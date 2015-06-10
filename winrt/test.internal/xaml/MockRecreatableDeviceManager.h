@@ -17,7 +17,7 @@ class MockRecreatableDeviceManager : public IRecreatableDeviceManager<TRAITS>
 
 public:
     CALL_COUNTER_WITH_MOCK(SetChangedCallbackMethod, void(std::function<void(ChangeReason)>));
-    CALL_COUNTER_WITH_MOCK(RunWithDeviceMethod, void(Sender*, RunWithDeviceFunction));
+    CALL_COUNTER_WITH_MOCK(RunWithDeviceMethod, void(Sender*, DeviceCreationOptions, RunWithDeviceFunction));
     CALL_COUNTER_WITH_MOCK(IsReadyToDrawMethod, bool());
     CALL_COUNTER_WITH_MOCK(AddCreateResourcesMethod, EventRegistrationToken(Sender*, CreateResourcesHandler*));
     CALL_COUNTER_WITH_MOCK(RemoveCreateResourcesMethod, void(EventRegistrationToken));
@@ -28,15 +28,15 @@ public:
         return SetChangedCallbackMethod.WasCalled(fn);
     }
 
-    virtual void RunWithDevice(Sender* sender, RunWithDeviceFunction fn) override
+    virtual void RunWithDevice(Sender* sender, DeviceCreationOptions options, RunWithDeviceFunction fn) override
     {
-        return RunWithDeviceMethod.WasCalled(sender, fn);
+        return RunWithDeviceMethod.WasCalled(sender, options, fn);
     }
 
     void SetRunWithDeviceFlags(RunWithDeviceFlags flags, int expectedCalls)
     {
         RunWithDeviceMethod.SetExpectedCalls(expectedCalls,
-            [=](Sender*, RunWithDeviceFunction fn)
+            [=](Sender*, DeviceCreationOptions, RunWithDeviceFunction fn)
             {
                 fn(m_device.Get(), flags);
             });

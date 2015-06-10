@@ -751,8 +751,46 @@ under the License.
     <member name="M:Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl.Invalidate">
       <summary>Marks this control as requiring redrawing.</summary>
       <inheritdoc/>
+    </member>    
+
+    <member name="P:Microsoft.Graphics.Canvas.UI.Xaml.ICanvasAnimatedControl.HardwareAcceleration">
+      <summary>Gets or sets the hardware acceleration property of devices that this control creates.</summary>
+      <remarks>
+      <p>
+      This property is set to CanvasHardwareAcceleration.<see cref="F:Microsoft.Graphics.Canvas.CanvasHardwareAcceleration.On"/> by default.
+      </p>
+      <p>
+      Modifying this option will cause re-creation of the control's device, if it already has one.
+      </p>
+      <p>
+      CanvasHardwareAcceleration.<see cref="F:Microsoft.Graphics.Canvas.CanvasHardwareAcceleration.Unknown"/> is not a valid option for this property.
+      </p>
+      </remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl.HardwareAcceleration">
+      <summary>Gets or sets the hardware acceleration property of devices that this control creates.</summary>
+      <inheritdoc/>
     </member>
     
+    <member name="P:Microsoft.Graphics.Canvas.UI.Xaml.ICanvasAnimatedControl.UseSharedDevice">
+      <summary>Gets or sets whether this control should create a new device each time, or use a device which may common between other controls.</summary>
+      <remarks>
+      <p>
+      This property is set to false by default.
+      </p>
+      <p>
+      Modifying this option will cause re-creation of the control's device, if it already has one.
+      </p>
+      <p>
+      If this property is set to true, the control will get its devices from 
+      CanvasDevice.<see cref="M:Microsoft.Graphics.Canvas.CanvasDevice.GetSharedDevice(Microsoft.Graphics.Canvas.CanvasHardwareAcceleration)"/>.
+      </p>
+      </remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl.UseSharedDevice">
+      <summary>Gets or sets whether this control should create a new device each time, or use a device which may common between other controls.</summary>
+      <inheritdoc/>
+    </member>
     
   </members>
 </doc>

@@ -86,6 +86,12 @@ std::shared_ptr<CanvasAnimatedControlTestAdapter> CreateAnimatedControlTestAdapt
         {
             return canvasDevice.CopyTo(value);
         });
+    
+    adapter->DeviceFactory->CreateWithDebugLevelAndHardwareAccelerationMethod.AllowAnyCall(
+        [=](CanvasDebugLevel, CanvasHardwareAcceleration, ICanvasDevice** device)
+        {
+            return canvasDevice.CopyTo(device);
+        });
 
     // Capture the adapter by pointer, not shared_ptr, to avoid a refcount cycle
     // when we assign the lambda to one of the adapter's own methods.

@@ -50,6 +50,14 @@ public:
         CreateRecreatableDeviceManagerMethod.AllowAnyCall();
         DeviceFactory->ActivateInstanceMethod.AllowAnyCall();
 
+        DeviceFactory->CreateWithDebugLevelAndHardwareAccelerationMethod.AllowAnyCall(
+            [&](CanvasDebugLevel, CanvasHardwareAcceleration, ICanvasDevice** device)
+            {
+                auto stubDevice = Make<StubCanvasDevice>();
+                stubDevice.CopyTo(device);
+                return S_OK;
+            });
+
         m_uiThreadDispatcher->get_HasThreadAccessMethod.AllowAnyCall(
             [=](boolean* out)
             {

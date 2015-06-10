@@ -118,6 +118,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         bool m_isSuspended;
         bool m_isVisible;
         float m_dpi;
+        bool m_useSharedDevice;
+        CanvasHardwareAcceleration m_hardwareAcceleration;
 
         EventSource<drawEventHandler_t, InvokeModeOptions<StopOnFirstError>> m_drawEventList;
 
@@ -136,7 +138,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         ComPtr<IDependencyObject> m_lastSeenParent;
 
     public:
-        BaseControl(std::shared_ptr<adapter_t> adapter)
+        BaseControl(std::shared_ptr<adapter_t> adapter, bool useSharedDevice)
             : m_adapter(adapter)
             , m_recreatableDeviceManager(adapter->CreateRecreatableDeviceManager())
             , m_isLoaded(false)
@@ -144,6 +146,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             , m_isVisible(true)
             , m_window(adapter->GetWindowOfCurrentThread())
             , m_dpi(adapter->GetLogicalDpi())
+            , m_useSharedDevice(useSharedDevice)
+            , m_hardwareAcceleration(CanvasHardwareAcceleration::On)
             , m_currentSize{}
             , m_clearColor{}
             , m_currentRenderTarget{}
@@ -249,6 +253,71 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                 [&]
                 {
                     RemoveFromVisualTreeImpl(m_lastSeenParent.Get(), As<IUIElement>(GetControl()).Get());
+                });
+        }
+
+        IFACEMETHODIMP get_UseSharedDevice(
+            boolean* value)
+        {
+            return ExceptionBoundary(
+                [&]
+                {
+                    CheckInPointer(value);
+
+                    auto lock = GetLock();
+
+                    *value = m_useSharedDevice;
+                });
+        }
+
+        IFACEMETHODIMP put_UseSharedDevice(
+            boolean value)
+        {
+            return ExceptionBoundary(
+                [&]
+                {
+                    auto lock = GetLock();
+
+                    if (m_useSharedDevice == !!value)
+                        return;
+
+                    m_useSharedDevice = !!value;
+
+                    Changed(lock, ChangeReason::DeviceCreationOptions);
+                });
+        }
+
+        IFACEMETHODIMP get_HardwareAcceleration(
+            CanvasHardwareAcceleration* value)
+        {
+            return ExceptionBoundary(
+                [&]
+                {
+                    CheckInPointer(value);
+
+                    auto lock = GetLock();
+
+                    *value = m_hardwareAcceleration;
+                });
+        }
+
+        IFACEMETHODIMP put_HardwareAcceleration(
+            CanvasHardwareAcceleration value)
+        {
+            return ExceptionBoundary(
+                [&]
+                {
+                    if (value == CanvasHardwareAcceleration::Unknown)
+                        ThrowHR(E_INVALIDARG, HStringReference(Strings::HardwareAccelerationUnknownIsNotValid).Get());
+
+                    auto lock = GetLock();
+
+                    if (m_hardwareAcceleration == value)
+                        return;
+
+                    m_hardwareAcceleration = value;
+
+                    Changed(lock, ChangeReason::DeviceCreationOptions);
                 });
         }
 
@@ -414,9 +483,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         // arranges for RenderWithTarget() to get called.
         //
         template<typename FN>
-        void RunWithRenderTarget(Size const& renderTargetSize, FN&& fn)
+        void RunWithRenderTarget(Size const& renderTargetSize, DeviceCreationOptions deviceCreationOptions, FN&& fn)
         {
-            m_recreatableDeviceManager->RunWithDevice(GetControl(),
+            m_recreatableDeviceManager->RunWithDevice(GetControl(), deviceCreationOptions,
                 [&] (ICanvasDevice* device, RunWithDeviceFlags flags)
                 {
                     RunWithRenderTarget(renderTargetSize, device, flags, fn);
@@ -468,6 +537,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         {
             auto lock = GetLock();
             return m_currentSize;
+        }
+
+        DeviceCreationOptions GetDeviceCreationOptions(Lock const& lock)
+        {
+            MustOwnLock(lock);
+
+            DeviceCreationOptions options { m_useSharedDevice, m_hardwareAcceleration };
+
+            return options;
         }
 
         void GetSharedState(Lock const& lock, Color* clearColor, Size* currentSize)

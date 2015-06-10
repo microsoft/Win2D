@@ -18,7 +18,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     {
         None                = 0x00,
         NewlyCreatedDevice  = 0x01,
-        ResourcesNotCreated = 0x02,
+        ResourcesNotCreated = 0x02
     };
 
     DEFINE_ENUM_FLAG_OPERATORS(RunWithDeviceFlags);
@@ -35,7 +35,24 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         Other,
         ClearColor,
         Size,
-        DeviceLost
+        DeviceLost,
+        DeviceCreationOptions
+    };
+
+    struct DeviceCreationOptions
+    {
+        bool UseSharedDevice;
+        CanvasHardwareAcceleration HardwareAcceleration;
+
+        inline bool operator==(const DeviceCreationOptions& rhs)
+        {
+            return UseSharedDevice == rhs.UseSharedDevice && HardwareAcceleration == rhs.HardwareAcceleration;
+        }
+
+        inline bool operator!=(const DeviceCreationOptions& rhs)
+        { 
+            return !(*this == rhs); 
+        }
     };
     
     template<typename TRAITS>
@@ -48,7 +65,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         virtual ~IRecreatableDeviceManager() = default;
 
         virtual void SetChangedCallback(std::function<void(ChangeReason)> fn) = 0;
-        virtual void RunWithDevice(Sender* sender, RunWithDeviceFunction fn) = 0;
+        virtual void RunWithDevice(Sender* sender, DeviceCreationOptions deviceCreationOptions, RunWithDeviceFunction fn) = 0;
         virtual ComPtr<ICanvasDevice> const& GetDevice() = 0;
         virtual bool IsReadyToDraw() = 0;
         virtual void SetDpiChanged() = 0;

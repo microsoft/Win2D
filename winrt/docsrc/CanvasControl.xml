@@ -416,7 +416,38 @@ under the License.
     <member name="F:Microsoft.Graphics.Canvas.UI.CanvasCreateResourcesReason.DpiChanged">
       <summary>The display DPI has changed.
                Only resources that depend on DPI need to be recreated.</summary>
-    </member>
+    </member>    
 
+    <member name="P:Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl.UseSharedDevice">
+      <summary>Gets or sets whether this control should create a new device each time, or use a device which may common between other controls.</summary>
+      <remarks>
+      <p>
+      This property is set to true by default.
+      </p>
+      <p>
+      Modifying this option will cause re-creation of the control's device, if it already has one.
+      </p>
+      <p>
+      If this property is set to true, the control will get its devices from 
+      CanvasDevice.<see cref="M:Microsoft.Graphics.Canvas.CanvasDevice.GetSharedDevice(Microsoft.Graphics.Canvas.CanvasHardwareAcceleration)"/>.
+      </p>
+      </remarks>
+    </member>
+    
+    <member name="P:Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl.HardwareAcceleration">
+      <summary>Gets or sets the hardware acceleration property of devices that this control creates.</summary>
+      <remarks>
+      <p>
+      This property is set to CanvasHardwareAcceleration.<see cref="F:Microsoft.Graphics.Canvas.CanvasHardwareAcceleration.On"/> by default.
+      </p>
+      <p>
+      Modifying this option will cause re-creation of the control's device, if it already has one.
+      </p>
+      <p>
+      CanvasHardwareAcceleration.<see cref="F:Microsoft.Graphics.Canvas.CanvasHardwareAcceleration.Unknown"/> is not a valid option for this property.
+      </p>
+      </remarks>
+    </member>    
+    
   </members>
 </doc>

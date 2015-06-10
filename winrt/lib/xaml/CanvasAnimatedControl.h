@@ -155,6 +155,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                 , ShouldResetElapsedTime(false)
                 , NeedsDraw(true)
                 , Invalidated(false)
+                , DeviceNeedsReCreationWithNewOptions(false)
             {}
 
             bool IsPaused;
@@ -164,6 +165,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             bool ShouldResetElapsedTime;
             bool NeedsDraw;
             bool Invalidated;
+            bool DeviceNeedsReCreationWithNewOptions;
             std::vector<ComPtr<AnimatedControlAsyncAction>> PendingAsyncActions;
         };
 

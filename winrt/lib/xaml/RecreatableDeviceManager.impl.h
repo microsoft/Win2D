@@ -23,7 +23,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         {
             NeedCreateResources,
             ResourcesCreated,
-            Lost
+            Unusable // Includes device-lost, and device-pending-replacement
         };
 
         ComPtr<ICanvasDevice> m_committedDevice;
@@ -52,7 +52,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                 m_state = State::ResourcesCreated;
                 break;
 
-            case State::Lost:
+            case State::Unusable:
                 // Once lost this device is lost forever
                 break;
 
@@ -88,20 +88,30 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             return m_createResourcesReason;
         }
 
-        bool IsLost()
+        bool IsUnusable()
         {
-            return (m_state == State::Lost);
+            return (m_state == State::Unusable);
         }
 
         void CheckForDeviceLost()
         {
-            if (m_state == State::Lost)
+            if (m_state == State::Unusable)
                 return;
 
             auto d3dDevice = GetDXGIInterface<ID3D11Device>(m_committedDevice.Get());
             
             if (d3dDevice->GetDeviceRemovedReason() != S_OK)
-                m_state = State::Lost;
+                m_state = State::Unusable;
+        }
+
+        void MarkAsUnusable()
+        {
+            //
+            // This is used when we want to explicitly replace the committed device
+            // with another one, but it hasn't happened as a result of a device
+            // lost exeption.
+            //
+            m_state = State::Unusable;
         }
     };
 
@@ -122,6 +132,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         // (and its tracked action) have finished running.
         //
         ComPtr<ICanvasDevice> m_device;
+        DeviceCreationOptions m_deviceCreationOptions;
 
         std::recursive_mutex m_currentOperationMutex;
         ComPtr<IAsyncInfo> m_currentOperation;
@@ -144,11 +155,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             m_changedCallback = fn;
         }
 
-        virtual void RunWithDevice(Sender* sender, RunWithDeviceFunction runWithDeviceFunction)
+        virtual void RunWithDevice(
+            Sender* sender, 
+            DeviceCreationOptions deviceCreationOptions,
+            RunWithDeviceFunction runWithDeviceFunction)
         {
             try
             {
-                RunWithDeviceFlags flags = EnsureDeviceCreated(sender);
+                RunWithDeviceFlags flags = EnsureDeviceCreated(sender, deviceCreationOptions);
                 assert(m_device);
 
                 // m_device is passed to the function.  This means that the
@@ -185,7 +199,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         virtual bool IsReadyToDraw() override
         {
-            if (!m_committedDevice || m_committedDevice->IsLost())
+            if (!m_committedDevice || m_committedDevice->IsUnusable())
                 return false;
 
             std::unique_lock<std::recursive_mutex> lock(m_currentOperationMutex);
@@ -215,7 +229,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             // so we're not left in a state where the handler has been added but
             // this method throws.
             //
-            if (m_committedDevice && !m_committedDevice->IsLost())
+            if (m_committedDevice && !m_committedDevice->IsUnusable())
             {
                 auto eventArgs = MakeEventArgs(CanvasCreateResourcesReason::FirstTime);
 
@@ -241,20 +255,36 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         }
 
     private:
-        RunWithDeviceFlags EnsureDeviceCreated(Sender* sender)
+        RunWithDeviceFlags EnsureDeviceCreated(Sender* sender, DeviceCreationOptions deviceCreationOptions)
         {
             std::unique_lock<std::recursive_mutex> lock(m_currentOperationMutex);
 
             RunWithDeviceFlags flags{};
 
             //
+            // If we are requesting a device that's shared, when it previously
+            // wasn't or vice versa- or, a different device type (hardware  
+            // versus software), the device needs to be cleared and re-created.
+            //
+            if (m_device && m_deviceCreationOptions != deviceCreationOptions)
+            {
+                m_device.Reset();
+                
+                m_committedDevice->MarkAsUnusable();
+            }
+
+            //
             // If we've never created a device, or we've seen a device lost
             // error for the one we have, then we'll need to create a new
             // device.
-            //            
+            // 
+
             if (!m_device)
             {
-                m_device = CreateDevice();
+                m_device = CreateDevice(deviceCreationOptions);
+
+                m_deviceCreationOptions = deviceCreationOptions;
+
                 flags = RunWithDeviceFlags::NewlyCreatedDevice;
             }
 
@@ -289,7 +319,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             //
             // If we haven't already, we can commit to the new device.
             //
-            if (!m_committedDevice || m_committedDevice->IsLost())
+            if (!m_committedDevice || m_committedDevice->IsUnusable())
             {
                 auto reason = !m_committedDevice ? CanvasCreateResourcesReason::FirstTime : 
                                                    CanvasCreateResourcesReason::NewDevice;
@@ -332,12 +362,27 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             return flags;
         }
 
-        ComPtr<ICanvasDevice> CreateDevice()
+        ComPtr<ICanvasDevice> CreateDevice(DeviceCreationOptions deviceCreationOptions)
         {
-            ComPtr<IInspectable> inspectableDevice;
-            ThrowIfFailed(m_canvasDeviceFactory->ActivateInstance(&inspectableDevice));
+            ComPtr<ICanvasDevice> device;
 
-            return As<ICanvasDevice>(inspectableDevice);
+            if (deviceCreationOptions.UseSharedDevice)
+            {
+                auto deviceStatics = As<ICanvasDeviceStatics>(m_canvasDeviceFactory);
+
+                ThrowIfFailed(deviceStatics->GetSharedDevice(deviceCreationOptions.HardwareAcceleration, &device));
+            }
+            else
+            {
+                auto deviceFactory = As<ICanvasDeviceFactory>(m_canvasDeviceFactory);
+
+                deviceFactory->CreateWithDebugLevelAndHardwareAcceleration(
+                    CanvasDebugLevel::None,
+                    deviceCreationOptions.HardwareAcceleration,
+                    &device);
+            }
+
+            return device;
         }
 
         void HandleDeviceLostException()
@@ -353,7 +398,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             {
                 m_committedDevice->CheckForDeviceLost();
 
-                if (!m_committedDevice->IsLost())
+                if (!m_committedDevice->IsUnusable())
                 {
                     // If m_committedDevice hasn't been lost then m_device also
                     // cannot have been lost so the exception can't be related
@@ -363,7 +408,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             }
 
             // At this point, the committed device is definitely lost
-            assert(!m_committedDevice || m_committedDevice->IsLost());
+            assert(!m_committedDevice || m_committedDevice->IsUnusable());
 
             // ...any pending create resources against it are definitely going
             // to fail (or be useless) so we cancel them now.

@@ -12,6 +12,8 @@
 
 #pragma once
 
+#include "mocks\MockCanvasSwapChain.h"
+
 template<typename TRAITS>
 struct BasicControlFixture
 {
@@ -60,6 +62,8 @@ struct BasicControlFixture
 
     void RenderSingleFrame();
 
+    void PrepareAdapterForRenderingResource();
+
     void RenderAnyNumberOfFrames()
     {
         int anyNumberOfTimes = 5;
@@ -96,6 +100,35 @@ inline void BasicControlFixture<CanvasControlTraits>::RenderSingleFrame()
 inline void BasicControlFixture<CanvasAnimatedControlTraits>::RenderSingleFrame()
 {
     Adapter->Tick();
+}
+
+
+inline void BasicControlFixture<CanvasControlTraits>::PrepareAdapterForRenderingResource()
+{
+    Adapter->CreateCanvasImageSourceMethod.AllowAnyCall();
+}
+
+
+inline void BasicControlFixture<CanvasAnimatedControlTraits>::PrepareAdapterForRenderingResource()
+{
+    auto swapChainManager = std::make_shared<MockCanvasSwapChainManager>();
+
+    Adapter->CreateCanvasSwapChainMethod.AllowAnyCall(
+        [=](ICanvasDevice*, float, float, float, CanvasAlphaMode)
+    {
+        auto mockSwapChain = swapChainManager->CreateMock();
+        mockSwapChain->CreateDrawingSessionMethod.AllowAnyCall(
+            [](Color, ICanvasDrawingSession** value)
+        {
+            auto ds = Make<MockCanvasDrawingSession>();
+            return ds.CopyTo(value);
+        });
+        mockSwapChain->PresentMethod.AllowAnyCall();
+
+        mockSwapChain->put_TransformMethod.AllowAnyCall();
+
+        return mockSwapChain;
+    });
 }
 
 struct Static_BasicControlFixture : public BasicControlFixture<CanvasControlTraits>

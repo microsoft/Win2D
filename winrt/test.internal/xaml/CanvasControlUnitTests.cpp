@@ -168,6 +168,15 @@ TEST_CLASS(CanvasControlTests_CommonAdapter)
 
         VERIFY_THREADING_RESTRICTION(S_OK, f.Control->Invalidate());
     }
+
+    TEST_METHOD_EX(CanvasControl_UseSharedDevice_Default_True)
+    {
+        CanvasControlFixture f;
+
+        boolean useSharedDevice;
+        Assert::AreEqual(S_OK, f.Control->get_UseSharedDevice(&useSharedDevice));
+        Assert::IsTrue(!!useSharedDevice);
+    }
 };
 
 TEST_CLASS(CanvasControlTests_SizeTests)

@@ -91,7 +91,7 @@ public:
         {
             this->RunWithDeviceFunction.SetExpectedCalls(1);
 
-            DeviceManager->RunWithDevice(AnySender,
+            DeviceManager->RunWithDevice(AnySender, DeviceCreationOptions{},
                 [=](ICanvasDevice* device, RunWithDeviceFlags flags)
                 {
                     this->RunWithDeviceFunction.WasCalled();
@@ -155,7 +155,7 @@ public:
         void CallRunWithDeviceDontExpectFunctionToBeCalled()
         {
             this->RunWithDeviceFunction.SetExpectedCalls(0);
-            DeviceManager->RunWithDevice(AnySender,
+            DeviceManager->RunWithDevice(AnySender, DeviceCreationOptions{},
                 [=](ICanvasDevice*, RunWithDeviceFlags)
                 {
                     this->RunWithDeviceFunction.WasCalled();

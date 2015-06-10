@@ -1850,6 +1850,15 @@ TEST_CLASS(CanvasAnimatedControlChangedAction)
         f.Adapter->DoChanged();
         Assert::IsFalse(f.IsChangedActionRunning());
     }
+
+    TEST_METHOD_EX(CanvasAnimatedControl_UseSharedDevice_Default_False)
+    {
+        CanvasAnimatedControlFixture f;
+
+        boolean useSharedDevice;
+        Assert::AreEqual(S_OK, f.Control->get_UseSharedDevice(&useSharedDevice));
+        Assert::IsFalse(!!useSharedDevice);
+    }
 };
 
 TEST_CLASS(CanvasAnimatedControlRenderLoop)

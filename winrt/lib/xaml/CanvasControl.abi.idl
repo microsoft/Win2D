@@ -143,6 +143,31 @@ namespace Microsoft.Graphics.Canvas.UI.Xaml
         // Removes the control from the visual tree.
         //
         HRESULT RemoveFromVisualTree();
+
+        //
+        // If this is set to true, the control obtains its CanvasDevice 
+        // from the SharedDevices pool. 
+        //
+        // This is set to true by default.
+        //
+        //
+        // Modifying this property will cause re-creation of the rendering
+        // resource.
+        //
+        [propget] HRESULT UseSharedDevice([out, retval] boolean* value);
+        [propput] HRESULT UseSharedDevice([in] boolean value);
+
+        //
+        // This affects what device the control will try to create, or 
+        // obtain (from the SharedDevices pool).
+        //
+        // This is set to On by default.
+        //
+        // Modifying this property will cause re-creation of the rendering
+        // resource.
+        //
+        [propget] HRESULT HardwareAcceleration([out, retval] Microsoft.Graphics.Canvas.CanvasHardwareAcceleration* value);
+        [propput] HRESULT HardwareAcceleration([in] Microsoft.Graphics.Canvas.CanvasHardwareAcceleration value);
     }
 
     [version(VERSION), activatable(VERSION), marshaling_behavior(agile), threading(both)]

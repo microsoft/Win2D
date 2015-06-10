@@ -160,7 +160,7 @@ public:
 
 CanvasControl::CanvasControl(
     std::shared_ptr<ICanvasControlAdapter> adapter)
-    : BaseControl(adapter)
+    : BaseControl(adapter, true)
     , m_needToHookCompositionRendering(false)
 {
     CreateImageControl();
@@ -225,12 +225,13 @@ HRESULT CanvasControl::OnCompositionRendering(IInspectable*, IInspectable*)
 
             auto lock = GetLock();
             m_renderingEventRegistration.Release();
+            DeviceCreationOptions deviceCreationOptions = GetDeviceCreationOptions(lock);
             lock.unlock();
 
             if (!IsWindowVisible())
                 return;
 
-            RunWithRenderTarget(GetCurrentSize(),
+            RunWithRenderTarget(GetCurrentSize(), deviceCreationOptions,
                 [&](CanvasImageSource* target, ICanvasDevice*, Color const& clearColor, bool callDrawHandlers)
                 {
                     if (!target)

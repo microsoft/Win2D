@@ -712,7 +712,7 @@ public:
 
         ComPtr<ICanvasDevice> unused;
         Assert::AreEqual(E_INVALIDARG, canvasDeviceFactory->GetSharedDevice(CanvasHardwareAcceleration::Unknown, &unused));
-        ValidateStoredErrorState(E_INVALIDARG, Strings::GetSharedDeviceUnknown);
+        ValidateStoredErrorState(E_INVALIDARG, Strings::HardwareAccelerationUnknownIsNotValid);
     }
 
     ComPtr<ICanvasDevice> GetSharedDevice_ExpectHardwareAcceleration(

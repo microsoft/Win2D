@@ -293,7 +293,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         CanvasHardwareAcceleration hardwareAcceleration)
     {
         if (hardwareAcceleration == CanvasHardwareAcceleration::Unknown)
-            ThrowHR(E_INVALIDARG, HStringReference(Strings::GetSharedDeviceUnknown).Get());
+            ThrowHR(E_INVALIDARG, HStringReference(Strings::HardwareAccelerationUnknownIsNotValid).Get());
 
         //
         // This code, unlike other non-control APIs, cannot rely on the D2D

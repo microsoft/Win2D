@@ -151,7 +151,7 @@ public:
 //
 
 CanvasAnimatedControl::CanvasAnimatedControl(std::shared_ptr<ICanvasAnimatedControlAdapter> adapter)
-    : BaseControl<CanvasAnimatedControlTraits>(adapter)
+    : BaseControl<CanvasAnimatedControlTraits>(adapter, false)
     , m_stepTimer(adapter)
     , m_hasUpdated(false)
 {
@@ -514,6 +514,10 @@ void CanvasAnimatedControl::Changed(Lock const& lock, ChangeReason reason)
         m_hasUpdated = false;
         break;
 
+    case ChangeReason::DeviceCreationOptions:
+        m_sharedState.DeviceNeedsReCreationWithNewOptions = true;
+        break;
+
     default:
         // nothing
         break;
@@ -568,6 +572,7 @@ void CanvasAnimatedControl::ChangedImpl()
     bool isPaused = m_sharedState.IsPaused;
     bool wasPaused = m_sharedState.FirstTickAfterWasPaused;
     bool hasPendingActions = !m_sharedState.PendingAsyncActions.empty();
+    DeviceCreationOptions deviceCreationOptions = GetDeviceCreationOptions(lock);
 
     lock.unlock();
 
@@ -653,7 +658,7 @@ void CanvasAnimatedControl::ChangedImpl()
     //
     // Try and start the update/render thread
     //
-    RunWithRenderTarget(GetCurrentSize(),
+    RunWithRenderTarget(GetCurrentSize(), deviceCreationOptions,
         [&] (CanvasSwapChain* rawTarget, ICanvasDevice*, Color const& clearColor, bool areResourcesCreated)
         {
             // The clearColor passed to us is ignored since this needs to be
@@ -824,9 +829,11 @@ bool CanvasAnimatedControl::Tick(
 
     bool isPaused = m_sharedState.IsPaused;
     bool firstTickAfterWasPaused = m_sharedState.FirstTickAfterWasPaused;
+    bool deviceNeedsReCreationWithNewOptions = m_sharedState.DeviceNeedsReCreationWithNewOptions;
 
     m_sharedState.ShouldResetElapsedTime = false;
     m_sharedState.FirstTickAfterWasPaused = false;
+    m_sharedState.DeviceNeedsReCreationWithNewOptions = false;
 
     Color clearColor;
     Size currentSize;
@@ -840,6 +847,13 @@ bool CanvasAnimatedControl::Tick(
     {
         // This will cause the update/render thread to stop, giving the UI
         // thread an opportunity to recreate the swap chain.
+        return false;
+    }
+
+    // If the device needs to be re-created with different options, this 
+    // needs to happen before we can draw.
+    if (deviceNeedsReCreationWithNewOptions)
+    {
         return false;
     }
 

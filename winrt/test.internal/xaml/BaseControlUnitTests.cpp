@@ -78,7 +78,7 @@ namespace
         using BaseControl::RenderTarget;
 
         AnyDerivedControl(std::shared_ptr<IAnyAdapter> adapter)
-            : BaseControl(adapter)
+            : BaseControl(adapter, false)
         {
         }
 
@@ -143,7 +143,7 @@ namespace
             CallCounter<> expectCallback(L"RunWithRenderTarget callback");
             expectCallback.SetExpectedCalls(1);
 
-            RunWithRenderTarget(size,
+            RunWithRenderTarget(size, DeviceCreationOptions{},
                 [&] (AnyRenderTarget* target, ICanvasDevice*, Color const& clearColor, bool callDrawHandlers)
                 {
                     expectCallback.WasCalled();
