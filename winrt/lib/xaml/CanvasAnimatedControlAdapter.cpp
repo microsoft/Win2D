@@ -237,24 +237,24 @@ public:
         ::Sleep(timeInMs);
     }
 
-    virtual LARGE_INTEGER GetPerformanceCounter() override
+    virtual int64_t GetPerformanceCounter() override
     {
         LARGE_INTEGER counter;
         if (QueryPerformanceCounter(&counter) == 0)
         {
             ThrowHR(E_FAIL);
         }
-        return counter;
+        return counter.QuadPart;
     }
 
-    virtual LARGE_INTEGER GetPerformanceFrequency() override
+    virtual int64_t GetPerformanceFrequency() override
     {
         LARGE_INTEGER frequency;
         if (QueryPerformanceFrequency(&frequency) == 0)
         {
             ThrowHR(E_FAIL);
         }
-        return frequency;
+        return frequency.QuadPart;
     }
 
 private:

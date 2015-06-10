@@ -148,18 +148,14 @@ public:
         m_performanceCounter += ticks;
     }
 
-    virtual LARGE_INTEGER GetPerformanceCounter() override
+    virtual int64_t GetPerformanceCounter() override
     {
-        LARGE_INTEGER l;
-        l.QuadPart = m_performanceCounter;
-        return l;
+        return m_performanceCounter;
     }
 
-    virtual LARGE_INTEGER GetPerformanceFrequency() override
+    virtual int64_t GetPerformanceFrequency() override
     {
-        LARGE_INTEGER l;
-        l.QuadPart = StepTimer::TicksPerSecond;
-        return l;
+        return StepTimer::TicksPerSecond;
     }
 
     ComPtr<StubCoreIndependentInputSource> GetCoreIndependentInputSource()

@@ -19,8 +19,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     public:
         virtual ~ICanvasTimingAdapter() = default;
 
-        virtual LARGE_INTEGER GetPerformanceCounter() = 0;
-        virtual LARGE_INTEGER GetPerformanceFrequency() = 0;
+        virtual int64_t GetPerformanceCounter() = 0;
+        virtual int64_t GetPerformanceFrequency() = 0;
     };
 
     // Helper class for animation and simulation timing.
@@ -29,8 +29,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         std::shared_ptr<ICanvasTimingAdapter> m_adapter;
 
         // Source timing data uses QPC units.
-        LARGE_INTEGER m_frequency;
-        LARGE_INTEGER m_lastTime;
+        int64_t m_frequency;
+        int64_t m_lastTime;
         uint64_t m_maxDelta;
 
         // Derived timing data uses a canonical tick format.
@@ -143,11 +143,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         void Tick(bool forceUpdate, CALLABLE&& fn)
         {
             // Query the current time.
-            LARGE_INTEGER currentTime;
+            auto currentTime = m_adapter->GetPerformanceCounter();
 
-            currentTime = m_adapter->GetPerformanceCounter();
-
-            uint64_t timeDelta = currentTime.QuadPart - m_lastTime.QuadPart;
+            uint64_t timeDelta = currentTime - m_lastTime;
 
             m_lastTime = currentTime;
             m_secondCounter += timeDelta;
@@ -160,7 +158,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
             // Convert QPC units into a canonical tick format. This cannot overflow due to the previous clamp.
             timeDelta *= TicksPerSecond;
-            timeDelta /= m_frequency.QuadPart;
+            timeDelta /= m_frequency;
 
             uint32_t lastFrameCount = m_frameCount;
 
@@ -228,11 +226,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                 m_framesThisSecond++;
             }
 
-            if (m_secondCounter >= static_cast<uint64_t>(m_frequency.QuadPart))
+            if (m_secondCounter >= static_cast<uint64_t>(m_frequency))
             {
                 m_framesPerSecond = m_framesThisSecond;
                 m_framesThisSecond = 0;
-                m_secondCounter %= m_frequency.QuadPart;
+                m_secondCounter %= m_frequency;
             }
         }
     };

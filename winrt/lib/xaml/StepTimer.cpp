@@ -32,7 +32,7 @@ StepTimer::StepTimer(std::shared_ptr<ICanvasTimingAdapter> adapter)
     m_lastTime = m_adapter->GetPerformanceCounter();
 
     // Initialize max delta to 1/10 of a second.
-    m_maxDelta = m_frequency.QuadPart / 10;
+    m_maxDelta = m_frequency / 10;
     assert(m_maxDelta > 0);
 }
 
