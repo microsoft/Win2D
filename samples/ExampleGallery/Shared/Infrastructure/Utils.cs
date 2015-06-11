@@ -44,15 +44,9 @@ namespace ExampleGallery
                 scale.Y = scale.X;
                 offset.Y = (outputSize.Y - sourceSize.Y * scale.Y) / 2;
             }
-
-            // TODO #4479: once .NET Native x64 codegen bug is fixed, change this back to:
-            /*
+            
             return Matrix3x2.CreateScale(scale) *
                    Matrix3x2.CreateTranslation(offset);
-            */
-            return new Matrix3x2(scale.X, 0,
-                                 0, scale.Y,
-                                 offset.X, offset.Y);
         }
 
         public static CanvasGeometry CreateStarGeometry(ICanvasResourceCreator resourceCreator, float scale, Vector2 center)

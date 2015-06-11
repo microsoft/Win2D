@@ -19,10 +19,6 @@
 #include "ErrorHandling.h"
 #include "LifespanTracker.h"
 
-// TODO #3318 - this started using std::function to workaround DevDev# 1104728.
-// This has been reported as fixed, so we should be able to roll this back once
-// we pick up a build with the fix.
-
 
 // Helper for marking our callback delegates as agile, by mixing in FtmBase.
 // Without this WinRT would marshal everything back to the UI thread.
@@ -63,7 +59,8 @@ protected:
 
 
     // Runs an async operation on the threadpool.
-    void RunOnThreadPool(std::function<void()> const& workerFunction)
+    template<typename TFunction>
+    void RunOnThreadPool(TFunction&& workerFunction)
     {
         auto threadPoolDelegate = MakeThreadPoolDelegate(std::move(workerFunction));
 
@@ -73,8 +70,8 @@ protected:
 
     // Runs one async operation as a continuation of another. The specified
     // worker function will execute after the previous operation has completed.
-    template<typename TPrevious>
-    void RunAsContinuation(Microsoft::WRL::ComPtr<TPrevious> const& previousOperation, std::function<void()> const& workerFunction)
+    template<typename TPrevious, typename TFunction>
+    void RunAsContinuation(Microsoft::WRL::ComPtr<TPrevious> const& previousOperation, TFunction&& workerFunction)
     {
         using namespace Microsoft::WRL;
 
@@ -140,7 +137,8 @@ protected:
 
 private:
     // Creates a callback delegate which will later execute the specified worker function.
-    Microsoft::WRL::ComPtr<ABI::Windows::System::Threading::IWorkItemHandler> MakeThreadPoolDelegate(std::function<void()> const& workerFunction)
+    template<typename TFunction>
+    Microsoft::WRL::ComPtr<ABI::Windows::System::Threading::IWorkItemHandler> MakeThreadPoolDelegate(TFunction const& workerFunction)
     {
         using namespace ABI::Windows::Foundation;
         using namespace ABI::Windows::System::Threading;

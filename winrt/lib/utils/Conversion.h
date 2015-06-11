@@ -150,7 +150,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         static_assert(static_cast<uint32_t>(D2D1_DRAW_TEXT_OPTIONS_NO_SNAP) == static_cast<uint32_t>(CanvasDrawTextOptions::NoPixelSnap), "CanvasDrawTextOptions must match D2D1_DRAW_TEXT_OPTIONS");
         static_assert(static_cast<uint32_t>(D2D1_DRAW_TEXT_OPTIONS_CLIP) == static_cast<uint32_t>(CanvasDrawTextOptions::Clip), "CanvasDrawTextOptions must match D2D1_DRAW_TEXT_OPTIONS");
 
-        // TODO: replace 4 with D2D1_DRAW_TEXT_OPTIONS_ENABLE_COLOR_FONT when the most recent VS2013 update has a d2d1.h for Windows Phone that includes it
+        // Using hardcoded constant instead of D2D1_DRAW_TEXT_OPTIONS_ENABLE_COLOR_FONT, because that enum entry is missing from the VS2013 Windows Phone version of d2d1.h
         static_assert(static_cast<uint32_t>(4U) == static_cast<uint32_t>(CanvasDrawTextOptions::EnableColorFont), "CanvasDrawTextOptions must match D2D1_DRAW_TEXT_OPTIONS");
     };
 

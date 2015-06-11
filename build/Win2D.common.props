@@ -42,10 +42,7 @@
 
     <__OutputPath>$(BinariesDirectory)\$(FullPlatform)\$(Configuration)\$(MSBuildProjectName)</__OutputPath>
     <BaseIntermediateOutputPath>$(MSBuildThisFileDirectory)..\obj\$(MSBuildProjectName)\$(FullPlatform)\$(Configuration)\</BaseIntermediateOutputPath>
-
-    <!-- TODO: MakeRelative shouldn't be necessary, but the .NET native build tools assume IntermediateOutputPath is relative to MSBuildProjectDirectory -->
-    <IntermediateOutputPath>$([MSBuild]::MakeRelative($(MSBuildProjectDirectory), $(BaseIntermediateOutputPath)))</IntermediateOutputPath>
-
+    <IntermediateOutputPath>$(BaseIntermediateOutputPath)</IntermediateOutputPath>
     <AssetDir>$(MSBuildThisFileDirectory)assets\</AssetDir>
 
     <!-- Force all directories to lower case -->

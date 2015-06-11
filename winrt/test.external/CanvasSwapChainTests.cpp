@@ -52,7 +52,7 @@ TEST_CLASS(CanvasSwapChainTests)
 
     TEST_METHOD(CanvasSwapChain_DrawOperation)
     {
-        auto canvasDevice = ref new CanvasDevice(); // TODO TH: CanvasDebugLevel::Information);
+        auto canvasDevice = ref new CanvasDevice(CanvasDebugLevel::Information);
 
         auto canvasSwapChain = ref new CanvasSwapChain(canvasDevice, 1, 1, DEFAULT_DPI);
 

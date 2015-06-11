@@ -27,12 +27,6 @@
         -->
         <AdditionalMetadataDirectories Condition="'$(ApplicationTypeRevision)' == '10.0'">$(TargetPlatformWinMDLocation)\Windows.Foundation.FoundationContract\1.0.0.0;%(Midl.AdditionalMetadataDirectories)</AdditionalMetadataDirectories>
 
-        <!-- 
-             TODO: works around a bug in Platform.Common.props on x64.  This has
-             been reported fixed in a later build.  Remove this once we move to
-             that build.
-        -->
-        <TargetEnvironment Condition="'$(Platform)' == 'x64'">X64</TargetEnvironment> 
         <AdditionalOptions>/target NT62</AdditionalOptions>
       </Midl>
     </ItemGroup>

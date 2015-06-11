@@ -38,8 +38,7 @@
       <MetaDataPath Condition="'$(ApplicationTypeRevision)' == '8.1'">"$(WindowsSDK_MetadataPath)"</MetaDataPath>
       <MetaDataPath Condition="'$(ApplicationTypeRevision)' == '10.0'">"$(WindowsSDK_MetadataPath)\Windows.Foundation.FoundationContract\1.0.0.0" -metadata_dir "$(WindowsSDK_MetadataPath)\Windows.Foundation.UniversalApiContract\1.0.0.0"</MetaDataPath>
     </PropertyGroup>
-    <Exec Command="$(MdMergeExe) -metadata_dir $(MetadataPath) -o &quot;$(MergedWinmdDirectory)&quot; -i &quot;$(UnmergedWinmdDirectory)&quot; -partial -n:Microsoft.Graphics.Canvas:3" />
-    <!-- TODO: should pass '-v' to mdmerge once MS:1341138 is resolved -->
+    <Exec Command="$(MdMergeExe) -v -metadata_dir $(MetadataPath) -o &quot;$(MergedWinmdDirectory)&quot; -i &quot;$(UnmergedWinmdDirectory)&quot; -partial -n:Microsoft.Graphics.Canvas:3" />
   </Target>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)drawing\CanvasActiveLayer.h" />
