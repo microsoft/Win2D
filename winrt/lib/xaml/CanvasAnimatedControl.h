@@ -149,7 +149,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         {
             SharedState()
                 : IsPaused(false)
-                , FirstTickAfterWasPaused(true)
+                , TimeWhenPausedWasSet{}
+                , TimeSpentPaused{}
                 , IsStepTimerFixedStep(false)
                 , TargetElapsedTime(0)
                 , ShouldResetElapsedTime(false)
@@ -159,7 +160,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             {}
 
             bool IsPaused;
-            bool FirstTickAfterWasPaused;
+            int64_t TimeWhenPausedWasSet;
+            int64_t TimeSpentPaused;
             bool IsStepTimerFixedStep;
             uint64_t TargetElapsedTime;
             bool ShouldResetElapsedTime;
@@ -249,7 +251,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             bool IsRunningSlowly;
         };
 
-        UpdateResult Update(bool forceUpdate);
+        UpdateResult Update(bool forceUpdate, int64_t timeSpentPaused);
 
         void ChangedImpl();
 

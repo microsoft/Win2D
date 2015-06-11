@@ -254,12 +254,32 @@ IFACEMETHODIMP CanvasAnimatedControl::put_Paused(boolean value)
         {
             auto lock = GetLock();
 
+            bool oldState = m_sharedState.IsPaused;
             m_sharedState.IsPaused = !!value;
 
-            if (!m_sharedState.IsPaused)
+            if (oldState != m_sharedState.IsPaused)
             {
-                m_sharedState.FirstTickAfterWasPaused = true;
-                Changed(lock);
+                auto currentTime = GetAdapter()->GetPerformanceCounter();
+
+                if (!m_sharedState.IsPaused)
+                {
+                    // Accumulate the time spent paused.  This will be accounted
+                    // for when the game loop timer ticks.
+                    //
+                    // Since different threads may set/unset Paused, and these
+                    // don't necessarily have tightly synchronized results from
+                    // QueryPerformanceCounter there's a possibility that we
+                    // could see Paused to false 'before' it was set to true.
+                    // The 'max' below guards against this.
+                    m_sharedState.TimeSpentPaused += std::max(0LL, (currentTime - m_sharedState.TimeWhenPausedWasSet));
+                    assert(m_sharedState.TimeSpentPaused >= 0);
+
+                    Changed(lock);
+                }
+                else
+                {
+                    m_sharedState.TimeWhenPausedWasSet = currentTime;
+                }
             }
         });
 }
@@ -570,7 +590,6 @@ void CanvasAnimatedControl::ChangedImpl()
 
     bool needsDraw = m_sharedState.NeedsDraw || m_sharedState.Invalidated;
     bool isPaused = m_sharedState.IsPaused;
-    bool wasPaused = m_sharedState.FirstTickAfterWasPaused;
     bool hasPendingActions = !m_sharedState.PendingAsyncActions.empty();
     DeviceCreationOptions deviceCreationOptions = GetDeviceCreationOptions(lock);
 
@@ -685,9 +704,6 @@ void CanvasAnimatedControl::ChangedImpl()
                 //
                 return;
             }
-
-            if (wasPaused)      // TODO: figure out the right thing here; resetting the timer probably isn't it.
-                m_stepTimer.ResetElapsedTime();
 
             ComPtr<CanvasSwapChain> target(rawTarget);
 
@@ -827,13 +843,9 @@ bool CanvasAnimatedControl::Tick(
         m_stepTimer.ResetElapsedTime();
     }
 
-    bool isPaused = m_sharedState.IsPaused;
-    bool firstTickAfterWasPaused = m_sharedState.FirstTickAfterWasPaused;
     bool deviceNeedsReCreationWithNewOptions = m_sharedState.DeviceNeedsReCreationWithNewOptions;
-
-    m_sharedState.ShouldResetElapsedTime = false;
-    m_sharedState.FirstTickAfterWasPaused = false;
     m_sharedState.DeviceNeedsReCreationWithNewOptions = false;
+    m_sharedState.ShouldResetElapsedTime = false;
 
     Color clearColor;
     Size currentSize;
@@ -871,7 +883,22 @@ bool CanvasAnimatedControl::Tick(
     // Invalidated request, so we can reset this flag now.
     if (areResourcesCreated)
         m_sharedState.Invalidated = false;
-    
+
+    // Handle Paused state
+    bool isPaused = m_sharedState.IsPaused;
+    int64_t timeSpentPaused = 0;
+
+    if (!isPaused)
+    {
+        timeSpentPaused = m_sharedState.TimeSpentPaused;
+
+        if (areResourcesCreated)
+        {
+            m_sharedState.TimeWhenPausedWasSet = 0;
+            m_sharedState.TimeSpentPaused = 0;
+        }
+    } 
+
     // We update, but forego drawing if the control is not in a visible state.
     // Force-draws, like those due to device lost, are not performed either.
     // Drawing behavior resumes when the control becomes visible once again.
@@ -911,9 +938,18 @@ bool CanvasAnimatedControl::Tick(
 
     if (areResourcesCreated && !isPaused)
     {
-        bool forceUpdate = (firstTickAfterWasPaused || !m_hasUpdated);
+        bool forceUpdate = false;
 
-        updateResult = Update(forceUpdate);
+        if (!m_hasUpdated)
+        {
+            // For the first update we reset the timer.  This handles the
+            // possibility of there being a long delay between construction and
+            // the first update.
+            m_stepTimer.ResetElapsedTime();
+            forceUpdate = true;
+        }
+
+        updateResult = Update(forceUpdate, timeSpentPaused);
 
         m_hasUpdated |= updateResult.Updated;
     }
@@ -967,11 +1003,11 @@ bool CanvasAnimatedControl::Tick(
     return areResourcesCreated && !isPaused;
 }
 
-CanvasAnimatedControl::UpdateResult CanvasAnimatedControl::Update(bool forceUpdate)
+CanvasAnimatedControl::UpdateResult CanvasAnimatedControl::Update(bool forceUpdate, int64_t timeSpentPaused)
 {
     UpdateResult result{};
 
-    m_stepTimer.Tick(forceUpdate,
+    m_stepTimer.Tick(forceUpdate, timeSpentPaused,
         [this, &result](bool isRunningSlowly)
         {
             auto timing = GetTimingInformationFromTimer();

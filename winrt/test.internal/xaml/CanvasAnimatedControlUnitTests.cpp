@@ -186,33 +186,6 @@ TEST_CLASS(CanvasAnimatedControlTests)
         Assert::IsFalse(!!paused);
     }
 
-    TEST_METHOD_EX(CanvasAnimatedControl_RedundantChangedCallsDoNothing)
-    {
-        CanvasAnimatedControlFixture f;
-        f.Load();
-        f.Adapter->DoChanged();
-
-        auto onDraw = MockEventHandler<Animated_DrawEventHandler>(L"Draw", ExpectedEventParams::Both);
-        f.AddDrawHandler(onDraw.Get());
-        onDraw.AllowAnyCall();
-        f.Adapter->Tick(); // Puts adapter in steady state.
-
-        onDraw.SetExpectedCalls(1); // Ensure the draw handler gets called one time, not three.
-
-        for (int i = 0; i < 3; ++i)
-        {
-            ThrowIfFailed(f.Control->put_Paused(true));
-            ThrowIfFailed(f.Control->put_Paused(false)); // Internally calls Changed().
-        }
-
-        //
-        // Verifies that multiple calls to Changed() don't somehow queue anything up, or
-        // corrupt anything, and only one draw handler gets called on Tick.
-        //
-        f.Adapter->DoChanged();
-        f.Adapter->Tick();
-    }
-
     TEST_METHOD_EX(CanvasAnimatedControl_IsFixedTimeStep_DefaultsToTrue)
     {
         CanvasAnimatedControlFixture f;
@@ -790,6 +763,18 @@ TEST_CLASS(CanvasAnimatedControlTests)
             
             Expectations::Instance()->Validate();
         }
+
+        void ExpectUpdateWithElapsedTime(int64_t expected)
+        {
+            OnUpdate.SetExpectedCalls(1,
+                [=] (ICanvasAnimatedControl*, ICanvasAnimatedUpdateEventArgs* args)
+                {
+                    CanvasTimingInformation timingInformation;
+                    ThrowIfFailed(args->get_Timing(&timingInformation));
+                    Assert::AreEqual(expected, timingInformation.ElapsedTime.Duration);
+                    return S_OK;
+                });
+        }
     };
 
     TEST_METHOD_EX(CanvasAnimatedControl_FirstRenderFrameAlwaysIssuesSingleUpdateAndDraw)
@@ -823,6 +808,8 @@ TEST_CLASS(CanvasAnimatedControlTests)
         f.Load();
         f.Adapter->DoChanged();
         f.RenderSingleFrame();
+
+        Expectations::Instance()->Validate();
     }
 
     TEST_METHOD_EX(CanvasAnimatedControl_VariableTimestepFiresInitialUpdateAtZeroTime)
@@ -966,6 +953,33 @@ TEST_CLASS(CanvasAnimatedControlTests)
         }
     }
 
+    TEST_METHOD_EX(CanvasAnimatedControl_ElapsedTime_DoesNotInclude_TimeWhilePaused)
+    {
+        UpdateRenderFixture f;
+        ThrowIfFailed(f.Control->put_IsFixedTimeStep(false));
+
+        f.GetIntoSteadyState();
+        f.OnDraw.AllowAnyCall();
+
+        int64_t timeWhileNotPaused = 0;
+
+        for (int i = 0; i < 50; ++i)
+        {
+            int64_t t = (i+1) * 10;
+
+            f.Adapter->ProgressTime(t);
+            timeWhileNotPaused += t;
+
+            ThrowIfFailed(f.Control->put_Paused(TRUE));
+            f.Adapter->ProgressTime(t * 50);
+            ThrowIfFailed(f.Control->put_Paused(FALSE));
+        }
+
+        f.ExpectUpdateWithElapsedTime(timeWhileNotPaused);
+        f.Adapter->DoChanged();
+        f.Adapter->Tick();
+    }
+
     TEST_METHOD_EX(CanvasAnimatedControl_WhenDeviceLost_DrawIsNotCalledUntilUpdateHasCompleted)
     {
         UpdateRenderFixture f;
@@ -1070,20 +1084,25 @@ TEST_CLASS(CanvasAnimatedControlTests)
         UpdateRenderFixture f;
         f.GetIntoSteadyState();
         
-        f.Adapter->ProgressTime(TicksPerFrame * 1000);
+        f.Adapter->ProgressTime(TicksPerFrame);
+        ThrowIfFailed(f.Control->put_Paused(TRUE)); // we pause it after a
+                                                    // single frame's worth time
+                                                    // has passed
+
         f.OnUpdate.SetExpectedCalls(0);
         f.OnDraw.SetExpectedCalls(0);
-        ThrowIfFailed(f.Control->put_Paused(TRUE));
         f.Adapter->DoChanged();
-        f.RenderSingleFrame();
+        f.Adapter->Tick();
 
         f.Adapter->ProgressTime(TicksPerFrame * 1000);
-        ThrowIfFailed(f.Control->put_Paused(FALSE));
-        f.Adapter->DoChanged();
+        ThrowIfFailed(f.Control->put_Paused(FALSE)); // unpause after much time
+                                                     // has passed
 
+        // But only see one update - so the time while paused is not counted
         f.OnUpdate.SetExpectedCalls(1);
         f.OnDraw.SetExpectedCalls(1);
-        f.RenderSingleFrame();
+        f.Adapter->DoChanged();
+        f.Adapter->Tick();
     }
 
 
@@ -1286,46 +1305,6 @@ TEST_CLASS(CanvasAnimatedControlTests)
 
         f.Adapter->DoChanged();
         f.Adapter->Tick();
-    }
-
-    TEST_METHOD_EX(CanvasAnimatedControl_FixedStep_WhilePaused_UpdateCountIncrements)
-    {
-        WhilePaused_UpdateCountIncrements(true);
-    }
-
-    TEST_METHOD_EX(CanvasAnimatedControl_VariableStep_WhilePaused_UpdateCountIncrements)
-    {
-        WhilePaused_UpdateCountIncrements(false);
-    }
-
-    void WhilePaused_UpdateCountIncrements(bool isFixedTimeStep)
-    {
-        UpdateRenderFixture f;
-        f.OnCreateResources.SetExpectedCalls(1);
-        f.OnDraw.AllowAnyCall();
-        f.Load();
-
-        ThrowIfFailed(f.Control->put_IsFixedTimeStep(isFixedTimeStep));
-        
-
-        int64_t expectedUpdateCount = 1;
-
-        for (int i = 0; i < 10; ++i)
-        {
-            ThrowIfFailed(f.Control->put_Paused(FALSE));
-            f.OnUpdate.SetExpectedCalls(1,
-                [&] (ICanvasAnimatedControl*, ICanvasAnimatedUpdateEventArgs* args)
-                {
-                    CanvasTimingInformation timingInformation;
-                    Assert::AreEqual(S_OK, args->get_Timing(&timingInformation));
-                    Assert::AreEqual(expectedUpdateCount, timingInformation.UpdateCount);
-                    ThrowIfFailed(f.Control->put_Paused(TRUE));
-                    return S_OK;
-                });
-            f.Adapter->DoChanged();
-            f.Adapter->Tick();
-            ++expectedUpdateCount;
-        }        
     }
 
     class TimingFixture : public CanvasAnimatedControlFixture
@@ -1586,13 +1565,6 @@ TEST_CLASS(CanvasAnimatedControlTests)
         f.GetIntoSteadyState();
         ThrowIfFailed(f.Control->put_Paused(FALSE));
 
-        // Do one changed/tick so that there are no more updates pending
-        f.OnUpdate.SetExpectedCalls(1);
-        f.OnDraw.SetExpectedCalls(1);
-
-        f.Adapter->DoChanged();
-        f.Adapter->Tick();
-
         // Now, we don't progress time, so we don't expect any more updates.  We
         // call Invalidate many times, but only get a single Draw as a result.
         f.OnDraw.SetExpectedCalls(1);
@@ -1612,13 +1584,6 @@ TEST_CLASS(CanvasAnimatedControlTests)
         UpdateRenderFixture f;        
         f.GetIntoSteadyState();
         ThrowIfFailed(f.Control->put_Paused(FALSE));
-
-        // Do one changed/tick so that there are no more updates pending
-        f.OnUpdate.SetExpectedCalls(1);
-        f.OnDraw.SetExpectedCalls(1);
-
-        f.Adapter->DoChanged();
-        f.Adapter->Tick();
 
         // When time progresses and we call Invalidate() we still only see a
         // single Draw.

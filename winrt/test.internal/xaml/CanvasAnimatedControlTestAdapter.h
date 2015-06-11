@@ -34,7 +34,7 @@ public:
     ComPtr<StubCanvasDevice> InitialDevice;
 
     CanvasAnimatedControlTestAdapter(StubCanvasDevice* initialDevice = nullptr)
-        : m_performanceCounter(0)
+        : m_performanceCounter(1)
         , SwapChainManager(std::make_shared<CanvasSwapChainManager>())
         , InitialDevice(initialDevice)
         , m_gameThreadDispatcher(Make<StubDispatcher>())
