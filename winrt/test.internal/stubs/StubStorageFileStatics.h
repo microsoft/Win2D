@@ -65,7 +65,7 @@ namespace canvas
         static std::wstring GetFakePath(WinString const& uri)
         {
             std::wstring path(L"pathof(");
-            path += static_cast<std::wstring>(uri);
+            path += static_cast<wchar_t const*>(uri);
             path += L")";
             return path;
         }

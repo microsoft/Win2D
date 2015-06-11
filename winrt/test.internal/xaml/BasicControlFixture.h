@@ -51,7 +51,7 @@ struct BasicControlFixture
 
     void Load()
     {
-        UserControl->Resize(Size{InitialWidth, InitialHeight});
+        UserControl->Resize(Size{static_cast<float>(InitialWidth), static_cast<float>(InitialHeight)});
         ThrowIfFailed(UserControl->LoadedEventSource->InvokeAll(nullptr, nullptr));
     }
 

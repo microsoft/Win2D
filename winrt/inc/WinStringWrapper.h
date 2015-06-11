@@ -122,7 +122,6 @@ public:
         ThrowIfFailed(WindowsDuplicateString(m_value, dest));
     }
 
-
     explicit operator wchar_t const*() const
     {
         return WindowsGetStringRawBuffer(m_value, nullptr);
