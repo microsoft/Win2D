@@ -918,26 +918,37 @@ bool CanvasAnimatedControl::Tick(
     // Copy out the list of async actions, to avoid retaining the lock while
     // they are being fired.
     //
+    // The async actions are only executed after resources have been created.
+    // This means that:
+    //
+    // - the actions can assume that there's a valid device and
+    // - there's no risk of them running concurrently with
+    //   CreateResources.
+    //
     std::vector<ComPtr<AnimatedControlAsyncAction>> pendingActions;
-    std::swap(pendingActions, m_sharedState.PendingAsyncActions);
+    
+    if (areResourcesCreated)
+        std::swap(pendingActions, m_sharedState.PendingAsyncActions);
 
     lock.unlock();
 
     //
     // Run any async actions
     //
-    bool hadPendingActions = !pendingActions.empty();
-    IssueAsyncActions(pendingActions);
-
-    // One of the async actions may have changed the shared state, in which case
-    // we want to respond immediately.
-    if (hadPendingActions && !invalidated)
+    if (!pendingActions.empty())
     {
-        auto lock2 = GetLock();
+        IssueAsyncActions(pendingActions);
 
-        invalidated = m_sharedState.Invalidated;
-        if (areResourcesCreated)
-            m_sharedState.Invalidated = false;
+        // One of the async actions may have changed the shared state, in which case
+        // we want to respond immediately.
+        if (!invalidated)
+        {
+            auto lock2 = GetLock();
+            
+            invalidated = m_sharedState.Invalidated;
+            if (areResourcesCreated)
+                m_sharedState.Invalidated = false;
+        }
     }
 
     //

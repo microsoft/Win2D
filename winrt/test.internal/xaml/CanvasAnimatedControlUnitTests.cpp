@@ -2784,4 +2784,47 @@ TEST_CLASS(CanvasAnimatedControl_AppAccessingWorkerThreadTests)
 
         f.VerifyTickLoopIsStillRunning();
     }
+
+    TEST_METHOD_EX(CanvasAnimatedControl_RunOnGameLoopThreadAsync_ActionIsNotExecutedUntilCreateResourcesHasCompleted)
+    {
+        CanvasAnimatedControlFixture f;
+
+        SimpleDispatchedHandler handler;
+        ComPtr<IAsyncAction> action;
+
+        ThrowIfFailed(f.Control->RunOnGameLoopThreadAsync(handler.Handler.Get(), &action));
+
+        auto onCreateResources = MockEventHandler<Animated_CreateResourcesEventHandler>(L"CreateResources", ExpectedEventParams::Both);
+        f.AddCreateResourcesHandler(onCreateResources.Get());
+
+        ComPtr<MockAsyncAction> asyncCreateResources;
+
+        onCreateResources.SetExpectedCalls(1,
+            [&](ICanvasAnimatedControl*, ICanvasCreateResourcesEventArgs* args)
+            {
+                asyncCreateResources = Make<MockAsyncAction>();
+                return args->TrackAsyncAction(asyncCreateResources.Get());
+            });
+
+        f.Load();
+
+        f.Adapter->DoChanged();
+        f.Adapter->Tick();
+
+        Assert::IsTrue(asyncCreateResources, L"CreateResources started tracking async action");
+
+        for (int i = 0; i < 10; ++i)
+        {
+            f.Adapter->DoChanged();
+            f.Adapter->Tick();
+        }
+
+        // Only after the CreateResources has completed do we expect to see the handler we passed
+        // to RunOnGameLoopThreadAsync get called
+        asyncCreateResources->SetResult(S_OK);
+        handler.CallbackMethod.SetExpectedCalls(1);
+
+        f.Adapter->DoChanged();
+        f.TickUntil([&] { return handler.CallbackMethod.GetCurrentCallCount() == 1; });
+    }
 };
