@@ -24,7 +24,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         ComPtr<IAsyncAction> m_threadAction;
         ComPtr<ICoreDispatcher> m_dispatcher;
 
+        // This is set by StartTickLoop, and is Reset when the tick loop decides
+        // that it has finished running.
         ComPtr<IAsyncAction> m_tickLoopAction;
+
+        // This is set when the tick loop finishes running and is used to query
+        // the status (ie to marshal exceptions from the tick loop to the ui
+        // thread).  It is reset by StartTickLoop.
+        ComPtr<IAsyncInfo> m_completedTickLoopInfo;
         
         ComPtr<IDispatchedHandler> m_tickHandler;
         ComPtr<IAsyncActionCompletedHandler> m_tickCompletedHandler;
@@ -40,12 +47,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             std::function<bool(CanvasAnimatedControl*)> const& tickFn,
             std::function<void(CanvasAnimatedControl*)> const& completedFn);
 
-        void TakeTickLoopState(bool* isRunning, ComPtr<IAsyncInfo>* asyncInfo);
+        void TakeTickLoopState(bool* isRunning, ComPtr<IAsyncInfo>* completedTickLoopState);
 
         bool HasThreadAccess();
 
     private:
         void ScheduleTick(Lock const& lock);
+        void EndTickLoop(Lock const& lock);
     };
 
 } } } } } }

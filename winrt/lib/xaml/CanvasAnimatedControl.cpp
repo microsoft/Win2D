@@ -600,20 +600,28 @@ void CanvasAnimatedControl::ChangedImpl()
     //
     // Get the status of the update/render thread.
     //
-    bool tickLoopIsRunning = false;
-    ComPtr<IAsyncInfo> tickLoopErrorInfo;
+    ComPtr<IAsyncInfo> completedTickLoopInfo;
+    AsyncStatus tickLoopStatus = AsyncStatus::Completed;
 
     if (m_gameLoop)
     {
-        m_gameLoop->TakeTickLoopState(&tickLoopIsRunning, &tickLoopErrorInfo);
+        bool isRunning;
+        m_gameLoop->TakeTickLoopState(&isRunning, &completedTickLoopInfo);
 
-        if (tickLoopIsRunning)
+        if (isRunning)
         {
             // The tick loop is still running, so we don't do anything here.
             // Ultimately, we rely on the tick loop noticing that something
             // needs to change.  When it does, it will stop itself and trigger
             // another Changed().
             return;
+        }
+
+        // The first time we consider starting the tick loop it won't be
+        // running, but we won't have a completedTickLoopInfo either.
+        if (completedTickLoopInfo)
+        {
+            ThrowIfFailed(completedTickLoopInfo->get_Status(&tickLoopStatus));
         }
     }
         
@@ -646,7 +654,7 @@ void CanvasAnimatedControl::ChangedImpl()
     //
     bool ignorePaused = false;
 
-    if (tickLoopErrorInfo)
+    if (tickLoopStatus != AsyncStatus::Completed)
     {
         // If the last render loop ended due to an error (eg lost device)
         // then we want to process the error.  The error is processed below
@@ -691,11 +699,11 @@ void CanvasAnimatedControl::ChangedImpl()
             // do this here, within RunWithRenderTarget, so that it can
             // handle errors (such as lost device).
             //
-            if (tickLoopErrorInfo)
+            if (completedTickLoopInfo)
             {
                 HRESULT hr;
-                ThrowIfFailed(tickLoopErrorInfo->get_ErrorCode(&hr));
-                ThrowHR(hr);
+                ThrowIfFailed(completedTickLoopInfo->get_ErrorCode(&hr));
+                ThrowIfFailed(hr);
             }
 
             if (!areResourcesCreated && !needsDraw)

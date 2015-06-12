@@ -39,6 +39,7 @@ void CanvasGameLoop::StartTickLoop(
     auto lock = Lock(m_mutex);
 
     assert(!m_tickLoopAction);
+    m_completedTickLoopInfo.Reset();
 
     std::weak_ptr<CanvasGameLoop> weakSelf(shared_from_this());
     auto weakControl = AsWeak(control);
@@ -68,8 +69,13 @@ void CanvasGameLoop::StartTickLoop(
     CheckMakeResult(m_tickHandler);
 
     m_tickCompletedHandler = Callback<AddFtmBase<IAsyncActionCompletedHandler>::Type>(
-        [weakSelf, weakControl, completedFn] (IAsyncAction*, AsyncStatus status) mutable
+        [weakSelf, weakControl, completedFn] (IAsyncAction* action, AsyncStatus status) mutable
         {
+#ifdef NDEBUG
+            UNREFERENCED_PARAMETER(action);
+            UNREFERENCED_PARAMETER(status);
+#endif
+
             return ExceptionBoundary(
                 [&] 
                 {
@@ -85,16 +91,15 @@ void CanvasGameLoop::StartTickLoop(
 
                     if (self->m_tickLoopShouldContinue)
                     {
-#ifdef NDEBUG
-                        UNREFERENCED_PARAMETER(status);
-#else
                         assert(status == AsyncStatus::Completed);
-#endif
 
                         self->ScheduleTick(lock);
                     }
                     else
                     {
+                        assert(action == self->m_tickLoopAction.Get());
+                        
+                        self->EndTickLoop(lock);
                         completedFn(control);
                     }
                 });
@@ -113,38 +118,20 @@ void CanvasGameLoop::ScheduleTick(Lock const& lock)
     
 }
 
-void CanvasGameLoop::TakeTickLoopState(bool* isRunning, ComPtr<IAsyncInfo>* errorInfo)
+void CanvasGameLoop::EndTickLoop(Lock const& lock)
 {
-    *isRunning = false;
-    *errorInfo = nullptr;
+    MustOwnLock(lock);
 
+    m_completedTickLoopInfo = As<IAsyncInfo>(m_tickLoopAction);
+    m_tickLoopAction.Reset();
+}
+
+void CanvasGameLoop::TakeTickLoopState(bool* isRunning, ComPtr<IAsyncInfo>* completedTickLoopState)
+{
     auto lock = Lock(m_mutex);
-
-    auto info = MaybeAs<IAsyncInfo>(m_tickLoopAction);
-
-    if (!info)
-    {
-        return;
-    }
-
-    AsyncStatus status;
-    ThrowIfFailed(info->get_Status(&status));
-
-    switch (status)
-    {
-    case AsyncStatus::Started:
-        *isRunning = true;
-        break;
-
-    case AsyncStatus::Completed:
-        m_tickLoopAction.Reset();
-        break;
-
-    default:
-        *errorInfo = info;
-        m_tickLoopAction.Reset();
-        break;
-    }
+    *isRunning = static_cast<bool>(m_tickLoopAction);
+    *completedTickLoopState = m_completedTickLoopInfo;
+    m_completedTickLoopInfo.Reset();
 }
 
 
