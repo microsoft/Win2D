@@ -12,6 +12,7 @@
 
 using ExampleGallery.Effects;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Windows.Foundation.Collections;
 using Windows.Media.Capture;
@@ -30,6 +31,20 @@ namespace ExampleGallery
         private IPropertySet effectConfiguration;
         private MediaCapture mediaCapture;
         private IRandomAccessStream thumbnail;
+        private TaskCompletionSource<object> hasLoaded = new TaskCompletionSource<object>();
+        private Task changeEffectTask = null;
+
+        const string noEffect = "No effect";
+        const string displacementEffect = "Displacement effect";
+        const string rotatingTilesEffect = "Rotating tiles effect";
+
+        public List<string> PossibleEffects
+        {
+            get
+            {
+                return new List<string> { noEffect, displacementEffect, rotatingTilesEffect };
+            }
+        }
 
         public CameraEffectExample()
         {
@@ -48,32 +63,18 @@ namespace ExampleGallery
             }
         }
 
-        private void DisableButtons()
-        {
-            ResetButton.IsEnabled = false;
-            DisplacementButton.IsEnabled = false;
-            TilesButton.IsEnabled = false;
-        }
-
-        private void EnableButtons()
-        {
-            ResetButton.IsEnabled = true;
-            DisplacementButton.IsEnabled = true;
-            TilesButton.IsEnabled = true;
-        }
-
         private async void mediaCapture_Failed(MediaCapture sender, MediaCaptureFailedEventArgs errorEventArgs)
         {
             await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
-                DisableButtons();
+                progressText.Text = "MediaCapture failed: " + errorEventArgs.Message;
+                progressText.Visibility = Visibility.Visible;
             });
         }
 
         private async void OnLoaded(object sender, RoutedEventArgs e)
         {
-            DisableButtons();
-
+            this.effectCombo.SelectedItem = noEffect;
             this.captureElement.Visibility = Visibility.Collapsed;
             this.progressRing.IsActive = true;
 
@@ -104,17 +105,17 @@ namespace ExampleGallery
 
             if (ThumbnailGenerator.IsDrawingThumbnail)
             {
-                await StartTilesEffectAsync();
+                await SetEffectWorker(rotatingTilesEffect);
                 var stream = new InMemoryRandomAccessStream();
                 await mediaCapture.CapturePhotoToStreamAsync(ImageEncodingProperties.CreateJpeg(), stream);
                 thumbnail = stream;
             }
 
-            EnableButtons();
-
             this.captureElement.Visibility = Visibility.Visible;
             this.progressRing.IsActive = false;
             this.progressRing.Visibility = Visibility.Collapsed;
+
+            hasLoaded.SetResult(null);
         }
 
         private async Task ResetEffectsAsync()
@@ -130,51 +131,48 @@ namespace ExampleGallery
             get { return thumbnail; }
         }
 
-        private async void ResetButton_Click(object sender, RoutedEventArgs e)
+        private async void EffectCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            DisableButtons();
+            string effect = noEffect;
 
-            await ResetEffectsAsync();
+            if (e.AddedItems.Count != 0)
+                effect = (string)e.AddedItems[0];
 
-            EnableButtons();
+            await SetEffect(effect);
         }
 
-        private async void DisplacementButton_Click(object sender, RoutedEventArgs e)
+        private async Task SetEffect(string effect)
         {
-            DisableButtons();
+            // wait for OnLoaded to complete
+            await hasLoaded.Task;
 
+            // wait for any previous SetEffect to finish
+            if (changeEffectTask != null)
+            {
+                await changeEffectTask;
+            }
+
+            await (changeEffectTask = SetEffectWorker(effect));
+        }
+
+        private async Task SetEffectWorker(string effect)
+        {
             await ResetEffectsAsync();
+
+            string typeName = null;
+
+            switch (effect)
+            {
+                case displacementEffect: typeName = typeof(DisplacementEffect).FullName; break;
+                case rotatingTilesEffect: typeName = typeof(RotatedTilesEffect).FullName; break;
+            }
+
+            if (typeName == null)
+                return;
 
             await mediaCapture.AddVideoEffectAsync(
-                new VideoEffectDefinition(
-                    typeof(DisplacementEffect).FullName,
-                    effectConfiguration
-                    ),
-                MediaStreamType.VideoPreview
-                );
-
-            EnableButtons();
-        }
-
-        private async void TilesButton_Click(object sender, RoutedEventArgs e)
-        {
-            DisableButtons();
-            await StartTilesEffectAsync();
-            EnableButtons();
-        }
-
-        // This is a separate method to allow it to be called by the thumbnail generator.
-        private async Task StartTilesEffectAsync()
-        {
-            await ResetEffectsAsync();
-
-            await mediaCapture.AddVideoEffectAsync(
-                new VideoEffectDefinition(
-                    typeof(RotatedTilesEffect).FullName,
-                    effectConfiguration
-                    ),
-                MediaStreamType.VideoPreview
-                );
+                new VideoEffectDefinition(typeName, effectConfiguration),
+                MediaStreamType.VideoPreview);
         }
     }
 }
