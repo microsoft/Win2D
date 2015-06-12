@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="Globals">
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
@@ -54,7 +54,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\StoredInPropertyMap.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\TemporaryTransform.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)xaml\AnimatedControlAsyncAction.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)xaml\AnimatedControlInput.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)xaml\BaseControl.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)xaml\BaseControlAdapter.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)xaml\CanvasAnimatedControl.h" />
@@ -144,7 +143,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)brushes\CanvasRadialGradientBrush.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)brushes\CanvasSolidColorBrush.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)brushes\Gradients.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)xaml\AnimatedControlInput.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)xaml\CanvasAnimatedControl.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)xaml\CanvasAnimatedControlAdapter.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)xaml\CanvasControl.cpp" />

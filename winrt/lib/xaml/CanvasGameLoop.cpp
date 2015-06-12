@@ -19,29 +19,10 @@ using namespace ::ABI::Microsoft::Graphics::Canvas::UI;
 using namespace ::ABI::Microsoft::Graphics::Canvas::UI::Xaml;
 using namespace ::Microsoft::WRL::Wrappers;
 
-CanvasGameLoop::CanvasGameLoop(ComPtr<IAsyncAction>&& action, ComPtr<ICoreDispatcher>&& dispatcher, ComPtr<AnimatedControlInput> input)
+CanvasGameLoop::CanvasGameLoop(ComPtr<IAsyncAction>&& action, ComPtr<ICoreDispatcher>&& dispatcher)
     : m_threadAction(std::move(action))
     , m_dispatcher(std::move(dispatcher))
 { 
-    // Set the input by dispatching to the game thread
-    auto handler = Callback<AddFtmBase<IDispatchedHandler>::Type>(
-        [input] ()
-        {
-            return ExceptionBoundary([&] { input->SetSource(); });
-        });
-    CheckMakeResult(handler);
-
-    ComPtr<IAsyncAction> ignoredAction;
-    ThrowIfFailed(m_dispatcher->RunAsync(CoreDispatcherPriority_Normal, handler.Get(), &ignoredAction));
-
-    // When the game thread exits we need to unset the input
-    auto onThreadExit = Callback<AddFtmBase<IAsyncActionCompletedHandler>::Type>(
-        [input] (IAsyncAction*, AsyncStatus)
-        {
-            return ExceptionBoundary([&] { input->RemoveSource(); });
-        });
-    CheckMakeResult(onThreadExit);
-    ThrowIfFailed(m_threadAction->put_Completed(onThreadExit.Get()));
 }
 
 CanvasGameLoop::~CanvasGameLoop()
@@ -164,4 +145,12 @@ void CanvasGameLoop::TakeTickLoopState(bool* isRunning, ComPtr<IAsyncInfo>* erro
         m_tickLoopAction.Reset();
         break;
     }
+}
+
+
+bool CanvasGameLoop::HasThreadAccess()
+{
+    boolean hasThreadAccess;
+    ThrowIfFailed(m_dispatcher->get_HasThreadAccess(&hasThreadAccess));
+    return !!hasThreadAccess;
 }

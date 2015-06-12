@@ -14,6 +14,8 @@
 
 using namespace ABI::Windows::UI::Core;
 
+typedef ITypedEventHandler<IInspectable*, PointerEventArgs*> EventHandlerWithPointerArgs;
+
 class MockCoreIndependentInputSource : public RuntimeClass<ICorePointerInputSource, ICoreInputSourceBase>
 {
 public:

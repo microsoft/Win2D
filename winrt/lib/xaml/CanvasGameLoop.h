@@ -31,7 +31,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         bool m_tickLoopShouldContinue;
 
     public:
-        CanvasGameLoop(ComPtr<IAsyncAction>&& action, ComPtr<ICoreDispatcher>&& dispatcher, ComPtr<AnimatedControlInput> input);
+        CanvasGameLoop(ComPtr<IAsyncAction>&& action, ComPtr<ICoreDispatcher>&& dispatcher);
 
         ~CanvasGameLoop();
 
@@ -41,6 +41,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             std::function<void(CanvasAnimatedControl*)> const& completedFn);
 
         void TakeTickLoopState(bool* isRunning, ComPtr<IAsyncInfo>* asyncInfo);
+
+        bool HasThreadAccess();
 
     private:
         void ScheduleTick(Lock const& lock);

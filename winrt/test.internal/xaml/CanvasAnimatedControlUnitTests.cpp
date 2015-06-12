@@ -1724,6 +1724,29 @@ TEST_CLASS(CanvasAnimatedControlTests)
         f.Adapter->DoChanged();
         f.Adapter->Tick();        
     }
+
+    TEST_METHOD_EX(CanvasAnimatedControl_CreateCoreIndependentInputSource_CallsThroughToSwapChainPanel)
+    {
+        CanvasAnimatedControlFixture f;
+
+        auto anyDeviceTypes = static_cast<CoreInputDeviceTypes>(123);
+        auto anyReturnValue = reinterpret_cast<ICoreInputSourceBase**>(456);
+        HRESULT anyResultCode = -789;
+
+        f.Adapter->GetSwapChainPanel()->CreateCoreIndependentInputSourceMethod.SetExpectedCalls(1,
+            [=] (CoreInputDeviceTypes actualDeviceTypes, ICoreInputSourceBase** actualReturnValue)
+            {
+                Assert::IsTrue(anyDeviceTypes == actualDeviceTypes, L"deviceTypes parameter is passed through");
+                Assert::IsTrue(anyReturnValue == actualReturnValue, L"returnValue paremeter is passed through");
+                return anyResultCode;
+            });
+        
+        auto actualResultCode = f.Control->CreateCoreIndependentInputSource(
+            anyDeviceTypes,
+            anyReturnValue);
+
+        Assert::AreEqual(anyResultCode, actualResultCode, L"result code is passed back");
+    }
 };
 
 TEST_CLASS(CanvasAnimatedControlChangedAction)
@@ -2077,257 +2100,6 @@ TEST_CLASS(CanvasAnimatedControlRenderLoop)
     }
 };
 
-
-TEST_CLASS(CanvasAnimatedControl_Input)
-{
-    struct InputFixture : public CanvasAnimatedControlFixture
-    {
-        InputFixture()
-        {
-        }
-
-        ComPtr<ICorePointerInputSource> GetInputSource()
-        {
-            ComPtr<ICorePointerInputSource> inputSource;
-
-            ThrowIfFailed(Control->get_Input(&inputSource));
-
-            return inputSource;
-        }
-
-        void AllowWorkerThreadToStart()
-        {
-            Adapter->DoChanged();
-            Adapter->Tick();
-        }
-
-        void VerifyPropertiesAreInaccessibleToThisThread()
-        {
-            auto inputSource = GetInputSource();
-
-            Point p;
-            ComPtr<ICoreCursor> cursor;
-
-            Assert::AreEqual(RPC_E_WRONG_THREAD, inputSource->get_PointerPosition(&p));
-            Assert::AreEqual(RPC_E_WRONG_THREAD, inputSource->get_PointerCursor(&cursor));
-            Assert::AreEqual(RPC_E_WRONG_THREAD, inputSource->put_PointerCursor(nullptr));
-        }
-
-        bool IsRenderActionRunning()
-        {
-            return Adapter->GameThreadHasPendingWork();
-        }
-    };
-
-    TEST_METHOD_EX(CanvasAnimatedControl_get_Input_NullArg)
-    {
-        CanvasAnimatedControlFixture f;
-
-        Assert::AreEqual(E_INVALIDARG, f.Control->get_Input(nullptr));
-    }
-
-    TEST_METHOD_EX(CanvasAnimatedControl_Input_NoAccessToPropertiesBeforeRenderThreadIsStarted)
-    {
-        InputFixture f;
-        f.Adapter->DoChanged();
-        f.Adapter->Tick();
-        Assert::IsFalse(f.IsRenderActionRunning());
-
-        f.VerifyPropertiesAreInaccessibleToThisThread();
-    }
-
-    TEST_METHOD_EX(CanvasAnimatedControl_Input_IfRenderThreadStops_PropertiesInaccessible)
-    {
-        InputFixture f;
-        f.Load();
-        f.AllowWorkerThreadToStart();
-        f.RaiseUnloadedEvent();
-
-        Assert::IsFalse(f.IsRenderActionRunning());
-
-        f.VerifyPropertiesAreInaccessibleToThisThread();
-    }
-
-    TEST_METHOD_EX(CanvasAnimatedControl_Input_WhenRenderThreadStops_CoreIndependentInputSourceIsRemoved)
-    {
-        InputFixture f;
-        f.Load();
-        f.AllowWorkerThreadToStart();
-
-        f.Adapter->GetSwapChainPanel()->CreateCoreIndependentInputSourceMethod.SetExpectedCalls(1,
-            [=](CoreInputDeviceTypes type, ICoreInputSourceBase** out)
-            {
-                Assert::IsTrue(CoreInputDeviceTypes_None == type);
-                *out = nullptr;
-                return S_OK;
-            });
-
-        f.RaiseUnloadedEvent();
-
-        Assert::IsFalse(f.IsRenderActionRunning());
-    }
-
-    TEST_METHOD_EX(CanvasAnimatedControl_Input_PropertiesPassThruAfterRenderThreadIsStarted)
-    {
-        InputFixture f;
-        f.Load();
-        f.AllowWorkerThreadToStart();
-
-        auto coreIndependentInputSource = f.Adapter->GetCoreIndependentInputSource();
-
-        ComPtr<ICorePointerInputSource> inputSource;
-        ThrowIfFailed(f.Control->get_Input(&inputSource));
-
-        Point testPoint = { 11, 22 };
-        Point retrievedPoint;
-        coreIndependentInputSource->get_PointerPositionMethod.SetExpectedCalls(1,
-            [=](Point* pt)
-            {
-                *pt = testPoint;
-                return S_OK;
-            });
-        ThrowIfFailed(inputSource->get_PointerPosition(&retrievedPoint));
-        Assert::AreEqual(testPoint, retrievedPoint);
-
-        // Tests with some non-null cursor, not worth mocking up
-        ICoreCursor* fakeCursor = reinterpret_cast<ICoreCursor*>(0x1234567);
-
-        coreIndependentInputSource->get_PointerCursorMethod.SetExpectedCalls(1,
-            [=](ICoreCursor** cursor)
-            {
-                *cursor = fakeCursor;
-                return S_OK;
-            });
-        ICoreCursor* retrievedCursor;
-        ThrowIfFailed(inputSource->get_PointerCursor(&retrievedCursor));
-        Assert::AreEqual(fakeCursor, retrievedCursor);
-
-        coreIndependentInputSource->put_PointerCursorMethod.SetExpectedCalls(1,
-            [=](ICoreCursor* cursor)
-            {
-                Assert::AreEqual(fakeCursor, cursor);
-                return S_OK;
-            });
-        ThrowIfFailed(inputSource->put_PointerCursor(fakeCursor));
-    }
-
-    TEST_METHOD_EX(CanvasAnimatedControl_Input_put_PointerCursor_NullOk)
-    {
-        //
-        // Verifies we don't accidentally sanitize or validate null values
-        //
-        InputFixture f;
-        f.Load();
-        f.AllowWorkerThreadToStart();
-
-        auto inputSource = f.GetInputSource();
-
-        auto coreIndependentInputSource = f.Adapter->GetCoreIndependentInputSource();
-        coreIndependentInputSource->put_PointerCursorMethod.SetExpectedCalls(1,
-            [=](ICoreCursor* cursor)
-            {
-                Assert::IsNull(cursor);
-                return S_OK;
-            });
-        ThrowIfFailed(inputSource->put_PointerCursor(nullptr));
-    }
-
-    TEST_METHOD_EX(CanvasAnimatedControl_Input_AddEventDelegateNullArgs)
-    {
-        InputFixture f;
-        f.Load();
-        auto inputSource = f.GetInputSource();
-
-        EventRegistrationToken token;
-
-        Assert::AreEqual(E_INVALIDARG, inputSource->add_PointerEntered(nullptr, &token));
-        Assert::AreEqual(E_INVALIDARG, inputSource->add_PointerExited(nullptr, &token));
-        Assert::AreEqual(E_INVALIDARG, inputSource->add_PointerMoved(nullptr, &token));
-        Assert::AreEqual(E_INVALIDARG, inputSource->add_PointerPressed(nullptr, &token));
-        Assert::AreEqual(E_INVALIDARG, inputSource->add_PointerReleased(nullptr, &token));
-        Assert::AreEqual(E_INVALIDARG, inputSource->add_PointerWheelChanged(nullptr, &token));
-    }
-
-    TEST_METHOD_EX(CanvasAnimatedControl_Input_CaptureMethodsAreNotAvailable)
-    {
-        InputFixture f;
-        auto inputSource = f.GetInputSource();
-        boolean b;
-
-        Assert::AreEqual(E_NOTIMPL, inputSource->ReleasePointerCapture());
-        Assert::AreEqual(E_NOTIMPL, inputSource->SetPointerCapture());
-        Assert::AreEqual(E_NOTIMPL, inputSource->get_HasCapture(&b));
-
-        auto eventHandler = MockEventHandler<EventHandlerWithPointerArgs>(L"PointerCapture");
-        EventRegistrationToken token;
-        Assert::AreEqual(E_NOTIMPL, inputSource->add_PointerCaptureLost(eventHandler.Get(), &token));
-        Assert::AreEqual(E_NOTIMPL, inputSource->remove_PointerCaptureLost(token));        
-    }
-
-    class InputFixture_EventTest
-    {
-    public:
-        template<typename MOCK_EVENT_SOURCE, typename INPUT_SOURCE_FN>
-        void TestEvent(
-            wchar_t const* name,
-            MOCK_EVENT_SOURCE pointerToMockEventSource,
-            INPUT_SOURCE_FN inputSourceMethod)
-        {
-            InputFixture f;
-
-            auto inputSource = f.GetInputSource();
-
-            //
-            // Register an event handler before the control has loaded.
-            //
-            auto appEventHandler = MockEventHandler<EventHandlerWithPointerArgs>(name);
-
-            EventRegistrationToken token;
-            ThrowIfFailed((inputSource.Get()->*inputSourceMethod)(appEventHandler.Get(), &token));
-
-            auto coreIndependentInputSource = f.Adapter->GetCoreIndependentInputSource().Get();
-
-            //
-            // Load the control; this'll start the game loop thread.
-            //
-            f.Load();
-            f.AllowWorkerThreadToStart();
-
-            // When an input event happens, expect our event handler to be called.
-            appEventHandler.SetExpectedCalls(1);
-            coreIndependentInputSource->InvokeViaDispatcher(pointerToMockEventSource);
-            f.Adapter->TickAll();
-
-            // ...even when the control is paused...
-            ThrowIfFailed(f.Control->put_Paused(TRUE));
-            appEventHandler.SetExpectedCalls(1);
-            coreIndependentInputSource->InvokeViaDispatcher(pointerToMockEventSource);
-            f.Adapter->TickAll();
-        }
-    };
-
-    TEST_METHOD_EX(CanvasAnimatedControl_Input_EventsAreRaisedAsAppropriate)
-    {
-        //
-        // Implementation detail: The control's input events are tracked using 
-        // EventSource. This test, therefore, will not try to test all the features
-        // of EventSource, but verifes that events are passed through as expected.
-        //
-        InputFixture_EventTest f;
-
-#define TEST_EVENT(EVENT) \
-        f.TestEvent(WIDEN(#EVENT), &StubCoreIndependentInputSource::##EVENT, &ICorePointerInputSource::add_ ## EVENT)
-
-        TEST_EVENT(PointerEntered);
-        TEST_EVENT(PointerExited);
-        TEST_EVENT(PointerMoved);
-        TEST_EVENT(PointerPressed);
-        TEST_EVENT(PointerReleased);
-        TEST_EVENT(PointerWheelChanged);
-
-#undef TEST_EVENT
-    }
-};
 
 TEST_CLASS(CanvasAnimatedControl_SuspendingTests)
 {

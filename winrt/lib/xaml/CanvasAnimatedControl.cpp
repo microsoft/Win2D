@@ -159,8 +159,6 @@ CanvasAnimatedControl::CanvasAnimatedControl(std::shared_ptr<ICanvasAnimatedCont
 
     auto swapChainPanel = As<ISwapChainPanel>(m_canvasSwapChainPanel);
 
-    m_input = Make<AnimatedControlInput>(swapChainPanel);
-
     m_sharedState.IsStepTimerFixedStep = m_stepTimer.IsFixedTimeStep();
     m_sharedState.TargetElapsedTime = m_stepTimer.GetTargetElapsedTicks();
 }
@@ -326,14 +324,15 @@ IFACEMETHODIMP CanvasAnimatedControl::ResetElapsedTime()
         });
 }
 
-IFACEMETHODIMP CanvasAnimatedControl::get_Input(ICorePointerInputSource** value)
+IFACEMETHODIMP CanvasAnimatedControl::CreateCoreIndependentInputSource(
+    CoreInputDeviceTypes deviceTypes,
+    ICoreInputSourceBase** returnValue)
 {
     return ExceptionBoundary(
         [&]
         {
-            CheckAndClearOutPointer(value);
-
-            ThrowIfFailed(m_input.CopyTo(value));
+            auto swapChainPanel = As<ISwapChainPanel>(m_canvasSwapChainPanel);
+            ThrowIfFailed(swapChainPanel->CreateCoreIndependentInputSource(deviceTypes, returnValue));
         });
 }
 
@@ -369,7 +368,10 @@ IFACEMETHODIMP CanvasAnimatedControl::get_HasGameLoopThreadAccess(boolean* value
             // before this method completes.
             //
 
-            *value = m_input->GetHasThreadAccess();
+            if (!m_gameLoop)
+                *value = false;
+            else
+                *value = m_gameLoop->HasThreadAccess();
         });
 }
 
@@ -460,7 +462,7 @@ ComPtr<CanvasAnimatedDrawEventArgs> CanvasAnimatedControl::CreateDrawEventArgs(
 void CanvasAnimatedControl::Loaded()
 {
     assert(!m_gameLoop);
-    m_gameLoop = GetAdapter()->CreateAndStartGameLoop(As<ISwapChainPanel>(m_canvasSwapChainPanel), m_input);
+    m_gameLoop = GetAdapter()->CreateAndStartGameLoop(As<ISwapChainPanel>(m_canvasSwapChainPanel));
 }
 
 void CanvasAnimatedControl::Unloaded()

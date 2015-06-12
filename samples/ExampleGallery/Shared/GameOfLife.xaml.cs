@@ -16,12 +16,11 @@ using Microsoft.Graphics.Canvas.UI;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Numerics;
 using Windows.UI;
-using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Input;
 
 namespace ExampleGallery
 {
@@ -92,13 +91,6 @@ namespace ExampleGallery
         {
             this.InitializeComponent();
             canvas.TargetElapsedTime = normalTargetElapsedTime;
-        }
-
-        void Canvas_Loaded(object sender, RoutedEventArgs e)
-        {
-            canvas.Input.PointerMoved += Canvas_PointerMoved;
-            canvas.Input.PointerReleased += Canvas_PointerReleased;
-            canvas.Input.PointerPressed += Canvas_PointerPressed;
         }
 
         void Canvas_CreateResources(CanvasAnimatedControl sender, CanvasCreateResourcesEventArgs args)
@@ -275,26 +267,35 @@ namespace ExampleGallery
             });
         }
 
-        void Canvas_PointerPressed(object sender, PointerEventArgs e)
+        void Canvas_PointerPressed(object sender, PointerRoutedEventArgs e)
         {
-            isPointerDown = true;
-            lastPointerX = lastPointerY = int.MaxValue;
+            lock (hitPoints)
+            {
+                isPointerDown = true;
+                lastPointerX = lastPointerY = int.MaxValue;
 
-            ProcessPointerInput(e);
+                ProcessPointerInput(e);
+            }
         }
 
-        void Canvas_PointerReleased(object sender, PointerEventArgs e)
+        void Canvas_PointerReleased(object sender, PointerRoutedEventArgs e)
         {
-            isPointerDown = false;
+            lock (hitPoints)
+            {
+                isPointerDown = false;
+            }
         }
 
-        void Canvas_PointerMoved(object sender, PointerEventArgs e)
+        void Canvas_PointerMoved(object sender, PointerRoutedEventArgs e)
         {
-            ProcessPointerInput(e);
+            lock (hitPoints)
+            {
+                ProcessPointerInput(e);
+            }
         }
 
         // Toggles the color of cells when they are clicked on.
-        private void ProcessPointerInput(PointerEventArgs e)
+        private void ProcessPointerInput(PointerRoutedEventArgs e)
         {
             if (!isPointerDown)
                 return;
@@ -303,7 +304,7 @@ namespace ExampleGallery
             Matrix3x2 transform;
             Matrix3x2.Invert(GetDisplayTransform(canvas), out transform);
 
-            foreach (var point in e.GetIntermediatePoints())
+            foreach (var point in e.GetIntermediatePoints(canvas))
             {
                 if (!point.IsInContact)
                     continue;
@@ -335,22 +336,25 @@ namespace ExampleGallery
 
         void ApplyHitPoints()
         {
-            foreach (var point in hitPoints)
+            lock (hitPoints)
             {
-                var x = point.X;
-                var y = point.Y;
+                foreach (var point in hitPoints)
+                {
+                    var x = point.X;
+                    var y = point.Y;
 
-                // Read the current color.
-                var cellColor = currentSurface.GetPixelColors(x, y, 1, 1);
+                    // Read the current color.
+                    var cellColor = currentSurface.GetPixelColors(x, y, 1, 1);
 
-                // Toggle the value.
-                cellColor[0] = cellColor[0].R > 0 ? Colors.Black : Colors.White;
+                    // Toggle the value.
+                    cellColor[0] = cellColor[0].R > 0 ? Colors.Black : Colors.White;
 
-                // Set the new color.
-                currentSurface.SetPixelColors(cellColor, x, y, 1, 1);
+                    // Set the new color.
+                    currentSurface.SetPixelColors(cellColor, x, y, 1, 1);
+                }
+
+                hitPoints.Clear();
             }
-
-            hitPoints.Clear();
         }
 
         static Matrix3x2 GetDisplayTransform(ICanvasAnimatedControl canvas)

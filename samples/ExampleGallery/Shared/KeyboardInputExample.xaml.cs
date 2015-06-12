@@ -22,6 +22,7 @@ using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Input;
 
 namespace ExampleGallery
 {
@@ -54,27 +55,22 @@ namespace ExampleGallery
                 inputPane.Showing += inputPane_Showing;
                 inputPane.Hiding += inputPane_Hiding;
             }
-            animatedControl.Input.PointerPressed += Input_PointerPressed;
 #endif
         }
 
-#if WINDOWS_PHONE_APP || WINDOWS_UAP
-        private async void Input_PointerPressed(object sender, PointerEventArgs args)
+        private void animatedControl_PointerPressed(object sender, PointerRoutedEventArgs e)
         {
+#if WINDOWS_PHONE_APP || WINDOWS_UAP
             // Bring the on-screen keyboard back up when the user taps on the screen.
-
-            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            var keyboardCaps = new Windows.Devices.Input.KeyboardCapabilities();
+            if (keyboardCaps.KeyboardPresent == 0)
             {
-                var keyboardCaps = new Windows.Devices.Input.KeyboardCapabilities();
-                if (keyboardCaps.KeyboardPresent == 0)
-                {
-                    // There's no keyboard present, so show the input pane
-                    var inputPane = Windows.UI.ViewManagement.InputPane.GetForCurrentView();
-                    inputPane.TryShow();
-                }
-            });
-        }
+                // There's no keyboard present, so show the input pane
+                var inputPane = Windows.UI.ViewManagement.InputPane.GetForCurrentView();
+                inputPane.TryShow();
+            }
 #endif
+        }
 
         private void control_Unloaded(object sender, RoutedEventArgs e)
         {
