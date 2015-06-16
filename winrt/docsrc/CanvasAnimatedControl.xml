@@ -427,15 +427,20 @@ under the License.
     </member>
     
     <member name="P:Microsoft.Graphics.Canvas.UI.Xaml.ICanvasAnimatedControl.Size">
-      <summary>Gets the current size of the control.</summary>
+      <summary>Gets the current size of the control, in device independent pixels (DIPs).</summary>
       <remarks>
-        This property may be accessed from any thread, including the game loop
-        thread.  This means that it can be accessed from an Update or Draw
-        handler.
+        <p>
+          This property may be accessed from any thread, including the game loop
+          thread.  This means that it can be accessed from an Update or Draw
+          handler.
+        </p>
+        <p>
+          For more information, see <a href="DPI.htm">DPI and DIPs</a>.
+        </p>
       </remarks>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl.Size">
-      <summary>Gets the current size of the control.</summary>
+      <summary>Gets the current size of the control, in device independent pixels (DIPs).</summary>
       <inheritdoc/>
     </member>
     
@@ -538,10 +543,12 @@ under the License.
     </member>            
     
     <member name="M:Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl.ConvertPixelsToDips(System.Int32)">
-      <summary>Converts units from physical pixels to device independent pixels (dips) based on the current DPI of this control.</summary>
+      <summary>Converts units from physical pixels to device independent pixels (DIPs) based on the current DPI of this control.</summary>
+      <remarks>For more information, see <a href="DPI.htm">DPI and DIPs</a>.</remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl.ConvertDipsToPixels(System.Single)">
-      <summary>Converts units from device independent pixels (dips) to physical pixels based on the current DPI of this control.</summary>
+      <summary>Converts units from device independent pixels (DIPs) to physical pixels based on the current DPI of this control.</summary>
+      <remarks>For more information, see <a href="DPI.htm">DPI and DIPs</a>.</remarks>
     </member>
     
     
@@ -558,11 +565,14 @@ under the License.
       <summary>Gets the current dots-per-inch (DPI) of this control.</summary>
       <remarks>
         <p>
-          DPI describes the ratio between device independent pixels (dips) and actual physical pixels.
-          The identity DPI value is 96, which means dips and pixels are the same.
+          DPI describes the ratio between device independent pixels (DIPs) and actual physical pixels.
+          The identity DPI value is 96, which means DIPs and pixels are the same.
         </p>
         <p>
           This property may be accessed from any thread.
+        </p>
+        <p>
+          For more information, see <a href="DPI.htm">DPI and DIPs</a>.
         </p>
       </remarks>
     </member>

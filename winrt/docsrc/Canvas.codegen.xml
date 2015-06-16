@@ -197,6 +197,7 @@ under the License.
     <member name="T:Microsoft.Graphics.Canvas.CanvasUnits">
       <summary>Specifies what units coordinates are in. This is important for making sure
                everything stays in the right place when running on high DPI devices.</summary>
+      <remarks>For more information, see <a href="DPI.htm">DPI and DIPs</a>.</remarks>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.CanvasUnits.Dips">
       <summary>Units are interpreted as device-independent pixels. This matches the behavior of the XAML UI framework.</summary>

@@ -59,23 +59,35 @@ under the License.
       <summary>Releases all resources used by the CanvasBitmap.</summary>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.CanvasBitmap.Size">
-      <summary>Gets the size of the bitmap, in device independent pixels (dips).</summary>
+      <summary>Gets the size of the bitmap, in device independent pixels (DIPs).</summary>
+      <remarks>For more information, see <a href="DPI.htm">DPI and DIPs</a>.</remarks>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.CanvasBitmap.SizeInPixels">
       <summary>Gets the size of the bitmap, in pixels.</summary>
+      <remarks>For more information, see <a href="DPI.htm">DPI and DIPs</a>.</remarks>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.CanvasBitmap.Bounds">
-      <summary>Gets the bounds of the bitmap, in device independent pixels (dips).</summary>
+      <summary>Gets the bounds of the bitmap, in device independent pixels (DIPs).</summary>
       <remarks>
-        This property is a convenience shortcut for when you need the bitmap size in Rect format.
-        The value of myBitmap.Bounds is Rect(Point(0, 0), myBitmap.Size).
+        <p>
+          This property is a convenience shortcut for when you need the bitmap size in Rect format.
+          The value of myBitmap.Bounds is Rect(Point(0, 0), myBitmap.Size).
+        </p>
+        <p>
+          For more information, see <a href="DPI.htm">DPI and DIPs</a>.
+        </p>
       </remarks>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.CanvasBitmap.Dpi">
       <summary>Gets the dots-per-inch (DPI) of this bitmap.</summary>
       <remarks>
-        DPI describes the ratio between device independent pixels (dips) and actual physical pixels.
-        The identity DPI value is 96, which means dips and pixels are the same.
+        <p>
+          DPI describes the ratio between device independent pixels (DIPs) and actual physical pixels.
+          The identity DPI value is 96, which means DIPs and pixels are the same.
+        </p>
+        <p>
+          For more information, see <a href="DPI.htm">DPI and DIPs</a>.
+        </p>
       </remarks>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.CanvasBitmap.Device">
@@ -88,10 +100,12 @@ under the License.
       <summary>Gets the pixel format of this bitmap.</summary>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.ConvertPixelsToDips(System.Int32)">
-      <summary>Converts units from physical pixels to device independent pixels (dips) based on the DPI of this bitmap.</summary>
+      <summary>Converts units from physical pixels to device independent pixels (DIPs) based on the DPI of this bitmap.</summary>
+      <remarks>For more information, see <a href="DPI.htm">DPI and DIPs</a>.</remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.ConvertDipsToPixels(System.Single)">
-      <summary>Converts units from device independent pixels (dips) to physical pixels based on the DPI of this bitmap.</summary>
+      <summary>Converts units from device independent pixels (DIPs) to physical pixels based on the DPI of this bitmap.</summary>
+      <remarks>For more information, see <a href="DPI.htm">DPI and DIPs</a>.</remarks>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.CanvasBitmap.Description">
       <summary>The description of this bitmap's underlying surface.</summary>
@@ -212,7 +226,7 @@ under the License.
         The size of the array is (Width of subregion, in pixels) X (Height of subregion, in pixels) X (bytes per pixel).
         The number of bytes per pixel is determined from CanvasBitmap's pixel format.
         For a CanvasBitmap with the default format of DXGI_FORMAT_B8G8R8A8_UNORM, for example, this is 4.
-        The region is specified in pixels (not dips).
+        The region is specified in pixels (not DIPs).
       </remarks>    
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.GetPixelColors">
@@ -227,7 +241,7 @@ under the License.
       <remarks>
         The bitmap's format must be DXGI_FORMAT_B8G8R8A8_UNORM.
         The size of the array is (Width of subregion, in pixels) X (Height of subregion, in pixels).
-        The region is specified in pixels (not dips).
+        The region is specified in pixels (not DIPs).
       </remarks>
     </member>
     
@@ -243,7 +257,7 @@ under the License.
       <remarks>
         Works on bitmaps of any format.
         The size of the array must be exactly (Width of subregion, in pixels) X (Height of subregion, in pixels) X (bytes per pixel).
-        The region is specified in pixels (not dips).
+        The region is specified in pixels (not DIPs).
       </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.SetPixelColors(Windows.UI.Color[])">
@@ -258,7 +272,7 @@ under the License.
       <remarks>
         The bitmap's format must be DXGI_FORMAT_B8G8R8A8_UNORM.
         The size of the array must be exactly (Width of subregion, in pixels) X (Height of subregion, in pixels).
-        The region is specified in pixels (not dips).
+        The region is specified in pixels (not DIPs).
       </remarks>
     </member>
 
@@ -300,12 +314,12 @@ under the License.
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.CopyPixelsFromBitmap(Microsoft.Graphics.Canvas.CanvasBitmap,System.Int32,System.Int32)">
       <summary>Copies the entire bitmap specified into this bitmap at the point specified.</summary>
       <remarks>The bitmap specified must be able to fit, and the pixel formats must match.
-               The destination point is specified in pixels (not dips).</remarks>
+               The destination point is specified in pixels (not DIPs).</remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.CopyPixelsFromBitmap(Microsoft.Graphics.Canvas.CanvasBitmap,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32)">
       <summary>Copies the specified region of a bitmap into this bitmap, at the point specified.</summary>
       <remarks>The region must be able to fit, and the pixel formats of the two bitmaps must match.
-               The destination point and source region are specified in pixels (not dips).</remarks>
+               The destination point and source region are specified in pixels (not DIPs).</remarks>
     </member>
 
   

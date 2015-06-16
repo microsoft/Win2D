@@ -265,7 +265,7 @@ namespace ExampleGallery
         void DemandCreateBloomRenderTarget(ICanvasAnimatedControl sender)
         {
             // Early-out if we already have a rendertarget of the correct size.
-            // Compare sizes as pixels rather than dips to avoid rounding artifacts.
+            // Compare sizes as pixels rather than DIPs to avoid rounding artifacts.
             if (bloomRenderTarget != null &&
                 bloomRenderTarget.SizeInPixels.Width == sender.ConvertDipsToPixels((float)sender.Size.Width) &&
                 bloomRenderTarget.SizeInPixels.Height == sender.ConvertDipsToPixels((float)sender.Size.Height))

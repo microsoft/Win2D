@@ -1,0 +1,298 @@
+<?xml version="1.0"?>
+<!--
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may
+not use these files except in compliance with the License. You may obtain
+a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+License for the specific language governing permissions and limitations
+under the License.
+-->
+
+<topic id="DPI" revisionNumber="1">
+  <developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <introduction>
+      <para>
+        This article explains the difference between physical pixels and device 
+        independent pixels (DIPs), and how DPI (dots per inch) is handled in Win2D.
+      </para>
+      <para>
+        Win2D is designed in such a way that many apps can ignore this distinction, as it 
+        provides sensible default behaviors that will do the right thing when run on both 
+        low and high DPI devices. If your app has more specialized needs, or if you have 
+        a different opinion about what "sensible default" means, read on for the gory 
+        details...
+      </para>
+    </introduction>
+
+    <section>
+      <title>What is DPI?</title>
+      <content>
+        <para>
+          DPI stands for "dots per inch". This is an approximate measure of the pixel 
+          density of an output display such as a computer monitor or phone screen. The 
+          higher the DPI, the more, smaller dots make up the display.
+        </para>
+        <para>
+          DPI is only an approximate measure because not all display hardware can be 
+          relied on to report accurate information. Some computer monitors do not report 
+          DPI to the operating system at all, or the user may have configured their 
+          system to render using a different DPI from the actual hardware (for instance 
+          to change the size of UI text elements). Applications can use DPI to choose how 
+          large things should be drawn, but should not rely on it as an exact physical 
+          measurement of the display size.
+        </para>
+        <para>
+          A DPI value of 96 is considered to be a neutral default.
+        </para>
+      </content>
+    </section>
+
+    <section>
+      <title>What is a pixel?</title>
+      <content>
+        <para>
+          A pixel is a single colored dot. Images in computer graphics are made up of 
+          many pixels arranged in a two dimensional grid. You can think of pixels as the 
+          atoms out of which all images are built.
+        </para>
+        <para>
+          The physical size of a pixel can vary greatly from one display to another. When 
+          a computer is connected to a large but low resolution monitor or external 
+          display, pixels can be quite large, but on a phone with a 1080p display only a 
+          few inches across, pixels are tiny.
+        </para>
+        <para>
+          In Win2D, whenever you see an API that specifies a position or size using 
+          integer data types (or a struct such as BitmapSize that contains integers), 
+          this means the API is operating in pixel units.
+        </para>
+        <para>
+          Most Win2D APIs work with DIPs rather than pixels.
+        </para>
+      </content>
+    </section>
+
+    <section>
+      <title>What is a DIP?</title>
+      <content>
+        <para>
+          DIP stands for "device independent pixel". This is a virtualized unit that may 
+          be the same as, larger, or smaller than a physical pixel.
+        </para>
+        <para>
+          The ratio between pixels and DIPs is determined by DPI:
+        </para>
+        <code>
+          pixels = dips * dpi / 96
+        </code>
+        <para>
+          When DPI is 96, pixels and DIPs are the same. When using higher DPI, a single 
+          DIP may correspond to more than one pixel (or parts of pixels in the common 
+          case where DPI is not an exact multiple of 96).
+        </para>
+        <para>
+          Most Windows Runtime APIs, including Win2D, use DIPs rather than pixels. This 
+          has the advantage of keeping graphics approximately the same physical size no 
+          matter what display an app is run on. For instance if an app specifies that a 
+          button is 100 DIPs wide, when run on a high DPI device such as a phone or 4k 
+          monitor this button will automatically scale to be more than 100 pixels in 
+          width, so it remains a sensible size that is possible for the user to click on. 
+          If the button size was specified in pixels, on the other hand, it would appear 
+          ridiculously small on this kind of high DPI display, so the app would have to 
+          do more work to adjust layouts differently for each kind of screen.
+        </para>
+        <para>
+          In Win2D, whenever you see an API that specifies a position or size using 
+          floating point data types (or structs such as Vector2 or Size that contain 
+          floating point values), this means the API is operating in DIPs.
+        </para>
+        <para>
+          To convert between DIPs and pixels, use the methods
+          <codeEntityReference>M:Microsoft.Graphics.Canvas.ICanvasResourceCreatorWithDpi.ConvertDipsToPixels(System.Single)</codeEntityReference> and
+          <codeEntityReference>M:Microsoft.Graphics.Canvas.ICanvasResourceCreatorWithDpi.ConvertPixelsToDips(System.Int32)</codeEntityReference>.
+        </para>
+      </content>
+    </section>
+
+    <section>
+      <title>Win2D resources that have DPI</title>
+      <content>
+        <para>
+          All Win2D resources that contain a bitmap image also have an associated DPI property:
+        </para>
+        <list class="bullet">
+          <listItem><codeEntityReference>T:Microsoft.Graphics.Canvas.CanvasBitmap</codeEntityReference></listItem>
+          <listItem><codeEntityReference>T:Microsoft.Graphics.Canvas.CanvasRenderTarget</codeEntityReference></listItem>
+          <listItem><codeEntityReference>T:Microsoft.Graphics.Canvas.CanvasSwapChain</codeEntityReference></listItem>
+          <listItem><codeEntityReference>T:Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl</codeEntityReference></listItem>
+          <listItem><codeEntityReference>T:Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl</codeEntityReference></listItem>
+          <listItem><codeEntityReference>T:Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource</codeEntityReference></listItem>
+        </list>
+        <para>
+          All other resource types are independent of DPI. For instance a single 
+          <codeEntityReference>T:Microsoft.Graphics.Canvas.CanvasDevice</codeEntityReference> 
+          instance can be used to draw to controls or rendertargets of many different 
+          DPIs, therefore the device has no DPI of its own.
+        </para>
+        <para>
+          Similarly, <codeEntityReference>T:Microsoft.Graphics.Canvas.CanvasCommandList</codeEntityReference> 
+          does not have a DPI, because it contains vector drawing instructions rather 
+          than a bitmap image. DPI only comes into play during the rasterization process, 
+          when the command list is drawn to a rendertarget or control (which do have DPI).
+        </para>
+      </content>
+    </section>
+
+    <section>
+      <title>Control DPI</title>
+      <content>
+        <para>
+          The Win2D controls (<codeEntityReference>T:Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl</codeEntityReference> 
+          and <codeEntityReference>T:Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl</codeEntityReference>) 
+          automatically use the same DPI as the display the app is running on. This 
+          matches the coordinate system used by XAML, CoreWindow, and other Windows 
+          Runtime APIs.
+        </para>
+        <para>
+          If the DPI changes (for instance if the app is moved to a different display), 
+          the control will raise the CreateResources event and pass a
+          <codeEntityReference>T:Microsoft.Graphics.Canvas.UI.CanvasCreateResourcesReason</codeEntityReference> of
+          <codeEntityReference>F:Microsoft.Graphics.Canvas.UI.CanvasCreateResourcesReason.DpiChanged</codeEntityReference>.
+          Apps should respond to this event by recreating any resources (such as 
+          rendertargets) that depend on the DPI of the control.
+        </para>
+      </content>
+    </section>
+
+    <section>
+      <title>Rendertarget DPI</title>
+      <content>
+        <para>
+          Things that can be drawn onto (which includes not just 
+          <codeEntityReference>T:Microsoft.Graphics.Canvas.CanvasRenderTarget</codeEntityReference> 
+          but also the rendertarget-like types 
+          <codeEntityReference>T:Microsoft.Graphics.Canvas.CanvasSwapChain</codeEntityReference> and
+          <codeEntityReference>T:Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource</codeEntityReference>) 
+          have a DPI of their own, but unlike the controls these types are not directly 
+          connected to a display, so Win2D cannot automatically determine what the DPI 
+          should be. If you are drawing to a rendertarget which will later be copied to 
+          the screen, you probably want that rendertarget to use the same DPI as the 
+          screen, but if you are drawing for some other purpose (eg. generating images 
+          for upload to a website) a default 96 DPI would be more appropriate.
+        </para>
+        <para>
+          To make both these usage patterns easy, Win2D provides two types of constructor 
+          overload:
+        </para>
+        <code>
+          CanvasRenderTarget(ICanvasResourceCreator, width, height, dpi)
+          CanvasRenderTarget(ICanvasResourceCreatorWithDpi, width, height)
+        </code>
+        <para>
+          The <codeEntityReference>T:Microsoft.Graphics.Canvas.ICanvasResourceCreator</codeEntityReference> 
+          interface is implemented by CanvasDevice as well as the Win2D controls. Because 
+          a device does not have any specific DPI of its own, you must explicitly specify 
+          the DPI when creating a rendertarget from one. For instance to create a default 
+          DPI rendertarget where DIPs and pixels will always be the same thing:
+        </para>
+        <code language="cs">
+          const float defaultDpi = 96;
+          var rtWithFixedDpi = new CanvasRenderTarget(canvasDevice, width, height, defaultDpi);
+        </code>
+        <para>
+          <codeEntityReference>T:Microsoft.Graphics.Canvas.ICanvasResourceCreatorWithDpi</codeEntityReference> 
+          extends ICanvasResourceCreator by adding a DPI property. This interface is 
+          implemented by the Win2D controls, and makes it easy to create a rendertarget 
+          which will automatically inherit the same DPI as the control it was created 
+          from:
+        </para>
+        <code language="cs">
+          var rtWithSameDpiAsDisplay = new CanvasRenderTarget(canvasControl, width, height);
+        </code>
+      </content>
+    </section>
+
+    <section>
+      <title>Bitmap DPI</title>
+      <content>
+        <para>
+          <codeEntityReference>T:Microsoft.Graphics.Canvas.CanvasBitmap</codeEntityReference>, 
+          unlike a rendertarget, does not automatically inherit DPI from a control. The 
+          methods for creating and loading bitmaps include overloads to explicitly 
+          specify DPI, but if you leave this out, bitmap DPI defaults to 96 regardless of 
+          the current display configuration.
+        </para>
+        <para>
+          The reason bitmaps are different to other types is that they are a source of 
+          input data, rather than an output which will be drawn onto. So the important 
+          thing for bitmaps is not the DPI of where that output will end up, but the DPI 
+          of the source image, which is entirely unrelated to the current display 
+          settings.
+        </para>
+        <para>
+          If you load say a 100x100 default DPI bitmap and then draw it onto a 
+          rendertarget, the bitmap will be scaled from 100 DIPs at 96 DPI (which is 100 
+          pixels) to 100 DIPs at the DPI of the destination rendertarget (which could be 
+          a larger number of pixels if it is a high DPI rendertarget). The resulting 
+          image will always be 100 DIPs in size (so there will be no unpleasant layout 
+          surprises), but it may suffer some blurring if a low DPI source bitmap was 
+          scaled up to a higher DPI destination.
+        </para>
+        <para>
+          For maximum clarity at high DPI, some applications may wish to provide multiple 
+          sets of bitmap images at different resolutions, and at load time select 
+          whichever version most closely matches the DPI of the destination control. 
+          Other apps may prefer to ship only high DPI bitmaps, and let Win2D scale these 
+          down when running on lower DPI displays (scaling down can often look better 
+          than scaling up). In either case, the bitmap DPI can be specified as a 
+          parameter to <codeEntityReference>M:Microsoft.Graphics.Canvas.CanvasBitmap.LoadAsync(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.String,System.Single)</codeEntityReference>.
+        </para>
+        <para>
+          Note that some bitmap file formats contain DPI metadata of their own, but Win2D 
+          ignores this since it is often set incorrectly. Instead, DPI must be explicitly 
+          specified when loading the bitmap.
+        </para>
+      </content>
+    </section>
+
+    <section>
+      <title>CanvasDrawingSession DPI</title>
+      <content>
+        <para>
+          <codeEntityReference>T:Microsoft.Graphics.Canvas.CanvasDrawingSession</codeEntityReference> 
+          inherits its DPI from whatever control, rendertarget, swapchain, etc, it is 
+          drawing onto.
+        </para>
+        <para>
+          By default, all drawing operations operate in DIPs. If you prefer to work in 
+          pixels, this can be changed via the 
+          <codeEntityReference>P:Microsoft.Graphics.Canvas.CanvasDrawingSession.Units</codeEntityReference> 
+          property.
+        </para>
+      </content>
+    </section>
+
+    <section>
+      <title>How to test DPI handling</title>
+      <content>
+        <para>
+          The easiest way to test that your app will do the right thing when run on 
+          devices with different display DPI is to run it in the Windows Simulator. In 
+          the Visual Studio toolbar, change the "Local Machine" setting to "Simulator", 
+          then use the Change Resolution icon to switch the simulated display between:
+        </para>
+        <list class="bullet">
+          <listItem>100% (DPI=96)</listItem>
+          <listItem>140% (DPI=134.4)</listItem>
+          <listItem>180% (DPI=172.8)</listItem>
+        </list>
+      </content>
+    </section>
+
+  </developerConceptualDocument>
+</topic>

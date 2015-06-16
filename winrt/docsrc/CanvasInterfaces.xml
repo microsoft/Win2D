@@ -84,26 +84,38 @@ under the License.
       </summary>
 
       <remarks>
-        Some objects (eg. <see cref="T:Microsoft.Graphics.Canvas.CanvasDevice"/>) can be used simultaneously to draw
-        at many different DPI (dots-per-inch) settings, but others (eg. <see cref="T:Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl"/>)
-        are fixed to a specific DPI. This interface represents things that have a specific DPI. When other resources
-        are created from it they can automatically inherit this DPI, whereas when a resource that cares about DPI is
-        created directly from a device, the DPI must be explicitly specified.
+        <p>
+          Some objects (eg. <see cref="T:Microsoft.Graphics.Canvas.CanvasDevice"/>) can be used simultaneously to draw
+          at many different DPI (dots-per-inch) settings, but others (eg. <see cref="T:Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl"/>)
+          are fixed to a specific DPI. This interface represents things that have a specific DPI. When other resources
+          are created from it they can automatically inherit this DPI, whereas when a resource that cares about DPI is
+          created directly from a device, the DPI must be explicitly specified.
+        </p>
+        <p>
+          For more information, see <a href="DPI.htm">DPI and DIPs</a>.
+        </p>
       </remarks>
     </member>
     
     <member name="P:Microsoft.Graphics.Canvas.ICanvasResourceCreatorWithDpi.Dpi">
       <summary>Gets the dots-per-inch (DPI) of this object.</summary>
       <remarks>
-        DPI describes the ratio between device independent pixels (dips) and actual physical pixels.
-        The identity DPI value is 96, which means dips and pixels are the same.
+        <p>
+          DPI describes the ratio between device independent pixels (DIPs) and actual physical pixels.
+          The identity DPI value is 96, which means DIPs and pixels are the same.
+        </p>
+        <p>
+          For more information, see <a href="DPI.htm">DPI and DIPs</a>.
+        </p>
       </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.ICanvasResourceCreatorWithDpi.ConvertPixelsToDips(System.Int32)">
-      <summary>Converts units from physical pixels to device independent pixels (dips) based on the current DPI of this object.</summary>
+      <summary>Converts units from physical pixels to device independent pixels (DIPs) based on the current DPI of this object.</summary>
+      <remarks>For more information, see <a href="DPI.htm">DPI and DIPs</a>.</remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.ICanvasResourceCreatorWithDpi.ConvertDipsToPixels(System.Single)">
-      <summary>Converts units from device independent pixels (dips) to physical pixels based on the current DPI of this object.</summary>
+      <summary>Converts units from device independent pixels (DIPs) to physical pixels based on the current DPI of this object.</summary>
+      <remarks>For more information, see <a href="DPI.htm">DPI and DIPs</a>.</remarks>
     </member>
     
   </members>
