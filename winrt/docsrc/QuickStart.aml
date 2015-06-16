@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+﻿<?xml version="1.0"?>
 <!--
 Copyright (c) Microsoft Corporation. All rights reserved.
 
@@ -104,7 +104,7 @@ under the License.
             <codeEntityReference>T:Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl</codeEntityReference> to your XAML page.
           </para>
           <para>
-            Before you continue, first ensure that the project’s Architecture option is set to <codeInline>x86</codeInline> or
+            Before you continue, first ensure that the project's Architecture option is set to <codeInline>x86</codeInline> or
             <codeInline>x64</codeInline> and NOT to <codeInline>Any CPU</codeInline>. Win2D is implemented in C++ and therefore projects
             that use Win2D need to be targeted to a specific CPU architecture.
           </para>
@@ -156,10 +156,10 @@ under the License.
             &lt;canvas:CanvasControl Draw="CanvasControl_Draw" /&gt;
           </code>
           <para>
-            Once you have entered in <codeInline>Draw=”</codeInline>, Visual Studio should pop up a box prompting you to let it automatically
-            fill out the right definition for the event handler. Press <legacyBold>TAB</legacyBold> to accept Visual Studio’s default event handler. 
+            Once you have entered in <codeInline>Draw="</codeInline>, Visual Studio should pop up a box prompting you to let it automatically
+            fill out the right definition for the event handler. Press <legacyBold>TAB</legacyBold> to accept Visual Studio's default event handler. 
             This will also automatically add a correctly formatted event handler method in your code behind (<legacyBold>MainPage.xaml.cs</legacyBold>).
-            Don’t worry if you didn’t use AutoComplete; you can manually add the event handler method in the next step.
+            Don't worry if you didn't use AutoComplete; you can manually add the event handler method in the next step.
           </para>
         </content></step>
 
@@ -171,7 +171,7 @@ under the License.
       <steps class="ordered">
 
         <step><content><para>
-          Now, let’s go to the C# code behind. Open <legacyBold>MainPage.xaml.cs</legacyBold> from <legacyBold>Solution Explorer</legacyBold>.
+          Now, let's go to the C# code behind. Open <legacyBold>MainPage.xaml.cs</legacyBold> from <legacyBold>Solution Explorer</legacyBold>.
         </para></content></step>
 
         <step><content>
@@ -197,7 +197,7 @@ under the License.
             {}
           </code>
           <para>
-            (If you didn’t use AutoComplete in the previous step, add this code now.)
+            (If you didn't use AutoComplete in the previous step, add this code now.)
           </para>
         </content></step>
 
@@ -218,9 +218,9 @@ under the License.
               args.DrawingSession.DrawText("Hello, World!", 100, 100, Colors.Black);   
           </code>
           <para>
-            The first argument, “<legacyBold>Hello, World!</legacyBold>”, is the string that you want Win2D to display. The two
-            “<legacyBold>100</legacyBold>”s tell Win2D to offset this text by 100 DIPs (device-independent pixels) to the right and down.
-            Finally, “<legacyBold>Colors.Black</legacyBold>” defines the color of the text.
+            The first argument, "<legacyBold>Hello, World!</legacyBold>", is the string that you want Win2D to display. The two
+            "<legacyBold>100</legacyBold>"s tell Win2D to offset this text by 100 DIPs (device-independent pixels) to the right and down.
+            Finally, "<legacyBold>Colors.Black</legacyBold>" defines the color of the text.
           </para>
         </content></step>
 
@@ -238,7 +238,7 @@ under the License.
 
         <step><content>
           <para>
-            It’s just as easy to add 2D geometry to your app. Add the following code to the end of <codeInline>CanvasControl_Draw</codeInline>:
+            It's just as easy to add 2D geometry to your app. Add the following code to the end of <codeInline>CanvasControl_Draw</codeInline>:
           </para>
           <code language="cs">
             args.DrawingSession.DrawCircle(125, 125, 100, Colors.Green);
@@ -276,7 +276,7 @@ under the License.
 
         <step><content>
           <para>
-            Now, let’s add some variety by drawing a bunch of shapes and text with randomized colors.
+            Now, let's add some variety by drawing a bunch of shapes and text with randomized colors.
           </para>
           <para>
             Add the following code to the top of your <codeInline>MainPage</codeInline> class. This is helper functionality to
@@ -318,7 +318,7 @@ under the License.
             }
           </code>
           <para>
-            Let’s break down how <codeInline>DrawText</codeInline> has changed. “<legacyBold>Hello, World!</legacyBold>” remains the same
+            Let's break down how <codeInline>DrawText</codeInline> has changed. "<legacyBold>Hello, World!</legacyBold>" remains the same
             as before. The x and y offset parameters have been replaced with a single
             <codeEntityReference>T:System.Numerics.Vector2</codeEntityReference> which is generated
             by <codeInline>RndPosition</codeInline>. Finally, instead of using a predefined color, <codeInline>Color.FromArgb</codeInline>
@@ -362,10 +362,10 @@ under the License.
             Image effects can be chained together, producing sophisticated visual appearance for minimal effort.
           </para>
           <para>
-            You use image effects by providing a source image (the content you’re starting with), creating an effect such as
+            You use image effects by providing a source image (the content you're starting with), creating an effect such as
             <codeEntityReference>T:Microsoft.Graphics.Canvas.Effects.GaussianBlurEffect</codeEntityReference>, setting properties such
             as <codeEntityReference>P:Microsoft.Graphics.Canvas.Effects.GaussianBlurEffect.BlurAmount</codeEntityReference>,
-            and then drawing the effect’s output with <codeInline>DrawImage</codeInline>.
+            and then drawing the effect's output with <codeInline>DrawImage</codeInline>.
           </para>
           <para>
             To apply an image effect to your text and shapes, you need to first render that content into a
@@ -393,12 +393,12 @@ under the License.
           <para>
             Just like how you obtain a <codeInline>CanvasDrawingSession</codeInline> from <codeInline>CanvasDrawEventArgs</codeInline>
             which you can draw with, you can create a <codeInline>CanvasDrawingSession</codeInline> from a <codeInline>CanvasCommandList</codeInline>.
-            The only difference is that when you draw to the command list’s drawing session (<codeInline>clds</codeInline>), you are not directly
+            The only difference is that when you draw to the command list's drawing session (<codeInline>clds</codeInline>), you are not directly
             rendering to the <codeInline>CanvasControl</codeInline>. Instead, the command list is an intermediate object that stores the results of
             rendering for later use.
           </para>
           <para>
-            You may have noticed the <codeInline>using</codeInline> block that wraps the command list’s drawing session. Drawing sessions implement
+            You may have noticed the <codeInline>using</codeInline> block that wraps the command list's drawing session. Drawing sessions implement
             <externalLink><linkText>IDisposable</linkText><linkUri>http://msdn.microsoft.com/library/system.idisposable</linkUri></externalLink>
             and must be disposed when you are done rendering (the <codeInline>using</codeInline> block does this).
             The <codeInline>CanvasDrawingSession</codeInline> that you obtain from <codeInline>CanvasDrawEventArgs</codeInline> automatically is
@@ -442,7 +442,7 @@ under the License.
             <codeEntityReference>T:Microosft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl</codeEntityReference>.
           </para>
           <para>
-            <codeInline>CanvasControl</codeInline> is best suited for mostly static graphics content – it only raises the
+            <codeInline>CanvasControl</codeInline> is best suited for mostly static graphics content - it only raises the
             <codeInline>Draw</codeInline> event when your content needs to be updated or redrawn. If you have continually changing
             content then you should consider using <codeInline>CanvasAnimatedControl</codeInline> instead.
             The two controls operate very similarly, except <codeInline>CanvasAnimatedControl</codeInline> raises the
