@@ -94,7 +94,7 @@
       <Project>{2b157b97-cbf7-4014-8655-1456f2807f43}</Project>
       <Name>ExampleGallery.Effects</Name>
     </ProjectReference>
-    <SDKReference Include="WindowsMobile, Version=10.0.10121.0">
+    <SDKReference Include="WindowsMobile, Version=10.0.10147.0">
       <Name>Windows Mobile Extensions for the Universal App Platform</Name>
     </SDKReference>
   </ItemGroup>
