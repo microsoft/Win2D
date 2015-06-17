@@ -7,7 +7,7 @@
     <win2d-DeviceType Condition="'$(TargetPlatformIdentifier)' == 'UAP'">UAP</win2d-DeviceType>
 
     <win2d-vclibs>Microsoft.VCLibs, Version=12.0</win2d-vclibs>
-    <win2d-vclibs Condition="'$(TargetPlatformIdentifier)' == 'UAP'">Microsoft.VCLibs.AppLocal, Version=14.0</win2d-vclibs>
+    <win2d-vclibs Condition="'$(TargetPlatformIdentifier)' == 'UAP'">Microsoft.VCLibs, Version=14.0</win2d-vclibs>
   </PropertyGroup>
 
   <Target Name="win2d-DeviceType-Check" BeforeTargets="InjectReference">
