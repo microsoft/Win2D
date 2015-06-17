@@ -24,10 +24,11 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.UI;
-using Windows.UI.Core;
+using Windows.UI.Input;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI.Xaml.Input;
 
 namespace ExampleGallery
 {
@@ -98,7 +99,7 @@ namespace ExampleGallery
         {
             sweepRenderer = await SweepRenderer.Create(sender);
             updatesPerDrawRenderer = new UpdatesPerDrawRenderer();
-            touchPointsRenderer = new TouchPointsRenderer(sender);
+            touchPointsRenderer = new TouchPointsRenderer();
         }
 
         private const float width = 1000;
@@ -131,7 +132,10 @@ namespace ExampleGallery
                 updatesPerDrawRenderer.Draw(args, ds, width * graphTransform.M11, height * graphTransform.M22);
 
                 ds.Transform = Matrix3x2.Identity;
-                touchPointsRenderer.Draw(ds);
+                lock (touchPointsRenderer)
+                {
+                    touchPointsRenderer.Draw(ds);
+                }
             }
         }
 
@@ -184,6 +188,24 @@ namespace ExampleGallery
                 sender.Paused = true;
                 step = false;
             }
+        }
+
+        private void OnPointerPressed(object sender, PointerRoutedEventArgs e)
+        {
+            lock (touchPointsRenderer)
+            {
+                touchPointsRenderer.OnPointerPressed();
+            }
+            animatedControl.Invalidate();
+        }
+
+        private void OnPointerMoved(object sender, PointerRoutedEventArgs e)
+        {
+            lock (touchPointsRenderer)
+            {
+                touchPointsRenderer.OnPointerMoved(e.GetIntermediatePoints(animatedControl));
+            }
+            animatedControl.Invalidate();
         }
 
         private void Pause_Checked(object sender, RoutedEventArgs e)
@@ -512,24 +534,15 @@ namespace ExampleGallery
     {
         Queue<Vector2> points = new Queue<Vector2>();
         const int maxPoints = 100;
-        CanvasAnimatedControl animatedControl;
 
-        public TouchPointsRenderer(CanvasAnimatedControl animatedControl)
-        {
-            this.animatedControl = animatedControl;
-            animatedControl.Input.PointerPressed += OnPointerPressed;
-            animatedControl.Input.PointerMoved += OnPointerMoved;
-        }
-
-        private void OnPointerPressed(object sender, PointerEventArgs args)
+        public void OnPointerPressed()
         {
             points.Clear();
-            animatedControl.Invalidate();
         }
 
-        private void OnPointerMoved(object sender, PointerEventArgs args)
-        {            
-            foreach (var point in args.GetIntermediatePoints())
+        public void OnPointerMoved(IList<PointerPoint> intermediatePoints)
+        {
+            foreach (var point in intermediatePoints)
             {
                 if (point.IsInContact)
                 {
@@ -541,7 +554,6 @@ namespace ExampleGallery
                     points.Enqueue(new Vector2((float)point.Position.X, (float)point.Position.Y));
                 }
             }
-            animatedControl.Invalidate();
         }
 
         public void Draw(CanvasDrawingSession ds)

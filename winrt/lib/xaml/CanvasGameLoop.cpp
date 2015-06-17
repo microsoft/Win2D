@@ -19,29 +19,10 @@ using namespace ::ABI::Microsoft::Graphics::Canvas::UI;
 using namespace ::ABI::Microsoft::Graphics::Canvas::UI::Xaml;
 using namespace ::Microsoft::WRL::Wrappers;
 
-CanvasGameLoop::CanvasGameLoop(ComPtr<IAsyncAction>&& action, ComPtr<ICoreDispatcher>&& dispatcher, ComPtr<AnimatedControlInput> input)
+CanvasGameLoop::CanvasGameLoop(ComPtr<IAsyncAction>&& action, ComPtr<ICoreDispatcher>&& dispatcher)
     : m_threadAction(std::move(action))
     , m_dispatcher(std::move(dispatcher))
 { 
-    // Set the input by dispatching to the game thread
-    auto handler = Callback<AddFtmBase<IDispatchedHandler>::Type>(
-        [input] ()
-        {
-            return ExceptionBoundary([&] { input->SetSource(); });
-        });
-    CheckMakeResult(handler);
-
-    ComPtr<IAsyncAction> ignoredAction;
-    ThrowIfFailed(m_dispatcher->RunAsync(CoreDispatcherPriority_Normal, handler.Get(), &ignoredAction));
-
-    // When the game thread exits we need to unset the input
-    auto onThreadExit = Callback<AddFtmBase<IAsyncActionCompletedHandler>::Type>(
-        [input] (IAsyncAction*, AsyncStatus)
-        {
-            return ExceptionBoundary([&] { input->RemoveSource(); });
-        });
-    CheckMakeResult(onThreadExit);
-    ThrowIfFailed(m_threadAction->put_Completed(onThreadExit.Get()));
 }
 
 CanvasGameLoop::~CanvasGameLoop()
@@ -58,6 +39,7 @@ void CanvasGameLoop::StartTickLoop(
     auto lock = Lock(m_mutex);
 
     assert(!m_tickLoopAction);
+    m_completedTickLoopInfo.Reset();
 
     std::weak_ptr<CanvasGameLoop> weakSelf(shared_from_this());
     auto weakControl = AsWeak(control);
@@ -87,8 +69,13 @@ void CanvasGameLoop::StartTickLoop(
     CheckMakeResult(m_tickHandler);
 
     m_tickCompletedHandler = Callback<AddFtmBase<IAsyncActionCompletedHandler>::Type>(
-        [weakSelf, weakControl, completedFn] (IAsyncAction*, AsyncStatus status) mutable
+        [weakSelf, weakControl, completedFn] (IAsyncAction* action, AsyncStatus status) mutable
         {
+#ifdef NDEBUG
+            UNREFERENCED_PARAMETER(action);
+            UNREFERENCED_PARAMETER(status);
+#endif
+
             return ExceptionBoundary(
                 [&] 
                 {
@@ -104,16 +91,15 @@ void CanvasGameLoop::StartTickLoop(
 
                     if (self->m_tickLoopShouldContinue)
                     {
-#ifdef NDEBUG
-                        UNREFERENCED_PARAMETER(status);
-#else
                         assert(status == AsyncStatus::Completed);
-#endif
 
                         self->ScheduleTick(lock);
                     }
                     else
                     {
+                        assert(action == self->m_tickLoopAction.Get());
+                        
+                        self->EndTickLoop(lock);
                         completedFn(control);
                     }
                 });
@@ -132,36 +118,26 @@ void CanvasGameLoop::ScheduleTick(Lock const& lock)
     
 }
 
-void CanvasGameLoop::TakeTickLoopState(bool* isRunning, ComPtr<IAsyncInfo>* errorInfo)
+void CanvasGameLoop::EndTickLoop(Lock const& lock)
 {
-    *isRunning = false;
-    *errorInfo = nullptr;
+    MustOwnLock(lock);
 
+    m_completedTickLoopInfo = As<IAsyncInfo>(m_tickLoopAction);
+    m_tickLoopAction.Reset();
+}
+
+void CanvasGameLoop::TakeTickLoopState(bool* isRunning, ComPtr<IAsyncInfo>* completedTickLoopState)
+{
     auto lock = Lock(m_mutex);
+    *isRunning = static_cast<bool>(m_tickLoopAction);
+    *completedTickLoopState = m_completedTickLoopInfo;
+    m_completedTickLoopInfo.Reset();
+}
 
-    auto info = MaybeAs<IAsyncInfo>(m_tickLoopAction);
 
-    if (!info)
-    {
-        return;
-    }
-
-    AsyncStatus status;
-    ThrowIfFailed(info->get_Status(&status));
-
-    switch (status)
-    {
-    case AsyncStatus::Started:
-        *isRunning = true;
-        break;
-
-    case AsyncStatus::Completed:
-        m_tickLoopAction.Reset();
-        break;
-
-    default:
-        *errorInfo = info;
-        m_tickLoopAction.Reset();
-        break;
-    }
+bool CanvasGameLoop::HasThreadAccess()
+{
+    boolean hasThreadAccess;
+    ThrowIfFailed(m_dispatcher->get_HasThreadAccess(&hasThreadAccess));
+    return !!hasThreadAccess;
 }

@@ -12,13 +12,13 @@
 
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Brushes;
+using Microsoft.Graphics.Canvas.Geometry;
 using Microsoft.Graphics.Canvas.Text;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using System;
 using System.Collections.Generic;
 using Windows.Foundation;
 using Windows.UI;
-using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -29,9 +29,17 @@ namespace ExampleGallery
         CanvasTextLayout textLayout;
         CanvasLinearGradientBrush textBrush;
         CanvasLinearGradientBrush selectionTextBrush;
+        CanvasStrokeStyle dashedStroke = new CanvasStrokeStyle()
+        {
+            DashStyle = CanvasDashStyle.Dash
+        };
+
         string testString;
-        bool showPerCharacterLayoutBounds;
-        bool showDrawBounds;
+
+        public bool ShowPerCharacterLayoutBounds { get; set; }
+        public bool ShowLayoutBounds { get; set; }
+        public bool ShowDrawBounds { get; set; }
+
         bool needsResourceRecreation;
         Size resourceRealizationSize;
 
@@ -52,12 +60,8 @@ namespace ExampleGallery
         {
             this.InitializeComponent();
 
-            canvas.Input.PointerPressed += OnPointerPressed;
-            canvas.Input.PointerMoved += OnPointerMoved;
-
             CurrentTextSampleOption = TextSampleOption.QuickBrownFox;
-
-            showPerCharacterLayoutBounds = true;
+            ShowPerCharacterLayoutBounds = true;
         }
 
         Rect InflateRect(Rect r)
@@ -69,7 +73,7 @@ namespace ExampleGallery
 
         void EnsureResources(ICanvasResourceCreatorWithDpi resourceCreator, Size targetSize)
         {
-            if (!needsResourceRecreation) 
+            if (resourceRealizationSize != targetSize && !needsResourceRecreation)
                 return;
 
             float canvasWidth = (float)targetSize.Width;
@@ -142,7 +146,7 @@ namespace ExampleGallery
             return new CanvasTextLayout(resourceCreator, testString, textFormat, canvasWidth, canvasHeight);
         }
 
-        private void Canvas_Draw(ICanvasAnimatedControl sender, CanvasAnimatedDrawEventArgs args)
+        private void Canvas_Draw(CanvasControl sender, CanvasDrawEventArgs args)
         {
             EnsureResources(sender, sender.Size);
 
@@ -161,7 +165,7 @@ namespace ExampleGallery
 
             args.DrawingSession.DrawTextLayout(textLayout, 0, 0, textBrush);
 
-            if (showPerCharacterLayoutBounds)
+            if (ShowPerCharacterLayoutBounds)
             {
                 for (int i = 0; i < testString.Length; i++)
                 {
@@ -172,44 +176,21 @@ namespace ExampleGallery
                 }
             }
 
-            if (showDrawBounds)
+            if (ShowDrawBounds)
             {
                 args.DrawingSession.DrawRectangle(textLayout.DrawBounds, Colors.Green, 2);
             }
 
-        }
-
-        private void Canvas_Update(ICanvasAnimatedControl sender, CanvasAnimatedUpdateEventArgs args)
-        {
-            if (resourceRealizationSize != sender.Size)
+            if (ShowLayoutBounds)
             {
-                needsResourceRecreation = true;
+                args.DrawingSession.DrawRectangle(textLayout.LayoutBounds, Colors.Red, 2, dashedStroke);
             }
+
         }
 
-        private void Canvas_CreateResources(CanvasAnimatedControl sender, object args)
+        private void Canvas_CreateResources(CanvasControl sender, object args)
         {
             needsResourceRecreation = true;
-        }
-
-        void ShowPerCharacterLayoutBounds_Checked(object sender, RoutedEventArgs e)
-        {
-            showPerCharacterLayoutBounds = true;
-        }
-
-        void ShowPerCharacterLayoutBounds_Unchecked(object sender, RoutedEventArgs e)
-        {
-            showPerCharacterLayoutBounds = false;
-        }
-
-        void ShowDrawBounds_Checked(object sender, RoutedEventArgs e)
-        {
-            showDrawBounds = true;
-        }
-
-        void ShowDrawBounds_Unchecked(object sender, RoutedEventArgs e)
-        {
-            showDrawBounds = false;
         }
 
         int GetHitIndex(Point mouseOverPt)
@@ -222,21 +203,25 @@ namespace ExampleGallery
             return textLayoutRegion.CharacterIndex;
         }
 
-        private void OnPointerPressed(object sender, PointerEventArgs args)
+        private void Canvas_PointerPressed(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs e)
         {
-            selectionStartIndex = GetHitIndex(args.CurrentPoint.Position);
+            selectionStartIndex = GetHitIndex(e.GetCurrentPoint(canvas).Position);
             selectionEndIndex = selectionStartIndex;
+            canvas.Invalidate();
+            e.Handled = true;
         }
 
-        private void OnPointerMoved(object sender, PointerEventArgs args)
+        private void Canvas_PointerMoved(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs e)
         {
-            foreach (var point in args.GetIntermediatePoints())
+            foreach (var point in e.GetIntermediatePoints(canvas))
             {
                 if (point.IsInContact)
                 {
                     selectionEndIndex = GetHitIndex(point.Position);
                 }
             }
+            canvas.Invalidate();
+            e.Handled = true;
         }
 
         void ClearSelection()
@@ -250,6 +235,12 @@ namespace ExampleGallery
         {
             ClearSelection();
             needsResourceRecreation = true;
+            canvas.Invalidate();
+        }
+
+        private void InvalidateCanvas(object sender, RoutedEventArgs e)
+        {
+            canvas.Invalidate();
         }
 
         private void control_Unloaded(object sender, RoutedEventArgs e)

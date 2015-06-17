@@ -26,7 +26,7 @@ under the License.
     d:DesignHeight="300"
     d:DesignWidth="400"
     Unloaded="control_Unloaded">
-    
+
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
@@ -36,18 +36,20 @@ under the License.
         <ScrollViewer Grid.Column="0" VerticalScrollMode="Auto" HorizontalScrollMode="Disabled" VerticalScrollBarVisibility="Hidden">
             <StackPanel Orientation="Vertical" MinWidth="100" Margin="5">
                 <TextBlock>Text sample:</TextBlock>
-                <ComboBox 
-                      ItemsSource="{Binding ElementName=control, Path=TextSampleOptions}"
-                      SelectedItem="{Binding CurrentTextSampleOption, ElementName=control, Mode=TwoWay}"
-                      SelectionChanged="TextSampleOptions_SelectionChanged"/>
+                <ComboBox ItemsSource="{Binding ElementName=control, Path=TextSampleOptions}"
+                          SelectedItem="{Binding CurrentTextSampleOption, ElementName=control, Mode=TwoWay}"
+                          SelectionChanged="TextSampleOptions_SelectionChanged"
+                          HorizontalAlignment="Stretch"/>
                 <TextBlock><LineBreak/>Show bounding boxes:</TextBlock>
-                <ToggleButton Content="Per-character layout" IsChecked="true" Checked="ShowPerCharacterLayoutBounds_Checked" Unchecked="ShowPerCharacterLayoutBounds_Unchecked"/>
-                <ToggleButton Content="DrawBounds" Checked="ShowDrawBounds_Checked" Unchecked="ShowDrawBounds_Unchecked"/>
+                <ToggleButton Content="Per-character layout" IsChecked="{Binding ElementName=control, Path=ShowPerCharacterLayoutBounds, Mode=TwoWay}" Click="InvalidateCanvas" HorizontalAlignment="Stretch"/>
+                <ToggleButton Content="LayoutBounds" IsChecked="{Binding ElementName=control, Path=ShowLayoutBounds, Mode=TwoWay}" Click="InvalidateCanvas" HorizontalAlignment="Stretch"/>
+                <ToggleButton Content="DrawBounds" IsChecked="{Binding ElementName=control, Path=ShowDrawBounds, Mode=TwoWay}" Click="InvalidateCanvas" HorizontalAlignment="Stretch"/>
             </StackPanel>
         </ScrollViewer>
-        <canvas:CanvasAnimatedControl x:Name="canvas" Grid.Column="1" Margin="5"
+        <canvas:CanvasControl x:Name="canvas" Grid.Column="1" Margin="5"
                               Draw="Canvas_Draw"
                               CreateResources="Canvas_CreateResources"
-                              Update="Canvas_Update"/>
+                              PointerPressed="Canvas_PointerPressed"
+                              PointerMoved="Canvas_PointerMoved"/>
     </Grid>
 </UserControl>

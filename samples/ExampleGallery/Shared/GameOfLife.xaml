@@ -43,7 +43,9 @@ under the License.
 
         <canvas:CanvasAnimatedControl x:Name="canvas"
                                       Grid.Column="1" Margin="5"
-                                      Loaded="Canvas_Loaded"
+                                      PointerPressed="Canvas_PointerPressed"
+                                      PointerMoved="Canvas_PointerMoved"
+                                      PointerReleased="Canvas_PointerReleased"
                                       Update="Canvas_Update"
                                       Draw="Canvas_Draw"
                                       CreateResources="Canvas_CreateResources"/>    

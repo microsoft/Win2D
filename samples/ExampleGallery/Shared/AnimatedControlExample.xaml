@@ -85,8 +85,9 @@ under the License.
                       SelectionChanged="TimestepTypeOptionsCombo_SelectionChanged"/>
         </StackPanel>
 
-        <canvas:CanvasAnimatedControl x:Name="animatedControl" Grid.Row="0" Grid.Column="1"
-            CreateResources="OnCreateResources" Draw="OnDraw" Update="OnUpdate"/>
+        <canvas:CanvasAnimatedControl x:Name="animatedControl" Grid.Row="0" Grid.Column="1"                                      
+                                      CreateResources="OnCreateResources" Draw="OnDraw" Update="OnUpdate"
+                                      PointerPressed="OnPointerPressed" PointerMoved="OnPointerMoved"/>
 
     </Grid>
 </UserControl>

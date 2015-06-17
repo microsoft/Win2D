@@ -13,7 +13,6 @@
 #pragma once
 
 #include "AnimatedControlAsyncAction.h"
-#include "AnimatedControlInput.h"
 #include "BaseControlAdapter.h"
 #include "CanvasSwapChainPanel.h"
 #include "StepTimer.h"
@@ -21,6 +20,7 @@
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace UI { namespace Xaml
 {
     using namespace ABI::Windows::ApplicationModel;
+    using namespace ABI::Windows::UI::Core;
     using namespace ABI::Windows::UI::Xaml::Controls;
     using namespace ABI::Windows::UI::Xaml;
     using namespace ABI::Windows::Foundation;
@@ -113,7 +113,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         virtual ComPtr<CanvasSwapChainPanel> CreateCanvasSwapChainPanel() = 0;
 
-        virtual std::shared_ptr<CanvasGameLoop> CreateAndStartGameLoop(ComPtr<ISwapChainPanel> swapChainPanel, ComPtr<AnimatedControlInput> input) = 0;
+        virtual std::shared_ptr<CanvasGameLoop> CreateAndStartGameLoop(ComPtr<ISwapChainPanel> swapChainPanel) = 0;
 
         virtual void Sleep(DWORD timeInMs) = 0;
     };
@@ -131,8 +131,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         ComPtr<ICanvasSwapChainPanel> m_canvasSwapChainPanel;
 
-        ComPtr<AnimatedControlInput> m_input;
-
         std::shared_ptr<CanvasGameLoop> m_gameLoop;
         ComPtr<IAsyncAction> m_renderLoopAction;
         
@@ -149,7 +147,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         {
             SharedState()
                 : IsPaused(false)
-                , FirstTickAfterWasPaused(true)
+                , TimeWhenPausedWasSet{}
+                , TimeSpentPaused{}
                 , IsStepTimerFixedStep(false)
                 , TargetElapsedTime(0)
                 , ShouldResetElapsedTime(false)
@@ -159,7 +158,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             {}
 
             bool IsPaused;
-            bool FirstTickAfterWasPaused;
+            int64_t TimeWhenPausedWasSet;
+            int64_t TimeSpentPaused;
             bool IsStepTimerFixedStep;
             uint64_t TargetElapsedTime;
             bool ShouldResetElapsedTime;
@@ -204,7 +204,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         
         IFACEMETHODIMP ResetElapsedTime() override;
 
-        IFACEMETHODIMP get_Input(ICorePointerInputSource** value) override;
+        IFACEMETHODIMP CreateCoreIndependentInputSource(
+            CoreInputDeviceTypes deviceType,
+            ICoreInputSourceBase** returnValue) override;
 
         IFACEMETHODIMP RemoveFromVisualTree() override;
 
@@ -249,7 +251,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             bool IsRunningSlowly;
         };
 
-        UpdateResult Update(bool forceUpdate);
+        UpdateResult Update(bool forceUpdate, int64_t timeSpentPaused);
 
         void ChangedImpl();
 

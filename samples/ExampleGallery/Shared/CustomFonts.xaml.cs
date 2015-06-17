@@ -64,6 +64,7 @@ namespace ExampleGallery
         CanvasLinearGradientBrush textOpacityBrush;
         CanvasLinearGradientBrush blurOpacityBrush;
 
+        CoreIndependentInputSource inputSource;
         GestureRecognizer gestureRecognizer;
 
         private async void OnLoaded(object sender, Windows.UI.Xaml.RoutedEventArgs e)
@@ -93,11 +94,14 @@ namespace ExampleGallery
                 //
                 gestureRecognizer.AutoProcessInertia = false;
 
-                animatedControl.Input.PointerPressed += Input_PointerPressed;
-                animatedControl.Input.PointerMoved += Input_PointerMoved;
-                animatedControl.Input.PointerReleased += Input_PointerReleased;
+                inputSource = animatedControl.CreateCoreIndependentInputSource(CoreInputDeviceTypes.Mouse | CoreInputDeviceTypes.Pen | CoreInputDeviceTypes.Touch);
+
+                inputSource.PointerPressed += Input_PointerPressed;
+                inputSource.PointerMoved += Input_PointerMoved;
+                inputSource.PointerReleased += Input_PointerReleased;
             });
         }
+
 
         private void OnCreateResources(CanvasAnimatedControl sender, CanvasCreateResourcesEventArgs args)
         {
@@ -252,8 +256,22 @@ namespace ExampleGallery
             }
         }
 
-        private void UserControl_Unloaded(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private async void UserControl_Unloaded(object sender, Windows.UI.Xaml.RoutedEventArgs e)
         {
+            await animatedControl.RunOnGameLoopThreadAsync(() =>
+            {
+                // Unregister the various input / gesture events.  Since these have strong thread affinity
+                // this needs to be done on the game loop thread.
+
+                inputSource.PointerPressed -= Input_PointerPressed;
+                inputSource.PointerMoved -= Input_PointerMoved;
+                inputSource.PointerReleased -= Input_PointerReleased;
+
+                gestureRecognizer.ManipulationStarted -= gestureRecognizer_ManipulationStarted;
+                gestureRecognizer.ManipulationUpdated -= gestureRecognizer_ManipulationUpdated;
+                gestureRecognizer.ManipulationCompleted -= gestureRecognizer_ManipulationCompleted;
+            });
+
             // Explicitly remove references to allow the Win2D controls to get
             // garbage collected
             animatedControl.RemoveFromVisualTree();

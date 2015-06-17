@@ -186,33 +186,6 @@ TEST_CLASS(CanvasAnimatedControlTests)
         Assert::IsFalse(!!paused);
     }
 
-    TEST_METHOD_EX(CanvasAnimatedControl_RedundantChangedCallsDoNothing)
-    {
-        CanvasAnimatedControlFixture f;
-        f.Load();
-        f.Adapter->DoChanged();
-
-        auto onDraw = MockEventHandler<Animated_DrawEventHandler>(L"Draw", ExpectedEventParams::Both);
-        f.AddDrawHandler(onDraw.Get());
-        onDraw.AllowAnyCall();
-        f.Adapter->Tick(); // Puts adapter in steady state.
-
-        onDraw.SetExpectedCalls(1); // Ensure the draw handler gets called one time, not three.
-
-        for (int i = 0; i < 3; ++i)
-        {
-            ThrowIfFailed(f.Control->put_Paused(true));
-            ThrowIfFailed(f.Control->put_Paused(false)); // Internally calls Changed().
-        }
-
-        //
-        // Verifies that multiple calls to Changed() don't somehow queue anything up, or
-        // corrupt anything, and only one draw handler gets called on Tick.
-        //
-        f.Adapter->DoChanged();
-        f.Adapter->Tick();
-    }
-
     TEST_METHOD_EX(CanvasAnimatedControl_IsFixedTimeStep_DefaultsToTrue)
     {
         CanvasAnimatedControlFixture f;
@@ -790,6 +763,18 @@ TEST_CLASS(CanvasAnimatedControlTests)
             
             Expectations::Instance()->Validate();
         }
+
+        void ExpectUpdateWithElapsedTime(int64_t expected)
+        {
+            OnUpdate.SetExpectedCalls(1,
+                [=] (ICanvasAnimatedControl*, ICanvasAnimatedUpdateEventArgs* args)
+                {
+                    CanvasTimingInformation timingInformation;
+                    ThrowIfFailed(args->get_Timing(&timingInformation));
+                    Assert::AreEqual(expected, timingInformation.ElapsedTime.Duration);
+                    return S_OK;
+                });
+        }
     };
 
     TEST_METHOD_EX(CanvasAnimatedControl_FirstRenderFrameAlwaysIssuesSingleUpdateAndDraw)
@@ -823,6 +808,8 @@ TEST_CLASS(CanvasAnimatedControlTests)
         f.Load();
         f.Adapter->DoChanged();
         f.RenderSingleFrame();
+
+        Expectations::Instance()->Validate();
     }
 
     TEST_METHOD_EX(CanvasAnimatedControl_VariableTimestepFiresInitialUpdateAtZeroTime)
@@ -966,6 +953,33 @@ TEST_CLASS(CanvasAnimatedControlTests)
         }
     }
 
+    TEST_METHOD_EX(CanvasAnimatedControl_ElapsedTime_DoesNotInclude_TimeWhilePaused)
+    {
+        UpdateRenderFixture f;
+        ThrowIfFailed(f.Control->put_IsFixedTimeStep(false));
+
+        f.GetIntoSteadyState();
+        f.OnDraw.AllowAnyCall();
+
+        int64_t timeWhileNotPaused = 0;
+
+        for (int i = 0; i < 50; ++i)
+        {
+            int64_t t = (i+1) * 10;
+
+            f.Adapter->ProgressTime(t);
+            timeWhileNotPaused += t;
+
+            ThrowIfFailed(f.Control->put_Paused(TRUE));
+            f.Adapter->ProgressTime(t * 50);
+            ThrowIfFailed(f.Control->put_Paused(FALSE));
+        }
+
+        f.ExpectUpdateWithElapsedTime(timeWhileNotPaused);
+        f.Adapter->DoChanged();
+        f.Adapter->Tick();
+    }
+
     TEST_METHOD_EX(CanvasAnimatedControl_WhenDeviceLost_DrawIsNotCalledUntilUpdateHasCompleted)
     {
         UpdateRenderFixture f;
@@ -1070,20 +1084,25 @@ TEST_CLASS(CanvasAnimatedControlTests)
         UpdateRenderFixture f;
         f.GetIntoSteadyState();
         
-        f.Adapter->ProgressTime(TicksPerFrame * 1000);
+        f.Adapter->ProgressTime(TicksPerFrame);
+        ThrowIfFailed(f.Control->put_Paused(TRUE)); // we pause it after a
+                                                    // single frame's worth time
+                                                    // has passed
+
         f.OnUpdate.SetExpectedCalls(0);
         f.OnDraw.SetExpectedCalls(0);
-        ThrowIfFailed(f.Control->put_Paused(TRUE));
         f.Adapter->DoChanged();
-        f.RenderSingleFrame();
+        f.Adapter->Tick();
 
         f.Adapter->ProgressTime(TicksPerFrame * 1000);
-        ThrowIfFailed(f.Control->put_Paused(FALSE));
-        f.Adapter->DoChanged();
+        ThrowIfFailed(f.Control->put_Paused(FALSE)); // unpause after much time
+                                                     // has passed
 
+        // But only see one update - so the time while paused is not counted
         f.OnUpdate.SetExpectedCalls(1);
         f.OnDraw.SetExpectedCalls(1);
-        f.RenderSingleFrame();
+        f.Adapter->DoChanged();
+        f.Adapter->Tick();
     }
 
 
@@ -1286,46 +1305,6 @@ TEST_CLASS(CanvasAnimatedControlTests)
 
         f.Adapter->DoChanged();
         f.Adapter->Tick();
-    }
-
-    TEST_METHOD_EX(CanvasAnimatedControl_FixedStep_WhilePaused_UpdateCountIncrements)
-    {
-        WhilePaused_UpdateCountIncrements(true);
-    }
-
-    TEST_METHOD_EX(CanvasAnimatedControl_VariableStep_WhilePaused_UpdateCountIncrements)
-    {
-        WhilePaused_UpdateCountIncrements(false);
-    }
-
-    void WhilePaused_UpdateCountIncrements(bool isFixedTimeStep)
-    {
-        UpdateRenderFixture f;
-        f.OnCreateResources.SetExpectedCalls(1);
-        f.OnDraw.AllowAnyCall();
-        f.Load();
-
-        ThrowIfFailed(f.Control->put_IsFixedTimeStep(isFixedTimeStep));
-        
-
-        int64_t expectedUpdateCount = 1;
-
-        for (int i = 0; i < 10; ++i)
-        {
-            ThrowIfFailed(f.Control->put_Paused(FALSE));
-            f.OnUpdate.SetExpectedCalls(1,
-                [&] (ICanvasAnimatedControl*, ICanvasAnimatedUpdateEventArgs* args)
-                {
-                    CanvasTimingInformation timingInformation;
-                    Assert::AreEqual(S_OK, args->get_Timing(&timingInformation));
-                    Assert::AreEqual(expectedUpdateCount, timingInformation.UpdateCount);
-                    ThrowIfFailed(f.Control->put_Paused(TRUE));
-                    return S_OK;
-                });
-            f.Adapter->DoChanged();
-            f.Adapter->Tick();
-            ++expectedUpdateCount;
-        }        
     }
 
     class TimingFixture : public CanvasAnimatedControlFixture
@@ -1586,13 +1565,6 @@ TEST_CLASS(CanvasAnimatedControlTests)
         f.GetIntoSteadyState();
         ThrowIfFailed(f.Control->put_Paused(FALSE));
 
-        // Do one changed/tick so that there are no more updates pending
-        f.OnUpdate.SetExpectedCalls(1);
-        f.OnDraw.SetExpectedCalls(1);
-
-        f.Adapter->DoChanged();
-        f.Adapter->Tick();
-
         // Now, we don't progress time, so we don't expect any more updates.  We
         // call Invalidate many times, but only get a single Draw as a result.
         f.OnDraw.SetExpectedCalls(1);
@@ -1612,13 +1584,6 @@ TEST_CLASS(CanvasAnimatedControlTests)
         UpdateRenderFixture f;        
         f.GetIntoSteadyState();
         ThrowIfFailed(f.Control->put_Paused(FALSE));
-
-        // Do one changed/tick so that there are no more updates pending
-        f.OnUpdate.SetExpectedCalls(1);
-        f.OnDraw.SetExpectedCalls(1);
-
-        f.Adapter->DoChanged();
-        f.Adapter->Tick();
 
         // When time progresses and we call Invalidate() we still only see a
         // single Draw.
@@ -1758,6 +1723,29 @@ TEST_CLASS(CanvasAnimatedControlTests)
         f.OnDraw.SetExpectedCalls(1);
         f.Adapter->DoChanged();
         f.Adapter->Tick();        
+    }
+
+    TEST_METHOD_EX(CanvasAnimatedControl_CreateCoreIndependentInputSource_CallsThroughToSwapChainPanel)
+    {
+        CanvasAnimatedControlFixture f;
+
+        auto anyDeviceTypes = static_cast<CoreInputDeviceTypes>(123);
+        auto anyReturnValue = reinterpret_cast<ICoreInputSourceBase**>(456);
+        HRESULT anyResultCode = -789;
+
+        f.Adapter->GetSwapChainPanel()->CreateCoreIndependentInputSourceMethod.SetExpectedCalls(1,
+            [=] (CoreInputDeviceTypes actualDeviceTypes, ICoreInputSourceBase** actualReturnValue)
+            {
+                Assert::IsTrue(anyDeviceTypes == actualDeviceTypes, L"deviceTypes parameter is passed through");
+                Assert::IsTrue(anyReturnValue == actualReturnValue, L"returnValue paremeter is passed through");
+                return anyResultCode;
+            });
+        
+        auto actualResultCode = f.Control->CreateCoreIndependentInputSource(
+            anyDeviceTypes,
+            anyReturnValue);
+
+        Assert::AreEqual(anyResultCode, actualResultCode, L"result code is passed back");
     }
 };
 
@@ -2112,257 +2100,6 @@ TEST_CLASS(CanvasAnimatedControlRenderLoop)
     }
 };
 
-
-TEST_CLASS(CanvasAnimatedControl_Input)
-{
-    struct InputFixture : public CanvasAnimatedControlFixture
-    {
-        InputFixture()
-        {
-        }
-
-        ComPtr<ICorePointerInputSource> GetInputSource()
-        {
-            ComPtr<ICorePointerInputSource> inputSource;
-
-            ThrowIfFailed(Control->get_Input(&inputSource));
-
-            return inputSource;
-        }
-
-        void AllowWorkerThreadToStart()
-        {
-            Adapter->DoChanged();
-            Adapter->Tick();
-        }
-
-        void VerifyPropertiesAreInaccessibleToThisThread()
-        {
-            auto inputSource = GetInputSource();
-
-            Point p;
-            ComPtr<ICoreCursor> cursor;
-
-            Assert::AreEqual(RPC_E_WRONG_THREAD, inputSource->get_PointerPosition(&p));
-            Assert::AreEqual(RPC_E_WRONG_THREAD, inputSource->get_PointerCursor(&cursor));
-            Assert::AreEqual(RPC_E_WRONG_THREAD, inputSource->put_PointerCursor(nullptr));
-        }
-
-        bool IsRenderActionRunning()
-        {
-            return Adapter->GameThreadHasPendingWork();
-        }
-    };
-
-    TEST_METHOD_EX(CanvasAnimatedControl_get_Input_NullArg)
-    {
-        CanvasAnimatedControlFixture f;
-
-        Assert::AreEqual(E_INVALIDARG, f.Control->get_Input(nullptr));
-    }
-
-    TEST_METHOD_EX(CanvasAnimatedControl_Input_NoAccessToPropertiesBeforeRenderThreadIsStarted)
-    {
-        InputFixture f;
-        f.Adapter->DoChanged();
-        f.Adapter->Tick();
-        Assert::IsFalse(f.IsRenderActionRunning());
-
-        f.VerifyPropertiesAreInaccessibleToThisThread();
-    }
-
-    TEST_METHOD_EX(CanvasAnimatedControl_Input_IfRenderThreadStops_PropertiesInaccessible)
-    {
-        InputFixture f;
-        f.Load();
-        f.AllowWorkerThreadToStart();
-        f.RaiseUnloadedEvent();
-
-        Assert::IsFalse(f.IsRenderActionRunning());
-
-        f.VerifyPropertiesAreInaccessibleToThisThread();
-    }
-
-    TEST_METHOD_EX(CanvasAnimatedControl_Input_WhenRenderThreadStops_CoreIndependentInputSourceIsRemoved)
-    {
-        InputFixture f;
-        f.Load();
-        f.AllowWorkerThreadToStart();
-
-        f.Adapter->GetSwapChainPanel()->CreateCoreIndependentInputSourceMethod.SetExpectedCalls(1,
-            [=](CoreInputDeviceTypes type, ICoreInputSourceBase** out)
-            {
-                Assert::IsTrue(CoreInputDeviceTypes_None == type);
-                *out = nullptr;
-                return S_OK;
-            });
-
-        f.RaiseUnloadedEvent();
-
-        Assert::IsFalse(f.IsRenderActionRunning());
-    }
-
-    TEST_METHOD_EX(CanvasAnimatedControl_Input_PropertiesPassThruAfterRenderThreadIsStarted)
-    {
-        InputFixture f;
-        f.Load();
-        f.AllowWorkerThreadToStart();
-
-        auto coreIndependentInputSource = f.Adapter->GetCoreIndependentInputSource();
-
-        ComPtr<ICorePointerInputSource> inputSource;
-        ThrowIfFailed(f.Control->get_Input(&inputSource));
-
-        Point testPoint = { 11, 22 };
-        Point retrievedPoint;
-        coreIndependentInputSource->get_PointerPositionMethod.SetExpectedCalls(1,
-            [=](Point* pt)
-            {
-                *pt = testPoint;
-                return S_OK;
-            });
-        ThrowIfFailed(inputSource->get_PointerPosition(&retrievedPoint));
-        Assert::AreEqual(testPoint, retrievedPoint);
-
-        // Tests with some non-null cursor, not worth mocking up
-        ICoreCursor* fakeCursor = reinterpret_cast<ICoreCursor*>(0x1234567);
-
-        coreIndependentInputSource->get_PointerCursorMethod.SetExpectedCalls(1,
-            [=](ICoreCursor** cursor)
-            {
-                *cursor = fakeCursor;
-                return S_OK;
-            });
-        ICoreCursor* retrievedCursor;
-        ThrowIfFailed(inputSource->get_PointerCursor(&retrievedCursor));
-        Assert::AreEqual(fakeCursor, retrievedCursor);
-
-        coreIndependentInputSource->put_PointerCursorMethod.SetExpectedCalls(1,
-            [=](ICoreCursor* cursor)
-            {
-                Assert::AreEqual(fakeCursor, cursor);
-                return S_OK;
-            });
-        ThrowIfFailed(inputSource->put_PointerCursor(fakeCursor));
-    }
-
-    TEST_METHOD_EX(CanvasAnimatedControl_Input_put_PointerCursor_NullOk)
-    {
-        //
-        // Verifies we don't accidentally sanitize or validate null values
-        //
-        InputFixture f;
-        f.Load();
-        f.AllowWorkerThreadToStart();
-
-        auto inputSource = f.GetInputSource();
-
-        auto coreIndependentInputSource = f.Adapter->GetCoreIndependentInputSource();
-        coreIndependentInputSource->put_PointerCursorMethod.SetExpectedCalls(1,
-            [=](ICoreCursor* cursor)
-            {
-                Assert::IsNull(cursor);
-                return S_OK;
-            });
-        ThrowIfFailed(inputSource->put_PointerCursor(nullptr));
-    }
-
-    TEST_METHOD_EX(CanvasAnimatedControl_Input_AddEventDelegateNullArgs)
-    {
-        InputFixture f;
-        f.Load();
-        auto inputSource = f.GetInputSource();
-
-        EventRegistrationToken token;
-
-        Assert::AreEqual(E_INVALIDARG, inputSource->add_PointerEntered(nullptr, &token));
-        Assert::AreEqual(E_INVALIDARG, inputSource->add_PointerExited(nullptr, &token));
-        Assert::AreEqual(E_INVALIDARG, inputSource->add_PointerMoved(nullptr, &token));
-        Assert::AreEqual(E_INVALIDARG, inputSource->add_PointerPressed(nullptr, &token));
-        Assert::AreEqual(E_INVALIDARG, inputSource->add_PointerReleased(nullptr, &token));
-        Assert::AreEqual(E_INVALIDARG, inputSource->add_PointerWheelChanged(nullptr, &token));
-    }
-
-    TEST_METHOD_EX(CanvasAnimatedControl_Input_CaptureMethodsAreNotAvailable)
-    {
-        InputFixture f;
-        auto inputSource = f.GetInputSource();
-        boolean b;
-
-        Assert::AreEqual(E_NOTIMPL, inputSource->ReleasePointerCapture());
-        Assert::AreEqual(E_NOTIMPL, inputSource->SetPointerCapture());
-        Assert::AreEqual(E_NOTIMPL, inputSource->get_HasCapture(&b));
-
-        auto eventHandler = MockEventHandler<EventHandlerWithPointerArgs>(L"PointerCapture");
-        EventRegistrationToken token;
-        Assert::AreEqual(E_NOTIMPL, inputSource->add_PointerCaptureLost(eventHandler.Get(), &token));
-        Assert::AreEqual(E_NOTIMPL, inputSource->remove_PointerCaptureLost(token));        
-    }
-
-    class InputFixture_EventTest
-    {
-    public:
-        template<typename MOCK_EVENT_SOURCE, typename INPUT_SOURCE_FN>
-        void TestEvent(
-            wchar_t const* name,
-            MOCK_EVENT_SOURCE pointerToMockEventSource,
-            INPUT_SOURCE_FN inputSourceMethod)
-        {
-            InputFixture f;
-
-            auto inputSource = f.GetInputSource();
-
-            //
-            // Register an event handler before the control has loaded.
-            //
-            auto appEventHandler = MockEventHandler<EventHandlerWithPointerArgs>(name);
-
-            EventRegistrationToken token;
-            ThrowIfFailed((inputSource.Get()->*inputSourceMethod)(appEventHandler.Get(), &token));
-
-            auto coreIndependentInputSource = f.Adapter->GetCoreIndependentInputSource().Get();
-
-            //
-            // Load the control; this'll start the game loop thread.
-            //
-            f.Load();
-            f.AllowWorkerThreadToStart();
-
-            // When an input event happens, expect our event handler to be called.
-            appEventHandler.SetExpectedCalls(1);
-            coreIndependentInputSource->InvokeViaDispatcher(pointerToMockEventSource);
-            f.Adapter->TickAll();
-
-            // ...even when the control is paused...
-            ThrowIfFailed(f.Control->put_Paused(TRUE));
-            appEventHandler.SetExpectedCalls(1);
-            coreIndependentInputSource->InvokeViaDispatcher(pointerToMockEventSource);
-            f.Adapter->TickAll();
-        }
-    };
-
-    TEST_METHOD_EX(CanvasAnimatedControl_Input_EventsAreRaisedAsAppropriate)
-    {
-        //
-        // Implementation detail: The control's input events are tracked using 
-        // EventSource. This test, therefore, will not try to test all the features
-        // of EventSource, but verifes that events are passed through as expected.
-        //
-        InputFixture_EventTest f;
-
-#define TEST_EVENT(EVENT) \
-        f.TestEvent(WIDEN(#EVENT), &StubCoreIndependentInputSource::##EVENT, &ICorePointerInputSource::add_ ## EVENT)
-
-        TEST_EVENT(PointerEntered);
-        TEST_EVENT(PointerExited);
-        TEST_EVENT(PointerMoved);
-        TEST_EVENT(PointerPressed);
-        TEST_EVENT(PointerReleased);
-        TEST_EVENT(PointerWheelChanged);
-
-#undef TEST_EVENT
-    }
-};
 
 TEST_CLASS(CanvasAnimatedControl_SuspendingTests)
 {
@@ -3046,5 +2783,48 @@ TEST_CLASS(CanvasAnimatedControl_AppAccessingWorkerThreadTests)
         f.TickUntil([&] { return dispatchedHandlers[5].CallbackMethod.GetCurrentCallCount() == 1; });
 
         f.VerifyTickLoopIsStillRunning();
+    }
+
+    TEST_METHOD_EX(CanvasAnimatedControl_RunOnGameLoopThreadAsync_ActionIsNotExecutedUntilCreateResourcesHasCompleted)
+    {
+        CanvasAnimatedControlFixture f;
+
+        SimpleDispatchedHandler handler;
+        ComPtr<IAsyncAction> action;
+
+        ThrowIfFailed(f.Control->RunOnGameLoopThreadAsync(handler.Handler.Get(), &action));
+
+        auto onCreateResources = MockEventHandler<Animated_CreateResourcesEventHandler>(L"CreateResources", ExpectedEventParams::Both);
+        f.AddCreateResourcesHandler(onCreateResources.Get());
+
+        ComPtr<MockAsyncAction> asyncCreateResources;
+
+        onCreateResources.SetExpectedCalls(1,
+            [&](ICanvasAnimatedControl*, ICanvasCreateResourcesEventArgs* args)
+            {
+                asyncCreateResources = Make<MockAsyncAction>();
+                return args->TrackAsyncAction(asyncCreateResources.Get());
+            });
+
+        f.Load();
+
+        f.Adapter->DoChanged();
+        f.Adapter->Tick();
+
+        Assert::IsTrue(asyncCreateResources, L"CreateResources started tracking async action");
+
+        for (int i = 0; i < 10; ++i)
+        {
+            f.Adapter->DoChanged();
+            f.Adapter->Tick();
+        }
+
+        // Only after the CreateResources has completed do we expect to see the handler we passed
+        // to RunOnGameLoopThreadAsync get called
+        asyncCreateResources->SetResult(S_OK);
+        handler.CallbackMethod.SetExpectedCalls(1);
+
+        f.Adapter->DoChanged();
+        f.TickUntil([&] { return handler.CallbackMethod.GetCurrentCallCount() == 1; });
     }
 };

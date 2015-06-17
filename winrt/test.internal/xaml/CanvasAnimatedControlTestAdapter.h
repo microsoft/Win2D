@@ -34,7 +34,7 @@ public:
     ComPtr<StubCanvasDevice> InitialDevice;
 
     CanvasAnimatedControlTestAdapter(StubCanvasDevice* initialDevice = nullptr)
-        : m_performanceCounter(0)
+        : m_performanceCounter(1)
         , SwapChainManager(std::make_shared<CanvasSwapChainManager>())
         , InitialDevice(initialDevice)
         , m_gameThreadDispatcher(Make<StubDispatcher>())
@@ -88,7 +88,7 @@ public:
         return m_gameThreadDispatcher->HasPendingActions();
     }
 
-    virtual std::shared_ptr<CanvasGameLoop> CreateAndStartGameLoop(ComPtr<ISwapChainPanel> swapChainPanel, ComPtr<AnimatedControlInput> input) override
+    virtual std::shared_ptr<CanvasGameLoop> CreateAndStartGameLoop(ComPtr<ISwapChainPanel> swapChainPanel) override
     {
         m_gameThreadAction = Make<MockAsyncAction>();
 
@@ -103,7 +103,7 @@ public:
             });
 
         // Now create the game loop
-        auto gameLoop = std::make_shared<CanvasGameLoop>(m_gameThreadAction, m_gameThreadDispatcher, input);
+        auto gameLoop = std::make_shared<CanvasGameLoop>(m_gameThreadAction, m_gameThreadDispatcher);
 
         // Allow any work the game loop constructor queued up to execute before
         // returning

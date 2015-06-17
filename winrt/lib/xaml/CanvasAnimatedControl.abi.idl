@@ -101,6 +101,7 @@ namespace Microsoft.Graphics.Canvas.UI.Xaml
 
         [eventremove] HRESULT CreateResources([in] EventRegistrationToken token);
 
+        //
         // Draw and Update events are issued on the AnimatedControl's game loop 
         // thread, if the control's state is not Paused.
         //
@@ -129,6 +130,7 @@ namespace Microsoft.Graphics.Canvas.UI.Xaml
         [propget] HRESULT ReadyToDraw(
             [out, retval] boolean* value);
 
+        //
         // Indicates whether this control uses fixed or variable timestep.  Default is TRUE.
         //
         // These methods can be called from any thread.
@@ -136,6 +138,7 @@ namespace Microsoft.Graphics.Canvas.UI.Xaml
         [propput] HRESULT IsFixedTimeStep([in] boolean value);
         [propget] HRESULT IsFixedTimeStep([out, retval] boolean* value);
 
+        //
         // Gets or sets the expected time for each iteration of the Draw/Update loop.
         // Default is 1/60th of a second.
         //
@@ -144,6 +147,7 @@ namespace Microsoft.Graphics.Canvas.UI.Xaml
         [propput] HRESULT TargetElapsedTime([in] Windows.Foundation.TimeSpan value);
         [propget] HRESULT TargetElapsedTime([out, retval] Windows.Foundation.TimeSpan* value);
 
+        //
         // Used to pause or un-pause draw/update. 
         //
         // These methods can be called from any thread.
@@ -151,6 +155,7 @@ namespace Microsoft.Graphics.Canvas.UI.Xaml
         [propput] HRESULT Paused([in] boolean value);
         [propget] HRESULT Paused([out, retval] boolean* value);
 
+        //
         // Control is cleared to this color at the start of each rendering event. 
         //
         // These methods can be called from any thread.
@@ -158,6 +163,7 @@ namespace Microsoft.Graphics.Canvas.UI.Xaml
         [propput] HRESULT ClearColor([in] Windows.UI.Color value);
         [propget] HRESULT ClearColor([out, retval] Windows.UI.Color* value);
 
+        //
         // The current size of the control; this is safe to call from Update/Draw
         //
         // This method can be called from any thread.
@@ -185,6 +191,7 @@ namespace Microsoft.Graphics.Canvas.UI.Xaml
         //
         HRESULT Invalidate();
 
+        //
         // Resets the elapsed time.
         //
         // This method can be called from any thread.
@@ -192,11 +199,12 @@ namespace Microsoft.Graphics.Canvas.UI.Xaml
         HRESULT ResetElapsedTime();
 
         //
-        // Provides pointer input functionality.
-        // 
-        // This method can be called from any thread.
+        // Calls through to this control's CanvasSwapChainPanel's
+        // CreateCoreIndpendentInputSource.
         //
-        [propget] HRESULT Input([out, retval] Windows.UI.Core.ICorePointerInputSource** value);
+        HRESULT CreateCoreIndependentInputSource(
+            [in] Windows.UI.Core.CoreInputDeviceTypes deviceTypes,
+            [out, retval] Windows.UI.Core.CoreIndependentInputSource** returnValue);
 
         //
         // Removes the control from the visual tree.

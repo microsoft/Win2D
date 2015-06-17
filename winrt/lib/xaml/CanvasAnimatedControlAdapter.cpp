@@ -182,7 +182,7 @@ public:
         return static_cast<CanvasSwapChain*>(swapChain.Get());
     }
 
-    virtual std::shared_ptr<CanvasGameLoop> CreateAndStartGameLoop(ComPtr<ISwapChainPanel> swapChainPanel, ComPtr<AnimatedControlInput> input) override
+    virtual std::shared_ptr<CanvasGameLoop> CreateAndStartGameLoop(ComPtr<ISwapChainPanel> swapChainPanel) override
     {
         //
         // This needs to start a new thread and, while executing code on that
@@ -224,7 +224,7 @@ public:
         auto action = StartThread(std::move(startThreadHandler));
         auto dispatcher = gameLoopStartup->WaitAndGetDispatcher(action.Get());
 
-        return std::make_shared<CanvasGameLoop>(std::move(action), std::move(dispatcher), input);
+        return std::make_shared<CanvasGameLoop>(std::move(action), std::move(dispatcher));
     }
 
     virtual ComPtr<IInspectable> CreateSwapChainPanel(IInspectable* canvasSwapChainPanel) override

@@ -140,12 +140,16 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         // Update timer state, calling the specified Update function the appropriate number of times.
         template<typename CALLABLE>
-        void Tick(bool forceUpdate, CALLABLE&& fn)
+        void Tick(bool forceUpdate, int64_t timeSpentPaused, CALLABLE&& fn)
         {
             // Query the current time.
             auto currentTime = m_adapter->GetPerformanceCounter();
 
             uint64_t timeDelta = currentTime - m_lastTime;
+
+            // Account for the time that was spent paused
+            assert(timeSpentPaused >= 0);
+            timeDelta -= std::min<uint64_t>(timeDelta, std::max(0LL, timeSpentPaused));
 
             m_lastTime = currentTime;
             m_secondCounter += timeDelta;

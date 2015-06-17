@@ -159,8 +159,6 @@ CanvasAnimatedControl::CanvasAnimatedControl(std::shared_ptr<ICanvasAnimatedCont
 
     auto swapChainPanel = As<ISwapChainPanel>(m_canvasSwapChainPanel);
 
-    m_input = Make<AnimatedControlInput>(swapChainPanel);
-
     m_sharedState.IsStepTimerFixedStep = m_stepTimer.IsFixedTimeStep();
     m_sharedState.TargetElapsedTime = m_stepTimer.GetTargetElapsedTicks();
 }
@@ -254,12 +252,32 @@ IFACEMETHODIMP CanvasAnimatedControl::put_Paused(boolean value)
         {
             auto lock = GetLock();
 
+            bool oldState = m_sharedState.IsPaused;
             m_sharedState.IsPaused = !!value;
 
-            if (!m_sharedState.IsPaused)
+            if (oldState != m_sharedState.IsPaused)
             {
-                m_sharedState.FirstTickAfterWasPaused = true;
-                Changed(lock);
+                auto currentTime = GetAdapter()->GetPerformanceCounter();
+
+                if (!m_sharedState.IsPaused)
+                {
+                    // Accumulate the time spent paused.  This will be accounted
+                    // for when the game loop timer ticks.
+                    //
+                    // Since different threads may set/unset Paused, and these
+                    // don't necessarily have tightly synchronized results from
+                    // QueryPerformanceCounter there's a possibility that we
+                    // could see Paused to false 'before' it was set to true.
+                    // The 'max' below guards against this.
+                    m_sharedState.TimeSpentPaused += std::max(0LL, (currentTime - m_sharedState.TimeWhenPausedWasSet));
+                    assert(m_sharedState.TimeSpentPaused >= 0);
+
+                    Changed(lock);
+                }
+                else
+                {
+                    m_sharedState.TimeWhenPausedWasSet = currentTime;
+                }
             }
         });
 }
@@ -306,14 +324,15 @@ IFACEMETHODIMP CanvasAnimatedControl::ResetElapsedTime()
         });
 }
 
-IFACEMETHODIMP CanvasAnimatedControl::get_Input(ICorePointerInputSource** value)
+IFACEMETHODIMP CanvasAnimatedControl::CreateCoreIndependentInputSource(
+    CoreInputDeviceTypes deviceTypes,
+    ICoreInputSourceBase** returnValue)
 {
     return ExceptionBoundary(
         [&]
         {
-            CheckAndClearOutPointer(value);
-
-            ThrowIfFailed(m_input.CopyTo(value));
+            auto swapChainPanel = As<ISwapChainPanel>(m_canvasSwapChainPanel);
+            ThrowIfFailed(swapChainPanel->CreateCoreIndependentInputSource(deviceTypes, returnValue));
         });
 }
 
@@ -349,7 +368,10 @@ IFACEMETHODIMP CanvasAnimatedControl::get_HasGameLoopThreadAccess(boolean* value
             // before this method completes.
             //
 
-            *value = m_input->GetHasThreadAccess();
+            if (!m_gameLoop)
+                *value = false;
+            else
+                *value = m_gameLoop->HasThreadAccess();
         });
 }
 
@@ -440,7 +462,7 @@ ComPtr<CanvasAnimatedDrawEventArgs> CanvasAnimatedControl::CreateDrawEventArgs(
 void CanvasAnimatedControl::Loaded()
 {
     assert(!m_gameLoop);
-    m_gameLoop = GetAdapter()->CreateAndStartGameLoop(As<ISwapChainPanel>(m_canvasSwapChainPanel), m_input);
+    m_gameLoop = GetAdapter()->CreateAndStartGameLoop(As<ISwapChainPanel>(m_canvasSwapChainPanel));
 }
 
 void CanvasAnimatedControl::Unloaded()
@@ -570,7 +592,6 @@ void CanvasAnimatedControl::ChangedImpl()
 
     bool needsDraw = m_sharedState.NeedsDraw || m_sharedState.Invalidated;
     bool isPaused = m_sharedState.IsPaused;
-    bool wasPaused = m_sharedState.FirstTickAfterWasPaused;
     bool hasPendingActions = !m_sharedState.PendingAsyncActions.empty();
     DeviceCreationOptions deviceCreationOptions = GetDeviceCreationOptions(lock);
 
@@ -579,20 +600,28 @@ void CanvasAnimatedControl::ChangedImpl()
     //
     // Get the status of the update/render thread.
     //
-    bool tickLoopIsRunning = false;
-    ComPtr<IAsyncInfo> tickLoopErrorInfo;
+    ComPtr<IAsyncInfo> completedTickLoopInfo;
+    AsyncStatus tickLoopStatus = AsyncStatus::Completed;
 
     if (m_gameLoop)
     {
-        m_gameLoop->TakeTickLoopState(&tickLoopIsRunning, &tickLoopErrorInfo);
+        bool isRunning;
+        m_gameLoop->TakeTickLoopState(&isRunning, &completedTickLoopInfo);
 
-        if (tickLoopIsRunning)
+        if (isRunning)
         {
             // The tick loop is still running, so we don't do anything here.
             // Ultimately, we rely on the tick loop noticing that something
             // needs to change.  When it does, it will stop itself and trigger
             // another Changed().
             return;
+        }
+
+        // The first time we consider starting the tick loop it won't be
+        // running, but we won't have a completedTickLoopInfo either.
+        if (completedTickLoopInfo)
+        {
+            ThrowIfFailed(completedTickLoopInfo->get_Status(&tickLoopStatus));
         }
     }
         
@@ -625,7 +654,7 @@ void CanvasAnimatedControl::ChangedImpl()
     //
     bool ignorePaused = false;
 
-    if (tickLoopErrorInfo)
+    if (tickLoopStatus != AsyncStatus::Completed)
     {
         // If the last render loop ended due to an error (eg lost device)
         // then we want to process the error.  The error is processed below
@@ -670,11 +699,11 @@ void CanvasAnimatedControl::ChangedImpl()
             // do this here, within RunWithRenderTarget, so that it can
             // handle errors (such as lost device).
             //
-            if (tickLoopErrorInfo)
+            if (completedTickLoopInfo)
             {
                 HRESULT hr;
-                ThrowIfFailed(tickLoopErrorInfo->get_ErrorCode(&hr));
-                ThrowHR(hr);
+                ThrowIfFailed(completedTickLoopInfo->get_ErrorCode(&hr));
+                ThrowIfFailed(hr);
             }
 
             if (!areResourcesCreated && !needsDraw)
@@ -685,9 +714,6 @@ void CanvasAnimatedControl::ChangedImpl()
                 //
                 return;
             }
-
-            if (wasPaused)      // TODO: figure out the right thing here; resetting the timer probably isn't it.
-                m_stepTimer.ResetElapsedTime();
 
             ComPtr<CanvasSwapChain> target(rawTarget);
 
@@ -827,13 +853,9 @@ bool CanvasAnimatedControl::Tick(
         m_stepTimer.ResetElapsedTime();
     }
 
-    bool isPaused = m_sharedState.IsPaused;
-    bool firstTickAfterWasPaused = m_sharedState.FirstTickAfterWasPaused;
     bool deviceNeedsReCreationWithNewOptions = m_sharedState.DeviceNeedsReCreationWithNewOptions;
-
-    m_sharedState.ShouldResetElapsedTime = false;
-    m_sharedState.FirstTickAfterWasPaused = false;
     m_sharedState.DeviceNeedsReCreationWithNewOptions = false;
+    m_sharedState.ShouldResetElapsedTime = false;
 
     Color clearColor;
     Size currentSize;
@@ -871,7 +893,22 @@ bool CanvasAnimatedControl::Tick(
     // Invalidated request, so we can reset this flag now.
     if (areResourcesCreated)
         m_sharedState.Invalidated = false;
-    
+
+    // Handle Paused state
+    bool isPaused = m_sharedState.IsPaused;
+    int64_t timeSpentPaused = 0;
+
+    if (!isPaused)
+    {
+        timeSpentPaused = m_sharedState.TimeSpentPaused;
+
+        if (areResourcesCreated)
+        {
+            m_sharedState.TimeWhenPausedWasSet = 0;
+            m_sharedState.TimeSpentPaused = 0;
+        }
+    } 
+
     // We update, but forego drawing if the control is not in a visible state.
     // Force-draws, like those due to device lost, are not performed either.
     // Drawing behavior resumes when the control becomes visible once again.
@@ -881,26 +918,37 @@ bool CanvasAnimatedControl::Tick(
     // Copy out the list of async actions, to avoid retaining the lock while
     // they are being fired.
     //
+    // The async actions are only executed after resources have been created.
+    // This means that:
+    //
+    // - the actions can assume that there's a valid device and
+    // - there's no risk of them running concurrently with
+    //   CreateResources.
+    //
     std::vector<ComPtr<AnimatedControlAsyncAction>> pendingActions;
-    std::swap(pendingActions, m_sharedState.PendingAsyncActions);
+    
+    if (areResourcesCreated)
+        std::swap(pendingActions, m_sharedState.PendingAsyncActions);
 
     lock.unlock();
 
     //
     // Run any async actions
     //
-    bool hadPendingActions = !pendingActions.empty();
-    IssueAsyncActions(pendingActions);
-
-    // One of the async actions may have changed the shared state, in which case
-    // we want to respond immediately.
-    if (hadPendingActions && !invalidated)
+    if (!pendingActions.empty())
     {
-        auto lock2 = GetLock();
+        IssueAsyncActions(pendingActions);
 
-        invalidated = m_sharedState.Invalidated;
-        if (areResourcesCreated)
-            m_sharedState.Invalidated = false;
+        // One of the async actions may have changed the shared state, in which case
+        // we want to respond immediately.
+        if (!invalidated)
+        {
+            auto lock2 = GetLock();
+            
+            invalidated = m_sharedState.Invalidated;
+            if (areResourcesCreated)
+                m_sharedState.Invalidated = false;
+        }
     }
 
     //
@@ -911,9 +959,18 @@ bool CanvasAnimatedControl::Tick(
 
     if (areResourcesCreated && !isPaused)
     {
-        bool forceUpdate = (firstTickAfterWasPaused || !m_hasUpdated);
+        bool forceUpdate = false;
 
-        updateResult = Update(forceUpdate);
+        if (!m_hasUpdated)
+        {
+            // For the first update we reset the timer.  This handles the
+            // possibility of there being a long delay between construction and
+            // the first update.
+            m_stepTimer.ResetElapsedTime();
+            forceUpdate = true;
+        }
+
+        updateResult = Update(forceUpdate, timeSpentPaused);
 
         m_hasUpdated |= updateResult.Updated;
     }
@@ -967,11 +1024,11 @@ bool CanvasAnimatedControl::Tick(
     return areResourcesCreated && !isPaused;
 }
 
-CanvasAnimatedControl::UpdateResult CanvasAnimatedControl::Update(bool forceUpdate)
+CanvasAnimatedControl::UpdateResult CanvasAnimatedControl::Update(bool forceUpdate, int64_t timeSpentPaused)
 {
     UpdateResult result{};
 
-    m_stepTimer.Tick(forceUpdate,
+    m_stepTimer.Tick(forceUpdate, timeSpentPaused,
         [this, &result](bool isRunningSlowly)
         {
             auto timing = GetTimingInformationFromTimer();

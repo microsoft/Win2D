@@ -619,26 +619,45 @@ under the License.
       </remarks>
     </member>
     
-    <member name="P:Microsoft.Graphics.Canvas.UI.Xaml.ICanvasAnimatedControl.Input">
-      <summary>Gets an object used to configure pointer input for the control.</summary>
+    <member name="M:Microsoft.Graphics.Canvas.UI.Xaml.ICanvasAnimatedControl.CreateCoreIndependentInputSource(Windows.UI.Core.CoreInputDeviceTypes)">
+      <summary>Creates an input source that can process input on a non-UI thread (such as the game loop thread).</summary>
       <remarks>
         <p>
-          This property may be accessed from any thread.
+          This method calls through to <a
+          href="https://msdn.microsoft.com/en-us/library/windows/apps/windows.ui.xaml.controls.swapchainpanel.createcoreindependentinputsource.aspx">SwapChainPanel.CreateCoreIndependentInputSource</a>.
+          The CoreIndependentInputSource can be used to process input events on
+          any thread.  It is important that CreateCoreIndependentInputSource is
+          called on the thread that you want the events to be processed on.  
         </p>
-        
         <p>
-        While using pointer functionality through this property, do not call 
-        <a href="https://msdn.microsoft.com/en-us/library/windows/apps/windows.ui.core.icorepointerinputsource.setpointercapture.aspx">SetPointerCapture</a>, 
-        <a href="https://msdn.microsoft.com/en-us/library/windows/apps/windows.ui.core.icorepointerinputsource.releasepointercapture.aspx">ReleasePointerCapture</a>, 
-        <a href="https://msdn.microsoft.com/en-us/library/windows/apps/windows.ui.core.icorepointerinputsource.hascapture.aspx">HasCapture</a>, or use the event
-        <a href="https://msdn.microsoft.com/en-us/library/windows/apps/windows.ui.core.icorepointerinputsource.pointercapturelost.aspx">PointerCaptureLost</a>,
-        as these are not supported through CanvasAnimatedControl.
+          If the input source is created on the game loop thread then
+          CanvasAnimatedControl is already managing a CoreDispatcher and
+          ensuring it processes events.  If it is created on some other thread,
+          then it is up to you to ensure that the input source's Dispatcher
+          processes events.  See the <a
+          href="https://msdn.microsoft.com/en-us/library/windows/apps/windows.ui.core.coreindependentinputsource.aspx">CoreIndependentInputSource</a>
+          documentation for more information.
         </p>
-        
+        <p>
+          In general, we recommend that you use CanvasAnimatedControl's standard
+          pointer events, such as PointerPressed, PointerMoved etc. These can be
+          found in the <a
+          href="https://msdn.microsoft.com/library/windows/apps/Windows.UI.Xaml.Controls.UserControl#events">UserControl</a>
+          documentation.  These events will be raised from the UI thread and so
+          care must be taken if the handler accesses data that may also be used
+          by the Update or Draw handlers.
+        </p>
+        <p>
+          The <a
+          href="https://github.com/Microsoft/Win2D-Samples/blob/master/ExampleGallery/Shared/CustomFonts.xaml.cs">CustomFonts</a>
+          example in ExampleGallery demonstrates using
+          CoreIndependentInputSource with <a
+          href="https://msdn.microsoft.com/en-us/library/windows/apps/windows.ui.input.gesturerecognizer.asp">GestureRecognizer</a> on a CanvasAnimatedControl.
+        </p>
       </remarks>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl.Input">
-      <summary>Gets an object used to configure pointer input for the control.</summary>
+    <member name="M:Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl.CreateCoreIndependentInputSource(Windows.UI.Core.CoreInputDeviceTypes)">
+      <summary>Creates an input source that can process input on a non-UI thread (such as the game loop thread).</summary>
       <inheritdoc/>
     </member>
 
