@@ -25,6 +25,11 @@ namespace canvas
             : m_owner(owner)
             , m_overrideProperties(nullptr)
         {
+            ClearMethod.AllowAnyCall();
+
+            SetDpiMethod.AllowAnyCall();
+
+            SetTextAntialiasModeMethod.AllowAnyCall();
         }
 
         //

@@ -19,6 +19,12 @@
 template<typename T, typename U>
 inline bool IsSameInstance(T* value1, U* value2)
 {
+    if (reinterpret_cast<void*>(value1) == reinterpret_cast<void*>(value2))
+        return true; //Easy, early out, and covers null==null case
+
+    if ((value1 == nullptr) || (value2 == nullptr))
+        return false;
+
     Microsoft::WRL::ComPtr<IUnknown> identity1;
     Microsoft::WRL::ComPtr<IUnknown> identity2;
 

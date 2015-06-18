@@ -253,6 +253,9 @@ namespace Microsoft.Graphics.Canvas.UI.Xaml
         //
         [propget] HRESULT HardwareAcceleration([out, retval] Microsoft.Graphics.Canvas.CanvasHardwareAcceleration* value);
         [propput] HRESULT HardwareAcceleration([in] Microsoft.Graphics.Canvas.CanvasHardwareAcceleration value);
+
+        [propget] HRESULT CustomDevice([out, retval] Microsoft.Graphics.Canvas.CanvasDevice** value);
+        [propput] HRESULT CustomDevice([in] Microsoft.Graphics.Canvas.CanvasDevice* value);
     }
 
     [version(VERSION), activatable(VERSION), marshaling_behavior(agile), threading(both)]

@@ -809,6 +809,38 @@ under the License.
     <member name="P:Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl.UseSharedDevice">
       <summary>Gets or sets whether this control should create a new device each time, or use a device which may common between other controls.</summary>
       <inheritdoc/>
+    </member>    
+
+    <member name="P:Microsoft.Graphics.Canvas.UI.Xaml.ICanvasAnimatedControl.CustomDevice">
+      <summary>Gets or sets an application-chosen device for this control.</summary>
+      <remarks>
+        <p>
+          Setting this property allows controls to use a CanvasDevice from 
+          arbitrary sources- for example, from Direct3D interop.
+        </p>
+        <p>
+          The default value for this property is null. This means that the control will obtain its
+          devices from <see cref="M:Microsoft.Graphics.Canvas.CanvasDevice.GetSharedDevice(Microsoft.Graphics.Canvas.CanvasHardwareAcceleration)"/>
+          if <see cref="P:Microsoft.Graphics.Canvas.UI.Xaml.ICanvasAnimatedControl.UseSharedDevice"/> is 
+          set. Otherwise, it will create its own new device each time.
+        </p>
+        <p>
+          Setting this property overrides the control's default device creation
+          behavior, so the
+          <see cref="P:Microsoft.Graphics.Canvas.UI.Xaml.ICanvasAnimatedControl.UseSharedDevice"/> and
+          <see cref="P:Microsoft.Graphics.Canvas.UI.Xaml.ICanvasAnimatedControl.HardwareAcceleration"/>
+          properties are ignored.
+        </p>
+        <p>
+          One way to handle device lost while using a custom device, is to subscribe
+          to the custom device's <see cref="E:Microsoft.Graphics.Canvas.CanvasDevice.DeviceLost"/>
+          event. Then in the event handler, create a new device and assign it to CustomDevice.
+        </p>
+      </remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl.CustomDevice">
+      <summary>Gets or sets an application-chosen device for this control.</summary>
+      <inheritdoc/>
     </member>
     
   </members>

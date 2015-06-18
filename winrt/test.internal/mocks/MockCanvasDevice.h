@@ -82,6 +82,8 @@ namespace canvas
 
         CALL_COUNTER_WITH_MOCK(GetDeviceRemovedErrorCodeMethod, HRESULT());
 
+        CALL_COUNTER_WITH_MOCK(IsDeviceLostMethod, HRESULT(int, boolean*));
+
         //
         // ICanvasDevice
         //
@@ -115,8 +117,7 @@ namespace canvas
             int hresult,
             boolean* value)
         {
-            Assert::Fail(L"Unexpected call to IsDeviceLost");
-            return E_NOTIMPL;
+            return IsDeviceLostMethod.WasCalled(hresult, value);
         }
 
         IFACEMETHODIMP RaiseDeviceLost()

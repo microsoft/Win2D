@@ -137,6 +137,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         ComPtr<IDependencyObject> m_lastSeenParent;
 
+        ComPtr<ICanvasDevice> m_customDevice;
+
     public:
         BaseControl(std::shared_ptr<adapter_t> adapter, bool useSharedDevice)
             : m_adapter(adapter)
@@ -318,6 +320,46 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                     m_hardwareAcceleration = value;
 
                     Changed(lock, ChangeReason::DeviceCreationOptions);
+                });
+        }
+
+        IFACEMETHODIMP get_CustomDevice(
+            ICanvasDevice** value)
+        {
+            return ExceptionBoundary(
+                [&]
+                {
+                    CheckAndClearOutPointer(value);
+
+                    auto lock = GetLock();
+
+                    if (m_customDevice)
+                    {
+                        ThrowIfFailed(m_customDevice.CopyTo(value));
+                    }
+                });
+        }
+
+        IFACEMETHODIMP put_CustomDevice(
+            ICanvasDevice* value)
+        {
+            return ExceptionBoundary(
+                [&]
+                {
+                    //
+                    // Passing null is valid here, and will clear out the custom device.
+                    //
+
+                    auto lock = GetLock();
+
+                    bool isChanged = !IsSameInstance(m_customDevice.Get(), value);
+
+                    if (isChanged)
+                    {
+                        m_customDevice = value;
+
+                        Changed(lock, ChangeReason::DeviceCreationOptions);
+                    }
                 });
         }
 
@@ -543,7 +585,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         {
             MustOwnLock(lock);
 
-            DeviceCreationOptions options { m_useSharedDevice, m_hardwareAcceleration };
+            DeviceCreationOptions options { m_useSharedDevice, m_hardwareAcceleration, m_customDevice };
 
             return options;
         }

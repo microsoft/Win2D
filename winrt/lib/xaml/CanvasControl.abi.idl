@@ -168,6 +168,27 @@ namespace Microsoft.Graphics.Canvas.UI.Xaml
         //
         [propget] HRESULT HardwareAcceleration([out, retval] Microsoft.Graphics.Canvas.CanvasHardwareAcceleration* value);
         [propput] HRESULT HardwareAcceleration([in] Microsoft.Graphics.Canvas.CanvasHardwareAcceleration value);
+
+        //
+        // Allows an app to explicitly set a device of its own choosing to the
+        // control. 
+        //
+        // After this property is set, the control will raise CreateResources 
+        // against the new device.
+        //
+        // The Device property will not return the value set to CustomDevice 
+        // until the CreateResources event is raised.
+        //
+        // Unlike for normal devices, if a custom device is lost, the control
+        // will not automatically re-create it. The app should subscribe to 
+        // the custom device's DeviceLost event, re-create and reassign the
+        // device.
+        //
+        // After a custom device is lost, the control is in an inoperable state
+        // until the custom device is reassigned.
+        //
+        [propget] HRESULT CustomDevice([out, retval] Microsoft.Graphics.Canvas.CanvasDevice** value);
+        [propput] HRESULT CustomDevice([in] Microsoft.Graphics.Canvas.CanvasDevice* value);
     }
 
     [version(VERSION), activatable(VERSION), marshaling_behavior(agile), threading(both)]

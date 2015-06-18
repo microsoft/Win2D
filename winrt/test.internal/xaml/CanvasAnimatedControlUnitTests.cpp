@@ -28,8 +28,14 @@ protected:
 
 public:
     FixtureWithSwapChainAccess()
-        : m_dxgiSwapChain(Make<MockDxgiSwapChain>())
     {
+        ResetSwapChain();
+    }
+
+    void ResetSwapChain()
+    {
+        m_dxgiSwapChain = Make<MockDxgiSwapChain>();
+
         m_dxgiSwapChain->Present1Method.AllowAnyCall();
 
         m_dxgiSwapChain->GetDesc1Method.AllowAnyCall(
@@ -591,9 +597,10 @@ TEST_CLASS(CanvasAnimatedControlTests)
             Adapter->Tick();
         }
 
-        void VerifyDeviceRecovered()
+        void VerifyDeviceRecovered(bool controlAlreadyNoticed = false)
         {
-            DoChangedAndTick(); // Device lost first noticed
+            if (!controlAlreadyNoticed)
+                DoChangedAndTick(); // Device lost first noticed
 
             OnCreateResources.SetExpectedCalls(1);
             OnUpdate.ExpectAtLeastOneCall();
@@ -679,6 +686,115 @@ TEST_CLASS(CanvasAnimatedControlTests)
             });
 
         f.VerifyDeviceRecovered();
+    }
+
+
+    TEST_METHOD_EX(CanvasAnimatedControl_WhenCustomDeviceIsLost_CustomDevicePropertyStillWorks)
+    {
+        DeviceLostFixture f;
+
+        auto customDevice = Make<StubCanvasDevice>();
+        Assert::AreEqual(S_OK, f.Control->put_CustomDevice(customDevice.Get()));
+        customDevice->CreateDeviceContextMethod.AllowAnyCall(
+            [=]
+            {
+                return Make<StubD2DDeviceContext>(nullptr);
+            });
+
+        f.DoChangedAndTick(); // Allows for custom device to be properly set.
+
+        f.OnDraw.SetExpectedCalls(1,
+            [&](ICanvasAnimatedControl*, ICanvasAnimatedDrawEventArgs*)
+            {
+                customDevice->MarkAsLost();
+                return DXGI_ERROR_DEVICE_REMOVED;
+            });
+        
+        f.DoChangedAndTick(); // Allow for device lost to be noticed.
+        f.Adapter->DoChanged(); // Control's device lost handler is called.
+
+        ComPtr<ICanvasDevice> retrievedDevice;
+        Assert::AreEqual(S_OK, f.Control->get_CustomDevice(&retrievedDevice));
+        Assert::AreEqual(static_cast<ICanvasDevice*>(customDevice.Get()), retrievedDevice.Get());
+    }
+
+    TEST_METHOD_EX(CanvasAnimatedControl_WhenCustomDeviceIsLost_CustomDeviceCanBeSetAgain)
+    {
+        DeviceLostFixture f;
+
+        auto customDevice = Make<StubCanvasDevice>();
+        Assert::AreEqual(S_OK, f.Control->put_CustomDevice(customDevice.Get()));
+        customDevice->CreateDeviceContextMethod.AllowAnyCall(
+            [=]
+            {
+                return Make<StubD2DDeviceContext>(nullptr);
+            });
+
+        f.DoChangedAndTick(); // Allows for custom device to be properly set.
+
+        f.OnDraw.SetExpectedCalls(1,
+            [&](ICanvasAnimatedControl*, ICanvasAnimatedDrawEventArgs*)
+        {
+            customDevice->MarkAsLost();
+            return DXGI_ERROR_DEVICE_REMOVED;
+        });
+
+        f.DoChangedAndTick(); // Allow for device lost to be noticed.
+        f.Adapter->DoChanged(); // Control's device lost handler is called.
+
+        auto otherCustomDevice = Make<StubCanvasDevice>();
+        Assert::AreEqual(S_OK, f.Control->put_CustomDevice(otherCustomDevice.Get()));
+
+        ComPtr<ICanvasDevice> retrievedDevice;
+        Assert::AreEqual(S_OK, f.Control->get_CustomDevice(&retrievedDevice));
+        Assert::AreEqual(static_cast<ICanvasDevice*>(otherCustomDevice.Get()), retrievedDevice.Get());
+    }
+
+
+    TEST_METHOD_EX(CanvasAnimatedControl_WhenCustomDeviceIsLostAndSetAgain_ControlIsRecovered)
+    {
+        DeviceLostFixture f;
+
+        auto customDevice = Make<StubCanvasDevice>();
+        customDevice->CreateDeviceContextMethod.AllowAnyCall(
+            [=]
+            {
+                return Make<StubD2DDeviceContext>(nullptr);
+            });
+        Assert::AreEqual(S_OK, f.Control->put_CustomDevice(customDevice.Get()));
+
+        f.DoChangedAndTick(); // Allows for custom device to be properly set.
+
+        f.OnDraw.SetExpectedCalls(1,
+            [&](ICanvasAnimatedControl*, ICanvasAnimatedDrawEventArgs*)
+        {
+            customDevice->MarkAsLost();
+            return DXGI_ERROR_DEVICE_REMOVED;
+        });
+
+        f.DoChangedAndTick(); // Allow for device lost to be noticed.
+        f.Adapter->DoChanged(); // Control's device lost handler is called.
+
+        auto otherCustomDevice = Make<StubCanvasDevice>();
+        otherCustomDevice->CreateDeviceContextMethod.AllowAnyCall(
+            [&]
+            {
+                return Make<StubD2DDeviceContext>(nullptr);
+            });
+        Assert::AreEqual(S_OK, f.Control->put_CustomDevice(otherCustomDevice.Get()));
+
+        //
+        // Necessary- otherwise, when the test infrastructure uses interop to
+        // create a new CanvasSwapChain, it will get confused as it's already
+        // seen its dxgi swap chain with a different canvas device.
+        //
+        f.ResetSwapChain();
+
+        //
+        // We want to do the validation, but we've already seen/processed
+        // device lost (and reacted to it by resetting the custom device).
+        //
+        f.VerifyDeviceRecovered(true);
     }
 
     TEST_METHOD_EX(CanvasAnimatedControl_WhenDrawReportsDeviceLost_ButDeviceIsntLost_ExceptionPropagates)
@@ -2744,7 +2860,6 @@ TEST_CLASS(CanvasAnimatedControl_AppAccessingWorkerThreadTests)
         //
         // because #2 and #3 were requeued.
         //
-
 
         static const int actionCount = 6;
         SimpleDispatchedHandler dispatchedHandlers[actionCount];
