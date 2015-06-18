@@ -113,9 +113,8 @@ void CanvasGameLoop::ScheduleTick(Lock const& lock)
 {
     MustOwnLock(lock);
 
-    ThrowIfFailed(m_dispatcher->RunAsync(CoreDispatcherPriority_Normal, m_tickHandler.Get(), &m_tickLoopAction));
-    ThrowIfFailed(m_tickLoopAction->put_Completed(m_tickCompletedHandler.Get()));
-    
+    ThrowIfFailed(m_dispatcher->RunAsync(CoreDispatcherPriority_Low, m_tickHandler.Get(), &m_tickLoopAction));
+    ThrowIfFailed(m_tickLoopAction->put_Completed(m_tickCompletedHandler.Get()));    
 }
 
 void CanvasGameLoop::EndTickLoop(Lock const& lock)
