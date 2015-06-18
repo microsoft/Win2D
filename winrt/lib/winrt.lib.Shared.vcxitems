@@ -34,11 +34,15 @@
   <Target Name="mdmerge" AfterTargets="Midl" Inputs="@(Midl -> '%(MetadataFileName)')" Outputs="$(MergedWinmdDirectory)\$(RootNamespace).winmd">
     <PropertyGroup>
       <MdMergeExe>"$(WindowsSdkDir)\bin\$(PreferredToolArchitecture)\mdmerge.exe"</MdMergeExe>
-      <!-- TODO: this shouldn't be necessary - $(WindowsSDK_MetadataPath) should be the correct path -->
-      <MetaDataPath Condition="'$(ApplicationTypeRevision)' == '8.1'">"$(WindowsSDK_MetadataPath)"</MetaDataPath>
-      <MetaDataPath Condition="'$(ApplicationTypeRevision)' == '10.0'">"$(WindowsSDK_MetadataPath)\Windows.Foundation.FoundationContract\1.0.0.0" -metadata_dir "$(WindowsSDK_MetadataPath)\Windows.Foundation.UniversalApiContract\1.0.0.0"</MetaDataPath>
     </PropertyGroup>
-    <Exec Command="$(MdMergeExe) -v -metadata_dir $(MetadataPath) -o &quot;$(MergedWinmdDirectory)&quot; -i &quot;$(UnmergedWinmdDirectory)&quot; -partial -n:Microsoft.Graphics.Canvas:3" />
+	<ItemGroup Condition="'$(ApplicationTypeRevision)' == '8.1'">
+      <MetaDataDir Include="$(WindowsSDK_MetadataPath)" />
+	</ItemGroup>
+	<ItemGroup Condition="'$(ApplicationTypeRevision)' == '10.0'">
+	  <MetaDataDir Include="$(WindowsSDK_MetadataPath)\Windows.Foundation.FoundationContract\1.0.0.0" />
+	  <MetaDataDir Include="$(WindowsSDK_MetadataPath)\Windows.Foundation.UniversalApiContract\1.0.0.0" />
+    </ItemGroup>
+    <Exec Command="$(MdMergeExe) -v @(MetaDataDir -> '-metadata_dir &quot;%(Identity)&quot;', ' ') -o &quot;$(MergedWinmdDirectory)&quot; -i &quot;$(UnmergedWinmdDirectory)&quot; -partial -n:Microsoft.Graphics.Canvas:3" />
   </Target>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)drawing\CanvasActiveLayer.h" />
