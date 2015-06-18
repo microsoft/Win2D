@@ -86,7 +86,10 @@ under the License.
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasSwapChain.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.DirectX.DirectXPixelFormat,System.Int32,Microsoft.Graphics.Canvas.CanvasAlphaMode)">
       <summary>Initializes a new instance of the CanvasSwapChain class with the options specified.</summary>
-      <remarks>Size is in <a href="DPI.htm">device independent pixels (DIPs)</a>.</remarks>
+      <remarks>
+        <p>Size is in <a href="DPI.htm">device independent pixels (DIPs)</a>.</p>
+        <p>List of <a href="PixelFormats.htm">supported pixel formats</a>.</p>
+      </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasSwapChain.CreateForCoreWindow(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.UI.Core.CoreWindow,System.Single)">
       <summary>Initializes a new instance of a CanvasSwapChain, suitable for use with CoreWindow.</summary>
@@ -119,6 +122,9 @@ under the License.
       <remarks>
         <p>
           The size is in <a href="DPI.htm">device independent pixels (DIPs)</a>.
+        </p>
+        <p>
+          List of <a href="PixelFormats.htm">supported pixel formats</a>.
         </p>
         <p>
           The <see
@@ -191,6 +197,9 @@ under the License.
       <remarks>
         <p>
           Size is in <a href="DPI.htm">device independent pixels (DIPs)</a>.
+        </p>
+        <p>
+          List of <a href="PixelFormats.htm">supported pixel formats</a>.
         </p>
         <p>
           On Windows Phone 8.1, this method will fail for swap chains created
