@@ -118,8 +118,14 @@ command prompt (if using Visual Studio 2015). This will:
 - Make sure all source files include the correct Apache copyright header
 
 To run Store unit tests, you must have a Windows Store development license
-installed on your computer, and must install a test package certificate as
-described in the Remarks section of http://msdn.microsoft.com/en-us/library/windows/desktop/jj835836%28v=vs.85%29.aspx
+installed on your computer, and must install the test package certificate from
+build\Assets\TemporaryKey.pfx in your Win2D enlistment:
+
+1. Right-click on the .pfx file, and select **Install PFX**
+2. Choose **Local Machine**, then click **Next** three times (leaving the password blank)
+3. Select **Place all certificates in the following store**
+4. Click the **Browse** button, and select **Trusted People**
+5. Click **OK**, **Next**, and then **Finish**
 
 #### Submit a pull request to the main repository
 
