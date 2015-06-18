@@ -568,28 +568,10 @@ public:
         Assert::AreEqual(S_OK, canvasDevice->RaiseDeviceLost());
     }
 
-    TEST_METHOD_EX(CanvasDeviceLostTests_RaiseDeviceLost_RaisesSubscribedHandlers_DeviceNotActuallyLost)
-    {
-        //
-        // The unit tests testing the DeviceLost event do not exhaustively test 
-        // everything concerning  adding/removing events, because DeviceLost is 
-        // implemented directly on top of EventSource<...>, which 
-        // already has coverage elsewhere.
-        //
-        auto canvasDevice = m_deviceManager->Create(CanvasDebugLevel::None, CanvasHardwareAcceleration::On);
-
-        MockEventHandler<DeviceLostHandlerType> deviceLostHandler(L"DeviceLost");
-        deviceLostHandler.SetExpectedCalls(1);
-
-        EventRegistrationToken token{};
-        Assert::AreEqual(S_OK, canvasDevice->add_DeviceLost(deviceLostHandler.Get(), &token));
-
-        Assert::AreEqual(S_OK, canvasDevice->RaiseDeviceLost());
-    }
-
     TEST_METHOD_EX(CanvasDeviceLostTests_RemoveEventThen_RaiseDeviceLost_DoesNotInvokeHandler)
     {
-        auto canvasDevice = m_deviceManager->Create(CanvasDebugLevel::None, CanvasHardwareAcceleration::On);
+        DeviceLostFixture f;
+        auto canvasDevice = f.DeviceManager->Create(CanvasDebugLevel::None, CanvasHardwareAcceleration::On);
 
         MockEventHandler<DeviceLostHandlerType> deviceLostHandler(L"DeviceLost");
         deviceLostHandler.SetExpectedCalls(0);
@@ -638,7 +620,40 @@ public:
 
         Assert::AreEqual(E_UNEXPECTED, canvasDevice->RaiseDeviceLost());
     }
+
+    class D3DDeviceAccessAdapter : public TestDeviceResourceCreationAdapter
+    {
+    public:
+        ComPtr<StubD3D11Device> D3DDevice;
+
+        D3DDeviceAccessAdapter()
+            : D3DDevice(Make<StubD3D11Device>())
+        {
+        }
+
+        ComPtr<StubD3D11Device> CreateStubD3D11Device() override
+        {
+            return D3DDevice;
+        }
+    };
+
+    TEST_METHOD_EX(CanvasDeviceLostTests_RaiseDeviceLost_IfDeviceIsNotActuallyLost_ErrorIsReturned)
+    {
+        auto adapter = std::make_shared<D3DDeviceAccessAdapter>();
+        auto manager = std::make_shared<CanvasDeviceManager>(adapter);
+
+        //
+        // The default mock for GetDeviceRemovedReason returns S_OK.
+        //
+        adapter->D3DDevice->GetDeviceRemovedReasonMethod.ExpectAtLeastOneCall();
+
+        auto device = manager->GetSharedDevice(CanvasHardwareAcceleration::Auto);
+
+        Assert::AreEqual(E_INVALIDARG, device->RaiseDeviceLost());
+        ValidateStoredErrorState(E_INVALIDARG, Strings::DeviceExpectedToBeLost);
+    }
 };
+
 
 CanvasHardwareAcceleration allHardwareAccelerationTypes[] = {
     CanvasHardwareAcceleration::Auto,
@@ -792,12 +807,10 @@ public:
         Assert::AreEqual(S_OK, device->add_DeviceLost(deviceLostHandler.Get(), &token));
 
         // Lose the device
-        int callIndex = 0;
         d3dDevice->GetDeviceRemovedReasonMethod.AllowAnyCall(
             [&] 
             { 
-                callIndex++;
-                return callIndex == 1? DXGI_ERROR_DEVICE_REMOVED : S_OK;
+                return DXGI_ERROR_DEVICE_REMOVED;
             });
 
         // Try and get the cached device again

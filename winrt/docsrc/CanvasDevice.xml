@@ -119,9 +119,7 @@ under the License.
           See <see cref="M:Microsoft.Graphics.Canvas.CanvasDevice.IsDeviceLost(System.Int32)"/>.
           </p>
           <p>
-          Any event handlers subscribed to the <see cref="E:Microsoft.Graphics.Canvas.CanvasDevice.DeviceLost"/>
-          will be issued. This will occur, even if there was no actual Direct3D device loss. This
-          is just a convenience, to make application testing easier.
+          Calling this method will produce an error if there was no actual Direct3D device loss.
           </p>
       </remarks>
     </member>
