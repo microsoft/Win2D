@@ -11,16 +11,7 @@
 // under the License.
 
 namespace Microsoft.Graphics.Canvas
-{
-    [version(VERSION)]
-    typedef enum CanvasHardwareAcceleration 
-    {
-        Auto, 
-        On,
-        Off,
-        Unknown
-    } CanvasHardwareAcceleration;
-    
+{    
     runtimeclass CanvasDevice;
 
     [version(VERSION), uuid(8F6D8AA8-492F-4BC6-B3D0-E7F5EAE84B11)]
@@ -46,9 +37,9 @@ namespace Microsoft.Graphics.Canvas
             [in] CanvasDebugLevel debugLevel,
             [out, retval] CanvasDevice** canvasDevice);
 
-        HRESULT CreateWithDebugLevelAndHardwareAcceleration(
+        HRESULT CreateWithDebugLevelAndForceSoftwareRendererOption(
             [in] CanvasDebugLevel debugLevel,
-            [in] CanvasHardwareAcceleration hardwareAcceleration,
+            [in] boolean forceSoftwareRenderer,
             [out, retval] CanvasDevice** canvasDevice);
     };
 
@@ -67,10 +58,8 @@ namespace Microsoft.Graphics.Canvas
         // The implementation checks if a device is already lost before it 
         // returns it. If the device is already lost it will recreate it.
         // 
-        // CanvasHardwareAcceleration.Unknown is not a valid parameter.
-        //
         HRESULT GetSharedDevice(
-            [in] CanvasHardwareAcceleration hardwareAcceleration, 
+            [in] boolean forceSoftwareRenderer, 
             [out, retval] CanvasDevice** canvasDevice);
     };
 
@@ -80,9 +69,12 @@ namespace Microsoft.Graphics.Canvas
                  ICanvasResourceCreator, 
                  IDIRECT3DDEVICE
     {
+        // 
+        // This always returns false if the device was created using Direct3D interop.
+        //
         [propget] 
-        HRESULT HardwareAcceleration(
-            [out, retval] CanvasHardwareAcceleration* value);
+        HRESULT ForceSoftwareRenderer(
+            [out, retval] boolean* value);
 
         [propget]
         HRESULT MaximumBitmapSizeInPixels(

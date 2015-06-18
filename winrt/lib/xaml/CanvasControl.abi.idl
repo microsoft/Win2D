@@ -158,16 +158,16 @@ namespace Microsoft.Graphics.Canvas.UI.Xaml
         [propput] HRESULT UseSharedDevice([in] boolean value);
 
         //
-        // This affects what device the control will try to create, or 
-        // obtain (from the SharedDevices pool).
+        // This affects what type of device the control will try to create,
+        // or obtain (from the SharedDevices pool).
         //
-        // This is set to On by default.
+        // This is set to false by default.
         //
         // Modifying this property will cause re-creation of the rendering
         // resource.
         //
-        [propget] HRESULT HardwareAcceleration([out, retval] Microsoft.Graphics.Canvas.CanvasHardwareAcceleration* value);
-        [propput] HRESULT HardwareAcceleration([in] Microsoft.Graphics.Canvas.CanvasHardwareAcceleration value);
+        [propget] HRESULT ForceSoftwareRenderer([out, retval] boolean* value);
+        [propput] HRESULT ForceSoftwareRenderer([in] boolean value);
 
         //
         // Allows an app to explicitly set a device of its own choosing to the

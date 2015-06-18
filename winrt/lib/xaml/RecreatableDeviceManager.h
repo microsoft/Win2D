@@ -42,13 +42,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     struct DeviceCreationOptions
     {
         bool UseSharedDevice;
-        CanvasHardwareAcceleration HardwareAcceleration;
+        bool ForceSoftwareRenderer;
         ComPtr<ICanvasDevice> CustomDevice;
 
         bool operator==(const DeviceCreationOptions& rhs)
         {
             return UseSharedDevice == rhs.UseSharedDevice &&
-                HardwareAcceleration == rhs.HardwareAcceleration &&
+                ForceSoftwareRenderer == rhs.ForceSoftwareRenderer &&
                 IsSameInstance(CustomDevice.Get(), rhs.CustomDevice.Get());
         }
 

@@ -119,7 +119,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         bool m_isVisible;
         float m_dpi;
         bool m_useSharedDevice;
-        CanvasHardwareAcceleration m_hardwareAcceleration;
+        bool m_forceSoftwareRenderer;
 
         EventSource<drawEventHandler_t, InvokeModeOptions<StopOnFirstError>> m_drawEventList;
 
@@ -149,7 +149,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             , m_window(adapter->GetWindowOfCurrentThread())
             , m_dpi(adapter->GetLogicalDpi())
             , m_useSharedDevice(useSharedDevice)
-            , m_hardwareAcceleration(CanvasHardwareAcceleration::On)
+            , m_forceSoftwareRenderer(false)
             , m_currentSize{}
             , m_clearColor{}
             , m_currentRenderTarget{}
@@ -289,8 +289,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                 });
         }
 
-        IFACEMETHODIMP get_HardwareAcceleration(
-            CanvasHardwareAcceleration* value)
+        IFACEMETHODIMP get_ForceSoftwareRenderer(
+            boolean* value)
         {
             return ExceptionBoundary(
                 [&]
@@ -299,25 +299,22 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
                     auto lock = GetLock();
 
-                    *value = m_hardwareAcceleration;
+                    *value = m_forceSoftwareRenderer;
                 });
         }
 
-        IFACEMETHODIMP put_HardwareAcceleration(
-            CanvasHardwareAcceleration value)
+        IFACEMETHODIMP put_ForceSoftwareRenderer(
+            boolean value)
         {
             return ExceptionBoundary(
                 [&]
                 {
-                    if (value == CanvasHardwareAcceleration::Unknown)
-                        ThrowHR(E_INVALIDARG, HStringReference(Strings::HardwareAccelerationUnknownIsNotValid).Get());
-
                     auto lock = GetLock();
 
-                    if (m_hardwareAcceleration == value)
+                    if (m_forceSoftwareRenderer == !!value)
                         return;
 
-                    m_hardwareAcceleration = value;
+                    m_forceSoftwareRenderer = !!value;
 
                     Changed(lock, ChangeReason::DeviceCreationOptions);
                 });
@@ -585,7 +582,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         {
             MustOwnLock(lock);
 
-            DeviceCreationOptions options { m_useSharedDevice, m_hardwareAcceleration, m_customDevice };
+            DeviceCreationOptions options { m_useSharedDevice, m_forceSoftwareRenderer, m_customDevice };
 
             return options;
         }

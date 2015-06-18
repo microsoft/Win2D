@@ -213,13 +213,6 @@ namespace Microsoft
                 END_ENUM(CanvasDebugLevel);
             }
 
-            ENUM_TO_STRING(CanvasHardwareAcceleration)
-            {
-                ENUM_VALUE(CanvasHardwareAcceleration::On);
-                ENUM_VALUE(CanvasHardwareAcceleration::Off);
-                END_ENUM(CanvasHardwareAcceleration);
-            }
-
             ENUM_TO_STRING(RunWithDeviceFlags)
             {
                 ENUM_VALUE(RunWithDeviceFlags::None);

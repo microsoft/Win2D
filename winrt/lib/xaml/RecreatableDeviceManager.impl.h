@@ -395,15 +395,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             {
                 auto deviceStatics = As<ICanvasDeviceStatics>(m_canvasDeviceFactory);
 
-                ThrowIfFailed(deviceStatics->GetSharedDevice(deviceCreationOptions.HardwareAcceleration, &device));
+                ThrowIfFailed(deviceStatics->GetSharedDevice(deviceCreationOptions.ForceSoftwareRenderer, &device));
             }
             else
             {
                 auto deviceFactory = As<ICanvasDeviceFactory>(m_canvasDeviceFactory);
 
-                deviceFactory->CreateWithDebugLevelAndHardwareAcceleration(
+                deviceFactory->CreateWithDebugLevelAndForceSoftwareRendererOption(
                     CanvasDebugLevel::None,
-                    deviceCreationOptions.HardwareAcceleration,
+                    deviceCreationOptions.ForceSoftwareRenderer,
                     &device);
             }
 

@@ -88,9 +88,9 @@ namespace canvas
         // ICanvasDevice
         //
 
-        IFACEMETHODIMP get_HardwareAcceleration(CanvasHardwareAcceleration *) override
+        IFACEMETHODIMP get_ForceSoftwareRenderer(boolean *) override
         {
-            Assert::Fail(L"Unexpected call to get_HardwareAcceleration");
+            Assert::Fail(L"Unexpected call to get_ForceSoftwareRenderer");
             return E_NOTIMPL;
         }
 

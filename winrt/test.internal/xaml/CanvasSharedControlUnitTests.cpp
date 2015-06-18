@@ -446,12 +446,7 @@ TEST_CLASS(CanvasSharedControlTests_CommonAdapter)
     }
 };
 
-CanvasHardwareAcceleration hardwareAccelerationOptions[] =
-{
-    CanvasHardwareAcceleration::Auto,
-    CanvasHardwareAcceleration::On,
-    CanvasHardwareAcceleration::Off
-};
+boolean allForceSoftwareRendererOptions[] = { false, true };
 
 template<typename TRAITS>
 struct DeviceCreationFixture : public BasicControlFixture<TRAITS>
@@ -479,7 +474,7 @@ struct DeviceCreationFixture : public BasicControlFixture<TRAITS>
     void ExpectOneGetSharedDevice()
     {
         Adapter->DeviceFactory->GetSharedDeviceMethod.SetExpectedCalls(1,
-            [&](CanvasHardwareAcceleration hardwareAcceleration, ICanvasDevice** device)
+            [&](boolean, ICanvasDevice** device)
         {
             Make<StubCanvasDevice>().CopyTo(device);
             return S_OK;
@@ -493,8 +488,8 @@ struct DeviceCreationFixture : public BasicControlFixture<TRAITS>
 
     void ExpectOneCreateDevice()
     {
-        Adapter->DeviceFactory->CreateWithDebugLevelAndHardwareAccelerationMethod.SetExpectedCalls(1,
-            [&](CanvasDebugLevel, CanvasHardwareAcceleration hardwareAcceleration, ICanvasDevice** device)
+        Adapter->DeviceFactory->CreateWithDebugLevelAndForceSoftwareRendererOptionMethod.SetExpectedCalls(1,
+            [&](CanvasDebugLevel, boolean, ICanvasDevice** device)
         {
             Make<StubCanvasDevice>().CopyTo(device);
             return S_OK;
@@ -503,7 +498,7 @@ struct DeviceCreationFixture : public BasicControlFixture<TRAITS>
 
     void DoNotExpectCreateDevice()
     {
-        Adapter->DeviceFactory->CreateWithDebugLevelAndHardwareAccelerationMethod.SetExpectedCalls(0);
+        Adapter->DeviceFactory->CreateWithDebugLevelAndForceSoftwareRendererOptionMethod.SetExpectedCalls(0);
     }
 
     void DoNotExpectChanged()
@@ -578,69 +573,58 @@ TEST_CLASS(CanvasSharedControlTests_DeviceApis)
         f.EnsureDevice();
     }
 
-    TEST_SHARED_CONTROL_BEHAVIOR(HardwareAcceleration_Null)
+    TEST_SHARED_CONTROL_BEHAVIOR(ForceSoftwareRenderer_Null)
     {
         BasicControlFixture<TRAITS> f;
 
         f.CreateAdapter();
         f.CreateControl();
 
-        Assert::AreEqual(E_INVALIDARG, f.Control->get_HardwareAcceleration(nullptr));
+        Assert::AreEqual(E_INVALIDARG, f.Control->get_ForceSoftwareRenderer(nullptr));
     }
 
-    TEST_SHARED_CONTROL_BEHAVIOR(HardwareAcceleration_UnknownIsInvalid)
+    TEST_SHARED_CONTROL_BEHAVIOR(ForceSoftwareRenderer_Default_Off)
     {
         BasicControlFixture<TRAITS> f;
 
         f.CreateAdapter();
         f.CreateControl();
 
-        Assert::AreEqual(E_INVALIDARG, f.Control->put_HardwareAcceleration(CanvasHardwareAcceleration::Unknown));
-        ValidateStoredErrorState(E_INVALIDARG, Strings::HardwareAccelerationUnknownIsNotValid);
+        boolean defaultValue;
+        Assert::AreEqual(S_OK, f.Control->get_ForceSoftwareRenderer(&defaultValue));
+        Assert::IsFalse(!!defaultValue);
     }
 
-    TEST_SHARED_CONTROL_BEHAVIOR(HardwareAcceleration_Default_On)
+    TEST_SHARED_CONTROL_BEHAVIOR(ForceSoftwareRenderer_SetAndGet)
     {
         BasicControlFixture<TRAITS> f;
 
         f.CreateAdapter();
         f.CreateControl();
 
-        CanvasHardwareAcceleration hardwareAcceleration;
-        Assert::AreEqual(S_OK, f.Control->get_HardwareAcceleration(&hardwareAcceleration));
-        Assert::AreEqual(CanvasHardwareAcceleration::On, hardwareAcceleration);
-    }
+        Assert::AreEqual(S_OK, f.Control->put_ForceSoftwareRenderer(true));
 
-    TEST_SHARED_CONTROL_BEHAVIOR(HardwareAcceleration_SetAndGet)
-    {
-        BasicControlFixture<TRAITS> f;
+        boolean forceSoftwareRenderer;
+        Assert::AreEqual(S_OK, f.Control->get_ForceSoftwareRenderer(&forceSoftwareRenderer));
 
-        f.CreateAdapter();
-        f.CreateControl();
-
-        Assert::AreEqual(S_OK, f.Control->put_HardwareAcceleration(CanvasHardwareAcceleration::Off));
-
-        CanvasHardwareAcceleration hardwareAcceleration;
-        Assert::AreEqual(S_OK, f.Control->get_HardwareAcceleration(&hardwareAcceleration));
-
-        Assert::AreEqual(CanvasHardwareAcceleration::Off, hardwareAcceleration);
+        Assert::IsTrue(!!forceSoftwareRenderer);
     }
 
     TEST_SHARED_CONTROL_BEHAVIOR(UseSharedDevice_IfTrue_DeviceIsRetrievedWithCorrectOption)
     {
-        for (auto expectedHardwareAcceleration : hardwareAccelerationOptions)
+        for (auto expectedForceSoftwareRenderer : allForceSoftwareRendererOptions)
         {
             DeviceCreationFixture<TRAITS> f;
 
             Assert::AreEqual(S_OK, f.Control->put_UseSharedDevice(true));
-            Assert::AreEqual(S_OK, f.Control->put_HardwareAcceleration(expectedHardwareAcceleration));
+            Assert::AreEqual(S_OK, f.Control->put_ForceSoftwareRenderer(expectedForceSoftwareRenderer));
 
             auto stubDevice = Make<StubCanvasDevice>();
 
             f.Adapter->DeviceFactory->GetSharedDeviceMethod.SetExpectedCalls(1,
-                [&](CanvasHardwareAcceleration hardwareAcceleration, ICanvasDevice** device)
+                [&](boolean forceSoftwareRenderer, ICanvasDevice** device)
                 {
-                    Assert::AreEqual(expectedHardwareAcceleration, hardwareAcceleration);
+                    Assert::AreEqual(expectedForceSoftwareRenderer, forceSoftwareRenderer);
                     return stubDevice.CopyTo(device);
                 });
 
@@ -650,18 +634,18 @@ TEST_CLASS(CanvasSharedControlTests_DeviceApis)
 
     TEST_SHARED_CONTROL_BEHAVIOR(UseSharedDevice_IfFalse_DeviceIsCreatedWithCorrectOption)
     {
-        for (auto expectedHardwareAcceleration : hardwareAccelerationOptions)
+        for (auto expectedForceSoftwareRenderer : allForceSoftwareRendererOptions)
         {
             DeviceCreationFixture<TRAITS> f;
             Assert::AreEqual(S_OK, f.Control->put_UseSharedDevice(false));
-            Assert::AreEqual(S_OK, f.Control->put_HardwareAcceleration(expectedHardwareAcceleration));
+            Assert::AreEqual(S_OK, f.Control->put_ForceSoftwareRenderer(expectedForceSoftwareRenderer));
             
             auto stubDevice = Make<StubCanvasDevice>();
 
-            f.Adapter->DeviceFactory->CreateWithDebugLevelAndHardwareAccelerationMethod.SetExpectedCalls(1,
-                [&](CanvasDebugLevel, CanvasHardwareAcceleration hardwareAcceleration, ICanvasDevice** device)
+            f.Adapter->DeviceFactory->CreateWithDebugLevelAndForceSoftwareRendererOptionMethod.SetExpectedCalls(1,
+                [&](CanvasDebugLevel, boolean forceSoftwareRenderer, ICanvasDevice** device)
                 {
-                    Assert::AreEqual(expectedHardwareAcceleration, hardwareAcceleration);
+                    Assert::AreEqual(expectedForceSoftwareRenderer, forceSoftwareRenderer);
                     return stubDevice.CopyTo(device);
                 });
 
@@ -701,41 +685,41 @@ TEST_CLASS(CanvasSharedControlTests_DeviceApis)
         }
     }
 
-    TEST_SHARED_CONTROL_BEHAVIOR(HardwareAcceleration_ChangingOptionCausesReCreation)
+    TEST_SHARED_CONTROL_BEHAVIOR(ForceSoftwareRenderer_ChangingOptionCausesReCreation)
     {
         DeviceCreationFixture<TRAITS> f;
 
         Assert::AreEqual(S_OK, f.Control->put_UseSharedDevice(true));
-        Assert::AreEqual(S_OK, f.Control->put_HardwareAcceleration(CanvasHardwareAcceleration::On));
+        Assert::AreEqual(S_OK, f.Control->put_ForceSoftwareRenderer(true));
 
         f.ExpectOneGetSharedDevice();
         f.EnsureDevice();
 
-        Assert::AreEqual(S_OK, f.Control->put_HardwareAcceleration(CanvasHardwareAcceleration::Off));
+        Assert::AreEqual(S_OK, f.Control->put_ForceSoftwareRenderer(false));
 
         f.ExpectOneGetSharedDevice();
         f.EnsureDevice();
     }
 
-    TEST_SHARED_CONTROL_BEHAVIOR(HardwareAcceleration_RedundantChangesDoNotCauseReCreation)
+    TEST_SHARED_CONTROL_BEHAVIOR(ForceSoftwareRenderer_RedundantChangesDoNotCauseReCreation)
     {
         DeviceCreationFixture<TRAITS> f;
 
         Assert::AreEqual(S_OK, f.Control->put_UseSharedDevice(true));
-        Assert::AreEqual(S_OK, f.Control->put_HardwareAcceleration(CanvasHardwareAcceleration::Off));
+        Assert::AreEqual(S_OK, f.Control->put_ForceSoftwareRenderer(true));
 
         f.ExpectOneGetSharedDevice();
         f.EnsureDevice();
 
         for (int i = 0; i < 3; ++i)
         {
-            Assert::AreEqual(S_OK, f.Control->put_HardwareAcceleration(CanvasHardwareAcceleration::Off));
+            Assert::AreEqual(S_OK, f.Control->put_ForceSoftwareRenderer(true));
             f.DoNotExpectGetSharedDevice();
             f.EnsureDevice();
         }
     }
 
-    TEST_SHARED_CONTROL_BEHAVIOR(HardwareAcceleration_get_Device_SucceedsAfterCreateResourcesOccurs)
+    TEST_SHARED_CONTROL_BEHAVIOR(ForceSoftwareRenderer_get_Device_SucceedsAfterCreateResourcesOccurs)
     {
         DeviceCreationFixture<TRAITS> f;
 

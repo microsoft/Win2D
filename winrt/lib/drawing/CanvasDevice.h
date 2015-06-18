@@ -33,7 +33,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         virtual ComPtr<ID2D1Factory2> CreateD2DFactory(CanvasDebugLevel debugLevel) = 0;
 
-        virtual bool TryCreateD3DDevice(CanvasHardwareAcceleration hardwareAcceleration, ComPtr<ID3D11Device>* device) = 0;
+        virtual bool TryCreateD3DDevice(bool useSoftwareRenderer, ComPtr<ID3D11Device>* device) = 0;
 
         virtual ComPtr<IDXGIDevice3> GetDxgiDevice(ID2D1Device1* d2dDevice) = 0;
     };
@@ -49,7 +49,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     public:
         virtual ComPtr<ID2D1Factory2> CreateD2DFactory(CanvasDebugLevel debugLevel) override;
 
-        virtual bool TryCreateD3DDevice(CanvasHardwareAcceleration hardwareAcceleration, ComPtr<ID3D11Device>* device) override;
+        virtual bool TryCreateD3DDevice(bool useSoftwareRenderer, ComPtr<ID3D11Device>* device) override;
 
         virtual ComPtr<IDXGIDevice3> GetDxgiDevice(ID2D1Device1* d2dDevice) override;
     };
@@ -160,9 +160,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     {
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_CanvasDevice, BaseTrust);
 
-        // This is used for the public-facing property value. Can be any value
-        // other than Auto.
-        CanvasHardwareAcceleration m_hardwareAcceleration; 
+        // This is used for the public-facing property value. If this device was
+        // created using interop, this is set to false.
+        bool m_forceSoftwareRenderer; 
 
         CanvasDebugLevel m_debugLevel;
         
@@ -179,7 +179,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         CanvasDevice(
             std::shared_ptr<CanvasDeviceManager> manager,
             CanvasDebugLevel debugLevel,
-            CanvasHardwareAcceleration hardwareAcceleration,
+            bool forceSoftwareRenderer,
             IDXGIDevice3* dxgiDevice,
             ID2D1Device1* d2dDevice);
 
@@ -187,7 +187,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         // ICanvasDevice
         //
 
-        IFACEMETHOD(get_HardwareAcceleration)(_Out_ CanvasHardwareAcceleration* value) override;
+        IFACEMETHOD(get_ForceSoftwareRenderer)(boolean* value) override;
 
         IFACEMETHOD(get_MaximumBitmapSizeInPixels)(int32_t* value) override;
 
@@ -323,30 +323,25 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     {
         std::shared_ptr<ICanvasDeviceResourceCreationAdapter> m_adapter;
 
-        WeakRef m_sharedDevices[3];
+        WeakRef m_sharedDevices[2];
         std::mutex m_mutex;
     public:
         CanvasDeviceManager(std::shared_ptr<ICanvasDeviceResourceCreationAdapter> adapter);
 
         virtual ~CanvasDeviceManager() = default;
         
-        ComPtr<CanvasDevice> CreateNew(CanvasDebugLevel debugLevel, CanvasHardwareAcceleration hardwareAcceleration);
-        ComPtr<CanvasDevice> CreateNew(CanvasDebugLevel debugLevel, CanvasHardwareAcceleration hardwareAcceleration, ID2D1Factory2* d2dFactory);
+        ComPtr<CanvasDevice> CreateNew(CanvasDebugLevel debugLevel, bool forceSoftwareRenderer);
+        ComPtr<CanvasDevice> CreateNew(CanvasDebugLevel debugLevel, bool forceSoftwareRenderer, ID2D1Factory2* d2dFactory);
         ComPtr<CanvasDevice> CreateNew(CanvasDebugLevel debugLevel, IDirect3DDevice* direct3DDevice);
         ComPtr<CanvasDevice> CreateNew(CanvasDebugLevel debugLevel, IDirect3DDevice* direct3DDevice, ID2D1Factory2* d2dFactory);
         ComPtr<CanvasDevice> CreateWrapper(ID2D1Device1* d2dDevice);
 
-        ComPtr<ICanvasDevice> GetSharedDevice(
-            CanvasHardwareAcceleration hardwareAcceleration);
+        ComPtr<ICanvasDevice> GetSharedDevice(bool forceSoftwareRenderer);
 
     private:
-        ComPtr<IDXGIDevice3> MakeDXGIDevice(
-            CanvasHardwareAcceleration requestedHardwareAcceleration,
-            CanvasHardwareAcceleration* actualHardwareAcceleration) const;
+        ComPtr<IDXGIDevice3> MakeDXGIDevice(bool forceSoftwareRenderer) const;
 
-        ComPtr<ID3D11Device> MakeD3D11Device(
-            CanvasHardwareAcceleration requestedHardwareAcceleration,
-            CanvasHardwareAcceleration* actualHardwareAcceleration) const;
+        ComPtr<ID3D11Device> MakeD3D11Device(bool forceSoftwareRenderer) const;
     };
 
 
@@ -380,9 +375,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             CanvasDebugLevel debugLevel,
             ICanvasDevice** canvasDevice) override;
 
-        IFACEMETHOD(CreateWithDebugLevelAndHardwareAcceleration)(
+        IFACEMETHOD(CreateWithDebugLevelAndForceSoftwareRendererOption)(
             CanvasDebugLevel debugLevel,
-            CanvasHardwareAcceleration hardwareAcceleration,
+            boolean forceSoftwareRenderer,
             ICanvasDevice** canvasDevice) override;
 
         IFACEMETHOD(CreateFromDirect3D11Device)(
@@ -394,7 +389,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         // ICanvasDeviceStatics
         //
         IFACEMETHOD(GetSharedDevice)(
-            CanvasHardwareAcceleration hardwareAcceleration,
+            boolean forceSoftwareRenderer,
             ICanvasDevice** device);
 
         //

@@ -26,11 +26,8 @@ under the License.
     <member name="M:Microsoft.Graphics.Canvas.CanvasDevice.#ctor(Microsoft.Graphics.Canvas.CanvasDebugLevel)">
       <summary>Initializes a new instance of the CanvasDevice class.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDevice.#ctor(Microsoft.Graphics.Canvas.CanvasDebugLevel,Microsoft.Graphics.Canvas.CanvasHardwareAcceleration)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDevice.#ctor(Microsoft.Graphics.Canvas.CanvasDebugLevel,System.Boolean)">
       <summary>Initializes a new instance of the CanvasDevice class.</summary>
-      <remarks>
-      	If <see cref="F:Microsoft.Graphics.Canvas.CanvasHardwareAcceleration.On"/> was specified, but GPU hardware acceleration was not available, an exception will be thrown.
-      </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasDevice.#ctor">
       <summary>Initializes a new instance of the CanvasDevice class.</summary>
@@ -41,13 +38,11 @@ under the License.
     <member name="M:Microsoft.Graphics.Canvas.CanvasDevice.CreateFromDirect3D11Device(Microsoft.Graphics.Canvas.DirectX.Direct3D11.IDirect3DDevice,Microsoft.Graphics.Canvas.CanvasDebugLevel)">
       <summary>Creates a CanvasDevice that will use the specified IDirect3DDevice.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasDevice.HardwareAcceleration">
-      <summary>Gets whether this device is using GPU hardware acceleration.</summary>
+    <member name="P:Microsoft.Graphics.Canvas.CanvasDevice.ForceSoftwareRenderer">
+      <summary>Gets the value of the forceSoftwareRendering parameter that was specified when this device was created.</summary>
       <remarks>
-      If the CanvasDevice was created with <see cref="F:Microsoft.Graphics.Canvas.CanvasHardwareAcceleration.Auto"/>,
-      this property will be either <see cref="F:Microsoft.Graphics.Canvas.CanvasHardwareAcceleration.On"/> or
-      <see cref="F:Microsoft.Graphics.Canvas.CanvasHardwareAcceleration.Off"/>, depending on which whether hardware
-      acceleration was actually available.
+        CanvasDevices created using native interop will always have this
+        property set to false.
       </remarks>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.CanvasDevice.Device">
@@ -55,28 +50,6 @@ under the License.
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasDevice.Trim">
       <summary>Trims any graphics memory allocated by the graphics device on the app's behalf.</summary>
-    </member>
-
-
-    <member name="T:Microsoft.Graphics.Canvas.CanvasHardwareAcceleration">
-      <summary>Specifies whether a graphics device uses GPU hardware acceleration or software rendering.</summary>
-    </member>
-    <member name="F:Microsoft.Graphics.Canvas.CanvasHardwareAcceleration.Auto">
-      <summary>Use GPU hardware acceleration if possible, otherwise fall back to software rendering.</summary>
-    </member>
-    <member name="F:Microsoft.Graphics.Canvas.CanvasHardwareAcceleration.On">
-      <summary>Use GPU hardware acceleration.</summary>
-    </member>
-    <member name="F:Microsoft.Graphics.Canvas.CanvasHardwareAcceleration.Off">
-      <summary>Use the WARP software renderer.</summary>
-    </member>
-    <member name="F:Microsoft.Graphics.Canvas.CanvasHardwareAcceleration.Unknown">
-      <summary>Indicates that it is not known whether this device uses hardware or software rendering.</summary>
-      <remarks>
-         This option exists for CanvasDevice objects created through C++ interop. On such objects, 
-         it may be returned by <see cref="P:Microsoft.Graphics.Canvas.CanvasDevice.HardwareAcceleration"/>.
-         Win2D does not try to ascertain whether the device's original creation flags specified hardware or software.
-      </remarks>
     </member>
     
     <member name="P:Microsoft.Graphics.Canvas.CanvasDevice.MaximumBitmapSizeInPixels">
@@ -141,11 +114,8 @@ under the License.
       </remarks>
     </member>
 
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDevice.GetSharedDevice(Microsoft.Graphics.Canvas.CanvasHardwareAcceleration)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDevice.GetSharedDevice(System.Boolean)">
       <summary>Gets a device that can be shared between multiple different rendering components, such as controls.</summary>
-          <p>
-          CanvasHardwareAcceleration.<see cref="F:Microsoft.Graphics.Canvas.CanvasHardwareAcceleration.Unknown"/> is not a valid parameter to this method.
-          </p>
           <p>
           Before being returned, the device is checked for whether it is lost. If it is lost, <see cref="M:Microsoft.Graphics.Canvas.CanvasDevice.RaiseDeviceLost"/>
           is called on the device, and then it is re-created.

@@ -131,7 +131,7 @@ TEST_CLASS(CanvasSwapChainTests)
 
     TEST_METHOD(CanvasSwapChain_WaitForVBlank_SW)
     {
-        auto device = ref new CanvasDevice(CanvasDebugLevel::None, CanvasHardwareAcceleration::Off);
+        auto device = ref new CanvasDevice(CanvasDebugLevel::None, true); // Force software renderer
         auto swapChain = ref new CanvasSwapChain(device, 1, 1, DEFAULT_DPI);
 
         // This should be a no-op and silently succeed.

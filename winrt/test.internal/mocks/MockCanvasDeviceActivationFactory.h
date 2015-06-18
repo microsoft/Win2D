@@ -16,13 +16,13 @@ class MockCanvasDeviceActivationFactory : public RuntimeClass<IActivationFactory
 {
 public:
     CALL_COUNTER_WITH_MOCK(ActivateInstanceMethod, HRESULT(IInspectable**));
-    CALL_COUNTER_WITH_MOCK(GetSharedDeviceMethod, HRESULT(CanvasHardwareAcceleration, ICanvasDevice**));
-    CALL_COUNTER_WITH_MOCK(CreateWithDebugLevelAndHardwareAccelerationMethod, HRESULT(CanvasDebugLevel, CanvasHardwareAcceleration, ICanvasDevice**));
+    CALL_COUNTER_WITH_MOCK(GetSharedDeviceMethod, HRESULT(boolean, ICanvasDevice**));
+    CALL_COUNTER_WITH_MOCK(CreateWithDebugLevelAndForceSoftwareRendererOptionMethod, HRESULT(CanvasDebugLevel, boolean, ICanvasDevice**));
 
     void ExpectToActivateOne(ComPtr<ICanvasDevice> device = Make<StubCanvasDevice>())
     {
-        CreateWithDebugLevelAndHardwareAccelerationMethod.SetExpectedCalls(1,
-            [=](CanvasDebugLevel, CanvasHardwareAcceleration, ICanvasDevice** out)
+        CreateWithDebugLevelAndForceSoftwareRendererOptionMethod.SetExpectedCalls(1,
+            [=](CanvasDebugLevel, boolean, ICanvasDevice** out)
             {
                 return device.CopyTo(out);
             });
@@ -51,12 +51,12 @@ public:
         return E_NOTIMPL;
     }
 
-    IFACEMETHODIMP CreateWithDebugLevelAndHardwareAcceleration(
+    IFACEMETHODIMP CreateWithDebugLevelAndForceSoftwareRendererOption(
         CanvasDebugLevel debugLevel,
-        CanvasHardwareAcceleration hardwareAcceleration,
+        boolean forceSoftwareRenderer,
         ICanvasDevice** canvasDevice)
     {
-        return CreateWithDebugLevelAndHardwareAccelerationMethod.WasCalled(debugLevel, hardwareAcceleration, canvasDevice);
+        return CreateWithDebugLevelAndForceSoftwareRendererOptionMethod.WasCalled(debugLevel, forceSoftwareRenderer, canvasDevice);
     }
 
     IFACEMETHODIMP CreateFromDirect3D11Device(
@@ -68,9 +68,9 @@ public:
     }
 
     IFACEMETHODIMP GetSharedDevice(
-        CanvasHardwareAcceleration hardwareAcceleration,
+        boolean forceSoftwareRenderer,
         ICanvasDevice** device)
     {
-        return GetSharedDeviceMethod.WasCalled(hardwareAcceleration, device);
+        return GetSharedDeviceMethod.WasCalled(forceSoftwareRenderer, device);
     }
 };

@@ -174,7 +174,6 @@ namespace Microsoft
                 return value.ToString()->Data();                    \
             }
             
-            CX_VALUE_TO_STRING(Microsoft::Graphics::Canvas::CanvasHardwareAcceleration);
             CX_VALUE_TO_STRING(Microsoft::Graphics::Canvas::Geometry::CanvasCapStyle);
             CX_VALUE_TO_STRING(Microsoft::Graphics::Canvas::Geometry::CanvasLineJoin);
             CX_VALUE_TO_STRING(Microsoft::Graphics::Canvas::Geometry::CanvasDashStyle);

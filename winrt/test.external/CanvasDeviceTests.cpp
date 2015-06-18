@@ -33,26 +33,30 @@ TEST_CLASS(CanvasDeviceTests)
         //
 
         CanvasDevice^ canvasDevice = ref new CanvasDevice();
-        Assert::AreEqual(CanvasHardwareAcceleration::On, canvasDevice->HardwareAcceleration);
+        Assert::IsFalse(canvasDevice->ForceSoftwareRenderer);
         Assert::IsNotNull(GetDXGIDevice(canvasDevice).Get());
 
         canvasDevice = ref new CanvasDevice(CanvasDebugLevel::Information);
-        Assert::AreEqual(CanvasHardwareAcceleration::On, canvasDevice->HardwareAcceleration);
+        Assert::IsFalse(canvasDevice->ForceSoftwareRenderer);
         Assert::IsNotNull(GetDXGIDevice(canvasDevice).Get());
 
-        canvasDevice = ref new CanvasDevice(CanvasDebugLevel::Warning, CanvasHardwareAcceleration::Off);
-        Assert::AreEqual(CanvasHardwareAcceleration::Off, canvasDevice->HardwareAcceleration);
+        canvasDevice = ref new CanvasDevice(CanvasDebugLevel::Warning, true);
+        Assert::IsTrue(canvasDevice->ForceSoftwareRenderer);
         Assert::IsNotNull(GetDXGIDevice(canvasDevice).Get());
 
         IDirect3DDevice^ direct3DDevice = canvasDevice;
         canvasDevice = CanvasDevice::CreateFromDirect3D11Device(
             direct3DDevice,
             CanvasDebugLevel::None);
-        Assert::AreEqual(CanvasHardwareAcceleration::Unknown, canvasDevice->HardwareAcceleration);
+        //
+        // Devices created using Direct3D interop have the convention of always
+        // ForceSoftwareRenderer == false.
+        //
+        Assert::IsFalse(canvasDevice->ForceSoftwareRenderer);
 
         delete canvasDevice;
             
-        ExpectObjectClosed([&]{ canvasDevice->HardwareAcceleration; });
+        ExpectObjectClosed([&]{ canvasDevice->ForceSoftwareRenderer; });
         ExpectObjectClosed([&]{ canvasDevice->MaximumBitmapSizeInPixels; });
         ExpectObjectClosed([&]{ GetDXGIDevice(canvasDevice); });
     }
@@ -79,20 +83,11 @@ TEST_CLASS(CanvasDeviceTests)
         Assert::AreEqual(originalD2DDevice.Get(), newD2DDevice.Get());
     }
 
-    TEST_METHOD(CanvasDevice_GetSharedDevice_UnknownNotAllowed)
-    {        
-        Assert::ExpectException<Platform::InvalidArgumentException^>(
-            [&]
-            {
-                CanvasDevice::GetSharedDevice(CanvasHardwareAcceleration::Unknown);
-            });
-    }
-
     TEST_METHOD(CanvasDevice_GetSharedDevice_ReturnsExisting)
     {
-        auto d1 = CanvasDevice::GetSharedDevice(CanvasHardwareAcceleration::On);
+        auto d1 = CanvasDevice::GetSharedDevice(false);
 
-        auto d2 = CanvasDevice::GetSharedDevice(CanvasHardwareAcceleration::On);
+        auto d2 = CanvasDevice::GetSharedDevice(false);
 
         Assert::AreEqual(d1, d2);
     }

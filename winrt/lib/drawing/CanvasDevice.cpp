@@ -35,13 +35,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
     bool DefaultDeviceResourceCreationAdapter::TryCreateD3DDevice(
-        CanvasHardwareAcceleration hardwareAcceleration, 
+        bool useSoftwareRenderer, 
         ComPtr<ID3D11Device>* device)
     {
-        assert(hardwareAcceleration == CanvasHardwareAcceleration::On || hardwareAcceleration == CanvasHardwareAcceleration::Off);
-
-        D3D_DRIVER_TYPE driverType = 
-            hardwareAcceleration == CanvasHardwareAcceleration::On ? D3D_DRIVER_TYPE_HARDWARE : D3D_DRIVER_TYPE_WARP;
+        D3D_DRIVER_TYPE driverType = useSoftwareRenderer ? D3D_DRIVER_TYPE_WARP : D3D_DRIVER_TYPE_HARDWARE;
 
         ComPtr<ID3D11Device> createdDevice;
         if (SUCCEEDED(D3D11CreateDevice(
@@ -126,29 +123,26 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     ComPtr<CanvasDevice> CanvasDeviceManager::CreateNew(
         CanvasDebugLevel debugLevel, 
-        CanvasHardwareAcceleration requestedHardwareAcceleration)
+        bool forceSoftwareRenderer)
     {
         ThrowIfInvalid(debugLevel);
 
         auto d2dFactory = m_adapter->CreateD2DFactory(debugLevel);
 
-        return CreateNew(debugLevel, requestedHardwareAcceleration, d2dFactory.Get());
+        return CreateNew(debugLevel, forceSoftwareRenderer, d2dFactory.Get());
     }
 
 
     ComPtr<CanvasDevice> CanvasDeviceManager::CreateNew(
         CanvasDebugLevel debugLevel,
-        CanvasHardwareAcceleration requestedHardwareAcceleration,
+        bool forceSoftwareRenderer,
         ID2D1Factory2* d2dFactory)
     {
         ThrowIfInvalid(debugLevel);
         CheckInPointer(d2dFactory);
 
-        CanvasHardwareAcceleration hardwareAcceleration;
-
         auto dxgiDevice = MakeDXGIDevice(
-            requestedHardwareAcceleration,
-            &hardwareAcceleration);
+            forceSoftwareRenderer);
 
         ComPtr<ID2D1Device1> d2dDevice;
         ThrowIfFailed(d2dFactory->CreateDevice(dxgiDevice.Get(), &d2dDevice));
@@ -156,7 +150,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         auto device = Make<CanvasDevice>(
             shared_from_this(), 
             debugLevel,
-            hardwareAcceleration,
+            forceSoftwareRenderer,
             dxgiDevice.Get(),
             d2dDevice.Get());
         CheckMakeResult(device);
@@ -198,7 +192,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         auto device = Make<CanvasDevice>(
             shared_from_this(), 
             debugLevel, 
-            CanvasHardwareAcceleration::Unknown,
+            false, // Do not force software renderer
             dxgiDevice.Get(), 
             d2dDevice.Get());
         CheckMakeResult(device);
@@ -215,7 +209,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         auto canvasDevice = Make<CanvasDevice>(
             shared_from_this(),
             CanvasDebugLevel::None,
-            CanvasHardwareAcceleration::Unknown,
+            false, // Do not force software renderer
             dxgiDevice.Get(),
             d2dDevice);
         CheckMakeResult(canvasDevice);
@@ -225,64 +219,34 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
 
     ComPtr<IDXGIDevice3> CanvasDeviceManager::MakeDXGIDevice(
-        CanvasHardwareAcceleration requestedHardwareAcceleration,
-        CanvasHardwareAcceleration* actualHardwareAccelerationOut) const
+        bool forceSoftwareRenderer) const
     {
-        assert(actualHardwareAccelerationOut);
-        *actualHardwareAccelerationOut = CanvasHardwareAcceleration::Unknown;
-
-        CanvasHardwareAcceleration actualHardwareAcceleration = CanvasHardwareAcceleration::Unknown;
-
-        ComPtr<ID3D11Device> d3dDevice = MakeD3D11Device(
-            requestedHardwareAcceleration,
-            &actualHardwareAcceleration);
+        ComPtr<ID3D11Device> d3dDevice = MakeD3D11Device(forceSoftwareRenderer);
 
         ComPtr<IDXGIDevice3> dxgiDevice;
         ThrowIfFailed(d3dDevice.As(&dxgiDevice));
-
-        *actualHardwareAccelerationOut = actualHardwareAcceleration;
 
         return dxgiDevice;
     }
 
 
     ComPtr<ID3D11Device> CanvasDeviceManager::MakeD3D11Device(
-        CanvasHardwareAcceleration requestedHardwareAcceleration,
-        CanvasHardwareAcceleration* actualHardwareAccelerationOut) const
+        bool forceSoftwareRenderer) const
     {
-        assert(actualHardwareAccelerationOut);
-
         ComPtr<ID3D11Device> d3dDevice;
 
-        switch (requestedHardwareAcceleration)
+        if (m_adapter->TryCreateD3DDevice(forceSoftwareRenderer, &d3dDevice))
         {
-        case CanvasHardwareAcceleration::Auto:
-            if (m_adapter->TryCreateD3DDevice(CanvasHardwareAcceleration::On, &d3dDevice))
+            return d3dDevice;
+        }
+
+        if (!forceSoftwareRenderer)
+        {
+            // try again using the software renderer
+            if (m_adapter->TryCreateD3DDevice(true, &d3dDevice))
             {
-                *actualHardwareAccelerationOut = CanvasHardwareAcceleration::On;
                 return d3dDevice;
             }
-
-            if (m_adapter->TryCreateD3DDevice(CanvasHardwareAcceleration::Off, &d3dDevice))
-            {
-                *actualHardwareAccelerationOut = CanvasHardwareAcceleration::Off;
-                return d3dDevice;
-            }
-
-            break;
-
-        case CanvasHardwareAcceleration::On:
-        case CanvasHardwareAcceleration::Off:
-            if (m_adapter->TryCreateD3DDevice(requestedHardwareAcceleration, &d3dDevice))
-            {
-                *actualHardwareAccelerationOut = requestedHardwareAcceleration;
-                return d3dDevice;
-            }
-
-            break;
-
-        default:
-            ThrowHR(E_INVALIDARG);
         }
 
         // If we end up here then we failed to create a d3d device
@@ -290,18 +254,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
     ComPtr<ICanvasDevice> CanvasDeviceManager::GetSharedDevice(
-        CanvasHardwareAcceleration hardwareAcceleration)
+        bool forceSoftwareRenderer)
     {
-        if (hardwareAcceleration == CanvasHardwareAcceleration::Unknown)
-            ThrowHR(E_INVALIDARG, HStringReference(Strings::HardwareAccelerationUnknownIsNotValid).Get());
-
         //
         // This code, unlike other non-control APIs, cannot rely on the D2D
         // API lock. CanvasDeviceManager keeps its own lock for this purpose.
         //
         Lock lock(m_mutex);
 
-        int cacheIndex = static_cast<int>(hardwareAcceleration);
+        int cacheIndex = static_cast<int>(forceSoftwareRenderer);
         assert(cacheIndex < _countof(m_sharedDevices));
 
         //
@@ -321,7 +282,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         if (!m_sharedDevices[cacheIndex])
         {
-            auto newDevice = Create(CanvasDebugLevel::None, hardwareAcceleration);
+            auto newDevice = Create(CanvasDebugLevel::None, forceSoftwareRenderer);
             m_sharedDevices[cacheIndex] = AsWeak(newDevice.Get());
             return newDevice;
         }
@@ -348,15 +309,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         CanvasDebugLevel debugLevel,
         ICanvasDevice** canvasDevice)
     {
-        return CreateWithDebugLevelAndHardwareAcceleration(
+        return CreateWithDebugLevelAndForceSoftwareRendererOption(
             debugLevel,
-            CanvasHardwareAcceleration::Auto,
+            false, // Do not force software renderer
             canvasDevice);
     }
 
-    IFACEMETHODIMP CanvasDeviceFactory::CreateWithDebugLevelAndHardwareAcceleration(
+    IFACEMETHODIMP CanvasDeviceFactory::CreateWithDebugLevelAndForceSoftwareRendererOption(
         CanvasDebugLevel debugLevel,
-        CanvasHardwareAcceleration hardwareAcceleration,
+        boolean forceSoftwareRenderer,
         ICanvasDevice** canvasDevice)
     {
         return ExceptionBoundary(
@@ -364,7 +325,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             {
                 CheckAndClearOutPointer(canvasDevice);
                 
-                auto newCanvasDevice = GetManager()->Create(debugLevel, hardwareAcceleration);
+                auto newCanvasDevice = GetManager()->Create(debugLevel, !!forceSoftwareRenderer);
                 
                 ThrowIfFailed(newCanvasDevice.CopyTo(canvasDevice));
             });
@@ -397,14 +358,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
             auto newCanvasDevice = GetManager()->Create(
                 CanvasDebugLevel::None,
-                CanvasHardwareAcceleration::Auto);
+                false); // Do not force software renderer
 
             ThrowIfFailed(newCanvasDevice.CopyTo(object));
         });
     }
 
     IFACEMETHODIMP CanvasDeviceFactory::GetSharedDevice(
-        CanvasHardwareAcceleration hardwareAcceleration,
+        boolean forceSoftwareRenderer,
         ICanvasDevice** device)
     {
         return ExceptionBoundary(
@@ -412,7 +373,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             {
                 CheckAndClearOutPointer(device);
 
-                auto sharedDevice = GetManager()->GetSharedDevice(hardwareAcceleration);
+                auto sharedDevice = GetManager()->GetSharedDevice(!!forceSoftwareRenderer);
 
                 ThrowIfFailed(sharedDevice.CopyTo(device));
             });
@@ -425,11 +386,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     CanvasDevice::CanvasDevice(
         std::shared_ptr<CanvasDeviceManager> deviceManager,
         CanvasDebugLevel debugLevel,
-        CanvasHardwareAcceleration hardwareAcceleration,
+        bool forceSoftwareRenderer,
         IDXGIDevice3* dxgiDevice,
         ID2D1Device1* d2dDevice)
         : ResourceWrapper(deviceManager, d2dDevice)
-        , m_hardwareAcceleration(hardwareAcceleration)
+        , m_forceSoftwareRenderer(forceSoftwareRenderer)
         , m_debugLevel(debugLevel)
         , m_dxgiDevice(dxgiDevice)
     {
@@ -455,14 +416,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return d2dDerivedFactory;
     }
 
-    IFACEMETHODIMP CanvasDevice::get_HardwareAcceleration(_Out_ CanvasHardwareAcceleration *value)
+    IFACEMETHODIMP CanvasDevice::get_ForceSoftwareRenderer(boolean *value)
     {
         return ExceptionBoundary(
             [&]
             {
                 CheckInPointer(value);
                 GetResource();  // this ensures that Close() hasn't been called
-                *value = m_hardwareAcceleration;
+                *value = m_forceSoftwareRenderer;
                 return S_OK;
             });
     }
@@ -957,7 +918,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     void CanvasDevice::InitializePrimaryOutput(IDXGIDevice3* dxgiDevice)
     {
         //
-        // Creating a CanvasDevice using CanvasHardwareAcceleration::Off 
+        // Creating a CanvasDevice using forceSoftwareRenderer==true
         // creates a 'render-only' WARP device, which cannot be used to 
         // enumerate outputs.
         //

@@ -782,22 +782,19 @@ under the License.
       <inheritdoc/>
     </member>    
 
-    <member name="P:Microsoft.Graphics.Canvas.UI.Xaml.ICanvasAnimatedControl.HardwareAcceleration">
-      <summary>Gets or sets the hardware acceleration property of devices that this control creates.</summary>
+    <member name="P:Microsoft.Graphics.Canvas.UI.Xaml.ICanvasAnimatedControl.ForceSoftwareRenderer">
+      <summary>Gets or sets the whether the devices that this control creates will be forced to software rendering.</summary>
       <remarks>
       <p>
-      This property is set to CanvasHardwareAcceleration.<see cref="F:Microsoft.Graphics.Canvas.CanvasHardwareAcceleration.On"/> by default.
+      This property is set to false by default.
       </p>
       <p>
       Modifying this option will cause re-creation of the control's device, if it already has one.
       </p>
-      <p>
-      CanvasHardwareAcceleration.<see cref="F:Microsoft.Graphics.Canvas.CanvasHardwareAcceleration.Unknown"/> is not a valid option for this property.
-      </p>
       </remarks>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl.HardwareAcceleration">
-      <summary>Gets or sets the hardware acceleration property of devices that this control creates.</summary>
+    <member name="P:Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl.ForceSoftwareRenderer">
+      <summary>Gets or sets the whether the devices that this control creates will be forced to software rendering.</summary>
       <inheritdoc/>
     </member>
     
@@ -812,7 +809,7 @@ under the License.
       </p>
       <p>
       If this property is set to true, the control will get its devices from 
-      CanvasDevice.<see cref="M:Microsoft.Graphics.Canvas.CanvasDevice.GetSharedDevice(Microsoft.Graphics.Canvas.CanvasHardwareAcceleration)"/>.
+      CanvasDevice.<see cref="M:Microsoft.Graphics.Canvas.CanvasDevice.GetSharedDevice(System.Boolean)"/>.
       </p>
       </remarks>
     </member>
@@ -830,7 +827,7 @@ under the License.
         </p>
         <p>
           The default value for this property is null. This means that the control will obtain its
-          devices from <see cref="M:Microsoft.Graphics.Canvas.CanvasDevice.GetSharedDevice(Microsoft.Graphics.Canvas.CanvasHardwareAcceleration)"/>
+          devices from <see cref="M:Microsoft.Graphics.Canvas.CanvasDevice.GetSharedDevice(System.Boolean)"/>
           if <see cref="P:Microsoft.Graphics.Canvas.UI.Xaml.ICanvasAnimatedControl.UseSharedDevice"/> is 
           set. Otherwise, it will create its own new device each time.
         </p>
@@ -838,7 +835,7 @@ under the License.
           Setting this property overrides the control's default device creation
           behavior, so the
           <see cref="P:Microsoft.Graphics.Canvas.UI.Xaml.ICanvasAnimatedControl.UseSharedDevice"/> and
-          <see cref="P:Microsoft.Graphics.Canvas.UI.Xaml.ICanvasAnimatedControl.HardwareAcceleration"/>
+          <see cref="P:Microsoft.Graphics.Canvas.UI.Xaml.ICanvasAnimatedControl.ForceSoftwareRenderer"/>
           properties are ignored.
         </p>
         <p>

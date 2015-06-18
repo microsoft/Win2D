@@ -27,7 +27,7 @@ public:
         , m_debugLevel(static_cast<CanvasDebugLevel>(-1))
         , m_numD3dDeviceCreationCalls(0)
         , m_allowHardware(true)
-        , m_retrievableHarwareAcceleration(CanvasHardwareAcceleration::Auto)
+        , m_retrievableForceSoftwareRenderer(false)
     {}
 
     virtual ComPtr<ID2D1Factory2> CreateD2DFactory(
@@ -42,7 +42,7 @@ public:
     }
 
     virtual bool TryCreateD3DDevice(
-        CanvasHardwareAcceleration hardwareAcceleration,
+        bool useSoftwareRenderer,
         ComPtr<ID3D11Device>* device) override
     {
         if (!device)
@@ -51,9 +51,9 @@ public:
             return false;
         }
 
-        m_retrievableHarwareAcceleration = hardwareAcceleration;
+        m_retrievableForceSoftwareRenderer = useSoftwareRenderer;
 
-        if (hardwareAcceleration == CanvasHardwareAcceleration::On && !m_allowHardware)
+        if (!useSoftwareRenderer && !m_allowHardware)
         {
             return false;
         }
@@ -91,5 +91,5 @@ public:
     CanvasDebugLevel m_debugLevel;
 
     int m_numD3dDeviceCreationCalls;
-    CanvasHardwareAcceleration m_retrievableHarwareAcceleration;
+    bool m_retrievableForceSoftwareRenderer;
 };
