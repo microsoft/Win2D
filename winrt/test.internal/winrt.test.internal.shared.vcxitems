@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="Globals">
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
@@ -104,6 +104,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)xaml\BaseControlUnitTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)xaml\CanvasAnimatedControlUnitTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)xaml\CanvasControlUnitTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)xaml\GameLoopThreadTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)xaml\CanvasSharedControlUnitTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)xaml\CanvasSwapChainPanelUnitTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)xaml\ControlFixtures.cpp" />

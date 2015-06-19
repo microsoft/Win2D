@@ -164,7 +164,7 @@ struct Animated_BasicControlFixture : public BasicControlFixture<CanvasAnimatedC
         for (int i = 0; i < 10; ++i)
             Adapter->Tick();
 
-        Assert::IsTrue(Adapter->GetGameThreadDispatcher()->HasPendingActions(), L"Tick loop is running");
+        Assert::IsTrue(Adapter->GameThreadHasPendingWork(), L"Tick loop is running");
         Assert::IsFalse(Adapter->HasPendingActionsOnUiThread(), L"No pending change action");
     }
 

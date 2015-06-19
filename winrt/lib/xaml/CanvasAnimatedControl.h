@@ -113,7 +113,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         virtual ComPtr<CanvasSwapChainPanel> CreateCanvasSwapChainPanel() = 0;
 
-        virtual std::shared_ptr<CanvasGameLoop> CreateAndStartGameLoop(ComPtr<ISwapChainPanel> swapChainPanel) = 0;
+        virtual std::unique_ptr<CanvasGameLoop> CreateAndStartGameLoop(
+            CanvasAnimatedControl* control,
+            ISwapChainPanel* swapChainPanel) = 0;
 
         virtual void Sleep(DWORD timeInMs) = 0;
     };
@@ -131,7 +133,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         ComPtr<ICanvasSwapChainPanel> m_canvasSwapChainPanel;
 
-        std::shared_ptr<CanvasGameLoop> m_gameLoop;
+        std::unique_ptr<CanvasGameLoop> m_gameLoop;
         ComPtr<IAsyncAction> m_renderLoopAction;
         
         ComPtr<ISuspendingDeferral> m_suspendingDeferral;
@@ -257,8 +259,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         CanvasTimingInformation GetTimingInformationFromTimer();
 
-        void CanvasAnimatedControl::IssueAsyncActions(
+        void IssueAsyncActions(
             std::vector<ComPtr<AnimatedControlAsyncAction>> const& pendingActions);
+
+        friend class CanvasGameLoop;
     };
 
 }}}}}}

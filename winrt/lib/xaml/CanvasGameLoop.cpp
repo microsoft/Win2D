@@ -19,92 +19,70 @@ using namespace ::ABI::Microsoft::Graphics::Canvas::UI;
 using namespace ::ABI::Microsoft::Graphics::Canvas::UI::Xaml;
 using namespace ::Microsoft::WRL::Wrappers;
 
-CanvasGameLoop::CanvasGameLoop(ComPtr<IAsyncAction>&& action, ComPtr<ICoreDispatcher>&& dispatcher)
-    : m_threadAction(std::move(action))
-    , m_dispatcher(std::move(dispatcher))
+CanvasGameLoop::CanvasGameLoop(
+    CanvasAnimatedControl* control,
+    std::unique_ptr<IGameLoopThread> gameLoopThread)
+    : m_control(control)
+    , m_gameLoopThread(std::move(gameLoopThread))
 { 
+    m_tickHandler = Callback<AddFtmBase<IDispatchedHandler>::Type>(
+        [this] ()
+        {
+            return ExceptionBoundary([&] { Tick(); });
+        });
+    CheckMakeResult(m_tickHandler);
+
+    m_tickCompletedHandler = Callback<AddFtmBase<IAsyncActionCompletedHandler>::Type>(
+        [this] (IAsyncAction* action, AsyncStatus status)
+        {
+            return ExceptionBoundary([&] { TickCompleted(action, status); });
+        });
+    CheckMakeResult(m_tickCompletedHandler);
 }
 
 CanvasGameLoop::~CanvasGameLoop()
 {
-    // Kill the game thread by stopping the dispatcher
-    As<ICoreDispatcherWithTaskPriority>(m_dispatcher)->StopProcessEvents();
+}
+
+void CanvasGameLoop::Tick()
+{
+    m_tickLoopShouldContinue = false;
+    m_tickLoopShouldContinue = m_control->Tick(m_target.Get(), m_areResourcesCreated);
+}
+
+void CanvasGameLoop::TickCompleted(IAsyncAction* action, AsyncStatus status)
+{
+#ifdef NDEBUG
+    UNREFERENCED_PARAMETER(action);
+#endif
+    assert(action == m_tickLoopAction.Get());
+
+    // This is called when the Tick completes, even if Tick threw an exception.
+    
+    auto lock = Lock(m_mutex);
+    
+    if (m_tickLoopShouldContinue && status == AsyncStatus::Completed)
+    {
+        ScheduleTick(lock);
+    }
+    else
+    {
+        EndTickLoop(lock);
+        m_control->Changed(m_control->GetLock());
+    }
 }
 
 void CanvasGameLoop::StartTickLoop(
-    CanvasAnimatedControl* control,
-    std::function<bool(CanvasAnimatedControl*)> const& tickFn,
-    std::function<void(CanvasAnimatedControl*)> const& completedFn)
+    CanvasSwapChain* target,
+    bool areResourcesCreated)
 {
     auto lock = Lock(m_mutex);
 
     assert(!m_tickLoopAction);
     m_completedTickLoopInfo.Reset();
 
-    std::weak_ptr<CanvasGameLoop> weakSelf(shared_from_this());
-    auto weakControl = AsWeak(control);
-
-    m_tickHandler = Callback<AddFtmBase<IDispatchedHandler>::Type>(
-        [weakSelf, weakControl, tickFn] () mutable
-        {
-            return ExceptionBoundary(
-                [&]
-                {
-                    auto self = weakSelf.lock();
-
-                    if (!self)
-                        return;
-
-                    self->m_tickLoopShouldContinue = false;
-
-                    auto strongControl = LockWeakRef<ICanvasAnimatedControl>(weakControl);
-                    auto control = static_cast<CanvasAnimatedControl*>(strongControl.Get());
-
-                    if (!control)
-                        return;
-
-                    self->m_tickLoopShouldContinue = tickFn(control);
-                });
-        });
-    CheckMakeResult(m_tickHandler);
-
-    m_tickCompletedHandler = Callback<AddFtmBase<IAsyncActionCompletedHandler>::Type>(
-        [weakSelf, weakControl, completedFn] (IAsyncAction* action, AsyncStatus status) mutable
-        {
-#ifdef NDEBUG
-            UNREFERENCED_PARAMETER(action);
-            UNREFERENCED_PARAMETER(status);
-#endif
-
-            return ExceptionBoundary(
-                [&] 
-                {
-                    auto self = weakSelf.lock();
-
-                    if (!self)
-                        return;
-
-                    auto strongControl = LockWeakRef<ICanvasAnimatedControl>(weakControl);
-                    auto control = static_cast<CanvasAnimatedControl*>(strongControl.Get());
-                
-                    auto lock = Lock(self->m_mutex);
-
-                    if (self->m_tickLoopShouldContinue)
-                    {
-                        assert(status == AsyncStatus::Completed);
-
-                        self->ScheduleTick(lock);
-                    }
-                    else
-                    {
-                        assert(action == self->m_tickLoopAction.Get());
-                        
-                        self->EndTickLoop(lock);
-                        completedFn(control);
-                    }
-                });
-        });
-    CheckMakeResult(m_tickCompletedHandler);
+    m_target = target;
+    m_areResourcesCreated = areResourcesCreated;
 
     ScheduleTick(lock);
 }
@@ -113,7 +91,7 @@ void CanvasGameLoop::ScheduleTick(Lock const& lock)
 {
     MustOwnLock(lock);
 
-    ThrowIfFailed(m_dispatcher->RunAsync(CoreDispatcherPriority_Low, m_tickHandler.Get(), &m_tickLoopAction));
+    m_tickLoopAction = m_gameLoopThread->RunAsync(m_tickHandler.Get());
     ThrowIfFailed(m_tickLoopAction->put_Completed(m_tickCompletedHandler.Get()));    
 }
 
@@ -133,10 +111,17 @@ void CanvasGameLoop::TakeTickLoopState(bool* isRunning, ComPtr<IAsyncInfo>* comp
     m_completedTickLoopInfo.Reset();
 }
 
+void CanvasGameLoop::StartDispatcher()
+{
+    return m_gameLoopThread->StartDispatcher();
+}
+
+void CanvasGameLoop::StopDispatcher()
+{
+    return m_gameLoopThread->StopDispatcher();
+}
 
 bool CanvasGameLoop::HasThreadAccess()
 {
-    boolean hasThreadAccess;
-    ThrowIfFailed(m_dispatcher->get_HasThreadAccess(&hasThreadAccess));
-    return !!hasThreadAccess;
+    return m_gameLoopThread->HasThreadAccess();
 }

@@ -67,6 +67,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             return result;
         }
 
+        void CancelAndFireCompletion()
+        {
+            (void)Cancel();
+            (void)FireCompletion();
+        }
+
         IFACEMETHODIMP put_Completed(IAsyncActionCompletedHandler* value) override
         {
             return PutOnComplete(value);

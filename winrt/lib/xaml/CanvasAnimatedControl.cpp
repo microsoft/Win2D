@@ -462,7 +462,7 @@ ComPtr<CanvasAnimatedDrawEventArgs> CanvasAnimatedControl::CreateDrawEventArgs(
 void CanvasAnimatedControl::Loaded()
 {
     assert(!m_gameLoop);
-    m_gameLoop = GetAdapter()->CreateAndStartGameLoop(As<ISwapChainPanel>(m_canvasSwapChainPanel));
+    m_gameLoop = GetAdapter()->CreateAndStartGameLoop(this, As<ISwapChainPanel>(m_canvasSwapChainPanel).Get());
 }
 
 void CanvasAnimatedControl::Unloaded()
@@ -685,10 +685,18 @@ void CanvasAnimatedControl::ChangedImpl()
     }
 
     //
+    // The UI thread is about to manipulate device resources (eg it might be
+    // about to call CreateResources).  While it is doing this we don't want
+    // anything running on the game loop thread, so we stop the dispatcher from
+    // processing events.
+    //
+    m_gameLoop->StopDispatcher();
+
+    //
     // Try and start the update/render thread
     //
     RunWithRenderTarget(GetCurrentSize(), deviceCreationOptions,
-        [&] (CanvasSwapChain* rawTarget, ICanvasDevice*, Color const& clearColor, bool areResourcesCreated)
+        [&] (CanvasSwapChain* target, ICanvasDevice*, Color const& clearColor, bool areResourcesCreated)
         {
             // The clearColor passed to us is ignored since this needs to be
             // checked on each tick of the update/render loop.
@@ -706,6 +714,14 @@ void CanvasAnimatedControl::ChangedImpl()
                 ThrowIfFailed(hr);
             }
 
+            if (areResourcesCreated)
+            {
+                // Once resources have been created we can start the dispatcher,
+                // since the game loop owns the device & resources at this
+                // point.
+                m_gameLoop->StartDispatcher();
+            }
+
             if (!areResourcesCreated && !needsDraw)
             {
                 //
@@ -715,17 +731,7 @@ void CanvasAnimatedControl::ChangedImpl()
                 return;
             }
 
-            ComPtr<CanvasSwapChain> target(rawTarget);
-
-            m_gameLoop->StartTickLoop(this,
-                [target, areResourcesCreated] (CanvasAnimatedControl* control)
-                { 
-                    return control->Tick(target.Get(), areResourcesCreated); 
-                },
-                [] (CanvasAnimatedControl* control)
-                { 
-                    control->Changed(control->GetLock()); 
-                });
+            m_gameLoop->StartTickLoop(target, areResourcesCreated);
         });
 }
 
@@ -843,6 +849,9 @@ bool CanvasAnimatedControl::Tick(
     auto lock = GetLock();
 
     if (IsSuspended())
+        return false;
+
+    if (!IsLoaded())
         return false;
 
     m_stepTimer.SetTargetElapsedTicks(m_sharedState.TargetElapsedTime);

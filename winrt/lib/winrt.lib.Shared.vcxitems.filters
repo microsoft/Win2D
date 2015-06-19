@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="effects">
@@ -254,6 +254,9 @@
       <Filter>xaml</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)xaml\CanvasGameLoop.cpp">
+      <Filter>xaml</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)xaml\GameLoopThread.cpp">
       <Filter>xaml</Filter>
     </ClCompile>
   </ItemGroup>
@@ -524,6 +527,9 @@
       <Filter>xaml</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)xaml\RemoveFromVisualTree.h">
+      <Filter>xaml</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)xaml\GameLoopThread.h">
       <Filter>xaml</Filter>
     </ClInclude>
   </ItemGroup>

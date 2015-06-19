@@ -12,17 +12,19 @@
 
 #pragma once
 
+#include "GameLoopThread.h"
+
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace UI { namespace Xaml
 {
     class CanvasAnimatedControl;
 
-    class CanvasGameLoop : public std::enable_shared_from_this<CanvasGameLoop>,
-                           private LifespanTracker<CanvasGameLoop>
+    class CanvasGameLoop : private LifespanTracker<CanvasGameLoop>
     {
         std::mutex m_mutex;
 
-        ComPtr<IAsyncAction> m_threadAction;
-        ComPtr<ICoreDispatcher> m_dispatcher;
+        // The control owns this object, and we ensure that this object never
+        // outlives the control, we can hold a raw pointer here.
+        CanvasAnimatedControl* m_control;
 
         // This is set by StartTickLoop, and is Reset when the tick loop decides
         // that it has finished running.
@@ -35,23 +37,34 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         
         ComPtr<IDispatchedHandler> m_tickHandler;
         ComPtr<IAsyncActionCompletedHandler> m_tickCompletedHandler;
+
+        ComPtr<CanvasSwapChain> m_target;
+        bool m_areResourcesCreated;
         bool m_tickLoopShouldContinue;
 
+        std::unique_ptr<IGameLoopThread> m_gameLoopThread;
+
     public:
-        CanvasGameLoop(ComPtr<IAsyncAction>&& action, ComPtr<ICoreDispatcher>&& dispatcher);
+        CanvasGameLoop(
+            CanvasAnimatedControl* control,
+            std::unique_ptr<IGameLoopThread> gameLoopThread);
 
         ~CanvasGameLoop();
 
         void StartTickLoop(
-            CanvasAnimatedControl* control,
-            std::function<bool(CanvasAnimatedControl*)> const& tickFn,
-            std::function<void(CanvasAnimatedControl*)> const& completedFn);
+            CanvasSwapChain* target,
+            bool areResourcesCreated);
 
         void TakeTickLoopState(bool* isRunning, ComPtr<IAsyncInfo>* completedTickLoopState);
 
+        void StartDispatcher();
+        void StopDispatcher();
         bool HasThreadAccess();
 
     private:
+        void Tick();
+        void TickCompleted(IAsyncAction* action, AsyncStatus status);
+
         void ScheduleTick(Lock const& lock);
         void EndTickLoop(Lock const& lock);
     };
