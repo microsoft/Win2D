@@ -140,6 +140,19 @@ under the License.
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Effects.ColorMatrixEffect.AlphaMode">
       <summary>Specifies the treatment of alpha. Default value Premultiplied.</summary>
+      <remarks>
+        <p>
+          Effect inputs and outputs are assumed to be in
+          <a href="PremultipliedAlpha.htm">premultiplied alpha</a> format, so when this 
+          property is set to Premultiplied, the color matrix is applied directly to the 
+          input values with no extra conversions.
+        </p>
+        <p>
+          If AlphaMode set to Straight, input values will be unpremultiplied, then the 
+          color matrix applied, and finally the result converted back to premultiplied 
+          format.
+        </p>
+      </remarks>
     </member>
 
     <member name="M:Microsoft.Graphics.Canvas.Effects.ColorMatrixEffect.GetBounds(Microsoft.Graphics.Canvas.CanvasDrawingSession)">

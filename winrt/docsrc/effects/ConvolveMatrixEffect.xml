@@ -130,9 +130,23 @@ under the License.
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Effects.ConvolveMatrixEffect.PreserveAlpha">
       <summary>
-        Specifies whether the convolution filter is applied to alpha as well as the color channels.
-        When set to true, only the color channels are filtered, while alpha values are kept unchanged.
-        Default value false.
+        <p>
+          Specifies whether the convolution filter is applied to alpha as well as the color channels.
+        </p>
+        <p>
+          When set to false, the filter applies equally to all of the red, green, blue, 
+          and alpha channels, operating on <a href="PremultipliedAlpha.htm">premultiplied 
+          alpha</a> format data.
+        </p>
+        <p>
+          When set to true, only the color channels are filtered, while alpha values are 
+          kept unchanged. In this case the effect will temporarily unpremultiply the red, 
+          green, and blue color component values, apply the filter kernel only to the 
+          color channels, and then re-premultiply the result.
+        </p>
+        <p>
+          Default value false.
+        </p>
       </summary>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Effects.ConvolveMatrixEffect.ClampOutput">
