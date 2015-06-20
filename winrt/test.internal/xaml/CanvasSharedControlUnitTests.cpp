@@ -488,8 +488,8 @@ struct DeviceCreationFixture : public BasicControlFixture<TRAITS>
 
     void ExpectOneCreateDevice()
     {
-        Adapter->DeviceFactory->CreateWithDebugLevelAndForceSoftwareRendererOptionMethod.SetExpectedCalls(1,
-            [&](CanvasDebugLevel, boolean, ICanvasDevice** device)
+        Adapter->DeviceFactory->CreateWithForceSoftwareRendererOptionMethod.SetExpectedCalls(1,
+            [&](boolean, ICanvasDevice** device)
         {
             Make<StubCanvasDevice>().CopyTo(device);
             return S_OK;
@@ -498,7 +498,7 @@ struct DeviceCreationFixture : public BasicControlFixture<TRAITS>
 
     void DoNotExpectCreateDevice()
     {
-        Adapter->DeviceFactory->CreateWithDebugLevelAndForceSoftwareRendererOptionMethod.SetExpectedCalls(0);
+        Adapter->DeviceFactory->CreateWithForceSoftwareRendererOptionMethod.SetExpectedCalls(0);
     }
 
     void DoNotExpectChanged()
@@ -642,8 +642,8 @@ TEST_CLASS(CanvasSharedControlTests_DeviceApis)
             
             auto stubDevice = Make<StubCanvasDevice>();
 
-            f.Adapter->DeviceFactory->CreateWithDebugLevelAndForceSoftwareRendererOptionMethod.SetExpectedCalls(1,
-                [&](CanvasDebugLevel, boolean forceSoftwareRenderer, ICanvasDevice** device)
+            f.Adapter->DeviceFactory->CreateWithForceSoftwareRendererOptionMethod.SetExpectedCalls(1,
+                [&](boolean forceSoftwareRenderer, ICanvasDevice** device)
                 {
                     Assert::AreEqual(expectedForceSoftwareRenderer, forceSoftwareRenderer);
                     return stubDevice.CopyTo(device);

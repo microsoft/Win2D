@@ -64,7 +64,11 @@ TEST_CLASS(FactoryWithResourceManagerUnitTests)
         ThrowIfFailed(propertySetActivationFactory->ActivateInstance(&propertySet));
 
         ComPtr<MockCoreApplication> app = Make<MockCoreApplication>();
-        app->MockGetProperties = [&] { return propertySet; };
+        app->get_PropertiesMethod.AllowAnyCall(
+            [&](IPropertySet** out)
+            { 
+                return propertySet.CopyTo(out); 
+            });
 
         //
         // The actual test ensures that the same manager is used for two

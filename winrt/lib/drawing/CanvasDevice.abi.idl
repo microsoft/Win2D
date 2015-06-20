@@ -33,12 +33,7 @@ namespace Microsoft.Graphics.Canvas
     [version(VERSION), uuid(E2C2BF21-5418-43B9-A2DA-539E287C790F), exclusiveto(CanvasDevice)]
     interface ICanvasDeviceFactory : IInspectable
     {
-        HRESULT CreateWithDebugLevel(
-            [in] CanvasDebugLevel debugLevel,
-            [out, retval] CanvasDevice** canvasDevice);
-
-        HRESULT CreateWithDebugLevelAndForceSoftwareRendererOption(
-            [in] CanvasDebugLevel debugLevel,
+        HRESULT CreateWithForceSoftwareRendererOption(
             [in] boolean forceSoftwareRenderer,
             [out, retval] CanvasDevice** canvasDevice);
     };
@@ -48,7 +43,6 @@ namespace Microsoft.Graphics.Canvas
     {
         HRESULT CreateFromDirect3D11Device(
             [in] IDIRECT3DDEVICE* direct3DDevice,
-            [in] CanvasDebugLevel debugLevel,
             [out, retval] CanvasDevice** canvasDevice);
         
         //
@@ -61,6 +55,13 @@ namespace Microsoft.Graphics.Canvas
         HRESULT GetSharedDevice(
             [in] boolean forceSoftwareRenderer, 
             [out, retval] CanvasDevice** canvasDevice);
+
+        //
+        // This global property controls the debug level of devices when 
+        // they are created. It doesn't have retro-active behavior.
+        //
+        [propput] HRESULT DebugLevel([in] CanvasDebugLevel value);
+        [propget] HRESULT DebugLevel([out, retval] CanvasDebugLevel* value);
     };
 
     [version(VERSION), uuid(A27F0B5D-EC2C-4D4F-948F-0AA1E95E33E6), exclusiveto(CanvasDevice)]

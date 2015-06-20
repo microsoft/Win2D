@@ -14,6 +14,14 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
+    DefaultDeviceResourceCreationAdapter::DefaultDeviceResourceCreationAdapter()
+    {
+        HSTRING stringActivableClassId = 
+            Wrappers::HStringReference(RuntimeClass_Windows_Foundation_PropertyValue).Get();
+
+        ThrowIfFailed(GetActivationFactory(stringActivableClassId, &m_propertyValueStatics));
+    }
+
     //
     // This implementation of the adapter does the normal thing, and calls into
     // D2D. It is separated out so tests can inject their own implementation.
@@ -96,6 +104,22 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return device;
     }
 
+
+    ComPtr<ICoreApplication> DefaultDeviceResourceCreationAdapter::GetCoreApplication()
+    {
+        ComPtr<ICoreApplication> coreApplication;
+        ThrowIfFailed(GetActivationFactory(
+            HStringReference(RuntimeClass_Windows_ApplicationModel_Core_CoreApplication).Get(),
+            &coreApplication));
+
+        return coreApplication;
+    }
+
+    ComPtr<IPropertyValueStatics> DefaultDeviceResourceCreationAdapter::GetPropertyValueStatics()
+    {
+        return m_propertyValueStatics;
+    }
+
     //
     // CanvasDeviceManager
     //
@@ -118,27 +142,31 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         std::shared_ptr<ICanvasDeviceResourceCreationAdapter> adapter)
         : m_adapter(adapter)
     {
+        m_debugLevel = LoadDebugLevelProperty();
+    }
+
+    CanvasDeviceManager::~CanvasDeviceManager()
+    {
+        // 
+        // Commit the debug level property back into the application properties.
+        //
+        SaveDebugLevelProperty(m_debugLevel);
     }
 
 
     ComPtr<CanvasDevice> CanvasDeviceManager::CreateNew(
-        CanvasDebugLevel debugLevel, 
         bool forceSoftwareRenderer)
     {
-        ThrowIfInvalid(debugLevel);
+        auto d2dFactory = m_adapter->CreateD2DFactory(GetDebugLevel());
 
-        auto d2dFactory = m_adapter->CreateD2DFactory(debugLevel);
-
-        return CreateNew(debugLevel, forceSoftwareRenderer, d2dFactory.Get());
+        return CreateNew(forceSoftwareRenderer, d2dFactory.Get());
     }
 
 
     ComPtr<CanvasDevice> CanvasDeviceManager::CreateNew(
-        CanvasDebugLevel debugLevel,
         bool forceSoftwareRenderer,
         ID2D1Factory2* d2dFactory)
     {
-        ThrowIfInvalid(debugLevel);
         CheckInPointer(d2dFactory);
 
         auto dxgiDevice = MakeDXGIDevice(
@@ -149,7 +177,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         
         auto device = Make<CanvasDevice>(
             shared_from_this(), 
-            debugLevel,
             forceSoftwareRenderer,
             dxgiDevice.Get(),
             d2dDevice.Get());
@@ -160,23 +187,20 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     
     ComPtr<CanvasDevice> CanvasDeviceManager::CreateNew(
-        CanvasDebugLevel debugLevel,
         IDirect3DDevice* direct3DDevice)
     {
-        ThrowIfInvalid(debugLevel);
         CheckInPointer(direct3DDevice);
-        auto d2dFactory = m_adapter->CreateD2DFactory(debugLevel);
 
-        return CreateNew(debugLevel, direct3DDevice, d2dFactory.Get());
+        auto d2dFactory = m_adapter->CreateD2DFactory(GetDebugLevel());
+
+        return CreateNew(direct3DDevice, d2dFactory.Get());
     }
 
 
     ComPtr<CanvasDevice> CanvasDeviceManager::CreateNew(
-        CanvasDebugLevel debugLevel,
         IDirect3DDevice* direct3DDevice,
         ID2D1Factory2* d2dFactory)
     {
-        ThrowIfInvalid(debugLevel);
         CheckInPointer(direct3DDevice);
         CheckInPointer(d2dFactory);
 
@@ -191,7 +215,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         
         auto device = Make<CanvasDevice>(
             shared_from_this(), 
-            debugLevel, 
             false, // Do not force software renderer
             dxgiDevice.Get(), 
             d2dDevice.Get());
@@ -208,7 +231,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         auto canvasDevice = Make<CanvasDevice>(
             shared_from_this(),
-            CanvasDebugLevel::None,
             false, // Do not force software renderer
             dxgiDevice.Get(),
             d2dDevice);
@@ -262,7 +284,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         //
         Lock lock(m_mutex);
 
-        int cacheIndex = static_cast<int>(forceSoftwareRenderer);
+        int cacheIndex = forceSoftwareRenderer ? 1 : 0;
         assert(cacheIndex < _countof(m_sharedDevices));
 
         //
@@ -282,7 +304,16 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         if (!m_sharedDevices[cacheIndex])
         {
-            auto newDevice = Create(CanvasDebugLevel::None, forceSoftwareRenderer);
+            //
+            // Any new devices we create here will honor the debug 
+            // level set at the time.
+            // But existing devices that we return do not need to match
+            // the debug level.
+            // This goes along with the debug level option not having
+            // retro-active behavior, and the fact that we expect apps to set the 
+            // debug level at start-up, before creating any devices.
+            //
+            auto newDevice = Create(forceSoftwareRenderer);
             m_sharedDevices[cacheIndex] = AsWeak(newDevice.Get());
             return newDevice;
         }
@@ -291,7 +322,86 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             assert(device);
             return device;
         }
+    }
 
+    CanvasDeviceManager::PropertyData CanvasDeviceManager::GetDebugLevelPropertyData()
+    {
+        auto coreApplication = m_adapter->GetCoreApplication();
+
+        ComPtr<IPropertySet> properties;
+        ThrowIfFailed(coreApplication->get_Properties(
+            &properties));
+
+        ComPtr<IMap<HSTRING, IInspectable*>> propertyMap;
+        ThrowIfFailed(properties.As(&propertyMap));
+
+        // This function's decorated name is simply used as a key.
+        HStringReference keyName(TEXT(__FUNCDNAME__));
+        ComPtr<IInspectable> inspectableDebugLevelPropertyHolder;
+
+        HRESULT hr = propertyMap->Lookup(keyName.Get(), &inspectableDebugLevelPropertyHolder);
+
+        PropertyData ret = { keyName, propertyMap, inspectableDebugLevelPropertyHolder, hr };
+        return ret;
+    }
+
+    void CanvasDeviceManager::StoreValueToPropertyKey(PropertyData key, CanvasDebugLevel debugLevel)
+    {
+        uint32_t value = static_cast<uint32_t>(debugLevel);
+        ComPtr<IPropertyValue> debugLevelPropertyHolder;
+        ThrowIfFailed(m_adapter->GetPropertyValueStatics()->CreateUInt32(value, &debugLevelPropertyHolder));
+
+        boolean inserted = false; // unused
+        ThrowIfFailed(key.PropertyMap->Insert(key.KeyName.Get(), debugLevelPropertyHolder.Get(), &inserted));
+    }
+
+    CanvasDebugLevel CanvasDeviceManager::LoadDebugLevelProperty()
+    {
+        auto propertyData = GetDebugLevelPropertyData();
+
+        if (SUCCEEDED(propertyData.LookupResult))
+        {
+            ComPtr<IPropertyValue> debugLevelPropertyHolder;
+            debugLevelPropertyHolder = static_cast<IPropertyValue*>(propertyData.PropertyHolder.Get());
+
+            uint32_t value;
+            ThrowIfFailed(debugLevelPropertyHolder->GetUInt32(&value));
+            return static_cast<CanvasDebugLevel>(value);
+        }
+        else
+        {
+            //
+            // If we couldn't load the property, create a new one and initialize it to None.
+            //
+            StoreValueToPropertyKey(propertyData, CanvasDebugLevel::None);
+            return CanvasDebugLevel::None;
+        }
+    }
+
+    void CanvasDeviceManager::SaveDebugLevelProperty(CanvasDebugLevel debugLevel)
+    {
+        StoreValueToPropertyKey(GetDebugLevelPropertyData(), debugLevel);
+    }
+
+    CanvasDebugLevel CanvasDeviceManager::GetDebugLevel()
+    {
+        //
+        // m_debugLevel requires synchronization. One option might be use the existing mutex
+        // in CanvasDeviceManager- except GetSharedDevice already uses that lock to control
+        // cached devices, and the new device construction path also needs to look up the
+        // debug level. 
+        //
+        // Rather than complicate things to accomodate this, we use a
+        // std::atomic member to do this simple synchronization.
+        //
+        auto ret = m_debugLevel.load();
+
+        return ret;
+    }
+
+    void CanvasDeviceManager::SetDebugLevel(CanvasDebugLevel const& value)
+    {
+        m_debugLevel.store(value);
     }
 
 
@@ -305,18 +415,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return std::make_shared<CanvasDeviceManager>(adapter);
     }
 
-    IFACEMETHODIMP CanvasDeviceFactory::CreateWithDebugLevel(
-        CanvasDebugLevel debugLevel,
-        ICanvasDevice** canvasDevice)
-    {
-        return CreateWithDebugLevelAndForceSoftwareRendererOption(
-            debugLevel,
-            false, // Do not force software renderer
-            canvasDevice);
-    }
-
-    IFACEMETHODIMP CanvasDeviceFactory::CreateWithDebugLevelAndForceSoftwareRendererOption(
-        CanvasDebugLevel debugLevel,
+    IFACEMETHODIMP CanvasDeviceFactory::CreateWithForceSoftwareRendererOption(
         boolean forceSoftwareRenderer,
         ICanvasDevice** canvasDevice)
     {
@@ -325,7 +424,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             {
                 CheckAndClearOutPointer(canvasDevice);
                 
-                auto newCanvasDevice = GetManager()->Create(debugLevel, !!forceSoftwareRenderer);
+                auto newCanvasDevice = GetManager()->Create(!!forceSoftwareRenderer);
                 
                 ThrowIfFailed(newCanvasDevice.CopyTo(canvasDevice));
             });
@@ -333,7 +432,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     IFACEMETHODIMP CanvasDeviceFactory::CreateFromDirect3D11Device(
         IDirect3DDevice* direct3DDevice,
-        CanvasDebugLevel debugLevel,
         ICanvasDevice** canvasDevice)
     {
         return ExceptionBoundary(
@@ -342,7 +440,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 CheckInPointer(direct3DDevice);
                 CheckAndClearOutPointer(canvasDevice);
 
-                auto newCanvasDevice = GetManager()->Create(debugLevel, direct3DDevice);
+                auto newCanvasDevice = GetManager()->Create(direct3DDevice);
 
                 ThrowIfFailed(newCanvasDevice.CopyTo(canvasDevice));
             });
@@ -357,7 +455,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             CheckAndClearOutPointer(object);
 
             auto newCanvasDevice = GetManager()->Create(
-                CanvasDebugLevel::None,
                 false); // Do not force software renderer
 
             ThrowIfFailed(newCanvasDevice.CopyTo(object));
@@ -379,19 +476,36 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             });
     }
 
+    IFACEMETHODIMP CanvasDeviceFactory::put_DebugLevel(CanvasDebugLevel value)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                GetManager()->SetDebugLevel(value);
+            });
+    }
+
+    IFACEMETHODIMP CanvasDeviceFactory::get_DebugLevel(CanvasDebugLevel* value)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckInPointer(value);
+                *value = GetManager()->GetDebugLevel();
+            });
+    }
+
     //
     // CanvasDevice
     //
 
     CanvasDevice::CanvasDevice(
         std::shared_ptr<CanvasDeviceManager> deviceManager,
-        CanvasDebugLevel debugLevel,
         bool forceSoftwareRenderer,
         IDXGIDevice3* dxgiDevice,
         ID2D1Device1* d2dDevice)
         : ResourceWrapper(deviceManager, d2dDevice)
         , m_forceSoftwareRenderer(forceSoftwareRenderer)
-        , m_debugLevel(debugLevel)
         , m_dxgiDevice(dxgiDevice)
     {
         CheckInPointer(dxgiDevice);

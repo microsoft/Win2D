@@ -23,10 +23,7 @@ under the License.
       <summary>Devices are used to create graphics resources and drawing sessions.
                Most apps should use the CanvasControl wrapper instead of directly managing their own CanvasDevice.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDevice.#ctor(Microsoft.Graphics.Canvas.CanvasDebugLevel)">
-      <summary>Initializes a new instance of the CanvasDevice class.</summary>
-    </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDevice.#ctor(Microsoft.Graphics.Canvas.CanvasDebugLevel,System.Boolean)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDevice.#ctor(System.Boolean)">
       <summary>Initializes a new instance of the CanvasDevice class.</summary>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasDevice.#ctor">
@@ -35,7 +32,7 @@ under the License.
     <member name="M:Microsoft.Graphics.Canvas.CanvasDevice.Dispose">
       <summary>Releases all resources used by the CanvasDevice.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDevice.CreateFromDirect3D11Device(Microsoft.Graphics.Canvas.DirectX.Direct3D11.IDirect3DDevice,Microsoft.Graphics.Canvas.CanvasDebugLevel)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDevice.CreateFromDirect3D11Device(Microsoft.Graphics.Canvas.DirectX.Direct3D11.IDirect3DDevice)">
       <summary>Creates a CanvasDevice that will use the specified IDirect3DDevice.</summary>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.CanvasDevice.ForceSoftwareRenderer">
@@ -120,7 +117,17 @@ under the License.
           Before being returned, the device is checked for whether it is lost. If it is lost, <see cref="M:Microsoft.Graphics.Canvas.CanvasDevice.RaiseDeviceLost"/>
           is called on the device, and then it is re-created.
           </p>
-    </member>
-    
+          <p>
+          The shared device returned may not necessary have the debug level in the <see cref="P:Microsoft.Graphics.Canvas.CanvasDevice.DebugLevel"/> property,
+          if the property has been modified in between calls to GetSharedDevice.
+          </p>
+    </member>    
+
+    <member name="P:Microsoft.Graphics.Canvas.CanvasDevice.DebugLevel">
+      <summary>Gets or sets the debug level for devices when they are created.</summary>
+      <remarks>
+         This property is not retroactive. Modifying it won't affect devices which have already been created.
+      </remarks>
+    </member>    
   </members>
 </doc>

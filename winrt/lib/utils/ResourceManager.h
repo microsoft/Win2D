@@ -203,9 +203,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             auto manager = FACTORY::CreateManager();
 
             managerHolder = Make<ManagerHolder>();
+            CheckMakeResult(managerHolder);
             managerHolder->Manager = manager;
             
-            boolean inserted = false;
+            boolean inserted = false; // unused
             ThrowIfFailed(propertyMap->Insert(keyName.Get(), managerHolder.Get(), &inserted)); // Insert will replace an existing entry
 
             manager->WhenDestroyedRemoveFromPropertyMap(propertyMap.Get(), keyName.Get());

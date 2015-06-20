@@ -260,6 +260,19 @@ namespace Microsoft
             }
 
             template<>
+            inline std::wstring ToString<CanvasDebugLevel>(CanvasDebugLevel const& value)
+            {
+                switch (value)
+                {
+                    case CanvasDebugLevel::None: return L"CanvasDebugLevel::None";
+                    case CanvasDebugLevel::Error: return L"CanvasDebugLevel::Error";
+                    case CanvasDebugLevel::Warning: return L"CanvasDebugLevel::Warning";
+                    case CanvasDebugLevel::Information: return L"CanvasDebugLevel::Information";
+                    default: assert(false); return L"<unknown CanvasDebugLevel>";
+                }
+            }
+
+            template<>
             inline std::wstring ToString<Platform::Guid>(Platform::Guid const& value)
             {
                 Platform::Guid copy = value;

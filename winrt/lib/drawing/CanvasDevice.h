@@ -17,12 +17,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     using namespace ::Microsoft::WRL;
     using namespace WinRTDirectX;
     using namespace ABI::Windows::UI::Core;
+    using namespace ABI::Windows::ApplicationModel::Core;
 
     class CanvasDevice;
     class CanvasDeviceManager;
 
     //
-    // Abstracts away the creation of a D2D factory / D3D device, allowing unit
+    // Abstracts away some lower-level resource access, allowing unit
     // tests to provide test doubles. Because they are internal, they can return
     // ComPtrs and throw exceptions on failure.
     //
@@ -36,22 +37,33 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         virtual bool TryCreateD3DDevice(bool useSoftwareRenderer, ComPtr<ID3D11Device>* device) = 0;
 
         virtual ComPtr<IDXGIDevice3> GetDxgiDevice(ID2D1Device1* d2dDevice) = 0;
+
+        virtual ComPtr<ICoreApplication> GetCoreApplication() = 0;
+
+        virtual ComPtr<IPropertyValueStatics> GetPropertyValueStatics() = 0;
     };
 
 
     //
-    // Default implementation of the adapter that actually talks to D3D / D2D
-    // that is used in production.
+    // Default implementation of the adapter, used in production.
     //
     class DefaultDeviceResourceCreationAdapter : public ICanvasDeviceResourceCreationAdapter,
                                                  private LifespanTracker<DefaultDeviceResourceCreationAdapter>
     {
+        ComPtr<IPropertyValueStatics> m_propertyValueStatics;
+
     public:
+        DefaultDeviceResourceCreationAdapter();
+
         virtual ComPtr<ID2D1Factory2> CreateD2DFactory(CanvasDebugLevel debugLevel) override;
 
         virtual bool TryCreateD3DDevice(bool useSoftwareRenderer, ComPtr<ID3D11Device>* device) override;
 
         virtual ComPtr<IDXGIDevice3> GetDxgiDevice(ID2D1Device1* d2dDevice) override;
+
+        virtual ComPtr<ICoreApplication> GetCoreApplication() override;
+
+        virtual ComPtr<IPropertyValueStatics> GetPropertyValueStatics() override;
     };
 
 
@@ -163,8 +175,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         // This is used for the public-facing property value. If this device was
         // created using interop, this is set to false.
         bool m_forceSoftwareRenderer; 
-
-        CanvasDebugLevel m_debugLevel;
         
         ClosablePtr<IDXGIDevice3> m_dxgiDevice;
         ClosablePtr<ID2D1DeviceContext1> m_d2dResourceCreationDeviceContext;
@@ -178,7 +188,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     public:
         CanvasDevice(
             std::shared_ptr<CanvasDeviceManager> manager,
-            CanvasDebugLevel debugLevel,
             bool forceSoftwareRenderer,
             IDXGIDevice3* dxgiDevice,
             ID2D1Device1* d2dDevice);
@@ -325,23 +334,41 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         WeakRef m_sharedDevices[2];
         std::mutex m_mutex;
+
+        std::atomic<CanvasDebugLevel> m_debugLevel;
     public:
         CanvasDeviceManager(std::shared_ptr<ICanvasDeviceResourceCreationAdapter> adapter);
 
-        virtual ~CanvasDeviceManager() = default;
+        virtual ~CanvasDeviceManager();
         
-        ComPtr<CanvasDevice> CreateNew(CanvasDebugLevel debugLevel, bool forceSoftwareRenderer);
-        ComPtr<CanvasDevice> CreateNew(CanvasDebugLevel debugLevel, bool forceSoftwareRenderer, ID2D1Factory2* d2dFactory);
-        ComPtr<CanvasDevice> CreateNew(CanvasDebugLevel debugLevel, IDirect3DDevice* direct3DDevice);
-        ComPtr<CanvasDevice> CreateNew(CanvasDebugLevel debugLevel, IDirect3DDevice* direct3DDevice, ID2D1Factory2* d2dFactory);
+        ComPtr<CanvasDevice> CreateNew(bool forceSoftwareRenderer);
+        ComPtr<CanvasDevice> CreateNew(bool forceSoftwareRenderer, ID2D1Factory2* d2dFactory);
+        ComPtr<CanvasDevice> CreateNew(IDirect3DDevice* direct3DDevice);
+        ComPtr<CanvasDevice> CreateNew(IDirect3DDevice* direct3DDevice, ID2D1Factory2* d2dFactory);
         ComPtr<CanvasDevice> CreateWrapper(ID2D1Device1* d2dDevice);
 
         ComPtr<ICanvasDevice> GetSharedDevice(bool forceSoftwareRenderer);
+
+        CanvasDebugLevel GetDebugLevel();
+        void SetDebugLevel(CanvasDebugLevel const& value);
 
     private:
         ComPtr<IDXGIDevice3> MakeDXGIDevice(bool forceSoftwareRenderer) const;
 
         ComPtr<ID3D11Device> MakeD3D11Device(bool forceSoftwareRenderer) const;
+
+        CanvasDebugLevel LoadDebugLevelProperty();
+        void SaveDebugLevelProperty(CanvasDebugLevel debugLevel);
+
+        struct PropertyData
+        {
+            HStringReference KeyName;
+            ComPtr<IMap<HSTRING, IInspectable*>> PropertyMap;
+            ComPtr<IInspectable> PropertyHolder;
+            HRESULT LookupResult;
+        };
+        PropertyData GetDebugLevelPropertyData();
+        void StoreValueToPropertyKey(PropertyData key, CanvasDebugLevel value);
     };
 
 
@@ -371,18 +398,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         // ICanvasDeviceFactory
         //
 
-        IFACEMETHOD(CreateWithDebugLevel)(
-            CanvasDebugLevel debugLevel,
-            ICanvasDevice** canvasDevice) override;
-
-        IFACEMETHOD(CreateWithDebugLevelAndForceSoftwareRendererOption)(
-            CanvasDebugLevel debugLevel,
+        IFACEMETHOD(CreateWithForceSoftwareRendererOption)(
             boolean forceSoftwareRenderer,
             ICanvasDevice** canvasDevice) override;
 
         IFACEMETHOD(CreateFromDirect3D11Device)(
             IDirect3DDevice* direct3DDevice,
-            CanvasDebugLevel debugLevel,
             ICanvasDevice** canvasDevice) override;
 
         //
@@ -391,6 +412,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         IFACEMETHOD(GetSharedDevice)(
             boolean forceSoftwareRenderer,
             ICanvasDevice** device);
+
+        IFACEMETHOD(put_DebugLevel)(CanvasDebugLevel value);
+        IFACEMETHOD(get_DebugLevel)(CanvasDebugLevel* value);
 
         //
         // Used by PerApplicationManager

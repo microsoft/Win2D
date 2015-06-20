@@ -87,8 +87,8 @@ std::shared_ptr<CanvasAnimatedControlTestAdapter> CreateAnimatedControlTestAdapt
             return canvasDevice.CopyTo(value);
         });
     
-    adapter->DeviceFactory->CreateWithDebugLevelAndForceSoftwareRendererOptionMethod.AllowAnyCall(
-        [=](CanvasDebugLevel, boolean, ICanvasDevice** device)
+    adapter->DeviceFactory->CreateWithForceSoftwareRendererOptionMethod.AllowAnyCall(
+        [=](boolean, ICanvasDevice** device)
         {
             return canvasDevice.CopyTo(device);
         });

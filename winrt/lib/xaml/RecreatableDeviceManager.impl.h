@@ -401,8 +401,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             {
                 auto deviceFactory = As<ICanvasDeviceFactory>(m_canvasDeviceFactory);
 
-                deviceFactory->CreateWithDebugLevelAndForceSoftwareRendererOption(
-                    CanvasDebugLevel::None,
+                deviceFactory->CreateWithForceSoftwareRendererOption(
                     deviceCreationOptions.ForceSoftwareRenderer,
                     &device);
             }

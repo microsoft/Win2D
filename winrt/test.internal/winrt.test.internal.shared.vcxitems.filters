@@ -265,6 +265,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockHelpers.h">
       <Filter>mocks</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockProperties.h">
+      <Filter>mocks</Filter>
+    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockSurfaceImageSource.h">
       <Filter>mocks</Filter>
     </ClInclude>

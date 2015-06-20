@@ -50,8 +50,8 @@ public:
         CreateRecreatableDeviceManagerMethod.AllowAnyCall();
         DeviceFactory->ActivateInstanceMethod.AllowAnyCall();
 
-        DeviceFactory->CreateWithDebugLevelAndForceSoftwareRendererOptionMethod.AllowAnyCall(
-            [&](CanvasDebugLevel, boolean, ICanvasDevice** device)
+        DeviceFactory->CreateWithForceSoftwareRendererOptionMethod.AllowAnyCall(
+            [&](boolean, ICanvasDevice** device)
             {
                 auto stubDevice = Make<StubCanvasDevice>();
                 stubDevice.CopyTo(device);

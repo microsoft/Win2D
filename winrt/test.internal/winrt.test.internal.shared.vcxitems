@@ -68,6 +68,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDWriteFontFile.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDWriteTextLayout.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockHelpers.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockProperties.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockSurfaceImageSource.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockSurfaceImageSourceFactory.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockWICBitmap.h" />

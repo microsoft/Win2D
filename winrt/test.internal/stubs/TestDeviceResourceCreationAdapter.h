@@ -13,6 +13,39 @@
 #pragma once
 
 #include "stubs/StubD3D11Device.h"
+#include "mocks/MockProperties.h"
+
+class StubDebugProperty : public MockPropertyValue
+{
+    uint32_t m_value;
+
+public:
+    StubDebugProperty(CanvasDebugLevel value)
+        : m_value(static_cast<uint32_t>(value))
+    {}
+
+    StubDebugProperty(uint32_t value)
+        : m_value(value)
+    {}
+
+    IFACEMETHODIMP GetUInt32(UINT32* out) override
+    {
+        *out = m_value;
+        return S_OK;
+    }
+};
+
+class StubPropertyValueStatics : public MockPropertyValueStatics
+{
+public:
+    IFACEMETHODIMP CreateUInt32(
+        UINT32 value,
+        IInspectable** out) override
+    {
+        auto propertyValue = Make<StubDebugProperty>(value);
+        return propertyValue.CopyTo(out);
+    }
+};
 
 // This device is used for creating mock devices which include some basic functionality, but do not call any actual D2D/D3D.
 class TestDeviceResourceCreationAdapter : public ICanvasDeviceResourceCreationAdapter
@@ -21,6 +54,7 @@ class TestDeviceResourceCreationAdapter : public ICanvasDeviceResourceCreationAd
     bool m_allowHardware;
 
 public:
+    CALL_COUNTER_WITH_MOCK(GetCoreApplicationMethod, ComPtr<ICoreApplication>());
 
     TestDeviceResourceCreationAdapter()
         : m_numD2DFactoryCreationCalls(0)
@@ -28,7 +62,29 @@ public:
         , m_numD3dDeviceCreationCalls(0)
         , m_allowHardware(true)
         , m_retrievableForceSoftwareRenderer(false)
-    {}
+    {
+        GetCoreApplicationMethod.AllowAnyCall(
+            [&]
+            {
+                auto coreApplication = Make<MockCoreApplication>();                
+                coreApplication->get_PropertiesMethod.AllowAnyCall(
+                    [&](IPropertySet** out)
+                    { 
+                        auto mockProperties = Make<MockProperties>();
+                        mockProperties->LookupMethod.AllowAnyCall(
+                            [&](HSTRING, IInspectable** out)
+                            {
+                                auto debugPropertyHolder = Make<StubDebugProperty>(CanvasDebugLevel::None);
+                                debugPropertyHolder.CopyTo(out);
+                                return S_OK;
+                            });
+                        mockProperties->InsertMethod.AllowAnyCall();
+                        return mockProperties.CopyTo(out);
+                    });
+
+                return coreApplication;
+            });
+    }
 
     virtual ComPtr<ID2D1Factory2> CreateD2DFactory(
         CanvasDebugLevel debugLevel) override
@@ -74,6 +130,16 @@ public:
         ThrowIfFailed(d2dDevice->QueryInterface(d2dDeviceWithDxgiDevice.GetAddressOf()));
         
         return d2dDeviceWithDxgiDevice->GetDxgiDevice();
+    }
+
+    virtual ComPtr<ICoreApplication> GetCoreApplication() override
+    {
+        return GetCoreApplicationMethod.WasCalled();
+    }
+
+    virtual ComPtr<IPropertyValueStatics> GetPropertyValueStatics() override
+    {
+        return Make<StubPropertyValueStatics>();
     }
 
     void SetHardwareEnabled(bool enable)

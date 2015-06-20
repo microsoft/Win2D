@@ -17,12 +17,14 @@ class MockCanvasDeviceActivationFactory : public RuntimeClass<IActivationFactory
 public:
     CALL_COUNTER_WITH_MOCK(ActivateInstanceMethod, HRESULT(IInspectable**));
     CALL_COUNTER_WITH_MOCK(GetSharedDeviceMethod, HRESULT(boolean, ICanvasDevice**));
-    CALL_COUNTER_WITH_MOCK(CreateWithDebugLevelAndForceSoftwareRendererOptionMethod, HRESULT(CanvasDebugLevel, boolean, ICanvasDevice**));
+    CALL_COUNTER_WITH_MOCK(CreateWithForceSoftwareRendererOptionMethod, HRESULT(boolean, ICanvasDevice**));
+    CALL_COUNTER_WITH_MOCK(put_DebugLevelMethod, HRESULT(CanvasDebugLevel));
+    CALL_COUNTER_WITH_MOCK(get_DebugLevelMethod, HRESULT(CanvasDebugLevel*));
 
     void ExpectToActivateOne(ComPtr<ICanvasDevice> device = Make<StubCanvasDevice>())
     {
-        CreateWithDebugLevelAndForceSoftwareRendererOptionMethod.SetExpectedCalls(1,
-            [=](CanvasDebugLevel, boolean, ICanvasDevice** out)
+        CreateWithForceSoftwareRendererOptionMethod.SetExpectedCalls(1,
+            [=](boolean, ICanvasDevice** out)
             {
                 return device.CopyTo(out);
             });
@@ -44,24 +46,15 @@ public:
             });
     }
 
-    IFACEMETHODIMP CreateWithDebugLevel(
-        CanvasDebugLevel debugLevel,
-        ICanvasDevice** canvasDevice)
-    {
-        return E_NOTIMPL;
-    }
-
-    IFACEMETHODIMP CreateWithDebugLevelAndForceSoftwareRendererOption(
-        CanvasDebugLevel debugLevel,
+    IFACEMETHODIMP CreateWithForceSoftwareRendererOption(
         boolean forceSoftwareRenderer,
         ICanvasDevice** canvasDevice)
     {
-        return CreateWithDebugLevelAndForceSoftwareRendererOptionMethod.WasCalled(debugLevel, forceSoftwareRenderer, canvasDevice);
+        return CreateWithForceSoftwareRendererOptionMethod.WasCalled(forceSoftwareRenderer, canvasDevice);
     }
 
     IFACEMETHODIMP CreateFromDirect3D11Device(
         IDirect3DDevice* direct3DDevice,
-        CanvasDebugLevel debugLevel,
         ICanvasDevice** canvasDevice)
     {
         return E_NOTIMPL;
@@ -72,5 +65,15 @@ public:
         ICanvasDevice** device)
     {
         return GetSharedDeviceMethod.WasCalled(forceSoftwareRenderer, device);
+    }
+
+    IFACEMETHODIMP put_DebugLevel(CanvasDebugLevel debugLevel)
+    {
+        return put_DebugLevelMethod.WasCalled(debugLevel);
+    }
+
+    IFACEMETHODIMP get_DebugLevel(CanvasDebugLevel* debugLevel)
+    {
+        return get_DebugLevelMethod.WasCalled(debugLevel);
     }
 };
