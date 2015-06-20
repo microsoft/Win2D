@@ -476,22 +476,22 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             });
     }
 
-    IFACEMETHODIMP CanvasDeviceFactory::put_DebugLevel(CanvasDebugLevel value)
+    IFACEMETHODIMP CanvasDeviceFactory::put_DebugLevel(CanvasDebugLevel debugLevel)
     {
         return ExceptionBoundary(
             [&]
             {
-                GetManager()->SetDebugLevel(value);
+                GetManager()->SetDebugLevel(debugLevel);
             });
     }
 
-    IFACEMETHODIMP CanvasDeviceFactory::get_DebugLevel(CanvasDebugLevel* value)
+    IFACEMETHODIMP CanvasDeviceFactory::get_DebugLevel(CanvasDebugLevel* debugLevel)
     {
         return ExceptionBoundary(
             [&]
             {
-                CheckInPointer(value);
-                *value = GetManager()->GetDebugLevel();
+                CheckInPointer(debugLevel);
+                *debugLevel = GetManager()->GetDebugLevel();
             });
     }
 

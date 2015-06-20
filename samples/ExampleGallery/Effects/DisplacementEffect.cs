@@ -82,7 +82,7 @@ namespace ExampleGallery.Effects
 
         public void SetEncodingProperties(VideoEncodingProperties encodingProperties, IDirect3DDevice device)
         {
-            canvasDevice = CanvasDevice.CreateFromDirect3D11Device(device, CanvasDebugLevel.None);
+            canvasDevice = CanvasDevice.CreateFromDirect3D11Device(device);
         }
 
         public void SetProperties(IPropertySet configuration) { }

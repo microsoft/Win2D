@@ -413,8 +413,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             boolean forceSoftwareRenderer,
             ICanvasDevice** device);
 
-        IFACEMETHOD(put_DebugLevel)(CanvasDebugLevel value);
-        IFACEMETHOD(get_DebugLevel)(CanvasDebugLevel* value);
+        IFACEMETHOD(put_DebugLevel)(CanvasDebugLevel debugLevel);
+        IFACEMETHOD(get_DebugLevel)(CanvasDebugLevel* debugLevel);
 
         //
         // Used by PerApplicationManager
