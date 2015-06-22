@@ -14,59 +14,69 @@
 
 #include "GameLoopThread.h"
 
-namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace UI { namespace Xaml
+using namespace ABI::Microsoft::Graphics::Canvas;
+
+class ICanvasGameLoopClient
 {
-    class CanvasAnimatedControl;
+public:
+    virtual ~ICanvasGameLoopClient() = default;
 
-    class CanvasGameLoop : private LifespanTracker<CanvasGameLoop>
-    {
-        std::mutex m_mutex;
+    virtual void OnGameLoopStarting() = 0;
+    virtual void OnGameLoopStopped() = 0;
 
-        // The control owns this object, and we ensure that this object never
-        // outlives the control, we can hold a raw pointer here.
-        CanvasAnimatedControl* m_control;
+    virtual bool Tick(CanvasSwapChain* target, bool areResourcesCreated) = 0;
+    virtual void OnTickLoopEnded() = 0;
+};
 
-        // This is set by StartTickLoop, and is Reset when the tick loop decides
-        // that it has finished running.
-        ComPtr<IAsyncAction> m_tickLoopAction;
 
-        // This is set when the tick loop finishes running and is used to query
-        // the status (ie to marshal exceptions from the tick loop to the ui
-        // thread).  It is reset by StartTickLoop.
-        ComPtr<IAsyncInfo> m_completedTickLoopInfo;
+class CanvasGameLoop : private LifespanTracker<CanvasGameLoop>
+{
+    std::mutex m_mutex;
+
+    // The client (ie the CanvasAnimatedControl) owns the CanvasGameLoop,
+    // and we ensure that this object never outlives the clietn, so we can
+    // hold a raw pointer here.
+    ICanvasGameLoopClient* m_client;
+
+    // This is set by StartTickLoop, and is Reset when the tick loop decides
+    // that it has finished running.
+    ComPtr<IAsyncAction> m_tickLoopAction;
+
+    // This is set when the tick loop finishes running and is used to query
+    // the status (ie to marshal exceptions from the tick loop to the ui
+    // thread).  It is reset by StartTickLoop.
+    ComPtr<IAsyncInfo> m_completedTickLoopInfo;
         
-        ComPtr<IDispatchedHandler> m_tickHandler;
-        ComPtr<IAsyncActionCompletedHandler> m_tickCompletedHandler;
+    ComPtr<IDispatchedHandler> m_tickHandler;
+    ComPtr<IAsyncActionCompletedHandler> m_tickCompletedHandler;
 
-        ComPtr<CanvasSwapChain> m_target;
-        bool m_areResourcesCreated;
-        bool m_tickLoopShouldContinue;
+    ComPtr<CanvasSwapChain> m_target;
+    bool m_areResourcesCreated;
+    bool m_tickLoopShouldContinue;
 
-        std::unique_ptr<IGameLoopThread> m_gameLoopThread;
+    std::unique_ptr<IGameLoopThread> m_gameLoopThread;
 
-    public:
-        CanvasGameLoop(
-            CanvasAnimatedControl* control,
-            std::unique_ptr<IGameLoopThread> gameLoopThread);
+public:
+    CanvasGameLoop(
+        ICanvasGameLoopClient* client,
+        std::unique_ptr<IGameLoopThread> gameLoopThread);
 
-        ~CanvasGameLoop();
+    ~CanvasGameLoop();
 
-        void StartTickLoop(
-            CanvasSwapChain* target,
-            bool areResourcesCreated);
+    void StartTickLoop(
+        CanvasSwapChain* target,
+        bool areResourcesCreated);
 
-        void TakeTickLoopState(bool* isRunning, ComPtr<IAsyncInfo>* completedTickLoopState);
+    void TakeTickLoopState(bool* isRunning, ComPtr<IAsyncInfo>* completedTickLoopState);
 
-        void StartDispatcher();
-        void StopDispatcher();
-        bool HasThreadAccess();
+    void StartDispatcher();
+    void StopDispatcher();
+    bool HasThreadAccess();
 
-    private:
-        void Tick();
-        void TickCompleted(IAsyncAction* action, AsyncStatus status);
+private:
+    void Tick();
+    void TickCompleted(IAsyncAction* action, AsyncStatus status);
 
-        void ScheduleTick(Lock const& lock);
-        void EndTickLoop(Lock const& lock);
-    };
-
-} } } } } }
+    void ScheduleTick(Lock const& lock);
+    void EndTickLoop(Lock const& lock);
+};

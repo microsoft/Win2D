@@ -92,7 +92,7 @@ public:
         // dispatcher.
         //
 
-        return std::make_unique<CanvasGameLoop>(control, CreateGameLoopThread(swapChainPanel));
+        return std::make_unique<CanvasGameLoop>(control, CreateGameLoopThread(swapChainPanel, control));
     }
 
     virtual ComPtr<IInspectable> CreateSwapChainPanel(IInspectable* canvasSwapChainPanel) override

@@ -66,10 +66,12 @@ static ComPtr<IAsyncAction> StartThread(ComPtr<IWorkItemHandler>&& handler)
 class GameLoopThread : public IGameLoopThread
                      , private LifespanTracker<GameLoopThread>
 {
+    ICanvasGameLoopClient* m_client;
     std::mutex m_mutex;
     std::condition_variable m_conditionVariable;
 
     ComPtr<ICoreDispatcher> m_dispatcher;
+    bool m_started;
     bool m_startDispatcher;
     bool m_dispatcherStarted;
     bool m_shutdownRequested;
@@ -77,8 +79,10 @@ class GameLoopThread : public IGameLoopThread
     std::vector<ComPtr<AnimatedControlAsyncAction>> m_pendingActions;
 
 public:
-    GameLoopThread(ComPtr<ISwapChainPanel> swapChainPanel)
-        : m_startDispatcher(false)
+    GameLoopThread(ComPtr<ISwapChainPanel> swapChainPanel, ICanvasGameLoopClient* client)
+        : m_client(client)
+        , m_started(false)
+        , m_startDispatcher(false)
         , m_dispatcherStarted(false)
         , m_shutdownRequested(false)
         , m_shutdown(false)
@@ -97,6 +101,9 @@ public:
             });
 
         ThrowIfFailed(action->put_Completed(threadCompletedHandler.Get()));
+
+        auto lock = GetLock();
+        m_conditionVariable.wait(lock, [=] { return m_started; });
     }
 
     ~GameLoopThread()
@@ -181,9 +188,15 @@ private:
         auto lock = GetLock();
 
         m_dispatcher = CreateCoreDispatcher(swapChainPanel.Get());
+        swapChainPanel.Reset(); // we only needed this to create the dispatcher
         m_conditionVariable.notify_all();
 
-        swapChainPanel.Reset(); // we only needed this to create the dispatcher
+        lock.unlock();
+        m_client->OnGameLoopStarting();
+        lock.lock();
+
+        m_started = true;
+        m_conditionVariable.notify_all();        
 
         for (;;)
         {
@@ -217,6 +230,9 @@ private:
 
         // Cancel any remaining actions
         CancelActions(lock);
+
+        lock.unlock();
+        m_client->OnGameLoopStopped();
 
         // falling out of ThreadMain will cause ThreadCompleted to be called,
         // which will mark the thread as shutdown.
@@ -258,7 +274,7 @@ private:
 };
 
 
-std::unique_ptr<IGameLoopThread> CreateGameLoopThread(ISwapChainPanel* swapChainPanel)
+std::unique_ptr<IGameLoopThread> CreateGameLoopThread(ISwapChainPanel* swapChainPanel, ICanvasGameLoopClient* client)
 {
-    return std::make_unique<GameLoopThread>(swapChainPanel);
+    return std::make_unique<GameLoopThread>(swapChainPanel, client);
 }

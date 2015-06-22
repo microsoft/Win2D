@@ -14,6 +14,7 @@
 
 #include "AnimatedControlAsyncAction.h"
 #include "BaseControlAdapter.h"
+#include "CanvasGameLoop.h"
 #include "CanvasSwapChainPanel.h"
 #include "StepTimer.h"
 
@@ -84,7 +85,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     typedef ITypedEventHandler<ICanvasAnimatedControl*, CanvasAnimatedDrawEventArgs*> Animated_DrawEventHandler;
 
     class CanvasAnimatedControl;
-    class CanvasGameLoop;
     class ICanvasAnimatedControlAdapter;
 
     struct CanvasAnimatedControlTraits
@@ -125,11 +125,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     class CanvasAnimatedControl : public RuntimeClass<
         MixIn<CanvasAnimatedControl, BaseControl<CanvasAnimatedControlTraits>>,
         ComposableBase<>>,
-        public BaseControl<CanvasAnimatedControlTraits>
+        public BaseControl<CanvasAnimatedControlTraits>,
+        public ICanvasGameLoopClient
     {
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_UI_Xaml_CanvasAnimatedControl, BaseTrust);
 
         EventSource<Animated_UpdateEventHandler, InvokeModeOptions<StopOnFirstError>> m_updateEventList;
+        EventSource<ITypedEventHandler<ICanvasAnimatedControl*, IInspectable*>, InvokeModeOptions<StopOnFirstError>> m_gameLoopStartingEventList;
+        EventSource<ITypedEventHandler<ICanvasAnimatedControl*, IInspectable*>, InvokeModeOptions<StopOnFirstError>> m_gameLoopStoppedEventList;
 
         ComPtr<ICanvasSwapChainPanel> m_canvasSwapChainPanel;
 
@@ -190,6 +193,20 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         IFACEMETHODIMP remove_Update(
             EventRegistrationToken token) override;
 
+        IFACEMETHODIMP add_GameLoopStarting(
+            ITypedEventHandler<ICanvasAnimatedControl*, IInspectable*>* value,
+            EventRegistrationToken* token) override;
+
+        IFACEMETHODIMP remove_GameLoopStarting(
+            EventRegistrationToken token) override;
+
+        IFACEMETHODIMP add_GameLoopStopped(
+            ITypedEventHandler<ICanvasAnimatedControl*, IInspectable*>* value,
+            EventRegistrationToken* token) override;
+
+        IFACEMETHODIMP remove_GameLoopStopped(
+            EventRegistrationToken token) override;
+
         IFACEMETHODIMP put_IsFixedTimeStep(boolean value) override;
 
         IFACEMETHODIMP get_IsFixedTimeStep(boolean* value) override;
@@ -243,9 +260,17 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     private:
         void CreateSwapChainPanel();
 
-        bool Tick(
+        // ICanvasGameLoopClient methods
+
+        virtual void OnGameLoopStarting() override;
+
+        virtual void OnGameLoopStopped() override;
+
+        virtual bool Tick(
             CanvasSwapChain* target, 
-            bool areResourcesCreated);
+            bool areResourcesCreated) override;
+
+        virtual void OnTickLoopEnded() override;
 
         struct UpdateResult
         {
@@ -261,8 +286,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         void IssueAsyncActions(
             std::vector<ComPtr<AnimatedControlAsyncAction>> const& pendingActions);
-
-        friend class CanvasGameLoop;
     };
 
 }}}}}}

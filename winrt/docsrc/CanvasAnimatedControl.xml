@@ -465,6 +465,54 @@ under the License.
       <inheritdoc/>
     </member>
     
+    <member name="E:Microsoft.Graphics.Canvas.UI.Xaml.ICanvasAnimatedControl.GameLoopStarting">
+      <summary>Occurs on the game loop thread just before the game loop starts.</summary>
+      <remarks>
+        <p>
+          This event is the first chance that an application has to execute code
+          on the game loop thread.  This is the recommended place to call <see
+          cref="M:Microsoft.Graphics.Canvas.UI.Xaml.ICanvasAnimatedControl.CreateCoreIndependentInputSource(Windows.UI.Core.CoreInputDeviceTypes)"/>,
+          create <a
+          href="https://msdn.microsoft.com/en-us/library/windows/apps/windows.ui.input.gesturerecognizer.asp">GestureRecognizer</a>s
+          and register event handlers against them.
+        </p>
+        <p>
+          Use <see
+          cref="E:Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl.GameLoopStopped"/>
+          to unregister any event handlers that were registered during GameLoopStarting.
+        </p>
+        <p>
+          The <a
+          href="https://github.com/Microsoft/Win2D-Samples/blob/master/ExampleGallery/Shared/CustomFonts.xaml.cs">CustomFonts</a>
+          example in ExampleGallery demonstrates using this event.
+        </p>
+      </remarks>
+    </member>
+    <member name="E:Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl.GameLoopStarting">
+      <summary>Occurs on the game loop thread just before the game loop starts.</summary>
+      <inheritdoc/>
+    </member>
+    <member name="E:Microsoft.Graphics.Canvas.UI.Xaml.ICanvasAnimatedControl.GameLoopStopped">
+      <summary>Occurs on the game loop thread just after the game loop stops.</summary>
+      <remarks>
+        <p>
+          This event is the last chance an application has to execute code
+          before the game loop thead exits.  This is the recommended place to
+          unregister any events that were registered during <see
+          cref="E:Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl.GameLoopStarting"/>.
+        </p>
+        <p>
+          The <a
+          href="https://github.com/Microsoft/Win2D-Samples/blob/master/ExampleGallery/Shared/CustomFonts.xaml.cs">CustomFonts</a>
+          example in ExampleGallery demonstrates using this event.
+        </p>
+      </remarks>
+    </member>
+    <member name="E:Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl.GameLoopStopped">
+      <summary>Occurs on the game loop thread just after the game loop stops.</summary>
+      <inheritdoc/>
+    </member>
+
     <member name="E:Microsoft.Graphics.Canvas.UI.Xaml.ICanvasAnimatedControl.CreateResources">
       <summary>Hook this event to create any resources needed for your drawing.</summary>
       <remarks>

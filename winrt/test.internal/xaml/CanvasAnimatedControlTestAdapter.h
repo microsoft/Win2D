@@ -164,11 +164,20 @@ public:
         class GameThreadProxy : public IGameLoopThread
         {
             std::shared_ptr<IGameLoopThread> m_thread;
+            ICanvasGameLoopClient* m_client;
 
         public:
-            GameThreadProxy(std::shared_ptr<IGameLoopThread> thread)
+            GameThreadProxy(std::shared_ptr<IGameLoopThread> thread, ICanvasGameLoopClient* client)
                 : m_thread(thread)
-            {}
+                , m_client(client)
+            {
+                m_client->OnGameLoopStarting();
+            }
+
+            ~GameThreadProxy()
+            {
+                m_client->OnGameLoopStopped();
+            }
 
             virtual void StartDispatcher() { m_thread->StartDispatcher(); }
             virtual void StopDispatcher() { m_thread->StopDispatcher(); }
@@ -178,7 +187,7 @@ public:
 
         auto gameThread = std::make_shared<FakeGameThread>();
 
-        auto gameLoop = std::make_unique<CanvasGameLoop>(control, std::make_unique<GameThreadProxy>(gameThread));
+        auto gameLoop = std::make_unique<CanvasGameLoop>(control, std::make_unique<GameThreadProxy>(gameThread, control));
 
         m_gameThread = gameThread;
         

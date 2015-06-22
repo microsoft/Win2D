@@ -3052,4 +3052,49 @@ TEST_CLASS(CanvasAnimatedControl_AppAccessingWorkerThreadTests)
 
         f.Run();
     }
+    
+    //
+    // These test the interaction between CanvasAnimatedControl and
+    // IGameLoopThread; another test verifies that the production implementation
+    // of IGameLoopThread raises the event at an appropriate time.
+    //
+
+    TEST_METHOD_EX(CanvasAnimatedControl_GameLoopStartingEventIsRaised)
+    {
+        CanvasAnimatedControlFixture f;
+
+        auto startingHandler = MockEventHandler<ITypedEventHandler<ICanvasAnimatedControl*, IInspectable*>>(L"GameLoopStarting");
+        startingHandler.SetExpectedCalls(1,
+            [&] (ICanvasAnimatedControl* control, IInspectable* args)
+            {
+                Assert::IsTrue(IsSameInstance(control, f.Control.Get()));
+                Assert::IsNull(args);
+                return S_OK;
+            });
+        
+        EventRegistrationToken token;
+        ThrowIfFailed(f.Control->add_GameLoopStarting(startingHandler.Get(), &token));
+
+        f.Load();
+    }
+
+    TEST_METHOD_EX(CanvasAnimatedControl_GameLoopStoppedEventIsRaised)
+    {
+        CanvasAnimatedControlFixture f;
+
+        auto stoppedHandler = MockEventHandler<ITypedEventHandler<ICanvasAnimatedControl*, IInspectable*>>(L"GameLoopStopped");
+        stoppedHandler.SetExpectedCalls(1,
+            [&] (ICanvasAnimatedControl* control, IInspectable* args)
+            {
+                Assert::IsTrue(IsSameInstance(control, f.Control.Get()));
+                Assert::IsNull(args);
+                return S_OK;
+            });
+        
+        EventRegistrationToken token;
+        ThrowIfFailed(f.Control->add_GameLoopStopped(stoppedHandler.Get(), &token));
+
+        f.Load();
+        f.RaiseUnloadedEvent();
+    }
 };

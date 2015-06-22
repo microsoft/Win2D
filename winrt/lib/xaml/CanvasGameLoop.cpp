@@ -20,9 +20,9 @@ using namespace ::ABI::Microsoft::Graphics::Canvas::UI::Xaml;
 using namespace ::Microsoft::WRL::Wrappers;
 
 CanvasGameLoop::CanvasGameLoop(
-    CanvasAnimatedControl* control,
+    ICanvasGameLoopClient* client,
     std::unique_ptr<IGameLoopThread> gameLoopThread)
-    : m_control(control)
+    : m_client(client)
     , m_gameLoopThread(std::move(gameLoopThread))
 { 
     m_tickHandler = Callback<AddFtmBase<IDispatchedHandler>::Type>(
@@ -47,7 +47,7 @@ CanvasGameLoop::~CanvasGameLoop()
 void CanvasGameLoop::Tick()
 {
     m_tickLoopShouldContinue = false;
-    m_tickLoopShouldContinue = m_control->Tick(m_target.Get(), m_areResourcesCreated);
+    m_tickLoopShouldContinue = m_client->Tick(m_target.Get(), m_areResourcesCreated);
 }
 
 void CanvasGameLoop::TickCompleted(IAsyncAction* action, AsyncStatus status)
@@ -68,7 +68,7 @@ void CanvasGameLoop::TickCompleted(IAsyncAction* action, AsyncStatus status)
     else
     {
         EndTickLoop(lock);
-        m_control->Changed(m_control->GetLock());
+        m_client->OnTickLoopEnded();
     }
 }
 

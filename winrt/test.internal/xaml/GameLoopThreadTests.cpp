@@ -109,13 +109,39 @@ public:
     }
 };
 
+struct MockGameLoopClient : public ICanvasGameLoopClient
+{
+    CALL_COUNTER_WITH_MOCK(GameLoopStarting, void());
+    CALL_COUNTER_WITH_MOCK(GameLoopStopped, void());
+
+    virtual void OnGameLoopStarting() override 
+    {
+        GameLoopStarting.WasCalled();
+    }
+
+    virtual void OnGameLoopStopped() override 
+    {
+        GameLoopStopped.WasCalled();
+    }
+
+    virtual bool Tick(CanvasSwapChain* target, bool areResourcesCreated) override 
+    {
+        return true;
+    }
+
+    virtual void OnTickLoopEnded() override 
+    {
+    }
+};
+
 TEST_CLASS(GameLoopThreadTests)
 {
     struct Fixture
     {
         ComPtr<FakeDispatcher> Dispatcher;
         ComPtr<StubSwapChainPanel> SwapChainPanel;
-        std::shared_ptr<IGameLoopThread> Thread;
+        MockGameLoopClient Client;
+        std::unique_ptr<IGameLoopThread> Thread;
 
         Fixture()
             : Dispatcher(Make<FakeDispatcher>())
@@ -128,7 +154,13 @@ TEST_CLASS(GameLoopThreadTests)
                     return inputSource.CopyTo(value);
                 });
 
-            Thread = CreateGameLoopThread(SwapChainPanel.Get());
+            Client.GameLoopStarting.AllowAnyCall();
+            Client.GameLoopStopped.AllowAnyCall();
+        }
+
+        void CreateThread()
+        {
+            Thread = CreateGameLoopThread(SwapChainPanel.Get(), &Client);
         }
 
         void RunAndWait(std::function<void()> fn = nullptr)
@@ -177,11 +209,13 @@ TEST_CLASS(GameLoopThreadTests)
     TEST_METHOD_EX(GameLoopThread_ConstructionDestruction)
     {
         Fixture f;
+        f.CreateThread();
     }
 
     TEST_METHOD_EX(GameLoopThread_HasThreadAccess_CallsThroughToDispatcher)
     {
         Fixture f;
+        f.CreateThread();
 
         f.RunAndWait();         // give the thread a chance to start
 
@@ -212,6 +246,7 @@ TEST_CLASS(GameLoopThreadTests)
     TEST_METHOD_EX(GameLoopThread_RunAsync_ExecutesHandler)
     {
         Fixture f;
+        f.CreateThread();
 
         f.RunAndWait();
     }
@@ -219,6 +254,7 @@ TEST_CLASS(GameLoopThreadTests)
     TEST_METHOD_EX(GameLoopThread_WhenStartDispatcherCalled_DispatcherStartsProcessingEvents)
     {
         Fixture f;
+        f.CreateThread();
 
         f.Thread->StartDispatcher();
         f.RunDirectlyOnDispatcherAndWait();
@@ -227,6 +263,7 @@ TEST_CLASS(GameLoopThreadTests)
     TEST_METHOD_EX(GameLoopThread_WhenStopDispatcherCalled_DispatcherStopsProcessingEvents)
     {
         Fixture f;
+        f.CreateThread();
 
         f.Thread->StartDispatcher();
         f.Thread->StopDispatcher();
@@ -249,6 +286,7 @@ TEST_CLASS(GameLoopThreadTests)
         // events to take priority over the ticks.  We ensure this by scheduling
         // the ticks at low priority.
         Fixture f;
+        f.CreateThread();
 
         f.Thread->StartDispatcher();
         f.RunDirectlyOnDispatcherAndWait();
@@ -260,5 +298,30 @@ TEST_CLASS(GameLoopThreadTests)
             });
 
         f.RunAndWait();
+    }
+
+    TEST_METHOD_EX(GameLoopThread_OnGameLoopStarting_IsCalledBeforeGameLoopStarts)
+    {
+        Fixture f;
+
+        f.Client.GameLoopStarting.SetExpectedCalls(1);
+        f.CreateThread();
+        f.Client.GameLoopStarting.SetExpectedCalls(0);
+
+        f.RunAndWait();
+    }
+
+    TEST_METHOD_EX(GameLoopThread_OnGameLoopStopped_IsCalledAfterGameLoopStops)
+    {
+        Fixture f;
+
+        f.Client.GameLoopStopped.SetExpectedCalls(0);
+
+        f.CreateThread();
+        f.Thread->StartDispatcher();
+        f.Thread->StopDispatcher();
+        
+        f.Client.GameLoopStopped.SetExpectedCalls(1);
+        f.Thread.reset();
     }
 };

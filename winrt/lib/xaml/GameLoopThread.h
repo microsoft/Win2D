@@ -28,4 +28,6 @@ public:
     virtual bool HasThreadAccess() = 0;
 };
 
-std::unique_ptr<IGameLoopThread> CreateGameLoopThread(ISwapChainPanel* swapChainPanel);
+class ICanvasGameLoopClient;
+
+std::unique_ptr<IGameLoopThread> CreateGameLoopThread(ISwapChainPanel* swapChainPanel, ICanvasGameLoopClient* client);

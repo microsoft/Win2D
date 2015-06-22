@@ -188,6 +188,48 @@ IFACEMETHODIMP CanvasAnimatedControl::remove_Update(
         });
 }
 
+IFACEMETHODIMP CanvasAnimatedControl::add_GameLoopStarting(
+    ITypedEventHandler<ICanvasAnimatedControl*, IInspectable*>* value,
+    EventRegistrationToken* token)
+{
+    return ExceptionBoundary(
+        [&]
+        {
+            ThrowIfFailed(m_gameLoopStartingEventList.Add(value, token));
+        });
+}
+
+IFACEMETHODIMP CanvasAnimatedControl::remove_GameLoopStarting(
+    EventRegistrationToken token)
+{
+    return ExceptionBoundary(
+        [&]
+        {
+            ThrowIfFailed(m_gameLoopStartingEventList.Remove(token));
+        });
+}
+
+IFACEMETHODIMP CanvasAnimatedControl::add_GameLoopStopped(
+    ITypedEventHandler<ICanvasAnimatedControl*, IInspectable*>* value,
+    EventRegistrationToken* token)
+{
+    return ExceptionBoundary(
+        [&]
+        {
+            ThrowIfFailed(m_gameLoopStoppedEventList.Add(value, token));
+        });
+}
+
+IFACEMETHODIMP CanvasAnimatedControl::remove_GameLoopStopped(
+    EventRegistrationToken token)
+{
+    return ExceptionBoundary(
+        [&]
+        {
+            ThrowIfFailed(m_gameLoopStoppedEventList.Remove(token));
+        });
+}
+
 IFACEMETHODIMP CanvasAnimatedControl::put_IsFixedTimeStep(boolean value)
 {
     return ExceptionBoundary(
@@ -794,6 +836,16 @@ void CanvasAnimatedControl::IssueAsyncActions(
     }
 }
 
+void CanvasAnimatedControl::OnGameLoopStarting()
+{
+    ThrowIfFailed(m_gameLoopStartingEventList.InvokeAll(this, nullptr));
+}
+
+void CanvasAnimatedControl::OnGameLoopStopped()
+{
+    ThrowIfFailed(m_gameLoopStoppedEventList.InvokeAll(this, nullptr));
+}
+
 bool CanvasAnimatedControl::Tick(
     CanvasSwapChain* swapChain, 
     bool areResourcesCreated)
@@ -1031,6 +1083,11 @@ bool CanvasAnimatedControl::Tick(
     }
 
     return areResourcesCreated && !isPaused;
+}
+
+void CanvasAnimatedControl::OnTickLoopEnded()
+{
+    Changed(GetLock());
 }
 
 CanvasAnimatedControl::UpdateResult CanvasAnimatedControl::Update(bool forceUpdate, int64_t timeSpentPaused)
