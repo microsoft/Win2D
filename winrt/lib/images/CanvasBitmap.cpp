@@ -731,15 +731,16 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         IAsyncAction **resultAsyncAction)
     {
         WinString fileName(rawfileName);
-        const D2D1_SIZE_U size = d2dBitmap->GetPixelSize();
-        float dpiX, dpiY;
-        d2dBitmap->GetDpi(&dpiX, &dpiY);
-
-        auto bitmapPixelAccess = std::make_shared<ScopedBitmapMappedPixelAccess>(d2dBitmap.Get(), D3D11_MAP_READ);
 
         auto asyncAction = Make<AsyncAction>(
             [=]
             {
+                const D2D1_SIZE_U size = d2dBitmap->GetPixelSize();
+                float dpiX, dpiY;
+                d2dBitmap->GetDpi(&dpiX, &dpiY);
+
+                ScopedBitmapMappedPixelAccess bitmapPixelAccess(d2dBitmap.Get(), D3D11_MAP_READ);
+
                 adapter->SaveLockedMemoryToFile(
                     fileName,
                     fileFormat,
@@ -748,7 +749,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                     size.height,
                     dpiX,
                     dpiY,
-                    bitmapPixelAccess.get());
+                    &bitmapPixelAccess);
             });
 
         CheckMakeResult(asyncAction);
@@ -768,15 +769,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ThrowHR(E_INVALIDARG, HStringReference(Strings::AutoFileFormatNotAllowed).Get());
         }
 
-        const D2D1_SIZE_U size = d2dBitmap->GetPixelSize();
-        float dpiX, dpiY;
-        d2dBitmap->GetDpi(&dpiX, &dpiY);
-
-        auto bitmapPixelAccess = std::make_shared<ScopedBitmapMappedPixelAccess>(d2dBitmap.Get(), D3D11_MAP_READ);
-
         auto asyncAction = Make<AsyncAction>(
             [=]
             {
+                const D2D1_SIZE_U size = d2dBitmap->GetPixelSize();
+                float dpiX, dpiY;
+                d2dBitmap->GetDpi(&dpiX, &dpiY);
+
+                ScopedBitmapMappedPixelAccess bitmapPixelAccess(d2dBitmap.Get(), D3D11_MAP_READ);
+
                 adapter->SaveLockedMemoryToStream(
                     stream,
                     fileFormat,
@@ -785,7 +786,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                     size.height,
                     dpiX,
                     dpiY,
-                    bitmapPixelAccess.get());
+                    &bitmapPixelAccess);
             });
 
         CheckMakeResult(asyncAction);
