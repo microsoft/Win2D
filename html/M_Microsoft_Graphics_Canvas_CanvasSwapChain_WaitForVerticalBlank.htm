@@ -14,8 +14,8 @@
       behavior should be synchronized to vertical blank, only call WaitForVerticalBlank
       on <i>one</i> of the swap chains. The choice of which swap chain is arbitrary.
       </p><p>
-      If the device you used to create the swap chain used hardware acceleration mode
-      <a href="T_Microsoft_Graphics_Canvas_CanvasHardwareAcceleration.htm">Off</a>, or 
+      If the device you used to create the swap chain had the ForceSoftwareRenderer
+      option set to true, or 
       <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ff476328%28v=vs.85%29.aspx">D3D_DRIVER_TYPE_WARP</a>
       (in the case of Direct3D interop), the display cannot be accessed to wait on vertical 
       blank. In that case, this method will relinquish the remainder of this thread's 

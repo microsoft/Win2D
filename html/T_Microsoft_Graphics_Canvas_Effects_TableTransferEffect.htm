@@ -12,6 +12,12 @@
           TableTransferEffect effect is similar to <a href="T_Microsoft_Graphics_Canvas_Effects_DiscreteTransferEffect.htm">DiscreteTransferEffect</a>.
           The difference is that TableTransferEffect interpolates between entries in the transfer table,
           which produces a smooth rather than stepped result.
-        </p><p>The transfer function is based on the list of inputs: V=(V0,V1,V2,V3,Vk...,VN) where N is the number of elements - 1.</p><p>The input pixel intensity is represented as C. The output pixel intensity, C' is calculated as follows:</p><p>For a value C, pick a value k, such that: k/N &lt;= C &lt; (k+1)/N</p><p>The output C' is calculated using the equation: C' = Vk + (C - k/N) * N * (V(k+1) - Vk)</p><p>This effect works on straight and premultiplied alpha images. It outputs premultiplied alpha.</p><p>This Windows Runtime type corresponds to the
+        </p><p>The transfer function is based on the list of inputs: V=(V0,V1,V2,V3,Vk...,VN) where N is the number of elements - 1.</p><p>The input pixel intensity is represented as C. The output pixel intensity, C' is calculated as follows:</p><p>For a value C, pick a value k, such that: k/N &lt;= C &lt; (k+1)/N</p><p>The output C' is calculated using the equation: C' = Vk + (C - k/N) * N * (V(k+1) - Vk)</p><p>
+          Effect inputs and outputs are assumed to be in
+          <a href="PremultipliedAlpha.htm">premultiplied alpha</a> format, but this 
+          effect operates internally on straight alpha data, so its input values will be 
+          unpremultiplied, then the transfer function applied, and finally the result 
+          converted back to premultiplied format.
+        </p><p>This Windows Runtime type corresponds to the
           <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/hh706373.aspx">D2D Table transfer effect</a>.
         </p></div><div class="collapsibleAreaRegion" id="seeAlsoSection"><span class="collapsibleRegionTitle" onclick="SectionExpandCollapse('ID7RB')" onkeypress="SectionExpandCollapse_CheckKey('ID7RB', event)" tabindex="0"><img id="ID7RBToggle" class="collapseToggle" src="../icons/SectionExpanded.png" />See Also</span></div><div id="ID7RBSection" class="collapsibleSection"><h4 class="subHeading">Reference</h4><div class="seeAlsoStyle"><a href="N_Microsoft_Graphics_Canvas_Effects.htm">Microsoft.Graphics.Canvas.Effects Namespace</a></div></div></div></div><div id="pageFooter" class="pageFooter"><p><a href="http://github.com/Microsoft/Win2D/blob/master/LICENSE.txt" target="_blank">Copyright (c) Microsoft Corporation. All rights reserved.</a></p> </div></body></html>
