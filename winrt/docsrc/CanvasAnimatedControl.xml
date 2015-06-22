@@ -371,6 +371,13 @@ under the License.
         <p>
           This property can be accessed from any thread.
         </p>
+        <p>
+          CanvasAnimatedControl uses this ClearColor property instead of the Background 
+          property that is inherited from XAML UserControl, because Background can be set 
+          to any XAML brush object. It does not make sense to clear an immediate mode 
+          Win2D control using XAML content as the background, so CanvasAnimatedControl 
+          ignores the XAML Background setting.
+        </p>
       </remarks>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl.ClearColor">
