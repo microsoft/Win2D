@@ -103,7 +103,7 @@ public:
         ThrowIfFailed(action->put_Completed(threadCompletedHandler.Get()));
 
         auto lock = GetLock();
-        m_conditionVariable.wait(lock, [=] { return m_started; });
+        m_conditionVariable.wait(lock, [=] { return m_started || m_shutdown; });
     }
 
     ~GameLoopThread()

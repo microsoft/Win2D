@@ -324,4 +324,21 @@ TEST_CLASS(GameLoopThreadTests)
         f.Client.GameLoopStopped.SetExpectedCalls(1);
         f.Thread.reset();
     }
+
+    TEST_METHOD_EX(GameLoopThead_WhenCreateCoreIndependentInputSourceFails_ConstructorStillCompletes)
+    {
+        Fixture f;
+
+        f.SwapChainPanel->CreateCoreIndependentInputSourceMethod.SetExpectedCalls(1,
+                [=] (CoreInputDeviceTypes, ICoreInputSourceBase**)
+                {
+                    // This is what happens when
+                    // CreateCoreIndependentInputSource is called from inside
+                    // the designer.
+                    return E_UNEXPECTED;
+                });
+
+        f.CreateThread();
+        // If this test fails then CreateThread will never return.
+    }
 };
