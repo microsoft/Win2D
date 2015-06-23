@@ -259,6 +259,54 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)xaml\GameLoopThread.cpp">
       <Filter>xaml</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\ChromaKeyEffect.cpp">
+      <Filter>effects\generated</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\ContrastEffect.cpp">
+      <Filter>effects\generated</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\EdgeDetectionEffect.cpp">
+      <Filter>effects\generated</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\EmbossEffect.cpp">
+      <Filter>effects\generated</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\ExposureEffect.cpp">
+      <Filter>effects\generated</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\GrayscaleEffect.cpp">
+      <Filter>effects\generated</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\HighlightsAndShadowsEffect.cpp">
+      <Filter>effects\generated</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\HueToRgbEffect.cpp">
+      <Filter>effects\generated</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\InvertEffect.cpp">
+      <Filter>effects\generated</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\PosterizeEffect.cpp">
+      <Filter>effects\generated</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\RgbToHueEffect.cpp">
+      <Filter>effects\generated</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\SepiaEffect.cpp">
+      <Filter>effects\generated</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\SharpenEffect.cpp">
+      <Filter>effects\generated</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\StraightenEffect.cpp">
+      <Filter>effects\generated</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\TemperatureAndTintEffect.cpp">
+      <Filter>effects\generated</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\VignetteEffect.cpp">
+      <Filter>effects\generated</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)pch.h" />
@@ -532,6 +580,54 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)xaml\GameLoopThread.h">
       <Filter>xaml</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\ChromaKeyEffect.h">
+      <Filter>effects\generated</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\ContrastEffect.h">
+      <Filter>effects\generated</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\EdgeDetectionEffect.h">
+      <Filter>effects\generated</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\EmbossEffect.h">
+      <Filter>effects\generated</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\ExposureEffect.h">
+      <Filter>effects\generated</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\GrayscaleEffect.h">
+      <Filter>effects\generated</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\HighlightsAndShadowsEffect.h">
+      <Filter>effects\generated</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\HueToRgbEffect.h">
+      <Filter>effects\generated</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\InvertEffect.h">
+      <Filter>effects\generated</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\PosterizeEffect.h">
+      <Filter>effects\generated</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\RgbToHueEffect.h">
+      <Filter>effects\generated</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\SepiaEffect.h">
+      <Filter>effects\generated</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\SharpenEffect.h">
+      <Filter>effects\generated</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\StraightenEffect.h">
+      <Filter>effects\generated</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\TemperatureAndTintEffect.h">
+      <Filter>effects\generated</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\VignetteEffect.h">
+      <Filter>effects\generated</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)Canvas.codegen.idl" />
@@ -680,6 +776,54 @@
       <Filter>effects\generated</Filter>
     </None>
     <None Include="$(MSBuildThisFileDirectory)effects\generated\UnPremultiplyEffect.abi.idl">
+      <Filter>effects\generated</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\ChromaKeyEffect.abi.idl">
+      <Filter>effects\generated</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\ContrastEffect.abi.idl">
+      <Filter>effects\generated</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\EdgeDetectionEffect.abi.idl">
+      <Filter>effects\generated</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\EmbossEffect.abi.idl">
+      <Filter>effects\generated</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\ExposureEffect.abi.idl">
+      <Filter>effects\generated</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\GrayscaleEffect.abi.idl">
+      <Filter>effects\generated</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\HighlightsAndShadowsEffect.abi.idl">
+      <Filter>effects\generated</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\HueToRgbEffect.abi.idl">
+      <Filter>effects\generated</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\InvertEffect.abi.idl">
+      <Filter>effects\generated</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\PosterizeEffect.abi.idl">
+      <Filter>effects\generated</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\RgbToHueEffect.abi.idl">
+      <Filter>effects\generated</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\SepiaEffect.abi.idl">
+      <Filter>effects\generated</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\SharpenEffect.abi.idl">
+      <Filter>effects\generated</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\StraightenEffect.abi.idl">
+      <Filter>effects\generated</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\TemperatureAndTintEffect.abi.idl">
+      <Filter>effects\generated</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\VignetteEffect.abi.idl">
       <Filter>effects\generated</Filter>
     </None>
     <None Include="$(MSBuildThisFileDirectory)geometry\CanvasCachedGeometry.abi.idl">

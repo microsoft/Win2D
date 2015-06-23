@@ -188,8 +188,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         }
 
 
-        // Marker type, used as TBoxed for float values that should be converted between radians and degrees.
+        // Marker types, used as TBoxed for values that need special conversion.
         struct ConvertRadiansToDegrees { };
+        struct ConvertAlphaMode { };
 
 
     private:
@@ -350,6 +351,30 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                 float degrees;
                 GetValueOfProperty(propertyValue, &degrees);
                 *result = ::DirectX::XMConvertToRadians(degrees);
+            }
+        };
+
+
+        // Handle the conversion between CanvasAlphaMode and D2D1_ALPHA_MODE/D2D1_COLORMATRIX_ALPHA_MODE enum values.
+        template<>
+        struct PropertyTypeConverter<ConvertAlphaMode, CanvasAlphaMode>
+        {
+            static_assert(D2D1_COLORMATRIX_ALPHA_MODE_PREMULTIPLIED == D2D1_ALPHA_MODE_PREMULTIPLIED, "Enum values should match");
+            static_assert(D2D1_COLORMATRIX_ALPHA_MODE_STRAIGHT == D2D1_ALPHA_MODE_STRAIGHT, "Enum values should match");
+
+            static ComPtr<IPropertyValue> Box(IPropertyValueStatics* factory, CanvasAlphaMode value)
+            {
+                if (value == CanvasAlphaMode::Ignore)
+                    ThrowHR(E_INVALIDARG);
+
+                return CreateProperty(factory, static_cast<uint32_t>(ToD2DAlphaMode(value)));
+            }
+
+            static void Unbox(IPropertyValue* propertyValue, CanvasAlphaMode* result)
+            {
+                uint32_t value;
+                GetValueOfProperty(propertyValue, &value);
+                *result = FromD2DAlphaMode(static_cast<D2D1_ALPHA_MODE>(value));
             }
         };
 

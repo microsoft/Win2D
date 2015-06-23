@@ -33,6 +33,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         D2D1_COLORMATRIX_PROP_COLOR_MATRIX)
 
     IMPLEMENT_EFFECT_PROPERTY(ColorMatrixEffect,
+        AlphaMode,
+        ConvertAlphaMode,
+        CanvasAlphaMode,
+        D2D1_COLORMATRIX_PROP_ALPHA_MODE)
+
+    IMPLEMENT_EFFECT_PROPERTY(ColorMatrixEffect,
         ClampOutput,
         boolean,
         boolean,
@@ -43,8 +49,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         0)
 
     IMPLEMENT_EFFECT_PROPERTY_MAPPING(ColorMatrixEffect,
-        { L"ColorMatrix", D2D1_COLORMATRIX_PROP_COLOR_MATRIX, GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT },
-        { L"ClampOutput", D2D1_COLORMATRIX_PROP_CLAMP_OUTPUT, GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT })
+        { L"ColorMatrix", D2D1_COLORMATRIX_PROP_COLOR_MATRIX, GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT                 },
+        { L"AlphaMode",   D2D1_COLORMATRIX_PROP_ALPHA_MODE,   GRAPHICS_EFFECT_PROPERTY_MAPPING_COLORMATRIX_ALPHA_MODE },
+        { L"ClampOutput", D2D1_COLORMATRIX_PROP_CLAMP_OUTPUT, GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT                 })
 
     ActivatableClass(ColorMatrixEffect);
 }}}}}

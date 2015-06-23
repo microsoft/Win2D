@@ -16,6 +16,7 @@
   <ItemGroup>
     <InputAssembly Include="$(BinariesDirectory)\Windowsx86\$(Configuration)\winrt.dll.windows\Microsoft.Graphics.Canvas.winmd">
       <DocSrc>..\..\winrt\docsrc\*.xml;..\..\winrt\docsrc\effects\*.xml</DocSrc>
+      <AdditionalApiDescription>..\..\winrt\docsrc\effects\UapApiDescription.cs</AdditionalApiDescription>
     </InputAssembly>
 
     <InputAssembly Include="$(BinariesDirectory)\Windowsx86\$(Configuration)\DotNetNumerics.Windows\Microsoft.Graphics.Canvas.Numerics.dll">
@@ -63,7 +64,7 @@
   <!-- Compile the generated C# code to create new assemblies -->
   <Target Name="CompileAPISurface" Condition="!$(IntellisenseOnly)">
 
-    <Csc Sources="$(IntermediateOutputPath)%(InputAssembly.Filename).cs"
+    <Csc Sources="$(IntermediateOutputPath)%(InputAssembly.Filename).cs;%(InputAssembly.AdditionalApiDescription)"
          OutputAssembly="$(IntermediateOutputPath)%(InputAssembly.Filename)%(InputAssembly.Extension)"
          DocumentationFile="$(IntermediateOutputPath)%(InputAssembly.Filename).xml"
          References="%(InputAssembly.References)"

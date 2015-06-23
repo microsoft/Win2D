@@ -12,7 +12,7 @@
 
 #include "pch.h"
 #include "generated\ArithmeticCompositeEffect.h"
-#include "generated\ColorMatrixEffect.h"
+#include "generated\HighlightsAndShadowsEffect.h"
 
 
 // Macro defines effect property get and set methods that pack a floating point 
@@ -78,33 +78,34 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         { L"Offset",         D2D1_ARITHMETICCOMPOSITE_PROP_COEFFICIENTS, GRAPHICS_EFFECT_PROPERTY_MAPPING_VECTORW })
 
 
-    // ColorMatrixEffect.AlphaMode property needs special enum value conversion, because our
-    // CanvasAlphaMode enum doesn't match the numeric values of D2D1_COLORMATRIX_ALPHA_MODE.
+#if (defined _WIN32_WINNT_WIN10) && (WINVER >= _WIN32_WINNT_WIN10)
 
-    IFACEMETHODIMP ColorMatrixEffect::get_AlphaMode(_Out_ CanvasAlphaMode* value)
+    // HighlightsAndShadowsEffect.SourceIsLinearGamma property needs special conversion,
+    // because we project the D2D1_HIGHLIGHTSANDSHADOWS_INPUT_GAMMA enum as a bool.
+
+    IFACEMETHODIMP HighlightsAndShadowsEffect::get_SourceIsLinearGamma(_Out_ boolean* value)
     {
         return ExceptionBoundary([&]
         {
-            D2D1_COLORMATRIX_ALPHA_MODE d2dValue;
-            GetBoxedProperty<uint32_t>(D2D1_COLORMATRIX_PROP_ALPHA_MODE, &d2dValue);
-            *value = FromD2DColorMatrixAlphaMode(d2dValue);
+            CheckInPointer(value);
+            D2D1_HIGHLIGHTSANDSHADOWS_INPUT_GAMMA d2dValue;
+            GetBoxedProperty<uint32_t>(D2D1_HIGHLIGHTSANDSHADOWS_PROP_INPUT_GAMMA, &d2dValue);
+            *value = (d2dValue == D2D1_HIGHLIGHTSANDSHADOWS_INPUT_GAMMA_LINEAR);
         });
     }
 
-    IFACEMETHODIMP ColorMatrixEffect::put_AlphaMode(_In_ CanvasAlphaMode value)
+    IFACEMETHODIMP HighlightsAndShadowsEffect::put_SourceIsLinearGamma(_In_ boolean value)
     {
-        if (value == CanvasAlphaMode::Ignore)
-        {
-            return E_INVALIDARG;
-        }
-
         return ExceptionBoundary([&]
         {
-            SetBoxedProperty<uint32_t>(D2D1_COLORMATRIX_PROP_ALPHA_MODE, ToD2DColorMatrixAlphaMode(value));
+            D2D1_HIGHLIGHTSANDSHADOWS_INPUT_GAMMA d2dValue = value ? D2D1_HIGHLIGHTSANDSHADOWS_INPUT_GAMMA_LINEAR : D2D1_HIGHLIGHTSANDSHADOWS_INPUT_GAMMA_SRGB;
+            SetBoxedProperty<uint32_t>(D2D1_HIGHLIGHTSANDSHADOWS_PROP_INPUT_GAMMA, d2dValue);
         });
     }
 
-    IMPLEMENT_EFFECT_PROPERTY_MAPPING_HANDCODED(ColorMatrixEffect,
-        { L"AlphaMode", D2D1_COLORMATRIX_PROP_ALPHA_MODE, GRAPHICS_EFFECT_PROPERTY_MAPPING_COLORMATRIX_ALPHA_MODE })
+    IMPLEMENT_EFFECT_PROPERTY_MAPPING_HANDCODED(HighlightsAndShadowsEffect,
+        { L"SourceIsLinearGamma", D2D1_HIGHLIGHTSANDSHADOWS_PROP_INPUT_GAMMA, GRAPHICS_EFFECT_PROPERTY_MAPPING_UNKNOWN })
+
+#endif // _WIN32_WINNT_WIN10
 
 }}}}}

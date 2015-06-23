@@ -18,7 +18,7 @@
 // will not be defined by the platform. To support 8.1, Win2D provides its own local definition
 // of these interfaces in the Microsoft.Graphics.Canvas namespace. This header arranges to use
 // the local versions when building for 8.1, or the official versions when building for UAP.
-#if WINVER <= 0x0603
+#if WINVER <= _WIN32_WINNT_WINBLUE
 # define USE_LOCALLY_EMULATED_UAP_APIS
 #endif
 

@@ -12,6 +12,7 @@
 
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Effects;
+using Microsoft.Graphics.Canvas.Text;
 using Microsoft.Graphics.Canvas.UI;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using System;
@@ -56,6 +57,23 @@ namespace ExampleGallery
             Shadow,
             Tile,
             Transform3D,
+#if WINDOWS_UAP
+            ChromaKey,
+            Contrast,
+            EdgeDetection,
+            Emboss,
+            Exposure,
+            Grayscale,
+            HighlightsAndShadows,
+            Invert,
+            Posterize,
+            RgbToHue,
+            Sepia,
+            Sharpen,
+            Straighten,
+            TemperatureAndTint,
+            Vignette,
+#endif
         }
 
         public EffectsExample()
@@ -65,7 +83,15 @@ namespace ExampleGallery
             CurrentEffect = EffectType.DisplacementMap;
         }
 
-        public List<EffectType> EffectsList { get { return Utils.GetEnumAsList<EffectType>(); } }
+        public List<EffectType> EffectsList
+        {
+            get
+            {
+                return Utils.GetEnumAsList<EffectType>()
+                            .OrderBy(v => v.ToString())
+                            .ToList();
+            }
+        }
 
         public EffectType CurrentEffect { get; set; }
 
@@ -76,6 +102,8 @@ namespace ExampleGallery
         string textLabel;
         Action<float> animationFunction;
         Stopwatch timer;
+
+        CanvasTextFormat textFormat = new CanvasTextFormat { FontSize = 12 };
 
         void Canvas_CreateResources(CanvasControl sender, CanvasCreateResourcesEventArgs args)
         {
@@ -100,9 +128,9 @@ namespace ExampleGallery
             ds.DrawImage(effect, (size.ToVector2() - currentEffectSize) / 2);
 
             // Draw text showing which effects are in use, but only if the screen is large enough to fit it.
-            const float minSizeToShowText = 550;
+            const float minSizeToShowText = 500;
 
-            if (size.Width > minSizeToShowText && size.Height > minSizeToShowText)
+            if ((size.Width + size.Height) / 2 > minSizeToShowText)
             {
                 string text = activeEffectNames;
 
@@ -111,7 +139,7 @@ namespace ExampleGallery
                     text += "\n\n" + textLabel;
                 }
 
-                ds.DrawText(text, 0, 80, Colors.White);
+                ds.DrawText(text, 0, 80, Colors.White, textFormat);
             }
 
             sender.Invalidate();
@@ -121,7 +149,7 @@ namespace ExampleGallery
         {
             if (canvas.ReadyToDraw)
             {
-                CreateEffect();
+                CreateEffect(false);
             }
         }
 
@@ -137,9 +165,13 @@ namespace ExampleGallery
             }
         }
 
-        private void CreateEffect()
+        private void CreateEffect(bool resetTime = true)
         {
-            timer = Stopwatch.StartNew();
+            if (resetTime)
+            {
+                timer = Stopwatch.StartNew();
+            }
+
             currentEffectSize = bitmapTiger.Size.ToVector2();
             textLabel = null;
 
@@ -224,6 +256,72 @@ namespace ExampleGallery
                 case EffectType.Transform3D:
                     effect = CreateTransform3D();
                     break;
+
+#if WINDOWS_UAP
+                // The following effects are new in the Universal Windows Platform.
+                // They are not supported on Windows 8.1 or Phone 8.1.";
+
+                case EffectType.ChromaKey:
+                    effect = CreateChromaKey();
+                    break;
+
+                case EffectType.Contrast:
+                    effect = CreateContrast();
+                    break;
+
+                case EffectType.EdgeDetection:
+                    effect = CreateEdgeDetection();
+                    break;
+
+                case EffectType.Emboss:
+                    effect = CreateEmboss();
+                    break;
+
+                case EffectType.Exposure:
+                    effect = CreateExposure();
+                    break;
+
+                case EffectType.Grayscale:
+                    effect = CreateGrayscale();
+                    break;
+
+                case EffectType.HighlightsAndShadows:
+                    effect = CreateHighlightsAndShadows();
+                    break;
+
+                case EffectType.Invert:
+                    effect = CreateInvert();
+                    break;
+
+                case EffectType.Posterize:
+                    effect = CreatePosterize();
+                    break;
+
+                case EffectType.RgbToHue:
+                    effect = CreateRgbToHue();
+                    break;
+
+                case EffectType.Sepia:
+                    effect = CreateSepia();
+                    break;
+
+                case EffectType.Sharpen:
+                    effect = CreateSharpen();
+                    break;
+
+                case EffectType.Straighten:
+                    effect = CreateStraighten();
+                    break;
+
+                case EffectType.TemperatureAndTint:
+                    effect = CreateTemperatureAndTint();
+                    break;
+
+                case EffectType.Vignette:
+                    effect = CreateVignette();
+                    break;
+
+#endif  // WINDOWS_UAP
 
                 default:
                     throw new NotSupportedException();
@@ -896,6 +994,347 @@ namespace ExampleGallery
 
             return transformEffect;
         }
+
+#if WINDOWS_UAP
+
+        const string requiresWin10 = "This effect is new in the\nUniversal Windows Platform.\nIt is not supported on \nWindows 8.1 or Phone 8.1.";
+
+        private ICanvasImage CreateChromaKey()
+        {
+            textLabel = requiresWin10;
+
+            var chromaKeyEffect = new ChromaKeyEffect
+            {
+                Source = bitmapTiger,
+                Color = Color.FromArgb(255, 162, 125, 73),
+                Feather = true
+            };
+
+            // Composite the chromakeyed image on top of a background checker pattern.
+            Color[] twoByTwoChecker =
+            {
+                Colors.LightGray, Colors.DarkGray,
+                Colors.DarkGray,  Colors.LightGray,
+            };
+
+            var compositeEffect = new CompositeEffect
+            {
+                Sources =
+                {
+                    // Create the checkered background by scaling up a tiled 2x2 bitmap.
+                    new CropEffect
+                    {
+                        Source = new DpiCompensationEffect
+                        {
+                            Source = new ScaleEffect
+                            {
+                                Source = new BorderEffect
+                                {
+                                    Source = CanvasBitmap.CreateFromColors(canvas, twoByTwoChecker, 2, 2),
+                                    ExtendX = CanvasEdgeBehavior.Wrap,
+                                    ExtendY = CanvasEdgeBehavior.Wrap
+                                },
+                                Scale = new Vector2(8, 8),
+                                InterpolationMode = CanvasImageInterpolation.NearestNeighbor
+                            }
+                        },
+                        SourceRectangle = bitmapTiger.Bounds
+                    },
+
+                    // Composite the chromakey result on top of the background.
+                    chromaKeyEffect
+                }
+            };
+
+            // Animation changes the chromakey matching tolerance.
+            animationFunction = elapsedTime =>
+            {
+                chromaKeyEffect.Tolerance = 0.1f + (float)Math.Sin(elapsedTime) * 0.1f;
+            };
+
+            return compositeEffect;
+        }
+
+        private ICanvasImage CreateContrast()
+        {
+            textLabel = requiresWin10;
+
+            var contrastEffect = new ContrastEffect
+            {
+                Source = bitmapTiger
+            };
+
+            // Animation changes the image contrast.
+            animationFunction = elapsedTime =>
+            {
+                contrastEffect.Contrast = (float)Math.Sin(elapsedTime * 2);
+            };
+
+            return contrastEffect;
+        }
+
+        private ICanvasImage CreateEdgeDetection()
+        {
+            textLabel = requiresWin10;
+
+            var edgeDetectionEffect = new EdgeDetectionEffect
+            {
+                Source = bitmapTiger
+            };
+
+            // Animation changes the edge detection settings.
+            animationFunction = elapsedTime =>
+            {
+                edgeDetectionEffect.Amount = 0.7f + (float)Math.Sin(elapsedTime * 2) * 0.3f;
+                edgeDetectionEffect.BlurAmount = Math.Max((float)Math.Sin(elapsedTime * 0.7) * 2, 0);
+            };
+
+            return edgeDetectionEffect;
+        }
+
+        private ICanvasImage CreateEmboss()
+        {
+            textLabel = requiresWin10;
+
+            var embossEffect = new EmbossEffect
+            {
+                Source = bitmapTiger
+            };
+
+            // Animation rotates the emboss direction, and changes its amount.
+            animationFunction = elapsedTime =>
+            {
+                embossEffect.Amount = 2 + (float)Math.Sin(elapsedTime) * 2;
+                embossEffect.Angle = elapsedTime % ((float)Math.PI * 2); ;
+            };
+
+            return embossEffect;
+        }
+
+        private ICanvasImage CreateExposure()
+        {
+            textLabel = requiresWin10;
+
+            var exposureEffect = new ExposureEffect
+            {
+                Source = bitmapTiger
+            };
+
+            // Animation changes the image exposure.
+            animationFunction = elapsedTime =>
+            {
+                exposureEffect.Exposure = (float)Math.Sin(elapsedTime) * 2;
+            };
+
+            return exposureEffect;
+        }
+
+        private ICanvasImage CreateGrayscale()
+        {
+            textLabel = requiresWin10;
+
+            animationFunction = elapsedTime => { };
+
+            return new GrayscaleEffect
+            {
+                Source = bitmapTiger
+            };
+        }
+
+        private ICanvasImage CreateHighlightsAndShadows()
+        {
+            textLabel = requiresWin10;
+
+            var highlightsAndShadowsEffect = new HighlightsAndShadowsEffect
+            {
+                Source = bitmapTiger
+            };
+
+            // Animation adjusts the highlight and shadow levels.
+            animationFunction = elapsedTime =>
+            {
+                highlightsAndShadowsEffect.Highlights = (float)Math.Sin(elapsedTime);
+                highlightsAndShadowsEffect.Shadows = (float)Math.Sin(elapsedTime * 1.3);
+                highlightsAndShadowsEffect.Clarity = (float)Math.Sin(elapsedTime / 7);
+            };
+
+            return highlightsAndShadowsEffect;
+        }
+
+        private ICanvasImage CreateInvert()
+        {
+            textLabel = requiresWin10;
+
+            animationFunction = elapsedTime => { };
+
+            return new InvertEffect
+            {
+                Source = bitmapTiger
+            };
+        }
+
+        private ICanvasImage CreatePosterize()
+        {
+            textLabel = requiresWin10;
+
+            var posterizeEffect = new PosterizeEffect
+            {
+                Source = bitmapTiger
+            };
+
+            // Animation changes the number of distinct color levels.
+            animationFunction = elapsedTime =>
+            {
+                posterizeEffect.RedValueCount = 2 + (int)(Math.Pow(0.5 + Math.Sin(elapsedTime) * 0.5, 4) * 10);
+                posterizeEffect.GreenValueCount = 2 + (int)(Math.Pow(0.5 + Math.Sin(elapsedTime / 1.3) * 0.5, 4) * 10);
+                posterizeEffect.BlueValueCount = 2 + (int)(Math.Pow(0.5 + Math.Sin(elapsedTime / 1.7) * 0.5, 4) * 10);
+            };
+
+            return posterizeEffect;
+        }
+
+        private ICanvasImage CreateRgbToHue()
+        {
+            textLabel = requiresWin10;
+
+            // Convert the input image from RGB to HSV color space.
+            var rgbToHueEffect = new RgbToHueEffect
+            {
+                Source = bitmapTiger
+            };
+
+            // This color matrix will operate on HSV values.
+            var colorMatrixEffect = new ColorMatrixEffect
+            {
+                Source = rgbToHueEffect
+            };
+
+            // Convert the result back to RGB format.
+            var hueToRgbEffect = new HueToRgbEffect
+            {
+                Source = colorMatrixEffect
+            };
+
+            // Animation changes the hue, saturation, and value (brightness) of the image.
+            // In HSV format, the red channel indicates hue, green is saturation, and blue is brightness.
+            // Altering these values changes the image in very different ways than if we did the same thing to RGB data!
+            animationFunction = elapsedTime =>
+            {
+                colorMatrixEffect.ColorMatrix = new Matrix5x4
+                {
+                    M11 = 1,
+                    M22 = 1,
+                    M33 = 1,
+                    M44 = 1,
+
+                    M51 = (float)Math.Sin(elapsedTime / 17) * 0.2f,
+                    M52 = (float)Math.Sin(elapsedTime * 1.3) * 0.5f,
+                    M53 = (float)Math.Sin(elapsedTime / 2) * 0.5f,
+                };
+            };
+
+            return hueToRgbEffect;
+        }
+
+        private ICanvasImage CreateSepia()
+        {
+            textLabel = requiresWin10;
+
+            var sepiaEffect = new SepiaEffect
+            {
+                Source = bitmapTiger
+            };
+
+            // Animation changes the sepia intensity.
+            animationFunction = elapsedTime =>
+            {
+                sepiaEffect.Intensity = 0.5f + (float)Math.Sin(elapsedTime * 4) * 0.5f;
+            };
+
+            return sepiaEffect;
+        }
+
+        private ICanvasImage CreateSharpen()
+        {
+            textLabel = requiresWin10;
+
+            var sharpenEffect = new SharpenEffect
+            {
+                Source = bitmapTiger
+            };
+
+            // Animation changes the sharpness amount.
+            animationFunction = elapsedTime =>
+            {
+                sharpenEffect.Amount = 5 + (float)Math.Sin(elapsedTime * 3) * 5;
+            };
+
+            return sharpenEffect;
+        }
+
+        private ICanvasImage CreateStraighten()
+        {
+            textLabel = requiresWin10;
+
+            var straightenEffect = new StraightenEffect
+            {
+                Source = bitmapTiger,
+                MaintainSize = true
+            };
+
+            // Animation rotates the image from side to side.
+            animationFunction = elapsedTime =>
+            {
+                straightenEffect.Angle = (float)Math.Sin(elapsedTime) * 0.2f;
+            };
+
+            return straightenEffect;
+        }
+
+        private ICanvasImage CreateTemperatureAndTint()
+        {
+            textLabel = requiresWin10;
+
+            var temperatureAndTintEffect = new TemperatureAndTintEffect
+            {
+                Source = bitmapTiger
+            };
+
+            // Animation adjusts the temperature and tint of the image.
+            animationFunction = elapsedTime =>
+            {
+                temperatureAndTintEffect.Temperature = (float)Math.Sin(elapsedTime * 0.9);
+                temperatureAndTintEffect.Tint = (float)Math.Sin(elapsedTime * 2.3);
+            };
+
+            return temperatureAndTintEffect;
+        }
+
+        private ICanvasImage CreateVignette()
+        {
+            textLabel = requiresWin10;
+
+            var vignetteEffect = new VignetteEffect
+            {
+                Source = bitmapTiger
+            };
+
+            // Animation changes the vignette color and amount.
+            animationFunction = elapsedTime =>
+            {
+                byte r = (byte)(127 + Math.Sin(elapsedTime / 3) * 127);
+                byte g = (byte)(127 + Math.Sin(elapsedTime / 4) * 127);
+                byte b = (byte)(127 + Math.Sin(elapsedTime / 5) * 127);
+
+                vignetteEffect.Color = Color.FromArgb(255, r, g, b);
+
+                vignetteEffect.Amount = 0.6f + (float)Math.Sin(elapsedTime) * 0.4f;
+            };
+
+            return vignetteEffect;
+        }
+
+#endif  // WINDOWS_UAP
 
         private ICanvasImage AddSoftEdgedCrop(ICanvasImage effect)
         {

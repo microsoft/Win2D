@@ -25,6 +25,8 @@ namespace CodeGen
 
         public static void OutputEnum(Effects.Property enumProperty, Formatter output)
         {
+            OutputVersionConditional(enumProperty.WinVer, output);
+
             output.WriteLine("[version(VERSION)]");
             output.WriteLine("typedef enum " + enumProperty.TypeNameIdl);
             output.WriteLine("{");
@@ -44,6 +46,8 @@ namespace CodeGen
             }
             output.Unindent();
             output.WriteLine("} " + enumProperty.TypeNameIdl + ";");
+
+            EndVersionConditional(enumProperty.WinVer, output);
         }
 
         public static void OutputCommonEnums(List<Effects.Effect> effects, Formatter output)
@@ -85,6 +89,8 @@ namespace CodeGen
         public static void OutputEffectIdl(Effects.Effect effect, Formatter output)
         {
             OutputDataTypes.OutputLeadingComment(output);
+
+            OutputVersionConditional(effect, output);
 
             output.WriteLine("namespace Microsoft.Graphics.Canvas.Effects");
             output.WriteLine("{");
@@ -177,6 +183,8 @@ namespace CodeGen
             output.WriteLine("}");
             output.Unindent();
             output.WriteLine("}");
+
+            EndVersionConditional(effect, output);
         }
 
         public static void OutputEffectHeader(Effects.Effect effect, Formatter output)
@@ -185,6 +193,9 @@ namespace CodeGen
 
             output.WriteLine("#pragma once");
             output.WriteLine();
+
+            OutputVersionConditional(effect, output);
+
             output.WriteLine("namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Effects ");
             output.WriteLine("{");
             output.Indent();
@@ -250,6 +261,8 @@ namespace CodeGen
             output.WriteLine("};");
             output.Unindent();
             output.WriteLine("}}}}}");
+
+            EndVersionConditional(effect, output);
         }
 
         public static void OutputEffectCpp(Effects.Effect effect, Formatter output)
@@ -262,13 +275,16 @@ namespace CodeGen
             output.WriteLine("#include \"pch.h\"");
             output.WriteLine("#include \"" + effect.ClassName + ".h\"");
             output.WriteLine();
+
+            OutputVersionConditional(effect, output);
+
             output.WriteLine("namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Effects");
             output.WriteLine("{");
             output.Indent();
             output.WriteLine(effect.ClassName + "::" + effect.ClassName + "()");
             output.WriteIndent();
-            output.WriteLine(": CanvasEffect(CLSID_D2D1"
-                             + EffectGenerator.FormatClassName(effect.Properties[0].Value) + ", "
+            output.WriteLine(": CanvasEffect("
+                             + GetEffectCLSID(effect) + ", "
                              + (effect.Properties.Count(p => !p.IsHandCoded) - 4) + ", "
                              + inputsCount + ", "
                              + isInputSizeFixed.ToString().ToLower() + ")");
@@ -313,6 +329,20 @@ namespace CodeGen
 
             output.Unindent();
             output.WriteLine("}}}}}");
+
+            EndVersionConditional(effect, output);
+        }
+
+        private static string GetEffectCLSID(Effects.Effect effect)
+        {
+            if (effect.Overrides != null && !string.IsNullOrEmpty(effect.Overrides.CLSIDOverride))
+            {
+                return effect.Overrides.CLSIDOverride;
+            }
+            else
+            {
+                return "CLSID_D2D1" + EffectGenerator.FormatClassName(effect.Properties[0].Value);
+            }
         }
 
         private static void WritePropertyInitialization(Formatter output, Effects.Property property)
@@ -341,7 +371,18 @@ namespace CodeGen
 
             bool isWithUnsupported = (property.ExcludedEnumIndexes != null) && (property.ExcludedEnumIndexes.Count != 0);
 
-            bool isValidation = ((min != null) || (max != null) || isWithUnsupported) && !property.ConvertRadiansToDegrees;
+            string customConversion = null;
+
+            if (property.ConvertRadiansToDegrees)
+            {
+                customConversion = "ConvertRadiansToDegrees";
+            }
+            else if (property.Name == "AlphaMode")
+            {
+                customConversion = "ConvertAlphaMode";
+            }
+
+            bool isValidation = ((min != null) || (max != null) || isWithUnsupported) && (customConversion == null);
 
             string implementMacro = property.IsArray ? "IMPLEMENT_EFFECT_ARRAY_PROPERTY" : "IMPLEMENT_EFFECT_PROPERTY";
 
@@ -353,7 +394,7 @@ namespace CodeGen
             output.WriteLine(implementMacro + "(" + effect.ClassName + ",");
             output.Indent();
             output.WriteLine(property.Name + ",");
-            output.WriteLine((property.ConvertRadiansToDegrees ? "ConvertRadiansToDegrees" : property.TypeNameBoxed) + ",");
+            output.WriteLine((customConversion ?? property.TypeNameBoxed) + ",");
 
             if (!property.IsArray)
             {
@@ -425,7 +466,7 @@ namespace CodeGen
                     bool valueFound = false;
                     foreach (EnumValue v in property.EnumFields.D2DEnum.Values)
                     {
-                        if(v.ValueExpression == value)
+                        if (v.ValueExpression == value)
                         {
                             value = v.NativeName;
                             valueFound = true;
@@ -433,6 +474,10 @@ namespace CodeGen
                         }
                     }
                     System.Diagnostics.Debug.Assert(valueFound);
+                }
+                else if (property.IsHidden)
+                {
+                    value = property.NativePropertyName.Replace("PROP_", "") + "_" + property.EnumFields.FieldsList[Int32.Parse(value)].Name.ToUpper();
                 }
                 else
                 {
@@ -593,6 +638,10 @@ namespace CodeGen
             {
                 return "GRAPHICS_EFFECT_PROPERTY_MAPPING_RADIANS_TO_DEGREES";
             }
+            else if (property.Name == "AlphaMode")
+            {
+                return "GRAPHICS_EFFECT_PROPERTY_MAPPING_COLORMATRIX_ALPHA_MODE";
+            }
             else if (property.TypeNameCpp == "Color")
             {
                 return "GRAPHICS_EFFECT_PROPERTY_MAPPING_COLOR_TO_VECTOR" + property.Type.Single(char.IsDigit);
@@ -615,6 +664,40 @@ namespace CodeGen
         static bool EffectHasVariableNumberOfInputs(Effects.Effect effect)
         {
             return effect.Inputs.Maximum == "0xFFFFFFFF";
+        }
+
+        private static void OutputVersionConditional(Effects.Effect effect, Formatter output)
+        {
+            if (effect.Overrides != null)
+            {
+                OutputVersionConditional(effect.Overrides.WinVer, output);
+            }
+        }
+
+        private static void EndVersionConditional(Effects.Effect effect, Formatter output)
+        {
+            if (effect.Overrides != null)
+            {
+                EndVersionConditional(effect.Overrides.WinVer, output);
+            }
+        }
+
+        private static void OutputVersionConditional(string winVer, Formatter output)
+        {
+            if (!string.IsNullOrEmpty(winVer))
+            {
+                output.WriteLine(string.Format("#if (defined {0}) && (WINVER >= {0})", winVer));
+                output.WriteLine();
+            }
+        }
+
+        private static void EndVersionConditional(string winVer, Formatter output)
+        {
+            if (!string.IsNullOrEmpty(winVer))
+            {
+                output.WriteLine();
+                output.WriteLine(string.Format("#endif // {0}", winVer));
+            }
         }
     }
 }

@@ -31,6 +31,18 @@ namespace CodeGen
 
             [XmlAttribute("displayname")]
             public string Displayname { get; set; }
+
+            public override bool Equals(object obj)
+            {
+                EnumValue value = obj as EnumValue;
+
+                return (value != null) && (Name == value.Name);
+            }
+
+            public override int GetHashCode()
+            {
+                return Name.GetHashCode();
+            }
         }
 
         public class EnumValues
@@ -55,53 +67,7 @@ namespace CodeGen
 
             [XmlElement("Field")]
             public List<EnumValue> FieldsList { get; set; }
-
-            public override bool Equals(System.Object obj)
-            {
-                // If parameter is null return false.
-                if (obj == null)
-                {
-                    return false;
-                }
-
-                // If parameter cannot be cast to Point return false.
-                EnumValues fields = obj as EnumValues;
-                if ((System.Object)fields == null)
-                {
-                    return false;
-                }
-
-                if (fields.FieldsList.Count != this.FieldsList.Count)
-                {
-                    return false;
-                }
-
-                // Return true if the fields match:
-                bool isSame = true;
-                for (int fieldCount = 0; fieldCount < fields.FieldsList.Count; ++fieldCount)
-                {
-                    if (fields.FieldsList[fieldCount].Name != this.FieldsList[fieldCount].Name)
-                    {
-                        isSame = false;
-                        break;
-                    }
-                }
-                return isSame;
-            }
-
-            public override int GetHashCode()
-            {
-                int hash = 0;
-
-                foreach (var field in FieldsList)
-                {
-                    hash ^= field.GetHashCode();
-                }
-
-                return hash;
-            }
         }
-
 
         public class Property
         {
@@ -141,6 +107,8 @@ namespace CodeGen
             public bool ConvertRadiansToDegrees { get; set; }
 
             public string NativePropertyName { get; set; }
+
+            public string WinVer { get; set; }
 
             public List<string> ExcludedEnumIndexes { get; set; }
         }
@@ -183,6 +151,9 @@ namespace CodeGen
             public string InterfaceName { get; set; }
 
             public string Uuid { get; set; }
+
+            [XmlIgnore]
+            public Overrides.XmlBindings.Effect Overrides { get; set; }
         }
 
         public class D2DEnum
@@ -316,6 +287,7 @@ namespace CodeGen
                         property.TypeNameCpp = enumOverride.ProjectedNameOverride;
                     }
                     property.ShouldProject = enumOverride.ShouldProject;
+                    property.WinVer = enumOverride.WinVer;
                     foreach (var enumValue in enumOverride.Values)
                     {
                         if (!enumValue.ShouldProject && property.ExcludedEnumIndexes != null)
@@ -430,14 +402,24 @@ namespace CodeGen
                 for (int propertyIndex2 = propertyIndex + 1; propertyIndex2 < allProperties.Count; propertyIndex2++)
                 {
                     Effects.EnumValues fields2 = allProperties[propertyIndex2].EnumFields;
-                    if (fields2 == null || fields.FieldsList.Count != fields2.FieldsList.Count)
+                    if (fields2 == null)
                         continue;
-                    if (fields.Equals(fields2))
+
+                    // Allow merging if either enum is a subset of the values of the other,
+                    // but not if their value sets are distinct in both directions.
+                    var delta1 = fields.FieldsList.Except(fields2.FieldsList);
+                    var delta2 = fields2.FieldsList.Except(fields.FieldsList);
+
+                    if (!delta1.Any() || !delta2.Any())
                     {
                         fields.Usage = Effects.EnumValues.UsageType.UsedByMultipleEffects;
                         fields.IsRepresentative = true;
                         fields2.Usage = Effects.EnumValues.UsageType.UsedByMultipleEffects;
                         fields2.FieldsList = fields.FieldsList;
+
+                        // Exclude any enum values that are supported by one enum but not the other.
+                        allProperties[propertyIndex2].ExcludedEnumIndexes.AddRange(delta1.Select(field => fields.FieldsList.IndexOf(field).ToString()));
+                        allProperties[propertyIndex].ExcludedEnumIndexes.AddRange(delta2.Select(field => fields2.FieldsList.IndexOf(field).ToString()));
                     }
                 }
             }
@@ -507,6 +489,8 @@ namespace CodeGen
 
         private static void ApplyEffectOverrides(Effects.Effect effect, Overrides.XmlBindings.Effect effectOverride, Dictionary<string, QualifiableType> typeDictionary)
         {
+            effect.Overrides = effectOverride;
+
             // Override the effect name?
             if (effectOverride.ProjectedNameOverride != null)
             {
@@ -547,7 +531,7 @@ namespace CodeGen
                     // Add a custom property that is part of our API surface but not defined by D2D.
                     effect.Properties.Add(new Effects.Property
                     {
-                        Name = propertyOverride.Name,
+                        Name = propertyOverride.ProjectedNameOverride ?? propertyOverride.Name,
                         TypeNameIdl = string.IsNullOrEmpty(propertyOverride.Type) ? property.TypeNameIdl : propertyOverride.Type,
                         IsHandCoded = true
                     });

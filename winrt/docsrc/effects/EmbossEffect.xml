@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+<!--
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may
+not use these files except in compliance with the License. You may obtain
+a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+License for the specific language governing permissions and limitations
+under the License.
+-->
+
+<doc>
+  <assembly>
+    <name>Microsoft.Graphics.Canvas</name>
+  </assembly>
+
+  <members>
+
+    <member name="T:Microsoft.Graphics.Canvas.Effects.EmbossEffect">
+      <summary>
+        <p>Creates a grayscale version of an image that appears as though it has been stamped into paper.</p>
+        <p><i>This effect is new in the Universal Windows Platform. It is not supported on Windows 8.1 or Phone 8.1.</i></p>
+        <p><i>Supported by Win2D but not Windows.UI.Composition.</i></p>
+      </summary>
+      <remarks>
+        <p>This Windows Runtime type corresponds to the
+           <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/dn890765.aspx">D2D Emboss effect</a>.</p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Effects.EmbossEffect.#ctor">
+      <summary>Initializes a new instance of the EmbossEffect class.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Effects.EmbossEffect.GetBounds(Microsoft.Graphics.Canvas.CanvasDrawingSession)">
+      <summary>Retrieves the bounds of this CanvasImage, in device-independent units.</summary>
+      <inheritdoc/>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Effects.EmbossEffect.GetBounds(Microsoft.Graphics.Canvas.CanvasDrawingSession,Microsoft.Graphics.Canvas.Numerics.Matrix3x2)">
+      <summary>Retrieves the bounds of this CanvasImage, in device-independent units.</summary>
+      <inheritdoc/>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Effects.EmbossEffect.Dispose">
+      <summary>Releases all resources used by the EmbossEffect.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.EmbossEffect.Name">
+      <summary>Attaches a user-defined name string to the effect.</summary>
+      <inheritdoc/>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.EmbossEffect.Source">
+      <summary>Gets or sets the input source for Emboss effect.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.EmbossEffect.Amount">
+      <summary>Controls the strength of the embossing effect. Default value 1, range 0 to 10.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.EmbossEffect.Angle">
+      <summary>Specifies the light direction used to create the effect.
+               Units are specified in radians. Default value 0, range 0 to 2*pi.</summary>
+    </member>
+
+  </members>
+</doc>

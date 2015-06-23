@@ -339,27 +339,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return CanvasAlphaMode::Premultiplied;
     }
 
-    inline D2D1_COLORMATRIX_ALPHA_MODE ToD2DColorMatrixAlphaMode(CanvasAlphaMode alphaMode)
-    {
-        switch (alphaMode)
-        {
-            case CanvasAlphaMode::Premultiplied: return D2D1_COLORMATRIX_ALPHA_MODE_PREMULTIPLIED;
-            case CanvasAlphaMode::Straight: return D2D1_COLORMATRIX_ALPHA_MODE_STRAIGHT;
-            case CanvasAlphaMode::Ignore:
-            default: return D2D1_COLORMATRIX_ALPHA_MODE_FORCE_DWORD;
-        }
-    }
-
-    inline CanvasAlphaMode FromD2DColorMatrixAlphaMode(D2D1_COLORMATRIX_ALPHA_MODE alphaMode)
-    {
-        switch (alphaMode)
-        {
-            case D2D1_COLORMATRIX_ALPHA_MODE_PREMULTIPLIED: return CanvasAlphaMode::Premultiplied;
-            case D2D1_COLORMATRIX_ALPHA_MODE_STRAIGHT: return CanvasAlphaMode::Straight;
-            default: assert(false); return CanvasAlphaMode::Premultiplied;
-        }
-    }
-
     inline CanvasAlphaMode FromDxgiAlphaMode(DXGI_ALPHA_MODE alphaMode)
     {
         switch (alphaMode)

@@ -674,7 +674,7 @@ under the License.
             </Method>
             
             <Method Name="GetRenderingControls" Return="void" IsConst="true" Comment="This retrieves the rendering controls currently selected into the device context.">
-                <Parameter Name="renderingControls" Type="D2D1:RENDERING_CONTROLS" Form="out pointer" IsRetval="true"/>
+                <Parameter Name="renderingControls" Type="D2D1::RENDERING_CONTROLS" Form="out pointer" IsRetval="true"/>
             </Method>
 
             <Method Name="SetPrimitiveBlend" Return="void" Comment="Changes the primitive blending mode for all of the rendering operations.">
@@ -1019,7 +1019,7 @@ under the License.
 
             <Method Name="GetSubProperties" IsConst="true" Comment="Retrieves the sub-properties of the given property by index.">
                 <Parameter Name="index" Type="UINT32"/>
-                <Parameter Name="subProperties" Type="D2D1::IProperties" Form="deref opt out pointer"/>
+                <Parameter Name="subProperties" Type="D2D1::IProperties" Form="deref out opt pointer"/>
             </Method>
 
         </Interface>
@@ -1043,7 +1043,7 @@ under the License.
 
             <Method Name="GetInput" Return="void" IsConst="true" Comment="Returns the input image to the effect. The input could be another effect or a bitmap.">
                 <Parameter Name="index" Type="UINT32"/>
-                <Parameter Name="input" Type="D2D1::IImage" Form="deref opt out pointer"/>
+                <Parameter Name="input" Type="D2D1::IImage" Form="deref out opt pointer"/>
             </Method>
             
             <Method Name="GetInputCount" Return="UINT32" IsConst="true" Comment="This returns the number of input that are bound into this effect."/>

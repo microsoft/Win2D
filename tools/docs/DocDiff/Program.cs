@@ -149,10 +149,23 @@ namespace DocDiff
         static IEnumerable<ApiMember> LoadApiMembers(IEnumerable<string> filenames)
         {
             var members = from filename in filenames
-                          from member in XDocument.Load(filename).Element("doc").Element("members").Elements()
+                          from member in LoadXDocument(filename).Element("doc").Element("members").Elements()
                           select new ApiMember(member, filename);
 
             return members.ToList();
+        }
+
+
+        static XDocument LoadXDocument(string filename)
+        {
+            try
+            {
+                return XDocument.Load(filename);
+            }
+            catch (Exception e)
+            {
+                throw new Exception(filename + ": " + e);
+            }
         }
     }
 }

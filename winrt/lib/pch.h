@@ -51,6 +51,10 @@
 #include <d2d1_2.h>
 #pragma warning(pop)
 
+#if (defined _WIN32_WINNT_WIN10) && (WINVER >= _WIN32_WINNT_WIN10)
+#include <d2d1_3.h>
+#endif
+
 #include <d3d11.h>
 #include <dwrite_2.h>
 #include <dxgi1_3.h>

@@ -102,12 +102,14 @@ under the License.
   </Namespace>
   
   <Namespace Name="Effects">
-    <Enum Name="3DTransformEffectInterpolationMode" ShouldProject="false" ProjectedNameOverride="CanvasImageInterpolation" Namespace="Microsoft.Graphics.Canvas">
-      <Field Name="HighQualityCubic" Index="5" ShouldProject="false"/>
-    </Enum>
     <Enum Name="EffectInterpolationMode" ShouldProject="false" ProjectedNameOverride="CanvasImageInterpolation" Namespace="Microsoft.Graphics.Canvas"/>
     <Enum Name="EffectScaleMode" ShouldProject="false" ProjectedNameOverride="CanvasImageInterpolation" Namespace="Microsoft.Graphics.Canvas"/>
-
+    <Enum Name="EffectInputColorSpace" ShouldProject="true" ProjectedNameOverride="EffectHueColorSpace" WinVer="_WIN32_WINNT_WIN10">
+      <Field Name="HSV" ProjectedNameOverride="Hsv"/>
+      <Field Name="HSL" ProjectedNameOverride="Hsl"/>
+    </Enum>
+    <Enum Name="EffectOutputColorSpace" ShouldProject="false" ProjectedNameOverride="EffectHueColorSpace"/>
+    <Enum Name="HighlightsandShadowsEffectInputGamma" ShouldProject="false"/>
     <Enum Name="EffectXChannelSelect" ShouldProject="true" ProjectedNameOverride="EffectChannelSelect">
       <Field Name="RedChannel" ProjectedNameOverride="Red"/>
       <Field Name="GreenChannel" ProjectedNameOverride="Green"/>
@@ -117,13 +119,10 @@ under the License.
     <Enum Name="EffectYChannelSelect" ShouldProject="false" ProjectedNameOverride="EffectChannelSelect"/>
     <Enum Name="EffectEdgeModeX" ShouldProject="false" ProjectedNameOverride="CanvasEdgeBehavior" Namespace="Microsoft.Graphics.Canvas"/>
     <Enum Name="EffectEdgeModeY" ShouldProject="false" ProjectedNameOverride="CanvasEdgeBehavior" Namespace="Microsoft.Graphics.Canvas"/>
-    <Enum Name="ColorMatrixEffectAlphaMode" ShouldProject="false" ProjectedNameOverride="CanvasAlphaMode" Namespace="Microsoft.Graphics.Canvas">
+    <Enum Name="EffectAlphaMode" ShouldProject="false" ProjectedNameOverride="CanvasAlphaMode" Namespace="Microsoft.Graphics.Canvas">
       <Field Name="Ignore" Index="2" ShouldProject="false"/>
     </Enum>
     <Enum Name="CompositeEffectMode" ShouldProject="false" ProjectedNameOverride="CanvasComposite" Namespace="Microsoft.Graphics.Canvas"/>
-    <Effect Name="ColorMatrixEffect">
-      <Property Name="AlphaMode" IsHandCoded="true"/>
-    </Effect>
     <Effect Name="AffineTransform2DEffect" ProjectedNameOverride="Transform2DEffect"/>
     <Effect Name="FloodEffect" ProjectedNameOverride="ColorSourceEffect"/>
     <Effect Name="AtlasEffect">
@@ -240,6 +239,45 @@ under the License.
       <Property Name="KernelUnitLength" ProjectedNameOverride="KernelScale"/>
       <Property Name="ScaleMode" ProjectedNameOverride="InterpolationMode"/>
       <Property Name="Bias" ProjectedNameOverride="Offset"/>
+    </Effect>
+    <Effect Name="ChromaKeyEffect" WinVer="_WIN32_WINNT_WIN10"/>
+    <Effect Name="ContrastEffect" WinVer="_WIN32_WINNT_WIN10">
+      <Property Name="ClampInput" ProjectedNameOverride="ClampSource"/>
+    </Effect>
+    <Effect Name="EdgeDetectionEffect" WinVer="_WIN32_WINNT_WIN10">
+      <Property Name="Strength" ProjectedNameOverride="Amount"/>
+      <Property Name="BlurRadius" ProjectedNameOverride="BlurAmount"/>
+    </Effect>
+    <Effect Name="EmbossEffect" WinVer="_WIN32_WINNT_WIN10">
+      <Property Name="Height" ProjectedNameOverride="Amount"/>
+      <Property Name="Direction" ProjectedNameOverride="Angle" ConvertRadiansToDegrees="true"/>
+    </Effect>
+    <Effect Name="ExposureEffect" WinVer="_WIN32_WINNT_WIN10">
+      <Property Name="ExposureValue" ProjectedNameOverride="Exposure"/>
+    </Effect>
+    <Effect Name="GrayscaleEffect" WinVer="_WIN32_WINNT_WIN10"/>
+    <Effect Name="HighlightsandShadowsEffect" ProjectedNameOverride="HighlightsAndShadowsEffect" CLSIDOverride="CLSID_D2D1HighlightsShadows" WinVer="_WIN32_WINNT_WIN10">
+      <Property Name="MaskBlurRadius" ProjectedNameOverride="MaskBlurAmount"/>
+      <Property Name="InputGamma" ProjectedNameOverride="SourceIsLinearGamma" Type="boolean" IsHandCoded="true"/>
+    </Effect>
+    <Effect Name="HueToRgbEffect" WinVer="_WIN32_WINNT_WIN10">
+      <Property Name="InputColorSpace" ProjectedNameOverride="SourceColorSpace"/>
+    </Effect>
+    <Effect Name="InvertEffect" WinVer="_WIN32_WINNT_WIN10"/>
+    <Effect Name="PosterizeEffect" WinVer="_WIN32_WINNT_WIN10"/>
+    <Effect Name="RgbToHueEffect" WinVer="_WIN32_WINNT_WIN10"/>
+    <Effect Name="SepiaEffect" WinVer="_WIN32_WINNT_WIN10"/>
+    <Effect Name="SharpenEffect" WinVer="_WIN32_WINNT_WIN10">
+      <Property Name="Sharpness" ProjectedNameOverride="Amount"/>
+    </Effect>
+    <Effect Name="StraightenEffect" WinVer="_WIN32_WINNT_WIN10">
+      <Property Name="Angle" ConvertRadiansToDegrees="true"/>
+      <Property Name="ScaleMode" ProjectedNameOverride="InterpolationMode"/>
+    </Effect>
+    <Effect Name="TemperatureAndTintEffect" CLSIDOverride="CLSID_D2D1TemperatureTint" WinVer="_WIN32_WINNT_WIN10"/>
+    <Effect Name="VignetteEffect" WinVer="_WIN32_WINNT_WIN10">
+      <Property Name="TransitionSize" ProjectedNameOverride="Amount"/>
+      <Property Name="Strength" ProjectedNameOverride="Curve"/>
     </Effect>
   </Namespace>
 </Settings>

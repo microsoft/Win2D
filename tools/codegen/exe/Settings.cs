@@ -87,7 +87,10 @@ namespace CodeGen
 
                 [XmlAttributeAttribute]
                 public string Namespace;
-                
+
+                [XmlAttributeAttribute]
+                public string WinVer;
+
                 [XmlElement("Field")]
                 public List<EnumValue> Values { get; set; }
             }
@@ -132,6 +135,12 @@ namespace CodeGen
 
                 [XmlAttributeAttribute]
                 public string ProjectedNameOverride;
+
+                [XmlAttributeAttribute]
+                public string CLSIDOverride;
+
+                [XmlAttributeAttribute]
+                public string WinVer;
 
                 [XmlElement("Input")]
                 public List<EffectProperty> Inputs { get; set; }

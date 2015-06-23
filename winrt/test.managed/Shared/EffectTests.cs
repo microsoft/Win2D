@@ -657,6 +657,26 @@ namespace test.managed
                 propertiesToRemove = new string[] { "AlphaMode", };
                 indexMapping = new int[] { 0, 2 };
             }
+#if WINDOWS_UAP
+            else if (effectType == typeof(SepiaEffect))
+            {
+                // SepiaEffect.AlphaMode has special logic to remap enum values between WinRT and D2D.
+                propertiesToRemove = new string[] { "AlphaMode", };
+                indexMapping = new int[] { 0 };
+            }
+            else if (effectType == typeof(EdgeDetectionEffect))
+            {
+                // EdgeDetectionEffect.AlphaMode has special logic to remap enum values between WinRT and D2D.
+                propertiesToRemove = new string[] { "AlphaMode", };
+                indexMapping = new int[] { 0, 1, 2, 3 };
+            }
+            else if (effectType == typeof(HighlightsAndShadowsEffect))
+            {
+                // HighlightsAndShadowsEffect.SourceIsLinearGamma projects an enum value as a bool.
+                propertiesToRemove = new string[] { "SourceIsLinearGamma", };
+                indexMapping = new int[] { 0, 1, 2, 4 };
+            }
+#endif  // WINDOWS_UAP
             else
             {
                 // Other effects do not need special filtering.
@@ -809,24 +829,25 @@ namespace test.managed
         }
 
 
+        const uint D2D1_ALPHA_MODE_PREMULTIPLIED = 1;
+        const uint D2D1_ALPHA_MODE_STRAIGHT = 2;
+
+
         [TestMethod]
         public void ColorMatrixEffectCustomizations()
         {
-            const uint D2D1_COLORMATRIX_ALPHA_MODE_PREMULTIPLIED = 1;
-            const uint D2D1_COLORMATRIX_ALPHA_MODE_STRAIGHT = 2;
-
             var effect = new ColorMatrixEffect();
 
             // Verify defaults.
             Assert.AreEqual(CanvasAlphaMode.Premultiplied, effect.AlphaMode);
-            Assert.AreEqual(D2D1_COLORMATRIX_ALPHA_MODE_PREMULTIPLIED, EffectAccessor.GetProperty(effect, 1));
+            Assert.AreEqual(D2D1_ALPHA_MODE_PREMULTIPLIED, EffectAccessor.GetProperty(effect, 1));
 
             // Change the property, and verify that the boxed value changes to match.
             effect.AlphaMode = CanvasAlphaMode.Straight;
-            Assert.AreEqual(D2D1_COLORMATRIX_ALPHA_MODE_STRAIGHT, EffectAccessor.GetProperty(effect, 1));
+            Assert.AreEqual(D2D1_ALPHA_MODE_STRAIGHT, EffectAccessor.GetProperty(effect, 1));
 
             effect.AlphaMode = CanvasAlphaMode.Premultiplied;
-            Assert.AreEqual(D2D1_COLORMATRIX_ALPHA_MODE_PREMULTIPLIED, EffectAccessor.GetProperty(effect, 1));
+            Assert.AreEqual(D2D1_ALPHA_MODE_PREMULTIPLIED, EffectAccessor.GetProperty(effect, 1));
 
             // Verify unsupported value throws.
             Assert.ThrowsException<ArgumentException>(() => { effect.AlphaMode = CanvasAlphaMode.Ignore; });
@@ -839,6 +860,160 @@ namespace test.managed
             EffectAccessor.GetNamedPropertyMapping(effect, "AlphaMode", out index, out mapping);
             Assert.AreEqual(1, index);
             Assert.AreEqual(EffectPropertyMapping.ColorMatrixAlphaMode, mapping);
+        }
+
+
+#if WINDOWS_UAP
+
+
+        [TestMethod]
+        public void SepiaEffectCustomizations()
+        {
+            var effect = new SepiaEffect();
+
+            // Verify defaults.
+            Assert.AreEqual(CanvasAlphaMode.Premultiplied, effect.AlphaMode);
+            Assert.AreEqual(D2D1_ALPHA_MODE_PREMULTIPLIED, EffectAccessor.GetProperty(effect, 1));
+
+            // Change the property, and verify that the boxed value changes to match.
+            effect.AlphaMode = CanvasAlphaMode.Straight;
+            Assert.AreEqual(D2D1_ALPHA_MODE_STRAIGHT, EffectAccessor.GetProperty(effect, 1));
+
+            effect.AlphaMode = CanvasAlphaMode.Premultiplied;
+            Assert.AreEqual(D2D1_ALPHA_MODE_PREMULTIPLIED, EffectAccessor.GetProperty(effect, 1));
+
+            // Verify unsupported value throws.
+            Assert.ThrowsException<ArgumentException>(() => { effect.AlphaMode = CanvasAlphaMode.Ignore; });
+            Assert.AreEqual(CanvasAlphaMode.Premultiplied, effect.AlphaMode);
+
+            // Validate that IGraphicsEffectD2D1Interop reports the right customizations.
+            int index;
+            EffectPropertyMapping mapping;
+
+            EffectAccessor.GetNamedPropertyMapping(effect, "AlphaMode", out index, out mapping);
+            Assert.AreEqual(1, index);
+            Assert.AreEqual(EffectPropertyMapping.ColorMatrixAlphaMode, mapping);
+        }
+
+
+        [TestMethod]
+        public void EdgeDetectionEffectCustomizations()
+        {
+            var effect = new EdgeDetectionEffect();
+
+            // Verify defaults.
+            Assert.AreEqual(CanvasAlphaMode.Premultiplied, effect.AlphaMode);
+            Assert.AreEqual(D2D1_ALPHA_MODE_PREMULTIPLIED, EffectAccessor.GetProperty(effect, 4));
+
+            // Change the property, and verify that the boxed value changes to match.
+            effect.AlphaMode = CanvasAlphaMode.Straight;
+            Assert.AreEqual(D2D1_ALPHA_MODE_STRAIGHT, EffectAccessor.GetProperty(effect, 4));
+
+            effect.AlphaMode = CanvasAlphaMode.Premultiplied;
+            Assert.AreEqual(D2D1_ALPHA_MODE_PREMULTIPLIED, EffectAccessor.GetProperty(effect, 4));
+
+            // Verify unsupported value throws.
+            Assert.ThrowsException<ArgumentException>(() => { effect.AlphaMode = CanvasAlphaMode.Ignore; });
+            Assert.AreEqual(CanvasAlphaMode.Premultiplied, effect.AlphaMode);
+
+            // Validate that IGraphicsEffectD2D1Interop reports the right customizations.
+            int index;
+            EffectPropertyMapping mapping;
+
+            EffectAccessor.GetNamedPropertyMapping(effect, "AlphaMode", out index, out mapping);
+            Assert.AreEqual(4, index);
+            Assert.AreEqual(EffectPropertyMapping.ColorMatrixAlphaMode, mapping);
+        }
+
+
+        [TestMethod]
+        public void HighlightsAndShadowsEffectCustomizations()
+        {
+            const uint D2D1_HIGHLIGHTSANDSHADOWS_INPUT_GAMMA_LINEAR = 0;
+            const uint D2D1_HIGHLIGHTSANDSHADOWS_INPUT_GAMMA_SRGB = 1;
+
+            var effect = new HighlightsAndShadowsEffect();
+
+            // Verify defaults.
+            Assert.IsFalse(effect.SourceIsLinearGamma);
+            Assert.AreEqual(D2D1_HIGHLIGHTSANDSHADOWS_INPUT_GAMMA_SRGB, EffectAccessor.GetProperty(effect, 3));
+
+            // Change the property, and verify that the boxed value changes to match.
+            effect.SourceIsLinearGamma = true;
+            Assert.IsTrue(effect.SourceIsLinearGamma);
+            Assert.AreEqual(D2D1_HIGHLIGHTSANDSHADOWS_INPUT_GAMMA_LINEAR, EffectAccessor.GetProperty(effect, 3));
+
+            effect.SourceIsLinearGamma = false;
+            Assert.IsFalse(effect.SourceIsLinearGamma);
+            Assert.AreEqual(D2D1_HIGHLIGHTSANDSHADOWS_INPUT_GAMMA_SRGB, EffectAccessor.GetProperty(effect, 3));
+
+            // Validate that IGraphicsEffectD2D1Interop reports the right customizations.
+            int index;
+            EffectPropertyMapping mapping;
+
+            EffectAccessor.GetNamedPropertyMapping(effect, "SourceIsLinearGamma", out index, out mapping);
+            Assert.AreEqual(3, index);
+            Assert.AreEqual(EffectPropertyMapping.Unknown, mapping);
+        }
+
+
+        [TestMethod]
+        public void StraightenEffectDoesNotSupportHighQualityInterpolation()
+        {
+            var effect = new StraightenEffect();
+
+            var supportedModes = from mode in Enum.GetValues(typeof(CanvasImageInterpolation)).Cast<CanvasImageInterpolation>()
+                                 where mode != CanvasImageInterpolation.HighQualityCubic
+                                 select mode;
+
+            foreach (var interpolationMode in supportedModes)
+            {
+                effect.InterpolationMode = interpolationMode;
+                Assert.AreEqual(interpolationMode, effect.InterpolationMode);
+            }
+
+            Assert.ThrowsException<ArgumentException>(() =>
+            {
+                effect.InterpolationMode = CanvasImageInterpolation.HighQualityCubic;
+            });
+        }
+
+
+#endif  // WINDOWS_UAP
+
+
+        [TestMethod]
+        public void Transform3DEffectDoesNotSupportHighQualityInterpolation()
+        {
+            var effect = new Transform3DEffect();
+
+            var supportedModes = from mode in Enum.GetValues(typeof(CanvasImageInterpolation)).Cast<CanvasImageInterpolation>()
+                                 where mode != CanvasImageInterpolation.HighQualityCubic
+                                 select mode;
+
+            foreach (var interpolationMode in supportedModes)
+            {
+                effect.InterpolationMode = interpolationMode;
+                Assert.AreEqual(interpolationMode, effect.InterpolationMode);
+            }
+
+            Assert.ThrowsException<ArgumentException>(() =>
+            {
+                effect.InterpolationMode = CanvasImageInterpolation.HighQualityCubic;
+            });
+        }
+
+
+        [TestMethod]
+        public void Transform2DEffectSupportsAllInterpolationModes()
+        {
+            var effect = new Transform2DEffect();
+
+            foreach (var interpolationMode in Enum.GetValues(typeof(CanvasImageInterpolation)).Cast<CanvasImageInterpolation>())
+            {
+                effect.InterpolationMode = interpolationMode;
+                Assert.AreEqual(interpolationMode, effect.InterpolationMode);
+            }
         }
 
 
