@@ -3,15 +3,13 @@
 REM
 REM Version is read from the VERSION file.
 REM
-REM Command-line parameter specifies optionally "signed" or "nodebug",
+REM Command-line parameter specifies optionally "signed",
 REM followed by an optional prerelease string to append to the version.
 REM
 REM Say VERSION contains "0.0.3" then:
 REM
 REM build-nupkg                     <-- generates package with version 0.0.3
 REM build-nupkg build-140912-1100   <-- generates package with version 0.0.3-build-140912-1100
-REM
-REM The "nodebug" flag builds only release flavor package, skipping the debug variant.
 REM
 REM The "signed" flag is intended for internal Microsoft use. This generates a
 REM package without a prerelease version number, using a license agreement
@@ -37,7 +35,6 @@ SET /p VERSION=<VERSION
 
 IF "%1" == "signed" (
     SHIFT
-    SET NODEBUG=true
     SET BIN=bin\signed
     SET OUTDIR=..\..\bin\signed
     SET LICENSE_URL=http://www.microsoft.com/web/webpi/eula/eula_win2d_10012014.htm
@@ -47,11 +44,6 @@ IF "%1" == "signed" (
     SET OUTDIR=..\..\bin
     SET LICENSE_URL=http://github.com/Microsoft/Win2D/blob/master/LICENSE.txt
     SET REQUIRE_LICENSE_ACCEPTANCE=false
-)
-
-IF "%1" == "nodebug" (
-    SHIFT
-    SET NODEBUG=true
 )
 
 IF NOT "%1" == "" (
@@ -74,11 +66,6 @@ SET NUGET_ARGS=^
 
 nuget pack %NUGET_PACKAGE%.nuspec %NUGET_ARGS%
 IF %ERRORLEVEL% NEQ 0 GOTO END
-
-IF NOT "%NODEBUG%" == "true" (
-    nuget pack %NUGET_PACKAGE%-debug.nuspec %NUGET_ARGS%
-    IF %ERRORLEVEL% NEQ 0 GOTO END
-)
 
 :END
 

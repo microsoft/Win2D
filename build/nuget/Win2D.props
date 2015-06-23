@@ -5,10 +5,7 @@
   <PropertyGroup>
     <win2d-Platform Condition="'$(Platform)' == 'Win32'">x86</win2d-Platform>
     <win2d-Platform Condition="'$(Platform)' != 'Win32'">$(Platform)</win2d-Platform>
-
-    <!-- This directory may be overridden by other packages that provide
-         different binaries (eg for debugging Win2D itself). -->
-    <win2d-BinDir Condition="'$(win2d-BinDir)' == ''">$(MSBuildThisFileDirectory)..\..\bin\</win2d-BinDir>
+    <win2d-BinDir>$(MSBuildThisFileDirectory)..\..\bin\</win2d-BinDir>
   </PropertyGroup>
 
 </Project>
