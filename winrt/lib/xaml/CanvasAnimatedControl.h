@@ -286,6 +286,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         void IssueAsyncActions(
             std::vector<ComPtr<AnimatedControlAsyncAction>> const& pendingActions);
+
+        void CancelAsyncActions();
     };
 
 }}}}}}

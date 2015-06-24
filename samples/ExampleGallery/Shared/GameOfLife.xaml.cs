@@ -234,9 +234,9 @@ namespace ExampleGallery
         }
 
         // Initializes the simulation to a random state.
-        async void RandomizeSimulation(object sender, RoutedEventArgs e)
+        void RandomizeSimulation(object sender, RoutedEventArgs e)
         {
-            await canvas.RunOnGameLoopThreadAsync(() =>
+            var action = canvas.RunOnGameLoopThreadAsync(() =>
             {
                 Random random = new Random();
 
@@ -254,9 +254,9 @@ namespace ExampleGallery
         }
 
         // Clears the simulation state.
-        async void ClearSimulation(object sender, RoutedEventArgs e)
+        void ClearSimulation(object sender, RoutedEventArgs e)
         {
-            await canvas.RunOnGameLoopThreadAsync(() =>
+            var action = canvas.RunOnGameLoopThreadAsync(() =>
             {
                 using (var ds = currentSurface.CreateDrawingSession())
                 {

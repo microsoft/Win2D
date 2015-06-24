@@ -36,8 +36,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         };
         InvocationResult InvokeAndFireCompletion()
         {
-            InvocationResult result;
-            result.ActionResult = m_dispatchedHandler->Invoke();
+            InvocationResult result{ S_OK, S_OK };
+
+            //
+            // Only actually invoke the handler if we're in a non-terminal
+            // state (eg we haven't been canceled already).
+            //
+            if (!IsTerminalState())
+                result.ActionResult = m_dispatchedHandler->Invoke();
 
             //
             // Even though the CanvasControl will handle device lost,

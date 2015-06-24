@@ -165,6 +165,8 @@ CanvasAnimatedControl::CanvasAnimatedControl(std::shared_ptr<ICanvasAnimatedCont
 
 CanvasAnimatedControl::~CanvasAnimatedControl()
 {
+    // These should all have been canceled on unload
+    assert(m_sharedState.PendingAsyncActions.empty());
 }
 
 IFACEMETHODIMP CanvasAnimatedControl::add_Update(
@@ -431,7 +433,32 @@ IFACEMETHODIMP CanvasAnimatedControl::RunOnGameLoopThreadAsync(
 
             auto newAsyncAction = Make<AnimatedControlAsyncAction>(callback);
             CheckMakeResult(newAsyncAction);
-            m_sharedState.PendingAsyncActions.push_back(newAsyncAction);
+
+            //
+            // If we're not loaded then there's a chance we'll never get loaded
+            // before this control is destroyed.  Since the game loop thread is
+            // only started when we load there's a chance we'll never have an
+            // opportunity to run this action.  So we only track the action if
+            // we're currently loaded.
+            //
+            if (IsLoaded())
+            {
+                m_sharedState.PendingAsyncActions.push_back(newAsyncAction);
+            }
+            else
+            {
+                // This action won't ever get a chance to run, so we cancel it
+                // now.
+
+                newAsyncAction->Cancel();
+
+                // Note: no need to fire completion here since the action is
+                // newly created and there's no way a completion handler could
+                // have been added.  This means we don't need to worry about
+                // releasing the lock or this method taking too long to
+                // complete.  When a completion handler is added to a canceled
+                // action the completion handler is invoked immediately.
+            }
 
             ThrowIfFailed(newAsyncAction.CopyTo(asyncAction));
 
@@ -510,6 +537,9 @@ void CanvasAnimatedControl::Loaded()
 void CanvasAnimatedControl::Unloaded()
 {    
     m_gameLoop.reset();
+
+    // Any remaining async actions won't get executed, so we cancel them
+    CancelAsyncActions();
 }
 
 void CanvasAnimatedControl::ApplicationSuspending(ISuspendingEventArgs* args)
@@ -833,6 +863,20 @@ void CanvasAnimatedControl::IssueAsyncActions(
 
             ThrowHR(actionsResult);
         }
+    }
+}
+
+void CanvasAnimatedControl::CancelAsyncActions()
+{
+    std::vector<ComPtr<AnimatedControlAsyncAction>> actions;
+
+    auto lock = GetLock();
+    std::swap(actions, m_sharedState.PendingAsyncActions);
+    lock.unlock();
+
+    for (auto& action : actions)
+    {
+        action->CancelAndFireCompletion();
     }
 }
 

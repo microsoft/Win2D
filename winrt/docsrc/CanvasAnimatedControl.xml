@@ -755,10 +755,28 @@ under the License.
     
 
     <member name="M:Microsoft.Graphics.Canvas.UI.Xaml.ICanvasAnimatedControl.RunOnGameLoopThreadAsync(Windows.UI.Core.DispatchedHandler)">
-      <summary>Does some work, specified using a DispatchedHandler, on the game loop thread.</summary>
+      <summary>Schedules the provided callback to run asynchronously on the game loop thread.</summary>
       <remarks>
         <p>
-          If the control is paused, the work won't be performed until the control is unpaused.
+          The action will not run until the control's CreateResources event has
+          completed (including any tracked async actions).  This means that the
+          callback can assume that CreateResources has completed.
+        </p>
+        <p>
+          If the control has not been loaded yet (ie the Loaded event has not
+          been raised) then the IAsyncAction that is returned is in the canceled
+          state.  Any work that has not completed before the control has
+          unloaded will also be canceled.  This means that any code that uses
+          "await" needs to be able to deal with the possibility that it fails
+          with a TaskCanceledException.  If there is no need to wait for the
+          action to complete then the return value can be ignored:
+          <code>
+            // This might throw TaskCanceledException (as well as any exception thrown by the callback)
+            await animatedControl.RunOnGameLoopThreadAsync(() => { ... });
+
+            // Any exceptions thrown by the callback, including TaskCanceledException, are ignored
+            var ignoredAction = animatedControl.RunOnGameLoopThreadAsync(() => { ... });
+          </code>
         </p>
         <p>
           Beware of passing async delegates to this method! The code:
@@ -798,7 +816,7 @@ under the License.
       <summary>Gets whether the current thread is the game loop thread.</summary>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl.RunOnGameLoopThreadAsync(Windows.UI.Core.DispatchedHandler)">
-      <summary>Does some work, specified using a DispatchedHandler, on the game loop thread.</summary>
+      <summary>Schedules the provided callback to run asynchronously on the game loop thread.</summary>
       <inheritdoc/>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl.HasGameLoopThreadAccess">

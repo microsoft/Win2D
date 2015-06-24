@@ -82,7 +82,7 @@ namespace ExampleGallery
             animatedControl = null;
         }
 
-        private async void KeyDown_UIThread(CoreWindow sender, KeyEventArgs args)
+        private void KeyDown_UIThread(CoreWindow sender, KeyEventArgs args)
         {
             // This event runs on the UI thread.  If we want to process data
             // structures that are accessed on the game loop thread then we need
@@ -122,7 +122,7 @@ namespace ExampleGallery
             // Now schedule code to run on the game loop thread to handle the
             // pressed letter.  The animated control will execute this before
             // the next Update.
-            await animatedControl.RunOnGameLoopThreadAsync(() => game.ProcessPressedLetterOnGameLoopThread(pressedLetter));
+            var action = animatedControl.RunOnGameLoopThreadAsync(() => game.ProcessPressedLetterOnGameLoopThread(pressedLetter));
         }
 
         // Convert a KeyEventArgs to the corresponding A-Z letter.
