@@ -45,7 +45,7 @@ under the License.
         </p>
 
         <p>
-          The control has three events that can be subscribed to:
+          The control has five events that can be subscribed to:
 
           <dl>
             <dt>CreateResources</dt>
@@ -56,6 +56,21 @@ under the License.
               </p>
               <p>
                 This event is raised on the UI thread.
+              </p>
+            </dd>
+
+            <dt>GameLoopStarting</dt>
+            <dd>
+              <p>
+                This is raised just before the game loop starts running.
+                Applications can hook this to perform any initialization that
+                must happen on the game loop thread.  For example, <see
+                cref="M:Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl.CreateCoreIndependentInputSource(Windows.UI.Core.CoreInputDeviceTypes)"/>
+                must be called from the thread that will process the input
+                events raised by the CoreIndependentInputSource.
+              </p>
+              <p>
+                This event is raised on the game loop thread.
               </p>
             </dd>
 
@@ -91,6 +106,20 @@ under the License.
                 has been completed.  However, it may be raised multiple times in
                 succession without an Update if the control is resized or the
                 ClearColor property is modified.
+              </p>
+              <p>
+                This event is raised on the game loop thread.
+              </p>
+            </dd>
+
+            <dt>GameLoopStopped</dt>
+            <dd>
+              <p>
+                This is raised just after the game loop has stopped, and just
+                before the game loop thread exits.  Applications can hook this
+                to perform any deinitialization that must happen on the game
+                loop thread, such as unregistering event handlers on a
+                CoreIndependentInputSource.
               </p>
               <p>
                 This event is raised on the game loop thread.
@@ -219,31 +248,41 @@ under the License.
 
         <h4>Pointer Input</h4>
         <p>
-          CanvasAnimatedControl can raise pointer input (pen, mouse, touch)
-          events on the game loop thread (where usually for XAML controls these
-          are raised on the UI thread).  This allows apps to process input
-          events synchronized with their game loop, rather than with XAML's
-          event loop.  Since the events are raised on the game loop thread there
-          are no threading concerns about state shared between the input event
-          handlers, the update handler or the draw handler.
+          The recommended way to receive pointer input events for a
+          CanvasAnimatedControl is to use the standard XAML events, such as <a
+          href="https://msdn.microsoft.com/en-us/library/windows/apps/windows.ui.xaml.uielement.pointerpressed.aspx">UIElement.PointerPressed</a>.
         </p>
-
         <p>
-          The pointer events can be subscribed to using the Input property.  For
-          example:
-
+          These events are raised on the UI thread, so they may be raised
+          concurrently with any of the game loop thread events (such as Update,
+          Draw and so on).  Care must be taken to ensure that access to any
+          shared data structures is synchronized.
+        </p>
+        <p>
+          One strategy for handling this is to use <see
+          cref="M:Microsoft.Graphics.Canvas.UI.Xaml.ICanvasAnimatedControl.RunOnGameLoopThreadAsync(Windows.UI.Core.DispatchedHandler)"/>
+          to execute code on the game loop thread.  For example:
           <code>
-            animatedControl.Input.PointerPressed += OnPointerPressed;
+            private void animatedControl_PointerPressed(object sender, PointerRoutedEventArgs e)
+            {
+                var position = e.GetCurrentPoint(animatedControl).Position;
+                var action = animatedControl.RunOnGameLoopThreadAsync(() =>
+                {
+                    HandlePointerPressed(position);
+                });
+            }
           </code>
+          More detailed examples can be seen in these ExampleGallery samples:
+          <ul>
+            <li><a href="https://github.com/Microsoft/Win2D-Samples/blob/master/ExampleGallery/Shared/KeyboardInputExample.xaml.cs">KeyboardInputExample.xaml.cs</a></li>
+            <li><a href="https://github.com/Microsoft/Win2D-Samples/blob/master/ExampleGallery/Shared/GameOfLife.xaml.cs">GameOfLife.xaml.cs</a></li>
+          </ul>
         </p>
-        
         <p>
-        While using pointer functionality through Input, do not call 
-        <a href="https://msdn.microsoft.com/en-us/library/windows/apps/windows.ui.core.icorepointerinputsource.setpointercapture.aspx">SetPointerCapture</a>, 
-        <a href="https://msdn.microsoft.com/en-us/library/windows/apps/windows.ui.core.icorepointerinputsource.releasepointercapture.aspx">ReleasePointerCapture</a>, 
-        <a href="https://msdn.microsoft.com/en-us/library/windows/apps/windows.ui.core.icorepointerinputsource.hascapture.aspx">HasCapture</a>, or use the event
-        <a href="https://msdn.microsoft.com/en-us/library/windows/apps/windows.ui.core.icorepointerinputsource.pointercapturelost.aspx">PointerCaptureLost</a>,
-        as these are not supported through CanvasAnimatedControl.
+          For more advanced input handling, CanvasAnimatedControl provides <see
+          cref="M:Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl.CreateCoreIndependentInputSource(Windows.UI.Core.CoreInputDeviceTypes)"/>.
+          This allows input to be processed on any thread (including the game
+          loop thread).  This gives the app finer control over input processing.
         </p>
 
         <h4>Keyboard Input</h4>
@@ -297,7 +336,7 @@ under the License.
                 // game loop thread
                 var virtualKey = args.VirtualKey;
 
-                await animatedControl.RunOnGameLoopThreadAsync(() => KeyDown_GameLoopThread(virtualKey));
+                var action = animatedControl.RunOnGameLoopThreadAsync(() => KeyDown_GameLoopThread(virtualKey));
             }
 
             private void KeyDown_GameLoopThread(VirtualKey virtualKey)
@@ -319,24 +358,59 @@ under the License.
           thread is started in response to the control's Loaded event, and
           stopped in response to the control's Unloaded event.
         </p>
+
         <p>
-          The CreateResources event is raised on the UI thread.  Update and Draw
-          are raised on the game loop thread.  The control ensures that Update
-          and Draw will never run at the same time as CreateResources.
+          The <see cref="E:Microsoft.Graphics.Canvas.UI.Xaml.ICanvasAnimatedControl.CreateResources"/>
+          event runs on the UI thread.  The other events - <see cref="E:Microsoft.Graphics.Canvas.UI.Xaml.ICanvasAnimatedControl.GameLoopStarting"/>,
+          <see cref="E:Microsoft.Graphics.Canvas.UI.Xaml.ICanvasAnimatedControl.Update"/>,
+          <see cref="E:Microsoft.Graphics.Canvas.UI.Xaml.ICanvasAnimatedControl.Draw"/>
+          and <see cref="E:Microsoft.Graphics.Canvas.UI.Xaml.ICanvasAnimatedControl.GameLoopStopped"/>
+          all run on the game loop thread.  The control ensures that it does not
+          raise any events on the game loop thread while CreateResources is
+          running on the UI thread.
         </p>
+
         <p>
-          Update and Draw are only ever raised on the game loop thread and will
-          never be raised simultaneously on different threads.
+          Arbitrary code can be scheduled to run on the game loop thread using
+          <see cref="M:Microsoft.Graphics.Canvas.UI.Xaml.ICanvasAnimatedControl.RunOnGameLoopThreadAsync(Windows.UI.Core.DispatchedHandler)"/>.
+          Work scheduled with this method will only run after CreateResources has
+          completed.
         </p>
+
         <p>
-          Input events are raised on the game loop thread and will never run
-          simultaneously with the Update or Draw events.
+          The following diagram shows how the UI thread and game loop thread are synchronized:
         </p>
+
+        <img src="../images/CanvasAnimatedControlLifeCycle.svg" />
+
         <p>
-          Arbitrary code can be scheduled to execute on the game loop thread
-          using <see
-          cref="M:Microsoft.Graphics.Canvas.UI.Xaml.ICanvasAnimatedControl.RunOnGameLoopThreadAsync(Windows.UI.Core.DispatchedHandler)"
-          />.
+          When the control is first loaded the game loop thread is created.  The
+          control will not raise its own Loaded event until the game loop thread
+          has finished raising the GameLoopStarting event.  The app's Loaded
+          event handlers will never run at the same time as the GameLoopStarting
+          event.
+        </p>
+
+        <p>
+          The game loop thread waits until the CreateResources process has
+          completed (included any asynchronous resource creation tasks) before
+          starting the dispatcher.
+        </p>
+
+        <p>
+          While the dispatcher is running, it raises Update / Draw events as
+          appropriate and runs RunOnGameLoopThread actions.  If a
+          CoreIndependentInputSource has been created on this thread then its
+          events are dispatched through the dispatcher.
+        </p>
+
+        <p>
+          When the control is unloaded the game loop thread is shutdown.  The
+          game loop thread raises the GameLoopStopped event after the dispatcher
+          has been stopped.  The control will not raise its own Unloaded event
+          until after the GameLoopStopped event has completed.  The app's
+          Unloaded event handlers will never run at the same time as the
+          GameLoopStopped event.
         </p>
 
       </remarks>
