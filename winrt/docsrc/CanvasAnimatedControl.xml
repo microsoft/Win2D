@@ -616,13 +616,10 @@ under the License.
           The CreateResources event is raised on XAML's UI thread.
         </p>
         <p>
-        If your app cannot be structured in a way where it loads all of its resources
-        at the beginning (for example, a game with multiple levels, and the levels require
-        different assets), see the note 'On loading resources at different times' in CanvasControl.
-        <see cref="E:Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl.CreateResources"/>.
-        For CanvasAnimatedControl, note that awaiting on asynchronous work in an event
-        handler such as Draw or Update will cause the app to continue on an arbitrary thread,
-        and not necessarily the game loop thread.
+          If your app cannot be structured in a way where it loads all of its resources
+          at the beginning (for example, a game with multiple levels, and the levels require
+          different assets), see <a href="LoadingResourcesOutsideCreateResources.htm">Loading Resources outside of CreateResources</a>
+          for more information.
         </p>
       </remarks>
     </member>
