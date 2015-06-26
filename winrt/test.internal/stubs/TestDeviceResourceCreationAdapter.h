@@ -62,6 +62,7 @@ public:
         , m_numD3dDeviceCreationCalls(0)
         , m_allowHardware(true)
         , m_retrievableForceSoftwareRenderer(false)
+        , m_retrievableUseDebugD3DDevice(false)
     {
         GetCoreApplicationMethod.AllowAnyCall(
             [&]
@@ -99,6 +100,7 @@ public:
 
     virtual bool TryCreateD3DDevice(
         bool useSoftwareRenderer,
+        bool useDebugD3DDevice,
         ComPtr<ID3D11Device>* device) override
     {
         if (!device)
@@ -108,6 +110,7 @@ public:
         }
 
         m_retrievableForceSoftwareRenderer = useSoftwareRenderer;
+        m_retrievableUseDebugD3DDevice = useDebugD3DDevice;
 
         if (!useSoftwareRenderer && !m_allowHardware)
         {
@@ -158,4 +161,5 @@ public:
 
     int m_numD3dDeviceCreationCalls;
     bool m_retrievableForceSoftwareRenderer;
+    bool m_retrievableUseDebugD3DDevice;
 };

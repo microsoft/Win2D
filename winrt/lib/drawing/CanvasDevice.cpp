@@ -43,17 +43,24 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
     bool DefaultDeviceResourceCreationAdapter::TryCreateD3DDevice(
-        bool useSoftwareRenderer, 
+        bool useSoftwareRenderer,
+        bool useDebugD3DDevice,
         ComPtr<ID3D11Device>* device)
     {
         D3D_DRIVER_TYPE driverType = useSoftwareRenderer ? D3D_DRIVER_TYPE_WARP : D3D_DRIVER_TYPE_HARDWARE;
+
+        UINT deviceFlags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
+        if (useDebugD3DDevice)
+        {
+            deviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
+        }
 
         ComPtr<ID3D11Device> createdDevice;
         if (SUCCEEDED(D3D11CreateDevice(
             NULL, // adapter
             driverType,
             NULL, // software handle
-            D3D11_CREATE_DEVICE_BGRA_SUPPORT,
+            deviceFlags,
             NULL, // feature level array
             0,  // feature level count
             D3D11_SDK_VERSION,
@@ -157,20 +164,26 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     ComPtr<CanvasDevice> CanvasDeviceManager::CreateNew(
         bool forceSoftwareRenderer)
     {
-        auto d2dFactory = m_adapter->CreateD2DFactory(GetDebugLevel());
+        auto debugLevel = GetDebugLevel();
 
-        return CreateNew(forceSoftwareRenderer, d2dFactory.Get());
+        auto d2dFactory = m_adapter->CreateD2DFactory(debugLevel);
+
+        bool useD3DDebugDevice = debugLevel != CanvasDebugLevel::None;
+
+        return CreateNew(forceSoftwareRenderer, useD3DDebugDevice, d2dFactory.Get());
     }
 
 
     ComPtr<CanvasDevice> CanvasDeviceManager::CreateNew(
         bool forceSoftwareRenderer,
+        bool useD3DDebugDevice,
         ID2D1Factory2* d2dFactory)
     {
         CheckInPointer(d2dFactory);
 
         auto dxgiDevice = MakeDXGIDevice(
-            forceSoftwareRenderer);
+            forceSoftwareRenderer,
+            useD3DDebugDevice);
 
         ComPtr<ID2D1Device1> d2dDevice;
         ThrowIfFailed(d2dFactory->CreateDevice(dxgiDevice.Get(), &d2dDevice));
@@ -241,9 +254,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
 
     ComPtr<IDXGIDevice3> CanvasDeviceManager::MakeDXGIDevice(
-        bool forceSoftwareRenderer) const
+        bool forceSoftwareRenderer,
+        bool useDebugD3DDevice) const
     {
-        ComPtr<ID3D11Device> d3dDevice = MakeD3D11Device(forceSoftwareRenderer);
+        ComPtr<ID3D11Device> d3dDevice = MakeD3D11Device(forceSoftwareRenderer, useDebugD3DDevice);
 
         ComPtr<IDXGIDevice3> dxgiDevice;
         ThrowIfFailed(d3dDevice.As(&dxgiDevice));
@@ -253,11 +267,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
 
     ComPtr<ID3D11Device> CanvasDeviceManager::MakeD3D11Device(
-        bool forceSoftwareRenderer) const
+        bool forceSoftwareRenderer,
+        bool useDebugD3DDevice) const
     {
         ComPtr<ID3D11Device> d3dDevice;
 
-        if (m_adapter->TryCreateD3DDevice(forceSoftwareRenderer, &d3dDevice))
+        if (m_adapter->TryCreateD3DDevice(forceSoftwareRenderer, useDebugD3DDevice, &d3dDevice))
         {
             return d3dDevice;
         }
@@ -265,7 +280,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         if (!forceSoftwareRenderer)
         {
             // try again using the software renderer
-            if (m_adapter->TryCreateD3DDevice(true, &d3dDevice))
+            if (m_adapter->TryCreateD3DDevice(true, useDebugD3DDevice, &d3dDevice))
             {
                 return d3dDevice;
             }

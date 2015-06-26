@@ -369,6 +369,7 @@ TEST_CLASS(DefaultDeviceResourceCreationAdapterTests)
         ComPtr<ID3D11Device> d3dDevice;
         if (!adapter.TryCreateD3DDevice(
             true, // Forces software rendering
+            false, // No debug layer
             &d3dDevice))
         {
             Assert::Fail(L"Failed to create d3d device");
@@ -650,6 +651,18 @@ TEST_CLASS(CanvasDebugLevelTests)
         {
             Assert::AreEqual(expected, ResourceCreationAdapter->m_debugLevel);
         }
+
+        void AssertD3DDebugLevel(CanvasDebugLevel expected)
+        {
+            const bool expectD3DDebugLevel = expected != CanvasDebugLevel::None;
+
+            Assert::AreEqual(expectD3DDebugLevel, ResourceCreationAdapter->m_retrievableUseDebugD3DDevice);
+        }
+
+        void AssertNoD3DDebugLevel()
+        {
+            Assert::IsFalse(ResourceCreationAdapter->m_retrievableUseDebugD3DDevice);
+        }
     };
 
     TEST_METHOD_EX(CreateWithForceSoftwareRendererOption_HasCorrectDebugLevel)
@@ -662,6 +675,8 @@ TEST_CLASS(CanvasDebugLevelTests)
 
             f.ExpectOneQueryDebugLevel(debugLevel);
             auto canvasDevice = f.Manager->Create(false);
+
+            f.AssertD3DDebugLevel(debugLevel);
         }
     }
 
@@ -682,6 +697,7 @@ TEST_CLASS(CanvasDebugLevelTests)
             auto canvasDevice = f.Manager->Create(stubDirect3DDevice.Get());
             
             f.AssertDebugLevel(debugLevel);
+            f.AssertNoD3DDebugLevel(); // We don't own creating a D3D device in this path
         }
     }
 
@@ -698,6 +714,7 @@ TEST_CLASS(CanvasDebugLevelTests)
             auto canvasDevice = f.Manager->GetSharedDevice(false);
 
             f.AssertDebugLevel(debugLevel);
+            f.AssertD3DDebugLevel(debugLevel);
         }
     }
 
@@ -746,10 +763,11 @@ public:
 
         virtual bool TryCreateD3DDevice(
             bool forceSoftwareRenderer,
+            bool useDebugD3DDevice,
             ComPtr<ID3D11Device>* device) override
         {
             if (m_canCreateDevices)
-                return __super::TryCreateD3DDevice(forceSoftwareRenderer, device);
+                return __super::TryCreateD3DDevice(forceSoftwareRenderer, useDebugD3DDevice, device);
             else
                 return false;
         }

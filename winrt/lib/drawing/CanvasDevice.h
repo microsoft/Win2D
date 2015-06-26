@@ -34,7 +34,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         virtual ComPtr<ID2D1Factory2> CreateD2DFactory(CanvasDebugLevel debugLevel) = 0;
 
-        virtual bool TryCreateD3DDevice(bool useSoftwareRenderer, ComPtr<ID3D11Device>* device) = 0;
+        virtual bool TryCreateD3DDevice(bool forceSoftwareRenderer, bool useDebugD3DDevice, ComPtr<ID3D11Device>* device) = 0;
 
         virtual ComPtr<IDXGIDevice3> GetDxgiDevice(ID2D1Device1* d2dDevice) = 0;
 
@@ -57,7 +57,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         virtual ComPtr<ID2D1Factory2> CreateD2DFactory(CanvasDebugLevel debugLevel) override;
 
-        virtual bool TryCreateD3DDevice(bool useSoftwareRenderer, ComPtr<ID3D11Device>* device) override;
+        virtual bool TryCreateD3DDevice(bool forceSoftwareRenderer, bool useDebugD3DDevice, ComPtr<ID3D11Device>* device) override;
 
         virtual ComPtr<IDXGIDevice3> GetDxgiDevice(ID2D1Device1* d2dDevice) override;
 
@@ -342,7 +342,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         virtual ~CanvasDeviceManager();
         
         ComPtr<CanvasDevice> CreateNew(bool forceSoftwareRenderer);
-        ComPtr<CanvasDevice> CreateNew(bool forceSoftwareRenderer, ID2D1Factory2* d2dFactory);
+        ComPtr<CanvasDevice> CreateNew(bool forceSoftwareRenderer, bool useD3DDebugDevice, ID2D1Factory2* d2dFactory);
         ComPtr<CanvasDevice> CreateNew(IDirect3DDevice* direct3DDevice);
         ComPtr<CanvasDevice> CreateNew(IDirect3DDevice* direct3DDevice, ID2D1Factory2* d2dFactory);
         ComPtr<CanvasDevice> CreateWrapper(ID2D1Device1* d2dDevice);
@@ -353,9 +353,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         void SetDebugLevel(CanvasDebugLevel const& value);
 
     private:
-        ComPtr<IDXGIDevice3> MakeDXGIDevice(bool forceSoftwareRenderer) const;
+        ComPtr<IDXGIDevice3> MakeDXGIDevice(bool forceSoftwareRenderer, bool useDebugD3DDevice) const;
 
-        ComPtr<ID3D11Device> MakeD3D11Device(bool forceSoftwareRenderer) const;
+        ComPtr<ID3D11Device> MakeD3D11Device(bool forceSoftwareRenderer, bool useDebugD3DDevice) const;
 
         CanvasDebugLevel LoadDebugLevelProperty();
         void SaveDebugLevelProperty(CanvasDebugLevel debugLevel);
