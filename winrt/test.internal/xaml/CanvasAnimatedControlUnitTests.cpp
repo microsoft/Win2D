@@ -613,6 +613,11 @@ TEST_CLASS(CanvasAnimatedControlTests)
                 });
         }
 
+        void PresentSucceeds()
+        {
+            m_dxgiSwapChain->Present1Method.AllowAnyCall();
+        }
+
         void ExpectAtLeastOnePresent()
         {
             m_dxgiSwapChain->Present1Method.ExpectAtLeastOneCall();
@@ -874,6 +879,45 @@ TEST_CLASS(CanvasAnimatedControlTests)
         ExpectHResultException(DXGI_ERROR_DEVICE_REMOVED,
             [&] { f.Adapter->DoChanged(); });
     }
+
+    TEST_METHOD_EX(CanvasAnimatedControl_WhenControlIsPaused_AndDeviceLostEventIsRaisedExternally_DeviceIsRecreated)
+    {
+        //
+        // In this scenario, the control is not attempting to use the device.
+        // However, some external code realizes that the device is lost and so
+        // raises the device lost event.  In this case the control needs to
+        // recreate the device.
+        //
+
+        DeviceLostFixture f;
+
+        ThrowIfFailed(f.Control->put_Paused(TRUE));
+
+        f.OnCreateResources.SetExpectedCalls(1);
+
+        f.DoChangedAndTick();
+
+        f.MarkDeviceAsLost();
+        f.LoseDeviceDuringPresent(); // this ensures that animated control sees a device lost error
+
+        ThrowIfFailed(f.Adapter->InitialDevice->RaiseDeviceLost());
+
+        // In this tick, the Present() call will fail with device lost...
+        f.DoChangedAndTick();
+
+        // The tests don't actually create a new device, so we shim this one to
+        // look like it is working again.
+        f.PresentSucceeds();
+
+        // Now the UI thread picks up the device lost exception
+        f.DoChangedAndTick();
+
+        // And so now the UI thread "creates" a new device, and runs through the
+        // CreateResources process
+        f.OnCreateResources.SetExpectedCalls(1);
+        f.DoChangedAndTick();
+    }
+
 
     struct UpdateRenderFixture : public CanvasAnimatedControlFixture
     {
