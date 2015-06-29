@@ -27,14 +27,22 @@ under the License.
     <Page.Resources>
         <DataTemplate x:Key="WideItemTemplate">
             <Grid Width="300" Height="150" Margin="10">
-                <Image Source="{Binding ThumbnailWide}"/>
+                <Image>
+                    <Image.Source>
+                        <BitmapImage UriSource="{Binding ThumbnailWide}" DecodePixelWidth="300" DecodePixelHeight="150" />
+                    </Image.Source>
+                </Image>
                 <TextBlock Text="{Binding Name}" Style="{StaticResource ExampleListTextBlockStyle}" Margin="20" />
             </Grid>
         </DataTemplate>
 
         <DataTemplate x:Key="NarrowItemTemplate">
             <Grid Width="150" Height="150" Margin="5">
-                <Image Source="{Binding ThumbnailNarrow}"/>
+                <Image>
+                    <Image.Source>
+                        <BitmapImage UriSource="{Binding ThumbnailNarrow}" DecodePixelWidth="150" DecodePixelHeight="150" />
+                    </Image.Source>
+                </Image>
                 <TextBlock Text="{Binding Name}" Style="{StaticResource ExampleListTextBlockStyle}" Margin="10" />
             </Grid>
         </DataTemplate>
