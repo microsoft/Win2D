@@ -381,7 +381,7 @@ under the License.
           The following diagram shows how the UI thread and game loop thread are synchronized:
         </p>
 
-        <img src="../images/CanvasAnimatedControlLifeCycle.svg" />
+        <img src="../media/CanvasAnimatedControlLifeCycle.svg" />
 
         <p>
           When the control is first loaded the game loop thread is created.  The

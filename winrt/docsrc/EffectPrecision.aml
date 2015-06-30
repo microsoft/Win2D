@@ -1,0 +1,288 @@
+<?xml version="1.0"?>
+<!--
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may
+not use these files except in compliance with the License. You may obtain
+a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+License for the specific language governing permissions and limitations
+under the License.
+-->
+
+<topic id="EffectPrecision" revisionNumber="1">
+  <developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <introduction>
+      <para>
+        Care must be taken while rendering effects using Win2D to achieve the desired level of 
+        quality and predictability with respect to numerical precision. You need to understand 
+        these details if:
+      </para>
+      <list class="ordered">
+        <listItem>
+          Your effect graph relies on high numerical precision or colors outside of the [0, 1] 
+          range, and you want to make sure these will always be available.
+        </listItem>
+        <listItem>
+          Or your effect graph relies on the rendering implementation to clamp intermediate colors 
+          to the [0, 1] range, so you must ensure this clamping always occurs.
+        </listItem>
+      </list>
+      <para>
+        Win2D often divides an effect graph into sections, and renders each section in a 
+        separate step. The output of some steps may be stored in intermediate Direct3D textures 
+        which by default have limited numerical range and precision. Win2D makes no guarantees 
+        about if or where these intermediate textures are used. This behavior may vary according to 
+        GPU capabilities as well as between Windows versions.
+      </para>
+      <para>
+        In Windows 10, Win2D uses fewer intermediate textures due to its use of
+        <externalLink>
+          <linkText>shader linking</linkText>
+          <linkUri>http://msdn.microsoft.com/en-us/library/windows/desktop/dn879810</linkUri>
+        </externalLink>.
+        Win2D may therefore produce different results with default settings than in prior Windows 
+        releases. This primarily affects scenarios where shader linking is possible in an effect 
+        graph, and that graph also contains effects that produce extended-range output colors.
+      </para>
+    </introduction>
+    
+    <section>
+      <title>Overview of effect rendering and intermediates</title>
+      <content>
+        <para>
+          To render an effect graph, Win2D first finds the underlying graph of "transforms", 
+          where a transform is a graph node used within an effect to apply a specific processing 
+          operation. Each image effect may internally be implemented using one or several 
+          transforms. There are different types of transforms, including those which provide 
+          Direct3D shaders for Direct2D to use.
+        </para>
+        <para>
+          For example, Win2D may render an effect graph as follows:
+        </para>
+        <mediaLink>
+          <image xlink:href="EffectPrecision1"/>
+        </mediaLink>
+        <para>
+          Win2D looks for opportunities to avoid using intermediate textures. This logic is 
+          opaque to applications, and may reduce the number of intermediate textures used. For 
+          example, the following graph can be rendered by Win2D using one Direct3D draw call and 
+          no intermediate textures:
+        </para>
+        <mediaLink>
+          <image xlink:href="EffectPrecision2"/>
+        </mediaLink>
+        <para>
+          Prior to Windows 10, Win2D would always use intermediate textures if multiple pixel 
+          shaders were used within the same effect graph. Most built-in effects that simply adjust 
+          color values (for example, Brightness or Saturation) do so using pixel shaders.
+        </para>
+        <para>
+          In Windows 10, Win2D may now avoid using intermediate textures in such cases. It does 
+          this by internally linking adjacent pixel shaders. For example:
+        </para>
+        <mediaLink>
+          <image xlink:href="EffectPrecision3"/>
+        </mediaLink>
+        <para>
+          Note that not all adjacent pixel shaders in a graph may be linked together, and therefore 
+          only certain graphs will produce different output on Windows 10. For full details see 
+          <externalLink>
+            <linkText>Effect Shader Linking</linkText>
+            <linkUri>http://msdn.microsoft.com/en-us/library/windows/desktop/dn879810</linkUri>
+          </externalLink>.
+          The primary restrictions are:
+        </para>
+        <list class="bullet">
+          <listItem>
+            An effect will not be linked with effects consuming its output, if the first effect is 
+            connected as an input to multiple effects.
+          </listItem>
+          <listItem>
+            An effect will not be linked with an effect set as its input, if the first effect 
+            samples its input at a different logical position than its output. For example, a 
+            ColorMatrix effect might be linked with its input, but a Convolution effect will not be.
+          </listItem>
+        </list>
+      </content>
+    </section>
+
+    <section>
+      <title>Built-in effect behavior</title>
+      <content>
+        <para>
+          Many built-in effects may produce colors outside of the [0, 1] range in unpremultiplied 
+          space, even when their input colors are within that range. When this happens, such colors 
+          may be subject to numerical clamping. Note that it's important to consider the color 
+          range in unpremultiplied space, even though built-in effects typically produce colors in 
+          premultiplied space. This ensures that colors stay within range, even if other effects 
+          subsequently unpremultiply them.
+        </para>
+        <para>
+          Some of the effects which emit these out-of-range colors offer a "ClampOutput" property. 
+          These include:
+        </para>
+        <list class="bullet">
+          <listItem>ColorMatrix</listItem>
+          <listItem>ArithmeticComposite</listItem>
+          <listItem>Convolve</listItem>
+          <listItem>Transfer effects</listItem>
+        </list>
+        <para>
+          Setting the ClampOutput property to true on these effects ensures a consistent result 
+          will be achieved regardless of factors such as shader linking. Note that clamping occurs 
+          in unpremultiplied space.
+        </para>
+        <para>
+          Other built-in effects may also produce output colors beyond the [0, 1] range in 
+          unpremultiplied space, even when their color pixels (and "Color" properties if any) are 
+          within that range. These include:
+        </para>
+        <list class="bullet">
+          <listItem>Transform and Scale effects (when the InterpolationMode property is Cubic or HighQualityCubic)</listItem>
+          <listItem>Lighting effects</listItem>
+          <listItem>EdgeDetection (when the OverlayEdges property is true)</listItem>
+          <listItem>Exposure</listItem>
+          <listItem>Composite (when the Mode property is Add)</listItem>
+          <listItem>Saturation</listItem>
+          <listItem>Sepia</listItem>
+          <listItem>TemperatureAndTint</listItem>
+        </list>
+      </content>
+    </section>
+
+    <section>
+      <title>Forcing numerical clamping within an effect graph</title>
+      <content>
+        <para>
+          While using effects listed above which do not have a ClampOutput property, applications 
+          should consider forcing numerical clamping. This can be done by inserting an additional 
+          effect into the graph that clamps its pixels. A ColorMatrix effect may be used, with its 
+          'ClampOutput' property set to true.
+        </para>
+        <para>
+          A second option to achieve consistent results is to request that Win2D use 
+          intermediate textures which have greater precision. This is described below.
+        </para>
+      </content>
+    </section>
+
+    <section>
+      <title>Controlling precision of intermediate textures</title>
+      <content>
+        <para>
+          Win2D provides a few ways to control the precision of a graph.
+
+          <!-- TODO #4066 - restore these docs once Win2D exposes IsBufferPrecisionSupported
+          Before using high precision formats in Win2D, applications must ensure they are supported 
+          sufficiently by the GPU. To check this, use 
+          ID2D1DeviceContext::IsBufferPrecisionSupported.
+          -->
+        </para>
+        <para>
+          Applications may create a Direct3D device using WARP (software emulation) to ensure that 
+          all buffer precisions are supported. This is recommended in scenarios such as applying 
+          effects to a photo while saving to disk. Even if Win2D supports high precision buffer 
+          formats on the GPU, using WARP is recommended in this scenario on feature level 9.X GPUs, 
+          due to limited precision of shader arithmetic and sampling on some low-power mobile GPUs. 
+          To use software rendering, specify ForceSoftwareRenderer=true on your Win2D XAML controls
+          or  when creating your CanvasDevice.
+        </para>
+        <para>
+          In each case below, the requested precision is actually the minimum precision Win2D 
+          will use. Higher precision may be used if intermediates are not required. Win2D may 
+          also share intermediate textures for different parts of the same graph or different 
+          graphs entirely. In this case Win2D uses the maximum precision requested for all 
+          involved operations.
+        </para>
+
+        <para>
+          <legacyBold>Precision selection from SetRenderingControls</legacyBold>
+        </para>
+        <para>
+          This option is not yet supported in Win2D. Coming soon!
+        </para>
+        <!-- TODO #4065 - restore these docs once Win2D exposes SetRenderingControls
+        <para>
+          The simplest way to control the precision of Win2D's intermediate textures is to use the 
+          ID2D1DeviceContext::SetRenderingControls method. This controls the precision of all 
+          intermediate textures, as long as a precision is not also set manually on effects or 
+          transforms directly.
+        </para>
+        <code>
+          if (Device->IsBufferPrecisionSupported(D2D1_BUFFER_PRECISION_32BPC_FLOAT))
+          {
+              // Get the current rendering controls
+              D2D1_RENDERING_CONTROLS renderingControls = {};
+              Context-&gt;GetRenderingControls(&amp;renderingControls);
+
+              // Switch the precision within the rendering controls and set it
+              renderingControls.bufferPrecision = D2D1_BUFFER_PRECISION_32BPC_FLOAT;
+              Context-&gt;SetRenderingControls(&amp;renderingControls);
+          }
+        </code>
+        -->
+        
+        <para>
+          <legacyBold>Precision selection from inputs and render targets</legacyBold>
+        </para>
+        <para>
+          Applications may also rely on the precision of the inputs to an effect graph to control 
+          the precision of intermediate textures.
+        </para>
+        <para>
+          The precisions of inputs to effects are propagated through the graph to select the 
+          precision of downstream intermediates. Where different branches in the effect graph meet, 
+          the greatest precision of any input is used.
+        </para>
+        <para>
+          The precision selected based on a Win2D bitmap is determined from its pixel format.
+        </para>
+        <para>
+          It is possible that Win2D cannot assign an effect a precision based on its inputs. This 
+          happens when an effect has no inputs, or when a command list is used, which has no 
+          specific precision. In this case, the precision of intermediate textures is determined 
+          from the current render target.
+        </para>
+
+        <para>
+          <legacyBold>Precision selection directly on effects</legacyBold>
+        </para>
+        <para>
+          This option is not yet supported in Win2D. Coming soon!
+        </para>
+        <!-- TODO #4074 - restore these docs once Win2D exposes D2D1_PROPERTY_PRECISION
+        <para>
+          The minimum precision for intermediate textures may also be set at explicit locations 
+          within an effect graph. This is only recommended for advanced applications.
+        </para>
+        <para>
+          The minimum precision may be set using a property on an effect as follows:
+        </para>
+        <code>
+          if (Device-&gt;IsBufferPrecisionSupported(D2D1_BUFFER_PRECISION_32BPC_FLOAT))
+          {
+              hr = Effect-&gt;SetValue(D2D1_PROPERTY_PRECISION, D2D1_BUFFER_PRECISION_32BPC_FLOAT);
+          }
+        </code>
+        <para>      
+          Note that the precision set on an effect will also apply to effects downstream in the 
+          same effect graph, unless a different precision is set on those downstream effects.
+        </para>
+        -->
+
+        <para>
+          Below is the full recursive logic used to determine the minimum precision for an 
+          intermediate buffer storing the output of a given transform node:
+        </para>
+        <mediaLink>
+          <image xlink:href="EffectPrecision4"/>
+        </mediaLink>
+      </content>
+    </section>
+
+  </developerConceptualDocument>
+</topic>

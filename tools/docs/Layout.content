@@ -16,7 +16,8 @@
   <Topic id="DPI" title="DPI and DIPs" />
   <Topic id="PixelFormats" title="Pixel formats" />
   <Topic id="PremultipliedAlpha" title="Premultiplied alpha" />
+  <Topic id="EffectPrecision" title="Effect precision and clamping" />
+  <Topic id="LoadingResourcesOutsideCreateResources" title="Loading resources outside of CreateResources"/>
   <Topic id="RefCycles" title="Avoiding memory leaks" />
   <Topic id="UAP" title="Windows 10 support" />
-  <Topic id="LoadingResourcesOutsideCreateResources" title="Loading resources outside of CreateResources"/>
 </Topics>

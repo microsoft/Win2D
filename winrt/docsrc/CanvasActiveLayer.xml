@@ -92,7 +92,7 @@ under the License.
           This image shows the result of these three pieces of code,
           using a grey checker pattern as the background:
         </p>
-        <img src="../images/LayerOpacity.png" alt="Layer opacity diagram"/>
+        <img src="../media/LayerOpacity.png" alt="Layer opacity diagram"/>
       </remarks>
       <seealso cref="O:Microsoft.Graphics.Canvas.CanvasDrawingSession.CreateLayer"/>
       <seealso cref="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillRectangle(Windows.Foundation.Rect,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush)"/>

@@ -33,7 +33,7 @@ under the License.
           This effect sets the alpha channel of the output to the luminance of the input 
           image using the color matrix:
         </p>
-        <img src="../images/LuminanceToAlpha.png" alt="LuminanceToAlpha diagram" />
+        <img src="../media/LuminanceToAlpha.png" alt="LuminanceToAlpha diagram" />
         <p>
           This effect consumes and outputs premultiplied alpha images. It won't work on 
           straight alpha images unless they are fully opaque.

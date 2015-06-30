@@ -34,7 +34,7 @@ under the License.
       <summary>Specifies the blend mode used to draw primitives.</summary>
       <remarks>
         <p>This illustration shows the available blend modes with varying opacity and backgrounds.</p>
-        <img src="../images/Blend.png" alt="CanvasBlend diagram" />
+        <img src="../media/Blend.png" alt="CanvasBlend diagram" />
       </remarks>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.CanvasBlend.SourceOver">
@@ -56,7 +56,7 @@ under the License.
       <remarks>
         <p>This illustration shows the available cap styles.
            The red portion of the line shows the extra area added by the cap setting.</p>
-        <img src="../images/CapStyle.png" alt="CanvasCapStyle diagram" />
+        <img src="../media/CapStyle.png" alt="CanvasCapStyle diagram" />
       </remarks>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.Geometry.CanvasCapStyle.Flat">
@@ -124,7 +124,7 @@ under the License.
         extend beyond the miter limit; otherwise, the line join will be beveled.</p>
 
         <p>This illustration shows different line join settings for the same stroked path geometry.</p>
-        <img src="../images/LineJoin.png" alt="CanvasLineJoin diagram" />
+        <img src="../media/LineJoin.png" alt="CanvasLineJoin diagram" />
       </remarks>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.Geometry.CanvasLineJoin.Miter">
