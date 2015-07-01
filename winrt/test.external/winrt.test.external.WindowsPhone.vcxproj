@@ -12,7 +12,7 @@
     <TestApplication>true</TestApplication>
     <AppxPackage>True</AppxPackage>
   </PropertyGroup>
-  <Import Project="$(MSBuildThisFileDir)..\..\build\Win2D.cpp.props" />
+  <Import Project="..\..\build\Win2D.cpp.props" />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup>
     <PackageCertificateKeyFile>$(AssetDir)TemporaryKey.pfx</PackageCertificateKeyFile>
@@ -75,5 +75,5 @@
   <PropertyGroup>
     <_DefineDefaultConvergedProjectType>False</_DefineDefaultConvergedProjectType>
   </PropertyGroup>
-  <Import Project="$(MSBuildThisFileDir)..\..\build\Win2D.cpp.targets" />
+  <Import Project="..\..\build\Win2D.cpp.targets" />
 </Project>

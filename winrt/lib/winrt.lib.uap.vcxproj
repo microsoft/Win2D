@@ -11,11 +11,11 @@
     <ApplicationTypeRevision>8.2</ApplicationTypeRevision>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
   </PropertyGroup>
-  <Import Project="$(MSBuildThisFileDir)..\..\build\Win2D.cpp.props" />
+  <Import Project="..\..\build\Win2D.cpp.props" />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
 
   <Import Project="winrt.lib.Shared.vcxitems" Label="Shared" />
 
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <Import Project="$(MSBuildThisFileDir)..\..\build\Win2D.cpp.targets" />
+  <Import Project="..\..\build\Win2D.cpp.targets" />
 </Project>
