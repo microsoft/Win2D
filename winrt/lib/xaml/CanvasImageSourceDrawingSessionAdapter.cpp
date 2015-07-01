@@ -79,11 +79,6 @@ std::shared_ptr<CanvasImageSourceDrawingSessionAdapter> CanvasImageSourceDrawing
     //
     deviceContext->Clear(&clearColor);
 
-    //
-    // TODO #2140 Use a separate code path, responsible for resetting
-    // transforms for non-SiS drawing sessions.  As part of #2140, also add
-    // tests verifying that the offset is scaled by the DPI appropriately.
-    //
     deviceContext->SetTransform(D2D1::Matrix3x2F::Translation(
         renderingSurfaceOffset.x,
         renderingSurfaceOffset.y));

@@ -29,7 +29,6 @@ using namespace canvas;
 using namespace ABI::Microsoft::Graphics::Canvas;
 using namespace ABI::Microsoft::Graphics::Canvas::Effects;
 
-// TODO #997/#1429: move these files
 #include "../test.external/MockDxgiDevice.h"
 #include "../test.external/MockDxgiSurface.h"
 
