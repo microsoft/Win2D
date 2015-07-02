@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="Globals">
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
@@ -46,6 +46,22 @@
   </Target>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)drawing\CanvasActiveLayer.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\ChromaKeyEffect.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\ContrastEffect.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\EdgeDetectionEffect.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\EmbossEffect.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\ExposureEffect.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\GrayscaleEffect.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\HighlightsAndShadowsEffect.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\HueToRgbEffect.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\InvertEffect.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\PosterizeEffect.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\RgbToHueEffect.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\SepiaEffect.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\SharpenEffect.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\StraightenEffect.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\TemperatureAndTintEffect.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\VignetteEffect.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)pch.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)brushes\CanvasBrush.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)brushes\CanvasImageBrush.h" />
@@ -66,6 +82,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)xaml\CanvasImageSource.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)xaml\CanvasImageSourceDrawingSessionAdapter.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)xaml\CanvasSwapChainPanel.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)xaml\GameLoopThread.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)xaml\RecreatableDeviceManager.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)xaml\RecreatableDeviceManager.impl.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)xaml\RemoveFromVisualTree.h" />
@@ -137,6 +154,22 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\Strings.inl" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\ChromaKeyEffect.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\ContrastEffect.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\EdgeDetectionEffect.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\EmbossEffect.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\ExposureEffect.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\GrayscaleEffect.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\HighlightsAndShadowsEffect.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\HueToRgbEffect.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\InvertEffect.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\PosterizeEffect.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\RgbToHueEffect.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\SepiaEffect.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\SharpenEffect.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\StraightenEffect.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\TemperatureAndTintEffect.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\VignetteEffect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
@@ -154,6 +187,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)xaml\CanvasImageSource.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)xaml\CanvasImageSourceDrawingSessionAdapter.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)xaml\CanvasSwapChainPanel.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)xaml\GameLoopThread.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)xaml\StepTimer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)drawing\CanvasDevice.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)drawing\CanvasDrawingSession.cpp" />
@@ -269,6 +303,22 @@
     <None Include="$(MSBuildThisFileDirectory)effects\generated\Transform3DEffect.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)effects\generated\TurbulenceEffect.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)effects\generated\UnPremultiplyEffect.abi.idl" />
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\ChromaKeyEffect.abi.idl" />
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\ContrastEffect.abi.idl" />
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\EdgeDetectionEffect.abi.idl" />
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\EmbossEffect.abi.idl" />
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\ExposureEffect.abi.idl" />
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\GrayscaleEffect.abi.idl" />
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\HighlightsAndShadowsEffect.abi.idl" />
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\HueToRgbEffect.abi.idl" />
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\InvertEffect.abi.idl" />
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\PosterizeEffect.abi.idl" />
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\RgbToHueEffect.abi.idl" />
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\SepiaEffect.abi.idl" />
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\SharpenEffect.abi.idl" />
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\StraightenEffect.abi.idl" />
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\TemperatureAndTintEffect.abi.idl" />
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\VignetteEffect.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)geometry\CanvasCachedGeometry.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)geometry\CanvasGeometry.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)geometry\CanvasPathBuilder.abi.idl" />

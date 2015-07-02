@@ -20,7 +20,7 @@
     <TargetFrameworkVersion />
     <TargetPlatformIdentifier>Windows</TargetPlatformIdentifier>
   </PropertyGroup>
-  <Import Project="$(MSBuildThisFileDir)..\..\..\build\Win2D.cs.props" />
+  <Import Project="..\..\..\build\Win2D.cs.props" />
   <PropertyGroup>
     <PackageCertificateKeyFile>$(AssetDir)TemporaryKey.pfx</PackageCertificateKeyFile>
   </PropertyGroup>
@@ -130,5 +130,5 @@
   </PropertyGroup>
   <Import Project="..\Shared\winrt.test.managed.Shared.projitems" Label="Shared" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsXaml\v$(VisualStudioVersion)\Microsoft.Windows.UI.Xaml.CSharp.targets" />
-  <Import Project="$(MSBuildThisFileDir)..\..\..\build\Win2D.cs.targets" />
+  <Import Project="..\..\..\build\Win2D.cs.targets" />
 </Project>

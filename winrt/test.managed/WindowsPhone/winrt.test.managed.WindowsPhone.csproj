@@ -26,7 +26,7 @@
   <PropertyGroup Condition=" '$(TargetPlatformIdentifier)' == '' ">
     <TargetPlatformIdentifier>WindowsPhoneApp</TargetPlatformIdentifier>
   </PropertyGroup>
-  <Import Project="$(MSBuildThisFileDir)..\..\..\build\Win2D.cs.props" />
+  <Import Project="..\..\..\build\Win2D.cs.props" />
   <PropertyGroup>
     <PackageCertificateKeyFile>$(AssetDir)TemporaryKey.pfx</PackageCertificateKeyFile>
   </PropertyGroup>
@@ -124,6 +124,6 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-  <Import Project="$(MSBuildThisFileDir)..\..\..\build\Win2D.cs.targets" />
+  <Import Project="..\..\..\build\Win2D.cs.targets" />
 
 </Project>

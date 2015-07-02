@@ -25,6 +25,13 @@ under the License.
         <p><i>Supported by Win2D but not Windows.UI.Composition.</i></p>
       </summary>
       <remarks>
+        <p>
+          Effect inputs and outputs are assumed to be in
+          <a href="PremultipliedAlpha.htm">premultiplied alpha</a> format, but this 
+          effect operates internally on straight alpha data, so its input values will be 
+          unpremultiplied, then the hue rotation applied, and finally the result 
+          converted back to premultiplied format.
+        </p>
         <p>This Windows Runtime type corresponds to the 
           <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/hh706342.aspx">D2D Hue rotate effect</a>.</p>
       </remarks>

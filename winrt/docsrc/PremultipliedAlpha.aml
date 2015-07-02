@@ -1,0 +1,174 @@
+<?xml version="1.0"?>
+<!--
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may
+not use these files except in compliance with the License. You may obtain
+a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+License for the specific language governing permissions and limitations
+under the License.
+-->
+
+<topic id="PremultipliedAlpha" revisionNumber="1">
+  <developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <introduction>
+      <para>
+        In computer graphics there are two different ways to represent the opacity of a 
+        color value. Win2D uses both methods. This article explains the difference, and 
+        which is used where.
+      </para>
+    </introduction>
+
+    <section>
+      <title>Straight alpha</title>
+      <content>
+        <para>
+          When using straight, also known as linear, alpha:
+        </para>
+        <list class="bullet">
+          <listItem>RGB values specify the color of the thing being drawn</listItem>
+          <listItem>The alpha value specifies how solid it is</listItem>
+        </list>
+        <para>
+          In this world, RGB and alpha are independent. You can change one without 
+          affecting the other. To make an object fade out, you would gradually 
+          reduce its alpha value while leaving RGB unchanged.
+        </para>
+        <para>
+          To perform a source-over blend between two colors that use straight alpha 
+          format:
+        </para>
+        <code>
+          result = (source.RGB * source.A) + (dest.RGB * (1 - source.A))
+        </code>
+      </content>
+    </section>
+
+    <section>
+      <title>Premultiplied alpha</title>
+      <content>
+        <para>
+          When using premultiplied alpha:
+        </para>
+        <list class="bullet">
+          <listItem>RGB specifies how much color the thing being drawn contributes to the output</listItem>
+          <listItem>The alpha value specifies how much it obscures whatever is behind it</listItem>
+        </list>
+        <para>
+          In this world, RGB and alpha are linked. To make an object transparent you must 
+          reduce both its RGB (to contribute less color) and also its alpha (to obscure 
+          less of whatever is behind it). Fully transparent objects no longer have any 
+          color at all, so there is only one value that represents 100% transparency: 
+          RGB and alpha all zero.
+        </para>
+        <para>
+          To perform a source-over blend between two colors that use premultiplied alpha 
+          format:
+        </para>
+        <code>
+          result = source.RGB + (dest.RGB * (1 - source.A)) 
+        </code>
+        <para>
+          Premultiplied alpha is used in graphics rendering because it gives better 
+          results than straight alpha when filtering images or composing different 
+          layers. For more information see the articles:
+        </para>
+        <list class="bullet">
+          <listItem>
+            <externalLink>
+              <linkText>http://blogs.msdn.com/b/shawnhar/archive/2009/11/06/premultiplied-alpha.aspx</linkText>
+              <linkUri>http://blogs.msdn.com/b/shawnhar/archive/2009/11/06/premultiplied-alpha.aspx</linkUri>
+            </externalLink>
+          </listItem>
+          <listItem>
+            <externalLink>
+              <linkText>http://blogs.msdn.com/b/shawnhar/archive/2009/11/07/premultiplied-alpha-and-image-composition.aspx</linkText>
+              <linkUri>http://blogs.msdn.com/b/shawnhar/archive/2009/11/07/premultiplied-alpha-and-image-composition.aspx</linkUri>
+            </externalLink>
+          </listItem>
+        </list>
+      </content>
+    </section>
+
+    <section>
+      <title>Alpha in Win2D</title>
+      <content>
+        <para>
+          Win2D uses straight alpha in its API surface, but premultiplied alpha for 
+          internal rendering operations.
+        </para>
+        <para>
+          Windows.UI.Color values use straight alpha. Whenever you pass a color to a 
+          Draw* or Fill* method, set the color of a brush, or clear to a color value, 
+          this color is specified using straight alpha.
+        </para>
+        <para>
+          The pixel values stored in a bitmap or rendertarget, and the drawing or 
+          blending operations that operate on these surfaces, use premultiplied alpha. 
+          When bitmaps are loaded from a file their contents are automatically converted 
+          into premultiplied format. When you call a Win2D drawing method, its color 
+          parameter is converted from straight to premultiplied before the actual drawing 
+          takes place.
+        </para>
+        <para>
+          Win2D image effects use a mixture of straight and premultiplied alpha. Some 
+          effects operate on one format, some on the other, and some provide a property 
+          to choose. The documentation for each effect type describes which alpha mode it 
+          uses. Effect input data is always assumed to be premultiplied, so when an 
+          effect needs to work with straight alpha it will first apply an unpremultiply 
+          transform, compute the effect, and then re-premultiply the output.
+        </para>
+        <para>
+          The bitmap APIs GetPixelBytes, SetPixelBytes, GetPixelColors, and 
+          SetPixelColors, do NOT perform any alpha format conversions. They just directly 
+          transfer bit values to or from the underlying GPU texture. This allows you to 
+          observe what alpha format Win2D is using internally:
+        </para>
+        <list class="bullet">
+          <listItem>Create a drawing session on a rendertarget</listItem>
+          <listItem>Call drawingSession.Clear(Colors.Tranparent)</listItem>
+          <listItem>Colors.Tranparent is defined as R=255, G=255, B=255, A=0</listItem>
+          <listItem>Win2D will convert this value to premultiplied format, yielding R=0, G=0, B=0, A=0</listItem>
+          <listItem>Use GetPixelColors to read back the contents of the rendertarget</listItem>
+          <listItem>Observe that it contains premultiplied format RGB=0, not RGB=255 like the original straight alpha Colors.Tranparent value</listItem>
+        </list>
+      </content>
+    </section>
+
+    <section>
+      <title>Converting between alpha formats</title>
+      <content>
+        <para>
+          To convert a straight alpha color value to premultiplied format, multiply its 
+          R, G, and B values by A. To convert premultiplied to straight, divide R, G, and 
+          B by A.
+        </para>
+        <para>
+          Note that color information is often represented as byte values ranging from 0 
+          to 255 (for example the Windows.UI.Color structure consists of 4 bytes). This 
+          representation is scaled up by a factor of 255, so a byte value of 255 actually 
+          means 1, while 128 is half intensity. That scaling factor must be taken into 
+          account during format conversions, so to convert a Windows.UI.Color from 
+          straight to premultiplied:
+        </para>
+        <code language="cs">
+          premultiplied.R = (byte)(straight.R * straight.A / 255);
+          premultiplied.G = (byte)(straight.G * straight.A / 255);
+          premultiplied.B = (byte)(straight.B * straight.A / 255);
+          premultiplied.A = straight.A;
+        </code>
+        <para>
+          If you have image data that is using the wrong alpha format,
+          <codeEntityReference>T:Microsoft.Graphics.Canvas.Effects.PremultiplyEffect</codeEntityReference> or
+          <codeEntityReference>T:Microsoft.Graphics.Canvas.Effects.UnPremultiplyEffect</codeEntityReference> 
+          can be used to convert it.
+        </para>
+      </content>
+    </section>
+
+  </developerConceptualDocument>
+</topic>

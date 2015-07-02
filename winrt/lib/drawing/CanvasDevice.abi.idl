@@ -11,16 +11,7 @@
 // under the License.
 
 namespace Microsoft.Graphics.Canvas
-{
-    [version(VERSION)]
-    typedef enum CanvasHardwareAcceleration 
-    {
-        Auto, 
-        On,
-        Off,
-        Unknown
-    } CanvasHardwareAcceleration;
-    
+{    
     runtimeclass CanvasDevice;
 
     [version(VERSION), uuid(8F6D8AA8-492F-4BC6-B3D0-E7F5EAE84B11)]
@@ -42,13 +33,8 @@ namespace Microsoft.Graphics.Canvas
     [version(VERSION), uuid(E2C2BF21-5418-43B9-A2DA-539E287C790F), exclusiveto(CanvasDevice)]
     interface ICanvasDeviceFactory : IInspectable
     {
-        HRESULT CreateWithDebugLevel(
-            [in] CanvasDebugLevel debugLevel,
-            [out, retval] CanvasDevice** canvasDevice);
-
-        HRESULT CreateWithDebugLevelAndHardwareAcceleration(
-            [in] CanvasDebugLevel debugLevel,
-            [in] CanvasHardwareAcceleration hardwareAcceleration,
+        HRESULT CreateWithForceSoftwareRendererOption(
+            [in] boolean forceSoftwareRenderer,
             [out, retval] CanvasDevice** canvasDevice);
     };
 
@@ -57,7 +43,6 @@ namespace Microsoft.Graphics.Canvas
     {
         HRESULT CreateFromDirect3D11Device(
             [in] IDIRECT3DDEVICE* direct3DDevice,
-            [in] CanvasDebugLevel debugLevel,
             [out, retval] CanvasDevice** canvasDevice);
         
         //
@@ -67,11 +52,16 @@ namespace Microsoft.Graphics.Canvas
         // The implementation checks if a device is already lost before it 
         // returns it. If the device is already lost it will recreate it.
         // 
-        // CanvasHardwareAcceleration.Unknown is not a valid parameter.
-        //
         HRESULT GetSharedDevice(
-            [in] CanvasHardwareAcceleration hardwareAcceleration, 
+            [in] boolean forceSoftwareRenderer, 
             [out, retval] CanvasDevice** canvasDevice);
+
+        //
+        // This global property controls the debug level of devices when 
+        // they are created. It doesn't have retro-active behavior.
+        //
+        [propput] HRESULT DebugLevel([in] CanvasDebugLevel value);
+        [propget] HRESULT DebugLevel([out, retval] CanvasDebugLevel* value);
     };
 
     [version(VERSION), uuid(A27F0B5D-EC2C-4D4F-948F-0AA1E95E33E6), exclusiveto(CanvasDevice)]
@@ -80,9 +70,12 @@ namespace Microsoft.Graphics.Canvas
                  ICanvasResourceCreator, 
                  IDIRECT3DDEVICE
     {
+        // 
+        // This always returns false if the device was created using Direct3D interop.
+        //
         [propget] 
-        HRESULT HardwareAcceleration(
-            [out, retval] CanvasHardwareAcceleration* value);
+        HRESULT ForceSoftwareRenderer(
+            [out, retval] boolean* value);
 
         [propget]
         HRESULT MaximumBitmapSizeInPixels(

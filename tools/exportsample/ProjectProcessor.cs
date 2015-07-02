@@ -98,7 +98,7 @@ namespace exportsample
         // Expand variables we know about
         string Expand(string path)
         {
-            path = path.Replace("$(MSBuildThisFileDir)", SourceDirectory + "\\");
+            path = path.Replace("$(MSBuildThisFileDirectory)", SourceDirectory + "\\");
 
             foreach (var property in config.Properties)
             {

@@ -16,17 +16,86 @@
 
 #include "BaseControlTestAdapter.h"
 #include "CanvasSwapChainPanelTestAdapter.h"
-#include "MockCoreIndependentInputSource.h"
 #include "StubDispatcher.h"
+
+class FakeGameThread : public IGameLoopThread
+{
+    ComPtr<StubDispatcher> m_dispatcher;
+    bool m_dispatcherActive;
+    std::vector<ComPtr<AnimatedControlAsyncAction>> m_pendingActions;
+
+public:
+    FakeGameThread()
+        : m_dispatcher(Make<StubDispatcher>())
+        , m_dispatcherActive(false)
+    {
+    }
+
+    void Tick()
+    {
+        for (auto& action : m_pendingActions)
+        {
+            action->InvokeAndFireCompletion();
+        }
+
+        m_pendingActions.clear();
+
+        if (m_dispatcherActive)
+        {
+            m_dispatcher->TickAll();
+        }
+    }
+
+    StubDispatcher* GetDispatcher()
+    {
+        return m_dispatcher.Get();
+    }
+
+    bool HasPendingActions()
+    {
+        return m_dispatcher->HasPendingActions();
+    }
+
+    virtual void StartDispatcher() override
+    {
+        m_dispatcherActive = true;
+    }
+
+    virtual void StopDispatcher() override
+    {
+        m_dispatcherActive = false;
+    }
+
+    virtual ComPtr<IAsyncAction> RunAsync(IDispatchedHandler* handler) override
+    {
+        if (m_dispatcherActive)
+        {
+            ComPtr<IAsyncAction> action;
+            ThrowIfFailed(m_dispatcher->RunAsync(CoreDispatcherPriority_Low, handler, &action));
+            return action;
+        }
+        else
+        {
+            auto action = Make<AnimatedControlAsyncAction>(handler);
+            m_pendingActions.push_back(action);
+            return action;
+        }
+    }
+
+    virtual bool HasThreadAccess() override
+    {
+        boolean result;
+        ThrowIfFailed(m_dispatcher->get_HasThreadAccess(&result));
+        return !!result;
+    }
+};
 
 class CanvasAnimatedControlTestAdapter : public BaseControlTestAdapter<CanvasAnimatedControlTraits>
 {
     std::shared_ptr<CanvasSwapChainPanelTestAdapter> m_swapChainPanelAdapter;
     int64_t m_performanceCounter;
-    ComPtr<MockAsyncAction> m_gameThreadAction;
-    ComPtr<StubDispatcher> m_gameThreadDispatcher;
     ComPtr<StubSwapChainPanel> m_swapChainPanel;
-    ComPtr<StubCoreIndependentInputSource> m_coreIndependentInputSource;
+    std::weak_ptr<FakeGameThread> m_gameThread;
 
 public:
     CALL_COUNTER_WITH_MOCK(CreateCanvasSwapChainMethod, ComPtr<CanvasSwapChain>(ICanvasDevice*, float, float, float, CanvasAlphaMode));
@@ -37,20 +106,12 @@ public:
         : m_performanceCounter(1)
         , SwapChainManager(std::make_shared<CanvasSwapChainManager>())
         , InitialDevice(initialDevice)
-        , m_gameThreadDispatcher(Make<StubDispatcher>())
         , m_swapChainPanel(Make<StubSwapChainPanel>())
-        , m_coreIndependentInputSource(Make<StubCoreIndependentInputSource>(m_gameThreadDispatcher.Get()))
     {
         m_swapChainPanel->SetSwapChainMethod.AllowAnyCall(
             [=](IDXGISwapChain*)
             {
                 return S_OK;
-            });
-
-        m_swapChainPanel->CreateCoreIndependentInputSourceMethod.AllowAnyCall(
-            [=](CoreInputDeviceTypes, ICoreInputSourceBase** out)
-            {
-                return m_coreIndependentInputSource.CopyTo(out);
             });
 
         m_swapChainPanelAdapter = std::make_shared<CanvasSwapChainPanelTestAdapter>(m_swapChainPanel);
@@ -80,35 +141,56 @@ public:
 
     StubDispatcher* GetGameThreadDispatcher()
     {
-        return m_gameThreadDispatcher.Get();
+        if (auto thread = m_gameThread.lock())
+            return thread->GetDispatcher();
+        else
+            return nullptr;
     }
 
     bool GameThreadHasPendingWork()
     {
-        return m_gameThreadDispatcher->HasPendingActions();
+        if (auto thread = m_gameThread.lock())
+            return thread->HasPendingActions();
+        else
+            return false;
     }
 
-    virtual std::shared_ptr<CanvasGameLoop> CreateAndStartGameLoop(ComPtr<ISwapChainPanel> swapChainPanel) override
+    virtual std::unique_ptr<CanvasGameLoop> CreateAndStartGameLoop(CanvasAnimatedControl* control, ISwapChainPanel*) override
     {
-        m_gameThreadAction = Make<MockAsyncAction>();
+        // CanvasGameLoop takes ownership of the IGameLoopThread we give it.
+        // However, for our tests we also want to allow the adapter to hold on
+        // to the thread.  So we store the underlying FakeGameThread in a
+        // shared_ptr, and pass a unique_ptr to this proxy to CanvasGameLoop.
+        class GameThreadProxy : public IGameLoopThread
+        {
+            std::shared_ptr<IGameLoopThread> m_thread;
+            ICanvasGameLoopClient* m_client;
 
-        m_gameThreadDispatcher->RunAsyncMethod.AllowAnyCall();
-
-        // Simulate the real behavior where the game loop's action is completed
-        // when the dispatcher stops processing events.
-        m_gameThreadDispatcher->SetOnStop(
-            [=] ()
+        public:
+            GameThreadProxy(std::shared_ptr<IGameLoopThread> thread, ICanvasGameLoopClient* client)
+                : m_thread(thread)
+                , m_client(client)
             {
-                m_gameThreadAction->SetResult(S_OK);
-            });
+                m_client->OnGameLoopStarting();
+            }
 
-        // Now create the game loop
-        auto gameLoop = std::make_shared<CanvasGameLoop>(m_gameThreadAction, m_gameThreadDispatcher);
+            ~GameThreadProxy()
+            {
+                m_client->OnGameLoopStopped();
+            }
 
-        // Allow any work the game loop constructor queued up to execute before
-        // returning
-        m_gameThreadDispatcher->TickAll();
+            virtual void StartDispatcher() { m_thread->StartDispatcher(); }
+            virtual void StopDispatcher() { m_thread->StopDispatcher(); }
+            virtual ComPtr<IAsyncAction> RunAsync(IDispatchedHandler* handler) { return m_thread->RunAsync(handler); }
+            virtual bool HasThreadAccess() { return m_thread->HasThreadAccess(); }
+        };
 
+        auto gameThread = std::make_shared<FakeGameThread>();
+
+        auto gameLoop = std::make_unique<CanvasGameLoop>(control, std::make_unique<GameThreadProxy>(gameThread, control));
+
+        m_gameThread = gameThread;
+        
         return gameLoop;
     }
 
@@ -119,12 +201,8 @@ public:
 
     void Tick()
     {
-        m_gameThreadDispatcher->Tick();
-    }
-
-    void TickAll()
-    {
-        m_gameThreadDispatcher->TickAll();
+        if (auto thread = m_gameThread.lock())
+            thread->Tick();
     }
 
     ComPtr<IInspectable> CreateSwapChainPanel(IInspectable* canvasSwapChainPanel)
@@ -156,10 +234,5 @@ public:
     virtual int64_t GetPerformanceFrequency() override
     {
         return StepTimer::TicksPerSecond;
-    }
-
-    ComPtr<StubCoreIndependentInputSource> GetCoreIndependentInputSource()
-    {
-        return m_coreIndependentInputSource;
     }
 };

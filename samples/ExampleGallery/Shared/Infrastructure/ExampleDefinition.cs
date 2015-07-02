@@ -69,7 +69,7 @@ namespace ExampleGallery
             new ExampleDefinition("Text Layouts", typeof(TextLayouts)),
             new ExampleDefinition("Text Directions", typeof(TextDirectionsExample)),
             new ExampleDefinition("Animated Control", typeof(AnimatedControlExample)),
-            new ExampleDefinition("Canvas Control", typeof(CanvasControlExample)),
+            new ExampleDefinition("Custom Control", typeof(CustomControlExample)),
             new ExampleDefinition("Keyboard Input", typeof(KeyboardInputExample)),
             new ExampleDefinition("Direct3D Interop", typeof(Direct3DInteropExample)),
             new ExampleDefinition("Image Source Update Region", typeof(ImageSourceUpdateRegion)),
@@ -77,6 +77,9 @@ namespace ExampleGallery
             new ExampleDefinition("Control Transforms", typeof(ControlTransforms)),
             new ExampleDefinition("DrawImage Emulations", typeof(DrawImageEmulations)),
             new ExampleDefinition("Bitmap Rotation", typeof(BitmapRotation)),
+#if WINDOWS_UAP
+            new ExampleDefinition("Background Task", typeof(BackgroundTaskExample)),
+#endif
             new ExampleDefinition("About", typeof(About)),
             new ExampleDefinition("Developer Tools", typeof(DeveloperTools)),
         };

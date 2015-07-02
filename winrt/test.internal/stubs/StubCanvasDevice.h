@@ -92,6 +92,13 @@ namespace canvas
                 {
                     return m_deviceLostEventSource->InvokeAll(this, nullptr);
                 });
+
+            IsDeviceLostMethod.AllowAnyCall(
+                [=](int, boolean* out)
+                {
+                    *out = false;
+                    return S_OK;
+                });
         }
 
         void MarkAsLost()

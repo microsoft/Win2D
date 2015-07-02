@@ -96,7 +96,7 @@ under the License.
         <code>
           #include &lt;sdkddkver.h&gt;
 
-          #if WINVER &lt;= 0x0603
+          #if WINVER &lt;= _WIN32_WINNT_WINBLUE
 
           // Use the Windows 8.1 / Windows Phone 8.1 version
           #include &lt;Microsoft.Graphics.Canvas.DirectX.Direct3D11.interop.h&gt;
@@ -194,7 +194,7 @@ under the License.
         <code>
           #include &lt;sdkddkver.h&gt;
 
-          #if WINVER &lt;= 0x0603
+          #if WINVER &lt;= _WIN32_WINNT_WINBLUE
 
           // Use the Windows 8.1 / Windows Phone 8.1 version
           #include &lt;Microsoft.Graphics.Canvas.DirectX.Direct3D11.interop.h&gt;

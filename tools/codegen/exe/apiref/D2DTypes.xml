@@ -18,6 +18,8 @@ under the License.
     <FileDependency Name="D2DEffectAuthor.xml"/>
     <FileDependency Name="D2DTypesP.xml"/> 
     <FileDependency Name="D2DTypes3.xml"/>
+    <FileDependency Name="D2DTypes4.xml"/>
+    <FileDependency Name="D2DEffectAuthor1.xml"/>
 
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
     <!-- Common primitive types                                        -->
@@ -46,6 +48,7 @@ under the License.
     <Primitive Name="LONG"          Size="4" />
     <Primitive Name="ULONG"         Size="4" />
     <Primitive Name="SIZE_T"/>
+    <Primitive Name="HANDLE"        AlwaysConst="true"/>
     <Primitive Name="BOOL"          Size="4" />
 
     <!-- We treat hresults as seperate primitives because this helps with validation -->
@@ -68,6 +71,7 @@ under the License.
 
     <!-- Trivial interface definitions -->
     <Interface Name="IWICBitmapSource" Extends="IUnknown" IsInternalPlainDecl="true"/>
+    <Interface Name="IWICBitmapFrameDecode" Extends="IWICBitmapSource" IsInternalPlainDecl="true"/>
         <!-- Just need the definition here, unlike IUnknown -->
 
     <Interface Name="IWICBitmap" Extends="IWICBitmapSource" IsInternalPlainDecl="true"/>
@@ -81,8 +85,8 @@ under the License.
     </Enum>
 
     <!-- These enums are globally defined, we want to define the common formats that we use in our API -->
-    <Enum Name="DXGI_FORMAT" ShouldValidate="false">
-    </Enum>
+    <Enum Name="DXGI_FORMAT" ShouldValidate="false" />
+    <Enum Name="DXGI_COLOR_SPACE_TYPE" ShouldValidate="false" />
 
     <!-- These types are globally defined, we want a definition here, we won't do anything except alias them -->
 

@@ -27,16 +27,16 @@ namespace Microsoft.Graphics.Canvas.Effects
         HRESULT ColorMatrix([in] Matrix5x4 value);
 
         [propget]
-        HRESULT ClampOutput([out, retval] boolean* value);
-
-        [propput]
-        HRESULT ClampOutput([in] boolean value);
-
-        [propget]
         HRESULT AlphaMode([out, retval] Microsoft.Graphics.Canvas.CanvasAlphaMode* value);
 
         [propput]
         HRESULT AlphaMode([in] Microsoft.Graphics.Canvas.CanvasAlphaMode value);
+
+        [propget]
+        HRESULT ClampOutput([out, retval] boolean* value);
+
+        [propput]
+        HRESULT ClampOutput([in] boolean value);
 
         [propget]
         HRESULT Source([out, retval] IGRAPHICSEFFECTSOURCE** source);

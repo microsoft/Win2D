@@ -85,7 +85,7 @@ namespace ExampleGallery.Effects
 
         public void SetEncodingProperties(VideoEncodingProperties encodingProperties, IDirect3DDevice device)
         {
-            canvasDevice = CanvasDevice.CreateFromDirect3D11Device(device, CanvasDebugLevel.None);
+            canvasDevice = CanvasDevice.CreateFromDirect3D11Device(device);
             numColumns = (uint)(encodingProperties.Width / pixelsPerTile);
             numRows = (uint)(encodingProperties.Height / pixelsPerTile);
             transforms = new Transform2DEffect[numColumns, numRows];

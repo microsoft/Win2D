@@ -27,6 +27,7 @@
 // Standard C++
 #include <algorithm>
 #include <assert.h>
+#include <atomic>
 #include <condition_variable>
 #include <cstdint>
 #include <functional>
@@ -44,8 +45,12 @@
 #include <wrl.h>
 #include <wrl\async.h>
 #include <strsafe.h>
-
 #include <d2d1_2.h>
+
+#if (defined _WIN32_WINNT_WIN10) && (WINVER >= _WIN32_WINNT_WIN10)
+#include <d2d1_3.h>
+#endif
+
 #include <d3d11.h>
 #include <dwrite_2.h>
 #include <dxgi1_3.h>

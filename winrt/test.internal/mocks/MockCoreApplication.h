@@ -20,7 +20,7 @@ namespace canvas
         ABI::Windows::ApplicationModel::Core::ICoreApplication>
     {
     public:
-        std::function<ComPtr<IPropertySet>()> MockGetProperties;
+        CALL_COUNTER_WITH_MOCK(get_PropertiesMethod, HRESULT(IPropertySet**));
 
         IFACEMETHODIMP get_Id(HSTRING *)
         {
@@ -54,18 +54,7 @@ namespace canvas
 
         IFACEMETHODIMP get_Properties(IPropertySet** propertySet)
         {
-            if (!MockGetProperties)
-            {
-                Assert::Fail(L"Unexpected call to get_Properties");
-                return E_NOTIMPL;
-            }
-
-            return ExceptionBoundary(
-                [&]
-                {
-                    auto properties = MockGetProperties();
-                    ThrowIfFailed(properties.CopyTo(propertySet));
-                });
+            return get_PropertiesMethod.WasCalled(propertySet);
         }
 
         IFACEMETHODIMP GetCurrentView(ABI::Windows::ApplicationModel::Core::ICoreApplicationView **)

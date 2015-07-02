@@ -28,8 +28,14 @@ protected:
 
 public:
     FixtureWithSwapChainAccess()
-        : m_dxgiSwapChain(Make<MockDxgiSwapChain>())
     {
+        ResetSwapChain();
+    }
+
+    void ResetSwapChain()
+    {
+        m_dxgiSwapChain = Make<MockDxgiSwapChain>();
+
         m_dxgiSwapChain->Present1Method.AllowAnyCall();
 
         m_dxgiSwapChain->GetDesc1Method.AllowAnyCall(
@@ -69,21 +75,53 @@ public:
     }
 };
 
-struct SimpleDispatchedHandler
+class MockDispatchedHandler
 {
-    ComPtr<IDispatchedHandler> Handler;
-    CALL_COUNTER_WITH_MOCK(CallbackMethod, void());
-    HRESULT HandlerReturnValue;
+    ComPtr<IDispatchedHandler> m_handler;
+    ComPtr<IAsyncAction> m_action;
 
-    SimpleDispatchedHandler()
-        : HandlerReturnValue(S_OK)
+public:
+    CALL_COUNTER_WITH_MOCK(OnInvoke, HRESULT());
+    CALL_COUNTER_WITH_MOCK(OnCompleted, HRESULT(IAsyncAction*, AsyncStatus));
+
+    MockDispatchedHandler()
     {
-        Handler = Callback<Implements<RuntimeClassFlags<ClassicCom>, IDispatchedHandler, FtmBase>>(
-            [&]()
-        {
-            CallbackMethod.WasCalled();
-            return HandlerReturnValue;
-        });
+        m_handler = Callback<AddFtmBase<IDispatchedHandler>::Type>(
+            [=]()
+            {
+                return OnInvoke.WasCalled();
+            });
+        OnCompleted.AllowAnyCall();
+    }
+
+    void RunOnGameLoopThreadAsync(ComPtr<ICanvasAnimatedControl> const& control)
+    {
+        ThrowIfFailed(control->RunOnGameLoopThreadAsync(m_handler.Get(), &m_action));
+
+        auto completedCallback = Callback<IAsyncActionCompletedHandler>(
+            [=] (IAsyncAction* action, AsyncStatus status)
+            {
+                return OnCompleted.WasCalled(action, status);
+            });
+        ThrowIfFailed(m_action->put_Completed(completedCallback.Get()));
+    }
+
+    void VerifyActionStatus(AsyncStatus expectedStatus, HRESULT expectedHr)
+    {
+        auto asyncInfo = As<IAsyncInfo>(m_action);
+
+        AsyncStatus status;
+        ThrowIfFailed(asyncInfo->get_Status(&status));
+        Assert::AreEqual(expectedStatus, status);
+
+        HRESULT errorCode;
+        ThrowIfFailed(asyncInfo->get_ErrorCode(&errorCode));
+        Assert::AreEqual(expectedHr, errorCode);
+    }
+
+    void CancelAction()
+    {
+        ThrowIfFailed(As<IAsyncInfo>(m_action)->Cancel());
     }
 };
 
@@ -575,6 +613,11 @@ TEST_CLASS(CanvasAnimatedControlTests)
                 });
         }
 
+        void PresentSucceeds()
+        {
+            m_dxgiSwapChain->Present1Method.AllowAnyCall();
+        }
+
         void ExpectAtLeastOnePresent()
         {
             m_dxgiSwapChain->Present1Method.ExpectAtLeastOneCall();
@@ -591,9 +634,10 @@ TEST_CLASS(CanvasAnimatedControlTests)
             Adapter->Tick();
         }
 
-        void VerifyDeviceRecovered()
+        void VerifyDeviceRecovered(bool controlAlreadyNoticed = false)
         {
-            DoChangedAndTick(); // Device lost first noticed
+            if (!controlAlreadyNoticed)
+                DoChangedAndTick(); // Device lost first noticed
 
             OnCreateResources.SetExpectedCalls(1);
             OnUpdate.ExpectAtLeastOneCall();
@@ -681,6 +725,115 @@ TEST_CLASS(CanvasAnimatedControlTests)
         f.VerifyDeviceRecovered();
     }
 
+
+    TEST_METHOD_EX(CanvasAnimatedControl_WhenCustomDeviceIsLost_CustomDevicePropertyStillWorks)
+    {
+        DeviceLostFixture f;
+
+        auto customDevice = Make<StubCanvasDevice>();
+        Assert::AreEqual(S_OK, f.Control->put_CustomDevice(customDevice.Get()));
+        customDevice->CreateDeviceContextMethod.AllowAnyCall(
+            [=]
+            {
+                return Make<StubD2DDeviceContext>(nullptr);
+            });
+
+        f.DoChangedAndTick(); // Allows for custom device to be properly set.
+
+        f.OnDraw.SetExpectedCalls(1,
+            [&](ICanvasAnimatedControl*, ICanvasAnimatedDrawEventArgs*)
+            {
+                customDevice->MarkAsLost();
+                return DXGI_ERROR_DEVICE_REMOVED;
+            });
+        
+        f.DoChangedAndTick(); // Allow for device lost to be noticed.
+        f.Adapter->DoChanged(); // Control's device lost handler is called.
+
+        ComPtr<ICanvasDevice> retrievedDevice;
+        Assert::AreEqual(S_OK, f.Control->get_CustomDevice(&retrievedDevice));
+        Assert::AreEqual(static_cast<ICanvasDevice*>(customDevice.Get()), retrievedDevice.Get());
+    }
+
+    TEST_METHOD_EX(CanvasAnimatedControl_WhenCustomDeviceIsLost_CustomDeviceCanBeSetAgain)
+    {
+        DeviceLostFixture f;
+
+        auto customDevice = Make<StubCanvasDevice>();
+        Assert::AreEqual(S_OK, f.Control->put_CustomDevice(customDevice.Get()));
+        customDevice->CreateDeviceContextMethod.AllowAnyCall(
+            [=]
+            {
+                return Make<StubD2DDeviceContext>(nullptr);
+            });
+
+        f.DoChangedAndTick(); // Allows for custom device to be properly set.
+
+        f.OnDraw.SetExpectedCalls(1,
+            [&](ICanvasAnimatedControl*, ICanvasAnimatedDrawEventArgs*)
+        {
+            customDevice->MarkAsLost();
+            return DXGI_ERROR_DEVICE_REMOVED;
+        });
+
+        f.DoChangedAndTick(); // Allow for device lost to be noticed.
+        f.Adapter->DoChanged(); // Control's device lost handler is called.
+
+        auto otherCustomDevice = Make<StubCanvasDevice>();
+        Assert::AreEqual(S_OK, f.Control->put_CustomDevice(otherCustomDevice.Get()));
+
+        ComPtr<ICanvasDevice> retrievedDevice;
+        Assert::AreEqual(S_OK, f.Control->get_CustomDevice(&retrievedDevice));
+        Assert::AreEqual(static_cast<ICanvasDevice*>(otherCustomDevice.Get()), retrievedDevice.Get());
+    }
+
+
+    TEST_METHOD_EX(CanvasAnimatedControl_WhenCustomDeviceIsLostAndSetAgain_ControlIsRecovered)
+    {
+        DeviceLostFixture f;
+
+        auto customDevice = Make<StubCanvasDevice>();
+        customDevice->CreateDeviceContextMethod.AllowAnyCall(
+            [=]
+            {
+                return Make<StubD2DDeviceContext>(nullptr);
+            });
+        Assert::AreEqual(S_OK, f.Control->put_CustomDevice(customDevice.Get()));
+
+        f.DoChangedAndTick(); // Allows for custom device to be properly set.
+
+        f.OnDraw.SetExpectedCalls(1,
+            [&](ICanvasAnimatedControl*, ICanvasAnimatedDrawEventArgs*)
+        {
+            customDevice->MarkAsLost();
+            return DXGI_ERROR_DEVICE_REMOVED;
+        });
+
+        f.DoChangedAndTick(); // Allow for device lost to be noticed.
+        f.Adapter->DoChanged(); // Control's device lost handler is called.
+
+        auto otherCustomDevice = Make<StubCanvasDevice>();
+        otherCustomDevice->CreateDeviceContextMethod.AllowAnyCall(
+            [&]
+            {
+                return Make<StubD2DDeviceContext>(nullptr);
+            });
+        Assert::AreEqual(S_OK, f.Control->put_CustomDevice(otherCustomDevice.Get()));
+
+        //
+        // Necessary- otherwise, when the test infrastructure uses interop to
+        // create a new CanvasSwapChain, it will get confused as it's already
+        // seen its dxgi swap chain with a different canvas device.
+        //
+        f.ResetSwapChain();
+
+        //
+        // We want to do the validation, but we've already seen/processed
+        // device lost (and reacted to it by resetting the custom device).
+        //
+        f.VerifyDeviceRecovered(true);
+    }
+
     TEST_METHOD_EX(CanvasAnimatedControl_WhenDrawReportsDeviceLost_ButDeviceIsntLost_ExceptionPropagates)
     {
         DeviceLostFixture f;
@@ -726,6 +879,45 @@ TEST_CLASS(CanvasAnimatedControlTests)
         ExpectHResultException(DXGI_ERROR_DEVICE_REMOVED,
             [&] { f.Adapter->DoChanged(); });
     }
+
+    TEST_METHOD_EX(CanvasAnimatedControl_WhenControlIsPaused_AndDeviceLostEventIsRaisedExternally_DeviceIsRecreated)
+    {
+        //
+        // In this scenario, the control is not attempting to use the device.
+        // However, some external code realizes that the device is lost and so
+        // raises the device lost event.  In this case the control needs to
+        // recreate the device.
+        //
+
+        DeviceLostFixture f;
+
+        ThrowIfFailed(f.Control->put_Paused(TRUE));
+
+        f.OnCreateResources.SetExpectedCalls(1);
+
+        f.DoChangedAndTick();
+
+        f.MarkDeviceAsLost();
+        f.LoseDeviceDuringPresent(); // this ensures that animated control sees a device lost error
+
+        ThrowIfFailed(f.Adapter->InitialDevice->RaiseDeviceLost());
+
+        // In this tick, the Present() call will fail with device lost...
+        f.DoChangedAndTick();
+
+        // The tests don't actually create a new device, so we shim this one to
+        // look like it is working again.
+        f.PresentSucceeds();
+
+        // Now the UI thread picks up the device lost exception
+        f.DoChangedAndTick();
+
+        // And so now the UI thread "creates" a new device, and runs through the
+        // CreateResources process
+        f.OnCreateResources.SetExpectedCalls(1);
+        f.DoChangedAndTick();
+    }
+
 
     struct UpdateRenderFixture : public CanvasAnimatedControlFixture
     {
@@ -1524,15 +1716,15 @@ TEST_CLASS(CanvasAnimatedControlTests)
                 return S_OK;
             });
 
-        SimpleDispatchedHandler dispatchedHandler;
-        dispatchedHandler.CallbackMethod.SetExpectedCalls(1,
+        MockDispatchedHandler dispatchedHandler;
+        dispatchedHandler.OnInvoke.SetExpectedCalls(1,
             [&]()
             {
                 Assert::AreEqual(1, order);
                 order++;
+                return S_OK;
             });
-        ComPtr<IAsyncAction> asyncAction;
-        Assert::AreEqual(S_OK, f.Control->RunOnGameLoopThreadAsync(dispatchedHandler.Handler.Get(), &asyncAction));
+        dispatchedHandler.RunOnGameLoopThreadAsync(f.Control);
 
         MockEventHandler<Animated_UpdateEventHandler> OnUpdate;
         OnUpdate = MockEventHandler<Animated_UpdateEventHandler>(L"Update", ExpectedEventParams::Both);
@@ -2373,55 +2565,17 @@ TEST_CLASS(CanvasAnimatedControl_VisibilityTests)
 
 TEST_CLASS(CanvasAnimatedControl_AppAccessingWorkerThreadTests)
 {
-    static void VerifyAsyncActionErrorStatus(
-        ComPtr<IAsyncAction> const& asyncAction,
-        HRESULT expectedHr)
+    struct RunOnGameLoopFixture : public CanvasAnimatedControlFixture
     {
-        auto asyncInfo = As<IAsyncInfo>(asyncAction);
-
-        AsyncStatus status;
-        ThrowIfFailed(asyncInfo->get_Status(&status));
-        Assert::AreEqual(AsyncStatus::Error, status);
-
-        HRESULT errorCode;
-        ThrowIfFailed(asyncInfo->get_ErrorCode(&errorCode));
-        Assert::AreEqual(expectedHr, errorCode);
-    }
-
-    static void AttachCompletedCallbackWhichReturnsHr(
-        ComPtr<IAsyncAction> const& asyncAction,
-        HRESULT hr)
-    {
-        auto completedCallback = Callback<IAsyncActionCompletedHandler>([hr](IAsyncAction* asyncAction, AsyncStatus status)
-        {
-            return hr;
-        });
-        ThrowIfFailed(asyncAction->put_Completed(completedCallback.Get()));
-    }
-
-    struct DispatcherFixture : public CanvasAnimatedControlFixture
-    {
-        DispatcherFixture()
+        RunOnGameLoopFixture()
         {
             Load();
             Adapter->DoChanged();
         }
-    };
 
-    struct CompletedHandlerWhichExpectsToBeCalled
-    {
-        CALL_COUNTER_WITH_MOCK(CompletedCallbackMethod, void());
-
-        CompletedHandlerWhichExpectsToBeCalled(ComPtr<IAsyncAction> const& asyncAction)
+        ~RunOnGameLoopFixture()
         {
-            auto completedCallback = Callback<IAsyncActionCompletedHandler>([&](IAsyncAction* asyncAction, AsyncStatus status)
-            {
-                CompletedCallbackMethod.WasCalled();
-                return S_OK;
-            });
-            ThrowIfFailed(asyncAction->put_Completed(completedCallback.Get()));
-
-            CompletedCallbackMethod.SetExpectedCalls(1);
+            RaiseUnloadedEvent();
         }
     };
 
@@ -2468,33 +2622,33 @@ TEST_CLASS(CanvasAnimatedControl_AppAccessingWorkerThreadTests)
     TEST_METHOD_EX(CanvasAnimatedControl_RunOnGameLoopThreadAsync_NullArgs)
     {
         CanvasAnimatedControlFixture f;
-        SimpleDispatchedHandler dispatchedHandler;
 
+        auto dispatchedHandler = Callback<IDispatchedHandler>([] { return S_OK; });
         ComPtr<IAsyncAction> asyncAction;
-        Assert::AreEqual(E_INVALIDARG, f.Control->RunOnGameLoopThreadAsync(dispatchedHandler.Handler.Get(), nullptr));
+
+        Assert::AreEqual(E_INVALIDARG, f.Control->RunOnGameLoopThreadAsync(dispatchedHandler.Get(), nullptr));
         Assert::AreEqual(E_INVALIDARG, f.Control->RunOnGameLoopThreadAsync(nullptr, &asyncAction));
     }
 
     TEST_METHOD_EX(CanvasAnimatedControl_RunOnGameLoopThreadAsync_AsyncActionInvokedOnNextTick)
     {
-        DispatcherFixture f;
+        RunOnGameLoopFixture f;
 
-        SimpleDispatchedHandler dispatchedHandler;
-        dispatchedHandler.CallbackMethod.SetExpectedCalls(0);
+        MockDispatchedHandler dispatchedHandler;
+        dispatchedHandler.OnInvoke.SetExpectedCalls(0);
 
-        ComPtr<IAsyncAction> asyncAction;
-        Assert::AreEqual(S_OK, f.Control->RunOnGameLoopThreadAsync(dispatchedHandler.Handler.Get(), &asyncAction));
+        dispatchedHandler.RunOnGameLoopThreadAsync(f.Control);
 
-        dispatchedHandler.CallbackMethod.SetExpectedCalls(1);
+        dispatchedHandler.OnInvoke.SetExpectedCalls(1);
 
-        f.TickUntil([&] { return dispatchedHandler.CallbackMethod.GetCurrentCallCount() == 1; });
+        f.TickUntil([&] { return dispatchedHandler.OnInvoke.GetCurrentCallCount() == 1; });
 
         f.VerifyTickLoopIsStillRunning();
     }
 
     TEST_METHOD_EX(CanvasAnimatedControl_RunOnGameLoopThreadAsync_AsyncActionInvokedOnNextTick_WhenPaused)
     {
-        DispatcherFixture f;
+        RunOnGameLoopFixture f;
 
         ThrowIfFailed(f.Control->put_Paused(TRUE));
 
@@ -2502,39 +2656,34 @@ TEST_CLASS(CanvasAnimatedControl_AppAccessingWorkerThreadTests)
         f.TickUntil([&] { return !f.Adapter->GameThreadHasPendingWork(); });
 
 
-        SimpleDispatchedHandler dispatchedHandler;
+        MockDispatchedHandler dispatchedHandler;
 
-        ComPtr<IAsyncAction> action;
-        ThrowIfFailed(f.Control->RunOnGameLoopThreadAsync(dispatchedHandler.Handler.Get(), &action));
+        dispatchedHandler.RunOnGameLoopThreadAsync(f.Control);
 
-        dispatchedHandler.CallbackMethod.SetExpectedCalls(1);
+        dispatchedHandler.OnInvoke.SetExpectedCalls(1);
 
         f.Adapter->DoChanged();
-        f.TickUntil([&] { return dispatchedHandler.CallbackMethod.GetCurrentCallCount() == 1; });
+        f.TickUntil([&] { return dispatchedHandler.OnInvoke.GetCurrentCallCount() == 1; });
     }
 
     TEST_METHOD_EX(CanvasAnimatedControl_RunOnGameLoopThreadAsync_MultipleAsyncActionsInvokedInCorrectOrder)
     {
         static const int actionCount = 3;
 
-        DispatcherFixture f;
+        RunOnGameLoopFixture f;
 
         int callbackIndex = 0;
-        SimpleDispatchedHandler dispatchedHandlers[actionCount];
+        MockDispatchedHandler dispatchedHandlers[actionCount];
         for (int i = 0; i < actionCount; ++i)
         {
-            dispatchedHandlers[i].CallbackMethod.SetExpectedCalls(1,
-                [i, &callbackIndex]() 
+            dispatchedHandlers[i].OnInvoke.SetExpectedCalls(1,
+                [i, &callbackIndex] () 
                 {
                     Assert::AreEqual(i, callbackIndex); 
                     callbackIndex++; 
+                    return S_OK;
                 });
-        }
-
-        for (int i = 0; i < actionCount; ++i)
-        {
-            ComPtr<IAsyncAction> asyncAction;
-            Assert::AreEqual(S_OK, f.Control->RunOnGameLoopThreadAsync(dispatchedHandlers[i].Handler.Get(), &asyncAction));
+            dispatchedHandlers[i].RunOnGameLoopThreadAsync(f.Control);
         }
 
         f.TickUntil([&] { return callbackIndex == actionCount; });
@@ -2543,20 +2692,18 @@ TEST_CLASS(CanvasAnimatedControl_AppAccessingWorkerThreadTests)
 
     TEST_METHOD_EX(CanvasAnimatedControl_RunOnGameLoopThreadAsync_IfHandlerThrowsDeviceRemoved_DeviceIsRecreated)
     {
-        DispatcherFixture f;
+        RunOnGameLoopFixture f;
                 
-        SimpleDispatchedHandler dispatchedHandler;
-        dispatchedHandler.CallbackMethod.SetExpectedCalls(1,
+        MockDispatchedHandler dispatchedHandler;
+        dispatchedHandler.OnInvoke.SetExpectedCalls(1,
             [&]
             {
                 f.Adapter->InitialDevice->MarkAsLost();
+                return DXGI_ERROR_DEVICE_REMOVED;
             });
-        dispatchedHandler.HandlerReturnValue = DXGI_ERROR_DEVICE_REMOVED;
+        dispatchedHandler.OnCompleted.SetExpectedCalls(1);
 
-        ComPtr<IAsyncAction> asyncAction;
-        Assert::AreEqual(S_OK, f.Control->RunOnGameLoopThreadAsync(dispatchedHandler.Handler.Get(), &asyncAction));
-
-        CompletedHandlerWhichExpectsToBeCalled completedHandler(asyncAction);
+        dispatchedHandler.RunOnGameLoopThreadAsync(f.Control);
 
         // Tick until the tick loop stops
         f.TickUntil([&] { return !f.Adapter->GameThreadHasPendingWork(); });
@@ -2572,26 +2719,25 @@ TEST_CLASS(CanvasAnimatedControl_AppAccessingWorkerThreadTests)
     {
         static const int actionCount = 3;
 
-        DispatcherFixture f;
+        RunOnGameLoopFixture f;
         
-        SimpleDispatchedHandler dispatchedHandlers[actionCount];
+        MockDispatchedHandler dispatchedHandlers[actionCount];
 
-        dispatchedHandlers[0].CallbackMethod.SetExpectedCalls(1,
+        dispatchedHandlers[0].OnInvoke.SetExpectedCalls(1,
             [&]
             {
                 f.Adapter->InitialDevice->MarkAsLost();
+                return DXGI_ERROR_DEVICE_REMOVED;
             });
-        dispatchedHandlers[0].HandlerReturnValue = DXGI_ERROR_DEVICE_REMOVED;
 
         for (int i = 1; i < actionCount; ++i)
         {
-            dispatchedHandlers[i].CallbackMethod.SetExpectedCalls(0);
+            dispatchedHandlers[i].OnInvoke.SetExpectedCalls(0);
         }
 
-        for (int i = 0; i < actionCount; ++i)
+        for (auto& h : dispatchedHandlers)
         {
-            ComPtr<IAsyncAction> asyncAction;
-            Assert::AreEqual(S_OK, f.Control->RunOnGameLoopThreadAsync(dispatchedHandlers[i].Handler.Get(), &asyncAction));
+            h.RunOnGameLoopThreadAsync(f.Control);
         }
 
         // Tick until the tick loop stops
@@ -2604,51 +2750,47 @@ TEST_CLASS(CanvasAnimatedControl_AppAccessingWorkerThreadTests)
         // Now the remaining handlers should get invoked
         for (int i = 1; i < actionCount; ++i)
         {
-            dispatchedHandlers[i].CallbackMethod.SetExpectedCalls(1);
+            dispatchedHandlers[i].OnInvoke.SetExpectedCalls(1);
         }
 
-        f.TickUntil([&] { return dispatchedHandlers[actionCount-1].CallbackMethod.GetCurrentCallCount() == 1; });
+        f.TickUntil([&] { return dispatchedHandlers[actionCount-1].OnInvoke.GetCurrentCallCount() == 1; });
 
         f.VerifyTickLoopIsStillRunning();
     }
 
     TEST_METHOD_EX(CanvasAnimatedControl_RunOnGameLoopThreadAsync_IfHandlerThrowsSomeWeirdError_ActionStateIsSetCorrectly)
     {
-        DispatcherFixture f;
+        RunOnGameLoopFixture f;
         
-        SimpleDispatchedHandler dispatchedHandler;
-        dispatchedHandler.CallbackMethod.SetExpectedCalls(1);
-        dispatchedHandler.HandlerReturnValue = E_INVALIDARG;
+        MockDispatchedHandler dispatchedHandler;
+        dispatchedHandler.OnInvoke.SetExpectedCalls(1, [] { return E_INVALIDARG; });
+        dispatchedHandler.OnCompleted.SetExpectedCalls(1);
 
-        ComPtr<IAsyncAction> asyncAction;
-        Assert::AreEqual(S_OK, f.Control->RunOnGameLoopThreadAsync(dispatchedHandler.Handler.Get(), &asyncAction));
+        dispatchedHandler.RunOnGameLoopThreadAsync(f.Control);
 
-        CompletedHandlerWhichExpectsToBeCalled completedHandler(asyncAction);
-
-        f.TickUntil([&] { return completedHandler.CompletedCallbackMethod.GetCurrentCallCount() == 1; });
+        f.TickUntil([&] { return dispatchedHandler.OnCompleted.GetCurrentCallCount() == 1; });
         f.VerifyTickLoopIsStillRunning();
 
-        VerifyAsyncActionErrorStatus(asyncAction, E_INVALIDARG);
+        dispatchedHandler.VerifyActionStatus(AsyncStatus::Error, E_INVALIDARG);
     }
 
     TEST_METHOD_EX(CanvasAnimatedControl_RunOnGameLoopThreadAsync_IfHandlerThrowsSomeWeirdError_OtherActionsAreStillRun)
     {
         static const int actionCount = 3;
 
-        DispatcherFixture f;
+        RunOnGameLoopFixture f;
         
-        SimpleDispatchedHandler dispatchedHandlers[actionCount];
-        for (int i = 0; i < actionCount; ++i)
-            dispatchedHandlers[i].CallbackMethod.SetExpectedCalls(1);
-        dispatchedHandlers[0].HandlerReturnValue = E_INVALIDARG;
+        MockDispatchedHandler dispatchedHandlers[actionCount];
+        dispatchedHandlers[0].OnInvoke.SetExpectedCalls(1, [] { return E_INVALIDARG; });
+        for (int i = 1; i < actionCount; ++i)
+            dispatchedHandlers[i].OnInvoke.SetExpectedCalls(1);
 
-        for (int i = 0; i < actionCount; ++i)
+        for (auto& h: dispatchedHandlers)
         {
-            ComPtr<IAsyncAction> asyncAction;
-            Assert::AreEqual(S_OK, f.Control->RunOnGameLoopThreadAsync(dispatchedHandlers[i].Handler.Get(), &asyncAction));
+            h.RunOnGameLoopThreadAsync(f.Control);
         }
 
-        f.TickUntil([&] { return dispatchedHandlers[actionCount-1].CallbackMethod.GetCurrentCallCount() == 1; });
+        f.TickUntil([&] { return dispatchedHandlers[actionCount-1].OnInvoke.GetCurrentCallCount() == 1; });
         f.VerifyTickLoopIsStillRunning();
     }
 
@@ -2658,15 +2800,13 @@ TEST_CLASS(CanvasAnimatedControl_AppAccessingWorkerThreadTests)
 
         for (HRESULT error : errors)
         {
-            DispatcherFixture f;
+            RunOnGameLoopFixture f;
             
-            SimpleDispatchedHandler dispatchedHandler;
-            dispatchedHandler.CallbackMethod.SetExpectedCalls(1);
+            MockDispatchedHandler dispatchedHandler;
+            dispatchedHandler.OnInvoke.SetExpectedCalls(1);
+            dispatchedHandler.OnCompleted.SetExpectedCalls(1, [=] (IAsyncAction*, AsyncStatus) { return error; });
 
-            ComPtr<IAsyncAction> asyncAction;
-            Assert::AreEqual(S_OK, f.Control->RunOnGameLoopThreadAsync(dispatchedHandler.Handler.Get(), &asyncAction));
-
-            AttachCompletedCallbackWhichReturnsHr(asyncAction, error);
+            dispatchedHandler.RunOnGameLoopThreadAsync(f.Control);
 
             // Tick until the tick loop stops
             f.TickUntil([&] { return !f.Adapter->GameThreadHasPendingWork(); });
@@ -2679,39 +2819,39 @@ TEST_CLASS(CanvasAnimatedControl_AppAccessingWorkerThreadTests)
     {
         static const int actionCount = 3;
 
-        DispatcherFixture f;
+        RunOnGameLoopFixture f;
         
-        SimpleDispatchedHandler dispatchedHandlers[actionCount];
-        dispatchedHandlers[0].CallbackMethod.SetExpectedCalls(1);
+        MockDispatchedHandler dispatchedHandlers[actionCount];
+
+        dispatchedHandlers[0].OnInvoke.SetExpectedCalls(1);
+        dispatchedHandlers[0].OnCompleted.SetExpectedCalls(1, [] (IAsyncAction*, AsyncStatus) { return E_INVALIDARG; });
+
         for (int i = 1; i < actionCount; ++i)
-            dispatchedHandlers[i].CallbackMethod.SetExpectedCalls(0);
+            dispatchedHandlers[i].OnInvoke.SetExpectedCalls(0);
 
-        ComPtr<IAsyncAction> returnedActions[actionCount];
-        for (int i = 0; i < actionCount; ++i)
-            Assert::AreEqual(S_OK, f.Control->RunOnGameLoopThreadAsync(dispatchedHandlers[i].Handler.Get(), &returnedActions[i]));
+        for (auto& h : dispatchedHandlers)
+            h.RunOnGameLoopThreadAsync(f.Control);
 
-        AttachCompletedCallbackWhichReturnsHr(returnedActions[0], E_INVALIDARG);
+        f.TickUntil([&] { return dispatchedHandlers[0].OnInvoke.GetCurrentCallCount() == 1; });
 
-        f.TickUntil([&] { return dispatchedHandlers[0].CallbackMethod.GetCurrentCallCount() == 1; });
         ExpectHResultException(E_INVALIDARG, [&] { f.Adapter->DoChanged(); });
     }
 
     TEST_METHOD_EX(CanvasAnimatedControl_RunOnGameLoopThreadAsync_HandlerThrowsDeviceRemoved_AndCompletedHandlerThrowsSomeError_CompleteHandlerErrorIsIgnored)
     {
         // The design is for the 'device removed' to take precedence.
-        DispatcherFixture f;
+        RunOnGameLoopFixture f;
         
-        SimpleDispatchedHandler dispatchedHandler;
-        dispatchedHandler.CallbackMethod.SetExpectedCalls(1,
+        MockDispatchedHandler dispatchedHandler;
+        dispatchedHandler.OnInvoke.SetExpectedCalls(1,
             [&]
             {
                 f.Adapter->InitialDevice->MarkAsLost();
+                return DXGI_ERROR_DEVICE_REMOVED;
             });
-        dispatchedHandler.HandlerReturnValue = DXGI_ERROR_DEVICE_REMOVED;
+        dispatchedHandler.OnCompleted.SetExpectedCalls(1, [] (IAsyncAction*, AsyncStatus) { return E_INVALIDARG; });
 
-        ComPtr<IAsyncAction> asyncAction;
-        Assert::AreEqual(S_OK, f.Control->RunOnGameLoopThreadAsync(dispatchedHandler.Handler.Get(), &asyncAction));
-        AttachCompletedCallbackWhichReturnsHr(asyncAction, E_INVALIDARG);
+        dispatchedHandler.RunOnGameLoopThreadAsync(f.Control);
 
         // Tick until the tick loop stops
         f.TickUntil([&] { return !f.Adapter->GameThreadHasPendingWork(); });
@@ -2745,25 +2885,23 @@ TEST_CLASS(CanvasAnimatedControl_AppAccessingWorkerThreadTests)
         // because #2 and #3 were requeued.
         //
 
-
         static const int actionCount = 6;
-        SimpleDispatchedHandler dispatchedHandlers[actionCount];
-        ComPtr<IAsyncAction> returnedActions[actionCount];
+        MockDispatchedHandler dispatchedHandlers[actionCount];
 
-        DispatcherFixture f;
+        RunOnGameLoopFixture f;
         
-        dispatchedHandlers[0].CallbackMethod.SetExpectedCalls(1);
-        dispatchedHandlers[1].CallbackMethod.SetExpectedCalls(1,
+        dispatchedHandlers[0].OnInvoke.SetExpectedCalls(1);
+        dispatchedHandlers[1].OnInvoke.SetExpectedCalls(1,
             [&]
             {
                 f.Adapter->InitialDevice->MarkAsLost();
+                return DXGI_ERROR_DEVICE_REMOVED;
             });
-        dispatchedHandlers[1].HandlerReturnValue = DXGI_ERROR_DEVICE_REMOVED;
 
-        Assert::AreEqual(S_OK, f.Control->RunOnGameLoopThreadAsync(dispatchedHandlers[0].Handler.Get(), &returnedActions[0]));
-        Assert::AreEqual(S_OK, f.Control->RunOnGameLoopThreadAsync(dispatchedHandlers[1].Handler.Get(), &returnedActions[1]));
-        Assert::AreEqual(S_OK, f.Control->RunOnGameLoopThreadAsync(dispatchedHandlers[2].Handler.Get(), &returnedActions[2]));
-        Assert::AreEqual(S_OK, f.Control->RunOnGameLoopThreadAsync(dispatchedHandlers[3].Handler.Get(), &returnedActions[3]));
+        dispatchedHandlers[0].RunOnGameLoopThreadAsync(f.Control);
+        dispatchedHandlers[1].RunOnGameLoopThreadAsync(f.Control);
+        dispatchedHandlers[2].RunOnGameLoopThreadAsync(f.Control);
+        dispatchedHandlers[3].RunOnGameLoopThreadAsync(f.Control);
 
         // Tick until the tick loop stops
         f.TickUntil([&] { return !f.Adapter->GameThreadHasPendingWork(); });
@@ -2771,16 +2909,16 @@ TEST_CLASS(CanvasAnimatedControl_AppAccessingWorkerThreadTests)
         // This puts us down the device recreation path.
         f.Adapter->DoChanged();
         f.Adapter->DoChanged();
+        
+        dispatchedHandlers[2].OnInvoke.SetExpectedCalls(1);
+        dispatchedHandlers[3].OnInvoke.SetExpectedCalls(1);
+        dispatchedHandlers[4].OnInvoke.SetExpectedCalls(1);
+        dispatchedHandlers[5].OnInvoke.SetExpectedCalls(1);
 
-        dispatchedHandlers[2].CallbackMethod.SetExpectedCalls(1);
-        dispatchedHandlers[3].CallbackMethod.SetExpectedCalls(1);
-        dispatchedHandlers[4].CallbackMethod.SetExpectedCalls(1);
-        dispatchedHandlers[5].CallbackMethod.SetExpectedCalls(1);
+        dispatchedHandlers[4].RunOnGameLoopThreadAsync(f.Control);
+        dispatchedHandlers[5].RunOnGameLoopThreadAsync(f.Control);
 
-        Assert::AreEqual(S_OK, f.Control->RunOnGameLoopThreadAsync(dispatchedHandlers[4].Handler.Get(), &returnedActions[4]));
-        Assert::AreEqual(S_OK, f.Control->RunOnGameLoopThreadAsync(dispatchedHandlers[5].Handler.Get(), &returnedActions[5]));
-
-        f.TickUntil([&] { return dispatchedHandlers[5].CallbackMethod.GetCurrentCallCount() == 1; });
+        f.TickUntil([&] { return dispatchedHandlers[5].OnInvoke.GetCurrentCallCount() == 1; });
 
         f.VerifyTickLoopIsStillRunning();
     }
@@ -2789,10 +2927,11 @@ TEST_CLASS(CanvasAnimatedControl_AppAccessingWorkerThreadTests)
     {
         CanvasAnimatedControlFixture f;
 
-        SimpleDispatchedHandler handler;
-        ComPtr<IAsyncAction> action;
+        f.Load();
 
-        ThrowIfFailed(f.Control->RunOnGameLoopThreadAsync(handler.Handler.Get(), &action));
+        MockDispatchedHandler handler;
+
+        handler.RunOnGameLoopThreadAsync(f.Control);
 
         auto onCreateResources = MockEventHandler<Animated_CreateResourcesEventHandler>(L"CreateResources", ExpectedEventParams::Both);
         f.AddCreateResourcesHandler(onCreateResources.Get());
@@ -2805,8 +2944,6 @@ TEST_CLASS(CanvasAnimatedControl_AppAccessingWorkerThreadTests)
                 asyncCreateResources = Make<MockAsyncAction>();
                 return args->TrackAsyncAction(asyncCreateResources.Get());
             });
-
-        f.Load();
 
         f.Adapter->DoChanged();
         f.Adapter->Tick();
@@ -2822,9 +2959,231 @@ TEST_CLASS(CanvasAnimatedControl_AppAccessingWorkerThreadTests)
         // Only after the CreateResources has completed do we expect to see the handler we passed
         // to RunOnGameLoopThreadAsync get called
         asyncCreateResources->SetResult(S_OK);
-        handler.CallbackMethod.SetExpectedCalls(1);
+        handler.OnInvoke.SetExpectedCalls(1);
 
         f.Adapter->DoChanged();
-        f.TickUntil([&] { return handler.CallbackMethod.GetCurrentCallCount() == 1; });
+        f.TickUntil([&] { return handler.OnInvoke.GetCurrentCallCount() == 1; });
+    }
+
+    TEST_METHOD_EX(CanvasAnimatedControl_RunOnGameLoopThreadAsync_WhenCalledAndControlIsNotLoaded_ActionIsCanceled)
+    {
+        CanvasAnimatedControlFixture f;
+
+        MockDispatchedHandler handler;
+
+        handler.OnInvoke.SetExpectedCalls(0);
+        handler.OnCompleted.SetExpectedCalls(1,
+            [=] (IAsyncAction*, AsyncStatus status)
+            {
+                Assert::AreEqual(AsyncStatus::Canceled, status);
+                return S_OK;
+            });
+
+        handler.RunOnGameLoopThreadAsync(f.Control);
+    }
+
+    TEST_METHOD_EX(CanvasAnimatedControl_RunOnGameLoopThreadAsync_WhenUnloaded_AnyOutstandingAsyncActionsAreCanceled)
+    {
+        CanvasAnimatedControlFixture f;
+
+        std::vector<MockDispatchedHandler> handlers;
+        for (int i = 0; i < 10; ++i)
+        {
+            MockDispatchedHandler handler;
+            handler.OnInvoke.SetExpectedCalls(0);
+            handler.OnCompleted.SetExpectedCalls(1,
+                [] (IAsyncAction*, AsyncStatus status)
+                {
+                    Assert::AreEqual(AsyncStatus::Canceled, status);
+                    return S_OK;
+                });
+            handlers.push_back(std::move(handler));
+        }
+
+        f.Load();
+
+        for (auto& h : handlers)
+        {
+            h.RunOnGameLoopThreadAsync(f.Control);
+        }
+
+        f.RaiseUnloadedEvent();
+    }
+
+    TEST_METHOD_EX(CanvasAnimatedControl_RunOnGameLoopThreadAsync_WhenActionIsCanceled_HandlerIsNotCalled)
+    {
+        CanvasAnimatedControlFixture f;
+
+        f.Load();
+
+        MockDispatchedHandler handler;
+        handler.OnInvoke.SetExpectedCalls(0);
+        handler.OnCompleted.SetExpectedCalls(1,
+            [] (IAsyncAction*, AsyncStatus status)
+            {
+                Assert::AreEqual(AsyncStatus::Canceled, status);
+                return S_OK;
+            });
+
+        handler.RunOnGameLoopThreadAsync(f.Control);
+        handler.CancelAction();
+
+        f.Adapter->DoChanged();
+        f.Adapter->Tick();
+    }
+
+
+    struct DispatcherFixture : public CanvasAnimatedControlFixture
+    {
+        MockEventHandler<Animated_CreateResourcesEventHandler> OnCreateResources;
+
+        DispatcherFixture()
+            : OnCreateResources(L"OnCreateResources")
+        {
+            AddCreateResourcesHandler(OnCreateResources.Get());
+            OnCreateResources.AllowAnyCall();
+        }
+
+        ComPtr<MockAsyncAction> SetupAsyncCreateResources()
+        {
+            auto action = Make<MockAsyncAction>();
+            OnCreateResources.SetExpectedCalls(1,
+                [=] (IInspectable*, ICanvasCreateResourcesEventArgs* args)
+                {
+                    return args->TrackAsyncAction(action.Get());
+                });
+            return action;
+        }
+
+        void Run()
+        {
+            for (int i = 0; i < 10; ++i)
+            {
+                Adapter->DoChanged();
+                Adapter->Tick();
+            }
+        }
+
+        typedef CallCounterWithMock<DefaultCallCounterTraits, HRESULT()> HResultCallCounter;
+
+        std::shared_ptr<HResultCallCounter> RunOnDispatcher()
+        {
+            auto mock = std::make_shared<HResultCallCounter>(L"RunAsync handler");
+            
+            auto handler = Callback<IDispatchedHandler>([=] { return mock->WasCalled(); });
+            
+            ComPtr<IAsyncAction> ignoredAction;
+            
+            ThrowIfFailed(Adapter->GetGameThreadDispatcher()->RunAsync(CoreDispatcherPriority_Normal, handler.Get(), &ignoredAction));
+            
+            return mock;
+        }
+
+        std::shared_ptr<HResultCallCounter> RunOnGameLoop()
+        {
+            auto mock = std::make_shared<HResultCallCounter>(L"RunOnGameLoopThreadAsync handler");
+
+            auto handler = Callback<IDispatchedHandler>([=] { return mock->WasCalled(); });
+            
+            ComPtr<IAsyncAction> ignoredAction;
+            
+            ThrowIfFailed(Control->RunOnGameLoopThreadAsync(handler.Get(), &ignoredAction));
+            
+            return mock;
+        }
+    };
+
+    TEST_METHOD_EX(CanvasAnimatedControl_DispatcherDoesNotProcessEventsUntilCreateResourcesCompleted)
+    {
+        DispatcherFixture f;
+
+        auto createResourcesAsyncAction = f.SetupAsyncCreateResources();
+
+        f.Load();
+
+        auto asyncHandler = f.RunOnDispatcher();
+        asyncHandler->SetExpectedCalls(0);
+
+        f.Run();
+
+        createResourcesAsyncAction->SetResult(S_OK);
+        asyncHandler->SetExpectedCalls(1);
+
+        f.Run();
+    }
+
+    TEST_METHOD_EX(CanvasAnimatedControl_DispatcherStopsProcessingEventsAfterDeviceLost)
+    {
+        DispatcherFixture f;
+
+        f.Load();
+        f.Run();
+
+        // Lose the device
+        f.Adapter->InitialDevice->MarkAsLost();
+        auto gameLoopAction = f.RunOnGameLoop();
+        gameLoopAction->SetExpectedCalls(1, [] { return DXGI_ERROR_DEVICE_REMOVED; });
+
+        f.Adapter->Tick();      // this'll cause gameLoopAction to run and start the lost-device handling
+
+        // This will prevent anything queued on the dispatcher from running
+        auto createResourcesAsyncAction = f.SetupAsyncCreateResources();
+
+        auto asyncHandler = f.RunOnDispatcher();
+        asyncHandler->SetExpectedCalls(0);
+        
+        f.Run();
+
+        // The async handler won't get called until create resources has
+        // completed
+        createResourcesAsyncAction->SetResult(S_OK);
+        asyncHandler->SetExpectedCalls(1);
+
+        f.Run();
+    }
+    
+    //
+    // These test the interaction between CanvasAnimatedControl and
+    // IGameLoopThread; another test verifies that the production implementation
+    // of IGameLoopThread raises the event at an appropriate time.
+    //
+
+    TEST_METHOD_EX(CanvasAnimatedControl_GameLoopStartingEventIsRaised)
+    {
+        CanvasAnimatedControlFixture f;
+
+        auto startingHandler = MockEventHandler<ITypedEventHandler<ICanvasAnimatedControl*, IInspectable*>>(L"GameLoopStarting");
+        startingHandler.SetExpectedCalls(1,
+            [&] (ICanvasAnimatedControl* control, IInspectable* args)
+            {
+                Assert::IsTrue(IsSameInstance(control, f.Control.Get()));
+                Assert::IsNull(args);
+                return S_OK;
+            });
+        
+        EventRegistrationToken token;
+        ThrowIfFailed(f.Control->add_GameLoopStarting(startingHandler.Get(), &token));
+
+        f.Load();
+    }
+
+    TEST_METHOD_EX(CanvasAnimatedControl_GameLoopStoppedEventIsRaised)
+    {
+        CanvasAnimatedControlFixture f;
+
+        auto stoppedHandler = MockEventHandler<ITypedEventHandler<ICanvasAnimatedControl*, IInspectable*>>(L"GameLoopStopped");
+        stoppedHandler.SetExpectedCalls(1,
+            [&] (ICanvasAnimatedControl* control, IInspectable* args)
+            {
+                Assert::IsTrue(IsSameInstance(control, f.Control.Get()));
+                Assert::IsNull(args);
+                return S_OK;
+            });
+        
+        EventRegistrationToken token;
+        ThrowIfFailed(f.Control->add_GameLoopStopped(stoppedHandler.Get(), &token));
+
+        f.Load();
+        f.RaiseUnloadedEvent();
     }
 };

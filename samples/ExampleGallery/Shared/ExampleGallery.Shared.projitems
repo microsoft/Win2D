@@ -21,14 +21,17 @@
     <Compile Include="$(MSBuildThisFileDirectory)ArcOptions.xaml.cs">
       <DependentUpon>ArcOptions.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)BackgroundTaskExample.xaml.cs">
+      <DependentUpon>BackgroundTaskExample.xaml</DependentUpon>
+    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)BitmapRotation.xaml.cs">
       <DependentUpon>BitmapRotation.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)BurningTextExample.xaml.cs">
       <DependentUpon>BurningTextExample.xaml</DependentUpon>
     </Compile>
-    <Compile Include="$(MSBuildThisFileDirectory)CanvasControlExample.xaml.cs">
-      <DependentUpon>CanvasControlExample.xaml</DependentUpon>
+    <Compile Include="$(MSBuildThisFileDirectory)CustomControlExample.xaml.cs">
+      <DependentUpon>CustomControlExample.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)ControlTransforms.xaml.cs">
       <DependentUpon>ControlTransforms.xaml</DependentUpon>
@@ -42,6 +45,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)DrawImageEmulations.xaml.cs">
       <DependentUpon>DrawImageEmulations.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)GlowTextCustomControl.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Infrastructure\AppIconGenerator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Infrastructure\DeveloperTools.xaml.cs">
       <DependentUpon>DeveloperTools.xaml</DependentUpon>
@@ -116,6 +120,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="$(MSBuildThisFileDirectory)BackgroundTaskExample.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="$(MSBuildThisFileDirectory)ControlTransforms.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -156,7 +164,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="$(MSBuildThisFileDirectory)CanvasControlExample.xaml">
+    <Page Include="$(MSBuildThisFileDirectory)CustomControlExample.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -232,12 +240,14 @@
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\AnimatedControlWide.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\ArcOptionsNarrow.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\ArcOptionsWide.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Thumbnails\BackgroundTaskNarrow.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Thumbnails\BackgroundTaskWide.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\BitmapRotationNarrow.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\BitmapRotationWide.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\BurningTextNarrow.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\BurningTextWide.png" />
-    <Content Include="$(MSBuildThisFileDirectory)Thumbnails\CanvasControlNarrow.png" />
-    <Content Include="$(MSBuildThisFileDirectory)Thumbnails\CanvasControlWide.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Thumbnails\CustomControlNarrow.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Thumbnails\CustomControlWide.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\ControlTransformsNarrow.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\ControlTransformsWide.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\CustomFontsNarrow.png" />

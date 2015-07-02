@@ -165,6 +165,8 @@ CanvasAnimatedControl::CanvasAnimatedControl(std::shared_ptr<ICanvasAnimatedCont
 
 CanvasAnimatedControl::~CanvasAnimatedControl()
 {
+    // These should all have been canceled on unload
+    assert(m_sharedState.PendingAsyncActions.empty());
 }
 
 IFACEMETHODIMP CanvasAnimatedControl::add_Update(
@@ -185,6 +187,48 @@ IFACEMETHODIMP CanvasAnimatedControl::remove_Update(
         [&]
         {
             ThrowIfFailed(m_updateEventList.Remove(token));
+        });
+}
+
+IFACEMETHODIMP CanvasAnimatedControl::add_GameLoopStarting(
+    ITypedEventHandler<ICanvasAnimatedControl*, IInspectable*>* value,
+    EventRegistrationToken* token)
+{
+    return ExceptionBoundary(
+        [&]
+        {
+            ThrowIfFailed(m_gameLoopStartingEventList.Add(value, token));
+        });
+}
+
+IFACEMETHODIMP CanvasAnimatedControl::remove_GameLoopStarting(
+    EventRegistrationToken token)
+{
+    return ExceptionBoundary(
+        [&]
+        {
+            ThrowIfFailed(m_gameLoopStartingEventList.Remove(token));
+        });
+}
+
+IFACEMETHODIMP CanvasAnimatedControl::add_GameLoopStopped(
+    ITypedEventHandler<ICanvasAnimatedControl*, IInspectable*>* value,
+    EventRegistrationToken* token)
+{
+    return ExceptionBoundary(
+        [&]
+        {
+            ThrowIfFailed(m_gameLoopStoppedEventList.Add(value, token));
+        });
+}
+
+IFACEMETHODIMP CanvasAnimatedControl::remove_GameLoopStopped(
+    EventRegistrationToken token)
+{
+    return ExceptionBoundary(
+        [&]
+        {
+            ThrowIfFailed(m_gameLoopStoppedEventList.Remove(token));
         });
 }
 
@@ -389,7 +433,32 @@ IFACEMETHODIMP CanvasAnimatedControl::RunOnGameLoopThreadAsync(
 
             auto newAsyncAction = Make<AnimatedControlAsyncAction>(callback);
             CheckMakeResult(newAsyncAction);
-            m_sharedState.PendingAsyncActions.push_back(newAsyncAction);
+
+            //
+            // If we're not loaded then there's a chance we'll never get loaded
+            // before this control is destroyed.  Since the game loop thread is
+            // only started when we load there's a chance we'll never have an
+            // opportunity to run this action.  So we only track the action if
+            // we're currently loaded.
+            //
+            if (IsLoaded())
+            {
+                m_sharedState.PendingAsyncActions.push_back(newAsyncAction);
+            }
+            else
+            {
+                // This action won't ever get a chance to run, so we cancel it
+                // now.
+
+                newAsyncAction->Cancel();
+
+                // Note: no need to fire completion here since the action is
+                // newly created and there's no way a completion handler could
+                // have been added.  This means we don't need to worry about
+                // releasing the lock or this method taking too long to
+                // complete.  When a completion handler is added to a canceled
+                // action the completion handler is invoked immediately.
+            }
 
             ThrowIfFailed(newAsyncAction.CopyTo(asyncAction));
 
@@ -462,12 +531,15 @@ ComPtr<CanvasAnimatedDrawEventArgs> CanvasAnimatedControl::CreateDrawEventArgs(
 void CanvasAnimatedControl::Loaded()
 {
     assert(!m_gameLoop);
-    m_gameLoop = GetAdapter()->CreateAndStartGameLoop(As<ISwapChainPanel>(m_canvasSwapChainPanel));
+    m_gameLoop = GetAdapter()->CreateAndStartGameLoop(this, As<ISwapChainPanel>(m_canvasSwapChainPanel).Get());
 }
 
 void CanvasAnimatedControl::Unloaded()
 {    
     m_gameLoop.reset();
+
+    // Any remaining async actions won't get executed, so we cancel them
+    CancelAsyncActions();
 }
 
 void CanvasAnimatedControl::ApplicationSuspending(ISuspendingEventArgs* args)
@@ -685,10 +757,18 @@ void CanvasAnimatedControl::ChangedImpl()
     }
 
     //
+    // The UI thread is about to manipulate device resources (eg it might be
+    // about to call CreateResources).  While it is doing this we don't want
+    // anything running on the game loop thread, so we stop the dispatcher from
+    // processing events.
+    //
+    m_gameLoop->StopDispatcher();
+
+    //
     // Try and start the update/render thread
     //
     RunWithRenderTarget(GetCurrentSize(), deviceCreationOptions,
-        [&] (CanvasSwapChain* rawTarget, ICanvasDevice*, Color const& clearColor, bool areResourcesCreated)
+        [&] (CanvasSwapChain* target, ICanvasDevice*, Color const& clearColor, bool areResourcesCreated)
         {
             // The clearColor passed to us is ignored since this needs to be
             // checked on each tick of the update/render loop.
@@ -706,6 +786,14 @@ void CanvasAnimatedControl::ChangedImpl()
                 ThrowIfFailed(hr);
             }
 
+            if (areResourcesCreated)
+            {
+                // Once resources have been created we can start the dispatcher,
+                // since the game loop owns the device & resources at this
+                // point.
+                m_gameLoop->StartDispatcher();
+            }
+
             if (!areResourcesCreated && !needsDraw)
             {
                 //
@@ -715,17 +803,7 @@ void CanvasAnimatedControl::ChangedImpl()
                 return;
             }
 
-            ComPtr<CanvasSwapChain> target(rawTarget);
-
-            m_gameLoop->StartTickLoop(this,
-                [target, areResourcesCreated] (CanvasAnimatedControl* control)
-                { 
-                    return control->Tick(target.Get(), areResourcesCreated); 
-                },
-                [] (CanvasAnimatedControl* control)
-                { 
-                    control->Changed(control->GetLock()); 
-                });
+            m_gameLoop->StartTickLoop(target, areResourcesCreated);
         });
 }
 
@@ -788,6 +866,30 @@ void CanvasAnimatedControl::IssueAsyncActions(
     }
 }
 
+void CanvasAnimatedControl::CancelAsyncActions()
+{
+    std::vector<ComPtr<AnimatedControlAsyncAction>> actions;
+
+    auto lock = GetLock();
+    std::swap(actions, m_sharedState.PendingAsyncActions);
+    lock.unlock();
+
+    for (auto& action : actions)
+    {
+        action->CancelAndFireCompletion();
+    }
+}
+
+void CanvasAnimatedControl::OnGameLoopStarting()
+{
+    ThrowIfFailed(m_gameLoopStartingEventList.InvokeAll(this, nullptr));
+}
+
+void CanvasAnimatedControl::OnGameLoopStopped()
+{
+    ThrowIfFailed(m_gameLoopStoppedEventList.InvokeAll(this, nullptr));
+}
+
 bool CanvasAnimatedControl::Tick(
     CanvasSwapChain* swapChain, 
     bool areResourcesCreated)
@@ -843,6 +945,9 @@ bool CanvasAnimatedControl::Tick(
     auto lock = GetLock();
 
     if (IsSuspended())
+        return false;
+
+    if (!IsLoaded())
         return false;
 
     m_stepTimer.SetTargetElapsedTicks(m_sharedState.TargetElapsedTime);
@@ -1022,6 +1127,11 @@ bool CanvasAnimatedControl::Tick(
     }
 
     return areResourcesCreated && !isPaused;
+}
+
+void CanvasAnimatedControl::OnTickLoopEnded()
+{
+    Changed(GetLock());
 }
 
 CanvasAnimatedControl::UpdateResult CanvasAnimatedControl::Update(bool forceUpdate, int64_t timeSpentPaused)

@@ -163,14 +163,26 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             try
             {
                 RunWithDeviceFlags flags = EnsureDeviceCreated(sender, deviceCreationOptions);
-                assert(m_device);
 
+                //
                 // m_device is passed to the function.  This means that the
                 // function has a device it can use for rendering, even if we
                 // haven't committed to using the new one yet.  This allows
                 // controls to perform rendering while asynchronous create
                 // resources actions are still executing against the previous
                 // device.
+                //
+                // In the case where we have a custom device that was lost,
+                // and a new custom device has not yet been re-assigned, we
+                // allow m_device to remain null.
+                //
+                if (deviceCreationOptions.CustomDevice && IsDeviceLost(deviceCreationOptions.CustomDevice.Get()))
+                {
+                    assert(!m_device);
+                    return;
+                }
+
+                assert(m_device);
 
                 runWithDeviceFunction(m_device.Get(), flags);
             }
@@ -281,13 +293,26 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
             if (!m_device)
             {
-                m_device = CreateDevice(deviceCreationOptions);
+                if (deviceCreationOptions.CustomDevice)
+                {
+                    // 
+                    // We only commit non-lost custom devices.
+                    //
+                    if (!IsDeviceLost(deviceCreationOptions.CustomDevice.Get()))
+                    {
+                        m_device = deviceCreationOptions.CustomDevice;
+                    }
+                }
+                else if (!deviceCreationOptions.CustomDevice)
+                {
+                    m_device = CreateDevice(deviceCreationOptions);
+                }
 
                 m_deviceCreationOptions = deviceCreationOptions;
 
                 flags = RunWithDeviceFlags::NewlyCreatedDevice;
             }
-
+            
             //
             // While there's an operation pending we can't use any new device we
             // created.
@@ -321,7 +346,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             //
             if (!m_committedDevice || m_committedDevice->IsUnusable())
             {
-                auto reason = !m_committedDevice ? CanvasCreateResourcesReason::FirstTime : 
+                auto reason = !m_committedDevice ? CanvasCreateResourcesReason::FirstTime :
                                                    CanvasCreateResourcesReason::NewDevice;
 
                 m_committedDevice = std::make_unique<CommittedDevice>(m_device, reason);
@@ -370,15 +395,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             {
                 auto deviceStatics = As<ICanvasDeviceStatics>(m_canvasDeviceFactory);
 
-                ThrowIfFailed(deviceStatics->GetSharedDevice(deviceCreationOptions.HardwareAcceleration, &device));
+                ThrowIfFailed(deviceStatics->GetSharedDevice(deviceCreationOptions.ForceSoftwareRenderer, &device));
             }
             else
             {
                 auto deviceFactory = As<ICanvasDeviceFactory>(m_canvasDeviceFactory);
 
-                deviceFactory->CreateWithDebugLevelAndHardwareAcceleration(
-                    CanvasDebugLevel::None,
-                    deviceCreationOptions.HardwareAcceleration,
+                deviceFactory->CreateWithForceSoftwareRendererOption(
+                    deviceCreationOptions.ForceSoftwareRenderer,
                     &device);
             }
 
@@ -517,6 +541,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                     if (m_changedCallback)
                         m_changedCallback(ChangeReason::Other);
                 });
+        }
+
+        static bool IsDeviceLost(ICanvasDevice* device)
+        {
+            boolean isLost;
+            ThrowIfFailed(device->IsDeviceLost(DXGI_ERROR_DEVICE_REMOVED, &isLost));
+
+            return !!isLost;
         }
     };
 

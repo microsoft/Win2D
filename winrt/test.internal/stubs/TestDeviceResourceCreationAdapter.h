@@ -13,6 +13,39 @@
 #pragma once
 
 #include "stubs/StubD3D11Device.h"
+#include "mocks/MockProperties.h"
+
+class StubDebugProperty : public MockPropertyValue
+{
+    uint32_t m_value;
+
+public:
+    StubDebugProperty(CanvasDebugLevel value)
+        : m_value(static_cast<uint32_t>(value))
+    {}
+
+    StubDebugProperty(uint32_t value)
+        : m_value(value)
+    {}
+
+    IFACEMETHODIMP GetUInt32(UINT32* out) override
+    {
+        *out = m_value;
+        return S_OK;
+    }
+};
+
+class StubPropertyValueStatics : public MockPropertyValueStatics
+{
+public:
+    IFACEMETHODIMP CreateUInt32(
+        UINT32 value,
+        IInspectable** out) override
+    {
+        auto propertyValue = Make<StubDebugProperty>(value);
+        return propertyValue.CopyTo(out);
+    }
+};
 
 // This device is used for creating mock devices which include some basic functionality, but do not call any actual D2D/D3D.
 class TestDeviceResourceCreationAdapter : public ICanvasDeviceResourceCreationAdapter
@@ -21,14 +54,38 @@ class TestDeviceResourceCreationAdapter : public ICanvasDeviceResourceCreationAd
     bool m_allowHardware;
 
 public:
+    CALL_COUNTER_WITH_MOCK(GetCoreApplicationMethod, ComPtr<ICoreApplication>());
 
     TestDeviceResourceCreationAdapter()
         : m_numD2DFactoryCreationCalls(0)
         , m_debugLevel(static_cast<CanvasDebugLevel>(-1))
         , m_numD3dDeviceCreationCalls(0)
         , m_allowHardware(true)
-        , m_retrievableHarwareAcceleration(CanvasHardwareAcceleration::Auto)
-    {}
+        , m_retrievableForceSoftwareRenderer(false)
+        , m_retrievableUseDebugD3DDevice(false)
+    {
+        GetCoreApplicationMethod.AllowAnyCall(
+            [&]
+            {
+                auto coreApplication = Make<MockCoreApplication>();                
+                coreApplication->get_PropertiesMethod.AllowAnyCall(
+                    [&](IPropertySet** out)
+                    { 
+                        auto mockProperties = Make<MockProperties>();
+                        mockProperties->LookupMethod.AllowAnyCall(
+                            [&](HSTRING, IInspectable** out)
+                            {
+                                auto debugPropertyHolder = Make<StubDebugProperty>(CanvasDebugLevel::None);
+                                debugPropertyHolder.CopyTo(out);
+                                return S_OK;
+                            });
+                        mockProperties->InsertMethod.AllowAnyCall();
+                        return mockProperties.CopyTo(out);
+                    });
+
+                return coreApplication;
+            });
+    }
 
     virtual ComPtr<ID2D1Factory2> CreateD2DFactory(
         CanvasDebugLevel debugLevel) override
@@ -42,7 +99,8 @@ public:
     }
 
     virtual bool TryCreateD3DDevice(
-        CanvasHardwareAcceleration hardwareAcceleration,
+        bool useSoftwareRenderer,
+        bool useDebugD3DDevice,
         ComPtr<ID3D11Device>* device) override
     {
         if (!device)
@@ -51,9 +109,10 @@ public:
             return false;
         }
 
-        m_retrievableHarwareAcceleration = hardwareAcceleration;
+        m_retrievableForceSoftwareRenderer = useSoftwareRenderer;
+        m_retrievableUseDebugD3DDevice = useDebugD3DDevice;
 
-        if (hardwareAcceleration == CanvasHardwareAcceleration::On && !m_allowHardware)
+        if (!useSoftwareRenderer && !m_allowHardware)
         {
             return false;
         }
@@ -76,6 +135,16 @@ public:
         return d2dDeviceWithDxgiDevice->GetDxgiDevice();
     }
 
+    virtual ComPtr<ICoreApplication> GetCoreApplication() override
+    {
+        return GetCoreApplicationMethod.WasCalled();
+    }
+
+    virtual ComPtr<IPropertyValueStatics> GetPropertyValueStatics() override
+    {
+        return Make<StubPropertyValueStatics>();
+    }
+
     void SetHardwareEnabled(bool enable)
     {
         m_allowHardware = enable;
@@ -91,5 +160,6 @@ public:
     CanvasDebugLevel m_debugLevel;
 
     int m_numD3dDeviceCreationCalls;
-    CanvasHardwareAcceleration m_retrievableHarwareAcceleration;
+    bool m_retrievableForceSoftwareRenderer;
+    bool m_retrievableUseDebugD3DDevice;
 };

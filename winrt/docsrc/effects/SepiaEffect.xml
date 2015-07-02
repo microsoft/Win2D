@@ -1,0 +1,76 @@
+<?xml version="1.0"?>
+<!--
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may
+not use these files except in compliance with the License. You may obtain
+a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+License for the specific language governing permissions and limitations
+under the License.
+-->
+
+<doc>
+  <assembly>
+    <name>Microsoft.Graphics.Canvas</name>
+  </assembly>
+
+  <members>
+
+    <member name="T:Microsoft.Graphics.Canvas.Effects.SepiaEffect">
+      <summary>
+        <p>Converts an image to sepia tones.</p>
+        <p><i>This effect is new in the Universal Windows Platform. It is not supported on Windows 8.1 or Phone 8.1.</i></p>
+        <p><i>Supported by Win2D but not Windows.UI.Composition.</i></p>
+      </summary>
+      <remarks>
+        <p>This Windows Runtime type corresponds to the
+           <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/dn900460.aspx">D2D Sepia effect</a>.</p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Effects.SepiaEffect.#ctor">
+      <summary>Initializes a new instance of the SepiaEffect class.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Effects.SepiaEffect.GetBounds(Microsoft.Graphics.Canvas.CanvasDrawingSession)">
+      <summary>Retrieves the bounds of this CanvasImage, in device-independent units.</summary>
+      <inheritdoc/>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Effects.SepiaEffect.GetBounds(Microsoft.Graphics.Canvas.CanvasDrawingSession,Microsoft.Graphics.Canvas.Numerics.Matrix3x2)">
+      <summary>Retrieves the bounds of this CanvasImage, in device-independent units.</summary>
+      <inheritdoc/>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Effects.SepiaEffect.Dispose">
+      <summary>Releases all resources used by the SepiaEffect.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.SepiaEffect.Name">
+      <summary>Attaches a user-defined name string to the effect.</summary>
+      <inheritdoc/>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.SepiaEffect.Source">
+      <summary>Gets or sets the input source for Sepia effect.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.SepiaEffect.Intensity">
+      <summary>Intensity of the sepia effect. Default value 0.5, range 0 to 1.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.SepiaEffect.AlphaMode">
+      <summary>Specifies the treatment of alpha. Default value Premultiplied.</summary>
+      <remarks>
+        <p>
+          Effect inputs and outputs are assumed to be in
+          <a href="PremultipliedAlpha.htm">premultiplied alpha</a> format, so when this 
+          property is set to Premultiplied, the sepia effect is applied directly to the 
+          input values with no extra conversions.
+        </p>
+        <p>
+          If AlphaMode set to Straight, input values will be unpremultiplied, then the 
+          sepia effect applied, and finally the result converted back to premultiplied 
+          format.
+        </p>
+      </remarks>
+    </member>
+
+  </members>
+</doc>

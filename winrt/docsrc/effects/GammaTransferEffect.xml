@@ -27,7 +27,13 @@ under the License.
       <remarks>
         <p>The gamma transfer function is evaluated separately for each color channel:</p>
         <p>result = pow(input, exponent) * amplitude + offset</p>
-        <p>This effect works on straight and premultiplied alpha images. It outputs premultiplied alpha.</p>
+        <p>
+          Effect inputs and outputs are assumed to be in
+          <a href="PremultipliedAlpha.htm">premultiplied alpha</a> format, but this 
+          effect operates internally on straight alpha data, so its input values will be 
+          unpremultiplied, then the transfer function applied, and finally the result 
+          converted back to premultiplied format.
+        </p>
         <p>This Windows Runtime type corresponds to the 
           <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/hh706337.aspx">D2D Gamma transfer effect</a>.</p>
       </remarks>

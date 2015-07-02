@@ -67,41 +67,51 @@ namespace ExampleGallery
         CoreIndependentInputSource inputSource;
         GestureRecognizer gestureRecognizer;
 
-        private async void OnLoaded(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private void OnGameLoopStarting(ICanvasAnimatedControl sender, object args)
         {
-            await animatedControl.RunOnGameLoopThreadAsync(() =>
-            {
-                //
-                // The GestureRecognizer needs to be created and accessed from the 
-                // same thread -- in this case the game loop thread, so RunOnGameLoopThreadAsync 
-                // is used.
-                //
+            //
+            // The GestureRecognizer needs to be created and accessed from the 
+            // same thread -- in this case the game loop thread, so we use the GameLoopStarting event 
+            // for this.
+            //
 
-                gestureRecognizer = new GestureRecognizer();
-                gestureRecognizer.GestureSettings = GestureSettings.ManipulationTranslateInertia | GestureSettings.ManipulationTranslateY;
+            gestureRecognizer = new GestureRecognizer();
+            gestureRecognizer.GestureSettings = GestureSettings.ManipulationTranslateInertia | GestureSettings.ManipulationTranslateY;
                 
-                gestureRecognizer.ManipulationStarted += gestureRecognizer_ManipulationStarted;
-                gestureRecognizer.ManipulationUpdated += gestureRecognizer_ManipulationUpdated;
-                gestureRecognizer.ManipulationCompleted += gestureRecognizer_ManipulationCompleted;
+            gestureRecognizer.ManipulationStarted += gestureRecognizer_ManipulationStarted;
+            gestureRecognizer.ManipulationUpdated += gestureRecognizer_ManipulationUpdated;
+            gestureRecognizer.ManipulationCompleted += gestureRecognizer_ManipulationCompleted;
 
-                gestureRecognizer.InertiaTranslationDeceleration = -0.05f;
+            gestureRecognizer.InertiaTranslationDeceleration = -0.05f;
 
-                //
-                // When the GestureRecognizer goes into intertia mode (ie after the pointer is released)
-                // we want it to generate ManipulationUpdated events in sync with the game loop's Update.
-                // We do this by disabling AutoProcessIntertia and explicitly calling ProcessInertia() 
-                // from the Update.
-                //
-                gestureRecognizer.AutoProcessInertia = false;
+            //
+            // When the GestureRecognizer goes into intertia mode (ie after the pointer is released)
+            // we want it to generate ManipulationUpdated events in sync with the game loop's Update.
+            // We do this by disabling AutoProcessIntertia and explicitly calling ProcessInertia() 
+            // from the Update.
+            //
+            gestureRecognizer.AutoProcessInertia = false;
 
-                inputSource = animatedControl.CreateCoreIndependentInputSource(CoreInputDeviceTypes.Mouse | CoreInputDeviceTypes.Pen | CoreInputDeviceTypes.Touch);
+            inputSource = animatedControl.CreateCoreIndependentInputSource(CoreInputDeviceTypes.Mouse | CoreInputDeviceTypes.Pen | CoreInputDeviceTypes.Touch);
 
-                inputSource.PointerPressed += Input_PointerPressed;
-                inputSource.PointerMoved += Input_PointerMoved;
-                inputSource.PointerReleased += Input_PointerReleased;
-            });
+            inputSource.PointerPressed += Input_PointerPressed;
+            inputSource.PointerMoved += Input_PointerMoved;
+            inputSource.PointerReleased += Input_PointerReleased;
         }
 
+        private void OnGameLoopStopped(ICanvasAnimatedControl sender, object args)
+        {
+            // Unregister the various input / gesture events.  Since these have strong thread affinity
+            // this needs to be done on the game loop thread.
+
+            inputSource.PointerPressed -= Input_PointerPressed;
+            inputSource.PointerMoved -= Input_PointerMoved;
+            inputSource.PointerReleased -= Input_PointerReleased;
+
+            gestureRecognizer.ManipulationStarted -= gestureRecognizer_ManipulationStarted;
+            gestureRecognizer.ManipulationUpdated -= gestureRecognizer_ManipulationUpdated;
+            gestureRecognizer.ManipulationCompleted -= gestureRecognizer_ManipulationCompleted;
+        }
 
         private void OnCreateResources(CanvasAnimatedControl sender, CanvasCreateResourcesEventArgs args)
         {
@@ -170,8 +180,6 @@ namespace ExampleGallery
         {
             inManipulation = false;
         }
-
-
 
         int firstLine;
         int lastLine;
@@ -256,22 +264,8 @@ namespace ExampleGallery
             }
         }
 
-        private async void UserControl_Unloaded(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private void UserControl_Unloaded(object sender, Windows.UI.Xaml.RoutedEventArgs e)
         {
-            await animatedControl.RunOnGameLoopThreadAsync(() =>
-            {
-                // Unregister the various input / gesture events.  Since these have strong thread affinity
-                // this needs to be done on the game loop thread.
-
-                inputSource.PointerPressed -= Input_PointerPressed;
-                inputSource.PointerMoved -= Input_PointerMoved;
-                inputSource.PointerReleased -= Input_PointerReleased;
-
-                gestureRecognizer.ManipulationStarted -= gestureRecognizer_ManipulationStarted;
-                gestureRecognizer.ManipulationUpdated -= gestureRecognizer_ManipulationUpdated;
-                gestureRecognizer.ManipulationCompleted -= gestureRecognizer_ManipulationCompleted;
-            });
-
             // Explicitly remove references to allow the Win2D controls to get
             // garbage collected
             animatedControl.RemoveFromVisualTree();

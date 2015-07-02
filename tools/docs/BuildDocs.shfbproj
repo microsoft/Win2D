@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
     <SHFBROOT>$(MSBuildThisFileDirectory)..\..\packages\EWSoftware.SHFB.2014.11.22.0\Tools\</SHFBROOT>
@@ -66,16 +66,18 @@
     <WildcardConceptual Include="$(MSBuildThisFileDirectory)..\..\numerics\Cpp\docsrc\*.aml" />
 
     <!-- Image files -->
-    <WildcardImages Include="..\..\winrt\docsrc\images\*.png" />
+    <WildcardImages Include="..\..\winrt\docsrc\media\*.png" />
+    <WildcardImages Include="..\..\winrt\docsrc\media\*.svg" />
 
-    <!-- Expand wildcards and fill in their Link metadata -->
+    <!-- Expand wildcards and fill in their metadata -->
     <None Include="@(WildcardConceptual)">
-      <Link>conceptual\%(WildcardConceptual.Filename)%(WildcardConceptual.Extension)</Link>
+      <Link>conceptual\%(Filename)%(Extension)</Link>
     </None>
 
-    <Content Include="@(WildcardImages)">
-      <Link>images\%(WildcardImages.Filename)%(WildcardImages.Extension)</Link>
-    </Content>
+    <Image Include="@(WildcardImages)">
+      <ImageId>%(Filename)</ImageId>
+      <CopyToMedia>True</CopyToMedia>
+    </Image>
   </ItemGroup>
 
   <Import Project="$(SHFBROOT)\SandcastleHelpFileBuilder.targets" />

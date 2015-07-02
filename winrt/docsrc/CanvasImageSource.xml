@@ -36,21 +36,21 @@ under the License.
     </member>
     <member name="M:Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreatorWithDpi,Windows.Foundation.Size)">
       <summary>Initializes a new instance of the CanvasImageSource class.</summary>
-      <remarks>Size is in device independent pixels (dips), and DPI is taken from the specified resource creator interface.</remarks>
+      <remarks>Size is in device independent pixels (DIPs), and DPI is taken from the specified resource creator interface.</remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreatorWithDpi,System.Single,System.Single)">
       <summary>Initializes a new instance of the CanvasImageSource class.</summary>
-      <remarks>Size is in device independent pixels (dips), and DPI is taken from the specified resource creator interface.</remarks>
+      <remarks>Size is in device independent pixels (DIPs), and DPI is taken from the specified resource creator interface.</remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Single,System.Single,System.Single)">
       <summary>Initializes a new instance of the CanvasImageSource class.</summary>
-      <remarks>Size is in device independent pixels (dips), using the specified DPI.</remarks>
+      <remarks>Size is in device independent pixels (DIPs), using the specified DPI.</remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.CanvasAlphaMode)">
       <summary>Initializes a new instance of the CanvasImageSource class.</summary>
       <remarks>
         <p>
-          Size is in device independent pixels (dips), using the specified DPI.
+          Size is in device independent pixels (DIPs), using the specified DPI.
         </p>
         <p>
           The alphaMode parameter determines whether the background of the image
@@ -70,7 +70,7 @@ under the License.
       <summary>Returns a new drawing session for updating a region of the image source.</summary>
       <remarks>
         The specified region of the image is cleared to the specified color before this method returns.
-        The region is in device independent pixels (dips).
+        The region is in device independent pixels (DIPs).
       </remarks>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource.Device">
@@ -83,21 +83,30 @@ under the License.
     <member name="P:Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource.Dpi">
       <summary>Gets the dots-per-inch (DPI) of this image source.</summary>
       <remarks>
-        DPI describes the ratio between device independent pixels (dips) and actual physical pixels.
-        The identity DPI value is 96, which means dips and pixels are the same.
+        <p>
+          DPI describes the ratio between device independent pixels (DIPs) and actual physical pixels.
+          The identity DPI value is 96, which means DIPs and pixels are the same.
+        </p>
+        <p>
+          For more information, see <a href="DPI.htm">DPI and DIPs</a>.
+        </p>
       </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource.ConvertPixelsToDips(System.Int32)">
-      <summary>Converts units from physical pixels to device independent pixels (dips) based on the DPI of this image source.</summary>
+      <summary>Converts units from physical pixels to device independent pixels (DIPs) based on the DPI of this image source.</summary>
+      <remarks>For more information, see <a href="DPI.htm">DPI and DIPs</a>.</remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource.ConvertDipsToPixels(System.Single)">
-      <summary>Converts units from device independent pixels (dips) to physical pixels based on the DPI of this image source.</summary>
+      <summary>Converts units from device independent pixels (DIPs) to physical pixels based on the DPI of this image source.</summary>
+      <remarks>For more information, see <a href="DPI.htm">DPI and DIPs</a>.</remarks>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource.Size">
-      <summary>Gets the size of the image source, in device independent pixels (dips).</summary>
+      <summary>Gets the size of the image source, in device independent pixels (DIPs).</summary>
+      <remarks>For more information, see <a href="DPI.htm">DPI and DIPs</a>.</remarks>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource.SizeInPixels">
       <summary>Gets the size of the image source, in pixels.</summary>
+      <remarks>For more information, see <a href="DPI.htm">DPI and DIPs</a>.</remarks>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource.AlphaMode">
       <summary>Returns the alpha mode for this image source that was passed in

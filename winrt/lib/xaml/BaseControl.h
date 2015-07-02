@@ -119,7 +119,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         bool m_isVisible;
         float m_dpi;
         bool m_useSharedDevice;
-        CanvasHardwareAcceleration m_hardwareAcceleration;
+        bool m_forceSoftwareRenderer;
 
         EventSource<drawEventHandler_t, InvokeModeOptions<StopOnFirstError>> m_drawEventList;
 
@@ -137,6 +137,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         ComPtr<IDependencyObject> m_lastSeenParent;
 
+        ComPtr<ICanvasDevice> m_customDevice;
+
     public:
         BaseControl(std::shared_ptr<adapter_t> adapter, bool useSharedDevice)
             : m_adapter(adapter)
@@ -147,7 +149,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             , m_window(adapter->GetWindowOfCurrentThread())
             , m_dpi(adapter->GetLogicalDpi())
             , m_useSharedDevice(useSharedDevice)
-            , m_hardwareAcceleration(CanvasHardwareAcceleration::On)
+            , m_forceSoftwareRenderer(false)
             , m_currentSize{}
             , m_clearColor{}
             , m_currentRenderTarget{}
@@ -287,8 +289,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                 });
         }
 
-        IFACEMETHODIMP get_HardwareAcceleration(
-            CanvasHardwareAcceleration* value)
+        IFACEMETHODIMP get_ForceSoftwareRenderer(
+            boolean* value)
         {
             return ExceptionBoundary(
                 [&]
@@ -297,27 +299,64 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
                     auto lock = GetLock();
 
-                    *value = m_hardwareAcceleration;
+                    *value = m_forceSoftwareRenderer;
                 });
         }
 
-        IFACEMETHODIMP put_HardwareAcceleration(
-            CanvasHardwareAcceleration value)
+        IFACEMETHODIMP put_ForceSoftwareRenderer(
+            boolean value)
         {
             return ExceptionBoundary(
                 [&]
                 {
-                    if (value == CanvasHardwareAcceleration::Unknown)
-                        ThrowHR(E_INVALIDARG, HStringReference(Strings::HardwareAccelerationUnknownIsNotValid).Get());
+                    auto lock = GetLock();
+
+                    if (m_forceSoftwareRenderer == !!value)
+                        return;
+
+                    m_forceSoftwareRenderer = !!value;
+
+                    Changed(lock, ChangeReason::DeviceCreationOptions);
+                });
+        }
+
+        IFACEMETHODIMP get_CustomDevice(
+            ICanvasDevice** value)
+        {
+            return ExceptionBoundary(
+                [&]
+                {
+                    CheckAndClearOutPointer(value);
 
                     auto lock = GetLock();
 
-                    if (m_hardwareAcceleration == value)
-                        return;
+                    if (m_customDevice)
+                    {
+                        ThrowIfFailed(m_customDevice.CopyTo(value));
+                    }
+                });
+        }
 
-                    m_hardwareAcceleration = value;
+        IFACEMETHODIMP put_CustomDevice(
+            ICanvasDevice* value)
+        {
+            return ExceptionBoundary(
+                [&]
+                {
+                    //
+                    // Passing null is valid here, and will clear out the custom device.
+                    //
 
-                    Changed(lock, ChangeReason::DeviceCreationOptions);
+                    auto lock = GetLock();
+
+                    bool isChanged = !IsSameInstance(m_customDevice.Get(), value);
+
+                    if (isChanged)
+                    {
+                        m_customDevice = value;
+
+                        Changed(lock, ChangeReason::DeviceCreationOptions);
+                    }
                 });
         }
 
@@ -543,7 +582,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         {
             MustOwnLock(lock);
 
-            DeviceCreationOptions options { m_useSharedDevice, m_hardwareAcceleration };
+            DeviceCreationOptions options { m_useSharedDevice, m_forceSoftwareRenderer, m_customDevice };
 
             return options;
         }

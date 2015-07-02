@@ -603,6 +603,7 @@ under the License.
     </member>
     <member name="P:Microsoft.Graphics.Canvas.CanvasDrawingSession.Units">
       <summary>Sets what units are used to specifiy coordinates for this drawing session.</summary>
+      <remarks>For more information, see <a href="DPI.htm">DPI and DIPs</a>.</remarks>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.CanvasDrawingSession.Transform">
       <summary>Sets the transform matrix that will be applied to subsequent drawing calls on this drawing session.</summary>
@@ -643,21 +644,26 @@ under the License.
       <summary>Gets the dots-per-inch (DPI) of this drawing session.</summary>
       <remarks>
         <p>
-          DPI describes the ratio between device independent pixels (dips) and actual physical pixels.
-          The identity DPI value is 96, which means dips and pixels are the same.
+          DPI describes the ratio between device independent pixels (DIPs) and actual physical pixels.
+          The identity DPI value is 96, which means DIPs and pixels are the same.
         </p>
         <p>
           Drawing sessions inherit their DPI from the <see cref="T:Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl"/>,
           <see cref="T:Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource"/> or
           <see cref="T:Microsoft.Graphics.Canvas.CanvasRenderTarget"/> they were created from.
         </p>
+        <p>
+          For more information, see <a href="DPI.htm">DPI and DIPs</a>.
+        </p>
       </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.ConvertPixelsToDips(System.Int32)">
-      <summary>Converts units from physical pixels to device independent pixels (dips) based on the DPI of this drawing session.</summary>
+      <summary>Converts units from physical pixels to device independent pixels (DIPs) based on the DPI of this drawing session.</summary>
+      <remarks>For more information, see <a href="DPI.htm">DPI and DIPs</a>.</remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.ConvertDipsToPixels(System.Single)">
-      <summary>Converts units from device independent pixels (dips) to physical pixels based on the DPI of this drawing session.</summary>
+      <summary>Converts units from device independent pixels (DIPs) to physical pixels based on the DPI of this drawing session.</summary>
+      <remarks>For more information, see <a href="DPI.htm">DPI and DIPs</a>.</remarks>
     </member>
 
     <member name="T:Microsoft.Graphics.Canvas.CanvasComposite">

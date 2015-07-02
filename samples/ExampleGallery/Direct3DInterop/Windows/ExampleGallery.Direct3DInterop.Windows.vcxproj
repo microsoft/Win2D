@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="..\..\..\..\packages\directxtk_windowsstore_8_1.2015.3.27.2\build\native\directxtk_windowsstore_8_1.props" Condition="Exists('..\..\..\..\packages\directxtk_windowsstore_8_1.2015.3.27.2\build\native\directxtk_windowsstore_8_1.props')" />
   <ItemGroup>
@@ -23,7 +23,7 @@
     <GenerateManifest>false</GenerateManifest>
     <NuGetPackageImportStamp>c59169d0</NuGetPackageImportStamp>
   </PropertyGroup>
-  <Import Project="$(MSBuildThisFileDir)..\..\..\..\build\Win2D.cpp.props" />
+  <Import Project="..\..\..\..\build\Win2D.cpp.props" />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <Import Project="..\Shared\ExampleGallery.Direct3DInterop.Shared.vcxitems" Label="Shared" />
@@ -34,7 +34,7 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <Import Project="$(MSBuildThisFileDir)..\..\..\..\build\Win2D.cpp.targets" />
+  <Import Project="..\..\..\..\build\Win2D.cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
     <Import Project="..\..\..\..\packages\directxtk_windowsstore_8_1.2015.3.27.2\build\native\directxtk_windowsstore_8_1.targets" Condition="Exists('..\..\..\..\packages\directxtk_windowsstore_8_1.2015.3.27.2\build\native\directxtk_windowsstore_8_1.targets')" />
   </ImportGroup>

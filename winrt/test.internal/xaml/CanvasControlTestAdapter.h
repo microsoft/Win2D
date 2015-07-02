@@ -30,7 +30,7 @@ public:
         , CompositionRenderingEventSource(Make<MockEventSourceUntyped>(L"CompositionRendering"))
     {
         DeviceFactory->GetSharedDeviceMethod.AllowAnyCall(
-            [&](CanvasHardwareAcceleration, ICanvasDevice** device)
+            [&](boolean, ICanvasDevice** device)
             {
                 auto stubDevice = Make<StubCanvasDevice>();
                 stubDevice.CopyTo(device);

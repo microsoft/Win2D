@@ -1,0 +1,222 @@
+<?xml version="1.0"?>
+<!--
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may
+not use these files except in compliance with the License. You may obtain
+a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+License for the specific language governing permissions and limitations
+under the License.
+-->
+
+<topic id="PixelFormats" revisionNumber="1">
+  <developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <introduction>
+      <para>
+        The <codeEntityReference>T:Microsoft.Graphics.Canvas.DirectX.DirectXPixelFormat</codeEntityReference>
+        enum includes all the many and varied pixel formats used by Direct3D and DXGI, 
+        but only a few of these options are supported by Win2D (or by Direct2D upon which 
+        Win2D is built).
+      </para>
+      <para>
+        If in doubt, pixel format B8G8R8A8UIntNormalized and 
+        <codeEntityReference>T:Microsoft.Graphics.Canvas.CanvasAlphaMode</codeEntityReference> 
+        Premultiplied are good defaults for most purposes.
+      </para>
+      <para>
+        All the formats listed below are supported by Direct3D feature level 11 GPU 
+        hardware (used in desktop computers and most tablets). Feature level 9 GPUs 
+        (which are found in phones) only support a subset. If you want to use one of the 
+        formats marked as <legacyItalic>Not supported on all devices</legacyItalic>, you 
+        should catch exceptions if the resource creation fails and be prepared to fall 
+        back on one of the universally available options.
+      </para>
+    </introduction>
+    
+    <section>
+      <title>CanvasBitmap formats</title>
+      <content>
+        <table>
+          <tableHeader>
+            <row>
+              <entry><codeEntityReference>T:Microsoft.Graphics.Canvas.DirectX.DirectXPixelFormat</codeEntityReference></entry>
+              <entry>Compatible <codeEntityReference>T:Microsoft.Graphics.Canvas.CanvasAlphaMode</codeEntityReference>s</entry>
+              <entry>Notes</entry>
+            </row>
+          </tableHeader>
+          <row>
+            <entry>B8G8R8A8UIntNormalized</entry>
+            <entry>Premultiplied, Ignore</entry>
+            <entry>The default format</entry>
+          </row>
+          <row>
+            <entry>B8G8R8A8UIntNormalizedSrgb</entry>
+            <entry>Premultiplied, Ignore</entry>
+            <entry>Not supported on all devices</entry>
+          </row>
+          <row>
+            <entry>B8G8R8X8UIntNormalized</entry>
+            <entry>Ignore</entry>
+            <entry/>
+          </row>
+          <row>
+            <entry>R8G8B8A8UIntNormalized</entry>
+            <entry>Premultiplied, Ignore</entry>
+            <entry/>
+          </row>
+          <row>
+            <entry>R8G8B8A8UIntNormalizedSrgb</entry>
+            <entry>Premultiplied, Ignore</entry>
+            <entry>Not supported on all devices</entry>
+          </row>
+          <row>
+            <entry>R16G16B16A16Float</entry>
+            <entry>Premultiplied, Ignore</entry>
+            <entry>Not supported on all devices</entry>
+          </row>
+          <row>
+            <entry>R32G32B32A32Float</entry>
+            <entry>Premultiplied, Ignore</entry>
+            <entry>Not supported on all devices</entry>
+          </row>
+          <row>
+            <entry>R16G16B16A16UIntNormalized</entry>
+            <entry>Premultiplied, Ignore</entry>
+            <entry>Not supported on all devices</entry>
+          </row>
+          <row>
+            <entry>R8G8UIntNormalized</entry>
+            <entry>Ignore</entry>
+            <entry>Not supported on all devices</entry>
+          </row>
+          <row>
+            <entry>R8UIntNormalized</entry>
+            <entry>Ignore</entry>
+            <entry>Not supported on all devices</entry>
+          </row>
+          <row>
+            <entry>A8UIntNormalized</entry>
+            <entry>Premultiplied, Straight</entry>
+            <entry/>
+          </row>
+          <row>
+            <entry>BC1UIntNormalized</entry>
+            <entry>Premultiplied, Ignore</entry>
+            <entry>Not yet fully supported by Win2D<superscript>1</superscript></entry>
+          </row>
+          <row>
+            <entry>BC2UIntNormalized</entry>
+            <entry>Premultiplied, Ignore</entry>
+            <entry>Not yet fully supported by Win2D<superscript>1</superscript></entry>
+          </row>
+          <row>
+            <entry>BC3UIntNormalized</entry>
+            <entry>Premultiplied, Ignore</entry>
+            <entry>Not yet fully supported by Win2D<superscript>1</superscript></entry>
+          </row>
+        </table>
+        
+        <para>
+          <superscript>1</superscript>
+          The block compressed formats (BC1, BC2, and BC3) are not yet fully supported by 
+          Win2D. It is possible to create block compressed bitmaps using 
+          CanvasBitmap.CreateFromBytes, to draw using them, and to interop them from 
+          native Direct2D or Direct3D, but Win2D does not provide any way to load images 
+          of these formats, and methods such as GetPixelBytes, SetPixelBytes, and 
+          CopyPixelsFromBitmap do not work correctly on block compressed data. We plan to 
+          improve this in a future version of Win2D.
+        </para>
+      </content>
+    </section>
+
+    <section>
+      <title>CanvasRenderTarget formats</title>
+      <content>
+        <table>
+          <tableHeader>
+            <row>
+              <entry><codeEntityReference>T:Microsoft.Graphics.Canvas.DirectX.DirectXPixelFormat</codeEntityReference></entry>
+              <entry>Compatible <codeEntityReference>T:Microsoft.Graphics.Canvas.CanvasAlphaMode</codeEntityReference>s</entry>
+              <entry>Notes</entry>
+            </row>
+          </tableHeader>
+          <row>
+            <entry>B8G8R8A8UIntNormalized</entry>
+            <entry>Premultiplied, Ignore</entry>
+            <entry>The default format</entry>
+          </row>
+          <row>
+            <entry>B8G8R8A8UIntNormalizedSrgb</entry>
+            <entry>Premultiplied, Ignore</entry>
+            <entry>Not supported on all devices</entry>
+          </row>
+          <row>
+            <entry>R8G8B8A8UIntNormalized</entry>
+            <entry>Premultiplied, Ignore</entry>
+            <entry/>
+          </row>
+          <row>
+            <entry>R8G8B8A8UIntNormalizedSrgb</entry>
+            <entry>Premultiplied, Ignore</entry>
+            <entry>Not supported on all devices</entry>
+          </row>
+          <row>
+            <entry>R16G16B16A16Float</entry>
+            <entry>Premultiplied, Ignore</entry>
+            <entry>Not supported on all devices</entry>
+          </row>
+          <row>
+            <entry>R32G32B32A32Float</entry>
+            <entry>Premultiplied, Ignore</entry>
+            <entry>Not supported on all devices</entry>
+          </row>
+          <row>
+            <entry>R16G16B16A16UIntNormalized</entry>
+            <entry>Premultiplied, Ignore</entry>
+            <entry>Not supported on all devices</entry>
+          </row>
+          <row>
+            <entry>A8UIntNormalized</entry>
+            <entry>Premultiplied, Straight</entry>
+            <entry/>
+          </row>
+        </table>
+      </content>
+    </section>
+
+    <section>
+      <title>CanvasSwapChain formats</title>
+      <content>
+        <table>
+          <tableHeader>
+            <row>
+              <entry><codeEntityReference>T:Microsoft.Graphics.Canvas.DirectX.DirectXPixelFormat</codeEntityReference></entry>
+              <entry>Compatible <codeEntityReference>T:Microsoft.Graphics.Canvas.CanvasAlphaMode</codeEntityReference>s</entry>
+              <entry>Notes</entry>
+            </row>
+          </tableHeader>
+          <row>
+            <entry>B8G8R8A8UIntNormalized</entry>
+            <entry>Premultiplied, Ignore</entry>
+            <entry>The default format</entry>
+          </row>
+          <row>
+            <entry>R8G8B8A8UIntNormalized</entry>
+            <entry>Premultiplied, Ignore</entry>
+            <entry/>
+          </row>
+          <row>
+            <entry>R16G16B16A16Float</entry>
+            <entry>Premultiplied, Ignore</entry>
+            <entry>Not supported on all devices</entry>
+          </row>
+        </table>
+      </content>
+    </section>
+
+  </developerConceptualDocument>
+</topic>

@@ -77,8 +77,8 @@ namespace ExampleGallery
 
 
         private SweepRenderer sweepRenderer;
-        private UpdatesPerDrawRenderer updatesPerDrawRenderer;
-        private TouchPointsRenderer touchPointsRenderer;
+        private UpdatesPerDrawRenderer updatesPerDrawRenderer = new UpdatesPerDrawRenderer();
+        private TouchPointsRenderer touchPointsRenderer = new TouchPointsRenderer();
         private bool step = false;
 
         public enum TimestepTypeOption
@@ -98,8 +98,6 @@ namespace ExampleGallery
         private async Task Canvas_CreateResourcesAsync(CanvasAnimatedControl sender)
         {
             sweepRenderer = await SweepRenderer.Create(sender);
-            updatesPerDrawRenderer = new UpdatesPerDrawRenderer();
-            touchPointsRenderer = new TouchPointsRenderer();
         }
 
         private const float width = 1000;

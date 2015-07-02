@@ -34,7 +34,13 @@ under the License.
         <p>The input pixel intensity is represented as C. The output pixel intensity, C' is calculated as follows:</p>
         <p>For a value C, pick a value k, such that: k/N &lt;= C &lt; (k+1)/N</p>
         <p>The output C' is calculated using the equation: C' = Vk</p>
-        <p>This effect works on straight and premultiplied alpha images. It outputs premultiplied alpha.</p>
+        <p>
+          Effect inputs and outputs are assumed to be in
+          <a href="PremultipliedAlpha.htm">premultiplied alpha</a> format, but this 
+          effect operates internally on straight alpha data, so its input values will be 
+          unpremultiplied, then the transfer function applied, and finally the result 
+          converted back to premultiplied format.
+        </p>
         <p>This Windows Runtime type corresponds to the 
           <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/hh706329.aspx">D2D Discrete transfer effect</a>.</p>
       </remarks>

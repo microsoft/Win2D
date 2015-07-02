@@ -44,7 +44,9 @@ under the License.
         </TextBlock>
 
         <canvas:CanvasAnimatedControl x:Name="animatedControl" ClearColor="CornflowerBlue" Grid.Row="1"
-                                      Loaded="OnLoaded" CreateResources="OnCreateResources" 
+                                      GameLoopStarting="OnGameLoopStarting"
+                                      GameLoopStopped="OnGameLoopStopped"
+                                      CreateResources="OnCreateResources" 
                                       Update="OnUpdate" Draw="OnDraw" />
 
         <TextBlock Grid.Row="2" Margin="5" Style="{ThemeResource BaseTextBlockStyle}">

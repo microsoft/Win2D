@@ -28,7 +28,6 @@ namespace ExampleGallery
 {
     public sealed partial class CameraEffectExample : UserControl, ICustomThumbnailSource
     {
-        private IPropertySet effectConfiguration;
         private MediaCapture mediaCapture;
         private IRandomAccessStream thumbnail;
         private TaskCompletionSource<object> hasLoaded = new TaskCompletionSource<object>();
@@ -51,21 +50,15 @@ namespace ExampleGallery
             this.InitializeComponent();
         }
 
-        private async void OnUnloaded(object sender, RoutedEventArgs e)
+        private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            try
-            { 
-                await mediaCapture.StopPreviewAsync();
-            }
-            catch (Exception)
-            {
-                // Any errors indicate that camera capture was already not active.
-            }
+            var action = mediaCapture.StopPreviewAsync();
+            mediaCapture.Failed -= mediaCapture_Failed;
         }
 
-        private async void mediaCapture_Failed(MediaCapture sender, MediaCaptureFailedEventArgs errorEventArgs)
+        private void mediaCapture_Failed(MediaCapture sender, MediaCaptureFailedEventArgs errorEventArgs)
         {
-            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            var action = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
                 progressText.Text = "MediaCapture failed: " + errorEventArgs.Message;
                 progressText.Visibility = Visibility.Visible;
@@ -78,7 +71,25 @@ namespace ExampleGallery
             this.captureElement.Visibility = Visibility.Collapsed;
             this.progressRing.IsActive = true;
 
-            effectConfiguration = new PropertySet();
+            await CreateMediaCapture();
+
+            if (ThumbnailGenerator.IsDrawingThumbnail)
+            {
+                await SetEffectWorker(rotatingTilesEffect);
+                var stream = new InMemoryRandomAccessStream();
+                await mediaCapture.CapturePhotoToStreamAsync(ImageEncodingProperties.CreateJpeg(), stream);
+                thumbnail = stream;
+            }
+
+            this.captureElement.Visibility = Visibility.Visible;
+            this.progressRing.IsActive = false;
+            this.progressRing.Visibility = Visibility.Collapsed;
+
+            hasLoaded.SetResult(null);
+        }
+
+        private async Task CreateMediaCapture()
+        {
             mediaCapture = new MediaCapture();
             mediaCapture.Failed += mediaCapture_Failed;
 
@@ -102,20 +113,6 @@ namespace ExampleGallery
 
             captureElement.Source = mediaCapture;
             await mediaCapture.StartPreviewAsync();
-
-            if (ThumbnailGenerator.IsDrawingThumbnail)
-            {
-                await SetEffectWorker(rotatingTilesEffect);
-                var stream = new InMemoryRandomAccessStream();
-                await mediaCapture.CapturePhotoToStreamAsync(ImageEncodingProperties.CreateJpeg(), stream);
-                thumbnail = stream;
-            }
-
-            this.captureElement.Visibility = Visibility.Visible;
-            this.progressRing.IsActive = false;
-            this.progressRing.Visibility = Visibility.Collapsed;
-
-            hasLoaded.SetResult(null);
         }
 
         private async Task ResetEffectsAsync()
@@ -131,14 +128,14 @@ namespace ExampleGallery
             get { return thumbnail; }
         }
 
-        private async void EffectCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void EffectCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             string effect = noEffect;
 
             if (e.AddedItems.Count != 0)
                 effect = (string)e.AddedItems[0];
 
-            await SetEffect(effect);
+            var task = SetEffect(effect);
         }
 
         private async Task SetEffect(string effect)
@@ -171,7 +168,7 @@ namespace ExampleGallery
                 return;
 
             await mediaCapture.AddVideoEffectAsync(
-                new VideoEffectDefinition(typeName, effectConfiguration),
+                new VideoEffectDefinition(typeName, new PropertySet()),
                 MediaStreamType.VideoPreview);
         }
     }

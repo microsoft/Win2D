@@ -355,6 +355,15 @@ class CallCounterWithMock : public CallCounter<TRAITS>
     std::function<FN> m_mock;
 
 public:
+    CallCounterWithMock()
+    {
+    }
+
+    CallCounterWithMock(std::wstring name)
+        : CallCounter(name)
+    {
+    }
+
     void AllowAnyCall(std::function<FN> mock = nullptr)
     {
         CallCounter::AllowAnyCall();

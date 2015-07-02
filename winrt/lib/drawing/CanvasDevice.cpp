@@ -14,6 +14,14 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
+    DefaultDeviceResourceCreationAdapter::DefaultDeviceResourceCreationAdapter()
+    {
+        HSTRING stringActivableClassId = 
+            Wrappers::HStringReference(RuntimeClass_Windows_Foundation_PropertyValue).Get();
+
+        ThrowIfFailed(GetActivationFactory(stringActivableClassId, &m_propertyValueStatics));
+    }
+
     //
     // This implementation of the adapter does the normal thing, and calls into
     // D2D. It is separated out so tests can inject their own implementation.
@@ -35,20 +43,24 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
     bool DefaultDeviceResourceCreationAdapter::TryCreateD3DDevice(
-        CanvasHardwareAcceleration hardwareAcceleration, 
+        bool useSoftwareRenderer,
+        bool useDebugD3DDevice,
         ComPtr<ID3D11Device>* device)
     {
-        assert(hardwareAcceleration == CanvasHardwareAcceleration::On || hardwareAcceleration == CanvasHardwareAcceleration::Off);
+        D3D_DRIVER_TYPE driverType = useSoftwareRenderer ? D3D_DRIVER_TYPE_WARP : D3D_DRIVER_TYPE_HARDWARE;
 
-        D3D_DRIVER_TYPE driverType = 
-            hardwareAcceleration == CanvasHardwareAcceleration::On ? D3D_DRIVER_TYPE_HARDWARE : D3D_DRIVER_TYPE_WARP;
+        UINT deviceFlags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
+        if (useDebugD3DDevice)
+        {
+            deviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
+        }
 
         ComPtr<ID3D11Device> createdDevice;
         if (SUCCEEDED(D3D11CreateDevice(
             NULL, // adapter
             driverType,
             NULL, // software handle
-            D3D11_CREATE_DEVICE_BGRA_SUPPORT,
+            deviceFlags,
             NULL, // feature level array
             0,  // feature level count
             D3D11_SDK_VERSION,
@@ -99,6 +111,22 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return device;
     }
 
+
+    ComPtr<ICoreApplication> DefaultDeviceResourceCreationAdapter::GetCoreApplication()
+    {
+        ComPtr<ICoreApplication> coreApplication;
+        ThrowIfFailed(GetActivationFactory(
+            HStringReference(RuntimeClass_Windows_ApplicationModel_Core_CoreApplication).Get(),
+            &coreApplication));
+
+        return coreApplication;
+    }
+
+    ComPtr<IPropertyValueStatics> DefaultDeviceResourceCreationAdapter::GetPropertyValueStatics()
+    {
+        return m_propertyValueStatics;
+    }
+
     //
     // CanvasDeviceManager
     //
@@ -121,42 +149,48 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         std::shared_ptr<ICanvasDeviceResourceCreationAdapter> adapter)
         : m_adapter(adapter)
     {
+        m_debugLevel = LoadDebugLevelProperty();
+    }
+
+    CanvasDeviceManager::~CanvasDeviceManager()
+    {
+        // 
+        // Commit the debug level property back into the application properties.
+        //
+        SaveDebugLevelProperty(m_debugLevel);
     }
 
 
     ComPtr<CanvasDevice> CanvasDeviceManager::CreateNew(
-        CanvasDebugLevel debugLevel, 
-        CanvasHardwareAcceleration requestedHardwareAcceleration)
+        bool forceSoftwareRenderer)
     {
-        ThrowIfInvalid(debugLevel);
+        auto debugLevel = GetDebugLevel();
 
         auto d2dFactory = m_adapter->CreateD2DFactory(debugLevel);
 
-        return CreateNew(debugLevel, requestedHardwareAcceleration, d2dFactory.Get());
+        bool useD3DDebugDevice = debugLevel != CanvasDebugLevel::None;
+
+        return CreateNew(forceSoftwareRenderer, useD3DDebugDevice, d2dFactory.Get());
     }
 
 
     ComPtr<CanvasDevice> CanvasDeviceManager::CreateNew(
-        CanvasDebugLevel debugLevel,
-        CanvasHardwareAcceleration requestedHardwareAcceleration,
+        bool forceSoftwareRenderer,
+        bool useD3DDebugDevice,
         ID2D1Factory2* d2dFactory)
     {
-        ThrowIfInvalid(debugLevel);
         CheckInPointer(d2dFactory);
 
-        CanvasHardwareAcceleration hardwareAcceleration;
-
         auto dxgiDevice = MakeDXGIDevice(
-            requestedHardwareAcceleration,
-            &hardwareAcceleration);
+            forceSoftwareRenderer,
+            useD3DDebugDevice);
 
         ComPtr<ID2D1Device1> d2dDevice;
         ThrowIfFailed(d2dFactory->CreateDevice(dxgiDevice.Get(), &d2dDevice));
         
         auto device = Make<CanvasDevice>(
             shared_from_this(), 
-            debugLevel,
-            hardwareAcceleration,
+            forceSoftwareRenderer,
             dxgiDevice.Get(),
             d2dDevice.Get());
         CheckMakeResult(device);
@@ -166,23 +200,20 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     
     ComPtr<CanvasDevice> CanvasDeviceManager::CreateNew(
-        CanvasDebugLevel debugLevel,
         IDirect3DDevice* direct3DDevice)
     {
-        ThrowIfInvalid(debugLevel);
         CheckInPointer(direct3DDevice);
-        auto d2dFactory = m_adapter->CreateD2DFactory(debugLevel);
 
-        return CreateNew(debugLevel, direct3DDevice, d2dFactory.Get());
+        auto d2dFactory = m_adapter->CreateD2DFactory(GetDebugLevel());
+
+        return CreateNew(direct3DDevice, d2dFactory.Get());
     }
 
 
     ComPtr<CanvasDevice> CanvasDeviceManager::CreateNew(
-        CanvasDebugLevel debugLevel,
         IDirect3DDevice* direct3DDevice,
         ID2D1Factory2* d2dFactory)
     {
-        ThrowIfInvalid(debugLevel);
         CheckInPointer(direct3DDevice);
         CheckInPointer(d2dFactory);
 
@@ -197,8 +228,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         
         auto device = Make<CanvasDevice>(
             shared_from_this(), 
-            debugLevel, 
-            CanvasHardwareAcceleration::Unknown,
+            false, // Do not force software renderer
             dxgiDevice.Get(), 
             d2dDevice.Get());
         CheckMakeResult(device);
@@ -214,8 +244,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         auto canvasDevice = Make<CanvasDevice>(
             shared_from_this(),
-            CanvasDebugLevel::None,
-            CanvasHardwareAcceleration::Unknown,
+            false, // Do not force software renderer
             dxgiDevice.Get(),
             d2dDevice);
         CheckMakeResult(canvasDevice);
@@ -225,64 +254,36 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
 
     ComPtr<IDXGIDevice3> CanvasDeviceManager::MakeDXGIDevice(
-        CanvasHardwareAcceleration requestedHardwareAcceleration,
-        CanvasHardwareAcceleration* actualHardwareAccelerationOut) const
+        bool forceSoftwareRenderer,
+        bool useDebugD3DDevice) const
     {
-        assert(actualHardwareAccelerationOut);
-        *actualHardwareAccelerationOut = CanvasHardwareAcceleration::Unknown;
-
-        CanvasHardwareAcceleration actualHardwareAcceleration = CanvasHardwareAcceleration::Unknown;
-
-        ComPtr<ID3D11Device> d3dDevice = MakeD3D11Device(
-            requestedHardwareAcceleration,
-            &actualHardwareAcceleration);
+        ComPtr<ID3D11Device> d3dDevice = MakeD3D11Device(forceSoftwareRenderer, useDebugD3DDevice);
 
         ComPtr<IDXGIDevice3> dxgiDevice;
         ThrowIfFailed(d3dDevice.As(&dxgiDevice));
-
-        *actualHardwareAccelerationOut = actualHardwareAcceleration;
 
         return dxgiDevice;
     }
 
 
     ComPtr<ID3D11Device> CanvasDeviceManager::MakeD3D11Device(
-        CanvasHardwareAcceleration requestedHardwareAcceleration,
-        CanvasHardwareAcceleration* actualHardwareAccelerationOut) const
+        bool forceSoftwareRenderer,
+        bool useDebugD3DDevice) const
     {
-        assert(actualHardwareAccelerationOut);
-
         ComPtr<ID3D11Device> d3dDevice;
 
-        switch (requestedHardwareAcceleration)
+        if (m_adapter->TryCreateD3DDevice(forceSoftwareRenderer, useDebugD3DDevice, &d3dDevice))
         {
-        case CanvasHardwareAcceleration::Auto:
-            if (m_adapter->TryCreateD3DDevice(CanvasHardwareAcceleration::On, &d3dDevice))
+            return d3dDevice;
+        }
+
+        if (!forceSoftwareRenderer)
+        {
+            // try again using the software renderer
+            if (m_adapter->TryCreateD3DDevice(true, useDebugD3DDevice, &d3dDevice))
             {
-                *actualHardwareAccelerationOut = CanvasHardwareAcceleration::On;
                 return d3dDevice;
             }
-
-            if (m_adapter->TryCreateD3DDevice(CanvasHardwareAcceleration::Off, &d3dDevice))
-            {
-                *actualHardwareAccelerationOut = CanvasHardwareAcceleration::Off;
-                return d3dDevice;
-            }
-
-            break;
-
-        case CanvasHardwareAcceleration::On:
-        case CanvasHardwareAcceleration::Off:
-            if (m_adapter->TryCreateD3DDevice(requestedHardwareAcceleration, &d3dDevice))
-            {
-                *actualHardwareAccelerationOut = requestedHardwareAcceleration;
-                return d3dDevice;
-            }
-
-            break;
-
-        default:
-            ThrowHR(E_INVALIDARG);
         }
 
         // If we end up here then we failed to create a d3d device
@@ -290,18 +291,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
     ComPtr<ICanvasDevice> CanvasDeviceManager::GetSharedDevice(
-        CanvasHardwareAcceleration hardwareAcceleration)
+        bool forceSoftwareRenderer)
     {
-        if (hardwareAcceleration == CanvasHardwareAcceleration::Unknown)
-            ThrowHR(E_INVALIDARG, HStringReference(Strings::HardwareAccelerationUnknownIsNotValid).Get());
-
         //
         // This code, unlike other non-control APIs, cannot rely on the D2D
         // API lock. CanvasDeviceManager keeps its own lock for this purpose.
         //
         Lock lock(m_mutex);
 
-        int cacheIndex = static_cast<int>(hardwareAcceleration);
+        int cacheIndex = forceSoftwareRenderer ? 1 : 0;
         assert(cacheIndex < _countof(m_sharedDevices));
 
         //
@@ -321,7 +319,16 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         if (!m_sharedDevices[cacheIndex])
         {
-            auto newDevice = Create(CanvasDebugLevel::None, hardwareAcceleration);
+            //
+            // Any new devices we create here will honor the debug 
+            // level set at the time.
+            // But existing devices that we return do not need to match
+            // the debug level.
+            // This goes along with the debug level option not having
+            // retro-active behavior, and the fact that we expect apps to set the 
+            // debug level at start-up, before creating any devices.
+            //
+            auto newDevice = Create(forceSoftwareRenderer);
             m_sharedDevices[cacheIndex] = AsWeak(newDevice.Get());
             return newDevice;
         }
@@ -330,7 +337,86 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             assert(device);
             return device;
         }
+    }
 
+    CanvasDeviceManager::PropertyData CanvasDeviceManager::GetDebugLevelPropertyData()
+    {
+        auto coreApplication = m_adapter->GetCoreApplication();
+
+        ComPtr<IPropertySet> properties;
+        ThrowIfFailed(coreApplication->get_Properties(
+            &properties));
+
+        ComPtr<IMap<HSTRING, IInspectable*>> propertyMap;
+        ThrowIfFailed(properties.As(&propertyMap));
+
+        // This function's decorated name is simply used as a key.
+        HStringReference keyName(TEXT(__FUNCDNAME__));
+        ComPtr<IInspectable> inspectableDebugLevelPropertyHolder;
+
+        HRESULT hr = propertyMap->Lookup(keyName.Get(), &inspectableDebugLevelPropertyHolder);
+
+        PropertyData ret = { keyName, propertyMap, inspectableDebugLevelPropertyHolder, hr };
+        return ret;
+    }
+
+    void CanvasDeviceManager::StoreValueToPropertyKey(PropertyData key, CanvasDebugLevel debugLevel)
+    {
+        uint32_t value = static_cast<uint32_t>(debugLevel);
+        ComPtr<IPropertyValue> debugLevelPropertyHolder;
+        ThrowIfFailed(m_adapter->GetPropertyValueStatics()->CreateUInt32(value, &debugLevelPropertyHolder));
+
+        boolean inserted = false; // unused
+        ThrowIfFailed(key.PropertyMap->Insert(key.KeyName.Get(), debugLevelPropertyHolder.Get(), &inserted));
+    }
+
+    CanvasDebugLevel CanvasDeviceManager::LoadDebugLevelProperty()
+    {
+        auto propertyData = GetDebugLevelPropertyData();
+
+        if (SUCCEEDED(propertyData.LookupResult))
+        {
+            ComPtr<IPropertyValue> debugLevelPropertyHolder;
+            debugLevelPropertyHolder = static_cast<IPropertyValue*>(propertyData.PropertyHolder.Get());
+
+            uint32_t value;
+            ThrowIfFailed(debugLevelPropertyHolder->GetUInt32(&value));
+            return static_cast<CanvasDebugLevel>(value);
+        }
+        else
+        {
+            //
+            // If we couldn't load the property, create a new one and initialize it to None.
+            //
+            StoreValueToPropertyKey(propertyData, CanvasDebugLevel::None);
+            return CanvasDebugLevel::None;
+        }
+    }
+
+    void CanvasDeviceManager::SaveDebugLevelProperty(CanvasDebugLevel debugLevel)
+    {
+        StoreValueToPropertyKey(GetDebugLevelPropertyData(), debugLevel);
+    }
+
+    CanvasDebugLevel CanvasDeviceManager::GetDebugLevel()
+    {
+        //
+        // m_debugLevel requires synchronization. One option might be use the existing mutex
+        // in CanvasDeviceManager- except GetSharedDevice already uses that lock to control
+        // cached devices, and the new device construction path also needs to look up the
+        // debug level. 
+        //
+        // Rather than complicate things to accomodate this, we use a
+        // std::atomic member to do this simple synchronization.
+        //
+        auto ret = m_debugLevel.load();
+
+        return ret;
+    }
+
+    void CanvasDeviceManager::SetDebugLevel(CanvasDebugLevel const& value)
+    {
+        m_debugLevel.store(value);
     }
 
 
@@ -344,19 +430,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return std::make_shared<CanvasDeviceManager>(adapter);
     }
 
-    IFACEMETHODIMP CanvasDeviceFactory::CreateWithDebugLevel(
-        CanvasDebugLevel debugLevel,
-        ICanvasDevice** canvasDevice)
-    {
-        return CreateWithDebugLevelAndHardwareAcceleration(
-            debugLevel,
-            CanvasHardwareAcceleration::Auto,
-            canvasDevice);
-    }
-
-    IFACEMETHODIMP CanvasDeviceFactory::CreateWithDebugLevelAndHardwareAcceleration(
-        CanvasDebugLevel debugLevel,
-        CanvasHardwareAcceleration hardwareAcceleration,
+    IFACEMETHODIMP CanvasDeviceFactory::CreateWithForceSoftwareRendererOption(
+        boolean forceSoftwareRenderer,
         ICanvasDevice** canvasDevice)
     {
         return ExceptionBoundary(
@@ -364,7 +439,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             {
                 CheckAndClearOutPointer(canvasDevice);
                 
-                auto newCanvasDevice = GetManager()->Create(debugLevel, hardwareAcceleration);
+                auto newCanvasDevice = GetManager()->Create(!!forceSoftwareRenderer);
                 
                 ThrowIfFailed(newCanvasDevice.CopyTo(canvasDevice));
             });
@@ -372,7 +447,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     IFACEMETHODIMP CanvasDeviceFactory::CreateFromDirect3D11Device(
         IDirect3DDevice* direct3DDevice,
-        CanvasDebugLevel debugLevel,
         ICanvasDevice** canvasDevice)
     {
         return ExceptionBoundary(
@@ -381,7 +455,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 CheckInPointer(direct3DDevice);
                 CheckAndClearOutPointer(canvasDevice);
 
-                auto newCanvasDevice = GetManager()->Create(debugLevel, direct3DDevice);
+                auto newCanvasDevice = GetManager()->Create(direct3DDevice);
 
                 ThrowIfFailed(newCanvasDevice.CopyTo(canvasDevice));
             });
@@ -396,15 +470,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             CheckAndClearOutPointer(object);
 
             auto newCanvasDevice = GetManager()->Create(
-                CanvasDebugLevel::None,
-                CanvasHardwareAcceleration::Auto);
+                false); // Do not force software renderer
 
             ThrowIfFailed(newCanvasDevice.CopyTo(object));
         });
     }
 
     IFACEMETHODIMP CanvasDeviceFactory::GetSharedDevice(
-        CanvasHardwareAcceleration hardwareAcceleration,
+        boolean forceSoftwareRenderer,
         ICanvasDevice** device)
     {
         return ExceptionBoundary(
@@ -412,9 +485,28 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             {
                 CheckAndClearOutPointer(device);
 
-                auto sharedDevice = GetManager()->GetSharedDevice(hardwareAcceleration);
+                auto sharedDevice = GetManager()->GetSharedDevice(!!forceSoftwareRenderer);
 
                 ThrowIfFailed(sharedDevice.CopyTo(device));
+            });
+    }
+
+    IFACEMETHODIMP CanvasDeviceFactory::put_DebugLevel(CanvasDebugLevel debugLevel)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                GetManager()->SetDebugLevel(debugLevel);
+            });
+    }
+
+    IFACEMETHODIMP CanvasDeviceFactory::get_DebugLevel(CanvasDebugLevel* debugLevel)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckInPointer(debugLevel);
+                *debugLevel = GetManager()->GetDebugLevel();
             });
     }
 
@@ -424,13 +516,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     CanvasDevice::CanvasDevice(
         std::shared_ptr<CanvasDeviceManager> deviceManager,
-        CanvasDebugLevel debugLevel,
-        CanvasHardwareAcceleration hardwareAcceleration,
+        bool forceSoftwareRenderer,
         IDXGIDevice3* dxgiDevice,
         ID2D1Device1* d2dDevice)
         : ResourceWrapper(deviceManager, d2dDevice)
-        , m_hardwareAcceleration(hardwareAcceleration)
-        , m_debugLevel(debugLevel)
+        , m_forceSoftwareRenderer(forceSoftwareRenderer)
         , m_dxgiDevice(dxgiDevice)
     {
         CheckInPointer(dxgiDevice);
@@ -455,14 +545,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return d2dDerivedFactory;
     }
 
-    IFACEMETHODIMP CanvasDevice::get_HardwareAcceleration(_Out_ CanvasHardwareAcceleration *value)
+    IFACEMETHODIMP CanvasDevice::get_ForceSoftwareRenderer(boolean *value)
     {
         return ExceptionBoundary(
             [&]
             {
                 CheckInPointer(value);
                 GetResource();  // this ensures that Close() hasn't been called
-                *value = m_hardwareAcceleration;
+                *value = m_forceSoftwareRenderer;
                 return S_OK;
             });
     }
@@ -540,7 +630,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ExceptionBoundary(
             [&]
             {
-                GetResource();  // this ensures that Close() hasn't been called
+                if (SUCCEEDED(GetDeviceRemovedErrorCode())) // Also ensures that Close() hasn't been called
+                {
+                    ThrowHR(E_INVALIDARG, HStringReference(Strings::DeviceExpectedToBeLost).Get());
+                }
 
                 ThrowIfFailed(m_deviceLostEventList.InvokeAll(this, nullptr));
             });
@@ -954,7 +1047,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     void CanvasDevice::InitializePrimaryOutput(IDXGIDevice3* dxgiDevice)
     {
         //
-        // Creating a CanvasDevice using CanvasHardwareAcceleration::Off 
+        // Creating a CanvasDevice using forceSoftwareRenderer==true
         // creates a 'render-only' WARP device, which cannot be used to 
         // enumerate outputs.
         //

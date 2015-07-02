@@ -15,6 +15,12 @@
 using namespace Microsoft::Graphics::Canvas;
 using namespace WinRTDirectX;
 
+CanvasDebugLevel allDebugLevels[] = {
+    CanvasDebugLevel::Error,
+    CanvasDebugLevel::Warning,
+    CanvasDebugLevel::Information,
+    CanvasDebugLevel::None };
+
 TEST_CLASS(CanvasDeviceTests)
 {
     //
@@ -29,30 +35,29 @@ TEST_CLASS(CanvasDeviceTests)
     {
         //
         // Unlike the unit tests, this uses actual D2D/D3D device creation. 
-        // Therefore, we want to cover each of {D2D debug layer on, off} and {D3D HW, SW}
+        // Therefore, we want to cover each of D3D HW and SW.
         //
 
         CanvasDevice^ canvasDevice = ref new CanvasDevice();
-        Assert::AreEqual(CanvasHardwareAcceleration::On, canvasDevice->HardwareAcceleration);
+        Assert::IsFalse(canvasDevice->ForceSoftwareRenderer);
         Assert::IsNotNull(GetDXGIDevice(canvasDevice).Get());
 
-        canvasDevice = ref new CanvasDevice(CanvasDebugLevel::Information);
-        Assert::AreEqual(CanvasHardwareAcceleration::On, canvasDevice->HardwareAcceleration);
-        Assert::IsNotNull(GetDXGIDevice(canvasDevice).Get());
-
-        canvasDevice = ref new CanvasDevice(CanvasDebugLevel::Warning, CanvasHardwareAcceleration::Off);
-        Assert::AreEqual(CanvasHardwareAcceleration::Off, canvasDevice->HardwareAcceleration);
+        canvasDevice = ref new CanvasDevice(true);
+        Assert::IsTrue(canvasDevice->ForceSoftwareRenderer);
         Assert::IsNotNull(GetDXGIDevice(canvasDevice).Get());
 
         IDirect3DDevice^ direct3DDevice = canvasDevice;
         canvasDevice = CanvasDevice::CreateFromDirect3D11Device(
-            direct3DDevice,
-            CanvasDebugLevel::None);
-        Assert::AreEqual(CanvasHardwareAcceleration::Unknown, canvasDevice->HardwareAcceleration);
+            direct3DDevice);
+        //
+        // Devices created using Direct3D interop have the convention of always
+        // ForceSoftwareRenderer == false.
+        //
+        Assert::IsFalse(canvasDevice->ForceSoftwareRenderer);
 
         delete canvasDevice;
             
-        ExpectObjectClosed([&]{ canvasDevice->HardwareAcceleration; });
+        ExpectObjectClosed([&]{ canvasDevice->ForceSoftwareRenderer; });
         ExpectObjectClosed([&]{ canvasDevice->MaximumBitmapSizeInPixels; });
         ExpectObjectClosed([&]{ GetDXGIDevice(canvasDevice); });
     }
@@ -79,21 +84,26 @@ TEST_CLASS(CanvasDeviceTests)
         Assert::AreEqual(originalD2DDevice.Get(), newD2DDevice.Get());
     }
 
-    TEST_METHOD(CanvasDevice_GetSharedDevice_UnknownNotAllowed)
-    {        
-        Assert::ExpectException<Platform::InvalidArgumentException^>(
-            [&]
-            {
-                CanvasDevice::GetSharedDevice(CanvasHardwareAcceleration::Unknown);
-            });
-    }
-
     TEST_METHOD(CanvasDevice_GetSharedDevice_ReturnsExisting)
     {
-        auto d1 = CanvasDevice::GetSharedDevice(CanvasHardwareAcceleration::On);
+        auto d1 = CanvasDevice::GetSharedDevice(false);
 
-        auto d2 = CanvasDevice::GetSharedDevice(CanvasHardwareAcceleration::On);
+        auto d2 = CanvasDevice::GetSharedDevice(false);
 
         Assert::AreEqual(d1, d2);
+    }
+
+    TEST_METHOD(CanvasDevice_DefaultDebugLevel)
+    {
+        Assert::AreEqual(CanvasDebugLevel::None, CanvasDevice::DebugLevel);
+    }
+
+    TEST_METHOD(CanvasDevice_SetAndGetDebugLevels)
+    {
+        for (auto debugLevel : allDebugLevels)
+        {
+            CanvasDevice::DebugLevel = debugLevel;
+            Assert::AreEqual(debugLevel, CanvasDevice::DebugLevel);
+        }
     }
 };

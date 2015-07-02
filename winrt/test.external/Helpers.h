@@ -170,7 +170,6 @@ namespace Microsoft
                 return value.ToString()->Data();                    \
             }
             
-            CX_VALUE_TO_STRING(Microsoft::Graphics::Canvas::CanvasHardwareAcceleration);
             CX_VALUE_TO_STRING(Microsoft::Graphics::Canvas::Geometry::CanvasCapStyle);
             CX_VALUE_TO_STRING(Microsoft::Graphics::Canvas::Geometry::CanvasLineJoin);
             CX_VALUE_TO_STRING(Microsoft::Graphics::Canvas::Geometry::CanvasDashStyle);
@@ -253,6 +252,19 @@ namespace Microsoft
                     case CanvasSwapChainRotation::Rotate180: return L"CanvasSwapChainRotation::Rotate180";
                     case CanvasSwapChainRotation::Rotate270: return L"CanvasSwapChainRotation::Rotate270";
                     default: assert(false); return L"<unknown CanvasSwapChainRotation>";
+                }
+            }
+
+            template<>
+            inline std::wstring ToString<CanvasDebugLevel>(CanvasDebugLevel const& value)
+            {
+                switch (value)
+                {
+                    case CanvasDebugLevel::None: return L"CanvasDebugLevel::None";
+                    case CanvasDebugLevel::Error: return L"CanvasDebugLevel::Error";
+                    case CanvasDebugLevel::Warning: return L"CanvasDebugLevel::Warning";
+                    case CanvasDebugLevel::Information: return L"CanvasDebugLevel::Information";
+                    default: assert(false); return L"<unknown CanvasDebugLevel>";
                 }
             }
 

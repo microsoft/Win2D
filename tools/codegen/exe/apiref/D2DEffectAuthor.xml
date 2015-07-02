@@ -148,7 +148,7 @@ under the License.
             <Field Name="destinationBlend" Type="D2D1::BLEND"/>
             <Field Name="blendOperation" Type="D2D1::BLEND_OPERATION"/>
             <Field Name="sourceBlendAlpha" Type="D2D1::BLEND"/>
-            <Field Name="destinationBlendAlpha" Type="D2D1::BLEND"/>
+            <Field Name="destinationBlendAlpha" Type="D2D1:BLEND"/>
             <Field Name="blendOperationAlpha" Type="D2D1::BLEND_OPERATION"/>
             <Field Name="blendFactor">
                 <Type Name="FLOAT">

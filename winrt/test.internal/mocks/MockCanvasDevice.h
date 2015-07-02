@@ -82,13 +82,15 @@ namespace canvas
 
         CALL_COUNTER_WITH_MOCK(GetDeviceRemovedErrorCodeMethod, HRESULT());
 
+        CALL_COUNTER_WITH_MOCK(IsDeviceLostMethod, HRESULT(int, boolean*));
+
         //
         // ICanvasDevice
         //
 
-        IFACEMETHODIMP get_HardwareAcceleration(CanvasHardwareAcceleration *) override
+        IFACEMETHODIMP get_ForceSoftwareRenderer(boolean *) override
         {
-            Assert::Fail(L"Unexpected call to get_HardwareAcceleration");
+            Assert::Fail(L"Unexpected call to get_ForceSoftwareRenderer");
             return E_NOTIMPL;
         }
 
@@ -115,8 +117,7 @@ namespace canvas
             int hresult,
             boolean* value)
         {
-            Assert::Fail(L"Unexpected call to IsDeviceLost");
-            return E_NOTIMPL;
+            return IsDeviceLostMethod.WasCalled(hresult, value);
         }
 
         IFACEMETHODIMP RaiseDeviceLost()

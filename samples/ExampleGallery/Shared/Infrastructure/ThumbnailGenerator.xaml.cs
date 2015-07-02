@@ -408,7 +408,7 @@ namespace ExampleGallery
 
             static Rect CropCapturedBitmap(CanvasBitmap capturedBitmap, Color[] pixelColors)
             {
-                Debug.Assert(capturedBitmap.Dpi == 96, "The following code mixes up dips and pixels in ways that are only valid if these units are the same.");
+                Debug.Assert(capturedBitmap.Dpi == 96, "The following code mixes up DIPs and pixels in ways that are only valid if these units are the same.");
 
                 Rect rect = capturedBitmap.Bounds;
                 uint stride = capturedBitmap.SizeInPixels.Width;

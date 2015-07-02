@@ -1,0 +1,71 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License"); you may
+// not use these files except in compliance with the License. You may obtain
+// a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+// WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+// License for the specific language governing permissions and limitations
+// under the License.
+
+// This file was automatically generated. Please do not edit it manually.
+
+#if (defined _WIN32_WINNT_WIN10) && (WINVER >= _WIN32_WINNT_WIN10)
+
+namespace Microsoft.Graphics.Canvas.Effects
+{
+    runtimeclass HighlightsAndShadowsEffect;
+
+    [version(VERSION), uuid(7F90BE14-267E-5088-BC36-2E0AAD869B52), exclusiveto(HighlightsAndShadowsEffect)]
+    interface IHighlightsAndShadowsEffect : IInspectable
+        requires Microsoft.Graphics.Canvas.ICanvasImage
+    {
+        [propget]
+        HRESULT Highlights([out, retval] float* value);
+
+        [propput]
+        HRESULT Highlights([in] float value);
+
+        [propget]
+        HRESULT Shadows([out, retval] float* value);
+
+        [propput]
+        HRESULT Shadows([in] float value);
+
+        [propget]
+        HRESULT Clarity([out, retval] float* value);
+
+        [propput]
+        HRESULT Clarity([in] float value);
+
+        [propget]
+        HRESULT MaskBlurAmount([out, retval] float* value);
+
+        [propput]
+        HRESULT MaskBlurAmount([in] float value);
+
+        [propget]
+        HRESULT SourceIsLinearGamma([out, retval] boolean* value);
+
+        [propput]
+        HRESULT SourceIsLinearGamma([in] boolean value);
+
+        [propget]
+        HRESULT Source([out, retval] IGRAPHICSEFFECTSOURCE** source);
+
+        [propput]
+        HRESULT Source([in] IGRAPHICSEFFECTSOURCE* source);
+
+    };
+
+    [version(VERSION), activatable(VERSION)]
+    runtimeclass HighlightsAndShadowsEffect
+    {
+        [default] interface IHighlightsAndShadowsEffect;
+        interface IGRAPHICSEFFECT;
+    }
+}
+
+#endif // _WIN32_WINNT_WIN10

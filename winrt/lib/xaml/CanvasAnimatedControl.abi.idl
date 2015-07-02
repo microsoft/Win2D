@@ -122,6 +122,33 @@ namespace Microsoft.Graphics.Canvas.UI.Xaml
         [eventremove] HRESULT Draw([in] EventRegistrationToken token);
 
         //
+        // GameLoopStarting and GameLoopStopped events match up with the UI
+        // thread's Loaded and Unloaded events.  Both these events are raised on
+        // the game loop thread.
+        //
+        // The GameLoopStarting event is raised before the game loop starts the
+        // dispatcher running.  The control's Loaded or CreateResources events
+        // will not be raised until the GameLoopStarting event has completed.
+        //
+        // The GameLoopStopped event is raised after the game loop's dispatcher
+        // has stopped and just before the game loop thread exits.  The
+        // control's Unloaded event will not be raised until the game loop
+        // thread has exited (and so not until GameLoopStopped has completed).
+        //
+
+        [eventadd] HRESULT GameLoopStarting(
+            [in] Windows.Foundation.TypedEventHandler<ICanvasAnimatedControl*, IInspectable*>* value,
+            [out, retval] EventRegistrationToken* token);
+
+        [eventremove] HRESULT GameLoopStarting([in] EventRegistrationToken token);
+
+        [eventadd] HRESULT GameLoopStopped(
+            [in] Windows.Foundation.TypedEventHandler<ICanvasAnimatedControl*, IInspectable*>* value,
+            [out, retval] EventRegistrationToken* token);
+
+        [eventremove] HRESULT GameLoopStopped([in] EventRegistrationToken token);
+
+        //
         // True if all required CreateResources calls (including the AsyncAction
         // if set) are complete.
         //
@@ -243,16 +270,19 @@ namespace Microsoft.Graphics.Canvas.UI.Xaml
         [propput] HRESULT UseSharedDevice([in] boolean value);
 
         //
-        // This affects what device the control will try to create, or 
-        // obtain (from the SharedDevices pool).
+        // This affects what type of device the control will try to create,
+        // or obtain (from the SharedDevices pool).
         //
-        // This is set to On by default.
+        // This is set to false by default.
         //
         // Modifying this property will cause re-creation of the rendering
         // resource.
         //
-        [propget] HRESULT HardwareAcceleration([out, retval] Microsoft.Graphics.Canvas.CanvasHardwareAcceleration* value);
-        [propput] HRESULT HardwareAcceleration([in] Microsoft.Graphics.Canvas.CanvasHardwareAcceleration value);
+        [propget] HRESULT ForceSoftwareRenderer([out, retval] boolean* value);
+        [propput] HRESULT ForceSoftwareRenderer([in] boolean value);
+
+        [propget] HRESULT CustomDevice([out, retval] Microsoft.Graphics.Canvas.CanvasDevice** value);
+        [propput] HRESULT CustomDevice([in] Microsoft.Graphics.Canvas.CanvasDevice* value);
     }
 
     [version(VERSION), activatable(VERSION), marshaling_behavior(agile), threading(both)]
