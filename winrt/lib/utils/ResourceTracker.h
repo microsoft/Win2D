@@ -97,13 +97,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
             auto it = m_resources.find(keyIdentity.Get());
 
-            if (it == m_resources.end())
+            if (it != m_resources.end())
             {
-                assert(false);
-                ThrowHR(E_UNEXPECTED);
+                m_resources.erase(it);
             }
-
-            m_resources.erase(it);
         }
 
     private:
