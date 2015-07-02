@@ -78,8 +78,6 @@ namespace test.managed
             }
         }
 
-        // TODO: reenable VerifySendPathTo test for UAP when fix for DevDiv:1166515 is flighted
-#if !WINDOWS_UAP
         [TestMethod]
         public void VerifySendPathTo()
         {
@@ -110,6 +108,5 @@ namespace test.managed
 
             myStreamReader.Verify();
         }
-#endif
     }
 }

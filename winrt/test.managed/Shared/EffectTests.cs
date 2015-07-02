@@ -28,8 +28,6 @@ namespace test.managed
     [TestClass]
     public class EffectTests
     {
-        // TODO: reenable ReflectOverAllEffects test for UAP when fix for DevDiv:1166515 is flighted
-#if !WINDOWS_UAP
         [TestMethod]
         public void ReflectOverAllEffects()
         {
@@ -47,7 +45,6 @@ namespace test.managed
                 TestEffectProperties(effectType, effect);
             }
         }
-#endif
 
 
         static void TestEffectSources(TypeInfo effectType, IGraphicsEffect effect)
