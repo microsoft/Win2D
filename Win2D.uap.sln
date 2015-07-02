@@ -69,6 +69,7 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExampleGallery.uap", "samples\ExampleGallery\UAP\ExampleGallery.uap.csproj", "{F6867923-3A6E-4102-B546-E3A6A5F8EC36}"
 	ProjectSection(ProjectDependencies) = postProject
 		{2B157B97-CBF7-4014-8655-1456F2807F43} = {2B157B97-CBF7-4014-8655-1456F2807F43}
+		{D77EB5BE-C840-4ADE-B4F6-1BA9512C4768} = {D77EB5BE-C840-4ADE-B4F6-1BA9512C4768}
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExampleGallery.Effects", "samples\ExampleGallery\Effects\ExampleGallery.Effects.csproj", "{2B157B97-CBF7-4014-8655-1456F2807F43}"
