@@ -102,7 +102,7 @@ namespace test.managed
                 get; private set;
             }
 
-            public int ConvertDipsToPixels(float dips) { throw new NotImplementedException(); }
+            public int ConvertDipsToPixels(float dips, CanvasDpiRounding roundingBehavior) { throw new NotImplementedException(); }
             public float ConvertPixelsToDips(int pixels) { throw new NotImplementedException(); }
         }
     }

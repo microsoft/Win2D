@@ -364,12 +364,9 @@ public:
         ThrowIfFailed(canvasImageSource->get_Dpi(&actualDpi));
         Assert::AreEqual(dpi, actualDpi);
 
+        VerifyConvertDipsToPixels(dpi, canvasImageSource);
+
         const float testValue = 100;
-
-        int pixels = 0;
-        ThrowIfFailed(canvasImageSource->ConvertDipsToPixels(testValue, &pixels));
-        Assert::AreEqual((int)(testValue * dpi / DEFAULT_DPI), pixels);
-
         float dips = 0;
         ThrowIfFailed(canvasImageSource->ConvertPixelsToDips((int)testValue, &dips));
         Assert::AreEqual(testValue * DEFAULT_DPI / dpi, dips);

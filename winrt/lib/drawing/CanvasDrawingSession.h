@@ -1215,7 +1215,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         IFACEMETHODIMP get_Dpi(float* dpi);
 
         IFACEMETHODIMP ConvertPixelsToDips(int pixels, float* dips);
-        IFACEMETHODIMP ConvertDipsToPixels(float dips, int* pixels);
+        IFACEMETHODIMP ConvertDipsToPixels(float dips, CanvasDpiRounding dpiRounding, int* pixels);
 
     private:
         void DrawLineImpl(

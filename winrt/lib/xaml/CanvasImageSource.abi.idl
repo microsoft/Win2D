@@ -119,7 +119,7 @@ namespace Microsoft.Graphics.Canvas.UI.Xaml
         // Convert units between dips and pixels.
         //
         HRESULT ConvertPixelsToDips([in] INT32 pixels, [out, retval] float* dips);
-        HRESULT ConvertDipsToPixels([in] float dips, [out, retval] INT32* pixels);
+        HRESULT ConvertDipsToPixels([in] float dips, [in] Microsoft.Graphics.Canvas.CanvasDpiRounding dpiRounding, [out, retval] INT32* pixels);
 
         //
         // Gets the size of the image source, in dips or pixels.

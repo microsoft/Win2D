@@ -353,8 +353,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ExceptionBoundary(
             [&]
             {
-                uint32_t width = DipsToPixels(value.Width, m_dpi);
-                uint32_t height = DipsToPixels(value.Height, m_dpi);
+                uint32_t width = SizeDipsToPixels(value.Width, m_dpi);
+                uint32_t height = SizeDipsToPixels(value.Height, m_dpi);
 
                 auto swapChain = As<IDXGISwapChain2>(GetResource());
                 ThrowIfFailed(swapChain->SetSourceSize(width, height));
@@ -419,14 +419,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             });
     }
 
-    IFACEMETHODIMP CanvasSwapChain::ConvertDipsToPixels(float dips, int* pixels)
+    IFACEMETHODIMP CanvasSwapChain::ConvertDipsToPixels(float dips, CanvasDpiRounding dpiRounding, int* pixels)
     {
         return ExceptionBoundary(
             [&]
             {
                 CheckInPointer(pixels);
 
-                *pixels = DipsToPixels(dips, m_dpi);
+                *pixels = DipsToPixels(dips, m_dpi, dpiRounding);
             });
     }
 
@@ -506,8 +506,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
                 m_dpi = newDpi;
 
-                int widthInPixels = DipsToPixels(newWidth, m_dpi);
-                int heightInPixels = DipsToPixels(newHeight, m_dpi);
+                int widthInPixels = SizeDipsToPixels(newWidth, m_dpi);
+                int heightInPixels = SizeDipsToPixels(newHeight, m_dpi);
 
                 ThrowIfNegative(bufferCount);
                 ThrowIfNegative(widthInPixels);
@@ -697,8 +697,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     {
         auto deviceInternal = As<ICanvasDeviceInternal>(device);
 
-        int widthInPixels = DipsToPixels(width, dpi);
-        int heightInPixels = DipsToPixels(height, dpi);
+        int widthInPixels = SizeDipsToPixels(width, dpi);
+        int heightInPixels = SizeDipsToPixels(height, dpi);
 
         ComPtr<IDXGISwapChain1> dxgiSwapChain = deviceInternal->CreateSwapChainForComposition(
             widthInPixels,
@@ -755,8 +755,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         auto dxgiSwapChain = As<ICanvasDeviceInternal>(device)->CreateSwapChainForCoreWindow(
             coreWindow,
-            DipsToPixels(width, dpi),
-            DipsToPixels(height, dpi),
+            SizeDipsToPixels(width, dpi),
+            SizeDipsToPixels(height, dpi),
             format,
             bufferCount,
             CanvasAlphaMode::Ignore);

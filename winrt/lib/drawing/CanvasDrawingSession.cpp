@@ -3439,7 +3439,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             });
     }
 
-    IFACEMETHODIMP CanvasDrawingSession::ConvertDipsToPixels(float dips, int* pixels)
+    IFACEMETHODIMP CanvasDrawingSession::ConvertDipsToPixels(float dips, CanvasDpiRounding dpiRounding, int* pixels)
     {
         return ExceptionBoundary(
             [&]
@@ -3447,7 +3447,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 auto& deviceContext = GetResource();
                 CheckInPointer(pixels);
 
-                *pixels = DipsToPixels(dips, GetDpi(deviceContext));
+                *pixels = DipsToPixels(dips, GetDpi(deviceContext), dpiRounding);
             });
     }
 

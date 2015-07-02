@@ -15,6 +15,7 @@ using Microsoft.Graphics.Canvas.Effects;
 using Microsoft.Graphics.Canvas.Text;
 using Microsoft.Graphics.Canvas.UI;
 using Microsoft.Graphics.Canvas.UI.Xaml;
+using System;
 using System.Numerics;
 using Windows.UI;
 using Windows.UI.Xaml;
@@ -261,14 +262,19 @@ namespace ExampleGallery
             drawingSession.DrawImage(bloomResult);
         }
 
+        int DipsToPixelSize(ICanvasAnimatedControl sender, float dips)
+        {
+            System.Diagnostics.Debug.Assert(dips > 0);
+            return Math.Max(sender.ConvertDipsToPixels(dips, CanvasDpiRounding.Round), 1);
+        }
 
         void DemandCreateBloomRenderTarget(ICanvasAnimatedControl sender)
         {
             // Early-out if we already have a rendertarget of the correct size.
             // Compare sizes as pixels rather than DIPs to avoid rounding artifacts.
             if (bloomRenderTarget != null &&
-                bloomRenderTarget.SizeInPixels.Width == sender.ConvertDipsToPixels((float)sender.Size.Width) &&
-                bloomRenderTarget.SizeInPixels.Height == sender.ConvertDipsToPixels((float)sender.Size.Height))
+                bloomRenderTarget.SizeInPixels.Width == DipsToPixelSize(sender, (float)sender.Size.Width) &&
+                bloomRenderTarget.SizeInPixels.Height == DipsToPixelSize(sender, (float)sender.Size.Height))
             {
                 return;
             }

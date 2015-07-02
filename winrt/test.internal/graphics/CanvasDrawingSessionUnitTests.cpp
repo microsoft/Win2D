@@ -3962,7 +3962,7 @@ public:
         auto adapter = std::make_shared<CanvasDrawingSessionAdapter_ChangeableOffset>();
         auto drawingSession = manager->Create(deviceContext.Get(), adapter);
 
-        deviceContext->GetDpiMethod.SetExpectedCalls(3, [&](float* dpiX, float* dpiY)
+        deviceContext->GetDpiMethod.AllowAnyCall([&](float* dpiX, float* dpiY)
         {
             *dpiX = dpi;
             *dpiY = dpi;
@@ -3972,12 +3972,9 @@ public:
         ThrowIfFailed(drawingSession->get_Dpi(&actualDpi));
         Assert::AreEqual(dpi, actualDpi);
 
+        VerifyConvertDipsToPixels(dpi, drawingSession);
+
         const float testValue = 100;
-
-        int pixels = 0;
-        ThrowIfFailed(drawingSession->ConvertDipsToPixels(testValue, &pixels));
-        Assert::AreEqual((int)(testValue * dpi / DEFAULT_DPI), pixels);
-
         float dips = 0;
         ThrowIfFailed(drawingSession->ConvertPixelsToDips((int)testValue, &dips));
         Assert::AreEqual(testValue * DEFAULT_DPI / dpi, dips);

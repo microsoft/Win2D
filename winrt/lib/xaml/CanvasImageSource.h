@@ -117,6 +117,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         IFACEMETHOD(ConvertDipsToPixels)(
             _In_  float dips, 
+            _In_ CanvasDpiRounding dpiRounding,
             _Out_ int* pixels) override;
 
         IFACEMETHOD(get_SizeInPixels)(

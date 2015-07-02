@@ -249,12 +249,9 @@ TEST_CLASS(CanvasBitmapUnitTest)
         ThrowIfFailed(canvasBitmap->get_Dpi(&actualDpi));
         Assert::AreEqual(dpi, actualDpi);
 
+        VerifyConvertDipsToPixels(dpi, canvasBitmap);
+
         const float testValue = 100;
-
-        int pixels = 0;
-        ThrowIfFailed(canvasBitmap->ConvertDipsToPixels(testValue, &pixels));
-        Assert::AreEqual((int)(testValue * dpi / DEFAULT_DPI), pixels);
-
         float dips = 0;
         ThrowIfFailed(canvasBitmap->ConvertPixelsToDips((int)testValue, &dips));
         Assert::AreEqual(testValue * DEFAULT_DPI / dpi, dips);

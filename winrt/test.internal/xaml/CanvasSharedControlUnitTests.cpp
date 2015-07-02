@@ -382,12 +382,9 @@ TEST_CLASS(CanvasSharedControlTests_CommonAdapter)
         ThrowIfFailed(f.Control->get_Dpi(&actualDpi));
         Assert::AreEqual(dpi, actualDpi);
 
+        VerifyConvertDipsToPixels(dpi, f.Control);
+
         const float testValue = 100;
-
-        int pixels = 0;
-        ThrowIfFailed(f.Control->ConvertDipsToPixels(testValue, &pixels));
-        Assert::AreEqual((int)(testValue * dpi / DEFAULT_DPI), pixels);
-
         float dips = 0;
         ThrowIfFailed(f.Control->ConvertPixelsToDips((int)testValue, &dips));
         Assert::AreEqual(testValue * DEFAULT_DPI / dpi, dips);

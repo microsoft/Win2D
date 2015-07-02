@@ -14,6 +14,14 @@ namespace Microsoft.Graphics.Canvas
 {    
     runtimeclass CanvasDevice;
 
+    [version(VERSION)]
+    typedef enum CanvasDpiRounding
+    {
+        Floor = 0,
+        Round = 1,
+        Ceiling = 2
+    } CanvasDpiRounding;
+
     [version(VERSION), uuid(8F6D8AA8-492F-4BC6-B3D0-E7F5EAE84B11)]
     interface ICanvasResourceCreator : IInspectable
     {
@@ -27,7 +35,7 @@ namespace Microsoft.Graphics.Canvas
         [propget] HRESULT Dpi([out, retval] float* dpi);
 
         HRESULT ConvertPixelsToDips([in] INT32 pixels, [out, retval] float* dips);
-        HRESULT ConvertDipsToPixels([in] float dips, [out, retval] INT32* pixels);
+        HRESULT ConvertDipsToPixels([in] float dips, [in] CanvasDpiRounding dpiRounding, [out, retval] INT32* pixels);
     };
 
     [version(VERSION), uuid(E2C2BF21-5418-43B9-A2DA-539E287C790F), exclusiveto(CanvasDevice)]

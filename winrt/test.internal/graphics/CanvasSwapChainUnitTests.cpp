@@ -169,8 +169,8 @@ TEST_CLASS(CanvasSwapChainUnitTests)
                 Assert::IsNull(restrictToOutput);
                 Assert::IsNotNull(swapChain);
 
-                Assert::AreEqual<int>(DipsToPixels(anyWidthInDips, anyDpi), desc->Width);
-                Assert::AreEqual<int>(DipsToPixels(anyHeightInDips, anyDpi), desc->Height);
+                Assert::AreEqual<int>(SizeDipsToPixels(anyWidthInDips, anyDpi), desc->Width);
+                Assert::AreEqual<int>(SizeDipsToPixels(anyHeightInDips, anyDpi), desc->Height);
                 Assert::AreEqual(static_cast<DXGI_FORMAT>(CanvasSwapChain::DefaultPixelFormat), desc->Format);
                 Assert::AreEqual(false, !!desc->Stereo);
                 Assert::AreEqual(1U, desc->SampleDesc.Count);
@@ -235,8 +235,8 @@ TEST_CLASS(CanvasSwapChainUnitTests)
                 Assert::IsNull(restrictToOutput);
                 Assert::IsNotNull(swapChain);
 
-                Assert::AreEqual<int>(DipsToPixels(anyWidthInDips, anyDpi), desc->Width);
-                Assert::AreEqual<int>(DipsToPixels(anyHeightInDips, anyDpi), desc->Height);
+                Assert::AreEqual<int>(SizeDipsToPixels(anyWidthInDips, anyDpi), desc->Width);
+                Assert::AreEqual<int>(SizeDipsToPixels(anyHeightInDips, anyDpi), desc->Height);
                 Assert::AreEqual(static_cast<DXGI_FORMAT>(anyPixelFormat), desc->Format);
                 Assert::AreEqual(false, !!desc->Stereo);
                 Assert::AreEqual(1U, desc->SampleDesc.Count);
@@ -1132,12 +1132,9 @@ TEST_CLASS(CanvasSwapChainUnitTests)
         ThrowIfFailed(swapChain->get_Dpi(&actualDpi));
         Assert::AreEqual(dpi, actualDpi);
 
+        VerifyConvertDipsToPixels(dpi, swapChain);
+
         const float testValue = 100;
-
-        int pixels = 0;
-        ThrowIfFailed(swapChain->ConvertDipsToPixels(testValue, &pixels));
-        Assert::AreEqual((int)(testValue * dpi / DEFAULT_DPI), pixels);
-
         float dips = 0;
         ThrowIfFailed(swapChain->ConvertPixelsToDips((int)testValue, &dips));
         Assert::AreEqual(testValue * DEFAULT_DPI / dpi, dips);

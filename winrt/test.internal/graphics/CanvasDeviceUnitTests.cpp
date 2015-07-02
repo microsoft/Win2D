@@ -328,8 +328,8 @@ public:
         deviceContext->CreateBitmapMethod.SetExpectedCalls(1,
             [&] (D2D1_SIZE_U size, void const* sourceData, UINT32 pitch, D2D1_BITMAP_PROPERTIES1 const* bitmapProperties, ID2D1Bitmap1** bitmap)
             {
-                Assert::AreEqual<int>(DipsToPixels(anyWidth, anyDpi), size.width);
-                Assert::AreEqual<int>(DipsToPixels(anyHeight, anyDpi), size.height);
+                Assert::AreEqual<int>(SizeDipsToPixels(anyWidth, anyDpi), size.width);
+                Assert::AreEqual<int>(SizeDipsToPixels(anyHeight, anyDpi), size.height);
                 Assert::IsNull(sourceData);
                 Assert::AreEqual(0U, pitch);
                 Assert::AreEqual(D2D1_BITMAP_OPTIONS_TARGET, bitmapProperties->bitmapOptions);

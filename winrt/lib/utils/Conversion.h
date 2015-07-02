@@ -425,9 +425,28 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return pixels * DEFAULT_DPI / dpi;
     }
 
-    inline int DipsToPixels(float dips, float dpi)
+    inline int DipsToPixels(
+        float dips, 
+        float dpi, 
+        CanvasDpiRounding dpiRounding)
     {
-        int result = (int)roundf(dips * dpi / DEFAULT_DPI);
+        float scaled = dips * dpi / DEFAULT_DPI;
+        switch (dpiRounding)
+        {
+            case CanvasDpiRounding::Floor: scaled = floorf(scaled); break;
+            case CanvasDpiRounding::Round: scaled = roundf(scaled); break;
+            case CanvasDpiRounding::Ceiling: scaled = ceilf(scaled); break;
+            default: ThrowHR(E_INVALIDARG);
+        }
+
+        return (int)(scaled);
+    }
+
+    inline int SizeDipsToPixels(
+        float dips,
+        float dpi)
+    {
+        int result = DipsToPixels(dips, dpi, CanvasDpiRounding::Round);
 
         // Zero versus non-zero is pretty important for things like control sizes, so we want
         // to avoid ever rounding non-zero input sizes down to zero during conversion to pixels.

@@ -672,7 +672,7 @@ under the License.
       <summary>Converts units from physical pixels to device independent pixels (DIPs) based on the current DPI of this control.</summary>
       <remarks>For more information, see <a href="DPI.htm">DPI and DIPs</a>.</remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl.ConvertDipsToPixels(System.Single)">
+    <member name="M:Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl.ConvertDipsToPixels(System.Single,Microsoft.Graphics.Canvas.CanvasDpiRounding)">
       <summary>Converts units from device independent pixels (DIPs) to physical pixels based on the current DPI of this control.</summary>
       <remarks>For more information, see <a href="DPI.htm">DPI and DIPs</a>.</remarks>
     </member>

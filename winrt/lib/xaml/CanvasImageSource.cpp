@@ -209,8 +209,8 @@ void CanvasImageSource::CreateBaseClass(
     ComPtr<IInspectable> baseInspectable;
 
     ThrowIfFailed(surfaceImageSourceFactory->CreateInstanceWithDimensionsAndOpacity(
-        DipsToPixels(m_width, m_dpi),
-        DipsToPixels(m_height, m_dpi),
+        SizeDipsToPixels(m_width, m_dpi),
+        SizeDipsToPixels(m_height, m_dpi),
         isOpaque,
         this,
         &baseInspectable,
@@ -286,10 +286,10 @@ IFACEMETHODIMP CanvasImageSource::CreateDrawingSessionWithUpdateRectangle(
 
             RECT rectInPixels =
                 {
-                    DipsToPixels(updateRectangle.X, m_dpi),
-                    DipsToPixels(updateRectangle.Y, m_dpi),
-                    DipsToPixels(updateRectangle.X + updateRectangle.Width, m_dpi),
-                    DipsToPixels(updateRectangle.Y + updateRectangle.Height, m_dpi),
+                    SizeDipsToPixels(updateRectangle.X, m_dpi),
+                    SizeDipsToPixels(updateRectangle.Y, m_dpi),
+                    SizeDipsToPixels(updateRectangle.X + updateRectangle.Width, m_dpi),
+                    SizeDipsToPixels(updateRectangle.Y + updateRectangle.Height, m_dpi),
                 };
 
             auto ds = m_drawingSessionFactory->Create(
@@ -362,13 +362,14 @@ IFACEMETHODIMP CanvasImageSource::ConvertPixelsToDips(
 _Use_decl_annotations_
 IFACEMETHODIMP CanvasImageSource::ConvertDipsToPixels(
     float dips, 
+    CanvasDpiRounding dpiRounding,
     int* pixels)
 {
     return ExceptionBoundary(
         [&]
         {
             CheckInPointer(pixels);
-            *pixels = DipsToPixels(dips, m_dpi);
+            *pixels = DipsToPixels(dips, m_dpi, dpiRounding);
         });
 }
 
@@ -381,8 +382,8 @@ IFACEMETHODIMP CanvasImageSource::get_SizeInPixels(
         [&]
         {
             CheckInPointer(size);
-            size->Width = DipsToPixels(m_width, m_dpi);
-            size->Height = DipsToPixels(m_height, m_dpi);
+            size->Width = SizeDipsToPixels(m_width, m_dpi);
+            size->Height = SizeDipsToPixels(m_height, m_dpi);
         });
 }
 

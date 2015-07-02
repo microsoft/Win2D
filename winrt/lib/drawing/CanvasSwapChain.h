@@ -164,7 +164,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         IFACEMETHOD(put_TransformMatrix)(Matrix3x2 value) override;
 
         IFACEMETHODIMP ConvertPixelsToDips(int pixels, float* dips) override;
-        IFACEMETHODIMP ConvertDipsToPixels(float dips, int* pixels) override;
+        IFACEMETHODIMP ConvertDipsToPixels(float dips, CanvasDpiRounding dpiRounding, int* pixels) override;
 
         IFACEMETHOD(Present)() override;
         IFACEMETHOD(PresentWithSyncInterval)(int32_t syncInterval) override;

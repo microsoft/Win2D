@@ -1234,3 +1234,37 @@ inline bool IsWeakRefValid(WeakRef weakRef)
     ThrowIfFailed(weakRef.As(&obj));
     return static_cast<bool>(obj);
 }
+
+template<typename CANVAS_TYPE>
+void VerifyConvertDipsToPixels(float dpi, CANVAS_TYPE dpiOwner)
+{
+    const float testValue = 101;
+
+    const float expectedScaledValue = testValue * dpi / DEFAULT_DPI;
+    Assert::AreNotEqual(expectedScaledValue, floorf(expectedScaledValue)); // Should not be integral
+
+    struct TestCase
+    {
+        CanvasDpiRounding DpiRounding;
+        int Expected;
+    } testCases[] = {
+        { CanvasDpiRounding::Floor, (int)(floorf(expectedScaledValue)) },
+        { CanvasDpiRounding::Round, (int)(roundf(expectedScaledValue)) },
+        { CanvasDpiRounding::Ceiling, (int)(ceilf(expectedScaledValue)) }
+    };
+
+    for (auto testCase : testCases)
+    {
+        int pixels = 0;
+        ThrowIfFailed(dpiOwner->ConvertDipsToPixels(testValue, testCase.DpiRounding, &pixels));
+        Assert::AreEqual(testCase.Expected, pixels);
+    }
+
+    // Check error case
+    int pixels = 0;
+    Assert::AreEqual(E_INVALIDARG, dpiOwner->ConvertDipsToPixels(testValue, static_cast<CanvasDpiRounding>(-1), &pixels));
+
+    // Check zero case
+    ThrowIfFailed(dpiOwner->ConvertDipsToPixels(0, CanvasDpiRounding::Round, &pixels));
+    Assert::AreEqual(0, pixels);
+}

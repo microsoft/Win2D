@@ -311,8 +311,8 @@ namespace ExampleGallery
 
                 var pos = Vector2.Transform(point.Position.ToVector2(), transform);
 
-                var x = canvas.ConvertDipsToPixels(pos.X);
-                var y = canvas.ConvertDipsToPixels(pos.Y);
+                var x = canvas.ConvertDipsToPixels(pos.X, CanvasDpiRounding.Floor);
+                var y = canvas.ConvertDipsToPixels(pos.Y, CanvasDpiRounding.Floor);
 
                 // If the point is within the bounds of the rendertarget, and not the same as the last point...
                 if (x >= 0 &&

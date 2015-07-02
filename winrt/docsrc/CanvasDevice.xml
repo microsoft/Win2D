@@ -136,6 +136,39 @@ under the License.
          On Windows 10, <a href="https://msdn.microsoft.com/en-us/library/mt125501(v=vs.140).aspx#InstallGraphicsTools">the debug layer is distributed as an optional Windows feature</a>.
          </p>
       </remarks>
-    </member>    
+    </member>
+    
+    <member name="T:Microsoft.Graphics.Canvas.CanvasDpiRounding">
+      <summary>Specifies the rounding behavior while performing dips-to-pixels conversions.</summary>
+      <remarks>
+      	<p>
+      	After applying DPI scaling to a quantity in dips, this rounding scheme
+      	is applied immediately before conversion to an integer.
+      	The various implementations of
+      	<see cref="M:Microsoft.Graphics.Canvas.ICanvasResourceCreatorWithDpi.ConvertDipsToPixels(System.Single,Microsoft.Graphics.Canvas.CanvasDpiRounding)"/>
+      	return pixels in integral quantities.
+      	</p>
+      	<p>
+      	The Floor option will yield which location in a pixel grid covers the point
+      	specified by the dips value. 
+      	This is useful for things like converting pointer input to pixel
+      	cells in a paint program.
+      	</p>
+      	<p>
+        The Round option will round to the closest representable pixel value.
+        This is useful for things like converting the sizes of bitmap resources.
+      	</p>
+      	</remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasDpiRounding.Floor">
+      <summary>Fractional amounts are rounded downward, toward negative infinity.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasDpiRounding.Round">
+      <summary>Fractional amounts are rounded to the nearest whole integer.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasDpiRounding.Ceiling">
+      <summary>Fractional amounts are rounded upward, toward positive infinity.</summary>
+    </member>
+    
   </members>
 </doc>

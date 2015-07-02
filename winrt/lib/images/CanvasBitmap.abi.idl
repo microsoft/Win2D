@@ -72,7 +72,7 @@ namespace Microsoft.Graphics.Canvas
         HRESULT Dpi([out, retval] float* dpi);
 
         HRESULT ConvertPixelsToDips([in] INT32 pixels, [out, retval] float* dips);
-        HRESULT ConvertDipsToPixels([in] float dips, [out, retval] INT32* pixels);
+        HRESULT ConvertDipsToPixels([in] float dips, [in] CanvasDpiRounding dpiRounding, [out, retval] INT32* pixels);
 
         [propget]
         HRESULT Device([out, retval] CanvasDevice** value);

@@ -400,13 +400,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                 });
         }
 
-        IFACEMETHODIMP ConvertDipsToPixels(float dips, int* pixels) override
+        IFACEMETHODIMP ConvertDipsToPixels(float dips, CanvasDpiRounding dpiRounding, int* pixels) override
         {
             return ExceptionBoundary(
                 [&]
                 {
                     CheckInPointer(pixels);
-                    *pixels = DipsToPixels(dips, m_dpi);
+                    *pixels = DipsToPixels(dips, m_dpi, dpiRounding);
                 });
         }
 

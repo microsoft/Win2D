@@ -122,7 +122,7 @@ namespace canvas
             return E_NOTIMPL;
         }
 
-        IFACEMETHODIMP ConvertDipsToPixels(float dips, int* pixels) override
+        IFACEMETHODIMP ConvertDipsToPixels(float dips, CanvasDpiRounding roundingBehavior, int* pixels) override
         {
             Assert::Fail(L"Unexpected call to ConvertDipsToPixels");
             return E_NOTIMPL;
