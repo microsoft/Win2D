@@ -911,4 +911,24 @@ public:
         Assert::IsFalse(IsWeakRefValid(weakDevices[0]));
         Assert::IsFalse(IsWeakRefValid(weakDevices[1]));
     }
+
+    TEST_METHOD_EX(CanvasDevice_EntersLockWhenCallingDxgiMethods)
+    {
+        Fixture f;
+        auto device = f.Manager->Create(false);
+
+        ComPtr<ID2D1Factory> d2dFactory;
+        As<ICanvasDeviceInternal>(device)->GetD2DDevice()->GetFactory(&d2dFactory);
+        auto mockFactory = static_cast<MockD2DFactory*>(d2dFactory.Get());
+
+        // Creating the device should have taken the lock once, while enumerating DXGI outputs.
+        Assert::AreEqual(1, mockFactory->GetEnterCount());
+        Assert::AreEqual(1, mockFactory->GetLeaveCount());
+
+        // Calling the DXGI Trim() method should lock a second time.
+        device->Trim();
+
+        Assert::AreEqual(2, mockFactory->GetEnterCount());
+        Assert::AreEqual(2, mockFactory->GetLeaveCount());
+    }
 };

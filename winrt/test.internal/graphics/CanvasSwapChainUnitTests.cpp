@@ -1210,4 +1210,125 @@ TEST_CLASS(CanvasSwapChainUnitTests)
 
         Assert::IsTrue(sleepCalled);
     }
+
+    static void AssertLockCount(int expectedLockCount, MockD2DFactory* factory)
+    {
+        Assert::AreEqual(expectedLockCount, factory->GetEnterCount());
+        Assert::AreEqual(expectedLockCount, factory->GetLeaveCount());
+    }
+
+    TEST_METHOD_EX(CanvasSwapChain_EntersLockWhenCallingDxgiMethods)
+    {
+        StubDeviceFixture f;
+
+        auto dxgiSwapChain = Make<MockDxgiSwapChain>();
+
+        dxgiSwapChain->Present1Method.AllowAnyCall();
+        dxgiSwapChain->ResizeBuffersMethod.AllowAnyCall();
+
+        dxgiSwapChain->GetMatrixTransformMethod.AllowAnyCall([](DXGI_MATRIX_3X2_F* m) { *m = DXGI_MATRIX_3X2_F{}; return S_OK; });
+        dxgiSwapChain->SetMatrixTransformMethod.AllowAnyCall();
+
+        dxgiSwapChain->GetRotationMethod.AllowAnyCall([](DXGI_MODE_ROTATION* r) { *r = DXGI_MODE_ROTATION_IDENTITY; return S_OK; });
+        dxgiSwapChain->SetRotationMethod.AllowAnyCall();
+
+        dxgiSwapChain->GetSourceSizeMethod.AllowAnyCall([](UINT* w, UINT* h) { *w = 0; *h = 0; return S_OK; });
+        dxgiSwapChain->SetSourceSizeMethod.AllowAnyCall();
+
+        dxgiSwapChain->GetDesc1Method.AllowAnyCall([](DXGI_SWAP_CHAIN_DESC1* desc)
+        {
+            *desc = DXGI_SWAP_CHAIN_DESC1{}; 
+            desc->AlphaMode = DXGI_ALPHA_MODE_PREMULTIPLIED;
+            return S_OK; 
+        });
+
+        f.m_canvasDevice->CreateSwapChainForCompositionMethod.AllowAnyCall([=](int32_t, int32_t, DirectXPixelFormat, int32_t, CanvasAlphaMode)
+        {
+            return dxgiSwapChain;
+        });
+
+        ComPtr<ID2D1Factory> d2dFactory;
+        As<ICanvasDeviceInternal>(f.m_canvasDevice)->GetD2DDevice()->GetFactory(&d2dFactory);
+        auto mockFactory = static_cast<MockD2DFactory*>(d2dFactory.Get());
+
+        int expectedLockCount = 0;
+        AssertLockCount(0, mockFactory);
+
+        // Creating a swapchain should lock the DXGI device.
+        auto swapChain = f.CreateTestSwapChain();
+
+        AssertLockCount(++expectedLockCount, mockFactory);
+
+        // get_Size should lock.
+        Size size;
+        ThrowIfFailed(swapChain->get_Size(&size));
+
+        AssertLockCount(++expectedLockCount, mockFactory);
+
+        // get_SizeInPixels should lock.
+        BitmapSize sizeInPixels;
+        ThrowIfFailed(swapChain->get_SizeInPixels(&sizeInPixels));
+
+        AssertLockCount(++expectedLockCount, mockFactory);
+
+        // get_Format should lock.
+        DirectXPixelFormat pixelFormat;
+        ThrowIfFailed(swapChain->get_Format(&pixelFormat));
+
+        AssertLockCount(++expectedLockCount, mockFactory);
+
+        // get_BufferCount should lock.
+        int bufferCount;
+        ThrowIfFailed(swapChain->get_BufferCount(&bufferCount));
+
+        AssertLockCount(++expectedLockCount, mockFactory);
+
+        // get_AlphaMode should lock.
+        CanvasAlphaMode alphaMode;
+        ThrowIfFailed(swapChain->get_AlphaMode(&alphaMode));
+
+        AssertLockCount(++expectedLockCount, mockFactory);
+
+        // get_Rotation should lock.
+        CanvasSwapChainRotation rotation;
+        ThrowIfFailed(swapChain->get_Rotation(&rotation));
+
+        AssertLockCount(++expectedLockCount, mockFactory);
+
+        // put_Rotation should lock.
+        ThrowIfFailed(swapChain->put_Rotation(CanvasSwapChainRotation::None));
+
+        AssertLockCount(++expectedLockCount, mockFactory);
+
+        // get_SourceSize should lock.
+        ThrowIfFailed(swapChain->get_SourceSize(&size));
+
+        AssertLockCount(++expectedLockCount, mockFactory);
+
+        // put_SourceSize should lock.
+        ThrowIfFailed(swapChain->put_SourceSize(Size{}));
+
+        AssertLockCount(++expectedLockCount, mockFactory);
+
+        // get_TransformMatrix should lock.
+        Matrix3x2 matrix;
+        ThrowIfFailed(swapChain->get_TransformMatrix(&matrix));
+
+        AssertLockCount(++expectedLockCount, mockFactory);
+
+        // put_TransformMatrix should lock.
+        ThrowIfFailed(swapChain->put_TransformMatrix(Matrix3x2{}));
+
+        AssertLockCount(++expectedLockCount, mockFactory);
+
+        // Present should lock.
+        ThrowIfFailed(swapChain->Present());
+
+        AssertLockCount(++expectedLockCount, mockFactory);
+
+        // ResizeBuffers should lock.
+        ThrowIfFailed(swapChain->ResizeBuffersWithAllOptions(1, 1, 1, PIXEL_FORMAT(B8G8R8A8UIntNormalizedSrgb), 2));
+
+        AssertLockCount(++expectedLockCount, mockFactory);
+    }
 };

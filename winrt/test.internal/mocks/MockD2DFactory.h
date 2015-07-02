@@ -16,10 +16,18 @@ namespace canvas
 {
     class MockD2DFactory : public RuntimeClass <
         RuntimeClassFlags<ClassicCom>,
-        ChainInterfaces < ID2D1Factory2, ID2D1Factory1, ID2D1Factory >>
+        ChainInterfaces < ID2D1Factory2, ID2D1Factory1, ID2D1Factory >, ID2D1Multithread >
     {
+        int m_enterCount;
+        int m_leaveCount;
+
     public:
         std::function<void(IDXGIDevice *dxgiDevice, ID2D1Device1 **d2dDevice1)> MockCreateDevice;
+
+        MockD2DFactory()
+          : m_enterCount(0)
+          , m_leaveCount(0)
+        { }
 
         STDMETHOD(ReloadSystemMetrics)(
             )
@@ -245,5 +253,28 @@ namespace canvas
             }
         }
 
+        STDMETHOD_(BOOL, GetMultithreadProtected)() CONST
+        {
+            return true;
+        }
+
+        STDMETHOD_(void, Enter)()
+        {
+            m_enterCount++;
+        }
+
+        STDMETHOD_(void, Leave)()
+        {
+            m_leaveCount++;
+        }
+
+        int GetEnterCount() const { return m_enterCount; }
+        int GetLeaveCount() const { return m_leaveCount; }
     };
+
+
+    inline ComPtr<ID2D1Factory2> MakeMockD2DFactory()
+    {
+        return Make<MockD2DFactory>();
+    }
 }

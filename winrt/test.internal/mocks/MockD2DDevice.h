@@ -16,6 +16,10 @@
 
 namespace canvas
 {
+    // Forward declaration to break circular dependency (defined in MockD2DFactory.h)
+    ComPtr<ID2D1Factory2> MakeMockD2DFactory();
+
+
     [uuid(D5B2FFD5-882E-4CB5-98FA-2342E52FC6F2)]
     class ID2DDeviceWithDxgiDevice : public IUnknown
     {
@@ -23,12 +27,13 @@ namespace canvas
         virtual ComPtr<IDXGIDevice3> GetDxgiDevice() = 0;
     };
     
+
     class MockD2DDevice : public RuntimeClass<
         RuntimeClassFlags<ClassicCom>,
         ChainInterfaces<ID2D1Device1, ID2D1Device, ID2D1Resource>,
         ID2DDeviceWithDxgiDevice>
     {
-        ComPtr<ID2D1Factory2> m_parentD2DFactory;
+        mutable ComPtr<ID2D1Factory2> m_parentD2DFactory;
         ComPtr<IDXGIDevice3> m_dxgiDevice;
 
     public:
@@ -53,7 +58,8 @@ namespace canvas
         IFACEMETHODIMP_(void) GetFactory(ID2D1Factory **factory) const override
         {
             if (!m_parentD2DFactory)
-                Assert::Fail(L"Unexpected call to GetFactory");
+                m_parentD2DFactory = MakeMockD2DFactory();
+
             m_parentD2DFactory.CopyTo(factory);
         }
 

@@ -769,7 +769,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ExceptionBoundary(
             [&]
             {
+                auto& d2dDevice = GetResource();
                 auto& dxgiDevice = m_dxgiDevice.EnsureNotClosed();
+
+                D2DResourceLock lock(d2dDevice.Get());
 
                 dxgiDevice->Trim();
             });
@@ -868,7 +871,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         CanvasAlphaMode alphaMode,
         FN&& createFn)
     {
+        auto& d2dDevice = GetResource();
         auto& dxgiDevice = m_dxgiDevice.EnsureNotClosed();
+
+        D2DResourceLock lock(d2dDevice.Get());
 
         ComPtr<IDXGIAdapter2> dxgiAdapter;
         ThrowIfFailed(dxgiDevice->GetParent(IID_PPV_ARGS(&dxgiAdapter)));
@@ -1046,6 +1052,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     void CanvasDevice::InitializePrimaryOutput(IDXGIDevice3* dxgiDevice)
     {
+        D2DResourceLock lock(GetResource().Get());
+
         //
         // Creating a CanvasDevice using forceSoftwareRenderer==true
         // creates a 'render-only' WARP device, which cannot be used to 
