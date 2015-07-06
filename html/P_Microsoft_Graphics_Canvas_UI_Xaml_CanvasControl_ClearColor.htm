@@ -3,4 +3,10 @@
         </p><p>
           Modifying ClearColor will cause the control to redraw, as if
           Invalidate() was called.
+        </p><p>
+          CanvasControl uses this ClearColor property instead of the Background property 
+          that is inherited from XAML UserControl, because Background can be set to any 
+          XAML brush object. It does not make sense to clear an immediate mode Win2D 
+          control using XAML content as the background, so CanvasControl ignores the XAML 
+          Background setting.
         </p></div><div class="collapsibleAreaRegion" id="seeAlsoSection"><span class="collapsibleRegionTitle" onclick="SectionExpandCollapse('ID3RB')" onkeypress="SectionExpandCollapse_CheckKey('ID3RB', event)" tabindex="0"><img id="ID3RBToggle" class="collapseToggle" src="../icons/SectionExpanded.png" />See Also</span></div><div id="ID3RBSection" class="collapsibleSection"><h4 class="subHeading">Reference</h4><div class="seeAlsoStyle"><a href="T_Microsoft_Graphics_Canvas_UI_Xaml_CanvasControl.htm">CanvasControl Class</a></div><div class="seeAlsoStyle"><a href="N_Microsoft_Graphics_Canvas_UI_Xaml.htm">Microsoft.Graphics.Canvas.UI.Xaml Namespace</a></div></div></div></div><div id="pageFooter" class="pageFooter"><p><a href="http://github.com/Microsoft/Win2D/blob/master/LICENSE.txt" target="_blank">Copyright (c) Microsoft Corporation. All rights reserved.</a></p> </div></body></html>

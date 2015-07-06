@@ -18,7 +18,7 @@ HRESULT GetDXGIInterface(_In_ IDirect3DSurface^ surface, _COM_Outptr_ DXGI_TYPE*
 
 IDirect3DSurface^ CreateDirect3DSurface(_In_ IDXGISurface* dxgiSurface);</pre></div></div></div><script type="text/javascript">AddLanguageTabSet("ID0EAABBA");</script></div><div class="collapsibleAreaRegion"><span class="collapsibleRegionTitle" onclick="SectionExpandCollapse('ID4RB')" onkeypress="SectionExpandCollapse_CheckKey('ID4RB', event)" tabindex="0"><img id="ID4RBToggle" class="collapseToggle" src="../icons/SectionExpanded.png" />Examples</span></div><div id="ID4RBSection" class="collapsibleSection"><p>First include the necessary headers and namespaces:</p><div class="codeSnippetContainer"><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID0EAEABA_copyCode" href="#" onclick="javascript:CopyToClipboard('ID0EAEABA');return false;" title="Copy">Copy</a></div></div><div id="ID0EAEABA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve"><span class="highlight-preprocessor">#include</span> &lt;sdkddkver.h&gt;
 
-<span class="highlight-preprocessor">#if</span> WINVER &lt;= <span class="highlight-number">0x0603</span>
+<span class="highlight-preprocessor">#if</span> WINVER &lt;= _WIN32_WINNT_WINBLUE
 
 <span class="highlight-comment">// Use the Windows 8.1 / Windows Phone 8.1 version</span>
 <span class="highlight-preprocessor">#include</span> &lt;Microsoft.Graphics.Canvas.DirectX.Direct3D11.interop.h&gt;
