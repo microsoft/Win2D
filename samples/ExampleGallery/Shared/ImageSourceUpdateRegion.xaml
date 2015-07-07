@@ -16,6 +16,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="400"
+    Loaded="UserControl_Loaded"
     Unloaded="UserControl_Unloaded">
     
     <Grid Margin="15">
@@ -27,6 +28,5 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         <TextBlock Grid.Row="0" FontSize="32">This example demonstrates updating subregions of an image source.</TextBlock>
         <TextBlock Grid.Row="1" x:Name="status"/>
         <Image Grid.Row="2" x:Name="image" Stretch="Uniform" Margin="15"/>
-        <canvas:CanvasControl x:Name="canvas" Visibility="Collapsed" CreateResources="OnCreateResources"/>
     </Grid>
 </UserControl>
