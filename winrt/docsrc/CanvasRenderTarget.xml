@@ -23,6 +23,7 @@ under the License.
       <summary>A rendertarget is a bitmap that can be drawn onto.</summary>
       <remarks>
         <p>When using native interop with CanvasRenderTarget, the version of GetOrCreate that takes a device must be used.</p>
+        <p>For more information about how to use CanvasRenderTarget, see <a href="Offscreen.htm">"Offscreen drawing"</a>.</p>
       </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasRenderTarget.CreateDrawingSession">
