@@ -22,7 +22,7 @@ CoreWindow.
 - [Backlog](http://github.com/Microsoft/Win2D/wiki/Backlog) - *what we plan to add next*
 - [Team blog](http://blogs.msdn.com/b/win2d)
 - [Report a bug or ask a question](http://github.com/Microsoft/Win2D/issues)
-- [License](http://www.apache.org/licenses/LICENSE-2.0.html)
+- [License](http://opensource.org/licenses/MIT)
 - [Contributing](http://github.com/Microsoft/Win2D/blob/master/CONTRIBUTING.md)
 
 ## Code Example

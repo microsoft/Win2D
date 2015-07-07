@@ -84,15 +84,7 @@ namespace CodeGen
         {
             output.WriteLine("// Copyright (c) Microsoft Corporation. All rights reserved.");
             output.WriteLine("//");
-            output.WriteLine("// Licensed under the Apache License, Version 2.0 (the \"License\"); you may");
-            output.WriteLine("// not use these files except in compliance with the License. You may obtain");
-            output.WriteLine("// a copy of the License at http://www.apache.org/licenses/LICENSE-2.0");
-            output.WriteLine("//");
-            output.WriteLine("// Unless required by applicable law or agreed to in writing, software");
-            output.WriteLine("// distributed under the License is distributed on an \"AS IS\" BASIS, WITHOUT");
-            output.WriteLine("// WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the");
-            output.WriteLine("// License for the specific language governing permissions and limitations");
-            output.WriteLine("// under the License.");
+            output.WriteLine("// Licensed under the MIT License. See LICENSE.txt in the project root for license information.");
             output.WriteLine();
 
             output.WriteLine("// This file was automatically generated. Please do not edit it manually.");

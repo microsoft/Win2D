@@ -115,7 +115,7 @@ command prompt (if using Visual Studio 2015). This will:
 - Build all flavors of all projects (debug, release, x86, x64, and ARM)
 - Run all automated tests
 - Generate updated reference documentation
-- Make sure all source files include the correct Apache copyright header
+- Make sure all source files include the correct MIT copyright header
 
 To run Store unit tests, you must have a Windows Store development license
 installed on your computer, and must install the test package certificate from
