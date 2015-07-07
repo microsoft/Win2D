@@ -83,9 +83,9 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         </para>
 
         <para>
-          <legacyItalic>Drawing operations are not committed to the 
-          CanvasRenderTarget until the object is disposed.</legacyItalic>
-          In C#, a 'using' block can organize this.
+          Drawing operations are not committed to the CanvasRenderTarget until 
+          the drawing session object is disposed. In C#, a 'using' block can 
+          organize this.
         </para>
 
         <para>

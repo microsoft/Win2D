@@ -18,6 +18,7 @@
   <Topic id="PixelFormats" title="Pixel formats" />
   <Topic id="PremultipliedAlpha" title="Premultiplied alpha" />
   <Topic id="EffectPrecision" title="Effect precision and clamping" />
+  <Topic id="WithoutControls" title="Using Win2D without built-in controls"/>
   <Topic id="LoadingResourcesOutsideCreateResources" title="Loading resources outside of CreateResources"/>
   <Topic id="RefCycles" title="Avoiding memory leaks" />
   <Topic id="UAP" title="Windows 10 support" />

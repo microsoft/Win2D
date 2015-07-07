@@ -1,0 +1,255 @@
+<?xml version="1.0"?>
+<!--
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+Licensed under the MIT License. See LICENSE.txt in the project root for license information.
+-->
+
+<topic id="WithoutControls" revisionNumber="1">
+  <developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <introduction>
+      <para>
+        <codeEntityReference>T:Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl</codeEntityReference> 
+        and 
+        <codeEntityReference>T:Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl</codeEntityReference> 
+        are both XAML controls- they extend UserControl and can exist alongside 
+        other controls in an app's XAML tree. They are good choice for many WinRT
+        apps that use XAML and produce graphical content using Win2D. While 
+        these controls are versatile, they do impose policies pertaining to 
+        layout, resource re-creation, and device lost. Apps may want to 
+        implement their own XAML controls, or not use XAML at all. 
+      </para>
+      <para>
+        Win2D is built to support this. This document describes how to use Win2D 
+        to draw graphics without use of CanvasControl or CanvasAnimatedControl.
+      </para>
+    </introduction>
+
+  <section>
+    <title>Layering</title>
+    <content>
+      <para>
+      CanvasAnimatedControl and CanvasControl are built on top of lower-level 
+      Win2D types. CanvasAnimatedControl is built on top of 
+      CanvasSwapChainPanel, and CanvasControl is built on top of CanvasImageSource. 
+      More specifically, each control contains an instance of a lower-level type. 
+      </para>
+      <para>      
+      The controls consume only the public interfaces of these lower-level types. 
+      This implementation detail lends some confidence that apps can implement 
+      their own XAML controls which are equivalently as powerful as the built-in 
+      Win2D controls.
+      </para>
+    </content>
+  </section>
+
+  <section>
+    <title>CanvasRenderTarget</title>
+    <content>
+      <para>
+      CanvasRenderTarget represents a drawable bitmap, and does not have any 
+      built-in association with XAML. It is suitable for XAML or non-XAML apps 
+      which need to use an intermediate bitmap- for example, for saving image 
+      data to a file, reading back pixel data, or to be used as an 
+      intermediate for another operation.
+      </para>
+      <para>
+      CanvasRenderTarget doesn't have an automatic mechanism to cause it to be 
+      displayed. To display the content of a CanvasRenderTarget in your app, 
+      draw it in the drawing session created from a displayed control, image 
+      source, or swap chain.
+      </para>
+      <para>
+      For more information about using CanvasRenderTarget, see 
+      <link xlink:href="Offscreen">Offscreen drawing</link>.
+      </para>
+    </content>
+  </section>
+
+    <section>
+      <title>Image sources and swap chains</title>
+      <content>
+        <para>
+          Two objects that Win2D's XAML controls wrap are CanvasImageSource
+          and CanvasSwapChain. In not using controls, an app may opt to consume
+          these types directly.
+        </para>
+        <para>
+          Of course, if an app uses native C++ interop
+          and already uses a Direct3D swap chain, it should use 
+          CanvasSwapChain- or CanvasSwapChainPanel, if the app expects a XAML
+          control. 
+          If the app needs to add graphics to a XAML element
+          which expects an ImageSource, it should use CanvasImageSource.
+          Aside from that, it's worth considering:
+          <list class="bullet">
+            <listItem>
+              Swap chains are suited for content which will
+              animate very frequently and the animation should be smooth.
+              Direct3D's swap chains are designed for this purpose. The
+              content of a swap chain can be re-drawn with a low latency,
+              as it is not tied to the XAML framework refresh timer.
+            </listItem>
+            <listItem>
+              CanvasSwapChain has heavier resource costs than CanvasImageSource.
+              It is generally not desirable to have more than one or two swap
+              chains onscreen at a time. For example, if an application has a 
+              page full of widgets, where each widget is a standalone graphical
+              element, it is more appropriate to make each widget use a 
+              CanvasImageSource resource than a CanvasSwapChain.
+            </listItem>
+            <listItem>
+              CanvasImageSource can be manipulated by other XAML UI elements
+              such as transforms or opacity changes, while CanvasSwapChain 
+              cannot.
+            </listItem>
+          </list>
+        </para>
+      </content>
+    </section>
+
+  <section>
+    <title>CanvasSwapChain and CoreWindow</title>
+    <content>
+      <para>
+        <codeEntityReference>T:Microsoft.Graphics.Canvas.CanvasSwapChain</codeEntityReference> 
+        wraps a Direct3D swap chain. CanvasSwapChain is not a XAML type, but the fact 
+        that it has a swap chain means it has a built-in mechanism for being 
+        displayed. That said, 
+        <externalLink>
+        <linkText>CoreWindow</linkText>
+        <linkUri>https://msdn.microsoft.com/en-us/library/windows.ui.core.corewindow.aspx</linkUri>
+        </externalLink> apps may use CanvasSwapChain for displaying graphical content.
+      </para>
+      <para>
+        To create a CanvasSwapChain for use with a CoreWindow, in C#:
+        <code>
+        float currentDpi = DisplayInformation.GetForCurrentView().LogicalDpi;
+        SwapChain = CanvasSwapChain.CreateForCoreWindow(device, window, currentDpi);
+        </code>  
+        To draw content using a CanvasSwapChain, call its 
+        <codeEntityReference>M:Microsoft.Graphics.Canvas.CanvasSwapChain.CreateDrawingSession(Windows.UI.Color)</codeEntityReference> 
+          method:
+        <code>
+        using (CanvasDrawingSession ds = swapChain.CreateDrawingSession(Colors.Black))
+        {
+            ds.FillRectangle(100, 200, 3, 5);
+        }
+        swapChain.Present();
+        </code>  
+      </para>
+      <para>
+        The size of the swap chain should match the size of the CoreWindow. If 
+        the size of the window changes, call 
+        <codeEntityReference>M:Microsoft.Graphics.Canvas.CanvasSwapChain.ResizeBuffers(Windows.Foundation.Size)</codeEntityReference> 
+        on the swap chain with the new size. For more information, see the 
+        CoreWindow Win2D sample.
+      </para>
+    </content>
+  </section>
+    
+  <section>
+    <title>CanvasImageSource</title>
+    <content>      
+      <para>      
+        <codeEntityReference>T:Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource</codeEntityReference>
+        is one way of integrating Win2D graphical content with XAML, and is
+        suitable for content which does not require swap chain rendering. 
+      </para>
+        <para>
+        CanvasImageSource extends XAML's 
+        <externalLink>
+        <linkText>SurfaceImageSource</linkText>
+        <linkUri>https://msdn.microsoft.com/en-US/library/windows/apps/windows.ui.xaml.media.imaging.surfaceimagesource.aspx</linkUri></externalLink>.
+        Apps can create an instance of CanvasImageSource, and reference it from
+        a XAML type that consumes an ImageSource, such as an 
+        <externalLink>
+        <linkText>Image</linkText>
+        <linkUri>https://msdn.microsoft.com/library/windows/apps/br242752.aspx</linkUri>
+        </externalLink> or 
+        <externalLink>
+        <linkText>ImageBrush</linkText>
+        <linkUri>https://msdn.microsoft.com/en-us/library/windows/apps/windows.ui.xaml.media.imagebrush</linkUri>
+        </externalLink>. For example, in XAML markup:
+      
+        <code>
+        &lt;Image x:Name="image"/&gt;
+        </code>
+          
+        Then, in C#:
+        <code>
+        CanvasDevice device = CanvasDevice.GetSharedDevice(false);
+        CanvasImageSource imageSource = new CanvasImageSource(device, width, height);
+        image.Source = imageSource;
+        </code>
+      
+        Drawing sessions are created directly on the image source object. For 
+        example:
+      
+        <code>
+        using (CanvasDrawingSession ds = imageSource.CreateDrawingSession(Colors.Black))
+        {
+            ds.FillRectangle(200, 300, 5, 6, Colors.Blue);
+        }
+        </code>
+      
+        Note that a clear color must be passed to CreateDrawingSession. 
+        Whenever a drawing session is created on a CanvasImageSource, the 
+        CanvasImageSource is cleared.
+      </para>
+      <para>
+        For an example demonstrating how to use CanvasImageSource, see the
+        ImageSourceUpdateRegion Win2D ExampleGallery page.
+      </para>
+    </content>
+  </section>  
+
+  <section>
+    <title>CanvasSwapChainPanel</title>
+    <content>
+      <para>
+        <codeEntityReference>T:Microsoft.Graphics.Canvas.UI.Xaml.CanvasSwapChainPanel</codeEntityReference> 
+        is a XAML type, and a relatively thin wrapper around CanvasSwapChain.
+        It is suitable for XAML apps that require swap chain rendering, but do 
+        not want to use the policies that exist in CanvasAnimatedControl.
+        To create a swap chain in XAML, use the namespace:
+        <code>
+        xmlns:canvas="using:Microsoft.Graphics.Canvas.UI.Xaml"
+        </code>
+        And declare:
+        <code>
+          &lt;canvas:CanvasSwapChainPanel x:Name="canvasSwapChainPanel"/&gt;
+        </code>
+        A CanvasSwapChainPanel does not have a swap chain automatically assigned 
+        to it. An an example, to assign one:
+        <code>
+        CanvasDevice device = CanvasDevice.GetSharedDevice(false);
+        CanvasSwapChain swapChain = new CanvasSwapChain(device, width, height, 96);
+        canvasSwapChainPanel.SwapChain = swapChain;
+        </code>
+      
+        To draw to the swap chain panel, in C#, use its SwapChain property:
+        <code>
+        using (CanvasDrawingSession ds = canvasSwapChainPanel.SwapChain.CreateDrawingSession(Colors.Black))
+        {
+            ds.FillRectangle(200, 300, 5, 6, Colors.Blue);
+        }
+        canvasSwapChainPanel.SwapChain.Present();
+        </code>
+        The application decides on the frequency of redrawing. In the same manner
+        as using CanvasSwapChain directly, it is up to the app to resize the swap
+        chain when the control is resized. For example, in C#:
+        <code>
+        canvasSwapChainPanel.SizeChanged += canvasSwapChainPanel_SizeChanged;
+      
+        void canvasSwapChainPanel_SizeChanged(object sender, Windows.UI.Xaml.SizeChangedEventArgs e)
+        {
+            canvasSwapChainPanel.SwapChain.ResizeBuffers(e.NewSize);
+        }
+        </code>
+      </para>
+    </content>
+  </section>
+  
+  </developerConceptualDocument>
+</topic>
