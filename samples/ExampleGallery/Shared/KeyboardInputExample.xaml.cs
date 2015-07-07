@@ -220,13 +220,9 @@ namespace ExampleGallery
 
                 if (ThumbnailGenerator.IsDrawingThumbnail)
                 {
-                    var rng = new Random();
-
                     for (int i = 0; i < 30; ++i)
                     {
-                        var l = new Letter();
-                        l.Pos = new Vector2((float)(0.2 + rng.NextDouble() * 0.8), l.Pos.Y);
-                        letters.Add(l);
+                        letters.Add(new Letter { Pos = new Vector2(Utils.RandomBetween(0.2f, 1), Utils.RandomBetween(0, 1)) });
                     }
                 }
             }

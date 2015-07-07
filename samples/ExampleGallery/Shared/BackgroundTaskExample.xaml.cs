@@ -12,24 +12,19 @@
 using ExampleGallery.BackgroundTask;
 #endif
 
-using Microsoft.Graphics.Canvas;
-using Microsoft.Graphics.Canvas.Text;
 using System;
 using System.Linq;
 using Windows.ApplicationModel.Background;
-using Windows.Storage.Streams;
-using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.Notifications;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 
 namespace ExampleGallery
 {
-    public sealed partial class BackgroundTaskExample : UserControl, ICustomThumbnailSource
+    public sealed partial class BackgroundTaskExample : UserControl
     {
 #if !WINDOWS_UAP
 
@@ -37,7 +32,6 @@ namespace ExampleGallery
         void StartButton_Click(object sender, RoutedEventArgs args) {}
         void StopButton_Click(object sender, RoutedEventArgs args) {}
         void ResetLiveTileButton_Click(object sender, RoutedEventArgs args) {}
-        public IRandomAccessStream Thumbnail { get; set; }
 
 #else
 
@@ -162,33 +156,6 @@ namespace ExampleGallery
             updater.Clear();
         }
 
-        public IRandomAccessStream Thumbnail
-        {
-            get 
-            {
-                float size = 512;
-
-                using (var device = new CanvasDevice())
-                using (var renderTarget = new CanvasRenderTarget(device, size, size, 96))
-                {
-                    using (var ds = renderTarget.CreateDrawingSession())
-                    {
-                        // U+23F0 is ALARM CLOCK
-                        ds.DrawText("\u23F0", size / 2, size / 2, Colors.Orange,
-                            new CanvasTextFormat()
-                            {
-                                FontSize = size / 2,
-                                HorizontalAlignment = CanvasHorizontalAlignment.Center,
-                                VerticalAlignment = CanvasVerticalAlignment.Center
-                            });
-                    }
-
-                    InMemoryRandomAccessStream stream = new InMemoryRandomAccessStream();
-                    renderTarget.SaveAsync(stream, CanvasBitmapFileFormat.Png).AsTask().Wait();
-                    return stream;
-                }
-            }
-        }
 #endif
     }
 }

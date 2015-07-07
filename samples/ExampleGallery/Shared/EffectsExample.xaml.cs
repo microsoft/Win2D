@@ -122,7 +122,7 @@ namespace ExampleGallery
             // Draw text showing which effects are in use, but only if the screen is large enough to fit it.
             const float minSizeToShowText = 500;
 
-            if ((size.Width + size.Height) / 2 > minSizeToShowText)
+            if ((size.Width + size.Height) / 2 > minSizeToShowText && !ThumbnailGenerator.IsDrawingThumbnail)
             {
                 string text = activeEffectNames;
 

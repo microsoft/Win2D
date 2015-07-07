@@ -142,8 +142,7 @@ namespace ExampleGallery
             {
                 rect.Width = sender.ActualWidth / 2;
             }
-
-            if (!ThumbnailGenerator.IsDrawingThumbnail)
+            else
             {
                 ds.DrawText("Win2D DrawText", rect, drawingColor,
                     new CanvasTextFormat()

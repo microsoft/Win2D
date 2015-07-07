@@ -47,6 +47,7 @@
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)GlowTextCustomControl.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Infrastructure\AppIconGenerator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Infrastructure\CustomThumbnails.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Infrastructure\DeveloperTools.xaml.cs">
       <DependentUpon>DeveloperTools.xaml</DependentUpon>
     </Compile>

@@ -181,10 +181,13 @@ namespace ExampleGallery
                 // If there are any ProgressRing indicators in the UI, wait for them to finish whatever they are doing.
                 await WaitForProgressRings(exampleControl);
 
-                if (exampleControl is ICustomThumbnailSource)
+                var customThumbnailSource = exampleControl as ICustomThumbnailSource;
+                var customThumbnail = (customThumbnailSource != null) ? customThumbnailSource.Thumbnail : null;
+
+                if (customThumbnail != null)
                 {
                     // This example explicitly tells us what thumbnail to use.
-                    await CaptureThumbnailFromCustomSource((ICustomThumbnailSource)exampleControl);
+                    await CaptureThumbnailFromCustomSource(customThumbnail);
                 }
                 else if (FindControlAndDrawMethod<CanvasControl, CanvasDrawEventArgs>(exampleControl, out canvasControl, out drawMethod))
                 {
@@ -204,9 +207,9 @@ namespace ExampleGallery
             }
 
 
-            async Task CaptureThumbnailFromCustomSource(ICustomThumbnailSource customSource)
+            async Task CaptureThumbnailFromCustomSource(IRandomAccessStream customThumbnail)
             {
-                var bitmap = await CanvasBitmap.LoadAsync(new CanvasDevice(), customSource.Thumbnail);
+                var bitmap = await CanvasBitmap.LoadAsync(new CanvasDevice(), customThumbnail);
 
                 await SaveThumbnails(bitmap);
             }
@@ -550,11 +553,5 @@ namespace ExampleGallery
                 }
             }
         }
-    }
-
-
-    interface ICustomThumbnailSource
-    {
-        IRandomAccessStream Thumbnail { get; }
     }
 }

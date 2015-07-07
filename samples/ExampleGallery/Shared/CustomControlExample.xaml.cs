@@ -13,19 +13,7 @@ namespace ExampleGallery
         public CustomControlExample()
         {
             this.InitializeComponent();
-
-            if (ThumbnailGenerator.IsDrawingThumbnail)
-            {
-                Content = new GlowTextCustomControl()
-                {
-                    Text = "Glow",
-                    GlowAmount = 30,
-                    GlowColor = Colors.Yellow,
-                    TextColor = Colors.White,
-                    HorizontalAlignment = HorizontalAlignment.Center,
-                    VerticalAlignment = VerticalAlignment.Center
-                };
-            }
+            this.InitializeThumbnail();
         }
 
         private void UserControl_SizeChanged(object sender, SizeChangedEventArgs e)

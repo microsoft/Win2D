@@ -17,8 +17,6 @@ namespace ExampleGallery
 {
     public sealed partial class BasicVideoEffectExample : UserControl, ICustomThumbnailSource
     {
-        IRandomAccessStream thumbnail;
-
         public BasicVideoEffectExample()
         {
             this.InitializeComponent();
@@ -63,7 +61,7 @@ namespace ExampleGallery
 
             if (ThumbnailGenerator.IsDrawingThumbnail)
             {
-                this.thumbnail = await composition.GetThumbnailAsync(TimeSpan.FromSeconds(10), 1280, 720, VideoFramePrecision.NearestFrame);
+                customThumbnail = await composition.GetThumbnailAsync(TimeSpan.FromSeconds(10), 1280, 720, VideoFramePrecision.NearestFrame);
             }
 
             mediaElement.SetMediaStreamSource(composition.GenerateMediaStreamSource());
@@ -74,9 +72,8 @@ namespace ExampleGallery
             this.progressRing.IsActive = false;
         }
 
-        IRandomAccessStream ICustomThumbnailSource.Thumbnail
-        {
-            get { return thumbnail; }
-        }
+        // This example generates a custom thumbnail image (not just a rendering capture like most examples).
+        IRandomAccessStream ICustomThumbnailSource.Thumbnail { get { return customThumbnail; } }
+        IRandomAccessStream customThumbnail;
     }
 }
