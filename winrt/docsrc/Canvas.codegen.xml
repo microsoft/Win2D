@@ -170,6 +170,15 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
             Win2D), in which case the DWrite mode determines text antialiasing behavior.
           </li>
         </ul>
+        <p>
+          Drawing ClearType directly to a transparent background, while not an 
+          error, can produce undefined results. If your app needs to draw
+          ClearType text to a transparent background, consider using a
+          <see cref="T:Microsoft.Graphics.Canvas.CanvasActiveLayer"/> followed
+          by a Clear to an opaque color, or using 
+          <see cref="O:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillRectangle"/>
+          to fill an opaque rectangle behind the text.
+        </p>
       </remarks>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTextAntialiasing.Auto">
