@@ -18,8 +18,6 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 
-// The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
-
 namespace ExampleGallery
 {
     public sealed partial class TextDirectionsExample : UserControl, INotifyPropertyChanged
@@ -28,30 +26,29 @@ namespace ExampleGallery
         {
             this.InitializeComponent();
 
-            if (DesignMode.DesignModeEnabled)
-            {
-                this.Background = new SolidColorBrush(Colors.Black);
-            }
-
             if (ThumbnailGenerator.IsDrawingThumbnail)
                 drawingColor = Colors.Indigo;
 
             DataContext = this;
+
+            Directions = new List<DirectionInfo>();
+
+            foreach (CanvasTextDirection direction in Enum.GetValues(typeof(CanvasTextDirection)))
+            {
+                Directions.Add(new DirectionInfo(direction));
+            }
         }
 
         Color drawingColor = Colors.White;
 
         public class DirectionInfo
         {
-            public DirectionInfo(CanvasTextDirection direction, CanvasImageSource imageSource)
+            public DirectionInfo(CanvasTextDirection direction)
             {
                 Direction = direction;
-                ImageSource = imageSource;
             }
 
             public CanvasTextDirection Direction { get; set; }
-
-            public CanvasImageSource ImageSource { get; set; }
 
             public string Name { get { return Direction.ToString().Replace("Then", " then "); } }            
         }
@@ -131,45 +128,12 @@ namespace ExampleGallery
             }
         }
 
-        CanvasGeometry arrow;
-
-        private void canvas_CreateResources(CanvasControl sender, CanvasCreateResourcesEventArgs args)
-        {
-            arrow = MakeDirectionIcon(sender);
-            
-            var bounds = arrow.ComputeStrokeBounds(3);
-            var outline = arrow.Stroke(2).Outline();
-
-            var foregroundBrush = (SolidColorBrush)directionsCombo.Foreground;
-            var color = foregroundBrush.Color;
-
-            Directions = new List<DirectionInfo>();
-
-            foreach (CanvasTextDirection direction in Enum.GetValues(typeof(CanvasTextDirection)))
-            {
-                var arrowImage = new CanvasImageSource(sender, 64, 64);
-                using (var ds = arrowImage.CreateDrawingSession(Colors.Transparent))
-                {
-
-                    var directionTransform = GetDirectionTransform(direction);
-                    ds.Transform = directionTransform * Matrix3x2.CreateTranslation((float)(32 - bounds.Width / 2), (float)(32 - bounds.Height / 2));
-
-                    ds.DrawGeometry(arrow, color, 1);
-                }
-
-                Directions.Add(new DirectionInfo(direction, arrowImage));
-            }
-
-            // Poke the property so that the control gets a chance to pick up the new images
-            if (PropertyChanged != null)
-            {
-                PropertyChanged.Invoke(this, new PropertyChangedEventArgs("Directions"));
-                PropertyChanged.Invoke(this, new PropertyChangedEventArgs("CurrentDirectionIndex"));
-            }
-        }
+        TextDirectionControl.SharedResources sharedResources;
 
         private void canvas_Draw(CanvasControl sender, CanvasDrawEventArgs args)
         {
+            sharedResources = TextDirectionControl.GetSharedResources(sender);
+
             var ds = args.DrawingSession;
 
             Rect rect = new Rect(0,0, sender.ActualWidth, sender.ActualHeight);
@@ -189,68 +153,21 @@ namespace ExampleGallery
                         VerticalAlignment = CanvasVerticalAlignment.Top
                     });
 
-                    DrawAlignedText(ds, rect, CanvasHorizontalAlignment.Left, CanvasVerticalAlignment.Top);
-                    DrawAlignedText(ds, rect, CanvasHorizontalAlignment.Right, CanvasVerticalAlignment.Top);
-                    DrawAlignedText(ds, rect, CanvasHorizontalAlignment.Left, CanvasVerticalAlignment.Bottom);
-                    DrawAlignedText(ds, rect, CanvasHorizontalAlignment.Right, CanvasVerticalAlignment.Bottom);
+                DrawAlignedText(ds, rect, CanvasHorizontalAlignment.Left, CanvasVerticalAlignment.Top);
+                DrawAlignedText(ds, rect, CanvasHorizontalAlignment.Right, CanvasVerticalAlignment.Top);
+                DrawAlignedText(ds, rect, CanvasHorizontalAlignment.Left, CanvasVerticalAlignment.Bottom);
+                DrawAlignedText(ds, rect, CanvasHorizontalAlignment.Right, CanvasVerticalAlignment.Bottom);
             }
 
-            var screenCenter = new Size(sender.ActualWidth, sender.ActualHeight).ToVector2() / 2;
-
-            Matrix3x2 directionTransform = GetDirectionTransform(CurrentDirection);
+            var arrow = sharedResources.GetArrow(CurrentDirection);
 
             var arrowBounds = arrow.ComputeStrokeBounds(4);
-            var arrowCenter = new Size(arrowBounds.Width, arrowBounds.Height).ToVector2() / 2;
 
-            float scaleAmount = (float)Math.Max(5.0, (rect.Width / arrowBounds.Width) / 4);
-            var scaleAndPositionTransform = Matrix3x2.CreateScale(scaleAmount, scaleAmount, arrowCenter) * Matrix3x2.CreateTranslation(screenCenter - arrowCenter);
-            ds.Transform = directionTransform * scaleAndPositionTransform;
-            ds.DrawGeometry(MakeDirectionIcon(ds), drawingColor, 4, new CanvasStrokeStyle() { TransformBehavior = CanvasStrokeTransformBehavior.Fixed });
-        }
+            var destSize = new Size(sender.ActualWidth / 2, sender.ActualHeight / 2);
+            var destBounds = new Rect(new Point(sender.ActualWidth / 2 - destSize.Width / 2, sender.ActualHeight / 2 - destSize.Height / 2), destSize);
+            arrow = arrow.Transform(TextDirectionControl.CalculateTransform(arrowBounds, destBounds));
 
-        private Matrix3x2 GetDirectionTransform(CanvasTextDirection direction)
-        {
-            var arrowBounds = arrow.ComputeStrokeBounds(4);
-            var arrowCenter = new Size(arrowBounds.Width, arrowBounds.Height).ToVector2() / 2;
-            Matrix3x2 directionTransform = Matrix3x2.Identity;
-
-            switch (direction)
-            {
-                case CanvasTextDirection.LeftToRightThenTopToBottom:
-                    directionTransform = Matrix3x2.Identity;
-                    break;
-
-                case CanvasTextDirection.RightToLeftThenTopToBottom:
-                    directionTransform = Matrix3x2.CreateScale(-1, 1);
-                    break;
-
-                case CanvasTextDirection.LeftToRightThenBottomToTop:
-                    directionTransform = Matrix3x2.CreateScale(1, -1);
-                    break;
-
-                case CanvasTextDirection.RightToLeftThenBottomToTop:
-                    directionTransform = Matrix3x2.CreateScale(-1, -1);
-                    break;
-
-                case CanvasTextDirection.TopToBottomThenLeftToRight:
-                    directionTransform = Matrix3x2.CreateRotation((float)Math.PI / 2) * Matrix3x2.CreateScale(-1, 1);
-                    break;
-
-                case CanvasTextDirection.BottomToTopThenLeftToRight:
-                    directionTransform = Matrix3x2.CreateRotation((float)-Math.PI / 2);
-                    break;
-
-                case CanvasTextDirection.TopToBottomThenRightToLeft:
-                    directionTransform = Matrix3x2.CreateRotation((float)Math.PI / 2);
-                    break;
-
-                case CanvasTextDirection.BottomToTopThenRightToLeft:
-                    directionTransform = Matrix3x2.CreateRotation((float)-Math.PI / 2) * Matrix3x2.CreateScale(-1, 1);
-                    break;
-            }
-
-            directionTransform = Matrix3x2.CreateTranslation(-arrowCenter) * directionTransform * Matrix3x2.CreateTranslation(arrowCenter);
-            return directionTransform;
+            ds.DrawGeometry(arrow, drawingColor, 4, TextDirectionControl.ArrowStrokeStyle);
         }
 
         void DrawAlignedText(CanvasDrawingSession ds, Rect rect, CanvasHorizontalAlignment horizontalAlignment, CanvasVerticalAlignment verticalAlignment)
@@ -265,39 +182,6 @@ namespace ExampleGallery
                     Direction = CurrentDirection
                 });
         }
-
-        CanvasGeometry MakeDirectionIcon(ICanvasResourceCreator creator)
-        {
-            var builder = new CanvasPathBuilder(creator);
-            
-            float radius = 3;
-            float lineWidth = 20;
-
-            builder.BeginFigure(0, 0);
-            builder.AddLine(0, radius * 2);
-            builder.EndFigure(CanvasFigureLoop.Open);
-
-            float y = radius;
-            builder.BeginFigure(0, y);
-            builder.AddArc(new Vector2(lineWidth + radius, y + radius), radius, radius, -(float)Math.PI/2, (float)Math.PI);
-            y += radius * 2;
-            builder.AddArc(new Vector2(radius, y + radius), radius, radius, -(float)Math.PI/2, -(float)Math.PI);
-
-            y += radius * 2;
-            float x = lineWidth * 2 / 3;
-            builder.AddLine(x, y);
-
-            builder.EndFigure(CanvasFigureLoop.Open);
-
-            builder.BeginFigure(x - radius, y - radius/3);
-            builder.AddLine(x, y);
-            builder.AddLine(x - radius, y + radius/3);
-            builder.EndFigure(CanvasFigureLoop.Open);
-
-            return CanvasGeometry.CreatePath(builder);
-            
-        }
-
 
         public event PropertyChangedEventHandler PropertyChanged;
 

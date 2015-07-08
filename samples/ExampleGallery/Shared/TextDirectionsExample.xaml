@@ -37,7 +37,8 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
                     <ComboBox.ItemTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                <Image Width="64" Height="64" Source="{Binding ImageSource}"/>
+                                <local:TextDirectionControl TextDirection="{Binding Direction}" Width="32" Height="32" Margin="16"                                                             
+                                                            Foreground="{Binding Foreground, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
                                 <TextBlock Text="{Binding Name}" VerticalAlignment="Center"/>
                             </StackPanel>
                         </DataTemplate>
@@ -59,7 +60,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
             </Grid>
 
             <Border Grid.Row="2" BorderThickness="2" BorderBrush="Yellow" Margin="10" />
-            <canvas:CanvasControl x:Name="canvas" Grid.Row="2" Margin="20" MinHeight="256" Draw="canvas_Draw" CreateResources="canvas_CreateResources" />
+            <canvas:CanvasControl x:Name="canvas" Grid.Row="2" Margin="20" MinHeight="256" Draw="canvas_Draw" />
 
         </Grid>
     </ScrollViewer>
