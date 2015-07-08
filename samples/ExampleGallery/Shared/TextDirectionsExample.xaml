@@ -2,15 +2,7 @@
 <!--
 Copyright (c) Microsoft Corporation. All rights reserved.
 
-Licensed under the Apache License, Version 2.0 (the "License"); you may
-not use these files except in compliance with the License. You may obtain
-a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-License for the specific language governing permissions and limitations
-under the License.
+Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 -->
 
 <UserControl
@@ -45,7 +37,8 @@ under the License.
                     <ComboBox.ItemTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                <Image Width="64" Height="64" Source="{Binding ImageSource}"/>
+                                <local:TextDirectionControl TextDirection="{Binding Direction}" Width="32" Height="32" Margin="16"                                                             
+                                                            Foreground="{Binding Foreground, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
                                 <TextBlock Text="{Binding Name}" VerticalAlignment="Center"/>
                             </StackPanel>
                         </DataTemplate>
@@ -67,7 +60,7 @@ under the License.
             </Grid>
 
             <Border Grid.Row="2" BorderThickness="2" BorderBrush="Yellow" Margin="10" />
-            <canvas:CanvasControl x:Name="canvas" Grid.Row="2" Margin="20" MinHeight="256" Draw="canvas_Draw" CreateResources="canvas_CreateResources" />
+            <canvas:CanvasControl x:Name="canvas" Grid.Row="2" Margin="20" MinHeight="256" Draw="canvas_Draw" />
 
         </Grid>
     </ScrollViewer>

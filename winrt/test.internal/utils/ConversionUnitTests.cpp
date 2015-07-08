@@ -1,14 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); you may
-// not use these files except in compliance with the License. You may obtain
-// a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-// WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-// License for the specific language governing permissions and limitations
-// under the License.
+// Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
 #include "pch.h"
 
@@ -176,23 +168,23 @@ TEST_CLASS(ConversionUnitTests)
 
     TEST_METHOD_EX(DpiConversion)
     {
-        Assert::AreEqual(0, DipsToPixels(0, 96));
-        Assert::AreEqual(23, DipsToPixels(23, 96));
-        Assert::AreEqual(1234, DipsToPixels(1234, 96));
+        Assert::AreEqual(0, SizeDipsToPixels(0, 96));
+        Assert::AreEqual(23, SizeDipsToPixels(23, 96));
+        Assert::AreEqual(1234, SizeDipsToPixels(1234, 96));
 
-        Assert::AreEqual(0, DipsToPixels(0, 144));
-        Assert::AreEqual(23 * 3 / 2, DipsToPixels(22.999f, 144));
-        Assert::AreEqual(1234 * 3 / 2, DipsToPixels(1234, 144));
+        Assert::AreEqual(0, SizeDipsToPixels(0, 144));
+        Assert::AreEqual(23 * 3 / 2, SizeDipsToPixels(22.999f, 144));
+        Assert::AreEqual(1234 * 3 / 2, SizeDipsToPixels(1234, 144));
 
-        Assert::AreEqual(0, DipsToPixels(0, 64));
-        Assert::AreEqual(23 * 2 / 3, DipsToPixels(23, 64));
-        Assert::AreEqual(1234 * 2 / 3, DipsToPixels(1233.5f, 64));
+        Assert::AreEqual(0, SizeDipsToPixels(0, 64));
+        Assert::AreEqual(23 * 2 / 3, SizeDipsToPixels(23, 64));
+        Assert::AreEqual(1234 * 2 / 3, SizeDipsToPixels(1233.5f, 64));
 
-        Assert::AreEqual(42, DipsToPixels(42.0f, 96));
-        Assert::AreEqual(42, DipsToPixels(42.1f, 96));
-        Assert::AreEqual(42, DipsToPixels(42.4f, 96));
-        Assert::AreEqual(43, DipsToPixels(42.6f, 96));
-        Assert::AreEqual(43, DipsToPixels(42.9f, 96));
+        Assert::AreEqual(42, SizeDipsToPixels(42.0f, 96));
+        Assert::AreEqual(42, SizeDipsToPixels(42.1f, 96));
+        Assert::AreEqual(42, SizeDipsToPixels(42.4f, 96));
+        Assert::AreEqual(43, SizeDipsToPixels(42.6f, 96));
+        Assert::AreEqual(43, SizeDipsToPixels(42.9f, 96));
 
         Assert::AreEqual(0.0f, PixelsToDips(0, 96));
         Assert::AreEqual(23.0f, PixelsToDips(23, 96));
@@ -209,28 +201,28 @@ TEST_CLASS(ConversionUnitTests)
 
     TEST_METHOD_EX(DipsToPixelsNeverRoundsPositiveValuesToZero)
     {
-        Assert::AreEqual(0, DipsToPixels(0, 96));
+        Assert::AreEqual(0, SizeDipsToPixels(0, 96));
 
-        Assert::AreEqual(0, DipsToPixels(-0.1f, 96));
-        Assert::AreEqual(0, DipsToPixels(-0.4f, 96));
-        Assert::AreEqual(-1, DipsToPixels(-0.6f, 96));
-        Assert::AreEqual(-1, DipsToPixels(-0.9f, 96));
+        Assert::AreEqual(0, SizeDipsToPixels(-0.1f, 96));
+        Assert::AreEqual(0, SizeDipsToPixels(-0.4f, 96));
+        Assert::AreEqual(-1, SizeDipsToPixels(-0.6f, 96));
+        Assert::AreEqual(-1, SizeDipsToPixels(-0.9f, 96));
 
-        Assert::AreEqual(1, DipsToPixels(0.1f, 96));
-        Assert::AreEqual(1, DipsToPixels(0.4f, 96));
-        Assert::AreEqual(1, DipsToPixels(0.6f, 96));
-        Assert::AreEqual(1, DipsToPixels(0.9f, 96));
+        Assert::AreEqual(1, SizeDipsToPixels(0.1f, 96));
+        Assert::AreEqual(1, SizeDipsToPixels(0.4f, 96));
+        Assert::AreEqual(1, SizeDipsToPixels(0.6f, 96));
+        Assert::AreEqual(1, SizeDipsToPixels(0.9f, 96));
 
-        Assert::AreEqual(0, DipsToPixels(0, 192));
+        Assert::AreEqual(0, SizeDipsToPixels(0, 192));
         
-        Assert::AreEqual(0, DipsToPixels(-0.1f, 192));
-        Assert::AreEqual(-1, DipsToPixels(-0.4f, 192));
-        Assert::AreEqual(-1, DipsToPixels(-0.6f, 192));
-        Assert::AreEqual(-2, DipsToPixels(-0.9f, 192));
+        Assert::AreEqual(0, SizeDipsToPixels(-0.1f, 192));
+        Assert::AreEqual(-1, SizeDipsToPixels(-0.4f, 192));
+        Assert::AreEqual(-1, SizeDipsToPixels(-0.6f, 192));
+        Assert::AreEqual(-2, SizeDipsToPixels(-0.9f, 192));
 
-        Assert::AreEqual(1, DipsToPixels(0.1f, 192));
-        Assert::AreEqual(1, DipsToPixels(0.4f, 192));
-        Assert::AreEqual(1, DipsToPixels(0.6f, 192));
-        Assert::AreEqual(2, DipsToPixels(0.9f, 192));
+        Assert::AreEqual(1, SizeDipsToPixels(0.1f, 192));
+        Assert::AreEqual(1, SizeDipsToPixels(0.4f, 192));
+        Assert::AreEqual(1, SizeDipsToPixels(0.6f, 192));
+        Assert::AreEqual(2, SizeDipsToPixels(0.9f, 192));
     }
 };

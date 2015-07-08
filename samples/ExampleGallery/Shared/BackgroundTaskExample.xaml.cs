@@ -1,14 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); you may
-// not use these files except in compliance with the License. You may obtain
-// a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-// WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-// License for the specific language governing permissions and limitations
-// under the License.
+// Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
 
 //
@@ -20,24 +12,19 @@
 using ExampleGallery.BackgroundTask;
 #endif
 
-using Microsoft.Graphics.Canvas;
-using Microsoft.Graphics.Canvas.Text;
 using System;
 using System.Linq;
 using Windows.ApplicationModel.Background;
-using Windows.Storage.Streams;
-using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.Notifications;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 
 namespace ExampleGallery
 {
-    public sealed partial class BackgroundTaskExample : UserControl, ICustomThumbnailSource
+    public sealed partial class BackgroundTaskExample : UserControl
     {
 #if !WINDOWS_UAP
 
@@ -45,7 +32,6 @@ namespace ExampleGallery
         void StartButton_Click(object sender, RoutedEventArgs args) {}
         void StopButton_Click(object sender, RoutedEventArgs args) {}
         void ResetLiveTileButton_Click(object sender, RoutedEventArgs args) {}
-        public IRandomAccessStream Thumbnail { get; set; }
 
 #else
 
@@ -170,33 +156,6 @@ namespace ExampleGallery
             updater.Clear();
         }
 
-        public IRandomAccessStream Thumbnail
-        {
-            get 
-            {
-                float size = 512;
-
-                using (var device = new CanvasDevice())
-                using (var renderTarget = new CanvasRenderTarget(device, size, size, 96))
-                {
-                    using (var ds = renderTarget.CreateDrawingSession())
-                    {
-                        // U+23F0 is ALARM CLOCK
-                        ds.DrawText("\u23F0", size / 2, size / 2, Colors.Orange,
-                            new CanvasTextFormat()
-                            {
-                                FontSize = size / 2,
-                                HorizontalAlignment = CanvasHorizontalAlignment.Center,
-                                VerticalAlignment = CanvasVerticalAlignment.Center
-                            });
-                    }
-
-                    InMemoryRandomAccessStream stream = new InMemoryRandomAccessStream();
-                    renderTarget.SaveAsync(stream, CanvasBitmapFileFormat.Png).AsTask().Wait();
-                    return stream;
-                }
-            }
-        }
 #endif
     }
 }

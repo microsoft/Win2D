@@ -1,14 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); you may
-// not use these files except in compliance with the License. You may obtain
-// a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-// WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-// License for the specific language governing permissions and limitations
-// under the License.
+// Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
 #pragma once
 
@@ -16,10 +8,18 @@ namespace canvas
 {
     class MockD2DFactory : public RuntimeClass <
         RuntimeClassFlags<ClassicCom>,
-        ChainInterfaces < ID2D1Factory2, ID2D1Factory1, ID2D1Factory >>
+        ChainInterfaces < ID2D1Factory2, ID2D1Factory1, ID2D1Factory >, ID2D1Multithread >
     {
+        int m_enterCount;
+        int m_leaveCount;
+
     public:
         std::function<void(IDXGIDevice *dxgiDevice, ID2D1Device1 **d2dDevice1)> MockCreateDevice;
+
+        MockD2DFactory()
+          : m_enterCount(0)
+          , m_leaveCount(0)
+        { }
 
         STDMETHOD(ReloadSystemMetrics)(
             )
@@ -245,5 +245,28 @@ namespace canvas
             }
         }
 
+        STDMETHOD_(BOOL, GetMultithreadProtected)() CONST
+        {
+            return true;
+        }
+
+        STDMETHOD_(void, Enter)()
+        {
+            m_enterCount++;
+        }
+
+        STDMETHOD_(void, Leave)()
+        {
+            m_leaveCount++;
+        }
+
+        int GetEnterCount() const { return m_enterCount; }
+        int GetLeaveCount() const { return m_leaveCount; }
     };
+
+
+    inline ComPtr<ID2D1Factory2> MakeMockD2DFactory()
+    {
+        return Make<MockD2DFactory>();
+    }
 }

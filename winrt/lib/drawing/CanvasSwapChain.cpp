@@ -1,14 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); you may
-// not use these files except in compliance with the License. You may obtain
-// a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-// WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-// License for the specific language governing permissions and limitations
-// under the License.
+// Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
 #include "pch.h"
 
@@ -312,6 +304,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
                 auto& resource = GetResource();
 
+                auto d2dDevice = As<ICanvasDeviceInternal>(m_device.EnsureNotClosed())->GetD2DDevice();
+                D2DResourceLock lock(d2dDevice.Get());
+
                 DXGI_MODE_ROTATION rotation;
                 ThrowIfFailed(resource->GetRotation(&rotation));
 
@@ -325,6 +320,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             [&]
             {
                 auto& resource = GetResource();
+
+                auto d2dDevice = As<ICanvasDeviceInternal>(m_device.EnsureNotClosed())->GetD2DDevice();
+                D2DResourceLock lock(d2dDevice.Get());
 
                 ThrowIfFailed(resource->SetRotation(ToDxgiRotation(value)));
             });
@@ -341,6 +339,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 uint32_t height;
 
                 auto swapChain = As<IDXGISwapChain2>(GetResource());
+
+                auto d2dDevice = As<ICanvasDeviceInternal>(m_device.EnsureNotClosed())->GetD2DDevice();
+                D2DResourceLock lock(d2dDevice.Get());
+
                 ThrowIfFailed(swapChain->GetSourceSize(&width, &height));
 
                 *value = Size{ PixelsToDips(width, m_dpi),
@@ -353,10 +355,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ExceptionBoundary(
             [&]
             {
-                uint32_t width = DipsToPixels(value.Width, m_dpi);
-                uint32_t height = DipsToPixels(value.Height, m_dpi);
+                uint32_t width = SizeDipsToPixels(value.Width, m_dpi);
+                uint32_t height = SizeDipsToPixels(value.Height, m_dpi);
 
                 auto swapChain = As<IDXGISwapChain2>(GetResource());
+
+                auto d2dDevice = As<ICanvasDeviceInternal>(m_device.EnsureNotClosed())->GetD2DDevice();
+                D2DResourceLock lock(d2dDevice.Get());
+
                 ThrowIfFailed(swapChain->SetSourceSize(width, height));
             });
     }
@@ -372,6 +378,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 DXGI_MATRIX_3X2_F matrix;
 
                 auto swapChain = As<IDXGISwapChain2>(GetResource());
+
+                auto d2dDevice = As<ICanvasDeviceInternal>(m_device.EnsureNotClosed())->GetD2DDevice();
+                D2DResourceLock lock(d2dDevice.Get());
+
                 ThrowIfFailed(swapChain->GetMatrixTransform(&matrix));
 
                 // Remove our extra DPI scaling from the transform.
@@ -404,6 +414,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 value.M32 *= dpiScale;
 
                 auto swapChain = As<IDXGISwapChain2>(GetResource());
+
+                auto d2dDevice = As<ICanvasDeviceInternal>(m_device.EnsureNotClosed())->GetD2DDevice();
+                D2DResourceLock lock(d2dDevice.Get());
+
                 ThrowIfFailed(swapChain->SetMatrixTransform(ReinterpretAs<DXGI_MATRIX_3X2_F*>(&value)));
             });
     }
@@ -419,14 +433,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             });
     }
 
-    IFACEMETHODIMP CanvasSwapChain::ConvertDipsToPixels(float dips, int* pixels)
+    IFACEMETHODIMP CanvasSwapChain::ConvertDipsToPixels(float dips, CanvasDpiRounding dpiRounding, int* pixels)
     {
         return ExceptionBoundary(
             [&]
             {
                 CheckInPointer(pixels);
 
-                *pixels = DipsToPixels(dips, m_dpi);
+                *pixels = DipsToPixels(dips, m_dpi, dpiRounding);
             });
     }
 
@@ -441,6 +455,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             [&]
             {
                 auto& resource = GetResource();
+
+                auto d2dDevice = As<ICanvasDeviceInternal>(m_device.EnsureNotClosed())->GetD2DDevice();
+                D2DResourceLock lock(d2dDevice.Get());
 
                 DXGI_PRESENT_PARAMETERS presentParameters = { 0 };
                 ThrowIfFailed(resource->Present1(syncInterval, 0, &presentParameters));
@@ -504,10 +521,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             {
                 auto& resource = GetResource();
 
+                auto d2dDevice = As<ICanvasDeviceInternal>(m_device.EnsureNotClosed())->GetD2DDevice();
+                D2DResourceLock lock(d2dDevice.Get());
+
                 m_dpi = newDpi;
 
-                int widthInPixels = DipsToPixels(newWidth, m_dpi);
-                int heightInPixels = DipsToPixels(newHeight, m_dpi);
+                int widthInPixels = SizeDipsToPixels(newWidth, m_dpi);
+                int heightInPixels = SizeDipsToPixels(newHeight, m_dpi);
 
                 ThrowIfNegative(bufferCount);
                 ThrowIfNegative(widthInPixels);
@@ -551,6 +571,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     DXGI_SWAP_CHAIN_DESC1 CanvasSwapChain::GetResourceDescription()
     {
         auto& resource = GetResource();
+
+        auto d2dDevice = As<ICanvasDeviceInternal>(m_device.EnsureNotClosed())->GetD2DDevice();
+        D2DResourceLock lock(d2dDevice.Get());
 
         DXGI_SWAP_CHAIN_DESC1 swapChainDesc;
         ThrowIfFailed(resource->GetDesc1(&swapChainDesc));
@@ -639,6 +662,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 auto& dxgiSwapChain = GetResource();
                 auto& device = m_device.EnsureNotClosed();
 
+                auto d2dDevice = As<ICanvasDeviceInternal>(device)->GetD2DDevice();
+                D2DResourceLock lock(d2dDevice.Get());
+
                 ComPtr<ID2D1DeviceContext1> deviceContext;
                 auto adapter = CanvasSwapChainDrawingSessionAdapter::Create(
                     device.Get(),
@@ -697,8 +723,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     {
         auto deviceInternal = As<ICanvasDeviceInternal>(device);
 
-        int widthInPixels = DipsToPixels(width, dpi);
-        int heightInPixels = DipsToPixels(height, dpi);
+        int widthInPixels = SizeDipsToPixels(width, dpi);
+        int heightInPixels = SizeDipsToPixels(height, dpi);
 
         ComPtr<IDXGISwapChain1> dxgiSwapChain = deviceInternal->CreateSwapChainForComposition(
             widthInPixels,
@@ -755,8 +781,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         auto dxgiSwapChain = As<ICanvasDeviceInternal>(device)->CreateSwapChainForCoreWindow(
             coreWindow,
-            DipsToPixels(width, dpi),
-            DipsToPixels(height, dpi),
+            SizeDipsToPixels(width, dpi),
+            SizeDipsToPixels(height, dpi),
             format,
             bufferCount,
             CanvasAlphaMode::Ignore);

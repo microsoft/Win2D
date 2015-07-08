@@ -1,14 +1,6 @@
-﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation. All rights reserved.
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); you may
-// not use these files except in compliance with the License. You may obtain
-// a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-// WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-// License for the specific language governing permissions and limitations
-// under the License.
+// Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Effects;
@@ -130,7 +122,7 @@ namespace ExampleGallery
             // Draw text showing which effects are in use, but only if the screen is large enough to fit it.
             const float minSizeToShowText = 500;
 
-            if ((size.Width + size.Height) / 2 > minSizeToShowText)
+            if ((size.Width + size.Height) / 2 > minSizeToShowText && !ThumbnailGenerator.IsDrawingThumbnail)
             {
                 string text = activeEffectNames;
 

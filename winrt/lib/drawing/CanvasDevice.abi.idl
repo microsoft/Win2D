@@ -1,18 +1,18 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); you may
-// not use these files except in compliance with the License. You may obtain
-// a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-// WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-// License for the specific language governing permissions and limitations
-// under the License.
+// Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
 namespace Microsoft.Graphics.Canvas
 {    
     runtimeclass CanvasDevice;
+
+    [version(VERSION)]
+    typedef enum CanvasDpiRounding
+    {
+        Floor = 0,
+        Round = 1,
+        Ceiling = 2
+    } CanvasDpiRounding;
 
     [version(VERSION), uuid(8F6D8AA8-492F-4BC6-B3D0-E7F5EAE84B11)]
     interface ICanvasResourceCreator : IInspectable
@@ -27,7 +27,7 @@ namespace Microsoft.Graphics.Canvas
         [propget] HRESULT Dpi([out, retval] float* dpi);
 
         HRESULT ConvertPixelsToDips([in] INT32 pixels, [out, retval] float* dips);
-        HRESULT ConvertDipsToPixels([in] float dips, [out, retval] INT32* pixels);
+        HRESULT ConvertDipsToPixels([in] float dips, [in] CanvasDpiRounding dpiRounding, [out, retval] INT32* pixels);
     };
 
     [version(VERSION), uuid(E2C2BF21-5418-43B9-A2DA-539E287C790F), exclusiveto(CanvasDevice)]

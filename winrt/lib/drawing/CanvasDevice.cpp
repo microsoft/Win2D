@@ -1,14 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); you may
-// not use these files except in compliance with the License. You may obtain
-// a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-// WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-// License for the specific language governing permissions and limitations
-// under the License.
+// Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
 #include "pch.h"
 
@@ -711,8 +703,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         bitmapProperties.pixelFormat.format = static_cast<DXGI_FORMAT>(format);
         bitmapProperties.pixelFormat.alphaMode = ToD2DAlphaMode(alpha);
 
-        auto pixelWidth = static_cast<uint32_t>(DipsToPixels(width, dpi));
-        auto pixelHeight = static_cast<uint32_t>(DipsToPixels(height, dpi));
+        auto pixelWidth = static_cast<uint32_t>(SizeDipsToPixels(width, dpi));
+        auto pixelHeight = static_cast<uint32_t>(SizeDipsToPixels(height, dpi));
 
         ThrowIfFailed(deviceContext->CreateBitmap(
             D2D1_SIZE_U{ pixelWidth, pixelHeight },
@@ -769,7 +761,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ExceptionBoundary(
             [&]
             {
+                auto& d2dDevice = GetResource();
                 auto& dxgiDevice = m_dxgiDevice.EnsureNotClosed();
+
+                D2DResourceLock lock(d2dDevice.Get());
 
                 dxgiDevice->Trim();
             });
@@ -868,7 +863,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         CanvasAlphaMode alphaMode,
         FN&& createFn)
     {
+        auto& d2dDevice = GetResource();
         auto& dxgiDevice = m_dxgiDevice.EnsureNotClosed();
+
+        D2DResourceLock lock(d2dDevice.Get());
 
         ComPtr<IDXGIAdapter2> dxgiAdapter;
         ThrowIfFailed(dxgiDevice->GetParent(IID_PPV_ARGS(&dxgiAdapter)));
@@ -1046,6 +1044,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     void CanvasDevice::InitializePrimaryOutput(IDXGIDevice3* dxgiDevice)
     {
+        D2DResourceLock lock(GetResource().Get());
+
         //
         // Creating a CanvasDevice using forceSoftwareRenderer==true
         // creates a 'render-only' WARP device, which cannot be used to 

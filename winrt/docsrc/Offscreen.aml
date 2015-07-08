@@ -1,0 +1,99 @@
+<?xml version="1.0"?>
+<!--
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+Licensed under the MIT License. See LICENSE.txt in the project root for license information.
+-->
+
+<topic id="Offscreen" revisionNumber="1">
+  <developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <section>
+      <content>
+        <para>
+          Apps occasionally need to draw graphics to a target, where that
+          target is <legacyBold>not</legacyBold> intended for immediate 
+          display. This type of drawing is sometimes called "offscreen 
+          rendering", or "drawing to a texture".
+          This is useful when, for example, an app's output of a drawing
+          operation is to be saved to a file, returned as an array of pixels,
+          or used as an input to a later operation.
+        </para>
+
+        <para>
+          Win2D supports these scenarios, and they are made easy with
+          <codeEntityReference>T:Microsoft.Graphics.Canvas.CanvasRenderTarget</codeEntityReference>.
+        </para>
+
+        <para>
+          CanvasRenderTarget extends 
+          <codeEntityReference>T:Microsoft.Graphics.Canvas.CanvasBitmap</codeEntityReference>, 
+          and has the method 
+          <codeEntityReference>M:Microsoft.Graphics.Canvas.CanvasRenderTarget.CreateDrawingSession</codeEntityReference>. 
+          Use CreateDrawingSession to draw graphics content to a
+          CanvasRenderTarget. For example:
+          <code>
+            CanvasDevice device = CanvasDevice.GetSharedDevice(false);
+            CanvasRenderTarget offscreen = new CanvasRenderTarget(device, width, height, 96);
+            using (CanvasDrawingSession ds = offscreen.CreateDrawingSession())
+            {
+                ds.Clear(Colors.Black);
+                ds.DrawRectangle(100, 200, 5, 6, Colors.Red);
+            }
+          </code>
+          Note that there is a method call to 'Clear'. Without this, the bitmap
+          will be initialized with undefined content. Drawing sessions created
+          through CanvasRenderTarget are different from those created on Win2D's
+          XAML controls, in terms of the Clear behavior. Controls are always
+          cleared automatically by Win2D when a drawing session is created.
+          CanvasRenderTargets are not. This way, apps have the ability to make
+          incremental changes to CanvasRenderTargets, and avoid redrawing an
+          entire scene every time.
+        </para>
+
+        <para>
+          To draw a CanvasRenderTarget to another drawing session, simply
+          use 
+          <codeEntityReference>M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawImage(Microsoft.Graphics.Canvas.ICanvasImage)</codeEntityReference>
+          or one of its overloads. For example:
+          <code>            
+            void canvasControl_Draw(CanvasControl sender, CanvasDrawEventArgs args)
+            {
+                args.DrawingSession.DrawImage(offscreen, 23, 34);
+            }
+          </code>
+        </para>
+
+        <para>
+          Or, to use a CanvasRenderTarget as an input to an effect, pass it
+          in wherever the effect expects to use an 
+          <codeEntityReference>T:Microsoft.Graphics.Canvas.Effects.IGraphicsEffectSource</codeEntityReference>
+          as a source. For example:
+          <code>
+          GaussianBlurEffect blurEffect = new GaussianBlurEffect()
+          {
+              Source = offscreen,
+              BlurAmount = 3.0f
+          };
+          </code>
+        </para>
+
+        <para>
+          An app can close, and re-open drawing sessions on a CanvasRenderTarget
+          abitrarily many times.
+        </para>
+
+        <para>
+          Drawing operations are not committed to the CanvasRenderTarget until 
+          the drawing session object is disposed. In C#, a 'using' block can 
+          organize this.
+        </para>
+
+        <para>
+          It's worth pointing out that CanvasRenderTarget is not a XAML control,
+          and does not involve the XAML tree at all. It is suitable for both
+          XAML and non-XAML-based apps.
+        </para>
+      </content>
+    </section>
+  </developerConceptualDocument>
+</topic>

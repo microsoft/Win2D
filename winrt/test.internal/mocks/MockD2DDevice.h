@@ -1,14 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); you may
-// not use these files except in compliance with the License. You may obtain
-// a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-// WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-// License for the specific language governing permissions and limitations
-// under the License.
+// Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
 #pragma once
 
@@ -16,6 +8,10 @@
 
 namespace canvas
 {
+    // Forward declaration to break circular dependency (defined in MockD2DFactory.h)
+    ComPtr<ID2D1Factory2> MakeMockD2DFactory();
+
+
     [uuid(D5B2FFD5-882E-4CB5-98FA-2342E52FC6F2)]
     class ID2DDeviceWithDxgiDevice : public IUnknown
     {
@@ -23,12 +19,13 @@ namespace canvas
         virtual ComPtr<IDXGIDevice3> GetDxgiDevice() = 0;
     };
     
+
     class MockD2DDevice : public RuntimeClass<
         RuntimeClassFlags<ClassicCom>,
         ChainInterfaces<ID2D1Device1, ID2D1Device, ID2D1Resource>,
         ID2DDeviceWithDxgiDevice>
     {
-        ComPtr<ID2D1Factory2> m_parentD2DFactory;
+        mutable ComPtr<ID2D1Factory2> m_parentD2DFactory;
         ComPtr<IDXGIDevice3> m_dxgiDevice;
 
     public:
@@ -53,7 +50,8 @@ namespace canvas
         IFACEMETHODIMP_(void) GetFactory(ID2D1Factory **factory) const override
         {
             if (!m_parentD2DFactory)
-                Assert::Fail(L"Unexpected call to GetFactory");
+                m_parentD2DFactory = MakeMockD2DFactory();
+
             m_parentD2DFactory.CopyTo(factory);
         }
 

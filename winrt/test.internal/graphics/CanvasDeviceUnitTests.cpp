@@ -1,14 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); you may
-// not use these files except in compliance with the License. You may obtain
-// a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-// WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-// License for the specific language governing permissions and limitations
-// under the License.
+// Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
 #include "pch.h"
 
@@ -328,8 +320,8 @@ public:
         deviceContext->CreateBitmapMethod.SetExpectedCalls(1,
             [&] (D2D1_SIZE_U size, void const* sourceData, UINT32 pitch, D2D1_BITMAP_PROPERTIES1 const* bitmapProperties, ID2D1Bitmap1** bitmap)
             {
-                Assert::AreEqual<int>(DipsToPixels(anyWidth, anyDpi), size.width);
-                Assert::AreEqual<int>(DipsToPixels(anyHeight, anyDpi), size.height);
+                Assert::AreEqual<int>(SizeDipsToPixels(anyWidth, anyDpi), size.width);
+                Assert::AreEqual<int>(SizeDipsToPixels(anyHeight, anyDpi), size.height);
                 Assert::IsNull(sourceData);
                 Assert::AreEqual(0U, pitch);
                 Assert::AreEqual(D2D1_BITMAP_OPTIONS_TARGET, bitmapProperties->bitmapOptions);
@@ -910,5 +902,25 @@ public:
         }
         Assert::IsFalse(IsWeakRefValid(weakDevices[0]));
         Assert::IsFalse(IsWeakRefValid(weakDevices[1]));
+    }
+
+    TEST_METHOD_EX(CanvasDevice_EntersLockWhenCallingDxgiMethods)
+    {
+        Fixture f;
+        auto device = f.Manager->Create(false);
+
+        ComPtr<ID2D1Factory> d2dFactory;
+        As<ICanvasDeviceInternal>(device)->GetD2DDevice()->GetFactory(&d2dFactory);
+        auto mockFactory = static_cast<MockD2DFactory*>(d2dFactory.Get());
+
+        // Creating the device should have taken the lock once, while enumerating DXGI outputs.
+        Assert::AreEqual(1, mockFactory->GetEnterCount());
+        Assert::AreEqual(1, mockFactory->GetLeaveCount());
+
+        // Calling the DXGI Trim() method should lock a second time.
+        device->Trim();
+
+        Assert::AreEqual(2, mockFactory->GetEnterCount());
+        Assert::AreEqual(2, mockFactory->GetLeaveCount());
     }
 };

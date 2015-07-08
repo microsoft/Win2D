@@ -1,14 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); you may
-// not use these files except in compliance with the License. You may obtain
-// a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-// WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-// License for the specific language governing permissions and limitations
-// under the License.
+// Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
 #pragma once
 
@@ -1233,4 +1225,38 @@ inline bool IsWeakRefValid(WeakRef weakRef)
     ComPtr<IInspectable> obj;
     ThrowIfFailed(weakRef.As(&obj));
     return static_cast<bool>(obj);
+}
+
+template<typename CANVAS_TYPE>
+void VerifyConvertDipsToPixels(float dpi, CANVAS_TYPE dpiOwner)
+{
+    const float testValue = 101;
+
+    const float expectedScaledValue = testValue * dpi / DEFAULT_DPI;
+    Assert::AreNotEqual(expectedScaledValue, floorf(expectedScaledValue)); // Should not be integral
+
+    struct TestCase
+    {
+        CanvasDpiRounding DpiRounding;
+        int Expected;
+    } testCases[] = {
+        { CanvasDpiRounding::Floor, (int)(floorf(expectedScaledValue)) },
+        { CanvasDpiRounding::Round, (int)(roundf(expectedScaledValue)) },
+        { CanvasDpiRounding::Ceiling, (int)(ceilf(expectedScaledValue)) }
+    };
+
+    for (auto testCase : testCases)
+    {
+        int pixels = 0;
+        ThrowIfFailed(dpiOwner->ConvertDipsToPixels(testValue, testCase.DpiRounding, &pixels));
+        Assert::AreEqual(testCase.Expected, pixels);
+    }
+
+    // Check error case
+    int pixels = 0;
+    Assert::AreEqual(E_INVALIDARG, dpiOwner->ConvertDipsToPixels(testValue, static_cast<CanvasDpiRounding>(-1), &pixels));
+
+    // Check zero case
+    ThrowIfFailed(dpiOwner->ConvertDipsToPixels(0, CanvasDpiRounding::Round, &pixels));
+    Assert::AreEqual(0, pixels);
 }

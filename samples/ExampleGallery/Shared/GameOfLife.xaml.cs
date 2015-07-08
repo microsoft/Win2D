@@ -1,14 +1,6 @@
-﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation. All rights reserved.
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); you may
-// not use these files except in compliance with the License. You may obtain
-// a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-// WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-// License for the specific language governing permissions and limitations
-// under the License.
+// Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Effects;
@@ -311,8 +303,8 @@ namespace ExampleGallery
 
                 var pos = Vector2.Transform(point.Position.ToVector2(), transform);
 
-                var x = canvas.ConvertDipsToPixels(pos.X);
-                var y = canvas.ConvertDipsToPixels(pos.Y);
+                var x = canvas.ConvertDipsToPixels(pos.X, CanvasDpiRounding.Floor);
+                var y = canvas.ConvertDipsToPixels(pos.Y, CanvasDpiRounding.Floor);
 
                 // If the point is within the bounds of the rendertarget, and not the same as the last point...
                 if (x >= 0 &&

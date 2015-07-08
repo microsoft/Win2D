@@ -47,6 +47,7 @@
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)GlowTextCustomControl.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Infrastructure\AppIconGenerator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Infrastructure\CustomThumbnails.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Infrastructure\DeveloperTools.xaml.cs">
       <DependentUpon>DeveloperTools.xaml</DependentUpon>
     </Compile>
@@ -103,6 +104,7 @@
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Infrastructure\SuspensionManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Infrastructure\Utils.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TextDirectionControl.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TextDirectionsExample.xaml.cs">
       <DependentUpon>TextDirectionsExample.xaml</DependentUpon>
     </Compile>

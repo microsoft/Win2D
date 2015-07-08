@@ -1,14 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); you may
-// not use these files except in compliance with the License. You may obtain
-// a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-// WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-// License for the specific language governing permissions and limitations
-// under the License.
+// Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
 #pragma once
 
@@ -425,9 +417,28 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return pixels * DEFAULT_DPI / dpi;
     }
 
-    inline int DipsToPixels(float dips, float dpi)
+    inline int DipsToPixels(
+        float dips, 
+        float dpi, 
+        CanvasDpiRounding dpiRounding)
     {
-        int result = (int)roundf(dips * dpi / DEFAULT_DPI);
+        float scaled = dips * dpi / DEFAULT_DPI;
+        switch (dpiRounding)
+        {
+            case CanvasDpiRounding::Floor: scaled = floorf(scaled); break;
+            case CanvasDpiRounding::Round: scaled = roundf(scaled); break;
+            case CanvasDpiRounding::Ceiling: scaled = ceilf(scaled); break;
+            default: ThrowHR(E_INVALIDARG);
+        }
+
+        return (int)(scaled);
+    }
+
+    inline int SizeDipsToPixels(
+        float dips,
+        float dpi)
+    {
+        int result = DipsToPixels(dips, dpi, CanvasDpiRounding::Round);
 
         // Zero versus non-zero is pretty important for things like control sizes, so we want
         // to avoid ever rounding non-zero input sizes down to zero during conversion to pixels.
