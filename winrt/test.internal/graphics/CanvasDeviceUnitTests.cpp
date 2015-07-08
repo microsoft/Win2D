@@ -61,7 +61,7 @@ public:
             Assert::AreEqual(expectedForceSoftwareRenderer, forceSoftwareRendererActual);
 
             // Ensure that the getter returns E_INVALIDARG with null ptr.
-            Assert::AreEqual(E_INVALIDARG, canvasDevice->get_ForceSoftwareRenderer(NULL));
+            Assert::AreEqual(E_INVALIDARG, canvasDevice->get_ForceSoftwareRenderer(nullptr));
 
             Assert::AreEqual(1, f.ResourceCreationAdapter->m_numD2DFactoryCreationCalls);
 

@@ -40,6 +40,9 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Effects.AtlasEffect.Source">
       <summary>Gets or sets the input source for Atlas effect.</summary>
+      <remarks>
+        This property is initialized to null.
+      </remarks>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Effects.AtlasEffect.PaddingRectangle">
       <summary>The padding rectangle specifies how much padding was included when 

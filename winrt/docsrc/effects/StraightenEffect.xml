@@ -44,6 +44,9 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Effects.StraightenEffect.Source">
       <summary>Gets or sets the input source for Straighten effect.</summary>
+      <remarks>
+        This property is initialized to null.
+      </remarks>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Effects.StraightenEffect.Angle">
       <summary>Specifies how much the image should be rotated.

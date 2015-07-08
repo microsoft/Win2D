@@ -82,7 +82,10 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.CreatePolygon(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.Graphics.Canvas.Numerics.Vector2[])">
       <summary>Creates a new polygon geometry (triangle, quadrilateral, etc.), connecting the specified points.</summary>
-      <remarks>The polygon will automatically be closed by connecting the last point back to the first one.</remarks>
+      <remarks>
+        <p>The polygon will automatically be closed by connecting the last point back to the first one.</p>
+        <p>Passing an empty set of points will produce an empty polygon.</p>
+      </remarks>
     </member>
 
     <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.CombineWith(Microsoft.Graphics.Canvas.Geometry.CanvasGeometry,Microsoft.Graphics.Canvas.Numerics.Matrix3x2,Microsoft.Graphics.Canvas.Geometry.CanvasGeometryCombine)">
@@ -276,6 +279,9 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         This overload determines how to fill intersecting geometries in the group using a default
         <see cref="T:Microsoft.Graphics.Canvas.Geometry.CanvasFilledRegionDetermination"/> of Alternate.
         </p>
+        <p>
+          Passing an empty set of geometries to this method is allowed, and will produce a zero-sized geomtry group.
+        </p>
       </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.CreateGroup(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.Graphics.Canvas.Geometry.CanvasGeometry[],Microsoft.Graphics.Canvas.Geometry.CanvasFilledRegionDetermination)">
@@ -296,6 +302,9 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         <p>
         This overload uses the specified <see cref="T:Microsoft.Graphics.Canvas.Geometry.CanvasFilledRegionDetermination"/>
         to determine how to fill intersecting geometries in the group.
+        </p>
+        <p>
+          Passing an empty set of geometries to this method is allowed, and will produce a zero-sized geomtry group.
         </p>
       </remarks>
     </member>    

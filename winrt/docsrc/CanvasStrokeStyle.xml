@@ -57,6 +57,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
            the third element sets the length of a dash, and so on. The length of each dash and space in
            the dash pattern is the product of the element value in the array and the stroke width.</p>
         <p>This array must contain an even number of elements.</p>
+        <p>This property is initialized to null.</p>
       </remarks>
     </member>
 

@@ -43,6 +43,9 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Effects.PosterizeEffect.Source">
       <summary>Gets or sets the input source for Posterize effect.</summary>
+      <remarks>
+        This property is initialized to null.
+      </remarks>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Effects.PosterizeEffect.RedValueCount">
       <summary>Specifies how many discrete steps to divide the red channel range of 0.0 to 1.0 into.</summary>

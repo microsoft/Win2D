@@ -33,6 +33,9 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Effects.BorderEffect.Source">
       <summary>Gets or sets the input source for Border effect.</summary>
+      <remarks>
+        This property is initialized to null.
+      </remarks>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Effects.BorderEffect.ExtendX">
       <summary>Specifies how content is tiled horizontally when it extends beyond the image.

@@ -56,9 +56,10 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="P:Microsoft.Graphics.Canvas.Effects.GaussianBlurEffect.Source">
       <summary>Gets or sets the input source for Gaussian blur effect.</summary>
       <remarks>
-        <p>Source can be any IGraphicsEffectSource object. But source have to be <see cref="T:Microsoft.Graphics.Canvas.ICanvasImage"/> 
+        <p>This property is initialized to null.</p>
+        <p>Source can be any IGraphicsEffectSource object. But the source has to be <see cref="T:Microsoft.Graphics.Canvas.ICanvasImage"/> 
            type if output will be drawn using <see cref="T:Microsoft.Graphics.Canvas.CanvasDrawingSession"/>. 
-             Any valid effect can be used as source to create effects chain.</p>
+             Any valid effect can be used as source to create an effects chain.</p>
       </remarks>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Effects.GaussianBlurEffect.Optimization">

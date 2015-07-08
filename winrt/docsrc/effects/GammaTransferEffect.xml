@@ -38,6 +38,9 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Effects.GammaTransferEffect.Source">
       <summary>Gets or sets the input source for GammaTransfer effect.</summary>
+      <remarks>
+        This property is initialized to null.
+      </remarks>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Effects.GammaTransferEffect.RedOffset">
       <summary>Offsets the red channel. Default value 0.</summary>

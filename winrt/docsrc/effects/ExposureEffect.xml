@@ -43,6 +43,9 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Effects.ExposureEffect.Source">
       <summary>Gets or sets the input source for Exposure effect.</summary>
+      <remarks>
+        This property is initialized to null.
+      </remarks>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Effects.ExposureEffect.Exposure">
       <summary>How much to increase or decrease the exposure of the image. Default value 0, range -2 to 2.</summary>

@@ -35,6 +35,9 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Effects.DpiCompensationEffect.Source">
       <summary>Gets or sets the input source for DpiCompensation effect.</summary>
+      <remarks>
+        This property is initialized to null.
+      </remarks>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Effects.DpiCompensationEffect.InterpolationMode">
       <summary>Interpolation mode. Default value <see cref="F:Microsoft.Graphics.Canvas.CanvasImageInterpolation.Linear"/>.</summary>

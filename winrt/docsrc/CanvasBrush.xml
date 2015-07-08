@@ -74,13 +74,20 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <summary>Releases all resources used by the CanvasImageBrush.</summary>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Brushes.CanvasImageBrush.SourceRectangle">
-      <summary>Optional field which specifies the source rectangle of the brush. If no source rectangle is specified, the entire source image is used.</summary>
+      <summary>Optional field which specifies the source rectangle of the brush.</summary>
+      <remarks>
+        If no source rectangle is specified- that is, this property is
+        set to null- then the entire source image is used.</remarks>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Brushes.CanvasImageBrush.Interpolation">
       <summary>Specifies the image quality used for resizing and transforms.</summary>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Brushes.CanvasImageBrush.Image">
-      <summary>Specifies an image used for the brush. Required, for the brush to be used for drawing.</summary>
+      <summary>Specifies an image used for the brush.</summary>
+      <remarks>
+        This property is allowed to be set to null. 
+        However, it must be set to non-null whenever the brush is used for drawing.
+      </remarks>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Brushes.CanvasImageBrush.ExtendY">
       <summary>Specifies how content is tiled vertically when it extends beyond the Image.</summary>
