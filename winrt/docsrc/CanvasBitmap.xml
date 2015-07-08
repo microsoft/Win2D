@@ -304,19 +304,39 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.CopyPixelsFromBitmap(Microsoft.Graphics.Canvas.CanvasBitmap)">
       <summary>Copies the entire bitmap specified into this bitmap, at position (0, 0).</summary>
-      <remarks>The bitmap specified must be able to fit, and the pixel formats must match.</remarks>
+      <remarks>
+        <p>
+          The bitmap specified must be able to fit, and the pixel formats must match.
+        </p>
+        <p>
+          It's an error to copy a bitmap onto itself.
+        </p>
+      </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.CopyPixelsFromBitmap(Microsoft.Graphics.Canvas.CanvasBitmap,System.Int32,System.Int32)">
       <summary>Copies the entire bitmap specified into this bitmap at the point specified.</summary>
-      <remarks>The bitmap specified must be able to fit, and the pixel formats must match.
-               The destination point is specified in pixels (not DIPs).</remarks>
+      <remarks>
+        <p>
+          The bitmap specified must be able to fit, and the pixel formats must match.
+          The destination point is specified in pixels (not DIPs).
+        </p>
+        <p>
+          It's an error to copy a bitmap onto itself.
+        </p>
+      </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.CopyPixelsFromBitmap(Microsoft.Graphics.Canvas.CanvasBitmap,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32)">
       <summary>Copies the specified region of a bitmap into this bitmap, at the point specified.</summary>
-      <remarks>The region must be able to fit, and the pixel formats of the two bitmaps must match.
-               The destination point and source region are specified in pixels (not DIPs).</remarks>
+      <remarks>
+        <p>
+          The region must be able to fit, and the pixel formats of the two bitmaps must match.
+          The destination point and source region are specified in pixels (not DIPs).
+        </p>
+        <p>
+          It's an error to copy a bitmap onto itself.
+        </p>
+      </remarks>
     </member>
-
   
     <member name="T:Microsoft.Graphics.Canvas.CanvasBitmapFileFormat">
       <summary>This denotes the format used when saving a bitmap to a file.</summary>

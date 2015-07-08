@@ -1272,7 +1272,11 @@ public:
         //
         auto bitmap = ref new CanvasRenderTarget(m_sharedDevice, 1, 1, DEFAULT_DPI);
 
-        Assert::ExpectException<Platform::COMException^>([&] { bitmap->CopyPixelsFromBitmap(bitmap); });
+        Assert::ExpectException<Platform::InvalidArgumentException^>([&] { bitmap->CopyPixelsFromBitmap(bitmap); });
+
+        Assert::ExpectException<Platform::InvalidArgumentException^>([&] { bitmap->CopyPixelsFromBitmap(bitmap, 0, 0); });
+
+        Assert::ExpectException<Platform::InvalidArgumentException^>([&] { bitmap->CopyPixelsFromBitmap(bitmap, 0, 0, 0, 0, 1, 1); });
     }
 
     TEST_METHOD(CanvasBitmap_SaveToStreamAsync_InvalidArguments)
