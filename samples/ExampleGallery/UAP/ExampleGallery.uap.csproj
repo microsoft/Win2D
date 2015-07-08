@@ -98,7 +98,7 @@
       <Project>{d77eb5be-c840-4ade-b4f6-1ba9512c4768}</Project>
       <Name>ExampleGallery.BackgroundTask.uap</Name>
     </ProjectReference>
-    <SDKReference Include="WindowsMobile, Version=10.0.10156.0">
+    <SDKReference Include="WindowsMobile, Version=10.0.10158.0">
       <Name>Windows Mobile Extensions for the Universal App Platform</Name>
     </SDKReference>
   </ItemGroup>
@@ -116,7 +116,7 @@
       <SubType>Designer</SubType>
     </AppxManifest>
     <None Include="$(AssetDir)TemporaryKey.pfx" />
-    <None Include="packages.config" />
+    <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\Logo.scale-100.png" />
@@ -149,17 +149,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="System.Numerics.Vectors, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\packages\System.Numerics.Vectors.4.0.0\lib\win8\System.Numerics.Vectors.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Numerics.Vectors.WindowsRuntime, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\packages\System.Numerics.Vectors.4.0.0\lib\win8\System.Numerics.Vectors.WindowsRuntime.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

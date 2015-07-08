@@ -104,7 +104,7 @@
       <SubType>Designer</SubType>
     </AppxManifest>
     <None Include="$(AssetDir)TemporaryKey.pfx" />
-    <None Include="packages.config" />
+    <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="$(AssetDir)Logo.scale-240.png">
