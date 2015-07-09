@@ -94,12 +94,11 @@ namespace Microsoft.Graphics.Canvas.UI.Xaml
             [out, retval] Microsoft.Graphics.Canvas.CanvasDevice** value);
 
         //
-        // Binds this image source to a different device.  This is used after a
-        // new device is recovered after a device lost.
+        // Recreates the surface, binding it to a new device.  Should be called
+        // after device lost or CompositionTarget.SurfaceContentsLost.
         //
-        [propput]
-        HRESULT Device(
-            [in] Microsoft.Graphics.Canvas.CanvasDevice* value);
+        HRESULT Recreate(
+            [in] Microsoft.Graphics.Canvas.ICanvasResourceCreator* value);
 
         //
         // Gets the DPI of the image source.

@@ -65,12 +65,50 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         The region is in device independent pixels (DIPs).
       </remarks>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource.Device">
-      <summary>Gets or sets the device used by this image source.</summary>
+    <member name="M:Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource.Recreate(Microsoft.Graphics.Canvas.ICanvasResourceCreator)">
+      <summary>Recreates the underlying image source.</summary>      
       <remarks>
-        Changing this property binds the image source to a different device.
-        This is used after a new device is recovered after a device lost.
+        <p>
+          This recreates the image source associating it with the specified
+          device.  Any previous contents of the image source is discarded.  
+          <see cref="O:Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource.CreateDrawingSession">CreateDrawingSession</see>
+          must be used to redraw the image.
+        </p>
+        <p>
+          This method should be called in response to the <a href="https://msdn.microsoft.com/en-us/library/windows/apps/windows.ui.xaml.media.compositiontarget.surfacecontentslost.aspx">CompositionTarget.SurfaceContentsLost</a>
+          event or a device lost exception.  One possible approach to handling
+          this is:
+
+          <code>
+            void CompositionTarget_SurfaceContentsLost(object sender, object e)
+            {
+                surfaceContentsLost = true;
+                UpdateImageSource();
+            }
+
+            void UpdateImageSource()
+            {
+                var device = CanvasDevice.GetSharedDevice(false);
+                if (device != imageSource.Device || surfaceContentsLost)
+                {
+                    imageSource.Recreate(device);
+                    surfaceContentsLost = false;
+                }
+
+                using (var ds = imageSource.CreateDrawingSession(clearColor))
+                {
+                    // ...
+                }
+            }
+          </code>
+
+          See <a href="https://github.com/Microsoft/Win2D-Samples/blob/master/ExampleGallery/Shared/ImageSourceUpdateRegion.xaml.cs">ImageSourceUpdateRegion.xaml.cs</a>
+          in ExampleGallery for a more complete example.
+        </p>
       </remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource.Device">
+      <summary>Gets the device used by this image source.</summary>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource.Dpi">
       <summary>Gets the dots-per-inch (DPI) of this image source.</summary>

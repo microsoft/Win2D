@@ -196,74 +196,81 @@ public:
         Assert::AreEqual(E_INVALIDARG, canvasImageSource->get_Device(nullptr));
     }
 
-    TEST_METHOD_EX(CanvasImageSourcePutDevice)
+    struct RecreateFixture
     {
-        auto firstCanvasDevice = Make<StubCanvasDevice>();
+        ComPtr<StubCanvasDevice> FirstDevice;
+        ComPtr<MockSurfaceImageSource> SurfaceImageSource;
+        ComPtr<CanvasImageSource> ImageSource;
 
-        auto mockSurfaceImageSource = Make<MockSurfaceImageSource>();
-        auto stubSurfaceImageSourceFactory = Make<StubSurfaceImageSourceFactory>(mockSurfaceImageSource.Get());
+        RecreateFixture()
+            : FirstDevice(Make<StubCanvasDevice>())
+            , SurfaceImageSource(Make<MockSurfaceImageSource>())
+        {
+            auto surfaceImageSourceFactory = Make<StubSurfaceImageSourceFactory>(SurfaceImageSource.Get());
 
-        // On the initial make we know that this succeeds
-        mockSurfaceImageSource->SetDeviceMethod.AllowAnyCall();
+            // On the initial make we know that this succeeds
+            SurfaceImageSource->SetDeviceMethod.AllowAnyCall();
 
-        auto canvasImageSource = Make<CanvasImageSource>(
-            firstCanvasDevice.Get(),
-            1.0f,
-            1.0f,
-            DEFAULT_DPI,
-            CanvasAlphaMode::Premultiplied,
-            stubSurfaceImageSourceFactory.Get(),
-            std::make_shared<MockCanvasImageSourceDrawingSessionFactory>());
+            ImageSource = Make<CanvasImageSource>(
+                FirstDevice.Get(),
+                1.0f,
+                1.0f,
+                DEFAULT_DPI,
+                CanvasAlphaMode::Premultiplied,
+                surfaceImageSourceFactory.Get(),
+                std::make_shared<MockCanvasImageSourceDrawingSessionFactory>());            
+        }
 
-        auto secondCanvasDevice = Make<StubCanvasDevice>();
-        ComPtr<IUnknown> expectedD2DDevice = secondCanvasDevice->GetD2DDevice();
 
-        // When the new device is set we expect SetDevice to be called with the
-        // new D2D device
-        mockSurfaceImageSource->SetDeviceMethod.SetExpectedCalls(1,
-            [&](IUnknown* actualDevice)
-            {
-                Assert::AreEqual(expectedD2DDevice.Get(), actualDevice);
-                return S_OK;
-            });
+        void ExpectSetDeviceWithNullAndThen(ComPtr<IUnknown> expected)
+        {
+            SurfaceImageSource->SetDeviceMethod.SetExpectedCalls(2,
+                [=] (IUnknown* actualDevice)
+                {
+                    if (this->SurfaceImageSource->SetDeviceMethod.GetCurrentCallCount() == 1)
+                    {
+                        Assert::IsNull(actualDevice);
+                    }
+                    else
+                    {
+                        Assert::IsTrue(IsSameInstance(actualDevice, expected.Get()));
+                    }
+                    return S_OK;
+                });
+        }
+    };
 
-        ThrowIfFailed(canvasImageSource->put_Device(secondCanvasDevice.Get()));
+    TEST_METHOD_EX(CanvasImageSource_Recreate_WhenPassedNull_ReturnsInvalidArg)
+    {
+        RecreateFixture f;
 
-        // Verify that get_Device also returns the correct device.
-        ComPtr<ICanvasDevice> expectedCanvasDevice;
-        ThrowIfFailed(secondCanvasDevice.As(&expectedCanvasDevice));
+        Assert::AreEqual(E_INVALIDARG, f.ImageSource->Recreate(nullptr));
+    }
 
-        ComPtr<ICanvasDevice> actualCanvasDevice;
-        ThrowIfFailed(canvasImageSource->get_Device(&actualCanvasDevice));
+    TEST_METHOD_EX(CanvasImageSource_Recreate_WhenPassedNewDevice_SetsDevice)
+    {
+        RecreateFixture f;
 
-        Assert::AreEqual(expectedCanvasDevice.Get(), actualCanvasDevice.Get());
+        auto secondDevice = Make<StubCanvasDevice>();
 
-        //
-        // Check what happens if part of the put_Device process fails
-        //
-        auto thirdCanvasDevice = Make<StubCanvasDevice>();
+        f.ExpectSetDeviceWithNullAndThen(secondDevice->GetD2DDevice());
+        ThrowIfFailed(f.ImageSource->Recreate(secondDevice.Get()));
 
-        // Simulate SetDevice failing
-        mockSurfaceImageSource->SetDeviceMethod.SetExpectedCalls(1,
-            [](IUnknown*)
-            {
-                return E_FAIL;
-            });
+        ComPtr<ICanvasDevice> retrievedDevice;
+        ThrowIfFailed(f.ImageSource->get_Device(&retrievedDevice));
+        Assert::IsTrue(IsSameInstance(secondDevice.Get(), retrievedDevice.Get()));
+    }
 
-        Assert::IsTrue(FAILED(canvasImageSource->put_Device(secondCanvasDevice.Get())));
+    TEST_METHOD_EX(CanvasImageSource_Recreated_WhenPassedOriginalDevice_SetsDevice)
+    {
+        RecreateFixture f;
 
-        // Verify that get_Device returns the original device since part of
-        // put_Device process failed.
-        expectedCanvasDevice.Reset();
-        ThrowIfFailed(secondCanvasDevice.As(&expectedCanvasDevice));
+        f.ExpectSetDeviceWithNullAndThen(f.FirstDevice->GetD2DDevice());
+        ThrowIfFailed(f.ImageSource->Recreate(f.FirstDevice.Get()));
 
-        actualCanvasDevice.Reset();
-        ThrowIfFailed(canvasImageSource->get_Device(&actualCanvasDevice));
-
-        Assert::AreEqual(expectedCanvasDevice.Get(), actualCanvasDevice.Get());   
-
-        // Calling put_Device with nullptr should fail appropriately
-        Assert::AreEqual(E_INVALIDARG, canvasImageSource->put_Device(nullptr));
+        ComPtr<ICanvasDevice> retrievedDevice;
+        ThrowIfFailed(f.ImageSource->get_Device(&retrievedDevice));
+        Assert::IsTrue(IsSameInstance(f.FirstDevice.Get(), retrievedDevice.Get()));
     }
 
     TEST_METHOD_EX(CanvasImageSource_CreateFromCanvasControl)
