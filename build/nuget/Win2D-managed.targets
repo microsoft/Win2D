@@ -52,6 +52,7 @@
     -->
     <ItemGroup>
       <win2d-PlatformWinmds Include="%(ReferencePath.Identity)" Condition="$([System.String]::new('%(ReferencePath.Identity)').EndsWith('Microsoft.VCLibs\12.0\References\CommonConfiguration\neutral\platform.winmd'))"/>
+      <win2d-PlatformWinmds Include="%(ReferencePath.Identity)" Condition="$([System.String]::new('%(ReferencePath.Identity)').EndsWith('Microsoft.VCLibs\14.0\References\CommonConfiguration\neutral\platform.winmd'))"/>
     </ItemGroup>
 
     <Message Text="Win2D is removing the reference to %(win2d-PlatformWinmds.Identity)" />
