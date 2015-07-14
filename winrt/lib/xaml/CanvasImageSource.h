@@ -97,8 +97,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         IFACEMETHOD(get_Device)(
             _COM_Outptr_ ICanvasDevice** value) override;
 
-        IFACEMETHOD(put_Device)(
-            _In_ ICanvasDevice* value) override;
+        IFACEMETHOD(Recreate)(
+            _In_ ICanvasResourceCreator* value) override;
 
         IFACEMETHOD(get_Dpi)(
             _Out_ float* dpi) override;
@@ -126,7 +126,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             ISurfaceImageSourceFactory* surfaceImageSourceFactory,
             bool isOpaque);
 
-        void SetResourceCreator(ICanvasResourceCreator* resourceCreator);
+        void SetDevice(ICanvasDevice* device);
     };
 
 

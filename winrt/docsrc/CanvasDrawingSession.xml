@@ -378,6 +378,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
           <li>Opacity brush <see cref="P:Microsoft.Graphics.Canvas.Brushes.CanvasImageBrush.Interpolation"/> is <see cref="F:Microsoft.Graphics.Canvas.CanvasImageInterpolation.Linear"/> (the default)</li>
           <li>The drawing session <see cref="P:Microsoft.Graphics.Canvas.CanvasDrawingSession.Antialiasing"/> property is set to <see cref="F:Microsoft.Graphics.Canvas.CanvasAntialiasing.Aliased"/> (not its default!)</li>
         </ul>
+        <p>The opacity mask brush is allowed to be null.</p>
       </remarks>
       <seealso cref="O:Microsoft.Graphics.Canvas.CanvasDrawingSession.CreateLayer"/>
       <seealso cref="T:Microsoft.Graphics.Canvas.CanvasActiveLayer"/>
@@ -404,6 +405,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
           <li>Opacity brush <see cref="P:Microsoft.Graphics.Canvas.Brushes.CanvasImageBrush.Interpolation"/> is <see cref="F:Microsoft.Graphics.Canvas.CanvasImageInterpolation.Linear"/> (the default)</li>
           <li>The drawing session <see cref="P:Microsoft.Graphics.Canvas.CanvasDrawingSession.Antialiasing"/> property is set to <see cref="F:Microsoft.Graphics.Canvas.CanvasAntialiasing.Aliased"/> (not its default!)</li>
         </ul>
+        <p>The opacity mask brush is allowed to be null.</p>
       </remarks>
       <seealso cref="O:Microsoft.Graphics.Canvas.CanvasDrawingSession.CreateLayer"/>
       <seealso cref="T:Microsoft.Graphics.Canvas.CanvasActiveLayer"/>
@@ -567,27 +569,51 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawText(System.String,System.Single,System.Single,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush,Microsoft.Graphics.Canvas.Text.CanvasTextFormat)">
       <summary>Draws text at the specified position, using a brush to define the color.</summary>
+      <remarks>
+        The text format object is allowed to be null.
+      </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawText(System.String,System.Single,System.Single,Windows.UI.Color,Microsoft.Graphics.Canvas.Text.CanvasTextFormat)">
       <summary>Draws text at the specified position.</summary>
+      <remarks>
+        The text format object is allowed to be null.
+      </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawText(System.String,Microsoft.Graphics.Canvas.Numerics.Vector2,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush,Microsoft.Graphics.Canvas.Text.CanvasTextFormat)">
       <summary>Draws text at the specified position, using a brush to define the color.</summary>
+      <remarks>
+        The text format object is allowed to be null.
+      </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawText(System.String,Microsoft.Graphics.Canvas.Numerics.Vector2,Windows.UI.Color,Microsoft.Graphics.Canvas.Text.CanvasTextFormat)">
       <summary>Draws text at the specified position.</summary>
+      <remarks>
+        The text format object is allowed to be null.
+      </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawText(System.String,System.Single,System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush,Microsoft.Graphics.Canvas.Text.CanvasTextFormat)">
       <summary>Draws text inside the specified rectangle, using a brush to define the color.</summary>
+      <remarks>
+        The text format object is allowed to be null.
+      </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawText(System.String,System.Single,System.Single,System.Single,System.Single,Windows.UI.Color,Microsoft.Graphics.Canvas.Text.CanvasTextFormat)">
       <summary>Draws text inside the specified rectangle.</summary>
+      <remarks>
+        The text format object is allowed to be null.
+      </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawText(System.String,Windows.Foundation.Rect,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush,Microsoft.Graphics.Canvas.Text.CanvasTextFormat)">
       <summary>Draws text inside the specified rectangle, using a brush to define the color.</summary>
+      <remarks>
+        The text format object is allowed to be null.
+      </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawText(System.String,Windows.Foundation.Rect,Windows.UI.Color,Microsoft.Graphics.Canvas.Text.CanvasTextFormat)">
       <summary>Draws text inside the specified rectangle.</summary>
+      <remarks>
+        The text format object is allowed to be null.
+      </remarks>
     </member>
 
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.Dispose">
@@ -804,6 +830,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
           <li>Its <see cref="P:Microsoft.Graphics.Canvas.Brushes.CanvasImageBrush.Image"/> is a <see cref="T:Microsoft.Graphics.Canvas.CanvasBitmap"/> or <see cref="T:Microsoft.Graphics.Canvas.CanvasRenderTarget"/></li>
           <li>Its <see cref="P:Microsoft.Graphics.Canvas.Brushes.CanvasImageBrush.ExtendX"/> and <see cref="P:Microsoft.Graphics.Canvas.Brushes.CanvasImageBrush.ExtendY"/> properties are set to <see cref="F:Microsoft.Graphics.Canvas.CanvasEdgeBehavior.Clamp"/> (the default)</li>
         </ul>
+        <p>The opacity mask brush is allowed to be null.</p>
       </remarks>
       <seealso cref="O:Microsoft.Graphics.Canvas.CanvasDrawingSession.CreateLayer"/>
       <seealso cref="T:Microsoft.Graphics.Canvas.CanvasActiveLayer"/>
@@ -827,6 +854,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
           <li>Its <see cref="P:Microsoft.Graphics.Canvas.Brushes.CanvasImageBrush.Image"/> is a <see cref="T:Microsoft.Graphics.Canvas.CanvasBitmap"/> or <see cref="T:Microsoft.Graphics.Canvas.CanvasRenderTarget"/></li>
           <li>Its <see cref="P:Microsoft.Graphics.Canvas.Brushes.CanvasImageBrush.ExtendX"/> and <see cref="P:Microsoft.Graphics.Canvas.Brushes.CanvasImageBrush.ExtendY"/> properties are set to <see cref="F:Microsoft.Graphics.Canvas.CanvasEdgeBehavior.Clamp"/> (the default)</li>
         </ul>
+        <p>The opacity mask brush is allowed to be null.</p>
       </remarks>
       <seealso cref="O:Microsoft.Graphics.Canvas.CanvasDrawingSession.CreateLayer"/>
       <seealso cref="T:Microsoft.Graphics.Canvas.CanvasActiveLayer"/>
@@ -850,6 +878,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
           <li>Its <see cref="P:Microsoft.Graphics.Canvas.Brushes.CanvasImageBrush.Image"/> is a <see cref="T:Microsoft.Graphics.Canvas.CanvasBitmap"/> or <see cref="T:Microsoft.Graphics.Canvas.CanvasRenderTarget"/></li>
           <li>Its <see cref="P:Microsoft.Graphics.Canvas.Brushes.CanvasImageBrush.ExtendX"/> and <see cref="P:Microsoft.Graphics.Canvas.Brushes.CanvasImageBrush.ExtendY"/> properties are set to <see cref="F:Microsoft.Graphics.Canvas.CanvasEdgeBehavior.Clamp"/> (the default)</li>
         </ul>
+        <p>The opacity mask brush is allowed to be null.</p>
       </remarks>
       <seealso cref="O:Microsoft.Graphics.Canvas.CanvasDrawingSession.CreateLayer"/>
       <seealso cref="T:Microsoft.Graphics.Canvas.CanvasActiveLayer"/>

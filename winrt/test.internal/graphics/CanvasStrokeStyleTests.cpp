@@ -153,7 +153,7 @@ public:
         Assert::AreEqual(D2D1_STROKE_TRANSFORM_TYPE_FIXED, testFactory->m_transformBehavior);
 
         // Some extra testing to verify the behavior of custom vs. non-custom dash styles.
-        canvasStrokeStyle->put_CustomDashStyle(0, NULL);
+        canvasStrokeStyle->put_CustomDashStyle(0, nullptr);
 
         // Re-realize
         realizedD2DStrokeStyle = canvasStrokeStyle->GetRealizedD2DStrokeStyle(testFactory.Get());
@@ -333,7 +333,7 @@ public:
             [&]{ canvasStrokeStyle->put_DashOffset(0.0f); });
 
         verifier.VerifyRedundantSetter(
-            [&]{ canvasStrokeStyle->put_CustomDashStyle(0, NULL); });
+            [&]{ canvasStrokeStyle->put_CustomDashStyle(0, nullptr); });
 
         verifier.VerifyRedundantSetter(
             [&]{ canvasStrokeStyle->put_TransformBehavior(CanvasStrokeTransformBehavior::Normal); });
@@ -351,10 +351,10 @@ public:
             [&]{ canvasStrokeStyle->put_CustomDashStyle(2, customDashPattern1); });
 
         verifier.VerifyEffectiveSetter(
-            [&]{ canvasStrokeStyle->put_CustomDashStyle(0, NULL); });
+            [&]{ canvasStrokeStyle->put_CustomDashStyle(0, nullptr); });
 
         verifier.VerifyRedundantSetter(
-            [&]{ canvasStrokeStyle->put_CustomDashStyle(0, NULL); });
+            [&]{ canvasStrokeStyle->put_CustomDashStyle(0, nullptr); });
     }
 
 };

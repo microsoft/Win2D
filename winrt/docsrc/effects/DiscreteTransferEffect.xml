@@ -45,6 +45,9 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Effects.DiscreteTransferEffect.Source">
       <summary>Gets or sets the input source for DiscreteTransfer effect.</summary>
+      <remarks>
+        This property is initialized to null.
+      </remarks>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Effects.DiscreteTransferEffect.RedTable">
       <summary>List of values defining the transfer function for the red channel. Default value {0,1}.</summary>

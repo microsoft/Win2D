@@ -44,6 +44,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     </member>
     <member name="P:Microsoft.Graphics.Canvas.UI.Xaml.CanvasSwapChainPanel.SwapChain">
       <summary>Gets or sets the associated swap chain object.</summary>
+      <remarks>This property is initially set to null.</remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.UI.Xaml.CanvasSwapChainPanel.RemoveFromVisualTree">
       <summary>Removes the control from the last FrameworkElement it was parented to.</summary>

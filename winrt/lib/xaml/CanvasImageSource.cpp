@@ -189,7 +189,10 @@ CanvasImageSource::CanvasImageSource(
     }
 
     CreateBaseClass(surfaceImageSourceFactory, isOpaque);
-    SetResourceCreator(resourceCreator);
+
+    ComPtr<ICanvasDevice> device;
+    ThrowIfFailed(resourceCreator->get_Device(&device));
+    SetDevice(device.Get());
 }
 
 
@@ -214,23 +217,18 @@ void CanvasImageSource::CreateBaseClass(
 }
 
 
-void CanvasImageSource::SetResourceCreator(ICanvasResourceCreator* resourceCreator)
+void CanvasImageSource::SetDevice(ICanvasDevice* device)
 {
-    CheckInPointer(resourceCreator);
-
-    ComPtr<ICanvasDevice> device;
-    ThrowIfFailed(resourceCreator->get_Device(&device));
-
     //
     // Get the D2D device and pass this to the underlying surface image
     // source.
     //
-    ComPtr<ICanvasDeviceInternal> deviceInternal;
-    ThrowIfFailed(device.As(&deviceInternal));
-    ComPtr<ID2D1Device1> d2dDevice = deviceInternal->GetD2DDevice();
+    ComPtr<ID2D1Device> d2dDevice;
 
-    ComPtr<ISurfaceImageSourceNativeWithD2D> sisNative;
-    ThrowIfFailed(GetComposableBase().As(&sisNative));
+    if (device)
+        d2dDevice = As<ICanvasDeviceInternal>(device)->GetD2DDevice();
+
+    auto sisNative = As<ISurfaceImageSourceNativeWithD2D>(GetComposableBase());
 
     //
     // Set the device.  SiS does some validation here - for example, if the
@@ -308,18 +306,19 @@ IFACEMETHODIMP CanvasImageSource::get_Device(
     
 
 _Use_decl_annotations_
-IFACEMETHODIMP CanvasImageSource::put_Device(
-    ICanvasDevice* value) 
+IFACEMETHODIMP CanvasImageSource::Recreate(
+    ICanvasResourceCreator* value) 
 {
     return ExceptionBoundary(
         [&]
         {
             CheckInPointer(value);
 
-            ComPtr<ICanvasResourceCreator> resourceCreator;
-            ThrowIfFailed(value->QueryInterface(resourceCreator.GetAddressOf()));
+            ComPtr<ICanvasDevice> device;
+            ThrowIfFailed(value->get_Device(&device));
 
-            SetResourceCreator(resourceCreator.Get());
+            SetDevice(nullptr);
+            SetDevice(device.Get());
         });
 }
 
