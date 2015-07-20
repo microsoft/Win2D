@@ -143,7 +143,7 @@ namespace CoreWindowExample
 
             var buffer = accumulationBuffers[currentBuffer];
 
-            if (buffer == null || SwapChainManager.SizeEqualsWithTolerance(buffer.Size, windowSize) || buffer.Dpi != dpi)
+            if (buffer == null || !(SwapChainManager.SizeEqualsWithTolerance(buffer.Size, windowSize)) || buffer.Dpi != dpi)
             {
                 if (buffer != null)
                     buffer.Dispose();
