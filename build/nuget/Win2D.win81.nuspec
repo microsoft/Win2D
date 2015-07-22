@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+    <metadata minClientVersion="2.8.6">
+        <id>Win2D.win81</id>
+        <version>0.0.0-SpecifyVersionOnCommandline</version>
+        <title>Win2D.win81: Win2D for Windows 8.1 and Windows Phone 8.1</title>
+        <authors>Microsoft</authors>
+        <owners>win2d,microsoft</owners>
+        <description>An easy-to-use Windows Runtime API for immediate mode 2D graphics rendering for Windows Store Apps on Windows 8.1 and Windows Phone 8.1.</description>
+        <projectUrl>http://go.microsoft.com/fwlink/?LinkID=519078</projectUrl>
+        <iconUrl>http://raw.githubusercontent.com/Microsoft/Win2D/master/samples/ExampleGallery/WindowsPhone/Assets/Square71x71Logo.scale-240.png</iconUrl>
+        <licenseUrl>$LicenseUrl$</licenseUrl>
+        <requireLicenseAcceptance>$RequireLicenseAcceptance$</requireLicenseAcceptance>
+        <copyright>Copyright (c) Microsoft Corporation. All rights reserved.</copyright>
+        <tags>graphics 2D Direct2D DirectX WinRT XAML canvas drawing C# C++ Windows</tags>
+
+        <references>
+          <reference file="Microsoft.Graphics.Canvas.winmd" />
+        </references>
+    </metadata>
+
+    <files>
+
+      <!--
+          These files are copied to the lib directory so that the Visual Studio
+          designer can find them.  We need versions for Windows Store Apps (win)
+          and Windows Phone Apps (wpa).
+      -->
+
+      <file target="lib\win\Microsoft.Graphics.Canvas.dll" src="$bin$\windowsx86\release\winrt.dll.windows\Microsoft.Graphics.Canvas.dll" />
+      <file target="lib\win\Microsoft.Graphics.Canvas.winmd" src="$bin$\windowsx86\release\winrt.dll.windows\Microsoft.Graphics.Canvas.winmd" />
+      <file target="lib\wpa\Microsoft.Graphics.Canvas.dll" src="$bin$\phonex86\release\winrt.dll.windowsphone\Microsoft.Graphics.Canvas.dll" />
+      <file target="lib\wpa\Microsoft.Graphics.Canvas.winmd" src="$bin$\phonex86\release\winrt.dll.windowsphone\Microsoft.Graphics.Canvas.winmd" />
+
+
+
+      <!-- 
+           These are the actual files that will be referenced by the project.
+
+           These generate warnings about the files being outside of the lib
+           directory.  We want it that way because we don't want to reference
+           the DLL files as they're not necessarly .NET assemblies.
+
+           Running with -NoPackageAnalysis suppresses the warnings.
+      -->
+
+      <!-- Windows -->
+
+      <file target="Win2d.githash.txt"                                                      src="obj\Win2d.githash.txt" />
+
+      <file target="bin\Phone\arm\Microsoft.Graphics.Canvas.Numerics.dll"                   src="$bin$\phonearm\release\dotnetnumerics.windowsphone\Microsoft.Graphics.Canvas.Numerics.dll" />
+      <file target="bin\Phone\arm\Microsoft.Graphics.Canvas.Numerics.xml"                   src="bin\intellisense\Microsoft.Graphics.Canvas.Numerics.xml" />
+      <file target="bin\Phone\arm\Microsoft.Graphics.Canvas.dll"                            src="$bin$\phonearm\release\winrt.dll.windowsphone\Microsoft.Graphics.Canvas.dll" />
+      <file target="bin\Phone\arm\Microsoft.Graphics.Canvas.lib"                            src="bin\phonearm\release\winrt.dll.windowsphone\Microsoft.Graphics.Canvas.lib" />
+      <file target="bin\Phone\arm\Microsoft.Graphics.Canvas.winmd"                          src="$bin$\phonearm\release\winrt.dll.windowsphone\Microsoft.Graphics.Canvas.winmd" />
+      <file target="bin\Phone\arm\Microsoft.Graphics.Canvas.xml"                            src="bin\intellisense\Microsoft.Graphics.Canvas.xml" />
+      <file target="bin\Phone\arm\en\Microsoft.Graphics.Canvas.Numerics.xml"                src="bin\intellisense\Microsoft.Graphics.Canvas.Numerics.xml" /> <!-- [1] -->
+      <file target="bin\Phone\arm\en\Microsoft.Graphics.Canvas.xml"                         src="bin\intellisense\Microsoft.Graphics.Canvas.xml" /> <!-- [1] -->
+
+      <file target="bin\Phone\x86\Microsoft.Graphics.Canvas.Numerics.dll"                   src="$bin$\phonex86\release\dotnetnumerics.windowsphone\Microsoft.Graphics.Canvas.Numerics.dll" />
+      <file target="bin\Phone\x86\Microsoft.Graphics.Canvas.Numerics.xml"                   src="bin\intellisense\Microsoft.Graphics.Canvas.Numerics.xml" />
+      <file target="bin\Phone\x86\Microsoft.Graphics.Canvas.dll"                            src="$bin$\phonex86\release\winrt.dll.windowsphone\Microsoft.Graphics.Canvas.dll" />
+      <file target="bin\Phone\x86\Microsoft.Graphics.Canvas.lib"                            src="bin\phonex86\release\winrt.dll.windowsphone\Microsoft.Graphics.Canvas.lib" />
+      <file target="bin\Phone\x86\Microsoft.Graphics.Canvas.winmd"                          src="$bin$\phonex86\release\winrt.dll.windowsphone\Microsoft.Graphics.Canvas.winmd" />
+      <file target="bin\Phone\x86\Microsoft.Graphics.Canvas.xml"                            src="bin\intellisense\Microsoft.Graphics.Canvas.xml" />
+      <file target="bin\Phone\x86\en\Microsoft.Graphics.Canvas.Numerics.xml"                src="bin\intellisense\Microsoft.Graphics.Canvas.Numerics.xml" /> <!-- [1] -->
+      <file target="bin\Phone\x86\en\Microsoft.Graphics.Canvas.xml"                         src="bin\intellisense\Microsoft.Graphics.Canvas.xml" /> <!-- [1] -->
+
+      <file target="bin\Windows\arm\Microsoft.Graphics.Canvas.Numerics.dll"                 src="$bin$\windowsarm\release\dotnetnumerics.windows\Microsoft.Graphics.Canvas.Numerics.dll" />
+      <file target="bin\Windows\arm\Microsoft.Graphics.Canvas.Numerics.xml"                 src="bin\intellisense\Microsoft.Graphics.Canvas.Numerics.xml" />
+      <file target="bin\Windows\arm\Microsoft.Graphics.Canvas.dll"                          src="$bin$\windowsarm\release\winrt.dll.windows\Microsoft.Graphics.Canvas.dll" />
+      <file target="bin\Windows\arm\Microsoft.Graphics.Canvas.lib"                          src="bin\windowsarm\release\winrt.dll.windows\Microsoft.Graphics.Canvas.lib" />
+      <file target="bin\Windows\arm\Microsoft.Graphics.Canvas.winmd"                        src="$bin$\windowsarm\release\winrt.dll.windows\Microsoft.Graphics.Canvas.winmd" />
+      <file target="bin\Windows\arm\Microsoft.Graphics.Canvas.xml"                          src="bin\intellisense\Microsoft.Graphics.Canvas.xml" />
+      <file target="bin\Windows\arm\en\Microsoft.Graphics.Canvas.Numerics.xml"              src="bin\intellisense\Microsoft.Graphics.Canvas.Numerics.xml" /> <!-- [1] -->
+      <file target="bin\Windows\arm\en\Microsoft.Graphics.Canvas.xml"                       src="bin\intellisense\Microsoft.Graphics.Canvas.xml" /> <!-- [1] -->
+
+      <file target="bin\Windows\x64\Microsoft.Graphics.Canvas.Numerics.dll"                 src="$bin$\windowsx64\release\dotnetnumerics.windows\Microsoft.Graphics.Canvas.Numerics.dll" />
+      <file target="bin\Windows\x64\Microsoft.Graphics.Canvas.Numerics.xml"                 src="bin\intellisense\Microsoft.Graphics.Canvas.Numerics.xml" />
+      <file target="bin\Windows\x64\Microsoft.Graphics.Canvas.dll"                          src="$bin$\windowsx64\release\winrt.dll.windows\Microsoft.Graphics.Canvas.dll" />
+      <file target="bin\Windows\x64\Microsoft.Graphics.Canvas.lib"                          src="bin\windowsx64\release\winrt.dll.windows\Microsoft.Graphics.Canvas.lib" />
+      <file target="bin\Windows\x64\Microsoft.Graphics.Canvas.winmd"                        src="$bin$\windowsx64\release\winrt.dll.windows\Microsoft.Graphics.Canvas.winmd" />
+      <file target="bin\Windows\x64\Microsoft.Graphics.Canvas.xml"                          src="bin\intellisense\Microsoft.Graphics.Canvas.xml" />
+      <file target="bin\Windows\x64\en\Microsoft.Graphics.Canvas.Numerics.xml"              src="bin\intellisense\Microsoft.Graphics.Canvas.Numerics.xml" /> <!-- [1] -->
+      <file target="bin\Windows\x64\en\Microsoft.Graphics.Canvas.xml"                       src="bin\intellisense\Microsoft.Graphics.Canvas.xml" /> <!-- [1] -->
+
+      <file target="bin\Windows\x86\Microsoft.Graphics.Canvas.Numerics.dll"                 src="$bin$\windowsx86\release\dotnetnumerics.windows\Microsoft.Graphics.Canvas.Numerics.dll" />
+      <file target="bin\Windows\x86\Microsoft.Graphics.Canvas.Numerics.xml"                 src="bin\intellisense\Microsoft.Graphics.Canvas.Numerics.xml" />
+      <file target="bin\Windows\x86\Microsoft.Graphics.Canvas.dll"                          src="$bin$\windowsx86\release\winrt.dll.windows\Microsoft.Graphics.Canvas.dll" />
+      <file target="bin\Windows\x86\Microsoft.Graphics.Canvas.lib"                          src="bin\windowsx86\release\winrt.dll.windows\Microsoft.Graphics.Canvas.lib" />
+      <file target="bin\Windows\x86\Microsoft.Graphics.Canvas.winmd"                        src="$bin$\windowsx86\release\winrt.dll.windows\Microsoft.Graphics.Canvas.winmd" />
+      <file target="bin\Windows\x86\Microsoft.Graphics.Canvas.xml"                          src="bin\intellisense\Microsoft.Graphics.Canvas.xml" />
+      <file target="bin\Windows\x86\en\Microsoft.Graphics.Canvas.Numerics.xml"              src="bin\intellisense\Microsoft.Graphics.Canvas.Numerics.xml" /> <!-- [1] -->
+      <file target="bin\Windows\x86\en\Microsoft.Graphics.Canvas.xml"                       src="bin\intellisense\Microsoft.Graphics.Canvas.xml" /> <!-- [1] -->
+
+      <file target="build\native\Win2D.win81.props"                                         src="build\nuget\Win2D.props" />
+      <file target="build\native\Win2D.win81.targets"                                       src="build\nuget\Win2D.win81-native.targets" />
+
+      <file target="build\win\Win2D.win81.props"                                            src="build\nuget\Win2D.props" />
+      <file target="build\win\Win2D.win81.targets"                                          src="build\nuget\Win2D.win81-managed.targets" />
+
+      <file target="build\wpa\Win2D.win81.props"                                            src="build\nuget\Win2D.props" />
+      <file target="build\wpa\Win2D.win81.targets"                                          src="build\nuget\Win2D.win81-managed.targets" />
+
+      <file target="include\Phone\Microsoft.Graphics.Canvas.DirectX.Direct3D11.interop.h"   src="winrt\published\Microsoft.Graphics.Canvas.DirectX.Direct3D11.interop.h"/>
+      <file target="include\Phone\Microsoft.Graphics.Canvas.Effects.interop.h"              src="winrt\published\Microsoft.Graphics.Canvas.Effects.interop.h"/>
+      <file target="include\Phone\Microsoft.Graphics.Canvas.h"                              src="bin\phonex86\release\IdlHeader\Microsoft.Graphics.Canvas.h"/>
+      <file target="include\Phone\Microsoft.Graphics.Canvas.native.h"                       src="winrt\published\Microsoft.Graphics.Canvas.native.h"/>
+      <file target="include\Phone"                                                          src="numerics\cpp\WindowsNumerics.*"/>
+
+      <file target="include\Windows\Microsoft.Graphics.Canvas.DirectX.Direct3D11.interop.h" src="winrt\published\Microsoft.Graphics.Canvas.DirectX.Direct3D11.interop.h"/>
+      <file target="include\Windows\Microsoft.Graphics.Canvas.Effects.interop.h"            src="winrt\published\Microsoft.Graphics.Canvas.Effects.interop.h"/>
+      <file target="include\Windows\Microsoft.Graphics.Canvas.h"                            src="bin\windowsx86\release\IdlHeader\Microsoft.Graphics.Canvas.h"/>
+      <file target="include\Windows\Microsoft.Graphics.Canvas.native.h"                     src="winrt\published\Microsoft.Graphics.Canvas.native.h"/>
+      <file target="include\Windows"                                                        src="numerics\cpp\WindowsNumerics.*"/>
+
+      <!-- 
+           [1] Workaround devdiv:1200085.  Fallback XML docs aren't getting
+           picked up in VS2015, but if we place them in a specific culture
+           directory then they'll at least be available for that language.
+      -->
+
+    </files>
+</package>

@@ -50,13 +50,6 @@ IF NOT "%1" == "" (
     SET VERSION=%VERSION%-%1
 )
 
-if "%OVERRIDE_NUGET_PACKAGE%" == "" (
-    SET NUGET_PACKAGE=Win2D
-) else (
-    ECHO Using OVERRIDE_NUGET_PACKAGE: %OVERRIDE_NUGET_PACKAGE%
-    SET NUGET_PACKAGE=%OVERRIDE_NUGET_PACKAGE%
-)
-
 SET NUGET_ARGS=^
     -nopackageanalysis ^
     -basepath ..\.. ^
@@ -64,7 +57,13 @@ SET NUGET_ARGS=^
     -version %VERSION% ^
     -properties bin=%BIN%;LicenseUrl=%LICENSE_URL%;RequireLicenseAcceptance=%REQUIRE_LICENSE_ACCEPTANCE%
 
-nuget pack %NUGET_PACKAGE%.nuspec %NUGET_ARGS%
+nuget pack Win2D.nuspec %NUGET_ARGS%
+IF %ERRORLEVEL% NEQ 0 GOTO END
+
+nuget pack Win2D.win81.nuspec %NUGET_ARGS%
+IF %ERRORLEVEL% NEQ 0 GOTO END
+
+nuget pack Win2D.uwp.nuspec %NUGET_ARGS%
 IF %ERRORLEVEL% NEQ 0 GOTO END
 
 :END

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+    <metadata minClientVersion="2.8.6">
+        <id>Win2D.uwp</id>
+        <version>0.0.0-SpecifyVersionOnCommandline</version>
+        <title>Win2D.uwp: Win2D for the Universal Windows Platform (Windows 10)</title>
+        <authors>Microsoft</authors>
+        <owners>win2d,microsoft</owners>
+        <description>An easy-to-use Windows Runtime API for immediate mode 2D graphics rendering for Univseral Windows Platform applications</description>
+        <projectUrl>http://go.microsoft.com/fwlink/?LinkID=519078</projectUrl>
+        <iconUrl>http://raw.githubusercontent.com/Microsoft/Win2D/master/samples/ExampleGallery/WindowsPhone/Assets/Square71x71Logo.scale-240.png</iconUrl>
+        <licenseUrl>$LicenseUrl$</licenseUrl>
+        <requireLicenseAcceptance>$RequireLicenseAcceptance$</requireLicenseAcceptance>
+        <copyright>Copyright (c) Microsoft Corporation. All rights reserved.</copyright>
+        <tags>graphics 2D Direct2D DirectX WinRT XAML canvas drawing C# C++ Windows UWP UAP Universal Windows Platform</tags>
+    </metadata>
+
+    <files>
+
+      <file target="Win2d.githash.txt"                                       src="obj\Win2d.githash.txt" />
+
+      <file target="build\native\Win2D.uwp.props"                            src="build\nuget\Win2D.props" />
+      <file target="build\native\Win2D.uwp.targets"                          src="build\nuget\Win2D.uwp.targets" />
+
+      <file target="include\Microsoft.Graphics.Canvas.h"                     src="bin\UAPx86\release\IdlHeader\Microsoft.Graphics.Canvas.h"/>
+      <file target="include\Microsoft.Graphics.Canvas.native.h"              src="winrt\published\Microsoft.Graphics.Canvas.native.h"/>
+
+      <file target="lib\uap10.0\Microsoft.Graphics.Canvas.winmd"             src="$bin$\UAPx86\release\winrt.dll.UAP\Microsoft.Graphics.Canvas.winmd" />
+      <file target="lib\uap10.0\Microsoft.Graphics.Canvas.xml"               src="bin\intellisense\Microsoft.Graphics.Canvas.xml" />
+      <file target="lib\uap10.0\en\Microsoft.Graphics.Canvas.xml"            src="bin\intellisense\Microsoft.Graphics.Canvas.xml" /> <!-- [1] -->
+      <file target="lib\win\Microsoft.Graphics.Canvas.winmd"                 src="$bin$\UAPx86\release\winrt.dll.UAP\Microsoft.Graphics.Canvas.winmd" />
+      <file target="lib\win\Microsoft.Graphics.Canvas.xml"                   src="bin\intellisense\Microsoft.Graphics.Canvas.xml" />
+      <file target="lib\win\en\Microsoft.Graphics.Canvas.xml"                src="bin\intellisense\Microsoft.Graphics.Canvas.xml" /> <!-- [1] -->
+
+      <file target="runtimes\win10-arm\native\Microsoft.Graphics.Canvas.dll" src="$bin$\UAPARM\release\winrt.dll.UAP\Microsoft.Graphics.Canvas.dll" />
+      <file target="runtimes\win10-x64\native\Microsoft.Graphics.Canvas.dll" src="$bin$\UAPx64\release\winrt.dll.UAP\Microsoft.Graphics.Canvas.dll" />
+      <file target="runtimes\win10-x86\native\Microsoft.Graphics.Canvas.dll" src="$bin$\UAPx86\release\winrt.dll.UAP\Microsoft.Graphics.Canvas.dll" />
+
+      <!-- 
+           [1] Workaround devdiv:1200085.  Fallback XML docs aren't getting
+           picked up in VS2015, but if we place them in a specific culture
+           directory then they'll at least be available for that language. 
+      -->
+
+    </files>
+</package>
