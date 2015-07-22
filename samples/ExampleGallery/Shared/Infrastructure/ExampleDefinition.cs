@@ -46,7 +46,7 @@ namespace ExampleGallery
             new ExampleDefinition("Effects", typeof(EffectsExample)),
             new ExampleDefinition("Burning Text", typeof(BurningTextExample)),
             new ExampleDefinition("Game of Life", typeof(GameOfLife)),
-#if WINDOWS_UAP
+#if WINDOWS_UWP
             new ExampleDefinition("Video Effect", typeof(BasicVideoEffectExample)),
             new ExampleDefinition("Camera Effect", typeof(CameraEffectExample)),
 #endif
@@ -69,7 +69,7 @@ namespace ExampleGallery
             new ExampleDefinition("Control Transforms", typeof(ControlTransforms)),
             new ExampleDefinition("DrawImage Emulations", typeof(DrawImageEmulations)),
             new ExampleDefinition("Bitmap Rotation", typeof(BitmapRotation)),
-#if WINDOWS_UAP
+#if WINDOWS_UWP
             new ExampleDefinition("Background Task", typeof(BackgroundTaskExample)),
 #endif
             new ExampleDefinition("About", typeof(About)),

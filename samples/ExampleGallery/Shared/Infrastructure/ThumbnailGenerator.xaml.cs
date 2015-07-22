@@ -2,7 +2,7 @@
 //
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
-#if WINDOWS_UAP
+#if WINDOWS_UWP
 using Windows.Graphics.DirectX;
 #else
 using Microsoft.Graphics.Canvas.DirectX;

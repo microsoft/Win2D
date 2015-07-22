@@ -13,7 +13,7 @@ using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
-#if !WINDOWS_UAP
+#if !WINDOWS_UWP
 using ExampleGallery.Direct3DInterop;
 #endif
 
@@ -30,7 +30,7 @@ namespace ExampleGallery
 
         // This example is temporarily disabled for UAP.
         // We'll turn it on as soon as a UAP NuGet package for the DirectX Tool Kit is available.
-#if !WINDOWS_UAP
+#if !WINDOWS_UWP
 
 
         // The TeapotRenderer class is provided by the ExampleGallery.Direct3DInterop project,
@@ -286,7 +286,7 @@ namespace ExampleGallery
         }
 
 
-#else   // WINDOWS_UAP
+#else   // WINDOWS_UWP
 
         public Direct3DInteropExample()
         {
@@ -316,7 +316,7 @@ namespace ExampleGallery
                 });
         }
 
-#endif  // WINDOWS_UAP
+#endif  // WINDOWS_UWP
 
 
         private void control_Unloaded(object sender, RoutedEventArgs e)

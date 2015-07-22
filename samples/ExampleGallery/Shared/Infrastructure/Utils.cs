@@ -60,7 +60,7 @@ namespace ExampleGallery
             var transformedPoints = from point in points
                                     select point * scale + center;
 
-#if WINDOWS_UAP
+#if WINDOWS_UWP
             var convertedPoints = transformedPoints;
 #else
             // Convert the System.Numerics.Vector2 type that we normally work with to the

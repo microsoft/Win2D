@@ -37,8 +37,8 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(TargetPlatformIdentifier)' == 'UAP'">
-    <WindowsTargetPlatformVersion>10.0.10192.0</WindowsTargetPlatformVersion>
-    <WindowsTargetPlatformMinVersion>10.0.10192.0</WindowsTargetPlatformMinVersion>
+    <WindowsTargetPlatformVersion>10.0.10240.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformMinVersion>10.0.10240.0</WindowsTargetPlatformMinVersion>
   </PropertyGroup>
 
   <!-- [[NOT IN SAMPLE]] -->

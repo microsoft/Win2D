@@ -8,7 +8,7 @@
 // from working.  When update 5 is released this example will be re-enabled.
 //
 
-#if WINDOWS_UAP
+#if WINDOWS_UWP
 using ExampleGallery.BackgroundTask;
 #endif
 
@@ -26,7 +26,7 @@ namespace ExampleGallery
 {
     public sealed partial class BackgroundTaskExample : UserControl
     {
-#if !WINDOWS_UAP
+#if !WINDOWS_UWP
 
         void UserControl_Loaded(object sender, RoutedEventArgs e) {}
         void StartButton_Click(object sender, RoutedEventArgs args) {}

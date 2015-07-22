@@ -12,7 +12,7 @@ using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Effects;
 
-#if WINDOWS_UAP
+#if WINDOWS_UWP
 using Windows.Graphics.DirectX;
 using Windows.Graphics.Effects;
 using System.Numerics;
@@ -29,7 +29,7 @@ namespace test.managed
     public class EffectTests
     {
         // TODO: reenable ReflectOverAllEffects test for UAP when fix for DevDiv:1166515 is flighted
-#if !WINDOWS_UAP
+#if !WINDOWS_UWP
         [TestMethod]
         public void ReflectOverAllEffects()
         {
@@ -649,7 +649,7 @@ namespace test.managed
                 propertiesToRemove = new string[] { "AlphaMode", };
                 indexMapping = new int[] { 0, 2 };
             }
-#if WINDOWS_UAP
+#if WINDOWS_UWP
             else if (effectType == typeof(SepiaEffect))
             {
                 // SepiaEffect.AlphaMode has special logic to remap enum values between WinRT and D2D.
@@ -668,7 +668,7 @@ namespace test.managed
                 propertiesToRemove = new string[] { "SourceIsLinearGamma", };
                 indexMapping = new int[] { 0, 1, 2, 4 };
             }
-#endif  // WINDOWS_UAP
+#endif  // WINDOWS_UWP
             else
             {
                 // Other effects do not need special filtering.
@@ -855,7 +855,7 @@ namespace test.managed
         }
 
 
-#if WINDOWS_UAP
+#if WINDOWS_UWP
 
 
         [TestMethod]
@@ -971,7 +971,7 @@ namespace test.managed
         }
 
 
-#endif  // WINDOWS_UAP
+#endif  // WINDOWS_UWP
 
 
         [TestMethod]
