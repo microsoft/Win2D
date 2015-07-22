@@ -557,6 +557,7 @@
   <HelpKINode Title="CanvasImageSource.CreateDrawingSession method" Url="html/Overload_Microsoft_Graphics_Canvas_UI_Xaml_CanvasImageSource_CreateDrawingSession.htm" />
   <HelpKINode Title="CanvasImageSource.Device property" Url="html/P_Microsoft_Graphics_Canvas_UI_Xaml_CanvasImageSource_Device.htm" />
   <HelpKINode Title="CanvasImageSource.Dpi property" Url="html/P_Microsoft_Graphics_Canvas_UI_Xaml_CanvasImageSource_Dpi.htm" />
+  <HelpKINode Title="CanvasImageSource.Recreate method" Url="html/M_Microsoft_Graphics_Canvas_UI_Xaml_CanvasImageSource_Recreate.htm" />
   <HelpKINode Title="CanvasImageSource.Size property" Url="html/P_Microsoft_Graphics_Canvas_UI_Xaml_CanvasImageSource_Size.htm" />
   <HelpKINode Title="CanvasImageSource.SizeInPixels property" Url="html/P_Microsoft_Graphics_Canvas_UI_Xaml_CanvasImageSource_SizeInPixels.htm" />
   <HelpKINode Title="CanvasLayerOptions enumeration" Url="html/T_Microsoft_Graphics_Canvas_CanvasLayerOptions.htm" />
@@ -1119,8 +1120,8 @@
     <HelpKINode Title="ICanvasAnimatedControl.CustomDevice Property " Url="html/P_Microsoft_Graphics_Canvas_UI_Xaml_ICanvasAnimatedControl_CustomDevice.htm" />
   </HelpKINode>
   <HelpKINode Title="D field">
-    <HelpKINode Title="Plane.D Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Plane_D.htm" />
     <HelpKINode Title="Plane.D Field" Url="html/F_System_Numerics_Plane_D.htm" />
+    <HelpKINode Title="Plane.D Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Plane_D.htm" />
   </HelpKINode>
   <HelpKINode Title="D16UIntNormalized enumeration member" Url="html/T_Microsoft_Graphics_Canvas_DirectX_DirectXPixelFormat.htm" />
   <HelpKINode Title="D24UIntNormalizedS8UInt enumeration member" Url="html/T_Microsoft_Graphics_Canvas_DirectX_DirectXPixelFormat.htm" />
@@ -2169,15 +2170,15 @@
     <HelpKINode Title="Matrix5x4.M11 Field" Url="html/F_Microsoft_Graphics_Canvas_Effects_Matrix5x4_M11.htm" />
   </HelpKINode>
   <HelpKINode Title="M12 field">
-    <HelpKINode Title="Matrix3x2.M12 Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Matrix3x2_M12.htm" />
     <HelpKINode Title="Matrix3x2.M12 Field" Url="html/F_System_Numerics_Matrix3x2_M12.htm" />
+    <HelpKINode Title="Matrix3x2.M12 Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Matrix3x2_M12.htm" />
     <HelpKINode Title="Matrix4x4.M12 Field" Url="html/F_System_Numerics_Matrix4x4_M12.htm" />
     <HelpKINode Title="Matrix4x4.M12 Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Matrix4x4_M12.htm" />
     <HelpKINode Title="Matrix5x4.M12 Field" Url="html/F_Microsoft_Graphics_Canvas_Effects_Matrix5x4_M12.htm" />
   </HelpKINode>
   <HelpKINode Title="M13 field">
-    <HelpKINode Title="Matrix4x4.M13 Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Matrix4x4_M13.htm" />
     <HelpKINode Title="Matrix4x4.M13 Field" Url="html/F_System_Numerics_Matrix4x4_M13.htm" />
+    <HelpKINode Title="Matrix4x4.M13 Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Matrix4x4_M13.htm" />
     <HelpKINode Title="Matrix5x4.M13 Field" Url="html/F_Microsoft_Graphics_Canvas_Effects_Matrix5x4_M13.htm" />
   </HelpKINode>
   <HelpKINode Title="M14 field">
@@ -2186,17 +2187,17 @@
     <HelpKINode Title="Matrix5x4.M14 Field" Url="html/F_Microsoft_Graphics_Canvas_Effects_Matrix5x4_M14.htm" />
   </HelpKINode>
   <HelpKINode Title="M21 field">
-    <HelpKINode Title="Matrix3x2.M21 Field" Url="html/F_System_Numerics_Matrix3x2_M21.htm" />
     <HelpKINode Title="Matrix3x2.M21 Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Matrix3x2_M21.htm" />
-    <HelpKINode Title="Matrix4x4.M21 Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Matrix4x4_M21.htm" />
+    <HelpKINode Title="Matrix3x2.M21 Field" Url="html/F_System_Numerics_Matrix3x2_M21.htm" />
     <HelpKINode Title="Matrix4x4.M21 Field" Url="html/F_System_Numerics_Matrix4x4_M21.htm" />
+    <HelpKINode Title="Matrix4x4.M21 Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Matrix4x4_M21.htm" />
     <HelpKINode Title="Matrix5x4.M21 Field" Url="html/F_Microsoft_Graphics_Canvas_Effects_Matrix5x4_M21.htm" />
   </HelpKINode>
   <HelpKINode Title="M22 field">
     <HelpKINode Title="Matrix3x2.M22 Field" Url="html/F_System_Numerics_Matrix3x2_M22.htm" />
     <HelpKINode Title="Matrix3x2.M22 Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Matrix3x2_M22.htm" />
-    <HelpKINode Title="Matrix4x4.M22 Field" Url="html/F_System_Numerics_Matrix4x4_M22.htm" />
     <HelpKINode Title="Matrix4x4.M22 Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Matrix4x4_M22.htm" />
+    <HelpKINode Title="Matrix4x4.M22 Field" Url="html/F_System_Numerics_Matrix4x4_M22.htm" />
     <HelpKINode Title="Matrix5x4.M22 Field" Url="html/F_Microsoft_Graphics_Canvas_Effects_Matrix5x4_M22.htm" />
   </HelpKINode>
   <HelpKINode Title="M23 field">
@@ -2205,32 +2206,32 @@
     <HelpKINode Title="Matrix5x4.M23 Field" Url="html/F_Microsoft_Graphics_Canvas_Effects_Matrix5x4_M23.htm" />
   </HelpKINode>
   <HelpKINode Title="M24 field">
-    <HelpKINode Title="Matrix4x4.M24 Field" Url="html/F_System_Numerics_Matrix4x4_M24.htm" />
     <HelpKINode Title="Matrix4x4.M24 Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Matrix4x4_M24.htm" />
+    <HelpKINode Title="Matrix4x4.M24 Field" Url="html/F_System_Numerics_Matrix4x4_M24.htm" />
     <HelpKINode Title="Matrix5x4.M24 Field" Url="html/F_Microsoft_Graphics_Canvas_Effects_Matrix5x4_M24.htm" />
   </HelpKINode>
   <HelpKINode Title="M31 field">
-    <HelpKINode Title="Matrix3x2.M31 Field" Url="html/F_System_Numerics_Matrix3x2_M31.htm" />
     <HelpKINode Title="Matrix3x2.M31 Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Matrix3x2_M31.htm" />
-    <HelpKINode Title="Matrix4x4.M31 Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Matrix4x4_M31.htm" />
+    <HelpKINode Title="Matrix3x2.M31 Field" Url="html/F_System_Numerics_Matrix3x2_M31.htm" />
     <HelpKINode Title="Matrix4x4.M31 Field" Url="html/F_System_Numerics_Matrix4x4_M31.htm" />
+    <HelpKINode Title="Matrix4x4.M31 Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Matrix4x4_M31.htm" />
     <HelpKINode Title="Matrix5x4.M31 Field" Url="html/F_Microsoft_Graphics_Canvas_Effects_Matrix5x4_M31.htm" />
   </HelpKINode>
   <HelpKINode Title="M32 field">
     <HelpKINode Title="Matrix3x2.M32 Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Matrix3x2_M32.htm" />
     <HelpKINode Title="Matrix3x2.M32 Field" Url="html/F_System_Numerics_Matrix3x2_M32.htm" />
-    <HelpKINode Title="Matrix4x4.M32 Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Matrix4x4_M32.htm" />
     <HelpKINode Title="Matrix4x4.M32 Field" Url="html/F_System_Numerics_Matrix4x4_M32.htm" />
+    <HelpKINode Title="Matrix4x4.M32 Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Matrix4x4_M32.htm" />
     <HelpKINode Title="Matrix5x4.M32 Field" Url="html/F_Microsoft_Graphics_Canvas_Effects_Matrix5x4_M32.htm" />
   </HelpKINode>
   <HelpKINode Title="M33 field">
-    <HelpKINode Title="Matrix4x4.M33 Field" Url="html/F_System_Numerics_Matrix4x4_M33.htm" />
     <HelpKINode Title="Matrix4x4.M33 Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Matrix4x4_M33.htm" />
+    <HelpKINode Title="Matrix4x4.M33 Field" Url="html/F_System_Numerics_Matrix4x4_M33.htm" />
     <HelpKINode Title="Matrix5x4.M33 Field" Url="html/F_Microsoft_Graphics_Canvas_Effects_Matrix5x4_M33.htm" />
   </HelpKINode>
   <HelpKINode Title="M34 field">
-    <HelpKINode Title="Matrix4x4.M34 Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Matrix4x4_M34.htm" />
     <HelpKINode Title="Matrix4x4.M34 Field" Url="html/F_System_Numerics_Matrix4x4_M34.htm" />
+    <HelpKINode Title="Matrix4x4.M34 Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Matrix4x4_M34.htm" />
     <HelpKINode Title="Matrix5x4.M34 Field" Url="html/F_Microsoft_Graphics_Canvas_Effects_Matrix5x4_M34.htm" />
   </HelpKINode>
   <HelpKINode Title="M41 field">
@@ -2244,13 +2245,13 @@
     <HelpKINode Title="Matrix5x4.M42 Field" Url="html/F_Microsoft_Graphics_Canvas_Effects_Matrix5x4_M42.htm" />
   </HelpKINode>
   <HelpKINode Title="M43 field">
-    <HelpKINode Title="Matrix4x4.M43 Field" Url="html/F_System_Numerics_Matrix4x4_M43.htm" />
     <HelpKINode Title="Matrix4x4.M43 Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Matrix4x4_M43.htm" />
+    <HelpKINode Title="Matrix4x4.M43 Field" Url="html/F_System_Numerics_Matrix4x4_M43.htm" />
     <HelpKINode Title="Matrix5x4.M43 Field" Url="html/F_Microsoft_Graphics_Canvas_Effects_Matrix5x4_M43.htm" />
   </HelpKINode>
   <HelpKINode Title="M44 field">
-    <HelpKINode Title="Matrix4x4.M44 Field" Url="html/F_System_Numerics_Matrix4x4_M44.htm" />
     <HelpKINode Title="Matrix4x4.M44 Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Matrix4x4_M44.htm" />
+    <HelpKINode Title="Matrix4x4.M44 Field" Url="html/F_System_Numerics_Matrix4x4_M44.htm" />
     <HelpKINode Title="Matrix5x4.M44 Field" Url="html/F_Microsoft_Graphics_Canvas_Effects_Matrix5x4_M44.htm" />
   </HelpKINode>
   <HelpKINode Title="M51 field" Url="html/F_Microsoft_Graphics_Canvas_Effects_Matrix5x4_M51.htm" />
@@ -2261,13 +2262,13 @@
   <HelpKINode Title="MaskBlurAmount property" Url="html/P_Microsoft_Graphics_Canvas_Effects_HighlightsAndShadowsEffect_MaskBlurAmount.htm" />
   <HelpKINode Title="MaskInvert enumeration member" Url="html/T_Microsoft_Graphics_Canvas_CanvasComposite.htm" />
   <HelpKINode Title="Matrix3x2 structure">
-    <HelpKINode Title="Matrix3x2 Structure" Url="html/T_Microsoft_Graphics_Canvas_Numerics_Matrix3x2.htm" />
     <HelpKINode Title="Matrix3x2 Structure" Url="html/T_System_Numerics_Matrix3x2.htm" />
-    <HelpKINode Title="about Matrix3x2 structure" Url="html/T_System_Numerics_Matrix3x2.htm" />
+    <HelpKINode Title="Matrix3x2 Structure" Url="html/T_Microsoft_Graphics_Canvas_Numerics_Matrix3x2.htm" />
     <HelpKINode Title="about Matrix3x2 structure" Url="html/T_Microsoft_Graphics_Canvas_Numerics_Matrix3x2.htm" />
+    <HelpKINode Title="about Matrix3x2 structure" Url="html/T_System_Numerics_Matrix3x2.htm" />
     <HelpKINode Title="constructor" Url="html/M_System_Numerics_Matrix3x2__ctor.htm" />
-    <HelpKINode Title="fields" Url="html/Fields_T_Microsoft_Graphics_Canvas_Numerics_Matrix3x2.htm" />
     <HelpKINode Title="fields" Url="html/Fields_T_System_Numerics_Matrix3x2.htm" />
+    <HelpKINode Title="fields" Url="html/Fields_T_Microsoft_Graphics_Canvas_Numerics_Matrix3x2.htm" />
     <HelpKINode Title="methods" Url="html/Methods_T_System_Numerics_Matrix3x2.htm" />
     <HelpKINode Title="operators and type conversions" Url="html/Operators_T_System_Numerics_Matrix3x2.htm" />
     <HelpKINode Title="properties" Url="html/Properties_T_System_Numerics_Matrix3x2.htm" />
@@ -2296,20 +2297,20 @@
     <HelpKINode Title="Matrix3x2.M11 Field" Url="html/F_System_Numerics_Matrix3x2_M11.htm" />
   </HelpKINode>
   <HelpKINode Title="Matrix3x2.M12 field">
-    <HelpKINode Title="Matrix3x2.M12 Field" Url="html/F_System_Numerics_Matrix3x2_M12.htm" />
     <HelpKINode Title="Matrix3x2.M12 Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Matrix3x2_M12.htm" />
+    <HelpKINode Title="Matrix3x2.M12 Field" Url="html/F_System_Numerics_Matrix3x2_M12.htm" />
   </HelpKINode>
   <HelpKINode Title="Matrix3x2.M21 field">
-    <HelpKINode Title="Matrix3x2.M21 Field" Url="html/F_System_Numerics_Matrix3x2_M21.htm" />
     <HelpKINode Title="Matrix3x2.M21 Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Matrix3x2_M21.htm" />
+    <HelpKINode Title="Matrix3x2.M21 Field" Url="html/F_System_Numerics_Matrix3x2_M21.htm" />
   </HelpKINode>
   <HelpKINode Title="Matrix3x2.M22 field">
     <HelpKINode Title="Matrix3x2.M22 Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Matrix3x2_M22.htm" />
     <HelpKINode Title="Matrix3x2.M22 Field" Url="html/F_System_Numerics_Matrix3x2_M22.htm" />
   </HelpKINode>
   <HelpKINode Title="Matrix3x2.M31 field">
-    <HelpKINode Title="Matrix3x2.M31 Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Matrix3x2_M31.htm" />
     <HelpKINode Title="Matrix3x2.M31 Field" Url="html/F_System_Numerics_Matrix3x2_M31.htm" />
+    <HelpKINode Title="Matrix3x2.M31 Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Matrix3x2_M31.htm" />
   </HelpKINode>
   <HelpKINode Title="Matrix3x2.M32 field">
     <HelpKINode Title="Matrix3x2.M32 Field" Url="html/F_System_Numerics_Matrix3x2_M32.htm" />
@@ -2325,20 +2326,20 @@
   <HelpKINode Title="Matrix3x2.Translation property" Url="html/P_System_Numerics_Matrix3x2_Translation.htm" />
   <HelpKINode Title="Matrix3x2.UnaryNegation operator" Url="html/M_System_Numerics_Matrix3x2_op_UnaryNegation.htm" />
   <HelpKINode Title="Matrix4x4 structure">
-    <HelpKINode Title="Matrix4x4 Structure" Url="html/T_Microsoft_Graphics_Canvas_Numerics_Matrix4x4.htm" />
     <HelpKINode Title="Matrix4x4 Structure" Url="html/T_System_Numerics_Matrix4x4.htm" />
+    <HelpKINode Title="Matrix4x4 Structure" Url="html/T_Microsoft_Graphics_Canvas_Numerics_Matrix4x4.htm" />
     <HelpKINode Title="about Matrix4x4 structure" Url="html/T_System_Numerics_Matrix4x4.htm" />
     <HelpKINode Title="about Matrix4x4 structure" Url="html/T_Microsoft_Graphics_Canvas_Numerics_Matrix4x4.htm" />
     <HelpKINode Title="constructor" Url="html/Overload_System_Numerics_Matrix4x4__ctor.htm" />
-    <HelpKINode Title="fields" Url="html/Fields_T_System_Numerics_Matrix4x4.htm" />
     <HelpKINode Title="fields" Url="html/Fields_T_Microsoft_Graphics_Canvas_Numerics_Matrix4x4.htm" />
+    <HelpKINode Title="fields" Url="html/Fields_T_System_Numerics_Matrix4x4.htm" />
     <HelpKINode Title="methods" Url="html/Methods_T_System_Numerics_Matrix4x4.htm" />
     <HelpKINode Title="operators and type conversions" Url="html/Operators_T_System_Numerics_Matrix4x4.htm" />
     <HelpKINode Title="properties" Url="html/Properties_T_System_Numerics_Matrix4x4.htm" />
   </HelpKINode>
   <HelpKINode Title="Matrix4x4 to Matrix4x4 conversion">
-    <HelpKINode Title="Matrix4x4&#160;Implicit Conversion (Matrix4x4 to Matrix4x4)" Url="html/M_System_Numerics_Matrix4x4_op_Implicit.htm" />
     <HelpKINode Title="Matrix4x4&#160;Implicit Conversion (Matrix4x4 to Matrix4x4)" Url="html/M_System_Numerics_Matrix4x4_op_Implicit_1.htm" />
+    <HelpKINode Title="Matrix4x4&#160;Implicit Conversion (Matrix4x4 to Matrix4x4)" Url="html/M_System_Numerics_Matrix4x4_op_Implicit.htm" />
   </HelpKINode>
   <HelpKINode Title="Matrix4x4.Add method" Url="html/M_System_Numerics_Matrix4x4_Add.htm" />
   <HelpKINode Title="Matrix4x4.Addition operator" Url="html/M_System_Numerics_Matrix4x4_op_Addition.htm" />
@@ -2388,8 +2389,8 @@
     <HelpKINode Title="Matrix4x4.M14 Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Matrix4x4_M14.htm" />
   </HelpKINode>
   <HelpKINode Title="Matrix4x4.M21 field">
-    <HelpKINode Title="Matrix4x4.M21 Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Matrix4x4_M21.htm" />
     <HelpKINode Title="Matrix4x4.M21 Field" Url="html/F_System_Numerics_Matrix4x4_M21.htm" />
+    <HelpKINode Title="Matrix4x4.M21 Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Matrix4x4_M21.htm" />
   </HelpKINode>
   <HelpKINode Title="Matrix4x4.M22 field">
     <HelpKINode Title="Matrix4x4.M22 Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Matrix4x4_M22.htm" />
@@ -2404,28 +2405,28 @@
     <HelpKINode Title="Matrix4x4.M24 Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Matrix4x4_M24.htm" />
   </HelpKINode>
   <HelpKINode Title="Matrix4x4.M31 field">
-    <HelpKINode Title="Matrix4x4.M31 Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Matrix4x4_M31.htm" />
     <HelpKINode Title="Matrix4x4.M31 Field" Url="html/F_System_Numerics_Matrix4x4_M31.htm" />
+    <HelpKINode Title="Matrix4x4.M31 Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Matrix4x4_M31.htm" />
   </HelpKINode>
   <HelpKINode Title="Matrix4x4.M32 field">
-    <HelpKINode Title="Matrix4x4.M32 Field" Url="html/F_System_Numerics_Matrix4x4_M32.htm" />
     <HelpKINode Title="Matrix4x4.M32 Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Matrix4x4_M32.htm" />
+    <HelpKINode Title="Matrix4x4.M32 Field" Url="html/F_System_Numerics_Matrix4x4_M32.htm" />
   </HelpKINode>
   <HelpKINode Title="Matrix4x4.M33 field">
     <HelpKINode Title="Matrix4x4.M33 Field" Url="html/F_System_Numerics_Matrix4x4_M33.htm" />
     <HelpKINode Title="Matrix4x4.M33 Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Matrix4x4_M33.htm" />
   </HelpKINode>
   <HelpKINode Title="Matrix4x4.M34 field">
-    <HelpKINode Title="Matrix4x4.M34 Field" Url="html/F_System_Numerics_Matrix4x4_M34.htm" />
     <HelpKINode Title="Matrix4x4.M34 Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Matrix4x4_M34.htm" />
+    <HelpKINode Title="Matrix4x4.M34 Field" Url="html/F_System_Numerics_Matrix4x4_M34.htm" />
   </HelpKINode>
   <HelpKINode Title="Matrix4x4.M41 field">
     <HelpKINode Title="Matrix4x4.M41 Field" Url="html/F_System_Numerics_Matrix4x4_M41.htm" />
     <HelpKINode Title="Matrix4x4.M41 Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Matrix4x4_M41.htm" />
   </HelpKINode>
   <HelpKINode Title="Matrix4x4.M42 field">
-    <HelpKINode Title="Matrix4x4.M42 Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Matrix4x4_M42.htm" />
     <HelpKINode Title="Matrix4x4.M42 Field" Url="html/F_System_Numerics_Matrix4x4_M42.htm" />
+    <HelpKINode Title="Matrix4x4.M42 Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Matrix4x4_M42.htm" />
   </HelpKINode>
   <HelpKINode Title="Matrix4x4.M43 field">
     <HelpKINode Title="Matrix4x4.M43 Field" Url="html/F_System_Numerics_Matrix4x4_M43.htm" />
@@ -2842,13 +2843,13 @@
   <HelpKINode Title="PinLight enumeration member" Url="html/T_Microsoft_Graphics_Canvas_Effects_BlendEffectMode.htm" />
   <HelpKINode Title="Pixels enumeration member" Url="html/T_Microsoft_Graphics_Canvas_CanvasUnits.htm" />
   <HelpKINode Title="Plane structure">
-    <HelpKINode Title="Plane Structure" Url="html/T_Microsoft_Graphics_Canvas_Numerics_Plane.htm" />
     <HelpKINode Title="Plane Structure" Url="html/T_System_Numerics_Plane.htm" />
-    <HelpKINode Title="about Plane structure" Url="html/T_Microsoft_Graphics_Canvas_Numerics_Plane.htm" />
+    <HelpKINode Title="Plane Structure" Url="html/T_Microsoft_Graphics_Canvas_Numerics_Plane.htm" />
     <HelpKINode Title="about Plane structure" Url="html/T_System_Numerics_Plane.htm" />
+    <HelpKINode Title="about Plane structure" Url="html/T_Microsoft_Graphics_Canvas_Numerics_Plane.htm" />
     <HelpKINode Title="constructor" Url="html/Overload_System_Numerics_Plane__ctor.htm" />
-    <HelpKINode Title="fields" Url="html/Fields_T_Microsoft_Graphics_Canvas_Numerics_Plane.htm" />
     <HelpKINode Title="fields" Url="html/Fields_T_System_Numerics_Plane.htm" />
+    <HelpKINode Title="fields" Url="html/Fields_T_Microsoft_Graphics_Canvas_Numerics_Plane.htm" />
     <HelpKINode Title="methods" Url="html/Methods_T_System_Numerics_Plane.htm" />
     <HelpKINode Title="operators and type conversions" Url="html/Operators_T_System_Numerics_Plane.htm" />
   </HelpKINode>
@@ -2869,8 +2870,8 @@
   <HelpKINode Title="Plane.GetHashCode method" Url="html/M_System_Numerics_Plane_GetHashCode.htm" />
   <HelpKINode Title="Plane.Inequality operator" Url="html/M_System_Numerics_Plane_op_Inequality.htm" />
   <HelpKINode Title="Plane.Normal field">
-    <HelpKINode Title="Plane.Normal Field" Url="html/F_System_Numerics_Plane_Normal.htm" />
     <HelpKINode Title="Plane.Normal Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Plane_Normal.htm" />
+    <HelpKINode Title="Plane.Normal Field" Url="html/F_System_Numerics_Plane_Normal.htm" />
   </HelpKINode>
   <HelpKINode Title="Plane.Normalize method" Url="html/M_System_Numerics_Plane_Normalize.htm" />
   <HelpKINode Title="Plane.Plane constructor" Url="html/Overload_System_Numerics_Plane__ctor.htm" />
@@ -2968,18 +2969,18 @@
   <HelpKINode Title="Quaternion structure">
     <HelpKINode Title="Quaternion Structure" Url="html/T_System_Numerics_Quaternion.htm" />
     <HelpKINode Title="Quaternion Structure" Url="html/T_Microsoft_Graphics_Canvas_Numerics_Quaternion.htm" />
-    <HelpKINode Title="about Quaternion structure" Url="html/T_System_Numerics_Quaternion.htm" />
     <HelpKINode Title="about Quaternion structure" Url="html/T_Microsoft_Graphics_Canvas_Numerics_Quaternion.htm" />
+    <HelpKINode Title="about Quaternion structure" Url="html/T_System_Numerics_Quaternion.htm" />
     <HelpKINode Title="constructor" Url="html/Overload_System_Numerics_Quaternion__ctor.htm" />
-    <HelpKINode Title="fields" Url="html/Fields_T_Microsoft_Graphics_Canvas_Numerics_Quaternion.htm" />
     <HelpKINode Title="fields" Url="html/Fields_T_System_Numerics_Quaternion.htm" />
+    <HelpKINode Title="fields" Url="html/Fields_T_Microsoft_Graphics_Canvas_Numerics_Quaternion.htm" />
     <HelpKINode Title="methods" Url="html/Methods_T_System_Numerics_Quaternion.htm" />
     <HelpKINode Title="operators and type conversions" Url="html/Operators_T_System_Numerics_Quaternion.htm" />
     <HelpKINode Title="properties" Url="html/Properties_T_System_Numerics_Quaternion.htm" />
   </HelpKINode>
   <HelpKINode Title="Quaternion to Quaternion conversion">
-    <HelpKINode Title="Quaternion&#160;Implicit Conversion (Quaternion to Quaternion)" Url="html/M_System_Numerics_Quaternion_op_Implicit_1.htm" />
     <HelpKINode Title="Quaternion&#160;Implicit Conversion (Quaternion to Quaternion)" Url="html/M_System_Numerics_Quaternion_op_Implicit.htm" />
+    <HelpKINode Title="Quaternion&#160;Implicit Conversion (Quaternion to Quaternion)" Url="html/M_System_Numerics_Quaternion_op_Implicit_1.htm" />
   </HelpKINode>
   <HelpKINode Title="Quaternion.Add method" Url="html/M_System_Numerics_Quaternion_Add.htm" />
   <HelpKINode Title="Quaternion.Addition operator" Url="html/M_System_Numerics_Quaternion_op_Addition.htm" />
@@ -3020,12 +3021,12 @@
     <HelpKINode Title="Quaternion.X Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Quaternion_X.htm" />
   </HelpKINode>
   <HelpKINode Title="Quaternion.Y field">
-    <HelpKINode Title="Quaternion.Y Field" Url="html/F_System_Numerics_Quaternion_Y.htm" />
     <HelpKINode Title="Quaternion.Y Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Quaternion_Y.htm" />
+    <HelpKINode Title="Quaternion.Y Field" Url="html/F_System_Numerics_Quaternion_Y.htm" />
   </HelpKINode>
   <HelpKINode Title="Quaternion.Z field">
-    <HelpKINode Title="Quaternion.Z Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Quaternion_Z.htm" />
     <HelpKINode Title="Quaternion.Z Field" Url="html/F_System_Numerics_Quaternion_Z.htm" />
+    <HelpKINode Title="Quaternion.Z Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Quaternion_Z.htm" />
   </HelpKINode>
   <HelpKINode Title="R10G10B10A2Typeless enumeration member" Url="html/T_Microsoft_Graphics_Canvas_DirectX_DirectXPixelFormat.htm" />
   <HelpKINode Title="R10G10B10A2UInt enumeration member" Url="html/T_Microsoft_Graphics_Canvas_DirectX_DirectXPixelFormat.htm" />
@@ -3098,6 +3099,7 @@
     <HelpKINode Title="ICanvasAnimatedControl.ReadyToDraw Property " Url="html/P_Microsoft_Graphics_Canvas_UI_Xaml_ICanvasAnimatedControl_ReadyToDraw.htm" />
   </HelpKINode>
   <HelpKINode Title="Reason property" Url="html/P_Microsoft_Graphics_Canvas_UI_CanvasCreateResourcesEventArgs_Reason.htm" />
+  <HelpKINode Title="Recreate method" Url="html/M_Microsoft_Graphics_Canvas_UI_Xaml_CanvasImageSource_Recreate.htm" />
   <HelpKINode Title="Rect structure">
     <HelpKINode Title="Rect Structure" Url="html/T_Windows_Foundation_Rect.htm" />
     <HelpKINode Title="about Rect structure" Url="html/T_Windows_Foundation_Rect.htm" />
@@ -3733,8 +3735,8 @@
     <HelpKINode Title="about Vector2 structure" Url="html/T_Microsoft_Graphics_Canvas_Numerics_Vector2.htm" />
     <HelpKINode Title="about Vector2 structure" Url="html/T_System_Numerics_Vector2.htm" />
     <HelpKINode Title="constructor" Url="html/Overload_System_Numerics_Vector2__ctor.htm" />
-    <HelpKINode Title="fields" Url="html/Fields_T_Microsoft_Graphics_Canvas_Numerics_Vector2.htm" />
     <HelpKINode Title="fields" Url="html/Fields_T_System_Numerics_Vector2.htm" />
+    <HelpKINode Title="fields" Url="html/Fields_T_Microsoft_Graphics_Canvas_Numerics_Vector2.htm" />
     <HelpKINode Title="methods" Url="html/Methods_T_System_Numerics_Vector2.htm" />
     <HelpKINode Title="operators and type conversions" Url="html/Operators_T_System_Numerics_Vector2.htm" />
     <HelpKINode Title="properties" Url="html/Properties_T_System_Numerics_Vector2.htm" />
@@ -3776,8 +3778,8 @@
   <HelpKINode Title="Vector2.UnitY property" Url="html/P_System_Numerics_Vector2_UnitY.htm" />
   <HelpKINode Title="Vector2.Vector2 constructor" Url="html/Overload_System_Numerics_Vector2__ctor.htm" />
   <HelpKINode Title="Vector2.X field">
-    <HelpKINode Title="Vector2.X Field" Url="html/F_System_Numerics_Vector2_X.htm" />
     <HelpKINode Title="Vector2.X Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Vector2_X.htm" />
+    <HelpKINode Title="Vector2.X Field" Url="html/F_System_Numerics_Vector2_X.htm" />
   </HelpKINode>
   <HelpKINode Title="Vector2.Y field">
     <HelpKINode Title="Vector2.Y Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Vector2_Y.htm" />
@@ -3790,8 +3792,8 @@
     <HelpKINode Title="about Vector3 structure" Url="html/T_Microsoft_Graphics_Canvas_Numerics_Vector3.htm" />
     <HelpKINode Title="about Vector3 structure" Url="html/T_System_Numerics_Vector3.htm" />
     <HelpKINode Title="constructor" Url="html/Overload_System_Numerics_Vector3__ctor.htm" />
-    <HelpKINode Title="fields" Url="html/Fields_T_Microsoft_Graphics_Canvas_Numerics_Vector3.htm" />
     <HelpKINode Title="fields" Url="html/Fields_T_System_Numerics_Vector3.htm" />
+    <HelpKINode Title="fields" Url="html/Fields_T_Microsoft_Graphics_Canvas_Numerics_Vector3.htm" />
     <HelpKINode Title="methods" Url="html/Methods_T_System_Numerics_Vector3.htm" />
     <HelpKINode Title="operators and type conversions" Url="html/Operators_T_System_Numerics_Vector3.htm" />
     <HelpKINode Title="properties" Url="html/Properties_T_System_Numerics_Vector3.htm" />
@@ -3839,8 +3841,8 @@
     <HelpKINode Title="Vector3.X Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Vector3_X.htm" />
   </HelpKINode>
   <HelpKINode Title="Vector3.Y field">
-    <HelpKINode Title="Vector3.Y Field" Url="html/F_System_Numerics_Vector3_Y.htm" />
     <HelpKINode Title="Vector3.Y Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Vector3_Y.htm" />
+    <HelpKINode Title="Vector3.Y Field" Url="html/F_System_Numerics_Vector3_Y.htm" />
   </HelpKINode>
   <HelpKINode Title="Vector3.Z field">
     <HelpKINode Title="Vector3.Z Field" Url="html/F_System_Numerics_Vector3_Z.htm" />
@@ -3853,15 +3855,15 @@
     <HelpKINode Title="about Vector4 structure" Url="html/T_Microsoft_Graphics_Canvas_Numerics_Vector4.htm" />
     <HelpKINode Title="about Vector4 structure" Url="html/T_System_Numerics_Vector4.htm" />
     <HelpKINode Title="constructor" Url="html/Overload_System_Numerics_Vector4__ctor.htm" />
-    <HelpKINode Title="fields" Url="html/Fields_T_Microsoft_Graphics_Canvas_Numerics_Vector4.htm" />
     <HelpKINode Title="fields" Url="html/Fields_T_System_Numerics_Vector4.htm" />
+    <HelpKINode Title="fields" Url="html/Fields_T_Microsoft_Graphics_Canvas_Numerics_Vector4.htm" />
     <HelpKINode Title="methods" Url="html/Methods_T_System_Numerics_Vector4.htm" />
     <HelpKINode Title="operators and type conversions" Url="html/Operators_T_System_Numerics_Vector4.htm" />
     <HelpKINode Title="properties" Url="html/Properties_T_System_Numerics_Vector4.htm" />
   </HelpKINode>
   <HelpKINode Title="Vector4 to Vector4 conversion">
-    <HelpKINode Title="Vector4&#160;Implicit Conversion (Vector4 to Vector4)" Url="html/M_System_Numerics_Vector4_op_Implicit.htm" />
     <HelpKINode Title="Vector4&#160;Implicit Conversion (Vector4 to Vector4)" Url="html/M_System_Numerics_Vector4_op_Implicit_1.htm" />
+    <HelpKINode Title="Vector4&#160;Implicit Conversion (Vector4 to Vector4)" Url="html/M_System_Numerics_Vector4_op_Implicit.htm" />
   </HelpKINode>
   <HelpKINode Title="Vector4.Add method" Url="html/M_System_Numerics_Vector4_Add.htm" />
   <HelpKINode Title="Vector4.Addition operator" Url="html/M_System_Numerics_Vector4_op_Addition.htm" />
@@ -3904,12 +3906,12 @@
     <HelpKINode Title="Vector4.X Field" Url="html/F_System_Numerics_Vector4_X.htm" />
   </HelpKINode>
   <HelpKINode Title="Vector4.Y field">
-    <HelpKINode Title="Vector4.Y Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Vector4_Y.htm" />
     <HelpKINode Title="Vector4.Y Field" Url="html/F_System_Numerics_Vector4_Y.htm" />
+    <HelpKINode Title="Vector4.Y Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Vector4_Y.htm" />
   </HelpKINode>
   <HelpKINode Title="Vector4.Z field">
-    <HelpKINode Title="Vector4.Z Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Vector4_Z.htm" />
     <HelpKINode Title="Vector4.Z Field" Url="html/F_System_Numerics_Vector4_Z.htm" />
+    <HelpKINode Title="Vector4.Z Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Vector4_Z.htm" />
   </HelpKINode>
   <HelpKINode Title="Vector4.Zero property" Url="html/P_System_Numerics_Vector4_Zero.htm" />
   <HelpKINode Title="VectorExtensions class">
@@ -3947,10 +3949,10 @@
   <HelpKINode Title="VignetteEffect.VignetteEffect constructor" Url="html/M_Microsoft_Graphics_Canvas_Effects_VignetteEffect__ctor.htm" />
   <HelpKINode Title="VividLight enumeration member" Url="html/T_Microsoft_Graphics_Canvas_Effects_BlendEffectMode.htm" />
   <HelpKINode Title="W field">
-    <HelpKINode Title="Quaternion.W Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Quaternion_W.htm" />
     <HelpKINode Title="Quaternion.W Field" Url="html/F_System_Numerics_Quaternion_W.htm" />
-    <HelpKINode Title="Vector4.W Field" Url="html/F_System_Numerics_Vector4_W.htm" />
+    <HelpKINode Title="Quaternion.W Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Quaternion_W.htm" />
     <HelpKINode Title="Vector4.W Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Vector4_W.htm" />
+    <HelpKINode Title="Vector4.W Field" Url="html/F_System_Numerics_Vector4_W.htm" />
   </HelpKINode>
   <HelpKINode Title="WaitForVerticalBlank method" Url="html/M_Microsoft_Graphics_Canvas_CanvasSwapChain_WaitForVerticalBlank.htm" />
   <HelpKINode Title="Warning enumeration member" Url="html/T_Microsoft_Graphics_Canvas_CanvasDebugLevel.htm" />
@@ -4001,10 +4003,10 @@
     <HelpKINode Title="CanvasWordWrapping Enumeration" Url="html/T_Microsoft_Graphics_Canvas_Text_CanvasWordWrapping.htm" />
   </HelpKINode>
   <HelpKINode Title="X field">
-    <HelpKINode Title="Quaternion.X Field" Url="html/F_System_Numerics_Quaternion_X.htm" />
     <HelpKINode Title="Quaternion.X Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Quaternion_X.htm" />
-    <HelpKINode Title="Vector2.X Field" Url="html/F_System_Numerics_Vector2_X.htm" />
+    <HelpKINode Title="Quaternion.X Field" Url="html/F_System_Numerics_Quaternion_X.htm" />
     <HelpKINode Title="Vector2.X Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Vector2_X.htm" />
+    <HelpKINode Title="Vector2.X Field" Url="html/F_System_Numerics_Vector2_X.htm" />
     <HelpKINode Title="Vector3.X Field" Url="html/F_System_Numerics_Vector3_X.htm" />
     <HelpKINode Title="Vector3.X Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Vector3_X.htm" />
     <HelpKINode Title="Vector4.X Field" Url="html/F_System_Numerics_Vector4_X.htm" />
@@ -4020,8 +4022,8 @@
   <HelpKINode Title="Y field">
     <HelpKINode Title="Quaternion.Y Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Quaternion_Y.htm" />
     <HelpKINode Title="Quaternion.Y Field" Url="html/F_System_Numerics_Quaternion_Y.htm" />
-    <HelpKINode Title="Vector2.Y Field" Url="html/F_System_Numerics_Vector2_Y.htm" />
     <HelpKINode Title="Vector2.Y Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Vector2_Y.htm" />
+    <HelpKINode Title="Vector2.Y Field" Url="html/F_System_Numerics_Vector2_Y.htm" />
     <HelpKINode Title="Vector3.Y Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Vector3_Y.htm" />
     <HelpKINode Title="Vector3.Y Field" Url="html/F_System_Numerics_Vector3_Y.htm" />
     <HelpKINode Title="Vector4.Y Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Vector4_Y.htm" />
@@ -4034,10 +4036,10 @@
   <HelpKINode Title="YChannelSelect property" Url="html/P_Microsoft_Graphics_Canvas_Effects_DisplacementMapEffect_YChannelSelect.htm" />
   <HelpKINode Title="Yuy2 enumeration member" Url="html/T_Microsoft_Graphics_Canvas_DirectX_DirectXPixelFormat.htm" />
   <HelpKINode Title="Z field">
-    <HelpKINode Title="Quaternion.Z Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Quaternion_Z.htm" />
     <HelpKINode Title="Quaternion.Z Field" Url="html/F_System_Numerics_Quaternion_Z.htm" />
-    <HelpKINode Title="Vector3.Z Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Vector3_Z.htm" />
+    <HelpKINode Title="Quaternion.Z Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Quaternion_Z.htm" />
     <HelpKINode Title="Vector3.Z Field" Url="html/F_System_Numerics_Vector3_Z.htm" />
+    <HelpKINode Title="Vector3.Z Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Vector3_Z.htm" />
     <HelpKINode Title="Vector4.Z Field" Url="html/F_Microsoft_Graphics_Canvas_Numerics_Vector4_Z.htm" />
     <HelpKINode Title="Vector4.Z Field" Url="html/F_System_Numerics_Vector4_Z.htm" />
   </HelpKINode>

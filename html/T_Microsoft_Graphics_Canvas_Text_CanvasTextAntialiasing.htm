@@ -14,4 +14,12 @@
             A DWrite rendering mode has been explicitly set on the output rendertarget 
             (via D2D interop, as that functionality is not currently available in 
             Win2D), in which case the DWrite mode determines text antialiasing behavior.
-          </li></ul></div><div class="collapsibleAreaRegion" id="seeAlsoSection"><span class="collapsibleRegionTitle" onclick="SectionExpandCollapse('ID4RB')" onkeypress="SectionExpandCollapse_CheckKey('ID4RB', event)" tabindex="0"><img id="ID4RBToggle" class="collapseToggle" src="../icons/SectionExpanded.png" />See Also</span></div><div id="ID4RBSection" class="collapsibleSection"><h4 class="subHeading">Reference</h4><div class="seeAlsoStyle"><a href="N_Microsoft_Graphics_Canvas_Text.htm">Microsoft.Graphics.Canvas.Text Namespace</a></div></div></div></div><div id="pageFooter" class="pageFooter"><p><a href="http://github.com/Microsoft/Win2D/blob/master/LICENSE.txt" target="_blank">Copyright (c) Microsoft Corporation. All rights reserved.</a></p> </div></body></html>
+          </li></ul><p>
+          Drawing ClearType directly to a transparent background, while not an 
+          error, can produce undefined results. If your app needs to draw
+          ClearType text to a transparent background, consider using a
+          <a href="T_Microsoft_Graphics_Canvas_CanvasActiveLayer.htm">CanvasActiveLayer</a> followed
+          by a Clear to an opaque color, or using 
+          <a href="Overload_Microsoft_Graphics_Canvas_CanvasDrawingSession_FillRectangle.htm">FillRectangle Overload</a>
+          to fill an opaque rectangle behind the text.
+        </p></div><div class="collapsibleAreaRegion" id="seeAlsoSection"><span class="collapsibleRegionTitle" onclick="SectionExpandCollapse('ID4RB')" onkeypress="SectionExpandCollapse_CheckKey('ID4RB', event)" tabindex="0"><img id="ID4RBToggle" class="collapseToggle" src="../icons/SectionExpanded.png" />See Also</span></div><div id="ID4RBSection" class="collapsibleSection"><h4 class="subHeading">Reference</h4><div class="seeAlsoStyle"><a href="N_Microsoft_Graphics_Canvas_Text.htm">Microsoft.Graphics.Canvas.Text Namespace</a></div></div></div></div><div id="pageFooter" class="pageFooter"><p><a href="http://github.com/Microsoft/Win2D/blob/master/LICENSE.txt" target="_blank">Copyright (c) Microsoft Corporation. All rights reserved.</a></p> </div></body></html>
