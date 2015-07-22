@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.23023.0
+VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "winrt", "winrt", "{0F212400-0A8B-4E26-9BA8-CE7165FF8717}"
 EndProject
@@ -221,7 +221,7 @@ Global
 		{70FB7B71-D56C-4BF1-9282-27AA58043CC0}.Debug|Win32.ActiveCfg = Debug|Win32
 		{70FB7B71-D56C-4BF1-9282-27AA58043CC0}.Debug|Win32.Build.0 = Debug|Win32
 		{70FB7B71-D56C-4BF1-9282-27AA58043CC0}.Debug|Win32.Deploy.0 = Debug|Win32
-		{70FB7B71-D56C-4BF1-9282-27AA58043CC0}.Debug|x64.ActiveCfg = Debug|Win32
+		{70FB7B71-D56C-4BF1-9282-27AA58043CC0}.Debug|x64.ActiveCfg = Debug|x64
 		{70FB7B71-D56C-4BF1-9282-27AA58043CC0}.Release|ARM.ActiveCfg = Release|ARM
 		{70FB7B71-D56C-4BF1-9282-27AA58043CC0}.Release|ARM.Build.0 = Release|ARM
 		{70FB7B71-D56C-4BF1-9282-27AA58043CC0}.Release|ARM.Deploy.0 = Release|ARM
