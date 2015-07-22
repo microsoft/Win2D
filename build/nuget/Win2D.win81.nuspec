@@ -93,13 +93,10 @@
       <file target="bin\Windows\x86\en\Microsoft.Graphics.Canvas.Numerics.xml"              src="bin\intellisense\Microsoft.Graphics.Canvas.Numerics.xml" /> <!-- [1] -->
       <file target="bin\Windows\x86\en\Microsoft.Graphics.Canvas.xml"                       src="bin\intellisense\Microsoft.Graphics.Canvas.xml" /> <!-- [1] -->
 
-      <file target="build\native\Win2D.win81.props"                                         src="build\nuget\Win2D.props" />
       <file target="build\native\Win2D.win81.targets"                                       src="build\nuget\Win2D.win81-native.targets" />
 
-      <file target="build\win\Win2D.win81.props"                                            src="build\nuget\Win2D.props" />
       <file target="build\win\Win2D.win81.targets"                                          src="build\nuget\Win2D.win81-managed.targets" />
 
-      <file target="build\wpa\Win2D.win81.props"                                            src="build\nuget\Win2D.props" />
       <file target="build\wpa\Win2D.win81.targets"                                          src="build\nuget\Win2D.win81-managed.targets" />
 
       <file target="include\Phone\Microsoft.Graphics.Canvas.DirectX.Direct3D11.interop.h"   src="winrt\published\Microsoft.Graphics.Canvas.DirectX.Direct3D11.interop.h"/>

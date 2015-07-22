@@ -19,7 +19,6 @@
 
       <file target="Win2d.githash.txt"                                       src="obj\Win2d.githash.txt" />
 
-      <file target="build\native\Win2D.uwp.props"                            src="build\nuget\Win2D.props" />
       <file target="build\native\Win2D.uwp.targets"                          src="build\nuget\Win2D.uwp.targets" />
 
       <file target="include\Microsoft.Graphics.Canvas.h"                     src="bin\UAPx86\release\IdlHeader\Microsoft.Graphics.Canvas.h"/>
