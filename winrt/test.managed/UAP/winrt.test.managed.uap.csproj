@@ -97,7 +97,7 @@
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Properties\winrt.test.managed.uap.rd.xml" />
+    <Content Include="$(AssetDir)RuntimeDirectives.rd.xml" />
     <Content Include="$(AssetDir)Logo.scale-240.png">
       <Link>Assets\Logo.scale-240.png</Link>
     </Content>
