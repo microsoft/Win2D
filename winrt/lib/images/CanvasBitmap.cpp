@@ -751,7 +751,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     void SaveBitmapToStreamImpl(
         ComPtr<ID2D1Bitmap1> const& d2dBitmap,
         ICanvasBitmapResourceCreationAdapter* adapter,
-        IRandomAccessStream* stream,
+        ComPtr<IRandomAccessStream> const& stream,
         CanvasBitmapFileFormat fileFormat,
         float quality,
         IAsyncAction **resultAsyncAction)
@@ -771,7 +771,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 ScopedBitmapMappedPixelAccess bitmapPixelAccess(d2dBitmap.Get(), D3D11_MAP_READ);
 
                 adapter->SaveLockedMemoryToStream(
-                    stream,
+                    stream.Get(),
                     fileFormat,
                     quality,
                     size.width,
