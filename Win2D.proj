@@ -87,6 +87,7 @@
   <ItemGroup Condition="$(BuildUAP)">
     <UAPProject Include="winrt\lib\winrt.lib.uap.vcxproj" />
     <UAPProject Include="winrt\dll\winrt.dll.uap.vcxproj" />
+    <AnyCPUProject Include="numerics\Workaround1200257\Workaround1200257.csproj" />
   </ItemGroup>
 
   <!-- Windows test projects -->

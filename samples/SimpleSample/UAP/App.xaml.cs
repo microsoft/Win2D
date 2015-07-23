@@ -24,10 +24,6 @@ namespace SimpleSample
         {
             this.InitializeComponent();
             this.Suspending += OnSuspending;
-
-            // TODO: remove this workaround once we have a project we can reference that does it for us
-            var a = System.Numerics.Vector2.Zero;
-            var b = a.X;
         }
 
         /// <summary>

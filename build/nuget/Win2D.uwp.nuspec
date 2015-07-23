@@ -27,6 +27,9 @@
       <file target="lib\uap10.0\Microsoft.Graphics.Canvas.winmd"             src="$bin$\UAPx86\release\winrt.dll.UAP\Microsoft.Graphics.Canvas.winmd" />
       <file target="lib\uap10.0\Microsoft.Graphics.Canvas.xml"               src="bin\intellisense\Microsoft.Graphics.Canvas.xml" />
       <file target="lib\uap10.0\en\Microsoft.Graphics.Canvas.xml"            src="bin\intellisense\Microsoft.Graphics.Canvas.xml" /> <!-- [1] -->
+
+      <file target="lib\uap10.0\Workaround1200257.dll"                       src="$bin$\UAPAnyCPU\release\Workaround1200257\Workaround1200257.dll" />
+
       <file target="lib\win\Microsoft.Graphics.Canvas.winmd"                 src="$bin$\UAPx86\release\winrt.dll.UAP\Microsoft.Graphics.Canvas.winmd" />
       <file target="lib\win\Microsoft.Graphics.Canvas.xml"                   src="bin\intellisense\Microsoft.Graphics.Canvas.xml" />
       <file target="lib\win\en\Microsoft.Graphics.Canvas.xml"                src="bin\intellisense\Microsoft.Graphics.Canvas.xml" /> <!-- [1] -->
