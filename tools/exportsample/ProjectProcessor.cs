@@ -11,12 +11,28 @@ using System.Xml.Linq;
 
 namespace exportsample
 {
+    public enum NuGetProjectType
+    {
+        PackagesConfig,
+        ProjectJson
+    }
+
+    public enum TargetPlatformIdentifier
+    {
+        Windows,
+        WindowsPhone,
+        UAP
+    }
+
     class ProjectProcessor
     {
         public static XNamespace NS = "http://schemas.microsoft.com/developer/msbuild/2003";
 
         public Dictionary<string, string> FilesToCopy = new Dictionary<string, string>();
         public bool ReferencesWin2DNuGetPackage { get; private set; }
+        public bool IsNative { get; private set; }
+        public string Win2DPackage { get; private set; }
+        public NuGetProjectType NuGetType { get; private set; }
 
         string fileName;
         public string SourceDirectory { get; private set; }
@@ -47,6 +63,21 @@ namespace exportsample
             this.relativePackagesDirectory = Path.Combine(relativeSolutionDirectory, "packages\\");
 
             doc = XDocument.Load(projectFileName);
+
+            this.IsNative = fileName.EndsWith("vcxproj");
+            this.ReferencesWin2DNuGetPackage = FindAndRemoveWin2DProjectReferences();
+
+            bool isUap = (GetTargetPlatformIdentifier() == TargetPlatformIdentifier.UAP);
+
+            if (isUap && !this.IsNative)
+                this.NuGetType = NuGetProjectType.ProjectJson;
+            else
+                this.NuGetType = NuGetProjectType.PackagesConfig;
+
+            if (isUap)
+                Win2DPackage = "Win2D.uwp";
+            else
+                Win2DPackage = "Win2D.win81";
         }
 
         public void Save(string dest)
@@ -312,10 +343,22 @@ namespace exportsample
 
         void ConvertWin2DProjectReferences()
         {
-            ReferencesWin2DNuGetPackage = FindAndRemoveWin2DProjectReferences();
+            if (!ReferencesWin2DNuGetPackage)
+                return;
 
-            if (ReferencesWin2DNuGetPackage)
-                AddWin2DNuGetPackage();
+            switch (NuGetType)
+            {
+                case NuGetProjectType.PackagesConfig:
+                    AddWin2DNuGetPackage();
+                    break;
+
+                case NuGetProjectType.ProjectJson:
+                    // nothing - project.json projects don't modify the project file (yay)
+                    break;
+
+                default:
+                    throw new Exception("Unknown project type");
+            }
         }
 
         bool FindAndRemoveWin2DProjectReferences()
@@ -371,10 +414,7 @@ namespace exportsample
 
             string importsDir = Path.Combine(Win2DPackagePath, "build", framework);
 
-            var propsImport = Path.Combine(importsDir, "Win2D.props");
-            var targetsImport = Path.Combine(importsDir, "Win2D.targets");
-
-            doc.Root.AddFirst(MakeImportElement(propsImport));
+            var targetsImport = Path.Combine(importsDir, Win2DPackage + ".targets");
 
             // Targets is added after last element (rather than the last node) so that it appears before
             // any comments at the end of the project.
@@ -382,38 +422,47 @@ namespace exportsample
 
 
             var importsTarget = GetEnsureNuGetPackageBuildImportsTarget();
-            importsTarget.Add(MakeCheckImport(propsImport));
             importsTarget.Add(MakeCheckImport(targetsImport));
         }
 
         public string GetFramework()
         {
             // C++ projects are always native
-            if (fileName.EndsWith("vcxproj"))
+            if (IsNative)
                 return "native";
 
             // Otherwise we need to look at TargetPlatformIdentifier
+            switch (GetTargetPlatformIdentifier())
+            {
+                case TargetPlatformIdentifier.Windows:
+                    return "win";
+
+                case TargetPlatformIdentifier.WindowsPhone:
+                    return "wpa";
+
+                default:
+                    throw new Exception(string.Format("Unexpected TargetPlatformIdentifier: {0}", GetTargetPlatformIdentifier()));
+            }
+        }
+
+        public TargetPlatformIdentifier GetTargetPlatformIdentifier()
+        {
             var targetPlatformIdentifier = doc.Descendants(NS + "TargetPlatformIdentifier").FirstOrDefault();
 
             // No platform == windows
             if (targetPlatformIdentifier == null)
-                return "win";
+                return TargetPlatformIdentifier.Windows;
 
             switch (targetPlatformIdentifier.Value)
             {
                 case "Windows":
-                    return "win";
+                    return TargetPlatformIdentifier.Windows;
 
                 case "WindowsPhoneApp":
-                    return "wpa";
+                    return TargetPlatformIdentifier.WindowsPhone;
 
                 case "UAP":
-                    // Since NuGet currently doesn't know about UAP as a framwork moniker,
-                    // the nuget package uses 'win'.
-                    //
-                    // When NuGet learns about UAP, and the Win2D package has been updated accordingly,
-                    // this will need to be changed.
-                    return "win";
+                    return TargetPlatformIdentifier.UAP;
             }
 
             throw new Exception("Unabled to determine NuGet framework for " + fileName);
@@ -431,7 +480,7 @@ namespace exportsample
         {
             get
             {
-                return Path.Combine(relativePackagesDirectory, "Win2D." + config.Options.Win2DVersion);
+                return Path.Combine(relativePackagesDirectory, Win2DPackage + "." + config.Options.Win2DVersion);
             }
         }
 

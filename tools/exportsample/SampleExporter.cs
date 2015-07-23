@@ -2,6 +2,8 @@
 //
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -14,7 +16,7 @@ namespace exportsample
     {
         public static void Export(Configuration config, SampleDirectory sample)
         {
-            new SampleExporter(config, sample).Go();            
+            new SampleExporter(config, sample).Go();
         }
 
         Configuration config;
@@ -108,13 +110,25 @@ namespace exportsample
 
             if (project.ReferencesWin2DNuGetPackage)
             {
-                CopyPackagesConfigWithAddedWin2DReference(project);
+                switch (project.NuGetType)
+                {
+                    case NuGetProjectType.PackagesConfig:
+                        CopyPackagesConfigWithAddedWin2DReference(project);
+                        break;
+
+                    case NuGetProjectType.ProjectJson:
+                        CopyProjectJsonWithAddedWin2DReference(project);
+                        break;
+
+                    default:
+                        throw new Exception(string.Format("Unhandled NuGetProjectType: {0}", project.NuGetType));
+                }
             }
 
             // Any referenced files should be copied            
             CopyReferencedFiles(project);
         }
-        
+
         void CopyPackagesConfigWithAddedWin2DReference(ProjectProcessor project)
         {
             var source = Path.Combine(project.SourceDirectory, "packages.config");
@@ -134,18 +148,32 @@ namespace exportsample
             RemoveExistingWin2DReferences(packagesConfig);
 
             var package = new XElement("package");
-            package.SetAttributeValue("id", "Win2D");
+            package.SetAttributeValue("id", project.Win2DPackage);
             package.SetAttributeValue("version", config.Options.Win2DVersion);
 
             // The framework name in packages.config does not exactly match then name on disk
-            string framework = project.GetFramework();
-            switch (framework)
+            string framework;
+            if (project.IsNative)
             {
-                case "win": framework = "win81"; break;
-                case "wpa": framework = "wpa81"; break;
-                case "native": framework = "Native"; break;
-                default: throw new Exception("Unexpected framework type");
+                framework = "Native";
             }
+            else
+            {
+                switch (project.GetTargetPlatformIdentifier())
+                {
+                    case TargetPlatformIdentifier.Windows:
+                        framework = "win81";
+                        break;
+
+                    case TargetPlatformIdentifier.WindowsPhone:
+                        framework = "wpa81";
+                        break;
+
+                    default:
+                        throw new Exception(string.Format("Unexpected TargetPlatformIdentifier", project.GetTargetPlatformIdentifier()));
+                }
+            }
+
             package.SetAttributeValue("targetFramework", framework);
 
             packagesConfig.Root.Add(package);
@@ -158,9 +186,40 @@ namespace exportsample
         private static void RemoveExistingWin2DReferences(XDocument packagesConfig)
         {
             var existingReferences = from package in packagesConfig.Descendants("package")
-                                     where package.Attribute("id").Value == "Win2D"
+                                     where package.Attribute("id").Value.StartsWith("Win2D")
                                      select package;
             existingReferences.ToList().ForEach(e => e.Remove());
+        }
+
+        void CopyProjectJsonWithAddedWin2DReference(ProjectProcessor project)
+        {
+            var source = Path.Combine(project.SourceDirectory, "project.json");
+            var destination = Path.Combine(project.DestinationDirectory, "project.json");
+
+            if (!File.Exists(source))
+            {
+                // We're not going to try and create new ones of these from scratch; we'll just
+                // update the existing one.
+                throw new Exception(string.Format("Could not find existing {0}", source));
+            }
+
+            using (var reader = File.OpenText(source))
+            {
+                var projectJson = JObject.Load(new JsonTextReader(reader));
+                projectJson["dependencies"].Children().Last().AddAfterSelf(
+                    new JProperty(project.Win2DPackage, config.Options.Win2DVersion));
+
+                using (var writer = File.CreateText(destination))
+                {
+                    var jsonWriter = new JsonTextWriter(writer)
+                    {
+                        Formatting = Formatting.Indented
+                    };
+
+                    projectJson.WriteTo(jsonWriter);
+                    copiedFiles.Add(destination);
+                }
+            }
         }
 
         void CopyReferencedFiles(ProjectProcessor project)
