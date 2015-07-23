@@ -44,36 +44,35 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
                     <ComboBox x:Name="TextColors" SelectedIndex="0" HorizontalAlignment="Stretch">
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
-                                <local:GlowTextCustomControl Text="Text Color" TextColor="{Binding}" GlowColor="Black" GlowAmount="10" />
+                                <local:GlowTextCustomControl Text="Text Color" TextColor="{Binding}" GlowColor="Black" GlowAmount="10"/>
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
                         <Color>White</Color>
+                        <Color>Black</Color>
                         <Color>Red</Color>
                         <Color>Green</Color>
                         <Color>Blue</Color>
-                        <Color>Black</Color>
+                        <Color>Yellow</Color>
                         <Color>Cyan</Color>
                         <Color>Purple</Color>
-                        <Color>Yellow</Color>
                     </ComboBox>
 
-                    <ComboBox x:Name="GlowColors" SelectedIndex="0" HorizontalAlignment="Stretch">
+                    <ComboBox x:Name="GlowColors" SelectedIndex="2" HorizontalAlignment="Stretch">
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
-                                <local:GlowTextCustomControl Text="Glow Color" GlowColor="{Binding}" TextColor="White" HorizontalAlignment="Stretch" />
+                                <local:GlowTextCustomControl Text="Glow Color" GlowColor="{Binding}" TextColor="LightGray" GlowAmount="10"/>
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
-                        <Color>Green</Color>
-                        <Color>Red</Color>
-                        <Color>Blue</Color>
                         <Color>White</Color>
-                        <Color>Purple</Color>
-                        <Color>Cyan</Color>
+                        <Color>Red</Color>
+                        <Color>Green</Color>
+                        <Color>Blue</Color>
                         <Color>Yellow</Color>
-                        <Color>Black</Color>
+                        <Color>Cyan</Color>
+                        <Color>Purple</Color>
                     </ComboBox>
 
-                    <ComboBox x:Name="GlowAmounts" SelectedIndex="5" HorizontalAlignment="Stretch">
+                    <ComboBox x:Name="GlowAmounts" SelectedIndex="2" HorizontalAlignment="Stretch">
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal" Background="White">
@@ -82,15 +81,10 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
                         <x:Double>5.0</x:Double>
-                        <x:Double>6.0</x:Double>
                         <x:Double>7.0</x:Double>
-                        <x:Double>8.0</x:Double>
                         <x:Double>9.0</x:Double>
-                        <x:Double>10.0</x:Double>
                         <x:Double>11.0</x:Double>
-                        <x:Double>12.0</x:Double>
                         <x:Double>13.0</x:Double>
-                        <x:Double>14.0</x:Double>
                         <x:Double>15.0</x:Double>
                     </ComboBox>
                 </StackPanel>
