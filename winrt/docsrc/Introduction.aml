@@ -20,9 +20,15 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <para>Where to get it:</para>
       <list class="bullet">
         <listItem>
+          NuGet packages for
           <externalLink>
-            <linkText>NuGet packages</linkText>
-            <linkUri>http://www.nuget.org/packages/Win2D</linkUri>
+            <linkText>Windows 10</linkText>
+            <linkUri>http://www.nuget.org/packages/Win2D.uwp</linkUri>
+          </externalLink>
+          or
+          <externalLink>
+            <linkText>Windows / Phone 8.1</linkText>
+            <linkUri>http://www.nuget.org/packages/Win2D.win81</linkUri>
           </externalLink>
         </listItem>
         <listItem>

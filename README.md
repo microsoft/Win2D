@@ -7,7 +7,9 @@ utilizes the power of Direct2D, and integrates seamlessly with XAML and
 CoreWindow.
 
 ##### Where to get it
-- [NuGet packages](http://www.nuget.org/packages/Win2D)
+- NuGet packages for
+    [Windows 10](http://www.nuget.org/packages/Win2D.uwp) or
+    [Windows / Phone 8.1](http://www.nuget.org/packages/Win2D.win81)
 - [Source code](http://github.com/Microsoft/Win2D)
 
 ##### How to use it
@@ -50,8 +52,7 @@ Studio, add the Win2D NuGet package to your project, and get started using the A
 
 ## Building Win2D from source
 
-##### Requirements:
-
+##### Requirements
 - Recommended: Visual Studio 2015
 - Visual Studio 2013 Update 5 is also supported (for Windows 8.1 or Windows Phone 8.1 development only)
 
