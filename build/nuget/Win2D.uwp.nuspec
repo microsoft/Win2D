@@ -6,7 +6,7 @@
         <title>Win2D.uwp: Win2D for the Universal Windows Platform (Windows 10)</title>
         <authors>Microsoft</authors>
         <owners>win2d,microsoft</owners>
-        <description>An easy-to-use Windows Runtime API for immediate mode 2D graphics rendering for Univseral Windows Platform applications</description>
+        <description>An easy-to-use Windows Runtime API for immediate mode 2D graphics rendering.&#10;For the Universal Windows Platform (Windows 10).</description>
         <projectUrl>http://go.microsoft.com/fwlink/?LinkID=519078</projectUrl>
         <iconUrl>http://raw.githubusercontent.com/Microsoft/Win2D/master/samples/ExampleGallery/WindowsPhone/Assets/Square71x71Logo.scale-240.png</iconUrl>
         <licenseUrl>$LicenseUrl$</licenseUrl>

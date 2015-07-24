@@ -6,7 +6,7 @@
         <title>Win2D.win81: Win2D for Windows 8.1 and Windows Phone 8.1</title>
         <authors>Microsoft</authors>
         <owners>win2d,microsoft</owners>
-        <description>An easy-to-use Windows Runtime API for immediate mode 2D graphics rendering for Windows Store Apps on Windows 8.1 and Windows Phone 8.1.</description>
+        <description>An easy-to-use Windows Runtime API for immediate mode 2D graphics rendering.&#10;For Windows 8.1 and Windows Phone 8.1.</description>
         <projectUrl>http://go.microsoft.com/fwlink/?LinkID=519078</projectUrl>
         <iconUrl>http://raw.githubusercontent.com/Microsoft/Win2D/master/samples/ExampleGallery/WindowsPhone/Assets/Square71x71Logo.scale-240.png</iconUrl>
         <licenseUrl>$LicenseUrl$</licenseUrl>
