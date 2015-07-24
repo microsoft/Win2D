@@ -16,13 +16,22 @@
   <Applications>
     <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="ExampleGallery.Windows.App">
       <m2:VisualElements DisplayName="Win2D Gallery" Square150x150Logo="Assets\Logo.png" Square30x30Logo="Assets\SmallLogo.png" Description="Win2D Example Gallery" ForegroundText="light" BackgroundColor="#E75934" ToastCapable="false">
-        <m2:DefaultTile ShortName="Win2D Gallery">
+        <m2:LockScreen Notification="badge" BadgeLogo="Assets\BadgeLogo.png" />
+        <m2:DefaultTile ShortName="Win2D Gallery" Wide310x150Logo="Assets\Wide310x150Logo.png">
           <m2:ShowNameOnTiles>
             <m2:ShowOn Tile="square150x150Logo" />
+            <m2:ShowOn Tile="wide310x150Logo" />
           </m2:ShowNameOnTiles>
         </m2:DefaultTile>
         <m2:SplashScreen Image="Assets\SplashScreen.png" BackgroundColor="black" />
       </m2:VisualElements>
+      <Extensions>
+        <Extension Category="windows.backgroundTasks" EntryPoint="ExampleGallery.BackgroundTask.LiveTileUpdaterTask">
+          <BackgroundTasks>
+            <Task Type="timer" />
+          </BackgroundTasks>
+        </Extension>
+      </Extensions>
     </Application>
   </Applications>
 </Package>

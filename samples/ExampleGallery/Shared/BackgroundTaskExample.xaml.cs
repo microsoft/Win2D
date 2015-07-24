@@ -2,16 +2,7 @@
 //
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
-
-//
-// This example is disabled for non-UAP versions since a bug in VS2013 Update 4 prevents it
-// from working.  When update 5 is released this example will be re-enabled.
-//
-
-#if WINDOWS_UAP
 using ExampleGallery.BackgroundTask;
-#endif
-
 using System;
 using System.Linq;
 using Windows.ApplicationModel.Background;
@@ -26,15 +17,6 @@ namespace ExampleGallery
 {
     public sealed partial class BackgroundTaskExample : UserControl
     {
-#if !WINDOWS_UAP
-
-        void UserControl_Loaded(object sender, RoutedEventArgs e) {}
-        void StartButton_Click(object sender, RoutedEventArgs args) {}
-        void StopButton_Click(object sender, RoutedEventArgs args) {}
-        void ResetLiveTileButton_Click(object sender, RoutedEventArgs args) {}
-
-#else
-
         LiveTileUpdater liveTileUpdater = new LiveTileUpdater();
 
         bool isBusy = false;
@@ -155,7 +137,5 @@ namespace ExampleGallery
             var updater = TileUpdateManager.CreateTileUpdaterForApplication();
             updater.Clear();
         }
-
-#endif
     }
 }

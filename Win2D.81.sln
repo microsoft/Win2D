@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+VisualStudioVersion = 12.0.40629.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "winrt", "winrt", "{0F212400-0A8B-4E26-9BA8-CE7165FF8717}"
 EndProject
@@ -110,8 +110,14 @@ EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "ExampleGallery.Shared", "samples\ExampleGallery\Shared\ExampleGallery.Shared.shproj", "{F6F2B4AD-0B11-4919-BF8B-08DE6FE76170}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExampleGallery.Windows", "samples\ExampleGallery\Windows\ExampleGallery.Windows.csproj", "{5C9D7C27-14C6-44F7-8A1B-447CDB939CBC}"
+	ProjectSection(ProjectDependencies) = postProject
+		{29CAA568-B055-4F80-9C14-94A38B9B3075} = {29CAA568-B055-4F80-9C14-94A38B9B3075}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExampleGallery.WindowsPhone", "samples\ExampleGallery\WindowsPhone\ExampleGallery.WindowsPhone.csproj", "{6F06C88D-B227-405B-A0D4-8E03DCBA8191}"
+	ProjectSection(ProjectDependencies) = postProject
+		{66260712-089F-49DE-BC57-E93D0B0BADF7} = {66260712-089F-49DE-BC57-E93D0B0BADF7}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CppNumericsPerfTest", "numerics\Cpp\perftest\CppNumericsPerfTest.vcxproj", "{7ED91C61-4EB4-4008-B027-48BFCBDA8A7F}"
 EndProject
@@ -145,8 +151,17 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleSample.Windows", "sam
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleSample.WindowsPhone", "samples\SimpleSample\WindowsPhone\SimpleSample.WindowsPhone.csproj", "{C0A77170-9650-4E0B-BBEA-8D1B924EBBA2}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ExampleGallery.BackgroundTask", "ExampleGallery.BackgroundTask", "{7276EFC9-80CD-4D52-8F83-36EE0AEC2CCB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExampleGallery.BackgroundTask.Windows", "samples\ExampleGallery\BackgroundTask\Windows\ExampleGallery.BackgroundTask.Windows.csproj", "{29CAA568-B055-4F80-9C14-94A38B9B3075}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExampleGallery.BackgroundTask.WindowsPhone", "samples\ExampleGallery\BackgroundTask\WindowsPhone\ExampleGallery.BackgroundTask.WindowsPhone.csproj", "{66260712-089F-49DE-BC57-E93D0B0BADF7}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "ExampleGallery.BackgroundTask.Shared", "samples\ExampleGallery\BackgroundTask\Shared\ExampleGallery.BackgroundTask.Shared.shproj", "{75A7926B-B1AE-4806-B332-9561BFE0EDF9}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		samples\ExampleGallery\BackgroundTask\Shared\ExampleGallery.BackgroundTask.Shared.projitems*{66260712-089f-49de-bc57-e93d0b0badf7}*SharedItemsImports = 4
 		samples\SimpleSample\Shared\SimpleSample.Shared.projitems*{36835e90-6663-40c5-b15e-de8f3fc27155}*SharedItemsImports = 4
 		numerics\Cpp\tests\CppNumericsTests.Shared.vcxitems*{2d1259ac-e4c6-4345-af91-5962e0c5112d}*SharedItemsImports = 4
 		winrt\test.nativecomponent\winrt.test.nativecomponent.Shared.vcxitems*{7c0a8506-002b-4169-989f-ea5723dad6fb}*SharedItemsImports = 9
@@ -173,9 +188,11 @@ Global
 		winrt\test.internal\winrt.test.internal.shared.vcxitems*{b038b2a3-0ff2-4313-a0db-b7b59dc2dc4c}*SharedItemsImports = 9
 		samples\ExampleGallery\Shared\ExampleGallery.Shared.projitems*{5c9d7c27-14c6-44f7-8a1b-447cdb939cbc}*SharedItemsImports = 4
 		numerics\DotNet\tests\Shared\DotNetNumericsTests.Shared.projitems*{198d676f-fed6-4501-a083-ea9d288db611}*SharedItemsImports = 4
+		samples\ExampleGallery\BackgroundTask\Shared\ExampleGallery.BackgroundTask.Shared.projitems*{29caa568-b055-4f80-9c14-94a38b9b3075}*SharedItemsImports = 4
 		numerics\DotNet\tests\Shared\DotNetNumericsTests.Shared.projitems*{860ee6b2-f36c-448e-ba84-607266fb6fba}*SharedItemsImports = 4
 		samples\CoreWindowExample\Shared\CoreWindowExample.Shared.projitems*{6104a231-3dc0-4354-9210-468d8b9d0686}*SharedItemsImports = 4
 		winrt\test.nativecomponent\winrt.test.nativecomponent.Shared.vcxitems*{dd961f31-3142-4e3a-80a9-bc9da5d75816}*SharedItemsImports = 4
+		samples\ExampleGallery\BackgroundTask\Shared\ExampleGallery.BackgroundTask.Shared.projitems*{75a7926b-b1ae-4806-b332-9561bfe0edf9}*SharedItemsImports = 13
 		samples\ExampleGallery\Shared\ExampleGallery.Shared.projitems*{6f06c88d-b227-405b-a0d4-8e03dcba8191}*SharedItemsImports = 4
 		samples\ExampleGallery\Direct3DInterop\Shared\ExampleGallery.Direct3DInterop.Shared.vcxitems*{063032f0-dcb8-4ca6-9719-b8391525db37}*SharedItemsImports = 4
 		winrt\test.internal\winrt.test.internal.shared.vcxitems*{1fe831f7-6773-4445-b570-1f5570fad88d}*SharedItemsImports = 4
@@ -548,6 +565,28 @@ Global
 		{C0A77170-9650-4E0B-BBEA-8D1B924EBBA2}.Release|Win32.Build.0 = Release|Win32
 		{C0A77170-9650-4E0B-BBEA-8D1B924EBBA2}.Release|Win32.Deploy.0 = Release|Win32
 		{C0A77170-9650-4E0B-BBEA-8D1B924EBBA2}.Release|x64.ActiveCfg = Release|Win32
+		{29CAA568-B055-4F80-9C14-94A38B9B3075}.Debug|ARM.ActiveCfg = Debug|ARM
+		{29CAA568-B055-4F80-9C14-94A38B9B3075}.Debug|ARM.Build.0 = Debug|ARM
+		{29CAA568-B055-4F80-9C14-94A38B9B3075}.Debug|Win32.ActiveCfg = Debug|Win32
+		{29CAA568-B055-4F80-9C14-94A38B9B3075}.Debug|Win32.Build.0 = Debug|Win32
+		{29CAA568-B055-4F80-9C14-94A38B9B3075}.Debug|x64.ActiveCfg = Debug|x64
+		{29CAA568-B055-4F80-9C14-94A38B9B3075}.Debug|x64.Build.0 = Debug|x64
+		{29CAA568-B055-4F80-9C14-94A38B9B3075}.Release|ARM.ActiveCfg = Release|ARM
+		{29CAA568-B055-4F80-9C14-94A38B9B3075}.Release|ARM.Build.0 = Release|ARM
+		{29CAA568-B055-4F80-9C14-94A38B9B3075}.Release|Win32.ActiveCfg = Release|Win32
+		{29CAA568-B055-4F80-9C14-94A38B9B3075}.Release|Win32.Build.0 = Release|Win32
+		{29CAA568-B055-4F80-9C14-94A38B9B3075}.Release|x64.ActiveCfg = Release|x64
+		{29CAA568-B055-4F80-9C14-94A38B9B3075}.Release|x64.Build.0 = Release|x64
+		{66260712-089F-49DE-BC57-E93D0B0BADF7}.Debug|ARM.ActiveCfg = Debug|ARM
+		{66260712-089F-49DE-BC57-E93D0B0BADF7}.Debug|ARM.Build.0 = Debug|ARM
+		{66260712-089F-49DE-BC57-E93D0B0BADF7}.Debug|Win32.ActiveCfg = Debug|Win32
+		{66260712-089F-49DE-BC57-E93D0B0BADF7}.Debug|Win32.Build.0 = Debug|Win32
+		{66260712-089F-49DE-BC57-E93D0B0BADF7}.Debug|x64.ActiveCfg = Debug|Win32
+		{66260712-089F-49DE-BC57-E93D0B0BADF7}.Release|ARM.ActiveCfg = Release|ARM
+		{66260712-089F-49DE-BC57-E93D0B0BADF7}.Release|ARM.Build.0 = Release|ARM
+		{66260712-089F-49DE-BC57-E93D0B0BADF7}.Release|Win32.ActiveCfg = Release|Win32
+		{66260712-089F-49DE-BC57-E93D0B0BADF7}.Release|Win32.Build.0 = Release|Win32
+		{66260712-089F-49DE-BC57-E93D0B0BADF7}.Release|x64.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -607,5 +646,9 @@ Global
 		{631F6A23-BFF0-44BF-BF3A-19D65AC62A52} = {C4388FAE-3ADF-455C-9A72-452BC77F14DC}
 		{36835E90-6663-40C5-B15E-DE8F3FC27155} = {C4388FAE-3ADF-455C-9A72-452BC77F14DC}
 		{C0A77170-9650-4E0B-BBEA-8D1B924EBBA2} = {C4388FAE-3ADF-455C-9A72-452BC77F14DC}
+		{7276EFC9-80CD-4D52-8F83-36EE0AEC2CCB} = {671EACB0-6255-4050-B092-1A874625AD5C}
+		{29CAA568-B055-4F80-9C14-94A38B9B3075} = {7276EFC9-80CD-4D52-8F83-36EE0AEC2CCB}
+		{66260712-089F-49DE-BC57-E93D0B0BADF7} = {7276EFC9-80CD-4D52-8F83-36EE0AEC2CCB}
+		{75A7926B-B1AE-4806-B332-9561BFE0EDF9} = {7276EFC9-80CD-4D52-8F83-36EE0AEC2CCB}
 	EndGlobalSection
 EndGlobal

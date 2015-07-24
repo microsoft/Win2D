@@ -25,6 +25,13 @@
         </m3:DefaultTile>
         <m3:SplashScreen Image="Assets\SplashScreen.png" BackgroundColor="black" />
       </m3:VisualElements>
+      <Extensions>
+        <Extension Category="windows.backgroundTasks" EntryPoint="ExampleGallery.BackgroundTask.LiveTileUpdaterTask">
+          <BackgroundTasks>
+            <Task Type="timer" />
+          </BackgroundTasks>
+        </Extension>
+      </Extensions>
     </Application>
   </Applications>
 </Package>
