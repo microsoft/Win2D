@@ -92,40 +92,30 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
 
       <content>
         <para>
-          Install Visual Studio:
+          <externalLink>
+            <linkText>Download and install Visual Studio</linkText>
+            <linkUri>http://www.visualstudio.com/en-us/downloads/download-visual-studio-vs.aspx</linkUri>
+          </externalLink>:
         </para>
-        <list class="bullet">
-          <listItem>
-            To develop for Windows 8.1 or Windows Phone 8.1:
-            <list class="bullet">
-              <listItem>
-                Install
-                <externalLink>
-                  <linkText>Visual Studio 2013</linkText>
-                  <linkUri>http://www.visualstudio.com/en-us/downloads/download-visual-studio-vs.aspx</linkUri>
-                </externalLink>
-              </listItem>
-              <listItem>Recommended version: Visual Studio Community 2013 with Update 4</listItem>
-              <listItem>Minimum version: Visual Studio 2013 Update 2</listItem>
-              <listItem>If using Visual Studio Express, requires the 'for Windows' version (not 'for Windows Desktop')</listItem>
-            </list>
-          </listItem>
 
+        <list class="bullet">
           <listItem>
             To develop for Windows 10 (Universal Windows Platform):
             <list class="bullet">
-              <listItem>
-                Install
-                <externalLink>
-                  <linkText>Visual Studio 2015</linkText>
-                  <linkUri>http://www.visualstudio.com/products/visual-studio-2015-downloads-vs</linkUri>
-                </externalLink>
-              </listItem>
-              <listItem>Minimum version: Visual Studio 2015 RC</listItem>
+              <listItem>Minimum version: Visual Studio Community 2015</listItem>
             </list>
+            
+            <listItem>
+              To develop for Windows 8.1 or Windows Phone 8.1:
+              <list class="bullet">
+                <listItem>Recommended version: Visual Studio Community 2015</listItem>
+                <listItem>Minimum version: Visual Studio Community 2013 with Update 5</listItem>
+                <listItem>If using Visual Studio Express, requires the 'for Windows' version (not 'for Windows Desktop')</listItem>
+              </list>
+            </listItem>
           </listItem>
         </list>
-
+        
         <para>Create your project:</para>
         <list class="bullet">
           <listItem>Go to 'File' -> 'New' -> 'Project...'</listItem>
@@ -139,7 +129,11 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         <list class="bullet">
           <listItem>Go to 'Tools' -> 'NuGet Package Manager' -> 'Manage NuGet Packages for Solution...'</listItem>
           <listItem>Type 'Win2D' into the 'Search Online' box, and hit Enter</listItem>
-          <listItem>Select the 'Win2D' package and click 'Install', then 'OK'</listItem>
+          <listItem>Select the 'Win2D.uwp' or 'Win2D.win81' package and click 'Install', then 'OK'</listItem>
+          <list class="bullet">
+            <listItem>If building for Windows 10, use Win2D.uwp</listItem>
+            <listItem>If building for Windows 8.1 or Windows Phone 8.1, use Win2D.win81</listItem>            
+          </list>
           <listItem>Accept the license agreement</listItem>
           <listItem>Click 'Close'</listItem>
           <listItem>If creating a Windows 8.1 or Windows Phone 8.1 app, change Solution Platform from 'Any CPU' to 'x86', 'x64', or 'ARM'</listItem>

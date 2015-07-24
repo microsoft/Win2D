@@ -9,12 +9,12 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
   <developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
     <introduction>
       <para>
-        As of Win2D version 0.0.17, Win2D can be used to build Universal
-        Windows apps using the latest
+        As of Win2D version 1.0.0, Win2D can be used to build Universal
+        Windows apps using 
         <externalLink>
-          <linkText>Visual Studio 2015 RC</linkText>
-          <linkUri>http://www.visualstudio.com/products/visual-studio-2015-downloads-vs</linkUri>
-        </externalLink>.  
+          <linkText>Visual Studio 2015</linkText>
+          <linkUri>http://www.visualstudio.com/en-us/downloads/download-visual-studio-vs.aspx</linkUri>
+        </externalLink>.
       </para>
     </introduction>
     
