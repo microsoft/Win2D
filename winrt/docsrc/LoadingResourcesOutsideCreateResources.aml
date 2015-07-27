@@ -197,7 +197,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
           <code>            
         async Task LoadResourcesForLevelAsync(ICanvasAnimatedControl resourceCreator, int level)
         {
-            return GameLoopSynchronizationContext.RunOnGameLoopAsync(resourceCreator, async() =>
+            return GameLoopSynchronizationContext.RunOnGameLoopThreadAsync(resourceCreator, async() =>
             {
                 levelBackground = await CanvasBitmap.LoadAsync(resourceCreator, ...);
                 levelThingie = await CanvasBitmap.LoadAsync(resourceCreator, ...);
@@ -327,14 +327,14 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         <para>
           It's worth pointing out that there are special implications of using 'await' from within
           application code which runs on the game loop thread. For example, when a task is run using 
-          RunOnGameLoopAsync and contains an await, the first await may result in RunOnGameLoopAsync
+          RunOnGameLoopThreadAsync and contains an await, the first await may result in RunOnGameLoopThreadAsync
           finishing. The remainder of the task is scheduled according a continuation handler. 
           And by default, this continuation handler is chosen from the application's thread pool, according
           to the default .NET SynchronizationContext. The remainder of the task might not run on the
           game loop thread at all.
         </para>
         <para>
-          To remedy this, and schedule work using RunOnGameLoopAsync which contains 'await'
+          To remedy this, and schedule work using RunOnGameLoopThreadAsync which contains 'await'
           where the work must all be run on the game loop thread, see the GameLoopSynchronizationContext sample.
         </para>
       </content>
