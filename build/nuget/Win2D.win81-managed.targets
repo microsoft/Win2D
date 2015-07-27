@@ -2,16 +2,17 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <PropertyGroup>
+    <win2d-Platform Condition="'$(Platform)' == 'Win32'">x86</win2d-Platform>
+    <win2d-Platform Condition="'$(Platform)' != 'Win32'">$(Platform)</win2d-Platform>
+    <win2d-BinDir>$(MSBuildThisFileDirectory)..\..\bin\</win2d-BinDir>
+
     <win2d-DeviceType Condition="'$(TargetPlatformIdentifier)' == 'Windows'">Windows</win2d-DeviceType>
     <win2d-DeviceType Condition="'$(TargetPlatformIdentifier)' == 'WindowsPhoneApp'">Phone</win2d-DeviceType>
-    <win2d-DeviceType Condition="'$(TargetPlatformIdentifier)' == 'UAP'">UAP</win2d-DeviceType>
 
-    <win2d-vclibs>Microsoft.VCLibs, Version=12.0</win2d-vclibs>
-    <win2d-vclibs Condition="'$(TargetPlatformIdentifier)' == 'UAP'">Microsoft.VCLibs, Version=14.0</win2d-vclibs>
   </PropertyGroup>
 
   <Target Name="win2d-DeviceType-Check" BeforeTargets="InjectReference">
-      <Error Condition="'$(win2d-DeviceType)' == ''" Text="Unable to determine if UAP, Windows or Windows Phone app" />
+      <Error Condition="'$(win2d-DeviceType)' == ''" Text="Unable to determine if Windows or Windows Phone app" />
       <Error Condition="!Exists('$(win2d-BinDir)$(win2d-DeviceType)')" Text="$(win2d-DeviceType) apps are currently not supported" />
   </Target>
 
@@ -22,7 +23,7 @@
       </Reference>
     </ItemGroup>
 
-    <ItemGroup Condition="'$(TargetPlatformIdentifier)' != 'UAP'">
+    <ItemGroup>
       <Reference Include="Microsoft.Graphics.Canvas.Numerics">
         <HintPath>$(win2d-BinDir)$(win2d-DeviceType)\$(win2d-Platform)\Microsoft.Graphics.Canvas.Numerics.dll</HintPath>
       </Reference>
@@ -30,7 +31,7 @@
   </Target>
 
   <ItemGroup>
-    <SDKReference Include="$(win2d-vclibs)">
+    <SDKReference Include="Microsoft.VCLibs, Version=12.0">
       <Name>Microsoft Visual C++ Runtime Package</Name>
     </SDKReference>
   </ItemGroup>
@@ -52,7 +53,6 @@
     -->
     <ItemGroup>
       <win2d-PlatformWinmds Include="%(ReferencePath.Identity)" Condition="$([System.String]::new('%(ReferencePath.Identity)').EndsWith('Microsoft.VCLibs\12.0\References\CommonConfiguration\neutral\platform.winmd'))"/>
-      <win2d-PlatformWinmds Include="%(ReferencePath.Identity)" Condition="$([System.String]::new('%(ReferencePath.Identity)').EndsWith('Microsoft.VCLibs\14.0\References\CommonConfiguration\neutral\platform.winmd'))"/>
     </ItemGroup>
 
     <Message Text="Win2D is removing the reference to %(win2d-PlatformWinmds.Identity)" />

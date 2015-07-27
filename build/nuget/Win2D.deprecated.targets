@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Target Name="Win2D_Package_Is_Deprecated_Error" BeforeTargets="Build">
+    <Error Text="The Win2D NuGet package has been deprecated.  Please uninstall it and install either Win2D.win81 or Win2D.uwp as appropriate." />
+  </Target>
+</Project>

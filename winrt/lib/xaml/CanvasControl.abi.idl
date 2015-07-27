@@ -39,8 +39,6 @@ namespace Microsoft.Graphics.Canvas.UI
     runtimeclass CanvasCreateResourcesEventArgs
     {
         [default] interface ICanvasCreateResourcesEventArgs;
-
-        // TODO #3046: this class should be activatable
     }
 
 }

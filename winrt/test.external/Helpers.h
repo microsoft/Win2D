@@ -125,10 +125,6 @@ namespace Microsoft
                 return buf;
             }
 
-            // TODO #2642: Various helpers are now duplicated between
-            // test.external and test.internal.  We should find a way to share
-            // them.
-
             template<>
             inline std::wstring ToString<D2D1_RECT_F>(D2D1_RECT_F const& value)
             {

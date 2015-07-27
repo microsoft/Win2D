@@ -191,7 +191,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             // previously
             //
 
-            // TODO: this isn't threadsafe
+            // TODO #802: this isn't threadsafe
             auto manager = FACTORY::CreateManager();
 
             managerHolder = Make<ManagerHolder>();

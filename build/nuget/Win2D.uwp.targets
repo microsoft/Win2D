@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup>
+    <win2d-Platform Condition="'$(Platform)' == 'Win32'">x86</win2d-Platform>
+    <win2d-Platform Condition="'$(Platform)' != 'Win32'">$(Platform)</win2d-Platform>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(TargetPlatformIdentifier)' == 'UAP'">
+      <Reference Include="$(MSBuildThisFileDirectory)..\..\lib\uap10.0\Microsoft.Graphics.Canvas.winmd">
+        <Implementation>Microsoft.Graphics.Canvas.dll</Implementation>
+      </Reference>
+      <ReferenceCopyLocalPaths Include="$(MSBuildThisFileDirectory)..\..\runtimes\win10-$(win2d-Platform)\native\Microsoft.Graphics.Canvas.dll" />
+  </ItemGroup>
+
+  <ItemDefinitionGroup Condition="'$(TargetPlatformIdentifier)' == 'UAP'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)..\..\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+
+</Project>

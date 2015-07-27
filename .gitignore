@@ -83,3 +83,6 @@ $RECYCLE.BIN/
 
 # Windows Store packages
 AppPackages/
+
+# Ignore NuGet3 lock file
+project.lock.json

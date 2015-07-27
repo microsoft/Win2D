@@ -473,7 +473,7 @@ TEST_CLASS(CanvasAnimatedControlTests)
     TEST_METHOD_EX(CanvasAnimatedControl_WhenControlIsResizedToCurrentSize_ThenResizeBuffersIsNotCalled)
     {
         ResizeFixture f;
-        f.Execute(Size{ ResizeFixture::InitialWidth, ResizeFixture::InitialHeight });
+        f.Execute(Size{ static_cast<float>(ResizeFixture::InitialWidth), static_cast<float>(ResizeFixture::InitialHeight) });
     }
 
     TEST_METHOD_EX(CanvasAnimatedControl_WhenControlIsResizedToZero_ThenSwapChainIsSetToNull)

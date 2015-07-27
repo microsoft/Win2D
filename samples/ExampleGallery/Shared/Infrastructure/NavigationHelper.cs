@@ -78,7 +78,7 @@ namespace ExampleGallery
 
 #if WINDOWS_PHONE_APP
             this.HasHardwareButtons = true;
-#elif WINDOWS_UAP
+#elif WINDOWS_UWP
             this.HasHardwareButtons = Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.Phone.UI.Input.HardwareButtons");
 #else
             this.HasHardwareButtons = false;
@@ -96,7 +96,7 @@ namespace ExampleGallery
                 Windows.Phone.UI.Input.HardwareButtons.BackPressed += HardwareButtons_BackPressed;
 #endif
 
-#if WINDOWS_UAP
+#if WINDOWS_UWP
                 if (this.HasHardwareButtons)
                 {
                     Windows.Phone.UI.Input.HardwareButtons.BackPressed += HardwareButtons_BackPressed;
@@ -127,7 +127,7 @@ namespace ExampleGallery
                 Windows.Phone.UI.Input.HardwareButtons.BackPressed -= HardwareButtons_BackPressed;
 #endif
 
-#if WINDOWS_UAP
+#if WINDOWS_UWP
                 if (this.HasHardwareButtons)
                 {
                     Windows.Phone.UI.Input.HardwareButtons.BackPressed -= HardwareButtons_BackPressed;
@@ -241,7 +241,7 @@ namespace ExampleGallery
             if (this.Frame != null && this.Frame.CanGoForward) this.Frame.GoForward();
         }
 
-#if WINDOWS_PHONE_APP || WINDOWS_UAP
+#if WINDOWS_PHONE_APP || WINDOWS_UWP
         /// <summary>
         /// Invoked when the hardware back button is pressed. For Windows Phone only.
         /// </summary>

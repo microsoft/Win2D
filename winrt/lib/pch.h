@@ -37,11 +37,7 @@
 #include <wrl.h>
 #include <wrl\async.h>
 #include <strsafe.h>
-
-#pragma warning(push)
-#pragma warning(disable: 4458)  // TODO: Disable "hides class member" warning until we pick up fix to MS.601961
 #include <d2d1_2.h>
-#pragma warning(pop)
 
 #if (defined _WIN32_WINNT_WIN10) && (WINVER >= _WIN32_WINNT_WIN10)
 #include <d2d1_3.h>

@@ -2,13 +2,16 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <PropertyGroup>
+    <win2d-Platform Condition="'$(Platform)' == 'Win32'">x86</win2d-Platform>
+    <win2d-Platform Condition="'$(Platform)' != 'Win32'">$(Platform)</win2d-Platform>
+    <win2d-BinDir>$(MSBuildThisFileDirectory)..\..\bin\</win2d-BinDir>
+
     <win2d-DeviceType Condition="'$(TargetPlatformIdentifier)' == 'Windows'">Windows</win2d-DeviceType>
     <win2d-DeviceType Condition="'$(TargetPlatformIdentifier)' == 'WindowsPhoneApp'">Phone</win2d-DeviceType>
-    <win2d-DeviceType Condition="'$(TargetPlatformIdentifier)' == 'UAP'">UAP</win2d-DeviceType>
   </PropertyGroup>
 
   <Target Name="win2d-DeviceType-Check" BeforeTargets="ResolveAssemblyReferences">
-      <Error Condition="'$(win2d-DeviceType)' == ''" Text="Unable to determine if Windows, Windows Phone or UAP app" />
+      <Error Condition="'$(win2d-DeviceType)' == ''" Text="Unable to determine if Windows or Windows Phone app" />
   </Target>
 
   <ItemGroup>
@@ -20,7 +23,7 @@
   <ItemDefinitionGroup>
     <Link>
       <AdditionalLibraryDirectories>$(win2d-BinDir)$(win2d-DeviceType)\$(win2d-Platform);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies Condition="'$(TargetPlatformIdentifier)' != 'UAP'">Microsoft.Graphics.Canvas.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Microsoft.Graphics.Canvas.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
 

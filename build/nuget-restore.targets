@@ -8,8 +8,8 @@
       The command-line version of NuGet cannot restore everything in Win2D.sln
       due to the issue described at http://nuget.codeplex.com/workitem/4401.
       
-      So instead we explicitly restore individual packages.config files using
-      the <PackagesConfig> item.
+      So instead we explicitly restore individual packages.config or project.json
+      files using the <NuGetRestore> item.
   -->
 
   <ItemGroup>
@@ -36,8 +36,21 @@
   </Target>
 
 
+  <Target Name="CheckNuGetVersion" Condition="'$(BuildUAP)' != '' AND '$(BuildUAP)'">
 
-  <Target Name="RestoreNuGetPackages" DependsOnTargets="FindNuGet" Condition="'@(PackagesConfig)' != ''">
-    <Exec Command="$(NuGetCommand) restore %(PackagesConfig.Identity) -SolutionDirectory $(MsBuildThisFileDirectory)..\ -Verbosity Detailed -NonInteractive" />
+    <Exec Command="$(NuGetCommand) help | findstr /i /c:&quot;NuGet Version&quot;" 
+          CustomErrorRegularExpression="(?i)NuGet Version: [012]"
+          IgnoreExitCode="true">
+        <Output TaskParameter="ExitCode" PropertyName="NuGetVersionExitCode" />
+    </Exec>
+
+    <Error Condition="$(NuGetVersionExitCode) != 0"
+           Text="Building for UWP requires nuget.exe version 3"/>
+
+  </Target>
+
+
+  <Target Name="RestoreNuGetPackages" DependsOnTargets="FindNuGet; CheckNuGetVersion" Condition="'@(NuGetRestore)' != ''">
+    <Exec Command="$(NuGetCommand) restore %(NuGetRestore.Identity) -SolutionDirectory $(MsBuildThisFileDirectory)..\ -Verbosity Detailed -NonInteractive" />
   </Target>
 </Project>

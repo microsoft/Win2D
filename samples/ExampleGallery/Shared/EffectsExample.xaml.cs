@@ -19,7 +19,7 @@ using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
-#if WINDOWS_UAP
+#if WINDOWS_UWP
 using Windows.Graphics.Effects;
 #endif
 
@@ -49,7 +49,7 @@ namespace ExampleGallery
             Shadow,
             Tile,
             Transform3D,
-#if WINDOWS_UAP
+#if WINDOWS_UWP
             ChromaKey,
             Contrast,
             EdgeDetection,
@@ -249,7 +249,7 @@ namespace ExampleGallery
                     effect = CreateTransform3D();
                     break;
 
-#if WINDOWS_UAP
+#if WINDOWS_UWP
                 // The following effects are new in the Universal Windows Platform.
                 // They are not supported on Windows 8.1 or Phone 8.1.";
 
@@ -313,7 +313,7 @@ namespace ExampleGallery
                     effect = CreateVignette();
                     break;
 
-#endif  // WINDOWS_UAP
+#endif  // WINDOWS_UWP
 
                 default:
                     throw new NotSupportedException();
@@ -987,7 +987,7 @@ namespace ExampleGallery
             return transformEffect;
         }
 
-#if WINDOWS_UAP
+#if WINDOWS_UWP
 
         const string requiresWin10 = "This effect is new in the\nUniversal Windows Platform.\nIt is not supported on \nWindows 8.1 or Phone 8.1.";
 
@@ -1326,7 +1326,7 @@ namespace ExampleGallery
             return vignetteEffect;
         }
 
-#endif  // WINDOWS_UAP
+#endif  // WINDOWS_UWP
 
         private ICanvasImage AddSoftEdgedCrop(ICanvasImage effect)
         {

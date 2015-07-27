@@ -26,8 +26,6 @@ namespace Microsoft.Graphics.Canvas
 
         [propget]
         HRESULT Device([out, retval] CanvasDevice** value);
-
-        // TODO #850: Support for streaming the contents of the command list
     }
 
     [version(VERSION), threading(both), marshaling_behavior(agile), activatable(ICanvasCommandListFactory, VERSION)]

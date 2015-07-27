@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="Globals">
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
@@ -9,13 +9,9 @@
     <ItemsRootNamespace>Microsoft.Graphics.Canvas</ItemsRootNamespace>
     <TargetName>$(ItemsRootNamespace)</TargetName>
   </PropertyGroup>
-
-
   <ItemGroup>
     <ProjectCapability Include="SourceItemsFromImports" />
   </ItemGroup>
-
-
   <ItemDefinitionGroup>
     <ClCompile>
       <CompileAsWinRT>false</CompileAsWinRT>
@@ -34,7 +30,7 @@
   </ItemGroup>
   <Target Name="CopyMergedWinMD" BeforeTargets="Link" Outputs="@(CopiedWinMDFile)">
     <Copy SourceFiles="@(CopyMergedWinMD)" DestinationFolder="$(Outdir)" SkipUnchangedFiles="true">
-      <Output TaskParameter="CopiedFiles" ItemName="CopiedWinMDFile"/>
+      <Output TaskParameter="CopiedFiles" ItemName="CopiedWinMDFile" />
     </Copy>
   </Target>
   <ItemGroup>
@@ -45,5 +41,4 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)module.cpp" />
     <None Include="$(MSBuildThisFileDirectory)module.def" />
   </ItemGroup>
-
 </Project>

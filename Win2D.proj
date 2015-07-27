@@ -26,7 +26,7 @@
   <PropertyGroup>
     <Has81Sdk Condition="'$(registry:HKEY_LOCAL_MACHINE\Software\Microsoft\Windows Kits\Installed Roots@KitsRoot81)' != ''">true</Has81Sdk>
     <Has10Sdk Condition="'$(registry:HKEY_LOCAL_MACHINE\Software\Microsoft\Windows Kits\Installed Roots@KitsRoot10)' != ''">true</Has10Sdk>
-
+    <RunningFrom2015Prompt Condition="'$(VisualStudioVersion)' &gt;= '14.0'">true</RunningFrom2015Prompt>
     <ShouldRunUAPTests>false</ShouldRunUAPTests>
     <ShouldRunUAPTests Condition="'$(registry:HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion@CurrentBuildNumber)' &gt;= '10000'">true</ShouldRunUAPTests>
   </PropertyGroup>
@@ -43,7 +43,7 @@
     <SkippedBuildPhone>true</SkippedBuildPhone>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Has10Sdk)' != 'true' and $(BuildUAP)">
+  <PropertyGroup Condition="('$(Has10Sdk)' != 'true' or '$(RunningFrom2015Prompt)' != 'true') and $(BuildUAP)">
     <BuildUAP>false</BuildUAP>
     <SkippedBuildUAP>true</SkippedBuildUAP>
   </PropertyGroup>
@@ -87,6 +87,7 @@
   <ItemGroup Condition="$(BuildUAP)">
     <UAPProject Include="winrt\lib\winrt.lib.uap.vcxproj" />
     <UAPProject Include="winrt\dll\winrt.dll.uap.vcxproj" />
+    <AnyCPUProject Include="numerics\Workaround1200257\Workaround1200257.csproj" />
   </ItemGroup>
 
   <!-- Windows test projects -->
@@ -155,12 +156,6 @@
     <UAPProject Include="samples\ExampleGallery\UAP\ExampleGallery.uap.csproj" />
   </ItemGroup>
 
-  <!-- Restore NuGet packages for all projects -->
-  <ItemGroup Condition="$(BuildTests)">
-    <PackagesConfig Include="samples\**\packages.config" />
-    <PackagesConfig Include="winrt\**\packages.config" />
-  </ItemGroup>
-
   <!-- Tools projects -->
   <ItemGroup Condition="$(BuildTools)">
     <AnyCPUProject Include="tools\copyright\copyright.csproj" />
@@ -176,6 +171,14 @@
     <AnyCPUProject Include="tools\docs\ExtractAPISurface\ExtractAPISurface.csproj" />
     <AnyCPUProject Include="tools\docs\MergeIntellisense\MergeIntellisense.csproj" />
     <AnyCPUProject Include="tools\exportsample\exportsample.csproj" />
+  </ItemGroup>
+
+  <!-- Restore NuGet packages for all projects -->
+  <ItemGroup>
+    <NuGetRestore Include="samples\**\packages.config" Condition="$(BuildTests)" />
+    <NuGetRestore Include="samples\**\project.json"    Condition="$(BuildUAP) and $(BuildTests)" />
+    <NuGetRestore Include="winrt\**\project.json"      Condition="$(BuildUAP) and $(BuildTests)" />
+    <NuGetRestore Include="numerics\**\project.json"   Condition="$(BuildUAP)" />
   </ItemGroup>
 
 
@@ -362,8 +365,11 @@
     <Warning Condition="'$(SkippedBuildPhone)' == 'true'"
              Text="Skipped building for Windows Phone 8.1 since Windows 8.1 SDK is not installed." />
 
-    <Warning Condition="'$(SkippedBuildUAP)' == 'true'"
+    <Warning Condition="'$(SkippedBuildUAP)' == 'true' and '$(Has10Sdk)' != 'true'"
              Text="Skipped building for Windows 10 UAP since Windows 10 SDK is not installed." />
+
+    <Warning Condition="'$(SkippedBuildUAP)' == 'true' and '$(Has10Sdk)' == 'true' and '$(RunningFrom2015Prompt)' != 'true'"
+             Text="Skipped building for Windows 10 UAP since not running from a MSBuild Command Prompt for VS2015" />
   </Target>
 
   <Import Project="$(MsBuildThisFileDirectory)build\nuget-restore.targets" />

@@ -37,7 +37,7 @@ namespace ExampleGallery
             // Register for keyboard events
             Window.Current.CoreWindow.KeyDown += KeyDown_UIThread;
 
-#if WINDOWS_PHONE_APP || WINDOWS_UAP
+#if WINDOWS_PHONE_APP || WINDOWS_UWP
             var keyboardCaps = new Windows.Devices.Input.KeyboardCapabilities();
             if (keyboardCaps.KeyboardPresent == 0)
             {
@@ -52,7 +52,7 @@ namespace ExampleGallery
 
         private void animatedControl_PointerPressed(object sender, PointerRoutedEventArgs e)
         {
-#if WINDOWS_PHONE_APP || WINDOWS_UAP
+#if WINDOWS_PHONE_APP || WINDOWS_UWP
             // Bring the on-screen keyboard back up when the user taps on the screen.
             var keyboardCaps = new Windows.Devices.Input.KeyboardCapabilities();
             if (keyboardCaps.KeyboardPresent == 0)

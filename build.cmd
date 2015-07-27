@@ -54,12 +54,6 @@ IF %ERRORLEVEL% NEQ 0 (
 
 ECHO.
 
-SET OVERRIDE_NUGET_PACKAGE=
-
-IF "%NOUAP%" == "1" (
-    SET OVERRIDE_NUGET_PACKAGE=Win2D-NoUAP
-)
-
 CALL "%~dp0build\nuget\build-nupkg.cmd" local
 GOTO END
 

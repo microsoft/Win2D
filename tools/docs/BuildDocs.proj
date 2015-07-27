@@ -91,7 +91,7 @@
 
 
   <ItemGroup>
-    <PackagesConfig Include="$(MSBuildThisFileDirectory)packages.config" />
+    <NuGetRestore Include="$(MSBuildThisFileDirectory)packages.config" />
   </ItemGroup>
 
   <!-- Run the Sandcastle tool to create HTML reference documentation -->

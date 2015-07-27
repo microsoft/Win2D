@@ -10,10 +10,7 @@
 #include "../lib/pch.h"
 
 // UnitTest
-#pragma warning(push)
-#pragma warning(disable: 4499) // TODO: Disable "explicit specialization cannot have a storage class" warning until we pick up fix to DevDiv.1116774
 #include <CppUnitTest.h>
-#pragma warning(pop)
 
 // local headers
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
@@ -24,7 +21,6 @@ using namespace canvas;
 using namespace ABI::Microsoft::Graphics::Canvas;
 using namespace ABI::Microsoft::Graphics::Canvas::Effects;
 
-// TODO #997/#1429: move these files
 #include "../test.external/MockDxgiDevice.h"
 #include "../test.external/MockDxgiSurface.h"
 
