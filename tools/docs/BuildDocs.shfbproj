@@ -57,13 +57,11 @@
     </DocumentationSources>
   </PropertyGroup>
 
+  <Import Project="$(MSBuildThisFileDirectory)DocItems.proj" />
+
   <ItemGroup>
     <!-- Layout specifies where to put conceptual doc pages -->
     <ContentLayout Include="Layout.content" />
-
-    <!-- Conceptual documentation source XML -->
-    <WildcardConceptual Include="$(MSBuildThisFileDirectory)..\..\winrt\docsrc\*.aml" />
-    <WildcardConceptual Include="$(MSBuildThisFileDirectory)..\..\numerics\Cpp\docsrc\*.aml" />
 
     <!-- Image files -->
     <WildcardImages Include="..\..\winrt\docsrc\media\*.png" />

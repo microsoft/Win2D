@@ -2,6 +2,7 @@
 <Project ToolsVersion="12.0" DefaultTargets="BuildDocs" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <Import Project="$(MsBuildThisFileDirectory)..\..\build\Win2D.common.props" />
+  <Import Project="$(MSBuildThisFileDirectory)DocItems.proj" />
 
 
   <!-- Settings -->
@@ -86,7 +87,7 @@
       <DocDiffTool>$(BinariesDirectory)\WindowsAnyCPU\$(Configuration)\DocDiff\DocDiff.exe</DocDiffTool>
     </PropertyGroup>
 
-    <Exec Command="&quot;$(DocDiffTool)&quot; /LogMissingDocs:&quot;$(IntermediateOutputPath)MissingDocs.xml&quot; @(DocSrc->'/DocSrc:&quot;%(Identity)&quot;', ' ') @(InputAssembly->'/ApiRef:&quot;$(IntermediateOutputPath)%(Filename).xml&quot;', ' ')" />
+    <Exec Command="&quot;$(DocDiffTool)&quot; /LogMissingDocs:&quot;$(IntermediateOutputPath)MissingDocs.xml&quot; @(DocSrc->'/DocSrc:&quot;%(Identity)&quot;', ' ') @(InputAssembly->'/ApiRef:&quot;$(IntermediateOutputPath)%(Filename).xml&quot;', ' ') @(WildcardConceptual->'/AmlSrc:&quot;%(Identity)&quot;', ' ')" />
   </Target>
 
 

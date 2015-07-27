@@ -10,8 +10,8 @@ namespace DocDiff
     public class CommandLineOptions
     {
         public readonly List<string> DocSrc = new List<string>();
-
         public readonly List<string> ApiRef = new List<string>();
+        public readonly List<string> AmlSrc = new List<string>();
 
         public string LogMissingDocs;
     }

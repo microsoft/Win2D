@@ -92,11 +92,11 @@ namespace DocDiff
             }
 
             // Report any <see cref=""/> references to things that don't exist.
-            ValidateReferences(docSrc);
+            ValidateReferences(docSrc, options.AmlSrc);
         }
 
 
-        static void ValidateReferences(IEnumerable<ApiMember> docs)
+        static void ValidateReferences(IEnumerable<ApiMember> docs, IEnumerable<string> amlSrc)
         {
             // Find all <see cref=""/> elements in the documentation.
             var references = from doc in docs
@@ -108,8 +108,19 @@ namespace DocDiff
                                  FileName = doc.FileName,
                              };
 
+            // Also look for <codeEntityReference> elements in the AML conceptual content.
+            var codeEntityReference = XName.Get("codeEntityReference", "http://ddue.schemas.microsoft.com/authoring/2003/5");
+
+            var amlReferences = from filename in amlSrc
+                                from reference in LoadXDocument(filename).Descendants(codeEntityReference)
+                                select new
+                                {
+                                    Target = reference.Value.Trim(),
+                                    FileName = filename,
+                                };
+
             // Report any references with invalid targets.
-            var badReferences = from reference in references
+            var badReferences = from reference in references.Concat(amlReferences)
                                 where !IsReferenceValid(reference.Target, docs)
                                 select reference;
 
