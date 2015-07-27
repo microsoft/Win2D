@@ -105,7 +105,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         </para>
         <para>
           To convert between DIPs and pixels, use the methods
-          <codeEntityReference>M:Microsoft.Graphics.Canvas.ICanvasResourceCreatorWithDpi.ConvertDipsToPixels(System.Single)</codeEntityReference> and
+          <codeEntityReference>M:Microsoft.Graphics.Canvas.ICanvasResourceCreatorWithDpi.ConvertDipsToPixels(System.Single,Microsoft.Graphics.Canvas.CanvasDpiRounding)</codeEntityReference> and
           <codeEntityReference>M:Microsoft.Graphics.Canvas.ICanvasResourceCreatorWithDpi.ConvertPixelsToDips(System.Int32)</codeEntityReference>.
         </para>
       </content>

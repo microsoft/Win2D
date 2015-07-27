@@ -77,8 +77,9 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
 
           <step><content>
             <para>
-              Win2D is now installed in your project. You can confirm this by checking that the <codeEntityReference>N:Microsoft.Graphics.Canvas
-              </codeEntityReference> namespace is present in the <legacyBold>References</legacyBold> node of the
+              Win2D is now installed in your project. You can confirm this by checking that the
+              <codeEntityReference>N:Microsoft.Graphics.Canvas</codeEntityReference> namespace
+              is present in the <legacyBold>References</legacyBold> node of the
               <legacyBold>Solution Explorer</legacyBold>.
             </para>
           </content></step>
@@ -196,12 +197,13 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         <step><content>
           <para>
             The <codeEntityReference>T:Microsoft.Graphics.Canvas.UI.Xaml.CanvasDrawEventArgs</codeEntityReference> parameter exposes a member,
-            <codeInline>DrawingSession</codeInline>, which is of the type <codeEntityReference>T:Microsoft.Graphics.Canvas.CanvasDrawingSession
-            </codeEntityReference>. This class provides most of the basic drawing functionality in Win2D: it has methods such as
-            <codeEntityReference qualifyHint="true" autoUpgrade="true">M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRectangle</codeEntityReference>,
-            <codeEntityReference qualifyHint="true" autoUpgrade="true">M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawImage</codeEntityReference>,
+            <codeInline>DrawingSession</codeInline>, which is of the type
+            <codeEntityReference>T:Microsoft.Graphics.Canvas.CanvasDrawingSession</codeEntityReference>.
+            This class provides most of the basic drawing functionality in Win2D: it has methods such as
+            <codeEntityReference qualifyHint="true" autoUpgrade="true">M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawRectangle(Windows.Foundation.Rect,Windows.UI.Color)</codeEntityReference>,
+            <codeEntityReference qualifyHint="true" autoUpgrade="true">M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawImage(Microsoft.Graphics.Canvas.ICanvasImage)</codeEntityReference>,
             and the method you need to draw text,
-            <codeEntityReference qualifyHint="true" autoUpgrade="true">M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawText</codeEntityReference>.
+            <codeEntityReference qualifyHint="true" autoUpgrade="true">M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawText(System.String,System.Single,System.Single,Windows.UI.Color)</codeEntityReference>.
           </para>
           <para>
             Add the following code to the <codeInline>CanvasControl_Draw</codeInline> method:
@@ -431,7 +433,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
           <para>
             Win2D gives you the ability to update and animate your content in realtime, for example by changing the blur radius of the
             Gaussian blur with every frame. To do this, you will use
-            <codeEntityReference>T:Microosft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl</codeEntityReference>.
+            <codeEntityReference>T:Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl</codeEntityReference>.
           </para>
           <para>
             <codeInline>CanvasControl</codeInline> is best suited for mostly static graphics content - it only raises the
