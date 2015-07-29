@@ -3,7 +3,7 @@
     <metadata minClientVersion="2.8.6">
         <id>Win2D.win81</id>
         <version>0.0.0-SpecifyVersionOnCommandline</version>
-        <title>Win2D.win81: Win2D for Windows 8.1 and Windows Phone 8.1</title>
+        <title>Win2D.win81</title>
         <authors>Microsoft</authors>
         <owners>win2d,microsoft</owners>
         <description>An easy-to-use Windows Runtime API for immediate mode 2D graphics rendering.&#10;For Windows 8.1 and Windows Phone 8.1.</description>
