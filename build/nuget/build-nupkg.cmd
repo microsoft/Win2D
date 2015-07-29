@@ -57,9 +57,6 @@ SET NUGET_ARGS=^
     -version %VERSION% ^
     -properties bin=%BIN%;LicenseUrl=%LICENSE_URL%;RequireLicenseAcceptance=%REQUIRE_LICENSE_ACCEPTANCE%
 
-nuget pack Win2D.nuspec %NUGET_ARGS%
-IF %ERRORLEVEL% NEQ 0 GOTO END
-
 nuget pack Win2D.win81.nuspec %NUGET_ARGS%
 IF %ERRORLEVEL% NEQ 0 GOTO END
 
