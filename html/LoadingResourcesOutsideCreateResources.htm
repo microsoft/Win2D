@@ -144,7 +144,7 @@
           and no CanvasAnimatedControl event handlers should be marked as async.
           <div class="codeSnippetContainer"><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID1EAACAAAAA_copyCode" href="#" onclick="javascript:CopyToClipboard('ID1EAACAAAAA');return false;" title="Copy">Copy</a></div></div><div id="ID1EAACAAAAA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve"><span class="highlight-keyword">async</span> Task LoadResourcesForLevelAsync(ICanvasAnimatedControl resourceCreator, <span class="highlight-keyword">int</span> level)
 {
-    <span class="highlight-keyword">return</span> GameLoopSynchronizationContext.RunOnGameLoopAsync(resourceCreator, <span class="highlight-keyword">async</span>() =&gt;
+    <span class="highlight-keyword">return</span> GameLoopSynchronizationContext.RunOnGameLoopThreadAsync(resourceCreator, <span class="highlight-keyword">async</span>() =&gt;
     {
         levelBackground = <span class="highlight-keyword">await</span> CanvasBitmap.LoadAsync(resourceCreator, ...);
         levelThingie = <span class="highlight-keyword">await</span> CanvasBitmap.LoadAsync(resourceCreator, ...);
@@ -270,12 +270,12 @@ Object lockable = <span class="highlight-keyword">new</span> Object();
 }</pre></div></div></div><script type="text/javascript">AddLanguageTabSet("ID1EAACAAAAA");</script></p><p>
           It's worth pointing out that there are special implications of using 'await' from within
           application code which runs on the game loop thread. For example, when a task is run using 
-          RunOnGameLoopAsync and contains an await, the first await may result in RunOnGameLoopAsync
+          RunOnGameLoopThreadAsync and contains an await, the first await may result in RunOnGameLoopThreadAsync
           finishing. The remainder of the task is scheduled according a continuation handler. 
           And by default, this continuation handler is chosen from the application's thread pool, according
           to the default .NET SynchronizationContext. The remainder of the task might not run on the
           game loop thread at all.
         </p><p>
-          To remedy this, and schedule work using RunOnGameLoopAsync which contains 'await'
+          To remedy this, and schedule work using RunOnGameLoopThreadAsync which contains 'await'
           where the work must all be run on the game loop thread, see the GameLoopSynchronizationContext sample.
         </p></div></div></div><div id="pageFooter" class="pageFooter"><p><a href="http://github.com/Microsoft/Win2D/blob/master/LICENSE.txt" target="_blank">Copyright (c) Microsoft Corporation. All rights reserved.</a></p></div></body></html>

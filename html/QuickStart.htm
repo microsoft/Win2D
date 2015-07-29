@@ -19,7 +19,9 @@
               If you are prompted to review changes, click <strong>OK</strong>.
               If you are presented with the Win2D license terms, click <strong>I Accept</strong>.
             </p></li><li><p>
-              Win2D is now installed in your project. You can confirm this by checking that the <a href="N_Microsoft_Graphics_Canvas.htm">Microsoft.Graphics.Canvas</a> namespace is present in the <strong>References</strong> node of the
+              Win2D is now installed in your project. You can confirm this by checking that the
+              <a href="N_Microsoft_Graphics_Canvas.htm">Microsoft.Graphics.Canvas</a> namespace
+              is present in the <strong>References</strong> node of the
               <strong>Solution Explorer</strong>.
             </p></li></ol></div><h3 class="procedureSubHeading">Add a Win2D CanvasControl to your app's XAML</h3><div class="subSection"><ol><li><p>
             In order to use Win2D, you need somewhere to draw your graphics. In a XAML app, the simplest way to do this is to add a
@@ -71,11 +73,13 @@
             (If you didn't use AutoComplete in the previous step, add this code now.)
           </p></li><li><p>
             The <a href="T_Microsoft_Graphics_Canvas_UI_Xaml_CanvasDrawEventArgs.htm">CanvasDrawEventArgs</a> parameter exposes a member,
-            <span class="code">DrawingSession</span>, which is of the type <a href="T_Microsoft_Graphics_Canvas_CanvasDrawingSession.htm">CanvasDrawingSession</a>. This class provides most of the basic drawing functionality in Win2D: it has methods such as
-            <span class="nolink">CanvasDrawingSession.DrawRectangle<span id="LST62128777_0"></span><script type="text/javascript">AddLanguageSpecificTextSet("LST62128777_0?cs=()|vb=|cpp=()|nu=()|fs=()");</script></span>,
-            <span class="nolink">CanvasDrawingSession.DrawImage<span id="LST62128777_1"></span><script type="text/javascript">AddLanguageSpecificTextSet("LST62128777_1?cs=()|vb=|cpp=()|nu=()|fs=()");</script></span>,
+            <span class="code">DrawingSession</span>, which is of the type
+            <a href="T_Microsoft_Graphics_Canvas_CanvasDrawingSession.htm">CanvasDrawingSession</a>.
+            This class provides most of the basic drawing functionality in Win2D: it has methods such as
+            <a href="Overload_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawRectangle.htm">CanvasDrawingSession<span id="LST62128777_0"></span><script type="text/javascript">AddLanguageSpecificTextSet("LST62128777_0?cs=.|vb=.|cpp=::|nu=.|fs=.");</script>DrawRectangle</a>,
+            <a href="Overload_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawImage.htm">CanvasDrawingSession<span id="LST62128777_1"></span><script type="text/javascript">AddLanguageSpecificTextSet("LST62128777_1?cs=.|vb=.|cpp=::|nu=.|fs=.");</script>DrawImage</a>,
             and the method you need to draw text,
-            <span class="nolink">CanvasDrawingSession.DrawText<span id="LST62128777_2"></span><script type="text/javascript">AddLanguageSpecificTextSet("LST62128777_2?cs=()|vb=|cpp=()|nu=()|fs=()");</script></span>.
+            <a href="Overload_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawText.htm">CanvasDrawingSession<span id="LST62128777_2"></span><script type="text/javascript">AddLanguageSpecificTextSet("LST62128777_2?cs=.|vb=.|cpp=::|nu=.|fs=.");</script>DrawText</a>.
           </p><p>
             Add the following code to the <span class="code">CanvasControl_Draw</span> method:
           </p><div class="codeSnippetContainer"><div class="codeSnippetContainerTabs"><div id="ID0EABABAEAAA_tab1" class="codeSnippetContainerTabSingle">C#</div></div><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID0EABABAEAAA_copyCode" href="#" onclick="javascript:CopyToClipboard('ID0EABABAEAAA');return false;" title="Copy">Copy</a></div></div><div id="ID0EABABAEAAA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve">args.DrawingSession.DrawText(<span class="highlight-literal">"Hello, World!"</span>, <span class="highlight-number">100</span>, <span class="highlight-number">100</span>, Colors.Black);</pre></div></div></div><script type="text/javascript">AddLanguageTabSet("ID0EABABAEAAA");</script><p>
@@ -201,7 +205,7 @@ args.DrawingSession.DrawImage(blur);</pre></div></div></div><script type="text/j
         </p></li></ol></div><h3 class="procedureSubHeading">Animate your app with CanvasAnimatedControl</h3><div class="subSection"><ol><li><p>
             Win2D gives you the ability to update and animate your content in realtime, for example by changing the blur radius of the
             Gaussian blur with every frame. To do this, you will use
-            <span class="nolink">CanvasAnimatedControl</span>.
+            <a href="T_Microsoft_Graphics_Canvas_UI_Xaml_CanvasAnimatedControl.htm">CanvasAnimatedControl</a>.
           </p><p><span class="code">CanvasControl</span> is best suited for mostly static graphics content - it only raises the
             <span class="code">Draw</span> event when your content needs to be updated or redrawn. If you have continually changing
             content then you should consider using <span class="code">CanvasAnimatedControl</span> instead.
