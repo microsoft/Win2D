@@ -54,6 +54,7 @@ namespace ExampleGallery
             public int Height;
             public float BottomPadding;
             public bool TransparentBackground;
+            public bool Monochrome;
 
             public IconInfo(string platform, string filename, int width, int height)
             {
@@ -64,6 +65,7 @@ namespace ExampleGallery
 
                 BottomPadding = 0;
                 TransparentBackground = false;
+                Monochrome = false;
             }
         };
 
@@ -74,7 +76,7 @@ namespace ExampleGallery
             new IconInfo("Windows",      "SmallLogo.scale-100.png",       30,   30),
             new IconInfo("Windows",      "SplashScreen.scale-100.png",    620,  300)  { BottomPadding = 0.1f, TransparentBackground = true },
             new IconInfo("Windows",      "StoreLogo.scale-100.png",       50,   50),
-            new IconInfo("Windows",      "BadgeLogo.scale-100.png",       24,   24),
+            new IconInfo("Windows",      "BadgeLogo.scale-100.png",       24,   24)   { TransparentBackground = true, Monochrome = true },
 
             new IconInfo("WindowsPhone", "Logo.scale-240.png",            360,  360)  { BottomPadding = 0.25f },
             new IconInfo("WindowsPhone", "WideLogo.scale-240.png",        744,  360)  { BottomPadding = 0.25f },
@@ -154,12 +156,14 @@ namespace ExampleGallery
         async Task GenerateIcon(AppInfo appInfo, IconInfo iconInfo, StorageFolder folder)
         {
             // Draw the icon image into a command list.
-            var iconImage = new CanvasCommandList(device);
+            var commandList = new CanvasCommandList(device);
 
-            using (var ds = iconImage.CreateDrawingSession())
+            using (var ds = commandList.CreateDrawingSession())
             {
                 appInfo.DrawIconImage(ds, iconInfo);
             }
+
+            ICanvasImage iconImage = commandList;
 
             // Rasterize into a rendertarget.
             var renderTarget = new CanvasRenderTarget(device, iconInfo.Width, iconInfo.Height, 96);
@@ -178,20 +182,42 @@ namespace ExampleGallery
 
                 float imageScale = appInfo.ImageScale * scaleUpTheSmallerIcons;
 
-                ds.Transform = Matrix3x2.CreateTranslation((float)-imageBounds.X, (float)-imageBounds.Y) *
-                               Utils.GetDisplayTransform(renderTarget.Size.ToVector2(), new Vector2((float)imageBounds.Width, (float)imageBounds.Height)) *
-                               Matrix3x2.CreateScale(imageScale, renderTarget.Size.ToVector2() / 2);
+                var transform = Matrix3x2.CreateTranslation((float)-imageBounds.X, (float)-imageBounds.Y) *
+                                Utils.GetDisplayTransform(renderTarget.Size.ToVector2(), new Vector2((float)imageBounds.Width, (float)imageBounds.Height)) *
+                                Matrix3x2.CreateScale(imageScale, renderTarget.Size.ToVector2() / 2);
 
-                // Optional shadow effet.
-                if (appInfo.AddShadow)
+                if (iconInfo.Monochrome)
                 {
-                    var shadow = new ShadowEffect
+                    // Optionally convert to monochrome.
+                    iconImage = new DiscreteTransferEffect
                     {
-                        Source = iconImage,
-                        BlurAmount = 12,
-                    };
+                        Source = new Transform2DEffect
+                        {
+                            Source = new LuminanceToAlphaEffect { Source = iconImage },
+                            TransformMatrix = transform
+                        },
 
-                    ds.DrawImage(shadow);
+                        RedTable   = new float[] { 1 },
+                        GreenTable = new float[] { 1 },
+                        BlueTable  = new float[] { 1 },
+                        AlphaTable = new float[] { 0, 1 }
+                    };
+                }
+                else
+                {
+                    ds.Transform = transform;
+
+                    // Optional shadow effect.
+                    if (appInfo.AddShadow)
+                    {
+                        var shadow = new ShadowEffect
+                        {
+                            Source = iconImage,
+                            BlurAmount = 12,
+                        };
+
+                        ds.DrawImage(shadow);
+                    }
                 }
 
                 // draw the main icon image.
