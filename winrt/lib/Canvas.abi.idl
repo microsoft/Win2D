@@ -9,6 +9,10 @@ import "Windows.UI.Xaml.Media.Imaging.idl";
 
 #include <sdkddkver.h>
 
+#if WINVER > _WIN32_WINNT_WINBLUE
+import "Windows.UI.Input.Inking.idl";
+#endif
+
 #if WINVER <= _WIN32_WINNT_WINBLUE
 #define VERSION NTDDI_WINBLUE
 #define USE_LOCALLY_EMULATED_UAP_APIS

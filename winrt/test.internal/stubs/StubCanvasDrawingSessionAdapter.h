@@ -21,5 +21,17 @@ namespace canvas
         {
             return D2D1::Point2F(0, 0);
         }
+
+#if WINVER > _WIN32_WINNT_WINBLUE
+		virtual ComPtr<IInkD2DRenderer> CreateInkRenderer() override
+		{
+			return nullptr;
+		}
+
+		virtual bool IsHighContrastEnabled() override
+		{
+			return false;
+		}
+#endif
     };
 }

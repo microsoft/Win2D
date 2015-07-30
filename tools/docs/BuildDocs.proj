@@ -17,7 +17,7 @@
   <ItemGroup>
     <InputAssembly Include="$(BinariesDirectory)\Windowsx86\$(Configuration)\winrt.dll.windows\Microsoft.Graphics.Canvas.winmd">
       <DocSrc>..\..\winrt\docsrc\*.xml;..\..\winrt\docsrc\effects\*.xml</DocSrc>
-      <AdditionalApiDescription>..\..\winrt\docsrc\effects\UapApiDescription.cs</AdditionalApiDescription>
+      <AdditionalApiDescription>..\..\winrt\docsrc\effects\UapApiDescription.cs;..\..\winrt\docsrc\UapApiDescription.cs</AdditionalApiDescription>
     </InputAssembly>
 
     <InputAssembly Include="$(BinariesDirectory)\Windowsx86\$(Configuration)\DotNetNumerics.Windows\Microsoft.Graphics.Canvas.Numerics.dll">
@@ -87,7 +87,7 @@
       <DocDiffTool>$(BinariesDirectory)\WindowsAnyCPU\$(Configuration)\DocDiff\DocDiff.exe</DocDiffTool>
     </PropertyGroup>
 
-    <Exec Command="&quot;$(DocDiffTool)&quot; /LogMissingDocs:&quot;$(IntermediateOutputPath)MissingDocs.xml&quot; @(DocSrc->'/DocSrc:&quot;%(Identity)&quot;', ' ') @(InputAssembly->'/ApiRef:&quot;$(IntermediateOutputPath)%(Filename).xml&quot;', ' ') @(WildcardConceptual->'/AmlSrc:&quot;%(Identity)&quot;', ' ')" />
+    <Exec Command="&quot;$(DocDiffTool)&quot; /LogMissingDocs:&quot;$(IntermediateOutputPath)MissingDocs.xml&quot; @(DocSrc->'/DocSrc:&quot;%(Identity)&quot;', ' ') @(InputAssembly->'/ApiRef:&quot;$(IntermediateOutputPath)%(Filename).xml&quot;', ' ') /ApiRef:&quot;Placeholders.xml&quot; @(WildcardConceptual->'/AmlSrc:&quot;%(Identity)&quot;', ' ')" />
   </Target>
 
 

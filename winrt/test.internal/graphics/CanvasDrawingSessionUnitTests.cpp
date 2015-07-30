@@ -57,6 +57,18 @@ TEST_CLASS(CanvasDrawingSession_CallsAdapter)
             Assert::IsFalse(m_endDrawCalled);
             return D2D1::Point2F(0, 0);
         }
+
+#if WINVER > _WIN32_WINNT_WINBLUE
+		virtual ComPtr<IInkD2DRenderer> CreateInkRenderer() override
+		{
+			return nullptr;
+		}
+
+		virtual bool IsHighContrastEnabled() override
+		{
+			return false;
+		}
+#endif
     };
 
     struct Fixture
@@ -3971,6 +3983,121 @@ public:
         ThrowIfFailed(drawingSession->ConvertPixelsToDips((int)testValue, &dips));
         Assert::AreEqual(testValue * DEFAULT_DPI / dpi, dips);
     }
+
+#if WINVER > _WIN32_WINNT_WINBLUE
+	TEST_METHOD_EX(CanvasDrawingSession_DrawInk_NullArg)
+	{
+		Assert::AreEqual(E_INVALIDARG, CanvasDrawingSessionFixture().DS->DrawInk(nullptr));
+	}
+
+	class StubInkRenderer : public RuntimeClass<RuntimeClassFlags<ClassicCom>, IInkD2DRenderer>
+	{
+	public:
+		CALL_COUNTER_WITH_MOCK(DrawMethod, HRESULT(IUnknown*, IUnknown*, BOOL));
+
+		IFACEMETHODIMP Draw(
+			IUnknown* deviceContext,
+			IUnknown* strokeCollection,
+			BOOL highContrast)
+		{
+			return DrawMethod.WasCalled(deviceContext, strokeCollection, highContrast);
+		}
+	};
+
+	class InkAdapter : public StubCanvasDrawingSessionAdapter
+	{
+		bool m_highContrast;
+		ComPtr<StubInkRenderer> m_inkRenderer;
+	public:
+
+		InkAdapter() : m_highContrast(false), m_inkRenderer(Make<StubInkRenderer>()) {}
+
+		ComPtr<IInkD2DRenderer> CreateInkRenderer() override
+		{
+			return m_inkRenderer;
+		}
+
+		virtual bool IsHighContrastEnabled() override
+		{
+			return m_highContrast;
+		}
+
+		void SetHighContrastEnabled(bool highContrast)
+		{
+			m_highContrast = highContrast;
+		}
+
+		ComPtr<StubInkRenderer> GetInkRenderer()
+		{
+			return m_inkRenderer;
+		}
+	};
+
+	class MockStrokeCollection : public RuntimeClass<IIterable<InkStroke*>>
+	{
+		IFACEMETHODIMP First(IIterator<InkStroke*>**)
+		{
+			return E_NOTIMPL;
+		}
+	};
+
+	struct InkFixture
+	{
+		ComPtr<ICanvasDrawingSession> DrawingSession;
+		std::shared_ptr<InkAdapter> Adapter;
+		ComPtr<StubD2DDeviceContextWithGetFactory> DeviceContext;
+		ComPtr<MockStrokeCollection> StrokeCollection;
+
+		InkFixture() : StrokeCollection(Make<MockStrokeCollection>())
+		{
+			auto manager = std::make_shared<CanvasDrawingSessionManager>();
+
+			DeviceContext = Make<StubD2DDeviceContextWithGetFactory>();
+			Adapter = std::make_shared<InkAdapter>();
+			DrawingSession = manager->Create(DeviceContext.Get(), Adapter);
+		}
+	};
+
+	TEST_METHOD_EX(CanvasDrawingSession_DrawInk_Default)
+	{
+		for (int i = 0; i < 2; ++i)
+		{
+			InkFixture f;
+
+			f.Adapter->SetHighContrastEnabled(i == 1);
+
+			f.Adapter->GetInkRenderer()->DrawMethod.SetExpectedCalls(1,
+				[&](IUnknown* dc, IUnknown* s, BOOL highContrast)
+				{
+					Assert::IsTrue(IsSameInstance(f.DeviceContext.Get(), dc));
+					Assert::IsTrue(IsSameInstance(f.StrokeCollection.Get(), s));
+					Assert::AreEqual(i == 1, !!highContrast);
+					return S_OK;
+				});
+
+			Assert::AreEqual(S_OK, f.DrawingSession->DrawInk(f.StrokeCollection.Get()));
+		}
+	}
+
+	TEST_METHOD_EX(CanvasDrawingSession_DrawInk_HighContrastOption)
+	{
+		for (int i = 0; i < 2; ++i)
+		{
+			InkFixture f;
+
+			f.Adapter->GetInkRenderer()->DrawMethod.SetExpectedCalls(1,
+				[&](IUnknown* dc, IUnknown* s, BOOL highContrast)
+				{
+					Assert::IsTrue(IsSameInstance(f.DeviceContext.Get(), dc));
+					Assert::IsTrue(IsSameInstance(f.StrokeCollection.Get(), s));
+					Assert::AreEqual(i == 1, !!highContrast);
+					return S_OK;
+				});
+
+			Assert::AreEqual(S_OK, f.DrawingSession->DrawInkWithHighContrast(f.StrokeCollection.Get(), i == 1));
+		}
+	}
+#endif
 };
 
 TEST_CLASS(CanvasDrawingSession_DrawTextTests)
@@ -4399,6 +4526,10 @@ TEST_CLASS(CanvasDrawingSession_CloseTests)
         EXPECT_OBJECT_CLOSED(canvasDrawingSession->DrawTextAtRectWithColorAndFormat(nullptr, Rect{}, Color{}, nullptr));
         EXPECT_OBJECT_CLOSED(canvasDrawingSession->DrawTextAtPointCoordsWithColorAndFormat(nullptr, 0, 0, Color{}, nullptr));
         EXPECT_OBJECT_CLOSED(canvasDrawingSession->DrawTextAtRectCoordsWithColorAndFormat(nullptr, 0, 0, 0, 0, Color{}, nullptr));
+
+#if WINVER > _WIN32_WINNT_WINBLUE
+		EXPECT_OBJECT_CLOSED(canvasDrawingSession->DrawInk(nullptr));
+#endif
 
         EXPECT_OBJECT_CLOSED(canvasDrawingSession->get_Antialiasing(nullptr));
         EXPECT_OBJECT_CLOSED(canvasDrawingSession->put_Antialiasing(CanvasAntialiasing::Aliased));

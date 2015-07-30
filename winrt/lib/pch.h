@@ -39,7 +39,7 @@
 #include <strsafe.h>
 #include <d2d1_2.h>
 
-#if (defined _WIN32_WINNT_WIN10) && (WINVER >= _WIN32_WINNT_WIN10)
+#if WINVER > _WIN32_WINNT_WINBLUE
 #include <d2d1_3.h>
 #endif
 
@@ -49,6 +49,10 @@
 #include <DirectXMath.h>
 #include <wincodec.h>
 #include <shcore.h>
+
+#if WINVER > _WIN32_WINNT_WINBLUE
+#include <inkrenderer.h>
+#endif
 
 // WinRT
 #include <windows.foundation.h>

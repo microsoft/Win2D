@@ -1018,5 +1018,102 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <seealso cref="T:Microsoft.Graphics.Canvas.CanvasActiveLayer"/>
     </member>
 
+
+    <member name="N:Windows.UI.Input.Inking">
+      <summary>
+        <a href="http://msdn.microsoft.com/library/windows/apps/Windows.UI.Input.Inking">This namespace is documented on MSDN.</a>
+      </summary>
+    </member>
+
+    <member name="T:Windows.UI.Input.Inking.InkStroke">
+      <tocexclude />
+      <summary>
+        <b>
+          <a href="http://msdn.microsoft.com/library/windows/apps/Windows.UI.Input.Inking.InkStroke">This type is documented on MSDN.</a>
+        </b>
+      </summary>
+    </member>
+
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawInk(System.Collections.Generic.IEnumerable{Windows.UI.Input.Inking.InkStroke})">
+      <summary>
+        [Experimental][Win10] Draws a collection of ink strokes.
+      </summary>
+      <remarks>
+        <p>
+          This API is available on Windows 10 only. It's marked as [Experimental], meaning it may be subject to change in upcoming Win2D releases. 
+        </p>
+        <p>
+        This overload reads the high-contrast accessiblity option from the 
+        system environment.
+        </p>
+        <p>
+          To draw ink from a collection of saved strokes saved to a stream, use the collection's GetStrokes method. For example:
+        <code>          
+          await inkManager.LoadAsync(inputStream);
+
+          using (CanvasDrawingSession ds = canvasRenderTarget.CreateDrawingSession())
+          {
+              ds.DrawInk(inkManager.GetStrokes());
+          }
+        </code>
+        </p>
+        <p>
+          To draw ink from an InkCanvas using custom drying, use BeginDry from the InkSynchronizer object. For example:
+          <code>
+          InkSynchronizer inkSynchronizer = inkCanvas.InkPresenter.ActivateCustomDrying();
+
+          using (CanvasDrawingSession ds = canvasRenderTarget.CreateDrawingSession())
+          {
+              var strokes = inkSynchronizer.BeginDry();
+              ds.DrawInk(strokes);
+              inkSynchronizer.EndDry();
+          }
+          
+        </code>
+        </p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawInk(System.Collections.Generic.IEnumerable{Windows.UI.Input.Inking.InkStroke},System.Boolean)">
+      <summary>
+        [Experimental][Win10] Draws a collection of ink strokes.
+      </summary>
+      <remarks>
+        <p>
+          This API is available on Windows 10 only. It's marked as [Experimental], meaning it may be subject to change in upcoming Win2D releases.
+        </p>
+        <p>
+        This overload allows an app to use an arbitrary high-contrast
+        accessibility option, which may be different from the one
+        globally specified in the system environment.
+        </p>
+        <p>
+          To draw ink from a collection of saved strokes saved to a stream, 
+          use the GetStrokes method from its InkManager or stroke container. For example:
+          <code>
+            await inkManager.LoadAsync(inputStream);
+
+            using (CanvasDrawingSession ds = canvasRenderTarget.CreateDrawingSession())
+            {
+                ds.DrawInk(inkManager.GetStrokes());
+            }
+          </code>
+        </p>
+        <p>
+          To draw ink from an InkCanvas using custom drying, use BeginDry from the InkSynchronizer object. For example:
+          <code>
+            InkSynchronizer inkSynchronizer = inkCanvas.InkPresenter.ActivateCustomDrying();
+
+            using (CanvasDrawingSession ds = canvasRenderTarget.CreateDrawingSession())
+            {
+                var strokes = inkSynchronizer.BeginDry();
+                ds.DrawInk(strokes);
+                inkSynchronizer.EndDry();
+            }
+
+          </code>
+        </p>
+      </remarks>
+    </member>
+
   </members>
 </doc>

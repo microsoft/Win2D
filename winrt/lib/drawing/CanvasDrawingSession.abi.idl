@@ -1303,6 +1303,20 @@ namespace Microsoft.Graphics.Canvas
             [in] float y,
             [in] Windows.UI.Color color);
 
+		//
+		// DrawInk
+		//
+#if WINVER > _WIN32_WINNT_WINBLUE
+		[overload("DrawInk")]
+		HRESULT DrawInk(
+			[in] Windows.Foundation.Collections.IIterable<Windows.UI.Input.Inking.InkStroke*>* inkStrokes);
+
+		[overload("DrawInk"), default_overload]
+		HRESULT DrawInkWithHighContrast(
+			[in] Windows.Foundation.Collections.IIterable<Windows.UI.Input.Inking.InkStroke*>* inkStrokes,
+			[in] boolean highContrast);
+#endif
+
         //
         // State properties
         //

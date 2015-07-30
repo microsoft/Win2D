@@ -176,7 +176,7 @@ namespace ExtractAPISurface
             // runtimeclasses use inheritence through extending DependencyObject.
             //
 
-            output.WriteLine("public {0} class {1}{2}", modifier, type.Name, FormatBaseTypes(type));
+            output.WriteLine("public {0} partial class {1}{2}", modifier, type.Name, FormatBaseTypes(type));
 
             using (output.WriteBraces())
             {

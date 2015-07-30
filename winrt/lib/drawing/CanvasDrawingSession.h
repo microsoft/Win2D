@@ -8,6 +8,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
     using namespace ABI::Microsoft::Graphics::Canvas::Numerics;
     using namespace ABI::Windows::Foundation;
+
+#if WINVER > _WIN32_WINNT_WINBLUE
+	using namespace ABI::Windows::UI::Input::Inking;
+	using namespace ABI::Windows::UI::ViewManagement;
+#endif
+
     using namespace ::Microsoft::WRL;
 
     class ICanvasDrawingSessionAdapter
@@ -15,8 +21,27 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     public:
         virtual ~ICanvasDrawingSessionAdapter() = default;
         virtual D2D1_POINT_2F GetRenderingSurfaceOffset() = 0;
+
+#if WINVER > _WIN32_WINNT_WINBLUE
+		virtual ComPtr<IInkD2DRenderer> CreateInkRenderer() = 0;
+		virtual bool IsHighContrastEnabled() = 0;
+#endif
+
         virtual void EndDraw() = 0;
     };
+
+	class DrawingSessionBaseAdapter : public ICanvasDrawingSessionAdapter
+	{
+#if WINVER > _WIN32_WINNT_WINBLUE
+		ComPtr<IAccessibilitySettings> m_accessibilitySettings;
+#endif
+
+	public:
+#if WINVER > _WIN32_WINNT_WINBLUE
+		virtual ComPtr<IInkD2DRenderer> CreateInkRenderer() override;
+		virtual bool IsHighContrastEnabled() override;
+#endif
+	};
 
     class CanvasDrawingSessionManager;
     class CanvasDrawingSession;
@@ -55,6 +80,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         //     by get_Device.
         //
         ComPtr<ICanvasDevice> m_owner;
+
+#if WINVER > _WIN32_WINNT_WINBLUE
+		ComPtr<IInkD2DRenderer> m_inkD2DRenderer;
+#endif
 
     public:
         CanvasDrawingSession(
@@ -1122,6 +1151,16 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ICanvasCachedGeometry* cachedGeometry,
             ABI::Windows::UI::Color color) override;
 
+		//
+		// DrawInk
+		//
+
+#if WINVER > _WIN32_WINNT_WINBLUE
+		IFACEMETHOD(DrawInk(IIterable<InkStroke*>* inkStrokes));
+
+		IFACEMETHOD(DrawInkWithHighContrast(IIterable<InkStroke*>* inkStrokes, boolean highContrast));
+#endif
+
         //
         // State properties
         //
@@ -1315,6 +1354,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ICanvasActiveLayer** layer);
 
         void PopLayer(int layerId, bool isAxisAlignedClip);
+
+#if WINVER > _WIN32_WINNT_WINBLUE
+		void DrawInkImpl(IIterable<InkStroke*>* inkStrokeCollection, bool highContrast);
+#endif
     };
 
 
@@ -1357,7 +1400,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     // A CanvasDrawingSessionAdapter that calls BeginDraw and EndDraw on the
     // device context.
     //
-    class SimpleCanvasDrawingSessionAdapter : public ICanvasDrawingSessionAdapter,
+    class SimpleCanvasDrawingSessionAdapter : public DrawingSessionBaseAdapter,
                                               private LifespanTracker<SimpleCanvasDrawingSessionAdapter>
     {
         ComPtr<ID2D1DeviceContext1> m_d2dDeviceContext;

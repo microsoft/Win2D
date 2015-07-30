@@ -9,6 +9,10 @@ namespace canvas
     using namespace ABI::Windows::Foundation;
     using namespace ABI::Windows::UI;
 
+#if WINVER > _WIN32_WINNT_WINBLUE
+	using namespace ABI::Windows::UI::Input::Inking;
+#endif
+
     class MockCanvasDrawingSession : public RuntimeClass<
         RuntimeClassFlags<WinRtClassicComMix>,
         ICanvasDrawingSession,
@@ -195,6 +199,11 @@ namespace canvas
         DONT_EXPECT(DrawTextLayoutAtCoordsWithBrush, ICanvasTextLayout*, float, float, ICanvasBrush*);
         DONT_EXPECT(DrawTextLayoutWithColor, ICanvasTextLayout*, Vector2, Color);
         DONT_EXPECT(DrawTextLayoutAtCoordsWithColor, ICanvasTextLayout*, float, float, Color);
+
+#if WINVER > _WIN32_WINNT_WINBLUE
+		DONT_EXPECT(DrawInk, IIterable<InkStroke*>*);
+		DONT_EXPECT(DrawInkWithHighContrast, IIterable<InkStroke*>*, boolean);
+#endif
 
         DONT_EXPECT(get_Antialiasing     , CanvasAntialiasing*);
         DONT_EXPECT(put_Antialiasing     , CanvasAntialiasing);

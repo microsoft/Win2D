@@ -8,7 +8,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 {
     using namespace ABI::Windows::UI::Xaml::Media::Imaging;
 
-    class CanvasImageSourceDrawingSessionAdapter : public ICanvasDrawingSessionAdapter,
+    class CanvasImageSourceDrawingSessionAdapter : public DrawingSessionBaseAdapter,
                                                    private LifespanTracker<CanvasImageSourceDrawingSessionAdapter>
     {
         ComPtr<ISurfaceImageSourceNativeWithD2D> m_sisNative;
@@ -31,6 +31,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         virtual void EndDraw() override;
 
-        virtual D2D1_POINT_2F GetRenderingSurfaceOffset() override;
+		virtual D2D1_POINT_2F GetRenderingSurfaceOffset() override;
     };
 }}}}}}

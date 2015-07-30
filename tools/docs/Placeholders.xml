@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!--
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+Licensed under the MIT License. See LICENSE.txt in the project root for license information.
+-->
+
+<doc>
+
+  <members>
+    
+    <member name="N:Windows.UI.Input.Inking">
+      <summary>
+        <a href="http://msdn.microsoft.com/library/windows/apps/Windows.UI.Input.Inking">This namespace is documented on MSDN.</a>
+      </summary>
+    </member>
+
+    <member name="T:Windows.UI.Input.Inking.InkStroke">
+      <tocexclude />
+      <summary>
+        <b>
+          <a href="http://msdn.microsoft.com/library/windows/apps/Windows.UI.Input.Inking.InkStroke">This type is documented on MSDN.</a>
+        </b>
+      </summary>
+    </member>
+
+  </members>
+</doc>

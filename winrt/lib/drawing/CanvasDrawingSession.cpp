@@ -52,7 +52,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     // ID2D1DeviceContext.  In this wrapper, interop, case we don't want
     // CanvasDrawingSession to call any additional methods in the device context.
     //
-    class NoopCanvasDrawingSessionAdapter : public ICanvasDrawingSessionAdapter,
+    class NoopCanvasDrawingSessionAdapter : public DrawingSessionBaseAdapter,
                                             private LifespanTracker<NoopCanvasDrawingSessionAdapter>
     {
     public:
@@ -114,6 +114,35 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         // Win2D wants a different text antialiasing default vs. native D2D.
         deviceContext->SetTextAntialiasMode(D2D1_TEXT_ANTIALIAS_MODE_GRAYSCALE);
     }
+
+#if WINVER > _WIN32_WINNT_WINBLUE
+	ComPtr<IInkD2DRenderer> DrawingSessionBaseAdapter::CreateInkRenderer()
+	{
+		ComPtr<IInkD2DRenderer> inkRenderer;
+
+		ThrowIfFailed(CoCreateInstance(__uuidof(InkD2DRenderer),
+			nullptr,
+			CLSCTX_INPROC_SERVER,
+			IID_PPV_ARGS(&inkRenderer)));
+
+		return inkRenderer;
+	}
+
+
+	bool DrawingSessionBaseAdapter::IsHighContrastEnabled()
+	{
+		if (!m_accessibilitySettings)
+		{
+			ComPtr<IActivationFactory> activationFactory;
+			ThrowIfFailed(GetActivationFactory(HStringReference(RuntimeClass_Windows_UI_ViewManagement_AccessibilitySettings).Get(), &activationFactory));
+			ThrowIfFailed(activationFactory->ActivateInstance(&m_accessibilitySettings));
+		}
+
+		boolean isHighContrastEnabled;
+		ThrowIfFailed(m_accessibilitySettings->get_HighContrast(&isHighContrastEnabled));
+		return !!isHighContrastEnabled;
+	}
+#endif
 
 
     CanvasDrawingSession::CanvasDrawingSession(
@@ -3214,6 +3243,51 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             brush);
     }
 
+#if WINVER > _WIN32_WINNT_WINBLUE
+	IFACEMETHODIMP CanvasDrawingSession::DrawInk(IIterable<InkStroke*>* inkStrokeCollection)
+	{
+        return ExceptionBoundary(
+            [&]
+            {
+				CheckInPointer(inkStrokeCollection);
+
+				DrawInkImpl(inkStrokeCollection, m_adapter->IsHighContrastEnabled());
+            });
+	}
+
+	IFACEMETHODIMP CanvasDrawingSession::DrawInkWithHighContrast(
+		IIterable<InkStroke*>* inkStrokeCollection,
+		boolean highContrast)
+	{
+        return ExceptionBoundary(
+            [&]
+            {
+				CheckInPointer(inkStrokeCollection);
+
+				DrawInkImpl(inkStrokeCollection, !!highContrast);
+            });
+	}
+
+	void CanvasDrawingSession::DrawInkImpl(
+		IIterable<InkStroke*>* inkStrokeCollection,
+		bool highContrast)
+	{
+		auto& deviceContext = GetResource();
+
+		ComPtr<IUnknown> inkStrokeCollectionAsIUnknown = As<IUnknown>(inkStrokeCollection);
+
+		if (!m_inkD2DRenderer)
+		{
+			m_inkD2DRenderer = m_adapter->CreateInkRenderer();
+		}
+
+		m_inkD2DRenderer->Draw(
+			deviceContext.Get(), 
+			inkStrokeCollectionAsIUnknown.Get(), 
+			highContrast);
+	}
+
+#endif
 
     ID2D1SolidColorBrush* CanvasDrawingSession::GetColorBrush(Color const& color)
     {
