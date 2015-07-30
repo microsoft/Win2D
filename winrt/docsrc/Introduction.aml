@@ -48,15 +48,10 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
           </externalLink>
           -
           <legacyItalic>
-            also available in the Store for
+            also available in the
             <externalLink>
-              <linkText>Windows</linkText>
-              <linkUri>http://apps.microsoft.com/windows/en-us/app/win2d-example-gallery/b668cfe1-e280-4c1e-adc1-09b7981ab084</linkUri>
-            </externalLink>
-            and
-            <externalLink>
-              <linkText>Phone</linkText>
-              <linkUri>http://www.windowsphone.com/en-us/store/app/win2d-example-gallery/8797b9cb-1443-475f-9a43-dd959de6fcc1</linkUri>
+              <linkText>Store</linkText>
+              <linkUri>https://www.microsoft.com/store/apps/9NBLGGGXWT9F</linkUri>
             </externalLink>
           </legacyItalic>
         </listItem>
