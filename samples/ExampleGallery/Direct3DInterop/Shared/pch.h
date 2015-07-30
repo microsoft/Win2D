@@ -18,4 +18,9 @@
 
 // Win2D headers.
 #include <Microsoft.Graphics.Canvas.native.h>
+
+#if WINVER <= _WIN32_WINNT_WINBLUE
 #include <Microsoft.Graphics.Canvas.DirectX.Direct3D11.interop.h>
+#else
+#include <Windows.Graphics.DirectX.Direct3D11.interop.h>
+#endif

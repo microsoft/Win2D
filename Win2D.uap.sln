@@ -96,6 +96,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "numerics", "numerics", "{D6
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Workaround1200257", "numerics\Workaround1200257\Workaround1200257.csproj", "{4EDD6AD1-0BD4-40CF-8D02-53597B1A76BA}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ExampleGallery.Direct3DInterop", "ExampleGallery.Direct3DInterop", "{81A681BB-9434-420E-8A27-1656AEFDCA4B}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ExampleGallery.Direct3DInterop.uap", "samples\ExampleGallery\Direct3DInterop\UAP\ExampleGallery.Direct3DInterop.uap.vcxproj", "{A81F96D0-4924-40E3-A463-3CB9EE55AA93}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ExampleGallery.Direct3DInterop.Shared", "samples\ExampleGallery\Direct3DInterop\Shared\ExampleGallery.Direct3DInterop.Shared.vcxitems", "{8E486BCA-FE9B-4F99-9D2E-A277905E84EB}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		winrt\test.managed\Shared\winrt.test.managed.Shared.projitems*{70fb7b71-d56c-4bf1-9282-27aa58043cc0}*SharedItemsImports = 4
@@ -108,7 +114,9 @@ Global
 		winrt\lib\winrt.lib.Shared.vcxitems*{1574c4de-318f-4555-b72e-97532f720a13}*SharedItemsImports = 9
 		winrt\dll\winrt.dll.Shared.vcxitems*{d3d2a425-69d2-4f8c-98dc-760abc25e535}*SharedItemsImports = 9
 		winrt\dll\winrt.dll.Shared.vcxitems*{8cf21e5d-e0a2-4fe7-8e2b-a025cf52dcfb}*SharedItemsImports = 4
+		samples\ExampleGallery\Direct3DInterop\Shared\ExampleGallery.Direct3DInterop.Shared.vcxitems*{8e486bca-fe9b-4f99-9d2e-a277905e84eb}*SharedItemsImports = 9
 		samples\CoreWindowExample\Shared\CoreWindowExample.Shared.projitems*{3aa4fcff-99f7-4746-957f-79303e9a8952}*SharedItemsImports = 4
+		samples\ExampleGallery\Direct3DInterop\Shared\ExampleGallery.Direct3DInterop.Shared.vcxitems*{a81f96d0-4924-40e3-a463-3cb9ee55aa93}*SharedItemsImports = 4
 		samples\ExampleGallery\Shared\ExampleGallery.Shared.projitems*{f6f2b4ad-0b11-4919-bf8b-08de6fe76170}*SharedItemsImports = 13
 		samples\ExampleGallery\BackgroundTask\Shared\ExampleGallery.BackgroundTask.Shared.projitems*{d77eb5be-c840-4ade-b4f6-1ba9512c4768}*SharedItemsImports = 4
 		winrt\test.internal\winrt.test.internal.shared.vcxitems*{063ab629-aadf-4749-b259-ab815b1aeb01}*SharedItemsImports = 4
@@ -298,6 +306,18 @@ Global
 		{4EDD6AD1-0BD4-40CF-8D02-53597B1A76BA}.Release|Win32.Build.0 = Release|Any CPU
 		{4EDD6AD1-0BD4-40CF-8D02-53597B1A76BA}.Release|x64.ActiveCfg = Release|Any CPU
 		{4EDD6AD1-0BD4-40CF-8D02-53597B1A76BA}.Release|x64.Build.0 = Release|Any CPU
+		{A81F96D0-4924-40E3-A463-3CB9EE55AA93}.Debug|ARM.ActiveCfg = Debug|ARM
+		{A81F96D0-4924-40E3-A463-3CB9EE55AA93}.Debug|ARM.Build.0 = Debug|ARM
+		{A81F96D0-4924-40E3-A463-3CB9EE55AA93}.Debug|Win32.ActiveCfg = Debug|Win32
+		{A81F96D0-4924-40E3-A463-3CB9EE55AA93}.Debug|Win32.Build.0 = Debug|Win32
+		{A81F96D0-4924-40E3-A463-3CB9EE55AA93}.Debug|x64.ActiveCfg = Debug|x64
+		{A81F96D0-4924-40E3-A463-3CB9EE55AA93}.Debug|x64.Build.0 = Debug|x64
+		{A81F96D0-4924-40E3-A463-3CB9EE55AA93}.Release|ARM.ActiveCfg = Release|ARM
+		{A81F96D0-4924-40E3-A463-3CB9EE55AA93}.Release|ARM.Build.0 = Release|ARM
+		{A81F96D0-4924-40E3-A463-3CB9EE55AA93}.Release|Win32.ActiveCfg = Release|Win32
+		{A81F96D0-4924-40E3-A463-3CB9EE55AA93}.Release|Win32.Build.0 = Release|Win32
+		{A81F96D0-4924-40E3-A463-3CB9EE55AA93}.Release|x64.ActiveCfg = Release|x64
+		{A81F96D0-4924-40E3-A463-3CB9EE55AA93}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -335,5 +355,8 @@ Global
 		{75A7926B-B1AE-4806-B332-9561BFE0EDF9} = {BB7C16DA-A97B-4C62-86A2-05739B418676}
 		{BB7C16DA-A97B-4C62-86A2-05739B418676} = {671EACB0-6255-4050-B092-1A874625AD5C}
 		{4EDD6AD1-0BD4-40CF-8D02-53597B1A76BA} = {D6BC00F7-D194-4136-8382-55B222A5C6F1}
+		{81A681BB-9434-420E-8A27-1656AEFDCA4B} = {671EACB0-6255-4050-B092-1A874625AD5C}
+		{A81F96D0-4924-40E3-A463-3CB9EE55AA93} = {81A681BB-9434-420E-8A27-1656AEFDCA4B}
+		{8E486BCA-FE9B-4F99-9D2E-A277905E84EB} = {81A681BB-9434-420E-8A27-1656AEFDCA4B}
 	EndGlobalSection
 EndGlobal

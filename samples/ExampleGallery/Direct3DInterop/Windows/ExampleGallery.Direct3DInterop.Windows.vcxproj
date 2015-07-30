@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\..\..\..\packages\directxtk_windowsstore_8_1.2015.3.27.2\build\native\directxtk_windowsstore_8_1.props" Condition="Exists('..\..\..\..\packages\directxtk_windowsstore_8_1.2015.3.27.2\build\native\directxtk_windowsstore_8_1.props')" />
+  <Import Project="..\..\..\..\packages\directxtk_windowsstore_8_1.2015.7.29.1\build\native\directxtk_windowsstore_8_1.props" Condition="Exists('..\..\..\..\packages\directxtk_windowsstore_8_1.2015.7.29.1\build\native\directxtk_windowsstore_8_1.props')" />
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\winrt\dll\winrt.dll.Windows.vcxproj">
       <Project>{0ae978bb-52e2-40fb-9d0f-2e3a4bd64837}</Project>
@@ -36,13 +36,13 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <Import Project="..\..\..\..\build\Win2D.cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
-    <Import Project="..\..\..\..\packages\directxtk_windowsstore_8_1.2015.3.27.2\build\native\directxtk_windowsstore_8_1.targets" Condition="Exists('..\..\..\..\packages\directxtk_windowsstore_8_1.2015.3.27.2\build\native\directxtk_windowsstore_8_1.targets')" />
+    <Import Project="..\..\..\..\packages\directxtk_windowsstore_8_1.2015.7.29.1\build\native\directxtk_windowsstore_8_1.targets" Condition="Exists('..\..\..\..\packages\directxtk_windowsstore_8_1.2015.7.29.1\build\native\directxtk_windowsstore_8_1.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\..\..\..\packages\directxtk_windowsstore_8_1.2015.3.27.2\build\native\directxtk_windowsstore_8_1.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\..\packages\directxtk_windowsstore_8_1.2015.3.27.2\build\native\directxtk_windowsstore_8_1.props'))" />
-    <Error Condition="!Exists('..\..\..\..\packages\directxtk_windowsstore_8_1.2015.3.27.2\build\native\directxtk_windowsstore_8_1.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\..\packages\directxtk_windowsstore_8_1.2015.3.27.2\build\native\directxtk_windowsstore_8_1.targets'))" />
+    <Error Condition="!Exists('..\..\..\..\packages\directxtk_windowsstore_8_1.2015.7.29.1\build\native\directxtk_windowsstore_8_1.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\..\packages\directxtk_windowsstore_8_1.2015.7.29.1\build\native\directxtk_windowsstore_8_1.props'))" />
+    <Error Condition="!Exists('..\..\..\..\packages\directxtk_windowsstore_8_1.2015.7.29.1\build\native\directxtk_windowsstore_8_1.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\..\packages\directxtk_windowsstore_8_1.2015.7.29.1\build\native\directxtk_windowsstore_8_1.targets'))" />
   </Target>
 </Project>

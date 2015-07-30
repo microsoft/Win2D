@@ -152,6 +152,9 @@
     </UAPProject>
     <UAPProject Include="samples\SimpleSample\UAP\SimpleSample.uap.csproj" />
     <UAPProject Include="samples\CoreWindowExample\UAP\CoreWindowExample.uap.csproj" />
+    <UAPProject Include="samples\ExampleGallery\Direct3DInterop\UAP\ExampleGallery.Direct3DInterop.uap.vcxproj">
+      <BuildInParallel>false</BuildInParallel>
+    </UAPProject>
     <UAPProject Include="samples\ExampleGallery\BackgroundTask\UAP\ExampleGallery.BackgroundTask.uap.csproj" />
     <UAPProject Include="samples\ExampleGallery\UAP\ExampleGallery.uap.csproj" />
   </ItemGroup>

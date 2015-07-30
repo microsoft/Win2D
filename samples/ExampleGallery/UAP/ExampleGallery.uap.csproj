@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -89,6 +89,10 @@
     <ProjectReference Include="..\..\..\winrt\dll\winrt.dll.uap.vcxproj">
       <Project>{8cf21e5d-e0a2-4fe7-8e2b-a025cf52dcfb}</Project>
       <Name>winrt.dll.uap</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Direct3DInterop\UAP\ExampleGallery.Direct3DInterop.uap.vcxproj">
+      <Project>{a81f96d0-4924-40e3-a463-3cb9ee55aa93}</Project>
+      <Name>ExampleGallery.Direct3DInterop.uap</Name>
     </ProjectReference>
     <ProjectReference Include="..\Effects\ExampleGallery.Effects.csproj">
       <Project>{2b157b97-cbf7-4014-8655-1456f2807f43}</Project>
