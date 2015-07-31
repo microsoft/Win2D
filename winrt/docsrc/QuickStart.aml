@@ -48,10 +48,13 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
 
           <step><content>
             <para>
-              If you are targeting Windows 8.1, select <legacyBold>Installed → Templates → Visual C# → Windows 8.1 → Blank App </legacyBold>.
+              If you are targeting Windows 10, select <legacyBold>Installed → Templates → Visual C# → Windows → Universal → Blank App (Universal Windows)</legacyBold>.
             </para>
             <para>
-              If you are targeting Windows 10, select <legacyBold>Installed → Templates → Visual C# → Windows Universal → Blank App</legacyBold>.
+              If you are targeting Windows 8.1 and using Visual Studio 2015, select <legacyBold>Installed → Templates → Visual C# → Windows 8 → Universal → Blank App  (Universal Windows 8.1)</legacyBold>.
+            </para>
+            <para>
+              If you are targeting Windows 8.1 and using Visual Studio 2013, select <legacyBold>Installed → Templates → Visual C# → Windows 8.1 → Blank App </legacyBold>.
             </para>
           </content></step>
 
@@ -61,29 +64,32 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
 
           <step><content>
             <para>
-              Win2D is released as a <externalLink><linkText>Nuget.org package</linkText><linkUri>http://www.nuget.org/packages/Win2D/</linkUri>
-              </externalLink> and needs to be installed before you can use it. Launch the NuGet Package Manager by going to <legacyBold>Tools →
-              NuGet Package Manager → Manage NuGet Packages for Solution</legacyBold>.
+              Win2D is released as a Nuget.org package and needs to be installed before you can use it. There are two package versions, one for
+              <externalLink><linkText>Windows 10</linkText><linkUri>http://www.nuget.org/packages/Win2D.uwp/</linkUri></externalLink> and one for
+              <externalLink><linkText>Windows 8.1</linkText><linkUri>http://www.nuget.org/packages/Win2D.win81/</linkUri></externalLink>.
+              Launch the NuGet Package Manager by going to <legacyBold>Tools → NuGet Package Manager → Manage NuGet Packages for Solution</legacyBold>.
             </para>
           </content></step>
 
           <step><content>
             <para>
-              Search for "Win2D", select <legacyBold>Win2D</legacyBold> from the results list, and click <legacyBold>Install</legacyBold>.
+              Search for "Win2D" and select the appropriate package for your target version of Windows.
+            </para>
+            <para>
+             If you are targeting Windows 10, select <legacyBold>Win2D.uwp</legacyBold>.
+            </para>
+            <para>
+              If you are targeting Windows 8.1, select <legacyBold>Win2D.win81</legacyBold>.
+            </para>
+            <para>
+              Finally, click <legacyBold>Install</legacyBold>.
               If you are prompted to review changes, click <legacyBold>OK</legacyBold>.
               If you are presented with the Win2D license terms, click <legacyBold>I Accept</legacyBold>.
             </para>
-          </content></step>
-
-          <step><content>
             <para>
-              Win2D is now installed in your project. You can confirm this by checking that the
-              <codeEntityReference>N:Microsoft.Graphics.Canvas</codeEntityReference> namespace
-              is present in the <legacyBold>References</legacyBold> node of the
-              <legacyBold>Solution Explorer</legacyBold>.
+              Win2D is now installed in your project.
             </para>
           </content></step>
-
         </steps>
     </procedure>
 
