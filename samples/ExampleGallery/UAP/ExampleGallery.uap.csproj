@@ -113,6 +113,9 @@
     <Compile Include="CameraEffectExample.xaml.cs">
       <DependentUpon>CameraEffectExample.xaml</DependentUpon>
     </Compile>
+    <Compile Include="InkExample.xaml.cs">
+      <DependentUpon>InkExample.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -130,8 +133,11 @@
     <Content Include="Assets\Square71x71Logo.scale-100.png" />
     <Content Include="Assets\StoreLogo.scale-100.png" />
     <Content Include="Assets\WideLogo.scale-100.png" />
+    <Content Include="Assets\InkThumbnailStrokes.bin" />
     <Content Include="Thumbnails\CameraEffectNarrow.png" />
     <Content Include="Thumbnails\CameraEffectWide.png" />
+    <Content Include="Thumbnails\InkNarrow.png" />
+    <Content Include="Thumbnails\InkWide.png" />
     <Content Include="Thumbnails\VideoEffectNarrow.png" />
     <Content Include="Thumbnails\VideoEffectWide.png" />
     <Content Include="$(AssetDir)Symbols.ttf">
@@ -147,6 +153,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="CameraEffectExample.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="InkExample.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

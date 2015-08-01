@@ -49,6 +49,7 @@ namespace ExampleGallery
 #if WINDOWS_UWP
             new ExampleDefinition("Video Effect", typeof(BasicVideoEffectExample)),
             new ExampleDefinition("Camera Effect", typeof(CameraEffectExample)),
+            new ExampleDefinition("Ink", typeof(InkExample)),
 #endif
             new ExampleDefinition("Particle System", typeof(ParticleExample)),
             new ExampleDefinition("Geometry Operations", typeof(GeometryOperations)),
