@@ -6,23 +6,30 @@
           </p></li></ul></div><h3 class="procedureSubHeading">Create a new project with Win2D</h3><div class="subSection"><ol><li><p>
               Launch Visual Studio, and create a new project: <strong>File → New → Project</strong>.
             </p></li><li><p>
-              If you are targeting Windows 8.1, select <strong>Installed → Templates → Visual C# → Windows 8.1 → Blank App </strong>.
+              If you are targeting Windows 10, select <strong>Installed → Templates → Visual C# → Windows → Universal → Blank App (Universal Windows)</strong>.
             </p><p>
-              If you are targeting Windows 10, select <strong>Installed → Templates → Visual C# → Windows Universal → Blank App</strong>.
+              If you are targeting Windows 8.1 and using Visual Studio 2015, select <strong>Installed → Templates → Visual C# → Windows 8 → Universal → Blank App  (Universal Windows 8.1)</strong>.
+            </p><p>
+              If you are targeting Windows 8.1 and using Visual Studio 2013, select <strong>Installed → Templates → Visual C# → Windows 8.1 → Blank App </strong>.
             </p></li><li><p>
             Give the project a name, choose a location, and create it.
           </p></li><li><p>
-              Win2D is released as a <a href="http://www.nuget.org/packages/Win2D/" target="_blank">Nuget.org package</a> and needs to be installed before you can use it. Launch the NuGet Package Manager by going to <strong>Tools →
-              NuGet Package Manager → Manage NuGet Packages for Solution</strong>.
+              Win2D is released as a Nuget.org package and needs to be installed before you can use it. There are two package versions, one for
+              <a href="http://www.nuget.org/packages/Win2D.uwp/" target="_blank">Windows 10</a> and one for
+              <a href="http://www.nuget.org/packages/Win2D.win81/" target="_blank">Windows 8.1</a>.
+              Launch the NuGet Package Manager by going to <strong>Tools → NuGet Package Manager → Manage NuGet Packages for Solution</strong>.
             </p></li><li><p>
-              Search for "Win2D", select <strong>Win2D</strong> from the results list, and click <strong>Install</strong>.
+              Search for "Win2D" and select the appropriate package for your target version of Windows.
+            </p><p>
+             If you are targeting Windows 10, select <strong>Win2D.uwp</strong>.
+            </p><p>
+              If you are targeting Windows 8.1, select <strong>Win2D.win81</strong>.
+            </p><p>
+              Finally, click <strong>Install</strong>.
               If you are prompted to review changes, click <strong>OK</strong>.
               If you are presented with the Win2D license terms, click <strong>I Accept</strong>.
-            </p></li><li><p>
-              Win2D is now installed in your project. You can confirm this by checking that the
-              <a href="N_Microsoft_Graphics_Canvas.htm">Microsoft.Graphics.Canvas</a> namespace
-              is present in the <strong>References</strong> node of the
-              <strong>Solution Explorer</strong>.
+            </p><p>
+              Win2D is now installed in your project.
             </p></li></ol></div><h3 class="procedureSubHeading">Add a Win2D CanvasControl to your app's XAML</h3><div class="subSection"><ol><li><p>
             In order to use Win2D, you need somewhere to draw your graphics. In a XAML app, the simplest way to do this is to add a
             <a href="T_Microsoft_Graphics_Canvas_UI_Xaml_CanvasControl.htm">CanvasControl</a> to your XAML page.
