@@ -3249,7 +3249,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ExceptionBoundary(
             [&]
             {
-				CheckInPointer(inkStrokeCollection);
+                if (!m_adapter)
+                    ThrowHR(RO_E_CLOSED);
 
 				DrawInkImpl(inkStrokeCollection, m_adapter->IsHighContrastEnabled());
             });
@@ -3262,8 +3263,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ExceptionBoundary(
             [&]
             {
-				CheckInPointer(inkStrokeCollection);
-
 				DrawInkImpl(inkStrokeCollection, !!highContrast);
             });
 	}
@@ -3273,6 +3272,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 		bool highContrast)
 	{
 		auto& deviceContext = GetResource();
+
+        CheckInPointer(inkStrokeCollection);
 
 		ComPtr<IUnknown> inkStrokeCollectionAsIUnknown = As<IUnknown>(inkStrokeCollection);
 
