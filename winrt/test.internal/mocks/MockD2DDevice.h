@@ -22,10 +22,16 @@ namespace canvas
 
     class MockD2DDevice : public RuntimeClass<
         RuntimeClassFlags<ClassicCom>,
-        ChainInterfaces<ID2D1Device1, ID2D1Device, ID2D1Resource>,
+		ChainInterfaces<
+#if WINVER > _WIN32_WINNT_WINBLUE
+		ID2D1Device2,
+#endif
+		ID2D1Device1, ID2D1Device, ID2D1Resource>,
         ID2DDeviceWithDxgiDevice>
     {
         mutable ComPtr<ID2D1Factory2> m_parentD2DFactory;
+
+	protected:
         ComPtr<IDXGIDevice3> m_dxgiDevice;
 
     public:
@@ -113,6 +119,32 @@ namespace canvas
             auto mockDeviceContext = Make<MockD2DDeviceContext>();
             return mockDeviceContext.CopyTo(deviceContext);
         }
+
+#if WINVER > _WIN32_WINNT_WINBLUE
+		//
+		// ID2D1Device2
+		//
+		IFACEMETHODIMP  CreateDeviceContext(
+			D2D1_DEVICE_CONTEXT_OPTIONS options,
+			ID2D1DeviceContext2 **deviceContext2)
+		{
+			Assert::Fail(L"Unexpected call to CreateDeviceContext");
+			return E_NOTIMPL;
+		}
+
+		IFACEMETHODIMP_(void) FlushDeviceContexts(
+			ID2D1Bitmap *bitmap)
+		{
+			Assert::Fail(L"Unexpected call to FlushDeviceContexts");
+		}
+
+		IFACEMETHODIMP GetDxgiDevice(
+			IDXGIDevice **dxgiDevice)
+		{
+			Assert::Fail(L"Unexpected call to FlushDeviceContexts");
+			return E_NOTIMPL;
+		}
+#endif
 
         //
         // ID2DDeviceWithDxgiDevice

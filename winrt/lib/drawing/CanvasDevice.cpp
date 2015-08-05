@@ -69,38 +69,49 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         }
     }
 
-    //
-    // We want to find the DXGI device associated with an ID2D1Device.
-    // Unfortunately, there's no direct way to do this.  However, it is possible
-    // to figure it out by creating a bitmap and querying that for the dxgi
-    // surface and then its dxgi device.
-    //
-    // #1428 tracks getting direct support for this added to D2D.
-    //
     ComPtr<IDXGIDevice3> DefaultDeviceResourceCreationAdapter::GetDxgiDevice(ID2D1Device1* d2dDevice)
     {
-        ComPtr<ID2D1DeviceContext> deviceContext;
-        ThrowIfFailed(d2dDevice->CreateDeviceContext(
-            D2D1_DEVICE_CONTEXT_OPTIONS_NONE,
-            &deviceContext));
+		//
+		// We want to find the DXGI device associated with an ID2D1Device.
+		//
+		// On Win10, there is direct API support for doing this.
+		//
+		// On Win8, there isn't. However, it's possible to figure it out by 
+		// creating a bitmap and querying that for the dxgi
+		// surface and then its dxgi device.
+		//
+		ComPtr<IDXGIDevice3> dxgiDevice3;
 
-        ComPtr<ID2D1Bitmap1> bitmap;
-        ThrowIfFailed(deviceContext->CreateBitmap(
-            D2D1_SIZE_U{ 1, 1 },
-            nullptr,
-            0,
-            D2D1::BitmapProperties1(
-                D2D1_BITMAP_OPTIONS_NONE,
-                D2D1::PixelFormat(DXGI_FORMAT_R8G8B8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED)),
-            &bitmap));
+#if WINVER > _WIN32_WINNT_WINBLUE
+		auto d2dDevice2 = As<ID2D1Device2>(d2dDevice);
 
-        ComPtr<IDXGISurface> surface;
-        ThrowIfFailed(bitmap->GetSurface(&surface));
+		ComPtr<IDXGIDevice> dxgiDevice;
+		ThrowIfFailed(d2dDevice2->GetDxgiDevice(&dxgiDevice));
 
-        ComPtr<IDXGIDevice3> device;
-        ThrowIfFailed(surface->GetDevice(IID_PPV_ARGS(&device)));
+		ThrowIfFailed(dxgiDevice.As(&dxgiDevice3));
+#else
+		ComPtr<ID2D1DeviceContext> deviceContext;
+		ThrowIfFailed(d2dDevice->CreateDeviceContext(
+			D2D1_DEVICE_CONTEXT_OPTIONS_NONE,
+			&deviceContext));
 
-        return device;
+		ComPtr<ID2D1Bitmap1> bitmap;
+		ThrowIfFailed(deviceContext->CreateBitmap(
+			D2D1_SIZE_U{ 1, 1 },
+			nullptr,
+			0,
+			D2D1::BitmapProperties1(
+				D2D1_BITMAP_OPTIONS_NONE,
+				D2D1::PixelFormat(DXGI_FORMAT_R8G8B8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED)),
+			&bitmap));
+
+		ComPtr<IDXGISurface> surface;
+		ThrowIfFailed(bitmap->GetSurface(&surface));
+
+		ThrowIfFailed(surface->GetDevice(IID_PPV_ARGS(&dxgiDevice3)));
+#endif
+
+        return dxgiDevice3;
     }
 
 
