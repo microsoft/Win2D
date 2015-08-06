@@ -10,6 +10,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     using namespace ABI::Windows::Storage;
     using namespace ::Microsoft::WRL::Wrappers;
 
+#if WINVER > _WIN32_WINNT_WINBLUE
+    using ABI::Windows::Graphics::Imaging::BitmapPixelFormat;
+#endif
+
     //
     // CanvasBitmapManager
     //
@@ -141,6 +145,29 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
 #if WINVER > _WIN32_WINNT_WINBLUE
 
+    //
+    // BitmapPixelFormat's values are intended to be reinterpreted as
+    // DXGI_FORMAT values.  Unfortunately, some of the chosen color values map
+    // to UINT rather than UNORM formats.  The intended use is UNORM, and so we
+    // fudge the BitmapPixelFormat values in these cases.
+    //
+    static DXGI_FORMAT GetFudgedDxgiFormat(BitmapPixelFormat format)
+    {
+        using namespace ABI::Windows::Graphics::Imaging;
+        
+        switch (format)
+        {
+        case BitmapPixelFormat_Rgba16: return DXGI_FORMAT_R16G16B16A16_UNORM;
+        case BitmapPixelFormat_Rgba8:  return DXGI_FORMAT_R8G8B8A8_UNORM;
+        case BitmapPixelFormat_Gray8:  return DXGI_FORMAT_A8_UNORM;
+
+        case BitmapPixelFormat_Bgra8: // BitmapPixelFormat already uses the UNORM value here
+        default:
+            return static_cast<DXGI_FORMAT>(format);
+        }        
+    }
+
+
     ComPtr<CanvasBitmap> CanvasBitmapManager::CreateNew(
         ICanvasDevice* device,
         ISoftwareBitmap* sourceBitmap)
@@ -180,7 +207,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         //
 
         auto bitmapProperties = D2D1::BitmapProperties1();
-        bitmapProperties.pixelFormat.format = static_cast<DXGI_FORMAT>(bitmapPixelFormat);
+        bitmapProperties.pixelFormat.format = GetFudgedDxgiFormat(bitmapPixelFormat);
         bitmapProperties.pixelFormat.alphaMode = ToD2DAlphaMode(bitmapAlphaMode);
         bitmapProperties.dpiX = static_cast<float>(dpiX);
         bitmapProperties.dpiY = static_cast<float>(dpiY);

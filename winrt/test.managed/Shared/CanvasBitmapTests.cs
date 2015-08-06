@@ -11,6 +11,10 @@ using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.UI;
 
+#if WINDOWS_UWP
+using Windows.Graphics.DirectX;
+#endif
+
 namespace test.managed
 {
     [TestClass]
@@ -68,7 +72,7 @@ namespace test.managed
     [TestClass]
     public class CanvasBitmapCreateFromSoftwareBitmapTests
     {
-        CanvasDevice device = new CanvasDevice();
+        CanvasDevice device = new CanvasDevice(true);
 
         [TestMethod]
         public void CanvasBitmap_CreateFromSoftwareBitmap_Roundtrip()
@@ -151,12 +155,12 @@ namespace test.managed
                 });
                 return;
             }
-
+            
             var canvasBitmap = CanvasBitmap.CreateFromSoftwareBitmap(device, softwareBitmap);
 
             Assert.AreEqual(anyWidth, (int)canvasBitmap.SizeInPixels.Width);
             Assert.AreEqual(anyHeight, (int)canvasBitmap.SizeInPixels.Height);
-            Assert.AreEqual((int)pixelFormat, (int)canvasBitmap.Format);
+            Assert.AreEqual(GetDirectXPixelFormatUsedForBitmapPixelFormat(pixelFormat), canvasBitmap.Format);
 
             CanvasAlphaMode expectedAlphaMode = CanvasAlphaMode.Straight;
             switch (alphaMode)
@@ -169,6 +173,30 @@ namespace test.managed
             Assert.AreEqual(expectedAlphaMode, canvasBitmap.AlphaMode);
         }
 
+        DirectXPixelFormat GetDirectXPixelFormatUsedForBitmapPixelFormat(BitmapPixelFormat format)
+        {
+            //
+            // Although BitmapPixelFormat looks like it corresponds directly to DirectXPixelFormat,
+            // it turns out that some of the types are generally intended to be used differently.  Win2D
+            // provides these conversions.
+            //
+            switch (format)
+            {
+                // The BitmapPixelFormat entry for these types use the plain UInt version.  However,
+                // these really were meant to use the UIntNormalized types so Win2D treats them as such.
+                case BitmapPixelFormat.Rgba16: return DirectXPixelFormat.R16G16B16A16UIntNormalized;
+                case BitmapPixelFormat.Rgba8: return DirectXPixelFormat.R8G8B8A8UIntNormalized;
+
+                // The BitmapPixelFormat entry for Gray8 suggests R8Uint.  However, it's intended to be
+                // used as UIntNormalized, plus D2D only supports A8UintNormalized, so that's what is
+                // used here.
+                case BitmapPixelFormat.Gray8: return DirectXPixelFormat.A8UIntNormalized;
+
+                // Other pixel formats are directly castable to the DirectXPixelFormat.
+                default: return (DirectXPixelFormat)format;
+            }
+        }
+
         bool IsFormatSupportedByWin2D(BitmapPixelFormat format, BitmapAlphaMode alphaMode)
         {
             // Win2D only supports A8UintNormalized with straight alpha.  SoftwareBitmap doesn't
@@ -178,27 +206,17 @@ namespace test.managed
 
             switch (format)
             {
-                case BitmapPixelFormat.Rgba16:
-                    // Rgba16 is DirectXPixelFormat.R16G16B16A16UInt.  Direct2D only supports
-                    // the normalized version of this, so we don't expect this format to work.
-                    return false;
-
-                case BitmapPixelFormat.Rgba8:
-                    // As for Rgba16, this is the non-normalized version which isn't supported by
-                    // Direct2D.
-                    return false;
-
                 case BitmapPixelFormat.Gray16:
-                    return false;
-
-                case BitmapPixelFormat.Gray8:
-                    // Direct2D does support R8UintNormalized, but this is the non-normalized one
-                    return false;
-
                 case BitmapPixelFormat.Nv12:
                 case BitmapPixelFormat.Yuy2:
                     // Direct2D doesn't support these formats
                     return false;
+
+                case BitmapPixelFormat.Gray8:
+                    if (alphaMode == BitmapAlphaMode.Ignore)
+                        return false;
+                    else
+                        return true;
             }
 
             return true;
