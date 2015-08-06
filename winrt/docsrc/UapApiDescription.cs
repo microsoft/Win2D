@@ -8,6 +8,11 @@
 // this file explicitly declares the API surface of the new effect types, in the same 
 // format as normally output by the ExtractAPISurface tool.
 
+namespace Windows.Graphics.Imaging
+{
+    public class SoftwareBitmap { internal SoftwareBitmap() { } }
+}
+
 namespace Windows.UI.Input.Inking
 {
     public class InkStroke { internal InkStroke() { } }
@@ -23,5 +28,12 @@ namespace Microsoft.Graphics.Canvas
 
         /// <summary></summary>
         public void DrawInk(System.Collections.Generic.IEnumerable<Windows.UI.Input.Inking.InkStroke> inkStrokes, bool highContrast) { throw new System.NotImplementedException(); }
+    }
+
+    /// <summary></summary>
+    public partial class CanvasBitmap
+    {
+        /// <summary></summary>
+        public void CreateFromSoftwareBitmap(ICanvasResourceCreator resourceCreator, Windows.Graphics.Imaging.SoftwareBitmap sourceBitmap) { throw new System.NotImplementedException(); }
     }
 }

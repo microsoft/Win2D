@@ -8,6 +8,21 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
 <doc>
 
   <members>
+
+    <member name="N:Windows.Graphics.Imaging">
+      <summary>
+        <a href="https://msdn.microsoft.com/en-us/library/windows/apps/windows.graphics.imaging.aspx">This namespace is documented on MSDN.</a>
+      </summary>
+    </member>
+
+    <member name="T:Windows.Graphics.Imaging.SoftwareBitmap">
+      <tocexclude />
+      <summary>
+        <b>
+          <a href="https://msdn.microsoft.com/en-us/library/windows/apps/windows.graphics.imaging.softwarebitmap.aspx">This type is documented on MSDN.</a>
+        </b>
+      </summary>
+    </member>
     
     <member name="N:Windows.UI.Input.Inking">
       <summary>
@@ -22,7 +37,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
           <a href="http://msdn.microsoft.com/library/windows/apps/Windows.UI.Input.Inking.InkStroke">This type is documented on MSDN.</a>
         </b>
       </summary>
-    </member>
+    </member>    
 
   </members>
 </doc>

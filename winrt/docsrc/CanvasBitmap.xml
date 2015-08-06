@@ -148,6 +148,79 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <summary>Creates a CanvasBitmap from an array of colors, using the specified pixel width/height, DPI and alpha behavior.</summary>
     </member>
 
+    <member name="N:Windows.Graphics.Imaging">
+      <summary>
+        <a href="https://msdn.microsoft.com/en-us/library/windows/apps/windows.graphics.imaging.aspx">This namespace is documented on MSDN.</a>
+      </summary>
+    </member>
+    
+    <member name="T:Windows.Graphics.Imaging.SoftwareBitmap">
+      <tocexclude />
+      <summary>
+        <b>
+          <a href="https://msdn.microsoft.com/en-us/library/windows/apps/windows.graphics.imaging.softwarebitmap.aspx">This type is documented on MSDN.</a>
+        </b>
+      </summary>
+    </member>
+    
+    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.CreateFromSoftwareBitmap(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.Graphics.Imaging.SoftwareBitmap)">
+      <summary>[Experimental][Win10] Creates a CanvasBitmap from a SoftwareBitmap.</summary>
+      <remarks>
+        <p>
+          This API is available on Windows 10 only. It's marked as [Experimental], meaning it may be subject to change in upcoming Win2D releases.
+        </p>
+        <p>
+          The CanvasBitmap's Format is determined from the SoftwareBitmap's
+          BitmapPixelFormat property.  Not all BitmapPixelFormats are supported
+          by CanvasBitmap.  See <a href="PixelFormats.htm">Pixel Formats</a> for
+          more details.
+        </p>
+
+        <p>
+          The following table shows how each BitmapPixelFormat
+          is interpreted:
+        </p>
+        
+        <table>
+          <tr>
+            <th>sourceBitmap's BitmapPixelFormat</th>
+            <th>CanvasBitmap's Format</th>
+          </tr>
+          <tr>
+            <td>BitmapPixelFormat.Unknown</td>
+            <td>unsupported</td>
+          </tr>
+          <tr>
+            <td>BitmapPixelFormat.Rgba16</td>
+            <td>DirectXPixelFormat.R16G16B16A16UIntNormalized</td>
+          </tr>
+          <tr>
+            <td>BitmapPixelFormat.Rgba8</td>
+            <td>DirectXPixelFormat.R8G8B8A8UIntNormalized</td>
+          </tr>
+          <tr>
+            <td>BitmapPixelFormat.Gray16</td>
+            <td>unsupported</td>
+          </tr>
+          <tr>
+            <td>BitmapPixelFormat.Gray8</td>
+            <td>DirectXPixelFormat.A8UIntNormalized</td>
+          </tr>
+          <tr>
+            <td>BitmapPixelFormat.Bgra8</td>
+            <td>DirectXPixelFormat.B8G8R8A8UIntNormalized</td>
+          </tr>
+          <tr>
+            <td>BitmapPixelFormat.Nv12</td>
+            <td>unsupported</td>
+          </tr>
+          <tr>
+            <td>BitmapPixelFormat.Yuy2</td>
+            <td>unsupported</td>
+          </tr>
+        </table>
+      </remarks>
+    </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.LoadAsync(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.String)">
       <summary>Loads a bitmap from an image file (jpeg, png, etc.)</summary>
       <remarks>The bitmap is set to default (96) DPI and premultiplied alpha.</remarks>
