@@ -139,6 +139,81 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
 
+#if WINVER > _WIN32_WINNT_WINBLUE
+
+    ComPtr<CanvasBitmap> CanvasBitmapManager::CreateNew(
+        ICanvasDevice* device,
+        ISoftwareBitmap* sourceBitmap)
+    {
+        using namespace ABI::Windows::Graphics::Imaging;
+        using ::Windows::Foundation::IMemoryBufferByteAccess;
+
+        //
+        // Extract information from the SoftwareBitmap
+        //
+
+        BitmapPixelFormat bitmapPixelFormat;
+        ThrowIfFailed(sourceBitmap->get_BitmapPixelFormat(&bitmapPixelFormat));
+
+        BitmapAlphaMode bitmapAlphaMode;
+        ThrowIfFailed(sourceBitmap->get_BitmapAlphaMode(&bitmapAlphaMode));
+
+        double dpiX, dpiY;
+        ThrowIfFailed(sourceBitmap->get_DpiX(&dpiX));
+        ThrowIfFailed(sourceBitmap->get_DpiY(&dpiY));
+
+        ComPtr<IBitmapBuffer> bitmapBuffer;
+        ThrowIfFailed(sourceBitmap->LockBuffer(BitmapBufferAccessMode_Read, &bitmapBuffer));
+
+        ComPtr<IMemoryBufferReference> memoryBuffer;
+        ThrowIfFailed(As<IMemoryBuffer>(bitmapBuffer)->CreateReference(&memoryBuffer));
+
+        uint32_t bufferSize;
+        uint8_t* buffer;
+        ThrowIfFailed(As<IMemoryBufferByteAccess>(memoryBuffer)->GetBuffer(&buffer, &bufferSize));
+
+        BitmapPlaneDescription bitmapPlaneDescription;
+        ThrowIfFailed(bitmapBuffer->GetPlaneDescription(0, &bitmapPlaneDescription));
+
+        //
+        // Create an ID2D1Bitmap1 from the source bitmap's data
+        //
+
+        auto bitmapProperties = D2D1::BitmapProperties1();
+        bitmapProperties.pixelFormat.format = static_cast<DXGI_FORMAT>(bitmapPixelFormat);
+        bitmapProperties.pixelFormat.alphaMode = ToD2DAlphaMode(bitmapAlphaMode);
+        bitmapProperties.dpiX = static_cast<float>(dpiX);
+        bitmapProperties.dpiY = static_cast<float>(dpiY);
+
+        auto deviceContext = As<ICanvasDeviceInternal>(device)->CreateDeviceContext();
+
+        auto pixelWidth = static_cast<uint32_t>(bitmapPlaneDescription.Width);
+        auto pixelHeight = static_cast<uint32_t>(bitmapPlaneDescription.Height);
+
+        ComPtr<ID2D1Bitmap1> d2dBitmap;
+        ThrowIfFailed(deviceContext->CreateBitmap(
+            D2D1_SIZE_U{ pixelWidth, pixelHeight },
+            buffer + bitmapPlaneDescription.StartIndex,
+            bitmapPlaneDescription.Stride,
+            &bitmapProperties,
+            &d2dBitmap));
+
+        //
+        // Wrap a CanvasBitmap around it
+        //
+
+        auto bitmap = Make<CanvasBitmap>(
+            shared_from_this(),
+            d2dBitmap.Get(),
+            device);
+        CheckMakeResult(bitmap);
+
+        return bitmap;
+    }
+
+#endif
+
+
     ComPtr<CanvasBitmap> CanvasBitmapManager::CreateWrapper(
         ICanvasDevice* device,
         ID2D1Bitmap1* d2dBitmap)
@@ -391,6 +466,33 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 ThrowIfFailed(newBitmap.CopyTo(canvasBitmap));
             });
     }
+
+#if WINVER > _WIN32_WINNT_WINBLUE
+
+    IFACEMETHODIMP CanvasBitmapFactory::CreateFromSoftwareBitmap(
+        ICanvasResourceCreator* resourceCreator,
+        ISoftwareBitmap* sourceBitmap,
+        ICanvasBitmap** canvasBitmap)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckInPointer(resourceCreator);
+                CheckInPointer(sourceBitmap);
+                CheckAndClearOutPointer(canvasBitmap);
+
+                ComPtr<ICanvasDevice> canvasDevice;
+                ThrowIfFailed(resourceCreator->get_Device(&canvasDevice));
+
+                auto newBitmap = GetManager()->CreateBitmap(
+                    canvasDevice.Get(),
+                    sourceBitmap);
+
+                ThrowIfFailed(newBitmap.CopyTo(canvasBitmap));
+            });
+    }
+
+#endif
 
     IFACEMETHODIMP CanvasBitmapFactory::LoadAsyncFromHstring(
         ICanvasResourceCreator* resourceCreator,

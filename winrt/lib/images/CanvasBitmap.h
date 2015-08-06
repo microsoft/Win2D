@@ -17,6 +17,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     using namespace ABI::Windows::Storage::Streams;
     using namespace ABI::Windows::Storage;
 
+#if WINVER > _WIN32_WINNT_WINBLUE
+    using ABI::Windows::Graphics::Imaging::ISoftwareBitmap;
+#endif
+
     class CanvasBitmapManager;
 
     class ICanvasBitmapResourceCreationAdapter
@@ -153,6 +157,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             float dpi,
             CanvasAlphaMode alpha,
             ICanvasBitmap** canvasBitmap) override;
+
+#if WINVER > _WIN32_WINNT_WINBLUE
+        IFACEMETHOD(CreateFromSoftwareBitmap)(
+            ICanvasResourceCreator* resourceCreator,
+            ISoftwareBitmap* sourceBitmap,
+            ICanvasBitmap** canvasBitmap) override;
+#endif        
 
         IFACEMETHOD(LoadAsyncFromHstring)(
             ICanvasResourceCreator* resourceCreator,
@@ -823,6 +834,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             int32_t heightInPixels,
             float dpi,
             CanvasAlphaMode alpha);
+
+#if WINVER > _WIN32_WINNT_WINBLUE
+
+        ComPtr<CanvasBitmap> CreateNew(
+            ICanvasDevice* device,
+            ISoftwareBitmap* sourceBitmap);
+
+#endif
 
         ComPtr<CanvasBitmap> CreateWrapper(
             ICanvasDevice* device,

@@ -283,6 +283,13 @@ namespace Microsoft.Graphics.Canvas
             [in] CanvasAlphaMode alpha,
             [out, retval] CanvasBitmap** bitmap);
 
+#if WINVER > _WIN32_WINNT_WINBLUE
+        HRESULT CreateFromSoftwareBitmap(
+            [in] ICanvasResourceCreator* resourceCreator,
+            [in] Windows.Graphics.Imaging.SoftwareBitmap* sourceBitmap,
+            [out, retval] CanvasBitmap** bitmap);
+#endif
+
         [overload("LoadAsync")]
         HRESULT LoadAsyncFromHstring(
             [in] ICanvasResourceCreator* resourceCreator,

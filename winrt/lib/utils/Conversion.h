@@ -320,6 +320,23 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         }
     }
 
+#if WINVER > _WIN32_WINNT_WINBLUE
+
+    inline D2D1_ALPHA_MODE ToD2DAlphaMode(ABI::Windows::Graphics::Imaging::BitmapAlphaMode alphaMode)
+    {
+        using namespace ABI::Windows::Graphics::Imaging;
+        
+        switch (alphaMode)
+        {
+            case BitmapAlphaMode_Premultiplied: return D2D1_ALPHA_MODE_PREMULTIPLIED;
+            case BitmapAlphaMode_Straight: return D2D1_ALPHA_MODE_STRAIGHT;
+            case BitmapAlphaMode_Ignore: return D2D1_ALPHA_MODE_IGNORE;
+            default: return D2D1_ALPHA_MODE_FORCE_DWORD;
+        }
+    }
+
+#endif
+    
     inline CanvasAlphaMode FromD2DColorInterpolation(D2D1_COLOR_INTERPOLATION_MODE colorInterpolation)
     {
         switch (colorInterpolation)

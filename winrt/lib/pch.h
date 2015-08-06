@@ -38,11 +38,6 @@
 #include <wrl\async.h>
 #include <strsafe.h>
 #include <d2d1_2.h>
-
-#if WINVER > _WIN32_WINNT_WINBLUE
-#include <d2d1_3.h>
-#endif
-
 #include <d3d11.h>
 #include <dwrite_2.h>
 #include <dxgi1_3.h>
@@ -51,7 +46,9 @@
 #include <shcore.h>
 
 #if WINVER > _WIN32_WINNT_WINBLUE
+#include <d2d1_3.h>
 #include <inkrenderer.h>
+#include <MemoryBuffer.h>
 #endif
 
 // WinRT
