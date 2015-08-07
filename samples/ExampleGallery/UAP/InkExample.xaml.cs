@@ -436,7 +436,7 @@ namespace ExampleGallery
             if (inkCanvas != null)
             {
                 InkDrawingAttributes drawingAttributes = inkCanvas.InkPresenter.CopyDefaultDrawingAttributes();
-                float radians = (float)e.NewValue / (2 * 3.14159f);
+                float radians = Utils.DegreesToRadians((float)e.NewValue);
                 drawingAttributes.PenTipTransform = Matrix3x2.CreateRotation(radians);
                 inkCanvas.InkPresenter.UpdateDefaultDrawingAttributes(drawingAttributes);
             }
