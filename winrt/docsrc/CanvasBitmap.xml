@@ -148,21 +148,6 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <summary>Creates a CanvasBitmap from an array of colors, using the specified pixel width/height, DPI and alpha behavior.</summary>
     </member>
 
-    <member name="N:Windows.Graphics.Imaging">
-      <summary>
-        <a href="https://msdn.microsoft.com/en-us/library/windows/apps/windows.graphics.imaging.aspx">This namespace is documented on MSDN.</a>
-      </summary>
-    </member>
-    
-    <member name="T:Windows.Graphics.Imaging.SoftwareBitmap">
-      <tocexclude />
-      <summary>
-        <b>
-          <a href="https://msdn.microsoft.com/en-us/library/windows/apps/windows.graphics.imaging.softwarebitmap.aspx">This type is documented on MSDN.</a>
-        </b>
-      </summary>
-    </member>
-    
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.CreateFromSoftwareBitmap(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.Graphics.Imaging.SoftwareBitmap)">
       <summary>[Experimental][Win10] Creates a CanvasBitmap from a SoftwareBitmap.</summary>
       <remarks>

@@ -1018,22 +1018,6 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <seealso cref="T:Microsoft.Graphics.Canvas.CanvasActiveLayer"/>
     </member>
 
-
-    <member name="N:Windows.UI.Input.Inking">
-      <summary>
-        <a href="http://msdn.microsoft.com/library/windows/apps/Windows.UI.Input.Inking">This namespace is documented on MSDN.</a>
-      </summary>
-    </member>
-
-    <member name="T:Windows.UI.Input.Inking.InkStroke">
-      <tocexclude />
-      <summary>
-        <b>
-          <a href="http://msdn.microsoft.com/library/windows/apps/Windows.UI.Input.Inking.InkStroke">This type is documented on MSDN.</a>
-        </b>
-      </summary>
-    </member>
-
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawInk(System.Collections.Generic.IEnumerable{Windows.UI.Input.Inking.InkStroke})">
       <summary>
         [Experimental][Win10] Draws a collection of ink strokes.
@@ -1068,7 +1052,6 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
               ds.DrawInk(strokes);
               inkSynchronizer.EndDry();
           }
-          
         </code>
         </p>
       </remarks>
@@ -1109,7 +1092,6 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
                 ds.DrawInk(strokes);
                 inkSynchronizer.EndDry();
             }
-
           </code>
         </p>
       </remarks>

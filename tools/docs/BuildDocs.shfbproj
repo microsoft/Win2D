@@ -54,6 +54,7 @@
       <DocumentationSource sourceFile="$(MSBuildThisFileDirectory)..\..\obj\docs\Microsoft.Graphics.Canvas.placeholders.xml" />
       <DocumentationSource sourceFile="$(MSBuildThisFileDirectory)..\..\obj\docs\Microsoft.Graphics.Canvas.Numerics.placeholders.xml" />
       <DocumentationSource sourceFile="$(MSBuildThisFileDirectory)..\..\obj\docs\PlaceholderNamespaces.xml" />
+      <DocumentationSource sourceFile="$(MSBuildThisFileDirectory)Placeholders.xml" />
     </DocumentationSources>
   </PropertyGroup>
 
