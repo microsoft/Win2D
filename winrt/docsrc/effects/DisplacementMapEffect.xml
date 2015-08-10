@@ -11,10 +11,9 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
   </assembly>
   <members>
   
-    <member name="T:Microsoft.Graphics.Canvas.Effects.DisplacementMapEffect">
+    <member name="T:Microsoft.Graphics.Canvas.Effects.DisplacementMapEffect" NoComposition="true">
       <summary>
-        <p>Displaces the pixels of an input image by the intensity values of a second image.</p>
-        <p><i>Supported by Win2D but not Windows.UI.Composition.</i></p>
+        Displaces the pixels of an input image by the intensity values of a second image.
       </summary>
       <remarks>
         <p>The locations of the pixels in the output are determined using this formula:</p>

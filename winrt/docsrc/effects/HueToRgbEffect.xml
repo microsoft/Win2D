@@ -12,11 +12,9 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
 
   <members>
 
-    <member name="T:Microsoft.Graphics.Canvas.Effects.HueToRgbEffect">
+    <member name="T:Microsoft.Graphics.Canvas.Effects.HueToRgbEffect" Win10="true" NoComposition="true">
       <summary>
-        <p>Converts an HSV (hue, saturation, value) or HSL (hue, saturation, lightness) image to RGB color space.</p>
-        <p><i>This effect is new in the Universal Windows Platform. It is not supported on Windows 8.1 or Phone 8.1.</i></p>
-        <p><i>Supported by Win2D but not Windows.UI.Composition.</i></p>
+        Converts an HSV (hue, saturation, value) or HSL (hue, saturation, lightness) image to RGB color space.
       </summary>
       <remarks>
         <p>
@@ -68,12 +66,11 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
                Default value <see cref="F:Microsoft.Graphics.Canvas.Effects.EffectHueColorSpace.Hsv"/>.</summary>
     </member>
 
-    <member name="T:Microsoft.Graphics.Canvas.Effects.EffectHueColorSpace">
+    <member name="T:Microsoft.Graphics.Canvas.Effects.EffectHueColorSpace" Win10="true">
       <summary>
         <p>Specifies the color space used by
            <see cref="T:Microsoft.Graphics.Canvas.Effects.HueToRgbEffect"/> and
            <see cref="T:Microsoft.Graphics.Canvas.Effects.RgbToHueEffect"/>.</p>
-        <p><i>This enum is new in the Universal Windows Platform. It is not supported on Windows 8.1 or Phone 8.1.</i></p>
       </summary>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.Effects.EffectHueColorSpace.Hsv">

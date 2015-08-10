@@ -11,10 +11,9 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
   </assembly>
   <members>
   
-    <member name="T:Microsoft.Graphics.Canvas.Effects.TurbulenceEffect">
+    <member name="T:Microsoft.Graphics.Canvas.Effects.TurbulenceEffect" NoComposition="true">
       <summary>
-        <p>Generates an image using the Perlin noise function.</p>
-        <p><i>Supported by Win2D but not Windows.UI.Composition.</i></p>
+        Generates an image using the Perlin noise function.
       </summary>
       <remarks>
         <p>

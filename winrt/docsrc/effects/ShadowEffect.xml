@@ -11,14 +11,11 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
   </assembly>
   <members>
   
-    <member name="T:Microsoft.Graphics.Canvas.Effects.ShadowEffect">
+    <member name="T:Microsoft.Graphics.Canvas.Effects.ShadowEffect" NoComposition="true">
       <summary>
-        <p>
-          Generates a shadow from the alpha channel of an image. The shadow is more
-          opaque for higher alpha values and more transparent for lower alpha
-          values. You can set the amount of blur and the color of the shadow.
-        </p>
-        <p><i>Supported by Win2D but not Windows.UI.Composition.</i></p>
+        Generates a shadow from the alpha channel of an image. The shadow is more
+        opaque for higher alpha values and more transparent for lower alpha
+        values. You can set the amount of blur and the color of the shadow.
       </summary>
       <remarks>
         <p>

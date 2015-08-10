@@ -11,10 +11,9 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
   </assembly>
   <members>
 
-    <member name="T:Microsoft.Graphics.Canvas.Effects.DiscreteTransferEffect">
+    <member name="T:Microsoft.Graphics.Canvas.Effects.DiscreteTransferEffect" NoComposition="true">
       <summary>
-        <p>Alters the colors of an image using a quantized transfer function defined by an arbitrary lookup table.</p>
-        <p><i>Supported by Win2D but not Windows.UI.Composition.</i></p>
+        Alters the colors of an image using a quantized transfer function defined by an arbitrary lookup table.
       </summary>
       <remarks>
         <p>

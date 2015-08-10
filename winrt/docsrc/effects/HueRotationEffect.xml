@@ -11,10 +11,9 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
   </assembly>
   <members>
   
-    <member name="T:Microsoft.Graphics.Canvas.Effects.HueRotationEffect">
+    <member name="T:Microsoft.Graphics.Canvas.Effects.HueRotationEffect" NoComposition="true">
       <summary>
-        <p>Alters the color of an image by rotating its hue values.</p>
-        <p><i>Supported by Win2D but not Windows.UI.Composition.</i></p>
+        Alters the color of an image by rotating its hue values.
       </summary>
       <remarks>
         <p>

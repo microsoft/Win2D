@@ -11,10 +11,9 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
   </assembly>
   <members>
   
-    <member name="T:Microsoft.Graphics.Canvas.Effects.ScaleEffect">
+    <member name="T:Microsoft.Graphics.Canvas.Effects.ScaleEffect" NoComposition="true">
       <summary>
-        <p>Resizes an image.</p>
-        <p><i>Supported by Win2D but not Windows.UI.Composition.</i></p>
+        Resizes an image.
       </summary>
       <remarks>
         <p>This Windows Runtime type corresponds to the 

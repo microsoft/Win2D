@@ -12,11 +12,9 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
 
   <members>
 
-    <member name="T:Microsoft.Graphics.Canvas.Effects.EmbossEffect">
+    <member name="T:Microsoft.Graphics.Canvas.Effects.EmbossEffect" Win10="true" NoComposition="true">
       <summary>
-        <p>Creates a grayscale version of an image that appears as though it has been stamped into paper.</p>
-        <p><i>This effect is new in the Universal Windows Platform. It is not supported on Windows 8.1 or Phone 8.1.</i></p>
-        <p><i>Supported by Win2D but not Windows.UI.Composition.</i></p>
+        Creates a grayscale version of an image that appears as though it has been stamped into paper.
       </summary>
       <remarks>
         <p>This Windows Runtime type corresponds to the

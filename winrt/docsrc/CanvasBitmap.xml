@@ -148,12 +148,9 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <summary>Creates a CanvasBitmap from an array of colors, using the specified pixel width/height, DPI and alpha behavior.</summary>
     </member>
 
-    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.CreateFromSoftwareBitmap(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.Graphics.Imaging.SoftwareBitmap)">
-      <summary>[Experimental][Win10] Creates a CanvasBitmap from a SoftwareBitmap.</summary>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.CreateFromSoftwareBitmap(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.Graphics.Imaging.SoftwareBitmap)" Experimental="true" Win10="true">
+      <summary>Creates a CanvasBitmap from a SoftwareBitmap.</summary>
       <remarks>
-        <p>
-          This API is available on Windows 10 only. It's marked as [Experimental], meaning it may be subject to change in upcoming Win2D releases.
-        </p>
         <p>
           The CanvasBitmap's Format is determined from the SoftwareBitmap's
           BitmapPixelFormat property.  Not all BitmapPixelFormats are supported

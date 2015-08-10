@@ -11,10 +11,9 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
   </assembly>
   <members>
 
-    <member name="T:Microsoft.Graphics.Canvas.Effects.GaussianBlurEffect">
+    <member name="T:Microsoft.Graphics.Canvas.Effects.GaussianBlurEffect" NoComposition="true">
       <summary>
-        <p>Creates a blur effect based on the Gaussian function over the entire input image.</p>
-        <p><i>Supported by Win2D but not Windows.UI.Composition.</i></p>
+        Creates a blur effect based on the Gaussian function over the entire input image.
       </summary>
       <remarks>
         <example>

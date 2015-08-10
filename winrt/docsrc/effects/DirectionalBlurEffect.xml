@@ -11,14 +11,11 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
   </assembly>
   <members>
   
-    <member name="T:Microsoft.Graphics.Canvas.Effects.DirectionalBlurEffect">
+    <member name="T:Microsoft.Graphics.Canvas.Effects.DirectionalBlurEffect" NoComposition="true">
       <summary>
-        <p>
-          Blurs an image in a particular direction.
-          You can use this effect to make an image look as if
-          it is in motion or to emphasize an animated image.
-        </p>
-        <p><i>Supported by Win2D but not Windows.UI.Composition.</i></p>
+        Blurs an image in a particular direction.
+        You can use this effect to make an image look as if
+        it is in motion or to emphasize an animated image.
       </summary>
       <remarks>
         <p>This Windows Runtime type corresponds to the 

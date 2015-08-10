@@ -12,11 +12,9 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
 
   <members>
 
-    <member name="T:Microsoft.Graphics.Canvas.Effects.EdgeDetectionEffect">
+    <member name="T:Microsoft.Graphics.Canvas.Effects.EdgeDetectionEffect" Win10="true" NoComposition="true">
       <summary>
-        <p>Filters out the content of an image leaving lines at the edges of contrasting sections.</p>
-        <p><i>This effect is new in the Universal Windows Platform. It is not supported on Windows 8.1 or Phone 8.1.</i></p>
-        <p><i>Supported by Win2D but not Windows.UI.Composition.</i></p>
+        Filters out the content of an image leaving lines at the edges of contrasting sections.
       </summary>
       <remarks>
         <p>This Windows Runtime type corresponds to the
@@ -84,10 +82,9 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       </remarks>
     </member>
 
-    <member name="T:Microsoft.Graphics.Canvas.Effects.EdgeDetectionEffectMode">
+    <member name="T:Microsoft.Graphics.Canvas.Effects.EdgeDetectionEffectMode" Win10="true">
       <summary>
         <p>Specifies what type of filter kernel to use for edge detection.</p>
-        <p><i>This enum is new in the Universal Windows Platform. It is not supported on Windows 8.1 or Phone 8.1.</i></p>
       </summary>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.Effects.EdgeDetectionEffectMode.Sobel">

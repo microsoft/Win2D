@@ -11,15 +11,12 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
   </assembly>
   <members>
   
-    <member name="T:Microsoft.Graphics.Canvas.Effects.DistantSpecularEffect">
+    <member name="T:Microsoft.Graphics.Canvas.Effects.DistantSpecularEffect" NoComposition="true">
       <summary>
-        <p>
-          Lighting effect creates an image that appears to be a reflective surface. This 
-          effect uses the alpha channel as a height map, and lights it with an infinitely 
-          distant light source (such as the sun) applying the specular portion of the Phong 
-          lighting model.
-        </p>
-        <p><i>Supported by Win2D but not Windows.UI.Composition.</i></p>
+        Lighting effect creates an image that appears to be a reflective surface. This 
+        effect uses the alpha channel as a height map, and lights it with an infinitely 
+        distant light source (such as the sun) applying the specular portion of the Phong 
+        lighting model.
       </summary>
       <remarks>
         <p>This Windows Runtime type corresponds to the 

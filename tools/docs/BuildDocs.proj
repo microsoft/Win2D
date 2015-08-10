@@ -36,6 +36,7 @@
   <!-- Tools used to generate the documentation -->
   <ItemGroup>
     <ToolProject Include="DocDiff\DocDiff.csproj" Condition="!$(IntellisenseOnly)" />
+    <ToolProject Include="DocPreprocess\DocPreprocess.csproj" />
     <ToolProject Include="ExtractAPISurface\ExtractAPISurface.csproj" Condition="!$(IntellisenseOnly)" />
     <ToolProject Include="MergeIntellisense\MergeIntellisense.csproj" />
   </ItemGroup>
@@ -43,7 +44,7 @@
 
   <!-- Master target just chains to a bunch of workers -->
   <Target Name="BuildDocs"
-          DependsOnTargets="BuildTools; ExtractAPISurface; CompileAPISurface; DiffDocs; RunSandcastle; MergeIntellisense" />
+          DependsOnTargets="BuildTools; ExtractAPISurface; CompileAPISurface; DiffDocs; PreprocessDocs; RunSandcastle; MergeIntellisense" />
 
 
   <!-- Build our custom tools -->
@@ -91,6 +92,22 @@
   </Target>
 
 
+  <!-- Preprocess the docsrc XML files to insert things like [Win10] tags -->
+  <Target Name="PreprocessDocs">
+
+    <ItemGroup>
+      <DocSrc Remove="@(DocSrc)" />
+      <DocSrc Include="%(InputAssembly.DocSrc)" />
+    </ItemGroup>
+
+    <PropertyGroup>
+      <DocPreprocessTool>$(BinariesDirectory)\WindowsAnyCPU\$(Configuration)\DocPreprocess\DocPreprocess.exe</DocPreprocessTool>
+    </PropertyGroup>
+
+    <Exec Command="&quot;$(DocPreprocessTool)&quot; /OutputPath:&quot;$(IntermediateOutputPath)docsrc&quot; @(DocSrc, ' ')" />
+  </Target>
+
+
   <ItemGroup>
     <NuGetRestore Include="$(MSBuildThisFileDirectory)packages.config" />
   </ItemGroup>
@@ -115,7 +132,7 @@
       <MergeIntellisenseTool>$(BinariesDirectory)\WindowsAnyCPU\$(Configuration)\MergeIntellisense\MergeIntellisense.exe</MergeIntellisenseTool>
     </PropertyGroup>
 
-    <Exec Command="&quot;$(MergeIntellisenseTool)&quot; &quot;$(BinariesDirectory)\intellisense\%(InputAssembly.Filename).xml&quot; @(DocSrc, ' ')" />
+    <Exec Command="&quot;$(MergeIntellisenseTool)&quot; &quot;$(BinariesDirectory)\intellisense\%(InputAssembly.Filename).xml&quot; @(DocSrc->'&quot;$(IntermediateOutputPath)docsrc\%(Filename)%(Extension)&quot;', ' ')" />
   </Target>
 
   <Import Project="$(MsBuildThisFileDirectory)..\..\build\nuget-restore.targets" />

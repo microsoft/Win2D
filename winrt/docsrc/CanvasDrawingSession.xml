@@ -1018,14 +1018,11 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <seealso cref="T:Microsoft.Graphics.Canvas.CanvasActiveLayer"/>
     </member>
 
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawInk(System.Collections.Generic.IEnumerable{Windows.UI.Input.Inking.InkStroke})">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawInk(System.Collections.Generic.IEnumerable{Windows.UI.Input.Inking.InkStroke})" Experimental="true" Win10="true">
       <summary>
-        [Experimental][Win10] Draws a collection of ink strokes.
+        Draws a collection of ink strokes.
       </summary>
       <remarks>
-        <p>
-          This API is available on Windows 10 only. It's marked as [Experimental], meaning it may be subject to change in upcoming Win2D releases. 
-        </p>
         <p>
         This overload reads the high-contrast accessiblity option from the 
         system environment.
@@ -1056,14 +1053,11 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         </p>
       </remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawInk(System.Collections.Generic.IEnumerable{Windows.UI.Input.Inking.InkStroke},System.Boolean)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawInk(System.Collections.Generic.IEnumerable{Windows.UI.Input.Inking.InkStroke},System.Boolean)" Experimental="true" Win10="true">
       <summary>
-        [Experimental][Win10] Draws a collection of ink strokes.
+        Draws a collection of ink strokes.
       </summary>
       <remarks>
-        <p>
-          This API is available on Windows 10 only. It's marked as [Experimental], meaning it may be subject to change in upcoming Win2D releases.
-        </p>
         <p>
         This overload allows an app to use an arbitrary high-contrast
         accessibility option, which may be different from the one

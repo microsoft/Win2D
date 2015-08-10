@@ -11,13 +11,10 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
   </assembly>
   <members>
   
-    <member name="T:Microsoft.Graphics.Canvas.Effects.DpiCompensationEffect">
+    <member name="T:Microsoft.Graphics.Canvas.Effects.DpiCompensationEffect" NoComposition="true">
       <summary>
-        <p>
-          Scales an input bitmap to match a different DPI. This is useful for situations 
-          where a bitmap is created or loaded at a different DPI than the screen.
-        </p>
-        <p><i>Supported by Win2D but not Windows.UI.Composition.</i></p>
+        Scales an input bitmap to match a different DPI. This is useful for situations 
+        where a bitmap is created or loaded at a different DPI than the screen.
       </summary>
       <remarks>
         <p>This Windows Runtime type corresponds to the 

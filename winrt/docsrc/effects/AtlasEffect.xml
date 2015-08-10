@@ -11,10 +11,9 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
   </assembly>
   <members>
   
-    <member name="T:Microsoft.Graphics.Canvas.Effects.AtlasEffect">
+    <member name="T:Microsoft.Graphics.Canvas.Effects.AtlasEffect" NoComposition="true">
       <summary>
-        <p>Outputs a specified region from an atlas bitmap.</p>
-        <p><i>Supported by Win2D but not Windows.UI.Composition.</i></p>
+        Outputs a specified region from an atlas bitmap.
       </summary>
       <remarks>
         <p>

@@ -104,6 +104,7 @@ namespace MergeIntellisense
             string[] tagsToStrip =
             {
                 "a",
+                "b",
                 "img",
             };
 

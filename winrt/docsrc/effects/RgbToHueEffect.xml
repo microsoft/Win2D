@@ -12,11 +12,9 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
 
   <members>
 
-    <member name="T:Microsoft.Graphics.Canvas.Effects.RgbToHueEffect">
+    <member name="T:Microsoft.Graphics.Canvas.Effects.RgbToHueEffect" Win10="true" NoComposition="true">
       <summary>
-        <p>Converts an RGB image to HSV (hue, saturation, value) or HSL (hue, saturation, lightness) color space.</p>
-        <p><i>This effect is new in the Universal Windows Platform. It is not supported on Windows 8.1 or Phone 8.1.</i></p>
-        <p><i>Supported by Win2D but not Windows.UI.Composition.</i></p>
+        Converts an RGB image to HSV (hue, saturation, value) or HSL (hue, saturation, lightness) color space.
       </summary>
       <remarks>
         <p>

@@ -12,11 +12,9 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
 
   <members>
 
-    <member name="T:Microsoft.Graphics.Canvas.Effects.ChromaKeyEffect">
+    <member name="T:Microsoft.Graphics.Canvas.Effects.ChromaKeyEffect" Win10="true" NoComposition="true">
       <summary>
-        <p>Replaces a specified color with transparency.</p>
-        <p><i>This effect is new in the Universal Windows Platform. It is not supported on Windows 8.1 or Phone 8.1.</i></p>
-        <p><i>Supported by Win2D but not Windows.UI.Composition.</i></p>
+        Replaces a specified color with transparency.
       </summary>
       <remarks>
         <p>Chroma keying is a more general purpose version of the green screen technique 
