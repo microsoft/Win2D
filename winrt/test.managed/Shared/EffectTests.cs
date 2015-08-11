@@ -13,7 +13,6 @@ using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Effects;
 
 #if WINDOWS_UWP
-using Windows.Graphics.DirectX;
 using Windows.Graphics.Effects;
 using System.Numerics;
 #else
@@ -304,7 +303,7 @@ namespace test.managed
             }
             else if (type.GetTypeInfo().IsEnum)
             {
-                return Enum.GetValues(type).GetValue((int)(uint)value);
+                return GetEnumValues(type).GetValue((int)(uint)value);
             }
             else if (type == typeof(Vector2))
             {
@@ -531,7 +530,7 @@ namespace test.managed
             }
             else if (type.GetTypeInfo().IsEnum)
             {
-                return Enum.GetValues(type).GetValue(whichOne ? 0 : 1);
+                return GetEnumValues(type).GetValue(whichOne ? 0 : 1);
             }
             else if (type == typeof(Vector2))
             {
@@ -617,6 +616,20 @@ namespace test.managed
             {
                 throw new NotSupportedException("Unsupported GetArbitraryTestValue type " + type);
             }
+        }
+
+
+        // Replacement for Enum.GetValues, to work around VS2015 .NET Native reflection bug.
+        static object[] GetEnumValues(Type type)
+        {
+            Assert.IsTrue(type.GetTypeInfo().IsEnum);
+
+            var values = from field in type.GetTypeInfo().DeclaredFields
+                         where field.IsStatic
+                         orderby field.GetValue(null)
+                         select field.GetValue(null);
+
+            return values.ToArray();
         }
 
 
