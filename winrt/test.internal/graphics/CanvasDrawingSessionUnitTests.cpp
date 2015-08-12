@@ -8,6 +8,10 @@
 #include <lib/geometry/CanvasCachedGeometry.h>
 #include <lib/images/CanvasCommandList.h>
 
+#if WINVER > _WIN32_WINNT_WINBLUE
+#include <lib/drawing/CanvasGradientMesh.h>
+#endif
+
 #include "mocks/MockD2DGeometryRealization.h"
 #include "mocks/MockD2DRectangleGeometry.h"
 #include "stubs/StubCanvasBrush.h"
@@ -136,6 +140,10 @@ public:
     ComPtr<CanvasCachedGeometry> CachedGeometry;
     ComPtr<CanvasTextLayout> TextLayout;
 
+#if WINVER > _WIN32_WINNT_WINBLUE
+    ComPtr<CanvasGradientMesh> GradientMesh;
+#endif
+
     CanvasDrawingSessionFixture()
         : DeviceContext(Make<StubD2DDeviceContextWithGetFactory>())
         , DS(MakeDrawingSession(DeviceContext.Get()))
@@ -153,6 +161,11 @@ public:
         auto textlayoutAdapter = std::make_shared<StubCanvasTextLayoutAdapter>();
         auto textLayoutManager = std::make_shared<CanvasTextLayoutManager>(textlayoutAdapter);
         TextLayout = textLayoutManager->Create(canvasDevice.Get(), WinString(L"A string"), textFormat.Get(), 0.0f, 0.0f);
+
+#if WINVER > _WIN32_WINNT_WINBLUE
+		auto gradientMeshManager = CanvasGradientMeshFactory::GetOrCreateManager();
+		GradientMesh = gradientMeshManager->Create(canvasDevice.Get(), 0, nullptr);
+#endif
     }
 
 private:
@@ -4097,6 +4110,78 @@ public:
 			Assert::AreEqual(S_OK, f.DrawingSession->DrawInkWithHighContrast(f.StrokeCollection.Get(), i == 1));
 		}
 	}
+
+    //
+    // DrawGradientMesh
+    //
+
+    template<typename TDraw>
+    void TestDrawGradientMesh(bool expectTranslation, TDraw const& callDrawFunction)
+    {
+        FixtureWithTemporaryTranslation f;
+
+        ComPtr<ID2D1GradientMesh> nativeGradientMeshResource = f.GradientMesh->GetResource();
+
+        static const int expectedDrawGradientMeshCalls = 1;
+
+        if (expectTranslation)
+        {
+            f.ExpectTemporaryTranslation(expectedDrawGradientMeshCalls);
+        }
+
+        f.DeviceContext->DrawGradientMeshMethod.SetExpectedCalls(expectedDrawGradientMeshCalls,
+            [&](ID2D1GradientMesh* gradientMesh)
+            {
+                if (expectTranslation)
+                {
+                    Assert::IsTrue(f.IsTemporaryTransformSet);
+                }
+
+                Assert::AreEqual(nativeGradientMeshResource.Get(), gradientMesh);
+            });
+
+        callDrawFunction(f, f.GradientMesh.Get());
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_DrawGradientMeshAtOrigin)
+    {
+        TestDrawGradientMesh(false,
+            [](CanvasDrawingSessionFixture const& f, CanvasGradientMesh* gradientMesh)
+            {
+                ThrowIfFailed(f.DS->DrawGradientMeshAtOrigin(gradientMesh));
+            });
+
+        // Null gradient mesh.
+        CanvasDrawingSessionFixture f;
+        Assert::AreEqual(E_INVALIDARG, f.DS->DrawGradientMeshAtOrigin(nullptr));
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_DrawGradientMesh)
+    {
+        TestDrawGradientMesh(true,
+            [](FixtureWithTemporaryTranslation const& f, CanvasGradientMesh* gradientMesh)
+            {
+                ThrowIfFailed(f.DS->DrawGradientMesh(gradientMesh, f.DrawOffset));
+            });
+
+        // Null gradient mesh.
+        CanvasDrawingSessionFixture f;
+        Assert::AreEqual(E_INVALIDARG, f.DS->DrawGradientMesh(nullptr, Vector2{}));
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_DrawGradientMeshAtCoords)
+    {
+        TestDrawGradientMesh(true,
+            [](FixtureWithTemporaryTranslation const& f, CanvasGradientMesh* gradientMesh)
+            {
+                ThrowIfFailed(f.DS->DrawGradientMeshAtCoords(gradientMesh, f.DrawOffset.X, f.DrawOffset.Y));
+            });
+
+        // Null gradient mesh.
+        CanvasDrawingSessionFixture f;
+        Assert::AreEqual(E_INVALIDARG, f.DS->DrawGradientMeshAtCoords(nullptr, 0, 0));
+    }
+     
 #endif
 };
 

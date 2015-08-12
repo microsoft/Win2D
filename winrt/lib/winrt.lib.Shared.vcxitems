@@ -89,6 +89,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)xaml\StepTimer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)drawing\CanvasDevice.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)drawing\CanvasDrawingSession.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)drawing\CanvasGradientMesh.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)drawing\CanvasStrokeStyle.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)drawing\CanvasSwapChain.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\CanvasEffect.h" />
@@ -191,6 +192,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)xaml\StepTimer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)drawing\CanvasDevice.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)drawing\CanvasDrawingSession.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)drawing\CanvasGradientMesh.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)drawing\CanvasStrokeStyle.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)drawing\CanvasSwapChain.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\CanvasEffect.cpp" />
@@ -261,6 +263,7 @@
     <None Include="$(MSBuildThisFileDirectory)drawing\CanvasActiveLayer.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)drawing\CanvasDevice.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)drawing\CanvasDrawingSession.abi.idl" />
+    <None Include="$(MSBuildThisFileDirectory)drawing\CanvasGradientMesh.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)drawing\CanvasStrokeStyle.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)drawing\CanvasSwapChain.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)effects\IGraphicsEffect.abi.idl" />

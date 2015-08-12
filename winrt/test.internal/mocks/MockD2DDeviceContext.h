@@ -13,7 +13,14 @@ namespace canvas
 
     class MockD2DDeviceContext : public RuntimeClass<
         RuntimeClassFlags<ClassicCom>,
-        ChainInterfaces<ID2D1DeviceContext1, ID2D1DeviceContext, ID2D1RenderTarget, ID2D1Resource>>
+        ChainInterfaces<
+#if WINVER > _WIN32_WINNT_WINBLUE
+            ID2D1DeviceContext2,
+#endif
+            ID2D1DeviceContext1, 
+            ID2D1DeviceContext, 
+            ID2D1RenderTarget, 
+            ID2D1Resource>>
     {
     public:
         CALL_COUNTER_WITH_MOCK(ClearMethod                           , void(D2D1_COLOR_F const*));
@@ -63,6 +70,12 @@ namespace canvas
         CALL_COUNTER_WITH_MOCK(PushAxisAlignedClipMethod             , void(D2D1_RECT_F const*, D2D1_ANTIALIAS_MODE));
         CALL_COUNTER_WITH_MOCK(PopAxisAlignedClipMethod              , void());
         CALL_COUNTER_WITH_MOCK(FillOpacityMaskMethod                 , void(ID2D1Bitmap*, ID2D1Brush*, D2D1_RECT_F const*, D2D1_RECT_F const*));
+
+#if WINVER > _WIN32_WINNT_WINBLUE
+		CALL_COUNTER_WITH_MOCK(CreateGradientMeshMethod              , HRESULT(CONST D2D1_GRADIENT_MESH_PATCH*, UINT32, ID2D1GradientMesh**));
+		CALL_COUNTER_WITH_MOCK(DrawGradientMeshMethod                , void(ID2D1GradientMesh*));
+		CALL_COUNTER_WITH_MOCK(GetGradientMeshWorldBoundsMethod      , HRESULT(ID2D1GradientMesh*, D2D1_RECT_F*));
+#endif
 
         MockD2DDeviceContext()
         {
@@ -583,5 +596,106 @@ namespace canvas
         {
             return DrawGeometryRealizationMethod.WasCalled(geometryRealization, brush);
         }
+
+#if WINVER > _WIN32_WINNT_WINBLUE
+
+        // ID2D1DeviceContext2
+
+        IFACEMETHODIMP CreateInk(
+            CONST D2D1_INK_POINT* startPoint,
+            ID2D1Ink** ink) override
+        {
+            Assert::Fail(L"Unexpected call to CreateInk");
+            return E_NOTIMPL;
+        }
+
+        IFACEMETHODIMP CreateInkStyle(
+            CONST D2D1_INK_STYLE_PROPERTIES* inkStyleProperties,
+            ID2D1InkStyle** inkStyle) override
+        {
+            Assert::Fail(L"Unexpected call to CreateInkStyle");
+            return E_NOTIMPL;
+        }
+
+        IFACEMETHODIMP CreateGradientMesh(
+            CONST D2D1_GRADIENT_MESH_PATCH* patches,
+            UINT32 patchesCount,
+            ID2D1GradientMesh** gradientMesh) override
+        {
+            Assert::Fail(L"Unexpected call to CreateGradientMesh");
+            return E_NOTIMPL;
+        }
+
+        IFACEMETHODIMP CreateImageSourceFromWic(
+            IWICBitmapSource* wicBitmapSource,
+            D2D1_IMAGE_SOURCE_LOADING_OPTIONS loadingOptions,
+            D2D1_ALPHA_MODE alphaMode,
+            ID2D1ImageSourceFromWic** imageSource) override
+        {
+            Assert::Fail(L"Unexpected call to CreateImageSourceFromWic");
+            return E_NOTIMPL;
+        }
+
+        IFACEMETHODIMP CreateLookupTable3D(
+            D2D1_BUFFER_PRECISION precision,
+            CONST UINT32* extents,
+            CONST BYTE* data,
+            UINT32 dataCount,
+            CONST UINT32* strides,
+            ID2D1LookupTable3D** lookupTable) override
+        {
+            Assert::Fail(L"Unexpected call to CreateLookupTable3D");
+            return E_NOTIMPL;
+        }
+
+        IFACEMETHODIMP CreateImageSourceFromDxgi(
+            IDXGISurface** surfaces,
+            UINT32 surfaceCount,
+            DXGI_COLOR_SPACE_TYPE colorSpace,
+            D2D1_IMAGE_SOURCE_FROM_DXGI_OPTIONS options,
+            ID2D1ImageSource** imageSource) override
+        {
+            Assert::Fail(L"Unexpected call to CreateImageSourceFromDxgi");
+            return E_NOTIMPL;
+        }
+
+        IFACEMETHODIMP GetGradientMeshWorldBounds(
+            ID2D1GradientMesh* gradientMesh,
+            D2D1_RECT_F* bounds) const override
+        {
+			return GetGradientMeshWorldBoundsMethod.WasCalled(gradientMesh, bounds);
+        }
+
+        IFACEMETHODIMP_(void) DrawInk(
+            ID2D1Ink* ink,
+            ID2D1Brush* brush,
+            ID2D1InkStyle* inkStyle) override
+        {
+            Assert::Fail(L"Unexpected call to DrawInk");
+        }
+
+        IFACEMETHODIMP_(void) DrawGradientMesh(
+            ID2D1GradientMesh* gradientMesh) override
+        {
+			DrawGradientMeshMethod.WasCalled(gradientMesh);
+        }
+
+        IFACEMETHODIMP_(void) DrawGdiMetafile(
+            ID2D1GdiMetafile* gdiMetafile,
+            CONST D2D1_RECT_F* destinationRectangle,
+            CONST D2D1_RECT_F* sourceRectangle) override
+        {
+            Assert::Fail(L"Unexpected call to DrawGdiMetafile");
+        }
+
+        IFACEMETHODIMP CreateTransformedImageSource(
+            ID2D1ImageSource* imageSource,
+            CONST D2D1_TRANSFORMED_IMAGE_SOURCE_PROPERTIES* properties,
+            ID2D1TransformedImageSource** transformedImageSource) override
+        {
+            Assert::Fail(L"Unexpected call to CreateTransformedImageSource");
+            return E_NOTIMPL;
+        }
+#endif
     };
 }

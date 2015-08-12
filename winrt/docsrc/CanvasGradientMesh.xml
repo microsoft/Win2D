@@ -1,0 +1,186 @@
+<?xml version="1.0"?>
+<!--
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+Licensed under the MIT License. See LICENSE.txt in the project root for license information.
+-->
+
+<doc>
+  <assembly>
+    <name>Microsoft.Graphics.Canvas</name>
+  </assembly>
+  <members>    
+    <member name="T:Microsoft.Graphics.Canvas.Geometry.CanvasGradientMeshPatchEdge" Experimental="true" Win10="true">
+      <summary>Specifies the type of edge a gradient mesh patch will have, when drawn.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Geometry.CanvasGradientMeshPatchEdge.Aliased">
+      <summary>The edge is aliased.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Geometry.CanvasGradientMeshPatchEdge.Antialiased">
+      <summary>The edge is antialiased using a per-primitive method.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Geometry.CanvasGradientMeshPatchEdge.AliasedAndInflated">
+      <summary>The edge of the patch is inflated by 0.5 pixels, and the edge is aliased. 
+      Useful when the edge is known to be an interior one; inflating the edge helps to mitigate seaming artifacts.
+    </summary>
+    </member>
+    <member name="T:Microsoft.Graphics.Canvas.Geometry.CanvasGradientMeshPatch" Experimental="true" Win10="true">
+      <summary>Describes a patch which can comprise a gradient mesh.</summary>
+      <remarks>
+        <p>
+          A bezier patch is defined by four bezier curves along its edges, four interior control points,
+          and colors at each of the four corners. Given its grid of sixteen control points, a patch
+          has a bezier curve for each of its four rows, and for each of its four columns. 
+          These cubic bezier curves determine the area filled by the patch, and its gradient color.
+        </p>
+        <p>
+          The colors in the interior are a bilinearly interpolated between the corner colors.
+        </p>
+        <p>
+          The sixteen Point fields in this struct are laid out as:
+        </p>
+        <img src="../media/CanvasGradientMeshPatch_Points.png" alt="CanvasGradientMeshPatch Points diagram"/>
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Geometry.CanvasGradientMeshPatch.Point00">
+      <summary>The point at row 0, column 0 in the patch.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Geometry.CanvasGradientMeshPatch.Point01">
+      <summary>The point at row 0, column 1 in the patch.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Geometry.CanvasGradientMeshPatch.Point02">
+      <summary>The point at row 0, column 2 in the patch.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Geometry.CanvasGradientMeshPatch.Point03">
+      <summary>The point at row 0, column 3 in the patch.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Geometry.CanvasGradientMeshPatch.Point10">
+      <summary>The point at row 1, column 0 in the patch.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Geometry.CanvasGradientMeshPatch.Point11">
+      <summary>The point at row 1, column 1 in the patch.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Geometry.CanvasGradientMeshPatch.Point12">
+      <summary>The point at row 1, column 2 in the patch.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Geometry.CanvasGradientMeshPatch.Point13">
+      <summary>The point at row 1, column 3 in the patch.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Geometry.CanvasGradientMeshPatch.Point20">
+      <summary>The point at row 2, column 0 in the patch.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Geometry.CanvasGradientMeshPatch.Point21">
+      <summary>The point at row 2, column 1 in the patch.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Geometry.CanvasGradientMeshPatch.Point22">
+      <summary>The point at row 2, column 2 in the patch.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Geometry.CanvasGradientMeshPatch.Point23">
+      <summary>The point at row 2, column 3 in the patch.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Geometry.CanvasGradientMeshPatch.Point30">
+      <summary>The point at row 3, column 0 in the patch.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Geometry.CanvasGradientMeshPatch.Point31">
+      <summary>The point at row 3, column 1 in the patch.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Geometry.CanvasGradientMeshPatch.Point32">
+      <summary>The point at row 3, column 2 in the patch.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Geometry.CanvasGradientMeshPatch.Point33">
+      <summary>The point at row 3, column 3 in the patch.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Geometry.CanvasGradientMeshPatch.Color00">
+      <summary>The color at Point00.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Geometry.CanvasGradientMeshPatch.Color03">
+      <summary>The color at Point03.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Geometry.CanvasGradientMeshPatch.Color30">
+      <summary>The color at Point30.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Geometry.CanvasGradientMeshPatch.Color33">
+      <summary>The color at Point33.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Geometry.CanvasGradientMeshPatch.Edge00To03">
+      <summary>The type of edge from Point00 to Point03.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Geometry.CanvasGradientMeshPatch.Edge03To33">
+      <summary>The type of edge from Point03 to Point33.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Geometry.CanvasGradientMeshPatch.Edge33To30">
+      <summary>The type of edge from Point33 to Point30.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Geometry.CanvasGradientMeshPatch.Edge30To00">
+      <summary>The type of edge from Point30 to Point00.</summary>
+    </member>
+    
+    <member name="T:Microsoft.Graphics.Canvas.Geometry.CanvasGradientMesh" Experimental="true" Win10="true">
+      <summary>A drawable set of bezier patches, consisting of interpolated colors.</summary>
+      <remarks>
+        <p>
+          A gradient mesh is comprised of some number of patches. A patch is an area defined by four bezier curves,
+          and colors to describe the corners. See <see cref="T:Microsoft.Graphics.Canvas.Geometry.CanvasGradientMeshPatch"/>
+          for more information.
+        </p>
+        <p>
+          Although it isn't terribly useful, a gradient mesh can have zero patches.
+        </p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGradientMesh.Dispose">
+      <summary>Releases all resources used by the CanvasGradientMesh.</summary>
+    </member>
+
+    <member name="P:Microsoft.Graphics.Canvas.Geometry.CanvasGradientMesh.Patches">
+      <summary>Gets the array of patches that comprise this gradient mesh.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGradientMesh.GetBounds(Microsoft.Graphics.Canvas.CanvasDrawingSession)">
+      <summary>Gets the bounds of this CanvasGradientMesh, in device-independent units.</summary>
+      <remarks>
+        The bounds are the extent of this gradient mesh as if it were drawn relative to the origin, on the given drawing session. 
+        GetBounds takes into account the drawing session's transform and DPI.</remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Geometry.CanvasGradientMesh.Device">
+      <summary>Gets the device associated with this CanvasGradientMesh.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGradientMesh.CreateCoonsPatch(Microsoft.Graphics.Canvas.Numerics.Vector2[],Windows.UI.Color[],Microsoft.Graphics.Canvas.Geometry.CanvasGradientMeshPatchEdge[])">
+      <summary>Creates a CanvasGradientMesh using Coons patch semantics.</summary>
+      <remarks>
+        <p>
+          CreateCoonsPatch is a convenience method for creating a gradient mesh patch.
+          Its semantics are a bit simpler than CreateTensorPatch, since it takes fewer input points (12 instead of 16).
+        </p>
+        <p>
+          CreateCoonsPatch requires that:
+          <ul>
+            <li>The size of the points array is 12.</li>
+            <li>The size of the colors array is 4.</li>
+            <li>The size of the edges array is 4.</li>
+          </ul>
+        </p>
+        <p>
+          The input point, color, and edge arrays are laid out as:
+        </p>
+        <img src="../media/CanvasGradientMesh_CreateCoonsPatch.png" alt="CanvasGradientMeshPatch.CreateCoonsPatch diagram"/>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGradientMesh.CreateTensorPatch(Microsoft.Graphics.Canvas.Numerics.Vector2[],Windows.UI.Color[],Microsoft.Graphics.Canvas.Geometry.CanvasGradientMeshPatchEdge[])">
+      <summary>Creates a CanvasGradientMesh using tensor patch semantics.</summary>
+      <remarks>
+        <p>
+          CreateTensorPatch requires that:
+          <ul>
+            <li>The size of the points array is 16.</li>
+            <li>The size of the colors array is 4.</li>
+            <li>The size of the edges array is 4.</li>
+          </ul>
+        </p>
+        <p>
+          The input point, color, and edge arrays are laid out as:
+        </p>
+        <img src="../media/CanvasGradientMesh_CreateTensorPatch.png" alt="CanvasGradientMeshPatch.CreateTensorPatch diagram"/>
+      </remarks>
+    </member>
+  </members>
+</doc>

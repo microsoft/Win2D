@@ -64,6 +64,9 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasGradientBrushUnitTests.cpp">
       <Filter>graphics</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasGradientMeshUnitTests.cpp">
+      <Filter>graphics</Filter>
+    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasImageBrushUnitTests.cpp">
       <Filter>graphics</Filter>
     </ClCompile>
@@ -361,6 +364,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubGeometrySink.h">
       <Filter>stubs</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DGradientMesh.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="$(MSBuildThisFileDirectory)readme.txt" />

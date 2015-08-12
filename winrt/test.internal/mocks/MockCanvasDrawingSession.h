@@ -203,6 +203,10 @@ namespace canvas
 #if WINVER > _WIN32_WINNT_WINBLUE
 		DONT_EXPECT(DrawInk, IIterable<InkStroke*>*);
 		DONT_EXPECT(DrawInkWithHighContrast, IIterable<InkStroke*>*, boolean);
+
+		DONT_EXPECT(DrawGradientMeshAtOrigin, ICanvasGradientMesh*);
+		DONT_EXPECT(DrawGradientMesh, ICanvasGradientMesh*, Vector2);
+		DONT_EXPECT(DrawGradientMeshAtCoords, ICanvasGradientMesh*, float, float);
 #endif
 
         DONT_EXPECT(get_Antialiasing     , CanvasAntialiasing*);

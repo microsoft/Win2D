@@ -1091,5 +1091,15 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       </remarks>
     </member>
 
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawGradientMesh(Microsoft.Graphics.Canvas.Geometry.CanvasGradientMesh)" Experimental="true" Win10="true">
+      <summary>Draws a gradient mesh, relative to the origin.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawGradientMesh(Microsoft.Graphics.Canvas.Geometry.CanvasGradientMesh,System.Single,System.Single)" Experimental="true" Win10="true">
+      <summary>Draws a gradient mesh, relative to the specified position.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawGradientMesh(Microsoft.Graphics.Canvas.Geometry.CanvasGradientMesh,Microsoft.Graphics.Canvas.Numerics.Vector2)" Experimental="true" Win10="true">
+      <summary>Draws a gradient mesh, relative to the specified position.</summary>
+    </member>
+
   </members>
 </doc>

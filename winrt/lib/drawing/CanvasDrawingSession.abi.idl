@@ -1315,6 +1315,24 @@ namespace Microsoft.Graphics.Canvas
 		HRESULT DrawInkWithHighContrast(
 			[in] Windows.Foundation.Collections.IIterable<Windows.UI.Input.Inking.InkStroke*>* inkStrokes,
 			[in] boolean highContrast);
+
+		//
+		// DrawGradientMesh
+		//
+		[overload("DrawGradientMesh")]
+		HRESULT DrawGradientMeshAtOrigin(
+			[in] Microsoft.Graphics.Canvas.Geometry.CanvasGradientMesh* gradientMesh);
+
+		[overload("DrawGradientMesh")]
+		HRESULT DrawGradientMesh(
+			[in] Microsoft.Graphics.Canvas.Geometry.CanvasGradientMesh* gradientMesh,
+			[in] NUMERICS.Vector2 point);
+
+		[overload("DrawGradientMesh")]
+		HRESULT DrawGradientMeshAtCoords(
+			[in] Microsoft.Graphics.Canvas.Geometry.CanvasGradientMesh* gradientMesh,
+			[in] float x,
+			[in] float y);
 #endif
 
         //

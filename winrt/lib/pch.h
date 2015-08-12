@@ -99,6 +99,7 @@
 #include "brushes/CanvasImageBrush.h"
 #include "brushes/Gradients.h"
 #include "drawing/CanvasDevice.h"
+#include "drawing/CanvasGradientMesh.h"
 #include "drawing/CanvasDrawingSession.h"
 #include "drawing/CanvasStrokeStyle.h"
 #include "drawing/CanvasSwapChain.h"

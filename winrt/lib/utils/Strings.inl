@@ -39,3 +39,4 @@ STRING(InvalidFontFamilyUri, L"The URI specified in the CanvasTextFormat's FontF
 STRING(InvalidFontFamilyUriScheme, L"The URI specified in the CanvasTextFormat's FontFamily has an invalid scheme; the scheme may be omitted, or must be one of ms-appx:// or ms-appdata://.")
 STRING(InvalidAlphaModeForImageSource, L"An invalid alpha mode was specified. Use either CanvasAlphaMode.Ignore or CanvasAlphaMode.Premultiplied.")
 STRING(DeviceExpectedToBeLost, L"This API was unexpectedly called when the Direct3D device is not lost.")
+STRING(WrongNamedArrayLength, L"The array %s was expected to be of size %d; actual array was of size %d.")

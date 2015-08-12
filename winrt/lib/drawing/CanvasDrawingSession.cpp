@@ -3288,6 +3288,55 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 			highContrast);
 	}
 
+    IFACEMETHODIMP CanvasDrawingSession::DrawGradientMeshAtOrigin(ICanvasGradientMesh* gradientMesh)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+				auto& deviceContext = GetResource();
+				auto deviceContext2 = As<ID2D1DeviceContext2>(deviceContext);
+
+				CheckInPointer(gradientMesh);
+
+				deviceContext2->DrawGradientMesh(
+					GetWrappedResource<ID2D1GradientMesh>(gradientMesh).Get());
+            });
+    }
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawGradientMesh(ICanvasGradientMesh* gradientMesh, Vector2 point)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+				auto& deviceContext = GetResource();
+				auto deviceContext2 = As<ID2D1DeviceContext2>(deviceContext);
+
+				CheckInPointer(gradientMesh);
+				
+				TemporaryTransform<ID2D1DeviceContext1> transform(GetResource().Get(), point);
+
+				deviceContext2->DrawGradientMesh(
+					GetWrappedResource<ID2D1GradientMesh>(gradientMesh).Get());
+            });
+    }
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawGradientMeshAtCoords(ICanvasGradientMesh* gradientMesh, float x, float y)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+				auto& deviceContext = GetResource();
+				auto deviceContext2 = As<ID2D1DeviceContext2>(deviceContext);
+
+				CheckInPointer(gradientMesh);
+				
+				TemporaryTransform<ID2D1DeviceContext1> transform(GetResource().Get(), Vector2{ x, y });
+
+				deviceContext2->DrawGradientMesh(
+					GetWrappedResource<ID2D1GradientMesh>(gradientMesh).Get());
+            });
+    }
+
 #endif
 
     ID2D1SolidColorBrush* CanvasDrawingSession::GetColorBrush(Color const& color)

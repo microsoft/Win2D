@@ -82,6 +82,9 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)drawing\CanvasDrawingSession.cpp">
       <Filter>drawing</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)drawing\CanvasGradientMesh.cpp">
+      <Filter>drawing</Filter>
+    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)drawing\CanvasStrokeStyle.cpp">
       <Filter>drawing</Filter>
     </ClCompile>
@@ -370,6 +373,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)drawing\CanvasDrawingSession.h">
       <Filter>drawing</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)drawing\CanvasGradientMesh.h">
+      <Filter>drawing</Filter>
+    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)drawing\CanvasStrokeStyle.h">
       <Filter>drawing</Filter>
     </ClInclude>
@@ -653,6 +659,9 @@
       <Filter>drawing</Filter>
     </None>
     <None Include="$(MSBuildThisFileDirectory)drawing\CanvasDrawingSession.abi.idl">
+      <Filter>drawing</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)drawing\CanvasGradientMesh.abi.idl">
       <Filter>drawing</Filter>
     </None>
     <None Include="$(MSBuildThisFileDirectory)drawing\CanvasStrokeStyle.abi.idl">

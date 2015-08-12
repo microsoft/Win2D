@@ -1,0 +1,110 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+//
+// Licensed under the MIT License. See LICENSE.txt in the project root for license information.
+
+#if WINVER > _WIN32_WINNT_WINBLUE
+
+namespace Microsoft.Graphics.Canvas.Geometry
+{
+    [version(VERSION)]
+    typedef enum CanvasGradientMeshPatchEdge
+    {
+        Aliased = 0,
+        Antialiased = 1,
+        AliasedAndInflated = 2
+    } CanvasGradientMeshPatchEdge;
+
+    [version(VERSION)]
+    typedef struct CanvasGradientMeshPatch
+    {
+        NUMERICS.Vector2 Point00;
+        NUMERICS.Vector2 Point01;
+        NUMERICS.Vector2 Point02;
+		NUMERICS.Vector2 Point03;
+
+		NUMERICS.Vector2 Point10;
+		NUMERICS.Vector2 Point11;
+		NUMERICS.Vector2 Point12;
+		NUMERICS.Vector2 Point13;
+
+		NUMERICS.Vector2 Point20;
+		NUMERICS.Vector2 Point21;
+		NUMERICS.Vector2 Point22;
+		NUMERICS.Vector2 Point23;
+
+		NUMERICS.Vector2 Point30;
+		NUMERICS.Vector2 Point31;
+		NUMERICS.Vector2 Point32;
+		NUMERICS.Vector2 Point33;
+
+		Windows.UI.Color Color00;
+		Windows.UI.Color Color03;
+		Windows.UI.Color Color30;
+		Windows.UI.Color Color33;
+
+        // Enumerated clockwise.
+		CanvasGradientMeshPatchEdge Edge00To03; // Top
+		CanvasGradientMeshPatchEdge Edge03To33; // Right
+		CanvasGradientMeshPatchEdge Edge33To30; // Bottom
+		CanvasGradientMeshPatchEdge Edge30To00; // Left
+
+    } CanvasGradientMeshPatch;
+
+	runtimeclass CanvasGradientMesh;
+
+    [version(VERSION), uuid(6BFC2BF1-0A7A-449C-A7EF-6706321B0C1A), exclusiveto(CanvasGradientMesh)]
+    interface ICanvasGradientMesh : IInspectable
+        requires Windows.Foundation.IClosable
+    {
+		[propget]
+		HRESULT Patches(
+			[out] UINT32* valueCount,
+			[out, size_is(, *valueCount), retval] CanvasGradientMeshPatch** valueElements);
+
+		HRESULT GetBounds(
+			[in] Microsoft.Graphics.Canvas.CanvasDrawingSession* drawingSession,
+			[out, retval] Windows.Foundation.Rect* bounds);
+
+        [propget] HRESULT Device([out, retval] Microsoft.Graphics.Canvas.CanvasDevice** value);
+    }
+
+	[version(VERSION), uuid(4756492D-251E-421D-834D-87EC260D5E4D), exclusiveto(CanvasGradientMesh)]
+	interface ICanvasGradientMeshFactory : IInspectable
+	{
+		HRESULT Create(
+			[in] Microsoft.Graphics.Canvas.ICanvasResourceCreator* resourceCreator,
+			[in] UINT32 patchCount,
+			[in, size_is(patchCount)] CanvasGradientMeshPatch* patchElements,
+			[out, retval] CanvasGradientMesh** canvasGradientMesh);
+	};
+
+    [version(VERSION), uuid(44027640-3EAB-4199-AA3B-644890D0123D), exclusiveto(CanvasGradientMesh)]
+    interface ICanvasGradientMeshStatics : IInspectable
+    {
+		HRESULT CreateCoonsPatch(
+			[in] UINT32 pointCount,
+			[in, size_is(pointCount)] NUMERICS.Vector2* points,
+			[in] UINT32 colorCount,
+			[in, size_is(colorCount)] Windows.UI.Color* colors,
+			[in] UINT32 edgeCount,
+			[in, size_is(edgeCount)] CanvasGradientMeshPatchEdge* edges,
+			[out, retval] CanvasGradientMeshPatch* gradientMeshPatch);
+
+		HRESULT CreateTensorPatch(
+			[in] UINT32 pointCount,
+			[in, size_is(pointCount)] NUMERICS.Vector2* points,
+			[in] UINT32 colorCount,
+			[in, size_is(colorCount)] Windows.UI.Color* colors,
+			[in] UINT32 edgeCount,
+			[in, size_is(edgeCount)] CanvasGradientMeshPatchEdge* edges,
+            [out, retval] CanvasGradientMeshPatch* gradientMeshPatch);
+    }
+
+    [version(VERSION), activatable(ICanvasGradientMeshFactory, VERSION), static(ICanvasGradientMeshStatics, VERSION)]
+    runtimeclass CanvasGradientMesh
+    {
+        [default] interface ICanvasGradientMesh;
+    }
+}
+
+#endif

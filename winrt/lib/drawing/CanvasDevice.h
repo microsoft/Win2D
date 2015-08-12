@@ -139,6 +139,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         virtual ComPtr<ID2D1DeviceContext1> GetResourceCreationDeviceContext() = 0;
 
         virtual ComPtr<IDXGIOutput> GetPrimaryDisplayOutput() = 0;
+
+#if WINVER > _WIN32_WINNT_WINBLUE
+        virtual ComPtr<ID2D1GradientMesh> CreateGradientMesh(D2D1_GRADIENT_MESH_PATCH const* patches, uint32_t patchCount) = 0;
+#endif
     };
 
 
@@ -282,6 +286,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         virtual ComPtr<ID2D1DeviceContext1> GetResourceCreationDeviceContext() override;
 
         virtual ComPtr<IDXGIOutput> GetPrimaryDisplayOutput() override;
+
+#if WINVER > _WIN32_WINNT_WINBLUE
+        virtual ComPtr<ID2D1GradientMesh> CreateGradientMesh(D2D1_GRADIENT_MESH_PATCH const* patches, uint32_t patchCount) override;
+#endif
 
         //
         // IDirect3DDevice

@@ -50,6 +50,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DGeometrySink.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DGeometryGroup.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DGeometryRealization.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DGradientMesh.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DGradientStopCollection.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DImageBrush.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DLinearGradientBrush.h" />
@@ -118,6 +119,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasEffectUnitTest.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasGeometryUnitTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasGradientBrushUnitTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasGradientMeshUnitTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasImageBrushUnitTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasImageSourceUnitTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasImageUnitTests.cpp" />

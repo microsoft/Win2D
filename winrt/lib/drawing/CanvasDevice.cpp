@@ -1094,6 +1094,23 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return m_primaryOutput;
     }
 
+#if WINVER > _WIN32_WINNT_WINBLUE
+    ComPtr<ID2D1GradientMesh> CanvasDevice::CreateGradientMesh(
+        D2D1_GRADIENT_MESH_PATCH const* patches,
+        uint32_t patchCount)
+    {
+        auto& deviceContext = m_d2dResourceCreationDeviceContext.EnsureNotClosed();
+
+        auto deviceContext2 = As<ID2D1DeviceContext2>(deviceContext);
+
+        ComPtr<ID2D1GradientMesh> gradientMesh;
+
+        ThrowIfFailed(deviceContext2->CreateGradientMesh(patches, patchCount, &gradientMesh));
+
+        return gradientMesh;
+    }
+#endif
+
     HRESULT CanvasDevice::GetDeviceRemovedErrorCode()
     {
         auto& dxgiDevice = m_dxgiDevice.EnsureNotClosed();

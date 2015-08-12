@@ -76,6 +76,10 @@ namespace canvas
 
         CALL_COUNTER_WITH_MOCK(IsDeviceLostMethod, HRESULT(int, boolean*));
 
+#if WINVER > _WIN32_WINNT_WINBLUE
+		CALL_COUNTER_WITH_MOCK(CreateGradientMeshMethod, ComPtr<ID2D1GradientMesh>(D2D1_GRADIENT_MESH_PATCH const*, UINT32));
+#endif
+
         //
         // ICanvasDevice
         //
@@ -370,6 +374,15 @@ namespace canvas
         {
             return GetPrimaryDisplayOutputMethod.WasCalled();
         }
+
+#if WINVER > _WIN32_WINNT_WINBLUE
+		virtual ComPtr<ID2D1GradientMesh> CreateGradientMesh(
+			D2D1_GRADIENT_MESH_PATCH const* patches,
+			UINT32 patchCount) override
+		{
+			return CreateGradientMeshMethod.WasCalled(patches, patchCount);
+		}
+#endif
     };
 }
 

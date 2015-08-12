@@ -6,6 +6,7 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
+    using namespace ABI::Microsoft::Graphics::Canvas::Geometry;
     using namespace ABI::Microsoft::Graphics::Canvas::Numerics;
     using namespace ABI::Windows::Foundation;
 
@@ -1151,14 +1152,22 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ICanvasCachedGeometry* cachedGeometry,
             ABI::Windows::UI::Color color) override;
 
+#if WINVER > _WIN32_WINNT_WINBLUE
 		//
 		// DrawInk
 		//
+		IFACEMETHOD(DrawInk)(IIterable<InkStroke*>* inkStrokes);
 
-#if WINVER > _WIN32_WINNT_WINBLUE
-		IFACEMETHOD(DrawInk(IIterable<InkStroke*>* inkStrokes));
+		IFACEMETHOD(DrawInkWithHighContrast)(IIterable<InkStroke*>* inkStrokes, boolean highContrast);
+        
+		//
+		// DrawGradientMesh
+		//
+        IFACEMETHOD(DrawGradientMeshAtOrigin)(ICanvasGradientMesh* gradientMesh);
 
-		IFACEMETHOD(DrawInkWithHighContrast(IIterable<InkStroke*>* inkStrokes, boolean highContrast));
+		IFACEMETHOD(DrawGradientMesh)(ICanvasGradientMesh* gradientMesh, Vector2 point);
+
+		IFACEMETHOD(DrawGradientMeshAtCoords)(ICanvasGradientMesh* gradientMesh, float x, float y);
 #endif
 
         //
