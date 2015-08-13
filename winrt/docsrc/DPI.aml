@@ -273,8 +273,18 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <title>How to test DPI handling</title>
       <content>
         <para>
-          The easiest way to test that your app will do the right thing when run on 
-          devices with different display DPI is to run it in the Windows Simulator. In 
+          The easiest way to test that your app will do the right thing in response to 
+          changing display DPI is to run on Windows 10 and change display settings while 
+          the app is running:
+        </para>
+        <list class="bullet">
+          <listItem>Right-click on the desktop background and choose 'Display settings'</listItem>
+          <listItem>Move the slider labeled 'Change the size of text, apps, and other items'</listItem>
+          <listItem>Click the 'Apply' button</listItem>
+          <listItem>Choose 'Sign out later'</listItem>
+        </list>
+        <para>
+          If you do not have Windows 10, you can also test with the Windows Simulator. In 
           the Visual Studio toolbar, change the "Local Machine" setting to "Simulator", 
           then use the Change Resolution icon to switch the simulated display between:
         </para>

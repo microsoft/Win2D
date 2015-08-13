@@ -1,0 +1,125 @@
+<?xml version="1.0"?>
+<!--
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+Licensed under the MIT License. See LICENSE.txt in the project root for license information.
+-->
+
+<topic id="HandlingDeviceLost" revisionNumber="1">
+  <developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+    <section>
+      <content>
+        <para>
+          "Device lost" refers to a situation where the GPU graphics device becomes 
+          unusable for further rendering. This can occur due to GPU hardware malfunction, 
+          driver bugs, driver software updates, or switching the app from one GPU to 
+          another. A lost device can no longer be used, and any attempt to do so from 
+          Win2D will throw an exception. To recover from this situation, the app must 
+          create a new device and then recreate all its graphics resources.
+        </para>
+        <para>
+          Not all apps bother trying to recover from device lost. This is a (hopefully!) 
+          rare situation, so some developers will just let their apps crash if it occurs. 
+          For those who prefer to handle device lost in a robust way, this article 
+          explains how.
+        </para>
+      </content>
+    </section>
+
+    <section>
+      <title>Device lost when using XAML controls</title>
+      <content>
+        <para>
+          The Win2D controls (<codeEntityReference>T:Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl</codeEntityReference> 
+          and <codeEntityReference>T:Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl</codeEntityReference>) 
+          attempt to automatically handle device lost on behalf of the app.
+        </para>
+        <para>
+          When device lost is detected, these controls will recreate their CanvasDevice 
+          and then raise the CreateResources event passing a
+          <codeEntityReference>T:Microsoft.Graphics.Canvas.UI.CanvasCreateResourcesReason</codeEntityReference> of
+          <codeEntityReference>F:Microsoft.Graphics.Canvas.UI.CanvasCreateResourcesReason.NewDevice</codeEntityReference>.
+          Apps should respond to this event by recreating all their graphics resources 
+          using the new device, and updating any data structures that may contain 
+          references to the old, no-longer-valid resources.
+        </para>
+        <para>
+          The controls can automatically catch and handle device lost exceptions that are 
+          thrown by their CreateResources, Update, or Draw event handlers. If you call 
+          Win2D drawing APIs from other places (for instance in a pointer or keyboard 
+          input event handler) then see the next section.
+        </para>
+      </content>
+    </section>
+
+    <section>
+      <title>Manually handling device lost</title>
+      <content>
+        <para>
+          If you are
+          <externalLink>
+            <linkText>using Win2D without the built-in controls</linkText>
+            <linkUri>WithoutControls.htm</linkUri>
+          </externalLink>
+          or from outside the CreateResources, Update or Draw event handlers, then it is 
+          your responsibility to catch and report lost device exceptions. This is done with the 
+          <codeEntityReference>M:Microsoft.Graphics.Canvas.CanvasDevice.IsDeviceLost(System.Int32)</codeEntityReference> and 
+          <codeEntityReference>M:Microsoft.Graphics.Canvas.CanvasDevice.RaiseDeviceLost</codeEntityReference> methods:
+        </para>
+        <code>
+          try
+          {
+              DrawStuff();
+          }
+          catch (Exception e) where canvasDevice.IsDeviceLost(e.ErrorCode)
+          {
+              canvasDevice.RaiseDeviceLost();
+          }
+        </code>
+        <para>
+          Calling RaiseDeviceLost tells any controls that are sharing this device to 
+          initiate their lost device recovery path. If you got your device from somewhere 
+          other than a control, use the 
+          <codeEntityReference>E:Microsoft.Graphics.Canvas.CanvasDevice.DeviceLost</codeEntityReference> 
+          event to be informed when it is lost.
+        </para>
+      </content>
+    </section>
+
+    <section>
+      <title>How to test device lost handling</title>
+      <content>
+        <para>
+          The easiest way to test that your app will do the right thing in response to 
+          device lost is to disable your hardware GPU while the app is running:
+        </para>
+        <list class="bullet">
+          <listItem>Open Device Manager (Explorer window -> right-click 'This PC' -> 'Properties' -> 'Device Manager')</listItem>
+          <listItem>Expand the 'Display adapters' node</listItem>
+          <listItem>Right-click the entry for your GPU and click 'Disable'</listItem>
+        </list>
+        <para>
+          This will bypass your hardware GPU, at which point Windows switches over to a 
+          WARP software rendering device, and all active apps experience a device lost.
+        </para>
+        <para>
+          Don't forget to reenable your GPU after performing this test! If you want to 
+          test device lost more than once, it's best to restart your app each time 
+          (always launch it with the GPU enabled). Repeatedly toggling the GPU on and off 
+          while an app is running doesn't reliably cause lost devices as it may just 
+          continue using the WARP software device.
+        </para>
+        <para>
+          While testing lost device handling, you probably also want to make sure your 
+          app deals correctly with dynamic
+          <externalLink>
+            <linkText>display DPI changes</linkText>
+            <linkUri>DPI.htm</linkUri>
+          </externalLink>.
+        </para>
+      </content>
+    </section>
+    
+  </developerConceptualDocument>
+</topic>

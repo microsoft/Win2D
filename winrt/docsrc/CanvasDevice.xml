@@ -76,6 +76,9 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
           }
           </code>
           </p>
+          <p>
+          For more information, see <a href="HandlingDeviceLost.htm">Handling device lost</a>.
+          </p>
       </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasDevice.RaiseDeviceLost">
@@ -88,6 +91,9 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
           <p>
           Calling this method will produce an error if there was no actual Direct3D device loss.
           </p>
+          <p>
+          For more information, see <a href="HandlingDeviceLost.htm">Handling device lost</a>.
+          </p>
       </remarks>
     </member>
     <member name="E:Microsoft.Graphics.Canvas.CanvasDevice.DeviceLost">
@@ -99,6 +105,9 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
           </p>
           <p>
           An implementation of this handler is expected to re-create the device, and any device-dependent resources.
+          </p>
+          <p>
+          For more information, see <a href="HandlingDeviceLost.htm">Handling device lost</a>.
           </p>
       </remarks>
     </member>

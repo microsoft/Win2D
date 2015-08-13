@@ -273,6 +273,11 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
 
     <member name="T:Microsoft.Graphics.Canvas.UI.CanvasCreateResourcesReason">
       <summary>Indicates why a CreateResources event was raised.</summary>
+      <remarks>
+        For more information about why resources may need to be recreated, see 
+        the articles <a href="HandlingDeviceLost.htm">Handling device lost</a> 
+        and <a href="DPI.htm">DPI</a>.
+      </remarks>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.UI.CanvasCreateResourcesReason.FirstTime">
       <summary>First time resource creation. Everything must be created from scratch.</summary>
