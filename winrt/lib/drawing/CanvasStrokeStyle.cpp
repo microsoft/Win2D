@@ -45,7 +45,7 @@ CanvasStrokeStyle::CanvasStrokeStyle(ID2D1StrokeStyle1* d2dStrokeStyle)
     {
         m_dashStyle = CanvasDashStyle::Solid;
 
-        UINT32 customDashElementCount = d2dStrokeStyle->GetDashesCount();
+        uint32_t customDashElementCount = d2dStrokeStyle->GetDashesCount();
         if (customDashElementCount > 0)
         {
             m_customDashElements.resize(customDashElementCount);
@@ -215,7 +215,7 @@ IFACEMETHODIMP CanvasStrokeStyle::get_DashOffset(_Out_ float* value)
         });
 }
 
-IFACEMETHODIMP CanvasStrokeStyle::put_DashOffset(_In_ float value)
+IFACEMETHODIMP CanvasStrokeStyle::put_DashOffset(float value)
 {
     return ExceptionBoundary(
         [&]
@@ -230,8 +230,8 @@ IFACEMETHODIMP CanvasStrokeStyle::put_DashOffset(_In_ float value)
 }
 
 IFACEMETHODIMP CanvasStrokeStyle::get_CustomDashStyle(
-    UINT32 *valueCount,
-    float **valueElements)
+    uint32_t* valueCount,
+    float** valueElements)
 {
     return ExceptionBoundary(
         [&]
@@ -248,8 +248,8 @@ IFACEMETHODIMP CanvasStrokeStyle::get_CustomDashStyle(
 }
 
 IFACEMETHODIMP CanvasStrokeStyle::put_CustomDashStyle(
-    UINT32 valueCount,
-    float *valueElements)
+    uint32_t valueCount,
+    float* valueElements)
 {
     return ExceptionBoundary(
         [&]
@@ -360,7 +360,7 @@ ComPtr<ID2D1StrokeStyle1> CanvasStrokeStyle::GetRealizedD2DStrokeStyle(ID2D1Fact
         ThrowIfFailed(d2dFactory2->CreateStrokeStyle(
             strokeStyleProperties,
             dashArray,
-            static_cast<UINT32>(m_customDashElements.size()),
+            static_cast<uint32_t>(m_customDashElements.size()),
             &m_d2dStrokeStyle));
     }
 
