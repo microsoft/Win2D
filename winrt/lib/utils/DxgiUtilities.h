@@ -9,13 +9,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     using namespace ::Microsoft::WRL;
     using namespace WinRTDirectX;
 
-    template<typename U>
-    inline ComPtr<ICanvasDevice> GetCanvasDevice(U* resourceCreator)
+    inline ComPtr<ICanvasDevice> GetCanvasDevice(ICanvasResourceCreator* resourceCreator)
     {
-        auto realResourceCreator = As<ICanvasResourceCreator>(resourceCreator);
-        
         ComPtr<ICanvasDevice> device;
-        ThrowIfFailed(realResourceCreator->get_Device(&device));
+        ThrowIfFailed(resourceCreator->get_Device(&device));
 
         return device;
     }

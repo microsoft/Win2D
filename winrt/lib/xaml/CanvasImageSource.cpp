@@ -18,10 +18,12 @@ ComPtr<ICanvasDrawingSession> CanvasImageSourceDrawingSessionFactory::Create(
     ICanvasDevice* owner,
     ISurfaceImageSourceNativeWithD2D* sisNative,
     Color const& clearColor,
-    RECT const& updateRectangle,
+    Rect const& updateRectangleInDips,
     float dpi) const
 {
     CheckInPointer(sisNative);
+
+    RECT updateRectangle = ToRECT(updateRectangleInDips, dpi);
 
     ComPtr<ID2D1DeviceContext1> deviceContext;
     auto adapter = CanvasImageSourceDrawingSessionAdapter::Create(
@@ -274,19 +276,11 @@ IFACEMETHODIMP CanvasImageSource::CreateDrawingSessionWithUpdateRectangle(
             ComPtr<ISurfaceImageSourceNativeWithD2D> sisNative;
             ThrowIfFailed(GetComposableBase().As(&sisNative));
 
-            RECT rectInPixels =
-                {
-                    SizeDipsToPixels(updateRectangle.X, m_dpi),
-                    SizeDipsToPixels(updateRectangle.Y, m_dpi),
-                    SizeDipsToPixels(updateRectangle.X + updateRectangle.Width, m_dpi),
-                    SizeDipsToPixels(updateRectangle.Y + updateRectangle.Height, m_dpi),
-                };
-
             auto ds = m_drawingSessionFactory->Create(
                 m_device.Get(),
                 sisNative.Get(),
                 clearColor,
-                rectInPixels,
+                updateRectangle,
                 m_dpi);
             
             ThrowIfFailed(ds.CopyTo(drawingSession));

@@ -1,0 +1,238 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+//
+// Licensed under the MIT License. See LICENSE.txt in the project root for license information.
+
+namespace Microsoft.Graphics.Canvas.UI.Xaml
+{
+    //
+    // CanvasVirtualImageSource - this wraps a
+    // Windows.UI.Media.Imaging.VirtualSurfaceImageSource.  Note that it cannot
+    // derive from VirtualSurfaceImageSource as VirtualSurfaceImageSource is
+    // sealed (ie it is not marked composable).
+    //
+    // Usage:
+    //
+    //   var imageSource = new CanvasVirtualImageSource(canvasDevice, width, height, dpi);
+    //   imageControl.Source = imageSource.Source;
+    //
+    //   imageSource.RegionsInvalidated += (sender, args) =>
+    //   {
+    //       foreach (var rect in args.InvalidatedRegions)
+    //       {
+    //           using (var ds = imageSource.CreateDrawingSession(Colors.Transparent, rect))
+    //           {
+    //               MyDrawing(ds, rect);
+    //           }
+    //       }
+    //   }
+    //
+    // A drawing session created from CanvasVirtualImageSource can be marshaled
+    // to a different thread by using the SuspendDrawingSession and
+    // ResumeDrawingSession methods.  The drawing session must always be
+    // disposed on the UI thread.
+    //
+
+    runtimeclass CanvasVirtualImageSource;
+    runtimeclass CanvasRegionsInvalidatedEventArgs;
+
+    [version(VERSION),
+     uuid(2FE755A1-307A-4623-9250-29590485BDB6),
+     exclusiveto(CanvasVirtualImageSource)]
+    interface ICanvasVirtualImageSourceFactory : IInspectable
+    {
+        HRESULT CreateWithSize(
+            [in]          Microsoft.Graphics.Canvas.ICanvasResourceCreatorWithDpi* resourceCreator,
+            [in]          Windows.Foundation.Size size,
+            [out, retval] CanvasVirtualImageSource** imageSource);
+
+        HRESULT CreateWithWidthAndHeight(
+            [in]          Microsoft.Graphics.Canvas.ICanvasResourceCreatorWithDpi* resourceCreator,
+            [in]          float width,
+            [in]          float height, 
+            [out, retval] CanvasVirtualImageSource** imageSource);
+
+        HRESULT CreateWithWidthAndHeightAndDpi(
+            [in]          Microsoft.Graphics.Canvas.ICanvasResourceCreator* resourceCreator,
+            [in]          float width,
+            [in]          float height,
+            [in]          float dpi,
+            [out, retval] CanvasVirtualImageSource** imageSource);
+
+        HRESULT CreateWithWidthAndHeightAndDpiAndAlphaMode(
+            [in]          Microsoft.Graphics.Canvas.ICanvasResourceCreator* resourceCreator,
+            [in]          float width,
+            [in]          float height,
+            [in]          float dpi,
+            [in]          Microsoft.Graphics.Canvas.CanvasAlphaMode alphaMode,
+            [out, retval] CanvasVirtualImageSource** imageSource);
+    }
+
+    [version(VERSION),
+     uuid(DF342987-4FE6-4BCD-B885-2AD3E6EF9FCE),
+     exclusiveto(CanvasVirtualImageSource)]
+    interface ICanvasVirtualImageSource : IInspectable
+    {
+        //
+        // Returns the VirtualSurfaceImageSource wrapped by this object.
+        //
+        [propget]
+        HRESULT Source([out, retval] Windows.UI.Xaml.Media.Imaging.VirtualSurfaceImageSource** value);
+
+        //
+        // Returns a new drawing session for updating a region of the image
+        // source.  The entire region is cleared to the specified color.
+        //
+        // This can be called from any thread.
+        //
+        HRESULT CreateDrawingSession(
+            [in]          Windows.UI.Color clearColor,
+            [in]          Windows.Foundation.Rect updateRectangle,
+            [out, retval] Microsoft.Graphics.Canvas.CanvasDrawingSession** drawingSession);
+
+        //
+        // Suspends a drawing session; this allows the drawing session to be
+        // resumed on another thread, or closed on the UI thread.
+        //
+        HRESULT SuspendDrawingSession([in] Microsoft.Graphics.Canvas.CanvasDrawingSession* drawingSession);
+
+        //
+        // Resumes a drawing session that was previously suspended.  The drawing
+        // session can be resumed on any thread.
+        //
+        HRESULT ResumeDrawingSession([in] Microsoft.Graphics.Canvas.CanvasDrawingSession* drawingSession);
+
+        //
+        // Marks the entire virtual image as invalid.
+        //
+        [overload("Invalidate")]
+        HRESULT Invalidate();
+
+        //
+        // Marks a region of the virtual image as invalid.
+        //
+        [overload("Invalidate")]
+        HRESULT InvalidateRegion([in] Windows.Foundation.Rect region);
+
+        //
+        // The RegionsInvalidated event is raised when regions are invalidated.
+        // This may be directly as the result of a call to InvalidateRegion, or
+        // it may be because XAML has decided that a region of the virtual image
+        // needs updating because it is on the screen now, or may be about to be
+        // scrolled onto the scren.
+        //
+        [eventadd] 
+        HRESULT RegionsInvalidated(
+            [in]          Windows.Foundation.TypedEventHandler<CanvasVirtualImageSource*, CanvasRegionsInvalidatedEventArgs*>* value,
+            [out, retval] EventRegistrationToken* token);
+
+        [eventremove]
+        HRESULT RegionsInvalidated(
+            [in] EventRegistrationToken token);
+
+        //
+        // Resizes the virtual image
+        //
+        [overload("Resize")]
+        HRESULT ResizeWithSize(
+            [in] Windows.Foundation.Size size);
+
+        [overload("Resize")]
+        HRESULT ResizeWithWidthAndHeight(
+            [in] float width, 
+            [in] float height);
+
+        [overload("Resize")]
+        HRESULT ResizeWithWidthAndHeightAndDpi(
+            [in] float width, 
+            [in] float height,
+            [in] float dpi);
+
+        //
+        // Returns the device used to create this image source
+        //
+        [propget]
+        HRESULT Device(
+            [out, retval] Microsoft.Graphics.Canvas.CanvasDevice** value);
+
+        //
+        // Recreates the surface, binding it to a new device.  Should be called
+        // after device lost or CompositionTarget.SurfaceContentsLost.
+        //
+        HRESULT Recreate(
+            [in] Microsoft.Graphics.Canvas.ICanvasResourceCreator* resourceCreator);
+
+        //
+        // Gets the DPI of the image source.
+        //
+        [propget]
+        HRESULT Dpi([out, retval] float* dpi);
+
+        //
+        // Convert units between dips and pixels.
+        //
+        HRESULT ConvertPixelsToDips([in] INT32 pixels, [out, retval] float* dips);
+        HRESULT ConvertDipsToPixels([in] float dips, [in] Microsoft.Graphics.Canvas.CanvasDpiRounding dpiRounding, [out, retval] INT32* pixels);
+
+        //
+        // Gets the size of the image source, in dips or pixels.
+        //
+        [propget]
+        HRESULT Size([out, retval] Windows.Foundation.Size* size);
+
+        [propget]
+        HRESULT SizeInPixels([out, retval] Microsoft.Graphics.Canvas.BitmapSize* size);
+
+        //
+        // Gets the image source alpha mode.
+        //
+        [propget]
+        HRESULT AlphaMode([out, retval] Microsoft.Graphics.Canvas.CanvasAlphaMode* value);
+    }
+
+    [version(VERSION),
+     activatable(ICanvasVirtualImageSourceFactory, VERSION),
+     marshaling_behavior(agile),
+     threading(both)]
+    runtimeclass CanvasVirtualImageSource
+    {
+        [default] interface ICanvasVirtualImageSource;
+    }
+
+
+    //
+    // CanvasRegionsInvalidatedEventArgs - passed to the RegionsInvalidated
+    // event handler
+    //
+
+    [version(VERSION),
+     exclusiveto(CanvasRegionsInvalidatedEventArgs),
+     uuid(3A21A204-F52F-4E7A-9B3F-94669819D981)]
+    interface ICanvasRegionsInvalidatedEventArgs : IInspectable
+    {
+        //
+        // The array of rectangular regions that need redrawing.
+        //
+        [propget]
+        HRESULT InvalidatedRegions(
+            [out] UINT32* count,
+            [out, size_is(, *count), retval] Windows.Foundation.Rect** value);
+
+        //
+        // The visible region, as reported by the VirtualSurfaceImageSource.
+        // Apps can use this to, eg, prioritize redrawing visible regions before
+        // off-screen regions.
+        //
+        [propget]
+        HRESULT VisibleRegion(
+            [out, retval] Windows.Foundation.Rect* value);
+    }
+
+    [version(VERSION),
+     activatable(VERSION),
+     marshaling_behavior(agile),
+     threading(both)]
+    runtimeclass CanvasRegionsInvalidatedEventArgs
+    {
+        [default] interface ICanvasRegionsInvalidatedEventArgs;
+    }
+}

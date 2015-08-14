@@ -1,0 +1,179 @@
+<?xml version="1.0"?>
+<!--
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+Licensed under the MIT License. See LICENSE.txt in the project root for license information.
+-->
+
+<doc>
+  <assembly>
+    <name>Microsoft.Graphics.Canvas</name>
+  </assembly>
+  <members>
+    <member name="T:Microsoft.Graphics.Canvas.UI.Xaml.CanvasRegionsInvalidatedEventArgs" Experimental="true">
+      <summary>Provides data for the <see cref="E:Microsoft.Graphics.Canvas.UI.Xaml.CanvasVirtualImageSource.RegionsInvalidated"/> event.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.UI.Xaml.CanvasRegionsInvalidatedEventArgs.#ctor">
+      <summary>Initializes a new instance of the CanvasRegionsInvalidatedEventArgs class.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.UI.Xaml.CanvasRegionsInvalidatedEventArgs.InvalidatedRegions">
+      <summary>Gets an array of rectangular regions that need to be drawn.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.UI.Xaml.CanvasRegionsInvalidatedEventArgs.VisibleRegion">
+      <summary>Gets the region of the image that is currently visible on screen.</summary>
+    </member>
+    <member name="T:Microsoft.Graphics.Canvas.UI.Xaml.CanvasVirtualImageSource" Experimental="true">
+      <summary>Provides a virtualized ImageSource that can be used with XAML controls.</summary>
+      <remarks>
+        <p>
+          A CanvasVirtualImageSource can be sized much larger than the largest
+          image that Win2D can render to.  CanvasVirtualImageSource provides
+          events to indicate when regions of the image need to be redrawn.
+        </p>
+        <example>
+          <code>
+            var imageSource = new CanvasVirtualImageSource(canvasDevice, width, height, dpi);
+            imageControl.Source = imageSource.Source;
+            imageSource.RegionsInvalidated += ImageSource_RegionsInvalidated;
+
+            private void ImageSource_RegionsInvalidated(CanvasVirtualImageSource sender, CanvasRegionsInvalidatedEventArgs args)
+            {
+                foreach (var region in args.InvalidatedRegions)
+                {
+                    using (var ds = sender.CreateDrawingSession(clearColor, region))
+                    {
+                        // drawing commands
+                    }
+                }
+            }
+          </code>
+        </example>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.UI.Xaml.CanvasVirtualImageSource.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreatorWithDpi,Windows.Foundation.Size)">
+      <summary>Initializes a new instance of the CanvasVirtualImageSource class.</summary>
+      <remarks>Size is in device independent pixels (DIPs), and DPI is taken from the specified resource creator interface.</remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.UI.Xaml.CanvasVirtualImageSource.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreatorWithDpi,System.Single,System.Single)">
+      <summary>Initializes a new instance of the CanvasVirtualImageSource class.</summary>
+      <remarks>Size is in device independent pixels (DIPs), and DPI is taken from the specified resource creator interface.</remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.UI.Xaml.CanvasVirtualImageSource.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Single,System.Single,System.Single)">
+      <summary>Initializes a new instance of the CanvasVirtualImageSource class.</summary>
+      <remarks>Size is in device independent pixels (DIPs), using the specified DPI.</remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.UI.Xaml.CanvasVirtualImageSource.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.CanvasAlphaMode)">
+      <summary>Initializes a new instance of the CanvasVirtualImageSource class.</summary>
+      <remarks>
+        <p>
+          Size is in device independent pixels (DIPs), using the specified DPI.
+        </p>
+        <p>
+          The alphaMode parameter determines whether the background of the image
+          source is opaque or not.  An opaque image source is slightly more
+          efficient than a transparent image source.  CanvasAlphaMode.Ignore
+          indicates an opaque background, while CanvasAlphaMode.Premultiplied
+          indicates a transparent background.  Passing CanvasAlphaMode.Straight
+          to this parameter will result in an error.
+        </p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.UI.Xaml.CanvasVirtualImageSource.CreateDrawingSession(Windows.UI.Color,Windows.Foundation.Rect)">
+      <summary>Returns a new drawing session for updating a region of the image source.</summary>
+      <remarks>
+        The specified region of the image is cleared to the specified color
+        before this method returns.  The region is in device independent pixels
+        (DIPs).  Regions that need to be updated are provided by the <see
+        cref="P:Microsoft.Graphics.Canvas.UI.Xaml.CanvasRegionsInvalidatedEventArgs.InvalidatedRegions"/>
+        property passed to the <see
+        cref="E:Microsoft.Graphics.Canvas.UI.Xaml.CanvasVirtualImageSource.RegionsInvalidated"/>
+        event handler.
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.UI.Xaml.CanvasVirtualImageSource.SuspendDrawingSession(Microsoft.Graphics.Canvas.CanvasDrawingSession)">
+      <summary>Suspends a drawing session so that it may be resumed on another thread.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.UI.Xaml.CanvasVirtualImageSource.ResumeDrawingSession(Microsoft.Graphics.Canvas.CanvasDrawingSession)">
+      <summary>Resumes a previously suspended drawing session.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.UI.Xaml.CanvasVirtualImageSource.Invalidate">
+      <summary>Marks the entire image as needing to be redrawn.</summary>
+      <remarks>
+        <p>
+          This will cause the <see
+          cref="E:Microsoft.Graphics.Canvas.UI.Xaml.CanvasVirtualImageSource.RegionsInvalidated"/>
+          to be raised, as determined by the OS.
+        </p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.UI.Xaml.CanvasVirtualImageSource.Invalidate(Windows.Foundation.Rect)">
+      <summary>Marks a region of the image as needing to be redrawn.</summary>
+      <remarks>
+        <p>
+          This will cause the <see
+          cref="E:Microsoft.Graphics.Canvas.UI.Xaml.CanvasVirtualImageSource.RegionsInvalidated"/>
+          to be raised, as determined by the OS.
+        </p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.UI.Xaml.CanvasVirtualImageSource.Resize(Windows.Foundation.Size)">
+      <summary>Resizes the virtual image.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.UI.Xaml.CanvasVirtualImageSource.Resize(System.Single,System.Single)">
+      <summary>Resizes the virtual image.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.UI.Xaml.CanvasVirtualImageSource.Resize(System.Single,System.Single,System.Single)">
+      <summary>Resizes the virtual image and possibly changes the DPI.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.UI.Xaml.CanvasVirtualImageSource.Recreate(Microsoft.Graphics.Canvas.ICanvasResourceCreator)">
+      <summary>Recreates the underlying image source associating it with a different CanvasDevice.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.UI.Xaml.CanvasVirtualImageSource.ConvertPixelsToDips(System.Int32)">
+      <summary>Converts units from physical pixels to device independent pixels (DIPs) based on the DPI of this image source.</summary>
+      <remarks>For more information, see <a href="DPI.htm">DPI and DIPs</a>.</remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.UI.Xaml.CanvasVirtualImageSource.ConvertDipsToPixels(System.Single,Microsoft.Graphics.Canvas.CanvasDpiRounding)">
+      <summary>Converts units from device independent pixels (DIPs) to physical pixels based on the DPI of this image source.</summary>
+      <remarks>For more information, see <a href="DPI.htm">DPI and DIPs</a>.</remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.UI.Xaml.CanvasVirtualImageSource.AlphaMode">
+      <summary>Returns the alpha mode for this image source that was passed in
+      to the constructor.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.UI.Xaml.CanvasVirtualImageSource.Device">
+      <summary>Gets the device used by this image source.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.UI.Xaml.CanvasVirtualImageSource.Dpi">
+      <summary>Gets the dots-per-inch (DPI) of this image source.</summary>
+      <remarks>
+        <p>
+          DPI describes the ratio between device independent pixels (DIPs) and actual physical pixels.
+          The identity DPI value is 96, which means DIPs and pixels are the same.
+        </p>
+        <p>
+          For more information, see <a href="DPI.htm">DPI and DIPs</a>.
+        </p>
+      </remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.UI.Xaml.CanvasVirtualImageSource.Size">
+      <summary>Gets the size of the image source, in device independent pixels (DIPs).</summary>
+      <remarks>For more information, see <a href="DPI.htm">DPI and DIPs</a>.</remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.UI.Xaml.CanvasVirtualImageSource.SizeInPixels">
+      <summary>Gets the size of the image source, in pixels.</summary>
+      <remarks>For more information, see <a href="DPI.htm">DPI and DIPs</a>.</remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.UI.Xaml.CanvasVirtualImageSource.Source">
+      <summary>Gets the VirtualSurfaceImageSource wrapped by this object.</summary>
+      <remarks>
+        <p>
+          The value of this property is suitable for setting on a <a
+          href="https://msdn.microsoft.com/en-us/library/windows/apps/windows.ui.xaml.controls.image.source.aspx">Image.Source</a>.
+        </p>
+      </remarks>
+    </member>
+    <member name="E:Microsoft.Graphics.Canvas.UI.Xaml.CanvasVirtualImageSource.RegionsInvalidated">
+      <summary>Occurs when a region of the image needs redrawing.</summary>
+    </member>
+  </members>
+</doc>

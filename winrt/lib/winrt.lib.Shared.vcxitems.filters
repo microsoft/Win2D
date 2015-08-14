@@ -310,6 +310,9 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\VignetteEffect.cpp">
       <Filter>effects\generated</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)xaml\CanvasVirtualImageSource.cpp">
+      <Filter>xaml</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)pch.h" />
@@ -634,6 +637,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\VignetteEffect.h">
       <Filter>effects\generated</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)xaml\CanvasVirtualImageSource.h">
+      <Filter>xaml</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)Canvas.codegen.idl" />
@@ -867,6 +873,9 @@
     </None>
     <None Include="$(MSBuildThisFileDirectory)effects\IGraphicsEffect.abi.idl">
       <Filter>effects</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)xaml\CanvasVirtualImageSource.abi.idl">
+      <Filter>xaml</Filter>
     </None>
   </ItemGroup>
 </Project>

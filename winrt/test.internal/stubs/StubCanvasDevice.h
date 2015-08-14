@@ -118,10 +118,7 @@ namespace canvas
         IFACEMETHODIMP get_Device(ICanvasDevice** value) override
         {
             ComPtr<ICanvasDevice> device(this);
-
-            *value = device.Detach();
-
-            return S_OK;
+            return device.CopyTo(value);
         }
 
         IFACEMETHODIMP GetInterface(REFIID iid, void** p) override

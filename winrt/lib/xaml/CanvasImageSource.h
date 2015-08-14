@@ -20,7 +20,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             ICanvasDevice* owner,
             ISurfaceImageSourceNativeWithD2D* sisNative,
             Color const& clearColor,
-            RECT const& updateRectangle,
+            Rect const& updateRectangleInDips,
             float dpi) const = 0;
     };
 
@@ -146,7 +146,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             ICanvasDevice* owner,
             ISurfaceImageSourceNativeWithD2D* sisNative,
             Color const& clearColor,
-            RECT const& updateRectangle,
+            Rect const& updateRectangleInDips,
             float dpi) const override;
     };
 }}}}}}

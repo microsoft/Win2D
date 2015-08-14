@@ -116,6 +116,9 @@
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)VectorArtScene0.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)VectorArtScene1.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)VirtualImageSourceExample.xaml.cs">
+      <DependentUpon>VirtualImageSourceExample.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Page Include="$(MSBuildThisFileDirectory)AnimatedControlExample.xaml">
@@ -234,6 +237,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="$(MSBuildThisFileDirectory)VirtualImageSourceExample.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Content Include="$(MSBuildThisFileDirectory)Particles\explosion.png" />
@@ -299,5 +306,7 @@
     <Content Include="$(MSBuildThisFileDirectory)BitmapOrientation\orientation_8.jpg" />
     <Content Include="$(MSBuildThisFileDirectory)BitmapOrientation\orientation_9.jpg" />
     <Content Include="$(MSBuildThisFileDirectory)BitmapOrientation\orientation_65535.jpg" />
+    <Content Include="$(MSBuildThisFileDirectory)Thumbnails\VirtualImageSourceNarrow.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Thumbnails\VirtualImageSourceWide.png" />
   </ItemGroup>
 </Project>

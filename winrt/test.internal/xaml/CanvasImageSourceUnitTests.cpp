@@ -383,7 +383,7 @@ public:
         auto mockDrawingSessionFactory = std::make_shared<MockCanvasImageSourceDrawingSessionFactory>();
         auto canvasImageSource = Make<CanvasImageSource>(resourceCreator.Get(), 1.0f, 1.0f, expectedDpi, CanvasAlphaMode::Ignore, stubSurfaceImageSourceFactory.Get(), mockDrawingSessionFactory);
 
-        mockDrawingSessionFactory->CreateMethod.SetExpectedCalls(1, [&](ICanvasDevice*, ISurfaceImageSourceNativeWithD2D*, Color const&, RECT const&, float dpi)
+        mockDrawingSessionFactory->CreateMethod.SetExpectedCalls(1, [&](ICanvasDevice*, ISurfaceImageSourceNativeWithD2D*, Color const&, Rect const&, float dpi)
         {
             Assert::AreEqual(expectedDpi, dpi);
             return nullptr;
@@ -464,12 +464,10 @@ TEST_CLASS(CanvasImageSourceCreateDrawingSessionTests)
         Fixture f;
 
         f.m_canvasImageSourceDrawingSessionFactory->CreateMethod.SetExpectedCalls(1,
-            [&](ICanvasDevice*, ISurfaceImageSourceNativeWithD2D*, Color const&, RECT const& updateRect, float)
+            [&](ICanvasDevice*, ISurfaceImageSourceNativeWithD2D*, Color const&, Rect const& updateRect, float)
             {
-                Assert::AreEqual<int>(0, updateRect.left);
-                Assert::AreEqual<int>(0, updateRect.top);
-                Assert::AreEqual<int>(f.m_imageWidth, updateRect.right);
-                Assert::AreEqual<int>(f.m_imageHeight, updateRect.bottom);
+                Rect expectedRect{ 0, 0, static_cast<float>(f.m_imageWidth), static_cast<float>(f.m_imageHeight) };
+                Assert::AreEqual(expectedRect, updateRect);
                 return Make<MockCanvasDrawingSession>();
             });
 
@@ -482,51 +480,18 @@ TEST_CLASS(CanvasImageSourceCreateDrawingSessionTests)
     {
         Fixture f;
 
-        int32_t left = 1;
-        int32_t top = 2;
-        int32_t width = 3;
-        int32_t height = 4;
-
-        RECT expectedRect{ left, top, left + width, top + height };
+        Rect expectedRect{ 1, 2, 3, 4 };
 
         f.m_canvasImageSourceDrawingSessionFactory->CreateMethod.SetExpectedCalls(1, 
-            [&](ICanvasDevice*, ISurfaceImageSourceNativeWithD2D*, Color const&, RECT const& updateRect, float)
+            [&](ICanvasDevice*, ISurfaceImageSourceNativeWithD2D*, Color const&, Rect const& updateRect, float)
             {
-                Assert::AreEqual(expectedRect.left, updateRect.left);
-                Assert::AreEqual(expectedRect.top, updateRect.top);
-                Assert::AreEqual(expectedRect.right, updateRect.right);
-                Assert::AreEqual(expectedRect.bottom, updateRect.bottom);
+                Assert::AreEqual(expectedRect, updateRect);
                 return Make<MockCanvasDrawingSession>();
             });
 
 
         ComPtr<ICanvasDrawingSession> drawingSession;
-        ThrowIfFailed(f.m_canvasImageSource->CreateDrawingSessionWithUpdateRectangle(f.m_anyColor, Rect{ (float)left, (float)top, (float)width, (float)height }, &drawingSession));
-        Assert::IsTrue(drawingSession);
-    }
-
-    TEST_METHOD_EX(CanvasImageSource_CreateDrawingSessionWithUpdateRegion_PassesSpecifiedUpdateRegion_HighDpi)
-    {
-        Fixture f(DEFAULT_DPI * 2);
-
-        int32_t left = 1;
-        int32_t top = 2;
-        int32_t width = 3;
-        int32_t height = 4;
-
-        f.m_canvasImageSourceDrawingSessionFactory->CreateMethod.SetExpectedCalls(1,
-            [&](ICanvasDevice*, ISurfaceImageSourceNativeWithD2D*, Color const&, RECT const& updateRect, float)
-        {
-            Assert::AreEqual(left * 2, (int32_t)updateRect.left);
-            Assert::AreEqual(top * 2, (int32_t)updateRect.top);
-            Assert::AreEqual((left + width) * 2, (int32_t)updateRect.right);
-            Assert::AreEqual((top + height) * 2, (int32_t)updateRect.bottom);
-            return Make<MockCanvasDrawingSession>();
-        });
-
-
-        ComPtr<ICanvasDrawingSession> drawingSession;
-        ThrowIfFailed(f.m_canvasImageSource->CreateDrawingSessionWithUpdateRectangle(f.m_anyColor, Rect{ (float)left, (float)top, (float)width, (float)height }, &drawingSession));
+        ThrowIfFailed(f.m_canvasImageSource->CreateDrawingSessionWithUpdateRectangle(f.m_anyColor, expectedRect, &drawingSession));
         Assert::IsTrue(drawingSession);
     }
 
@@ -542,7 +507,7 @@ TEST_CLASS(CanvasImageSourceCreateDrawingSessionTests)
         Color expectedColor{ 1, 2, 3, 4 };
 
         f.m_canvasImageSourceDrawingSessionFactory->CreateMethod.SetExpectedCalls(2,
-            [&](ICanvasDevice*, ISurfaceImageSourceNativeWithD2D*, Color const& clearColor, RECT const&, float)
+            [&](ICanvasDevice*, ISurfaceImageSourceNativeWithD2D*, Color const& clearColor, Rect const&, float)
             {
                 Assert::AreEqual(expectedColor, clearColor);
                 return Make<MockCanvasDrawingSession>();
@@ -551,6 +516,43 @@ TEST_CLASS(CanvasImageSourceCreateDrawingSessionTests)
         ComPtr<ICanvasDrawingSession> ignoredDrawingSession;
         ThrowIfFailed(f.m_canvasImageSource->CreateDrawingSession(expectedColor, &ignoredDrawingSession));
         ThrowIfFailed(f.m_canvasImageSource->CreateDrawingSessionWithUpdateRectangle(expectedColor, Rect{ (float)anyLeft, (float)anyTop, (float)anyWidth, (float)anyHeight }, &ignoredDrawingSession));
+    }
+};
+
+TEST_CLASS(CanvasImageSourceDrawingSessionFactoryTests)
+{
+public:
+    TEST_METHOD_EX(CanvasImageSourceDrawingSessionFactory_CallsBeginDrawWithCorrectUpdateRectangle)
+    {
+        auto drawingSessionFactory = std::make_shared<CanvasImageSourceDrawingSessionFactory>();
+        auto surfaceImageSource = Make<MockSurfaceImageSource>();
+
+        float dpi = 123.0f;
+        Rect updateRectangleInDips{ 10, 20, 30, 40 };
+
+        RECT expectedUpdateRectangle = ToRECT(updateRectangleInDips, dpi);
+
+        surfaceImageSource->BeginDrawMethod.SetExpectedCalls(1,
+            [&] (RECT const& updateRectangle, IID const& iid, void** updateObject, POINT*)
+            {
+                Assert::AreEqual(expectedUpdateRectangle, updateRectangle);
+
+                auto dc = Make<StubD2DDeviceContext>(nullptr);
+                dc->SetTransformMethod.AllowAnyCall();
+
+                return dc.CopyTo(iid, updateObject);
+            });
+
+        surfaceImageSource->EndDrawMethod.SetExpectedCalls(1);
+
+        Color anyClearColor{ 1,2,3,4 };
+
+        drawingSessionFactory->Create(
+            Make<MockCanvasDevice>().Get(),
+            As<ISurfaceImageSourceNativeWithD2D>(surfaceImageSource).Get(),
+            anyClearColor,
+            updateRectangleInDips,
+            dpi);
     }
 };
 

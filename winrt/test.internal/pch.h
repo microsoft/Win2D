@@ -54,6 +54,7 @@ using namespace ABI::Microsoft::Graphics::Canvas::Effects;
 #include "stubs/StubCanvasDrawingSessionAdapter.h"
 #include "stubs/StubD2DDeviceContext.h"
 #include "stubs/StubImageControl.h"
+#include "stubs/StubResourceCreatorWithDpi.h"
 #include "stubs/StubSurfaceImageSource.h"
 #include "stubs/StubSurfaceImageSourceFactory.h"
 #include "stubs/StubUserControl.h"

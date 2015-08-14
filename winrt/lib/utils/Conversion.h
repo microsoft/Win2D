@@ -468,6 +468,26 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return result;
     }
 
+    inline RECT ToRECT(ABI::Windows::Foundation::Rect const& rect, float dpi)
+    {
+        auto left = SizeDipsToPixels(rect.X, dpi);
+        auto top = SizeDipsToPixels(rect.Y, dpi);
+        auto right = SizeDipsToPixels(rect.X + rect.Width, dpi);
+        auto bottom = SizeDipsToPixels(rect.Y + rect.Height, dpi);
+
+        return RECT{ left, top, right, bottom };
+    }
+
+    inline ABI::Windows::Foundation::Rect ToRect(RECT const& rect, float dpi)
+    {
+        auto x = PixelsToDips(rect.left, dpi);
+        auto y = PixelsToDips(rect.top, dpi);
+        auto width = PixelsToDips(rect.right - rect.left, dpi);
+        auto height = PixelsToDips(rect.bottom - rect.top, dpi);
+
+        return ABI::Windows::Foundation::Rect{ x, y, width, height };
+    }
+
 #if WINVER > _WIN32_WINNT_WINBLUE
 	inline D2D1_PATCH_EDGE_MODE ToD2DPatchEdgeMode(CanvasGradientMeshPatchEdge edge)
 	{

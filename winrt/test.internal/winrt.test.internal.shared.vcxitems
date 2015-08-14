@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="Globals">
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
@@ -22,8 +22,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockCoreWindow.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DEllipseGeometry.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DRectangleGeometry.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DRoundedRectangleGeometry.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockStorageFileStatics.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockSuspendingEventArgs.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockVirtualSurfaceImageSource.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockVirtualSurfaceImageSourceFactory.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)pch.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubD2DEffect.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubResourceCreatorWithDpi.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubStorageFile.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubStorageFileStatics.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)xaml\BaseControlTestAdapter.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)xaml\BasicControlFixture.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)xaml\CanvasAnimatedControlTestAdapter.h" />
@@ -98,6 +109,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\TestDeviceResourceCreationAdapter.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\TestEffect.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\Helpers.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)xaml\StubDispatcher.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)pch.cpp">
@@ -107,6 +119,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)xaml\CanvasAnimatedControlUnitTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)xaml\CanvasControlUnitTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)xaml\CanvasImageSourceUnitTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)xaml\CanvasVirtualImageSourceUnitTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)xaml\GameLoopThreadTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)xaml\CanvasSharedControlUnitTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)xaml\CanvasSwapChainPanelUnitTests.cpp" />
