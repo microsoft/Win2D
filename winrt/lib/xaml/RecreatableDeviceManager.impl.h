@@ -387,7 +387,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             {
                 auto deviceStatics = As<ICanvasDeviceStatics>(m_canvasDeviceFactory);
 
-                ThrowIfFailed(deviceStatics->GetSharedDevice(deviceCreationOptions.ForceSoftwareRenderer, &device));
+                ThrowIfFailed(deviceStatics->GetSharedDeviceWithForceSoftwareRenderer(deviceCreationOptions.ForceSoftwareRenderer, &device));
             }
             else
             {

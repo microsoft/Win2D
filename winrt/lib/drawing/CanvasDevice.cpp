@@ -480,6 +480,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
     IFACEMETHODIMP CanvasDeviceFactory::GetSharedDevice(
+        ICanvasDevice** device)
+    {
+        return GetSharedDeviceWithForceSoftwareRenderer(FALSE, device);
+    }
+
+    IFACEMETHODIMP CanvasDeviceFactory::GetSharedDeviceWithForceSoftwareRenderer(
         boolean forceSoftwareRenderer,
         ICanvasDevice** device)
     {

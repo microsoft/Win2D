@@ -410,6 +410,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         // ICanvasDeviceStatics
         //
         IFACEMETHOD(GetSharedDevice)(
+            ICanvasDevice** device);
+
+        IFACEMETHOD(GetSharedDeviceWithForceSoftwareRenderer)(
             boolean forceSoftwareRenderer,
             ICanvasDevice** device);
 

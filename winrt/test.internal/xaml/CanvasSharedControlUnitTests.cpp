@@ -462,7 +462,7 @@ struct DeviceCreationFixture : public BasicControlFixture<TRAITS>
     }
     void ExpectOneGetSharedDevice()
     {
-        Adapter->DeviceFactory->GetSharedDeviceMethod.SetExpectedCalls(1,
+        Adapter->DeviceFactory->GetSharedDeviceWithForceSoftwareRendererMethod.SetExpectedCalls(1,
             [&](boolean, ICanvasDevice** device)
         {
             Make<StubCanvasDevice>().CopyTo(device);
@@ -472,7 +472,7 @@ struct DeviceCreationFixture : public BasicControlFixture<TRAITS>
 
     void DoNotExpectGetSharedDevice()
     {
-        Adapter->DeviceFactory->GetSharedDeviceMethod.SetExpectedCalls(0);
+        Adapter->DeviceFactory->GetSharedDeviceWithForceSoftwareRendererMethod.SetExpectedCalls(0);
     }
 
     void ExpectOneCreateDevice()
@@ -610,7 +610,7 @@ TEST_CLASS(CanvasSharedControlTests_DeviceApis)
 
             auto stubDevice = Make<StubCanvasDevice>();
 
-            f.Adapter->DeviceFactory->GetSharedDeviceMethod.SetExpectedCalls(1,
+            f.Adapter->DeviceFactory->GetSharedDeviceWithForceSoftwareRendererMethod.SetExpectedCalls(1,
                 [&](boolean forceSoftwareRenderer, ICanvasDevice** device)
                 {
                     Assert::AreEqual(expectedForceSoftwareRenderer, forceSoftwareRenderer);

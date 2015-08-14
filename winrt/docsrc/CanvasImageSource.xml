@@ -88,7 +88,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
 
             void UpdateImageSource()
             {
-                var device = CanvasDevice.GetSharedDevice(false);
+                var device = CanvasDevice.GetSharedDevice();
                 if (device != imageSource.Device || surfaceContentsLost)
                 {
                     imageSource.Recreate(device);

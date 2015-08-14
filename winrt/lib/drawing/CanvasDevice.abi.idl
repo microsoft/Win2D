@@ -51,8 +51,15 @@ namespace Microsoft.Graphics.Canvas
         //
         // The implementation checks if a device is already lost before it 
         // returns it. If the device is already lost it will recreate it.
-        // 
+        //
+        // Defaults for forceSoftwareRenderer = false
+        //
+        [overload("GetSharedDevice")]
         HRESULT GetSharedDevice(
+            [out, retval] CanvasDevice** canvasDevice);
+        
+        [overload("GetSharedDevice")]
+        HRESULT GetSharedDeviceWithForceSoftwareRenderer(
             [in] boolean forceSoftwareRenderer, 
             [out, retval] CanvasDevice** canvasDevice);
 

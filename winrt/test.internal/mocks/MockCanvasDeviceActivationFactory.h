@@ -8,7 +8,7 @@ class MockCanvasDeviceActivationFactory : public RuntimeClass<IActivationFactory
 {
 public:
     CALL_COUNTER_WITH_MOCK(ActivateInstanceMethod, HRESULT(IInspectable**));
-    CALL_COUNTER_WITH_MOCK(GetSharedDeviceMethod, HRESULT(boolean, ICanvasDevice**));
+    CALL_COUNTER_WITH_MOCK(GetSharedDeviceWithForceSoftwareRendererMethod, HRESULT(boolean, ICanvasDevice**));
     CALL_COUNTER_WITH_MOCK(CreateWithForceSoftwareRendererOptionMethod, HRESULT(boolean, ICanvasDevice**));
     CALL_COUNTER_WITH_MOCK(put_DebugLevelMethod, HRESULT(CanvasDebugLevel));
     CALL_COUNTER_WITH_MOCK(get_DebugLevelMethod, HRESULT(CanvasDebugLevel*));
@@ -22,7 +22,7 @@ public:
             });
     }
 
-    IFACEMETHODIMP ActivateInstance(IInspectable** value)
+    IFACEMETHODIMP ActivateInstance(IInspectable** value) override
     {
         return ExceptionBoundary(
             [=]
@@ -40,31 +40,36 @@ public:
 
     IFACEMETHODIMP CreateWithForceSoftwareRendererOption(
         boolean forceSoftwareRenderer,
-        ICanvasDevice** canvasDevice)
+        ICanvasDevice** canvasDevice) override
     {
         return CreateWithForceSoftwareRendererOptionMethod.WasCalled(forceSoftwareRenderer, canvasDevice);
     }
 
     IFACEMETHODIMP CreateFromDirect3D11Device(
         IDirect3DDevice* direct3DDevice,
-        ICanvasDevice** canvasDevice)
+        ICanvasDevice** canvasDevice) override
     {
         return E_NOTIMPL;
     }
 
-    IFACEMETHODIMP GetSharedDevice(
-        boolean forceSoftwareRenderer,
-        ICanvasDevice** device)
+    IFACEMETHODIMP GetSharedDevice(ICanvasDevice** device) override
     {
-        return GetSharedDeviceMethod.WasCalled(forceSoftwareRenderer, device);
+        return GetSharedDeviceWithForceSoftwareRenderer(FALSE, device);
     }
 
-    IFACEMETHODIMP put_DebugLevel(CanvasDebugLevel debugLevel)
+    IFACEMETHODIMP GetSharedDeviceWithForceSoftwareRenderer(
+        boolean forceSoftwareRenderer,
+        ICanvasDevice** device) override
+    {
+        return GetSharedDeviceWithForceSoftwareRendererMethod.WasCalled(forceSoftwareRenderer, device);
+    }
+
+    IFACEMETHODIMP put_DebugLevel(CanvasDebugLevel debugLevel) override
     {
         return put_DebugLevelMethod.WasCalled(debugLevel);
     }
 
-    IFACEMETHODIMP get_DebugLevel(CanvasDebugLevel* debugLevel)
+    IFACEMETHODIMP get_DebugLevel(CanvasDebugLevel* debugLevel) override
     {
         return get_DebugLevelMethod.WasCalled(debugLevel);
     }

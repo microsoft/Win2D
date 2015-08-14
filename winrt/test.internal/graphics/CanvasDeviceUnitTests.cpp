@@ -788,7 +788,7 @@ public:
     {
         auto canvasDeviceFactory = Make<CanvasDeviceFactory>();
 
-        Assert::AreEqual(E_INVALIDARG, canvasDeviceFactory->GetSharedDevice(false, nullptr));
+        Assert::AreEqual(E_INVALIDARG, canvasDeviceFactory->GetSharedDevice(nullptr));
     }
 
     ComPtr<ICanvasDevice> GetSharedDevice_ExpectForceSoftwareRenderer(

@@ -112,8 +112,10 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       </remarks>
     </member>
 
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDevice.GetSharedDevice(System.Boolean)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDevice.GetSharedDevice" Experimental="true">
       <summary>Gets a device that can be shared between multiple different rendering components, such as controls.</summary>
+      <remarks>
+          <p>This overload defaults to choosing a hardware accelerated device.</p>
           <p>
           Before being returned, the device is checked for whether it is lost. If it is lost, <see cref="M:Microsoft.Graphics.Canvas.CanvasDevice.RaiseDeviceLost"/>
           is called on the device, and then it is re-created.
@@ -122,6 +124,21 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
           The shared device returned may not necessary have the debug level in the <see cref="P:Microsoft.Graphics.Canvas.CanvasDevice.DebugLevel"/> property,
           if the property has been modified in between calls to GetSharedDevice.
           </p>
+      </remarks>
+    </member>
+
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDevice.GetSharedDevice(System.Boolean)">
+      <summary>Gets a device that can be shared between multiple different rendering components, such as controls.</summary>
+      <remarks>
+          <p>
+          Before being returned, the device is checked for whether it is lost. If it is lost, <see cref="M:Microsoft.Graphics.Canvas.CanvasDevice.RaiseDeviceLost"/>
+          is called on the device, and then it is re-created.
+          </p>
+          <p>
+          The shared device returned may not necessary have the debug level in the <see cref="P:Microsoft.Graphics.Canvas.CanvasDevice.DebugLevel"/> property,
+          if the property has been modified in between calls to GetSharedDevice.
+          </p>
+      </remarks>
     </member>    
 
     <member name="P:Microsoft.Graphics.Canvas.CanvasDevice.DebugLevel">

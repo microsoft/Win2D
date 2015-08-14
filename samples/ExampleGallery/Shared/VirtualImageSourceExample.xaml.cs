@@ -36,7 +36,7 @@ namespace ExampleGallery
         {
             CompositionTarget.SurfaceContentsLost += CompositionTarget_SurfaceContentsLost;
 
-            var device = CanvasDevice.GetSharedDevice(false);
+            var device = CanvasDevice.GetSharedDevice();
             imageSource = new CanvasVirtualImageSource(device, width, height, dpi);
             imageSource.RegionsInvalidated += ImageSource_RegionsInvalidated;
             image.Source = imageSource.Source;
@@ -55,7 +55,7 @@ namespace ExampleGallery
 
         private void RecreateDevice()
         {
-            var device = CanvasDevice.GetSharedDevice(false);
+            var device = CanvasDevice.GetSharedDevice();
             if (imageSource.Device != device)
                 imageSource.Recreate(device);
         }

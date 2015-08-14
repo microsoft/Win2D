@@ -137,7 +137,7 @@ namespace ExampleGallery
             if (double.IsInfinity(availableSize.Height))
                 availableSize.Height = 6000;
 
-            var device = CanvasDevice.GetSharedDevice(false);
+            var device = CanvasDevice.GetSharedDevice();
 
             var layout = CreateTextLayout(device, availableSize);
             var bounds = layout.LayoutBounds;

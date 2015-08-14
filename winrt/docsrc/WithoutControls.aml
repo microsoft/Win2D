@@ -178,7 +178,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
           
         Then, in C#:
         <code>
-        CanvasDevice device = CanvasDevice.GetSharedDevice(false);
+        CanvasDevice device = CanvasDevice.GetSharedDevice();
         CanvasImageSource imageSource = new CanvasImageSource(device, width, height);
         image.Source = imageSource;
         </code>
@@ -223,7 +223,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         A CanvasSwapChainPanel does not have a swap chain automatically assigned 
         to it. An an example, to assign one:
         <code>
-        CanvasDevice device = CanvasDevice.GetSharedDevice(false);
+        CanvasDevice device = CanvasDevice.GetSharedDevice();
         CanvasSwapChain swapChain = new CanvasSwapChain(device, width, height, 96);
         canvasSwapChainPanel.SwapChain = swapChain;
         </code>

@@ -21,7 +21,7 @@ public:
         : SurfaceContentsLostEventSource(Make<MockEventSourceUntyped>(L"SurfaceContentsLost"))
         , CompositionRenderingEventSource(Make<MockEventSourceUntyped>(L"CompositionRendering"))
     {
-        DeviceFactory->GetSharedDeviceMethod.AllowAnyCall(
+        DeviceFactory->GetSharedDeviceWithForceSoftwareRendererMethod.AllowAnyCall(
             [&](boolean, ICanvasDevice** device)
             {
                 auto stubDevice = Make<StubCanvasDevice>();
