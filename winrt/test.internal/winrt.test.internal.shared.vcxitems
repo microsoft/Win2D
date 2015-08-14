@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="Globals">
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
@@ -106,6 +106,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)xaml\BaseControlUnitTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)xaml\CanvasAnimatedControlUnitTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)xaml\CanvasControlUnitTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)xaml\CanvasImageSourceUnitTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)xaml\GameLoopThreadTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)xaml\CanvasSharedControlUnitTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)xaml\CanvasSwapChainPanelUnitTests.cpp" />
@@ -121,7 +122,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasGradientBrushUnitTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasGradientMeshUnitTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasImageBrushUnitTests.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasImageSourceUnitTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasImageUnitTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasPathBuilderUnitTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasRenderTargetUnitTests.cpp" />
