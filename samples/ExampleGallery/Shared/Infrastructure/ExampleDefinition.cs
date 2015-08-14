@@ -50,6 +50,7 @@ namespace ExampleGallery
             new ExampleDefinition("Video Effect", typeof(BasicVideoEffectExample)),
             new ExampleDefinition("Camera Effect", typeof(CameraEffectExample)),
             new ExampleDefinition("Ink", typeof(InkExample)),
+            new ExampleDefinition("Gradient Mesh", typeof(GradientMeshExample)),
 #endif
             new ExampleDefinition("Particle System", typeof(ParticleExample)),
             new ExampleDefinition("Geometry Operations", typeof(GeometryOperations)),

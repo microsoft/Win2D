@@ -113,6 +113,9 @@
     <Compile Include="CameraEffectExample.xaml.cs">
       <DependentUpon>CameraEffectExample.xaml</DependentUpon>
     </Compile>
+    <Compile Include="GradientMeshExample.xaml.cs">
+      <DependentUpon>GradientMeshExample.xaml</DependentUpon>
+    </Compile>
     <Compile Include="InkExample.xaml.cs">
       <DependentUpon>InkExample.xaml</DependentUpon>
     </Compile>
@@ -136,6 +139,8 @@
     <Content Include="Assets\InkThumbnailStrokes.bin" />
     <Content Include="Thumbnails\CameraEffectNarrow.png" />
     <Content Include="Thumbnails\CameraEffectWide.png" />
+    <Content Include="Thumbnails\GradientMeshNarrow.png" />
+    <Content Include="Thumbnails\GradientMeshWide.png" />
     <Content Include="Thumbnails\InkNarrow.png" />
     <Content Include="Thumbnails\InkWide.png" />
     <Content Include="Thumbnails\VideoEffectNarrow.png" />
@@ -153,6 +158,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="CameraEffectExample.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="GradientMeshExample.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
