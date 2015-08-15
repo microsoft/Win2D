@@ -66,6 +66,9 @@
     <WildcardImages Include="..\..\winrt\docsrc\media\*.png" />
     <WildcardImages Include="..\..\winrt\docsrc\media\*.svg" />
 
+    <!-- Generated title pages for index topics -->
+    <WildcardConceptual Include="$(MSBuildThisFileDirectory)..\..\obj\docs\topics\*.aml" />
+
     <!-- Expand wildcards and fill in their metadata -->
     <None Include="@(WildcardConceptual)">
       <Link>conceptual\%(Filename)%(Extension)</Link>

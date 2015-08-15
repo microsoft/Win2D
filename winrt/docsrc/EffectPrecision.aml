@@ -10,8 +10,10 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <introduction>
       <para>
         Care must be taken while rendering effects using Win2D to achieve the desired level of 
-        quality and predictability with respect to numerical precision. You need to understand 
-        these details if:
+        quality and predictability with respect to numerical precision.
+      </para>
+      <para>
+        You need to understand these details if:
       </para>
       <list class="ordered">
         <listItem>

@@ -15,11 +15,14 @@ The documentation build process works like so:
    documentation, or if there are stale docs left over from old types that no longer 
    exist in the API.
 
-5) The Sandcastle tool (http://shfb.codeplex.com and https://github.com/EWSoftware/SHFB)
+5) The PreprocessDocs tool preprocesses the docsrc files, inserting boilerplate text for
+   standard tags like [Win10] and [Experimental].
+
+6) The Sandcastle tool (http://shfb.codeplex.com and https://github.com/EWSoftware/SHFB)
    combines the generated temporary assemblies, docsrc XML files, and overview pages
    generated from .aml files, creating HTML reference documentation which ends up in bin\docs.
 
-6) The MergeIntellisense tool combines all the XML files from the docsrc folders to 
+7) The MergeIntellisense tool combines all the XML files from the docsrc folders to 
    create a single merged XML per assembly, which is used by Visual Studio intellisense. 
    The merged results are written to bin\intellisense.
 

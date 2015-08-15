@@ -104,7 +104,7 @@
       <DocPreprocessTool>$(BinariesDirectory)\WindowsAnyCPU\$(Configuration)\DocPreprocess\DocPreprocess.exe</DocPreprocessTool>
     </PropertyGroup>
 
-    <Exec Command="&quot;$(DocPreprocessTool)&quot; /OutputPath:&quot;$(IntermediateOutputPath)docsrc&quot; @(DocSrc, ' ')" />
+    <Exec Command="&quot;$(DocPreprocessTool)&quot; /LayoutContent:$(MsBuildThisFileDirectory)Layout.content /DocSrcOutput:$(IntermediateOutputPath)docsrc /TopicsOutput:$(IntermediateOutputPath)topics @(DocSrc, ' ') @(WildcardConceptual->'/AmlSrc:&quot;%(Identity)&quot;', ' ')" />
   </Target>
 
 

@@ -39,7 +39,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <summary>
         <p>This namespace provides image manipulation effects such as blur and saturation.</p>
         <p>Effects are a type of <see cref="T:Microsoft.Graphics.Canvas.ICanvasImage"/>, so they can be displayed 
-           using <see cref="O:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawImage"/> or 
+           using <see cref="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawImage(Microsoft.Graphics.Canvas.ICanvasImage)"/> or 
            <see cref="T:Microsoft.Graphics.Canvas.Brushes.CanvasImageBrush"/>. The source data fed into an effect 
            is also of type ICanvasImage, which allows you to connect either a bitmap or another effect. 
            Complex image processing graphs can be constructed by chaining many effects together.</p>

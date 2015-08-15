@@ -4,11 +4,11 @@
 
 using Shared;
 using System;
-using System.Linq;
-using System.Xml.Linq;
-using System.IO;
-using System.Xml;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Xml;
+using System.Xml.Linq;
 
 namespace DocPreprocess
 {
@@ -29,7 +29,9 @@ namespace DocPreprocess
             // Run the program logic.
             try
             {
-                Run(options);
+                var docsrc = PreprocessDocuments(options);
+
+                GenerateIndexTopics(options, docsrc);
             }
             catch (Exception e)
             {
@@ -41,26 +43,32 @@ namespace DocPreprocess
         }
 
 
-        static void Run(CommandLineOptions options)
+        static XDocument[] PreprocessDocuments(CommandLineOptions options)
         {
             Console.WriteLine("Preprocessing documentation sources");
 
-            Directory.CreateDirectory(options.OutputPath);
+            Directory.CreateDirectory(options.DocSrcOutput);
+
+            var allDocuments = new List<XDocument>();
 
             foreach (var filename in options.DocSrc)
             {
                 var doc = XDocument.Load(filename);
 
-                Preprocess(doc, filename);
+                PreprocessDocument(doc, filename);
 
-                string output = Path.Combine(options.OutputPath, Path.GetFileName(filename));
+                string output = Path.Combine(options.DocSrcOutput, Path.GetFileName(filename));
 
                 doc.Save(output);
+
+                allDocuments.Add(doc);
             }
+
+            return allDocuments.ToArray();
         }
 
 
-        static void Preprocess(XDocument doc, string filename)
+        static void PreprocessDocument(XDocument doc, string filename)
         {
             var members = doc.Element("doc").Element("members").Elements();
 
@@ -91,7 +99,7 @@ namespace DocPreprocess
         {
             // Find all the types (classes, structs) that have this tag.
             var taggedTypes = (from member in members
-                               where IsMemberType(member, 'T') && HasTag(member, tag)
+                               where IsMemberType(member, 'T') && HasAttribute(member, tag.Attribute)
                                select MemberName(member) + '.').ToList();
 
             // Find members (methods, fields) of these types that should also be tagged.
@@ -108,7 +116,7 @@ namespace DocPreprocess
 
         static void InsertTagText(IEnumerable<XElement> members, Tag tag)
         {
-            foreach (var member in members.Where(e => HasTag(e, tag)))
+            foreach (var member in members.Where(e => HasAttribute(e, tag.Attribute)))
             {
                 // Clear the no-longer-needed attribute.
                 member.SetAttributeValue(tag.Attribute, null);
@@ -128,6 +136,189 @@ namespace DocPreprocess
                 summary.AddFirst(new XElement("b", tag.Summary + " "));
                 remarks.AddFirst(new XElement("p", new XElement("i", tag.Description)));
             }
+        }
+
+
+        static void GenerateIndexTopics(CommandLineOptions options, XDocument[] docsrc)
+        {
+            Console.WriteLine("Processing layout content");
+
+            Directory.CreateDirectory(options.TopicsOutput);
+
+            // Find index topics in the Sandcastle Layout.content file that don't already have handwritten .aml content.
+            var layoutContent = XDocument.Load(options.LayoutContent);
+
+            var topics = from element in layoutContent.Descendants("Topic")
+                         where HasAttribute(element, "generateTopic")
+                         select element;
+
+            // Autogenerate .aml content for these topics.
+            foreach (var topic in topics)
+            {
+                GenerateTopicPage(options, docsrc, topic);
+            }
+        }
+
+
+        static readonly XNamespace ns = "http://ddue.schemas.microsoft.com/authoring/2003/5";
+        static readonly XNamespace xlink = "http://www.w3.org/1999/xlink";
+
+
+        static void GenerateTopicPage(CommandLineOptions options, XDocument[] docsrc, XElement parentTopic)
+        {
+            string topicId = parentTopic.Attribute("id").Value;
+
+            var summaryAttribute = parentTopic.Attribute("summary");
+            var summaryElement = summaryAttribute != null ? new XElement(ns + "para", summaryAttribute.Value) : null;
+
+            var topicPage = new XDocument(
+                                new XElement("topic", 
+                                    new XAttribute("id", topicId),
+                                    new XAttribute("revisionNumber", 1),
+                                    new XElement(ns + "developerConceptualDocument",
+                                        new XAttribute(XNamespace.Xmlns + "xlink", xlink),
+                                        new XElement(ns + "section",
+                                            new XElement(ns + "content",
+                                                summaryElement,
+                                                new XElement(ns + "table",
+
+                                                    // Each child of this topic forms one row of the table.
+                                                    from childTopic in parentTopic.Elements("Topic")
+                                                    select FormatChildTopic(options, docsrc, childTopic)
+                                                )
+                                            )
+                                        )
+                                    )
+                                )
+                            );
+
+            string output = Path.Combine(options.TopicsOutput, topicId + ".aml");
+
+            topicPage.Save(output);
+        }
+
+
+        static object FormatChildTopic(CommandLineOptions options, XDocument[] docsrc, XElement childTopic)
+        {
+            // Row of the table consists of a link to the child topic, plus topic description text.
+            var childTopicRow = FormatTableRow(
+                                    new XElement(ns + "link",
+                                        new XAttribute(xlink + "href", childTopic.Attribute("id").Value),
+                                        (childTopic.Attribute("tocTitle") ?? childTopic.Attribute("title")).Value
+                                    ),
+                                    GetTopicSummary(options, childTopic)
+                                );
+
+            if (childTopic.Attribute("apiParentMode") != null)
+            {
+                // Insert reference documentation namespace links at the location marked by apiParentMode attribute.
+                if (childTopic.Attribute("apiParentMode").Value != "InsertBefore")
+                    throw new NotSupportedException();
+
+                var namespaceList = FormatNamespaceList(docsrc);
+
+                return namespaceList.Concat(new XElement[] { childTopicRow });
+            }
+            else
+            {
+                // Otherwise just directly insert the row for this child topic.
+                return childTopicRow;
+            }
+        }
+
+
+        static object GetTopicSummary(CommandLineOptions options, XElement topic)
+        {
+            // Do we have a .aml file matching this topic?
+            string topicId = topic.Attribute("id").Value;
+
+            var filename = options.AmlSrc.FirstOrDefault(aml => topicId.Equals(Path.GetFileNameWithoutExtension(aml), StringComparison.OrdinalIgnoreCase));
+
+            if (filename != null)
+            {
+                // Include the first paragraph of the .aml article in the index page.
+                var doc = XDocument.Load(filename);
+
+                return doc.Descendants(ns + "para").First().Nodes();
+            }
+            else
+            {
+                // If no .aml file, look for a summary attribute in the Layout.content metadata.
+                var summary = topic.Attribute("summary");
+
+                return (summary != null) ? summary.Value : null;
+            }
+        }
+
+
+        static IEnumerable<XElement> FormatNamespaceList(XDocument[] docsrc)
+        {
+            // Find all the namespaces that we have reference docs for.
+            var namespaceList = from doc in docsrc
+                                from member in doc.Element("doc").Element("members").Elements()
+                                where IsMemberType(member, 'N')
+                                orderby MemberName(member)
+                                select member;
+
+            // Format them into a table.
+            return from member in namespaceList
+                   select FormatTableRow(
+                       new XElement(ns + "codeEntityReference", member.Attribute("name").Value),
+                       GetNamespaceSummary(member)
+                   );
+        }
+
+
+        static IEnumerable<object> GetNamespaceSummary(XElement namespaceMember)
+        {
+            var summary = namespaceMember.Element("summary");
+
+            // If there is more than one paragraph, include only the first one in the summary.
+            var paragraphs = summary.Elements("p");
+
+            if (paragraphs.Count() > 1)
+            {
+                summary = paragraphs.First();
+            }
+
+            return ConvertDocSrcToAml(summary);
+        }
+
+
+        static IEnumerable<object> ConvertDocSrcToAml(XElement element)
+        {
+            return element.Nodes().Select(ConvertNodeToAml);
+        }
+
+
+        static object ConvertNodeToAml(XNode node)
+        {
+            var childElement = node as XElement;
+
+            if (childElement == null)
+                return node;
+
+            switch (childElement.Name.LocalName)
+            {
+                case "p":
+                    return new XElement(ns + "para", ConvertDocSrcToAml(childElement));
+
+                case "see":
+                    return new XElement(ns + "codeEntityReference", childElement.Attribute("cref").Value);
+
+                case "a":
+                    return new XElement(ns + "link", new XAttribute(xlink + "href", childElement.Attribute("href").Value.Replace(".htm", "")), childElement.Value);
+
+                default:
+                    return childElement.Value;
+            }
+        }
+
+
+        static XElement FormatTableRow(params object[] columnContent)
+        {
+            return new XElement(ns + "row", from content in columnContent
+                                            select new XElement(ns + "entry", content));
         }
 
 
@@ -152,9 +343,9 @@ namespace DocPreprocess
         }
 
 
-        static bool HasTag(XElement member, Tag tag)
+        static bool HasAttribute(XElement element, string attributeName)
         {
-            var attribute = member.Attribute(tag.Attribute);
+            var attribute = element.Attribute(attributeName);
 
             return attribute != null && XmlConvert.ToBoolean(attribute.Value);
         }

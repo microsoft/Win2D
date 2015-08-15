@@ -12,6 +12,11 @@ namespace DocPreprocess
         [CommandLineParser.Required]
         public readonly List<string> DocSrc = new List<string>();
 
-        public string OutputPath;
+        public readonly List<string> AmlSrc = new List<string>();
+
+        public string LayoutContent;
+
+        public string DocSrcOutput;
+        public string TopicsOutput;
     }
 }

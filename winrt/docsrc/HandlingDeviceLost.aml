@@ -58,10 +58,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <content>
         <para>
           If you are
-          <externalLink>
-            <linkText>using Win2D without the built-in controls</linkText>
-            <linkUri>WithoutControls.htm</linkUri>
-          </externalLink>
+          <link xlink:href="WithoutControls">using Win2D without the built-in controls</link>
           or from outside the CreateResources, Update or Draw event handlers, then it is 
           your responsibility to catch and report lost device exceptions. This is done with the 
           <codeEntityReference>M:Microsoft.Graphics.Canvas.CanvasDevice.IsDeviceLost(System.Int32)</codeEntityReference> and 
@@ -112,11 +109,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         </para>
         <para>
           While testing lost device handling, you probably also want to make sure your 
-          app deals correctly with dynamic
-          <externalLink>
-            <linkText>display DPI changes</linkText>
-            <linkUri>DPI.htm</linkUri>
-          </externalLink>.
+          app deals correctly with dynamic <link xlink:href="DPI">display DPI changes</link>.
         </para>
       </content>
     </section>

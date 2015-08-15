@@ -3,7 +3,7 @@
   <Topic id="Introduction" title="Introduction" isDefault="true" />
   <Topic id="QuickStart" title="Quick start" />
 
-  <Topic id="APIReference" title="API Reference">
+  <Topic id="APIReference" title="API Reference" generateTopic="true">
     <Topic id="WindowsNumerics" title="Windows.Foundation.Numerics Namespace" tocTitle="Windows.Foundation.Numerics" apiParentMode="InsertBefore">
       <Topic id="WindowsNumerics_float2" title="float2 Structure" />
       <Topic id="WindowsNumerics_float3" title="float3 Structure" />
@@ -16,7 +16,7 @@
     </Topic>
   </Topic>
 
-  <Topic id="Articles" title="Articles">
+  <Topic id="Articles" title="Articles" generateTopic="true">
     <Topic id="Interop" title="Interop with Direct2D" />
     <Topic id="Offscreen" title="Offscreen drawing" />
     <Topic id="DPI" title="DPI and DIPs" />
