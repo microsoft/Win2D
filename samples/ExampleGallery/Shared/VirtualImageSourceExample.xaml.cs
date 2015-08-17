@@ -141,9 +141,12 @@ namespace ExampleGallery
                     }
                 }
 
-                DrawTextWithBackground(ds, tryPanningOrZoomingLayout, gridSize / 2, gridSize / 2);
-                DrawTextWithBackground(ds, infoLayout, gridSize * 3.5, gridSize * 5.5);
-                DrawTextWithBackground(ds, youMadeIt, width - youMadeIt.RequestedSize.Width, height - youMadeIt.RequestedSize.Height);
+                if (!ThumbnailGenerator.IsDrawingThumbnail)
+                {
+                    DrawTextWithBackground(ds, tryPanningOrZoomingLayout, gridSize / 2, gridSize / 2);
+                    DrawTextWithBackground(ds, infoLayout, gridSize * 3.5, gridSize * 5.5);
+                    DrawTextWithBackground(ds, youMadeIt, width - youMadeIt.RequestedSize.Width, height - youMadeIt.RequestedSize.Height);
+                }
             }
         }
 
@@ -164,7 +167,11 @@ namespace ExampleGallery
 
         private Color NextColor()
         {
-            var brightness = 3;
+            if (ThumbnailGenerator.IsDrawingThumbnail)
+                return Colors.SandyBrown;
+
+            float brightness = 3;
+
             var r = (random.NextDouble() + brightness) / (1 + brightness);
             var g = (random.NextDouble() + brightness) / (1 + brightness);
             var b = (random.NextDouble() + brightness) / (1 + brightness);
