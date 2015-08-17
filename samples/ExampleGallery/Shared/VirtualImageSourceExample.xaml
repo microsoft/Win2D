@@ -21,18 +21,21 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
 
     <Grid Margin="15">
         <Grid.RowDefinitions>
-            <RowDefinition Height="auto"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="1*" MinHeight="30" MaxHeight="200"/>
+            <RowDefinition Height="10*" MinHeight="100"/>
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
-        <TextBlock Grid.Row="0" TextWrapping="Wrap" Margin="15">
-            This example shows a CanvasVirtualImageSource in action. The XAML layout contains a ScrollViewer with a single Image control.  The 
-            Source property on the image is set to a CanvasVirtualImageSource.
-        </TextBlock>
+        
+        <ScrollViewer Grid.Row="0">
+            <TextBlock TextWrapping="Wrap" VerticalAlignment="Center">
+                This example shows a CanvasVirtualImageSource in action. The XAML layout contains a ScrollViewer with a single Image control.  The 
+                Source property on the image is set to a CanvasVirtualImageSource.
+            </TextBlock>
+        </ScrollViewer>
         <ScrollViewer Grid.Row="1" HorizontalScrollMode="Enabled" VerticalScrollMode="Enabled" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"
                       ZoomMode="Enabled" MaxZoomFactor="2" MinZoomFactor="0.5">
             <Image x:Name="image" Stretch="None" Margin="15"/>
         </ScrollViewer>
-        <TextBlock Grid.Row="2" x:Name="status" Margin="15"/>
+        <TextBlock Grid.Row="2" x:Name="status" Margin="1" FontSize="10" Text="Status"/>
     </Grid>
 </UserControl>
