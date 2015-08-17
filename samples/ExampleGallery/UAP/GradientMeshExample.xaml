@@ -106,6 +106,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
                               x:Name="canvasControl" 
                               Draw="canvasControl_Draw" 
                               PointerPressed="canvasControl_PointerPressed"
+                              PointerReleased="canvasControl_PointerReleased"
                               PointerMoved="canvasControl_PointerMoved"/>
 
     </Grid>

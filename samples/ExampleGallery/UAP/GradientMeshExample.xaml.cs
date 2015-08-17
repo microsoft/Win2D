@@ -81,6 +81,8 @@ namespace ExampleGallery
             Color03 = namedColors[1];
             Color30 = namedColors[2];
             Color33 = namedColors[3];
+
+            pickedUp.PatchIndex = -1;
         }
 
         void EnsureMesh(ICanvasResourceCreator resourceCreator)
@@ -344,24 +346,33 @@ namespace ExampleGallery
                         pickedUp.PointIndex = j;
                         return;
                     }
-
                 }
             }
+            pickedUp.PatchIndex = -1;
+        }
+
+        private void canvasControl_PointerReleased(object sender, PointerRoutedEventArgs e)
+        {
+            pickedUp.PatchIndex = -1;
+            e.Handled = true;
         }
 
         private void canvasControl_PointerMoved(object sender, PointerRoutedEventArgs e)
         {
-            foreach (var point in e.GetIntermediatePoints(canvasControl))
+            if (pickedUp.PatchIndex >= 0)
             {
-                if (point.IsInContact)
+                foreach (var point in e.GetIntermediatePoints(canvasControl))
                 {
-                    patchPoints[pickedUp.PatchIndex][pickedUp.PointIndex] = point.Position.ToVector2();
-                    gradientMesh = null;
-                    break;
+                    if (point.IsInContact)
+                    {
+                        patchPoints[pickedUp.PatchIndex][pickedUp.PointIndex] = point.Position.ToVector2();
+                        gradientMesh = null;
+                        break;
+                    }
                 }
+                canvasControl.Invalidate();
+                e.Handled = true;
             }
-            canvasControl.Invalidate();
-            e.Handled = true;
         }
     }
 }
