@@ -167,7 +167,7 @@ TEST_CLASS(CanvasSharedControlTests_InteractionWithRecreatableDeviceManager)
         f.Adapter->LogicalDpi = 100;
         f.Adapter->RaiseDpiChangedEvent();
 
-        // When the control loads, the DPI change shoudl be picked up.
+        // When the control loads, the DPI change should be picked up.
         f.DeviceManager->SetDpiChangedMethod.SetExpectedCalls(1);
         f.Load();
     }

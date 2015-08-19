@@ -13,6 +13,11 @@ static Color const AnyOtherTranslucentColor { 250, 249, 248, 247 };
 
 static auto const TicksPerFrame = StepTimer::TicksPerSecond / 60;
 
+static float dpiTestCases[] = {
+    50,
+    DEFAULT_DPI,
+    200 };
+
 class FixtureWithSwapChainAccess : public CanvasAnimatedControlFixture
 {
 protected:
@@ -558,6 +563,96 @@ TEST_CLASS(CanvasAnimatedControlTests)
 
             Assert::AreEqual(ResizeFixture::TickCountForExecute, sleepCount);
         }
+    }
+
+    class DpiFixture : public ResizeFixture
+    {
+    public:
+        float m_controlSize;
+
+        DpiFixture(float controlSize = 1000)
+            : m_controlSize(controlSize)
+        {
+            // Set an initial size. Commit it using a resize event.
+            UserControl->Resize(Size{ m_controlSize, m_controlSize });
+
+            // An event handler needs to be registered for a drawing session to be constructed.
+            auto onDrawFn =
+                Callback<Animated_DrawEventHandler>([](ICanvasAnimatedControl*, ICanvasAnimatedDrawEventArgs*) { return S_OK; });
+            EventRegistrationToken drawEventToken;
+            ThrowIfFailed(Control->add_Draw(onDrawFn.Get(), &drawEventToken));
+
+            m_dxgiSwapChain->ResizeBuffersMethod.AllowAnyCall();
+        }
+
+        void SetDpiAndFireEvent(float dpi)
+        {
+            Adapter->LogicalDpi = dpi;
+            Adapter->RaiseDpiChangedEvent();
+        }
+
+        void DoNotExpectResizeBuffers()
+        {
+            m_dxgiSwapChain->ResizeBuffersMethod.SetExpectedCalls(0);
+        }
+    };
+
+    TEST_METHOD_EX(CanvasAnimatedControl_AfterDpiChange_ExpectResize)
+    {
+        for (auto dpiCase : dpiTestCases)
+        {
+            DpiFixture f;
+
+            float dpiRatio = dpiCase / DEFAULT_DPI;
+
+            Size expectedPixelSize{ roundf(f.m_controlSize * dpiRatio), roundf(f.m_controlSize * dpiRatio) };
+            f.ExpectOneResizeBuffers(expectedPixelSize);
+
+            f.SetDpiAndFireEvent(dpiCase);
+
+            f.Adapter->Tick();
+            f.Adapter->DoChanged();
+        }
+    }
+
+    TEST_METHOD_EX(CanvasAnimatedControl_AfterDpiChange_DeviceContextHasDpiSet)
+    {
+        for (auto dpiCase : dpiTestCases)
+        {
+            DpiFixture f;
+
+            auto deviceContext = Make<StubD2DDeviceContext>(nullptr);
+            f.Adapter->InitialDevice->CreateDeviceContextMethod.AllowAnyCall(
+                [&]
+                {
+                    return deviceContext;
+                });
+
+            deviceContext->SetDpiMethod.SetExpectedCalls(1,
+                [&](float dpiX, float dpiY)
+                {
+                    Assert::AreEqual(dpiCase, dpiX);
+                    Assert::AreEqual(dpiCase, dpiY);
+                });
+
+            f.SetDpiAndFireEvent(dpiCase);
+
+            f.Adapter->Tick();
+            f.Adapter->DoChanged();
+        }
+    }
+
+    TEST_METHOD_EX(CanvasAnimatedControl_ZeroSizedControl_DpiChange_DoesNotResize)
+    {
+        DpiFixture f(0);
+
+        f.DoNotExpectResizeBuffers();
+
+        float someDpi = 123.0f;
+        f.SetDpiAndFireEvent(someDpi);
+
+        f.Adapter->Tick();
+        f.Adapter->DoChanged();
     }
 
     class DeviceLostFixture : public FixtureWithSwapChainAccess

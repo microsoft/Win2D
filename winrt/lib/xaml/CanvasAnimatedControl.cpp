@@ -956,7 +956,8 @@ bool CanvasAnimatedControl::Tick(
 
     Color clearColor;
     Size currentSize;
-    GetSharedState(lock, &clearColor, &currentSize);
+	float currentDpi;
+    GetSharedState(lock, &clearColor, &currentSize, &currentDpi);
 
     // If the opacity has changed then the swap chain will need to be
     // recreated before we can draw.
@@ -1080,13 +1081,20 @@ bool CanvasAnimatedControl::Tick(
     //
     if ((updateResult.Updated || forceDraw || invalidated) && isVisible)
     {
+        bool zeroSizedTarget = currentSize.Width <= 0 || currentSize.Height <= 0;
+        
+        // A dpi change doesn't matter on a zero-sized target.
+        bool dpiChangedOnNonZeroSizedTarget = renderTarget->Dpi != currentDpi && !zeroSizedTarget;
+
+        bool sizeChanged = renderTarget->Size != currentSize;
+
         //
-        // If the control's size has changed then the swapchain's buffers
+        // If the control's size or dpi has changed then the swapchain's buffers
         // need to be resized as appropriate.
         //
-        if (renderTarget->Size != currentSize)
+        if (sizeChanged || dpiChangedOnNonZeroSizedTarget)
         {
-            if (currentSize.Width <= 0 || currentSize.Height <= 0 || !renderTarget->Target)
+            if (zeroSizedTarget || !renderTarget->Target)
             {
                 //
                 // Switching between zero and non-zero sized rendertargets requires calling
@@ -1104,8 +1112,14 @@ bool CanvasAnimatedControl::Tick(
                 //  - the current render target won't be updated by the UI thread
                 //    while the update/render thread is running
                 //
-                ThrowIfFailed(renderTarget->Target->ResizeBuffersWithWidthAndHeight(currentSize.Width, currentSize.Height));
+                ThrowIfFailed(renderTarget->Target->ResizeBuffersWithWidthAndHeightAndDpi(currentSize.Width, currentSize.Height, currentDpi));
+
+				//
+				// The size and dpi fields of the render target object represent the real, committed state of the render
+				// target, while currentSize/currentDpi represent the thing last requested by the app.
+				//
                 renderTarget->Size = currentSize;
+				renderTarget->Dpi = currentDpi;
             }
         }
 

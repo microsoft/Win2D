@@ -109,7 +109,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         bool m_isLoaded;
         bool m_isSuspended;
         bool m_isVisible;
-        float m_dpi;
         bool m_useSharedDevice;
         bool m_forceSoftwareRenderer;
 
@@ -124,6 +123,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         std::mutex m_mutex;
         Size m_currentSize;     // protected by m_mutex
         Color m_clearColor;     // protected by m_mutex
+        float m_dpi;            // protected by m_mutex
 
         RenderTarget m_currentRenderTarget;
 
@@ -378,7 +378,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                 [&]
                 {
                     CheckInPointer(dpi);
-                    *dpi = m_dpi;
+
+                    *dpi = GetCurrentDpi();
                 });
         }
 
@@ -388,7 +389,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                 [&]
                 {
                     CheckInPointer(dips);
-                    *dips = PixelsToDips(pixels, m_dpi);
+
+                    *dips = PixelsToDips(pixels, GetCurrentDpi());
                 });
         }
 
@@ -398,7 +400,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                 [&]
                 {
                     CheckInPointer(pixels);
-                    *pixels = DipsToPixels(dips, m_dpi, dpiRounding);
+
+                    *pixels = DipsToPixels(dips, GetCurrentDpi(), dpiRounding);
                 });
         }
 
@@ -570,6 +573,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             return m_currentSize;
         }
 
+        float GetCurrentDpi()
+        {
+            auto lock = GetLock();
+            return m_dpi;
+        }
+
         DeviceCreationOptions GetDeviceCreationOptions(Lock const& lock)
         {
             MustOwnLock(lock);
@@ -579,12 +588,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             return options;
         }
 
-        void GetSharedState(Lock const& lock, Color* clearColor, Size* currentSize)
+        void GetSharedState(Lock const& lock, Color* clearColor, Size* currentSize, float* currentDpi)
         {
             MustOwnLock(lock);
 
             *clearColor = m_clearColor;
             *currentSize = m_currentSize;
+            *currentDpi = m_dpi;
         }
 
         Lock GetLock()
@@ -639,14 +649,25 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                     callback.Get());
             }
 
-            auto clearColor = GetClearColor();
+            Color clearColor;
+            Size unused;
+            float currentDpi;
+            auto lock = GetLock();
+            GetSharedState(lock, &clearColor, &unused, &currentDpi);
+            lock.unlock();
+
             bool areResourcesCreated = !IsSet(flags, RunWithDeviceFlags::ResourcesNotCreated);
 
-            UpdateCurrentRenderTarget(device, renderTargetSize, flags, clearColor);
+            UpdateCurrentRenderTarget(device, renderTargetSize, flags, clearColor, currentDpi);
             fn(m_currentRenderTarget.Target.Get(), device, clearColor, areResourcesCreated);
         }
 
-        void UpdateCurrentRenderTarget(ICanvasDevice* device, Size const& renderTargetSize, RunWithDeviceFlags flags, Color const& clearColor)
+        void UpdateCurrentRenderTarget(
+            ICanvasDevice* device, 
+            Size const& renderTargetSize, 
+            RunWithDeviceFlags flags, 
+            Color const& clearColor,
+            float dpi)
         {
             if (IsSet(flags, RunWithDeviceFlags::NewlyCreatedDevice))
                 m_currentRenderTarget = RenderTarget{};
@@ -660,7 +681,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             GetControl()->CreateOrUpdateRenderTarget(
                 device,
                 alphaMode,
-                m_dpi,
+                dpi,
                 renderTargetSize,
                 &m_currentRenderTarget);
         }
@@ -723,7 +744,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                 GetWindow());
 
             // Check if the DPI changed while we weren't listening for events.
-            OnDpiChanged(nullptr, nullptr);
+            ThrowIfFailed(OnDpiChanged(nullptr, nullptr));
         }
 
         void UnregisterEventHandlers()
@@ -758,11 +779,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             return ExceptionBoundary(
                 [&]
                 {
-                    auto lock = GetLock();
-                    m_isLoaded = true;
                     RegisterEventHandlers();
                     UpdateLastSeenParent();
                     Loaded();
+
+                    auto lock = GetLock();
+                    m_isLoaded = true;
                     Changed(lock);
                 });
         }
@@ -833,15 +855,27 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         {
             return ExceptionBoundary(
                 [&]
-            {
-                float newDpi = m_adapter->GetLogicalDpi();
-
-                if (newDpi != m_dpi)
                 {
-                    m_dpi = newDpi;
-                    m_recreatableDeviceManager->SetDpiChanged();
-                }
-            });
+                    float newDpi = m_adapter->GetLogicalDpi();
+
+                    if (newDpi != m_dpi)
+                    {
+                        auto lock = GetLock();
+
+                        m_dpi = newDpi;
+
+                        //
+                        // The recreatable device manager
+                        // may turn around and call Changed() on this 
+                        // control, which takes out the lock. In that
+                        // case, we want to make sure we don't hold the
+                        // lock.
+                        //
+                        lock.unlock();
+
+                        m_recreatableDeviceManager->SetDpiChanged();
+                    }
+                });
         }
 
         HRESULT OnWindowVisibilityChanged(IInspectable*, IVisibilityChangedEventArgs* args)
