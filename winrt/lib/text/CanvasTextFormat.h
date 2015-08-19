@@ -10,53 +10,19 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 {
     using namespace ::Microsoft::WRL;
 
-    //
-    // CanvasTextFormatAdapter
-    //
-
-    class ICanvasTextFormatAdapter
-    {
-    public:
-        virtual ~ICanvasTextFormatAdapter() = default;
-
-        virtual ComPtr<IDWriteFactory> CreateDWriteFactory(DWRITE_FACTORY_TYPE type) = 0;
-        virtual IStorageFileStatics* GetStorageFileStatics() = 0;
-    };
-
-    class CanvasTextFormatAdapter : public ICanvasTextFormatAdapter
-    {
-        ComPtr<IStorageFileStatics> m_storageFileStatics;
-
-    public:
-        virtual ComPtr<IDWriteFactory> CreateDWriteFactory(DWRITE_FACTORY_TYPE type) override;
-        virtual IStorageFileStatics* GetStorageFileStatics() override;
-    };
-
     class CanvasTextFormat;
+
 
     //
     // CanvasTextFormatManager
     //
-    // This follows the pattern of CanvasTextFormatFactory /
-    // PerApplicationManager / CanvasTextFormatManager since it plays nicely
-    // with our established leak tracking code.  
-    //
-    // Note that CanvasTextFormatManager does not derive from ResourceManager,
-    // since CanvasTextFormat is not a wrapped resource and doesn't support
-    // idempotent interop.
-    //
 
     class CanvasTextFormatManager 
-        : public CustomFontManager
-        , public std::enable_shared_from_this<CanvasTextFormatManager>
-        , public StoredInPropertyMap
-        , private LifespanTracker<CanvasTextFormatManager>
+        : private LifespanTracker<CanvasTextFormatManager>
     {
     public:
-        CanvasTextFormatManager(std::shared_ptr<ICanvasTextFormatAdapter> adapter);
-
         ComPtr<CanvasTextFormat> Create();
-        ComPtr<CanvasTextFormat> Create(IDWriteTextFormat* format);
+        ComPtr<CanvasTextFormat> CreateWrapper(IDWriteTextFormat* format);
     };
 
 
@@ -65,39 +31,18 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     //
 
     class CanvasTextFormatFactory 
-        : public ActivationFactory<
-            CloakedIid<ICanvasFactoryNative>>,
-          public PerApplicationManager<CanvasTextFormatFactory, CanvasTextFormatManager>
+        : public ActivationFactory<>
+        , private LifespanTracker<CanvasTextFormatFactory>
     {
-        InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_Text_CanvasTextFormat, BaseTrust);
-
     public:
-        CanvasTextFormatFactory();
-
-        //
-        // ActivationFactory
-        //
-
+        IMPLEMENT_DEFAULT_GETMANAGER(CanvasTextFormatManager)
+            
         IFACEMETHOD(ActivateInstance)(IInspectable** obj) override;
-
-        //
-        // ICanvasFactoryNative
-        //
-
-        IFACEMETHOD(GetOrCreate)(
-            IUnknown* resource,
-            IInspectable** wrapper) override;
-
-        //
-        // Used by PerApplicationManager
-        //
-        static std::shared_ptr<CanvasTextFormatManager> CreateManager();
     };
 
 
-
     //
-    // CanvasTextFormat
+    // ICanvasTextFormatInternal
     //
 
     [uuid(E295AC1E-B763-49D4-9AE3-6E75D0C429AA)]
@@ -115,17 +60,18 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     // keeps track of shadow copies of properties and recreates ("realizes") an
     // IDWriteTextFormat as necessary.
     //
-    class CanvasTextFormat : public RuntimeClass<
-        RuntimeClassFlags<WinRtClassicComMix>,
-        ICanvasTextFormat,
-        ABI::Windows::Foundation::IClosable,
-        CloakedIid<ICanvasTextFormatInternal>,
-        CloakedIid<ICanvasResourceWrapperNative>>,
+    class CanvasTextFormat :
+        public RuntimeClass<
+            RuntimeClassFlags<WinRtClassicComMix>,
+            ICanvasTextFormat,
+            ABI::Windows::Foundation::IClosable,
+            CloakedIid<ICanvasTextFormatInternal>,
+            CloakedIid<ICanvasResourceWrapperNative>>,
         private LifespanTracker<CanvasTextFormat>
     {
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_Text_CanvasTextFormat, BaseTrust);
 
-        std::shared_ptr<CanvasTextFormatManager> m_manager;
+        std::shared_ptr<CustomFontManager> m_customFontManager;
         
         //
         // Has Close() been called?  It is tempting to use a null m_format to
@@ -169,8 +115,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         ComPtr<IDWriteTextFormat> m_format;
 
     public:
-        CanvasTextFormat(std::shared_ptr<CanvasTextFormatManager> manager);
-        CanvasTextFormat(std::shared_ptr<CanvasTextFormatManager> manager, IDWriteTextFormat* format);
+        CanvasTextFormat();
+        CanvasTextFormat(IDWriteTextFormat* format);
 
         //
         // ICanvasTextFormat
@@ -217,7 +163,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         //
         
         IFACEMETHOD(GetResource)(REFIID iid, void** resource) override;
-
 
     private:
         void ThrowIfClosed();

@@ -23,7 +23,7 @@ TEST_CLASS(CanvasCachedGeometryTests)
         ComPtr<CanvasCachedGeometry> CreateCachedGeometry()
         {
             auto mockD2DGeometryRealization = Make<MockD2DGeometryRealization>();
-            auto cachedGeometry = Manager->GetOrCreate(Device.Get(), mockD2DGeometryRealization.Get());
+            auto cachedGeometry = Make<CanvasCachedGeometry>(Device.Get(), mockD2DGeometryRealization.Get());
             return cachedGeometry;
         }
     };
@@ -77,7 +77,7 @@ TEST_CLASS(CanvasCachedGeometryTests)
             , StrokeStyle(Make<CanvasStrokeStyle>())
             , m_factory(Make<StubD2DFactoryWithCreateStrokeStyle>())
         {
-            CanvasRectangleGeometry = m_geometryManager->GetOrCreate(Device.Get(), D2DRectangleGeometry.Get()); 
+            CanvasRectangleGeometry = Make<CanvasGeometry>(Device.Get(), D2DRectangleGeometry.Get()); 
 
             StrokeStyle->put_LineJoin(CanvasLineJoin::MiterOrBevel);
 
@@ -109,15 +109,15 @@ TEST_CLASS(CanvasCachedGeometryTests)
 
         f.Device->CreateStrokedGeometryRealizationMethod.SetExpectedCalls(0);
 
-        f.CachedGeometryManager->Create(f.Device.Get(), f.CanvasRectangleGeometry.Get(), 5.0f);
+        f.CachedGeometryManager->CreateNew(f.Device.Get(), f.CanvasRectangleGeometry.Get(), 5.0f);
     }
 
     TEST_METHOD_EX(CanvasCachedGeometry_CreateFill_NullArgs)
     {
         GeometryObjectAccess_Fixture f;
 
-        ExpectHResultException(E_INVALIDARG, [&]{ f.CachedGeometryManager->Create(nullptr, f.CanvasRectangleGeometry.Get(), 5.0f); });
-        ExpectHResultException(E_INVALIDARG, [&]{ f.CachedGeometryManager->Create(f.Device.Get(), nullptr, 5.0f); });
+        ExpectHResultException(E_INVALIDARG, [&]{ f.CachedGeometryManager->CreateNew(nullptr, f.CanvasRectangleGeometry.Get(), 5.0f); });
+        ExpectHResultException(E_INVALIDARG, [&]{ f.CachedGeometryManager->CreateNew(f.Device.Get(), nullptr, 5.0f); });
     }
 
     TEST_METHOD_EX(CanvasCachedGeometry_CreateStroke)
@@ -137,7 +137,7 @@ TEST_CLASS(CanvasCachedGeometryTests)
 
         f.Device->CreateFilledGeometryRealizationMethod.SetExpectedCalls(0);
 
-        f.CachedGeometryManager->Create(f.Device.Get(), f.CanvasRectangleGeometry.Get(), 99.0f, f.StrokeStyle.Get(), 5.0f);
+        f.CachedGeometryManager->CreateNew(f.Device.Get(), f.CanvasRectangleGeometry.Get(), 99.0f, f.StrokeStyle.Get(), 5.0f);
         f.VerifyStrokeStyle();
     }
 
@@ -145,7 +145,7 @@ TEST_CLASS(CanvasCachedGeometryTests)
     {
         GeometryObjectAccess_Fixture f;
 
-        ExpectHResultException(E_INVALIDARG, [&]{ f.CachedGeometryManager->Create(nullptr, f.CanvasRectangleGeometry.Get(), 0.0f, f.StrokeStyle.Get(), 0.0f); });
-        ExpectHResultException(E_INVALIDARG, [&]{ f.CachedGeometryManager->Create(f.Device.Get(), nullptr, 0.0f, f.StrokeStyle.Get(), 0.0f); });
+        ExpectHResultException(E_INVALIDARG, [&]{ f.CachedGeometryManager->CreateNew(nullptr, f.CanvasRectangleGeometry.Get(), 0.0f, f.StrokeStyle.Get(), 0.0f); });
+        ExpectHResultException(E_INVALIDARG, [&]{ f.CachedGeometryManager->CreateNew(f.Device.Get(), nullptr, 0.0f, f.StrokeStyle.Get(), 0.0f); });
     }
 };

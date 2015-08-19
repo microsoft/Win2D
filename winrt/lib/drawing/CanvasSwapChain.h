@@ -16,15 +16,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     class CanvasSwapChainManager;
 
     class CanvasSwapChainFactory
-        : public ActivationFactory<
-        ICanvasSwapChainFactory,
-        ICanvasSwapChainStatics,
-        CloakedIid<ICanvasDeviceResourceWithDpiFactoryNative>> ,
-        public PerApplicationManager<CanvasSwapChainFactory, CanvasSwapChainManager>
+        : public ActivationFactory<ICanvasSwapChainFactory, ICanvasSwapChainStatics>
+        , private LifespanTracker<CanvasSwapChainFactory>
     {
         InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_CanvasSwapChain, BaseTrust);
 
     public:
+        IMPLEMENT_DEFAULT_GETMANAGER(CanvasSwapChainManager)
+
         CanvasSwapChainFactory();
 
         //
@@ -78,28 +77,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             DirectXPixelFormat format,
             int32_t bufferCount,
             ICanvasSwapChain** swapChain);
-
-        //
-        // ICanvasDeviceResourceWithDpiFactoryNative
-        //
-
-        IFACEMETHOD(GetOrCreate)(
-            ICanvasDevice* device,
-            IUnknown* resource,
-            float dpi,
-            IInspectable** wrapper) override;
-    };
-
-    struct CanvasSwapChainTraits
-    {
-        typedef IDXGISwapChain1 resource_t;
-        typedef CanvasSwapChain wrapper_t;
-        typedef ICanvasSwapChain wrapper_interface_t;
-        typedef CanvasSwapChainManager manager_t;
-
-        // IDXGISwapChain1 is used here, rather than IDXGISwapChain2, since
-        // IDXGISwapChain2 is not supported on all platforms and swap chains (ie
-        // a CoreWindow swap chain on Phone doesn't implement IDXGISwapChain2).
     };
 
     class ICanvasSwapChainAdapter
@@ -110,8 +87,16 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         virtual void Sleep(DWORD timeInMs) = 0;
     };
 
+    // IDXGISwapChain1 is used here, rather than IDXGISwapChain2, since
+    // IDXGISwapChain2 is not supported on all platforms and swap chains (ie
+    // a CoreWindow swap chain on Phone doesn't implement IDXGISwapChain2).
+
     class CanvasSwapChain : RESOURCE_WRAPPER_RUNTIME_CLASS(
-        CanvasSwapChainTraits,
+        IDXGISwapChain1,
+        CanvasSwapChain,
+        ICanvasSwapChain,
+        CloakedIid<ICanvasResourceWrapperWithDevice>,
+        CloakedIid<ICanvasResourceWrapperWithDpi>,
         IClosable)
     {
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_CanvasSwapChain, BaseTrust);
@@ -128,7 +113,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         CanvasSwapChain(
             ICanvasDevice* device,
-            std::shared_ptr<CanvasSwapChainManager> swapChainManager,
             std::shared_ptr<ICanvasSwapChainAdapter> swapChainAdapter,
             IDXGISwapChain1* dxgiSwapChain,
             float dpi);
@@ -200,7 +184,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         void SetDpi(D2DResourceLock const& lock, ComPtr<IDXGISwapChain2> const& resource, float newDpi);
     };
     
-    class CanvasSwapChainManager : public ResourceManager<CanvasSwapChainTraits>
+    class CanvasSwapChainManager : private LifespanTracker<CanvasSwapChainManager>
     {
     protected:
         std::shared_ptr<ICanvasSwapChainAdapter> m_adapter;

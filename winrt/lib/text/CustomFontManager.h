@@ -6,25 +6,47 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Text
 {
-    class ICanvasTextFormatAdapter;
+    class DefaultCustomFontManagerAdapter;
+
+
+    class CustomFontManagerAdapter : public Singleton<CustomFontManagerAdapter, DefaultCustomFontManagerAdapter>
+    {
+    public:
+        virtual ~CustomFontManagerAdapter() = default;
+
+        virtual ComPtr<IDWriteFactory> CreateDWriteFactory(DWRITE_FACTORY_TYPE type) = 0;
+        virtual IStorageFileStatics* GetStorageFileStatics() = 0;
+    };
+
+
+    class DefaultCustomFontManagerAdapter : public CustomFontManagerAdapter
+                                          , private LifespanTracker<DefaultCustomFontManagerAdapter>
+    {
+        ComPtr<IStorageFileStatics> m_storageFileStatics;
+
+    public:
+        virtual ComPtr<IDWriteFactory> CreateDWriteFactory(DWRITE_FACTORY_TYPE type) override;
+        virtual IStorageFileStatics* GetStorageFileStatics() override;
+    };
+
 
     class CustomFontManager
-        : private LifespanTracker<CustomFontManager>
+        : public Singleton<CustomFontManager>
+        , private LifespanTracker<CustomFontManager>
     {
         ComPtr<IDWriteFactory> m_isolatedFactory;
         ComPtr<IDWriteFactory> m_sharedFactory;
         ComPtr<IUriRuntimeClassFactory> m_uriFactory;
         ComPtr<IDWriteFontCollectionLoader> m_customLoader;
-        std::shared_ptr<ICanvasTextFormatAdapter> m_adapter;
+        std::shared_ptr<CustomFontManagerAdapter> m_adapter;
 
     public:
-        CustomFontManager(std::shared_ptr<ICanvasTextFormatAdapter> const& adapter);
+        CustomFontManager();
 
         ComPtr<IDWriteFontCollection> GetFontCollectionFromUri(WinString const& uri);
 
         void ValidateUri(WinString const& uriString);
 
-    protected:
         ComPtr<IDWriteFactory> const& GetSharedFactory();
 
     private:

@@ -393,25 +393,4 @@ IFACEMETHODIMP CanvasStrokeStyleFactory::ActivateInstance(IInspectable** object)
         });
 }
 
-
-IFACEMETHODIMP CanvasStrokeStyleFactory::GetOrCreate(
-    IUnknown* resource,
-    IInspectable** wrapper)
-{
-    // Call Create here
-    return ExceptionBoundary(
-        [&]
-        {
-            ComPtr<ID2D1StrokeStyle1> d2dStrokeStyle;
-
-            ThrowIfFailed(resource->QueryInterface(d2dStrokeStyle.GetAddressOf()));
-
-            auto newCanvasStrokeStyle = Make<CanvasStrokeStyle>(d2dStrokeStyle.Get());
-
-            CheckMakeResult(newCanvasStrokeStyle);
-
-            ThrowIfFailed(newCanvasStrokeStyle.CopyTo(wrapper));
-        });
-}
-
 ActivatableClassWithFactory(CanvasStrokeStyle, CanvasStrokeStyleFactory);

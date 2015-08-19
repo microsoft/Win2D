@@ -10,19 +10,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 {
     using namespace Numerics;
 
-    class CanvasGradientMesh;
-    class CanvasGradientMeshManager;
-
-    struct CanvasGradientMeshTraits
-    {
-        typedef ID2D1GradientMesh resource_t;
-        typedef CanvasGradientMesh wrapper_t;
-        typedef ICanvasGradientMesh wrapper_interface_t;
-        typedef CanvasGradientMeshManager manager_t;
-    };
-
     class CanvasGradientMesh : RESOURCE_WRAPPER_RUNTIME_CLASS(
-        CanvasGradientMeshTraits,
+        ID2D1GradientMesh,
+        CanvasGradientMesh,
+        ICanvasGradientMesh,
+        CloakedIid<ICanvasResourceWrapperWithDevice>,
         IClosable)
     {
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_Geometry_CanvasGradientMesh, BaseTrust);
@@ -31,7 +23,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
     public:
         CanvasGradientMesh(
-            std::shared_ptr<CanvasGradientMeshManager> manager,
             ID2D1GradientMesh* d2dGradientMesh,
             ICanvasDevice* canvasDevice);
         
@@ -48,7 +39,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         IFACEMETHOD(get_Device)(ICanvasDevice** device);
     };
 
-    class CanvasGradientMeshManager : public ResourceManager<CanvasGradientMeshTraits>
+    class CanvasGradientMeshManager : private LifespanTracker<CanvasGradientMeshManager>
     {
     public:
         ComPtr<CanvasGradientMesh> CreateNew(
@@ -62,16 +53,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     };
 
     class CanvasGradientMeshFactory
-        : public ActivationFactory<
-            ICanvasGradientMeshStatics,
-            ICanvasGradientMeshFactory,
-            CloakedIid<ICanvasDeviceResourceFactoryNative>>,
-        public PerApplicationManager<CanvasGradientMeshFactory, CanvasGradientMeshManager>
+        : public ActivationFactory<ICanvasGradientMeshStatics, ICanvasGradientMeshFactory>
+        , private LifespanTracker<CanvasGradientMeshFactory>
     {
         InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_Geometry_CanvasGradientMesh, BaseTrust);
 
     public:
-        IMPLEMENT_DEFAULT_ICANVASDEVICERESOURCEFACTORYNATIVE();
+        IMPLEMENT_DEFAULT_GETMANAGER(CanvasGradientMeshManager);
 
         IFACEMETHOD(Create)(
             ICanvasResourceCreator* resourceCreator,

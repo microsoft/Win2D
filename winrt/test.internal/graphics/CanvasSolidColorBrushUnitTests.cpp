@@ -120,7 +120,7 @@ public:
         Color red = { 255, 255, 0, 0 };
         D2D1_COLOR_F d2dRed = D2D1::ColorF(1, 0, 0);
 
-        auto canvasSolidColorBrush = m_colorBrushManager->Create(canvasDevice.Get(), red);
+        auto canvasSolidColorBrush = m_colorBrushManager->CreateNew(canvasDevice.Get(), red);
         auto d2dSolidColorBrush = canvasSolidColorBrush->GetResource();
 
         Assert::AreEqual(d2dRed, d2dSolidColorBrush->GetColor());
@@ -135,7 +135,7 @@ public:
     TEST_METHOD_EX(CanvasSolidColorBrush_Implements_Expected_Interfaces)
     {
         auto canvasDevice = Make<TestCanvasDevice>();
-        auto brush = m_colorBrushManager->Create(canvasDevice.Get(), Color{ 255, 0, 0, 0 });
+        auto brush = m_colorBrushManager->CreateNew(canvasDevice.Get(), Color{ 255, 0, 0, 0 });
 
         ASSERT_IMPLEMENTS_INTERFACE(brush, ICanvasSolidColorBrush);
         ASSERT_IMPLEMENTS_INTERFACE(brush, ICanvasBrush);
@@ -155,7 +155,7 @@ public:
         auto testD2DSolidColorBrush = Make<TestD2DSolidColorBrush>(d2dRed, &counters);
         auto canvasDevice = Make<TestCanvasDevice>();
 
-        auto canvasSolidColorBrush = m_colorBrushManager->GetOrCreate(canvasDevice.Get(), testD2DSolidColorBrush.Get());
+        auto canvasSolidColorBrush = m_colorBrushManager->CreateWrapper(canvasDevice.Get(), testD2DSolidColorBrush.Get());
 
         // Verify the brush resource got initialized correctly and didn't call
         // any unexpected methods.
@@ -218,7 +218,7 @@ public:
 
         auto d2dBrush = Make<MockD2DSolidColorBrush>();
         auto canvasDevice = Make<TestCanvasDevice>();
-        auto canvasSolidColorBrush = m_colorBrushManager->GetOrCreate(canvasDevice.Get(), d2dBrush.Get());
+        auto canvasSolidColorBrush = m_colorBrushManager->CreateWrapper(canvasDevice.Get(), d2dBrush.Get());
 
         Assert::IsNotNull(canvasSolidColorBrush.Get());
 
@@ -271,7 +271,7 @@ public:
         ThrowIfFailed(userControl->LoadedEventSource->InvokeAll(nullptr, nullptr));
         canvasControlAdapter->RaiseCompositionRenderingEvent();
 
-        auto brush = m_colorBrushManager->Create(canvasControl.Get(), Color{ 255, 0, 0, 0 });
+        auto brush = m_colorBrushManager->CreateNew(canvasControl.Get(), Color{ 255, 0, 0, 0 });
 
         // This will only be true if the brush was constructed on the correct device.
         Assert::IsTrue(createSolidColorBrushCalled);
@@ -298,12 +298,12 @@ public:
             Make<StubD2DDeviceContextWithGetFactory>();
 
         auto manager = std::make_shared<CanvasDrawingSessionManager>();
-        ComPtr<CanvasDrawingSession> drawingSession = manager->Create(
+        ComPtr<CanvasDrawingSession> drawingSession = manager->CreateNew(
             canvasDevice.Get(),
             d2dDeviceContext.Get(),
             std::make_shared<StubCanvasDrawingSessionAdapter>());
 
-        auto createdBrush = m_colorBrushManager->Create(drawingSession.Get(), Color{ 255, 0, 0, 0 });
+        auto createdBrush = m_colorBrushManager->CreateNew(drawingSession.Get(), Color{ 255, 0, 0, 0 });
 
         // Verify that the Create occurred on the DrawingSession device, and not on some
         // other device. Verify it wrapped around the correct brush.

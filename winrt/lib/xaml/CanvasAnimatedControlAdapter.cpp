@@ -17,8 +17,7 @@ using namespace ::Microsoft::WRL::Wrappers;
 // CanvasAnimatedControlAdapter
 //
 
-class CanvasAnimatedControlAdapter : public BaseControlAdapter<CanvasAnimatedControlTraits>,
-    public std::enable_shared_from_this<CanvasAnimatedControlAdapter>
+class CanvasAnimatedControlAdapter : public BaseControlAdapter<CanvasAnimatedControlTraits>
 {
     ComPtr<ICanvasSwapChainFactory> m_canvasSwapChainFactory;
     std::shared_ptr<CanvasSwapChainPanelAdapter> m_canvasSwapChainPanelAdapter;

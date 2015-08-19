@@ -89,7 +89,7 @@ TEST_CLASS(CanvasDrawingSession_CallsAdapter)
             m_mockAdapter = std::make_shared<MockCanvasDrawingSessionAdapter>();
             
             auto manager = std::make_shared<CanvasDrawingSessionManager>();
-            m_canvasDrawingSession = manager->Create(m_expectedDeviceContext.Get(), m_mockAdapter);
+            m_canvasDrawingSession = manager->CreateNew(m_expectedDeviceContext.Get(), m_mockAdapter);
         }
     };
 
@@ -152,19 +152,19 @@ public:
         ComPtr<StubCanvasDevice> canvasDevice = Make<StubCanvasDevice>();
 
         auto geometryManager = std::make_shared<CanvasGeometryManager>();
-        Geometry = geometryManager->Create(canvasDevice.Get(), Rect{ 1, 2, 3, 4 });
+        Geometry = geometryManager->CreateNew(canvasDevice.Get(), Rect{ 1, 2, 3, 4 });
 
         auto cachedGeometryManager = std::make_shared<CanvasCachedGeometryManager>();
-        CachedGeometry = cachedGeometryManager->Create(canvasDevice.Get(), Geometry.Get(), D2D1_DEFAULT_FLATTENING_TOLERANCE);
+        CachedGeometry = cachedGeometryManager->CreateNew(canvasDevice.Get(), Geometry.Get(), D2D1_DEFAULT_FLATTENING_TOLERANCE);
 
-        auto textFormat = CanvasTextFormatFactory::GetOrCreateManager()->Create();
+        auto textFormat = CanvasTextFormatFactory::GetManager()->Create();
         auto textlayoutAdapter = std::make_shared<StubCanvasTextLayoutAdapter>();
-        auto textLayoutManager = std::make_shared<CanvasTextLayoutManager>(textlayoutAdapter);
-        TextLayout = textLayoutManager->Create(canvasDevice.Get(), WinString(L"A string"), textFormat.Get(), 0.0f, 0.0f);
+        auto textLayoutManager = std::make_shared<CanvasTextLayoutManager>();
+        TextLayout = textLayoutManager->CreateNew(canvasDevice.Get(), WinString(L"A string"), textFormat.Get(), 0.0f, 0.0f);
 
 #if WINVER > _WIN32_WINNT_WINBLUE
-        auto gradientMeshManager = CanvasGradientMeshFactory::GetOrCreateManager();
-        GradientMesh = gradientMeshManager->Create(canvasDevice.Get(), 0, nullptr);
+        auto gradientMeshManager = CanvasGradientMeshFactory::GetManager();
+        GradientMesh = gradientMeshManager->CreateNew(canvasDevice.Get(), 0, nullptr);
 #endif
     }
 
@@ -172,7 +172,7 @@ private:
     static ComPtr<CanvasDrawingSession> MakeDrawingSession(ID2D1DeviceContext1* deviceContext)
     {
         auto manager = std::make_shared<CanvasDrawingSessionManager>();
-        return manager->Create(
+        return manager->CreateNew(
             deviceContext,
             std::make_shared<StubCanvasDrawingSessionAdapter>());
     }
@@ -393,7 +393,7 @@ public:
             auto d2dCommandList = Make<MockD2DCommandList>();
             d2dCommandList->CloseMethod.AllowAnyCall();
 
-            return commandListManager->GetOrCreate(Make<StubCanvasDevice>().Get(), d2dCommandList.Get());
+            return commandListManager->CreateWrapper(Make<StubCanvasDevice>().Get(), d2dCommandList.Get());
         }
 
         ComPtr<CanvasBitmap> MakeBitmap()
@@ -406,7 +406,7 @@ public:
             auto adapter = std::make_shared<TestBitmapResourceCreationAdapter>(converter);
             auto bitmapManager = std::make_shared<CanvasBitmapManager>(adapter);
 
-            return bitmapManager->GetOrCreate(Make<StubCanvasDevice>().Get(), d2dBitmap.Get());
+            return bitmapManager->CreateWrapper(Make<StubCanvasDevice>().Get(), d2dBitmap.Get());
         }
     };
 
@@ -3852,7 +3852,7 @@ public:
 
         auto manager = std::make_shared<CanvasDrawingSessionManager>();
         auto adapter = std::make_shared<CanvasDrawingSessionAdapter_ChangeableOffset>();
-        auto drawingSession = manager->Create(deviceContext.Get(), adapter);
+        auto drawingSession = manager->CreateNew(deviceContext.Get(), adapter);
 
         //
         // The adapter sets the native transform to the offset on BeginDraw. 
@@ -3946,7 +3946,7 @@ public:
             }
 
             auto manager = std::make_shared<CanvasDrawingSessionManager>();
-            auto drawingSession = manager->Create(
+            auto drawingSession = manager->CreateNew(
                 testCase.ManagerDevice,
                 d2dDeviceContext.Get(),
                 std::make_shared<StubCanvasDrawingSessionAdapter>());
@@ -3977,7 +3977,7 @@ public:
         auto deviceContext = Make<StubD2DDeviceContextWithGetFactory>();
         auto manager = std::make_shared<CanvasDrawingSessionManager>();
         auto adapter = std::make_shared<CanvasDrawingSessionAdapter_ChangeableOffset>();
-        auto drawingSession = manager->Create(deviceContext.Get(), adapter);
+        auto drawingSession = manager->CreateNew(deviceContext.Get(), adapter);
 
         deviceContext->GetDpiMethod.AllowAnyCall([&](float* dpiX, float* dpiY)
         {
@@ -4067,7 +4067,7 @@ public:
 
             DeviceContext = Make<StubD2DDeviceContextWithGetFactory>();
             Adapter = std::make_shared<InkAdapter>();
-            DrawingSession = manager->Create(DeviceContext.Get(), Adapter);
+            DrawingSession = manager->CreateNew(DeviceContext.Get(), Adapter);
         }
     };
 
@@ -4194,7 +4194,7 @@ TEST_CLASS(CanvasDrawingSession_DrawTextTests)
 
         Fixture()
         {
-            Format = CanvasTextFormatFactory::GetOrCreateManager()->Create();
+            Format = CanvasTextFormatFactory::GetManager()->Create();
         }
 
         template<typename FORMAT_VALIDATOR>
@@ -4484,7 +4484,7 @@ TEST_CLASS(CanvasDrawingSession_CloseTests)
         // this has taken ownership of the token.
         //
         auto manager = std::make_shared<CanvasDrawingSessionManager>();
-        auto canvasDrawingSession = manager->Create(
+        auto canvasDrawingSession = manager->CreateNew(
             deviceContext.Get(),
             std::make_shared<StubCanvasDrawingSessionAdapter>());
 
@@ -4662,7 +4662,7 @@ TEST_CLASS(CanvasDrawingSession_Interop)
         // interop should not change the text antialias mode.
         deviceContext->SetTextAntialiasModeMethod.SetExpectedCalls(0);
 
-        auto drawingSession = manager->GetOrCreate(deviceContext.Get());
+        auto drawingSession = manager->CreateWrapper(deviceContext.Get());
 
         // Check one method - we assume that the previous tests are enough to
         // exercise all the methods appropriately.

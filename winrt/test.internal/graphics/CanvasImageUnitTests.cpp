@@ -59,9 +59,9 @@ TEST_CLASS(CanvasImageUnitTests)
 
         auto manager = std::make_shared<CanvasDrawingSessionManager>();
 
-        auto drawingSession = manager->GetOrCreate(d2dDeviceContext.Get());
+        auto drawingSession = manager->CreateWrapper(d2dDeviceContext.Get());
 
-        auto canvasBitmap = f.m_manager->Create(
+        auto canvasBitmap = f.m_manager->CreateNew(
             f.m_canvasDevice.Get(),
             1.0f,
             1.0f,

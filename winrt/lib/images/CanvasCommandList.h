@@ -8,19 +8,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
     class CanvasCommandListManager;
 
-    struct CanvasCommandListTraits
-    {
-        typedef ID2D1CommandList resource_t;
-        typedef CanvasCommandList wrapper_t;
-        typedef ICanvasCommandList wrapper_interface_t;
-        typedef CanvasCommandListManager manager_t;
-    };
-
-
     class CanvasCommandList : RESOURCE_WRAPPER_RUNTIME_CLASS(
-        CanvasCommandListTraits,
+        ID2D1CommandList,
+        CanvasCommandList,
+        ICanvasCommandList,
         ICanvasImage,
         CloakedIid<ICanvasImageInternal>,
+        CloakedIid<ICanvasResourceWrapperWithDevice>,
         Effects::IGraphicsEffectSource)
     {
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_CanvasCommandList, BaseTrust);
@@ -30,7 +24,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     public:
         CanvasCommandList(
-            std::shared_ptr<CanvasCommandListManager> manager,
             ICanvasDevice* device,
             ID2D1CommandList* d2dCommandList);
 
@@ -65,7 +58,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     };
 
 
-    class CanvasCommandListManager : public ResourceManager<CanvasCommandListTraits>
+    class CanvasCommandListManager : private LifespanTracker<CanvasCommandListManager>
     {
     public:
         ComPtr<CanvasCommandList> CreateNew(
@@ -77,21 +70,17 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     };
 
 
-    class CanvasCommandListFactory : public ActivationFactory<
-        ICanvasCommandListFactory,
-        CloakedIid<ICanvasDeviceResourceFactoryNative>>,
-        public PerApplicationManager<CanvasCommandListFactory, CanvasCommandListManager>
+    class CanvasCommandListFactory
+        : public ActivationFactory<ICanvasCommandListFactory>
+        , private LifespanTracker<CanvasCommandListFactory>
     {
         InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_CanvasCommandList, BaseTrust);
 
     public:
+        IMPLEMENT_DEFAULT_GETMANAGER(CanvasCommandListManager)
+            
         IFACEMETHOD(Create)(
             ICanvasResourceCreator* resourceCreator,
             ICanvasCommandList** commandList) override;
-
-        IFACEMETHOD(GetOrCreate)(
-            ICanvasDevice* device,
-            IUnknown* resource,
-            IInspectable** wrapper) override;
     };
 }}}}

@@ -8,12 +8,12 @@
 
 namespace canvas
 {
-    class StubCanvasTextFormatAdapter : public CanvasTextFormatAdapter
+    class StubFontManagerAdapter : public CustomFontManagerAdapter
     {
     public:
         ComPtr<StubStorageFileStatics> StorageFileStatics;
 
-        StubCanvasTextFormatAdapter()
+        StubFontManagerAdapter()
             : StorageFileStatics(Make<StubStorageFileStatics>())
         {
         }

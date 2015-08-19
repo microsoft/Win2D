@@ -515,7 +515,7 @@ public:
             Make<StubD2DDeviceContextWithGetFactory>();
         d2dDeviceContext->FillRectangleMethod.AllowAnyCall();
 
-        ComPtr<CanvasDrawingSession> drawingSession = manager->Create(
+        ComPtr<CanvasDrawingSession> drawingSession = manager->CreateNew(
             f.m_canvasDevice.Get(),
             d2dDeviceContext.Get(),
             std::make_shared<StubCanvasDrawingSessionAdapter>());

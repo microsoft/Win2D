@@ -237,7 +237,7 @@ struct ControlFixture<CanvasAnimatedControlTraits> : public Animated_BasicContro
         std::shared_ptr<CanvasSwapChainManager> const& swapChainManager,
         ICanvasDevice* device)
     {
-        return swapChainManager->Create(
+        return swapChainManager->CreateNew(
             device,
             1.0f,
             1.0f,

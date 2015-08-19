@@ -141,7 +141,7 @@ namespace canvas
         IFACEMETHODIMP GetDxgiDevice(
             IDXGIDevice **dxgiDevice)
         {
-            Assert::Fail(L"Unexpected call to FlushDeviceContexts");
+            Assert::Fail(L"Unexpected call to GetDxgiDevice");
             return E_NOTIMPL;
         }
 #endif

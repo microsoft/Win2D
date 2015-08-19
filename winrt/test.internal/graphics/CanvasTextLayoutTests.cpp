@@ -12,7 +12,6 @@
 #include "mocks/MockDWriteFontCollection.h"
 #include "mocks/MockDWriteTextLayout.h"
 #include "stubs/StubCanvasBrush.h"
-#include "stubs/StubCanvasTextFormatAdapter.h"
 #include "stubs/StubCanvasTextLayoutAdapter.h"
 #include "stubs/TestBitmapResourceCreationAdapter.h"
 #include "stubs/TestEffect.h"
@@ -39,12 +38,13 @@ namespace canvas
                 , Device(Make<StubCanvasDevice>())
                 , DeviceContext(Make<MockD2DDeviceContext>())
             {
-                auto formatAdapter = std::make_shared<StubCanvasTextFormatAdapter>();
-                auto formatManager = std::make_shared<CanvasTextFormatManager>(formatAdapter);
+                CustomFontManagerAdapter::SetInstance(Adapter);
+
+                auto formatManager = std::make_shared<CanvasTextFormatManager>();
 
                 Format = formatManager->Create();
 
-                LayoutManager = std::make_shared<CanvasTextLayoutManager>(Adapter);
+                LayoutManager = std::make_shared<CanvasTextLayoutManager>();
 
                 Device->CreateDeviceContextMethod.AllowAnyCall(
                     [=]
@@ -137,7 +137,7 @@ namespace canvas
 
             ComPtr<CanvasTextLayout> CreateSimpleTextLayout()
             {
-                return LayoutManager->Create(Device.Get(), WinString(L"A string"), Format.Get(), 0.0f, 0.0f);
+                return LayoutManager->CreateNew(Device.Get(), WinString(L"A string"), Format.Get(), 0.0f, 0.0f);
             }
         };
 

@@ -11,11 +11,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     //
     // CanvasRenderTargetManager
     //
+    CanvasRenderTargetManager::CanvasRenderTargetManager()
+        : m_adapter(CanvasBitmapFactory::GetManager()->GetAdapter())    // TODO interop fix this
+    {
+    }
+
     CanvasRenderTargetManager::CanvasRenderTargetManager(
         std::shared_ptr<ICanvasBitmapResourceCreationAdapter> adapter)
         : m_adapter(adapter)
     {
-
     }
 
     ComPtr<CanvasRenderTarget> CanvasRenderTargetManager::CreateNew(
@@ -31,7 +35,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         auto d2dBitmap = canvasDeviceInternal->CreateRenderTargetBitmap(width, height, dpi, format, alpha);
 
-        return Make<CanvasRenderTarget>(shared_from_this(), d2dBitmap.Get(), canvasDevice);
+        return Make<CanvasRenderTarget>(d2dBitmap.Get(), canvasDevice);
     }
 
 
@@ -40,7 +44,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ID2D1Bitmap1* d2dBitmap)
     {
         auto renderTarget = Make<CanvasRenderTarget>(
-            shared_from_this(),
             d2dBitmap,
             device);
         CheckMakeResult(renderTarget);
@@ -93,7 +96,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 ComPtr<ICanvasDevice> canvasDevice;
                 ThrowIfFailed(As<ICanvasResourceCreator>(resourceCreator)->get_Device(&canvasDevice));
 
-                auto bitmap = GetManager()->CreateRenderTarget(
+                auto bitmap = GetManager()->CreateNew(
                     canvasDevice.Get(), 
                     width, 
                     height, 
@@ -140,7 +143,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 ComPtr<ICanvasDevice> canvasDevice;
                 ThrowIfFailed(resourceCreator->get_Device(&canvasDevice));
 
-                auto bitmap = GetManager()->CreateRenderTarget(
+                auto bitmap = GetManager()->CreateNew(
                     canvasDevice.Get(), 
                     width, 
                     height, 
@@ -149,26 +152,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                     alpha);
 
                 ThrowIfFailed(bitmap.CopyTo(renderTarget));
-            });
-    }
-    
-    IFACEMETHODIMP CanvasRenderTargetFactory::GetOrCreate(
-        ICanvasDevice* device,
-        IUnknown* resource,
-        IInspectable** wrapper)
-    {
-        return ExceptionBoundary(
-            [&]
-            {
-                CheckInPointer(resource);
-                CheckAndClearOutPointer(wrapper);
-
-                ComPtr<ID2D1Bitmap1> d2dBitmap;
-                ThrowIfFailed(resource->QueryInterface(d2dBitmap.GetAddressOf()));
-
-                auto newCanvasRenderTarget = GetManager()->GetOrCreateRenderTarget(device, d2dBitmap.Get());
-
-                ThrowIfFailed(newCanvasRenderTarget.CopyTo(wrapper));
             });
     }
 
@@ -216,11 +199,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 ComPtr<ICanvasDevice> canvasDevice;
                 ThrowIfFailed(resourceCreator->get_Device(&canvasDevice));
 
-                auto newRenderTarget = GetManager()->CreateRenderTargetFromSurface(
-                    canvasDevice.Get(), 
-                    surface, 
-                    dpi,
-                    alpha);
+                auto d2dBitmap = CreateD2DBitmap(canvasDevice.Get(), surface, dpi, alpha);
+
+                if (!IsRenderTargetBitmap(d2dBitmap.Get()))
+                    ThrowHR(E_INVALIDARG);
+
+                auto newRenderTarget = Make<CanvasRenderTarget>(d2dBitmap.Get(), canvasDevice.Get());
+                CheckMakeResult(newRenderTarget);
 
                 ThrowIfFailed(newRenderTarget.CopyTo(canvasRenderTarget));
             });
@@ -253,8 +238,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         auto adapter = std::make_shared<SimpleCanvasDrawingSessionAdapter>(deviceContext.Get());
 
-        auto drawingSessionManager = CanvasDrawingSessionFactory::GetOrCreateManager();
-        return drawingSessionManager->Create(owner, deviceContext.Get(), adapter);
+        auto drawingSessionManager = CanvasDrawingSessionFactory::GetManager();
+        return drawingSessionManager->CreateNew(owner, deviceContext.Get(), adapter);
     }
 
     //
@@ -263,10 +248,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
 
     CanvasRenderTarget::CanvasRenderTarget(
-        std::shared_ptr<CanvasRenderTargetManager> manager,
         ID2D1Bitmap1* d2dBitmap,
         ICanvasDevice* canvasDevice)
-        : CanvasBitmapImpl(manager, d2dBitmap, canvasDevice)
+        : CanvasBitmapImpl(d2dBitmap, canvasDevice)
     {
         assert(IsRenderTargetBitmap(d2dBitmap) 
             && "CanvasRenderTarget should never be constructed with a non-target bitmap.  This should have been validated before construction.");

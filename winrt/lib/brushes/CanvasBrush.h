@@ -28,7 +28,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         : public Implements<
             RuntimeClassFlags<WinRtClassicComMix>,
             ICanvasBrush, 
-            CloakedIid<ICanvasBrushInternal>>
+            CloakedIid<ICanvasBrushInternal>,
+            CloakedIid<ICanvasResourceWrapperWithDevice>>
     {
     protected:
         ClosablePtr<ICanvasDevice> m_device;

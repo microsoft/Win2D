@@ -11,19 +11,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     using namespace ::Microsoft::WRL;
     using namespace Numerics;
 
-    class CanvasGeometry;
-    class CanvasGeometryManager;
-
-    struct CanvasGeometryTraits
-    {
-        typedef ID2D1Geometry resource_t;
-        typedef CanvasGeometry wrapper_t;
-        typedef ICanvasGeometry wrapper_interface_t;
-        typedef CanvasGeometryManager manager_t;
-    };
-
     class CanvasGeometry : RESOURCE_WRAPPER_RUNTIME_CLASS(
-        CanvasGeometryTraits,
+        ID2D1Geometry,
+        CanvasGeometry,
+        ICanvasGeometry,
+        CloakedIid<ICanvasResourceWrapperWithDevice>,
         IClosable)
     {
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_Geometry_CanvasGeometry, BaseTrust);
@@ -32,9 +24,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
     public:
         CanvasGeometry(
-            std::shared_ptr<CanvasGeometryManager> manager,
-            ID2D1Geometry* d2dGeometry,
-            ICanvasDevice* canvasDevice);
+            ICanvasDevice* canvasDevice,
+            ID2D1Geometry* d2dGeometry);
 
         IFACEMETHOD(Close)();
 
@@ -236,7 +227,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             Vector2* point);
     };
 
-    class CanvasGeometryManager : public ResourceManager<CanvasGeometryTraits>
+    class CanvasGeometryManager : private LifespanTracker<CanvasGeometryManager>
     {
     public:
         ComPtr<CanvasGeometry> CreateNew(
@@ -275,15 +266,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     };
 
     class CanvasGeometryFactory
-        : public ActivationFactory<
-            ICanvasGeometryStatics,
-            CloakedIid<ICanvasDeviceResourceFactoryNative>> ,
-            public PerApplicationManager<CanvasGeometryFactory, CanvasGeometryManager>
+        : public ActivationFactory<ICanvasGeometryStatics>
+        , private LifespanTracker<CanvasGeometryFactory>
     {
         InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_Geometry_CanvasGeometry, BaseTrust);
 
     public:
-        IMPLEMENT_DEFAULT_ICANVASDEVICERESOURCEFACTORYNATIVE();
+        IMPLEMENT_DEFAULT_GETMANAGER(CanvasGeometryManager);
 
         IFACEMETHOD(CreateRectangle)(
             ICanvasResourceCreator* resourceCreator,

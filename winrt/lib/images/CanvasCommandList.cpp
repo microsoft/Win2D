@@ -20,26 +20,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ExceptionBoundary(
             [&]
             {
-                auto cl = GetManager()->Create(resourceCreator);
+                auto cl = GetManager()->CreateNew(resourceCreator);
                 ThrowIfFailed(cl.CopyTo(commandList));
-            });
-    }
-
-
-    IFACEMETHODIMP CanvasCommandListFactory::GetOrCreate(
-        ICanvasDevice* device,
-        IUnknown* resource,
-        IInspectable** wrapper)
-    {
-        return ExceptionBoundary(
-            [&]
-            {
-                CheckInPointer(device);
-                CheckInPointer(resource);
-                CheckAndClearOutPointer(wrapper);
-
-                auto cl = GetManager()->GetOrCreate(device, As<ID2D1CommandList>(resource).Get());
-                ThrowIfFailed(cl.CopyTo(wrapper));
             });
     }
 
@@ -57,7 +39,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         
         auto d2dCommandList = As<ICanvasDeviceInternal>(device)->CreateCommandList();
 
-        auto cl = Make<CanvasCommandList>(shared_from_this(), device.Get(), d2dCommandList.Get());
+        auto cl = Make<CanvasCommandList>(device.Get(), d2dCommandList.Get());
         CheckMakeResult(cl);
         return cl;
     }
@@ -67,7 +49,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ICanvasDevice* device,
         ID2D1CommandList* resource)
     {
-        auto cl = Make<CanvasCommandList>(shared_from_this(), device, resource);
+        auto cl = Make<CanvasCommandList>(device, resource);
         CheckMakeResult(cl);
         return cl;
     }
@@ -79,10 +61,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
 
     CanvasCommandList::CanvasCommandList(
-        std::shared_ptr<CanvasCommandListManager> manager, 
         ICanvasDevice* device,
         ID2D1CommandList* d2dCommandList)
-        : ResourceWrapper(manager, d2dCommandList)
+        : ResourceWrapper(d2dCommandList)
         , m_device(device)
         , m_d2dCommandListIsClosed(false)
     {
@@ -106,10 +87,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 auto deviceContext = As<ICanvasDeviceInternal>(device)->CreateDeviceContext();
                 deviceContext->SetTarget(d2dCommandList.Get());
 
-                auto drawingSessionManager = CanvasDrawingSessionFactory::GetOrCreateManager();
+                auto drawingSessionManager = CanvasDrawingSessionFactory::GetManager();
                 auto adapter = std::make_shared<SimpleCanvasDrawingSessionAdapter>(deviceContext.Get());
 
-                auto ds = drawingSessionManager->Create(device.Get(), deviceContext.Get(), adapter);
+                auto ds = drawingSessionManager->CreateNew(device.Get(), deviceContext.Get(), adapter);
 
                 ThrowIfFailed(ds.CopyTo(drawingSession));
             });

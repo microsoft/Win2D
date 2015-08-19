@@ -94,9 +94,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasTextFormatTests.cpp">
       <Filter>graphics</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)graphics\PolymorphicBitmapManagerUnitTests.cpp">
-      <Filter>graphics</Filter>
-    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)stubs\StubD2DResources.cpp">
       <Filter>stubs</Filter>
     </ClCompile>
@@ -113,9 +110,6 @@
       <Filter>utils</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)utils\ResourceManagerUnitTests.cpp">
-      <Filter>utils</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)utils\ResourceTrackerUnitTests.cpp">
       <Filter>utils</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)utils\VectorTests.cpp">
@@ -138,6 +132,12 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)xaml\CanvasVirtualControlUnitTests.cpp">
       <Filter>xaml</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)graphics\PolymorphicBitmapInteropUnitTests.cpp">
+      <Filter>graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)utils\SingletonUnitTests.cpp">
+      <Filter>utils</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -367,9 +367,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockSuspendingEventArgs.h">
       <Filter>mocks</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubCanvasTextFormatAdapter.h">
-      <Filter>stubs</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubGeometrySink.h">
       <Filter>stubs</Filter>
     </ClInclude>
@@ -416,6 +413,9 @@
       <Filter>mocks</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubCanvasVirtualImageSource.h">
+      <Filter>stubs</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubFontManagerAdapter.h">
       <Filter>stubs</Filter>
     </ClInclude>
   </ItemGroup>

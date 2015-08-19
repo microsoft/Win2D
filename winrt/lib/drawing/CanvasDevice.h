@@ -14,6 +14,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     class CanvasDevice;
     class CanvasDeviceManager;
 
+
     //
     // Abstracts away some lower-level resource access, allowing unit
     // tests to provide test doubles. Because they are internal, they can return
@@ -146,21 +147,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     };
 
 
-    struct CanvasDeviceTraits
-    {
-        typedef ID2D1Device1 resource_t;
-        typedef CanvasDevice wrapper_t;
-        typedef ICanvasDevice wrapper_interface_t;
-        typedef CanvasDeviceManager manager_t;
-    };
-
     typedef ITypedEventHandler<CanvasDevice*, IInspectable*> DeviceLostHandlerType;
 
     //
     // The CanvasDevice class itself.
     //
     class CanvasDevice : RESOURCE_WRAPPER_RUNTIME_CLASS(
-        CanvasDeviceTraits, 
+        ID2D1Device1,
+        CanvasDevice,
+        ICanvasDevice,
         CloakedIid<ICanvasDeviceInternal>,
         ICanvasResourceCreator,
         IDirect3DDevice,
@@ -181,12 +176,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         EventSource<DeviceLostHandlerType, InvokeModeOptions<StopOnFirstError>> m_deviceLostEventList;
 
+        std::shared_ptr<CanvasDeviceManager> m_manager;
+
     public:
         CanvasDevice(
-            std::shared_ptr<CanvasDeviceManager> manager,
             bool forceSoftwareRenderer,
             IDXGIDevice3* dxgiDevice,
-            ID2D1Device1* d2dDevice);
+            ID2D1Device1* d2dDevice,
+            std::shared_ptr<CanvasDeviceManager> manager);
 
         //
         // ICanvasDevice
@@ -328,7 +325,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     // Responsible for creating and tracking CanvasDevice instances and the
     // ID2D1Device they wrap.
     //
-    class CanvasDeviceManager : public ResourceManager<CanvasDeviceTraits>
+    class CanvasDeviceManager : public Singleton<CanvasDeviceManager>
+                              , public std::enable_shared_from_this<CanvasDeviceManager>
+                              , private LifespanTracker<CanvasDeviceManager>
     {
         std::shared_ptr<ICanvasDeviceResourceCreationAdapter> m_adapter;
 
@@ -336,7 +335,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         std::mutex m_mutex;
 
         std::atomic<CanvasDebugLevel> m_debugLevel;
+
     public:
+        // TODO interop: after adapters are refactored, should not need two constructor overloads.
+        CanvasDeviceManager();
         CanvasDeviceManager(std::shared_ptr<ICanvasDeviceResourceCreationAdapter> adapter);
 
         virtual ~CanvasDeviceManager();
@@ -362,7 +364,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         struct PropertyData
         {
-            HStringReference KeyName;
+            Wrappers::HStringReference KeyName;
             ComPtr<IMap<HSTRING, IInspectable*>> PropertyMap;
             ComPtr<IInspectable> PropertyHolder;
             HRESULT LookupResult;
@@ -376,17 +378,18 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     // WinRT activation factory for the CanvasDevice runtimeclass.
     //
     class CanvasDeviceFactory 
-        : public ActivationFactory<
-            ICanvasDeviceFactory, 
-            ICanvasDeviceStatics, 
-            CloakedIid<ICanvasFactoryNative>>,
-          public PerApplicationManager<CanvasDeviceFactory, CanvasDeviceManager>
+        : public ActivationFactory<ICanvasDeviceFactory, ICanvasDeviceStatics, CloakedIid<ICanvasFactoryNative>>
+        , private LifespanTracker<CanvasDeviceFactory>
                                 
     {
         InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_CanvasDevice, BaseTrust);
 
     public:
-        IMPLEMENT_DEFAULT_ICANVASFACTORYNATIVE();
+        // TODO interop: after adapters are refactored, this should no longer be attached to the factory
+        static std::shared_ptr<CanvasDeviceManager> GetManager()
+        {
+            return CanvasDeviceManager::GetInstance();
+        }
 
         //
         // ActivationFactory
@@ -420,8 +423,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         IFACEMETHOD(get_DebugLevel)(CanvasDebugLevel* debugLevel);
 
         //
-        // Used by PerApplicationManager
+        // ICanvasFactoryNative.
         //
-        static std::shared_ptr<CanvasDeviceManager> CreateManager();
+        IFACEMETHOD(GetOrCreate)(
+            ICanvasDevice* device,
+            IUnknown* resource,
+            float dpi,
+            IInspectable** wrapper) override;
     };
 }}}}

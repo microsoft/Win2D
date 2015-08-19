@@ -91,7 +91,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubCanvasBrush.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubCanvasDevice.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubCanvasDrawingSessionAdapter.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubCanvasTextFormatAdapter.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubFontManagerAdapter.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubCanvasTextLayoutAdapter.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubD2DBrush.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubD2DDeviceContext.h" />
@@ -118,6 +118,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)utils\SingletonUnitTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)xaml\BaseControlUnitTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)xaml\CanvasAnimatedControlUnitTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)xaml\CanvasControlUnitTests.cpp" />
@@ -147,14 +148,13 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasSwapChainUnitTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasTextFormatTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasTextLayoutTests.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)graphics\PolymorphicBitmapManagerUnitTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)graphics\PolymorphicBitmapInteropUnitTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)stubs\StubD2DResources.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)utils\AsyncOperationTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)utils\ComArrayTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)utils\ConversionUnitTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)utils\RegisteredEventUnitTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)utils\ResourceManagerUnitTests.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)utils\ResourceTrackerUnitTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)utils\VectorTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)utils\WinStringBuilderTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)utils\WinStringTests.cpp" />

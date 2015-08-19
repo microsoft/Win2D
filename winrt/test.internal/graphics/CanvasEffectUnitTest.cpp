@@ -148,7 +148,7 @@ public:
             m_drawingSessionManager = std::make_shared<CanvasDrawingSessionManager>();
             m_stubDevice = Make<StubD2DDevice>();
             m_deviceContext = MakeDeviceContext();
-            m_drawingSession = m_drawingSessionManager->Create(m_deviceContext.Get(), std::make_shared<StubCanvasDrawingSessionAdapter>());
+            m_drawingSession = m_drawingSessionManager->CreateNew(m_deviceContext.Get(), std::make_shared<StubCanvasDrawingSessionAdapter>());
             m_mockEffect = Make<MockD2DEffect>();
             m_dpi = DEFAULT_DPI;
         }
@@ -221,7 +221,8 @@ public:
                 return S_OK;
             });
 
-        f.m_drawingSession = drawingSessionManager->Create(f.m_deviceContext.Get(), std::make_shared<StubCanvasDrawingSessionAdapter>());
+        f.m_drawingSession = nullptr;
+        f.m_drawingSession = drawingSessionManager->CreateNew(f.m_deviceContext.Get(), std::make_shared<StubCanvasDrawingSessionAdapter>());
 
         f.m_drawingSession->DrawImageAtOrigin(testEffect);
 
@@ -235,7 +236,7 @@ public:
         deviceContext2->DrawImageMethod.AllowAnyCall();
         deviceContext2->CreateEffectMethod.SetExpectedCalls(0);
 
-        auto drawingSession2 = drawingSessionManager->Create(deviceContext2.Get(), std::make_shared<StubCanvasDrawingSessionAdapter>());
+        auto drawingSession2 = drawingSessionManager->CreateNew(deviceContext2.Get(), std::make_shared<StubCanvasDrawingSessionAdapter>());
 
         drawingSession2->DrawImageAtOrigin(testEffect);
     }
@@ -418,7 +419,7 @@ public:
 
         // Drawing the third level effect on a second device should re-realize just that effect.
         auto deviceContext2 = f.MakeDeviceContext();
-        auto drawingSession2 = f.m_drawingSessionManager->Create(deviceContext2.Get(), std::make_shared<StubCanvasDrawingSessionAdapter>());
+        auto drawingSession2 = f.m_drawingSessionManager->CreateNew(deviceContext2.Get(), std::make_shared<StubCanvasDrawingSessionAdapter>());
         auto stubDevice2 = Make<StubD2DDevice>();
 
         deviceContext2->GetDeviceMethod.AllowAnyCallAlwaysCopyValueToParam(stubDevice2);
@@ -663,7 +664,7 @@ public:
         // Create a drawing session.
         auto manager = std::make_shared<CanvasDrawingSessionManager>();
         auto d2dDeviceContext = Make<StubD2DDeviceContextWithGetFactory>();
-        auto drawingSession = manager->Create(f.m_canvasDevice.Get(), d2dDeviceContext.Get(), std::make_shared<StubCanvasDrawingSessionAdapter>());
+        auto drawingSession = manager->CreateNew(f.m_canvasDevice.Get(), d2dDeviceContext.Get(), std::make_shared<StubCanvasDrawingSessionAdapter>());
 
         d2dDeviceContext->FillRectangleMethod.AllowAnyCall();
         d2dDeviceContext->GetDeviceMethod.AllowAnyCallAlwaysCopyValueToParam(Make<StubD2DDevice>());

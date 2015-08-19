@@ -38,7 +38,6 @@ ComPtr<CanvasLinearGradientBrush> CanvasLinearGradientBrushManager::CreateNew(
     auto d2dBrush = deviceInternal->CreateLinearGradientBrush(stopCollection.Get());
 
     auto canvasLinearGradientBrush = Make<CanvasLinearGradientBrush>(
-        shared_from_this(),
         d2dBrush.Get(),
         device.Get());
     CheckMakeResult(canvasLinearGradientBrush);
@@ -59,7 +58,6 @@ ComPtr<CanvasLinearGradientBrush> CanvasLinearGradientBrushManager::CreateNew(
     auto d2dBrush = deviceInternal->CreateLinearGradientBrush(stopCollection);
 
     auto canvasLinearGradientBrush = Make<CanvasLinearGradientBrush>(
-        shared_from_this(),
         d2dBrush.Get(),
         device.Get());
     CheckMakeResult(canvasLinearGradientBrush);
@@ -72,7 +70,6 @@ ComPtr<CanvasLinearGradientBrush> CanvasLinearGradientBrushManager::CreateWrappe
     ID2D1LinearGradientBrush* resource)
 {
     auto canvasLinearGradientBrush = Make<CanvasLinearGradientBrush>(
-        shared_from_this(),
         resource,
         device);
     CheckMakeResult(canvasLinearGradientBrush);
@@ -98,7 +95,7 @@ IFACEMETHODIMP CanvasLinearGradientBrushFactory::CreateSimple(
             ComPtr<ID2D1GradientStopCollection1> stopCollection =
                 CreateSimpleGradientStopCollection(canvasDevice.Get(), startColor, endColor, CanvasEdgeBehavior::Clamp);
 
-            auto newLinearBrush = GetManager()->Create(resourceCreator, stopCollection.Get());
+            auto newLinearBrush = GetManager()->CreateNew(resourceCreator, stopCollection.Get());
 
             ThrowIfFailed(newLinearBrush.CopyTo(linearGradientBrush));
         });
@@ -159,7 +156,7 @@ IFACEMETHODIMP CanvasLinearGradientBrushFactory::CreateWithEdgeBehaviorAndInterp
             CheckInPointer(resourceCreator);
             CheckAndClearOutPointer(linearGradientBrush);
 
-            auto newLinearBrush = GetManager()->Create(
+            auto newLinearBrush = GetManager()->CreateNew(
                 resourceCreator,
                 gradientStopCount,
                 gradientStops,
@@ -190,18 +187,17 @@ IFACEMETHODIMP CanvasLinearGradientBrushFactory::CreateRainbow(
             ComPtr<ID2D1GradientStopCollection1> stopCollection =
                 CreateRainbowGradientStopCollection(canvasDevice.Get(), eldritchness);
 
-            auto newLinearBrush = GetManager()->Create(resourceCreator, stopCollection.Get());
+            auto newLinearBrush = GetManager()->CreateNew(resourceCreator, stopCollection.Get());
 
             ThrowIfFailed(newLinearBrush.CopyTo(canvasLinearGradientBrush));
         });
 }
 
 CanvasLinearGradientBrush::CanvasLinearGradientBrush(
-    std::shared_ptr<CanvasLinearGradientBrushManager> manager,
     ID2D1LinearGradientBrush* brush,
     ICanvasDevice* device)
     : CanvasBrush(device)
-    , ResourceWrapper(manager, brush)
+    , ResourceWrapper(brush)
 {
     assert(brush != nullptr);
 }

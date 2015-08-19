@@ -9,10 +9,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     using namespace ::Microsoft::WRL;
 
     class CanvasImageBrushFactory
-        : public ActivationFactory<
-            ICanvasImageBrushFactory,
-            CloakedIid<ICanvasDeviceResourceFactoryNative>>,
-          private LifespanTracker<CanvasImageBrushFactory>
+        : public ActivationFactory<ICanvasImageBrushFactory>
+        , private LifespanTracker<CanvasImageBrushFactory>
     {
         InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_Brushes_CanvasImageBrush, BaseTrust);
 
@@ -25,11 +23,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             ICanvasResourceCreator* resourceAllocator,
             ICanvasImage* image,
             ICanvasImageBrush** canvasImageBrush) override;
-            
-        IFACEMETHOD(GetOrCreate)(
-            ICanvasDevice* device,
-            IUnknown* resource,
-            IInspectable** wrapper) override;
     };
 
     class CanvasImageBrush : public RuntimeClass<
@@ -65,6 +58,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             ICanvasDevice* device,
             ID2D1BitmapBrush1* bitmapBrush = nullptr,
             ID2D1ImageBrush* imageBrush = nullptr);
+
+        CanvasImageBrush(
+            ICanvasDevice* device,
+            ID2D1ImageBrush* imageBrush);
 
         IFACEMETHOD(get_Image)(ICanvasImage** value) override;
 

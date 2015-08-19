@@ -89,7 +89,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         InitializeDefaultState(deviceContext);
 
         return Make<CanvasDrawingSession>(
-            shared_from_this(),
             owner,
             deviceContext,
             drawingSessionAdapter);
@@ -100,7 +99,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ID2D1DeviceContext1* resource)
     {
         auto drawingSession = Make<CanvasDrawingSession>(
-            shared_from_this(), 
             nullptr,
             resource, 
             m_adapter);
@@ -146,11 +144,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
 
     CanvasDrawingSession::CanvasDrawingSession(
-        std::shared_ptr<CanvasDrawingSessionManager> manager,
         ICanvasDevice* owner,
         ID2D1DeviceContext1* deviceContext,
         std::shared_ptr<ICanvasDrawingSessionAdapter> adapter)
-        : ResourceWrapper(manager, deviceContext)
+        : ResourceWrapper(deviceContext)
         , m_owner(owner)
         , m_adapter(adapter)
         , m_nextLayerId(0)
@@ -2548,7 +2545,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     {
         if (!m_defaultTextFormat)
         {
-            m_defaultTextFormat = CanvasTextFormatFactory::GetOrCreateManager()->Create();
+            m_defaultTextFormat = CanvasTextFormatFactory::GetManager()->Create();
         }
 
         return m_defaultTextFormat.Get();
@@ -3522,9 +3519,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                     ComPtr<ID2D1Device1> d2dDevice;
                     ThrowIfFailed(d2dDeviceBase.As(&d2dDevice));
 
-                    auto canvasDeviceManager = CanvasDeviceFactory::GetOrCreateManager();
-
-                    m_owner = canvasDeviceManager->GetOrCreate(d2dDevice.Get());
+                    m_owner = ResourceManager::GetOrCreate<ICanvasDevice>(d2dDevice.Get());
                 }
 
                 ThrowIfFailed(m_owner.CopyTo(value));

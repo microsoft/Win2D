@@ -76,50 +76,18 @@ static void ThrowIfNegativeOrNan(float value)
 
 
 //
-// CanvasTextFormatAdapter implementation
-//
-
-
-ComPtr<IDWriteFactory> CanvasTextFormatAdapter::CreateDWriteFactory(DWRITE_FACTORY_TYPE type)
-{
-    ComPtr<IDWriteFactory> factory;
-    ThrowIfFailed(DWriteCreateFactory(type, __uuidof(factory), &factory));
-    return factory;
-}
-
-
-IStorageFileStatics* CanvasTextFormatAdapter::GetStorageFileStatics()
-{
-    if (!m_storageFileStatics)
-    {
-        ThrowIfFailed(GetActivationFactory(
-            HStringReference(RuntimeClass_Windows_Storage_StorageFile).Get(), 
-            &m_storageFileStatics));
-    }
-
-    return m_storageFileStatics.Get();
-}
-
-
-//
 // CanvasTextFormatManager implementation
 //
 
-CanvasTextFormatManager::CanvasTextFormatManager(std::shared_ptr<ICanvasTextFormatAdapter> adapter)
-    : CustomFontManager(adapter)
-{
-}
-
-
 ComPtr<CanvasTextFormat> CanvasTextFormatManager::Create()
 {
-    return Make<CanvasTextFormat>(shared_from_this());
+    return Make<CanvasTextFormat>();
 }
 
 
-ComPtr<CanvasTextFormat> CanvasTextFormatManager::Create(IDWriteTextFormat* format)
+ComPtr<CanvasTextFormat> CanvasTextFormatManager::CreateWrapper(IDWriteTextFormat* format)
 {
-    return Make<CanvasTextFormat>(shared_from_this(), format);
+    return Make<CanvasTextFormat>(format);
 }
 
 
@@ -128,38 +96,13 @@ ComPtr<CanvasTextFormat> CanvasTextFormatManager::Create(IDWriteTextFormat* form
 // CanvasTextFormatFactory implementation
 //
 
-
-CanvasTextFormatFactory::CanvasTextFormatFactory()
-{
-}
-
-
-std::shared_ptr<CanvasTextFormatManager> CanvasTextFormatFactory::CreateManager()
-{
-    return std::make_shared<CanvasTextFormatManager>(std::make_shared<CanvasTextFormatAdapter>());
-}
-
-
 IFACEMETHODIMP CanvasTextFormatFactory::ActivateInstance(IInspectable** object)
 {
     return ExceptionBoundary(
         [&]
         {
-            auto format = GetOrCreateManager()->Create();
+            auto format = GetManager()->Create();
             ThrowIfFailed(format.CopyTo(object));
-        });
-}
-
-
-IFACEMETHODIMP CanvasTextFormatFactory::GetOrCreate(
-    IUnknown* resource,
-    IInspectable** wrapper)
-{
-    return ExceptionBoundary(
-        [&]
-        {
-            auto format = GetOrCreateManager()->Create(As<IDWriteTextFormat>(resource).Get());
-            ThrowIfFailed(format.CopyTo(wrapper));
         });
 }
 
@@ -169,8 +112,8 @@ IFACEMETHODIMP CanvasTextFormatFactory::GetOrCreate(
 //
 
 
-CanvasTextFormat::CanvasTextFormat(std::shared_ptr<CanvasTextFormatManager> manager)
-    : m_manager(manager)
+CanvasTextFormat::CanvasTextFormat()
+    : m_customFontManager(CustomFontManager::GetInstance())
     , m_closed(false)
     , m_direction(CanvasTextDirection::LeftToRightThenTopToBottom)
     , m_fontFamilyName(L"Segoe UI")
@@ -191,8 +134,8 @@ CanvasTextFormat::CanvasTextFormat(std::shared_ptr<CanvasTextFormatManager> mana
 }
 
 
-CanvasTextFormat::CanvasTextFormat(std::shared_ptr<CanvasTextFormatManager> manager, IDWriteTextFormat* format)
-    : m_manager(manager)
+CanvasTextFormat::CanvasTextFormat(IDWriteTextFormat* format)
+    : m_customFontManager(CustomFontManager::GetInstance())
     , m_closed(false)
     , m_format(format)
 {
@@ -244,7 +187,7 @@ ComPtr<IDWriteTextFormat> CanvasTextFormat::GetRealizedTextFormat()
 
     if (!fontCollection)
     {
-        fontCollection = m_manager->GetFontCollectionFromUri(uri);
+        fontCollection = m_customFontManager->GetFontCollectionFromUri(uri);
     }
 
     ThrowIfFailed(factory->CreateTextFormat(
@@ -556,7 +499,7 @@ IFACEMETHODIMP CanvasTextFormat::put_FontFamily(HSTRING value)
 
             auto uriAndFontFamily = GetUriAndFontFamily(WinString(value));
             auto const& uri = uriAndFontFamily.first;
-            m_manager->ValidateUri(uri);
+            m_customFontManager->ValidateUri(uri);
 
             Unrealize();
             m_fontCollection.Reset();

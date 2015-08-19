@@ -47,36 +47,6 @@ IFACEMETHODIMP CanvasImageBrushFactory::CreateWithImage(
         });
 }
 
-IFACEMETHODIMP CanvasImageBrushFactory::GetOrCreate(
-    ICanvasDevice* device,
-    IUnknown* resource,
-    IInspectable** wrapper)
-{
-    return ExceptionBoundary(
-        [&]
-        {
-            CheckInPointer(device);
-            CheckInPointer(resource);
-            CheckAndClearOutPointer(wrapper);
-
-            auto deviceInternal = As<ICanvasDeviceInternal>(device);
-
-            auto d2dBitmapBrush = MaybeAs<ID2D1BitmapBrush1>(resource);
-            auto d2dImageBrush = MaybeAs<ID2D1ImageBrush>(resource);
-
-            if (!d2dBitmapBrush && !d2dImageBrush)
-                ThrowHR(E_NOINTERFACE);
-
-            auto newImageBrush = Make<CanvasImageBrush>(
-                device,
-                d2dBitmapBrush.Get(),
-                d2dImageBrush.Get());
-            CheckMakeResult(newImageBrush);
-            ThrowIfFailed(newImageBrush.CopyTo(wrapper));
-        });
-}
-
-
 CanvasImageBrush::CanvasImageBrush(
     ICanvasDevice* device,
     ID2D1BitmapBrush1* bitmapBrush,
@@ -103,6 +73,13 @@ CanvasImageBrush::CanvasImageBrush(
 
     if (!m_d2dImageBrush)
         m_d2dImageBrush = deviceInternal->CreateImageBrush(nullptr);
+}
+
+CanvasImageBrush::CanvasImageBrush(
+    ICanvasDevice* device,
+    ID2D1ImageBrush* imageBrush)
+    : CanvasImageBrush(device, nullptr, imageBrush)
+{
 }
 
 void CanvasImageBrush::SetImage(ICanvasImage* image)
@@ -172,9 +149,8 @@ IFACEMETHODIMP CanvasImageBrush::get_Image(ICanvasImage** value)
             if (!d2dBitmap)
                 return;
 
-            auto bitmapManager = PerApplicationPolymorphicBitmapManager::GetOrCreateManager();
-            auto bitmap = bitmapManager->GetOrCreateBitmap(device.Get(), d2dBitmap.Get());
-            ThrowIfFailed(bitmap.CopyTo(value));
+            auto image = ResourceManager::GetOrCreate<ICanvasImage>(device.Get(), d2dBitmap.Get());
+            ThrowIfFailed(image.CopyTo(value));
         });
 }
 

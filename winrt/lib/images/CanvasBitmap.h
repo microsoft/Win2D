@@ -4,7 +4,6 @@
 
 #pragma once
 
-#include "PolymorphicBitmapmanager.h"
 #include "TextureUtilities.h"
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
@@ -16,6 +15,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     using namespace ABI::Windows::Foundation;
     using namespace ABI::Windows::Storage::Streams;
     using namespace ABI::Windows::Storage;
+    using namespace ABI::Windows::UI;
 
 #if WINVER > _WIN32_WINNT_WINBLUE
     using ABI::Windows::Graphics::Imaging::ISoftwareBitmap;
@@ -70,15 +70,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     };
 
     class CanvasBitmapFactory :
-        public ActivationFactory<
-            ICanvasBitmapFactory, 
-            ICanvasBitmapStatics,
-            CloakedIid<ICanvasDeviceResourceFactoryNative>>,
-        public PerApplicationPolymorphicBitmapManager
+        public ActivationFactory<ICanvasBitmapFactory, ICanvasBitmapStatics>,
+        private LifespanTracker<CanvasBitmapFactory>
     {
         InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_CanvasBitmap, BaseTrust);
 
     public:
+        IMPLEMENT_DEFAULT_GETMANAGER(CanvasBitmapManager)
+            
         //
         // ICanvasBitmapStatics
         //
@@ -219,16 +218,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             CanvasAlphaMode alpha,
             ABI::Windows::Foundation::IAsyncOperation<CanvasBitmap*>** canvasBitmapAsyncOperation) override;
 
-        //
-        // ICanvasDeviceResourceFactoryNative
-        //
-        
-        IFACEMETHOD(GetOrCreate)(
-            ICanvasDevice* device,
-            IUnknown* resource,
-            IInspectable** wrapper) override;
-
-        private:
+    private:
         HRESULT CreateFromDirect3D11SurfaceImpl(
             ICanvasResourceCreator* resourceCreator,
             IDirect3DSurface* surface,
@@ -251,7 +241,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     void SaveBitmapToFileImpl(
         ComPtr<ID2D1Bitmap1> const& d2dBitmap,
-        ICanvasBitmapResourceCreationAdapter* adapter,
+        std::shared_ptr<ICanvasBitmapResourceCreationAdapter> adapter,
         HSTRING rawfileName,
         CanvasBitmapFileFormat fileFormat,
         float quality,
@@ -259,7 +249,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     void SaveBitmapToStreamImpl(
         ComPtr<ID2D1Bitmap1> const& d2dBitmap,
-        ICanvasBitmapResourceCreationAdapter* adapter,
+        std::shared_ptr<ICanvasBitmapResourceCreationAdapter> adapter,
         ComPtr<IRandomAccessStream> const& stream,
         CanvasBitmapFileFormat fileFormat,
         float quality,
@@ -292,23 +282,26 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         typedef ID2D1Bitmap1 resource_t;
         typedef CanvasBitmap wrapper_t;
         typedef ICanvasBitmap wrapper_interface_t;
-        typedef CanvasBitmapManager manager_t;
     };
 
 
     template<typename TRAITS>
     class CanvasBitmapImpl 
         : public Implements<
-        RuntimeClassFlags<WinRtClassicComMix>,
-        ICanvasBitmap,
-        ICanvasImage,
-        IGraphicsEffectSource,
-        IDirect3DSurface,
-        CloakedIid<ICanvasImageInternal>,
-        CloakedIid<ICanvasBitmapInternal>,
-        CloakedIid<IDirect3DDxgiInterfaceAccess>,
-        ChainInterfaces<MixIn<CanvasBitmapImpl<TRAITS>, ResourceWrapper<TRAITS>>, ABI::Windows::Foundation::IClosable, CloakedIid<ICanvasResourceWrapperNative>>>
-        , public ResourceWrapper<TRAITS>
+            RuntimeClassFlags<WinRtClassicComMix>,
+            ICanvasBitmap,
+            ICanvasImage,
+            IGraphicsEffectSource,
+            IDirect3DSurface,
+            CloakedIid<ICanvasImageInternal>,
+            CloakedIid<ICanvasBitmapInternal>,
+            CloakedIid<IDirect3DDxgiInterfaceAccess>,
+            CloakedIid<ICanvasResourceWrapperWithDevice>,
+            ChainInterfaces<
+                MixIn<CanvasBitmapImpl<TRAITS>, ResourceWrapper<typename TRAITS::resource_t, typename TRAITS::wrapper_t>>,
+                ABI::Windows::Foundation::IClosable,
+                CloakedIid<ICanvasResourceWrapperNative>>>
+        , public ResourceWrapper<typename TRAITS::resource_t, typename TRAITS::wrapper_t>
     {
         float m_dpi;
 
@@ -316,10 +309,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ComPtr<ICanvasDevice> m_device;
 
         CanvasBitmapImpl(
-            std::shared_ptr<typename TRAITS::manager_t> manager, 
             ID2D1Bitmap1* resource,
             ICanvasDevice* device)
-            : ResourceWrapper(manager, resource)
+            : ResourceWrapper(resource)
             , m_device(device)
             , m_dpi(GetDpi(resource))
         {}
@@ -528,8 +520,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
                     SaveBitmapToFileImpl(
                         d2dBitmap.Get(), 
-                        Manager()->GetAdapter(),
-                        rawfileName, 
+                        CanvasBitmapFactory::GetManager()->GetAdapter(),
+                        rawfileName,
                         fileFormat,
                         quality,
                         resultAsyncAction);
@@ -564,7 +556,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
                     SaveBitmapToStreamImpl(
                         d2dBitmap.Get(), 
-                        Manager()->GetAdapter(),
+                        CanvasBitmapFactory::GetManager()->GetAdapter(),
                         stream,
                         fileFormat,
                         quality,
@@ -799,17 +791,17 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     public:
         CanvasBitmap(
-            std::shared_ptr<CanvasBitmapManager> manager,
             ID2D1Bitmap1* bitmap,
             ICanvasDevice* device);
     };
 
 
-    class CanvasBitmapManager : public ResourceManager<CanvasBitmapTraits>
+    class CanvasBitmapManager : private LifespanTracker<CanvasBitmapManager>
     {
         std::shared_ptr<ICanvasBitmapResourceCreationAdapter> m_adapter;
 
     public:
+        CanvasBitmapManager();
         CanvasBitmapManager(std::shared_ptr<ICanvasBitmapResourceCreationAdapter> adapter);
 
         ComPtr<CanvasBitmap> CreateNew(
@@ -855,6 +847,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ICanvasDevice* device,
             ID2D1Bitmap1* bitmap);
 
-        ICanvasBitmapResourceCreationAdapter* GetAdapter();
+        std::shared_ptr<ICanvasBitmapResourceCreationAdapter> GetAdapter();
     };
 }}}}

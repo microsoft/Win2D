@@ -66,9 +66,11 @@ public:
                 return m_dxgiSwapChain;
             });
 
-            auto canvasSwapChain = Adapter->SwapChainManager->GetOrCreate(device, m_dxgiSwapChain.Get(), dpi);
+            auto canvasSwapChain = ResourceManager::GetOrCreate(device, m_dxgiSwapChain.Get(), dpi);
 
-            return canvasSwapChain;
+            ComPtr<CanvasSwapChain> typedPtr = static_cast<CanvasSwapChain*>(As<ICanvasSwapChain>(canvasSwapChain).Get());
+
+            return typedPtr;
         });
     }
 };
@@ -3370,7 +3372,7 @@ TEST_CLASS(CanvasAnimatedControl_DpiScaling)
 
                     Assert::AreEqual(dpi, expectedDpi);
 
-                    return Adapter->SwapChainManager->GetOrCreate(device, m_dxgiSwapChain.Get(), dpi);
+                    return Adapter->SwapChainManager->CreateWrapper(device, m_dxgiSwapChain.Get(), dpi);
                 });
         }
 

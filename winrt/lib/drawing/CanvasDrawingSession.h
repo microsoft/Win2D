@@ -44,19 +44,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 #endif
     };
 
-    class CanvasDrawingSessionManager;
-    class CanvasDrawingSession;
-
-    struct CanvasDrawingSessionTraits
-    {
-        typedef ID2D1DeviceContext1 resource_t;
-        typedef CanvasDrawingSession wrapper_t;
-        typedef ICanvasDrawingSession wrapper_interface_t;
-        typedef CanvasDrawingSessionManager manager_t;
-    };
-
     class CanvasDrawingSession : RESOURCE_WRAPPER_RUNTIME_CLASS(
-        CanvasDrawingSessionTraits,
+        ID2D1DeviceContext1,
+        CanvasDrawingSession,
+        ICanvasDrawingSession,
         ICanvasResourceCreatorWithDpi,
         ICanvasResourceCreator)
     {
@@ -88,7 +79,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     public:
         CanvasDrawingSession(
-            std::shared_ptr<CanvasDrawingSessionManager> manager,
             ICanvasDevice* owner,
             ID2D1DeviceContext1* deviceContext,
             std::shared_ptr<ICanvasDrawingSessionAdapter> drawingSessionAdapter);
@@ -1370,7 +1360,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     };
 
 
-    class CanvasDrawingSessionManager : public ResourceManager<CanvasDrawingSessionTraits>
+    class CanvasDrawingSessionManager : private LifespanTracker<CanvasDrawingSessionManager>
     {
         std::shared_ptr<ICanvasDrawingSessionAdapter> m_adapter;
 
@@ -1395,13 +1385,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
 
     class CanvasDrawingSessionFactory
-        : public ActivationFactory<ICanvasDrawingSessionStatics, CloakedIid<ICanvasFactoryNative>>,
-          public PerApplicationManager<CanvasDrawingSessionFactory, CanvasDrawingSessionManager>
+        : public ActivationFactory<ICanvasDrawingSessionStatics>
+        , private LifespanTracker<CanvasDrawingSessionFactory>
     {
         InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_CanvasDrawingSession, BaseTrust);
 
     public:
-        IMPLEMENT_DEFAULT_ICANVASFACTORYNATIVE();
+        IMPLEMENT_DEFAULT_GETMANAGER(CanvasDrawingSessionManager);
     };
 
 

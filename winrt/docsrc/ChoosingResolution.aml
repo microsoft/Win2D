@@ -10,13 +10,13 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <introduction>
       <para>
           This article explains how to configure the resolution used by 
-          Win2D's XAML controls. It explains how to
+          Win2D's XAML controls. It explains how to:
           <list class="bullet">
               <listItem>
-                  Make Win2D controls run at a fixed resolution
+                  Make Win2D controls run at a fixed resolution.
               </listItem>
               <listItem>
-                  Adjust controls' DPI to improve performance by rendering less pixels.
+                  Adjust control DPI to improve performance by rendering fewer pixels.
               </listItem>
           </list>
       </para>

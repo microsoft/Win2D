@@ -63,10 +63,8 @@ TEST_CLASS(CanvasCommandListTests)
     {
         auto device = Make<StubCanvasDevice>();
         auto d2dCommandList = Make<MockD2DCommandList>();
-        auto factory = Make<CanvasCommandListFactory>();
 
-        ComPtr<ICanvasCommandList> commandList;
-        ThrowIfFailed(factory->GetOrCreate(device.Get(), d2dCommandList.Get(), &commandList));
+        ComPtr<ICanvasCommandList> commandList = Make<CanvasCommandList>(device.Get(), d2dCommandList.Get());
 
         auto wrappedD2DCommandList = GetWrappedResource<ID2D1CommandList>(commandList);
         Assert::IsTrue(IsSameInstance(d2dCommandList.Get(), wrappedD2DCommandList.Get()));
@@ -243,4 +241,3 @@ TEST_CLASS(CanvasCommandListTests)
         }
     }
 };
-

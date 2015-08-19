@@ -40,7 +40,7 @@ TEST_CLASS(CanvasPathBuilderUnitTests)
                 return pathGeometry;
             });
 
-            SomeTestGeometry = Manager->GetOrCreate(Device.Get(), Make<MockD2DRectangleGeometry>().Get());
+            SomeTestGeometry = Make<CanvasGeometry>(Device.Get(), Make<MockD2DRectangleGeometry>().Get());
         }
     };
 
@@ -100,9 +100,9 @@ TEST_CLASS(CanvasPathBuilderUnitTests)
 
         auto canvasPathBuilder = Make<CanvasPathBuilder>(f.Device.Get());
 
-        f.Manager->Create(canvasPathBuilder.Get());
+        f.Manager->CreateNew(canvasPathBuilder.Get());
 
-        ExpectHResultException(RO_E_CLOSED, [&]{ f.Manager->Create(canvasPathBuilder.Get()); });
+        ExpectHResultException(RO_E_CLOSED, [&]{ f.Manager->CreateNew(canvasPathBuilder.Get()); });
     }
 
     TEST_METHOD_EX(CanvasPathBuilder_CreatePathClosesSink)
@@ -127,7 +127,7 @@ TEST_CLASS(CanvasPathBuilderUnitTests)
 
         auto canvasPathBuilder = Make<CanvasPathBuilder>(f.Device.Get());
 
-        f.Manager->Create(canvasPathBuilder.Get());
+        f.Manager->CreateNew(canvasPathBuilder.Get());
     }
 
     struct SinkAccessFixture : SetupFixture
@@ -550,7 +550,7 @@ TEST_CLASS(CanvasPathBuilderUnitTests)
 
         Assert::AreEqual(S_OK, canvasPathBuilder->BeginFigure(Vector2{}));
 
-        ExpectHResultException(E_INVALIDARG, [&]{ f.Manager->Create(canvasPathBuilder.Get()); });
+        ExpectHResultException(E_INVALIDARG, [&]{ f.Manager->CreateNew(canvasPathBuilder.Get()); });
         ValidateStoredErrorState(E_INVALIDARG, Strings::PathBuilderClosedMidFigure);
 
     }
@@ -578,7 +578,7 @@ TEST_CLASS(CanvasPathBuilderUnitTests)
         SinkAccessFixture f;
 
         auto mockD2DPathGeometry = Make<MockD2DPathGeometry>();
-        auto pathGeometry = f.Manager->GetOrCreate(f.Device.Get(), mockD2DPathGeometry.Get());
+        auto pathGeometry = Make<CanvasGeometry>(f.Device.Get(), mockD2DPathGeometry.Get());
 
         auto canvasPathBuilder = Make<CanvasPathBuilder>(f.Device.Get());
 
@@ -597,7 +597,7 @@ TEST_CLASS(CanvasPathBuilderUnitTests)
         SinkAccessFixture f;
 
         auto mockD2DRectangleGeometry = Make<MockD2DRectangleGeometry>();
-        auto rectangleGeometry = f.Manager->GetOrCreate(f.Device.Get(), mockD2DRectangleGeometry.Get());
+        auto rectangleGeometry = Make<CanvasGeometry>(f.Device.Get(), mockD2DRectangleGeometry.Get());
 
         auto canvasPathBuilder = Make<CanvasPathBuilder>(f.Device.Get());
 

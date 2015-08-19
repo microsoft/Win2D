@@ -10,19 +10,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 {
     using namespace ::Microsoft::WRL;
 
-    class CanvasTextLayout;
-    class CanvasTextLayoutManager;
-
-    struct CanvasTextLayoutTraits
-    {
-        typedef IDWriteTextLayout2 resource_t;
-        typedef CanvasTextLayout wrapper_t;
-        typedef ICanvasTextLayout wrapper_interface_t;
-        typedef CanvasTextLayoutManager manager_t;
-    };
-
     class CanvasTextLayout : RESOURCE_WRAPPER_RUNTIME_CLASS(
-        CanvasTextLayoutTraits,
+        IDWriteTextLayout2,
+        CanvasTextLayout,
+        ICanvasTextLayout,
+        CloakedIid<ICanvasResourceWrapperWithDevice>,
         IClosable)
     {
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_Text_CanvasTextLayout, BaseTrust);
@@ -31,11 +23,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         ClosablePtr<ICanvasDevice> m_device;
 
+        std::shared_ptr<CustomFontManager> m_customFontManager;
+
     public:
         CanvasTextLayout(
-            std::shared_ptr<CanvasTextLayoutManager> manager, 
             IDWriteTextLayout2* layout, 
-            ICanvasDevice* device);
+            ICanvasDevice* device,
+            std::shared_ptr<CustomFontManager> customFontManager);
 
         IFACEMETHOD(GetFormatChangeIndices)(
             uint32_t* positionCount,
@@ -331,23 +325,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         IFACEMETHOD(Close)() override;
 
-        //
-        // Required by ResourceTracker
-        //
-
         IFACEMETHOD(get_Device)(ICanvasDevice** device);
-
-    private:
-        ComPtr<ICanvasBrush> PolymorphicGetOrCreateBrush(
-            ComPtr<IUnknown> const& resource);
     };
 
     class CanvasTextLayoutManager
-        : public ResourceManager<CanvasTextLayoutTraits>
-        , public CustomFontManager
+        : private LifespanTracker<CanvasTextLayoutManager>
     {
     public:
-        CanvasTextLayoutManager(std::shared_ptr<ICanvasTextFormatAdapter> adapter);
+        CanvasTextLayoutManager();
 
         virtual ~CanvasTextLayoutManager() = default;
 
@@ -368,15 +353,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     //
 
     class CanvasTextLayoutFactory
-        : public ActivationFactory<
-        ICanvasTextLayoutFactory,
-        CloakedIid<ICanvasDeviceResourceFactoryNative >> ,
-        public PerApplicationManager<CanvasTextLayoutFactory, CanvasTextLayoutManager>
+        : public ActivationFactory<ICanvasTextLayoutFactory>
+        , private LifespanTracker<CanvasTextLayoutFactory>
     {
         InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_Text_CanvasTextLayout, BaseTrust);
 
     public:
-        IMPLEMENT_DEFAULT_ICANVASDEVICERESOURCEFACTORYNATIVE();
+        IMPLEMENT_DEFAULT_GETMANAGER(CanvasTextLayoutManager);
 
         CanvasTextLayoutFactory();
 
@@ -387,10 +370,5 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             float requestedWidth,
             float requestedHeight,
             ICanvasTextLayout** textLayout);
-
-        //
-        // Used by PerApplicationManager
-        //
-        static std::shared_ptr<CanvasTextLayoutManager> CreateManager();
     };
 }}}}}

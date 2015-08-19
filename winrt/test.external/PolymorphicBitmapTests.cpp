@@ -28,7 +28,7 @@ TEST_CLASS(PolymorphicBitmapTests)
 
     TEST_METHOD(GetWrappedNonTarget_AsCanvasRenderTarget_Fails)
     {
-        Assert::ExpectException<Platform::InvalidArgumentException^>(
+        Assert::ExpectException<Platform::InvalidCastException^>(
             [&]
             {
                 GetOrCreate<CanvasRenderTarget>(m_canvasDevice, m_nonTargetBitmap.Get());
@@ -70,7 +70,7 @@ TEST_CLASS(PolymorphicBitmapTests)
         //
         WicBitmapTestFixture f = CreateWicBitmapTestFixture();
 
-        Assert::ExpectException<Platform::InvalidArgumentException^>(
+        Assert::ExpectException<Platform::InvalidCastException^>(
             [&]
             {
                 GetOrCreate<CanvasRenderTarget>(m_canvasDevice, f.Bitmap.Get());

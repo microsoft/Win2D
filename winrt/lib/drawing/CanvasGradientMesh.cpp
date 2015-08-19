@@ -111,7 +111,7 @@ IFACEMETHODIMP CanvasGradientMeshFactory::Create(
             CheckInPointer(resourceCreator);
             CheckAndClearOutPointer(canvasGradientMesh);
 
-            auto newGradientMesh = GetManager()->Create(resourceCreator, patchCount, patchElements);
+            auto newGradientMesh = GetManager()->CreateNew(resourceCreator, patchCount, patchElements);
 
             ThrowIfFailed(newGradientMesh.CopyTo(canvasGradientMesh));
         });
@@ -226,10 +226,9 @@ IFACEMETHODIMP CanvasGradientMeshFactory::CreateTensorPatch(
 //
 
 CanvasGradientMesh::CanvasGradientMesh(
-    std::shared_ptr<CanvasGradientMeshManager> manager,
     ID2D1GradientMesh* d2dGradientMesh,
     ICanvasDevice* canvasDevice)
-        : ResourceWrapper(manager, d2dGradientMesh)
+        : ResourceWrapper(d2dGradientMesh)
         , m_canvasDevice(canvasDevice)
 {
 }
@@ -333,7 +332,6 @@ ComPtr<CanvasGradientMesh> CanvasGradientMeshManager::CreateNew(
     }
 
     auto canvasGradientMesh = Make<CanvasGradientMesh>(
-        shared_from_this(),
         d2dGradientMesh.Get(),
         device.Get());
     CheckMakeResult(canvasGradientMesh);
@@ -346,7 +344,6 @@ ComPtr<CanvasGradientMesh> CanvasGradientMeshManager::CreateWrapper(
     ID2D1GradientMesh* resource)
 {
     auto canvasGradientMesh = Make<CanvasGradientMesh>(
-        shared_from_this(),
         resource,
         device);
     CheckMakeResult(canvasGradientMesh);

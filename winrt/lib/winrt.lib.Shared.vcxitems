@@ -70,7 +70,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)brushes\CanvasSolidColorBrush.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)brushes\Gradients.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\LockUtilities.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)utils\StoredInPropertyMap.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\TemporaryTransform.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)xaml\AnimatedControlAsyncAction.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)xaml\BaseControl.h" />
@@ -142,7 +141,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)images\CanvasCommandList.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)images\CanvasImage.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)images\CanvasRenderTarget.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)images\PolymorphicBitmapManager.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)images\TextureUtilities.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)text\CanvasTextFormat.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)text\CanvasTextLayout.h" />
@@ -152,7 +150,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\D2DResourceLock.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\DxgiUtilities.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\ResourceManager.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)utils\ResourceTracker.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\ResourceWrapper.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\Strings.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\Strings.inl" />
@@ -183,6 +180,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)brushes\CanvasRadialGradientBrush.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)brushes\CanvasSolidColorBrush.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)brushes\Gradients.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)utils\ResourceManager.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)xaml\CanvasAnimatedControl.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)xaml\CanvasAnimatedControlAdapter.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)xaml\CanvasControl.cpp" />
@@ -247,7 +245,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)images\CanvasCommandList.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)images\CanvasImage.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)images\CanvasRenderTarget.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)images\PolymorphicBitmapManager.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)images\TextureUtilities.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)text\CanvasTextFormat.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)text\CanvasTextLayout.cpp" />

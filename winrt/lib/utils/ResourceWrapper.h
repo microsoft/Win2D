@@ -4,45 +4,41 @@
 
 #pragma once
 
+#include "ResourceManager.h"
+
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
     //
     // ResourceWrapper is a helper for implementing WinRT types that are
-    // conceptually wrappers around a native resource.  It works in conjunction
-    // with ResourceManager to allow looking up wrappers by resource.
-    //
-    // See ResourceManager.h for more information.
+    // conceptually wrappers around a native resource.
     //
 
-#define RESOURCE_WRAPPER_RUNTIME_CLASS(TRAITS, ...)         \
-    public RuntimeClass<                                    \
-        RuntimeClassFlags<WinRtClassicComMix>,              \
-        TRAITS::wrapper_interface_t,                        \
-        ChainInterfaces<MixIn<TRAITS::wrapper_t, ResourceWrapper<TRAITS>>, ABI::Windows::Foundation::IClosable, CloakedIid<ABI::Microsoft::Graphics::Canvas::ICanvasResourceWrapperNative>>, \
-        __VA_ARGS__>,                                       \
-    public ResourceWrapper<TRAITS>
+#define RESOURCE_WRAPPER_RUNTIME_CLASS(TResource, TWrapper, TWrapperInterface, ...)         \
+    public RuntimeClass<                                                                    \
+        RuntimeClassFlags<WinRtClassicComMix>,                                              \
+        TWrapperInterface,                                                                  \
+        ChainInterfaces<                                                                    \
+            MixIn<TWrapper, ResourceWrapper<TResource, TWrapper>>,                          \
+            ABI::Windows::Foundation::IClosable,                                            \
+            CloakedIid<ABI::Microsoft::Graphics::Canvas::ICanvasResourceWrapperNative>>,    \
+        __VA_ARGS__>,                                                                       \
+    public ResourceWrapper<TResource, TWrapper>
 
 
-    template<typename TRAITS>
+    template<typename TResource, typename TWrapper>
     class ResourceWrapper : public ABI::Windows::Foundation::IClosable, 
                             public ABI::Microsoft::Graphics::Canvas::ICanvasResourceWrapperNative,
-                            private LifespanTracker<typename TRAITS::wrapper_t>
+                            private LifespanTracker<TWrapper>
     {
-        std::shared_ptr<typename TRAITS::manager_t> m_manager;
-        ClosablePtr<typename TRAITS::resource_t> m_resource;
+        ClosablePtr<TResource> m_resource;
 
     public:
-        typedef typename TRAITS::resource_t resource_t;
-        typedef typename TRAITS::wrapper_t wrapper_t;
-        typedef typename TRAITS::wrapper_interface_t wrapper_interface_t;
-        typedef std::function<void(resource_t*)> remover_t;
-
-        ResourceWrapper(std::shared_ptr<typename TRAITS::manager_t> manager, resource_t* resource)
-            : m_manager(manager)
-            , m_resource(resource)
+        ResourceWrapper(TResource* resource)
+            : m_resource(resource)
         {
-            CheckInPointer(manager.get());
             CheckInPointer(resource);
+
+            ResourceManager::Add(resource, AsWeak(static_cast<TWrapper*>(this)));
         }
 
         virtual ~ResourceWrapper()
@@ -50,14 +46,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             Close();
         }
 
-        ComPtr<resource_t> const& GetResource()
+        ComPtr<TResource> const& GetResource()
         {
             return m_resource.EnsureNotClosed();
-        }
-
-        std::shared_ptr<typename TRAITS::manager_t> Manager()
-        {
-            return m_manager;
         }
 
         //
@@ -72,7 +63,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                     if (m_resource)
                     {
                         auto const& resource = m_resource.Close();
-                        m_manager->Remove(resource.Get());
+
+                        ResourceManager::Remove(resource.Get());
                     }
                 });
         }
@@ -93,4 +85,29 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 });
         }
     };
+
+
+    // TODO interop: add tests to validate that these interfaces are implemented by the right set of types
+    [uuid(D8CF19FE-8064-423E-B649-8B458BA86116)]
+    class ICanvasResourceWrapperWithDevice : public IUnknown
+    {
+    public:
+        IFACEMETHOD(get_Device)(ICanvasDevice** value) = 0;
+    };
+
+
+    [uuid(D4142C4E-024D-45C3-85D1-B058314D9204)]
+    class ICanvasResourceWrapperWithDpi : public IUnknown
+    {
+    public:
+        IFACEMETHOD(get_Dpi)(float* value) = 0;
+    };
+
 }}}}
+
+// TODO interop - placeholder migration aid, won't be needed once managers are refactored away
+#define IMPLEMENT_DEFAULT_GETMANAGER(MANAGER)           \
+    static std::shared_ptr<MANAGER> GetManager()        \
+    {                                                   \
+        return std::make_shared<MANAGER>();             \
+    }

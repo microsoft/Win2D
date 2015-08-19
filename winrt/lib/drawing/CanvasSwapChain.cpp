@@ -61,7 +61,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 ComPtr<ICanvasDevice> device;
                 ThrowIfFailed(As<ICanvasResourceCreator>(resourceCreator)->get_Device(&device));
 
-                auto newCanvasSwapChain = GetManager()->Create(
+                auto newCanvasSwapChain = GetManager()->CreateNew(
                     device.Get(),
                     width,
                     height,
@@ -111,7 +111,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 ComPtr<ICanvasDevice> device;
                 ThrowIfFailed(resourceCreator->get_Device(&device));
 
-                auto newCanvasSwapChain = GetManager()->Create(
+                auto newCanvasSwapChain = GetManager()->CreateNew(
                     device.Get(),
                     width,
                     height,
@@ -143,7 +143,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 ComPtr<ICanvasDevice> device;
                 ThrowIfFailed(resourceCreator->get_Device(&device));
 
-                auto newCanvasSwapChain = GetManager()->Create(
+                auto newCanvasSwapChain = GetManager()->CreateNew(
                     device.Get(),
                     coreWindow,
                     dpi);
@@ -171,7 +171,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 ComPtr<ICanvasDevice> device;
                 ThrowIfFailed(resourceCreator->get_Device(&device));
 
-                auto newCanvasSwapChain = GetManager()->Create(
+                auto newCanvasSwapChain = GetManager()->CreateNew(
                     device.Get(),
                     coreWindow,
                     width,
@@ -184,40 +184,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             });
     }
     
-
-    //
-    // ICanvasDeviceResourceWithDpiFactoryNative
-    //
-
-
-    IFACEMETHODIMP CanvasSwapChainFactory::GetOrCreate(
-        ICanvasDevice* device,
-        IUnknown* resource,
-        float dpi,
-        IInspectable** wrapper)
-    {
-        return ExceptionBoundary(
-            [&]
-            {
-                CheckInPointer(resource);
-                CheckAndClearOutPointer(wrapper);
-
-                ComPtr<IDXGISwapChain1> dxgiSwapChain;
-                ThrowIfFailed(resource->QueryInterface(dxgiSwapChain.GetAddressOf()));
-
-                auto newCanvasSwapChain = GetManager()->GetOrCreate(device, dxgiSwapChain.Get(), dpi);
-
-                ThrowIfFailed(newCanvasSwapChain.CopyTo(wrapper));
-            });
-    }
-
     CanvasSwapChain::CanvasSwapChain(
         ICanvasDevice* device,
-        std::shared_ptr<CanvasSwapChainManager> swapChainManager,
         std::shared_ptr<ICanvasSwapChainAdapter> swapChainAdapter,
         IDXGISwapChain1* dxgiSwapChain,
         float dpi)
-        : ResourceWrapper(swapChainManager, dxgiSwapChain)
+        : ResourceWrapper(dxgiSwapChain)
         , m_device(device)
         , m_dpi(dpi)
         , m_adapter(swapChainAdapter)
@@ -693,8 +665,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                     m_dpi,
                     &deviceContext);
                 
-                auto drawingSessionManager = CanvasDrawingSessionFactory::GetOrCreateManager();
-                auto newDrawingSession = drawingSessionManager->Create(deviceContext.Get(), adapter);
+                auto drawingSessionManager = CanvasDrawingSessionFactory::GetManager();
+                auto newDrawingSession = drawingSessionManager->CreateNew(deviceContext.Get(), adapter);
 
                 ThrowIfFailed(newDrawingSession.CopyTo(drawingSession));
             });
@@ -755,7 +727,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         auto canvasSwapChain = Make<CanvasSwapChain>(
             device,
-            shared_from_this(),
             m_adapter,
             dxgiSwapChain.Get(),
             dpi);
@@ -809,7 +780,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         auto canvasSwapChain = Make<CanvasSwapChain>(
             device,
-            shared_from_this(),
             m_adapter,
             dxgiSwapChain.Get(),
             dpi);
@@ -825,7 +795,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     {
         auto swapChain = Make<CanvasSwapChain>(
             device,
-            shared_from_this(),
             m_adapter,
             resource,
             dpi);

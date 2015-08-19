@@ -4,7 +4,6 @@
 
 #include "pch.h"
 #include "TextureUtilities.h"
-#include "PolymorphicBitmapManager.h"
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
@@ -141,6 +140,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return m_mappedSubresource.RowPitch;
     }
 
+
     unsigned int GetBytesPerPixel(DXGI_FORMAT format)
     {
         switch (format)
@@ -230,6 +230,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         }
     }
 
+
     ComPtr<ID3D11Texture2D> GetTexture2DForDXGISurface(
         ComPtr<IDXGISurface2> const& dxgiSurface,
         uint32_t* subresourceIndexOut)
@@ -247,4 +248,57 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return parentResource;
     }
 
-} } } }
+
+    ComPtr<ID2D1Bitmap1> CreateD2DBitmap(
+        ICanvasDevice* canvasDevice, 
+        IDirect3DSurface* surface,
+        float dpi,
+        CanvasAlphaMode alpha)
+    {
+        auto dxgiSurface = GetDXGIInterface<IDXGISurface2>(surface);
+        auto deviceContext = As<ICanvasDeviceInternal>(canvasDevice)->CreateDeviceContext();
+
+        D2D1_BITMAP_PROPERTIES1 bitmapProperties = D2D1::BitmapProperties1();
+        bitmapProperties.pixelFormat.alphaMode = ToD2DAlphaMode(alpha);
+        bitmapProperties.dpiX = dpi;
+        bitmapProperties.dpiY = dpi;
+
+        // D2D requires bitmap flags that match the surface format, if a
+        // D2D1_BITMAP_PROPERTIES1 is specified.
+        //
+        ComPtr<ID3D11Texture2D> parentResource = GetTexture2DForDXGISurface(dxgiSurface);
+
+        ComPtr<IDXGIResource1> dxgiResource;
+        ThrowIfFailed(parentResource.As(&dxgiResource));
+
+        DXGI_USAGE dxgiUsage;
+        ThrowIfFailed(dxgiResource->GetUsage(&dxgiUsage));
+
+        D3D11_TEXTURE2D_DESC texture2DDesc;
+        parentResource->GetDesc(&texture2DDesc);
+
+        if (texture2DDesc.BindFlags & D3D11_BIND_RENDER_TARGET && !(dxgiUsage & DXGI_USAGE_READ_ONLY))
+        {
+            bitmapProperties.bitmapOptions |= D2D1_BITMAP_OPTIONS_TARGET;
+        }
+
+        if (!(texture2DDesc.BindFlags & D3D11_BIND_SHADER_RESOURCE))
+        {
+            bitmapProperties.bitmapOptions |= D2D1_BITMAP_OPTIONS_CANNOT_DRAW;
+        }
+
+        if (texture2DDesc.Usage & D3D11_USAGE_STAGING && texture2DDesc.CPUAccessFlags & D3D11_CPU_ACCESS_READ)
+        {
+            bitmapProperties.bitmapOptions |= D2D1_BITMAP_OPTIONS_CPU_READ;
+        }
+        
+        ComPtr<ID2D1Bitmap1> d2dBitmap;
+        ThrowIfFailed(deviceContext->CreateBitmapFromDxgiSurface(
+            dxgiSurface.Get(),
+            &bitmapProperties,
+            &d2dBitmap));
+
+        return d2dBitmap;
+    }
+
+}}}}

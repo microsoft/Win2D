@@ -148,6 +148,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         }
     }
 
+    CanvasDeviceManager::CanvasDeviceManager()
+        : m_adapter(std::make_shared<DefaultDeviceResourceCreationAdapter>())
+    {
+        m_debugLevel = LoadDebugLevelProperty();
+    }
+
     CanvasDeviceManager::CanvasDeviceManager(
         std::shared_ptr<ICanvasDeviceResourceCreationAdapter> adapter)
         : m_adapter(adapter)
@@ -192,10 +198,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ThrowIfFailed(d2dFactory->CreateDevice(dxgiDevice.Get(), &d2dDevice));
         
         auto device = Make<CanvasDevice>(
-            shared_from_this(), 
             forceSoftwareRenderer,
             dxgiDevice.Get(),
-            d2dDevice.Get());
+            d2dDevice.Get(),
+            shared_from_this());
         CheckMakeResult(device);
 
         return device;
@@ -230,10 +236,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ThrowIfFailed(d2dFactory->CreateDevice(dxgiDevice.Get(), &d2dDevice));
         
         auto device = Make<CanvasDevice>(
-            shared_from_this(), 
             false, // Do not force software renderer
             dxgiDevice.Get(), 
-            d2dDevice.Get());
+            d2dDevice.Get(),
+            shared_from_this());
         CheckMakeResult(device);
 
         return device;
@@ -246,10 +252,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         auto dxgiDevice = m_adapter->GetDxgiDevice(d2dDevice);
 
         auto canvasDevice = Make<CanvasDevice>(
-            shared_from_this(),
             false, // Do not force software renderer
             dxgiDevice.Get(),
-            d2dDevice);
+            d2dDevice,
+            shared_from_this());
         CheckMakeResult(canvasDevice);
         
         return canvasDevice;
@@ -331,7 +337,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             // retro-active behavior, and the fact that we expect apps to set the 
             // debug level at start-up, before creating any devices.
             //
-            auto newDevice = Create(forceSoftwareRenderer);
+            auto newDevice = CreateNew(forceSoftwareRenderer);
             m_sharedDevices[cacheIndex] = AsWeak(newDevice.Get());
             return newDevice;
         }
@@ -427,12 +433,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     // CanvasDeviceFactory
     //
 
-    std::shared_ptr<CanvasDeviceManager> CanvasDeviceFactory::CreateManager()
-    {
-        auto adapter = std::make_shared<DefaultDeviceResourceCreationAdapter>();
-        return std::make_shared<CanvasDeviceManager>(adapter);
-    }
-
     IFACEMETHODIMP CanvasDeviceFactory::CreateWithForceSoftwareRendererOption(
         boolean forceSoftwareRenderer,
         ICanvasDevice** canvasDevice)
@@ -442,7 +442,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             {
                 CheckAndClearOutPointer(canvasDevice);
                 
-                auto newCanvasDevice = GetManager()->Create(!!forceSoftwareRenderer);
+                auto newCanvasDevice = GetManager()->CreateNew(!!forceSoftwareRenderer);
                 
                 ThrowIfFailed(newCanvasDevice.CopyTo(canvasDevice));
             });
@@ -458,7 +458,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 CheckInPointer(direct3DDevice);
                 CheckAndClearOutPointer(canvasDevice);
 
-                auto newCanvasDevice = GetManager()->Create(direct3DDevice);
+                auto newCanvasDevice = GetManager()->CreateNew(direct3DDevice);
 
                 ThrowIfFailed(newCanvasDevice.CopyTo(canvasDevice));
             });
@@ -472,7 +472,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         {
             CheckAndClearOutPointer(object);
 
-            auto newCanvasDevice = GetManager()->Create(
+            auto newCanvasDevice = GetManager()->CreateNew(
                 false); // Do not force software renderer
 
             ThrowIfFailed(newCanvasDevice.CopyTo(object));
@@ -520,17 +520,39 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
     //
+    // ICanvasFactoryNative.
+    //
+    // This is not really related to CanvasDevice: we just attach it to the factory
+    // interface to give Microsoft.Graphics.Canvas.native.h a convenient way to access it.
+    //
+
+    IFACEMETHODIMP CanvasDeviceFactory::GetOrCreate(ICanvasDevice* device, IUnknown* resource, float dpi, IInspectable** wrapper)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckInPointer(resource);
+                CheckAndClearOutPointer(wrapper);
+
+                auto result = ResourceManager::GetOrCreate(device, resource, dpi);
+
+                ThrowIfFailed(result.CopyTo(wrapper));
+            });
+    }
+
+    //
     // CanvasDevice
     //
 
     CanvasDevice::CanvasDevice(
-        std::shared_ptr<CanvasDeviceManager> deviceManager,
         bool forceSoftwareRenderer,
         IDXGIDevice3* dxgiDevice,
-        ID2D1Device1* d2dDevice)
-        : ResourceWrapper(deviceManager, d2dDevice)
+        ID2D1Device1* d2dDevice,
+        std::shared_ptr<CanvasDeviceManager> manager)
+        : ResourceWrapper(d2dDevice)
         , m_forceSoftwareRenderer(forceSoftwareRenderer)
         , m_dxgiDevice(dxgiDevice)
+        , m_manager(std::move(manager))
     {
         CheckInPointer(dxgiDevice);
 

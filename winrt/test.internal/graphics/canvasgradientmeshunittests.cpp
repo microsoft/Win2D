@@ -108,7 +108,7 @@ public:
     {
         Fixture f;
 
-        auto gradientMesh = f.Manager->Create(f.Device.Get(), 1, &f.DefaultPatches[0]);
+        auto gradientMesh = f.Manager->CreateNew(f.Device.Get(), 1, &f.DefaultPatches[0]);
 
         Assert::AreEqual(S_OK, gradientMesh->Close());
 
@@ -128,7 +128,7 @@ public:
     {
         Fixture f;
 
-        auto gradientMesh = f.Manager->Create(f.Device.Get(), 1, &f.DefaultPatches[0]);
+        auto gradientMesh = f.Manager->CreateNew(f.Device.Get(), 1, &f.DefaultPatches[0]);
 
         ComPtr<ICanvasDevice> device;
         Assert::AreEqual(S_OK, gradientMesh->get_Device(&device));
@@ -140,7 +140,7 @@ public:
     {
         Fixture f;
 
-        auto gradientMesh = f.Manager->Create(f.Device.Get(), 0, nullptr);
+        auto gradientMesh = f.Manager->CreateNew(f.Device.Get(), 0, nullptr);
         Assert::IsNotNull(gradientMesh.Get());
     }
 
@@ -361,7 +361,7 @@ public:
                 return Make<MockD2DGradientMesh>();
             });
 
-        auto gradientMesh = f.Manager->Create(f.Device.Get(), 1, &f.DefaultPatches[0]);
+        auto gradientMesh = f.Manager->CreateNew(f.Device.Get(), 1, &f.DefaultPatches[0]);
         Assert::IsNotNull(gradientMesh.Get());
     }
 
@@ -380,7 +380,7 @@ public:
                 return Make<MockD2DGradientMesh>();
             });
 
-        auto gradientMesh = f.Manager->Create(f.Device.Get(), 3, f.DefaultPatches);
+        auto gradientMesh = f.Manager->CreateNew(f.Device.Get(), 3, f.DefaultPatches);
         Assert::IsNotNull(gradientMesh.Get());
     }
 
@@ -398,10 +398,10 @@ public:
                 return S_OK;
             });
 
-        auto gradientMesh = f.Manager->Create(f.Device.Get(), 1, &f.DefaultPatches[0]);
+        auto gradientMesh = f.Manager->CreateNew(f.Device.Get(), 1, &f.DefaultPatches[0]);
 
         auto manager = std::make_shared<CanvasDrawingSessionManager>();
-        auto drawingSession = manager->GetOrCreate(d2dDeviceContext.Get());
+        auto drawingSession = manager->CreateWrapper(d2dDeviceContext.Get());
 
         Rect bounds;
         Assert::AreEqual(S_OK, gradientMesh->GetBounds(drawingSession.Get(), &bounds));
@@ -419,7 +419,7 @@ public:
         f.D2DGradientMesh->GetPatchCountMethod.SetExpectedCalls(1, [&]() { return 0; });
         f.D2DGradientMesh->GetPatchesMethod.SetExpectedCalls(0);
 
-        auto gradientMesh = f.Manager->Create(f.Device.Get(), 0, nullptr);
+        auto gradientMesh = f.Manager->CreateNew(f.Device.Get(), 0, nullptr);
 
         uint32_t patchCount{};
         CanvasGradientMeshPatch* patchElements{};
@@ -442,7 +442,7 @@ public:
                 return S_OK;
             });
 
-        auto gradientMesh = f.Manager->Create(f.Device.Get(), 1, &f.DefaultPatches[0]);
+        auto gradientMesh = f.Manager->CreateNew(f.Device.Get(), 1, &f.DefaultPatches[0]);
 
         uint32_t patchCount{};
         CanvasGradientMeshPatch* patchElements{};
@@ -468,7 +468,7 @@ public:
                 return S_OK;
             });
 
-        auto gradientMesh = f.Manager->Create(f.Device.Get(), 3, f.DefaultPatches);
+        auto gradientMesh = f.Manager->CreateNew(f.Device.Get(), 3, f.DefaultPatches);
 
         uint32_t patchCount{};
         CanvasGradientMeshPatch* patchElements{};

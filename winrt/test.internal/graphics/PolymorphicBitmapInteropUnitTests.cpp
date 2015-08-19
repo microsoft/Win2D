@@ -4,11 +4,10 @@
 
 #include "pch.h"
 
-TEST_CLASS(PolymorphicBitmapManagerTests_FromD2DBitmap)
+TEST_CLASS(PolymorphicBitmapInteropTests_FromD2DBitmap)
 {
     struct Fixture
     {
-        std::shared_ptr<PolymorphicBitmapManager> m_manager;
         ComPtr<StubCanvasDevice> m_canvasDevice;
         
         ComPtr<StubD2DBitmap> m_nonTargetBitmap;
@@ -16,7 +15,6 @@ TEST_CLASS(PolymorphicBitmapManagerTests_FromD2DBitmap)
 
         Fixture()
         {
-            m_manager = std::make_shared<PolymorphicBitmapManager>(std::make_shared<TestBitmapResourceCreationAdapter>());
             m_canvasDevice = Make<StubCanvasDevice>();
             m_nonTargetBitmap = Make<StubD2DBitmap>(D2D1_BITMAP_OPTIONS_NONE);
             m_targetBitmap = Make<StubD2DBitmap>(D2D1_BITMAP_OPTIONS_TARGET);
@@ -27,7 +25,7 @@ TEST_CLASS(PolymorphicBitmapManagerTests_FromD2DBitmap)
     {
         Fixture f;
 
-        auto wrapped = f.m_manager->GetOrCreateBitmap(f.m_canvasDevice.Get(), f.m_nonTargetBitmap.Get());
+        auto wrapped = ResourceManager::GetOrCreate<ICanvasBitmap>(f.m_canvasDevice.Get(), f.m_nonTargetBitmap.Get());
 
         AssertClassName(wrapped, RuntimeClass_Microsoft_Graphics_Canvas_CanvasBitmap);
     }
@@ -36,10 +34,10 @@ TEST_CLASS(PolymorphicBitmapManagerTests_FromD2DBitmap)
     {
         Fixture f;
 
-        ExpectHResultException(E_INVALIDARG, 
+        ExpectHResultException(E_NOINTERFACE, 
             [&]
             { 
-                f.m_manager->GetOrCreateRenderTarget(f.m_canvasDevice.Get(), f.m_nonTargetBitmap.Get()); 
+                ResourceManager::GetOrCreate<ICanvasRenderTarget>(f.m_canvasDevice.Get(), f.m_nonTargetBitmap.Get());
             });
     }
 
@@ -47,7 +45,7 @@ TEST_CLASS(PolymorphicBitmapManagerTests_FromD2DBitmap)
     {
         Fixture f;
 
-        auto wrapped = f.m_manager->GetOrCreateRenderTarget(f.m_canvasDevice.Get(), f.m_targetBitmap.Get());
+        auto wrapped = ResourceManager::GetOrCreate<ICanvasRenderTarget>(f.m_canvasDevice.Get(), f.m_targetBitmap.Get());
 
         AssertClassName(wrapped, RuntimeClass_Microsoft_Graphics_Canvas_CanvasRenderTarget);
     }
@@ -56,7 +54,7 @@ TEST_CLASS(PolymorphicBitmapManagerTests_FromD2DBitmap)
     {
         Fixture f;
 
-        auto wrapped = f.m_manager->GetOrCreateBitmap(f.m_canvasDevice.Get(), f.m_targetBitmap.Get());
+        auto wrapped = ResourceManager::GetOrCreate<ICanvasBitmap>(f.m_canvasDevice.Get(), f.m_targetBitmap.Get());
 
         AssertClassName(wrapped, RuntimeClass_Microsoft_Graphics_Canvas_CanvasRenderTarget);
     }

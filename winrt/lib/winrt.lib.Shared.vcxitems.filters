@@ -229,9 +229,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)images\CanvasRenderTarget.cpp">
       <Filter>images</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)images\PolymorphicBitmapManager.cpp">
-      <Filter>images</Filter>
-    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)images\TextureUtilities.cpp">
       <Filter>images</Filter>
     </ClCompile>
@@ -318,6 +315,9 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)xaml\ImageControlMixIn.cpp">
       <Filter>xaml</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)utils\ResourceManager.cpp">
+      <Filter>utils</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -532,9 +532,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)images\CanvasRenderTarget.h">
       <Filter>images</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)images\PolymorphicBitmapManager.h">
-      <Filter>images</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)images\TextureUtilities.h">
       <Filter>images</Filter>
     </ClInclude>
@@ -562,9 +559,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\ResourceManager.h">
       <Filter>utils</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)utils\ResourceTracker.h">
-      <Filter>utils</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\ResourceWrapper.h">
       <Filter>utils</Filter>
     </ClInclude>
@@ -572,9 +566,6 @@
       <Filter>utils</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\Strings.inl">
-      <Filter>utils</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)utils\StoredInPropertyMap.h">
       <Filter>utils</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)drawing\CanvasActiveLayer.h">

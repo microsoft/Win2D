@@ -18,26 +18,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         virtual ComPtr<ID2D1StrokeStyle1> GetRealizedD2DStrokeStyle(ID2D1Factory* d2dFactory) = 0;
     };
 
-    class CanvasStrokeStyleFactory : public ActivationFactory<CloakedIid<ICanvasFactoryNative>>,
-                                     private LifespanTracker<CanvasStrokeStyleFactory>
+    class CanvasStrokeStyleFactory
+        : public ActivationFactory<>
+        , private LifespanTracker<CanvasStrokeStyleFactory>
     {
-        InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_Geometry_CanvasStrokeStyle, BaseTrust);
-
     public:
-
-        //
-        // ActivationFactory
-        //
-
         IFACEMETHOD(ActivateInstance)(_COM_Outptr_ IInspectable** ppvObject) override;
-
-        //
-        // ICanvasFactoryNative
-        //
-
-        IFACEMETHOD(GetOrCreate)(
-            IUnknown* resource,
-            IInspectable** wrapper) override;
     };
 
     class CanvasStrokeStyle : public RuntimeClass<

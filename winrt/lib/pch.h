@@ -30,6 +30,7 @@
 #include <queue>
 #include <set>
 #include <type_traits>
+#include <unordered_map>
 #include <vector>
 
 // Win32
@@ -75,6 +76,7 @@
 #include <Nullable.h>
 #include <RegisteredEvent.h>
 #include <ScopeWarden.h>
+#include <Singleton.h>
 #include <Utilities.h>
 #include <Vector.h>
 #include <WinStringWrapper.h>
@@ -89,7 +91,7 @@
 // local
 #include "utils/Conversion.h"
 #include "utils/DxgiUtilities.h"
-#include "utils/ResourceManager.h"
+#include "utils/ResourceWrapper.h"
 #include "utils/Strings.h"
 #include "images/CanvasImage.h"
 #include "images/CanvasBitmap.h"

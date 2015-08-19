@@ -8,19 +8,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 {
     using namespace ::Microsoft::WRL;
 
-    class CanvasCachedGeometry;
-    class CanvasCachedGeometryManager;
-
-    struct CanvasCachedGeometryTraits
-    {
-        typedef ID2D1GeometryRealization resource_t;
-        typedef CanvasCachedGeometry wrapper_t;
-        typedef ICanvasCachedGeometry wrapper_interface_t;
-        typedef CanvasCachedGeometryManager manager_t;
-    };
-
     class CanvasCachedGeometry : RESOURCE_WRAPPER_RUNTIME_CLASS(
-        CanvasCachedGeometryTraits,
+        ID2D1GeometryRealization,
+        CanvasCachedGeometry,
+        ICanvasCachedGeometry,
+        CloakedIid<ICanvasResourceWrapperWithDevice>,
         IClosable)
     {
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_Geometry_CanvasCachedGeometry, BaseTrust);
@@ -30,9 +22,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     public:
 
         CanvasCachedGeometry(
-            std::shared_ptr<CanvasCachedGeometryManager> manager,
-            ID2D1GeometryRealization* d2dGeometryRealization,
-            ComPtr<ICanvasDevice> const& device);
+            ICanvasDevice* device,
+            ID2D1GeometryRealization* d2dGeometryRealization);
 
         IFACEMETHOD(Close)();
 
@@ -40,7 +31,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     };
 
 
-    class CanvasCachedGeometryManager : public ResourceManager<CanvasCachedGeometryTraits>
+    class CanvasCachedGeometryManager : private LifespanTracker<CanvasCachedGeometryManager>
     {
     public:
         // Cached fills
@@ -63,15 +54,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     };
 
     class CanvasCachedGeometryFactory
-        : public ActivationFactory<
-            ICanvasCachedGeometryStatics,
-            CloakedIid<ICanvasDeviceResourceFactoryNative>> ,
-            public PerApplicationManager<CanvasCachedGeometryFactory, CanvasCachedGeometryManager>
+        : public ActivationFactory<ICanvasCachedGeometryStatics>
+        , private LifespanTracker<CanvasCachedGeometryFactory>
     {
         InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_Geometry_CanvasCachedGeometry, BaseTrust);
 
     public:
-        IMPLEMENT_DEFAULT_ICANVASDEVICERESOURCEFACTORYNATIVE();
+        IMPLEMENT_DEFAULT_GETMANAGER(CanvasCachedGeometryManager);
 
         IFACEMETHOD(CreateFill)(
             ICanvasGeometry* geometry,

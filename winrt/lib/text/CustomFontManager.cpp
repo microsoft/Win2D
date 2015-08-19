@@ -10,10 +10,30 @@
 
 using namespace ABI::Microsoft::Graphics::Canvas::Text;
 
+
+ComPtr<IDWriteFactory> DefaultCustomFontManagerAdapter::CreateDWriteFactory(DWRITE_FACTORY_TYPE type)
+{
+    ComPtr<IDWriteFactory> factory;
+    ThrowIfFailed(DWriteCreateFactory(type, __uuidof(factory), &factory));
+    return factory;
+}
+
+
+IStorageFileStatics* DefaultCustomFontManagerAdapter::GetStorageFileStatics()
+{
+    if (!m_storageFileStatics)
+    {
+        ThrowIfFailed(GetActivationFactory(
+            HStringReference(RuntimeClass_Windows_Storage_StorageFile).Get(),
+            &m_storageFileStatics));
+    }
+
+    return m_storageFileStatics.Get();
+}
+
+
 class CustomFontFileEnumerator 
-    : public RuntimeClass<
-        RuntimeClassFlags<ClassicCom>,
-        IDWriteFontFileEnumerator>
+    : public RuntimeClass<RuntimeClassFlags<ClassicCom>, IDWriteFontFileEnumerator>
     , private LifespanTracker<CustomFontFileEnumerator>
 {
     ComPtr<IDWriteFactory> m_factory;
@@ -53,9 +73,7 @@ public:
 
 
 class CustomFontLoader
-    : public RuntimeClass<
-    RuntimeClassFlags<ClassicCom>,
-    IDWriteFontCollectionLoader>
+    : public RuntimeClass<RuntimeClassFlags<ClassicCom>, IDWriteFontCollectionLoader>
     , private LifespanTracker<CustomFontLoader>
 {
 public:
@@ -76,8 +94,8 @@ public:
 };
 
 
-CustomFontManager::CustomFontManager(std::shared_ptr<ICanvasTextFormatAdapter> const& adapter)
-    : m_adapter(adapter)
+CustomFontManager::CustomFontManager()
+    : m_adapter(CustomFontManagerAdapter::GetInstance())
 {
     ThrowIfFailed(GetActivationFactory(
         HStringReference(RuntimeClass_Windows_Foundation_Uri).Get(),

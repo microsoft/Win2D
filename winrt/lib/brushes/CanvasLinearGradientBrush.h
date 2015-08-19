@@ -9,18 +9,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     using namespace ABI::Microsoft::Graphics::Canvas::Numerics;
     using namespace ::Microsoft::WRL;    
 
-    class CanvasLinearGradientBrushManager;
-
-    struct CanvasLinearGradientBrushTraits
-    {
-        typedef ID2D1LinearGradientBrush resource_t;
-        typedef CanvasLinearGradientBrush wrapper_t;
-        typedef ICanvasLinearGradientBrush wrapper_interface_t;
-        typedef CanvasLinearGradientBrushManager manager_t;
-    };
-
     class CanvasLinearGradientBrush : RESOURCE_WRAPPER_RUNTIME_CLASS(
-        CanvasLinearGradientBrushTraits,
+        ID2D1LinearGradientBrush,
+        CanvasLinearGradientBrush,
+        ICanvasLinearGradientBrush,
         MixIn<CanvasLinearGradientBrush, CanvasBrush>),
         public CanvasBrush
     {
@@ -28,7 +20,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
     public:
         CanvasLinearGradientBrush(
-            std::shared_ptr<CanvasLinearGradientBrushManager> manager,
             ID2D1LinearGradientBrush* brush,
             ICanvasDevice* device);
 
@@ -62,7 +53,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         ComPtr<ID2D1GradientStopCollection1> GetGradientStopCollection();
     };
 
-    class CanvasLinearGradientBrushManager : public ResourceManager<CanvasLinearGradientBrushTraits>
+    class CanvasLinearGradientBrushManager : private LifespanTracker<CanvasLinearGradientBrushManager>
     {
     public:
         ComPtr<CanvasLinearGradientBrush> CreateNew(
@@ -85,16 +76,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     };
 
     class CanvasLinearGradientBrushFactory
-        : public ActivationFactory<
-        ICanvasLinearGradientBrushFactory,
-        CloakedIid<ICanvasDeviceResourceFactoryNative>,
-        ICanvasLinearGradientBrushStatics>,
-        public PerApplicationManager<CanvasLinearGradientBrushFactory, CanvasLinearGradientBrushManager>
+        : public ActivationFactory<ICanvasLinearGradientBrushFactory, ICanvasLinearGradientBrushStatics>
+        , private LifespanTracker<CanvasLinearGradientBrushFactory>
     {
         InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_Brushes_CanvasLinearGradientBrush, BaseTrust);
 
     public:
-        IMPLEMENT_DEFAULT_ICANVASDEVICERESOURCEFACTORYNATIVE();
+        IMPLEMENT_DEFAULT_GETMANAGER(CanvasLinearGradientBrushManager);
         
         IFACEMETHOD(CreateSimple)(
             ICanvasResourceCreator* resourceCreator,

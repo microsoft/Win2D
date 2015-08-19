@@ -22,7 +22,7 @@ public:
         ThrowIfFailed(expectedCanvasDevice->QueryInterface(canvasDeviceInternal.GetAddressOf()));
 
         auto d2dDevice = canvasDeviceInternal->GetD2DDevice();
-        auto actualCanvasDevice = Manager->GetOrCreate(d2dDevice.Get());
+        auto actualCanvasDevice = ResourceManager::GetOrCreate<ICanvasDevice>(d2dDevice.Get());
 
         Assert::AreEqual<ICanvasDevice*>(expectedCanvasDevice, actualCanvasDevice.Get());
     }
@@ -35,7 +35,7 @@ public:
     TEST_METHOD_EX(CanvasDevice_Implements_Expected_Interfaces)
     {
         Fixture f;
-        auto canvasDevice = f.Manager->Create(false);
+        auto canvasDevice = f.Manager->CreateNew(false);
 
         ASSERT_IMPLEMENTS_INTERFACE(canvasDevice, ICanvasDevice);
         ASSERT_IMPLEMENTS_INTERFACE(canvasDevice, ABI::Windows::Foundation::IClosable);
@@ -50,7 +50,7 @@ public:
             boolean expectedForceSoftwareRenderer = i == 1;
 
             Fixture f;
-            auto canvasDevice = f.Manager->Create(
+            auto canvasDevice = f.Manager->CreateNew(
                 !!expectedForceSoftwareRenderer);
 
             Assert::IsNotNull(canvasDevice.Get());
@@ -77,7 +77,7 @@ public:
         ThrowIfFailed(CreateDirect3D11DeviceFromDXGIDevice(stubD3D11Device.Get(), &stubDirect3DDevice));
 
         Fixture f;
-        auto canvasDevice = f.Manager->Create(
+        auto canvasDevice = f.Manager->CreateNew(
             stubDirect3DDevice.Get());
         Assert::IsNotNull(canvasDevice.Get());
 
@@ -99,7 +99,7 @@ public:
 
         // Try a NULL Direct3DDevice. 
         ExpectHResultException(E_INVALIDARG,
-            [&] { f.Manager->Create(nullptr); });
+            [&] { f.Manager->CreateNew(nullptr); });
     }
 
     TEST_METHOD_EX(CanvasDevice_Create_From_D2DDevice)
@@ -107,7 +107,7 @@ public:
         auto d2dDevice = Make<MockD2DDevice>(Make<MockD2DFactory>().Get());
 
         Fixture f;
-        auto canvasDevice = f.Manager->GetOrCreate(d2dDevice.Get());
+        auto canvasDevice = f.Manager->CreateWrapper(d2dDevice.Get());
         Assert::IsNotNull(canvasDevice.Get());
 
         // Nothing should have been created
@@ -128,7 +128,7 @@ public:
     TEST_METHOD_EX(CanvasDevice_Closed)
     {
         Fixture f;
-        auto canvasDevice = f.Manager->Create(false);
+        auto canvasDevice = f.Manager->CreateNew(false);
         Assert::IsNotNull(canvasDevice.Get());
 
         Assert::AreEqual(S_OK, canvasDevice->Close());
@@ -154,7 +154,7 @@ public:
         int d3dDeviceCreationCount = 0;
 
         // Default canvas device should be hardware.
-        auto canvasDevice = f.Manager->Create(
+        auto canvasDevice = f.Manager->CreateNew(
             false);
         d3dDeviceCreationCount++;
 
@@ -166,7 +166,7 @@ public:
 
         {
             // Ensure the fallback works.
-            canvasDevice = f.Manager->Create(
+            canvasDevice = f.Manager->CreateNew(
                 false);
             d3dDeviceCreationCount++;
 
@@ -182,7 +182,7 @@ public:
         {
             // Re-create another whole device with the hardware path on, ensuring there isn't some weird statefulness problem.
             f.ResourceCreationAdapter->SetHardwareEnabled(true);
-            canvasDevice = f.Manager->Create(
+            canvasDevice = f.Manager->CreateNew(
                 false);
             d3dDeviceCreationCount++;
 
@@ -197,45 +197,10 @@ public:
         }
     }
 
-    TEST_METHOD_EX(CanvasDeviceManager_Create_GetOrCreate_Returns_Same_Instance)
-    {
-        Fixture f;
-
-        auto expectedCanvasDevice = f.Manager->Create(false);
-
-        //
-        // Create, followed by GetOrCreate on the same d2d device should give
-        // back the same CanvasDevice.
-        //
-
-        auto d2dDevice = expectedCanvasDevice->GetD2DDevice();
-
-        auto actualCanvasDevice = f.Manager->GetOrCreate(d2dDevice.Get());
-
-        Assert::AreEqual<ICanvasDevice*>(expectedCanvasDevice.Get(), actualCanvasDevice.Get());
-
-        //
-        // Destroying these original CanvasDevices, and the GetOrCreate using
-        // the same d2d device should give back a new, different, CanvasDevice.
-        //
-
-        WeakRef weakExpectedCanvasDevice;
-        ThrowIfFailed(AsWeak(expectedCanvasDevice.Get(), &weakExpectedCanvasDevice));
-        expectedCanvasDevice.Reset();
-        actualCanvasDevice.Reset();
-
-        actualCanvasDevice = f.Manager->GetOrCreate(d2dDevice.Get());
-
-        ComPtr<ICanvasDevice> unexpectedCanvasDevice;
-        weakExpectedCanvasDevice.As(&unexpectedCanvasDevice);
-
-        Assert::AreNotEqual<ICanvasDevice*>(unexpectedCanvasDevice.Get(), actualCanvasDevice.Get());
-    }
-
     TEST_METHOD_EX(CanvasDevice_DeviceProperty)
     {
         Fixture f;
-        auto device = f.Manager->Create(false);
+        auto device = f.Manager->CreateNew(false);
 
         Assert::AreEqual(E_INVALIDARG, device->get_Device(nullptr));
 
@@ -247,7 +212,7 @@ public:
     TEST_METHOD_EX(CanvasDevice_MaximumBitmapSize_NullArg)
     {
         Fixture f;
-        auto canvasDevice = f.Manager->Create(false);
+        auto canvasDevice = f.Manager->CreateNew(false);
 
         Assert::AreEqual(E_INVALIDARG, canvasDevice->get_MaximumBitmapSizeInPixels(nullptr));
     }
@@ -269,7 +234,7 @@ public:
             };
 
         Fixture f;
-        auto canvasDevice = f.Manager->GetOrCreate(d2dDevice.Get());
+        auto canvasDevice = f.Manager->CreateWrapper(d2dDevice.Get());
 
         int32_t maximumBitmapSize;
         ThrowIfFailed(canvasDevice->get_MaximumBitmapSizeInPixels(&maximumBitmapSize));
@@ -297,7 +262,7 @@ public:
             };
 
         Fixture f;
-        auto canvasDevice = f.Manager->GetOrCreate(d2dDevice.Get());
+        auto canvasDevice = f.Manager->CreateWrapper(d2dDevice.Get());
         auto actualD2DCommandList = canvasDevice->CreateCommandList();
 
         Assert::IsTrue(IsSameInstance(d2dCommandList.Get(), actualD2DCommandList.Get()));
@@ -338,7 +303,7 @@ public:
                 ThrowIfFailed(deviceContext.CopyTo(value));
             };
 
-        auto canvasDevice = f.Manager->GetOrCreate(d2dDevice.Get());
+        auto canvasDevice = f.Manager->CreateWrapper(d2dDevice.Get());
         auto actualBitmap = canvasDevice->CreateRenderTargetBitmap(anyWidth, anyHeight, anyDpi, anyFormat, anyAlphaMode);
 
         Assert::IsTrue(IsSameInstance(d2dBitmap.Get(), actualBitmap.Get()));
@@ -399,7 +364,7 @@ public:
     TEST_METHOD_EX(CanvasDeviceLostTests_Closed)
     {
         Fixture f;
-        auto canvasDevice = f.Manager->Create(false);
+        auto canvasDevice = f.Manager->CreateNew(false);
 
         Assert::AreEqual(S_OK, canvasDevice->Close());
 
@@ -421,7 +386,7 @@ public:
     TEST_METHOD_EX(CanvasDeviceLostTests_NullArgs)
     {
         Fixture f;
-        auto canvasDevice = f.Manager->Create(false);
+        auto canvasDevice = f.Manager->CreateNew(false);
 
         EventRegistrationToken token{};
         MockEventHandler<DeviceLostHandlerType> dummyDeviceLostHandler(L"DeviceLost");
@@ -460,7 +425,7 @@ public:
     TEST_METHOD_EX(CanvasDeviceLostTests_IsDeviceLost_DeviceRemovedHr_DeviceIsLost_ReturnsTrue)
     {
         DeviceLostFixture f;
-        auto canvasDevice = f.DeviceManager->Create(false);
+        auto canvasDevice = f.DeviceManager->CreateNew(false);
 
         for (HRESULT hr : deviceRemovedHResults)
         {
@@ -473,7 +438,7 @@ public:
     TEST_METHOD_EX(CanvasDeviceLostTests_IsDeviceLost_SomeArbitraryHr_DeviceIsLost_ReturnsFalse)
     {
         DeviceLostFixture f;
-        auto canvasDevice = f.DeviceManager->Create(false);
+        auto canvasDevice = f.DeviceManager->CreateNew(false);
 
         boolean isDeviceLost;
         Assert::AreEqual(S_OK, canvasDevice->IsDeviceLost(E_INVALIDARG, &isDeviceLost));
@@ -483,7 +448,7 @@ public:
     TEST_METHOD_EX(CanvasDeviceLostTests_IsDeviceLost_DeviceRemovedHr_DeviceNotActuallyLost_ReturnsFalse)
     {
         Fixture f;
-        auto canvasDevice = f.Manager->Create(false);
+        auto canvasDevice = f.Manager->CreateNew(false);
 
         for (HRESULT hr : deviceRemovedHResults)
         {
@@ -496,7 +461,7 @@ public:
     TEST_METHOD_EX(CanvasDeviceLostTests_IsDeviceLost_SomeArbitraryHr_DeviceNotActuallyLost_ReturnsFalse)
     {
         DeviceLostFixture f;
-        auto canvasDevice = f.DeviceManager->Create(false);
+        auto canvasDevice = f.DeviceManager->CreateNew(false);
 
         boolean isDeviceLost;
         Assert::AreEqual(S_OK, canvasDevice->IsDeviceLost(E_INVALIDARG, &isDeviceLost));
@@ -506,7 +471,7 @@ public:
     TEST_METHOD_EX(CanvasDeviceLostTests_RaiseDeviceLost_RaisesSubscribedHandlers_DeviceActuallyLost)
     {
         DeviceLostFixture f;
-        auto canvasDevice = f.DeviceManager->Create(false);
+        auto canvasDevice = f.DeviceManager->CreateNew(false);
 
         MockEventHandler<DeviceLostHandlerType> deviceLostHandler(L"DeviceLost");
         deviceLostHandler.SetExpectedCalls(1);
@@ -520,7 +485,7 @@ public:
     TEST_METHOD_EX(CanvasDeviceLostTests_RemoveEventThen_RaiseDeviceLost_DoesNotInvokeHandler)
     {
         DeviceLostFixture f;
-        auto canvasDevice = f.DeviceManager->Create(false);
+        auto canvasDevice = f.DeviceManager->CreateNew(false);
 
         MockEventHandler<DeviceLostHandlerType> deviceLostHandler(L"DeviceLost");
         deviceLostHandler.SetExpectedCalls(0);
@@ -535,7 +500,7 @@ public:
     TEST_METHOD_EX(CanvasDeviceLostTests_RaiseDeviceLost_HasCorrectSenderAndArgs)
     {
         DeviceLostFixture f;
-        auto canvasDevice = f.DeviceManager->Create(false);
+        auto canvasDevice = f.DeviceManager->CreateNew(false);
 
         MockEventHandler<DeviceLostHandlerType> deviceLostHandler(L"DeviceLost");
         deviceLostHandler.SetExpectedCalls(1, 
@@ -555,7 +520,7 @@ public:
     TEST_METHOD_EX(CanvasDeviceLostTests_RaiseDeviceLost_ExceptionFromHandlerIsPropagated)
     {
         DeviceLostFixture f;
-        auto canvasDevice = f.DeviceManager->Create(false);
+        auto canvasDevice = f.DeviceManager->CreateNew(false);
 
         MockEventHandler<DeviceLostHandlerType> deviceLostHandler(L"DeviceLost");
         deviceLostHandler.SetExpectedCalls(1, 
@@ -666,7 +631,7 @@ TEST_CLASS(CanvasDebugLevelTests)
             f.Manager->SetDebugLevel(debugLevel);
 
             f.ExpectOneQueryDebugLevel(debugLevel);
-            auto canvasDevice = f.Manager->Create(false);
+            auto canvasDevice = f.Manager->CreateNew(false);
 
             f.AssertD3DDebugLevel(debugLevel);
         }
@@ -686,7 +651,7 @@ TEST_CLASS(CanvasDebugLevelTests)
             f.Manager->SetDebugLevel(debugLevel);
 
             f.ExpectOneQueryDebugLevel(debugLevel);
-            auto canvasDevice = f.Manager->Create(stubDirect3DDevice.Get());
+            auto canvasDevice = f.Manager->CreateNew(stubDirect3DDevice.Get());
             
             f.AssertDebugLevel(debugLevel);
             f.AssertNoD3DDebugLevel(); // We don't own creating a D3D device in this path
@@ -907,7 +872,7 @@ public:
     TEST_METHOD_EX(CanvasDevice_EntersLockWhenCallingDxgiMethods)
     {
         Fixture f;
-        auto device = f.Manager->Create(false);
+        auto device = f.Manager->CreateNew(false);
 
         ComPtr<ID2D1Factory> d2dFactory;
         As<ICanvasDeviceInternal>(device)->GetD2DDevice()->GetFactory(&d2dFactory);

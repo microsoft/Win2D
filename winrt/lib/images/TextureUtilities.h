@@ -34,10 +34,26 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         unsigned int GetStride();
     };
 
+
     unsigned int GetBytesPerPixel(DXGI_FORMAT format);
+
 
     ComPtr<ID3D11Texture2D> GetTexture2DForDXGISurface(
         ComPtr<IDXGISurface2> const& dxgiSurface,
         uint32_t* subresourceIndexOut = nullptr);
 
-} } } }
+
+    ComPtr<ID2D1Bitmap1> CreateD2DBitmap(
+        ICanvasDevice* canvasDevice,
+        IDirect3DSurface* surface,
+        float dpi,
+        CanvasAlphaMode alpha);
+
+
+    inline bool IsRenderTargetBitmap(ID2D1Bitmap1* d2dBitmap)
+    {
+        auto options = d2dBitmap->GetOptions();
+        return (options & D2D1_BITMAP_OPTIONS_TARGET) != 0;
+    }
+
+}}}}

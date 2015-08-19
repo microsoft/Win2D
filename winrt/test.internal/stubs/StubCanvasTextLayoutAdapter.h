@@ -13,7 +13,7 @@
 
 namespace canvas
 {
-    class StubCanvasTextLayoutAdapter : public CanvasTextFormatAdapter
+    class StubCanvasTextLayoutAdapter : public CustomFontManagerAdapter
     {
         ComPtr<MockDWriteFactory> m_mockDwritefactory;
 

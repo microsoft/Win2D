@@ -93,7 +93,7 @@ std::shared_ptr<CanvasAnimatedControlTestAdapter> CreateAnimatedControlTestAdapt
     adapter->CreateCanvasSwapChainMethod.AllowAnyCall(
         [=](ICanvasDevice* device, float width, float height, float dpi, CanvasAlphaMode alphaMode)
         {
-            auto swapChain = adapterPtr->SwapChainManager->Create(
+            auto swapChain = adapterPtr->SwapChainManager->CreateNew(
                 device,
                 1.0f,
                 1.0f,

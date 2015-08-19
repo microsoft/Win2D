@@ -61,7 +61,7 @@ TEST_CLASS(CanvasRenderTargetTests)
                     return result;
                 };
 
-            auto renderTarget = m_manager->Create(
+            auto renderTarget = m_manager->CreateNew(
                 m_canvasDevice.Get(), 
                 size.Width, 
                 size.Height, 
@@ -72,11 +72,6 @@ TEST_CLASS(CanvasRenderTargetTests)
             m_canvasDevice->MockCreateRenderTargetBitmap = nullptr;
 
             return renderTarget;
-        }
-
-        ComPtr<CanvasRenderTarget> CreateRenderTargetAsWrapper(ICanvasDevice* device, ComPtr<ID2D1Bitmap1> bitmap)
-        {
-            return m_manager->GetOrCreate(device, bitmap.Get());
         }
     };
 
@@ -146,7 +141,7 @@ TEST_CLASS(CanvasRenderTargetTests)
     {
         Fixture f;
         auto d2dBitmap = Make<StubD2DBitmap>(D2D1_BITMAP_OPTIONS_TARGET);
-        auto renderTarget = f.CreateRenderTargetAsWrapper(f.m_canvasDevice.Get(), d2dBitmap);
+        auto renderTarget = ResourceManager::GetOrCreate<ICanvasRenderTarget>(f.m_canvasDevice.Get(), d2dBitmap.Get());
 
         ComPtr<ICanvasDrawingSession> drawingSession;
         ThrowIfFailed(renderTarget->CreateDrawingSession(&drawingSession));
@@ -162,7 +157,7 @@ TEST_CLASS(CanvasRenderTargetTests)
 
         auto otherCanvasDevice = Make<StubCanvasDevice>();
 
-        ExpectHResultException(E_INVALIDARG, [&]{ f.CreateRenderTargetAsWrapper(otherCanvasDevice.Get(), d2dBitmap.Get()); });
+        ExpectHResultException(E_INVALIDARG, [&]{ ResourceManager::GetOrCreate<ICanvasRenderTarget>(otherCanvasDevice.Get(), d2dBitmap.Get()); });
     }
 
     //

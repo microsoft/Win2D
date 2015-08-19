@@ -8,19 +8,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 {
     using namespace ::Microsoft::WRL;
 
-    class CanvasSolidColorBrush;
-    class CanvasSolidColorBrushManager;
-
-    struct CanvasSolidColorBrushTraits
-    {
-        typedef ID2D1SolidColorBrush resource_t;
-        typedef CanvasSolidColorBrush wrapper_t;
-        typedef ICanvasSolidColorBrush wrapper_interface_t;
-        typedef CanvasSolidColorBrushManager manager_t;
-    };
-
     class CanvasSolidColorBrush : RESOURCE_WRAPPER_RUNTIME_CLASS(
-        CanvasSolidColorBrushTraits, 
+        ID2D1SolidColorBrush,
+        CanvasSolidColorBrush,
+        ICanvasSolidColorBrush,
         MixIn<CanvasSolidColorBrush, CanvasBrush>),
         public CanvasBrush
     {
@@ -28,7 +19,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
     public:
         CanvasSolidColorBrush(
-            std::shared_ptr<CanvasSolidColorBrushManager> manager,
             ID2D1SolidColorBrush* brush,
             ICanvasDevice* device);
 
@@ -43,7 +33,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         virtual ComPtr<ID2D1Brush> GetD2DBrush(ID2D1DeviceContext* deviceContext, GetBrushFlags flags) override;
     };
 
-    class CanvasSolidColorBrushManager : public ResourceManager<CanvasSolidColorBrushTraits>
+    class CanvasSolidColorBrushManager : private LifespanTracker<CanvasSolidColorBrushManager>
     {
     public:
         ComPtr<CanvasSolidColorBrush> CreateNew(
@@ -56,15 +46,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     };
 
     class CanvasSolidColorBrushFactory 
-        : public ActivationFactory<
-            ICanvasSolidColorBrushFactory,
-            CloakedIid<ICanvasDeviceResourceFactoryNative>>,
-          public PerApplicationManager<CanvasSolidColorBrushFactory, CanvasSolidColorBrushManager>
+        : public ActivationFactory<ICanvasSolidColorBrushFactory>
+        , private LifespanTracker<CanvasSolidColorBrushFactory>
     {
         InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_Brushes_CanvasSolidColorBrush, BaseTrust);
 
     public:
-        IMPLEMENT_DEFAULT_ICANVASDEVICERESOURCEFACTORYNATIVE();
+        IMPLEMENT_DEFAULT_GETMANAGER(CanvasSolidColorBrushManager);
 
         //
         // ICanvasSolidColorBrushFactory

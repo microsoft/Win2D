@@ -48,8 +48,7 @@ CanvasTextLayoutRegion ToHitTestDescription(DWRITE_HIT_TEST_METRICS const& hitTe
 // CanvasTextLayoutManager implementation
 //
 
-CanvasTextLayoutManager::CanvasTextLayoutManager(std::shared_ptr<ICanvasTextFormatAdapter> adapter)
-    : CustomFontManager(adapter)
+CanvasTextLayoutManager::CanvasTextLayoutManager()
 {
 }
 
@@ -60,7 +59,8 @@ ComPtr<CanvasTextLayout> CanvasTextLayoutManager::CreateNew(
     float requestedWidth,
     float requestedHeight)
 {
-    auto dwriteFactory = GetSharedFactory();
+    auto customFontManager = CustomFontManager::GetInstance();
+    auto dwriteFactory = customFontManager->GetSharedFactory();
 
     uint32_t textLength;
     auto textBuffer = WindowsGetStringRawBuffer(text, &textLength);
@@ -79,9 +79,9 @@ ComPtr<CanvasTextLayout> CanvasTextLayoutManager::CreateNew(
     ThrowIfFailed(resourceCreator->get_Device(&device));
 
     auto textLayout = Make<CanvasTextLayout>(
-        shared_from_this(),
         As<IDWriteTextLayout2>(dwriteTextLayout).Get(),
-        device.Get());
+        device.Get(),
+        customFontManager);
     CheckMakeResult(textLayout);
 
     return textLayout;
@@ -92,9 +92,9 @@ ComPtr<CanvasTextLayout> CanvasTextLayoutManager::CreateWrapper(
     IDWriteTextLayout2* resource)
 {
     auto canvasTextLayout = Make<CanvasTextLayout>(
-        shared_from_this(),
         resource,
-        device);
+        device,
+        CustomFontManager::GetInstance());
     CheckMakeResult(canvasTextLayout);
 
     return canvasTextLayout;
@@ -108,11 +108,6 @@ ComPtr<CanvasTextLayout> CanvasTextLayoutManager::CreateWrapper(
 
 CanvasTextLayoutFactory::CanvasTextLayoutFactory()
 {
-}
-
-std::shared_ptr<CanvasTextLayoutManager> CanvasTextLayoutFactory::CreateManager()
-{
-    return std::make_shared<CanvasTextLayoutManager>(std::make_shared<CanvasTextFormatAdapter>());
 }
 
 IFACEMETHODIMP CanvasTextLayoutFactory::Create(
@@ -129,7 +124,7 @@ IFACEMETHODIMP CanvasTextLayoutFactory::Create(
             CheckInPointer(textFormat);
             CheckAndClearOutPointer(textLayout);
 
-            auto newTextLayout = GetManager()->Create(
+            auto newTextLayout = GetManager()->CreateNew(
                 resourceCreator,
                 textString,
                 textFormat,
@@ -141,12 +136,13 @@ IFACEMETHODIMP CanvasTextLayoutFactory::Create(
 }
 
 CanvasTextLayout::CanvasTextLayout(
-    std::shared_ptr<CanvasTextLayoutManager> manager, 
     IDWriteTextLayout2* layout,
-    ICanvasDevice* device)
-    : ResourceWrapper(manager, layout)
+    ICanvasDevice* device,
+    std::shared_ptr<CustomFontManager> customFontManager)
+    : ResourceWrapper(layout)
     , m_drawTextOptions(CanvasDrawTextOptions::Default)
     , m_device(device)
+    , m_customFontManager(customFontManager)
 {
 }
 
@@ -527,75 +523,6 @@ IFACEMETHODIMP CanvasTextLayout::put_RequestedSize(
         });
 }
 
-ComPtr<ICanvasBrush> CanvasTextLayout::PolymorphicGetOrCreateBrush(
-    ComPtr<IUnknown> const& resource)
-{
-    auto& device = m_device.EnsureNotClosed();
-
-    if (!resource)
-    {
-        return nullptr;
-    }
-
-    auto solidColorBrush = MaybeAs<ID2D1SolidColorBrush>(resource);
-    if (solidColorBrush)
-    {
-        auto canvasSolidColorBrushManager = CanvasSolidColorBrushFactory::GetOrCreateManager();
-
-        return canvasSolidColorBrushManager->GetOrCreate(
-            device.Get(),
-            solidColorBrush.Get());
-    }
-
-    auto linearGradientBrush = MaybeAs<ID2D1LinearGradientBrush>(resource);
-    if (linearGradientBrush)
-    {
-        auto canvasLinearGradientBrushManager = CanvasLinearGradientBrushFactory::GetOrCreateManager();
-
-        return canvasLinearGradientBrushManager->GetOrCreate(
-            device.Get(),
-            linearGradientBrush.Get());
-    }
-
-    auto radialGradientBrush = MaybeAs<ID2D1RadialGradientBrush>(resource);
-    if (radialGradientBrush)
-    {
-        auto canvasRadialGradientBrushManager = CanvasRadialGradientBrushFactory::GetOrCreateManager();
-
-        return canvasRadialGradientBrushManager->GetOrCreate(
-            device.Get(),
-            radialGradientBrush.Get());
-    }
-
-    auto bitmapBrush = MaybeAs<ID2D1BitmapBrush>(resource);
-    auto imageBrush = MaybeAs<ID2D1ImageBrush>(resource);
-    if (bitmapBrush || imageBrush)
-    {
-        //
-        // TODO #4047 - Use a resource manager shared across all image
-        // brushes, rather than creating a new factory here. This works
-        // because there isn't any state stored in the factory.
-        //
-        auto imageBrushFactory = Make<CanvasImageBrushFactory>();
-        CheckMakeResult(imageBrushFactory);
-
-        ComPtr<ICanvasBrush> wrappedBrush;
-
-        if (bitmapBrush)
-            ThrowIfFailed(imageBrushFactory->GetOrCreate(device.Get(), bitmapBrush.Get(), &wrappedBrush));
-        else
-            ThrowIfFailed(imageBrushFactory->GetOrCreate(device.Get(), imageBrush.Get(), &wrappedBrush));
-
-        return wrappedBrush;
-    }
-
-    //
-    // It's possible to reach here in the case of interop, where a non-brush drawing effect has
-    // been set to the text layout. It's not possible to return this as a brush, so we throw.
-    //
-    ThrowHR(E_NOINTERFACE);
-}
-
 IFACEMETHODIMP CanvasTextLayout::GetBrush(
     int32_t characterIndex,
     ICanvasBrush** brush)
@@ -608,14 +535,20 @@ IFACEMETHODIMP CanvasTextLayout::GetBrush(
             ThrowIfNegative(characterIndex);
 
             auto& resource = GetResource();
+            auto& device = m_device.EnsureNotClosed();
 
             ComPtr<IUnknown> drawingEffect;
             ThrowIfFailed(resource->GetDrawingEffect(characterIndex, &drawingEffect, nullptr));
 
-            auto wrappedBrush = PolymorphicGetOrCreateBrush(drawingEffect);
+            ComPtr<ICanvasBrush> wrappedBrush;
+
+            if (drawingEffect)
+            {
+                wrappedBrush = ResourceManager::GetOrCreate<ICanvasBrush>(device.Get(), drawingEffect.Get());
+            }
 
             ThrowIfFailed(wrappedBrush.CopyTo(brush));
-        });
+    });
 }
 
 IFACEMETHODIMP CanvasTextLayout::GetFontFamily(
@@ -856,7 +789,7 @@ IFACEMETHODIMP CanvasTextLayout::SetFontFamily(
             auto const& uri = uriAndFontFamily.first;
             auto const& fontFamily = uriAndFontFamily.second;
 
-            ComPtr<IDWriteFontCollection> fontCollection = Manager()->GetFontCollectionFromUri(uri);
+            ComPtr<IDWriteFontCollection> fontCollection = m_customFontManager->GetFontCollectionFromUri(uri);
 
             auto textRange = ToDWriteTextRange(characterIndex, characterCount);
 

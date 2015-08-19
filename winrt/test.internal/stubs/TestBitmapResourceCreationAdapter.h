@@ -64,10 +64,10 @@ public:
 
 inline ComPtr<CanvasBitmap> CreateStubCanvasBitmap(float dpi = DEFAULT_DPI)
 {
-    auto adapter = std::make_shared<TestBitmapResourceCreationAdapter>();
-    auto manager = std::make_shared<CanvasBitmapManager>(adapter);
+    // TODO interop auto adapter = std::make_shared<TestBitmapResourceCreationAdapter>();
+    // TODO interop auto manager = std::make_shared<CanvasBitmapManager>(adapter);
 
-    return manager->GetOrCreate(nullptr, Make<StubD2DBitmap>(D2D1_BITMAP_OPTIONS_NONE, dpi).Get());
+    return Make<CanvasBitmap>(Make<StubD2DBitmap>(D2D1_BITMAP_OPTIONS_NONE, dpi).Get(), nullptr);
 }
 
 
@@ -86,5 +86,5 @@ inline ComPtr<ICanvasDrawingSession> CreateStubDrawingSession()
 
     auto manager = std::make_shared<CanvasDrawingSessionManager>();
 
-    return manager->GetOrCreate(d2dDeviceContext.Get());
+    return manager->CreateWrapper(d2dDeviceContext.Get());
 }

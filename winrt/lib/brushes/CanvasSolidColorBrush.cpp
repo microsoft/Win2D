@@ -24,7 +24,6 @@ ComPtr<CanvasSolidColorBrush> CanvasSolidColorBrushManager::CreateNew(
     auto d2dBrush = canvasDeviceInternal->CreateSolidColorBrush(ToD2DColor(color));
 
     auto canvasSolidColorBrush = Make<CanvasSolidColorBrush>(
-        shared_from_this(),
         d2dBrush.Get(),
         device.Get());
     CheckMakeResult(canvasSolidColorBrush);
@@ -38,7 +37,6 @@ ComPtr<CanvasSolidColorBrush> CanvasSolidColorBrushManager::CreateWrapper(
     ID2D1SolidColorBrush* brush)
 {
     auto canvasSolidColorBrush = Make<CanvasSolidColorBrush>(
-        shared_from_this(),
         brush,
         device);
     CheckMakeResult(canvasSolidColorBrush);
@@ -57,7 +55,7 @@ IFACEMETHODIMP CanvasSolidColorBrushFactory::Create(
             CheckInPointer(resourceCreator);
             CheckAndClearOutPointer(canvasSolidColorBrush);
 
-            auto newSolidColorBrush = GetManager()->Create(
+            auto newSolidColorBrush = GetManager()->CreateNew(
                 resourceCreator,
                 color);
 
@@ -67,11 +65,10 @@ IFACEMETHODIMP CanvasSolidColorBrushFactory::Create(
 
 
 CanvasSolidColorBrush::CanvasSolidColorBrush(
-    std::shared_ptr<CanvasSolidColorBrushManager> manager,
     ID2D1SolidColorBrush* brush,
     ICanvasDevice *device)
     : CanvasBrush(device)
-    , ResourceWrapper(manager, brush)
+    , ResourceWrapper(brush)
 {
 }
 

@@ -12,10 +12,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     class CanvasRenderTargetManager;
 
     class CanvasRenderTargetFactory 
-        : public ActivationFactory<ICanvasRenderTargetFactory, ICanvasRenderTargetStatics, CloakedIid<ICanvasDeviceResourceFactoryNative>>
-        , public PerApplicationPolymorphicBitmapManager
+        : public ActivationFactory<ICanvasRenderTargetFactory, ICanvasRenderTargetStatics>
+        , private LifespanTracker<CanvasRenderTargetFactory>
     {
     public:
+        IMPLEMENT_DEFAULT_GETMANAGER(CanvasRenderTargetManager)
+
         CanvasRenderTargetFactory();
     
         IFACEMETHOD(CreateWithSize)(
@@ -44,11 +46,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             DirectXPixelFormat format,
             CanvasAlphaMode alpha,
             ICanvasRenderTarget** renderTarget);
-
-        IFACEMETHOD(GetOrCreate)(
-            ICanvasDevice* device,
-            IUnknown* resource,
-            IInspectable** wrapper) override;
 
         //
         // ICanvasRenderTargetStatics
@@ -79,7 +76,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         typedef ID2D1Bitmap1 resource_t;
         typedef CanvasRenderTarget wrapper_t;
         typedef ICanvasRenderTarget wrapper_interface_t;
-        typedef CanvasRenderTargetManager manager_t;
     };
 
     class CanvasRenderTarget 
@@ -93,7 +89,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     public:
         CanvasRenderTarget(
-            std::shared_ptr<CanvasRenderTargetManager> manager,
             ID2D1Bitmap1* bitmap,
             ICanvasDevice* device);
 
@@ -102,11 +97,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     };
 
 
-    class CanvasRenderTargetManager : public ResourceManager<CanvasRenderTargetTraits>
+    class CanvasRenderTargetManager : private LifespanTracker<CanvasRenderTargetManager>
     {
         std::shared_ptr<ICanvasBitmapResourceCreationAdapter> m_adapter;
 
     public:
+        CanvasRenderTargetManager();
         CanvasRenderTargetManager(std::shared_ptr<ICanvasBitmapResourceCreationAdapter> adapter);
 
         ComPtr<CanvasRenderTarget> CreateNew(
