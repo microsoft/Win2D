@@ -65,7 +65,7 @@ public:
                 return m_dxgiSwapChain;
             });
 
-            auto canvasSwapChain = Adapter->SwapChainManager->GetOrCreate(device, m_dxgiSwapChain.Get(), DEFAULT_DPI);
+            auto canvasSwapChain = Adapter->SwapChainManager->GetOrCreate(device, m_dxgiSwapChain.Get(), dpi);
 
             return canvasSwapChain;
         });
@@ -569,12 +569,19 @@ TEST_CLASS(CanvasAnimatedControlTests)
     {
     public:
         float m_controlSize;
+        MockEventHandler<Animated_CreateResourcesEventHandler> m_createResourcesEventHandler;
 
         DpiFixture(float controlSize = 1000)
             : m_controlSize(controlSize)
+            , m_createResourcesEventHandler(L"CreateResources", ExpectedEventParams::Both)
         {
             // Set an initial size. Commit it using a resize event.
             UserControl->Resize(Size{ m_controlSize, m_controlSize });
+
+            // Process the resize event.
+            m_dxgiSwapChain->ResizeBuffersMethod.AllowAnyCall();
+            Adapter->Tick();
+            Adapter->ProgressTime(TicksPerFrame);
 
             // An event handler needs to be registered for a drawing session to be constructed.
             auto onDrawFn =
@@ -582,7 +589,9 @@ TEST_CLASS(CanvasAnimatedControlTests)
             EventRegistrationToken drawEventToken;
             ThrowIfFailed(Control->add_Draw(onDrawFn.Get(), &drawEventToken));
 
-            m_dxgiSwapChain->ResizeBuffersMethod.AllowAnyCall();
+            // CR is raised once immediately after adding, because this control's been Loaded already.
+            m_createResourcesEventHandler.AllowAnyCall();
+            AddCreateResourcesHandler(m_createResourcesEventHandler.Get());
         }
 
         void SetDpiAndFireEvent(float dpi)
@@ -597,20 +606,23 @@ TEST_CLASS(CanvasAnimatedControlTests)
         }
     };
 
-    TEST_METHOD_EX(CanvasAnimatedControl_AfterDpiChange_ExpectResize)
+    TEST_METHOD_EX(CanvasAnimatedControl_AfterDpiChange_NoSizeChange_DoNotExpectResize_UntilTargetRecreation)
     {
         for (auto dpiCase : dpiTestCases)
         {
             DpiFixture f;
 
-            float dpiRatio = dpiCase / DEFAULT_DPI;
-
-            Size expectedPixelSize{ roundf(f.m_controlSize * dpiRatio), roundf(f.m_controlSize * dpiRatio) };
-            f.ExpectOneResizeBuffers(expectedPixelSize);
+            f.DoNotExpectResizeBuffers();
 
             f.SetDpiAndFireEvent(dpiCase);
 
             f.Adapter->Tick();
+
+            if (dpiCase == DEFAULT_DPI)
+                continue;
+
+            float expectedPixelSize = static_cast<float>(SizeDipsToPixels(f.m_controlSize, dpiCase));
+            f.ExpectOneResizeBuffers(Size{ expectedPixelSize, expectedPixelSize });
             f.Adapter->DoChanged();
         }
     }
@@ -628,17 +640,21 @@ TEST_CLASS(CanvasAnimatedControlTests)
                     return deviceContext;
                 });
 
-            deviceContext->SetDpiMethod.SetExpectedCalls(1,
-                [&](float dpiX, float dpiY)
-                {
-                    Assert::AreEqual(dpiCase, dpiX);
-                    Assert::AreEqual(dpiCase, dpiY);
-                });
-
             f.SetDpiAndFireEvent(dpiCase);
 
-            f.Adapter->Tick();
-            f.Adapter->DoChanged();
+            f.Adapter->Tick(); // Allow game loop thread to stop
+            f.Adapter->DoChanged(); // Schedule game loop thread to start again
+
+            deviceContext->SetDpiMethod.SetExpectedCalls(1,
+                [&](float dpiX, float dpiY)
+            {
+                Assert::AreEqual(dpiCase, dpiX);
+                Assert::AreEqual(dpiCase, dpiY);
+            });
+            f.Adapter->ProgressTime(TicksPerFrame);
+
+            // Target will get re-created (or resized) with correct DPI.
+            f.Adapter->Tick(); 
         }
     }
 
@@ -653,6 +669,61 @@ TEST_CLASS(CanvasAnimatedControlTests)
 
         f.Adapter->Tick();
         f.Adapter->DoChanged();
+    }
+
+    TEST_METHOD_EX(CanvasAnimatedControl_AfterDpiChange_ExpectCreateResources)
+    {
+        for (auto dpiCase : dpiTestCases)
+        {
+            DpiFixture f;
+
+            f.SetDpiAndFireEvent(dpiCase);
+
+            if(dpiCase != DEFAULT_DPI)
+                f.m_createResourcesEventHandler.SetExpectedCalls(1);
+
+            f.Adapter->Tick();
+            f.Adapter->DoChanged();
+        }
+    }
+
+    TEST_METHOD_EX(CanvasAnimatedControl_AfterDpiChange_CreateResourcesHasCorrectParameter)
+    {
+        DpiFixture f;
+
+        f.SetDpiAndFireEvent(200.0f);
+
+        f.m_createResourcesEventHandler.SetExpectedCalls(1,
+            [&](ICanvasAnimatedControl*, ICanvasCreateResourcesEventArgs* eventArgs)
+            {
+                CanvasCreateResourcesReason reason = (CanvasCreateResourcesReason)-1;
+                Assert::AreEqual(S_OK, eventArgs->get_Reason(&reason));
+                Assert::AreEqual(CanvasCreateResourcesReason::DpiChanged, reason);
+
+                return S_OK;
+            });
+
+        f.Adapter->Tick();
+        f.Adapter->DoChanged();
+    }
+
+    TEST_METHOD_EX(CanvasAnimatedControl_ChangeToNonDefaultDpi_ThenResize_ResizeUsesCorrectDpi)
+    {
+        DpiFixture f;
+
+        f.SetDpiAndFireEvent(DEFAULT_DPI * 2);
+
+        // Reach steady state
+        f.Adapter->Tick(); 
+        f.Adapter->DoChanged(); 
+        f.Adapter->Tick();
+
+        // Issue a resize
+        f.UserControl->Resize(Size{ 123, 456 });
+
+        // Process the resize event.
+        f.ExpectOneResizeBuffers(Size{ 123 * 2, 456 * 2 });
+        f.Adapter->Tick();
     }
 
     class DeviceLostFixture : public FixtureWithSwapChainAccess

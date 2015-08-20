@@ -474,9 +474,9 @@ void CanvasAnimatedControl::CreateOrUpdateRenderTarget(
     bool alphaModeChanged = (renderTarget->AlphaMode != newAlphaMode);
     bool dpiChanged = (renderTarget->Dpi != newDpi);
     bool sizeChanged = (renderTarget->Size != newSize);
-    bool needsCreate = needsTarget || alphaModeChanged || dpiChanged;
+    bool needsCreate = needsTarget || alphaModeChanged;
 
-    if (!needsCreate && !sizeChanged)
+    if (!needsCreate && !sizeChanged && !dpiChanged)
         return;
 
     if (newSize.Width <= 0 || newSize.Height <= 0)
@@ -485,11 +485,12 @@ void CanvasAnimatedControl::CreateOrUpdateRenderTarget(
         *renderTarget = RenderTarget{};
         ThrowIfFailed(m_canvasSwapChainPanel->put_SwapChain(nullptr));
     }
-    else if (sizeChanged && !needsCreate)
+    else if ((sizeChanged || dpiChanged) && !needsCreate)
     {
-        ThrowIfFailed(renderTarget->Target->ResizeBuffersWithWidthAndHeight(newSize.Width, newSize.Height));
+        ThrowIfFailed(renderTarget->Target->ResizeBuffersWithWidthAndHeightAndDpi(newSize.Width, newSize.Height, newDpi));
 
         renderTarget->Size = newSize;
+        renderTarget->Dpi = newDpi;
     }
     else
     {
@@ -956,7 +957,7 @@ bool CanvasAnimatedControl::Tick(
 
     Color clearColor;
     Size currentSize;
-	float currentDpi;
+    float currentDpi;
     GetSharedState(lock, &clearColor, &currentSize, &currentDpi);
 
     // If the opacity has changed then the swap chain will need to be
@@ -1103,6 +1104,14 @@ bool CanvasAnimatedControl::Tick(
                 //
                 return false;
             }
+            else if (dpiChangedOnNonZeroSizedTarget)
+            {
+                //
+                // A DPI change should stop and start the render thread, and
+                // raise a CreateResources.
+                //
+                return false;
+            }
             else
             {
                 // This can be done on the update/render thread because:
@@ -1114,12 +1123,12 @@ bool CanvasAnimatedControl::Tick(
                 //
                 ThrowIfFailed(renderTarget->Target->ResizeBuffersWithWidthAndHeightAndDpi(currentSize.Width, currentSize.Height, currentDpi));
 
-				//
-				// The size and dpi fields of the render target object represent the real, committed state of the render
-				// target, while currentSize/currentDpi represent the thing last requested by the app.
-				//
+                //
+                // The size and dpi fields of the render target object represent the real, committed state of the render
+                // target, while currentSize/currentDpi represent the thing last requested by the app.
+                //
                 renderTarget->Size = currentSize;
-				renderTarget->Dpi = currentDpi;
+                renderTarget->Dpi = currentDpi;
             }
         }
 
