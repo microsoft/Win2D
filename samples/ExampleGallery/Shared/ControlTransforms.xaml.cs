@@ -83,7 +83,7 @@ namespace ExampleGallery
             }
             else
             {
-                swapChain.ResizeBuffers(size);
+                swapChain.ResizeBuffers((float)size.Width, (float)size.Height, canvasControl.Dpi);
             }
 
             using (var ds = swapChain.CreateDrawingSession(Colors.Transparent))
