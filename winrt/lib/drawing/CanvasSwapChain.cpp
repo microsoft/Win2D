@@ -374,28 +374,34 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             {
                 CheckInPointer(value);
 
-
-                DXGI_MATRIX_3X2_F matrix;
-
                 auto swapChain = As<IDXGISwapChain2>(GetResource());
 
                 auto d2dDevice = As<ICanvasDeviceInternal>(m_device.EnsureNotClosed())->GetD2DDevice();
                 D2DResourceLock lock(d2dDevice.Get());
 
-                ThrowIfFailed(swapChain->GetMatrixTransform(&matrix));
-
-                // Remove our extra DPI scaling from the transform.
-                float dpiScale = m_dpi / DEFAULT_DPI;
-
-                matrix._11 *= dpiScale;
-                matrix._12 *= dpiScale;
-                matrix._21 *= dpiScale;
-                matrix._22 *= dpiScale;
-                matrix._31 *= dpiScale;
-                matrix._32 *= dpiScale;
+                DXGI_MATRIX_3X2_F matrix = GetMatrixInternal(lock, swapChain);
 
                 *value = *ReinterpretAs<Matrix3x2*>(&matrix);
             });
+    }
+
+    DXGI_MATRIX_3X2_F CanvasSwapChain::GetMatrixInternal(D2DResourceLock const&, ComPtr<IDXGISwapChain2> const& swapChain)
+    {
+        DXGI_MATRIX_3X2_F matrix;
+
+        ThrowIfFailed(swapChain->GetMatrixTransform(&matrix));
+
+        // Remove our extra DPI scaling from the transform.
+        float dpiScale = m_dpi / DEFAULT_DPI;
+
+        matrix._11 *= dpiScale;
+        matrix._12 *= dpiScale;
+        matrix._21 *= dpiScale;
+        matrix._22 *= dpiScale;
+        matrix._31 *= dpiScale;
+        matrix._32 *= dpiScale;
+
+        return matrix;
     }
 
     IFACEMETHODIMP CanvasSwapChain::put_TransformMatrix(Matrix3x2 value)
@@ -404,22 +410,27 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             [&]
             {
                 // Insert additional scaling to account for display DPI.
-                float dpiScale = DEFAULT_DPI / m_dpi;
-
-                value.M11 *= dpiScale;
-                value.M12 *= dpiScale;
-                value.M21 *= dpiScale;
-                value.M22 *= dpiScale;
-                value.M31 *= dpiScale;
-                value.M32 *= dpiScale;
-
                 auto swapChain = As<IDXGISwapChain2>(GetResource());
 
                 auto d2dDevice = As<ICanvasDeviceInternal>(m_device.EnsureNotClosed())->GetD2DDevice();
                 D2DResourceLock lock(d2dDevice.Get());
 
-                ThrowIfFailed(swapChain->SetMatrixTransform(ReinterpretAs<DXGI_MATRIX_3X2_F*>(&value)));
+                SetMatrixInternal(lock, swapChain, ReinterpretAs<DXGI_MATRIX_3X2_F*>(&value));
             });
+    }
+
+    void CanvasSwapChain::SetMatrixInternal(D2DResourceLock const&, ComPtr<IDXGISwapChain2> const& swapChain, DXGI_MATRIX_3X2_F* transform)
+    {
+        float dpiScale = DEFAULT_DPI / m_dpi;
+
+        transform->_11 *= dpiScale;
+        transform->_12 *= dpiScale;
+        transform->_21 *= dpiScale;
+        transform->_22 *= dpiScale;
+        transform->_31 *= dpiScale;
+        transform->_32 *= dpiScale;
+
+        ThrowIfFailed(swapChain->SetMatrixTransform(transform));
     }
 
     IFACEMETHODIMP CanvasSwapChain::ConvertPixelsToDips(int pixels, float* dips)
@@ -519,12 +530,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ExceptionBoundary(
             [&]
             {
-                auto& resource = GetResource();
+                auto resource = As<IDXGISwapChain2>(GetResource());
 
                 auto d2dDevice = As<ICanvasDeviceInternal>(m_device.EnsureNotClosed())->GetD2DDevice();
                 D2DResourceLock lock(d2dDevice.Get());
 
-                m_dpi = newDpi;
+                SetDpi(lock, resource, newDpi);
 
                 int widthInPixels = SizeDipsToPixels(newWidth, m_dpi);
                 int heightInPixels = SizeDipsToPixels(newHeight, m_dpi);
@@ -540,6 +551,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                     static_cast<DXGI_FORMAT>(newFormat), 
                     0));
             });
+    }
+
+    void CanvasSwapChain::SetDpi(D2DResourceLock const& lock, ComPtr<IDXGISwapChain2> const& swapChain, float newDpi)
+    {
+        DXGI_MATRIX_3X2_F dpiIndependentTransform = GetMatrixInternal(lock, swapChain);
+
+        m_dpi = newDpi;
+
+        SetMatrixInternal(lock, swapChain, &dpiIndependentTransform);
     }
 
     // IClosable

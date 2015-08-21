@@ -3,6 +3,7 @@
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
 #include "pch.h"
+#include "stubs/StubDxgiSwapChain.h"
 
 std::shared_ptr<CanvasAnimatedControlTestAdapter> CreateAnimatedControlTestAdapter(
     ComPtr<MockD2DDeviceContext> const& deviceContext,
@@ -25,7 +26,7 @@ std::shared_ptr<CanvasAnimatedControlTestAdapter> CreateAnimatedControlTestAdapt
         int32_t bufferCount,
         CanvasAlphaMode alphaMode)
         {
-            auto dxgiSwapChain = Make<MockDxgiSwapChain>();
+            auto dxgiSwapChain = Make<StubDxgiSwapChain>();
 
             dxgiSwapChain->Present1Method.AllowAnyCall();
             dxgiSwapChain->SetMatrixTransformMethod.AllowAnyCall();

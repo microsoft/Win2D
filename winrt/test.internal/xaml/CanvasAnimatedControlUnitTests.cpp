@@ -3,6 +3,7 @@
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
 #include "pch.h"
+#include "stubs/StubDxgiSwapChain.h"
 
 static Color const AnyColor                 {   1,   2,   3,   4 };
 static Color const AnyOtherColor            {   5,   6,   7,   8 };
@@ -21,7 +22,7 @@ static float dpiTestCases[] = {
 class FixtureWithSwapChainAccess : public CanvasAnimatedControlFixture
 {
 protected:
-    ComPtr<MockDxgiSwapChain> m_dxgiSwapChain;
+    ComPtr<StubDxgiSwapChain> m_dxgiSwapChain;
 
 public:
     FixtureWithSwapChainAccess()
@@ -31,7 +32,7 @@ public:
 
     void ResetSwapChain()
     {
-        m_dxgiSwapChain = Make<MockDxgiSwapChain>();
+        m_dxgiSwapChain = Make<StubDxgiSwapChain>();
 
         m_dxgiSwapChain->Present1Method.AllowAnyCall();
 

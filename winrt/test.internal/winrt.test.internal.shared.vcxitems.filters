@@ -322,6 +322,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubDxgiDevice.h">
       <Filter>stubs</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubDxgiSwapChain.h">
+      <Filter>stubs</Filter>
+    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubImageControl.h">
       <Filter>stubs</Filter>
     </ClInclude>

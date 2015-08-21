@@ -188,6 +188,16 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     private:
         DXGI_SWAP_CHAIN_DESC1 GetResourceDescription(); // Expected to be called from exception boundary.
 
+        DXGI_MATRIX_3X2_F GetMatrixInternal(
+            D2DResourceLock const& lock, 
+            ComPtr<IDXGISwapChain2> const& swapChain);
+
+        void SetMatrixInternal(
+            D2DResourceLock const& lock, 
+            ComPtr<IDXGISwapChain2> const& resource, 
+            DXGI_MATRIX_3X2_F* transform);
+
+        void SetDpi(D2DResourceLock const& lock, ComPtr<IDXGISwapChain2> const& resource, float newDpi);
     };
     
     class CanvasSwapChainManager : public ResourceManager<CanvasSwapChainTraits>

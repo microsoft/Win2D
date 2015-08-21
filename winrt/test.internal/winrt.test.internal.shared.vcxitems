@@ -98,6 +98,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubD3D11Device.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubDxgiAdapter.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubDxgiDevice.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubDxgiSwapChain.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubGeometrySink.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubImageControl.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubSurfaceImageSource.h" />

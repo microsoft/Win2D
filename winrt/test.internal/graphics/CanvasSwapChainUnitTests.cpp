@@ -7,6 +7,7 @@
 #include "mocks/MockDXGIAdapter.h"
 #include "mocks/MockDXGIFactory.h"
 #include "stubs/StubDxgiDevice.h"
+#include "stubs/StubDxgiSwapChain.h"
 
 TEST_CLASS(CanvasSwapChainUnitTests)
 {
@@ -624,9 +625,7 @@ TEST_CLASS(CanvasSwapChainUnitTests)
 
         f.m_canvasDevice->CreateSwapChainForCompositionMethod.AllowAnyCall([=](int32_t, int32_t, DirectXPixelFormat, int32_t, CanvasAlphaMode)
         {
-            auto swapChain = Make<MockDxgiSwapChain>();
-
-            swapChain->SetMatrixTransformMethod.SetExpectedCalls(1);
+            auto swapChain = Make<StubDxgiSwapChain>();
 
             swapChain->ResizeBuffersMethod.SetExpectedCalls(1,
                 [=](UINT bufferCount,
@@ -659,9 +658,7 @@ TEST_CLASS(CanvasSwapChainUnitTests)
 
         f.m_canvasDevice->CreateSwapChainForCompositionMethod.AllowAnyCall([&](int32_t, int32_t, DirectXPixelFormat, int32_t, CanvasAlphaMode)
         {
-            auto swapChain = Make<MockDxgiSwapChain>();
-
-            swapChain->SetMatrixTransformMethod.SetExpectedCalls(1);
+            auto swapChain = Make<StubDxgiSwapChain>();
 
             swapChain->ResizeBuffersMethod.SetExpectedCalls(1,
                 [&](UINT bufferCount,
@@ -724,9 +721,7 @@ TEST_CLASS(CanvasSwapChainUnitTests)
 
             f.m_canvasDevice->CreateSwapChainForCompositionMethod.AllowAnyCall([=](int32_t, int32_t, DirectXPixelFormat, int32_t, CanvasAlphaMode)
             {
-                auto swapChain = Make<MockDxgiSwapChain>();
-            
-                swapChain->SetMatrixTransformMethod.SetExpectedCalls(1);
+                auto swapChain = Make<StubDxgiSwapChain>();
 
                 swapChain->ResizeBuffersMethod.SetExpectedCalls(1,
                     [=](UINT bufferCount,
@@ -1022,9 +1017,7 @@ TEST_CLASS(CanvasSwapChainUnitTests)
             
             m_canvasDevice->CreateSwapChainForCompositionMethod.AllowAnyCall([=](int32_t, int32_t, DirectXPixelFormat, int32_t, CanvasAlphaMode)
             {
-                auto swapChain = Make<MockDxgiSwapChain>();
-
-                swapChain->SetMatrixTransformMethod.SetExpectedCalls(1);
+                auto swapChain = Make<StubDxgiSwapChain>(expectedBackBufferSurface);
 
                 swapChain->GetDesc1Method.SetExpectedCalls(1,
                     [=](DXGI_SWAP_CHAIN_DESC1* desc)
@@ -1035,17 +1028,6 @@ TEST_CLASS(CanvasSwapChainUnitTests)
 
                         desc->Format = expectedFormat;
                         desc->AlphaMode = DXGI_ALPHA_MODE_IGNORE;
-                        return S_OK;
-                    });
-
-                swapChain->GetBufferMethod.SetExpectedCalls(1,
-                    [=](UINT index, const IID& iid, void** out)
-                    {
-                        Assert::AreEqual(0u, index);
-                        Assert::AreEqual(__uuidof(IDXGISurface2), iid);
-
-                        ThrowIfFailed(expectedBackBufferSurface.CopyTo(reinterpret_cast<IDXGISurface2**>(out)));
-
                         return S_OK;
                     });
 
@@ -1105,6 +1087,41 @@ TEST_CLASS(CanvasSwapChainUnitTests)
 
         ComPtr<ICanvasDrawingSession> drawingSession;
         Assert::AreEqual(E_NOTIMPL, canvasSwapChain->CreateDrawingSession(Color{0, 0, 0, 0}, &drawingSession));
+    }
+
+    TEST_METHOD_EX(CanvasSwapChain_ResizeBuffers_DoesNotMessUpTransform)
+    {
+        struct TestCase
+        {
+            Matrix3x2 Transform;
+            float Dpi;
+        } testCases[] {
+            { { 2.0f, 0.0f, 0.0f, 2.0f, 1.0f, 1.0f }, DEFAULT_DPI / 2 },
+            { { -1.0f, 1.0f, 2.0f, 3.0f, 1.0f, 1.0f }, DEFAULT_DPI },
+            { { 4.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f }, DEFAULT_DPI * 2 },
+            { { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f }, DEFAULT_DPI },
+        };
+
+        for (auto testCase : testCases)
+        {
+            DrawingSessionAdapterFixture f;
+
+            // Create a swap chain at default DPI
+            auto swapChain = f.CreateTestSwapChain();
+
+            Matrix3x2 transform1 = testCase.Transform;
+            ThrowIfFailed(swapChain->put_TransformMatrix(transform1));
+
+            // Resize, changing only the DPI
+            ThrowIfFailed(swapChain->ResizeBuffersWithWidthAndHeightAndDpi(1.0f, 1.0f, testCase.Dpi));
+
+            // Get the transform back
+            Matrix3x2 transform2;
+            ThrowIfFailed(swapChain->get_TransformMatrix(&transform2));
+
+            // Should be equal
+            Assert::AreEqual(transform1, transform2);
+        }
     }
 
     TEST_METHOD_EX(CanvasSwapChain_DpiProperties)
