@@ -43,6 +43,7 @@ public:
 
     RegisteredEvent& operator=(RegisteredEvent&& other)
     {
+        Release();
         m_unregisterFunction = other.m_unregisterFunction;
         other.m_unregisterFunction = nullptr;
         return *this;
