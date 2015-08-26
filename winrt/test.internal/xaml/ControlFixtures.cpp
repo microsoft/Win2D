@@ -107,3 +107,10 @@ std::shared_ptr<CanvasAnimatedControlTestAdapter> CreateAnimatedControlTestAdapt
 
     return adapter;
 }
+
+DpiScalingTestCase dpiScalingTestCases[]
+{
+    { 2.0f, DEFAULT_DPI },
+    { 1.5f, DEFAULT_DPI / 2.0f },
+    { 5.53f, DEFAULT_DPI * 2.0f },
+};

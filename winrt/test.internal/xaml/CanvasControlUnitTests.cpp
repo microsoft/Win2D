@@ -556,6 +556,29 @@ TEST_CLASS(CanvasControlTests_Dpi)
         CanvasControlFixture f;
         ThrowIfFailed(f.Control->Invalidate());
     }
+
+    TEST_METHOD_EX(CanvasControl_DpiScaling_ResourceHasCorrectDpiScale)
+    {
+        for (auto testCase : dpiScalingTestCases)
+        {
+            CanvasControlFixture f;
+
+            f.Adapter->LogicalDpi = testCase.Dpi;
+
+            f.Control->put_DpiScale(testCase.DpiScale);
+
+            f.Adapter->CreateCanvasImageSourceMethod.SetExpectedCalls(1,
+                [&](ICanvasDevice*, float, float, float dpi, CanvasAlphaMode alphaMode)
+                {
+                    float expectedDpi = testCase.Dpi * testCase.DpiScale;
+                    Assert::AreEqual(dpi, expectedDpi);
+                    return nullptr;
+                });
+
+            f.Load();
+            f.RenderSingleFrame();
+        }
+    }
 };
 
 

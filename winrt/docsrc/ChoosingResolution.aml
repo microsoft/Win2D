@@ -1,0 +1,210 @@
+<?xml version="1.0"?>
+<!--
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+Licensed under the MIT License. See LICENSE.txt in the project root for license information.
+-->
+
+<topic id="ChoosingResolution" revisionNumber="1">
+  <developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <introduction>
+      <para>
+          This article explains how to configure the resolution used by 
+          Win2D's XAML controls. It explains how to
+          <list class="bullet">
+              <listItem>
+                  Make Win2D controls run at a fixed resolution
+              </listItem>
+              <listItem>
+                  Adjust controls' DPI to improve performance by rendering less pixels.
+              </listItem>
+          </list>
+      </para>
+  </introduction>
+  
+  <section>
+      <title>Resolution and control sizing</title>
+      <content>
+          <para>
+              'Resolution', as used in this document, is another word for the size
+              of a bitmap. It consists of a width, and height. 
+          </para>
+          <para>
+              The objects that Win2D's XAML controls draw to have a resolution. 
+              They also have a DPI. An object's DPI is a measurement of how dense 
+              the pixels of that object are, when drawn. DPI behaves like a scale 
+              factor- a high DPI increases the number of pixels that comprise the 
+              drawn object. On the other hand, lowering the DPI of an object means 
+              that it will span fewer pixels. For more information about Win2D's 
+              handling of DPI in general, see 
+              <link xlink:href="DPI">this page</link>.
+          </para>
+          <para>
+              DPI-independent size is sometimes called 'logical size'. And a 
+              DPI-dependent size, in pixels, is called 'physical size'.
+          </para>
+          <para>
+              In terms of resolution and sizing, a control's default behavior when 
+              it's loaded is:
+              <list class="bullet">
+                  <listItem>
+                      The control's logical size is determined by its layout, as 
+                      determined by where it falls in the XAML tree.
+                  </listItem>
+                  <listItem>
+                      A DPI is queried from the environment. The control's DPI 
+                      is set to that.
+                  </listItem>
+                  <listItem>
+                      The amount of physical pixels that comprise the 
+                      control's drawable area is determined by the control's size, 
+                      scaled by its DPI. 
+                          <list class="bullet">
+                              <listItem>On high DPI, the physical size will be greater (more pixels) compared to the logical size.</listItem>
+                              <listItem>On low DPI, the physical size will be smaller (fewer pixels) compared to the logical size.</listItem>
+                              <listItem>On default DPI, the physical size and logical size of the drawable area are the same.</listItem>
+                          </list>
+                      </listItem>
+                      <listItem>
+                      The control's drawing resource (CanvasImageSource for CanvasControl, 
+                      CanvasSwapChain for CanvasAnimatedControl) is set to match the size and DPI of the control.
+                  </listItem>
+              </list>
+          </para>
+          <para>
+              Most Win2D operations are in dips (DPI-independent units), and 
+              Win2D's XAML controls' drawing resources are automatically sized 
+              to take DPI into account. This means applications can often ignore 
+              DPI. Sizes and co-ordinates are always DPI-independent unless 
+              specified otherwise. An application can hard-code various sizes and 
+              co-ordinates at which things are drawn into the controls, and that 
+              content gets scaled when the app is run in environments with different DPIs.
+          </para>
+          <para>
+              But for some applications, the default behavior isn't sufficient. This 
+              article outlines a couple scenarios where the default is not sufficient, 
+              and what apps can do to fix it.
+          </para> 
+      </content>
+    </section>
+
+    <section>
+      <title>Scenario: The control's contents must be a fixed, lower-than-normal resolution</title>
+      <content>
+        <para>        
+            This scenario may arise, for instance, on a 2D sprite game that 
+            should always render at a fixed 640x480 resolution, 
+            regardless of what actual display hardware it is run on.
+        </para>
+        <para>        
+            Solving this doesn't strictly require writing any new Win2D code at all.
+        </para>
+        <para>    
+            The 
+            <externalLink>
+              <linkText>ViewBox</linkText>
+              <linkUri>https://msdn.microsoft.com/en-us/library/windows/apps/windows.ui.xaml.controls.viewbox.aspx</linkUri>
+            </externalLink>
+            XAML object lets you constrain the sizes of its child visual 
+            elements, automatically adding scaling, with letterboxing or 
+            pillarboxing to preseve aspect ratios as necessary.
+        </para> 
+        <para>    
+            Simply ensure your CanvasControl or CanvasAnimatedControl is a 
+            child element of a ViewBox, and restrict the size of that control.
+        </para> 
+        <para> 
+            For example, to constrain the size of the control to 320 pixels
+            wide, and 224 pixels high, regardless of DPI, then instead of
+                <code>
+                    &lt;canvas:CanvasAnimatedControl/&gt;
+                </code>
+            Use
+                <code>
+                    &lt;Viewbox&gt;
+                        &lt;canvas:CanvasAnimatedControl  Width="320" Height="224"/&gt;
+                    &lt;/Viewbox&gt;
+                </code>
+        </para> 
+        <para>
+            If your app should not preserve the aspect ratio by adding
+            letterboxing/pillarboxing, then add the Stretch attribute:
+                <code>
+                    &lt;Viewbox Stretch="Fill"&gt;
+                        &lt;canvas:CanvasAnimatedControl Width="320" Height="224"/&gt;
+                    &lt;/Viewbox&gt;
+                </code>
+        </para>
+        <para>
+            Note that the scaling performed by the Viewbox element does not
+            guarantee any control over the interpolation mode. The
+            filtering method may look like CanvasInterpolationMode.Linear,
+            or something similar. If your app needs a particular interpolation
+            mode, then don't use ViewBox with a fixed-size control. Instead,
+            draw to an intermediate, fixed-size CanvasRenderTarget, and
+            use the desired interpolation mode to draw the scaled intermediate
+            to the target.
+        </para>
+      </content>
+    </section>
+    
+    <section>
+        <title>Scenario: The app cannot perform well at high resolutions</title>
+        <content>
+            <para>    
+                Some devices have very high-resolution displays, but their
+                graphics processing unit is not powerful enough to animate
+                that many pixels smoothly. Developers may not be readily aware
+                of how their apps perform on these devices without testing them.
+            </para> 
+            <para>    
+                One option is to use the DpiScale property of the control
+                to reduce the control's DPI.
+            </para> 
+            <para>    
+                For example, to fix the control at half-resolution, use:
+                <code>
+                    &lt;canvas:CanvasAnimatedControl DpiScale="0.5f" /&gt;
+                </code>
+            </para> 
+            <para>  
+            The actual DPI scale factor depends upon the needs of your app.
+            One option is to compute a scale factor that will fix the app's
+            DPI at 96, and no higher. 
+            </para>   
+            <para>    
+                For example:
+                <code>
+                    float dpiLimit = 96.0f;
+                    if(control.Dpi &gt; dpiLimit)
+                    {
+                        control.DpiScale = dpiLimit / control.Dpi;
+                    }
+                </code>
+            </para>
+                To ensure this setting works across DPI changes, the 
+                application should subscribe to
+                <externalLink>
+                  <linkText>DisplayInformation.DpiChanged</linkText>
+                  <linkUri>https://msdn.microsoft.com/en-us/library/windows/apps/windows.graphics.display.displayinformation.dpichanged</linkUri>
+                </externalLink>
+                and use this logic in the handler to set the DPI scale against 
+                the new DPI.
+            <para>  
+            </para>
+            <para>  
+                This saves the app some perf overhead, exploiting the fact
+                that users may not be able to easily percieve the reduced
+                resolution on a high-DPI display.
+            </para>  
+            <para>  
+                The scaling performed in having a lower-than-native resolution 
+                control resource cannot guarantee control over the interpolation
+                mode, similar to ViewBox mentioned above. If your app needs
+                a particular interpolation mode, use an intermediate instead.
+            </para>   
+        </content>
+    </section>
+
+  </developerConceptualDocument>
+</topic>

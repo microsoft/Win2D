@@ -193,4 +193,8 @@ inline void ClearColorFixture<CanvasAnimatedControlTraits>::RenderAnyNumberOfFra
     }            
 }
 
-
+extern struct DpiScalingTestCase
+{
+    float DpiScale;
+    float Dpi;
+} dpiScalingTestCases[3];

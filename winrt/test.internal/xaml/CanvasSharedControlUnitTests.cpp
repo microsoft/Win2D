@@ -886,3 +886,107 @@ TEST_CLASS(CanvasSharedControlTests_CustomDevice)
         }
     }
 };
+
+TEST_CLASS(CanvasSharedControlTests_DpiScaling)
+{
+    template<typename TRAITS>
+    struct Fixture : BasicControlFixture<TRAITS>
+    {
+        Fixture(float logicalDpi = DEFAULT_DPI)
+        {
+            CreateAdapter();
+            Adapter->LogicalDpi = logicalDpi;
+
+            CreateControl();
+        }
+    };
+
+    TEST_SHARED_CONTROL_BEHAVIOR(DpiScaling_get_DpiScale_Null)
+    {
+        Fixture<TRAITS> f;
+
+        Assert::AreEqual(E_INVALIDARG, f.Control->get_DpiScale(nullptr));
+    }
+
+    TEST_SHARED_CONTROL_BEHAVIOR(DpiScaling_put_DpiScale_InvalidNumbers)
+    {
+        Fixture<TRAITS> f;
+
+        Assert::AreEqual(E_INVALIDARG, f.Control->put_DpiScale(-FLT_EPSILON));
+        Assert::AreEqual(E_INVALIDARG, f.Control->put_DpiScale(0.0f));
+    }
+
+    TEST_SHARED_CONTROL_BEHAVIOR(DpiScaling_put_DpiScale_ValidNumbers)
+    {
+        Fixture<TRAITS> f;
+
+        Assert::AreEqual(S_OK, f.Control->put_DpiScale(FLT_EPSILON));
+        Assert::AreEqual(S_OK, f.Control->put_DpiScale(std::numeric_limits<float>::infinity()));
+    }
+
+    TEST_SHARED_CONTROL_BEHAVIOR(DpiScaling_get_DpiScale)
+    {
+        Fixture<TRAITS> f;
+
+        float expected = 0.123456f;
+        ThrowIfFailed(f.Control->put_DpiScale(expected));
+
+        float actual;
+        ThrowIfFailed(f.Control->get_DpiScale(&actual));
+
+        Assert::AreEqual(expected, actual);
+    }
+
+    TEST_SHARED_CONTROL_BEHAVIOR(DpiScaling_Default)
+    {
+        Fixture<TRAITS> f;
+
+        float dpiScale;
+        Assert::AreEqual(S_OK, f.Control->get_DpiScale(&dpiScale));
+        Assert::AreEqual(1.0f, dpiScale);
+    }
+
+    TEST_SHARED_CONTROL_BEHAVIOR(DpiScaling_Affects_get_Dpi)
+    {
+        for (auto testCase : dpiScalingTestCases)
+        {
+            Fixture<TRAITS> f(testCase.Dpi);
+
+            ThrowIfFailed(f.Control->put_DpiScale(testCase.DpiScale));
+
+            float dpi;
+            Assert::AreEqual(S_OK, f.Control->get_Dpi(&dpi));
+
+            Assert::AreEqual(testCase.DpiScale * testCase.Dpi, dpi);
+        }
+    }
+
+    TEST_SHARED_CONTROL_BEHAVIOR(DpiScaling_Affects_ConvertDipsToPixels)
+    {
+        for (auto testCase : dpiScalingTestCases)
+        {
+            float dpi = testCase.Dpi + 1; // Expects non-integral multiple of default DPI
+
+            Fixture<TRAITS> f(dpi);
+
+            ThrowIfFailed(f.Control->put_DpiScale(testCase.DpiScale));
+
+            VerifyConvertDipsToPixels(testCase.DpiScale * dpi, f.Control);
+        }
+    }
+
+    TEST_SHARED_CONTROL_BEHAVIOR(DpiScaling_Affects_ConvertPixelsToDips)
+    {
+        for (auto testCase : dpiScalingTestCases)
+        {
+            Fixture<TRAITS> f(testCase.Dpi);
+
+            ThrowIfFailed(f.Control->put_DpiScale(testCase.DpiScale));
+
+            const float testValue = 100;
+            float dips = 0;
+            ThrowIfFailed(f.Control->ConvertPixelsToDips((int)testValue, &dips));
+            Assert::AreEqual(testValue * DEFAULT_DPI / (testCase.Dpi * testCase.DpiScale), dips);
+        }
+    }
+};

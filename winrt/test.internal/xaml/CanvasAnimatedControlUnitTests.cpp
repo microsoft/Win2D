@@ -3346,3 +3346,89 @@ TEST_CLASS(CanvasAnimatedControl_AppAccessingWorkerThreadTests)
         f.RaiseUnloadedEvent();
     }
 };
+
+TEST_CLASS(CanvasAnimatedControl_DpiScaling)
+{
+    class DpiScalingFixture : public FixtureWithSwapChainAccess
+    {
+    public:
+        DpiScalingFixture(float logicalDpi = DEFAULT_DPI)
+        {
+            Adapter->LogicalDpi = logicalDpi;
+        }
+
+        void ExpectCreateSwapChainWithDpi(float expectedDpi)
+        {
+            Adapter->CreateCanvasSwapChainMethod.SetExpectedCalls(1, 
+                [=](ICanvasDevice* device, float width, float height, float dpi, CanvasAlphaMode alphaMode)
+                {
+                    StubCanvasDevice* stubDevice = static_cast<StubCanvasDevice*>(device); // Ensured by test construction
+                    stubDevice->CreateSwapChainForCompositionMethod.AllowAnyCall([=](int32_t, int32_t, DirectXPixelFormat, int32_t, CanvasAlphaMode)
+                    {
+                        return m_dxgiSwapChain;
+                    });
+
+                    Assert::AreEqual(dpi, expectedDpi);
+
+                    return Adapter->SwapChainManager->GetOrCreate(device, m_dxgiSwapChain.Get(), dpi);
+                });
+        }
+
+        void ExpectResizeBuffersWithDpi(float expectedDpi)
+        {
+            const float dpiScale = expectedDpi / DEFAULT_DPI;
+            const uint32_t expectedWidthInPixels = static_cast<uint32_t>(FixtureWithSwapChainAccess::InitialWidth * dpiScale);
+            const uint32_t expectedHeightInPixels = static_cast<uint32_t>(FixtureWithSwapChainAccess::InitialHeight * dpiScale);
+
+            m_dxgiSwapChain->ResizeBuffersMethod.SetExpectedCalls(1,
+                [=](UINT bufferCount,
+                    UINT width,
+                    UINT height,
+                    DXGI_FORMAT newFormat,
+                    UINT swapChainFlags)
+                {
+                    Assert::AreEqual(expectedWidthInPixels, width);
+                    Assert::AreEqual(expectedHeightInPixels, height);
+                    return S_OK;
+                });
+        }
+
+        void EnsureSwapChain()
+        {
+            Load();
+            Adapter->DoChanged();
+        }
+    };
+
+
+    TEST_METHOD_EX(CanvasAnimatedControl_DpiScaling_Affects_SwapChainDpi_InitialCreate)
+    {
+        for (auto testCase : dpiScalingTestCases)
+        {
+            DpiScalingFixture f(testCase.Dpi);
+
+            f.Control->put_DpiScale(testCase.DpiScale);
+            f.ExpectCreateSwapChainWithDpi(testCase.DpiScale * testCase.Dpi);
+
+            f.EnsureSwapChain();
+        }
+    }
+
+    TEST_METHOD_EX(CanvasAnimatedControl_DpiScaling_Affects_SwapChainDpi_ResizeBuffers)
+    {
+        for (auto testCase : dpiScalingTestCases)
+        {
+            DpiScalingFixture f(testCase.Dpi);
+            f.EnsureSwapChain();
+
+            f.Adapter->ProgressTime(TicksPerFrame);
+
+            f.Control->put_DpiScale(testCase.DpiScale);
+
+            f.Adapter->Tick(); // Render thread notices the dpi scale change, and stops
+
+            f.ExpectResizeBuffersWithDpi(testCase.DpiScale * testCase.Dpi);
+            f.Adapter->DoChanged();
+        }
+    }
+};

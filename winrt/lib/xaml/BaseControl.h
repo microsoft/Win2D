@@ -121,9 +121,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         RegisteredEvent m_deviceLostEventRegistration;
 
         std::mutex m_mutex;
-        Size m_currentSize;     // protected by m_mutex
-        Color m_clearColor;     // protected by m_mutex
-        float m_dpi;            // protected by m_mutex
+        Size m_currentSize;       // protected by m_mutex
+        Color m_clearColor;       // protected by m_mutex
+        float m_logicalDpi;       // protected by m_mutex
+        float m_customDpiScaling; // protected by m_mutex
 
         RenderTarget m_currentRenderTarget;
 
@@ -139,7 +140,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             , m_isSuspended(false)
             , m_isVisible(true)
             , m_window(adapter->GetWindowOfCurrentThread())
-            , m_dpi(adapter->GetLogicalDpi())
+            , m_logicalDpi(adapter->GetLogicalDpi())
+            , m_customDpiScaling(1.0f)
             , m_useSharedDevice(useSharedDevice)
             , m_forceSoftwareRenderer(false)
             , m_currentSize{}
@@ -350,6 +352,40 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                         Changed(lock, ChangeReason::DeviceCreationOptions);
                     }
                 });
+        }        
+
+        IFACEMETHODIMP get_DpiScale(float* value)
+        {
+            return ExceptionBoundary(
+                [&]
+                {
+                    CheckInPointer(value);
+
+                    auto lock = GetLock();
+
+                    *value = m_customDpiScaling;
+                });
+        }
+
+        IFACEMETHODIMP put_DpiScale(float value)
+        {
+            return ExceptionBoundary(
+                [&]
+                {
+                    if (value <= 0)
+                        ThrowHR(E_INVALIDARG);
+
+                    auto lock = GetLock();
+
+                    if (value != m_customDpiScaling)
+                    {
+                        m_customDpiScaling = value;
+
+                        lock.unlock();
+
+                        m_recreatableDeviceManager->SetDpiChanged();
+                    }
+                });
         }
 
         //
@@ -372,6 +408,19 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                 });
         }
 
+        float GetEffectiveDpi()
+        {
+            auto lock = GetLock();
+            return GetEffectiveDpiNoLock(lock);
+        }
+
+        float GetEffectiveDpiNoLock(Lock const& lock)
+        {
+            MustOwnLock(lock);
+
+            return m_logicalDpi * m_customDpiScaling;
+        }
+
         IFACEMETHODIMP get_Dpi(float* dpi) override
         {
             return ExceptionBoundary(
@@ -379,7 +428,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                 {
                     CheckInPointer(dpi);
 
-                    *dpi = GetCurrentDpi();
+                    *dpi = GetEffectiveDpi();
                 });
         }
 
@@ -390,7 +439,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                 {
                     CheckInPointer(dips);
 
-                    *dips = PixelsToDips(pixels, GetCurrentDpi());
+                    *dips = PixelsToDips(pixels, GetEffectiveDpi());
                 });
         }
 
@@ -401,7 +450,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                 {
                     CheckInPointer(pixels);
 
-                    *pixels = DipsToPixels(dips, GetCurrentDpi(), dpiRounding);
+                    *pixels = DipsToPixels(dips, GetEffectiveDpi(), dpiRounding);
                 });
         }
 
@@ -573,12 +622,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             return m_currentSize;
         }
 
-        float GetCurrentDpi()
-        {
-            auto lock = GetLock();
-            return m_dpi;
-        }
-
         DeviceCreationOptions GetDeviceCreationOptions(Lock const& lock)
         {
             MustOwnLock(lock);
@@ -594,7 +637,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
             *clearColor = m_clearColor;
             *currentSize = m_currentSize;
-            *currentDpi = m_dpi;
+            *currentDpi = GetEffectiveDpiNoLock(lock);
         }
 
         Lock GetLock()
@@ -858,11 +901,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                 {
                     float newDpi = m_adapter->GetLogicalDpi();
 
-                    if (newDpi != m_dpi)
+                    if (newDpi != m_logicalDpi)
                     {
                         auto lock = GetLock();
 
-                        m_dpi = newDpi;
+                        m_logicalDpi = newDpi;
 
                         //
                         // The recreatable device manager

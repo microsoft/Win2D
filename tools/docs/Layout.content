@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Topics>
   <Topic id="Introduction" title="Introduction" isDefault="true" />
   <Topic id="QuickStart" title="Quick start" />
@@ -20,6 +20,7 @@
     <Topic id="Interop" title="Interop with Direct2D" />
     <Topic id="Offscreen" title="Offscreen drawing" />
     <Topic id="DPI" title="DPI and DIPs" />
+    <Topic id="ChoosingResolution" title="Choosing control resolution" />
     <Topic id="PixelFormats" title="Pixel formats" />
     <Topic id="PremultipliedAlpha" title="Premultiplied alpha" />
     <Topic id="EffectPrecision" title="Effect precision and clamping" />

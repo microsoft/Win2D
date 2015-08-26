@@ -179,6 +179,9 @@ namespace Microsoft.Graphics.Canvas.UI.Xaml
         //
         [propget] HRESULT CustomDevice([out, retval] Microsoft.Graphics.Canvas.CanvasDevice** value);
         [propput] HRESULT CustomDevice([in] Microsoft.Graphics.Canvas.CanvasDevice* value);
+
+        [propget] HRESULT DpiScale([out, retval] float* value);
+        [propput] HRESULT DpiScale([in] float ratio);
     }
 
     [version(VERSION), activatable(VERSION), marshaling_behavior(agile), threading(both)]
