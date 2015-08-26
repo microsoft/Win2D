@@ -1002,6 +1002,9 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
               A value less than or equal to zero is not valid for this property.
           </p>
           <p>
+              This property may be accessed from any thread.
+          </p>
+          <p>
               For more information on using this property, see
               <a href="ChoosingResolution.htm">Choosing resolution for controls</a>.
           </p>
