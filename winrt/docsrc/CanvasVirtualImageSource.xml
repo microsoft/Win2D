@@ -175,5 +175,23 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="E:Microsoft.Graphics.Canvas.UI.Xaml.CanvasVirtualImageSource.RegionsInvalidated">
       <summary>Occurs when a region of the image needs redrawing.</summary>
     </member>
+    <member name="M:Microsoft.Graphics.Canvas.UI.Xaml.CanvasVirtualImageSource.RaiseRegionsInvalidatedIfAny">
+      <summary>Raises RegionsInvalidated if there are any invalid regions.</summary>
+      <remarks>
+        <p>
+          If the RegionsInvalidated handler redraws all invalidated regions then
+          it is not necessary to call this method.
+        </p>
+        <p>
+          However, if there are ever any situations where it is possible that
+          some regions are not redrawn then this method can be called to obtain
+          the list of invalidated regions.
+        </p>
+        <p>
+          This method can only be called from the UI thread and it may
+          immediately raise the RegionsInvalidated event.
+        </p>
+      </remarks>
+    </member>
   </members>
 </doc>

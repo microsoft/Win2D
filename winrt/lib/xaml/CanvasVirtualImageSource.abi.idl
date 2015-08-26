@@ -114,6 +114,18 @@ namespace Microsoft.Graphics.Canvas.UI.Xaml
         HRESULT InvalidateRegion([in] Windows.Foundation.Rect region);
 
         //
+        // Manually checks for invalidated regions - will raise
+        // RegionsInvalidated if there are any.
+        //
+        // This exists to allow for the case where an app may have not processed
+        // all the invalidated regions and so wants RegionsInvalidated to be
+        // raised again.  CanvasVirtualControl uses this in the case where is
+        // has been unable to draw while the window is invisible.  When the
+        // window is visible again it needs RegionsInvalidated to be raised.
+        //
+        HRESULT RaiseRegionsInvalidatedIfAny();
+
+        //
         // The RegionsInvalidated event is raised when regions are invalidated.
         // This may be directly as the result of a call to InvalidateRegion, or
         // it may be because XAML has decided that a region of the virtual image

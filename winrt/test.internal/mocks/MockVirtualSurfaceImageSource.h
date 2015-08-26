@@ -9,7 +9,9 @@ using namespace ABI::Windows::UI::Xaml::Media::Imaging;
 class MockVirtualSurfaceImageSource : public RuntimeClass<
     RuntimeClassFlags<WinRtClassicComMix>,
     IVirtualSurfaceImageSource,
-    ChainInterfaces<IVirtualSurfaceImageSourceNative, ISurfaceImageSourceNative>,
+    IImageSource,
+    IDependencyObject,
+    ChainInterfaces<IVirtualSurfaceImageSourceNative, ISurfaceImageSourceNative>,    
     ISurfaceImageSourceNativeWithD2D>
 {
 public:
@@ -22,6 +24,13 @@ public:
     CALL_COUNTER_WITH_MOCK(GetVisibleBoundsMethod, HRESULT(RECT*));
     CALL_COUNTER_WITH_MOCK(RegisterForUpdatesNeededMethod, HRESULT(IVirtualSurfaceUpdatesCallbackNative*));
     CALL_COUNTER_WITH_MOCK(ResizeMethod, HRESULT(int, int));
+
+    CALL_COUNTER_WITH_MOCK(GetValueMethod, HRESULT(IDependencyProperty*, IInspectable**));
+    CALL_COUNTER_WITH_MOCK(SetValueMethod, HRESULT(IDependencyProperty*, IInspectable*));
+    CALL_COUNTER_WITH_MOCK(ClearValueMethod, HRESULT(IDependencyProperty*));
+    CALL_COUNTER_WITH_MOCK(ReadLocalValueMethod, HRESULT(IDependencyProperty*, IInspectable**));
+    CALL_COUNTER_WITH_MOCK(GetAnimationBaseValueMethod, HRESULT(IDependencyProperty*, IInspectable**));
+    CALL_COUNTER_WITH_MOCK(get_DispatcherMethod, HRESULT(ICoreDispatcher**));    
 
     CALL_COUNTER_WITH_MOCK(SetDeviceMethod, HRESULT(IUnknown*));
     CALL_COUNTER_WITH_MOCK(BeginDrawMethod, HRESULT(RECT const&, IID const&, void**, POINT*));
@@ -76,7 +85,41 @@ public:
     {
         return ResizeMethod.WasCalled(width, height);
     }
+
+    //
+    // IDependencyObject
+    //
+
+    IFACEMETHODIMP GetValue(IDependencyProperty* p, IInspectable** v) override
+    {
+        return GetValueMethod.WasCalled(p, v);
+    }
     
+    IFACEMETHODIMP SetValue(IDependencyProperty* p, IInspectable* v) override
+    {
+        return SetValueMethod.WasCalled(p, v);
+    }
+    
+    IFACEMETHODIMP ClearValue(IDependencyProperty* p) override
+    {
+        return ClearValueMethod.WasCalled(p);
+    }
+    
+    IFACEMETHODIMP ReadLocalValue(IDependencyProperty* p, IInspectable** v) override
+    {
+        return ReadLocalValueMethod.WasCalled(p, v);
+    }
+    
+    IFACEMETHODIMP GetAnimationBaseValue(IDependencyProperty* p, IInspectable** v) override
+    {
+        return GetAnimationBaseValueMethod.WasCalled(p, v);
+    }
+    
+    IFACEMETHODIMP get_Dispatcher(ICoreDispatcher** v) override
+    {
+        return get_DispatcherMethod.WasCalled(v);
+    }    
+
     //
     // ISurfaceImageSourceNativeWithD2D
     //

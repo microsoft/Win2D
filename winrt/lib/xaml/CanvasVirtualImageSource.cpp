@@ -296,8 +296,29 @@ IFACEMETHODIMP CanvasVirtualImageSource::InvalidateRegion(
 }
 
 
+IFACEMETHODIMP CanvasVirtualImageSource::RaiseRegionsInvalidatedIfAny()
+{
+    return ExceptionBoundary(
+        [&]
+        {
+            // This must be called on the UI thread
+            ComPtr<ICoreDispatcher> dispatcher;
+            ThrowIfFailed(As<IDependencyObject>(m_vsis)->get_Dispatcher(&dispatcher));
+
+            boolean hasThreadAccess;
+            ThrowIfFailed(dispatcher->get_HasThreadAccess(&hasThreadAccess));
+
+            if (!hasThreadAccess)
+                ThrowHR(RPC_E_WRONG_THREAD);
+
+            // The UpdatesNeeded handler will raise RegionsInvalidated for us.
+            ThrowIfFailed(UpdatesNeeded());
+        });
+}
+
+
 IFACEMETHODIMP CanvasVirtualImageSource::add_RegionsInvalidated(
-    RegionsInvalidatedHandler* value,
+    ImageSourceRegionsInvalidatedHandler* value,
     EventRegistrationToken* token)
 {
     return ExceptionBoundary(
@@ -488,6 +509,13 @@ IFACEMETHODIMP CanvasVirtualImageSource::UpdatesNeeded()
 
             DWORD updateRectCount;
             ThrowIfFailed(vsisNative->GetUpdateRectCount(&updateRectCount));
+
+            if (updateRectCount == 0)
+            {
+                // When there are no regions to update we don't raise
+                // RegionsInvalidated.
+                return;
+            }
 
             std::vector<RECT> updateRECTs(updateRectCount);
             ThrowIfFailed(vsisNative->GetUpdateRects(updateRECTs.data(), updateRectCount));

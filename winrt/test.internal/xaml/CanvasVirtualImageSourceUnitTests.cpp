@@ -560,7 +560,7 @@ public:
 
         f.ExpectRegisterForUpdatesNeeded();
 
-        auto onRegionsInvalidated = MockEventHandler<RegionsInvalidatedHandler>(L"onRegionsInvalidated");
+        auto onRegionsInvalidated = MockEventHandler<ImageSourceRegionsInvalidatedHandler>(L"onRegionsInvalidated");
         EventRegistrationToken token;
         ThrowIfFailed(f.ImageSource->add_RegionsInvalidated(onRegionsInvalidated.Get(), &token));
 
@@ -578,6 +578,7 @@ public:
             });
 
         f.Vsis->GetUpdateRectsMethod.SetExpectedCalls(2,
+
             [&] (RECT* updates, DWORD count)
             {
                 for (auto i = 0U; i < count; ++i)
@@ -625,6 +626,89 @@ public:
         ThrowIfFailed(f.ImageSource->remove_RegionsInvalidated(token));
         onRegionsInvalidated.SetExpectedCalls(0);
         f.RaiseUpdatesNeeded();
+    }
+
+    TEST_METHOD_EX(CanvasVirtualImageSource_WhenNoRegionsAreInvalid_RegionsInvalidatedCallback_IsNotCalled)
+    {
+        CallbackFixture f;
+
+        f.ExpectRegisterForUpdatesNeeded();
+
+        auto onRegionsInvalidated = MockEventHandler<ImageSourceRegionsInvalidatedHandler>(L"onRegionsInvalidated");
+        EventRegistrationToken token;
+        ThrowIfFailed(f.ImageSource->add_RegionsInvalidated(onRegionsInvalidated.Get(), &token));
+
+        f.Vsis->GetUpdateRectCountMethod.SetExpectedCalls(1,
+            [&] (DWORD* count)
+            {
+                *count = 0;
+                return S_OK;
+            });
+
+        onRegionsInvalidated.SetExpectedCalls(0);
+
+        f.RaiseUpdatesNeeded();
+    }
+
+    TEST_METHOD_EX(CanvasVirtualImageSource_RaiseRegionsInvalidatedIfAny_RaisesRegionsInvalidated)
+    {
+        CallbackFixture f;
+
+        f.ExpectRegisterForUpdatesNeeded();
+
+        auto onRegionsInvalidated = MockEventHandler<ImageSourceRegionsInvalidatedHandler>(L"onRegionsInvalidated");
+        EventRegistrationToken token;
+        ThrowIfFailed(f.ImageSource->add_RegionsInvalidated(onRegionsInvalidated.Get(), &token));
+
+        f.Vsis->GetUpdateRectCountMethod.SetExpectedCalls(1,
+            [&] (DWORD* count)
+            {
+                *count = 1;
+                return S_OK;
+            });
+
+        f.Vsis->GetUpdateRectsMethod.SetExpectedCalls(1,
+            [&] (RECT* updates, DWORD)
+            {
+                updates[0] = RECT{ 1, 2, 3, 4 };
+                return S_OK;
+            });
+
+        f.Vsis->GetVisibleBoundsMethod.SetExpectedCalls(1,
+            [&] (RECT* bounds)
+            {
+                *bounds = RECT{ 1, 2, 3, 4 };
+                return S_OK;
+            });
+
+        onRegionsInvalidated.SetExpectedCalls(1);
+
+        auto mockDispatcher = Make<MockDispatcher>();
+        mockDispatcher->get_HasThreadAccessMethod.AllowAnyCall([] (boolean* value) { *value = TRUE; return S_OK; });
+        
+        f.Vsis->get_DispatcherMethod.SetExpectedCalls(1,
+            [=] (ICoreDispatcher** value)
+            {
+                return mockDispatcher.CopyTo(value);
+            });
+
+        ThrowIfFailed(f.ImageSource->RaiseRegionsInvalidatedIfAny());
+    }
+
+    TEST_METHOD_EX(CanvasVirtualImageSource_RaiseRegionsInvalidatedIfAny_FailsIfNotCalledFromUiThread)
+    {
+        CallbackFixture f;
+        
+        auto mockDispatcher = Make<MockDispatcher>();
+        mockDispatcher->get_HasThreadAccessMethod.AllowAnyCall([] (boolean* value) { *value = FALSE; return S_OK; });
+        
+        f.Vsis->get_DispatcherMethod.SetExpectedCalls(1,
+            [=] (ICoreDispatcher** value)
+            {
+                return mockDispatcher.CopyTo(value);
+            });
+
+        Assert::AreEqual(RPC_E_WRONG_THREAD, f.ImageSource->RaiseRegionsInvalidatedIfAny());
     }
 
     TEST_METHOD_EX(CanvasVirtualImageSource_CanvasRegionsInvalidatedEventArgs_AccessorsFailWhenPassedNull)

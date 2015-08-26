@@ -61,7 +61,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     };
 
 
-    typedef ITypedEventHandler<CanvasVirtualImageSource*, CanvasRegionsInvalidatedEventArgs*> RegionsInvalidatedHandler;
+    typedef ITypedEventHandler<CanvasVirtualImageSource*, CanvasRegionsInvalidatedEventArgs*> ImageSourceRegionsInvalidatedHandler;
 
     class CanvasVirtualImageSource
         : public RuntimeClass<
@@ -79,7 +79,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         Size m_size;
         CanvasAlphaMode m_alphaMode;
         bool m_registeredForUpdates;
-        EventSource<RegionsInvalidatedHandler> m_regionsInvalidatedEventSource;
+        EventSource<ImageSourceRegionsInvalidatedHandler, InvokeModeOptions<StopOnFirstError>> m_regionsInvalidatedEventSource;
 
     public:
         CanvasVirtualImageSource(
@@ -113,8 +113,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         IFACEMETHOD(InvalidateRegion)(
             Rect region) override;
 
+        IFACEMETHOD(RaiseRegionsInvalidatedIfAny)() override;
+
         IFACEMETHOD(add_RegionsInvalidated)(
-            RegionsInvalidatedHandler* value,
+            ImageSourceRegionsInvalidatedHandler* value,
             EventRegistrationToken* token) override;
 
         IFACEMETHOD(remove_RegionsInvalidated)(
