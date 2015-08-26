@@ -313,6 +313,12 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)xaml\CanvasVirtualImageSource.cpp">
       <Filter>xaml</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)xaml\CanvasVirtualControl.cpp">
+      <Filter>xaml</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)xaml\ImageControlMixIn.cpp">
+      <Filter>xaml</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)pch.h" />
@@ -640,6 +646,12 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)xaml\CanvasVirtualImageSource.h">
       <Filter>xaml</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)xaml\CanvasVirtualControl.h">
+      <Filter>xaml</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)xaml\ImageControlMixIn.h">
+      <Filter>xaml</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)Canvas.codegen.idl" />
@@ -875,6 +887,9 @@
       <Filter>effects</Filter>
     </None>
     <None Include="$(MSBuildThisFileDirectory)xaml\CanvasVirtualImageSource.abi.idl">
+      <Filter>xaml</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)xaml\CanvasVirtualControl.abi.idl">
       <Filter>xaml</Filter>
     </None>
   </ItemGroup>

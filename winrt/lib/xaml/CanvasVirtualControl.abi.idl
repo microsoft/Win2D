@@ -1,0 +1,119 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+//
+// Licensed under the MIT License. See LICENSE.txt in the project root for license information.
+
+namespace Microsoft.Graphics.Canvas.UI.Xaml
+{
+    runtimeclass CanvasVirtualControl;
+
+    [version(VERSION),
+     uuid(3C2B5177-7C61-41D2-95AE-FCFC92FD617A),
+     exclusiveto(CanvasVirtualControl)]
+    interface ICanvasVirtualControl : IInspectable
+        requires Microsoft.Graphics.Canvas.ICanvasResourceCreatorWithDpi
+    {
+        //
+        // CreateResources - as for CanvasControl
+        //
+        [eventadd] HRESULT CreateResources(
+            [in]          Windows.Foundation.TypedEventHandler<CanvasVirtualControl*, Microsoft.Graphics.Canvas.UI.CanvasCreateResourcesEventArgs*>* value,
+            [out, retval] EventRegistrationToken* token);
+
+        [eventremove] HRESULT CreateResources([in] EventRegistrationToken token);
+
+        //
+        // ReadyToDraw - as for CanvasControl
+        //
+        [propget] HRESULT ReadyToDraw(
+            [out, retval] boolean* value);
+
+        //
+        // RegionsInvalidated; as for CanvasVirtualImageSource.  This event
+        // won't be raised until resources have been created.  Before resources
+        // have been created the control will just display the clear color.
+        //
+        [eventadd] 
+        HRESULT RegionsInvalidated(
+            [in]          Windows.Foundation.TypedEventHandler<CanvasVirtualControl*, CanvasRegionsInvalidatedEventArgs*>* value,
+            [out, retval] EventRegistrationToken* token);
+
+        [eventremove]
+        HRESULT RegionsInvalidated(
+            [in] EventRegistrationToken token);
+
+        //
+        // Drawing sessions created for this control will use this color.
+        //
+        [propput] HRESULT ClearColor([in] Windows.UI.Color value);
+        [propget] HRESULT ClearColor([out, retval] Windows.UI.Color* value);
+
+        //
+        // Returns a new drawing session for updating a region of the image
+        // source.  The region is cleared to ClearColor before the session is
+        // returned.
+        //
+        // This can be called from any thread.
+        //
+        HRESULT CreateDrawingSession(
+            [in]          Windows.Foundation.Rect updateRectangle,
+            [out, retval] Microsoft.Graphics.Canvas.CanvasDrawingSession** drawingSession);
+
+        //
+        // Suspends a drawing session; this allows the drawing session to be
+        // resumed on another thread, or closed on the UI thread.
+        //
+        HRESULT SuspendDrawingSession([in] Microsoft.Graphics.Canvas.CanvasDrawingSession* drawingSession);
+
+        //
+        // Resumes a drawing session that was previously suspended.  The drawing
+        // session can be resumed on any thread.
+        //
+        HRESULT ResumeDrawingSession([in] Microsoft.Graphics.Canvas.CanvasDrawingSession* drawingSession);
+
+        //
+        // Marks the entire virtual image as invalid.
+        //
+        [overload("Invalidate")]
+        HRESULT Invalidate();
+
+        //
+        // Marks a region of the virtual image as invalid.
+        //
+        [overload("Invalidate")]
+        HRESULT InvalidateRegion([in] Windows.Foundation.Rect region);
+
+        //
+        // Gets the current size of the control.
+        //
+        [propget] HRESULT Size([out, retval] Windows.Foundation.Size* size);
+
+        //
+        // Removes the control from the visual tree.
+        //
+        HRESULT RemoveFromVisualTree();
+
+        //
+        // As for CanvasControl
+        //
+        [propget] HRESULT UseSharedDevice([out, retval] boolean* value);
+        [propput] HRESULT UseSharedDevice([in] boolean value);
+
+        //
+        // As for CanvasControl
+        //
+        [propget] HRESULT ForceSoftwareRenderer([out, retval] boolean* value);
+        [propput] HRESULT ForceSoftwareRenderer([in] boolean value);
+
+        //
+        // As for CanvasControl
+        //
+        [propget] HRESULT CustomDevice([out, retval] Microsoft.Graphics.Canvas.CanvasDevice** value);
+        [propput] HRESULT CustomDevice([in] Microsoft.Graphics.Canvas.CanvasDevice* value);        
+    }
+
+    [version(VERSION), activatable(VERSION), marshaling_behavior(agile), threading(both)]
+    runtimeclass CanvasVirtualControl : Windows.UI.Xaml.Controls.UserControl
+    {
+        [default] interface ICanvasVirtualControl;
+    }
+}

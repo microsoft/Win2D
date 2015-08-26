@@ -122,6 +122,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
           <listItem><codeEntityReference>T:Microsoft.Graphics.Canvas.CanvasRenderTarget</codeEntityReference></listItem>
           <listItem><codeEntityReference>T:Microsoft.Graphics.Canvas.CanvasSwapChain</codeEntityReference></listItem>
           <listItem><codeEntityReference>T:Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl</codeEntityReference></listItem>
+          <listItem><codeEntityReference>T:Microsoft.Graphics.Canvas.UI.Xaml.CanvasVirtualControl</codeEntityReference></listItem>
           <listItem><codeEntityReference>T:Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl</codeEntityReference></listItem>
           <listItem><codeEntityReference>T:Microsoft.Graphics.Canvas.UI.Xaml.CanvasImageSource</codeEntityReference></listItem>
         </list>
@@ -144,7 +145,8 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <title>Control DPI</title>
       <content>
         <para>
-          The Win2D controls (<codeEntityReference>T:Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl</codeEntityReference> 
+          The Win2D controls (<codeEntityReference>T:Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl</codeEntityReference>,
+          <codeEntityReference>T:Microsoft.Graphics.Canvas.UI.Xaml.CanvasVirtualControl</codeEntityReference>
           and <codeEntityReference>T:Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl</codeEntityReference>) 
           automatically use the same DPI as the display the app is running on. This 
           matches the coordinate system used by XAML, CoreWindow, and other Windows 

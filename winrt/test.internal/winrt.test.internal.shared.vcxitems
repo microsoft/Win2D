@@ -22,6 +22,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockCanvasVirtualImageSource.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockCoreWindow.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DEllipseGeometry.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DRectangleGeometry.h" />
@@ -31,6 +32,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockVirtualSurfaceImageSource.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockVirtualSurfaceImageSourceFactory.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)pch.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubCanvasVirtualImageSource.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubD2DEffect.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubResourceCreatorWithDpi.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubStorageFile.h" />
@@ -120,6 +122,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)xaml\CanvasAnimatedControlUnitTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)xaml\CanvasControlUnitTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)xaml\CanvasImageSourceUnitTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)xaml\CanvasVirtualControlUnitTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)xaml\CanvasVirtualImageSourceUnitTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)xaml\GameLoopThreadTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)xaml\CanvasSharedControlUnitTests.cpp" />

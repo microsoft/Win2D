@@ -47,19 +47,31 @@ IFACEMETHODIMP CanvasDrawEventArgs::get_DrawingSession(ICanvasDrawingSession** v
         });
 }
 
+//
+// Warning C4250 is incorrectly triggered when we use virtual inheritance with
+// pure-virtual functions.  In this case we have the functions defined in
+// IImageControlMixInAdapter that are implemented by ImageControlMixInAdapter.
+// The inheritance graph looks like this:
+//
+//                        /-- BaseControlAdapter -- ICanvasControlAdapter --\
+//                       /                                                   \
+//  CanvasControlAdapter                                                      -- IImageControlMixInAdapter
+//                       \                                                   /
+//                        \-- ImageControlMixInAdapter ---------------------/
+//
+// The warning is only relevant if the functions from IImageControlMixInAdapter
+// are non-pure.
+//
+#pragma warning(disable: 4250)
+
 class CanvasControlAdapter : public BaseControlAdapter<CanvasControlTraits>
+                           , public ImageControlMixInAdapter
 {
-    ComPtr<ICompositionTargetStatics> m_compositionTargetStatics;
     ComPtr<ICanvasImageSourceFactory> m_canvasImageSourceFactory;
-    ComPtr<IActivationFactory> m_imageControlFactory;
 
 public:
     CanvasControlAdapter()
     {
-        ThrowIfFailed(GetActivationFactory(
-            HStringReference(RuntimeClass_Windows_UI_Xaml_Media_CompositionTarget).Get(),
-            &m_compositionTargetStatics));
-
         auto& module = Module<InProc>::GetModule();
 
         ComPtr<IActivationFactory> imageSourceActivationFactory;
@@ -67,27 +79,14 @@ public:
             HStringReference(RuntimeClass_Microsoft_Graphics_Canvas_UI_Xaml_CanvasImageSource).Get(),
             &imageSourceActivationFactory));
         ThrowIfFailed(imageSourceActivationFactory.As(&m_canvasImageSourceFactory));
-
-        ThrowIfFailed(GetActivationFactory(
-            HStringReference(RuntimeClass_Windows_UI_Xaml_Controls_Image).Get(),
-            &m_imageControlFactory));
     }
 
     virtual RegisteredEvent AddCompositionRenderingCallback(IEventHandler<IInspectable*>* handler) override
     {
         return RegisteredEvent(
-            m_compositionTargetStatics.Get(),
+            GetCompositionTargetStatics(),
             &ICompositionTargetStatics::add_Rendering,
             &ICompositionTargetStatics::remove_Rendering,
-            handler);
-    }
-
-    virtual RegisteredEvent AddSurfaceContentsLostCallback(IEventHandler<IInspectable*>* handler) override
-    {
-        return RegisteredEvent(
-            m_compositionTargetStatics.Get(),
-            &ICompositionTargetStatics::add_SurfaceContentsLost,
-            &ICompositionTargetStatics::remove_SurfaceContentsLost,
             handler);
     }
 
@@ -110,18 +109,9 @@ public:
         // ICanvasImageSource we get back is actually a CanvasImageSource.
         return static_cast<CanvasImageSource*>(imageSource.Get());
     }
-
-    virtual ComPtr<IImage> CreateImageControl() override 
-    {
-        ComPtr<IInspectable> inspectableImage;
-        ThrowIfFailed(m_imageControlFactory->ActivateInstance(&inspectableImage));
-
-        ComPtr<IImage> image;
-        ThrowIfFailed(inspectableImage.As(&image));
-
-        return image;
-    }
 };
+
+#pragma warning(default: 4250)
 
 
 class CanvasControlFactory : public ActivationFactory<>,
@@ -152,44 +142,15 @@ public:
 
 CanvasControl::CanvasControl(
     std::shared_ptr<ICanvasControlAdapter> adapter)
-    : BaseControl(adapter, true)
+    : BaseControlWithDrawHandler(adapter, true)
+    , ImageControlMixIn(As<IUserControl>(GetComposableBase()).Get(), adapter.get())
     , m_needToHookCompositionRendering(false)
 {
-    CreateImageControl();
-}
-
-void CanvasControl::CreateImageControl()
-{
-    m_imageControl = GetAdapter()->CreateImageControl();
-
-    //
-    // Set the stretch mode to Fill. This will ensure that on high DPI, the
-    // layout will confine the control to the correct area even when the
-    // backing image has a different physical size from the control's
-    // device-independent size.
-    //
-    // The logic in EnsureSizeDependentResources ensures that the Source
-    // assigned to the Image control matches the CanvasImageSource extents.
-    //
-    ThrowIfFailed(m_imageControl->put_Stretch(Stretch_Fill));
-
-    //
-    // Set the image control as the content of this control.
-    //
-    ComPtr<IUIElement> imageAsUIElement;
-    ThrowIfFailed(m_imageControl.As(&imageAsUIElement));
-
-    ComPtr<IUserControl> thisAsUserControl;
-    ThrowIfFailed(GetComposableBase().As(&thisAsUserControl));
-    thisAsUserControl->put_Content(imageAsUIElement.Get());
 }
 
 void CanvasControl::RegisterEventHandlers()
 {
-    using namespace ABI::Windows::UI::Xaml::Controls;
-    using namespace Windows::Foundation;
-
-    m_surfaceContentsLostEventRegistration = GetAdapter()->AddSurfaceContentsLostCallback(this, &CanvasControl::OnSurfaceContentsLost);
+    ImageControlMixIn::RegisterEventHandlers<CanvasControl>(GetAdapter().get());
 }
 
 void CanvasControl::UnregisterEventHandlers()
@@ -200,7 +161,7 @@ void CanvasControl::UnregisterEventHandlers()
         m_needToHookCompositionRendering = true;
     }
 
-    m_surfaceContentsLostEventRegistration.Release();
+    ImageControlMixIn::UnregisterEventHandlers();
 }
 
 CanvasControl::~CanvasControl()
@@ -218,12 +179,18 @@ HRESULT CanvasControl::OnCompositionRendering(IInspectable*, IInspectable*)
             auto lock = GetLock();
             m_renderingEventRegistration.Release();
             DeviceCreationOptions deviceCreationOptions = GetDeviceCreationOptions(lock);
+
+            Color clearColor;
+            Size currentSize;
+            float currentDpi;
+            GetSharedState(lock, &clearColor, &currentSize, &currentDpi);
+            
             lock.unlock();
 
             if (!IsWindowVisible())
                 return;
 
-            RunWithRenderTarget(GetCurrentSize(), deviceCreationOptions,
+            RunWithRenderTarget(clearColor, currentSize, currentDpi, deviceCreationOptions,
                 [&](CanvasImageSource* target, ICanvasDevice*, Color const& clearColor, bool callDrawHandlers)
                 {
                     if (!target)
@@ -253,7 +220,7 @@ void CanvasControl::CreateOrUpdateRenderTarget(
     {
         // Zero-sized controls don't have image sources
         *renderTarget = RenderTarget{};
-        ThrowIfFailed(m_imageControl->put_Source(nullptr));
+        SetImageSource(nullptr);
     }
     else
     {
@@ -268,8 +235,7 @@ void CanvasControl::CreateOrUpdateRenderTarget(
         renderTarget->Dpi = newDpi;
         renderTarget->Size = newSize;
 
-        auto baseImageSource = As<IImageSource>(renderTarget->Target);
-        ThrowIfFailed(m_imageControl->put_Source(baseImageSource.Get()));
+        SetImageSource(As<IImageSource>(renderTarget->Target).Get());
     }
 }
 
@@ -332,63 +298,7 @@ void CanvasControl::HookCompositionRenderingIfNecessary()
     m_needToHookCompositionRendering = false;
 }
 
-IFACEMETHODIMP CanvasControl::MeasureOverride(
-    Size availableSize, 
-    Size* returnValue)
-{
-    UNREFERENCED_PARAMETER(availableSize);
-
-    return ExceptionBoundary(
-        [&]
-        {
-            Size zeroSize{ 0, 0 };
-
-            //
-            // Call Measure on our children (in this case just the image control).
-            //
-            ThrowIfFailed(As<IUIElement>(m_imageControl)->Measure(zeroSize));
-
-            //
-            // Reply that we're happy to be sized however the layout engine wants to size us.
-            //
-            *returnValue = zeroSize;
-        });
-}
-
-IFACEMETHODIMP CanvasControl::ArrangeOverride(
-    Size finalSize, 
-    Size* returnValue)
-{
-    return ExceptionBoundary(
-        [&]
-        {
-            //
-            // Call Arrange on our children (in this case just the image control).
-            //
-            ThrowIfFailed(As<IUIElement>(m_imageControl)->Arrange(Rect{ 0, 0, finalSize.Width, finalSize.Height }));
-
-            //
-            // Reply that we're happy to accept the size chosen by the layout engine.
-            //
-            *returnValue = finalSize;
-    });
-}
-
-IFACEMETHODIMP CanvasControl::OnApplyTemplate()
-{
-    return ExceptionBoundary(
-        [&]
-        {
-            //
-            // Allow base class to handle this
-            //
-            ComPtr<IFrameworkElementOverrides> base;
-            ThrowIfFailed(GetComposableBase().As(&base));
-            ThrowIfFailed(base->OnApplyTemplate());
-        });
-}
-
-void CanvasControl::WindowVisibilityChanged()
+void CanvasControl::WindowVisibilityChanged(Lock const&)
 {
     // Note that this is always called with ownership of the lock.
 
@@ -412,15 +322,6 @@ void CanvasControl::WindowVisibilityChanged()
             m_needToHookCompositionRendering = true;
         }
     }
-}
-
-HRESULT CanvasControl::OnSurfaceContentsLost(IInspectable*, IInspectable*)
-{
-    return ExceptionBoundary(
-        [&]
-        {
-            ResetRenderTarget();
-        });
 }
 
 ActivatableClassWithFactory(CanvasDrawEventArgs, CanvasDrawEventArgsFactory);

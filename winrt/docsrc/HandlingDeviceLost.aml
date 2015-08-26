@@ -31,7 +31,8 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <title>Device lost when using XAML controls</title>
       <content>
         <para>
-          The Win2D controls (<codeEntityReference>T:Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl</codeEntityReference> 
+          The Win2D controls (<codeEntityReference>T:Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl</codeEntityReference>,
+          <codeEntityReference>T:Microsoft.Graphics.Canvas.UI.Xaml.CanvasVirtualControl</codeEntityReference> 
           and <codeEntityReference>T:Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl</codeEntityReference>) 
           attempt to automatically handle device lost on behalf of the app.
         </para>

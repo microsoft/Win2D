@@ -136,6 +136,9 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)xaml\CanvasVirtualImageSourceUnitTests.cpp">
       <Filter>xaml</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)xaml\CanvasVirtualControlUnitTests.cpp">
+      <Filter>xaml</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)pch.h" />
@@ -408,6 +411,12 @@
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockVirtualSurfaceImageSourceFactory.h">
       <Filter>mocks</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockCanvasVirtualImageSource.h">
+      <Filter>mocks</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubCanvasVirtualImageSource.h">
+      <Filter>stubs</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

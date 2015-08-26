@@ -40,3 +40,4 @@ STRING(InvalidFontFamilyUriScheme, L"The URI specified in the CanvasTextFormat's
 STRING(InvalidAlphaModeForImageSource, L"An invalid alpha mode was specified. Use either CanvasAlphaMode.Ignore or CanvasAlphaMode.Premultiplied.")
 STRING(DeviceExpectedToBeLost, L"This API was unexpectedly called when the Direct3D device is not lost.")
 STRING(WrongNamedArrayLength, L"The array %s was expected to be of size %d; actual array was of size %d.")
+STRING(CreateDrawingSessionCalledBeforeRegionsInvalidated, L"CreateDrawingSession cannot be called before the RegionsInvalidated event has been raised.");

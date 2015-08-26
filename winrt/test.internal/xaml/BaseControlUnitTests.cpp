@@ -60,9 +60,9 @@ namespace
     class AnyDerivedControl 
         : public RuntimeClass<
             RuntimeClassFlags<WinRtClassicComMix>, 
-            MixIn<AnyDerivedControl, BaseControl<AnyTraits>>,
+            MixIn<AnyDerivedControl, BaseControlWithDrawHandler<AnyTraits>>,
             ComposableBase<>>,
-          public BaseControl<AnyTraits>
+          public BaseControlWithDrawHandler<AnyTraits>
     {
         InspectableClass(L"AnyDerivedControl", BaseTrust);
 
@@ -70,7 +70,7 @@ namespace
         using BaseControl::RenderTarget;
 
         AnyDerivedControl(std::shared_ptr<IAnyAdapter> adapter)
-            : BaseControl(adapter, false)
+            : BaseControlWithDrawHandler(adapter, false)
         {
         }
 
@@ -124,18 +124,22 @@ namespace
             ApplicationResumingMethod.WasCalled();
         }
 
-        virtual void WindowVisibilityChanged() override final
+        virtual void WindowVisibilityChanged(Lock const&) override final
         {
             Assert::Fail(L"Unexpected call to WindowVisibilityChanged");
         }
 
         template<typename FN>
-        void CallRunWithRenderTarget(Size const& size, FN&& fn)
+        void CallRunWithRenderTarget(FN&& fn)
         {
             CallCounter<> expectCallback(L"RunWithRenderTarget callback");
             expectCallback.SetExpectedCalls(1);
 
-            RunWithRenderTarget(size, DeviceCreationOptions{},
+            Size anySize { 1, 2 };
+            Color anyColor { 3, 4, 5, 6 };
+            float anyDpi { 7 };
+
+            RunWithRenderTarget(anyColor, anySize, anyDpi, DeviceCreationOptions{},
                 [&] (AnyRenderTarget* target, ICanvasDevice*, Color const& clearColor, bool callDrawHandlers)
                 {
                     expectCallback.WasCalled();
@@ -235,7 +239,7 @@ TEST_CLASS(BaseControl_Interaction_With_RecreatableDeviceManager)
                 renderTarget->Target = firstRenderTarget;
             });
 
-        f.Control->CallRunWithRenderTarget(anySize,
+        f.Control->CallRunWithRenderTarget(
             [&] (AnyRenderTarget* target, Color const&, bool)
             {
                 Assert::IsTrue(IsSameInstance(firstRenderTarget.Get(), target));
@@ -254,7 +258,7 @@ TEST_CLASS(BaseControl_Interaction_With_RecreatableDeviceManager)
                 renderTarget->Target = secondRenderTarget;
             });
 
-        f.Control->CallRunWithRenderTarget(anySize,
+        f.Control->CallRunWithRenderTarget(
             [&] (AnyRenderTarget* target, Color const&, bool)
             {
                 Assert::IsTrue(IsSameInstance(secondRenderTarget.Get(), target));
@@ -263,8 +267,6 @@ TEST_CLASS(BaseControl_Interaction_With_RecreatableDeviceManager)
 
     TEST_METHOD_EX(BaseControl_WhenDeviceIsNotNewlyCreated_RenderTargetIsPersisted)
     {
-        Size anySize{1,2};
-
         auto device = Make<StubCanvasDevice>();
 
         auto target = Make<AnyRenderTarget>();
@@ -282,7 +284,7 @@ TEST_CLASS(BaseControl_Interaction_With_RecreatableDeviceManager)
                 renderTarget->Target = target;
             });
 
-        f.Control->CallRunWithRenderTarget(anySize,
+        f.Control->CallRunWithRenderTarget(
             [&] (AnyRenderTarget* passedTarget, Color const&, bool)
             {
                 Assert::IsTrue(IsSameInstance(target.Get(), passedTarget));
@@ -297,7 +299,7 @@ TEST_CLASS(BaseControl_Interaction_With_RecreatableDeviceManager)
                 Assert::IsTrue(IsSameInstance(target.Get(), renderTarget->Target.Get()));
             });
 
-        f.Control->CallRunWithRenderTarget(anySize,
+        f.Control->CallRunWithRenderTarget(
             [&] (AnyRenderTarget* passedTarget, Color const&, bool)
             {
                 Assert::IsTrue(IsSameInstance(target.Get(), passedTarget));

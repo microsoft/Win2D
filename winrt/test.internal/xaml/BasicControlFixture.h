@@ -12,7 +12,6 @@ struct BasicControlFixture
     typedef typename TestAdapter<TRAITS>::type             adapter_t;
     typedef typename TRAITS::control_t                     control_t;
     typedef typename TRAITS::createResourcesEventHandler_t createResourcesEventHandler_t;
-    typedef typename TRAITS::drawEventHandler_t            drawEventHandler_t;
 
     static int const InitialWidth = 100;
     static int const InitialHeight = 200;
@@ -41,9 +40,9 @@ struct BasicControlFixture
         UserControl = static_cast<StubUserControl*>(As<IUserControl>(Control).Get());
     }
 
-    void Load()
+    void Load(float initialWidth = (float)InitialWidth, float initialHeight = (float)InitialHeight)
     {
-        UserControl->Resize(Size{static_cast<float>(InitialWidth), static_cast<float>(InitialHeight)});
+        UserControl->Resize(Size{ initialWidth, initialHeight });
         ThrowIfFailed(UserControl->LoadedEventSource->InvokeAll(nullptr, nullptr));
     }
 
@@ -52,25 +51,11 @@ struct BasicControlFixture
         ThrowIfFailed(UserControl->UnloadedEventSource->InvokeAll(nullptr, nullptr));
     }
 
-    void RenderSingleFrame();
-
     void PrepareAdapterForRenderingResource();
-
-    void RenderAnyNumberOfFrames()
-    {
-        int anyNumberOfTimes = 5;
-        for (auto i = 0; i < anyNumberOfTimes; ++i)
-            RenderSingleFrame();
-    }
 
     EventRegistrationToken AddCreateResourcesHandler(createResourcesEventHandler_t* handler)
     {
         return AddEventHandler(&control_t::add_CreateResources, handler);
-    }
-
-    EventRegistrationToken AddDrawHandler(drawEventHandler_t* handler)
-    {
-        return AddEventHandler(&control_t::add_Draw, handler);
     }
 
 protected:
@@ -83,13 +68,34 @@ protected:
     }
 };
 
-inline void BasicControlFixture<CanvasControlTraits>::RenderSingleFrame()
+template<typename TRAITS>
+struct BasicControlWithDrawFixture : public BasicControlFixture<TRAITS>
+{
+    typedef typename TRAITS::drawEventHandler_t            drawEventHandler_t;
+
+    void RenderSingleFrame();
+
+    void RenderAnyNumberOfFrames()
+    {
+        int anyNumberOfTimes = 5;
+        for (auto i = 0; i < anyNumberOfTimes; ++i)
+            RenderSingleFrame();
+    }
+
+    EventRegistrationToken AddDrawHandler(drawEventHandler_t* handler)
+    {
+        return AddEventHandler(&control_t::add_Draw, handler);
+    }
+
+};
+
+inline void BasicControlWithDrawFixture<CanvasControlTraits>::RenderSingleFrame()
 {
     Adapter->RaiseCompositionRenderingEvent();
 }
 
 
-inline void BasicControlFixture<CanvasAnimatedControlTraits>::RenderSingleFrame()
+inline void BasicControlWithDrawFixture<CanvasAnimatedControlTraits>::RenderSingleFrame()
 {
     Adapter->Tick();
 }
@@ -123,7 +129,7 @@ inline void BasicControlFixture<CanvasAnimatedControlTraits>::PrepareAdapterForR
     });
 }
 
-struct Static_BasicControlFixture : public BasicControlFixture<CanvasControlTraits>
+struct Static_BasicControlFixture : public BasicControlWithDrawFixture<CanvasControlTraits>
 {
     void RaiseAnyNumberOfSurfaceContentsLostEvents()
     {
@@ -133,7 +139,7 @@ struct Static_BasicControlFixture : public BasicControlFixture<CanvasControlTrai
     }    
 };
 
-struct Animated_BasicControlFixture : public BasicControlFixture<CanvasAnimatedControlTraits>
+struct Animated_BasicControlFixture : public BasicControlWithDrawFixture<CanvasAnimatedControlTraits>
 {
     template<typename T>
     void TickUntil(T predicate)

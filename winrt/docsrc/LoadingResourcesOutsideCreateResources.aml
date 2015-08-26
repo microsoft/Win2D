@@ -11,13 +11,14 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <section>
       <content>
         <para>
-          This document discusses how apps using Win2D's XAML controls, CanvasControl and CanvasAnimatedControl,
-          can load resources from outside the CreateResources handler.
+          This document discusses how apps using Win2D's XAML controls,
+          CanvasControl, CanvasVirtualControl and CanvasAnimatedControl, can
+          load resources from outside the CreateResources handler.
         </para>
       </content>
     </section>
     <section>
-      <title>Resource loading and CanvasControl</title>
+      <title>Resource loading and CanvasControl / CanvasVirtualControl</title>
       <content>
         <para>
           Normally, apps are expected to use the CreateResources handler for creating controls' resources, 

@@ -143,7 +143,7 @@ public:
 //
 
 CanvasAnimatedControl::CanvasAnimatedControl(std::shared_ptr<ICanvasAnimatedControlAdapter> adapter)
-    : BaseControl<CanvasAnimatedControlTraits>(adapter, false)
+    : BaseControlWithDrawHandler<CanvasAnimatedControlTraits>(adapter, false)
     , m_stepTimer(adapter)
     , m_hasUpdated(false)
 {
@@ -384,7 +384,7 @@ IFACEMETHODIMP CanvasAnimatedControl::RemoveFromVisualTree()
     if (FAILED(hr))
         return hr;
 
-    return BaseControl::RemoveFromVisualTree();
+    return BaseControlWithDrawHandler::RemoveFromVisualTree();
 }
 
 IFACEMETHODIMP CanvasAnimatedControl::get_HasGameLoopThreadAccess(boolean* value)
@@ -567,7 +567,7 @@ void CanvasAnimatedControl::ApplicationResuming()
     Changed(GetLock());
 }
 
-void CanvasAnimatedControl::WindowVisibilityChanged()
+void CanvasAnimatedControl::WindowVisibilityChanged(Lock const&)
 {
     //
     // Note that we don't stop the game loop thread here, because
@@ -660,6 +660,11 @@ void CanvasAnimatedControl::ChangedImpl()
     bool hasPendingActions = !m_sharedState.PendingAsyncActions.empty();
     DeviceCreationOptions deviceCreationOptions = GetDeviceCreationOptions(lock);
 
+    Color clearColor;
+    Size currentSize;
+    float currentDpi;
+    GetSharedState(lock, &clearColor, &currentSize, &currentDpi);
+    
     lock.unlock();
 
     //
@@ -760,7 +765,7 @@ void CanvasAnimatedControl::ChangedImpl()
     //
     // Try and start the update/render thread
     //
-    RunWithRenderTarget(GetCurrentSize(), deviceCreationOptions,
+    RunWithRenderTarget(clearColor, currentSize, currentDpi, deviceCreationOptions,
         [&] (CanvasSwapChain* target, ICanvasDevice*, Color const& clearColor, bool areResourcesCreated)
         {
             // The clearColor passed to us is ignored since this needs to be

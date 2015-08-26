@@ -47,6 +47,7 @@ import "Windows.UI.Input.Inking.idl";
 #include "xaml\CanvasControl.abi.idl"
 #include "xaml\CanvasSwapChainPanel.abi.idl"
 #include "xaml\CanvasVirtualImageSource.abi.idl"
+#include "xaml\CanvasVirtualControl.abi.idl"
 
 #include "effects\generated\ArithmeticCompositeEffect.abi.idl"
 #include "effects\generated\AtlasEffect.abi.idl"

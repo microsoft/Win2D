@@ -438,7 +438,7 @@ TEST_CLASS(CanvasSharedControlTests_CommonAdapter)
 boolean allForceSoftwareRendererOptions[] = { false, true };
 
 template<typename TRAITS>
-struct DeviceCreationFixture : public BasicControlFixture<TRAITS>
+struct DeviceCreationFixture : public BasicControlWithDrawFixture<TRAITS>
 {
     RecreatableDeviceManager<TRAITS>* LastDeviceManager;
 

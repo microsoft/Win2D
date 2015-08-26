@@ -16,54 +16,21 @@ using Windows.UI.Xaml.Media;
 
 namespace ExampleGallery
 {
-    public sealed partial class VirtualImageSourceExample : UserControl
+    public sealed partial class VirtualControlExample : UserControl
     {
-        const int width = 10000;
-        const int height = 10000;
-        const float dpi = 96;
         const int step = 32;
-
-        CanvasVirtualImageSource imageSource = null;
 
         Random random = new Random();
 
-        public VirtualImageSourceExample()
+        public VirtualControlExample()
         {
             this.InitializeComponent();
-        }
-
-        private void UserControl_Loaded(object sender, RoutedEventArgs args)
-        {
-            CompositionTarget.SurfaceContentsLost += CompositionTarget_SurfaceContentsLost;
-
-            var device = CanvasDevice.GetSharedDevice();
-            imageSource = new CanvasVirtualImageSource(device, width, height, dpi);
-            imageSource.RegionsInvalidated += ImageSource_RegionsInvalidated;
-            image.Source = imageSource.Source;
-        }
-
-        private void UserControl_Unloaded(object sender, RoutedEventArgs args)
-        {
-            CompositionTarget.SurfaceContentsLost -= CompositionTarget_SurfaceContentsLost;
-            imageSource.RegionsInvalidated -= ImageSource_RegionsInvalidated;
-        }
-
-        private void CompositionTarget_SurfaceContentsLost(object sender, object e)
-        {
-            RecreateDevice();
-        }
-
-        private void RecreateDevice()
-        {
-            var device = CanvasDevice.GetSharedDevice();
-            if (imageSource.Device != device)
-                imageSource.Recreate(device);
         }
 
         int regionsInvalidatedEventCount = 0;
         int regionsInvalidatedCount = 0;
 
-        private void ImageSource_RegionsInvalidated(CanvasVirtualImageSource sender, CanvasRegionsInvalidatedEventArgs args)
+        private void OnRegionsInvalidated(CanvasVirtualControl sender, CanvasRegionsInvalidatedEventArgs args)
         {
             ++regionsInvalidatedEventCount;
 
@@ -72,20 +39,10 @@ namespace ExampleGallery
 
             status.Text = string.Format("{0} RegionsInvalidated events, {1} total regions invalidated", regionsInvalidatedEventCount, regionsInvalidatedCount);
 
-            try
+            foreach (var region in invalidatedRegions)
             {
-                foreach (var region in invalidatedRegions)
-                {
-                    DrawRegion(sender, region);
-                }
+                DrawRegion(sender, region);
             }
-            catch (Exception e)
-            {
-                if (!sender.Device.IsDeviceLost(e.HResult))
-                    throw;
-
-                sender.Device.RaiseDeviceLost();
-            }        
         }
 
         CanvasTextFormat format = new CanvasTextFormat()
@@ -111,20 +68,22 @@ namespace ExampleGallery
 
         const int gridSize = 150;
 
-        private void DrawRegion(CanvasVirtualImageSource sender, Rect region)
+        private void DrawRegion(CanvasVirtualControl sender, Rect region)
         {
-            var tryPanningOrZoomingLayout = new CanvasTextLayout(sender.Device, "Try panning or zooming.", format, 500, 0);
+            var tryPanningOrZoomingLayout = new CanvasTextLayout(sender, "Try panning or zooming.", format, 500, 0);
 
-            var infoLayout = new CanvasTextLayout(sender.Device,
+            var infoLayout = new CanvasTextLayout(sender,
                 "In this demo, each time a region is updated, it is cleared to a different background color.  " +
                 "This is to make it possible to see which regions get redrawn.",
                 format, 500, 0);
             
-            var youMadeIt = new CanvasTextLayout(sender.Device,
+            var youMadeIt = new CanvasTextLayout(sender,
                 "You made it to the end!", endFormat, 1000, 0);
 
-            using (var ds = sender.CreateDrawingSession(NextColor(), region))
+            using (var ds = sender.CreateDrawingSession(region))
             {
+                ds.Clear(NextColor());
+
                 var left = ((int)(region.X / gridSize) - 1) * gridSize;
                 var top = ((int)(region.Y / gridSize) - 1) * gridSize;
                 var right = ((int)((region.X + region.Width) / gridSize) + 1) * gridSize;
@@ -135,7 +94,8 @@ namespace ExampleGallery
                     for (var y = top; y <= bottom; y += gridSize)
                     {
                         var pos = new Vector2((float)x, (float)y);
-                        ds.DrawCircle(pos, 10, Colors.White);
+                        ds.DrawCircle(pos, 50, Colors.Black, 6);
+                        ds.DrawCircle(pos, 50, Colors.White, 4);
 
                         ds.DrawText(string.Format("{0}\n{1}", x, y), pos, Colors.DarkBlue, coordFormat);
                     }
@@ -145,7 +105,7 @@ namespace ExampleGallery
                 {
                     DrawTextWithBackground(ds, tryPanningOrZoomingLayout, gridSize / 2, gridSize / 2);
                     DrawTextWithBackground(ds, infoLayout, gridSize * 3.5, gridSize * 5.5);
-                    DrawTextWithBackground(ds, youMadeIt, width - youMadeIt.RequestedSize.Width, height - youMadeIt.RequestedSize.Height);
+                    DrawTextWithBackground(ds, youMadeIt, sender.ActualWidth - youMadeIt.RequestedSize.Width, sender.ActualHeight - youMadeIt.RequestedSize.Height);
                 }
             }
         }
@@ -165,18 +125,35 @@ namespace ExampleGallery
             ds.DrawTextLayout(layout, (float)x, (float)y, Colors.Black);
         }
 
+        static Color[] colors =
+        {
+            Colors.SandyBrown,
+            Colors.Cornsilk,
+            Colors.LightPink,
+            Colors.Bisque,
+            Colors.LightSalmon,
+            Colors.LightGreen,
+            Colors.BlanchedAlmond,
+            Colors.Wheat,
+            Colors.Honeydew
+        };
+
+        int lastColorIndex = 0;
+
         private Color NextColor()
         {
-            if (ThumbnailGenerator.IsDrawingThumbnail)
-                return Colors.SandyBrown;
+            var color = colors[lastColorIndex];
 
-            float brightness = 3;
+            lastColorIndex = (lastColorIndex + 1) % colors.Length;
 
-            var r = (random.NextDouble() + brightness) / (1 + brightness);
-            var g = (random.NextDouble() + brightness) / (1 + brightness);
-            var b = (random.NextDouble() + brightness) / (1 + brightness);
+            return color;
+        }
 
-            return Color.FromArgb(255, (byte)(r * 255), (byte)(g * 255), (byte)(b * 255));
+        private void UserControl_Unloaded(object sender, RoutedEventArgs args)
+        {
+            // Explicitly remove references to allow the Win2D controls to get garbage collected
+            virtualControl.RemoveFromVisualTree();
+            virtualControl = null;
         }
     }
 }

@@ -23,6 +23,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
           <listItem>You use one of the Win2D XAML controls:
             <list class="bullet">
               <listItem><codeEntityReference>T:Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl</codeEntityReference></listItem>
+              <listItem><codeEntityReference>T:Microsoft.Graphics.Canvas.UI.Xaml.CanvasVirtualControl</codeEntityReference></listItem>
               <listItem><codeEntityReference>T:Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl</codeEntityReference></listItem>
               <listItem><codeEntityReference>T:Microsoft.Graphics.Canvas.UI.Xaml.CanvasSwapChainPanel</codeEntityReference></listItem>
             </list>

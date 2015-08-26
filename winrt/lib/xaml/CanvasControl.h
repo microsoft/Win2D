@@ -5,6 +5,7 @@
 #pragma once
 
 #include "BaseControl.h"
+#include "ImageControlMixIn.h"
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace UI { namespace Xaml
 {
@@ -59,12 +60,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     };
 
     class ICanvasControlAdapter : public IBaseControlAdapter<CanvasControlTraits>
+                                , public virtual IImageControlMixInAdapter
     {
     public:
         virtual RegisteredEvent AddCompositionRenderingCallback(IEventHandler<IInspectable*>*) = 0;
-        virtual RegisteredEvent AddSurfaceContentsLostCallback(IEventHandler<IInspectable*>*) = 0;
         virtual ComPtr<CanvasImageSource> CreateCanvasImageSource(ICanvasDevice* device, float width, float height, float dpi, CanvasAlphaMode alphaMode) = 0;
-        virtual ComPtr<IImage> CreateImageControl() = 0;
         
 #define CB_HELPER(NAME, DELEGATE)                                       \
         template<typename T, typename METHOD, typename... EXTRA_ARGS>   \
@@ -74,7 +74,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         }
 
         CB_HELPER(AddCompositionRenderingCallback, IEventHandler<IInspectable*>);
-        CB_HELPER(AddSurfaceContentsLostCallback, IEventHandler<IInspectable*>);
 
 #undef CB_HELPER
 
@@ -89,20 +88,17 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
     class CanvasControl : public RuntimeClass<
         RuntimeClassFlags<WinRtClassicComMix>,
-        ABI::Windows::UI::Xaml::IFrameworkElementOverrides,
-        MixIn<CanvasControl, BaseControl<CanvasControlTraits>>,
+        MixIn<CanvasControl, BaseControlWithDrawHandler<CanvasControlTraits>>,
+        MixIn<CanvasControl, ImageControlMixIn>,
         ComposableBase<>>,
-        public BaseControl<CanvasControlTraits>
+        public BaseControlWithDrawHandler<CanvasControlTraits>,
+        public ImageControlMixIn
     {
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_UI_Xaml_CanvasControl, BaseTrust);
 
         RegisteredEvent m_renderingEventRegistration; // protected by BaseControl's mutex
         bool m_needToHookCompositionRendering;        // protected by BaseControl's mutex
 
-        RegisteredEvent m_surfaceContentsLostEventRegistration;
-
-        ComPtr<IImage> m_imageControl;
-        
     public:
         CanvasControl(std::shared_ptr<ICanvasControlAdapter> adapter);
 
@@ -120,20 +116,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                     Changed(GetLock());
                 });
         }
-
-        //
-        // IFrameworkElementOverrides
-        //
-
-        IFACEMETHODIMP MeasureOverride(
-            Size availableSize, 
-            Size* returnValue) override;
-
-        IFACEMETHODIMP ArrangeOverride(
-            Size finalSize, 
-            Size* returnValue) override;
-
-        IFACEMETHODIMP OnApplyTemplate() override;
 
         //
         // BaseControl
@@ -155,17 +137,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         virtual void Unloaded() override final;
         virtual void ApplicationSuspending(ISuspendingEventArgs* args) override final;
         virtual void ApplicationResuming() override final;
-        virtual void WindowVisibilityChanged() override final;
+        virtual void WindowVisibilityChanged(Lock const&) override final;
 
     private:
         void HookCompositionRenderingIfNecessary();
 
-        void CreateImageControl();
         void RegisterEventHandlers();
         void UnregisterEventHandlers();
 
         HRESULT OnCompositionRendering(IInspectable* sender, IInspectable* args);
-        HRESULT OnSurfaceContentsLost(IInspectable* sender, IInspectable* args);
 
         void ChangedImpl();
     };

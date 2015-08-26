@@ -1,0 +1,276 @@
+<?xml version="1.0"?>
+<!--
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+Licensed under the MIT License. See LICENSE.txt in the project root for license information.
+-->
+
+<doc>
+  <assembly>
+    <name>Microsoft.Graphics.Canvas</name>
+  </assembly>
+  <members>
+    <member name="T:Microsoft.Graphics.Canvas.UI.Xaml.CanvasVirtualControl" Experimental="true">
+      <summary>XAML control providing immediate mode 2D rendering to a virtualized surface.</summary>
+      <remarks>
+        <p>
+          Use CanvasVirtualControl if:
+          <ul>
+            <li>the image you are drawing is very large</li>
+            <li>you don't want to spend time drawing non-visible parts of the image</li>
+            <li>you don't want the entire image to be resident in memory</li>
+            <li>you want to redraw the image on a background thread</li>
+          </ul>
+
+          CanvasVirtualControl is built on top of <see
+          cref="T:Microsoft.Graphics.Canvas.UI.Xaml.CanvasVirtualImageSource"/>.
+          The image is virtualized; this means that the entire image does not
+          need to be resident in memory at any one time.  Instead, the OS keeps
+          track of which regions of the image are valid, and which regions are
+          invalid.  When an invalid region needs to be shown on screen the <see
+          cref="E:Microsoft.Graphics.Canvas.UI.Xaml.CanvasVirtualControl.RegionsInvalidated"/>
+          event is raised to give the app an opportunity to redraw the contents.
+        </p>
+        <p>
+          From within the RegionsInvalidated event handler, use <see
+          cref="M:Microsoft.Graphics.Canvas.UI.Xaml.CanvasVirtualControl.CreateDrawingSession(Windows.Foundation.Rect)"/>
+          to redraw:
+          <code>
+            void OnRegionsInvalidated(CanvasVirtualControl sender, CanvasRegionsInvalidatedEventArgs args)
+            {
+                foreach (var region in args.InvalidatedRegions)
+                {
+                    using (var ds = sender.CreateDrawingSession(region))
+                    {
+                        // draw the region
+                    }
+                }
+            }
+          </code>
+        </p>
+        <p>          
+          CanvasVirtualControl works well when it is placed within a XAML
+          ScrollViewer:
+          <code>
+            &lt;ScrollViewer&gt;
+              &lt;canvas:CanvasVirtualControl Width="10000" Height="10000" RegionsInvalidated="OnRegionsInvalidated" /&gt;
+            &lt;/ScrollViewer&gt;
+          </code>
+        </p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.UI.Xaml.CanvasVirtualControl.#ctor">
+      <summary>Initializes a new instance of the CanvasVirtualControl class.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.UI.Xaml.CanvasVirtualControl.CreateDrawingSession(Windows.Foundation.Rect)">
+      <summary>Returns a new drawing session for updating a region of the control.</summary>
+      <remarks>
+        <p>
+          The specified region of the image is cleared to the <see
+          cref="P:Microsoft.Graphics.Canvas.UI.Xaml.CanvasVirtualControl.ClearColor"/>
+          before this method returns.  The region is in device independent
+          pixels (DIPs).  Regions that need to be updated are provided by the
+          <see
+          cref="P:Microsoft.Graphics.Canvas.UI.Xaml.CanvasRegionsInvalidatedEventArgs.InvalidatedRegions"/>
+          property passed to the <see
+          cref="E:Microsoft.Graphics.Canvas.UI.Xaml.CanvasVirtualImageSource.RegionsInvalidated"/>
+          event handler.
+        </p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.UI.Xaml.CanvasVirtualControl.SuspendDrawingSession(Microsoft.Graphics.Canvas.CanvasDrawingSession)">
+      <summary>Suspends a drawing session so that it may be resumed on another thread.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.UI.Xaml.CanvasVirtualControl.ResumeDrawingSession(Microsoft.Graphics.Canvas.CanvasDrawingSession)">
+      <summary>Resumes a previously suspended drawing session.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.UI.Xaml.CanvasVirtualControl.Invalidate">
+      <summary>Marks the entire control as needing to be redrawn.</summary>
+      <remarks>
+        <p>
+          This will cause the <see
+          cref="E:Microsoft.Graphics.Canvas.UI.Xaml.CanvasVirtualControl.RegionsInvalidated"/>
+          to be raised, as determined by the OS.
+        </p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.UI.Xaml.CanvasVirtualControl.Invalidate(Windows.Foundation.Rect)">
+      <summary>Marks a region of the control as needing to be redrawn.</summary>
+      <remarks>
+        <p>
+          This will cause the <see
+          cref="E:Microsoft.Graphics.Canvas.UI.Xaml.CanvasVirtualControl.RegionsInvalidated"/>
+          to be raised, as determined by the OS.
+        </p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.UI.Xaml.CanvasVirtualControl.RemoveFromVisualTree">
+      <summary>Removes the control from the last FrameworkElement it was parented to.</summary>
+      <remarks>
+        <p>
+          When using this control from managed code it is necessary to ensure
+          that all references to it are released, otherwise it will not get
+          garbage collected correctly.  To do this, call RemoveFromVisualTree
+          from the Unloaded event handler of the page that the control was on
+          and then release any explicit references to it.
+        </p>
+        <p>For more information, see <a href="RefCycles.htm">Avoiding memory leaks</a>.</p>
+        <example>
+          <code>
+            void page_Unloaded(object sender, RoutedEventArgs e)
+            {
+                this.canvas.RemoveFromVisualTree();
+                this.canvas = null;
+            }
+          </code>
+        </example>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.UI.Xaml.CanvasVirtualControl.ConvertPixelsToDips(System.Int32)">
+      <summary>Converts units from physical pixels to device independent pixels (DIPs) based on the current DPI of this control.</summary>
+      <remarks>For more information, see <a href="DPI.htm">DPI and DIPs</a>.</remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.UI.Xaml.CanvasVirtualControl.ConvertDipsToPixels(System.Single,Microsoft.Graphics.Canvas.CanvasDpiRounding)">
+      <summary>Converts units from device independent pixels (DIPs) to physical pixels based on the current DPI of this control.</summary>
+      <remarks>For more information, see <a href="DPI.htm">DPI and DIPs</a>.</remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.UI.Xaml.CanvasVirtualControl.UseSharedDevice">
+      <summary>Gets or sets whether this control should create a new device each time, or use a device which may common between other controls.</summary>
+      <remarks>
+      <p>
+      This property is set to true by default.
+      </p>
+      <p>
+      Modifying this option will cause re-creation of the control's device, if it already has one.
+      </p>
+      <p>
+      If this property is set to true, the control will get its devices from 
+      CanvasDevice.<see cref="M:Microsoft.Graphics.Canvas.CanvasDevice.GetSharedDevice(System.Boolean)"/>.
+      </p>
+      </remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.UI.Xaml.CanvasVirtualControl.ForceSoftwareRenderer">
+      <summary>Gets or sets the whether the devices that this control creates will be forced to software rendering.</summary>
+      <remarks>
+      <p>
+      This property is set to false by default.
+      </p>
+      <p>
+      Modifying this option will cause re-creation of the control's device, if it already has one.
+      </p>
+      </remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.UI.Xaml.CanvasVirtualControl.CustomDevice">
+      <summary>Gets or sets an application-chosen device for this control.</summary>
+      <remarks>
+        <p>
+          Setting this property allows controls to use a CanvasDevice from 
+          arbitrary sources- for example, from Direct3D interop.
+        </p>
+        <p>
+          The default value for this property is null. This means that the control will obtain its
+          devices from <see cref="M:Microsoft.Graphics.Canvas.CanvasDevice.GetSharedDevice(System.Boolean)"/>
+          if <see cref="P:Microsoft.Graphics.Canvas.UI.Xaml.CanvasVirtualControl.UseSharedDevice"/> is
+          set. Otherwise, it will create its own new device each time.
+        </p>
+        <p>
+          Setting this property overrides the control's default device creation
+          behavior, so the 
+          <see cref="P:Microsoft.Graphics.Canvas.UI.Xaml.CanvasVirtualControl.UseSharedDevice"/> and
+          <see cref="P:Microsoft.Graphics.Canvas.UI.Xaml.CanvasVirtualControl.ForceSoftwareRenderer"/>
+          properties are ignored.
+        </p>
+        <p>
+          One way to handle device lost while using a custom device, is to subscribe
+          to the custom device's <see cref="E:Microsoft.Graphics.Canvas.CanvasDevice.DeviceLost"/>
+          event. Then in the event handler, create a new device and assign it to CustomDevice.
+        </p>
+      </remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.UI.Xaml.CanvasVirtualControl.ClearColor">
+      <summary>The color that the control is cleared to when CreateDrawingSession is called.</summary>
+      <remarks>
+        <p>
+          ClearColor defaults to transparent black, that is, Color.FromArgb(0,0,0,0).
+        </p>
+        <p>
+          Modifying ClearColor will invalidate the entire control, as if
+          Invalidate() was called.
+        </p>
+        <p>
+          CanvasVirtualControl uses this ClearColor property instead of the
+          Background property that is inherited from XAML UserControl, because
+          Background can be set to any XAML brush object. It does not make sense
+          to clear an immediate mode Win2D control using XAML content as the
+          background, so CanvasVirtualControl ignores the XAML Background
+          setting.
+        </p>
+      </remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.UI.Xaml.CanvasVirtualControl.ReadyToDraw">
+      <summary>Gets whether the control is in a state where it is ready to draw.</summary>
+      <remarks>
+        This control is ready to draw when a device has been created and all
+        CreateResources event handlers have completed successfully.
+      </remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.UI.Xaml.CanvasVirtualControl.Size">
+      <summary>Gets the current size of the control, in device independent pixels (DIPs).</summary>
+      <remarks>For more information, see <a href="DPI.htm">DPI and DIPs</a>.</remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.UI.Xaml.CanvasVirtualControl.Dpi">
+      <summary>Gets the current dots-per-inch (DPI) of this control.</summary>
+      <remarks>
+        <p>
+          DPI describes the ratio between device independent pixels (DIPs) and actual physical pixels.
+          The identity DPI value is 96, which means DIPs and pixels are the same.
+        </p>
+        <p>
+          For more information, see <a href="DPI.htm">DPI and DIPs</a>.
+        </p>
+      </remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.UI.Xaml.CanvasVirtualControl.Device">
+      <summary>Gets the underlying device used by this control.</summary>
+    </member>
+    <member name="E:Microsoft.Graphics.Canvas.UI.Xaml.CanvasVirtualControl.CreateResources">
+      <summary>Hook this event to create any resources needed for your drawing.</summary>
+      <remarks>      
+        <p>
+          The CreateResources event is raised once when the CanvasControl is
+          first initialized, then again any time the resources need to be
+          recreated, for instance if the graphics device is lost.
+        </p>
+        <p>
+          If your app cannot be structured in a way where it loads all of its
+          resources at the beginning (for example, a game with multiple levels,
+          and the levels require different assets), see <a
+          href="LoadingResourcesOutsideCreateResources.htm">Loading Resources
+          outside of CreateResources</a> for more information.
+        </p>
+      </remarks>
+    </member>
+    <member name="E:Microsoft.Graphics.Canvas.UI.Xaml.CanvasVirtualControl.RegionsInvalidated">
+      <summary>Occurs when a region of the control needs redrawing.</summary>
+      <remarks>
+        <p>
+          Applications should register for this event to be notified when
+          regions of the control should be redrawn.  Typically applications will
+          run a loop similar to this:
+          <code>
+            void OnRegionsInvalidated(CanvasVirtualControl sender, CanvasRegionsInvalidatedEventArgs args)
+            {
+                foreach (var region in args.InvalidatedRegions)
+                {
+                    using (var ds = sender.CreateDrawingSession(region))
+                    {
+                        // draw the region
+                    }
+                }
+            }
+          </code>
+        </p>
+      </remarks>
+    </member>
+  </members>
+</doc>

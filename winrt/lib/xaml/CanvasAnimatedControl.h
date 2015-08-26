@@ -115,9 +115,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     std::shared_ptr<ICanvasAnimatedControlAdapter> CreateCanvasAnimatedControlAdapter();
 
     class CanvasAnimatedControl : public RuntimeClass<
-        MixIn<CanvasAnimatedControl, BaseControl<CanvasAnimatedControlTraits>>,
+        MixIn<CanvasAnimatedControl, BaseControlWithDrawHandler<CanvasAnimatedControlTraits>>,
         ComposableBase<>>,
-        public BaseControl<CanvasAnimatedControlTraits>,
+        public BaseControlWithDrawHandler<CanvasAnimatedControlTraits>,
         public ICanvasGameLoopClient
     {
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_UI_Xaml_CanvasAnimatedControl, BaseTrust);
@@ -247,7 +247,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         virtual void Unloaded() override final;
         virtual void ApplicationSuspending(ISuspendingEventArgs* args) override final;
         virtual void ApplicationResuming() override final;
-        virtual void WindowVisibilityChanged() override final;
+        virtual void WindowVisibilityChanged(Lock const&) override final;
 
     private:
         void CreateSwapChainPanel();
