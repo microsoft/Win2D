@@ -41,7 +41,16 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             {
                 ThrowIfFailed(userControl->put_Content(nullptr));
             }
-        }                    
+        }
+        else if (auto contentControl = MaybeAs<IContentControl>(parent))
+        {
+            ComPtr<IInspectable> currentContent;
+            ThrowIfFailed(contentControl->get_Content(&currentContent));
+            if (IsSameInstance(currentContent.Get(), toRemove))
+            {
+                ThrowIfFailed(contentControl->put_Content(nullptr));
+            }
+        }
     }
 
 }}}}}}
