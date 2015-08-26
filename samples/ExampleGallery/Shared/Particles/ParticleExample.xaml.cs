@@ -11,6 +11,7 @@ using System.Numerics;
 using System.Threading.Tasks;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
 
 namespace ExampleGallery
 {
@@ -50,6 +51,9 @@ namespace ExampleGallery
 
         void CreateResources(CanvasAnimatedControl sender, CanvasCreateResourcesEventArgs args)
         {
+            if (args.Reason == CanvasCreateResourcesReason.DpiChanged)
+                return;
+
             args.TrackAsyncAction(CreateResourcesAsync(sender).AsAsyncAction());
         }
 
@@ -144,6 +148,11 @@ namespace ExampleGallery
             explosion.Draw(ds);
         }
 
+        public void SliderValueChanged(object sender, RangeBaseValueChangedEventArgs args)
+        {
+            if (canvas != null)
+                canvas.DpiScale = (float)(args.NewValue);
+        }
 
         private void control_Unloaded(object sender, RoutedEventArgs e)
         {

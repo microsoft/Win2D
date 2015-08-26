@@ -20,16 +20,27 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     Unloaded="control_Unloaded">
 
     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+
         <canvas:CanvasAnimatedControl x:Name="canvas"
                                       CreateResources="CreateResources"
                                       Update="Update"
                                       Draw="Draw"
-                                      ClearColor="Black"/>
+                                      ClearColor="Black"
+                                      Grid.Column="0"
+                                      Grid.ColumnSpan="2"/>
 
-        <StackPanel Orientation="Horizontal">
+        <StackPanel Grid.Column="0" Orientation="Vertical">
             <ListBox Margin="5" VerticalAlignment="Top"
                      ItemsSource="{Binding ElementName=control, Path=ModeList}"
                      SelectedItem="{Binding CurrentMode, ElementName=control, Mode=TwoWay}"/>
+            <TextBlock Text="DPI Scale"/>
+
+            <Slider Maximum="1.0" Minimum="0.01" StepFrequency="0.01" Value="1.0" ValueChanged="SliderValueChanged"/>
         </StackPanel>
+        
     </Grid>
 </UserControl>
