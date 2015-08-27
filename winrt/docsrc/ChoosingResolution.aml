@@ -66,8 +66,11 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
                           </list>
                       </listItem>
                       <listItem>
-                      The control's drawing resource (CanvasImageSource for CanvasControl, 
-                      CanvasSwapChain for CanvasAnimatedControl) is set to match the size and DPI of the control.
+                      The control's drawing resource (CanvasImageSource for
+                      CanvasControl, CanvasVirtualImageSource for
+                      CanvasVirtualControl and CanvasSwapChain for
+                      CanvasAnimatedControl) is set to match the size and DPI of
+                      the control.
                   </listItem>
               </list>
           </para>
@@ -110,8 +113,9 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
             pillarboxing to preseve aspect ratios as necessary.
         </para> 
         <para>    
-            Simply ensure your CanvasControl or CanvasAnimatedControl is a 
-            child element of a ViewBox, and restrict the size of that control.
+            Simply ensure your CanvasControl, CanvasVirtualControl or
+            CanvasAnimatedControl is a child element of a ViewBox, and restrict
+            the size of that control.
         </para> 
         <para> 
             For example, to constrain the size of the control to 320 pixels

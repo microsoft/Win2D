@@ -592,4 +592,28 @@ TEST_CLASS(CanvasVirtualControlTests)
         onRegionsInvalidated.SetExpectedCalls(1);
         replacementImageSource->RaiseRegionsInvalidated(std::vector<Rect> { anyRegion }, anyRegion);
     }
+
+    TEST_METHOD_EX(CanvasVirtualControl_DpiScaling_ResourceHasCorrectDpiScale)
+    {
+        for (auto testCase : dpiScalingTestCases)
+        {
+            Fixture f;
+
+            f.Adapter->LogicalDpi = testCase.Dpi;
+
+            f.Control->put_DpiScale(testCase.DpiScale);
+
+            auto imageSource = Make<StubCanvasVirtualImageSource>();
+            f.Adapter->CreateCanvasVirtualImageSourceMethod.SetExpectedCalls(1,
+                [&](ICanvasDevice*, float, float, float dpi, CanvasAlphaMode)
+                {
+                    float expectedDpi = testCase.Dpi * testCase.DpiScale;
+                    Assert::AreEqual(dpi, expectedDpi);
+                    return imageSource;
+                });
+
+            f.Load();
+            f.Adapter->TickUiThread();
+        }
+    }
 };

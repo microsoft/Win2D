@@ -32,7 +32,7 @@ namespace Microsoft.Graphics.Canvas.UI.Xaml
         // won't be raised until resources have been created.  Before resources
         // have been created the control will just display the clear color.
         //
-        [eventadd] 
+        [eventadd]
         HRESULT RegionsInvalidated(
             [in]          Windows.Foundation.TypedEventHandler<CanvasVirtualControl*, CanvasRegionsInvalidatedEventArgs*>* value,
             [out, retval] EventRegistrationToken* token);
@@ -108,7 +108,10 @@ namespace Microsoft.Graphics.Canvas.UI.Xaml
         // As for CanvasControl
         //
         [propget] HRESULT CustomDevice([out, retval] Microsoft.Graphics.Canvas.CanvasDevice** value);
-        [propput] HRESULT CustomDevice([in] Microsoft.Graphics.Canvas.CanvasDevice* value);        
+        [propput] HRESULT CustomDevice([in] Microsoft.Graphics.Canvas.CanvasDevice* value);
+
+        [propget] HRESULT DpiScale([out, retval] float* value);
+        [propput] HRESULT DpiScale([in] float ratio);
     }
 
     [version(VERSION), activatable(VERSION), marshaling_behavior(agile), threading(both)]

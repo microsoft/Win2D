@@ -272,5 +272,26 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         </p>
       </remarks>
     </member>
+    <member name="P:Microsoft.Graphics.Canvas.UI.Xaml.CanvasVirtualControl.DpiScale">
+      <summary>Gets or sets a scaling factor applied to this control's Dpi.</summary>
+      <remarks>
+          <p>
+              This scaling factor affects the DPI of the CanvasVirtualImageSource used
+              by this control, as well as the following other members of the control:
+              <ul>
+                  <li>Dpi property</li>
+                  <li>ConvertDipsToPixels</li>
+                  <li>ConvertPixelsToDips</li>
+              </ul>
+          </p>
+          <p>
+              A value less than or equal to zero is not valid for this property.
+          </p>
+          <p>
+              For more information on using this property, see
+              <a href="ChoosingResolution.htm">Choosing resolution for controls</a>.
+          </p>
+      </remarks>
+    </member>
   </members>
 </doc>
