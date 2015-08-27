@@ -298,11 +298,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         IDirect3DSurface* surface,
         ICanvasBitmap** canvasBitmap)
     {
-        return CreateFromDirect3D11SurfaceWithDpiAndAlpha(
+        return CreateFromDirect3D11SurfaceImpl(
             resourceCreator,
             surface,
             DEFAULT_DPI,
-            CanvasAlphaMode::Premultiplied,
+            nullptr,
             canvasBitmap);
     }
 
@@ -312,11 +312,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         float dpi,
         ICanvasBitmap** canvasBitmap)
     {
-        return CreateFromDirect3D11SurfaceWithDpiAndAlpha(
+        return CreateFromDirect3D11SurfaceImpl(
             resourceCreator,
             surface,
             dpi,
-            CanvasAlphaMode::Premultiplied,
+            nullptr,
             canvasBitmap);
     }
 
@@ -325,6 +325,31 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         IDirect3DSurface* surface,
         float dpi,
         CanvasAlphaMode alpha,
+        ICanvasBitmap** canvasBitmap)
+    {
+        return CreateFromDirect3D11SurfaceImpl(
+            resourceCreator,
+            surface,
+            dpi,
+            &alpha,
+            canvasBitmap);
+    }
+
+    static bool DoesSurfaceSupportAlpha(IDirect3DSurface* surface)
+    {
+        Direct3DSurfaceDescription surfaceDescription;
+        ThrowIfFailed(surface->get_Description(&surfaceDescription));
+
+        return surfaceDescription.Format != PIXEL_FORMAT(B8G8R8X8UIntNormalized)
+            && surfaceDescription.Format != PIXEL_FORMAT(R8G8UIntNormalized)
+            && surfaceDescription.Format != PIXEL_FORMAT(R8UIntNormalized);
+    }
+
+    HRESULT CanvasBitmapFactory::CreateFromDirect3D11SurfaceImpl(
+        ICanvasResourceCreator* resourceCreator,
+        IDirect3DSurface* surface,
+        float dpi,
+        CanvasAlphaMode const* requestedAlpha,
         ICanvasBitmap** canvasBitmap)
     {
         return ExceptionBoundary(
@@ -336,6 +361,16 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
                 ComPtr<ICanvasDevice> canvasDevice;
                 ThrowIfFailed(resourceCreator->get_Device(&canvasDevice));
+
+                CanvasAlphaMode alpha;
+                if (requestedAlpha)
+                {
+                    alpha = *requestedAlpha;
+                }
+                else
+                {
+                    alpha = DoesSurfaceSupportAlpha(surface) ? CanvasAlphaMode::Premultiplied : CanvasAlphaMode::Ignore;
+                }
 
                 auto newBitmap = GetManager()->CreateBitmapFromSurface(canvasDevice.Get(), surface, dpi, alpha);
                 ThrowIfFailed(newBitmap.CopyTo(canvasBitmap));

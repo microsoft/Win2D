@@ -227,6 +227,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ICanvasDevice* device,
             IUnknown* resource,
             IInspectable** wrapper) override;
+
+        private:
+        HRESULT CreateFromDirect3D11SurfaceImpl(
+            ICanvasResourceCreator* resourceCreator,
+            IDirect3DSurface* surface,
+            float dpi,
+            CanvasAlphaMode const* requestedAlpha,
+            ICanvasBitmap** canvasBitmap);
     };
 
     void GetPixelBytesImpl(

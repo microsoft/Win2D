@@ -103,19 +103,36 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <summary>The description of this bitmap's underlying surface.</summary>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.CreateFromDirect3D11Surface(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.Graphics.Canvas.DirectX.Direct3D11.IDirect3DSurface)">
-      <summary>Creates a CanvasBitmap from an existing Direct3D graphics surface, using premultiplied alpha and default (96) DPI.</summary>
+      <summary>Creates a CanvasBitmap from an existing Direct3D graphics surface.</summary>
       <remarks>
-        The bitmap's properties are determined by the properties of the surface. If the surface is able to be used as
-        a render target then a CanvasRenderTarget instance is actually returned. However, to avoid needing to cast, use
-        <see cref="M:Microsoft.Graphics.Canvas.CanvasRenderTarget.CreateFromDirect3D11Surface(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.Graphics.Canvas.DirectX.Direct3D11.IDirect3DSurface)"/>.
+        <p>
+          The bitmap's properties are determined by the properties of the surface. If the surface is able to be used as
+          a render target then a CanvasRenderTarget instance is actually returned. However, to avoid needing to cast, use
+          <see cref="M:Microsoft.Graphics.Canvas.CanvasRenderTarget.CreateFromDirect3D11Surface(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.Graphics.Canvas.DirectX.Direct3D11.IDirect3DSurface)"/>.
+        </p>
+        <p>
+          This will use the default (96) DPI. 
+        </p>
+        <p>
+          The value of AlphaMode is determined by the pixel format of the surface. If the surface supports alpha, then the AlphaMode is set to
+          CanvasAlphaMode.Premultiplied, otherwise it is set to CanvasAlphaMode.Ignore.
+          See <a href="PixelFormats.htm">Pixel Formats</a> for more information about which formats support which alpha modes.
+        </p>
       </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.CreateFromDirect3D11Surface(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.Graphics.Canvas.DirectX.Direct3D11.IDirect3DSurface,System.Single)">
-      <summary>Creates a CanvasBitmap from an existing Direct3D graphics surface, using the specified DPI and premultiplied alpha.</summary>
+      <summary>Creates a CanvasBitmap from an existing Direct3D graphics surface.</summary>
       <remarks>
-        The bitmap's properties are determined by the properties of the surface. If the surface is able to be used as
-        a render target then a CanvasRenderTarget instance is actually returned. However, to avoid needing to cast, use
-        <see cref="M:Microsoft.Graphics.Canvas.CanvasRenderTarget.CreateFromDirect3D11Surface(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.Graphics.Canvas.DirectX.Direct3D11.IDirect3DSurface)"/>.
+        <p>        
+          The bitmap's properties are determined by the properties of the surface. If the surface is able to be used as
+          a render target then a CanvasRenderTarget instance is actually returned. However, to avoid needing to cast, use
+          <see cref="M:Microsoft.Graphics.Canvas.CanvasRenderTarget.CreateFromDirect3D11Surface(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.Graphics.Canvas.DirectX.Direct3D11.IDirect3DSurface)"/>.
+        </p>
+        <p>
+          The value of AlphaMode is determined by the pixel format of the surface. If the surface supports alpha, then the AlphaMode is set to
+          CanvasAlphaMode.Premultiplied, otherwise it is set to CanvasAlphaMode.Ignore.
+          See <a href="PixelFormats.htm">Pixel Formats</a> for more information about which formats support which alpha modes.
+        </p>
       </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.CreateFromDirect3D11Surface(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.Graphics.Canvas.DirectX.Direct3D11.IDirect3DSurface,System.Single,Microsoft.Graphics.Canvas.CanvasAlphaMode)">

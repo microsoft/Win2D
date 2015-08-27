@@ -156,7 +156,9 @@ TEST_CLASS(Direct3DSurfaceInteropTests)
         Assert::AreEqual<uint32_t>(dxgiDesc.SampleDesc.Quality, canvasDescription.MultisampleDescription.Quality);
     }
 
-    IDirect3DSurface^ CreateSurface(D3D11_BIND_FLAG bindFlags)
+    IDirect3DSurface^ CreateSurface(
+        D3D11_BIND_FLAG bindFlags,
+        DXGI_FORMAT format = DXGI_FORMAT_B8G8R8A8_UNORM)
     {
         //
         // We create a new DXGI surface by creating Texture2D's from the same
@@ -171,7 +173,7 @@ TEST_CLASS(Direct3DSurfaceInteropTests)
         textureDesc.Height = 1;
         textureDesc.MipLevels = 0;
         textureDesc.ArraySize = 1;
-        textureDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+        textureDesc.Format = format;
         textureDesc.SampleDesc.Count = 1;
         textureDesc.SampleDesc.Quality = 0;
         textureDesc.Usage = D3D11_USAGE_DEFAULT;
@@ -185,5 +187,43 @@ TEST_CLASS(Direct3DSurfaceInteropTests)
             &texture2D));
 
         return CreateDirect3DSurface(As<IDXGISurface>(texture2D).Get());
+    }
+
+    void CreateBitmapFromDirect3DSurface_InfersAlphaIgnore_TestCase(DirectXPixelFormat format)
+    {
+        auto surface = CreateSurface(D3D11_BIND_SHADER_RESOURCE, static_cast<DXGI_FORMAT>(format));
+        auto bitmap1 = CanvasBitmap::CreateFromDirect3D11Surface(m_canvasDevice, surface);
+
+        Assert::AreEqual(CanvasAlphaMode::Ignore, bitmap1->AlphaMode);
+
+        auto bitmap2 = CanvasBitmap::CreateFromDirect3D11Surface(m_canvasDevice, surface, 100.0f);
+
+        Assert::AreEqual(CanvasAlphaMode::Ignore, bitmap2->AlphaMode);
+    }
+
+    TEST_METHOD(CreateBitmapFromDirect3DSurface_InfersAlphaIgnoreOnEligibleFormats)
+    {
+        CreateBitmapFromDirect3DSurface_InfersAlphaIgnore_TestCase(DirectXPixelFormat::B8G8R8X8UIntNormalized);
+        CreateBitmapFromDirect3DSurface_InfersAlphaIgnore_TestCase(DirectXPixelFormat::R8G8UIntNormalized);
+        CreateBitmapFromDirect3DSurface_InfersAlphaIgnore_TestCase(DirectXPixelFormat::R8UIntNormalized);
+    }
+
+    void CreateBitmapFromDirect3DSurface_DoesNotInferAlphaMode_IfWrongAlphaModeIsExplicitlySpecified_TestCase(DirectXPixelFormat format)
+    {
+        auto surface = CreateSurface(D3D11_BIND_SHADER_RESOURCE, static_cast<DXGI_FORMAT>(format));
+        
+        // The bad alpha mode should fall through and get validated by D2D.
+        Assert::ExpectException<Platform::COMException^>(
+            [&]
+            {
+                CanvasBitmap::CreateFromDirect3D11Surface(m_canvasDevice, surface, 96.0f, CanvasAlphaMode::Premultiplied);
+            });
+    }
+
+    TEST_METHOD(CreateBitmapFromDirect3DSurface_DoesNotInferAlphaMode_IfWrongAlphaModeIsExplicitlySpecified)
+    {
+        CreateBitmapFromDirect3DSurface_DoesNotInferAlphaMode_IfWrongAlphaModeIsExplicitlySpecified_TestCase(DirectXPixelFormat::B8G8R8X8UIntNormalized);
+        CreateBitmapFromDirect3DSurface_DoesNotInferAlphaMode_IfWrongAlphaModeIsExplicitlySpecified_TestCase(DirectXPixelFormat::R8G8UIntNormalized);
+        CreateBitmapFromDirect3DSurface_DoesNotInferAlphaMode_IfWrongAlphaModeIsExplicitlySpecified_TestCase(DirectXPixelFormat::R8UIntNormalized);
     }
 };
