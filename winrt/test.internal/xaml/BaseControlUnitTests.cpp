@@ -47,6 +47,14 @@ namespace
         IFACEMETHOD(get_ReadyToDraw)(boolean*) = 0;
         IFACEMETHOD(get_Size)(Size*) = 0;
         IFACEMETHOD(RemoveFromVisualTree)() = 0;
+        IFACEMETHOD(get_UseSharedDevice)(boolean*) = 0;
+        IFACEMETHOD(put_UseSharedDevice)(boolean) = 0;
+        IFACEMETHOD(get_ForceSoftwareRenderer)(boolean*) = 0;
+        IFACEMETHOD(put_ForceSoftwareRenderer)(boolean) = 0;
+        IFACEMETHOD(get_CustomDevice)(ICanvasDevice**) = 0;
+        IFACEMETHOD(put_CustomDevice)(ICanvasDevice*) = 0;
+        IFACEMETHOD(get_DpiScale)(float*) = 0;
+        IFACEMETHOD(put_DpiScale)(float) = 0;
     };
 
     class IAnyAdapter : public IBaseControlAdapter<AnyTraits>

@@ -227,7 +227,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         }
 
         IFACEMETHODIMP get_UseSharedDevice(
-            boolean* value)
+            boolean* value) override
         {
             return ExceptionBoundary(
                 [&]
@@ -241,7 +241,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         }
 
         IFACEMETHODIMP put_UseSharedDevice(
-            boolean value)
+            boolean value) override
         {
             return ExceptionBoundary(
                 [&]
@@ -258,7 +258,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         }
 
         IFACEMETHODIMP get_ForceSoftwareRenderer(
-            boolean* value)
+            boolean* value) override
         {
             return ExceptionBoundary(
                 [&]
@@ -272,7 +272,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         }
 
         IFACEMETHODIMP put_ForceSoftwareRenderer(
-            boolean value)
+            boolean value) override
         {
             return ExceptionBoundary(
                 [&]
@@ -289,7 +289,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         }
 
         IFACEMETHODIMP get_CustomDevice(
-            ICanvasDevice** value)
+            ICanvasDevice** value) override
         {
             return ExceptionBoundary(
                 [&]
@@ -306,7 +306,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         }
 
         IFACEMETHODIMP put_CustomDevice(
-            ICanvasDevice* value)
+            ICanvasDevice* value) override
         {
             return ExceptionBoundary(
                 [&]
@@ -328,7 +328,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                 });
         }        
 
-        IFACEMETHODIMP get_DpiScale(float* value)
+        IFACEMETHODIMP get_DpiScale(float* value) override
         {
             return ExceptionBoundary(
                 [&]
@@ -341,7 +341,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                 });
         }
 
-        IFACEMETHODIMP put_DpiScale(float value)
+        IFACEMETHODIMP put_DpiScale(float value) override
         {
             return ExceptionBoundary(
                 [&]
