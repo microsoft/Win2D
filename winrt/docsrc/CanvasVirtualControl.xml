@@ -35,7 +35,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
           From within the RegionsInvalidated event handler, use <see
           cref="M:Microsoft.Graphics.Canvas.UI.Xaml.CanvasVirtualControl.CreateDrawingSession(Windows.Foundation.Rect)"/>
           to redraw:
-          <code>
+          <code title="C#">
             void OnRegionsInvalidated(CanvasVirtualControl sender, CanvasRegionsInvalidatedEventArgs args)
             {
                 foreach (var region in args.InvalidatedRegions)
@@ -51,10 +51,21 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         <p>          
           CanvasVirtualControl works well when it is placed within a XAML
           ScrollViewer:
-          <code>
-            &lt;ScrollViewer&gt;
-              &lt;canvas:CanvasVirtualControl Width="10000" Height="10000" RegionsInvalidated="OnRegionsInvalidated" /&gt;
-            &lt;/ScrollViewer&gt;
+          <code title="XAML"><![CDATA[
+            <ScrollViewer>
+              <canvas:CanvasVirtualControl Width="10000" Height="10000" RegionsInvalidated="OnRegionsInvalidated" />
+            </ScrollViewer>
+          ]]></code>
+        </p>
+        <p>
+          When a CanvasVirtualControl's size changes the current contents of the
+          control is not invalidated.  In order to make the contents invalidate
+          on resize, add a SizeChanged event handler and call Invalidate() from it:
+          <code title="C#">
+            void VirtualControl_SizeChanged(object sender, SizeChangedEventArgs e)
+            {
+                VirtualControl.Invalidate();
+            }
           </code>
         </p>
       </remarks>
@@ -116,7 +127,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         </p>
         <p>For more information, see <a href="RefCycles.htm">Avoiding memory leaks</a>.</p>
         <example>
-          <code>
+          <code title="C#">
             void page_Unloaded(object sender, RoutedEventArgs e)
             {
                 this.canvas.RemoveFromVisualTree();
@@ -257,7 +268,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
           Applications should register for this event to be notified when
           regions of the control should be redrawn.  Typically applications will
           run a loop similar to this:
-          <code>
+          <code title="C#">
             void OnRegionsInvalidated(CanvasVirtualControl sender, CanvasRegionsInvalidatedEventArgs args)
             {
                 foreach (var region in args.InvalidatedRegions)

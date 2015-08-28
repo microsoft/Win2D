@@ -84,17 +84,35 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <summary>Indicates that the contents of the CanvasControl need to be redrawn.
                Calling Invalidate results in the Draw event being raised shortly afterward.</summary>
       <remarks>
-        <p>Normally, the contents of a CanvasControl are drawn only once when it first becomes visible.
-           If you want to change those contents, call Invalidate to tell the control it must redraw itself.</p>
+        <p>
+          Normally, the contents of a CanvasControl are drawn only once when it
+          first becomes visible.  If you want to change those contents, call
+          Invalidate to tell the control it must redraw itself.
+        </p>
 
-        <p>This is a lightweight method, so it is reasonable to call it many times in rapid succession.
-           High frequency calls to Invalidate will be merged, with the control only actually redrawing
-           at a maximum of the display refresh rate. It will not redraw once for every Invalidate call
-           if these are happening faster than the display can keep up.</p>
+        <p>
+          This is a lightweight method, so it is reasonable to call it many
+          times in rapid succession.  High frequency calls to Invalidate will be
+          merged, with the control only actually redrawing at a maximum of the
+          display refresh rate. It will not redraw once for every Invalidate
+          call if these are happening faster than the display can keep up.
+        </p>
 
-        <p>If you want to animate the contents of a CanvasControl, you should use
-           <see cref="T:Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl"/> instead. CanvasAnimatedControl
-           raises the Draw event on a configurable interval; by default this is 60 times per second.</p>
+        <p>
+          If you want to animate the contents of a CanvasControl, you should use
+          <see
+          cref="T:Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl"/>
+          instead. CanvasAnimatedControl raises the Draw event on a configurable
+          interval; by default this is 60 times per second.
+        </p>
+
+        <p>
+          If you find that you want to Invalidate only a region of the control,
+          maybe because the control is very large or it takes too long to draw
+          the entire control, then you should consider using <see
+          cref="T:Microsoft.Graphics.Canvas.UI.Xaml.CanvasVirtualControl"/>
+          instead.
+        </p>       
       </remarks>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl.Device">
