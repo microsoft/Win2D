@@ -218,6 +218,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
             if (!m_currentOperationIsPending && m_changedCallback)
             {
+                lock.unlock();
                 m_changedCallback(ChangeReason::Other);
             }
         }
