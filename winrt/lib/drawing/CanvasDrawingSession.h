@@ -11,8 +11,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     using namespace ABI::Windows::Foundation;
 
 #if WINVER > _WIN32_WINNT_WINBLUE
-	using namespace ABI::Windows::UI::Input::Inking;
-	using namespace ABI::Windows::UI::ViewManagement;
+    using namespace ABI::Windows::UI::Input::Inking;
+    using namespace ABI::Windows::UI::ViewManagement;
 #endif
 
     using namespace ::Microsoft::WRL;
@@ -24,25 +24,25 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         virtual D2D1_POINT_2F GetRenderingSurfaceOffset() = 0;
 
 #if WINVER > _WIN32_WINNT_WINBLUE
-		virtual ComPtr<IInkD2DRenderer> CreateInkRenderer() = 0;
-		virtual bool IsHighContrastEnabled() = 0;
+        virtual ComPtr<IInkD2DRenderer> CreateInkRenderer() = 0;
+        virtual bool IsHighContrastEnabled() = 0;
 #endif
 
         virtual void EndDraw() = 0;
     };
 
-	class DrawingSessionBaseAdapter : public ICanvasDrawingSessionAdapter
-	{
+    class DrawingSessionBaseAdapter : public ICanvasDrawingSessionAdapter
+    {
 #if WINVER > _WIN32_WINNT_WINBLUE
-		ComPtr<IAccessibilitySettings> m_accessibilitySettings;
+        ComPtr<IAccessibilitySettings> m_accessibilitySettings;
 #endif
 
-	public:
+    public:
 #if WINVER > _WIN32_WINNT_WINBLUE
-		virtual ComPtr<IInkD2DRenderer> CreateInkRenderer() override;
-		virtual bool IsHighContrastEnabled() override;
+        virtual ComPtr<IInkD2DRenderer> CreateInkRenderer() override;
+        virtual bool IsHighContrastEnabled() override;
 #endif
-	};
+    };
 
     class CanvasDrawingSessionManager;
     class CanvasDrawingSession;
@@ -83,7 +83,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ComPtr<ICanvasDevice> m_owner;
 
 #if WINVER > _WIN32_WINNT_WINBLUE
-		ComPtr<IInkD2DRenderer> m_inkD2DRenderer;
+        ComPtr<IInkD2DRenderer> m_inkD2DRenderer;
 #endif
 
     public:
@@ -1153,21 +1153,21 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ABI::Windows::UI::Color color) override;
 
 #if WINVER > _WIN32_WINNT_WINBLUE
-		//
-		// DrawInk
-		//
-		IFACEMETHOD(DrawInk)(IIterable<InkStroke*>* inkStrokes);
+        //
+        // DrawInk
+        //
+        IFACEMETHOD(DrawInk)(IIterable<InkStroke*>* inkStrokes);
 
-		IFACEMETHOD(DrawInkWithHighContrast)(IIterable<InkStroke*>* inkStrokes, boolean highContrast);
+        IFACEMETHOD(DrawInkWithHighContrast)(IIterable<InkStroke*>* inkStrokes, boolean highContrast);
         
-		//
-		// DrawGradientMesh
-		//
+        //
+        // DrawGradientMesh
+        //
         IFACEMETHOD(DrawGradientMeshAtOrigin)(ICanvasGradientMesh* gradientMesh);
 
-		IFACEMETHOD(DrawGradientMesh)(ICanvasGradientMesh* gradientMesh, Vector2 point);
+        IFACEMETHOD(DrawGradientMesh)(ICanvasGradientMesh* gradientMesh, Vector2 point);
 
-		IFACEMETHOD(DrawGradientMeshAtCoords)(ICanvasGradientMesh* gradientMesh, float x, float y);
+        IFACEMETHOD(DrawGradientMeshAtCoords)(ICanvasGradientMesh* gradientMesh, float x, float y);
 #endif
 
         //
@@ -1365,7 +1365,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         void PopLayer(int layerId, bool isAxisAlignedClip);
 
 #if WINVER > _WIN32_WINNT_WINBLUE
-		void DrawInkImpl(IIterable<InkStroke*>* inkStrokeCollection, bool highContrast);
+        void DrawInkImpl(IIterable<InkStroke*>* inkStrokeCollection, bool highContrast);
 #endif
     };
 

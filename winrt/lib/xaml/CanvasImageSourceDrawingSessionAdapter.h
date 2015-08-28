@@ -31,6 +31,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         virtual void EndDraw() override;
 
-		virtual D2D1_POINT_2F GetRenderingSurfaceOffset() override;
+        virtual D2D1_POINT_2F GetRenderingSurfaceOffset() override;
     };
 }}}}}}

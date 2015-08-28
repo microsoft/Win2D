@@ -10,96 +10,96 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 {
     using namespace Numerics;
 
-	class CanvasGradientMesh;
-	class CanvasGradientMeshManager;
+    class CanvasGradientMesh;
+    class CanvasGradientMeshManager;
 
-	struct CanvasGradientMeshTraits
-	{
-		typedef ID2D1GradientMesh resource_t;
-		typedef CanvasGradientMesh wrapper_t;
-		typedef ICanvasGradientMesh wrapper_interface_t;
-		typedef CanvasGradientMeshManager manager_t;
-	};
+    struct CanvasGradientMeshTraits
+    {
+        typedef ID2D1GradientMesh resource_t;
+        typedef CanvasGradientMesh wrapper_t;
+        typedef ICanvasGradientMesh wrapper_interface_t;
+        typedef CanvasGradientMeshManager manager_t;
+    };
 
-	class CanvasGradientMesh : RESOURCE_WRAPPER_RUNTIME_CLASS(
-		CanvasGradientMeshTraits,
-		IClosable)
-	{
-		InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_Geometry_CanvasGradientMesh, BaseTrust);
+    class CanvasGradientMesh : RESOURCE_WRAPPER_RUNTIME_CLASS(
+        CanvasGradientMeshTraits,
+        IClosable)
+    {
+        InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_Geometry_CanvasGradientMesh, BaseTrust);
 
-		ClosablePtr<ICanvasDevice> m_canvasDevice;
+        ClosablePtr<ICanvasDevice> m_canvasDevice;
 
-	public:
-		CanvasGradientMesh(
-			std::shared_ptr<CanvasGradientMeshManager> manager,
-			ID2D1GradientMesh* d2dGradientMesh,
-			ICanvasDevice* canvasDevice);
+    public:
+        CanvasGradientMesh(
+            std::shared_ptr<CanvasGradientMeshManager> manager,
+            ID2D1GradientMesh* d2dGradientMesh,
+            ICanvasDevice* canvasDevice);
         
-		IFACEMETHOD(get_Patches)(
-			uint32_t* valueCount,
-			CanvasGradientMeshPatch** valueElements);
+        IFACEMETHOD(get_Patches)(
+            uint32_t* valueCount,
+            CanvasGradientMeshPatch** valueElements);
 
-		IFACEMETHOD(GetBounds)(
-			ICanvasDrawingSession* drawingSession,
-			Rect* bounds);
+        IFACEMETHOD(GetBounds)(
+            ICanvasDrawingSession* drawingSession,
+            Rect* bounds);
 
-		IFACEMETHOD(Close)();
+        IFACEMETHOD(Close)();
 
-		IFACEMETHOD(get_Device)(ICanvasDevice** device);
-	};
+        IFACEMETHOD(get_Device)(ICanvasDevice** device);
+    };
 
-	class CanvasGradientMeshManager : public ResourceManager<CanvasGradientMeshTraits>
-	{
-	public:
-		ComPtr<CanvasGradientMesh> CreateNew(
-			ICanvasResourceCreator* resourceCreator,
-			uint32_t patchCount,
-			CanvasGradientMeshPatch* patchElements);
+    class CanvasGradientMeshManager : public ResourceManager<CanvasGradientMeshTraits>
+    {
+    public:
+        ComPtr<CanvasGradientMesh> CreateNew(
+            ICanvasResourceCreator* resourceCreator,
+            uint32_t patchCount,
+            CanvasGradientMeshPatch* patchElements);
 
-		ComPtr<CanvasGradientMesh> CreateWrapper(
-			ICanvasDevice* device,
-			ID2D1GradientMesh* resource);
-	};
+        ComPtr<CanvasGradientMesh> CreateWrapper(
+            ICanvasDevice* device,
+            ID2D1GradientMesh* resource);
+    };
 
-	class CanvasGradientMeshFactory
-		: public ActivationFactory<
-			ICanvasGradientMeshStatics,
-			ICanvasGradientMeshFactory,
-			CloakedIid<ICanvasDeviceResourceFactoryNative>>,
-		public PerApplicationManager<CanvasGradientMeshFactory, CanvasGradientMeshManager>
-	{
-		InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_Geometry_CanvasGradientMesh, BaseTrust);
+    class CanvasGradientMeshFactory
+        : public ActivationFactory<
+            ICanvasGradientMeshStatics,
+            ICanvasGradientMeshFactory,
+            CloakedIid<ICanvasDeviceResourceFactoryNative>>,
+        public PerApplicationManager<CanvasGradientMeshFactory, CanvasGradientMeshManager>
+    {
+        InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_Geometry_CanvasGradientMesh, BaseTrust);
 
-	public:
-		IMPLEMENT_DEFAULT_ICANVASDEVICERESOURCEFACTORYNATIVE();
+    public:
+        IMPLEMENT_DEFAULT_ICANVASDEVICERESOURCEFACTORYNATIVE();
 
-		IFACEMETHOD(Create)(
-			ICanvasResourceCreator* resourceCreator,
-			uint32_t patchCount,
-			CanvasGradientMeshPatch* patchElements,
-			ICanvasGradientMesh** canvasGradientMesh) override;
+        IFACEMETHOD(Create)(
+            ICanvasResourceCreator* resourceCreator,
+            uint32_t patchCount,
+            CanvasGradientMeshPatch* patchElements,
+            ICanvasGradientMesh** canvasGradientMesh) override;
 
-		IFACEMETHOD(CreateCoonsPatch)(
-			uint32_t pointCount,
-			Vector2* pointElements,
-			uint32_t colorCount,
-			Color* colorElements,
-			uint32_t edgeCount,
-			CanvasGradientMeshPatchEdge* edgeElements,
-			CanvasGradientMeshPatch* gradientMeshPatch) override;
+        IFACEMETHOD(CreateCoonsPatch)(
+            uint32_t pointCount,
+            Vector2* pointElements,
+            uint32_t colorCount,
+            Color* colorElements,
+            uint32_t edgeCount,
+            CanvasGradientMeshPatchEdge* edgeElements,
+            CanvasGradientMeshPatch* gradientMeshPatch) override;
 
-		IFACEMETHOD(CreateTensorPatch)(
-			uint32_t pointCount,
-			Vector2* pointElements,
-			uint32_t colorCount,
-			Color* colorElements,
-			uint32_t edgeCount,
-			CanvasGradientMeshPatchEdge* edgeElements,
-			CanvasGradientMeshPatch* gradientMeshPatch) override;
+        IFACEMETHOD(CreateTensorPatch)(
+            uint32_t pointCount,
+            Vector2* pointElements,
+            uint32_t colorCount,
+            Color* colorElements,
+            uint32_t edgeCount,
+            CanvasGradientMeshPatchEdge* edgeElements,
+            CanvasGradientMeshPatch* gradientMeshPatch) override;
 
-		static D2D1_GRADIENT_MESH_PATCH PatchToD2DPatch(CanvasGradientMeshPatch const& patch);
-		static CanvasGradientMeshPatch PatchFromD2DPatch(D2D1_GRADIENT_MESH_PATCH const& d2dPatch);
-	};
+        static D2D1_GRADIENT_MESH_PATCH PatchToD2DPatch(CanvasGradientMeshPatch const& patch);
+        static CanvasGradientMeshPatch PatchFromD2DPatch(D2D1_GRADIENT_MESH_PATCH const& d2dPatch);
+    };
 }}}}}
 
 #endif

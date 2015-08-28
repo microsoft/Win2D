@@ -116,32 +116,32 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
 #if WINVER > _WIN32_WINNT_WINBLUE
-	ComPtr<IInkD2DRenderer> DrawingSessionBaseAdapter::CreateInkRenderer()
-	{
-		ComPtr<IInkD2DRenderer> inkRenderer;
+    ComPtr<IInkD2DRenderer> DrawingSessionBaseAdapter::CreateInkRenderer()
+    {
+        ComPtr<IInkD2DRenderer> inkRenderer;
 
-		ThrowIfFailed(CoCreateInstance(__uuidof(InkD2DRenderer),
-			nullptr,
-			CLSCTX_INPROC_SERVER,
-			IID_PPV_ARGS(&inkRenderer)));
+        ThrowIfFailed(CoCreateInstance(__uuidof(InkD2DRenderer),
+            nullptr,
+            CLSCTX_INPROC_SERVER,
+            IID_PPV_ARGS(&inkRenderer)));
 
-		return inkRenderer;
-	}
+        return inkRenderer;
+    }
 
 
-	bool DrawingSessionBaseAdapter::IsHighContrastEnabled()
-	{
-		if (!m_accessibilitySettings)
-		{
-			ComPtr<IActivationFactory> activationFactory;
-			ThrowIfFailed(GetActivationFactory(HStringReference(RuntimeClass_Windows_UI_ViewManagement_AccessibilitySettings).Get(), &activationFactory));
-			ThrowIfFailed(activationFactory->ActivateInstance(&m_accessibilitySettings));
-		}
+    bool DrawingSessionBaseAdapter::IsHighContrastEnabled()
+    {
+        if (!m_accessibilitySettings)
+        {
+            ComPtr<IActivationFactory> activationFactory;
+            ThrowIfFailed(GetActivationFactory(HStringReference(RuntimeClass_Windows_UI_ViewManagement_AccessibilitySettings).Get(), &activationFactory));
+            ThrowIfFailed(activationFactory->ActivateInstance(&m_accessibilitySettings));
+        }
 
-		boolean isHighContrastEnabled;
-		ThrowIfFailed(m_accessibilitySettings->get_HighContrast(&isHighContrastEnabled));
-		return !!isHighContrastEnabled;
-	}
+        boolean isHighContrastEnabled;
+        ThrowIfFailed(m_accessibilitySettings->get_HighContrast(&isHighContrastEnabled));
+        return !!isHighContrastEnabled;
+    }
 #endif
 
 
@@ -3244,62 +3244,62 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
 #if WINVER > _WIN32_WINNT_WINBLUE
-	IFACEMETHODIMP CanvasDrawingSession::DrawInk(IIterable<InkStroke*>* inkStrokeCollection)
-	{
+    IFACEMETHODIMP CanvasDrawingSession::DrawInk(IIterable<InkStroke*>* inkStrokeCollection)
+    {
         return ExceptionBoundary(
             [&]
             {
                 if (!m_adapter)
                     ThrowHR(RO_E_CLOSED);
 
-				DrawInkImpl(inkStrokeCollection, m_adapter->IsHighContrastEnabled());
+                DrawInkImpl(inkStrokeCollection, m_adapter->IsHighContrastEnabled());
             });
-	}
+    }
 
-	IFACEMETHODIMP CanvasDrawingSession::DrawInkWithHighContrast(
-		IIterable<InkStroke*>* inkStrokeCollection,
-		boolean highContrast)
-	{
+    IFACEMETHODIMP CanvasDrawingSession::DrawInkWithHighContrast(
+        IIterable<InkStroke*>* inkStrokeCollection,
+        boolean highContrast)
+    {
         return ExceptionBoundary(
             [&]
             {
-				DrawInkImpl(inkStrokeCollection, !!highContrast);
+                DrawInkImpl(inkStrokeCollection, !!highContrast);
             });
-	}
+    }
 
-	void CanvasDrawingSession::DrawInkImpl(
-		IIterable<InkStroke*>* inkStrokeCollection,
-		bool highContrast)
-	{
-		auto& deviceContext = GetResource();
+    void CanvasDrawingSession::DrawInkImpl(
+        IIterable<InkStroke*>* inkStrokeCollection,
+        bool highContrast)
+    {
+        auto& deviceContext = GetResource();
 
         CheckInPointer(inkStrokeCollection);
 
-		ComPtr<IUnknown> inkStrokeCollectionAsIUnknown = As<IUnknown>(inkStrokeCollection);
+        ComPtr<IUnknown> inkStrokeCollectionAsIUnknown = As<IUnknown>(inkStrokeCollection);
 
-		if (!m_inkD2DRenderer)
-		{
-			m_inkD2DRenderer = m_adapter->CreateInkRenderer();
-		}
+        if (!m_inkD2DRenderer)
+        {
+            m_inkD2DRenderer = m_adapter->CreateInkRenderer();
+        }
 
-		m_inkD2DRenderer->Draw(
-			deviceContext.Get(), 
-			inkStrokeCollectionAsIUnknown.Get(), 
-			highContrast);
-	}
+        m_inkD2DRenderer->Draw(
+            deviceContext.Get(), 
+            inkStrokeCollectionAsIUnknown.Get(), 
+            highContrast);
+    }
 
     IFACEMETHODIMP CanvasDrawingSession::DrawGradientMeshAtOrigin(ICanvasGradientMesh* gradientMesh)
     {
         return ExceptionBoundary(
             [&]
             {
-				auto& deviceContext = GetResource();
-				auto deviceContext2 = As<ID2D1DeviceContext2>(deviceContext);
+                auto& deviceContext = GetResource();
+                auto deviceContext2 = As<ID2D1DeviceContext2>(deviceContext);
 
-				CheckInPointer(gradientMesh);
+                CheckInPointer(gradientMesh);
 
-				deviceContext2->DrawGradientMesh(
-					GetWrappedResource<ID2D1GradientMesh>(gradientMesh).Get());
+                deviceContext2->DrawGradientMesh(
+                    GetWrappedResource<ID2D1GradientMesh>(gradientMesh).Get());
             });
     }
 
@@ -3308,15 +3308,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ExceptionBoundary(
             [&]
             {
-				auto& deviceContext = GetResource();
-				auto deviceContext2 = As<ID2D1DeviceContext2>(deviceContext);
+                auto& deviceContext = GetResource();
+                auto deviceContext2 = As<ID2D1DeviceContext2>(deviceContext);
 
-				CheckInPointer(gradientMesh);
-				
-				TemporaryTransform<ID2D1DeviceContext1> transform(GetResource().Get(), point);
+                CheckInPointer(gradientMesh);
+                
+                TemporaryTransform<ID2D1DeviceContext1> transform(GetResource().Get(), point);
 
-				deviceContext2->DrawGradientMesh(
-					GetWrappedResource<ID2D1GradientMesh>(gradientMesh).Get());
+                deviceContext2->DrawGradientMesh(
+                    GetWrappedResource<ID2D1GradientMesh>(gradientMesh).Get());
             });
     }
 
@@ -3325,15 +3325,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ExceptionBoundary(
             [&]
             {
-				auto& deviceContext = GetResource();
-				auto deviceContext2 = As<ID2D1DeviceContext2>(deviceContext);
+                auto& deviceContext = GetResource();
+                auto deviceContext2 = As<ID2D1DeviceContext2>(deviceContext);
 
-				CheckInPointer(gradientMesh);
-				
-				TemporaryTransform<ID2D1DeviceContext1> transform(GetResource().Get(), Vector2{ x, y });
+                CheckInPointer(gradientMesh);
+                
+                TemporaryTransform<ID2D1DeviceContext1> transform(GetResource().Get(), Vector2{ x, y });
 
-				deviceContext2->DrawGradientMesh(
-					GetWrappedResource<ID2D1GradientMesh>(gradientMesh).Get());
+                deviceContext2->DrawGradientMesh(
+                    GetWrappedResource<ID2D1GradientMesh>(gradientMesh).Get());
             });
     }
 
@@ -3377,10 +3377,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
                 *value = static_cast<CanvasAntialiasing>(deviceContext->GetAntialiasMode());
             });
-	}
+    }
 
     IFACEMETHODIMP CanvasDrawingSession::put_Antialiasing(CanvasAntialiasing value)
-	{
+    {
         return ExceptionBoundary(
             [&]
             {
@@ -3388,10 +3388,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
                 deviceContext->SetAntialiasMode(static_cast<D2D1_ANTIALIAS_MODE>(value));
             });
-	}
+    }
 
     IFACEMETHODIMP CanvasDrawingSession::get_Blend(CanvasBlend* value)
-	{
+    {
         return ExceptionBoundary(
             [&]
             {
@@ -3400,10 +3400,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
                 *value = static_cast<CanvasBlend>(deviceContext->GetPrimitiveBlend());
             });
-	}
+    }
 
     IFACEMETHODIMP CanvasDrawingSession::put_Blend(CanvasBlend value)
-	{
+    {
         return ExceptionBoundary(
             [&]
             {
@@ -3411,7 +3411,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
                 deviceContext->SetPrimitiveBlend(static_cast<D2D1_PRIMITIVE_BLEND>(value));
             });
-	}
+    }
 
     IFACEMETHODIMP CanvasDrawingSession::get_TextAntialiasing(CanvasTextAntialiasing* value)
     {
@@ -3423,10 +3423,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
                 *value = static_cast<CanvasTextAntialiasing>(deviceContext->GetTextAntialiasMode());
             });
-	}
+    }
 
     IFACEMETHODIMP CanvasDrawingSession::put_TextAntialiasing(CanvasTextAntialiasing value)
-	{
+    {
         return ExceptionBoundary(
             [&]
             {
@@ -3434,7 +3434,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
                 deviceContext->SetTextAntialiasMode(static_cast<D2D1_TEXT_ANTIALIAS_MODE>(value));
             });
-	}
+    }
 
     IFACEMETHODIMP CanvasDrawingSession::get_Transform(ABI::Microsoft::Graphics::Canvas::Numerics::Matrix3x2* value)
     {
@@ -3461,10 +3461,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
                 *value = *reinterpret_cast<ABI::Microsoft::Graphics::Canvas::Numerics::Matrix3x2*>(&transform);
             });
-	}
+    }
 
     IFACEMETHODIMP CanvasDrawingSession::put_Transform(ABI::Microsoft::Graphics::Canvas::Numerics::Matrix3x2 value)
-	{
+    {
         return ExceptionBoundary(
             [&]
             {
@@ -3478,7 +3478,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
                 deviceContext->SetTransform(transform);
             });
-	}
+    }
 
     IFACEMETHODIMP CanvasDrawingSession::get_Units(CanvasUnits* value)
     {
@@ -3490,10 +3490,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
                 *value = static_cast<CanvasUnits>(deviceContext->GetUnitMode());
             });
-	}
+    }
 
     IFACEMETHODIMP CanvasDrawingSession::put_Units(CanvasUnits value)
-	{
+    {
         return ExceptionBoundary(
             [&]
             {

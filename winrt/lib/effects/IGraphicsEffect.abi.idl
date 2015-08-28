@@ -23,7 +23,7 @@ namespace Microsoft.Graphics.Canvas.Effects
 
     [version(VERSION), uuid(3A339957-A95E-490E-A1BF-2CBF4806C378)]
     interface IGraphicsEffect : IInspectable
-		requires IGraphicsEffectSource
+        requires IGraphicsEffectSource
     {
         [propget] HRESULT Name([out, retval] HSTRING* name);
         [propput] HRESULT Name([in] HSTRING name);

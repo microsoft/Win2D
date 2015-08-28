@@ -489,27 +489,27 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
 #if WINVER > _WIN32_WINNT_WINBLUE
-	inline D2D1_PATCH_EDGE_MODE ToD2DPatchEdgeMode(CanvasGradientMeshPatchEdge edge)
-	{
-		switch (edge)
-		{
-			case CanvasGradientMeshPatchEdge::Aliased: return D2D1_PATCH_EDGE_MODE_ALIASED;
-			case CanvasGradientMeshPatchEdge::Antialiased: return D2D1_PATCH_EDGE_MODE_ANTIALIASED;
-			case CanvasGradientMeshPatchEdge::AliasedAndInflated: return D2D1_PATCH_EDGE_MODE_ALIASED_INFLATED;
-			default: assert(false); return D2D1_PATCH_EDGE_MODE_ALIASED;
-		}
-	}
+    inline D2D1_PATCH_EDGE_MODE ToD2DPatchEdgeMode(CanvasGradientMeshPatchEdge edge)
+    {
+        switch (edge)
+        {
+            case CanvasGradientMeshPatchEdge::Aliased: return D2D1_PATCH_EDGE_MODE_ALIASED;
+            case CanvasGradientMeshPatchEdge::Antialiased: return D2D1_PATCH_EDGE_MODE_ANTIALIASED;
+            case CanvasGradientMeshPatchEdge::AliasedAndInflated: return D2D1_PATCH_EDGE_MODE_ALIASED_INFLATED;
+            default: assert(false); return D2D1_PATCH_EDGE_MODE_ALIASED;
+        }
+    }
 
-	inline CanvasGradientMeshPatchEdge FromD2DPatchEdgeMode(D2D1_PATCH_EDGE_MODE edge)
-	{
-		switch (edge)
-		{
-			case D2D1_PATCH_EDGE_MODE_ALIASED: return CanvasGradientMeshPatchEdge::Aliased;
-			case D2D1_PATCH_EDGE_MODE_ANTIALIASED: return CanvasGradientMeshPatchEdge::Antialiased;
-			case D2D1_PATCH_EDGE_MODE_ALIASED_INFLATED: return CanvasGradientMeshPatchEdge::AliasedAndInflated;
-			default: assert(false); return CanvasGradientMeshPatchEdge::Aliased;
-		}
-	}
+    inline CanvasGradientMeshPatchEdge FromD2DPatchEdgeMode(D2D1_PATCH_EDGE_MODE edge)
+    {
+        switch (edge)
+        {
+            case D2D1_PATCH_EDGE_MODE_ALIASED: return CanvasGradientMeshPatchEdge::Aliased;
+            case D2D1_PATCH_EDGE_MODE_ANTIALIASED: return CanvasGradientMeshPatchEdge::Antialiased;
+            case D2D1_PATCH_EDGE_MODE_ALIASED_INFLATED: return CanvasGradientMeshPatchEdge::AliasedAndInflated;
+            default: assert(false); return CanvasGradientMeshPatchEdge::Aliased;
+        }
+    }
 
 #endif
 }}}}

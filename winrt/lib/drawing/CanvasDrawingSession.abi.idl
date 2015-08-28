@@ -1303,36 +1303,36 @@ namespace Microsoft.Graphics.Canvas
             [in] float y,
             [in] Windows.UI.Color color);
 
-		//
-		// DrawInk
-		//
+        //
+        // DrawInk
+        //
 #if WINVER > _WIN32_WINNT_WINBLUE
-		[overload("DrawInk")]
-		HRESULT DrawInk(
-			[in] Windows.Foundation.Collections.IIterable<Windows.UI.Input.Inking.InkStroke*>* inkStrokes);
+        [overload("DrawInk")]
+        HRESULT DrawInk(
+            [in] Windows.Foundation.Collections.IIterable<Windows.UI.Input.Inking.InkStroke*>* inkStrokes);
 
-		[overload("DrawInk"), default_overload]
-		HRESULT DrawInkWithHighContrast(
-			[in] Windows.Foundation.Collections.IIterable<Windows.UI.Input.Inking.InkStroke*>* inkStrokes,
-			[in] boolean highContrast);
+        [overload("DrawInk"), default_overload]
+        HRESULT DrawInkWithHighContrast(
+            [in] Windows.Foundation.Collections.IIterable<Windows.UI.Input.Inking.InkStroke*>* inkStrokes,
+            [in] boolean highContrast);
 
-		//
-		// DrawGradientMesh
-		//
-		[overload("DrawGradientMesh")]
-		HRESULT DrawGradientMeshAtOrigin(
-			[in] Microsoft.Graphics.Canvas.Geometry.CanvasGradientMesh* gradientMesh);
+        //
+        // DrawGradientMesh
+        //
+        [overload("DrawGradientMesh")]
+        HRESULT DrawGradientMeshAtOrigin(
+            [in] Microsoft.Graphics.Canvas.Geometry.CanvasGradientMesh* gradientMesh);
 
-		[overload("DrawGradientMesh")]
-		HRESULT DrawGradientMesh(
-			[in] Microsoft.Graphics.Canvas.Geometry.CanvasGradientMesh* gradientMesh,
-			[in] NUMERICS.Vector2 point);
+        [overload("DrawGradientMesh")]
+        HRESULT DrawGradientMesh(
+            [in] Microsoft.Graphics.Canvas.Geometry.CanvasGradientMesh* gradientMesh,
+            [in] NUMERICS.Vector2 point);
 
-		[overload("DrawGradientMesh")]
-		HRESULT DrawGradientMeshAtCoords(
-			[in] Microsoft.Graphics.Canvas.Geometry.CanvasGradientMesh* gradientMesh,
-			[in] float x,
-			[in] float y);
+        [overload("DrawGradientMesh")]
+        HRESULT DrawGradientMeshAtCoords(
+            [in] Microsoft.Graphics.Canvas.Geometry.CanvasGradientMesh* gradientMesh,
+            [in] float x,
+            [in] float y);
 #endif
 
         //

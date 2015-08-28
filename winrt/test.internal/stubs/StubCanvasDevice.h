@@ -94,11 +94,11 @@ namespace canvas
                 });
 
 #if WINVER > _WIN32_WINNT_WINBLUE
-			CreateGradientMeshMethod.AllowAnyCall(
-				[=](D2D1_GRADIENT_MESH_PATCH const*, UINT32)
-				{
-					return Make<MockD2DGradientMesh>();
-				});
+            CreateGradientMeshMethod.AllowAnyCall(
+                [=](D2D1_GRADIENT_MESH_PATCH const*, UINT32)
+                {
+                    return Make<MockD2DGradientMesh>();
+                });
 #endif
         }
 

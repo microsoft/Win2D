@@ -195,7 +195,7 @@ namespace Microsoft
             TO_STRING(IAsyncAction);
 
 #if WINVER > _WIN32_WINNT_WINBLUE
-			TO_STRING(ID2D1GradientMesh);
+            TO_STRING(ID2D1GradientMesh);
 #endif
 
 #undef TO_STRING
@@ -989,25 +989,25 @@ namespace Microsoft
             }
 
 #if WINVER > _WIN32_WINNT_WINBLUE
-			ENUM_TO_STRING(CanvasGradientMeshPatchEdge)
-			{
-				ENUM_VALUE(CanvasGradientMeshPatchEdge::Aliased);
-				ENUM_VALUE(CanvasGradientMeshPatchEdge::Antialiased);
-				ENUM_VALUE(CanvasGradientMeshPatchEdge::AliasedAndInflated);
-				END_ENUM(CanvasGradientMeshPatchEdge);
-			}
+            ENUM_TO_STRING(CanvasGradientMeshPatchEdge)
+            {
+                ENUM_VALUE(CanvasGradientMeshPatchEdge::Aliased);
+                ENUM_VALUE(CanvasGradientMeshPatchEdge::Antialiased);
+                ENUM_VALUE(CanvasGradientMeshPatchEdge::AliasedAndInflated);
+                END_ENUM(CanvasGradientMeshPatchEdge);
+            }
 
-			template<>
-			inline std::wstring ToString<CanvasGradientMeshPatch>(CanvasGradientMeshPatch const& value)
-			{
-				return L"CanvasGradientMeshPatch";
-			}
+            template<>
+            inline std::wstring ToString<CanvasGradientMeshPatch>(CanvasGradientMeshPatch const& value)
+            {
+                return L"CanvasGradientMeshPatch";
+            }
 
-			template<>
-			inline std::wstring ToString<D2D1_GRADIENT_MESH_PATCH>(D2D1_GRADIENT_MESH_PATCH const& value)
-			{
-				return L"D2D1_GRADIENT_MESH_PATCH";
-			}
+            template<>
+            inline std::wstring ToString<D2D1_GRADIENT_MESH_PATCH>(D2D1_GRADIENT_MESH_PATCH const& value)
+            {
+                return L"D2D1_GRADIENT_MESH_PATCH";
+            }
 #endif
 
             template<typename T>
@@ -1147,73 +1147,73 @@ namespace Microsoft
         }
 
 #if WINVER > _WIN32_WINNT_WINBLUE
-		inline bool operator==(CanvasGradientMeshPatch const& a, CanvasGradientMeshPatch const& b)
-		{
-			return
-				a.Point00 == b.Point00 &&
-				a.Point01 == b.Point01 &&
-				a.Point02 == b.Point02 &&
-				a.Point03 == b.Point03 &&
+        inline bool operator==(CanvasGradientMeshPatch const& a, CanvasGradientMeshPatch const& b)
+        {
+            return
+                a.Point00 == b.Point00 &&
+                a.Point01 == b.Point01 &&
+                a.Point02 == b.Point02 &&
+                a.Point03 == b.Point03 &&
 
-				a.Point10 == b.Point10 &&
-				a.Point11 == b.Point11 &&
-				a.Point12 == b.Point12 &&
-				a.Point13 == b.Point13 &&
+                a.Point10 == b.Point10 &&
+                a.Point11 == b.Point11 &&
+                a.Point12 == b.Point12 &&
+                a.Point13 == b.Point13 &&
 
-				a.Point20 == b.Point20 &&
-				a.Point21 == b.Point21 &&
-				a.Point22 == b.Point22 &&
-				a.Point23 == b.Point23 &&
+                a.Point20 == b.Point20 &&
+                a.Point21 == b.Point21 &&
+                a.Point22 == b.Point22 &&
+                a.Point23 == b.Point23 &&
 
-				a.Point30 == b.Point30 &&
-				a.Point31 == b.Point31 &&
-				a.Point32 == b.Point32 &&
-				a.Point33 == b.Point33 &&
+                a.Point30 == b.Point30 &&
+                a.Point31 == b.Point31 &&
+                a.Point32 == b.Point32 &&
+                a.Point33 == b.Point33 &&
 
-				a.Color00 == b.Color00 &&
-				a.Color03 == b.Color03 &&
-				a.Color30 == b.Color30 &&
-				a.Color33 == b.Color33 &&
+                a.Color00 == b.Color00 &&
+                a.Color03 == b.Color03 &&
+                a.Color30 == b.Color30 &&
+                a.Color33 == b.Color33 &&
 
-				a.Edge00To03 == b.Edge00To03 &&
-				a.Edge03To33 == b.Edge03To33 &&
-				a.Edge33To30 == b.Edge33To30 &&
-				a.Edge30To00 == b.Edge30To00;
-		}
+                a.Edge00To03 == b.Edge00To03 &&
+                a.Edge03To33 == b.Edge03To33 &&
+                a.Edge33To30 == b.Edge33To30 &&
+                a.Edge30To00 == b.Edge30To00;
+        }
 
-		inline bool operator==(D2D1_GRADIENT_MESH_PATCH const& a, D2D1_GRADIENT_MESH_PATCH const& b)
-		{
-			return
-				a.point00 == b.point00 &&
-				a.point01 == b.point01 &&
-				a.point02 == b.point02 &&
-				a.point03 == b.point03 &&
+        inline bool operator==(D2D1_GRADIENT_MESH_PATCH const& a, D2D1_GRADIENT_MESH_PATCH const& b)
+        {
+            return
+                a.point00 == b.point00 &&
+                a.point01 == b.point01 &&
+                a.point02 == b.point02 &&
+                a.point03 == b.point03 &&
 
-				a.point10 == b.point10 &&
-				a.point11 == b.point11 &&
-				a.point12 == b.point12 &&
-				a.point13 == b.point13 &&
+                a.point10 == b.point10 &&
+                a.point11 == b.point11 &&
+                a.point12 == b.point12 &&
+                a.point13 == b.point13 &&
 
-				a.point20 == b.point20 &&
-				a.point21 == b.point21 &&
-				a.point22 == b.point22 &&
-				a.point23 == b.point23 &&
+                a.point20 == b.point20 &&
+                a.point21 == b.point21 &&
+                a.point22 == b.point22 &&
+                a.point23 == b.point23 &&
 
-				a.point30 == b.point30 &&
-				a.point31 == b.point31 &&
-				a.point32 == b.point32 &&
-				a.point33 == b.point33 &&
+                a.point30 == b.point30 &&
+                a.point31 == b.point31 &&
+                a.point32 == b.point32 &&
+                a.point33 == b.point33 &&
 
-				a.color00 == b.color00 &&
-				a.color03 == b.color03 &&
-				a.color30 == b.color30 &&
-				a.color33 == b.color33 &&
+                a.color00 == b.color00 &&
+                a.color03 == b.color03 &&
+                a.color30 == b.color30 &&
+                a.color33 == b.color33 &&
 
-				a.topEdgeMode == b.topEdgeMode &&
-				a.leftEdgeMode == b.leftEdgeMode &&
-				a.bottomEdgeMode == b.bottomEdgeMode &&
-				a.rightEdgeMode == b.rightEdgeMode;
-		}
+                a.topEdgeMode == b.topEdgeMode &&
+                a.leftEdgeMode == b.leftEdgeMode &&
+                a.bottomEdgeMode == b.bottomEdgeMode &&
+                a.rightEdgeMode == b.rightEdgeMode;
+        }
 #endif
 
     }

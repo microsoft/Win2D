@@ -53,7 +53,7 @@ TEST_CLASS(CanvasBitmapUnitTest)
     };
 
     TEST_METHOD_EX(CanvasBitmap_Implements_Expected_Interfaces)
-	{
+    {
         Fixture f;
 
         auto canvasBitmap = f.m_bitmapManager->Create(f.m_canvasDevice.Get(), f.m_testFileName, DEFAULT_DPI, CanvasAlphaMode::Premultiplied);

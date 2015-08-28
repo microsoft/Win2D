@@ -72,9 +72,9 @@ namespace canvas
         CALL_COUNTER_WITH_MOCK(FillOpacityMaskMethod                 , void(ID2D1Bitmap*, ID2D1Brush*, D2D1_RECT_F const*, D2D1_RECT_F const*));
 
 #if WINVER > _WIN32_WINNT_WINBLUE
-		CALL_COUNTER_WITH_MOCK(CreateGradientMeshMethod              , HRESULT(CONST D2D1_GRADIENT_MESH_PATCH*, UINT32, ID2D1GradientMesh**));
-		CALL_COUNTER_WITH_MOCK(DrawGradientMeshMethod                , void(ID2D1GradientMesh*));
-		CALL_COUNTER_WITH_MOCK(GetGradientMeshWorldBoundsMethod      , HRESULT(ID2D1GradientMesh*, D2D1_RECT_F*));
+        CALL_COUNTER_WITH_MOCK(CreateGradientMeshMethod              , HRESULT(CONST D2D1_GRADIENT_MESH_PATCH*, UINT32, ID2D1GradientMesh**));
+        CALL_COUNTER_WITH_MOCK(DrawGradientMeshMethod                , void(ID2D1GradientMesh*));
+        CALL_COUNTER_WITH_MOCK(GetGradientMeshWorldBoundsMethod      , HRESULT(ID2D1GradientMesh*, D2D1_RECT_F*));
 #endif
 
         MockD2DDeviceContext()
@@ -663,7 +663,7 @@ namespace canvas
             ID2D1GradientMesh* gradientMesh,
             D2D1_RECT_F* bounds) const override
         {
-			return GetGradientMeshWorldBoundsMethod.WasCalled(gradientMesh, bounds);
+            return GetGradientMeshWorldBoundsMethod.WasCalled(gradientMesh, bounds);
         }
 
         IFACEMETHODIMP_(void) DrawInk(
@@ -677,7 +677,7 @@ namespace canvas
         IFACEMETHODIMP_(void) DrawGradientMesh(
             ID2D1GradientMesh* gradientMesh) override
         {
-			DrawGradientMeshMethod.WasCalled(gradientMesh);
+            DrawGradientMeshMethod.WasCalled(gradientMesh);
         }
 
         IFACEMETHODIMP_(void) DrawGdiMetafile(

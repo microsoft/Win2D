@@ -20,7 +20,7 @@ public:
 
     TEST_METHOD(CanvasGradientMesh_InteropFailAfterClosure)
     {
-		auto patches = ref new Platform::Array<CanvasGradientMeshPatch>(1);
+        auto patches = ref new Platform::Array<CanvasGradientMeshPatch>(1);
         auto canvasGradientMesh = ref new CanvasGradientMesh(m_device, patches);
 
         delete canvasGradientMesh;
@@ -45,7 +45,7 @@ public:
 
     TEST_METHOD(CanvasGradientMesh_ZeroArray_Ok)
     {
-		auto canvasGradientMesh = ref new CanvasGradientMesh(m_device, nullptr);
+        auto canvasGradientMesh = ref new CanvasGradientMesh(m_device, nullptr);
     }
 };
 

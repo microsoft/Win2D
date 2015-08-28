@@ -37,7 +37,7 @@ namespace canvas
             }
 
             MockSetImage(image);
-		}
+        }
 
 
         STDMETHOD_(void, SetExtendModeX)(
@@ -78,7 +78,7 @@ namespace canvas
             }
 
             MockSetInterpolationMode(interpolationMode);
-		}
+        }
 
 
         STDMETHOD_(void, SetSourceRectangle)(
@@ -92,7 +92,7 @@ namespace canvas
             }
 
             MockSetSourceRectangle(sourceRectangle);
-		}
+        }
 
 
         STDMETHOD_(void, GetImage)(
@@ -106,7 +106,7 @@ namespace canvas
             }
 
             MockGetImage(image);
-		}
+        }
 
 
         STDMETHOD_(D2D1_EXTEND_MODE, GetExtendModeX)(
@@ -119,7 +119,7 @@ namespace canvas
             }
 
             return MockGetExtendModeX();
-		}
+        }
 
 
         STDMETHOD_(D2D1_EXTEND_MODE, GetExtendModeY)(
@@ -132,7 +132,7 @@ namespace canvas
             }
 
             return MockGetExtendModeY();
-		}
+        }
 
 
         STDMETHOD_(D2D1_INTERPOLATION_MODE, GetInterpolationMode)(
@@ -145,7 +145,7 @@ namespace canvas
             }
 
             return MockGetInterpolationMode();
-		}
+        }
 
 
         STDMETHOD_(void, GetSourceRectangle)(
@@ -159,7 +159,7 @@ namespace canvas
             }
 
             MockGetSourceRectangle(sourceRectangle);
-		}        
+        }        
 
         //
         // ID2D1Brush

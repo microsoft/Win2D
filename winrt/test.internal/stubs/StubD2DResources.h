@@ -79,11 +79,11 @@ class StubD2DDevice : public MockD2DDevice
     }
 
 #if WINVER > _WIN32_WINNT_WINBLUE
-	IFACEMETHODIMP GetDxgiDevice(
-		IDXGIDevice **dxgiDevice) override
-	{
-		return m_dxgiDevice.CopyTo(dxgiDevice);
-	}
+    IFACEMETHODIMP GetDxgiDevice(
+        IDXGIDevice **dxgiDevice) override
+    {
+        return m_dxgiDevice.CopyTo(dxgiDevice);
+    }
 #endif
 };
 

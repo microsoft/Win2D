@@ -9,65 +9,65 @@
 #include <lib/drawing/CanvasGradientMesh.h>
 
 static Vector2 testPoints[] = {
-	{ 0, 31 },{ 0, 2 },{ 0, 84 },{ 35, 8 },
-	{ 4, 2 },{ 33, 1 },{ 1, 11 },{ 6, 8 },
-	{ 5, 1 },{ 0, 1 },{ 0, 3 },{ 4, 1 },
-	{ 0, 6 },{ 9, 1 },{ 9, 1 },{ 200, 1 },
+    { 0, 31 },{ 0, 2 },{ 0, 84 },{ 35, 8 },
+    { 4, 2 },{ 33, 1 },{ 1, 11 },{ 6, 8 },
+    { 5, 1 },{ 0, 1 },{ 0, 3 },{ 4, 1 },
+    { 0, 6 },{ 9, 1 },{ 9, 1 },{ 200, 1 },
 };
 
 static Color testColors[] = {
-	{ 255, 0, 0, 255},
-	{ 255, 0, 255, 0 },
-	{ 255, 255, 0, 0 },
-	{ 127, 127, 127, 127 },
+    { 255, 0, 0, 255},
+    { 255, 0, 255, 0 },
+    { 255, 255, 0, 0 },
+    { 127, 127, 127, 127 },
 };
 
 static CanvasGradientMeshPatchEdge testEdges[] = {
-	CanvasGradientMeshPatchEdge::Aliased,
-	CanvasGradientMeshPatchEdge::Antialiased,
-	CanvasGradientMeshPatchEdge::AliasedAndInflated,
-	CanvasGradientMeshPatchEdge::Aliased
+    CanvasGradientMeshPatchEdge::Aliased,
+    CanvasGradientMeshPatchEdge::Antialiased,
+    CanvasGradientMeshPatchEdge::AliasedAndInflated,
+    CanvasGradientMeshPatchEdge::Aliased
 };
 
 inline CanvasGradientMeshPatch GetTestGradientMeshPatch(int index = 0)
 {
-	float f = static_cast<float>(index);
+    float f = static_cast<float>(index);
 
-	assert(index < 256);
-	BYTE b = static_cast<BYTE>(index);
+    assert(index < 256);
+    BYTE b = static_cast<BYTE>(index);
 
-	CanvasGradientMeshPatch patch;
-	patch.Point00 = { f, 00 };
-	patch.Point01 = { f, 01 };
-	patch.Point02 = { f, 02 };
-	patch.Point03 = { f, 03 };
+    CanvasGradientMeshPatch patch;
+    patch.Point00 = { f, 00 };
+    patch.Point01 = { f, 01 };
+    patch.Point02 = { f, 02 };
+    patch.Point03 = { f, 03 };
 
-	patch.Point10 = { f, 10 };
-	patch.Point11 = { f, 11 };
-	patch.Point12 = { f, 12 };
-	patch.Point13 = { f, 13 };
+    patch.Point10 = { f, 10 };
+    patch.Point11 = { f, 11 };
+    patch.Point12 = { f, 12 };
+    patch.Point13 = { f, 13 };
 
-	patch.Point20 = { f, 20 };
-	patch.Point21 = { f, 21 };
-	patch.Point22 = { f, 22 };
-	patch.Point23 = { f, 23 };
+    patch.Point20 = { f, 20 };
+    patch.Point21 = { f, 21 };
+    patch.Point22 = { f, 22 };
+    patch.Point23 = { f, 23 };
 
-	patch.Point30 = { f, 30 };
-	patch.Point31 = { f, 31 };
-	patch.Point32 = { f, 32 };
-	patch.Point33 = { f, 33 };
+    patch.Point30 = { f, 30 };
+    patch.Point31 = { f, 31 };
+    patch.Point32 = { f, 32 };
+    patch.Point33 = { f, 33 };
 
-	patch.Color00 = { b, 100, 101, 102 };
-	patch.Color03 = { b, 103, 104, 105 };
-	patch.Color30 = { b, 106, 107, 108 };
-	patch.Color33 = { b, 109, 110, 111 };
+    patch.Color00 = { b, 100, 101, 102 };
+    patch.Color03 = { b, 103, 104, 105 };
+    patch.Color30 = { b, 106, 107, 108 };
+    patch.Color33 = { b, 109, 110, 111 };
 
-	patch.Edge00To03 = static_cast<CanvasGradientMeshPatchEdge>((index + 0) % 3);
-	patch.Edge03To33 = static_cast<CanvasGradientMeshPatchEdge>((index + 1) % 3);
-	patch.Edge33To30 = static_cast<CanvasGradientMeshPatchEdge>((index + 2) % 3);
-	patch.Edge30To00 = static_cast<CanvasGradientMeshPatchEdge>((index + 3) % 3);
+    patch.Edge00To03 = static_cast<CanvasGradientMeshPatchEdge>((index + 0) % 3);
+    patch.Edge03To33 = static_cast<CanvasGradientMeshPatchEdge>((index + 1) % 3);
+    patch.Edge33To30 = static_cast<CanvasGradientMeshPatchEdge>((index + 2) % 3);
+    patch.Edge30To00 = static_cast<CanvasGradientMeshPatchEdge>((index + 3) % 3);
 
-	return patch;
+    return patch;
 }
 
 TEST_CLASS(CanvasGradientMeshTests)
@@ -80,12 +80,12 @@ public:
         std::shared_ptr<CanvasGradientMeshManager> Manager;
         CanvasGradientMeshPatch DefaultPatches[3];
 
-		ComPtr<MockD2DGradientMesh> D2DGradientMesh;
+        ComPtr<MockD2DGradientMesh> D2DGradientMesh;
 
         Fixture()
             : Device(Make<StubCanvasDevice>())
             , Manager(std::make_shared<CanvasGradientMeshManager>())
-			, D2DGradientMesh(Make<MockD2DGradientMesh>())
+            , D2DGradientMesh(Make<MockD2DGradientMesh>())
         {
             for (int i=0; i<3; i++)
             {
@@ -93,13 +93,13 @@ public:
             }
 
 
-			auto d2dGradientMesh = Make<MockD2DGradientMesh>();
+            auto d2dGradientMesh = Make<MockD2DGradientMesh>();
 
-			Device->CreateGradientMeshMethod.AllowAnyCall(
-				[&](D2D1_GRADIENT_MESH_PATCH const*, uint32_t)
-				{
-					return D2DGradientMesh;
-				});
+            Device->CreateGradientMeshMethod.AllowAnyCall(
+                [&](D2D1_GRADIENT_MESH_PATCH const*, uint32_t)
+                {
+                    return D2DGradientMesh;
+                });
         }
     };
 
@@ -108,7 +108,7 @@ public:
     {
         Fixture f;
 
-		auto gradientMesh = f.Manager->Create(f.Device.Get(), 1, &f.DefaultPatches[0]);
+        auto gradientMesh = f.Manager->Create(f.Device.Get(), 1, &f.DefaultPatches[0]);
 
         Assert::AreEqual(S_OK, gradientMesh->Close());
 
@@ -128,7 +128,7 @@ public:
     {
         Fixture f;
 
-		auto gradientMesh = f.Manager->Create(f.Device.Get(), 1, &f.DefaultPatches[0]);
+        auto gradientMesh = f.Manager->Create(f.Device.Get(), 1, &f.DefaultPatches[0]);
 
         ComPtr<ICanvasDevice> device;
         Assert::AreEqual(S_OK, gradientMesh->get_Device(&device));
@@ -152,7 +152,7 @@ public:
         Vector2 points[12] {};
         Color colors[4]{};
         CanvasGradientMeshPatchEdge edges[4]{};
-		CanvasGradientMeshPatch gradientMeshPatch {};
+        CanvasGradientMeshPatch gradientMeshPatch {};
 
         Assert::AreEqual(E_INVALIDARG, canvasGeometryMeshFactory->CreateCoonsPatch(
             0, nullptr, 
@@ -181,7 +181,7 @@ public:
         Vector2 points[13] {};
         Color colors[5]{};
         CanvasGradientMeshPatchEdge edges[5]{};
-		CanvasGradientMeshPatch gradientMeshPatch{};
+        CanvasGradientMeshPatch gradientMeshPatch{};
 
         struct TestCase
         {
@@ -206,56 +206,56 @@ public:
         }
     }
 
-	TEST_METHOD_EX(CanvasGradientMesh_CreateCoonsPatch_NullArg)
-	{
-		auto canvasGeometryMeshFactory = Make<CanvasGradientMeshFactory>();
+    TEST_METHOD_EX(CanvasGradientMesh_CreateCoonsPatch_NullArg)
+    {
+        auto canvasGeometryMeshFactory = Make<CanvasGradientMeshFactory>();
 
-		Vector2 points[12]{};
-		Color colors[4]{};
-		CanvasGradientMeshPatchEdge edges[4]{};
+        Vector2 points[12]{};
+        Color colors[4]{};
+        CanvasGradientMeshPatchEdge edges[4]{};
 
-		Assert::AreEqual(E_INVALIDARG, canvasGeometryMeshFactory->CreateCoonsPatch(
-			_countof(points), points,
-			_countof(colors), colors,
-			_countof(edges), edges,
-			nullptr));
-	}
-
-
-	void VerifyGradientMeshPatchEqualToD2DGradientMeshPatch(
-		CanvasGradientMeshPatch const& patch,
-		D2D1_GRADIENT_MESH_PATCH const& d2dPatch)
-	{
-		auto verify = CanvasGradientMeshFactory::PatchToD2DPatch(patch);
-		Assert::AreEqual(d2dPatch, verify);
-	}
+        Assert::AreEqual(E_INVALIDARG, canvasGeometryMeshFactory->CreateCoonsPatch(
+            _countof(points), points,
+            _countof(colors), colors,
+            _countof(edges), edges,
+            nullptr));
+    }
 
 
-	TEST_METHOD(CanvasGradientMesh_CreateCoonsPatch_TypicalCase)
-	{
-		// D2D orders edges differently from Win2D, so these variables make it explicit which is which.
-		auto topEdge = testEdges[0];
-		auto rightEdge = testEdges[1];
-		auto bottomEdge = testEdges[2];
-		auto leftEdge = testEdges[3];
+    void VerifyGradientMeshPatchEqualToD2DGradientMeshPatch(
+        CanvasGradientMeshPatch const& patch,
+        D2D1_GRADIENT_MESH_PATCH const& d2dPatch)
+    {
+        auto verify = CanvasGradientMeshFactory::PatchToD2DPatch(patch);
+        Assert::AreEqual(d2dPatch, verify);
+    }
 
-		auto canvasGeometryMeshFactory = Make<CanvasGradientMeshFactory>();
 
-		CanvasGradientMeshPatch patch;
-		ThrowIfFailed(canvasGeometryMeshFactory->CreateCoonsPatch(12, testPoints, 4, testColors, 4, testEdges, &patch));
+    TEST_METHOD(CanvasGradientMesh_CreateCoonsPatch_TypicalCase)
+    {
+        // D2D orders edges differently from Win2D, so these variables make it explicit which is which.
+        auto topEdge = testEdges[0];
+        auto rightEdge = testEdges[1];
+        auto bottomEdge = testEdges[2];
+        auto leftEdge = testEdges[3];
 
-		auto d2dPatch = D2D1::GradientMeshPatchFromCoonsPatch(
-			ToD2DPoint(testPoints[0]), ToD2DPoint(testPoints[1]), ToD2DPoint(testPoints[2]), ToD2DPoint(testPoints[3]),
-			ToD2DPoint(testPoints[4]), ToD2DPoint(testPoints[5]), ToD2DPoint(testPoints[6]), ToD2DPoint(testPoints[7]),
-			ToD2DPoint(testPoints[8]), ToD2DPoint(testPoints[9]), ToD2DPoint(testPoints[10]), ToD2DPoint(testPoints[11]),
-			ToD2DColor(testColors[0]), ToD2DColor(testColors[1]), ToD2DColor(testColors[2]), ToD2DColor(testColors[3]),
-			static_cast<D2D1_PATCH_EDGE_MODE>(topEdge), 
-			static_cast<D2D1_PATCH_EDGE_MODE>(leftEdge), 
-			static_cast<D2D1_PATCH_EDGE_MODE>(bottomEdge), 
-			static_cast<D2D1_PATCH_EDGE_MODE>(rightEdge));
+        auto canvasGeometryMeshFactory = Make<CanvasGradientMeshFactory>();
 
-		VerifyGradientMeshPatchEqualToD2DGradientMeshPatch(patch, d2dPatch);
-	}
+        CanvasGradientMeshPatch patch;
+        ThrowIfFailed(canvasGeometryMeshFactory->CreateCoonsPatch(12, testPoints, 4, testColors, 4, testEdges, &patch));
+
+        auto d2dPatch = D2D1::GradientMeshPatchFromCoonsPatch(
+            ToD2DPoint(testPoints[0]), ToD2DPoint(testPoints[1]), ToD2DPoint(testPoints[2]), ToD2DPoint(testPoints[3]),
+            ToD2DPoint(testPoints[4]), ToD2DPoint(testPoints[5]), ToD2DPoint(testPoints[6]), ToD2DPoint(testPoints[7]),
+            ToD2DPoint(testPoints[8]), ToD2DPoint(testPoints[9]), ToD2DPoint(testPoints[10]), ToD2DPoint(testPoints[11]),
+            ToD2DColor(testColors[0]), ToD2DColor(testColors[1]), ToD2DColor(testColors[2]), ToD2DColor(testColors[3]),
+            static_cast<D2D1_PATCH_EDGE_MODE>(topEdge), 
+            static_cast<D2D1_PATCH_EDGE_MODE>(leftEdge), 
+            static_cast<D2D1_PATCH_EDGE_MODE>(bottomEdge), 
+            static_cast<D2D1_PATCH_EDGE_MODE>(rightEdge));
+
+        VerifyGradientMeshPatchEqualToD2DGradientMeshPatch(patch, d2dPatch);
+    }
 
     TEST_METHOD_EX(CanvasGradientMesh_CreateTensorPatch_WrongSizeArray)
     {
@@ -264,7 +264,7 @@ public:
         Vector2 points[17] {};
         Color colors[5]{};
         CanvasGradientMeshPatchEdge edges[5]{};
-		CanvasGradientMeshPatch gradientMeshPatch{};
+        CanvasGradientMeshPatch gradientMeshPatch{};
 
         struct TestCase
         {
@@ -296,7 +296,7 @@ public:
         Vector2 points[12] {};
         Color colors[4]{};
         CanvasGradientMeshPatchEdge edges[4]{};
-		CanvasGradientMeshPatch gradientMeshPatch{};
+        CanvasGradientMeshPatch gradientMeshPatch{};
 
         Assert::AreEqual(E_INVALIDARG, canvasGeometryMeshFactory->CreateTensorPatch(
             0, nullptr, 
@@ -327,20 +327,20 @@ public:
         Assert::AreEqual(static_cast<float>(color.B)/255.0f, d2dColor.b, 0.01f);
     }
 
-	TEST_METHOD_EX(CanvasGradientMesh_CreateTensorPatch_NullArg)
-	{
-		auto canvasGeometryMeshFactory = Make<CanvasGradientMeshFactory>();
+    TEST_METHOD_EX(CanvasGradientMesh_CreateTensorPatch_NullArg)
+    {
+        auto canvasGeometryMeshFactory = Make<CanvasGradientMeshFactory>();
 
-		Vector2 points[16]{};
-		Color colors[4]{};
-		CanvasGradientMeshPatchEdge edges[4]{};
+        Vector2 points[16]{};
+        Color colors[4]{};
+        CanvasGradientMeshPatchEdge edges[4]{};
 
-		Assert::AreEqual(E_INVALIDARG, canvasGeometryMeshFactory->CreateTensorPatch(
-			_countof(points), points,
-			_countof(colors), colors,
-			_countof(edges), edges,
-			nullptr));
-	}
+        Assert::AreEqual(E_INVALIDARG, canvasGeometryMeshFactory->CreateTensorPatch(
+            _countof(points), points,
+            _countof(colors), colors,
+            _countof(edges), edges,
+            nullptr));
+    }
 
     void VerifyEqualEdgeModes(
         CanvasGradientMeshPatchEdge const& edgeMode,
@@ -361,7 +361,7 @@ public:
                 return Make<MockD2DGradientMesh>();
             });
 
-		auto gradientMesh = f.Manager->Create(f.Device.Get(), 1, &f.DefaultPatches[0]);
+        auto gradientMesh = f.Manager->Create(f.Device.Get(), 1, &f.DefaultPatches[0]);
         Assert::IsNotNull(gradientMesh.Get());
     }
 
@@ -395,10 +395,10 @@ public:
             {
                 Assert::IsTrue(IsSameInstance(f.D2DGradientMesh.Get(), thisD2dGradientMesh));
                 *bounds = D2D1::RectF(1, 2, 30, 40);
-				return S_OK;
+                return S_OK;
             });
 
-		auto gradientMesh = f.Manager->Create(f.Device.Get(), 1, &f.DefaultPatches[0]);
+        auto gradientMesh = f.Manager->Create(f.Device.Get(), 1, &f.DefaultPatches[0]);
 
         auto manager = std::make_shared<CanvasDrawingSessionManager>();
         auto drawingSession = manager->GetOrCreate(d2dDeviceContext.Get());
@@ -416,12 +416,12 @@ public:
     {
         Fixture f;
 
-		f.D2DGradientMesh->GetPatchCountMethod.SetExpectedCalls(1, [&]() { return 0; });
-		f.D2DGradientMesh->GetPatchesMethod.SetExpectedCalls(0);
+        f.D2DGradientMesh->GetPatchCountMethod.SetExpectedCalls(1, [&]() { return 0; });
+        f.D2DGradientMesh->GetPatchesMethod.SetExpectedCalls(0);
 
         auto gradientMesh = f.Manager->Create(f.Device.Get(), 0, nullptr);
 
-		uint32_t patchCount{};
+        uint32_t patchCount{};
         CanvasGradientMeshPatch* patchElements{};
         Assert::AreEqual(S_OK, gradientMesh->get_Patches(&patchCount, &patchElements));
         Assert::AreEqual(0u, patchCount);
@@ -432,19 +432,19 @@ public:
     {
         Fixture f;
 
-		f.D2DGradientMesh->GetPatchCountMethod.SetExpectedCalls(1, [&]() { return 1; });
-		f.D2DGradientMesh->GetPatchesMethod.SetExpectedCalls(1,
-			[&](uint32_t startIndex, D2D1_GRADIENT_MESH_PATCH* patches, uint32_t numPatches)
-			{
-				Assert::AreEqual(0u, startIndex);
-				Assert::AreEqual(1u, numPatches);
-				*patches = CanvasGradientMeshFactory::PatchToD2DPatch(f.DefaultPatches[0]);
-				return S_OK;
-			});
+        f.D2DGradientMesh->GetPatchCountMethod.SetExpectedCalls(1, [&]() { return 1; });
+        f.D2DGradientMesh->GetPatchesMethod.SetExpectedCalls(1,
+            [&](uint32_t startIndex, D2D1_GRADIENT_MESH_PATCH* patches, uint32_t numPatches)
+            {
+                Assert::AreEqual(0u, startIndex);
+                Assert::AreEqual(1u, numPatches);
+                *patches = CanvasGradientMeshFactory::PatchToD2DPatch(f.DefaultPatches[0]);
+                return S_OK;
+            });
 
         auto gradientMesh = f.Manager->Create(f.Device.Get(), 1, &f.DefaultPatches[0]);
 
-		uint32_t patchCount{};
+        uint32_t patchCount{};
         CanvasGradientMeshPatch* patchElements{};
         Assert::AreEqual(S_OK, gradientMesh->get_Patches(&patchCount, &patchElements));
         Assert::AreEqual(1u, patchCount);
@@ -455,22 +455,22 @@ public:
     {
         Fixture f;
 
-		f.D2DGradientMesh->GetPatchCountMethod.SetExpectedCalls(1, [&]() { return 3; });
-		f.D2DGradientMesh->GetPatchesMethod.SetExpectedCalls(1,
-			[&](uint32_t startIndex, D2D1_GRADIENT_MESH_PATCH* patches, uint32_t numPatches)
-			{
-				Assert::AreEqual(0u, startIndex);
-				Assert::AreEqual(3u, numPatches);
-				for (int i = 0; i < 3; ++i)
-				{
-					patches[i] = CanvasGradientMeshFactory::PatchToD2DPatch(f.DefaultPatches[i]);
-				}
-				return S_OK;
-			});
+        f.D2DGradientMesh->GetPatchCountMethod.SetExpectedCalls(1, [&]() { return 3; });
+        f.D2DGradientMesh->GetPatchesMethod.SetExpectedCalls(1,
+            [&](uint32_t startIndex, D2D1_GRADIENT_MESH_PATCH* patches, uint32_t numPatches)
+            {
+                Assert::AreEqual(0u, startIndex);
+                Assert::AreEqual(3u, numPatches);
+                for (int i = 0; i < 3; ++i)
+                {
+                    patches[i] = CanvasGradientMeshFactory::PatchToD2DPatch(f.DefaultPatches[i]);
+                }
+                return S_OK;
+            });
 
         auto gradientMesh = f.Manager->Create(f.Device.Get(), 3, f.DefaultPatches);
 
-		uint32_t patchCount{};
+        uint32_t patchCount{};
         CanvasGradientMeshPatch* patchElements{};
         Assert::AreEqual(S_OK, gradientMesh->get_Patches(&patchCount, &patchElements));
         Assert::AreEqual(3u, patchCount);
