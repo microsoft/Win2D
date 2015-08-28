@@ -171,6 +171,7 @@ namespace Microsoft
             CX_VALUE_TO_STRING(Microsoft::Graphics::Canvas::Text::CanvasTextAntialiasing);
             CX_VALUE_TO_STRING(Microsoft::Graphics::Canvas::CanvasUnits);
             CX_VALUE_TO_STRING(Microsoft::Graphics::Canvas::CanvasAlphaMode);
+            CX_VALUE_TO_STRING(Microsoft::Graphics::Canvas::UI::CanvasCreateResourcesReason);
 
 #undef CX_VALUE_TO_STRING
 

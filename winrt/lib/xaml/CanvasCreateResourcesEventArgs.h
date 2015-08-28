@@ -6,6 +6,17 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace UI
 {
+    class CanvasCreateResourcesEventArgsFactory : public ActivationFactory<ICanvasCreateResourcesEventArgsFactory>
+                                                , private LifespanTracker<CanvasCreateResourcesEventArgsFactory>
+    {
+        InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_UI_CanvasCreateResourcesEventArgs, BaseTrust);
+
+    public:
+        IFACEMETHOD(Create)(
+            CanvasCreateResourcesReason reason,
+            ICanvasCreateResourcesEventArgs** createResourcesEventArgs);
+    };
+
     class CanvasCreateResourcesEventArgs : public RuntimeClass<ICanvasCreateResourcesEventArgs>,
                                            private LifespanTracker<CanvasCreateResourcesEventArgs>
     {
@@ -13,12 +24,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         CanvasCreateResourcesReason m_reason;
         std::function<void(IAsyncAction*)> m_trackAsyncActionCallback;
+        ComPtr<IAsyncAction> m_trackedAction;
 
     public:
         CanvasCreateResourcesEventArgs(CanvasCreateResourcesReason reason, std::function<void(IAsyncAction*)> trackAsyncActionCallback);
 
         IFACEMETHODIMP get_Reason(CanvasCreateResourcesReason* value) override;
         IFACEMETHODIMP TrackAsyncAction(IAsyncAction* action) override;
+        IFACEMETHODIMP GetTrackedAction(IAsyncAction** action) override;
     };
 
 } } } } }

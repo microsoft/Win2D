@@ -21,6 +21,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasBrushTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasCommandListTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasControlTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)CanvasCreateResourcesEventArgsTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasDeviceTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasBitmapTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasEffectsTests.cpp" />

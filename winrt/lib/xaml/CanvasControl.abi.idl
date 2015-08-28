@@ -17,25 +17,47 @@ namespace Microsoft.Graphics.Canvas.UI
 
     runtimeclass CanvasCreateResourcesEventArgs;
 
+    [version(VERSION), uuid(3A21C766-0781-4389-BBC3-86B1F5022AF1), exclusiveto(CanvasCreateResourcesEventArgs)]
+    interface ICanvasCreateResourcesEventArgsFactory : IInspectable
+    {
+        HRESULT Create(
+            [in] CanvasCreateResourcesReason createResourcesReason,
+            [out, retval] CanvasCreateResourcesEventArgs** CreateResourcesEventArgs);
+    };
+
     [version(VERSION), uuid(EDC52108-F6BA-4A09-9FA3-10C97A24E49A), exclusiveto(CanvasCreateResourcesEventArgs)]
     interface ICanvasCreateResourcesEventArgs : IInspectable
     {
         [propget] HRESULT Reason([out, retval] CanvasCreateResourcesReason* value);
 
         //
-        // Caller can set an AsyncAction to continue the create resources
-        // operation.  CanvasControl will wait until this has completed before
-        // calling any draw handlers.
+        // For CanvasCreateResourcesEventArgs created by a control and passed
+        // to an app through CreateResources, TrackAsyncAction has the 
+        // following behavior:
+        //    Caller can set an AsyncAction to continue the create resources
+        //    operation.  CanvasControl will wait until this has completed before
+        //    calling any draw handlers.
         //
-        // The same event args object is passed to all event handlers.  The
-        // AsyncAction may only be set once - attempting to set it when it
-        // already has a non-null value will result in an error.
+        //    The same event args object is passed to all event handlers.  The
+        //    AsyncAction may only be set once - attempting to set it when it
+        //    already has a non-null value will result in an error.
+        //
+        // CanvasCreateResourcesEventArgs can also be activated by the app,
+        // for testing purposes. On these args, TrackAsyncAction does
+        // not do anything.
         //
         HRESULT TrackAsyncAction(
             [in] Windows.Foundation.IAsyncAction* action);
+
+        //
+        // Gets the last action passed to TrackAsyncAction, or returns null
+        // if no action is tracked.
+        //
+        HRESULT GetTrackedAction(
+            [out, retval] Windows.Foundation.IAsyncAction** action);
     }
 
-    [version(VERSION), threading(both), marshaling_behavior(agile)]
+    [version(VERSION), activatable(ICanvasCreateResourcesEventArgsFactory, VERSION), threading(both), marshaling_behavior(agile)]
     runtimeclass CanvasCreateResourcesEventArgs
     {
         [default] interface ICanvasCreateResourcesEventArgs;

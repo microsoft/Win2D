@@ -433,6 +433,92 @@ TEST_CLASS(CanvasSharedControlTests_CommonAdapter)
         ThrowIfFailed(f.Control->get_Size(&size));
         Assert::AreEqual(newSize, size);
     }
+
+    TEST_METHOD_EX(CanvasCreateResourcesArgs_ActivatedByApp_GetTrackedAction_NullArg)
+    {
+        auto args = Make<CanvasCreateResourcesEventArgs>(CanvasCreateResourcesReason::DpiChanged, nullptr);
+
+        Assert::AreEqual(E_INVALIDARG, args->GetTrackedAction(nullptr));
+    }
+
+    TEST_METHOD_EX(CanvasCreateResourcesArgs_ActivatedByApp_GetTrackedAction_InitiallyReturnsNoAction)
+    {
+        auto args = Make<CanvasCreateResourcesEventArgs>(CanvasCreateResourcesReason::DpiChanged, nullptr);
+
+        ComPtr<IAsyncAction> action;
+        Assert::AreEqual(S_OK, args->GetTrackedAction(&action));
+        Assert::IsNull(action.Get());
+    }
+
+    TEST_METHOD_EX(CanvasCreateResourcesArgs_ActivatedByApp_TrackAsyncAction_DoesntDoAnythingBad)
+    {
+        auto args = Make<CanvasCreateResourcesEventArgs>(CanvasCreateResourcesReason::DpiChanged, nullptr);
+
+        auto mockAsyncAction = Make<MockAsyncAction>();
+
+        Assert::AreEqual(S_OK, args->TrackAsyncAction(mockAsyncAction.Get()));
+    }
+
+    TEST_METHOD_EX(CanvasCreateResourcesArgs_ActivatedByApp_TrackAsyncAction_AddsReferenceToAction)
+    {
+        auto args = Make<CanvasCreateResourcesEventArgs>(CanvasCreateResourcesReason::DpiChanged, nullptr);
+
+        auto mockAsyncAction = Make<MockAsyncAction>();
+
+        // Use AddRef/Release to read back a refcount.
+        mockAsyncAction.Get()->AddRef();
+        auto refCount1 = mockAsyncAction.Get()->Release();
+
+        Assert::AreEqual(S_OK, args->TrackAsyncAction(mockAsyncAction.Get()));
+
+        mockAsyncAction.Get()->AddRef();
+        auto refCount2 = mockAsyncAction.Get()->Release();
+
+        Assert::AreEqual(refCount1 + 1, refCount2);
+    }
+
+    TEST_METHOD_EX(CanvasCreateResourcesArgs_ActivatedByApp_GetTrackedAction_ReturnsTrackedAction)
+    {
+        auto args = Make<CanvasCreateResourcesEventArgs>(CanvasCreateResourcesReason::DpiChanged, nullptr);
+
+        auto mockAsyncAction = Make<MockAsyncAction>();
+
+        ThrowIfFailed(args->TrackAsyncAction(mockAsyncAction.Get()));
+
+        ComPtr<IAsyncAction> returnedAction;
+        Assert::AreEqual(S_OK, args->GetTrackedAction(&returnedAction));
+
+        Assert::IsTrue(IsSameInstance(mockAsyncAction.Get(), returnedAction.Get()));
+    }
+
+    TEST_METHOD_EX(CanvasCreateResourcesArgs_ActivatedByApp_TrackAsyncAction_Twice_Fails)
+    {
+        auto args = Make<CanvasCreateResourcesEventArgs>(CanvasCreateResourcesReason::DpiChanged, nullptr);
+
+        auto mockAsyncAction1 = Make<MockAsyncAction>();
+        ThrowIfFailed(args->TrackAsyncAction(mockAsyncAction1.Get()));
+
+        auto mockAsyncAction2 = Make<MockAsyncAction>();
+        Assert::AreEqual(E_FAIL, args->TrackAsyncAction(mockAsyncAction2.Get()));
+
+        ValidateStoredErrorState(E_FAIL, Strings::MultipleAsyncCreateResourcesNotSupported);
+    }
+
+    TEST_METHOD_EX(CanvasCreateResourcesArgs_ActivatedByApp_TrackAsyncAction_Twice_GetTrackedActionReturnsCorrectThing)
+    {
+        auto args = Make<CanvasCreateResourcesEventArgs>(CanvasCreateResourcesReason::DpiChanged, nullptr);
+
+        auto mockAsyncAction1 = Make<MockAsyncAction>();
+        ThrowIfFailed(args->TrackAsyncAction(mockAsyncAction1.Get()));
+
+        auto mockAsyncAction2 = Make<MockAsyncAction>();
+        Assert::AreEqual(E_FAIL, args->TrackAsyncAction(mockAsyncAction2.Get()));
+
+        ComPtr<IAsyncAction> returnedAction;
+        Assert::AreEqual(S_OK, args->GetTrackedAction(&returnedAction));
+
+        Assert::IsTrue(IsSameInstance(mockAsyncAction1.Get(), returnedAction.Get()));
+    }
 };
 
 boolean allForceSoftwareRendererOptions[] = { false, true };

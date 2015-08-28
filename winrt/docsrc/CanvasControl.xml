@@ -237,6 +237,15 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
 
     <member name="T:Microsoft.Graphics.Canvas.UI.CanvasCreateResourcesEventArgs">
       <summary>Provides data for the <see cref="E:Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl.CreateResources"/> event.</summary>
+      <remarks>
+        <p>
+          Typically, instances of CanvasCreateResourcesEventArgs are created by
+          Win2D controls and passed to the application through its 
+          CreateResources event handler. However, applications may choose to 
+          create their own instances of CanvasCreateResourcesEventArgs for 
+          unit testing purposes.
+        </p>
+      </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.UI.CanvasCreateResourcesEventArgs.TrackAsyncAction(Windows.Foundation.IAsyncAction)">
       <summary>Causes the sender to track an action that must completed before
@@ -275,9 +284,21 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
           <li><a href="http://blogs.msdn.com/b/win2d/archive/2014/12/05/async-resource-loading-in-win2d.aspx">Async resource loading in Win2D</a></li>
         </ul>
         <p>
-          In the current implementation, only one action can be tracked at a
-          time.  Attempting to track multiple actions simultaneously will cause
-          TrackAsyncAction to throw an exception.
+          In the current implementation, only one action per control can be
+          tracked at a time.  Attempting to track multiple actions
+          simultaneously will cause TrackAsyncAction to throw an exception.
+        </p>
+        <p>
+          The behavior discussed above pertains to 
+          CanvasCreateResourcesEventArgs passed to an app through its 
+          CreateResources event handler.
+        </p>
+        <p>
+          For instances of CanvasCreateResourcesEventArgs which the app has
+          created itself, TrackAsyncAction is a lightweight operation which
+          does not do the above behavior. It holds a reference to the tracked
+          action which can be retrieved using 
+          <see cref="M:Microsoft.Graphics.Canvas.UI.CanvasCreateResourcesEventArgs.GetTrackedAction"/>.
         </p>
       </remarks>
     </member>
@@ -286,8 +307,18 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <remarks>This information can be used to optimize resource recreation.
                For instance if the DPI has changed, only resources that depend
                on DPI (such as rendertargets) need to be recreated.</remarks>
-    </member>
+    </member>    
 
+    <member name="M:Microsoft.Graphics.Canvas.UI.CanvasCreateResourcesEventArgs.#ctor(Microsoft.Graphics.Canvas.UI.CanvasCreateResourcesReason)">
+      <summary>Initializes a new instance of the CanvasCreateResourcesEventArgs class.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.UI.CanvasCreateResourcesEventArgs.GetTrackedAction">
+      <summary>Gets the asynchronous tracked action stored by this object.</summary>
+      <remarks>
+        <p>This returns the IAsyncAction that was passed to TrackAsyncAction, 
+        or null if TrackAsyncAction has not been called.</p>
+      </remarks>
+    </member>
 
     <member name="T:Microsoft.Graphics.Canvas.UI.CanvasCreateResourcesReason">
       <summary>Indicates why a CreateResources event was raised.</summary>

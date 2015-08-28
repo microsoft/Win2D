@@ -9,6 +9,22 @@
 using namespace ABI::Microsoft::Graphics::Canvas::UI;
 using namespace ABI::Windows::Foundation;
 
+IFACEMETHODIMP CanvasCreateResourcesEventArgsFactory::Create(
+    CanvasCreateResourcesReason reason,
+    ICanvasCreateResourcesEventArgs** createResourcesEventArgs)
+{
+    return ExceptionBoundary(
+        [&]
+        {
+            CheckAndClearOutPointer(createResourcesEventArgs);
+
+            auto newCreateResourcesEventArgs = Make<CanvasCreateResourcesEventArgs>(reason, nullptr);
+            CheckMakeResult(newCreateResourcesEventArgs);
+
+            ThrowIfFailed(newCreateResourcesEventArgs.CopyTo(createResourcesEventArgs));
+        });
+}
+
 CanvasCreateResourcesEventArgs::CanvasCreateResourcesEventArgs(CanvasCreateResourcesReason reason, std::function<void(IAsyncAction*)> trackAsyncActionCallback)
     : m_reason(reason)
     , m_trackAsyncActionCallback(trackAsyncActionCallback)
@@ -32,8 +48,32 @@ IFACEMETHODIMP CanvasCreateResourcesEventArgs::TrackAsyncAction(IAsyncAction* ac
     return ExceptionBoundary(
         [=]
         {
-            m_trackAsyncActionCallback(action);
+            if (m_trackAsyncActionCallback)
+            {
+                m_trackAsyncActionCallback(action);
+            }
+
+            if (m_trackedAction)
+            {
+                ThrowHR(E_FAIL, HStringReference(Strings::MultipleAsyncCreateResourcesNotSupported).Get());
+            }
+
+            m_trackedAction = action;
         });
 }
 
+IFACEMETHODIMP CanvasCreateResourcesEventArgs::GetTrackedAction(IAsyncAction** action)
+{
+    return ExceptionBoundary(
+        [=]
+        {
+            CheckAndClearOutPointer(action);
 
+            if (m_trackedAction)
+            {
+                ThrowIfFailed(m_trackedAction.CopyTo(action));
+            }
+        });
+}
+
+ActivatableClassWithFactory(CanvasCreateResourcesEventArgs, CanvasCreateResourcesEventArgsFactory);
