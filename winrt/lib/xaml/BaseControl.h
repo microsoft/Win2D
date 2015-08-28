@@ -253,7 +253,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
                     m_useSharedDevice = !!value;
 
-                    Changed(lock, ChangeReason::DeviceCreationOptions);
+                    lock.unlock();
+                    
+                    Changed(ChangeReason::DeviceCreationOptions);
                 });
         }
 
@@ -284,7 +286,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
                     m_forceSoftwareRenderer = !!value;
 
-                    Changed(lock, ChangeReason::DeviceCreationOptions);
+                    lock.unlock();
+                    
+                    Changed(ChangeReason::DeviceCreationOptions);
                 });
         }
 
@@ -323,7 +327,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                     {
                         m_customDevice = value;
 
-                        Changed(lock, ChangeReason::DeviceCreationOptions);
+                        lock.unlock();
+
+                        Changed(ChangeReason::DeviceCreationOptions);
                     }
                 });
         }        
@@ -382,19 +388,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                 });
         }
 
-        float GetEffectiveDpi()
-        {
-            auto lock = GetLock();
-            return GetEffectiveDpiNoLock(lock);
-        }
-
-        float GetEffectiveDpiNoLock(Lock const& lock)
-        {
-            MustOwnLock(lock);
-
-            return m_logicalDpi * m_customDpiScaling;
-        }
-
         IFACEMETHODIMP get_Dpi(float* dpi) override
         {
             return ExceptionBoundary(
@@ -402,7 +395,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                 {
                     CheckInPointer(dpi);
 
-                    *dpi = GetEffectiveDpi();
+                    *dpi = GetEffectiveDpi(GetLock());
                 });
         }
 
@@ -413,7 +406,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                 {
                     CheckInPointer(dips);
 
-                    *dips = PixelsToDips(pixels, GetEffectiveDpi());
+                    *dips = PixelsToDips(pixels, GetEffectiveDpi(GetLock()));
                 });
         }
 
@@ -424,7 +417,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                 {
                     CheckInPointer(pixels);
 
-                    *pixels = DipsToPixels(dips, GetEffectiveDpi(), dpiRounding);
+                    *pixels = DipsToPixels(dips, GetEffectiveDpi(GetLock()), dpiRounding);
                 });
         }
 
@@ -435,14 +428,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             Size newSize,
             RenderTarget* renderTarget) = 0;
 
-        virtual void Changed(Lock const& lock, ChangeReason reason = ChangeReason::Other) = 0;
+        virtual void Changed(ChangeReason reason) = 0;
 
         virtual void Loaded() = 0;
         virtual void Unloaded() = 0;
 
         virtual void ApplicationSuspending(ISuspendingEventArgs* args) = 0;
         virtual void ApplicationResuming() = 0;
-        virtual void WindowVisibilityChanged(Lock const&) = 0;
+        virtual void WindowVisibilityChanged() = 0;
 
         control_t* GetControl()
         {
@@ -533,7 +526,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         void ResetRenderTarget()
         {
             m_currentRenderTarget = RenderTarget{};
-            Changed(GetLock());
+            Changed(ChangeReason::Other);
         }
 
         RenderTarget* GetCurrentRenderTarget()
@@ -546,8 +539,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         // arranges for RenderWithTarget() to get called.
         //
         template<typename FN>
-        void RunWithRenderTarget(Color const& clearColor, Size const& renderTargetSize, float dpi, DeviceCreationOptions deviceCreationOptions, FN&& fn)
+        void RunWithRenderTarget(FN&& fn)
         {
+            auto lock = GetLock();
+            auto clearColor = m_clearColor;
+            auto renderTargetSize = m_currentSize;
+            auto dpi = GetEffectiveDpi(lock);
+            DeviceCreationOptions deviceCreationOptions{ m_useSharedDevice, m_forceSoftwareRenderer, m_customDevice };
+            lock.unlock();
+            
             m_recreatableDeviceManager->RunWithDevice(GetControl(), deviceCreationOptions,
                 [&] (ICanvasDevice* device, RunWithDeviceFlags flags)
                 {
@@ -560,8 +560,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         // not attempt to recreate or resize the target.
         //
         template<typename FN>
-        void RunWithCurrentRenderTarget(DeviceCreationOptions deviceCreationOptions, FN&& fn)
+        void RunWithCurrentRenderTarget(FN&& fn)
         {
+            auto lock = GetLock();
+            auto clearColor = m_clearColor;
+            DeviceCreationOptions deviceCreationOptions{ m_useSharedDevice, m_forceSoftwareRenderer, m_customDevice };
+            lock.unlock();
+            
             m_recreatableDeviceManager->RunWithDevice(GetControl(), deviceCreationOptions,
                 [&] (ICanvasDevice* device, RunWithDeviceFlags flags)
                 {
@@ -569,7 +574,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                     
                     bool areResourcesCreated = !IsSet(flags, RunWithDeviceFlags::ResourcesNotCreated);
 
-                    fn(m_currentRenderTarget.Target.Get(), areResourcesCreated);
+                    fn(m_currentRenderTarget.Target.Get(), clearColor, areResourcesCreated);
                 });
         }
         
@@ -588,18 +593,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
                     m_deviceLostEventRegistration.Release();
 
-                    Changed(lock, ChangeReason::DeviceLost);
+                    lock.unlock();
+                    
+                    Changed(ChangeReason::DeviceLost);
                 });
         }
 
         Color GetClearColor()
         {
-            return GetClearColor(GetLock());
-        }
-
-        Color GetClearColor(Lock const& lock)
-        {
-            MustOwnLock(lock);
+            auto lock = GetLock();
             return m_clearColor;
         }
 
@@ -609,27 +611,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             return m_currentSize;
         }
 
-        DeviceCreationOptions GetDeviceCreationOptions(Lock const& lock)
+        void GetClearColorSizeAndDpi(Color* clearColor, Size* currentSize, float* currentDpi)
         {
-            MustOwnLock(lock);
-
-            DeviceCreationOptions options { m_useSharedDevice, m_forceSoftwareRenderer, m_customDevice };
-
-            return options;
-        }
-
-        void GetSharedState(Lock const& lock, Color* clearColor, Size* currentSize, float* currentDpi)
-        {
-            MustOwnLock(lock);
-
+            auto lock = GetLock();
             *clearColor = m_clearColor;
             *currentSize = m_currentSize;
-            *currentDpi = GetEffectiveDpiNoLock(lock);
-        }
-
-        Lock GetLock()
-        {
-            return Lock(m_mutex);
+            *currentDpi = GetEffectiveDpi(lock);
         }
 
         static CanvasAlphaMode GetAlphaModeFromClearColor(Color const& clearColor)
@@ -648,6 +635,17 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         }
 
     private:
+        Lock GetLock()
+        {
+            return Lock(m_mutex);
+        }
+
+        float GetEffectiveDpi(Lock const& lock)
+        {
+            MustOwnLock(lock);
+            return m_logicalDpi * m_customDpiScaling;
+        }
+
         void SetClearColor(Color const& value)
         {
             auto lock = GetLock();
@@ -662,7 +660,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
             m_clearColor = value;
 
-            Changed(lock, ChangeReason::ClearColor);
+            lock.unlock();
+            
+            Changed(ChangeReason::ClearColor);
         }
 
         template<typename FN>
@@ -743,7 +743,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             m_recreatableDeviceManager->SetChangedCallback(
                 [=] (ChangeReason reason)
                 {
-                    Changed(GetLock(), reason);
+                    Changed(reason);
                 });
         }
 
@@ -808,7 +808,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
                     auto lock = GetLock();
                     m_isLoaded = true;
-                    Changed(lock);
+                    lock.unlock();
+                    
+                    Changed(ChangeReason::Other);
                 });
         }
 
@@ -848,8 +850,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                     if (m_currentSize != newSize)
                     {
                         m_currentSize = newSize;
-
-                        Changed(lock, ChangeReason::Size);
+                        lock.unlock();
+                        
+                        Changed(ChangeReason::Size);
                     }
                 });
         }
@@ -911,8 +914,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
                     auto lock = GetLock();
                     m_isVisible = !!isVisible;
-
-                    WindowVisibilityChanged(lock);
+                    lock.unlock();
+                    
+                    WindowVisibilityChanged();
                 });
 
         }
@@ -944,7 +948,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                 [&]
                 {
                     ThrowIfFailed(m_drawEventList.Add(value, token));
-                    Changed(GetLock());
+                    Changed(ChangeReason::Other);
                 });
         }
 

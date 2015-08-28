@@ -80,12 +80,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             Size newSize,
             RenderTarget* renderTarget) override final;
 
-        virtual void Changed(Lock const& lock, ChangeReason reason = ChangeReason::Other) override final;
+        virtual void Changed(ChangeReason reason) override final;
         virtual void Loaded() override final;
         virtual void Unloaded() override final;
         virtual void ApplicationSuspending(ISuspendingEventArgs* args) override final;
         virtual void ApplicationResuming() override final;
-        virtual void WindowVisibilityChanged(Lock const&) override final;
+        virtual void WindowVisibilityChanged() override final;
 
     private:
         void ChangedImpl(ChangeReason reason);

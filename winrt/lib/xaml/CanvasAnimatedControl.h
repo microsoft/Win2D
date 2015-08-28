@@ -138,7 +138,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         //
         // State shared between the UI thread and the update/render thread.
-        // Access to this must be guarded using BaseControl's mutex.
+        // Access to this must be guarded using m_sharedStateMutex
         //
         struct SharedState
         {
@@ -166,6 +166,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             std::vector<ComPtr<AnimatedControlAsyncAction>> PendingAsyncActions;
         };
 
+        std::mutex m_sharedStateMutex;
         SharedState m_sharedState;
 
     public:
@@ -242,12 +243,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             ICanvasDrawingSession* drawingSession,
             bool isRunningSlowly) override final;
 
-        virtual void Changed(Lock const& lock, ChangeReason reason = ChangeReason::Other) override final;
+        virtual void Changed(ChangeReason reason) override final;
         virtual void Loaded() override final;
         virtual void Unloaded() override final;
         virtual void ApplicationSuspending(ISuspendingEventArgs* args) override final;
         virtual void ApplicationResuming() override final;
-        virtual void WindowVisibilityChanged(Lock const&) override final;
+        virtual void WindowVisibilityChanged() override final;
 
     private:
         void CreateSwapChainPanel();

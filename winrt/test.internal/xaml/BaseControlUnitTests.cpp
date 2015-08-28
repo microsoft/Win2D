@@ -107,7 +107,7 @@ namespace
             return CreateDrawEventArgsMethod.WasCalled(drawingSession, isRunningSlowly);
         }
 
-        virtual void Changed(Lock const&, ChangeReason) override final
+        virtual void Changed(ChangeReason) override final
         {
             return ChangedMethod.WasCalled();
         }
@@ -132,7 +132,7 @@ namespace
             ApplicationResumingMethod.WasCalled();
         }
 
-        virtual void WindowVisibilityChanged(Lock const&) override final
+        virtual void WindowVisibilityChanged() override final
         {
             Assert::Fail(L"Unexpected call to WindowVisibilityChanged");
         }
@@ -143,11 +143,7 @@ namespace
             CallCounter<> expectCallback(L"RunWithRenderTarget callback");
             expectCallback.SetExpectedCalls(1);
 
-            Size anySize { 1, 2 };
-            Color anyColor { 3, 4, 5, 6 };
-            float anyDpi { 7 };
-
-            RunWithRenderTarget(anyColor, anySize, anyDpi, DeviceCreationOptions{},
+            RunWithRenderTarget(
                 [&] (AnyRenderTarget* target, ICanvasDevice*, Color const& clearColor, bool callDrawHandlers)
                 {
                     expectCallback.WasCalled();
@@ -224,8 +220,8 @@ TEST_CLASS(BaseControl_Interaction_With_RecreatableDeviceManager)
 
     TEST_METHOD_EX(BaseControl_WhenDeviceIsNewlyCreated_ANewRenderTargetIsCreated)
     {
-        Size anySize{1,2};
-
+        Size anySize{ 1, 2 };
+        
         auto firstDevice = Make<StubCanvasDevice>();
         auto secondDevice = Make<StubCanvasDevice>();
 
@@ -247,6 +243,9 @@ TEST_CLASS(BaseControl_Interaction_With_RecreatableDeviceManager)
                 renderTarget->Target = firstRenderTarget;
             });
 
+        f.Control->ChangedMethod.SetExpectedCalls(1);
+        f.UserControl->Resize(anySize);
+        
         f.Control->CallRunWithRenderTarget(
             [&] (AnyRenderTarget* target, Color const&, bool)
             {

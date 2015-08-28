@@ -142,7 +142,6 @@ TEST_CLASS(CanvasVirtualControlTests)
             });
 
         f.Load(0,0);
-        f.Adapter->TickUiThread();
     }
 
     TEST_METHOD_EX(CanvasVirtualControl_WhenLoaded_ImageSourceIsSetOnImageControl)
@@ -161,7 +160,6 @@ TEST_CLASS(CanvasVirtualControlTests)
             });
 
         f.Load();
-        f.Adapter->TickUiThread();
     }
 
     TEST_METHOD_EX(CanvasVirtualControl_BeforeCreateResourcesCompletes_ControlShowsTheClearColor)
@@ -193,7 +191,6 @@ TEST_CLASS(CanvasVirtualControlTests)
             });
 
         f.Load();
-        f.Adapter->TickUiThread();
 
         imageSource->RaiseRegionsInvalidated(expectedRegions, anyRegion);
     }
@@ -212,7 +209,6 @@ TEST_CLASS(CanvasVirtualControlTests)
         imageSource->InvalidateMethod.SetExpectedCalls(0);
 
         action->SetResult(S_OK);
-        f.Adapter->TickUiThread();
     }
 
     TEST_METHOD_EX(CanvasVirtualControl_WhenCreateResourcesCompletesAfterClearingToClearColor_ImageSourceIsExplicitlyInvalidated)
@@ -221,7 +217,6 @@ TEST_CLASS(CanvasVirtualControlTests)
         auto imageSource = f.ExpectCreateImageSource();
         auto action = f.AddAsyncCreateResources();
         f.Load();
-        f.Adapter->TickUiThread();
 
         imageSource->CreateDrawingSessionMethod.AllowAnyCall(
             [] (Color, Rect, ICanvasDrawingSession** ds) { return Make<MockCanvasDrawingSession>().CopyTo(ds); });
@@ -238,7 +233,6 @@ TEST_CLASS(CanvasVirtualControlTests)
         imageSource->InvalidateMethod.SetExpectedCalls(1);
 
         action->SetResult(S_OK);
-        f.Adapter->TickUiThread();
     }
 
     TEST_METHOD_EX(CanvasVirtualControl_RegionsInvalidatedHandler_FailsWhenPassedBadParameters)
@@ -258,7 +252,6 @@ TEST_CLASS(CanvasVirtualControlTests)
         auto imageSource = f.ExpectCreateImageSource();
 
         f.Load();
-        f.Adapter->TickUiThread();
 
         imageSource->InvalidateMethod.SetExpectedCalls(1);
 
@@ -287,7 +280,6 @@ TEST_CLASS(CanvasVirtualControlTests)
         ThrowIfFailed(f.Control->add_RegionsInvalidated(onRegionsInvalidated.Get(), &token));
 
         f.Load();
-        f.Adapter->TickUiThread();
 
         onRegionsInvalidated.SetExpectedCalls(1,
             [&] (ICanvasVirtualControl* sender, ICanvasRegionsInvalidatedEventArgs* args)
@@ -310,14 +302,12 @@ TEST_CLASS(CanvasVirtualControlTests)
             });
 
         imageSource->RaiseRegionsInvalidated(expectedRegions, expectedVisibleRegion);
-        f.Adapter->TickUiThread();
 
         // Unregistering the event should stop it getting raised
         ThrowIfFailed(f.Control->remove_RegionsInvalidated(token));
         onRegionsInvalidated.SetExpectedCalls(0);
 
         imageSource->RaiseRegionsInvalidated(expectedRegions, expectedVisibleRegion);
-        f.Adapter->TickUiThread();
     }
 
     TEST_METHOD_EX(CanvasVirtualControl_CreateDrawingSession_FailsWhenPassedBadParameters)
@@ -333,7 +323,6 @@ TEST_CLASS(CanvasVirtualControlTests)
         f.ExpectCreateImageSource();
         f.AddAsyncCreateResources();
         f.Load();
-        f.Adapter->TickUiThread();
 
         ComPtr<ICanvasDrawingSession> ds;
 
@@ -360,7 +349,6 @@ TEST_CLASS(CanvasVirtualControlTests)
             });
 
         f.Load();
-        f.Adapter->TickUiThread();
 
         ComPtr<ICanvasDrawingSession> ds;
         Assert::AreEqual(S_OK, f.Control->CreateDrawingSession(anyRegion, &ds));
@@ -378,7 +366,6 @@ TEST_CLASS(CanvasVirtualControlTests)
         Fixture f;
         auto imageSource = f.ExpectCreateImageSource();
         f.Load();
-        f.Adapter->TickUiThread();
 
         imageSource->InvalidateMethod.SetExpectedCalls(1);
         ThrowIfFailed(f.Control->Invalidate());
@@ -389,7 +376,6 @@ TEST_CLASS(CanvasVirtualControlTests)
         Fixture f;
         auto imageSource = f.ExpectCreateImageSource();
         f.Load();
-        f.Adapter->TickUiThread();
 
         imageSource->InvalidateRegionMethod.SetExpectedCalls(1,
             [] (Rect region)
@@ -412,7 +398,6 @@ TEST_CLASS(CanvasVirtualControlTests)
 
         auto imageSource = f.ExpectCreateImageSource();
         f.Load();
-        f.Adapter->TickUiThread();
 
         imageSource->SuspendDrawingSessionMethod.SetExpectedCalls(1,
             [=] (ICanvasDrawingSession* ds)
@@ -435,7 +420,6 @@ TEST_CLASS(CanvasVirtualControlTests)
 
         auto imageSource = f.ExpectCreateImageSource();
         f.Load();
-        f.Adapter->TickUiThread();
 
         imageSource->ResumeDrawingSessionMethod.SetExpectedCalls(1,
             [=] (ICanvasDrawingSession* ds)
@@ -452,11 +436,9 @@ TEST_CLASS(CanvasVirtualControlTests)
         Fixture f;
         auto imageSource = f.ExpectCreateImageSource();
         f.Load();
-        f.Adapter->TickUiThread();
 
         imageSource->InvalidateMethod.SetExpectedCalls(1);
         ThrowIfFailed(f.Control->put_ClearColor(anyColor));
-        f.Adapter->TickUiThread();
     }
 
     TEST_METHOD_EX(CanvasVirtualControl_WhenClearColorChangesWhileWaitingForCreateResource_ImageSourceIsInvalidated)
@@ -465,11 +447,9 @@ TEST_CLASS(CanvasVirtualControlTests)
         f.AddAsyncCreateResources();
         auto imageSource = f.ExpectCreateImageSource();
         f.Load();
-        f.Adapter->TickUiThread();
 
         imageSource->InvalidateMethod.SetExpectedCalls(1);
         ThrowIfFailed(f.Control->put_ClearColor(anyColor));
-        f.Adapter->TickUiThread();
     }
 
     TEST_METHOD_EX(CanvasVirtualControl_WhenDpiChanges_ImageSourceIsRecreatedAndInvalidated)
@@ -482,7 +462,6 @@ TEST_CLASS(CanvasVirtualControlTests)
 
         auto imageSource = f.ExpectCreateImageSource();
         f.Load(expectedWidth, expectedHeight);
-        f.Adapter->TickUiThread();
 
         imageSource->ResizeWithWidthAndHeightAndDpiMethod.SetExpectedCalls(1,
             [&] (float w, float h, float dpi)
@@ -497,7 +476,6 @@ TEST_CLASS(CanvasVirtualControlTests)
 
         f.Adapter->LogicalDpi = f.Adapter->LogicalDpi * 2;
         f.Adapter->RaiseDpiChangedEvent();
-        f.Adapter->TickUiThread();
     }
 
     TEST_METHOD_EX(CanvasVirtualControl_WhenResized_ImageSourceIsResized)
@@ -505,7 +483,6 @@ TEST_CLASS(CanvasVirtualControlTests)
         Fixture f;
         auto imageSource = f.ExpectCreateImageSource();
         f.Load();
-        f.Adapter->TickUiThread();
 
         float expectedWidth = 123;
         float expectedHeight = 456;
@@ -521,7 +498,6 @@ TEST_CLASS(CanvasVirtualControlTests)
             });
 
         f.UserControl->Resize(Size{ expectedWidth, expectedHeight });
-        f.Adapter->TickUiThread();
     }
 
     TEST_METHOD_EX(CanvasVirtualControl_WhenWindowIsNotVisible_RegionsInvalidatedIsNotRaised)
@@ -535,13 +511,11 @@ TEST_CLASS(CanvasVirtualControlTests)
         ThrowIfFailed(f.Control->add_RegionsInvalidated(onRegionsInvalidated.Get(), &token));
 
         f.Load();
-        f.Adapter->TickUiThread();
 
         onRegionsInvalidated.SetExpectedCalls(0);
 
         f.Adapter->GetCurrentMockWindow()->SetVisible(false);
         imageSource->RaiseRegionsInvalidated(std::vector<Rect> { anyRegion }, anyRegion);
-        f.Adapter->TickUiThread();
     }
 
     TEST_METHOD_EX(CanvasVirtualControl_WhenWindowBecomesVisible_ForceRegionsInvalidatedIsRaised)
@@ -551,13 +525,11 @@ TEST_CLASS(CanvasVirtualControlTests)
         auto imageSource = f.ExpectCreateImageSource();
 
         f.Load();
-        f.Adapter->TickUiThread();
 
         f.Adapter->GetCurrentMockWindow()->SetVisible(false);
 
         imageSource->RaiseRegionsInvalidatedIfAnyMethod.SetExpectedCalls(1);
         f.Adapter->GetCurrentMockWindow()->SetVisible(true);
-        f.Adapter->TickUiThread();
     }
 
     TEST_METHOD_EX(CanvasVirtualControl_WhenDeviceLostDuringRegionsInvalidated_ImageIsRecreated)
@@ -570,7 +542,6 @@ TEST_CLASS(CanvasVirtualControlTests)
         ThrowIfFailed(f.Control->add_RegionsInvalidated(onRegionsInvalidated.Get(), &token));
 
         f.Load();
-        f.Adapter->TickUiThread();
 
         onRegionsInvalidated.SetExpectedCalls(1,
             [&] (ICanvasVirtualControl*, ICanvasRegionsInvalidatedEventArgs*)
@@ -583,7 +554,7 @@ TEST_CLASS(CanvasVirtualControlTests)
 
         auto replacementImageSource = f.ExpectCreateImageSource();
         f.Adapter->TickUiThread();
-
+        
         // The old image source should have had its events disconnected
         onRegionsInvalidated.SetExpectedCalls(0);
         imageSource->RaiseRegionsInvalidated(std::vector<Rect> { anyRegion }, anyRegion);
@@ -613,7 +584,27 @@ TEST_CLASS(CanvasVirtualControlTests)
                 });
 
             f.Load();
-            f.Adapter->TickUiThread();
         }
+    }
+
+    TEST_METHOD_EX(CanvasVirtualControl_WhenChangedIsCalledOnBackgroundThread_ChangedImplIsDeferred)
+    {
+        Fixture f;
+        auto imageSource = f.ExpectCreateImageSource();
+        f.Load();
+
+        // Call put_ClearColor from a non-UI thread will cause Changed() to be
+        // called.  ChangedImpl will eventually call Invalidate, but not until
+        // we've ticked the UI thread.
+        imageSource->InvalidateMethod.SetExpectedCalls(0);
+
+        f.Adapter->SetHasUIThreadAccess(false);
+        f.Control->put_ClearColor(Color{ 1, 2, 3, 4 });
+
+        // Invalidate is now called when we tick the UI thread.
+        imageSource->InvalidateMethod.SetExpectedCalls(1);
+
+        f.Adapter->SetHasUIThreadAccess(true);
+        f.Adapter->TickUiThread();        
     }
 };

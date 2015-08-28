@@ -164,9 +164,16 @@ void CanvasControl::UnregisterEventHandlers()
     ImageControlMixIn::UnregisterEventHandlers();
 }
 
-CanvasControl::~CanvasControl()
+
+IFACEMETHODIMP CanvasControl::Invalidate()
 {
+    return ExceptionBoundary(
+        [&]
+        {
+            Changed(ChangeReason::Other);
+        });
 }
+
 
 HRESULT CanvasControl::OnCompositionRendering(IInspectable*, IInspectable*)
 {
@@ -176,21 +183,14 @@ HRESULT CanvasControl::OnCompositionRendering(IInspectable*, IInspectable*)
             if (!IsLoaded())
                 return;
 
-            auto lock = GetLock();
+            auto lock = Lock(m_renderingEventMutex);
             m_renderingEventRegistration.Release();
-            DeviceCreationOptions deviceCreationOptions = GetDeviceCreationOptions(lock);
-
-            Color clearColor;
-            Size currentSize;
-            float currentDpi;
-            GetSharedState(lock, &clearColor, &currentSize, &currentDpi);
-            
             lock.unlock();
 
             if (!IsWindowVisible())
                 return;
 
-            RunWithRenderTarget(clearColor, currentSize, currentDpi, deviceCreationOptions,
+            RunWithRenderTarget(
                 [&](CanvasImageSource* target, ICanvasDevice*, Color const& clearColor, bool callDrawHandlers)
                 {
                     if (!target)
@@ -246,13 +246,13 @@ ComPtr<CanvasDrawEventArgs> CanvasControl::CreateDrawEventArgs(ICanvasDrawingSes
     return drawEventArgs;
 }
 
-void CanvasControl::Changed(Lock const& lock, ChangeReason)
+void CanvasControl::Changed(ChangeReason)
 {
-    MustOwnLock(lock);
-
     if (!IsLoaded())
         return;
 
+    auto lock = Lock(m_renderingEventMutex);
+    
     if (m_renderingEventRegistration)
         return;
 
@@ -261,7 +261,7 @@ void CanvasControl::Changed(Lock const& lock, ChangeReason)
     if (!IsWindowVisible())
         return;
 
-    HookCompositionRenderingIfNecessary();
+    HookCompositionRenderingIfNecessary(lock);
 }
 
 void CanvasControl::Loaded()
@@ -283,8 +283,10 @@ void CanvasControl::ApplicationResuming()
 {
 }
 
-void CanvasControl::HookCompositionRenderingIfNecessary()
+void CanvasControl::HookCompositionRenderingIfNecessary(Lock const& renderingEventLock)
 {
+    MustOwnLock(renderingEventLock);
+    
     if (m_renderingEventRegistration)
         return;
 
@@ -298,13 +300,13 @@ void CanvasControl::HookCompositionRenderingIfNecessary()
     m_needToHookCompositionRendering = false;
 }
 
-void CanvasControl::WindowVisibilityChanged(Lock const&)
+void CanvasControl::WindowVisibilityChanged()
 {
-    // Note that this is always called with ownership of the lock.
-
+    auto lock = Lock(m_renderingEventMutex);
+    
     if (IsVisible())
     {
-        HookCompositionRenderingIfNecessary();
+        HookCompositionRenderingIfNecessary(lock);
     }
     else
     {

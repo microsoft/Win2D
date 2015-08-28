@@ -96,26 +96,18 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     {
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_UI_Xaml_CanvasControl, BaseTrust);
 
-        RegisteredEvent m_renderingEventRegistration; // protected by BaseControl's mutex
-        bool m_needToHookCompositionRendering;        // protected by BaseControl's mutex
+        std::mutex m_renderingEventMutex;
+        RegisteredEvent m_renderingEventRegistration; // protected by m_renderingEventMutex
+        bool m_needToHookCompositionRendering;        // protected by m_renderingEventMutex
 
     public:
         CanvasControl(std::shared_ptr<ICanvasControlAdapter> adapter);
-
-        ~CanvasControl();
 
         //
         // ICanvasControl
         //
 
-        IFACEMETHODIMP Invalidate() override
-        {
-            return ExceptionBoundary(
-                [&]
-                {
-                    Changed(GetLock());
-                });
-        }
+        IFACEMETHODIMP Invalidate() override;
 
         //
         // BaseControl
@@ -132,22 +124,20 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             ICanvasDrawingSession* drawingSession,
             bool isRunningSlowly) override final;
 
-        virtual void Changed(Lock const& lock, ChangeReason reason = ChangeReason::Other) override final;
+        virtual void Changed(ChangeReason reason) override final;
         virtual void Loaded() override final;
         virtual void Unloaded() override final;
         virtual void ApplicationSuspending(ISuspendingEventArgs* args) override final;
         virtual void ApplicationResuming() override final;
-        virtual void WindowVisibilityChanged(Lock const&) override final;
+        virtual void WindowVisibilityChanged() override final;
 
     private:
-        void HookCompositionRenderingIfNecessary();
+        void HookCompositionRenderingIfNecessary(Lock const&);
 
         void RegisterEventHandlers();
         void UnregisterEventHandlers();
 
         HRESULT OnCompositionRendering(IInspectable* sender, IInspectable* args);
-
-        void ChangedImpl();
     };
 
 }}}}}}

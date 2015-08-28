@@ -229,8 +229,7 @@ IFACEMETHODIMP CanvasAnimatedControl::put_IsFixedTimeStep(boolean value)
     return ExceptionBoundary(
         [&]
         {
-            auto lock = GetLock();
-
+            auto lock = Lock(m_sharedStateMutex);
             m_sharedState.IsStepTimerFixedStep = !!value;
         });
 }
@@ -242,8 +241,7 @@ IFACEMETHODIMP CanvasAnimatedControl::get_IsFixedTimeStep(boolean* value)
         {
             CheckInPointer(value);
 
-            auto lock = GetLock();
-
+            auto lock = Lock(m_sharedStateMutex);
             *value = m_sharedState.IsStepTimerFixedStep; 
         });
 }
@@ -253,13 +251,12 @@ IFACEMETHODIMP CanvasAnimatedControl::put_TargetElapsedTime(TimeSpan value)
     return ExceptionBoundary(
         [&]
         {
-            auto lock = GetLock();
-
             if (value.Duration <= 0)
             {
                 ThrowHR(E_INVALIDARG, HStringReference(Strings::ExpectedPositiveNonzero).Get());
             }
 
+            auto lock = Lock(m_sharedStateMutex);
             m_sharedState.TargetElapsedTime = value.Duration;
         });
 }
@@ -271,8 +268,7 @@ IFACEMETHODIMP CanvasAnimatedControl::get_TargetElapsedTime(TimeSpan* value)
         {
             CheckInPointer(value);
 
-            auto lock = GetLock();
-
+            auto lock = Lock(m_sharedStateMutex);
             assert(m_sharedState.TargetElapsedTime <= INT64_MAX);
 
             TimeSpan timeSpan = {};
@@ -286,7 +282,7 @@ IFACEMETHODIMP CanvasAnimatedControl::put_Paused(boolean value)
     return ExceptionBoundary(
         [&]
         {
-            auto lock = GetLock();
+            auto lock = Lock(m_sharedStateMutex);
 
             bool oldState = m_sharedState.IsPaused;
             m_sharedState.IsPaused = !!value;
@@ -308,7 +304,8 @@ IFACEMETHODIMP CanvasAnimatedControl::put_Paused(boolean value)
                     m_sharedState.TimeSpentPaused += std::max(0LL, (currentTime - m_sharedState.TimeWhenPausedWasSet));
                     assert(m_sharedState.TimeSpentPaused >= 0);
 
-                    Changed(lock);
+                    lock.unlock();
+                    Changed(ChangeReason::Other);
                 }
                 else
                 {
@@ -325,8 +322,7 @@ IFACEMETHODIMP CanvasAnimatedControl::get_Paused(boolean* value)
         {
             CheckInPointer(value);
 
-            auto lock = GetLock();
-
+            auto lock = Lock(m_sharedStateMutex);
             *value = m_sharedState.IsPaused;
         });
 }
@@ -336,15 +332,17 @@ IFACEMETHODIMP CanvasAnimatedControl::Invalidate()
     return ExceptionBoundary(
         [&]
         {
-            auto lock = GetLock();
+            auto lock = Lock(m_sharedStateMutex);
 
             auto wasInvalidated = m_sharedState.Invalidated;
             
             m_sharedState.Invalidated = true;
 
+            lock.unlock();
+
             if (!wasInvalidated)
             {
-                Changed(lock);
+                Changed(ChangeReason::Other);
             }
         });
 }
@@ -354,7 +352,7 @@ IFACEMETHODIMP CanvasAnimatedControl::ResetElapsedTime()
     return ExceptionBoundary(
         [&]
         {
-            auto lock = GetLock();
+            auto lock = Lock(m_sharedStateMutex);
 
             m_sharedState.ShouldResetElapsedTime = true;
         });
@@ -421,7 +419,7 @@ IFACEMETHODIMP CanvasAnimatedControl::RunOnGameLoopThreadAsync(
             CheckInPointer(callback);
             CheckAndClearOutPointer(asyncAction);
 
-            auto lock = GetLock();
+            auto lock = Lock(m_sharedStateMutex);
 
             auto newAsyncAction = Make<AnimatedControlAsyncAction>(callback);
             CheckMakeResult(newAsyncAction);
@@ -458,7 +456,8 @@ IFACEMETHODIMP CanvasAnimatedControl::RunOnGameLoopThreadAsync(
             // loop, otherwise we won't get around to running the callback.
             if (m_sharedState.IsPaused)
             {
-                Changed(lock);
+                lock.unlock();
+                Changed(ChangeReason::Other);
             }
         });
 }
@@ -559,15 +558,15 @@ void CanvasAnimatedControl::ApplicationSuspending(ISuspendingEventArgs* args)
     //     deferral altogether, but deferring that decision to the existing mechanisms
     //     inside Changed allows sharing a single suspend codepath for all possible states.
     //
-    Changed(GetLock());
+    Changed(ChangeReason::Other);
 }
 
 void CanvasAnimatedControl::ApplicationResuming()
 {
-    Changed(GetLock());
+    Changed(ChangeReason::Other);
 }
 
-void CanvasAnimatedControl::WindowVisibilityChanged(Lock const&)
+void CanvasAnimatedControl::WindowVisibilityChanged()
 {
     //
     // Note that we don't stop the game loop thread here, because
@@ -575,19 +574,19 @@ void CanvasAnimatedControl::WindowVisibilityChanged(Lock const&)
     //
 }
 
-void CanvasAnimatedControl::Changed(Lock const& lock, ChangeReason reason)
+void CanvasAnimatedControl::Changed(ChangeReason reason)
 {
     //
     // This may be called from any thread.
     //
-
-    MustOwnLock(lock);
 
     //
     // Early out if we are in an inactive state where there is no possible work to be done.
     //
     if (!IsLoaded() && !m_suspendingDeferral)
         return;
+
+    auto lock = Lock(m_sharedStateMutex);
 
     switch (reason)
     {
@@ -653,18 +652,12 @@ void CanvasAnimatedControl::ChangedImpl()
     // This method, as an action, is always run on the UI thread.
     //
 
-    auto lock = GetLock();
+    auto lock = Lock(m_sharedStateMutex);
 
     bool needsDraw = m_sharedState.NeedsDraw || m_sharedState.Invalidated;
     bool isPaused = m_sharedState.IsPaused;
     bool hasPendingActions = !m_sharedState.PendingAsyncActions.empty();
-    DeviceCreationOptions deviceCreationOptions = GetDeviceCreationOptions(lock);
 
-    Color clearColor;
-    Size currentSize;
-    float currentDpi;
-    GetSharedState(lock, &clearColor, &currentSize, &currentDpi);
-    
     lock.unlock();
 
     //
@@ -765,7 +758,7 @@ void CanvasAnimatedControl::ChangedImpl()
     //
     // Try and start the update/render thread
     //
-    RunWithRenderTarget(clearColor, currentSize, currentDpi, deviceCreationOptions,
+    RunWithRenderTarget(
         [&] (CanvasSwapChain* target, ICanvasDevice*, Color const& clearColor, bool areResourcesCreated)
         {
             // The clearColor passed to us is ignored since this needs to be
@@ -853,7 +846,7 @@ void CanvasAnimatedControl::IssueAsyncActions(
         //
         if (FAILED(actionsResult))
         {
-            auto lock = GetLock();
+            auto lock = Lock(m_sharedStateMutex);
 
             m_sharedState.PendingAsyncActions.insert(m_sharedState.PendingAsyncActions.begin(), actionIter+1, pendingActions.end());
 
@@ -868,7 +861,7 @@ void CanvasAnimatedControl::CancelAsyncActions()
 {
     std::vector<ComPtr<AnimatedControlAsyncAction>> actions;
 
-    auto lock = GetLock();
+    auto lock = Lock(m_sharedStateMutex);
     std::swap(actions, m_sharedState.PendingAsyncActions);
     lock.unlock();
 
@@ -934,19 +927,24 @@ bool CanvasAnimatedControl::Tick(
         GetAdapter()->Sleep(static_cast<DWORD>(StepTimer::TicksToMilliseconds(StepTimer::DefaultTargetElapsedTime)));
     }
 
+    if (IsSuspended())
+        return false;
+
+    if (!IsLoaded())
+        return false;
+
     //
     // Access shared state that's shared between the UI thread and the
     // update/render thread.  This is done in one place in order to hold the
     // lock for as little time as possible.
     //
 
-    auto lock = GetLock();
+    Color clearColor;
+    Size currentSize;
+    float currentDpi;
+    GetClearColorSizeAndDpi(&clearColor, &currentSize, &currentDpi);
 
-    if (IsSuspended())
-        return false;
-
-    if (!IsLoaded())
-        return false;
+    auto lock = Lock(m_sharedStateMutex);
 
     m_stepTimer.SetTargetElapsedTicks(m_sharedState.TargetElapsedTime);
     m_stepTimer.SetFixedTimeStep(m_sharedState.IsStepTimerFixedStep);
@@ -959,11 +957,6 @@ bool CanvasAnimatedControl::Tick(
     bool deviceNeedsReCreationWithNewOptions = m_sharedState.DeviceNeedsReCreationWithNewOptions;
     m_sharedState.DeviceNeedsReCreationWithNewOptions = false;
     m_sharedState.ShouldResetElapsedTime = false;
-
-    Color clearColor;
-    Size currentSize;
-    float currentDpi;
-    GetSharedState(lock, &clearColor, &currentSize, &currentDpi);
 
     // If the opacity has changed then the swap chain will need to be
     // recreated before we can draw.
@@ -1047,7 +1040,7 @@ bool CanvasAnimatedControl::Tick(
         // we want to respond immediately.
         if (!invalidated)
         {
-            auto lock2 = GetLock();
+            lock = Lock(m_sharedStateMutex);
             
             invalidated = m_sharedState.Invalidated;
             if (areResourcesCreated)
@@ -1151,7 +1144,7 @@ bool CanvasAnimatedControl::Tick(
 
 void CanvasAnimatedControl::OnTickLoopEnded()
 {
-    Changed(GetLock());
+    Changed(ChangeReason::Other);
 }
 
 CanvasAnimatedControl::UpdateResult CanvasAnimatedControl::Update(bool forceUpdate, int64_t timeSpentPaused)

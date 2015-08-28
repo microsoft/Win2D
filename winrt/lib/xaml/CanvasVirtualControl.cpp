@@ -143,7 +143,7 @@ IFACEMETHODIMP CanvasVirtualControl::CreateDrawingSession(Rect updateRectangle, 
                 ThrowHR(E_FAIL, HStringReference(Strings::CreateDrawingSessionCalledBeforeRegionsInvalidated).Get());
             }
 
-            auto clearColor = GetClearColor(GetLock());
+            auto clearColor = GetClearColor();
             ThrowIfFailed(imageSource->CreateDrawingSession(clearColor, updateRectangle, drawingSession));
         });
 }
@@ -265,7 +265,7 @@ void CanvasVirtualControl::CreateOrUpdateRenderTarget(
 }
 
 
-void CanvasVirtualControl::Changed(Lock const&, ChangeReason reason)
+void CanvasVirtualControl::Changed(ChangeReason reason)
 {
     if (!IsLoaded())
         return;
@@ -355,16 +355,7 @@ void CanvasVirtualControl::ChangedImpl(ChangeReason reason)
     if (!IsVisible())
         return;
 
-    auto lock = GetLock();
-    DeviceCreationOptions deviceCreationOptions = GetDeviceCreationOptions(lock);
-    
-    Color clearColor;
-    Size currentSize;
-    float currentDpi;
-    GetSharedState(lock, &clearColor, &currentSize, &currentDpi);
-    lock.unlock();
-
-    RunWithRenderTarget(clearColor, currentSize, currentDpi, deviceCreationOptions,
+    RunWithRenderTarget(
         [&] (ICanvasVirtualImageSource* imageSource, ICanvasDevice*, Color const&, bool areResourcesCreated)
         {
             if (!imageSource)
@@ -417,48 +408,15 @@ void CanvasVirtualControl::ApplicationResuming()
 }
 
 
-void CanvasVirtualControl::WindowVisibilityChanged(Lock const&)
+void CanvasVirtualControl::WindowVisibilityChanged()
 {
     if (IsVisible())
     {
-        //
-        // TODO #5529: ideally we'd be able to call CheckForRegionsInvalidated
-        // directly.  However, this may cause callbacks and we don't want that
-        // to happen while the lock is held, so we run this through the
-        // dispatcher.
-        //
-        ComPtr<ICoreDispatcher> dispatcher;
-        ThrowIfFailed(GetWindow()->get_Dispatcher(&dispatcher));
-
-        if (!dispatcher)
+        auto imageSource = GetCurrentRenderTarget()->Target;
+        if (imageSource)
         {
-            // There's no dispatcher but get_Dispatcher didn't fail means that we're
-            // in the designer.
-            return;
+            ThrowIfFailed(imageSource->RaiseRegionsInvalidatedIfAny());
         }
-        
-        WeakRef weakSelf = AsWeak(this);
-        auto callback = Callback<AddFtmBase<IDispatchedHandler>::Type>(
-            [weakSelf] () mutable
-            {
-                return ExceptionBoundary(
-                    [&]
-                    {
-                        auto strongSelf = LockWeakRef<ICanvasVirtualControl>(weakSelf);
-                        auto self = static_cast<CanvasVirtualControl*>(strongSelf.Get());
-
-                        if (self)
-                        {
-                            auto imageSource = self->GetCurrentRenderTarget()->Target;
-                            if (imageSource)
-                            {
-                                ThrowIfFailed(imageSource->RaiseRegionsInvalidatedIfAny());
-                            }
-                        }
-                    });
-            });
-        ComPtr<IAsyncAction> asyncAction;
-        ThrowIfFailed(dispatcher->RunAsync(CoreDispatcherPriority_Normal, callback.Get(), &asyncAction));
     }
 }
 
@@ -474,16 +432,8 @@ void CanvasVirtualControl::OnRegionsInvalidatedImpl(ICanvasVirtualImageSource*, 
     if (!IsWindowVisible())
         return;
     
-    auto lock = GetLock();
-    DeviceCreationOptions deviceCreationOptions = GetDeviceCreationOptions(lock);
-    Color clearColor;
-    Size ignoredCurrentSize;
-    float ignoredCurrentDpi;
-    GetSharedState(lock, &clearColor, &ignoredCurrentSize, &ignoredCurrentDpi);
-    lock.unlock();
-
-    RunWithCurrentRenderTarget(deviceCreationOptions,
-        [=] (ICanvasVirtualImageSource* imageSource, bool areResourcesCreated)
+    RunWithCurrentRenderTarget(
+        [=] (ICanvasVirtualImageSource* imageSource, Color const& clearColor, bool areResourcesCreated)
         {
             if (!areResourcesCreated)
             {
