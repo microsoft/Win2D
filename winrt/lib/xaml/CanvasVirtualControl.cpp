@@ -310,14 +310,6 @@ void CanvasVirtualControl::Changed(ChangeReason reason)
         deferCallingChangedImpl = !hasThreadAccess;
     }
 
-    // TODO #5529: ideally, we'd be able to call ChangedImpl immediately in some
-    // cases.  However, this is problematic since Changed() is called while the
-    // lock is held.  This means that we cannot safely raise any events from
-    // inside Changed() since they may call back into the control and attempt to
-    // take the lock out again.  For now, we'll always call ChangedImpl()
-    // through the dispatcher.
-    deferCallingChangedImpl = true;
-    
     if (!deferCallingChangedImpl)
     {
         ChangedImpl(reason);
