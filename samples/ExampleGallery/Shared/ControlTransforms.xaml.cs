@@ -45,8 +45,21 @@ namespace ExampleGallery
         {
             Draw(args.DrawingSession, "Canvas\nAnimated\nControl", sender.Size);
         }
-        
-        
+
+
+        // Draw to the CanvasVirtualControl
+        void virtualControl_RegionsInvalidated(CanvasVirtualControl sender, CanvasRegionsInvalidatedEventArgs args)
+        {
+            foreach (var region in args.InvalidatedRegions)
+            {
+                using (var ds = sender.CreateDrawingSession(region))
+                {
+                    Draw(ds, "Canvas\nVirtual\nControl", sender.Size);
+                }
+            }
+        }
+
+
         // Draw to the CanvasImageSource.
         void DrawToImageSource(Size size)
         {
@@ -146,6 +159,12 @@ namespace ExampleGallery
 
                 DrawToSwapChain(e.NewSize);
             }
+        }
+
+
+        private void virtualControl_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            virtualControl.Invalidate();
         }
 
 

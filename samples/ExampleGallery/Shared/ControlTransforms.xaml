@@ -71,6 +71,19 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
                     <ScaleTransform CenterX="48" CenterY="48"/>
                 </canvas:CanvasSwapChainPanel.RenderTransform>
             </canvas:CanvasSwapChainPanel>
+
+            <canvas:CanvasVirtualControl x:Name="virtualControl"
+                                         Grid.Column="0" Grid.Row="0"
+                                         Grid.ColumnSpan="2"
+                                         Grid.RowSpan="2"
+                                         Width="96" Height="96"
+                                         SizeChanged="virtualControl_SizeChanged"
+                                         RegionsInvalidated="virtualControl_RegionsInvalidated">
+                <canvas:CanvasVirtualControl.RenderTransform>
+                    <ScaleTransform CenterX="48" CenterY="48"/>
+                </canvas:CanvasVirtualControl.RenderTransform>
+            </canvas:CanvasVirtualControl>
+                                         
         </Grid>
 
         <StackPanel Orientation="Vertical" Margin="5">
@@ -90,6 +103,8 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
             <DoubleAnimation From="0" To="2" Storyboard.TargetName="imageControl"    Storyboard.TargetProperty="(RenderTransform).(ScaleTransform.ScaleY)"/>
             <DoubleAnimation From="0" To="2" Storyboard.TargetName="swapChainPanel"  Storyboard.TargetProperty="(RenderTransform).(ScaleTransform.ScaleX)"/>
             <DoubleAnimation From="0" To="2" Storyboard.TargetName="swapChainPanel"  Storyboard.TargetProperty="(RenderTransform).(ScaleTransform.ScaleY)"/>
+            <DoubleAnimation From="0" To="2" Storyboard.TargetName="virtualControl"  Storyboard.TargetProperty="(RenderTransform).(ScaleTransform.ScaleX)"/>
+            <DoubleAnimation From="0" To="2" Storyboard.TargetName="virtualControl"  Storyboard.TargetProperty="(RenderTransform).(ScaleTransform.ScaleY)"/>
         </Storyboard>
 
         <Storyboard x:Name="sizeAnimation">
@@ -101,6 +116,8 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
             <DoubleAnimation From="0" To="192" Storyboard.TargetName="imageControl"    Storyboard.TargetProperty="Height" EnableDependentAnimation="True"/>
             <DoubleAnimation From="0" To="192" Storyboard.TargetName="swapChainPanel"  Storyboard.TargetProperty="Width"  EnableDependentAnimation="True"/>
             <DoubleAnimation From="0" To="192" Storyboard.TargetName="swapChainPanel"  Storyboard.TargetProperty="Height" EnableDependentAnimation="True"/>
+            <DoubleAnimation From="0" To="192" Storyboard.TargetName="virtualControl"  Storyboard.TargetProperty="Width"  EnableDependentAnimation="True"/>
+            <DoubleAnimation From="0" To="192" Storyboard.TargetName="virtualControl"  Storyboard.TargetProperty="Height" EnableDependentAnimation="True"/>
         </Storyboard>
     </UserControl.Resources>
 </UserControl>
