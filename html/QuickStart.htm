@@ -45,21 +45,22 @@
             Before you add the control, you first have to tell XAML where <span class="code">CanvasControl</span> is defined.
             To do this, go to the definition of the <span class="code">Page</span> element, and add this statement:
             <span class="code">xmlns:canvas="using:Microsoft.Graphics.Canvas.UI.Xaml"</span>. Your XAML should now look like this:
-          </p><div class="codeSnippetContainer"><div class="codeSnippetContainerTabs"><div id="ID0EAAACAFAAA_tab1" class="codeSnippetContainerTabSingle">XAML</div></div><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID0EAAACAFAAA_copyCode" href="#" onclick="javascript:CopyToClipboard('ID0EAAACAFAAA');return false;" title="Copy">Copy</a></div></div><div id="ID0EAAACAFAAA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve"><span class="highlight-xml-bracket">&lt;</span><span class="highlight-xml-tag">Page</span>
+          </p><div class="codeSnippetContainer"><div class="codeSnippetContainerTabs"><div id="ID0EAAACAGAAA_tab1" class="codeSnippetContainerTabSingle">XAML</div></div><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID0EAAACAGAAA_copyCode" href="#" onclick="javascript:CopyToClipboard('ID0EAAACAGAAA');return false;" title="Copy">Copy</a></div></div><div id="ID0EAAACAGAAA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve"><span class="highlight-xml-bracket">&lt;</span><span class="highlight-xml-tag">Page</span>
     ...
     <span class="highlight-xml-attribute-name">xmlns:mc</span><span class="highlight-xml-attribute-equal">=</span><span class="highlight-xml-attribute-value">"http://schemas.openxmlformats.org/markup-compatibility/2006"</span>
     <span class="highlight-xml-attribute-name">xmlns:canvas</span><span class="highlight-xml-attribute-equal">=</span><span class="highlight-xml-attribute-value">"using:Microsoft.Graphics.Canvas.UI.Xaml"</span>
-    <span class="highlight-xml-attribute-name">mc:Ignorable</span><span class="highlight-xml-attribute-equal">=</span><span class="highlight-xml-attribute-value">"d"</span><span class="highlight-xml-bracket">&gt;</span></pre></div></div></div><script type="text/javascript">AddLanguageTabSet("ID0EAAACAFAAA");</script></li><li><p>
-            Now, add a new <span class="code">canvas:CanvasControl</span> as a child element to the root <span class="code">Grid</span> element.
+    <span class="highlight-xml-attribute-name">mc:Ignorable</span><span class="highlight-xml-attribute-equal">=</span><span class="highlight-xml-attribute-value">"d"</span><span class="highlight-xml-bracket">&gt;</span></pre></div></div></div><script type="text/javascript">AddLanguageTabSet("ID0EAAACAGAAA");</script></li><li><p>
+            Now, add a new <span class="code">canvas:CanvasControl</span> as a child element to the root
+            <span class="code">Grid</span> element. Give the control a name, e.g. "canvas".
             Your XAML should now look like this:
-          </p><div class="codeSnippetContainer"><div class="codeSnippetContainerTabs"><div id="ID0EAAABAFAAA_tab1" class="codeSnippetContainerTabSingle">XAML</div></div><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID0EAAABAFAAA_copyCode" href="#" onclick="javascript:CopyToClipboard('ID0EAAABAFAAA');return false;" title="Copy">Copy</a></div></div><div id="ID0EAAABAFAAA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve"><span class="highlight-xml-bracket">&lt;</span><span class="highlight-xml-tag">Grid</span> <span class="highlight-xml-attribute-name">Background</span><span class="highlight-xml-attribute-equal">=</span><span class="highlight-xml-attribute-value">"{ThemeResource ApplicationPageBackgroundThemeBrush}"</span><span class="highlight-xml-bracket">&gt;</span>
-    <span class="highlight-xml-bracket">&lt;</span><span class="highlight-xml-tag">canvas:CanvasControl</span> <span class="highlight-xml-bracket">/&gt;</span>
-<span class="highlight-xml-bracket">&lt;/</span><span class="highlight-xml-tag">Grid</span><span class="highlight-xml-bracket">&gt;</span></pre></div></div></div><script type="text/javascript">AddLanguageTabSet("ID0EAAABAFAAA");</script></li><li><p>
+          </p><div class="codeSnippetContainer"><div class="codeSnippetContainerTabs"><div id="ID0EAAABAGAAA_tab1" class="codeSnippetContainerTabSingle">XAML</div></div><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID0EAAABAGAAA_copyCode" href="#" onclick="javascript:CopyToClipboard('ID0EAAABAGAAA');return false;" title="Copy">Copy</a></div></div><div id="ID0EAAABAGAAA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve"><span class="highlight-xml-bracket">&lt;</span><span class="highlight-xml-tag">Grid</span> <span class="highlight-xml-attribute-name">Background</span><span class="highlight-xml-attribute-equal">=</span><span class="highlight-xml-attribute-value">"{ThemeResource ApplicationPageBackgroundThemeBrush}"</span><span class="highlight-xml-bracket">&gt;</span>
+    <span class="highlight-xml-bracket">&lt;</span><span class="highlight-xml-tag">canvas:CanvasControl</span> <span class="highlight-xml-attribute-name">x:Name</span><span class="highlight-xml-attribute-equal">=</span><span class="highlight-xml-attribute-value">"canvas"</span><span class="highlight-xml-bracket">/&gt;</span>
+<span class="highlight-xml-bracket">&lt;/</span><span class="highlight-xml-tag">Grid</span><span class="highlight-xml-bracket">&gt;</span></pre></div></div></div><script type="text/javascript">AddLanguageTabSet("ID0EAAABAGAAA");</script></li><li><p>
             Next, define an event handler for the <a href="E_Microsoft_Graphics_Canvas_UI_Xaml_CanvasControl_Draw.htm">Draw</a>
             event. <span class="code">CanvasControl</span> raises <span class="code">Draw</span> whenever your app needs to draw or redraw its content.
             The easiest way is to let Visual Studio AutoComplete assist you. In the <span class="code">CanvasControl</span> definition, begin typing
             a new attribute for the <span class="code">Draw</span> event handler:
-          </p><div class="codeSnippetContainer"><div class="codeSnippetContainerTabs"><div id="ID0EABAAAFAAA_tab1" class="codeSnippetContainerTabSingle">XAML</div></div><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID0EABAAAFAAA_copyCode" href="#" onclick="javascript:CopyToClipboard('ID0EABAAAFAAA');return false;" title="Copy">Copy</a></div></div><div id="ID0EABAAAFAAA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve"><span class="highlight-xml-bracket">&lt;</span><span class="highlight-xml-tag">canvas:CanvasControl</span> <span class="highlight-xml-attribute-name">Draw</span><span class="highlight-xml-attribute-equal">=</span><span class="highlight-xml-attribute-value">"CanvasControl_Draw"</span> <span class="highlight-xml-bracket">/&gt;</span></pre></div></div></div><script type="text/javascript">AddLanguageTabSet("ID0EABAAAFAAA");</script><p>
+          </p><div class="codeSnippetContainer"><div class="codeSnippetContainerTabs"><div id="ID0EABAAAGAAA_tab1" class="codeSnippetContainerTabSingle">XAML</div></div><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID0EABAAAGAAA_copyCode" href="#" onclick="javascript:CopyToClipboard('ID0EABAAAGAAA');return false;" title="Copy">Copy</a></div></div><div id="ID0EABAAAGAAA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve"><span class="highlight-xml-bracket">&lt;</span><span class="highlight-xml-tag">canvas:CanvasControl</span> <span class="highlight-xml-attribute-name">x:Name</span><span class="highlight-xml-attribute-equal">=</span><span class="highlight-xml-attribute-value">"canvas"</span> <span class="highlight-xml-attribute-name">Draw</span><span class="highlight-xml-attribute-equal">=</span><span class="highlight-xml-attribute-value">"canvas_Draw"</span> <span class="highlight-xml-bracket">/&gt;</span></pre></div></div></div><script type="text/javascript">AddLanguageTabSet("ID0EABAAAGAAA");</script><p>
             Once you have entered in <span class="code">Draw="</span>, Visual Studio should pop up a box prompting you to let it automatically
             fill out the right definition for the event handler. Press <strong>TAB</strong> to accept Visual Studio's default event handler. 
             This will also automatically add a correctly formatted event handler method in your code behind (<strong>MainPage.xaml.cs</strong>).
@@ -68,15 +69,15 @@
           Now, let's go to the C# code behind. Open <strong>MainPage.xaml.cs</strong> from <strong>Solution Explorer</strong>.
         </p></li><li><p>
             At the top of the C# file are various namespace definitions. Add the following namespaces:
-          </p><div class="codeSnippetContainer"><div class="codeSnippetContainerTabs"><div id="ID0EAAADAEAAA_tab1" class="codeSnippetContainerTabSingle">C#</div></div><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID0EAAADAEAAA_copyCode" href="#" onclick="javascript:CopyToClipboard('ID0EAAADAEAAA');return false;" title="Copy">Copy</a></div></div><div id="ID0EAAADAEAAA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve"><span class="highlight-keyword">using</span> Windows.UI;
+          </p><div class="codeSnippetContainer"><div class="codeSnippetContainerTabs"><div id="ID0EAAADAFAAA_tab1" class="codeSnippetContainerTabSingle">C#</div></div><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID0EAAADAFAAA_copyCode" href="#" onclick="javascript:CopyToClipboard('ID0EAAADAFAAA');return false;" title="Copy">Copy</a></div></div><div id="ID0EAAADAFAAA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve"><span class="highlight-keyword">using</span> Windows.UI;
 <span class="highlight-keyword">using</span> System.Numerics;
 <span class="highlight-keyword">using</span> Microsoft.Graphics.Canvas;
-<span class="highlight-keyword">using</span> Microsoft.Graphics.Canvas.Effects;</pre></div></div></div><script type="text/javascript">AddLanguageTabSet("ID0EAAADAEAAA");</script></li><li><p>
+<span class="highlight-keyword">using</span> Microsoft.Graphics.Canvas.Effects;</pre></div></div></div><script type="text/javascript">AddLanguageTabSet("ID0EAAADAFAAA");</script></li><li><p>
             Next, you should see the following blank event handler which was inserted by AutoComplete: 
-          </p><div class="codeSnippetContainer"><div class="codeSnippetContainerTabs"><div id="ID0EABACAEAAA_tab1" class="codeSnippetContainerTabSingle">C#</div></div><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID0EABACAEAAA_copyCode" href="#" onclick="javascript:CopyToClipboard('ID0EABACAEAAA');return false;" title="Copy">Copy</a></div></div><div id="ID0EABACAEAAA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve"><span class="highlight-keyword">private</span> <span class="highlight-keyword">void</span> CanvasControl_Draw(
+          </p><div class="codeSnippetContainer"><div class="codeSnippetContainerTabs"><div id="ID0EABACAFAAA_tab1" class="codeSnippetContainerTabSingle">C#</div></div><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID0EABACAFAAA_copyCode" href="#" onclick="javascript:CopyToClipboard('ID0EABACAFAAA');return false;" title="Copy">Copy</a></div></div><div id="ID0EABACAFAAA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve"><span class="highlight-keyword">private</span> <span class="highlight-keyword">void</span> canvas_Draw(
     Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl sender,
     Microsoft.Graphics.Canvas.UI.Xaml.CanvasDrawEventArgs args)
-{}</pre></div></div></div><script type="text/javascript">AddLanguageTabSet("ID0EABACAEAAA");</script><p>
+{}</pre></div></div></div><script type="text/javascript">AddLanguageTabSet("ID0EABACAFAAA");</script><p>
             (If you didn't use AutoComplete in the previous step, add this code now.)
           </p></li><li><p>
             The <a href="T_Microsoft_Graphics_Canvas_UI_Xaml_CanvasDrawEventArgs.htm">CanvasDrawEventArgs</a> parameter exposes a member,
@@ -88,16 +89,47 @@
             and the method you need to draw text,
             <a href="Overload_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawText.htm">CanvasDrawingSession<span id="LST62128777_2"></span><script type="text/javascript">AddLanguageSpecificTextSet("LST62128777_2?cs=.|vb=.|cpp=::|nu=.|fs=.");</script>DrawText</a>.
           </p><p>
-            Add the following code to the <span class="code">CanvasControl_Draw</span> method:
-          </p><div class="codeSnippetContainer"><div class="codeSnippetContainerTabs"><div id="ID0EABABAEAAA_tab1" class="codeSnippetContainerTabSingle">C#</div></div><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID0EABABAEAAA_copyCode" href="#" onclick="javascript:CopyToClipboard('ID0EABABAEAAA');return false;" title="Copy">Copy</a></div></div><div id="ID0EABABAEAAA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve">args.DrawingSession.DrawText(<span class="highlight-literal">"Hello, World!"</span>, <span class="highlight-number">100</span>, <span class="highlight-number">100</span>, Colors.Black);</pre></div></div></div><script type="text/javascript">AddLanguageTabSet("ID0EABABAEAAA");</script><p>
+            Add the following code to the <span class="code">canvas_Draw</span> method:
+          </p><div class="codeSnippetContainer"><div class="codeSnippetContainerTabs"><div id="ID0EABABAFAAA_tab1" class="codeSnippetContainerTabSingle">C#</div></div><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID0EABABAFAAA_copyCode" href="#" onclick="javascript:CopyToClipboard('ID0EABABAFAAA');return false;" title="Copy">Copy</a></div></div><div id="ID0EABABAFAAA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve">args.DrawingSession.DrawText(<span class="highlight-literal">"Hello, World!"</span>, <span class="highlight-number">100</span>, <span class="highlight-number">100</span>, Colors.Black);</pre></div></div></div><script type="text/javascript">AddLanguageTabSet("ID0EABABAFAAA");</script><p>
             The first argument, "<strong>Hello, World!</strong>", is the string that you want Win2D to display. The two
             "<strong>100</strong>"s tell Win2D to offset this text by 100 DIPs (device-independent pixels) to the right and down.
             Finally, "<strong>Colors.Black</strong>" defines the color of the text.
           </p></li><li><p>
           Now you are ready to run your first Win2D app. Press the <strong>F5</strong> key to compile and launch. You should see
           an empty window with "Hello, world!" in black.
+        </p></li></ol></div><h3 class="procedureSubHeading">Correctly dispose of Win2D resources</h3><div class="subSection"><ol><li><p>
+            Before continuing on to draw other kinds of content, you first should add some code to
+            ensure your app avoids memory leaks. Most Win2D applications written in a .NET language
+            and using a Win2D control like
+            <a href="T_Microsoft_Graphics_Canvas_UI_Xaml_CanvasControl.htm">CanvasControl</a>
+            need to follow the below steps. Strictly speaking, your simple "Hello, world" app is not
+            affected, but this is a good practice to follow in general.
+          </p><p>
+            For more information, see <a href="RefCycles.htm">Avoiding memory leaks</a>.
+          </p></li><li><p>
+          Open <strong>MainPage.xaml</strong> and find the <strong>Page</strong> XAML
+          element that contains your <strong>CanvasControl</strong>. It should be the first
+          element in the file.
+        </p></li><li><p>
+          Add a handler for the <strong>Unloaded</strong> event. Your XAML should look like this:
+          <div class="codeSnippetContainer"><div class="codeSnippetContainerTabs"><div id="ID0EAAAACAEAAA_tab1" class="codeSnippetContainerTabSingle">XAML</div></div><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID0EAAAACAEAAA_copyCode" href="#" onclick="javascript:CopyToClipboard('ID0EAAAACAEAAA');return false;" title="Copy">Copy</a></div></div><div id="ID0EAAAACAEAAA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve"><span class="highlight-xml-bracket">&lt;</span><span class="highlight-xml-tag">Page</span>
+    ...
+    <span class="highlight-xml-attribute-name">xmlns:mc</span><span class="highlight-xml-attribute-equal">=</span><span class="highlight-xml-attribute-value">"http://schemas.openxmlformats.org/markup-compatibility/2006"</span>
+    <span class="highlight-xml-attribute-name">xmlns:canvas</span><span class="highlight-xml-attribute-equal">=</span><span class="highlight-xml-attribute-value">"using:Microsoft.Graphics.Canvas.UI.Xaml"</span>
+    <span class="highlight-xml-attribute-name">mc:Ignorable</span><span class="highlight-xml-attribute-equal">=</span><span class="highlight-xml-attribute-value">"d"</span>
+    <span class="highlight-xml-attribute-name">Unloaded</span><span class="highlight-xml-attribute-equal">=</span><span class="highlight-xml-attribute-value">"Page_Unloaded"</span><span class="highlight-xml-bracket">&gt;</span></pre></div></div></div><script type="text/javascript">AddLanguageTabSet("ID0EAAAACAEAAA");</script></p></li><li><p>
+          Go to <strong>MainPage.xaml.cs</strong> and find the <strong>Page_Unloaded</strong>
+          event handler. Add the following code:
+          <div class="codeSnippetContainer"><div class="codeSnippetContainerTabs"><div id="ID0EAAAABAEAAA_tab1" class="codeSnippetContainerTabSingle">C#</div></div><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID0EAAAABAEAAA_copyCode" href="#" onclick="javascript:CopyToClipboard('ID0EAAAABAEAAA');return false;" title="Copy">Copy</a></div></div><div id="ID0EAAAABAEAAA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve"><span class="highlight-keyword">void</span> Page_Unloaded(<span class="highlight-keyword">object</span> sender, RoutedEventArgs e)
+{
+    <span class="highlight-keyword">this</span>.canvas.RemoveFromVisualTree();
+    <span class="highlight-keyword">this</span>.canvas = <span class="highlight-keyword">null</span>;
+}</pre></div></div></div><script type="text/javascript">AddLanguageTabSet("ID0EAAAABAEAAA");</script></p></li><li><p>
+          If your app contains multiple Win2D controls, then you need to repeat the above steps for each
+          XAML page that contains a Win2D control. Your app currently only has a single
+          <strong>CanvasControl</strong> so you're all done.
         </p></li></ol></div><h3 class="procedureSubHeading">Draw some shapes</h3><div class="subSection"><ol><li><p>
-            It's just as easy to add 2D geometry to your app. Add the following code to the end of <span class="code">CanvasControl_Draw</span>:
+            It's just as easy to add 2D geometry to your app. Add the following code to the end of <span class="code">canvas_Draw</span>:
           </p><div class="codeSnippetContainer"><div class="codeSnippetContainerTabs"><div id="ID0EABABADAAA_tab1" class="codeSnippetContainerTabSingle">C#</div></div><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID0EABABADAAA_copyCode" href="#" onclick="javascript:CopyToClipboard('ID0EABABADAAA');return false;" title="Copy">Copy</a></div></div><div id="ID0EABABADAAA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve">args.DrawingSession.DrawCircle(<span class="highlight-number">125</span>, <span class="highlight-number">125</span>, <span class="highlight-number">100</span>, Colors.Green);
 args.DrawingSession.DrawLine(<span class="highlight-number">0</span>, <span class="highlight-number">0</span>, <span class="highlight-number">50</span>, <span class="highlight-number">200</span>, Colors.Red);</pre></div></div></div><script type="text/javascript">AddLanguageTabSet("ID0EABABADAAA");</script><p>
             The arguments to these two methods are similar to <span class="code">DrawText</span>. A circle is defined by a center point
@@ -136,8 +168,8 @@ args.DrawingSession.DrawLine(<span class="highlight-number">0</span>, <span clas
 {
     <span class="highlight-keyword">return</span> (<span class="highlight-keyword">byte</span>)rnd.Next(<span class="highlight-number">256</span>);
 }</pre></div></div></div><script type="text/javascript">AddLanguageTabSet("ID0EAAADACAAA");</script></li><li><p>
-            Modify your CanvasControl_Draw method to draw using these random parameters:
-          </p><div class="codeSnippetContainer"><div class="codeSnippetContainerTabs"><div id="ID0EACACACAAA_tab1" class="codeSnippetContainerTabSingle">C#</div></div><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID0EACACACAAA_copyCode" href="#" onclick="javascript:CopyToClipboard('ID0EACACACAAA');return false;" title="Copy">Copy</a></div></div><div id="ID0EACACACAAA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve"><span class="highlight-keyword">private</span> <span class="highlight-keyword">void</span> CanvasControl_Draw(
+            Modify your <span class="code">canvas_Draw</span> method to draw using these random parameters:
+          </p><div class="codeSnippetContainer"><div class="codeSnippetContainerTabs"><div id="ID0EACACACAAA_tab1" class="codeSnippetContainerTabSingle">C#</div></div><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID0EACACACAAA_copyCode" href="#" onclick="javascript:CopyToClipboard('ID0EACACACAAA');return false;" title="Copy">Copy</a></div></div><div id="ID0EACACACAAA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve"><span class="highlight-keyword">private</span> <span class="highlight-keyword">void</span> canvas_Draw(
     Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl sender,
     Microsoft.Graphics.Canvas.UI.Xaml.CanvasDrawEventArgs args)
 {
@@ -154,7 +186,7 @@ args.DrawingSession.DrawLine(<span class="highlight-number">0</span>, <span clas
           </p><p><span class="code">DrawCircle</span> and <span class="code">DrawLine</span> operate similarly to <span class="code">DrawText</span>.
           </p></li><li><p>
             Finally, wrap your drawing code in a <span class="code">for</span> loop. You should end up with the following
-            <span class="code">CanvasControl_Draw</span> code:
+            <span class="code">canvas_Draw</span> code:
           </p><div class="codeSnippetContainer"><div class="codeSnippetContainerTabs"><div id="ID0EAAABACAAA_tab1" class="codeSnippetContainerTabSingle">C#</div></div><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID0EAAABACAAA_copyCode" href="#" onclick="javascript:CopyToClipboard('ID0EAAABACAAA');return false;" title="Copy">Copy</a></div></div><div id="ID0EAAABACAAA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve"><span class="highlight-keyword">for</span> (<span class="highlight-keyword">int</span> i = <span class="highlight-number">0</span>; i &lt; <span class="highlight-number">100</span>; i++)
 {
     args.DrawingSession.DrawText(<span class="highlight-literal">"Hello, World!"</span>, RndPosition(), Color.FromArgb(<span class="highlight-number">255</span>, RndByte(), RndByte(), RndByte()));
@@ -175,7 +207,7 @@ args.DrawingSession.DrawLine(<span class="highlight-number">0</span>, <span clas
             <a href="T_Microsoft_Graphics_Canvas_CanvasCommandList.htm">CanvasCommandList</a>.
             This object is usable as an input to your effect.
           </p></li><li><p>
-            Change your <span class="code">CanvasControl_Draw</span> method to use the following code:
+            Change your <span class="code">canvas_Draw</span> method to use the following code:
           </p><div class="codeSnippetContainer"><div class="codeSnippetContainerTabs"><div id="ID0EACACABAAA_tab1" class="codeSnippetContainerTabSingle">C#</div></div><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID0EACACABAAA_copyCode" href="#" onclick="javascript:CopyToClipboard('ID0EACACABAAA');return false;" title="Copy">Copy</a></div></div><div id="ID0EACACABAAA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve">CanvasCommandList cl = <span class="highlight-keyword">new</span> CanvasCommandList(sender);
 <span class="highlight-keyword">using</span> (CanvasDrawingSession clds = cl.CreateDrawingSession())
 {
@@ -199,7 +231,7 @@ args.DrawingSession.DrawLine(<span class="highlight-number">0</span>, <span clas
             closed for you, but <em>you must dispose any drawing sessions that you explicitly created</em>.
           </p></li><li><p>
             Finally, define the <span class="code">GaussianBlurEffect</span> by adding the following code to the end of the
-            <span class="code">CanvasControl_Draw</span> method:
+            <span class="code">canvas_Draw</span> method:
           </p><div class="codeSnippetContainer"><div class="codeSnippetContainerTabs"><div id="ID0EABABABAAA_tab1" class="codeSnippetContainerTabSingle">C#</div></div><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID0EABABABAAA_copyCode" href="#" onclick="javascript:CopyToClipboard('ID0EABABABAAA');return false;" title="Copy">Copy</a></div></div><div id="ID0EABABABAAA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve">GaussianBlurEffect blur = <span class="highlight-keyword">new</span> GaussianBlurEffect();
 blur.Source = cl;
 blur.BlurAmount = <span class="highlight-number">10.0</span>f;
@@ -221,11 +253,15 @@ args.DrawingSession.DrawImage(blur);</pre></div></div></div><script type="text/j
           </p></li><li><p>
             To switch to <span class="code">CanvasAnimatedControl</span>, go to <strong>MainPage.xaml</strong>, delete the
             <span class="code">CanvasControl</span> line, and replace it with the following XAML: 
-          </p><div class="codeSnippetContainer"><div class="codeSnippetContainerTabs"><div id="ID0EACAEAAAAA_tab1" class="codeSnippetContainerTabSingle">XAML</div></div><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID0EACAEAAAAA_copyCode" href="#" onclick="javascript:CopyToClipboard('ID0EACAEAAAAA');return false;" title="Copy">Copy</a></div></div><div id="ID0EACAEAAAAA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve"><span class="highlight-xml-bracket">&lt;</span><span class="highlight-xml-tag">Grid</span> <span class="highlight-xml-attribute-name">Background</span><span class="highlight-xml-attribute-equal">=</span><span class="highlight-xml-attribute-value">"{ThemeResource ApplicationPageBackgroundThemeBrush}"</span><span class="highlight-xml-bracket">&gt;</span>
-    <span class="highlight-xml-bracket">&lt;</span><span class="highlight-xml-tag">canvas:CanvasAnimatedControl</span> <span class="highlight-xml-attribute-name">Draw</span><span class="highlight-xml-attribute-equal">=</span><span class="highlight-xml-attribute-value">"CanvasAnimatedControl_Draw"</span> <span class="highlight-xml-attribute-name">CreateResources</span><span class="highlight-xml-attribute-equal">=</span><span class="highlight-xml-attribute-value">"CanvasAnimatedControl_CreateResources"</span><span class="highlight-xml-bracket">/&gt;</span>
-<span class="highlight-xml-bracket">&lt;/</span><span class="highlight-xml-tag">Grid</span><span class="highlight-xml-bracket">&gt;</span></pre></div></div></div><script type="text/javascript">AddLanguageTabSet("ID0EACAEAAAAA");</script><p>
-            Just like with <span class="code">CanvasControl</span>, let AutoComplete create the <span class="code">Draw</span> event handler for you.
-            Note that <span class="code">CanvasAnimatedControl_Draw</span> is distinct from <span class="code">CanvasControl_Draw</span>.
+          </p><div class="codeSnippetContainer"><div class="codeSnippetContainerTabs"><div id="ID0EADAEAAAAA_tab1" class="codeSnippetContainerTabSingle">XAML</div></div><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID0EADAEAAAAA_copyCode" href="#" onclick="javascript:CopyToClipboard('ID0EADAEAAAAA');return false;" title="Copy">Copy</a></div></div><div id="ID0EADAEAAAAA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve"><span class="highlight-xml-bracket">&lt;</span><span class="highlight-xml-tag">Grid</span> <span class="highlight-xml-attribute-name">Background</span><span class="highlight-xml-attribute-equal">=</span><span class="highlight-xml-attribute-value">"{ThemeResource ApplicationPageBackgroundThemeBrush}"</span><span class="highlight-xml-bracket">&gt;</span>
+    <span class="highlight-xml-bracket">&lt;</span><span class="highlight-xml-tag">canvas:CanvasAnimatedControl</span> <span class="highlight-xml-attribute-name">x:Name</span><span class="highlight-xml-attribute-equal">=</span><span class="highlight-xml-attribute-value">"canvas"</span> <span class="highlight-xml-attribute-name">Draw</span><span class="highlight-xml-attribute-equal">=</span><span class="highlight-xml-attribute-value">"canvas_DrawAnimated"</span> <span class="highlight-xml-attribute-name">CreateResources</span><span class="highlight-xml-attribute-equal">=</span><span class="highlight-xml-attribute-value">"canvas_CreateResources"</span><span class="highlight-xml-bracket">/&gt;</span>
+<span class="highlight-xml-bracket">&lt;/</span><span class="highlight-xml-tag">Grid</span><span class="highlight-xml-bracket">&gt;</span></pre></div></div></div><script type="text/javascript">AddLanguageTabSet("ID0EADAEAAAAA");</script><p>
+            Just like with <span class="code">CanvasControl</span>, let AutoComplete create the
+            <span class="code">Draw</span> event handler for you. By default, Visual Studio will name this
+            handler <span class="code">canvas_Draw_1</span> because <span class="code">canvas_Draw</span>
+            already exists; here, we've renamed the method <span class="code">canvas_AnimatedDraw</span> to
+            make it clear that this is a different event.
+          </p><p>
             In addition, you are also handling a new event,
             <a href="E_Microsoft_Graphics_Canvas_UI_Xaml_CanvasAnimatedControl_CreateResources.htm">CreateResources</a>.
             Once again, let AutoComplete create the handler.
@@ -235,9 +271,9 @@ args.DrawingSession.DrawImage(blur);</pre></div></div></div><script type="text/j
             per second when the content remains static. <span class="code">CreateResources</span> is an event that is fired only when Win2D
             determines you need to recreate your visual resources, such as when the page is loaded.
           </p></li><li><p>
-            Switch back to <strong>MainPage.xaml.cs</strong>. Find your <span class="code">CanvasControl_Draw</span> method which should look
+            Switch back to <strong>MainPage.xaml.cs</strong>. Find your <span class="code">canvas_Draw</span> method which should look
             like this:
-          </p><div class="codeSnippetContainer"><div class="codeSnippetContainerTabs"><div id="ID0EACADAAAAA_tab1" class="codeSnippetContainerTabSingle">C#</div></div><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID0EACADAAAAA_copyCode" href="#" onclick="javascript:CopyToClipboard('ID0EACADAAAAA');return false;" title="Copy">Copy</a></div></div><div id="ID0EACADAAAAA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve"><span class="highlight-keyword">private</span> <span class="highlight-keyword">void</span> CanvasControl_Draw(
+          </p><div class="codeSnippetContainer"><div class="codeSnippetContainerTabs"><div id="ID0EACADAAAAA_tab1" class="codeSnippetContainerTabSingle">C#</div></div><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID0EACADAAAAA_copyCode" href="#" onclick="javascript:CopyToClipboard('ID0EACADAAAAA');return false;" title="Copy">Copy</a></div></div><div id="ID0EACADAAAAA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve"><span class="highlight-keyword">private</span> <span class="highlight-keyword">void</span> canvas_Draw(
     Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl sender,
     Microsoft.Graphics.Canvas.UI.Xaml.CanvasDrawEventArgs args)
 {
@@ -261,13 +297,13 @@ args.DrawingSession.DrawImage(blur);</pre></div></div></div><script type="text/j
             lines and circles remains the same with every frame, and the only thing that changes is the blur radius. Therefore, you can move
             this "static" code into <span class="code">CreateResources</span>.
           </p><p>
-            To do this, first cut (<strong>CTRL+X</strong>) the entire contents of <span class="code">CanvasControl_Draw</span>,
+            To do this, first cut (<strong>CTRL+X</strong>) the entire contents of <span class="code">canvas_Draw</span>,
             <em>except</em> for the very last line (<span class="code">args.DrawingSession.DrawImage(blur);</span>).
-            You can now delete the remainder of <span class="code">CanvasControl_Draw</span> as it is no longer needed: recall that
+            You can now delete the remainder of <span class="code">canvas_Draw</span> as it is no longer needed: recall that
             <span class="code">CanvasAnimatedControl</span> has its own distinct <span class="code">Draw</span> event.
           </p></li><li><p>
-            Find the automatically generated <span class="code">CanvasAnimatedControl_CreateResources</span> method:
-          </p><div class="codeSnippetContainer"><div class="codeSnippetContainerTabs"><div id="ID0EACACAAAAA_tab1" class="codeSnippetContainerTabSingle">C#</div></div><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID0EACACAAAAA_copyCode" href="#" onclick="javascript:CopyToClipboard('ID0EACACAAAAA');return false;" title="Copy">Copy</a></div></div><div id="ID0EACACAAAAA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve"><span class="highlight-keyword">private</span> <span class="highlight-keyword">void</span> CanvasAnimatedControl_CreateResources(
+            Find the automatically generated <span class="code">canvas_CreateResources</span> method:
+          </p><div class="codeSnippetContainer"><div class="codeSnippetContainerTabs"><div id="ID0EACACAAAAA_tab1" class="codeSnippetContainerTabSingle">C#</div></div><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID0EACACAAAAA_copyCode" href="#" onclick="javascript:CopyToClipboard('ID0EACACAAAAA');return false;" title="Copy">Copy</a></div></div><div id="ID0EACACAAAAA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve"><span class="highlight-keyword">private</span> <span class="highlight-keyword">void</span> canvas_CreateResources(
     Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl sender, 
     Microsoft.Graphics.Canvas.UI.CanvasCreateResourcesEventArgs args)
 {}</pre></div></div></div><script type="text/javascript">AddLanguageTabSet("ID0EACACAAAAA");</script><p>
@@ -275,7 +311,7 @@ args.DrawingSession.DrawImage(blur);</pre></div></div></div><script type="text/j
             <span class="code">GaussianBlurEffect</span> outside the method body so the variable becomes a member of the MainPage class.
             Your code should now look like the following:
           </p><div class="codeSnippetContainer"><div class="codeSnippetContainerTabs"><div id="ID0EAAACAAAAA_tab1" class="codeSnippetContainerTabSingle">C#</div></div><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID0EAAACAAAAA_copyCode" href="#" onclick="javascript:CopyToClipboard('ID0EAAACAAAAA');return false;" title="Copy">Copy</a></div></div><div id="ID0EAAACAAAAA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve">GaussianBlurEffect blur;
-<span class="highlight-keyword">private</span> <span class="highlight-keyword">void</span> CanvasAnimatedControl_CreateResources(
+<span class="highlight-keyword">private</span> <span class="highlight-keyword">void</span> canvas_CreateResources(
     Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl sender,
     Microsoft.Graphics.Canvas.UI.CanvasCreateResourcesEventArgs args)
 {
@@ -296,9 +332,9 @@ args.DrawingSession.DrawImage(blur);</pre></div></div></div><script type="text/j
         BlurAmount = <span class="highlight-number">10.0</span>f
     };
 }</pre></div></div></div><script type="text/javascript">AddLanguageTabSet("ID0EAAACAAAAA");</script></li><li><p>
-            Now you can animate the Gaussian blur. Find the <span class="code">CanvasAnimatedControl_Draw</span> method and add the
+            Now you can animate the Gaussian blur. Find the <span class="code">canvas_AnimatedDraw</span> method and add the
             following code:
-          </p><div class="codeSnippetContainer"><div class="codeSnippetContainerTabs"><div id="ID0EABABAAAAA_tab1" class="codeSnippetContainerTabSingle">C#</div></div><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID0EABABAAAAA_copyCode" href="#" onclick="javascript:CopyToClipboard('ID0EABABAAAAA');return false;" title="Copy">Copy</a></div></div><div id="ID0EABABAAAAA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve"><span class="highlight-keyword">private</span> <span class="highlight-keyword">void</span> CanvasAnimatedControl_Draw(
+          </p><div class="codeSnippetContainer"><div class="codeSnippetContainerTabs"><div id="ID0EABABAAAAA_tab1" class="codeSnippetContainerTabSingle">C#</div></div><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID0EABABAAAAA_copyCode" href="#" onclick="javascript:CopyToClipboard('ID0EABABAAAAA');return false;" title="Copy">Copy</a></div></div><div id="ID0EABABAAAAA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve"><span class="highlight-keyword">private</span> <span class="highlight-keyword">void</span> canvas_AnimatedDraw(
     Microsoft.Graphics.Canvas.UI.Xaml.ICanvasAnimatedControl sender,
     Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedDrawEventArgs args)
 {
