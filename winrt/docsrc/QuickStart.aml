@@ -134,12 +134,13 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
 
         <step><content>
           <para>
-            Now, add a new <codeInline>canvas:CanvasControl</codeInline> as a child element to the root <codeInline>Grid</codeInline> element.
+            Now, add a new <codeInline>canvas:CanvasControl</codeInline> as a child element to the root
+            <codeInline>Grid</codeInline> element. Give the control a name, e.g. "canvas".
             Your XAML should now look like this:
           </para>
           <code language="xaml">
             &lt;Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"&gt;
-                &lt;canvas:CanvasControl /&gt;
+                &lt;canvas:CanvasControl x:Name="canvas"/&gt;
             &lt;/Grid&gt;
           </code>
         </content></step>
@@ -152,7 +153,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
             a new attribute for the <codeInline>Draw</codeInline> event handler:
           </para>
           <code language="xaml">
-            &lt;canvas:CanvasControl Draw="CanvasControl_Draw" /&gt;
+            &lt;canvas:CanvasControl x:Name="canvas" Draw="canvas_Draw" /&gt;
           </code>
           <para>
             Once you have entered in <codeInline>Draw="</codeInline>, Visual Studio should pop up a box prompting you to let it automatically
@@ -190,7 +191,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
             Next, you should see the following blank event handler which was inserted by AutoComplete: 
           </para>
           <code language="cs">
-            private void CanvasControl_Draw(
+            private void canvas_Draw(
                 Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl sender,
                 Microsoft.Graphics.Canvas.UI.Xaml.CanvasDrawEventArgs args)
             {}
@@ -212,7 +213,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
             <codeEntityReference qualifyHint="true" autoUpgrade="true">M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawText(System.String,System.Single,System.Single,Windows.UI.Color)</codeEntityReference>.
           </para>
           <para>
-            Add the following code to the <codeInline>CanvasControl_Draw</codeInline> method:
+            Add the following code to the <codeInline>canvas_Draw</codeInline> method:
           </para>
           <code language="cs">
               args.DrawingSession.DrawText("Hello, World!", 100, 100, Colors.Black);   
@@ -233,12 +234,69 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     </procedure>
 
     <procedure>
+      <title>Correctly dispose of Win2D resources</title>
+      <steps class="ordered">
+
+        <step><content>
+          <para>
+            Before continuing on to draw other kinds of content, you first should add some code to
+            ensure your app avoids memory leaks. Most Win2D applications written in a .NET language
+            and using a Win2D control like
+            <codeEntityReference>T:Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl</codeEntityReference>
+            need to follow the below steps. Strictly speaking, your simple "Hello, world" app is not
+            affected, but this is a good practice to follow in general.
+          </para>
+          <para>
+            For more information, see <link xlink:href="RefCycles">Avoiding memory leaks</link>.
+          </para>
+        </content></step>
+        
+        <step><content><para>
+          Open <legacyBold>MainPage.xaml</legacyBold> and find the <legacyBold>Page</legacyBold> XAML
+          element that contains your <legacyBold>CanvasControl</legacyBold>. It should be the first
+          element in the file.
+        </para></content></step>
+          
+        <step><content><para>
+          Add a handler for the <legacyBold>Unloaded</legacyBold> event. Your XAML should look like this:
+          <code language="xaml">
+            &lt;Page
+                ...
+                xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                xmlns:canvas="using:Microsoft.Graphics.Canvas.UI.Xaml"
+                mc:Ignorable="d"
+                Unloaded="Page_Unloaded"&gt;
+          </code>
+        </para></content></step>
+
+        <step><content><para>
+          Go to <legacyBold>MainPage.xaml.cs</legacyBold> and find the <legacyBold>Page_Unloaded</legacyBold>
+          event handler. Add the following code:
+          <code language="cs">
+            void Page_Unloaded(object sender, RoutedEventArgs e)
+            {
+                this.canvas.RemoveFromVisualTree();
+                this.canvas = null;
+            }
+          </code>
+        </para></content></step>
+        
+        <step><content><para>
+          If your app contains multiple Win2D controls, then you need to repeat the above steps for each
+          XAML page that contains a Win2D control. Your app currently only has a single
+          <legacyBold>CanvasControl</legacyBold> so you're all done.
+        </para></content></step>
+        
+      </steps>
+    </procedure>
+
+    <procedure>
       <title>Draw some shapes</title>
       <steps class="ordered">
 
         <step><content>
           <para>
-            It's just as easy to add 2D geometry to your app. Add the following code to the end of <codeInline>CanvasControl_Draw</codeInline>:
+            It's just as easy to add 2D geometry to your app. Add the following code to the end of <codeInline>canvas_Draw</codeInline>:
           </para>
           <code language="cs">
             args.DrawingSession.DrawCircle(125, 125, 100, Colors.Green);
@@ -305,10 +363,10 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
 
         <step><content>
           <para>
-            Modify your CanvasControl_Draw method to draw using these random parameters:
+            Modify your <codeInline>canvas_Draw</codeInline> method to draw using these random parameters:
           </para>
           <code language="cs">
-            private void CanvasControl_Draw(
+            private void canvas_Draw(
                 Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl sender,
                 Microsoft.Graphics.Canvas.UI.Xaml.CanvasDrawEventArgs args)
             {
@@ -333,7 +391,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         <step><content>
           <para>
             Finally, wrap your drawing code in a <codeInline>for</codeInline> loop. You should end up with the following
-            <codeInline>CanvasControl_Draw</codeInline> code:
+            <codeInline>canvas_Draw</codeInline> code:
           </para>
           <code language="cs">
             for (int i = 0; i &lt; 100; i++)
@@ -376,7 +434,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
 
         <step><content>
           <para>
-            Change your <codeInline>CanvasControl_Draw</codeInline> method to use the following code:
+            Change your <codeInline>canvas_Draw</codeInline> method to use the following code:
           </para>
           <code language="cs">
             CanvasCommandList cl = new CanvasCommandList(sender);
@@ -409,7 +467,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         <step><content>
           <para>
             Finally, define the <codeInline>GaussianBlurEffect</codeInline> by adding the following code to the end of the
-            <codeInline>CanvasControl_Draw</codeInline> method:
+            <codeInline>canvas_Draw</codeInline> method:
           </para>
           <code language="cs">
             GaussianBlurEffect blur = new GaussianBlurEffect();
@@ -457,12 +515,17 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
           </para>
           <code language="xaml">
             &lt;Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"&gt;
-                &lt;canvas:CanvasAnimatedControl Draw="CanvasAnimatedControl_Draw" CreateResources="CanvasAnimatedControl_CreateResources"/&gt;
+                &lt;canvas:CanvasAnimatedControl x:Name="canvas" Draw="canvas_DrawAnimated" CreateResources="canvas_CreateResources"/&gt;
             &lt;/Grid&gt;
           </code>
           <para>
-            Just like with <codeInline>CanvasControl</codeInline>, let AutoComplete create the <codeInline>Draw</codeInline> event handler for you.
-            Note that <codeInline>CanvasAnimatedControl_Draw</codeInline> is distinct from <codeInline>CanvasControl_Draw</codeInline>.
+            Just like with <codeInline>CanvasControl</codeInline>, let AutoComplete create the
+            <codeInline>Draw</codeInline> event handler for you. By default, Visual Studio will name this
+            handler <codeInline>canvas_Draw_1</codeInline> because <codeInline>canvas_Draw</codeInline>
+            already exists; here, we've renamed the method <codeInline>canvas_AnimatedDraw</codeInline> to
+            make it clear that this is a different event.
+          </para>
+          <para>
             In addition, you are also handling a new event,
             <codeEntityReference>E:Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl.CreateResources</codeEntityReference>.
             Once again, let AutoComplete create the handler.
@@ -477,11 +540,11 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
 
         <step><content>
           <para>
-            Switch back to <legacyBold>MainPage.xaml.cs</legacyBold>. Find your <codeInline>CanvasControl_Draw</codeInline> method which should look
+            Switch back to <legacyBold>MainPage.xaml.cs</legacyBold>. Find your <codeInline>canvas_Draw</codeInline> method which should look
             like this:
           </para>
           <code language="cs">
-            private void CanvasControl_Draw(
+            private void canvas_Draw(
                 Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl sender,
                 Microsoft.Graphics.Canvas.UI.Xaml.CanvasDrawEventArgs args)
             {
@@ -508,19 +571,19 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
             this "static" code into <codeInline>CreateResources</codeInline>.
           </para>
           <para>
-            To do this, first cut (<legacyBold>CTRL+X</legacyBold>) the entire contents of <codeInline>CanvasControl_Draw</codeInline>,
+            To do this, first cut (<legacyBold>CTRL+X</legacyBold>) the entire contents of <codeInline>canvas_Draw</codeInline>,
             <legacyItalic>except</legacyItalic> for the very last line (<codeInline>args.DrawingSession.DrawImage(blur);</codeInline>).
-            You can now delete the remainder of <codeInline>CanvasControl_Draw</codeInline> as it is no longer needed: recall that
+            You can now delete the remainder of <codeInline>canvas_Draw</codeInline> as it is no longer needed: recall that
             <codeInline>CanvasAnimatedControl</codeInline> has its own distinct <codeInline>Draw</codeInline> event.
           </para>
         </content></step>
 
         <step><content>
           <para>
-            Find the automatically generated <codeInline>CanvasAnimatedControl_CreateResources</codeInline> method:
+            Find the automatically generated <codeInline>canvas_CreateResources</codeInline> method:
           </para>
           <code language="cs">
-            private void CanvasAnimatedControl_CreateResources(
+            private void canvas_CreateResources(
                 Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl sender, 
                 Microsoft.Graphics.Canvas.UI.CanvasCreateResourcesEventArgs args)
             {}
@@ -532,7 +595,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
           </para>
           <code language="cs">
             GaussianBlurEffect blur;
-            private void CanvasAnimatedControl_CreateResources(
+            private void canvas_CreateResources(
                 Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl sender,
                 Microsoft.Graphics.Canvas.UI.CanvasCreateResourcesEventArgs args)
             {
@@ -558,11 +621,11 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
 
         <step><content>
           <para>
-            Now you can animate the Gaussian blur. Find the <codeInline>CanvasAnimatedControl_Draw</codeInline> method and add the
+            Now you can animate the Gaussian blur. Find the <codeInline>canvas_AnimatedDraw</codeInline> method and add the
             following code:
           </para>
           <code language="cs">
-            private void CanvasAnimatedControl_Draw(
+            private void canvas_AnimatedDraw(
                 Microsoft.Graphics.Canvas.UI.Xaml.ICanvasAnimatedControl sender,
                 Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedDrawEventArgs args)
             {
