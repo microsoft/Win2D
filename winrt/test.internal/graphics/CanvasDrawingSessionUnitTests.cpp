@@ -157,8 +157,7 @@ public:
 
         auto textFormat = Make<CanvasTextFormat>();
         auto textlayoutAdapter = std::make_shared<StubCanvasTextLayoutAdapter>();
-        auto textLayoutManager = std::make_shared<CanvasTextLayoutManager>();
-        TextLayout = textLayoutManager->CreateNew(canvasDevice.Get(), WinString(L"A string"), textFormat.Get(), 0.0f, 0.0f);
+        TextLayout = CanvasTextLayout::CreateNew(canvasDevice.Get(), WinString(L"A string"), textFormat.Get(), 0.0f, 0.0f);
 
 #if WINVER > _WIN32_WINNT_WINBLUE
         GradientMesh = CanvasGradientMesh::CreateNew(canvasDevice.Get(), 0, nullptr);

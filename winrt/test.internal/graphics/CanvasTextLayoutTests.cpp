@@ -27,7 +27,6 @@ namespace canvas
         struct Fixture
         {
             ComPtr<ICanvasTextFormat> Format;
-            std::shared_ptr<CanvasTextLayoutManager> LayoutManager;
             std::shared_ptr<StubCanvasTextLayoutAdapter> Adapter;
             ComPtr<MockD2DDeviceContext> DeviceContext;
             ComPtr<StubCanvasDevice> Device;
@@ -41,8 +40,6 @@ namespace canvas
                 CustomFontManagerAdapter::SetInstance(Adapter);
 
                 Format = Make<CanvasTextFormat>();
-
-                LayoutManager = std::make_shared<CanvasTextLayoutManager>();
 
                 Device->GetResourceCreationDeviceContextMethod.AllowAnyCall(
                     [=]
@@ -129,7 +126,7 @@ namespace canvas
 
             ComPtr<CanvasTextLayout> CreateSimpleTextLayout()
             {
-                return LayoutManager->CreateNew(Device.Get(), WinString(L"A string"), Format.Get(), 0.0f, 0.0f);
+                return CanvasTextLayout::CreateNew(Device.Get(), WinString(L"A string"), Format.Get(), 0.0f, 0.0f);
             }
         };
 

@@ -44,15 +44,8 @@ CanvasTextLayoutRegion ToHitTestDescription(DWRITE_HIT_TEST_METRICS const& hitTe
     return description;
 }
 
-//
-// CanvasTextLayoutManager implementation
-//
 
-CanvasTextLayoutManager::CanvasTextLayoutManager()
-{
-}
-
-ComPtr<CanvasTextLayout> CanvasTextLayoutManager::CreateNew(
+ComPtr<CanvasTextLayout> CanvasTextLayout::CreateNew(
     ICanvasResourceCreator* resourceCreator,
     HSTRING text,
     ICanvasTextFormat* textFormat,
@@ -79,36 +72,17 @@ ComPtr<CanvasTextLayout> CanvasTextLayoutManager::CreateNew(
     ThrowIfFailed(resourceCreator->get_Device(&device));
 
     auto textLayout = Make<CanvasTextLayout>(
-        As<IDWriteTextLayout2>(dwriteTextLayout).Get(),
         device.Get(),
-        customFontManager);
+        As<IDWriteTextLayout2>(dwriteTextLayout).Get());
     CheckMakeResult(textLayout);
 
     return textLayout;
-}
-
-ComPtr<CanvasTextLayout> CanvasTextLayoutManager::CreateWrapper(
-    ICanvasDevice* device,
-    IDWriteTextLayout2* resource)
-{
-    auto canvasTextLayout = Make<CanvasTextLayout>(
-        resource,
-        device,
-        CustomFontManager::GetInstance());
-    CheckMakeResult(canvasTextLayout);
-
-    return canvasTextLayout;
 }
 
 
 //
 // CanvasTextLayoutFactory implementation
 //
-
-
-CanvasTextLayoutFactory::CanvasTextLayoutFactory()
-{
-}
 
 IFACEMETHODIMP CanvasTextLayoutFactory::Create(
     ICanvasResourceCreator* resourceCreator,
@@ -124,7 +98,7 @@ IFACEMETHODIMP CanvasTextLayoutFactory::Create(
             CheckInPointer(textFormat);
             CheckAndClearOutPointer(textLayout);
 
-            auto newTextLayout = GetManager()->CreateNew(
+            auto newTextLayout = CanvasTextLayout::CreateNew(
                 resourceCreator,
                 textString,
                 textFormat,
@@ -135,17 +109,16 @@ IFACEMETHODIMP CanvasTextLayoutFactory::Create(
         });
 }
 
+
 CanvasTextLayout::CanvasTextLayout(
-    IDWriteTextLayout2* layout,
     ICanvasDevice* device,
-    std::shared_ptr<CustomFontManager> customFontManager)
+    IDWriteTextLayout2* layout)
     : ResourceWrapper(layout)
     , m_drawTextOptions(CanvasDrawTextOptions::Default)
     , m_device(device)
-    , m_customFontManager(customFontManager)
+    , m_customFontManager(CustomFontManager::GetInstance())
 {
 }
-
 
 IFACEMETHODIMP CanvasTextLayout::GetFormatChangeIndices(
     uint32_t* positionCount,
