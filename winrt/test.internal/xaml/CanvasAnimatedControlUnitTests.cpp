@@ -637,7 +637,7 @@ TEST_CLASS(CanvasAnimatedControlTests)
             DpiFixture f;
 
             auto deviceContext = Make<StubD2DDeviceContext>(nullptr);
-            f.Adapter->InitialDevice->CreateDeviceContextMethod.AllowAnyCall(
+            f.Adapter->InitialDevice->CreateDeviceContextForDrawingSessionMethod.AllowAnyCall(
                 [&]
                 {
                     return deviceContext;
@@ -893,7 +893,7 @@ TEST_CLASS(CanvasAnimatedControlTests)
 
         auto customDevice = Make<StubCanvasDevice>();
         Assert::AreEqual(S_OK, f.Control->put_CustomDevice(customDevice.Get()));
-        customDevice->CreateDeviceContextMethod.AllowAnyCall(
+        customDevice->CreateDeviceContextForDrawingSessionMethod.AllowAnyCall(
             [=]
             {
                 return Make<StubD2DDeviceContext>(nullptr);
@@ -922,7 +922,7 @@ TEST_CLASS(CanvasAnimatedControlTests)
 
         auto customDevice = Make<StubCanvasDevice>();
         Assert::AreEqual(S_OK, f.Control->put_CustomDevice(customDevice.Get()));
-        customDevice->CreateDeviceContextMethod.AllowAnyCall(
+        customDevice->CreateDeviceContextForDrawingSessionMethod.AllowAnyCall(
             [=]
             {
                 return Make<StubD2DDeviceContext>(nullptr);
@@ -954,7 +954,7 @@ TEST_CLASS(CanvasAnimatedControlTests)
         DeviceLostFixture f;
 
         auto customDevice = Make<StubCanvasDevice>();
-        customDevice->CreateDeviceContextMethod.AllowAnyCall(
+        customDevice->CreateDeviceContextForDrawingSessionMethod.AllowAnyCall(
             [=]
             {
                 return Make<StubD2DDeviceContext>(nullptr);
@@ -974,7 +974,7 @@ TEST_CLASS(CanvasAnimatedControlTests)
         f.Adapter->DoChanged(); // Control's device lost handler is called.
 
         auto otherCustomDevice = Make<StubCanvasDevice>();
-        otherCustomDevice->CreateDeviceContextMethod.AllowAnyCall(
+        otherCustomDevice->CreateDeviceContextForDrawingSessionMethod.AllowAnyCall(
             [&]
             {
                 return Make<StubD2DDeviceContext>(nullptr);

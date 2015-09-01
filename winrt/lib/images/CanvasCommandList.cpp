@@ -84,7 +84,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 auto& d2dCommandList = GetResource();
                 auto& device = m_device.EnsureNotClosed();
 
-                auto deviceContext = As<ICanvasDeviceInternal>(device)->CreateDeviceContext();
+                auto deviceContext = As<ICanvasDeviceInternal>(device)->CreateDeviceContextForDrawingSession();
                 deviceContext->SetTarget(d2dCommandList.Get());
 
                 auto drawingSessionManager = CanvasDrawingSessionFactory::GetManager();

@@ -46,7 +46,9 @@ namespace canvas
 
         CALL_COUNTER_WITH_MOCK(TrimMethod, HRESULT());
         CALL_COUNTER_WITH_MOCK(GetInterfaceMethod, HRESULT(REFIID,void**));
-        CALL_COUNTER_WITH_MOCK(CreateDeviceContextMethod, ComPtr<ID2D1DeviceContext1>());
+        CALL_COUNTER_WITH_MOCK(CreateDeviceContextForDrawingSessionMethod, ComPtr<ID2D1DeviceContext1>());
+        CALL_COUNTER_WITH_MOCK(CreateBitmapFromBytesMethod, ComPtr<ID2D1Bitmap1>(uint8_t*, uint32_t, int32_t, int32_t, float, DirectXPixelFormat, CanvasAlphaMode));
+        CALL_COUNTER_WITH_MOCK(CreateBitmapFromSurfaceMethod, ComPtr<ID2D1Bitmap1>(IDirect3DSurface*, float, CanvasAlphaMode));
         CALL_COUNTER_WITH_MOCK(CreateSwapChainForCompositionMethod, ComPtr<IDXGISwapChain1>(int32_t, int32_t, DirectXPixelFormat, int32_t, CanvasAlphaMode));
         CALL_COUNTER_WITH_MOCK(CreateSwapChainForCoreWindowMethod, ComPtr<IDXGISwapChain1>(ICoreWindow*, int32_t, int32_t, DirectXPixelFormat, int32_t, CanvasAlphaMode));
         CALL_COUNTER_WITH_MOCK(CreateCommandListMethod, ComPtr<ID2D1CommandList>());
@@ -169,9 +171,9 @@ namespace canvas
             return MockGetD2DDevice();
         }
 
-        virtual ComPtr<ID2D1DeviceContext1> CreateDeviceContext() override
+        virtual ComPtr<ID2D1DeviceContext1> CreateDeviceContextForDrawingSession() override
         {
-            return CreateDeviceContextMethod.WasCalled();
+            return CreateDeviceContextForDrawingSessionMethod.WasCalled();
         }
 
         virtual ComPtr<ID2D1SolidColorBrush> CreateSolidColorBrush(D2D1_COLOR_F const& color) override
@@ -196,6 +198,26 @@ namespace canvas
                 return nullptr;
             }
             return MockCreateBitmapFromWicResource(converter, alpha, dpi);
+        }
+
+        virtual ComPtr<ID2D1Bitmap1> CreateBitmapFromBytes(
+            uint8_t* bytes,
+            uint32_t pitch,
+            int32_t widthInPixels,
+            int32_t heightInPixels,
+            float dpi,
+            DirectXPixelFormat format,
+            CanvasAlphaMode alphaMode) override
+        {
+            return CreateBitmapFromBytesMethod.WasCalled(bytes, pitch, widthInPixels, heightInPixels, dpi, format, alphaMode);
+        }
+
+        virtual ComPtr<ID2D1Bitmap1> CreateBitmapFromSurface(
+            IDirect3DSurface* surface,
+            float dpi,
+            CanvasAlphaMode alphaMode) override
+        {
+            return CreateBitmapFromSurfaceMethod.WasCalled(surface, dpi, alphaMode);
         }
 
         virtual ComPtr<ID2D1Bitmap1> CreateRenderTargetBitmap(

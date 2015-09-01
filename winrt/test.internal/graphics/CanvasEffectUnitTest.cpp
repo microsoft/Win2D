@@ -588,7 +588,7 @@ public:
                     return d2dCl;
                 });
 
-            CanvasDevice->CreateDeviceContextMethod.SetExpectedCalls(1, [=] { return DeviceContext; });            
+            CanvasDevice->CreateDeviceContextForDrawingSessionMethod.SetExpectedCalls(1, [=] { return DeviceContext; });            
         }
 
         ComPtr<ICanvasCommandList> CreateCommandList()

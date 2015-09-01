@@ -43,13 +43,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         uint32_t* subresourceIndexOut = nullptr);
 
 
-    ComPtr<ID2D1Bitmap1> CreateD2DBitmap(
-        ICanvasDevice* canvasDevice,
-        IDirect3DSurface* surface,
-        float dpi,
-        CanvasAlphaMode alpha);
-
-
     inline bool IsRenderTargetBitmap(ID2D1Bitmap1* d2dBitmap)
     {
         auto options = d2dBitmap->GetOptions();

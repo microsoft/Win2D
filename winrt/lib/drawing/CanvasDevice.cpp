@@ -688,7 +688,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return GetResource();
     }
 
-    ComPtr<ID2D1DeviceContext1> CanvasDevice::CreateDeviceContext()
+    ComPtr<ID2D1DeviceContext1> CanvasDevice::CreateDeviceContextForDrawingSession()
     {
         ComPtr<ID2D1DeviceContext1> dc;
         ThrowIfFailed(GetResource()->CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS_NONE, &dc));
@@ -724,6 +724,87 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return bitmap;
     }
 
+    ComPtr<ID2D1Bitmap1> CanvasDevice::CreateBitmapFromBytes(
+        uint8_t* bytes,
+        uint32_t pitch,
+        int32_t widthInPixels,
+        int32_t heightInPixels,
+        float dpi,
+        DirectXPixelFormat format,
+        CanvasAlphaMode alphaMode)
+    {
+        auto deviceContext = m_d2dResourceCreationDeviceContext.EnsureNotClosed();
+
+        D2D1_BITMAP_PROPERTIES1 bitmapProperties = D2D1::BitmapProperties1();
+        bitmapProperties.pixelFormat.alphaMode = ToD2DAlphaMode(alphaMode);
+        bitmapProperties.pixelFormat.format = static_cast<DXGI_FORMAT>(format);
+        bitmapProperties.dpiX = dpi;
+        bitmapProperties.dpiY = dpi;
+
+        auto size = D2D1::SizeU(widthInPixels, heightInPixels);
+
+        ComPtr<ID2D1Bitmap1> d2dBitmap;
+        ThrowIfFailed(deviceContext->CreateBitmap(
+            size,
+            bytes,
+            pitch,
+            &bitmapProperties,
+            &d2dBitmap));
+
+        return d2dBitmap;
+    }
+
+    ComPtr<ID2D1Bitmap1> CanvasDevice::CreateBitmapFromSurface(
+        IDirect3DSurface* surface,
+        float dpi,
+        CanvasAlphaMode alphaMode)
+    {        
+        auto deviceContext = m_d2dResourceCreationDeviceContext.EnsureNotClosed();
+
+        auto dxgiSurface = GetDXGIInterface<IDXGISurface2>(surface);
+
+        D2D1_BITMAP_PROPERTIES1 bitmapProperties = D2D1::BitmapProperties1();
+        bitmapProperties.pixelFormat.alphaMode = ToD2DAlphaMode(alphaMode);
+        bitmapProperties.dpiX = dpi;
+        bitmapProperties.dpiY = dpi;
+
+        // D2D requires bitmap flags that match the surface format, if a
+        // D2D1_BITMAP_PROPERTIES1 is specified.
+        //
+        ComPtr<ID3D11Texture2D> parentResource = GetTexture2DForDXGISurface(dxgiSurface);
+
+        ComPtr<IDXGIResource1> dxgiResource;
+        ThrowIfFailed(parentResource.As(&dxgiResource));
+
+        DXGI_USAGE dxgiUsage;
+        ThrowIfFailed(dxgiResource->GetUsage(&dxgiUsage));
+
+        D3D11_TEXTURE2D_DESC texture2DDesc;
+        parentResource->GetDesc(&texture2DDesc);
+
+        if (texture2DDesc.BindFlags & D3D11_BIND_RENDER_TARGET && !(dxgiUsage & DXGI_USAGE_READ_ONLY))
+        {
+            bitmapProperties.bitmapOptions |= D2D1_BITMAP_OPTIONS_TARGET;
+        }
+
+        if (!(texture2DDesc.BindFlags & D3D11_BIND_SHADER_RESOURCE))
+        {
+            bitmapProperties.bitmapOptions |= D2D1_BITMAP_OPTIONS_CANNOT_DRAW;
+        }
+
+        if (texture2DDesc.Usage & D3D11_USAGE_STAGING && texture2DDesc.CPUAccessFlags & D3D11_CPU_ACCESS_READ)
+        {
+            bitmapProperties.bitmapOptions |= D2D1_BITMAP_OPTIONS_CPU_READ;
+        }
+        
+        ComPtr<ID2D1Bitmap1> d2dBitmap;
+        ThrowIfFailed(deviceContext->CreateBitmapFromDxgiSurface(
+            dxgiSurface.Get(),
+            &bitmapProperties,
+            &d2dBitmap));
+
+        return d2dBitmap;
+    }
 
     ComPtr<ID2D1Bitmap1> CanvasDevice::CreateRenderTargetBitmap(
         float width,

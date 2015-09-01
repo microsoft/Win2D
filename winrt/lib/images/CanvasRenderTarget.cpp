@@ -199,7 +199,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 ComPtr<ICanvasDevice> canvasDevice;
                 ThrowIfFailed(resourceCreator->get_Device(&canvasDevice));
 
-                auto d2dBitmap = CreateD2DBitmap(canvasDevice.Get(), surface, dpi, alpha);
+                auto d2dBitmap = As<ICanvasDeviceInternal>(canvasDevice)->CreateBitmapFromSurface(surface, dpi, alpha);
 
                 if (!IsRenderTargetBitmap(d2dBitmap.Get()))
                     ThrowHR(E_INVALIDARG);
@@ -222,7 +222,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         //
         // Create a new ID2D1DeviceContext
         //
-        auto deviceContext = As<ICanvasDeviceInternal>(owner)->CreateDeviceContext();
+        auto deviceContext = As<ICanvasDeviceInternal>(owner)->CreateDeviceContextForDrawingSession();
 
         //
         // Set the target

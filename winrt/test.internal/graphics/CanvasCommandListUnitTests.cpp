@@ -146,7 +146,7 @@ TEST_CLASS(CanvasCommandListTests)
                 Assert::AreEqual(D2D1_TEXT_ANTIALIAS_MODE_GRAYSCALE, mode);
             });
 
-        f.Device->CreateDeviceContextMethod.SetExpectedCalls(1, [=] { return dc; });
+        f.Device->CreateDeviceContextForDrawingSessionMethod.SetExpectedCalls(1, [=] { return dc; });
 
         dc->SetTargetMethod.SetExpectedCalls(1, 
             [=](ID2D1Image* target)

@@ -586,7 +586,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             float dpi,
             ID2D1DeviceContext1** outDeviceContext)
         {
-            auto deviceContext = As<ICanvasDeviceInternal>(owner)->CreateDeviceContext();
+            auto deviceContext = As<ICanvasDeviceInternal>(owner)->CreateDeviceContextForDrawingSession();
 
             DXGI_SWAP_CHAIN_DESC1 swapChainDescription;
             ThrowIfFailed(swapChainResource->GetDesc1(&swapChainDescription));

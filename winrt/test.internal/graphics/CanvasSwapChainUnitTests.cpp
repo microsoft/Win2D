@@ -881,7 +881,7 @@ TEST_CLASS(CanvasSwapChainUnitTests)
             });
 
 
-        f.m_canvasDevice->CreateDeviceContextMethod.SetExpectedCalls(1,
+        f.m_canvasDevice->CreateDeviceContextForDrawingSessionMethod.SetExpectedCalls(1,
             [&] ()
             {
                 return deviceContext;

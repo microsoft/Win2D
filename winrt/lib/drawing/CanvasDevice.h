@@ -74,21 +74,40 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     public:
         virtual ComPtr<ID2D1Device1> GetD2DDevice() = 0;
 
-        virtual ComPtr<ID2D1DeviceContext1> CreateDeviceContext() = 0;
+        virtual ComPtr<ID2D1DeviceContext1> CreateDeviceContextForDrawingSession() = 0;
 
         virtual ComPtr<ID2D1SolidColorBrush> CreateSolidColorBrush(D2D1_COLOR_F const& color) = 0;
+
         virtual ComPtr<ID2D1Bitmap1> CreateBitmapFromWicResource(
             IWICBitmapSource* wicBitmapSource,
             float dpi,
             CanvasAlphaMode alpha) = 0;
+
+        virtual ComPtr<ID2D1Bitmap1> CreateBitmapFromBytes(
+            uint8_t* bytes,
+            uint32_t pitch,
+            int32_t widthInPixels,
+            int32_t heightInPixels,
+            float dpi,
+            DirectXPixelFormat format,
+            CanvasAlphaMode alphaMode) = 0;
+
+        virtual ComPtr<ID2D1Bitmap1> CreateBitmapFromSurface(
+            IDirect3DSurface* surface,
+            float dpi,
+            CanvasAlphaMode alphaMode) = 0;
+
         virtual ComPtr<ID2D1Bitmap1> CreateRenderTargetBitmap(
             float width,
             float height,
             float dpi,
             DirectXPixelFormat format,
             CanvasAlphaMode alpha) = 0;
+
         virtual ComPtr<ID2D1BitmapBrush1> CreateBitmapBrush(ID2D1Bitmap1* bitmap) = 0;
+
         virtual ComPtr<ID2D1ImageBrush> CreateImageBrush(ID2D1Image* image) = 0;
+
         virtual ComPtr<ID2D1Image> GetD2DImage(ICanvasImage* canvasImage) = 0;
 
         virtual ComPtr<ID2D1GradientStopCollection1> CreateGradientStopCollection(
@@ -218,20 +237,41 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         //
 
         virtual ComPtr<ID2D1Device1> GetD2DDevice() override;
-        virtual ComPtr<ID2D1DeviceContext1> CreateDeviceContext() override;
+
+        virtual ComPtr<ID2D1DeviceContext1> CreateDeviceContextForDrawingSession() override;
+
         virtual ComPtr<ID2D1SolidColorBrush> CreateSolidColorBrush(D2D1_COLOR_F const& color) override;
+
         virtual ComPtr<ID2D1Bitmap1> CreateBitmapFromWicResource(
             IWICBitmapSource* wicBitmapSource,
             float dpi,
             CanvasAlphaMode alpha) override;
+
+        virtual ComPtr<ID2D1Bitmap1> CreateBitmapFromBytes(
+            uint8_t* bytes,
+            uint32_t pitch,
+            int32_t widthInPixels,
+            int32_t heightInPixels,
+            float dpi,
+            DirectXPixelFormat format,
+            CanvasAlphaMode alphaMode) override;
+            
+        virtual ComPtr<ID2D1Bitmap1> CreateBitmapFromSurface(
+            IDirect3DSurface* surface,
+            float dpi,
+            CanvasAlphaMode alphaMode) override;
+
         virtual ComPtr<ID2D1Bitmap1> CreateRenderTargetBitmap(
             float width,
             float height,
             float dpi,
             DirectXPixelFormat format,
             CanvasAlphaMode alpha) override;
+
         virtual ComPtr<ID2D1BitmapBrush1> CreateBitmapBrush(ID2D1Bitmap1* bitmap) override;
+
         virtual ComPtr<ID2D1ImageBrush> CreateImageBrush(ID2D1Image* image) override;
+
         virtual ComPtr<ID2D1Image> GetD2DImage(ICanvasImage* canvasImage) override;
 
         virtual ComPtr<ID2D1LinearGradientBrush> CreateLinearGradientBrush(

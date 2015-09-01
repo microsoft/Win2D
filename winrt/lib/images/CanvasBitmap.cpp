@@ -428,18 +428,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         BYTE* bytes,
         int32_t widthInPixels,
         int32_t heightInPixels,
-        DirectXPixelFormat format,
         float dpi,
+        DirectXPixelFormat format,
         CanvasAlphaMode alpha)
     {
-        auto deviceContext = As<ICanvasDeviceInternal>(device)->CreateDeviceContext();
-
-        D2D1_BITMAP_PROPERTIES1 bitmapProperties = D2D1::BitmapProperties1();
-        bitmapProperties.pixelFormat.alphaMode = ToD2DAlphaMode(alpha);
-        bitmapProperties.pixelFormat.format = static_cast<DXGI_FORMAT>(format);
-        bitmapProperties.dpiX = dpi;
-        bitmapProperties.dpiY = dpi;
-
         // D2D does not fail attempts to create zero-sized bitmaps. Neither does this.
         uint32_t pitch = 0;
         if (heightInPixels > 0)
@@ -451,8 +443,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             pitch = byteCount;
         }
 
-        ComPtr<ID2D1Bitmap1> d2dBitmap;
-        ThrowIfFailed(deviceContext->CreateBitmap(D2D1::SizeU(widthInPixels, heightInPixels), bytes, pitch, &bitmapProperties, &d2dBitmap));
+        auto d2dBitmap = As<ICanvasDeviceInternal>(device)->CreateBitmapFromBytes(
+            bytes,
+            pitch,
+            widthInPixels,
+            heightInPixels,
+            dpi,
+            format,
+            alpha);
 
         auto bitmap = Make<CanvasBitmap>(
             d2dBitmap.Get(),
@@ -462,7 +460,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return bitmap;
     }
 
-
+    
     ComPtr<CanvasBitmap> CanvasBitmapManager::CreateNew(
         ICanvasDevice* device,
         uint32_t colorCount,
@@ -492,8 +490,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             convertedBytes.empty() ? nullptr : &convertedBytes[0],
             widthInPixels,
             heightInPixels,
-            PIXEL_FORMAT(B8G8R8A8UIntNormalized),
             dpi,
+            PIXEL_FORMAT(B8G8R8A8UIntNormalized),
             alpha);
     }
 
@@ -506,19 +504,19 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     // to UINT rather than UNORM formats.  The intended use is UNORM, and so we
     // fudge the BitmapPixelFormat values in these cases.
     //
-    static DXGI_FORMAT GetFudgedDxgiFormat(BitmapPixelFormat format)
+    static DirectXPixelFormat GetFudgedFormat(BitmapPixelFormat format)
     {
         using namespace ABI::Windows::Graphics::Imaging;
         
         switch (format)
         {
-        case BitmapPixelFormat_Rgba16: return DXGI_FORMAT_R16G16B16A16_UNORM;
-        case BitmapPixelFormat_Rgba8:  return DXGI_FORMAT_R8G8B8A8_UNORM;
-        case BitmapPixelFormat_Gray8:  return DXGI_FORMAT_A8_UNORM;
+        case BitmapPixelFormat_Rgba16: return PIXEL_FORMAT(R16G16B16A16UIntNormalized);
+        case BitmapPixelFormat_Rgba8:  return PIXEL_FORMAT(R8G8B8A8UIntNormalized);
+        case BitmapPixelFormat_Gray8:  return PIXEL_FORMAT(A8UIntNormalized);
 
         case BitmapPixelFormat_Bgra8: // BitmapPixelFormat already uses the UNORM value here
         default:
-            return static_cast<DXGI_FORMAT>(format);
+            return static_cast<DirectXPixelFormat>(format);
         }        
     }
 
@@ -540,9 +538,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         BitmapAlphaMode bitmapAlphaMode;
         ThrowIfFailed(sourceBitmap->get_BitmapAlphaMode(&bitmapAlphaMode));
 
-        double dpiX, dpiY;
+        double dpiX;
         ThrowIfFailed(sourceBitmap->get_DpiX(&dpiX));
-        ThrowIfFailed(sourceBitmap->get_DpiY(&dpiY));
 
         ComPtr<IBitmapBuffer> bitmapBuffer;
         ThrowIfFailed(sourceBitmap->LockBuffer(BitmapBufferAccessMode_Read, &bitmapBuffer));
@@ -557,28 +554,21 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         BitmapPlaneDescription bitmapPlaneDescription;
         ThrowIfFailed(bitmapBuffer->GetPlaneDescription(0, &bitmapPlaneDescription));
 
+        auto pixelWidth = static_cast<uint32_t>(bitmapPlaneDescription.Width);
+        auto pixelHeight = static_cast<uint32_t>(bitmapPlaneDescription.Height);
+
         //
         // Create an ID2D1Bitmap1 from the source bitmap's data
         //
 
-        auto bitmapProperties = D2D1::BitmapProperties1();
-        bitmapProperties.pixelFormat.format = GetFudgedDxgiFormat(bitmapPixelFormat);
-        bitmapProperties.pixelFormat.alphaMode = ToD2DAlphaMode(bitmapAlphaMode);
-        bitmapProperties.dpiX = static_cast<float>(dpiX);
-        bitmapProperties.dpiY = static_cast<float>(dpiY);
-
-        auto deviceContext = As<ICanvasDeviceInternal>(device)->CreateDeviceContext();
-
-        auto pixelWidth = static_cast<uint32_t>(bitmapPlaneDescription.Width);
-        auto pixelHeight = static_cast<uint32_t>(bitmapPlaneDescription.Height);
-
-        ComPtr<ID2D1Bitmap1> d2dBitmap;
-        ThrowIfFailed(deviceContext->CreateBitmap(
-            D2D1_SIZE_U{ pixelWidth, pixelHeight },
+        auto d2dBitmap = As<ICanvasDeviceInternal>(device)->CreateBitmapFromBytes(
             buffer + bitmapPlaneDescription.StartIndex,
             bitmapPlaneDescription.Stride,
-            &bitmapProperties,
-            &d2dBitmap));
+            pixelWidth,
+            pixelHeight,
+            static_cast<float>(dpiX),
+            GetFudgedFormat(bitmapPixelFormat),
+            ToCanvasAlphaMode(bitmapAlphaMode));
 
         //
         // Wrap a CanvasBitmap around it
@@ -725,7 +715,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                     alpha = DoesSurfaceSupportAlpha(surface) ? CanvasAlphaMode::Premultiplied : CanvasAlphaMode::Ignore;
                 }
 
-                auto d2dBitmap = CreateD2DBitmap(canvasDevice.Get(), surface, dpi, alpha);
+                auto d2dBitmap = As<ICanvasDeviceInternal>(canvasDevice)->CreateBitmapFromSurface(surface, dpi, alpha);
 
                 auto newBitmap = ResourceManager::GetOrCreate<ICanvasBitmap>(canvasDevice.Get(), d2dBitmap.Get());
 
@@ -804,8 +794,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                     bytes, 
                     widthInPixels,
                     heightInPixels,
-                    format, 
                     dpi,
+                    format, 
                     alpha);
 
                 ThrowIfFailed(newBitmap.CopyTo(canvasBitmap));

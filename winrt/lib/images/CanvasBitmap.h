@@ -822,8 +822,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             BYTE* bytes,
             int32_t widthInPixels,
             int32_t heightInPixels,
-            DirectXPixelFormat format,
             float dpi,
+            DirectXPixelFormat format,
             CanvasAlphaMode alpha);
 
         ComPtr<CanvasBitmap> CreateNew(

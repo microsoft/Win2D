@@ -46,12 +46,6 @@ namespace canvas
 
                 LayoutManager = std::make_shared<CanvasTextLayoutManager>();
 
-                Device->CreateDeviceContextMethod.AllowAnyCall(
-                    [=]
-                    {
-                        return DeviceContext;
-                    });
-
                 Device->GetResourceCreationDeviceContextMethod.AllowAnyCall(
                     [=]
                     {

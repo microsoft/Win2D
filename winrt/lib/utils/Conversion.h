@@ -322,16 +322,16 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
 #if WINVER > _WIN32_WINNT_WINBLUE
 
-    inline D2D1_ALPHA_MODE ToD2DAlphaMode(ABI::Windows::Graphics::Imaging::BitmapAlphaMode alphaMode)
+    inline CanvasAlphaMode ToCanvasAlphaMode(ABI::Windows::Graphics::Imaging::BitmapAlphaMode alphaMode)
     {
         using namespace ABI::Windows::Graphics::Imaging;
         
         switch (alphaMode)
         {
-            case BitmapAlphaMode_Premultiplied: return D2D1_ALPHA_MODE_PREMULTIPLIED;
-            case BitmapAlphaMode_Straight: return D2D1_ALPHA_MODE_STRAIGHT;
-            case BitmapAlphaMode_Ignore: return D2D1_ALPHA_MODE_IGNORE;
-            default: return D2D1_ALPHA_MODE_FORCE_DWORD;
+            case BitmapAlphaMode_Premultiplied: return CanvasAlphaMode::Premultiplied;
+            case BitmapAlphaMode_Straight: return CanvasAlphaMode::Straight;
+            case BitmapAlphaMode_Ignore: return CanvasAlphaMode::Ignore;
+            default: assert(false); return CanvasAlphaMode::Premultiplied;
         }
     }
 

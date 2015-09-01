@@ -26,7 +26,8 @@ namespace canvas
             , m_deviceLostEventSource(Make<MockEventSource<DeviceLostHandlerType>>(L"DeviceLost"))
         {
             GetInterfaceMethod.AllowAnyCall();
-            CreateDeviceContextMethod.AllowAnyCall(
+            
+            CreateDeviceContextForDrawingSessionMethod.AllowAnyCall(
                 [=]
                 {
                     ComPtr<ID2D1DeviceContext1> dc;
