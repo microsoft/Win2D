@@ -76,23 +76,6 @@ static void ThrowIfNegativeOrNan(float value)
 
 
 //
-// CanvasTextFormatManager implementation
-//
-
-ComPtr<CanvasTextFormat> CanvasTextFormatManager::Create()
-{
-    return Make<CanvasTextFormat>();
-}
-
-
-ComPtr<CanvasTextFormat> CanvasTextFormatManager::CreateWrapper(IDWriteTextFormat* format)
-{
-    return Make<CanvasTextFormat>(format);
-}
-
-
-
-//
 // CanvasTextFormatFactory implementation
 //
 
@@ -101,7 +84,8 @@ IFACEMETHODIMP CanvasTextFormatFactory::ActivateInstance(IInspectable** object)
     return ExceptionBoundary(
         [&]
         {
-            auto format = GetManager()->Create();
+            auto format = Make<CanvasTextFormat>();
+            CheckMakeResult(format);
             ThrowIfFailed(format.CopyTo(object));
         });
 }

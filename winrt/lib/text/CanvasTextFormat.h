@@ -11,21 +11,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 {
     using namespace ::Microsoft::WRL;
 
-    class CanvasTextFormat;
-
-
-    //
-    // CanvasTextFormatManager
-    //
-
-    class CanvasTextFormatManager 
-        : private LifespanTracker<CanvasTextFormatManager>
-    {
-    public:
-        ComPtr<CanvasTextFormat> Create();
-        ComPtr<CanvasTextFormat> CreateWrapper(IDWriteTextFormat* format);
-    };
-
 
     //
     // CanvasTextFormatFactory
@@ -36,8 +21,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         , private LifespanTracker<CanvasTextFormatFactory>
     {
     public:
-        IMPLEMENT_DEFAULT_GETMANAGER(CanvasTextFormatManager)
-            
         IFACEMETHOD(ActivateInstance)(IInspectable** obj) override;
     };
 

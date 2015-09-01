@@ -37,8 +37,7 @@ namespace canvas
         auto adapter = std::make_shared<StubFontManagerAdapter>();
         CustomFontManagerAdapter::SetInstance(adapter);
         
-        auto manager = std::make_shared<CanvasTextFormatManager>();
-        auto ctf = manager->Create();
+        auto ctf = Make<CanvasTextFormat>();
 
         //
         // Test roundtripping on unrealized format
@@ -77,7 +76,7 @@ namespace canvas
         //
         // Check round-tripping on a realized format
         //
-        ctf = manager->Create();
+        ctf = Make<CanvasTextFormat>();
         dwf = ctf->GetRealizedTextFormat();
 
         canvasSetter(ctf.Get(), expectedValue);
@@ -171,7 +170,7 @@ namespace canvas
         std::function<void(CanvasTextFormat*, CANVAS_TYPE)>&& canvasSetter,
         std::vector<CANVAS_TYPE> values)
     {
-        auto ctf = std::make_shared<CanvasTextFormatManager>()->Create();
+        auto ctf = Make<CanvasTextFormat>();
 
         for (auto& value : values)
         {
@@ -215,7 +214,7 @@ namespace canvas
     public:
         TEST_METHOD_EX(CanvasTextFormat_Implements_Expected_Interfaces)
         {
-            auto ctf = std::make_shared<CanvasTextFormatManager>()->Create();
+            auto ctf = Make<CanvasTextFormat>();
 
             ASSERT_IMPLEMENTS_INTERFACE(ctf, ICanvasTextFormat);
             ASSERT_IMPLEMENTS_INTERFACE(ctf, ABI::Windows::Foundation::IClosable);
@@ -224,7 +223,7 @@ namespace canvas
 
         TEST_METHOD_EX(CanvasTextFormat_Direction_DefaultValue)
         {
-            auto ctf = std::make_shared<CanvasTextFormatManager>()->Create();
+            auto ctf = Make<CanvasTextFormat>();
             CanvasTextDirection actualDirection;
             ThrowIfFailed(ctf->get_Direction(&actualDirection));
             Assert::AreEqual(CanvasTextDirection::LeftToRightThenTopToBottom, actualDirection);
@@ -256,7 +255,7 @@ namespace canvas
                 auto const& testCase = cases[i];
                 auto const& otherTestCase = cases[(i+1) % _countof(cases)];
 
-                auto ctf = std::make_shared<CanvasTextFormatManager>()->Create();
+                auto ctf = Make<CanvasTextFormat>();
 
                 // Setting CanvasTextFormat.Direction and then getting the
                 // DWrite object should set the correct values
@@ -399,7 +398,7 @@ namespace canvas
 
         TEST_METHOD_EX(CanvasTextFormat_LineSpacing_DefaultValue)
         {
-            auto ctf = std::make_shared<CanvasTextFormatManager>()->Create();
+            auto ctf = Make<CanvasTextFormat>();
 
             float lineSpacing{};
             ThrowIfFailed(ctf->get_LineSpacing(&lineSpacing));
@@ -414,14 +413,14 @@ namespace canvas
             for (auto value : values)
             {
                 // Create a CanvasTextFormat with LineSpacing set to the value
-                auto ctf = std::make_shared<CanvasTextFormatManager>()->Create();
+                auto ctf = Make<CanvasTextFormat>();
                 ThrowIfFailed(ctf->put_LineSpacing(value));
 
                 // Get the underlying IDWriteTextFormat, and wrap a new
                 // CanvasTextFormat around it
                 auto dtf = GetWrappedResource<IDWriteTextFormat>(ctf);
 
-                ctf = std::make_shared<CanvasTextFormatManager>()->CreateWrapper(dtf.Get());
+                ctf = Make<CanvasTextFormat>(dtf.Get());
 
                 // The LineSpacing value should have made it back again
                 float roundTrippedValue;
@@ -449,7 +448,7 @@ namespace canvas
             
             for (auto c : cases)
             {
-                auto ctf = std::make_shared<CanvasTextFormatManager>()->Create();
+                auto ctf = Make<CanvasTextFormat>();
                 ThrowIfFailed(ctf->put_LineSpacing(c.Value));
 
                 auto dtf = GetWrappedResource<IDWriteTextFormat>(ctf);
@@ -464,14 +463,14 @@ namespace canvas
         TEST_METHOD_EX(CanvasTextFormat_LineSpacing_WrappedFormatWithDefaultMethodAndZeroLineSpacingWorksAsExpected)
         {
             // Create a IDWriteTextFormat...
-            auto ctf = std::make_shared<CanvasTextFormatManager>()->Create();
+            auto ctf = Make<CanvasTextFormat>();
             auto dtf = GetWrappedResource<IDWriteTextFormat>(ctf);
 
             // Set the line spacing to DEFAULT/0.
             ThrowIfFailed(dtf->SetLineSpacing(DWRITE_LINE_SPACING_METHOD_DEFAULT, 0.0f, 0.0f));
 
             // Wrap a new CanvasTextFormat around it
-            ctf = std::make_shared<CanvasTextFormatManager>()->CreateWrapper(dtf.Get());
+            ctf = Make<CanvasTextFormat>(dtf.Get());
 
             // Force it to re-realize
             ThrowIfFailed(ctf->put_FontSize(123));
@@ -738,7 +737,7 @@ namespace canvas
             // 'Options' isn't part of IDWriteTextFormat, and so we can't use
             // TestSimpleProperty with it.
 
-            auto ctf = std::make_shared<CanvasTextFormatManager>()->Create();
+            auto ctf = Make<CanvasTextFormat>();
 
             // Check the default value
             CanvasDrawTextOptions actualDefault;
@@ -787,7 +786,6 @@ namespace canvas
         struct CustomFontFixture
         {
             std::shared_ptr<StubFontManagerAdapterWithDWriteFactory> Adapter;
-            std::shared_ptr<CanvasTextFormatManager> Manager;
 
             WinString AnyFullFontFamilyName;
             std::wstring AnyPath;
@@ -798,7 +796,6 @@ namespace canvas
 
             CustomFontFixture()
                 : Adapter(std::make_shared<StubFontManagerAdapterWithDWriteFactory>())
-                , Manager(std::make_shared<CanvasTextFormatManager>())
                 , AnyFullFontFamilyName(L"any_uri#any_font_family")
                 , AnyPath(StubStorageFileStatics::GetFakePath(WinString(L"ms-appx:///any_uri")))
                 , AnyFontFamily(L"any_font_family")
@@ -873,7 +870,7 @@ namespace canvas
             CustomFontFixture f;
             f.DontExpectCreateCustomFontCollection();
 
-            auto cf = f.Manager->Create();
+            auto cf = Make<CanvasTextFormat>();
             ThrowIfFailed(cf->put_FontFamily(WinString(L"family with no uri")));
             cf->GetRealizedTextFormat();
         }
@@ -883,7 +880,7 @@ namespace canvas
             CustomFontFixture f;
             f.DontExpectCreateCustomFontCollection();
 
-            auto cf = f.Manager->Create();
+            auto cf = Make<CanvasTextFormat>();
             ThrowIfFailed(cf->put_FontFamily(WinString(L"#family with blank uri")));
             cf->GetRealizedTextFormat();
         }
@@ -895,7 +892,7 @@ namespace canvas
 
             auto fontCollectionReturnedFromAdapter = f.ExpectCreateCustomFontCollection(f.AnyPath);
 
-            auto cf = f.Manager->Create();
+            auto cf = Make<CanvasTextFormat>();
             ThrowIfFailed(cf->put_FontFamily(f.AnyFullFontFamilyName));
             auto df = cf->GetRealizedTextFormat();
 
@@ -914,7 +911,7 @@ namespace canvas
 
             f.ExpectCreateCustomFontCollection(f.AnyPath);
 
-            auto cf1 = f.Manager->Create();
+            auto cf1 = Make<CanvasTextFormat>();
             ThrowIfFailed(cf1->put_FontFamily(f.AnyFullFontFamilyName));
             ThrowIfFailed(cf1->put_FontSize(1));
 
@@ -922,7 +919,7 @@ namespace canvas
 
             f.DontExpectCreateCustomFontCollection();
 
-            auto cf2 = f.Manager->CreateWrapper(df1.Get());
+            auto cf2 = Make<CanvasTextFormat>(df1.Get());
             ThrowIfFailed(cf2->put_FontSize(2));
             
             auto df2 = cf2->GetRealizedTextFormat();
@@ -944,13 +941,13 @@ namespace canvas
         {
             CustomFontFixture f;
 
-            auto cf1 = f.Manager->Create();
+            auto cf1 = Make<CanvasTextFormat>();
             ThrowIfFailed(cf1->put_FontFamily(f.AnyFullFontFamilyName));
 
             f.ExpectCreateCustomFontCollection(f.AnyPath);
             auto df1 = cf1->GetRealizedTextFormat();
 
-            auto cf2 = f.Manager->CreateWrapper(df1.Get());
+            auto cf2 = Make<CanvasTextFormat>(df1.Get());
             ThrowIfFailed(cf2->put_FontFamily(f.AnyOtherFullFontFamilyName));
                 
             f.ExpectCreateCustomFontCollection(f.AnyOtherPath);
@@ -973,7 +970,7 @@ namespace canvas
         {
             CustomFontFixture f;
 
-            auto cf = f.Manager->Create();
+            auto cf = Make<CanvasTextFormat>();
             ThrowIfFailed(cf->put_FontFamily(f.AnyFullFontFamilyName));
             
             WinString actualFontFamily;
@@ -990,7 +987,6 @@ namespace canvas
         TEST_METHOD_EX(CanvasTextFormat_WhenGetFileFromApplicationUriFails_HelpfulErrorMessageIsThrown)
         {
             auto adapter = std::make_shared<StubFontManagerAdapter>();
-            auto manager = std::make_shared<CanvasTextFormatManager>();
 
             CustomFontManagerAdapter::SetInstance(adapter);
 
@@ -1000,7 +996,7 @@ namespace canvas
                     return E_INVALIDARG;
                 });
 
-            auto cf = manager->Create();
+            auto cf = Make<CanvasTextFormat>();
             ThrowIfFailed(cf->put_FontFamily(WinString(L"uri#family the actual value doesn't matter as long as there is a #")));
             ExpectHResultException(E_INVALIDARG, [&] { cf->GetRealizedTextFormat(); });
             ValidateStoredErrorState(E_INVALIDARG, Strings::InvalidFontFamilyUri);
@@ -1008,7 +1004,7 @@ namespace canvas
 
         TEST_METHOD_EX(CanvasTextFormat_PutFontFamily_ValidatesUriSchema)
         {
-            auto cf = std::make_shared<CanvasTextFormatManager>()->Create();
+            auto cf = Make<CanvasTextFormat>();
 
             auto validFamilies = { L"", L"any family name with no uri", L"#family" };
 

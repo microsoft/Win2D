@@ -155,7 +155,7 @@ public:
 
         CachedGeometry = CanvasCachedGeometry::CreateNew(canvasDevice.Get(), Geometry.Get(), D2D1_DEFAULT_FLATTENING_TOLERANCE);
 
-        auto textFormat = CanvasTextFormatFactory::GetManager()->Create();
+        auto textFormat = Make<CanvasTextFormat>();
         auto textlayoutAdapter = std::make_shared<StubCanvasTextLayoutAdapter>();
         auto textLayoutManager = std::make_shared<CanvasTextLayoutManager>();
         TextLayout = textLayoutManager->CreateNew(canvasDevice.Get(), WinString(L"A string"), textFormat.Get(), 0.0f, 0.0f);
@@ -4189,7 +4189,7 @@ TEST_CLASS(CanvasDrawingSession_DrawTextTests)
 
         Fixture()
         {
-            Format = CanvasTextFormatFactory::GetManager()->Create();
+            Format = Make<CanvasTextFormat>();
         }
 
         template<typename FORMAT_VALIDATOR>

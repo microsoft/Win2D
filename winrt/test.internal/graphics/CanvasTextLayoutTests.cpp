@@ -40,9 +40,7 @@ namespace canvas
             {
                 CustomFontManagerAdapter::SetInstance(Adapter);
 
-                auto formatManager = std::make_shared<CanvasTextFormatManager>();
-
-                Format = formatManager->Create();
+                Format = Make<CanvasTextFormat>();
 
                 LayoutManager = std::make_shared<CanvasTextLayoutManager>();
 
