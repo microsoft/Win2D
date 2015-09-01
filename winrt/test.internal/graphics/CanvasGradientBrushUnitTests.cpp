@@ -14,14 +14,10 @@ TEST_CLASS(CanvasGradientBrushTests)
     struct Fixture
     {
         ComPtr<StubCanvasDevice> m_canvasDevice;
-        std::shared_ptr<CanvasLinearGradientBrushManager> m_linearGradientBrushManager;
-        std::shared_ptr<CanvasRadialGradientBrushManager> m_radialGradientBrushManager;
 
         Fixture()
         {
             m_canvasDevice = Make<StubCanvasDevice>();
-            m_linearGradientBrushManager = std::make_shared<CanvasLinearGradientBrushManager>();
-            m_radialGradientBrushManager = std::make_shared<CanvasRadialGradientBrushManager>();
 
             m_canvasDevice->MockCreateLinearGradientBrush =
                 [&](ID2D1GradientStopCollection1* stopCollection)
@@ -43,14 +39,14 @@ TEST_CLASS(CanvasGradientBrushTests)
 
         auto stopCollection = Make<MockD2DGradientStopCollection>();
 
-        auto linearGradientBrush = f.m_linearGradientBrushManager->CreateNew(f.m_canvasDevice.Get(), stopCollection.Get());
+        auto linearGradientBrush = CanvasLinearGradientBrush::CreateNew(f.m_canvasDevice.Get(), stopCollection.Get());
         ASSERT_IMPLEMENTS_INTERFACE(linearGradientBrush, ICanvasLinearGradientBrush);
         ASSERT_IMPLEMENTS_INTERFACE(linearGradientBrush, ICanvasBrush);
         ASSERT_IMPLEMENTS_INTERFACE(linearGradientBrush, ICanvasBrushInternal);
         ASSERT_IMPLEMENTS_INTERFACE(linearGradientBrush, ABI::Windows::Foundation::IClosable);
         ASSERT_IMPLEMENTS_INTERFACE(linearGradientBrush, ICanvasResourceWrapperNative);
 
-        auto radialGradientBrush = f.m_radialGradientBrushManager->CreateNew(f.m_canvasDevice.Get(), stopCollection.Get());
+        auto radialGradientBrush = CanvasRadialGradientBrush::CreateNew(f.m_canvasDevice.Get(), stopCollection.Get());
         ASSERT_IMPLEMENTS_INTERFACE(radialGradientBrush, ICanvasRadialGradientBrush);
         ASSERT_IMPLEMENTS_INTERFACE(radialGradientBrush, ICanvasBrush);
         ASSERT_IMPLEMENTS_INTERFACE(radialGradientBrush, ICanvasBrushInternal);
@@ -58,9 +54,8 @@ TEST_CLASS(CanvasGradientBrushTests)
         ASSERT_IMPLEMENTS_INTERFACE(radialGradientBrush, ICanvasResourceWrapperNative);
     }
 
-    template<class MOCK_TYPE, class BRUSH_MANAGER_TYPE, typename MOCK_CREATE_BRUSH_FN_TYPE>
+    template<class BRUSH_TYPE, class MOCK_TYPE, typename MOCK_CREATE_BRUSH_FN_TYPE>
     void TestCommonProperties(
-        std::shared_ptr<BRUSH_MANAGER_TYPE> manager,
         ComPtr<StubCanvasDevice> const testDevice,
         MOCK_CREATE_BRUSH_FN_TYPE* mockCreateBrushFunction)
     {
@@ -191,7 +186,7 @@ TEST_CLASS(CanvasGradientBrushTests)
         CanvasColorSpace colorSpace;
         CanvasBufferPrecision bufferPrecision;
 
-        auto brush = manager->CreateNew(testDevice.Get(), mockStopCollection.Get());
+        auto brush = BRUSH_TYPE::CreateNew(testDevice.Get(), mockStopCollection.Get());
 
         ThrowIfFailed(brush->get_EdgeBehavior(&edgeBehavior));
         Assert::AreEqual(CanvasEdgeBehavior::Wrap, edgeBehavior);
@@ -261,13 +256,11 @@ TEST_CLASS(CanvasGradientBrushTests)
 
         auto testDevice = Make<StubCanvasDevice>();
 
-        TestCommonProperties<MockD2DLinearGradientBrush>(
-            f.m_linearGradientBrushManager,
+        TestCommonProperties<CanvasLinearGradientBrush, MockD2DLinearGradientBrush>(
             testDevice,
             &testDevice->MockCreateLinearGradientBrush);
 
-        TestCommonProperties<MockD2DRadialGradientBrush>(
-            f.m_radialGradientBrushManager,
+        TestCommonProperties<CanvasRadialGradientBrush, MockD2DRadialGradientBrush>(
             testDevice,
             &testDevice->MockCreateRadialGradientBrush);
     }
@@ -322,7 +315,7 @@ TEST_CLASS(CanvasGradientBrushTests)
             };
 
         auto stopCollection = Make<MockD2DGradientStopCollection>();
-        auto linearGradientBrush = f.m_linearGradientBrushManager->CreateNew(testDevice.Get(), stopCollection.Get());
+        auto linearGradientBrush = CanvasLinearGradientBrush::CreateNew(testDevice.Get(), stopCollection.Get());
 
         Numerics::Vector2 v;
 
@@ -427,7 +420,7 @@ TEST_CLASS(CanvasGradientBrushTests)
         };
 
         auto stopCollection = Make<MockD2DGradientStopCollection>();
-        auto radialGradientBrush = f.m_radialGradientBrushManager->CreateNew(testDevice.Get(), stopCollection.Get());
+        auto radialGradientBrush = CanvasRadialGradientBrush::CreateNew(testDevice.Get(), stopCollection.Get());
 
         Numerics::Vector2 v;
 
@@ -475,7 +468,7 @@ TEST_CLASS(CanvasGradientBrushTests)
 
         auto stopCollection = Make<MockD2DGradientStopCollection>();
 
-        auto linearGradientBrush = f.m_linearGradientBrushManager->CreateNew(f.m_canvasDevice.Get(), stopCollection.Get());
+        auto linearGradientBrush = CanvasLinearGradientBrush::CreateNew(f.m_canvasDevice.Get(), stopCollection.Get());
 
         Assert::AreEqual(E_INVALIDARG, linearGradientBrush->get_StartPoint(nullptr));
         Assert::AreEqual(E_INVALIDARG, linearGradientBrush->get_EndPoint(nullptr));
@@ -490,7 +483,7 @@ TEST_CLASS(CanvasGradientBrushTests)
         Assert::AreEqual(E_INVALIDARG, linearGradientBrush->get_Opacity(nullptr));
         Assert::AreEqual(E_INVALIDARG, linearGradientBrush->get_Transform(nullptr));
 
-        auto radialGradientBrush = f.m_radialGradientBrushManager->CreateNew(f.m_canvasDevice.Get(), stopCollection.Get());
+        auto radialGradientBrush = CanvasRadialGradientBrush::CreateNew(f.m_canvasDevice.Get(), stopCollection.Get());
 
         Assert::AreEqual(E_INVALIDARG, radialGradientBrush->get_Center(nullptr));
         Assert::AreEqual(E_INVALIDARG, radialGradientBrush->get_OriginOffset(nullptr));
@@ -524,7 +517,7 @@ TEST_CLASS(CanvasGradientBrushTests)
         CanvasBufferPrecision bufferPrecision;
         ComPtr<ICanvasDevice> actualDevice;
 
-        auto linearGradientBrush = f.m_linearGradientBrushManager->CreateNew(f.m_canvasDevice.Get(), stopCollection.Get());
+        auto linearGradientBrush = CanvasLinearGradientBrush::CreateNew(f.m_canvasDevice.Get(), stopCollection.Get());
         ThrowIfFailed(linearGradientBrush->Close());
 
         Assert::AreEqual(RO_E_CLOSED, linearGradientBrush->get_StartPoint(&v));
@@ -543,7 +536,7 @@ TEST_CLASS(CanvasGradientBrushTests)
         Assert::AreEqual(RO_E_CLOSED, linearGradientBrush->put_Transform(m));
         Assert::AreEqual(RO_E_CLOSED, linearGradientBrush->get_Device(&actualDevice));
 
-        auto radialGradientBrush = f.m_radialGradientBrushManager->CreateNew(f.m_canvasDevice.Get(), stopCollection.Get());
+        auto radialGradientBrush = CanvasRadialGradientBrush::CreateNew(f.m_canvasDevice.Get(), stopCollection.Get());
         ThrowIfFailed(radialGradientBrush->Close());
 
         Assert::AreEqual(RO_E_CLOSED, radialGradientBrush->get_Center(&v));

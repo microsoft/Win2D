@@ -10,7 +10,7 @@ using namespace ABI::Microsoft::Graphics::Canvas::Numerics;
 using namespace ABI::Microsoft::Graphics::Canvas;
 using namespace ABI::Windows::UI;
 
-ComPtr<CanvasLinearGradientBrush> CanvasLinearGradientBrushManager::CreateNew(
+ComPtr<CanvasLinearGradientBrush> CanvasLinearGradientBrush::CreateNew(
     ICanvasResourceCreator* resourceCreator,
     UINT32 gradientStopCount,
     CanvasGradientStop* gradientStops,
@@ -38,14 +38,14 @@ ComPtr<CanvasLinearGradientBrush> CanvasLinearGradientBrushManager::CreateNew(
     auto d2dBrush = deviceInternal->CreateLinearGradientBrush(stopCollection.Get());
 
     auto canvasLinearGradientBrush = Make<CanvasLinearGradientBrush>(
-        d2dBrush.Get(),
-        device.Get());
+        device.Get(),
+        d2dBrush.Get());
     CheckMakeResult(canvasLinearGradientBrush);
 
     return canvasLinearGradientBrush;
 }
 
-ComPtr<CanvasLinearGradientBrush> CanvasLinearGradientBrushManager::CreateNew(
+ComPtr<CanvasLinearGradientBrush> CanvasLinearGradientBrush::CreateNew(
     ICanvasResourceCreator* resourceCreator,
     ID2D1GradientStopCollection1* stopCollection)
 {
@@ -58,20 +58,8 @@ ComPtr<CanvasLinearGradientBrush> CanvasLinearGradientBrushManager::CreateNew(
     auto d2dBrush = deviceInternal->CreateLinearGradientBrush(stopCollection);
 
     auto canvasLinearGradientBrush = Make<CanvasLinearGradientBrush>(
-        d2dBrush.Get(),
-        device.Get());
-    CheckMakeResult(canvasLinearGradientBrush);
-
-    return canvasLinearGradientBrush;
-}
-
-ComPtr<CanvasLinearGradientBrush> CanvasLinearGradientBrushManager::CreateWrapper(
-    ICanvasDevice* device,
-    ID2D1LinearGradientBrush* resource)
-{
-    auto canvasLinearGradientBrush = Make<CanvasLinearGradientBrush>(
-        resource,
-        device);
+        device.Get(),
+        d2dBrush.Get());
     CheckMakeResult(canvasLinearGradientBrush);
 
     return canvasLinearGradientBrush;
@@ -95,7 +83,7 @@ IFACEMETHODIMP CanvasLinearGradientBrushFactory::CreateSimple(
             ComPtr<ID2D1GradientStopCollection1> stopCollection =
                 CreateSimpleGradientStopCollection(canvasDevice.Get(), startColor, endColor, CanvasEdgeBehavior::Clamp);
 
-            auto newLinearBrush = GetManager()->CreateNew(resourceCreator, stopCollection.Get());
+            auto newLinearBrush = CanvasLinearGradientBrush::CreateNew(resourceCreator, stopCollection.Get());
 
             ThrowIfFailed(newLinearBrush.CopyTo(linearGradientBrush));
         });
@@ -156,7 +144,7 @@ IFACEMETHODIMP CanvasLinearGradientBrushFactory::CreateWithEdgeBehaviorAndInterp
             CheckInPointer(resourceCreator);
             CheckAndClearOutPointer(linearGradientBrush);
 
-            auto newLinearBrush = GetManager()->CreateNew(
+            auto newLinearBrush = CanvasLinearGradientBrush::CreateNew(
                 resourceCreator,
                 gradientStopCount,
                 gradientStops,
@@ -187,15 +175,15 @@ IFACEMETHODIMP CanvasLinearGradientBrushFactory::CreateRainbow(
             ComPtr<ID2D1GradientStopCollection1> stopCollection =
                 CreateRainbowGradientStopCollection(canvasDevice.Get(), eldritchness);
 
-            auto newLinearBrush = GetManager()->CreateNew(resourceCreator, stopCollection.Get());
+            auto newLinearBrush = CanvasLinearGradientBrush::CreateNew(resourceCreator, stopCollection.Get());
 
             ThrowIfFailed(newLinearBrush.CopyTo(canvasLinearGradientBrush));
         });
 }
 
 CanvasLinearGradientBrush::CanvasLinearGradientBrush(
-    ID2D1LinearGradientBrush* brush,
-    ICanvasDevice* device)
+    ICanvasDevice* device,
+    ID2D1LinearGradientBrush* brush)
     : CanvasBrush(device)
     , ResourceWrapper(brush)
 {

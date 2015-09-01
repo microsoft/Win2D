@@ -19,9 +19,23 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_Brushes_CanvasRadialGradientBrush, BaseTrust);
 
     public:
+        static ComPtr<CanvasRadialGradientBrush> CreateNew(
+            ICanvasResourceCreator* resourceAllocator,
+            UINT32 gradientStopCount,
+            CanvasGradientStop* gradientStops,
+            CanvasEdgeBehavior edgeBehavior,
+            CanvasAlphaMode alphaMode,
+            CanvasColorSpace preInterpolationSpace,
+            CanvasColorSpace postInterpolationSpace,
+            CanvasBufferPrecision bufferPrecision);
+
+        static ComPtr<CanvasRadialGradientBrush> CreateNew(
+            ICanvasResourceCreator* resourceCreator,
+            ID2D1GradientStopCollection1* stopCollection);
+
         CanvasRadialGradientBrush(
-            ID2D1RadialGradientBrush* brush,
-            ICanvasDevice* device);
+            ICanvasDevice* device,
+            ID2D1RadialGradientBrush* brush);
 
         IFACEMETHOD(get_Center)(_Out_ Vector2* value) override;
 
@@ -61,28 +75,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         ComPtr<ID2D1GradientStopCollection1> GetGradientStopCollection();
     };
 
-    class CanvasRadialGradientBrushManager : private LifespanTracker<CanvasRadialGradientBrushManager>
-    {
-    public:
-        ComPtr<CanvasRadialGradientBrush> CreateNew(
-            ICanvasResourceCreator* resourceAllocator,
-            UINT32 gradientStopCount,
-            CanvasGradientStop* gradientStops,
-            CanvasEdgeBehavior edgeBehavior,
-            CanvasAlphaMode alphaMode,
-            CanvasColorSpace preInterpolationSpace,
-            CanvasColorSpace postInterpolationSpace,
-            CanvasBufferPrecision bufferPrecision);
-
-        ComPtr<CanvasRadialGradientBrush> CreateNew(
-            ICanvasResourceCreator* resourceCreator,
-            ID2D1GradientStopCollection1* stopCollection);
-
-        ComPtr<CanvasRadialGradientBrush> CreateWrapper(
-            ICanvasDevice* device,
-            ID2D1RadialGradientBrush* resource);
-    };
-
     class CanvasRadialGradientBrushFactory
         : public ActivationFactory<ICanvasRadialGradientBrushFactory, ICanvasRadialGradientBrushStatics>
         , private LifespanTracker<CanvasRadialGradientBrushFactory>
@@ -90,8 +82,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_Brushes_CanvasRadialGradientBrush, BaseTrust);
 
     public:
-        IMPLEMENT_DEFAULT_GETMANAGER(CanvasRadialGradientBrushManager);
-
         IFACEMETHOD(CreateSimple)(
             ICanvasResourceCreator* resourceCreator,
             ABI::Windows::UI::Color startColor,

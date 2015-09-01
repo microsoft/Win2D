@@ -11,7 +11,7 @@ using namespace ABI::Microsoft::Graphics::Canvas::Numerics;
 using namespace ABI::Microsoft::Graphics::Canvas;
 using namespace ABI::Windows::UI;
 
-ComPtr<CanvasRadialGradientBrush> CanvasRadialGradientBrushManager::CreateNew(
+ComPtr<CanvasRadialGradientBrush> CanvasRadialGradientBrush::CreateNew(
     ICanvasResourceCreator* resourceCreator,
     UINT32 gradientStopCount,
     CanvasGradientStop* gradientStops,
@@ -39,14 +39,14 @@ ComPtr<CanvasRadialGradientBrush> CanvasRadialGradientBrushManager::CreateNew(
     auto d2dBrush = deviceInternal->CreateRadialGradientBrush(stopCollection.Get());
 
     auto canvasRadialGradientBrush = Make<CanvasRadialGradientBrush>(
-        d2dBrush.Get(),
-        device.Get());
+        device.Get(),
+        d2dBrush.Get());
     CheckMakeResult(canvasRadialGradientBrush);
 
     return canvasRadialGradientBrush;
 }
 
-ComPtr<CanvasRadialGradientBrush> CanvasRadialGradientBrushManager::CreateNew(
+ComPtr<CanvasRadialGradientBrush> CanvasRadialGradientBrush::CreateNew(
     ICanvasResourceCreator* resourceCreator,
     ID2D1GradientStopCollection1* stopCollection)
 {
@@ -59,25 +59,12 @@ ComPtr<CanvasRadialGradientBrush> CanvasRadialGradientBrushManager::CreateNew(
     auto d2dBrush = deviceInternal->CreateRadialGradientBrush(stopCollection);
 
     auto canvasRadialGradientBrush = Make<CanvasRadialGradientBrush>(
-        d2dBrush.Get(),
-        device.Get());
+        device.Get(),
+        d2dBrush.Get());
     CheckMakeResult(canvasRadialGradientBrush);
 
     return canvasRadialGradientBrush;
 }
-
-ComPtr<CanvasRadialGradientBrush> CanvasRadialGradientBrushManager::CreateWrapper(
-    ICanvasDevice* device,
-    ID2D1RadialGradientBrush* resource)
-{
-    auto canvasRadialGradientBrush = Make<CanvasRadialGradientBrush>(
-        resource,
-        device);
-    CheckMakeResult(canvasRadialGradientBrush);
-
-    return canvasRadialGradientBrush;
-}
-
 
 IFACEMETHODIMP CanvasRadialGradientBrushFactory::CreateSimple(
     ICanvasResourceCreator* resourceCreator,
@@ -85,7 +72,6 @@ IFACEMETHODIMP CanvasRadialGradientBrushFactory::CreateSimple(
     ABI::Windows::UI::Color endColor,
     ICanvasRadialGradientBrush** radialGradientBrush)
 {
-
     return ExceptionBoundary(
         [&]
         {
@@ -98,7 +84,7 @@ IFACEMETHODIMP CanvasRadialGradientBrushFactory::CreateSimple(
             ComPtr<ID2D1GradientStopCollection1> stopCollection =
                 CreateSimpleGradientStopCollection(canvasDevice.Get(), startColor, endColor, CanvasEdgeBehavior::Clamp);
 
-            auto newRadialBrush = GetManager()->CreateNew(resourceCreator, stopCollection.Get());
+            auto newRadialBrush = CanvasRadialGradientBrush::CreateNew(resourceCreator, stopCollection.Get());
 
             ThrowIfFailed(newRadialBrush.CopyTo(radialGradientBrush));
         });    
@@ -159,7 +145,7 @@ IFACEMETHODIMP CanvasRadialGradientBrushFactory::CreateWithEdgeBehaviorAndInterp
             CheckInPointer(resourceCreator);
             CheckAndClearOutPointer(radialGradientBrush);
 
-            auto newRadialBrush = GetManager()->CreateNew(
+            auto newRadialBrush = CanvasRadialGradientBrush::CreateNew(
                 resourceCreator,
                 gradientStopCount,
                 gradientStops,
@@ -190,15 +176,15 @@ IFACEMETHODIMP CanvasRadialGradientBrushFactory::CreateRainbow(
             ComPtr<ID2D1GradientStopCollection1> stopCollection =
                 CreateRainbowGradientStopCollection(canvasDevice.Get(), eldritchness);
 
-            auto newRadialBrush = GetManager()->CreateNew(resourceCreator, stopCollection.Get());
+            auto newRadialBrush = CanvasRadialGradientBrush::CreateNew(resourceCreator, stopCollection.Get());
 
             ThrowIfFailed(newRadialBrush.CopyTo(canvasRadialGradientBrush));
         });
 }
 
 CanvasRadialGradientBrush::CanvasRadialGradientBrush(
-    ID2D1RadialGradientBrush* brush,
-    ICanvasDevice* device)
+    ICanvasDevice* device,
+    ID2D1RadialGradientBrush* brush)
     : CanvasBrush(device)
     , ResourceWrapper(brush)
 {
