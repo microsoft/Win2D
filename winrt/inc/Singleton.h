@@ -7,7 +7,7 @@
 
 // Manages a singleton instance of T, which will be kept alive as long as any client maintains a shared_ptr to it.
 template<typename T, typename DefaultImplementation = T>
-class Singleton
+class Singleton : private LifespanTracker<T>
 {
 public:
     // Demand-creates the singleton instance.

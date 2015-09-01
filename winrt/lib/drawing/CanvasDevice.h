@@ -367,7 +367,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     //
     class CanvasDeviceManager : public Singleton<CanvasDeviceManager>
                               , public std::enable_shared_from_this<CanvasDeviceManager>
-                              , private LifespanTracker<CanvasDeviceManager>
     {
         std::shared_ptr<ICanvasDeviceResourceCreationAdapter> m_adapter;
 

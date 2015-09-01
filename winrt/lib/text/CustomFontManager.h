@@ -20,7 +20,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
 
     class DefaultCustomFontManagerAdapter : public CustomFontManagerAdapter
-                                          , private LifespanTracker<DefaultCustomFontManagerAdapter>
     {
         ComPtr<IStorageFileStatics> m_storageFileStatics;
 
@@ -30,9 +29,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     };
 
 
-    class CustomFontManager
-        : public Singleton<CustomFontManager>
-        , private LifespanTracker<CustomFontManager>
+    class CustomFontManager : public Singleton<CustomFontManager>
     {
         ComPtr<IDWriteFactory> m_isolatedFactory;
         ComPtr<IDWriteFactory> m_sharedFactory;
