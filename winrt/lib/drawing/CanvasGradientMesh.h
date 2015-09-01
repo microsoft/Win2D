@@ -22,9 +22,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         ClosablePtr<ICanvasDevice> m_canvasDevice;
 
     public:
+        static ComPtr<CanvasGradientMesh> CreateNew(
+            ICanvasResourceCreator* resourceCreator,
+            uint32_t patchCount,
+            CanvasGradientMeshPatch* patchElements);
+
         CanvasGradientMesh(
-            ID2D1GradientMesh* d2dGradientMesh,
-            ICanvasDevice* canvasDevice);
+            ICanvasDevice* canvasDevice,
+            ID2D1GradientMesh* d2dGradientMesh);
         
         IFACEMETHOD(get_Patches)(
             uint32_t* valueCount,
@@ -39,19 +44,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         IFACEMETHOD(get_Device)(ICanvasDevice** device);
     };
 
-    class CanvasGradientMeshManager : private LifespanTracker<CanvasGradientMeshManager>
-    {
-    public:
-        ComPtr<CanvasGradientMesh> CreateNew(
-            ICanvasResourceCreator* resourceCreator,
-            uint32_t patchCount,
-            CanvasGradientMeshPatch* patchElements);
-
-        ComPtr<CanvasGradientMesh> CreateWrapper(
-            ICanvasDevice* device,
-            ID2D1GradientMesh* resource);
-    };
-
     class CanvasGradientMeshFactory
         : public ActivationFactory<ICanvasGradientMeshStatics, ICanvasGradientMeshFactory>
         , private LifespanTracker<CanvasGradientMeshFactory>
@@ -59,8 +51,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_Geometry_CanvasGradientMesh, BaseTrust);
 
     public:
-        IMPLEMENT_DEFAULT_GETMANAGER(CanvasGradientMeshManager);
-
         IFACEMETHOD(Create)(
             ICanvasResourceCreator* resourceCreator,
             uint32_t patchCount,

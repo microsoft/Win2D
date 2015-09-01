@@ -111,7 +111,7 @@ IFACEMETHODIMP CanvasGradientMeshFactory::Create(
             CheckInPointer(resourceCreator);
             CheckAndClearOutPointer(canvasGradientMesh);
 
-            auto newGradientMesh = GetManager()->CreateNew(resourceCreator, patchCount, patchElements);
+            auto newGradientMesh = CanvasGradientMesh::CreateNew(resourceCreator, patchCount, patchElements);
 
             ThrowIfFailed(newGradientMesh.CopyTo(canvasGradientMesh));
         });
@@ -226,8 +226,8 @@ IFACEMETHODIMP CanvasGradientMeshFactory::CreateTensorPatch(
 //
 
 CanvasGradientMesh::CanvasGradientMesh(
-    ID2D1GradientMesh* d2dGradientMesh,
-    ICanvasDevice* canvasDevice)
+    ICanvasDevice* canvasDevice,
+    ID2D1GradientMesh* d2dGradientMesh)
         : ResourceWrapper(d2dGradientMesh)
         , m_canvasDevice(canvasDevice)
 {
@@ -302,7 +302,7 @@ IFACEMETHODIMP CanvasGradientMesh::get_Device(ICanvasDevice** device)
         });
 }
 
-ComPtr<CanvasGradientMesh> CanvasGradientMeshManager::CreateNew(
+ComPtr<CanvasGradientMesh> CanvasGradientMesh::CreateNew(
     ICanvasResourceCreator* resourceCreator,
     uint32_t patchCount,
     CanvasGradientMeshPatch* patchElements)
@@ -332,20 +332,8 @@ ComPtr<CanvasGradientMesh> CanvasGradientMeshManager::CreateNew(
     }
 
     auto canvasGradientMesh = Make<CanvasGradientMesh>(
-        d2dGradientMesh.Get(),
-        device.Get());
-    CheckMakeResult(canvasGradientMesh);
-
-    return canvasGradientMesh;
-}
-
-ComPtr<CanvasGradientMesh> CanvasGradientMeshManager::CreateWrapper(
-    ICanvasDevice* device,
-    ID2D1GradientMesh* resource)
-{
-    auto canvasGradientMesh = Make<CanvasGradientMesh>(
-        resource,
-        device);
+        device.Get(),
+        d2dGradientMesh.Get());
     CheckMakeResult(canvasGradientMesh);
 
     return canvasGradientMesh;

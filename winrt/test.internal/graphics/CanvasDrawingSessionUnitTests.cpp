@@ -161,8 +161,7 @@ public:
         TextLayout = textLayoutManager->CreateNew(canvasDevice.Get(), WinString(L"A string"), textFormat.Get(), 0.0f, 0.0f);
 
 #if WINVER > _WIN32_WINNT_WINBLUE
-        auto gradientMeshManager = CanvasGradientMeshFactory::GetManager();
-        GradientMesh = gradientMeshManager->CreateNew(canvasDevice.Get(), 0, nullptr);
+        GradientMesh = CanvasGradientMesh::CreateNew(canvasDevice.Get(), 0, nullptr);
 #endif
     }
 

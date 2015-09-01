@@ -36,7 +36,7 @@ std::vector<ResourceManager::TryCreateFunction> ResourceManager::tryCreateFuncti
     TryCreate<ID2D1Geometry, CanvasGeometry, MakeWrapperWithDevice<ID2D1Geometry, CanvasGeometry>>,
     TryCreate<ID2D1GeometryRealization, CanvasCachedGeometry, MakeWrapperWithDevice<ID2D1GeometryRealization, CanvasCachedGeometry>>,
 #if WINVER > _WIN32_WINNT_WINBLUE
-    TryCreate<ID2D1GradientMesh, CanvasGradientMesh, CreateFromManagerWithDevice<ID2D1GradientMesh, CanvasGradientMesh, CanvasGradientMeshFactory>>,
+    TryCreate<ID2D1GradientMesh, CanvasGradientMesh, MakeWrapperWithDevice<ID2D1GradientMesh, CanvasGradientMesh>>,
 #endif
 };
 
