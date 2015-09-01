@@ -29,11 +29,9 @@ public:
     struct Fixture
     {
         ComPtr<StubCanvasDevice> Device;
-        std::shared_ptr<CanvasGeometryManager> Manager;
 
         Fixture()
             : Device(Make<StubCanvasDevice>())
-            , Manager(std::make_shared<CanvasGeometryManager>())
         {
             Device->CreateRectangleGeometryMethod.AllowAnyCall(
                 [](D2D1_RECT_F const&)
@@ -48,7 +46,7 @@ public:
     {
         Fixture f;
 
-        auto canvasGeometry = f.Manager->CreateNew(f.Device.Get(), Rect{});
+        auto canvasGeometry = CanvasGeometry::CreateNew(f.Device.Get(), Rect{});
 
         ASSERT_IMPLEMENTS_INTERFACE(canvasGeometry, ICanvasGeometry);
         ASSERT_IMPLEMENTS_INTERFACE(canvasGeometry, ABI::Windows::Foundation::IClosable);
@@ -69,7 +67,7 @@ public:
                 return Make<MockD2DRectangleGeometry>();
             });
 
-        f.Manager->CreateNew(f.Device.Get(), expectedRect);
+        CanvasGeometry::CreateNew(f.Device.Get(), expectedRect);
     }
 
     TEST_METHOD_EX(CanvasGeometry_CreatedWithCorrectD2DEllipseResource)
@@ -85,7 +83,7 @@ public:
                 return Make<MockD2DEllipseGeometry>();
             });
             
-        f.Manager->CreateNew(f.Device.Get(), Vector2{ testEllipse.point.x, testEllipse.point.y }, testEllipse.radiusX, testEllipse.radiusY);
+        CanvasGeometry::CreateNew(f.Device.Get(), Vector2{ testEllipse.point.x, testEllipse.point.y }, testEllipse.radiusX, testEllipse.radiusY);
     }
 
     TEST_METHOD_EX(CanvasGeometry_CreatedWithCorrectD2DRoundedRectangleResource)
@@ -105,7 +103,7 @@ public:
                 return Make<MockD2DRoundedRectangleGeometry>();
             });
 
-        f.Manager->CreateNew(f.Device.Get(), expectedRect, expectedRadiusX, expectedRadiusY);
+        CanvasGeometry::CreateNew(f.Device.Get(), expectedRect, expectedRadiusX, expectedRadiusY);
     }
 
     class CreatePolygonFixture : public Fixture
@@ -170,7 +168,7 @@ public:
 
         CreatePolygonFixture f(3, testVertices);
 
-        f.Manager->CreateNew(f.Device.Get(), 3, testVertices);
+        CanvasGeometry::CreateNew(f.Device.Get(), 3, testVertices);
     }
 
     TEST_METHOD_EX(CanvasGeometry_CreatePolygon_OneVertex)
@@ -179,21 +177,21 @@ public:
 
         CreatePolygonFixture f(1, &testVertex);
 
-        f.Manager->CreateNew(f.Device.Get(), 1, &testVertex);
+        CanvasGeometry::CreateNew(f.Device.Get(), 1, &testVertex);
     }
 
     TEST_METHOD_EX(CanvasGeometry_CreatePolygon_ZeroVertices)
     {
         CreatePolygonFixture f(0, nullptr);
 
-        f.Manager->CreateNew(f.Device.Get(), 0, nullptr);
+        CanvasGeometry::CreateNew(f.Device.Get(), 0, nullptr);
     }
 
     TEST_METHOD_EX(CanvasGeometry_CreatePolygon_NullVertexArray)
     {
         Fixture f;
 
-        ExpectHResultException(E_INVALIDARG, [&]{ f.Manager->CreateNew(f.Device.Get(), 1, nullptr); });
+        ExpectHResultException(E_INVALIDARG, [&]{ CanvasGeometry::CreateNew(f.Device.Get(), 1, nullptr); });
     }
 
     class GeometryGroupFixture : public Fixture
@@ -263,7 +261,7 @@ public:
                     return Make<MockD2DGeometryGroup>();
                 });
 
-            f.Manager->CreateNew(f.Device.Get(), geometryCount, f.GetGeometries(), CanvasFilledRegionDetermination::Winding);
+            CanvasGeometry::CreateNew(f.Device.Get(), geometryCount, f.GetGeometries(), CanvasFilledRegionDetermination::Winding);
         }
     }
 
@@ -281,7 +279,7 @@ public:
                 return Make<MockD2DGeometryGroup>();
             });
 
-        auto geometryGroup = f.Manager->CreateNew(f.Device.Get(), 0, nullptr, CanvasFilledRegionDetermination::Winding);
+        auto geometryGroup = CanvasGeometry::CreateNew(f.Device.Get(), 0, nullptr, CanvasFilledRegionDetermination::Winding);
         Assert::IsNotNull(geometryGroup.Get());
     }
 
@@ -289,7 +287,7 @@ public:
     {
         Fixture f;
 
-        ExpectHResultException(E_INVALIDARG, [&]{ f.Manager->CreateNew(f.Device.Get(), 1, nullptr, CanvasFilledRegionDetermination::Winding); });
+        ExpectHResultException(E_INVALIDARG, [&]{ CanvasGeometry::CreateNew(f.Device.Get(), 1, nullptr, CanvasFilledRegionDetermination::Winding); });
     }
 
     TEST_METHOD_EX(CanvasGeometry_ZeroSizedGeometryGroup_NonNullInputArray)
@@ -309,7 +307,7 @@ public:
                 return Make<MockD2DGeometryGroup>();
             });
 
-        auto geometryGroup = f.Manager->CreateNew(f.Device.Get(), 0, canvasGeometry.GetAddressOf(), CanvasFilledRegionDetermination::Winding);
+        auto geometryGroup = CanvasGeometry::CreateNew(f.Device.Get(), 0, canvasGeometry.GetAddressOf(), CanvasFilledRegionDetermination::Winding);
         Assert::IsNotNull(geometryGroup.Get());
     }
 
@@ -319,7 +317,7 @@ public:
 
         f.DeleteResourceAtIndex(2);
 
-        ExpectHResultException(E_INVALIDARG, [&]{ f.Manager->CreateNew(f.Device.Get(), 3, f.GetGeometries(), CanvasFilledRegionDetermination::Winding); });
+        ExpectHResultException(E_INVALIDARG, [&]{ CanvasGeometry::CreateNew(f.Device.Get(), 3, f.GetGeometries(), CanvasFilledRegionDetermination::Winding); });
     }
 
     class GeometryOperationsFixture_DoesNotOutputToTempPathBuilder : public Fixture
@@ -1208,8 +1206,8 @@ public:
     {
         GeometryOperationsFixture_DoesNotOutputToTempPathBuilder f;
 
-        auto canvasGeometry = f.Manager->CreateNew(f.Device.Get(), Rect{});
-        auto otherCanvasGeometry = f.Manager->CreateNew(f.Device.Get(), Rect{});
+        auto canvasGeometry = CanvasGeometry::CreateNew(f.Device.Get(), Rect{});
+        auto otherCanvasGeometry = CanvasGeometry::CreateNew(f.Device.Get(), Rect{});
         auto pb = Make<CanvasPathBuilder>(f.Device.Get());
 
         auto strokeStyle = Make<CanvasStrokeStyle>();
@@ -1296,7 +1294,7 @@ public:
     {
         Fixture f;
 
-        auto canvasGeometry = f.Manager->CreateNew(f.Device.Get(), Rect{});
+        auto canvasGeometry = CanvasGeometry::CreateNew(f.Device.Get(), Rect{});
 
         ComPtr<ICanvasDevice> device;
         Assert::AreEqual(S_OK, canvasGeometry->get_Device(&device));
@@ -1308,7 +1306,7 @@ public:
     {
         Fixture f;
 
-        auto canvasGeometry = f.Manager->CreateNew(f.Device.Get(), Rect{});
+        auto canvasGeometry = CanvasGeometry::CreateNew(f.Device.Get(), Rect{});
 
         Assert::AreEqual(E_INVALIDARG, canvasGeometry->get_Device(nullptr));
     }
@@ -1317,7 +1315,7 @@ public:
     {
         Fixture f;
 
-        auto canvasGeometry = f.Manager->CreateNew(f.Device.Get(), Rect{});
+        auto canvasGeometry = CanvasGeometry::CreateNew(f.Device.Get(), Rect{});
 
         Assert::AreEqual(E_INVALIDARG, canvasGeometry->SendPathTo(nullptr));
 

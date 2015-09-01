@@ -23,6 +23,36 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         ClosablePtr<ICanvasDevice> m_canvasDevice;
 
     public:
+        static ComPtr<CanvasGeometry> CreateNew(
+            ICanvasResourceCreator* device,
+            Rect rect);
+
+        static ComPtr<CanvasGeometry> CreateNew(
+            ICanvasResourceCreator* device,
+            Vector2 center,
+            float radiusX,
+            float radiusY);
+
+        static ComPtr<CanvasGeometry> CreateNew(
+            ICanvasResourceCreator* device,
+            Rect rect,
+            float radiusX,
+            float radiusY);
+
+        static ComPtr<CanvasGeometry> CreateNew(
+            ICanvasPathBuilder* pathBuilder);
+
+        static ComPtr<CanvasGeometry> CreateNew(
+            ICanvasResourceCreator* resourceCreator,
+            uint32_t pointCount,
+            Vector2* points);
+
+        static ComPtr<CanvasGeometry> CreateNew(
+            ICanvasResourceCreator* resourceCreator,
+            uint32_t geometryCount,
+            ICanvasGeometry** geometryElements,
+            CanvasFilledRegionDetermination filledRegionDetermination);
+
         CanvasGeometry(
             ICanvasDevice* canvasDevice,
             ID2D1Geometry* d2dGeometry);
@@ -227,43 +257,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             Vector2* point);
     };
 
-    class CanvasGeometryManager : private LifespanTracker<CanvasGeometryManager>
-    {
-    public:
-        ComPtr<CanvasGeometry> CreateNew(
-            ICanvasResourceCreator* device,
-            Rect rect);
-
-        ComPtr<CanvasGeometry> CreateNew(
-            ICanvasResourceCreator* device,
-            Vector2 center,
-            float radiusX,
-            float radiusY);
-
-        ComPtr<CanvasGeometry> CreateNew(
-            ICanvasResourceCreator* device,
-            Rect rect,
-            float radiusX,
-            float radiusY);
-
-        ComPtr<CanvasGeometry> CreateNew(
-            ICanvasPathBuilder* pathBuilder);
-
-        ComPtr<CanvasGeometry> CreateNew(
-            ICanvasResourceCreator* resourceCreator,
-            uint32_t pointCount,
-            Vector2* points);
-
-        ComPtr<CanvasGeometry> CreateNew(
-            ICanvasResourceCreator* resourceCreator,
-            uint32_t geometryCount,
-            ICanvasGeometry** geometryElements,
-            CanvasFilledRegionDetermination filledRegionDetermination);
-
-        ComPtr<CanvasGeometry> CreateWrapper(
-            ICanvasDevice* device,
-            ID2D1Geometry* resource);
-    };
 
     class CanvasGeometryFactory
         : public ActivationFactory<ICanvasGeometryStatics>
@@ -272,8 +265,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_Geometry_CanvasGeometry, BaseTrust);
 
     public:
-        IMPLEMENT_DEFAULT_GETMANAGER(CanvasGeometryManager);
-
         IFACEMETHOD(CreateRectangle)(
             ICanvasResourceCreator* resourceCreator,
             Rect rect,

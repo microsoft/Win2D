@@ -151,8 +151,7 @@ public:
     {
         ComPtr<StubCanvasDevice> canvasDevice = Make<StubCanvasDevice>();
 
-        auto geometryManager = std::make_shared<CanvasGeometryManager>();
-        Geometry = geometryManager->CreateNew(canvasDevice.Get(), Rect{ 1, 2, 3, 4 });
+        Geometry = CanvasGeometry::CreateNew(canvasDevice.Get(), Rect{ 1, 2, 3, 4 });
 
         auto cachedGeometryManager = std::make_shared<CanvasCachedGeometryManager>();
         CachedGeometry = cachedGeometryManager->CreateNew(canvasDevice.Get(), Geometry.Get(), D2D1_DEFAULT_FLATTENING_TOLERANCE);

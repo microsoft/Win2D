@@ -61,7 +61,6 @@ TEST_CLASS(CanvasCachedGeometryTests)
     class GeometryObjectAccess_Fixture
     {
         ComPtr<StubD2DFactoryWithCreateStrokeStyle> m_factory;
-        std::shared_ptr<CanvasGeometryManager> m_geometryManager;
     public:
         ComPtr<StubCanvasDevice> Device;
         std::shared_ptr<CanvasCachedGeometryManager> CachedGeometryManager;
@@ -71,7 +70,6 @@ TEST_CLASS(CanvasCachedGeometryTests)
 
         GeometryObjectAccess_Fixture()
             : Device(Make<StubCanvasDevice>())
-            , m_geometryManager(std::make_shared<CanvasGeometryManager>())
             , CachedGeometryManager(std::make_shared<CanvasCachedGeometryManager>())
             , D2DRectangleGeometry(Make<MockD2DRectangleGeometry>())
             , StrokeStyle(Make<CanvasStrokeStyle>())

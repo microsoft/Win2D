@@ -13,12 +13,10 @@ TEST_CLASS(CanvasPathBuilderUnitTests)
     struct SetupFixture
     {
         ComPtr<StubCanvasDevice> Device;
-        std::shared_ptr<CanvasGeometryManager> Manager;
         ComPtr<ICanvasGeometry> SomeTestGeometry;
 
         SetupFixture()
             : Device(Make<StubCanvasDevice>())
-            , Manager(std::make_shared<CanvasGeometryManager>())
         {
             Device->CreatePathGeometryMethod.AllowAnyCall(
                 []()
@@ -100,9 +98,9 @@ TEST_CLASS(CanvasPathBuilderUnitTests)
 
         auto canvasPathBuilder = Make<CanvasPathBuilder>(f.Device.Get());
 
-        f.Manager->CreateNew(canvasPathBuilder.Get());
+        CanvasGeometry::CreateNew(canvasPathBuilder.Get());
 
-        ExpectHResultException(RO_E_CLOSED, [&]{ f.Manager->CreateNew(canvasPathBuilder.Get()); });
+        ExpectHResultException(RO_E_CLOSED, [&]{ CanvasGeometry::CreateNew(canvasPathBuilder.Get()); });
     }
 
     TEST_METHOD_EX(CanvasPathBuilder_CreatePathClosesSink)
@@ -127,7 +125,7 @@ TEST_CLASS(CanvasPathBuilderUnitTests)
 
         auto canvasPathBuilder = Make<CanvasPathBuilder>(f.Device.Get());
 
-        f.Manager->CreateNew(canvasPathBuilder.Get());
+        CanvasGeometry::CreateNew(canvasPathBuilder.Get());
     }
 
     struct SinkAccessFixture : SetupFixture
@@ -550,7 +548,7 @@ TEST_CLASS(CanvasPathBuilderUnitTests)
 
         Assert::AreEqual(S_OK, canvasPathBuilder->BeginFigure(Vector2{}));
 
-        ExpectHResultException(E_INVALIDARG, [&]{ f.Manager->CreateNew(canvasPathBuilder.Get()); });
+        ExpectHResultException(E_INVALIDARG, [&]{ CanvasGeometry::CreateNew(canvasPathBuilder.Get()); });
         ValidateStoredErrorState(E_INVALIDARG, Strings::PathBuilderClosedMidFigure);
 
     }

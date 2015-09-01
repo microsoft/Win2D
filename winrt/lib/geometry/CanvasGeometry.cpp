@@ -25,7 +25,7 @@ IFACEMETHODIMP CanvasGeometryFactory::CreateRectangle(
             CheckInPointer(resourceCreator);
             CheckAndClearOutPointer(geometry);
 
-            auto newCanvasGeometry = GetManager()->CreateNew(resourceCreator, rect);
+            auto newCanvasGeometry = CanvasGeometry::CreateNew(resourceCreator, rect);
 
             ThrowIfFailed(newCanvasGeometry.CopyTo(geometry));
         });
@@ -55,7 +55,7 @@ IFACEMETHODIMP CanvasGeometryFactory::CreateRoundedRectangle(
             CheckInPointer(resourceCreator);
             CheckAndClearOutPointer(geometry);
 
-            auto newCanvasGeometry = GetManager()->CreateNew(resourceCreator, rect, xRadius, yRadius);
+            auto newCanvasGeometry = CanvasGeometry::CreateNew(resourceCreator, rect, xRadius, yRadius);
 
             ThrowIfFailed(newCanvasGeometry.CopyTo(geometry));
         });
@@ -87,7 +87,7 @@ IFACEMETHODIMP CanvasGeometryFactory::CreateEllipse(
             CheckInPointer(resourceCreator);
             CheckAndClearOutPointer(geometry);
 
-            auto newCanvasGeometry = GetManager()->CreateNew(resourceCreator, center, xRadius, yRadius);
+            auto newCanvasGeometry = CanvasGeometry::CreateNew(resourceCreator, center, xRadius, yRadius);
 
             ThrowIfFailed(newCanvasGeometry.CopyTo(geometry));
         });
@@ -133,7 +133,7 @@ IFACEMETHODIMP CanvasGeometryFactory::CreatePath(
             CheckInPointer(pathBuilder);
             CheckAndClearOutPointer(geometry);
 
-            auto newCanvasGeometry = GetManager()->CreateNew(pathBuilder);
+            auto newCanvasGeometry = CanvasGeometry::CreateNew(pathBuilder);
 
             ThrowIfFailed(newCanvasGeometry.CopyTo(geometry));
     });
@@ -151,7 +151,7 @@ IFACEMETHODIMP CanvasGeometryFactory::CreatePolygon(
             CheckInPointer(resourceCreator); 
             CheckAndClearOutPointer(geometry);
 
-            auto newCanvasGeometry = GetManager()->CreateNew(resourceCreator, pointCount, points);
+            auto newCanvasGeometry = CanvasGeometry::CreateNew(resourceCreator, pointCount, points);
 
             ThrowIfFailed(newCanvasGeometry.CopyTo(geometry));
         });
@@ -184,7 +184,7 @@ IFACEMETHODIMP CanvasGeometryFactory::CreateGroupWithFilledRegionDetermination(
             CheckInPointer(resourceCreator); 
             CheckAndClearOutPointer(geometry);
 
-            auto newCanvasGeometry = GetManager()->CreateNew(resourceCreator, geometryCount, geometryElements, filledRegionDetermination);
+            auto newCanvasGeometry = CanvasGeometry::CreateNew(resourceCreator, geometryCount, geometryElements, filledRegionDetermination);
 
             ThrowIfFailed(newCanvasGeometry.CopyTo(geometry));
         });
@@ -323,7 +323,7 @@ IFACEMETHODIMP CanvasGeometry::CombineWithUsingFlatteningTolerance(
                 flatteningTolerance,
                 targetPathBuilderInternal->GetGeometrySink().Get())); 
 
-            auto newGeometry = CanvasGeometryFactory::GetManager()->CreateNew(temporaryPathBuilder.Get());
+            auto newGeometry = CanvasGeometry::CreateNew(temporaryPathBuilder.Get());
             ThrowIfFailed(newGeometry.CopyTo(geometry));
         });
 }
@@ -389,7 +389,7 @@ void CanvasGeometry::StrokeImpl(
         flatteningTolerance,
         targetPathBuilderInternal->GetGeometrySink().Get()));
 
-    auto newGeometry = CanvasGeometryFactory::GetManager()->CreateNew(temporaryPathBuilder.Get());
+    auto newGeometry = CanvasGeometry::CreateNew(temporaryPathBuilder.Get());
     ThrowIfFailed(newGeometry.CopyTo(geometry));
 }
 
@@ -423,7 +423,7 @@ IFACEMETHODIMP CanvasGeometry::OutlineWithTransformAndFlatteningTolerance(
                 flatteningTolerance,
                 targetPathBuilderInternal->GetGeometrySink().Get())); 
 
-            auto newGeometry = CanvasGeometryFactory::GetManager()->CreateNew(temporaryPathBuilder.Get());
+            auto newGeometry = CanvasGeometry::CreateNew(temporaryPathBuilder.Get());
             ThrowIfFailed(newGeometry.CopyTo(geometry));
         });
 }
@@ -462,7 +462,7 @@ IFACEMETHODIMP CanvasGeometry::SimplifyWithTransformAndFlatteningTolerance(
                 flatteningTolerance,
                 targetPathBuilderInternal->GetGeometrySink().Get())); 
 
-            auto newGeometry = CanvasGeometryFactory::GetManager()->CreateNew(temporaryPathBuilder.Get());
+            auto newGeometry = CanvasGeometry::CreateNew(temporaryPathBuilder.Get());
             ThrowIfFailed(newGeometry.CopyTo(geometry));
         });
 }
@@ -934,7 +934,7 @@ IFACEMETHODIMP CanvasGeometry::SendPathTo(
     });
 }
 
-ComPtr<CanvasGeometry> CanvasGeometryManager::CreateNew(
+ComPtr<CanvasGeometry> CanvasGeometry::CreateNew(
     ICanvasResourceCreator* resourceCreator,
     Rect rect)
 {
@@ -953,7 +953,7 @@ ComPtr<CanvasGeometry> CanvasGeometryManager::CreateNew(
     return canvasGeometry;
 }
 
-ComPtr<CanvasGeometry> CanvasGeometryManager::CreateNew(
+ComPtr<CanvasGeometry> CanvasGeometry::CreateNew(
     ICanvasResourceCreator* resourceCreator,
     Vector2 center,
     float radiusX,
@@ -974,7 +974,7 @@ ComPtr<CanvasGeometry> CanvasGeometryManager::CreateNew(
     return canvasGeometry;
 }
 
-ComPtr<CanvasGeometry> CanvasGeometryManager::CreateNew(
+ComPtr<CanvasGeometry> CanvasGeometry::CreateNew(
     ICanvasResourceCreator* resourceCreator,
     Rect rect,
     float radiusX,
@@ -995,7 +995,7 @@ ComPtr<CanvasGeometry> CanvasGeometryManager::CreateNew(
     return canvasGeometry;
 }
 
-ComPtr<CanvasGeometry> CanvasGeometryManager::CreateNew(
+ComPtr<CanvasGeometry> CanvasGeometry::CreateNew(
     ICanvasPathBuilder* pathBuilder)
 {
     auto pathBuilderInternal = As<ICanvasPathBuilderInternal>(pathBuilder);
@@ -1012,7 +1012,7 @@ ComPtr<CanvasGeometry> CanvasGeometryManager::CreateNew(
     return canvasGeometry;
 }
 
-ComPtr<CanvasGeometry> CanvasGeometryManager::CreateNew(
+ComPtr<CanvasGeometry> CanvasGeometry::CreateNew(
     ICanvasResourceCreator* resourceCreator,
     uint32_t pointCount,
     Vector2* points)
@@ -1050,7 +1050,7 @@ ComPtr<CanvasGeometry> CanvasGeometryManager::CreateNew(
     return canvasGeometry;
 }
 
-ComPtr<CanvasGeometry> CanvasGeometryManager::CreateNew(
+ComPtr<CanvasGeometry> CanvasGeometry::CreateNew(
     ICanvasResourceCreator* resourceCreator,
     uint32_t geometryCount,
     ICanvasGeometry** geometryElements,
@@ -1094,18 +1094,6 @@ ComPtr<CanvasGeometry> CanvasGeometryManager::CreateNew(
     auto canvasGeometry = Make<CanvasGeometry>(
         device.Get(),
         d2dGeometry.Get());
-    CheckMakeResult(canvasGeometry);
-
-    return canvasGeometry;
-}
-
-ComPtr<CanvasGeometry> CanvasGeometryManager::CreateWrapper(
-    ICanvasDevice* device,
-    ID2D1Geometry* geometry)
-{
-    auto canvasGeometry = Make<CanvasGeometry>(
-        device,
-        geometry);
     CheckMakeResult(canvasGeometry);
 
     return canvasGeometry;
