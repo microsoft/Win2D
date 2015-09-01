@@ -6,8 +6,6 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
-    class CanvasCommandListManager;
-
     class CanvasCommandList : RESOURCE_WRAPPER_RUNTIME_CLASS(
         ID2D1CommandList,
         CanvasCommandList,
@@ -23,6 +21,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         bool m_d2dCommandListIsClosed;
 
     public:
+        static ComPtr<CanvasCommandList> CreateNew(
+            ICanvasResourceCreator* resourceCreator);
+
         CanvasCommandList(
             ICanvasDevice* device,
             ID2D1CommandList* d2dCommandList);
@@ -58,18 +59,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     };
 
 
-    class CanvasCommandListManager : private LifespanTracker<CanvasCommandListManager>
-    {
-    public:
-        ComPtr<CanvasCommandList> CreateNew(
-            ICanvasResourceCreator* resourceCreator);
-
-        ComPtr<CanvasCommandList> CreateWrapper(
-            ICanvasDevice* device,
-            ID2D1CommandList* resource);
-    };
-
-
     class CanvasCommandListFactory
         : public ActivationFactory<ICanvasCommandListFactory>
         , private LifespanTracker<CanvasCommandListFactory>
@@ -77,8 +66,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_CanvasCommandList, BaseTrust);
 
     public:
-        IMPLEMENT_DEFAULT_GETMANAGER(CanvasCommandListManager)
-            
         IFACEMETHOD(Create)(
             ICanvasResourceCreator* resourceCreator,
             ICanvasCommandList** commandList) override;

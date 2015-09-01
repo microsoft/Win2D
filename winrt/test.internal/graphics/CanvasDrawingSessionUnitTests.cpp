@@ -388,12 +388,10 @@ public:
             
         ComPtr<CanvasCommandList> MakeCommandList()
         {
-            auto commandListManager = std::make_shared<CanvasCommandListManager>();
-
             auto d2dCommandList = Make<MockD2DCommandList>();
             d2dCommandList->CloseMethod.AllowAnyCall();
 
-            return commandListManager->CreateWrapper(Make<StubCanvasDevice>().Get(), d2dCommandList.Get());
+            return Make<CanvasCommandList>(Make<StubCanvasDevice>().Get(), d2dCommandList.Get());
         }
 
         ComPtr<CanvasBitmap> MakeBitmap()

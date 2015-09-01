@@ -20,18 +20,18 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ExceptionBoundary(
             [&]
             {
-                auto cl = GetManager()->CreateNew(resourceCreator);
+                auto cl = CanvasCommandList::CreateNew(resourceCreator);
                 ThrowIfFailed(cl.CopyTo(commandList));
             });
     }
 
 
     //
-    // CanvasCommandListManager
+    // CanvasCommandList
     //
 
 
-    ComPtr<CanvasCommandList> CanvasCommandListManager::CreateNew(
+    ComPtr<CanvasCommandList> CanvasCommandList::CreateNew(
         ICanvasResourceCreator* resourceCreator)
     {
         ComPtr<ICanvasDevice> device;
@@ -43,21 +43,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         CheckMakeResult(cl);
         return cl;
     }
-
-
-    ComPtr<CanvasCommandList> CanvasCommandListManager::CreateWrapper(
-        ICanvasDevice* device,
-        ID2D1CommandList* resource)
-    {
-        auto cl = Make<CanvasCommandList>(device, resource);
-        CheckMakeResult(cl);
-        return cl;
-    }
-
-
-    //
-    // CanvasCommandList
-    //
 
 
     CanvasCommandList::CanvasCommandList(
