@@ -171,7 +171,12 @@ IFACEMETHODIMP CanvasTextFormat::GetResource(REFIID iid, void** value)
 ComPtr<IDWriteTextFormat> CanvasTextFormat::GetRealizedTextFormat()
 {
     auto lock = GetLock();
-    
+    return GetRealizedTextFormatImpl();
+}
+
+
+ComPtr<IDWriteTextFormat> CanvasTextFormat::GetRealizedTextFormatImpl()
+{
     if (m_format)
         return m_format;
 
@@ -214,9 +219,44 @@ ComPtr<IDWriteTextFormat> CanvasTextFormat::GetRealizedTextFormat()
 }
 
 
-CanvasDrawTextOptions CanvasTextFormat::GetDrawTextOptions()
+ComPtr<IDWriteTextFormat> CanvasTextFormat::GetRealizedTextFormatClone(CanvasWordWrapping overrideWordWrapping)
 {
-    return m_drawTextOptions;
+    //
+    // This is called when we want to create a IDWriteTextFormat that is exactly
+    // what would be returned by GetRealizedTextFormat() except that it has an
+    // overridden word wrapping property.  This is needed by
+    // CanvasDrawingSession::DrawTextAtPointImpl which needs to set the word
+    // wrapping to NoWrap.  It needs to operate on a copy because DrawText is
+    // conceptually a read-only operation and we don't want DrawText on one
+    // thread to interfere with a DrawText on another thread using the same text
+    // format.
+    //
+
+    ThrowIfInvalid<CanvasWordWrapping>(overrideWordWrapping);
+
+    auto lock = GetLock();
+
+    auto oldFormat = m_format;
+    Unrealize();
+
+    // At this point we know we're unrealized, so we can manipulate the shadow
+    // state directly
+
+    auto oldWordWrapping = m_wordWrapping;
+    m_wordWrapping = overrideWordWrapping;
+    
+    auto newFormat = GetRealizedTextFormatImpl();
+
+    m_wordWrapping = oldWordWrapping;
+    m_format = oldFormat;
+
+    return newFormat;
+}
+
+
+D2D1_DRAW_TEXT_OPTIONS CanvasTextFormat::GetDrawTextOptions()
+{
+    return static_cast<D2D1_DRAW_TEXT_OPTIONS>(m_drawTextOptions);
 }
 
 

@@ -1305,6 +1305,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ID2D1Brush* brush,
             ICanvasTextFormat* format);
 
+        void DrawTextImpl(
+            HSTRING text,
+            Rect const& rect,
+            ID2D1Brush* brush,
+            IDWriteTextFormat* format,
+            D2D1_DRAW_TEXT_OPTIONS options);
+
         ICanvasTextFormat* GetDefaultTextFormat();
 
         void DrawGeometryImpl(

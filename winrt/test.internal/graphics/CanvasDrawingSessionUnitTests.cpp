@@ -4449,6 +4449,36 @@ TEST_CLASS(CanvasDrawingSession_DrawTextTests)
             ThrowIfFailed(f.DS->DrawTextAtRectCoordsWithColorAndFormat(text, 1, 2, 3, 4, ArbitraryMarkerColor2, nullptr));
         });
     }
+
+    TEST_METHOD_EX(CanvasDrawingSession_DrawTextAtPoint_DoesNotModifyOriginalFormat)
+    {
+        Fixture f;
+
+        auto originalWrapping = CanvasWordWrapping::Wrap;
+
+        ThrowIfFailed(f.Format->put_WordWrapping(originalWrapping));
+
+        f.DeviceContext->DrawTextMethod.SetExpectedCalls(1,
+            [&] (wchar_t const*, uint32_t, IDWriteTextFormat* format, D2D1_RECT_F const*, ID2D1Brush*, D2D1_DRAW_TEXT_OPTIONS, DWRITE_MEASURING_MODE)
+            {
+                Assert::AreEqual(DWRITE_WORD_WRAPPING_NO_WRAP, format->GetWordWrapping());
+
+                // Verify that the original format's word wrapping value has not
+                // changed.  This is important since DrawText looks like a
+                // read-only operation and we'd expect the same text format to
+                // work correctly if used from multiple threads.
+                CanvasWordWrapping currentWrapping;
+                ThrowIfFailed(f.Format->get_WordWrapping(&currentWrapping));
+
+                Assert::AreEqual(originalWrapping, currentWrapping);
+            });
+
+        ThrowIfFailed(f.DS->DrawTextAtPointWithColorAndFormat(
+            HStringReference(L"test").Get(),
+            Vector2{ 0, 0 },
+            Color{ 1, 2, 3, 4 },
+            f.Format.Get()));
+    }
 };
 
 TEST_CLASS(CanvasDrawingSession_CloseTests)

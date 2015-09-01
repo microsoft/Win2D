@@ -2480,30 +2480,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ID2D1Brush* brush,
         ICanvasTextFormat* format)
     {
-        auto& deviceContext = GetResource();
-        CheckInPointer(brush);
-
         if (!format)
-        {
             format = GetDefaultTextFormat();
-        }
 
-        ComPtr<ICanvasTextFormatInternal> formatInternal;
-        ThrowIfFailed(format->QueryInterface(formatInternal.GetAddressOf()));
-
-        uint32_t textLength;
-        auto textBuffer = WindowsGetStringRawBuffer(text, &textLength);
-        ThrowIfNullPointer(textBuffer, E_INVALIDARG);
-
-        auto d2dRect = ToD2DRect(rect);
-
-        deviceContext->DrawText(
-            textBuffer,
-            textLength,
-            formatInternal->GetRealizedTextFormat().Get(),
-            &d2dRect,
-            brush,
-            static_cast<D2D1_DRAW_TEXT_OPTIONS>(formatInternal->GetDrawTextOptions()));
+        auto formatInternal = As<ICanvasTextFormatInternal>(format);
+        auto realizedFormat = formatInternal->GetRealizedTextFormat();
+        auto drawTextOptions = formatInternal->GetDrawTextOptions();
+        
+        DrawTextImpl(text, rect, brush, realizedFormat.Get(), drawTextOptions);
     }
 
 
@@ -2522,22 +2506,52 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         // disable word wrapping.
         Rect rect{ point.X, point.Y, 0, 0 };
 
+        auto formatInternal = As<ICanvasTextFormatInternal>(format);
+        auto drawTextOptions = formatInternal->GetDrawTextOptions();
+
+        ComPtr<IDWriteTextFormat> realizedTextFormat;
+        
         //
-        // TODO #802: there's a thread-safety implication since we're modifying state
-        // on something that _may_ be being used on another thread.
+        // Drawing at a point only works if word wrapping is turned off.  We
+        // don't want to modify the original format passed in (since DrawText is
+        // conceptually a read-only operation and we want the same format to be
+        // usable across multiple threads).  Instead we create a temporary clone
+        // of the original with a different word wrapping setting.
         //
-        CanvasWordWrapping oldWordWrapping{};
-        ThrowIfFailed(format->get_WordWrapping(&oldWordWrapping));
+        
+        CanvasWordWrapping wordWrapping;
+        ThrowIfFailed(format->get_WordWrapping(&wordWrapping));
 
-        ThrowIfFailed(format->put_WordWrapping(CanvasWordWrapping::NoWrap));
+        if (wordWrapping == CanvasWordWrapping::NoWrap)
+        {
+            realizedTextFormat = formatInternal->GetRealizedTextFormat();
+        }
+        else
+        {
+            realizedTextFormat = formatInternal->GetRealizedTextFormatClone(CanvasWordWrapping::NoWrap);
+        }
 
-        auto restoreWordWrapping = MakeScopeWarden(
-            [&]
-            {
-                format->put_WordWrapping(oldWordWrapping);
-            });
+        DrawTextImpl(text, rect, brush, realizedTextFormat.Get(), drawTextOptions);
+    }
 
-        DrawTextAtRectImpl(text, rect, brush, format);
+
+    void CanvasDrawingSession::DrawTextImpl(
+        HSTRING text,
+        Rect const& rect,
+        ID2D1Brush* brush,
+        IDWriteTextFormat* realizedFormat,
+        D2D1_DRAW_TEXT_OPTIONS drawTextOptions)
+    {
+        auto& deviceContext = GetResource();
+        CheckInPointer(brush);
+
+        uint32_t textLength;
+        auto textBuffer = WindowsGetStringRawBuffer(text, &textLength);
+        ThrowIfNullPointer(textBuffer, E_INVALIDARG);
+
+        auto d2dRect = ToD2DRect(rect);
+
+        deviceContext->DrawText(textBuffer, textLength, realizedFormat, &d2dRect, brush, drawTextOptions);
     }
 
 

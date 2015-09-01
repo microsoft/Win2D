@@ -51,7 +51,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     {
     public:
         virtual ComPtr<IDWriteTextFormat> GetRealizedTextFormat() = 0;
-        virtual CanvasDrawTextOptions GetDrawTextOptions() = 0;
+        virtual ComPtr<IDWriteTextFormat> GetRealizedTextFormatClone(CanvasWordWrapping overrideWordWrapping) = 0;
+        virtual D2D1_DRAW_TEXT_OPTIONS GetDrawTextOptions() = 0;
     };
 
 
@@ -164,7 +165,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         //
 
         virtual ComPtr<IDWriteTextFormat> GetRealizedTextFormat() override;
-        virtual CanvasDrawTextOptions GetDrawTextOptions() override;
+        virtual ComPtr<IDWriteTextFormat> GetRealizedTextFormatClone(CanvasWordWrapping overrideWordWrapping) override;
+        virtual D2D1_DRAW_TEXT_OPTIONS GetDrawTextOptions() override;
 
         //
         // ICanvasResourceWrapperNative
@@ -199,7 +201,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         void RealizeTextAlignment();
         void RealizeTrimming();
         void RealizeWordWrapping();
-    };
+
+        ComPtr<IDWriteTextFormat> GetRealizedTextFormatImpl();
+};
 
 
     // Helper for getting line spacing from DWrite   
