@@ -11,7 +11,7 @@ using namespace ABI::Microsoft::Graphics::Canvas;
 using namespace ABI::Windows::Foundation;
 using namespace ABI::Windows::UI;
 
-ComPtr<CanvasSolidColorBrush> CanvasSolidColorBrushManager::CreateNew(
+ComPtr<CanvasSolidColorBrush> CanvasSolidColorBrush::CreateNew(
     ICanvasResourceCreator* resourceCreator,
     Color color)
 {
@@ -24,25 +24,13 @@ ComPtr<CanvasSolidColorBrush> CanvasSolidColorBrushManager::CreateNew(
     auto d2dBrush = canvasDeviceInternal->CreateSolidColorBrush(ToD2DColor(color));
 
     auto canvasSolidColorBrush = Make<CanvasSolidColorBrush>(
-        d2dBrush.Get(),
-        device.Get());
+        device.Get(),
+        d2dBrush.Get());
     CheckMakeResult(canvasSolidColorBrush);
 
     return canvasSolidColorBrush;
 };
 
-
-ComPtr<CanvasSolidColorBrush> CanvasSolidColorBrushManager::CreateWrapper(
-    ICanvasDevice* device,
-    ID2D1SolidColorBrush* brush)
-{
-    auto canvasSolidColorBrush = Make<CanvasSolidColorBrush>(
-        brush,
-        device);
-    CheckMakeResult(canvasSolidColorBrush);
-
-    return canvasSolidColorBrush;
-}
 
 IFACEMETHODIMP CanvasSolidColorBrushFactory::Create(
     ICanvasResourceCreator* resourceCreator,
@@ -55,7 +43,7 @@ IFACEMETHODIMP CanvasSolidColorBrushFactory::Create(
             CheckInPointer(resourceCreator);
             CheckAndClearOutPointer(canvasSolidColorBrush);
 
-            auto newSolidColorBrush = GetManager()->CreateNew(
+            auto newSolidColorBrush = CanvasSolidColorBrush::CreateNew(
                 resourceCreator,
                 color);
 
@@ -65,8 +53,8 @@ IFACEMETHODIMP CanvasSolidColorBrushFactory::Create(
 
 
 CanvasSolidColorBrush::CanvasSolidColorBrush(
-    ID2D1SolidColorBrush* brush,
-    ICanvasDevice *device)
+    ICanvasDevice *device,
+    ID2D1SolidColorBrush* brush)
     : CanvasBrush(device)
     , ResourceWrapper(brush)
 {

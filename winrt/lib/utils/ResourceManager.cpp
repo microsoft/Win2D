@@ -23,7 +23,7 @@ std::vector<ResourceManager::TryCreateFunction> ResourceManager::tryCreateFuncti
     TryCreate<ID2D1DeviceContext1, CanvasDrawingSession, CreateFromManager<ID2D1DeviceContext1, CanvasDrawingSession, CanvasDrawingSessionFactory>>,
     TryCreate<ID2D1Bitmap1, CanvasRenderTarget, CreateFromManagerWithDevice<ID2D1Bitmap1, CanvasRenderTarget, CanvasRenderTargetFactory>, IsRenderTargetBitmap>,
     TryCreate<ID2D1Bitmap1, CanvasBitmap, CreateFromManagerWithDevice<ID2D1Bitmap1, CanvasBitmap, CanvasBitmapFactory>>,
-    TryCreate<ID2D1SolidColorBrush, CanvasSolidColorBrush, CreateFromManagerWithDevice<ID2D1SolidColorBrush, CanvasSolidColorBrush, CanvasSolidColorBrushFactory>>,
+    TryCreate<ID2D1SolidColorBrush, CanvasSolidColorBrush, MakeWrapperWithDevice<ID2D1SolidColorBrush, CanvasSolidColorBrush>>,
     TryCreate<ID2D1LinearGradientBrush, CanvasLinearGradientBrush, CreateFromManagerWithDevice<ID2D1LinearGradientBrush, CanvasLinearGradientBrush, CanvasLinearGradientBrushFactory>>,
     TryCreate<ID2D1RadialGradientBrush, CanvasRadialGradientBrush, CreateFromManagerWithDevice<ID2D1RadialGradientBrush, CanvasRadialGradientBrush, CanvasRadialGradientBrushFactory>>,
     TryCreate<ID2D1ImageBrush, CanvasImageBrush, MakeWrapperWithDevice<ID2D1ImageBrush, CanvasImageBrush>>,

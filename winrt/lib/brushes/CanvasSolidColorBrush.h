@@ -18,9 +18,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_Brushes_CanvasSolidColorBrush, BaseTrust);
 
     public:
+        static ComPtr<CanvasSolidColorBrush> CreateNew(
+            ICanvasResourceCreator* resourceCreator,
+            ABI::Windows::UI::Color color);
+
         CanvasSolidColorBrush(
-            ID2D1SolidColorBrush* brush,
-            ICanvasDevice* device);
+            ICanvasDevice* device,
+            ID2D1SolidColorBrush* brush);
 
         IFACEMETHOD(get_Color)(_Out_ ABI::Windows::UI::Color *value) override;
 
@@ -33,18 +37,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         virtual ComPtr<ID2D1Brush> GetD2DBrush(ID2D1DeviceContext* deviceContext, GetBrushFlags flags) override;
     };
 
-    class CanvasSolidColorBrushManager : private LifespanTracker<CanvasSolidColorBrushManager>
-    {
-    public:
-        ComPtr<CanvasSolidColorBrush> CreateNew(
-            ICanvasResourceCreator* resourceCreator,
-            ABI::Windows::UI::Color color);
-
-        ComPtr<CanvasSolidColorBrush> CreateWrapper(
-            ICanvasDevice* device,
-            ID2D1SolidColorBrush* resource);
-    };
-
     class CanvasSolidColorBrushFactory 
         : public ActivationFactory<ICanvasSolidColorBrushFactory>
         , private LifespanTracker<CanvasSolidColorBrushFactory>
@@ -52,12 +44,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_Brushes_CanvasSolidColorBrush, BaseTrust);
 
     public:
-        IMPLEMENT_DEFAULT_GETMANAGER(CanvasSolidColorBrushManager);
-
-        //
-        // ICanvasSolidColorBrushFactory
-        //
-
         IFACEMETHOD(Create)(
             ICanvasResourceCreator* resourceCreator,
             ABI::Windows::UI::Color color,
