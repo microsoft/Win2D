@@ -3358,7 +3358,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         }
         else
         {
-            // TODO #802: pool and reuse this brush along with the device context?
             auto& deviceContext = GetResource();
             ThrowIfFailed(deviceContext->CreateSolidColorBrush(ToD2DColor(color), &m_solidColorBrush));
         }
