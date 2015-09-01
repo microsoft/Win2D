@@ -32,7 +32,7 @@ IFACEMETHODIMP CanvasCachedGeometryFactory::CreateFillWithFlatteningTolerance(
             ComPtr<ICanvasDevice> device;
             ThrowIfFailed(geometry->get_Device(&device));
 
-            auto newCanvasCachedGeometry = GetManager()->CreateNew(device.Get(), geometry, flatteningTolerance);
+            auto newCanvasCachedGeometry = CanvasCachedGeometry::CreateNew(device.Get(), geometry, flatteningTolerance);
 
             ThrowIfFailed(newCanvasCachedGeometry.CopyTo(cachedGeometry));
         });
@@ -92,7 +92,7 @@ void CanvasCachedGeometryFactory::CreateStrokeImpl(
     ComPtr<ICanvasDevice> device;
     ThrowIfFailed(geometry->get_Device(&device));
 
-    auto newCanvasCachedGeometry = GetManager()->CreateNew(
+    auto newCanvasCachedGeometry = CanvasCachedGeometry::CreateNew(
         device.Get(), 
         geometry, 
         strokeWidth,
@@ -129,7 +129,7 @@ IFACEMETHODIMP CanvasCachedGeometry::get_Device(ICanvasDevice** device)
 }
 
 // Cached fills
-ComPtr<CanvasCachedGeometry> CanvasCachedGeometryManager::CreateNew(
+ComPtr<CanvasCachedGeometry> CanvasCachedGeometry::CreateNew(
     ICanvasDevice* device,
     ICanvasGeometry* geometry,
     float flatteningTolerance)
@@ -152,7 +152,7 @@ ComPtr<CanvasCachedGeometry> CanvasCachedGeometryManager::CreateNew(
 }
 
 // Cached strokes
-ComPtr<CanvasCachedGeometry> CanvasCachedGeometryManager::CreateNew(
+ComPtr<CanvasCachedGeometry> CanvasCachedGeometry::CreateNew(
     ICanvasDevice* device,
     ICanvasGeometry* geometry,
     float strokeWidth,
@@ -173,16 +173,6 @@ ComPtr<CanvasCachedGeometry> CanvasCachedGeometryManager::CreateNew(
         flatteningTolerance);
 
     auto canvasCachedGeometry = Make<CanvasCachedGeometry>(device, d2dGeometryRealization.Get());
-    CheckMakeResult(canvasCachedGeometry);
-
-    return canvasCachedGeometry;
-}
-
-ComPtr<CanvasCachedGeometry> CanvasCachedGeometryManager::CreateWrapper(
-    ICanvasDevice* device,
-    ID2D1GeometryRealization* resource)
-{
-    auto canvasCachedGeometry = Make<CanvasCachedGeometry>(device, resource);
     CheckMakeResult(canvasCachedGeometry);
 
     return canvasCachedGeometry;

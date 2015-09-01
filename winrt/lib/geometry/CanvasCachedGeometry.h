@@ -20,6 +20,19 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         ClosablePtr<ICanvasDevice> m_canvasDevice;
 
     public:
+        // Cached fills
+        static ComPtr<CanvasCachedGeometry> CreateNew(
+            ICanvasDevice* device,
+            ICanvasGeometry* geometry,
+            float flatteningTolerance);
+
+        // Cached strokes
+        static ComPtr<CanvasCachedGeometry> CreateNew(
+            ICanvasDevice* device,
+            ICanvasGeometry* geometry,
+            float strokeWidth,
+            ICanvasStrokeStyle* strokeStyle,
+            float flatteningTolerance);
 
         CanvasCachedGeometry(
             ICanvasDevice* device,
@@ -31,28 +44,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     };
 
 
-    class CanvasCachedGeometryManager : private LifespanTracker<CanvasCachedGeometryManager>
-    {
-    public:
-        // Cached fills
-        ComPtr<CanvasCachedGeometry> CreateNew(
-            ICanvasDevice* device,
-            ICanvasGeometry* geometry,
-            float flatteningTolerance);
-
-        // Cached strokes
-        ComPtr<CanvasCachedGeometry> CreateNew(
-            ICanvasDevice* device,
-            ICanvasGeometry* geometry,
-            float strokeWidth,
-            ICanvasStrokeStyle* strokeStyle,
-            float flatteningTolerance);
-
-        ComPtr<CanvasCachedGeometry> CreateWrapper(
-            ICanvasDevice* device,
-            ID2D1GeometryRealization* resource);
-    };
-
     class CanvasCachedGeometryFactory
         : public ActivationFactory<ICanvasCachedGeometryStatics>
         , private LifespanTracker<CanvasCachedGeometryFactory>
@@ -60,8 +51,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_Geometry_CanvasCachedGeometry, BaseTrust);
 
     public:
-        IMPLEMENT_DEFAULT_GETMANAGER(CanvasCachedGeometryManager);
-
         IFACEMETHOD(CreateFill)(
             ICanvasGeometry* geometry,
             ICanvasCachedGeometry** cachedGeometry) override;

@@ -153,8 +153,7 @@ public:
 
         Geometry = CanvasGeometry::CreateNew(canvasDevice.Get(), Rect{ 1, 2, 3, 4 });
 
-        auto cachedGeometryManager = std::make_shared<CanvasCachedGeometryManager>();
-        CachedGeometry = cachedGeometryManager->CreateNew(canvasDevice.Get(), Geometry.Get(), D2D1_DEFAULT_FLATTENING_TOLERANCE);
+        CachedGeometry = CanvasCachedGeometry::CreateNew(canvasDevice.Get(), Geometry.Get(), D2D1_DEFAULT_FLATTENING_TOLERANCE);
 
         auto textFormat = CanvasTextFormatFactory::GetManager()->Create();
         auto textlayoutAdapter = std::make_shared<StubCanvasTextLayoutAdapter>();

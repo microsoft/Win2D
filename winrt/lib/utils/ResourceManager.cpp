@@ -34,7 +34,7 @@ std::vector<ResourceManager::TryCreateFunction> ResourceManager::tryCreateFuncti
     TryCreate<IDWriteTextLayout2, CanvasTextLayout, CreateFromManagerWithDevice<IDWriteTextLayout2, CanvasTextLayout, CanvasTextLayoutFactory>>,
     TryCreate<IDWriteTextFormat, CanvasTextFormat, CreateFromManager<IDWriteTextFormat, CanvasTextFormat, CanvasTextFormatFactory>>,
     TryCreate<ID2D1Geometry, CanvasGeometry, MakeWrapperWithDevice<ID2D1Geometry, CanvasGeometry>>,
-    TryCreate<ID2D1GeometryRealization, CanvasCachedGeometry, CreateFromManagerWithDevice<ID2D1GeometryRealization, CanvasCachedGeometry, CanvasCachedGeometryFactory>>,
+    TryCreate<ID2D1GeometryRealization, CanvasCachedGeometry, MakeWrapperWithDevice<ID2D1GeometryRealization, CanvasCachedGeometry>>,
 #if WINVER > _WIN32_WINNT_WINBLUE
     TryCreate<ID2D1GradientMesh, CanvasGradientMesh, CreateFromManagerWithDevice<ID2D1GradientMesh, CanvasGradientMesh, CanvasGradientMeshFactory>>,
 #endif
