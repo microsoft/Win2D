@@ -91,12 +91,10 @@ class CanvasAnimatedControlTestAdapter : public BaseControlTestAdapter<CanvasAni
 
 public:
     CALL_COUNTER_WITH_MOCK(CreateCanvasSwapChainMethod, ComPtr<CanvasSwapChain>(ICanvasDevice*, float, float, float, CanvasAlphaMode));
-    std::shared_ptr<CanvasSwapChainManager> SwapChainManager;
     ComPtr<StubCanvasDevice> InitialDevice;
 
     CanvasAnimatedControlTestAdapter(StubCanvasDevice* initialDevice = nullptr)
         : m_performanceCounter(1)
-        , SwapChainManager(std::make_shared<CanvasSwapChainManager>())
         , InitialDevice(initialDevice)
         , m_swapChainPanel(Make<StubSwapChainPanel>())
     {

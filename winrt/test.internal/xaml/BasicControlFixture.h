@@ -109,12 +109,10 @@ inline void BasicControlFixture<CanvasControlTraits>::PrepareAdapterForRendering
 
 inline void BasicControlFixture<CanvasAnimatedControlTraits>::PrepareAdapterForRenderingResource()
 {
-    auto swapChainManager = std::make_shared<MockCanvasSwapChainManager>();
-
     Adapter->CreateCanvasSwapChainMethod.AllowAnyCall(
         [=](ICanvasDevice*, float, float, float, CanvasAlphaMode)
     {
-        auto mockSwapChain = swapChainManager->CreateMock();
+        auto mockSwapChain = Make<MockCanvasSwapChain>();
         mockSwapChain->CreateDrawingSessionMethod.AllowAnyCall(
             [](Color, ICanvasDrawingSession** value)
         {
@@ -209,12 +207,10 @@ struct ControlFixture<CanvasAnimatedControlTraits> : public Animated_BasicContro
 
     void ExpectOneCreateSwapChain()
     {
-        auto swapChainManager = Adapter->SwapChainManager;
-
         Adapter->CreateCanvasSwapChainMethod.SetExpectedCalls(1,
-            [swapChainManager](ICanvasDevice* device, float width, float height, float dpi, CanvasAlphaMode alphaMode)
+            [](ICanvasDevice* device, float width, float height, float dpi, CanvasAlphaMode alphaMode)
             {
-                return CreateTestSwapChain(swapChainManager, device);
+                return CreateTestSwapChain(device);
             });
     }
 
@@ -234,10 +230,9 @@ struct ControlFixture<CanvasAnimatedControlTraits> : public Animated_BasicContro
     
     static
     ComPtr<CanvasSwapChain> CreateTestSwapChain(
-        std::shared_ptr<CanvasSwapChainManager> const& swapChainManager,
         ICanvasDevice* device)
     {
-        return swapChainManager->CreateNew(
+        return CanvasSwapChain::CreateNew(
             device,
             1.0f,
             1.0f,

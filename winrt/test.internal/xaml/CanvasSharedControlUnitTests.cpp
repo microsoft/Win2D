@@ -293,12 +293,10 @@ TEST_CLASS(CanvasSharedControlTests_InteractionWithRecreatableDeviceManager)
         template<>
         void PrepareAdapter<CanvasAnimatedControlTraits>()
         {
-            auto swapChainManager = std::make_shared<MockCanvasSwapChainManager>();
-
             Adapter->CreateCanvasSwapChainMethod.AllowAnyCall(
                 [=] (ICanvasDevice*, float, float, float, CanvasAlphaMode)
                 { 
-                    auto mockSwapChain = swapChainManager->CreateMock(); 
+                    auto mockSwapChain = Make<MockCanvasSwapChain>();
                     mockSwapChain->CreateDrawingSessionMethod.AllowAnyCall(
                         [] (Color, ICanvasDrawingSession** value)
                         {

@@ -313,15 +313,14 @@ TEST_CLASS(CanvasAnimatedControlTests)
     TEST_METHOD_EX(CanvasAnimatedControl_RecreatedSwapChainHasCorrectAlphaMode)
     {
         CanvasAnimatedControlFixture f;
-        auto swapChainManager = f.Adapter->SwapChainManager;
         f.Load();
         f.Adapter->DoChanged();
         
         f.Adapter->CreateCanvasSwapChainMethod.SetExpectedCalls(1, 
-            [swapChainManager](ICanvasDevice* device, float width, float height, float dpi, CanvasAlphaMode alphaMode)
+            [](ICanvasDevice* device, float width, float height, float dpi, CanvasAlphaMode alphaMode)
             {
                 Assert::AreEqual(CanvasAlphaMode::Ignore, alphaMode);
-                return CanvasAnimatedControlFixture::CreateTestSwapChain(swapChainManager, device);
+                return CanvasAnimatedControlFixture::CreateTestSwapChain(device);
             });
 
         Assert::AreEqual(S_OK, f.Control->put_ClearColor(AnyOpaqueColor));
@@ -329,10 +328,10 @@ TEST_CLASS(CanvasAnimatedControlTests)
         f.Adapter->DoChanged();
 
         f.Adapter->CreateCanvasSwapChainMethod.SetExpectedCalls(1,
-            [swapChainManager](ICanvasDevice* device, float width, float height, float dpi, CanvasAlphaMode alphaMode)
+            [](ICanvasDevice* device, float width, float height, float dpi, CanvasAlphaMode alphaMode)
             {
                 Assert::AreEqual(CanvasAlphaMode::Premultiplied, alphaMode);
-                return CanvasAnimatedControlFixture::CreateTestSwapChain(swapChainManager, device);
+                return CanvasAnimatedControlFixture::CreateTestSwapChain(device);
             });
 
         Assert::AreEqual(S_OK, f.Control->put_ClearColor(AnyTranslucentColor));
@@ -343,7 +342,6 @@ TEST_CLASS(CanvasAnimatedControlTests)
     TEST_METHOD_EX(CanvasAnimatedControl_RedundantClearColorChangesDoNotCauseRecreation)
     {
         CanvasAnimatedControlFixture f;
-        auto swapChainManager = f.Adapter->SwapChainManager;
         f.Load();
         f.Adapter->DoChanged();
         
@@ -2111,12 +2109,10 @@ TEST_CLASS(CanvasAnimatedControlChangedAction)
             CreateAdapter();
             CreateControl();
             
-            auto swapChainManager = std::make_shared<MockCanvasSwapChainManager>();
-
             Adapter->CreateCanvasSwapChainMethod.AllowAnyCall(
                 [=] (ICanvasDevice*, float, float, float, CanvasAlphaMode)
                 {
-                    return swapChainManager->CreateMock();
+                    return Make<MockCanvasSwapChain>();
                 });
         }
 
@@ -2210,8 +2206,7 @@ TEST_CLASS(CanvasAnimatedControlRenderLoop)
 
         Fixture()
         {
-            auto swapChainManager = std::make_shared<MockCanvasSwapChainManager>();
-            SwapChain = swapChainManager->CreateMock();
+            SwapChain = Make<MockCanvasSwapChain>();
 
             SwapChain->put_TransformMethod.AllowAnyCall();
 
@@ -3372,7 +3367,7 @@ TEST_CLASS(CanvasAnimatedControl_DpiScaling)
 
                     Assert::AreEqual(dpi, expectedDpi);
 
-                    return Adapter->SwapChainManager->CreateWrapper(device, m_dxgiSwapChain.Get(), dpi);
+                    return Make<CanvasSwapChain>(device, m_dxgiSwapChain.Get(), dpi);
                 });
         }
 

@@ -14,11 +14,10 @@ namespace canvas
         CALL_COUNTER_WITH_MOCK(put_TransformMethod, HRESULT(Matrix3x2));
 
         MockCanvasSwapChain(
-            ICanvasDevice* device,
-            std::shared_ptr<ICanvasSwapChainAdapter> adapter,
-            IDXGISwapChain1* dxgiSwapChain,
-            float dpi)
-            : CanvasSwapChain(device, adapter, dxgiSwapChain, dpi)
+            ICanvasDevice* device = Make<StubCanvasDevice>().Get(),
+            IDXGISwapChain1* dxgiSwapChain = MakeMockSwapChain().Get(),
+            float dpi = DEFAULT_DPI)
+            : CanvasSwapChain(device, dxgiSwapChain, dpi)
         {
             CreateDrawingSessionMethod.AllowAnyCall();
         }
@@ -181,52 +180,6 @@ namespace canvas
             return CanvasSwapChain::GetResource(iid, out);
         }
 
-    };
-
-    class CanvasSwapChainTestAdapter : public ICanvasSwapChainAdapter
-    {
-    public:
-        std::function<void(DWORD)> m_sleepFn;
-        virtual void Sleep(DWORD timeInMs) override
-        {
-            if (m_sleepFn) m_sleepFn(timeInMs);
-        }
-    };
-
-    class MockCanvasSwapChainManager : public CanvasSwapChainManager
-    {
-        std::shared_ptr<CanvasSwapChainTestAdapter> m_testAdapter;
-
-    public:
-        MockCanvasSwapChainManager()
-        {
-            m_testAdapter = std::make_shared<CanvasSwapChainTestAdapter>();
-            m_adapter = m_testAdapter;
-        }
-
-        ComPtr<MockCanvasSwapChain> CreateMock(
-            ICanvasDevice* device = Make<StubCanvasDevice>().Get(),
-            IDXGISwapChain2* dxgiSwapChain = MakeMockSwapChain().Get(),
-            float dpi = DEFAULT_DPI)
-        {
-            auto mockSwapChain = Make<MockCanvasSwapChain>(device, m_adapter, dxgiSwapChain, dpi);
-            Assert::IsNotNull(mockSwapChain.Get());
-            return mockSwapChain;
-        }
-
-        virtual ComPtr<CanvasSwapChain> CreateWrapper(
-            ICanvasDevice* device,
-            IDXGISwapChain1* resource,
-            float dpi) override
-        {
-            return Make<MockCanvasSwapChain>(device, m_adapter, resource, dpi);
-        }
-
-        std::shared_ptr<CanvasSwapChainTestAdapter> GetTestAdapter()
-        {
-            return m_testAdapter;
-        }
-
     private:
         static ComPtr<IDXGISwapChain2> MakeMockSwapChain()
         {
@@ -259,6 +212,16 @@ namespace canvas
                 });
 
             return dxgiSwapChain;
+        }
+    };
+
+    class CanvasSwapChainTestAdapter : public CanvasSwapChainAdapter
+    {
+    public:
+        std::function<void(DWORD)> m_sleepFn;
+        virtual void Sleep(DWORD timeInMs) override
+        {
+            if (m_sleepFn) m_sleepFn(timeInMs);
         }
     };
 }

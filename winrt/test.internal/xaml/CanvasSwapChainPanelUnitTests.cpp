@@ -16,12 +16,9 @@ TEST_CLASS(CanvasSwapChainPanelUnitTests)
 
         ComPtr<CanvasSwapChainPanel> SwapChainPanel;
 
-        std::shared_ptr<MockCanvasSwapChainManager> SwapChainManager;
-
         Fixture()
             : Adapter(std::make_shared<CanvasSwapChainPanelTestAdapter>())
             , SwapChainPanel(Make<CanvasSwapChainPanel>(Adapter))
-            , SwapChainManager(std::make_shared<MockCanvasSwapChainManager>())
         {
         }
     };
@@ -42,7 +39,7 @@ TEST_CLASS(CanvasSwapChainPanelUnitTests)
         auto device = Make<StubCanvasDevice>();
         auto dxgiResource = Make<MockDxgiSwapChain>();
         
-        auto swapChain = f.SwapChainManager->CreateMock(device.Get(), dxgiResource.Get());
+        auto swapChain = Make<MockCanvasSwapChain>(device.Get(), dxgiResource.Get());
 
         //
         // Verify that no swap chain is assigned upon initialization.
