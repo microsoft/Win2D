@@ -170,6 +170,8 @@ IFACEMETHODIMP CanvasTextFormat::GetResource(REFIID iid, void** value)
 
 ComPtr<IDWriteTextFormat> CanvasTextFormat::GetRealizedTextFormat()
 {
+    auto lock = GetLock();
+    
     if (m_format)
         return m_format;
 
@@ -328,6 +330,8 @@ HRESULT __declspec(nothrow) CanvasTextFormat::PropertyGet(T* value, ST const& sh
     return ExceptionBoundary(
         [&]
         {
+            auto lock = GetLock();
+
             CheckInPointer(value);
             ThrowIfClosed();
 
@@ -345,6 +349,8 @@ HRESULT __declspec(nothrow) CanvasTextFormat::PropertyPut(T value, TT* dest, FNV
     return ExceptionBoundary(
         [&]
         {
+            auto lock = GetLock();
+
             validator(value);
 
             ThrowIfClosed();
@@ -492,6 +498,7 @@ IFACEMETHODIMP CanvasTextFormat::put_FontFamily(HSTRING value)
     return ExceptionBoundary(
         [&]
         {
+            auto lock = GetLock();
             ThrowIfClosed();
 
             if (IsSame(&m_fontFamilyName, value))

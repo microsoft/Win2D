@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include "utils/LockUtilities.h"
 #include "CustomFontManager.h"
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Text
@@ -72,7 +73,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_Text_CanvasTextFormat, BaseTrust);
 
         std::shared_ptr<CustomFontManager> m_customFontManager;
-        
+
         //
         // Has Close() been called?  It is tempting to use a null m_format to
         // indicated closed, but we need to be able to tell the difference
@@ -80,6 +81,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         //
         bool m_closed;
 
+        //
+        // The various bits of shadow state and the realized format all need to
+        // be updated atomically.
+        //
+        std::mutex m_mutex;
+        
         //
         // Shadow properties.  These values are used to recreate m_format when
         // it is required.
@@ -104,7 +111,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         //
         // Draw text options are not part of m_format, but are stored in
-        // CanvasTextFormat.
+        // CanvasTextFormat.  These are not protected by the mutex since they
+        // are independent from the shadow state / format.
         //
         CanvasDrawTextOptions m_drawTextOptions;
 
@@ -165,6 +173,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         IFACEMETHOD(GetResource)(REFIID iid, void** resource) override;
 
     private:
+        Lock GetLock()
+        {
+            return Lock(m_mutex);
+        }
+        
         void ThrowIfClosed();
 
         template<typename T, typename ST, typename FN>
