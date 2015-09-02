@@ -44,6 +44,5 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
   <Win2DProject Name="winrt.dll.uap.vcxproj" />
   <Win2DProject Name="DotNetNumerics.Windows.csproj" />
   <Win2DProject Name="DotNetNumerics.WindowsPhone.csproj" />
-  <Win2DProject Name="Workaround1200257.csproj" />
 
 </ExportSamples>

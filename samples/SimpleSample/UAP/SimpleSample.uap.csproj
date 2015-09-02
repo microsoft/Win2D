@@ -119,10 +119,6 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\numerics\Workaround1200257\Workaround1200257.csproj">
-      <Project>{4edd6ad1-0bd4-40cf-8d02-53597b1a76ba}</Project>
-      <Name>Workaround1200257</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\..\winrt\dll\winrt.dll.uap.vcxproj">
       <Project>{8cf21e5d-e0a2-4fe7-8e2b-a025cf52dcfb}</Project>
       <Name>winrt.dll.uap</Name>
