@@ -59,6 +59,8 @@ IFACEMETHODIMP CanvasStrokeStyle::get_StartCap(_Out_ CanvasCapStyle* value)
     return ExceptionBoundary(
         [&]
         {
+            auto lock = GetLock();
+            
             CheckInPointer(value);
             ThrowIfClosed();
             *value = m_startCap;
@@ -70,6 +72,8 @@ IFACEMETHODIMP CanvasStrokeStyle::put_StartCap(_In_ CanvasCapStyle value)
     return ExceptionBoundary(
         [&]
         {
+            auto lock = GetLock();
+            
             ThrowIfClosed();
             if (m_startCap != value)
             {
@@ -84,6 +88,8 @@ IFACEMETHODIMP CanvasStrokeStyle::get_EndCap(_Out_ CanvasCapStyle* value)
     return ExceptionBoundary(
         [&]
         {
+            auto lock = GetLock();
+            
             CheckInPointer(value);
             ThrowIfClosed();
             *value = m_endCap;
@@ -95,6 +101,8 @@ IFACEMETHODIMP CanvasStrokeStyle::put_EndCap(_In_ CanvasCapStyle value)
     return ExceptionBoundary(
         [&]
         {
+            auto lock = GetLock();
+            
             ThrowIfClosed();
             if (m_endCap != value)
             {
@@ -109,6 +117,8 @@ IFACEMETHODIMP CanvasStrokeStyle::get_DashCap(_Out_ CanvasCapStyle* value)
     return ExceptionBoundary(
         [&]
         {
+            auto lock = GetLock();
+            
             CheckInPointer(value);
             ThrowIfClosed();
             *value = m_dashCap;
@@ -120,6 +130,8 @@ IFACEMETHODIMP CanvasStrokeStyle::put_DashCap(_In_ CanvasCapStyle value)
     return ExceptionBoundary(
         [&]
         {
+            auto lock = GetLock();
+            
             ThrowIfClosed();
             if (m_dashCap != value)
             {
@@ -134,6 +146,8 @@ IFACEMETHODIMP CanvasStrokeStyle::get_LineJoin(_Out_ CanvasLineJoin* value)
     return ExceptionBoundary(
         [&]
         {
+            auto lock = GetLock();
+            
             CheckInPointer(value);
             ThrowIfClosed();
             *value = m_lineJoin;
@@ -145,6 +159,8 @@ IFACEMETHODIMP CanvasStrokeStyle::put_LineJoin(_In_ CanvasLineJoin value)
     return ExceptionBoundary(
         [&]
         {
+            auto lock = GetLock();
+            
             ThrowIfClosed();
             if (m_lineJoin != value)
             {
@@ -159,6 +175,8 @@ IFACEMETHODIMP CanvasStrokeStyle::get_MiterLimit(_Out_ float* value)
     return ExceptionBoundary(
         [&]
         {
+            auto lock = GetLock();
+            
             CheckInPointer(value);
             ThrowIfClosed();
             *value = m_miterLimit;
@@ -170,6 +188,8 @@ IFACEMETHODIMP CanvasStrokeStyle::put_MiterLimit(_In_ float value)
     return ExceptionBoundary(
         [&]
         {
+            auto lock = GetLock();
+            
             ThrowIfClosed();
             if (m_miterLimit != value)
             {
@@ -184,6 +204,8 @@ IFACEMETHODIMP CanvasStrokeStyle::get_DashStyle(_Out_ CanvasDashStyle* value)
     return ExceptionBoundary(
         [&]
         {
+            auto lock = GetLock();
+            
             CheckInPointer(value);
             ThrowIfClosed();
             *value = m_dashStyle;
@@ -195,6 +217,8 @@ IFACEMETHODIMP CanvasStrokeStyle::put_DashStyle(_In_ CanvasDashStyle value)
     return ExceptionBoundary(
         [&]
         {
+            auto lock = GetLock();
+            
             ThrowIfClosed();
             if (m_dashStyle != value)
             {
@@ -209,6 +233,8 @@ IFACEMETHODIMP CanvasStrokeStyle::get_DashOffset(_Out_ float* value)
     return ExceptionBoundary(
         [&]
         {
+            auto lock = GetLock();
+            
             CheckInPointer(value);
             ThrowIfClosed();
             *value = m_dashOffset;
@@ -220,6 +246,8 @@ IFACEMETHODIMP CanvasStrokeStyle::put_DashOffset(float value)
     return ExceptionBoundary(
         [&]
         {
+            auto lock = GetLock();
+            
             ThrowIfClosed();
             if (m_dashOffset != value)
             {
@@ -236,6 +264,8 @@ IFACEMETHODIMP CanvasStrokeStyle::get_CustomDashStyle(
     return ExceptionBoundary(
         [&]
         {
+            auto lock = GetLock();
+            
             CheckInPointer(valueCount);
             CheckAndClearOutPointer(valueElements);
             ThrowIfClosed();
@@ -254,6 +284,8 @@ IFACEMETHODIMP CanvasStrokeStyle::put_CustomDashStyle(
     return ExceptionBoundary(
         [&]
         {
+            auto lock = GetLock();
+            
             ThrowIfClosed();
 
             if ((m_customDashElements.size() != valueCount) ||
@@ -273,6 +305,8 @@ IFACEMETHODIMP CanvasStrokeStyle::get_TransformBehavior(_Out_ CanvasStrokeTransf
     return ExceptionBoundary(
         [&]
         {
+            auto lock = GetLock();
+            
             CheckInPointer(value);
             ThrowIfClosed();
             *value = m_transformBehavior;
@@ -284,6 +318,8 @@ IFACEMETHODIMP CanvasStrokeStyle::put_TransformBehavior(_In_ CanvasStrokeTransfo
     return ExceptionBoundary(
         [&]
         {
+            auto lock = GetLock();
+            
             ThrowIfClosed();
 
             if (m_transformBehavior != value)
@@ -299,10 +335,14 @@ IFACEMETHODIMP CanvasStrokeStyle::put_TransformBehavior(_In_ CanvasStrokeTransfo
 //
 IFACEMETHODIMP CanvasStrokeStyle::Close()
 {
-    m_d2dStrokeStyle.Reset();
-    m_closed = true;
-
-    return S_OK;
+    return ExceptionBoundary(
+        [&]
+        {
+            auto lock = GetLock();
+            
+            m_d2dStrokeStyle.Reset();
+            m_closed = true;
+        });
 }
 
 
@@ -312,11 +352,11 @@ IFACEMETHODIMP CanvasStrokeStyle::Close()
 
 ComPtr<ID2D1StrokeStyle1> CanvasStrokeStyle::GetRealizedD2DStrokeStyle(ID2D1Factory* d2dFactory)
 {
+    auto lock = GetLock();
+            
     //
     // If there is already a realization, ensure its factory matches the target factory.
     // If not, invalidate and re-realize.
-    //
-    // May be possible to forego re-realizing in some more cases. See item #1589.
     //
     if (m_d2dStrokeStyle)
     {
@@ -331,7 +371,6 @@ ComPtr<ID2D1StrokeStyle1> CanvasStrokeStyle::GetRealizedD2DStrokeStyle(ID2D1Fact
 
     if (!m_d2dStrokeStyle)
     {
-
         D2D1_STROKE_STYLE_PROPERTIES1 strokeStyleProperties = D2D1::StrokeStyleProperties1(
             static_cast<D2D1_CAP_STYLE>(m_startCap),
             static_cast<D2D1_CAP_STYLE>(m_endCap),
@@ -348,9 +387,6 @@ ComPtr<ID2D1StrokeStyle1> CanvasStrokeStyle::GetRealizedD2DStrokeStyle(ID2D1Fact
             dashArray = &(m_customDashElements[0]);
             strokeStyleProperties.dashStyle = D2D1_DASH_STYLE_CUSTOM;
         }
-
-        // Potential thread safety problem here. Need to ensure resource creation, including
-        // device-independent resource creation, is per-thread. See #802.
 
         assert(m_customDashElements.size() <= UINT_MAX);
 

@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include "utils/LockUtilities.h"
+
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Geometry
 {
     using namespace ::Microsoft::WRL;
@@ -34,6 +36,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         private LifespanTracker<CanvasStrokeStyle>
     {
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_Geometry_CanvasStrokeStyle, BaseTrust);
+
+        std::mutex m_mutex;
 
         CanvasCapStyle m_startCap;
         CanvasCapStyle m_endCap;
@@ -106,5 +110,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
     private:
         void ThrowIfClosed();
+
+        Lock GetLock()
+        {
+            return Lock(m_mutex);
+        }
     };
 }}}}}
