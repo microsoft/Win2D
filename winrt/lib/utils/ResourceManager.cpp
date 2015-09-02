@@ -21,8 +21,8 @@ std::vector<ResourceManager::TryCreateFunction> ResourceManager::tryCreateFuncti
 {
     TryCreate<ID2D1Device1, CanvasDevice, MakeWrapper<ID2D1Device1, CanvasDevice>>,
     TryCreate<ID2D1DeviceContext1, CanvasDrawingSession, MakeWrapper<ID2D1DeviceContext1, CanvasDrawingSession>>,
-    TryCreate<ID2D1Bitmap1, CanvasRenderTarget, CreateFromManagerWithDevice<ID2D1Bitmap1, CanvasRenderTarget, CanvasRenderTargetFactory>, IsRenderTargetBitmap>,
-    TryCreate<ID2D1Bitmap1, CanvasBitmap, CreateFromManagerWithDevice<ID2D1Bitmap1, CanvasBitmap, CanvasBitmapFactory>>,
+    TryCreate<ID2D1Bitmap1, CanvasRenderTarget, MakeWrapperWithDevice<ID2D1Bitmap1, CanvasRenderTarget>, IsRenderTargetBitmap>,
+    TryCreate<ID2D1Bitmap1, CanvasBitmap, MakeWrapperWithDevice<ID2D1Bitmap1, CanvasBitmap>>,
     TryCreate<ID2D1SolidColorBrush, CanvasSolidColorBrush, MakeWrapperWithDevice<ID2D1SolidColorBrush, CanvasSolidColorBrush>>,
     TryCreate<ID2D1LinearGradientBrush, CanvasLinearGradientBrush, MakeWrapperWithDevice<ID2D1LinearGradientBrush, CanvasLinearGradientBrush>>,
     TryCreate<ID2D1RadialGradientBrush, CanvasRadialGradientBrush, MakeWrapperWithDevice<ID2D1RadialGradientBrush, CanvasRadialGradientBrush>>,

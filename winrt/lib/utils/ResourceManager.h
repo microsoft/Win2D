@@ -107,15 +107,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         }
 
 
-        template<typename TResource, typename TWrapper, typename TFactory>
-        static ComPtr<TWrapper> CreateFromManagerWithDevice(ICanvasDevice* device, TResource* resource, float dpi)
-        {
-            UNREFERENCED_PARAMETER(dpi);
-
-            return TFactory::GetManager()->CreateWrapper(device, resource);
-        }
-
-
     private:
         // Native resource -> WinRT wrapper map, shared by all active resources.
         static std::unordered_map<IUnknown*, WeakRef> m_resources;

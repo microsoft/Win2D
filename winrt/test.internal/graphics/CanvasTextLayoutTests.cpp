@@ -8,12 +8,8 @@
 #include <lib/brushes/CanvasLinearGradientBrush.h>
 #include <lib/text/CanvasTextLayout.h>
 
-#include "mocks/MockDWriteFactory.h"
-#include "mocks/MockDWriteFontCollection.h"
-#include "mocks/MockDWriteTextLayout.h"
 #include "stubs/StubCanvasBrush.h"
 #include "stubs/StubCanvasTextLayoutAdapter.h"
-#include "stubs/TestBitmapResourceCreationAdapter.h"
 #include "stubs/TestEffect.h"
 
 namespace canvas

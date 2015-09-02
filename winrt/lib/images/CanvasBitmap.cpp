@@ -137,252 +137,226 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ThrowIfFailed(encoder->Commit());
     }
 
-
-    //
-    // DefaultBitmapResourceCreationAdapter
-    //
-
-    class DefaultBitmapResourceCreationAdapter : public ICanvasBitmapResourceCreationAdapter,
-                                                 private LifespanTracker<DefaultBitmapResourceCreationAdapter>
+    static UINT GetOrientationFromFrameDecode(ComPtr<IWICBitmapFrameDecode> const& frameDecode)
     {
-        ComPtr<IWICImagingFactory2> m_wicFactory;
+        ComPtr<IWICMetadataQueryReader> queryReader;
 
-    public:
-        DefaultBitmapResourceCreationAdapter()
+        HRESULT getMetadataHr = frameDecode->GetMetadataQueryReader(&queryReader);
+        if (getMetadataHr == WINCODEC_ERR_UNSUPPORTEDOPERATION)
         {
-            ThrowIfFailed(
-                CoCreateInstance(
-                CLSID_WICImagingFactory,
-                nullptr,
-                CLSCTX_INPROC_SERVER,
-                IID_PPV_ARGS(&m_wicFactory)));
+            // This is expected for some formats, such as BMP.
+            return PHOTO_ORIENTATION_NORMAL;
         }
+        else
+            ThrowIfFailed(getMetadataHr);
 
-        void SaveLockedMemoryToStream(
-            IRandomAccessStream* randomAccessStream,
-            CanvasBitmapFileFormat fileFormat,
-            float quality,
-            unsigned int width,
-            unsigned int height,
-            float dpiX,
-            float dpiY,
-            ScopedBitmapMappedPixelAccess* bitmapLock)
-        {
-            ComPtr<IWICStream> wicStream;
-            ThrowIfFailed(m_wicFactory->CreateStream(&wicStream));
-
-            ComPtr<IStream> iStream;
-            ThrowIfFailed(CreateStreamOverRandomAccessStream(randomAccessStream, IID_PPV_ARGS(&iStream)));
-
-            ThrowIfFailed(wicStream->InitializeFromIStream(iStream.Get()));
-
-            SaveLockedMemoryToNativeStream(
-                m_wicFactory.Get(), 
-                wicStream.Get(), 
-                GetGUIDForFileFormat(fileFormat),
-                quality, 
-                width, 
-                height, 
-                dpiX,
-                dpiY, 
-                bitmapLock);
-        }
-
-        void SaveLockedMemoryToFile(
-            HSTRING fileName,
-            CanvasBitmapFileFormat fileFormat,
-            float quality,
-            unsigned int width,
-            unsigned int height,
-            float dpiX,
-            float dpiY,
-            ScopedBitmapMappedPixelAccess* bitmapLock)
-        {
-            WinString fileNameString(fileName);
-
-            GUID encoderGuid;
-            if (fileFormat == CanvasBitmapFileFormat::Auto)
-            {
-                encoderGuid = GetEncoderFromFileExtension(static_cast<const wchar_t*>(fileNameString));
-            }
-            else
-            {
-                encoderGuid = GetGUIDForFileFormat(fileFormat);
-            }
-
-            ComPtr<IWICStream> wicStream;
-            ThrowIfFailed(m_wicFactory->CreateStream(&wicStream));
-
-            ThrowIfFailed(wicStream->InitializeFromFilename(static_cast<const wchar_t*>(fileNameString), GENERIC_WRITE));
-
-            SaveLockedMemoryToNativeStream(
-                m_wicFactory.Get(),
-                wicStream.Get(), 
-                encoderGuid, 
-                quality, 
-                width, 
-                height, 
-                dpiX, 
-                dpiY, 
-                bitmapLock);
-        }
-
-        UINT GetOrientationFromFrameDecode(ComPtr<IWICBitmapFrameDecode> const& frameDecode)
-        {
-            ComPtr<IWICMetadataQueryReader> queryReader;
-
-            HRESULT getMetadataHr = frameDecode->GetMetadataQueryReader(&queryReader);
-            if (getMetadataHr == WINCODEC_ERR_UNSUPPORTEDOPERATION)
-            {
-                // This is expected for some formats, such as BMP.
-                return PHOTO_ORIENTATION_NORMAL;
-            }
-            else
-                ThrowIfFailed(getMetadataHr);
-
-            PROPVARIANT orientation;
-            PropVariantInit(&orientation);
+        PROPVARIANT orientation;
+        PropVariantInit(&orientation);
             
-            HRESULT lookupHr = queryReader->GetMetadataByName(L"System.Photo.Orientation", &orientation);
+        HRESULT lookupHr = queryReader->GetMetadataByName(L"System.Photo.Orientation", &orientation);
 
-            const bool propertyNotFound = 
-                lookupHr == WINCODEC_ERR_PROPERTYNOTFOUND ||
-                lookupHr == WINCODEC_ERR_PROPERTYNOTSUPPORTED;
+        const bool propertyNotFound = 
+            lookupHr == WINCODEC_ERR_PROPERTYNOTFOUND ||
+            lookupHr == WINCODEC_ERR_PROPERTYNOTSUPPORTED;
 
-            // Anything other than property-not-found is unexpected
-            if (!propertyNotFound)
-                ThrowIfFailed(lookupHr);
+        // Anything other than property-not-found is unexpected
+        if (!propertyNotFound)
+            ThrowIfFailed(lookupHr);
 
-            // The property wasn't specified, or specifies an out-of-range value
-            if (propertyNotFound ||
-                orientation.vt != VT_UI2 ||
-                orientation.uiVal < 1 ||
-                orientation.uiVal > 8)
-            {                
-                return PHOTO_ORIENTATION_NORMAL;
-            }
-            else
-            {
-                return orientation.uiVal;
-            }
+        // The property wasn't specified, or specifies an out-of-range value
+        if (propertyNotFound ||
+            orientation.vt != VT_UI2 ||
+            orientation.uiVal < 1 ||
+            orientation.uiVal > 8)
+        {                
+            return PHOTO_ORIENTATION_NORMAL;
         }
-
-        WICBitmapTransformOptions GetTransformOptionsFromPhotoOrientation(
-            UINT photoOrientation)
+        else
         {
-            switch (photoOrientation)
-            {
-            case PHOTO_ORIENTATION_NORMAL: return WICBitmapTransformRotate0;
-            case PHOTO_ORIENTATION_ROTATE90: return WICBitmapTransformRotate270;
-            case PHOTO_ORIENTATION_ROTATE180: return WICBitmapTransformRotate180;
-            case PHOTO_ORIENTATION_ROTATE270: return WICBitmapTransformRotate90;
-            case PHOTO_ORIENTATION_FLIPHORIZONTAL: return WICBitmapTransformFlipHorizontal;
-            case PHOTO_ORIENTATION_FLIPVERTICAL: return WICBitmapTransformFlipVertical;
-            case PHOTO_ORIENTATION_TRANSPOSE: return static_cast<WICBitmapTransformOptions>(WICBitmapTransformRotate270 | WICBitmapTransformFlipHorizontal);
-            case PHOTO_ORIENTATION_TRANSVERSE: return static_cast<WICBitmapTransformOptions>(WICBitmapTransformRotate90 | WICBitmapTransformFlipHorizontal);
-            default:
-                ThrowHR(E_INVALIDARG);
-            }
+            return orientation.uiVal;
         }
+    }
 
-        ComPtr<IWICBitmapSource> CreateFlipRotator(
-            IWICImagingFactory* wicImagingFactory,
-            IWICBitmapSource* bitmapSource,
-            WICBitmapTransformOptions transformOptions)
-        {
-            ComPtr<IWICBitmap> bitmap;
-            if (transformOptions != WICBitmapTransformRotate0)
-            {
-
-                ComPtr<IWICBitmapFlipRotator> bitmapFlipRotator;
-                ThrowIfFailed(wicImagingFactory->CreateBitmapFlipRotator(&bitmapFlipRotator));
-                ThrowIfFailed(bitmapFlipRotator->Initialize(bitmapSource, transformOptions));
-
-                // WICBitmapCacheOnLoad is required so that the entire destination buffer is provided to the 
-                // flip/rotator.  Requesting the entire desination in one CopyPixels call enables optimizations.    
-                ThrowIfFailed(wicImagingFactory->CreateBitmapFromSource(bitmapFlipRotator.Get(), WICBitmapCacheOnLoad, &bitmap));
-            }
-            else
-            {
-                // No rotation needed, just cache the source.
-                // Note that because this is passed directly into D2D CreateBitmapFromWicBitmap,
-                // this doesn't introduce any additional memory costs. 
-                // Otherwise, if at some point this changes, we should remove this step.
-                //
-                ThrowIfFailed(wicImagingFactory->CreateBitmapFromSource(bitmapSource, WICBitmapCacheOnLoad, &bitmap));
-            }
-
-            return bitmap;
-        }
-
-        ComPtr<IWICBitmapSource> ApplyRotationIfNeeded(ComPtr<IWICBitmapFrameDecode> const& wicBitmapFrameSource, ComPtr<IWICFormatConverter>& postFormatConversion)
-        {
-            const UINT orientation = GetOrientationFromFrameDecode(wicBitmapFrameSource);
-
-            const WICBitmapTransformOptions transformOptions = GetTransformOptionsFromPhotoOrientation(orientation);
-
-            const ComPtr<IWICBitmapSource> rotator = CreateFlipRotator(m_wicFactory.Get(), postFormatConversion.Get(), transformOptions);
-
-            return rotator;
-        }
-
-        ComPtr<IWICBitmapSource> CreateWICFormatConverter(HSTRING fileName)
-        {
-            ComPtr<IWICStream> stream;
-            ThrowIfFailed(m_wicFactory->CreateStream(&stream));
-
-            WinString fileNameString(fileName);
-            ThrowIfFailed(stream->InitializeFromFilename(static_cast<const wchar_t*>(fileNameString), GENERIC_READ));
-
-            return CreateWICFormatConverter(stream.Get());
-        }
-
-        ComPtr<IWICBitmapSource> CreateWICFormatConverter(IStream* fileStream)
-        {
-            ComPtr<IWICFormatConverter> wicFormatConverter;
-
-            ComPtr<IWICBitmapDecoder> wicBitmapDecoder;
-            ThrowIfFailed(m_wicFactory->CreateDecoderFromStream(
-                fileStream,
-                nullptr,
-                WICDecodeMetadataCacheOnDemand,
-                &wicBitmapDecoder));
-
-            ComPtr<IWICBitmapFrameDecode> wicBitmapFrameSource;
-            ThrowIfFailed(wicBitmapDecoder->GetFrame(0, &wicBitmapFrameSource));
-
-            ThrowIfFailed(m_wicFactory->CreateFormatConverter(&wicFormatConverter));
-
-            ThrowIfFailed(wicFormatConverter->Initialize(
-                wicBitmapFrameSource.Get(),
-                GUID_WICPixelFormat32bppPBGRA,
-                WICBitmapDitherTypeNone,
-                NULL,
-                0,
-                WICBitmapPaletteTypeMedianCut));
-
-            return ApplyRotationIfNeeded(wicBitmapFrameSource, wicFormatConverter);
-        }
-    };
-
-
-    //
-    // CanvasBitmapManager
-    //
-
-    CanvasBitmapManager::CanvasBitmapManager()
-        : m_adapter(std::make_shared<DefaultBitmapResourceCreationAdapter>())
+    static WICBitmapTransformOptions GetTransformOptionsFromPhotoOrientation(UINT photoOrientation)
     {
+        switch (photoOrientation)
+        {
+        case PHOTO_ORIENTATION_NORMAL: return WICBitmapTransformRotate0;
+        case PHOTO_ORIENTATION_ROTATE90: return WICBitmapTransformRotate270;
+        case PHOTO_ORIENTATION_ROTATE180: return WICBitmapTransformRotate180;
+        case PHOTO_ORIENTATION_ROTATE270: return WICBitmapTransformRotate90;
+        case PHOTO_ORIENTATION_FLIPHORIZONTAL: return WICBitmapTransformFlipHorizontal;
+        case PHOTO_ORIENTATION_FLIPVERTICAL: return WICBitmapTransformFlipVertical;
+        case PHOTO_ORIENTATION_TRANSPOSE: return static_cast<WICBitmapTransformOptions>(WICBitmapTransformRotate270 | WICBitmapTransformFlipHorizontal);
+        case PHOTO_ORIENTATION_TRANSVERSE: return static_cast<WICBitmapTransformOptions>(WICBitmapTransformRotate90 | WICBitmapTransformFlipHorizontal);
+        default:
+            ThrowHR(E_INVALIDARG);
+        }
+    }
+
+    static ComPtr<IWICBitmapSource> CreateFlipRotator(
+        IWICImagingFactory* wicImagingFactory,
+        IWICBitmapSource* bitmapSource,
+        WICBitmapTransformOptions transformOptions)
+    {
+        ComPtr<IWICBitmap> bitmap;
+        if (transformOptions != WICBitmapTransformRotate0)
+        {
+
+            ComPtr<IWICBitmapFlipRotator> bitmapFlipRotator;
+            ThrowIfFailed(wicImagingFactory->CreateBitmapFlipRotator(&bitmapFlipRotator));
+            ThrowIfFailed(bitmapFlipRotator->Initialize(bitmapSource, transformOptions));
+
+            // WICBitmapCacheOnLoad is required so that the entire destination buffer is provided to the 
+            // flip/rotator.  Requesting the entire desination in one CopyPixels call enables optimizations.    
+            ThrowIfFailed(wicImagingFactory->CreateBitmapFromSource(bitmapFlipRotator.Get(), WICBitmapCacheOnLoad, &bitmap));
+        }
+        else
+        {
+            // No rotation needed, just cache the source.
+            // Note that because this is passed directly into D2D CreateBitmapFromWicBitmap,
+            // this doesn't introduce any additional memory costs. 
+            // Otherwise, if at some point this changes, we should remove this step.
+            //
+            ThrowIfFailed(wicImagingFactory->CreateBitmapFromSource(bitmapSource, WICBitmapCacheOnLoad, &bitmap));
+        }
+
+        return bitmap;
+    }
+
+    static ComPtr<IWICBitmapSource> ApplyRotationIfNeeded(IWICImagingFactory* wicFactory, ComPtr<IWICBitmapFrameDecode> const& wicBitmapFrameSource, ComPtr<IWICFormatConverter>& postFormatConversion)
+    {
+        const UINT orientation = GetOrientationFromFrameDecode(wicBitmapFrameSource);
+
+        const WICBitmapTransformOptions transformOptions = GetTransformOptionsFromPhotoOrientation(orientation);
+
+        return CreateFlipRotator(wicFactory, postFormatConversion.Get(), transformOptions);
     }
 
 
-    CanvasBitmapManager::CanvasBitmapManager(std::shared_ptr<ICanvasBitmapResourceCreationAdapter> adapter)
-        : m_adapter(adapter)
+    //
+    // DefaultBitmapAdapter
+    //
+
+    DefaultBitmapAdapter::DefaultBitmapAdapter()
     {
+        ThrowIfFailed(
+            CoCreateInstance(
+            CLSID_WICImagingFactory,
+            nullptr,
+            CLSCTX_INPROC_SERVER,
+            IID_PPV_ARGS(&m_wicFactory)));
+    }
+
+    void DefaultBitmapAdapter::SaveLockedMemoryToStream(
+        IRandomAccessStream* randomAccessStream,
+        CanvasBitmapFileFormat fileFormat,
+        float quality,
+        unsigned int width,
+        unsigned int height,
+        float dpiX,
+        float dpiY,
+        ScopedBitmapMappedPixelAccess* bitmapLock)
+    {
+        ComPtr<IWICStream> wicStream;
+        ThrowIfFailed(m_wicFactory->CreateStream(&wicStream));
+
+        ComPtr<IStream> iStream;
+        ThrowIfFailed(CreateStreamOverRandomAccessStream(randomAccessStream, IID_PPV_ARGS(&iStream)));
+
+        ThrowIfFailed(wicStream->InitializeFromIStream(iStream.Get()));
+
+        SaveLockedMemoryToNativeStream(
+            m_wicFactory.Get(), 
+            wicStream.Get(), 
+            GetGUIDForFileFormat(fileFormat),
+            quality, 
+            width, 
+            height, 
+            dpiX,
+            dpiY, 
+            bitmapLock);
+    }
+
+    void DefaultBitmapAdapter::SaveLockedMemoryToFile(
+        HSTRING fileName,
+        CanvasBitmapFileFormat fileFormat,
+        float quality,
+        unsigned int width,
+        unsigned int height,
+        float dpiX,
+        float dpiY,
+        ScopedBitmapMappedPixelAccess* bitmapLock)
+    {
+        WinString fileNameString(fileName);
+
+        GUID encoderGuid;
+        if (fileFormat == CanvasBitmapFileFormat::Auto)
+        {
+            encoderGuid = GetEncoderFromFileExtension(static_cast<const wchar_t*>(fileNameString));
+        }
+        else
+        {
+            encoderGuid = GetGUIDForFileFormat(fileFormat);
+        }
+
+        ComPtr<IWICStream> wicStream;
+        ThrowIfFailed(m_wicFactory->CreateStream(&wicStream));
+
+        ThrowIfFailed(wicStream->InitializeFromFilename(static_cast<const wchar_t*>(fileNameString), GENERIC_WRITE));
+
+        SaveLockedMemoryToNativeStream(
+            m_wicFactory.Get(),
+            wicStream.Get(), 
+            encoderGuid, 
+            quality, 
+            width, 
+            height, 
+            dpiX, 
+            dpiY, 
+            bitmapLock);
+    }
+
+    ComPtr<IWICBitmapSource> DefaultBitmapAdapter::CreateWICFormatConverter(HSTRING fileName)
+    {
+        ComPtr<IWICStream> stream;
+        ThrowIfFailed(m_wicFactory->CreateStream(&stream));
+
+        WinString fileNameString(fileName);
+        ThrowIfFailed(stream->InitializeFromFilename(static_cast<const wchar_t*>(fileNameString), GENERIC_READ));
+
+        return CreateWICFormatConverter(stream.Get());
+    }
+
+    ComPtr<IWICBitmapSource> DefaultBitmapAdapter::CreateWICFormatConverter(IStream* fileStream)
+    {
+        ComPtr<IWICFormatConverter> wicFormatConverter;
+
+        ComPtr<IWICBitmapDecoder> wicBitmapDecoder;
+        ThrowIfFailed(m_wicFactory->CreateDecoderFromStream(
+            fileStream,
+            nullptr,
+            WICDecodeMetadataCacheOnDemand,
+            &wicBitmapDecoder));
+
+        ComPtr<IWICBitmapFrameDecode> wicBitmapFrameSource;
+        ThrowIfFailed(wicBitmapDecoder->GetFrame(0, &wicBitmapFrameSource));
+
+        ThrowIfFailed(m_wicFactory->CreateFormatConverter(&wicFormatConverter));
+
+        ThrowIfFailed(wicFormatConverter->Initialize(
+            wicBitmapFrameSource.Get(),
+            GUID_WICPixelFormat32bppPBGRA,
+            WICBitmapDitherTypeNone,
+            NULL,
+            0,
+            WICBitmapPaletteTypeMedianCut));
+
+        return ApplyRotationIfNeeded(m_wicFactory.Get(), wicBitmapFrameSource, wicFormatConverter);
     }
 
 
-    ComPtr<CanvasBitmap> CanvasBitmapManager::CreateNew(
+    ComPtr<CanvasBitmap> CanvasBitmap::CreateNew(
         ICanvasDevice* canvasDevice,
         HSTRING fileName,
         float dpi,
@@ -391,18 +365,20 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ComPtr<ICanvasDeviceInternal> canvasDeviceInternal;
         ThrowIfFailed(canvasDevice->QueryInterface(canvasDeviceInternal.GetAddressOf()));
 
-        auto d2dBitmap = canvasDeviceInternal->CreateBitmapFromWicResource(m_adapter->CreateWICFormatConverter(fileName).Get(), dpi, alpha);
+        auto wicBitmapSource = CanvasBitmapAdapter::GetInstance()->CreateWICFormatConverter(fileName);
+
+        auto d2dBitmap = canvasDeviceInternal->CreateBitmapFromWicResource(wicBitmapSource.Get(), dpi, alpha);
 
         auto bitmap = Make<CanvasBitmap>(
-            d2dBitmap.Get(),
-            canvasDevice);
+            canvasDevice,
+            d2dBitmap.Get());
         CheckMakeResult(bitmap);
         
         return bitmap;
     }
 
 
-    ComPtr<CanvasBitmap> CanvasBitmapManager::CreateNew(
+    ComPtr<CanvasBitmap> CanvasBitmap::CreateNew(
         ICanvasDevice* canvasDevice,
         IStream* fileStream,
         float dpi,
@@ -411,18 +387,20 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ComPtr<ICanvasDeviceInternal> canvasDeviceInternal;
         ThrowIfFailed(canvasDevice->QueryInterface(canvasDeviceInternal.GetAddressOf()));
 
-        auto d2dBitmap = canvasDeviceInternal->CreateBitmapFromWicResource(m_adapter->CreateWICFormatConverter(fileStream).Get(), dpi, alpha);
+        auto wicBitmapSource = CanvasBitmapAdapter::GetInstance()->CreateWICFormatConverter(fileStream);
+
+        auto d2dBitmap = canvasDeviceInternal->CreateBitmapFromWicResource(wicBitmapSource.Get(), dpi, alpha);
 
         auto bitmap = Make<CanvasBitmap>(
-            d2dBitmap.Get(),
-            canvasDevice);
+            canvasDevice,
+            d2dBitmap.Get());
         CheckMakeResult(bitmap);
         
         return bitmap;
     }
 
 
-    ComPtr<CanvasBitmap> CanvasBitmapManager::CreateNew(
+    ComPtr<CanvasBitmap> CanvasBitmap::CreateNew(
         ICanvasDevice* device,
         uint32_t byteCount,
         BYTE* bytes,
@@ -453,15 +431,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             alpha);
 
         auto bitmap = Make<CanvasBitmap>(
-            d2dBitmap.Get(),
-            device);
+            device,
+            d2dBitmap.Get());
         CheckMakeResult(bitmap);
 
         return bitmap;
     }
 
     
-    ComPtr<CanvasBitmap> CanvasBitmapManager::CreateNew(
+    ComPtr<CanvasBitmap> CanvasBitmap::CreateNew(
         ICanvasDevice* device,
         uint32_t colorCount,
         Color* colors,
@@ -521,7 +499,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
 
-    ComPtr<CanvasBitmap> CanvasBitmapManager::CreateNew(
+    ComPtr<CanvasBitmap> CanvasBitmap::CreateNew(
         ICanvasDevice* device,
         ISoftwareBitmap* sourceBitmap)
     {
@@ -575,61 +553,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         //
 
         auto bitmap = Make<CanvasBitmap>(
-            d2dBitmap.Get(),
-            device);
+            device,
+            d2dBitmap.Get());
         CheckMakeResult(bitmap);
 
         return bitmap;
     }
 
 #endif
-
-
-    ComPtr<CanvasBitmap> CanvasBitmapManager::CreateWrapper(
-        ICanvasDevice* device,
-        ID2D1Bitmap1* d2dBitmap)
-    {
-        auto bitmap = Make<CanvasBitmap>(
-            d2dBitmap,
-            device);
-        CheckMakeResult(bitmap);
-
-        return bitmap;
-    }
-
-
-    std::shared_ptr<ICanvasBitmapResourceCreationAdapter> CanvasBitmapManager::GetAdapter()
-    {
-        return m_adapter;
-    }
-
-    class DefaultCanvasBitmapAdapter : public ICanvasBitmapAdapter,
-                                       private LifespanTracker<DefaultCanvasBitmapAdapter>
-    {
-        ComPtr<IRandomAccessStreamReferenceStatics> m_randomAccessStreamReferenceStatics;
-        ComPtr<IStorageFileStatics> m_storageFileStatics;
-    public:
-        DefaultCanvasBitmapAdapter()
-        {
-            ThrowIfFailed(GetActivationFactory(HStringReference(RuntimeClass_Windows_Storage_Streams_RandomAccessStreamReference).Get(), &m_randomAccessStreamReferenceStatics));
-            ThrowIfFailed(GetActivationFactory(HStringReference(RuntimeClass_Windows_Storage_StorageFile).Get(), &m_storageFileStatics));
-        }
-
-        ComPtr<IRandomAccessStreamReference> CreateRandomAccessStreamFromUri(IUriRuntimeClass* uri) override
-        {
-            ComPtr<IRandomAccessStreamReference> randomAccessStreamReference;
-            ThrowIfFailed(m_randomAccessStreamReferenceStatics->CreateFromUri(uri, &randomAccessStreamReference));
-
-            return randomAccessStreamReference;
-        }
-
-        ComPtr<IAsyncOperation<StorageFile*>> GetFileFromPathAsync(HSTRING path) override
-        {
-            ComPtr<IAsyncOperation<StorageFile*>> task;
-            ThrowIfFailed(m_storageFileStatics->GetFileFromPathAsync(path, &task));
-            return task;
-        }
-    };
 
     
     //
@@ -788,7 +719,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 ComPtr<ICanvasDevice> canvasDevice;
                 ThrowIfFailed(resourceCreator->get_Device(&canvasDevice));
 
-                auto newBitmap = GetManager()->CreateNew(
+                auto newBitmap = CanvasBitmap::CreateNew(
                     canvasDevice.Get(), 
                     byteCount, 
                     bytes, 
@@ -862,7 +793,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 ComPtr<ICanvasDevice> canvasDevice;
                 ThrowIfFailed(resourceCreator->get_Device(&canvasDevice));
 
-                auto newBitmap = GetManager()->CreateNew(
+                auto newBitmap = CanvasBitmap::CreateNew(
                     canvasDevice.Get(), 
                     colorCount,
                     colors,
@@ -892,7 +823,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 ComPtr<ICanvasDevice> canvasDevice;
                 ThrowIfFailed(resourceCreator->get_Device(&canvasDevice));
 
-                auto newBitmap = GetManager()->CreateNew(
+                auto newBitmap = CanvasBitmap::CreateNew(
                     canvasDevice.Get(),
                     sourceBitmap);
 
@@ -951,7 +882,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 auto asyncOperation = Make<AsyncOperation<CanvasBitmap>>(
                     [=]
                     {
-                        return GetManager()->CreateNew(canvasDevice.Get(), fileName, dpi, alpha);
+                        return CanvasBitmap::CreateNew(canvasDevice.Get(), fileName, dpi, alpha);
                     });
 
                 CheckMakeResult(asyncOperation);
@@ -1003,8 +934,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 ComPtr<ICanvasDevice> canvasDevice;
                 ThrowIfFailed(resourceCreator->get_Device(&canvasDevice));
 
-                auto adapter = std::make_unique<DefaultCanvasBitmapAdapter>();
-                ComPtr<IRandomAccessStreamReference> streamReference = adapter->CreateRandomAccessStreamFromUri(uri);
+                ComPtr<IRandomAccessStreamReferenceStatics> streamReferenceStatics;
+                ThrowIfFailed(GetActivationFactory(HStringReference(RuntimeClass_Windows_Storage_Streams_RandomAccessStreamReference).Get(), &streamReferenceStatics));
+
+                ComPtr<IRandomAccessStreamReference> streamReference;
+                ThrowIfFailed(streamReferenceStatics->CreateFromUri(uri, &streamReference));
 
                 // Start opening the file.
                 ComPtr<IAsyncOperation<IRandomAccessStreamWithContentType*>> openOperation;
@@ -1020,7 +954,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                     ComPtr<IStream> stream;
                     ThrowIfFailed(CreateStreamOverRandomAccessStream(randomAccessStream.Get(), IID_PPV_ARGS(&stream)));
 
-                    return GetManager()->CreateNew(canvasDevice.Get(), stream.Get(), dpi, alpha);
+                    return CanvasBitmap::CreateNew(canvasDevice.Get(), stream.Get(), dpi, alpha);
                 });
 
                 CheckMakeResult(asyncOperation);
@@ -1080,7 +1014,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                     ComPtr<IStream> nativeStream;
                     ThrowIfFailed(CreateStreamOverRandomAccessStream(stream.Get(), IID_PPV_ARGS(&nativeStream)));
 
-                    return GetManager()->CreateNew(canvasDevice.Get(), nativeStream.Get(), dpi, alpha);
+                    return CanvasBitmap::CreateNew(canvasDevice.Get(), nativeStream.Get(), dpi, alpha);
                 });
 
                 CheckMakeResult(asyncOperation);
@@ -1094,9 +1028,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     //
 
     CanvasBitmap::CanvasBitmap(
-        ID2D1Bitmap1* d2dBitmap,
-        ICanvasDevice* device)
-        : CanvasBitmapImpl(d2dBitmap, device)
+        ICanvasDevice* device,
+        ID2D1Bitmap1* d2dBitmap)
+        : CanvasBitmapImpl(device, d2dBitmap)
     {
         assert(!IsRenderTargetBitmap(d2dBitmap) 
             && "CanvasBitmap should never be constructed with a render-target bitmap.  This should have been validated before construction.");
@@ -1199,7 +1133,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     void SaveBitmapToFileImpl(
         ComPtr<ID2D1Bitmap1> const& d2dBitmap,
-        std::shared_ptr<ICanvasBitmapResourceCreationAdapter> adapter,
         HSTRING rawfileName,
         CanvasBitmapFileFormat fileFormat,
         float quality,
@@ -1216,7 +1149,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
                 ScopedBitmapMappedPixelAccess bitmapPixelAccess(d2dBitmap.Get(), D3D11_MAP_READ);
 
-                adapter->SaveLockedMemoryToFile(
+                CanvasBitmapAdapter::GetInstance()->SaveLockedMemoryToFile(
                     fileName,
                     fileFormat,
                     quality,
@@ -1233,7 +1166,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     void SaveBitmapToStreamImpl(
         ComPtr<ID2D1Bitmap1> const& d2dBitmap,
-        std::shared_ptr<ICanvasBitmapResourceCreationAdapter> adapter,
         ComPtr<IRandomAccessStream> const& stream,
         CanvasBitmapFileFormat fileFormat,
         float quality,
@@ -1253,7 +1185,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
                 ScopedBitmapMappedPixelAccess bitmapPixelAccess(d2dBitmap.Get(), D3D11_MAP_READ);
 
-                adapter->SaveLockedMemoryToStream(
+                CanvasBitmapAdapter::GetInstance()->SaveLockedMemoryToStream(
                     stream.Get(),
                     fileFormat,
                     quality,

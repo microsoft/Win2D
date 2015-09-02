@@ -9,17 +9,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     using namespace ::Microsoft::WRL;
     using namespace ABI::Windows::Foundation;
 
-    class CanvasRenderTargetManager;
 
     class CanvasRenderTargetFactory 
         : public ActivationFactory<ICanvasRenderTargetFactory, ICanvasRenderTargetStatics>
         , private LifespanTracker<CanvasRenderTargetFactory>
     {
     public:
-        IMPLEMENT_DEFAULT_GETMANAGER(CanvasRenderTargetManager)
-
-        CanvasRenderTargetFactory();
-    
         IFACEMETHOD(CreateWithSize)(
             ICanvasResourceCreatorWithDpi* resourceCreator,
             Size size,
@@ -78,6 +73,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         typedef ICanvasRenderTarget wrapper_interface_t;
     };
 
+
     class CanvasRenderTarget 
         : public RuntimeClass<
             RuntimeClassFlags<WinRtClassicComMix>,
@@ -88,24 +84,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_CanvasRenderTarget, BaseTrust);
 
     public:
-        CanvasRenderTarget(
-            ID2D1Bitmap1* bitmap,
-            ICanvasDevice* device);
-
-        IFACEMETHOD(CreateDrawingSession)(
-            _COM_Outptr_ ICanvasDrawingSession** drawingSession) override;
-    };
-
-
-    class CanvasRenderTargetManager : private LifespanTracker<CanvasRenderTargetManager>
-    {
-        std::shared_ptr<ICanvasBitmapResourceCreationAdapter> m_adapter;
-
-    public:
-        CanvasRenderTargetManager();
-        CanvasRenderTargetManager(std::shared_ptr<ICanvasBitmapResourceCreationAdapter> adapter);
-
-        ComPtr<CanvasRenderTarget> CreateNew(
+        static ComPtr<CanvasRenderTarget> CreateNew(
             ICanvasDevice* canvasDevice,
             float width,
             float height,
@@ -113,10 +92,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             DirectXPixelFormat format,
             CanvasAlphaMode alpha);
 
-        ComPtr<CanvasRenderTarget> CreateWrapper(
+        CanvasRenderTarget(
             ICanvasDevice* device,
             ID2D1Bitmap1* bitmap);
 
-        ICanvasBitmapResourceCreationAdapter* GetAdapter();
+        IFACEMETHOD(CreateDrawingSession)(
+            _COM_Outptr_ ICanvasDrawingSession** drawingSession) override;
     };
 }}}}

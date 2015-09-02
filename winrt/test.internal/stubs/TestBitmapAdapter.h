@@ -4,18 +4,14 @@
 
 #pragma once
 
-class TestBitmapResourceCreationAdapter : public ICanvasBitmapResourceCreationAdapter
+class TestBitmapAdapter : public CanvasBitmapAdapter
 {
     ComPtr<IWICBitmapSource> m_converter;
 
 public:
     std::function<void()> MockCreateWICFormatConverter;
 
-    TestBitmapResourceCreationAdapter()
-    {
-    }
-
-    TestBitmapResourceCreationAdapter(ComPtr<IWICFormatConverter> converter)
+    TestBitmapAdapter(ComPtr<IWICFormatConverter> converter)
         : m_converter(converter)
     {
     }
@@ -64,10 +60,7 @@ public:
 
 inline ComPtr<CanvasBitmap> CreateStubCanvasBitmap(float dpi = DEFAULT_DPI)
 {
-    // TODO interop auto adapter = std::make_shared<TestBitmapResourceCreationAdapter>();
-    // TODO interop auto manager = std::make_shared<CanvasBitmapManager>(adapter);
-
-    return Make<CanvasBitmap>(Make<StubD2DBitmap>(D2D1_BITMAP_OPTIONS_NONE, dpi).Get(), nullptr);
+    return Make<CanvasBitmap>(nullptr, Make<StubD2DBitmap>(D2D1_BITMAP_OPTIONS_NONE, dpi).Get());
 }
 
 

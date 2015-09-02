@@ -11,16 +11,12 @@ TEST_CLASS(CanvasRenderTargetTests)
 {
     struct Fixture
     {
-        std::shared_ptr<TestBitmapResourceCreationAdapter> m_adapter;
-        std::shared_ptr<CanvasRenderTargetManager> m_manager;
+        std::shared_ptr<TestBitmapAdapter> m_adapter;
         ComPtr<MockD2DDevice> m_d2dDevice;
         ComPtr<StubCanvasDevice> m_canvasDevice;
         
         Fixture(float expectedDpi = DEFAULT_DPI)
         {
-            auto converter = Make<MockWICFormatConverter>();
-            auto adapter = std::make_shared<TestBitmapResourceCreationAdapter>(converter);
-            m_manager = std::make_shared<CanvasRenderTargetManager>(adapter);
             m_d2dDevice = Make<MockD2DDevice>();
             m_canvasDevice = Make<StubCanvasDevice>(m_d2dDevice);
 
@@ -61,7 +57,7 @@ TEST_CLASS(CanvasRenderTargetTests)
                     return result;
                 };
 
-            auto renderTarget = m_manager->CreateNew(
+            auto renderTarget = CanvasRenderTarget::CreateNew(
                 m_canvasDevice.Get(), 
                 size.Width, 
                 size.Height, 

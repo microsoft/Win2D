@@ -394,11 +394,7 @@ public:
             d2dBitmap->GetSizeMethod.AllowAnyCall([] { return D2D1_SIZE_F{ 23, 45 }; });
             d2dBitmap->GetPixelSizeMethod.AllowAnyCall([] { return D2D1_SIZE_U{ 67, 89 }; });
 
-            auto converter = Make<MockWICFormatConverter>();
-            auto adapter = std::make_shared<TestBitmapResourceCreationAdapter>(converter);
-            auto bitmapManager = std::make_shared<CanvasBitmapManager>(adapter);
-
-            return bitmapManager->CreateWrapper(Make<StubCanvasDevice>().Get(), d2dBitmap.Get());
+            return Make<CanvasBitmap>(Make<StubCanvasDevice>().Get(), d2dBitmap.Get());
         }
     };
 

@@ -8,63 +8,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
     using namespace ::Microsoft::WRL::Wrappers;
 
-    //
-    // CanvasRenderTargetManager
-    //
-    CanvasRenderTargetManager::CanvasRenderTargetManager()
-        : m_adapter(CanvasBitmapFactory::GetManager()->GetAdapter())    // TODO interop fix this
-    {
-    }
-
-    CanvasRenderTargetManager::CanvasRenderTargetManager(
-        std::shared_ptr<ICanvasBitmapResourceCreationAdapter> adapter)
-        : m_adapter(adapter)
-    {
-    }
-
-    ComPtr<CanvasRenderTarget> CanvasRenderTargetManager::CreateNew(
-        ICanvasDevice* canvasDevice,
-        float width,
-        float height,
-        float dpi,
-        DirectXPixelFormat format,
-        CanvasAlphaMode alpha)
-    {
-        ComPtr<ICanvasDeviceInternal> canvasDeviceInternal;
-        ThrowIfFailed(canvasDevice->QueryInterface(canvasDeviceInternal.GetAddressOf()));
-
-        auto d2dBitmap = canvasDeviceInternal->CreateRenderTargetBitmap(width, height, dpi, format, alpha);
-
-        return Make<CanvasRenderTarget>(d2dBitmap.Get(), canvasDevice);
-    }
-
-
-    ComPtr<CanvasRenderTarget> CanvasRenderTargetManager::CreateWrapper(
-        ICanvasDevice* device,
-        ID2D1Bitmap1* d2dBitmap)
-    {
-        auto renderTarget = Make<CanvasRenderTarget>(
-            d2dBitmap,
-            device);
-        CheckMakeResult(renderTarget);
-        
-        return renderTarget;
-    }
-
-    ICanvasBitmapResourceCreationAdapter* CanvasRenderTargetManager::GetAdapter()
-    {
-        return m_adapter.get();
-    }
-
 
     //
     // CanvasRenderTargetFactory
     //
-
-
-    CanvasRenderTargetFactory::CanvasRenderTargetFactory()
-    {
-    }
 
     IFACEMETHODIMP CanvasRenderTargetFactory::CreateWithSize(
         ICanvasResourceCreatorWithDpi* resourceCreator,
@@ -96,7 +43,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 ComPtr<ICanvasDevice> canvasDevice;
                 ThrowIfFailed(As<ICanvasResourceCreator>(resourceCreator)->get_Device(&canvasDevice));
 
-                auto bitmap = GetManager()->CreateNew(
+                auto bitmap = CanvasRenderTarget::CreateNew(
                     canvasDevice.Get(), 
                     width, 
                     height, 
@@ -143,7 +90,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 ComPtr<ICanvasDevice> canvasDevice;
                 ThrowIfFailed(resourceCreator->get_Device(&canvasDevice));
 
-                auto bitmap = GetManager()->CreateNew(
+                auto bitmap = CanvasRenderTarget::CreateNew(
                     canvasDevice.Get(), 
                     width, 
                     height, 
@@ -204,7 +151,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 if (!IsRenderTargetBitmap(d2dBitmap.Get()))
                     ThrowHR(E_INVALIDARG);
 
-                auto newRenderTarget = Make<CanvasRenderTarget>(d2dBitmap.Get(), canvasDevice.Get());
+                auto newRenderTarget = Make<CanvasRenderTarget>(canvasDevice.Get(), d2dBitmap.Get());
                 CheckMakeResult(newRenderTarget);
 
                 ThrowIfFailed(newRenderTarget.CopyTo(canvasRenderTarget));
@@ -241,15 +188,33 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return CanvasDrawingSession::CreateNew(deviceContext.Get(), adapter, owner);
     }
 
+
     //
     // CanvasRenderTarget
     //
 
 
+    ComPtr<CanvasRenderTarget> CanvasRenderTarget::CreateNew(
+        ICanvasDevice* canvasDevice,
+        float width,
+        float height,
+        float dpi,
+        DirectXPixelFormat format,
+        CanvasAlphaMode alpha)
+    {
+        ComPtr<ICanvasDeviceInternal> canvasDeviceInternal;
+        ThrowIfFailed(canvasDevice->QueryInterface(canvasDeviceInternal.GetAddressOf()));
+
+        auto d2dBitmap = canvasDeviceInternal->CreateRenderTargetBitmap(width, height, dpi, format, alpha);
+
+        return Make<CanvasRenderTarget>(canvasDevice, d2dBitmap.Get());
+    }
+
+
     CanvasRenderTarget::CanvasRenderTarget(
-        ID2D1Bitmap1* d2dBitmap,
-        ICanvasDevice* canvasDevice)
-        : CanvasBitmapImpl(d2dBitmap, canvasDevice)
+        ICanvasDevice* canvasDevice,
+        ID2D1Bitmap1* d2dBitmap)
+        : CanvasBitmapImpl(canvasDevice, d2dBitmap)
     {
         assert(IsRenderTargetBitmap(d2dBitmap) 
             && "CanvasRenderTarget should never be constructed with a non-target bitmap.  This should have been validated before construction.");

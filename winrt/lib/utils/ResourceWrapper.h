@@ -104,10 +104,3 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     };
 
 }}}}
-
-// TODO interop - placeholder migration aid, won't be needed once managers are refactored away
-#define IMPLEMENT_DEFAULT_GETMANAGER(MANAGER)           \
-    static std::shared_ptr<MANAGER> GetManager()        \
-    {                                                   \
-        return std::make_shared<MANAGER>();             \
-    }

@@ -8,14 +8,10 @@ TEST_CLASS(CanvasImageUnitTests)
 {
     struct Fixture
     {
-        std::shared_ptr<CanvasRenderTargetManager> m_manager;
         ComPtr<StubCanvasDevice> m_canvasDevice;
 
         Fixture()
         {
-            auto converter = Make<MockWICFormatConverter>();
-            auto adapter = std::make_shared<TestBitmapResourceCreationAdapter>(converter);
-            m_manager = std::make_shared<CanvasRenderTargetManager>(adapter);
             m_canvasDevice = Make<StubCanvasDevice>();
             
             m_canvasDevice->MockCreateRenderTargetBitmap =
@@ -59,7 +55,7 @@ TEST_CLASS(CanvasImageUnitTests)
 
         auto drawingSession = Make<CanvasDrawingSession>(d2dDeviceContext.Get());
 
-        auto canvasBitmap = f.m_manager->CreateNew(
+        auto canvasBitmap = CanvasRenderTarget::CreateNew(
             f.m_canvasDevice.Get(),
             1.0f,
             1.0f,

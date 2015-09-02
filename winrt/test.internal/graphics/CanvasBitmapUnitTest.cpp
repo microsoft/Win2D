@@ -11,8 +11,7 @@ TEST_CLASS(CanvasBitmapUnitTest)
     struct Fixture
     {
         ComPtr<MockWICFormatConverter> m_converter;
-        std::shared_ptr<TestBitmapResourceCreationAdapter> m_adapter;
-        std::shared_ptr<CanvasBitmapManager> m_bitmapManager;
+        std::shared_ptr<TestBitmapAdapter> m_adapter;
         
         WinString m_testFileName;
         uint32_t m_testImageWidth;
@@ -24,8 +23,9 @@ TEST_CLASS(CanvasBitmapUnitTest)
         Fixture()
         {
             m_converter = Make<MockWICFormatConverter>();
-            m_adapter = std::make_shared<TestBitmapResourceCreationAdapter>(m_converter);
-            m_bitmapManager = std::make_shared<CanvasBitmapManager>(m_adapter);
+
+            m_adapter = std::make_shared<TestBitmapAdapter>(m_converter);
+            CanvasBitmapAdapter::SetInstance(m_adapter);
 
             m_testImageWidth = 16;
             m_testImageHeight = 32;
@@ -56,7 +56,7 @@ TEST_CLASS(CanvasBitmapUnitTest)
     {
         Fixture f;
 
-        auto canvasBitmap = f.m_bitmapManager->CreateNew(f.m_canvasDevice.Get(), f.m_testFileName, DEFAULT_DPI, CanvasAlphaMode::Premultiplied);
+        auto canvasBitmap = CanvasBitmap::CreateNew(f.m_canvasDevice.Get(), f.m_testFileName, DEFAULT_DPI, CanvasAlphaMode::Premultiplied);
         
         ASSERT_IMPLEMENTS_INTERFACE(canvasBitmap, ICanvasBitmap);
         ASSERT_IMPLEMENTS_INTERFACE(canvasBitmap, ICanvasImage);
@@ -79,7 +79,7 @@ TEST_CLASS(CanvasBitmapUnitTest)
         Direct3DSurfaceDescription surfaceDescription;
         ComPtr<IDXGISurface> dxgiSurface;
 
-        auto canvasBitmap = f.m_bitmapManager->CreateNew(f.m_canvasDevice.Get(), f.m_testFileName, DEFAULT_DPI, CanvasAlphaMode::Premultiplied);
+        auto canvasBitmap = CanvasBitmap::CreateNew(f.m_canvasDevice.Get(), f.m_testFileName, DEFAULT_DPI, CanvasAlphaMode::Premultiplied);
 
         Assert::IsNotNull(canvasBitmap.Get());
 
@@ -95,7 +95,7 @@ TEST_CLASS(CanvasBitmapUnitTest)
         Assert::AreEqual(RO_E_CLOSED, canvasBitmap->GetBounds(drawingSession.Get(), &bounds));
         Assert::AreEqual(RO_E_CLOSED, canvasBitmap->GetBoundsWithTransform(drawingSession.Get(), matrix, &bounds));
 
-        auto otherBitmap = f.m_bitmapManager->CreateNew(f.m_canvasDevice.Get(), f.m_testFileName, DEFAULT_DPI, CanvasAlphaMode::Premultiplied);
+        auto otherBitmap = CanvasBitmap::CreateNew(f.m_canvasDevice.Get(), f.m_testFileName, DEFAULT_DPI, CanvasAlphaMode::Premultiplied);
         Assert::AreEqual(RO_E_CLOSED, canvasBitmap->CopyPixelsFromBitmap(otherBitmap.Get()));
         Assert::AreEqual(RO_E_CLOSED, canvasBitmap->CopyPixelsFromBitmapWithDestPoint(otherBitmap.Get(), 0, 0));
         Assert::AreEqual(RO_E_CLOSED, canvasBitmap->CopyPixelsFromBitmapWithDestPointAndSourceRect(otherBitmap.Get(), 0, 0, 0, 0, 0, 0));
@@ -104,7 +104,7 @@ TEST_CLASS(CanvasBitmapUnitTest)
     TEST_METHOD_EX(CanvasBitmap_GetDevice)
     {
         Fixture f;
-        auto bitmap = f.m_bitmapManager->CreateNew(f.m_canvasDevice.Get(), f.m_testFileName, DEFAULT_DPI, CanvasAlphaMode::Premultiplied);
+        auto bitmap = CanvasBitmap::CreateNew(f.m_canvasDevice.Get(), f.m_testFileName, DEFAULT_DPI, CanvasAlphaMode::Premultiplied);
 
         ComPtr<ICanvasDevice> actualDevice;
         bitmap->get_Device(&actualDevice);
@@ -123,7 +123,7 @@ TEST_CLASS(CanvasBitmapUnitTest)
             return d2dBitmap;
         };
 
-        auto bitmap = f.m_bitmapManager->CreateNew(canvasDevice.Get(), f.m_testFileName, DEFAULT_DPI, CanvasAlphaMode::Premultiplied);
+        auto bitmap = CanvasBitmap::CreateNew(canvasDevice.Get(), f.m_testFileName, DEFAULT_DPI, CanvasAlphaMode::Premultiplied);
 
         d2dBitmap->GetPixelFormatMethod.SetExpectedCalls(1, []
         {
@@ -147,7 +147,7 @@ TEST_CLASS(CanvasBitmapUnitTest)
             return d2dBitmap;
         };
 
-        auto bitmap = f.m_bitmapManager->CreateNew(canvasDevice.Get(), f.m_testFileName, DEFAULT_DPI, CanvasAlphaMode::Premultiplied);
+        auto bitmap = CanvasBitmap::CreateNew(canvasDevice.Get(), f.m_testFileName, DEFAULT_DPI, CanvasAlphaMode::Premultiplied);
 
         d2dBitmap->GetPixelFormatMethod.SetExpectedCalls(1, []
         {
@@ -171,7 +171,7 @@ TEST_CLASS(CanvasBitmapUnitTest)
                 isConverterCreated = true;
             };
 
-        auto canvasBitmap = f.m_bitmapManager->CreateNew(f.m_canvasDevice.Get(), f.m_testFileName, DEFAULT_DPI, CanvasAlphaMode::Premultiplied);
+        auto canvasBitmap = CanvasBitmap::CreateNew(f.m_canvasDevice.Get(), f.m_testFileName, DEFAULT_DPI, CanvasAlphaMode::Premultiplied);
 
         Assert::AreEqual(true, isConverterCreated);
 
@@ -202,7 +202,7 @@ TEST_CLASS(CanvasBitmapUnitTest)
                 isConverterCreated = true;
             };
 
-        auto canvasBitmap = f.m_bitmapManager->CreateNew(f.m_canvasDevice.Get(), f.m_testFileName, DEFAULT_DPI, CanvasAlphaMode::Premultiplied);
+        auto canvasBitmap = CanvasBitmap::CreateNew(f.m_canvasDevice.Get(), f.m_testFileName, DEFAULT_DPI, CanvasAlphaMode::Premultiplied);
 
         Assert::AreEqual(true, isConverterCreated);
 
@@ -221,7 +221,7 @@ TEST_CLASS(CanvasBitmapUnitTest)
         ABI::Windows::Foundation::Rect bounds;
         Numerics::Matrix3x2 matrix = { 0 };
 
-        auto canvasBitmap = f.m_bitmapManager->CreateNew(f.m_canvasDevice.Get(), f.m_testFileName, DEFAULT_DPI, CanvasAlphaMode::Premultiplied);
+        auto canvasBitmap = CanvasBitmap::CreateNew(f.m_canvasDevice.Get(), f.m_testFileName, DEFAULT_DPI, CanvasAlphaMode::Premultiplied);
 
         auto drawingSession = CreateStubDrawingSession();
         Assert::AreEqual(E_INVALIDARG, canvasBitmap->GetBounds(nullptr, &bounds));
@@ -235,7 +235,7 @@ TEST_CLASS(CanvasBitmapUnitTest)
         const float dpi = 144;
 
         Fixture f;
-        auto canvasBitmap = f.m_bitmapManager->CreateNew(f.m_canvasDevice.Get(), f.m_testFileName, dpi, CanvasAlphaMode::Premultiplied);
+        auto canvasBitmap = CanvasBitmap::CreateNew(f.m_canvasDevice.Get(), f.m_testFileName, dpi, CanvasAlphaMode::Premultiplied);
 
         float actualDpi = 0;
         ThrowIfFailed(canvasBitmap->get_Dpi(&actualDpi));
@@ -253,7 +253,7 @@ TEST_CLASS(CanvasBitmapUnitTest)
     {
         Fixture f;
 
-        auto canvasBitmap = f.m_bitmapManager->CreateNew(f.m_canvasDevice.Get(), f.m_testFileName, DEFAULT_DPI, CanvasAlphaMode::Premultiplied);
+        auto canvasBitmap = CanvasBitmap::CreateNew(f.m_canvasDevice.Get(), f.m_testFileName, DEFAULT_DPI, CanvasAlphaMode::Premultiplied);
 
         Assert::AreEqual(E_INVALIDARG, canvasBitmap->CopyPixelsFromBitmap(nullptr));
         Assert::AreEqual(E_INVALIDARG, canvasBitmap->CopyPixelsFromBitmapWithDestPoint(nullptr, 0, 0));
@@ -281,7 +281,7 @@ TEST_CLASS(CanvasBitmapUnitTest)
                 {
                     return sourceD2DBitmap;
                 };
-            SourceBitmap = m_bitmapManager->CreateNew(canvasDevice.Get(), m_testFileName, DEFAULT_DPI, CanvasAlphaMode::Premultiplied);
+            SourceBitmap = CanvasBitmap::CreateNew(canvasDevice.Get(), m_testFileName, DEFAULT_DPI, CanvasAlphaMode::Premultiplied);
 
             bool expectDestPoint = false;
             D2D1_POINT_2U expectedDestPoint;
@@ -342,7 +342,7 @@ TEST_CLASS(CanvasBitmapUnitTest)
                 {
                     return destD2DBitmap;
                 };
-            DestBitmap = m_bitmapManager->CreateNew(canvasDevice.Get(), m_testFileName, DEFAULT_DPI, CanvasAlphaMode::Premultiplied);
+            DestBitmap = CanvasBitmap::CreateNew(canvasDevice.Get(), m_testFileName, DEFAULT_DPI, CanvasAlphaMode::Premultiplied);
         }
     };
 
@@ -391,11 +391,11 @@ TEST_CLASS(CanvasBitmapUnitTest)
 
         auto sourceD2DBitmap = Make<StubD2DBitmap>();
         canvasDevice->MockCreateBitmapFromWicResource = [&](IWICBitmapSource*, CanvasAlphaMode, float) -> ComPtr<ID2D1Bitmap1> { return sourceD2DBitmap; };
-        auto sourceBitmap = f.m_bitmapManager->CreateNew(canvasDevice.Get(), f.m_testFileName, DEFAULT_DPI, CanvasAlphaMode::Premultiplied);
+        auto sourceBitmap = CanvasBitmap::CreateNew(canvasDevice.Get(), f.m_testFileName, DEFAULT_DPI, CanvasAlphaMode::Premultiplied);
 
         auto destD2DBitmap = Make<StubD2DBitmap>();
         canvasDevice->MockCreateBitmapFromWicResource = [&](IWICBitmapSource*, CanvasAlphaMode, float) -> ComPtr<ID2D1Bitmap1> { return destD2DBitmap; };
-        auto destBitmap = f.m_bitmapManager->CreateNew(canvasDevice.Get(), f.m_testFileName, DEFAULT_DPI, CanvasAlphaMode::Premultiplied);
+        auto destBitmap = CanvasBitmap::CreateNew(canvasDevice.Get(), f.m_testFileName, DEFAULT_DPI, CanvasAlphaMode::Premultiplied);
 
         // Negative coordinates
         Assert::AreEqual(E_INVALIDARG, destBitmap->CopyPixelsFromBitmapWithDestPoint(sourceBitmap.Get(), -1, 100));
