@@ -321,11 +321,10 @@ public:
                 Assert::AreEqual(D2D1_TEXT_ANTIALIAS_MODE_GRAYSCALE, mode);
             });
 
-        auto manager = std::make_shared<CanvasDrawingSessionManager>();
-        ComPtr<CanvasDrawingSession> drawingSession = manager->CreateNew(
-            canvasDevice.Get(),
+        ComPtr<CanvasDrawingSession> drawingSession = CanvasDrawingSession::CreateNew(
             d2dDeviceContext.Get(),
-            std::make_shared<StubCanvasDrawingSessionAdapter>());
+            std::make_shared<StubCanvasDrawingSessionAdapter>(),
+            canvasDevice.Get());
 
         auto stubSurfaceImageSourceFactory = Make<StubSurfaceImageSourceFactory>();
 
@@ -353,8 +352,7 @@ public:
 
         auto canvasDevice = Make<StubCanvasDevice>();
         auto d2dDeviceContext = Make<StubD2DDeviceContextWithGetFactory>();
-        auto manager = std::make_shared<CanvasDrawingSessionManager>();
-        auto resourceCreator = manager->CreateNew(canvasDevice.Get(), d2dDeviceContext.Get(), std::make_shared<StubCanvasDrawingSessionAdapter>());
+        auto resourceCreator = CanvasDrawingSession::CreateNew(d2dDeviceContext.Get(), std::make_shared<StubCanvasDrawingSessionAdapter>(), canvasDevice.Get());
         auto stubSurfaceImageSourceFactory = Make<StubSurfaceImageSourceFactory>();
         auto mockDrawingSessionFactory = std::make_shared<MockCanvasImageSourceDrawingSessionFactory>();
         auto canvasImageSource = Make<CanvasImageSource>(resourceCreator.Get(), 1.0f, 1.0f, dpi, CanvasAlphaMode::Ignore, stubSurfaceImageSourceFactory.Get(), mockDrawingSessionFactory);
@@ -377,8 +375,7 @@ public:
 
         auto canvasDevice = Make<StubCanvasDevice>();
         auto d2dDeviceContext = Make<StubD2DDeviceContextWithGetFactory>();
-        auto manager = std::make_shared<CanvasDrawingSessionManager>();
-        auto resourceCreator = manager->CreateNew(canvasDevice.Get(), d2dDeviceContext.Get(), std::make_shared<StubCanvasDrawingSessionAdapter>());
+        auto resourceCreator = CanvasDrawingSession::CreateNew(d2dDeviceContext.Get(), std::make_shared<StubCanvasDrawingSessionAdapter>(), canvasDevice.Get());
         auto stubSurfaceImageSourceFactory = Make<StubSurfaceImageSourceFactory>();
         auto mockDrawingSessionFactory = std::make_shared<MockCanvasImageSourceDrawingSessionFactory>();
         auto canvasImageSource = Make<CanvasImageSource>(resourceCreator.Get(), 1.0f, 1.0f, expectedDpi, CanvasAlphaMode::Ignore, stubSurfaceImageSourceFactory.Get(), mockDrawingSessionFactory);
@@ -401,8 +398,7 @@ public:
 
         auto canvasDevice = Make<StubCanvasDevice>();
         auto d2dDeviceContext = Make<StubD2DDeviceContextWithGetFactory>();
-        auto manager = std::make_shared<CanvasDrawingSessionManager>();
-        auto resourceCreator = manager->CreateNew(canvasDevice.Get(), d2dDeviceContext.Get(), std::make_shared<StubCanvasDrawingSessionAdapter>());
+        auto resourceCreator = CanvasDrawingSession::CreateNew(d2dDeviceContext.Get(), std::make_shared<StubCanvasDrawingSessionAdapter>(), canvasDevice.Get());
         auto stubSurfaceImageSourceFactory = Make<StubSurfaceImageSourceFactory>();
         auto mockDrawingSessionFactory = std::make_shared<MockCanvasImageSourceDrawingSessionFactory>();
         auto canvasImageSource = Make<CanvasImageSource>(resourceCreator.Get(), width, height, dpi, CanvasAlphaMode::Ignore, stubSurfaceImageSourceFactory.Get(), mockDrawingSessionFactory);

@@ -398,8 +398,7 @@ public:
 
         auto gradientMesh = CanvasGradientMesh::CreateNew(f.Device.Get(), 1, &f.DefaultPatches[0]);
 
-        auto manager = std::make_shared<CanvasDrawingSessionManager>();
-        auto drawingSession = manager->CreateWrapper(d2dDeviceContext.Get());
+        auto drawingSession = Make<CanvasDrawingSession>(d2dDeviceContext.Get());
 
         Rect bounds;
         Assert::AreEqual(S_OK, gradientMesh->GetBounds(drawingSession.Get(), &bounds));

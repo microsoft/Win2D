@@ -290,11 +290,10 @@ public:
         ComPtr<StubD2DDeviceContextWithGetFactory> d2dDeviceContext =
             Make<StubD2DDeviceContextWithGetFactory>();
 
-        auto manager = std::make_shared<CanvasDrawingSessionManager>();
-        ComPtr<CanvasDrawingSession> drawingSession = manager->CreateNew(
-            canvasDevice.Get(),
+        ComPtr<CanvasDrawingSession> drawingSession = CanvasDrawingSession::CreateNew(
             d2dDeviceContext.Get(),
-            std::make_shared<StubCanvasDrawingSessionAdapter>());
+            std::make_shared<StubCanvasDrawingSessionAdapter>(),
+            canvasDevice.Get());
 
         auto createdBrush = CanvasSolidColorBrush::CreateNew(drawingSession.Get(), Color{ 255, 0, 0, 0 });
 

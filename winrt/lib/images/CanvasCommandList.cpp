@@ -72,10 +72,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 auto deviceContext = As<ICanvasDeviceInternal>(device)->CreateDeviceContextForDrawingSession();
                 deviceContext->SetTarget(d2dCommandList.Get());
 
-                auto drawingSessionManager = CanvasDrawingSessionFactory::GetManager();
                 auto adapter = std::make_shared<SimpleCanvasDrawingSessionAdapter>(deviceContext.Get());
 
-                auto ds = drawingSessionManager->CreateNew(device.Get(), deviceContext.Get(), adapter);
+                auto ds = CanvasDrawingSession::CreateNew(deviceContext.Get(), adapter, device.Get());
 
                 ThrowIfFailed(ds.CopyTo(drawingSession));
             });

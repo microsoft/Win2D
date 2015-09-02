@@ -643,8 +643,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                     m_dpi,
                     &deviceContext);
                 
-                auto drawingSessionManager = CanvasDrawingSessionFactory::GetManager();
-                auto newDrawingSession = drawingSessionManager->CreateNew(deviceContext.Get(), adapter);
+                auto newDrawingSession = CanvasDrawingSession::CreateNew(deviceContext.Get(), adapter, device.Get());
 
                 ThrowIfFailed(newDrawingSession.CopyTo(drawingSession));
             });

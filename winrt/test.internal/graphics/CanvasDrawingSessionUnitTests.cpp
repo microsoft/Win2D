@@ -88,8 +88,7 @@ TEST_CLASS(CanvasDrawingSession_CallsAdapter)
 
             m_mockAdapter = std::make_shared<MockCanvasDrawingSessionAdapter>();
             
-            auto manager = std::make_shared<CanvasDrawingSessionManager>();
-            m_canvasDrawingSession = manager->CreateNew(m_expectedDeviceContext.Get(), m_mockAdapter);
+            m_canvasDrawingSession = CanvasDrawingSession::CreateNew(m_expectedDeviceContext.Get(), m_mockAdapter);
         }
     };
 
@@ -167,8 +166,7 @@ public:
 private:
     static ComPtr<CanvasDrawingSession> MakeDrawingSession(ID2D1DeviceContext1* deviceContext)
     {
-        auto manager = std::make_shared<CanvasDrawingSessionManager>();
-        return manager->CreateNew(
+        return CanvasDrawingSession::CreateNew(
             deviceContext,
             std::make_shared<StubCanvasDrawingSessionAdapter>());
     }
@@ -3844,9 +3842,8 @@ public:
     {
         auto deviceContext = Make<StubD2DDeviceContextWithGetFactory>();
 
-        auto manager = std::make_shared<CanvasDrawingSessionManager>();
         auto adapter = std::make_shared<CanvasDrawingSessionAdapter_ChangeableOffset>();
-        auto drawingSession = manager->CreateNew(deviceContext.Get(), adapter);
+        auto drawingSession = CanvasDrawingSession::CreateNew(deviceContext.Get(), adapter);
 
         //
         // The adapter sets the native transform to the offset on BeginDraw. 
@@ -3939,11 +3936,10 @@ public:
                 d2dDeviceContext->GetDeviceMethod.SetExpectedCalls(0);
             }
 
-            auto manager = std::make_shared<CanvasDrawingSessionManager>();
-            auto drawingSession = manager->CreateNew(
-                testCase.ManagerDevice,
+            auto drawingSession = CanvasDrawingSession::CreateNew(
                 d2dDeviceContext.Get(),
-                std::make_shared<StubCanvasDrawingSessionAdapter>());
+                std::make_shared<StubCanvasDrawingSessionAdapter>(),
+                testCase.ManagerDevice);
 
             ComPtr<ICanvasDevice> deviceVerify;
             ThrowIfFailed(drawingSession->get_Device(&deviceVerify));
@@ -3969,9 +3965,8 @@ public:
         const float dpi = 144;
 
         auto deviceContext = Make<StubD2DDeviceContextWithGetFactory>();
-        auto manager = std::make_shared<CanvasDrawingSessionManager>();
         auto adapter = std::make_shared<CanvasDrawingSessionAdapter_ChangeableOffset>();
-        auto drawingSession = manager->CreateNew(deviceContext.Get(), adapter);
+        auto drawingSession = CanvasDrawingSession::CreateNew(deviceContext.Get(), adapter);
 
         deviceContext->GetDpiMethod.AllowAnyCall([&](float* dpiX, float* dpiY)
         {
@@ -4057,11 +4052,9 @@ public:
 
         InkFixture() : StrokeCollection(Make<MockStrokeCollection>())
         {
-            auto manager = std::make_shared<CanvasDrawingSessionManager>();
-
             DeviceContext = Make<StubD2DDeviceContextWithGetFactory>();
             Adapter = std::make_shared<InkAdapter>();
-            DrawingSession = manager->CreateNew(DeviceContext.Get(), Adapter);
+            DrawingSession = CanvasDrawingSession::CreateNew(DeviceContext.Get(), Adapter);
         }
     };
 
@@ -4507,8 +4500,7 @@ TEST_CLASS(CanvasDrawingSession_CloseTests)
         // Create a drawing session using this device context, verifying that
         // this has taken ownership of the token.
         //
-        auto manager = std::make_shared<CanvasDrawingSessionManager>();
-        auto canvasDrawingSession = manager->CreateNew(
+        auto canvasDrawingSession = CanvasDrawingSession::CreateNew(
             deviceContext.Get(),
             std::make_shared<StubCanvasDrawingSessionAdapter>());
 
@@ -4675,8 +4667,6 @@ TEST_CLASS(CanvasDrawingSession_Interop)
 {
     TEST_METHOD_EX(CanvasDrawingSession_Wrapper_DoesNotAutomaticallyCallAnyMethods)
     {
-        auto manager = std::make_shared<CanvasDrawingSessionManager>();
-        
         // This mock device context will cause the test to fail if BeginDraw()
         // or EndDraw() is called on it.  When wrapping a drawing session like
         // this we don't want these methods to be called automatically.
@@ -4686,7 +4676,7 @@ TEST_CLASS(CanvasDrawingSession_Interop)
         // interop should not change the text antialias mode.
         deviceContext->SetTextAntialiasModeMethod.SetExpectedCalls(0);
 
-        auto drawingSession = manager->CreateWrapper(deviceContext.Get());
+        auto drawingSession = Make<CanvasDrawingSession>(deviceContext.Get());
 
         // Check one method - we assume that the previous tests are enough to
         // exercise all the methods appropriately.

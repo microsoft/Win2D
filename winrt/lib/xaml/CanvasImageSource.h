@@ -137,11 +137,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     class CanvasImageSourceDrawingSessionFactory : public ICanvasImageSourceDrawingSessionFactory,
                                                    private LifespanTracker<CanvasImageSourceDrawingSessionFactory>
     {
-        std::shared_ptr<CanvasDrawingSessionManager> m_drawingSessionManager;
-
     public:
-        CanvasImageSourceDrawingSessionFactory();
-
         virtual ComPtr<ICanvasDrawingSession> Create(
             ICanvasDevice* owner,
             ISurfaceImageSourceNativeWithD2D* sisNative,

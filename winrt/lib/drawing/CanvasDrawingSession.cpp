@@ -56,7 +56,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                                             private LifespanTracker<NoopCanvasDrawingSessionAdapter>
     {
     public:
-
         virtual D2D1_POINT_2F GetRenderingSurfaceOffset() override
         {
             return D2D1::Point2F(0, 0);
@@ -69,49 +68,29 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     };
 
 
-    CanvasDrawingSessionManager::CanvasDrawingSessionManager()
-        : m_adapter(std::make_shared<NoopCanvasDrawingSessionAdapter>())
-    {
-    }
-
-    ComPtr<CanvasDrawingSession> CanvasDrawingSessionManager::CreateNew(
+    ComPtr<CanvasDrawingSession> CanvasDrawingSession::CreateNew(
         ID2D1DeviceContext1* deviceContext,
-        std::shared_ptr<ICanvasDrawingSessionAdapter> drawingSessionAdapter)
-    {
-        return CreateNew(nullptr, deviceContext, drawingSessionAdapter);
-    }
-
-    ComPtr<CanvasDrawingSession> CanvasDrawingSessionManager::CreateNew(
-        ICanvasDevice* owner,
-        ID2D1DeviceContext1* deviceContext,
-        std::shared_ptr<ICanvasDrawingSessionAdapter> drawingSessionAdapter)
+        std::shared_ptr<ICanvasDrawingSessionAdapter> drawingSessionAdapter,
+        ICanvasDevice* owner)
     {
         InitializeDefaultState(deviceContext);
 
-        return Make<CanvasDrawingSession>(
-            owner,
-            deviceContext,
-            drawingSessionAdapter);
-    }
-
-
-    ComPtr<CanvasDrawingSession> CanvasDrawingSessionManager::CreateWrapper(
-        ID2D1DeviceContext1* resource)
-    {
         auto drawingSession = Make<CanvasDrawingSession>(
-            nullptr,
-            resource, 
-            m_adapter);
+            deviceContext,
+            drawingSessionAdapter,
+            owner);
         CheckMakeResult(drawingSession);
+
         return drawingSession;
     }
-    
 
-    void CanvasDrawingSessionManager::InitializeDefaultState(ID2D1DeviceContext1* deviceContext)
+
+    void CanvasDrawingSession::InitializeDefaultState(ID2D1DeviceContext1* deviceContext)
     {
         // Win2D wants a different text antialiasing default vs. native D2D.
         deviceContext->SetTextAntialiasMode(D2D1_TEXT_ANTIALIAS_MODE_GRAYSCALE);
     }
+
 
 #if WINVER > _WIN32_WINNT_WINBLUE
     ComPtr<IInkD2DRenderer> DrawingSessionBaseAdapter::CreateInkRenderer()
@@ -144,15 +123,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
 
     CanvasDrawingSession::CanvasDrawingSession(
-        ICanvasDevice* owner,
         ID2D1DeviceContext1* deviceContext,
-        std::shared_ptr<ICanvasDrawingSessionAdapter> adapter)
+        std::shared_ptr<ICanvasDrawingSessionAdapter> adapter,
+        ICanvasDevice* owner)
         : ResourceWrapper(deviceContext)
         , m_owner(owner)
-        , m_adapter(adapter)
+        , m_adapter(adapter ? adapter : std::make_shared<NoopCanvasDrawingSessionAdapter>())
         , m_nextLayerId(0)
     {
-        CheckInPointer(adapter.get());
     }
 
 
@@ -3777,6 +3755,4 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         }
     }
 
-
-    ActivatableStaticOnlyFactory(CanvasDrawingSessionFactory);
 }}}}

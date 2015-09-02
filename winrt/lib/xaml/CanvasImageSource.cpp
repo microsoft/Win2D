@@ -9,11 +9,6 @@
 using namespace ABI::Microsoft::Graphics::Canvas;
 using namespace ABI::Microsoft::Graphics::Canvas::UI::Xaml;
 
-CanvasImageSourceDrawingSessionFactory::CanvasImageSourceDrawingSessionFactory()
-    : m_drawingSessionManager(CanvasDrawingSessionFactory::GetManager())
-{
-}
-
 ComPtr<ICanvasDrawingSession> CanvasImageSourceDrawingSessionFactory::Create(
     ICanvasDevice* owner,
     ISurfaceImageSourceNativeWithD2D* sisNative,
@@ -33,10 +28,10 @@ ComPtr<ICanvasDrawingSession> CanvasImageSourceDrawingSessionFactory::Create(
         dpi,
         &deviceContext);
 
-    return m_drawingSessionManager->CreateNew(
-        owner,
+    return CanvasDrawingSession::CreateNew(
         deviceContext.Get(),
-        std::move(adapter));
+        std::move(adapter),
+        owner);
 }
 
 //

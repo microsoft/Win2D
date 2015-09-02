@@ -238,8 +238,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         auto adapter = std::make_shared<SimpleCanvasDrawingSessionAdapter>(deviceContext.Get());
 
-        auto drawingSessionManager = CanvasDrawingSessionFactory::GetManager();
-        return drawingSessionManager->CreateNew(owner, deviceContext.Get(), adapter);
+        return CanvasDrawingSession::CreateNew(deviceContext.Get(), adapter, owner);
     }
 
     //

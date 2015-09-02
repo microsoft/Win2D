@@ -78,10 +78,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 #endif
 
     public:
-        CanvasDrawingSession(
-            ICanvasDevice* owner,
+        static ComPtr<CanvasDrawingSession> CreateNew(
             ID2D1DeviceContext1* deviceContext,
-            std::shared_ptr<ICanvasDrawingSessionAdapter> drawingSessionAdapter);
+            std::shared_ptr<ICanvasDrawingSessionAdapter> drawingSessionAdapter,
+            ICanvasDevice* owner = nullptr);
+
+        CanvasDrawingSession(
+            ID2D1DeviceContext1* deviceContext,
+            std::shared_ptr<ICanvasDrawingSessionAdapter> drawingSessionAdapter = nullptr,
+            ICanvasDevice* owner = nullptr);
 
         virtual ~CanvasDrawingSession();
 
@@ -1364,41 +1369,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 #if WINVER > _WIN32_WINNT_WINBLUE
         void DrawInkImpl(IIterable<InkStroke*>* inkStrokeCollection, bool highContrast);
 #endif
-    };
 
-
-    class CanvasDrawingSessionManager : private LifespanTracker<CanvasDrawingSessionManager>
-    {
-        std::shared_ptr<ICanvasDrawingSessionAdapter> m_adapter;
-
-    public:
-        CanvasDrawingSessionManager();
-
-        ComPtr<CanvasDrawingSession> CreateNew(
-            ICanvasDevice* owner,
-            ID2D1DeviceContext1* deviceContext,
-            std::shared_ptr<ICanvasDrawingSessionAdapter> drawingSessionAdapter);
-
-        ComPtr<CanvasDrawingSession> CreateNew(
-            ID2D1DeviceContext1* deviceContext,
-            std::shared_ptr<ICanvasDrawingSessionAdapter> drawingSessionAdapter);
-
-        ComPtr<CanvasDrawingSession> CreateWrapper(
-            ID2D1DeviceContext1* resource);
-
-    private:
         static void InitializeDefaultState(ID2D1DeviceContext1* deviceContext);
-    };
-
-
-    class CanvasDrawingSessionFactory
-        : public ActivationFactory<ICanvasDrawingSessionStatics>
-        , private LifespanTracker<CanvasDrawingSessionFactory>
-    {
-        InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_CanvasDrawingSession, BaseTrust);
-
-    public:
-        IMPLEMENT_DEFAULT_GETMANAGER(CanvasDrawingSessionManager);
     };
 
 

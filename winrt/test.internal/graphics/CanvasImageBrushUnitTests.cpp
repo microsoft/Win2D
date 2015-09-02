@@ -510,15 +510,13 @@ public:
         Assert::IsTrue(AreReferencedRectsEqual(testSourceRect.Get(), retrievedSourceRect.Get()));
 
         // Make a drawing session.
-        auto manager = std::make_shared<CanvasDrawingSessionManager>();
-        ComPtr<StubD2DDeviceContextWithGetFactory> d2dDeviceContext =
-            Make<StubD2DDeviceContextWithGetFactory>();
+        auto d2dDeviceContext = Make<StubD2DDeviceContextWithGetFactory>();
         d2dDeviceContext->FillRectangleMethod.AllowAnyCall();
 
-        ComPtr<CanvasDrawingSession> drawingSession = manager->CreateNew(
-            f.m_canvasDevice.Get(),
+        ComPtr<CanvasDrawingSession> drawingSession = CanvasDrawingSession::CreateNew(
             d2dDeviceContext.Get(),
-            std::make_shared<StubCanvasDrawingSessionAdapter>());
+            std::make_shared<StubCanvasDrawingSessionAdapter>(),
+            f.m_canvasDevice.Get());
 
         d2dDeviceContext->GetDpiMethod.AllowAnyCall();
         d2dDeviceContext->GetDeviceMethod.AllowAnyCallAlwaysCopyValueToParam(Make<StubD2DDevice>());

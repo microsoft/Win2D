@@ -20,7 +20,7 @@ std::recursive_mutex ResourceManager::m_mutex;
 std::vector<ResourceManager::TryCreateFunction> ResourceManager::tryCreateFunctions =
 {
     TryCreate<ID2D1Device1, CanvasDevice, CreateFromManager<ID2D1Device1, CanvasDevice, CanvasDeviceFactory>>,
-    TryCreate<ID2D1DeviceContext1, CanvasDrawingSession, CreateFromManager<ID2D1DeviceContext1, CanvasDrawingSession, CanvasDrawingSessionFactory>>,
+    TryCreate<ID2D1DeviceContext1, CanvasDrawingSession, MakeWrapper<ID2D1DeviceContext1, CanvasDrawingSession>>,
     TryCreate<ID2D1Bitmap1, CanvasRenderTarget, CreateFromManagerWithDevice<ID2D1Bitmap1, CanvasRenderTarget, CanvasRenderTargetFactory>, IsRenderTargetBitmap>,
     TryCreate<ID2D1Bitmap1, CanvasBitmap, CreateFromManagerWithDevice<ID2D1Bitmap1, CanvasBitmap, CanvasBitmapFactory>>,
     TryCreate<ID2D1SolidColorBrush, CanvasSolidColorBrush, MakeWrapperWithDevice<ID2D1SolidColorBrush, CanvasSolidColorBrush>>,

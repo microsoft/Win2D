@@ -84,7 +84,5 @@ inline ComPtr<ICanvasDrawingSession> CreateStubDrawingSession()
             return mockEffect.CopyTo(effect);
         });
 
-    auto manager = std::make_shared<CanvasDrawingSessionManager>();
-
-    return manager->CreateWrapper(d2dDeviceContext.Get());
+    return Make<CanvasDrawingSession>(d2dDeviceContext.Get());
 }
