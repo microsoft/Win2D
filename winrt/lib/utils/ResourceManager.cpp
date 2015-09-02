@@ -19,7 +19,7 @@ std::recursive_mutex ResourceManager::m_mutex;
 // TODO interop: autogen this table
 std::vector<ResourceManager::TryCreateFunction> ResourceManager::tryCreateFunctions =
 {
-    TryCreate<ID2D1Device1, CanvasDevice, CreateFromManager<ID2D1Device1, CanvasDevice, CanvasDeviceFactory>>,
+    TryCreate<ID2D1Device1, CanvasDevice, MakeWrapper<ID2D1Device1, CanvasDevice>>,
     TryCreate<ID2D1DeviceContext1, CanvasDrawingSession, MakeWrapper<ID2D1DeviceContext1, CanvasDrawingSession>>,
     TryCreate<ID2D1Bitmap1, CanvasRenderTarget, CreateFromManagerWithDevice<ID2D1Bitmap1, CanvasRenderTarget, CanvasRenderTargetFactory>, IsRenderTargetBitmap>,
     TryCreate<ID2D1Bitmap1, CanvasBitmap, CreateFromManagerWithDevice<ID2D1Bitmap1, CanvasBitmap, CanvasBitmapFactory>>,

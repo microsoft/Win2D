@@ -40,7 +40,7 @@ public:
 };
 
 // This device is used for creating mock devices which include some basic functionality, but do not call any actual D2D/D3D.
-class TestDeviceResourceCreationAdapter : public ICanvasDeviceResourceCreationAdapter
+class TestDeviceAdapter : public CanvasDeviceAdapter
 {
     // If not set, fail all attempts at creating a device with CanvasHardwareAcceleration::On.
     bool m_allowHardware;
@@ -48,7 +48,7 @@ class TestDeviceResourceCreationAdapter : public ICanvasDeviceResourceCreationAd
 public:
     CALL_COUNTER_WITH_MOCK(GetCoreApplicationMethod, ComPtr<ICoreApplication>());
 
-    TestDeviceResourceCreationAdapter()
+    TestDeviceAdapter()
         : m_numD2DFactoryCreationCalls(0)
         , m_debugLevel(static_cast<CanvasDebugLevel>(-1))
         , m_numD3dDeviceCreationCalls(0)

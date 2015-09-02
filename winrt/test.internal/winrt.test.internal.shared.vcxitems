@@ -109,7 +109,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubUserControl.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\SwitchableTestBrushFixture.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\TestBitmapResourceCreationAdapter.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)stubs\TestDeviceResourceCreationAdapter.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)stubs\TestDeviceAdapter.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\TestEffect.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\Helpers.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)xaml\StubDispatcher.h" />

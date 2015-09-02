@@ -12,7 +12,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     using namespace ABI::Windows::ApplicationModel::Core;
 
     class CanvasDevice;
-    class CanvasDeviceManager;
+    class SharedDeviceState;
+    class DefaultDeviceAdapter;
 
 
     //
@@ -20,10 +21,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     // tests to provide test doubles. Because they are internal, they can return
     // ComPtrs and throw exceptions on failure.
     //
-    class ICanvasDeviceResourceCreationAdapter
+    class CanvasDeviceAdapter : public Singleton<CanvasDeviceAdapter, DefaultDeviceAdapter>
     {
     public:
-        virtual ~ICanvasDeviceResourceCreationAdapter() = default;
+        virtual ~CanvasDeviceAdapter() = default;
 
         virtual ComPtr<ID2D1Factory2> CreateD2DFactory(CanvasDebugLevel debugLevel) = 0;
 
@@ -40,13 +41,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     //
     // Default implementation of the adapter, used in production.
     //
-    class DefaultDeviceResourceCreationAdapter : public ICanvasDeviceResourceCreationAdapter,
-                                                 private LifespanTracker<DefaultDeviceResourceCreationAdapter>
+    class DefaultDeviceAdapter : public CanvasDeviceAdapter
     {
         ComPtr<IPropertyValueStatics> m_propertyValueStatics;
 
     public:
-        DefaultDeviceResourceCreationAdapter();
+        DefaultDeviceAdapter();
 
         virtual ComPtr<ID2D1Factory2> CreateD2DFactory(CanvasDebugLevel debugLevel) override;
 
@@ -195,14 +195,17 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         EventSource<DeviceLostHandlerType, InvokeModeOptions<StopOnFirstError>> m_deviceLostEventList;
 
-        std::shared_ptr<CanvasDeviceManager> m_manager;
+        // Backreference keeps the shared device state alive as long as any device exists.
+        std::shared_ptr<SharedDeviceState> m_sharedState;
 
     public:
+        static ComPtr<CanvasDevice> CreateNew(bool forceSoftwareRenderer);
+        static ComPtr<CanvasDevice> CreateNew(IDirect3DDevice* direct3DDevice);
+
         CanvasDevice(
-            bool forceSoftwareRenderer,
-            IDXGIDevice3* dxgiDevice,
             ID2D1Device1* d2dDevice,
-            std::shared_ptr<CanvasDeviceManager> manager);
+            IDXGIDevice3* dxgiDevice = nullptr,
+            bool forceSoftwareRenderer = false);
 
         //
         // ICanvasDevice
@@ -346,6 +349,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         HRESULT GetDeviceRemovedErrorCode();
 
     private:
+        static ComPtr<ID3D11Device> MakeD3D11Device(CanvasDeviceAdapter* adapter, bool forceSoftwareRenderer, bool useDebugD3DDevice);
+
         template<typename FN>
         ComPtr<IDXGISwapChain1> CreateSwapChain(
             int32_t widthInPixels,
@@ -362,13 +367,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
 
     //
-    // Responsible for creating and tracking CanvasDevice instances and the
-    // ID2D1Device they wrap.
+    // Singleton shared by all active CanvasDevice instances, responsible for tracking global
+    // state such as the shared device pool and value of the debug level static property.
     //
-    class CanvasDeviceManager : public Singleton<CanvasDeviceManager>
-                              , public std::enable_shared_from_this<CanvasDeviceManager>
+    class SharedDeviceState : public Singleton<SharedDeviceState>
     {
-        std::shared_ptr<ICanvasDeviceResourceCreationAdapter> m_adapter;
+        std::shared_ptr<CanvasDeviceAdapter> m_adapter;
 
         WeakRef m_sharedDevices[2];
         std::mutex m_mutex;
@@ -376,28 +380,18 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         std::atomic<CanvasDebugLevel> m_debugLevel;
 
     public:
-        // TODO interop: after adapters are refactored, should not need two constructor overloads.
-        CanvasDeviceManager();
-        CanvasDeviceManager(std::shared_ptr<ICanvasDeviceResourceCreationAdapter> adapter);
+        SharedDeviceState();
 
-        virtual ~CanvasDeviceManager();
+        virtual ~SharedDeviceState();
         
-        ComPtr<CanvasDevice> CreateNew(bool forceSoftwareRenderer);
-        ComPtr<CanvasDevice> CreateNew(bool forceSoftwareRenderer, bool useD3DDebugDevice, ID2D1Factory2* d2dFactory);
-        ComPtr<CanvasDevice> CreateNew(IDirect3DDevice* direct3DDevice);
-        ComPtr<CanvasDevice> CreateNew(IDirect3DDevice* direct3DDevice, ID2D1Factory2* d2dFactory);
-        ComPtr<CanvasDevice> CreateWrapper(ID2D1Device1* d2dDevice);
-
         ComPtr<ICanvasDevice> GetSharedDevice(bool forceSoftwareRenderer);
 
         CanvasDebugLevel GetDebugLevel();
         void SetDebugLevel(CanvasDebugLevel const& value);
 
+        CanvasDeviceAdapter* GetAdapter() const { return m_adapter.get(); }
+
     private:
-        ComPtr<IDXGIDevice3> MakeDXGIDevice(bool forceSoftwareRenderer, bool useDebugD3DDevice) const;
-
-        ComPtr<ID3D11Device> MakeD3D11Device(bool forceSoftwareRenderer, bool useDebugD3DDevice) const;
-
         CanvasDebugLevel LoadDebugLevelProperty();
         void SaveDebugLevelProperty(CanvasDebugLevel debugLevel);
 
@@ -424,12 +418,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_CanvasDevice, BaseTrust);
 
     public:
-        // TODO interop: after adapters are refactored, this should no longer be attached to the factory
-        static std::shared_ptr<CanvasDeviceManager> GetManager()
-        {
-            return CanvasDeviceManager::GetInstance();
-        }
-
         //
         // ActivationFactory
         //

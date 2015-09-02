@@ -91,6 +91,7 @@ TEST_CLASS(CanvasSwapChainUnitTests)
         ComPtr<MockDxgiFactory> DxgiFactory;
         ComPtr<StubDxgiDevice> DxgiDevice;
         ComPtr<CanvasDevice> Device;
+        std::shared_ptr<CanvasDeviceAdapter> Adapter;
 
         MockDxgiFixture()
             : DxgiFactory(Make<MockDxgiFactory>())
@@ -113,10 +114,10 @@ TEST_CLASS(CanvasSwapChainUnitTests)
 
             auto d2dDevice = Make<MockD2DDevice>(DxgiDevice.Get());
 
-            auto resourceCreationAdapter = std::make_shared<TestDeviceResourceCreationAdapter>();
-            auto deviceManager = std::make_shared<CanvasDeviceManager>(resourceCreationAdapter);
+            Adapter = std::make_shared<TestDeviceAdapter>();
+            CanvasDeviceAdapter::SetInstance(Adapter);
 
-            Device = deviceManager->CreateWrapper(d2dDevice.Get());
+            Device = Make<CanvasDevice>(d2dDevice.Get());
         }
     };
 
@@ -290,14 +291,11 @@ TEST_CLASS(CanvasSwapChainUnitTests)
 
     TEST_METHOD_EX(CanvasSwapChain_Creation_InvalidParameters)
     {
-        FullDeviceFixture f0;
-        ExpectHResultException(E_INVALIDARG, [&]  {  f0.CreateTestSwapChain(-1, 100, 2); });
-
-        FullDeviceFixture f1;
-        ExpectHResultException(E_INVALIDARG, [&]  {  f1.CreateTestSwapChain(123, -3, 2); });
-
-        FullDeviceFixture f2;
-        ExpectHResultException(E_INVALIDARG, [&]  {  f2.CreateTestSwapChain(100, 100, -3); });
+        FullDeviceFixture f;
+        
+        ExpectHResultException(E_INVALIDARG, [&] {  f.CreateTestSwapChain(-1, 100, 2); });
+        ExpectHResultException(E_INVALIDARG, [&] {  f.CreateTestSwapChain(123, -3, 2); });
+        ExpectHResultException(E_INVALIDARG, [&] {  f.CreateTestSwapChain(100, 100, -3); });
     }
 
     TEST_METHOD_EX(CanvasSwapChain_Closed)

@@ -7,13 +7,15 @@
 class Fixture
 {
 public:
-    std::shared_ptr<TestDeviceResourceCreationAdapter> ResourceCreationAdapter;
-    std::shared_ptr<CanvasDeviceManager> Manager;
+    std::shared_ptr<TestDeviceAdapter> DeviceAdapter;
+    std::shared_ptr<SharedDeviceState> SharedDeviceState;
 
     Fixture()
-        : ResourceCreationAdapter(std::make_shared<TestDeviceResourceCreationAdapter>())
-        , Manager(std::make_shared<CanvasDeviceManager>(ResourceCreationAdapter))
     {
+        DeviceAdapter = std::make_shared<TestDeviceAdapter>();
+        CanvasDeviceAdapter::SetInstance(DeviceAdapter);
+
+        SharedDeviceState = SharedDeviceState::GetInstance();
     }
 
     void AssertDeviceManagerRoundtrip(ICanvasDevice* expectedCanvasDevice)
@@ -35,7 +37,7 @@ public:
     TEST_METHOD_EX(CanvasDevice_Implements_Expected_Interfaces)
     {
         Fixture f;
-        auto canvasDevice = f.Manager->CreateNew(false);
+        auto canvasDevice = CanvasDevice::CreateNew(false);
 
         ASSERT_IMPLEMENTS_INTERFACE(canvasDevice, ICanvasDevice);
         ASSERT_IMPLEMENTS_INTERFACE(canvasDevice, ABI::Windows::Foundation::IClosable);
@@ -50,7 +52,7 @@ public:
             boolean expectedForceSoftwareRenderer = i == 1;
 
             Fixture f;
-            auto canvasDevice = f.Manager->CreateNew(
+            auto canvasDevice = CanvasDevice::CreateNew(
                 !!expectedForceSoftwareRenderer);
 
             Assert::IsNotNull(canvasDevice.Get());
@@ -63,7 +65,7 @@ public:
             // Ensure that the getter returns E_INVALIDARG with null ptr.
             Assert::AreEqual(E_INVALIDARG, canvasDevice->get_ForceSoftwareRenderer(nullptr));
 
-            Assert::AreEqual(1, f.ResourceCreationAdapter->m_numD2DFactoryCreationCalls);
+            Assert::AreEqual(1, f.DeviceAdapter->m_numD2DFactoryCreationCalls);
 
             f.AssertDeviceManagerRoundtrip(canvasDevice.Get());
         }
@@ -77,15 +79,15 @@ public:
         ThrowIfFailed(CreateDirect3D11DeviceFromDXGIDevice(stubD3D11Device.Get(), &stubDirect3DDevice));
 
         Fixture f;
-        auto canvasDevice = f.Manager->CreateNew(
+        auto canvasDevice = CanvasDevice::CreateNew(
             stubDirect3DDevice.Get());
         Assert::IsNotNull(canvasDevice.Get());
 
         // A D2D device should still have been created
-        Assert::AreEqual(1, f.ResourceCreationAdapter->m_numD2DFactoryCreationCalls);
+        Assert::AreEqual(1, f.DeviceAdapter->m_numD2DFactoryCreationCalls);
 
         // But not a D3D device.
-        Assert::AreEqual(0, f.ResourceCreationAdapter->m_numD3dDeviceCreationCalls);
+        Assert::AreEqual(0, f.DeviceAdapter->m_numD3dDeviceCreationCalls);
 
         f.AssertDeviceManagerRoundtrip(canvasDevice.Get());
 
@@ -99,7 +101,7 @@ public:
 
         // Try a NULL Direct3DDevice. 
         ExpectHResultException(E_INVALIDARG,
-            [&] { f.Manager->CreateNew(nullptr); });
+            [&] { CanvasDevice::CreateNew(nullptr); });
     }
 
     TEST_METHOD_EX(CanvasDevice_Create_From_D2DDevice)
@@ -107,12 +109,12 @@ public:
         auto d2dDevice = Make<MockD2DDevice>(Make<MockD2DFactory>().Get());
 
         Fixture f;
-        auto canvasDevice = f.Manager->CreateWrapper(d2dDevice.Get());
+        auto canvasDevice = Make<CanvasDevice>(d2dDevice.Get());
         Assert::IsNotNull(canvasDevice.Get());
 
         // Nothing should have been created
-        Assert::AreEqual(0, f.ResourceCreationAdapter->m_numD2DFactoryCreationCalls);
-        Assert::AreEqual(0, f.ResourceCreationAdapter->m_numD3dDeviceCreationCalls);
+        Assert::AreEqual(0, f.DeviceAdapter->m_numD2DFactoryCreationCalls);
+        Assert::AreEqual(0, f.DeviceAdapter->m_numD3dDeviceCreationCalls);
 
         f.AssertDeviceManagerRoundtrip(canvasDevice.Get());
 
@@ -128,7 +130,7 @@ public:
     TEST_METHOD_EX(CanvasDevice_Closed)
     {
         Fixture f;
-        auto canvasDevice = f.Manager->CreateNew(false);
+        auto canvasDevice = CanvasDevice::CreateNew(false);
         Assert::IsNotNull(canvasDevice.Get());
 
         Assert::AreEqual(S_OK, canvasDevice->Close());
@@ -154,25 +156,25 @@ public:
         int d3dDeviceCreationCount = 0;
 
         // Default canvas device should be hardware.
-        auto canvasDevice = f.Manager->CreateNew(
+        auto canvasDevice = CanvasDevice::CreateNew(
             false);
         d3dDeviceCreationCount++;
 
-        Assert::IsFalse(f.ResourceCreationAdapter->m_retrievableForceSoftwareRenderer);
-        Assert::AreEqual(d3dDeviceCreationCount, f.ResourceCreationAdapter->m_numD3dDeviceCreationCalls);
+        Assert::IsFalse(f.DeviceAdapter->m_retrievableForceSoftwareRenderer);
+        Assert::AreEqual(d3dDeviceCreationCount, f.DeviceAdapter->m_numD3dDeviceCreationCalls);
 
         // Now disable the hardware path.
-        f.ResourceCreationAdapter->SetHardwareEnabled(false);
+        f.DeviceAdapter->SetHardwareEnabled(false);
 
         {
             // Ensure the fallback works.
-            canvasDevice = f.Manager->CreateNew(
+            canvasDevice = CanvasDevice::CreateNew(
                 false);
             d3dDeviceCreationCount++;
 
             // Ensure the software path was used.
-            Assert::IsTrue(f.ResourceCreationAdapter->m_retrievableForceSoftwareRenderer);
-            Assert::AreEqual(d3dDeviceCreationCount, f.ResourceCreationAdapter->m_numD3dDeviceCreationCalls);
+            Assert::IsTrue(f.DeviceAdapter->m_retrievableForceSoftwareRenderer);
+            Assert::AreEqual(d3dDeviceCreationCount, f.DeviceAdapter->m_numD3dDeviceCreationCalls);
 
             // Ensure the ForceSoftwareRenderer property getter returns the right thing.
             boolean forceSoftwareRenderer;
@@ -181,14 +183,14 @@ public:
         }
         {
             // Re-create another whole device with the hardware path on, ensuring there isn't some weird statefulness problem.
-            f.ResourceCreationAdapter->SetHardwareEnabled(true);
-            canvasDevice = f.Manager->CreateNew(
+            f.DeviceAdapter->SetHardwareEnabled(true);
+            canvasDevice = CanvasDevice::CreateNew(
                 false);
             d3dDeviceCreationCount++;
 
             // Ensure the hardware path was enabled.
-            Assert::IsFalse(f.ResourceCreationAdapter->m_retrievableForceSoftwareRenderer);
-            Assert::AreEqual(d3dDeviceCreationCount, f.ResourceCreationAdapter->m_numD3dDeviceCreationCalls);
+            Assert::IsFalse(f.DeviceAdapter->m_retrievableForceSoftwareRenderer);
+            Assert::AreEqual(d3dDeviceCreationCount, f.DeviceAdapter->m_numD3dDeviceCreationCalls);
 
             // Ensure the ForceSoftwareRenderer property is still correct.
             boolean forceSoftwareRenderer;
@@ -200,7 +202,7 @@ public:
     TEST_METHOD_EX(CanvasDevice_DeviceProperty)
     {
         Fixture f;
-        auto device = f.Manager->CreateNew(false);
+        auto device = CanvasDevice::CreateNew(false);
 
         Assert::AreEqual(E_INVALIDARG, device->get_Device(nullptr));
 
@@ -212,7 +214,7 @@ public:
     TEST_METHOD_EX(CanvasDevice_MaximumBitmapSize_NullArg)
     {
         Fixture f;
-        auto canvasDevice = f.Manager->CreateNew(false);
+        auto canvasDevice = CanvasDevice::CreateNew(false);
 
         Assert::AreEqual(E_INVALIDARG, canvasDevice->get_MaximumBitmapSizeInPixels(nullptr));
     }
@@ -234,7 +236,7 @@ public:
             };
 
         Fixture f;
-        auto canvasDevice = f.Manager->CreateWrapper(d2dDevice.Get());
+        auto canvasDevice = Make<CanvasDevice>(d2dDevice.Get());
 
         int32_t maximumBitmapSize;
         ThrowIfFailed(canvasDevice->get_MaximumBitmapSizeInPixels(&maximumBitmapSize));
@@ -262,7 +264,7 @@ public:
             };
 
         Fixture f;
-        auto canvasDevice = f.Manager->CreateWrapper(d2dDevice.Get());
+        auto canvasDevice = Make<CanvasDevice>(d2dDevice.Get());
         auto actualD2DCommandList = canvasDevice->CreateCommandList();
 
         Assert::IsTrue(IsSameInstance(d2dCommandList.Get(), actualD2DCommandList.Get()));
@@ -303,14 +305,14 @@ public:
                 ThrowIfFailed(deviceContext.CopyTo(value));
             };
 
-        auto canvasDevice = f.Manager->CreateWrapper(d2dDevice.Get());
+        auto canvasDevice = Make<CanvasDevice>(d2dDevice.Get());
         auto actualBitmap = canvasDevice->CreateRenderTargetBitmap(anyWidth, anyHeight, anyDpi, anyFormat, anyAlphaMode);
 
         Assert::IsTrue(IsSameInstance(d2dBitmap.Get(), actualBitmap.Get()));
     }
 };
 
-TEST_CLASS(DefaultDeviceResourceCreationAdapterTests)
+TEST_CLASS(DefaultDeviceAdapterTests)
 {
     //
     // This tests GetDxgiDevice against real-live D3D/D2D instances since it
@@ -321,7 +323,7 @@ TEST_CLASS(DefaultDeviceResourceCreationAdapterTests)
         //
         // Set up
         //
-        DefaultDeviceResourceCreationAdapter adapter;
+        DefaultDeviceAdapter adapter;
 
         ComPtr<ID3D11Device> d3dDevice;
         if (!adapter.TryCreateD3DDevice(
@@ -364,7 +366,7 @@ public:
     TEST_METHOD_EX(CanvasDeviceLostTests_Closed)
     {
         Fixture f;
-        auto canvasDevice = f.Manager->CreateNew(false);
+        auto canvasDevice = CanvasDevice::CreateNew(false);
 
         Assert::AreEqual(S_OK, canvasDevice->Close());
 
@@ -386,7 +388,7 @@ public:
     TEST_METHOD_EX(CanvasDeviceLostTests_NullArgs)
     {
         Fixture f;
-        auto canvasDevice = f.Manager->CreateNew(false);
+        auto canvasDevice = CanvasDevice::CreateNew(false);
 
         EventRegistrationToken token{};
         MockEventHandler<DeviceLostHandlerType> dummyDeviceLostHandler(L"DeviceLost");
@@ -395,7 +397,7 @@ public:
         Assert::AreEqual(E_INVALIDARG, canvasDevice->IsDeviceLost(0, nullptr));
     }
 
-    class DeviceLostResourceCreationAdapter : public TestDeviceResourceCreationAdapter
+    class DeviceLostAdapter : public TestDeviceAdapter
     {
         virtual ComPtr<StubD3D11Device> CreateStubD3D11Device() override
         {
@@ -410,22 +412,20 @@ public:
 
     class DeviceLostFixture
     {
-        std::shared_ptr<DeviceLostResourceCreationAdapter> m_resourceCreationAdapter;
+        std::shared_ptr<DeviceLostAdapter> m_deviceAdapter;
 
     public:
-        std::shared_ptr<CanvasDeviceManager> DeviceManager;
-
         DeviceLostFixture()
-            : m_resourceCreationAdapter(std::make_shared<DeviceLostResourceCreationAdapter>())
-            , DeviceManager(std::make_shared<CanvasDeviceManager>(m_resourceCreationAdapter))
         {
+            m_deviceAdapter = std::make_shared<DeviceLostAdapter>();
+            CanvasDeviceAdapter::SetInstance(m_deviceAdapter);
         }
     };
 
     TEST_METHOD_EX(CanvasDeviceLostTests_IsDeviceLost_DeviceRemovedHr_DeviceIsLost_ReturnsTrue)
     {
         DeviceLostFixture f;
-        auto canvasDevice = f.DeviceManager->CreateNew(false);
+        auto canvasDevice = CanvasDevice::CreateNew(false);
 
         for (HRESULT hr : deviceRemovedHResults)
         {
@@ -438,7 +438,7 @@ public:
     TEST_METHOD_EX(CanvasDeviceLostTests_IsDeviceLost_SomeArbitraryHr_DeviceIsLost_ReturnsFalse)
     {
         DeviceLostFixture f;
-        auto canvasDevice = f.DeviceManager->CreateNew(false);
+        auto canvasDevice = CanvasDevice::CreateNew(false);
 
         boolean isDeviceLost;
         Assert::AreEqual(S_OK, canvasDevice->IsDeviceLost(E_INVALIDARG, &isDeviceLost));
@@ -448,7 +448,7 @@ public:
     TEST_METHOD_EX(CanvasDeviceLostTests_IsDeviceLost_DeviceRemovedHr_DeviceNotActuallyLost_ReturnsFalse)
     {
         Fixture f;
-        auto canvasDevice = f.Manager->CreateNew(false);
+        auto canvasDevice = CanvasDevice::CreateNew(false);
 
         for (HRESULT hr : deviceRemovedHResults)
         {
@@ -461,7 +461,7 @@ public:
     TEST_METHOD_EX(CanvasDeviceLostTests_IsDeviceLost_SomeArbitraryHr_DeviceNotActuallyLost_ReturnsFalse)
     {
         DeviceLostFixture f;
-        auto canvasDevice = f.DeviceManager->CreateNew(false);
+        auto canvasDevice = CanvasDevice::CreateNew(false);
 
         boolean isDeviceLost;
         Assert::AreEqual(S_OK, canvasDevice->IsDeviceLost(E_INVALIDARG, &isDeviceLost));
@@ -471,7 +471,7 @@ public:
     TEST_METHOD_EX(CanvasDeviceLostTests_RaiseDeviceLost_RaisesSubscribedHandlers_DeviceActuallyLost)
     {
         DeviceLostFixture f;
-        auto canvasDevice = f.DeviceManager->CreateNew(false);
+        auto canvasDevice = CanvasDevice::CreateNew(false);
 
         MockEventHandler<DeviceLostHandlerType> deviceLostHandler(L"DeviceLost");
         deviceLostHandler.SetExpectedCalls(1);
@@ -485,7 +485,7 @@ public:
     TEST_METHOD_EX(CanvasDeviceLostTests_RemoveEventThen_RaiseDeviceLost_DoesNotInvokeHandler)
     {
         DeviceLostFixture f;
-        auto canvasDevice = f.DeviceManager->CreateNew(false);
+        auto canvasDevice = CanvasDevice::CreateNew(false);
 
         MockEventHandler<DeviceLostHandlerType> deviceLostHandler(L"DeviceLost");
         deviceLostHandler.SetExpectedCalls(0);
@@ -500,7 +500,7 @@ public:
     TEST_METHOD_EX(CanvasDeviceLostTests_RaiseDeviceLost_HasCorrectSenderAndArgs)
     {
         DeviceLostFixture f;
-        auto canvasDevice = f.DeviceManager->CreateNew(false);
+        auto canvasDevice = CanvasDevice::CreateNew(false);
 
         MockEventHandler<DeviceLostHandlerType> deviceLostHandler(L"DeviceLost");
         deviceLostHandler.SetExpectedCalls(1, 
@@ -520,7 +520,7 @@ public:
     TEST_METHOD_EX(CanvasDeviceLostTests_RaiseDeviceLost_ExceptionFromHandlerIsPropagated)
     {
         DeviceLostFixture f;
-        auto canvasDevice = f.DeviceManager->CreateNew(false);
+        auto canvasDevice = CanvasDevice::CreateNew(false);
 
         MockEventHandler<DeviceLostHandlerType> deviceLostHandler(L"DeviceLost");
         deviceLostHandler.SetExpectedCalls(1, 
@@ -535,7 +535,7 @@ public:
         Assert::AreEqual(E_UNEXPECTED, canvasDevice->RaiseDeviceLost());
     }
 
-    class D3DDeviceAccessAdapter : public TestDeviceResourceCreationAdapter
+    class D3DDeviceAccessAdapter : public TestDeviceAdapter
     {
     public:
         ComPtr<StubD3D11Device> D3DDevice;
@@ -554,14 +554,16 @@ public:
     TEST_METHOD_EX(CanvasDeviceLostTests_RaiseDeviceLost_IfDeviceIsNotActuallyLost_ErrorIsReturned)
     {
         auto adapter = std::make_shared<D3DDeviceAccessAdapter>();
-        auto manager = std::make_shared<CanvasDeviceManager>(adapter);
+        CanvasDeviceAdapter::SetInstance(adapter);
+
+        auto sharedDeviceState = SharedDeviceState::GetInstance();
 
         //
         // The default mock for GetDeviceRemovedReason returns S_OK.
         //
         adapter->D3DDevice->GetDeviceRemovedReasonMethod.ExpectAtLeastOneCall();
 
-        auto device = manager->GetSharedDevice(false);
+        auto device = sharedDeviceState->GetSharedDevice(false);
 
         Assert::AreEqual(E_INVALIDARG, device->RaiseDeviceLost());
         ValidateStoredErrorState(E_INVALIDARG, Strings::DeviceExpectedToBeLost);
@@ -581,7 +583,7 @@ TEST_CLASS(CanvasDebugLevelTests)
     public:
         void ExpectOneQueryDebugLevel(CanvasDebugLevel debugLevel)
         {
-            ResourceCreationAdapter->GetCoreApplicationMethod.SetExpectedCalls(1,
+            DeviceAdapter->GetCoreApplicationMethod.SetExpectedCalls(1,
                 [debugLevel]
                 {
                     auto coreApplication = Make<MockCoreApplication>();
@@ -606,19 +608,19 @@ TEST_CLASS(CanvasDebugLevelTests)
 
         void AssertDebugLevel(CanvasDebugLevel expected)
         {
-            Assert::AreEqual(expected, ResourceCreationAdapter->m_debugLevel);
+            Assert::AreEqual(expected, DeviceAdapter->m_debugLevel);
         }
 
         void AssertD3DDebugLevel(CanvasDebugLevel expected)
         {
             const bool expectD3DDebugLevel = expected != CanvasDebugLevel::None;
 
-            Assert::AreEqual(expectD3DDebugLevel, ResourceCreationAdapter->m_retrievableUseDebugD3DDevice);
+            Assert::AreEqual(expectD3DDebugLevel, DeviceAdapter->m_retrievableUseDebugD3DDevice);
         }
 
         void AssertNoD3DDebugLevel()
         {
-            Assert::IsFalse(ResourceCreationAdapter->m_retrievableUseDebugD3DDevice);
+            Assert::IsFalse(DeviceAdapter->m_retrievableUseDebugD3DDevice);
         }
     };
 
@@ -628,10 +630,10 @@ TEST_CLASS(CanvasDebugLevelTests)
         {
             DebugLevelFixture f;
 
-            f.Manager->SetDebugLevel(debugLevel);
+            f.SharedDeviceState->SetDebugLevel(debugLevel);
 
             f.ExpectOneQueryDebugLevel(debugLevel);
-            auto canvasDevice = f.Manager->CreateNew(false);
+            auto canvasDevice = CanvasDevice::CreateNew(false);
 
             f.AssertD3DDebugLevel(debugLevel);
         }
@@ -648,10 +650,10 @@ TEST_CLASS(CanvasDebugLevelTests)
             ComPtr<IDirect3DDevice> stubDirect3DDevice;
             ThrowIfFailed(CreateDirect3D11DeviceFromDXGIDevice(stubD3D11Device.Get(), &stubDirect3DDevice));
 
-            f.Manager->SetDebugLevel(debugLevel);
+            f.SharedDeviceState->SetDebugLevel(debugLevel);
 
             f.ExpectOneQueryDebugLevel(debugLevel);
-            auto canvasDevice = f.Manager->CreateNew(stubDirect3DDevice.Get());
+            auto canvasDevice = CanvasDevice::CreateNew(stubDirect3DDevice.Get());
             
             f.AssertDebugLevel(debugLevel);
             f.AssertNoD3DDebugLevel(); // We don't own creating a D3D device in this path
@@ -664,11 +666,11 @@ TEST_CLASS(CanvasDebugLevelTests)
         {
             DebugLevelFixture f;
 
-            f.Manager->SetDebugLevel(debugLevel);
+            f.SharedDeviceState->SetDebugLevel(debugLevel);
 
             f.ExpectOneQueryDebugLevel(debugLevel);
 
-            auto canvasDevice = f.Manager->GetSharedDevice(false);
+            auto canvasDevice = f.SharedDeviceState->GetSharedDevice(false);
 
             f.AssertDebugLevel(debugLevel);
             f.AssertD3DDebugLevel(debugLevel);
@@ -679,11 +681,11 @@ TEST_CLASS(CanvasDebugLevelTests)
     {
         DebugLevelFixture f;
 
-        f.Manager->SetDebugLevel(CanvasDebugLevel::Information);
-        auto canvasDevice1 = f.Manager->GetSharedDevice(false);
+        f.SharedDeviceState->SetDebugLevel(CanvasDebugLevel::Information);
+        auto canvasDevice1 = f.SharedDeviceState->GetSharedDevice(false);
 
-        f.Manager->SetDebugLevel(CanvasDebugLevel::Warning);
-        auto canvasDevice2 = f.Manager->GetSharedDevice(false);
+        f.SharedDeviceState->SetDebugLevel(CanvasDebugLevel::Warning);
+        auto canvasDevice2 = f.SharedDeviceState->GetSharedDevice(false);
 
         Assert::IsTrue(IsSameInstance(canvasDevice1.Get(), canvasDevice2.Get()));
     }
@@ -699,7 +701,7 @@ TEST_CLASS(CanvasGetSharedDeviceTests)
 {
 public:
 
-    class GetSharedDevice_Adapter : public TestDeviceResourceCreationAdapter
+    class GetSharedDevice_Adapter : public TestDeviceAdapter
     {
         int m_deviceLostCounter;
         bool m_canCreateDevices;
@@ -740,12 +742,14 @@ public:
     {
     public:
         std::shared_ptr<GetSharedDevice_Adapter> Adapter;
-        std::shared_ptr<CanvasDeviceManager> Manager;
+        std::shared_ptr<SharedDeviceState> SharedDeviceState;
 
         Fixture()
-            : Adapter(std::make_shared<GetSharedDevice_Adapter>())
-            , Manager(std::make_shared<CanvasDeviceManager>(Adapter))
         {
+            Adapter = std::make_shared<GetSharedDevice_Adapter>();
+            CanvasDeviceAdapter::SetInstance(Adapter);
+
+            SharedDeviceState = SharedDeviceState::GetInstance();
         }
     };
 
@@ -760,7 +764,7 @@ public:
         Fixture& f,
         bool passedInAndExpectedBack)
     {
-        ComPtr<ICanvasDevice> device = f.Manager->GetSharedDevice(passedInAndExpectedBack);
+        ComPtr<ICanvasDevice> device = f.SharedDeviceState->GetSharedDevice(passedInAndExpectedBack);
 
         boolean retrievedValue;
         Assert::AreEqual(S_OK, device->get_ForceSoftwareRenderer(&retrievedValue));
@@ -807,7 +811,7 @@ public:
         Fixture f;
         f.Adapter->SetCreatingDevicesEnabled(false);
 
-        ExpectHResultException(E_FAIL, [&]{ f.Manager->GetSharedDevice(false); });
+        ExpectHResultException(E_FAIL, [&]{ f.SharedDeviceState->GetSharedDevice(false); });
     }
 
     TEST_METHOD_EX(CanvasGetSharedDeviceTests_ExistingDevice_Lost_RaisesEvent)
@@ -817,7 +821,7 @@ public:
         auto d3dDevice = Make<StubD3D11Device>();
         f.Adapter->CreateStubD3D11DeviceMethod.AllowAnyCall([&](){ return d3dDevice; });
 
-        auto device = f.Manager->GetSharedDevice(false);
+        auto device = f.SharedDeviceState->GetSharedDevice(false);
 
         // 
         //Expect the DeviceLost event to get raised.
@@ -835,18 +839,18 @@ public:
             });
 
         // Try and get the cached device again
-        f.Manager->GetSharedDevice(false);
+        f.SharedDeviceState->GetSharedDevice(false);
     }
 
     TEST_METHOD_EX(CanvasGetSharedDeviceTests_ExistingDevice_LastDeviceReferenceWasReleased)
     {
         Fixture f;
 
-        auto device = f.Manager->GetSharedDevice(false);
+        auto device = f.SharedDeviceState->GetSharedDevice(false);
         Assert::IsNotNull(device.Get());
         device.Reset();
 
-        auto device2 = f.Manager->GetSharedDevice(false);
+        auto device2 = f.SharedDeviceState->GetSharedDevice(false);
         Assert::IsNotNull(device2.Get());
     }
 
@@ -856,10 +860,10 @@ public:
         {
             Fixture f;
 
-            auto d1 = f.Manager->GetSharedDevice(false);
+            auto d1 = f.SharedDeviceState->GetSharedDevice(false);
             ThrowIfFailed(AsWeak(d1.Get(), &weakDevices[0]));
 
-            auto d2 = f.Manager->GetSharedDevice(true);
+            auto d2 = f.SharedDeviceState->GetSharedDevice(true);
             ThrowIfFailed(AsWeak(d2.Get(), &weakDevices[1]));
 
             Assert::IsTrue(IsWeakRefValid(weakDevices[0]));
@@ -872,7 +876,7 @@ public:
     TEST_METHOD_EX(CanvasDevice_EntersLockWhenCallingDxgiMethods)
     {
         Fixture f;
-        auto device = f.Manager->CreateNew(false);
+        auto device = CanvasDevice::CreateNew(false);
 
         ComPtr<ID2D1Factory> d2dFactory;
         As<ICanvasDeviceInternal>(device)->GetD2DDevice()->GetFactory(&d2dFactory);

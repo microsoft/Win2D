@@ -349,9 +349,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\TestBitmapResourceCreationAdapter.h">
       <Filter>stubs</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)stubs\TestDeviceResourceCreationAdapter.h">
-      <Filter>stubs</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\TestEffect.h">
       <Filter>stubs</Filter>
     </ClInclude>
@@ -416,6 +413,9 @@
       <Filter>stubs</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubFontManagerAdapter.h">
+      <Filter>stubs</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)stubs\TestDeviceAdapter.h">
       <Filter>stubs</Filter>
     </ClInclude>
   </ItemGroup>

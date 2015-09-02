@@ -905,7 +905,7 @@ bool CanvasAnimatedControl::Tick(
     //
     // The only way it may be initialized with WARP render-only is if
     // something is malfunctioning in the system's driver, causing
-    // WARP to be used as a fallback (see CanvasDeviceManager::MakeD3D11Device). 
+    // WARP to be used as a fallback (see CanvasDevice::MakeD3D11Device). 
     // 
     // In the future, we may allow the app to use its own device with
     // the control, making the software path to be more accessible to an app.

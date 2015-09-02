@@ -108,16 +108,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
 
         template<typename TResource, typename TWrapper, typename TFactory>
-        static ComPtr<TWrapper> CreateFromManager(ICanvasDevice* device, TResource* resource, float dpi)
-        {
-            UNREFERENCED_PARAMETER(device);
-            UNREFERENCED_PARAMETER(dpi);
-
-            return TFactory::GetManager()->CreateWrapper(resource);
-        }
-
-
-        template<typename TResource, typename TWrapper, typename TFactory>
         static ComPtr<TWrapper> CreateFromManagerWithDevice(ICanvasDevice* device, TResource* resource, float dpi)
         {
             UNREFERENCED_PARAMETER(dpi);
