@@ -164,6 +164,8 @@ IFACEMETHODIMP CanvasImageBrush::get_Image(ICanvasImage** value)
 
 ComPtr<ID2D1Bitmap1> CanvasImageBrush::GetD2DBitmap() const
 {
+    Lock lock(m_mutex);
+    
     if (m_useBitmapBrush)
     {
         ComPtr<ID2D1Bitmap> bm;
@@ -199,6 +201,8 @@ IFACEMETHODIMP CanvasImageBrush::put_Image(ICanvasImage* value)
     return ExceptionBoundary(
         [&]
         {
+            Lock lock(m_mutex);    
+
             ThrowIfClosed();
 
             SetImage(value);
@@ -210,6 +214,8 @@ IFACEMETHODIMP CanvasImageBrush::get_ExtendX(CanvasEdgeBehavior* value)
     return ExceptionBoundary(
         [&]
         {
+            Lock lock(m_mutex);    
+
             CheckInPointer(value);
             ThrowIfClosed();
             D2D1_EXTEND_MODE extendMode;
@@ -226,8 +232,10 @@ IFACEMETHODIMP CanvasImageBrush::get_ExtendX(CanvasEdgeBehavior* value)
 IFACEMETHODIMP CanvasImageBrush::put_ExtendX(CanvasEdgeBehavior value)
 {
     return ExceptionBoundary(
-        [&]()
+        [&]
         {
+            Lock lock(m_mutex);    
+
             ThrowIfClosed();
             if (m_useBitmapBrush)
                 m_d2dBitmapBrush->SetExtendModeX(static_cast<D2D1_EXTEND_MODE>(value));
@@ -239,8 +247,10 @@ IFACEMETHODIMP CanvasImageBrush::put_ExtendX(CanvasEdgeBehavior value)
 IFACEMETHODIMP CanvasImageBrush::get_ExtendY(CanvasEdgeBehavior* value)
 {
     return ExceptionBoundary(
-        [&]()
+        [&]
         {
+            Lock lock(m_mutex);    
+
             CheckInPointer(value);
             ThrowIfClosed();
             D2D1_EXTEND_MODE extendMode;
@@ -257,8 +267,10 @@ IFACEMETHODIMP CanvasImageBrush::get_ExtendY(CanvasEdgeBehavior* value)
 IFACEMETHODIMP CanvasImageBrush::put_ExtendY(CanvasEdgeBehavior value)
 {
     return ExceptionBoundary(
-        [&]()
+        [&]
         {
+            Lock lock(m_mutex);    
+
             ThrowIfClosed();
             if (m_useBitmapBrush)
                 m_d2dBitmapBrush->SetExtendModeY(static_cast<D2D1_EXTEND_MODE>(value));
@@ -270,8 +282,10 @@ IFACEMETHODIMP CanvasImageBrush::put_ExtendY(CanvasEdgeBehavior value)
 IFACEMETHODIMP CanvasImageBrush::get_SourceRectangle(ABI::Windows::Foundation::IReference<ABI::Windows::Foundation::Rect>** value)
 {
     return ExceptionBoundary(
-        [&]()
+        [&]
         {
+            Lock lock(m_mutex);    
+
             CheckAndClearOutPointer(value);
             ThrowIfClosed();
 
@@ -303,6 +317,8 @@ IFACEMETHODIMP CanvasImageBrush::put_SourceRectangle(ABI::Windows::Foundation::I
     return ExceptionBoundary(
         [&]
         {
+            Lock lock(m_mutex);    
+
             ThrowIfClosed();
 
             if (m_useBitmapBrush)
@@ -347,6 +363,8 @@ IFACEMETHODIMP CanvasImageBrush::get_Interpolation(CanvasImageInterpolation* val
     return ExceptionBoundary(
         [&]
         {
+            Lock lock(m_mutex);    
+
             CheckInPointer(value);
             ThrowIfClosed();
             D2D1_INTERPOLATION_MODE interpolationMode;
@@ -365,6 +383,8 @@ IFACEMETHODIMP CanvasImageBrush::put_Interpolation(CanvasImageInterpolation valu
     return ExceptionBoundary(
         [&]()
         {
+            Lock lock(m_mutex);    
+
             ThrowIfClosed();
 
             if (m_useBitmapBrush)
@@ -384,6 +404,8 @@ IFACEMETHODIMP CanvasImageBrush::Close()
 
 ComPtr<ID2D1Brush> CanvasImageBrush::GetD2DBrush(ID2D1DeviceContext* deviceContext, GetBrushFlags flags)
 {
+    Lock lock(m_mutex);    
+
     ThrowIfClosed();
 
     if (m_useBitmapBrush) 
@@ -418,6 +440,8 @@ IFACEMETHODIMP CanvasImageBrush::GetResource(REFIID iid, void** resource)
     return ExceptionBoundary(
         [=]
         {
+            Lock lock(m_mutex);    
+
             ThrowIfClosed();
 
             if (m_useBitmapBrush)

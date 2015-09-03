@@ -42,6 +42,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         // Bitmap brush is eligible when the source image is a bitmap and the source rect
         // is NULL.
 
+        mutable std::mutex m_mutex;
+
         ComPtr<ID2D1BitmapBrush1> m_d2dBitmapBrush;
 
         ComPtr<ID2D1ImageBrush> m_d2dImageBrush;
