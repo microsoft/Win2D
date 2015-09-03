@@ -14,8 +14,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         IDWriteTextLayout2,
         CanvasTextLayout,
         ICanvasTextLayout,
-        CloakedIid<ICanvasResourceWrapperWithDevice>,
-        IClosable)
+        CloakedIid<ICanvasResourceWrapperWithDevice>)
     {
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_Text_CanvasTextLayout, BaseTrust);
 

@@ -14,8 +14,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         ID2D1GradientMesh,
         CanvasGradientMesh,
         ICanvasGradientMesh,
-        CloakedIid<ICanvasResourceWrapperWithDevice>,
-        IClosable)
+        CloakedIid<ICanvasResourceWrapperWithDevice>)
     {
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_Geometry_CanvasGradientMesh, BaseTrust);
 

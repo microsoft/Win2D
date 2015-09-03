@@ -15,8 +15,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         ID2D1Geometry,
         CanvasGeometry,
         ICanvasGeometry,
-        CloakedIid<ICanvasResourceWrapperWithDevice>,
-        IClosable)
+        CloakedIid<ICanvasResourceWrapperWithDevice>)
     {
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_Geometry_CanvasGeometry, BaseTrust);
 

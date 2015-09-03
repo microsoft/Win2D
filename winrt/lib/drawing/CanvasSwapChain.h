@@ -103,8 +103,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         CanvasSwapChain,
         ICanvasSwapChain,
         CloakedIid<ICanvasResourceWrapperWithDevice>,
-        CloakedIid<ICanvasResourceWrapperWithDpi>,
-        IClosable)
+        CloakedIid<ICanvasResourceWrapperWithDpi>)
     {
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_CanvasSwapChain, BaseTrust);
 
