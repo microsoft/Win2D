@@ -62,8 +62,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 {
                     if (m_resource)
                     {
-                        auto const& resource = m_resource.Close();
-
+                        auto resource = m_resource.Close();
+                        
                         ResourceManager::Remove(resource.Get());
                     }
                 });
