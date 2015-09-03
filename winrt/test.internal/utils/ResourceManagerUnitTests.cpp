@@ -73,7 +73,7 @@ TEST_CLASS(ResourceManagerUnitTests)
     TEST_METHOD_EX(ResourceManager_Exercise)
     {
         // Tell ResourceManager about our DummyResource/DummyWrapper test types.
-        auto tryCreateDummyResource = ResourceManager::TryCreate<IDummyResource, DummyWrapper, ResourceManager::MakeWrapperWithDevice<IDummyResource, DummyWrapper>>;
+        auto tryCreateDummyResource = ResourceManager::TryCreate<IDummyResource, DummyWrapper, ResourceManager::MakeWrapperWithDevice>;
         ResourceManager::RegisterType(tryCreateDummyResource);
         auto restoreTypeTable = MakeScopeWarden([&] { ResourceManager::UnregisterType(tryCreateDummyResource); });
 
@@ -111,7 +111,7 @@ TEST_CLASS(ResourceManagerUnitTests)
     TEST_METHOD_EX(ResourceManager_Close_Reused_Resource)
     {
         // Tell ResourceManager about our DummyResource/DummyWrapper test types.
-        auto tryCreateDummyResource = ResourceManager::TryCreate<IDummyResource, DummyWrapper, ResourceManager::MakeWrapperWithDevice<IDummyResource, DummyWrapper>>;
+        auto tryCreateDummyResource = ResourceManager::TryCreate<IDummyResource, DummyWrapper, ResourceManager::MakeWrapperWithDevice>;
         ResourceManager::RegisterType(tryCreateDummyResource);
         auto restoreTypeTable = MakeScopeWarden([&] { ResourceManager::UnregisterType(tryCreateDummyResource); });
 
@@ -220,7 +220,7 @@ TEST_CLASS(ResourceManagerRequiresCOMIdentity)
     TEST_METHOD_EX(ResourceManager_UsesCOMIdentityRules)
     {
         // Tell ResourceManager about our MultipleInterfaceResource/MultipleInterfaceWrapper test types.
-        auto tryCreateDummyResource = ResourceManager::TryCreate<IBaseInterface, MultipleInterfaceWrapper, ResourceManager::MakeWrapper<IBaseInterface, MultipleInterfaceWrapper>>;
+        auto tryCreateDummyResource = ResourceManager::TryCreate<IBaseInterface, MultipleInterfaceWrapper, ResourceManager::MakeWrapper>;
         ResourceManager::RegisterType(tryCreateDummyResource);
         auto restoreTypeTable = MakeScopeWarden([&] { ResourceManager::UnregisterType(tryCreateDummyResource); });
 

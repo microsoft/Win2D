@@ -45,17 +45,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         static void UnregisterType(TryCreateFunction tryCreate);
 
 
-        // TODO interop: the following templates are far too repetetetetive - should be greatly simplified.
-        // Won't need so many variants here once the manager intermediates are 100% refactored out.
-
+        // Custom tester functions can apply extra filtering rules (eg. calling IsRenderTargetBitmap on an ID2D1Bitmap1).
         template<typename TResource>
-        static bool DefaultTester(TResource*)
+        static inline bool DefaultTester(TResource*)
         {
             return true;
         }
 
 
-        template<typename TResource, typename TWrapper, ComPtr<TWrapper> TMaker(ICanvasDevice*, TResource*, float), bool TTester(TResource*) = DefaultTester<TResource>>
+        template<typename TResource, typename TWrapper, typename TMaker, bool TTester(TResource*) = DefaultTester<TResource>>
         static bool TryCreate(ICanvasDevice* device, IUnknown* resource, float dpi, ComPtr<IInspectable>* result)
         {
             // Is this the type we are looking for?
@@ -68,43 +66,51 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 return false;
 
             // Create a new wrapper instance.
-            auto wrapper = TMaker(device, myTypeOfResource.Get(), dpi);
-
+            auto wrapper = TMaker::Make<TResource, TWrapper>(device, myTypeOfResource.Get(), dpi);
+            
+            CheckMakeResult(wrapper);
             ThrowIfFailed(wrapper.As(result));
+
             return true;
         }
 
 
-        template<typename TResource, typename TWrapper>
-        static ComPtr<TWrapper> MakeWrapper(ICanvasDevice* device, TResource* resource, float dpi)
+        //  Calls Make<> on a type whose constructor wants only a resource parameter.
+        struct MakeWrapper
         {
-            UNREFERENCED_PARAMETER(device);
-            UNREFERENCED_PARAMETER(dpi);
+            template<typename TResource, typename TWrapper>
+            static ComPtr<TWrapper> Make(ICanvasDevice* device, TResource* resource, float dpi)
+            {
+                UNREFERENCED_PARAMETER(device);
+                UNREFERENCED_PARAMETER(dpi);
 
-            auto wrapper = Make<TWrapper>(resource);
-            CheckMakeResult(wrapper);
-            return wrapper;
-        }
+                return ::Microsoft::WRL::Make<TWrapper>(resource);
+            }
+        };
 
 
-        template<typename TResource, typename TWrapper>
-        static ComPtr<TWrapper> MakeWrapperWithDevice(ICanvasDevice* device, TResource* resource, float dpi)
+        //  Calls Make<> on a type whose constructor wants device and resource parameters.
+        struct MakeWrapperWithDevice
         {
-            UNREFERENCED_PARAMETER(dpi);
+            template<typename TResource, typename TWrapper>
+            static ComPtr<TWrapper> Make(ICanvasDevice* device, TResource* resource, float dpi)
+            {
+                UNREFERENCED_PARAMETER(dpi);
 
-            auto wrapper = Make<TWrapper>(device, resource);
-            CheckMakeResult(wrapper);
-            return wrapper;
-        }
+                return ::Microsoft::WRL::Make<TWrapper>(device, resource);
+            }
+        };
 
 
-        template<typename TResource, typename TWrapper>
-        static ComPtr<TWrapper> MakeWrapperWithDeviceAndDpi(ICanvasDevice* device, TResource* resource, float dpi)
+        //  Calls Make<> on a type whose constructor wants device, resource, and dpi parameters.
+        struct MakeWrapperWithDeviceAndDpi
         {
-            auto wrapper = Make<TWrapper>(device, resource, dpi);
-            CheckMakeResult(wrapper);
-            return wrapper;
-        }
+            template<typename TResource, typename TWrapper>
+            static ComPtr<TWrapper> Make(ICanvasDevice* device, TResource* resource, float dpi)
+            {
+                return ::Microsoft::WRL::Make<TWrapper>(device, resource, dpi);
+            }
+        };
 
 
     private:

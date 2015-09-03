@@ -16,27 +16,26 @@ std::unordered_map<IUnknown*, WeakRef> ResourceManager::m_resources;
 std::recursive_mutex ResourceManager::m_mutex;
 
 
-// TODO interop: autogen this table
 std::vector<ResourceManager::TryCreateFunction> ResourceManager::tryCreateFunctions =
 {
-    TryCreate<ID2D1Device1, CanvasDevice, MakeWrapper<ID2D1Device1, CanvasDevice>>,
-    TryCreate<ID2D1DeviceContext1, CanvasDrawingSession, MakeWrapper<ID2D1DeviceContext1, CanvasDrawingSession>>,
-    TryCreate<ID2D1Bitmap1, CanvasRenderTarget, MakeWrapperWithDevice<ID2D1Bitmap1, CanvasRenderTarget>, IsRenderTargetBitmap>,
-    TryCreate<ID2D1Bitmap1, CanvasBitmap, MakeWrapperWithDevice<ID2D1Bitmap1, CanvasBitmap>>,
-    TryCreate<ID2D1SolidColorBrush, CanvasSolidColorBrush, MakeWrapperWithDevice<ID2D1SolidColorBrush, CanvasSolidColorBrush>>,
-    TryCreate<ID2D1LinearGradientBrush, CanvasLinearGradientBrush, MakeWrapperWithDevice<ID2D1LinearGradientBrush, CanvasLinearGradientBrush>>,
-    TryCreate<ID2D1RadialGradientBrush, CanvasRadialGradientBrush, MakeWrapperWithDevice<ID2D1RadialGradientBrush, CanvasRadialGradientBrush>>,
-    TryCreate<ID2D1ImageBrush, CanvasImageBrush, MakeWrapperWithDevice<ID2D1ImageBrush, CanvasImageBrush>>,
-    TryCreate<ID2D1BitmapBrush1, CanvasImageBrush, MakeWrapperWithDevice<ID2D1BitmapBrush1, CanvasImageBrush>>,
-    TryCreate<ID2D1StrokeStyle1, CanvasStrokeStyle, MakeWrapper<ID2D1StrokeStyle1, CanvasStrokeStyle>>,
-    TryCreate<IDXGISwapChain1, CanvasSwapChain, MakeWrapperWithDeviceAndDpi<IDXGISwapChain1, CanvasSwapChain>>,
-    TryCreate<ID2D1CommandList, CanvasCommandList, MakeWrapperWithDevice<ID2D1CommandList, CanvasCommandList>>,
-    TryCreate<IDWriteTextLayout2, CanvasTextLayout, MakeWrapperWithDevice<IDWriteTextLayout2, CanvasTextLayout>>,
-    TryCreate<IDWriteTextFormat, CanvasTextFormat, MakeWrapper<IDWriteTextFormat, CanvasTextFormat>>,
-    TryCreate<ID2D1Geometry, CanvasGeometry, MakeWrapperWithDevice<ID2D1Geometry, CanvasGeometry>>,
-    TryCreate<ID2D1GeometryRealization, CanvasCachedGeometry, MakeWrapperWithDevice<ID2D1GeometryRealization, CanvasCachedGeometry>>,
+    TryCreate<ID2D1Device1,             CanvasDevice,               MakeWrapper>,
+    TryCreate<ID2D1DeviceContext1,      CanvasDrawingSession,       MakeWrapper>,
+    TryCreate<ID2D1Bitmap1,             CanvasRenderTarget,         MakeWrapperWithDevice,  IsRenderTargetBitmap>,
+    TryCreate<ID2D1Bitmap1,             CanvasBitmap,               MakeWrapperWithDevice>,
+    TryCreate<ID2D1CommandList,         CanvasCommandList,          MakeWrapperWithDevice>,
+    TryCreate<IDXGISwapChain1,          CanvasSwapChain,            MakeWrapperWithDeviceAndDpi>,
+    TryCreate<ID2D1Geometry,            CanvasGeometry,             MakeWrapperWithDevice>,
+    TryCreate<ID2D1GeometryRealization, CanvasCachedGeometry,       MakeWrapperWithDevice>,
+    TryCreate<IDWriteTextLayout2,       CanvasTextLayout,           MakeWrapperWithDevice>,
+    TryCreate<IDWriteTextFormat,        CanvasTextFormat,           MakeWrapper>,
+    TryCreate<ID2D1StrokeStyle1,        CanvasStrokeStyle,          MakeWrapper>,
+    TryCreate<ID2D1SolidColorBrush,     CanvasSolidColorBrush,      MakeWrapperWithDevice>,
+    TryCreate<ID2D1LinearGradientBrush, CanvasLinearGradientBrush,  MakeWrapperWithDevice>,
+    TryCreate<ID2D1RadialGradientBrush, CanvasRadialGradientBrush,  MakeWrapperWithDevice>,
+    TryCreate<ID2D1ImageBrush,          CanvasImageBrush,           MakeWrapperWithDevice>,
+    TryCreate<ID2D1BitmapBrush1,        CanvasImageBrush,           MakeWrapperWithDevice>,
 #if WINVER > _WIN32_WINNT_WINBLUE
-    TryCreate<ID2D1GradientMesh, CanvasGradientMesh, MakeWrapperWithDevice<ID2D1GradientMesh, CanvasGradientMesh>>,
+    TryCreate<ID2D1GradientMesh,        CanvasGradientMesh,         MakeWrapperWithDevice>,
 #endif
 };
 
