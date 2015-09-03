@@ -384,7 +384,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                     if (device)
                         ThrowIfFailed(device.CopyTo(value));
                     else
-                        ThrowHR(E_INVALIDARG, HStringReference(Strings::CanvasDeviceGetDeviceWhenNotCreated).Get());
+                        ThrowHR(E_INVALIDARG, Strings::CanvasDeviceGetDeviceWhenNotCreated);
                 });
         }
 

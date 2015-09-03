@@ -1102,7 +1102,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         if (d2dBitmap->GetPixelFormat().format != DXGI_FORMAT_B8G8R8A8_UNORM)
         {
-            ThrowHR(E_INVALIDARG, HStringReference(Strings::PixelColorsFormatRestriction).Get());
+            ThrowHR(E_INVALIDARG, Strings::PixelColorsFormatRestriction);
         }
 
         ScopedBitmapMappedPixelAccess bitmapPixelAccess(d2dBitmap.Get(), D3D11_MAP_READ, &subRectangle);
@@ -1173,7 +1173,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     {
         if (fileFormat == CanvasBitmapFileFormat::Auto)
         {
-            ThrowHR(E_INVALIDARG, HStringReference(Strings::AutoFileFormatNotAllowed).Get());
+            ThrowHR(E_INVALIDARG, Strings::AutoFileFormatNotAllowed);
         }
 
         auto asyncAction = Make<AsyncAction>(
@@ -1264,7 +1264,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         if (d2dBitmap->GetPixelFormat().format != DXGI_FORMAT_B8G8R8A8_UNORM)
         {
-            ThrowHR(E_INVALIDARG, HStringReference(Strings::PixelColorsFormatRestriction).Get());
+            ThrowHR(E_INVALIDARG, Strings::PixelColorsFormatRestriction);
         }
 
         ScopedBitmapMappedPixelAccess bitmapPixelAccess(d2dBitmap.Get(), D3D11_MAP_WRITE, &subRectangle);

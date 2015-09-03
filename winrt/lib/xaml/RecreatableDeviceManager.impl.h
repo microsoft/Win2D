@@ -508,12 +508,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         void TrackAsyncAction(IAsyncAction* action)
         {
-            using ::Microsoft::WRL::Wrappers::HStringReference;
-
             std::unique_lock<std::recursive_mutex> lock(m_currentOperationMutex);
 
             if (m_currentOperation)
-                ThrowHR(E_FAIL, HStringReference(Strings::MultipleAsyncCreateResourcesNotSupported).Get());
+                ThrowHR(E_FAIL, Strings::MultipleAsyncCreateResourcesNotSupported);
 
             auto onCompleted = Callback<IAsyncActionCompletedHandler>(this, &RecreatableDeviceManager::OnAsynchronousCreateResourcesCompleted);
             CheckMakeResult(onCompleted);

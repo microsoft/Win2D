@@ -253,7 +253,7 @@ IFACEMETHODIMP CanvasAnimatedControl::put_TargetElapsedTime(TimeSpan value)
         {
             if (value.Duration <= 0)
             {
-                ThrowHR(E_INVALIDARG, HStringReference(Strings::ExpectedPositiveNonzero).Get());
+                ThrowHR(E_INVALIDARG, Strings::ExpectedPositiveNonzero);
             }
 
             auto lock = Lock(m_sharedStateMutex);

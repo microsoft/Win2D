@@ -167,8 +167,6 @@ CanvasImageSource::CanvasImageSource(
     , m_dpi(dpi)
     , m_alphaMode(alphaMode)
 {
-    using ::Microsoft::WRL::Wrappers::HStringReference;
-
     bool isOpaque;
 
     switch (alphaMode)
@@ -182,7 +180,7 @@ CanvasImageSource::CanvasImageSource(
         break;
 
     default:
-        ThrowHR(E_INVALIDARG, HStringReference(Strings::InvalidAlphaModeForImageSource).Get());
+        ThrowHR(E_INVALIDARG, Strings::InvalidAlphaModeForImageSource);
     }
 
     CreateBaseClass(surfaceImageSourceFactory, isOpaque);

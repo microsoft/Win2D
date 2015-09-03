@@ -140,7 +140,7 @@ IFACEMETHODIMP CanvasVirtualControl::CreateDrawingSession(Rect updateRectangle, 
 
             if (!IsReadyToDraw() || !imageSource)
             {
-                ThrowHR(E_FAIL, HStringReference(Strings::CreateDrawingSessionCalledBeforeRegionsInvalidated).Get());
+                ThrowHR(E_FAIL, Strings::CreateDrawingSessionCalledBeforeRegionsInvalidated);
             }
 
             auto clearColor = GetClearColor();

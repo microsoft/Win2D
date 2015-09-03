@@ -18,8 +18,7 @@ STRING(ImageBrushRequiresSourceRectangle, L"When using image types other than Ca
 STRING(UnrecognizedImageFileExtension, L"When saving a CanvasBitmap without specifying a CanvasBitmapFileFormat, the file name must include a recognized file extension such as '.jpeg' or '.png'.");
 STRING(WrongArrayLength, L"The array was expected to be of size %d; actual array was of size %d.")
 STRING(AutoFileFormatNotAllowed, L"The option CanvasFileFormat.Auto is not allowed when saving to a stream.")
-STRING(CanvasDeviceGetDeviceWhenNotCreated, L"The control does not currently have a CanvasDevice associated with it. "
-    L"Ensure that resources are created from a CreateResources or Draw event handler.");
+STRING(CanvasDeviceGetDeviceWhenNotCreated, L"The control does not currently have a CanvasDevice associated with it. Ensure that resources are created from a CreateResources or Draw event handler.");
 STRING(PixelColorsFormatRestriction, L"This method only supports resources with pixel format DirectXPixelFormat.B8G8R8A8UIntNormalized.")
 STRING(MultipleAsyncCreateResourcesNotSupported, L"Only one asynchronous CreateResources action can be tracked at a time.")
 STRING(ResourceTrackerWrongDevice, L"Existing resource wrapper is associated with a different device.")

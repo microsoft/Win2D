@@ -209,6 +209,6 @@ void CustomFontManager::ValidateUri(WinString const& uriString)
     if (!schemeName.Equals(HStringReference(L"ms-appx").Get()) &&
         !schemeName.Equals(HStringReference(L"ms-appdata").Get()))
     {
-        ThrowHR(E_INVALIDARG, HStringReference(Strings::InvalidFontFamilyUriScheme).Get());
+        ThrowHR(E_INVALIDARG, Strings::InvalidFontFamilyUriScheme);
     }
 }

@@ -153,7 +153,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             [&]
             {
                 if (!m_activeLayerIds.empty())
-                    ThrowHR(E_FAIL, HStringReference(Strings::DidNotPopLayer).Get());
+                    ThrowHR(E_FAIL, Strings::DidNotPopLayer);
 
                 if (m_adapter)
                 {
@@ -587,7 +587,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 return D2D1_COMPOSITE_MODE_PLUS;
                 
             case D2D1_PRIMITIVE_BLEND_MIN:
-                ThrowHR(E_FAIL, HStringReference(Strings::DrawImageMinBlendNotSupported).Get());
+                ThrowHR(E_FAIL, Strings::DrawImageMinBlendNotSupported);
                 
             default:
                 ThrowHR(E_UNEXPECTED);
@@ -3741,7 +3741,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         assert(!m_activeLayerIds.empty());
 
         if (m_activeLayerIds.back() != layerId)
-            ThrowHR(E_FAIL, HStringReference(Strings::PoppedWrongLayer).Get());
+            ThrowHR(E_FAIL, Strings::PoppedWrongLayer);
 
         m_activeLayerIds.pop_back();
 

@@ -80,7 +80,7 @@ IFACEMETHODIMP CanvasPathBuilder::BeginFigureWithFigureFill(
 
             if (m_isInFigure)
             {
-                ThrowHR(E_INVALIDARG, HStringReference(Strings::TwoBeginFigures).Get());
+                ThrowHR(E_INVALIDARG, Strings::TwoBeginFigures);
             }
 
             d2dGeometrySink->BeginFigure(ToD2DPoint(startPoint), static_cast<D2D1_FIGURE_BEGIN>(figureFill));
@@ -268,7 +268,7 @@ IFACEMETHODIMP CanvasPathBuilder::AddGeometry(
 
             if (m_isInFigure)
             {
-                ThrowHR(E_INVALIDARG, HStringReference(Strings::PathBuilderAddGeometryMidFigure).Get());
+                ThrowHR(E_INVALIDARG, Strings::PathBuilderAddGeometryMidFigure);
             }
 
             auto otherD2DPathGeometry = MaybeAs<ID2D1PathGeometry>(otherD2DGeometry);
@@ -309,7 +309,7 @@ IFACEMETHODIMP CanvasPathBuilder::SetFilledRegionDetermination(
 
             if (m_beginFigureOccurred)
             {
-                ThrowHR(E_INVALIDARG, HStringReference(Strings::SetFilledRegionDeterminationAfterBeginFigure).Get());
+                ThrowHR(E_INVALIDARG, Strings::SetFilledRegionDeterminationAfterBeginFigure);
             }
 
             d2dGeometrySink->SetFillMode(static_cast<D2D1_FILL_MODE>(filledRegionDetermination));
@@ -326,7 +326,7 @@ IFACEMETHODIMP CanvasPathBuilder::EndFigure(
 
             if (!m_isInFigure)
             {
-                ThrowHR(E_INVALIDARG, HStringReference(Strings::EndFigureWithoutBeginFigure).Get());
+                ThrowHR(E_INVALIDARG, Strings::EndFigureWithoutBeginFigure);
             }
 
             d2dGeometrySink->EndFigure(static_cast<D2D1_FIGURE_END>(figureLoop));
@@ -359,7 +359,7 @@ ComPtr<ID2D1PathGeometry1> CanvasPathBuilder::CloseAndReturnPath()
 
     if (m_isInFigure)
     {
-        ThrowHR(E_INVALIDARG, HStringReference(Strings::PathBuilderClosedMidFigure).Get());
+        ThrowHR(E_INVALIDARG, Strings::PathBuilderClosedMidFigure);
     }
 
     ThrowIfFailed(Close());
@@ -371,7 +371,7 @@ void CanvasPathBuilder::ValidateIsInFigure()
 {
     if (!m_isInFigure)
     {
-        ThrowHR(E_INVALIDARG, HStringReference(Strings::CanOnlyAddPathDataWhileInFigure).Get());
+        ThrowHR(E_INVALIDARG, Strings::CanOnlyAddPathDataWhileInFigure);
     }
 }
 

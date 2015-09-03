@@ -64,7 +64,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 CheckAndClearOutPointer(drawingSession);
 
                 if (m_d2dCommandListIsClosed)
-                    ThrowHR(E_INVALIDARG, HStringReference(Strings::CommandListCannotBeDrawnToAfterItHasBeenUsed).Get());
+                    ThrowHR(E_INVALIDARG, Strings::CommandListCannotBeDrawnToAfterItHasBeenUsed);
 
                 auto& d2dCommandList = GetResource();
                 auto& device = m_device.EnsureNotClosed();

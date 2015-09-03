@@ -145,7 +145,7 @@ void CanvasVirtualImageSourceFactory::Create(
         break;
 
     default:
-        ThrowHR(E_INVALIDARG, HStringReference(Strings::InvalidAlphaModeForImageSource).Get());
+        ThrowHR(E_INVALIDARG, Strings::InvalidAlphaModeForImageSource);
     }
 
     ComPtr<IVirtualSurfaceImageSource> vsis;

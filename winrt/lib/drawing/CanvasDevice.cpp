@@ -598,7 +598,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             {
                 if (SUCCEEDED(GetDeviceRemovedErrorCode())) // Also ensures that Close() hasn't been called
                 {
-                    ThrowHR(E_INVALIDARG, HStringReference(Strings::DeviceExpectedToBeLost).Get());
+                    ThrowHR(E_INVALIDARG, Strings::DeviceExpectedToBeLost);
                 }
 
                 ThrowIfFailed(m_deviceLostEventList.InvokeAll(this, nullptr));

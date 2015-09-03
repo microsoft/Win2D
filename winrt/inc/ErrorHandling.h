@@ -101,6 +101,14 @@ inline void ThrowHR(HRESULT hr, HSTRING message)
     ThrowHR(hr);
 }
 
+__declspec(noreturn) __declspec(noinline)
+inline void ThrowHR(HRESULT hr, wchar_t const* message)
+{
+    using ::Microsoft::WRL::Wrappers::HStringReference;
+
+    ThrowHR(hr, HStringReference(message).Get());
+}
+
 //
 // Throws if the HR fails.  This is the workhorse helper for converting calls to
 // functions that return HRESULTs to exceptions. eg:

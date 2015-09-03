@@ -55,7 +55,7 @@ IFACEMETHODIMP CanvasCreateResourcesEventArgs::TrackAsyncAction(IAsyncAction* ac
 
             if (m_trackedAction)
             {
-                ThrowHR(E_FAIL, HStringReference(Strings::MultipleAsyncCreateResourcesNotSupported).Get());
+                ThrowHR(E_FAIL, Strings::MultipleAsyncCreateResourcesNotSupported);
             }
 
             m_trackedAction = action;

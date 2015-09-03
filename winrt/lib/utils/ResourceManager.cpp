@@ -84,7 +84,7 @@ static void ValidateDevice(IInspectable* wrapper, ICanvasDevice* device)
 
             if (device != wrapperDevice.Get())
             {
-                ThrowHR(E_INVALIDARG, HStringReference(Strings::ResourceTrackerWrongDevice).Get());
+                ThrowHR(E_INVALIDARG, Strings::ResourceTrackerWrongDevice);
             }
         }
     }
@@ -107,7 +107,7 @@ static void ValidateDpi(IInspectable* wrapper, float dpi)
 
             if (dpi != wrapperDpi)
             {
-                ThrowHR(E_INVALIDARG, HStringReference(Strings::ResourceTrackerWrongDpi).Get());
+                ThrowHR(E_INVALIDARG, Strings::ResourceTrackerWrongDpi);
             }
         }
     }

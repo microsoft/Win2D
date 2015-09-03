@@ -390,7 +390,7 @@ ComPtr<ID2D1Brush> CanvasImageBrush::GetD2DBrush(ID2D1DeviceContext* deviceConte
         {
             if (!m_isSourceRectSet)
             {
-                ThrowHR(E_INVALIDARG, HStringReference(Strings::ImageBrushRequiresSourceRectangle).Get());
+                ThrowHR(E_INVALIDARG, Strings::ImageBrushRequiresSourceRectangle);
             }
         }
 
