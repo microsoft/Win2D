@@ -38,10 +38,9 @@ IFACEMETHODIMP CanvasImageBrushFactory::CreateWithImage(
             ThrowIfFailed(resourceAllocator->get_Device(&device));
 
             auto newImageBrush = Make<CanvasImageBrush>(
-                device.Get());
+                device.Get(),
+                image);
             CheckMakeResult(newImageBrush);
-
-            newImageBrush->SetImage(image);
 
             ThrowIfFailed(newImageBrush.CopyTo(canvasImageBrush));
         });
@@ -80,6 +79,14 @@ CanvasImageBrush::CanvasImageBrush(
     ID2D1ImageBrush* imageBrush)
     : CanvasImageBrush(device, nullptr, imageBrush)
 {
+}
+
+CanvasImageBrush::CanvasImageBrush(
+    ICanvasDevice* device,
+    ICanvasImage* image)
+    : CanvasImageBrush(device)
+{
+    SetImage(image);
 }
 
 void CanvasImageBrush::SetImage(ICanvasImage* image)
@@ -190,7 +197,7 @@ ComPtr<ID2D1Bitmap1> CanvasImageBrush::GetD2DBitmap() const
 IFACEMETHODIMP CanvasImageBrush::put_Image(ICanvasImage* value)
 {
     return ExceptionBoundary(
-        [&]()
+        [&]
         {
             ThrowIfClosed();
 

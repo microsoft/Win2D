@@ -63,6 +63,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             ICanvasDevice* device,
             ID2D1ImageBrush* imageBrush);
 
+        CanvasImageBrush(
+            ICanvasDevice* device,
+            ICanvasImage* image);
+
         IFACEMETHOD(get_Image)(ICanvasImage** value) override;
 
         IFACEMETHOD(put_Image)(ICanvasImage* value) override;
@@ -92,11 +96,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         // ICanvasResourceWrapperNative
         IFACEMETHOD(GetResource)(REFIID iid, void** resource) override;
 
-        // non-interface methods
-        void SetImage(ICanvasImage* image);
-
     private:
         void ThrowIfClosed();
+        void SetImage(ICanvasImage* image);
         void SwitchFromBitmapBrushToImageBrush();
         void TrySwitchFromImageBrushToBitmapBrush();
         ComPtr<ID2D1Bitmap1> GetD2DBitmap() const;

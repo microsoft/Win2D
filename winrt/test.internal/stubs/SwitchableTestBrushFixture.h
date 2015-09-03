@@ -113,8 +113,7 @@ namespace canvas
                 canvasBitmap = CreateStubCanvasBitmap();
             }
 
-            m_canvasImageBrush = Make<CanvasImageBrush>(m_canvasDevice.Get());
-            m_canvasImageBrush->SetImage(canvasBitmap.Get());
+            m_canvasImageBrush = Make<CanvasImageBrush>(m_canvasDevice.Get(), canvasBitmap.Get());
             ThrowIfFailed(m_canvasImageBrush.As(&m_canvasBrushInternal));
         }
     };

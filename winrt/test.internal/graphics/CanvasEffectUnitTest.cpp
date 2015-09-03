@@ -650,7 +650,7 @@ public:
 
         ThrowIfFailed(testEffect->put_Source(testBitmap.Get()));
 
-        f.m_canvasImageBrush->SetImage(testEffect.Get());
+        ThrowIfFailed(f.m_canvasImageBrush->put_Image(testEffect.Get()));
 
         auto sourceRectangle = Make<Nullable<Rect>>(Rect{ 0, 0, 1, 1 });
         ThrowIfFailed(f.m_canvasImageBrush->put_SourceRectangle(sourceRectangle.Get()));
