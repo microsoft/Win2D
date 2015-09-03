@@ -85,22 +85,4 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 });
         }
     };
-
-
-    // TODO interop: add tests to validate that these interfaces are implemented by the right set of types
-    [uuid(D8CF19FE-8064-423E-B649-8B458BA86116)]
-    class ICanvasResourceWrapperWithDevice : public IUnknown
-    {
-    public:
-        IFACEMETHOD(get_Device)(ICanvasDevice** value) = 0;
-    };
-
-
-    [uuid(D4142C4E-024D-45C3-85D1-B058314D9204)]
-    class ICanvasResourceWrapperWithDpi : public IUnknown
-    {
-    public:
-        IFACEMETHOD(get_Dpi)(float* value) = 0;
-    };
-
 }}}}

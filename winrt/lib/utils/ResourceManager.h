@@ -6,6 +6,22 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
+    [uuid(D8CF19FE-8064-423E-B649-8B458BA86116)]
+    class ICanvasResourceWrapperWithDevice : public IUnknown
+    {
+    public:
+        IFACEMETHOD(get_Device)(ICanvasDevice** value) = 0;
+    };
+
+
+    [uuid(D4142C4E-024D-45C3-85D1-B058314D9204)]
+    class ICanvasResourceWrapperWithDpi : public IUnknown
+    {
+    public:
+        IFACEMETHOD(get_Dpi)(float* value) = 0;
+    };
+
+
     class ResourceManager
     {
     public:
@@ -97,6 +113,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             {
                 UNREFERENCED_PARAMETER(dpi);
 
+                static_assert(std::is_base_of<ICanvasResourceWrapperWithDevice, TWrapper>::value, "Types constructed from a device should implement ICanvasResourceWrapperWithDevice");
+
                 return ::Microsoft::WRL::Make<TWrapper>(device, resource);
             }
         };
@@ -108,6 +126,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             template<typename TResource, typename TWrapper>
             static ComPtr<TWrapper> Make(ICanvasDevice* device, TResource* resource, float dpi)
             {
+                static_assert(std::is_base_of<ICanvasResourceWrapperWithDevice, TWrapper>::value, "Types constructed from a device should implement ICanvasResourceWrapperWithDevice");
+                static_assert(std::is_base_of<ICanvasResourceWrapperWithDpi,    TWrapper>::value, "Types constructed with a dpi should implement ICanvasResourceWrapperWithDpi");
+
                 return ::Microsoft::WRL::Make<TWrapper>(device, resource, dpi);
             }
         };
