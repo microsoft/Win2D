@@ -420,16 +420,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         , m_forceSoftwareRenderer(forceSoftwareRenderer)
         , m_dxgiDevice(dxgiDevice)
         , m_sharedState(SharedDeviceState::GetInstance())
+        , m_deviceContextPool(d2dDevice)
     {
         if (!dxgiDevice)
         {
             auto dxgiDeviceFromD2DDevice = m_sharedState->GetAdapter()->GetDxgiDevice(d2dDevice);
             m_dxgiDevice = dxgiDevice = dxgiDeviceFromD2DDevice.Get();
         }
-
-        ThrowIfFailed(d2dDevice->CreateDeviceContext(
-            D2D1_DEVICE_CONTEXT_OPTIONS_NONE,
-            &m_d2dResourceCreationDeviceContext));
 
         InitializePrimaryOutput(dxgiDevice);
     }
@@ -533,8 +530,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             [&]
             {
                 CheckInPointer(value);
-
-                auto& deviceContext = m_d2dResourceCreationDeviceContext.EnsureNotClosed();
+                
+                auto deviceContext = GetResourceCreationDeviceContext();
                 UINT32 maximumBitmapSize = deviceContext->GetMaximumBitmapSize();
 
                 assert(maximumBitmapSize <= INT_MAX);
@@ -610,15 +607,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     IFACEMETHODIMP CanvasDevice::Close()
     {
-        HRESULT hr = ResourceWrapper::Close();
-        if (FAILED(hr))
-            return hr;
-        
-        m_dxgiDevice.Close();
-        m_d2dResourceCreationDeviceContext.Close();
-        m_primaryOutput.Reset();
+        return ExceptionBoundary(
+            [&]
+            {
+                m_deviceContextPool.Close();
+                ThrowIfFailed(this->ResourceWrapper::Close()); // 'this->' is workaround for VS2013 calling with bad 'this' pointer
 
-        return S_OK;
+                m_dxgiDevice.Close();
+                m_primaryOutput.Reset();
+            });
     }
 
     ComPtr<ID2D1Device1> CanvasDevice::GetD2DDevice()
@@ -635,9 +632,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     ComPtr<ID2D1SolidColorBrush> CanvasDevice::CreateSolidColorBrush(D2D1_COLOR_F const& color)
     {
-        // TODO #802: this isn't very threadsafe - we should really have a different
-        // resource creation context per-thread.
-        auto deviceContext = m_d2dResourceCreationDeviceContext.EnsureNotClosed();
+        auto deviceContext = GetResourceCreationDeviceContext();
 
         ComPtr<ID2D1SolidColorBrush> brush;
         ThrowIfFailed(deviceContext->CreateSolidColorBrush(color, &brush));
@@ -650,7 +645,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         float dpi,
         CanvasAlphaMode alpha)
     {
-        auto deviceContext = m_d2dResourceCreationDeviceContext.EnsureNotClosed();
+        auto deviceContext = GetResourceCreationDeviceContext();
 
         D2D1_BITMAP_PROPERTIES1 bitmapProperties = D2D1::BitmapProperties1();
         bitmapProperties.pixelFormat.alphaMode = ToD2DAlphaMode(alpha);
@@ -671,7 +666,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         DirectXPixelFormat format,
         CanvasAlphaMode alphaMode)
     {
-        auto deviceContext = m_d2dResourceCreationDeviceContext.EnsureNotClosed();
+        auto deviceContext = GetResourceCreationDeviceContext();
 
         D2D1_BITMAP_PROPERTIES1 bitmapProperties = D2D1::BitmapProperties1();
         bitmapProperties.pixelFormat.alphaMode = ToD2DAlphaMode(alphaMode);
@@ -697,7 +692,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         float dpi,
         CanvasAlphaMode alphaMode)
     {        
-        auto deviceContext = m_d2dResourceCreationDeviceContext.EnsureNotClosed();
+        auto deviceContext = GetResourceCreationDeviceContext();
 
         auto dxgiSurface = GetDXGIInterface<IDXGISurface2>(surface);
 
@@ -751,7 +746,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         DirectXPixelFormat format,
         CanvasAlphaMode alpha)
     {
-        auto deviceContext = m_d2dResourceCreationDeviceContext.EnsureNotClosed();
+        auto deviceContext = GetResourceCreationDeviceContext();
 
         ComPtr<ID2D1Bitmap1> bitmap;
         D2D1_BITMAP_PROPERTIES1 bitmapProperties = D2D1::BitmapProperties1();
@@ -787,7 +782,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     ComPtr<ID2D1BitmapBrush1> CanvasDevice::CreateBitmapBrush(ID2D1Bitmap1* bitmap)
     {
-        auto deviceContext = m_d2dResourceCreationDeviceContext.EnsureNotClosed();
+        auto deviceContext = GetResourceCreationDeviceContext();
 
         ComPtr<ID2D1BitmapBrush1> bitmapBrush;
         ThrowIfFailed(deviceContext->CreateBitmapBrush(bitmap, &bitmapBrush));
@@ -797,7 +792,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     ComPtr<ID2D1ImageBrush> CanvasDevice::CreateImageBrush(ID2D1Image* image)
     {
-        auto deviceContext = m_d2dResourceCreationDeviceContext.EnsureNotClosed();
+        auto deviceContext = GetResourceCreationDeviceContext();
 
         ComPtr<ID2D1ImageBrush> imageBrush;
         ThrowIfFailed(deviceContext->CreateImageBrush(image, D2D1::ImageBrushProperties(D2D1::RectF()), &imageBrush));
@@ -810,7 +805,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ComPtr<ICanvasImageInternal> imageInternal;
         ThrowIfFailed(canvasImage->QueryInterface(imageInternal.GetAddressOf()));
 
-        auto deviceContext = m_d2dResourceCreationDeviceContext.EnsureNotClosed();
+        auto deviceContext = GetResourceCreationDeviceContext();
         return imageInternal->GetD2DImage(deviceContext.Get());
     }
 
@@ -848,7 +843,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         CanvasBufferPrecision bufferPrecision,
         CanvasAlphaMode alphaMode)
     {
-        auto deviceContext = m_d2dResourceCreationDeviceContext.EnsureNotClosed();
+        auto deviceContext = GetResourceCreationDeviceContext();
 
         std::vector<D2D1_GRADIENT_STOP> d2dGradientStops;
         d2dGradientStops.resize(gradientStopCount);
@@ -875,7 +870,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     ComPtr<ID2D1LinearGradientBrush> CanvasDevice::CreateLinearGradientBrush(
         ID2D1GradientStopCollection1* stopCollection)
     {
-        auto deviceContext = m_d2dResourceCreationDeviceContext.EnsureNotClosed();
+        auto deviceContext = GetResourceCreationDeviceContext();
 
         D2D1_LINEAR_GRADIENT_BRUSH_PROPERTIES linearGradientBrushProperties = D2D1::LinearGradientBrushProperties(
             D2D1::Point2F(),
@@ -894,7 +889,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     ComPtr<ID2D1RadialGradientBrush> CanvasDevice::CreateRadialGradientBrush(
         ID2D1GradientStopCollection1* stopCollection)
     {
-        auto deviceContext = m_d2dResourceCreationDeviceContext.EnsureNotClosed();
+        auto deviceContext = GetResourceCreationDeviceContext();
 
         D2D1_RADIAL_GRADIENT_BRUSH_PROPERTIES radialGradientBrushProperties = D2D1::RadialGradientBrushProperties(
             D2D1::Point2F(),
@@ -996,7 +991,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     ComPtr<ID2D1CommandList> CanvasDevice::CreateCommandList()
     {
-        auto deviceContext = m_d2dResourceCreationDeviceContext.EnsureNotClosed();
+        auto deviceContext = GetResourceCreationDeviceContext();
 
         ComPtr<ID2D1CommandList> cl;
         ThrowIfFailed(deviceContext->CreateCommandList(&cl));
@@ -1066,7 +1061,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     ComPtr<ID2D1GeometryRealization> CanvasDevice::CreateFilledGeometryRealization(ID2D1Geometry* geometry, float flatteningTolerance)
     {
-        auto deviceContext = m_d2dResourceCreationDeviceContext.EnsureNotClosed();
+        auto deviceContext = GetResourceCreationDeviceContext();
 
         ComPtr<ID2D1GeometryRealization> geometryRealization;
         ThrowIfFailed(deviceContext->CreateFilledGeometryRealization(geometry, flatteningTolerance, &geometryRealization));
@@ -1080,7 +1075,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ID2D1StrokeStyle* strokeStyle,
         float flatteningTolerance)
     {
-        auto deviceContext = m_d2dResourceCreationDeviceContext.EnsureNotClosed();
+        auto deviceContext = GetResourceCreationDeviceContext();
 
         ComPtr<ID2D1GeometryRealization> geometryRealization;
         ThrowIfFailed(deviceContext->CreateStrokedGeometryRealization(
@@ -1093,11 +1088,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return geometryRealization;
     }
 
-    ComPtr<ID2D1DeviceContext1> CanvasDevice::GetResourceCreationDeviceContext()
+    DeviceContextLease CanvasDevice::GetResourceCreationDeviceContext()
     {
-        auto deviceContext = m_d2dResourceCreationDeviceContext.EnsureNotClosed();
-
-        return deviceContext;
+        return m_deviceContextPool.TakeLease();
     }
 
     void CanvasDevice::InitializePrimaryOutput(IDXGIDevice3* dxgiDevice)
@@ -1146,9 +1139,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         D2D1_GRADIENT_MESH_PATCH const* patches,
         uint32_t patchCount)
     {
-        auto& deviceContext = m_d2dResourceCreationDeviceContext.EnsureNotClosed();
+        auto deviceContext = GetResourceCreationDeviceContext();
 
-        auto deviceContext2 = As<ID2D1DeviceContext2>(deviceContext);
+        auto deviceContext2 = As<ID2D1DeviceContext2>(deviceContext.Get());
 
         ComPtr<ID2D1GradientMesh> gradientMesh;
 

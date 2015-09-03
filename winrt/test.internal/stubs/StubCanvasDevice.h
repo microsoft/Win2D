@@ -19,11 +19,13 @@ namespace canvas
         ComPtr<ID2D1Device1> m_d2DDevice;
         ComPtr<MockD3D11Device> m_d3dDevice;
         ComPtr<MockEventSource<DeviceLostHandlerType>> m_deviceLostEventSource;
-
+        DeviceContextPool m_deviceContextPool;
+        
     public:
         StubCanvasDevice(ComPtr<ID2D1Device1> device = Make<StubD2DDevice>())
             : m_d2DDevice(device)
             , m_deviceLostEventSource(Make<MockEventSource<DeviceLostHandlerType>>(L"DeviceLost"))
+            , m_deviceContextPool(m_d2DDevice.Get())
         {
             GetInterfaceMethod.AllowAnyCall();
             
@@ -56,9 +58,7 @@ namespace canvas
             GetResourceCreationDeviceContextMethod.AllowAnyCall(
                 [=]
                 {
-                    ComPtr<ID2D1DeviceContext1> dc;
-                    ThrowIfFailed(m_d2DDevice->CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS_NONE, &dc));
-                    return dc;
+                    return m_deviceContextPool.TakeLease();
                 });
 
             GetPrimaryDisplayOutputMethod.AllowAnyCall(

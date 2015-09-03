@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="effects">
@@ -89,6 +89,9 @@
       <Filter>drawing</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)drawing\CanvasSwapChain.cpp">
+      <Filter>drawing</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)drawing\DeviceContextPool.cpp">
       <Filter>drawing</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\CanvasEffect.cpp">
@@ -389,6 +392,9 @@
       <Filter>drawing</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)drawing\CanvasSwapChain.h">
+      <Filter>drawing</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)drawing\DeviceContextPool.h">
       <Filter>drawing</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\CanvasEffect.h">

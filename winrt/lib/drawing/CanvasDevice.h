@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include "DeviceContextPool.h"
+
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
     using namespace ::Microsoft::WRL;
@@ -156,7 +158,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ID2D1StrokeStyle* strokeStyle,
             float flatteningTolerance) = 0;
 
-        virtual ComPtr<ID2D1DeviceContext1> GetResourceCreationDeviceContext() = 0;
+        virtual DeviceContextLease GetResourceCreationDeviceContext() = 0;
 
         virtual ComPtr<IDXGIOutput> GetPrimaryDisplayOutput() = 0;
 
@@ -187,8 +189,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         bool m_forceSoftwareRenderer; 
         
         ClosablePtr<IDXGIDevice3> m_dxgiDevice;
-        ClosablePtr<ID2D1DeviceContext1> m_d2dResourceCreationDeviceContext;
-
+        
         // Null-versus-non-null is not necessarily tied to whether the 
         // device object is open or closed.
         ComPtr<IDXGIOutput> m_primaryOutput;
@@ -197,6 +198,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         // Backreference keeps the shared device state alive as long as any device exists.
         std::shared_ptr<SharedDeviceState> m_sharedState;
+
+        DeviceContextPool m_deviceContextPool;
 
     public:
         static ComPtr<CanvasDevice> CreateNew(bool forceSoftwareRenderer);
@@ -323,7 +326,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ID2D1StrokeStyle* strokeStyle,
             float flatteningTolerance) override;
 
-        virtual ComPtr<ID2D1DeviceContext1> GetResourceCreationDeviceContext() override;
+        virtual DeviceContextLease GetResourceCreationDeviceContext() override final;
 
         virtual ComPtr<IDXGIOutput> GetPrimaryDisplayOutput() override;
 

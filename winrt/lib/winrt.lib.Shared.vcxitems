@@ -46,6 +46,7 @@
   </Target>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)drawing\CanvasActiveLayer.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)drawing\DeviceContextPool.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\ChromaKeyEffect.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\ContrastEffect.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\EdgeDetectionEffect.h" />
@@ -199,6 +200,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)drawing\CanvasGradientMesh.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)drawing\CanvasStrokeStyle.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)drawing\CanvasSwapChain.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)drawing\DeviceContextPool.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\CanvasEffect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\CustomizedEffectProperties.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\ArithmeticCompositeEffect.cpp" />

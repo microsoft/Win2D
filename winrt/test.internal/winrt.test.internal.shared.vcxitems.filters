@@ -94,6 +94,9 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasTextFormatTests.cpp">
       <Filter>graphics</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)graphics\DeviceContextPoolUnitTests.cpp">
+      <Filter>graphics</Filter>
+    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)stubs\StubD2DResources.cpp">
       <Filter>stubs</Filter>
     </ClCompile>

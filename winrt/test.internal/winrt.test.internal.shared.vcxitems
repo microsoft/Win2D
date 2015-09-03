@@ -148,6 +148,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasSwapChainUnitTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasTextFormatTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasTextLayoutTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)graphics\DeviceContextPoolUnitTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)graphics\PolymorphicBitmapInteropUnitTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)stubs\StubD2DResources.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)utils\AsyncOperationTests.cpp" />

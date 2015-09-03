@@ -29,6 +29,7 @@
 #include <mutex>
 #include <queue>
 #include <set>
+#include <thread>
 #include <type_traits>
 #include <unordered_map>
 #include <vector>

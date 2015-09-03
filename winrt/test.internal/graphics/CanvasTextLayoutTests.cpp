@@ -40,7 +40,7 @@ namespace canvas
                 Device->GetResourceCreationDeviceContextMethod.AllowAnyCall(
                     [=]
                     {
-                        return DeviceContext; 
+                        return DeviceContextLease(DeviceContext);
                     });
 
                 Device->MockCreateBitmapBrush =
