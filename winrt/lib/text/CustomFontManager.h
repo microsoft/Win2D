@@ -31,11 +31,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
     class CustomFontManager : public Singleton<CustomFontManager>
     {
+        std::shared_ptr<CustomFontManagerAdapter> m_adapter;
+        ComPtr<IUriRuntimeClassFactory> m_uriFactory;
+
+        std::mutex m_mutex;
         ComPtr<IDWriteFactory> m_isolatedFactory;
         ComPtr<IDWriteFactory> m_sharedFactory;
-        ComPtr<IUriRuntimeClassFactory> m_uriFactory;
         ComPtr<IDWriteFontCollectionLoader> m_customLoader;
-        std::shared_ptr<CustomFontManagerAdapter> m_adapter;
 
     public:
         CustomFontManager();

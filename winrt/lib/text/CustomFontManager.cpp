@@ -171,6 +171,8 @@ ComPtr<IDWriteFontCollection> CustomFontManager::GetFontCollectionFromUri(WinStr
 
 ComPtr<IDWriteFactory> const& CustomFontManager::GetIsolatedFactory()
 {
+    Lock lock(m_mutex);
+    
     if (!m_isolatedFactory)
     {
         m_isolatedFactory = m_adapter->CreateDWriteFactory(DWRITE_FACTORY_TYPE_ISOLATED);
@@ -183,6 +185,8 @@ ComPtr<IDWriteFactory> const& CustomFontManager::GetIsolatedFactory()
 
 ComPtr<IDWriteFactory> const& CustomFontManager::GetSharedFactory()
 {
+    Lock lock(m_mutex);
+    
     if (!m_sharedFactory)
     {
         m_sharedFactory = m_adapter->CreateDWriteFactory(DWRITE_FACTORY_TYPE_SHARED);
