@@ -115,6 +115,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
                 static_assert(std::is_base_of<ICanvasResourceWrapperWithDevice, TWrapper>::value, "Types constructed from a device should implement ICanvasResourceWrapperWithDevice");
 
+                if (!device)
+                    ThrowHR(E_INVALIDARG, Strings::ResourceManagerNoDevice);
+
                 return ::Microsoft::WRL::Make<TWrapper>(device, resource);
             }
         };
@@ -128,6 +131,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             {
                 static_assert(std::is_base_of<ICanvasResourceWrapperWithDevice, TWrapper>::value, "Types constructed from a device should implement ICanvasResourceWrapperWithDevice");
                 static_assert(std::is_base_of<ICanvasResourceWrapperWithDpi,    TWrapper>::value, "Types constructed with a dpi should implement ICanvasResourceWrapperWithDpi");
+                
+                if (!device)
+                    ThrowHR(E_INVALIDARG, Strings::ResourceManagerNoDevice);
+
+                if (dpi <= 0)
+                    ThrowHR(E_INVALIDARG, Strings::ResourceManagerNoDpi);
 
                 return ::Microsoft::WRL::Make<TWrapper>(device, resource, dpi);
             }

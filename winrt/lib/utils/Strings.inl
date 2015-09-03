@@ -21,8 +21,11 @@ STRING(AutoFileFormatNotAllowed, L"The option CanvasFileFormat.Auto is not allow
 STRING(CanvasDeviceGetDeviceWhenNotCreated, L"The control does not currently have a CanvasDevice associated with it. Ensure that resources are created from a CreateResources or Draw event handler.");
 STRING(PixelColorsFormatRestriction, L"This method only supports resources with pixel format DirectXPixelFormat.B8G8R8A8UIntNormalized.")
 STRING(MultipleAsyncCreateResourcesNotSupported, L"Only one asynchronous CreateResources action can be tracked at a time.")
-STRING(ResourceTrackerWrongDevice, L"Existing resource wrapper is associated with a different device.")
-STRING(ResourceTrackerWrongDpi, L"Existing resource wrapper has a different DPI.")
+STRING(ResourceManagerNoDevice, L"To wrap this resource type, a device parameter must be passed to GetOrCreate.")
+STRING(ResourceManagerNoDpi, L"To wrap this resource type, a dpi parameter must be passed to GetOrCreate.")
+STRING(ResourceManagerUnknownType, L"Unsupported type. Win2D is not able to wrap the specified resource.")
+STRING(ResourceManagerWrongDevice, L"Existing resource wrapper is associated with a different device.")
+STRING(ResourceManagerWrongDpi, L"Existing resource wrapper has a different DPI.")
 STRING(CommandListCannotBeDrawnToAfterItHasBeenUsed, L"CanvasCommandList.CreateDrawingSession cannot be called after the CanvasCommandList has been used as an image.")
 STRING(ExpectedPositiveNonzero, L"A positive, non-zero number was expected for this method.")
 STRING(DrawImageMinBlendNotSupported, L"This DrawImage overload is not valid when CanvasDrawingSession.Blend is set to CanvasBlend.Min.")

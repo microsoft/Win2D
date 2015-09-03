@@ -11,9 +11,11 @@ namespace
     {
     };
 
+
     class DummyResource : public RuntimeClass<RuntimeClassFlags<ClassicCom>, IDummyResource>
     {
     };
+
 
     [uuid(B7E157E0-99C7-463B-8DDC-F72B10221FEC)]
     class IDummyWrapper : public IInspectable
@@ -22,19 +24,44 @@ namespace
         virtual int GetId() = 0;
     };
 
+
     class DummyWrapper : RESOURCE_WRAPPER_RUNTIME_CLASS(
+        IDummyResource,
+        DummyWrapper,
+        IDummyWrapper)
+    {
+        InspectableClass(L"DummyWrapper", BaseTrust);
+
+        int m_id;
+
+    public:
+        DummyWrapper(IDummyResource* resource)
+            : ResourceWrapper(resource)
+        {
+            static int nextId = 1;
+            m_id = nextId++;
+        }
+
+        virtual int GetId() override
+        {
+            return m_id;
+        }
+    };
+
+
+    class DummyWrapperWithDevice : RESOURCE_WRAPPER_RUNTIME_CLASS(
         IDummyResource,
         DummyWrapper,
         IDummyWrapper,
         ICanvasResourceWrapperWithDevice)
     {
-        InspectableClass(L"DummyWrapper", BaseTrust);
+        InspectableClass(L"DummyWrapperWithDevice", BaseTrust);
 
         int m_id;
         ComPtr<ICanvasDevice> m_device;
 
     public:
-        DummyWrapper(ICanvasDevice* device, IDummyResource* resource)
+        DummyWrapperWithDevice(ICanvasDevice* device, IDummyResource* resource)
             : ResourceWrapper(resource)
             , m_device(device)
         {
@@ -42,20 +69,55 @@ namespace
             m_id = nextId++;
         }
 
-        virtual ~DummyWrapper()
-        {
-            Close();
-        }
-
         virtual int GetId() override
         {
-            GetResource();      // throws if closed
             return m_id;
         }
 
         IFACEMETHODIMP get_Device(ICanvasDevice** device) override
         {
             return m_device.CopyTo(device);
+        }
+    };
+
+
+    class DummyWrapperWithDeviceAndDpi : RESOURCE_WRAPPER_RUNTIME_CLASS(
+        IDummyResource,
+        DummyWrapper,
+        IDummyWrapper,
+        ICanvasResourceWrapperWithDevice,
+        ICanvasResourceWrapperWithDpi)
+    {
+        InspectableClass(L"DummyWrapperWithDeviceAndDpi", BaseTrust);
+
+        int m_id;
+        ComPtr<ICanvasDevice> m_device;
+        float m_dpi;
+
+    public:
+        DummyWrapperWithDeviceAndDpi(ICanvasDevice* device, IDummyResource* resource, float dpi)
+            : ResourceWrapper(resource)
+            , m_device(device)
+            , m_dpi(dpi)
+        {
+            static int nextId = 1;
+            m_id = nextId++;
+        }
+
+        virtual int GetId() override
+        {
+            return m_id;
+        }
+
+        IFACEMETHODIMP get_Device(ICanvasDevice** device) override
+        {
+            return m_device.CopyTo(device);
+        }
+
+        IFACEMETHODIMP get_Dpi(float* dpi) override
+        {
+            *dpi = m_dpi;
+            return S_OK;
         }
     };
 }
@@ -73,7 +135,7 @@ TEST_CLASS(ResourceManagerUnitTests)
     TEST_METHOD_EX(ResourceManager_Exercise)
     {
         // Tell ResourceManager about our DummyResource/DummyWrapper test types.
-        auto tryCreateDummyResource = ResourceManager::TryCreate<IDummyResource, DummyWrapper, ResourceManager::MakeWrapperWithDevice>;
+        auto tryCreateDummyResource = ResourceManager::TryCreate<IDummyResource, DummyWrapper, ResourceManager::MakeWrapper>;
         ResourceManager::RegisterType(tryCreateDummyResource);
         auto restoreTypeTable = MakeScopeWarden([&] { ResourceManager::UnregisterType(tryCreateDummyResource); });
 
@@ -84,7 +146,7 @@ TEST_CLASS(ResourceManagerUnitTests)
         for (int i=0; i<5; ++i)
         {
             auto resource = Make<DummyResource>();
-            auto wrapper = Make<DummyWrapper>(nullptr, resource.Get());
+            auto wrapper = Make<DummyWrapper>(resource.Get());
 
             resources.push_back(resource);
             wrappers.push_back(wrapper);
@@ -111,12 +173,12 @@ TEST_CLASS(ResourceManagerUnitTests)
     TEST_METHOD_EX(ResourceManager_Close_Reused_Resource)
     {
         // Tell ResourceManager about our DummyResource/DummyWrapper test types.
-        auto tryCreateDummyResource = ResourceManager::TryCreate<IDummyResource, DummyWrapper, ResourceManager::MakeWrapperWithDevice>;
+        auto tryCreateDummyResource = ResourceManager::TryCreate<IDummyResource, DummyWrapper, ResourceManager::MakeWrapper>;
         ResourceManager::RegisterType(tryCreateDummyResource);
         auto restoreTypeTable = MakeScopeWarden([&] { ResourceManager::UnregisterType(tryCreateDummyResource); });
 
         auto resource = Make<DummyResource>();
-        auto wrapper = Make<DummyWrapper>(nullptr, resource.Get());
+        auto wrapper = Make<DummyWrapper>(resource.Get());
 
         // Closing a wrapper should disassociate it with the resource, so
         // GetOrCreate should create a new wrapper.
@@ -133,25 +195,201 @@ TEST_CLASS(ResourceManagerUnitTests)
         Assert::AreNotEqual(wrapperInspectable.Get(), otherWrapperInspectable.Get());
     }
 
-    TEST_METHOD_EX(ResourceManager_GetOrCreate_WithMatchingDevice_Succeeds)
+    TEST_METHOD_EX(ResourceManager_GetOrCreate_DummyWrapper_PassUnwantedDeviceAndDpi_Succeeds)
     {
+        auto tryCreateDummyResource = ResourceManager::TryCreate<IDummyResource, DummyWrapper, ResourceManager::MakeWrapper>;
+        ResourceManager::RegisterType(tryCreateDummyResource);
+        auto restoreTypeTable = MakeScopeWarden([&] { ResourceManager::UnregisterType(tryCreateDummyResource); });
+
         auto resource = Make<DummyResource>();
-        auto canvasDevice = Make<StubCanvasDevice>();
-        auto expectedWrapper = Make<DummyWrapper>(canvasDevice.Get(), resource.Get());
 
-        auto actualWrapper = ResourceManager::GetOrCreate<IDummyWrapper>(canvasDevice.Get(), resource.Get());
+        // These unwanted parameters should be ignored.
+        auto unwantedDevice = Make<StubCanvasDevice>();
+        auto unwantedDpi = 23.0f;
 
-        Assert::AreEqual<IDummyWrapper*>(expectedWrapper.Get(), actualWrapper.Get());
+        auto wrapper1 = ResourceManager::GetOrCreate(unwantedDevice.Get(), resource.Get(), unwantedDpi);
+        auto wrapper2 = ResourceManager::GetOrCreate(unwantedDevice.Get(), resource.Get(), unwantedDpi);
+
+        Assert::AreEqual(wrapper1.Get(), wrapper2.Get());
     }
 
-    TEST_METHOD_EX(ResourceManager_GetOrCreate_WithWrongDevice_Fails)
+    TEST_METHOD_EX(ResourceManager_GetOrCreate_DummyWrapperWithDevice_PassMatchingDeviceAndUnwantedDpi_Succeeds)
     {
-        auto resource = Make<DummyResource>();
-        auto canvasDevice = Make<StubCanvasDevice>();
-        auto expectedWrapper = Make<DummyWrapper>(canvasDevice.Get(), resource.Get());
+        auto tryCreateDummyResource = ResourceManager::TryCreate<IDummyResource, DummyWrapperWithDevice, ResourceManager::MakeWrapperWithDevice>;
+        ResourceManager::RegisterType(tryCreateDummyResource);
+        auto restoreTypeTable = MakeScopeWarden([&] { ResourceManager::UnregisterType(tryCreateDummyResource); });
 
-        auto otherCanvasDevice = Make<StubCanvasDevice>();
-        ExpectHResultException(E_INVALIDARG, [&]{ ResourceManager::GetOrCreate<IDummyWrapper>(otherCanvasDevice.Get(), resource.Get()); });
+        auto resource = Make<DummyResource>();
+        auto device = Make<StubCanvasDevice>();
+
+        // This unwanted parameter should be ignored.
+        auto unwantedDpi = 23.0f;
+
+        auto wrapper1 = ResourceManager::GetOrCreate(device.Get(), resource.Get(), unwantedDpi);
+        auto wrapper2 = ResourceManager::GetOrCreate(device.Get(), resource.Get(), unwantedDpi);
+
+        Assert::AreEqual(wrapper1.Get(), wrapper2.Get());
+    }
+
+    TEST_METHOD_EX(ResourceManager_GetOrCreate_DummyWrapperWithDevice_OmitDevice_NewWrapper_Fails)
+    {
+        auto tryCreateDummyResource = ResourceManager::TryCreate<IDummyResource, DummyWrapperWithDevice, ResourceManager::MakeWrapperWithDevice>;
+        ResourceManager::RegisterType(tryCreateDummyResource);
+        auto restoreTypeTable = MakeScopeWarden([&] { ResourceManager::UnregisterType(tryCreateDummyResource); });
+
+        auto resource = Make<DummyResource>();
+
+        // No device, but this type needs one, so should fail.
+        ExpectHResultException(E_INVALIDARG, [&]
+        {
+            ResourceManager::GetOrCreate(nullptr, resource.Get(), 0);
+        });
+
+        ValidateStoredErrorState(E_INVALIDARG, Strings::ResourceManagerNoDevice);
+    }
+
+    TEST_METHOD_EX(ResourceManager_GetOrCreate_DummyWrapperWithDevice_OmitDevice_ExistingWrapper_Succeeds)
+    {
+        auto tryCreateDummyResource = ResourceManager::TryCreate<IDummyResource, DummyWrapperWithDevice, ResourceManager::MakeWrapperWithDevice>;
+        ResourceManager::RegisterType(tryCreateDummyResource);
+        auto restoreTypeTable = MakeScopeWarden([&] { ResourceManager::UnregisterType(tryCreateDummyResource); });
+
+        auto resource = Make<DummyResource>();
+        auto device = Make<StubCanvasDevice>();
+
+        // First time we specify the device, second time we don't but a wrapper already exists so that's ok.
+        auto wrapper1 = ResourceManager::GetOrCreate(device.Get(), resource.Get(), 0);
+        auto wrapper2 = ResourceManager::GetOrCreate(nullptr, resource.Get(), 0);
+
+        Assert::AreEqual(wrapper1.Get(), wrapper2.Get());
+    }
+    
+    TEST_METHOD_EX(ResourceManager_GetOrCreate_DummyWrapperWithDevice_WithWrongDevice_Fails)
+    {
+        auto tryCreateDummyResource = ResourceManager::TryCreate<IDummyResource, DummyWrapperWithDevice, ResourceManager::MakeWrapperWithDevice>;
+        ResourceManager::RegisterType(tryCreateDummyResource);
+        auto restoreTypeTable = MakeScopeWarden([&] { ResourceManager::UnregisterType(tryCreateDummyResource); });
+
+        auto resource = Make<DummyResource>();
+
+        auto device1 = Make<StubCanvasDevice>();
+        auto device2 = Make<StubCanvasDevice>();
+
+        auto wrapper = ResourceManager::GetOrCreate(device1.Get(), resource.Get(), 0);
+
+        // Specified device doesn't match = sad panda.
+        ExpectHResultException(E_INVALIDARG, [&]
+        {
+            ResourceManager::GetOrCreate(device2.Get(), resource.Get(), 0);
+        });
+
+        ValidateStoredErrorState(E_INVALIDARG, Strings::ResourceManagerWrongDevice);
+    }
+
+    TEST_METHOD_EX(ResourceManager_GetOrCreate_DummyWrapperWithDeviceAndDpi_PassMatchingDeviceAndDpi_Succeeds)
+    {
+        auto tryCreateDummyResource = ResourceManager::TryCreate<IDummyResource, DummyWrapperWithDeviceAndDpi, ResourceManager::MakeWrapperWithDeviceAndDpi>;
+        ResourceManager::RegisterType(tryCreateDummyResource);
+        auto restoreTypeTable = MakeScopeWarden([&] { ResourceManager::UnregisterType(tryCreateDummyResource); });
+
+        auto resource = Make<DummyResource>();
+        auto device = Make<StubCanvasDevice>();
+        auto dpi = 23.0f;
+
+        auto wrapper1 = ResourceManager::GetOrCreate(device.Get(), resource.Get(), dpi);
+        auto wrapper2 = ResourceManager::GetOrCreate(device.Get(), resource.Get(), dpi);
+
+        Assert::AreEqual(wrapper1.Get(), wrapper2.Get());
+    }
+
+    TEST_METHOD_EX(ResourceManager_GetOrCreate_DummyWrapperWithDeviceAndDpi_OmitDeviceOrDpi_NewWrapper_Fails)
+    {
+        auto tryCreateDummyResource = ResourceManager::TryCreate<IDummyResource, DummyWrapperWithDeviceAndDpi, ResourceManager::MakeWrapperWithDeviceAndDpi>;
+        ResourceManager::RegisterType(tryCreateDummyResource);
+        auto restoreTypeTable = MakeScopeWarden([&] { ResourceManager::UnregisterType(tryCreateDummyResource); });
+
+        auto resource = Make<DummyResource>();
+        auto device = Make<StubCanvasDevice>();
+        auto dpi = 23.0f;
+
+        // No device, but this type needs one, so should fail.
+        ExpectHResultException(E_INVALIDARG, [&]
+        {
+            ResourceManager::GetOrCreate(nullptr, resource.Get(), dpi);
+        });
+
+        ValidateStoredErrorState(E_INVALIDARG, Strings::ResourceManagerNoDevice);
+
+        // No dpi, but this type needs one, so should fail.
+        ExpectHResultException(E_INVALIDARG, [&]
+        {
+            ResourceManager::GetOrCreate(device.Get(), resource.Get(), 0);
+        });
+
+        ValidateStoredErrorState(E_INVALIDARG, Strings::ResourceManagerNoDpi);
+    }
+
+    TEST_METHOD_EX(ResourceManager_GetOrCreate_DummyWrapperWithDeviceAndDpi_OmitDeviceAndDpi_ExistingWrapper_Succeeds)
+    {
+        auto tryCreateDummyResource = ResourceManager::TryCreate<IDummyResource, DummyWrapperWithDeviceAndDpi, ResourceManager::MakeWrapperWithDeviceAndDpi>;
+        ResourceManager::RegisterType(tryCreateDummyResource);
+        auto restoreTypeTable = MakeScopeWarden([&] { ResourceManager::UnregisterType(tryCreateDummyResource); });
+
+        auto resource = Make<DummyResource>();
+        auto device = Make<StubCanvasDevice>();
+        auto dpi = 23.0f;
+
+        // First time we specify the device and dpi, second time we don't but a wrapper already exists so that's ok.
+        auto wrapper1 = ResourceManager::GetOrCreate(device.Get(), resource.Get(), dpi);
+        auto wrapper2 = ResourceManager::GetOrCreate(nullptr, resource.Get(), 0);
+
+        Assert::AreEqual(wrapper1.Get(), wrapper2.Get());
+    }
+
+    TEST_METHOD_EX(ResourceManager_GetOrCreate_DummyWrapperWithDeviceAndDpi_WithWrongDeviceOrDpi_Fails)
+    {
+        auto tryCreateDummyResource = ResourceManager::TryCreate<IDummyResource, DummyWrapperWithDeviceAndDpi, ResourceManager::MakeWrapperWithDeviceAndDpi>;
+        ResourceManager::RegisterType(tryCreateDummyResource);
+        auto restoreTypeTable = MakeScopeWarden([&] { ResourceManager::UnregisterType(tryCreateDummyResource); });
+
+        auto resource = Make<DummyResource>();
+
+        auto device1 = Make<StubCanvasDevice>();
+        auto device2 = Make<StubCanvasDevice>();
+
+        auto dpi = 23.0f;
+
+        auto wrapper = ResourceManager::GetOrCreate(device1.Get(), resource.Get(), dpi);
+
+        // Specified device doesn't match = sad panda.
+        ExpectHResultException(E_INVALIDARG, [&]
+        {
+            ResourceManager::GetOrCreate(device2.Get(), resource.Get(), dpi);
+        });
+
+        ValidateStoredErrorState(E_INVALIDARG, Strings::ResourceManagerWrongDevice);
+
+        // Specified dpi doesn't match = sad panda.
+        ExpectHResultException(E_INVALIDARG, [&]
+        {
+            ResourceManager::GetOrCreate(device1.Get(), resource.Get(), dpi + 7);
+        });
+
+        ValidateStoredErrorState(E_INVALIDARG, Strings::ResourceManagerWrongDpi);
+    }
+
+    TEST_METHOD_EX(ResourceManager_GetOrCreate_UnknownType_Fails)
+    {
+        // For this test we do NOT register IDummyResource via ResourceManager::RegisterType.
+
+        auto resource = Make<DummyResource>();
+
+        ExpectHResultException(E_NOINTERFACE, [&]
+        {
+            ResourceManager::GetOrCreate(nullptr, resource.Get(), 0);
+        });
+
+        ValidateStoredErrorState(E_NOINTERFACE, Strings::ResourceManagerUnknownType);
     }
 };
 

@@ -84,7 +84,7 @@ static void ValidateDevice(IInspectable* wrapper, ICanvasDevice* device)
 
             if (device != wrapperDevice.Get())
             {
-                ThrowHR(E_INVALIDARG, Strings::ResourceTrackerWrongDevice);
+                ThrowHR(E_INVALIDARG, Strings::ResourceManagerWrongDevice);
             }
         }
     }
@@ -107,7 +107,7 @@ static void ValidateDpi(IInspectable* wrapper, float dpi)
 
             if (dpi != wrapperDpi)
             {
-                ThrowHR(E_INVALIDARG, Strings::ResourceTrackerWrongDpi);
+                ThrowHR(E_INVALIDARG, Strings::ResourceManagerWrongDpi);
             }
         }
     }
@@ -143,8 +143,7 @@ ComPtr<IInspectable> ResourceManager::GetOrCreate(ICanvasDevice* device, IUnknow
         // Fail if we did not find a way to wrap this type.
         if (!wrapper)
         {
-            // TODO interop better error message on failure (+ test for that)
-            ThrowHR(E_NOINTERFACE);
+            ThrowHR(E_NOINTERFACE, Strings::ResourceManagerUnknownType);
         }
     }
 

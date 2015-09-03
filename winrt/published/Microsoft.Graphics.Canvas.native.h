@@ -56,8 +56,6 @@ namespace Microsoft
     {
         namespace Canvas
         {
-            // TODO 2523: better error reporting when the wrong GetOrCreate is used
-
             template<class WRAPPER>
             WRAPPER^ GetOrCreate(IUnknown* resource)
             {
