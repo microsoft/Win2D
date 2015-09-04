@@ -41,6 +41,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     {
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_Geometry_CanvasPathBuilder, BaseTrust);
 
+        //
+        // Although this ties together several bits of state, no attempt is made
+        // to make CanvasPathBuilder thread safe.  It is hard to imagine any
+        // valid scenario where a path may be meaningfully built simultaneously
+        // from multiple threads.
+        //
+        
         ClosablePtr<ICanvasDevice> m_canvasDevice;
         ClosablePtr<ID2D1GeometrySink> m_d2dGeometrySink;
         ClosablePtr<ID2D1PathGeometry1> m_d2dPathGeometry;
