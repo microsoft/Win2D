@@ -499,7 +499,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         bool IsReadyToDraw() const
         {
-            // TODO #5526: is this threadsafe? especially in CanvasVirtualControl case
             return m_recreatableDeviceManager->IsReadyToDraw();
         }
 

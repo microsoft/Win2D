@@ -135,7 +135,6 @@ IFACEMETHODIMP CanvasVirtualControl::CreateDrawingSession(Rect updateRectangle, 
         {
             CheckAndClearOutPointer(drawingSession);
 
-            // TODO #5526: Is this threadsafe?
             auto imageSource = GetCurrentRenderTarget()->Target;
 
             if (!IsReadyToDraw() || !imageSource)
