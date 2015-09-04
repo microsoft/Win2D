@@ -53,11 +53,26 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         ~D2DResourceLock()
         {
-            if (m_d2dMultithread->GetMultithreadProtected())
+            if (m_d2dMultithread && m_d2dMultithread->GetMultithreadProtected())
             {
                 m_d2dMultithread->Leave();
             }
         }
+
+        D2DResourceLock(D2DResourceLock&& other)
+        {
+            std::swap(m_d2dMultithread, other.m_d2dMultithread);
+        }
+
+        D2DResourceLock& operator=(D2DResourceLock&& other)
+        {
+            std::swap(m_d2dMultithread, other.m_d2dMultithread);
+            other.m_d2dMultithread.Reset();
+            return *this;
+        }
+
+        D2DResourceLock(D2DResourceLock const&) = delete;
+        D2DResourceLock& operator=(D2DResourceLock const&) = delete;
     };
 
 } } } }

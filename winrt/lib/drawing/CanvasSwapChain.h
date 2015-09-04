@@ -198,7 +198,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         IFACEMETHOD(Close)() override;
 
     private:
-        DXGI_SWAP_CHAIN_DESC1 GetResourceDescription(); // Expected to be called from exception boundary.
+        D2DResourceLock GetResourceLock();
+
+        DXGI_SWAP_CHAIN_DESC1 GetSwapChainDesc(D2DResourceLock const& lock);
 
         DXGI_MATRIX_3X2_F GetMatrixInternal(
             D2DResourceLock const& lock, 
@@ -210,6 +212,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             DXGI_MATRIX_3X2_F* transform);
 
         void SetDpi(D2DResourceLock const& lock, ComPtr<IDXGISwapChain2> const& resource, float newDpi);
+
+        void ResizeBuffersImpl(
+            D2DResourceLock const& lock,
+            float newWidth,
+            float newHeight,
+            float newDpi,
+            DirectXPixelFormat newFormat,
+            int32_t bufferCount);
+
     };
 
 }}}}

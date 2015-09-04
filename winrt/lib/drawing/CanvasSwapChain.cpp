@@ -181,7 +181,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             {
                 CheckInPointer(value);
 
-                auto desc = GetResourceDescription();
+                auto lock = GetResourceLock();
+                auto desc = GetSwapChainDesc(lock);
 
                 *value = Size{ PixelsToDips(desc.Width, m_dpi),
                                PixelsToDips(desc.Height, m_dpi) };
@@ -195,7 +196,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             {
                 CheckInPointer(value);
 
-                auto desc = GetResourceDescription();
+                auto lock = GetResourceLock();
+                auto desc = GetSwapChainDesc(lock);
 
                 *value = BitmapSize{ desc.Width, desc.Height };
             });
@@ -219,7 +221,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             {
                 CheckInPointer(value);
 
-                *value = static_cast<DirectXPixelFormat>(GetResourceDescription().Format);
+                auto lock = GetResourceLock();
+                auto desc = GetSwapChainDesc(lock);
+
+                *value = static_cast<DirectXPixelFormat>(desc.Format);
             });
     }
 
@@ -230,7 +235,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             {
                 CheckInPointer(value);
 
-                *value = GetResourceDescription().BufferCount;
+                auto lock = GetResourceLock();
+                auto desc = GetSwapChainDesc(lock);
+
+                *value = desc.BufferCount;
             });
     }
 
@@ -241,7 +249,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             {
                 CheckInPointer(value);
 
-                *value = FromDxgiAlphaMode(GetResourceDescription().AlphaMode);
+                auto lock = GetResourceLock();
+                auto desc = GetSwapChainDesc(lock);
+
+                *value = FromDxgiAlphaMode(desc.AlphaMode);
             });
     }
 
@@ -252,10 +263,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             {
                 CheckInPointer(value);
 
-                auto& resource = GetResource();
+                auto lock = GetResourceLock();
 
-                auto d2dDevice = As<ICanvasDeviceInternal>(m_device.EnsureNotClosed())->GetD2DDevice();
-                D2DResourceLock lock(d2dDevice.Get());
+                auto& resource = GetResource();
 
                 DXGI_MODE_ROTATION rotation;
                 ThrowIfFailed(resource->GetRotation(&rotation));
@@ -269,10 +279,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ExceptionBoundary(
             [&]
             {
+                auto lock = GetResourceLock();
+                
                 auto& resource = GetResource();
-
-                auto d2dDevice = As<ICanvasDeviceInternal>(m_device.EnsureNotClosed())->GetD2DDevice();
-                D2DResourceLock lock(d2dDevice.Get());
 
                 ThrowIfFailed(resource->SetRotation(ToDxgiRotation(value)));
             });
@@ -285,14 +294,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             {
                 CheckInPointer(value);
 
-                uint32_t width;
-                uint32_t height;
+                auto lock = GetResourceLock();
 
                 auto swapChain = As<IDXGISwapChain2>(GetResource());
 
-                auto d2dDevice = As<ICanvasDeviceInternal>(m_device.EnsureNotClosed())->GetD2DDevice();
-                D2DResourceLock lock(d2dDevice.Get());
-
+                uint32_t width;
+                uint32_t height;
                 ThrowIfFailed(swapChain->GetSourceSize(&width, &height));
 
                 *value = Size{ PixelsToDips(width, m_dpi),
@@ -305,13 +312,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ExceptionBoundary(
             [&]
             {
+                auto lock = GetResourceLock();
+                
                 uint32_t width = SizeDipsToPixels(value.Width, m_dpi);
                 uint32_t height = SizeDipsToPixels(value.Height, m_dpi);
 
                 auto swapChain = As<IDXGISwapChain2>(GetResource());
-
-                auto d2dDevice = As<ICanvasDeviceInternal>(m_device.EnsureNotClosed())->GetD2DDevice();
-                D2DResourceLock lock(d2dDevice.Get());
 
                 ThrowIfFailed(swapChain->SetSourceSize(width, height));
             });
@@ -324,10 +330,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             {
                 CheckInPointer(value);
 
-                auto swapChain = As<IDXGISwapChain2>(GetResource());
+                auto lock = GetResourceLock();
 
-                auto d2dDevice = As<ICanvasDeviceInternal>(m_device.EnsureNotClosed())->GetD2DDevice();
-                D2DResourceLock lock(d2dDevice.Get());
+                auto swapChain = As<IDXGISwapChain2>(GetResource());
 
                 DXGI_MATRIX_3X2_F matrix = GetMatrixInternal(lock, swapChain);
 
@@ -359,11 +364,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ExceptionBoundary(
             [&]
             {
+                auto lock = GetResourceLock();
+
                 // Insert additional scaling to account for display DPI.
                 auto swapChain = As<IDXGISwapChain2>(GetResource());
-
-                auto d2dDevice = As<ICanvasDeviceInternal>(m_device.EnsureNotClosed())->GetD2DDevice();
-                D2DResourceLock lock(d2dDevice.Get());
 
                 SetMatrixInternal(lock, swapChain, ReinterpretAs<DXGI_MATRIX_3X2_F*>(&value));
             });
@@ -415,10 +419,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ExceptionBoundary(
             [&]
             {
+                auto lock = GetResourceLock();
                 auto& resource = GetResource();
-
-                auto d2dDevice = As<ICanvasDeviceInternal>(m_device.EnsureNotClosed())->GetD2DDevice();
-                D2DResourceLock lock(d2dDevice.Get());
 
                 DXGI_PRESENT_PARAMETERS presentParameters = { 0 };
                 ThrowIfFailed(resource->Present1(syncInterval, 0, &presentParameters));
@@ -440,14 +442,16 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ExceptionBoundary(
             [&]
             {
-                auto desc = GetResourceDescription();
+                auto lock = GetResourceLock();
+                auto desc = GetSwapChainDesc(lock);
 
-                ThrowIfFailed(ResizeBuffersWithAllOptions(
+                ResizeBuffersImpl(
+                    lock,
                     newWidth,
                     newHeight,
                     m_dpi,
                     static_cast<DirectXPixelFormat>(desc.Format),
-                    desc.BufferCount));
+                    desc.BufferCount);
             });
     }
 
@@ -459,14 +463,16 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ExceptionBoundary(
             [&]
             {
-                auto desc = GetResourceDescription();
+                auto lock = GetResourceLock();
+                auto desc = GetSwapChainDesc(lock);
 
-                ThrowIfFailed(ResizeBuffersWithAllOptions(
+                ResizeBuffersImpl(
+                    lock,
                     newWidth,
                     newHeight,
                     newDpi,
                     static_cast<DirectXPixelFormat>(desc.Format),
-                    desc.BufferCount));
+                    desc.BufferCount);
             });
     }
 
@@ -480,27 +486,42 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ExceptionBoundary(
             [&]
             {
-                auto resource = As<IDXGISwapChain2>(GetResource());
-
-                auto d2dDevice = As<ICanvasDeviceInternal>(m_device.EnsureNotClosed())->GetD2DDevice();
-                D2DResourceLock lock(d2dDevice.Get());
-
-                SetDpi(lock, resource, newDpi);
-
-                int widthInPixels = SizeDipsToPixels(newWidth, m_dpi);
-                int heightInPixels = SizeDipsToPixels(newHeight, m_dpi);
-
-                ThrowIfNegative(bufferCount);
-                ThrowIfNegative(widthInPixels);
-                ThrowIfNegative(heightInPixels);
-
-                ThrowIfFailed(resource->ResizeBuffers(
-                    bufferCount, 
-                    widthInPixels,
-                    heightInPixels,
-                    static_cast<DXGI_FORMAT>(newFormat), 
-                    0));
+                auto lock = GetResourceLock();
+                ResizeBuffersImpl(
+                    lock,
+                    newWidth,
+                    newHeight,
+                    newDpi,
+                    newFormat,
+                    bufferCount);
             });
+    }
+    
+    void CanvasSwapChain::ResizeBuffersImpl(
+        D2DResourceLock const& lock,
+        float newWidth,
+        float newHeight,
+        float newDpi,
+        DirectXPixelFormat newFormat,
+        int32_t bufferCount)
+    {            
+        auto swapChain = As<IDXGISwapChain2>(GetResource());
+
+        SetDpi(lock, swapChain, newDpi);
+
+        int widthInPixels = SizeDipsToPixels(newWidth, m_dpi);
+        int heightInPixels = SizeDipsToPixels(newHeight, m_dpi);
+        
+        ThrowIfNegative(bufferCount);
+        ThrowIfNegative(widthInPixels);
+        ThrowIfNegative(heightInPixels);
+        
+        ThrowIfFailed(swapChain->ResizeBuffers(
+            bufferCount, 
+            widthInPixels,
+            heightInPixels,
+            static_cast<DXGI_FORMAT>(newFormat), 
+            0));
     }
 
     void CanvasSwapChain::SetDpi(D2DResourceLock const& lock, ComPtr<IDXGISwapChain2> const& swapChain, float newDpi)
@@ -529,7 +550,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ExceptionBoundary(
             [&]
             {
-            CheckInPointer(value);
+                CheckInPointer(value);
 
                 auto& device = m_device.EnsureNotClosed();
 
@@ -538,12 +559,16 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
 
-    DXGI_SWAP_CHAIN_DESC1 CanvasSwapChain::GetResourceDescription()
+    D2DResourceLock CanvasSwapChain::GetResourceLock()
+    {
+        auto d2dDevice = As<ICanvasDeviceInternal>(m_device.EnsureNotClosed())->GetD2DDevice();
+        return D2DResourceLock(d2dDevice.Get());        
+    }
+
+
+    DXGI_SWAP_CHAIN_DESC1 CanvasSwapChain::GetSwapChainDesc(D2DResourceLock const&)
     {
         auto& resource = GetResource();
-
-        auto d2dDevice = As<ICanvasDeviceInternal>(m_device.EnsureNotClosed())->GetD2DDevice();
-        D2DResourceLock lock(d2dDevice.Get());
 
         DXGI_SWAP_CHAIN_DESC1 swapChainDesc;
         ThrowIfFailed(resource->GetDesc1(&swapChainDesc));
