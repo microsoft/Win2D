@@ -68,52 +68,6 @@ void ResourceManager::Remove(IUnknown* resource)
 }
 
 
-static void ValidateDevice(IInspectable* wrapper, ICanvasDevice* device)
-{
-    // If the caller specified a device, and the wrapper has a device, these must match.
-    // If the caller specified a device but the wrapper has no device, we'll allow that, ignoring the device parameter.
-    // If the caller did not specify a device, we'll accept any existing wrapper instance regardless of its device.
-    if (device)
-    {
-        auto wrapperWithDevice = MaybeAs<ICanvasResourceWrapperWithDevice>(wrapper);
-
-        if (wrapperWithDevice)
-        {
-            ComPtr<ICanvasDevice> wrapperDevice;
-            ThrowIfFailed(wrapperWithDevice->get_Device(&wrapperDevice));
-
-            if (device != wrapperDevice.Get())
-            {
-                ThrowHR(E_INVALIDARG, Strings::ResourceManagerWrongDevice);
-            }
-        }
-    }
-}
-
-
-static void ValidateDpi(IInspectable* wrapper, float dpi)
-{
-    // If the caller specified a dpi, and the wrapper has a dpi, these must match.
-    // If the caller specified a dpi but the wrapper has no dpi, we'll allow that, ignoring the dpi parameter.
-    // If the caller did not specify a dpi, we'll accept any existing wrapper instance regardless of its dpi.
-    if (dpi != 0)
-    {
-        auto wrapperWithDpi = MaybeAs<ICanvasResourceWrapperWithDpi>(wrapper);
-
-        if (wrapperWithDpi)
-        {
-            float wrapperDpi;
-            ThrowIfFailed(wrapperWithDpi->get_Dpi(&wrapperDpi));
-
-            if (dpi != wrapperDpi)
-            {
-                ThrowHR(E_INVALIDARG, Strings::ResourceManagerWrongDpi);
-            }
-        }
-    }
-}
-
-
 ComPtr<IInspectable> ResourceManager::GetOrCreate(ICanvasDevice* device, IUnknown* resource, float dpi)
 {
     ComPtr<IUnknown> resourceIdentity = AsUnknown(resource);
@@ -152,6 +106,64 @@ ComPtr<IInspectable> ResourceManager::GetOrCreate(ICanvasDevice* device, IUnknow
     ValidateDpi(wrapper.Get(), dpi);
 
     return wrapper;
+}
+
+
+// Validation rules:
+//  - If the caller specified a device or dpi, and the wrapper has device/dpi, these must match.
+//  - If the caller specified device or dpi but the wrapper has no device/dpi, we'll allow that, ignoring the parameter.
+//  - If the caller did not specify device or dpi, we'll accept any existing wrapper instance regardless of its device/dpi.
+
+
+void ResourceManager::ValidateDevice(IInspectable* wrapper, ICanvasDevice* device)
+{
+    auto wrapperWithDevice = MaybeAs<ICanvasResourceWrapperWithDevice>(wrapper);
+
+    if (wrapperWithDevice)
+    {
+        ValidateDevice(wrapperWithDevice.Get(), device);
+    }
+}
+
+
+void ResourceManager::ValidateDevice(ICanvasResourceWrapperWithDevice* wrapper, ICanvasDevice* device)
+{
+    if (device)
+    {
+        ComPtr<ICanvasDevice> wrapperDevice;
+        ThrowIfFailed(wrapper->get_Device(&wrapperDevice));
+
+        if (device != wrapperDevice.Get())
+        {
+            ThrowHR(E_INVALIDARG, Strings::ResourceManagerWrongDevice);
+        }
+    }
+}
+
+
+void ResourceManager::ValidateDpi(IInspectable* wrapper, float dpi)
+{
+    auto wrapperWithDpi = MaybeAs<ICanvasResourceWrapperWithDpi>(wrapper);
+
+    if (wrapperWithDpi)
+    {
+        ValidateDpi(wrapperWithDpi.Get(), dpi);
+    }
+}
+
+
+void ResourceManager::ValidateDpi(ICanvasResourceWrapperWithDpi* wrapper, float dpi)
+{
+    if (dpi != 0)
+    {
+        float wrapperDpi;
+        ThrowIfFailed(wrapper->get_Dpi(&wrapperDpi));
+
+        if (dpi != wrapperDpi)
+        {
+            ThrowHR(E_INVALIDARG, Strings::ResourceManagerWrongDpi);
+        }
+    }
 }
 
 

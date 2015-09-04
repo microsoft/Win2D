@@ -231,7 +231,7 @@ namespace canvas
         DONT_EXPECT(CreateLayerWithAllOptions                             , float, ICanvasBrush*, Rect, ICanvasGeometry*, Matrix3x2, CanvasLayerOptions, ICanvasActiveLayer**);
 
         // ICanvasResourceWrapperNative
-        DONT_EXPECT(GetResource, REFIID iid, void**);
+        DONT_EXPECT(GetResource, ICanvasDevice* device, float dpi, REFIID iid, void**);
 
 #undef DONT_EXPECT
 

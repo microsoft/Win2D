@@ -168,18 +168,6 @@ namespace canvas
             return E_NOTIMPL;
         }
 
-        // ICanvasResourceCreator
-        IFACEMETHOD(get_Device)(ICanvasDevice** value) override
-        {
-            return CanvasSwapChain::get_Device(value);
-        }
-
-        // ICanvasResourceWrapperNative
-        IFACEMETHOD(GetResource)(const IID& iid, void** out) override
-        {
-            return CanvasSwapChain::GetResource(iid, out);
-        }
-
     private:
         static ComPtr<IDXGISwapChain2> MakeMockSwapChain()
         {

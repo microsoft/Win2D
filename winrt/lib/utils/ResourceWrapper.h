@@ -32,13 +32,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     {
         ClosablePtr<TResource> m_resource;
 
-    public:
+    protected:
         ResourceWrapper(TResource* resource)
             : m_resource(resource)
         {
-            CheckInPointer(resource);
-
-            ResourceManager::Add(resource, AsWeak(static_cast<TWrapper*>(this)));
+            if (resource)
+            {
+                ResourceManager::Add(resource, AsWeak(static_cast<TWrapper*>(this)));
+            }
         }
 
         virtual ~ResourceWrapper()
@@ -46,9 +47,37 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             Close();
         }
 
+        void ReleaseResource()
+        {
+            if (m_resource)
+            {
+                auto resource = m_resource.Close();
+
+                ResourceManager::Remove(resource.Get());
+            }
+        }
+
+        void SetResource(TResource* resource)
+        {
+            ReleaseResource();
+
+            if (resource)
+            {
+                m_resource = resource;
+
+                ResourceManager::Add(resource, AsWeak(static_cast<TWrapper*>(this)));
+            }
+        }
+
+    public:
         ComPtr<TResource> const& GetResource()
         {
             return m_resource.EnsureNotClosed();
+        }
+
+        bool HasResource()
+        {
+            return (bool)m_resource;
         }
 
         //
@@ -60,12 +89,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             return ExceptionBoundary(
                 [&]
                 {
-                    if (m_resource)
-                    {
-                        auto resource = m_resource.Close();
-                        
-                        ResourceManager::Remove(resource.Get());
-                    }
+                    ReleaseResource();
                 });
         }
 
@@ -73,7 +97,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         // ICanvasResourceWrapperNative
         //
 
-        IFACEMETHODIMP GetResource(REFIID iid, void** outResource) override
+        IFACEMETHODIMP GetResource(ICanvasDevice* device, float dpi, REFIID iid, void** outResource) override
         {
             return ExceptionBoundary(
                 [&]
@@ -81,8 +105,32 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                     CheckAndClearOutPointer(outResource);
 
                     auto& resource = GetResource();
+
+                    // Validation methods are overloaded to provide compile time dispatch, so they only actually
+                    // bother to check anything if TWrapper implements ICanvasResourceWrapperWith(Device|Dpi).
+                    auto wrapper = static_cast<TWrapper*>(this);
+
+                    ValidateDevice(wrapper, device);
+                    ValidateDpi(wrapper, dpi);
+
                     ThrowIfFailed(resource.CopyTo(iid, outResource));
                 });
         }
+
+    private:
+        // Forward validation requests for types that need them to the ResourceManager.
+        static void ValidateDevice(ICanvasResourceWrapperWithDevice* wrapper, ICanvasDevice* device)
+        {
+            ResourceManager::ValidateDevice(wrapper, device);
+        }
+
+        static void ValidateDpi(ICanvasResourceWrapperWithDpi* wrapper, float dpi)
+        {
+            ResourceManager::ValidateDpi(wrapper, dpi);
+        }
+
+        // No-op validation requests for other types.
+        static void ValidateDevice(void*, ICanvasDevice*) { }
+        static void ValidateDpi(void*, float) { }
     };
 }}}}

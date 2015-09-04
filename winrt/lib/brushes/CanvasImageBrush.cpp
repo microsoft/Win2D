@@ -435,8 +435,11 @@ ComPtr<ID2D1Brush> CanvasImageBrush::GetD2DBrush(ID2D1DeviceContext* deviceConte
     }
 }
 
-IFACEMETHODIMP CanvasImageBrush::GetResource(REFIID iid, void** resource)
+IFACEMETHODIMP CanvasImageBrush::GetResource(ICanvasDevice* device, float dpi, REFIID iid, void** resource)
 {
+    UNREFERENCED_PARAMETER(device);
+    UNREFERENCED_PARAMETER(dpi);
+
     return ExceptionBoundary(
         [=]
         {

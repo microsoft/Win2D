@@ -40,6 +40,24 @@ TEST_CLASS(CanvasSwapChainTests)
             {
                 GetOrCreate<CanvasSwapChain>(canvasDevice, dxgiSwapChain.Get(), DEFAULT_DPI + 3);
             });
+
+        auto getResourceWithExplicitDevice = GetWrappedResource<IDXGISwapChain2>(canvasDevice, canvasSwapChain);
+        Assert::AreEqual(dxgiSwapChain.Get(), getResourceWithExplicitDevice.Get());
+
+        auto getResourceWithExplicitDeviceAndDpi = GetWrappedResource<IDXGISwapChain2>(canvasDevice, canvasSwapChain, DEFAULT_DPI);
+        Assert::AreEqual(dxgiSwapChain.Get(), getResourceWithExplicitDeviceAndDpi.Get());
+
+        ExpectCOMException(E_INVALIDARG, L"Existing resource wrapper is associated with a different device.",
+            [&]
+            {
+                GetWrappedResource<IDXGISwapChain2>(ref new CanvasDevice(), canvasSwapChain);
+            });
+
+        ExpectCOMException(E_INVALIDARG, L"Existing resource wrapper has a different DPI.",
+            [&]
+            {
+                GetWrappedResource<IDXGISwapChain2>(canvasDevice, canvasSwapChain, DEFAULT_DPI + 3);
+            });
     }
 
     TEST_METHOD(CanvasSwapChain_DrawOperation)

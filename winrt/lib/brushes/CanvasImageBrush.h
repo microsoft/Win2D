@@ -96,7 +96,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         virtual ComPtr<ID2D1Brush> GetD2DBrush(ID2D1DeviceContext* deviceContext, GetBrushFlags flags) override;
 
         // ICanvasResourceWrapperNative
-        IFACEMETHOD(GetResource)(REFIID iid, void** resource) override;
+        IFACEMETHOD(GetResource)(ICanvasDevice* device, float dpi, REFIID iid, void** resource) override;
 
     private:
         void ThrowIfClosed();

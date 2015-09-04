@@ -38,7 +38,7 @@ namespace ABI
                 class ICanvasResourceWrapperNative : public IUnknown
                 {
                 public:
-                    IFACEMETHOD(GetResource)(REFIID iid, void** resource) = 0;
+                    IFACEMETHOD(GetResource)(ICanvasDevice* device, float dpi, REFIID iid, void** resource) = 0;
                 };
             }
         }
@@ -106,6 +106,18 @@ namespace Microsoft
             template<typename T, typename U>
             Microsoft::WRL::ComPtr<T> GetWrappedResource(U^ wrapper)
             {
+                return GetWrappedResource<T>(static_cast<CanvasDevice^>(nullptr), wrapper, 0);
+            }
+
+            template<typename T, typename U>
+            Microsoft::WRL::ComPtr<T> GetWrappedResource(CanvasDevice^ device, U^ wrapper)
+            {
+                return GetWrappedResource<T>(device, wrapper, 0);
+            }
+
+            template<typename T, typename U>
+            Microsoft::WRL::ComPtr<T> GetWrappedResource(CanvasDevice^ device, U^ wrapper, float dpi)
+            {
                 using namespace Microsoft::WRL;
                 namespace abi = ABI::Microsoft::Graphics::Canvas;
 
@@ -116,7 +128,7 @@ namespace Microsoft
                 __abi_ThrowIfFailed(inspectableWrapper->QueryInterface(nativeWrapper.GetAddressOf()));
 
                 ComPtr<T> resource;
-                __abi_ThrowIfFailed(nativeWrapper->GetResource(IID_PPV_ARGS(&resource)));
+                __abi_ThrowIfFailed(nativeWrapper->GetResource(reinterpret_cast<abi::ICanvasDevice*>(device), dpi, IID_PPV_ARGS(&resource)));
 
                 return resource;
             }

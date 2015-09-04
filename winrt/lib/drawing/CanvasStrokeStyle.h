@@ -28,12 +28,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         IFACEMETHOD(ActivateInstance)(_COM_Outptr_ IInspectable** ppvObject) override;
     };
 
-    class CanvasStrokeStyle : public RuntimeClass<
-        RuntimeClassFlags<WinRtClassicComMix>,
+    class CanvasStrokeStyle : RESOURCE_WRAPPER_RUNTIME_CLASS(
+        ID2D1StrokeStyle1,
+        CanvasStrokeStyle,
         ICanvasStrokeStyle,
-        ABI::Windows::Foundation::IClosable,
-        CloakedIid<ICanvasStrokeStyleInternal>>,
-        private LifespanTracker<CanvasStrokeStyle>
+        CloakedIid<ICanvasStrokeStyleInternal>)
     {
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_Geometry_CanvasStrokeStyle, BaseTrust);
 
@@ -55,7 +54,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         // The contained D2D resource could be NULL at any given time.
         //
         bool m_closed;
-        ComPtr<ID2D1StrokeStyle1> m_d2dStrokeStyle;
 
     public:
         CanvasStrokeStyle();
@@ -106,7 +104,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         IFACEMETHOD(Close)() override;
 
         // ICanvasStrokeStyleInternal
-        virtual ComPtr<ID2D1StrokeStyle1>  GetRealizedD2DStrokeStyle(ID2D1Factory* d2dFactory) override;
+        virtual ComPtr<ID2D1StrokeStyle1> GetRealizedD2DStrokeStyle(ID2D1Factory* d2dFactory) override;
+
+        // ICanvasResourceWrapperNative
+        IFACEMETHOD(GetResource)(ICanvasDevice* device, float dpi, REFIID iid, void** outResource) override;
 
     private:
         void ThrowIfClosed();

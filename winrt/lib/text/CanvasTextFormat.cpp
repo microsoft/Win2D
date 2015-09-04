@@ -141,8 +141,11 @@ void CanvasTextFormat::ThrowIfClosed()
 }
 
 
-IFACEMETHODIMP CanvasTextFormat::GetResource(REFIID iid, void** value)
+IFACEMETHODIMP CanvasTextFormat::GetResource(ICanvasDevice* device, float dpi, REFIID iid, void** value)
 {
+    UNREFERENCED_PARAMETER(device);
+    UNREFERENCED_PARAMETER(dpi);
+
     return ExceptionBoundary(
         [&]
         {

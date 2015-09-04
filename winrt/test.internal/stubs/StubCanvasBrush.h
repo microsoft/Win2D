@@ -61,7 +61,7 @@ namespace canvas
             return E_NOTIMPL;
         }
 
-        IFACEMETHOD(GetResource)(REFIID iid, void** resource) override
+        IFACEMETHOD(GetResource)(ICanvasDevice*, float, REFIID iid, void** resource) override
         {
             Assert::IsTrue(
                 iid == __uuidof(ID2D1Brush) ||

@@ -7,7 +7,8 @@
 using namespace ABI::Microsoft::Graphics::Canvas::Geometry;
 
 CanvasStrokeStyle::CanvasStrokeStyle()
-    : m_startCap(CanvasCapStyle::Flat)
+    : ResourceWrapper(nullptr)
+    , m_startCap(CanvasCapStyle::Flat)
     , m_endCap(CanvasCapStyle::Flat)
     , m_dashCap(CanvasCapStyle::Square)
     , m_lineJoin(CanvasLineJoin::Miter)
@@ -21,7 +22,8 @@ CanvasStrokeStyle::CanvasStrokeStyle()
 
 
 CanvasStrokeStyle::CanvasStrokeStyle(ID2D1StrokeStyle1* d2dStrokeStyle)
-    : m_closed(false)
+    : ResourceWrapper(d2dStrokeStyle)
+    , m_closed(false)
     , m_startCap(static_cast<CanvasCapStyle>(d2dStrokeStyle->GetStartCap()))
     , m_endCap(static_cast<CanvasCapStyle>(d2dStrokeStyle->GetEndCap()))
     , m_dashCap(static_cast<CanvasCapStyle>(d2dStrokeStyle->GetDashCap()))
@@ -30,7 +32,6 @@ CanvasStrokeStyle::CanvasStrokeStyle(ID2D1StrokeStyle1* d2dStrokeStyle)
     , m_dashStyle(static_cast<CanvasDashStyle>(d2dStrokeStyle->GetDashStyle()))
     , m_dashOffset(d2dStrokeStyle->GetDashOffset())
     , m_transformBehavior(static_cast<CanvasStrokeTransformBehavior>(d2dStrokeStyle->GetStrokeTransformType()))
-    , m_d2dStrokeStyle(d2dStrokeStyle)
 {
     //
     // Canvas stroke styles created from native stroke styles are made 
@@ -77,7 +78,7 @@ IFACEMETHODIMP CanvasStrokeStyle::put_StartCap(_In_ CanvasCapStyle value)
             ThrowIfClosed();
             if (m_startCap != value)
             {
-                m_d2dStrokeStyle.Reset();
+                ReleaseResource();
                 m_startCap = value;
             }
         });
@@ -106,7 +107,7 @@ IFACEMETHODIMP CanvasStrokeStyle::put_EndCap(_In_ CanvasCapStyle value)
             ThrowIfClosed();
             if (m_endCap != value)
             {
-                m_d2dStrokeStyle.Reset();
+                ReleaseResource();
                 m_endCap = value;
             }
         });
@@ -135,7 +136,7 @@ IFACEMETHODIMP CanvasStrokeStyle::put_DashCap(_In_ CanvasCapStyle value)
             ThrowIfClosed();
             if (m_dashCap != value)
             {
-                m_d2dStrokeStyle.Reset();
+                ReleaseResource();
                 m_dashCap = value;
             }
         });
@@ -164,7 +165,7 @@ IFACEMETHODIMP CanvasStrokeStyle::put_LineJoin(_In_ CanvasLineJoin value)
             ThrowIfClosed();
             if (m_lineJoin != value)
             {
-                m_d2dStrokeStyle.Reset();
+                ReleaseResource();
                 m_lineJoin = value;
             }
         });
@@ -193,7 +194,7 @@ IFACEMETHODIMP CanvasStrokeStyle::put_MiterLimit(_In_ float value)
             ThrowIfClosed();
             if (m_miterLimit != value)
             {
-                m_d2dStrokeStyle.Reset();
+                ReleaseResource();
                 m_miterLimit = value;
             }
         });
@@ -222,7 +223,7 @@ IFACEMETHODIMP CanvasStrokeStyle::put_DashStyle(_In_ CanvasDashStyle value)
             ThrowIfClosed();
             if (m_dashStyle != value)
             {
-                m_d2dStrokeStyle.Reset();
+                ReleaseResource();
                 m_dashStyle = value;
             }
         });
@@ -251,7 +252,7 @@ IFACEMETHODIMP CanvasStrokeStyle::put_DashOffset(float value)
             ThrowIfClosed();
             if (m_dashOffset != value)
             {
-                m_d2dStrokeStyle.Reset();
+                ReleaseResource();
                 m_dashOffset = value;
             }
         });
@@ -294,7 +295,7 @@ IFACEMETHODIMP CanvasStrokeStyle::put_CustomDashStyle(
                     m_customDashElements.end(),
                     stdext::checked_array_iterator<float*>(valueElements, valueCount)))
             {
-                m_d2dStrokeStyle.Reset();
+                ReleaseResource();
                 m_customDashElements.assign(valueElements, valueElements + valueCount);
             }
         });
@@ -324,7 +325,7 @@ IFACEMETHODIMP CanvasStrokeStyle::put_TransformBehavior(_In_ CanvasStrokeTransfo
 
             if (m_transformBehavior != value)
             {
-                m_d2dStrokeStyle.Reset();
+                ReleaseResource();
                 m_transformBehavior = value;
             }
         });
@@ -340,7 +341,7 @@ IFACEMETHODIMP CanvasStrokeStyle::Close()
         {
             auto lock = GetLock();
             
-            m_d2dStrokeStyle.Reset();
+            ReleaseResource();
             m_closed = true;
         });
 }
@@ -356,52 +357,83 @@ ComPtr<ID2D1StrokeStyle1> CanvasStrokeStyle::GetRealizedD2DStrokeStyle(ID2D1Fact
             
     //
     // If there is already a realization, ensure its factory matches the target factory.
-    // If not, invalidate and re-realize.
     //
-    if (m_d2dStrokeStyle)
+    if (HasResource())
     {
+        auto& resource = ResourceWrapper::GetResource();
+
         ComPtr<ID2D1Factory> realizationFactory;
-        m_d2dStrokeStyle->GetFactory(&realizationFactory);
+        resource->GetFactory(&realizationFactory);
 
-        if (!IsSameInstance(realizationFactory.Get(), d2dFactory))
+        if (IsSameInstance(realizationFactory.Get(), d2dFactory))
         {
-            m_d2dStrokeStyle.Reset();
+            return resource;
         }
     }
 
-    if (!m_d2dStrokeStyle)
+    //
+    // We must re-realize the D2D resource.
+    //
+    D2D1_STROKE_STYLE_PROPERTIES1 strokeStyleProperties = D2D1::StrokeStyleProperties1(
+        static_cast<D2D1_CAP_STYLE>(m_startCap),
+        static_cast<D2D1_CAP_STYLE>(m_endCap),
+        static_cast<D2D1_CAP_STYLE>(m_dashCap),
+        static_cast<D2D1_LINE_JOIN>(m_lineJoin),
+        m_miterLimit,
+        static_cast<D2D1_DASH_STYLE>(m_dashStyle),
+        m_dashOffset,
+        static_cast<D2D1_STROKE_TRANSFORM_TYPE>(m_transformBehavior));
+
+    float* dashArray = NULL;
+    if (m_customDashElements.size() > 0)
     {
-        D2D1_STROKE_STYLE_PROPERTIES1 strokeStyleProperties = D2D1::StrokeStyleProperties1(
-            static_cast<D2D1_CAP_STYLE>(m_startCap),
-            static_cast<D2D1_CAP_STYLE>(m_endCap),
-            static_cast<D2D1_CAP_STYLE>(m_dashCap),
-            static_cast<D2D1_LINE_JOIN>(m_lineJoin),
-            m_miterLimit,
-            static_cast<D2D1_DASH_STYLE>(m_dashStyle),
-            m_dashOffset,
-            static_cast<D2D1_STROKE_TRANSFORM_TYPE>(m_transformBehavior));
-
-        float* dashArray = NULL;
-        if (m_customDashElements.size() > 0)
-        {
-            dashArray = &(m_customDashElements[0]);
-            strokeStyleProperties.dashStyle = D2D1_DASH_STYLE_CUSTOM;
-        }
-
-        assert(m_customDashElements.size() <= UINT_MAX);
-
-        ComPtr<ID2D1Factory2> d2dFactory2;
-        ThrowIfFailed(d2dFactory->QueryInterface(IID_PPV_ARGS(d2dFactory2.GetAddressOf())));
-
-        ThrowIfFailed(d2dFactory2->CreateStrokeStyle(
-            strokeStyleProperties,
-            dashArray,
-            static_cast<uint32_t>(m_customDashElements.size()),
-            &m_d2dStrokeStyle));
+        dashArray = &(m_customDashElements[0]);
+        strokeStyleProperties.dashStyle = D2D1_DASH_STYLE_CUSTOM;
     }
 
-    return m_d2dStrokeStyle;
+    assert(m_customDashElements.size() <= UINT_MAX);
+
+    ComPtr<ID2D1Factory2> d2dFactory2;
+    ThrowIfFailed(d2dFactory->QueryInterface(IID_PPV_ARGS(d2dFactory2.GetAddressOf())));
+
+    ComPtr<ID2D1StrokeStyle1> d2dStrokeStyle;
+    ThrowIfFailed(d2dFactory2->CreateStrokeStyle(
+        strokeStyleProperties,
+        dashArray,
+        static_cast<uint32_t>(m_customDashElements.size()),
+        &d2dStrokeStyle));
+
+    SetResource(d2dStrokeStyle.Get());
+
+    return d2dStrokeStyle;
 }
+
+
+//
+// ICanvasResourceWrapperNative
+//
+
+IFACEMETHODIMP CanvasStrokeStyle::GetResource(ICanvasDevice* device, float dpi, REFIID iid, void** outResource)
+{
+    UNREFERENCED_PARAMETER(dpi);
+
+    return ExceptionBoundary(
+        [&]
+        {
+            CheckAndClearOutPointer(outResource);
+
+            if (!device)
+                ThrowHR(E_INVALIDARG, Strings::GetResourceNoDevice);
+
+            ComPtr<ID2D1Factory> d2dFactory;
+            As<ICanvasDeviceInternal>(device)->GetD2DDevice()->GetFactory(&d2dFactory);
+
+            auto resource = GetRealizedD2DStrokeStyle(d2dFactory.Get());
+
+            ThrowIfFailed(resource.CopyTo(iid, outResource));
+        });
+}
+
 
 void CanvasStrokeStyle::ThrowIfClosed()
 {

@@ -48,6 +48,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         }
         
         
+        // Validation helpers, also used by ResourceWrapper.
+        static void ValidateDevice(IInspectable* wrapper, ICanvasDevice* device);
+        static void ValidateDevice(ICanvasResourceWrapperWithDevice* wrapper, ICanvasDevice* device);
+        
+        static void ValidateDpi(IInspectable* wrapper, float dpi);
+        static void ValidateDpi(ICanvasResourceWrapperWithDpi* wrapper, float dpi);
+
+
         // A try-create function attempts to wrap a native resource with a WinRT wrapper of a specific type.
         // The result is an out pointer rather than return value because we are going to call these functions
         // a bunch of times in a loop probing for different types, and don't want the overhead of messing
