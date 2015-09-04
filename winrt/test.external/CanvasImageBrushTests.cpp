@@ -44,11 +44,22 @@ public:
         Assert::AreEqual<ICanvasImage^>(nullptr, brush->Image);
     }
 
+    TEST_METHOD(CanvasImageBrush_Construct_WithBitmap)
+    {
+        auto anyBitmap = CreateArbitraryCanvasBitmap(m_device);
+
+        auto brush = ref new CanvasImageBrush(m_device, anyBitmap);
+
+        Assert::AreEqual<ICanvasImage>(anyBitmap, brush->Image);
+    }
+
     TEST_METHOD(CanvasImageBrush_Construct_WithImage)
     {
-        auto brush = ref new CanvasImageBrush(m_device, m_anyImage);
+        auto anyImage = ref new CanvasCommandList(m_device);
 
-        Assert::AreEqual(m_anyImage, brush->Image);
+        auto brush = ref new CanvasImageBrush(m_device, anyImage);
+
+        Assert::AreEqual<ICanvasImage>(anyImage, brush->Image);
     }
 
     TEST_METHOD(CanvasImageBrush_ImageProperty_WithBitmap)
@@ -71,6 +82,16 @@ public:
         Assert::AreEqual<ICanvasImage^>(anyRenderTarget, brush->Image);
     }
 
+    TEST_METHOD(CanvasImageBrush_ImageProperty_WithCommandList)
+    {
+        auto anyCommandList = ref new CanvasCommandList(m_device);
+
+        auto brush = ref new CanvasImageBrush(m_device);
+        brush->Image = anyCommandList;
+
+        Assert::AreEqual<ICanvasImage^>(anyCommandList, brush->Image);
+    }
+
     TEST_METHOD(CanvasImageBrush_ImageProperty_WithEffect)
     {
         auto anyEffect = CreateArbitraryEffect();
@@ -78,8 +99,8 @@ public:
         auto brush = ref new CanvasImageBrush(m_device);
         brush->Image = anyEffect;
 
-        // TODO #2630: get_Image needs to support effects
-        Assert::ExpectException<Platform::NotImplementedException^>(
+        // TODO #1697: get_Image needs to support effects
+        Assert::ExpectException<Platform::InvalidCastException^>(
             [&] { Assert::AreEqual<ICanvasImage^>(anyEffect, brush->Image); });
     }
 
@@ -344,20 +365,27 @@ public:
         Assert::IsTrue(IsSameInstance(d2dImageBrush.Get(), wrappedD2DImageBrush.Get()));
     }
 
-    TEST_METHOD(CanvasImageBrush_GetOrCreate_IsNotIdempotent)
+    TEST_METHOD(CanvasImageBrush_GetOrCreate_IsIdempotent)
     {
-        //
-        // Since CanvasImageBrush wraps multiple D2D resources and tracks state
-        // not necessarily stored in the underlying resource, GetOrCreate does
-        // not attempt to be idempotent.
-        //
-
         auto d2dImageBrush = CreateD2DImageBrush();
 
         auto brush1 = GetOrCreate<CanvasImageBrush>(m_device, d2dImageBrush.Get());
         auto brush2 = GetOrCreate<CanvasImageBrush>(m_device, d2dImageBrush.Get());
 
-        Assert::IsFalse(IsSameInstance(reinterpret_cast<IInspectable*>(brush1), reinterpret_cast<IInspectable*>(brush2)));
+        Assert::AreEqual(brush1, brush2);
+    }
+
+    TEST_METHOD(CanvasImageBrush_GetResource_WrongDevice)
+    {
+        auto brush = ref new CanvasImageBrush(m_device);
+
+        auto otherDevice = ref new CanvasDevice();
+
+        ExpectCOMException(E_INVALIDARG, L"Existing resource wrapper is associated with a different device.",
+            [&]
+            {
+                GetWrappedResource<ID2D1Brush>(otherDevice, brush);
+            });
     }
 
     ComPtr<ID2D1ImageBrush> CreateD2DImageBrush(D2D1_RECT_F rect = D2D1_RECT_F{})

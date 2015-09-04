@@ -25,14 +25,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             ICanvasImageBrush** canvasImageBrush) override;
     };
 
-    class CanvasImageBrush : public RuntimeClass<
-        RuntimeClassFlags<WinRtClassicComMix>,
+    class CanvasImageBrush : RESOURCE_WRAPPER_RUNTIME_CLASS(
+        ID2D1Brush,
+        CanvasImageBrush,
         ICanvasImageBrush,
-        ABI::Windows::Foundation::IClosable,
-        CloakedIid<ICanvasResourceWrapperNative>,
-        MixIn<CanvasImageBrush, CanvasBrush>>,
-        public CanvasBrush,
-        private LifespanTracker<CanvasImageBrush>
+        MixIn<CanvasImageBrush, CanvasBrush>),
+        public CanvasBrush
     {
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_Brushes_CanvasImageBrush, BaseTrust);
 
@@ -48,18 +46,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         ComPtr<ID2D1ImageBrush> m_d2dImageBrush;
 
-        // TODO #2630: stop explicitly storing this once we support proper effect interop.
+        // TODO #1697: stop explicitly storing this once we support proper effect interop.
         ComPtr<ICanvasImageInternal> m_effectNeedingDpiFixup;
-
-        bool m_useBitmapBrush;
 
         bool m_isSourceRectSet;
 
     public:
         CanvasImageBrush(
             ICanvasDevice* device,
-            ID2D1BitmapBrush1* bitmapBrush = nullptr,
-            ID2D1ImageBrush* imageBrush = nullptr);
+            ID2D1BitmapBrush1* bitmapBrush);
 
         CanvasImageBrush(
             ICanvasDevice* device,
@@ -67,7 +62,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         CanvasImageBrush(
             ICanvasDevice* device,
-            ICanvasImage* image);
+            ICanvasImage* image = nullptr);
 
         IFACEMETHOD(get_Image)(ICanvasImage** value) override;
 
@@ -101,10 +96,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     private:
         void ThrowIfClosed();
         void SetImage(ICanvasImage* image);
-        void SwitchFromBitmapBrushToImageBrush();
+        void SwitchToImageBrush(ID2D1Image* image);
+        void SwitchToBitmapBrush(ID2D1Bitmap1* bitmap);
         void TrySwitchFromImageBrushToBitmapBrush();
-        ComPtr<ID2D1Bitmap1> GetD2DBitmap() const;
-        static D2D1_RECT_F GetD2DRectFromRectReference(ABI::Windows::Foundation::IReference<ABI::Windows::Foundation::Rect>* value);
+        ComPtr<ID2D1Image> GetD2DImage() const;
     };
 
 }}}}}

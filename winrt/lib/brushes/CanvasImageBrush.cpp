@@ -48,45 +48,39 @@ IFACEMETHODIMP CanvasImageBrushFactory::CreateWithImage(
 
 CanvasImageBrush::CanvasImageBrush(
     ICanvasDevice* device,
-    ID2D1BitmapBrush1* bitmapBrush,
-    ID2D1ImageBrush* imageBrush)
+    ID2D1BitmapBrush1* bitmapBrush)
     : CanvasBrush(device)
+    , ResourceWrapper(bitmapBrush)
     , m_d2dBitmapBrush(bitmapBrush)
-    , m_d2dImageBrush(imageBrush)
-    , m_useBitmapBrush(true)
     , m_isSourceRectSet(false)
 {
-    auto deviceInternal = As<ICanvasDeviceInternal>(m_device.EnsureNotClosed());
-
-    // We always use the bitmap brush, unless an image brush was explicitly
-    // specified
-    if (m_d2dImageBrush)
-    {
-        m_useBitmapBrush = false;
-        m_isSourceRectSet = true;
-    }
-
-    // Create missing brushes
-    if (!m_d2dBitmapBrush)
-        m_d2dBitmapBrush = deviceInternal->CreateBitmapBrush(nullptr);
-
-    if (!m_d2dImageBrush)
-        m_d2dImageBrush = deviceInternal->CreateImageBrush(nullptr);
 }
 
 CanvasImageBrush::CanvasImageBrush(
     ICanvasDevice* device,
     ID2D1ImageBrush* imageBrush)
-    : CanvasImageBrush(device, nullptr, imageBrush)
+    : CanvasBrush(device)
+    , ResourceWrapper(imageBrush)
+    , m_d2dImageBrush(imageBrush)
+    , m_isSourceRectSet(true)
 {
 }
 
 CanvasImageBrush::CanvasImageBrush(
     ICanvasDevice* device,
     ICanvasImage* image)
-    : CanvasImageBrush(device)
+    : CanvasBrush(device)
+    , ResourceWrapper(nullptr)
+    , m_isSourceRectSet(false)
 {
-    SetImage(image);
+    if (image)
+    {
+        SetImage(image);
+    }
+    else
+    {
+        SwitchToBitmapBrush(nullptr);
+    }
 }
 
 void CanvasImageBrush::SetImage(ICanvasImage* image)
@@ -95,50 +89,52 @@ void CanvasImageBrush::SetImage(ICanvasImage* image)
 
     if (image == nullptr)
     {
-        if (m_useBitmapBrush) m_d2dBitmapBrush->SetBitmap(nullptr);
-        else m_d2dImageBrush->SetImage(nullptr);
+        if (m_d2dBitmapBrush)
+            m_d2dBitmapBrush->SetBitmap(nullptr);
+        else
+            m_d2dImageBrush->SetImage(nullptr);
+
         return;
     }
 
     auto bitmap = MaybeAs<ICanvasBitmap>(image);
 
-    if (bitmap && m_useBitmapBrush)
+    if (bitmap && !m_isSourceRectSet)
     {
-        // Can replace the current bitmap brush's bitmap
-        ComPtr<ICanvasBitmapInternal> bitmapInternal;
-        ThrowIfFailed(bitmap.As(&bitmapInternal));
+        // Use a bitmap brush.
+        auto& d2dBitmap = As<ICanvasBitmapInternal>(bitmap)->GetD2DBitmap();
 
-        auto& d2dBitmap = bitmapInternal->GetD2DBitmap();
-
-        m_d2dBitmapBrush->SetBitmap(d2dBitmap.Get());
-    }
-    else
-    {
-        // If they specified an image, but this is currently backed by a bitmap brush,
-        // then we need to switch to using an image brush.
-        if (m_useBitmapBrush)
-            SwitchFromBitmapBrushToImageBrush();
-
-        auto deviceInternal = As<ICanvasDeviceInternal>(m_device.EnsureNotClosed());
-        m_d2dImageBrush->SetImage(deviceInternal->GetD2DImage(image).Get());
-
-        if (bitmap)
+        if (m_d2dBitmapBrush)
         {
-            // If they specified a bitmap, but this is currently backed by an image brush,
-            // then we may be able to switch to using a bitmap brush.
-            if (!m_isSourceRectSet)
-                TrySwitchFromImageBrushToBitmapBrush();
+            m_d2dBitmapBrush->SetBitmap(d2dBitmap.Get());
         }
         else
         {
-            // Effects need to be reconfigured depending on the DPI of the device context they
-            // are drawn onto. We don't know target DPI at this point, so if the image is an
-            // effect, we store that away for use by a later fixup inside GetD2DBrush.
-            ComPtr<IGraphicsEffect> effect;
-            if (SUCCEEDED(image->QueryInterface(effect.GetAddressOf())))
-            {
-                m_effectNeedingDpiFixup = As<ICanvasImageInternal>(effect);
-            }
+            SwitchToBitmapBrush(d2dBitmap.Get());
+        }
+    }
+    else
+    {
+        // Use an image brush.
+        auto d2dImage = As<ICanvasDeviceInternal>(m_device.EnsureNotClosed())->GetD2DImage(image);
+
+        if (m_d2dImageBrush)
+        {
+            m_d2dImageBrush->SetImage(d2dImage.Get());
+        }
+        else
+        {
+            SwitchToImageBrush(d2dImage.Get());
+        }
+
+        // Effects need to be reconfigured depending on the DPI of the device context they
+        // are drawn onto. We don't know target DPI at this point, so if the image is an
+        // effect, we store that away for use by a later fixup inside GetD2DBrush.
+        auto effect = MaybeAs<IGraphicsEffect>(image);
+            
+        if (effect)
+        {
+            m_effectNeedingDpiFixup = As<ICanvasImageInternal>(effect);
         }
     }
 }
@@ -151,50 +147,35 @@ IFACEMETHODIMP CanvasImageBrush::get_Image(ICanvasImage** value)
             CheckAndClearOutPointer(value);
             auto& device = m_device.EnsureNotClosed();
 
-            auto d2dBitmap = GetD2DBitmap();
+            auto d2dImage = GetD2DImage();
 
-            if (!d2dBitmap)
+            if (!d2dImage)
                 return;
 
-            auto image = ResourceManager::GetOrCreate<ICanvasImage>(device.Get(), d2dBitmap.Get());
+            auto image = ResourceManager::GetOrCreate<ICanvasImage>(device.Get(), d2dImage.Get());
             ThrowIfFailed(image.CopyTo(value));
         });
 }
 
-
-ComPtr<ID2D1Bitmap1> CanvasImageBrush::GetD2DBitmap() const
+ComPtr<ID2D1Image> CanvasImageBrush::GetD2DImage() const
 {
     Lock lock(m_mutex);
     
-    if (m_useBitmapBrush)
+    if (m_d2dBitmapBrush)
     {
-        ComPtr<ID2D1Bitmap> bm;
-        m_d2dBitmapBrush->GetBitmap(&bm);
+        ComPtr<ID2D1Bitmap> bitmap;
+        m_d2dBitmapBrush->GetBitmap(&bitmap);
 
-        if (!bm)
-            return nullptr;
-
-        return As<ID2D1Bitmap1>(bm);
+        return bitmap;
     }
     else
     {
         ComPtr<ID2D1Image> image;
         m_d2dImageBrush->GetImage(&image);
 
-        ComPtr<ID2D1Bitmap1> d2dBitmap; 
-        HRESULT hr = image.As(&d2dBitmap);
-        if (hr == E_NOINTERFACE)
-        {
-            // TODO #2630: polymorphic interop for all ICanvasImage
-            // types.  For now, this only works for CanvasBitmap.
-            ThrowHR(E_NOTIMPL);
-        }
-        ThrowIfFailed(hr);
-
-        return d2dBitmap;
+        return image;
     }
 }
-
 
 IFACEMETHODIMP CanvasImageBrush::put_Image(ICanvasImage* value)
 {
@@ -220,7 +201,7 @@ IFACEMETHODIMP CanvasImageBrush::get_ExtendX(CanvasEdgeBehavior* value)
             ThrowIfClosed();
             D2D1_EXTEND_MODE extendMode;
 
-            if (m_useBitmapBrush)
+            if (m_d2dBitmapBrush)
                 extendMode = m_d2dBitmapBrush->GetExtendModeX();
             else 
                 extendMode = m_d2dImageBrush->GetExtendModeX();
@@ -237,7 +218,8 @@ IFACEMETHODIMP CanvasImageBrush::put_ExtendX(CanvasEdgeBehavior value)
             Lock lock(m_mutex);    
 
             ThrowIfClosed();
-            if (m_useBitmapBrush)
+
+            if (m_d2dBitmapBrush)
                 m_d2dBitmapBrush->SetExtendModeX(static_cast<D2D1_EXTEND_MODE>(value));
             else 
                 m_d2dImageBrush->SetExtendModeX(static_cast<D2D1_EXTEND_MODE>(value));
@@ -255,7 +237,7 @@ IFACEMETHODIMP CanvasImageBrush::get_ExtendY(CanvasEdgeBehavior* value)
             ThrowIfClosed();
             D2D1_EXTEND_MODE extendMode;
 
-            if (m_useBitmapBrush)
+            if (m_d2dBitmapBrush)
                 extendMode = m_d2dBitmapBrush->GetExtendModeY();
             else 
                 extendMode = m_d2dImageBrush->GetExtendModeY();
@@ -272,7 +254,8 @@ IFACEMETHODIMP CanvasImageBrush::put_ExtendY(CanvasEdgeBehavior value)
             Lock lock(m_mutex);    
 
             ThrowIfClosed();
-            if (m_useBitmapBrush)
+
+            if (m_d2dBitmapBrush)
                 m_d2dBitmapBrush->SetExtendModeY(static_cast<D2D1_EXTEND_MODE>(value));
             else 
                 m_d2dImageBrush->SetExtendModeY(static_cast<D2D1_EXTEND_MODE>(value));
@@ -291,7 +274,7 @@ IFACEMETHODIMP CanvasImageBrush::get_SourceRectangle(ABI::Windows::Foundation::I
 
             ComPtr<IReference<Rect>> rectReference;
 
-            if (!m_useBitmapBrush && m_isSourceRectSet)
+            if (m_d2dImageBrush && m_isSourceRectSet)
             {
                 D2D1_RECT_F sourceRectangle;
                 m_d2dImageBrush->GetSourceRectangle(&sourceRectangle);
@@ -304,8 +287,7 @@ IFACEMETHODIMP CanvasImageBrush::get_SourceRectangle(ABI::Windows::Foundation::I
         });
 }
 
-//static
-D2D1_RECT_F CanvasImageBrush::GetD2DRectFromRectReference(ABI::Windows::Foundation::IReference<ABI::Windows::Foundation::Rect>* value)
+static D2D1_RECT_F GetD2DRectFromRectReference(ABI::Windows::Foundation::IReference<ABI::Windows::Foundation::Rect>* value)
 {
     Rect rect{};
     ThrowIfFailed(value->get_Value(&rect));
@@ -321,12 +303,15 @@ IFACEMETHODIMP CanvasImageBrush::put_SourceRectangle(ABI::Windows::Foundation::I
 
             ThrowIfClosed();
 
-            if (m_useBitmapBrush)
+            if (m_d2dBitmapBrush)
             {
                 assert(!m_isSourceRectSet);
                 if (value)
                 {
-                    SwitchFromBitmapBrushToImageBrush();
+                    ComPtr<ID2D1Bitmap> targetImage;
+                    m_d2dBitmapBrush->GetBitmap(&targetImage);
+
+                    SwitchToImageBrush(targetImage.Get());
 
                     D2D1_RECT_F d2dRect = GetD2DRectFromRectReference(value);
 
@@ -369,7 +354,7 @@ IFACEMETHODIMP CanvasImageBrush::get_Interpolation(CanvasImageInterpolation* val
             ThrowIfClosed();
             D2D1_INTERPOLATION_MODE interpolationMode;
 
-            if (m_useBitmapBrush)
+            if (m_d2dBitmapBrush)
                 interpolationMode = m_d2dBitmapBrush->GetInterpolationMode1();
             else 
                 interpolationMode = m_d2dImageBrush->GetInterpolationMode();
@@ -387,7 +372,7 @@ IFACEMETHODIMP CanvasImageBrush::put_Interpolation(CanvasImageInterpolation valu
 
             ThrowIfClosed();
 
-            if (m_useBitmapBrush)
+            if (m_d2dBitmapBrush)
                 m_d2dBitmapBrush->SetInterpolationMode1(static_cast<D2D1_INTERPOLATION_MODE>(value));
             else 
                 m_d2dImageBrush->SetInterpolationMode(static_cast<D2D1_INTERPOLATION_MODE>(value));
@@ -399,7 +384,7 @@ IFACEMETHODIMP CanvasImageBrush::Close()
     CanvasBrush::Close();
     m_d2dBitmapBrush.Reset();
     m_d2dImageBrush.Reset();
-    return S_OK;
+    return ResourceWrapper::Close();
 }
 
 ComPtr<ID2D1Brush> CanvasImageBrush::GetD2DBrush(ID2D1DeviceContext* deviceContext, GetBrushFlags flags)
@@ -408,7 +393,7 @@ ComPtr<ID2D1Brush> CanvasImageBrush::GetD2DBrush(ID2D1DeviceContext* deviceConte
 
     ThrowIfClosed();
 
-    if (m_useBitmapBrush) 
+    if (m_d2dBitmapBrush)
     {
         return m_d2dBitmapBrush;
     }
@@ -437,17 +422,24 @@ ComPtr<ID2D1Brush> CanvasImageBrush::GetD2DBrush(ID2D1DeviceContext* deviceConte
 
 IFACEMETHODIMP CanvasImageBrush::GetResource(ICanvasDevice* device, float dpi, REFIID iid, void** resource)
 {
-    UNREFERENCED_PARAMETER(device);
     UNREFERENCED_PARAMETER(dpi);
 
     return ExceptionBoundary(
         [=]
         {
+            CheckAndClearOutPointer(resource);
+
             Lock lock(m_mutex);    
 
             ThrowIfClosed();
 
-            if (m_useBitmapBrush)
+            ResourceManager::ValidateDevice(static_cast<ICanvasResourceWrapperWithDevice*>(this), device);
+
+            // TODO #1697: pass target DPI on to our source effect once we properly support effect interop.
+            // if (m_effectNeedingDpiFixup)
+            //    m_effectNeedingDpiFixup->GetResource(device, dpi);
+
+            if (m_d2dBitmapBrush)
                 ThrowIfFailed(m_d2dBitmapBrush.CopyTo(iid, resource));
             else
                 ThrowIfFailed(m_d2dImageBrush.CopyTo(iid, resource));
@@ -459,59 +451,73 @@ void CanvasImageBrush::ThrowIfClosed()
     m_device.EnsureNotClosed();
 }
 
-void CanvasImageBrush::SwitchFromBitmapBrushToImageBrush()
+void CanvasImageBrush::SwitchToImageBrush(ID2D1Image* image)
 {
-    assert(m_useBitmapBrush);
+    assert(!m_d2dImageBrush);
 
-    m_useBitmapBrush = false;
+    m_d2dImageBrush = As<ICanvasDeviceInternal>(m_device.EnsureNotClosed())->CreateImageBrush(image);
 
-    m_d2dImageBrush->SetExtendModeX(m_d2dBitmapBrush->GetExtendModeX());
-    m_d2dImageBrush->SetExtendModeY(m_d2dBitmapBrush->GetExtendModeY());
-    m_d2dImageBrush->SetInterpolationMode(m_d2dBitmapBrush->GetInterpolationMode1());
-    m_d2dImageBrush->SetOpacity(m_d2dBitmapBrush->GetOpacity());
-    D2D1_MATRIX_3X2_F transform;
-    m_d2dBitmapBrush->GetTransform(&transform);
-    m_d2dImageBrush->SetTransform(transform);
+    if (m_d2dBitmapBrush)
+    {
+        m_d2dImageBrush->SetExtendModeX(m_d2dBitmapBrush->GetExtendModeX());
+        m_d2dImageBrush->SetExtendModeY(m_d2dBitmapBrush->GetExtendModeY());
+        m_d2dImageBrush->SetInterpolationMode(m_d2dBitmapBrush->GetInterpolationMode1());
+        m_d2dImageBrush->SetOpacity(m_d2dBitmapBrush->GetOpacity());
+        D2D1_MATRIX_3X2_F transform;
+        m_d2dBitmapBrush->GetTransform(&transform);
+        m_d2dImageBrush->SetTransform(transform);
 
-    ComPtr<ID2D1Bitmap> targetImage;
-    m_d2dBitmapBrush->GetBitmap(&targetImage);
-    m_d2dBitmapBrush->SetBitmap(nullptr);
-    m_d2dImageBrush->SetImage(targetImage.Get());
+        m_d2dBitmapBrush.Reset();
+    }
+
+    SetResource(m_d2dImageBrush.Get());
+}
+
+void CanvasImageBrush::SwitchToBitmapBrush(ID2D1Bitmap1* bitmap)
+{
+    assert(!m_d2dBitmapBrush);
+    assert(!m_isSourceRectSet);
+
+    m_d2dBitmapBrush = As<ICanvasDeviceInternal>(m_device.EnsureNotClosed())->CreateBitmapBrush(bitmap);
+
+    if (m_d2dImageBrush)
+    {
+        m_d2dBitmapBrush->SetExtendModeX(m_d2dImageBrush->GetExtendModeX());
+        m_d2dBitmapBrush->SetExtendModeY(m_d2dImageBrush->GetExtendModeY());
+        m_d2dBitmapBrush->SetInterpolationMode1(m_d2dImageBrush->GetInterpolationMode());
+        m_d2dBitmapBrush->SetOpacity(m_d2dImageBrush->GetOpacity());
+        D2D1_MATRIX_3X2_F transform;
+        m_d2dImageBrush->GetTransform(&transform);
+        m_d2dBitmapBrush->SetTransform(transform);
+
+        m_d2dImageBrush.Reset();
+    }
+
+    SetResource(m_d2dBitmapBrush.Get());
 }
 
 void CanvasImageBrush::TrySwitchFromImageBrushToBitmapBrush()
 {
-    assert(!m_useBitmapBrush);
+    assert(m_d2dImageBrush);
     assert(!m_isSourceRectSet);
 
     ComPtr<ID2D1Image> targetImage;
     m_d2dImageBrush->GetImage(&targetImage);
 
-    ComPtr<ID2D1Bitmap> targetBitmap;
+    ComPtr<ID2D1Bitmap1> targetBitmap;
+
     if (targetImage)
     {
         HRESULT hr = targetImage.As(&targetBitmap);
 
         if (FAILED(hr))
         {
-            // The image brush's image isn't a bitmap, so we can't switch to
-            // bitmap brush.
+            // The image brush's image isn't a bitmap, so we can't switch to bitmap brush.
             return;
         }
     }
 
-    m_useBitmapBrush = true;
-
-    m_d2dBitmapBrush->SetExtendModeX(m_d2dImageBrush->GetExtendModeX());
-    m_d2dBitmapBrush->SetExtendModeY(m_d2dImageBrush->GetExtendModeY());
-    m_d2dBitmapBrush->SetInterpolationMode1(m_d2dImageBrush->GetInterpolationMode());
-    m_d2dBitmapBrush->SetOpacity(m_d2dImageBrush->GetOpacity());
-    D2D1_MATRIX_3X2_F transform;
-    m_d2dImageBrush->GetTransform(&transform);
-    m_d2dBitmapBrush->SetTransform(transform);
-
-    m_d2dImageBrush->SetImage(nullptr);
-    m_d2dBitmapBrush->SetBitmap(targetBitmap.Get());
+    SwitchToBitmapBrush(targetBitmap.Get());
 }
 
 ActivatableClassWithFactory(CanvasImageBrush, CanvasImageBrushFactory);
