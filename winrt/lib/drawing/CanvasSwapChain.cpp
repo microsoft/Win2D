@@ -507,29 +507,22 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     {            
         auto swapChain = As<IDXGISwapChain2>(GetResource());
 
-        SetDpi(lock, swapChain, newDpi);
-
-        int widthInPixels = SizeDipsToPixels(newWidth, m_dpi);
-        int heightInPixels = SizeDipsToPixels(newHeight, m_dpi);
+        int widthInPixels = SizeDipsToPixels(newWidth, newDpi);
+        int heightInPixels = SizeDipsToPixels(newHeight, newDpi);
         
         ThrowIfNegative(bufferCount);
         ThrowIfNegative(widthInPixels);
         ThrowIfNegative(heightInPixels);
-        
+
         ThrowIfFailed(swapChain->ResizeBuffers(
             bufferCount, 
             widthInPixels,
             heightInPixels,
             static_cast<DXGI_FORMAT>(newFormat), 
             0));
-    }
 
-    void CanvasSwapChain::SetDpi(D2DResourceLock const& lock, ComPtr<IDXGISwapChain2> const& swapChain, float newDpi)
-    {
         DXGI_MATRIX_3X2_F dpiIndependentTransform = GetMatrixInternal(lock, swapChain);
-
         m_dpi = newDpi;
-
         SetMatrixInternal(lock, swapChain, &dpiIndependentTransform);
     }
 

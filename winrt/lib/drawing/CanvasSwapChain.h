@@ -211,8 +211,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ComPtr<IDXGISwapChain2> const& resource, 
             DXGI_MATRIX_3X2_F* transform);
 
-        void SetDpi(D2DResourceLock const& lock, ComPtr<IDXGISwapChain2> const& resource, float newDpi);
-
         void ResizeBuffersImpl(
             D2DResourceLock const& lock,
             float newWidth,
@@ -220,7 +218,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             float newDpi,
             DirectXPixelFormat newFormat,
             int32_t bufferCount);
-
     };
 
 }}}}
