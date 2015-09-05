@@ -3367,7 +3367,7 @@ TEST_CLASS(CanvasAnimatedControl_DpiScaling)
 
                     Assert::AreEqual(dpi, expectedDpi);
 
-                    return Make<CanvasSwapChain>(device, m_dxgiSwapChain.Get(), dpi);
+                    return Make<CanvasSwapChain>(device, m_dxgiSwapChain.Get(), dpi, false);
                 });
         }
 

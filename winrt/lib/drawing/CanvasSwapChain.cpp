@@ -166,11 +166,37 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     CanvasSwapChain::CanvasSwapChain(
         ICanvasDevice* device,
         IDXGISwapChain1* dxgiSwapChain,
-        float dpi)
+        float dpi,
+        bool isCoreWindowSwapChain)
         : ResourceWrapper(dxgiSwapChain)
         , m_device(device)
+        , m_isCoreWindowSwapChain(isCoreWindowSwapChain)
         , m_dpi(dpi)
         , m_adapter(CanvasSwapChainAdapter::GetInstance())
+    {
+    }
+
+    // CoreWindow swap chains cannot have a matrix set on them.  Swap chains
+    // created via CanvasSwapChainFactory can directly tell CanvasSwapChain what
+    // type of swap chain they are.  Swap chains created by interop need to be
+    // queried to find out if they have a core window associated.
+    static bool IsCoreWindowSwapChain(IDXGISwapChain1* swapChain)
+    {
+        ComPtr<ICoreWindow> coreWindow;
+        if (SUCCEEDED(swapChain->GetCoreWindow(IID_PPV_ARGS(&coreWindow))))
+        {
+            if (coreWindow)
+                return true;
+        }
+
+        return false;
+    }
+
+    CanvasSwapChain::CanvasSwapChain(
+        ICanvasDevice* device,
+        IDXGISwapChain1* dxgiSwapChain,
+        float dpi)
+        : CanvasSwapChain(device, dxgiSwapChain, dpi, IsCoreWindowSwapChain(dxgiSwapChain))
     {
     }
 
@@ -521,9 +547,18 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             static_cast<DXGI_FORMAT>(newFormat), 
             0));
 
-        DXGI_MATRIX_3X2_F dpiIndependentTransform = GetMatrixInternal(lock, swapChain);
-        m_dpi = newDpi;
-        SetMatrixInternal(lock, swapChain, &dpiIndependentTransform);
+        if (m_isCoreWindowSwapChain)
+        {
+            // CoreWindow swap chains can't get or set the transform matrix.
+            m_dpi = newDpi;
+        }
+        else
+        {
+            // Update the transform matrix to account for any DPI changes
+            DXGI_MATRIX_3X2_F dpiIndependentTransform = GetMatrixInternal(lock, swapChain);
+            m_dpi = newDpi;
+            SetMatrixInternal(lock, swapChain, &dpiIndependentTransform);
+        }
     }
 
     // IClosable
@@ -719,7 +754,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         auto canvasSwapChain = Make<CanvasSwapChain>(
             device,
             dxgiSwapChain.Get(),
-            dpi);
+            dpi,
+            false);
         CheckMakeResult(canvasSwapChain);
 
         ThrowIfFailed(canvasSwapChain->put_TransformMatrix(Matrix3x2{ 1, 0, 0, 1, 0, 0 }));
@@ -771,7 +807,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         auto canvasSwapChain = Make<CanvasSwapChain>(
             device,
             dxgiSwapChain.Get(),
-            dpi);
+            dpi,
+            true);
         CheckMakeResult(canvasSwapChain);
 
         return canvasSwapChain;

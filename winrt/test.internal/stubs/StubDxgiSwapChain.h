@@ -27,6 +27,8 @@ namespace canvas
                     m_transform = *matrix;
                     return S_OK;
                 });
+
+            GetCoreWindowMethod.AllowAnyCall();
         }
 
         IFACEMETHODIMP GetMatrixTransform(

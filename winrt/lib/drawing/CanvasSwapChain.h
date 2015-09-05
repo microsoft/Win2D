@@ -108,6 +108,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_CanvasSwapChain, BaseTrust);
 
         ClosablePtr<ICanvasDevice> m_device;
+        bool m_isCoreWindowSwapChain;
         float m_dpi;
         std::shared_ptr<CanvasSwapChainAdapter> m_adapter;
 
@@ -139,6 +140,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             float dpi,
             DirectXPixelFormat format,
             int32_t bufferCount);
+
+        CanvasSwapChain(
+            ICanvasDevice* device,
+            IDXGISwapChain1* dxgiSwapChain,
+            float dpi,
+            bool isCoreWindowSwapChain);
 
         CanvasSwapChain(
             ICanvasDevice* device,

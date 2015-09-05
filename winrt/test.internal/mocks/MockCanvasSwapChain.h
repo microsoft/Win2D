@@ -17,7 +17,7 @@ namespace canvas
             ICanvasDevice* device = Make<StubCanvasDevice>().Get(),
             IDXGISwapChain1* dxgiSwapChain = MakeMockSwapChain().Get(),
             float dpi = DEFAULT_DPI)
-            : CanvasSwapChain(device, dxgiSwapChain, dpi)
+            : CanvasSwapChain(device, dxgiSwapChain, dpi, false)
         {
             CreateDrawingSessionMethod.AllowAnyCall();
         }
