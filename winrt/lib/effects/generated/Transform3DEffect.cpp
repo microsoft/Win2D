@@ -9,13 +9,16 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Effects
 {
-    Transform3DEffect::Transform3DEffect()
-        : CanvasEffect(CLSID_D2D13DTransform, 3, 1, true)
+    Transform3DEffect::Transform3DEffect(ID2D1Effect* effect)
+        : CanvasEffect(effect, EffectId(), 3, 1, true)
     {
-        // Set default values
-        SetBoxedProperty<uint32_t>(D2D1_3DTRANSFORM_PROP_INTERPOLATION_MODE, D2D1_INTERPOLATION_MODE_LINEAR);
-        SetBoxedProperty<uint32_t>(D2D1_3DTRANSFORM_PROP_BORDER_MODE, D2D1_BORDER_MODE_SOFT);
-        SetBoxedProperty<float[16]>(D2D1_3DTRANSFORM_PROP_TRANSFORM_MATRIX, Numerics::Matrix4x4{ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 });
+        if (!effect)
+        {
+            // Set default values
+            SetBoxedProperty<uint32_t>(D2D1_3DTRANSFORM_PROP_INTERPOLATION_MODE, D2D1_INTERPOLATION_MODE_LINEAR);
+            SetBoxedProperty<uint32_t>(D2D1_3DTRANSFORM_PROP_BORDER_MODE, D2D1_BORDER_MODE_SOFT);
+            SetBoxedProperty<float[16]>(D2D1_3DTRANSFORM_PROP_TRANSFORM_MATRIX, Numerics::Matrix4x4{ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 });
+        }
     }
 
     IMPLEMENT_EFFECT_PROPERTY_WITH_VALIDATION(Transform3DEffect,

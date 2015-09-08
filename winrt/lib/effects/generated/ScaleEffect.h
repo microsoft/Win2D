@@ -19,7 +19,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_Effects_ScaleEffect, BaseTrust);
 
     public:
-        ScaleEffect();
+        ScaleEffect(ID2D1Effect* effect = nullptr);
+
+        static IID const& EffectId() { return CLSID_D2D1Scale; }
 
         EFFECT_PROPERTY(Scale, Numerics::Vector2);
         EFFECT_PROPERTY(CenterPoint, Numerics::Vector2);

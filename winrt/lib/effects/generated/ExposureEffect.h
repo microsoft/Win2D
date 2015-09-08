@@ -21,7 +21,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_Effects_ExposureEffect, BaseTrust);
 
     public:
-        ExposureEffect();
+        ExposureEffect(ID2D1Effect* effect = nullptr);
+
+        static IID const& EffectId() { return CLSID_D2D1Exposure; }
 
         EFFECT_PROPERTY(Exposure, float);
         EFFECT_PROPERTY(Source, IGraphicsEffectSource*);

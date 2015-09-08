@@ -9,12 +9,15 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Effects
 {
-    BrightnessEffect::BrightnessEffect()
-        : CanvasEffect(CLSID_D2D1Brightness, 2, 1, true)
+    BrightnessEffect::BrightnessEffect(ID2D1Effect* effect)
+        : CanvasEffect(effect, EffectId(), 2, 1, true)
     {
-        // Set default values
-        SetBoxedProperty<float[2]>(D2D1_BRIGHTNESS_PROP_WHITE_POINT, Numerics::Vector2{ 1.0f, 1.0f });
-        SetBoxedProperty<float[2]>(D2D1_BRIGHTNESS_PROP_BLACK_POINT, Numerics::Vector2{ 0.0f, 0.0f });
+        if (!effect)
+        {
+            // Set default values
+            SetBoxedProperty<float[2]>(D2D1_BRIGHTNESS_PROP_WHITE_POINT, Numerics::Vector2{ 1.0f, 1.0f });
+            SetBoxedProperty<float[2]>(D2D1_BRIGHTNESS_PROP_BLACK_POINT, Numerics::Vector2{ 0.0f, 0.0f });
+        }
     }
 
     IMPLEMENT_EFFECT_PROPERTY_WITH_VALIDATION(BrightnessEffect,

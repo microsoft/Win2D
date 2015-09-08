@@ -19,7 +19,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_Effects_TurbulenceEffect, BaseTrust);
 
     public:
-        TurbulenceEffect();
+        TurbulenceEffect(ID2D1Effect* effect = nullptr);
+
+        static IID const& EffectId() { return CLSID_D2D1Turbulence; }
 
         EFFECT_PROPERTY(Offset, Numerics::Vector2);
         EFFECT_PROPERTY(Size, Numerics::Vector2);

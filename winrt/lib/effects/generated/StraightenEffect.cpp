@@ -11,13 +11,16 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Effects
 {
-    StraightenEffect::StraightenEffect()
-        : CanvasEffect(CLSID_D2D1Straighten, 3, 1, true)
+    StraightenEffect::StraightenEffect(ID2D1Effect* effect)
+        : CanvasEffect(effect, EffectId(), 3, 1, true)
     {
-        // Set default values
-        SetBoxedProperty<float>(D2D1_STRAIGHTEN_PROP_ANGLE, 0.0f);
-        SetBoxedProperty<boolean>(D2D1_STRAIGHTEN_PROP_MAINTAIN_SIZE, static_cast<boolean>(false));
-        SetBoxedProperty<uint32_t>(D2D1_STRAIGHTEN_PROP_SCALE_MODE, D2D1_INTERPOLATION_MODE_LINEAR);
+        if (!effect)
+        {
+            // Set default values
+            SetBoxedProperty<float>(D2D1_STRAIGHTEN_PROP_ANGLE, 0.0f);
+            SetBoxedProperty<boolean>(D2D1_STRAIGHTEN_PROP_MAINTAIN_SIZE, static_cast<boolean>(false));
+            SetBoxedProperty<uint32_t>(D2D1_STRAIGHTEN_PROP_SCALE_MODE, D2D1_INTERPOLATION_MODE_LINEAR);
+        }
     }
 
     IMPLEMENT_EFFECT_PROPERTY(StraightenEffect,

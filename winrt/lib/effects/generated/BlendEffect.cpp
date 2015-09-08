@@ -9,11 +9,14 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Effects
 {
-    BlendEffect::BlendEffect()
-        : CanvasEffect(CLSID_D2D1Blend, 1, 2, true)
+    BlendEffect::BlendEffect(ID2D1Effect* effect)
+        : CanvasEffect(effect, EffectId(), 1, 2, true)
     {
-        // Set default values
-        SetBoxedProperty<uint32_t>(D2D1_BLEND_PROP_MODE, D2D1_BLEND_MODE_MULTIPLY);
+        if (!effect)
+        {
+            // Set default values
+            SetBoxedProperty<uint32_t>(D2D1_BLEND_PROP_MODE, D2D1_BLEND_MODE_MULTIPLY);
+        }
     }
 
     IMPLEMENT_EFFECT_PROPERTY(BlendEffect,

@@ -19,7 +19,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_Effects_LinearTransferEffect, BaseTrust);
 
     public:
-        LinearTransferEffect();
+        LinearTransferEffect(ID2D1Effect* effect = nullptr);
+
+        static IID const& EffectId() { return CLSID_D2D1LinearTransfer; }
 
         EFFECT_PROPERTY(RedOffset, float);
         EFFECT_PROPERTY(RedSlope, float);

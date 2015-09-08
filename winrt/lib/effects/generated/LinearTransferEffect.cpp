@@ -9,23 +9,26 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Effects
 {
-    LinearTransferEffect::LinearTransferEffect()
-        : CanvasEffect(CLSID_D2D1LinearTransfer, 13, 1, true)
+    LinearTransferEffect::LinearTransferEffect(ID2D1Effect* effect)
+        : CanvasEffect(effect, EffectId(), 13, 1, true)
     {
-        // Set default values
-        SetBoxedProperty<float>(D2D1_LINEARTRANSFER_PROP_RED_Y_INTERCEPT, 0.0f);
-        SetBoxedProperty<float>(D2D1_LINEARTRANSFER_PROP_RED_SLOPE, 1.0f);
-        SetBoxedProperty<boolean>(D2D1_LINEARTRANSFER_PROP_RED_DISABLE, static_cast<boolean>(false));
-        SetBoxedProperty<float>(D2D1_LINEARTRANSFER_PROP_GREEN_Y_INTERCEPT, 0.0f);
-        SetBoxedProperty<float>(D2D1_LINEARTRANSFER_PROP_GREEN_SLOPE, 1.0f);
-        SetBoxedProperty<boolean>(D2D1_LINEARTRANSFER_PROP_GREEN_DISABLE, static_cast<boolean>(false));
-        SetBoxedProperty<float>(D2D1_LINEARTRANSFER_PROP_BLUE_Y_INTERCEPT, 0.0f);
-        SetBoxedProperty<float>(D2D1_LINEARTRANSFER_PROP_BLUE_SLOPE, 1.0f);
-        SetBoxedProperty<boolean>(D2D1_LINEARTRANSFER_PROP_BLUE_DISABLE, static_cast<boolean>(false));
-        SetBoxedProperty<float>(D2D1_LINEARTRANSFER_PROP_ALPHA_Y_INTERCEPT, 0.0f);
-        SetBoxedProperty<float>(D2D1_LINEARTRANSFER_PROP_ALPHA_SLOPE, 1.0f);
-        SetBoxedProperty<boolean>(D2D1_LINEARTRANSFER_PROP_ALPHA_DISABLE, static_cast<boolean>(false));
-        SetBoxedProperty<boolean>(D2D1_LINEARTRANSFER_PROP_CLAMP_OUTPUT, static_cast<boolean>(false));
+        if (!effect)
+        {
+            // Set default values
+            SetBoxedProperty<float>(D2D1_LINEARTRANSFER_PROP_RED_Y_INTERCEPT, 0.0f);
+            SetBoxedProperty<float>(D2D1_LINEARTRANSFER_PROP_RED_SLOPE, 1.0f);
+            SetBoxedProperty<boolean>(D2D1_LINEARTRANSFER_PROP_RED_DISABLE, static_cast<boolean>(false));
+            SetBoxedProperty<float>(D2D1_LINEARTRANSFER_PROP_GREEN_Y_INTERCEPT, 0.0f);
+            SetBoxedProperty<float>(D2D1_LINEARTRANSFER_PROP_GREEN_SLOPE, 1.0f);
+            SetBoxedProperty<boolean>(D2D1_LINEARTRANSFER_PROP_GREEN_DISABLE, static_cast<boolean>(false));
+            SetBoxedProperty<float>(D2D1_LINEARTRANSFER_PROP_BLUE_Y_INTERCEPT, 0.0f);
+            SetBoxedProperty<float>(D2D1_LINEARTRANSFER_PROP_BLUE_SLOPE, 1.0f);
+            SetBoxedProperty<boolean>(D2D1_LINEARTRANSFER_PROP_BLUE_DISABLE, static_cast<boolean>(false));
+            SetBoxedProperty<float>(D2D1_LINEARTRANSFER_PROP_ALPHA_Y_INTERCEPT, 0.0f);
+            SetBoxedProperty<float>(D2D1_LINEARTRANSFER_PROP_ALPHA_SLOPE, 1.0f);
+            SetBoxedProperty<boolean>(D2D1_LINEARTRANSFER_PROP_ALPHA_DISABLE, static_cast<boolean>(false));
+            SetBoxedProperty<boolean>(D2D1_LINEARTRANSFER_PROP_CLAMP_OUTPUT, static_cast<boolean>(false));
+        }
     }
 
     IMPLEMENT_EFFECT_PROPERTY(LinearTransferEffect,

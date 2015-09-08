@@ -9,11 +9,14 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Effects
 {
-    ColorSourceEffect::ColorSourceEffect()
-        : CanvasEffect(CLSID_D2D1Flood, 1, 0, true)
+    ColorSourceEffect::ColorSourceEffect(ID2D1Effect* effect)
+        : CanvasEffect(effect, EffectId(), 1, 0, true)
     {
-        // Set default values
-        SetBoxedProperty<float[4]>(D2D1_FLOOD_PROP_COLOR, Color{ 255, 0, 0, 0 });
+        if (!effect)
+        {
+            // Set default values
+            SetBoxedProperty<float[4]>(D2D1_FLOOD_PROP_COLOR, Color{ 255, 0, 0, 0 });
+        }
     }
 
     IMPLEMENT_EFFECT_PROPERTY(ColorSourceEffect,

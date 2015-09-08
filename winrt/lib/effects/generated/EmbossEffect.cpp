@@ -11,12 +11,15 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Effects
 {
-    EmbossEffect::EmbossEffect()
-        : CanvasEffect(CLSID_D2D1Emboss, 2, 1, true)
+    EmbossEffect::EmbossEffect(ID2D1Effect* effect)
+        : CanvasEffect(effect, EffectId(), 2, 1, true)
     {
-        // Set default values
-        SetBoxedProperty<float>(D2D1_EMBOSS_PROP_HEIGHT, 1.0f);
-        SetBoxedProperty<float>(D2D1_EMBOSS_PROP_DIRECTION, 0.0f);
+        if (!effect)
+        {
+            // Set default values
+            SetBoxedProperty<float>(D2D1_EMBOSS_PROP_HEIGHT, 1.0f);
+            SetBoxedProperty<float>(D2D1_EMBOSS_PROP_DIRECTION, 0.0f);
+        }
     }
 
     IMPLEMENT_EFFECT_PROPERTY_WITH_VALIDATION(EmbossEffect,

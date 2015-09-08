@@ -9,19 +9,22 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Effects
 {
-    DiscreteTransferEffect::DiscreteTransferEffect()
-        : CanvasEffect(CLSID_D2D1DiscreteTransfer, 9, 1, true)
+    DiscreteTransferEffect::DiscreteTransferEffect(ID2D1Effect* effect)
+        : CanvasEffect(effect, EffectId(), 9, 1, true)
     {
-        // Set default values
-        SetArrayProperty<float>(D2D1_DISCRETETRANSFER_PROP_RED_TABLE, { 0.0, 1.0 });
-        SetBoxedProperty<boolean>(D2D1_DISCRETETRANSFER_PROP_RED_DISABLE, static_cast<boolean>(false));
-        SetArrayProperty<float>(D2D1_DISCRETETRANSFER_PROP_GREEN_TABLE, { 0.0, 1.0 });
-        SetBoxedProperty<boolean>(D2D1_DISCRETETRANSFER_PROP_GREEN_DISABLE, static_cast<boolean>(false));
-        SetArrayProperty<float>(D2D1_DISCRETETRANSFER_PROP_BLUE_TABLE, { 0.0, 1.0 });
-        SetBoxedProperty<boolean>(D2D1_DISCRETETRANSFER_PROP_BLUE_DISABLE, static_cast<boolean>(false));
-        SetArrayProperty<float>(D2D1_DISCRETETRANSFER_PROP_ALPHA_TABLE, { 0.0, 1.0 });
-        SetBoxedProperty<boolean>(D2D1_DISCRETETRANSFER_PROP_ALPHA_DISABLE, static_cast<boolean>(false));
-        SetBoxedProperty<boolean>(D2D1_DISCRETETRANSFER_PROP_CLAMP_OUTPUT, static_cast<boolean>(false));
+        if (!effect)
+        {
+            // Set default values
+            SetArrayProperty<float>(D2D1_DISCRETETRANSFER_PROP_RED_TABLE, { 0.0, 1.0 });
+            SetBoxedProperty<boolean>(D2D1_DISCRETETRANSFER_PROP_RED_DISABLE, static_cast<boolean>(false));
+            SetArrayProperty<float>(D2D1_DISCRETETRANSFER_PROP_GREEN_TABLE, { 0.0, 1.0 });
+            SetBoxedProperty<boolean>(D2D1_DISCRETETRANSFER_PROP_GREEN_DISABLE, static_cast<boolean>(false));
+            SetArrayProperty<float>(D2D1_DISCRETETRANSFER_PROP_BLUE_TABLE, { 0.0, 1.0 });
+            SetBoxedProperty<boolean>(D2D1_DISCRETETRANSFER_PROP_BLUE_DISABLE, static_cast<boolean>(false));
+            SetArrayProperty<float>(D2D1_DISCRETETRANSFER_PROP_ALPHA_TABLE, { 0.0, 1.0 });
+            SetBoxedProperty<boolean>(D2D1_DISCRETETRANSFER_PROP_ALPHA_DISABLE, static_cast<boolean>(false));
+            SetBoxedProperty<boolean>(D2D1_DISCRETETRANSFER_PROP_CLAMP_OUTPUT, static_cast<boolean>(false));
+        }
     }
 
     IMPLEMENT_EFFECT_ARRAY_PROPERTY(DiscreteTransferEffect,

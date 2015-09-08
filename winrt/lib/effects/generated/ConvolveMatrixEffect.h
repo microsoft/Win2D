@@ -19,7 +19,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_Effects_ConvolveMatrixEffect, BaseTrust);
 
     public:
-        ConvolveMatrixEffect();
+        ConvolveMatrixEffect(ID2D1Effect* effect = nullptr);
+
+        static IID const& EffectId() { return CLSID_D2D1ConvolveMatrix; }
 
         EFFECT_PROPERTY(KernelScale, Numerics::Vector2);
         EFFECT_PROPERTY(InterpolationMode, CanvasImageInterpolation);

@@ -9,19 +9,22 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Effects
 {
-    SpotDiffuseEffect::SpotDiffuseEffect()
-        : CanvasEffect(CLSID_D2D1SpotDiffuse, 9, 1, true)
+    SpotDiffuseEffect::SpotDiffuseEffect(ID2D1Effect* effect)
+        : CanvasEffect(effect, EffectId(), 9, 1, true)
     {
-        // Set default values
-        SetBoxedProperty<float[3]>(D2D1_SPOTDIFFUSE_PROP_LIGHT_POSITION, Numerics::Vector3{ 0.0f, 0.0f, 0.0f });
-        SetBoxedProperty<float[3]>(D2D1_SPOTDIFFUSE_PROP_POINTS_AT, Numerics::Vector3{ 0.0f, 0.0f, 0.0f });
-        SetBoxedProperty<float>(D2D1_SPOTDIFFUSE_PROP_FOCUS, 1.0f);
-        SetBoxedProperty<float>(D2D1_SPOTDIFFUSE_PROP_LIMITING_CONE_ANGLE, 90.0f);
-        SetBoxedProperty<float>(D2D1_SPOTDIFFUSE_PROP_DIFFUSE_CONSTANT, 1.0f);
-        SetBoxedProperty<float>(D2D1_SPOTDIFFUSE_PROP_SURFACE_SCALE, 1.0f);
-        SetBoxedProperty<float[3]>(D2D1_SPOTDIFFUSE_PROP_COLOR, Color{ 255, 255, 255, 255 });
-        SetBoxedProperty<float[2]>(D2D1_SPOTDIFFUSE_PROP_KERNEL_UNIT_LENGTH, Numerics::Vector2{ 1.0f, 1.0f });
-        SetBoxedProperty<uint32_t>(D2D1_SPOTDIFFUSE_PROP_SCALE_MODE, D2D1_SPOTDIFFUSE_SCALE_MODE_LINEAR);
+        if (!effect)
+        {
+            // Set default values
+            SetBoxedProperty<float[3]>(D2D1_SPOTDIFFUSE_PROP_LIGHT_POSITION, Numerics::Vector3{ 0.0f, 0.0f, 0.0f });
+            SetBoxedProperty<float[3]>(D2D1_SPOTDIFFUSE_PROP_POINTS_AT, Numerics::Vector3{ 0.0f, 0.0f, 0.0f });
+            SetBoxedProperty<float>(D2D1_SPOTDIFFUSE_PROP_FOCUS, 1.0f);
+            SetBoxedProperty<float>(D2D1_SPOTDIFFUSE_PROP_LIMITING_CONE_ANGLE, 90.0f);
+            SetBoxedProperty<float>(D2D1_SPOTDIFFUSE_PROP_DIFFUSE_CONSTANT, 1.0f);
+            SetBoxedProperty<float>(D2D1_SPOTDIFFUSE_PROP_SURFACE_SCALE, 1.0f);
+            SetBoxedProperty<float[3]>(D2D1_SPOTDIFFUSE_PROP_COLOR, Color{ 255, 255, 255, 255 });
+            SetBoxedProperty<float[2]>(D2D1_SPOTDIFFUSE_PROP_KERNEL_UNIT_LENGTH, Numerics::Vector2{ 1.0f, 1.0f });
+            SetBoxedProperty<uint32_t>(D2D1_SPOTDIFFUSE_PROP_SCALE_MODE, D2D1_SPOTDIFFUSE_SCALE_MODE_LINEAR);
+        }
     }
 
     IMPLEMENT_EFFECT_PROPERTY(SpotDiffuseEffect,

@@ -9,13 +9,16 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Effects
 {
-    MorphologyEffect::MorphologyEffect()
-        : CanvasEffect(CLSID_D2D1Morphology, 3, 1, true)
+    MorphologyEffect::MorphologyEffect(ID2D1Effect* effect)
+        : CanvasEffect(effect, EffectId(), 3, 1, true)
     {
-        // Set default values
-        SetBoxedProperty<uint32_t>(D2D1_MORPHOLOGY_PROP_MODE, D2D1_MORPHOLOGY_MODE_ERODE);
-        SetBoxedProperty<int32_t>(D2D1_MORPHOLOGY_PROP_WIDTH, 1);
-        SetBoxedProperty<int32_t>(D2D1_MORPHOLOGY_PROP_HEIGHT, 1);
+        if (!effect)
+        {
+            // Set default values
+            SetBoxedProperty<uint32_t>(D2D1_MORPHOLOGY_PROP_MODE, D2D1_MORPHOLOGY_MODE_ERODE);
+            SetBoxedProperty<int32_t>(D2D1_MORPHOLOGY_PROP_WIDTH, 1);
+            SetBoxedProperty<int32_t>(D2D1_MORPHOLOGY_PROP_HEIGHT, 1);
+        }
     }
 
     IMPLEMENT_EFFECT_PROPERTY(MorphologyEffect,

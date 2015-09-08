@@ -6,13 +6,15 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Effects 
 {
-    CanvasEffect::CanvasEffect(IID effectId, unsigned int propertiesSize, unsigned int sourcesSize, bool isSourcesSizeFixed)
+    CanvasEffect::CanvasEffect(ID2D1Effect* effect, IID const& effectId, unsigned int propertiesSize, unsigned int sourcesSize, bool isSourcesSizeFixed)
         : m_effectId(effectId)
         , m_propertiesChanged(false)
         , m_realizationId(0)
         , m_insideGetImage(false)
         , m_closed(false)
     {
+        UNREFERENCED_PARAMETER(effect);   // TODO - unused for now!
+
         m_properties.resize(propertiesSize);
 
         m_sources = Make<Vector<IGraphicsEffectSource*>>(sourcesSize, isSourcesSizeFixed);

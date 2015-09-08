@@ -19,7 +19,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_Effects_BorderEffect, BaseTrust);
 
     public:
-        BorderEffect();
+        BorderEffect(ID2D1Effect* effect = nullptr);
+
+        static IID const& EffectId() { return CLSID_D2D1Border; }
 
         EFFECT_PROPERTY(ExtendX, CanvasEdgeBehavior);
         EFFECT_PROPERTY(ExtendY, CanvasEdgeBehavior);

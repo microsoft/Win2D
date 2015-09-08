@@ -9,11 +9,14 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Effects
 {
-    TileEffect::TileEffect()
-        : CanvasEffect(CLSID_D2D1Tile, 1, 1, true)
+    TileEffect::TileEffect(ID2D1Effect* effect)
+        : CanvasEffect(effect, EffectId(), 1, 1, true)
     {
-        // Set default values
-        SetBoxedProperty<float[4]>(D2D1_TILE_PROP_RECT, Rect{ 0, 0, 100, 100 });
+        if (!effect)
+        {
+            // Set default values
+            SetBoxedProperty<float[4]>(D2D1_TILE_PROP_RECT, Rect{ 0, 0, 100, 100 });
+        }
     }
 
     IMPLEMENT_EFFECT_PROPERTY(TileEffect,

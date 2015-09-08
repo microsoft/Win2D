@@ -9,12 +9,15 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Effects
 {
-    ArithmeticCompositeEffect::ArithmeticCompositeEffect()
-        : CanvasEffect(CLSID_D2D1ArithmeticComposite, 2, 2, true)
+    ArithmeticCompositeEffect::ArithmeticCompositeEffect(ID2D1Effect* effect)
+        : CanvasEffect(effect, EffectId(), 2, 2, true)
     {
-        // Set default values
-        SetBoxedProperty<float[4]>(D2D1_ARITHMETICCOMPOSITE_PROP_COEFFICIENTS, Numerics::Vector4{ 1.0f, 0.0f, 0.0f, 0.0f });
-        SetBoxedProperty<boolean>(D2D1_ARITHMETICCOMPOSITE_PROP_CLAMP_OUTPUT, static_cast<boolean>(false));
+        if (!effect)
+        {
+            // Set default values
+            SetBoxedProperty<float[4]>(D2D1_ARITHMETICCOMPOSITE_PROP_COEFFICIENTS, Numerics::Vector4{ 1.0f, 0.0f, 0.0f, 0.0f });
+            SetBoxedProperty<boolean>(D2D1_ARITHMETICCOMPOSITE_PROP_CLAMP_OUTPUT, static_cast<boolean>(false));
+        }
     }
 
     IMPLEMENT_EFFECT_PROPERTY(ArithmeticCompositeEffect,

@@ -11,15 +11,18 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Effects
 {
-    HighlightsAndShadowsEffect::HighlightsAndShadowsEffect()
-        : CanvasEffect(CLSID_D2D1HighlightsShadows, 5, 1, true)
+    HighlightsAndShadowsEffect::HighlightsAndShadowsEffect(ID2D1Effect* effect)
+        : CanvasEffect(effect, EffectId(), 5, 1, true)
     {
-        // Set default values
-        SetBoxedProperty<float>(D2D1_HIGHLIGHTSANDSHADOWS_PROP_HIGHLIGHTS, 0.0f);
-        SetBoxedProperty<float>(D2D1_HIGHLIGHTSANDSHADOWS_PROP_SHADOWS, 0.0f);
-        SetBoxedProperty<float>(D2D1_HIGHLIGHTSANDSHADOWS_PROP_CLARITY, 0.0f);
-        SetBoxedProperty<uint32_t>(D2D1_HIGHLIGHTSANDSHADOWS_PROP_INPUT_GAMMA, D2D1_HIGHLIGHTSANDSHADOWS_INPUT_GAMMA_SRGB);
-        SetBoxedProperty<float>(D2D1_HIGHLIGHTSANDSHADOWS_PROP_MASK_BLUR_RADIUS, 1.25f);
+        if (!effect)
+        {
+            // Set default values
+            SetBoxedProperty<float>(D2D1_HIGHLIGHTSANDSHADOWS_PROP_HIGHLIGHTS, 0.0f);
+            SetBoxedProperty<float>(D2D1_HIGHLIGHTSANDSHADOWS_PROP_SHADOWS, 0.0f);
+            SetBoxedProperty<float>(D2D1_HIGHLIGHTSANDSHADOWS_PROP_CLARITY, 0.0f);
+            SetBoxedProperty<uint32_t>(D2D1_HIGHLIGHTSANDSHADOWS_PROP_INPUT_GAMMA, D2D1_HIGHLIGHTSANDSHADOWS_INPUT_GAMMA_SRGB);
+            SetBoxedProperty<float>(D2D1_HIGHLIGHTSANDSHADOWS_PROP_MASK_BLUR_RADIUS, 1.25f);
+        }
     }
 
     IMPLEMENT_EFFECT_PROPERTY_WITH_VALIDATION(HighlightsAndShadowsEffect,

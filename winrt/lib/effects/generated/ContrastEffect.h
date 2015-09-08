@@ -21,7 +21,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_Effects_ContrastEffect, BaseTrust);
 
     public:
-        ContrastEffect();
+        ContrastEffect(ID2D1Effect* effect = nullptr);
+
+        static IID const& EffectId() { return CLSID_D2D1Contrast; }
 
         EFFECT_PROPERTY(Contrast, float);
         EFFECT_PROPERTY(ClampSource, boolean);

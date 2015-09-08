@@ -11,12 +11,15 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Effects
 {
-    SharpenEffect::SharpenEffect()
-        : CanvasEffect(CLSID_D2D1Sharpen, 2, 1, true)
+    SharpenEffect::SharpenEffect(ID2D1Effect* effect)
+        : CanvasEffect(effect, EffectId(), 2, 1, true)
     {
-        // Set default values
-        SetBoxedProperty<float>(D2D1_SHARPEN_PROP_SHARPNESS, 0.0f);
-        SetBoxedProperty<float>(D2D1_SHARPEN_PROP_THRESHOLD, 0.0f);
+        if (!effect)
+        {
+            // Set default values
+            SetBoxedProperty<float>(D2D1_SHARPEN_PROP_SHARPNESS, 0.0f);
+            SetBoxedProperty<float>(D2D1_SHARPEN_PROP_THRESHOLD, 0.0f);
+        }
     }
 
     IMPLEMENT_EFFECT_PROPERTY_WITH_VALIDATION(SharpenEffect,

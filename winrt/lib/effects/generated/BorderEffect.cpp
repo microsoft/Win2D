@@ -9,12 +9,15 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Effects
 {
-    BorderEffect::BorderEffect()
-        : CanvasEffect(CLSID_D2D1Border, 2, 1, true)
+    BorderEffect::BorderEffect(ID2D1Effect* effect)
+        : CanvasEffect(effect, EffectId(), 2, 1, true)
     {
-        // Set default values
-        SetBoxedProperty<uint32_t>(D2D1_BORDER_PROP_EDGE_MODE_X, D2D1_BORDER_EDGE_MODE_CLAMP);
-        SetBoxedProperty<uint32_t>(D2D1_BORDER_PROP_EDGE_MODE_Y, D2D1_BORDER_EDGE_MODE_CLAMP);
+        if (!effect)
+        {
+            // Set default values
+            SetBoxedProperty<uint32_t>(D2D1_BORDER_PROP_EDGE_MODE_X, D2D1_BORDER_EDGE_MODE_CLAMP);
+            SetBoxedProperty<uint32_t>(D2D1_BORDER_PROP_EDGE_MODE_Y, D2D1_BORDER_EDGE_MODE_CLAMP);
+        }
     }
 
     IMPLEMENT_EFFECT_PROPERTY(BorderEffect,

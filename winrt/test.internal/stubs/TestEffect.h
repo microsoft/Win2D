@@ -27,12 +27,12 @@ class TestEffect : public RuntimeClass <
 
 public:
     TestEffect(GUID effectId, int propertiesSize, int sourcesSize, bool isSourcesSizeFixed)
-        : CanvasEffect(effectId, propertiesSize, sourcesSize, isSourcesSizeFixed)
+        : CanvasEffect(nullptr, effectId, propertiesSize, sourcesSize, isSourcesSizeFixed)
     {
     }
 
     TestEffect()
-        : CanvasEffect(CLSID_D2D1GaussianBlur, 1, 1, true)
+        : CanvasEffect(nullptr, CLSID_D2D1GaussianBlur, 1, 1, true)
     {
     }
 

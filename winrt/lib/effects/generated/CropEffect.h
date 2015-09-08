@@ -19,7 +19,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_Effects_CropEffect, BaseTrust);
 
     public:
-        CropEffect();
+        CropEffect(ID2D1Effect* effect = nullptr);
+
+        static IID const& EffectId() { return CLSID_D2D1Crop; }
 
         EFFECT_PROPERTY(SourceRectangle, Rect);
         EFFECT_PROPERTY(BorderMode, EffectBorderMode);

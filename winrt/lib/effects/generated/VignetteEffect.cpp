@@ -11,13 +11,16 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Effects
 {
-    VignetteEffect::VignetteEffect()
-        : CanvasEffect(CLSID_D2D1Vignette, 3, 1, true)
+    VignetteEffect::VignetteEffect(ID2D1Effect* effect)
+        : CanvasEffect(effect, EffectId(), 3, 1, true)
     {
-        // Set default values
-        SetBoxedProperty<float[4]>(D2D1_VIGNETTE_PROP_COLOR, Color{ 255, 0, 0, 0 });
-        SetBoxedProperty<float>(D2D1_VIGNETTE_PROP_TRANSITION_SIZE, 0.1f);
-        SetBoxedProperty<float>(D2D1_VIGNETTE_PROP_STRENGTH, 0.5f);
+        if (!effect)
+        {
+            // Set default values
+            SetBoxedProperty<float[4]>(D2D1_VIGNETTE_PROP_COLOR, Color{ 255, 0, 0, 0 });
+            SetBoxedProperty<float>(D2D1_VIGNETTE_PROP_TRANSITION_SIZE, 0.1f);
+            SetBoxedProperty<float>(D2D1_VIGNETTE_PROP_STRENGTH, 0.5f);
+        }
     }
 
     IMPLEMENT_EFFECT_PROPERTY(VignetteEffect,

@@ -117,7 +117,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
     protected:
         // for effects with unknown number of sources, sourcesSize has to be zero
-        CanvasEffect(IID m_effectId, unsigned int propertiesSize, unsigned int sourcesSize, bool isSourcesSizeFixed);
+        CanvasEffect(ID2D1Effect* effect, IID const& m_effectId, unsigned int propertiesSize, unsigned int sourcesSize, bool isSourcesSizeFixed);
 
         virtual ~CanvasEffect() = default;
 

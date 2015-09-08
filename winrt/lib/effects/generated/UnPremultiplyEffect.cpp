@@ -9,10 +9,13 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Effects
 {
-    UnPremultiplyEffect::UnPremultiplyEffect()
-        : CanvasEffect(CLSID_D2D1UnPremultiply, 0, 1, true)
+    UnPremultiplyEffect::UnPremultiplyEffect(ID2D1Effect* effect)
+        : CanvasEffect(effect, EffectId(), 0, 1, true)
     {
-        // Set default values
+        if (!effect)
+        {
+            // Set default values
+        }
     }
 
     IMPLEMENT_EFFECT_SOURCE_PROPERTY(UnPremultiplyEffect,

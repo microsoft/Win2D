@@ -207,7 +207,9 @@ namespace CodeGen
             output.Unindent();
             output.WriteLine("public:");
             output.Indent();
-            output.WriteLine(effect.ClassName + "();");
+            output.WriteLine(effect.ClassName + "(ID2D1Effect* effect = nullptr);");
+            output.WriteLine();
+            output.WriteLine("static IID const& EffectId() { return " + GetEffectCLSID(effect) + "; }");
             output.WriteLine();
 
             foreach (var property in effect.Properties)
@@ -273,13 +275,15 @@ namespace CodeGen
             output.WriteLine("namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Effects");
             output.WriteLine("{");
             output.Indent();
-            output.WriteLine(effect.ClassName + "::" + effect.ClassName + "()");
+            output.WriteLine(effect.ClassName + "::" + effect.ClassName + "(ID2D1Effect* effect)");
             output.WriteIndent();
-            output.WriteLine(": CanvasEffect("
-                             + GetEffectCLSID(effect) + ", "
+            output.WriteLine(": CanvasEffect(effect, EffectId(), "
                              + (effect.Properties.Count(p => !p.IsHandCoded) - 4) + ", "
                              + inputsCount + ", "
                              + isInputSizeFixed.ToString().ToLower() + ")");
+            output.WriteLine("{");
+            output.Indent();
+            output.WriteLine("if (!effect)");
             output.WriteLine("{");
             output.Indent();
             output.WriteLine("// Set default values");
@@ -288,6 +292,8 @@ namespace CodeGen
             {
                 WritePropertyInitialization(output, property);
             }
+            output.Unindent();
+            output.WriteLine("}");
             output.Unindent();
             output.WriteLine("}");
             output.WriteLine();

@@ -19,7 +19,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_Effects_Transform3DEffect, BaseTrust);
 
     public:
-        Transform3DEffect();
+        Transform3DEffect(ID2D1Effect* effect = nullptr);
+
+        static IID const& EffectId() { return CLSID_D2D13DTransform; }
 
         EFFECT_PROPERTY(InterpolationMode, CanvasImageInterpolation);
         EFFECT_PROPERTY(BorderMode, EffectBorderMode);

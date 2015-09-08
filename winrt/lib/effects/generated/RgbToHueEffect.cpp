@@ -11,11 +11,14 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Effects
 {
-    RgbToHueEffect::RgbToHueEffect()
-        : CanvasEffect(CLSID_D2D1RgbToHue, 1, 1, true)
+    RgbToHueEffect::RgbToHueEffect(ID2D1Effect* effect)
+        : CanvasEffect(effect, EffectId(), 1, 1, true)
     {
-        // Set default values
-        SetBoxedProperty<uint32_t>(D2D1_RGBTOHUE_PROP_OUTPUT_COLOR_SPACE, EffectHueColorSpace::Hsv);
+        if (!effect)
+        {
+            // Set default values
+            SetBoxedProperty<uint32_t>(D2D1_RGBTOHUE_PROP_OUTPUT_COLOR_SPACE, EffectHueColorSpace::Hsv);
+        }
     }
 
     IMPLEMENT_EFFECT_PROPERTY(RgbToHueEffect,

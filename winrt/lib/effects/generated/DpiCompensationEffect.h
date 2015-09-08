@@ -19,7 +19,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_Effects_DpiCompensationEffect, BaseTrust);
 
     public:
-        DpiCompensationEffect();
+        DpiCompensationEffect(ID2D1Effect* effect = nullptr);
+
+        static IID const& EffectId() { return CLSID_D2D1DpiCompensation; }
 
         EFFECT_PROPERTY(InterpolationMode, CanvasImageInterpolation);
         EFFECT_PROPERTY(BorderMode, EffectBorderMode);

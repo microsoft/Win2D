@@ -21,7 +21,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_Effects_RgbToHueEffect, BaseTrust);
 
     public:
-        RgbToHueEffect();
+        RgbToHueEffect(ID2D1Effect* effect = nullptr);
+
+        static IID const& EffectId() { return CLSID_D2D1RgbToHue; }
 
         EFFECT_PROPERTY(OutputColorSpace, EffectHueColorSpace);
         EFFECT_PROPERTY(Source, IGraphicsEffectSource*);

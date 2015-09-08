@@ -21,7 +21,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_Effects_ChromaKeyEffect, BaseTrust);
 
     public:
-        ChromaKeyEffect();
+        ChromaKeyEffect(ID2D1Effect* effect = nullptr);
+
+        static IID const& EffectId() { return CLSID_D2D1ChromaKey; }
 
         EFFECT_PROPERTY(Color, Color);
         EFFECT_PROPERTY(Tolerance, float);

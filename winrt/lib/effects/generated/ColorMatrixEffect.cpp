@@ -9,13 +9,16 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Effects
 {
-    ColorMatrixEffect::ColorMatrixEffect()
-        : CanvasEffect(CLSID_D2D1ColorMatrix, 3, 1, true)
+    ColorMatrixEffect::ColorMatrixEffect(ID2D1Effect* effect)
+        : CanvasEffect(effect, EffectId(), 3, 1, true)
     {
-        // Set default values
-        SetBoxedProperty<float[20]>(D2D1_COLORMATRIX_PROP_COLOR_MATRIX, Matrix5x4{ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0 });
-        SetBoxedProperty<uint32_t>(D2D1_COLORMATRIX_PROP_ALPHA_MODE, D2D1_COLORMATRIX_ALPHA_MODE_PREMULTIPLIED);
-        SetBoxedProperty<boolean>(D2D1_COLORMATRIX_PROP_CLAMP_OUTPUT, static_cast<boolean>(false));
+        if (!effect)
+        {
+            // Set default values
+            SetBoxedProperty<float[20]>(D2D1_COLORMATRIX_PROP_COLOR_MATRIX, Matrix5x4{ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0 });
+            SetBoxedProperty<uint32_t>(D2D1_COLORMATRIX_PROP_ALPHA_MODE, D2D1_COLORMATRIX_ALPHA_MODE_PREMULTIPLIED);
+            SetBoxedProperty<boolean>(D2D1_COLORMATRIX_PROP_CLAMP_OUTPUT, static_cast<boolean>(false));
+        }
     }
 
     IMPLEMENT_EFFECT_PROPERTY(ColorMatrixEffect,

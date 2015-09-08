@@ -19,7 +19,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_Effects_CompositeEffect, BaseTrust);
 
     public:
-        CompositeEffect();
+        CompositeEffect(ID2D1Effect* effect = nullptr);
+
+        static IID const& EffectId() { return CLSID_D2D1Composite; }
 
         EFFECT_PROPERTY(Mode, CanvasComposite);
         EFFECT_SOURCES_PROPERTY();

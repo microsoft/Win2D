@@ -9,13 +9,16 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Effects
 {
-    DpiCompensationEffect::DpiCompensationEffect()
-        : CanvasEffect(CLSID_D2D1DpiCompensation, 3, 1, true)
+    DpiCompensationEffect::DpiCompensationEffect(ID2D1Effect* effect)
+        : CanvasEffect(effect, EffectId(), 3, 1, true)
     {
-        // Set default values
-        SetBoxedProperty<uint32_t>(D2D1_DPICOMPENSATION_PROP_INTERPOLATION_MODE, D2D1_DPICOMPENSATION_INTERPOLATION_MODE_LINEAR);
-        SetBoxedProperty<uint32_t>(D2D1_DPICOMPENSATION_PROP_BORDER_MODE, D2D1_BORDER_MODE_HARD);
-        SetBoxedProperty<float[2]>(D2D1_DPICOMPENSATION_PROP_INPUT_DPI, Numerics::Vector2{ 96, 96 });
+        if (!effect)
+        {
+            // Set default values
+            SetBoxedProperty<uint32_t>(D2D1_DPICOMPENSATION_PROP_INTERPOLATION_MODE, D2D1_DPICOMPENSATION_INTERPOLATION_MODE_LINEAR);
+            SetBoxedProperty<uint32_t>(D2D1_DPICOMPENSATION_PROP_BORDER_MODE, D2D1_BORDER_MODE_HARD);
+            SetBoxedProperty<float[2]>(D2D1_DPICOMPENSATION_PROP_INPUT_DPI, Numerics::Vector2{ 96, 96 });
+        }
     }
 
     IMPLEMENT_EFFECT_PROPERTY(DpiCompensationEffect,

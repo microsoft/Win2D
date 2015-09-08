@@ -11,15 +11,18 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Effects
 {
-    EdgeDetectionEffect::EdgeDetectionEffect()
-        : CanvasEffect(CLSID_D2D1EdgeDetection, 5, 1, true)
+    EdgeDetectionEffect::EdgeDetectionEffect(ID2D1Effect* effect)
+        : CanvasEffect(effect, EffectId(), 5, 1, true)
     {
-        // Set default values
-        SetBoxedProperty<float>(D2D1_EDGEDETECTION_PROP_STRENGTH, 0.5f);
-        SetBoxedProperty<float>(D2D1_EDGEDETECTION_PROP_BLUR_RADIUS, 0.0f);
-        SetBoxedProperty<uint32_t>(D2D1_EDGEDETECTION_PROP_MODE, EdgeDetectionEffectMode::Sobel);
-        SetBoxedProperty<boolean>(D2D1_EDGEDETECTION_PROP_OVERLAY_EDGES, static_cast<boolean>(false));
-        SetBoxedProperty<uint32_t>(D2D1_EDGEDETECTION_PROP_ALPHA_MODE, D2D1_COLORMANAGEMENT_ALPHA_MODE_PREMULTIPLIED);
+        if (!effect)
+        {
+            // Set default values
+            SetBoxedProperty<float>(D2D1_EDGEDETECTION_PROP_STRENGTH, 0.5f);
+            SetBoxedProperty<float>(D2D1_EDGEDETECTION_PROP_BLUR_RADIUS, 0.0f);
+            SetBoxedProperty<uint32_t>(D2D1_EDGEDETECTION_PROP_MODE, EdgeDetectionEffectMode::Sobel);
+            SetBoxedProperty<boolean>(D2D1_EDGEDETECTION_PROP_OVERLAY_EDGES, static_cast<boolean>(false));
+            SetBoxedProperty<uint32_t>(D2D1_EDGEDETECTION_PROP_ALPHA_MODE, D2D1_COLORMANAGEMENT_ALPHA_MODE_PREMULTIPLIED);
+        }
     }
 
     IMPLEMENT_EFFECT_PROPERTY_WITH_VALIDATION(EdgeDetectionEffect,

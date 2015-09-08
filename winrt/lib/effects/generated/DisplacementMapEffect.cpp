@@ -9,13 +9,16 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Effects
 {
-    DisplacementMapEffect::DisplacementMapEffect()
-        : CanvasEffect(CLSID_D2D1DisplacementMap, 3, 2, true)
+    DisplacementMapEffect::DisplacementMapEffect(ID2D1Effect* effect)
+        : CanvasEffect(effect, EffectId(), 3, 2, true)
     {
-        // Set default values
-        SetBoxedProperty<float>(D2D1_DISPLACEMENTMAP_PROP_SCALE, 0.0f);
-        SetBoxedProperty<uint32_t>(D2D1_DISPLACEMENTMAP_PROP_X_CHANNEL_SELECT, EffectChannelSelect::Alpha);
-        SetBoxedProperty<uint32_t>(D2D1_DISPLACEMENTMAP_PROP_Y_CHANNEL_SELECT, EffectChannelSelect::Alpha);
+        if (!effect)
+        {
+            // Set default values
+            SetBoxedProperty<float>(D2D1_DISPLACEMENTMAP_PROP_SCALE, 0.0f);
+            SetBoxedProperty<uint32_t>(D2D1_DISPLACEMENTMAP_PROP_X_CHANNEL_SELECT, EffectChannelSelect::Alpha);
+            SetBoxedProperty<uint32_t>(D2D1_DISPLACEMENTMAP_PROP_Y_CHANNEL_SELECT, EffectChannelSelect::Alpha);
+        }
     }
 
     IMPLEMENT_EFFECT_PROPERTY(DisplacementMapEffect,

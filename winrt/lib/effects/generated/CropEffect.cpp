@@ -9,12 +9,15 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Effects
 {
-    CropEffect::CropEffect()
-        : CanvasEffect(CLSID_D2D1Crop, 2, 1, true)
+    CropEffect::CropEffect(ID2D1Effect* effect)
+        : CanvasEffect(effect, EffectId(), 2, 1, true)
     {
-        // Set default values
-        SetBoxedProperty<float[4]>(D2D1_CROP_PROP_RECT, Rect{ -std::numeric_limits<float>::infinity(), -std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity() });
-        SetBoxedProperty<uint32_t>(D2D1_CROP_PROP_BORDER_MODE, D2D1_BORDER_MODE_SOFT);
+        if (!effect)
+        {
+            // Set default values
+            SetBoxedProperty<float[4]>(D2D1_CROP_PROP_RECT, Rect{ -std::numeric_limits<float>::infinity(), -std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity() });
+            SetBoxedProperty<uint32_t>(D2D1_CROP_PROP_BORDER_MODE, D2D1_BORDER_MODE_SOFT);
+        }
     }
 
     IMPLEMENT_EFFECT_PROPERTY(CropEffect,

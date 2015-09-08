@@ -21,7 +21,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_Effects_PosterizeEffect, BaseTrust);
 
     public:
-        PosterizeEffect();
+        PosterizeEffect(ID2D1Effect* effect = nullptr);
+
+        static IID const& EffectId() { return CLSID_D2D1Posterize; }
 
         EFFECT_PROPERTY(RedValueCount, int32_t);
         EFFECT_PROPERTY(GreenValueCount, int32_t);

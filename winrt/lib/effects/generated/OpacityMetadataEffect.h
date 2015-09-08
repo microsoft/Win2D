@@ -19,7 +19,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_Effects_OpacityMetadataEffect, BaseTrust);
 
     public:
-        OpacityMetadataEffect();
+        OpacityMetadataEffect(ID2D1Effect* effect = nullptr);
+
+        static IID const& EffectId() { return CLSID_D2D1OpacityMetadata; }
 
         EFFECT_PROPERTY(OpaqueRectangle, Rect);
         EFFECT_PROPERTY(Source, IGraphicsEffectSource*);

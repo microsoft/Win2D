@@ -9,11 +9,14 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Effects
 {
-    HueRotationEffect::HueRotationEffect()
-        : CanvasEffect(CLSID_D2D1HueRotation, 1, 1, true)
+    HueRotationEffect::HueRotationEffect(ID2D1Effect* effect)
+        : CanvasEffect(effect, EffectId(), 1, 1, true)
     {
-        // Set default values
-        SetBoxedProperty<float>(D2D1_HUEROTATION_PROP_ANGLE, 0.0f);
+        if (!effect)
+        {
+            // Set default values
+            SetBoxedProperty<float>(D2D1_HUEROTATION_PROP_ANGLE, 0.0f);
+        }
     }
 
     IMPLEMENT_EFFECT_PROPERTY(HueRotationEffect,

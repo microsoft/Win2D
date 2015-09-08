@@ -9,11 +9,14 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Effects
 {
-    CompositeEffect::CompositeEffect()
-        : CanvasEffect(CLSID_D2D1Composite, 1, 0, false)
+    CompositeEffect::CompositeEffect(ID2D1Effect* effect)
+        : CanvasEffect(effect, EffectId(), 1, 0, false)
     {
-        // Set default values
-        SetBoxedProperty<uint32_t>(D2D1_COMPOSITE_PROP_MODE, D2D1_COMPOSITE_MODE_SOURCE_OVER);
+        if (!effect)
+        {
+            // Set default values
+            SetBoxedProperty<uint32_t>(D2D1_COMPOSITE_PROP_MODE, D2D1_COMPOSITE_MODE_SOURCE_OVER);
+        }
     }
 
     IMPLEMENT_EFFECT_PROPERTY(CompositeEffect,

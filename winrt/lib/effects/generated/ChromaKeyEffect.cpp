@@ -11,14 +11,17 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Effects
 {
-    ChromaKeyEffect::ChromaKeyEffect()
-        : CanvasEffect(CLSID_D2D1ChromaKey, 4, 1, true)
+    ChromaKeyEffect::ChromaKeyEffect(ID2D1Effect* effect)
+        : CanvasEffect(effect, EffectId(), 4, 1, true)
     {
-        // Set default values
-        SetBoxedProperty<float[3]>(D2D1_CHROMAKEY_PROP_COLOR, Color{ 255, 0, 0, 0 });
-        SetBoxedProperty<float>(D2D1_CHROMAKEY_PROP_TOLERANCE, 0.1f);
-        SetBoxedProperty<boolean>(D2D1_CHROMAKEY_PROP_INVERT_ALPHA, static_cast<boolean>(false));
-        SetBoxedProperty<boolean>(D2D1_CHROMAKEY_PROP_FEATHER, static_cast<boolean>(false));
+        if (!effect)
+        {
+            // Set default values
+            SetBoxedProperty<float[3]>(D2D1_CHROMAKEY_PROP_COLOR, Color{ 255, 0, 0, 0 });
+            SetBoxedProperty<float>(D2D1_CHROMAKEY_PROP_TOLERANCE, 0.1f);
+            SetBoxedProperty<boolean>(D2D1_CHROMAKEY_PROP_INVERT_ALPHA, static_cast<boolean>(false));
+            SetBoxedProperty<boolean>(D2D1_CHROMAKEY_PROP_FEATHER, static_cast<boolean>(false));
+        }
     }
 
     IMPLEMENT_EFFECT_PROPERTY(ChromaKeyEffect,

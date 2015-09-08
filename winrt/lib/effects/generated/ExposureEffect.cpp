@@ -11,11 +11,14 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Effects
 {
-    ExposureEffect::ExposureEffect()
-        : CanvasEffect(CLSID_D2D1Exposure, 1, 1, true)
+    ExposureEffect::ExposureEffect(ID2D1Effect* effect)
+        : CanvasEffect(effect, EffectId(), 1, 1, true)
     {
-        // Set default values
-        SetBoxedProperty<float>(D2D1_EXPOSURE_PROP_EXPOSURE_VALUE, 0.0f);
+        if (!effect)
+        {
+            // Set default values
+            SetBoxedProperty<float>(D2D1_EXPOSURE_PROP_EXPOSURE_VALUE, 0.0f);
+        }
     }
 
     IMPLEMENT_EFFECT_PROPERTY_WITH_VALIDATION(ExposureEffect,

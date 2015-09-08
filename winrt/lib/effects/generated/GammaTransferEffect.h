@@ -19,7 +19,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_Effects_GammaTransferEffect, BaseTrust);
 
     public:
-        GammaTransferEffect();
+        GammaTransferEffect(ID2D1Effect* effect = nullptr);
+
+        static IID const& EffectId() { return CLSID_D2D1GammaTransfer; }
 
         EFFECT_PROPERTY(RedAmplitude, float);
         EFFECT_PROPERTY(RedExponent, float);

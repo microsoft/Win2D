@@ -9,13 +9,16 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Effects
 {
-    ShadowEffect::ShadowEffect()
-        : CanvasEffect(CLSID_D2D1Shadow, 3, 1, true)
+    ShadowEffect::ShadowEffect(ID2D1Effect* effect)
+        : CanvasEffect(effect, EffectId(), 3, 1, true)
     {
-        // Set default values
-        SetBoxedProperty<float>(D2D1_SHADOW_PROP_BLUR_STANDARD_DEVIATION, 3.0f);
-        SetBoxedProperty<float[4]>(D2D1_SHADOW_PROP_COLOR, Color{ 255, 0, 0, 0 });
-        SetBoxedProperty<uint32_t>(D2D1_SHADOW_PROP_OPTIMIZATION, D2D1_SHADOW_OPTIMIZATION_BALANCED);
+        if (!effect)
+        {
+            // Set default values
+            SetBoxedProperty<float>(D2D1_SHADOW_PROP_BLUR_STANDARD_DEVIATION, 3.0f);
+            SetBoxedProperty<float[4]>(D2D1_SHADOW_PROP_COLOR, Color{ 255, 0, 0, 0 });
+            SetBoxedProperty<uint32_t>(D2D1_SHADOW_PROP_OPTIMIZATION, D2D1_SHADOW_OPTIMIZATION_BALANCED);
+        }
     }
 
     IMPLEMENT_EFFECT_PROPERTY_WITH_VALIDATION(ShadowEffect,

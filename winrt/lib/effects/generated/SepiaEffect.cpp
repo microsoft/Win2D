@@ -11,12 +11,15 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Effects
 {
-    SepiaEffect::SepiaEffect()
-        : CanvasEffect(CLSID_D2D1Sepia, 2, 1, true)
+    SepiaEffect::SepiaEffect(ID2D1Effect* effect)
+        : CanvasEffect(effect, EffectId(), 2, 1, true)
     {
-        // Set default values
-        SetBoxedProperty<float>(D2D1_SEPIA_PROP_INTENSITY, 0.5f);
-        SetBoxedProperty<uint32_t>(D2D1_SEPIA_PROP_ALPHA_MODE, D2D1_COLORMANAGEMENT_ALPHA_MODE_PREMULTIPLIED);
+        if (!effect)
+        {
+            // Set default values
+            SetBoxedProperty<float>(D2D1_SEPIA_PROP_INTENSITY, 0.5f);
+            SetBoxedProperty<uint32_t>(D2D1_SEPIA_PROP_ALPHA_MODE, D2D1_COLORMANAGEMENT_ALPHA_MODE_PREMULTIPLIED);
+        }
     }
 
     IMPLEMENT_EFFECT_PROPERTY_WITH_VALIDATION(SepiaEffect,

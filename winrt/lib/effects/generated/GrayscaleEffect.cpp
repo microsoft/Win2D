@@ -11,10 +11,13 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Effects
 {
-    GrayscaleEffect::GrayscaleEffect()
-        : CanvasEffect(CLSID_D2D1Grayscale, 0, 1, true)
+    GrayscaleEffect::GrayscaleEffect(ID2D1Effect* effect)
+        : CanvasEffect(effect, EffectId(), 0, 1, true)
     {
-        // Set default values
+        if (!effect)
+        {
+            // Set default values
+        }
     }
 
     IMPLEMENT_EFFECT_SOURCE_PROPERTY(GrayscaleEffect,
