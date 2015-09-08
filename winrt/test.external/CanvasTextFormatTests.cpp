@@ -63,6 +63,20 @@ TEST_CLASS(CanvasTextFormatTests)
         Assert::AreEqual<void*>(dwriteTextFormat.Get(), wrappedTextFormat.Get());
 
         //
+        // Repeated lookups should be idempotent
+        //
+        auto canvasTextFormat2 = GetOrCreate<CanvasTextFormat>(dwriteTextFormat.Get());
+
+        Assert::AreEqual(canvasTextFormat, canvasTextFormat2);
+
+        //
+        // The Options property is special - this is stored in the Win2D object rather
+        // than as part of the underlying IDWriteTextFormat. To test this properly,
+        // we must set it to something other than the default value.
+        //
+        canvasTextFormat->Options = CanvasDrawTextOptions::EnableColorFont;
+
+        //
         // Verify that it shows the right values
         //
 
@@ -85,16 +99,11 @@ TEST_CLASS(CanvasTextFormatTests)
         CHECK(TrimmingDelimiter,      L"/");
         CHECK(TrimmingDelimiterCount, 1); 
         CHECK(WordWrapping,           CanvasWordWrapping::EmergencyBreak);
-        CHECK(Options,                CanvasDrawTextOptions::Default);
+        CHECK(Options,                CanvasDrawTextOptions::EnableColorFont);
 
         //
         // Set properties on the underlying dwrite object and confirm the
-        // changes are shown in the reflect object.
-        //
-        // TODO #1764: figure out if this is the best behavior.  Maybe
-        // GetOrCreate() should take a snapshot and so these updates are
-        // ignored, and GetWrappedResource() always returns a unique dwrite
-        // object?
+        // changes are shown in the reflected object.
         //
 
         ThrowIfFailed(dwriteTextFormat->SetReadingDirection(DWRITE_READING_DIRECTION_BOTTOM_TO_TOP));
@@ -107,6 +116,28 @@ TEST_CLASS(CanvasTextFormatTests)
 
         trimming = DWRITE_TRIMMING{ DWRITE_TRIMMING_GRANULARITY_CHARACTER, L'!', 2 };
         ThrowIfFailed(dwriteTextFormat->SetTrimming(&trimming, nullptr));
+
+        CHECK(Direction, CanvasTextDirection::BottomToTopThenRightToLeft);
+        CHECK(IncrementalTabStop, 16.0f);
+        CHECK(LineSpacing, -5.0f);
+        CHECK(LineSpacingBaseline, 7.0f);
+        CHECK(VerticalAlignment, CanvasVerticalAlignment::Center);
+        CHECK(HorizontalAlignment, CanvasHorizontalAlignment::Center);
+        CHECK(WordWrapping, CanvasWordWrapping::NoWrap);
+        CHECK(TrimmingGranularity, CanvasTextTrimmingGranularity::Character);
+        CHECK(TrimmingDelimiter, L"!");
+        CHECK(TrimmingDelimiterCount, 2);
+
+        //
+        // Set a Win2D property back to its original value from before the underlying
+        // dwrite change, and confirm this is reflected both via Win2D and DWrite.
+        //
+
+        canvasTextFormat->IncrementalTabStop = 12.0f;
+
+        CHECK(IncrementalTabStop, 12.0f);
+
+        Assert::AreEqual(12.0f, dwriteTextFormat->GetIncrementalTabStop());
 
         //
         // Set a property that would cause it to recreate.
@@ -125,7 +156,7 @@ TEST_CLASS(CanvasTextFormatTests)
         CHECK(FontStretch,            Windows::UI::Text::FontStretch::UltraExpanded);
         CHECK(FontStyle,              Windows::UI::Text::FontStyle::Oblique);
         CHECK(FontWeight,             Windows::UI::Text::FontWeight { 100 } );
-        CHECK(IncrementalTabStop,     16.0f);
+        CHECK(IncrementalTabStop,     12.0f);
         CHECK(LineSpacing,            -5.0f);
         CHECK(LineSpacingBaseline,    7.0f);
         CHECK(LocaleName,             L"locale");
@@ -135,7 +166,7 @@ TEST_CLASS(CanvasTextFormatTests)
         CHECK(TrimmingDelimiter,      L"!");
         CHECK(TrimmingDelimiterCount, 2); 
         CHECK(WordWrapping,           CanvasWordWrapping::NoWrap);
-        CHECK(Options,                CanvasDrawTextOptions::Default);
+        CHECK(Options,                CanvasDrawTextOptions::EnableColorFont);
 
         //
         // Verify that a new IDWriteTextFormat was indeed created and that it
@@ -150,6 +181,16 @@ TEST_CLASS(CanvasTextFormatTests)
         ThrowIfFailed(newDWriteTextFormat->GetFontCollection(&newFontCollection));
         
         Assert::AreNotEqual<void*>(fontCollection.Get(), newFontCollection.Get());
+
+        //
+        // Verify that after the Win2D object has created a new IDWriteTextFormat,
+        // looking up a Win2D wrapper for the original DWrite instance should create
+        // a new CanvasTextFormat.
+        //
+
+        auto newWrapper = GetOrCreate<CanvasTextFormat>(dwriteTextFormat.Get());
+
+        Assert::AreNotEqual(newWrapper, canvasTextFormat);
 
 #undef CHECK
     }

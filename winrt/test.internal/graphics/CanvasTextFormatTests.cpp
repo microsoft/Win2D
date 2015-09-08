@@ -420,6 +420,8 @@ namespace canvas
                 // CanvasTextFormat around it
                 auto dtf = GetWrappedResource<IDWriteTextFormat>(ctf);
 
+                ctf.Reset();
+
                 ctf = Make<CanvasTextFormat>(dtf.Get());
 
                 // The LineSpacing value should have made it back again
@@ -470,6 +472,8 @@ namespace canvas
             ThrowIfFailed(dtf->SetLineSpacing(DWRITE_LINE_SPACING_METHOD_DEFAULT, 0.0f, 0.0f));
 
             // Wrap a new CanvasTextFormat around it
+            ctf.Reset();
+
             ctf = Make<CanvasTextFormat>(dtf.Get());
 
             // Force it to re-realize
@@ -919,10 +923,9 @@ namespace canvas
 
             f.DontExpectCreateCustomFontCollection();
 
-            auto cf2 = Make<CanvasTextFormat>(df1.Get());
-            ThrowIfFailed(cf2->put_FontSize(2));
+            ThrowIfFailed(cf1->put_FontSize(2));
             
-            auto df2 = cf2->GetRealizedTextFormat();
+            auto df2 = cf1->GetRealizedTextFormat();
 
             // We have a new IDWriteTextFormat (since the font size changed)
             Assert::IsFalse(IsSameInstance(df1.Get(), df2.Get()));
@@ -947,11 +950,10 @@ namespace canvas
             f.ExpectCreateCustomFontCollection(f.AnyPath);
             auto df1 = cf1->GetRealizedTextFormat();
 
-            auto cf2 = Make<CanvasTextFormat>(df1.Get());
-            ThrowIfFailed(cf2->put_FontFamily(f.AnyOtherFullFontFamilyName));
+            ThrowIfFailed(cf1->put_FontFamily(f.AnyOtherFullFontFamilyName));
                 
             f.ExpectCreateCustomFontCollection(f.AnyOtherPath);
-            auto df2 = cf2->GetRealizedTextFormat();
+            auto df2 = cf1->GetRealizedTextFormat();
 
             // We have a new IDWriteTextFormat (since the font family changed)
             Assert::IsFalse(IsSameInstance(df1.Get(), df2.Get()));

@@ -80,6 +80,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         template<typename TResource, typename TWrapper, typename TMaker, bool TTester(TResource*) = DefaultTester<TResource>>
         static bool TryCreate(ICanvasDevice* device, IUnknown* resource, float dpi, ComPtr<IInspectable>* result)
         {
+            static_assert(std::is_base_of<ICanvasResourceWrapperNative, TWrapper>::value, "Types used with interop should implement ICanvasResourceWrapperNative");
+
             // Is this the type we are looking for?
             auto myTypeOfResource = MaybeAs<TResource>(resource);
 

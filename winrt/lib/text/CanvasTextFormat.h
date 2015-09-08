@@ -45,23 +45,20 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     // keeps track of shadow copies of properties and recreates ("realizes") an
     // IDWriteTextFormat as necessary.
     //
-    class CanvasTextFormat :
-        public RuntimeClass<
-            RuntimeClassFlags<WinRtClassicComMix>,
-            ICanvasTextFormat,
-            ABI::Windows::Foundation::IClosable,
-            CloakedIid<ICanvasTextFormatInternal>,
-            CloakedIid<ICanvasResourceWrapperNative>>,
-        private LifespanTracker<CanvasTextFormat>
+    class CanvasTextFormat : RESOURCE_WRAPPER_RUNTIME_CLASS(
+        IDWriteTextFormat,
+        CanvasTextFormat,
+        ICanvasTextFormat,
+        CloakedIid<ICanvasTextFormatInternal>)
     {
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_Text_CanvasTextFormat, BaseTrust);
 
         std::shared_ptr<CustomFontManager> m_customFontManager;
 
         //
-        // Has Close() been called?  It is tempting to use a null m_format to
+        // Has Close() been called?  It is tempting to use a null resource to
         // indicated closed, but we need to be able to tell the difference
-        // between not having created m_format yet and being closed.
+        // between not having created the resource yet and being closed.
         //
         bool m_closed;
 
@@ -72,7 +69,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         std::mutex m_mutex;
         
         //
-        // Shadow properties.  These values are used to recreate m_format when
+        // Shadow properties.  These values are used to recreate the IDWriteTextFormat when
         // it is required.
         //
         ComPtr<IDWriteFontCollection> m_fontCollection;
@@ -94,17 +91,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         CanvasWordWrapping m_wordWrapping;
 
         //
-        // Draw text options are not part of m_format, but are stored in
-        // CanvasTextFormat.  These are not protected by the mutex since they
+        // Draw text options are not part of IDWriteTextFormat, but are stored
+        // in CanvasTextFormat.  These are not protected by the mutex since they
         // are independent from the shadow state / format.
         //
         CanvasDrawTextOptions m_drawTextOptions;
-
-        //
-        // The IDWriteTextFormat object itself.  This is created on demand from
-        // the shadow properties.
-        //
-        ComPtr<IDWriteTextFormat> m_format;
 
     public:
         CanvasTextFormat();
@@ -169,23 +160,24 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         HRESULT __declspec(nothrow) PropertyGet(T* value, ST const& shadowValue, FN realizedGetter);
 
         template<typename T, typename TT, typename FNV>
-        HRESULT __declspec(nothrow) PropertyPut(T value, TT* dest, FNV&& validator, void(CanvasTextFormat::*realizer)() = nullptr);
+        HRESULT __declspec(nothrow) PropertyPut(T value, TT* dest, FNV&& validator, void(CanvasTextFormat::*realizer)(IDWriteTextFormat*) = nullptr);
         
         template<typename T, typename TT>
-        HRESULT __declspec(nothrow) PropertyPut(T value, TT* dest, void(CanvasTextFormat::*realizer)() = nullptr);
+        HRESULT __declspec(nothrow) PropertyPut(T value, TT* dest, void(CanvasTextFormat::*realizer)(IDWriteTextFormat*) = nullptr);
 
         void SetShadowPropertiesFromDWrite();
 
         void Unrealize();
-        void RealizeDirection();
-        void RealizeIncrementalTabStop();
-        void RealizeLineSpacing();
-        void RealizeParagraphAlignment();
-        void RealizeTextAlignment();
-        void RealizeTrimming();
-        void RealizeWordWrapping();
 
-        ComPtr<IDWriteTextFormat> GetRealizedTextFormatImpl();
+        void RealizeDirection(IDWriteTextFormat* textFormat);
+        void RealizeIncrementalTabStop(IDWriteTextFormat* textFormat);
+        void RealizeLineSpacing(IDWriteTextFormat* textFormat);
+        void RealizeParagraphAlignment(IDWriteTextFormat* textFormat);
+        void RealizeTextAlignment(IDWriteTextFormat* textFormat);
+        void RealizeTrimming(IDWriteTextFormat* textFormat);
+        void RealizeWordWrapping(IDWriteTextFormat* textFormat);
+
+        ComPtr<IDWriteTextFormat> CreateRealizedTextFormat(bool skipWordWrapping = false);
 };
 
 
