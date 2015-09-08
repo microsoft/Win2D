@@ -374,8 +374,10 @@ HRESULT __declspec(nothrow) CanvasTextFormat::PropertyGet(T* value, ST const& sh
             CheckInPointer(value);
             ThrowIfClosed();
 
-            if (HasResource())
-                SetFrom(value, realizedGetter());
+            ResourceWrapper* resourceWrapper = this; // workaround VS2013 using wrong 'this' pointer
+
+            if (resourceWrapper->HasResource())
+                SetFrom(value, realizedGetter(resourceWrapper->GetResource().Get()));
             else
                 SetFrom(value, shadowValue);
         });
@@ -416,9 +418,11 @@ HRESULT __declspec(nothrow) CanvasTextFormat::PropertyPut(T value, TT* dest, FNV
             SetFrom(dest, value);
 
             // Realize the value on the dwrite object, if we can
-            if (HasResource() && realizer)
+            ResourceWrapper* resourceWrapper = this; // workaround VS2013 using wrong 'this' pointer
+
+            if (resourceWrapper->HasResource() && realizer)
             {
-                (this->*realizer)(ResourceWrapper::GetResource().Get());
+                (this->*realizer)(resourceWrapper->GetResource().Get());
             }
         });
 }
@@ -485,10 +489,8 @@ IFACEMETHODIMP CanvasTextFormat::get_Direction(CanvasTextDirection* value)
     return PropertyGet(
         value,
         m_direction,
-        [=]
+        [](IDWriteTextFormat* textFormat)
         {
-            auto& textFormat = ResourceWrapper::GetResource();
-
             return DWriteToCanvasTextDirection::Lookup(textFormat->GetReadingDirection(), textFormat->GetFlowDirection())->TextDirection;
         });
 }
@@ -512,7 +514,7 @@ IFACEMETHODIMP CanvasTextFormat::get_FontFamily(HSTRING* value)
     return PropertyGet(
         value,
         m_fontFamilyName,
-        [&]
+        [&](IDWriteTextFormat*)
         {
             //
             // If this were any other simple property, this would get the
@@ -570,7 +572,7 @@ IFACEMETHODIMP CanvasTextFormat::get_FontSize(float* value)
     return PropertyGet(
         value,
         m_fontSize,
-        [&] { return ResourceWrapper::GetResource()->GetFontSize(); });
+        [](IDWriteTextFormat* textFormat) { return textFormat->GetFontSize(); });
 }
 
 
@@ -591,7 +593,7 @@ IFACEMETHODIMP CanvasTextFormat::get_FontStretch(ABI::Windows::UI::Text::FontStr
     return PropertyGet(
         value,
         m_fontStretch,
-        [&] { return ToWindowsFontStretch(ResourceWrapper::GetResource()->GetFontStretch()); });
+        [](IDWriteTextFormat* textFormat) { return ToWindowsFontStretch(textFormat->GetFontStretch()); });
 }
 
 
@@ -612,7 +614,7 @@ IFACEMETHODIMP CanvasTextFormat::get_FontStyle(ABI::Windows::UI::Text::FontStyle
     return PropertyGet(
         value,
         m_fontStyle,
-        [&] { return ToWindowsFontStyle(ResourceWrapper::GetResource()->GetFontStyle()); });
+        [](IDWriteTextFormat* textFormat) { return ToWindowsFontStyle(textFormat->GetFontStyle()); });
 }
 
 
@@ -633,7 +635,7 @@ IFACEMETHODIMP CanvasTextFormat::get_FontWeight(ABI::Windows::UI::Text::FontWeig
     return PropertyGet(
         value,
         m_fontWeight,
-        [&] { return ToWindowsFontWeight(ResourceWrapper::GetResource()->GetFontWeight()); });
+        [](IDWriteTextFormat* textFormat) { return ToWindowsFontWeight(textFormat->GetFontWeight()); });
 }
 
 
@@ -654,7 +656,7 @@ IFACEMETHODIMP CanvasTextFormat::get_IncrementalTabStop(float* value)
     return PropertyGet(
         value,
         m_incrementalTabStop,
-        [&] { return ResourceWrapper::GetResource()->GetIncrementalTabStop(); });
+        [](IDWriteTextFormat* textFormat) { return textFormat->GetIncrementalTabStop(); });
 }
 
 
@@ -685,9 +687,9 @@ IFACEMETHODIMP CanvasTextFormat::get_LineSpacing(float* value)
     return PropertyGet(
         value,
         m_lineSpacing,
-        [&] 
+        [](IDWriteTextFormat* textFormat)
         { 
-            return DWriteLineSpacing(ResourceWrapper::GetResource().Get()).GetAdjustedSpacing();
+            return DWriteLineSpacing(textFormat).GetAdjustedSpacing();
         });
 }
 
@@ -710,7 +712,7 @@ IFACEMETHODIMP CanvasTextFormat::get_LineSpacingBaseline(float* value)
     return PropertyGet(
         value,
         m_lineSpacingBaseline,
-        [&] { return DWriteLineSpacing(ResourceWrapper::GetResource().Get()).Baseline; });
+        [](IDWriteTextFormat* textFormat) { return DWriteLineSpacing(textFormat).Baseline; });
 }
 
 
@@ -739,9 +741,9 @@ IFACEMETHODIMP CanvasTextFormat::get_LocaleName(HSTRING* value)
     return PropertyGet(
         value,
         m_localeName,
-        [&]
+        [](IDWriteTextFormat* textFormat)
         {
-            return GetLocaleName(ResourceWrapper::GetResource().Get());
+            return GetLocaleName(textFormat);
         });
 }
 
@@ -763,7 +765,7 @@ IFACEMETHODIMP CanvasTextFormat::get_VerticalAlignment(CanvasVerticalAlignment* 
     return PropertyGet(
         value,
         m_verticalAlignment,
-        [&] { return ToCanvasVerticalAlignment(ResourceWrapper::GetResource()->GetParagraphAlignment()); });
+        [](IDWriteTextFormat* textFormat) { return ToCanvasVerticalAlignment(textFormat->GetParagraphAlignment()); });
 }
 
 
@@ -792,7 +794,7 @@ IFACEMETHODIMP CanvasTextFormat::get_HorizontalAlignment(CanvasHorizontalAlignme
     return PropertyGet(
         value,
         m_horizontalAlignment,
-        [&] { return ToCanvasHorizontalAlignment(ResourceWrapper::GetResource()->GetTextAlignment()); });
+        [](IDWriteTextFormat* textFormat) { return ToCanvasHorizontalAlignment(textFormat->GetTextAlignment()); });
 }
 
 
@@ -819,7 +821,7 @@ IFACEMETHODIMP CanvasTextFormat::get_TrimmingGranularity(CanvasTextTrimmingGranu
     return PropertyGet(
         value,
         m_trimmingGranularity,
-        [&] { return ToCanvasTextTrimmingGranularity(DWriteTrimming(ResourceWrapper::GetResource().Get()).Options.granularity); });
+        [](IDWriteTextFormat* textFormat) { return ToCanvasTextTrimmingGranularity(DWriteTrimming(textFormat).Options.granularity); });
 }
 
 
@@ -841,7 +843,7 @@ IFACEMETHODIMP CanvasTextFormat::get_TrimmingDelimiter(HSTRING* value)
     return PropertyGet(
         value,
         m_trimmingDelimiter,
-        [&] { return ToCanvasTrimmingDelimiter(DWriteTrimming(ResourceWrapper::GetResource().Get()).Options.delimiter); });
+        [](IDWriteTextFormat* textFormat) { return ToCanvasTrimmingDelimiter(DWriteTrimming(textFormat).Options.delimiter); });
 }
 
 
@@ -863,7 +865,7 @@ IFACEMETHODIMP CanvasTextFormat::get_TrimmingDelimiterCount(int32_t* value)
     return PropertyGet(
         value,
         m_trimmingDelimiterCount,
-        [&] { return static_cast<int32_t>(DWriteTrimming(ResourceWrapper::GetResource().Get()).Options.delimiterCount); });
+        [](IDWriteTextFormat* textFormat) { return static_cast<int32_t>(DWriteTrimming(textFormat).Options.delimiterCount); });
 }
 
 
@@ -899,7 +901,7 @@ IFACEMETHODIMP CanvasTextFormat::get_WordWrapping(CanvasWordWrapping* value)
     return PropertyGet(
         value,
         m_wordWrapping,
-        [&] { return ToCanvasWordWrapping(ResourceWrapper::GetResource()->GetWordWrapping()); });
+        [](IDWriteTextFormat* textFormat) { return ToCanvasWordWrapping(textFormat->GetWordWrapping()); });
 }
 
 
