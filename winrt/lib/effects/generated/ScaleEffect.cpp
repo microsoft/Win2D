@@ -9,8 +9,8 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Effects
 {
-    ScaleEffect::ScaleEffect(ID2D1Effect* effect)
-        : CanvasEffect(effect, EffectId(), 5, 1, true)
+    ScaleEffect::ScaleEffect(ICanvasDevice* device, ID2D1Effect* effect)
+        : CanvasEffect(EffectId(), 5, 1, true, device, effect, static_cast<IScaleEffect*>(this))
     {
         if (!effect)
         {

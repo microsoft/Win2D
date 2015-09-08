@@ -21,7 +21,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_Effects_GrayscaleEffect, BaseTrust);
 
     public:
-        GrayscaleEffect(ID2D1Effect* effect = nullptr);
+        GrayscaleEffect(ICanvasDevice* device = nullptr, ID2D1Effect* effect = nullptr);
 
         static IID const& EffectId() { return CLSID_D2D1Grayscale; }
 

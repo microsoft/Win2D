@@ -9,8 +9,8 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Effects
 {
-    HueRotationEffect::HueRotationEffect(ID2D1Effect* effect)
-        : CanvasEffect(effect, EffectId(), 1, 1, true)
+    HueRotationEffect::HueRotationEffect(ICanvasDevice* device, ID2D1Effect* effect)
+        : CanvasEffect(EffectId(), 1, 1, true, device, effect, static_cast<IHueRotationEffect*>(this))
     {
         if (!effect)
         {

@@ -9,8 +9,8 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Effects
 {
-    CropEffect::CropEffect(ID2D1Effect* effect)
-        : CanvasEffect(effect, EffectId(), 2, 1, true)
+    CropEffect::CropEffect(ICanvasDevice* device, ID2D1Effect* effect)
+        : CanvasEffect(EffectId(), 2, 1, true, device, effect, static_cast<ICropEffect*>(this))
     {
         if (!effect)
         {

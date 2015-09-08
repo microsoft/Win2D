@@ -99,9 +99,7 @@ public:
         auto brush = ref new CanvasImageBrush(m_device);
         brush->Image = anyEffect;
 
-        // TODO #1697: get_Image needs to support effects
-        Assert::ExpectException<Platform::InvalidCastException^>(
-            [&] { Assert::AreEqual<ICanvasImage^>(anyEffect, brush->Image); });
+        Assert::AreEqual<ICanvasImage^>(anyEffect, brush->Image);
     }
 
     TEST_METHOD(CanvasImageBrush_SourceRectangle)
@@ -286,9 +284,7 @@ public:
 
         auto d2dEffect = As<ID2D1Effect>(image);
 
-        // TODO #1697: Without effect interop there's not much more we can check
-        // here.  Once we have effect interop we should check that
-        // GetOrCreate<>(d2dEffect) matches m_imageThatIsNotABitmap.
+        Assert::AreEqual(m_imageThatIsNotABitmap, GetOrCreate<ICanvasImage>(d2dEffect.Get()));
     }
 };
 

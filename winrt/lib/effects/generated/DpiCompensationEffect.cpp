@@ -9,8 +9,8 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Effects
 {
-    DpiCompensationEffect::DpiCompensationEffect(ID2D1Effect* effect)
-        : CanvasEffect(effect, EffectId(), 3, 1, true)
+    DpiCompensationEffect::DpiCompensationEffect(ICanvasDevice* device, ID2D1Effect* effect)
+        : CanvasEffect(EffectId(), 3, 1, true, device, effect, static_cast<IDpiCompensationEffect*>(this))
     {
         if (!effect)
         {

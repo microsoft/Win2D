@@ -9,8 +9,8 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Effects
 {
-    PointSpecularEffect::PointSpecularEffect(ID2D1Effect* effect)
-        : CanvasEffect(effect, EffectId(), 7, 1, true)
+    PointSpecularEffect::PointSpecularEffect(ICanvasDevice* device, ID2D1Effect* effect)
+        : CanvasEffect(EffectId(), 7, 1, true, device, effect, static_cast<IPointSpecularEffect*>(this))
     {
         if (!effect)
         {

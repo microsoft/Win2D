@@ -672,6 +672,11 @@ namespace CodeGen
                 OutputEffectType.OutputCommonEnums(effects, commonStreamWriter);
             }
 
+            using (Formatter effectMakersStreamWriter = new Formatter(Path.Combine(outDirectory, "EffectMakers.cpp")))
+            {
+                OutputEffectType.OutputEffectMakers(effects, effectMakersStreamWriter);
+            }
+
             foreach (var effect in effects.Where(IsEffectEnabled))
             {
                 Directory.CreateDirectory(outDirectory);

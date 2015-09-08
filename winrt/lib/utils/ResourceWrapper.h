@@ -34,11 +34,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     protected:
         ResourceWrapper(TResource* resource)
+            : ResourceWrapper(resource, GetOuterInspectable())
+        { }
+
+        ResourceWrapper(TResource* resource, IInspectable* outerInspectable)
             : m_resource(resource)
         {
             if (resource)
             {
-                ResourceManager::Add(resource, GetOuterInspectable());
+                ResourceManager::Add(resource, outerInspectable);
             }
         }
 

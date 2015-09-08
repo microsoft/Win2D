@@ -36,30 +36,45 @@ namespace test.managed
                               where type.ImplementedInterfaces.Contains(typeof(IGraphicsEffect))
                               select type;
 
+            var device = new CanvasDevice();
+
             foreach (var effectType in effectTypes)
             {
                 IGraphicsEffect effect = (IGraphicsEffect)Activator.CreateInstance(effectType.AsType());
 
-                TestEffectSources(effectType, effect);
+                // Test an un-realized effect instance.
+                TestEffectSources(effectType, effect, null);
                 TestEffectProperties(effectType, effect);
+
+                // Realize the effect (creating a backing D2D effect instance), then test it again.
+                var initialSourceImage = RealizeEffect(device, effectType, effect);
+
+                TestEffectSources(effectType, effect, initialSourceImage);
+                TestEffectProperties(effectType, effect);
+
+                // Test that interop can successfully transfer property values in both directions.
+                TestEffectInterop(device, effectType, effect);
             }
         }
 
 
-        static void TestEffectSources(TypeInfo effectType, IGraphicsEffect effect)
+        static void TestEffectSources(TypeInfo effectType, IGraphicsEffect effect, ICanvasImage initialSourceImage)
         {
             var sourceProperties = (from property in effectType.DeclaredProperties
                                     where property.PropertyType == typeof(IGraphicsEffectSource)
                                     select property).ToList();
 
+            if (!sourceProperties.Any())
+                return;
+
             // Should have the same number of strongly typed properties as the effect has sources.
             Assert.AreEqual(sourceProperties.Count, EffectAccessor.GetSourceCount(effect));
 
-            // Initial source values should all be null.
+            // Initial source values should all be as expected.
             for (int i = 0; i < EffectAccessor.GetSourceCount(effect); i++)
             {
-                Assert.IsNull(EffectAccessor.GetSource(effect, i));
-                Assert.IsNull(sourceProperties[i].GetValue(effect));
+                Assert.AreEqual(EffectAccessor.GetSource(effect, i), initialSourceImage);
+                Assert.AreEqual(sourceProperties[i].GetValue(effect), initialSourceImage);
             }
 
             var testValue1 = new GaussianBlurEffect();
@@ -99,11 +114,7 @@ namespace test.managed
 
         static void TestEffectProperties(TypeInfo effectType, IGraphicsEffect effect)
         {
-            var properties = (from property in effectType.DeclaredProperties
-                              where property.Name != "Name"
-                              where property.Name != "Sources"
-                              where property.PropertyType != typeof(IGraphicsEffectSource)
-                              select property).ToList();
+            var properties = GetEffectProperties(effectType).ToList();
 
             IList<object> effectProperties = new ViewIndexerAsList<object>(() => EffectAccessor.GetPropertyCount(effect),
                                                                            i => EffectAccessor.GetProperty(effect, i));
@@ -169,6 +180,74 @@ namespace test.managed
 
             // Should not have any duplicate property mappings.
             Assert.AreEqual(whichIndexIsProperty.Count, whichIndexIsProperty.Distinct().Count());
+        }
+
+
+        static ICanvasImage RealizeEffect(CanvasDevice device, TypeInfo effectType, IGraphicsEffect effect)
+        {
+            var dummySourceImage = new CanvasCommandList(device);
+
+            // We can't realize an effect with invalid inputs, so must first set them all to something reasonable.
+            foreach (var sourceProperty in effectType.DeclaredProperties.Where(p => p.PropertyType == typeof(IGraphicsEffectSource)))
+            {
+                sourceProperty.SetValue(effect, dummySourceImage);
+            }
+
+            // Add one image to any variable size Sources collection properties.
+            foreach (var sourcesProperty in effectType.DeclaredProperties.Where(p => p.Name == "Sources"))
+            {
+                ((IList<IGraphicsEffectSource>)sourcesProperty.GetValue(effect)).Add(dummySourceImage);
+            }
+
+            EffectAccessor.RealizeEffect(device, effect);
+
+            return dummySourceImage;
+        }
+
+
+        static void TestEffectInterop(CanvasDevice device, TypeInfo effectType, IGraphicsEffect realizedEffect)
+        {
+            // One Win2D effect is backed by a realized ID2D1Effect instance, the other is not.
+            // Their property values should be the same either way.
+            IGraphicsEffect unrealizedEffect = (IGraphicsEffect)Activator.CreateInstance(effectType.AsType());
+
+            PropertyValuesShouldMatch(effectType, realizedEffect, unrealizedEffect);
+
+            // Create a new ID2D1Effect instance, then wrap a Win2D effect around it.
+            // We should get the same default property values either way.
+            IGraphicsEffect wrappedEffect = EffectAccessor.CreateThenWrapNewEffectOfSameType(device, realizedEffect);
+
+            // Special case: Win2D intentionally defaults to a different DpiCompensationEffect.BorderMode vs. D2D.
+            if (wrappedEffect is DpiCompensationEffect)
+            {
+                var dpiCompensationEffect = wrappedEffect as DpiCompensationEffect;
+                Assert.AreEqual(EffectBorderMode.Soft, dpiCompensationEffect.BorderMode);
+                dpiCompensationEffect.BorderMode = EffectBorderMode.Hard;
+            }
+
+            PropertyValuesShouldMatch(effectType, unrealizedEffect, wrappedEffect);
+        }
+
+
+        static void PropertyValuesShouldMatch(TypeInfo effectType, IGraphicsEffect effect1, IGraphicsEffect effect2)
+        {
+            foreach (var property in GetEffectProperties(effectType))
+            {
+                object value1 = property.GetValue(effect1);
+                object value2 = property.GetValue(effect2);
+
+                AssertPropertyValuesAreEqual(value1, value2);
+            }
+        }
+
+
+        static IEnumerable<PropertyInfo> GetEffectProperties(TypeInfo effectType)
+        {
+            return from property in effectType.DeclaredProperties
+                   where property.Name != "Name"
+                   where property.Name != "Sources"
+                   where property.PropertyType != typeof(IGraphicsEffectSource)
+                   select property;
         }
 
 
@@ -1049,7 +1128,7 @@ namespace test.managed
                     drawingSession.DrawImage(effect);
                     Assert.Fail("should throw");
                 }
-                catch (NullReferenceException e)
+                catch (ArgumentException e)
                 {
                     VerifyExceptionMessage("Effect source #0 is null.", e.Message);
                 }

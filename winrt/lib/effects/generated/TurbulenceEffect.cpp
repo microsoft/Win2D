@@ -9,8 +9,8 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Effects
 {
-    TurbulenceEffect::TurbulenceEffect(ID2D1Effect* effect)
-        : CanvasEffect(effect, EffectId(), 7, 0, true)
+    TurbulenceEffect::TurbulenceEffect(ICanvasDevice* device, ID2D1Effect* effect)
+        : CanvasEffect(EffectId(), 7, 0, true, device, effect, static_cast<ITurbulenceEffect*>(this))
     {
         if (!effect)
         {

@@ -9,8 +9,8 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Effects
 {
-    OpacityMetadataEffect::OpacityMetadataEffect(ID2D1Effect* effect)
-        : CanvasEffect(effect, EffectId(), 1, 1, true)
+    OpacityMetadataEffect::OpacityMetadataEffect(ICanvasDevice* device, ID2D1Effect* effect)
+        : CanvasEffect(EffectId(), 1, 1, true, device, effect, static_cast<IOpacityMetadataEffect*>(this))
     {
         if (!effect)
         {

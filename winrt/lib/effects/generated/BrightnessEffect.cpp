@@ -9,8 +9,8 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Effects
 {
-    BrightnessEffect::BrightnessEffect(ID2D1Effect* effect)
-        : CanvasEffect(effect, EffectId(), 2, 1, true)
+    BrightnessEffect::BrightnessEffect(ICanvasDevice* device, ID2D1Effect* effect)
+        : CanvasEffect(EffectId(), 2, 1, true, device, effect, static_cast<IBrightnessEffect*>(this))
     {
         if (!effect)
         {

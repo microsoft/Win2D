@@ -9,8 +9,8 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Effects
 {
-    GaussianBlurEffect::GaussianBlurEffect(ID2D1Effect* effect)
-        : CanvasEffect(effect, EffectId(), 3, 1, true)
+    GaussianBlurEffect::GaussianBlurEffect(ICanvasDevice* device, ID2D1Effect* effect)
+        : CanvasEffect(EffectId(), 3, 1, true, device, effect, static_cast<IGaussianBlurEffect*>(this))
     {
         if (!effect)
         {

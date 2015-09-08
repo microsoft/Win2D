@@ -13,18 +13,20 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     using namespace ABI::Microsoft::Graphics::Canvas;
     using namespace ::collections;
 
+
     struct EffectPropertyMapping
     {
         LPCWSTR Name;
         UINT Index;
         GRAPHICS_EFFECT_PROPERTY_MAPPING Mapping;
     };
-
+    
     struct EffectPropertyMappingTable
     {
         EffectPropertyMapping const* Mappings;
         size_t Count;
     };
+
 
     class CanvasEffect
         : public Implements<
@@ -32,16 +34,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             IGraphicsEffect,
             IGraphicsEffectSource,
             IGraphicsEffectD2D1Interop,
-            ICanvasImageInternal,
             ICanvasImage,
-            ABI::Windows::Foundation::IClosable>,
-          private LifespanTracker<CanvasEffect>
+            CloakedIid<ICanvasImageInternal>,
+            ChainInterfaces<
+                MixIn<CanvasEffect, ResourceWrapper<ID2D1Effect, CanvasEffect, IGraphicsEffect>>,
+                IClosable,
+                CloakedIid<ICanvasResourceWrapperNative>>>
+        , public ResourceWrapper<ID2D1Effect, CanvasEffect, IGraphicsEffect>
     {
-
-    private:
-        ComPtr<ID2D1Effect> m_resource;
-
-        // Unlike other objects, !m_resource does not necessarily indicate
+        // Unlike other objects, a null ID2D1Effect does not necessarily indicate
         // that the object was closed.
         bool m_closed; 
 
@@ -64,7 +65,26 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         WinString m_name;
 
+        // Generated table of effect factory functions, used by interop to create strongly
+        // typed wrapper classes. m_effectMakers is terminated by a null MakeEffectFunction.
+        typedef void(*MakeEffectFunction)(ICanvasDevice* device, ID2D1Effect* d2dEffect, ComPtr<IInspectable>* result);
+
+        static std::pair<IID, MakeEffectFunction> m_effectMakers[];
+
+    protected:
+        CanvasEffect(IID const& m_effectId, unsigned int propertiesSize, unsigned int sourcesSize, bool isSourcesSizeFixed, ICanvasDevice* device, ID2D1Effect* effect, IInspectable* outerInspectable);
+
+        virtual ~CanvasEffect() = default;
+
+        ComPtr<Vector<IGraphicsEffectSource*>> const& Sources() { return m_sources; }
+
+        virtual EffectPropertyMappingTable GetPropertyMapping()          { return EffectPropertyMappingTable{ nullptr, 0 }; }
+        virtual EffectPropertyMappingTable GetPropertyMappingHandCoded() { return EffectPropertyMappingTable{ nullptr, 0 }; }
+
     public:
+        // Used by ResourceManager::GetOrCreate.
+        static bool TryCreateEffect(ICanvasDevice* device, IUnknown* resource, float dpi, ComPtr<IInspectable>* result);
+            
         //
         // IClosable
         //
@@ -115,18 +135,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         ComPtr<ID2D1Image> GetD2DImage(ID2D1DeviceContext* deviceContext) override;
         RealizedEffectNode GetRealizedEffectNode(ID2D1DeviceContext* deviceContext, float targetDpi) override;
 
+        //
+        // ICanvasResourceWrapperNative
+        //
+
+        IFACEMETHOD(GetResource)(ICanvasDevice* device, float dpi, REFIID iid, void** resource) override;
+
+
     protected:
-        // for effects with unknown number of sources, sourcesSize has to be zero
-        CanvasEffect(ID2D1Effect* effect, IID const& m_effectId, unsigned int propertiesSize, unsigned int sourcesSize, bool isSourcesSizeFixed);
-
-        virtual ~CanvasEffect() = default;
-
-        ComPtr<Vector<IGraphicsEffectSource*>> const& Sources() { return m_sources; }
-
-        virtual EffectPropertyMappingTable GetPropertyMapping()          { return EffectPropertyMappingTable{ nullptr, 0 }; }
-        virtual EffectPropertyMappingTable GetPropertyMappingHandCoded() { return EffectPropertyMappingTable{ nullptr, 0 }; }
-
-
         //
         // The main property set/get methods. TBoxed is how we represent the data internally,
         // while TPublic is how it is exposed by strongly typed effect subclasses. For instance
@@ -189,7 +205,20 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         void SetD2DInputs(ID2D1DeviceContext* deviceContext, float targetDpi, bool wasRecreated);
         void SetD2DProperties();
 
+        void InitializeInputsFromD2D(ICanvasDevice* device);
+        void InitializePropertiesFromD2D();
+
         void ThrowIfClosed();
+
+
+        // Used by EffectMakers.cpp to populate the m_effectMakers table.
+        template<typename T>
+        static void MakeEffect(ICanvasDevice* device, ID2D1Effect* d2dEffect, ComPtr<IInspectable>* result)
+        {
+            auto wrapper = Make<T>(device, d2dEffect);
+            CheckMakeResult(wrapper);
+            ThrowIfFailed(wrapper.As(result));
+        }
 
 
         //

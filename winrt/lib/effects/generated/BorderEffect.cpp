@@ -9,8 +9,8 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Effects
 {
-    BorderEffect::BorderEffect(ID2D1Effect* effect)
-        : CanvasEffect(effect, EffectId(), 2, 1, true)
+    BorderEffect::BorderEffect(ICanvasDevice* device, ID2D1Effect* effect)
+        : CanvasEffect(EffectId(), 2, 1, true, device, effect, static_cast<IBorderEffect*>(this))
     {
         if (!effect)
         {

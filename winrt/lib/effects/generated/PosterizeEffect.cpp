@@ -11,8 +11,8 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Effects
 {
-    PosterizeEffect::PosterizeEffect(ID2D1Effect* effect)
-        : CanvasEffect(effect, EffectId(), 3, 1, true)
+    PosterizeEffect::PosterizeEffect(ICanvasDevice* device, ID2D1Effect* effect)
+        : CanvasEffect(EffectId(), 3, 1, true, device, effect, static_cast<IPosterizeEffect*>(this))
     {
         if (!effect)
         {

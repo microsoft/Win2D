@@ -9,8 +9,8 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Effects
 {
-    MorphologyEffect::MorphologyEffect(ID2D1Effect* effect)
-        : CanvasEffect(effect, EffectId(), 3, 1, true)
+    MorphologyEffect::MorphologyEffect(ICanvasDevice* device, ID2D1Effect* effect)
+        : CanvasEffect(EffectId(), 3, 1, true, device, effect, static_cast<IMorphologyEffect*>(this))
     {
         if (!effect)
         {

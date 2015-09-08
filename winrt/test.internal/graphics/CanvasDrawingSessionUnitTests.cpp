@@ -1473,7 +1473,7 @@ public:
         ThrowIfFailed(f.DS->DrawImageAtOrigin(blurEffect.Get()));
         Assert::IsTrue(setInputCalled);
         Assert::IsTrue(setValueCalled);
-        Assert::IsTrue(setInputCountCalled);
+        Assert::IsFalse(setInputCountCalled);
     }
 
 

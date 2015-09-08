@@ -9,8 +9,8 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Effects
 {
-    PremultiplyEffect::PremultiplyEffect(ID2D1Effect* effect)
-        : CanvasEffect(effect, EffectId(), 0, 1, true)
+    PremultiplyEffect::PremultiplyEffect(ICanvasDevice* device, ID2D1Effect* effect)
+        : CanvasEffect(EffectId(), 0, 1, true, device, effect, static_cast<IPremultiplyEffect*>(this))
     {
         if (!effect)
         {

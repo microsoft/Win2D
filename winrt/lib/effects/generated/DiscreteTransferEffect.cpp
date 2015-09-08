@@ -9,8 +9,8 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Effects
 {
-    DiscreteTransferEffect::DiscreteTransferEffect(ID2D1Effect* effect)
-        : CanvasEffect(effect, EffectId(), 9, 1, true)
+    DiscreteTransferEffect::DiscreteTransferEffect(ICanvasDevice* device, ID2D1Effect* effect)
+        : CanvasEffect(EffectId(), 9, 1, true, device, effect, static_cast<IDiscreteTransferEffect*>(this))
     {
         if (!effect)
         {

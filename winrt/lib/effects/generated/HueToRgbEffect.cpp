@@ -11,8 +11,8 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Effects
 {
-    HueToRgbEffect::HueToRgbEffect(ID2D1Effect* effect)
-        : CanvasEffect(effect, EffectId(), 1, 1, true)
+    HueToRgbEffect::HueToRgbEffect(ICanvasDevice* device, ID2D1Effect* effect)
+        : CanvasEffect(EffectId(), 1, 1, true, device, effect, static_cast<IHueToRgbEffect*>(this))
     {
         if (!effect)
         {

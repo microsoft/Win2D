@@ -9,8 +9,8 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Effects
 {
-    GammaTransferEffect::GammaTransferEffect(ID2D1Effect* effect)
-        : CanvasEffect(effect, EffectId(), 17, 1, true)
+    GammaTransferEffect::GammaTransferEffect(ICanvasDevice* device, ID2D1Effect* effect)
+        : CanvasEffect(EffectId(), 17, 1, true, device, effect, static_cast<IGammaTransferEffect*>(this))
     {
         if (!effect)
         {

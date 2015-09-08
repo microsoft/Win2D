@@ -9,8 +9,8 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Effects
 {
-    TileEffect::TileEffect(ID2D1Effect* effect)
-        : CanvasEffect(effect, EffectId(), 1, 1, true)
+    TileEffect::TileEffect(ICanvasDevice* device, ID2D1Effect* effect)
+        : CanvasEffect(EffectId(), 1, 1, true, device, effect, static_cast<ITileEffect*>(this))
     {
         if (!effect)
         {

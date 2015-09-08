@@ -9,8 +9,8 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Effects
 {
-    AtlasEffect::AtlasEffect(ID2D1Effect* effect)
-        : CanvasEffect(effect, EffectId(), 2, 1, true)
+    AtlasEffect::AtlasEffect(ICanvasDevice* device, ID2D1Effect* effect)
+        : CanvasEffect(EffectId(), 2, 1, true, device, effect, static_cast<IAtlasEffect*>(this))
     {
         if (!effect)
         {

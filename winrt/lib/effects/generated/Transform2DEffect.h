@@ -19,7 +19,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_Effects_Transform2DEffect, BaseTrust);
 
     public:
-        Transform2DEffect(ID2D1Effect* effect = nullptr);
+        Transform2DEffect(ICanvasDevice* device = nullptr, ID2D1Effect* effect = nullptr);
 
         static IID const& EffectId() { return CLSID_D2D12DAffineTransform; }
 

@@ -11,8 +11,8 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Effects
 {
-    ChromaKeyEffect::ChromaKeyEffect(ID2D1Effect* effect)
-        : CanvasEffect(effect, EffectId(), 4, 1, true)
+    ChromaKeyEffect::ChromaKeyEffect(ICanvasDevice* device, ID2D1Effect* effect)
+        : CanvasEffect(EffectId(), 4, 1, true, device, effect, static_cast<IChromaKeyEffect*>(this))
     {
         if (!effect)
         {

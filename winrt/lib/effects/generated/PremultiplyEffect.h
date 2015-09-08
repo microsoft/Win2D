@@ -19,7 +19,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_Effects_PremultiplyEffect, BaseTrust);
 
     public:
-        PremultiplyEffect(ID2D1Effect* effect = nullptr);
+        PremultiplyEffect(ICanvasDevice* device = nullptr, ID2D1Effect* effect = nullptr);
 
         static IID const& EffectId() { return CLSID_D2D1Premultiply; }
 

@@ -9,8 +9,8 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Effects
 {
-    ConvolveMatrixEffect::ConvolveMatrixEffect(ID2D1Effect* effect)
-        : CanvasEffect(effect, EffectId(), 11, 1, true)
+    ConvolveMatrixEffect::ConvolveMatrixEffect(ICanvasDevice* device, ID2D1Effect* effect)
+        : CanvasEffect(EffectId(), 11, 1, true, device, effect, static_cast<IConvolveMatrixEffect*>(this))
     {
         if (!effect)
         {

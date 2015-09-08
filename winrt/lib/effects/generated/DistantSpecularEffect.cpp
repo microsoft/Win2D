@@ -9,8 +9,8 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Effects
 {
-    DistantSpecularEffect::DistantSpecularEffect(ID2D1Effect* effect)
-        : CanvasEffect(effect, EffectId(), 8, 1, true)
+    DistantSpecularEffect::DistantSpecularEffect(ICanvasDevice* device, ID2D1Effect* effect)
+        : CanvasEffect(EffectId(), 8, 1, true, device, effect, static_cast<IDistantSpecularEffect*>(this))
     {
         if (!effect)
         {

@@ -9,8 +9,8 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Effects
 {
-    ArithmeticCompositeEffect::ArithmeticCompositeEffect(ID2D1Effect* effect)
-        : CanvasEffect(effect, EffectId(), 2, 2, true)
+    ArithmeticCompositeEffect::ArithmeticCompositeEffect(ICanvasDevice* device, ID2D1Effect* effect)
+        : CanvasEffect(EffectId(), 2, 2, true, device, effect, static_cast<IArithmeticCompositeEffect*>(this))
     {
         if (!effect)
         {

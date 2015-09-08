@@ -159,6 +159,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\ChromaKeyEffect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\ContrastEffect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\EdgeDetectionEffect.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\EffectMakers.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\EmbossEffect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\ExposureEffect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\GrayscaleEffect.cpp" />

@@ -9,8 +9,8 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Effects
 {
-    DisplacementMapEffect::DisplacementMapEffect(ID2D1Effect* effect)
-        : CanvasEffect(effect, EffectId(), 3, 2, true)
+    DisplacementMapEffect::DisplacementMapEffect(ICanvasDevice* device, ID2D1Effect* effect)
+        : CanvasEffect(EffectId(), 3, 2, true, device, effect, static_cast<IDisplacementMapEffect*>(this))
     {
         if (!effect)
         {

@@ -9,8 +9,8 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Effects
 {
-    Transform2DEffect::Transform2DEffect(ID2D1Effect* effect)
-        : CanvasEffect(effect, EffectId(), 4, 1, true)
+    Transform2DEffect::Transform2DEffect(ICanvasDevice* device, ID2D1Effect* effect)
+        : CanvasEffect(EffectId(), 4, 1, true, device, effect, static_cast<ITransform2DEffect*>(this))
     {
         if (!effect)
         {

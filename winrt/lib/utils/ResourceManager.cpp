@@ -37,6 +37,10 @@ std::vector<ResourceManager::TryCreateFunction> ResourceManager::tryCreateFuncti
 #if WINVER > _WIN32_WINNT_WINBLUE
     TryCreate<ID2D1GradientMesh,        CanvasGradientMesh,         MakeWrapperWithDevice>,
 #endif
+
+    // Effects get their very own try-create function. These are special because ID2D1Effect
+    // can map to many different Win2D wrapper types depending on its D2D1_PROPERTY_CLSID.
+    CanvasEffect::TryCreateEffect
 };
 
 

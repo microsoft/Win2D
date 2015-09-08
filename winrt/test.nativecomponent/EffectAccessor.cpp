@@ -2,9 +2,22 @@
 //
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
-#include "pch.h"
+// Exposes features of IGraphicsEffectD2D1Interop and the Microsoft.Graphics.Canvas.native.h
+// interop mechanism for use by test.managed.EffectTests. This cross language testing approach
+// is used because:
+//
+//  1)  C# reflection is the easiest way to apply automated test logic across the entire set of
+//      strongly typed effect variants, validating the marshalling of all source parameters and
+//      effect properties without having to manually write separate tests for each effect type.
+//
+//  2)  Some aspects of this validation require access to interop functionality that is not
+//      exposed in .NET.
+//
+// Because of 1), the reflection based effect tests are written in C# (test.managed.EffectTests).
+// To satisfy 2), this module exposes the neccessary interop features for use by the C# tests.
 
-using namespace Microsoft::WRL;
+#include "pch.h"
+#include <Microsoft.Graphics.Canvas.native.h>
 
 #ifdef USE_LOCALLY_EMULATED_UAP_APIS
 
@@ -21,6 +34,9 @@ using namespace Microsoft::WRL;
 #endif
 
 using EffectsAbi::IGraphicsEffectD2D1Interop;
+
+using namespace Microsoft::WRL;
+using namespace Microsoft::Graphics::Canvas;
 
 namespace NativeComponent
 {
@@ -39,7 +55,7 @@ namespace NativeComponent
         ColorToVector4       = EffectsAbi::GRAPHICS_EFFECT_PROPERTY_MAPPING_COLOR_TO_VECTOR4
     };
 
-    // Exposes features of IGraphicsEffectD2D1Interop for use by test.managed.EffectTests.
+
 	[Windows::Foundation::Metadata::WebHostHidden]
     public ref class EffectAccessor sealed
     {
@@ -95,6 +111,41 @@ namespace NativeComponent
 
             *index = static_cast<int>(interopIndex);
             *mapping = static_cast<EffectPropertyMapping>(interopMapping);
+        }
+
+        static void RealizeEffect(CanvasDevice^ device, IGraphicsEffect^ effect)
+        {
+            int originalSourceCount = GetSourceCount(effect);
+
+            auto d2dEffect = GetWrappedResource<ID2D1Effect>(device, effect);
+
+            // Before and after, Win2D + D2D should all agree on how many inputs this effect has.
+            int newSourceCount = GetSourceCount(effect);
+            int d2dInputCount = d2dEffect->GetInputCount();
+
+            if (originalSourceCount != newSourceCount ||
+                originalSourceCount != d2dInputCount)
+            {
+                ThrowHR(E_FAIL);
+            }
+        }
+
+        static IGraphicsEffect^ CreateThenWrapNewEffectOfSameType(CanvasDevice^ device, IGraphicsEffect^ originalEffect)
+        {
+            // What type of effect is this?
+            IID effectId;
+            ThrowIfFailed(As<IGraphicsEffectD2D1Interop>(originalEffect)->GetEffectId(&effectId));
+
+            // Create a new D2D effect of the same type.
+            auto commandList = ref new CanvasCommandList(device);
+            auto drawingSession = commandList->CreateDrawingSession();
+            auto d2dContext = GetWrappedResource<ID2D1DeviceContext>(drawingSession);
+
+            ComPtr<ID2D1Effect> d2dEffect;
+            ThrowIfFailed(d2dContext->CreateEffect(effectId, &d2dEffect));
+
+            // Wrap a Win2D effect around the D2D effect.
+            return GetOrCreate<IGraphicsEffect>(device, d2dEffect.Get());
         }
     };
 }

@@ -78,6 +78,66 @@ namespace CodeGen
             output.WriteLine("}");
         }
 
+        public static void OutputEffectMakers(List<Effects.Effect> effects, Formatter output)
+        {
+            OutputDataTypes.OutputLeadingComment(output);
+
+            output.WriteLine("#include \"pch.h\"");
+            output.WriteLine();
+
+            var enabledEffects = from effect in effects
+                                 where EffectGenerator.IsEffectEnabled(effect)
+                                 select effect;
+
+            var effectsByVersion = from effect in enabledEffects
+                                   orderby effect.ClassName
+                                   group effect by (effect.Overrides != null ? effect.Overrides.WinVer : null) into versionGroup
+                                   orderby versionGroup.Key
+                                   select versionGroup;
+
+            foreach (var versionGroup in effectsByVersion)
+            {
+                OutputVersionConditional(versionGroup.Key, output);
+
+                foreach (var effect in versionGroup)
+                {
+                    output.WriteLine("#include \"" + effect.ClassName + ".h\"");
+                }
+
+                EndVersionConditional(versionGroup.Key, output);
+                output.WriteLine();
+            }
+
+            output.WriteLine();
+            output.WriteLine("std::pair<IID, CanvasEffect::MakeEffectFunction> CanvasEffect::m_effectMakers[] =");
+            output.WriteLine("{");
+
+            int longestName = enabledEffects.Select(effect => effect.ClassName.Length).Max();
+
+            foreach (var versionGroup in effectsByVersion)
+            {
+                OutputVersionConditional(versionGroup.Key, output);
+                output.Indent();
+
+                foreach (var effect in versionGroup)
+                {
+                    string padding = new string(' ', longestName - effect.ClassName.Length);
+
+                    output.WriteLine("{ " + effect.ClassName + "::EffectId(), " + padding + "MakeEffect<" + effect.ClassName + "> " + padding + "},");
+                }
+
+                output.Unindent();
+                EndVersionConditional(versionGroup.Key, output);
+                output.WriteLine();
+            }
+
+            output.Indent();
+            output.WriteLine("{ GUID_NULL, nullptr }");
+            output.Unindent();
+
+            output.WriteLine("};");
+        }
+
         public static void OutputEffectIdl(Effects.Effect effect, Formatter output)
         {
             OutputDataTypes.OutputLeadingComment(output);
@@ -207,7 +267,7 @@ namespace CodeGen
             output.Unindent();
             output.WriteLine("public:");
             output.Indent();
-            output.WriteLine(effect.ClassName + "(ID2D1Effect* effect = nullptr);");
+            output.WriteLine(effect.ClassName + "(ICanvasDevice* device = nullptr, ID2D1Effect* effect = nullptr);");
             output.WriteLine();
             output.WriteLine("static IID const& EffectId() { return " + GetEffectCLSID(effect) + "; }");
             output.WriteLine();
@@ -275,12 +335,13 @@ namespace CodeGen
             output.WriteLine("namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Effects");
             output.WriteLine("{");
             output.Indent();
-            output.WriteLine(effect.ClassName + "::" + effect.ClassName + "(ID2D1Effect* effect)");
+            output.WriteLine(effect.ClassName + "::" + effect.ClassName + "(ICanvasDevice* device, ID2D1Effect* effect)");
             output.WriteIndent();
-            output.WriteLine(": CanvasEffect(effect, EffectId(), "
+            output.WriteLine(": CanvasEffect(EffectId(), "
                              + (effect.Properties.Count(p => !p.IsHandCoded) - 4) + ", "
                              + inputsCount + ", "
-                             + isInputSizeFixed.ToString().ToLower() + ")");
+                             + isInputSizeFixed.ToString().ToLower() + ", "
+                             + "device, effect, static_cast<" + effect.InterfaceName + "*>(this))");
             output.WriteLine("{");
             output.Indent();
             output.WriteLine("if (!effect)");

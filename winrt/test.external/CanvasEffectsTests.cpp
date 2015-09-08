@@ -18,7 +18,7 @@ namespace EffectsAbi = ABI::Windows::Graphics::Effects;
 
 using EffectsAbi::IGraphicsEffectD2D1Interop;
 
-TEST_CLASS(CanvasBitmapTests)
+TEST_CLASS(CanvasEffectsTests)
 {
     TEST_METHOD(CanvasEffect_IGraphicsEffectD2D1Interop)
     {
@@ -278,5 +278,230 @@ TEST_CLASS(CanvasBitmapTests)
         Assert::AreEqual(E_INVALIDARG, blurInterop->GetNamedPropertyMapping(nullptr, &index, &mapping));
         Assert::AreEqual(E_INVALIDARG, blurInterop->GetNamedPropertyMapping(L"BlurAmount", nullptr, &mapping));
         Assert::AreEqual(E_INVALIDARG, blurInterop->GetNamedPropertyMapping(L"BlurAmount", &index, nullptr));
+    }
+
+    TEST_METHOD(CanvasEffect_GetResource)
+    {
+        auto blurEffect = ref new GaussianBlurEffect();
+        auto device = ref new CanvasDevice();
+        auto bitmap = ref new CanvasRenderTarget(device, 1, 1, DEFAULT_DPI);
+
+        const float expectedBlurAmount = 23;
+        blurEffect->BlurAmount = expectedBlurAmount;
+
+        blurEffect->Source = bitmap;
+
+        auto d2dEffect = GetWrappedResource<ID2D1Effect>(device, blurEffect, DEFAULT_DPI);
+
+        // Make sure we got back a sensible looking effect.
+        Assert::IsTrue(d2dEffect->GetValue<IID>(D2D1_PROPERTY_CLSID) == CLSID_D2D1GaussianBlur);
+        Assert::AreEqual(expectedBlurAmount, d2dEffect->GetValue<float>(D2D1_GAUSSIANBLUR_PROP_STANDARD_DEVIATION));
+
+        ComPtr<ID2D1Image> input;
+        d2dEffect->GetInput(0, &input);
+        Assert::IsTrue(IsSameInstance(input.Get(), GetWrappedResource<ID2D1Image>(bitmap).Get()));
+
+        // Repeated queries should be idempotent.
+        auto d2dEffect2 = GetWrappedResource<ID2D1Effect>(device, blurEffect);
+        Assert::IsTrue(IsSameInstance(d2dEffect.Get(), d2dEffect2.Get()));
+
+        // Reverse lookups should give back the object we started with.
+        auto effect2 = GetOrCreate<GaussianBlurEffect>(d2dEffect.Get());
+        Assert::AreEqual(blurEffect, effect2);
+
+        // Realizing onto a different device should return a different D2D instance.
+        auto device2 = ref new CanvasDevice();
+        auto d2dEffect3 = GetWrappedResource<ID2D1Effect>(device2, blurEffect);
+        Assert::IsFalse(IsSameInstance(d2dEffect.Get(), d2dEffect3.Get()));
+    }
+
+    TEST_METHOD(CanvasEffect_GetResource_NoDevice)
+    {
+        auto blurEffect = ref new GaussianBlurEffect();
+
+        ExpectCOMException(E_INVALIDARG, L"To unwrap this resource type, a device parameter must be passed to GetWrappedResource.",
+            [&]
+            {
+                GetWrappedResource<ID2D1Effect>(blurEffect);
+            });
+    }
+
+    TEST_METHOD(CanvasEffect_GetResource_NoSources)
+    {
+        auto device = ref new CanvasDevice();
+        auto compositeEffect = ref new CompositeEffect();
+
+        ExpectCOMException(E_INVALIDARG, L"Effect Sources collection is empty.",
+            [&]
+            {
+                GetWrappedResource<ID2D1Effect>(device, compositeEffect);
+            });
+
+        // But this is ok.
+        compositeEffect->Sources->Append(ref new ColorSourceEffect());
+
+        GetWrappedResource<ID2D1Effect>(device, compositeEffect);
+    }
+
+    TEST_METHOD(CanvasEffect_GetResource_DpiCompensation)
+    {
+        auto blurEffect = ref new GaussianBlurEffect();
+        auto device = ref new CanvasDevice();
+        auto bitmap = ref new CanvasRenderTarget(device, 1, 1, DEFAULT_DPI);
+        blurEffect->Source = bitmap;
+
+        // Requesting different DPI from the bitmap should insert DPI compenstation.
+        auto d2dEffect = GetWrappedResource<ID2D1Effect>(device, blurEffect, DEFAULT_DPI + 1);
+
+        ComPtr<ID2D1Image> input;
+        d2dEffect->GetInput(0, &input);
+        auto dpiEffect = As<ID2D1Effect>(input);
+        Assert::IsTrue(dpiEffect->GetValue<IID>(D2D1_PROPERTY_CLSID) == CLSID_D2D1DpiCompensation);
+
+        dpiEffect->GetInput(0, &input);
+        Assert::IsTrue(IsSameInstance(input.Get(), GetWrappedResource<ID2D1Image>(bitmap).Get()));
+
+        // Requesting the same DPI as the bitmap should not insert DPI compensation.
+        d2dEffect = GetWrappedResource<ID2D1Effect>(device, blurEffect, DEFAULT_DPI);
+
+        d2dEffect->GetInput(0, &input);
+        Assert::IsTrue(IsSameInstance(input.Get(), GetWrappedResource<ID2D1Image>(bitmap).Get()));
+
+        // Not specifying DPI should insert DPI compenstation.
+        d2dEffect = GetWrappedResource<ID2D1Effect>(device, blurEffect);
+
+        d2dEffect->GetInput(0, &input);
+        dpiEffect = As<ID2D1Effect>(input);
+        Assert::IsTrue(dpiEffect->GetValue<IID>(D2D1_PROPERTY_CLSID) == CLSID_D2D1DpiCompensation);
+
+        dpiEffect->GetInput(0, &input);
+        Assert::IsTrue(IsSameInstance(input.Get(), GetWrappedResource<ID2D1Image>(bitmap).Get()));
+    }
+
+    TEST_METHOD(CanvasEffect_GetOrCreate)
+    {
+        auto device = ref new CanvasDevice();
+        auto renderTarget = ref new CanvasRenderTarget(device, 1, 1, DEFAULT_DPI);
+        auto drawingSession = renderTarget->CreateDrawingSession();
+        auto d2dContext = GetWrappedResource<ID2D1DeviceContext>(drawingSession);
+
+        // Create and configure a D2D effect instance.
+        ComPtr<ID2D1Effect> d2dEffect;
+        ThrowIfFailed(d2dContext->CreateEffect(CLSID_D2D1GaussianBlur, &d2dEffect));
+
+        const float expectedBlurAmount = 23;
+        d2dEffect->SetValue(D2D1_GAUSSIANBLUR_PROP_STANDARD_DEVIATION, expectedBlurAmount);
+
+        auto bitmap = ref new CanvasRenderTarget(device, 1, 1, DEFAULT_DPI);
+        auto d2dBitmap = GetWrappedResource<ID2D1Bitmap>(bitmap);
+        d2dEffect->SetInput(0, d2dBitmap.Get());
+
+        // Wrap a Win2D object around the D2D effect.
+        auto effect = GetOrCreate<GaussianBlurEffect>(device, d2dEffect.Get());
+
+        Assert::AreEqual(expectedBlurAmount, effect->BlurAmount);
+        Assert::AreEqual<IGraphicsEffectSource>(bitmap, effect->Source);
+
+        // Repeated lookups should be idempotent.
+        auto effect2 = GetOrCreate<ICanvasImage>(d2dEffect.Get());
+        Assert::AreEqual<ICanvasImage>(effect, effect2);
+
+        // Reverse lookups should give back the object we started with.
+        auto d2dEffect2 = GetWrappedResource<ID2D1Effect>(device, effect);
+        Assert::IsTrue(IsSameInstance(d2dEffect.Get(), d2dEffect2.Get()));
+    }
+
+    TEST_METHOD(CanvasEffect_GetOrCreate_SourceHasNoExistingWrapper)
+    {
+        auto device = ref new CanvasDevice();
+        auto renderTarget = ref new CanvasRenderTarget(device, 1, 1, DEFAULT_DPI);
+        auto drawingSession = renderTarget->CreateDrawingSession();
+        auto d2dContext = GetWrappedResource<ID2D1DeviceContext>(drawingSession);
+
+        // Create and configure a D2D effect instance.
+        ComPtr<ID2D1Effect> d2dEffect;
+        ThrowIfFailed(d2dContext->CreateEffect(CLSID_D2D1GaussianBlur, &d2dEffect));
+
+        auto bitmap = ref new CanvasRenderTarget(device, 1, 1, DEFAULT_DPI);
+        auto d2dBitmap = GetWrappedResource<ID2D1Bitmap>(bitmap);
+        d2dEffect->SetInput(0, d2dBitmap.Get());
+
+        // Release the Win2D wrapper, so the source bitmap only exists in the land of native D2D.
+        bitmap = nullptr;
+
+        // Trying to wrap the effect without specifying a device should throw,
+        // because wrapping its source bitmap requires a device.
+        ExpectCOMException(E_INVALIDARG, L"To wrap this resource type, a device parameter must be passed to GetOrCreate.",
+            [&]
+            {
+                GetOrCreate<GaussianBlurEffect>(d2dEffect.Get());
+            });
+
+        // Wrap a Win2D object around the D2D effect, now specifying the device.
+        auto effect = GetOrCreate<GaussianBlurEffect>(device, d2dEffect.Get());
+
+        // Now that we have a wrapper, looking it up a second time without specifying the device is fine.
+        auto effect2 = GetOrCreate<GaussianBlurEffect>(d2dEffect.Get());
+        Assert::AreEqual(effect, effect2);
+
+        // A new wrapper for the source bitmap should have been automatically created.
+        bitmap = GetOrCreate<CanvasRenderTarget>(d2dBitmap.Get());
+        Assert::AreEqual<IGraphicsEffectSource>(bitmap, effect->Source);
+    }
+
+    TEST_METHOD(CanvasEffect_GetOrCreate_VariableNumberOfInputs)
+    {
+        auto device = ref new CanvasDevice();
+        auto renderTarget = ref new CanvasRenderTarget(device, 1, 1, DEFAULT_DPI);
+        auto drawingSession = renderTarget->CreateDrawingSession();
+        auto d2dContext = GetWrappedResource<ID2D1DeviceContext>(drawingSession);
+
+        for (unsigned inputCount = 1; inputCount <= 3; inputCount++)
+        {
+            // Create and configure a D2D effect instance.
+            ComPtr<ID2D1Effect> d2dEffect;
+            ThrowIfFailed(d2dContext->CreateEffect(CLSID_D2D1Composite, &d2dEffect));
+
+            d2dEffect->SetInputCount(inputCount);
+
+            std::vector<CanvasRenderTarget^> bitmaps;
+            std::vector<ComPtr<ID2D1Bitmap>> d2dBitmaps;
+
+            for (unsigned i = 0; i < inputCount; i++)
+            {
+                bitmaps.emplace_back(ref new CanvasRenderTarget(device, 1, 1, DEFAULT_DPI));
+                d2dBitmaps.emplace_back(GetWrappedResource<ID2D1Bitmap>(bitmaps.back()));
+                d2dEffect->SetInput(i, d2dBitmaps.back().Get());
+            }
+
+            // Wrap a Win2D object around the D2D effect, and validate its inputs.
+            auto effect = GetOrCreate<CompositeEffect>(device, d2dEffect.Get());
+
+            Assert::AreEqual(inputCount, effect->Sources->Size);
+
+            for (unsigned i = 0; i < inputCount; i++)
+            {
+                Assert::AreEqual<IGraphicsEffectSource>(bitmaps[i], effect->Sources->GetAt(i));
+            }
+        }
+    }
+
+    TEST_METHOD(CanvasEffect_GetOrCreate_UnknownEffectType)
+    {
+        auto device = ref new CanvasDevice();
+        auto renderTarget = ref new CanvasRenderTarget(device, 1, 1, DEFAULT_DPI);
+        auto drawingSession = renderTarget->CreateDrawingSession();
+        auto d2dContext = GetWrappedResource<ID2D1DeviceContext>(drawingSession);
+
+        // Create and configure a D2D effect instance using an effect type that Win2D does not support.
+        ComPtr<ID2D1Effect> d2dEffect;
+        ThrowIfFailed(d2dContext->CreateEffect(CLSID_D2D13DPerspectiveTransform, &d2dEffect));
+
+        // Try to wrap a Win2D object around the unsupported D2D effect.
+        ExpectCOMException(E_NOINTERFACE, L"Unsupported type. Win2D is not able to wrap the specified resource.",
+            [&]
+            {
+                GetOrCreate<ICanvasImage>(d2dEffect.Get());
+            });
     }
 };

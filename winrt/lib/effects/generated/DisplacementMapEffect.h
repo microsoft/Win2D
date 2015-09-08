@@ -19,7 +19,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_Effects_DisplacementMapEffect, BaseTrust);
 
     public:
-        DisplacementMapEffect(ID2D1Effect* effect = nullptr);
+        DisplacementMapEffect(ICanvasDevice* device = nullptr, ID2D1Effect* effect = nullptr);
 
         static IID const& EffectId() { return CLSID_D2D1DisplacementMap; }
 

@@ -26,13 +26,8 @@ class TestEffect : public RuntimeClass <
     InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_Effects_GaussianBlurEffect, BaseTrust);
 
 public:
-    TestEffect(GUID effectId, int propertiesSize, int sourcesSize, bool isSourcesSizeFixed)
-        : CanvasEffect(nullptr, effectId, propertiesSize, sourcesSize, isSourcesSizeFixed)
-    {
-    }
-
-    TestEffect()
-        : CanvasEffect(nullptr, CLSID_D2D1GaussianBlur, 1, 1, true)
+    TestEffect(GUID effectId = CLSID_D2D1GaussianBlur, int propertiesSize = 1, int sourcesSize = 1, bool isSourcesSizeFixed = true)
+        : CanvasEffect(effectId, propertiesSize, sourcesSize, isSourcesSizeFixed, nullptr, nullptr, nullptr)
     {
     }
 

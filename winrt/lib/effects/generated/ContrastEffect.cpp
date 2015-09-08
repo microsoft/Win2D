@@ -11,8 +11,8 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Effects
 {
-    ContrastEffect::ContrastEffect(ID2D1Effect* effect)
-        : CanvasEffect(effect, EffectId(), 2, 1, true)
+    ContrastEffect::ContrastEffect(ICanvasDevice* device, ID2D1Effect* effect)
+        : CanvasEffect(EffectId(), 2, 1, true, device, effect, static_cast<IContrastEffect*>(this))
     {
         if (!effect)
         {
