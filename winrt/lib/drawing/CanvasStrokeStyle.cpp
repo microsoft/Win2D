@@ -421,6 +421,7 @@ IFACEMETHODIMP CanvasStrokeStyle::GetResource(ICanvasDevice* device, float dpi, 
         [&]
         {
             CheckAndClearOutPointer(outResource);
+            ThrowIfClosed();
 
             if (!device)
                 ThrowHR(E_INVALIDARG, Strings::GetResourceNoDevice);

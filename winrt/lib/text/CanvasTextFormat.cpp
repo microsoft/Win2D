@@ -152,6 +152,7 @@ IFACEMETHODIMP CanvasTextFormat::GetResource(ICanvasDevice* device, float dpi, R
         [&]
         {
             CheckAndClearOutPointer(value);
+            ThrowIfClosed();
             ThrowIfFailed(GetRealizedTextFormat().CopyTo(iid, value));
         });
 }

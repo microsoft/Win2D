@@ -765,6 +765,15 @@ namespace canvas
                 static_cast<CanvasDrawTextOptions>(999));
         }
 
+        TEST_METHOD_EX(CanvasTextFormat_GetResourceFailsWhenClosed)
+        {
+            auto ctf = Make<CanvasTextFormat>();
+            ThrowIfFailed(ctf->Close());
+            
+            ComPtr<IUnknown> resource;
+            Assert::AreEqual(RO_E_CLOSED, ctf->GetResource(nullptr, 0, IID_PPV_ARGS(resource.ReleaseAndGetAddressOf())));
+        }
+
 #undef TEST_SIMPLE_PROPERTY
 #undef SIMPLE_DWRITE_SETTER
 #undef SIMPLE_DWRITE_GETTER

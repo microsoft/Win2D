@@ -301,6 +301,9 @@ public:
             float customDashPattern[4] = { 1, 2, 3, 4 };
             Assert::AreEqual(RO_E_CLOSED, canvasStrokeStyle->put_CustomDashStyle(4, customDashPattern));
             Assert::AreEqual(RO_E_CLOSED, canvasStrokeStyle->put_TransformBehavior(CanvasStrokeTransformBehavior::Normal));
+
+            ComPtr<IUnknown> resource;
+            Assert::AreEqual(RO_E_CLOSED, canvasStrokeStyle->GetResource(nullptr, 0, IID_PPV_ARGS(resource.ReleaseAndGetAddressOf())));
         }
     }
 
