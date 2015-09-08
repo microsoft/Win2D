@@ -18,8 +18,8 @@ namespace ExampleGallery.Effects
     /// </summary>
     public sealed class DynamicBlurVideoEffect : IBasicVideoEffect
     {
-        private CanvasDevice _canvasDevice;
-        private IPropertySet _configuration;
+        private CanvasDevice canvasDevice;
+        private IPropertySet configuration;
 
         /// <summary>
         /// Value used for BlurAmount property
@@ -28,14 +28,12 @@ namespace ExampleGallery.Effects
         {
             get
             {
-                if (_configuration != null && _configuration.ContainsKey("BlurAmount"))
-                    return (double)_configuration["BlurAmount"];
-
+                object val;
+                if(configuration != null && configuration.TryGetValue("BlurAmount", out val))
+                {
+                    return (double)val;
+                }
                 return 3;
-            }
-            set
-            {
-                _configuration["BlurAmount"] = value;
             }
         }
         public bool IsReadOnly { get { return true; } }
@@ -48,7 +46,7 @@ namespace ExampleGallery.Effects
 
         public void Close(MediaEffectClosedReason reason)
         {
-            if(_canvasDevice != null) _canvasDevice.Dispose();
+            if(canvasDevice != null) canvasDevice.Dispose();
         }
 
         public void DiscardQueuedFrames()
@@ -57,18 +55,18 @@ namespace ExampleGallery.Effects
 
         public void SetProperties(IPropertySet configuration)
         {
-            _configuration = configuration;
+            this.configuration = configuration;
         }
 
         public void SetEncodingProperties(VideoEncodingProperties encodingProperties, IDirect3DDevice device)
         {
-            _canvasDevice = CanvasDevice.CreateFromDirect3D11Device(device);
+            canvasDevice = CanvasDevice.CreateFromDirect3D11Device(device);
         }
 
         public void ProcessFrame(ProcessVideoFrameContext context)
         {
-            using (CanvasBitmap inputBitmap = CanvasBitmap.CreateFromDirect3D11Surface(_canvasDevice, context.InputFrame.Direct3DSurface))
-            using (CanvasRenderTarget renderTarget = CanvasRenderTarget.CreateFromDirect3D11Surface(_canvasDevice, context.OutputFrame.Direct3DSurface))
+            using (CanvasBitmap inputBitmap = CanvasBitmap.CreateFromDirect3D11Surface(canvasDevice, context.InputFrame.Direct3DSurface))
+            using (CanvasRenderTarget renderTarget = CanvasRenderTarget.CreateFromDirect3D11Surface(canvasDevice, context.OutputFrame.Direct3DSurface))
             using (CanvasDrawingSession ds = renderTarget.CreateDrawingSession())
             {
 
