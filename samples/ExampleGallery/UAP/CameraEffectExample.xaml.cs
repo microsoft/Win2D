@@ -15,6 +15,7 @@ using Windows.Storage.Streams;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
 
 namespace ExampleGallery
 {
@@ -23,16 +24,18 @@ namespace ExampleGallery
         private MediaCapture mediaCapture;
         private TaskCompletionSource<object> hasLoaded = new TaskCompletionSource<object>();
         private Task changeEffectTask = null;
+        private IPropertySet effectPropertySet = null; //defined in class scope so that Slider_ValueChanged can modify values
 
         const string noEffect = "No effect";
         const string displacementEffect = "Displacement effect";
         const string rotatingTilesEffect = "Rotating tiles effect";
-
+        const string gaussianBlurEffect = "Gaussian Blur effect";
+        
         public List<string> PossibleEffects
         {
             get
             {
-                return new List<string> { noEffect, displacementEffect, rotatingTilesEffect };
+                return new List<string> { noEffect, displacementEffect, rotatingTilesEffect, gaussianBlurEffect };
             }
         }
 
@@ -119,6 +122,12 @@ namespace ExampleGallery
             var task = SetEffect(effect);
         }
 
+        private void BlurAmountSlider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
+        {
+            if (effectPropertySet == null) return;
+            effectPropertySet["BlurAmount"] = e.NewValue;
+        }
+
         private async Task SetEffect(string effect)
         {
             // wait for OnLoaded to complete
@@ -137,24 +146,35 @@ namespace ExampleGallery
         {
             await ResetEffectsAsync();
 
+            blurAmountSlider.Visibility = Visibility.Collapsed;
+            effectPropertySet = new PropertySet();
             string typeName = null;
 
             switch (effect)
             {
-                case displacementEffect: typeName = typeof(DisplacementEffect).FullName; break;
-                case rotatingTilesEffect: typeName = typeof(RotatedTilesEffect).FullName; break;
+                case displacementEffect:
+                    typeName = typeof(DisplacementEffect).FullName;
+                    break;
+                case rotatingTilesEffect:
+                    typeName = typeof(RotatedTilesEffect).FullName;
+                    break;
+                case gaussianBlurEffect:
+                    typeName = typeof(DynamicBlurVideoEffect).FullName;
+                    effectPropertySet["BlurAmount"] = blurAmountSlider.Value;
+                    blurAmountSlider.Visibility = Visibility.Visible;
+                    break;
             }
 
             if (typeName == null)
                 return;
 
-            await mediaCapture.AddVideoEffectAsync(
-                new VideoEffectDefinition(typeName, new PropertySet()),
+            await mediaCapture.AddVideoEffectAsync(new VideoEffectDefinition(typeName, effectPropertySet),
                 MediaStreamType.VideoPreview);
         }
 
         // This example generates a custom thumbnail image (not just a rendering capture like most examples).
         IRandomAccessStream ICustomThumbnailSource.Thumbnail { get { return customThumbnail; } }
         IRandomAccessStream customThumbnail;
+
     }
 }

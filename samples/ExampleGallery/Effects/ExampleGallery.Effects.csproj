@@ -90,6 +90,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DynamicBlurVideoEffect.cs" />
     <Compile Include="ExampleVideoEffect.cs" />
     <Compile Include="DisplacementEffect.cs" />
     <Compile Include="RotatedTilesEffect.cs" />
