@@ -22,8 +22,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         m_sources->SetChanged(true);
 
         // Create propertyValueFactory
-        HSTRING stringActivableClassId = Wrappers::HStringReference(RuntimeClass_Windows_Foundation_PropertyValue).Get();
-        ThrowIfFailed(GetActivationFactory(stringActivableClassId, &m_propertyValueFactory));
+        Wrappers::HStringReference stringActivableClassId(RuntimeClass_Windows_Foundation_PropertyValue);
+        ThrowIfFailed(GetActivationFactory(stringActivableClassId.Get(), &m_propertyValueFactory));
     }
 
     //
