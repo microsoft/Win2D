@@ -321,10 +321,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             CloakedIid<IDirect3DDxgiInterfaceAccess>,
             CloakedIid<ICanvasResourceWrapperWithDevice>,
             ChainInterfaces<
-                MixIn<CanvasBitmapImpl<TRAITS>, ResourceWrapper<typename TRAITS::resource_t, typename TRAITS::wrapper_t>>,
+                MixIn<CanvasBitmapImpl<TRAITS>, ResourceWrapper<typename TRAITS::resource_t, typename TRAITS::wrapper_t, typename TRAITS::wrapper_interface_t>>,
                 ABI::Windows::Foundation::IClosable,
                 CloakedIid<ICanvasResourceWrapperNative>>>
-        , public ResourceWrapper<typename TRAITS::resource_t, typename TRAITS::wrapper_t>
+        , public ResourceWrapper<typename TRAITS::resource_t, typename TRAITS::wrapper_t, typename TRAITS::wrapper_interface_t>
     {
         float m_dpi;
 
@@ -852,6 +852,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         CanvasBitmap(
             ICanvasDevice* device,
             ID2D1Bitmap1* bitmap);
+
+        // Customize the behavior of ResourceWrapper::GetOuterInspectable. The default doesn't
+        // work for CanvasBitmap because this type directly implements no interfaces at all,
+        // picking everything up from the CanvasBitmapImpl mixin. Therefore its outer IInspectable
+        // belongs directly to the RuntimeClass, which is not at the same address as ICanvasBitmap.
+        typedef RuntimeClass outer_inspectable_t;
     };
 
 }}}}

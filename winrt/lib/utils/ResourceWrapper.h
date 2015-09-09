@@ -18,14 +18,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         RuntimeClassFlags<WinRtClassicComMix>,                                              \
         TWrapperInterface,                                                                  \
         ChainInterfaces<                                                                    \
-            MixIn<TWrapper, ResourceWrapper<TResource, TWrapper>>,                          \
+            MixIn<TWrapper, ResourceWrapper<TResource, TWrapper, TWrapperInterface>>,       \
             ABI::Windows::Foundation::IClosable,                                            \
             CloakedIid<ABI::Microsoft::Graphics::Canvas::ICanvasResourceWrapperNative>>,    \
         __VA_ARGS__>,                                                                       \
-    public ResourceWrapper<TResource, TWrapper>
+    public ResourceWrapper<TResource, TWrapper, TWrapperInterface>
 
 
-    template<typename TResource, typename TWrapper>
+    template<typename TResource, typename TWrapper, typename TWrapperInterface>
     class ResourceWrapper : public ABI::Windows::Foundation::IClosable, 
                             public ABI::Microsoft::Graphics::Canvas::ICanvasResourceWrapperNative,
                             private LifespanTracker<TWrapper>
@@ -38,7 +38,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         {
             if (resource)
             {
-                ResourceManager::Add(resource, AsWeak(static_cast<TWrapper*>(this)));
+                ResourceManager::Add(resource, GetOuterInspectable());
             }
         }
 
@@ -65,7 +65,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             {
                 m_resource = resource;
 
-                ResourceManager::Add(resource, AsWeak(static_cast<TWrapper*>(this)));
+                ResourceManager::Add(resource, GetOuterInspectable());
             }
         }
 
@@ -132,5 +132,22 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         // No-op validation requests for other types.
         static void ValidateDevice(void*, ICanvasDevice*) { }
         static void ValidateDpi(void*, float) { }
+
+
+        // Looks up the outermost IInspectable of the runtime class that has mixed in this ResourceWrapper
+        // instance. It is important to use the right IInspectable (of which there are several copies
+        // due to multiple inheritance) because when the ResourceWrapper constructor executes, things
+        // are not yet initialized far enough for QI or AsWeak to work from any of the other versions.
+        //
+        // outer_inspectable_t is a typedef so it can be customized by types with special needs (eg. CanvasBitmap).
+
+        typedef TWrapperInterface outer_inspectable_t;
+
+        IInspectable* GetOuterInspectable()
+        {
+            TWrapper* wrapper = static_cast<TWrapper*>(this);
+            TWrapper::outer_inspectable_t* outer = wrapper;
+            return outer;
+        }
     };
 }}}}

@@ -26,7 +26,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     {
     public:
         // Used by ResourceWrapper to maintain its state in the interop mapping table.
-        static void Add(IUnknown* resource, WeakRef const& wrapper);
+        static void Add(IUnknown* resource, IInspectable* wrapper);
         static void Remove(IUnknown* resource);
 
 

@@ -41,13 +41,13 @@ std::vector<ResourceManager::TryCreateFunction> ResourceManager::tryCreateFuncti
 
 
 // Called by the ResourceWrapper constructor, to add itself to the interop mapping table.
-void ResourceManager::Add(IUnknown* resource, WeakRef const& wrapper)
+void ResourceManager::Add(IUnknown* resource, IInspectable* wrapper)
 {
     ComPtr<IUnknown> resourceIdentity = AsUnknown(resource);
 
     std::lock_guard<std::recursive_mutex> lock(m_mutex);
 
-    auto result = m_resources.insert(std::make_pair(resourceIdentity.Get(), wrapper));
+    auto result = m_resources.insert(std::make_pair(resourceIdentity.Get(), AsWeak(wrapper)));
 
     if (!result.second)
         ThrowHR(E_UNEXPECTED);
