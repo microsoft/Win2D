@@ -9,6 +9,7 @@
 #include "mocks/MockDWriteFontFile.h"
 #include "stubs/StubStorageFileStatics.h"
 #include "stubs/StubFontManagerAdapter.h"
+#include "stubs/StubDWriteTextFormat.h"
 
 namespace canvas
 {
@@ -818,6 +819,30 @@ namespace canvas
                 CustomFontManagerAdapter::SetInstance(Adapter);
 
                 Adapter->DWriteFactory->RegisterFontCollectionLoaderMethod.AllowAnyCall();
+                
+                Adapter->DWriteFactory->CreateTextFormatMethod.AllowAnyCall(
+                    [&]
+                    (WCHAR const* fontFamilyName,
+                    IDWriteFontCollection* fontCollection,
+                    DWRITE_FONT_WEIGHT fontWeight,
+                    DWRITE_FONT_STYLE fontStyle,
+                    DWRITE_FONT_STRETCH fontStretch,
+                    FLOAT fontSize,
+                    WCHAR const* localeName,
+                    IDWriteTextFormat** textFormat)
+                    {
+                        auto stubTextFormat = Make<StubDWriteTextFormat>(
+                            fontFamilyName,
+                            fontCollection,
+                            fontWeight,
+                            fontStyle,
+                            fontStretch,
+                            fontSize,
+                            localeName);
+
+                        stubTextFormat.CopyTo(textFormat);
+                        return S_OK;
+                    });
             }
 
             ComPtr<MockDWriteFontCollection> ExpectCreateCustomFontCollection(std::wstring expectedFilename)

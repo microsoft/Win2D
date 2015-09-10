@@ -179,11 +179,7 @@ ComPtr<IDWriteTextFormat> CanvasTextFormat::GetRealizedTextFormat()
 
 ComPtr<IDWriteTextFormat> CanvasTextFormat::CreateRealizedTextFormat(bool skipWordWrapping)
 {
-    ComPtr<IDWriteFactory2> factory;
-    ThrowIfFailed(DWriteCreateFactory(
-        DWRITE_FACTORY_TYPE_SHARED,
-        __uuidof(&factory),
-        static_cast<IUnknown**>(&factory)));
+    auto factory = m_customFontManager->GetSharedFactory();
 
     auto uriAndFontFamily = GetUriAndFontFamily(m_fontFamilyName);
     auto const& uri = uriAndFontFamily.first;

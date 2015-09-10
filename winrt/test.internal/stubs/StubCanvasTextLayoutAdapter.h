@@ -10,24 +10,16 @@
 #include "mocks/MockDWriteTextLayout.h"
 #include "mocks/MockDWriteFontCollection.h"
 #include "stubs/StubStorageFileStatics.h"
+#include "stubs/StubDWriteTextFormat.h"
 
 namespace canvas
 {
-    class StubCanvasTextLayoutAdapter : public CustomFontManagerAdapter
+    class StubTextLayout : public MockDWriteTextLayout
     {
-        ComPtr<MockDWriteFactory> m_mockDwritefactory;
-
     public:
-
-        ComPtr<MockDWriteTextLayout> MockTextLayout;
-        ComPtr<StubStorageFileStatics> StorageFileStatics;
-
-        StubCanvasTextLayoutAdapter()
-            : m_mockDwritefactory(Make<MockDWriteFactory>())
-            , MockTextLayout(Make<MockDWriteTextLayout>())
-            , StorageFileStatics(Make<StubStorageFileStatics>())
+        StubTextLayout()
         {
-            MockTextLayout->GetFontCollection_BaseFormat_Method.AllowAnyCall(
+            GetFontCollection_BaseFormat_Method.AllowAnyCall(
                 [](IDWriteFontCollection** fontCollection)
             {
                 auto mockFontCollection = Make<MockDWriteFontCollection>();
@@ -35,9 +27,9 @@ namespace canvas
                 return S_OK;
             });
 
-            MockTextLayout->GetFontFamilyNameLength_BaseFormat_Method.AllowAnyCall([] { return 1; });
+            GetFontFamilyNameLength_BaseFormat_Method.AllowAnyCall([] { return 1; });
 
-            MockTextLayout->GetFontFamilyName_BaseFormat_Method.AllowAnyCall(
+            GetFontFamilyName_BaseFormat_Method.AllowAnyCall(
                 [](WCHAR* localeName, UINT32 nameSize)
             {
                 Assert::AreEqual(2u, nameSize); // Includes null term
@@ -46,21 +38,21 @@ namespace canvas
                 return S_OK;
             });
 
-            MockTextLayout->GetFlowDirectionMethod.AllowAnyCall([] { return DWRITE_FLOW_DIRECTION_TOP_TO_BOTTOM; });
+            GetFlowDirectionMethod.AllowAnyCall([] { return DWRITE_FLOW_DIRECTION_TOP_TO_BOTTOM; });
 
-            MockTextLayout->GetFontSize_BaseFormat_Method.AllowAnyCall([] { return 16.0f; });
+            GetFontSize_BaseFormat_Method.AllowAnyCall([] { return 16.0f; });
 
-            MockTextLayout->GetFontStretch_BaseFormat_Method.AllowAnyCall([] { return DWRITE_FONT_STRETCH_UNDEFINED; });
+            GetFontStretch_BaseFormat_Method.AllowAnyCall([] { return DWRITE_FONT_STRETCH_UNDEFINED; });
 
-            MockTextLayout->GetFontStyle_BaseFormat_Method.AllowAnyCall([] { return DWRITE_FONT_STYLE_NORMAL; });
+            GetFontStyle_BaseFormat_Method.AllowAnyCall([] { return DWRITE_FONT_STYLE_NORMAL; });
 
-            MockTextLayout->GetFontWeight_BaseFormat_Method.AllowAnyCall([] { return DWRITE_FONT_WEIGHT_NORMAL; });
+            GetFontWeight_BaseFormat_Method.AllowAnyCall([] { return DWRITE_FONT_WEIGHT_NORMAL; });
 
-            MockTextLayout->GetIncrementalTabStopMethod.AllowAnyCall([] { return 0.0f; });
+            GetIncrementalTabStopMethod.AllowAnyCall([] { return 0.0f; });
 
-            MockTextLayout->GetLocaleNameLength_BaseFormat_Method.AllowAnyCall([] { return 1; });
+            GetLocaleNameLength_BaseFormat_Method.AllowAnyCall([] { return 1; });
 
-            MockTextLayout->GetLocaleName_BaseFormat_Method.AllowAnyCall(
+            GetLocaleName_BaseFormat_Method.AllowAnyCall(
                 [](WCHAR* localeName, UINT32 nameSize)
             {
                 Assert::AreEqual(2u, nameSize);
@@ -68,15 +60,15 @@ namespace canvas
                 return S_OK;
             });
 
-            MockTextLayout->GetParagraphAlignmentMethod.AllowAnyCall([] { return DWRITE_PARAGRAPH_ALIGNMENT_CENTER; });
+            GetParagraphAlignmentMethod.AllowAnyCall([] { return DWRITE_PARAGRAPH_ALIGNMENT_CENTER; });
 
-            MockTextLayout->GetTextAlignmentMethod.AllowAnyCall([] { return DWRITE_TEXT_ALIGNMENT_CENTER; });
+            GetTextAlignmentMethod.AllowAnyCall([] { return DWRITE_TEXT_ALIGNMENT_CENTER; });
 
-            MockTextLayout->GetReadingDirectionMethod.AllowAnyCall([] { return DWRITE_READING_DIRECTION_LEFT_TO_RIGHT; });
+            GetReadingDirectionMethod.AllowAnyCall([] { return DWRITE_READING_DIRECTION_LEFT_TO_RIGHT; });
 
-            MockTextLayout->GetWordWrappingMethod.AllowAnyCall([] { return DWRITE_WORD_WRAPPING_WRAP; });
+            GetWordWrappingMethod.AllowAnyCall([] { return DWRITE_WORD_WRAPPING_WRAP; });
 
-            MockTextLayout->GetLineSpacingMethod.AllowAnyCall(
+            GetLineSpacingMethod.AllowAnyCall(
                 [](DWRITE_LINE_SPACING_METHOD* lineSpacingMethod, FLOAT* lineSpacing, FLOAT* baseline)
             {
                 *lineSpacingMethod = DWRITE_LINE_SPACING_METHOD_DEFAULT;
@@ -85,7 +77,25 @@ namespace canvas
                 return S_OK;
             });
 
-            MockTextLayout->GetTrimmingMethod.AllowAnyCall();
+            GetTrimmingMethod.AllowAnyCall();
+
+        }
+    };
+
+    class StubCanvasTextLayoutAdapter : public CustomFontManagerAdapter
+    {
+        ComPtr<MockDWriteFactory> m_mockDwritefactory;
+
+    public:
+
+        ComPtr<StubTextLayout> MockTextLayout;
+        ComPtr<StubStorageFileStatics> StorageFileStatics;
+
+        StubCanvasTextLayoutAdapter()
+            : m_mockDwritefactory(Make<MockDWriteFactory>())
+            , MockTextLayout(Make<StubTextLayout>())
+            , StorageFileStatics(Make<StubStorageFileStatics>())
+        {
 
             m_mockDwritefactory->CreateTextLayoutMethod.AllowAnyCall(
                 [&](
@@ -99,6 +109,30 @@ namespace canvas
                 MockTextLayout.CopyTo(textLayout);
                 return S_OK;
             });
+
+
+            m_mockDwritefactory->CreateTextFormatMethod.AllowAnyCall(
+                [&]
+                (WCHAR const* fontFamilyName,
+                IDWriteFontCollection* fontCollection,
+                DWRITE_FONT_WEIGHT fontWeight,
+                DWRITE_FONT_STYLE fontStyle,
+                DWRITE_FONT_STRETCH fontStretch,
+                FLOAT fontSize,
+                WCHAR const* localeName,
+                IDWriteTextFormat** textFormat)
+                {
+                    auto stubTextFormat = Make<StubDWriteTextFormat>(
+                        fontFamilyName,
+                        fontCollection,
+                        fontWeight,
+                        fontStyle,
+                        fontStretch,
+                        fontSize,
+                        localeName);
+                    stubTextFormat.CopyTo(textFormat);
+                    return S_OK;
+                });
 
             m_mockDwritefactory->RegisterFontCollectionLoaderMethod.AllowAnyCall();
         }

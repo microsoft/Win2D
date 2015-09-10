@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="Globals">
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
@@ -80,6 +80,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDWriteFactory.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDWriteFontCollection.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDWriteFontFile.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDWriteTextFormat.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDWriteTextLayout.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockHelpers.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockProperties.h" />
@@ -98,6 +99,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubD2DResources.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubD2DStrokeStyle.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubD3D11Device.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubDWriteTextFormat.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubDxgiAdapter.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubDxgiDevice.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubDxgiSwapChain.h" />
