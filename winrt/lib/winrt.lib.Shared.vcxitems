@@ -70,6 +70,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)brushes\CanvasRadialGradientBrush.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)brushes\CanvasSolidColorBrush.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)brushes\Gradients.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)utils\CachedResourceReference.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\LockUtilities.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\TemporaryTransform.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)xaml\AnimatedControlAsyncAction.h" />

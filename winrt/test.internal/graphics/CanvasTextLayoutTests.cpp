@@ -63,11 +63,12 @@ namespace canvas
                     };
 
                 Device->MockCreateImageBrush =
-                    [&](ID2D1Image*)
+                    [&](ID2D1Image* initialImage)
                     {
                         auto imageBrush = Make<MockD2DImageBrush>();
-                        imageBrush->MockGetImage = [&](ID2D1Image** image) {*image = nullptr;  };
-                        imageBrush->MockSetImage = [&](ID2D1Image* image) {};
+                        auto currentImage = std::make_shared<ComPtr<ID2D1Image>>(initialImage);
+                        imageBrush->MockGetImage = [currentImage](ID2D1Image** image) { currentImage->CopyTo(image); };
+                        imageBrush->MockSetImage = [currentImage](ID2D1Image* image) { *currentImage = image; };
                         imageBrush->MockGetExtendModeX = [&]() { return D2D1_EXTEND_MODE_MIRROR; };
                         imageBrush->MockGetExtendModeY = [&]() { return D2D1_EXTEND_MODE_WRAP; };
                         imageBrush->MockGetInterpolationMode = [&]() { return D2D1_INTERPOLATION_MODE_ANISOTROPIC; };
@@ -83,25 +84,25 @@ namespace canvas
                         return imageBrush;
                     };                
 
-                    Device->MockGetD2DImage =
-                        [&](ICanvasImage* canvasImage) -> ComPtr<ID2D1Image>
+                Device->MockGetD2DImage =
+                    [&](ICanvasImage* canvasImage) -> ComPtr<ID2D1Image>
+                    {
+                        ComPtr<IGraphicsEffect> effect;
+                        ComPtr<ICanvasBitmap> bitmap;
+                        if (SUCCEEDED(canvasImage->QueryInterface(IID_PPV_ARGS(&effect))))
                         {
-                            ComPtr<IGraphicsEffect> effect;
-                            ComPtr<ICanvasBitmap> bitmap;
-                            if (SUCCEEDED(canvasImage->QueryInterface(IID_PPV_ARGS(&effect))))
-                            {
-                                return Make<MockD2DEffect>();
-                            }
-                            else if (SUCCEEDED(canvasImage->QueryInterface(IID_PPV_ARGS(&bitmap))))
-                            {
-                                return Make<MockD2DBitmap>();
-                            }
-                            else
-                            {
-                                Assert::Fail(); // command list: notimpl
-                                return nullptr;
-                            }
-                        };
+                            return Make<MockD2DEffect>();
+                        }
+                        else if (SUCCEEDED(canvasImage->QueryInterface(IID_PPV_ARGS(&bitmap))))
+                        {
+                            return Make<MockD2DBitmap>();
+                        }
+                        else
+                        {
+                            Assert::Fail(); // command list: notimpl
+                            return nullptr;
+                        }
+                    };
                 
                 DeviceContext->CreateEffectMethod.AllowAnyCall(
                     [=](IID const& effectId, ID2D1Effect** effect)

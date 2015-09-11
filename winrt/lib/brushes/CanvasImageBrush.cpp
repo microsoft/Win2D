@@ -85,14 +85,14 @@ CanvasImageBrush::CanvasImageBrush(
 
 void CanvasImageBrush::SetImage(ICanvasImage* image)
 {
-    m_effectNeedingDpiFixup.Reset();
-
     if (image == nullptr)
     {
         if (m_d2dBitmapBrush)
             m_d2dBitmapBrush->SetBitmap(nullptr);
         else
             m_d2dImageBrush->SetImage(nullptr);
+
+        m_currentImageCache.Reset();
 
         return;
     }
@@ -112,6 +112,8 @@ void CanvasImageBrush::SetImage(ICanvasImage* image)
         {
             SwitchToBitmapBrush(d2dBitmap.Get());
         }
+     
+        m_currentImageCache.Set(d2dBitmap.Get(), image);
     }
     else
     {
@@ -127,15 +129,7 @@ void CanvasImageBrush::SetImage(ICanvasImage* image)
             SwitchToImageBrush(d2dImage.Get());
         }
 
-        // Effects need to be reconfigured depending on the DPI of the device context they
-        // are drawn onto. We don't know target DPI at this point, so if the image is an
-        // effect, we store that away for use by a later fixup inside GetD2DBrush.
-        auto effect = MaybeAs<IGraphicsEffect>(image);
-            
-        if (effect)
-        {
-            m_effectNeedingDpiFixup = As<ICanvasImageInternal>(effect);
-        }
+        m_currentImageCache.Set(d2dImage.Get(), image);
     }
 }
 
@@ -149,10 +143,8 @@ IFACEMETHODIMP CanvasImageBrush::get_Image(ICanvasImage** value)
 
             auto d2dImage = GetD2DImage();
 
-            if (!d2dImage)
-                return;
+            auto image = m_currentImageCache.GetOrCreateWrapper(device.Get(), d2dImage.Get());
 
-            auto image = ResourceManager::GetOrCreate<ICanvasImage>(device.Get(), d2dImage.Get());
             ThrowIfFailed(image.CopyTo(value));
         });
 }
@@ -384,6 +376,7 @@ IFACEMETHODIMP CanvasImageBrush::Close()
     CanvasBrush::Close();
     m_d2dBitmapBrush.Reset();
     m_d2dImageBrush.Reset();
+    m_currentImageCache.Reset();
     return ResourceWrapper::Close();
 }
 
@@ -409,11 +402,14 @@ ComPtr<ID2D1Brush> CanvasImageBrush::GetD2DBrush(ID2D1DeviceContext* deviceConte
         }
 
         // If our input image is an effect graph, make sure it is fully configured to match the target DPI.
-        if (m_effectNeedingDpiFixup && deviceContext)
+        if (deviceContext)
         {
-            float targetDpi = ((flags & GetBrushFlags::AlwaysInsertDpiCompensation) != GetBrushFlags::None) ? MAGIC_FORCE_DPI_COMPENSATION_VALUE : GetDpi(deviceContext);
+            if (auto sourceEffect = GetSourceEffectNeedingDpiCompensation())
+            {
+                float targetDpi = ((flags & GetBrushFlags::AlwaysInsertDpiCompensation) != GetBrushFlags::None) ? MAGIC_FORCE_DPI_COMPENSATION_VALUE : GetDpi(deviceContext);
 
-            m_effectNeedingDpiFixup->GetRealizedEffectNode(deviceContext, targetDpi);
+                As<ICanvasImageInternal>(sourceEffect)->GetRealizedEffectNode(deviceContext, targetDpi);
+            }
         }
 
         return m_d2dImageBrush;
@@ -435,15 +431,39 @@ IFACEMETHODIMP CanvasImageBrush::GetResource(ICanvasDevice* device, float dpi, R
 
             ResourceManager::ValidateDevice(static_cast<ICanvasResourceWrapperWithDevice*>(this), device);
 
-            // TODO #1697: pass target DPI on to our source effect once we properly support effect interop.
-            // if (m_effectNeedingDpiFixup)
-            //    m_effectNeedingDpiFixup->GetResource(device, dpi);
-
             if (m_d2dBitmapBrush)
+            {
                 ThrowIfFailed(m_d2dBitmapBrush.CopyTo(iid, resource));
+            }
             else
+            {
+                // If our input image is an effect graph, make sure it is fully configured to match the target DPI.
+                if (auto sourceEffect = GetSourceEffectNeedingDpiCompensation())
+                {
+                    ComPtr<IUnknown> unwantedReturnValue;
+                    ThrowIfFailed(As<ICanvasResourceWrapperNative>(sourceEffect)->GetResource(m_device.EnsureNotClosed().Get(), dpi, IID_PPV_ARGS(&unwantedReturnValue)));
+                }
+
                 ThrowIfFailed(m_d2dImageBrush.CopyTo(iid, resource));
+            }
         });
+}
+
+ComPtr<ICanvasImage> CanvasImageBrush::GetSourceEffectNeedingDpiCompensation()
+{
+    // Do we have a source image?
+    ComPtr<ID2D1Image> d2dImage;
+    m_d2dImageBrush->GetImage(&d2dImage);
+
+    if (!d2dImage)
+        return nullptr;
+
+    // Is it an effect?
+    if (!MaybeAs<ID2D1Effect>(d2dImage))
+        return nullptr;
+
+    // Return the corresponding Win2D wrapper instance.
+    return m_currentImageCache.GetOrCreateWrapper(m_device.EnsureNotClosed().Get(), d2dImage.Get());
 }
 
 void CanvasImageBrush::ThrowIfClosed()

@@ -46,8 +46,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         ComPtr<ID2D1ImageBrush> m_d2dImageBrush;
 
-        // TODO #1697: stop explicitly storing this once we support proper effect interop.
-        ComPtr<ICanvasImageInternal> m_effectNeedingDpiFixup;
+        CachedResourceReference<ID2D1Image, ICanvasImage> m_currentImageCache;
 
         bool m_isSourceRectSet;
 
@@ -100,6 +99,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         void SwitchToBitmapBrush(ID2D1Bitmap1* bitmap);
         void TrySwitchFromImageBrushToBitmapBrush();
         ComPtr<ID2D1Image> GetD2DImage() const;
+        ComPtr<ICanvasImage> GetSourceEffectNeedingDpiCompensation();
     };
 
 }}}}}

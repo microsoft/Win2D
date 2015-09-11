@@ -4,8 +4,6 @@
 
 #pragma once
 
-#include "ResourceManager.h"
-
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
     //

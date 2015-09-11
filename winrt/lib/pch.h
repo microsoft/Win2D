@@ -92,7 +92,9 @@
 // local
 #include "utils/Conversion.h"
 #include "utils/DxgiUtilities.h"
+#include "utils/ResourceManager.h"
 #include "utils/ResourceWrapper.h"
+#include "utils/CachedResourceReference.h"
 #include "utils/Strings.h"
 #include "images/CanvasImage.h"
 #include "images/CanvasBitmap.h"

@@ -652,6 +652,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)xaml\ImageControlMixIn.h">
       <Filter>xaml</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)utils\CachedResourceReference.h">
+      <Filter>utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)Canvas.codegen.idl" />

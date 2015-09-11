@@ -5,6 +5,7 @@
 #include "pch.h"
 
 using namespace Microsoft::Graphics::Canvas;
+using namespace Microsoft::Graphics::Canvas::Effects;
 using namespace WinRTDirectX;
 using namespace Windows::UI;
 
@@ -382,6 +383,47 @@ public:
             {
                 GetWrappedResource<ID2D1Brush>(otherDevice, brush);
             });
+    }
+
+    TEST_METHOD(CanvasImageBrush_GetResource_WhenSourceIsEffect_AppliesDpiCompensation)
+    {
+        // Create an image brush.
+        auto brush = ref new CanvasImageBrush(m_device);
+        brush->SourceRectangle = Rect{ 0, 0, 1, 1 };
+        auto d2dBrush = GetWrappedResource<ID2D1ImageBrush>(brush);
+
+        // Create a bitmap image.
+        auto image = ref new CanvasRenderTarget(m_device, 1, 1, DEFAULT_DPI);
+        auto d2dImage = GetWrappedResource<ID2D1Image>(image);
+
+        // Create an effect, with the bitmap as its source.
+        auto effect = ref new GaussianBlurEffect();
+        effect->Source = image;
+        auto d2dEffect = GetWrappedResource<ID2D1Effect>(m_device, effect);
+
+        // Set the effect as the brush image, purely at the D2D level (not using Win2D APIs).
+        d2dBrush->SetImage(As<ID2D1Image>(d2dEffect).Get());
+
+        // Looking up the ID2D1ImageBrush a second time should return the same instance as before.
+        auto d2dBrush2 = GetWrappedResource<ID2D1ImageBrush>(brush);
+        Assert::IsTrue(IsSameInstance(d2dBrush.Get(), d2dBrush2.Get()));
+
+        // DPI compensation fixups should have been applied to the effect.
+        ComPtr<ID2D1Image> effectInput;
+        d2dEffect->GetInput(0, &effectInput);
+        Assert::IsFalse(IsSameInstance(effectInput.Get(), d2dImage.Get()));
+
+        auto dpiEffect = As<ID2D1Effect>(effectInput);
+        Assert::IsTrue(dpiEffect->GetValue<IID>(D2D1_PROPERTY_CLSID) == CLSID_D2D1DpiCompensation);
+
+        dpiEffect->GetInput(0, &effectInput);
+        Assert::IsTrue(IsSameInstance(effectInput.Get(), d2dImage.Get()));
+
+        // Win2D property getter should notice that we changed the brush source.
+        Assert::IsTrue(brush->Image == effect);
+
+        // DPI compensation should not be visible in the Win2D view of the effect graph.
+        Assert::IsTrue(effect->Source == image);
     }
 
     ComPtr<ID2D1ImageBrush> CreateD2DImageBrush(D2D1_RECT_F rect = D2D1_RECT_F{})

@@ -74,8 +74,10 @@ namespace canvas
                 };
             
             m_canvasDevice->MockCreateImageBrush =
-                [&](ID2D1Image* image)
+                [&](ID2D1Image* initialImage)
                 {
+                    m_targetImage = initialImage;
+
                     m_imageBrush->MockGetImage = [&](ID2D1Image** image) 
                     {
                         if (m_targetImage) m_targetImage.CopyTo(image);
