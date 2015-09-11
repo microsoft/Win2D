@@ -127,6 +127,13 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="T:Microsoft.Graphics.Canvas.Text.CanvasTextFormat">
       <summary>Describes font and layout options for drawing text.</summary>
 
+      <remarks>
+        <p>
+          When using <a href="Interop.htm">Direct2D interop</a>, this Win2D class
+          corresponds to the Direct2D interface IDWriteTextFormat.
+        </p>
+      </remarks>
+
       <example>
         Create a CanvasTextFormat with reasonable defaults:
         <code>var format = new CanvasTextFormat();</code>

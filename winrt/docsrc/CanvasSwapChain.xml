@@ -50,6 +50,10 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
             swapChain.Present();
           </code>
         </p>
+        <p>
+          When using <a href="Interop.htm">Direct2D interop</a>, this Win2D class
+          corresponds to the DXGI interface IDXGISwapChain1.
+        </p>
       </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasSwapChain.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreatorWithDpi,Windows.Foundation.Size)">

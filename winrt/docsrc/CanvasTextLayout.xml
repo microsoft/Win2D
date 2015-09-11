@@ -25,7 +25,13 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     </member>
     <member name="T:Microsoft.Graphics.Canvas.Text.CanvasTextLayout">
       <summary>Describes a cached, drawable piece of text.</summary>
-      <remarks>For text which changes infrequently, use CanvasTextLayout.</remarks>
+      <remarks>
+        <p>For text which changes infrequently, use CanvasTextLayout.</p>
+        <p>
+          When using <a href="Interop.htm">Direct2D interop</a>, this Win2D class
+          corresponds to the Direct2D interface IDWriteTextLayout2.
+        </p>
+      </remarks>
       <example>
         How to create a CanvasTextLayout:
         <code>

@@ -43,6 +43,15 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
           costly to draw. It may be worth paying a one-time, up-front performance cost for a less
           expensive draw-time cost. To do this, consider using <see cref="T:Microsoft.Graphics.Canvas.Geometry.CanvasCachedGeometry"/>.
         </p>
+
+        <p>
+          When using <a href="Interop.htm">Direct2D interop</a>, this Win2D class
+          corresponds to the Direct2D interface ID2D1Geometry. Depending on how the 
+          CanvasGeometry was created, its underlying Direct2D resource will also 
+          implement one of the derived interfaces ID2D1PathGeometry, 
+          ID2D1RectangleGeometry, ID2D1RoundedRectangleGeometry, ID2D1EllipseGeometry, 
+          ID2D1TransformedGeometry, or ID2D1GeometryGroup.
+        </p>
       </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.Dispose">

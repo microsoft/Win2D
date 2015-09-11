@@ -16,6 +16,7 @@ std::unordered_map<IUnknown*, WeakRef> ResourceManager::m_resources;
 std::recursive_mutex ResourceManager::m_mutex;
 
 
+// When adding new types here, please also update the "Types that support interop" table in winrt\docsrc\Interop.aml.
 std::vector<ResourceManager::TryCreateFunction> ResourceManager::tryCreateFunctions =
 {
     TryCreate<ID2D1Device1,             CanvasDevice,               MakeWrapper>,

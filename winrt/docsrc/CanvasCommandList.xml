@@ -12,6 +12,12 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
   <members>
     <member name="T:Microsoft.Graphics.Canvas.CanvasCommandList">
       <summary>A list of commands that can be recorded and used anywhere an image can be used.</summary>
+      <remarks>
+        <p>
+          When using <a href="Interop.htm">Direct2D interop</a>, this Win2D class
+          corresponds to the Direct2D interface ID2D1CommandList.
+        </p>
+      </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasCommandList.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreator)">
       <summary>Initializes a new instance of the CanvasCommandList class.</summary>

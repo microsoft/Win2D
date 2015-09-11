@@ -14,6 +14,12 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="T:Microsoft.Graphics.Canvas.CanvasDevice">
       <summary>Devices are used to create graphics resources and drawing sessions.
                Most apps should use the CanvasControl wrapper instead of directly managing their own CanvasDevice.</summary>
+      <remarks>
+        <p>
+          When using <a href="Interop.htm">Direct2D interop</a>, this Win2D class
+          corresponds to the Direct2D interface ID2D1Device1.
+        </p>
+      </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasDevice.#ctor(System.Boolean)">
       <summary>Initializes a new instance of the CanvasDevice class.</summary>

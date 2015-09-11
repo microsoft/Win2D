@@ -38,6 +38,12 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
 
     <member name="T:Microsoft.Graphics.Canvas.Brushes.CanvasSolidColorBrush">
       <summary>The simplest kind of brush. Paints things a solid color.</summary>
+      <remarks>
+        <p>
+          When using <a href="Interop.htm">Direct2D interop</a>, this Win2D class
+          corresponds to the Direct2D interface ID2D1SolidColorBrush.
+        </p>
+      </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Brushes.CanvasSolidColorBrush.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.UI.Color)">
       <summary>Initializes a new instance of the CanvasSolidColorBrush class.</summary>
@@ -63,6 +69,14 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     
     <member name="T:Microsoft.Graphics.Canvas.Brushes.CanvasImageBrush">
       <summary>A brush which paints using image content, such as a bitmap. Useful for producing tiled backgrounds, or filling geometry with a pattern.</summary>
+      <remarks>
+        <p>
+          When using <a href="Interop.htm">Direct2D interop</a>, this Win2D class
+          corresponds to the Direct2D interface ID2D1BitmapBrush1 (if Image is a
+          CanvasBitmap and SourceRectangle is null) or ID2D1ImageBrush (if Image
+          is any other type of ICanvasImage, or if SourceRectangle is set).
+        </p>
+      </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Brushes.CanvasImageBrush.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreator)">
       <summary>Initializes a new instance of the CanvasImageBrush class.</summary>
@@ -167,6 +181,12 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     
     <member name="T:Microsoft.Graphics.Canvas.Brushes.CanvasLinearGradientBrush">
       <summary>A brush used to paint a linear gradient.</summary>
+      <remarks>
+        <p>
+          When using <a href="Interop.htm">Direct2D interop</a>, this Win2D class
+          corresponds to the Direct2D interface ID2D1LinearGradientBrush.
+        </p>
+      </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Brushes.CanvasLinearGradientBrush.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.UI.Color,Windows.UI.Color)">
       <summary>Initializes a new instance of the CanvasLinearGradientBrush class.</summary>
@@ -230,6 +250,12 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
 
     <member name="T:Microsoft.Graphics.Canvas.Brushes.CanvasRadialGradientBrush">
       <summary>A brush used to paint a radial gradient.</summary>
+      <remarks>
+        <p>
+          When using <a href="Interop.htm">Direct2D interop</a>, this Win2D class
+          corresponds to the Direct2D interface ID2D1RadialGradientBrush.
+        </p>
+      </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Brushes.CanvasRadialGradientBrush.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.UI.Color,Windows.UI.Color)">
       <summary>Initializes a new instance of the CanvasRadialGradientBrush class.</summary>

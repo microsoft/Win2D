@@ -35,6 +35,11 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
            need for you to do anything else. However, if you explicitly created a drawing session you must
            dispose it yourself when you are done drawing to it.
         </p>
+
+        <p>
+          When using <a href="Interop.htm">Direct2D interop</a>, this Win2D class
+          corresponds to the Direct2D interface ID2D1DeviceContext1.
+        </p>
       </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.Clear(Windows.UI.Color)">

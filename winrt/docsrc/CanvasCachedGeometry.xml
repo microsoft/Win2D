@@ -69,6 +69,10 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       	For more information about the Direct2D implementation of cached geometries used by Win2D, see 
       	<a href="https://msdn.microsoft.com/en-us/library/windows/desktop/dn363632%28v=vs.85%29.aspx">Geometry Realizations Overview</a>.
       	</p>
+        <p>
+          When using <a href="Interop.htm">Direct2D interop</a>, this Win2D class
+          corresponds to the Direct2D interface ID2D1GeometryRealization.
+        </p>
       </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasCachedGeometry.Dispose">

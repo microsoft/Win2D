@@ -126,6 +126,10 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         <p>
           Although it isn't terribly useful, a gradient mesh can have zero patches.
         </p>
+        <p>
+          When using <a href="Interop.htm">Direct2D interop</a>, this Win2D class
+          corresponds to the Direct2D interface ID2D1GradientMesh.
+        </p>
       </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGradientMesh.Dispose">

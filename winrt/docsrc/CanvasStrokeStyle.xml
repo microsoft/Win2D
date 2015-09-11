@@ -13,6 +13,12 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
 
     <member name="T:Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle">
       <summary>Defines a stroke style for drawing lines. Dashes, dots, how to join segments, how to cap the ends, etc.</summary>
+      <remarks>
+        <p>
+          When using <a href="Interop.htm">Direct2D interop</a>, this Win2D class
+          corresponds to the Direct2D interface ID2D1StrokeStyle1.
+        </p>
+      </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle.#ctor">
       <summary>Initializes a new instance of the CanvasStrokeStyle class.</summary>

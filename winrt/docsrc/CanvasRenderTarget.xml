@@ -14,8 +14,11 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="T:Microsoft.Graphics.Canvas.CanvasRenderTarget">
       <summary>A rendertarget is a bitmap that can be drawn onto.</summary>
       <remarks>
-        <p>When using native interop with CanvasRenderTarget, the version of GetOrCreate that takes a device must be used.</p>
         <p>For more information about how to use CanvasRenderTarget, see <a href="Offscreen.htm">"Offscreen drawing"</a>.</p>
+        <p>
+          When using <a href="Interop.htm">Direct2D interop</a>, this Win2D class
+          corresponds to an ID2D1Bitmap1 with the D2D1_BITMAP_OPTIONS_TARGET flag.
+        </p>
       </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasRenderTarget.CreateDrawingSession">
