@@ -49,7 +49,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         IID m_effectId;
 
         std::vector<ComPtr<IPropertyValue>> m_properties;
-        bool m_propertiesChanged;
 
         ComPtr<Vector<IGraphicsEffectSource*>> m_sources;
 
@@ -153,29 +152,27 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         template<typename TBoxed, typename TPublic>
         void SetBoxedProperty(unsigned int index, TPublic const& value)
         {
-            assert(index < m_properties.size());
+            auto boxedValue = PropertyTypeConverter<TBoxed, TPublic>::Box(m_propertyValueFactory.Get(), value);
 
-            m_properties[index] = PropertyTypeConverter<TBoxed, TPublic>::Box(m_propertyValueFactory.Get(), value);
-            m_propertiesChanged = true;
+            SetProperty(index, boxedValue.Get());
         }
 
         template<typename TBoxed, typename TPublic>
         void GetBoxedProperty(unsigned int index, TPublic* value)
         {
-            assert(index < m_properties.size());
-
             CheckInPointer(value);
 
-            PropertyTypeConverter<TBoxed, TPublic>::Unbox(m_properties[index].Get(), value);
+            auto boxedValue = GetProperty(index);
+
+            PropertyTypeConverter<TBoxed, TPublic>::Unbox(boxedValue.Get(), value);
         }
 
         template<typename T>
         void SetArrayProperty(unsigned int index, uint32_t valueCount, T const* value)
         {
-            assert(index < m_properties.size());
+            auto boxedValue = CreateProperty(m_propertyValueFactory.Get(), valueCount, value);
 
-            m_properties[index] = CreateProperty(m_propertyValueFactory.Get(), valueCount, value);
-            m_propertiesChanged = true;
+            SetProperty(index, boxedValue.Get());
         }
 
         template<typename T>
@@ -187,12 +184,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         template<typename T>
         void GetArrayProperty(unsigned int index, uint32_t* valueCount, T** value)
         {
-            assert(index < m_properties.size());
-
             CheckInPointer(valueCount);
             CheckAndClearOutPointer(value);
 
-            GetValueOfProperty(m_properties[index].Get(), valueCount, value);
+            auto boxedValue = GetProperty(index);
+
+            GetValueOfProperty(boxedValue.Get(), valueCount, value);
         }
 
 
@@ -203,10 +200,16 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
     private:
         void SetD2DInputs(ID2D1DeviceContext* deviceContext, float targetDpi, bool wasRecreated);
-        void SetD2DProperties();
-
         void InitializeInputsFromD2D(ICanvasDevice* device);
-        void InitializePropertiesFromD2D();
+
+        void SetProperty(unsigned int index, IPropertyValue* propertyValue);
+        void SetD2DProperty(ID2D1Effect* d2dEffect, unsigned int index, IPropertyValue* propertyValue);
+
+        ComPtr<IPropertyValue> GetProperty(unsigned int index);
+        ComPtr<IPropertyValue> GetD2DProperty(ID2D1Effect* d2dEffect, unsigned int index);
+
+        void Realize(ID2D1DeviceContext* deviceContext);
+        void Unrealize();
 
         void ThrowIfClosed();
 

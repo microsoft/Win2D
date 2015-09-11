@@ -7,6 +7,7 @@
 using namespace Microsoft::Graphics::Canvas;
 using namespace Microsoft::Graphics::Canvas::Effects;
 using namespace Windows::Foundation::Collections;
+using namespace Windows::UI;
 using namespace Windows::Devices::Enumeration;
 using namespace Platform;
 
@@ -503,5 +504,366 @@ TEST_CLASS(CanvasEffectsTests)
             {
                 GetOrCreate<ICanvasImage>(d2dEffect.Get());
             });
+    }
+
+    TEST_METHOD(CanvasEffect_InteropChangesProperty_IsBidirectional)
+    {
+        auto device = ref new CanvasDevice();
+        auto image = ref new CanvasCommandList(device);
+        auto effect = ref new PointSpecularEffect();
+        effect->Source = image;
+
+        auto d2dEffect = GetWrappedResource<ID2D1Effect>(device, effect);
+
+        // Change properties via Win2D.
+        effect->SpecularExponent = 3;
+        effect->SpecularAmount = 0.5f;
+        effect->HeightMapInterpolationMode = CanvasImageInterpolation::NearestNeighbor;
+        effect->LightColor = Colors::Yellow;
+        effect->LightPosition = float3(1, 2, 3);
+
+        // D2D should immediately see the changes.
+        Assert::AreEqual(3.0f, d2dEffect->GetValue<float>(D2D1_POINTSPECULAR_PROP_SPECULAR_EXPONENT));
+        Assert::AreEqual(0.5f, d2dEffect->GetValue<float>(D2D1_POINTSPECULAR_PROP_SPECULAR_CONSTANT));
+        Assert::AreEqual(static_cast<UINT32>(D2D1_POINTSPECULAR_SCALE_MODE_NEAREST_NEIGHBOR), d2dEffect->GetValue<UINT32>(D2D1_POINTSPECULAR_PROP_SCALE_MODE));
+        Assert::AreEqual(float3(1, 1, 0), d2dEffect->GetValue<float3>(D2D1_POINTSPECULAR_PROP_COLOR));
+        Assert::AreEqual(float3(1, 2, 3), d2dEffect->GetValue<float3>(D2D1_POINTSPECULAR_PROP_LIGHT_POSITION));
+
+        // Changes properties via D2D.
+        d2dEffect->SetValue(D2D1_POINTSPECULAR_PROP_SPECULAR_EXPONENT, 7.0f);
+        d2dEffect->SetValue(D2D1_POINTSPECULAR_PROP_SPECULAR_CONSTANT, 2.5f);
+        d2dEffect->SetValue(D2D1_POINTSPECULAR_PROP_SCALE_MODE, D2D1_POINTSPECULAR_SCALE_MODE_ANISOTROPIC);
+        d2dEffect->SetValue(D2D1_POINTSPECULAR_PROP_COLOR, float3(0, 1, 1));
+        d2dEffect->SetValue(D2D1_POINTSPECULAR_PROP_LIGHT_POSITION, float3(4, 5, 6));
+
+        // Win2D should immediately see the changes.
+        Assert::AreEqual(7.0f, effect->SpecularExponent);
+        Assert::AreEqual(2.5f, effect->SpecularAmount);
+        Assert::AreEqual(CanvasImageInterpolation::Anisotropic, effect->HeightMapInterpolationMode);
+        Assert::AreEqual(Colors::Cyan, effect->LightColor);
+        Assert::AreEqual(float3(4, 5, 6), (float3)effect->LightPosition);
+    }
+
+    TEST_METHOD(CanvasEffect_InteropChangesInput_IsBidirectional)
+    {
+        auto device = ref new CanvasDevice();
+
+        CanvasCommandList^ images[] =
+        {
+            ref new CanvasCommandList(device),
+            ref new CanvasCommandList(device),
+            ref new CanvasCommandList(device),
+            ref new CanvasCommandList(device),
+            ref new CanvasCommandList(device),
+        };
+
+        auto effect = ref new BlendEffect();
+
+        effect->Background = images[0];
+        effect->Foreground = images[0];
+
+        auto d2dEffect = GetWrappedResource<ID2D1Effect>(device, effect);
+
+        ComPtr<ID2D1Image> d2dImages[] =
+        {
+            GetWrappedResource<ID2D1Image>(images[0]),
+            GetWrappedResource<ID2D1Image>(images[1]),
+            GetWrappedResource<ID2D1Image>(images[2]),
+            GetWrappedResource<ID2D1Image>(images[3]),
+            GetWrappedResource<ID2D1Image>(images[3]),
+        };
+
+        // Change properties via Win2D.
+        effect->Background = images[1];
+        effect->Foreground = images[2];
+
+        // D2D should immediately see the changes.
+        ComPtr<ID2D1Image> input;
+
+        d2dEffect->GetInput(0, &input);
+        Assert::IsTrue(IsSameInstance(input.Get(), d2dImages[1].Get()));
+
+        d2dEffect->GetInput(1, &input);
+        Assert::IsTrue(IsSameInstance(input.Get(), d2dImages[2].Get()));
+
+        // Changes properties via D2D.
+        d2dEffect->SetInput(0, d2dImages[3].Get());
+        d2dEffect->SetInput(1, d2dImages[4].Get());
+
+        // Win2D should immediately see the changes.
+        Assert::AreEqual<IGraphicsEffectSource>(images[3], effect->Background);
+        Assert::AreEqual<IGraphicsEffectSource>(images[4], effect->Foreground);
+    }
+
+    TEST_METHOD(CanvasEffect_InteropChangesSourcesCollection_IsBidirectional)
+    {
+        auto device = ref new CanvasDevice();
+
+        CanvasCommandList^ images[] =
+        {
+            ref new CanvasCommandList(device),
+            ref new CanvasCommandList(device),
+            ref new CanvasCommandList(device),
+            ref new CanvasCommandList(device),
+        };
+
+        auto effect = ref new CompositeEffect();
+
+        effect->Sources->Append(images[0]);
+
+        auto d2dEffect = GetWrappedResource<ID2D1Effect>(device, effect);
+
+        ComPtr<ID2D1Image> d2dImages[] =
+        {
+            GetWrappedResource<ID2D1Image>(images[0]),
+            GetWrappedResource<ID2D1Image>(images[1]),
+            GetWrappedResource<ID2D1Image>(images[2]),
+            GetWrappedResource<ID2D1Image>(images[3]),
+        };
+
+        // Change properties via Win2D.
+        effect->Sources->SetAt(0, images[1]);
+        effect->Sources->Append(images[2]);
+        effect->Sources->Append(images[3]);
+
+        // D2D should immediately see the changes.
+        Assert::AreEqual(3u, d2dEffect->GetInputCount());
+
+        ComPtr<ID2D1Image> input;
+
+        d2dEffect->GetInput(0, &input);
+        Assert::IsTrue(IsSameInstance(input.Get(), d2dImages[1].Get()));
+
+        d2dEffect->GetInput(1, &input);
+        Assert::IsTrue(IsSameInstance(input.Get(), d2dImages[2].Get()));
+
+        d2dEffect->GetInput(2, &input);
+        Assert::IsTrue(IsSameInstance(input.Get(), d2dImages[3].Get()));
+
+        // Changes properties via D2D.
+        d2dEffect->SetInputCount(2);
+        d2dEffect->SetInput(0, d2dImages[2].Get());
+        d2dEffect->SetInput(1, d2dImages[1].Get());
+
+        // Win2D should immediately see the changes.
+        Assert::AreEqual(2u, effect->Sources->Size);
+
+        Assert::AreEqual<IGraphicsEffectSource>(images[2], effect->Sources->GetAt(0));
+        Assert::AreEqual<IGraphicsEffectSource>(images[1], effect->Sources->GetAt(1));
+    }
+
+    TEST_METHOD(CanvasEffect_WhenSourcesCollectionIsEmpty_EffectBecomesUnrealized)
+    {
+        auto device = ref new CanvasDevice();
+        auto image = ref new CanvasCommandList(device);
+        auto effect = ref new CompositeEffect();
+
+        effect->Sources->Append(image);
+
+        auto d2dEffect = GetWrappedResource<ID2D1Effect>(device, effect);
+
+        // Reverse lookups should get us back to the Win2D effect (because it is currently realized).
+        Assert::AreEqual(effect, GetOrCreate<CompositeEffect>(device, d2dEffect.Get()));
+
+        Assert::AreEqual(1u, effect->Sources->Size);
+
+        // Emptying the sources collection should unrealize the effect (because D2D doesn't support 0 sources).
+        effect->Sources->Clear();
+
+        Assert::AreEqual(0u, effect->Sources->Size);
+
+        // We prove we are no longer realized by noting that GetOrCreate from
+        // our previous D2D resource now creates a different Win2D wrapper.
+        Assert::AreNotEqual(effect, GetOrCreate<CompositeEffect>(device, d2dEffect.Get()));
+    }
+
+    TEST_METHOD(CanvasEffect_WhenRerealizedOnDifferentDevice_PropertiesArePreserved)
+    {
+        auto effect = ref new PointSpecularEffect();
+        effect->Source = ref new ColorSourceEffect();
+
+        // Realize the effect onto device #1.
+        auto device1 = ref new CanvasDevice();
+        auto d2dEffect1 = GetWrappedResource<ID2D1Effect>(device1, effect);
+
+        // Change properties, one via Win2D and the other via D2D.
+        effect->SpecularExponent = 3;
+        d2dEffect1->SetValue(D2D1_POINTSPECULAR_PROP_SPECULAR_CONSTANT, 2.5f);
+
+        // Re-realize onto a different device.
+        auto device2 = ref new CanvasDevice();
+        auto d2dEffect2 = GetWrappedResource<ID2D1Effect>(device2, effect);
+        Assert::IsFalse(IsSameInstance(d2dEffect1.Get(), d2dEffect2.Get()));
+
+        // Modified property values should be preserved, whether viewed from Win2D or D2D.
+        Assert::AreEqual(3.0f, effect->SpecularExponent);
+        Assert::AreEqual(2.5f, effect->SpecularAmount);
+
+        Assert::AreEqual(3.0f, d2dEffect2->GetValue<float>(D2D1_POINTSPECULAR_PROP_SPECULAR_EXPONENT));
+        Assert::AreEqual(2.5f, d2dEffect2->GetValue<float>(D2D1_POINTSPECULAR_PROP_SPECULAR_CONSTANT));
+    }
+
+    TEST_METHOD(CanvasEffect_WhenRerealizedOnDifferentDevice_InputsArePreserved)
+    {
+        auto effect = ref new BlendEffect();
+
+        auto image1 = ref new ColorSourceEffect();
+        auto image2 = ref new ColorSourceEffect();
+        auto image3 = ref new ColorSourceEffect();
+
+        effect->Background = image1;
+        effect->Foreground = image1;
+
+        // Realize the effect onto device #1.
+        auto device1 = ref new CanvasDevice();
+        auto d2dEffect1 = GetWrappedResource<ID2D1Effect>(device1, effect);
+
+        // Change inputs, one via Win2D and the other via D2D.
+        effect->Background = image2;
+        d2dEffect1->SetInput(1, GetWrappedResource<ID2D1Image>(device1, image3).Get());
+
+        // Re-realize onto a different device.
+        auto device2 = ref new CanvasDevice();
+        auto d2dEffect2 = GetWrappedResource<ID2D1Effect>(device2, effect);
+        Assert::IsFalse(IsSameInstance(d2dEffect1.Get(), d2dEffect2.Get()));
+
+        // Modified input values should be preserved, whether viewed from Win2D or D2D.
+        Assert::AreEqual<IGraphicsEffectSource>(image2, effect->Background);
+        Assert::AreEqual<IGraphicsEffectSource>(image3, effect->Foreground);
+
+        ComPtr<ID2D1Image> input;
+
+        d2dEffect2->GetInput(0, &input);
+        Assert::IsTrue(IsSameInstance(GetWrappedResource<ID2D1Effect>(device2, image2).Get(), input.Get()));
+
+        d2dEffect2->GetInput(1, &input);
+        Assert::IsTrue(IsSameInstance(GetWrappedResource<ID2D1Effect>(device2, image3).Get(), input.Get()));
+    }
+
+    TEST_METHOD(CanvasEffect_WhenRerealizedOnDifferentDevice_SourcesCollectionIsPreserved)
+    {
+        auto effect = ref new CompositeEffect();
+
+        auto image1 = ref new ColorSourceEffect();
+        auto image2 = ref new ColorSourceEffect();
+        auto image3 = ref new ColorSourceEffect();
+
+        effect->Sources->Append(image1);
+        effect->Sources->Append(image1);
+
+        // Realize the effect onto device #1.
+        auto device1 = ref new CanvasDevice();
+        auto d2dEffect1 = GetWrappedResource<ID2D1Effect>(device1, effect);
+
+        // Change inputs, one via Win2D and the other via D2D.
+        effect->Sources->SetAt(0, image2);
+        d2dEffect1->SetInput(1, GetWrappedResource<ID2D1Image>(device1, image3).Get());
+
+        // Re-realize onto a different device.
+        auto device2 = ref new CanvasDevice();
+        auto d2dEffect2 = GetWrappedResource<ID2D1Effect>(device2, effect);
+        Assert::IsFalse(IsSameInstance(d2dEffect1.Get(), d2dEffect2.Get()));
+
+        // Modified input values should be preserved, whether viewed from Win2D or D2D.
+        Assert::AreEqual(2u, effect->Sources->Size);
+        Assert::AreEqual(2u, d2dEffect2->GetInputCount());
+
+        Assert::AreEqual<IGraphicsEffectSource>(image2, effect->Sources->GetAt(0));
+        Assert::AreEqual<IGraphicsEffectSource>(image3, effect->Sources->GetAt(1));
+
+        ComPtr<ID2D1Image> input;
+
+        d2dEffect2->GetInput(0, &input);
+        Assert::IsTrue(IsSameInstance(GetWrappedResource<ID2D1Effect>(device2, image2).Get(), input.Get()));
+
+        d2dEffect2->GetInput(1, &input);
+        Assert::IsTrue(IsSameInstance(GetWrappedResource<ID2D1Effect>(device2, image3).Get(), input.Get()));
+    }
+
+    TEST_METHOD(CanvasEffect_WhenInputSetToBitmapUsingDifferentDevice_EffectIsUnrealized)
+    {
+        auto effect = ref new BlendEffect();
+
+        // Set the inputs to bitmaps created on device #1.
+        auto device1 = ref new CanvasDevice();
+
+        auto bitmap1a = ref new CanvasRenderTarget(device1, 1, 1, DEFAULT_DPI);
+        auto bitmap1b = ref new CanvasRenderTarget(device1, 1, 1, DEFAULT_DPI);
+
+        effect->Background = bitmap1a;
+        effect->Foreground = bitmap1b;
+
+        // Realize the effect onto device #1.
+        auto d2dEffect1 = GetWrappedResource<ID2D1Effect>(device1, effect, DEFAULT_DPI);
+
+        // Change the first input to a bitmap created on device #2.
+        auto device2 = ref new CanvasDevice();
+
+        auto bitmap2a = ref new CanvasRenderTarget(device2, 1, 1, DEFAULT_DPI);
+        auto bitmap2b = ref new CanvasRenderTarget(device2, 1, 1, DEFAULT_DPI);
+
+        effect->Background = bitmap2a;
+
+        // This should have unrealized the effect.
+        Assert::AreNotEqual(effect, GetOrCreate<BlendEffect>(d2dEffect1.Get()));
+
+        // At this transitional point Win2D should be able to report back the two input bitmaps, regardless of their mixed devices.
+        Assert::AreEqual<IGraphicsEffectSource>(bitmap2a, effect->Background);
+        Assert::AreEqual<IGraphicsEffectSource>(bitmap1b, effect->Foreground);
+
+        // Change the second input to match the device of the first.
+        effect->Foreground = bitmap2b;
+
+        // Realize the effect onto device #2.
+        auto d2dEffect2 = GetWrappedResource<ID2D1Effect>(device2, effect, DEFAULT_DPI);
+
+        Assert::IsFalse(IsSameInstance(d2dEffect1.Get(), d2dEffect2.Get()));
+
+        // Should be able to read back the inputs via Win2D.
+        Assert::AreEqual<IGraphicsEffectSource>(bitmap2a, effect->Background);
+        Assert::AreEqual<IGraphicsEffectSource>(bitmap2b, effect->Foreground);
+
+        // Should also be able to read back the inputs via D2D.
+        ComPtr<ID2D1Image> input;
+
+        d2dEffect2->GetInput(0, &input);
+        Assert::IsTrue(IsSameInstance(GetWrappedResource<ID2D1Bitmap1>(bitmap2a).Get(), input.Get()));
+
+        d2dEffect2->GetInput(1, &input);
+        Assert::IsTrue(IsSameInstance(GetWrappedResource<ID2D1Bitmap1>(bitmap2b).Get(), input.Get()));
+    }
+
+    TEST_METHOD(CanvasEffect_DpiCompensationIsNotVisibleInWinRT)
+    {
+        auto device = ref new CanvasDevice();
+        auto effect = ref new GaussianBlurEffect();
+        auto bitmap = ref new CanvasRenderTarget(device, 1, 1, DEFAULT_DPI);
+
+        effect->Source = bitmap;
+
+        // Realize the effect.
+        auto d2dEffect = GetWrappedResource<ID2D1Effect>(device, effect, DEFAULT_DPI + 123);
+
+        // At the D2D level, a DPI compensation effect should have been inserted.
+        ComPtr<ID2D1Image> input;
+        d2dEffect->GetInput(0, &input);
+        auto dpiEffect = As<ID2D1Effect>(input);
+        Assert::IsTrue(dpiEffect->GetValue<IID>(D2D1_PROPERTY_CLSID) == CLSID_D2D1DpiCompensation);
+
+        dpiEffect->GetInput(0, &input);
+        Assert::IsTrue(IsSameInstance(GetWrappedResource<ID2D1Bitmap1>(bitmap).Get(), input.Get()));
+
+        // Win2D should not see the DPI compensation effect.
+        Assert::AreEqual<IGraphicsEffectSource>(bitmap, effect->Source);
+
+        // Discard our Win2D effect wrapper, then construct a new wrapper around the D2D effect.
+        effect = nullptr;
+        effect = GetOrCreate<GaussianBlurEffect>(device, d2dEffect.Get());
+
+        // The DPI compensation effect should now be visible from Win2D.
+        Assert::AreNotEqual<IGraphicsEffectSource>(bitmap, effect->Source);
+        auto dpiWrapper = dynamic_cast<DpiCompensationEffect^>(effect->Source);
+        Assert::IsNotNull(dpiWrapper);
+        Assert::AreEqual<IGraphicsEffectSource>(bitmap, dpiWrapper->Source);
     }
 };

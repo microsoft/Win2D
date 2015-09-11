@@ -217,6 +217,19 @@ public:
                         return S_OK;
                     };
 
+                mockEffect->MockGetType =
+                    [](UINT32)
+                    {
+                        return D2D1_PROPERTY_TYPE_FLOAT;
+                    };
+
+                mockEffect->MockGetValue =
+                    [](UINT32 index, D2D1_PROPERTY_TYPE type, BYTE *data, UINT32 dataSize)
+                    {
+                        ZeroMemory(data, dataSize);
+                        return S_OK;
+                    };
+
                 return S_OK;
             });
 
@@ -342,11 +355,28 @@ public:
         auto stubBitmap = CreateStubCanvasBitmap();
 
         std::vector<ComPtr<MockD2DEffectThatCountsCalls>> mockEffects;
+
         auto createCountingEffect =
             [&](IID const&, ID2D1Effect** effect)
             {
-                mockEffects.push_back(Make<MockD2DEffectThatCountsCalls>());
-                return mockEffects.back().CopyTo(effect);
+                auto mockEffect = Make<MockD2DEffectThatCountsCalls>();
+
+                mockEffect->MockGetType =
+                    [](UINT32)
+                    {
+                        return D2D1_PROPERTY_TYPE_FLOAT;
+                    };
+
+                mockEffect->MockGetValue =
+                    [](UINT32 index, D2D1_PROPERTY_TYPE type, BYTE *data, UINT32 dataSize)
+                    {
+                        ZeroMemory(data, dataSize);
+                        return S_OK;
+                    };
+
+                mockEffects.push_back(mockEffect);
+
+                return mockEffect.CopyTo(effect);
             };
 
         std::vector<ComPtr<TestEffect>> testEffects;

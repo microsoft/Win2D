@@ -37,6 +37,7 @@ namespace test.managed
                               select type;
 
             var device = new CanvasDevice();
+            var device2 = new CanvasDevice();
 
             foreach (var effectType in effectTypes)
             {
@@ -53,7 +54,7 @@ namespace test.managed
                 TestEffectProperties(effectType, effect);
 
                 // Test that interop can successfully transfer property values in both directions.
-                TestEffectInterop(device, effectType, effect);
+                TestEffectInterop(device, device2, effectType, effect);
             }
         }
 
@@ -87,6 +88,7 @@ namespace test.managed
             {
                 // Change a property value, and see which source changes.
                 sourceProperties[i].SetValue(effect, testValue1);
+                Assert.AreSame(testValue1, sourceProperties[i].GetValue(effect));
 
                 int whichIndexIsThis = 0;
                 
@@ -100,10 +102,12 @@ namespace test.managed
 
                 // Change the same property value again, and make sure the same source changes.
                 sourceProperties[i].SetValue(effect, testValue2);
+                Assert.AreSame(testValue2, sourceProperties[i].GetValue(effect));
                 Assert.AreSame(testValue2, EffectAccessor.GetSource(effect, whichIndexIsThis));
 
                 // Change the property value to null.
                 sourceProperties[i].SetValue(effect, null);
+                Assert.IsNull(sourceProperties[i].GetValue(effect));
                 Assert.IsNull(EffectAccessor.GetSource(effect, whichIndexIsThis));
             }
 
@@ -137,6 +141,7 @@ namespace test.managed
 
                 // Change a property value, and see which collection properties match the result.
                 properties[i].SetValue(effect, testValue1);
+                AssertPropertyValuesAreEqual(testValue1, properties[i].GetValue(effect));
 
                 var matches1 = (from j in Enumerable.Range(0, effectProperties.Count)
                                 where BoxedValuesAreEqual(effectProperties[j], Box(testValue1, properties[i]), properties[i])
@@ -144,6 +149,7 @@ namespace test.managed
 
                 // Change the same property to a different value, and see which collection properties match now.
                 properties[i].SetValue(effect, testValue2);
+                AssertPropertyValuesAreEqual(testValue2, properties[i].GetValue(effect));
 
                 var matches2 = (from j in Enumerable.Range(0, effectProperties.Count)
                                 where BoxedValuesAreEqual(effectProperties[j], Box(testValue2, properties[i]), properties[i])
@@ -158,7 +164,9 @@ namespace test.managed
                 whichIndexIsProperty.Add(whichIndexIsThis);
 
                 // Change the property value back to its initial state.
-                properties[i].SetValue(effect, Unbox(initialValues[whichIndexIsThis], properties[i]));
+                var unboxedValue = Unbox(initialValues[whichIndexIsThis], properties[i]);
+                properties[i].SetValue(effect, unboxedValue);
+                AssertPropertyValuesAreEqual(unboxedValue, properties[i].GetValue(effect));
                 Assert.IsTrue(BoxedValuesAreEqual(initialValues[whichIndexIsThis], effectProperties[whichIndexIsThis], properties[i]));
 
                 // Validate that IGraphicsEffectD2D1Interop agrees with what we think the type and index of this property is.
@@ -196,7 +204,10 @@ namespace test.managed
             // Add one image to any variable size Sources collection properties.
             foreach (var sourcesProperty in effectType.DeclaredProperties.Where(p => p.Name == "Sources"))
             {
-                ((IList<IGraphicsEffectSource>)sourcesProperty.GetValue(effect)).Add(dummySourceImage);
+                var sources = sourcesProperty.GetValue(effect) as IList<IGraphicsEffectSource>;
+
+                sources.Clear();
+                sources.Add(dummySourceImage);
             }
 
             EffectAccessor.RealizeEffect(device, effect);
@@ -205,7 +216,7 @@ namespace test.managed
         }
 
 
-        static void TestEffectInterop(CanvasDevice device, TypeInfo effectType, IGraphicsEffect realizedEffect)
+        static void TestEffectInterop(CanvasDevice device, CanvasDevice device2, TypeInfo effectType, IGraphicsEffect realizedEffect)
         {
             // One Win2D effect is backed by a realized ID2D1Effect instance, the other is not.
             // Their property values should be the same either way.
@@ -224,6 +235,12 @@ namespace test.managed
                 Assert.AreEqual(EffectBorderMode.Soft, dpiCompensationEffect.BorderMode);
                 dpiCompensationEffect.BorderMode = EffectBorderMode.Hard;
             }
+
+            PropertyValuesShouldMatch(effectType, unrealizedEffect, wrappedEffect);
+
+            // Re-realize the new effect onto a second device.
+            // All property values should be successfully transferred across.
+            RealizeEffect(device2, effectType, wrappedEffect);
 
             PropertyValuesShouldMatch(effectType, unrealizedEffect, wrappedEffect);
         }

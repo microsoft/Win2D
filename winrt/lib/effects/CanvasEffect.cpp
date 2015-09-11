@@ -9,7 +9,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     CanvasEffect::CanvasEffect(IID const& effectId, unsigned int propertiesSize, unsigned int sourcesSize, bool isSourcesSizeFixed, ICanvasDevice* device, ID2D1Effect* effect, IInspectable* outerInspectable)
         : ResourceWrapper(effect, outerInspectable)
         , m_effectId(effectId)
-        , m_propertiesChanged(false)
         , m_realizationId(0)
         , m_insideGetImage(false)
         , m_closed(false)
@@ -27,7 +26,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         if (effect)
         {
             InitializeInputsFromD2D(device);
-            InitializePropertiesFromD2D();
 
             m_previousDeviceIdentity = As<IUnknown>(As<ICanvasDeviceInternal>(device)->GetD2DDevice());
         }
@@ -66,7 +64,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
 
     //
-    // ICanvasImageInternal
+    // ICanvasImage
     //
 
     IFACEMETHODIMP CanvasEffect::GetBounds(
@@ -129,9 +127,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         if (deviceIdentity != m_previousDeviceIdentity)
         {
+            Unrealize();
+
             m_previousDeviceIdentity = deviceIdentity;
-            ReleaseResource();
-            m_dpiCompensators.clear();
         }
 
         // Create resource if not created yet
@@ -140,11 +138,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         if (!HasResource())
         {
-            ComPtr<ID2D1Effect> newEffect;
-            ThrowIfFailed(deviceContext->CreateEffect(m_effectId, &newEffect));
-            SetResource(newEffect.Get());
+            Realize(deviceContext);
+
             wasRecreated = true;
-            m_realizationId++;
         }
 
         // If this is a DPI compensation effect, we no longer need to insert
@@ -161,13 +157,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         m_insideGetImage = true;
         auto clearFlagWarden = MakeScopeWarden([&] { m_insideGetImage = false; });
 
-        // Update ID2D1Image with the latest property values if a change is detected
-        if (wasRecreated || m_propertiesChanged)
-        {
-            SetD2DProperties();
-        }
-
-        // Update ID2D1Image with the latest inputs, and recurse through 
+        // Update ID2D1Effect with the latest inputs, and recurse through 
         // the effect graph to make sure child nodes are properly realized
         SetD2DInputs(deviceContext, targetDpi, wasRecreated);
 
@@ -304,7 +294,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                 if (index >= m_properties.size())
                     ThrowHR(E_BOUNDS);
 
-                ThrowIfFailed(m_properties[index].CopyTo(value));
+                ThrowIfFailed(GetProperty(index).CopyTo(value));
             });
     }
 
@@ -464,65 +454,73 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     }
 
 
-    void CanvasEffect::SetD2DProperties()
+    void CanvasEffect::SetProperty(unsigned int index, IPropertyValue* propertyValue)
     {
-        auto& d2dEffect = ResourceWrapper::GetResource();
+        assert(index < m_properties.size());
 
-        for (unsigned i = 0; i < m_properties.size(); ++i)
+        if (HasResource())
         {
-            auto& propertyValue = m_properties[i];
-
-            PropertyType propertyType;
-            ThrowIfFailed(propertyValue->get_Type(&propertyType));
-
-            switch (propertyType)
-            {
-            case PropertyType_Boolean:
-                {
-                    boolean value;
-                    ThrowIfFailed(propertyValue->GetBoolean(&value));
-                    ThrowIfFailed(d2dEffect->SetValue(i, static_cast<BOOL>(value)));
-                }
-                break;
-
-            case PropertyType_Int32:
-                {
-                    INT32 value;
-                    ThrowIfFailed(propertyValue->GetInt32(&value));
-                    ThrowIfFailed(d2dEffect->SetValue(i, value));
-                }
-                break;
-
-            case PropertyType_UInt32:
-                {
-                    UINT32 value;
-                    ThrowIfFailed(propertyValue->GetUInt32(&value));
-                    ThrowIfFailed(d2dEffect->SetValue(i, value));
-                }
-                break;
-
-            case PropertyType_Single:
-                {
-                    float value;
-                    ThrowIfFailed(propertyValue->GetSingle(&value));
-                    ThrowIfFailed(d2dEffect->SetValue(i, value));
-                }
-                break;
-
-            case PropertyType_SingleArray:
-                {
-                    ComArray<float> value;
-                    ThrowIfFailed(propertyValue->GetSingleArray(value.GetAddressOfSize(), value.GetAddressOfData()));
-                    ThrowIfFailed(d2dEffect->SetValue(i, reinterpret_cast<BYTE*>(value.GetData()), value.GetSize() * sizeof(float)));
-                }
-                break;
-
-            default:
-                ThrowHR(E_NOTIMPL);
-            }
+            // If we are realized, set the property value through to the underlying D2D resource.
+            SetD2DProperty(ResourceWrapper::GetResource().Get(), index, propertyValue);
         }
+        else
+        {
+            // If we are not realized, directly store the property value.
+            m_properties[index] = propertyValue;
+        }
+    }
 
-        m_propertiesChanged = false;
+
+    void CanvasEffect::SetD2DProperty(ID2D1Effect* d2dEffect, unsigned int index, IPropertyValue* propertyValue)
+    {
+        PropertyType propertyType;
+        ThrowIfFailed(propertyValue->get_Type(&propertyType));
+
+        switch (propertyType)
+        {
+        case PropertyType_Boolean:
+            {
+                boolean value;
+                ThrowIfFailed(propertyValue->GetBoolean(&value));
+                ThrowIfFailed(d2dEffect->SetValue(index, static_cast<BOOL>(value)));
+            }
+            break;
+
+        case PropertyType_Int32:
+            {
+                INT32 value;
+                ThrowIfFailed(propertyValue->GetInt32(&value));
+                ThrowIfFailed(d2dEffect->SetValue(index, value));
+            }
+            break;
+
+        case PropertyType_UInt32:
+            {
+                UINT32 value;
+                ThrowIfFailed(propertyValue->GetUInt32(&value));
+                ThrowIfFailed(d2dEffect->SetValue(index, value));
+            }
+            break;
+
+        case PropertyType_Single:
+            {
+                float value;
+                ThrowIfFailed(propertyValue->GetSingle(&value));
+                ThrowIfFailed(d2dEffect->SetValue(index, value));
+            }
+            break;
+
+        case PropertyType_SingleArray:
+            {
+                ComArray<float> value;
+                ThrowIfFailed(propertyValue->GetSingleArray(value.GetAddressOfSize(), value.GetAddressOfData()));
+                ThrowIfFailed(d2dEffect->SetValue(index, reinterpret_cast<BYTE*>(value.GetData()), value.GetSize() * sizeof(float)));
+            }
+            break;
+
+        default:
+            ThrowHR(E_NOTIMPL);
+        }
     }
 
 
@@ -550,65 +548,122 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     }
 
 
-    void CanvasEffect::InitializePropertiesFromD2D()
+    ComPtr<IPropertyValue> CanvasEffect::GetProperty(unsigned int index)
     {
-        auto& d2dEffect = ResourceWrapper::GetResource();
+        assert(index < m_properties.size());
 
+        if (HasResource())
+        {
+            // If we are realized, read the property value from the underlying D2D resource.
+            return GetD2DProperty(ResourceWrapper::GetResource().Get(), index);
+        }
+        else
+        {
+            // If we are not realized, directly return the property value.
+            return m_properties[index];
+        }
+    }
+
+
+    ComPtr<IPropertyValue> CanvasEffect::GetD2DProperty(ID2D1Effect* d2dEffect, unsigned int index)
+    {
+        switch (d2dEffect->GetType(index))
+        {
+        case D2D1_PROPERTY_TYPE_BOOL:
+            {
+                BOOL value = d2dEffect->GetValue<BOOL>(index);
+                return CreateProperty(m_propertyValueFactory.Get(), static_cast<boolean>(value));
+            }
+            break;
+
+        case D2D1_PROPERTY_TYPE_INT32:
+        case D2D1_PROPERTY_TYPE_UINT32:     // Not a mistake: unsigned DImage properties are exposed in WinRT as signed.
+            {
+                INT32 value = d2dEffect->GetValue<INT32>(index);
+                return CreateProperty(m_propertyValueFactory.Get(), value);
+            }
+            break;
+
+        case D2D1_PROPERTY_TYPE_ENUM:
+            {
+                UINT32 value = d2dEffect->GetValue<UINT32>(index);
+                return CreateProperty(m_propertyValueFactory.Get(), value);
+            }
+            break;
+
+        case D2D1_PROPERTY_TYPE_FLOAT:
+            {
+                float value = d2dEffect->GetValue<float>(index);
+                return CreateProperty(m_propertyValueFactory.Get(), value);
+            }
+            break;
+
+        case D2D1_PROPERTY_TYPE_VECTOR2:
+        case D2D1_PROPERTY_TYPE_VECTOR3:
+        case D2D1_PROPERTY_TYPE_VECTOR4:
+        case D2D1_PROPERTY_TYPE_MATRIX_3X2:
+        case D2D1_PROPERTY_TYPE_MATRIX_4X4:
+        case D2D1_PROPERTY_TYPE_MATRIX_5X4:
+        case D2D1_PROPERTY_TYPE_BLOB:
+            {
+                unsigned sizeInBytes = d2dEffect->GetValueSize(index);
+                unsigned sizeInFloats = sizeInBytes / sizeof(float);
+
+                std::vector<BYTE> value(sizeInBytes);
+                ThrowIfFailed(d2dEffect->GetValue(index, value.data(), sizeInBytes));
+
+                return CreateProperty(m_propertyValueFactory.Get(), sizeInFloats, reinterpret_cast<float*>(value.data()));
+            }
+            break;
+
+        default:
+            ThrowHR(E_NOTIMPL);
+        }
+    }
+
+
+    void CanvasEffect::Realize(ID2D1DeviceContext* deviceContext)
+    {
+        assert(!HasResource());
+
+        // Create a new D2D effect instance.
+        ComPtr<ID2D1Effect> newEffect;
+
+        ThrowIfFailed(deviceContext->CreateEffect(m_effectId, &newEffect));
+
+        // Transfer property values from our resource independent m_properties store to the D2D effect.
         for (unsigned i = 0; i < m_properties.size(); ++i)
         {
-            switch (d2dEffect->GetType(i))
-            {
-                case D2D1_PROPERTY_TYPE_BOOL:
-                {
-                    BOOL value = d2dEffect->GetValue<BOOL>(i);
-                    m_properties[i] = CreateProperty(m_propertyValueFactory.Get(), static_cast<boolean>(value));
-                }
-                break;
-
-            case D2D1_PROPERTY_TYPE_INT32:
-                {
-                    INT32 value = d2dEffect->GetValue<INT32>(i);
-                    m_properties[i] = CreateProperty(m_propertyValueFactory.Get(), value);
-                }
-                break;
-
-            case D2D1_PROPERTY_TYPE_UINT32:
-            case D2D1_PROPERTY_TYPE_ENUM:
-                {
-                    UINT32 value = d2dEffect->GetValue<UINT32>(i);
-                    m_properties[i] = CreateProperty(m_propertyValueFactory.Get(), value);
-                }
-                break;
-
-            case D2D1_PROPERTY_TYPE_FLOAT:
-                {
-                    float value = d2dEffect->GetValue<float>(i);
-                    m_properties[i] = CreateProperty(m_propertyValueFactory.Get(), value);
-                }
-                break;
-
-            case D2D1_PROPERTY_TYPE_VECTOR2:
-            case D2D1_PROPERTY_TYPE_VECTOR3:
-            case D2D1_PROPERTY_TYPE_VECTOR4:
-            case D2D1_PROPERTY_TYPE_MATRIX_3X2:
-            case D2D1_PROPERTY_TYPE_MATRIX_4X4:
-            case D2D1_PROPERTY_TYPE_MATRIX_5X4:
-            case D2D1_PROPERTY_TYPE_BLOB:
-                {
-                    unsigned sizeInBytes = d2dEffect->GetValueSize(i);
-                    unsigned sizeInFloats = sizeInBytes / sizeof(float);
-
-                    std::vector<BYTE> value(sizeInBytes);
-                    d2dEffect->GetValue(i, value.data(), sizeInBytes);
-
-                    m_properties[i] = CreateProperty(m_propertyValueFactory.Get(), sizeInFloats, reinterpret_cast<float*>(value.data()));
-                }
-                break;
-
-            default:
-                ThrowHR(E_NOTIMPL);
-            }
+            SetD2DProperty(newEffect.Get(), i, m_properties[i].Get());
         }
+
+        // Wipe m_properties, as the D2D effect is now the One True Source Of Authoritativeness.
+        m_properties.assign(m_properties.size(), nullptr);
+
+        // Store the new effect.
+        SetResource(newEffect.Get());
+
+        m_realizationId++;
+    }
+
+
+    void CanvasEffect::Unrealize()
+    {
+        if (HasResource())
+        {
+            // Transfer property values from the D2D effect to our resource independent m_properties store.
+            auto& oldEffect = ResourceWrapper::GetResource();
+
+            for (unsigned i = 0; i < m_properties.size(); ++i)
+            {
+                m_properties[i] = GetD2DProperty(oldEffect.Get(), i);
+            }
+
+            // Clear the effect resource.
+            ReleaseResource();
+        }
+
+        m_dpiCompensators.clear();
     }
 
 

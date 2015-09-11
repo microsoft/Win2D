@@ -142,6 +142,19 @@ namespace Microsoft
             }
 
             template<>
+            inline std::wstring ToString<float3>(float3 const& value)
+            {
+                wchar_t buf[256];
+                ThrowIfFailed(StringCchPrintf(
+                    buf,
+                    _countof(buf),
+                    L"Numerics.float3{%f,%f,%f}",
+                    value.x, value.y, value.z));
+
+                return buf;
+            }
+
+            template<>
             inline std::wstring ToString<float3x2>(float3x2 const& value)
             {
                 wchar_t buf[256];
@@ -172,6 +185,7 @@ namespace Microsoft
             CX_VALUE_TO_STRING(Microsoft::Graphics::Canvas::Text::CanvasTextAntialiasing);
             CX_VALUE_TO_STRING(Microsoft::Graphics::Canvas::CanvasUnits);
             CX_VALUE_TO_STRING(Microsoft::Graphics::Canvas::CanvasAlphaMode);
+            CX_VALUE_TO_STRING(Microsoft::Graphics::Canvas::CanvasImageInterpolation);
             CX_VALUE_TO_STRING(Microsoft::Graphics::Canvas::UI::CanvasCreateResourcesReason);
 
 #undef CX_VALUE_TO_STRING

@@ -15,6 +15,8 @@ namespace canvas
         std::function<void(UINT32 index, ID2D1Image* input)> MockSetInput;
         std::function<HRESULT()> MockSetInputCount;
         std::function<HRESULT(UINT32 index, D2D1_PROPERTY_TYPE type, CONST BYTE* data, UINT32 dataSize)> MockSetValue;
+        std::function<D2D1_PROPERTY_TYPE(UINT32 index)> MockGetType;
+        std::function<HRESULT(UINT32 index, D2D1_PROPERTY_TYPE type, BYTE *data, UINT32 dataSize)> MockGetValue;
 
         //
         // ID2D1Effect
@@ -54,14 +56,14 @@ namespace canvas
             Assert::Fail(L"Unexpected call to GetInput");
         }
 
-            STDMETHOD_(UINT32, GetInputCount)(
+        STDMETHOD_(UINT32, GetInputCount)(
             ) CONST
         {
             Assert::Fail(L"Unexpected call to GetInputCount");
             return 0;
         }
 
-            STDMETHOD_(void, GetOutput)(
+        STDMETHOD_(void, GetOutput)(
             _Outptr_ ID2D1Image **outputImage
             ) CONST
         {
@@ -101,8 +103,12 @@ namespace canvas
             UINT32 index
             ) CONST
         {
-            Assert::Fail(L"Unexpected call to GetType");
-            return D2D1_PROPERTY_TYPE_UNKNOWN;
+            if (!MockGetType)
+            {
+                Assert::Fail(L"Unexpected call to GetType");
+                return D2D1_PROPERTY_TYPE_UNKNOWN;
+            }
+            return MockGetType(index);
         }
 
         STDMETHOD_(UINT32, GetPropertyIndex)(
@@ -157,8 +163,12 @@ namespace canvas
             UINT32 dataSize
             ) CONST
         {
-            Assert::Fail(L"Unexpected call to GetValue");
-            return E_NOTIMPL;
+            if (!MockGetValue)
+            {
+                Assert::Fail(L"Unexpected call to GetValue");
+                return E_NOTIMPL;
+            }
+            return MockGetValue(index, type, data, dataSize);
         }
 
         STDMETHOD_(UINT32, GetValueSize)(

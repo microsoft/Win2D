@@ -58,6 +58,8 @@ namespace collections
         }
     };
 
+
+    // Specialized element traits for strings.
     template<>
     struct ElementTraits<HSTRING>
     {
