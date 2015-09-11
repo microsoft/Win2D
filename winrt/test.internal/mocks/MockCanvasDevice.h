@@ -21,12 +21,6 @@ namespace canvas
         std::function<ComPtr<ID2D1ImageBrush>(ID2D1Image* image)> MockCreateImageBrush;
         std::function<ComPtr<ID2D1BitmapBrush1>(ID2D1Bitmap1* bitmap)> MockCreateBitmapBrush;
         std::function<ComPtr<ID2D1Bitmap1>(IWICBitmapSource* converter, CanvasAlphaMode alpha, float dpi)> MockCreateBitmapFromWicResource;
-        std::function<ComPtr<ID2D1Bitmap1>(
-            float width,
-            float height,
-            DirectXPixelFormat format,
-            CanvasAlphaMode alpha,
-            float dpi)> MockCreateRenderTargetBitmap;
         std::function<ComPtr<ID2D1Image>(ICanvasImage* canvasImage)> MockGetD2DImage;
 
         std::function<ComPtr<ID2D1GradientStopCollection1>(
@@ -49,6 +43,7 @@ namespace canvas
         CALL_COUNTER_WITH_MOCK(CreateDeviceContextForDrawingSessionMethod, ComPtr<ID2D1DeviceContext1>());
         CALL_COUNTER_WITH_MOCK(CreateBitmapFromBytesMethod, ComPtr<ID2D1Bitmap1>(uint8_t*, uint32_t, int32_t, int32_t, float, DirectXPixelFormat, CanvasAlphaMode));
         CALL_COUNTER_WITH_MOCK(CreateBitmapFromSurfaceMethod, ComPtr<ID2D1Bitmap1>(IDirect3DSurface*, float, CanvasAlphaMode));
+        CALL_COUNTER_WITH_MOCK(CreateRenderTargetBitmapMethod, ComPtr<ID2D1Bitmap1>(float, float, float, DirectXPixelFormat, CanvasAlphaMode));
         CALL_COUNTER_WITH_MOCK(CreateSwapChainForCompositionMethod, ComPtr<IDXGISwapChain1>(int32_t, int32_t, DirectXPixelFormat, int32_t, CanvasAlphaMode));
         CALL_COUNTER_WITH_MOCK(CreateSwapChainForCoreWindowMethod, ComPtr<IDXGISwapChain1>(ICoreWindow*, int32_t, int32_t, DirectXPixelFormat, int32_t, CanvasAlphaMode));
         CALL_COUNTER_WITH_MOCK(CreateCommandListMethod, ComPtr<ID2D1CommandList>());
@@ -227,12 +222,7 @@ namespace canvas
             DirectXPixelFormat format,
             CanvasAlphaMode alpha) override
         {
-            if (!MockCreateRenderTargetBitmap)
-            {
-                Assert::Fail(L"Unexpected call to CreateRenderTargetBitmap");
-                return nullptr;
-            }
-            return MockCreateRenderTargetBitmap(width, height, format, alpha, dpi);
+            return CreateRenderTargetBitmapMethod.WasCalled(width, height, dpi, format, alpha);
         }
 
         virtual ComPtr<ID2D1BitmapBrush1> CreateBitmapBrush(ID2D1Bitmap1* Bitmap) override

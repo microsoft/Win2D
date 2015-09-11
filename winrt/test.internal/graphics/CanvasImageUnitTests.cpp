@@ -14,11 +14,11 @@ TEST_CLASS(CanvasImageUnitTests)
         {
             m_canvasDevice = Make<StubCanvasDevice>();
             
-            m_canvasDevice->MockCreateRenderTargetBitmap =
-                [&](float, float, DirectXPixelFormat, CanvasAlphaMode, float)
+            m_canvasDevice->CreateRenderTargetBitmapMethod.AllowAnyCall(
+                [&](float, float, float, DirectXPixelFormat, CanvasAlphaMode)
                 {
                     return Make<StubD2DBitmap>(D2D1_BITMAP_OPTIONS_TARGET);
-                };
+                });
         }
     };
 

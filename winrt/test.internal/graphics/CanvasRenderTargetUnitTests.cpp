@@ -48,14 +48,11 @@ TEST_CLASS(CanvasRenderTargetTests)
             if (!bitmap)
                 bitmap = Make<StubD2DBitmap>(D2D1_BITMAP_OPTIONS_TARGET);
 
-            m_canvasDevice->MockCreateRenderTargetBitmap =
-                [&](float, float, DirectXPixelFormat, CanvasAlphaMode, float)
+            m_canvasDevice->CreateRenderTargetBitmapMethod.SetExpectedCalls(1,
+                [=](float, float, float, DirectXPixelFormat, CanvasAlphaMode)
                 {
-                    Assert::IsNotNull(bitmap.Get());
-                    auto result = bitmap;
-                    bitmap.Reset();
-                    return result;
-                };
+                    return bitmap;
+                });
 
             auto renderTarget = CanvasRenderTarget::CreateNew(
                 m_canvasDevice.Get(), 
@@ -64,8 +61,6 @@ TEST_CLASS(CanvasRenderTargetTests)
                 DEFAULT_DPI,
                 PIXEL_FORMAT(B8G8R8A8UIntNormalized),
                 CanvasAlphaMode::Premultiplied);
-
-            m_canvasDevice->MockCreateRenderTargetBitmap = nullptr;
 
             return renderTarget;
         }
