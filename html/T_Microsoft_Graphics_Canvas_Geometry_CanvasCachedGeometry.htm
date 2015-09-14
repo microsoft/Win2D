@@ -15,7 +15,7 @@
       	</p><p>
       	Cached geometries are created and drawn in the following way:      	
       	
-        <div class="codeSnippetContainer"><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID1EAAFABA_copyCode" href="#" onclick="javascript:CopyToClipboard('ID1EAAFABA');return false;" title="Copy">Copy</a></div></div><div id="ID1EAAFABA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve">CanvasCachedGeometry cachedGeometry;
+        <div class="codeSnippetContainer"><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID1EAAGABA_copyCode" href="#" onclick="javascript:CopyToClipboard('ID1EAAGABA');return false;" title="Copy">Copy</a></div></div><div id="ID1EAAGABA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve">CanvasCachedGeometry cachedGeometry;
 
 <span class="highlight-keyword">void</span> myWidget_CreateResources(CanvasControl sender, <span class="highlight-keyword">object</span> args)
 {
@@ -27,7 +27,7 @@
 <span class="highlight-keyword">void</span> myWidget_Draw(CanvasControl sender, CanvasDrawEventArgs args)
 {
     args.DrawingSession.DrawCachedGeometry(cachedGeometry, Colors.Blue);
-}</pre></div></div></div><script type="text/javascript">AddLanguageTabSet("ID1EAAFABA");</script></p><p>
+}</pre></div></div></div><script type="text/javascript">AddLanguageTabSet("ID1EAAGABA");</script></p><p>
       	Cached geometries, like any resource, induce memory cost. Use them if geometry performance is expected to
       	be a problem.
       	</p><p>
@@ -44,4 +44,7 @@
       	</p><p>
       	For more information about the Direct2D implementation of cached geometries used by Win2D, see 
       	<a href="https://msdn.microsoft.com/en-us/library/windows/desktop/dn363632%28v=vs.85%29.aspx">Geometry Realizations Overview</a>.
-      	</p></div><div class="collapsibleAreaRegion" id="seeAlsoSection"><span class="collapsibleRegionTitle" onclick="SectionExpandCollapse('ID6RB')" onkeypress="SectionExpandCollapse_CheckKey('ID6RB', event)" tabindex="0"><img id="ID6RBToggle" class="collapseToggle" src="../icons/SectionExpanded.png" />See Also</span></div><div id="ID6RBSection" class="collapsibleSection"><h4 class="subHeading">Reference</h4><div class="seeAlsoStyle"><a href="N_Microsoft_Graphics_Canvas_Geometry.htm">Microsoft.Graphics.Canvas.Geometry Namespace</a></div></div></div></div><div id="pageFooter" class="pageFooter"><p><a href="http://github.com/Microsoft/Win2D/blob/master/LICENSE.txt" target="_blank">Copyright (c) Microsoft Corporation. All rights reserved.</a></p> </div></body></html>
+      	</p><p>
+          When using <a href="Interop.htm">Direct2D interop</a>, this Win2D class
+          corresponds to the Direct2D interface ID2D1GeometryRealization.
+        </p></div><div class="collapsibleAreaRegion" id="seeAlsoSection"><span class="collapsibleRegionTitle" onclick="SectionExpandCollapse('ID6RB')" onkeypress="SectionExpandCollapse_CheckKey('ID6RB', event)" tabindex="0"><img id="ID6RBToggle" class="collapseToggle" src="../icons/SectionExpanded.png" />See Also</span></div><div id="ID6RBSection" class="collapsibleSection"><h4 class="subHeading">Reference</h4><div class="seeAlsoStyle"><a href="N_Microsoft_Graphics_Canvas_Geometry.htm">Microsoft.Graphics.Canvas.Geometry Namespace</a></div></div></div></div><div id="pageFooter" class="pageFooter"><p><a href="http://github.com/Microsoft/Win2D/blob/master/LICENSE.txt" target="_blank">Copyright (c) Microsoft Corporation. All rights reserved.</a></p> </div></body></html>
