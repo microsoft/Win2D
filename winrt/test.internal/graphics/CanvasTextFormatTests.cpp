@@ -7,9 +7,12 @@
 #include "mocks/MockDWriteFactory.h"
 #include "mocks/MockDWriteFontCollection.h"
 #include "mocks/MockDWriteFontFile.h"
+#include "mocks/MockDWriteFontFamily.h"
+#include "mocks/MockDWriteLocalizedStrings.h"
 #include "stubs/StubStorageFileStatics.h"
 #include "stubs/StubFontManagerAdapter.h"
 #include "stubs/StubDWriteTextFormat.h"
+#include "stubs/StubCanvasTextLayoutAdapter.h"
 
 namespace canvas
 {
@@ -1071,6 +1074,264 @@ namespace canvas
                 Assert::AreEqual(E_INVALIDARG, cf->put_FontFamily(WinString(familyName)), familyName.c_str());
                 ValidateStoredErrorState(E_INVALIDARG, Strings::InvalidFontFamilyUriScheme);
             }
+        }
+
+        class LocaleList : public Vector<HSTRING>
+        {
+        public:
+
+            LocaleList(wchar_t const* str)
+            {
+                this->Append(WinString(str));
+            }
+
+            LocaleList(std::wstring str1, std::wstring str2)
+            {
+                this->Append(WinString(str1));
+                this->Append(WinString(str2));
+            }
+
+            LocaleList(std::wstring str1, std::wstring str2, std::wstring str3)
+            {
+                this->Append(WinString(str1));
+                this->Append(WinString(str2));
+                this->Append(WinString(str3));
+            }
+        };
+
+        static ComPtr<IVectorView<HSTRING>> GetVectorView(ComPtr<LocaleList> const& list)
+        {
+            ComPtr<IVectorView<HSTRING>> view;
+            ThrowIfFailed(list->GetView(&view));
+            return view;
+        }
+
+        TEST_METHOD_EX(CanvasTextFormat_GetSystemFontFamilies_NullArg)
+        {
+            auto factory = Make<CanvasTextFormatFactory>();
+
+            auto localeList = Make<LocaleList>(L"");
+            uint32_t elementCount;
+            HSTRING* element;
+
+            Assert::AreEqual(E_INVALIDARG, factory->GetSystemFontFamilies(&elementCount, nullptr));
+            Assert::AreEqual(E_INVALIDARG, factory->GetSystemFontFamilies(nullptr, &element));
+
+            Assert::AreEqual(E_INVALIDARG, factory->GetSystemFontFamiliesFromLocaleList(GetVectorView(localeList).Get(), &elementCount, nullptr));
+            Assert::AreEqual(E_INVALIDARG, factory->GetSystemFontFamiliesFromLocaleList(GetVectorView(localeList).Get(), nullptr, &element));
+        }
+
+        class LocalizedFontNames : public MockDWriteLocalizedStrings
+        {
+            struct LocalizedName
+            {
+                std::wstring Name;
+                std::wstring Locale;
+            };
+            std::vector<LocalizedName> m_names;
+
+        public:
+
+            LocalizedFontNames(std::wstring const& name, std::wstring const& locale)
+            {
+                m_names.push_back({ name, locale });
+            }
+
+            LocalizedFontNames(std::wstring const& n1, std::wstring const& l1, std::wstring const& n2, std::wstring const& l2)
+            {
+                m_names.push_back({ n1, l1 });
+                m_names.push_back({ n2, l2 });
+            }
+
+            IFACEMETHODIMP_(uint32_t) GetCount() override
+            {
+                return static_cast<uint32_t>(m_names.size());
+            }
+
+            IFACEMETHODIMP FindLocaleName(
+                WCHAR const* localeName,
+                uint32_t* index,
+                BOOL* exists) override
+            {
+                for (uint32_t i = 0; i < m_names.size(); ++i)
+                {
+                    if (wcscmp(localeName, m_names[i].Locale.c_str()) == 0)
+                    {
+                        *index = i;
+                        *exists = TRUE;
+                        return S_OK;
+                    }
+                }
+                *exists = FALSE;
+                return S_OK;
+            }
+
+            IFACEMETHODIMP GetStringLength(
+                UINT32 index,
+                UINT32* length) override
+            {
+                *length = static_cast<uint32_t>(m_names[index].Name.size());
+                return S_OK;
+            }
+
+            IFACEMETHODIMP GetString(
+                UINT32 index,
+                WCHAR* stringBuffer,
+                UINT32 size) override
+            {
+                Assert::IsTrue(size == m_names[index].Name.size() + 1); // accounts for null term
+                StringCchCopyN(stringBuffer, size, &m_names[index].Name[0], size);
+                return S_OK;
+            }
+        };
+
+        class SystemFontFamiliesFixture
+        {
+            std::shared_ptr<StubCanvasTextLayoutAdapter> m_adapter;
+            ComPtr<MockDWriteFontCollection> m_fontCollection;
+            ComPtr<MockDWriteFontFamily> m_fontFamily; // Only one is used here.
+            ComPtr<LocalizedFontNames> m_localizedFontNames; // Only one
+
+        public:
+            SystemFontFamiliesFixture(int fontCollectionSize, ComPtr<LocalizedFontNames> const& localizedFontNames)
+            {
+                m_adapter = std::make_shared<StubCanvasTextLayoutAdapter>();
+                m_localizedFontNames = localizedFontNames;
+
+                m_fontCollection = Make<MockDWriteFontCollection>();
+
+                m_fontCollection->GetFontFamilyCountMethod.SetExpectedCalls(1,
+                    [fontCollectionSize]()
+                    {
+                        return fontCollectionSize; 
+                    });
+
+                m_fontFamily = Make<MockDWriteFontFamily>();
+                m_fontFamily->GetFamilyNamesMethod.SetExpectedCalls(fontCollectionSize,
+                    [=](IDWriteLocalizedStrings** out)
+                    {
+                        return m_localizedFontNames.CopyTo(out);
+                    });
+
+                m_fontCollection->GetFontFamilyMethod.SetExpectedCalls(fontCollectionSize,
+                    [=](uint32_t index, IDWriteFontFamily** out)
+                    {
+                        // Same font family gets returned each time, just because
+                        return m_fontFamily.CopyTo(out);
+                    });
+
+                m_adapter->GetMockDWriteFactory()->GetSystemFontCollectionMethod.SetExpectedCalls(1,
+                    [=](IDWriteFontCollection** out, BOOL)
+                    {
+                        return m_fontCollection.CopyTo(out);
+                    });
+
+                CustomFontManagerAdapter::SetInstance(m_adapter);
+            }
+
+            void Verify(wchar_t const* expectedLanguage)
+            {
+                auto factory = Make<CanvasTextFormatFactory>();
+
+                uint32_t elementCount;
+                HSTRING* elements;
+
+                Assert::AreEqual(S_OK, factory->GetSystemFontFamilies(&elementCount, &elements));
+
+                Assert::AreEqual(1u, elementCount);
+
+                WinString elementName(*elements);
+                Assert::AreEqual(0, wcscmp(expectedLanguage, static_cast<wchar_t const*>(elementName)));
+
+            }
+
+            void VerifyFromLocaleList(wchar_t const* expectedLanguage, ComPtr<LocaleList> const& localeList)
+            {
+                auto factory = Make<CanvasTextFormatFactory>();
+
+                uint32_t elementCount;
+                HSTRING* elements;
+
+                Assert::AreEqual(S_OK, factory->GetSystemFontFamiliesFromLocaleList(GetVectorView(localeList).Get(), &elementCount, &elements));
+
+                Assert::AreEqual(1u, elementCount);
+
+                WinString elementName(*elements);
+                Assert::AreEqual(0, wcscmp(expectedLanguage, static_cast<wchar_t const*>(elementName)));
+
+            }
+        };
+
+        TEST_METHOD_EX(CanvasTextFormat_GetSystemFontFamilies_OnlyEnglishAvailable_ReturnsEnglish)
+        {
+            SystemFontFamiliesFixture f(1, Make<LocalizedFontNames>(
+                L"English", L"en-us"));
+
+            f.Verify(L"English");
+        }
+
+        TEST_METHOD_EX(CanvasTextFormat_GetSystemFontFamilies_MultipleAvailable_ReturnsEnglish)
+        {
+            SystemFontFamiliesFixture f(1, Make<LocalizedFontNames>(
+                L"SomeLanguage", L"xx-xx",
+                L"English", L"en-us"));
+
+            f.Verify(L"English");
+        }
+
+        TEST_METHOD_EX(CanvasTextFormat_GetSystemFontFamilies_NoEnglish_ReturnsFirstAvailable)
+        {
+            SystemFontFamiliesFixture f(1, Make<LocalizedFontNames>(
+                L"SomeLanguage1", L"xx-xa",
+                L"SomeLanguage2", L"xx-xb"));
+
+            f.Verify(L"SomeLanguage1");
+        }
+
+        TEST_METHOD_EX(CanvasTextFormat_GetSystemFontFamiliesFromLocaleList_UseFirstChoice)
+        {
+            SystemFontFamiliesFixture f(1, Make<LocalizedFontNames>(
+                L"English", L"en-us",
+                L"SomeLanguage", L"xx-xx"));
+
+            f.VerifyFromLocaleList(L"SomeLanguage", Make<LocaleList>(
+                L"xx-xx",
+                L"aa-aa"));
+        }
+
+        TEST_METHOD_EX(CanvasTextFormat_GetSystemFontFamiliesFromLocaleList_UseSecondChoice)
+        {
+            SystemFontFamiliesFixture f(1, Make<LocalizedFontNames>(
+                L"English", L"en-us",
+                L"SomeLanguage", L"xx-xx"));
+
+            f.VerifyFromLocaleList(L"SomeLanguage", Make<LocaleList>(
+                L"aa-aa",
+                L"xx-xx"));
+        }
+
+        TEST_METHOD_EX(CanvasTextFormat_GetSystemFontFamiliesFromLocaleList_NothingInListWasAvailable_UseEnglish)
+        {
+            SystemFontFamiliesFixture f(1, Make<LocalizedFontNames>(
+                L"SomeLanguage", L"xx-xx",
+                L"English", L"en-us"));
+
+            f.VerifyFromLocaleList(L"English", Make<LocaleList>(
+                L"aa-aa",
+                L"bb-bb",
+                L"cc-cc"));
+        }
+
+        TEST_METHOD_EX(CanvasTextFormat_GetSystemFontFamiliesFromLocaleList_NothingInListWasAvailable_NonEnglish)
+        {
+            SystemFontFamiliesFixture f(1, Make<LocalizedFontNames>(
+                L"SomeLanguage1", L"xx-aa",
+                L"SomeLanguage2", L"xx-bb"));
+
+            f.VerifyFromLocaleList(L"SomeLanguage1", Make<LocaleList>(
+                L"aa-aa",
+                L"bb-bb",
+                L"cc-cc"));
         }
     };
 }

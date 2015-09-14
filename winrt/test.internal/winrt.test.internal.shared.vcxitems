@@ -79,7 +79,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDXGISwapChain.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDWriteFactory.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDWriteFontCollection.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDWriteFontFamily.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDWriteFontFile.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDWriteLocalizedStrings.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDWriteTextFormat.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDWriteTextLayout.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockHelpers.h" />

@@ -952,4 +952,126 @@ IFACEMETHODIMP CanvasTextFormat::put_Options(CanvasDrawTextOptions value)
 }
 
 
+static WinString GetTextFromLocalizedStrings(
+    int32_t stringIndex,
+    ComPtr<IDWriteLocalizedStrings> const& localizedStrings)
+{
+    WinStringBuilder stringBuilder;
+    uint32_t attributeLength;
+    ThrowIfFailed(localizedStrings->GetStringLength(stringIndex, &attributeLength));
+    attributeLength++; // Account for null terminator
+
+    auto buffer = stringBuilder.Allocate(attributeLength);
+    ThrowIfFailed(localizedStrings->GetString(stringIndex, buffer, attributeLength));
+    return stringBuilder.Get();
+}
+
+
+static bool TryGetLocalizedName(
+    wchar_t const* locale,
+    ComPtr<IDWriteLocalizedStrings> const& familyNames,
+    WinString* nameIfFound)
+{
+    uint32_t index;
+    BOOL found;
+    ThrowIfFailed(familyNames->FindLocaleName(locale, &index, &found));
+    if (found)
+    {
+        *nameIfFound = GetTextFromLocalizedStrings(index, familyNames);
+    }
+    return !!found;
+}
+
+
+static bool TryGetLocalizedNameUsingLocaleList(
+    IVectorView<HSTRING>* localeList,
+    ComPtr<IDWriteLocalizedStrings> const& familyNames,
+    WinString* nameIfFound)
+{
+    if (!localeList) 
+        return false;
+
+    uint32_t localeListSize;
+    ThrowIfFailed(localeList->get_Size(&localeListSize));
+
+    for (uint32_t localeIndex = 0; localeIndex < localeListSize; ++localeIndex)
+    {
+        WinString locale;
+        ThrowIfFailed(localeList->GetAt(localeIndex, locale.GetAddressOf()));
+
+        if (TryGetLocalizedName(static_cast<wchar_t const*>(locale), familyNames, nameIfFound))
+            return true;
+    }
+
+    return false;
+}
+
+
+static WinString GetFamilyName(
+    ComPtr<IDWriteLocalizedStrings> const& familyNames,
+    IVectorView<HSTRING>* localeList) // Optional
+{
+    //
+    // This returns one of the following, by order of priority:
+    // - passed-in list of locales by order of preference
+    // - en-us
+    // - whatever's available
+
+    WinString result;
+
+    if (TryGetLocalizedNameUsingLocaleList(localeList, familyNames, &result)) 
+        return result;
+
+    if (TryGetLocalizedName(L"en-us", familyNames, &result)) 
+        return result;
+
+    return GetTextFromLocalizedStrings(0, familyNames);
+}
+
+
+IFACEMETHODIMP CanvasTextFormatFactory::GetSystemFontFamilies(
+    uint32_t* valueCount,
+    HSTRING** valueElements)
+{
+    return GetSystemFontFamiliesFromLocaleList(nullptr, valueCount, valueElements);
+}
+
+
+IFACEMETHODIMP CanvasTextFormatFactory::GetSystemFontFamiliesFromLocaleList(
+    IVectorView<HSTRING>* localeList,
+    uint32_t* valueCount,
+    HSTRING** valueElements)
+{
+    return ExceptionBoundary(
+        [&]
+        {
+            CheckInPointer(valueCount);
+            CheckAndClearOutPointer(valueElements);
+            
+            auto factory = CustomFontManager::GetInstance()->GetSharedFactory();
+
+            ComPtr<IDWriteFontCollection> systemFontCollection;
+            ThrowIfFailed(factory->GetSystemFontCollection(&systemFontCollection));
+
+            uint32_t familyCount = systemFontCollection->GetFontFamilyCount();
+
+            ComArray<HSTRING> stringArray(familyCount);
+
+            for (uint32_t i = 0; i < familyCount; ++i)
+            {
+                ComPtr<IDWriteFontFamily> fontFamily;
+                ThrowIfFailed(systemFontCollection->GetFontFamily(i, &fontFamily));
+
+                ComPtr<IDWriteLocalizedStrings> familyNames;
+                ThrowIfFailed(fontFamily->GetFamilyNames(&familyNames));
+
+                WinString familyName = GetFamilyName(familyNames, localeList);
+                familyName.CopyTo(&stringArray[i]);
+            }
+
+            stringArray.Detach(valueCount, valueElements);
+        });
+}
+
+
 ActivatableClassWithFactory(CanvasTextFormat, CanvasTextFormatFactory);

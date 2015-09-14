@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 //
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
@@ -240,6 +240,61 @@ TEST_CLASS(CanvasTextFormatTests)
         {
             Assert::AreEqual(DWRITE_E_FLOWDIRECTIONCONFLICTS, static_cast<HRESULT>(e->HResult));
         }
+    }
+
+    TEST_METHOD(CanvasTextFormat_GetSystemFontFamilies_ZeroLocaleArray_DoesntDoAnythingBad)
+    {
+        auto zeroArray = ref new Platform::Collections::Vector<Platform::String^>();
+        CanvasTextFormat::GetSystemFontFamilies(zeroArray->GetView());
+    }
+
+    TEST_METHOD(CanvasTextFormat_GetSystemFontFamilies_NullLocaleList)
+    {
+        auto l1 = CanvasTextFormat::GetSystemFontFamilies(nullptr);
+        auto l2 = CanvasTextFormat::GetSystemFontFamilies();
+
+        Assert::AreEqual(l1->Length, l2->Length);
+        for (uint32_t i = 0; i < l1->Length; ++i)
+        {
+            Assert::AreEqual(l1[i], l2[i]);
+        }
+    }
+
+    TEST_METHOD(CanvasTextFormat_GetSystemFontFamilies_TypicalCaseWorks)
+    {
+        Platform::Array<Platform::String^>^ families = CanvasTextFormat::GetSystemFontFamilies();
+        Assert::IsTrue(families->Length > 0);
+
+        bool arialFound = false;
+        for(Platform::String^ name : families)
+        {
+            if (name == L"Arial")
+            {
+                arialFound = true;
+                break;
+            }
+        }
+        Assert::IsTrue(arialFound);
+    }
+
+    TEST_METHOD(CanvasTextFormat_GetSystemFontFamilies_RequestNonEnglishName)
+    {
+        auto preferZhCn = ref new Platform::Collections::Vector<Platform::String^>(1);
+        preferZhCn->SetAt(0, L"zh-cn");
+
+        Platform::Array<Platform::String^>^ families = CanvasTextFormat::GetSystemFontFamilies(preferZhCn->GetView());
+        Assert::IsTrue(families->Length > 0);
+
+        bool simSunFound = false;
+        for (Platform::String^ name : families)
+        {
+            if (name == L"宋体")
+            {
+                simSunFound = true;
+                break;
+            }
+        }
+        Assert::IsTrue(simSunFound);
     }
 };
 

@@ -427,6 +427,12 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubDWriteTextFormat.h">
       <Filter>stubs</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDWriteFontFamily.h">
+      <Filter>mocks</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDWriteLocalizedStrings.h">
+      <Filter>stubs</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="$(MSBuildThisFileDirectory)readme.txt" />

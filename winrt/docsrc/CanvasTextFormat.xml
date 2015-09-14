@@ -256,7 +256,57 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
           </dl>
         </p>
       </remarks>
+    </member>    
+
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextFormat.GetSystemFontFamilies" Experimental="true">
+      <summary>Gets a list of font families available.</summary>
+      <remarks>
+        <p>
+          Font family names are locale-dependent. For each font, this method
+          returns its 'en-us' name if possible. If no 'en-us' name is available,
+          this method returns whatever is first name enumerated for the font.
+        </p>
+        <p>
+          If you prefer font names to prioritize some other localization,
+          use the overload 
+          <see cref="M:Microsoft.Graphics.Canvas.Text.CanvasTextFormat.GetSystemFontFamilies(System.Collections.Generic.IReadOnlyList{System.String})"/>.
+        </p>
+      </remarks>
     </member>
+    
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextFormat.GetSystemFontFamilies(System.Collections.Generic.IReadOnlyList{System.String})" Experimental="true">
+      <summary>Gets a list of font families available, prioritizing the specified locales.</summary>
+      <remarks>
+        <p>
+          Font family names are locale-dependent. For each font, this method 
+          returns the first available of:
+          <ul>
+            <li>The specified list of locales, in order</li>
+            <li>en-us</li>
+            <li>Whatever is the first name enumerated for the font.</li>
+          </ul>
+        </p>
+        <p>
+          An application's environment has a list of locales ordered by
+          user preference. 
+        </p>
+        <p>
+          Using this in C# looks like:
+          <code>          
+              using Windows.Globalization;
+              
+              ...
+              
+              string[] fontFamilyNames = CanvasTextFormat.GetSystemFontFamilies(ApplicationLanguages.Languages);
+          </code>
+        </p>
+        <p>
+          Passing a null locale list is valid, and is equivalent to using the 
+          <see cref="M:Microsoft.Graphics.Canvas.Text.CanvasTextFormat.GetSystemFontFamilies"/>
+          overload.
+        </p>
+      </remarks>
+    </member>    
     
   </members>
 </doc>

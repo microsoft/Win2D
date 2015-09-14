@@ -176,8 +176,37 @@ namespace Microsoft.Graphics.Canvas.Text
     }
 
 #undef PROPERTY
+        
+    [version(VERSION), uuid(8A927515-33FC-4C92-A6AA-94A8F29C140B), exclusiveto(CanvasTextFormat)]
+    interface ICanvasTextFormatStatics : IInspectable
+    {
+        //
+        // GetSystemFontFamilies returns the names of all font families installed on the system.
+        // These names can be used to populate some UI selector.
+        // They can also be set to the FontFamily of a CanvasTextFormat.
 
-    [version(VERSION), activatable(VERSION)]
+        //
+        // Uses en-us if possible. 
+        // If there’s no en-us, pick the first name arbitrarily.
+        //
+        [overload("GetSystemFontFamilies")]
+        HRESULT GetSystemFontFamilies(
+            [out] UINT32* valueCount,
+            [out, size_is(, *valueCount), retval] HSTRING** valueElements);
+
+        // 
+        // Uses the specified list of languages. 
+        // We guide people toward using ApplicationLanguages.Languages, or they can make their own list. 
+        // If nothing matches, return the result of the above overload.
+        //
+        [overload("GetSystemFontFamilies")]
+        HRESULT GetSystemFontFamiliesFromLocaleList(
+            [in] Windows.Foundation.Collections.IVectorView<HSTRING>* localeList,
+            [out] UINT32* valueCount,
+            [out, size_is(, *valueCount), retval] HSTRING** valueElements);
+    }
+
+    [version(VERSION), activatable(VERSION), static(ICanvasTextFormatStatics, VERSION)]
     runtimeclass CanvasTextFormat
     {
         [default] interface ICanvasTextFormat;

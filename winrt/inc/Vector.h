@@ -13,7 +13,7 @@ namespace collections
 {
     // Element traits describe how to store and manipulate the values inside a collection.
     // This default implementation is for value types. The same template is specialized with
-    // more interesting versions for reference counted pointer types and maybe someday strings.
+    // more interesting versions for reference counted pointer types and strings.
     template<typename T>
     struct ElementTraits
     {
@@ -55,6 +55,29 @@ namespace collections
         static bool Equals(Microsoft::WRL::ComPtr<T> const& value1, T* value2)
         {
             return value1.Get() == value2;
+        }
+    };
+
+    template<>
+    struct ElementTraits<HSTRING>
+    {
+        typedef WinString ElementType;
+
+        static ElementType Wrap(HSTRING const& value)
+        {
+            return WinString(value);
+        }
+
+        static void Unwrap(ElementType const& value, _Out_ HSTRING* result)
+        {
+            value.CopyTo(result);
+        }
+
+        static bool Equals(HSTRING const& value1, HSTRING const& value2)
+        {
+            int compareResult;
+            ThrowIfFailed(WindowsCompareStringOrdinal(value1, value2, &compareResult));
+            return compareResult == 0;
         }
     };
 

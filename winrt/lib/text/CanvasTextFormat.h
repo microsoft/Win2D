@@ -15,13 +15,23 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     //
     // CanvasTextFormatFactory
     //
-
-    class CanvasTextFormatFactory 
-        : public ActivationFactory<>
+    class CanvasTextFormatFactory
+        : public ActivationFactory<ICanvasTextFormatStatics>
         , private LifespanTracker<CanvasTextFormatFactory>
     {
+        InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_Text_CanvasTextFormat, BaseTrust);
+
     public:
         IFACEMETHOD(ActivateInstance)(IInspectable** obj) override;
+
+        IFACEMETHOD(GetSystemFontFamilies)(
+            uint32_t* valueCount,
+            HSTRING** valueElements) override;
+
+        IFACEMETHOD(GetSystemFontFamiliesFromLocaleList)(
+            IVectorView<HSTRING>* localeList,
+            uint32_t* valueCount,
+            HSTRING** valueElements) override;
     };
 
 

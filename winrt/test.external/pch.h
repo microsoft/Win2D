@@ -31,6 +31,7 @@
 #include <Utilities.h>
 #include <Constants.h>
 #include <ComArray.h>
+#include <collection.h>
 
 #include <windowsnumerics.h>
 
