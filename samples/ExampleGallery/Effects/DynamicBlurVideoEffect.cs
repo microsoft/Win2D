@@ -36,7 +36,7 @@ namespace ExampleGallery.Effects
                 return 3;
             }
         }
-        public bool IsReadOnly { get { return true; } }
+        public bool IsReadOnly { get { return false; } }
 
         public IReadOnlyList<VideoEncodingProperties> SupportedEncodingProperties { get { return new List<VideoEncodingProperties>(); } }
 

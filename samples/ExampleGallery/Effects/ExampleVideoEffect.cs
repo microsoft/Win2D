@@ -18,7 +18,7 @@ namespace ExampleGallery.Effects
 {
     public sealed class ExampleVideoEffect : IBasicVideoEffect
     {
-        public bool IsReadOnly { get { return true; } }
+        public bool IsReadOnly { get { return false; } }
 
         public IReadOnlyList<VideoEncodingProperties> SupportedEncodingProperties { get { return new List<VideoEncodingProperties>(); } }
 

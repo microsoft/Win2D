@@ -33,7 +33,7 @@ namespace ExampleGallery.Effects
 
         public IReadOnlyList<VideoEncodingProperties> SupportedEncodingProperties { get { return new List<VideoEncodingProperties>(); } }
 
-        public bool IsReadOnly { get { return true; } }
+        public bool IsReadOnly { get { return false; } }
 
         public MediaMemoryTypes SupportedMemoryTypes { get { return MediaMemoryTypes.Gpu; } }
 
