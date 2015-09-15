@@ -24,9 +24,19 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       Note that some glyphs may still overhang outside the margin, such as flourishes or italic slants.</remarks>
     </member>
     <member name="T:Microsoft.Graphics.Canvas.Text.CanvasTextLayout">
-      <summary>Describes a cached, drawable piece of text.</summary>
+      <summary>A cached, drawable piece of formatted text which can combine different fonts, colors etc.</summary>
       <remarks>
-        <p>For text which changes infrequently, use CanvasTextLayout.</p>
+        <p>
+          Use CanvasTextLayout to display rich text combining different formatting 
+          options, and to query the size and layout of such text after it has been 
+          wordwrapped.
+        </p>
+        <p>
+          If you are going to draw the same piece of text more than once, CanvasTextLayout can be 
+          faster than <see cref="O:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawText"/>, 
+          because it can reuse layout computations rather than repeating them every time the text 
+          is drawn.
+        </p>
         <p>
           When using <a href="Interop.htm">Direct2D interop</a>, this Win2D class
           corresponds to the Direct2D interface IDWriteTextLayout2.
