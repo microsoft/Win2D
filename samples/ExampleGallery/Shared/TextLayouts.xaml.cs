@@ -10,9 +10,11 @@ using Microsoft.Graphics.Canvas.UI.Xaml;
 using System;
 using System.Collections.Generic;
 using Windows.Foundation;
+using Windows.Globalization;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media;
 
 namespace ExampleGallery
 {
@@ -52,6 +54,8 @@ namespace ExampleGallery
         {
             this.InitializeComponent();
 
+            InitializeFontPicker();
+
             CurrentTextSampleOption = TextSampleOption.QuickBrownFox;
             ShowPerCharacterLayoutBounds = true;
         }
@@ -63,6 +67,21 @@ namespace ExampleGallery
                 new Point(Math.Ceiling(r.Right), Math.Ceiling(r.Bottom)));
         }
 
+        void InitializeFontPicker()
+        {
+            string[] fontFamilyNames = CanvasTextFormat.GetSystemFontFamilies(ApplicationLanguages.Languages);
+            
+            foreach (string fontFamilyName in fontFamilyNames)
+            {
+                ComboBoxItem item = new ComboBoxItem();
+                item.Content = fontFamilyName;
+                item.FontFamily = new FontFamily(fontFamilyName);
+                fontPicker.Items.Add(item);
+            }
+            fontPicker.SelectedIndex = 0;
+
+        }
+
         void EnsureResources(ICanvasResourceCreatorWithDpi resourceCreator, Size targetSize)
         {
             if (resourceRealizationSize != targetSize && !needsResourceRecreation)
@@ -71,7 +90,7 @@ namespace ExampleGallery
             float canvasWidth = (float)targetSize.Width;
             float canvasHeight = (float)targetSize.Height;
 
-            if(textLayout != null) 
+            if (textLayout != null) 
                 textLayout.Dispose();
             textLayout = CreateTextLayout(resourceCreator, canvasWidth, canvasHeight);
 
@@ -134,6 +153,8 @@ namespace ExampleGallery
                     };
                     break;
             }
+
+            textFormat.FontFamily = (fontPicker.SelectedItem as ComboBoxItem).Content as string;
 
             return new CanvasTextLayout(resourceCreator, testString, textFormat, canvasWidth, canvasHeight);
         }
@@ -233,6 +254,13 @@ namespace ExampleGallery
         private void InvalidateCanvas(object sender, RoutedEventArgs e)
         {
             canvas.Invalidate();
+        }
+
+        private void fontPicker_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            needsResourceRecreation = true;
+            canvas.Invalidate();
+            fontPicker.FontFamily = (fontPicker.SelectedItem as ComboBoxItem).FontFamily;
         }
 
         private void control_Unloaded(object sender, RoutedEventArgs e)

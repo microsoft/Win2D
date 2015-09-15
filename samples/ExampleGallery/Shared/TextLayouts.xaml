@@ -32,6 +32,8 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
                           SelectedItem="{Binding CurrentTextSampleOption, ElementName=control, Mode=TwoWay}"
                           SelectionChanged="TextSampleOptions_SelectionChanged"
                           HorizontalAlignment="Stretch"/>
+                <TextBlock>Font:</TextBlock>
+                <ComboBox x:Name="fontPicker" HorizontalAlignment="Stretch" SelectionChanged="fontPicker_SelectionChanged"/>
                 <TextBlock><LineBreak/>Show bounding boxes:</TextBlock>
                 <ToggleButton Content="Per-character layout" IsChecked="{Binding ElementName=control, Path=ShowPerCharacterLayoutBounds, Mode=TwoWay}" Click="InvalidateCanvas" HorizontalAlignment="Stretch"/>
                 <ToggleButton Content="LayoutBounds" IsChecked="{Binding ElementName=control, Path=ShowLayoutBounds, Mode=TwoWay}" Click="InvalidateCanvas" HorizontalAlignment="Stretch"/>
