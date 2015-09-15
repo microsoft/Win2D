@@ -27,7 +27,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         </StackPanel>
         <ComboBox x:Name="effectCombo" ItemsSource="{Binding ElementName=control, Path=PossibleEffects}"
                   SelectionChanged="EffectCombo_SelectionChanged" />
-        <Slider x:Name="blurAmountSlider" Header="Blur" Minimum="0" Value="3" Maximum="12" Visibility="Visible" Orientation="Vertical" HorizontalAlignment="Right"
+        <Slider x:Name="blurAmountSlider" Header="Blur" Minimum="0" Value="3" Maximum="12" Visibility="Collapsed" Orientation="Vertical" HorizontalAlignment="Right"
                 ValueChanged="BlurAmountSlider_ValueChanged" LargeChange="3" SmallChange="0.1" StepFrequency="0.1" TickFrequency="1"
                 VerticalAlignment="Top" Height="240" />
     </Grid>
