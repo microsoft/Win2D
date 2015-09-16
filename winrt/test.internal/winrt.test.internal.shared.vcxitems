@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="Globals">
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
@@ -27,6 +27,10 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DEllipseGeometry.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DRectangleGeometry.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DRoundedRectangleGeometry.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockPrintControl.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockPrintDocumentPackageTarget.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockPrintPreviewDxgiPackageTarget.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockPrintTaskOptions.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockStorageFileStatics.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockSuspendingEventArgs.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockVirtualSurfaceImageSource.h" />
@@ -119,6 +123,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)xaml\StubDispatcher.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasPrintDocumentUnitTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>

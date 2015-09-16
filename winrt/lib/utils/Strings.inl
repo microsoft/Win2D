@@ -13,6 +13,9 @@
 STRING(AutoFileFormatNotAllowed, L"The option CanvasFileFormat.Auto is not allowed when saving to a stream.")
 STRING(CanOnlyAddPathDataWhileInFigure, L"This operation is only allowed after a successful call to CanvasPathBuilder.BeginFigure.")
 STRING(CanvasDeviceGetDeviceWhenNotCreated, L"The control does not currently have a CanvasDevice associated with it. Ensure that resources are created from a CreateResources or Draw event handler.");
+STRING(CanvasPrintDocumentMustBeConstructedOnUIThread, L"CanvasPrintDocument must be constructed on a UI thread.");
+STRING(CanvasPrintEventArgsDpiCannotBeChangedAfterCreateDrawingSession, L"CanvasPrintEventArgs.Dpi cannot be set after the first call to CanvasPrintEventArgs.CreateDrawingSession.");
+STRING(CanvasPrintEventArgsCannotCreateDrawingSessionUntilPreviousOneClosed, L"The last drawing session returned by CanvasPrintEventArgs.CreateDrawingSession must be disposed before a new one can be created.");
 STRING(CommandListCannotBeDrawnToAfterItHasBeenUsed, L"CanvasCommandList.CreateDrawingSession cannot be called after the CanvasCommandList has been used as an image.")
 STRING(CreateDrawingSessionCalledBeforeRegionsInvalidated, L"CreateDrawingSession cannot be called before the RegionsInvalidated event has been raised.");
 STRING(DeviceExpectedToBeLost, L"This API was unexpectedly called when the Direct3D device is not lost.")
@@ -39,6 +42,7 @@ STRING(ResourceManagerUnknownType, L"Unsupported type. Win2D is not able to wrap
 STRING(ResourceManagerWrongDevice, L"Existing resource wrapper is associated with a different device.")
 STRING(ResourceManagerWrongDpi, L"Existing resource wrapper has a different DPI.")
 STRING(SetFilledRegionDeterminationAfterBeginFigure, L"This operation is not allowed after the first call to CanvasPathBuilder.BeginFigure.")
+STRING(SetPageCountCalledBeforePreviewing, L"CanvasPrintDocument.SetPageCount or CanvasPrintDocument.SetIntermediatePageCount cannot be called until the Paginate event has been raised.")
 STRING(TwoBeginFigures, L"A call to CanvasPathBuilder.BeginFigure occurred, when the figure was already begun.")
 STRING(UnrecognizedImageFileExtension, L"When saving a CanvasBitmap without specifying a CanvasBitmapFileFormat, the file name must include a recognized file extension such as '.jpeg' or '.png'.");
 STRING(WrongArrayLength, L"The array was expected to be of size %d; actual array was of size %d.")

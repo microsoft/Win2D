@@ -22,7 +22,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     public:
         static ComPtr<CanvasCommandList> CreateNew(
-            ICanvasResourceCreator* resourceCreator);
+            ICanvasDevice* device);
 
         CanvasCommandList(
             ICanvasDevice* device,

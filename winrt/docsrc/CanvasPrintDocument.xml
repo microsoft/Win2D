@@ -1,0 +1,106 @@
+<?xml version="1.0"?>
+<!--
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+Licensed under the MIT License. See LICENSE.txt in the project root for license information.
+-->
+
+<doc>
+  <assembly>
+    <name>Microsoft.Graphics.Canvas</name>
+  </assembly>
+  <members>
+    
+    <member name="T:Microsoft.Graphics.Canvas.Printing.CanvasPrintDocument" Experimental="true">
+      <summary></summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Printing.CanvasPrintDocument.#ctor(Microsoft.Graphics.Canvas.CanvasDevice)">
+      <summary>Initializes a new instance of the CanvasPrintDocument class.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Printing.CanvasPrintDocument.#ctor">
+      <summary>Initializes a new instance of the CanvasPrintDocument class.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Printing.CanvasPrintDocument.InvalidatePreview">
+      <summary></summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Printing.CanvasPrintDocument.SetPageCount(System.Int32)">
+      <summary></summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Printing.CanvasPrintDocument.SetIntermediatePageCount(System.Int32)">
+      <summary></summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Printing.CanvasPrintDocument.Dispose">
+      <summary>Releases all resources used by the CanvasPrintDocument.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Printing.CanvasPrintDocument.Device">
+      <summary></summary>
+    </member>
+    <member name="E:Microsoft.Graphics.Canvas.Printing.CanvasPrintDocument.Preview">
+      <summary></summary>
+    </member>
+    <member name="E:Microsoft.Graphics.Canvas.Printing.CanvasPrintDocument.Print">
+      <summary></summary>
+    </member>
+    <member name="E:Microsoft.Graphics.Canvas.Printing.CanvasPrintDocument.PrintTaskOptionsChanged">
+      <summary></summary>
+    </member>
+
+
+    <member name="T:Microsoft.Graphics.Canvas.Printing.CanvasPrintTaskOptionsChangedEventArgs" Experimental="true">
+      <summary></summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Printing.CanvasPrintTaskOptionsChangedEventArgs.GetDeferral">
+      <summary></summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Printing.CanvasPrintTaskOptionsChangedEventArgs.NewPreviewPageNumber">
+      <summary></summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Printing.CanvasPrintTaskOptionsChangedEventArgs.CurrentPreviewPageNumber">
+      <summary></summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Printing.CanvasPrintTaskOptionsChangedEventArgs.PrintTaskOptions">
+      <summary></summary>
+    </member>
+
+
+    <member name="T:Microsoft.Graphics.Canvas.Printing.CanvasPreviewEventArgs" Experimental="true">
+      <summary></summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Printing.CanvasPreviewEventArgs.GetDeferral">
+      <summary></summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Printing.CanvasPreviewEventArgs.DrawingSession">
+      <summary></summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Printing.CanvasPreviewEventArgs.PageNumber">
+      <summary></summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Printing.CanvasPreviewEventArgs.PrintTaskOptions">
+      <summary></summary>
+    </member>
+
+
+    <member name="T:Microsoft.Graphics.Canvas.Printing.CanvasPrintEventArgs" Experimental="true">
+      <summary></summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Printing.CanvasPrintEventArgs.GetDeferral">
+      <summary></summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Printing.CanvasPrintEventArgs.CreateDrawingSession">
+      <summary></summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Printing.CanvasPrintEventArgs.Dpi">
+      <summary></summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Printing.CanvasPrintEventArgs.PrintTaskOptions">
+      <summary></summary>
+    </member>
+
+      <member name="T:Microsoft.Graphics.Canvas.Printing.CanvasPrintDeferral" Experimental="true">
+      <summary></summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Printing.CanvasPrintDeferral.Complete">
+      <summary></summary>
+    </member>
+  </members>
+</doc>

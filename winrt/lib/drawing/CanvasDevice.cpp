@@ -1088,6 +1088,36 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return geometryRealization;
     }
 
+    ComPtr<ID2D1PrintControl> CanvasDevice::CreatePrintControl(
+        IPrintDocumentPackageTarget* target,
+        float dpi)
+    {
+        ComPtr<IWICImagingFactory> wicFactory;
+        ThrowIfFailed(
+            CoCreateInstance(
+            CLSID_WICImagingFactory,
+            nullptr,
+            CLSCTX_INPROC_SERVER,
+            IID_PPV_ARGS(&wicFactory)));
+
+        auto properties = D2D1_PRINT_CONTROL_PROPERTIES{
+            D2D1_PRINT_FONT_SUBSET_MODE_DEFAULT,
+            dpi,
+            D2D1_COLOR_SPACE_SRGB
+        };
+
+        auto& d2dDevice = GetResource();
+
+        ComPtr<ID2D1PrintControl> printControl;
+        ThrowIfFailed(d2dDevice->CreatePrintControl(
+            wicFactory.Get(),
+            target,
+            properties,
+            &printControl));
+
+        return printControl;
+    }
+
     DeviceContextLease CanvasDevice::GetResourceCreationDeviceContext()
     {
         return m_deviceContextPool.TakeLease();

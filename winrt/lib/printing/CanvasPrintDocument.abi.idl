@@ -1,0 +1,289 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+//
+// Licensed under the MIT License. See LICENSE.txt in the project root for license information.
+
+namespace Microsoft.Graphics.Canvas.Printing
+{
+    runtimeclass CanvasPrintDocument;
+    runtimeclass CanvasPrintTaskOptionsChangedEventArgs;
+    runtimeclass CanvasPreviewEventArgs;
+    runtimeclass CanvasPrintEventArgs;
+    runtimeclass CanvasPrintDeferral;
+
+    //
+    // Example:
+    //
+    // var printDocument = new CanvasPrintDocument();
+    //
+    // int pageCount = 10;
+    //
+    // printDocument.PrintTaskOptionsChanged += (sender, args) => {
+    //     sender.InvalidatePreview();
+    //     sender.SetPageCount(pageCount);
+    //     args.NewPreviewPageNumber = 2;
+    // };
+    //
+    // printDocument.Preview += (sender, args) => {
+    //     args.DrawingSession.DrawText(string.Format("Page: {0}", args.PageNumber), ...);
+    // };
+    //
+    // printDocument.Print += (sender, args) => {
+    //     for (int page = 1; page <= pageCount; ++page) {
+    //         using (var ds = args.CreateDrawingSession()) {
+    //             ds.DrawText(string.Format("Page: {0}", page), ...);
+    //         }
+    //     }
+    // };
+    //
+    
+
+    //
+    // runtimeclass: CanvasPrintDocument
+    //
+
+    [version(VERSION), uuid(A201AF1E-CE4A-401D-A719-2BF004D5C26A), exclusiveto(CanvasPrintDocument)]
+    interface ICanvasPrintDocumentFactory : IInspectable
+    {
+        HRESULT CreateWithDevice(
+            [in]          Microsoft.Graphics.Canvas.CanvasDevice* device,
+            [out, retval] CanvasPrintDocument** value);
+    }
+
+    [version(VERSION), uuid(0A99CDEE-BF11-49D0-AA34-3BA5C32C51A5), exclusiveto(CanvasPrintDocument)]
+    interface ICanvasPrintDocument : IInspectable
+        requires
+            Windows.Foundation.IClosable,
+            Microsoft.Graphics.Canvas.ICanvasResourceCreator,
+            Windows.Graphics.Printing.IPrintDocumentSource
+    {
+        //
+        // This is raised when the print task options have changed (or before
+        // the first call to Preview).
+        //
+        // If the options have changed in such a way that the current preview is
+        // invalid the app should call sender.InvalidatePreview().
+        //
+        // The app has a chance here to pick the first page that'll be shown in
+        // the preview.
+        //
+        // The Preview event will be raised after this to preview that page.
+        //
+        [eventadd] HRESULT PrintTaskOptionsChanged(
+            [in]          Windows.Foundation.TypedEventHandler<CanvasPrintDocument*, CanvasPrintTaskOptionsChangedEventArgs*>* value,
+            [out, retval] EventRegistrationToken* token);
+
+        [eventremove] HRESULT PrintTaskOptionsChanged([in] EventRegistrationToken token);
+
+        //
+        // This is raised when the print preview display wants to get a page
+        // preview.  (Name picked here to match CanvasControl.Draw)
+        //
+        [eventadd] HRESULT Preview(
+            [in]          Windows.Foundation.TypedEventHandler<CanvasPrintDocument*, CanvasPreviewEventArgs*>* value,
+            [out, retval] EventRegistrationToken* token);
+
+        [eventremove] HRESULT Preview([in] EventRegistrationToken token);
+
+        //
+        // This is raised when the user has clicked the "Print" button on the
+        // print dialog.
+        //
+        [eventadd] HRESULT Print(
+            [in]          Windows.Foundation.TypedEventHandler<CanvasPrintDocument*, CanvasPrintEventArgs*>* value,
+            [out, retval] EventRegistrationToken* token);
+
+        [eventremove] HRESULT Print([in] EventRegistrationToken token);
+
+        //
+        // Marks the preview as invalidated.  This may be called from anywhere,
+        // but most likely the PrintTaskOptionsChanged or Preview handlers.
+        //
+        HRESULT InvalidatePreview();
+
+        //
+        // This sets the final page count.  This may be called from anywhere,
+        // but most likely the PrintTaskOptionsChanged or Preview handlers.
+        //
+        // We use UINT32 (rather than INT32) so we match page numbers in
+        // existing WinRT APIS (PrintTaskOptions).
+        //
+        HRESULT SetPageCount([in] UINT32 count);
+
+        //
+        // This sets the intermediate page count (allows the app to continue
+        // pagination in the background while the print preview displays what it
+        // has paginated so far).
+        //
+        // Internally, SetPageCount and SetIntermediatePageCount call
+        // IPrintPreviewDxgiPackageTarget::SetJobPageCount with different values
+        // for PageCountType.  This is split into two methods because:
+        //
+        // - it avoids adding a new enum (or sharing a XAML enum)
+        //
+        // - simple scenarios would just involve calling SetPageCount
+        //
+        // We use UINT32 (rather than INT32) so we match page numbers in
+        // existing WinRT APIS (PrintTaskOptions).
+        //
+        HRESULT SetIntermediatePageCount([in] UINT32 count);
+    }
+
+    [version(VERSION), threading(both), marshaling_behavior(agile),
+     activatable(VERSION), activatable(ICanvasPrintDocumentFactory, VERSION)]
+    runtimeclass CanvasPrintDocument
+    {
+        [default] interface ICanvasPrintDocument;
+    }
+
+    
+    //
+    // runtimeclass: CanvasPrintTaskOptionsChangedEventArgs
+    //
+
+    [version(VERSION), uuid(F92089BA-6C99-4CAC-B28A-B5DCEC7A310D), exclusiveto(CanvasPrintTaskOptionsChangedEventArgs)]
+    interface ICanvasPrintTaskOptionsChangedEventArgs : IInspectable
+    {
+        //
+        // For the first preview this is set to 1.  When a preview is starting
+        // because print options have changed, this is the page number of the
+        // page that's currently being previewed.
+        //
+        // We use UINT32 (rather than INT32) so we match page numbers in
+        // existing WinRT APIS (PrintTaskOptions).
+        //
+        [propget] HRESULT CurrentPreviewPageNumber([out, retval] UINT32* value);
+
+        //
+        // This controls the first page that'll be displayed in the preview.  It
+        // defaults to 1.  An example use of this would be to ensure that the
+        // content that was visible on CurrentPreviewPageNumber is still visible
+        // with the new print options.
+        //
+        // We use UINT32 (rather than INT32) so we match page numbers in
+        // existing WinRT APIS (PrintTaskOptions).
+        //
+        [propput] HRESULT NewPreviewPageNumber([in] UINT32 value);
+        [propget] HRESULT NewPreviewPageNumber([out, retval] UINT32* value);
+
+        //
+        // An app can use this if it needs to extend calculation of
+        // NewPreviewPageNumber beyond the event handler.  This might be
+        // required if it needs to perform async IO.
+        //
+        HRESULT GetDeferral([out, retval] CanvasPrintDeferral** value);
+
+
+        [propget] HRESULT PrintTaskOptions([out, retval] Windows.Graphics.Printing.PrintTaskOptions** value);
+    }
+
+    
+    [version(VERSION), threading(both), marshaling_behavior(agile)]
+    runtimeclass CanvasPrintTaskOptionsChangedEventArgs
+    {
+        [default] interface ICanvasPrintTaskOptionsChangedEventArgs;
+    }
+
+
+    //
+    // runtimeclass: CanvasPreviewEventArgs
+    //
+
+    [version(VERSION), uuid(0A6A80A0-B07D-4DB2-BDEB-0368BB18C0F8), exclusiveto(CanvasPreviewEventArgs)]
+    interface ICanvasPreviewEventArgs : IInspectable
+    {
+        //
+        // This is page number of the page that is being previewed.  Page
+        // numbers are 1 based.
+        //
+        // We use UINT32 (rather than INT32) so we match page numbers in
+        // existing WinRT APIS (PrintTaskOptions).
+        //
+        [propget] HRESULT PageNumber([out, retval] UINT32* value);
+
+        [propget] HRESULT PrintTaskOptions([out, retval] Windows.Graphics.Printing.PrintTaskOptions** value);
+
+        //
+        // An app can use this if it wants to extend printing beyond the
+        // lifespan of this event handler.  An app might want to do this if it
+        // needs to perform async IO to load resources for printing.
+        //
+        HRESULT GetDeferral([out, retval] CanvasPrintDeferral** value);
+
+        //
+        // The app uses this drawing session to render the page.  Ultimately,
+        // this is drawing into a CanvasRenderTarget.  However, the DPI on the
+        // drawing session has been configured appropriately so that the size of
+        // the render target in DIPS matches the size of the target paper.
+        //
+        // The drawing session has been pre-cleared to White.
+        //
+        [propget] HRESULT DrawingSession([out, retval] Microsoft.Graphics.Canvas.CanvasDrawingSession** value);
+    }
+
+    [version(VERSION), threading(both), marshaling_behavior(agile)]
+    runtimeclass CanvasPreviewEventArgs
+    {
+        [default] interface ICanvasPreviewEventArgs;
+    }
+
+
+    //
+    // runtimeclass: CanvasPrintEventArgs
+    //
+
+    [version(VERSION), uuid(0C6148C4-0216-4561-A817-34C8942AAC8B), exclusiveto(CanvasPrintEventArgs)]
+    interface ICanvasPrintEventArgs : IInspectable
+    {
+        [propget] HRESULT PrintTaskOptions([out, retval] Windows.Graphics.Printing.PrintTaskOptions** value);
+
+        //
+        // The DPI property sets the raster DPI value that is passed to
+        // CreatePrintControl().  By default, this value is set to match the
+        // value DPI as reported by the PrintPageDescription for the first page.
+        //
+        // This value is locked in after the first call to
+        // CreateDrawingSession(), any attempt to change it after that will
+        // result in an error.
+        //
+        [propget] HRESULT Dpi([out, retval] float* value);
+        [propput] HRESULT Dpi([in] float value);
+
+        //
+        // An app can use this if it wants to extend printing beyond the
+        // lifespan of this event handler.  An app might want to do this if it
+        // needs to perform async IO to load resources for printing.
+        //
+        HRESULT GetDeferral([out, retval] CanvasPrintDeferral** value);
+
+        //
+        // Creates a drawing session for the next page.
+        //
+        // The previous drawing session must have been closed (or this call will
+        // fail).
+        //
+        HRESULT CreateDrawingSession([out, retval] Microsoft.Graphics.Canvas.CanvasDrawingSession** value);
+    }
+
+    [version(VERSION), threading(both), marshaling_behavior(agile)]
+    runtimeclass CanvasPrintEventArgs
+    {
+        [default] interface ICanvasPrintEventArgs;
+    }
+
+
+    //
+    // runtimeclass: CanvasPrintDeferral
+    //
+
+    [version(VERSION), uuid(08CA99A2-5801-4EA4-8687-896CBDA69A47), exclusiveto(CanvasPrintDeferral)]
+    interface ICanvasPrintDeferral : IInspectable
+    {
+        HRESULT Complete();
+    }
+
+    [version(VERSION), threading(both), marshaling_behavior(agile)]
+    runtimeclass CanvasPrintDeferral
+    {
+        [default] interface ICanvasPrintDeferral;
+    }
+}

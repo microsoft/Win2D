@@ -70,6 +70,11 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)brushes\CanvasRadialGradientBrush.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)brushes\CanvasSolidColorBrush.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)brushes\Gradients.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)printing\CanvasPreviewEventArgs.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)printing\CanvasPrintDocument.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)printing\CanvasPrintDocumentAdapter.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)printing\CanvasPrintEventArgs.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)printing\CanvasPrintTaskOptionsChangedEventArgs.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\CachedResourceReference.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\LockUtilities.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\TemporaryTransform.h" />
@@ -183,6 +188,9 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)brushes\CanvasRadialGradientBrush.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)brushes\CanvasSolidColorBrush.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)brushes\Gradients.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)printing\CanvasPrintDocument.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)printing\CanvasPrintDocumentAdapter.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)printing\CanvasPrintEventArgs.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)utils\ResourceManager.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)xaml\CanvasAnimatedControl.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)xaml\CanvasAnimatedControlAdapter.cpp" />
@@ -341,6 +349,7 @@
     <None Include="$(MSBuildThisFileDirectory)text\CanvasTextLayout.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)directx\WinRTDirect3D11.idl" />
     <None Include="$(MSBuildThisFileDirectory)directx\WinRTDirectXCommon.idl" />
+    <None Include="$(MSBuildThisFileDirectory)printing\CanvasPrintDocument.abi.idl" />
   </ItemGroup>
   <ItemGroup>
     <ProjectCapability Include="SourceItemsFromImports" />

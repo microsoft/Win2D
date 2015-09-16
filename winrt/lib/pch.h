@@ -46,6 +46,8 @@
 #include <DirectXMath.h>
 #include <wincodec.h>
 #include <shcore.h>
+#include <DocumentSource.h>
+#include <PrintPreview.h>
 
 #if WINVER > _WIN32_WINNT_WINBLUE
 #include <d2d1_3.h>

@@ -6,6 +6,7 @@ import "inspectable.idl";
 import "Windows.Foundation.idl";
 import "Windows.UI.idl";
 import "Windows.UI.Xaml.Media.Imaging.idl";
+import "Windows.Graphics.Printing.idl";
 
 #include <sdkddkver.h>
 
@@ -43,6 +44,7 @@ import "Windows.UI.Input.Inking.idl";
 #include "xaml\CanvasImageSource.abi.idl"
 #include "drawing\CanvasSwapChain.abi.idl"
 #include "images\CanvasCommandList.abi.idl"
+#include "printing\CanvasPrintDocument.abi.idl"
 #include "xaml\CanvasAnimatedControl.abi.idl"
 #include "xaml\CanvasControl.abi.idl"
 #include "xaml\CanvasSwapChainPanel.abi.idl"

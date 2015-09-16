@@ -31,6 +31,9 @@
     <Filter Include="utils">
       <UniqueIdentifier>{0fed6078-c1ee-40b5-9532-0265a9b17d0a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="printing">
+      <UniqueIdentifier>{007da80b-0c24-4f3a-a5be-1ec320c18646}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <MidlRT Include="$(MSBuildThisFileDirectory)Canvas.abi.idl" />
@@ -322,8 +325,17 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)utils\ResourceManager.cpp">
       <Filter>utils</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)printing\CanvasPrintDocument.cpp">
+      <Filter>printing</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)printing\CanvasPrintDocumentAdapter.cpp">
+      <Filter>printing</Filter>
+    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\EffectMakers.cpp">
       <Filter>effects\generated</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)printing\CanvasPrintEventArgs.cpp">
+      <Filter>printing</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -652,8 +664,23 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)xaml\ImageControlMixIn.h">
       <Filter>xaml</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)printing\CanvasPrintDocument.h">
+      <Filter>printing</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)printing\CanvasPrintDocumentAdapter.h">
+      <Filter>printing</Filter>
+    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\CachedResourceReference.h">
       <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)printing\CanvasPreviewEventArgs.h">
+      <Filter>printing</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)printing\CanvasPrintEventArgs.h">
+      <Filter>printing</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)printing\CanvasPrintTaskOptionsChangedEventArgs.h">
+      <Filter>printing</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -894,6 +921,9 @@
     </None>
     <None Include="$(MSBuildThisFileDirectory)xaml\CanvasVirtualControl.abi.idl">
       <Filter>xaml</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)printing\CanvasPrintDocument.abi.idl">
+      <Filter>printing</Filter>
     </None>
   </ItemGroup>
 </Project>

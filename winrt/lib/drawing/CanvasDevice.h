@@ -158,6 +158,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ID2D1StrokeStyle* strokeStyle,
             float flatteningTolerance) = 0;
 
+        virtual ComPtr<ID2D1PrintControl> CreatePrintControl(IPrintDocumentPackageTarget*, float dpi) = 0;
+
         virtual DeviceContextLease GetResourceCreationDeviceContext() = 0;
 
         virtual ComPtr<IDXGIOutput> GetPrimaryDisplayOutput() = 0;
@@ -325,6 +327,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             float strokeWidth,
             ID2D1StrokeStyle* strokeStyle,
             float flatteningTolerance) override;
+
+        virtual ComPtr<ID2D1PrintControl> CreatePrintControl(
+            IPrintDocumentPackageTarget*,
+            float dpi) override;
 
         virtual DeviceContextLease GetResourceCreationDeviceContext() override final;
 
