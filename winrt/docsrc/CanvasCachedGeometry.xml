@@ -66,6 +66,18 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       	Cached geometries are associated with the device of the geometry that was used to create them.
       	</p>
       	<p>
+      	While creating a cached geometry, if the source geometry extends 
+      	outside of [-524,287, 524,287] DIPs along any axis, then the 
+      	cached geometry may be clipped to those bounds. 
+      	This clipping will be visible even if the cached geometry is later 
+      	drawn scaled down to fit within the bounds. 
+      	</p>
+      	<p>
+      	To draw massive cached geometries with no clipping, ensure that the
+      	coordinate space of the source geometry fits within the above bounds,
+      	and use a scale transform on the drawing session to scale it up.
+      	</p>
+      	<p>
       	For more information about the Direct2D implementation of cached geometries used by Win2D, see 
       	<a href="https://msdn.microsoft.com/en-us/library/windows/desktop/dn363632%28v=vs.85%29.aspx">Geometry Realizations Overview</a>.
       	</p>
