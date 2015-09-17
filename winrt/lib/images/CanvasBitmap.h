@@ -472,17 +472,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         }
 
         // ICanvasImageInternal
-        ComPtr<ID2D1Image> GetD2DImage(ID2D1DeviceContext*) override
+        virtual ComPtr<ID2D1Image> GetD2DImage(ICanvasDevice*, ID2D1DeviceContext*, GetImageFlags, float /*targetDpi*/, float* realizedDpi) override
         {
+            if (realizedDpi)
+                *realizedDpi = m_dpi;
+
             return GetResource();
-        }
-
-        ICanvasImageInternal::RealizedEffectNode GetRealizedEffectNode(ID2D1DeviceContext* deviceContext, float targetDpi) override
-        {
-            UNREFERENCED_PARAMETER(deviceContext);
-            UNREFERENCED_PARAMETER(targetDpi);
-
-            return RealizedEffectNode{ GetResource(), m_dpi, 0 };
         }
 
         // ICanvasBitmapInternal

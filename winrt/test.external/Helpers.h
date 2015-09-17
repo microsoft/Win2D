@@ -155,6 +155,19 @@ namespace Microsoft
             }
 
             template<>
+            inline std::wstring ToString<float4>(float4 const& value)
+            {
+                wchar_t buf[256];
+                ThrowIfFailed(StringCchPrintf(
+                    buf,
+                    _countof(buf),
+                    L"Numerics.float4{%f,%f,%f,%f}",
+                    value.x, value.y, value.z, value.w));
+
+                return buf;
+            }
+
+            template<>
             inline std::wstring ToString<float3x2>(float3x2 const& value)
             {
                 wchar_t buf[256];

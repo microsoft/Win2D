@@ -28,13 +28,18 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ComPtr<TWrapper> m_wrapper;
 
     public:
-        // It is never required to call Set, but doing so at resource creation time if you already
+        IUnknown* GetResource() { return m_resource.Get(); }
+        TWrapper* GetWrapper()  { return m_wrapper.Get();  }
+
+
+        // It is not required to call Set, but doing so at resource creation time if you already
         // happen to know both the resource and wrapper will speed future GetOrCreateWrapper calls.
         void Set(TResource* resource, TWrapper* wrapper)
         {
-            m_resource = resource;
+            m_resource = resource ? As<IUnknown>(resource) : nullptr;
             m_wrapper = wrapper;
         }
+
 
         void Reset()
         {
@@ -42,7 +47,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             m_wrapper.Reset();
         }
 
-        ComPtr<TWrapper> GetOrCreateWrapper(ICanvasDevice* device, TResource* resource)
+
+        ComPtr<TWrapper> const& GetOrCreateWrapper(ICanvasDevice* device, TResource* resource)
         {
             auto resourceIdentity = resource ? As<IUnknown>(resource) : nullptr;
 
@@ -58,6 +64,20 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             }
 
             return m_wrapper;
+        }
+
+
+        // Updates the resource for an existing wrapper, after potential re-realization
+        // of a lazily bound type. Returns whether the resource had changed.
+        bool UpdateResource(TResource* resource)
+        {
+            auto resourceIdentity = As<IUnknown>(resource);
+
+            if (m_resource == resourceIdentity)
+                return false;
+
+            m_resource = resourceIdentity;
+            return true;
         }
     };
 }}}}

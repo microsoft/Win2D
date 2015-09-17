@@ -30,9 +30,9 @@ namespace NativeComponent
     public ref class VectorCreator sealed
     {
     public:
-        static IVector<int>^ CreateVectorOfInts(int initialSize, bool fixedSize)
+        static IVector<int>^ CreateVectorOfInts(bool fixedSize, int initialSize)
         {
-            auto v = Make<Vector<int>>(initialSize, fixedSize);
+            auto v = Make<Vector<int>>(fixedSize, initialSize);
             CheckMakeResult(v);
 
             return reinterpret_cast<IVector<int>^>(v.Get());

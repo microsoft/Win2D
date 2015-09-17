@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include "stubs/StubD2DEffect.h"
+
 namespace canvas
 {
     class SwitchableTestBrushFixture
@@ -15,6 +17,8 @@ namespace canvas
         ComPtr<CanvasImageBrush> m_canvasImageBrush;
         ComPtr<ICanvasBrushInternal> m_canvasBrushInternal;
         ComPtr<MockCanvasDevice> m_canvasDevice;
+        ComPtr<StubD2DDevice> m_d2dDevice;
+        ComPtr<MockD2DDeviceContext> m_d2dDeviceContext;
 
         D2D1_MATRIX_3X2_F m_transform;
 
@@ -25,26 +29,6 @@ namespace canvas
             m_bitmapBrush = Make<MockD2DBitmapBrush>();
             m_imageBrush = Make<MockD2DImageBrush>();
 
-            m_canvasDevice->MockGetD2DImage =
-                [&](ICanvasImage* canvasImage) -> ComPtr<ID2D1Image>
-                {
-                    ComPtr<IGraphicsEffect> effect;
-                    ComPtr<ICanvasBitmap> bitmap;
-                    if (SUCCEEDED(canvasImage->QueryInterface(IID_PPV_ARGS(&effect))))
-                    {
-                        return Make<MockD2DEffect>();
-                    }
-                    else if (SUCCEEDED(canvasImage->QueryInterface(IID_PPV_ARGS(&bitmap))))
-                    {
-                        return Make<MockD2DBitmap>();
-                    }
-                    else
-                    {
-                        Assert::Fail(); // command list: notimpl
-                        return nullptr;
-                    }
-                };
-            
             m_canvasDevice->MockCreateBitmapBrush =
                 [&](ID2D1Bitmap1* bitmap)
                 {
@@ -117,6 +101,23 @@ namespace canvas
 
             m_canvasImageBrush = Make<CanvasImageBrush>(m_canvasDevice.Get(), canvasBitmap.Get());
             ThrowIfFailed(m_canvasImageBrush.As(&m_canvasBrushInternal));
+
+            m_d2dDevice = Make<StubD2DDevice>();
+            m_canvasDevice->MockGetD2DDevice = [&] { return m_d2dDevice; };
+
+            m_d2dDeviceContext = Make<StubD2DDeviceContextWithGetFactory>();
+
+            m_canvasDevice->GetResourceCreationDeviceContextMethod.AllowAnyCall(
+                [&]
+                {
+                    return DeviceContextLease(As<ID2D1DeviceContext1>(m_d2dDeviceContext));
+                });
+
+            m_d2dDeviceContext->CreateEffectMethod.AllowAnyCall(
+                [](IID const& iid, ID2D1Effect** effect)
+                {
+                    return Make<StubD2DEffect>(iid).CopyTo(effect);
+                });
         }
     };
 }

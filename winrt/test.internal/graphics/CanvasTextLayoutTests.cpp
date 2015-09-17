@@ -84,26 +84,6 @@ namespace canvas
                         return imageBrush;
                     };                
 
-                Device->MockGetD2DImage =
-                    [&](ICanvasImage* canvasImage) -> ComPtr<ID2D1Image>
-                    {
-                        ComPtr<IGraphicsEffect> effect;
-                        ComPtr<ICanvasBitmap> bitmap;
-                        if (SUCCEEDED(canvasImage->QueryInterface(IID_PPV_ARGS(&effect))))
-                        {
-                            return Make<MockD2DEffect>();
-                        }
-                        else if (SUCCEEDED(canvasImage->QueryInterface(IID_PPV_ARGS(&bitmap))))
-                        {
-                            return Make<MockD2DBitmap>();
-                        }
-                        else
-                        {
-                            Assert::Fail(); // command list: notimpl
-                            return nullptr;
-                        }
-                    };
-                
                 DeviceContext->CreateEffectMethod.AllowAnyCall(
                     [=](IID const& effectId, ID2D1Effect** effect)
                     {
@@ -1666,7 +1646,7 @@ namespace canvas
         {
             Fixture f;
 
-            auto testBitmap = CreateStubCanvasBitmap(dpi);
+            auto testBitmap = CreateStubCanvasBitmap(dpi, f.Device.Get());
             auto testEffect = Make<TestEffect>(CLSID_D2D1GaussianBlur, 0, 1, true);
             ThrowIfFailed(testEffect->put_Source(testBitmap.Get()));
 

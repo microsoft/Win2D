@@ -25,6 +25,7 @@ STRING(DidNotPopLayer, L"After calling CanvasDrawingSession.CreateLayer, you mus
 STRING(DrawImageMinBlendNotSupported, L"This DrawImage overload is not valid when CanvasDrawingSession.Blend is set to CanvasBlend.Min.")
 STRING(EffectNoSources, L"Effect Sources collection is empty.")
 STRING(EffectNullSource, L"Effect source #%d is null.")
+STRING(EffectWrongDevice, L"Effect source #%d is associated with a different device.")
 STRING(EffectWrongSourceType, L"Effect source #%d is an unsupported type. To draw an effect using Win2D, all its sources must be Win2D ICanvasImage objects.")
 STRING(EndFigureWithoutBeginFigure, L"A call to CanvasPathBuilder.EndFigure occurred without a previous call to CanvasPathBuilder.BeginFigure.")
 STRING(ExpectedPositiveNonzero, L"A positive, non-zero number was expected for this method.")

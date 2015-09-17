@@ -98,8 +98,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         void SwitchToImageBrush(ID2D1Image* image);
         void SwitchToBitmapBrush(ID2D1Bitmap1* bitmap);
         void TrySwitchFromImageBrushToBitmapBrush();
-        ComPtr<ID2D1Image> GetD2DImage() const;
-        ComPtr<ICanvasImage> GetSourceEffectNeedingDpiCompensation();
+        void RealizeSourceEffect(ID2D1DeviceContext* deviceContext, GetImageFlags flags, float dpi);
     };
 
 }}}}}

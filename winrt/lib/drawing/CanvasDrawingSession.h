@@ -1370,6 +1370,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         void DrawInkImpl(IIterable<InkStroke*>* inkStrokeCollection, bool highContrast);
 #endif
 
+        ComPtr<ICanvasDevice> const& GetDevice();
+
         static void InitializeDefaultState(ID2D1DeviceContext1* deviceContext);
     };
 

@@ -439,7 +439,7 @@ TEST_CLASS(VectorTests)
 
     TEST_METHOD_EX(VectorFixedSizeTest)
     {
-        auto v = Make<Vector<int>>(3, true);
+        auto v = Make<Vector<int>>(true, 3);
 
         Assert::IsTrue(v->IsFixedSize());
         

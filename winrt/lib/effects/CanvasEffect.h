@@ -14,6 +14,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     using namespace ::collections;
 
 
+    // Metadata created by codegen, used to implement IGraphicsEffectD2D1Interop::GetNamedPropertyMapping.
     struct EffectPropertyMapping
     {
         LPCWSTR Name;
@@ -42,27 +43,73 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                 CloakedIid<ICanvasResourceWrapperNative>>>
         , public ResourceWrapper<ID2D1Effect, CanvasEffect, IGraphicsEffect>
     {
-        // Unlike other objects, a null ID2D1Effect does not necessarily indicate
-        // that the object was closed.
+        // Unlike other objects, a null ID2D1Effect does not necessarily indicate the object was closed.
         bool m_closed; 
+        bool m_insideGetImage;
 
         IID m_effectId;
-
-        std::vector<ComPtr<IPropertyValue>> m_properties;
-
-        ComPtr<Vector<IGraphicsEffectSource*>> m_sources;
+        WinString m_name;
 
         ComPtr<IPropertyValueStatics> m_propertyValueFactory;
 
-        ComPtr<IUnknown> m_previousDeviceIdentity;
-        std::vector<uint64_t> m_previousSourceRealizationIds;
-        uint64_t m_realizationId;
-        
-        std::vector<ComPtr<ID2D1Effect>> m_dpiCompensators;
+        // What device are we currently realized on?
+        CachedResourceReference<ID2D1Device, ICanvasDevice> m_realizationDevice;
 
-        bool m_insideGetImage;
+        // Effect property values (only used when the effect is not realized).
+        std::vector<ComPtr<IPropertyValue>> m_properties;
 
-        WinString m_name;
+
+        // State tracking the effect source images. This data is authoritative when
+        // the effect is not realized - otherwise just a cache to speed reverse lookups.
+        //
+        // For realized effects, CachedResourceReference tracks both the ID2D1Image
+        // resource and its IGraphicsEffectSource wrapper. For unrealized effects,
+        // the resource is null and only the wrapper part is used.
+
+        struct SourceReference : public CachedResourceReference<ID2D1Image, IGraphicsEffectSource>
+        {
+            SourceReference()
+            { }
+
+            SourceReference(IGraphicsEffectSource* source)
+            {
+                Set(nullptr, source);
+            }
+
+            ComPtr<ID2D1Effect> DpiCompensator;
+        };
+
+        std::vector<SourceReference> m_sources;
+
+
+        // Optionally expose a view of our effect sources as an IVector<> collection.
+        template<typename T>
+        struct SourcesVectorTraits : public collections::ElementTraits<T>
+        {
+            typedef CanvasEffect* InternalVectorType;
+
+            static unsigned GetSize(CanvasEffect* effect)                       { return EnsureNotClosed(effect)->GetSourceCount(); };
+            static ElementType GetAt(CanvasEffect* effect, unsigned index)      { return EnsureNotClosed(effect)->GetSource(index); }
+            static void SetAt(CanvasEffect* effect, unsigned index, T item)     { EnsureNotClosed(effect)->SetSource(index, item); }
+            static void InsertAt(CanvasEffect* effect, unsigned index, T item)  { EnsureNotClosed(effect)->InsertSource(index, item); }
+            static void RemoveAt(CanvasEffect* effect, unsigned index)          { EnsureNotClosed(effect)->RemoveSource(index); }
+            static void Append(CanvasEffect* effect, T item)                    { EnsureNotClosed(effect)->AppendSource(item); }
+            static void Clear(CanvasEffect* effect)                             { EnsureNotClosed(effect)->ClearSources(); }
+
+        private:
+            static CanvasEffect* EnsureNotClosed(CanvasEffect* effect)
+            {
+                if (!effect)
+                    ThrowHR(RO_E_CLOSED);
+
+                return effect;
+            }
+        };
+
+        typedef Vector<IGraphicsEffectSource*, SourcesVectorTraits> SourcesVector;
+
+        ComPtr<SourcesVector> m_sourcesVector;
+
 
         // Generated table of effect factory functions, used by interop to create strongly
         // typed wrapper classes. m_effectMakers is terminated by a null MakeEffectFunction.
@@ -70,15 +117,16 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         static std::pair<IID, MakeEffectFunction> m_effectMakers[];
 
+
     protected:
         CanvasEffect(IID const& m_effectId, unsigned int propertiesSize, unsigned int sourcesSize, bool isSourcesSizeFixed, ICanvasDevice* device, ID2D1Effect* effect, IInspectable* outerInspectable);
 
-        virtual ~CanvasEffect() = default;
-
-        ComPtr<Vector<IGraphicsEffectSource*>> const& Sources() { return m_sources; }
+        virtual ~CanvasEffect();
 
         virtual EffectPropertyMappingTable GetPropertyMapping()          { return EffectPropertyMappingTable{ nullptr, 0 }; }
         virtual EffectPropertyMappingTable GetPropertyMappingHandCoded() { return EffectPropertyMappingTable{ nullptr, 0 }; }
+
+        ComPtr<SourcesVector> const& Sources() { return m_sourcesVector; }
 
     public:
         // Used by ResourceManager::GetOrCreate.
@@ -109,12 +157,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         IFACEMETHOD(GetNamedPropertyMapping)(LPCWSTR name, UINT* index, GRAPHICS_EFFECT_PROPERTY_MAPPING* mapping) override;
 
         //
-        // Not part of IGraphicsEffectD2D1Interop, but same semantics as if it was a peer to GetSource.
-        //
-
-        STDMETHOD(SetSource)(UINT index, IGraphicsEffectSource* source);
-
-        //
         // ICanvasImage
         //
 
@@ -131,8 +173,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         // ICanvasImageInternal
         //
 
-        ComPtr<ID2D1Image> GetD2DImage(ID2D1DeviceContext* deviceContext) override;
-        RealizedEffectNode GetRealizedEffectNode(ID2D1DeviceContext* deviceContext, float targetDpi) override;
+        virtual ComPtr<ID2D1Image> GetD2DImage(ICanvasDevice* device, ID2D1DeviceContext* deviceContext, GetImageFlags flags, float targetDpi, float* realizedDpi = nullptr) override;
 
         //
         // ICanvasResourceWrapperNative
@@ -198,9 +239,23 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         struct ConvertAlphaMode { };
 
 
+        // Methods for manipulating the collection of source images, used by SourcesVector::Traits.
+        unsigned int GetSourceCount();
+        ComPtr<IGraphicsEffectSource> GetSource(unsigned int index);
+        void SetSource(unsigned int index, IGraphicsEffectSource* source);
+        void InsertSource(unsigned int index, IGraphicsEffectSource* source);
+        void RemoveSource(unsigned int index);
+        void AppendSource(IGraphicsEffectSource* source);
+        void ClearSources();
+
+
     private:
-        void SetD2DInputs(ID2D1DeviceContext* deviceContext, float targetDpi, bool wasRecreated);
-        void InitializeInputsFromD2D(ICanvasDevice* device);
+        ComPtr<ID2D1Effect> CreateD2DEffect(ID2D1DeviceContext* deviceContext, IID const& effectId);
+        bool ApplyDpiCompensation(unsigned int index, ComPtr<ID2D1Image>& inputImage, float inputDpi, GetImageFlags flags, float targetDpi, ID2D1DeviceContext* deviceContext);
+        void RefreshInputs(GetImageFlags flags, float targetDpi, ID2D1DeviceContext* deviceContext);
+        
+        bool SetD2DInput(ID2D1Effect* d2dEffect, unsigned int index, IGraphicsEffectSource* source, GetImageFlags flags, float targetDpi = 0, ID2D1DeviceContext* deviceContext = nullptr);
+        ComPtr<IGraphicsEffectSource> GetD2DInput(ID2D1Effect* d2dEffect, unsigned int index);
 
         void SetProperty(unsigned int index, IPropertyValue* propertyValue);
         void SetD2DProperty(ID2D1Effect* d2dEffect, unsigned int index, IPropertyValue* propertyValue);
@@ -208,8 +263,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         ComPtr<IPropertyValue> GetProperty(unsigned int index);
         ComPtr<IPropertyValue> GetD2DProperty(ID2D1Effect* d2dEffect, unsigned int index);
 
-        void Realize(ID2D1DeviceContext* deviceContext);
-        void Unrealize();
+        bool Realize(GetImageFlags flags, float targetDpi, ID2D1DeviceContext* deviceContext);
+        void Unrealize(unsigned int skipSourceIndex = UINT_MAX, bool skipAllSources = false);
 
         void ThrowIfClosed();
 
@@ -534,7 +589,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                                                                                         \
         IFACEMETHODIMP CLASS::put_##SOURCE_NAME(_In_ IGraphicsEffectSource* source)     \
         {                                                                               \
-            return SetSource(SOURCE_INDEX, source);                                     \
+            return ExceptionBoundary([&]                                                \
+            {                                                                           \
+                SetSource(SOURCE_INDEX, source);                                        \
+            });                                                                         \
         }
 
 

@@ -78,8 +78,8 @@ namespace test.managed
                 Assert.AreEqual(sourceProperties[i].GetValue(effect), initialSourceImage);
             }
 
-            var testValue1 = new GaussianBlurEffect();
-            var testValue2 = new ShadowEffect();
+            var testValue1 = new GaussianBlurEffect() { Source = new ColorSourceEffect() };
+            var testValue2 = new ShadowEffect() { Source = new ColorSourceEffect() };
 
             var whichIndexIsProperty = new List<int>();
 
@@ -1117,6 +1117,7 @@ namespace test.managed
 
         class NotACanvasImage : IGraphicsEffectSource { }
 
+
         void VerifyExceptionMessage(string expected, string sourceMessage)
         {
             // Exception messages contain something like 
@@ -1129,6 +1130,7 @@ namespace test.managed
             string exceptionMessage = sourceMessage.Substring(delimiterPosition + delimiterString.Length);
             Assert.AreEqual(expected, exceptionMessage);
         }
+
 
         [TestMethod]
         public void EffectExceptionMessages()
@@ -1150,6 +1152,19 @@ namespace test.managed
                     VerifyExceptionMessage("Effect source #0 is null.", e.Message);
                 }
 
+                // Null source (tree 2 deep).
+                effect.Source = new GaussianBlurEffect();
+
+                try
+                {
+                    drawingSession.DrawImage(effect);
+                    Assert.Fail("should throw");
+                }
+                catch (ArgumentException e)
+                {
+                    VerifyExceptionMessage("Effect source #0 is null.", e.Message);
+                }
+
                 // Invalid source type.
                 effect.Source = new NotACanvasImage();
 
@@ -1161,6 +1176,71 @@ namespace test.managed
                 catch (InvalidCastException e)
                 {
                     VerifyExceptionMessage("Effect source #0 is an unsupported type. To draw an effect using Win2D, all its sources must be Win2D ICanvasImage objects.", e.Message);
+                }
+
+                // Invalid source type (tree 2 deep).
+                effect.Source = new GaussianBlurEffect { Source = new NotACanvasImage() };
+
+                try
+                {
+                    drawingSession.DrawImage(effect);
+                    Assert.Fail("should throw");
+                }
+                catch (InvalidCastException e)
+                {
+                    VerifyExceptionMessage("Effect source #0 is an unsupported type. To draw an effect using Win2D, all its sources must be Win2D ICanvasImage objects.", e.Message);
+                }
+
+                // But I can set invalid source types as long as I don't draw with them,
+                // even when the effect is previously realized.
+                effect.Source = new ColorSourceEffect();
+                drawingSession.DrawImage(effect);
+
+                effect.Source = new NotACanvasImage();  // no exception
+
+                effect.Source = new ColorSourceEffect();
+                drawingSession.DrawImage(effect);
+
+                effect.Source = new GaussianBlurEffect { Source = new NotACanvasImage() };  // no exception
+            }
+        }
+
+
+        [TestMethod]
+        public void EffectDrawFailsWhenSourceIsBitmapOnWrongDevice()
+        {
+            var effect = new GaussianBlurEffect();
+
+            using (var device = new CanvasDevice())
+            using (var renderTarget = new CanvasRenderTarget(device, 1, 1, 96))
+            using (var drawingSession = renderTarget.CreateDrawingSession())
+            using (var otherDevice = new CanvasDevice())
+            using (var bitmapOnOtherDevice = new CanvasRenderTarget(otherDevice, 1, 1, 96))
+            {
+                // Source bitmap is on the wrong device.
+                effect.Source = bitmapOnOtherDevice;
+
+                try
+                {
+                    drawingSession.DrawImage(effect);
+                    Assert.Fail("should throw");
+                }
+                catch (ArgumentException e)
+                {
+                    VerifyExceptionMessage("Effect source #0 is associated with a different device.", e.Message);
+                }
+
+                // Source is another effect, whose source is a bitmap on the wrong device.
+                effect.Source = new GaussianBlurEffect { Source = bitmapOnOtherDevice };
+
+                try
+                {
+                    drawingSession.DrawImage(effect);
+                    Assert.Fail("should throw");
+                }
+                catch (ArgumentException e)
+                {
+                    VerifyExceptionMessage("Effect source #0 is associated with a different device.", e.Message);
                 }
             }
         }

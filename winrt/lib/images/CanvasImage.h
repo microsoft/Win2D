@@ -9,40 +9,53 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     using namespace ::Microsoft::WRL;
     using namespace ABI::Windows::Foundation;
 
+
+    // Options for fine-tuning the behavior of ICanvasImageInternal::GetD2DImage.
+    enum class GetImageFlags
+    {
+        None                        = 0,
+        ReadDpiFromDeviceContext    = 1,    // Ignore the targetDpi parameter - read DPI from deviceContext instead
+        AlwaysInsertDpiCompensation = 2,    // Ignore the targetDpi parameter - always insert DPI compensation
+        NeverInsertDpiCompensation  = 4,    // Ignore the targetDpi parameter - never insert DPI compensation
+        MinimalRealization          = 8,    // Do the bare minimum to get back an ID2D1Image - no validation or recursive realization
+        AllowNullEffectInputs       = 16,   // Allow partially configured effect graphs where some inputs are null
+        UnrealizeOnFailure          = 32,   // If an input is invalid, unrealize the effect and return null rather than throwing
+    };
+
+    DEFINE_ENUM_FLAG_OPERATORS(GetImageFlags)
+
+
     [uuid(2F434224-053C-4978-87C4-CFAAFA2F4FAC)]
     class ICanvasImageInternal : public IUnknown
     {
     public:
-        virtual ComPtr<ID2D1Image> GetD2DImage(ID2D1DeviceContext* deviceContext) = 0;
-      
-        // GetRealizedEffectNode is a fancier version of GetD2DImage, which propagates the
-        // extra information needed to realize an effect graph where input nodes may be
-        // either bitmaps or other effects.
+        // For bitmaps and command lists, GetD2DImage is a trivial getter.
+        // For effects it triggers on-demand realization, which requires extra information.
+        //
+        // The device parameter is required, while deviceContext is optional (but recommended)
+        // except when the ReadDpiFromDeviceContext flag is specified. This is because not all
+        // callers of GetD2DImage have easy access to a context. It is always possible to get a
+        // resource creation context from the device, but the context is only actually necessary
+        // if a new effect realization needs to be created, so it is more efficient to have the
+        // implementation do this lookup only if/when it turns out to be needed.
         //
         // targetDpi passes in the DPI of the target device context. This is used to
-        // determine when a D2D1DpiCompensation effect needs to be inserted. If zero,
-        // DPI has already been handled and no further compensation is required.
+        // determine when a D2D1DpiCompensation effect needs to be inserted. Behavior of
+        // this parameter can be overridden by the flag values ReadDpiFromDeviceContext,
+        // AlwaysInsertDpiCompensation, or NeverInsertDpiCompensation.
         //
-        // result.Dpi returns the DPI of a source bitmap, or zero if the image does not
-        // have a fixed DPI. A D2D1DpiCompensation effect will be inserted whenever
-        // targetDpi and imageDpi are different and both non-zero.
+        // realizedDpi returns the DPI of a source bitmap, or zero if the image does not
+        // have a fixed DPI. A D2D1DpiCompensation effect will be inserted if targetDpi
+        // and realizedDpi are different (flags permitting).
 
-        // result.RealizationId is used to efficiently detect when the ID2D1Image returned by an
-        // ICanvasImage has changed. Effects are virtualized and may need to re-realize their
-        // underlying D2D objects for various reasons. To avoid having to hang on to COM
-        // interface pointers (which introduces lifespan complexities) we use a simple integer
-        // ID to detect these cases. The contract is that whenever an ICanvasImage implementation 
-        // changes its ID2D1Image, it must also report a new realizationId (eg. by incrementing it).
-
-        struct RealizedEffectNode
-        {
-            ComPtr<ID2D1Image> Image;
-            float Dpi;
-            uint64_t RealizationId;
-        };
-
-        virtual RealizedEffectNode GetRealizedEffectNode(ID2D1DeviceContext* deviceContext, float targetDpi) = 0;
+        virtual ComPtr<ID2D1Image> GetD2DImage(
+            ICanvasDevice* device,
+            ID2D1DeviceContext* deviceContext,
+            GetImageFlags flags = GetImageFlags::ReadDpiFromDeviceContext,
+            float targetDpi = 0,
+            float* realizedDpi = nullptr) = 0;
     };
+
 
     HRESULT GetImageBoundsImpl(
         ICanvasImageInternal* imageInternal,

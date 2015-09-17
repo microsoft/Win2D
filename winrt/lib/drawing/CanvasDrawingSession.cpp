@@ -383,6 +383,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     class DrawImageWorker
     {
+        ICanvasDevice* m_canvasDevice;
         ID2D1DeviceContext1* m_deviceContext;
         Vector2* m_offset;
         Rect* m_destinationRect;
@@ -395,8 +396,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ComPtr<ID2D1Image> m_borderEffectOutput;
 
     public:
-        DrawImageWorker(ID2D1DeviceContext1* deviceContext, Vector2* offset, Rect* destinationRect, Rect* sourceRect, float opacity, CanvasImageInterpolation interpolation)
-            : m_deviceContext(deviceContext)
+        DrawImageWorker(ICanvasDevice* canvasDevice, ID2D1DeviceContext1* deviceContext, Vector2* offset, Rect* destinationRect, Rect* sourceRect, float opacity, CanvasImageInterpolation interpolation)
+            : m_canvasDevice(canvasDevice)
+            , m_deviceContext(deviceContext)
             , m_offset(offset)
             , m_destinationRect(destinationRect)
             , m_sourceRect(sourceRect)
@@ -430,7 +432,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 // If DrawBitmap cannot handle this request, we must use the DrawImage slow path.
 
                 auto internalImage = As<ICanvasImageInternal>(image);
-                auto d2dImage = internalImage->GetD2DImage(m_deviceContext);
+                auto d2dImage = internalImage->GetD2DImage(m_canvasDevice, m_deviceContext);
 
                 auto d2dInterpolationMode = static_cast<D2D1_INTERPOLATION_MODE>(m_interpolation);
                 auto d2dCompositeMode = composite ? static_cast<D2D1_COMPOSITE_MODE>(*composite)
@@ -692,7 +694,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             auto& deviceContext = GetResource();
             CheckInPointer(image);
 
-            DrawImageWorker(deviceContext.Get(), offset, destinationRect, sourceRect, opacity, interpolation).DrawImage(image, composite);
+            DrawImageWorker(GetDevice().Get(), deviceContext.Get(), offset, destinationRect, sourceRect, opacity, interpolation).DrawImage(image, composite);
         });
 
     }
@@ -711,7 +713,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             auto& deviceContext = GetResource();
             CheckInPointer(bitmap);
 
-            DrawImageWorker(deviceContext.Get(), offset, destinationRect, sourceRect, opacity, interpolation).DrawBitmap(bitmap, perspective);
+            DrawImageWorker(GetDevice().Get(), deviceContext.Get(), offset, destinationRect, sourceRect, opacity, interpolation).DrawBitmap(bitmap, perspective);
         });
     }
 
@@ -3501,21 +3503,23 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             {
                 CheckInPointer(value);
 
-                if (!m_owner)
-                {
-                    auto& deviceContext = GetResource();
-
-                    ComPtr<ID2D1Device> d2dDeviceBase;
-                    deviceContext->GetDevice(&d2dDeviceBase);
-
-                    ComPtr<ID2D1Device1> d2dDevice;
-                    ThrowIfFailed(d2dDeviceBase.As(&d2dDevice));
-
-                    m_owner = ResourceManager::GetOrCreate<ICanvasDevice>(d2dDevice.Get());
-                }
-
-                ThrowIfFailed(m_owner.CopyTo(value));
+                ThrowIfFailed(GetDevice().CopyTo(value));
             });
+    }
+
+    ComPtr<ICanvasDevice> const& CanvasDrawingSession::GetDevice()
+    {
+        if (!m_owner)
+        {
+            auto& deviceContext = GetResource();
+
+            ComPtr<ID2D1Device> d2dDevice;
+            deviceContext->GetDevice(&d2dDevice);
+
+            m_owner = ResourceManager::GetOrCreate<ICanvasDevice>(d2dDevice.Get());
+        }
+
+        return m_owner;
     }
 
     IFACEMETHODIMP CanvasDrawingSession::get_Dpi(float* dpi)

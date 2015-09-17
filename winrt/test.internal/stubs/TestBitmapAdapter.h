@@ -58,9 +58,9 @@ public:
 };
 
 
-inline ComPtr<CanvasBitmap> CreateStubCanvasBitmap(float dpi = DEFAULT_DPI)
+inline ComPtr<CanvasBitmap> CreateStubCanvasBitmap(float dpi = DEFAULT_DPI, ICanvasDevice* device = nullptr)
 {
-    return Make<CanvasBitmap>(nullptr, Make<StubD2DBitmap>(D2D1_BITMAP_OPTIONS_NONE, dpi).Get());
+    return Make<CanvasBitmap>(device, Make<StubD2DBitmap>(D2D1_BITMAP_OPTIONS_NONE, dpi).Get());
 }
 
 

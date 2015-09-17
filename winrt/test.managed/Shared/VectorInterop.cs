@@ -13,7 +13,7 @@ namespace test.managed
         [TestMethod]
         public void UseVectorFromManagedCode()
         {
-            var v = NativeComponent.VectorCreator.CreateVectorOfInts(0, false);
+            var v = NativeComponent.VectorCreator.CreateVectorOfInts(false, 0);
 
             Assert.AreEqual(0, v.Count);
 
@@ -101,7 +101,7 @@ namespace test.managed
         [TestMethod]
         public void UseFixedSizeVectorFromManagedCode()
         {
-            var v = NativeComponent.VectorCreator.CreateVectorOfInts(2, true);
+            var v = NativeComponent.VectorCreator.CreateVectorOfInts(true, 2);
 
             // Collection should start out the size we specified, and initialized to zero.
             Assert.AreEqual(2, v.Count);

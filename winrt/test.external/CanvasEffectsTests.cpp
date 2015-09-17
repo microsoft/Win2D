@@ -281,16 +281,352 @@ TEST_CLASS(CanvasEffectsTests)
         Assert::AreEqual(E_INVALIDARG, blurInterop->GetNamedPropertyMapping(L"BlurAmount", &index, nullptr));
     }
 
+    TEST_METHOD(CanvasEffect_WhenClosed_AccessingSourcesCollectionThrows)
+    {
+        auto effect = ref new CompositeEffect();
+        auto sources = effect->Sources;
+
+        delete effect;
+
+        EnsureCollectionAccessorsThrowObjectDisposed(sources);
+    }
+
+    TEST_METHOD(CanvasEffect_WhenReleased_AccessingSourcesCollectionThrows)
+    {
+        auto effect = ref new CompositeEffect();
+        auto sources = effect->Sources;
+
+        effect = nullptr;
+
+        EnsureCollectionAccessorsThrowObjectDisposed(sources);
+    }
+
+    static void EnsureCollectionAccessorsThrowObjectDisposed(IVector<IGraphicsEffectSource^>^ sources)
+    {
+        Assert::ExpectException<Platform::ObjectDisposedException^>([&]
+        {
+            sources->Size;
+        });
+
+        Assert::ExpectException<Platform::ObjectDisposedException^>([&]
+        {
+            sources->GetAt(0);
+        });
+
+        Assert::ExpectException<Platform::ObjectDisposedException^>([&]
+        {
+            sources->SetAt(0, nullptr);
+        });
+
+        Assert::ExpectException<Platform::ObjectDisposedException^>([&]
+        {
+            sources->InsertAt(0, nullptr);
+        });
+
+        Assert::ExpectException<Platform::ObjectDisposedException^>([&]
+        {
+            sources->RemoveAt(0);
+        });
+
+        Assert::ExpectException<Platform::ObjectDisposedException^>([&]
+        {
+            sources->Append(nullptr);
+        });
+
+        Assert::ExpectException<Platform::ObjectDisposedException^>([&]
+        {
+            sources->Clear();
+        });
+    }
+
+    TEST_METHOD(CanvasEffect_SourcesCollection_GetAndSet)
+    {
+        auto device = ref new CanvasDevice();
+        auto effect = ref new CompositeEffect();
+
+        auto bitmap1 = ref new CanvasRenderTarget(device, 1, 1, DEFAULT_DPI);
+        auto bitmap2 = ref new CanvasRenderTarget(device, 1, 1, DEFAULT_DPI);
+        auto bitmap3 = ref new CanvasRenderTarget(device, 1, 1, DEFAULT_DPI);
+
+        effect->Sources->Append(bitmap1);
+        effect->Sources->Append(bitmap2);
+
+        // Test using an unrealized effect.
+        Assert::AreEqual(2u, effect->Sources->Size);
+        Assert::AreEqual<IGraphicsEffectSource>(bitmap1, effect->Sources->GetAt(0));
+        Assert::AreEqual<IGraphicsEffectSource>(bitmap2, effect->Sources->GetAt(1));
+
+        effect->Sources->SetAt(0, bitmap3);
+        effect->Sources->SetAt(1, nullptr);
+
+        Assert::AreEqual(2u, effect->Sources->Size);
+        Assert::AreEqual<IGraphicsEffectSource>(bitmap3, effect->Sources->GetAt(0));
+        Assert::IsNull(effect->Sources->GetAt(1));
+
+        Assert::ExpectException<Platform::OutOfBoundsException^>([&]
+        {
+            effect->Sources->GetAt(2);
+        });
+
+        Assert::ExpectException<Platform::OutOfBoundsException^>([&]
+        {
+            effect->Sources->SetAt(2, nullptr);
+        });
+
+        // Test using a realized effect.
+        auto d2dEffect = GetWrappedResource<ID2D1Effect>(device, effect, DEFAULT_DPI);
+
+        effect->Sources->SetAt(0, nullptr);
+        effect->Sources->SetAt(1, bitmap3);
+
+        Assert::AreEqual(2u, effect->Sources->Size);
+        Assert::IsNull(effect->Sources->GetAt(0));
+        Assert::AreEqual<IGraphicsEffectSource>(bitmap3, effect->Sources->GetAt(1));
+
+        Assert::ExpectException<Platform::OutOfBoundsException^>([&]
+        {
+            effect->Sources->GetAt(2);
+        });
+
+        Assert::ExpectException<Platform::OutOfBoundsException^>([&]
+        {
+            effect->Sources->SetAt(2, nullptr);
+        });
+
+        // Make sure we are still realized.
+        Assert::AreEqual(effect, GetOrCreate<CompositeEffect>(d2dEffect.Get()));
+    }
+
+    TEST_METHOD(CanvasEffect_SourcesCollection_InsertSource)
+    {
+        auto device = ref new CanvasDevice();
+        auto effect = ref new CompositeEffect();
+
+        auto bitmap1 = ref new CanvasRenderTarget(device, 1, 1, DEFAULT_DPI);
+        auto bitmap2 = ref new CanvasRenderTarget(device, 1, 1, DEFAULT_DPI);
+        auto bitmap3 = ref new CanvasRenderTarget(device, 1, 1, DEFAULT_DPI);
+
+        ComPtr<ID2D1Effect> d2dEffect;
+
+        // First time test an unrealized effect, second time a realized one.
+        for (int pass = 0; pass < 2; pass++)
+        {
+            effect->Sources->InsertAt(0, bitmap2);
+
+            if (pass > 0)
+            {
+                // Realize the effect (not possible while it has zero sources, so this comes after the first InsertAt).
+                d2dEffect = GetWrappedResource<ID2D1Effect>(device, effect, DEFAULT_DPI);
+            }
+
+            effect->Sources->InsertAt(0, nullptr);
+            effect->Sources->InsertAt(2, bitmap3);
+            effect->Sources->InsertAt(1, bitmap1);
+
+            Assert::AreEqual(4u, effect->Sources->Size);
+            Assert::IsNull(effect->Sources->GetAt(0));
+            Assert::AreEqual<IGraphicsEffectSource>(bitmap1, effect->Sources->GetAt(1));
+            Assert::AreEqual<IGraphicsEffectSource>(bitmap2, effect->Sources->GetAt(2));
+            Assert::AreEqual<IGraphicsEffectSource>(bitmap3, effect->Sources->GetAt(3));
+
+            Assert::ExpectException<Platform::OutOfBoundsException^>([&]
+            {
+                effect->Sources->InsertAt(5, nullptr);
+            });
+
+            if (pass > 0)
+            {
+                // Make sure we are still realized (before the Clear, which will unrealize).
+                Assert::AreEqual(effect, GetOrCreate<CompositeEffect>(device, d2dEffect.Get()));
+            }
+
+            effect->Sources->Clear();
+
+            Assert::AreEqual(0u, effect->Sources->Size);
+
+            if (pass > 0)
+            {
+                // Becoming empty should have unrealized the effect.
+                Assert::AreNotEqual(effect, GetOrCreate<CompositeEffect>(device, d2dEffect.Get()));
+            }
+        }
+    }
+
+    TEST_METHOD(CanvasEffect_SourcesCollection_RemoveSource)
+    {
+        auto device = ref new CanvasDevice();
+        auto effect = ref new CompositeEffect();
+
+        auto bitmap1 = ref new CanvasRenderTarget(device, 1, 1, DEFAULT_DPI);
+        auto bitmap2 = ref new CanvasRenderTarget(device, 1, 1, DEFAULT_DPI);
+        auto bitmap3 = ref new CanvasRenderTarget(device, 1, 1, DEFAULT_DPI);
+        
+        ComPtr<ID2D1Effect> d2dEffect;
+
+        // First time test an unrealized effect, second time a realized one.
+        for (int pass = 0; pass < 2; pass++)
+        {
+            effect->Sources->Append(bitmap1);
+
+            if (pass > 0)
+            {
+                // Realize the effect (not possible while it has zero sources, so this comes after the first Append).
+                d2dEffect = GetWrappedResource<ID2D1Effect>(device, effect, DEFAULT_DPI);
+            }
+
+            effect->Sources->Append(bitmap2);
+            effect->Sources->Append(bitmap3);
+
+            Assert::ExpectException<Platform::OutOfBoundsException^>([&]
+            {
+                effect->Sources->RemoveAt(3);
+            });
+
+            effect->Sources->RemoveAt(2);
+
+            Assert::AreEqual(2u, effect->Sources->Size);
+            Assert::AreEqual<IGraphicsEffectSource>(bitmap1, effect->Sources->GetAt(0));
+            Assert::AreEqual<IGraphicsEffectSource>(bitmap2, effect->Sources->GetAt(1));
+
+            effect->Sources->RemoveAt(0);
+
+            Assert::AreEqual(1u, effect->Sources->Size);
+            Assert::AreEqual<IGraphicsEffectSource>(bitmap2, effect->Sources->GetAt(0));
+
+            if (pass > 0)
+            {
+                // Make sure we are still realized (before the last RemoveAt, which will unrealize).
+                Assert::AreEqual(effect, GetOrCreate<CompositeEffect>(device, d2dEffect.Get()));
+            }
+
+            effect->Sources->RemoveAt(0);
+
+            Assert::AreEqual(0u, effect->Sources->Size);
+
+            if (pass > 0)
+            {
+                // Becoming empty should have unrealized the effect.
+                Assert::AreNotEqual(effect, GetOrCreate<CompositeEffect>(device, d2dEffect.Get()));
+            }
+
+            Assert::ExpectException<Platform::OutOfBoundsException^>([&]
+            {
+                effect->Sources->RemoveAt(0);
+            });
+        }
+    }
+
+    TEST_METHOD(CanvasEffect_SetSource_BitmapIsOnWrongDevice)
+    {
+        auto effect1 = ref new GaussianBlurEffect;
+        auto effect2 = ref new GaussianBlurEffect;
+
+        effect1->Source = effect2;
+
+        // Realize the effects onto device1.
+        auto device1 = ref new CanvasDevice();
+        auto bitmap1 = ref new CanvasRenderTarget(device1, 1, 1, DEFAULT_DPI);
+
+        effect2->Source = bitmap1;
+
+        auto d2dEffect11 = GetWrappedResource<ID2D1Effect>(device1, effect1);
+        auto d2dEffect21 = GetWrappedResource<ID2D1Effect>(device1, effect2);
+
+        Assert::AreEqual(effect1, GetOrCreate<GaussianBlurEffect>(device1, d2dEffect11.Get()));
+        Assert::AreEqual(effect2, GetOrCreate<GaussianBlurEffect>(device1, d2dEffect21.Get()));
+
+        Assert::AreEqual<IGraphicsEffectSource>(effect1->Source, effect2);
+        Assert::AreEqual<IGraphicsEffectSource>(effect2->Source, bitmap1);
+
+        // Set a source bitmap that is on a different device.
+        auto device2 = ref new CanvasDevice();
+        auto bitmap2 = ref new CanvasRenderTarget(device2, 1, 1, DEFAULT_DPI);
+
+        effect2->Source = bitmap2;
+
+        // This should have unrealized effect2, but not effect1.
+        Assert::AreEqual(effect1, GetOrCreate<GaussianBlurEffect>(device1, d2dEffect11.Get()));
+        Assert::AreNotEqual(effect2, GetOrCreate<GaussianBlurEffect>(device1, d2dEffect21.Get()));
+
+        Assert::AreEqual<IGraphicsEffectSource>(effect1->Source, effect2);
+        Assert::AreEqual<IGraphicsEffectSource>(effect2->Source, bitmap2);
+
+        // Realize both effects on to device2.
+        auto d2dEffect22 = GetWrappedResource<ID2D1Effect>(device2, effect2);
+        auto d2dEffect12 = GetWrappedResource<ID2D1Effect>(device2, effect1);
+
+        Assert::IsFalse(IsSameInstance(d2dEffect11.Get(), d2dEffect12.Get()));
+        Assert::IsFalse(IsSameInstance(d2dEffect21.Get(), d2dEffect22.Get()));
+
+        // It should not be possible to realize onto device1, as the bitmap does not match.
+        ExpectCOMException(E_INVALIDARG, L"Effect source #0 is associated with a different device.",
+            [&]
+            {
+                GetWrappedResource<ID2D1Effect>(device1, effect1);
+            });
+
+        ExpectCOMException(E_INVALIDARG, L"Effect source #0 is associated with a different device.",
+            [&]
+            {
+                GetWrappedResource<ID2D1Effect>(device1, effect2);
+            });
+
+        // Failed realizations attempt should not have messed up the source links.
+        Assert::AreEqual<IGraphicsEffectSource>(effect1->Source, effect2);
+        Assert::AreEqual<IGraphicsEffectSource>(effect2->Source, bitmap2);
+
+        // But it should have unrealized the effects.
+        Assert::AreNotEqual(effect1, GetOrCreate<GaussianBlurEffect>(device2, d2dEffect12.Get()));
+        Assert::AreNotEqual(effect2, GetOrCreate<GaussianBlurEffect>(device2, d2dEffect22.Get()));
+
+        // Rerealize both effects back on to device2 again.
+        auto d2dEffect23 = GetWrappedResource<ID2D1Effect>(device2, effect2);
+        auto d2dEffect13 = GetWrappedResource<ID2D1Effect>(device2, effect1);
+
+        // What if we set an unrealized effect, whose input is a bitmap created from device 1?
+        // This must unrealize the target effect, rather than trying to realize the source.
+        auto effect3 = ref new GaussianBlurEffect;
+        effect3->Source = bitmap1;
+
+        effect2->Source = effect3;
+
+        Assert::AreEqual(effect1, GetOrCreate<GaussianBlurEffect>(device2, d2dEffect13.Get()));
+        Assert::AreNotEqual(effect2, GetOrCreate<GaussianBlurEffect>(device2, d2dEffect23.Get()));
+
+        Assert::AreEqual<IGraphicsEffectSource>(effect1->Source, effect2);
+        Assert::AreEqual<IGraphicsEffectSource>(effect2->Source, effect3);
+        Assert::AreEqual<IGraphicsEffectSource>(effect3->Source, bitmap1);
+
+        // Now we can realize onto device1.
+        auto d2dEffect14 = GetWrappedResource<ID2D1Effect>(device1, effect1);
+
+        Assert::IsFalse(IsSameInstance(d2dEffect11.Get(), d2dEffect13.Get()));
+        Assert::IsFalse(IsSameInstance(d2dEffect12.Get(), d2dEffect13.Get()));
+
+        Assert::AreEqual(effect1, GetOrCreate<GaussianBlurEffect>(device1, d2dEffect14.Get()));
+
+        // But we cannot realize onto device2.
+        ExpectCOMException(E_INVALIDARG, L"Effect source #0 is associated with a different device.",
+            [&]
+        {
+            GetWrappedResource<ID2D1Effect>(device2, effect1);
+        });
+
+        Assert::AreEqual<IGraphicsEffectSource>(effect1->Source, effect2);
+        Assert::AreEqual<IGraphicsEffectSource>(effect2->Source, effect3);
+        Assert::AreEqual<IGraphicsEffectSource>(effect3->Source, bitmap1);
+    }
+
     TEST_METHOD(CanvasEffect_GetResource)
     {
         auto blurEffect = ref new GaussianBlurEffect();
         auto device = ref new CanvasDevice();
-        auto bitmap = ref new CanvasRenderTarget(device, 1, 1, DEFAULT_DPI);
+        auto source = ref new ColorSourceEffect();
 
         const float expectedBlurAmount = 23;
         blurEffect->BlurAmount = expectedBlurAmount;
 
-        blurEffect->Source = bitmap;
+        blurEffect->Source = source;
 
         auto d2dEffect = GetWrappedResource<ID2D1Effect>(device, blurEffect, DEFAULT_DPI);
 
@@ -300,7 +636,7 @@ TEST_CLASS(CanvasEffectsTests)
 
         ComPtr<ID2D1Image> input;
         d2dEffect->GetInput(0, &input);
-        Assert::IsTrue(IsSameInstance(input.Get(), GetWrappedResource<ID2D1Image>(bitmap).Get()));
+        Assert::IsTrue(IsSameInstance(input.Get(), GetWrappedResource<ID2D1Image>(device, source).Get()));
 
         // Repeated queries should be idempotent.
         auto d2dEffect2 = GetWrappedResource<ID2D1Effect>(device, blurEffect);
@@ -342,6 +678,39 @@ TEST_CLASS(CanvasEffectsTests)
         compositeEffect->Sources->Append(ref new ColorSourceEffect());
 
         GetWrappedResource<ID2D1Effect>(device, compositeEffect);
+    }
+
+    TEST_METHOD(CanvasEffect_GetResource_NullSource)
+    {
+        auto device = ref new CanvasDevice();
+
+        // Should be able to realize the effect even though its input is null.
+        auto blurEffect = ref new GaussianBlurEffect();
+
+        auto d2dEffect = GetWrappedResource<ID2D1Effect>(device, blurEffect);
+
+        Assert::IsTrue(d2dEffect->GetValue<IID>(D2D1_PROPERTY_CLSID) == CLSID_D2D1GaussianBlur);
+
+        ComPtr<ID2D1Image> input;
+        d2dEffect->GetInput(0, &input);
+        Assert::IsNull(input.Get());
+
+        // Ditto if the null source is 2 levels down the graph.
+        auto linearTransferEffect = ref new LinearTransferEffect();
+        auto morphologyEffect = ref new MorphologyEffect();
+
+        linearTransferEffect->Source = morphologyEffect;
+
+        d2dEffect = GetWrappedResource<ID2D1Effect>(device, linearTransferEffect);
+
+        Assert::IsTrue(d2dEffect->GetValue<IID>(D2D1_PROPERTY_CLSID) == CLSID_D2D1LinearTransfer);
+
+        d2dEffect->GetInput(0, &input);
+        d2dEffect = As<ID2D1Effect>(input);
+        Assert::IsTrue(d2dEffect->GetValue<IID>(D2D1_PROPERTY_CLSID) == CLSID_D2D1Morphology);
+
+        d2dEffect->GetInput(0, &input);
+        Assert::IsNull(input.Get());
     }
 
     TEST_METHOD(CanvasEffect_GetResource_DpiCompensation)
@@ -446,6 +815,7 @@ TEST_CLASS(CanvasEffectsTests)
         Assert::AreEqual(effect, effect2);
 
         // A new wrapper for the source bitmap should have been automatically created.
+        Assert::IsNotNull(effect->Source);
         bitmap = GetOrCreate<CanvasRenderTarget>(d2dBitmap.Get());
         Assert::AreEqual<IGraphicsEffectSource>(bitmap, effect->Source);
     }
@@ -548,13 +918,13 @@ TEST_CLASS(CanvasEffectsTests)
     {
         auto device = ref new CanvasDevice();
 
-        CanvasCommandList^ images[] =
+        CanvasBitmap^ images[] =
         {
-            ref new CanvasCommandList(device),
-            ref new CanvasCommandList(device),
-            ref new CanvasCommandList(device),
-            ref new CanvasCommandList(device),
-            ref new CanvasCommandList(device),
+            ref new CanvasRenderTarget(device, 1, 1, DEFAULT_DPI),
+            ref new CanvasRenderTarget(device, 1, 1, DEFAULT_DPI),
+            ref new CanvasRenderTarget(device, 1, 1, DEFAULT_DPI),
+            ref new CanvasRenderTarget(device, 1, 1, DEFAULT_DPI),
+            ref new CanvasRenderTarget(device, 1, 1, DEFAULT_DPI),
         };
 
         auto effect = ref new BlendEffect();
@@ -562,7 +932,7 @@ TEST_CLASS(CanvasEffectsTests)
         effect->Background = images[0];
         effect->Foreground = images[0];
 
-        auto d2dEffect = GetWrappedResource<ID2D1Effect>(device, effect);
+        auto d2dEffect = GetWrappedResource<ID2D1Effect>(device, effect, DEFAULT_DPI);
 
         ComPtr<ID2D1Image> d2dImages[] =
         {
@@ -570,7 +940,7 @@ TEST_CLASS(CanvasEffectsTests)
             GetWrappedResource<ID2D1Image>(images[1]),
             GetWrappedResource<ID2D1Image>(images[2]),
             GetWrappedResource<ID2D1Image>(images[3]),
-            GetWrappedResource<ID2D1Image>(images[3]),
+            GetWrappedResource<ID2D1Image>(images[4]),
         };
 
         // Change properties via Win2D.
@@ -599,19 +969,19 @@ TEST_CLASS(CanvasEffectsTests)
     {
         auto device = ref new CanvasDevice();
 
-        CanvasCommandList^ images[] =
+        CanvasBitmap^ images[] =
         {
-            ref new CanvasCommandList(device),
-            ref new CanvasCommandList(device),
-            ref new CanvasCommandList(device),
-            ref new CanvasCommandList(device),
+            ref new CanvasRenderTarget(device, 1, 1, DEFAULT_DPI),
+            ref new CanvasRenderTarget(device, 1, 1, DEFAULT_DPI),
+            ref new CanvasRenderTarget(device, 1, 1, DEFAULT_DPI),
+            ref new CanvasRenderTarget(device, 1, 1, DEFAULT_DPI),
         };
 
         auto effect = ref new CompositeEffect();
 
         effect->Sources->Append(images[0]);
 
-        auto d2dEffect = GetWrappedResource<ID2D1Effect>(device, effect);
+        auto d2dEffect = GetWrappedResource<ID2D1Effect>(device, effect, DEFAULT_DPI);
 
         ComPtr<ID2D1Image> d2dImages[] =
         {
@@ -780,6 +1150,51 @@ TEST_CLASS(CanvasEffectsTests)
         Assert::IsTrue(IsSameInstance(GetWrappedResource<ID2D1Effect>(device2, image3).Get(), input.Get()));
     }
 
+    TEST_METHOD(CanvasEffect_RerealizeChildEffectsOnDifferentDevice)
+    {
+        auto effect1 = ref new GaussianBlurEffect;
+        auto effect2 = ref new ColorSourceEffect;
+
+        effect1->Source = effect2;
+
+        // Realize the effects onto device1.
+        auto device1 = ref new CanvasDevice();
+
+        auto d2dEffect11 = GetWrappedResource<ID2D1Effect>(device1, effect1);
+        auto d2dEffect21 = GetWrappedResource<ID2D1Effect>(device1, effect2);
+
+        Assert::AreEqual(effect1, GetOrCreate<GaussianBlurEffect>(device1, d2dEffect11.Get()));
+        Assert::AreEqual(effect2, GetOrCreate<ColorSourceEffect>(device1, d2dEffect21.Get()));
+
+        Assert::AreEqual<IGraphicsEffectSource>(effect1->Source, effect2);
+
+        // Realize the child effect onto device2.
+        auto device2 = ref new CanvasDevice();
+
+        auto d2dEffect22 = GetWrappedResource<ID2D1Effect>(device2, effect2);
+
+        Assert::IsFalse(IsSameInstance(d2dEffect21.Get(), d2dEffect22.Get()));
+
+        Assert::AreEqual(effect1, GetOrCreate<GaussianBlurEffect>(device1, d2dEffect11.Get()));
+        Assert::AreEqual(effect2, GetOrCreate<ColorSourceEffect>(device2, d2dEffect22.Get()));
+
+        Assert::AreEqual<IGraphicsEffectSource>(effect1->Source, effect2);
+
+        // Using the parent effect (still on device1) should move the child back to device1 as well.
+        auto d2dEffect12 = GetWrappedResource<ID2D1Effect>(device1, effect1);
+
+        Assert::IsTrue(IsSameInstance(d2dEffect11.Get(), d2dEffect12.Get()));
+
+        Assert::AreEqual(effect1, GetOrCreate<GaussianBlurEffect>(device1, d2dEffect12.Get()));
+
+        ComPtr<ID2D1Image> input;
+        d2dEffect12->GetInput(0, &input);
+
+        Assert::AreEqual(effect2, GetOrCreate<ColorSourceEffect>(device1, input.Get()));
+
+        Assert::AreEqual<IGraphicsEffectSource>(effect1->Source, effect2);
+    }
+
     TEST_METHOD(CanvasEffect_WhenInputSetToBitmapUsingDifferentDevice_EffectIsUnrealized)
     {
         auto effect = ref new BlendEffect();
@@ -796,6 +1211,8 @@ TEST_CLASS(CanvasEffectsTests)
         // Realize the effect onto device #1.
         auto d2dEffect1 = GetWrappedResource<ID2D1Effect>(device1, effect, DEFAULT_DPI);
 
+        Assert::AreEqual(effect, GetOrCreate<BlendEffect>(device1, d2dEffect1.Get()));
+
         // Change the first input to a bitmap created on device #2.
         auto device2 = ref new CanvasDevice();
 
@@ -805,7 +1222,7 @@ TEST_CLASS(CanvasEffectsTests)
         effect->Background = bitmap2a;
 
         // This should have unrealized the effect.
-        Assert::AreNotEqual(effect, GetOrCreate<BlendEffect>(d2dEffect1.Get()));
+        Assert::AreNotEqual(effect, GetOrCreate<BlendEffect>(device1, d2dEffect1.Get()));
 
         // At this transitional point Win2D should be able to report back the two input bitmaps, regardless of their mixed devices.
         Assert::AreEqual<IGraphicsEffectSource>(bitmap2a, effect->Background);

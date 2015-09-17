@@ -90,6 +90,60 @@ namespace collections
     struct DefaultVectorTraits : public ElementTraits<T>
     {
         typedef std::vector<ElementType> InternalVectorType;
+
+
+        static unsigned GetSize(InternalVectorType const& vector)
+        {
+            return (unsigned)vector.size();
+        };
+
+
+        static ElementType GetAt(InternalVectorType const& vector, unsigned index)
+        {
+            if (index >= vector.size())
+                ThrowHR(E_BOUNDS);
+
+            return vector[index];
+        }
+
+
+        static void SetAt(InternalVectorType& vector, unsigned index, T const& item)
+        {
+            if (index >= vector.size())
+                ThrowHR(E_BOUNDS);
+
+            vector[index] = Wrap(item);
+        }
+
+
+        static void InsertAt(InternalVectorType& vector, unsigned index, T const& item)
+        {
+            if (index > vector.size())
+                ThrowHR(E_BOUNDS);
+
+            vector.insert(vector.begin() + index, Wrap(item));
+        }
+
+
+        static void RemoveAt(InternalVectorType& vector, unsigned index)
+        {
+            if (index >= vector.size())
+                ThrowHR(E_BOUNDS);
+
+            vector.erase(vector.begin() + index);
+        }
+
+
+        static void Append(InternalVectorType& vector, T const& item)
+        {
+            vector.push_back(Wrap(item));
+        }
+
+
+        static void Clear(InternalVectorType& vector)
+        {
+            vector.clear();
+        }
     };
 
 
@@ -125,12 +179,12 @@ namespace collections
 
 
         // Constructs a vector of the specified size.
-        Vector(unsigned initialSize, bool isFixedSize)
-            : isFixedSize(isFixedSize),
+        template<typename... Args>
+        Vector(bool isFixedSize, Args&&... args)
+            : mVector(std::forward<Args>(args)...),
+              isFixedSize(isFixedSize),
               isChanged(false)
-        {
-            mVector.resize(initialSize);
-        }
+        { }
 
 
         // Checks whether this vector is fixed or resizable.
@@ -168,7 +222,7 @@ namespace collections
             {
                 CheckInPointer(size);
 
-                *size = (unsigned)mVector.size();
+                *size = Traits::GetSize(mVector);
             });
         };
 
@@ -180,10 +234,7 @@ namespace collections
                 CheckInPointer(item);
                 ZeroMemory(item, sizeof(*item));
 
-                if (index >= mVector.size())
-                    ThrowHR(E_BOUNDS);
-
-                Traits::Unwrap(mVector[index], item);
+                Traits::Unwrap(Traits::GetAt(mVector, index), item);
             });
         }
 
@@ -198,9 +249,11 @@ namespace collections
                 *index = 0;
                 *found = false;
 
-                for (unsigned i = 0; i < mVector.size(); i++)
+                auto size = Traits::GetSize(mVector);
+
+                for (unsigned i = 0; i < size; i++)
                 {
-                    if (Traits::Equals(mVector[i], value))
+                    if (Traits::Equals(Traits::GetAt(mVector, i), value))
                     {
                         *index = i;
                         *found = true;
@@ -215,10 +268,7 @@ namespace collections
         {
             return ExceptionBoundary([&]
             {
-                if (index >= mVector.size())
-                    ThrowHR(E_BOUNDS);
-
-                mVector[index] = Traits::Wrap(item);
+                Traits::SetAt(mVector, index, item);
                 isChanged = true;
             });
         }
@@ -231,10 +281,7 @@ namespace collections
                 if (isFixedSize)
                     ThrowHR(E_NOTIMPL);
 
-                if (index > mVector.size())
-                    ThrowHR(E_BOUNDS);
-
-                mVector.insert(mVector.begin() + index, Traits::Wrap(item));
+                Traits::InsertAt(mVector, index, item);
                 isChanged = true;
             });
         }
@@ -247,10 +294,7 @@ namespace collections
                 if (isFixedSize)
                     ThrowHR(E_NOTIMPL);
 
-                if (index >= mVector.size())
-                    ThrowHR(E_BOUNDS);
-
-                mVector.erase(mVector.begin() + index);
+                Traits::RemoveAt(mVector, index);
                 isChanged = true;
             });
         }
@@ -263,7 +307,7 @@ namespace collections
                 if (isFixedSize)
                     ThrowHR(E_NOTIMPL);
 
-                mVector.emplace_back(Traits::Wrap(item));
+                Traits::Append(mVector, item);
                 isChanged = true;
             });
         }
@@ -276,10 +320,7 @@ namespace collections
                 if (isFixedSize)
                     ThrowHR(E_NOTIMPL);
 
-                if (mVector.empty())
-                    ThrowHR(E_BOUNDS);
-
-                mVector.pop_back();
+                Traits::RemoveAt(mVector, Traits::GetSize(mVector) - 1);
                 isChanged = true;
             });
         }
@@ -292,7 +333,7 @@ namespace collections
                 if (isFixedSize)
                     ThrowHR(E_NOTIMPL);
 
-                mVector.clear();
+                Traits::Clear(mVector);
                 isChanged = true;
             });
         }
@@ -302,16 +343,26 @@ namespace collections
         {
             return ExceptionBoundary([&]
             {
-                if (isFixedSize && count != mVector.size())
-                    ThrowHR(E_NOTIMPL);
-
                 CheckInPointer(value);
-
-                mVector.resize(count);
-
-                for (unsigned i = 0; i < count; i++)
+                
+                if (count == Traits::GetSize(mVector))
                 {
-                    mVector[i] = Traits::Wrap(value[i]);
+                    for (unsigned i = 0; i < count; i++)
+                    {
+                        Traits::SetAt(mVector, i, value[i]);
+                    }
+                }
+                else
+                {
+                    if (isFixedSize)
+                        ThrowHR(E_NOTIMPL);
+
+                    Traits::Clear(mVector);
+
+                    for (unsigned i = 0; i < count; i++)
+                    {
+                        Traits::Append(mVector, value[i]);
+                    }
                 }
 
                 isChanged = true;
@@ -424,7 +475,7 @@ namespace collections
             {
                 CheckInPointer(hasCurrent);
 
-                *hasCurrent = (mPosition < mVector->InternalVector().size());
+                *hasCurrent = (mPosition < TVector::Traits::GetSize(mVector->InternalVector()));
             });
         }
 
@@ -435,7 +486,7 @@ namespace collections
             {
                 CheckInPointer(hasCurrent);
 
-                auto size = mVector->InternalVector().size();
+                auto size = TVector::Traits::GetSize(mVector->InternalVector());
 
                 if (mPosition >= size)
                 {

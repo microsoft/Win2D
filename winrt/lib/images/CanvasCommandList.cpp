@@ -121,9 +121,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
 
     ComPtr<ID2D1Image> CanvasCommandList::GetD2DImage(
-        ID2D1DeviceContext*)
+        ICanvasDevice*,
+        ID2D1DeviceContext*,
+        GetImageFlags,
+        float /*targetDpi*/,
+        float* realizedDpi)
     {
         auto& commandList = GetResource();
+
         if (!m_d2dCommandListIsClosed)
         {
             HRESULT hr = commandList->Close();
@@ -136,18 +141,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
             m_d2dCommandListIsClosed = true;
         }
+
+        if (realizedDpi)
+            *realizedDpi = 0;
+
         return commandList;
     }
 
-
-    ICanvasImageInternal::RealizedEffectNode CanvasCommandList::GetRealizedEffectNode(
-        ID2D1DeviceContext* deviceContext,
-        float targetDpi)
-    {
-        UNREFERENCED_PARAMETER(targetDpi);
-
-        return RealizedEffectNode{ GetD2DImage(deviceContext), 0, 0 };
-    }
 
     ActivatableClassWithFactory(CanvasCommandList, CanvasCommandListFactory);
 

@@ -800,15 +800,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return imageBrush;
     }
 
-    ComPtr<ID2D1Image> CanvasDevice::GetD2DImage(ICanvasImage* canvasImage)
-    {
-        ComPtr<ICanvasImageInternal> imageInternal;
-        ThrowIfFailed(canvasImage->QueryInterface(imageInternal.GetAddressOf()));
-
-        auto deviceContext = GetResourceCreationDeviceContext();
-        return imageInternal->GetD2DImage(deviceContext.Get());
-    }
-
     IFACEMETHODIMP CanvasDevice::Trim()
     {
         return ExceptionBoundary(

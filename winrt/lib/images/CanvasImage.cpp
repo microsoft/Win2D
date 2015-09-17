@@ -13,12 +13,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ICanvasDrawingSession *drawingSession,
         Numerics::Matrix3x2 const* transform)
     {
+        ComPtr<ICanvasDevice> canvasDevice;
+        ThrowIfFailed(As<ICanvasResourceCreator>(drawingSession)->get_Device(&canvasDevice));
+
         auto drawingSessionResourceWrapper = As<ICanvasResourceWrapperNative>(drawingSession);
 
         ComPtr<ID2D1DeviceContext1> d2dDeviceContext;
         ThrowIfFailed(drawingSessionResourceWrapper->GetResource(nullptr, 0, IID_PPV_ARGS(&d2dDeviceContext)));
 
-        auto d2dImage = imageInternal->GetD2DImage(d2dDeviceContext.Get());
+        auto d2dImage = imageInternal->GetD2DImage(canvasDevice.Get(), d2dDeviceContext.Get());
 
         D2D1_RECT_F d2dBounds;
         

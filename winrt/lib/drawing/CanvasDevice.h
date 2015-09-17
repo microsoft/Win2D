@@ -110,8 +110,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         virtual ComPtr<ID2D1ImageBrush> CreateImageBrush(ID2D1Image* image) = 0;
 
-        virtual ComPtr<ID2D1Image> GetD2DImage(ICanvasImage* canvasImage) = 0;
-
         virtual ComPtr<ID2D1GradientStopCollection1> CreateGradientStopCollection(
             uint32_t gradientStopCount,
             CanvasGradientStop const* gradientStops,
@@ -279,8 +277,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         virtual ComPtr<ID2D1BitmapBrush1> CreateBitmapBrush(ID2D1Bitmap1* bitmap) override;
 
         virtual ComPtr<ID2D1ImageBrush> CreateImageBrush(ID2D1Image* image) override;
-
-        virtual ComPtr<ID2D1Image> GetD2DImage(ICanvasImage* canvasImage) override;
 
         virtual ComPtr<ID2D1LinearGradientBrush> CreateLinearGradientBrush(
             ID2D1GradientStopCollection1* stopCollection) override;

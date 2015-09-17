@@ -467,7 +467,15 @@ public:
     {
         // Create an image brush backed by an effect.
         SwitchableTestBrushFixture f;
+
+        auto createEffect = [&](IID const& effectId, ID2D1Effect** effect)
+        {
+            Make<MockD2DEffectThatCountsCalls>(effectId).CopyTo(effect);
+            return S_OK;
+        };
+
         auto effect0 = Make<TestEffect>(CLSID_D2D1GaussianBlur, 0, 0, true);
+        f.m_d2dDeviceContext->CreateEffectMethod.SetExpectedCalls(1, createEffect);
         ThrowIfFailed(f.m_canvasImageBrush->put_Image(effect0.Get()));
 
         // Ensure it's backed by an image brush.
@@ -480,6 +488,7 @@ public:
 
         // Switch it to a different effect.
         auto effect1 = Make<TestEffect>(CLSID_D2D1GaussianBlur, 0, 0, true);
+        f.m_d2dDeviceContext->CreateEffectMethod.SetExpectedCalls(1, createEffect);
         ThrowIfFailed(f.m_canvasImageBrush->put_Image(effect1.Get()));
         
         // Ensure the source rect is still null.
@@ -513,23 +522,15 @@ public:
         Assert::IsTrue(AreReferencedRectsEqual(testSourceRect.Get(), retrievedSourceRect.Get()));
 
         // Make a drawing session.
-        auto d2dDeviceContext = Make<StubD2DDeviceContextWithGetFactory>();
-        d2dDeviceContext->FillRectangleMethod.AllowAnyCall();
+        f.m_d2dDeviceContext->FillRectangleMethod.AllowAnyCall();
 
         ComPtr<CanvasDrawingSession> drawingSession = CanvasDrawingSession::CreateNew(
-            d2dDeviceContext.Get(),
+            f.m_d2dDeviceContext.Get(),
             std::make_shared<StubCanvasDrawingSessionAdapter>(),
             f.m_canvasDevice.Get());
 
-        d2dDeviceContext->GetDpiMethod.AllowAnyCall();
-        d2dDeviceContext->GetDeviceMethod.AllowAnyCallAlwaysCopyValueToParam(Make<StubD2DDevice>());
-
-        d2dDeviceContext->CreateEffectMethod.SetExpectedCalls(1,
-            [&](IID const& effectId, ID2D1Effect** effect)
-        {
-            Make<MockD2DEffectThatCountsCalls>(effectId).CopyTo(effect);
-            return S_OK;
-        });
+        f.m_d2dDeviceContext->GetDpiMethod.AllowAnyCall();
+        f.m_d2dDeviceContext->GetTargetMethod.AllowAnyCallAlwaysCopyValueToParam<ID2D1Image>(nullptr);
 
         ThrowIfFailed(drawingSession->FillRectangleAtCoordsWithBrush(0, 0, 0, 0, f.m_canvasImageBrush.Get())); // Should not throw
 

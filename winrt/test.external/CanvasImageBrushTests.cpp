@@ -426,6 +426,59 @@ public:
         Assert::IsTrue(effect->Source == image);
     }
 
+    TEST_METHOD(CanvasImageBrush_GetResource_WhenSourceIsEffectOnWrongDevice_RerealizesAccordingly)
+    {
+        // Create an image brush.
+        auto brush = ref new CanvasImageBrush(m_device);
+        brush->SourceRectangle = Rect{ 0, 0, 1, 1 };
+
+        // Create an effect, and set it as the brush image.
+        auto effect = ref new ColorSourceEffect();
+        brush->Image = effect;
+
+        // Validate that the proper D2D resources were set.
+        auto d2dBrush = GetWrappedResource<ID2D1ImageBrush>(brush);
+        auto d2dEffect1 = GetWrappedResource<ID2D1Effect>(m_device, effect);
+
+        ComPtr<ID2D1Image> brushImage;
+        d2dBrush->GetImage(&brushImage);
+        Assert::IsTrue(IsSameInstance(d2dEffect1.Get(), brushImage.Get()));
+
+        // Realize the effect onto a second device.
+        auto device2 = ref new CanvasDevice();
+        auto d2dEffect2 = GetWrappedResource<ID2D1Effect>(device2, effect);
+
+        // D2D brush state should still be pointing at the now orphaned realized effect,
+        // but the Win2D CanvasImageBrush.Image property getter still knows what effect this is.
+        d2dBrush->GetImage(&brushImage);
+        Assert::IsTrue(IsSameInstance(d2dEffect1.Get(), brushImage.Get()));
+
+        Assert::AreEqual<ICanvasImage>(effect, brush->Image);
+
+        // Setting a property on the effect should be reflected on its second D2D instance, but not the first.
+        effect->Color = Colors::Red;
+
+        Assert::AreEqual(float4(0, 0, 0, 1), d2dEffect1->GetValue<float4>(D2D1_FLOOD_PROP_COLOR));
+        Assert::AreEqual(float4(1, 0, 0, 1), d2dEffect2->GetValue<float4>(D2D1_FLOOD_PROP_COLOR));
+
+        // Now use the brush. This should realize the effect back over to the original device.
+        auto d2dBrush2 = GetWrappedResource<ID2D1ImageBrush>(brush);
+     
+        Assert::IsTrue(IsSameInstance(d2dBrush.Get(), d2dBrush2.Get()));
+
+        Assert::AreEqual<ICanvasImage>(effect, brush->Image);
+
+        d2dBrush->GetImage(&brushImage);
+
+        Assert::AreEqual(effect, GetOrCreate<ColorSourceEffect>(m_device, brushImage.Get()));
+
+        Assert::IsFalse(IsSameInstance(d2dEffect1.Get(), brushImage.Get()));
+        Assert::IsFalse(IsSameInstance(d2dEffect2.Get(), brushImage.Get()));
+
+        effect->Color = Colors::Blue;
+        Assert::AreEqual(float4(0, 0, 1, 1), As<ID2D1Effect>(brushImage)->GetValue<float4>(D2D1_FLOOD_PROP_COLOR));
+    }
+
     ComPtr<ID2D1ImageBrush> CreateD2DImageBrush(D2D1_RECT_F rect = D2D1_RECT_F{})
     {
         ComPtr<ID2D1ImageBrush> d2dImageBrush;

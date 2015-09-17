@@ -59,11 +59,11 @@ public:
         return CanvasEffect::GetSource(index, source);
     }
 
-    STDMETHOD(SetSource)(unsigned int index, IGraphicsEffectSource* source)
+    STDMETHOD_(void, SetSource)(unsigned int index, IGraphicsEffectSource* source)
     {
         if (MockSetSource)
             MockSetSource();
-        return CanvasEffect::SetSource(index, source);
+        CanvasEffect::SetSource(index, source);
     }
 
     template<typename TBoxed, typename TPublic>
@@ -109,5 +109,5 @@ inline void CheckEffectTypeAndInput(
     ID2D1DeviceContext* deviceContext,
     float expectedDpi = 0)
 {
-    CheckEffectTypeAndInput(mockEffect, expectedId, As<ICanvasImageInternal>(expectedInput)->GetD2DImage(deviceContext).Get(), expectedDpi);
+    CheckEffectTypeAndInput(mockEffect, expectedId, As<ICanvasImageInternal>(expectedInput)->GetD2DImage(nullptr, deviceContext).Get(), expectedDpi);
 }

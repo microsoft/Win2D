@@ -132,6 +132,7 @@ TEST_CLASS(CanvasDrawingSession_CallsAdapter)
 class CanvasDrawingSessionFixture
 {
 public:
+    ComPtr<StubCanvasDevice> CanvasDevice;
     ComPtr<StubD2DDeviceContextWithGetFactory> DeviceContext;
     ComPtr<CanvasDrawingSession> DS;
     ComPtr<StubCanvasBrush> Brush;
@@ -144,31 +145,31 @@ public:
 #endif
 
     CanvasDrawingSessionFixture()
-        : DeviceContext(Make<StubD2DDeviceContextWithGetFactory>())
-        , DS(MakeDrawingSession(DeviceContext.Get()))
+        : CanvasDevice(Make<StubCanvasDevice>())
+        , DeviceContext(Make<StubD2DDeviceContextWithGetFactory>())
+        , DS(MakeDrawingSession(DeviceContext.Get(), CanvasDevice.Get()))
         , Brush(Make<StubCanvasBrush>())
     {
-        ComPtr<StubCanvasDevice> canvasDevice = Make<StubCanvasDevice>();
+        Geometry = CanvasGeometry::CreateNew(CanvasDevice.Get(), Rect{ 1, 2, 3, 4 });
 
-        Geometry = CanvasGeometry::CreateNew(canvasDevice.Get(), Rect{ 1, 2, 3, 4 });
-
-        CachedGeometry = CanvasCachedGeometry::CreateNew(canvasDevice.Get(), Geometry.Get(), D2D1_DEFAULT_FLATTENING_TOLERANCE);
+        CachedGeometry = CanvasCachedGeometry::CreateNew(CanvasDevice.Get(), Geometry.Get(), D2D1_DEFAULT_FLATTENING_TOLERANCE);
 
         auto textFormat = Make<CanvasTextFormat>();
         auto textlayoutAdapter = std::make_shared<StubCanvasTextLayoutAdapter>();
-        TextLayout = CanvasTextLayout::CreateNew(canvasDevice.Get(), WinString(L"A string"), textFormat.Get(), 0.0f, 0.0f);
+        TextLayout = CanvasTextLayout::CreateNew(CanvasDevice.Get(), WinString(L"A string"), textFormat.Get(), 0.0f, 0.0f);
 
 #if WINVER > _WIN32_WINNT_WINBLUE
-        GradientMesh = CanvasGradientMesh::CreateNew(canvasDevice.Get(), 0, nullptr);
+        GradientMesh = CanvasGradientMesh::CreateNew(CanvasDevice.Get(), 0, nullptr);
 #endif
     }
 
 private:
-    static ComPtr<CanvasDrawingSession> MakeDrawingSession(ID2D1DeviceContext1* deviceContext)
+    static ComPtr<CanvasDrawingSession> MakeDrawingSession(ID2D1DeviceContext1* deviceContext, ICanvasDevice* device)
     {
         return CanvasDrawingSession::CreateNew(
             deviceContext,
-            std::make_shared<StubCanvasDrawingSessionAdapter>());
+            std::make_shared<StubCanvasDrawingSessionAdapter>(),
+            device);
     }
 };
 
@@ -385,7 +386,7 @@ public:
             auto d2dCommandList = Make<MockD2DCommandList>();
             d2dCommandList->CloseMethod.AllowAnyCall();
 
-            return Make<CanvasCommandList>(Make<StubCanvasDevice>().Get(), d2dCommandList.Get());
+            return Make<CanvasCommandList>(CanvasDevice.Get(), d2dCommandList.Get());
         }
 
         ComPtr<CanvasBitmap> MakeBitmap()
@@ -394,7 +395,7 @@ public:
             d2dBitmap->GetSizeMethod.AllowAnyCall([] { return D2D1_SIZE_F{ 23, 45 }; });
             d2dBitmap->GetPixelSizeMethod.AllowAnyCall([] { return D2D1_SIZE_U{ 67, 89 }; });
 
-            return Make<CanvasBitmap>(Make<StubCanvasDevice>().Get(), d2dBitmap.Get());
+            return Make<CanvasBitmap>(CanvasDevice.Get(), d2dBitmap.Get());
         }
     };
 
@@ -1408,39 +1409,13 @@ public:
     {
         DrawImageBitmapFixture f;
 
-        ComPtr<MockD2DEffect> mockEffect = Make<MockD2DEffect>();
+        ComPtr<StubD2DEffect> stubEffect;
         
-        bool setInputCalled = false;
-        mockEffect->MockSetInput = 
-            [&](UINT32, ID2D1Image*)
-            {
-                Assert::IsFalse(setInputCalled);
-                setInputCalled = true;
-            };
-
-        bool setValueCalled = false;
-        mockEffect->MockSetValue = 
-            [&](UINT32, D2D1_PROPERTY_TYPE, CONST BYTE*, UINT32)
-            {
-                setValueCalled = true;
-                return S_OK;
-            };
-
-        bool setInputCountCalled = false;
-        mockEffect->MockSetInputCount =
-            [&]
-        {
-            setInputCountCalled = true;
-            return S_OK;
-        };
-
         ComPtr<Effects::GaussianBlurEffect> blurEffect = Make<Effects::GaussianBlurEffect>();
         
         ThrowIfFailed(blurEffect->put_Source(As<IGraphicsEffectSource>(f.Bitmap).Get()));
 
-        ComPtr<StubCanvasDevice> canvasDevice = Make<StubCanvasDevice>();
-
-        f.DeviceContext->GetDeviceMethod.AllowAnyCallAlwaysCopyValueToParam(canvasDevice->GetD2DDevice());
+        f.DeviceContext->GetDeviceMethod.AllowAnyCallAlwaysCopyValueToParam(f.CanvasDevice->GetD2DDevice());
         f.DeviceContext->GetPrimitiveBlendMethod.AllowAnyCall();
 
         f.DeviceContext->GetDpiMethod.SetExpectedCalls(1,
@@ -1457,23 +1432,22 @@ public:
             });
 
         f.DeviceContext->CreateEffectMethod.SetExpectedCalls(1,
-            [&](IID const&, ID2D1Effect** effect)
+            [&](IID const& id, ID2D1Effect** effect)
             {
-                return mockEffect.CopyTo(effect);
+                Assert::IsNull(stubEffect.Get());
+                stubEffect = Make<StubD2DEffect>(id);
+                return stubEffect.CopyTo(effect);
             });
 
         f.DeviceContext->DrawImageMethod.SetExpectedCalls(1,
-            [](ID2D1Image* image, D2D1_POINT_2F const*, D2D1_RECT_F const*, D2D1_INTERPOLATION_MODE, D2D1_COMPOSITE_MODE)
+            [&](ID2D1Image* image, D2D1_POINT_2F const*, D2D1_RECT_F const*, D2D1_INTERPOLATION_MODE, D2D1_COMPOSITE_MODE)
             {
-                Assert::IsNotNull(image);
+                Assert::IsTrue(IsSameInstance(stubEffect.Get(), image));
             });
 
         ThrowIfFailed(blurEffect->put_BlurAmount(5.0f));
 
         ThrowIfFailed(f.DS->DrawImageAtOrigin(blurEffect.Get()));
-        Assert::IsTrue(setInputCalled);
-        Assert::IsTrue(setValueCalled);
-        Assert::IsFalse(setInputCountCalled);
     }
 
 
