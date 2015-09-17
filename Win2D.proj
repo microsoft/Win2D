@@ -179,10 +179,11 @@
 
   <!-- Restore NuGet packages for all projects -->
   <ItemGroup>
-    <NuGetRestore Include="samples\**\packages.config" Condition="$(BuildTests)" />
-    <NuGetRestore Include="samples\**\project.json"    Condition="$(BuildUAP) and $(BuildTests)" />
-    <NuGetRestore Include="winrt\**\project.json"      Condition="$(BuildUAP) and $(BuildTests)" />
-    <NuGetRestore Include="numerics\**\project.json"   Condition="$(BuildUAP)" />
+    <NuGetRestore Include="samples\**\packages.config"         Condition="$(BuildTests)" />
+    <NuGetRestore Include="samples\**\project.json"            Condition="$(BuildUAP) and $(BuildTests)" />
+    <NuGetRestore Include="winrt\**\project.json"              Condition="$(BuildUAP) and $(BuildTests)" />
+    <NuGetRestore Include="numerics\**\project.json"           Condition="$(BuildUAP)" />
+    <NuGetRestore Include="tools\exportsample\packages.config" Condition="$(BuildTools)" />
   </ItemGroup>
 
 
