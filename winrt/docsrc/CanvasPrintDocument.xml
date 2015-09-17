@@ -12,95 +12,414 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
   <members>
     
     <member name="T:Microsoft.Graphics.Canvas.Printing.CanvasPrintDocument" Experimental="true">
-      <summary></summary>
+      <summary>The main object that enables printing of Win2D content.  To use,
+      pass a CanvasPrintDocument to
+      PrintTaskSourceRequestedArgs.SetSource.</summary>
+      <remarks>
+        <p>
+          CanvasPrintDocument enables printing from Win2D by providing an object
+          that can be set as a <a
+          href="https://msdn.microsoft.com/en-us/library/windows/apps/windows.graphics.printing.iprintdocumentsource.aspx">print
+          document source</a>.  The following code example shows how to register
+          events on PrintManager to get to the point where a CanvasPrintDocument
+          can be set as the source:
+          <code>
+            <![CDATA[
+            CanvasPrintDocument printDocument;
+            
+            async void OnPrintClicked(object sender, RoutedEventArgs e)
+            {
+                printDocument = new CanvasPrintDocument();
+
+                var printManager = PrintManager.GetForCurrentView();
+                printManager.PrintTaskRequested += OnPrintTaskRequested;
+                await PrintManager.ShowPrintUIAsync();
+                printManager.PrintTaskRequested -= OnPrintTaskRequested;
+            }
+
+            void OnPrintTaskRequested(PrintManager sender, PrintTaskRequestedEventArgs args)
+            {
+                args.Request.CreatePrintTask("Job Name", (a) =>
+                {
+                    a.SetSource(printDocument);
+                });
+            }
+            ]]>
+          </code>
+        </p>
+        <p>
+          CanvasPrintDocument must be created on the UI thread.  Once the object
+          is created, methods may be called from any thread.  This allows any
+          heavy-lifting printing work to be performed on a background thread.
+          Any events raised by CanvasPrintDocument are raised on the same thread
+          it was created on.
+        </p>
+        <p>
+          CanvasPrintDocument supports print preview and printing via events.
+        </p>
+        <p>
+          While the print preview dialog is displayed, the <see
+          cref="E:Microsoft.Graphics.Canvas.Printing.CanvasPrintDocument.PrintTaskOptionsChanged"/>
+          will be called when the user changes an option that may cause the
+          preview to need redrawing.  For example, they may pick a different
+          printer or page size.  The <see
+          cref="E:Microsoft.Graphics.Canvas.Printing.CanvasPrintDocument.Preview"/>
+          event is raised to request that a preview image be drawn.
+        </p>
+        <p>
+          When the user chooses to print the <see
+          cref="E:Microsoft.Graphics.Canvas.Printing.CanvasPrintDocument.Print"/>
+          event is raised.  The application can then draw each page in turn
+          using <cee
+          cref="M:Microsoft.Graphics.Canvas.Printing.CanvasPrintEventArgs.CreateDrawingSession"/>
+        </p>
+        <p>
+          The following example shows how to configure a CanvasPrintDocument to
+          preview and print some text:
+          <code>
+            <![CDATA[
+            CanvasPrintDocument MakePrintDocument()
+            {
+                var doc = new CanvasPrintDocument();
+
+                doc.Preview += (sender, args) =>
+                {
+                    sender.SetPageCount(1);
+                    PrintPage(args.DrawingSession, args.PrintTaskOptions.GetPageDescription(1));
+                };
+
+                doc.Print += (sender, args) =>
+                {
+                    using (var ds = args.CreateDrawingSession())
+                    {
+                        PrintPage(ds, args.PrintTaskOptions.GetPageDescription(1));
+                    }
+                }
+            }
+            
+            void PrintPage(CanvasDrawingSession ds, PrintPageDescription desc)
+            {
+                var pageSize = desc.PageSize;
+                var center = pageSize.ToVector2() / 2;
+                ds.DrawText("Win2D", center, Colors.Black, new CanvasTextFormat()
+                {
+                    VerticalAlignment = CanvasVerticalAlignment.Center,
+                    HorizontalAlignment = CanvasHorizontalAlignment.Center
+                });
+            }
+            ]]>
+          </code>
+        </p>
+        <p>
+          Throughout the printing API, page numbers start at 1.  So the first
+          page is page 1 (not page 0, as might be expected by C++ and C#
+          developers).
+        </p>
+      </remarks>
     </member>
+
     <member name="M:Microsoft.Graphics.Canvas.Printing.CanvasPrintDocument.#ctor(Microsoft.Graphics.Canvas.CanvasDevice)">
       <summary>Initializes a new instance of the CanvasPrintDocument class.</summary>
+      <remarks>
+        <p>
+          The provided CanvasDevice is used for drawing previews as well as producing
+          the final printed pages.
+        </p>
+      </remarks>
     </member>
+
     <member name="M:Microsoft.Graphics.Canvas.Printing.CanvasPrintDocument.#ctor">
-      <summary>Initializes a new instance of the CanvasPrintDocument class.</summary>
+      <summary>Initializes a new instance of the CanvasPrintDocument class using the current shared device.</summary>
+      <remarks>
+        <p>
+          This is the same as calling:
+          <code>
+            <![CDATA[
+            new CanvasPrintDocument(CanvasDevice.GetSharedDevice());
+            ]]>
+          </code>
+        </p>
+      </remarks>
     </member>
+
     <member name="M:Microsoft.Graphics.Canvas.Printing.CanvasPrintDocument.InvalidatePreview">
-      <summary></summary>
+      <summary>Tells the print preview dialog that it needs to request the print preview to be regenerated.</summary>
+      <remarks>
+        <p>
+          The system will automatically invalidate if the page size has changed.
+          However, if there are other options that affect the way that the
+          preview is generated (eg PrintPageDescription.ImageableRect or
+          PrintTaskOptions.ColorMode) then the app should explicitly call
+          InvalidatePreview().
+        </p>
+        <p>
+          The <see
+          cref="E:Microsoft.Graphics.Canvas.Printing.CanvasPrintDocument.PrintTaskOptionsChanged"/>
+          event is raised whenever an option is changed and this would be an
+          appropriate place to examine the new options to see if the preview
+          needs invalidating.
+        </p>
+      </remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.Printing.CanvasPrintDocument.SetPageCount(System.Int32)">
-      <summary></summary>
+
+    <member name="M:Microsoft.Graphics.Canvas.Printing.CanvasPrintDocument.SetPageCount(System.UInt32)">
+      <summary>Sets the final page count, as used by the print preview dialog.</summary>
+      <remarks>
+        <p>
+          If it is going to take a long time to asynchronously calculate the
+          page count then it may be worth calling <see
+          cref="M:Microsoft.Graphics.Canvas.Printing.CanvasPrintDocument.SetIntermediatePageCount(System.UInt32)"/>
+          periodically to allow the preview dialog to update its UI.
+        </p>
+      </remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.Printing.CanvasPrintDocument.SetIntermediatePageCount(System.Int32)">
-      <summary></summary>
+
+    <member name="M:Microsoft.Graphics.Canvas.Printing.CanvasPrintDocument.SetIntermediatePageCount(System.UInt32)">
+      <summary>Sets an intermediate page count, as used by the print preview dialog.</summary>
+      <remarks>
+        <p>
+          Call this periodically while asynchronously calculating the page
+          count.  Once the final page count is known, pass it to <see
+          cref="M:Microsoft.Graphics.Canvas.Printing.CanvasPrintDocument.SetPageCount(System.UInt32)"/>.
+        </p>
+      </remarks>
     </member>
+
     <member name="M:Microsoft.Graphics.Canvas.Printing.CanvasPrintDocument.Dispose">
       <summary>Releases all resources used by the CanvasPrintDocument.</summary>
+      <remarks>
+        <p>
+          As CanvasPrintDocument contains events there is a potential of <a
+          href="RefCycles.htm">memory leaks</a> if any registered event handlers
+          are not removed.  An alternative to explicitly removing the events
+          handlers is to call Dispose().
+        </p>
+      </remarks>
     </member>
+
     <member name="P:Microsoft.Graphics.Canvas.Printing.CanvasPrintDocument.Device">
-      <summary></summary>
+      <summary>Gets the CanvasDevice that this CanvasPrintDocument uses for drawing.</summary>
     </member>
+
     <member name="E:Microsoft.Graphics.Canvas.Printing.CanvasPrintDocument.Preview">
-      <summary></summary>
+      <summary>Hook this event to draw print previews.</summary>
+      <remarks>
+        <p>
+          <see
+          cref="E:Microsoft.Graphics.Canvas.Printing.CanvasPrintDocument.PrintTaskOptionsChanged"
+          /> will always be raised at least once before the first Preview event
+          has been raised.
+        </p>
+        <p>
+          The Preview event is raised when the print preview dialog needs a page
+          to be drawn.  The provided <see
+          cref="P:Microsoft.Graphics.Canvas.Printing.CanvasPreviewEventArgs.DrawingSession"
+          /> is configured correctly for drawing the page, with the DPI
+          configured correctly so that the preview size matches the page size.          
+        </p>
+        <p>
+          <code>
+            <![CDATA[
+            void OnPreview(CanvasPrintDocument sender, CanvasPreviewEventArgs args)
+            {
+                PageDescription pageDesc = args.PrintTaskOptions.GetPageDescription(args.PageNumber);
+                Size pageSize = pageDesc.PageSize;
+
+                // Draws a rectangle around the entire page
+                args.DrawingSession.DrawRect(0, 0, (float)pageSize.Width, (float)pageSize.Height, Colors.Black, 1);
+            }
+            ]]>    
+          </code>
+        </p>
+      </remarks>
+      
     </member>
+
     <member name="E:Microsoft.Graphics.Canvas.Printing.CanvasPrintDocument.Print">
-      <summary></summary>
+      <summary>Hook this event to print the document.</summary>
+      <remarks>
+        <p>
+          This is raised after the user presses the "Print" button on the print
+          preview dialog.  The app should draw each page to be printed, calling
+          <see
+          cref="M:Microsoft.Graphics.Canvas.Printing.CanvasPrintEventArgs.CreateDrawingSession"/>
+          for each page.  For example:
+          <code>
+            <![CDATA[
+            void OnPrint(CanvasPrintDocument sender, CanvasPrintEventArgs args)
+            {
+                for (uint pageNumber = 1; pageNumber <= this.numberOfPages; ++pageNumber)
+                {
+                    using (var ds = args.CreateDrawingSession())
+                    {
+                        this.DrawPage(ds, pageNumber, args.PrintTaskOptions.GetPageDescription(pageNumber);
+                    }
+                }
+            }
+            ]]>
+          </code>
+        </p>
+        <p>
+          By default, the <see
+          cref="P:Microsoft.Graphics.Canvas.Printing.CanvasPrintEventArgs.Dpi"/>
+          is set to match the printer DPI.  If an app has a reason to change the
+          DPI then it can do this before the first call to <see
+          cref="M:Microsoft.Graphics.Canvas.Printing.CanvasPrintEventArgs.CreateDrawingSession"/>.
+        </p>
+      </remarks>
     </member>
+
     <member name="E:Microsoft.Graphics.Canvas.Printing.CanvasPrintDocument.PrintTaskOptionsChanged">
-      <summary></summary>
+      <summary>Hook this event to be notified when the print options have
+      changed.</summary>
+      <remarks>
+        <p>
+          This event is always raised at least once before the first <see
+          cref="E:Microsoft.Graphics.Canvas.Printing.CanvasPrintDocument.Preview"/>
+          event is raised.
+        </p>
+        <p>
+          This event gives an application an opportunity to examine the new
+          print options and determine whether or not any existing preview images
+          need to be regenerated.  If so, then <see
+          cref="M:Microsoft.Graphics.Canvas.Printing.CanvasPrintDocument.InvalidatePreview"/>
+          can be used to trigger regeneration.
+        </p>
+        <p>
+          The app is also able to control the initial page that is displayed
+          after preview settings have changed.  This is useful if the page size
+          changes and the app wants to arrange for the content that was on page
+          3 to still be visible, even if it is now on page 4.  The <see
+          cref="P:Microsoft.Graphics.Canvas.Printing.CanvasPrintTaskOptionsChangedEventArgs.CurrentPreviewPageNumber"/>
+          and <see
+          cref="P:Microsoft.Graphics.Canvas.Printing.CanvasPrintTaskOptionsChangedEventArgs.NewPreviewPageNumber"/>
+          properties control this.
+        </p>
+      </remarks>
     </member>
 
 
     <member name="T:Microsoft.Graphics.Canvas.Printing.CanvasPrintTaskOptionsChangedEventArgs" Experimental="true">
-      <summary></summary>
+      <summary>Provides data to the <see cref="E:Microsoft.Graphics.Canvas.Printing.CanvasPrintDocument.PrintTaskOptionsChanged"/> event.</summary>
     </member>
+
     <member name="M:Microsoft.Graphics.Canvas.Printing.CanvasPrintTaskOptionsChangedEventArgs.GetDeferral">
-      <summary></summary>
+      <summary>Allows the app to perform asynchronous operations while processing this event.</summary>
+      <remarks>
+        <p>
+          Usually, when the <see
+          cref="E:Microsoft.Graphics.Canvas.Printing.CanvasPrintDocument.PrintTaskOptionsChanged"/>
+          event handler returns this indicates to CanvasPrintDocument that the
+          application has finished all the processing required.  However, if the
+          application needs to perform asynchronous operations (for example,
+          loading files from disk or performing calculations on a background
+          thread) then it should defer completion using GetDeferral.
+        </p>
+      </remarks>
     </member>
+
     <member name="P:Microsoft.Graphics.Canvas.Printing.CanvasPrintTaskOptionsChangedEventArgs.NewPreviewPageNumber">
-      <summary></summary>
+      <summary>Gets or sets the page number of the page that will be initialled displayed in the print preview.</summary>
     </member>
+
     <member name="P:Microsoft.Graphics.Canvas.Printing.CanvasPrintTaskOptionsChangedEventArgs.CurrentPreviewPageNumber">
-      <summary></summary>
+      <summary>Gets the page number of the page that is currently displayed in the print preview.</summary>
     </member>
+
     <member name="P:Microsoft.Graphics.Canvas.Printing.CanvasPrintTaskOptionsChangedEventArgs.PrintTaskOptions">
-      <summary></summary>
+      <summary>Gets the current print task options.</summary>
     </member>
 
 
     <member name="T:Microsoft.Graphics.Canvas.Printing.CanvasPreviewEventArgs" Experimental="true">
-      <summary></summary>
+      <summary>Provides data to the <see cref="E:Microsoft.Graphics.Canvas.Printing.CanvasPrintDocument.Preview"/> event.</summary>
     </member>
+
     <member name="M:Microsoft.Graphics.Canvas.Printing.CanvasPreviewEventArgs.GetDeferral">
-      <summary></summary>
+      <summary>Allows the app to perform asynchronous operations while processing this event.</summary>
+      <remarks>
+        <p>
+          Usually, when the <see
+          cref="E:Microsoft.Graphics.Canvas.Printing.CanvasPrintDocument.Preview"/>
+          event handler returns this indicates to CanvasPrintDocument that the
+          application has finished all the processing required.  However, if the
+          application needs to perform asynchronous operations (for example,
+          loading files from disk or performing calculations on a background
+          thread) then it should defer completion using GetDeferral.
+        </p>
+      </remarks>
     </member>
+
     <member name="P:Microsoft.Graphics.Canvas.Printing.CanvasPreviewEventArgs.DrawingSession">
-      <summary></summary>
+      <summary>Gets the drawing session for use by the Preview event handler.</summary>
+      <remarks>
+        <p>
+          The application should draw the content for the appropriate page using
+          this drawing session.  The drawing session's DPI has been configured
+          so that coordinates in DIPs match the page size in DIPs.
+        </p>
+      </remarks>
     </member>
+
     <member name="P:Microsoft.Graphics.Canvas.Printing.CanvasPreviewEventArgs.PageNumber">
-      <summary></summary>
+      <summary>Gets the page number of the page that is being previewed.</summary>
     </member>
+
     <member name="P:Microsoft.Graphics.Canvas.Printing.CanvasPreviewEventArgs.PrintTaskOptions">
-      <summary></summary>
+      <summary>Gets the current print task options.</summary>
     </member>
 
 
     <member name="T:Microsoft.Graphics.Canvas.Printing.CanvasPrintEventArgs" Experimental="true">
-      <summary></summary>
-    </member>
-    <member name="M:Microsoft.Graphics.Canvas.Printing.CanvasPrintEventArgs.GetDeferral">
-      <summary></summary>
-    </member>
-    <member name="M:Microsoft.Graphics.Canvas.Printing.CanvasPrintEventArgs.CreateDrawingSession">
-      <summary></summary>
-    </member>
-    <member name="P:Microsoft.Graphics.Canvas.Printing.CanvasPrintEventArgs.Dpi">
-      <summary></summary>
-    </member>
-    <member name="P:Microsoft.Graphics.Canvas.Printing.CanvasPrintEventArgs.PrintTaskOptions">
-      <summary></summary>
+      <summary>Provides data to the <see cref="E:Microsoft.Graphics.Canvas.Printing.CanvasPrintDocument.Print"/> event.</summary>
     </member>
 
-      <member name="T:Microsoft.Graphics.Canvas.Printing.CanvasPrintDeferral" Experimental="true">
-      <summary></summary>
+    <member name="M:Microsoft.Graphics.Canvas.Printing.CanvasPrintEventArgs.GetDeferral">
+      <summary>Allows the app to perform asynchronous operations while processing this event.</summary>
+      <remarks>
+        <p>
+          Usually, when the <see
+          cref="E:Microsoft.Graphics.Canvas.Printing.CanvasPrintDocument.Print"/>
+          event handler returns this indicates to CanvasPrintDocument that the
+          application has finished all the processing required.  However, if the
+          application needs to perform asynchronous operations (for example,
+          loading files from disk or performing calculations on a background
+          thread) then it should defer completion using GetDeferral.
+        </p>
+      </remarks>
+    </member>
+
+    <member name="M:Microsoft.Graphics.Canvas.Printing.CanvasPrintEventArgs.CreateDrawingSession">
+      <summary>Creates a drawing session for drawing the next page to be printed.</summary>
+    </member>
+
+    <member name="P:Microsoft.Graphics.Canvas.Printing.CanvasPrintEventArgs.Dpi">
+      <summary>Gets or sets the DPI to be used while printing.</summary>
+      <remarks>
+        <p>
+          This can only be set before the first call to <see
+          cref="M:Microsoft.Graphics.Canvas.Printing.CanvasPrintEventArgs.CreateDrawingSession"/>.
+        </p>
+        <p>
+          Many drawing operations are DPI independent (eg text, lines, circles
+          etc.) and are sent to the printer as geometry.  However, some
+          operations require explicit rasterization (eg some types of layers,
+          effects).  This setting controls the DPI that this rasterization will
+          happen at.
+        </p>
+      </remarks>
+    </member>
+
+    <member name="P:Microsoft.Graphics.Canvas.Printing.CanvasPrintEventArgs.PrintTaskOptions">
+      <summary>Gets the current print task options.</summary>
+    </member>
+
+
+    <member name="T:Microsoft.Graphics.Canvas.Printing.CanvasPrintDeferral" Experimental="true">
+      <summary>Allows an event handler to defer completion.</summary>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Printing.CanvasPrintDeferral.Complete">
-      <summary></summary>
+      <summary>Notifies that the application has finished handling the event.</summary>
     </member>
   </members>
 </doc>
