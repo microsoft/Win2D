@@ -202,7 +202,12 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextFormat.LineSpacingBaseline">
       <summary>Specifies the distance from top of line to baseline. A reasonable ratio to lineSpacing is 80 percent.</summary>
       <remarks>
-        This property is ignored when <see cref="P:Microsoft.Graphics.Canvas.Text.CanvasTextFormat.LineSpacing" /> is negative.
+        <p>
+          This property is ignored when <see cref="P:Microsoft.Graphics.Canvas.Text.CanvasTextFormat.LineSpacing" /> is negative.
+        </p>
+        <p>
+          The default value for this property is 1.
+        </p>
       </remarks>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextFormat.LineSpacing">

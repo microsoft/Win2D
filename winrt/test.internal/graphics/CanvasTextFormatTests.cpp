@@ -520,6 +520,16 @@ namespace canvas
                 nanf(""));
         }
 
+        TEST_METHOD_EX(CanvasTextFormat_LineSpacingBaseline_DefaultValueIs1)
+        {
+            auto ctf = Make<CanvasTextFormat>();
+
+            float baseline;
+            ThrowIfFailed(ctf->get_LineSpacingBaseline(&baseline));
+
+            Assert::AreEqual(1.0f, baseline);
+        }
+
         TEST_METHOD_EX(CanvasTextFormat_LineSpacingBaseline)
         {
             auto dwriteSetLineSpacingBaseline = 
