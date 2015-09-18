@@ -4,6 +4,8 @@
 
 #include "pch.h"
 
+#ifndef WINDOWS_PHONE
+
 #include "CanvasPrintDocumentAdapter.h"
 
 ComPtr<ICanvasDevice> DefaultPrintDocumentAdapter::GetSharedDevice()
@@ -53,3 +55,5 @@ float DefaultPrintDocumentAdapter::GetLogicalDpi()
     ThrowIfFailed(displayInformation->get_LogicalDpi(&logicalDpi));
     return logicalDpi;    
 }
+
+#endif

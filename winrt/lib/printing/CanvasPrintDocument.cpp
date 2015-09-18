@@ -4,6 +4,8 @@
 
 #include "pch.h"
 
+#ifndef WINDOWS_PHONE
+
 #include "CanvasPrintDocument.h"
 
 #include "CanvasPreviewEventArgs.h"
@@ -487,3 +489,5 @@ void CanvasPrintDocument::RunAsync(std::function<void(CanvasPrintDocument*)> fn)
     ComPtr<IAsyncAction> asyncAction;
     ThrowIfFailed(m_dispatcher->RunAsync(CoreDispatcherPriority_Normal, handler.Get(), &asyncAction));
 }
+
+#endif

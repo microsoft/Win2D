@@ -23,7 +23,11 @@
     <ClCompile>
       <!-- This is, unfortuantely, necessary, because the header propkey.h exists in the Windows SDK but was not put into the Phone SDK. -->
       <AdditionalIncludeDirectories>$(WindowsSDK80Path)\Include\um;$(WindowsSDK80Path)\Include\shared;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WINDOWS_PHONE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
+    <Midl>
+      <PreprocessorDefinitions>WINDOWS_PHONE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </Midl>
   </ItemDefinitionGroup>
 
 </Project>

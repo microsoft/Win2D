@@ -4,6 +4,8 @@
 
 #include "pch.h"
 
+#ifndef WINDOWS_PHONE
+
 #include "CanvasPrintEventArgs.h"
 
 using namespace ABI::Microsoft::Graphics::Canvas::Printing;
@@ -163,3 +165,5 @@ void CanvasPrintEventArgs::DrawingSessionClosed()
 
     m_currentCommandList.Reset();
 }
+
+#endif

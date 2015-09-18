@@ -2,6 +2,8 @@
 //
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
+#ifndef WINDOWS_PHONE
+
 namespace Microsoft.Graphics.Canvas.Printing
 {
     runtimeclass CanvasPrintDocument;
@@ -287,3 +289,5 @@ namespace Microsoft.Graphics.Canvas.Printing
         [default] interface ICanvasPrintDeferral;
     }
 }
+
+#endif

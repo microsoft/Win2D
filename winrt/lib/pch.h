@@ -46,8 +46,11 @@
 #include <DirectXMath.h>
 #include <wincodec.h>
 #include <shcore.h>
+
+#ifndef WINDOWS_PHONE
 #include <DocumentSource.h>
 #include <PrintPreview.h>
+#endif
 
 #if WINVER > _WIN32_WINNT_WINBLUE
 #include <d2d1_3.h>

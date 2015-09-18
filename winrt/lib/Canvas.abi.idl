@@ -6,7 +6,10 @@ import "inspectable.idl";
 import "Windows.Foundation.idl";
 import "Windows.UI.idl";
 import "Windows.UI.Xaml.Media.Imaging.idl";
+
+#ifndef WINDOWS_PHONE
 import "Windows.Graphics.Printing.idl";
+#endif
 
 #include <sdkddkver.h>
 

@@ -115,6 +115,10 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
           page is page 1 (not page 0, as might be expected by C++ and C#
           developers).
         </p>
+        <p>
+          This type is not present in the Windows Phone 8.1 version of Win2D
+          since Windows Phone 8.1 doesn't not support printing.
+        </p>
       </remarks>
     </member>
 
@@ -301,6 +305,12 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
 
     <member name="T:Microsoft.Graphics.Canvas.Printing.CanvasPrintTaskOptionsChangedEventArgs" Experimental="true">
       <summary>Provides data to the <see cref="E:Microsoft.Graphics.Canvas.Printing.CanvasPrintDocument.PrintTaskOptionsChanged"/> event.</summary>
+      <remarks>
+        <p>
+          This type is not present in the Windows Phone 8.1 version of Win2D
+          since Windows Phone 8.1 doesn't not support printing.
+        </p>
+      </remarks>
     </member>
 
     <member name="M:Microsoft.Graphics.Canvas.Printing.CanvasPrintTaskOptionsChangedEventArgs.GetDeferral">
@@ -333,6 +343,12 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
 
     <member name="T:Microsoft.Graphics.Canvas.Printing.CanvasPreviewEventArgs" Experimental="true">
       <summary>Provides data to the <see cref="E:Microsoft.Graphics.Canvas.Printing.CanvasPrintDocument.Preview"/> event.</summary>
+      <remarks>
+        <p>
+          This type is not present in the Windows Phone 8.1 version of Win2D
+          since Windows Phone 8.1 doesn't not support printing.
+        </p>
+      </remarks>
     </member>
 
     <member name="M:Microsoft.Graphics.Canvas.Printing.CanvasPreviewEventArgs.GetDeferral">
@@ -372,6 +388,12 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
 
     <member name="T:Microsoft.Graphics.Canvas.Printing.CanvasPrintEventArgs" Experimental="true">
       <summary>Provides data to the <see cref="E:Microsoft.Graphics.Canvas.Printing.CanvasPrintDocument.Print"/> event.</summary>
+      <remarks>
+        <p>
+          This type is not present in the Windows Phone 8.1 version of Win2D
+          since Windows Phone 8.1 doesn't not support printing.
+        </p>
+      </remarks>
     </member>
 
     <member name="M:Microsoft.Graphics.Canvas.Printing.CanvasPrintEventArgs.GetDeferral">
@@ -417,6 +439,12 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
 
     <member name="T:Microsoft.Graphics.Canvas.Printing.CanvasPrintDeferral" Experimental="true">
       <summary>Allows an event handler to defer completion.</summary>
+      <remarks>
+        <p>
+          This type is not present in the Windows Phone 8.1 version of Win2D
+          since Windows Phone 8.1 doesn't not support printing.
+        </p>
+      </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Printing.CanvasPrintDeferral.Complete">
       <summary>Notifies that the application has finished handling the event.</summary>
