@@ -458,10 +458,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     {
         assert(index < m_properties.size());
 
-        if (HasResource())
+        auto& d2dEffect = MaybeGetResource();
+
+        if (d2dEffect)
         {
             // If we are realized, set the property value through to the underlying D2D resource.
-            SetD2DProperty(ResourceWrapper::GetResource().Get(), index, propertyValue);
+            SetD2DProperty(d2dEffect.Get(), index, propertyValue);
         }
         else
         {
@@ -552,10 +554,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     {
         assert(index < m_properties.size());
 
-        if (HasResource())
+        auto& d2dEffect = MaybeGetResource();
+
+        if (d2dEffect)
         {
             // If we are realized, read the property value from the underlying D2D resource.
-            return GetD2DProperty(ResourceWrapper::GetResource().Get(), index);
+            return GetD2DProperty(d2dEffect.Get(), index);
         }
         else
         {
@@ -649,11 +653,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
     void CanvasEffect::Unrealize()
     {
-        if (HasResource())
+        auto& oldEffect = MaybeGetResource();
+
+        if (oldEffect)
         {
             // Transfer property values from the D2D effect to our resource independent m_properties store.
-            auto& oldEffect = ResourceWrapper::GetResource();
-
             for (unsigned i = 0; i < m_properties.size(); ++i)
             {
                 m_properties[i] = GetD2DProperty(oldEffect.Get(), i);

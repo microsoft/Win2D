@@ -164,9 +164,11 @@ ComPtr<IDWriteTextFormat> CanvasTextFormat::GetRealizedTextFormat()
 {
     auto lock = GetLock();
 
-    if (HasResource())
+    auto& existingResource = MaybeGetResource();
+
+    if (existingResource)
     {
-        return ResourceWrapper::GetResource();
+        return existingResource;
     }
     else
     {
@@ -377,10 +379,10 @@ HRESULT __declspec(nothrow) CanvasTextFormat::PropertyGet(T* value, ST const& sh
             CheckInPointer(value);
             ThrowIfClosed();
 
-            ResourceWrapper* resourceWrapper = this; // workaround VS2013 using wrong 'this' pointer
+            auto& textFormat = MaybeGetResource();
 
-            if (resourceWrapper->HasResource())
-                SetFrom(value, realizedGetter(resourceWrapper->GetResource().Get()));
+            if (textFormat)
+                SetFrom(value, realizedGetter(textFormat.Get()));
             else
                 SetFrom(value, shadowValue);
         });
@@ -421,11 +423,11 @@ HRESULT __declspec(nothrow) CanvasTextFormat::PropertyPut(T value, TT* dest, FNV
             SetFrom(dest, value);
 
             // Realize the value on the dwrite object, if we can
-            ResourceWrapper* resourceWrapper = this; // workaround VS2013 using wrong 'this' pointer
+            auto& textFormat = MaybeGetResource();
 
-            if (resourceWrapper->HasResource() && realizer)
+            if (textFormat && realizer)
             {
-                (this->*realizer)(resourceWrapper->GetResource().Get());
+                (this->*realizer)(textFormat.Get());
             }
         });
 }

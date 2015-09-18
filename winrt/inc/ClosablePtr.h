@@ -88,6 +88,11 @@ public:
         return m_ptr;
     }
 
+    Microsoft::WRL::ComPtr<T> const& UncheckedGet() const
+    {
+        return m_ptr;
+    }
+
     explicit operator bool() const
     {
         return static_cast<bool>(m_ptr);

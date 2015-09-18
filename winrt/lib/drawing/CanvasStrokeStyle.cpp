@@ -358,10 +358,10 @@ ComPtr<ID2D1StrokeStyle1> CanvasStrokeStyle::GetRealizedD2DStrokeStyle(ID2D1Fact
     //
     // If there is already a realization, ensure its factory matches the target factory.
     //
-    if (HasResource())
-    {
-        auto& resource = ResourceWrapper::GetResource();
+    auto& resource = MaybeGetResource();
 
+    if (resource)
+    {
         ComPtr<ID2D1Factory> realizationFactory;
         resource->GetFactory(&realizationFactory);
 

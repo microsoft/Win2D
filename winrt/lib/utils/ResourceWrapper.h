@@ -77,6 +77,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             return m_resource.EnsureNotClosed();
         }
 
+        ComPtr<TResource> const& MaybeGetResource()
+        {
+            return m_resource.UncheckedGet();
+        }
+
         bool HasResource()
         {
             return (bool)m_resource;
