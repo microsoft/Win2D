@@ -76,6 +76,12 @@ ComPtr<CanvasTextLayout> CanvasTextLayout::CreateNew(
         As<IDWriteTextLayout2>(dwriteTextLayout).Get());
     CheckMakeResult(textLayout);
 
+    CanvasLineSpacingMode lineSpacingMode{};
+#if WINVER > _WIN32_WINNT_WINBLUE
+    ThrowIfFailed(textFormat->get_LineSpacingMode(&lineSpacingMode));
+#endif
+    textLayout->SetLineSpacingModeInternal(lineSpacingMode);
+
     return textLayout;
 }
 
@@ -117,6 +123,7 @@ CanvasTextLayout::CanvasTextLayout(
     , m_drawTextOptions(CanvasDrawTextOptions::Default)
     , m_device(device)
     , m_customFontManager(CustomFontManager::GetInstance())
+    , m_lineSpacingMode(CanvasLineSpacingMode::Default)
 {
 }
 
@@ -296,7 +303,16 @@ IFACEMETHODIMP CanvasTextLayout::put_LineSpacing(
 
             DWriteLineSpacing originalSpacing(resource.Get());
 
-            DWriteLineSpacing::Set(resource.Get(), value, originalSpacing.Baseline);
+            CanvasLineSpacingMode lineSpacingMode{};
+#if WINVER > _WIN32_WINNT_WINBLUE
+            lineSpacingMode = ToCanvasLineSpacingMode(originalSpacing.Method);
+#endif
+
+            DWriteLineSpacing::Set(
+                resource.Get(),
+                lineSpacingMode,
+                value, 
+                originalSpacing.Baseline);
         });
 }
 
@@ -331,6 +347,45 @@ IFACEMETHODIMP CanvasTextLayout::put_LineSpacingBaseline(
             ThrowIfFailed(resource->SetLineSpacing(method, spacing, value));
         });
 }
+
+#if WINVER > _WIN32_WINNT_WINBLUE
+
+IFACEMETHODIMP CanvasTextLayout::get_LineSpacingMode(
+    CanvasLineSpacingMode* value)
+{
+    return ExceptionBoundary(
+        [&]
+    {
+        CheckInPointer(value);
+        auto& resource = GetResource();
+
+        DWriteLineSpacing spacing(resource.Get());
+        bool allowUniform = m_lineSpacingMode == CanvasLineSpacingMode::Uniform;
+        *value = spacing.GetAdjustedLineSpacingMode(allowUniform);
+    });
+}
+
+IFACEMETHODIMP CanvasTextLayout::put_LineSpacingMode(
+    CanvasLineSpacingMode value)
+{
+    return ExceptionBoundary(
+        [&]
+    {
+        auto& resource = GetResource();
+
+        DWriteLineSpacing originalSpacing(resource.Get());
+
+        DWriteLineSpacing::Set(
+            resource.Get(),
+            value,
+            originalSpacing.GetAdjustedSpacing(),
+            originalSpacing.Baseline);
+
+        m_lineSpacingMode = value;
+    });
+}
+
+#endif
 
 IFACEMETHODIMP CanvasTextLayout::get_TrimmingGranularity(
     CanvasTextTrimmingGranularity* value)
@@ -1302,6 +1357,11 @@ IFACEMETHODIMP CanvasTextLayout::get_Device(ICanvasDevice** device)
 
             ThrowIfFailed(m_device.EnsureNotClosed().CopyTo(device));
         });
+}
+
+void CanvasTextLayout::SetLineSpacingModeInternal(CanvasLineSpacingMode lineSpacingMode)
+{
+    m_lineSpacingMode = lineSpacingMode;
 }
 
 ActivatableClassWithFactory(CanvasTextLayout, CanvasTextLayoutFactory);

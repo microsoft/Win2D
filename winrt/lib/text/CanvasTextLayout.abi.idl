@@ -61,6 +61,10 @@ namespace Microsoft.Graphics.Canvas.Text
         PROPERTY(WordWrapping, CanvasWordWrapping);
         PROPERTY(Options, CanvasDrawTextOptions);
 
+#if WINVER > _WIN32_WINNT_WINBLUE
+        PROPERTY(LineSpacingMode, CanvasLineSpacingMode);
+#endif
+
         // Not exposed:                             Reason
         //---------------                           -------
         // GetDefaultFontCollection                 Relies on exposure of IDWriteFontCollection. Needs design. Out of scope.

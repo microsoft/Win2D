@@ -104,6 +104,18 @@ namespace Microsoft.Graphics.Canvas.Text
         Character
     } CanvasWordWrapping;
 
+
+#if WINVER > _WIN32_WINNT_WINBLUE
+    [version(VERSION)]
+    typedef enum CanvasLineSpacingMode
+    {
+        Default,
+        Uniform,
+        Proportional
+    } CanvasLineSpacingMode;
+#endif
+
+
 #define PROPERTY(NAME, TYPE)                            \
     [propget] HRESULT NAME([out, retval] TYPE* value);  \
     [propput] HRESULT NAME([in] TYPE value)
@@ -130,6 +142,10 @@ namespace Microsoft.Graphics.Canvas.Text
         PROPERTY(WordWrapping,           CanvasWordWrapping);
         PROPERTY(Options,                CanvasDrawTextOptions); // [5]
 
+#if WINVER > _WIN32_WINNT_WINBLUE
+        PROPERTY(LineSpacingMode,        CanvasLineSpacingMode); // [6]
+#endif
+
         //
         // [1] Direction corresponds to IDWriteTextFormat::FlowDirection and
         //     IDWriteTextFormat::ReadingDirection.  The CanvasTextDirection
@@ -155,13 +171,20 @@ namespace Microsoft.Graphics.Canvas.Text
         //     will also need to have an Options provided, so it makes sense to
         //     combine the two.
         //
-        // [6] When LineSpacing is negative (it defaults to -1) this indicates
-        //     that DWRITE_LINE_SPACING_METHOD_DEFAULT should be used.  When
-        //     non-negative, DWRITE_LINE_SPACING_METHOD_UNIFORM should be used.
-        //     This allows us to a) remove the error case when LineSpacing is
-        //     negative, b) remove the LineSpacingMethod property and c) remove
-        //     the need to explain why LineSpacing is ignored when the method is
-        //     set to default.
+        // [6] The DWRITE_LINE_SPACING_METHOD and line spacing value Win2D passes 
+        //     to Dwrite is a function of LineSpacingMode and LineSpacing.
+        //
+        //     If LineSpacingMode == Default (or always, on Win8.1):
+        //        Use DWRITE_LINE_SPACING_METHOD_UNIFORM if LineSpacing is positive.
+        //        Use DWRITE_LINE_SPACING_METHOD_DEFAULT if LineSpacing is negative.
+        //
+        //    If LineSpacingMode == Uniform
+        //       Use DWRITE_LINE_SPACING_METHOD_UNIFORM.
+        //       Pass DWrite a sanitized LineSpacing by taking its absolute value.
+        //
+        //    If LineSpacingMode == Proportional
+        //       Use DWRITE_LINE_SPACING_METHOD_PROPORTIONAL.
+        //       Pass DWrite a sanitized LineSpacing by taking its absolute value.
         //
         // FontCollection will be added in the future.  #821 covers adding
         // custom font loading which is when having configurable font collection

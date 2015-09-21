@@ -582,6 +582,9 @@ namespace Microsoft
             {
                 ENUM_VALUE(DWRITE_LINE_SPACING_METHOD_DEFAULT);
                 ENUM_VALUE(DWRITE_LINE_SPACING_METHOD_UNIFORM);
+#if WINVER > _WIN32_WINNT_WINBLUE
+                ENUM_VALUE(DWRITE_LINE_SPACING_METHOD_PROPORTIONAL);
+#endif
                 END_ENUM(DWRITE_LINE_SPACING_METHOD);
             }
 
@@ -1007,6 +1010,14 @@ namespace Microsoft
             inline std::wstring ToString<D2D1_GRADIENT_MESH_PATCH>(D2D1_GRADIENT_MESH_PATCH const& value)
             {
                 return L"D2D1_GRADIENT_MESH_PATCH";
+            }
+
+            ENUM_TO_STRING(CanvasLineSpacingMode)
+            {
+                ENUM_VALUE(CanvasLineSpacingMode::Default);
+                ENUM_VALUE(CanvasLineSpacingMode::Uniform);
+                ENUM_VALUE(CanvasLineSpacingMode::Proportional);
+                END_ENUM(CanvasLineSpacingMode);
             }
 #endif
 

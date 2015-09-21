@@ -106,7 +106,8 @@ CanvasTextFormat::CanvasTextFormat()
     , m_fontStretch(ABI::Windows::UI::Text::FontStretch_Normal)
     , m_fontStyle(ABI::Windows::UI::Text::FontStyle_Normal)
     , m_fontWeight(ToWindowsFontWeight(DWRITE_FONT_WEIGHT_NORMAL))
-    , m_incrementalTabStop(-1.0f)          
+    , m_incrementalTabStop(-1.0f)
+    , m_lineSpacingMode(CanvasLineSpacingMode::Default)
     , m_lineSpacing(-1.0f)
     , m_lineSpacingBaseline(1.0f)
     , m_verticalAlignment(CanvasVerticalAlignment::Top)
@@ -124,6 +125,7 @@ CanvasTextFormat::CanvasTextFormat(IDWriteTextFormat* format)
     , m_customFontManager(CustomFontManager::GetInstance())
     , m_closed(false)
     , m_drawTextOptions(CanvasDrawTextOptions::Default)
+    , m_lineSpacingMode(CanvasLineSpacingMode::Default)
 {
     SetShadowPropertiesFromDWrite();
 }
@@ -290,6 +292,11 @@ void CanvasTextFormat::SetShadowPropertiesFromDWrite()
     DWriteLineSpacing spacing(textFormat.Get());
     m_lineSpacing = spacing.GetAdjustedSpacing();
     m_lineSpacingBaseline = spacing.Baseline;
+
+#if WINVER > _WIN32_WINNT_WINBLUE
+    bool isUniform = m_lineSpacingMode == CanvasLineSpacingMode::Uniform;
+    m_lineSpacingMode = spacing.GetAdjustedLineSpacingMode(isUniform);
+#endif
 
     DWRITE_TRIMMING trimmingOptions{};
     ComPtr<IDWriteInlineObject> inlineObject;
@@ -724,7 +731,11 @@ IFACEMETHODIMP CanvasTextFormat::put_LineSpacingBaseline(float value)
 
 void CanvasTextFormat::RealizeLineSpacing(IDWriteTextFormat* textFormat)
 {
-    DWriteLineSpacing::Set(textFormat, m_lineSpacing, m_lineSpacingBaseline);
+    DWriteLineSpacing::Set(
+        textFormat, 
+        m_lineSpacingMode,
+        m_lineSpacing, 
+        m_lineSpacingBaseline);
 }
 
 
@@ -950,6 +961,34 @@ IFACEMETHODIMP CanvasTextFormat::put_Options(CanvasDrawTextOptions value)
             m_drawTextOptions = value;
         });
 }
+
+//
+// CanvasTextFormat.LineSpacingMethod
+//
+
+#if WINVER > _WIN32_WINNT_WINBLUE
+
+IFACEMETHODIMP CanvasTextFormat::get_LineSpacingMode(CanvasLineSpacingMode* value)
+{
+    bool allowUniformToBePreserved = m_lineSpacingMode == CanvasLineSpacingMode::Uniform;
+
+    return PropertyGet(
+        value,
+        m_lineSpacingMode,
+        [=](IDWriteTextFormat* textFormat) { return DWriteLineSpacing(textFormat).GetAdjustedLineSpacingMode(allowUniformToBePreserved); });
+}
+
+
+IFACEMETHODIMP CanvasTextFormat::put_LineSpacingMode(CanvasLineSpacingMode value)
+{
+    return PropertyPut(
+        value, 
+        &m_lineSpacingMode,
+        ThrowIfInvalid<CanvasLineSpacingMode>,
+        &CanvasTextFormat::RealizeLineSpacing);
+}
+
+#endif
 
 
 static WinString GetTextFromLocalizedStrings(

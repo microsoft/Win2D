@@ -7,6 +7,15 @@
 #include "utils/LockUtilities.h"
 #include "CustomFontManager.h"
 
+//
+// CanvasLineSpacingMode is a type that is only available on Win10.
+// To reduce the number of guards around places that consume this type,
+// we define a placeholder for 8.1.
+//
+#if WINVER <= _WIN32_WINNT_WINBLUE
+enum CanvasLineSpacingMode { Default };
+#endif
+
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Text
 {
     using namespace ::Microsoft::WRL;
@@ -107,6 +116,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         //
         CanvasDrawTextOptions m_drawTextOptions;
 
+        //
+        // This type is used on Win10, and is defined as a placeholder on 8.1.
+        //
+        CanvasLineSpacingMode m_lineSpacingMode;
+
     public:
         CanvasTextFormat();
         CanvasTextFormat(IDWriteTextFormat* format);
@@ -135,6 +149,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         PROPERTY(TrimmingDelimiterCount, int32_t);
         PROPERTY(WordWrapping,           CanvasWordWrapping);
         PROPERTY(Options,                CanvasDrawTextOptions);
+
+#if WINVER > _WIN32_WINNT_WINBLUE
+        PROPERTY(LineSpacingMode,        CanvasLineSpacingMode);
+#endif
 
 #undef PROPERTY
 
@@ -211,25 +229,78 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                 return -Spacing;
 
             case DWRITE_LINE_SPACING_METHOD_UNIFORM:
+
+#if WINVER > _WIN32_WINNT_WINBLUE
+            case DWRITE_LINE_SPACING_METHOD_PROPORTIONAL:
+#endif
             default:
                 return Spacing;
             }
         }
 
-        static void Set(IDWriteTextFormat* format, float spacing, float baseline)
+#if WINVER > _WIN32_WINNT_WINBLUE
+        CanvasLineSpacingMode GetAdjustedLineSpacingMode(bool allowUniform = false) const
         {
-            // The line spacing method is determined by the value of the
-            // LineSpacing property.  Negative means DEFAULT while non-negative
-            // means UNIFORM.  In the DEFAULT method, the actual value of
-            // m_lineSpacing is ignored, although it is still validated to be
-            // non-negative.  For this reason we pass in the fabs of the value
-            // that was set.  This also allows us to round-trip the values.
+            if (Method == DWRITE_LINE_SPACING_METHOD_PROPORTIONAL)
+            {
+                return CanvasLineSpacingMode::Proportional;
+            }
+            else
+            {
+                return allowUniform? CanvasLineSpacingMode::Uniform : CanvasLineSpacingMode::Default;
+            }
+        }
+#endif
+
+        static void Set(
+            IDWriteTextFormat* format,
+            CanvasLineSpacingMode lineSpacingMode,
+            float spacing, 
+            float baseline)
+        {
+            //
+            // The DWrite line spacing method is determined by the value of the
+            // LineSpacing property, together with the LineSpacingMode
+            // property (when available, on Win10+).  
+            //
+            //  If LineSpacingMode == Default (or always, on Win8.1):
+            //     Use DWRITE_LINE_SPACING_METHOD_UNIFORM if LineSpacing is positive.
+            //     Use DWRITE_LINE_SPACING_METHOD_DEFAULT if LineSpacing is negative.
+            //
+            //  If LineSpacingMode == Uniform
+            //     Use DWRITE_LINE_SPACING_METHOD_UNIFORM.
+            //
+            //  If LineSpacingMode == Proportional
+            //     Use DWRITE_LINE_SPACING_METHOD_PROPORTIONAL.
+            //
+            //
+            // In the DEFAULT method, the actual value of m_lineSpacing is ignored, 
+            // although it is still validated to be non-negative.  
+            // For this reason we pass in the fabs of the value
+            // that was set.  This also allows us to round-trip the values in that 
+            // case.
+            //
+
             //
             // signbit() is used so we can tell the difference between 0.0 and
             // -0.0.
-            auto method = signbit(spacing)
-                ? DWRITE_LINE_SPACING_METHOD_DEFAULT 
+            //
+            DWRITE_LINE_SPACING_METHOD method = signbit(spacing)
+                ? DWRITE_LINE_SPACING_METHOD_DEFAULT
                 : DWRITE_LINE_SPACING_METHOD_UNIFORM;
+
+#if WINVER > _WIN32_WINNT_WINBLUE
+            if (lineSpacingMode == CanvasLineSpacingMode::Uniform)
+            {
+                method = DWRITE_LINE_SPACING_METHOD_UNIFORM;
+            }
+            else if (lineSpacingMode == CanvasLineSpacingMode::Proportional)
+            {
+                method = DWRITE_LINE_SPACING_METHOD_PROPORTIONAL;
+            }
+#else
+            UNREFERENCED_PARAMETER(lineSpacingMode);
+#endif
 
             ThrowIfFailed(format->SetLineSpacing(
                 method,

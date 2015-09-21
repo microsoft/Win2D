@@ -410,7 +410,7 @@ namespace canvas
             Assert::IsTrue(lineSpacing < 0, L"LineSpacing defaults to a negative value");
         }
 
-        TEST_METHOD_EX(CanvasTextFormat_LineSpacing_AllValuesRoundTripToAndFromDWrite)
+        TEST_METHOD_EX(CanvasTextFormat_LineSpacing_DefaultMethod_AllValuesRoundTripToAndFromDWrite)
         {
             auto values = { -100.0f, -50.0f, -1.0f, 0.0f, 0.1f, 1.0f, 100.0f };
 
@@ -442,6 +442,107 @@ namespace canvas
 
             }
         }
+
+#if WINVER > _WIN32_WINNT_WINBLUE
+
+        TEST_METHOD_EX(CanvasTextFormat_LineSpacing_InteropToAndFromDWrite_AllSpacingMethods)
+        {
+            struct TestCase
+            {
+                CanvasLineSpacingMode OriginalLineSpacingMode;
+                float OriginalLineSpacing;
+
+                DWRITE_LINE_SPACING_METHOD UnwrappedLineSpacingMethod;
+                float UnwrappedLineSpacing;
+
+                CanvasLineSpacingMode WrappedLineSpacingMode;
+                float WrappedLineSpacing;
+            } testCases[]
+            {
+                { CanvasLineSpacingMode::Default, 5.0f, DWRITE_LINE_SPACING_METHOD_UNIFORM, 5.0f, CanvasLineSpacingMode::Default, 5.0f},
+                { CanvasLineSpacingMode::Default, -1.0f, DWRITE_LINE_SPACING_METHOD_DEFAULT, 1.0f, CanvasLineSpacingMode::Default, -1.0f },
+                
+                { CanvasLineSpacingMode::Uniform, 5.0f, DWRITE_LINE_SPACING_METHOD_UNIFORM, 5.0f, CanvasLineSpacingMode::Default, 5.0f},
+                { CanvasLineSpacingMode::Uniform, -11.0f, DWRITE_LINE_SPACING_METHOD_UNIFORM, 11.0f, CanvasLineSpacingMode::Default, 11.0f },
+                
+                { CanvasLineSpacingMode::Proportional, 5.0f, DWRITE_LINE_SPACING_METHOD_PROPORTIONAL, 5.0f, CanvasLineSpacingMode::Proportional, 5.0f},
+                { CanvasLineSpacingMode::Proportional, -22.0f, DWRITE_LINE_SPACING_METHOD_PROPORTIONAL, 22.0f, CanvasLineSpacingMode::Proportional, 22.0f }
+            };
+
+            for (auto testCase : testCases)
+            {
+                // Create a CanvasTextFormat with LineSpacing set to the value
+                auto ctf = Make<CanvasTextFormat>();
+                ThrowIfFailed(ctf->put_LineSpacing(testCase.OriginalLineSpacing));
+                ThrowIfFailed(ctf->put_LineSpacingMode(testCase.OriginalLineSpacingMode));
+
+                // Get the underlying IDWriteTextFormat, and wrap a new
+                // CanvasTextFormat around it
+                auto dtf = GetWrappedResource<IDWriteTextFormat>(ctf);
+
+                DWRITE_LINE_SPACING_METHOD dwriteMethod;
+                float dwriteSpacing, unusedBaseline;
+                ThrowIfFailed(dtf->GetLineSpacing(&dwriteMethod, &dwriteSpacing, &unusedBaseline));
+                Assert::AreEqual(testCase.UnwrappedLineSpacing, dwriteSpacing);
+                Assert::AreEqual(testCase.UnwrappedLineSpacingMethod, dwriteMethod);
+
+                ctf.Reset();
+
+                ctf = Make<CanvasTextFormat>(dtf.Get());
+
+                float wrappedSpacingValue;
+                ThrowIfFailed(ctf->get_LineSpacing(&wrappedSpacingValue));
+                Assert::AreEqual(testCase.WrappedLineSpacing, wrappedSpacingValue);
+
+                CanvasLineSpacingMode wrappedSpacingMode;
+                ThrowIfFailed(ctf->get_LineSpacingMode(&wrappedSpacingMode));
+                Assert::AreEqual(testCase.WrappedLineSpacingMode, wrappedSpacingMode);
+
+                // Even after unrealizing 
+                ThrowIfFailed(ctf->put_FontSize(123));
+
+                ThrowIfFailed(ctf->get_LineSpacing(&wrappedSpacingValue));
+                Assert::AreEqual(testCase.WrappedLineSpacing, wrappedSpacingValue);
+
+                ThrowIfFailed(ctf->get_LineSpacingMode(&wrappedSpacingMode));
+                Assert::AreEqual(testCase.WrappedLineSpacingMode, wrappedSpacingMode);
+            }
+        }
+
+        TEST_METHOD_EX(CanvasTextFormat_LineSpacing_RealizationDoesntClobberUniform)
+        {
+            auto ctf = Make<CanvasTextFormat>();
+            ThrowIfFailed(ctf->put_LineSpacing(5.0f));
+            ThrowIfFailed(ctf->put_LineSpacingMode(CanvasLineSpacingMode::Uniform));
+
+            // Force realization.
+            auto dtf = GetWrappedResource<IDWriteTextFormat>(ctf);
+
+            // Shouldn't've changed from Uniform.
+            CanvasLineSpacingMode spacingMode;
+            ThrowIfFailed(ctf->get_LineSpacingMode(&spacingMode));
+            Assert::AreEqual(CanvasLineSpacingMode::Uniform, spacingMode);
+        }
+
+        TEST_METHOD_EX(CanvasTextFormat_LineSpacingMode_ReadBackAfterRealization)
+        {
+            for (int i = 0; i < 2; ++i)
+            {
+                auto ctf = Make<CanvasTextFormat>();
+                ThrowIfFailed(ctf->put_LineSpacingMode(CanvasLineSpacingMode::Uniform));
+                ThrowIfFailed(ctf->put_LineSpacing(i==0? -1.0f : 5.0f));                
+
+                // Force realization.
+                auto dtf = GetWrappedResource<IDWriteTextFormat>(ctf);
+
+                ThrowIfFailed(ctf->put_LineSpacingMode(CanvasLineSpacingMode::Default));
+
+                CanvasLineSpacingMode spacingMode;
+                ThrowIfFailed(ctf->get_LineSpacingMode(&spacingMode));
+                Assert::AreEqual(CanvasLineSpacingMode::Default, spacingMode);
+            }
+        }
+#endif
 
         TEST_METHOD_EX(CanvasTextFormat_LineSpacing_MethodIsDeterminedByValueOfLineSpacing)
         {

@@ -163,4 +163,41 @@ namespace Microsoft.Graphics.Canvas.Geometry
             throw new System.NotImplementedException();
         }
     }
+
+}
+
+namespace Microsoft.Graphics.Canvas.Text
+{
+    /// <summary></summary>
+    public enum CanvasLineSpacingMode : int
+    {
+        /// <summary></summary>
+        Default = 0,
+        /// <summary></summary>
+        Uniform = 1,
+        /// <summary></summary>
+        Proportional = 2,
+    }
+
+    /// <summary></summary>
+    public sealed partial class CanvasTextFormat : global::System.IDisposable
+    {
+        /// <summary></summary>
+        public global::Microsoft.Graphics.Canvas.Text.CanvasLineSpacingMode LineSpacingMode
+        {
+            get { throw new System.NotImplementedException(); }
+            set { throw new System.NotImplementedException(); }
+        }
+    }
+
+    /// <summary></summary>
+    public sealed partial class CanvasTextLayout : global::System.IDisposable
+    {
+        /// <summary></summary>
+        public global::Microsoft.Graphics.Canvas.Text.CanvasLineSpacingMode LineSpacingMode
+        {
+            get { throw new System.NotImplementedException(); }
+            set { throw new System.NotImplementedException(); }
+        }
+    }
 }

@@ -16,8 +16,15 @@ namespace canvas
 {
     class StubTextLayout : public MockDWriteTextLayout
     {
+        DWRITE_LINE_SPACING_METHOD m_lineSpacingMethod;
+        float m_lineSpacing;
+        float m_baseline;
+
     public:
         StubTextLayout()
+            : m_lineSpacingMethod(DWRITE_LINE_SPACING_METHOD_DEFAULT)
+            , m_lineSpacing(0)
+            , m_baseline(0)
         {
             GetFontCollection_BaseFormat_Method.AllowAnyCall(
                 [](IDWriteFontCollection** fontCollection)
@@ -69,11 +76,20 @@ namespace canvas
             GetWordWrappingMethod.AllowAnyCall([] { return DWRITE_WORD_WRAPPING_WRAP; });
 
             GetLineSpacingMethod.AllowAnyCall(
-                [](DWRITE_LINE_SPACING_METHOD* lineSpacingMethod, FLOAT* lineSpacing, FLOAT* baseline)
+                [=](DWRITE_LINE_SPACING_METHOD* lineSpacingMethod, FLOAT* lineSpacing, FLOAT* baseline)
             {
-                *lineSpacingMethod = DWRITE_LINE_SPACING_METHOD_DEFAULT;
-                *lineSpacing = 0;
-                *baseline = 0;
+                *lineSpacingMethod = m_lineSpacingMethod;
+                *lineSpacing = m_lineSpacing;
+                *baseline = m_baseline;
+                return S_OK;
+            });
+
+            SetLineSpacingMethod.AllowAnyCall(
+                [=](DWRITE_LINE_SPACING_METHOD lineSpacingMethod, FLOAT lineSpacing, FLOAT baseline)
+            {
+                m_lineSpacingMethod = lineSpacingMethod;
+                m_lineSpacing = lineSpacing;
+                m_baseline = baseline;
                 return S_OK;
             });
 

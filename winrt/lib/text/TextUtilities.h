@@ -332,6 +332,38 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         }
     }
 
+#if WINVER > _WIN32_WINNT_WINBLUE
+    template<>
+    inline void ThrowIfInvalid(CanvasLineSpacingMode value)
+    {
+        switch (value)
+        {
+        case CanvasLineSpacingMode::Default:
+        case CanvasLineSpacingMode::Uniform:
+        case CanvasLineSpacingMode::Proportional:
+            return;
+
+        default:
+            ThrowHR(E_INVALIDARG);
+        }
+    }
+
+    inline CanvasLineSpacingMode ToCanvasLineSpacingMode(DWRITE_LINE_SPACING_METHOD value)
+    {
+        // static_asserts in ToLineSpacingMethod validate that this cast is ok
+        return static_cast<CanvasLineSpacingMode>(value);
+    }
+
+    inline DWRITE_LINE_SPACING_METHOD ToLineSpacingMethod(CanvasLineSpacingMode value)
+    {
+        CHECK_ENUM_MEMBER(DWRITE_LINE_SPACING_METHOD_DEFAULT, CanvasLineSpacingMode::Default);
+        CHECK_ENUM_MEMBER(DWRITE_LINE_SPACING_METHOD_UNIFORM, CanvasLineSpacingMode::Uniform);
+        CHECK_ENUM_MEMBER(DWRITE_LINE_SPACING_METHOD_PROPORTIONAL, CanvasLineSpacingMode::Proportional);
+
+        return static_cast<DWRITE_LINE_SPACING_METHOD>(value);
+    }
+#endif
+
     inline void ThrowIfInvalidTrimmingDelimiter(HSTRING value)
     {
         // The delimiter must be a single code point and so cannot be more than

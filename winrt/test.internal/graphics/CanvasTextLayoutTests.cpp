@@ -664,6 +664,82 @@ namespace canvas
             Assert::AreEqual(456.0f, fl);
         }
 
+#if WINVER > _WIN32_WINNT_WINBLUE
+
+        TEST_METHOD_EX(CanvasTextLayoutTests_LineSpacingMode)
+        {
+            struct TestCase
+            {
+                CanvasLineSpacingMode OriginalLineSpacingMode;
+                float OriginalLineSpacing;
+
+                DWRITE_LINE_SPACING_METHOD UnwrappedLineSpacingMethod;
+                float UnwrappedLineSpacing;
+
+                CanvasLineSpacingMode WrappedLineSpacingMode;
+                float WrappedLineSpacing;
+            } testCases[]
+            {
+                { CanvasLineSpacingMode::Default, 5.0f, DWRITE_LINE_SPACING_METHOD_UNIFORM, 5.0f, CanvasLineSpacingMode::Default, 5.0f },
+                { CanvasLineSpacingMode::Default, -1.0f, DWRITE_LINE_SPACING_METHOD_DEFAULT, 1.0f, CanvasLineSpacingMode::Default, -1.0f },
+
+                { CanvasLineSpacingMode::Uniform, 5.0f, DWRITE_LINE_SPACING_METHOD_UNIFORM, 5.0f, CanvasLineSpacingMode::Default, 5.0f },
+                { CanvasLineSpacingMode::Uniform, -11.0f, DWRITE_LINE_SPACING_METHOD_UNIFORM, 11.0f, CanvasLineSpacingMode::Default, 11.0f },
+
+                { CanvasLineSpacingMode::Proportional, 5.0f, DWRITE_LINE_SPACING_METHOD_PROPORTIONAL, 5.0f, CanvasLineSpacingMode::Proportional, 5.0f },
+                { CanvasLineSpacingMode::Proportional, -22.0f, DWRITE_LINE_SPACING_METHOD_PROPORTIONAL, 22.0f, CanvasLineSpacingMode::Proportional, 22.0f }
+            };
+
+            for (auto testCase : testCases)
+            {
+                Fixture f;
+                auto textLayout = f.CreateSimpleTextLayout();
+
+                textLayout->put_LineSpacingMode(testCase.OriginalLineSpacingMode);
+                textLayout->put_LineSpacing(testCase.OriginalLineSpacing);
+
+                auto dtl = GetWrappedResource<IDWriteTextLayout2>(textLayout);
+
+                // Make sure the resulting DWrite text layout has the correct properties.
+                DWRITE_LINE_SPACING_METHOD dwriteMethod;
+                float dwriteSpacing, unusedBaseline;
+                ThrowIfFailed(dtl->GetLineSpacing(&dwriteMethod, &dwriteSpacing, &unusedBaseline));
+                Assert::AreEqual(testCase.UnwrappedLineSpacing, dwriteSpacing);
+                Assert::AreEqual(testCase.UnwrappedLineSpacingMethod, dwriteMethod);
+
+                textLayout.Reset();
+
+                textLayout = Make<CanvasTextLayout>(f.Device.Get(), dtl.Get());
+
+                float wrappedSpacingValue;
+                ThrowIfFailed(textLayout->get_LineSpacing(&wrappedSpacingValue));
+                Assert::AreEqual(testCase.WrappedLineSpacing, wrappedSpacingValue);
+
+                CanvasLineSpacingMode wrappedSpacingMode;
+                ThrowIfFailed(textLayout->get_LineSpacingMode(&wrappedSpacingMode));
+                Assert::AreEqual(testCase.WrappedLineSpacingMode, wrappedSpacingMode);
+            }
+        }
+
+        TEST_METHOD_EX(CanvasTextLayout_LineSpacingMode_RealizationDoesntClobberUniform)
+        {
+            Fixture f;
+            auto ctl = f.CreateSimpleTextLayout();
+
+            ThrowIfFailed(ctl->put_LineSpacing(5.0f));
+            ThrowIfFailed(ctl->put_LineSpacingMode(CanvasLineSpacingMode::Uniform));
+
+            // Force realization
+            auto dtl = GetWrappedResource<IDWriteTextLayout2>(ctl);
+
+            // Ensure still Uniform
+            CanvasLineSpacingMode spacingMode;
+            ThrowIfFailed(ctl->get_LineSpacingMode(&spacingMode));
+            Assert::AreEqual(CanvasLineSpacingMode::Uniform, spacingMode);
+        }
+
+#endif
+
         template<class SET_LINE_SPACING_METHOD>
         void InitializeSetLineSpacingMethod(SET_LINE_SPACING_METHOD& setLineSpacingMethod, DWRITE_LINE_SPACING_METHOD method, FLOAT spacing, FLOAT baseline)
         {

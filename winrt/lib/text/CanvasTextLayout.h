@@ -24,6 +24,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         std::shared_ptr<CustomFontManager> m_customFontManager;
 
+        CanvasLineSpacingMode m_lineSpacingMode;
+
     public:
         static ComPtr<CanvasTextLayout> CreateNew(
             ICanvasResourceCreator* resourceCreator,
@@ -78,6 +80,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         IFACEMETHOD(put_LineSpacingBaseline)(
             float value) override;
+
+#if WINVER > _WIN32_WINNT_WINBLUE
+        IFACEMETHOD(get_LineSpacingMode)(
+            CanvasLineSpacingMode* value) override;
+
+        IFACEMETHOD(put_LineSpacingMode)(
+            CanvasLineSpacingMode value) override;
+#endif
 
         IFACEMETHOD(get_DefaultLocaleName)(
             HSTRING* value) override;
@@ -331,6 +341,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         IFACEMETHOD(Close)() override;
 
         IFACEMETHOD(get_Device)(ICanvasDevice** device);
+
+        //
+        // Internal
+        //
+        void SetLineSpacingModeInternal(CanvasLineSpacingMode lineSpacingMode);
     };
 
 

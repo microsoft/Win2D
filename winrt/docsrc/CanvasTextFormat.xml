@@ -208,15 +208,23 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         <p>
           The default value for this property is 1.
         </p>
+        <p>
+          The behavior of this property is affected by the text format's <see cref="T:Microsoft.Graphics.Canvas.Text.CanvasLineSpacingMode"/>.
+        </p>
       </remarks>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextFormat.LineSpacing">
       <summary>Negative values use default line spacing; non-negative values specify the line height.</summary>
       <remarks>
-        The line height is the distance from one baseline to another.  When
-        LineSpacing is negative the <see
-        cref="P:Microsoft.Graphics.Canvas.Text.CanvasTextFormat.LineSpacingBaseline"/>
-        property is ignored.
+        <p>
+          The line height is the distance from one baseline to another.  When
+          LineSpacing is negative the <see
+          cref="P:Microsoft.Graphics.Canvas.Text.CanvasTextFormat.LineSpacingBaseline"/>
+          property is ignored.
+        </p>
+        <p>
+          The behavior of this property is affected by the text format's <see cref="T:Microsoft.Graphics.Canvas.Text.CanvasLineSpacingMode"/>.
+        </p>
       </remarks>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextFormat.IncrementalTabStop">
@@ -311,7 +319,60 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
           overload.
         </p>
       </remarks>
-    </member>    
+    </member>
+
+    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasLineSpacingMode" Experimental="true"  Win10="true">
+      <summary>Options for specifying how lines are spaced apart.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasLineSpacingMode.Default">
+      <summary>
+        Automatically positioned, if <see cref="P:Microsoft.Graphics.Canvas.Text.CanvasTextFormat.LineSpacing"/> is negative; otherwise, LineSpacing and LineSpacingBaseline are treated as a quantities in DIPs.
+      </summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasLineSpacingMode.Uniform">
+      <summary>
+        Spacing is affected by the absolute value of LineSpacing, and vertical offset of the text is determined by LineSpacingBaseline. LineSpacing and LineSpacingBaseline are treated as a quantities in DIPs.
+      </summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasLineSpacingMode.Proportional">
+      <summary>
+        Spacing is affected by the absolute value of LineSpacing, and vertical offset of the text is determined by LineSpacingBaseline. LineSpacing and LineSpacingBaseline are treated as a ratio of the default.
+      </summary>
+    </member>
+
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextFormat.LineSpacingMode" Experimental="true" Win10="true">
+      <summary>Specifies how lines are spaced apart.</summary>
+      <remarks>
+        <p>
+          If this property is set to Default:
+          <ul>
+            <li>Leaving <see cref="P:Microsoft.Graphics.Canvas.Text.CanvasTextFormat.LineSpacing"/> 
+            at is default value of -1 will keep the default line spacing.</li>
+            <li>Set LineSpacing to any positive quantity to have it affect the line spacing. 
+                And, LineSpacing and 
+                <see cref="P:Microsoft.Graphics.Canvas.Text.CanvasTextFormat.LineSpacingBaseline"/> are absolute quantities.</li>
+          </ul>
+        </p>
+        <p>
+          If this property is set to Uniform, then the magnitude of the LineSpacing field will affect line spacing.
+          LineSpacing and LineSpacingBaseline are absolute quantities in DIPs.
+        </p>
+        <p>
+          If this property is set to Proportional, then the magnitude of the LineSpacing field will affect line spacing.
+          LineSpacing and LineSpacingBaseline are amounts by which to scale the default line spacing and line spacing baseline, respectively.
+        </p>
+        <p>
+          For example, to create a text format for double-spaced text, use
+          <code>
+            CanvasTextFormat textFormat = new CanvasTextFormat()
+            {
+                LineSpacingMode = CanvasLineSpacingMode.Proportional,
+                LineSpacing = 2
+            };
+          </code>
+        </p>
+      </remarks>
+    </member>
     
   </members>
 </doc>
