@@ -86,3 +86,16 @@ WicBitmapTestFixture CreateWicBitmapTestFixture()
 
     return result;
 }
+
+bool GpuMatchesDescription(CanvasDevice^ canvasDevice, wchar_t const* description)
+{
+    auto dxgiDevice = GetDXGIInterface<IDXGIDevice>(canvasDevice);
+
+    ComPtr<IDXGIAdapter> adapter;
+    ThrowIfFailed(dxgiDevice->GetAdapter(&adapter));
+
+    DXGI_ADAPTER_DESC adapterDesc;
+    ThrowIfFailed(adapter->GetDesc(&adapterDesc));
+
+    return wcscmp(adapterDesc.Description, description) == 0;
+}

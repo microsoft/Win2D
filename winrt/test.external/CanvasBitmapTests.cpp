@@ -693,11 +693,16 @@ public:
             Assert::AreEqual(sliceDimension, (unsigned int)decoder->PixelWidth);
             Assert::AreEqual(sliceDimension, (unsigned int)decoder->PixelHeight);
         }
-
     }
 
     TEST_METHOD(CanvasBitmap_GetData_Subresource)
     {
+        // Skip this test on hardware known to fail it due to a driver bug.
+        // Normally we wouldn't bother with checks like this, but Shawn has
+        // become fed up with the test constantly showing red on his laptop :-(
+        if (GpuMatchesDescription(m_sharedDevice, L"Intel(R) HD Graphics 3000"))
+            return;
+
         SubresourceTestFixture f(m_sharedDevice);
 
         for (unsigned int i = 0; i < c_subresourceSliceCount; i++)

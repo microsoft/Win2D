@@ -487,7 +487,6 @@ inline void AssertTypeName(U^ obj)
     Assert::AreEqual(T::typeid->FullName, obj->GetType()->FullName);
 }
 
-
 template<typename T, typename U>
 inline ComPtr<T> GetDXGIInterface(U^ obj)
 {
@@ -496,12 +495,13 @@ inline ComPtr<T> GetDXGIInterface(U^ obj)
     return dxgi;
 }
 
-
 ComPtr<ID2D1DeviceContext1> CreateTestD2DDeviceContext(CanvasDevice^ device = nullptr);
 
 ComPtr<ID2D1Bitmap1> CreateTestD2DBitmap(D2D1_BITMAP_OPTIONS options, ComPtr<ID2D1DeviceContext1> deviceContext = nullptr);
 
 void VerifyDpiAndAlpha(ComPtr<ID2D1Bitmap1> const& d2dBitmap, float expectedDpi, D2D1_ALPHA_MODE expectedAlphaMode);
+
+bool GpuMatchesDescription(CanvasDevice^ canvasDevice, wchar_t const* description);
 
 struct WicBitmapTestFixture
 {
