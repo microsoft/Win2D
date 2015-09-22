@@ -841,14 +841,14 @@ struct DeferrableFixture
 {
     ComPtr<MockDispatcher> Dispatcher;
     DeferrableTaskScheduler Scheduler;
-    DeferrableTaskPtr Task;
+    std::unique_ptr<DeferrableTask> Task;
 
     DeferrableFixture()
         : Dispatcher(Make<MockDispatcher>())
         , Scheduler(Dispatcher)
     {
         Task = Scheduler.CreateTask(
-            [=] (DeferrableTaskPtr task)
+            [=] (DeferrableTask* task)
             {
             });
     }
@@ -868,8 +868,11 @@ struct DeferrableFixture
     template<typename ARGS>
     void VerifySecondCallToDeferralCompleteFails(ComPtr<ARGS> const& args)
     {
+        // The scheduler needs to think that it is running this task
+        Dispatcher->RunAsyncMethod.SetExpectedCalls(1);
+        Scheduler.Schedule(std::move(Task));
+        
         ComPtr<ICanvasPrintDeferral> deferral;
-
         ThrowIfFailed(args->GetDeferral(&deferral));
 
         Dispatcher->RunAsyncMethod.SetExpectedCalls(1);
@@ -890,7 +893,7 @@ TEST_CLASS(CanvasPrintTaskOptionsChangedEventArgsUnitTests)
 
         Fixture()
             : AnyPrintTaskOptions(Make<MockPrintTaskOptions>())
-            , Args(Make<CanvasPrintTaskOptionsChangedEventArgs>(Task, AnyPageNumber, AnyPrintTaskOptions))
+            , Args(Make<CanvasPrintTaskOptionsChangedEventArgs>(Task.get(), AnyPageNumber, AnyPrintTaskOptions))
         {
         }
     };
@@ -939,7 +942,7 @@ TEST_CLASS(CanvasPreviewEventArgsUnitTests)
         Fixture()
             : AnyPrintTaskOptions(Make<MockPrintTaskOptions>())
             , AnyDrawingSession(Make<MockCanvasDrawingSession>())
-            , Args(Make<CanvasPreviewEventArgs>(Task, AnyPageNumber, AnyPrintTaskOptions, AnyDrawingSession))
+            , Args(Make<CanvasPreviewEventArgs>(Task.get(), AnyPageNumber, AnyPrintTaskOptions, AnyDrawingSession))
         {
         }
     };
@@ -984,7 +987,7 @@ TEST_CLASS(CanvasPrintEventArgsUnitTests)
             , PrintTaskOptions(Make<MockPrintTaskOptions>())
             , AnyTarget(Make<MockPrintDocumentPackageTarget>())
             , PrintControl(Make<MockPrintControl>())
-            , Args(Make<CanvasPrintEventArgs>(Task, Device, AnyTarget, PrintTaskOptions, AnyDpi))
+            , Args(Make<CanvasPrintEventArgs>(Task.get(), Device, AnyTarget, PrintTaskOptions, AnyDpi))
         {
             Device->CreatePrintControlMethod.AllowAnyCall(
                 [=] (IPrintDocumentPackageTarget*, float)

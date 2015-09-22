@@ -11,7 +11,7 @@
 using namespace ABI::Microsoft::Graphics::Canvas::Printing;
 
 CanvasPrintEventArgs::CanvasPrintEventArgs(
-    DeferrableTaskPtr task,
+    DeferrableTask* task,
     ComPtr<ICanvasDevice> const& device,
     ComPtr<IPrintDocumentPackageTarget> const& target,
     ComPtr<IPrintTaskOptionsCore> const& printTaskOptions,

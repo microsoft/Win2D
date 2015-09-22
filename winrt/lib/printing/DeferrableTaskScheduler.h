@@ -8,12 +8,13 @@
 #include "DeferrableTask.h"
 
 class DeferrableTaskScheduler
+    : private LifespanTracker<DeferrableTaskScheduler>
 {
     ComPtr<ICoreDispatcher> const m_dispatcher;
 
     std::mutex m_mutex;
-    DeferrableTaskPtr m_currentTask;
-    std::queue<DeferrableTaskPtr> m_pending;
+    std::unique_ptr<DeferrableTask> m_currentTask;
+    std::queue<std::unique_ptr<DeferrableTask>> m_pending;
     
 public:    
     explicit DeferrableTaskScheduler(ComPtr<ICoreDispatcher> const& dispatcher)
@@ -21,27 +22,29 @@ public:
     {
     }
 
-    DeferrableTaskPtr CreateTask(DeferrableFn&& fn)
+    std::unique_ptr<DeferrableTask> CreateTask(DeferrableFn&& fn)
     {
-        return std::make_shared<DeferrableTask>(this, std::move(fn));
+        return std::make_unique<DeferrableTask>(this, std::move(fn));
     }
 
-    void Schedule(DeferrableTaskPtr task)
+    void Schedule(std::unique_ptr<DeferrableTask> task)
     {
         Lock lock(m_mutex);
 
         if (m_currentTask)
         {
-            m_pending.push(task);
+            m_pending.push(std::move(task));
         }
         else
         {
-            RunAsync(task);
+            RunAsync(std::move(task));
         }
     }
 
-    void DeferredTaskCompleted(DeferrableTaskPtr task)
+    void DeferredTaskCompleted(DeferrableTask* task)
     {
+        assert(task == m_currentTask.get());
+        
         // Deferred completed tasks we dispatch via the dispatcher
         auto handler = Callback<AddFtmBase<IDispatchedHandler>::Type>(
             [task] () mutable
@@ -58,10 +61,10 @@ public:
         ThrowIfFailed(m_dispatcher->RunAsync(CoreDispatcherPriority_Normal, handler.Get(), &asyncAction));
     }
 
-    void TaskCompleted(DeferrableTaskPtr task)
+    void TaskCompleted(DeferrableTask* task)
     {
         Lock lock(m_mutex);
-        assert(m_currentTask == task);
+        assert(m_currentTask.get() == task);
         m_currentTask.reset();
 
         if (!m_pending.empty())
@@ -76,18 +79,20 @@ public:
 
 
 private:
-    void RunAsync(DeferrableTaskPtr task)
+    void RunAsync(std::unique_ptr<DeferrableTask> task)
     {
         assert(!m_currentTask);
-        m_currentTask = task;
+        m_currentTask = std::move(task);
+
+        DeferrableTask* t = m_currentTask.get();
         
         auto handler = Callback<AddFtmBase<IDispatchedHandler>::Type>(
-            [task] () mutable
+            [t] () mutable
             {
                 return ExceptionBoundary(
                     [&]
                     {
-                        task->Invoke();
+                        t->Invoke();
                     });
             });
         CheckMakeResult(handler);

@@ -11,10 +11,10 @@ using namespace ABI::Microsoft::Graphics::Canvas::Printing;
 class DeferrableTaskScheduler;
 
 class DeferrableTask;
-typedef std::shared_ptr<DeferrableTask> DeferrableTaskPtr;
-typedef std::function<void(DeferrableTaskPtr)> DeferrableFn;
+typedef std::function<void(DeferrableTask*)> DeferrableFn;
 
-class DeferrableTask : public std::enable_shared_from_this<DeferrableTask>
+class DeferrableTask
+    : private LifespanTracker<DeferrableTask>
 {
     DeferrableTaskScheduler* m_owner;
     bool m_deferred;

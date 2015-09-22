@@ -11,14 +11,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
     class CanvasPrintDeferral
         : public RuntimeClass<ICanvasPrintDeferral>
+        , private LifespanTracker<CanvasPrintDeferral>
     {
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_Printing_CanvasPrintDeferral, BaseTrust);
 
         std::mutex m_mutex;
-        std::shared_ptr<DeferrableTask> m_task;
+        DeferrableTask* m_task;
         
     public:
-        CanvasPrintDeferral(std::shared_ptr<DeferrableTask> task);
+        CanvasPrintDeferral(DeferrableTask* task);
 
         IFACEMETHODIMP Complete() override;
     };

@@ -13,7 +13,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
     class CanvasPrintDocumentFactory
         : public ActivationFactory<ICanvasPrintDocumentFactory>
-        , public LifespanTracker<CanvasPrintDocumentFactory>
+        , private LifespanTracker<CanvasPrintDocumentFactory>
     {
         InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_Printing_CanvasPrintDocument, BaseTrust);
 
@@ -42,7 +42,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             IPrintDocumentSource,
             IPrintPreviewPageCollection,
             IPrintDocumentPageSource>
-        , public LifespanTracker<CanvasPrintDocument>
+        , private LifespanTracker<CanvasPrintDocument>
     {
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_Printing_CanvasPrintDocument, BaseTrust);
 
@@ -125,15 +125,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         HRESULT SetJobPageCount(PageCountType type, uint32_t count);
 
-        void RunAsync(std::function<void(CanvasPrintDocument*, DeferrableTaskPtr)>&& fn);
+        void RunAsync(std::function<void(CanvasPrintDocument*, DeferrableTask*)>&& fn);
 
         void PaginateImpl(
-            DeferrableTaskPtr task,
+            DeferrableTask* task,
             uint32_t currentPreviewPageNumber,
             ComPtr<IPrintTaskOptionsCore> const& printTaskOptions);
 
         void MakePageImpl(
-            DeferrableTaskPtr task,
+            DeferrableTask* task,
             uint32_t pageNumber,
             float width,
             float height);
@@ -141,7 +141,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         float CalculateDpiForPreviewBitmap(Size previewSize, Size pageSize) const;
 
         void MakeDocumentImpl(
-            DeferrableTaskPtr task,
+            DeferrableTask* task,
             ComPtr<IPrintTaskOptionsCore> const& printTaskOptions,
             ComPtr<IPrintDocumentPackageTarget> const& target);
     };

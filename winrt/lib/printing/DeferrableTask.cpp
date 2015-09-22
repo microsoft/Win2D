@@ -20,7 +20,7 @@ DeferrableTask::DeferrableTask(DeferrableTaskScheduler* owner, DeferrableFn fn)
 
 void DeferrableTask::Invoke()
 {
-    m_code(shared_from_this());
+    m_code(this);
 }
 
 
@@ -43,14 +43,14 @@ void DeferrableTask::NonDeferredComplete()
 void DeferrableTask::Completed()
 {
     m_completionFn();
-    m_owner->TaskCompleted(shared_from_this());
+    m_owner->TaskCompleted(this);
 }
 
 
 void DeferrableTask::DeferredComplete()
 {
     assert(m_deferred);
-    m_owner->DeferredTaskCompleted(shared_from_this());
+    m_owner->DeferredTaskCompleted(this);
 }
 
 
@@ -59,7 +59,7 @@ ComPtr<CanvasPrintDeferral> DeferrableTask::GetDeferral()
     if (m_deferred)
         ThrowHR(E_FAIL, Strings::CanvasPrintDocumentGetDeferralMayOnlyBeCalledOnce);
     
-    auto deferral = Make<CanvasPrintDeferral>(shared_from_this());
+    auto deferral = Make<CanvasPrintDeferral>(this);
     CheckMakeResult(deferral);
 
     m_deferred = true;

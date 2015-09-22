@@ -12,10 +12,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
     class CanvasPreviewEventArgs
         : public RuntimeClass<ICanvasPreviewEventArgs>
+        , private LifespanTracker<CanvasPreviewEventArgs>
     {
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_Printing_CanvasPreviewEventArgs, BaseTrust);
 
-        DeferrableTaskPtr const m_task;
+        DeferrableTask* const m_task;
 
         uint32_t const m_pageNumber;
         ComPtr<IPrintTaskOptionsCore> const m_printTaskOptions;
@@ -23,7 +24,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
     public:
         CanvasPreviewEventArgs(            
-            DeferrableTaskPtr task,
+            DeferrableTask* task,
             uint32_t pageNumber,
             ComPtr<IPrintTaskOptionsCore> const& printTaskOptions,
             ComPtr<ICanvasDrawingSession> const& drawingSession)

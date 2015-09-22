@@ -14,11 +14,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
     class CanvasPrintEventArgs
         : public RuntimeClass<ICanvasPrintEventArgs>
+        , private LifespanTracker<CanvasPrintEventArgs>
     {
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_Printing_CanvasPrintEventArgs, BaseTrust);
 
 
-        DeferrableTaskPtr const m_task;
+        DeferrableTask* const m_task;
 
         ComPtr<ICanvasDevice> const m_device;
         ComPtr<IPrintDocumentPackageTarget> const m_target;
@@ -35,7 +36,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         
     public:
         CanvasPrintEventArgs(
-            DeferrableTaskPtr task,
+            DeferrableTask* task,
             ComPtr<ICanvasDevice> const& device,
             ComPtr<IPrintDocumentPackageTarget> const& target,
             ComPtr<IPrintTaskOptionsCore> const& printTaskOptions,

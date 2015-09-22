@@ -9,7 +9,7 @@
 
 using namespace ABI::Microsoft::Graphics::Canvas::Printing;
 
-CanvasPrintDeferral::CanvasPrintDeferral(std::shared_ptr<DeferrableTask> task)
+CanvasPrintDeferral::CanvasPrintDeferral(DeferrableTask* task)
     : m_task(task)
 {
     assert(m_task);
@@ -27,6 +27,6 @@ IFACEMETHODIMP CanvasPrintDeferral::Complete()
                 ThrowHR(E_FAIL, Strings::CanvasPrintDocumentDeferralCompleteMayOnlyBeCalledOnce);
                 
             m_task->DeferredComplete();
-            m_task.reset();
+            m_task = nullptr;
         });
 }

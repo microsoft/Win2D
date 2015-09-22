@@ -235,13 +235,13 @@ IFACEMETHODIMP CanvasPrintDocument::Paginate(uint32_t currentPreviewPageNumber, 
         {
             auto printTaskOptions = As<IPrintTaskOptionsCore>(optionsAsInspectable);
 
-            RunAsync([=] (CanvasPrintDocument* doc, DeferrableTaskPtr task) { doc->PaginateImpl(task, currentPreviewPageNumber, printTaskOptions); });
+            RunAsync([=] (CanvasPrintDocument* doc, DeferrableTask* task) { doc->PaginateImpl(task, currentPreviewPageNumber, printTaskOptions); });
         });
 }
 
 
 void CanvasPrintDocument::PaginateImpl(
-    DeferrableTaskPtr task,
+    DeferrableTask* task,
     uint32_t currentPreviewPageNumber,
     ComPtr<IPrintTaskOptionsCore> const& printTaskOptions)
 {
@@ -284,12 +284,12 @@ IFACEMETHODIMP CanvasPrintDocument::MakePage(uint32_t pageNumber, float width, f
     return ExceptionBoundary(
         [&]
         {
-            RunAsync([=] (CanvasPrintDocument* doc, DeferrableTaskPtr task) { doc->MakePageImpl(task, pageNumber, width, height); });
+            RunAsync([=] (CanvasPrintDocument* doc, DeferrableTask* task) { doc->MakePageImpl(task, pageNumber, width, height); });
         });
 }
 
 
-void CanvasPrintDocument::MakePageImpl(DeferrableTaskPtr task, uint32_t pageNumber, float previewWidth, float previewHeight)
+void CanvasPrintDocument::MakePageImpl(DeferrableTask* task, uint32_t pageNumber, float previewWidth, float previewHeight)
 {
     //
     // The application defined page number was set by the
@@ -419,13 +419,13 @@ IFACEMETHODIMP CanvasPrintDocument::MakeDocument(
         {
             auto printTaskOptions = As<IPrintTaskOptionsCore>(optionsAsInspectable);
 
-            RunAsync([=] (CanvasPrintDocument* doc, DeferrableTaskPtr task) { doc->MakeDocumentImpl(task, printTaskOptions, target); });
+            RunAsync([=] (CanvasPrintDocument* doc, DeferrableTask* task) { doc->MakeDocumentImpl(task, printTaskOptions, target); });
         });
 }
 
 
 void CanvasPrintDocument::MakeDocumentImpl(
-    DeferrableTaskPtr task,
+    DeferrableTask* task,
     ComPtr<IPrintTaskOptionsCore> const& printTaskOptions,
     ComPtr<IPrintDocumentPackageTarget> const& target)
 {
@@ -494,12 +494,12 @@ std::shared_ptr<CanvasPrintDocument::EventSources> CanvasPrintDocument::GetEvent
 }
 
 
-void CanvasPrintDocument::RunAsync(std::function<void(CanvasPrintDocument*, DeferrableTaskPtr)>&& fn)
+void CanvasPrintDocument::RunAsync(std::function<void(CanvasPrintDocument*, DeferrableTask*)>&& fn)
 {
     auto weakSelf = AsWeak(this);
 
     auto task = m_scheduler.CreateTask(
-        [weakSelf, fn](DeferrableTaskPtr task) mutable
+        [weakSelf, fn](DeferrableTask* task) mutable
         {
             auto strongSelf = LockWeakRef<ICanvasPrintDocument>(weakSelf);
             auto self = static_cast<CanvasPrintDocument*>(strongSelf.Get());
@@ -508,7 +508,7 @@ void CanvasPrintDocument::RunAsync(std::function<void(CanvasPrintDocument*, Defe
                 fn(self, task);
         });
 
-    m_scheduler.Schedule(task);
+    m_scheduler.Schedule(std::move(task));
 }
 
 #endif
