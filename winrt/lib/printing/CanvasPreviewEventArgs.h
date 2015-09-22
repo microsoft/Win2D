@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include "DeferrableTask.h"
+
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Printing
 {
     using namespace ABI::Windows::Graphics::Printing;
@@ -13,16 +15,20 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     {
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_Printing_CanvasPreviewEventArgs, BaseTrust);
 
-        uint32_t m_pageNumber;
-        ComPtr<IPrintTaskOptionsCore> m_printTaskOptions;
-        ComPtr<ICanvasDrawingSession> m_drawingSession;
+        DeferrableTaskPtr const m_task;
+
+        uint32_t const m_pageNumber;
+        ComPtr<IPrintTaskOptionsCore> const m_printTaskOptions;
+        ComPtr<ICanvasDrawingSession> const m_drawingSession;
 
     public:
-        CanvasPreviewEventArgs(
+        CanvasPreviewEventArgs(            
+            DeferrableTaskPtr task,
             uint32_t pageNumber,
             ComPtr<IPrintTaskOptionsCore> const& printTaskOptions,
             ComPtr<ICanvasDrawingSession> const& drawingSession)
-            : m_pageNumber(pageNumber)              
+            : m_task(task)
+            , m_pageNumber(pageNumber)              
             , m_printTaskOptions(printTaskOptions)
             , m_drawingSession(drawingSession)
         {
@@ -54,7 +60,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                 [&]
                 {
                     CheckAndClearOutPointer(value);
-                    ThrowHR(E_NOTIMPL);
+
+                    auto deferral = m_task->GetDeferral();
+
+                    ThrowIfFailed(deferral.CopyTo(value));
                 });
         }
         

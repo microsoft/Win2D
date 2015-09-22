@@ -61,18 +61,24 @@ IFACEMETHODIMP CanvasPrintDocumentFactory::CreateWithDevice(
 // CanvasPrintDocument implementation
 //
 
+static ComPtr<ICoreDispatcher> GetDispatcher(CanvasPrintDocumentAdapter* adapter)
+{
+    auto dispatcher = adapter->GetDispatcherForCurrentThread();
+    if (!dispatcher)
+        ThrowHR(RPC_E_WRONG_THREAD, Strings::CanvasPrintDocumentMustBeConstructedOnUIThread);
+    return dispatcher;
+}
+
 
 CanvasPrintDocument::CanvasPrintDocument(
     std::shared_ptr<CanvasPrintDocumentAdapter> adapter,
     ComPtr<ICanvasDevice> const& device)
-    : m_dispatcher(adapter->GetDispatcherForCurrentThread())
+    : m_scheduler(GetDispatcher(adapter.get()))
     , m_displayDpi(adapter->GetLogicalDpi())
     , m_device(device.Get())
     , m_eventSources(std::make_shared<EventSources>())
     , m_newPreviewPageNumber(1)
 {
-    if (!m_dispatcher)
-        ThrowHR(RPC_E_WRONG_THREAD, Strings::CanvasPrintDocumentMustBeConstructedOnUIThread);
 }
 
 
@@ -229,12 +235,13 @@ IFACEMETHODIMP CanvasPrintDocument::Paginate(uint32_t currentPreviewPageNumber, 
         {
             auto printTaskOptions = As<IPrintTaskOptionsCore>(optionsAsInspectable);
 
-            RunAsync([=] (CanvasPrintDocument* doc) { doc->PaginateImpl(currentPreviewPageNumber, printTaskOptions); });
+            RunAsync([=] (CanvasPrintDocument* doc, DeferrableTaskPtr task) { doc->PaginateImpl(task, currentPreviewPageNumber, printTaskOptions); });
         });
 }
 
 
 void CanvasPrintDocument::PaginateImpl(
+    DeferrableTaskPtr task,
     uint32_t currentPreviewPageNumber,
     ComPtr<IPrintTaskOptionsCore> const& printTaskOptions)
 {
@@ -252,16 +259,23 @@ void CanvasPrintDocument::PaginateImpl(
     //
     m_printTaskOptions = printTaskOptions;
 
-    auto args = Make<CanvasPrintTaskOptionsChangedEventArgs>(currentPreviewPageNumber, printTaskOptions);
+    auto args = Make<CanvasPrintTaskOptionsChangedEventArgs>(task, currentPreviewPageNumber, printTaskOptions);
     CheckMakeResult(args);
+
+    task->SetCompletionFn(
+        [=]
+        {
+            //
+            // When the event has completed, we read out the
+            // NewPreviewPageNumber so that it can be passed to the Preview
+            // event handler.
+            //
+            m_newPreviewPageNumber = args->GetNewPreviewPageNumber();
+        });
 
     ThrowIfFailed(GetEventSources()->PrintTaskOptionsChanged.InvokeAll(this, args.Get()));
 
-    //
-    // Read out the new preview page number so we can pass it to the Preview
-    // event handler.
-    //
-    m_newPreviewPageNumber = args->GetNewPreviewPageNumber();
+    task->NonDeferredComplete();
 }
 
 
@@ -270,12 +284,12 @@ IFACEMETHODIMP CanvasPrintDocument::MakePage(uint32_t pageNumber, float width, f
     return ExceptionBoundary(
         [&]
         {
-            RunAsync([=] (CanvasPrintDocument* doc) { doc->MakePageImpl(pageNumber, width, height); });
+            RunAsync([=] (CanvasPrintDocument* doc, DeferrableTaskPtr task) { doc->MakePageImpl(task, pageNumber, width, height); });
         });
 }
 
 
-void CanvasPrintDocument::MakePageImpl(uint32_t pageNumber, float previewWidth, float previewHeight)
+void CanvasPrintDocument::MakePageImpl(DeferrableTaskPtr task, uint32_t pageNumber, float previewWidth, float previewHeight)
 {
     //
     // The application defined page number was set by the
@@ -310,30 +324,36 @@ void CanvasPrintDocument::MakePageImpl(uint32_t pageNumber, float previewWidth, 
     // Raise the Preview event; this is where the app gets to draw the print
     // preview
     //
-    auto args = Make<CanvasPreviewEventArgs>(pageNumber, m_printTaskOptions, ds);
+    auto args = Make<CanvasPreviewEventArgs>(task, pageNumber, m_printTaskOptions, ds);
     CheckMakeResult(args);
+
+    task->SetCompletionFn(
+        [=]
+        {
+            ThrowIfFailed(As<IClosable>(ds)->Close());
+
+            //
+            // Show the preview
+            //
+            auto d2dBitmap = renderTarget->GetResource();
+            ComPtr<IDXGISurface> dxgiSurface;
+            ThrowIfFailed(d2dBitmap->GetSurface(&dxgiSurface));
+
+            auto previewTarget = GetPreviewTarget();
+            auto hr = previewTarget->DrawPage(pageNumber, dxgiSurface.Get(), dpi, dpi);
+
+            //
+            // DrawPage() is extremely picky about surface sizes, and will return
+            // E_INVALIDARG if the surface doesn't match its requirements.  We swallow
+            // these errors as there's not much we can do in response.
+            //
+            if (FAILED(hr) && hr != E_INVALIDARG)
+                ThrowHR(hr);
+        });
 
     ThrowIfFailed(GetEventSources()->Preview.InvokeAll(this, args.Get()));
 
-    ThrowIfFailed(As<IClosable>(ds)->Close());
-
-    //
-    // Show the preview
-    //
-    auto d2dBitmap = renderTarget->GetResource();
-    ComPtr<IDXGISurface> dxgiSurface;
-    ThrowIfFailed(d2dBitmap->GetSurface(&dxgiSurface));
-
-    auto previewTarget = GetPreviewTarget();
-    auto hr = previewTarget->DrawPage(pageNumber, dxgiSurface.Get(), dpi, dpi);
-
-    //
-    // DrawPage() is extremely picky about surface sizes, and will return
-    // E_INVALIDARG if the surface doesn't match its requirements.  We swallow
-    // these errors as there's not much we can do in response.
-    //
-    if (FAILED(hr) && hr != E_INVALIDARG)
-        ThrowHR(hr);
+    task->NonDeferredComplete();
 }
 
 
@@ -399,12 +419,13 @@ IFACEMETHODIMP CanvasPrintDocument::MakeDocument(
         {
             auto printTaskOptions = As<IPrintTaskOptionsCore>(optionsAsInspectable);
 
-            RunAsync([=] (CanvasPrintDocument* doc) { doc->MakeDocumentImpl(printTaskOptions, target); });
+            RunAsync([=] (CanvasPrintDocument* doc, DeferrableTaskPtr task) { doc->MakeDocumentImpl(task, printTaskOptions, target); });
         });
 }
 
 
 void CanvasPrintDocument::MakeDocumentImpl(
+    DeferrableTaskPtr task,
     ComPtr<IPrintTaskOptionsCore> const& printTaskOptions,
     ComPtr<IPrintDocumentPackageTarget> const& target)
 {
@@ -422,15 +443,21 @@ void CanvasPrintDocument::MakeDocumentImpl(
     //
     // Raise the Print event
     //
-    auto args = Make<CanvasPrintEventArgs>(m_device.EnsureNotClosed(), target, printTaskOptions, dpi);
+    auto args = Make<CanvasPrintEventArgs>(task, m_device.EnsureNotClosed(), target, printTaskOptions, dpi);
     CheckMakeResult(args);
+
+    task->SetCompletionFn(
+        [=]
+        {
+            //
+            // Tell the args we're done so it can close its print control
+            //
+            args->EndPrinting();
+        });
 
     ThrowIfFailed(GetEventSources()->Print.InvokeAll(this, args.Get()));
 
-    //
-    // Tell the args we're done so it can close its print control
-    //
-    args->EndPrinting();
+    task->NonDeferredComplete();
 }
 
 
@@ -467,27 +494,21 @@ std::shared_ptr<CanvasPrintDocument::EventSources> CanvasPrintDocument::GetEvent
 }
 
 
-void CanvasPrintDocument::RunAsync(std::function<void(CanvasPrintDocument*)> fn)
+void CanvasPrintDocument::RunAsync(std::function<void(CanvasPrintDocument*, DeferrableTaskPtr)>&& fn)
 {
     auto weakSelf = AsWeak(this);
 
-    auto handler = Callback<AddFtmBase<IDispatchedHandler>::Type>(
-        [weakSelf, fn] () mutable
+    auto task = m_scheduler.CreateTask(
+        [weakSelf, fn](DeferrableTaskPtr task) mutable
         {
-            return ExceptionBoundary(
-                [&]
-                {
-                    auto strongSelf = LockWeakRef<ICanvasPrintDocument>(weakSelf);
-                    auto self = static_cast<CanvasPrintDocument*>(strongSelf.Get());
+            auto strongSelf = LockWeakRef<ICanvasPrintDocument>(weakSelf);
+            auto self = static_cast<CanvasPrintDocument*>(strongSelf.Get());
 
-                    if (self)
-                        fn(self);
-                });
+            if (self)
+                fn(self, task);
         });
-    CheckMakeResult(handler);
 
-    ComPtr<IAsyncAction> asyncAction;
-    ThrowIfFailed(m_dispatcher->RunAsync(CoreDispatcherPriority_Normal, handler.Get(), &asyncAction));
+    m_scheduler.Schedule(task);
 }
 
 #endif

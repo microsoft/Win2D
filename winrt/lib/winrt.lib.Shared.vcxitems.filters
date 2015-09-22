@@ -337,6 +337,12 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)printing\CanvasPrintEventArgs.cpp">
       <Filter>printing</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)printing\CanvasPrintDeferral.cpp">
+      <Filter>printing</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)printing\DeferrableTask.cpp">
+      <Filter>printing</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)pch.h" />
@@ -680,6 +686,15 @@
       <Filter>printing</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)printing\CanvasPrintTaskOptionsChangedEventArgs.h">
+      <Filter>printing</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)printing\CanvasPrintDeferral.h">
+      <Filter>printing</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)printing\DeferrableTask.h">
+      <Filter>printing</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)printing\DeferrableTaskScheduler.h">
       <Filter>printing</Filter>
     </ClInclude>
   </ItemGroup>

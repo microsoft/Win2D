@@ -5,6 +5,7 @@
 #pragma once
 
 #include "CanvasPrintDocumentAdapter.h"
+#include "DeferrableTaskScheduler.h"
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Printing
 {
@@ -46,7 +47,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_Printing_CanvasPrintDocument, BaseTrust);
 
         // This member is only modified on construction
-        ComPtr<ICoreDispatcher> const m_dispatcher;
+        DeferrableTaskScheduler m_scheduler;
         float const m_displayDpi;
 
         // These members are not threadsafe and may be accessed from any thread
@@ -124,13 +125,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         HRESULT SetJobPageCount(PageCountType type, uint32_t count);
 
-        void RunAsync(std::function<void(CanvasPrintDocument*)> fn);
+        void RunAsync(std::function<void(CanvasPrintDocument*, DeferrableTaskPtr)>&& fn);
 
         void PaginateImpl(
+            DeferrableTaskPtr task,
             uint32_t currentPreviewPageNumber,
             ComPtr<IPrintTaskOptionsCore> const& printTaskOptions);
 
         void MakePageImpl(
+            DeferrableTaskPtr task,
             uint32_t pageNumber,
             float width,
             float height);
@@ -138,6 +141,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         float CalculateDpiForPreviewBitmap(Size previewSize, Size pageSize) const;
 
         void MakeDocumentImpl(
+            DeferrableTaskPtr task,
             ComPtr<IPrintTaskOptionsCore> const& printTaskOptions,
             ComPtr<IPrintDocumentPackageTarget> const& target);
     };

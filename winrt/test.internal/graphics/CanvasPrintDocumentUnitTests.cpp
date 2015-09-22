@@ -97,6 +97,9 @@ TEST_CLASS(CanvasPrintDocumentUnitTests)
             
             return As<ICanvasPrintDocument>(docInsp);
         }
+
+        Fixture(Fixture const&) = delete;
+        Fixture& operator=(Fixture const&) = delete;
     };
 
     TEST_METHOD_EX(CanvasPrintDocument_DefaultActivation_FailsWhenNoDispatcher)
@@ -416,6 +419,83 @@ TEST_CLASS(CanvasPrintDocumentUnitTests)
         f.Adapter->RunNextAction();        
     }
 
+    struct MakePageFixture : public PrintPreviewFixture
+    {
+        float ExpectedBitmapDpi;
+        ComPtr<StubD2DBitmap> D2DBitmap;
+
+        MakePageFixture()
+        {
+            RegisterPreview();
+            
+            float pageWidth = 100;
+            float pageHeight = 200;
+
+            auto printPageDescription = PrintPageDescription{
+                Size{ pageWidth, pageHeight },
+                Rect{ 0, 0, pageWidth, pageHeight }, // ImageableRect
+                (uint32_t)AnyDpi, (uint32_t)AnyDpi   // DPI X, Y
+            };
+
+            auto printTaskOptions = Make<MockPrintTaskOptions>();
+            printTaskOptions->GetPageDescriptionMethod.SetExpectedCalls(1,
+                [=] (uint32_t page, PrintPageDescription* outDesc)
+                {
+                    Assert::AreEqual(AnyPageNumber, page);
+                    *outDesc = printPageDescription;
+                    return S_OK;
+                });
+
+            ThrowIfFailed(PageCollection->Paginate(static_cast<uint32_t>(AnyPageNumber), printTaskOptions.Get()));
+            Adapter->RunNextAction();
+
+            float previewScale = 0.5f;
+
+            float displayWidth = pageWidth * previewScale;
+            float displayHeight = pageHeight * previewScale;
+
+            ThrowIfFailed(PageCollection->MakePage(AnyPageNumber, displayWidth, displayHeight));
+
+            ExpectedBitmapDpi = Adapter->Dpi * previewScale;
+
+            D2DBitmap = Make<StubD2DBitmap>(D2D1_BITMAP_OPTIONS_TARGET);
+
+            Adapter->SharedDevice->CreateRenderTargetBitmapMethod.SetExpectedCalls(1,
+                [=] (float width, float height, float dpi, DirectXPixelFormat format, CanvasAlphaMode alpha)
+                {
+                    // The width/height of the RT should be the same as the
+                    // width/height of the page (since we've adjusted the DPI so
+                    // that pageSize * DPI = previewSizeInPixels.
+                    Assert::AreEqual(pageWidth, width);
+                    Assert::AreEqual(pageHeight, height);
+
+                    Assert::AreEqual(ExpectedBitmapDpi, dpi);
+
+                    Assert::AreEqual(PIXEL_FORMAT(B8G8R8A8UIntNormalized), format);
+                    Assert::AreEqual(CanvasAlphaMode::Premultiplied, alpha);
+
+                    return D2DBitmap;
+                });
+        }
+
+        void ExpectDrawPage()
+        {
+            PreviewTarget->DrawPageMethod.SetExpectedCalls(1,
+                [=] (uint32_t pageNumber, IDXGISurface* dxgiSurface, float dpiX, float dpiY)
+                {
+                    Assert::AreEqual<int>(AnyPageNumber, pageNumber);
+                    Assert::AreEqual(ExpectedBitmapDpi, dpiX);
+                    Assert::AreEqual(ExpectedBitmapDpi, dpiY);
+
+                    ComPtr<IDXGISurface> expectedDxgiSurface;
+                    ThrowIfFailed(D2DBitmap->GetSurface(&expectedDxgiSurface));
+                    Assert::IsTrue(IsSameInstance(expectedDxgiSurface.Get(), dxgiSurface));
+
+                    return S_OK;
+                });
+        }
+    };
+
     TEST_METHOD_EX(CanvasPrintDocument_WhenMakePageCalled_PreviewIsDrawn)
     {
         // To draw the preview:
@@ -428,59 +508,8 @@ TEST_CLASS(CanvasPrintDocumentUnitTests)
         // - IPrintPreviewDxgiPackageTarget::DrawPage() must be called with the
         //   DXGI surface and the correct DPI values
 
-        PrintPreviewFixture f;
-        f.RegisterPreview();
-
-        float pageWidth = 100;
-        float pageHeight = 200;
-
-        PrintPageDescription printPageDescription {
-            Size{ pageWidth, pageHeight },
-            Rect{ 0, 0, pageWidth, pageHeight }, // ImageableRect
-            (uint32_t)AnyDpi, (uint32_t)AnyDpi   // DPI X, Y
-        };
-
-        auto printTaskOptions = Make<MockPrintTaskOptions>();
-        printTaskOptions->GetPageDescriptionMethod.SetExpectedCalls(1,
-            [&] (uint32_t page, PrintPageDescription* outDesc)
-            {
-                Assert::AreEqual(AnyPageNumber, page);
-                *outDesc = printPageDescription;
-                return S_OK;
-            });
-
-        ThrowIfFailed(f.PageCollection->Paginate(static_cast<uint32_t>(AnyPageNumber), printTaskOptions.Get()));
-        f.Adapter->RunNextAction();
-
+        MakePageFixture f;
         
-        float previewScale = 0.5f;
-
-        float displayWidth = pageWidth * previewScale;
-        float displayHeight = pageHeight * previewScale;
-
-        ThrowIfFailed(f.PageCollection->MakePage(AnyPageNumber, displayWidth, displayHeight));
-
-        float expectedBitmapDpi = f.Adapter->Dpi * previewScale;
-
-        auto d2dBitmap = Make<StubD2DBitmap>(D2D1_BITMAP_OPTIONS_TARGET);
-
-        f.Adapter->SharedDevice->CreateRenderTargetBitmapMethod.SetExpectedCalls(1,
-            [&] (float width, float height, float dpi, DirectXPixelFormat format, CanvasAlphaMode alpha)
-            {
-                // The width/height of the RT should be the same as the
-                // width/height of the page (since we've adjusted the DPI so
-                // that pageSize * DPI = previewSizeInPixels.
-                Assert::AreEqual(pageWidth, width);
-                Assert::AreEqual(pageHeight, height);
-
-                Assert::AreEqual(expectedBitmapDpi, dpi);
-
-                Assert::AreEqual(PIXEL_FORMAT(B8G8R8A8UIntNormalized), format);
-                Assert::AreEqual(CanvasAlphaMode::Premultiplied, alpha);
-
-                return d2dBitmap;
-            });
-
         f.PreviewHandler.SetExpectedCalls(1,
             [&] (ICanvasPrintDocument*, ICanvasPreviewEventArgs* args)
             {
@@ -492,25 +521,34 @@ TEST_CLASS(CanvasPrintDocumentUnitTests)
                 auto deviceContext = GetWrappedResource<ID2D1DeviceContext>(ds);
                 ComPtr<ID2D1Image> currentTarget;
                 deviceContext->GetTarget(&currentTarget);
-                Assert::IsTrue(IsSameInstance(d2dBitmap.Get(), currentTarget.Get()));
+                Assert::IsTrue(IsSameInstance(f.D2DBitmap.Get(), currentTarget.Get()));
                 
                 return S_OK;
             });
 
-        f.PreviewTarget->DrawPageMethod.SetExpectedCalls(1,
-            [&] (uint32_t pageNumber, IDXGISurface* dxgiSurface, float dpiX, float dpiY)
+        f.ExpectDrawPage();
+
+        f.Adapter->RunNextAction();        
+    }
+
+    TEST_METHOD_EX(CanvasPrintDocument_WhenMakePageIsCalled_AndPreviewHandlerIsDeferred_PreviewIsDrawnWhenDeferralCompletes)
+    {
+        MakePageFixture f;
+
+        ComPtr<ICanvasPrintDeferral> deferral;
+
+        f.PreviewHandler.SetExpectedCalls(1,
+            [&] (ICanvasPrintDocument*, ICanvasPreviewEventArgs* args)
             {
-                Assert::AreEqual<int>(AnyPageNumber, pageNumber);
-                Assert::AreEqual(expectedBitmapDpi, dpiX);
-                Assert::AreEqual(expectedBitmapDpi, dpiY);
-
-                ComPtr<IDXGISurface> expectedDxgiSurface;
-                ThrowIfFailed(d2dBitmap->GetSurface(&expectedDxgiSurface));
-                Assert::IsTrue(IsSameInstance(expectedDxgiSurface.Get(), dxgiSurface));
-
+                ThrowIfFailed(args->GetDeferral(&deferral));
                 return S_OK;
             });
 
+        f.Adapter->RunNextAction();
+
+        ThrowIfFailed(deferral->Complete());
+
+        f.ExpectDrawPage();
         f.Adapter->RunNextAction();        
     }
 
@@ -537,6 +575,69 @@ TEST_CLASS(CanvasPrintDocumentUnitTests)
         Assert::AreEqual(E_INVALIDARG, f.Doc->add_Preview(f.PreviewHandler.Get(), nullptr));
     }
 
+    TEST_METHOD_EX(CanvasPrintDocument_When_PrintTaskOptionsChanged_IsDeferred_Preview_IsNotRaised_UntilItCompletes)
+    {
+        PrintPreviewFixture f;
+
+        f.RegisterPrintTaskOptionsChanged();
+        f.RegisterPreview();
+
+        ComPtr<ICanvasPrintDeferral> deferral;
+        ComPtr<ICanvasPrintTaskOptionsChangedEventArgs> optionsChangedEventArgs;
+        f.PrintTaskOptionsChangedHandler.SetExpectedCalls(1,
+            [&] (ICanvasPrintDocument*, ICanvasPrintTaskOptionsChangedEventArgs* args)
+            {
+                ThrowIfFailed(args->GetDeferral(&deferral));
+                optionsChangedEventArgs = args;
+
+                ThrowIfFailed(args->put_NewPreviewPageNumber(AnyPageNumber));
+
+                return S_OK;
+            });
+
+        ThrowIfFailed(f.PageCollection->Paginate(static_cast<uint32_t>(AnyPageNumber), f.AnyPrintTaskOptions.Get()));
+        f.Adapter->RunNextAction();
+
+        f.PrintTaskOptionsChangedHandler.SetExpectedCalls(0);
+
+        // The call to MakePage would normally raise the Preview event, but
+        // because we've taken out the deferral it will wait until that has
+        // completed.
+
+        ThrowIfFailed(f.PageCollection->MakePage(JOB_PAGE_APPLICATION_DEFINED, AnyWidth, AnyHeight));
+        f.Adapter->RunNextAction();
+        f.Adapter->RunNextAction();
+        f.Adapter->RunNextAction();
+
+        // Set the new page number, outside of the event handler.  This should
+        // only get picked up when the deferral completes.
+        ThrowIfFailed(optionsChangedEventArgs->put_NewPreviewPageNumber(AnyPageNumber + 1));
+
+        // Now complete the deferral.  This just queues something to the
+        // dispatcher so we don't expect anything to happen immediately.
+        ThrowIfFailed(deferral->Complete());
+        f.Adapter->RunNextAction();
+
+        // The pending call to the preview handler should now execute.
+        f.PreviewHandler.SetExpectedCalls(1,
+            [&] (ICanvasPrintDocument*, ICanvasPreviewEventArgs* args)
+            {
+                uint32_t pageNumber;
+                ThrowIfFailed(args->get_PageNumber(&pageNumber));
+
+                // The page number should match the one most recently set before
+                // the deferral was completed
+                Assert::AreEqual(AnyPageNumber + 1, pageNumber);
+
+                return S_OK;
+            });
+
+        f.Adapter->RunNextAction();
+        f.PreviewHandler.SetExpectedCalls(0);
+
+        // We don't expect any other events to be raised after this
+        f.Adapter->RunNextAction();
+    }
 
     struct PrintFixture : public Fixture
     {
@@ -669,6 +770,48 @@ TEST_CLASS(CanvasPrintDocumentUnitTests)
         f.Adapter->RunNextAction();        
     }
 
+    TEST_METHOD_EX(CanvasPrintDocument_PrintEvent_CanBeDeferred)
+    {        
+        PrintFixture f;
+        f.RegisterPrint();
+        
+        ThrowIfFailed(As<IPrintDocumentPageSource>(f.Doc)->MakeDocument(
+            f.AnyPrintTaskOptions.Get(),
+            f.AnyTarget.Get()));
+
+        ComPtr<ICanvasPrintDeferral> deferral;
+        ComPtr<ICanvasDrawingSession> ds;
+
+        f.PrintHandler.SetExpectedCalls(1,
+            [&] (ICanvasPrintDocument*, ICanvasPrintEventArgs* args)
+            {
+                f.Adapter->SharedDevice->CreatePrintControlMethod.SetExpectedCalls(1,
+                    [&] (IPrintDocumentPackageTarget* target, float)
+                    {
+                        Assert::IsTrue(IsSameInstance(f.AnyTarget.Get(), target));
+                        return f.PrintControl;
+                    });
+
+                ThrowIfFailed(args->CreateDrawingSession(&ds));
+
+                ThrowIfFailed(args->GetDeferral(&deferral));
+
+                return S_OK;
+            });
+
+        f.Adapter->RunNextAction();        
+
+        // Closing the drawing session will immediately AddPage
+        f.PrintControl->AddPageMethod.SetExpectedCalls(1);
+        ds.Reset();
+
+        // But the print control won't be closed until the deferral completes
+
+        f.PrintControl->CloseMethod.SetExpectedCalls(1);
+        ThrowIfFailed(deferral->Complete());
+        f.Adapter->RunNextAction();        
+    }
+
     TEST_METHOD_EX(CanvasPrintDocument_PrintIsUnregistered_ItIsNotCalled)
     {
         PrintFixture f;
@@ -694,17 +837,60 @@ TEST_CLASS(CanvasPrintDocumentUnitTests)
 };
 
 
+struct DeferrableFixture
+{
+    ComPtr<MockDispatcher> Dispatcher;
+    DeferrableTaskScheduler Scheduler;
+    DeferrableTaskPtr Task;
+
+    DeferrableFixture()
+        : Dispatcher(Make<MockDispatcher>())
+        , Scheduler(Dispatcher)
+    {
+        Task = Scheduler.CreateTask(
+            [=] (DeferrableTaskPtr task)
+            {
+            });
+    }
+
+    template<typename ARGS>
+    void VerifySecondCallToGetDeferralFails(ComPtr<ARGS> const& args)
+    {
+        ComPtr<ICanvasPrintDeferral> deferral[2];
+
+        ThrowIfFailed(args->GetDeferral(&deferral[0]));
+
+        Assert::AreEqual(E_FAIL, args->GetDeferral(&deferral[1]));
+        ValidateStoredErrorState(E_FAIL, Strings::CanvasPrintDocumentGetDeferralMayOnlyBeCalledOnce);        
+    }
+
+
+    template<typename ARGS>
+    void VerifySecondCallToDeferralCompleteFails(ComPtr<ARGS> const& args)
+    {
+        ComPtr<ICanvasPrintDeferral> deferral;
+
+        ThrowIfFailed(args->GetDeferral(&deferral));
+
+        Dispatcher->RunAsyncMethod.SetExpectedCalls(1);
+        ThrowIfFailed(deferral->Complete());
+
+        Assert::AreEqual(E_FAIL, deferral->Complete());
+        ValidateStoredErrorState(E_FAIL, Strings::CanvasPrintDocumentDeferralCompleteMayOnlyBeCalledOnce);
+    }
+};
+
+
 TEST_CLASS(CanvasPrintTaskOptionsChangedEventArgsUnitTests)
 {
-    struct Fixture
+    struct Fixture : public DeferrableFixture
     {
         ComPtr<MockPrintTaskOptions> AnyPrintTaskOptions;
-
         ComPtr<CanvasPrintTaskOptionsChangedEventArgs> Args;
 
         Fixture()
             : AnyPrintTaskOptions(Make<MockPrintTaskOptions>())
-            , Args(Make<CanvasPrintTaskOptionsChangedEventArgs>(AnyPageNumber, AnyPrintTaskOptions))
+            , Args(Make<CanvasPrintTaskOptionsChangedEventArgs>(Task, AnyPageNumber, AnyPrintTaskOptions))
         {
         }
     };
@@ -726,12 +912,24 @@ TEST_CLASS(CanvasPrintTaskOptionsChangedEventArgsUnitTests)
         Assert::AreEqual(S_OK, f.Args->put_NewPreviewPageNumber(1));
         Assert::AreEqual(S_OK, f.Args->put_NewPreviewPageNumber(10));
     }
+
+    TEST_METHOD_EX(CanvasPrintTaskOptionsChangedEventArgs_When_GetDeferralCalledMultipleTimes_SecondCallFails)
+    {
+        Fixture f;
+        f.VerifySecondCallToGetDeferralFails(f.Args);
+    }
+
+    TEST_METHOD_EX(CanvasPrintTaskOptionsChangedEventArgs_When_DeferralCompleteCalledMultipleTimes_SecondCallFails)
+    {
+        Fixture f;
+        f.VerifySecondCallToDeferralCompleteFails(f.Args);
+    }
 };
 
 
 TEST_CLASS(CanvasPreviewEventArgsUnitTests)
 {
-    struct Fixture
+    struct Fixture : public DeferrableFixture
     {
         ComPtr<MockPrintTaskOptions> AnyPrintTaskOptions;
         ComPtr<MockCanvasDrawingSession> AnyDrawingSession;
@@ -741,7 +939,7 @@ TEST_CLASS(CanvasPreviewEventArgsUnitTests)
         Fixture()
             : AnyPrintTaskOptions(Make<MockPrintTaskOptions>())
             , AnyDrawingSession(Make<MockCanvasDrawingSession>())
-            , Args(Make<CanvasPreviewEventArgs>(AnyPageNumber, AnyPrintTaskOptions, AnyDrawingSession))
+            , Args(Make<CanvasPreviewEventArgs>(Task, AnyPageNumber, AnyPrintTaskOptions, AnyDrawingSession))
         {
         }
     };
@@ -755,12 +953,24 @@ TEST_CLASS(CanvasPreviewEventArgsUnitTests)
         Assert::AreEqual(E_INVALIDARG, f.Args->GetDeferral(nullptr));
         Assert::AreEqual(E_INVALIDARG, f.Args->get_DrawingSession(nullptr));
     }
+
+    TEST_METHOD_EX(CanvasPreviewEventArgs_When_GetDeferralCalledMultipleTimes_SecondCallFails)
+    {
+        Fixture f;
+        f.VerifySecondCallToGetDeferralFails(f.Args);
+    }
+
+    TEST_METHOD_EX(CanvasPreviewEventArgs_When_DeferralCompleteCalledMultipleTimes_SecondCallFails)
+    {
+        Fixture f;
+        f.VerifySecondCallToDeferralCompleteFails(f.Args);
+    }
 };
 
 
 TEST_CLASS(CanvasPrintEventArgsUnitTests)
 {
-    struct Fixture
+    struct Fixture : public DeferrableFixture
     {
         ComPtr<MockCanvasDevice> Device;
         ComPtr<MockPrintTaskOptions> PrintTaskOptions;
@@ -774,7 +984,7 @@ TEST_CLASS(CanvasPrintEventArgsUnitTests)
             , PrintTaskOptions(Make<MockPrintTaskOptions>())
             , AnyTarget(Make<MockPrintDocumentPackageTarget>())
             , PrintControl(Make<MockPrintControl>())
-            , Args(Make<CanvasPrintEventArgs>(Device, AnyTarget, PrintTaskOptions, AnyDpi))
+            , Args(Make<CanvasPrintEventArgs>(Task, Device, AnyTarget, PrintTaskOptions, AnyDpi))
         {
             Device->CreatePrintControlMethod.AllowAnyCall(
                 [=] (IPrintDocumentPackageTarget*, float)
@@ -933,6 +1143,18 @@ TEST_CLASS(CanvasPrintEventArgsUnitTests)
 
         Assert::AreEqual(E_FAIL, f.Args->CreateDrawingSession(&ds[1]));
         ValidateStoredErrorState(E_FAIL, Strings::CanvasPrintEventArgsCannotCreateDrawingSessionUntilPreviousOneClosed);
+    }
+
+    TEST_METHOD_EX(CanvasPrintEventArgs_When_GetDeferralCalledMultipleTimes_SecondCallFails)
+    {
+        Fixture f;
+        f.VerifySecondCallToGetDeferralFails(f.Args);
+    }
+
+    TEST_METHOD_EX(CanvasPrintEventArgs_When_DeferralCompleteCalledMultipleTimes_SecondCallFails)
+    {
+        Fixture f;
+        f.VerifySecondCallToDeferralCompleteFails(f.Args);
     }
 
     // TODO #5659: Verify failure behavior (including device lost, in paginate/makepage/makedocument)

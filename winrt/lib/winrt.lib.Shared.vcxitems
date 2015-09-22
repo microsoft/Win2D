@@ -71,10 +71,13 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)brushes\CanvasSolidColorBrush.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)brushes\Gradients.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)printing\CanvasPreviewEventArgs.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)printing\CanvasPrintDeferral.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)printing\CanvasPrintDocument.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)printing\CanvasPrintDocumentAdapter.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)printing\CanvasPrintEventArgs.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)printing\CanvasPrintTaskOptionsChangedEventArgs.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)printing\DeferrableTask.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)printing\DeferrableTaskScheduler.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\CachedResourceReference.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\LockUtilities.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\TemporaryTransform.h" />
@@ -188,9 +191,11 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)brushes\CanvasRadialGradientBrush.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)brushes\CanvasSolidColorBrush.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)brushes\Gradients.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)printing\CanvasPrintDeferral.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)printing\CanvasPrintDocument.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)printing\CanvasPrintDocumentAdapter.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)printing\CanvasPrintEventArgs.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)printing\DeferrableTask.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)utils\ResourceManager.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)xaml\CanvasAnimatedControl.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)xaml\CanvasAnimatedControlAdapter.cpp" />

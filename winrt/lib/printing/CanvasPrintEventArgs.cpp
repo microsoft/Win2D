@@ -11,11 +11,13 @@
 using namespace ABI::Microsoft::Graphics::Canvas::Printing;
 
 CanvasPrintEventArgs::CanvasPrintEventArgs(
+    DeferrableTaskPtr task,
     ComPtr<ICanvasDevice> const& device,
     ComPtr<IPrintDocumentPackageTarget> const& target,
     ComPtr<IPrintTaskOptionsCore> const& printTaskOptions,
     float initialDpi)
-    : m_device(device)
+    : m_task(task)
+    , m_device(device)
     , m_target(target)
     , m_printTaskOptions(printTaskOptions)
     , m_dpi(initialDpi)
@@ -41,6 +43,8 @@ IFACEMETHODIMP CanvasPrintEventArgs::get_Dpi(float* value)
     return ExceptionBoundary(
         [&]
         {
+            Lock lock(m_mutex);
+            
             CheckInPointer(value);
             *value = m_dpi;
         });
@@ -52,6 +56,8 @@ IFACEMETHODIMP CanvasPrintEventArgs::put_Dpi(float value)
     return ExceptionBoundary(
         [&]
         {
+            Lock lock(m_mutex);
+            
             if (m_printControl)
                 ThrowHR(E_FAIL, Strings::CanvasPrintEventArgsDpiCannotBeChangedAfterCreateDrawingSession);
                     
@@ -68,8 +74,13 @@ IFACEMETHODIMP CanvasPrintEventArgs::GetDeferral(ICanvasPrintDeferral** value)
     return ExceptionBoundary(
         [&]
         {
+            Lock lock(m_mutex);
+            
             CheckAndClearOutPointer(value);
-            ThrowHR(E_NOTIMPL);
+
+            auto deferral = m_task->GetDeferral();
+
+            ThrowIfFailed(deferral.CopyTo(value));
         });
 }
 
@@ -87,8 +98,12 @@ IFACEMETHODIMP CanvasPrintEventArgs::CreateDrawingSession(ICanvasDrawingSession*
 }
 
 
+// This is called by CanvasPrintDocument when either the event handler returns
+// or the deferral's Complete() method is called.
 void CanvasPrintEventArgs::EndPrinting()
 {
+    Lock lock(m_mutex);
+            
     if (m_printControl)
         ThrowIfFailed(m_printControl->Close());
 }
@@ -115,6 +130,8 @@ public:
 
 ComPtr<ICanvasDrawingSession> CanvasPrintEventArgs::CreateDrawingSessionImpl()
 {
+    Lock lock(m_mutex);
+            
     auto deviceInternal = As<ICanvasDeviceInternal>(m_device);
             
     if (!m_printControl)
@@ -148,9 +165,10 @@ ComPtr<ICanvasDrawingSession> CanvasPrintEventArgs::CreateDrawingSessionImpl()
 }
 
 
-// TODO #5645: this could run on any thread (fix once we implement deferrals)
 void CanvasPrintEventArgs::DrawingSessionClosed()
 {
+    Lock lock(m_mutex);
+            
     assert(m_currentPage > 0);
     assert(m_currentCommandList);
 

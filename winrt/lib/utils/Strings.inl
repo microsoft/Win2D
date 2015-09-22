@@ -16,6 +16,8 @@ STRING(CanvasDeviceGetDeviceWhenNotCreated, L"The control does not currently hav
 STRING(CanvasPrintDocumentMustBeConstructedOnUIThread, L"CanvasPrintDocument must be constructed on a UI thread.");
 STRING(CanvasPrintEventArgsDpiCannotBeChangedAfterCreateDrawingSession, L"CanvasPrintEventArgs.Dpi cannot be set after the first call to CanvasPrintEventArgs.CreateDrawingSession.");
 STRING(CanvasPrintEventArgsCannotCreateDrawingSessionUntilPreviousOneClosed, L"The last drawing session returned by CanvasPrintEventArgs.CreateDrawingSession must be disposed before a new one can be created.");
+STRING(CanvasPrintDocumentGetDeferralMayOnlyBeCalledOnce, L"GetDeferral can only be called once per event.")
+STRING(CanvasPrintDocumentDeferralCompleteMayOnlyBeCalledOnce, L"CanvasPrintDeferral.Complete may only be called once.")
 STRING(CommandListCannotBeDrawnToAfterItHasBeenUsed, L"CanvasCommandList.CreateDrawingSession cannot be called after the CanvasCommandList has been used as an image.")
 STRING(CreateDrawingSessionCalledBeforeRegionsInvalidated, L"CreateDrawingSession cannot be called before the RegionsInvalidated event has been raised.");
 STRING(DeviceExpectedToBeLost, L"This API was unexpectedly called when the Direct3D device is not lost.")

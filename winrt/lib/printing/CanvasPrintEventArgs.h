@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include "DeferrableTask.h"
+
 #include "../images/CanvasCommandList.h"
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Printing
@@ -15,9 +17,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     {
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_Printing_CanvasPrintEventArgs, BaseTrust);
 
-        ComPtr<ICanvasDevice> m_device;
-        ComPtr<IPrintDocumentPackageTarget> m_target;
-        ComPtr<IPrintTaskOptionsCore> m_printTaskOptions;
+
+        DeferrableTaskPtr const m_task;
+
+        ComPtr<ICanvasDevice> const m_device;
+        ComPtr<IPrintDocumentPackageTarget> const m_target;
+        ComPtr<IPrintTaskOptionsCore> const m_printTaskOptions;
+
+        std::mutex m_mutex;
+
         float m_dpi;
 
         ComPtr<ID2D1PrintControl> m_printControl;
@@ -27,11 +35,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         
     public:
         CanvasPrintEventArgs(
+            DeferrableTaskPtr task,
             ComPtr<ICanvasDevice> const& device,
             ComPtr<IPrintDocumentPackageTarget> const& target,
             ComPtr<IPrintTaskOptionsCore> const& printTaskOptions,
             float initialDpi);
-
+        
         void EndPrinting();
 
         IFACEMETHODIMP get_PrintTaskOptions(IPrintTaskOptionsCore** value) override;
