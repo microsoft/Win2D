@@ -21,6 +21,8 @@ class DeferrableTask
 
     DeferrableFn m_code;
     std::function<void()> m_completionFn;
+
+    std::promise<void> m_promise;
     
 public:
     DeferrableTask(DeferrableTaskScheduler* owner, DeferrableFn fn);
@@ -34,6 +36,7 @@ public:
     void Completed();
     
     ComPtr<CanvasPrintDeferral> GetDeferral();
+    std::future<void> GetFuture();
 
     DeferrableTask(DeferrableTask const&) = delete;
     DeferrableTask(DeferrableTask&&) = delete;

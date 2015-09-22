@@ -46,9 +46,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     {
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_Printing_CanvasPrintDocument, BaseTrust);
 
-        // This member is only modified on construction
+        // These members are only modified on construction
         DeferrableTaskScheduler m_scheduler;
         float const m_displayDpi;
+        bool const m_waitForUIThread;
 
         // These members are not threadsafe and may be accessed from any thread
         // and so are protected by m_mutex
@@ -125,7 +126,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         HRESULT SetJobPageCount(PageCountType type, uint32_t count);
 
-        void RunAsync(std::function<void(CanvasPrintDocument*, DeferrableTask*)>&& fn);
+        void RunOnUIThread(std::function<void(CanvasPrintDocument*, DeferrableTask*)>&& fn);
 
         void PaginateImpl(
             DeferrableTask* task,

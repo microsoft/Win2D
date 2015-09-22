@@ -75,6 +75,7 @@ CanvasPrintDocument::CanvasPrintDocument(
     ComPtr<ICanvasDevice> const& device)
     : m_scheduler(GetDispatcher(adapter.get()))
     , m_displayDpi(adapter->GetLogicalDpi())
+    , m_waitForUIThread(adapter->ShouldWaitForUIThread())
     , m_device(device.Get())
     , m_eventSources(std::make_shared<EventSources>())
     , m_newPreviewPageNumber(1)
@@ -235,7 +236,7 @@ IFACEMETHODIMP CanvasPrintDocument::Paginate(uint32_t currentPreviewPageNumber, 
         {
             auto printTaskOptions = As<IPrintTaskOptionsCore>(optionsAsInspectable);
 
-            RunAsync([=] (CanvasPrintDocument* doc, DeferrableTask* task) { doc->PaginateImpl(task, currentPreviewPageNumber, printTaskOptions); });
+            RunOnUIThread([=] (CanvasPrintDocument* doc, DeferrableTask* task) { doc->PaginateImpl(task, currentPreviewPageNumber, printTaskOptions); });
         });
 }
 
@@ -284,7 +285,7 @@ IFACEMETHODIMP CanvasPrintDocument::MakePage(uint32_t pageNumber, float width, f
     return ExceptionBoundary(
         [&]
         {
-            RunAsync([=] (CanvasPrintDocument* doc, DeferrableTask* task) { doc->MakePageImpl(task, pageNumber, width, height); });
+            RunOnUIThread([=] (CanvasPrintDocument* doc, DeferrableTask* task) { doc->MakePageImpl(task, pageNumber, width, height); });
         });
 }
 
@@ -419,7 +420,7 @@ IFACEMETHODIMP CanvasPrintDocument::MakeDocument(
         {
             auto printTaskOptions = As<IPrintTaskOptionsCore>(optionsAsInspectable);
 
-            RunAsync([=] (CanvasPrintDocument* doc, DeferrableTask* task) { doc->MakeDocumentImpl(task, printTaskOptions, target); });
+            RunOnUIThread([=] (CanvasPrintDocument* doc, DeferrableTask* task) { doc->MakeDocumentImpl(task, printTaskOptions, target); });
         });
 }
 
@@ -494,7 +495,7 @@ std::shared_ptr<CanvasPrintDocument::EventSources> CanvasPrintDocument::GetEvent
 }
 
 
-void CanvasPrintDocument::RunAsync(std::function<void(CanvasPrintDocument*, DeferrableTask*)>&& fn)
+void CanvasPrintDocument::RunOnUIThread(std::function<void(CanvasPrintDocument*, DeferrableTask*)>&& fn)
 {
     auto weakSelf = AsWeak(this);
 
@@ -508,7 +509,15 @@ void CanvasPrintDocument::RunAsync(std::function<void(CanvasPrintDocument*, Defe
                 fn(self, task);
         });
 
+    auto future = task->GetFuture();
     m_scheduler.Schedule(std::move(task));
+
+    if (m_waitForUIThread)
+    {
+        // If the task failed then the exception will be stashed in the future.
+        // Calling get() will cause it to rethrow the exception.
+        future.get();
+    }
 }
 
 #endif

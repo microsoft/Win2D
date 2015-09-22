@@ -63,6 +63,16 @@ public:
         return Dpi;
     }
 
+    virtual bool ShouldWaitForUIThread() override
+    {
+        // In product code, Paginate, MakePage and MakeDocument block until the
+        // UI thread has completed.
+        //
+        // This makes it hard to test, so we disable this behavior in these
+        // tests.
+        return false;
+    }
+
     void RunNextAction()
     {
         Dispatcher->Tick();
@@ -1159,8 +1169,151 @@ TEST_CLASS(CanvasPrintEventArgsUnitTests)
         Fixture f;
         f.VerifySecondCallToDeferralCompleteFails(f.Args);
     }
-
-    // TODO #5659: Verify failure behavior (including device lost, in paginate/makepage/makedocument)
 };
+
+
+static auto Timeout = std::chrono::seconds(5);
+static HRESULT AnyHR = 0x87654321;
+
+TEST_CLASS(CanvasPrintDeferrableTaskUnitTests)
+{
+    struct Fixture
+    {
+        ComPtr<StubDispatcher> Dispatcher;
+        DeferrableTaskScheduler Scheduler;
+
+        Fixture()
+            : Dispatcher(Make<StubDispatcher>())
+            , Scheduler(Dispatcher)
+        {
+        }
+
+        template<typename FN>
+        std::future<void> Schedule(FN&& fn)
+        {
+            auto task = Scheduler.CreateTask(fn);
+            auto future = task->GetFuture();
+            Scheduler.Schedule(std::move(task));
+            return future;
+        }
+
+        void TickDispatcherOnOtherThreadUntilDone()
+        {
+            auto future = std::async(std::launch::async,
+                [=]
+                {
+                    while (Dispatcher->HasPendingActions())
+                    {
+                        Dispatcher->TickAll();
+                    }
+                });
+            future.wait();
+        }
+    };
+
+    TEST_METHOD_EX(CanvasPrint_DeferrableTask_SetsFutureOnCompletion)
+    {
+        Fixture f;
+
+        std::promise<void> completionFnCalled;
+
+        auto future = f.Schedule(
+            [&] (DeferrableTask* task)
+            {
+                task->SetCompletionFn([&] { completionFnCalled.set_value(); });
+                task->NonDeferredComplete();
+            });
+
+        f.TickDispatcherOnOtherThreadUntilDone();
+
+        auto completionFnFuture = completionFnCalled.get_future();
+        Assert::IsTrue(completionFnFuture.wait_for(Timeout) == std::future_status::ready);
+        completionFnFuture.get();
+
+        Assert::IsTrue(future.wait_for(Timeout) == std::future_status::ready);
+        future.get();
+    }
+
+    TEST_METHOD_EX(CanvasPrint_DeferrableTask_FailureInMainTask_MarshaledBackViaFuture)
+    {
+        Fixture f;
+
+        auto future = f.Schedule(
+            [&] (DeferrableTask* task)
+            {
+                ThrowHR(AnyHR);
+            });
+
+        f.TickDispatcherOnOtherThreadUntilDone();
+
+        Assert::IsTrue(future.wait_for(Timeout) == std::future_status::ready);
+        ExpectHResultException(AnyHR, [&] { future.get(); });
+    }
+
+    TEST_METHOD_EX(CanvasPrint_DeferrableTask_FailureInMaskTask_DoesNotBlockFutureTasks)
+    {
+        Fixture f;
+
+        f.Schedule(
+            [&] (DeferrableTask* task)
+            {
+                ThrowHR(AnyHR);
+            });
+
+        auto future = f.Schedule(
+            [&] (DeferrableTask* task)
+            {
+                task->SetCompletionFn([&] {});
+                task->NonDeferredComplete();
+            });
+
+        f.TickDispatcherOnOtherThreadUntilDone();
+
+        Assert::IsTrue(future.wait_for(Timeout) == std::future_status::ready);
+        future.get();
+    }
+
+    TEST_METHOD_EX(CanvasPrint_DeferrableTask_FailureInCompletionFn_MarshaledBackViaFuture)
+    {
+        Fixture f;
+
+        auto future = f.Schedule(
+            [&] (DeferrableTask* task)
+            {
+                task->SetCompletionFn([] { ThrowHR(AnyHR); });
+                task->NonDeferredComplete();
+            });
+
+        f.TickDispatcherOnOtherThreadUntilDone();
+
+        Assert::IsTrue(future.wait_for(Timeout) == std::future_status::ready);
+        ExpectHResultException(AnyHR, [&] { future.get(); });
+    }
+
+    TEST_METHOD_EX(CanvasPrint_DeferrableTask_FailureInCompletoinFn_DoesNotBlockFutureTasks)
+    {
+        Fixture f;
+
+        f.Schedule(
+            [&] (DeferrableTask* task)
+            {
+                task->SetCompletionFn([] { ThrowHR(AnyHR); });
+                task->NonDeferredComplete();
+            });
+
+        auto future = f.Schedule(
+            [&] (DeferrableTask* task)
+            {
+                task->SetCompletionFn([&] {});
+                task->NonDeferredComplete();
+            });
+
+        f.TickDispatcherOnOtherThreadUntilDone();
+
+        Assert::IsTrue(future.wait_for(Timeout) == std::future_status::ready);
+        future.get();
+    }
+};
+
 
 

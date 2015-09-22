@@ -56,4 +56,10 @@ float DefaultPrintDocumentAdapter::GetLogicalDpi()
     return logicalDpi;    
 }
 
+
+bool DefaultPrintDocumentAdapter::ShouldWaitForUIThread()
+{
+    return true;
+}
+
 #endif

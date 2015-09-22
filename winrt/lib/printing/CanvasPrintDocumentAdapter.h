@@ -14,6 +14,7 @@ public:
     virtual ComPtr<ICanvasDevice> GetSharedDevice() = 0;
     virtual ComPtr<ICoreDispatcher> GetDispatcherForCurrentThread() = 0;
     virtual float GetLogicalDpi() = 0;
+    virtual bool ShouldWaitForUIThread() = 0;
 };
 
 
@@ -23,4 +24,5 @@ public:
     virtual ComPtr<ICanvasDevice> GetSharedDevice() override;
     virtual ComPtr<ICoreDispatcher> GetDispatcherForCurrentThread() override;
     virtual float GetLogicalDpi() override;
+    virtual bool ShouldWaitForUIThread() override;
 };

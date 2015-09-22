@@ -22,7 +22,15 @@ DeferrableTask::DeferrableTask(DeferrableTaskScheduler* owner, DeferrableFn fn)
 
 void DeferrableTask::Invoke()
 {
-    m_code(this);
+    try
+    {
+        m_code(this);
+    }
+    catch (...)
+    {
+        m_promise.set_exception(std::current_exception());
+        m_owner->TaskCompleted(this);
+    }
 }
 
 
@@ -44,7 +52,15 @@ void DeferrableTask::NonDeferredComplete()
 
 void DeferrableTask::Completed()
 {
-    m_completionFn();
+    try
+    {
+        m_completionFn();
+        m_promise.set_value();
+    }
+    catch (...)
+    {
+        m_promise.set_exception(std::current_exception());
+    }
     m_owner->TaskCompleted(this);
 }
 
@@ -67,6 +83,12 @@ ComPtr<CanvasPrintDeferral> DeferrableTask::GetDeferral()
     m_deferred = true;
 
     return deferral;
+}
+
+
+std::future<void> DeferrableTask::GetFuture()
+{
+    return m_promise.get_future();
 }
 
 #endif
