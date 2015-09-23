@@ -4,6 +4,8 @@
 
 #include "pch.h"
 
+#ifndef WINDOWS_PHONE
+
 #include "DeferrableTask.h"
 
 #include "DeferrableTaskScheduler.h"
@@ -67,3 +69,4 @@ ComPtr<CanvasPrintDeferral> DeferrableTask::GetDeferral()
     return deferral;
 }
 
+#endif
