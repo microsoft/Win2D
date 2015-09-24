@@ -63,7 +63,10 @@ public:
 
     void TaskCompleted(DeferrableTask* task)
     {
+        UNREFERENCED_PARAMETER(task); // task is only referenced in an assert
+
         Lock lock(m_mutex);
+
         assert(m_currentTask.get() == task);
         m_currentTask.reset();
 
