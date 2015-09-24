@@ -50,6 +50,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         IID m_effectId;
         WinString m_name;
 
+        std::mutex m_mutex;
+
         ComPtr<IPropertyValueStatics> m_propertyValueFactory;
 
         // What device are we currently realized on?
