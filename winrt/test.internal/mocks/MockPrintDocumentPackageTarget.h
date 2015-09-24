@@ -4,9 +4,6 @@
 
 #pragma once
 
-// TODO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-//      add this to the project files
-
 class MockPrintDocumentPackageTarget 
     : public RuntimeClass<
         RuntimeClassFlags<ClassicCom>,
