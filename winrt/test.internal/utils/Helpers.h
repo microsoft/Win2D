@@ -429,6 +429,12 @@ namespace Microsoft
                 return buf;
             }
 
+            template<>
+            inline std::wstring ToString<std::vector<BYTE>>(std::vector<BYTE> const& value)
+            {
+                return L"std::vector<BYTE>";
+            }
+
             ENUM_TO_STRING(CanvasCapStyle)
             {
                 ENUM_VALUE(CanvasCapStyle::Flat);

@@ -8,7 +8,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Windows.Foundation;
+using Windows.Storage;
 
 namespace ExampleGallery
 {
@@ -88,6 +91,15 @@ namespace ExampleGallery
         public static float RandomBetween(float min, float max)
         {
             return min + (float)random.NextDouble() * (max - min);
+        }
+
+        public static async Task<byte[]> ReadAllBytes(string filename)
+        {
+            var uri = new Uri("ms-appx:///" + filename);
+            var file = await StorageFile.GetFileFromApplicationUriAsync(uri);
+            var buffer = await FileIO.ReadBufferAsync(file);
+
+            return buffer.ToArray();
         }
     }
 }

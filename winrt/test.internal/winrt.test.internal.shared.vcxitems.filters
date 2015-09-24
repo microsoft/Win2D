@@ -151,6 +151,12 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasTextRenderingParametersUnitTests.cpp">
       <Filter>graphics</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)utils\HashUtilitiesTests.cpp">
+      <Filter>utils</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)graphics\PixelShaderEffectUnitTests.cpp">
+      <Filter>graphics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)pch.h" />
@@ -458,6 +464,15 @@
       <Filter>mocks</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockPrintTaskOptions.h">
+      <Filter>mocks</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DDrawInfo.h">
+      <Filter>mocks</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DTransformGraph.h">
+      <Filter>mocks</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DEffectContext.h">
       <Filter>mocks</Filter>
     </ClInclude>
   </ItemGroup>

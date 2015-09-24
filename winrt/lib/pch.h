@@ -44,6 +44,9 @@
 #include <d3d11.h>
 #include <dwrite_2.h>
 #include <dxgi1_3.h>
+#include <d2d1effectauthor.h>  
+#include <d2d1effecthelpers.h>
+#include <d3dcompiler.h>
 #include <DirectXMath.h>
 #include <wincodec.h>
 #include <shcore.h>
@@ -63,6 +66,8 @@
 // WinRT
 #include <windows.foundation.h>
 #include <windows.foundation.collections.h>
+#include <windows.security.cryptography.h>
+#include <windows.security.cryptography.core.h>
 #include <windows.storage.h>
 #include <windows.ui.h>
 #include <windows.ui.xaml.controls.h>
@@ -81,7 +86,9 @@
 #include <Constants.h>
 #include <ErrorHandling.h>
 #include <LifespanTracker.h>
+#include <Map.h>
 #include <Nullable.h>
+#include <ReferenceArray.h>
 #include <RegisteredEvent.h>
 #include <ScopeWarden.h>
 #include <Singleton.h>

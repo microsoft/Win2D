@@ -19,7 +19,7 @@ namespace collections
     template<typename T>
     struct MapKeyComparison<Microsoft::WRL::ComPtr<T>>
     {
-        bool operator() (Microsoft::WRL::ComPtr<T> const& value1, Microsoft::WRL::ComPtr<T> const& value2)
+        bool operator() (Microsoft::WRL::ComPtr<T> const& value1, Microsoft::WRL::ComPtr<T> const& value2) const
         {
             Microsoft::WRL::ComPtr<IUnknown> value1Identity;
             Microsoft::WRL::ComPtr<IUnknown> value2Identity;
@@ -342,7 +342,7 @@ namespace collections
         }
 
 
-        virtual HRESULT STDMETHODCALLTYPE Split(_Out_ IMapView** first, _Out_ IMapView** second)
+        virtual HRESULT STDMETHODCALLTYPE Split(_Out_ ABI::Windows::Foundation::Collections::IMapView<TKey, TValue>** first, _Out_ ABI::Windows::Foundation::Collections::IMapView<TKey, TValue>** second)
         {
             return ExceptionBoundary([&]
             {

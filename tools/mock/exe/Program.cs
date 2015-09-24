@@ -40,7 +40,8 @@ namespace Mock
             {
                 case "pointer":
                 case "pointer opt":
-                    return qualifiable is CodeGen.Struct;
+                case "pointer ecount opt":
+                    return qualifiable is CodeGen.Struct || qualifiable is CodeGen.Primitive;
                 default:
                     return false;
             }
@@ -264,13 +265,20 @@ namespace Mock
                 output.WriteLine("RuntimeClassFlags<ClassicCom>,");
 
                 output.WriteIndent();
-                output.Write("ChainInterfaces<");
+                if (inheritanceHierarchy.Count > 1)
+                {
+                    output.Write("ChainInterfaces<");
+                }
                 for (int i = 0; i < inheritanceHierarchy.Count; i++)
                 {
                     output.Write(inheritanceHierarchy[i].NativeName);
                     if (i < inheritanceHierarchy.Count - 1) output.Write(", ");
                 }
-                output.Write(">>");
+                if (inheritanceHierarchy.Count > 1)
+                {
+                    output.Write(">");
+                }
+                output.Write(">");
                 output.WriteLine();
                 output.Unindent();
                 output.WriteLine("{");
@@ -306,6 +314,9 @@ namespace Mock
             OutputMock("RoundedRectangleGeometry", inputDir, outputDir);
             OutputMock("TransformedGeometry", inputDir, outputDir);
             OutputMock("GeometryGroup", inputDir, outputDir);
+            OutputMock("DrawInfo", inputDir, outputDir);
+            OutputMock("EffectContext", inputDir, outputDir);
+            OutputMock("TransformGraph", inputDir, outputDir);
         }
 
         static void Main(string[] args)

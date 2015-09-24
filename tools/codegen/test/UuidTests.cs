@@ -24,6 +24,9 @@ namespace CodeGen.Test
             Guid result21 = UuidHelper.GetVersion5Uuid(salt2, name1);
             Guid result22 = UuidHelper.GetVersion5Uuid(salt2, name2);
 
+            // Validate against a hard-coded expected result.
+            Assert.AreEqual(new Guid("C3091B3B-5718-5928-8CBF-41298EF7C614"), result11);
+
             // All results should be different (changing either name or salt alters the UUID).
             Assert.AreNotEqual(result11, result12);
             Assert.AreNotEqual(result11, result21);

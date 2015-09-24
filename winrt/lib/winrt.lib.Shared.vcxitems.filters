@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="effects">
@@ -33,6 +33,9 @@
     </Filter>
     <Filter Include="printing">
       <UniqueIdentifier>{007da80b-0c24-4f3a-a5be-1ec320c18646}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="effects\shader">
+      <UniqueIdentifier>{2ee3a682-7b83-4f7d-85ca-569607a51de1}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -345,6 +348,21 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)printing\DeferrableTask.cpp">
       <Filter>printing</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)utils\HashUtilities.cpp">
+      <Filter>utils</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\shader\PixelShaderEffect.cpp">
+      <Filter>effects\shader</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\shader\PixelShaderEffectImpl.cpp">
+      <Filter>effects\shader</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\shader\PixelShaderTransform.cpp">
+      <Filter>effects\shader</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\shader\SharedShaderState.cpp">
+      <Filter>effects\shader</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -706,6 +724,24 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)printing\DeferrableTaskScheduler.h">
       <Filter>printing</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)utils\HashUtilities.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\shader\PixelShaderEffect.h">
+      <Filter>effects\shader</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\shader\PixelShaderEffectImpl.h">
+      <Filter>effects\shader</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\shader\PixelShaderTransform.h">
+      <Filter>effects\shader</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\shader\ShaderDescription.h">
+      <Filter>effects\shader</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\shader\SharedShaderState.h">
+      <Filter>effects\shader</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)Canvas.codegen.idl" />
@@ -951,6 +987,9 @@
     </None>
     <None Include="$(MSBuildThisFileDirectory)printing\CanvasPrintDocument.abi.idl">
       <Filter>printing</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)effects\shader\PixelShaderEffect.abi.idl">
+      <Filter>effects\shader</Filter>
     </None>
   </ItemGroup>
 </Project>

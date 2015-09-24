@@ -30,6 +30,11 @@
   <PropertyGroup>
     <IgnoreImportLibrary>false</IgnoreImportLibrary>
   </PropertyGroup>
+  <ItemDefinitionGroup>
+    <Link>
+      <DelayLoadDLLs>d3dcompiler_47.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
+    </Link>
+  </ItemDefinitionGroup>
 
   <Import Project="winrt.dll.Shared.vcxitems" Label="Shared" />
 

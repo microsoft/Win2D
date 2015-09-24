@@ -872,7 +872,7 @@ TEST_CLASS(CanvasEffectsTests)
         ExpectCOMException(E_NOINTERFACE, L"Unsupported type. Win2D is not able to wrap the specified resource.",
             [&]
             {
-                GetOrCreate<ICanvasImage>(d2dEffect.Get());
+                GetOrCreate<ICanvasImage>(device, d2dEffect.Get());
             });
     }
 

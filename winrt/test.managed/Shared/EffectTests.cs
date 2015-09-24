@@ -34,6 +34,7 @@ namespace test.managed
 
             var effectTypes = from type in assembly.DefinedTypes
                               where type.ImplementedInterfaces.Contains(typeof(IGraphicsEffect))
+                              where type.AsType() != typeof(PixelShaderEffect)
                               select type;
 
             var device = new CanvasDevice();
@@ -1118,20 +1119,6 @@ namespace test.managed
         class NotACanvasImage : IGraphicsEffectSource { }
 
 
-        void VerifyExceptionMessage(string expected, string sourceMessage)
-        {
-            // Exception messages contain something like 
-            // "Invalid pointer\r\n\r\nEffect source #0 is null",
-            // The 'invalid pointer' part is locale 
-            // dependent and is stripped out.
-
-            string delimiterString = "\r\n\r\n";
-            int delimiterPosition = sourceMessage.LastIndexOf(delimiterString);
-            string exceptionMessage = sourceMessage.Substring(delimiterPosition + delimiterString.Length);
-            Assert.AreEqual(expected, exceptionMessage);
-        }
-
-
         [TestMethod]
         public void EffectExceptionMessages()
         {
@@ -1142,54 +1129,30 @@ namespace test.managed
             using (var drawingSession = renderTarget.CreateDrawingSession())
             {
                 // Null source.
-                try
-                {
-                    drawingSession.DrawImage(effect);
-                    Assert.Fail("should throw");
-                }
-                catch (ArgumentException e)
-                {
-                    VerifyExceptionMessage("Effect source #0 is null.", e.Message);
-                }
+                Utils.AssertThrowsException< ArgumentException>(
+                    () => drawingSession.DrawImage(effect),  
+                    "Effect source #0 is null.");
 
                 // Null source (tree 2 deep).
                 effect.Source = new GaussianBlurEffect();
 
-                try
-                {
-                    drawingSession.DrawImage(effect);
-                    Assert.Fail("should throw");
-                }
-                catch (ArgumentException e)
-                {
-                    VerifyExceptionMessage("Effect source #0 is null.", e.Message);
-                }
+                Utils.AssertThrowsException<ArgumentException>(
+                    () => drawingSession.DrawImage(effect), 
+                    "Effect source #0 is null.");
 
                 // Invalid source type.
                 effect.Source = new NotACanvasImage();
 
-                try
-                {
-                    drawingSession.DrawImage(effect);
-                    Assert.Fail("should throw");
-                }
-                catch (InvalidCastException e)
-                {
-                    VerifyExceptionMessage("Effect source #0 is an unsupported type. To draw an effect using Win2D, all its sources must be Win2D ICanvasImage objects.", e.Message);
-                }
+                Utils.AssertThrowsException<InvalidCastException>(
+                    () => drawingSession.DrawImage(effect), 
+                    "Effect source #0 is an unsupported type. To draw an effect using Win2D, all its sources must be Win2D ICanvasImage objects.");
 
                 // Invalid source type (tree 2 deep).
                 effect.Source = new GaussianBlurEffect { Source = new NotACanvasImage() };
 
-                try
-                {
-                    drawingSession.DrawImage(effect);
-                    Assert.Fail("should throw");
-                }
-                catch (InvalidCastException e)
-                {
-                    VerifyExceptionMessage("Effect source #0 is an unsupported type. To draw an effect using Win2D, all its sources must be Win2D ICanvasImage objects.", e.Message);
-                }
+                Utils.AssertThrowsException<InvalidCastException>(
+                    () => drawingSession.DrawImage(effect), 
+                    "Effect source #0 is an unsupported type. To draw an effect using Win2D, all its sources must be Win2D ICanvasImage objects.");
 
                 // But I can set invalid source types as long as I don't draw with them,
                 // even when the effect is previously realized.
@@ -1220,28 +1183,16 @@ namespace test.managed
                 // Source bitmap is on the wrong device.
                 effect.Source = bitmapOnOtherDevice;
 
-                try
-                {
-                    drawingSession.DrawImage(effect);
-                    Assert.Fail("should throw");
-                }
-                catch (ArgumentException e)
-                {
-                    VerifyExceptionMessage("Effect source #0 is associated with a different device.", e.Message);
-                }
+                Utils.AssertThrowsException<ArgumentException>(
+                    () => drawingSession.DrawImage(effect),
+                    "Effect source #0 is associated with a different device.");
 
                 // Source is another effect, whose source is a bitmap on the wrong device.
                 effect.Source = new GaussianBlurEffect { Source = bitmapOnOtherDevice };
 
-                try
-                {
-                    drawingSession.DrawImage(effect);
-                    Assert.Fail("should throw");
-                }
-                catch (ArgumentException e)
-                {
-                    VerifyExceptionMessage("Effect source #0 is associated with a different device.", e.Message);
-                }
+                Utils.AssertThrowsException<ArgumentException>(
+                    () => drawingSession.DrawImage(effect),
+                    "Effect source #0 is associated with a different device.");
             }
         }
 

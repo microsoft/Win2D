@@ -20,6 +20,15 @@ STRING(CanvasPrintDocumentGetDeferralMayOnlyBeCalledOnce, L"GetDeferral can only
 STRING(CanvasPrintDocumentDeferralCompleteMayOnlyBeCalledOnce, L"CanvasPrintDeferral.Complete may only be called once.")
 STRING(CommandListCannotBeDrawnToAfterItHasBeenUsed, L"CanvasCommandList.CreateDrawingSession cannot be called after the CanvasCommandList has been used as an image.")
 STRING(CreateDrawingSessionCalledBeforeRegionsInvalidated, L"CreateDrawingSession cannot be called before the RegionsInvalidated event has been raised.");
+STRING(CustomEffectBadShader, L"Unable to load the specified shader. This should be a Direct3D pixel shader compiled for shader model 4.");
+STRING(CustomEffectBadPropertyType, L"Shader property '%S' is an unsupported type.");
+STRING(CustomEffectSourceOutOfRange, L"Source%d must be null when using this pixel shader (shader inputs: %d).");
+STRING(CustomEffectTooManyConstantBuffers, L"Unsupported constant buffer layout. There should be a single constant buffer bound to b0.");
+STRING(CustomEffectTooManyTextures, L"Shader has too many input textures.");
+STRING(CustomEffectUnknownProperty, L"Shader does not have a property named '%s'.");
+STRING(CustomEffectWrongPropertyArraySize, L"Wrong array size. Shader property '%s' is an array of %d elements.");
+STRING(CustomEffectWrongPropertyType, L"Wrong type. Shader property '%s' is of type %s.");
+STRING(CustomEffectWrongPropertyTypeArray, L"Wrong type. Shader property '%s' is an array of %s.");
 STRING(DeviceExpectedToBeLost, L"This API was unexpectedly called when the Direct3D device is not lost.")
 STRING(DidNotPopLayer, L"After calling CanvasDrawingSession.CreateLayer, you must close the resulting CanvasActiveLayer before ending the CanvasDrawingSession.")
 STRING(DrawImageMinBlendNotSupported, L"This DrawImage overload is not valid when CanvasDrawingSession.Blend is set to CanvasBlend.Min.")

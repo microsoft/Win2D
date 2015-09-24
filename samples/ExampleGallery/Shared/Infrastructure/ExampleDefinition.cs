@@ -55,6 +55,7 @@ namespace ExampleGallery
 
             // Show capabilities of the API.
             new ExampleDefinition("Effects", typeof(EffectsExample)),
+            new ExampleDefinition("Custom Effects", typeof(CustomEffects)),
             new ExampleDefinition("Geometry Operations", typeof(GeometryOperations)),
             new ExampleDefinition("Layers", typeof(LayersExample)),
 #if WINDOWS_UWP

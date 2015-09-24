@@ -81,6 +81,12 @@ public:
 
 class StubD2DDevice : public MockD2DDevice
 {
+public:
+    StubD2DDevice(ID2D1Factory2* parentD2DFactory = nullptr)
+        : MockD2DDevice(parentD2DFactory)
+    {
+    }
+
     IFACEMETHODIMP CreateDeviceContext(
         D2D1_DEVICE_CONTEXT_OPTIONS deviceContextOptions, 
         ID2D1DeviceContext** deviceContext) override
