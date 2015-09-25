@@ -516,7 +516,7 @@ namespace test.managed
             }
             else if (value1 is float)
             {
-                return Math.Abs((float)value1 - (float)value2) < 0.000001;
+                return Math.Abs((float)value1 - (float)value2) < 0.00001;
             }
             else if (value1 is float[])
             {
