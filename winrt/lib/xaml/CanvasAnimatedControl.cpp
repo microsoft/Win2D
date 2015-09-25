@@ -1040,7 +1040,7 @@ bool CanvasAnimatedControl::Tick(
         // we want to respond immediately.
         if (!invalidated)
         {
-            lock = Lock(m_sharedStateMutex);
+            auto lock2 = Lock(m_sharedStateMutex);
             
             invalidated = m_sharedState.Invalidated;
             if (areResourcesCreated)
