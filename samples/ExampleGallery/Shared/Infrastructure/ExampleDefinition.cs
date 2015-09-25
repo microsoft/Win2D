@@ -43,39 +43,50 @@ namespace ExampleGallery
     {
         static ExampleDefinition[] definitions =
         {
-            new ExampleDefinition("Effects", typeof(EffectsExample)),
+            // Visual demos.
             new ExampleDefinition("Burning Text", typeof(BurningTextExample)),
             new ExampleDefinition("Game of Life", typeof(GameOfLife)),
 #if WINDOWS_UWP
-            new ExampleDefinition("Video Effect", typeof(BasicVideoEffectExample)),
             new ExampleDefinition("Camera Effect", typeof(CameraEffectExample)),
-            new ExampleDefinition("Ink", typeof(InkExample)),
-            new ExampleDefinition("Gradient Mesh", typeof(GradientMeshExample)),
+            new ExampleDefinition("Video Effect", typeof(BasicVideoEffectExample)),
 #endif
             new ExampleDefinition("Particle System", typeof(ParticleExample)),
+            new ExampleDefinition("Vector Art", typeof(VectorArt)),
+
+            // Show capabilities of the API.
+            new ExampleDefinition("Effects", typeof(EffectsExample)),
             new ExampleDefinition("Geometry Operations", typeof(GeometryOperations)),
             new ExampleDefinition("Layers", typeof(LayersExample)),
+#if WINDOWS_UWP
+            new ExampleDefinition("Ink", typeof(InkExample)),
+#endif
             new ExampleDefinition("Shapes", typeof(ShapesExample)),
-            new ExampleDefinition("Vector Art", typeof(VectorArt)),
             new ExampleDefinition("Stroke Styles", typeof(StrokeStyles)),
-            new ExampleDefinition("Arc Options", typeof(ArcOptions)),
-            new ExampleDefinition("Custom Fonts", typeof(CustomFonts)),
+            new ExampleDefinition("Arc Options", typeof(ArcOptions)),          
+#if WINDOWS_UWP
+            new ExampleDefinition("Gradient Mesh", typeof(GradientMeshExample)),
+#endif
             new ExampleDefinition("Text Layouts", typeof(TextLayouts)),
-            new ExampleDefinition("Text Directions", typeof(TextDirectionsExample)),
             new ExampleDefinition("Text Outlines", typeof(TextOutlines)),
-            new ExampleDefinition("Animated Control", typeof(AnimatedControlExample)),
+            new ExampleDefinition("Custom Fonts", typeof(CustomFonts)),
+            new ExampleDefinition("Text Directions", typeof(TextDirectionsExample)),
+
+            // Show how to use the API.
             new ExampleDefinition("Custom Control", typeof(CustomControlExample)),
-            new ExampleDefinition("Keyboard Input", typeof(KeyboardInputExample)),
-            new ExampleDefinition("Direct3D Interop", typeof(Direct3DInteropExample)),
             new ExampleDefinition("Virtual Control", typeof(VirtualControlExample)),
+            new ExampleDefinition("Animated Control", typeof(AnimatedControlExample)),
+            new ExampleDefinition("Direct3D Interop", typeof(Direct3DInteropExample)),
+            new ExampleDefinition("Keyboard Input", typeof(KeyboardInputExample)),
+            new ExampleDefinition("Background Task", typeof(BackgroundTaskExample)),
+
+            // Tests for internal use by the Win2D team.
             new ExampleDefinition("Image Source Update Region", typeof(ImageSourceUpdateRegion)),
             new ExampleDefinition("DPI", typeof(DpiExample)),
             new ExampleDefinition("Control Transforms", typeof(ControlTransforms)),
             new ExampleDefinition("DrawImage Emulations", typeof(DrawImageEmulations)),
             new ExampleDefinition("Bitmap Rotation", typeof(BitmapRotation)),
-            new ExampleDefinition("Background Task", typeof(BackgroundTaskExample)),
-            new ExampleDefinition("About", typeof(About)),
             new ExampleDefinition("Developer Tools", typeof(DeveloperTools)),
+            new ExampleDefinition("About", typeof(About)),
         };
 
         public static ExampleDefinition[] Definitions { get { return definitions; } }
