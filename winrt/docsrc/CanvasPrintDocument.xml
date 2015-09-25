@@ -29,6 +29,13 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
             
             async void OnPrintClicked(object sender, RoutedEventArgs e)
             {
+                if (printDocument != null)
+                {
+                    // Dispose any previously created CanvasPrintDocument
+                    // (see the CanvasPrintDocument.Dispose documentation for more information).
+                    printDocument.Dispose();
+                }
+
                 printDocument = new CanvasPrintDocument();
 
                 var printManager = PrintManager.GetForCurrentView();
@@ -44,6 +51,16 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
                     a.SetSource(printDocument);
                 });
             }
+
+            void Page_Unloaded(object sender, RoutedEventArgs args)
+            {
+                if (printDocument != null)
+                {
+                    printDocument.Dispose();
+                    printDocument = null;
+                }
+            }
+
             ]]>
           </code>
         </p>
@@ -78,17 +95,26 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
           preview and print some text:
           <code>
             <![CDATA[
+            CanvasPrintDocument printDocument;
+
             CanvasPrintDocument MakePrintDocument()
             {
-                var doc = new CanvasPrintDocument();
+                if (printDocument != null)
+                {
+                    // Dispose any previously created CanvasPrintDocument
+                    // (see the CanvasPrintDocument.Dispose documentation for more information).
+                    printDocument.Dispose();
+                }
 
-                doc.Preview += (sender, args) =>
+                printDocument = new CanvasPrintDocument();
+
+                printDocument.Preview += (sender, args) =>
                 {
                     sender.SetPageCount(1);
                     PrintPage(args.DrawingSession, args.PrintTaskOptions.GetPageDescription(1));
                 };
 
-                doc.Print += (sender, args) =>
+                printDocument.Print += (sender, args) =>
                 {
                     using (var ds = args.CreateDrawingSession())
                     {
@@ -106,6 +132,15 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
                     VerticalAlignment = CanvasVerticalAlignment.Center,
                     HorizontalAlignment = CanvasHorizontalAlignment.Center
                 });
+            }
+
+            void Page_Unloaded(object sender, RoutedEventArgs args)
+            {
+                if (printDocument != null)
+                {
+                    printDocument.Dispose();
+                    printDocument = null;
+                }
             }
             ]]>
           </code>
@@ -196,7 +231,12 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
           As CanvasPrintDocument contains events there is a potential of <a
           href="RefCycles.htm">memory leaks</a> if any registered event handlers
           are not removed.  An alternative to explicitly removing the events
-          handlers is to call Dispose().
+          handlers is to call Dispose.
+        </p>
+        <p>
+          Dispose should be called whenever the application is about to stop
+          referencing an old instance - for example, when a new
+          CanvasPrintDocument is created or when the page is unloaded.
         </p>
       </remarks>
     </member>
