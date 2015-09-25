@@ -62,6 +62,7 @@ namespace ExampleGallery
             new ExampleDefinition("Custom Fonts", typeof(CustomFonts)),
             new ExampleDefinition("Text Layouts", typeof(TextLayouts)),
             new ExampleDefinition("Text Directions", typeof(TextDirectionsExample)),
+            new ExampleDefinition("Text Outlines", typeof(TextOutlines)),
             new ExampleDefinition("Animated Control", typeof(AnimatedControlExample)),
             new ExampleDefinition("Custom Control", typeof(CustomControlExample)),
             new ExampleDefinition("Keyboard Input", typeof(KeyboardInputExample)),

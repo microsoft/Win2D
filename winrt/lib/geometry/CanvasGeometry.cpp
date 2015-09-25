@@ -190,6 +190,22 @@ IFACEMETHODIMP CanvasGeometryFactory::CreateGroupWithFilledRegionDetermination(
         });
 }
 
+IFACEMETHODIMP CanvasGeometryFactory::CreateText(
+    ICanvasTextLayout* textLayout,
+    ICanvasGeometry** geometry)
+{
+    return ExceptionBoundary(
+        [&]
+        {
+            CheckInPointer(textLayout);
+            CheckAndClearOutPointer(geometry);
+
+            auto newCanvasGeometry = CanvasGeometry::CreateNew(textLayout);
+
+            ThrowIfFailed(newCanvasGeometry.CopyTo(geometry));
+        });
+}
+
 IFACEMETHODIMP CanvasGeometryFactory::ComputeFlatteningTolerance(
     float dpi,
     float maximumZoomFactor,
@@ -1097,6 +1113,299 @@ ComPtr<CanvasGeometry> CanvasGeometry::CreateNew(
     CheckMakeResult(canvasGeometry);
 
     return canvasGeometry;
+}
+
+
+class OutlineTextRenderer : public RuntimeClass<RuntimeClassFlags<ClassicCom>, IDWriteTextRenderer1>,
+    private LifespanTracker<OutlineTextRenderer>
+{
+    std::vector<ComPtr<ID2D1Geometry>> m_geometries;
+    ComPtr<ICanvasDeviceInternal> m_device;
+    ComPtr<IDWriteTextAnalyzer1> m_textAnalyzer;
+public:
+    OutlineTextRenderer(ComPtr<ICanvasDevice> const& device)
+        : m_device(As<ICanvasDeviceInternal>(device))
+    {
+        auto customFontManager = CustomFontManager::GetInstance();
+        auto dwriteFactory = customFontManager->GetSharedFactory();
+
+        ComPtr<IDWriteTextAnalyzer> textAnalyzerBase;
+        ThrowIfFailed(dwriteFactory->CreateTextAnalyzer(&textAnalyzerBase));
+        m_textAnalyzer = As<IDWriteTextAnalyzer1>(textAnalyzerBase);
+    }
+
+    ComPtr<ID2D1GeometryGroup> CloseAndGetPath()
+    {
+        if (!m_geometries.empty())
+        {
+            std::vector<ID2D1Geometry*> rawPtrs;
+            rawPtrs.resize(m_geometries.size());
+
+            for (uint32_t i = 0; i < m_geometries.size(); ++i)
+            {
+                rawPtrs[i] = m_geometries[i].Get();
+            }
+
+            return m_device->CreateGeometryGroup(D2D1_FILL_MODE_ALTERNATE, &rawPtrs[0], static_cast<uint32_t>(rawPtrs.size()));
+        }
+        else
+        {
+            ID2D1Geometry* unused{};
+            return m_device->CreateGeometryGroup(D2D1_FILL_MODE_ALTERNATE, &unused, 0);
+        }
+
+    }
+
+    IFACEMETHODIMP DrawGlyphRun(
+        void* clientDrawingContext,
+        FLOAT baselineOriginX,
+        FLOAT baselineOriginY,
+        DWRITE_MEASURING_MODE measuringMode,
+        DWRITE_GLYPH_RUN const* glyphRun,
+        DWRITE_GLYPH_RUN_DESCRIPTION const* glyphRunDescription,
+        IUnknown* clientDrawingEffect)
+    {
+        return DrawGlyphRun(
+            clientDrawingContext,
+            baselineOriginX,
+            baselineOriginY,
+            DWRITE_GLYPH_ORIENTATION_ANGLE_0_DEGREES,
+            measuringMode,
+            glyphRun,
+            glyphRunDescription,
+            clientDrawingEffect);
+    }
+
+    IFACEMETHODIMP DrawGlyphRun(
+        void*,
+        FLOAT baselineOriginX,
+        FLOAT baselineOriginY,
+        DWRITE_GLYPH_ORIENTATION_ANGLE orientationAngle,
+        DWRITE_MEASURING_MODE,
+        DWRITE_GLYPH_RUN const* glyphRun,
+        DWRITE_GLYPH_RUN_DESCRIPTION const*,
+        IUnknown*)
+    {
+        auto d2dPathGeometry = m_device->CreatePathGeometry();
+
+        ComPtr<ID2D1GeometrySink> d2dGeometrySink;
+        ThrowIfFailed(d2dPathGeometry->Open(&d2dGeometrySink));
+
+        ThrowIfFailed(glyphRun->fontFace->GetGlyphRunOutline(
+            glyphRun->fontEmSize,
+            glyphRun->glyphIndices,
+            glyphRun->glyphAdvances,
+            glyphRun->glyphOffsets,
+            glyphRun->glyphCount,
+            glyphRun->isSideways,
+            glyphRun->bidiLevel % 2,
+            d2dGeometrySink.Get()));
+
+        ThrowIfFailed(d2dGeometrySink->Close());
+
+        DWRITE_MATRIX transform;
+        m_textAnalyzer->GetGlyphOrientationTransform(orientationAngle, glyphRun->isSideways, &transform);
+        transform.dx = baselineOriginX;
+        transform.dy = baselineOriginY;
+
+        auto transformedGeometry = m_device->CreateTransformedGeometry(d2dPathGeometry.Get(), reinterpret_cast<D2D1_MATRIX_3X2_F*>(&transform));
+
+        m_geometries.push_back(transformedGeometry);
+
+        return S_OK;
+    }
+
+    D2D1_RECT_F RotateRectangle(DWRITE_GLYPH_ORIENTATION_ANGLE orientationAngle, D2D1_RECT_F const& rect)
+    {
+        switch (orientationAngle)
+        {
+            case DWRITE_GLYPH_ORIENTATION_ANGLE_90_DEGREES:
+                return D2D1::RectF(-rect.top, rect.left, -rect.bottom, rect.right);
+            case DWRITE_GLYPH_ORIENTATION_ANGLE_180_DEGREES:
+                return D2D1::RectF(-rect.left, -rect.top, -rect.right, -rect.bottom);
+            case DWRITE_GLYPH_ORIENTATION_ANGLE_270_DEGREES:
+                D2D1::RectF(rect.top, -rect.left, rect.bottom, -rect.right);
+            case DWRITE_GLYPH_ORIENTATION_ANGLE_0_DEGREES:
+            default:
+                return rect;
+        }
+    }
+
+    D2D1_RECT_F OffsetRectangle(float offsetX, float offsetY, D2D1_RECT_F const& rect)
+    {
+        return D2D1::RectF(rect.left + offsetX, rect.top + offsetY, rect.right + offsetX, rect.bottom + offsetY);
+    }
+
+    IFACEMETHODIMP DrawUnderline(
+        void* clientDrawingContext,
+        FLOAT baselineOriginX,
+        FLOAT baselineOriginY,
+        DWRITE_UNDERLINE const* underline,
+        IUnknown* clientDrawingEffect)
+    {
+        DrawUnderline(
+            clientDrawingContext,
+            baselineOriginX,
+            baselineOriginY,
+            DWRITE_GLYPH_ORIENTATION_ANGLE_0_DEGREES,
+            underline,
+            clientDrawingEffect);
+        return S_OK;
+    }
+
+    IFACEMETHODIMP DrawUnderline(
+        void*,
+        FLOAT baselineOriginX,
+        FLOAT baselineOriginY,
+        DWRITE_GLYPH_ORIENTATION_ANGLE orientationAngle,
+        DWRITE_UNDERLINE const* underline,
+        IUnknown*)
+    {
+        D2D1_RECT_F rect = { 0, underline->offset, underline->width, underline->offset + underline->thickness };
+        rect = RotateRectangle(orientationAngle, rect);
+        rect = OffsetRectangle(baselineOriginX, baselineOriginY, rect);
+
+        auto rectangleGeometry = m_device->CreateRectangleGeometry(rect);
+
+        m_geometries.push_back(rectangleGeometry);
+
+        return S_OK;
+    }
+
+    IFACEMETHODIMP DrawStrikethrough(
+        void* clientDrawingContext,
+        FLOAT baselineOriginX,
+        FLOAT baselineOriginY,
+        DWRITE_STRIKETHROUGH const* strikethrough,
+        IUnknown* clientDrawingEffect)
+    {
+        return DrawStrikethrough(
+            clientDrawingContext,
+            baselineOriginX,
+            baselineOriginY,
+            DWRITE_GLYPH_ORIENTATION_ANGLE_0_DEGREES,
+            strikethrough,
+            clientDrawingEffect);
+    }
+
+    IFACEMETHODIMP DrawStrikethrough(
+        void*,
+        FLOAT baselineOriginX,
+        FLOAT baselineOriginY,
+        DWRITE_GLYPH_ORIENTATION_ANGLE orientationAngle,
+        DWRITE_STRIKETHROUGH const* strikethrough,
+        IUnknown*)
+    {
+        D2D1_RECT_F rect = { 0, strikethrough->offset, strikethrough->width, strikethrough->offset + strikethrough->thickness };
+        rect = RotateRectangle(orientationAngle, rect);
+        rect = OffsetRectangle(baselineOriginX, baselineOriginY, rect);
+
+        auto rectangleGeometry = m_device->CreateRectangleGeometry(rect);
+
+        m_geometries.push_back(rectangleGeometry);
+
+        return S_OK;
+    }
+
+    IFACEMETHODIMP DrawInlineObject(
+        void*,
+        FLOAT,
+        FLOAT,
+        IDWriteInlineObject*,
+        BOOL,
+        BOOL,
+        IUnknown*)
+    {
+        return S_OK;
+    }
+
+    IFACEMETHODIMP DrawInlineObject(
+        void*,
+        FLOAT,
+        FLOAT,
+        DWRITE_GLYPH_ORIENTATION_ANGLE,
+        IDWriteInlineObject*,
+        BOOL,
+        BOOL,
+        IUnknown*)
+    {
+        //
+        // TODO: 5629 Win2D does not have full exposure for inline objects yet.
+        //
+        return S_OK;
+    }
+
+    IFACEMETHODIMP IsPixelSnappingDisabled(
+        void*,
+        BOOL* isDisabled)
+    {
+        //
+        // Outlines can't take advantage of pixel snapping because 
+        // we don't know what target, positioning etc to which the
+        // text will ultimately be drawn, or if it will even be
+        // drawn 'intact'. 
+        //
+        // The conventional text rasterizing path (i.e. DrawTextLayout)
+        // is what takes advantage of pixel-snapping and hinting.
+        //
+        *isDisabled = TRUE;
+        return S_OK;
+    }
+
+    IFACEMETHODIMP GetCurrentTransform(
+        void*,
+        DWRITE_MATRIX* transform)
+    {
+        //
+        // This transform is redundant with the ability to wrap the
+        // output geometry in a transformed geometry, so we don't
+        // expose a way of modifying it here.
+        //
+        CheckInPointer(transform);
+
+        D2D1_MATRIX_3X2_F identity = D2D1::Matrix3x2F::Identity();
+        *(reinterpret_cast<D2D1_MATRIX_3X2_F*>(transform)) = identity;
+
+        return S_OK;
+    }
+
+    IFACEMETHODIMP GetPixelsPerDip(
+        void*,
+        FLOAT* pixelsPerDip)
+    {
+        //
+        // Outlines are returned at a default DPI; geometries recieve
+        // DPI scaling when they are drawn.
+        // It is not lossy to produce outlines at a low(er) DPI and then
+        // scale them up later because getting glyph outlines should 
+        // never cause a flatten, and because pixel hinting doesn't apply
+        // here.
+        //
+
+        const float assumedDpi = DEFAULT_DPI;
+        *pixelsPerDip = assumedDpi / DEFAULT_DPI;
+
+        return S_OK;
+    }
+};
+
+ComPtr<CanvasGeometry> CanvasGeometry::CreateNew(
+    ICanvasTextLayout* canvasTextLayout)
+{
+    auto dwriteTextLayout = GetWrappedResource<IDWriteTextLayout2>(canvasTextLayout);
+
+    ComPtr<ICanvasDevice> device;
+    ThrowIfFailed(canvasTextLayout->get_Device(&device));
+
+    auto outlineTextRenderer = Make<OutlineTextRenderer>(device);
+
+    ThrowIfFailed(dwriteTextLayout->Draw(nullptr, outlineTextRenderer.Get(), 0, 0));
+
+    auto d2dGeometry = outlineTextRenderer->CloseAndGetPath();
+
+    auto outlineGeometry = Make<CanvasGeometry>(device.Get(), d2dGeometry.Get());
+
+    return outlineGeometry;
 }
 
 ActivatableClassWithFactory(CanvasGeometry, CanvasGeometryFactory);

@@ -52,6 +52,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             ICanvasGeometry** geometryElements,
             CanvasFilledRegionDetermination filledRegionDetermination);
 
+        static ComPtr<CanvasGeometry> CreateNew(
+            ICanvasTextLayout* textLayout);
+
         CanvasGeometry(
             ICanvasDevice* canvasDevice,
             ID2D1Geometry* d2dGeometry);
@@ -343,6 +346,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             uint32_t geometryCount,
             ICanvasGeometry** geometryElements,
             CanvasFilledRegionDetermination filledRegionDetermination,
+            ICanvasGeometry** geometry) override;
+
+        IFACEMETHOD(CreateText)(
+            ICanvasTextLayout* textLayout,
             ICanvasGeometry** geometry) override;
 
         IFACEMETHOD(ComputeFlatteningTolerance)(

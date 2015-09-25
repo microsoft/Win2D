@@ -376,7 +376,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     </member>
     <member name="F:Microsoft.Graphics.Canvas.Geometry.CanvasTriangleVertices.Vertex3">
       <summary>Third vertex of the triangle.</summary>
-    </member>    
+    </member>     
     
 
     <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.SendPathTo(Microsoft.Graphics.Canvas.Geometry.ICanvasPathReceiver)">
@@ -412,8 +412,41 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Geometry.ICanvasPathReceiver.EndFigure(Microsoft.Graphics.Canvas.Geometry.CanvasFigureLoop)">
       <summary>Signals the end of a figure to the app.</summary>
+    </member>    
+
+    <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.CreateText(Microsoft.Graphics.Canvas.Text.CanvasTextLayout)" Experimental="true">
+      <summary>Creates a geometry based on a text layout.</summary>
+      <remarks>
+        <p>
+          Treating text as geometry expands your app's options for how it can draw text, and do things not
+          ordinarily possible when drawing text through text layouts. Once text is turned into geometry,
+          it can be manipulated with <see cref="O:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.CombineWith"/>, 
+          or used to produce widened strokes, or read back by the app, like any arbitrary geometry.
+        </p>
+        <p>
+        For example, if an app needs to trace the contours of some text with a dashed line, it could do the following:
+          <code>
+            CanvasGeometry geometry = CanvasGeometry.CreateText(textLayout);            
+
+            CanvasStrokeStyle dashedStroke = new CanvasStrokeStyle()
+            {
+                DashStyle = CanvasDashStyle.Dash
+            };
+        
+            drawingSession.DrawGeometry(geometry, Colors.White, 2.0f, dashedStroke);
+          </code>
+        </p>
+        <p>
+          For simple text-drawing scenarios which don't actually require text as geometry, it's recommended that you use 
+          <see cref="O:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawText"/> or 
+          <see cref="O:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawTextLayout"/> to draw text.
+        </p>
+        <p>
+          Creating geometry from text is a one-directional operation; it isn't possible to obtain
+          text back from a geometry.
+        </p>
+      </remarks>
     </member>
-    
     
   </members>
 </doc>

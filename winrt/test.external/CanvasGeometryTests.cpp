@@ -211,6 +211,23 @@ public:
             });
     }
 
+    TEST_METHOD(CanvasGeometry_CreateText_NullArg)
+    {
+        Assert::ExpectException<Platform::InvalidArgumentException^>(
+            [=]
+            {
+                CanvasGeometry::CreateText(nullptr);
+            });
+    }
+
+    TEST_METHOD(CanvasGeometry_CreateText_NoGlyphs_NothingBadHappens)
+    {
+        auto textFormat = ref new CanvasTextFormat();
+        auto textLayout = ref new CanvasTextLayout(m_device, L"", textFormat, 0, 0);
+
+        CanvasGeometry::CreateText(textLayout);
+    }
+
 private:
     ComPtr<ID2D1Factory> GetD2DFactory()
     {

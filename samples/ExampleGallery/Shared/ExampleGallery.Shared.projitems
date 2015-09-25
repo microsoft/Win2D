@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
@@ -110,6 +110,9 @@
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)TextLayouts.xaml.cs">
       <DependentUpon>TextLayouts.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)TextOutlines.xaml.cs">
+      <DependentUpon>TextOutlines.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)VectorArt.xaml.cs">
       <DependentUpon>VectorArt.xaml</DependentUpon>
@@ -233,6 +236,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="$(MSBuildThisFileDirectory)TextOutlines.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="$(MSBuildThisFileDirectory)VectorArt.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -293,6 +300,8 @@
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\TextDirectionsWide.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\TextLayoutsNarrow.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\TextLayoutsWide.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Thumbnails\TextOutlinesNarrow.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Thumbnails\TextOutlinesWide.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\VectorArtNarrow.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\VectorArtWide.png" />
     <Content Include="$(MSBuildThisFileDirectory)BitmapOrientation\orientation_0.jpg" />

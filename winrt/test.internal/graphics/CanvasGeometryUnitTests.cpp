@@ -12,6 +12,7 @@
 #include "mocks/MockD2DTransformedGeometry.h"
 #include "mocks/MockD2DGeometryGroup.h"
 #include "stubs/StubGeometrySink.h"
+#include "stubs/StubCanvasTextLayoutAdapter.h"
 
 static const D2D1_MATRIX_3X2_F sc_someD2DTransform = { 1, 2, 3, 4, 5, 6 };
 static const D2D1_MATRIX_3X2_F sc_identityD2DTransform = { 1, 0, 0, 1, 0, 0 };
@@ -2007,5 +2008,17 @@ public:
             });
 
         Assert::AreEqual(S_OK, canvasGeometry->SendPathTo(geometrySink.Get()));
+    }
+
+    TEST_METHOD_EX(CanvasGeometry_CreateText_NullArg)
+    {
+        Fixture f;
+
+        auto canvasGeometryFactory = Make<CanvasGeometryFactory>();
+        auto textlayoutAdapter = std::make_shared<StubCanvasTextLayoutAdapter>();
+        auto textFormat = Make<CanvasTextFormat>();
+        auto stubTextLayout = CanvasTextLayout::CreateNew(f.Device.Get(), WinString(L"A string"), textFormat.Get(), 0.0f, 0.0f);
+
+        Assert::AreEqual(E_INVALIDARG, canvasGeometryFactory->CreateText(stubTextLayout.Get(), nullptr));
     }
 };

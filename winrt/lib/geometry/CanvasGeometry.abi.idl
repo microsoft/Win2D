@@ -370,6 +370,10 @@ namespace Microsoft.Graphics.Canvas.Geometry
             [in] CanvasFilledRegionDetermination filledRegionDetermination,
             [out, retval] CanvasGeometry** geometry);
 
+        HRESULT CreateText(
+            [in] Microsoft.Graphics.Canvas.Text.CanvasTextLayout* textLayout,
+            [out, retval] CanvasGeometry** geometry);
+
         [overload("ComputeFlatteningTolerance")]
         HRESULT ComputeFlatteningTolerance(
             [in] float dpi,
