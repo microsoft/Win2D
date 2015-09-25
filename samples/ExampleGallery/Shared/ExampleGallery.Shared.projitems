@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
@@ -96,6 +96,9 @@
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Particles\ParticleSystem.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Particles\SmokePlumeParticleSystem.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)PrintingExample.xaml.cs">
+      <DependentUpon>PrintingExample.xaml</DependentUpon>
+    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)ShapesExample.xaml.cs">
       <DependentUpon>ShapesExample.xaml</DependentUpon>
     </Compile>
@@ -216,6 +219,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="$(MSBuildThisFileDirectory)PrintingExample.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="$(MSBuildThisFileDirectory)ShapesExample.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -290,6 +297,8 @@
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\LayersWide.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\ParticleSystemNarrow.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\ParticleSystemWide.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Thumbnails\PrintingNarrow.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Thumbnails\PrintingWide.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\ShapesNarrow.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\ShapesWide.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\AboutNarrow.png" />

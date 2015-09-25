@@ -17,6 +17,35 @@ namespace ExampleGallery
     }
 
 
+    static class CustomThumbnailGenerator
+    {
+        public static IRandomAccessStream GenerateFromString(string str, string fontFamily, Color color)
+        {
+            float size = 512;
+
+            using (var device = new CanvasDevice())
+            using (var renderTarget = new CanvasRenderTarget(device, size, size, 96))
+            {
+                using (var ds = renderTarget.CreateDrawingSession())
+                {
+                    ds.DrawText(str, size / 2, size / 2, color,
+                        new CanvasTextFormat()
+                        {
+                            FontFamily = fontFamily,
+                            FontSize = size / 2,
+                            HorizontalAlignment = CanvasHorizontalAlignment.Center,
+                            VerticalAlignment = CanvasVerticalAlignment.Center
+                        });
+                }
+
+                InMemoryRandomAccessStream stream = new InMemoryRandomAccessStream();
+                renderTarget.SaveAsync(stream, CanvasBitmapFileFormat.Png).AsTask().Wait();
+                return stream;
+            }
+        }
+    }
+
+
     // Extend BackgroundTaskExample to generate a custom thumbnail image (not just a rendering capture like most examples).
     partial class BackgroundTaskExample : ICustomThumbnailSource
     {
@@ -24,27 +53,8 @@ namespace ExampleGallery
         {
             get
             {
-                float size = 512;
-
-                using (var device = new CanvasDevice())
-                using (var renderTarget = new CanvasRenderTarget(device, size, size, 96))
-                {
-                    using (var ds = renderTarget.CreateDrawingSession())
-                    {
-                        // U+23F0 is ALARM CLOCK
-                        ds.DrawText("\u23F0", size / 2, size / 2, Colors.Orange,
-                            new CanvasTextFormat()
-                            {
-                                FontSize = size / 2,
-                                HorizontalAlignment = CanvasHorizontalAlignment.Center,
-                                VerticalAlignment = CanvasVerticalAlignment.Center
-                            });
-                    }
-
-                    InMemoryRandomAccessStream stream = new InMemoryRandomAccessStream();
-                    renderTarget.SaveAsync(stream, CanvasBitmapFileFormat.Png).AsTask().Wait();
-                    return stream;
-                }
+                // U+23F0 is ALARM CLOCK
+                return CustomThumbnailGenerator.GenerateFromString("\u23F0", "Segoe UI", Colors.Orange);
             }
         }
     }
@@ -66,6 +76,20 @@ namespace ExampleGallery
                     HorizontalAlignment = HorizontalAlignment.Center,
                     VerticalAlignment = VerticalAlignment.Center
                 };
+            }
+        }
+    }
+
+
+    // Printing example doesn't have any Win2D content, so we need to draw one
+    partial class PrintingExample : ICustomThumbnailSource
+    {
+        IRandomAccessStream ICustomThumbnailSource.Thumbnail
+        {
+            get
+            {
+                // U+2399 is PRINT SCREEN SYMBOL
+                return CustomThumbnailGenerator.GenerateFromString("\u2399", "Segoe UI Symbol", Colors.Orchid);
             }
         }
     }

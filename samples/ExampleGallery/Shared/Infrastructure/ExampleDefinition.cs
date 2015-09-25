@@ -78,6 +78,9 @@ namespace ExampleGallery
             new ExampleDefinition("Direct3D Interop", typeof(Direct3DInteropExample)),
             new ExampleDefinition("Keyboard Input", typeof(KeyboardInputExample)),
             new ExampleDefinition("Background Task", typeof(BackgroundTaskExample)),
+#if !WINDOWS_PHONE_APP
+            new ExampleDefinition("Printing", typeof(PrintingExample)),
+#endif
 
             // Tests for internal use by the Win2D team.
             new ExampleDefinition("Image Source Update Region", typeof(ImageSourceUpdateRegion)),
