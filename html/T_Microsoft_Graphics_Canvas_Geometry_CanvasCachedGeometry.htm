@@ -15,7 +15,7 @@
       	</p><p>
       	Cached geometries are created and drawn in the following way:      	
       	
-        <div class="codeSnippetContainer"><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID1EAAGABA_copyCode" href="#" onclick="javascript:CopyToClipboard('ID1EAAGABA');return false;" title="Copy">Copy</a></div></div><div id="ID1EAAGABA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve">CanvasCachedGeometry cachedGeometry;
+        <div class="codeSnippetContainer"><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID1EAAIABA_copyCode" href="#" onclick="javascript:CopyToClipboard('ID1EAAIABA');return false;" title="Copy">Copy</a></div></div><div id="ID1EAAIABA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve">CanvasCachedGeometry cachedGeometry;
 
 <span class="highlight-keyword">void</span> myWidget_CreateResources(CanvasControl sender, <span class="highlight-keyword">object</span> args)
 {
@@ -27,7 +27,7 @@
 <span class="highlight-keyword">void</span> myWidget_Draw(CanvasControl sender, CanvasDrawEventArgs args)
 {
     args.DrawingSession.DrawCachedGeometry(cachedGeometry, Colors.Blue);
-}</pre></div></div></div><script type="text/javascript">AddLanguageTabSet("ID1EAAGABA");</script></p><p>
+}</pre></div></div></div><script type="text/javascript">AddLanguageTabSet("ID1EAAIABA");</script></p><p>
       	Cached geometries, like any resource, induce memory cost. Use them if geometry performance is expected to
       	be a problem.
       	</p><p>
@@ -41,6 +41,16 @@
       	and memory cost. A value of CanvasGeometry.DefaultFlatteningTolerance works for many common situations.
       	</p><p>
       	Cached geometries are associated with the device of the geometry that was used to create them.
+      	</p><p>
+      	While creating a cached geometry, if the source geometry extends 
+      	outside of [-524,287, 524,287] DIPs along any axis, then the 
+      	cached geometry may be clipped to those bounds. 
+      	This clipping will be visible even if the cached geometry is later 
+      	drawn scaled down to fit within the bounds. 
+      	</p><p>
+      	To draw massive cached geometries with no clipping, ensure that the
+      	coordinate space of the source geometry fits within the above bounds,
+      	and use a scale transform on the drawing session to scale it up.
       	</p><p>
       	For more information about the Direct2D implementation of cached geometries used by Win2D, see 
       	<a href="https://msdn.microsoft.com/en-us/library/windows/desktop/dn363632%28v=vs.85%29.aspx">Geometry Realizations Overview</a>.
