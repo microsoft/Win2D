@@ -179,12 +179,20 @@ TEST_CLASS(CanvasCommandListTests)
         mockCl->CloseMethod.SetExpectedCalls(1);
 
         ICanvasDevice* ignoredDevice = nullptr;
-        ID2D1DeviceContext* ignoredDeviceContext = nullptr;
+        auto stubDeviceContext = Make<StubD2DDeviceContext>();
+        // We don't call Close on the command list unless we see that
+        // it isn't already closed via GetImageLocalBounds.
+        stubDeviceContext->GetImageLocalBoundsMethod.AllowAnyCall(
+            [](ID2D1Image*, D2D1_RECT_F*)
+            {
+                return D2DERR_WRONG_STATE;
+            });
+
         auto canvasImageInternal = As<ICanvasImageInternal>(f.CommandList);
 
         for (int i = 0; i < 10; ++i)
         {
-            auto d2dImage = canvasImageInternal->GetD2DImage(ignoredDevice, ignoredDeviceContext);
+            auto d2dImage = canvasImageInternal->GetD2DImage(ignoredDevice, stubDeviceContext.Get());
             Assert::IsTrue(IsSameInstance(d2dImage.Get(), d2dCommandList.Get()));
         }
     }
@@ -198,27 +206,11 @@ TEST_CLASS(CanvasCommandListTests)
         mockCl->CloseMethod.AllowAnyCall();
 
         ICanvasDevice* ignoredDevice = nullptr;
-        ID2D1DeviceContext* ignoredDeviceContext = nullptr;
-        As<ICanvasImageInternal>(f.CommandList)->GetD2DImage(ignoredDevice, ignoredDeviceContext);
+        auto stubDeviceContext = Make<StubD2DDeviceContext>();
+        As<ICanvasImageInternal>(f.CommandList)->GetD2DImage(ignoredDevice, stubDeviceContext.Get());
 
         ComPtr<ICanvasDrawingSession> ds;
         Assert::AreEqual(E_INVALIDARG, f.CommandList->CreateDrawingSession(&ds));
         ValidateStoredErrorState(E_INVALIDARG, Strings::CommandListCannotBeDrawnToAfterItHasBeenUsed);
-    }
-
-    TEST_METHOD_EX(CanvasCommandList_GetD2DImage_CanHandleCloseReturningError)
-    {
-        Fixture f;
-
-        auto d2dCommandList = GetWrappedResource<ID2D1CommandList>(f.CommandList);
-        auto mockCl = static_cast<MockD2DCommandList*>(d2dCommandList.Get());
-
-        // This might happen if the command list was created by wrapping a
-        // D2DCommandList that had already been closed.
-        mockCl->CloseMethod.SetExpectedCalls(1, [] { return D2DERR_WRONG_STATE; });
-
-        ICanvasDevice* ignoredDevice = nullptr;
-        ID2D1DeviceContext* ignoredDeviceContext = nullptr;
-        As<ICanvasImageInternal>(f.CommandList)->GetD2DImage(ignoredDevice, ignoredDeviceContext);
     }
 };

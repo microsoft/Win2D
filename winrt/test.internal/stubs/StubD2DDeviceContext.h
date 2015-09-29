@@ -15,7 +15,7 @@ namespace canvas
         float m_dpiY;
 
     public:
-        StubD2DDeviceContext(ID2D1Device* owner)
+        StubD2DDeviceContext(ID2D1Device* owner = nullptr)
             : m_owner(owner)
             , m_overrideProperties(nullptr)
             , m_dpiX(DEFAULT_DPI)
@@ -34,6 +34,12 @@ namespace canvas
                 {
                     *x = m_dpiX;
                     *y = m_dpiY;
+                });
+            
+            GetImageLocalBoundsMethod.AllowAnyCall(
+                [](ID2D1Image*, D2D1_RECT_F*)
+                {
+                    return S_OK;
                 });
 
             SetTextAntialiasModeMethod.AllowAnyCall();

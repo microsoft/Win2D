@@ -41,7 +41,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     {
         auto d2dCommandList = As<ICanvasDeviceInternal>(device)->CreateCommandList();
 
-        auto cl = Make<CanvasCommandList>(device, d2dCommandList.Get());
+        auto cl = Make<CanvasCommandList>(device, d2dCommandList.Get(), false);
         CheckMakeResult(cl);
         return cl;
     }
@@ -49,10 +49,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     CanvasCommandList::CanvasCommandList(
         ICanvasDevice* device,
-        ID2D1CommandList* d2dCommandList)
+        ID2D1CommandList* d2dCommandList,
+        bool hasInteropBeenUsed)
         : ResourceWrapper(d2dCommandList)
         , m_device(device)
         , m_d2dCommandListIsClosed(false)
+        , m_hasInteropBeenUsed(hasInteropBeenUsed)
     {
     }
 
@@ -68,7 +70,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 if (m_d2dCommandListIsClosed)
                     ThrowHR(E_INVALIDARG, Strings::CommandListCannotBeDrawnToAfterItHasBeenUsed);
 
-                auto& d2dCommandList = GetResource();
+                auto& d2dCommandList = GetContainedResource();
                 auto& device = m_device.EnsureNotClosed();
 
                 auto deviceContext = As<ICanvasDeviceInternal>(device)->CreateDeviceContextForDrawingSession();
@@ -119,25 +121,37 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return GetImageBoundsImpl(this, drawingSession, &transform, bounds);
     }
 
+    bool IsD2DCommandListClosed(
+        ID2D1CommandList* d2dCommandList,
+        ID2D1DeviceContext* d2dDeviceContext)
+    {
+        D2D1_RECT_F unusedBounds;
+        
+        return d2dDeviceContext->GetImageLocalBounds(d2dCommandList, &unusedBounds) != D2DERR_WRONG_STATE;
+    }
 
     ComPtr<ID2D1Image> CanvasCommandList::GetD2DImage(
         ICanvasDevice*,
-        ID2D1DeviceContext*,
+        ID2D1DeviceContext* deviceContext,
         GetImageFlags,
         float /*targetDpi*/,
         float* realizedDpi)
     {
-        auto& commandList = GetResource();
+        auto& commandList = GetContainedResource();
 
         if (!m_d2dCommandListIsClosed)
         {
-            HRESULT hr = commandList->Close();
-
-            // D2DERR_WRONG_STATE means that this CL was already closed.  This
-            // might happen if we were interopping with an existing
-            // D2D1CommandList.  We ignore this error.
-            if (hr != D2DERR_WRONG_STATE && FAILED(hr))
-                ThrowHR(hr);
+            // This command list might have been interopped, and could actually 
+            // already be closed but we haven't 'realized' it yet.
+            // Unfortunately, the act of calling Close on it again will mess up the 
+            // state of any device context we're trying to draw this
+            // command list to.
+            // Therefore, we do a check before closing it.
+            //
+            if (!m_hasInteropBeenUsed || !IsD2DCommandListClosed(commandList.Get(), deviceContext))
+            {
+                ThrowIfFailed(commandList->Close());
+            }
 
             m_d2dCommandListIsClosed = true;
         }
@@ -146,6 +160,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             *realizedDpi = 0;
 
         return commandList;
+    }
+
+    IFACEMETHODIMP CanvasCommandList::GetResource(ICanvasDevice* device, float dpi, REFIID iid, void** outResource)
+    {
+        m_hasInteropBeenUsed = true;
+
+        return __super::GetResource(device, dpi, iid, outResource);
     }
 
 

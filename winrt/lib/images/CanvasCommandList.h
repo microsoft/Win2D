@@ -19,6 +19,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         ClosablePtr<ICanvasDevice> m_device;
         bool m_d2dCommandListIsClosed;
+        bool m_hasInteropBeenUsed;
 
     public:
         static ComPtr<CanvasCommandList> CreateNew(
@@ -26,7 +27,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         CanvasCommandList(
             ICanvasDevice* device,
-            ID2D1CommandList* d2dCommandList);
+            ID2D1CommandList* d2dCommandList,
+            bool hasInteropBeenUsed = true);
 
         // ICanvasCommandList
 
@@ -60,6 +62,22 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             GetImageFlags flags,
             float targetDpi,
             float* realizedDpi) override;
+
+        // ResourceWrapper
+
+        IFACEMETHOD(GetResource)(ICanvasDevice* device, float dpi, REFIID iid, void** outResource) override;
+
+    private:
+
+        //
+        // TODO #5798: This is necessary to work around a codegen bug when 
+        // referencing GetResource(), which requires an explicit qualifier, 
+        // from within a lambda.
+        //
+        ComPtr<ID2D1CommandList> const& GetContainedResource()
+        {
+            return ResourceWrapper::GetResource();
+        }
     };
 
 

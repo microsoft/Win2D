@@ -353,7 +353,9 @@ public:
             , Perspective(Matrix4x4{ 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26 })
         {
             DeviceContext->GetPrimitiveBlendMethod.AllowAnyCall([] { return D2D1_PRIMITIVE_BLEND_SOURCE_OVER; });
-            DeviceContext->GetUnitModeMethod.AllowAnyCall([] { return D2D1_UNIT_MODE_DIPS; });
+            DeviceContext->GetUnitModeMethod.AllowAnyCall([] { return D2D1_UNIT_MODE_DIPS; });            
+
+            DeviceContext->GetImageLocalBoundsMethod.AllowAnyCall();
         }
             
         virtual ~DrawImageFixture()
