@@ -32,7 +32,6 @@ namespace ExampleGallery
         public bool ShowNonOutlineText { get; set; }
 
         bool needsResourceRecreation;
-        Size resourceRealizationSize;
         
         public List<CanvasTextDirection> TextDirectionOptions { get { return Utils.GetEnumAsList<CanvasTextDirection>(); } }
         public CanvasTextDirection CurrentTextDirection { get; set; }
@@ -68,11 +67,8 @@ namespace ExampleGallery
 
         void EnsureResources(ICanvasResourceCreatorWithDpi resourceCreator, Size targetSize)
         {
-            if (resourceRealizationSize != targetSize && !needsResourceRecreation)
+            if (!needsResourceRecreation)
                 return;
-
-            float canvasWidth = (float)targetSize.Width;
-            float canvasHeight = (float)targetSize.Height;
 
             if (textLayout != null)
             {
@@ -80,11 +76,10 @@ namespace ExampleGallery
                 textGeometry.Dispose();
             }
 
-            textLayout = CreateTextLayout(resourceCreator, canvasWidth, canvasHeight);
+            textLayout = CreateTextLayout(resourceCreator, (float)targetSize.Width, (float)targetSize.Height);
             textGeometry = CanvasGeometry.CreateText(textLayout);
 
             needsResourceRecreation = false;
-            resourceRealizationSize = targetSize;
         }
 
         private CanvasTextLayout CreateTextLayout(ICanvasResourceCreator resourceCreator, float canvasWidth, float canvasHeight)
@@ -176,18 +171,12 @@ namespace ExampleGallery
             needsResourceRecreation = true;
         }
 
-        private void TextSampleOptions_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void Canvas_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             needsResourceRecreation = true;
-            canvas.Invalidate();
         }
 
         private void InvalidateCanvas(object sender, RoutedEventArgs e)
-        {
-            canvas.Invalidate();
-        }
-
-        private void TextDirectionOptions_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             needsResourceRecreation = true;
             canvas.Invalidate();
