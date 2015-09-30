@@ -145,6 +145,9 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasPrintDocumentUnitTests.cpp">
       <Filter>graphics</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)utils\MapTests.cpp">
+      <Filter>utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)pch.h" />
