@@ -886,7 +886,7 @@ namespace canvas
             ThrowIfFailed(ctf->Close());
             
             ComPtr<IUnknown> resource;
-            Assert::AreEqual(RO_E_CLOSED, ctf->GetResource(nullptr, 0, IID_PPV_ARGS(resource.ReleaseAndGetAddressOf())));
+            Assert::AreEqual(RO_E_CLOSED, ctf->GetNativeResource(nullptr, 0, IID_PPV_ARGS(resource.ReleaseAndGetAddressOf())));
         }
 
 #undef TEST_SIMPLE_PROPERTY

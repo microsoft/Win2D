@@ -19,7 +19,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         auto drawingSessionResourceWrapper = As<ICanvasResourceWrapperNative>(drawingSession);
 
         ComPtr<ID2D1DeviceContext1> d2dDeviceContext;
-        ThrowIfFailed(drawingSessionResourceWrapper->GetResource(nullptr, 0, IID_PPV_ARGS(&d2dDeviceContext)));
+        ThrowIfFailed(drawingSessionResourceWrapper->GetNativeResource(nullptr, 0, IID_PPV_ARGS(&d2dDeviceContext)));
 
         auto d2dImage = imageInternal->GetD2DImage(canvasDevice.Get(), d2dDeviceContext.Get());
 

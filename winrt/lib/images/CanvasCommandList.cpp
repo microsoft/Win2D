@@ -70,7 +70,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 if (m_d2dCommandListIsClosed)
                     ThrowHR(E_INVALIDARG, Strings::CommandListCannotBeDrawnToAfterItHasBeenUsed);
 
-                auto& d2dCommandList = GetContainedResource();
+                auto& d2dCommandList = GetResource();
                 auto& device = m_device.EnsureNotClosed();
 
                 auto deviceContext = As<ICanvasDeviceInternal>(device)->CreateDeviceContextForDrawingSession();
@@ -137,7 +137,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         float /*targetDpi*/,
         float* realizedDpi)
     {
-        auto& commandList = GetContainedResource();
+        auto& commandList = GetResource();
 
         if (!m_d2dCommandListIsClosed)
         {
@@ -162,11 +162,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return commandList;
     }
 
-    IFACEMETHODIMP CanvasCommandList::GetResource(ICanvasDevice* device, float dpi, REFIID iid, void** outResource)
+    IFACEMETHODIMP CanvasCommandList::GetNativeResource(ICanvasDevice* device, float dpi, REFIID iid, void** outResource)
     {
         m_hasInteropBeenUsed = true;
 
-        return __super::GetResource(device, dpi, iid, outResource);
+        return __super::GetNativeResource(device, dpi, iid, outResource);
     }
 
 

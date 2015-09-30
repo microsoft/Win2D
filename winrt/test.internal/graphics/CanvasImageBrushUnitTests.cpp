@@ -108,7 +108,7 @@ public:
         Assert::AreEqual(RO_E_CLOSED, brush->get_Device(&actualDevice));
 
         ComPtr<IUnknown> resource;
-        Assert::AreEqual(RO_E_CLOSED, brush->GetResource(nullptr, 0, IID_PPV_ARGS(resource.ReleaseAndGetAddressOf())));
+        Assert::AreEqual(RO_E_CLOSED, brush->GetNativeResource(nullptr, 0, IID_PPV_ARGS(resource.ReleaseAndGetAddressOf())));
     }
 
     TEST_METHOD_EX(CanvasImageBrush_Properties_NullArgs)

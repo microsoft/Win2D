@@ -65,19 +65,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         // ResourceWrapper
 
-        IFACEMETHOD(GetResource)(ICanvasDevice* device, float dpi, REFIID iid, void** outResource) override;
-
-    private:
-
-        //
-        // TODO #5798: This is necessary to work around a codegen bug when 
-        // referencing GetResource(), which requires an explicit qualifier, 
-        // from within a lambda.
-        //
-        ComPtr<ID2D1CommandList> const& GetContainedResource()
-        {
-            return ResourceWrapper::GetResource();
-        }
+        IFACEMETHOD(GetNativeResource)(ICanvasDevice* device, float dpi, REFIID iid, void** outResource) override;
     };
 
 

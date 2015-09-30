@@ -413,7 +413,7 @@ ComPtr<ID2D1StrokeStyle1> CanvasStrokeStyle::GetRealizedD2DStrokeStyle(ID2D1Fact
 // ICanvasResourceWrapperNative
 //
 
-IFACEMETHODIMP CanvasStrokeStyle::GetResource(ICanvasDevice* device, float dpi, REFIID iid, void** outResource)
+IFACEMETHODIMP CanvasStrokeStyle::GetNativeResource(ICanvasDevice* device, float dpi, REFIID iid, void** outResource)
 {
     UNREFERENCED_PARAMETER(dpi);
 

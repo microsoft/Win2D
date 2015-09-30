@@ -85,7 +85,7 @@ public:
         Assert::AreEqual(RO_E_CLOSED, canvasEffect->GetBoundsWithTransform(drawingSession.Get(), matrix, &bounds));
 
         ComPtr<ID2D1Effect> resource;
-        Assert::AreEqual(RO_E_CLOSED, canvasEffect->GetResource(nullptr, 0, IID_PPV_ARGS(&resource)));
+        Assert::AreEqual(RO_E_CLOSED, canvasEffect->GetNativeResource(nullptr, 0, IID_PPV_ARGS(&resource)));
     }
 
     TEST_METHOD_EX(CanvasEffect_Sources)

@@ -169,7 +169,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         if (realizedDpi)
             *realizedDpi = 0;
 
-        return As<ID2D1Image>(ResourceWrapper::GetResource());
+        return As<ID2D1Image>(GetResource());
     }
 
 
@@ -177,7 +177,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     // ICanvasResourceWrapperNative
     //
 
-    IFACEMETHODIMP CanvasEffect::GetResource(ICanvasDevice* device, float dpi, REFIID iid, void** resource)
+    IFACEMETHODIMP CanvasEffect::GetNativeResource(ICanvasDevice* device, float dpi, REFIID iid, void** resource)
     {
         return ExceptionBoundary(
             [&]
@@ -662,7 +662,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     
     void CanvasEffect::RefreshInputs(GetImageFlags flags, float targetDpi, ID2D1DeviceContext* deviceContext)
     {
-        auto& d2dEffect = ResourceWrapper::GetResource();
+        auto& d2dEffect = GetResource();
 
         m_sources.resize(d2dEffect->GetInputCount());
         

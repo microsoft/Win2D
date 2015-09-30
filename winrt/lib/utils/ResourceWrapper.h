@@ -104,7 +104,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         // ICanvasResourceWrapperNative
         //
 
-        IFACEMETHODIMP GetResource(ICanvasDevice* device, float dpi, REFIID iid, void** outResource) override
+        IFACEMETHODIMP GetNativeResource(ICanvasDevice* device, float dpi, REFIID iid, void** outResource) override
         {
             return ExceptionBoundary(
                 [&]

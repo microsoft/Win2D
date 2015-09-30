@@ -107,7 +107,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         virtual ComPtr<ID2D1StrokeStyle1> GetRealizedD2DStrokeStyle(ID2D1Factory* d2dFactory) override;
 
         // ICanvasResourceWrapperNative
-        IFACEMETHOD(GetResource)(ICanvasDevice* device, float dpi, REFIID iid, void** outResource) override;
+        IFACEMETHOD(GetNativeResource)(ICanvasDevice* device, float dpi, REFIID iid, void** outResource) override;
 
     private:
         void ThrowIfClosed();

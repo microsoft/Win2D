@@ -116,7 +116,7 @@ IFACEMETHODIMP CanvasSwapChainPanel::put_SwapChain(ICanvasSwapChain* value)
             {
                 auto swapChainResourceWrapper = As<ICanvasResourceWrapperNative>(value);
 
-                ThrowIfFailed(swapChainResourceWrapper->GetResource(nullptr, 0, IID_PPV_ARGS(&dxgiSwapChain)));
+                ThrowIfFailed(swapChainResourceWrapper->GetNativeResource(nullptr, 0, IID_PPV_ARGS(&dxgiSwapChain)));
             }
 
             ThrowIfFailed(swapChainPanelNative->SetSwapChain(dxgiSwapChain.Get()));

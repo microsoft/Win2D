@@ -174,7 +174,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         // ICanvasResourceWrapperNative
         //
         
-        IFACEMETHOD(GetResource)(ICanvasDevice* device, float dpi, REFIID iid, void** resource) override;
+        IFACEMETHOD(GetNativeResource)(ICanvasDevice* device, float dpi, REFIID iid, void** resource) override;
 
     private:
         Lock GetLock()

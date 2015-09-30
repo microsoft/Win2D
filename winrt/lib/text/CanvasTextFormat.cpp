@@ -145,7 +145,7 @@ void CanvasTextFormat::ThrowIfClosed()
 }
 
 
-IFACEMETHODIMP CanvasTextFormat::GetResource(ICanvasDevice* device, float dpi, REFIID iid, void** value)
+IFACEMETHODIMP CanvasTextFormat::GetNativeResource(ICanvasDevice* device, float dpi, REFIID iid, void** value)
 {
     UNREFERENCED_PARAMETER(device);
     UNREFERENCED_PARAMETER(dpi);
@@ -275,7 +275,7 @@ void CanvasTextFormat::Unrealize()
 
 void CanvasTextFormat::SetShadowPropertiesFromDWrite()
 {
-    auto& textFormat = ResourceWrapper::GetResource();
+    auto& textFormat = GetResource();
 
     ThrowIfFailed(textFormat->GetFontCollection(&m_fontCollection));
 

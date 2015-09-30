@@ -38,7 +38,7 @@ namespace ABI
                 class ICanvasResourceWrapperNative : public IUnknown
                 {
                 public:
-                    IFACEMETHOD(GetResource)(ICanvasDevice* device, float dpi, REFIID iid, void** resource) = 0;
+                    IFACEMETHOD(GetNativeResource)(ICanvasDevice* device, float dpi, REFIID iid, void** resource) = 0;
                 };
             }
         }
@@ -128,7 +128,7 @@ namespace Microsoft
                 __abi_ThrowIfFailed(inspectableWrapper->QueryInterface(nativeWrapper.GetAddressOf()));
 
                 ComPtr<T> resource;
-                __abi_ThrowIfFailed(nativeWrapper->GetResource(reinterpret_cast<abi::ICanvasDevice*>(device), dpi, IID_PPV_ARGS(&resource)));
+                __abi_ThrowIfFailed(nativeWrapper->GetNativeResource(reinterpret_cast<abi::ICanvasDevice*>(device), dpi, IID_PPV_ARGS(&resource)));
 
                 return resource;
             }
