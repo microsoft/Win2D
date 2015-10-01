@@ -34,7 +34,7 @@
         <uap:VisualElements 
             DisplayName="NoUIEntryPoints"
             Square150x150Logo="Assets\UnitTestLogo.png"
-            Square44x44Logo="Assets\UnitTestSmallLogo.png"
+            Square44x44Logo="Assets\UnitTestSmallLogo44x44.png"
             Description="vstest.executionengine.App"
             BackgroundColor="#0084FF">
             <uap:SplashScreen Image="Assets\UnitTestSplashScreen.png" />
@@ -46,7 +46,7 @@
         <uap:VisualElements 
             DisplayName="NoUIEntryPoints"
             Square150x150Logo="Assets\UnitTestLogo.png"
-            Square44x44Logo="Assets\UnitTestSmallLogo.png"
+            Square44x44Logo="Assets\UnitTestSmallLogo44x44.png"
             Description="vstest.executionengine.App"
             BackgroundColor="#0084FF">
             <uap:SplashScreen Image="Assets\UnitTestSplashScreen.png" />
@@ -58,7 +58,7 @@
         <uap:VisualElements 
             DisplayName="NoUIEntryPoints"
             Square150x150Logo="Assets\UnitTestLogo.png"
-            Square44x44Logo="Assets\UnitTestSmallLogo.png"
+            Square44x44Logo="Assets\UnitTestSmallLogo44x44.png"
             Description="vstest.executionengine.x86.App"
             BackgroundColor="#0084FF">
             <uap:SplashScreen Image="Assets\UnitTestSplashScreen.png" />

@@ -50,8 +50,8 @@
     <Image Include="$(AssetDir)UnitTestLogo.scale-100.png">
       <Link>Assets\UnitTestLogo.scale-100.png</Link>
     </Image>
-    <Image Include="$(AssetDir)UnitTestSmallLogo.scale-100.png">
-      <Link>Assets\UnitTestSmallLogo.scale-100.png</Link>
+    <Image Include="$(AssetDir)UnitTestSmallLogo44x44.scale-100.png">
+      <Link>Assets\UnitTestSmallLogo44x44.scale-100.png</Link>
     </Image>
     <Image Include="$(AssetDir)UnitTestSplashScreen.scale-100.png">
       <Link>Assets\UnitTestSplashScreen.scale-100.png</Link>

@@ -4,7 +4,7 @@
     <Image Include="$(AssetDir)UnitTestLogo.scale-100.png">
       <Filter>Assets</Filter>
     </Image>
-    <Image Include="$(AssetDir)UnitTestSmallLogo.scale-100.png">
+    <Image Include="$(AssetDir)UnitTestSmallLogo44x44.scale-100.png">
       <Filter>Assets</Filter>
     </Image>
     <Image Include="$(AssetDir)UnitTestSplashScreen.scale-100.png">
