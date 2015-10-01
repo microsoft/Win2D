@@ -667,11 +667,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         {
             ThrowIfFailed(m_deviceContext->EndDraw());
         }
-
-        virtual D2D1_POINT_2F GetRenderingSurfaceOffset()
-        {
-            return D2D1::Point2F(0, 0);
-        }
     };
 
     IFACEMETHODIMP CanvasSwapChain::CreateDrawingSession(

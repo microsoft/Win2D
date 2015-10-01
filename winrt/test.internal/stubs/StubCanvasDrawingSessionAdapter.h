@@ -17,11 +17,6 @@ namespace canvas
             // nothing
         }
 
-        virtual D2D1_POINT_2F GetRenderingSurfaceOffset() override
-        {
-            return D2D1::Point2F(0, 0);
-        }
-
 #if WINVER > _WIN32_WINNT_WINBLUE
         virtual ComPtr<IInkD2DRenderer> CreateInkRenderer() override
         {

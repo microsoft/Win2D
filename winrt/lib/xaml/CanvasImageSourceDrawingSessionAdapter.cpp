@@ -14,7 +14,8 @@ std::shared_ptr<CanvasImageSourceDrawingSessionAdapter> CanvasImageSourceDrawing
     D2D1_COLOR_F const& clearColor,
     RECT const& updateRect,
     float dpi,
-    ID2D1DeviceContext1** outDeviceContext)
+    ID2D1DeviceContext1** outDeviceContext,
+    D2D1_POINT_2F* outOffset)
 {
     if (dpi <= 0)
         ThrowHR(E_INVALIDARG);
@@ -56,13 +57,12 @@ std::shared_ptr<CanvasImageSourceDrawingSessionAdapter> CanvasImageSourceDrawing
     offset.x -= updateRect.left;
     offset.y -= updateRect.top;
 
-    const D2D1_POINT_2F renderingSurfaceOffset = D2D1::Point2F(
+    *outOffset = D2D1_POINT_2F{
         static_cast<float>(offset.x / dpiScalingFactor),
-        static_cast<float>(offset.y / dpiScalingFactor));
+        static_cast<float>(offset.y / dpiScalingFactor) };
 
     auto adapter = std::make_shared<CanvasImageSourceDrawingSessionAdapter>(
-        sisNative,
-        renderingSurfaceOffset);
+        sisNative);
 
     //
     // XAML has given us a surface to render to, but it doesn't make any
@@ -72,8 +72,8 @@ std::shared_ptr<CanvasImageSourceDrawingSessionAdapter> CanvasImageSourceDrawing
     deviceContext->Clear(&clearColor);
 
     deviceContext->SetTransform(D2D1::Matrix3x2F::Translation(
-        renderingSurfaceOffset.x,
-        renderingSurfaceOffset.y));
+        outOffset->x,
+        outOffset->y));
 
     deviceContext->SetDpi(dpi, dpi);
 
@@ -87,10 +87,8 @@ std::shared_ptr<CanvasImageSourceDrawingSessionAdapter> CanvasImageSourceDrawing
 
 
 CanvasImageSourceDrawingSessionAdapter::CanvasImageSourceDrawingSessionAdapter(
-    ISurfaceImageSourceNativeWithD2D* sisNative,
-    D2D1_POINT_2F const& renderingSurfaceOffset)
+    ISurfaceImageSourceNativeWithD2D* sisNative)
     : m_sisNative(sisNative)
-    , m_renderingSurfaceOffset(renderingSurfaceOffset)
 {
     CheckInPointer(sisNative);
 }
@@ -99,9 +97,4 @@ CanvasImageSourceDrawingSessionAdapter::CanvasImageSourceDrawingSessionAdapter(
 void CanvasImageSourceDrawingSessionAdapter::EndDraw()
 {
     ThrowIfFailed(m_sisNative->EndDraw());
-}
-
-D2D1_POINT_2F CanvasImageSourceDrawingSessionAdapter::GetRenderingSurfaceOffset()
-{
-    return m_renderingSurfaceOffset;
 }

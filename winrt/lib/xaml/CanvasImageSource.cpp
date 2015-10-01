@@ -21,17 +21,20 @@ ComPtr<ICanvasDrawingSession> CanvasImageSourceDrawingSessionFactory::Create(
     RECT updateRectangle = ToRECT(updateRectangleInDips, dpi);
 
     ComPtr<ID2D1DeviceContext1> deviceContext;
+    D2D1_POINT_2F offset;
     auto adapter = CanvasImageSourceDrawingSessionAdapter::Create(
         sisNative,
         ToD2DColor(clearColor),
         updateRectangle,
         dpi,
-        &deviceContext);
+        &deviceContext,
+        &offset);
 
     return CanvasDrawingSession::CreateNew(
         deviceContext.Get(),
         std::move(adapter),
-        owner);
+        owner,
+        offset);
 }
 
 //

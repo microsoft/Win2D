@@ -56,11 +56,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                                             private LifespanTracker<NoopCanvasDrawingSessionAdapter>
     {
     public:
-        virtual D2D1_POINT_2F GetRenderingSurfaceOffset() override
-        {
-            return D2D1::Point2F(0, 0);
-        }
-
         virtual void EndDraw() override
         {
             // nothing
@@ -71,14 +66,16 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     ComPtr<CanvasDrawingSession> CanvasDrawingSession::CreateNew(
         ID2D1DeviceContext1* deviceContext,
         std::shared_ptr<ICanvasDrawingSessionAdapter> drawingSessionAdapter,
-        ICanvasDevice* owner)
+        ICanvasDevice* owner,
+        D2D1_POINT_2F offset)
     {
         InitializeDefaultState(deviceContext);
 
         auto drawingSession = Make<CanvasDrawingSession>(
             deviceContext,
             drawingSessionAdapter,
-            owner);
+            owner,
+            offset);
         CheckMakeResult(drawingSession);
 
         return drawingSession;
@@ -125,11 +122,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     CanvasDrawingSession::CanvasDrawingSession(
         ID2D1DeviceContext1* deviceContext,
         std::shared_ptr<ICanvasDrawingSessionAdapter> adapter,
-        ICanvasDevice* owner)
+        ICanvasDevice* owner,
+        D2D1_POINT_2F offset)
         : ResourceWrapper(deviceContext)
-        , m_owner(owner)
         , m_adapter(adapter ? adapter : std::make_shared<NoopCanvasDrawingSessionAdapter>())
+        , m_offset(offset)
         , m_nextLayerId(0)
+        , m_owner(owner)
     {
     }
 
@@ -3495,7 +3494,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 auto& deviceContext = GetResource();
                 CheckInPointer(value);
 
-                *value = GetTransform(deviceContext.Get(), m_adapter->GetRenderingSurfaceOffset());
+                *value = GetTransform(deviceContext.Get(), m_offset);
             });
     }
 
@@ -3506,7 +3505,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             {
                 auto& deviceContext = GetResource();
 
-                SetTransform(deviceContext.Get(), m_adapter->GetRenderingSurfaceOffset(), value);
+                SetTransform(deviceContext.Get(), m_offset, value);
             });
     }
 
@@ -3529,13 +3528,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             {
                 auto& deviceContext = GetResource();
 
-                auto offset = m_adapter->GetRenderingSurfaceOffset();
-
-                if (offset.x != 0 || offset.y != 0)
+                if (m_offset.x != 0 || m_offset.y != 0)
                 {
-                    auto transform = GetTransform(deviceContext.Get(), offset);
+                    auto transform = GetTransform(deviceContext.Get(), m_offset);
                     deviceContext->SetUnitMode(static_cast<D2D1_UNIT_MODE>(value));
-                    SetTransform(deviceContext.Get(), offset, transform);
+                    SetTransform(deviceContext.Get(), m_offset, transform);
                 }
                 else
                 {

@@ -563,6 +563,10 @@ public:
         POINT beginDrawOffset{ 5, 6 };
         D2D1_COLOR_F expectedClearColor{ 7, 8, 9, 10 };
 
+        D2D1_POINT_2F expectedOffset{
+            static_cast<float>(beginDrawOffset.x - expectedUpdateRect.left),
+            static_cast<float>(beginDrawOffset.y - expectedUpdateRect.top) };
+
         mockSurfaceImageSource->BeginDrawMethod.SetExpectedCalls(1,
             [&](RECT const& updateRect, IID const& iid, void** updateObject, POINT* offset)
             {
@@ -583,18 +587,12 @@ public:
         mockDeviceContext->SetTransformMethod.SetExpectedCalls(1,
             [&](const D2D1_MATRIX_3X2_F* m)
             {
-                // We expect the transform to be set to just the offset as
-                // calculated from the offset returned by BeginDraw and the
-                // update rectangle
-                float expectedOffsetX = static_cast<float>(beginDrawOffset.x - expectedUpdateRect.left);
-                float expectedOffsetY = static_cast<float>(beginDrawOffset.y - expectedUpdateRect.top);
-
                 Assert::AreEqual(1.0f, m->_11);
                 Assert::AreEqual(0.0f, m->_12);
                 Assert::AreEqual(0.0f, m->_21);
                 Assert::AreEqual(1.0f, m->_22);
-                Assert::AreEqual(expectedOffsetX, m->_31);
-                Assert::AreEqual(expectedOffsetY, m->_32);
+                Assert::AreEqual(expectedOffset.x, m->_31);
+                Assert::AreEqual(expectedOffset.y, m->_32);
             });
 
         mockDeviceContext->SetDpiMethod.SetExpectedCalls(1,
@@ -605,15 +603,18 @@ public:
             });
 
         ComPtr<ID2D1DeviceContext1> actualDeviceContext;
+        D2D1_POINT_2F actualOffset;
         auto adapter = CanvasImageSourceDrawingSessionAdapter::Create(
             mockSurfaceImageSource.Get(),
             expectedClearColor,
             expectedUpdateRect,
             DEFAULT_DPI,
-            &actualDeviceContext);
+            &actualDeviceContext,
+            &actualOffset);
 
         Assert::AreEqual<ID2D1DeviceContext1*>(mockDeviceContext.Get(), actualDeviceContext.Get());
-
+        Assert::AreEqual(expectedOffset, actualOffset);
+        
         mockSurfaceImageSource->EndDrawMethod.SetExpectedCalls(1);
 
         adapter->EndDraw();
@@ -656,6 +657,7 @@ public:
         // up properly.
         //
         ComPtr<ID2D1DeviceContext1> actualDeviceContext;
+        D2D1_POINT_2F actualOffset;
         ExpectHResultException(E_NOINTERFACE,
             [&]
             {
@@ -664,7 +666,8 @@ public:
                     D2D1_COLOR_F{ 1, 2, 3, 4 },
                     RECT{ 1, 2, 3, 4 },
                     DEFAULT_DPI,
-                    &actualDeviceContext);
+                    &actualDeviceContext,
+                    &actualOffset);
             });
     }
 };

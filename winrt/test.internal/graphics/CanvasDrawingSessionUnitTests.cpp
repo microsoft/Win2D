@@ -56,12 +56,6 @@ TEST_CLASS(CanvasDrawingSession_CallsAdapter)
                 ThrowHR(DXGI_ERROR_DEVICE_REMOVED);
         }
 
-        virtual D2D1_POINT_2F GetRenderingSurfaceOffset() override
-        {
-            Assert::IsFalse(m_endDrawCalled);
-            return D2D1::Point2F(0, 0);
-        }
-
 #if WINVER > _WIN32_WINNT_WINBLUE
         virtual ComPtr<IInkD2DRenderer> CreateInkRenderer() override
         {
@@ -170,20 +164,6 @@ private:
             deviceContext,
             std::make_shared<StubCanvasDrawingSessionAdapter>(),
             device);
-    }
-};
-
-class CanvasDrawingSessionAdapter_ChangeableOffset : public StubCanvasDrawingSessionAdapter
-{
-public:
-    D2D1_POINT_2F m_offset;
-
-    CanvasDrawingSessionAdapter_ChangeableOffset()
-        : m_offset(D2D1::Point2F(0, 0)) {}
-
-    virtual D2D1_POINT_2F GetRenderingSurfaceOffset() override
-    {
-        return m_offset;
     }
 };
 
@@ -3822,15 +3802,17 @@ public:
     struct OffsetFixture
     {
         ComPtr<StubD2DDeviceContext> DeviceContext;
-        std::shared_ptr<CanvasDrawingSessionAdapter_ChangeableOffset> Adapter;
+        std::shared_ptr<StubCanvasDrawingSessionAdapter> Adapter;
+        D2D1_POINT_2F Offset;
         ComPtr<CanvasDrawingSession> DrawingSession;
         D2D1_MATRIX_3X2_F NativeTransform;
         D2D1_UNIT_MODE UnitMode;
 
         OffsetFixture(float offsetX = AnyOffsetX, float offsetY = AnyOffsetY)
             : DeviceContext(Make<StubD2DDeviceContext>())
-            , Adapter(std::make_shared<CanvasDrawingSessionAdapter_ChangeableOffset>())
-            , DrawingSession(CanvasDrawingSession::CreateNew(DeviceContext.Get(), Adapter))
+            , Adapter(std::make_shared<StubCanvasDrawingSessionAdapter>())
+            , Offset{offsetX, offsetY}
+            , DrawingSession(CanvasDrawingSession::CreateNew(DeviceContext.Get(), Adapter, nullptr, Offset))
             , UnitMode(D2D1_UNIT_MODE_DIPS)
         {
             //
@@ -3841,11 +3823,9 @@ public:
             // the CanvasImageSource adapter does this.  For the purposes of
             // this fixture, we assume that this has been done.
             //
-            Adapter->m_offset = D2D1::Point2F(offsetX, offsetY);
-
             NativeTransform = D2D1::Matrix3x2F::Translation(
-                Adapter->m_offset.x,
-                Adapter->m_offset.y);
+                Offset.x,
+                Offset.y);
 
             DeviceContext->SetTransformMethod.AllowAnyCall(
                 [&] (D2D1_MATRIX_3X2_F const* m)
@@ -4058,7 +4038,7 @@ public:
         const float dpi = 144;
 
         auto deviceContext = Make<StubD2DDeviceContextWithGetFactory>();
-        auto adapter = std::make_shared<CanvasDrawingSessionAdapter_ChangeableOffset>();
+        auto adapter = std::make_shared<StubCanvasDrawingSessionAdapter>();
         auto drawingSession = CanvasDrawingSession::CreateNew(deviceContext.Get(), adapter);
 
         deviceContext->GetDpiMethod.AllowAnyCall([&](float* dpiX, float* dpiY)

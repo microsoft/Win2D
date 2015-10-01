@@ -21,7 +21,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     {
     public:
         virtual ~ICanvasDrawingSessionAdapter() = default;
-        virtual D2D1_POINT_2F GetRenderingSurfaceOffset() = 0;
 
 #if WINVER > _WIN32_WINNT_WINBLUE
         virtual ComPtr<IInkD2DRenderer> CreateInkRenderer() = 0;
@@ -54,6 +53,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_CanvasDrawingSession, BaseTrust);
 
         std::shared_ptr<ICanvasDrawingSessionAdapter> m_adapter;
+        D2D1_POINT_2F const m_offset;
+        
         ComPtr<ID2D1SolidColorBrush> m_solidColorBrush;
         ComPtr<ICanvasTextFormat> m_defaultTextFormat;
 
@@ -81,12 +82,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         static ComPtr<CanvasDrawingSession> CreateNew(
             ID2D1DeviceContext1* deviceContext,
             std::shared_ptr<ICanvasDrawingSessionAdapter> drawingSessionAdapter,
-            ICanvasDevice* owner = nullptr);
+            ICanvasDevice* owner = nullptr,
+            D2D1_POINT_2F offset = D2D1_POINT_2F{ 0, 0 });
 
         CanvasDrawingSession(
             ID2D1DeviceContext1* deviceContext,
             std::shared_ptr<ICanvasDrawingSessionAdapter> drawingSessionAdapter = nullptr,
-            ICanvasDevice* owner = nullptr);
+            ICanvasDevice* owner = nullptr,
+            D2D1_POINT_2F offset = D2D1_POINT_2F{ 0, 0 });
+
 
         virtual ~CanvasDrawingSession();
 
@@ -1390,11 +1394,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             : m_d2dDeviceContext(d2dDeviceContext) 
         {
             d2dDeviceContext->BeginDraw();
-        }
-
-        virtual D2D1_POINT_2F GetRenderingSurfaceOffset() override
-        {
-            return D2D1::Point2F(0, 0);
         }
 
         virtual void EndDraw() override

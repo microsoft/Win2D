@@ -13,24 +13,20 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     {
         ComPtr<ISurfaceImageSourceNativeWithD2D> m_sisNative;
 
-        D2D1_POINT_2F m_renderingSurfaceOffset;
-
     public:
         static std::shared_ptr<CanvasImageSourceDrawingSessionAdapter> Create(
             ISurfaceImageSourceNativeWithD2D* sisNative,
             D2D1_COLOR_F const& clearColor,
             RECT const& updateRect,
             float dpi,
-            ID2D1DeviceContext1** outDeviceContext);
+            ID2D1DeviceContext1** outDeviceContext,
+            D2D1_POINT_2F* outOffset);
 
         CanvasImageSourceDrawingSessionAdapter(
-            ISurfaceImageSourceNativeWithD2D* sisNative,
-            D2D1_POINT_2F const& renderingSurfaceOffset);
+            ISurfaceImageSourceNativeWithD2D* sisNative);
 
         virtual ~CanvasImageSourceDrawingSessionAdapter() = default;
 
         virtual void EndDraw() override;
-
-        virtual D2D1_POINT_2F GetRenderingSurfaceOffset() override;
     };
 }}}}}}
