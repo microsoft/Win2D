@@ -9,6 +9,7 @@ using Microsoft.Graphics.Canvas.Text;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Windows.Foundation;
 using Windows.Globalization;
 using Windows.UI;
@@ -69,13 +70,13 @@ namespace ExampleGallery
 
         void InitializeFontPicker()
         {
-            string[] fontFamilyNames = CanvasTextFormat.GetSystemFontFamilies(ApplicationLanguages.Languages);
+            var fontFamilyNames = CanvasTextFormat.GetSystemFontFamilies(ApplicationLanguages.Languages).OrderBy(k => k);
             
             foreach (string fontFamilyName in fontFamilyNames)
             {
                 ComboBoxItem item = new ComboBoxItem();
                 item.Content = fontFamilyName;
-                item.FontFamily = new FontFamily(fontFamilyName);
+                item.FontFamily = new FontFamily(fontFamilyName);                
                 fontPicker.Items.Add(item);
             }
             fontPicker.SelectedIndex = 0;
