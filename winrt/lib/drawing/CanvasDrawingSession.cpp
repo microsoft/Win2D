@@ -3427,30 +3427,75 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             });
     }
 
+    //
+    // Converts the given offset from DIPs to the appropriate unit
+    //
+    static D2D1_POINT_2F GetOffsetInCorrectUnits(ID2D1DeviceContext1* deviceContext, D2D1_POINT_2F const& offset)
+    {
+        auto unitMode = deviceContext->GetUnitMode();
+
+        if (unitMode == D2D1_UNIT_MODE_DIPS)
+        {
+            return offset;
+        }
+        else if (unitMode == D2D1_UNIT_MODE_PIXELS)
+        {
+            auto dpi = GetDpi(deviceContext);
+            D2D1_POINT_2F adjustedOffset = {
+                (float)DipsToPixels(offset.x, dpi, CanvasDpiRounding::Floor),
+                (float)DipsToPixels(offset.y, dpi, CanvasDpiRounding::Floor)
+            };
+            return adjustedOffset;
+        }
+        else
+        {
+            assert(false);
+            ThrowHR(E_UNEXPECTED);
+        }
+    }
+
+    //
+    // Gets the current transform from the given device context, stripping out
+    // the current offset
+    //
+    static Matrix3x2 GetTransform(ID2D1DeviceContext1* deviceContext, D2D1_POINT_2F const& offset)
+    {
+        D2D1_MATRIX_3X2_F transform;
+        deviceContext->GetTransform(&transform);
+
+        // We assume that the currently set transform has the offset applied to
+        // it, correctly set for the current unit mode.  We need to subtract
+        // that from the transform before returning it.
+        auto adjustedOffset = GetOffsetInCorrectUnits(deviceContext, offset);
+        transform._31 -= adjustedOffset.x;
+        transform._32 -= adjustedOffset.y;
+
+        return *reinterpret_cast<ABI::Microsoft::Graphics::Canvas::Numerics::Matrix3x2*>(&transform);
+    }
+
+    //
+    // Sets the transform on the given device context, applied the offset.
+    //
+    static void SetTransform(ID2D1DeviceContext1* deviceContext, D2D1_POINT_2F const& offset, Matrix3x2 const& matrix)
+    {
+        auto adjustedOffset = GetOffsetInCorrectUnits(deviceContext, offset);
+
+        D2D1_MATRIX_3X2_F transform = *(ReinterpretAs<D2D1_MATRIX_3X2_F const*>(&matrix));
+        transform._31 += adjustedOffset.x;
+        transform._32 += adjustedOffset.y;
+
+        deviceContext->SetTransform(transform);
+    }
+
     IFACEMETHODIMP CanvasDrawingSession::get_Transform(ABI::Microsoft::Graphics::Canvas::Numerics::Matrix3x2* value)
     {
         return ExceptionBoundary(
             [&]
-            {
+            {                               
                 auto& deviceContext = GetResource();
                 CheckInPointer(value);
 
-                D2D1_MATRIX_3X2_F transform;
-                deviceContext->GetTransform(&transform);
-                
-                //
-                // Un-apply the offset transform. This could be done with a matrix invert, 
-                // but this is cheaper.
-                //
-                // This polls from the wrapped object, rather than stores a local transform 
-                // member. This ensures that any transforms performed in native interop
-                // will be retrievable here.
-                //
-                const D2D1_POINT_2F renderingSurfaceOffset = m_adapter->GetRenderingSurfaceOffset();
-                transform._31 -= renderingSurfaceOffset.x;
-                transform._32 -= renderingSurfaceOffset.y;
-
-                *value = *reinterpret_cast<ABI::Microsoft::Graphics::Canvas::Numerics::Matrix3x2*>(&transform);
+                *value = GetTransform(deviceContext.Get(), m_adapter->GetRenderingSurfaceOffset());
             });
     }
 
@@ -3460,14 +3505,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             [&]
             {
                 auto& deviceContext = GetResource();
-                
-                D2D1_POINT_2F offset = m_adapter->GetRenderingSurfaceOffset();
 
-                D2D1_MATRIX_3X2_F transform = *(ReinterpretAs<D2D1_MATRIX_3X2_F*>(&value));
-                transform._31 += offset.x;
-                transform._32 += offset.y;
-
-                deviceContext->SetTransform(transform);
+                SetTransform(deviceContext.Get(), m_adapter->GetRenderingSurfaceOffset(), value);
             });
     }
 
@@ -3490,7 +3529,18 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             {
                 auto& deviceContext = GetResource();
 
-                deviceContext->SetUnitMode(static_cast<D2D1_UNIT_MODE>(value));
+                auto offset = m_adapter->GetRenderingSurfaceOffset();
+
+                if (offset.x != 0 || offset.y != 0)
+                {
+                    auto transform = GetTransform(deviceContext.Get(), offset);
+                    deviceContext->SetUnitMode(static_cast<D2D1_UNIT_MODE>(value));
+                    SetTransform(deviceContext.Get(), offset, transform);
+                }
+                else
+                {
+                    deviceContext->SetUnitMode(static_cast<D2D1_UNIT_MODE>(value));
+                }
             });
     }
 

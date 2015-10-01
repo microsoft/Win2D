@@ -3766,6 +3766,7 @@ public:
 
         {
             Numerics::Matrix3x2 matrix = { 1, 2, 3, 5, 8, 13 };
+            f.DeviceContext->GetUnitModeMethod.SetExpectedCalls(1, [] { return D2D1_UNIT_MODE_DIPS; });
             f.DeviceContext->SetTransformMethod.SetExpectedCalls(1,
                 [&](const D2D1_MATRIX_3X2_F* m)
                 {
@@ -3778,6 +3779,7 @@ public:
 
         {
             Numerics::Matrix3x2 matrix = { 13, 8, 5, 3, 2, 1 };
+            f.DeviceContext->GetUnitModeMethod.SetExpectedCalls(1, [] { return D2D1_UNIT_MODE_DIPS; });
             f.DeviceContext->GetTransformMethod.SetExpectedCalls(1,
                 [&](D2D1_MATRIX_3X2_F* m)
                 {
@@ -3791,6 +3793,10 @@ public:
         }
 
         {
+            f.DeviceContext->SetTransformMethod.AllowAnyCall();
+            f.DeviceContext->GetTransformMethod.AllowAnyCall();
+            f.DeviceContext->GetUnitModeMethod.AllowAnyCall([] { return D2D1_UNIT_MODE_DIPS; });
+            
             f.DeviceContext->SetUnitModeMethod.SetExpectedCalls(1,
                 [](const D2D1_UNIT_MODE m)
                 {
@@ -3810,52 +3816,167 @@ public:
         }
     }
 
-    TEST_METHOD_EX(CanvasDrawingSession_SiSOffsetIsHiddenFromTransformProperty)
+    static int const AnyOffsetX = 1;
+    static int const AnyOffsetY = 2;
+    
+    struct OffsetFixture
     {
-        auto deviceContext = Make<StubD2DDeviceContextWithGetFactory>();
+        ComPtr<StubD2DDeviceContext> DeviceContext;
+        std::shared_ptr<CanvasDrawingSessionAdapter_ChangeableOffset> Adapter;
+        ComPtr<CanvasDrawingSession> DrawingSession;
+        D2D1_MATRIX_3X2_F NativeTransform;
+        D2D1_UNIT_MODE UnitMode;
 
-        auto adapter = std::make_shared<CanvasDrawingSessionAdapter_ChangeableOffset>();
-        auto drawingSession = CanvasDrawingSession::CreateNew(deviceContext.Get(), adapter);
+        OffsetFixture(float offsetX = AnyOffsetX, float offsetY = AnyOffsetY)
+            : DeviceContext(Make<StubD2DDeviceContext>())
+            , Adapter(std::make_shared<CanvasDrawingSessionAdapter_ChangeableOffset>())
+            , DrawingSession(CanvasDrawingSession::CreateNew(DeviceContext.Get(), Adapter))
+            , UnitMode(D2D1_UNIT_MODE_DIPS)
+        {
+            //
+            // The adapter is expected to set the native transform to the offset
+            // when it is created.
+            //
+            // CanvasImageSourceDrawingSessionAdapter_BeginEndDraw verifies that
+            // the CanvasImageSource adapter does this.  For the purposes of
+            // this fixture, we assume that this has been done.
+            //
+            Adapter->m_offset = D2D1::Point2F(offsetX, offsetY);
 
-        //
-        // The adapter sets the native transform to the offset on BeginDraw. 
-        // This test doesn't verify that - the test CanvasImageSourceDrawingSessionAdapter_BeginEndDraw 
-        // does. This test just replicates the behavior.
-        //
-        adapter->m_offset = D2D1::Point2F(1, 1);
-        D2D1_MATRIX_3X2_F nativeTransform = D2D1::Matrix3x2F::Translation(
-            adapter->m_offset.x,
-            adapter->m_offset.y);
+            NativeTransform = D2D1::Matrix3x2F::Translation(
+                Adapter->m_offset.x,
+                Adapter->m_offset.y);
 
-        deviceContext->SetTransformMethod.AllowAnyCall(
-            [&](const D2D1_MATRIX_3X2_F* m)
-            {
-                nativeTransform = *m;
-            });
+            DeviceContext->SetTransformMethod.AllowAnyCall(
+                [&] (D2D1_MATRIX_3X2_F const* m)
+                {
+                    NativeTransform = *m;
+                });
 
-        deviceContext->GetTransformMethod.AllowAnyCall(
-            [&](D2D1_MATRIX_3X2_F* m)
-            {
-                *m = nativeTransform;
-            });
-        
+            DeviceContext->GetTransformMethod.AllowAnyCall(
+                [&] (D2D1_MATRIX_3X2_F* m)
+                {
+                    *m = NativeTransform;
+                });
+
+            DeviceContext->GetUnitModeMethod.AllowAnyCall(
+                [&] ()
+                {
+                    return UnitMode;
+                });
+
+            DeviceContext->SetUnitModeMethod.AllowAnyCall(
+                [&] (D2D1_UNIT_MODE unitMode)
+                {
+                    UnitMode = unitMode;
+                });
+        }
+    };
+
+    TEST_METHOD_EX(CanvasDrawingSession_OffsetIsHiddenFromTransformProperty)
+    {
+        OffsetFixture f;
+
         Numerics::Matrix3x2 transform;
-        ThrowIfFailed(drawingSession->get_Transform(&transform));
+        ThrowIfFailed(f.DrawingSession->get_Transform(&transform));
         Assert::AreEqual(0.0f, transform.M31);
         Assert::AreEqual(0.0f, transform.M32);
 
-        Numerics::Matrix3x2 interestingTranslation = { 1, 0, 0, 1, 123, 456 };
-        ThrowIfFailed(drawingSession->put_Transform(interestingTranslation));
+        float anyTranslateX = 123;
+        float anyTranslateY = 456;
 
-        ThrowIfFailed(drawingSession->get_Transform(&transform));
+        Numerics::Matrix3x2 interestingTranslation = { 1, 0, 0, 1, anyTranslateX, anyTranslateY };
+        ThrowIfFailed(f.DrawingSession->put_Transform(interestingTranslation));
+
+        ThrowIfFailed(f.DrawingSession->get_Transform(&transform));
         Assert::AreEqual(interestingTranslation, transform);
 
         // Verify that the native resource out of interop, too, reflects the SiS offset.
-        ComPtr<ID2D1DeviceContext> nativeResource = drawingSession->GetResource();
+        ComPtr<ID2D1DeviceContext> nativeResource = f.DrawingSession->GetResource();
         D2D1_MATRIX_3X2_F wrappedResourceTransform;
         nativeResource->GetTransform(&wrappedResourceTransform);
-        D2D1_MATRIX_3X2_F expectedTransform = D2D1::Matrix3x2F(1, 0, 0, 1, 123 + adapter->m_offset.x, 456 + adapter->m_offset.y);
+
+        D2D1_MATRIX_3X2_F expectedTransform = D2D1::Matrix3x2F(1, 0, 0, 1, anyTranslateX + AnyOffsetX, anyTranslateY + AnyOffsetY);
         Assert::AreEqual(expectedTransform, wrappedResourceTransform);
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_When_UnitModeIsChanged_AndOffsetIsZero_TransformIsNotModified)
+    {
+        OffsetFixture f(0, 0);
+
+        f.DeviceContext->SetTransformMethod.SetExpectedCalls(0);
+
+        ThrowIfFailed(f.DrawingSession->put_Units(CanvasUnits_Pixels));
+        ThrowIfFailed(f.DrawingSession->put_Units(CanvasUnits_Dips));
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_When_UnitModeIsChanged_AndOffsetIsNonZero_TransformOffsetIsModifiedToBeCorrectInCurrentUnitMode)
+    {
+        OffsetFixture f;
+
+        //
+        // Report the DPI as something other than the default (so some kind of
+        // translation is required!)
+        //
+        auto nonDefaultDpi = DEFAULT_DPI * 1.23f;
+        f.DeviceContext->SetDpi(nonDefaultDpi, nonDefaultDpi);
+
+        //
+        // Set an initial matrix.  We expect this matrix to be preserved
+        // verbatim, regardless of the offset
+        //
+        Numerics::Matrix3x2 anyTransform = {
+            1, 2,
+            3, 4,
+            5, 6
+        };
+        ThrowIfFailed(f.DrawingSession->put_Transform(anyTransform));
+
+        //
+        // This is the offset we expect to be applied to the native transform
+        //
+        auto expectedOffsetX = DipsToPixels((float)AnyOffsetX, nonDefaultDpi, CanvasDpiRounding::Floor);
+        auto expectedOffsetY = DipsToPixels((float)AnyOffsetY, nonDefaultDpi, CanvasDpiRounding::Floor);
+
+        f.DeviceContext->SetTransformMethod.SetExpectedCalls(1,
+            [&] (D2D1_MATRIX_3X2_F const* m)
+            {
+                D2D1_MATRIX_3X2_F expected = {
+                    1, 2,
+                    3, 4,
+                    5.0f + expectedOffsetX, 6.0f + expectedOffsetY
+                };
+                Assert::AreEqual(expected, *m);
+                f.NativeTransform = *m;
+            });
+
+        ThrowIfFailed(f.DrawingSession->put_Units(CanvasUnits_Pixels));
+
+        // The Transform property should not have changed.
+        Numerics::Matrix3x2 retrievedTransform;
+        ThrowIfFailed(f.DrawingSession->get_Transform(&retrievedTransform));
+        Assert::AreEqual(anyTransform, retrievedTransform);
+
+        //
+        // Going back to DIPs should update the transform again
+        //
+        f.DeviceContext->SetTransformMethod.SetExpectedCalls(1,
+            [&] (D2D1_MATRIX_3X2_F const* m)
+            {
+                D2D1_MATRIX_3X2_F expected = {
+                    1, 2,
+                    3, 4,
+                    5.0f + AnyOffsetX, 6.0f + AnyOffsetY
+                };
+                Assert::AreEqual(expected, *m);
+                f.NativeTransform = *m;
+            });
+
+        ThrowIfFailed(f.DrawingSession->put_Units(CanvasUnits_Dips));
+
+        // The Transform property should still be unchanged
+        ThrowIfFailed(f.DrawingSession->get_Transform(&retrievedTransform));
+        Assert::AreEqual(anyTransform, retrievedTransform);
     }
 
     TEST_METHOD_EX(CanvasDrawingSession_get_Device)
