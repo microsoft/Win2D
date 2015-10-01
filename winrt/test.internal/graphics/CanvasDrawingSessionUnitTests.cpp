@@ -3811,7 +3811,7 @@ public:
         OffsetFixture(float offsetX = AnyOffsetX, float offsetY = AnyOffsetY)
             : DeviceContext(Make<StubD2DDeviceContext>())
             , Adapter(std::make_shared<StubCanvasDrawingSessionAdapter>())
-            , Offset{offsetX, offsetY}
+            , Offset(D2D1_POINT_2F{offsetX, offsetY})
             , DrawingSession(CanvasDrawingSession::CreateNew(DeviceContext.Get(), Adapter, nullptr, Offset))
             , UnitMode(D2D1_UNIT_MODE_DIPS)
         {
