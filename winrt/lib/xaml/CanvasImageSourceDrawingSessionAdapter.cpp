@@ -94,7 +94,7 @@ CanvasImageSourceDrawingSessionAdapter::CanvasImageSourceDrawingSessionAdapter(
 }
 
 
-void CanvasImageSourceDrawingSessionAdapter::EndDraw()
+void CanvasImageSourceDrawingSessionAdapter::EndDraw(ID2D1DeviceContext1*)
 {
     ThrowIfFailed(m_sisNative->EndDraw());
 }

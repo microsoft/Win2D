@@ -27,7 +27,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         virtual bool IsHighContrastEnabled() = 0;
 #endif
 
-        virtual void EndDraw() = 0;
+        virtual void EndDraw(ID2D1DeviceContext1* d2dDeviceContext) = 0;
     };
 
     class DrawingSessionBaseAdapter : public ICanvasDrawingSessionAdapter
@@ -1387,18 +1387,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     class SimpleCanvasDrawingSessionAdapter : public DrawingSessionBaseAdapter,
                                               private LifespanTracker<SimpleCanvasDrawingSessionAdapter>
     {
-        ComPtr<ID2D1DeviceContext1> m_d2dDeviceContext;
-
     public:
         SimpleCanvasDrawingSessionAdapter(ID2D1DeviceContext1* d2dDeviceContext)
-            : m_d2dDeviceContext(d2dDeviceContext) 
         {
             d2dDeviceContext->BeginDraw();
         }
 
-        virtual void EndDraw() override
+        virtual void EndDraw(ID2D1DeviceContext1* d2dDeviceContext) override
         {
-            ThrowIfFailed(m_d2dDeviceContext->EndDraw());
+            ThrowIfFailed(d2dDeviceContext->EndDraw());
         }
     };
 }}}}

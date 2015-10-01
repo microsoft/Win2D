@@ -607,8 +607,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     class CanvasSwapChainDrawingSessionAdapter : public DrawingSessionBaseAdapter,
                                                  private LifespanTracker<CanvasSwapChainDrawingSessionAdapter>
     {
-        ComPtr<ID2D1DeviceContext1> m_deviceContext;
-
     public:
         static std::shared_ptr<CanvasSwapChainDrawingSessionAdapter> Create(
             ICanvasDevice* owner,
@@ -643,7 +641,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
             ThrowIfFailed(deviceContext.CopyTo(outDeviceContext));
 
-            auto adapter = std::make_shared<CanvasSwapChainDrawingSessionAdapter>(deviceContext.Get());
+            auto adapter = std::make_shared<CanvasSwapChainDrawingSessionAdapter>();
 
             deviceContext->Clear(&clearColor);
 
@@ -657,15 +655,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             return adapter;
         }
 
-        CanvasSwapChainDrawingSessionAdapter(ID2D1DeviceContext1* deviceContext)
-            : m_deviceContext(deviceContext)
+        CanvasSwapChainDrawingSessionAdapter()
         {
-
         }
 
-        virtual void EndDraw() override
+        virtual void EndDraw(ID2D1DeviceContext1* deviceContext) override
         {
-            ThrowIfFailed(m_deviceContext->EndDraw());
+            ThrowIfFailed(deviceContext->EndDraw());
         }
     };
 

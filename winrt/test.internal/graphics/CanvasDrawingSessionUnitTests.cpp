@@ -47,7 +47,7 @@ TEST_CLASS(CanvasDrawingSession_CallsAdapter)
             Assert::IsTrue(m_endDrawCalled);
         }
 
-        virtual void EndDraw() override
+        virtual void EndDraw(ID2D1DeviceContext1*) override
         {
             Assert::IsFalse(m_endDrawCalled);
             m_endDrawCalled = true;

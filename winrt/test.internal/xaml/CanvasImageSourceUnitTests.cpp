@@ -617,7 +617,7 @@ public:
         
         mockSurfaceImageSource->EndDrawMethod.SetExpectedCalls(1);
 
-        adapter->EndDraw();
+        adapter->EndDraw(actualDeviceContext.Get());
     }
 
     struct DeviceContextWithRestrictedQI : public MockD2DDeviceContext

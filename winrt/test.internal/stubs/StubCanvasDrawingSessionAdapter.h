@@ -12,7 +12,7 @@ namespace canvas
         StubCanvasDrawingSessionAdapter()
         {}
 
-        virtual void EndDraw() override
+        virtual void EndDraw(ID2D1DeviceContext1*) override
         {
             // nothing
         }

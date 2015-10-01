@@ -56,7 +56,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                                             private LifespanTracker<NoopCanvasDrawingSessionAdapter>
     {
     public:
-        virtual void EndDraw() override
+        virtual void EndDraw(ID2D1DeviceContext1*) override
         {
             // nothing
         }
@@ -142,26 +142,26 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     IFACEMETHODIMP CanvasDrawingSession::Close()
     {
-        // Base class Close() called outside of ExceptionBoundary since this
-        // already has its own boundary.
-        HRESULT hr = ResourceWrapper::Close();
-        if (FAILED(hr))
-            return hr;
-
         return ExceptionBoundary(
             [&]
             {
+                auto deviceContext = MaybeGetResource();
+        
+                ReleaseResource();
+
                 if (!m_activeLayerIds.empty())
                     ThrowHR(E_FAIL, Strings::DidNotPopLayer);
 
                 if (m_adapter)
                 {
+                    assert(deviceContext);
+                    
                     // Arrange it so that m_adapter will always get
                     // reset, even if EndDraw throws.
                     auto adapter = m_adapter;
                     m_adapter.reset();
 
-                    adapter->EndDraw();
+                    adapter->EndDraw(deviceContext.Get());
                 }        
             });
     }

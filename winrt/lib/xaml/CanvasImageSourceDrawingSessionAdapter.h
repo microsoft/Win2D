@@ -27,6 +27,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         virtual ~CanvasImageSourceDrawingSessionAdapter() = default;
 
-        virtual void EndDraw() override;
+        virtual void EndDraw(ID2D1DeviceContext1*) override;
     };
 }}}}}}

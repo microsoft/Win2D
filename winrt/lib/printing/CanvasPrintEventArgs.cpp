@@ -120,9 +120,9 @@ public:
     {
     }
 
-    virtual void EndDraw() override
+    virtual void EndDraw(ID2D1DeviceContext1* deviceContext) override
     {
-        __super::EndDraw();
+        __super::EndDraw(deviceContext);
         m_args->DrawingSessionClosed();
     }
 };
