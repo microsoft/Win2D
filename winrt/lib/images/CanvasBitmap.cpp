@@ -67,9 +67,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 return tableEntry.Guid;
             }
         }
-        WinStringBuilder message;
-        message.Format(Strings::UnrecognizedImageFileExtension);
-        ThrowHR(E_INVALIDARG, message.Get());
+        ThrowHR(E_INVALIDARG, Strings::UnrecognizedImageFileExtension);
     }
 
     static void SaveLockedMemoryToNativeStream(
