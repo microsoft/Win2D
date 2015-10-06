@@ -176,22 +176,19 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         int cacheIndex = forceSoftwareRenderer ? 1 : 0;
         assert(cacheIndex < _countof(m_sharedDevices));
 
-        //
-        // If the returned device is null, it has the side effect of nulling
-        // out m_sharedDevices[cacheIndex].
-        //
         ComPtr<ICanvasDevice> device = LockWeakRef<ICanvasDevice>(m_sharedDevices[cacheIndex]);
+        ComPtr<ICanvasDevice> lostDevice;
 
-        if (m_sharedDevices[cacheIndex])
+        if (device && FAILED(static_cast<CanvasDevice*>(device.Get())->GetDeviceRemovedErrorCode()))
         {
-            if (device && FAILED(static_cast<CanvasDevice*>(device.Get())->GetDeviceRemovedErrorCode()))
-            {
-                device->RaiseDeviceLost();
-                m_sharedDevices[cacheIndex].Reset();
-            }
+            // We need to raise DeviceLost when we detect a lost device, but we
+            // can't do that while we're holding the lock, so we need to do it
+            // later.
+            lostDevice = device;
+            device.Reset();
         }
 
-        if (!m_sharedDevices[cacheIndex])
+        if (!device)
         {
             //
             // Any new devices we create here will honor the debug 
@@ -202,15 +199,18 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             // retro-active behavior, and the fact that we expect apps to set the 
             // debug level at start-up, before creating any devices.
             //
-            auto newDevice = CanvasDevice::CreateNew(forceSoftwareRenderer);
-            m_sharedDevices[cacheIndex] = AsWeak(newDevice.Get());
-            return newDevice;
+            device = CanvasDevice::CreateNew(forceSoftwareRenderer);
+            m_sharedDevices[cacheIndex] = AsWeak(device.Get());
         }
-        else
-        {
-            assert(device);
-            return device;
-        }
+
+        lock.unlock();
+
+        // Now that the lock has been released we can safely raise DeviceLost
+        if (lostDevice)
+            lostDevice->RaiseDeviceLost();
+
+        assert(device);
+        return device;
     }
 
     SharedDeviceState::PropertyData SharedDeviceState::GetDebugLevelPropertyData()
