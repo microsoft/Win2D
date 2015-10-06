@@ -55,6 +55,7 @@
 
 #if WINVER > _WIN32_WINNT_WINBLUE
 #include <d2d1_3.h>
+#include <dwrite_3.h>
 #include <inkrenderer.h>
 #include <MemoryBuffer.h>
 #endif

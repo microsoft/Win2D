@@ -245,6 +245,14 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
             <entry>Device</entry>
             <entry>Device, optional DPI<superscript>(1)</superscript></entry>
           </row>
+          <row>
+            <entry>
+              <codeEntityReference>T:Microsoft.Graphics.Canvas.Text.CanvasTextRenderingParameters</codeEntityReference>
+            </entry>
+            <entry><codeInline>IDWriteRenderingParams2</codeInline></entry>
+            <entry>-</entry>
+            <entry>-</entry>
+          </row>
         </table>
         
         <para>

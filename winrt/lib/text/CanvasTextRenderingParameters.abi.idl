@@ -1,0 +1,57 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+//
+// Licensed under the MIT License. See LICENSE.txt in the project root for license information.
+
+import "inspectable.idl";
+import "Windows.Foundation.idl";
+
+namespace Microsoft.Graphics.Canvas.Text
+{
+    [version(VERSION)]
+    typedef enum CanvasTextRenderingMode
+    {
+        Default,
+        Aliased,
+        GdiClassic,
+        GdiNatural,
+        Natural,
+        NaturalSymmetric,
+        Outline,
+#if WINVER > _WIN32_WINNT_WINBLUE
+        NaturalSymmetricDownsampled
+#endif
+    } CanvasTextRenderingMode;
+
+    [version(VERSION)]
+    typedef enum CanvasTextGridFit
+    {
+        Default,
+        Disable,
+        Enable
+    } CanvasTextGridFit;
+
+    runtimeclass CanvasTextRenderingParameters;
+
+    [version(VERSION), uuid(B20BF738-EDB9-4EEC-A12F-B6AE32E8ACE6), exclusiveto(CanvasTextRenderingParameters)]
+    interface ICanvasTextRenderingParameters : IInspectable
+    {
+        [propget] HRESULT RenderingMode([out, retval] CanvasTextRenderingMode* value);
+            
+        [propget] HRESULT GridFit([out, retval] CanvasTextGridFit* value);
+    };
+
+    [version(VERSION), uuid(D240AC25-4D23-4964-9D9A-DB2FC8AF185D), exclusiveto(CanvasTextRenderingParameters)]
+    interface ICanvasTextRenderingParametersFactory : IInspectable
+    {
+        HRESULT Create(
+            [in] CanvasTextRenderingMode textRenderingMode,
+            [in] CanvasTextGridFit gridFit,
+            [out, retval] CanvasTextRenderingParameters** textRenderingParameters);
+    };
+
+    [version(VERSION), activatable(ICanvasTextRenderingParametersFactory, VERSION)]
+    runtimeclass CanvasTextRenderingParameters
+    {
+        [default] interface ICanvasTextRenderingParameters;
+    }
+}

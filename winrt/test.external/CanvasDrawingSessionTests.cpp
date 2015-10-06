@@ -83,5 +83,18 @@ TEST_CLASS(CanvasDrawingSessionTests)
 
         Assert::AreEqual(d2dDeviceA.Get(), d2dDeviceB.Get());
     }
+
+    TEST_METHOD(CanvasDrawingSession_TextRenderingParameters_DefaultIsNull)
+    {
+        ComPtr<ID2D1DeviceContext1> context = CreateTestD2DDeviceContext();
+
+        auto drawingSession = GetOrCreate<CanvasDrawingSession>(context.Get());
+
+        Assert::IsNull(drawingSession->TextRenderingParameters);
+
+        // Ensure the setter doesn't mess up anything
+        drawingSession->TextRenderingParameters = nullptr;
+        Assert::IsNull(drawingSession->TextRenderingParameters);
+    }
 };
 

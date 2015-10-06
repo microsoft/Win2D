@@ -1337,6 +1337,9 @@ namespace Microsoft.Graphics.Canvas
 
         [propget] HRESULT TextAntialiasing([out, retval] Microsoft.Graphics.Canvas.Text.CanvasTextAntialiasing* value);
         [propput] HRESULT TextAntialiasing([in] Microsoft.Graphics.Canvas.Text.CanvasTextAntialiasing value);
+        
+        [propget] HRESULT TextRenderingParameters([out, retval] Microsoft.Graphics.Canvas.Text.CanvasTextRenderingParameters** value);
+        [propput] HRESULT TextRenderingParameters([in] Microsoft.Graphics.Canvas.Text.CanvasTextRenderingParameters* value);
 
         [propget] HRESULT Transform([out, retval] NUMERICS.Matrix3x2* value);
         [propput] HRESULT Transform([in] NUMERICS.Matrix3x2 value);

@@ -415,5 +415,60 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         else
             return std::make_pair(WinString(beginIt, hashPos), WinString(hashPos + 1, endIt));
     }
+
+#if WINVER > _WIN32_WINNT_WINBLUE
+
+    inline CanvasTextRenderingMode ToCanvasTextRenderingMode(DWRITE_RENDERING_MODE1 const& value)
+    {
+        // static_asserts in ToDWriteRenderingMode validate that this cast is ok
+        return static_cast<CanvasTextRenderingMode>(value);
+    }
+
+    inline DWRITE_RENDERING_MODE1 ToDWriteRenderingMode(CanvasTextRenderingMode value)
+    {
+        CHECK_ENUM_MEMBER(DWRITE_RENDERING_MODE1_DEFAULT, CanvasTextRenderingMode::Default);
+        CHECK_ENUM_MEMBER(DWRITE_RENDERING_MODE1_ALIASED, CanvasTextRenderingMode::Aliased);
+        CHECK_ENUM_MEMBER(DWRITE_RENDERING_MODE1_GDI_CLASSIC, CanvasTextRenderingMode::GdiClassic);
+        CHECK_ENUM_MEMBER(DWRITE_RENDERING_MODE1_GDI_NATURAL, CanvasTextRenderingMode::GdiNatural);
+        CHECK_ENUM_MEMBER(DWRITE_RENDERING_MODE1_NATURAL, CanvasTextRenderingMode::Natural);
+        CHECK_ENUM_MEMBER(DWRITE_RENDERING_MODE1_NATURAL_SYMMETRIC, CanvasTextRenderingMode::NaturalSymmetric);
+        CHECK_ENUM_MEMBER(DWRITE_RENDERING_MODE1_OUTLINE, CanvasTextRenderingMode::Outline);
+        CHECK_ENUM_MEMBER(DWRITE_RENDERING_MODE1_NATURAL_SYMMETRIC_DOWNSAMPLED, CanvasTextRenderingMode::NaturalSymmetricDownsampled);
+        return static_cast<DWRITE_RENDERING_MODE1>(value);
+    }
+#else
+
+    inline CanvasTextRenderingMode ToCanvasTextRenderingMode(DWRITE_RENDERING_MODE const& value)
+    {
+        // static_asserts in ToDWriteRenderingMode validate that this cast is ok
+        return static_cast<CanvasTextRenderingMode>(value);
+    }
+
+    inline DWRITE_RENDERING_MODE ToDWriteRenderingMode(CanvasTextRenderingMode value)
+    {
+        CHECK_ENUM_MEMBER(DWRITE_RENDERING_MODE_DEFAULT, CanvasTextRenderingMode::Default);
+        CHECK_ENUM_MEMBER(DWRITE_RENDERING_MODE_ALIASED, CanvasTextRenderingMode::Aliased);
+        CHECK_ENUM_MEMBER(DWRITE_RENDERING_MODE_GDI_CLASSIC, CanvasTextRenderingMode::GdiClassic);
+        CHECK_ENUM_MEMBER(DWRITE_RENDERING_MODE_GDI_NATURAL, CanvasTextRenderingMode::GdiNatural);
+        CHECK_ENUM_MEMBER(DWRITE_RENDERING_MODE_NATURAL, CanvasTextRenderingMode::Natural);
+        CHECK_ENUM_MEMBER(DWRITE_RENDERING_MODE_NATURAL_SYMMETRIC, CanvasTextRenderingMode::NaturalSymmetric);
+        CHECK_ENUM_MEMBER(DWRITE_RENDERING_MODE_OUTLINE, CanvasTextRenderingMode::Outline);
+        return static_cast<DWRITE_RENDERING_MODE>(value);
+    }
+#endif
+
+    inline CanvasTextGridFit ToCanvasTextGridFit(DWRITE_GRID_FIT_MODE value)
+    {
+        // static_asserts in ToDWriteGridFitMode validate that this cast is ok
+        return static_cast<CanvasTextGridFit>(value);
+    }
+
+    inline DWRITE_GRID_FIT_MODE ToDWriteGridFitMode(CanvasTextGridFit value)
+    {
+        CHECK_ENUM_MEMBER(DWRITE_GRID_FIT_MODE_DEFAULT, CanvasTextGridFit::Default);
+        CHECK_ENUM_MEMBER(DWRITE_GRID_FIT_MODE_DISABLED, CanvasTextGridFit::Disable);
+        CHECK_ENUM_MEMBER(DWRITE_GRID_FIT_MODE_ENABLED, CanvasTextGridFit::Enable);
+        return static_cast<DWRITE_GRID_FIT_MODE>(value);
+    }
    
 }}}}}

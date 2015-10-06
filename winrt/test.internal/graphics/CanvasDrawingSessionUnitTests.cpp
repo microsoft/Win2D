@@ -14,6 +14,7 @@
 
 #include "mocks/MockD2DGeometryRealization.h"
 #include "mocks/MockD2DRectangleGeometry.h"
+#include "mocks/MockDWriteRenderingParams.h"
 #include "stubs/StubCanvasBrush.h"
 #include "stubs/StubCanvasTextLayoutAdapter.h"
 #include "stubs/StubD2DEffect.h"
@@ -5051,5 +5052,49 @@ TEST_CLASS(CanvasDrawingSession_CreateLayerTests)
 
         f.DeviceContext->PopAxisAlignedClipMethod.SetExpectedCalls(1);
         ThrowIfFailed(As<IClosable>(activeLayer)->Close());
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_get_TextRenderingParameters_CallsThrough)
+    {
+        Fixture f;
+
+        auto expectedRenderingParams = Make<MockDWriteRenderingParams>();
+
+        f.DeviceContext->GetTextRenderingParamsMethod.SetExpectedCalls(1,
+            [&](IDWriteRenderingParams** params)
+            {
+                expectedRenderingParams.CopyTo(params);
+            });
+
+        ComPtr<ICanvasTextRenderingParameters> textRenderingParameters;
+        Assert::AreEqual(S_OK, f.DS->get_TextRenderingParameters(&textRenderingParameters));
+
+        Assert::IsTrue(IsSameInstance(expectedRenderingParams.Get(), GetWrappedResource<IDWriteRenderingParams>(textRenderingParameters).Get()));
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_put_TextRenderingParameters_NullIsOk)
+    {
+        Fixture f;
+
+        Assert::AreEqual(S_OK, f.DS->put_TextRenderingParameters(nullptr));
+    }
+    
+
+    TEST_METHOD_EX(CanvasDrawingSession_put_TextRenderingParameters_CallsThrough)
+    {
+        Fixture f;
+
+        auto dwriteRenderingParams = Make<MockDWriteRenderingParams>();
+        auto canvasTextRenderingParameters = ResourceManager::GetOrCreate<ICanvasTextRenderingParameters>(dwriteRenderingParams.Get());
+
+        dwriteRenderingParams->GetRenderingModeMethod.AllowAnyCall([=]() { return DWRITE_RENDERING_MODE_DEFAULT; });
+
+        f.DeviceContext->SetTextRenderingParamsMethod.SetExpectedCalls(1,
+            [&](IDWriteRenderingParams* params)
+            {
+                Assert::IsTrue(IsSameInstance(dwriteRenderingParams.Get(), params));
+            });
+
+        Assert::AreEqual(S_OK, f.DS->put_TextRenderingParameters(canvasTextRenderingParameters.Get()));
     }
 };

@@ -991,6 +991,29 @@ namespace Microsoft
                 END_ENUM(CanvasFigureLoop);
             }
 
+            ENUM_TO_STRING(CanvasTextRenderingMode)
+            {
+                ENUM_VALUE(CanvasTextRenderingMode::Default);
+                ENUM_VALUE(CanvasTextRenderingMode::Aliased);
+                ENUM_VALUE(CanvasTextRenderingMode::GdiClassic);
+                ENUM_VALUE(CanvasTextRenderingMode::GdiNatural);
+                ENUM_VALUE(CanvasTextRenderingMode::Natural);
+                ENUM_VALUE(CanvasTextRenderingMode::NaturalSymmetric);
+                ENUM_VALUE(CanvasTextRenderingMode::Outline);
+#if WINVER > _WIN32_WINNT_WINBLUE
+                ENUM_VALUE(CanvasTextRenderingMode::NaturalSymmetricDownsampled);
+#endif
+                END_ENUM(CanvasTextRenderingMode);
+            }
+
+            ENUM_TO_STRING(CanvasTextGridFit)
+            {
+                ENUM_VALUE(CanvasTextGridFit::Default);
+                ENUM_VALUE(CanvasTextGridFit::Disable);
+                ENUM_VALUE(CanvasTextGridFit::Enable);
+                END_ENUM(CanvasTextGridFit);
+            }
+
 #if WINVER > _WIN32_WINNT_WINBLUE
             ENUM_TO_STRING(CanvasGradientMeshPatchEdge)
             {

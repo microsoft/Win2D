@@ -6,6 +6,7 @@
 
 #include "CanvasActiveLayer.h"
 #include "text/CanvasTextFormat.h"
+#include "text/CanvasTextRenderingParameters.h"
 #include "utils/TemporaryTransform.h"
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
@@ -3425,6 +3426,45 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 deviceContext->SetTextAntialiasMode(static_cast<D2D1_TEXT_ANTIALIAS_MODE>(value));
             });
     }
+
+    IFACEMETHODIMP CanvasDrawingSession::get_TextRenderingParameters(ICanvasTextRenderingParameters** value)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                auto& deviceContext = GetResource();
+                CheckAndClearOutPointer(value);
+
+                ComPtr<IDWriteRenderingParams> dwriteRenderingParams;
+                deviceContext->GetTextRenderingParams(&dwriteRenderingParams);
+
+                if (dwriteRenderingParams)
+                {
+                    auto canvasTextRenderingParams = ResourceManager::GetOrCreate<ICanvasTextRenderingParameters>(dwriteRenderingParams.Get());
+
+                    ThrowIfFailed(canvasTextRenderingParams.CopyTo(value));
+                }
+            });
+    }
+
+    IFACEMETHODIMP CanvasDrawingSession::put_TextRenderingParameters(ICanvasTextRenderingParameters* value)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                auto& deviceContext = GetResource();
+
+                ComPtr<IDWriteRenderingParams> dwriteRenderingParams;
+                if (value)
+                {
+                    dwriteRenderingParams = GetWrappedResource<IDWriteRenderingParams>(value);
+                }
+
+                deviceContext->SetTextRenderingParams(dwriteRenderingParams.Get());
+
+            });
+    }
+
 
     //
     // Converts the given offset from DIPs to the appropriate unit

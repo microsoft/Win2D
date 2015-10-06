@@ -1,0 +1,109 @@
+<?xml version="1.0"?>
+<!--
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+Licensed under the MIT License. See LICENSE.txt in the project root for license information.
+-->
+
+<doc>
+  <assembly>
+    <name>Microsoft.Graphics.Canvas</name>
+  </assembly>
+  <members>
+    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasTextGridFit" Experimental="true">
+      <summary>Specifies whether to enable gridfitting behavior for glyphs.</summary>
+      <remarks>
+        <p>
+          This is also sometimes called "pixel-snapping" or "hinting".
+        </p>
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTextGridFit.Default">
+      <summary>Gridfitting is enabled or disabled based on font table information for the text being drawn.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTextGridFit.Disable">
+      <summary>Gridfitting is always disabled.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTextGridFit.Enable">
+      <summary>Gridfitting is always enabled.</summary>
+    </member>
+    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasTextRenderingMode" Experimental="true">
+      <summary>Specifies the behavior when glyphs are rendered.</summary>
+      <remarks>
+        <p>
+          This enum contains an additional field, NaturalSymmetricDownsampled, 
+          available on Windows 10 only. NaturalSymmetricDownsampled is the same as NaturalSymmetric 
+          except that text is rendered in a downsampled form where possible, sacrificing quality
+          for faster performance.
+        </p>
+        <p>
+          Outline text is recommended for scenarios where text size is animated- for example, text being 
+          zoomed in and out- if maintaining smooth quality is important. The default rendering mode
+          may have a small 'snapping' effect when text size changes. Out of the non-default options,
+          outline is specifically optimized to maintain smoothness across size changes.
+        </p>
+
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTextRenderingMode.Default">
+      <summary>
+        The behavior is determined automatically, based on the font and text size.
+      </summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTextRenderingMode.Aliased">
+      <summary>
+        No anti-aliasing is performed.
+      </summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTextRenderingMode.GdiClassic">
+      <summary>
+        Antialiasing is performed in the horizontal direction,
+        and the appearance of glyphs is layout-compatible with GDI when GDI's CLEARTYPE_QUALITY
+        option is used. This option is unlikely to be used by WinRT apps. It's intended
+        for backwards compatibility with legacy rendering.
+      </summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTextRenderingMode.GdiNatural">
+      <summary>
+        Antialiasing is performed in the horizontal direction, 
+        and the appearance of glyphs is compatible with GDI when GDI's CLEARTYPE_NATRUAL_QUALITY
+        option is used. This option is unlikely to be used by WinRT apps. It's intended
+        for backwards compatibility with legacy rendering.
+      </summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTextRenderingMode.Natural">
+      <summary>
+        Antialiasing is performed in the horizontal direction. This allows glyphs to be
+        positioned with horizontally subpixel precision.
+      </summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTextRenderingMode.NaturalSymmetric">
+      <summary>
+        Similar to Natural except antialiasing is performed in both the
+        horizontal and vertical directions. This is typically used at larger sizes to make curves
+        and diagonal lines look smoother.
+      </summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTextRenderingMode.Outline">
+      <summary>Specifies that text rendering should be perfomed using geometric outlines.</summary>
+    </member>
+    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasTextRenderingParameters" Experimental="true">
+      <summary>Represents text-drawing parameters which may be applied to a CanvasDrawingSession.</summary>
+      <remarks>
+        <p>
+          When using <a href="Interop.htm">Direct2D interop</a>, this Win2D class
+          corresponds to the DirectWrite interface IDWriteRenderingParams2.
+        </p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextRenderingParameters.#ctor(Microsoft.Graphics.Canvas.Text.CanvasTextRenderingMode,Microsoft.Graphics.Canvas.Text.CanvasTextGridFit)">
+      <summary>Initializes a new instance of the CanvasTextRenderingParameters class.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextRenderingParameters.GridFit">
+      <summary>Gets the gridfitting option which may be applied to text.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextRenderingParameters.RenderingMode">
+      <summary>Gets the rendering mode option which may be applied to text.</summary>
+    </member>    
+  </members>
+</doc>

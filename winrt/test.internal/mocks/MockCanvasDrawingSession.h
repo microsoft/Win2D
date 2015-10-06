@@ -209,16 +209,18 @@ namespace canvas
         DONT_EXPECT(DrawGradientMeshAtCoords, ICanvasGradientMesh*, float, float);
 #endif
 
-        DONT_EXPECT(get_Antialiasing     , CanvasAntialiasing*);
-        DONT_EXPECT(put_Antialiasing     , CanvasAntialiasing);
-        DONT_EXPECT(get_Blend            , CanvasBlend*);
-        DONT_EXPECT(put_Blend            , CanvasBlend);
-        DONT_EXPECT(get_TextAntialiasing , CanvasTextAntialiasing*);
-        DONT_EXPECT(put_TextAntialiasing , CanvasTextAntialiasing);
-        DONT_EXPECT(get_Transform        , ABI::Microsoft::Graphics::Canvas::Numerics::Matrix3x2*);
-        DONT_EXPECT(put_Transform        , ABI::Microsoft::Graphics::Canvas::Numerics::Matrix3x2);
-        DONT_EXPECT(get_Units            , CanvasUnits*);
-        DONT_EXPECT(put_Units            , CanvasUnits);
+        DONT_EXPECT(get_Antialiasing            , CanvasAntialiasing*);
+        DONT_EXPECT(put_Antialiasing            , CanvasAntialiasing);
+        DONT_EXPECT(get_Blend                   , CanvasBlend*);
+        DONT_EXPECT(put_Blend                   , CanvasBlend);
+        DONT_EXPECT(get_TextAntialiasing        , CanvasTextAntialiasing*);
+        DONT_EXPECT(put_TextAntialiasing        , CanvasTextAntialiasing);
+        DONT_EXPECT(get_TextRenderingParameters , ICanvasTextRenderingParameters**);
+        DONT_EXPECT(put_TextRenderingParameters , ICanvasTextRenderingParameters*);
+        DONT_EXPECT(get_Transform               , ABI::Microsoft::Graphics::Canvas::Numerics::Matrix3x2*);
+        DONT_EXPECT(put_Transform               , ABI::Microsoft::Graphics::Canvas::Numerics::Matrix3x2);
+        DONT_EXPECT(get_Units                   , CanvasUnits*);
+        DONT_EXPECT(put_Units                   , CanvasUnits);
 
         DONT_EXPECT(CreateLayerWithOpacity                                , float, ICanvasActiveLayer**);
         DONT_EXPECT(CreateLayerWithOpacityBrush                           , ICanvasBrush*, ICanvasActiveLayer**);

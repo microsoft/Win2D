@@ -1182,6 +1182,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         IFACEMETHOD(get_TextAntialiasing)(CanvasTextAntialiasing* value);
         IFACEMETHOD(put_TextAntialiasing)(CanvasTextAntialiasing value);
 
+        IFACEMETHOD(get_TextRenderingParameters)(ICanvasTextRenderingParameters** value);
+        IFACEMETHOD(put_TextRenderingParameters)(ICanvasTextRenderingParameters* value);
+
         IFACEMETHOD(get_Transform)(ABI::Microsoft::Graphics::Canvas::Numerics::Matrix3x2* value);
         IFACEMETHOD(put_Transform)(ABI::Microsoft::Graphics::Canvas::Numerics::Matrix3x2 value);
 

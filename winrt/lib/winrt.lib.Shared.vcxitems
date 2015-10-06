@@ -154,6 +154,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)images\TextureUtilities.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)text\CanvasTextFormat.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)text\CanvasTextLayout.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)text\CanvasTextRenderingParameters.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)text\CustomFontManager.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)text\TextUtilities.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\Conversion.h" />
@@ -265,6 +266,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)images\TextureUtilities.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)text\CanvasTextFormat.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)text\CanvasTextLayout.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)text\CanvasTextRenderingParameters.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)text\CustomFontManager.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)utils\Strings.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)directx\Direct3DDevice.cpp" />
@@ -352,6 +354,7 @@
     <None Include="$(MSBuildThisFileDirectory)images\CanvasImage.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)text\CanvasTextFormat.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)text\CanvasTextLayout.abi.idl" />
+    <None Include="$(MSBuildThisFileDirectory)text\CanvasTextRenderingParameters.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)directx\WinRTDirect3D11.idl" />
     <None Include="$(MSBuildThisFileDirectory)directx\WinRTDirectXCommon.idl" />
     <None Include="$(MSBuildThisFileDirectory)printing\CanvasPrintDocument.abi.idl" />

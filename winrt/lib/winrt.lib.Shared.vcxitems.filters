@@ -244,6 +244,9 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)text\CanvasTextLayout.cpp">
       <Filter>text</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)text\CanvasTextRenderingParameters.cpp">
+      <Filter>text</Filter>
+    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)text\CustomFontManager.cpp">
       <Filter>text</Filter>
     </ClCompile>
@@ -566,6 +569,9 @@
       <Filter>text</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)text\CanvasTextLayout.h">
+      <Filter>text</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)text\CanvasTextRenderingParameters.h">
       <Filter>text</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)text\CustomFontManager.h">
@@ -917,6 +923,9 @@
       <Filter>images</Filter>
     </None>
     <None Include="$(MSBuildThisFileDirectory)text\CanvasTextFormat.abi.idl">
+      <Filter>text</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)text\CanvasTextRenderingParameters.abi.idl">
       <Filter>text</Filter>
     </None>
     <None Include="$(MSBuildThisFileDirectory)directx\WinRTDirect3D11.idl">

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="xaml">
@@ -148,6 +148,9 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)utils\MapTests.cpp">
       <Filter>utils</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasTextRenderingParametersUnitTests.cpp">
+      <Filter>graphics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)pch.h" />
@@ -263,6 +266,9 @@
       <Filter>mocks</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDWriteFontFile.h">
+      <Filter>mocks</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDWriteRenderingParams.h">
       <Filter>mocks</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDWriteTextLayout.h">

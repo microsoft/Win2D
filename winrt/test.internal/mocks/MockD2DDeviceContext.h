@@ -70,6 +70,8 @@ namespace canvas
         CALL_COUNTER_WITH_MOCK(PushAxisAlignedClipMethod             , void(D2D1_RECT_F const*, D2D1_ANTIALIAS_MODE));
         CALL_COUNTER_WITH_MOCK(PopAxisAlignedClipMethod              , void());
         CALL_COUNTER_WITH_MOCK(FillOpacityMaskMethod                 , void(ID2D1Bitmap*, ID2D1Brush*, D2D1_RECT_F const*, D2D1_RECT_F const*));
+        CALL_COUNTER_WITH_MOCK(SetTextRenderingParamsMethod          , void(IDWriteRenderingParams*));
+        CALL_COUNTER_WITH_MOCK(GetTextRenderingParamsMethod          , void(IDWriteRenderingParams**));
 
 #if WINVER > _WIN32_WINNT_WINBLUE
         CALL_COUNTER_WITH_MOCK(CreateGradientMeshMethod              , HRESULT(CONST D2D1_GRADIENT_MESH_PATCH*, UINT32, ID2D1GradientMesh**));
@@ -279,14 +281,14 @@ namespace canvas
             return GetTextAntialiasModeMethod.WasCalled();
         }
 
-        IFACEMETHODIMP_(void) SetTextRenderingParams(IDWriteRenderingParams *) override
+        IFACEMETHODIMP_(void) SetTextRenderingParams(IDWriteRenderingParams* params) override
         {
-            Assert::Fail(L"Unexpected call to SetTextRenderingParams");
+            return SetTextRenderingParamsMethod.WasCalled(params);
         }
 
-        IFACEMETHODIMP_(void) GetTextRenderingParams(IDWriteRenderingParams **) const override
+        IFACEMETHODIMP_(void) GetTextRenderingParams(IDWriteRenderingParams** params) const override
         {
-            Assert::Fail(L"Unexpected call to GetTextRenderingParams");
+            return GetTextRenderingParamsMethod.WasCalled(params);
         }
 
         IFACEMETHODIMP_(void) SetTags(D2D1_TAG,D2D1_TAG) override

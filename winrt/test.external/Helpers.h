@@ -291,6 +291,36 @@ namespace Microsoft
             }
 
             template<>
+            inline std::wstring ToString<CanvasTextRenderingMode>(CanvasTextRenderingMode const& value)
+            {
+                switch (value)
+                {
+                    case CanvasTextRenderingMode::Default: return L"CanvasTextRenderingMode::Default";
+                    case CanvasTextRenderingMode::Aliased: return L"CanvasTextRenderingMode::Aliased";
+                    case CanvasTextRenderingMode::GdiClassic: return L"CanvasTextRenderingMode::GdiClassic";
+                    case CanvasTextRenderingMode::GdiNatural: return L"CanvasTextRenderingMode::GdiNatural";
+                    case CanvasTextRenderingMode::NaturalSymmetric: return L"CanvasTextRenderingMode::NaturalSymmetric";
+                    case CanvasTextRenderingMode::Outline: return L"CanvasTextRenderingMode::Outline";
+#if WINVER > _WIN32_WINNT_WINBLUE
+                    case CanvasTextRenderingMode::NaturalSymmetricDownsampled: return L"CanvasTextRenderingMode::NaturalSymmetricDownsampled";
+#endif
+                    default: assert(false); return L"<unknown CanvasTextRenderingMode>";
+                }
+            }
+
+            template<>
+            inline std::wstring ToString<CanvasTextGridFit>(CanvasTextGridFit const& value)
+            {
+                switch (value)
+                {
+                    case CanvasTextGridFit::Default: return L"CanvasTextGridFit::Default";
+                    case CanvasTextGridFit::Disable: return L"CanvasTextGridFit::Disable";
+                    case CanvasTextGridFit::Enable: return L"CanvasTextGridFit::Enable";
+                    default: assert(false); return L"<unknown CanvasTextGridFit>";
+                }
+            }
+
+            template<>
             inline std::wstring ToString<Platform::Guid>(Platform::Guid const& value)
             {
                 Platform::Guid copy = value;
