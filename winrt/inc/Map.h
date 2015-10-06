@@ -39,7 +39,7 @@ namespace collections
     template<>
     struct MapKeyComparison<WinString>
     {
-        bool operator() (WinString const& value1, WinString const& value2)
+        bool operator() (HSTRING value1, HSTRING value2) const
         {
             int compareResult;
             ThrowIfFailed(WindowsCompareStringOrdinal(value1, value2, &compareResult));
