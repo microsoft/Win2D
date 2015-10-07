@@ -13,6 +13,9 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
 
     <member name="T:Microsoft.Graphics.Canvas.Text.CanvasOpticalAlignment">
       <summary>Specifies how glyphs are aligned to the margin.</summary>
+      <remarks>
+          By default, there is allowed to be some whitespace in between the margin edge and the glyph edge.
+      </remarks>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.Text.CanvasOpticalAlignment.Default">
       <summary>Glyphs are aligned according to their 'cell' boundaries. </summary>
@@ -327,6 +330,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.LastLineWrapping">
       <summary>Specifies whether or not the last word on the last line is wrapped.</summary>
+      <remarks>This is set to 'true' by default.</remarks>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.IncrementalTabStop">
       <summary>Specifies the incremental tab stop position.</summary>
@@ -354,6 +358,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     </member>
     <member name="T:Microsoft.Graphics.Canvas.Text.CanvasVerticalGlyphOrientation">
       <summary>Specifies the orientation of glyphs when a vertical reading direction is used.</summary>
+      <remarks>By default, some naturally horizontal scripts may be rotated if they're drawn using a vertical text direction.</remarks>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.Text.CanvasVerticalGlyphOrientation.Default">
       <summary>

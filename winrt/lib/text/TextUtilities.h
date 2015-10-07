@@ -362,7 +362,35 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         return static_cast<DWRITE_LINE_SPACING_METHOD>(value);
     }
-#endif
+#endif    
+
+    template<>
+    inline void ThrowIfInvalid(CanvasVerticalGlyphOrientation value)
+    {
+        switch (value)
+        {
+        case CanvasVerticalGlyphOrientation::Default:
+        case CanvasVerticalGlyphOrientation::Stacked:
+            return;
+
+        default:
+            ThrowHR(E_INVALIDARG);
+        }
+    }
+
+    template<>
+    inline void ThrowIfInvalid(CanvasOpticalAlignment value)
+    {
+        switch (value)
+        {
+        case CanvasOpticalAlignment::Default:
+        case CanvasOpticalAlignment::NoSideBearings:
+            return;
+
+        default:
+            ThrowHR(E_INVALIDARG);
+        }
+    }
 
     inline void ThrowIfInvalidTrimmingDelimiter(HSTRING value)
     {

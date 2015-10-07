@@ -130,7 +130,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <remarks>
         <p>
           When using <a href="Interop.htm">Direct2D interop</a>, this Win2D class
-          corresponds to the Direct2D interface IDWriteTextFormat.
+          corresponds to the Direct2D interface IDWriteTextFormat1.
         </p>
       </remarks>
 
@@ -372,6 +372,21 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
           </code>
         </p>
       </remarks>
+    </member>    
+
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextFormat.VerticalGlyphOrientation" Experimental="true">
+      <summary>Specifies the orientation of glyphs when a vertical reading direction is used.</summary>
+      <remarks>By default, some naturally horizontal scripts may be rotated if they're drawn using a vertical text direction.</remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextFormat.OpticalAlignment" Experimental="true">
+      <summary>Specifies how glyphs are aligned to the margin.</summary>
+      <remarks>
+          By default, there is allowed to be some whitespace in between the margin edge and the glyph edge.
+      </remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextFormat.LastLineWrapping" Experimental="true">
+      <summary>Specifies whether the last line is wrapped.</summary>
+      <remarks>This is set to 'true' by default.</remarks>
     </member>
     
   </members>

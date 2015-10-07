@@ -174,6 +174,7 @@ namespace Microsoft
             TO_STRING(ID2D1DeviceContext1);
             TO_STRING(ID2D1Factory);
             TO_STRING(IDWriteTextFormat);
+            TO_STRING(IDWriteTextFormat1);
             TO_STRING(IDXGIDevice3);
             TO_STRING(IDirect3DDevice);
             TO_STRING(IInspectable);

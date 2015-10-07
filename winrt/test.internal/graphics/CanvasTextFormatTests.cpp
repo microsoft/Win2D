@@ -31,8 +31,8 @@ namespace canvas
     void TestSimpleProperty(
         std::function<CANVAS_TYPE(CanvasTextFormat*)> canvasGetter,
         std::function<void(CanvasTextFormat*, CANVAS_TYPE)> canvasSetter,
-        std::function<DW_TYPE(IDWriteTextFormat*)> dwriteGetter,
-        std::function<void(IDWriteTextFormat*, DW_TYPE)> dwriteSetter,
+        std::function<DW_TYPE(IDWriteTextFormat1*)> dwriteGetter,
+        std::function<void(IDWriteTextFormat1*, DW_TYPE)> dwriteSetter,
         CANVAS_TYPE expectedValue,
         DW_TYPE realizedValue,
         DW_TYPE setRealizedValue,
@@ -55,7 +55,7 @@ namespace canvas
         //
         // Check the realized object
         //        
-        ComPtr<IDWriteTextFormat> dwf = ctf->GetRealizedTextFormat();
+        ComPtr<IDWriteTextFormat1> dwf = ctf->GetRealizedTextFormat();
 
         auto actualDWriteValue = dwriteGetter(dwf.Get());
         Assert::AreEqual(realizedValue, actualDWriteValue);
@@ -133,13 +133,13 @@ namespace canvas
     }
 
 #define SIMPLE_DWRITE_GETTER(PROPERTY)          \
-    [](IDWriteTextFormat* dwf)                  \
+    [](IDWriteTextFormat1* dwf)                 \
     {                                           \
         return dwf->Get ## PROPERTY();          \
     }
 
 #define SIMPLE_DWRITE_SETTER(PROPERTY, TYPE)        \
-    [](IDWriteTextFormat* dwf, TYPE value)          \
+    [](IDWriteTextFormat1* dwf, TYPE value)         \
     {                                               \
         ThrowIfFailed(dwf->Set ## PROPERTY(value)); \
     }
@@ -422,7 +422,7 @@ namespace canvas
 
                 // Get the underlying IDWriteTextFormat, and wrap a new
                 // CanvasTextFormat around it
-                auto dtf = GetWrappedResource<IDWriteTextFormat>(ctf);
+                auto dtf = GetWrappedResource<IDWriteTextFormat1>(ctf);
 
                 ctf.Reset();
 
@@ -478,7 +478,7 @@ namespace canvas
 
                 // Get the underlying IDWriteTextFormat, and wrap a new
                 // CanvasTextFormat around it
-                auto dtf = GetWrappedResource<IDWriteTextFormat>(ctf);
+                auto dtf = GetWrappedResource<IDWriteTextFormat1>(ctf);
 
                 DWRITE_LINE_SPACING_METHOD dwriteMethod;
                 float dwriteSpacing, unusedBaseline;
@@ -571,7 +571,7 @@ namespace canvas
         {
             // Create a IDWriteTextFormat...
             auto ctf = Make<CanvasTextFormat>();
-            auto dtf = GetWrappedResource<IDWriteTextFormat>(ctf);
+            auto dtf = GetWrappedResource<IDWriteTextFormat1>(ctf);
 
             // Set the line spacing to DEFAULT/0.
             ThrowIfFailed(dtf->SetLineSpacing(DWRITE_LINE_SPACING_METHOD_DEFAULT, 0.0f, 0.0f));
@@ -584,7 +584,7 @@ namespace canvas
             // Force it to re-realize
             ThrowIfFailed(ctf->put_FontSize(123));
 
-            dtf = GetWrappedResource<IDWriteTextFormat>(ctf);
+            dtf = GetWrappedResource<IDWriteTextFormat1>(ctf);
 
             // Verify that the line spacing method is still DEFAULT
             DWriteLineSpacing spacing(dtf.Get());
@@ -878,6 +878,76 @@ namespace canvas
             TEST_INVALID_PROPERTIES(
                 Options,
                 static_cast<CanvasDrawTextOptions>(999));
+        }
+
+        TEST_METHOD_EX(CanvasTextFormat_VerticalGlyphOrientation)
+        {
+            //
+            // For properties with only two settings where one of them is the
+            // default, this tests both orderings of the properties to ensure
+            // things aren't somehow working by accident.
+            //
+            TEST_PROPERTY(
+                VerticalGlyphOrientation,
+                VerticalGlyphOrientation,
+                CanvasVerticalGlyphOrientation::Stacked,
+                DWRITE_VERTICAL_GLYPH_ORIENTATION_STACKED,
+                DWRITE_VERTICAL_GLYPH_ORIENTATION_DEFAULT,
+                CanvasVerticalGlyphOrientation::Default);
+
+            TEST_PROPERTY(
+                VerticalGlyphOrientation,
+                VerticalGlyphOrientation,
+                CanvasVerticalGlyphOrientation::Default,
+                DWRITE_VERTICAL_GLYPH_ORIENTATION_DEFAULT,
+                DWRITE_VERTICAL_GLYPH_ORIENTATION_STACKED,
+                CanvasVerticalGlyphOrientation::Stacked);
+
+            TEST_INVALID_PROPERTIES(
+                VerticalGlyphOrientation,
+                static_cast<CanvasVerticalGlyphOrientation>(999));
+        }
+
+        TEST_METHOD_EX(CanvasTextFormat_OpticalAlignment)
+        {
+            TEST_PROPERTY(
+                OpticalAlignment,
+                OpticalAlignment,
+                CanvasOpticalAlignment::NoSideBearings,
+                DWRITE_OPTICAL_ALIGNMENT_NO_SIDE_BEARINGS,
+                DWRITE_OPTICAL_ALIGNMENT_NONE,
+                CanvasOpticalAlignment::Default);
+
+            TEST_PROPERTY(
+                OpticalAlignment,
+                OpticalAlignment,
+                CanvasOpticalAlignment::Default,
+                DWRITE_OPTICAL_ALIGNMENT_NONE,
+                DWRITE_OPTICAL_ALIGNMENT_NO_SIDE_BEARINGS,
+                CanvasOpticalAlignment::NoSideBearings);
+
+            TEST_INVALID_PROPERTIES(
+                OpticalAlignment,
+                static_cast<CanvasOpticalAlignment>(999));
+        }
+
+        TEST_METHOD_EX(CanvasTextFormat_LastLineWrapping)
+        {
+            TEST_PROPERTY(
+                LastLineWrapping,
+                LastLineWrapping,
+                static_cast<boolean>(false),
+                FALSE,
+                TRUE,
+                static_cast<boolean>(true));
+
+            TEST_PROPERTY(
+                LastLineWrapping,
+                LastLineWrapping,
+                static_cast<boolean>(true),
+                TRUE,
+                FALSE,
+                static_cast<boolean>(false));
         }
 
         TEST_METHOD_EX(CanvasTextFormat_GetResourceFailsWhenClosed)

@@ -32,6 +32,10 @@ namespace canvas
         std::wstring m_fontFamilyName;
         std::wstring m_localeName;
 
+        DWRITE_VERTICAL_GLYPH_ORIENTATION m_verticalGlyphOrientation;
+        DWRITE_OPTICAL_ALIGNMENT m_opticalAlignment;
+        bool m_lastLineWrapping;
+
     public:
         StubDWriteTextFormat(
             WCHAR const* fontFamilyName,
@@ -55,6 +59,9 @@ namespace canvas
             SetReadingDirectionMethod.AllowAnyCall([&](DWRITE_READING_DIRECTION direction) {m_readingDirection = direction; return S_OK; });
             SetFlowDirectionMethod.AllowAnyCall([&](DWRITE_FLOW_DIRECTION direction) {m_flowDirection = direction; return S_OK; });
             SetIncrementalTabStopMethod.AllowAnyCall([&](float stop) {m_incrementalTabStop = stop; return S_OK; });
+            SetVerticalGlyphOrientationMethod.AllowAnyCall([&](DWRITE_VERTICAL_GLYPH_ORIENTATION newValue) {m_verticalGlyphOrientation = newValue; return S_OK; });
+            SetOpticalAlignmentMethod.AllowAnyCall([&](DWRITE_OPTICAL_ALIGNMENT newValue) {m_opticalAlignment = newValue; return S_OK; });
+            SetLastLineWrappingMethod.AllowAnyCall([&](BOOL newValue) {m_lastLineWrapping = !!newValue; return S_OK; });
 
             SetTrimmingMethod.AllowAnyCall(
                 [&](DWRITE_TRIMMING const* trimming, IDWriteInlineObject* obj) 
@@ -128,6 +135,10 @@ namespace canvas
 
                     return S_OK;
                 });
+
+            GetVerticalGlyphOrientationMethod.AllowAnyCall([&]() { return m_verticalGlyphOrientation; });
+            GetOpticalAlignmentMethod.AllowAnyCall([&]() { return m_opticalAlignment; });
+            GetLastLineWrappingMethod.AllowAnyCall([&]() { return m_lastLineWrapping; });
         }
     };
 }

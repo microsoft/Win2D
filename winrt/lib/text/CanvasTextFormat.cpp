@@ -116,11 +116,14 @@ CanvasTextFormat::CanvasTextFormat()
     , m_trimmingDelimiterCount(0)
     , m_wordWrapping(CanvasWordWrapping::Wrap)
     , m_drawTextOptions(CanvasDrawTextOptions::Default)
+    , m_verticalGlyphOrientation(CanvasVerticalGlyphOrientation::Default)
+    , m_opticalAlignment(CanvasOpticalAlignment::Default)
+    , m_lastLineWrapping(true)
 {
 }
 
 
-CanvasTextFormat::CanvasTextFormat(IDWriteTextFormat* format)
+CanvasTextFormat::CanvasTextFormat(IDWriteTextFormat1* format)
     : ResourceWrapper(format)
     , m_customFontManager(CustomFontManager::GetInstance())
     , m_closed(false)
@@ -160,7 +163,7 @@ IFACEMETHODIMP CanvasTextFormat::GetNativeResource(ICanvasDevice* device, float 
 }
 
 
-ComPtr<IDWriteTextFormat> CanvasTextFormat::GetRealizedTextFormat()
+ComPtr<IDWriteTextFormat1> CanvasTextFormat::GetRealizedTextFormat()
 {
     auto lock = GetLock();
 
@@ -181,7 +184,7 @@ ComPtr<IDWriteTextFormat> CanvasTextFormat::GetRealizedTextFormat()
 }
 
 
-ComPtr<IDWriteTextFormat> CanvasTextFormat::CreateRealizedTextFormat(bool skipWordWrapping)
+ComPtr<IDWriteTextFormat1> CanvasTextFormat::CreateRealizedTextFormat(bool skipWordWrapping)
 {
     auto factory = m_customFontManager->GetSharedFactory();
 
@@ -196,7 +199,7 @@ ComPtr<IDWriteTextFormat> CanvasTextFormat::CreateRealizedTextFormat(bool skipWo
         fontCollection = m_customFontManager->GetFontCollectionFromUri(uri);
     }
 
-    ComPtr<IDWriteTextFormat> textFormat;
+    ComPtr<IDWriteTextFormat> textFormatBase;
 
     ThrowIfFailed(factory->CreateTextFormat(
         static_cast<const wchar_t*>(fontFamily),
@@ -206,7 +209,9 @@ ComPtr<IDWriteTextFormat> CanvasTextFormat::CreateRealizedTextFormat(bool skipWo
         ToFontStretch(m_fontStretch),
         m_fontSize,
         static_cast<const wchar_t*>(m_localeName),
-        &textFormat));
+        &textFormatBase));
+
+    auto textFormat = As<IDWriteTextFormat1>(textFormatBase);
 
     RealizeDirection(textFormat.Get());
     RealizeIncrementalTabStop(textFormat.Get());
@@ -214,6 +219,10 @@ ComPtr<IDWriteTextFormat> CanvasTextFormat::CreateRealizedTextFormat(bool skipWo
     RealizeParagraphAlignment(textFormat.Get());
     RealizeTextAlignment(textFormat.Get());
     RealizeTrimming(textFormat.Get());
+
+    RealizeVerticalGlyphOrientation(textFormat.Get());
+    RealizeOpticalAlignment(textFormat.Get());
+    RealizeLastLineWrapping(textFormat.Get());
 
     if (!skipWordWrapping) 
         RealizeWordWrapping(textFormat.Get());
@@ -290,6 +299,10 @@ void CanvasTextFormat::SetShadowPropertiesFromDWrite()
     m_verticalAlignment  = ToCanvasVerticalAlignment(textFormat->GetParagraphAlignment());
     m_horizontalAlignment = ToCanvasHorizontalAlignment(textFormat->GetTextAlignment());
     m_wordWrapping       = ToCanvasWordWrapping(textFormat->GetWordWrapping());
+    m_verticalGlyphOrientation = ToCanvasVerticalGlyphOrientation(textFormat->GetVerticalGlyphOrientation());
+    m_opticalAlignment         = ToCanvasOpticalAlignment(textFormat->GetOpticalAlignment());
+    m_lastLineWrapping         = !!textFormat->GetLastLineWrapping();
+
 
     DWriteLineSpacing spacing(textFormat.Get());
     m_lineSpacing = spacing.GetAdjustedSpacing();
@@ -342,6 +355,12 @@ static bool IsSame(WinString* outputValue, HSTRING const& value)
     return outputValue->Equals(value);
 }
 
+template<typename boolean>
+static bool IsSame(bool* outputValue, boolean value)
+{
+    return *outputValue == !!value;
+}
+
 
 template<typename T>
 static void SetFrom(T* outputValue, T const& value)
@@ -367,6 +386,18 @@ static void SetFrom(WinString* outputValue, HSTRING const& value)
     *outputValue = value;
 }
 
+template<typename BOOL>
+static void SetFrom(boolean* outputValue, BOOL value)
+{
+    *outputValue = !!value;
+}
+
+template<typename boolean>
+static void SetFrom(bool* outputValue, boolean value)
+{
+    *outputValue = !!value;
+}
+
 
 template<typename T, typename ST, typename FN>
 HRESULT __declspec(nothrow) CanvasTextFormat::PropertyGet(T* value, ST const& shadowValue, FN realizedGetter)
@@ -390,7 +421,7 @@ HRESULT __declspec(nothrow) CanvasTextFormat::PropertyGet(T* value, ST const& sh
 
 
 template<typename T, typename TT, typename FNV>
-HRESULT __declspec(nothrow) CanvasTextFormat::PropertyPut(T value, TT* dest, FNV&& validator, void(CanvasTextFormat::*realizer)(IDWriteTextFormat*))
+HRESULT __declspec(nothrow) CanvasTextFormat::PropertyPut(T value, TT* dest, FNV&& validator, void(CanvasTextFormat::*realizer)(IDWriteTextFormat1*))
 {
     return ExceptionBoundary(
         [&]
@@ -433,7 +464,7 @@ HRESULT __declspec(nothrow) CanvasTextFormat::PropertyPut(T value, TT* dest, FNV
 }
 
 template<typename T, typename TT>
-HRESULT __declspec(nothrow) CanvasTextFormat::PropertyPut(T value, TT* dest, void(CanvasTextFormat::*realizer)(IDWriteTextFormat*))
+HRESULT __declspec(nothrow) CanvasTextFormat::PropertyPut(T value, TT* dest, void(CanvasTextFormat::*realizer)(IDWriteTextFormat1*))
 {
     return PropertyPut(value, dest, [](T){}, realizer);
 }
@@ -479,7 +510,7 @@ DWriteToCanvasTextDirection const* DWriteToCanvasTextDirection::Lookup(CanvasTex
 }
 
 
-void CanvasTextFormat::RealizeDirection(IDWriteTextFormat* textFormat)
+void CanvasTextFormat::RealizeDirection(IDWriteTextFormat1* textFormat)
 {
     auto entry = DWriteToCanvasTextDirection::Lookup(m_direction);
     assert(entry);          // m_direction should always be set to a valid value
@@ -675,7 +706,7 @@ IFACEMETHODIMP CanvasTextFormat::put_IncrementalTabStop(float value)
 }
 
 
-void CanvasTextFormat::RealizeIncrementalTabStop(IDWriteTextFormat* textFormat)
+void CanvasTextFormat::RealizeIncrementalTabStop(IDWriteTextFormat1* textFormat)
 {
     // Negative value indicates that it hasn't been set yet, so we want to
     // use dwrite's default.
@@ -731,7 +762,7 @@ IFACEMETHODIMP CanvasTextFormat::put_LineSpacingBaseline(float value)
 }
 
 
-void CanvasTextFormat::RealizeLineSpacing(IDWriteTextFormat* textFormat)
+void CanvasTextFormat::RealizeLineSpacing(IDWriteTextFormat1* textFormat)
 {
     DWriteLineSpacing::Set(
         textFormat, 
@@ -788,7 +819,7 @@ IFACEMETHODIMP CanvasTextFormat::put_VerticalAlignment(CanvasVerticalAlignment v
 }
 
 
-void CanvasTextFormat::RealizeParagraphAlignment(IDWriteTextFormat* textFormat)
+void CanvasTextFormat::RealizeParagraphAlignment(IDWriteTextFormat1* textFormat)
 {
     ThrowIfFailed(textFormat->SetParagraphAlignment(ToParagraphAlignment(m_verticalAlignment)));
 }
@@ -816,7 +847,7 @@ IFACEMETHODIMP CanvasTextFormat::put_HorizontalAlignment(CanvasHorizontalAlignme
         &CanvasTextFormat::RealizeTextAlignment);
 }
 
-void CanvasTextFormat::RealizeTextAlignment(IDWriteTextFormat* textFormat)
+void CanvasTextFormat::RealizeTextAlignment(IDWriteTextFormat1* textFormat)
 {
     ThrowIfFailed(textFormat->SetTextAlignment(ToTextAlignment(m_horizontalAlignment)));        
 }
@@ -888,7 +919,7 @@ IFACEMETHODIMP CanvasTextFormat::put_TrimmingDelimiterCount(int32_t value)
 }
 
 
-void CanvasTextFormat::RealizeTrimming(IDWriteTextFormat* textFormat)
+void CanvasTextFormat::RealizeTrimming(IDWriteTextFormat1* textFormat)
 {
     DWRITE_TRIMMING trimmingOptions{};
     trimmingOptions.granularity = ToTrimmingGranularity(m_trimmingGranularity);
@@ -924,7 +955,7 @@ IFACEMETHODIMP CanvasTextFormat::put_WordWrapping(CanvasWordWrapping value)
 }
 
 
-void CanvasTextFormat::RealizeWordWrapping(IDWriteTextFormat* textFormat)
+void CanvasTextFormat::RealizeWordWrapping(IDWriteTextFormat1* textFormat)
 {
     ThrowIfFailed(textFormat->SetWordWrapping(ToWordWrapping(m_wordWrapping)));        
 }
@@ -992,6 +1023,72 @@ IFACEMETHODIMP CanvasTextFormat::put_LineSpacingMode(CanvasLineSpacingMode value
 
 #endif
 
+
+IFACEMETHODIMP CanvasTextFormat::get_VerticalGlyphOrientation(CanvasVerticalGlyphOrientation* value)
+{
+    return PropertyGet(
+        value,
+        m_verticalGlyphOrientation,
+        [](IDWriteTextFormat1* textFormat) { return ToCanvasVerticalGlyphOrientation(textFormat->GetVerticalGlyphOrientation()); });
+}
+
+
+IFACEMETHODIMP CanvasTextFormat::put_VerticalGlyphOrientation(CanvasVerticalGlyphOrientation value)
+{
+    return PropertyPut(
+        value,
+        &m_verticalGlyphOrientation,
+        ThrowIfInvalid<CanvasVerticalGlyphOrientation>,
+        &CanvasTextFormat::RealizeVerticalGlyphOrientation);
+}
+
+void CanvasTextFormat::RealizeVerticalGlyphOrientation(IDWriteTextFormat1* textFormat)
+{
+    ThrowIfFailed(textFormat->SetVerticalGlyphOrientation(ToVerticalGlyphOrientation(m_verticalGlyphOrientation)));
+}
+
+IFACEMETHODIMP CanvasTextFormat::get_OpticalAlignment(CanvasOpticalAlignment* value)
+{
+    return PropertyGet(
+        value,
+        m_opticalAlignment,
+        [](IDWriteTextFormat1* textFormat) { return ToCanvasOpticalAlignment(textFormat->GetOpticalAlignment()); });
+}
+
+IFACEMETHODIMP CanvasTextFormat::put_OpticalAlignment(CanvasOpticalAlignment value)
+{
+    return PropertyPut(
+        value,
+        &m_opticalAlignment,
+        ThrowIfInvalid<CanvasOpticalAlignment>,
+        &CanvasTextFormat::RealizeOpticalAlignment);
+}
+
+void CanvasTextFormat::RealizeOpticalAlignment(IDWriteTextFormat1* textFormat)
+{
+    ThrowIfFailed(textFormat->SetOpticalAlignment(ToOpticalAlignment(m_opticalAlignment)));
+}
+
+IFACEMETHODIMP CanvasTextFormat::get_LastLineWrapping(boolean* value)
+{
+    return PropertyGet(
+        value,
+        m_lastLineWrapping,
+        [](IDWriteTextFormat1* textFormat) { return textFormat->GetLastLineWrapping(); });
+}
+
+IFACEMETHODIMP CanvasTextFormat::put_LastLineWrapping(boolean value)
+{
+    return PropertyPut(
+        value,
+        &m_lastLineWrapping,
+        &CanvasTextFormat::RealizeLastLineWrapping);
+}
+
+void CanvasTextFormat::RealizeLastLineWrapping(IDWriteTextFormat1* textFormat)
+{
+    ThrowIfFailed(textFormat->SetLastLineWrapping(m_lastLineWrapping));
+}
 
 static WinString GetTextFromLocalizedStrings(
     int32_t stringIndex,

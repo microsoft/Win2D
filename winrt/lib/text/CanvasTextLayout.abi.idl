@@ -5,20 +5,6 @@
 namespace Microsoft.Graphics.Canvas.Text
 {
     runtimeclass CanvasTextLayout;
-
-    [version(VERSION)]
-    typedef enum CanvasOpticalAlignment // Corresponds to DWRITE_OPTICAL_ALIGNMENT.
-    {
-        Default,
-        NoSideBearings
-    } CanvasOpticalAlignment;
-
-    [version(VERSION)]
-    typedef enum CanvasVerticalGlyphOrientation // Corresponds to DWRITE_VERTICAL_GLYPH_ORIENTATION.
-    {
-        Default,
-        Stacked
-    } CanvasVerticalGlyphOrientation;
     
     [version(VERSION)]
     typedef struct CanvasTextLayoutRegion

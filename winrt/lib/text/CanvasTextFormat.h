@@ -52,7 +52,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     class ICanvasTextFormatInternal : public IUnknown
     {
     public:
-        virtual ComPtr<IDWriteTextFormat> GetRealizedTextFormat() = 0;
+        virtual ComPtr<IDWriteTextFormat1> GetRealizedTextFormat() = 0;
         virtual ComPtr<IDWriteTextFormat> GetRealizedTextFormatClone(CanvasWordWrapping overrideWordWrapping) = 0;
         virtual D2D1_DRAW_TEXT_OPTIONS GetDrawTextOptions() = 0;
     };
@@ -65,7 +65,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     // IDWriteTextFormat as necessary.
     //
     class CanvasTextFormat : RESOURCE_WRAPPER_RUNTIME_CLASS(
-        IDWriteTextFormat,
+        IDWriteTextFormat1,
         CanvasTextFormat,
         ICanvasTextFormat,
         CloakedIid<ICanvasTextFormatInternal>)
@@ -108,6 +108,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         WinString m_trimmingDelimiter;
         int32_t m_trimmingDelimiterCount;
         CanvasWordWrapping m_wordWrapping;
+        CanvasVerticalGlyphOrientation m_verticalGlyphOrientation;
+        CanvasOpticalAlignment m_opticalAlignment;
+        bool m_lastLineWrapping;
 
         //
         // Draw text options are not part of IDWriteTextFormat, but are stored
@@ -123,7 +126,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
     public:
         CanvasTextFormat();
-        CanvasTextFormat(IDWriteTextFormat* format);
+        CanvasTextFormat(IDWriteTextFormat1* format);
 
         //
         // ICanvasTextFormat
@@ -132,26 +135,29 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         IFACEMETHOD(get_##NAME)(TYPE* value) override;   \
         IFACEMETHOD(put_##NAME)(TYPE value) override
 
-        PROPERTY(Direction,              CanvasTextDirection);
-        PROPERTY(FontFamily,             HSTRING);
-        PROPERTY(FontSize,               float);
-        PROPERTY(FontStretch,            ABI::Windows::UI::Text::FontStretch);
-        PROPERTY(FontStyle,              ABI::Windows::UI::Text::FontStyle);
-        PROPERTY(FontWeight,             ABI::Windows::UI::Text::FontWeight);
-        PROPERTY(IncrementalTabStop,     float);
-        PROPERTY(LineSpacing,            float);
-        PROPERTY(LineSpacingBaseline,    float);
-        PROPERTY(LocaleName,             HSTRING);
-        PROPERTY(VerticalAlignment,      CanvasVerticalAlignment);
-        PROPERTY(HorizontalAlignment,    CanvasHorizontalAlignment);
-        PROPERTY(TrimmingGranularity,    CanvasTextTrimmingGranularity);
-        PROPERTY(TrimmingDelimiter,      HSTRING);
-        PROPERTY(TrimmingDelimiterCount, int32_t);
-        PROPERTY(WordWrapping,           CanvasWordWrapping);
-        PROPERTY(Options,                CanvasDrawTextOptions);
+        PROPERTY(Direction,                CanvasTextDirection);
+        PROPERTY(FontFamily,               HSTRING);
+        PROPERTY(FontSize,                 float);
+        PROPERTY(FontStretch,              ABI::Windows::UI::Text::FontStretch);
+        PROPERTY(FontStyle,                ABI::Windows::UI::Text::FontStyle);
+        PROPERTY(FontWeight,               ABI::Windows::UI::Text::FontWeight);
+        PROPERTY(IncrementalTabStop,       float);
+        PROPERTY(LineSpacing,              float);
+        PROPERTY(LineSpacingBaseline,      float);
+        PROPERTY(LocaleName,               HSTRING);
+        PROPERTY(VerticalAlignment,        CanvasVerticalAlignment);
+        PROPERTY(HorizontalAlignment,      CanvasHorizontalAlignment);
+        PROPERTY(TrimmingGranularity,      CanvasTextTrimmingGranularity);
+        PROPERTY(TrimmingDelimiter,        HSTRING);
+        PROPERTY(TrimmingDelimiterCount,   int32_t);
+        PROPERTY(WordWrapping,             CanvasWordWrapping);
+        PROPERTY(Options,                  CanvasDrawTextOptions);
+        PROPERTY(VerticalGlyphOrientation, CanvasVerticalGlyphOrientation);
+        PROPERTY(OpticalAlignment,         CanvasOpticalAlignment);
+        PROPERTY(LastLineWrapping,         boolean);
 
 #if WINVER > _WIN32_WINNT_WINBLUE
-        PROPERTY(LineSpacingMode,        CanvasLineSpacingMode);
+        PROPERTY(LineSpacingMode,          CanvasLineSpacingMode);
 #endif
 
 #undef PROPERTY
@@ -166,7 +172,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         // ICanvasTextFormatInternal
         //
 
-        virtual ComPtr<IDWriteTextFormat> GetRealizedTextFormat() override;
+        virtual ComPtr<IDWriteTextFormat1> GetRealizedTextFormat() override;
         virtual ComPtr<IDWriteTextFormat> GetRealizedTextFormatClone(CanvasWordWrapping overrideWordWrapping) override;
         virtual D2D1_DRAW_TEXT_OPTIONS GetDrawTextOptions() override;
 
@@ -188,24 +194,27 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         HRESULT __declspec(nothrow) PropertyGet(T* value, ST const& shadowValue, FN realizedGetter);
 
         template<typename T, typename TT, typename FNV>
-        HRESULT __declspec(nothrow) PropertyPut(T value, TT* dest, FNV&& validator, void(CanvasTextFormat::*realizer)(IDWriteTextFormat*) = nullptr);
+        HRESULT __declspec(nothrow) PropertyPut(T value, TT* dest, FNV&& validator, void(CanvasTextFormat::*realizer)(IDWriteTextFormat1*) = nullptr);
         
         template<typename T, typename TT>
-        HRESULT __declspec(nothrow) PropertyPut(T value, TT* dest, void(CanvasTextFormat::*realizer)(IDWriteTextFormat*) = nullptr);
+        HRESULT __declspec(nothrow) PropertyPut(T value, TT* dest, void(CanvasTextFormat::*realizer)(IDWriteTextFormat1*) = nullptr);
 
         void SetShadowPropertiesFromDWrite();
 
         void Unrealize();
 
-        void RealizeDirection(IDWriteTextFormat* textFormat);
-        void RealizeIncrementalTabStop(IDWriteTextFormat* textFormat);
-        void RealizeLineSpacing(IDWriteTextFormat* textFormat);
-        void RealizeParagraphAlignment(IDWriteTextFormat* textFormat);
-        void RealizeTextAlignment(IDWriteTextFormat* textFormat);
-        void RealizeTrimming(IDWriteTextFormat* textFormat);
-        void RealizeWordWrapping(IDWriteTextFormat* textFormat);
+        void RealizeDirection(IDWriteTextFormat1* textFormat);
+        void RealizeIncrementalTabStop(IDWriteTextFormat1* textFormat);
+        void RealizeLineSpacing(IDWriteTextFormat1* textFormat);
+        void RealizeParagraphAlignment(IDWriteTextFormat1* textFormat);
+        void RealizeTextAlignment(IDWriteTextFormat1* textFormat);
+        void RealizeTrimming(IDWriteTextFormat1* textFormat);
+        void RealizeWordWrapping(IDWriteTextFormat1* textFormat);
+        void RealizeVerticalGlyphOrientation(IDWriteTextFormat1* textFormat);
+        void RealizeOpticalAlignment(IDWriteTextFormat1* textFormat);
+        void RealizeLastLineWrapping(IDWriteTextFormat1* textFormat);
 
-        ComPtr<IDWriteTextFormat> CreateRealizedTextFormat(bool skipWordWrapping = false);
+        ComPtr<IDWriteTextFormat1> CreateRealizedTextFormat(bool skipWordWrapping = false);
 };
 
 

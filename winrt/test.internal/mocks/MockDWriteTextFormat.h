@@ -8,7 +8,7 @@ namespace canvas
 {
     class MockDWriteTextFormat : public RuntimeClass<
         RuntimeClassFlags<ClassicCom>,
-        IDWriteTextFormat>
+        ChainInterfaces<IDWriteTextFormat1, IDWriteTextFormat>>
     {
     public:
         CALL_COUNTER_WITH_MOCK(SetTextAlignmentMethod, HRESULT(DWRITE_TEXT_ALIGNMENT));
@@ -36,6 +36,14 @@ namespace canvas
         CALL_COUNTER_WITH_MOCK(GetFontSizeMethod, FLOAT());
         CALL_COUNTER_WITH_MOCK(GetLocaleNameLengthMethod, UINT32());
         CALL_COUNTER_WITH_MOCK(GetLocaleNameMethod, HRESULT(WCHAR*, UINT32));
+        CALL_COUNTER_WITH_MOCK(SetVerticalGlyphOrientationMethod, HRESULT(DWRITE_VERTICAL_GLYPH_ORIENTATION));
+        CALL_COUNTER_WITH_MOCK(GetVerticalGlyphOrientationMethod, DWRITE_VERTICAL_GLYPH_ORIENTATION());
+        CALL_COUNTER_WITH_MOCK(SetLastLineWrappingMethod, HRESULT(BOOL));
+        CALL_COUNTER_WITH_MOCK(GetLastLineWrappingMethod, BOOL());
+        CALL_COUNTER_WITH_MOCK(SetOpticalAlignmentMethod, HRESULT(DWRITE_OPTICAL_ALIGNMENT));
+        CALL_COUNTER_WITH_MOCK(GetOpticalAlignmentMethod, DWRITE_OPTICAL_ALIGNMENT());
+        CALL_COUNTER_WITH_MOCK(SetFontFallbackMethod, HRESULT(IDWriteFontFallback*));
+        CALL_COUNTER_WITH_MOCK(GetFontFallbackMethod, HRESULT(IDWriteFontFallback**));
 
 
         IFACEMETHODIMP SetTextAlignment(
@@ -186,6 +194,53 @@ namespace canvas
             WCHAR* localeName, UINT32 nameSize) override
         {
             return GetLocaleNameMethod.WasCalled(localeName, nameSize);
+        }
+        IFACEMETHODIMP SetVerticalGlyphOrientation(
+            DWRITE_VERTICAL_GLYPH_ORIENTATION glyphOrientation) override
+        {
+            return SetVerticalGlyphOrientationMethod.WasCalled(glyphOrientation);
+        }
+
+        IFACEMETHODIMP_(DWRITE_VERTICAL_GLYPH_ORIENTATION) GetVerticalGlyphOrientation(
+            ) override
+        {
+            return GetVerticalGlyphOrientationMethod.WasCalled();
+        }
+
+        IFACEMETHODIMP SetLastLineWrapping(
+            BOOL isLastLineWrappingEnabled) override
+        {
+            return SetLastLineWrappingMethod.WasCalled(isLastLineWrappingEnabled);
+        }
+
+        IFACEMETHODIMP_(BOOL) GetLastLineWrapping(
+            ) override
+        {
+            return GetLastLineWrappingMethod.WasCalled();
+        }
+
+        IFACEMETHODIMP SetOpticalAlignment(
+            DWRITE_OPTICAL_ALIGNMENT opticalAlignment) override
+        {
+            return SetOpticalAlignmentMethod.WasCalled(opticalAlignment);
+        }
+
+        IFACEMETHODIMP_(DWRITE_OPTICAL_ALIGNMENT) GetOpticalAlignment(
+            ) override
+        {
+            return GetOpticalAlignmentMethod.WasCalled();
+        }
+
+        IFACEMETHODIMP SetFontFallback(
+            IDWriteFontFallback* fontFallback) override
+        {
+            return SetFontFallbackMethod.WasCalled(fontFallback);
+        }
+
+        IFACEMETHODIMP GetFontFallback(
+            IDWriteFontFallback** fontFallback) override
+        {
+            return GetFontFallbackMethod.WasCalled(fontFallback);
         }
     };
 }

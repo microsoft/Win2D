@@ -115,6 +115,19 @@ namespace Microsoft.Graphics.Canvas.Text
     } CanvasLineSpacingMode;
 #endif
 
+    [version(VERSION)]
+    typedef enum CanvasOpticalAlignment // Corresponds to DWRITE_OPTICAL_ALIGNMENT.
+    {
+        Default,
+        NoSideBearings
+    } CanvasOpticalAlignment;
+
+    [version(VERSION)]
+    typedef enum CanvasVerticalGlyphOrientation // Corresponds to DWRITE_VERTICAL_GLYPH_ORIENTATION.
+    {
+        Default,
+        Stacked
+    } CanvasVerticalGlyphOrientation;
 
 #define PROPERTY(NAME, TYPE)                            \
     [propget] HRESULT NAME([out, retval] TYPE* value);  \
@@ -124,26 +137,29 @@ namespace Microsoft.Graphics.Canvas.Text
     interface ICanvasTextFormat : IInspectable
         requires Windows.Foundation.IClosable
     {
-        PROPERTY(Direction,              CanvasTextDirection); // [1]
-        PROPERTY(FontFamily,             HSTRING);
-        PROPERTY(FontSize,               float);
-        PROPERTY(FontStretch,            Windows.UI.Text.FontStretch);
-        PROPERTY(FontStyle,              Windows.UI.Text.FontStyle);
-        PROPERTY(FontWeight,             Windows.UI.Text.FontWeight);
-        PROPERTY(IncrementalTabStop,     float);
-        PROPERTY(LineSpacing,            float); // [6]
-        PROPERTY(LineSpacingBaseline,    float);
-        PROPERTY(LocaleName,             HSTRING);
-        PROPERTY(VerticalAlignment,      CanvasVerticalAlignment); // [2]
-        PROPERTY(HorizontalAlignment,    CanvasHorizontalAlignment); // [2]
-        PROPERTY(TrimmingGranularity,    CanvasTextTrimmingGranularity);
-        PROPERTY(TrimmingDelimiter,      HSTRING); // [3]
-        PROPERTY(TrimmingDelimiterCount, INT32); // [4]
-        PROPERTY(WordWrapping,           CanvasWordWrapping);
-        PROPERTY(Options,                CanvasDrawTextOptions); // [5]
+        PROPERTY(Direction,                CanvasTextDirection); // [1]
+        PROPERTY(FontFamily,               HSTRING);
+        PROPERTY(FontSize,                 float);
+        PROPERTY(FontStretch,              Windows.UI.Text.FontStretch);
+        PROPERTY(FontStyle,                Windows.UI.Text.FontStyle);
+        PROPERTY(FontWeight,               Windows.UI.Text.FontWeight);
+        PROPERTY(IncrementalTabStop,       float);
+        PROPERTY(LineSpacing,              float); // [6]
+        PROPERTY(LineSpacingBaseline,      float);
+        PROPERTY(LocaleName,               HSTRING);
+        PROPERTY(VerticalAlignment,        CanvasVerticalAlignment); // [2]
+        PROPERTY(HorizontalAlignment,      CanvasHorizontalAlignment); // [2]
+        PROPERTY(TrimmingGranularity,      CanvasTextTrimmingGranularity);
+        PROPERTY(TrimmingDelimiter,        HSTRING); // [3]
+        PROPERTY(TrimmingDelimiterCount,   INT32); // [4]
+        PROPERTY(WordWrapping,             CanvasWordWrapping);
+        PROPERTY(Options,                  CanvasDrawTextOptions); // [5]
+        PROPERTY(VerticalGlyphOrientation, CanvasVerticalGlyphOrientation);
+        PROPERTY(OpticalAlignment,         CanvasOpticalAlignment); 
+        PROPERTY(LastLineWrapping,         boolean);
 
 #if WINVER > _WIN32_WINNT_WINBLUE
-        PROPERTY(LineSpacingMode,        CanvasLineSpacingMode); // [6]
+        PROPERTY(LineSpacingMode,          CanvasLineSpacingMode); // [6]
 #endif
 
         //

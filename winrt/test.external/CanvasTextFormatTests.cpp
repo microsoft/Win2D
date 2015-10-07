@@ -32,7 +32,7 @@ TEST_CLASS(CanvasTextFormatTests)
         //
         auto fontCollection = Make<StubDWriteFontCollection>();
 
-        ComPtr<IDWriteTextFormat> dwriteTextFormat;
+        ComPtr<IDWriteTextFormat> dwriteTextFormatBase;
         ThrowIfFailed(factory->CreateTextFormat(
             L"Arial",
             fontCollection.Get(),
@@ -41,7 +41,8 @@ TEST_CLASS(CanvasTextFormatTests)
             DWRITE_FONT_STRETCH_ULTRA_EXPANDED,
             12.0,
             L"locale",
-            &dwriteTextFormat));
+            &dwriteTextFormatBase));
+        auto dwriteTextFormat = As<IDWriteTextFormat1>(dwriteTextFormatBase);
 
         ThrowIfFailed(dwriteTextFormat->SetReadingDirection(DWRITE_READING_DIRECTION_TOP_TO_BOTTOM));
         ThrowIfFailed(dwriteTextFormat->SetFlowDirection(DWRITE_FLOW_DIRECTION_RIGHT_TO_LEFT));
@@ -53,6 +54,10 @@ TEST_CLASS(CanvasTextFormatTests)
 
         auto trimming = DWRITE_TRIMMING{ DWRITE_TRIMMING_GRANULARITY_WORD, L'/', 1 };
         ThrowIfFailed(dwriteTextFormat->SetTrimming(&trimming, nullptr));
+
+        ThrowIfFailed(dwriteTextFormat->SetVerticalGlyphOrientation(DWRITE_VERTICAL_GLYPH_ORIENTATION_STACKED));
+        ThrowIfFailed(dwriteTextFormat->SetOpticalAlignment(DWRITE_OPTICAL_ALIGNMENT_NO_SIDE_BEARINGS));
+        ThrowIfFailed(dwriteTextFormat->SetLastLineWrapping(false));
 
         //
         // Get a CanvasTextFormat based on the IDWriteTextFormat
@@ -83,23 +88,26 @@ TEST_CLASS(CanvasTextFormatTests)
 #define CHECK(PROPERTY, EXPECTED) \
         Assert::IsTrue(canvasTextFormat->PROPERTY == EXPECTED)
 
-        CHECK(Direction,              CanvasTextDirection::TopToBottomThenRightToLeft);
-        CHECK(FontFamily,             L"Arial");
-        CHECK(FontSize,               12.0f);
-        CHECK(FontStretch,            Windows::UI::Text::FontStretch::UltraExpanded);
-        CHECK(FontStyle,              Windows::UI::Text::FontStyle::Oblique);
-        CHECK(FontWeight,             Windows::UI::Text::FontWeight { 100 } );
-        CHECK(IncrementalTabStop,     12.0f);
-        CHECK(LineSpacing,            2.0f);
-        CHECK(LineSpacingBaseline,    4.0f);
-        CHECK(LocaleName,             L"locale");
-        CHECK(VerticalAlignment,      CanvasVerticalAlignment::Bottom);
-        CHECK(HorizontalAlignment,    CanvasHorizontalAlignment::Right);
-        CHECK(TrimmingGranularity,    CanvasTextTrimmingGranularity::Word);
-        CHECK(TrimmingDelimiter,      L"/");
-        CHECK(TrimmingDelimiterCount, 1); 
-        CHECK(WordWrapping,           CanvasWordWrapping::EmergencyBreak);
-        CHECK(Options,                CanvasDrawTextOptions::EnableColorFont);
+        CHECK(Direction,                CanvasTextDirection::TopToBottomThenRightToLeft);
+        CHECK(FontFamily,               L"Arial");
+        CHECK(FontSize,                 12.0f);
+        CHECK(FontStretch,              Windows::UI::Text::FontStretch::UltraExpanded);
+        CHECK(FontStyle,                Windows::UI::Text::FontStyle::Oblique);
+        CHECK(FontWeight,               Windows::UI::Text::FontWeight { 100 } );
+        CHECK(IncrementalTabStop,       12.0f);
+        CHECK(LineSpacing,              2.0f);
+        CHECK(LineSpacingBaseline,      4.0f);
+        CHECK(LocaleName,               L"locale");
+        CHECK(VerticalAlignment,        CanvasVerticalAlignment::Bottom);
+        CHECK(HorizontalAlignment,      CanvasHorizontalAlignment::Right);
+        CHECK(TrimmingGranularity,      CanvasTextTrimmingGranularity::Word);
+        CHECK(TrimmingDelimiter,        L"/");
+        CHECK(TrimmingDelimiterCount,   1); 
+        CHECK(WordWrapping,             CanvasWordWrapping::EmergencyBreak);
+        CHECK(Options,                  CanvasDrawTextOptions::EnableColorFont);
+        CHECK(VerticalGlyphOrientation, CanvasVerticalGlyphOrientation::Stacked);
+        CHECK(OpticalAlignment,         CanvasOpticalAlignment::NoSideBearings);
+        CHECK(LastLineWrapping,         false);
 
         //
         // Set properties on the underlying dwrite object and confirm the
@@ -117,6 +125,10 @@ TEST_CLASS(CanvasTextFormatTests)
         trimming = DWRITE_TRIMMING{ DWRITE_TRIMMING_GRANULARITY_CHARACTER, L'!', 2 };
         ThrowIfFailed(dwriteTextFormat->SetTrimming(&trimming, nullptr));
 
+        ThrowIfFailed(dwriteTextFormat->SetVerticalGlyphOrientation(DWRITE_VERTICAL_GLYPH_ORIENTATION_DEFAULT));
+        ThrowIfFailed(dwriteTextFormat->SetOpticalAlignment(DWRITE_OPTICAL_ALIGNMENT_NONE));
+        ThrowIfFailed(dwriteTextFormat->SetLastLineWrapping(true));
+
         CHECK(Direction, CanvasTextDirection::BottomToTopThenRightToLeft);
         CHECK(IncrementalTabStop, 16.0f);
         CHECK(LineSpacing, -5.0f);
@@ -127,6 +139,10 @@ TEST_CLASS(CanvasTextFormatTests)
         CHECK(TrimmingGranularity, CanvasTextTrimmingGranularity::Character);
         CHECK(TrimmingDelimiter, L"!");
         CHECK(TrimmingDelimiterCount, 2);
+
+        CHECK(VerticalGlyphOrientation, CanvasVerticalGlyphOrientation::Default);
+        CHECK(OpticalAlignment,         CanvasOpticalAlignment::Default);
+        CHECK(LastLineWrapping,         true);
 
         //
         // Set a Win2D property back to its original value from before the underlying
@@ -150,23 +166,26 @@ TEST_CLASS(CanvasTextFormatTests)
         // shadow values will be being used.
         //
 
-        CHECK(Direction,              CanvasTextDirection::BottomToTopThenRightToLeft);
-        CHECK(FontFamily,             L"Comic Sans MS");
-        CHECK(FontSize,               12.0f);
-        CHECK(FontStretch,            Windows::UI::Text::FontStretch::UltraExpanded);
-        CHECK(FontStyle,              Windows::UI::Text::FontStyle::Oblique);
-        CHECK(FontWeight,             Windows::UI::Text::FontWeight { 100 } );
-        CHECK(IncrementalTabStop,     12.0f);
-        CHECK(LineSpacing,            -5.0f);
-        CHECK(LineSpacingBaseline,    7.0f);
-        CHECK(LocaleName,             L"locale");
-        CHECK(VerticalAlignment,      CanvasVerticalAlignment::Center);
-        CHECK(HorizontalAlignment,    CanvasHorizontalAlignment::Center);
-        CHECK(TrimmingGranularity,    CanvasTextTrimmingGranularity::Character);
-        CHECK(TrimmingDelimiter,      L"!");
-        CHECK(TrimmingDelimiterCount, 2); 
-        CHECK(WordWrapping,           CanvasWordWrapping::NoWrap);
-        CHECK(Options,                CanvasDrawTextOptions::EnableColorFont);
+        CHECK(Direction,                CanvasTextDirection::BottomToTopThenRightToLeft);
+        CHECK(FontFamily,               L"Comic Sans MS");
+        CHECK(FontSize,                 12.0f);
+        CHECK(FontStretch,              Windows::UI::Text::FontStretch::UltraExpanded);
+        CHECK(FontStyle,                Windows::UI::Text::FontStyle::Oblique);
+        CHECK(FontWeight,               Windows::UI::Text::FontWeight { 100 } );
+        CHECK(IncrementalTabStop,       12.0f);
+        CHECK(LineSpacing,              -5.0f);
+        CHECK(LineSpacingBaseline,      7.0f);
+        CHECK(LocaleName,               L"locale");
+        CHECK(VerticalAlignment,        CanvasVerticalAlignment::Center);
+        CHECK(HorizontalAlignment,      CanvasHorizontalAlignment::Center);
+        CHECK(TrimmingGranularity,      CanvasTextTrimmingGranularity::Character);
+        CHECK(TrimmingDelimiter,        L"!");
+        CHECK(TrimmingDelimiterCount,   2); 
+        CHECK(WordWrapping,             CanvasWordWrapping::NoWrap);
+        CHECK(Options,                  CanvasDrawTextOptions::EnableColorFont);  
+        CHECK(VerticalGlyphOrientation, CanvasVerticalGlyphOrientation::Default);
+        CHECK(OpticalAlignment,         CanvasOpticalAlignment::Default);
+        CHECK(LastLineWrapping,         true);
 
         //
         // Verify that a new IDWriteTextFormat was indeed created and that it
