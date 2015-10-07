@@ -1155,41 +1155,41 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         //
         // DrawInk
         //
-        IFACEMETHOD(DrawInk)(IIterable<InkStroke*>* inkStrokes);
+        IFACEMETHOD(DrawInk)(IIterable<InkStroke*>* inkStrokes) override;
 
-        IFACEMETHOD(DrawInkWithHighContrast)(IIterable<InkStroke*>* inkStrokes, boolean highContrast);
+        IFACEMETHOD(DrawInkWithHighContrast)(IIterable<InkStroke*>* inkStrokes, boolean highContrast) override;
         
         //
         // DrawGradientMesh
         //
-        IFACEMETHOD(DrawGradientMeshAtOrigin)(ICanvasGradientMesh* gradientMesh);
+        IFACEMETHOD(DrawGradientMeshAtOrigin)(ICanvasGradientMesh* gradientMesh) override;
 
-        IFACEMETHOD(DrawGradientMesh)(ICanvasGradientMesh* gradientMesh, Vector2 point);
+        IFACEMETHOD(DrawGradientMesh)(ICanvasGradientMesh* gradientMesh, Vector2 point) override;
 
-        IFACEMETHOD(DrawGradientMeshAtCoords)(ICanvasGradientMesh* gradientMesh, float x, float y);
+        IFACEMETHOD(DrawGradientMeshAtCoords)(ICanvasGradientMesh* gradientMesh, float x, float y) override;
 #endif
 
         //
         // State properties
         //
 
-        IFACEMETHOD(get_Antialiasing)(CanvasAntialiasing* value);
-        IFACEMETHOD(put_Antialiasing)(CanvasAntialiasing value);
+        IFACEMETHOD(get_Antialiasing)(CanvasAntialiasing* value) override;
+        IFACEMETHOD(put_Antialiasing)(CanvasAntialiasing value) override;
 
-        IFACEMETHOD(get_Blend)(CanvasBlend* value);
-        IFACEMETHOD(put_Blend)(CanvasBlend value);
+        IFACEMETHOD(get_Blend)(CanvasBlend* value) override;
+        IFACEMETHOD(put_Blend)(CanvasBlend value) override;
 
-        IFACEMETHOD(get_TextAntialiasing)(CanvasTextAntialiasing* value);
-        IFACEMETHOD(put_TextAntialiasing)(CanvasTextAntialiasing value);
+        IFACEMETHOD(get_TextAntialiasing)(CanvasTextAntialiasing* value) override;
+        IFACEMETHOD(put_TextAntialiasing)(CanvasTextAntialiasing value) override;
 
-        IFACEMETHOD(get_TextRenderingParameters)(ICanvasTextRenderingParameters** value);
-        IFACEMETHOD(put_TextRenderingParameters)(ICanvasTextRenderingParameters* value);
+        IFACEMETHOD(get_TextRenderingParameters)(ICanvasTextRenderingParameters** value) override;
+        IFACEMETHOD(put_TextRenderingParameters)(ICanvasTextRenderingParameters* value) override;
 
-        IFACEMETHOD(get_Transform)(ABI::Microsoft::Graphics::Canvas::Numerics::Matrix3x2* value);
-        IFACEMETHOD(put_Transform)(ABI::Microsoft::Graphics::Canvas::Numerics::Matrix3x2 value);
+        IFACEMETHOD(get_Transform)(ABI::Microsoft::Graphics::Canvas::Numerics::Matrix3x2* value) override;
+        IFACEMETHOD(put_Transform)(ABI::Microsoft::Graphics::Canvas::Numerics::Matrix3x2 value) override;
 
-        IFACEMETHOD(get_Units)(CanvasUnits* value);
-        IFACEMETHOD(put_Units)(CanvasUnits value);
+        IFACEMETHOD(get_Units)(CanvasUnits* value) override;
+        IFACEMETHOD(put_Units)(CanvasUnits value) override;
 
         //
         // CreateLayer
@@ -1248,16 +1248,16 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         // ICanvasResourceCreator
         //
 
-        IFACEMETHODIMP get_Device(ICanvasDevice** value);
+        IFACEMETHODIMP get_Device(ICanvasDevice** value) override;
 
         //
         // ICanvasResourceCreatorWithDpi
         //
 
-        IFACEMETHODIMP get_Dpi(float* dpi);
+        IFACEMETHODIMP get_Dpi(float* dpi) override;
 
-        IFACEMETHODIMP ConvertPixelsToDips(int pixels, float* dips);
-        IFACEMETHODIMP ConvertDipsToPixels(float dips, CanvasDpiRounding dpiRounding, int* pixels);
+        IFACEMETHODIMP ConvertPixelsToDips(int pixels, float* dips) override;
+        IFACEMETHODIMP ConvertDipsToPixels(float dips, CanvasDpiRounding dpiRounding, int* pixels) override;
 
     private:
         void DrawLineImpl(
