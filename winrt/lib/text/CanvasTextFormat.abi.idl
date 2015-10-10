@@ -129,6 +129,13 @@ namespace Microsoft.Graphics.Canvas.Text
         Stacked
     } CanvasVerticalGlyphOrientation;
 
+    [version(VERSION)]
+    typedef enum CanvasTrimmingSign
+    {
+        None,
+        Ellipsis
+    } CanvasTrimmingSign;
+
 #define PROPERTY(NAME, TYPE)                            \
     [propget] HRESULT NAME([out, retval] TYPE* value);  \
     [propput] HRESULT NAME([in] TYPE value)
@@ -208,9 +215,20 @@ namespace Microsoft.Graphics.Canvas.Text
         // font collection specified by a URI in the font family property is
         // used.
         //
-        // TODO #841: A TrimmingSign property should be added in the future that
+
+        PROPERTY(TrimmingSign, CanvasTrimmingSign);
+        //
+        // TODO #841: A custom trimming sign property will be added in the future that
         // allows a IDWriteInlineObject equivalent to provide the trimming sign
-        // to SetTrimming.  For now, a NULL trimming sign is always used.
+        // to SetTrimming. 
+        // 
+        // Example: 
+        //    textFormat.TrimmingSign = CanvasTrimmingSign.Ellipsis;
+        //    textFormat.CustomTrimmingSign = null;             // (Not exposed yet) Means ellipsis gets used.
+        //    textFormat.CustomTrimmingSign = myTrimmingObject; // (Not exposed yet) Takes priority over the ellipsis.
+        //
+        // Custom trimming signs don't interact with the TrimmingSign property,
+        // except that a custom trimming sign (being non-null) always takes precedence.
         //
     }
 

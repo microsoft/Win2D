@@ -157,6 +157,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)text\CanvasTextRenderingParameters.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)text\CustomFontManager.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)text\TextUtilities.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)text\TrimmingSignInformation.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\Conversion.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\D2DResourceLock.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\DxgiUtilities.h" />

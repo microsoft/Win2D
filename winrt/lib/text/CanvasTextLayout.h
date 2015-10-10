@@ -5,6 +5,7 @@
 #pragma once
 
 #include "CustomFontManager.h"
+#include "TrimmingSignInformation.h"
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Text
 {
@@ -25,6 +26,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         std::shared_ptr<CustomFontManager> m_customFontManager;
 
         CanvasLineSpacingMode m_lineSpacingMode;
+
+        TrimmingSignInformation m_trimmingSignInformation;
 
     public:
         static ComPtr<CanvasTextLayout> CreateNew(
@@ -275,6 +278,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         IFACEMETHOD(put_LastLineWrapping)(
             boolean value) override;
 
+        IFACEMETHOD(get_TrimmingSign)(
+            CanvasTrimmingSign* value) override;
+
+        IFACEMETHOD(put_TrimmingSign)(
+            CanvasTrimmingSign value) override;
+
         //
         // Hit-testing and metrics-related methods
         //
@@ -346,6 +355,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         // Internal
         //
         void SetLineSpacingModeInternal(CanvasLineSpacingMode lineSpacingMode);
+
+        void SetTrimmingSignInternal(CanvasTrimmingSign trimmingSign);
     };
 
 

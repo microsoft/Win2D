@@ -392,6 +392,20 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         }
     }
 
+    template<>
+    inline void ThrowIfInvalid(CanvasTrimmingSign value)
+    {
+        switch (value)
+        {
+        case CanvasTrimmingSign::None:
+        case CanvasTrimmingSign::Ellipsis:
+            return;
+
+        default:
+            ThrowHR(E_INVALIDARG);
+        }
+    }
+
     inline void ThrowIfInvalidTrimmingDelimiter(HSTRING value)
     {
         // The delimiter must be a single code point and so cannot be more than

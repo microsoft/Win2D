@@ -9,6 +9,7 @@
 #include "mocks/MockDWriteFactory.h"
 #include "mocks/MockDWriteTextLayout.h"
 #include "mocks/MockDWriteFontCollection.h"
+#include "mocks/MockDWriteInlineObject.h"
 #include "stubs/StubStorageFileStatics.h"
 #include "stubs/StubDWriteTextFormat.h"
 
@@ -19,12 +20,15 @@ namespace canvas
         DWRITE_LINE_SPACING_METHOD m_lineSpacingMethod;
         float m_lineSpacing;
         float m_baseline;
+        DWRITE_TRIMMING m_trimming;
+        ComPtr<IDWriteInlineObject> m_trimmingSign;
 
     public:
         StubTextLayout()
             : m_lineSpacingMethod(DWRITE_LINE_SPACING_METHOD_DEFAULT)
             , m_lineSpacing(0)
             , m_baseline(0)
+            , m_trimming(DWRITE_TRIMMING{})
         {
             GetFontCollection_BaseFormat_Method.AllowAnyCall(
                 [](IDWriteFontCollection** fontCollection)
@@ -93,7 +97,21 @@ namespace canvas
                 return S_OK;
             });
 
-            GetTrimmingMethod.AllowAnyCall();
+            GetTrimmingMethod.AllowAnyCall(
+                [=](DWRITE_TRIMMING* trimming, IDWriteInlineObject** sign)
+                {
+                    *trimming = m_trimming;
+                    m_trimmingSign.CopyTo(sign);
+                    return S_OK;
+                });
+
+            SetTrimmingMethod.AllowAnyCall(
+                [=](DWRITE_TRIMMING const* trimming, IDWriteInlineObject* sign)
+                {
+                    m_trimming = *trimming;
+                    m_trimmingSign = sign;
+                    return S_OK;
+                });
 
         }
     };
@@ -151,6 +169,16 @@ namespace canvas
                 });
 
             m_mockDwritefactory->RegisterFontCollectionLoaderMethod.AllowAnyCall();
+
+            m_mockDwritefactory->CreateEllipsisTrimmingSignMethod.AllowAnyCall(
+                [&](IDWriteTextFormat*, IDWriteInlineObject** out)
+                {
+                    auto mockInlineObject = Make<MockDWriteInlineObject>();
+
+                    ThrowIfFailed(mockInlineObject.CopyTo(out));
+
+                    return S_OK;
+                });
         }
 
         virtual IStorageFileStatics* GetStorageFileStatics() override

@@ -50,11 +50,13 @@ namespace Microsoft.Graphics.Canvas.Text
 #if WINVER > _WIN32_WINNT_WINBLUE
         PROPERTY(LineSpacingMode, CanvasLineSpacingMode);
 #endif
+        PROPERTY(TrimmingSign, CanvasTrimmingSign);
 
         // Not exposed:                             Reason
         //---------------                           -------
         // GetDefaultFontCollection                 Relies on exposure of IDWriteFontCollection. Needs design. Out of scope.
         // SetTrimming's trimmingSign argument      Advanced usage, needs design decisions about IDWriteInlineObject.
+        //                                          The trimmingSign property is used for achieving ellipsis trimming signs (common case).
 
         ///////////////////////////////////////////////////////////////////////
         //

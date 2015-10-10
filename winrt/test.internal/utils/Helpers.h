@@ -194,6 +194,7 @@ namespace Microsoft
             TO_STRING(IDWriteTextLayout);
             TO_STRING(IDispatchedHandler);
             TO_STRING(IAsyncAction);
+            TO_STRING(IDWriteInlineObject);
 
 #if WINVER > _WIN32_WINNT_WINBLUE
             TO_STRING(ID2D1GradientMesh);
@@ -1044,6 +1045,13 @@ namespace Microsoft
                 END_ENUM(CanvasLineSpacingMode);
             }
 #endif
+
+            ENUM_TO_STRING(CanvasTrimmingSign)
+            {
+                ENUM_VALUE(CanvasTrimmingSign::None);
+                ENUM_VALUE(CanvasTrimmingSign::Ellipsis);
+                END_ENUM(CanvasTrimmingSign);
+            }
 
             template<typename T>
             inline std::wstring ToStringAsInt(T value)

@@ -213,6 +213,8 @@ namespace canvas
         INVALID1,                                           \
         __VA_ARGS__)    
 
+    static const CanvasTrimmingSign sc_trimmingSigns[] = { CanvasTrimmingSign::None, CanvasTrimmingSign::Ellipsis };
+
     TEST_CLASS(CanvasTextFormatTests)
     {
     public:
@@ -1513,6 +1515,197 @@ namespace canvas
                 L"aa-aa",
                 L"bb-bb",
                 L"cc-cc"));
+        }
+
+        TEST_METHOD_EX(CanvasTextFormat_TrimmingSign_Property)
+        {
+            for (auto expected : sc_trimmingSigns)
+            {
+                auto ctf = Make<CanvasTextFormat>();
+
+                ThrowIfFailed(ctf->put_TrimmingSign(expected));
+
+                CanvasTrimmingSign actual;
+                ThrowIfFailed(ctf->get_TrimmingSign(&actual));
+
+                Assert::AreEqual(expected, actual);
+            }
+        }
+
+        TEST_METHOD_EX(CanvasTextFormat_TrimmingSign_DefaultIsNone)
+        {
+            auto ctf = Make<CanvasTextFormat>();
+
+            CanvasTrimmingSign sign;
+            ThrowIfFailed(ctf->get_TrimmingSign(&sign));
+
+            Assert::AreEqual(CanvasTrimmingSign::None, sign);
+        }
+
+        TEST_METHOD_EX(CanvasTextFormat_TrimmingSign_ChangingSignDoesntCauseFormatReRealization)
+        {
+            auto ctf = Make<CanvasTextFormat>();
+
+            auto dtf1 = ctf->GetRealizedTextFormat();
+
+            ThrowIfFailed(ctf->put_TrimmingSign(CanvasTrimmingSign::Ellipsis));
+
+            auto dtf2 = ctf->GetRealizedTextFormat();
+
+            Assert::AreEqual(dtf1.Get(), dtf2.Get());
+        }
+
+        ComPtr<IDWriteInlineObject> GetTrimmingSign(ComPtr<IDWriteTextFormat> const& textFormat)
+        {
+            DWRITE_TRIMMING unused;
+
+            ComPtr<IDWriteInlineObject> trimmingSign;
+            ThrowIfFailed(textFormat->GetTrimming(&unused, &trimmingSign));
+
+            return trimmingSign;
+        }
+
+        template<typename SetterType>
+        void CanvasTextFormat_TrimmingSign_AffectsTextFormatState_TestCase(
+            HRESULT (__stdcall CanvasTextFormat::*setFn)(SetterType value),
+            SetterType setTo,
+            bool setterRequiresRecreatingEllipsisTrimmingSign = true)
+        {
+            for (auto expected : sc_trimmingSigns)
+            {
+                auto ctf = Make<CanvasTextFormat>();
+
+                ctf->GetRealizedTextFormat(); // Force realization
+
+                ThrowIfFailed(ctf->put_TrimmingSign(expected));
+                auto sign1 = GetTrimmingSign(ctf->GetRealizedTextFormat());
+
+                ((*ctf.Get()).*setFn)(setTo);
+
+                CanvasTrimmingSign actual;
+                ThrowIfFailed(ctf->get_TrimmingSign(&actual));
+                auto sign2 = GetTrimmingSign(ctf->GetRealizedTextFormat());
+
+                Assert::AreEqual(expected, actual);
+
+                //
+                // For ellipsis, the trimming sign object should still exist,
+                // but has been changed.
+                // It isn't enough to just check whether we created a new
+                // text format; there's cases where we need
+                // to create a new trimming sign object, even when the
+                // underlying text format resource stays the same.
+                //
+                if (expected == CanvasTrimmingSign::Ellipsis)
+                {
+                    Assert::IsNotNull(sign1.Get());
+                    Assert::IsNotNull(sign2.Get());
+                    if (setterRequiresRecreatingEllipsisTrimmingSign)
+                    {
+                        Assert::AreNotEqual(sign1.Get(), sign2.Get());
+                    }
+                    else
+                    {
+                        Assert::AreEqual(sign1.Get(), sign2.Get());
+                    }
+                }
+            }
+        }
+
+        TEST_METHOD_EX(CanvasTextFormat_TrimmingSign_AffectsTextFormatState)
+        {
+            //
+            // These tests verify that calling the various setters of CanvasTextFormat
+            // will cause the format's trimming sign to be recreated or not recreated,
+            // as expected for the situation.
+            //
+
+            CanvasTextFormat_TrimmingSign_AffectsTextFormatState_TestCase(
+                &CanvasTextFormat::put_Direction,
+                CanvasTextDirection::RightToLeftThenBottomToTop);
+
+            CanvasTextFormat_TrimmingSign_AffectsTextFormatState_TestCase(
+                &CanvasTextFormat::put_FontFamily,
+                static_cast<HSTRING>(WinString(L"SomeOtherFamily")));
+
+            CanvasTextFormat_TrimmingSign_AffectsTextFormatState_TestCase(
+                &CanvasTextFormat::put_FontSize,
+                456.0f);
+
+            CanvasTextFormat_TrimmingSign_AffectsTextFormatState_TestCase(
+                &CanvasTextFormat::put_FontStretch,
+                ABI::Windows::UI::Text::FontStretch_Condensed);
+
+            CanvasTextFormat_TrimmingSign_AffectsTextFormatState_TestCase(
+                &CanvasTextFormat::put_FontStyle,
+                ABI::Windows::UI::Text::FontStyle_Oblique);
+
+            CanvasTextFormat_TrimmingSign_AffectsTextFormatState_TestCase(
+                &CanvasTextFormat::put_FontWeight,
+                ABI::Windows::UI::Text::FontWeight{ 900 });
+
+            CanvasTextFormat_TrimmingSign_AffectsTextFormatState_TestCase(
+                &CanvasTextFormat::put_HorizontalAlignment,
+                CanvasHorizontalAlignment::Center);
+
+            CanvasTextFormat_TrimmingSign_AffectsTextFormatState_TestCase(
+                &CanvasTextFormat::put_IncrementalTabStop,
+                3.9f);
+
+            CanvasTextFormat_TrimmingSign_AffectsTextFormatState_TestCase(
+                &CanvasTextFormat::put_LastLineWrapping,
+                static_cast<boolean>(false));
+
+            CanvasTextFormat_TrimmingSign_AffectsTextFormatState_TestCase(
+                &CanvasTextFormat::put_LineSpacing,
+                201.0f);
+
+            CanvasTextFormat_TrimmingSign_AffectsTextFormatState_TestCase(
+                &CanvasTextFormat::put_LineSpacingBaseline,
+                202.0f);
+
+#if WINVER > _WIN32_WINNT_WINBLUE
+            CanvasTextFormat_TrimmingSign_AffectsTextFormatState_TestCase(
+                &CanvasTextFormat::put_LineSpacingMode,
+                CanvasLineSpacingMode::Proportional);
+#endif
+
+            CanvasTextFormat_TrimmingSign_AffectsTextFormatState_TestCase(
+                &CanvasTextFormat::put_LocaleName,
+                static_cast<HSTRING>(WinString(L"xx_12")));
+
+            CanvasTextFormat_TrimmingSign_AffectsTextFormatState_TestCase(
+                &CanvasTextFormat::put_OpticalAlignment,
+                CanvasOpticalAlignment::NoSideBearings);
+
+            CanvasTextFormat_TrimmingSign_AffectsTextFormatState_TestCase(
+                &CanvasTextFormat::put_Options,
+                CanvasDrawTextOptions::EnableColorFont,
+                false);
+
+            CanvasTextFormat_TrimmingSign_AffectsTextFormatState_TestCase(
+                &CanvasTextFormat::put_TrimmingDelimiter,
+                static_cast<HSTRING>(WinString(L"K")));
+            
+            CanvasTextFormat_TrimmingSign_AffectsTextFormatState_TestCase(
+                &CanvasTextFormat::put_TrimmingDelimiterCount,
+                2);
+
+            CanvasTextFormat_TrimmingSign_AffectsTextFormatState_TestCase(
+                &CanvasTextFormat::put_TrimmingGranularity,
+                CanvasTextTrimmingGranularity::Character);
+
+            CanvasTextFormat_TrimmingSign_AffectsTextFormatState_TestCase(
+                &CanvasTextFormat::put_VerticalAlignment,
+                CanvasVerticalAlignment::Bottom);
+
+            CanvasTextFormat_TrimmingSign_AffectsTextFormatState_TestCase(
+                &CanvasTextFormat::put_VerticalGlyphOrientation,
+                CanvasVerticalGlyphOrientation::Stacked);
+
+            CanvasTextFormat_TrimmingSign_AffectsTextFormatState_TestCase(
+                &CanvasTextFormat::put_WordWrapping,
+                CanvasWordWrapping::EmergencyBreak);
         }
     };
 }

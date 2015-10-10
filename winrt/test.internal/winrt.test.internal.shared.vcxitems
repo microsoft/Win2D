@@ -85,6 +85,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDWriteFontCollection.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDWriteFontFamily.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDWriteFontFile.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDWriteInlineObject.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDWriteLocalizedStrings.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDWriteRenderingParams.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDWriteTextFormat.h" />

@@ -6,6 +6,7 @@
 
 #include "utils/LockUtilities.h"
 #include "CustomFontManager.h"
+#include "TrimmingSignInformation.h"
 
 //
 // CanvasLineSpacingMode is a type that is only available on Win10.
@@ -112,6 +113,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         CanvasOpticalAlignment m_opticalAlignment;
         bool m_lastLineWrapping;
 
+        TrimmingSignInformation m_trimmingSignInformation;
+
         //
         // Draw text options are not part of IDWriteTextFormat, but are stored
         // in CanvasTextFormat.  These are not protected by the mutex since they
@@ -155,6 +158,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         PROPERTY(VerticalGlyphOrientation, CanvasVerticalGlyphOrientation);
         PROPERTY(OpticalAlignment,         CanvasOpticalAlignment);
         PROPERTY(LastLineWrapping,         boolean);
+        PROPERTY(TrimmingSign,             CanvasTrimmingSign);
 
 #if WINVER > _WIN32_WINNT_WINBLUE
         PROPERTY(LineSpacingMode,          CanvasLineSpacingMode);
@@ -213,6 +217,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         void RealizeVerticalGlyphOrientation(IDWriteTextFormat1* textFormat);
         void RealizeOpticalAlignment(IDWriteTextFormat1* textFormat);
         void RealizeLastLineWrapping(IDWriteTextFormat1* textFormat);
+        void RealizeTrimmingSign(IDWriteTextFormat1* textFormat);
 
         ComPtr<IDWriteTextFormat1> CreateRealizedTextFormat(bool skipWordWrapping = false);
 };

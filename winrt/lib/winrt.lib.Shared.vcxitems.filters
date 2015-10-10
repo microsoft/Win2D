@@ -607,6 +607,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)text\TextUtilities.h">
       <Filter>text</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)text\TrimmingSignInformation.h">
+      <Filter>text</Filter>
+    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\TemporaryTransform.h">
       <Filter>utils</Filter>
     </ClInclude>

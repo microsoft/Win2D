@@ -321,6 +321,29 @@ namespace Microsoft
             }
 
             template<>
+            inline std::wstring ToString<CanvasTextTrimmingGranularity>(CanvasTextTrimmingGranularity const& value)
+            {
+                switch (value)
+                {
+                    case CanvasTextTrimmingGranularity::None: return L"CanvasDebugLevel::None";
+                    case CanvasTextTrimmingGranularity::Character: return L"CanvasDebugLevel::Character";
+                    case CanvasTextTrimmingGranularity::Word: return L"CanvasDebugLevel::Word";
+                    default: assert(false); return L"<unknown CanvasTextTrimmingGranularity>";
+                }
+            }
+
+            template<>
+            inline std::wstring ToString<CanvasTrimmingSign>(CanvasTrimmingSign const& value)
+            {
+                switch (value)
+                {
+                    case CanvasTrimmingSign::None: return L"CanvasTrimmingSign::None";
+                    case CanvasTrimmingSign::Ellipsis: return L"CanvasTrimmingSign::Ellipsis";
+                    default: assert(false); return L"<unknown CanvasTrimmingSign>";
+                }
+            }
+
+            template<>
             inline std::wstring ToString<Platform::Guid>(Platform::Guid const& value)
             {
                 Platform::Guid copy = value;

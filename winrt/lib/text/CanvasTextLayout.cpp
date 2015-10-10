@@ -82,6 +82,10 @@ ComPtr<CanvasTextLayout> CanvasTextLayout::CreateNew(
 #endif
     textLayout->SetLineSpacingModeInternal(lineSpacingMode);
 
+    CanvasTrimmingSign trimmingSign;
+    ThrowIfFailed(textFormat->get_TrimmingSign(&trimmingSign));
+    textLayout->SetTrimmingSignInternal(trimmingSign);
+
     return textLayout;
 }
 
@@ -200,6 +204,8 @@ IFACEMETHODIMP CanvasTextLayout::##name(valueType value)            \
                                                                     \
             ThrowIfInvalid(value);                                  \
             resource->dwriteMethod(conversionFunc(value));          \
+                                                                    \
+            m_trimmingSignInformation.RecreateInternalTrimmingSignIfNeeded(resource.Get()); \
         });                                                         \
 }
 
@@ -261,6 +267,8 @@ IFACEMETHODIMP CanvasTextLayout::put_Direction(CanvasTextDirection value)
             auto entry = DWriteToCanvasTextDirection::Lookup(value);
             ThrowIfFailed(resource->SetReadingDirection(entry->ReadingDirection));
             ThrowIfFailed(resource->SetFlowDirection(entry->FlowDirection));
+
+            m_trimmingSignInformation.RecreateInternalTrimmingSignIfNeeded(resource.Get());
         });
 }
 
@@ -313,6 +321,8 @@ IFACEMETHODIMP CanvasTextLayout::put_LineSpacing(
                 lineSpacingMode,
                 value, 
                 originalSpacing.Baseline);
+
+            m_trimmingSignInformation.RecreateInternalTrimmingSignIfNeeded(resource.Get());
         });
 }
 
@@ -345,6 +355,8 @@ IFACEMETHODIMP CanvasTextLayout::put_LineSpacingBaseline(
             ThrowIfFailed(resource->GetLineSpacing(&method, &spacing, &unusedBaseline));
 
             ThrowIfFailed(resource->SetLineSpacing(method, spacing, value));
+
+            m_trimmingSignInformation.RecreateInternalTrimmingSignIfNeeded(resource.Get());
         });
 }
 
@@ -382,6 +394,8 @@ IFACEMETHODIMP CanvasTextLayout::put_LineSpacingMode(
             originalSpacing.Baseline);
 
         m_lineSpacingMode = value;
+
+        m_trimmingSignInformation.RecreateInternalTrimmingSignIfNeeded(resource.Get());
     });
 }
 
@@ -420,6 +434,8 @@ IFACEMETHODIMP CanvasTextLayout::put_TrimmingGranularity(
             trimming.granularity = static_cast<DWRITE_TRIMMING_GRANULARITY>(value);
 
             ThrowIfFailed(resource->SetTrimming(&trimming, inlineObject.Get()));
+
+            m_trimmingSignInformation.RecreateInternalTrimmingSignIfNeeded(resource.Get());
         });
 }
 
@@ -457,6 +473,8 @@ IFACEMETHODIMP CanvasTextLayout::put_TrimmingDelimiter(
             trimming.delimiter = ToTrimmingDelimiter(WinString(value));
 
             ThrowIfFailed(resource->SetTrimming(&trimming, inlineObject.Get()));
+
+            m_trimmingSignInformation.RecreateInternalTrimmingSignIfNeeded(resource.Get());
         });
 }
 
@@ -495,6 +513,8 @@ IFACEMETHODIMP CanvasTextLayout::put_TrimmingDelimiterCount(
             trimming.delimiterCount = static_cast<uint32_t>(value);
 
             ThrowIfFailed(resource->SetTrimming(&trimming, inlineObject.Get()));
+
+            m_trimmingSignInformation.RecreateInternalTrimmingSignIfNeeded(resource.Get());
         });
 }
 
@@ -1063,6 +1083,8 @@ IFACEMETHODIMP CanvasTextLayout::put_VerticalGlyphOrientation(
             auto& resource = GetResource();
 
             ThrowIfFailed(resource->SetVerticalGlyphOrientation(ToVerticalGlyphOrientation(value)));
+
+            m_trimmingSignInformation.RecreateInternalTrimmingSignIfNeeded(resource.Get());
         });
 }
 
@@ -1089,6 +1111,8 @@ IFACEMETHODIMP CanvasTextLayout::put_OpticalAlignment(
             auto& resource = GetResource();
 
             ThrowIfFailed(resource->SetOpticalAlignment(ToOpticalAlignment(value)));
+
+            m_trimmingSignInformation.RecreateInternalTrimmingSignIfNeeded(resource.Get());
         });
 }
 
@@ -1116,6 +1140,34 @@ IFACEMETHODIMP CanvasTextLayout::put_LastLineWrapping(
             auto& resource = GetResource();
 
             ThrowIfFailed(resource->SetLastLineWrapping(value));
+
+            m_trimmingSignInformation.RecreateInternalTrimmingSignIfNeeded(resource.Get());
+        });
+}
+
+IFACEMETHODIMP CanvasTextLayout::get_TrimmingSign(
+    CanvasTrimmingSign* value)
+{
+    return ExceptionBoundary(
+        [&]
+    {
+        CheckInPointer(value);
+
+        auto& resource = GetResource();
+
+        *value = m_trimmingSignInformation.GetTrimmingSignFromResource(resource.Get());
+    });
+}
+
+IFACEMETHODIMP CanvasTextLayout::put_TrimmingSign(
+    CanvasTrimmingSign value)
+{
+    return ExceptionBoundary(
+        [&]
+        {
+            auto& resource = GetResource();
+
+            m_trimmingSignInformation.SetTrimmingSignOnResource(value, resource.Get());
         });
 }
 
@@ -1362,6 +1414,11 @@ IFACEMETHODIMP CanvasTextLayout::get_Device(ICanvasDevice** device)
 void CanvasTextLayout::SetLineSpacingModeInternal(CanvasLineSpacingMode lineSpacingMode)
 {
     m_lineSpacingMode = lineSpacingMode;
+}
+
+void CanvasTextLayout::SetTrimmingSignInternal(CanvasTrimmingSign trimmingSign)
+{
+    m_trimmingSignInformation.SetTrimmingSignOnResource(trimmingSign, GetResource().Get());
 }
 
 ActivatableClassWithFactory(CanvasTextLayout, CanvasTextLayoutFactory);
