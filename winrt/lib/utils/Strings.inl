@@ -20,6 +20,7 @@ STRING(CanvasPrintDocumentGetDeferralMayOnlyBeCalledOnce, L"GetDeferral can only
 STRING(CanvasPrintDocumentDeferralCompleteMayOnlyBeCalledOnce, L"CanvasPrintDeferral.Complete may only be called once.")
 STRING(CommandListCannotBeDrawnToAfterItHasBeenUsed, L"CanvasCommandList.CreateDrawingSession cannot be called after the CanvasCommandList has been used as an image.")
 STRING(CreateDrawingSessionCalledBeforeRegionsInvalidated, L"CreateDrawingSession cannot be called before the RegionsInvalidated event has been raised.");
+STRING(CustomEffectBadFeatureLevel, L"This shader requires a higher Direct3D feature level than is supported by the device. Check PixelShaderEffect.IsSupported before using it.");
 STRING(CustomEffectBadShader, L"Unable to load the specified shader. This should be a Direct3D pixel shader compiled for shader model 4.");
 STRING(CustomEffectBadPropertyType, L"Shader property '%S' is an unsupported type.");
 STRING(CustomEffectSourceOutOfRange, L"Source%d must be null when using this pixel shader (shader inputs: %d).");

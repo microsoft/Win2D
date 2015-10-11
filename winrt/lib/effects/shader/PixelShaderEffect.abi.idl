@@ -29,6 +29,8 @@ namespace Microsoft.Graphics.Canvas.Effects
         [propput] HRESULT Source6([in] IGRAPHICSEFFECTSOURCE* source);
         [propput] HRESULT Source7([in] IGRAPHICSEFFECTSOURCE* source);
         [propput] HRESULT Source8([in] IGRAPHICSEFFECTSOURCE* source);
+
+        HRESULT IsSupported([in] Microsoft.Graphics.Canvas.CanvasDevice* device, [out, retval] boolean* result);
     };
 
     [version(VERSION), uuid(9D1727E5-489D-4ABC-B129-5361E3534AF4), exclusiveto(PixelShaderEffect)]

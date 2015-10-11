@@ -8,6 +8,7 @@ using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
 using NativeComponent;
 using System;
 using System.Linq;
+using System.Runtime.InteropServices;
 
 #if WINDOWS_UWP
 using System.Numerics;
@@ -110,6 +111,39 @@ namespace test.managed
             Utils.AssertThrowsException<ArgumentException>(
                 () => new PixelShaderEffect(compiledShader),
                 "Shader property 'bar' is an unsupported type.");
+        }
+
+
+        [TestMethod]
+        public void PixelShaderEffect_FeatureLevelValidation()
+        {
+            const string hlsl =
+            @"
+                float4 main() : SV_Target
+                {
+                    return 0;
+                }
+            ";
+
+            var effect93 = new PixelShaderEffect(ShaderCompiler.CompileShader(hlsl, "ps_4_0_level_9_3"));
+            var effect40 = new PixelShaderEffect(ShaderCompiler.CompileShader(hlsl, "ps_4_0"));
+
+            using (var featureLevel93Device = DeviceCreator.CreateDevice(useFeatureLevel93: true))
+            using (var canvasDevice = CanvasDevice.CreateFromDirect3D11Device(featureLevel93Device))
+            {
+                Assert.IsTrue(effect93.IsSupported(canvasDevice));
+                Assert.IsFalse(effect40.IsSupported(canvasDevice));
+
+                using (var renderTarget = new CanvasRenderTarget(canvasDevice, 1, 1, 96))
+                using (var drawingSession = renderTarget.CreateDrawingSession())
+                {
+                    drawingSession.DrawImage(effect93);
+
+                    Utils.AssertThrowsException<COMException>(
+                        () => drawingSession.DrawImage(effect40),
+                        "This shader requires a higher Direct3D feature level than is supported by the device. Check PixelShaderEffect.IsSupported before using it.");
+                }
+            }
         }
 
 

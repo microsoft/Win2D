@@ -123,8 +123,38 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     IMPLEMENT_EFFECT_SOURCE_PROPERTY(PixelShaderEffect, Source8, 7)
 
     
+    IFACEMETHODIMP PixelShaderEffect::IsSupported(ICanvasDevice* device, boolean* result)
+    {
+        return ExceptionBoundary([&]
+        {
+            CheckInPointer(device);
+            CheckInPointer(result);
+
+            *result = IsSupported(device);
+        });
+    }
+
+
+    bool PixelShaderEffect::IsSupported(ICanvasDevice* device)
+    {
+        ComPtr<ID3D11Device> d3dDevice;
+        ThrowIfFailed(As<IDirect3DDxgiInterfaceAccess>(device)->GetInterface(IID_PPV_ARGS(&d3dDevice)));
+
+        auto deviceFeatureLevel = d3dDevice->GetFeatureLevel();
+        auto shaderFeatureLevel = m_sharedState->Shader().MinFeatureLevel;
+
+        return deviceFeatureLevel >= shaderFeatureLevel;
+    }
+
+
     bool PixelShaderEffect::Realize(GetImageFlags flags, float targetDpi, ID2D1DeviceContext* deviceContext)
     {
+        // Validate that this device supports the D3D feature level of the pixel shader.
+        if (!IsSupported(RealizationDevice()))
+        {
+            ThrowHR(E_FAIL, Strings::CustomEffectBadFeatureLevel);
+        }
+
         // Before trying to instantiate our custom effect type, we must register it with the D2D factory.
         ComPtr<ID2D1Factory> factory;
         As<ICanvasDeviceInternal>(RealizationDevice())->GetD2DDevice()->GetFactory(&factory);

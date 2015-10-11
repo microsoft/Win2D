@@ -54,7 +54,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         EFFECT_PROPERTY(Source7, IGraphicsEffectSource*);
         EFFECT_PROPERTY(Source8, IGraphicsEffectSource*);
 
+        IFACEMETHOD(IsSupported)(ICanvasDevice* device, boolean* result) override;
+
     protected:
+        bool IsSupported(ICanvasDevice* device);
+
         virtual bool Realize(GetImageFlags flags, float targetDpi, ID2D1DeviceContext* deviceContext) override;
         virtual void Unrealize(unsigned int skipSourceIndex, bool skipAllSources) override;
 

@@ -194,6 +194,25 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         </p>
       </remarks>
     </member>
+    <member name="M:Microsoft.Graphics.Canvas.Effects.PixelShaderEffect.IsSupported(Microsoft.Graphics.Canvas.CanvasDevice)">
+      <summary>
+        Checks whether the pixel shader used by this effect is compatible with the 
+        Direct3D feature level of the specified device.
+      </summary>
+      <remarks>
+        <p>
+          IsSupported will return false if the device does not support the GPU features 
+          needed to use the pixel shader. For instance this can happen if the pixel 
+          shader was compiled targetting feature level ps_4_0, while the device only 
+          supports feature level ps_4_0_level_9_3 (as is found in many phones).
+        </p>
+        <p>
+          Apps can use this query to switch between more or less sophisticated versions 
+          of a shader, or to disable an effect entirely if the GPU is not powerful enough 
+          to process it.
+        </p>
+      </remarks>
+    </member>
 
     <member name="M:Microsoft.Graphics.Canvas.Effects.PixelShaderEffect.GetBounds(Microsoft.Graphics.Canvas.CanvasDrawingSession)">
       <summary>Retrieves the bounds of this CanvasImage, in device-independent units.</summary>
