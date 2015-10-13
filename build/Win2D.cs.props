@@ -18,7 +18,7 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(TargetPlatformIdentifier)' == 'UAP'">
-    <TargetPlatformVersion>10.0.10563.0</TargetPlatformVersion>
-    <TargetPlatformMinVersion>10.0.10563.0</TargetPlatformMinVersion>
+    <TargetPlatformVersion>10.0.10568.0</TargetPlatformVersion>
+    <TargetPlatformMinVersion>10.0.10568.0</TargetPlatformMinVersion>
   </PropertyGroup>
 </Project>
