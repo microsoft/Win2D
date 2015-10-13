@@ -424,9 +424,122 @@ private:
     static typename std::enable_if<std::is_void<RET>::value, RET>::type Return(T value)
     {
     }
-    
-
 };
+
+//
+// Helpers for generating mock methods
+//
+
+template<typename F>
+struct FuncInfo;
+
+template<typename R>
+struct FuncInfo<R()>
+{
+    typedef R ReturnType;
+};
+
+template<typename R, typename A0>
+struct FuncInfo<R(A0)>
+{
+    typedef R ReturnType;
+    typedef A0 Arg0Type;
+};
+
+template<typename R, typename A0, typename A1>
+struct FuncInfo<R(A0, A1)>
+{
+    typedef R ReturnType;
+    typedef A0 Arg0Type;
+    typedef A1 Arg1Type;
+};
+
+template<typename R, typename A0, typename A1, typename A2>
+struct FuncInfo<R(A0, A1, A2)>
+{
+    typedef R ReturnType;
+    typedef A0 Arg0Type;
+    typedef A1 Arg1Type;
+    typedef A2 Arg2Type;
+};
+
+template<typename R, typename A0, typename A1, typename A2, typename A3>
+struct FuncInfo<R(A0, A1, A2, A3)>
+{
+    typedef R ReturnType;
+    typedef A0 Arg0Type;
+    typedef A1 Arg1Type;
+    typedef A2 Arg2Type;
+    typedef A3 Arg3Type;
+};
+
+template<typename R, typename A0, typename A1, typename A2, typename A3, typename A4>
+struct FuncInfo<R(A0, A1, A2, A3, A4)>
+{
+    typedef R ReturnType;
+    typedef A0 Arg0Type;
+    typedef A1 Arg1Type;
+    typedef A2 Arg2Type;
+    typedef A3 Arg3Type;
+    typedef A4 Arg4Type;
+};
+
+#define MOCK_METHOD0(name, ...)                                 \
+    virtual FuncInfo<__VA_ARGS__>::ReturnType STDMETHODCALLTYPE name() override   \
+    {                                                           \
+        return name ## Method.WasCalled();                      \
+    }                                                           \
+    CALL_COUNTER_WITH_MOCK(name ## Method, __VA_ARGS__);
+
+#define MOCK_METHOD1(name, ...)                             \
+    virtual FuncInfo<__VA_ARGS__>::ReturnType STDMETHODCALLTYPE name(         \
+        FuncInfo<__VA_ARGS__>::Arg0Type a0) override        \
+    {                                                       \
+        return name ## Method.WasCalled(a0);                \
+    }                                                       \
+    CALL_COUNTER_WITH_MOCK(name ## Method, __VA_ARGS__);
+
+#define MOCK_METHOD2(name, ...)                             \
+    virtual FuncInfo<__VA_ARGS__>::ReturnType STDMETHODCALLTYPE name(         \
+        FuncInfo<__VA_ARGS__>::Arg0Type a0,                 \
+        FuncInfo<__VA_ARGS__>::Arg1Type a1) override        \
+    {                                                       \
+        return name ## Method.WasCalled(a0, a1);            \
+    }                                                       \
+    CALL_COUNTER_WITH_MOCK(name ## Method, __VA_ARGS__);
+
+#define MOCK_METHOD3(name, ...)                             \
+    virtual FuncInfo<__VA_ARGS__>::ReturnType STDMETHODCALLTYPE name(         \
+        FuncInfo<__VA_ARGS__>::Arg0Type a0,                 \
+        FuncInfo<__VA_ARGS__>::Arg1Type a1,                 \
+        FuncInfo<__VA_ARGS__>::Arg2Type a2) override        \
+    {                                                       \
+        return name ## Method.WasCalled(a0, a1, a2);        \
+    }                                                       \
+    CALL_COUNTER_WITH_MOCK(name ## Method, __VA_ARGS__);
+
+#define MOCK_METHOD4(name, ...)                             \
+    virtual FuncInfo<__VA_ARGS__>::ReturnType STDMETHODCALLTYPE name(         \
+        FuncInfo<__VA_ARGS__>::Arg0Type a0,                 \
+        FuncInfo<__VA_ARGS__>::Arg1Type a1,                 \
+        FuncInfo<__VA_ARGS__>::Arg2Type a2,                 \
+        FuncInfo<__VA_ARGS__>::Arg3Type a3) override        \
+    {                                                       \
+        return name ## Method.WasCalled(a0, a1, a2, a3);    \
+    }                                                       \
+    CALL_COUNTER_WITH_MOCK(name ## Method, __VA_ARGS__);
+
+#define MOCK_METHOD5(name, ...)                                 \
+    virtual FuncInfo<__VA_ARGS__>::ReturnType STDMETHODCALLTYPE name(             \
+        FuncInfo<__VA_ARGS__>::Arg0Type a0,                     \
+        FuncInfo<__VA_ARGS__>::Arg1Type a1,                     \
+        FuncInfo<__VA_ARGS__>::Arg2Type a2,                     \
+        FuncInfo<__VA_ARGS__>::Arg3Type a3,                     \
+        FuncInfo<__VA_ARGS__>::Arg4Type a4) override            \
+    {                                                           \
+        return name ## Method.WasCalled(a0, a1, a2, a3, a4);    \
+    }                                                           \
+    CALL_COUNTER_WITH_MOCK(name ## Method, __VA_ARGS__);
 
 
 //
