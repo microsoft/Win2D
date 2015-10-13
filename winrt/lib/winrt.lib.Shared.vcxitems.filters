@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="effects">
@@ -33,6 +33,9 @@
     </Filter>
     <Filter Include="printing">
       <UniqueIdentifier>{007da80b-0c24-4f3a-a5be-1ec320c18646}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="composition">
+      <UniqueIdentifier>{6833e68e-c2a4-4af0-a737-aa8e537554c8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -345,6 +348,12 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)printing\DeferrableTask.cpp">
       <Filter>printing</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)composition\CanvasComposition.cpp">
+      <Filter>composition</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)utils\ApiInformationAdapter.cpp">
+      <Filter>utils</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -703,6 +712,12 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)printing\DeferrableTaskScheduler.h">
       <Filter>printing</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)composition\CanvasComposition.h">
+      <Filter>composition</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)utils\ApiInformationAdapter.h">
+      <Filter>utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)Canvas.codegen.idl" />
@@ -948,6 +963,9 @@
     </None>
     <None Include="$(MSBuildThisFileDirectory)printing\CanvasPrintDocument.abi.idl">
       <Filter>printing</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)composition\CanvasComposition.abi.idl">
+      <Filter>composition</Filter>
     </None>
   </ItemGroup>
 </Project>

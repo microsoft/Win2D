@@ -31,6 +31,10 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <summary>This namespace defines common types for using Win2D with UI frameworks.</summary>
     </member>
 
+    <member name="N:Microsoft.Graphics.Canvas.UI.Composition">
+      <summary>This namespace provides Win2D interoperability with Windows.UI.Composition.</summary>
+    </member>
+
     <member name="N:Microsoft.Graphics.Canvas.UI.Xaml">
       <summary>This namespace provides Win2D-enabled XAML controls.</summary>
     </member>

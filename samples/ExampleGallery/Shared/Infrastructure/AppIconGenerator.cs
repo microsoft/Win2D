@@ -39,9 +39,10 @@ namespace ExampleGallery
 
         static AppInfo[] apps =
         {
-            new AppInfo("ExampleGallery",    DrawExampleGalleryIcon, Color.FromArgb(255, 0xE7, 0x59, 0x34)) { AddShadow = true },
-            new AppInfo("CoreWindowExample", DrawCoreWindowIcon,     Colors.CornflowerBlue)                 { ImageScale = 0.6f },
-            new AppInfo("SimpleSample",      DrawSimpleSampleIcon,   Colors.CornflowerBlue)                 { ImageScale = 0.6f },
+            new AppInfo("ExampleGallery",     DrawExampleGalleryIcon,     Color.FromArgb(255, 0xE7, 0x59, 0x34)) { AddShadow = true },
+            new AppInfo("CoreWindowExample",  DrawCoreWindowIcon,         Colors.CornflowerBlue)                 { ImageScale = 0.6f },
+            new AppInfo("SimpleSample",       DrawSimpleSampleIcon,       Colors.CornflowerBlue)                 { ImageScale = 0.6f },
+            new AppInfo("CompositionExample", DrawCompositionExampleIcon, Colors.Goldenrod)                      { AddShadow = true, ImageScale = 0.6f },
         };
 
 
@@ -255,11 +256,18 @@ namespace ExampleGallery
         }
 
 
-        // For CoreWindowExample, we draw the same simple graphics as the sample itself.
+        // For SimpleSample, we draw the same simple graphics as the sample itself.
         static void DrawSimpleSampleIcon(CanvasDrawingSession ds, IconInfo iconInfo)
         {
             ds.DrawEllipse(155, 115, 80, 30, Colors.Black, 3);
             ds.DrawText("Hello, world!", 100, 100, Colors.Yellow);
+        }
+
+        
+        // Generate an icon for CompositionExample
+        private static void DrawCompositionExampleIcon(CanvasDrawingSession ds, IconInfo iconInfo)
+        {
+            ds.DrawText("C", 0, 0, Colors.White);
         }
     }
 }

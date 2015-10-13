@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="xaml">
@@ -15,6 +15,9 @@
     </Filter>
     <Filter Include="stubs">
       <UniqueIdentifier>{c531b9c2-9295-431a-a302-c74e2f1730b4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="composition">
+      <UniqueIdentifier>{7b54d51e-b689-4225-87a4-c1f1995ccd9b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -150,6 +153,9 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasTextRenderingParametersUnitTests.cpp">
       <Filter>graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)composition\CanvasCompositionUnitTests.cpp">
+      <Filter>composition</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -456,6 +462,18 @@
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockPrintTaskOptions.h">
       <Filter>mocks</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockCompositor.h">
+      <Filter>mocks</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockCompositionDrawingSurface.h">
+      <Filter>mocks</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockCompositionGraphicsDevice.h">
+      <Filter>mocks</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)utils\ApiInformationTestAdapter.h">
+      <Filter>utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

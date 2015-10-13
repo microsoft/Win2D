@@ -25,9 +25,13 @@ using namespace ABI::Microsoft::Graphics::Canvas::Effects;
 #include "../test.external/MockDxgiSurface.h"
 
 #include "utils/Helpers.h"
+#include "utils/ApiInformationTestAdapter.h"
 #include "mocks/MockHelpers.h"
 #include "mocks/MockAsyncAction.h"
 #include "mocks/MockDxgiSwapChain.h"
+#include "mocks/MockCompositor.h"
+#include "mocks/MockCompositionGraphicsDevice.h"
+#include "mocks/MockCompositionDrawingSurface.h"
 #include "mocks/MockCanvasDevice.h"
 #include "mocks/MockCanvasDrawingSession.h"
 #include "mocks/MockCanvasImageSourceDrawingSessionFactory.h"

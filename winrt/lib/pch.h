@@ -69,6 +69,12 @@
 #include <windows.ui.xaml.media.dxinterop.h>
 #include <windows.graphics.display.h>
 
+#if WINVER > _WIN32_WINNT_WINBLUE
+#include <windows.foundation.metadata.h>
+#include <windows.ui.composition.h>
+#include <windows.ui.composition.interop.h>
+#endif
+
 #pragma warning(default: 4265)  // "class has virtual functions, but destructor is not virtual"
 
 // Public

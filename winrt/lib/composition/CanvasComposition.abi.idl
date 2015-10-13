@@ -1,0 +1,96 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+//
+// Licensed under the MIT License. See LICENSE.txt in the project root for license information.
+
+#if WINVER > _WIN32_WINNT_WINBLUE
+
+namespace Microsoft.Graphics.Canvas.UI.Composition
+{
+    runtimeclass CanvasComposition;
+
+    [version(VERSION), uuid(162DEB43-1CF5-46F8-A0AF-356B23158F92), exclusiveto(CanvasComposition)]
+    interface ICanvasCompositionStatics : IInspectable
+    {
+        //
+        // Compositor interop
+        //
+        
+
+        HRESULT CreateCompositionGraphicsDevice(
+            [in]          Windows.UI.Composition.Compositor* compositor,
+            [in]          Microsoft.Graphics.Canvas.CanvasDevice* canvasDevice,
+            [out, retval] Windows.UI.Composition.CompositionGraphicsDevice** graphicsDevice);
+
+        HRESULT CreateCompositionSurfaceForSwapChain(
+            [in]          Windows.UI.Composition.Compositor* compositor,
+            [in]          Microsoft.Graphics.Canvas.CanvasSwapChain* swapChain,
+            [out, retval] Windows.UI.Composition.ICompositionSurface** compositionSurface);
+
+        
+        //
+        // CompositionGraphicsDevice interop
+        //
+
+        
+        HRESULT GetCanvasDevice(
+            [in]          Windows.UI.Composition.CompositionGraphicsDevice* graphicsDevice,
+            [out, retval] Microsoft.Graphics.Canvas.CanvasDevice** canvasDevice);
+
+        HRESULT SetCanvasDevice(
+            [in] Windows.UI.Composition.CompositionGraphicsDevice* graphicsDevice,
+            [in] Microsoft.Graphics.Canvas.CanvasDevice* canvasDevice);
+
+        
+        //
+        // CompositionDrawingSurface interop
+        //
+
+        
+        // NOTE: no ClearColor here.  It's up to apps to decide if they want to
+        // clear or if they want to just draw over the entire region.  (Differs
+        // from CanvasImageSource where we apply this policy).
+        [overload("CreateDrawingSession")]
+        HRESULT CreateDrawingSession(
+            [in]          Windows.UI.Composition.CompositionDrawingSurface* drawingSurface,
+            [out, retval] Microsoft.Graphics.Canvas.CanvasDrawingSession** drawingSession);
+
+        [overload("CreateDrawingSession")]
+        HRESULT CreateDrawingSessionWithUpdateRect(
+            [in]          Windows.UI.Composition.CompositionDrawingSurface* drawingSurface,
+            [in]          Windows.Foundation.Rect updateRect,
+            [out, retval] Microsoft.Graphics.Canvas.CanvasDrawingSession** drawingSession);
+
+        HRESULT SuspendDrawing(
+            [in] Windows.UI.Composition.CompositionDrawingSurface* drawingSurface);
+
+        HRESULT ResumeDrawing(
+            [in] Windows.UI.Composition.CompositionDrawingSurface* drawingSurface);
+
+
+        // QUESTION: Why isn't this on CompositionDrawingSurface's interface?
+        //
+        // NOTE: sizeInPixels is converted to integer by rounding (rather than
+        // truncating).  This is to match the behavior of CreateDrawingSurface.
+        HRESULT Resize(
+            [in] Windows.UI.Composition.CompositionDrawingSurface* drawingSurface,
+            [in] Windows.Foundation.Size sizeInPixels);
+
+        // QUESTION: Why isn't this on CompositionDrawingSurface's interface?
+        //
+        // NOTE: Rects are converted to RECTs by converting first to l,r,t,b and
+        // then rounding.  Points are converted by rounding.  This is to try and
+        // match CreateDrawingSurface's behavior.
+        HRESULT Scroll(
+            [in] Windows.UI.Composition.CompositionDrawingSurface* drawingSurface,
+            [in] Windows.Foundation.IReference<Windows.Foundation.Rect>* scrollRect,
+            [in] Windows.Foundation.IReference<Windows.Foundation.Rect>* clipRect,
+            [in] Windows.Foundation.Point offset);
+    }
+
+    [version(VERSION), static(ICanvasCompositionStatics, VERSION)]
+    runtimeclass CanvasComposition
+    {
+    }
+}
+
+#endif

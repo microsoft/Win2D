@@ -1,0 +1,88 @@
+<?xml version="1.0"?>
+<!--
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+Licensed under the MIT License. See LICENSE.txt in the project root for license information.
+-->
+
+<doc>
+  <assembly>
+    <name>Microsoft.Graphics.Canvas</name>
+  </assembly>
+  <members>
+    
+    <member name="T:Microsoft.Graphics.Canvas.UI.Composition.CanvasComposition" Experimental="true" TH2="true">
+      <summary>
+        Methods for using Win2D with Windows.UI.Composition.
+      </summary>
+    </member>
+
+    <member name="M:Microsoft.Graphics.Canvas.UI.Composition.CanvasComposition.CreateCompositionGraphicsDevice(Windows.UI.Composition.Compositor,Microsoft.Graphics.Canvas.CanvasDevice)">
+      <summary>
+        Creates a CompositionGraphicsDevice associated with a CanvasDevice.
+      </summary>
+    </member>
+
+    <member name="M:Microsoft.Graphics.Canvas.UI.Composition.CanvasComposition.CreateCompositionSurfaceForSwapChain(Windows.UI.Composition.Compositor,Microsoft.Graphics.Canvas.CanvasSwapChain)">
+      <summary>
+        Creates an ICompositionSurface associated with a CanvasSwapChain.
+      </summary>
+    </member>
+
+    <member name="M:Microsoft.Graphics.Canvas.UI.Composition.CanvasComposition.CreateDrawingSession(Windows.UI.Composition.CompositionDrawingSurface)">
+      <summary>
+        Creates a CanvasDrawingSession for drawing to the given CompositionDrawingSurface.
+      </summary>
+      <remarks>
+        <p>
+          The initial content of the drawing surface is undefined, so apps
+          should ensure that they either call Clear or draw over the entire
+          surface.
+        </p>
+      </remarks>
+    </member>
+
+    <member name="M:Microsoft.Graphics.Canvas.UI.Composition.CanvasComposition.CreateDrawingSession(Windows.UI.Composition.CompositionDrawingSurface,Windows.Foundation.Rect)">
+      <summary>
+        Creates a CanvasDrawingSession for updating a region of the given CompositionDrawingSurface.
+      </summary>
+    </member>
+
+    <member name="M:Microsoft.Graphics.Canvas.UI.Composition.CanvasComposition.GetCanvasDevice(Windows.UI.Composition.CompositionGraphicsDevice)">
+      <summary>
+        Gets the CanvasDevice associated with the given CompositionGraphicsDevice.
+      </summary>
+    </member>
+
+    <member name="M:Microsoft.Graphics.Canvas.UI.Composition.CanvasComposition.Resize(Windows.UI.Composition.CompositionDrawingSurface,Windows.Foundation.Size)">
+      <summary>
+        Resizes the given CompositionDrawingSurface.
+      </summary>
+    </member>
+
+    <member name="M:Microsoft.Graphics.Canvas.UI.Composition.CanvasComposition.ResumeDrawing(Windows.UI.Composition.CompositionDrawingSurface)">
+      <summary>
+        Resumes drawing on the given CompositionDrawingSurface.
+      </summary>
+    </member>
+
+    <member name="M:Microsoft.Graphics.Canvas.UI.Composition.CanvasComposition.Scroll(Windows.UI.Composition.CompositionDrawingSurface,System.Nullable{Windows.Foundation.Rect},System.Nullable{Windows.Foundation.Rect},Microsoft.Graphics.Canvas.UI.Composition.Point)">
+      <summary>
+        Scrolls the given CompositionDrawingSurface.
+      </summary>
+    </member>
+
+    <member name="M:Microsoft.Graphics.Canvas.UI.Composition.CanvasComposition.SetCanvasDevice(Windows.UI.Composition.CompositionGraphicsDevice,Microsoft.Graphics.Canvas.CanvasDevice)">
+      <summary>
+        Sets the CanvasDevice associated with the given CompositionGraphicsDevice.
+      </summary>
+    </member>
+
+    <member name="M:Microsoft.Graphics.Canvas.UI.Composition.CanvasComposition.SuspendDrawing(Windows.UI.Composition.CompositionDrawingSurface)">
+      <summary>
+        Suspends drawing on the given CompositionDrawingSurface.
+      </summary>
+    </member>
+    
+  </members>
+</doc>

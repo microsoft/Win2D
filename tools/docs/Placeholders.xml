@@ -39,5 +39,27 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       </summary>
     </member>    
 
+    <member name="N:Windows.UI.Composition">
+      <summary>
+        <a href="http://msdn.microsoft.com/library/windows/apps/Windows.UI.Composition">This namespace is documented on MSDN.</a>
+      </summary>
+    </member>
+
+    <member name="T:Windows.UI.Composition.Compositor">
+      <tocexclude />
+    </member>
+
+    <member name="T:Windows.UI.Composition.CompositionDrawingSurface">
+      <tocexclude />
+    </member>
+
+    <member name="T:Windows.UI.Composition.CompositionGraphicsDevice">
+      <tocexclude />
+    </member>
+    
+    <member name="T:Windows.UI.Composition.ICompositionSurface">
+      <tocexclude />
+    </member>
+
   </members>
 </doc>

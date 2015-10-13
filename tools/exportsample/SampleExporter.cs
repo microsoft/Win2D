@@ -41,6 +41,9 @@ namespace exportsample
         {
             // Delete all the directories under the sample (leaving any files in the root).  This is to allow
             // us to catch (re)moved files.
+            if (!Directory.Exists(sample.Destination))
+                return;
+
             foreach (var dir in Directory.EnumerateDirectories(sample.Destination))
             {
                 Directory.Delete(dir, true);

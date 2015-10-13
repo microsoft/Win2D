@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="Globals">
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
@@ -45,6 +45,7 @@
     <Exec Command="$(MdMergeExe) -v @(MetaDataDir -> '-metadata_dir &quot;%(Identity)&quot;', ' ') -o &quot;$(MergedWinmdDirectory)&quot; -i &quot;$(UnmergedWinmdDirectory)&quot; -partial -n:Microsoft.Graphics.Canvas:3" />
   </Target>
   <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)composition\CanvasComposition.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)drawing\CanvasActiveLayer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)drawing\DeviceContextPool.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\ChromaKeyEffect.h" />
@@ -78,6 +79,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)printing\CanvasPrintTaskOptionsChangedEventArgs.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)printing\DeferrableTask.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)printing\DeferrableTaskScheduler.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)utils\ApiInformationAdapter.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\CachedResourceReference.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\LockUtilities.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\TemporaryTransform.h" />
@@ -166,6 +168,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\Strings.inl" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)composition\CanvasComposition.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\ChromaKeyEffect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\ContrastEffect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\EdgeDetectionEffect.cpp" />
@@ -197,6 +200,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)printing\CanvasPrintDocumentAdapter.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)printing\CanvasPrintEventArgs.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)printing\DeferrableTask.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)utils\ApiInformationAdapter.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)utils\ResourceManager.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)xaml\CanvasAnimatedControl.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)xaml\CanvasAnimatedControlAdapter.cpp" />
@@ -278,6 +282,7 @@
     </MidlRT>
     <None Include="$(MSBuildThisFileDirectory)Canvas.codegen.idl" />
     <None Include="$(MSBuildThisFileDirectory)brushes\CanvasBrush.abi.idl" />
+    <None Include="$(MSBuildThisFileDirectory)composition\CanvasComposition.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)xaml\CanvasAnimatedControl.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)xaml\CanvasControl.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)xaml\CanvasImageSource.abi.idl" />

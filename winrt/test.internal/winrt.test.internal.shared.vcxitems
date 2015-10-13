@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="Globals">
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
@@ -23,6 +23,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockCanvasVirtualImageSource.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockCompositionDrawingSurface.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockCompositionGraphicsDevice.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockCompositor.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockCoreWindow.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DEllipseGeometry.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DRectangleGeometry.h" />
@@ -41,6 +44,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubResourceCreatorWithDpi.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubStorageFile.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubStorageFileStatics.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)utils\ApiInformationTestAdapter.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)xaml\BaseControlTestAdapter.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)xaml\BasicControlFixture.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)xaml\CanvasAnimatedControlTestAdapter.h" />
@@ -124,6 +128,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)xaml\StubDispatcher.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)composition\CanvasCompositionUnitTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasPrintDocumentUnitTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>

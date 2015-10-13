@@ -13,6 +13,14 @@ namespace Windows.Graphics.Imaging
     public class SoftwareBitmap { internal SoftwareBitmap() { } }
 }
 
+namespace Windows.UI.Composition
+{
+    public class Compositor { internal Compositor() { } }
+    public class CompositionDrawingSurface { internal CompositionDrawingSurface() { } }
+    public class CompositionGraphicsDevice { internal CompositionGraphicsDevice() { } }
+    public interface ICompositionSurface { }
+}
+
 namespace Windows.UI.Input.Inking
 {
     public class InkStroke { internal InkStroke() { } }
@@ -200,4 +208,38 @@ namespace Microsoft.Graphics.Canvas.Text
             set { throw new System.NotImplementedException(); }
         }
     }
+}
+
+namespace Microsoft.Graphics.Canvas.UI.Composition
+{
+    /// <summary></summary>
+   public static class CanvasComposition
+    {
+        /// <summary></summary>
+        public static Windows.UI.Composition.CompositionGraphicsDevice CreateCompositionGraphicsDevice(Windows.UI.Composition.Compositor compositor, Microsoft.Graphics.Canvas.CanvasDevice canvasDevice)                           { throw new System.NotImplementedException(); }
+        /// <summary></summary>
+        public static Windows.UI.Composition.ICompositionSurface CreateCompositionSurfaceForSwapChain(Windows.UI.Composition.Compositor compositor, Microsoft.Graphics.Canvas.CanvasSwapChain swapChain)                            { throw new System.NotImplementedException(); }
+        /// <summary></summary>
+        public static Microsoft.Graphics.Canvas.CanvasDrawingSession CreateDrawingSession(Windows.UI.Composition.CompositionDrawingSurface drawingSurface)                                                                          { throw new System.NotImplementedException(); }
+        /// <summary></summary>
+        public static Microsoft.Graphics.Canvas.CanvasDrawingSession CreateDrawingSession(Windows.UI.Composition.CompositionDrawingSurface drawingSurface, global::Windows.Foundation.Rect updateRect)                              { throw new System.NotImplementedException(); }
+        /// <summary></summary>
+        public static Microsoft.Graphics.Canvas.CanvasDevice GetCanvasDevice(Windows.UI.Composition.CompositionGraphicsDevice graphicsDevice)                                                                                       { throw new System.NotImplementedException(); }
+        /// <summary></summary>
+        public static void Resize(Windows.UI.Composition.CompositionDrawingSurface drawingSurface, global::Windows.Foundation.Size sizeInPixels)                                                                                    { throw new System.NotImplementedException(); }
+        /// <summary></summary>
+        public static void ResumeDrawing(Windows.UI.Composition.CompositionDrawingSurface drawingSurface)                                                                                                                           { throw new System.NotImplementedException(); }
+        /// <summary></summary>
+        public static void Scroll(Windows.UI.Composition.CompositionDrawingSurface drawingSurface, global::Windows.Foundation.Rect? scrollRect, global::Windows.Foundation.Rect? clipRect, Point offset) { throw new System.NotImplementedException(); }
+        /// <summary></summary>
+        public static void SetCanvasDevice(Windows.UI.Composition.CompositionGraphicsDevice graphicsDevice, Microsoft.Graphics.Canvas.CanvasDevice canvasDevice)                                                                    { throw new System.NotImplementedException(); }
+        /// <summary></summary>
+        public static void SuspendDrawing(Windows.UI.Composition.CompositionDrawingSurface drawingSurface)                                                                                                                          { throw new System.NotImplementedException(); }        
+    }
+
+    // This shouldn't be necessary, and it is in the wrong namespace, but it
+    // conflicts with the W.F.Point generated for the numerics docs if it is put
+    // in the right namespace, and it complains that it can't be found if it
+    // isn't present at all.
+    public struct Point { }
 }
