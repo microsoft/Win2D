@@ -92,7 +92,7 @@ namespace ExampleGallery
             }
             else
             {
-                testString = "This is some text which demonstrates Win2D's text-to-geometry option; there are sub-options of this test which apply lining options such as underline or strike-through. Additionally,  this example applies different text directions to ensure glyphs are transformed correctly.";
+                testString = "This is some text which demonstrates Win2D's text-to-geometry option; there are sub-options of this test which apply lining options such as underline or strike-through. Additionally, this example applies different text directions to ensure glyphs are transformed correctly.";
             }
 
             if(ThumbnailGenerator.IsDrawingThumbnail)
