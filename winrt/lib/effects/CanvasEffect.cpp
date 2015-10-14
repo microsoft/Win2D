@@ -799,7 +799,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         {
             if (IsSameInstance(input.Get(), m_sources[index].DpiCompensator.Get()))
             {
-                m_sources[index].DpiCompensator->GetInput(index, &input);
+                m_sources[index].DpiCompensator->GetInput(0, &input);
             }
             else
             {

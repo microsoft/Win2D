@@ -20,7 +20,7 @@ TEST_CLASS(PixelShaderEffectUnitTests)
 {
     TEST_METHOD_EX(PixelShaderEffect_UsePropertyMapAfterClose)
     {
-        auto sharedState = Make<SharedShaderState>(ShaderDescription(), std::vector<BYTE>());
+        auto sharedState = Make<SharedShaderState>(ShaderDescription(), std::vector<BYTE>(), CoordinateMappingState());
         auto effect = Make<PixelShaderEffect>(nullptr, nullptr, sharedState.Get());
 
         ComPtr<IMap<HSTRING, IInspectable*>> properties;
@@ -34,7 +34,7 @@ TEST_CLASS(PixelShaderEffectUnitTests)
 
     TEST_METHOD_EX(PixelShaderEffect_UsePropertyMapAfterFinalRelease)
     {
-        auto sharedState = Make<SharedShaderState>(ShaderDescription(), std::vector<BYTE>());
+        auto sharedState = Make<SharedShaderState>(ShaderDescription(), std::vector<BYTE>(), CoordinateMappingState());
         auto effect = Make<PixelShaderEffect>(nullptr, nullptr, sharedState.Get());
 
         ComPtr<IMap<HSTRING, IInspectable*>> properties;
@@ -112,6 +112,15 @@ TEST_CLASS(PixelShaderEffectUnitTests)
                 return S_OK;
             });
         }
+
+
+        template<typename T>
+        T const& GetEffectPropertyValue(PixelShaderEffectProperty prop)
+        {
+            Assert::AreEqual(sizeof(T), EffectPropertyValues[(int)prop].size());
+
+            return *reinterpret_cast<T*>(EffectPropertyValues[(int)prop].data());
+        }
     };
 
 
@@ -120,7 +129,11 @@ TEST_CLASS(PixelShaderEffectUnitTests)
         Fixture f;
 
         std::vector<BYTE> constants{ 1, 3, 7 };
-        auto sharedState = Make<SharedShaderState>(ShaderDescription(), constants);
+
+        CoordinateMappingState coordinateMapping;
+        coordinateMapping.MaxOffset = 123;
+
+        auto sharedState = Make<SharedShaderState>(ShaderDescription(), constants, coordinateMapping);
         auto effect = Make<PixelShaderEffect>(nullptr, nullptr, sharedState.Get());
 
         // Realize the effect.
@@ -130,9 +143,10 @@ TEST_CLASS(PixelShaderEffectUnitTests)
         Assert::AreEqual(constants, f.EffectPropertyValues[(int)PixelShaderEffectProperty::Constants]);
 
         // Should have also passed the shared state interface.
-        Assert::AreEqual(sizeof(ISharedShaderState*), f.EffectPropertyValues[(int)PixelShaderEffectProperty::SharedState].size());
+        Assert::IsTrue(IsSameInstance(sharedState.Get(), f.GetEffectPropertyValue<ISharedShaderState*>(PixelShaderEffectProperty::SharedState)));
 
-        Assert::IsTrue(IsSameInstance(sharedState.Get(), *reinterpret_cast<ISharedShaderState**>(f.EffectPropertyValues[(int)PixelShaderEffectProperty::SharedState].data())));
+        // And it should have passed the coordinate mapping state.
+        Assert::AreEqual(coordinateMapping.MaxOffset, f.GetEffectPropertyValue<CoordinateMappingState>(PixelShaderEffectProperty::CoordinateMapping).MaxOffset);
     }
 
 
@@ -149,7 +163,7 @@ TEST_CLASS(PixelShaderEffectUnitTests)
         ShaderDescription desc;
         desc.Variables.push_back(variable);
 
-        auto sharedState = Make<SharedShaderState>(desc, std::vector<BYTE>());
+        auto sharedState = Make<SharedShaderState>(desc, std::vector<BYTE>(), CoordinateMappingState());
 
         // Teach the D2D effect how to report its CLSID and shared state.
         f.MockEffect->MockGetValue = [&](UINT32 index, D2D1_PROPERTY_TYPE type, BYTE *data, UINT32 dataSize)
@@ -206,7 +220,7 @@ TEST_CLASS(PixelShaderEffectUnitTests)
         ShaderDescription desc;
         desc.Variables.push_back(variable);
 
-        auto sharedState = Make<SharedShaderState>(desc, std::vector<BYTE>(sizeof(int)));
+        auto sharedState = Make<SharedShaderState>(desc, std::vector<BYTE>(sizeof(int)), CoordinateMappingState());
         auto effect = Make<PixelShaderEffect>(nullptr, nullptr, sharedState.Get());
 
         // Change the property value to 3.
@@ -220,15 +234,48 @@ TEST_CLASS(PixelShaderEffectUnitTests)
         effect->GetD2DImage(f.CanvasDevice.Get(), f.DeviceContext.Get(), GetImageFlags::None, 0, nullptr);
 
         // This should have passed the constant buffer containing 3 through to D2D.
-        Assert::AreEqual<size_t>(sizeof(int), f.EffectPropertyValues[(int)PixelShaderEffectProperty::Constants].size());
-        auto d2dConstants = reinterpret_cast<int*>(f.EffectPropertyValues[(int)PixelShaderEffectProperty::Constants].data());
-        Assert::AreEqual(3, *d2dConstants);
+        auto& d2dConstants = f.GetEffectPropertyValue<int>(PixelShaderEffectProperty::Constants);
+        Assert::AreEqual(3, d2dConstants);
 
         // Change the property value to 5.
         ThrowIfFailed(properties->Insert(HStringReference(L"foo").Get(), Make<Nullable<int>>(5).Get(), &replaced));
 
         // This change should immediately be passed along to D2D.
-        Assert::AreEqual(5, *d2dConstants);
+        Assert::AreEqual(5, d2dConstants);
+    }
+
+
+    TEST_METHOD_EX(PixelShaderEffect_CoordinateMappingChangesArePassedThroughToD2D)
+    {
+        Fixture f;
+
+        auto sharedState = Make<SharedShaderState>(ShaderDescription(), std::vector<BYTE>(), CoordinateMappingState());
+        auto effect = Make<PixelShaderEffect>(nullptr, nullptr, sharedState.Get());
+
+        // Change some coordinate mapping settings.
+        ThrowIfFailed(effect->put_Source1Mapping(SamplerCoordinateMapping::OneToOne));
+        ThrowIfFailed(effect->put_Source2Mapping(SamplerCoordinateMapping::Offset));
+        ThrowIfFailed(effect->put_MaxSamplerOffset(23));
+
+        // Realize the effect.
+        effect->GetD2DImage(f.CanvasDevice.Get(), f.DeviceContext.Get(), GetImageFlags::None, 0, nullptr);
+
+        // This should have passed the coordinate mapping state through to D2D.
+        auto& d2dMapping = f.GetEffectPropertyValue<CoordinateMappingState>(PixelShaderEffectProperty::CoordinateMapping);
+        
+        Assert::AreEqual(SamplerCoordinateMapping::OneToOne, d2dMapping.Mapping[0]);
+        Assert::AreEqual(SamplerCoordinateMapping::Offset, d2dMapping.Mapping[1]);
+        Assert::AreEqual(23, d2dMapping.MaxOffset);
+
+        // Change the state.
+        ThrowIfFailed(effect->put_Source1Mapping(SamplerCoordinateMapping::Unknown));
+        ThrowIfFailed(effect->put_Source2Mapping(SamplerCoordinateMapping::OneToOne));
+        ThrowIfFailed(effect->put_MaxSamplerOffset(42));
+
+        // Changes should immediately be passed along to D2D.
+        Assert::AreEqual(SamplerCoordinateMapping::Unknown, d2dMapping.Mapping[0]);
+        Assert::AreEqual(SamplerCoordinateMapping::OneToOne, d2dMapping.Mapping[1]);
+        Assert::AreEqual(42, d2dMapping.MaxOffset);
     }
 };
 
@@ -348,7 +395,7 @@ public:
         desc.Hash = IID{ 0x8495c8be, 0xd63e, 0x40a0, 0x9f, 0xa5, 0x9, 0x72, 0x4b, 0xaf, 0xf7, 0x15 };
         desc.InputCount = 7;
 
-        auto sharedState = Make<SharedShaderState>(desc, std::vector<BYTE>());
+        auto sharedState = Make<SharedShaderState>(desc, std::vector<BYTE>(), CoordinateMappingState());
 
         ThrowIfFailed(f.FindBinding(L"SharedState").setFunction(impl, reinterpret_cast<BYTE*>(sharedState.GetAddressOf()), sizeof(ISharedShaderState*)));
 
@@ -387,7 +434,7 @@ public:
         PixelShaderEffectImpl::Register(f.Factory.Get());
         auto& binding = f.FindBinding(L"SharedState");
 
-        auto sharedState = Make<SharedShaderState>(ShaderDescription(), std::vector<BYTE>());
+        auto sharedState = Make<SharedShaderState>(ShaderDescription(), std::vector<BYTE>(), CoordinateMappingState());
         auto impl = Make<PixelShaderEffectImpl>();
 
         // SharedState property is initially null.
@@ -425,7 +472,7 @@ public:
 
         auto impl = Make<PixelShaderEffectImpl>();
 
-        auto sharedState = Make<SharedShaderState>(ShaderDescription(), std::vector<BYTE>());
+        auto sharedState = Make<SharedShaderState>(ShaderDescription(), std::vector<BYTE>(), CoordinateMappingState());
         ThrowIfFailed(f.FindBinding(L"SharedState").setFunction(impl.Get(), reinterpret_cast<BYTE*>(sharedState.GetAddressOf()), sizeof(ISharedShaderState*)));
 
         ThrowIfFailed(impl->Initialize(f.MockEffectContext.Get(), f.MockTransformGraph.Get()));
@@ -500,6 +547,59 @@ public:
 
         ThrowIfFailed(impl->PrepareForRender(D2D1_CHANGE_TYPE_NONE));
     }
+
+
+    TEST_METHOD_EX(PixelShaderEffectImpl_CoordinateMapping)
+    {
+        Fixture f;
+        PixelShaderEffectImpl::Register(f.Factory.Get());
+        auto& binding = f.FindBinding(L"CoordinateMapping");
+
+        auto sharedState = Make<SharedShaderState>(ShaderDescription(), std::vector<BYTE>(), CoordinateMappingState());
+        auto impl = Make<PixelShaderEffectImpl>();
+
+        // Can query the size of the property.
+        unsigned valueSize;
+        ThrowIfFailed(binding.getFunction(impl.Get(), nullptr, 0, &valueSize));
+        Assert::AreEqual<size_t>(sizeof(CoordinateMappingState), valueSize);
+
+        // Can read the value of the property.
+        CoordinateMappingState value;
+        ThrowIfFailed(binding.getFunction(impl.Get(), reinterpret_cast<BYTE*>(&value), sizeof(CoordinateMappingState), &valueSize));
+        Assert::AreEqual<size_t>(sizeof(CoordinateMappingState), valueSize);
+
+        for (int i = 0; i < MaxShaderInputs; i++)
+        {
+            Assert::AreEqual(SamplerCoordinateMapping::Unknown, value.Mapping[i]);
+        }
+
+        Assert::AreEqual(0, value.MaxOffset);
+
+        // Can't read if we specify the wrong size.
+        Assert::AreEqual(E_NOT_SUFFICIENT_BUFFER, binding.getFunction(impl.Get(), reinterpret_cast<BYTE*>(&value), sizeof(CoordinateMappingState) - 1, &valueSize));
+
+        // Can't set it to the wrong size.
+        Assert::AreEqual(E_NOT_SUFFICIENT_BUFFER, binding.setFunction(impl.Get(), reinterpret_cast<BYTE*>(&value), sizeof(CoordinateMappingState) - 1));
+
+        // Set the property.
+        value.Mapping[0] = SamplerCoordinateMapping::Offset;
+        value.Mapping[1] = SamplerCoordinateMapping::OneToOne;
+        value.MaxOffset = 123;
+
+        ThrowIfFailed(binding.setFunction(impl.Get(), reinterpret_cast<BYTE*>(&value), sizeof(CoordinateMappingState)));
+
+        // Read it back.
+        CoordinateMappingState value2;
+        ThrowIfFailed(binding.getFunction(impl.Get(), reinterpret_cast<BYTE*>(&value2), sizeof(CoordinateMappingState), &valueSize));
+        Assert::AreEqual<size_t>(sizeof(CoordinateMappingState), valueSize);
+
+        for (int i = 0; i < MaxShaderInputs; i++)
+        {
+            Assert::AreEqual(value.Mapping[i], value2.Mapping[i]);
+        }
+
+        Assert::AreEqual(value.MaxOffset, value2.MaxOffset);
+    }
 };
 
 
@@ -511,8 +611,8 @@ public:
         ShaderDescription desc;
         desc.InputCount = 5;
 
-        auto sharedState = Make<SharedShaderState>(desc, std::vector<BYTE>());
-        auto transform = Make<PixelShaderTransform>(sharedState.Get());
+        auto sharedState = Make<SharedShaderState>(desc, std::vector<BYTE>(), CoordinateMappingState());
+        auto transform = Make<PixelShaderTransform>(sharedState.Get(), std::make_shared<CoordinateMappingState>());
 
         Assert::AreEqual(5u, transform->GetInputCount());
     }
@@ -524,8 +624,8 @@ public:
         desc.InstructionCount = 123;
         desc.Hash = IID{ 0x8495c8be, 0xd63e, 0x40a0, 0x9f, 0xa5, 0x9, 0x72, 0x4b, 0xaf, 0xf7, 0x15 };
 
-        auto sharedState = Make<SharedShaderState>(desc, std::vector<BYTE>());
-        auto transform = Make<PixelShaderTransform>(sharedState.Get());
+        auto sharedState = Make<SharedShaderState>(desc, std::vector<BYTE>(), CoordinateMappingState());
+        auto transform = Make<PixelShaderTransform>(sharedState.Get(), std::make_shared<CoordinateMappingState>());
 
         auto mockDrawInfo = Make<MockD2DDrawInfo>();
 
@@ -565,9 +665,73 @@ public:
     }
 
 
-    TEST_METHOD_EX(PixelShaderTransform_MapInputRectsToOutputRect_ReturnsUnion)
+    TEST_METHOD_EX(PixelShaderTransform_MapInputRectsToOutputRect_WhenMappingIsOneToOne_ReturnPassThrough)
     {
-        auto transform = Make<PixelShaderTransform>(nullptr);
+        auto mapping = std::make_shared<CoordinateMappingState>();
+
+        mapping->Mapping[0] = SamplerCoordinateMapping::OneToOne;
+
+        auto transform = Make<PixelShaderTransform>(nullptr, mapping);
+
+        D2D1_RECT_L input = { 1, 2, 3, 4 };
+        D2D1_RECT_L output;
+        D2D1_RECT_L outputOpaqueSubRect;
+
+        ThrowIfFailed(transform->MapInputRectsToOutputRect(&input, nullptr, 1, &output, &outputOpaqueSubRect));
+
+        Assert::AreEqual(input, output);
+        Assert::AreEqual(D2D1_RECT_L{ 0, 0, 0, 0 }, outputOpaqueSubRect);
+    }
+
+
+    TEST_METHOD_EX(PixelShaderTransform_MapInputRectsToOutputRect_WhenMappingIsOffset_ReturnsExpandedRect)
+    {
+        auto mapping = std::make_shared<CoordinateMappingState>();
+
+        mapping->Mapping[0] = SamplerCoordinateMapping::Offset;
+        mapping->MaxOffset = 5;
+
+        auto transform = Make<PixelShaderTransform>(nullptr, mapping);
+
+        D2D1_RECT_L input = { 1, 2, 3, 4 };
+        D2D1_RECT_L output;
+        D2D1_RECT_L outputOpaqueSubRect;
+
+        ThrowIfFailed(transform->MapInputRectsToOutputRect(&input, nullptr, 1, &output, &outputOpaqueSubRect));
+
+        Assert::AreEqual(D2D1_RECT_L{ -4, -3, 8, 9 }, output);
+        Assert::AreEqual(D2D1_RECT_L{ 0, 0, 0, 0 }, outputOpaqueSubRect);
+    }
+
+
+    TEST_METHOD_EX(PixelShaderTransform_MapInputRectsToOutputRect_WhenMappingIsUnknown_ReturnsInfinite)
+    {
+        auto mapping = std::make_shared<CoordinateMappingState>();
+
+        mapping->Mapping[0] = SamplerCoordinateMapping::Unknown;
+
+        auto transform = Make<PixelShaderTransform>(nullptr, mapping);
+
+        D2D1_RECT_L input = { 1, 2, 3, 4 };
+        D2D1_RECT_L output;
+        D2D1_RECT_L outputOpaqueSubRect;
+
+        ThrowIfFailed(transform->MapInputRectsToOutputRect(&input, nullptr, 1, &output, &outputOpaqueSubRect));
+
+        Assert::AreEqual(D2D1_RECT_L{ INT_MIN, INT_MIN, INT_MAX, INT_MAX }, output);
+        Assert::AreEqual(D2D1_RECT_L{ 0, 0, 0, 0 }, outputOpaqueSubRect);
+    }
+
+
+    TEST_METHOD_EX(PixelShaderTransform_MapInputRectsToOutputRect_WhenMultipleInputs_ReturnsUnion)
+    {
+        auto mapping = std::make_shared<CoordinateMappingState>();
+
+        mapping->Mapping[0] = SamplerCoordinateMapping::OneToOne;
+        mapping->Mapping[1] = SamplerCoordinateMapping::Offset;
+        mapping->MaxOffset = 1;
+
+        auto transform = Make<PixelShaderTransform>(nullptr, mapping);
 
         D2D1_RECT_L inputs[] =
         {
@@ -580,14 +744,39 @@ public:
 
         ThrowIfFailed(transform->MapInputRectsToOutputRect(inputs, nullptr, _countof(inputs), &output, &outputOpaqueSubRect));
 
-        Assert::AreEqual(D2D1_RECT_L{ -3, 200, 79, 220 }, output);
+        Assert::AreEqual(D2D1_RECT_L{ -4, 200, 79, 221 }, output);
         Assert::AreEqual(D2D1_RECT_L{ 0, 0, 0, 0 }, outputOpaqueSubRect);
     }
 
 
-    TEST_METHOD_EX(PixelShaderTransform_MapInputRectsToOutputRect_ReturnsInfiniteIfNoInputs)
+    TEST_METHOD_EX(PixelShaderTransform_MapInputRectsToOutputRect_WhenMultipleInputs_IgnoresUnknownMappings)
     {
-        auto transform = Make<PixelShaderTransform>(nullptr);
+        auto mapping = std::make_shared<CoordinateMappingState>();
+
+        mapping->Mapping[0] = SamplerCoordinateMapping::OneToOne;
+        mapping->Mapping[1] = SamplerCoordinateMapping::Unknown;
+
+        auto transform = Make<PixelShaderTransform>(nullptr, mapping);
+
+        D2D1_RECT_L inputs[] =
+        {
+            { 50, 200, 79, 210 },
+            { -3, 210, 50, 220 },
+        };
+
+        D2D1_RECT_L output;
+        D2D1_RECT_L outputOpaqueSubRect;
+
+        ThrowIfFailed(transform->MapInputRectsToOutputRect(inputs, nullptr, _countof(inputs), &output, &outputOpaqueSubRect));
+
+        Assert::AreEqual(inputs[0], output);
+        Assert::AreEqual(D2D1_RECT_L{ 0, 0, 0, 0 }, outputOpaqueSubRect);
+    }
+
+
+    TEST_METHOD_EX(PixelShaderTransform_MapInputRectsToOutputRect_WhenNoInputs_ReturnsInfinite)
+    {
+        auto transform = Make<PixelShaderTransform>(nullptr, std::make_shared<CoordinateMappingState>());
 
         D2D1_RECT_L output;
         D2D1_RECT_L outputOpaqueSubRect;
@@ -599,32 +788,61 @@ public:
     }
 
 
-    TEST_METHOD_EX(PixelShaderTransform_MapOutputRectToInputRects_IsPassThrough)
+    TEST_METHOD_EX(PixelShaderTransform_MapOutputRectToInputRects)
     {
-        auto transform = Make<PixelShaderTransform>(nullptr);
+        auto mapping = std::make_shared<CoordinateMappingState>();
 
-        D2D1_RECT_L output = { 1, 2, 3, 4 };
+        mapping->Mapping[0] = SamplerCoordinateMapping::Unknown;
+        mapping->Mapping[1] = SamplerCoordinateMapping::OneToOne;
+        mapping->Mapping[2] = SamplerCoordinateMapping::Offset;
+        mapping->MaxOffset = 2;
+
+        auto transform = Make<PixelShaderTransform>(nullptr, mapping);
+
+        // Store input image bounds.
+        D2D1_RECT_L initialInputs[] =
+        {
+            { 1, 2, 3, 4 },
+            { 5, 6, 7, 8 },
+            { 9, 10, 11, 12 },
+        };
+
+        D2D1_RECT_L output;
+        D2D1_RECT_L outputOpaqueSubRect;
+
+        ThrowIfFailed(transform->MapInputRectsToOutputRect(initialInputs, nullptr, _countof(initialInputs), &output, &outputOpaqueSubRect));
+
+        Assert::AreEqual(D2D_RECT_L{ 5, 6, 13, 14 }, output);
+        Assert::AreEqual(D2D1_RECT_L{ 0, 0, 0, 0 }, outputOpaqueSubRect);
+
+        // Map backward from an output region being drawn to parts of our input images.
+        output = { 10, 11, 23, 42 };
         D2D1_RECT_L inputs[3];
 
-        ThrowIfFailed(transform->MapOutputRectToInputRects(&output, inputs, _countof(inputs)));
+        ThrowIfFailed(transform->MapOutputRectToInputRects(&output, inputs, 3));
 
-        for (int i = 0; i < _countof(inputs); i++)
-        {
-            Assert::AreEqual(output, inputs[i]);
-        }
+        // Unknown mapping = return the entire input image bounds.
+        Assert::AreEqual(initialInputs[0], inputs[0]);
+
+        // OneToOne mapping.
+        Assert::AreEqual(output, inputs[1]);
+
+        // Offset mapping.
+        Assert::AreEqual(D2D_RECT_L{ 8, 9, 25, 44 }, inputs[2]);
     }
 
 
-    TEST_METHOD_EX(PixelShaderTransform_MapInvalidRect_IsPassThrough)
+    TEST_METHOD_EX(PixelShaderTransform_MapInvalidRect_ReturnsInfinity)
     {
-        auto transform = Make<PixelShaderTransform>(nullptr);
+        auto transform = Make<PixelShaderTransform>(nullptr, std::make_shared<CoordinateMappingState>());
 
         D2D1_RECT_L input = { 1, 2, 3, 4 };
         D2D1_RECT_L output;
+        D2D1_RECT_L expected = { INT_MIN, INT_MIN, INT_MAX, INT_MAX };
 
         ThrowIfFailed(transform->MapInvalidRect(1234, input, &output));
 
-        Assert::AreEqual(input, output);
+        Assert::AreEqual(expected, output);
     }
 };
 
@@ -695,20 +913,26 @@ TEST_CLASS(SharedShaderStateUnitTests)
 
         std::vector<BYTE> constants = { 29 };
 
-        auto originalState = Make<SharedShaderState>(desc, constants);
+        CoordinateMappingState coordinateMapping;
+        coordinateMapping.MaxOffset = 23;
+
+        auto originalState = Make<SharedShaderState>(desc, constants, coordinateMapping);
 
         Assert::AreEqual(desc.InputCount, originalState->Shader().InputCount);
         Assert::AreEqual<size_t>(1, originalState->Constants().size());
         Assert::AreEqual(constants[0], originalState->Constants()[0]);
+        Assert::AreEqual(coordinateMapping.MaxOffset, originalState->CoordinateMapping().MaxOffset);
 
         auto clone = originalState->Clone();
 
         Assert::AreEqual(desc.InputCount, clone->Shader().InputCount);
         Assert::AreEqual<size_t>(1, clone->Constants().size());
         Assert::AreEqual(constants[0], clone->Constants()[0]);
+        Assert::AreEqual(coordinateMapping.MaxOffset, clone->CoordinateMapping().MaxOffset);
 
         Assert::AreNotEqual<void const*>(&originalState->Shader(), &clone->Shader());
         Assert::AreNotEqual<void const*>(&originalState->Constants(), &clone->Constants());
+        Assert::AreNotEqual<void const*>(&originalState->CoordinateMapping(), &clone->CoordinateMapping());
     };
 
 

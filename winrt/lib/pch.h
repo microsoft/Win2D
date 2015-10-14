@@ -106,6 +106,7 @@
 // local
 #include "utils/Conversion.h"
 #include "utils/DxgiUtilities.h"
+#include "utils/MathUtilities.h"
 #include "utils/ResourceManager.h"
 #include "utils/ResourceWrapper.h"
 #include "utils/CachedResourceReference.h"

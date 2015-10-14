@@ -564,6 +564,14 @@ namespace Microsoft
                 END_ENUM(D2D1_FILL_MODE);
             }
 
+            ENUM_TO_STRING(SamplerCoordinateMapping)
+            {
+                ENUM_VALUE(SamplerCoordinateMapping_Unknown);
+                ENUM_VALUE(SamplerCoordinateMapping_OneToOne);
+                ENUM_VALUE(SamplerCoordinateMapping_Offset);
+                END_ENUM(SamplerCoordinateMapping);
+            }
+
             template<>
             inline std::wstring ToString<__int64>(__int64 const& value)
             {

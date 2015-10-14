@@ -742,6 +742,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\shader\SharedShaderState.h">
       <Filter>effects\shader</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)utils\MathUtilities.h">
+      <Filter>utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)Canvas.codegen.idl" />

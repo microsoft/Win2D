@@ -54,6 +54,17 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         EFFECT_PROPERTY(Source7, IGraphicsEffectSource*);
         EFFECT_PROPERTY(Source8, IGraphicsEffectSource*);
 
+        EFFECT_PROPERTY(Source1Mapping, SamplerCoordinateMapping);
+        EFFECT_PROPERTY(Source2Mapping, SamplerCoordinateMapping);
+        EFFECT_PROPERTY(Source3Mapping, SamplerCoordinateMapping);
+        EFFECT_PROPERTY(Source4Mapping, SamplerCoordinateMapping);
+        EFFECT_PROPERTY(Source5Mapping, SamplerCoordinateMapping);
+        EFFECT_PROPERTY(Source6Mapping, SamplerCoordinateMapping);
+        EFFECT_PROPERTY(Source7Mapping, SamplerCoordinateMapping);
+        EFFECT_PROPERTY(Source8Mapping, SamplerCoordinateMapping);
+
+        EFFECT_PROPERTY(MaxSamplerOffset, int);
+
         IFACEMETHOD(IsSupported)(ICanvasDevice* device, boolean* result) override;
 
     protected:
@@ -66,7 +77,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         void SetSource(unsigned int index, IGraphicsEffectSource* source);
 
         void SetProperty(HSTRING name, IInspectable* boxedValue);
-        void SetD2DConstants(ID2D1Effect* d2dEffect);
+
+        HRESULT GetCoordinateMapping(unsigned index, SamplerCoordinateMapping* value);
+        HRESULT SetCoordinateMapping(unsigned index, SamplerCoordinateMapping value);
+
+        void SetD2DConstants();
+        void SetD2DCoordinateMapping();
     };
 
 }}}}}

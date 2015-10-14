@@ -8,6 +8,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 {
     class ISharedShaderState;
     class PixelShaderTransform;
+    struct CoordinateMappingState;
 
     DEFINE_GUID(CLSID_PixelShaderEffect, 0x8db3047a, 0x84cc, 0x4152, 0xaf, 0x92, 0x50, 0xe4, 0xac, 0xb9, 0xd1, 0xfc);
 
@@ -18,14 +19,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     {
     public:
         ComPtr<ISharedShaderState> m_sharedState;
-
         ComPtr<PixelShaderTransform> m_shaderTransform;
-
         ComPtr<ID2D1EffectContext> m_effectContext;
         ComPtr<ID2D1TransformGraph> m_transformGraph;
 
         std::vector<BYTE> m_constants;
         bool m_constantsDirty;
+
+        std::shared_ptr<CoordinateMappingState> m_coordinateMapping;
 
     public:
         PixelShaderEffectImpl();
@@ -42,6 +43,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         HRESULT SetConstantsProperty(BYTE const* data, UINT32 dataSize);
         HRESULT GetConstantsProperty(BYTE* data, UINT32 dataSize, UINT32 *actualSize) const;
+
+        HRESULT SetCoordinateMappingProperty(BYTE const* data, UINT32 dataSize);
+        HRESULT GetCoordinateMappingProperty(BYTE* data, UINT32 dataSize, UINT32 *actualSize) const;
     };
 
 
@@ -50,6 +54,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     {
         SharedState,
         Constants,
+        CoordinateMapping,
     };
 
 }}}}}

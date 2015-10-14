@@ -9,6 +9,7 @@ using NativeComponent;
 using System;
 using System.Linq;
 using System.Runtime.InteropServices;
+using Windows.Foundation;
 
 #if WINDOWS_UWP
 using System.Numerics;
@@ -1016,6 +1017,237 @@ namespace test.managed
                 M31 = m31, M32 = m32, M33 = m33, M34 = m34,
                 M41 = m41, M42 = m42, M43 = m43, M44 = m44,
             };
+        }
+
+        
+        [TestMethod]
+        public void PixelShaderEffect_CoordinateMappingAccessors()
+        {
+            const string hlsl =
+            @"
+                float4 main() : SV_Target
+                {
+                    return 0;
+                }
+            ";
+
+            var effect = new PixelShaderEffect(ShaderCompiler.CompileShader(hlsl, "ps_4_0"));
+
+            // Check defaults.
+            Assert.AreEqual(SamplerCoordinateMapping.Unknown, effect.Source1Mapping);
+            Assert.AreEqual(SamplerCoordinateMapping.Unknown, effect.Source2Mapping);
+            Assert.AreEqual(SamplerCoordinateMapping.Unknown, effect.Source3Mapping);
+            Assert.AreEqual(SamplerCoordinateMapping.Unknown, effect.Source4Mapping);
+            Assert.AreEqual(SamplerCoordinateMapping.Unknown, effect.Source5Mapping);
+            Assert.AreEqual(SamplerCoordinateMapping.Unknown, effect.Source6Mapping);
+            Assert.AreEqual(SamplerCoordinateMapping.Unknown, effect.Source7Mapping);
+            Assert.AreEqual(SamplerCoordinateMapping.Unknown, effect.Source8Mapping);
+
+            Assert.AreEqual(0, effect.MaxSamplerOffset);
+
+            // Setters.
+            effect.Source1Mapping = SamplerCoordinateMapping.OneToOne;
+            effect.Source2Mapping = SamplerCoordinateMapping.Offset;
+            effect.Source3Mapping = SamplerCoordinateMapping.OneToOne;
+            effect.Source4Mapping = SamplerCoordinateMapping.Offset;
+            effect.Source5Mapping = SamplerCoordinateMapping.OneToOne;
+            effect.Source6Mapping = SamplerCoordinateMapping.Offset;
+            effect.Source7Mapping = SamplerCoordinateMapping.OneToOne;
+            effect.Source8Mapping = SamplerCoordinateMapping.Offset;
+
+            effect.MaxSamplerOffset = 23;
+
+            // Getters.
+            Assert.AreEqual(SamplerCoordinateMapping.OneToOne, effect.Source1Mapping);
+            Assert.AreEqual(SamplerCoordinateMapping.Offset,   effect.Source2Mapping);
+            Assert.AreEqual(SamplerCoordinateMapping.OneToOne, effect.Source3Mapping);
+            Assert.AreEqual(SamplerCoordinateMapping.Offset,   effect.Source4Mapping);
+            Assert.AreEqual(SamplerCoordinateMapping.OneToOne, effect.Source5Mapping);
+            Assert.AreEqual(SamplerCoordinateMapping.Offset,   effect.Source6Mapping);
+            Assert.AreEqual(SamplerCoordinateMapping.OneToOne, effect.Source7Mapping);
+            Assert.AreEqual(SamplerCoordinateMapping.Offset,   effect.Source8Mapping);
+
+            Assert.AreEqual(23, effect.MaxSamplerOffset);
+        }
+
+
+        [TestMethod]
+        public void PixelShaderEffect_InputRectTooBigError()
+        {
+            const string hlsl =
+            @"
+                texture2D t1;
+                sampler s1;
+
+                float4 main() : SV_Target
+                {
+                    return t1.Sample(s1, 0);
+                }
+            ";
+
+            var effect = new PixelShaderEffect(ShaderCompiler.CompileShader(hlsl, "ps_4_0"))
+            {
+                Source1Mapping = SamplerCoordinateMapping.Unknown
+            };
+
+            var device = new CanvasDevice();
+            var renderTarget = new CanvasRenderTarget(device, 1, 1, 96);
+
+            // Drawing with a fixed size input is ok.
+            effect.Source1 = new CanvasRenderTarget(device, 1, 1, 96);
+
+            using (var ds = renderTarget.CreateDrawingSession())
+            {
+                ds.DrawImage(effect);
+            }
+
+            // Drawing with an infinite sized input is not!
+            effect.Source1 = new ColorSourceEffect();
+
+            Utils.AssertThrowsException<Exception>(() => 
+            {
+                using (var ds = renderTarget.CreateDrawingSession())
+                {
+                    ds.DrawImage(effect);
+                }
+            }, "Drawing this effect would require too big an intermediate surface. Make sure PixelShaderEffect.Source1Mapping is set correctly, or wrap the source image with a CropEffect to reduce its size.");
+
+            // But it's ok if we clamp the input back down to finite size.
+            effect.Source1 = new CropEffect
+            {
+                Source = new ColorSourceEffect(),
+                SourceRectangle = new Rect(0, 0, 100, 100)
+            };
+
+            using (var ds = renderTarget.CreateDrawingSession())
+            {
+                ds.DrawImage(effect);
+            }
+
+            // Also ok if we change our mapping mode to something other than infinite.
+            effect.Source1 = new ColorSourceEffect();
+            effect.Source1Mapping = SamplerCoordinateMapping.OneToOne;
+
+            using (var ds = renderTarget.CreateDrawingSession())
+            {
+                ds.DrawImage(effect);
+            }
+        }
+
+
+        [TestMethod]
+        public void PixelShaderEffect_MaxOffsetAndOffsetMappingValidation()
+        {
+            const string hlsl =
+            @"
+                texture2D t1;
+                sampler s1;
+
+                float4 main() : SV_Target
+                {
+                    return t1.Sample(s1, 0);
+                }
+            ";
+
+            var effect = new PixelShaderEffect(ShaderCompiler.CompileShader(hlsl, "ps_4_0"))
+            {
+                Source1 = new ColorSourceEffect()
+            };
+
+            var device = new CanvasDevice();
+            var renderTarget = new CanvasRenderTarget(device, 1, 1, 96);
+
+            // It's an error to draw with Offset mapping mode but MaxSamplerOffset not set.
+            effect.Source1Mapping = SamplerCoordinateMapping.Offset;
+            effect.MaxSamplerOffset = 0;
+
+            Utils.AssertThrowsException<ArgumentException>(() => 
+            {
+                using (var ds = renderTarget.CreateDrawingSession())
+                {
+                    ds.DrawImage(effect);
+                }
+            }, "When PixelShaderEffect.Source1Mapping is set to Offset, MaxSamplerOffset should also be set.");
+
+            // Also an error to draw with MaxSamplerOffset but no Offset mapping mode.
+            effect.Source1Mapping = SamplerCoordinateMapping.OneToOne;
+            effect.MaxSamplerOffset = 1;
+
+            Utils.AssertThrowsException<ArgumentException>(() => 
+            {
+                using (var ds = renderTarget.CreateDrawingSession())
+                {
+                    ds.DrawImage(effect);
+                }
+            }, "When PixelShaderEffect.MaxSamplerOffset is set, at least one source should be using SamplerCoordinateMapping.Offset.");
+
+            // Ok if we have both.
+            effect.Source1Mapping = SamplerCoordinateMapping.Offset;
+            effect.MaxSamplerOffset = 1;
+
+            using (var ds = renderTarget.CreateDrawingSession())
+            {
+                ds.DrawImage(effect);
+            }
+        }
+
+
+        [TestMethod]
+        public void PixelShaderEffect_ShaderReflectionSetsCoordinateMappingDefaults()
+        {
+            const string hlsl =
+            @"
+                texture2D t0;
+                sampler s0;
+
+                texture2D t1;
+                sampler s1;
+
+                texture2D t2;
+                sampler s2;
+
+                texture2D t3;
+                sampler s3;
+
+                float4 main(float4 texcoord0 : TEXCOORD0, 
+                            float4 texcoord1 : TEXCOORD1, 
+                            float4 texcoord2 : TEXCOORD2, 
+                            float4 texcoord3 : TEXCOORD3) : SV_Target
+                {
+                    return t0.Sample(s0, texcoord0) +
+                           t1.Sample(s1, texcoord1) +
+                           t2.Sample(s2, texcoord2) +
+                           t3.Sample(s3, texcoord3);
+                }
+
+                export float4 ShaderLinkingFunction(float4 input0    : INPUT0, 
+                                                    float4 texcoord1 : TEXCOORD1, 
+                                                    float4 texcoord2 : TEXCOORD2, 
+                                                    float4 input3    : INPUT3)
+                {
+                    return input0 +
+                           t1.Sample(s1, texcoord1) +
+                           t2.Sample(s2, texcoord2) +
+                           input3;
+                }
+            ";
+
+            // If we compile without support for shader linking, all mappings default to Unknown.
+            var effect = new PixelShaderEffect(ShaderCompiler.CompileShader(hlsl, "ps_4_0"));
+
+            Assert.AreEqual(SamplerCoordinateMapping.Unknown, effect.Source1Mapping);
+            Assert.AreEqual(SamplerCoordinateMapping.Unknown, effect.Source2Mapping);
+            Assert.AreEqual(SamplerCoordinateMapping.Unknown, effect.Source3Mapping);
+            Assert.AreEqual(SamplerCoordinateMapping.Unknown, effect.Source4Mapping);
+
+            // But if we include a shader linking function, reflection now has enough
+            // info to detect which inputs are simple. These are set to OneToOne mapping.
+            effect = new PixelShaderEffect(ShaderCompiler.CompileShaderAndEmbedLinkingFunction(hlsl));
+
+            Assert.AreEqual(SamplerCoordinateMapping.OneToOne, effect.Source1Mapping);
+            Assert.AreEqual(SamplerCoordinateMapping.Unknown, effect.Source2Mapping);
+            Assert.AreEqual(SamplerCoordinateMapping.Unknown, effect.Source3Mapping);
+            Assert.AreEqual(SamplerCoordinateMapping.OneToOne, effect.Source4Mapping);
         }
     }
 }

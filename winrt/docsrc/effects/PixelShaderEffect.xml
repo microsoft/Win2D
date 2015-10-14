@@ -21,23 +21,42 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
           the shader as input textures.
         </p>
         <p>
-          IMPORTANT NOTE: the source -> output mapping must currently be 1:1, i.e. each 
-          source texture must be sampled at the same location as the pixel being shaded. 
-          If your shader offsets the texture coordinates before sampling, the effect will 
-          sometimes fail in unpredictable ways. This limitation is temporary and will be 
-          lifted as soon as possible.
-        </p>
-        <p>
           Steps to use a custom pixel shader:
         </p>
         <ol>
-          <li>Write a pixel shader in HLSL</li>
-          <li>Compile it using fxc.exe</li>
-          <li>Include the resulting .bin file with your app (you do not need to ship the source .hlsl file)</li>
-          <li>Load the .bin file and pass it to the <see cref="M:Microsoft.Graphics.Canvas.Effects.PixelShaderEffect.#ctor(System.Byte[])"/> constructor</li>
-          <li>Set from 0 to 8 source properties (e.g. <see cref="P:Microsoft.Graphics.Canvas.Effects.PixelShaderEffect.Source1"/>) as required by the shader</li>
-          <li>Configure any constant buffer <see cref="P:Microsoft.Graphics.Canvas.Effects.PixelShaderEffect.Properties"/> required by the shader</li>
-          <li>Draw the effect!</li>
+          <li>
+            Write a pixel shader in HLSL
+          </li>
+          <li>
+            Compile it using fxc.exe
+          </li>
+          <li>
+            Include the resulting .bin file with your app (you do not need to ship the source .hlsl file)
+          </li>
+          <li>
+            Load the .bin file and pass it to the
+            <see cref="M:Microsoft.Graphics.Canvas.Effects.PixelShaderEffect.#ctor(System.Byte[])"/> 
+            constructor
+          </li>
+          <li>
+            If your shader uses non 1:1 texture coordinate mapping (sampling at different 
+            locations from the pixel being shaded), make sure the appropriate
+            <see cref="T:Microsoft.Graphics.Canvas.Effects.SamplerCoordinateMapping"/>
+            is set (eg. <see cref="P:Microsoft.Graphics.Canvas.Effects.PixelShaderEffect.Source1Mapping"/>) 
+          </li>
+          <li>
+            Set from 0 to 8 source properties (eg.
+            <see cref="P:Microsoft.Graphics.Canvas.Effects.PixelShaderEffect.Source1"/>) 
+            as required by the shader
+          </li>
+          <li>
+            Configure any constant buffer
+            <see cref="P:Microsoft.Graphics.Canvas.Effects.PixelShaderEffect.Properties"/> 
+            required by the shader
+          </li>
+          <li>
+            Draw the effect!
+          </li>
         </ol>
         <p>
           See the <see cref="M:Microsoft.Graphics.Canvas.Effects.PixelShaderEffect.#ctor(System.Byte[])"/> 
@@ -138,10 +157,53 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
           }
         </code>
         <p>
-          For more details see the shaders used by Example Gallery, and the
-          <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/dn879811%28v=vs.85%29.aspx">HLSL Helpers</a>
-          article on MSDN.
+          Defining the symbol D2D_INPUT{N}_SIMPLE indicates that texture input N 
+          uses simple sampling, i.e. is always sampled at the same location as the pixel 
+          being shaded. This define should be used when a texture is sampled by calling 
+          D2DGetInput. Using it in your shader code will initialize the corresponding 
+          <see cref="T:Microsoft.Graphics.Canvas.Effects.SamplerCoordinateMapping"/> 
+          property to OneToOne.
         </p>
+        <p>
+          If your shader samples its texture in some other way than D2DGetInput, for 
+          instance calling D2DSampleInputAtOffset or D2DSampleInputAtPosition, then you 
+          should define D2D_INPUT{N}_COMPLEX to indicate that it is not a 1:1 
+          texture coordinate mapping. This will initialize the corresponding
+          <see cref="T:Microsoft.Graphics.Canvas.Effects.SamplerCoordinateMapping"/> 
+          property to Unknown. Depending on the behavior of your shader, you may wish to 
+          change this to Offset, and set
+          <see cref="P:Microsoft.Graphics.Canvas.Effects.PixelShaderEffect.MaxSamplerOffset"/>
+          to indicate the maximum number of pixels by which a texture coordinate will be 
+          displaced.
+        </p>
+        <p>
+          For instance an edge detection shader that uses a 3x3 filter kernel (which has 
+          a maximum offset of 1 pixel in any direction from the center tap) should 
+          configure itself as:
+        </p>
+        <code>
+          var effect = new PixelShaderEffect(File.ReadAllBytes("MyShader.bin"))
+          {
+              Source1Mapping = SamplerCoordinateMapping.Offset,
+              MaxSamplerOffset = 1
+          };
+        </code>
+        <p>
+          Using SamplerCoordinateMapping.Offset can be more efficient than 
+          SamplerCoordinateMapping.Unknown, as the extra knowledge allows the effect 
+          runtime to break up large images into smaller tiles and skip computing unused 
+          regions of the source images. But specifying this information wrongly (for 
+          instance if your shader actually samples further away from the current pixel 
+          than the specified MaxSamplerOffset) can give unpredictably wrong results.
+          If in doubt, stick with SamplerCoordinateMapping.Unknown.
+        </p>
+        <p>
+          For more information see the shaders used by Example Gallery, and the MSDN articles:
+        </p>
+        <ul>
+          <li><a href="https://msdn.microsoft.com/en-us/library/windows/desktop/dn879811%28v=vs.85%29.aspx">HLSL Helpers</a></li>
+          <li><a href="https://msdn.microsoft.com/en-us/library/windows/desktop/dn879810%28v=vs.85%29.aspx">Effect Shader Linking</a></li>
+        </ul>
       </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Effects.PixelShaderEffect.Dispose">
@@ -170,6 +232,55 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Effects.PixelShaderEffect.Source8">
       <summary>Gets or sets the eighth input source for the custom pixel shader.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.PixelShaderEffect.Source1Mapping">
+      <summary>Describes what texture coordinates the shader will use when sampling its first input texture.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.PixelShaderEffect.Source2Mapping">
+      <summary>Describes what texture coordinates the shader will use when sampling its second input texture.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.PixelShaderEffect.Source3Mapping">
+      <summary>Describes what texture coordinates the shader will use when sampling its third input texture.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.PixelShaderEffect.Source4Mapping">
+      <summary>Describes what texture coordinates the shader will use when sampling its fourth input texture.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.PixelShaderEffect.Source5Mapping">
+      <summary>Describes what texture coordinates the shader will use when sampling its fifth input texture.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.PixelShaderEffect.Source6Mapping">
+      <summary>Describes what texture coordinates the shader will use when sampling its sixth input texture.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.PixelShaderEffect.Source7Mapping">
+      <summary>Describes what texture coordinates the shader will use when sampling its seventh input texture.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.PixelShaderEffect.Source8Mapping">
+      <summary>Describes what texture coordinates the shader will use when sampling its eighth input texture.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.PixelShaderEffect.MaxSamplerOffset">
+      <summary>
+        Describes the maximum offset the shader will add to or subtract from a texture
+        coordinate when sampling from an input that uses Offset coordinate mapping mode.
+      </summary>
+      <remarks>
+        <p>
+          Offset mapping mode is intended for use with shaders that call 
+          D2DSampleInputAtOffset. Correctly describing the maximum offset allows the effect 
+          runtime to know what region of each source image needs to be computed before a 
+          given output area can be drawn.
+        </p>
+        <p>
+          Beware: specifying this information wrongly (for instance if your shader actually 
+          samples further away from the current pixel than the current MaxSamplerOffset) 
+          can give unpredictably wrong results.
+        </p>
+        <p>
+          This value is specified in pixels (not dips).
+        </p>
+        <p>
+          MaxSamplerOffset is ignored for inputs that do not use Offset coordinate mapping mode.
+        </p>
+      </remarks>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Effects.PixelShaderEffect.Properties">
       <summary>
@@ -227,5 +338,70 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <inheritdoc/>
     </member>
     
+    <member name="T:Microsoft.Graphics.Canvas.Effects.SamplerCoordinateMapping" Experimental="true">
+      <summary>
+        Describes what texture coordinates the shader will use when sampling an input texture.
+      </summary>
+      <remarks>
+        <p>
+          When a <see cref="T:Microsoft.Graphics.Canvas.Effects.PixelShaderEffect"/> source image 
+          is set to Unknown coordinate mapping mode, the effect runtime must make the 
+          entire source image available as a pixel shader input texture. This is 
+          different from OneToOne or Offset mapping modes, in which the neccessary region 
+          of the source image can be determined from what output region is being drawn.
+        </p>
+        <p>
+          Requesting the entire source image is fine as long as this is reasonably sized 
+          (eg. a bitmap) but will fail if the source image is very large or infinite in 
+          size (eg. <see cref="T:Microsoft.Graphics.Canvas.Effects.ColorSourceEffect"/> 
+          or the output of a <see cref="T:Microsoft.Graphics.Canvas.Effects.BorderEffect"/>).
+        <p>
+        </p>
+          If you get an exception message <i>drawing this effect would require too big an 
+          intermediate surface</i>, consider switching from Unknown to Offset mapping 
+          mode (if that is suitable for your shader) or wrapping the source with a 
+          <see cref="T:Microsoft.Graphics.Canvas.Effects.CropEffect"/> to reduce its size.
+        </p>
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Effects.SamplerCoordinateMapping.Unknown">
+      <summary>
+        Indicates that the texture coordinate mapping is complex or unknown. This is the 
+        default for shaders that specify D2D_INPUT{N}_COMPLEX.
+      </summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Effects.SamplerCoordinateMapping.OneToOne">
+      <summary>
+        Indicates that the texture coordinate mapping is 1:1 between the source image and 
+        pixel being shaded. This is the default for shaders that specify 
+        D2D_INPUT{N}_SIMPLE, which should only be used when the shader calls 
+        D2DGetInput rather than D2DSampleInputAtOffset or D2DSampleInputAtPosition.
+      </summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Effects.SamplerCoordinateMapping.Offset">
+      <summary>
+        <p>
+          Indicates that there is a correlation between the texture coordinates at which 
+          the input is sampled and the pixel being shaded, but this is not exactly 1:1. 
+          For instance this is the mode to use when a filter kernel calls 
+          D2DSampleInputAtOffset to take a number of samples from a region around the 
+          pixel itself.
+        </p>
+        <p>
+          Offset mode is never selected by default. To use it, set one of the 
+          Source{N}Mapping properties on
+          <see cref="T:Microsoft.Graphics.Canvas.Effects.PixelShaderEffect"/>, and set
+          <see cref="P:Microsoft.Graphics.Canvas.Effects.PixelShaderEffect.MaxSamplerOffset"/>
+          to indicate the maximum number of pixels by which a texture coordinate will be 
+          displaced.
+        </p>
+        <p>
+          Beware: specifying this mode incorrectly (for instance if your shader actually 
+          samples further away from the current pixel than the current MaxSamplerOffset) 
+          can give unpredictably wrong results.
+        </p>
+      </summary>
+    </member>
+
   </members>
 </doc>

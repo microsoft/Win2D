@@ -8,8 +8,9 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Effects
 {
-    PixelShaderTransform::PixelShaderTransform(ISharedShaderState* sharedState)
+    PixelShaderTransform::PixelShaderTransform(ISharedShaderState* sharedState, std::shared_ptr<CoordinateMappingState> const& coordinateMapping)
         : m_sharedState(sharedState)
+        , m_coordinateMapping(coordinateMapping)
     { }
 
 
@@ -19,33 +20,75 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     }
 
 
-    static D2D1_RECT_L RectangleUnion(D2D1_RECT_L const* rectangles, unsigned count)
-    {
-        assert(count);
-
-        D2D1_RECT_L result = rectangles[0];
-
-        for (unsigned i = 1; i < count; i++)
-        {
-            result.left   = std::min(result.left,   rectangles[i].left);
-            result.right  = std::max(result.right,  rectangles[i].right);
-            result.top    = std::min(result.top,    rectangles[i].top);
-            result.bottom = std::max(result.bottom, rectangles[i].bottom);
-        }
-
-        return result;
-    }
-
-
     IFACEMETHODIMP PixelShaderTransform::MapInputRectsToOutputRect(D2D1_RECT_L const* inputRects, D2D1_RECT_L const* inputOpaqueSubRects, UINT32 inputRectCount, D2D1_RECT_L* outputRect, D2D1_RECT_L* outputOpaqueSubRect)
     {
         UNREFERENCED_PARAMETER(inputOpaqueSubRects);
 
         return ExceptionBoundary([&]
         {
-            // For now, we assume 1:1 mapping.
-            *outputRect = inputRectCount ? RectangleUnion(inputRects, inputRectCount)
-                                         : D2D_RECT_L{ INT_MIN, INT_MIN, INT_MAX, INT_MAX };
+            if (inputRectCount > MaxShaderInputs)
+                ThrowHR(E_INVALIDARG);
+
+            // Store the bounds of our input images, for later use by MapOutputRectToInputRects.
+            m_inputBounds.assign(inputRects, inputRects + inputRectCount);
+
+            D2D_RECT_L accumulatedRect = { INT_MIN, INT_MIN, INT_MAX, INT_MAX };
+            bool gotRect = false;
+            bool gotOffset = false;
+
+            for (unsigned i = 0; i < inputRectCount; i++)
+            {
+                D2D_RECT_L rect;
+
+                switch (m_coordinateMapping->Mapping[i])
+                {
+                case SamplerCoordinateMapping::Unknown:
+                    // Due to unknown coordinate mapping, this input does not contribute to the output rectangle.
+                    continue;
+
+                case SamplerCoordinateMapping::OneToOne:
+                    // This input rectangle maps directly to the output.
+                    rect = inputRects[i];
+                    break;
+
+                case SamplerCoordinateMapping::Offset:
+                    // This rectangle must be expanded due to the use of offset texture coordinates.
+                    if (!m_coordinateMapping->MaxOffset)
+                    {
+                        WinStringBuilder message;
+                        message.Format(Strings::CustomEffectOffsetMappingWithoutMaxOffset, i + 1);
+                        ThrowHR(E_INVALIDARG, message.Get());
+                    }
+
+                    rect = ExpandRectangle(inputRects[i], m_coordinateMapping->MaxOffset);
+                    gotOffset = true;
+                    break;
+
+                default:
+                    ThrowHR(E_INVALIDARG);
+                }
+
+                if (!gotRect)
+                {
+                    // This is the first output rectangle we have seen, so store it directly.
+                    accumulatedRect = rect;
+                    gotRect = true;
+                }
+                else
+                {
+                    // Subsequent rectangles are combined with the existing region.
+                    accumulatedRect = RectangleUnion(accumulatedRect, rect);
+                }
+            }
+
+            // Validate that if MaxOffset is set, at least one input should be using SamplerCoordinateMapping::Offset.
+            if (m_coordinateMapping->MaxOffset && !gotOffset)
+            {
+                ThrowHR(E_INVALIDARG, Strings::CustomEffectMaxOffsetWithoutOffsetMapping);
+            }
+
+            // Return the accumulated output rectangle.
+            *outputRect = accumulatedRect;
 
             // We don't know how this shader handles opacity, so always just report an empty opaque subrect.
             *outputOpaqueSubRect = D2D1_RECT_L{ 0, 0, 0, 0 };
@@ -55,22 +98,59 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
     IFACEMETHODIMP PixelShaderTransform::MapOutputRectToInputRects(D2D1_RECT_L const* outputRect, D2D1_RECT_L* inputRects, UINT32 inputRectsCount) const
     {
-        // For now, we assume 1:1 mapping.
-        for (unsigned i = 0; i < inputRectsCount; i++)
+        return ExceptionBoundary([&]
         {
-            inputRects[i] = *outputRect;
-        }
+            if (inputRectsCount > m_inputBounds.size())
+                ThrowHR(E_INVALIDARG);
 
-        return S_OK;
+            for (unsigned i = 0; i < inputRectsCount; i++)
+            {
+                D2D1_RECT_L rect;
+
+                switch (m_coordinateMapping->Mapping[i])
+                {
+                case SamplerCoordinateMapping::Unknown:
+                    // Due to unknown coordinate mapping, we must request access to the entire input image.
+                    rect = m_inputBounds[i];
+                    break;
+
+                case SamplerCoordinateMapping::OneToOne:
+                    // This output rectangle maps directly to the input.
+                    rect = *outputRect;
+                    break;
+
+                case SamplerCoordinateMapping::Offset:
+                    // This rectangle must be expanded due to the use of offset texture coordinates.
+                    rect = ExpandRectangle(*outputRect, m_coordinateMapping->MaxOffset);
+                    break;
+
+                default:
+                    ThrowHR(E_INVALIDARG);
+                }
+           
+                // Validate that the input region we are requesting is reasonably sized.
+                if (static_cast<unsigned>(rect.right - rect.left) > MaxDImageIntermediateSize ||
+                    static_cast<unsigned>(rect.bottom - rect.top) > MaxDImageIntermediateSize)
+                {
+                    WinStringBuilder message;
+                    message.Format(Strings::CustomEffectInputRectTooBig, i + 1);
+                    ThrowHR(D2DERR_INTERMEDIATE_TOO_LARGE, message.Get());
+                }
+
+                // Return the desired input rectangle.
+                inputRects[i] = rect;
+            }
+        });
     }
 
 
     IFACEMETHODIMP PixelShaderTransform::MapInvalidRect(UINT32 inputIndex, D2D1_RECT_L invalidInputRect, D2D1_RECT_L* invalidOutputRect) const
     {
         UNREFERENCED_PARAMETER(inputIndex);
+        UNREFERENCED_PARAMETER(invalidInputRect);
 
-        // For now, we assume 1:1 mapping.
-        *invalidOutputRect = invalidInputRect;
+        // Mark the entire output as invalid.
+        *invalidOutputRect = D2D_RECT_L{ INT_MIN, INT_MIN, INT_MAX, INT_MAX };
 
         return S_OK;
     }

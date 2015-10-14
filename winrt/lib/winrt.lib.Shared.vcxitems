@@ -86,6 +86,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\CachedResourceReference.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\HashUtilities.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\LockUtilities.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)utils\MathUtilities.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\TemporaryTransform.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)xaml\AnimatedControlAsyncAction.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)xaml\BaseControl.h" />

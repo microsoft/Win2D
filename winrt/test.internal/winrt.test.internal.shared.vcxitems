@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="Globals">
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
@@ -135,6 +135,7 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)utils\HashUtilitiesTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)utils\MapTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)utils\MathUtilitiesTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)utils\SingletonUnitTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)xaml\BaseControlUnitTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)xaml\CanvasAnimatedControlUnitTests.cpp" />

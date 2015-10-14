@@ -11,6 +11,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 {
     PixelShaderEffectImpl::PixelShaderEffectImpl()
         : m_constantsDirty(false)
+        , m_coordinateMapping(std::make_shared<CoordinateMappingState>())
     { }
 
 
@@ -40,6 +41,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             </Property>
             <Property name='Constants' type='blob'>
                 <Property name='DisplayName' type='string' value='Constants'/>
+                <Property name='Default' type='blob' value=''/>
+            </Property>
+            <Property name='CoordinateMapping' type='blob'>
+                <Property name='DisplayName' type='string' value='CoordinateMapping'/>
                 <Property name='Default' type='blob' value=''/>
             </Property>
         </Effect>
@@ -81,8 +86,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         static const D2D1_PROPERTY_BINDING bindings[] =
         {
-            D2D1_VALUE_TYPE_BINDING(L"SharedState", &SetSharedStateProperty, &GetSharedStateProperty),
-            D2D1_BLOB_TYPE_BINDING (L"Constants",   &SetConstantsProperty,   &GetConstantsProperty)
+            D2D1_VALUE_TYPE_BINDING(L"SharedState",       &SetSharedStateProperty,       &GetSharedStateProperty),
+            D2D1_BLOB_TYPE_BINDING (L"Constants",         &SetConstantsProperty,         &GetConstantsProperty),
+            D2D1_BLOB_TYPE_BINDING (L"CoordinateMapping", &SetCoordinateMappingProperty, &GetCoordinateMappingProperty)
         };
 
         ThrowIfFailed(factory->RegisterEffectFromString(CLSID_PixelShaderEffect, effectXml, bindings, _countof(bindings), PixelShaderEffectImplFactory));
@@ -129,7 +135,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                     ThrowHR(hr, Strings::CustomEffectBadShader);
 
                 // Configure the effect transform graph.
-                m_shaderTransform = Make<PixelShaderTransform>(m_sharedState.Get());
+                m_shaderTransform = Make<PixelShaderTransform>(m_sharedState.Get(), m_coordinateMapping);
                 CheckMakeResult(m_shaderTransform);
 
                 ThrowIfFailed(m_transformGraph->SetSingleTransformNode(As<ID2D1TransformNode>(m_shaderTransform).Get()));
@@ -183,6 +189,34 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         if (data)
             memcpy(data, m_constants.data(), std::min<size_t>(dataSize, m_constants.size()));
+
+        return S_OK;
+    }
+
+
+    HRESULT PixelShaderEffectImpl::SetCoordinateMappingProperty(BYTE const* data, UINT32 dataSize)
+    {
+        if (dataSize != sizeof(CoordinateMappingState))
+            return E_NOT_SUFFICIENT_BUFFER;
+        
+        *m_coordinateMapping = *reinterpret_cast<CoordinateMappingState const*>(data);
+
+        return S_OK;
+    }
+
+
+    HRESULT PixelShaderEffectImpl::GetCoordinateMappingProperty(BYTE* data, UINT32 dataSize, UINT32 *actualSize) const
+    {
+        if (actualSize)
+            *actualSize = sizeof(CoordinateMappingState);
+
+        if (data)
+        {
+            if (dataSize != sizeof(CoordinateMappingState))
+                return E_NOT_SUFFICIENT_BUFFER;
+
+            *reinterpret_cast<CoordinateMappingState*>(data) = *m_coordinateMapping;
+        }
 
         return S_OK;
     }

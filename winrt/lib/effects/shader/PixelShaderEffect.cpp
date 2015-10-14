@@ -123,6 +123,29 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     IMPLEMENT_EFFECT_SOURCE_PROPERTY(PixelShaderEffect, Source8, 7)
 
     
+#define IMPLEMENT_COORDINATE_MAPPING_PROPERTY(PROPERTY, INDEX)                          \
+                                                                                        \
+    IFACEMETHODIMP PixelShaderEffect::get_##PROPERTY(SamplerCoordinateMapping* value)   \
+    {                                                                                   \
+        return GetCoordinateMapping(INDEX, value);                                      \
+    }                                                                                   \
+                                                                                        \
+    IFACEMETHODIMP PixelShaderEffect::put_##PROPERTY(SamplerCoordinateMapping value)    \
+    {                                                                                   \
+        return SetCoordinateMapping(INDEX, value);                                      \
+    }
+
+
+    IMPLEMENT_COORDINATE_MAPPING_PROPERTY(Source1Mapping, 0)
+    IMPLEMENT_COORDINATE_MAPPING_PROPERTY(Source2Mapping, 1)
+    IMPLEMENT_COORDINATE_MAPPING_PROPERTY(Source3Mapping, 2)
+    IMPLEMENT_COORDINATE_MAPPING_PROPERTY(Source4Mapping, 3)
+    IMPLEMENT_COORDINATE_MAPPING_PROPERTY(Source5Mapping, 4)
+    IMPLEMENT_COORDINATE_MAPPING_PROPERTY(Source6Mapping, 5)
+    IMPLEMENT_COORDINATE_MAPPING_PROPERTY(Source7Mapping, 6)
+    IMPLEMENT_COORDINATE_MAPPING_PROPERTY(Source8Mapping, 7)
+
+
     IFACEMETHODIMP PixelShaderEffect::IsSupported(ICanvasDevice* device, boolean* result)
     {
         return ExceptionBoundary([&]
@@ -168,11 +191,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         }
 
         // Set our shared state as properties on the newly realized D2D effect instance.
-        auto& d2dEffect = GetResource();
+        ThrowIfFailed(GetResource()->SetValue(PixelShaderEffectProperty::SharedState, m_sharedState.Get()));
 
-        ThrowIfFailed(d2dEffect->SetValue(PixelShaderEffectProperty::SharedState, m_sharedState.Get()));
-
-        SetD2DConstants(d2dEffect.Get());
+        SetD2DConstants();
+        SetD2DCoordinateMapping();
 
         return true;
     }
@@ -237,22 +259,89 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         m_sharedState->SetProperty(name, boxedValue);
 
         // If we are realized, pass the updated constant buffer on to Direct2D.
-        auto& d2dEffect = MaybeGetResource();
+        SetD2DConstants();
+    }
 
-        if (d2dEffect)
+
+    HRESULT PixelShaderEffect::GetCoordinateMapping(unsigned index, SamplerCoordinateMapping* value)
+    {
+        assert(index < MaxShaderInputs);
+
+        return ExceptionBoundary([&]
         {
-            SetD2DConstants(d2dEffect.Get());
+            CheckInPointer(value);
+
+            *value = m_sharedState->CoordinateMapping().Mapping[index];
+        });
+    }
+
+
+    HRESULT PixelShaderEffect::SetCoordinateMapping(unsigned index, SamplerCoordinateMapping value)
+    {
+        assert(index < MaxShaderInputs);
+
+        return ExceptionBoundary([&]
+        {
+            auto lock = Lock(m_mutex);
+
+            // Store the new value into our shared state object.
+            m_sharedState->CoordinateMapping().Mapping[index] = value;
+
+            // If we are realized, pass the updated mapping state on to Direct2D.
+            SetD2DCoordinateMapping();
+        });
+    }
+
+
+    IFACEMETHODIMP PixelShaderEffect::get_MaxSamplerOffset(int* value)
+    {
+        return ExceptionBoundary([&]
+        {
+            CheckInPointer(value);
+
+            *value = m_sharedState->CoordinateMapping().MaxOffset;
+        });
+    }
+
+
+    IFACEMETHODIMP PixelShaderEffect::put_MaxSamplerOffset(int value)
+    {
+        return ExceptionBoundary([&]
+        {
+            auto lock = Lock(m_mutex);
+
+            // Store the new value into our shared state object.
+            m_sharedState->CoordinateMapping().MaxOffset = value;
+
+            // If we are realized, pass the updated mapping state on to Direct2D.
+            SetD2DCoordinateMapping();
+        });
+    }
+
+
+    void PixelShaderEffect::SetD2DConstants()
+    {
+        auto& d2dEffect = MaybeGetResource();
+        auto& constants = m_sharedState->Constants();
+
+        if (d2dEffect && !constants.empty())
+        {
+            ThrowIfFailed(d2dEffect->SetValue(PixelShaderEffectProperty::Constants,
+                                              constants.data(),
+                                              static_cast<UINT32>(constants.size())));
         }
     }
 
 
-    void PixelShaderEffect::SetD2DConstants(ID2D1Effect* d2dEffect)
+    void PixelShaderEffect::SetD2DCoordinateMapping()
     {
-        auto& constants = m_sharedState->Constants();
+        auto& d2dEffect = MaybeGetResource();
 
-        if (!constants.empty())
+        if (d2dEffect)
         {
-            ThrowIfFailed(d2dEffect->SetValue(PixelShaderEffectProperty::Constants, constants.data(), static_cast<UINT32>(constants.size())));
+            ThrowIfFailed(d2dEffect->SetValue(PixelShaderEffectProperty::CoordinateMapping,
+                                              reinterpret_cast<BYTE*>(&m_sharedState->CoordinateMapping()),
+                                              sizeof(CoordinateMappingState)));
         }
     }
 

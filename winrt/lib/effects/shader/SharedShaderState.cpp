@@ -8,9 +8,20 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Effects
 {
-    SharedShaderState::SharedShaderState(ShaderDescription const& shader, std::vector<BYTE> const& constants)
+    CoordinateMappingState::CoordinateMappingState()
+        : MaxOffset(0)
+    {
+        for (int i = 0; i < MaxShaderInputs; i++)
+        {
+            Mapping[i] = SamplerCoordinateMapping::Unknown;
+        }
+    }
+
+
+    SharedShaderState::SharedShaderState(ShaderDescription const& shader, std::vector<BYTE> const& constants, CoordinateMappingState const& coordinateMapping)
         : m_shader(shader)
         , m_constants(constants)
+        , m_coordinateMapping(coordinateMapping)
     { }
 
 
@@ -31,7 +42,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
     ComPtr<ISharedShaderState> SharedShaderState::Clone()
     {
-        auto clone = Make<SharedShaderState>(m_shader, m_constants);
+        auto clone = Make<SharedShaderState>(m_shader, m_constants, m_coordinateMapping);
         CheckMakeResult(clone);
 
         return clone;
@@ -474,6 +485,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         m_shader.InstructionCount = desc.InstructionCount;
 
         ThrowIfFailed(reflector->GetMinFeatureLevel(&m_shader.MinFeatureLevel));
+
+        // If this shader was compiled to support shader linking, we can also determine which inputs are simple vs. complex.
+        ReflectOverShaderLinkingFunction();
     }
 
 
@@ -487,7 +501,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             switch (inputDesc.Type)
             {
             case D3D_SIT_TEXTURE:
-                if (inputDesc.BindPoint >= 8)
+                if (inputDesc.BindPoint >= MaxShaderInputs)
                     ThrowHR(E_INVALIDARG, Strings::CustomEffectTooManyTextures);
 
                 // Record how many input textures this shader uses.
@@ -640,6 +654,55 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         // Store metadata about this variable.
         m_shader.Variables.emplace_back(desc, type);
+    }
+
+
+    void SharedShaderState::ReflectOverShaderLinkingFunction()
+    {
+        // If this shader was compiled to support shader linking, we can get extra information
+        // (telling us which inputs are simple vs. complex) from the shader linking function.
+        
+        // It's valid to use shaders that don't support linking, so we return on failure rather than throwing.
+        ComPtr<ID3DBlob> privateData;
+
+        if (FAILED(D3DGetBlobPart(m_shader.Code.data(), m_shader.Code.size(), D3D_BLOB_PRIVATE_DATA, 0, &privateData)))
+            return;
+
+        ComPtr<ID3D11LibraryReflection> reflector;
+
+        if (FAILED(D3DReflectLibrary(privateData->GetBufferPointer(), privateData->GetBufferSize(), IID_PPV_ARGS(&reflector))))
+            return;
+
+        D3D11_LIBRARY_DESC desc;
+        reflector->GetDesc(&desc);
+
+        // For shader linking there should be a single function entrypoint.
+        if (desc.FunctionCount != 1)
+            return;
+
+        auto function = reflector->GetFunctionByIndex(0);
+
+        D3D11_FUNCTION_DESC functionDesc;
+        ThrowIfFailed(function->GetDesc(&functionDesc));
+
+        int inputCount = 0;
+
+        for (int i = 0; i < functionDesc.FunctionParameterCount; i++)
+        {
+            D3D11_PARAMETER_DESC parameterDesc;
+            ThrowIfFailed(function->GetFunctionParameter(i)->GetDesc(&parameterDesc));
+
+            if (strstr(parameterDesc.SemanticName, "TEXCOORD"))
+            {
+                // TEXCOORD semantic means this is a complex input, so skip past it.
+                inputCount++;
+            }
+            else if (strstr(parameterDesc.SemanticName, "INPUT"))
+            {
+                // INPUT semantic means a simple input, so select passthrough coordinate mapping mode.
+                m_coordinateMapping.Mapping[inputCount++] = SamplerCoordinateMapping::OneToOne;
+            }
+        }
     }
 
 }}}}}

@@ -7,6 +7,9 @@
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Effects 
 {
     class ISharedShaderState;
+    struct CoordinateMappingState;
+
+    const int MaxDImageIntermediateSize = 4096;
 
 
     // Custom Direct2D draw transform.
@@ -15,10 +18,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     {
         ComPtr<ISharedShaderState> m_sharedState;
 
+        std::shared_ptr<CoordinateMappingState> m_coordinateMapping;
+        std::vector<D2D1_RECT_L> m_inputBounds;
+
         ComPtr<ID2D1DrawInfo> m_drawInfo;
 
     public:
-        PixelShaderTransform(ISharedShaderState* sharedState);
+        PixelShaderTransform(ISharedShaderState* sharedState, std::shared_ptr<CoordinateMappingState> const& coordinateMapping);
 
         IFACEMETHOD_(UINT32, GetInputCount)() const override;
 

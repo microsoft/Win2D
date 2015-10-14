@@ -11,11 +11,12 @@ namespace NativeComponent
     public ref class ShaderCompiler sealed
     {
     public:
-        static Platform::Array<byte>^ CompileShader(Platform::String^ shaderCode, Platform::String^ targetProfile)
+        static Platform::Array<byte>^ CompileShader(Platform::String^ shaderCode, Platform::String^ targetProfile, Platform::String^ entryPoint)
         {
             // Convert Unicode -> ASCII (sloppily, just casting wchar_t to char, but this is good enough for unit tests).
             std::string asciiShader(shaderCode->Begin(), shaderCode->End());
             std::string asciiProfile(targetProfile->Begin(), targetProfile->End());
+            std::string asciiEntryPoint(entryPoint->Begin(), entryPoint->End());
 
             ComPtr<ID3DBlob> result;
             ComPtr<ID3DBlob> errors;
@@ -26,7 +27,7 @@ namespace NativeComponent
                 nullptr, // sourceName
                 nullptr, // defines
                 nullptr, // include
-                "main",
+                asciiEntryPoint.empty() ? nullptr : asciiEntryPoint.c_str(),
                 asciiProfile.c_str(),
                 0, // flags1
                 0, // flags2
@@ -43,10 +44,35 @@ namespace NativeComponent
                 throw ref new Platform::Exception(hr, ref new Platform::String(errorString.c_str()));
             }
 
-            // Convert the output blob to a WinRT array.
-            auto resultBuffer = reinterpret_cast<byte*>(result->GetBufferPointer());
+            return BlobToArray(result.Get());
+        }
 
-            return ref new Platform::Array<byte>(resultBuffer, static_cast<unsigned>(result->GetBufferSize()));
+
+        static Platform::Array<byte>^ CompileShader(Platform::String^ shaderCode, Platform::String^ targetProfile)
+        {
+            return CompileShader(shaderCode, targetProfile, L"main");
+        }
+
+
+        static Platform::Array<byte>^ CompileShaderAndEmbedLinkingFunction(Platform::String^ shaderCode)
+        {
+            auto bin = CompileShader(shaderCode, L"ps_4_0_level_9_3", L"main");
+            auto lib = CompileShader(shaderCode, L"lib_4_0_level_9_3_ps_only", nullptr);
+
+            ComPtr<ID3DBlob> mergedBlob;
+
+            ThrowIfFailed(D3DSetBlobPart(bin->Data, bin->Length, D3D_BLOB_PRIVATE_DATA, 0, lib->Data, lib->Length, &mergedBlob));
+
+            return BlobToArray(mergedBlob.Get());
+        }
+
+
+    private:
+        static Platform::Array<byte>^ BlobToArray(ID3DBlob* blob)
+        {
+            auto buffer = reinterpret_cast<byte*>(blob->GetBufferPointer());
+
+            return ref new Platform::Array<byte>(buffer, static_cast<unsigned>(blob->GetBufferSize()));
         }
     };
 }
