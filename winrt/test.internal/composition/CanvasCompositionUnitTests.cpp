@@ -281,44 +281,6 @@ public:
         f.Check(drawingSession);
     }
 
-    TEST_METHOD_EX(CanvasComposition_SuspendDrawing_FailsWhenPassedNullParameters)
-    {
-        Fixture f;
-
-        Assert::AreEqual(E_INVALIDARG, f.Composition->SuspendDrawing(nullptr));
-    }
-
-    TEST_METHOD_EX(CanvasComposition_SuspendDrawing)
-    {
-        DrawingSurfaceFixture f;
-
-        f.DrawingSurface->SuspendDrawMethod.SetExpectedCalls(1,
-            []
-            {
-                return AnyErrorResult;
-            });
-        Assert::AreEqual(AnyErrorResult, f.Composition->SuspendDrawing(f.DrawingSurface.Get()));
-    }
-
-    TEST_METHOD_EX(CanvasComposition_ResumeDrawing_FailsWhenPassedNullParameters)
-    {
-        Fixture f;
-
-        Assert::AreEqual(E_INVALIDARG, f.Composition->ResumeDrawing(nullptr));
-    }
-
-    TEST_METHOD_EX(CanvasComposition_ResumeDrawing)
-    {
-        DrawingSurfaceFixture f;
-
-        f.DrawingSurface->ResumeDrawMethod.SetExpectedCalls(1,
-            []
-            {
-                return AnyErrorResult;
-            });
-        Assert::AreEqual(AnyErrorResult, f.Composition->ResumeDrawing(f.DrawingSurface.Get()));
-    }
-
     TEST_METHOD_EX(CanvasComposition_Resize_FailsWhenPassedNullParameters)
     {
         DrawingSurfaceFixture f;
@@ -341,84 +303,6 @@ public:
                 return AnyErrorResult;
             });
         Assert::AreEqual(AnyErrorResult, f.Composition->Resize(f.DrawingSurface.Get(), anySize));
-    }
-
-    TEST_METHOD_EX(CanvasComposition_Scroll_FailsWhenPassedNullParameters)
-    {
-        DrawingSurfaceFixture f;
-
-        IReference<Rect>* nullScrollRectIsValid = nullptr;
-        IReference<Rect>* nullClipRectIsValid = nullptr;
-
-        Assert::AreEqual(E_INVALIDARG, f.Composition->Scroll(nullptr, nullScrollRectIsValid, nullClipRectIsValid, Point{}));
-    }
-
-    struct ScrollFixture : public DrawingSurfaceFixture
-    {
-        Rect ScrollRectValue{ 1.1f, 1.4f, 2.3f, 2.1f };
-        Rect ClipRectValue{ 3.4f, 3.4f, 4.1f, 4.0f };
-
-        RECT ExpectedScrollRect{ 1, 1, 3, 4 };
-        RECT ExpectedClipRect{ 3, 3, 8, 7 };
-        
-        ComPtr<IReference<Rect>> ScrollRect = Make<Nullable<Rect>>(ScrollRectValue);
-        ComPtr<IReference<Rect>> ClipRect = Make<Nullable<Rect>>(ClipRectValue);
-
-        void Test(bool scroll, bool clip)
-        {
-            Point offset{ -1.5f, 1.5f };
-            int expectedOffsetX = -2;
-            int expectedOffsetY = 2;
-            
-            DrawingSurface->ScrollMethod.SetExpectedCalls(1,
-                [=] (RECT const* scrollRect, RECT const* clipRect, int offsetX, int offsetY)
-                {
-                    if (scroll)
-                        Assert::AreEqual(ExpectedScrollRect, *scrollRect);
-                    else
-                        Assert::IsNull(scrollRect);
-
-                    if (clip)
-                        Assert::AreEqual(ExpectedClipRect, *clipRect);
-                    else
-                        Assert::IsNull(clipRect);
-
-                    Assert::AreEqual(expectedOffsetX, offsetX);
-                    Assert::AreEqual(expectedOffsetY, offsetY);
-
-                    return AnyErrorResult;
-                });
-
-            Assert::AreEqual(AnyErrorResult, Composition->Scroll(
-                DrawingSurface.Get(),
-                scroll ? ScrollRect.Get() : nullptr,
-                clip   ? ClipRect.Get()   : nullptr,
-                offset));
-        }
-    };
-
-    TEST_METHOD_EX(CanvasComposition_Scroll_NoRects)
-    {
-        ScrollFixture f;
-        f.Test(false, false);
-    }
-
-    TEST_METHOD_EX(CanvasComposition_Scroll_ScrollRect)
-    {
-        ScrollFixture f;
-        f.Test(true, false);
-    }
-
-    TEST_METHOD_EX(CanvasComposition_Scroll_ClipRect)
-    {
-        ScrollFixture f;
-        f.Test(false, true);
-    }
-
-    TEST_METHOD_EX(CanvasComposition_Scroll_ScrollRectAndClipRect)
-    {
-        ScrollFixture f;
-        f.Test(true, true);
     }
 
     TEST_METHOD_EX(CanvasComposition_When_CompositionApiNotPresent_CannotActivate)

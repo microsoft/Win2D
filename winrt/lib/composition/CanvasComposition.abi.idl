@@ -60,31 +60,11 @@ namespace Microsoft.Graphics.Canvas.UI.Composition
             [in]          Windows.Foundation.Rect updateRect,
             [out, retval] Microsoft.Graphics.Canvas.CanvasDrawingSession** drawingSession);
 
-        HRESULT SuspendDrawing(
-            [in] Windows.UI.Composition.CompositionDrawingSurface* drawingSurface);
-
-        HRESULT ResumeDrawing(
-            [in] Windows.UI.Composition.CompositionDrawingSurface* drawingSurface);
-
-
-        // QUESTION: Why isn't this on CompositionDrawingSurface's interface?
-        //
         // NOTE: sizeInPixels is converted to integer by rounding (rather than
         // truncating).  This is to match the behavior of CreateDrawingSurface.
         HRESULT Resize(
             [in] Windows.UI.Composition.CompositionDrawingSurface* drawingSurface,
             [in] Windows.Foundation.Size sizeInPixels);
-
-        // QUESTION: Why isn't this on CompositionDrawingSurface's interface?
-        //
-        // NOTE: Rects are converted to RECTs by converting first to l,r,t,b and
-        // then rounding.  Points are converted by rounding.  This is to try and
-        // match CreateDrawingSurface's behavior.
-        HRESULT Scroll(
-            [in] Windows.UI.Composition.CompositionDrawingSurface* drawingSurface,
-            [in] Windows.Foundation.IReference<Windows.Foundation.Rect>* scrollRect,
-            [in] Windows.Foundation.IReference<Windows.Foundation.Rect>* clipRect,
-            [in] Windows.Foundation.Point offset);
     }
 
     [version(VERSION), static(ICanvasCompositionStatics, VERSION)]

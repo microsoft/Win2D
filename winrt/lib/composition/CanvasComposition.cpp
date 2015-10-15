@@ -194,36 +194,6 @@ HRESULT CanvasCompositionStatics::CreateDrawingSessionImpl(ICompositionDrawingSu
 }
 
 
-IFACEMETHODIMP CanvasCompositionStatics::SuspendDrawing(
-    ICompositionDrawingSurface* drawingSurface)
-{
-    return ExceptionBoundary(
-        [&]
-        {
-            CheckInPointer(drawingSurface);
-
-            auto drawingSurfaceInterop = As<ICompositionDrawingSurfaceInterop>(drawingSurface);
-
-            ThrowIfFailed(drawingSurfaceInterop->SuspendDraw());
-        });
-}
-
-
-IFACEMETHODIMP CanvasCompositionStatics::ResumeDrawing(
-    ICompositionDrawingSurface* drawingSurface)
-{
-    return ExceptionBoundary(
-        [&]
-        {
-            CheckInPointer(drawingSurface);
-
-            auto drawingSurfaceInterop = As<ICompositionDrawingSurfaceInterop>(drawingSurface);
-
-            ThrowIfFailed(drawingSurfaceInterop->ResumeDraw());
-        });
-}
-
-
 IFACEMETHODIMP CanvasCompositionStatics::Resize( 
     ICompositionDrawingSurface* drawingSurface,
     Size size)
@@ -240,47 +210,6 @@ IFACEMETHODIMP CanvasCompositionStatics::Resize(
             auto drawingSurfaceInterop = As<ICompositionDrawingSurfaceInterop>(drawingSurface);
 
             ThrowIfFailed(drawingSurfaceInterop->Resize(newSize));
-        });
-}
-
-
-static RECT MaybeGetRECT(IReference<Rect>* maybeRect)
-{
-    RECT r{};
-
-    if (!maybeRect)
-        return r;
-
-    Rect rect;
-    ThrowIfFailed(maybeRect->get_Value(&rect));
-
-    return ToRECTForCompositor(rect);
-}
-
-
-IFACEMETHODIMP CanvasCompositionStatics::Scroll( 
-    ICompositionDrawingSurface* drawingSurface,
-    IReference<Rect>* scrollRect,
-    IReference<Rect>* clipRect,
-    Point offset)
-{
-    return ExceptionBoundary(
-        [&]
-        {
-            CheckInPointer(drawingSurface);
-            
-            RECT scroll = MaybeGetRECT(scrollRect);
-            RECT clip   = MaybeGetRECT(clipRect);
-
-            int offsetX = static_cast<int>(std::round(offset.X));
-            int offsetY = static_cast<int>(std::round(offset.Y));
-
-            auto drawingSurfaceInterop = As<ICompositionDrawingSurfaceInterop>(drawingSurface);
-            ThrowIfFailed(drawingSurfaceInterop->Scroll(
-                scrollRect ? &scroll : nullptr,
-                clipRect   ? &clip   : nullptr,
-                offsetX,
-                offsetY));
         });
 }
 

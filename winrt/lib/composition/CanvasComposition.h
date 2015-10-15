@@ -44,21 +44,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             Rect updateRect,
             ICanvasDrawingSession** drawingSession) override;
 
-        IFACEMETHODIMP SuspendDrawing(
-            ICompositionDrawingSurface* drawingSurface) override;
-
-        IFACEMETHODIMP ResumeDrawing(
-            ICompositionDrawingSurface* drawingSurface) override;
-
         IFACEMETHODIMP Resize( 
             ICompositionDrawingSurface* drawingSurface,
             Size size) override;
-
-        IFACEMETHODIMP Scroll( 
-            ICompositionDrawingSurface* drawingSurface,
-            IReference<Rect>* scrollRect,
-            IReference<Rect>* clipRect,
-            Point offset) override;
 
     private:
         HRESULT CreateDrawingSessionImpl(ICompositionDrawingSurface* drawingSurface, RECT const* rect, ICanvasDrawingSession** drawingSession);

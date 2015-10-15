@@ -228,13 +228,7 @@ namespace Microsoft.Graphics.Canvas.UI.Composition
         /// <summary></summary>
         public static void Resize(Windows.UI.Composition.CompositionDrawingSurface drawingSurface, global::Windows.Foundation.Size sizeInPixels)                                                                                    { throw new System.NotImplementedException(); }
         /// <summary></summary>
-        public static void ResumeDrawing(Windows.UI.Composition.CompositionDrawingSurface drawingSurface)                                                                                                                           { throw new System.NotImplementedException(); }
-        /// <summary></summary>
-        public static void Scroll(Windows.UI.Composition.CompositionDrawingSurface drawingSurface, global::Windows.Foundation.Rect? scrollRect, global::Windows.Foundation.Rect? clipRect, Point offset) { throw new System.NotImplementedException(); }
-        /// <summary></summary>
         public static void SetCanvasDevice(Windows.UI.Composition.CompositionGraphicsDevice graphicsDevice, Microsoft.Graphics.Canvas.CanvasDevice canvasDevice)                                                                    { throw new System.NotImplementedException(); }
-        /// <summary></summary>
-        public static void SuspendDrawing(Windows.UI.Composition.CompositionDrawingSurface drawingSurface)                                                                                                                          { throw new System.NotImplementedException(); }        
     }
 
     // This shouldn't be necessary, and it is in the wrong namespace, but it
