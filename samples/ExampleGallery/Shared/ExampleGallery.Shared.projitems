@@ -335,12 +335,15 @@
     <Content Include="$(MSBuildThisFileDirectory)BitmapOrientation\orientation_65535.jpg" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\VirtualControlNarrow.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\VirtualControlWide.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Shaders\SketchTexture.jpg" />
+    <Content Include="$(MSBuildThisFileDirectory)Shaders\Sketch.bin" />
     <Content Include="$(MSBuildThisFileDirectory)Shaders\Ripples.bin" />
     <Content Include="$(MSBuildThisFileDirectory)Shaders\Dissolve.bin" />
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)Shaders\Readme.txt" />
     <None Include="$(MSBuildThisFileDirectory)Shaders\CompileShaders.cmd" />
+    <None Include="$(MSBuildThisFileDirectory)Shaders\Sketch.hlsl" />
     <None Include="$(MSBuildThisFileDirectory)Shaders\Ripples.hlsl" />
     <None Include="$(MSBuildThisFileDirectory)Shaders\Dissolve.hlsl" />
   </ItemGroup>

@@ -21,6 +21,7 @@ if not exist %INCLUDEPATH%\d2d1effecthelpers.hlsli (
 
 call :COMPILE Dissolve.hlsl || goto END
 call :COMPILE Ripples.hlsl  || goto END
+call :COMPILE Sketch.hlsl   || goto END
 
 goto END
 

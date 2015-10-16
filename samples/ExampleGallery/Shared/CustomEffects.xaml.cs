@@ -19,21 +19,27 @@ namespace ExampleGallery
 {
     public sealed partial class CustomEffects : UserControl
     {
-        public enum EffectType
+        public enum DissolveType
         {
             Ripples,
             Turbulence,
             LinearGradient,
             RadialGradient,
+            NoDissolve,
         }
 
-        public EffectType CurrentEffect { get; set; }
-        public List<EffectType> EffectsList { get { return Utils.GetEnumAsList<EffectType>(); } }
+        public DissolveType CurrentDissolve { get; set; }
+        public List<DissolveType> DissolveList { get { return Utils.GetEnumAsList<DissolveType>(); } }
+
+        public bool SketchEnabled { get; set; }
+
+        Random random = new Random();
 
         CanvasBitmap bitmapTiger;
-        Vector2 bitmapSize;
+        Vector2 tigerSize;
 
         // Custom pixel shader effects.
+        PixelShaderEffect sketchEffect;
         PixelShaderEffect dissolveEffect;
         PixelShaderEffect rippleEffect;
 
@@ -45,6 +51,8 @@ namespace ExampleGallery
 
         public CustomEffects()
         {
+            SketchEnabled = true;
+
             this.InitializeComponent();
         }
 
@@ -58,7 +66,29 @@ namespace ExampleGallery
         async Task Canvas_CreateResourcesAsync(CanvasAnimatedControl sender)
         {
             bitmapTiger = await CanvasBitmap.LoadAsync(sender, "imageTiger.jpg");
-            bitmapSize = bitmapTiger.Size.ToVector2();
+            tigerSize = bitmapTiger.Size.ToVector2();
+
+            // The Sketch shader has two input textures:
+            //
+            //  - First is the image that will be processed by the sketch effect.
+            //    The sketch shader applies a 3x3 edge detection filter kernel to this input,
+            //    so we specify Offset coordinate mapping mode with a max offset of 1 dip.
+            //
+            //  - Second is an overlay containing a pencil sketch texture. The JitterX and JitterY
+            //    properties offset this by randomly varying amounts, so we specify Unknown mapping
+            //    mode to indicate that the entire image must be made available to the shader.
+
+            sketchEffect = new PixelShaderEffect(await Utils.ReadAllBytes("Shaders/Sketch.bin"))
+            {
+                Source1 = bitmapTiger,
+                Source1Mapping = SamplerCoordinateMapping.Offset,
+                MaxSamplerOffset = (int)Math.Ceiling(sender.Dpi / 96),
+
+                Source2 = await CanvasBitmap.LoadAsync(sender, "Shaders/SketchTexture.jpg"),
+                Source2Mapping = SamplerCoordinateMapping.Unknown
+            };
+
+            sketchEffect.Properties["EdgeOffset"] = sender.Dpi / 96;
 
             // The Dissolve shader has two input textures:
             //
@@ -69,10 +99,7 @@ namespace ExampleGallery
             //
             // This example selects different dissolve masks depending on the CurrentEffect.
 
-            dissolveEffect = new PixelShaderEffect(await Utils.ReadAllBytes("Shaders/Dissolve.bin"))
-            {
-                Source1 = bitmapTiger
-            };
+            dissolveEffect = new PixelShaderEffect(await Utils.ReadAllBytes("Shaders/Dissolve.bin"));
 
             // The Ripples shader has no input textures.
             // It generates an animatable series of concentric circles.
@@ -82,9 +109,9 @@ namespace ExampleGallery
             rippleEffect.Properties["frequency"] = 0.15f;
             rippleEffect.Properties["dpi"] = sender.Dpi;
 #if WINDOWS_UWP
-            rippleEffect.Properties["center"] = bitmapSize / 3;
+            rippleEffect.Properties["center"] = tigerSize / 3;
 #else
-            rippleEffect.Properties["center"] = (Microsoft.Graphics.Canvas.Numerics.Vector2)(bitmapSize / 3);
+            rippleEffect.Properties["center"] = (Microsoft.Graphics.Canvas.Numerics.Vector2)(tigerSize / 3);
 
             // When compiling for Windows 8.1, we must explicitly convert vector and matrix values
             // from System.Numerics to their Microsoft.Graphics.Canvas.Numerics equivalents before
@@ -100,78 +127,117 @@ namespace ExampleGallery
         }
 
 
+        void Canvas_Update(ICanvasAnimatedControl sender, CanvasAnimatedUpdateEventArgs args)
+        {
+            // Randomly offset the sketch overlay pattern to create a hand-drawn animation effect.
+            const int jitterRate = 5;
+            const float jitterOffset = 256;
+
+            if (args.Timing.UpdateCount % jitterRate == 0)
+            {
+                sketchEffect.Properties["JitterX"] = (float)random.NextDouble() * jitterOffset;
+                sketchEffect.Properties["JitterY"] = (float)random.NextDouble() * jitterOffset;
+            }
+        }
+
         void Canvas_Draw(ICanvasAnimatedControl sender, CanvasAnimatedDrawEventArgs args)
         {
             var elapsedTime = (float)args.Timing.TotalTime.TotalSeconds;
 
+            // Center in the control.
+            var position = (sender.Size.ToVector2() - tigerSize) / 2;
+            position.Y -= tigerSize.Y * 0.75f;
+
+            // Is the sketch effect enabled?
+            ICanvasImage sourceImage;
+
+            if (SketchEnabled)
+                sourceImage = sketchEffect;
+            else
+                sourceImage = bitmapTiger;
+
+            // Which dissolve mode are we currently displaying?
             ICanvasImage dissolveMask;
 
-            switch (CurrentEffect)
+            switch (CurrentDissolve)
             {
-                case EffectType.Ripples:
+                case DissolveType.Ripples:
                     // Use the custom rippleEffect as our dissolve mask, and animate its offset.
                     dissolveMask = rippleEffect;
                     rippleEffect.Properties["offset"] = -elapsedTime * 6;
                     break;
 
-                case EffectType.Turbulence:
+                case DissolveType.Turbulence:
                     // Use a turbulence image as the dissolve mask.
                     dissolveMask = turbulence;
                     break;
 
-                case EffectType.LinearGradient:
+                case DissolveType.LinearGradient:
                     // Use a linear gradient as the dissolve mask, and slowly rotate it.
                     dissolveMask = linearGradient;
-                    linearGradient.TransformMatrix = Matrix3x2.CreateRotation(elapsedTime / 3, bitmapSize / 2);
+                    linearGradient.TransformMatrix = Matrix3x2.CreateRotation(elapsedTime / 3, tigerSize / 2);
                     break;
 
-                case EffectType.RadialGradient:
+                case DissolveType.RadialGradient:
                     // Use a radial gradient as the dissolve mask.
                     dissolveMask = radialGradient;
                     break;
+
+                case DissolveType.NoDissolve:
+                    // Dissolve is turned off, so just draw the source image directly.
+                    args.DrawingSession.DrawImage(sourceImage, position);
+                    return;
 
                 default:
                     throw new NotSupportedException();
             }
 
-            dissolveEffect.Source2 = dissolveMask;
-
             // Animate the dissolve amount.
-            dissolveEffect.Properties["dissolveAmount"] = (float)Math.Sin(elapsedTime * 2) / 2 + 0.5f;
-
-            // Center in the control.
-            var position = (sender.Size.ToVector2() - bitmapSize) / 2;
-            position.Y -= bitmapSize.Y * 0.75f;
+            dissolveEffect.Properties["dissolveAmount"] = (float)Math.Sin(elapsedTime * 2.4) / 2 + 0.5f;
 
             // Draw the custom effect.
+            dissolveEffect.Source1 = sourceImage;
+            dissolveEffect.Source2 = dissolveMask;
+
             args.DrawingSession.DrawImage(dissolveEffect, position);
 
             if (!ThumbnailGenerator.IsDrawingThumbnail)
             {
                 // Display the current dissolve mask.
-                args.DrawingSession.DrawText("Dissolve mask:", position.X, position.Y + bitmapSize.Y * 1.5f - 32, Colors.Gray);
-                args.DrawingSession.DrawImage(dissolveMask, position.X, position.Y + bitmapSize.Y * 1.5f, bitmapTiger.Bounds);
+                args.DrawingSession.DrawText("Dissolve mask:", position.X, position.Y + tigerSize.Y * 1.5f - 32, Colors.Gray);
+                args.DrawingSession.DrawImage(dissolveMask, position.X, position.Y + tigerSize.Y * 1.5f, bitmapTiger.Bounds);
 
                 // Display the current dissolve amount.
                 string dissolvePercentage = string.Format("{0:0}%", (float)dissolveEffect.Properties["dissolveAmount"] * 100);
-                args.DrawingSession.DrawText(dissolvePercentage, position + bitmapSize * new Vector2(1.2f, 0.4f), Colors.Gray);
+                args.DrawingSession.DrawText(dissolvePercentage, position + tigerSize * new Vector2(1.2f, 0.4f), Colors.Gray);
             }
         }
 
 
         void CreateTurbulence()
         {
-            turbulence = new LinearTransferEffect
+            turbulence = new ColorMatrixEffect
             {
                 Source = new TurbulenceEffect
                 {
-                    Size = bitmapSize,
+                    Size = tigerSize,
                     Frequency = new Vector2(0.02f),
                     Octaves = 3,
                 },
 
-                RedSlope = 2,
-                RedOffset = -0.2f,
+                // Adjust intensity of the generated turbulence, and copy the red channel over green and blue.
+                ColorMatrix = new Matrix5x4
+                {
+                    M11 = 1.8f,
+                    M12 = 1.8f,
+                    M13 = 1.8f,
+
+                    M51 = -0.4f,
+                    M52 = -0.4f,
+                    M53 = -0.4f,
+
+                    M54 = 1
+                }
             };
         }
 
@@ -184,8 +250,8 @@ namespace ExampleGallery
             {
                 var brush = new CanvasLinearGradientBrush(resourceCreator, Colors.White, Colors.Black)
                 {
-                    StartPoint = new Vector2(-bitmapSize.X / 4, 0),
-                    EndPoint = new Vector2(bitmapSize.X * 5 / 4, 0),
+                    StartPoint = new Vector2(-tigerSize.X / 4, 0),
+                    EndPoint = new Vector2(tigerSize.X * 5 / 4, 0),
                 };
 
                 drawingSession.FillRectangle(bitmapTiger.Bounds, brush);
@@ -212,10 +278,10 @@ namespace ExampleGallery
 
                 var brush = new CanvasRadialGradientBrush(resourceCreator, Colors.White, Colors.Black)
                 {
-                    Center = bitmapSize / 2,
+                    Center = tigerSize / 2,
 
-                    RadiusX = bitmapSize.X / sqrt2,
-                    RadiusY = bitmapSize.Y / sqrt2,
+                    RadiusX = tigerSize.X / sqrt2,
+                    RadiusY = tigerSize.Y / sqrt2,
                 };
 
                 drawingSession.FillRectangle(bitmapTiger.Bounds, brush);

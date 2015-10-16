@@ -25,14 +25,18 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         
-        <StackPanel Orientation="Vertical" Margin="5">
-            <ListBox ItemsSource="{Binding ElementName=control, Path=EffectsList}"
-                     SelectedItem="{Binding CurrentEffect, ElementName=control, Mode=TwoWay}"/>
+        <StackPanel Orientation="Vertical" Margin="5">           
+            <ListBox ItemsSource="{Binding ElementName=control, Path=DissolveList}"
+                     SelectedItem="{Binding CurrentDissolve, ElementName=control, Mode=TwoWay}"/>
+
+            <ToggleButton Content="Sketch"
+                          IsChecked="{Binding SketchEnabled, ElementName=control, Mode=TwoWay}"/>
         </StackPanel>
 
         <canvas:CanvasAnimatedControl x:Name="canvas"
                                       Grid.Column="1"
                                       CreateResources="Canvas_CreateResources"
+                                      Update="Canvas_Update"
                                       Draw="Canvas_Draw"/>
     </Grid>
 </UserControl>
