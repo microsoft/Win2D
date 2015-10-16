@@ -25,6 +25,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     };
 
 
+    // Configures the filtering mode used to sample shader source textures.
+    struct SourceInterpolationState
+    {
+        SourceInterpolationState();
+
+        D2D1_FILTER Filter[MaxShaderInputs];
+    };
+
+
     // Implementation state shared between PixelShaderEffect and PixelShaderEffectImpl.
     // This stores the compiled shader code, metadata obtained via shader reflection,
     // and app-specified state such as the current constant buffer.
@@ -44,6 +53,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         virtual ShaderDescription const& Shader() = 0;
         virtual std::vector<BYTE> const& Constants() = 0;
         virtual CoordinateMappingState& CoordinateMapping() = 0;
+        virtual SourceInterpolationState& SourceInterpolation() = 0;
 
         // Property accessors.
         virtual unsigned GetPropertyCount() = 0;
@@ -60,9 +70,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         ShaderDescription m_shader;
         std::vector<BYTE> m_constants;
         CoordinateMappingState m_coordinateMapping;
+        SourceInterpolationState m_sourceInterpolation;
 
     public:
-        SharedShaderState(ShaderDescription const& shader, std::vector<BYTE> const& constants, CoordinateMappingState const& coordinateMapping);
+        SharedShaderState(ShaderDescription const& shader, std::vector<BYTE> const& constants, CoordinateMappingState const& coordinateMapping, SourceInterpolationState const& sourceInterpolation);
         SharedShaderState(BYTE* shaderCode, uint32_t shaderCodeSize);
 
         virtual ComPtr<ISharedShaderState> Clone() override;
@@ -70,6 +81,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         virtual ShaderDescription const& Shader() override { return m_shader; }
         virtual std::vector<BYTE> const& Constants() override { return m_constants; }
         virtual CoordinateMappingState& CoordinateMapping() override { return m_coordinateMapping; }
+        virtual SourceInterpolationState& SourceInterpolation() { return m_sourceInterpolation; }
 
         // Property accessors.
         virtual unsigned GetPropertyCount() override;

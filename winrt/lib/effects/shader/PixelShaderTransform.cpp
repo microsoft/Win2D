@@ -157,4 +157,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         ThrowIfFailed(m_drawInfo->SetPixelShaderConstantBuffer(constants.data(), static_cast<UINT32>(constants.size())));
     }
 
+
+    void PixelShaderTransform::SetSourceInterpolation(SourceInterpolationState const* sourceInterpolation)
+    {
+        auto inputCount = m_sharedState->Shader().InputCount;
+
+        for (unsigned i = 0; i < inputCount; i++)
+        {
+            ThrowIfFailed(m_drawInfo->SetInputDescription(i, D2D1_INPUT_DESCRIPTION{ sourceInterpolation->Filter[i], 0 }));
+        }
+    }
+
 }}}}}

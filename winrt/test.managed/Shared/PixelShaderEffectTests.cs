@@ -1029,7 +1029,59 @@ namespace test.managed
             };
         }
 
-        
+
+        [TestMethod]
+        public void PixelShaderEffect_InterpolationModeAccessors()
+        {
+            const string hlsl =
+            @"
+                float4 main() : SV_Target
+                {
+                    return 0;
+                }
+            ";
+
+            var effect = new PixelShaderEffect(ShaderCompiler.CompileShader(hlsl, "ps_4_0"));
+
+            // Check defaults.
+            Assert.AreEqual(CanvasImageInterpolation.Linear, effect.Source1Interpolation);
+            Assert.AreEqual(CanvasImageInterpolation.Linear, effect.Source2Interpolation);
+            Assert.AreEqual(CanvasImageInterpolation.Linear, effect.Source3Interpolation);
+            Assert.AreEqual(CanvasImageInterpolation.Linear, effect.Source4Interpolation);
+            Assert.AreEqual(CanvasImageInterpolation.Linear, effect.Source5Interpolation);
+            Assert.AreEqual(CanvasImageInterpolation.Linear, effect.Source6Interpolation);
+            Assert.AreEqual(CanvasImageInterpolation.Linear, effect.Source7Interpolation);
+            Assert.AreEqual(CanvasImageInterpolation.Linear, effect.Source8Interpolation);
+
+            // Setters.
+            effect.Source1Interpolation = CanvasImageInterpolation.Anisotropic;
+            effect.Source2Interpolation = CanvasImageInterpolation.Linear;
+            effect.Source3Interpolation = CanvasImageInterpolation.NearestNeighbor;
+            effect.Source4Interpolation = CanvasImageInterpolation.Anisotropic;
+            effect.Source5Interpolation = CanvasImageInterpolation.Linear;
+            effect.Source6Interpolation = CanvasImageInterpolation.NearestNeighbor;
+            effect.Source7Interpolation = CanvasImageInterpolation.Anisotropic;
+            effect.Source8Interpolation = CanvasImageInterpolation.Linear;
+
+            // Getters.
+            Assert.AreEqual(CanvasImageInterpolation.Anisotropic,     effect.Source1Interpolation);
+            Assert.AreEqual(CanvasImageInterpolation.Linear,          effect.Source2Interpolation);
+            Assert.AreEqual(CanvasImageInterpolation.NearestNeighbor, effect.Source3Interpolation);
+            Assert.AreEqual(CanvasImageInterpolation.Anisotropic,     effect.Source4Interpolation);
+            Assert.AreEqual(CanvasImageInterpolation.Linear,          effect.Source5Interpolation);
+            Assert.AreEqual(CanvasImageInterpolation.NearestNeighbor, effect.Source6Interpolation);
+            Assert.AreEqual(CanvasImageInterpolation.Anisotropic,     effect.Source7Interpolation);
+            Assert.AreEqual(CanvasImageInterpolation.Linear,          effect.Source8Interpolation);
+
+            // Illegal values.
+            Assert.ThrowsException<ArgumentException>(() => effect.Source1Interpolation = CanvasImageInterpolation.Cubic);
+            Assert.ThrowsException<ArgumentException>(() => effect.Source1Interpolation = CanvasImageInterpolation.HighQualityCubic);
+            Assert.ThrowsException<ArgumentException>(() => effect.Source1Interpolation = CanvasImageInterpolation.MultiSampleLinear);
+
+            Assert.AreEqual(CanvasImageInterpolation.Anisotropic, effect.Source1Interpolation);
+        }
+
+
         [TestMethod]
         public void PixelShaderEffect_CoordinateMappingAccessors()
         {

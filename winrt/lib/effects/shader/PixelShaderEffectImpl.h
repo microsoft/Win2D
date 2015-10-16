@@ -9,6 +9,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     class ISharedShaderState;
     class PixelShaderTransform;
     struct CoordinateMappingState;
+    struct SourceInterpolationState;
 
     DEFINE_GUID(CLSID_PixelShaderEffect, 0x8db3047a, 0x84cc, 0x4152, 0xaf, 0x92, 0x50, 0xe4, 0xac, 0xb9, 0xd1, 0xfc);
 
@@ -26,6 +27,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         bool m_constantsDirty;
 
         std::shared_ptr<CoordinateMappingState> m_coordinateMapping;
+
+        std::unique_ptr<SourceInterpolationState> m_sourceInterpolation;
+        bool m_sourceInterpolationDirty;
 
     public:
         PixelShaderEffectImpl();
@@ -45,6 +49,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         HRESULT SetCoordinateMappingProperty(BYTE const* data, UINT32 dataSize);
         HRESULT GetCoordinateMappingProperty(BYTE* data, UINT32 dataSize, UINT32 *actualSize) const;
+
+        HRESULT SetSourceInterpolationProperty(BYTE const* data, UINT32 dataSize);
+        HRESULT GetSourceInterpolationProperty(BYTE* data, UINT32 dataSize, UINT32 *actualSize) const;
     };
 
 
@@ -54,6 +61,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         SharedState,
         Constants,
         CoordinateMapping,
+        SourceInterpolation,
     };
 
 }}}}}

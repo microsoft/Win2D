@@ -59,6 +59,24 @@ namespace Microsoft.Graphics.Canvas.Effects
         [propget] HRESULT MaxSamplerOffset([out, retval] INT32* value);
         [propput] HRESULT MaxSamplerOffset([in] INT32 value);
 
+        [propget] HRESULT Source1Interpolation([out, retval] Microsoft.Graphics.Canvas.CanvasImageInterpolation* value);
+        [propget] HRESULT Source2Interpolation([out, retval] Microsoft.Graphics.Canvas.CanvasImageInterpolation* value);
+        [propget] HRESULT Source3Interpolation([out, retval] Microsoft.Graphics.Canvas.CanvasImageInterpolation* value);
+        [propget] HRESULT Source4Interpolation([out, retval] Microsoft.Graphics.Canvas.CanvasImageInterpolation* value);
+        [propget] HRESULT Source5Interpolation([out, retval] Microsoft.Graphics.Canvas.CanvasImageInterpolation* value);
+        [propget] HRESULT Source6Interpolation([out, retval] Microsoft.Graphics.Canvas.CanvasImageInterpolation* value);
+        [propget] HRESULT Source7Interpolation([out, retval] Microsoft.Graphics.Canvas.CanvasImageInterpolation* value);
+        [propget] HRESULT Source8Interpolation([out, retval] Microsoft.Graphics.Canvas.CanvasImageInterpolation* value);
+
+        [propput] HRESULT Source1Interpolation([in] Microsoft.Graphics.Canvas.CanvasImageInterpolation value);
+        [propput] HRESULT Source2Interpolation([in] Microsoft.Graphics.Canvas.CanvasImageInterpolation value);
+        [propput] HRESULT Source3Interpolation([in] Microsoft.Graphics.Canvas.CanvasImageInterpolation value);
+        [propput] HRESULT Source4Interpolation([in] Microsoft.Graphics.Canvas.CanvasImageInterpolation value);
+        [propput] HRESULT Source5Interpolation([in] Microsoft.Graphics.Canvas.CanvasImageInterpolation value);
+        [propput] HRESULT Source6Interpolation([in] Microsoft.Graphics.Canvas.CanvasImageInterpolation value);
+        [propput] HRESULT Source7Interpolation([in] Microsoft.Graphics.Canvas.CanvasImageInterpolation value);
+        [propput] HRESULT Source8Interpolation([in] Microsoft.Graphics.Canvas.CanvasImageInterpolation value);
+
         HRESULT IsSupported([in] Microsoft.Graphics.Canvas.CanvasDevice* device, [out, retval] boolean* result);
     };
 

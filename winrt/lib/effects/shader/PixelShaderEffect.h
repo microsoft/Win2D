@@ -65,6 +65,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         EFFECT_PROPERTY(MaxSamplerOffset, int);
 
+        EFFECT_PROPERTY(Source1Interpolation, CanvasImageInterpolation);
+        EFFECT_PROPERTY(Source2Interpolation, CanvasImageInterpolation);
+        EFFECT_PROPERTY(Source3Interpolation, CanvasImageInterpolation);
+        EFFECT_PROPERTY(Source4Interpolation, CanvasImageInterpolation);
+        EFFECT_PROPERTY(Source5Interpolation, CanvasImageInterpolation);
+        EFFECT_PROPERTY(Source6Interpolation, CanvasImageInterpolation);
+        EFFECT_PROPERTY(Source7Interpolation, CanvasImageInterpolation);
+        EFFECT_PROPERTY(Source8Interpolation, CanvasImageInterpolation);
+
         IFACEMETHOD(IsSupported)(ICanvasDevice* device, boolean* result) override;
 
     protected:
@@ -81,8 +90,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         HRESULT GetCoordinateMapping(unsigned index, SamplerCoordinateMapping* value);
         HRESULT SetCoordinateMapping(unsigned index, SamplerCoordinateMapping value);
 
+        HRESULT GetSourceInterpolation(unsigned index, CanvasImageInterpolation* value);
+        HRESULT SetSourceInterpolation(unsigned index, CanvasImageInterpolation value);
+
         void SetD2DConstants();
         void SetD2DCoordinateMapping();
+        void SetD2DSourceInterpolation();
     };
 
 }}}}}

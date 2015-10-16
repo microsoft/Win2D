@@ -8,8 +8,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 {
     class ISharedShaderState;
     struct CoordinateMappingState;
-
-    const int MaxDImageIntermediateSize = 4096;
+    struct SourceInterpolationState;
 
 
     // Custom Direct2D draw transform.
@@ -32,6 +31,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         IFACEMETHOD(SetDrawInfo)(ID2D1DrawInfo* drawInfo) override;
 
         void SetConstants(std::vector<BYTE> const& constants);
+        void SetSourceInterpolation(SourceInterpolationState const* sourceInterpolation);
     };
 
 }}}}}
