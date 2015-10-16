@@ -1192,6 +1192,8 @@ namespace test.managed
         }
 
 
+#if WINDOWS_UWP
+
         [TestMethod]
         public void PixelShaderEffect_ShaderReflectionSetsCoordinateMappingDefaults()
         {
@@ -1249,5 +1251,7 @@ namespace test.managed
             Assert.AreEqual(SamplerCoordinateMapping.Unknown, effect.Source3Mapping);
             Assert.AreEqual(SamplerCoordinateMapping.OneToOne, effect.Source4Mapping);
         }
+
+#endif
     }
 }

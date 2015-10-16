@@ -54,6 +54,8 @@ namespace NativeComponent
         }
 
 
+#if WINVER > _WIN32_WINNT_WINBLUE
+
         static Platform::Array<byte>^ CompileShaderAndEmbedLinkingFunction(Platform::String^ shaderCode)
         {
             auto bin = CompileShader(shaderCode, L"ps_4_0_level_9_3", L"main");
@@ -65,6 +67,8 @@ namespace NativeComponent
 
             return BlobToArray(mergedBlob.Get());
         }
+
+#endif
 
 
     private:
