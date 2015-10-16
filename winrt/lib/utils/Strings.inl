@@ -23,7 +23,6 @@ STRING(CreateDrawingSessionCalledBeforeRegionsInvalidated, L"CreateDrawingSessio
 STRING(CustomEffectBadFeatureLevel, L"This shader requires a higher Direct3D feature level than is supported by the device. Check PixelShaderEffect.IsSupported before using it.");
 STRING(CustomEffectBadShader, L"Unable to load the specified shader. This should be a Direct3D pixel shader compiled for shader model 4.");
 STRING(CustomEffectBadPropertyType, L"Shader property '%S' is an unsupported type.");
-STRING(CustomEffectInputRectTooBig, L"Drawing this effect would require too big an intermediate surface. Make sure PixelShaderEffect.Source%dMapping is set correctly, or wrap the source image with a CropEffect to reduce its size.");
 STRING(CustomEffectMaxOffsetWithoutOffsetMapping, L"When PixelShaderEffect.MaxSamplerOffset is set, at least one source should be using SamplerCoordinateMapping.Offset.");
 STRING(CustomEffectOffsetMappingWithoutMaxOffset, L"When PixelShaderEffect.Source%dMapping is set to Offset, MaxSamplerOffset should also be set.");
 STRING(CustomEffectSourceOutOfRange, L"Source%d must be null when using this pixel shader (shader inputs: %d).");

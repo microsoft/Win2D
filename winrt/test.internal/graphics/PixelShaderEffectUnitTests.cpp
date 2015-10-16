@@ -783,7 +783,7 @@ public:
 
         ThrowIfFailed(transform->MapInputRectsToOutputRect(nullptr, nullptr, 0, &output, &outputOpaqueSubRect));
 
-        Assert::AreEqual(D2D_RECT_L{ INT_MIN, INT_MIN, INT_MAX, INT_MAX }, output);
+        Assert::AreEqual(D2D1_RECT_L{ INT_MIN, INT_MIN, INT_MAX, INT_MAX }, output);
         Assert::AreEqual(D2D1_RECT_L{ 0, 0, 0, 0 }, outputOpaqueSubRect);
     }
 
@@ -812,7 +812,7 @@ public:
 
         ThrowIfFailed(transform->MapInputRectsToOutputRect(initialInputs, nullptr, _countof(initialInputs), &output, &outputOpaqueSubRect));
 
-        Assert::AreEqual(D2D_RECT_L{ 5, 6, 13, 14 }, output);
+        Assert::AreEqual(D2D1_RECT_L{ 5, 6, 13, 14 }, output);
         Assert::AreEqual(D2D1_RECT_L{ 0, 0, 0, 0 }, outputOpaqueSubRect);
 
         // Map backward from an output region being drawn to parts of our input images.
@@ -822,13 +822,13 @@ public:
         ThrowIfFailed(transform->MapOutputRectToInputRects(&output, inputs, 3));
 
         // Unknown mapping = return the entire input image bounds.
-        Assert::AreEqual(initialInputs[0], inputs[0]);
+        Assert::AreEqual(D2D1_RECT_L{ INT_MIN, INT_MIN, INT_MAX, INT_MAX }, inputs[0]);
 
         // OneToOne mapping.
         Assert::AreEqual(output, inputs[1]);
 
         // Offset mapping.
-        Assert::AreEqual(D2D_RECT_L{ 8, 9, 25, 44 }, inputs[2]);
+        Assert::AreEqual(D2D1_RECT_L{ 8, 9, 25, 44 }, inputs[2]);
     }
 
 

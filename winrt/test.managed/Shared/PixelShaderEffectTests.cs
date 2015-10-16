@@ -140,7 +140,7 @@ namespace test.managed
                 {
                     drawingSession.DrawImage(effect93);
 
-                    Utils.AssertThrowsException<COMException>(
+                    Utils.AssertThrowsException<Exception>(
                         () => drawingSession.DrawImage(effect40),
                         "This shader requires a higher Direct3D feature level than is supported by the device. Check PixelShaderEffect.IsSupported before using it.");
                 }
@@ -1110,7 +1110,7 @@ namespace test.managed
                 {
                     ds.DrawImage(effect);
                 }
-            }, "Drawing this effect would require too big an intermediate surface. Make sure PixelShaderEffect.Source1Mapping is set correctly, or wrap the source image with a CropEffect to reduce its size.");
+            }, " graph could not be rendered with the context's current tiling settings. (Exception from HRESULT: 0x88990027)");
 
             // But it's ok if we clamp the input back down to finite size.
             effect.Source1 = new CropEffect

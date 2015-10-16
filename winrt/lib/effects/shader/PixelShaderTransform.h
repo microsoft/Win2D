@@ -17,10 +17,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                                , private LifespanTracker<PixelShaderTransform>
     {
         ComPtr<ISharedShaderState> m_sharedState;
-
         std::shared_ptr<CoordinateMappingState> m_coordinateMapping;
-        std::vector<D2D1_RECT_L> m_inputBounds;
-
         ComPtr<ID2D1DrawInfo> m_drawInfo;
 
     public:

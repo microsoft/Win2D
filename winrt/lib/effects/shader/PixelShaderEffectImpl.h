@@ -17,7 +17,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     class PixelShaderEffectImpl : public RuntimeClass<RuntimeClassFlags<ClassicCom>, ID2D1EffectImpl>
                                 , private LifespanTracker<PixelShaderEffectImpl>
     {
-    public:
         ComPtr<ISharedShaderState> m_sharedState;
         ComPtr<PixelShaderTransform> m_shaderTransform;
         ComPtr<ID2D1EffectContext> m_effectContext;

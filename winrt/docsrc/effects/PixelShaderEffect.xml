@@ -356,8 +356,8 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
           or the output of a <see cref="T:Microsoft.Graphics.Canvas.Effects.BorderEffect"/>).
         <p>
         </p>
-          If you get an exception message <i>drawing this effect would require too big an 
-          intermediate surface</i>, consider switching from Unknown to Offset mapping 
+          If you get an exception <i>the graph could not be rendered with the context's
+          current tiling settings</i>, consider switching from Unknown to Offset mapping 
           mode (if that is suitable for your shader) or wrapping the source with a 
           <see cref="T:Microsoft.Graphics.Canvas.Effects.CropEffect"/> to reduce its size.
         </p>
