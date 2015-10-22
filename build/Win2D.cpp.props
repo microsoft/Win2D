@@ -37,10 +37,17 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(TargetPlatformIdentifier)' == 'UAP'">
-    <WindowsTargetPlatformVersion>10.0.10568.0</WindowsTargetPlatformVersion>
-    <WindowsTargetPlatformMinVersion>10.0.10568.0</WindowsTargetPlatformMinVersion>
+    <WindowsTargetPlatformVersion>10.0.10577.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformMinVersion>10.0.10577.0</WindowsTargetPlatformMinVersion>
   </PropertyGroup>
 
+  <ItemDefinitionGroup Condition="'$(TargetPlatformIdentifier)' == 'UAP'">
+    <ClCompile>
+      <!-- TODO: this shouldn't be necessary -->
+      <AdditionalOptions>/DNTDDI_VERSION=0x0A000001 %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  
   <!-- [[NOT IN SAMPLE]] -->
 
   <PropertyGroup Label="Configuration">
