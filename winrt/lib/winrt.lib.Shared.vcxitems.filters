@@ -355,6 +355,9 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)utils\ApiInformationAdapter.cpp">
       <Filter>utils</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)drawing\CanvasSpriteBatch.cpp">
+      <Filter>drawing</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)pch.h" />
@@ -718,6 +721,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\ApiInformationAdapter.h">
       <Filter>utils</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)drawing\CanvasSpriteBatch.h">
+      <Filter>drawing</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)Canvas.codegen.idl" />
@@ -746,6 +752,9 @@
       <Filter>drawing</Filter>
     </None>
     <None Include="$(MSBuildThisFileDirectory)drawing\CanvasGradientMesh.abi.idl">
+      <Filter>drawing</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)drawing\CanvasSpriteBatch.abi.idl">
       <Filter>drawing</Filter>
     </None>
     <None Include="$(MSBuildThisFileDirectory)drawing\CanvasStrokeStyle.abi.idl">

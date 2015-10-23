@@ -381,7 +381,7 @@ namespace Microsoft
                 ThrowIfFailed(StringCchPrintf(
                     buf,
                     _countof(buf),
-                    L"D2D1_RECT_U{l=%f,t=%f,r=%f,b=%f}",
+                    L"D2D1_RECT_U{l=%u,t=%u,r=%u,b=%u}",
                     value.left, value.top, value.right, value.bottom));
 
                 return buf;
@@ -834,6 +834,24 @@ namespace Microsoft
                 ENUM_VALUE(D2D1_INTERPOLATION_MODE_HIGH_QUALITY_CUBIC);
                 END_ENUM(D2D1_INTERPOLATION_MODE);
             }
+
+            ENUM_TO_STRING(D2D1_BITMAP_INTERPOLATION_MODE)
+            {
+                ENUM_VALUE(D2D1_BITMAP_INTERPOLATION_MODE_NEAREST_NEIGHBOR);
+                ENUM_VALUE(D2D1_BITMAP_INTERPOLATION_MODE_LINEAR);
+                END_ENUM(D2D1_BITMAP_INTERPOLATION_MODE);
+            }
+            
+#if WINVER > _WIN32_WINNT_WINBLUE
+
+            ENUM_TO_STRING(D2D1_SPRITE_OPTIONS)
+            {
+                ENUM_VALUE(D2D1_SPRITE_OPTIONS_NONE);
+                ENUM_VALUE(D2D1_SPRITE_OPTIONS_CLAMP_TO_SOURCE_RECTANGLE);
+                END_ENUM(D2D1_SPRITE_OPTIONS);
+            }
+
+#endif
 
             ENUM_TO_STRING(CanvasAlphaMode)
             {

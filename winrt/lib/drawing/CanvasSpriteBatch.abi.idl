@@ -1,0 +1,185 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+//
+// Licensed under the MIT License. See LICENSE.txt in the project root for license information.
+
+#if WINVER > _WIN32_WINNT_WINBLUE
+
+namespace Microsoft.Graphics.Canvas
+{
+    [version(VERSION)]
+    typedef enum CanvasSpriteSortMode
+    {
+        None,
+        Bitmap
+    } CanvasSpriteSortMode;
+
+    [version(VERSION), flags]
+    typedef enum CanvasSpriteOptions
+    {
+        None              = 0x00,
+        ClampToSourceRect = 0x01
+    } CanvasSpriteOptions;
+
+    [version(VERSION), flags]
+    typedef enum CanvasSpriteFlip
+    {
+        None       = 0x00,
+        Horizontal = 0x01,
+        Vertical   = 0x02,
+
+        Both       = 0x03 
+    } CanvasSpriteFlip;
+
+    runtimeclass CanvasSpriteBatch;
+
+    [version(VERSION), uuid(851EB08D-9D01-4B57-9E94-24113151B74B), exclusiveto(CanvasSpriteBatch)]
+    interface ICanvasSpriteBatchStatics : IInspectable
+    {
+        HRESULT IsSupported(CanvasDevice* device, [out, retval] boolean* value);
+    }
+
+    [version(VERSION), uuid(A065DCE4-A7F2-4DF4-8405-EA9E3A215BF8), exclusiveto(CanvasSpriteBatch)]
+    interface ICanvasSpriteBatch : IInspectable
+        requires Windows.Foundation.IClosable, ICanvasResourceCreatorWithDpi
+    {
+        //
+        // Draw
+        //
+        
+        [overload("Draw")]
+        HRESULT DrawToRect(
+            [in] CanvasBitmap* bitmap, 
+            [in] Windows.Foundation.Rect destRect);
+
+        [overload("Draw"), default_overload]
+        HRESULT DrawAtOffset(
+            [in] CanvasBitmap* bitmap,
+            [in] Windows.Foundation.Numerics.Vector2 offset);
+
+        [overload("Draw")]
+        HRESULT DrawWithTransform(
+            [in] CanvasBitmap* bitmap,
+            [in] Windows.Foundation.Numerics.Matrix3x2 transform);
+
+        [overload("Draw")]
+        HRESULT DrawToRectWithTint(
+            [in] CanvasBitmap* bitmap, 
+            [in] Windows.Foundation.Rect destRect,
+            [in] Windows.Foundation.Numerics.Vector4 tint);
+
+        [overload("Draw")]
+        HRESULT DrawAtOffsetWithTint(
+            [in] CanvasBitmap* bitmap,
+            [in] Windows.Foundation.Numerics.Vector2 offset,
+            [in] Windows.Foundation.Numerics.Vector4 tint);
+
+        [overload("Draw"), default_overload]
+        HRESULT DrawWithTransformAndTint(
+            [in] CanvasBitmap* bitmap,
+            [in] Windows.Foundation.Numerics.Matrix3x2 transform,
+            [in] Windows.Foundation.Numerics.Vector4 tint);
+
+        [overload("Draw"), default_overload]
+        HRESULT DrawToRectWithTintAndFlip(
+            [in] CanvasBitmap* bitmap,
+            [in] Windows.Foundation.Rect destRect,
+            [in] Windows.Foundation.Numerics.Vector4 tint,
+            [in] CanvasSpriteFlip flip);
+
+        [overload("Draw")]
+        HRESULT DrawWithTransformAndTintAndFlip(
+            [in] CanvasBitmap* bitmap,
+            [in] Windows.Foundation.Numerics.Matrix3x2 transform,
+            [in] Windows.Foundation.Numerics.Vector4 tint,
+            [in] CanvasSpriteFlip flip);
+
+        [overload("Draw")]
+        HRESULT DrawAtOffsetWithTintAndTransform(
+            [in] CanvasBitmap* bitmap,
+            [in] Windows.Foundation.Numerics.Vector2 offset,
+            [in] Windows.Foundation.Numerics.Vector4 tint,
+            [in] Windows.Foundation.Numerics.Vector2 origin,
+            [in] float rotation,
+            [in] Windows.Foundation.Numerics.Vector2 scale,
+            [in] CanvasSpriteFlip flip);
+
+        //
+        // DrawSprite
+        //
+
+        [overload("DrawFromSpriteSheet")]
+        HRESULT DrawFromSpriteSheetToRect(
+            [in] CanvasBitmap* bitmap,
+            [in] Windows.Foundation.Rect destRect,
+            [in] Windows.Foundation.Rect sourceRect);
+
+        [overload("DrawFromSpriteSheet"), default_overload]
+        HRESULT DrawFromSpriteSheetAtOffset(
+            [in] CanvasBitmap* bitmap,
+            [in] Windows.Foundation.Numerics.Vector2 offset,
+            [in] Windows.Foundation.Rect sourceRect);
+
+        [overload("DrawFromSpriteSheet")]
+        HRESULT DrawFromSpriteSheetWithTransform(
+            [in] CanvasBitmap* bitmap,
+            [in] Windows.Foundation.Numerics.Matrix3x2 transform,
+            [in] Windows.Foundation.Rect sourceRect);
+
+        [overload("DrawFromSpriteSheet")]
+        HRESULT DrawFromSpriteSheetToRectWithTint(
+            [in] CanvasBitmap* bitmap,
+            [in] Windows.Foundation.Rect destRect,
+            [in] Windows.Foundation.Rect sourceRect,
+            [in] Windows.Foundation.Numerics.Vector4 tint);
+
+        [overload("DrawFromSpriteSheet")]
+        HRESULT DrawFromSpriteSheetAtOffsetWithTint(
+            [in] CanvasBitmap* bitmap,
+            [in] Windows.Foundation.Numerics.Vector2 offset,
+            [in] Windows.Foundation.Rect sourceRect,
+            [in] Windows.Foundation.Numerics.Vector4 tint);
+
+        [overload("DrawFromSpriteSheet"), default_overload]
+        HRESULT DrawFromSpriteSheetWithTransformAndTint(
+            [in] CanvasBitmap* bitmap,
+            [in] Windows.Foundation.Numerics.Matrix3x2 transform,
+            [in] Windows.Foundation.Rect sourceRect,
+            [in] Windows.Foundation.Numerics.Vector4 tint);
+
+        [overload("DrawFromSpriteSheet"), default_overload]
+        HRESULT DrawFromSpriteSheetToRectWithTintAndFlip(
+            [in] CanvasBitmap* bitmap,
+            [in] Windows.Foundation.Rect destRect,
+            [in] Windows.Foundation.Rect sourceRect,
+            [in] Windows.Foundation.Numerics.Vector4 tint,
+            [in] CanvasSpriteFlip flip);
+
+        [overload("DrawFromSpriteSheet")]
+        HRESULT DrawFromSpriteSheetWithTransformAndTintAndFlip(
+            [in] CanvasBitmap* bitmap,
+            [in] Windows.Foundation.Numerics.Matrix3x2 transform,
+            [in] Windows.Foundation.Rect sourceRect,
+            [in] Windows.Foundation.Numerics.Vector4 tint,
+            [in] CanvasSpriteFlip flip);
+
+        [overload("DrawFromSpriteSheet")]
+        HRESULT DrawFromSpriteSheetAtOffsetWithTintAndTransform(
+            [in] CanvasBitmap* bitmap,
+            [in] Windows.Foundation.Numerics.Vector2 offset,
+            [in] Windows.Foundation.Rect sourceRect,
+            [in] Windows.Foundation.Numerics.Vector4 tint,
+            [in] Windows.Foundation.Numerics.Vector2 origin,
+            [in] float rotation,
+            [in] Windows.Foundation.Numerics.Vector2 scale,
+            [in] CanvasSpriteFlip flip);
+    }
+
+
+    [version(VERSION), static(ICanvasSpriteBatchStatics, VERSION)]
+    runtimeclass CanvasSpriteBatch
+    {
+        [default] interface ICanvasSpriteBatch;
+    }
+}
+
+#endif

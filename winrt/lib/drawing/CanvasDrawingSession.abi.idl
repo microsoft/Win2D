@@ -74,21 +74,21 @@ namespace Microsoft.Graphics.Canvas
         //
         //   DrawImage(<what>, <where to>, <where from>, <opacity>, <interpolation>, <composite|perspective>)
         //
-        // <what>���������: either ICanvasImage or CanvasBitmap
+        // <what>         : either ICanvasImage or CanvasBitmap
         //
-        // <where to>�����: an offset (Vector2 or x,y) or destination rectangle
+        // <where to>     : an offset (Vector2 or x,y) or destination rectangle
         //
-        // <where from>���: a source rectangle
+        // <where from>   : a source rectangle
         //
-        // <opacity>������: a float specifying opacity (simulated using an
+        // <opacity>      : a float specifying opacity (simulated using an
         //                  effect for non-bitmaps)
         //
         // <interpolation>: CanvasImageInterpolation
         //
-        // <composite>����: a composite mode (may call DrawImage even if <what>
+        // <composite>    : a composite mode (may call DrawImage even if <what>
         //                  is a bitmap)
         //
-        // <perspective>��: the perspective transform - only for overloads where
+        // <perspective>  : the perspective transform - only for overloads where
         //                  <what> is a CanvasBitmap.
         //
         // Note that there is no overload that has both composite and
@@ -1408,6 +1408,37 @@ namespace Microsoft.Graphics.Canvas
             [in] NUMERICS.Matrix3x2 geometryTransform,
             [in] CanvasLayerOptions options,
             [out, retval] CanvasActiveLayer** layer);
+
+#if WINVER > _WIN32_WINNT_WINBLUE
+
+        //
+        // CreateSpriteBatch
+        //
+
+        [overload("CreateSpriteBatch")]
+        HRESULT CreateSpriteBatch(
+            [out, retval] CanvasSpriteBatch** spriteBatch);
+
+        [overload("CreateSpriteBatch")]
+        HRESULT CreateSpriteBatchWithSortMode(
+            [in] CanvasSpriteSortMode sortMode,
+            [out, retval] CanvasSpriteBatch** spriteBatch);
+
+        [overload("CreateSpriteBatch")]
+        HRESULT CreateSpriteBatchWithSortModeAndInterpolation(
+            [in] CanvasSpriteSortMode sortMode,
+            [in] CanvasImageInterpolation interpolation,
+            [out, retval] CanvasSpriteBatch** spriteBatch);
+
+        [overload("CreateSpriteBatch")]
+        HRESULT CreateSpriteBatchWithSortModeAndInterpolationAndOptions(
+            [in] CanvasSpriteSortMode sortMode,
+            [in] CanvasImageInterpolation interpolation,
+            [in] CanvasSpriteOptions options,
+            [out, retval] CanvasSpriteBatch** spriteBatch);
+        
+#endif
+
     };
 
     [version(VERSION)]

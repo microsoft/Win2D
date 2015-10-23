@@ -138,11 +138,11 @@ namespace canvas
             Assert::Fail(L"Unexpected call to FlushDeviceContexts");
         }
 
+
         IFACEMETHODIMP GetDxgiDevice(
-            IDXGIDevice **dxgiDevice)
+            IDXGIDevice **dxgiDevice) override
         {
-            Assert::Fail(L"Unexpected call to GetDxgiDevice");
-            return E_NOTIMPL;
+            return m_dxgiDevice.CopyTo(dxgiDevice);
         }
 #endif
 

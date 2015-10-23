@@ -1244,6 +1244,31 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             CanvasLayerOptions options,
             ICanvasActiveLayer** layer) override;
 
+#if WINVER > _WIN32_WINNT_WINBLUE
+
+        //
+        // CreateSpriteBatch
+        //
+
+        IFACEMETHOD(CreateSpriteBatch)(
+            ICanvasSpriteBatch** spriteBatch) override;
+
+        IFACEMETHOD(CreateSpriteBatchWithSortMode)(
+            CanvasSpriteSortMode sortMode,
+            ICanvasSpriteBatch** spriteBatch) override;
+
+        IFACEMETHOD(CreateSpriteBatchWithSortModeAndInterpolation)(
+            CanvasSpriteSortMode sortMode,
+            CanvasImageInterpolation interpolation,
+            ICanvasSpriteBatch** spriteBatch) override;
+
+        IFACEMETHOD(CreateSpriteBatchWithSortModeAndInterpolationAndOptions)(
+            CanvasSpriteSortMode sortMode,
+            CanvasImageInterpolation interpolation,
+            CanvasSpriteOptions options,
+            ICanvasSpriteBatch** spriteBatch) override;
+
+#endif
         //
         // ICanvasResourceCreator
         //

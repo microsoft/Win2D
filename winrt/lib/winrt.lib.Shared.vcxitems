@@ -47,6 +47,7 @@
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)composition\CanvasComposition.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)drawing\CanvasActiveLayer.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)drawing\CanvasSpriteBatch.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)drawing\DeviceContextPool.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\ChromaKeyEffect.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\ContrastEffect.h" />
@@ -169,6 +170,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)composition\CanvasComposition.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)drawing\CanvasSpriteBatch.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\ChromaKeyEffect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\ContrastEffect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\EdgeDetectionEffect.cpp" />
@@ -293,6 +295,7 @@
     <None Include="$(MSBuildThisFileDirectory)drawing\CanvasDevice.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)drawing\CanvasDrawingSession.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)drawing\CanvasGradientMesh.abi.idl" />
+    <None Include="$(MSBuildThisFileDirectory)drawing\CanvasSpriteBatch.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)drawing\CanvasStrokeStyle.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)drawing\CanvasSwapChain.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)effects\IGraphicsEffect.abi.idl" />

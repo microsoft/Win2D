@@ -88,14 +88,6 @@ class StubD2DDevice : public MockD2DDevice
         auto stubDeviceContext = Make<StubD2DDeviceContextWithGetFactory>();
         return stubDeviceContext.CopyTo(deviceContext);
     }
-
-#if WINVER > _WIN32_WINNT_WINBLUE
-    IFACEMETHODIMP GetDxgiDevice(
-        IDXGIDevice **dxgiDevice) override
-    {
-        return m_dxgiDevice.CopyTo(dxgiDevice);
-    }
-#endif
 };
 
 class StubDxgiSurface : public MockDxgiSurface
@@ -129,7 +121,6 @@ public:
         , m_dpi(dpi)
     {
     }
-
 
     STDMETHOD_(D2D1_BITMAP_OPTIONS, GetOptions)(
         ) CONST

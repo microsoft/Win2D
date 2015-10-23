@@ -9,6 +9,9 @@
 
 #include "../lib/pch.h"
 
+// Standard C++
+#include <array>
+
 // UnitTest
 #include <CppUnitTest.h>
 

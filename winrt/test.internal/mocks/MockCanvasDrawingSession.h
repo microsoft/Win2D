@@ -232,6 +232,13 @@ namespace canvas
         DONT_EXPECT(CreateLayerWithOpacityBrushAndClipGeometryAndTransform, ICanvasBrush*, ICanvasGeometry*, Matrix3x2, ICanvasActiveLayer**);
         DONT_EXPECT(CreateLayerWithAllOptions                             , float, ICanvasBrush*, Rect, ICanvasGeometry*, Matrix3x2, CanvasLayerOptions, ICanvasActiveLayer**);
 
+#if WINVER > _WIN32_WINNT_WINBLUE
+        DONT_EXPECT(CreateSpriteBatch                                       , ICanvasSpriteBatch**);
+        DONT_EXPECT(CreateSpriteBatchWithSortMode                           , CanvasSpriteSortMode, ICanvasSpriteBatch**);
+        DONT_EXPECT(CreateSpriteBatchWithSortModeAndInterpolation           , CanvasSpriteSortMode, CanvasImageInterpolation, ICanvasSpriteBatch**);
+        DONT_EXPECT(CreateSpriteBatchWithSortModeAndInterpolationAndOptions , CanvasSpriteSortMode, CanvasImageInterpolation, CanvasSpriteOptions, ICanvasSpriteBatch**);
+#endif
+        
         // ICanvasResourceWrapperNative
         DONT_EXPECT(GetNativeResource, ICanvasDevice* device, float dpi, REFIID iid, void**);
 

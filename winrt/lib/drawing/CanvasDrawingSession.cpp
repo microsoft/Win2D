@@ -5,6 +5,7 @@
 #include "pch.h"
 
 #include "CanvasActiveLayer.h"
+#include "CanvasSpriteBatch.h"
 #include "text/CanvasTextFormat.h"
 #include "text/CanvasTextRenderingParameters.h"
 #include "utils/TemporaryTransform.h"
@@ -3845,5 +3846,91 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             deviceContext->PopLayer();
         }
     }
+
+#if WINVER > _WIN32_WINNT_WINBLUE
+
+    IFACEMETHODIMP CanvasDrawingSession::CreateSpriteBatch(
+        ICanvasSpriteBatch** spriteBatch)
+    {
+        return CreateSpriteBatchWithSortModeAndInterpolationAndOptions(
+            CanvasSpriteSortMode::None,
+            CanvasImageInterpolation::Linear,
+            CanvasSpriteOptions::None,
+            spriteBatch);
+    }
+    
+    IFACEMETHODIMP CanvasDrawingSession::CreateSpriteBatchWithSortMode(
+        CanvasSpriteSortMode sortMode,
+        ICanvasSpriteBatch** spriteBatch)
+    {
+        return CreateSpriteBatchWithSortModeAndInterpolationAndOptions(
+            sortMode,
+            CanvasImageInterpolation::Linear,
+            CanvasSpriteOptions::None,
+            spriteBatch);
+    }
+    
+    IFACEMETHODIMP CanvasDrawingSession::CreateSpriteBatchWithSortModeAndInterpolation(
+        CanvasSpriteSortMode sortMode,
+        CanvasImageInterpolation interpolation,
+        ICanvasSpriteBatch** spriteBatch)
+    {
+        return CreateSpriteBatchWithSortModeAndInterpolationAndOptions(
+            sortMode,
+            interpolation,
+            CanvasSpriteOptions::None,
+            spriteBatch);
+    }
+    
+    IFACEMETHODIMP CanvasDrawingSession::CreateSpriteBatchWithSortModeAndInterpolationAndOptions(
+        CanvasSpriteSortMode sortMode,
+        CanvasImageInterpolation interpolation,
+        CanvasSpriteOptions options,
+        ICanvasSpriteBatch** spriteBatch)
+    {
+        return ExceptionBoundary([&]
+        {
+            // Validate interpolation mode
+            switch (interpolation)
+            {
+            case CanvasImageInterpolation::NearestNeighbor:
+            case CanvasImageInterpolation::Linear:
+                break;
+
+            default:
+                // We have a special message for this case since there are
+                // various, valid looking, CanvasImageInterpolation modes that
+                // are not valid to use with this API.
+                ThrowHR(E_INVALIDARG, Strings::SpriteBatchInvalidInterpolation);
+            }
+
+            // Validate options
+            auto const validOptions = CanvasSpriteOptions::ClampToSourceRect;
+            if ((static_cast<uint32_t>(options) & ~static_cast<uint32_t>(validOptions)) != 0)
+            {
+                // no special message for this since this can't happen unless
+                // the app is doing casting.
+                ThrowHR(E_INVALIDARG);
+            }
+
+            CheckAndClearOutPointer(spriteBatch);
+            
+            auto deviceContext3 = MaybeAs<ID2D1DeviceContext3>(GetResource());
+
+            if (!deviceContext3)
+                ThrowHR(E_NOTIMPL, Strings::SpriteBatchNotAvailable);
+
+            auto newSpriteBatch = Make<CanvasSpriteBatch>(
+                deviceContext3,
+                sortMode,
+                static_cast<D2D1_BITMAP_INTERPOLATION_MODE>(interpolation),
+                static_cast<D2D1_SPRITE_OPTIONS>(options));
+            CheckMakeResult(newSpriteBatch);
+
+            ThrowIfFailed(newSpriteBatch.CopyTo(spriteBatch));
+        });
+    }
+    
+#endif
 
 }}}}
