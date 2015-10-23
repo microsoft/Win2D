@@ -37,8 +37,10 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
             <ListBox Margin="5" VerticalAlignment="Top"
                      ItemsSource="{Binding ElementName=control, Path=ModeList}"
                      SelectedItem="{Binding CurrentMode, ElementName=control, Mode=TwoWay}"/>
-            <TextBlock Text="DPI Scale"/>
 
+            <CheckBox Content="Use CanvasSpriteBatch" x:Name="UseSpriteBatchCheckBox" IsChecked="{Binding ElementName=control, Path=UseSpriteBatch, Mode=TwoWay}" />
+
+            <TextBlock Text="DPI Scale"/>
             <Slider Maximum="1.0" Minimum="0.01" StepFrequency="0.01" Value="1.0" ValueChanged="SliderValueChanged"/>
         </StackPanel>
         

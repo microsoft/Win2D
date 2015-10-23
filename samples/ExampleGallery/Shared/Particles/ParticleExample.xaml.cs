@@ -27,6 +27,7 @@ namespace ExampleGallery
 
         public ParticleMode CurrentMode { get; set; }
 
+        public bool UseSpriteBatch { get; set; }
 
         // This example uses three different particle systems.
         ParticleSystem smokePlume = new SmokePlumeParticleSystem();
@@ -53,6 +54,13 @@ namespace ExampleGallery
         {
             if (args.Reason == CanvasCreateResourcesReason.DpiChanged)
                 return;
+
+            bool spriteBatchSupported = false;
+#if WINDOWS_UWP
+            spriteBatchSupported = CanvasSpriteBatch.IsSupported(sender.Device);
+#endif
+            UseSpriteBatch = UseSpriteBatchCheckBox.IsChecked.GetValueOrDefault(false);
+            UseSpriteBatchCheckBox.Visibility = spriteBatchSupported ? Visibility.Visible : Visibility.Collapsed;
 
             args.TrackAsyncAction(CreateResourcesAsync(sender).AsAsyncAction());
         }
@@ -143,16 +151,18 @@ namespace ExampleGallery
         {
             var ds = args.DrawingSession;
 
-            smokePlume.Draw(ds);
-            smoke.Draw(ds);
-            explosion.Draw(ds);
+            smokePlume.Draw(ds, UseSpriteBatch);
+            smoke.Draw(ds, UseSpriteBatch);
+            explosion.Draw(ds, UseSpriteBatch);
         }
+
 
         public void SliderValueChanged(object sender, RangeBaseValueChangedEventArgs args)
         {
             if (canvas != null)
                 canvas.DpiScale = (float)(args.NewValue);
         }
+
 
         private void control_Unloaded(object sender, RoutedEventArgs e)
         {

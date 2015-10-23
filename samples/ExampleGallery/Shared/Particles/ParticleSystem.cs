@@ -184,12 +184,38 @@ namespace ExampleGallery
 
 
         // Draws all of the active particles.
-        public void Draw(CanvasDrawingSession drawingSession)
+        public void Draw(CanvasDrawingSession drawingSession, bool useSpriteBatch)
         {
             var previousBlend = drawingSession.Blend;
 
             drawingSession.Blend = blendState;
 
+#if WINDOWS_UWP
+            if (useSpriteBatch)
+            {
+                using (var spriteBatch = drawingSession.CreateSpriteBatch())
+                {
+                    Draw(drawingSession, spriteBatch);
+                }
+            }
+            else
+            {
+                Draw(drawingSession, null);
+            }
+#else
+            Draw(drawingSession);
+#endif
+
+            drawingSession.Blend = previousBlend;
+        }
+
+
+        void Draw(CanvasDrawingSession drawingSession
+#if WINDOWS_UWP
+            , CanvasSpriteBatch spriteBatch
+#endif
+            )
+        { 
             // Go through the particles in reverse order, so new ones are drawn underneath
             // older ones. This improves visual appearance of effects like smoke plume
             // where many particles are created at the same position over a period of time.
@@ -218,16 +244,23 @@ namespace ExampleGallery
                 // They'll start at 75% of their size, and increase to 100% once they're finished.
                 float scale = particle.Scale * (.75f + .25f * normalizedLifetime);
 
-                // Compute a transform matrix for this particle.
-                var transform = Matrix3x2.CreateRotation(particle.Rotation, bitmapCenter) *
-                                Matrix3x2.CreateScale(scale, bitmapCenter) *
-                                Matrix3x2.CreateTranslation(particle.Position - bitmapCenter);
+#if WINDOWS_UWP
+                if (spriteBatch != null)
+                {
+                    spriteBatch.Draw(bitmap, particle.Position, new Vector4(1, 1, 1, alpha), bitmapCenter, particle.Rotation, new Vector2(scale), CanvasSpriteFlip.None);
+                }
+                else
+#endif
+                {
+                    // Compute a transform matrix for this particle.
+                    var transform = Matrix3x2.CreateRotation(particle.Rotation, bitmapCenter) *
+                                    Matrix3x2.CreateScale(scale, bitmapCenter) *
+                                    Matrix3x2.CreateTranslation(particle.Position - bitmapCenter);
 
-                // Draw the particle.
-                drawingSession.DrawImage(bitmap, 0, 0, bitmapBounds, alpha, CanvasImageInterpolation.Linear, new Matrix4x4(transform));
+                    // Draw the particle.
+                    drawingSession.DrawImage(bitmap, 0, 0, bitmapBounds, alpha, CanvasImageInterpolation.Linear, new Matrix4x4(transform));
+                }
             }
-
-            drawingSession.Blend = previousBlend;
         }
     }
 }
