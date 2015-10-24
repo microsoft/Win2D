@@ -44,6 +44,8 @@ import "Windows.UI.Input.Inking.idl";
 #include "drawing\CanvasActiveLayer.abi.idl"
 #include "drawing\CanvasGradientMesh.abi.idl"
 #include "text\CanvasTextRenderingParameters.abi.idl"
+#include "text\CanvasFontFace.abi.idl"
+#include "text\CanvasFontSet.abi.idl"
 #include "drawing\CanvasDrawingSession.abi.idl"
 #include "xaml\CanvasImageSource.abi.idl"
 #include "drawing\CanvasSwapChain.abi.idl"

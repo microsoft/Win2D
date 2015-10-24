@@ -29,7 +29,7 @@ IFACEMETHODIMP CanvasTextRenderingParametersFactory::Create(
 }
 
 CanvasTextRenderingParameters::CanvasTextRenderingParameters(
-    DwriteTextParamsType* renderingParams)
+    DWriteTextParamsType* renderingParams)
     : ResourceWrapper(renderingParams)
 {
 }
@@ -80,7 +80,7 @@ ComPtr<CanvasTextRenderingParameters> CanvasTextRenderingParameters::CreateNew(
     ComPtr<IDWriteRenderingParams> defaultRenderingParamsBase;
     ThrowIfFailed(dwriteFactoryBase->CreateRenderingParams(&defaultRenderingParamsBase));
 
-    auto defaultRenderingParams = As<DwriteTextParamsType>(defaultRenderingParamsBase);
+    auto defaultRenderingParams = As<DWriteTextParamsType>(defaultRenderingParamsBase);
 
 #if WINVER > _WIN32_WINNT_WINBLUE
     auto dwriteFactory = As<IDWriteFactory3>(dwriteFactoryBase);
@@ -88,7 +88,7 @@ ComPtr<CanvasTextRenderingParameters> CanvasTextRenderingParameters::CreateNew(
     auto dwriteFactory = As<IDWriteFactory2>(dwriteFactoryBase);
 #endif
 
-    ComPtr<DwriteTextParamsType> newRenderingParams;
+    ComPtr<DWriteTextParamsType> newRenderingParams;
 
     ThrowIfFailed(dwriteFactory->CreateCustomRenderingParams(
         defaultRenderingParams->GetGamma(),

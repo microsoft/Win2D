@@ -89,6 +89,16 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         static_assert(offsetof(D2D1_MATRIX_4X4_F, _44) == offsetof(Numerics::Matrix4x4, M44), "Matrix4x4 layout must match D2D1_MATRIX_4X4_F");
     };
 
+    template<> struct ValidateReinterpretAs<DWRITE_MATRIX*, Numerics::Matrix3x2*> : std::true_type
+    {
+        static_assert(offsetof(DWRITE_MATRIX, m11) == offsetof(Numerics::Matrix3x2, M11), "Matrix3x2 layout must match DWRITE_MATRIX");
+        static_assert(offsetof(DWRITE_MATRIX, m12) == offsetof(Numerics::Matrix3x2, M12), "Matrix3x2 layout must match DWRITE_MATRIX");
+        static_assert(offsetof(DWRITE_MATRIX, m21) == offsetof(Numerics::Matrix3x2, M21), "Matrix3x2 layout must match DWRITE_MATRIX");
+        static_assert(offsetof(DWRITE_MATRIX, m22) == offsetof(Numerics::Matrix3x2, M22), "Matrix3x2 layout must match DWRITE_MATRIX");
+        static_assert(offsetof(DWRITE_MATRIX, dx) == offsetof(Numerics::Matrix3x2, M31), "Matrix3x2 layout must match DWRITE_MATRIX");
+        static_assert(offsetof(DWRITE_MATRIX, dy) == offsetof(Numerics::Matrix3x2, M32), "Matrix3x2 layout must match DWRITE_MATRIX");
+    };
+
     template<> struct ValidateReinterpretAs<Numerics::Vector4*, D2D1_COLOR_F*> : std::true_type
     {
         static_assert(offsetof(D2D1_COLOR_F, r) == offsetof(Numerics::Vector4, X), "Vector4 layout must match D2D1_COLOR_F");
@@ -144,6 +154,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         // Using hardcoded constant instead of D2D1_DRAW_TEXT_OPTIONS_ENABLE_COLOR_FONT, because that enum entry is missing from the VS2013 Windows Phone version of d2d1.h
         static_assert(static_cast<uint32_t>(4U) == static_cast<uint32_t>(CanvasDrawTextOptions::EnableColorFont), "CanvasDrawTextOptions must match D2D1_DRAW_TEXT_OPTIONS");
+    };
+
+    template<> struct ValidateReinterpretAs<DWRITE_UNICODE_RANGE*, CanvasUnicodeRange*> : std::true_type
+    {
+        static_assert(offsetof(DWRITE_UNICODE_RANGE, first) == offsetof(CanvasUnicodeRange, First), "CanvasUnicodeRange layout must match DWRITE_UNICODE_RANGE");
+        static_assert(offsetof(DWRITE_UNICODE_RANGE, last) == offsetof(CanvasUnicodeRange, Last), "CanvasUnicodeRange layout must match DWRITE_UNICODE_RANGE");
     };
 
     inline float ToNormalizedFloat(uint8_t v)

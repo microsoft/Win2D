@@ -195,7 +195,7 @@ namespace Microsoft.Graphics.Canvas.Text
         //     combine the two.
         //
         // [6] The DWRITE_LINE_SPACING_METHOD and line spacing value Win2D passes 
-        //     to Dwrite is a function of LineSpacingMode and LineSpacing.
+        //     to DWrite is a function of LineSpacingMode and LineSpacing.
         //
         //     If LineSpacingMode == Default (or always, on Win8.1):
         //        Use DWRITE_LINE_SPACING_METHOD_UNIFORM if LineSpacing is positive.

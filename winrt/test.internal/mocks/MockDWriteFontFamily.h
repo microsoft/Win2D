@@ -13,6 +13,8 @@ namespace canvas
     public:
 
         CALL_COUNTER_WITH_MOCK(GetFamilyNamesMethod, HRESULT(IDWriteLocalizedStrings**));
+        CALL_COUNTER_WITH_MOCK(GetFontCountMethod, UINT32());
+        CALL_COUNTER_WITH_MOCK(GetFontMethod, HRESULT(UINT32, IDWriteFont**));
 
         IFACEMETHODIMP GetFamilyNames(IDWriteLocalizedStrings** names)
         {
@@ -47,16 +49,14 @@ namespace canvas
 
         IFACEMETHODIMP_(UINT32) GetFontCount()
         {
-            Assert::Fail(L"Unexpected call to GetFontCount");
-            return 0;
+            return GetFontCountMethod.WasCalled();
         }
 
         IFACEMETHODIMP GetFont(
             UINT32 index,
             IDWriteFont** font)
         {
-            Assert::Fail(L"Unexpected call to GetFont");
-            return E_NOTIMPL;
+            return GetFontMethod.WasCalled(index, font);
         }
     };
 }

@@ -52,6 +52,7 @@ STRING(PathBuilderAddGeometryMidFigure, L"CanvasPathBuilder.AddGeometry may not 
 STRING(PathBuilderClosedMidFigure, L"There was an attempt to use a CanvasPathBuilder, which was missing a call to CanvasPathBuilder.EndFigure.")
 STRING(PixelColorsFormatRestriction, L"This method only supports resources with pixel format DirectXPixelFormat.B8G8R8A8UIntNormalized.")
 STRING(PoppedWrongLayer, L"Attempting to close a CanvasActiveLayer that is not top of the stack. The most recently created layer must be closed first.")
+STRING(RemoteFontUnavailable, L"The requested font is not locally available.")
 STRING(ResourceManagerNoDevice, L"To wrap this resource type, a device parameter must be passed to GetOrCreate.")
 STRING(ResourceManagerNoDpi, L"To wrap this resource type, a dpi parameter must be passed to GetOrCreate.")
 STRING(ResourceManagerUnknownType, L"Unsupported type. Win2D is not able to wrap the specified resource.")

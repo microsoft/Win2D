@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="Globals">
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
@@ -159,6 +159,8 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)images\CanvasImage.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)images\CanvasRenderTarget.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)images\TextureUtilities.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)text\CanvasFontFace.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)text\CanvasFontSet.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)text\CanvasTextFormat.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)text\CanvasTextLayout.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)text\CanvasTextRenderingParameters.h" />
@@ -277,6 +279,8 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)images\CanvasImage.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)images\CanvasRenderTarget.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)images\TextureUtilities.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)text\CanvasFontFace.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)text\CanvasFontSet.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)text\CanvasTextFormat.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)text\CanvasTextLayout.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)text\CanvasTextRenderingParameters.cpp" />
@@ -365,6 +369,8 @@
     <None Include="$(MSBuildThisFileDirectory)images\CanvasBitmap.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)images\CanvasCommandList.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)images\CanvasImage.abi.idl" />
+    <None Include="$(MSBuildThisFileDirectory)text\CanvasFontFace.abi.idl" />
+    <None Include="$(MSBuildThisFileDirectory)text\CanvasFontSet.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)text\CanvasTextFormat.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)text\CanvasTextLayout.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)text\CanvasTextRenderingParameters.abi.idl" />

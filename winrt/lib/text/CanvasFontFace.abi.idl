@@ -1,0 +1,222 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+//
+// Licensed under the MIT License. See LICENSE.txt in the project root for license information.
+
+import "inspectable.idl";
+import "Windows.Foundation.idl";
+import "Windows.UI.Text.idl";
+
+namespace Microsoft.Graphics.Canvas.Text
+{
+    runtimeclass CanvasFontFace;
+
+    [version(VERSION)]
+    typedef enum CanvasTextMeasuringMode
+    {
+        Natural,
+        GdiClassic,
+        GdiNatural
+    } CanvasTextMeasuringMode;
+
+    [version(VERSION)]
+    typedef enum CanvasFontFileFormatType
+    {
+        Cff,
+        TrueType,
+        TrueTypeCollection,
+        Type1,
+        Vector,
+        Bitmap,
+        Unknown,
+        RawCff
+    } CanvasFontFileFormatType;
+
+    [version(VERSION), flags]
+    typedef enum CanvasFontSimulations
+    {
+        None = 0,
+        Bold = 1,
+        Oblique = 2
+    } CanvasFontSimulations;
+
+    [version(VERSION)]
+    typedef enum CanvasFontInformation
+    {
+        None,
+        CopyrightNotice,
+        VersionStrings,
+        Trademark,
+        Manufacturer,
+        Designer,
+        DesignerUrl,
+        Description,
+        FontVendorUrl,
+        LicenseDescription,
+        LicenseInfoUrl,
+        Win32FamilyNames,
+        Win32SubfamilyNames,
+        PreferredFamilyNames,
+        PreferredSubfamilyNames,
+        SampleText,
+        FullName,
+        PostscriptName,
+        PostscriptCidName,
+        WwsFamilyName,
+        DesignScriptLanguageTag,
+        SupportedScriptLanguageTag
+    } CanvasFontInformation;
+
+    [version(VERSION)]
+    typedef struct CanvasUnicodeRange
+    {
+        UINT32 First;
+        UINT32 Last;
+    } CanvasUnicodeRange;
+
+    [version(VERSION), uuid(5199D129-4EF9-4DEE-B74C-4DC910201A7F), exclusiveto(CanvasFontFace)]
+    interface ICanvasFontFace : IInspectable
+        requires Windows.Foundation.IClosable
+    {
+        [overload("GetRecommendedRenderingMode")]
+        HRESULT GetRecommendedRenderingMode(
+            [in] float fontSize,
+            [in] float dpi,
+            [in] CanvasTextMeasuringMode measuringMode,
+            [in] CanvasTextRenderingParameters* renderingParameters,
+            [out, retval] CanvasTextRenderingMode* renderingMode);
+
+        [overload("GetRecommendedRenderingMode")]
+        HRESULT GetRecommendedRenderingModeWithAllOptions(
+            [in] float fontSize,
+            [in] float dpi,
+            [in] CanvasTextMeasuringMode measuringMode,
+            [in] CanvasTextRenderingParameters* renderingParameters,
+            [in] NUMERICS.Matrix3x2 transform,
+            [in] boolean isSideways,
+            [in] Microsoft.Graphics.Canvas.CanvasAntialiasing outlineThreshold,
+            [out, retval] CanvasTextRenderingMode* renderingMode);
+
+        HRESULT GetRecommendedGridFit(
+            [in] float fontSize,
+            [in] float dpi,
+            [in] CanvasTextMeasuringMode measuringMode,
+            [in] CanvasTextRenderingParameters* renderingParameters,
+            [in] NUMERICS.Matrix3x2 transform,
+            [in] boolean isSideways,
+            [in] Microsoft.Graphics.Canvas.CanvasAntialiasing outlineThreshold,
+            [out, retval] CanvasTextGridFit* gridFit);
+
+        // Properties below are font metrics, exposed via individual properties
+        // rather than a returned struct. They are converted from design space
+        // to em space before being returned.
+
+        // Accumulated bounding box of all glyphs in the font.
+        [propget] HRESULT GlyphBox([out, retval] Windows.Foundation.Rect* value);
+
+        // Superscript/subscript metrics.
+        [propget] HRESULT SubscriptPosition([out, retval] NUMERICS.Vector2* value);
+        [propget] HRESULT SubscriptSize([out, retval]  Windows.Foundation.Size* value);
+        [propget] HRESULT SuperscriptPosition([out, retval] NUMERICS.Vector2* value);
+        [propget] HRESULT SuperscriptSize([out, retval]  Windows.Foundation.Size* value);
+
+        // Whether the ascent, descent and lineGap values are typographic, or legacy.
+        [propget] HRESULT HasTypographicMetrics([out, retval] boolean* value);
+
+        // General positioning metrics
+        [propget] HRESULT Ascent([out, retval] float* value);
+        [propget] HRESULT Descent([out, retval] float* value);
+        [propget] HRESULT LineGap([out, retval] float* value);
+        [propget] HRESULT CapHeight([out, retval] float* value);
+        [propget] HRESULT LowercaseLetterHeight([out, retval] float* value);
+        [propget] HRESULT UnderlinePosition([out, retval] float* value);
+        [propget] HRESULT UnderlineThickness([out, retval] float* value);
+        [propget] HRESULT StrikethroughPosition([out, retval] float* value);
+        [propget] HRESULT StrikethroughThickness([out, retval] float* value);
+
+        // Caret metrics
+        [propget] HRESULT CaretSlopeRise([out, retval] float* value);
+        [propget] HRESULT CaretSlopeRun([out, retval] float* value);
+        [propget] HRESULT CaretOffset([out, retval] float* value);
+
+        [propget] HRESULT UnicodeRanges(
+            [out] UINT32* valueCount,
+            [out, size_is(, *valueCount), retval] CanvasUnicodeRange** valueElements);
+
+        [propget] HRESULT IsMonospaced([out, retval] boolean* value);
+
+        HRESULT GetVerticalGlyphVariants(
+            [in] UINT32 inputCount,
+            [in, size_is(inputCount)] int* inputElements,
+            [out] UINT32* outputCount,
+            [out, size_is(, *outputCount), retval] int** outputElements);
+
+        [propget] HRESULT HasVerticalGlyphVariants([out, retval] boolean* value);
+
+        [propget] HRESULT FileFormatType([out, retval] CanvasFontFileFormatType* value);
+
+        [propget] HRESULT Simulations([out, retval] CanvasFontSimulations* value);
+
+        [propget] HRESULT IsSymbolFont([out, retval] boolean* value);
+
+        [propget] HRESULT GlyphCount([out, retval] UINT32* value);
+
+        HRESULT GetGlyphIndices(
+            [in] UINT32 inputCount,
+            [in, size_is(inputCount)] UINT32* inputElements,
+            [out] UINT32* outputCount,
+            [out, size_is(, *outputCount), retval] int** outputElements);
+
+        [propget] HRESULT Weight([out, retval] Windows.UI.Text.FontWeight* value);
+        [propget] HRESULT Stretch([out, retval] Windows.UI.Text.FontStretch* value);
+        [propget] HRESULT Style([out, retval] Windows.UI.Text.FontStyle* value);
+
+#if WINVER > _WIN32_WINNT_WINBLUE
+        [propget] HRESULT FamilyNames([out, retval] Windows.Foundation.Collections.IMapView<HSTRING, HSTRING>** values);
+#endif
+        [propget] HRESULT FaceNames([out, retval] Windows.Foundation.Collections.IMapView<HSTRING, HSTRING>** values);
+
+        // Returns null if the string was not found.
+        HRESULT GetInformationalStrings(
+            [in] CanvasFontInformation fontInformation,
+            [out, retval] Windows.Foundation.Collections.IMapView<HSTRING, HSTRING>** values);
+
+        HRESULT HasCharacter([in] UINT32 unicodeValue, [out, retval] boolean* value);
+
+        // TODO: #5635 Expose GetPanose
+
+        // Not exposed: 
+        // IsColorFont, GetColorPaletteCount, GetPaletteEntryCount, GetPaletteEntries. Color font properties aren't supported in Win2D.
+        
+        // GetGdiCompatibleMetrics. Used for legacy features.
+        // GetGdiCompatibleGlyphMetrics - Used for legacy features.
+        // GetGdiCompatibleGlyphAdvances. Used for legacy features
+
+        // GetGlyphDesignAdvances. Intended for working in design space, and redundant with GetGlyphMetrics
+        // GetKerningPairAdjustments, HasKerningPairs. Knobs for pair kerning are part of DWrite completeness.
+
+        // GetFiles - Out of scope for enumeration scenarios.
+        // GetIndex - Same.
+        // TryGetFontTable, ReleaseFontTable - Out of scope for enumeration scenarios.
+
+        // GetDesignGlyphMetrics - Methods that operate solely in design metrics rather than em space are out of scope.
+
+        // GetGlyphRunOutline - Redundant with exposure off of CanvasTextLayout.
+
+        // One of the overloads of GetRecommendedRenderingMode; it fits awkwardly with the others.
+
+        // Font set builders. Out of scope for enumeration scenarios.
+    }
+
+    // Instances of CanvasFontFace are produced out of CanvasFontSet- not activated by the app.
+    [version(VERSION)]
+    runtimeclass CanvasFontFace
+    {
+        [default] interface ICanvasFontFace;
+    }
+
+    declare
+    {
+        interface Windows.Foundation.Collections.IVector<Windows.Foundation.Collections.IKeyValuePair<HSTRING, HSTRING>*>;
+        interface Windows.Foundation.Collections.IVector<CanvasFontFace*>;
+    }
+}

@@ -9,6 +9,8 @@
 #include "drawing/CanvasGradientMesh.h"
 #include "geometry/CanvasCachedGeometry.h"
 #include "images/CanvasCommandList.h"
+#include "text/CanvasFontFace.h"
+#include "text/CanvasFontSet.h"
 #include "text/CanvasTextLayout.h"
 #include "text/CanvasTextRenderingParameters.h"
 
@@ -39,8 +41,12 @@ std::vector<ResourceManager::TryCreateFunction> ResourceManager::tryCreateFuncti
 #if WINVER > _WIN32_WINNT_WINBLUE
     TryCreate<ID2D1GradientMesh,        CanvasGradientMesh,            MakeWrapperWithDevice>,
     TryCreate<IDWriteRenderingParams3,  CanvasTextRenderingParameters, MakeWrapper>,
+    TryCreate<IDWriteFontSet,           CanvasFontSet,                 MakeWrapper>,
+    TryCreate<IDWriteFontFaceReference, CanvasFontFace,                MakeWrapper>,
 #else
     TryCreate<IDWriteRenderingParams2,  CanvasTextRenderingParameters, MakeWrapper>,
+    TryCreate<IDWriteFontCollection,    CanvasFontSet,                 MakeWrapper>,
+    TryCreate<IDWriteFont,              CanvasFontFace,                MakeWrapper>,
 #endif
 
     // Effects get their very own try-create function. These are special because ID2D1Effect

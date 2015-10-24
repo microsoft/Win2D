@@ -61,6 +61,12 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasEffectUnitTest.cpp">
       <Filter>graphics</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasFontFaceUnitTests.cpp">
+      <Filter>graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasFontSetUnitTests.cpp">
+      <Filter>graphics</Filter>
+    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasGeometryUnitTests.cpp">
       <Filter>graphics</Filter>
     </ClCompile>
@@ -274,7 +280,19 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDWriteFontCollection.h">
       <Filter>mocks</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDWriteFont.h">
+      <Filter>mocks</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDWriteFontFace.h">
+      <Filter>mocks</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDWriteFontFaceReference.h">
+      <Filter>mocks</Filter>
+    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDWriteFontFile.h">
+      <Filter>mocks</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDWriteFontSet.h">
       <Filter>mocks</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDWriteInlineObject.h">
@@ -455,7 +473,7 @@
       <Filter>mocks</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDWriteLocalizedStrings.h">
-      <Filter>stubs</Filter>
+      <Filter>mocks</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockPrintControl.h">
       <Filter>mocks</Filter>
@@ -478,6 +496,10 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DEffectContext.h">
       <Filter>mocks</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)stubs\LocalizedFontNames.h">
+      <Filter>stubs</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDWriteStringList.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="$(MSBuildThisFileDirectory)readme.txt" />

@@ -445,6 +445,36 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             format);
     }
 
+    template<typename DWriteContainerType>
+    inline WinString GetLocaleFromLocalizedStrings(
+        int32_t stringIndex,
+        ComPtr<DWriteContainerType> const& localizedStrings)
+    {
+        WinStringBuilder stringBuilder;
+        uint32_t attributeLength;
+        ThrowIfFailed(localizedStrings->GetLocaleNameLength(stringIndex, &attributeLength));
+        attributeLength++; // Account for null terminator
+
+        auto buffer = stringBuilder.Allocate(attributeLength);
+        ThrowIfFailed(localizedStrings->GetLocaleName(stringIndex, buffer, attributeLength));
+        return stringBuilder.Get();
+    }
+
+    template<typename DWriteContainerType>
+    inline WinString GetTextFromLocalizedStrings(
+        int32_t stringIndex,
+        ComPtr<DWriteContainerType> const& localizedStrings)
+    {
+        WinStringBuilder stringBuilder;
+        uint32_t attributeLength;
+        ThrowIfFailed(localizedStrings->GetStringLength(stringIndex, &attributeLength));
+        attributeLength++; // Account for null terminator
+
+        auto buffer = stringBuilder.Allocate(attributeLength);
+        ThrowIfFailed(localizedStrings->GetString(stringIndex, buffer, attributeLength));
+        return stringBuilder.Get();
+    }
+
     inline std::pair<WinString, WinString> GetUriAndFontFamily(WinString const& fontFamilyName)
     {
         auto beginIt = begin(fontFamilyName);
@@ -511,6 +541,131 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         CHECK_ENUM_MEMBER(DWRITE_GRID_FIT_MODE_DISABLED, CanvasTextGridFit::Disable);
         CHECK_ENUM_MEMBER(DWRITE_GRID_FIT_MODE_ENABLED, CanvasTextGridFit::Enable);
         return static_cast<DWRITE_GRID_FIT_MODE>(value);
+    }
+
+    inline DWRITE_MEASURING_MODE ToDWriteMeasuringMode(CanvasTextMeasuringMode value)
+    {
+        CHECK_ENUM_MEMBER(DWRITE_MEASURING_MODE_NATURAL, CanvasTextMeasuringMode::Natural);
+        CHECK_ENUM_MEMBER(DWRITE_MEASURING_MODE_GDI_CLASSIC, CanvasTextMeasuringMode::GdiClassic);
+        CHECK_ENUM_MEMBER(DWRITE_MEASURING_MODE_GDI_NATURAL, CanvasTextMeasuringMode::GdiNatural);
+        return static_cast<DWRITE_MEASURING_MODE>(value);
+    }
+
+    inline DWRITE_OUTLINE_THRESHOLD ToDWriteOutlineThreshold(CanvasAntialiasing value)
+    {
+        CHECK_ENUM_MEMBER(DWRITE_OUTLINE_THRESHOLD_ANTIALIASED, CanvasAntialiasing::Antialiased);
+        CHECK_ENUM_MEMBER(DWRITE_OUTLINE_THRESHOLD_ALIASED, CanvasAntialiasing::Aliased);
+        return static_cast<DWRITE_OUTLINE_THRESHOLD>(value);
+    }
+    
+    inline DWRITE_FONT_FACE_TYPE ToDWriteFontFaceType(CanvasFontFileFormatType value)
+    {
+        CHECK_ENUM_MEMBER(DWRITE_FONT_FACE_TYPE_CFF, CanvasFontFileFormatType::Cff);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_FACE_TYPE_TRUETYPE, CanvasFontFileFormatType::TrueType);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_FACE_TYPE_TRUETYPE_COLLECTION, CanvasFontFileFormatType::TrueTypeCollection);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_FACE_TYPE_TYPE1, CanvasFontFileFormatType::Type1);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_FACE_TYPE_VECTOR, CanvasFontFileFormatType::Vector);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_FACE_TYPE_BITMAP, CanvasFontFileFormatType::Bitmap);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_FACE_TYPE_UNKNOWN, CanvasFontFileFormatType::Unknown);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_FACE_TYPE_RAW_CFF, CanvasFontFileFormatType::RawCff);
+        return static_cast<DWRITE_FONT_FACE_TYPE>(value);
+    }
+
+    inline CanvasFontFileFormatType ToCanvasFontFileFormatType(DWRITE_FONT_FACE_TYPE value)
+    {
+        // static_asserts in ToDWriteFontFaceType validate that this cast is ok
+        return static_cast<CanvasFontFileFormatType>(value);
+    }
+
+    inline DWRITE_FONT_SIMULATIONS ToDWriteFontSimulations(CanvasFontSimulations value)
+    {
+        CHECK_ENUM_MEMBER(DWRITE_FONT_SIMULATIONS_NONE, CanvasFontSimulations::None);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_SIMULATIONS_BOLD, CanvasFontSimulations::Bold);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_SIMULATIONS_OBLIQUE, CanvasFontSimulations::Oblique);
+        return static_cast<DWRITE_FONT_SIMULATIONS>(value);
+    }
+
+    inline CanvasFontSimulations ToCanvasFontSimulations(DWRITE_FONT_SIMULATIONS value)
+    {
+        // static_asserts in ToDWriteFontSimulations validate that this cast is ok
+        return static_cast<CanvasFontSimulations>(value);
+    }
+
+    inline DWRITE_INFORMATIONAL_STRING_ID ToDWriteInformationalStringId(CanvasFontInformation value)
+    {
+        CHECK_ENUM_MEMBER(DWRITE_INFORMATIONAL_STRING_NONE, CanvasFontInformation::None);
+        CHECK_ENUM_MEMBER(DWRITE_INFORMATIONAL_STRING_COPYRIGHT_NOTICE, CanvasFontInformation::CopyrightNotice);
+        CHECK_ENUM_MEMBER(DWRITE_INFORMATIONAL_STRING_VERSION_STRINGS, CanvasFontInformation::VersionStrings);
+        CHECK_ENUM_MEMBER(DWRITE_INFORMATIONAL_STRING_TRADEMARK, CanvasFontInformation::Trademark);
+        CHECK_ENUM_MEMBER(DWRITE_INFORMATIONAL_STRING_MANUFACTURER, CanvasFontInformation::Manufacturer);
+        CHECK_ENUM_MEMBER(DWRITE_INFORMATIONAL_STRING_DESIGNER, CanvasFontInformation::Designer);
+        CHECK_ENUM_MEMBER(DWRITE_INFORMATIONAL_STRING_DESIGNER_URL, CanvasFontInformation::DesignerUrl);
+        CHECK_ENUM_MEMBER(DWRITE_INFORMATIONAL_STRING_DESCRIPTION, CanvasFontInformation::Description);
+        CHECK_ENUM_MEMBER(DWRITE_INFORMATIONAL_STRING_FONT_VENDOR_URL, CanvasFontInformation::FontVendorUrl);
+        CHECK_ENUM_MEMBER(DWRITE_INFORMATIONAL_STRING_LICENSE_DESCRIPTION, CanvasFontInformation::LicenseDescription);
+        CHECK_ENUM_MEMBER(DWRITE_INFORMATIONAL_STRING_LICENSE_INFO_URL, CanvasFontInformation::LicenseInfoUrl);
+        CHECK_ENUM_MEMBER(DWRITE_INFORMATIONAL_STRING_WIN32_FAMILY_NAMES, CanvasFontInformation::Win32FamilyNames);
+        CHECK_ENUM_MEMBER(DWRITE_INFORMATIONAL_STRING_WIN32_SUBFAMILY_NAMES, CanvasFontInformation::Win32SubfamilyNames);
+        CHECK_ENUM_MEMBER(DWRITE_INFORMATIONAL_STRING_PREFERRED_FAMILY_NAMES, CanvasFontInformation::PreferredFamilyNames);
+        CHECK_ENUM_MEMBER(DWRITE_INFORMATIONAL_STRING_PREFERRED_SUBFAMILY_NAMES, CanvasFontInformation::PreferredSubfamilyNames);
+        CHECK_ENUM_MEMBER(DWRITE_INFORMATIONAL_STRING_SAMPLE_TEXT, CanvasFontInformation::SampleText);
+        CHECK_ENUM_MEMBER(DWRITE_INFORMATIONAL_STRING_FULL_NAME, CanvasFontInformation::FullName);
+        CHECK_ENUM_MEMBER(DWRITE_INFORMATIONAL_STRING_POSTSCRIPT_NAME, CanvasFontInformation::PostscriptName);
+        CHECK_ENUM_MEMBER(DWRITE_INFORMATIONAL_STRING_POSTSCRIPT_CID_NAME, CanvasFontInformation::PostscriptCidName);
+#if WINVER > _WIN32_WINNT_WINBLUE
+        CHECK_ENUM_MEMBER(DWRITE_INFORMATIONAL_STRING_WWS_FAMILY_NAME, CanvasFontInformation::WwsFamilyName);
+        CHECK_ENUM_MEMBER(DWRITE_INFORMATIONAL_STRING_DESIGN_SCRIPT_LANGUAGE_TAG, CanvasFontInformation::DesignScriptLanguageTag);
+        CHECK_ENUM_MEMBER(DWRITE_INFORMATIONAL_STRING_SUPPORTED_SCRIPT_LANGUAGE_TAG, CanvasFontInformation::SupportedScriptLanguageTag);
+#endif
+        return static_cast<DWRITE_INFORMATIONAL_STRING_ID>(value);
+    }
+
+#if WINVER > _WIN32_WINNT_WINBLUE
+    inline DWRITE_FONT_PROPERTY_ID ToDWriteFontPropertyId(CanvasFontPropertyIdentifier value)
+    {
+        CHECK_ENUM_MEMBER(DWRITE_FONT_PROPERTY_ID_NONE, CanvasFontPropertyIdentifier::None);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_PROPERTY_ID_FAMILY_NAME, CanvasFontPropertyIdentifier::FamilyName);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_PROPERTY_ID_PREFERRED_FAMILY_NAME, CanvasFontPropertyIdentifier::PreferredFamilyName);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_PROPERTY_ID_FACE_NAME, CanvasFontPropertyIdentifier::FaceName);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_PROPERTY_ID_FULL_NAME, CanvasFontPropertyIdentifier::FullName);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_PROPERTY_ID_WIN32_FAMILY_NAME, CanvasFontPropertyIdentifier::Win32FamilyName);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_PROPERTY_ID_POSTSCRIPT_NAME, CanvasFontPropertyIdentifier::PostscriptName);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_PROPERTY_ID_DESIGN_SCRIPT_LANGUAGE_TAG, CanvasFontPropertyIdentifier::DesignScriptLanguageTag);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_PROPERTY_ID_SUPPORTED_SCRIPT_LANGUAGE_TAG, CanvasFontPropertyIdentifier::SupportedScriptLanguageTag);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_PROPERTY_ID_SEMANTIC_TAG, CanvasFontPropertyIdentifier::SemanticTag);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_PROPERTY_ID_WEIGHT, CanvasFontPropertyIdentifier::Weight);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_PROPERTY_ID_STRETCH, CanvasFontPropertyIdentifier::Stretch);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_PROPERTY_ID_STYLE, CanvasFontPropertyIdentifier::Style);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_PROPERTY_ID_TOTAL, CanvasFontPropertyIdentifier::Total);
+
+        return static_cast<DWRITE_FONT_PROPERTY_ID>(value);
+    }
+#endif
+
+    //
+    // The localizedStrings are allowed to be null. If they are, this returns an empty map view.
+    //
+    inline void CopyLocalizedStringsToMapView(ComPtr<IDWriteLocalizedStrings> const& localizedStrings, IMapView<HSTRING, HSTRING>** values)
+    {
+        auto map = Make<Map<HSTRING, HSTRING>>();
+        CheckMakeResult(map);
+
+        if (localizedStrings)
+        {
+            const uint32_t stringCount = localizedStrings->GetCount();
+
+            for (uint32_t i = 0; i < stringCount; ++i)
+            {
+                auto name = GetTextFromLocalizedStrings(i, localizedStrings);
+
+                auto locale = GetLocaleFromLocalizedStrings(i, localizedStrings);
+
+                boolean unused;
+                ThrowIfFailed(map->Insert(locale, name, &unused));
+            }
+        }
+
+        ThrowIfFailed(map->GetView(values));
     }
    
 }}}}}

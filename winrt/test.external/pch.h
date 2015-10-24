@@ -23,6 +23,10 @@
 #endif
 
 #include <dwrite_2.h>
+#if WINVER > _WIN32_WINNT_WINBLUE
+#include <dwrite_3.h>
+#endif
+
 #include <DirectXMath.h>
 #include <Combaseapi.h>
 #include <wincodec.h>

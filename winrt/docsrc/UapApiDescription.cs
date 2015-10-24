@@ -200,4 +200,27 @@ namespace Microsoft.Graphics.Canvas.Text
             set { throw new System.NotImplementedException(); }
         }
     }
+
+    /// <summary></summary>
+    public sealed partial class CanvasFontSet : global::System.IDisposable
+    {
+        /// <summary></summary>
+        public global::Microsoft.Graphics.Canvas.Text.CanvasFontSet GetMatchingFontsFromProperties(global::Microsoft.Graphics.Canvas.Text.CanvasFontProperty[] properties) { throw new System.NotImplementedException(); }
+
+        /// <summary></summary>
+        public global::Microsoft.Graphics.Canvas.Text.CanvasFontSet GetMatchingFontsFromProperties(global::System.String familyName, global::Windows.UI.Text.FontWeight weight, global::Windows.UI.Text.FontStretch stretch, global::Windows.UI.Text.FontStyle style) { throw new System.NotImplementedException(); }
+
+        /// <summary></summary>
+        public global::System.UInt32 CountFontsMatchingProperty(global::Microsoft.Graphics.Canvas.Text.CanvasFontProperty property) { throw new System.NotImplementedException(); }
+
+        /// <summary></summary>
+        public global::System.Collections.Generic.IReadOnlyDictionary<global::System.String, global::System.String> GetPropertyValuesFromIndex(global::System.UInt32 index, global::Microsoft.Graphics.Canvas.Text.CanvasFontPropertyIdentifier id) { throw new System.NotImplementedException(); }
+
+        /// <summary></summary>
+        public global::Microsoft.Graphics.Canvas.Text.CanvasFontProperty[] GetPropertyValuesFromIdentifier(global::Microsoft.Graphics.Canvas.Text.CanvasFontPropertyIdentifier id, global::System.String preferredLocales) { throw new System.NotImplementedException(); }
+
+        /// <summary></summary>
+        public global::Microsoft.Graphics.Canvas.Text.CanvasFontProperty[] GetPropertyValuesFromIdentifier(global::Microsoft.Graphics.Canvas.Text.CanvasFontPropertyIdentifier id) { throw new System.NotImplementedException(); }
+    }
+
 }

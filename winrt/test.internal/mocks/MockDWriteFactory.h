@@ -8,16 +8,20 @@ namespace canvas
 {
     class MockDWriteFactory : public RuntimeClass<
         RuntimeClassFlags<ClassicCom>,
-        IDWriteFactory>
+        ChainInterfaces<
+#if WINVER > _WIN32_WINNT_WINBLUE
+        IDWriteFactory3,
+#endif
+        IDWriteFactory2, IDWriteFactory1, IDWriteFactory>>
     {
     public:
         CALL_COUNTER_WITH_MOCK(GetSystemFontCollectionMethod, HRESULT(IDWriteFontCollection**,BOOL));
-        CALL_COUNTER_WITH_MOCK(CreateCustomFontCollectionMethod, HRESULT(IDWriteFontCollectionLoader*,void const*,UINT32,IDWriteFontCollection**));
+        CALL_COUNTER_WITH_MOCK(CreateCustomFontCollectionMethod, HRESULT(IDWriteFontCollectionLoader*,void const*,uint32_t,IDWriteFontCollection**));
         CALL_COUNTER_WITH_MOCK(RegisterFontCollectionLoaderMethod, HRESULT(IDWriteFontCollectionLoader*));
         CALL_COUNTER_WITH_MOCK(UnregisterFontCollectionLoaderMethod, HRESULT(IDWriteFontCollectionLoader*));
         CALL_COUNTER_WITH_MOCK(CreateFontFileReferenceMethod, HRESULT(WCHAR const*,FILETIME const*,IDWriteFontFile**));
-        CALL_COUNTER_WITH_MOCK(CreateCustomFontFileReferenceMethod, HRESULT(void const*,UINT32,IDWriteFontFileLoader*,IDWriteFontFile**));
-        CALL_COUNTER_WITH_MOCK(CreateFontFaceMethod, HRESULT(DWRITE_FONT_FACE_TYPE,UINT32,IDWriteFontFile* const*,UINT32,DWRITE_FONT_SIMULATIONS,IDWriteFontFace**));
+        CALL_COUNTER_WITH_MOCK(CreateCustomFontFileReferenceMethod, HRESULT(void const*,uint32_t,IDWriteFontFileLoader*,IDWriteFontFile**));
+        CALL_COUNTER_WITH_MOCK(CreateFontFaceMethod, HRESULT(DWRITE_FONT_FACE_TYPE,uint32_t,IDWriteFontFile* const*,uint32_t,DWRITE_FONT_SIMULATIONS,IDWriteFontFace**));
         CALL_COUNTER_WITH_MOCK(CreateRenderingParamsMethod, HRESULT(IDWriteRenderingParams**));
         CALL_COUNTER_WITH_MOCK(CreateMonitorRenderingParamsMethod, HRESULT(HMONITOR,IDWriteRenderingParams**));
         CALL_COUNTER_WITH_MOCK(CreateCustomRenderingParamsMethod, HRESULT(FLOAT,FLOAT,FLOAT,DWRITE_PIXEL_GEOMETRY,DWRITE_RENDERING_MODE,IDWriteRenderingParams**));
@@ -26,13 +30,21 @@ namespace canvas
         CALL_COUNTER_WITH_MOCK(CreateTextFormatMethod, HRESULT(WCHAR const*,IDWriteFontCollection*,DWRITE_FONT_WEIGHT,DWRITE_FONT_STYLE,DWRITE_FONT_STRETCH,FLOAT,WCHAR const*,IDWriteTextFormat**));
         CALL_COUNTER_WITH_MOCK(CreateTypographyMethod, HRESULT(IDWriteTypography**));
         CALL_COUNTER_WITH_MOCK(GetGdiInteropMethod, HRESULT(IDWriteGdiInterop**));
-        CALL_COUNTER_WITH_MOCK(CreateTextLayoutMethod, HRESULT(WCHAR const*,UINT32,IDWriteTextFormat*,FLOAT,FLOAT,IDWriteTextLayout**));
-        CALL_COUNTER_WITH_MOCK(CreateGdiCompatibleTextLayoutMethod, HRESULT(WCHAR const*,UINT32,IDWriteTextFormat*,FLOAT,FLOAT,FLOAT,DWRITE_MATRIX const*,BOOL,IDWriteTextLayout**));
+        CALL_COUNTER_WITH_MOCK(CreateTextLayoutMethod, HRESULT(WCHAR const*,uint32_t,IDWriteTextFormat*,FLOAT,FLOAT,IDWriteTextLayout**));
+        CALL_COUNTER_WITH_MOCK(CreateGdiCompatibleTextLayoutMethod, HRESULT(WCHAR const*,uint32_t,IDWriteTextFormat*,FLOAT,FLOAT,FLOAT,DWRITE_MATRIX const*,BOOL,IDWriteTextLayout**));
         CALL_COUNTER_WITH_MOCK(CreateEllipsisTrimmingSignMethod, HRESULT(IDWriteTextFormat*,IDWriteInlineObject**));
         CALL_COUNTER_WITH_MOCK(CreateTextAnalyzerMethod, HRESULT(IDWriteTextAnalyzer**));
         CALL_COUNTER_WITH_MOCK(CreateNumberSubstitutionMethod, HRESULT(DWRITE_NUMBER_SUBSTITUTION_METHOD,WCHAR const*,BOOL,IDWriteNumberSubstitution**));
         CALL_COUNTER_WITH_MOCK(CreateGlyphRunAnalysisMethod, HRESULT(DWRITE_GLYPH_RUN const*,FLOAT,DWRITE_MATRIX const*,DWRITE_RENDERING_MODE,DWRITE_MEASURING_MODE,FLOAT,FLOAT,IDWriteGlyphRunAnalysis**));
  
+        CALL_COUNTER_WITH_MOCK(CreateCustomRenderingParamsMethod1, HRESULT(IDWriteRenderingParams2**));
+
+#if WINVER > _WIN32_WINNT_WINBLUE
+        CALL_COUNTER_WITH_MOCK(CreateCustomRenderingParamsMethod2, HRESULT(FLOAT,FLOAT,FLOAT,FLOAT,DWRITE_PIXEL_GEOMETRY,DWRITE_RENDERING_MODE1,DWRITE_GRID_FIT_MODE,IDWriteRenderingParams3**));
+        CALL_COUNTER_WITH_MOCK(GetSystemFontSetMethod, HRESULT(IDWriteFontSet**));
+        CALL_COUNTER_WITH_MOCK(CreateFontSetBuilderMethod, HRESULT(IDWriteFontSetBuilder**));
+#endif
+
         IFACEMETHODIMP GetSystemFontCollection(
             IDWriteFontCollection** fontCollection,
             BOOL checkForUpdates) override
@@ -43,7 +55,7 @@ namespace canvas
         IFACEMETHODIMP CreateCustomFontCollection(
             IDWriteFontCollectionLoader* collectionLoader,
             void const* collectionKey,
-            UINT32 collectionKeySize,
+            uint32_t collectionKeySize,
             IDWriteFontCollection** fontCollection) override
         {
             return CreateCustomFontCollectionMethod.WasCalled(collectionLoader, collectionKey, collectionKeySize, fontCollection);
@@ -71,7 +83,7 @@ namespace canvas
 
         IFACEMETHODIMP CreateCustomFontFileReference(
             void const* fontFileReferenceKey,
-            UINT32 fontFileReferenceKeySize,
+            uint32_t fontFileReferenceKeySize,
             IDWriteFontFileLoader* fontFileLoader,
             IDWriteFontFile** fontFile) override
         {
@@ -80,9 +92,9 @@ namespace canvas
 
         IFACEMETHODIMP CreateFontFace(
             DWRITE_FONT_FACE_TYPE fontFaceType,
-            UINT32 numberOfFiles,
+            uint32_t numberOfFiles,
             IDWriteFontFile* const* fontFiles,
-            UINT32 faceIndex,
+            uint32_t faceIndex,
             DWRITE_FONT_SIMULATIONS fontFaceSimulationFlags,
             IDWriteFontFace** fontFace) override
         {
@@ -152,7 +164,7 @@ namespace canvas
 
         IFACEMETHODIMP CreateTextLayout(
             WCHAR const* string,
-            UINT32 stringLength,
+            uint32_t stringLength,
             IDWriteTextFormat* textFormat,
             FLOAT maxWidth,
             FLOAT maxHeight,
@@ -163,7 +175,7 @@ namespace canvas
 
         IFACEMETHODIMP CreateGdiCompatibleTextLayout(
             WCHAR const* string,
-            UINT32 stringLength,
+            uint32_t stringLength,
             IDWriteTextFormat* textFormat,
             FLOAT layoutWidth,
             FLOAT layoutHeight,
@@ -209,5 +221,183 @@ namespace canvas
         {
             return CreateGlyphRunAnalysisMethod.WasCalled(glyphRun, pixelsPerDip, transform, renderingMode, measuringMode, baselineOriginX, baselineOriginY, glyphRunAnalysis);
         }
+
+        //
+        // IDWriteFactory1
+        //
+
+        IFACEMETHODIMP GetEudcFontCollection(
+            IDWriteFontCollection**,
+            BOOL)
+        {
+            Assert::Fail(L"Unexpected call to GetEudcFontCollection");
+            return E_NOTIMPL;
+        }
+
+        IFACEMETHODIMP CreateCustomRenderingParams(
+            FLOAT,
+            FLOAT,
+            FLOAT,
+            FLOAT,
+            DWRITE_PIXEL_GEOMETRY,
+            DWRITE_RENDERING_MODE,
+            IDWriteRenderingParams1**)
+        {
+            Assert::Fail(L"Unexpected call to CreateCustomRenderingParams");
+            return E_NOTIMPL;
+        }
+
+        //
+        // IDWriteFactory2
+        //
+
+        IFACEMETHODIMP GetSystemFontFallback(IDWriteFontFallback**)
+        {
+            Assert::Fail(L"Unexpected call to GetSystemFontFallback");
+            return E_NOTIMPL;
+        }
+
+        IFACEMETHODIMP CreateFontFallbackBuilder(IDWriteFontFallbackBuilder**)
+        {
+            Assert::Fail(L"Unexpected call to CreateFontFallbackBuilder");
+            return E_NOTIMPL;
+        }
+
+        IFACEMETHODIMP TranslateColorGlyphRun(
+            FLOAT,
+            FLOAT,
+            DWRITE_GLYPH_RUN const*,
+            DWRITE_GLYPH_RUN_DESCRIPTION const*,
+            DWRITE_MEASURING_MODE,
+            DWRITE_MATRIX const*,
+            uint32_t,
+            IDWriteColorGlyphRunEnumerator**)
+        {
+            Assert::Fail(L"Unexpected call to TranslateColorGlyphRun");
+            return E_NOTIMPL;
+        }
+
+        IFACEMETHODIMP CreateCustomRenderingParams(
+            FLOAT,
+            FLOAT,
+            FLOAT,
+            FLOAT,
+            DWRITE_PIXEL_GEOMETRY,
+            DWRITE_RENDERING_MODE,
+            DWRITE_GRID_FIT_MODE,
+            IDWriteRenderingParams2** out)
+        {
+            return CreateCustomRenderingParamsMethod1.WasCalled(out);
+        }
+
+
+        IFACEMETHODIMP CreateGlyphRunAnalysis(
+            DWRITE_GLYPH_RUN const*,
+            DWRITE_MATRIX const*,
+            DWRITE_RENDERING_MODE,
+            DWRITE_MEASURING_MODE,
+            DWRITE_GRID_FIT_MODE,
+            DWRITE_TEXT_ANTIALIAS_MODE,
+            FLOAT,
+            FLOAT,
+            IDWriteGlyphRunAnalysis**)
+        {
+            Assert::Fail(L"Unexpected call to CreateGlyphRunAnalysis");
+            return E_NOTIMPL;
+        }
+
+        //
+        // IDWriteFactory3
+        //
+
+#if WINVER > _WIN32_WINNT_WINBLUE
+
+        IFACEMETHODIMP CreateGlyphRunAnalysis(
+            DWRITE_GLYPH_RUN const*,
+            DWRITE_MATRIX const*,
+            DWRITE_RENDERING_MODE1,
+            DWRITE_MEASURING_MODE,
+            DWRITE_GRID_FIT_MODE,
+            DWRITE_TEXT_ANTIALIAS_MODE,
+            FLOAT,
+            FLOAT,
+            IDWriteGlyphRunAnalysis**)
+        {
+            Assert::Fail(L"Unexpected call to CreateGlyphRunAnalysis");
+            return E_NOTIMPL;
+        }
+
+        IFACEMETHODIMP CreateCustomRenderingParams(
+            FLOAT gamma,
+            FLOAT enhancedContrast,
+            FLOAT grayscaleEnhancedContrast,
+            FLOAT clearTypeLevel,
+            DWRITE_PIXEL_GEOMETRY pixelGeometry,
+            DWRITE_RENDERING_MODE1 renderingMode,
+            DWRITE_GRID_FIT_MODE gridFitMode,
+            IDWriteRenderingParams3** renderingParams)
+        {
+            return CreateCustomRenderingParamsMethod2.WasCalled(gamma, enhancedContrast, grayscaleEnhancedContrast, clearTypeLevel, pixelGeometry, renderingMode, gridFitMode, renderingParams);
+        }
+
+        IFACEMETHODIMP CreateFontFaceReference(
+            WCHAR const*,
+            FILETIME const*,
+            UINT32,
+            DWRITE_FONT_SIMULATIONS,
+            IDWriteFontFaceReference**)
+        {
+            Assert::Fail(L"Unexpected call to CreateFontFaceReference");
+            return E_NOTIMPL;
+        }
+
+        IFACEMETHODIMP CreateFontFaceReference(
+            IDWriteFontFile*,
+            UINT32,
+            DWRITE_FONT_SIMULATIONS,
+            IDWriteFontFaceReference**)
+        {
+            Assert::Fail(L"Unexpected call to CreateFontFaceReference");
+            return E_NOTIMPL;
+        }
+
+        IFACEMETHODIMP GetSystemFontSet(
+            IDWriteFontSet** fontSet)
+        {
+            return GetSystemFontSetMethod.WasCalled(fontSet);
+        }
+
+        IFACEMETHODIMP CreateFontSetBuilder(
+            IDWriteFontSetBuilder** fontSetBuilder)
+        {
+            return CreateFontSetBuilderMethod.WasCalled(fontSetBuilder);
+        }
+
+        IFACEMETHODIMP CreateFontCollectionFromFontSet(
+            IDWriteFontSet*,
+            IDWriteFontCollection1**)
+        {
+            Assert::Fail(L"Unexpected call to CreateFontCollectionFromFontSet");
+            return E_NOTIMPL;
+        }
+
+        IFACEMETHODIMP GetSystemFontCollection(
+            BOOL,
+            IDWriteFontCollection1**,
+            BOOL)
+        {
+            Assert::Fail(L"Unexpected call to GetSystemFontCollection");
+            return E_NOTIMPL;
+        }
+
+        IFACEMETHODIMP GetFontDownloadQueue(
+            IDWriteFontDownloadQueue**)
+        {
+            Assert::Fail(L"Unexpected call to GetFontDownloadQueue");
+            return E_NOTIMPL;
+        }
+
+#endif
+
     };
 }

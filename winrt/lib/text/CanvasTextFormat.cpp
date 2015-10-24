@@ -1132,20 +1132,6 @@ void CanvasTextFormat::RealizeTrimmingSign(IDWriteTextFormat1* textFormat)
     m_trimmingSignInformation.RealizeTrimmingSign(textFormat);
 }
 
-static WinString GetTextFromLocalizedStrings(
-    int32_t stringIndex,
-    ComPtr<IDWriteLocalizedStrings> const& localizedStrings)
-{
-    WinStringBuilder stringBuilder;
-    uint32_t attributeLength;
-    ThrowIfFailed(localizedStrings->GetStringLength(stringIndex, &attributeLength));
-    attributeLength++; // Account for null terminator
-
-    auto buffer = stringBuilder.Allocate(attributeLength);
-    ThrowIfFailed(localizedStrings->GetString(stringIndex, buffer, attributeLength));
-    return stringBuilder.Get();
-}
-
 
 static bool TryGetLocalizedName(
     wchar_t const* locale,

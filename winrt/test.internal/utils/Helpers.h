@@ -349,6 +349,21 @@ namespace Microsoft
             }
 
             template<>
+            inline std::wstring ToString<DWRITE_MATRIX>(DWRITE_MATRIX const& value)
+            {
+                wchar_t buf[256];
+                ThrowIfFailed(StringCchPrintf(
+                    buf,
+                    _countof(buf),
+                    L"DWRITE_MATRIX{m11=%f,m12=%f,m21=%f,m22=%f,dx=%f,dy=%f}",
+                    value.m11, value.m12,
+                    value.m21, value.m22,
+                    value.dx, value.dy));
+
+                return buf;
+            }
+
+            template<>
             inline std::wstring ToString<ABI::Windows::Foundation::Rect>(ABI::Windows::Foundation::Rect const& value)
             {
                 wchar_t buf[256];
@@ -433,6 +448,18 @@ namespace Microsoft
             inline std::wstring ToString<std::vector<BYTE>>(std::vector<BYTE> const& value)
             {
                 return L"std::vector<BYTE>";
+            }
+
+            template<>
+            inline std::wstring ToString<unsigned short>(unsigned short const& value)
+            {
+                wchar_t buf[256];
+                ThrowIfFailed(StringCchPrintf(
+                    buf,
+                    _countof(buf),
+                    L"{%hu}", 
+                    value));
+                return buf;
             }
 
             ENUM_TO_STRING(CanvasCapStyle)
@@ -964,6 +991,35 @@ namespace Microsoft
                 END_ENUM(DWRITE_OPTICAL_ALIGNMENT);
             }
 
+            ENUM_TO_STRING(DWRITE_MEASURING_MODE)
+            {
+                ENUM_VALUE(DWRITE_MEASURING_MODE_NATURAL);
+                ENUM_VALUE(DWRITE_MEASURING_MODE_GDI_CLASSIC);
+                ENUM_VALUE(DWRITE_MEASURING_MODE_GDI_NATURAL);
+                END_ENUM(DWRITE_MEASURING_MODE);
+            }
+
+#if WINVER > _WIN32_WINNT_WINBLUE
+            ENUM_TO_STRING(DWRITE_FONT_PROPERTY_ID)
+            {
+                ENUM_VALUE(DWRITE_FONT_PROPERTY_ID_NONE);
+                ENUM_VALUE(DWRITE_FONT_PROPERTY_ID_FAMILY_NAME);
+                ENUM_VALUE(DWRITE_FONT_PROPERTY_ID_PREFERRED_FAMILY_NAME);
+                ENUM_VALUE(DWRITE_FONT_PROPERTY_ID_FACE_NAME);
+                ENUM_VALUE(DWRITE_FONT_PROPERTY_ID_FULL_NAME);
+                ENUM_VALUE(DWRITE_FONT_PROPERTY_ID_WIN32_FAMILY_NAME);
+                ENUM_VALUE(DWRITE_FONT_PROPERTY_ID_POSTSCRIPT_NAME);
+                ENUM_VALUE(DWRITE_FONT_PROPERTY_ID_DESIGN_SCRIPT_LANGUAGE_TAG);
+                ENUM_VALUE(DWRITE_FONT_PROPERTY_ID_SUPPORTED_SCRIPT_LANGUAGE_TAG);
+                ENUM_VALUE(DWRITE_FONT_PROPERTY_ID_SEMANTIC_TAG);
+                ENUM_VALUE(DWRITE_FONT_PROPERTY_ID_WEIGHT);
+                ENUM_VALUE(DWRITE_FONT_PROPERTY_ID_STRETCH);
+                ENUM_VALUE(DWRITE_FONT_PROPERTY_ID_STYLE);
+                ENUM_VALUE(DWRITE_FONT_PROPERTY_ID_TOTAL);
+                END_ENUM(DWRITE_FONT_PROPERTY_ID);
+            }
+#endif
+
             ENUM_TO_STRING(CanvasFigureFill)
             {
                 ENUM_VALUE(CanvasFigureFill::Default);
@@ -1051,6 +1107,20 @@ namespace Microsoft
                 return L"D2D1_GRADIENT_MESH_PATCH";
             }
 
+            template<>
+            inline std::wstring ToString<DWRITE_FONT_PROPERTY>(DWRITE_FONT_PROPERTY const& value)
+            {
+                wchar_t buf[256];
+                ThrowIfFailed(StringCchPrintf(
+                    buf,
+                    _countof(buf),
+                    L"DWRITE_FONT_PROPERTY{%i,%s,%s}",
+                    value.propertyId,
+                    value.propertyValue,
+                    value.localeName));
+                return buf;
+            }
+
             ENUM_TO_STRING(CanvasLineSpacingMode)
             {
                 ENUM_VALUE(CanvasLineSpacingMode::Default);
@@ -1065,6 +1135,77 @@ namespace Microsoft
                 ENUM_VALUE(CanvasTrimmingSign::None);
                 ENUM_VALUE(CanvasTrimmingSign::Ellipsis);
                 END_ENUM(CanvasTrimmingSign);
+            }
+
+            ENUM_TO_STRING(DWRITE_OUTLINE_THRESHOLD)
+            {
+                ENUM_VALUE(DWRITE_OUTLINE_THRESHOLD_ANTIALIASED);
+                ENUM_VALUE(DWRITE_OUTLINE_THRESHOLD_ALIASED);
+                END_ENUM(DWRITE_OUTLINE_THRESHOLD);
+            }
+
+            ENUM_TO_STRING(CanvasFontFileFormatType)
+            {
+                ENUM_VALUE(CanvasFontFileFormatType::Cff);
+                ENUM_VALUE(CanvasFontFileFormatType::TrueType);
+                ENUM_VALUE(CanvasFontFileFormatType::TrueTypeCollection);
+                ENUM_VALUE(CanvasFontFileFormatType::Type1);
+                ENUM_VALUE(CanvasFontFileFormatType::Vector);
+                ENUM_VALUE(CanvasFontFileFormatType::Bitmap);
+                ENUM_VALUE(CanvasFontFileFormatType::Unknown);
+                ENUM_VALUE(CanvasFontFileFormatType::RawCff);
+                END_ENUM(CanvasFontFileFormatType);
+            }
+
+            ENUM_TO_STRING(CanvasFontSimulations)
+            {
+                ENUM_VALUE(CanvasFontSimulations::None);
+                ENUM_VALUE(CanvasFontSimulations::Bold);
+                ENUM_VALUE(CanvasFontSimulations::Oblique);
+                END_ENUM(CanvasFontSimulations);
+            }
+
+            ENUM_TO_STRING(CanvasFontPropertyIdentifier)
+            {
+                ENUM_VALUE(CanvasFontPropertyIdentifier::None);
+                ENUM_VALUE(CanvasFontPropertyIdentifier::FamilyName);
+                ENUM_VALUE(CanvasFontPropertyIdentifier::PreferredFamilyName);
+                ENUM_VALUE(CanvasFontPropertyIdentifier::FaceName);
+                ENUM_VALUE(CanvasFontPropertyIdentifier::FullName);
+                ENUM_VALUE(CanvasFontPropertyIdentifier::Win32FamilyName);
+                ENUM_VALUE(CanvasFontPropertyIdentifier::PostscriptName);
+                ENUM_VALUE(CanvasFontPropertyIdentifier::DesignScriptLanguageTag);
+                ENUM_VALUE(CanvasFontPropertyIdentifier::SupportedScriptLanguageTag);
+                ENUM_VALUE(CanvasFontPropertyIdentifier::SemanticTag);
+                ENUM_VALUE(CanvasFontPropertyIdentifier::Weight);
+                ENUM_VALUE(CanvasFontPropertyIdentifier::Stretch);
+                ENUM_VALUE(CanvasFontPropertyIdentifier::Style);
+                ENUM_VALUE(CanvasFontPropertyIdentifier::Total);
+                END_ENUM(CanvasFontPropertyIdentifier);
+            }
+
+            ENUM_TO_STRING(DWRITE_INFORMATIONAL_STRING_ID)
+            {
+                ENUM_VALUE(DWRITE_INFORMATIONAL_STRING_NONE);
+                ENUM_VALUE(DWRITE_INFORMATIONAL_STRING_COPYRIGHT_NOTICE);
+                ENUM_VALUE(DWRITE_INFORMATIONAL_STRING_VERSION_STRINGS);
+                ENUM_VALUE(DWRITE_INFORMATIONAL_STRING_TRADEMARK);
+                ENUM_VALUE(DWRITE_INFORMATIONAL_STRING_MANUFACTURER);
+                ENUM_VALUE(DWRITE_INFORMATIONAL_STRING_DESIGNER);
+                ENUM_VALUE(DWRITE_INFORMATIONAL_STRING_DESIGNER_URL);
+                ENUM_VALUE(DWRITE_INFORMATIONAL_STRING_DESCRIPTION);
+                ENUM_VALUE(DWRITE_INFORMATIONAL_STRING_FONT_VENDOR_URL);
+                ENUM_VALUE(DWRITE_INFORMATIONAL_STRING_LICENSE_DESCRIPTION);
+                ENUM_VALUE(DWRITE_INFORMATIONAL_STRING_LICENSE_INFO_URL);
+                ENUM_VALUE(DWRITE_INFORMATIONAL_STRING_WIN32_FAMILY_NAMES);
+                ENUM_VALUE(DWRITE_INFORMATIONAL_STRING_WIN32_SUBFAMILY_NAMES);
+                ENUM_VALUE(DWRITE_INFORMATIONAL_STRING_PREFERRED_FAMILY_NAMES);
+                ENUM_VALUE(DWRITE_INFORMATIONAL_STRING_PREFERRED_SUBFAMILY_NAMES);
+                ENUM_VALUE(DWRITE_INFORMATIONAL_STRING_SAMPLE_TEXT);
+                ENUM_VALUE(DWRITE_INFORMATIONAL_STRING_FULL_NAME);
+                ENUM_VALUE(DWRITE_INFORMATIONAL_STRING_POSTSCRIPT_NAME);
+                ENUM_VALUE(DWRITE_INFORMATIONAL_STRING_POSTSCRIPT_CID_NAME);
+                END_ENUM(DWRITE_INFORMATIONAL_STRING_ID);
             }
 
             template<typename T>
@@ -1083,6 +1224,12 @@ namespace Microsoft
             inline std::wstring ToString<ABI::Windows::UI::Text::FontWeight>(ABI::Windows::UI::Text::FontWeight const& value)
             {
                 return ToStringAsInt(value.Weight);
+            }
+
+            template<>
+            inline std::wstring ToString<WinString>(WinString const& value)
+            {
+                return static_cast<wchar_t const*>(value);
             }
 
 #define TO_STRING_AS_INT(TYPE)                                          \
@@ -1271,8 +1418,14 @@ namespace Microsoft
                 a.bottomEdgeMode == b.bottomEdgeMode &&
                 a.rightEdgeMode == b.rightEdgeMode;
         }
-#endif
 
+        inline bool operator==(DWRITE_FONT_PROPERTY const& a, DWRITE_FONT_PROPERTY const& b)
+        {
+            return a.propertyId == b.propertyId &&
+                wcscmp(a.propertyValue, b.propertyValue) == 0 &&
+                wcscmp(a.localeName, b.localeName) == 0;
+        }
+#endif        
     }
 }
 
@@ -1301,6 +1454,14 @@ inline bool operator==(D2D1_MATRIX_5X4_F const& a, D2D1_MATRIX_5X4_F const& b)
         a._31 == b._31 && a._32 == b._32 && a._33 == b._33 && a._34 == b._34 &&
         a._41 == b._41 && a._42 == b._42 && a._43 == b._43 && a._44 == b._44 &&
         a._51 == b._51 && a._52 == b._52 && a._53 == b._53 && a._54 == b._54;
+}
+
+inline bool operator==(DWRITE_MATRIX const& a, DWRITE_MATRIX const& b)
+{
+    return
+        a.m11 == b.m11 && a.m12 == b.m12 &&
+        a.m21 == b.m21 && a.m22 == b.m22 &&
+        a.dx == b.dx && a.dy == b.dy;
 }
 
 inline bool operator==(D2D1_POINT_2U const& a, D2D1_POINT_2U const& b)
@@ -1413,4 +1574,21 @@ void VerifyConvertDipsToPixels(float dpi, CANVAS_TYPE dpiOwner)
     // Check zero case
     ThrowIfFailed(dpiOwner->ConvertDipsToPixels(0, CanvasDpiRounding::Round, &pixels));
     Assert::AreEqual(0, pixels);
+}
+
+
+inline void VerifyStringMapContainsKeyValue(
+    ComPtr<IMapView<HSTRING, HSTRING>> const& stringMap,
+    wchar_t const* key,
+    wchar_t const* expectedValue)
+{
+    WinString keyString(key);
+
+    boolean hasKey;
+    ThrowIfFailed(stringMap->HasKey(keyString, &hasKey));
+    Assert::IsTrue(!!hasKey);
+
+    WinString value;
+    ThrowIfFailed(stringMap->Lookup(keyString, value.GetAddressOf()));
+    Assert::AreEqual(expectedValue, static_cast<const wchar_t*>(value));
 }

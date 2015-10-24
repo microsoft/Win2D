@@ -85,12 +85,17 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDXGIOutput.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDXGISwapChain.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDWriteFactory.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDWriteFont.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDWriteFontCollection.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDWriteFontFace.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDWriteFontFaceReference.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDWriteFontFamily.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDWriteFontFile.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDWriteFontSet.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDWriteInlineObject.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDWriteLocalizedStrings.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDWriteRenderingParams.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDWriteStringList.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDWriteTextFormat.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDWriteTextLayout.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockHelpers.h" />
@@ -100,6 +105,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockWICBitmap.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockWICFormatConverter.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockWindow.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)stubs\LocalizedFontNames.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubCanvasBrush.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubCanvasDevice.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubCanvasDrawingSessionAdapter.h" />
@@ -154,6 +160,8 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasDeviceUnitTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasDrawingSessionUnitTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasEffectUnitTest.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasFontFaceUnitTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasFontSetUnitTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasGeometryUnitTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasGradientBrushUnitTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasGradientMeshUnitTests.cpp" />
