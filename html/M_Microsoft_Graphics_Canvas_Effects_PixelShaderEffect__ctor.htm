@@ -7,10 +7,10 @@
           the "MSBuild Command Prompt").
         </p><p>
           To compile your shader, invoke fxc twice using the options:
-        </p><div class="codeSnippetContainer"><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID0EAGABA_copyCode" href="#" onclick="javascript:CopyToClipboard('ID0EAGABA');return false;" title="Copy">Copy</a></div></div><div id="ID0EAGABA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve"><span class="highlight-keyword">set</span> INCLUDEPATH=<span class="highlight-literal">"%WindowsSdkDir%\Include\%WindowsSDKVersion%\um"</span>
+        </p><div class="codeSnippetContainer"><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID0EAMABA_copyCode" href="#" onclick="javascript:CopyToClipboard('ID0EAMABA');return false;" title="Copy">Copy</a></div></div><div id="ID0EAMABA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve"><span class="highlight-keyword">set</span> INCLUDEPATH=<span class="highlight-literal">"%WindowsSdkDir%\Include\%WindowsSDKVersion%\um"</span>
 
 fxc MyShader.hlsl /nologo /T lib_4_0_level_9_3_ps_only /D D2D_FUNCTION /D D2D_ENTRY=main /Fl MyShader.fxlib /I %INCLUDEPATH%
-fxc MyShader.hlsl /nologo /T ps_4_0_level_9_3 /D D2D_FULL_SHADER /D D2D_ENTRY=main /E main /setprivate MyShader.fxlib /Fo:MyShader.bin /I %INCLUDEPATH%</pre></div></div></div><script type="text/javascript">AddLanguageTabSet("ID0EAGABA");</script><p>
+fxc MyShader.hlsl /nologo /T ps_4_0_level_9_3 /D D2D_FULL_SHADER /D D2D_ENTRY=main /E main /setprivate MyShader.fxlib /Fo:MyShader.bin /I %INCLUDEPATH%</pre></div></div></div><script type="text/javascript">AddLanguageTabSet("ID0EAMABA");</script><p>
           This generates a .bin file which can be included with your app, loaded (eg. via 
           File.ReadAllBytes) and passed to this constructor. It also generates a .fxlib 
           file, which is temporary and can be deleted.
@@ -27,7 +27,7 @@ fxc MyShader.hlsl /nologo /T ps_4_0_level_9_3 /D D2D_FULL_SHADER /D D2D_ENTRY=ma
           "d2d1effecthelpers.hlsli" and use the helper macros it provides. Here is a 
           simple example that samples from a single input texture and multiplies by a 
           tint color:
-        </p><div class="codeSnippetContainer"><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID0EABABA_copyCode" href="#" onclick="javascript:CopyToClipboard('ID0EABABA');return false;" title="Copy">Copy</a></div></div><div id="ID0EABABA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve"><span class="highlight-preprocessor">#define</span> D2D_INPUT_COUNT <span class="highlight-number">1</span>
+        </p><div class="codeSnippetContainer"><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID0EAHABA_copyCode" href="#" onclick="javascript:CopyToClipboard('ID0EAHABA');return false;" title="Copy">Copy</a></div></div><div id="ID0EAHABA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve"><span class="highlight-preprocessor">#define</span> D2D_INPUT_COUNT <span class="highlight-number">1</span>
 <span class="highlight-preprocessor">#define</span> D2D_INPUT0_SIMPLE
 
 <span class="highlight-preprocessor">#include</span> <span class="highlight-literal">"d2d1effecthelpers.hlsli"</span>
@@ -39,8 +39,40 @@ D2D_PS_ENTRY(main)
     float4 color = D2DGetInput(<span class="highlight-number">0</span>);
 
     <span class="highlight-keyword">return</span> color * tint;
-}</pre></div></div></div><script type="text/javascript">AddLanguageTabSet("ID0EABABA");</script><p>
-          For more details see the shaders used by Example Gallery, and the
-          <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/dn879811%28v=vs.85%29.aspx">HLSL Helpers</a>
-          article on MSDN.
-        </p></div><div class="collapsibleAreaRegion" id="seeAlsoSection"><span class="collapsibleRegionTitle" onclick="SectionExpandCollapse('ID3RB')" onkeypress="SectionExpandCollapse_CheckKey('ID3RB', event)" tabindex="0"><img id="ID3RBToggle" class="collapseToggle" src="../icons/SectionExpanded.png" />See Also</span></div><div id="ID3RBSection" class="collapsibleSection"><h4 class="subHeading">Reference</h4><div class="seeAlsoStyle"><a href="T_Microsoft_Graphics_Canvas_Effects_PixelShaderEffect.htm">PixelShaderEffect Class</a></div><div class="seeAlsoStyle"><a href="N_Microsoft_Graphics_Canvas_Effects.htm">Microsoft.Graphics.Canvas.Effects Namespace</a></div></div></div></div><div id="pageFooter" class="pageFooter"><p><a href="http://github.com/Microsoft/Win2D/blob/master/LICENSE.txt" target="_blank">Copyright (c) Microsoft Corporation. All rights reserved.</a></p> </div></body></html>
+}</pre></div></div></div><script type="text/javascript">AddLanguageTabSet("ID0EAHABA");</script><p>
+          Defining the symbol D2D_INPUT{N}_SIMPLE indicates that texture input N 
+          uses simple sampling, i.e. is always sampled at the same location as the pixel 
+          being shaded. This define should be used when a texture is sampled by calling 
+          D2DGetInput. Using it in your shader code will initialize the corresponding 
+          <a href="T_Microsoft_Graphics_Canvas_Effects_SamplerCoordinateMapping.htm">SamplerCoordinateMapping</a> 
+          property to OneToOne.
+        </p><p>
+          If your shader samples its texture in some other way than D2DGetInput, for 
+          instance calling D2DSampleInputAtOffset or D2DSampleInputAtPosition, then you 
+          should define D2D_INPUT{N}_COMPLEX to indicate that it is not a 1:1 
+          texture coordinate mapping. This will initialize the corresponding
+          <a href="T_Microsoft_Graphics_Canvas_Effects_SamplerCoordinateMapping.htm">SamplerCoordinateMapping</a> 
+          property to Unknown. Depending on the behavior of your shader, you may wish to 
+          change this to Offset, and set
+          <a href="P_Microsoft_Graphics_Canvas_Effects_PixelShaderEffect_MaxSamplerOffset.htm">MaxSamplerOffset</a>
+          to indicate the maximum number of pixels by which a texture coordinate will be 
+          displaced.
+        </p><p>
+          For instance an edge detection shader that uses a 3x3 filter kernel (which has 
+          a maximum offset of 1 pixel in any direction from the center tap) should 
+          configure itself as:
+        </p><div class="codeSnippetContainer"><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID0EADABA_copyCode" href="#" onclick="javascript:CopyToClipboard('ID0EADABA');return false;" title="Copy">Copy</a></div></div><div id="ID0EADABA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve"><span class="highlight-keyword">var</span> effect = <span class="highlight-keyword">new</span> PixelShaderEffect(File.ReadAllBytes(<span class="highlight-literal">"MyShader.bin"</span>))
+{
+    Source1Mapping = SamplerCoordinateMapping.Offset,
+    MaxSamplerOffset = <span class="highlight-number">1</span>
+};</pre></div></div></div><script type="text/javascript">AddLanguageTabSet("ID0EADABA");</script><p>
+          Using SamplerCoordinateMapping.Offset can be more efficient than 
+          SamplerCoordinateMapping.Unknown, as the extra knowledge allows the effect 
+          runtime to break up large images into smaller tiles and skip computing unused 
+          regions of the source images. But specifying this information wrongly (for 
+          instance if your shader actually samples further away from the current pixel 
+          than the specified MaxSamplerOffset) can give unpredictably wrong results.
+          If in doubt, stick with SamplerCoordinateMapping.Unknown.
+        </p><p>
+          For more information see the shaders used by Example Gallery, and the MSDN articles:
+        </p><ul><li><a href="https://msdn.microsoft.com/en-us/library/windows/desktop/dn879811%28v=vs.85%29.aspx">HLSL Helpers</a></li><li><a href="https://msdn.microsoft.com/en-us/library/windows/desktop/dn879810%28v=vs.85%29.aspx">Effect Shader Linking</a></li></ul></div><div class="collapsibleAreaRegion" id="seeAlsoSection"><span class="collapsibleRegionTitle" onclick="SectionExpandCollapse('ID3RB')" onkeypress="SectionExpandCollapse_CheckKey('ID3RB', event)" tabindex="0"><img id="ID3RBToggle" class="collapseToggle" src="../icons/SectionExpanded.png" />See Also</span></div><div id="ID3RBSection" class="collapsibleSection"><h4 class="subHeading">Reference</h4><div class="seeAlsoStyle"><a href="T_Microsoft_Graphics_Canvas_Effects_PixelShaderEffect.htm">PixelShaderEffect Class</a></div><div class="seeAlsoStyle"><a href="N_Microsoft_Graphics_Canvas_Effects.htm">Microsoft.Graphics.Canvas.Effects Namespace</a></div></div></div></div><div id="pageFooter" class="pageFooter"><p><a href="http://github.com/Microsoft/Win2D/blob/master/LICENSE.txt" target="_blank">Copyright (c) Microsoft Corporation. All rights reserved.</a></p> </div></body></html>
