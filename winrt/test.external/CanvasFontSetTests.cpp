@@ -14,6 +14,17 @@ TEST_CLASS(CanvasFontSetTests)
         CanvasFontSet::SystemFontSet;
     }
 
+    TEST_METHOD(CanvasFontSet_GetSystemFontSet_TwoReferences)
+    {
+        auto ref = CanvasFontSet::SystemFontSet;
+
+		//
+		// Calling get_SystemFontSet when there's an existing object
+		// wrapping the system font set shouldn't fail.
+		//
+        auto ref2 = CanvasFontSet::SystemFontSet;
+    }
+
     TEST_METHOD(CanvasFontSet_Interop)
     {
         ComPtr<IDWriteFactory2> factory;

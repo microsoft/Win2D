@@ -62,7 +62,7 @@ IFACEMETHODIMP CanvasFontSetStatics::get_SystemFontSet(
 #else
             ThrowIfFailed(factory->GetSystemFontCollection(&systemFonts));
 #endif
-            auto canvasFontSet = Make<CanvasFontSet>(systemFonts.Get());
+            auto canvasFontSet = ResourceManager::GetOrCreate<ICanvasFontSet>(systemFonts.Get());
 
             canvasFontSet.CopyTo(fontSet);
         });
