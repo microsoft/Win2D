@@ -550,6 +550,20 @@ namespace ExampleGallery
                     {
                         yield return grandChild;
                     }
+
+                    if (child is ContentControl)
+                    {
+                        var contentControl = (ContentControl)child;
+                        var content = contentControl.Content as DependencyObject;
+
+                        if (content != null)
+                        {
+                            foreach (var grandchild in GetDescendantsOfType<T>(content))
+                            {
+                                yield return grandchild;
+                            }
+                        }
+                    }
                 }
             }
         }

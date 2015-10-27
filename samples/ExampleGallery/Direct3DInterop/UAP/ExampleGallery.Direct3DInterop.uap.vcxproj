@@ -9,6 +9,9 @@
       <Project>{8cf21e5d-e0a2-4fe7-8e2b-a025cf52dcfb}</Project>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="SpriteBatchPerformance.cpp" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{A81F96D0-4924-40E3-A463-3CB9EE55AA93}</ProjectGuid>
     <RootNamespace>ExampleGallery.Direct3DInterop</RootNamespace>

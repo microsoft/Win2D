@@ -88,6 +88,9 @@ namespace ExampleGallery
             new ExampleDefinition("Control Transforms", typeof(ControlTransforms)),
             new ExampleDefinition("DrawImage Emulations", typeof(DrawImageEmulations)),
             new ExampleDefinition("Bitmap Rotation", typeof(BitmapRotation)),
+#if WINDOWS_UWP
+            new ExampleDefinition("SpriteBatch Performance", typeof(SpriteBatchPerf)),
+#endif
             new ExampleDefinition("Developer Tools", typeof(DeveloperTools)),
             new ExampleDefinition("About", typeof(About)),
         };

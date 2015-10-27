@@ -303,6 +303,8 @@
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\ShapesWide.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\AboutNarrow.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\AboutWide.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Thumbnails\SpriteBatchPerformanceNarrow.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Thumbnails\SpriteBatchPerformanceWide.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\StrokeStylesNarrow.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\StrokeStylesWide.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\TextDirectionsNarrow.png" />
