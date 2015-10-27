@@ -1358,7 +1358,7 @@ public:
         {
             std::vector<DrawSpriteBatchEntry> expected(rawExpected);
             size_t i = 0;
-            DeviceContext->DrawSpriteBatchMethod.SetExpectedCalls(expected.size(),
+            DeviceContext->DrawSpriteBatchMethod.SetExpectedCalls(static_cast<int>(expected.size()),
                 [=] (auto actualSpriteBatch, auto startIndex, auto spriteCount, auto bitmap, auto, auto) mutable
                 {
                     Assert::IsTrue(i != expected.size());
