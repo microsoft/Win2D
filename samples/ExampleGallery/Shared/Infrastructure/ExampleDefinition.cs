@@ -71,6 +71,7 @@ namespace ExampleGallery
             new ExampleDefinition("Text Outlines", typeof(TextOutlines)),
             new ExampleDefinition("Custom Fonts", typeof(CustomFonts)),
             new ExampleDefinition("Text Directions", typeof(TextDirectionsExample)),
+            new ExampleDefinition("Font Metrics", typeof(FontMetrics)),
 
             // Show how to use the API.
             new ExampleDefinition("Custom Control", typeof(CustomControlExample)),

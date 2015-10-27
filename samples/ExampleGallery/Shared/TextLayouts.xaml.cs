@@ -88,7 +88,7 @@ namespace ExampleGallery
 
         void EnsureResources(ICanvasResourceCreatorWithDpi resourceCreator, Size targetSize)
         {
-            if (resourceRealizationSize != targetSize && !needsResourceRecreation)
+            if (resourceRealizationSize == targetSize && !needsResourceRecreation)
                 return;
 
             float canvasWidth = (float)targetSize.Width;
@@ -260,6 +260,12 @@ namespace ExampleGallery
 
         private void InvalidateCanvas(object sender, RoutedEventArgs e)
         {
+            canvas.Invalidate();
+        }
+
+        private void EllipsisTrimming_Click(object sender, RoutedEventArgs e)
+        {
+            needsResourceRecreation = true;
             canvas.Invalidate();
         }
 
