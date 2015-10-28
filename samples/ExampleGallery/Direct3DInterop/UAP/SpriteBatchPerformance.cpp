@@ -5,7 +5,9 @@
 #include "pch.h"
 
 using namespace Microsoft::Graphics::Canvas;
+using namespace Microsoft::WRL;
 using namespace Windows::Foundation::Numerics;
+using namespace Windows::Graphics::DirectX::Direct3D11;
 
 namespace ExampleGallery
 {
@@ -13,6 +15,154 @@ namespace ExampleGallery
     {
         namespace SpriteBatchPerformance
         {
+            class D2DLock
+            {
+                ComPtr<ID2D1Multithread> m_d2dMultithread;
+            public:
+                D2DLock(ComPtr<ID2D1Multithread> const& multiThread)
+                    : m_d2dMultithread(multiThread)
+                {
+                    if (m_d2dMultithread->GetMultithreadProtected())
+                    {
+                        m_d2dMultithread->Enter();
+                    }
+                    else
+                    {
+                        m_d2dMultithread.Reset();
+                    }
+                }
+
+                ~D2DLock()
+                {
+                    Unlock();
+                }
+
+                void Unlock()
+                {
+                    if (m_d2dMultithread)
+                    {
+                        m_d2dMultithread->Leave();
+                        m_d2dMultithread.Reset();
+                    }
+                }
+            };
+            
+            //
+            // This records how long something takes to execute on the GPU.
+            //
+            public ref class GpuStopWatch sealed
+            {
+                ComPtr<ID2D1Multithread> m_d2dMultithread;
+
+                ComPtr<ID3D11Device> m_d3dDevice;
+                ComPtr<ID3D11DeviceContext> m_deviceContext;
+                
+                ComPtr<ID3D11Query> m_disjointQuery;
+                ComPtr<ID3D11Query> m_timestampStartQuery;
+                ComPtr<ID3D11Query> m_timestampEndQuery;
+
+                enum class State
+                {
+                    New, Started, Stopped
+                };
+
+                State m_state = State::New;
+                
+            public:
+                GpuStopWatch(CanvasDevice^ canvasDevice)
+                {
+                    // Get the ID2D1Multithread for the device
+                    auto d2dDevice = GetWrappedResource<ID2D1Device>(canvasDevice);
+
+                    ComPtr<ID2D1Factory> factory;
+                    d2dDevice->GetFactory(&factory);
+                    
+                    __abi_ThrowIfFailed(factory.As(&m_d2dMultithread));
+
+                    // Get the D3D interfaces
+                    __abi_ThrowIfFailed(GetDXGIInterface(canvasDevice, m_d3dDevice.ReleaseAndGetAddressOf()));
+                    m_d3dDevice->GetImmediateContext(&m_deviceContext);
+
+                    // Create the queries
+                    D2DLock lock(m_d2dMultithread);
+                    
+                    D3D11_QUERY_DESC desc{};
+                    desc.Query = D3D11_QUERY_TIMESTAMP_DISJOINT;
+                    __abi_ThrowIfFailed(m_d3dDevice->CreateQuery(&desc, &m_disjointQuery));
+
+                    desc.Query = D3D11_QUERY_TIMESTAMP;
+                    __abi_ThrowIfFailed(m_d3dDevice->CreateQuery(&desc, &m_timestampStartQuery));
+                    __abi_ThrowIfFailed(m_d3dDevice->CreateQuery(&desc, &m_timestampEndQuery));
+                }
+                
+                void Start()
+                {
+                    if (m_state != State::New)
+                        throw ref new Platform::FailureException();
+                    
+                    D2DLock lock(m_d2dMultithread);
+                    m_deviceContext->Begin(m_disjointQuery.Get());
+                    m_deviceContext->End(m_timestampStartQuery.Get());
+
+                    m_state = State::Started;
+                }
+
+                void Stop()
+                {
+                    if (m_state != State::Started)
+                        throw ref new Platform::FailureException();
+                    
+                    D2DLock lock(m_d2dMultithread);
+                    m_deviceContext->End(m_timestampEndQuery.Get());
+                    m_deviceContext->End(m_disjointQuery.Get());
+
+                    m_state = State::Stopped;
+                }
+
+                double GetGpuTimeInMs()
+                {
+                    if (m_state != State::Stopped)
+                        throw ref new Platform::FailureException();
+
+                    uint64_t startTime;
+                    uint64_t endTime;
+                    D3D11_QUERY_DATA_TIMESTAMP_DISJOINT disjointData;
+
+                    D2DLock lock(m_d2dMultithread);
+                    BlockAndGetQueryData(m_timestampStartQuery, &startTime);
+                    BlockAndGetQueryData(m_timestampEndQuery, &endTime);
+                    BlockAndGetQueryData(m_disjointQuery, &disjointData);
+
+                    if (disjointData.Disjoint)
+                    {
+                        // this data isn't reliable - we return a negative
+                        // number to indicate this
+                        return -1.0;
+                    }
+
+                    auto delta = endTime - startTime;
+                    auto frequency = static_cast<double>(disjointData.Frequency);
+
+                    return (delta / frequency) * 1000.0;
+                }
+
+            private:
+                template<typename T>
+                void BlockAndGetQueryData(ComPtr<ID3D11Query> const& query, T* data)
+                {
+                    HRESULT hr = S_FALSE;
+                    
+                    do
+                    {
+                        hr = m_deviceContext->GetData(query.Get(), data, sizeof(T), 0);
+                        __abi_ThrowIfFailed(hr);
+
+                        // GetData returns S_FALSE to indicate that the data
+                        // isn't ready yet.
+                    } while (hr != S_OK);
+                }
+            };
+            
             //
             // The sprite batch performance tests need to be able to run
             // multiple scenarios against the same set of sprites.
@@ -79,8 +229,6 @@ namespace ExampleGallery
 
                 virtual void RunScenario(CanvasDrawingSession^ drawingSession, CanvasSpriteSortMode sortMode)
                 {
-                    using namespace Microsoft::WRL;
-
                     UNREFERENCED_PARAMETER(sortMode); // sort mode is ignored
 
                     std::vector<ID2D1Bitmap*> bitmaps;

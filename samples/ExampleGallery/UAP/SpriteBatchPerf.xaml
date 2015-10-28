@@ -17,7 +17,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     mc:Ignorable="d"
     Unloaded="control_Unloaded"
     d:DataContext="{d:DesignInstance Type=local:SpriteBatchPerf, IsDesignTimeCreatable=true}"
-    d:DesignHeight="500"
+    d:DesignHeight="800"
     d:DesignWidth="1000">
 
     <ScrollViewer VerticalScrollMode="Auto" VerticalScrollBarVisibility="Auto">
@@ -30,7 +30,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto"/>
                 <RowDefinition/>
-                <RowDefinition Height="auto"/>
+                <RowDefinition/>
             </Grid.RowDefinitions>
 
             <Grid Grid.Column="0" VerticalAlignment="Top" Margin="5">
@@ -61,12 +61,15 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
                         IsEnabled="{Binding IsDrawCountEnabled}"/>
 
                 <Slider Grid.Row="2" Grid.Column="2" x:Name="BitmapCountSlider" 
-                        Minimum="1" Maximum="1000" TickFrequency="1" 
+                        Minimum="1" Maximum="100" TickFrequency="1" 
                         Value="{Binding Path=BitmapCount, Mode=TwoWay}"
                         IsEnabled="{Binding IsBitmapCountEnabled}"/>
 
-                <Button Grid.Row="3" Grid.ColumnSpan="2" HorizontalAlignment="Center" 
+                <Button Grid.Row="3" Grid.Column="0"
                         Content="Go" Click="OnGoButtonClicked"/>
+
+                <Button Grid.Row="3" Grid.Column="1" HorizontalAlignment="Right"
+                        Content="Reset" Click="OnResetGraphClicked" />
 
                 <Frame Grid.Row="4" Grid.ColumnSpan="2" BorderBrush="Red" BorderThickness="2" Margin="0,10,0,0" Visibility="Collapsed" x:Name="SpriteBatchNotSupportedText" >
                     <TextBlock Margin="5" TextWrapping="Wrap" MaxWidth="300">
@@ -92,7 +95,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
                                 <TextBlock Margin="5" Text="{Binding Summary}" FontSize="10" Foreground="White"/>
                             </Frame>
 
-                       </Grid>
+                        </Grid>
                     </DataTemplate>
                 </GridView.ItemTemplate>
                 <GridView.ItemsPanel>
@@ -102,10 +105,10 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
                 </GridView.ItemsPanel>
             </GridView>
 
-            <Grid Grid.Row="1" Grid.ColumnSpan="2" Margin="5">
-                <canvas:CanvasControl x:Name="GraphCanvas" ClearColor="Black" MinHeight="300" Draw="OnDrawGraph" />
-                <Button Content="Reset" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="15" Click="OnResetGraphClicked" />
-            </Grid>
+            <canvas:CanvasControl x:Name="CpuGraphCanvas" Grid.Row="1" Grid.ColumnSpan="2" Margin="5" MinHeight="300"
+                                  ClearColor="Black" Draw="OnDrawCpuGraph" />
+            <canvas:CanvasControl x:Name="GpuGraphCanvas" Grid.Row="2" Grid.ColumnSpan="2" Margin="5" MinHeight="300"
+                                  ClearColor="Black" Draw="OnDrawGpuGraph" />
         </Grid>
     </ScrollViewer>
 </UserControl>
