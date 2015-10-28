@@ -54,7 +54,7 @@ namespace ExampleGallery
 
         CanvasFontFace FindFontFace(string fontFamily, bool useBold, bool useItalic)
         {
-            var systemFonts = CanvasFontSet.SystemFontSet;
+            var systemFonts = CanvasFontSet.GetSystemFontSet();
 
             //
             // TODO: #5770 Expose all the system fonts through the UI, 

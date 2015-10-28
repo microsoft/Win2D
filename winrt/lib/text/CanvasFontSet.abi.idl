@@ -108,7 +108,7 @@ namespace Microsoft.Graphics.Canvas.Text
     [version(VERSION), uuid(5F4275CE-BCFA-48C5-9E67-FBE9866D4924), exclusiveto(CanvasFontSet)]
     interface ICanvasFontSetStatics : IInspectable
     {
-        [propget] HRESULT SystemFontSet([out, retval] CanvasFontSet** fontSet);
+        HRESULT GetSystemFontSet([out, retval] CanvasFontSet** fontSet);
     }
 
     [version(VERSION), activatable(VERSION), static(ICanvasFontSetStatics, VERSION)]

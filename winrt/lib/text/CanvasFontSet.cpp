@@ -42,7 +42,7 @@ ComPtr<IDWriteFontSet> GetLocalFonts(ComPtr<IDWriteFontSet> const& fonts)
 }
 #endif
 
-IFACEMETHODIMP CanvasFontSetStatics::get_SystemFontSet(
+IFACEMETHODIMP CanvasFontSetStatics::GetSystemFontSet(
     ICanvasFontSet** fontSet)
 {
     return ExceptionBoundary(

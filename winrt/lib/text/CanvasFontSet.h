@@ -89,7 +89,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_Text_CanvasFontSet, BaseTrust);
 
     public:
-        IFACEMETHOD(get_SystemFontSet)(
+        IFACEMETHOD(GetSystemFontSet)(
             ICanvasFontSet** systemFontSet);
     };
 }}}}}

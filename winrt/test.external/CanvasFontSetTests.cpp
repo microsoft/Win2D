@@ -11,18 +11,18 @@ TEST_CLASS(CanvasFontSetTests)
 {
     TEST_METHOD(CanvasFontSet_GetSystemFontSet)
     {
-        CanvasFontSet::SystemFontSet;
+		CanvasFontSet::GetSystemFontSet();
     }
 
     TEST_METHOD(CanvasFontSet_GetSystemFontSet_TwoReferences)
     {
-        auto ref = CanvasFontSet::SystemFontSet;
+        auto ref = CanvasFontSet::GetSystemFontSet();
 
 		//
-		// Calling get_SystemFontSet when there's an existing object
+		// Calling GetSystemFontSet when there's an existing object
 		// wrapping the system font set shouldn't fail.
 		//
-        auto ref2 = CanvasFontSet::SystemFontSet;
+		auto ref2 = CanvasFontSet::GetSystemFontSet();
     }
 
     TEST_METHOD(CanvasFontSet_Interop)

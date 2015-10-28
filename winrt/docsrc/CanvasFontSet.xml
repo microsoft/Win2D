@@ -91,7 +91,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <summary>Gets a collection representing the individual fonts in the set.</summary>
       <remarks>This method returns a list of <see cref="T:Microsoft.Graphics.Canvas.Text.CanvasFontFace"/> objects.</remarks>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasFontSet.SystemFontSet">
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasFontSet.GetSystemFontSet">
       <summary>Gets a grouping of all the fonts available locally on the system.</summary>
     </member>
     

@@ -227,7 +227,7 @@ TEST_CLASS(CanvasFontSetTests)
         boolean b{};
 
         auto statics = Make<CanvasFontSetStatics>();
-        Assert::AreEqual(E_INVALIDARG, statics->get_SystemFontSet(nullptr));
+        Assert::AreEqual(E_INVALIDARG, statics->GetSystemFontSet(nullptr));
 
         auto canvasFontSet = CreateSimpleTestFontSet();
         Assert::AreEqual(E_INVALIDARG, canvasFontSet->TryFindFontFace(nullptr, &i, &b));
@@ -324,13 +324,13 @@ TEST_CLASS(CanvasFontSetTests)
         }
     };
 
-    TEST_METHOD_EX(CanvasFontSet_get_SystemFontSet)
+    TEST_METHOD_EX(CanvasFontSet_GetSystemFontSet)
     {
         SystemFontSetFixture f;
 
         auto statics = Make<CanvasFontSetStatics>();
         ComPtr<ICanvasFontSet> actualCanvasFontSet;
-        Assert::AreEqual(S_OK, statics->get_SystemFontSet(&actualCanvasFontSet));
+        Assert::AreEqual(S_OK, statics->GetSystemFontSet(&actualCanvasFontSet));
 
 #if WINVER > _WIN32_WINNT_WINBLUE
         auto actualFontCollection = GetWrappedResource<IDWriteFontSet>(actualCanvasFontSet);
@@ -348,7 +348,7 @@ TEST_CLASS(CanvasFontSetTests)
     }
 
 #if WINVER > _WIN32_WINNT_WINBLUE
-    TEST_METHOD_EX(CanvasFontSet_get_SystemFontSet_RemovesRemoteFonts)
+    TEST_METHOD_EX(CanvasFontSet_GetSystemFontSet_RemovesRemoteFonts)
     {
         DWRITE_LOCALITY localities[] = { DWRITE_LOCALITY_PARTIAL, DWRITE_LOCALITY_REMOTE };
         for (auto locality : localities)
@@ -363,7 +363,7 @@ TEST_CLASS(CanvasFontSetTests)
 
             auto statics = Make<CanvasFontSetStatics>();
             ComPtr<ICanvasFontSet> actualCanvasFontSet;
-            Assert::AreEqual(S_OK, statics->get_SystemFontSet(&actualCanvasFontSet));
+            Assert::AreEqual(S_OK, statics->GetSystemFontSet(&actualCanvasFontSet));
 
             auto actualFontCollection = GetWrappedResource<IDWriteFontSet>(actualCanvasFontSet);
             ComPtr<StubDWriteFontSet> actualStubFontSet = static_cast<StubDWriteFontSet*>(actualFontCollection.Get());
