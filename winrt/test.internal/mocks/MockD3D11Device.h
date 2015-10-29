@@ -298,7 +298,7 @@ namespace canvas
 
         D3D_FEATURE_LEVEL STDMETHODCALLTYPE GetFeatureLevel(void)
         {
-            return static_cast<D3D_FEATURE_LEVEL>(-1);
+            return D3D_FEATURE_LEVEL_9_1;
         }
 
         UINT STDMETHODCALLTYPE GetCreationFlags(void)

@@ -105,6 +105,18 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Link>Deployed Files\MockD2DGeometryGroup.h</Link>
     </Content>
+    <Content Include="..\..\..\winrt\test.internal\mocks\MockD2DDrawInfo.h">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>Deployed Files\MockD2DDrawInfo.h</Link>
+    </Content>
+    <Content Include="..\..\..\winrt\test.internal\mocks\MockD2DEffectContext.h">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>Deployed Files\MockD2DEffectContext.h</Link>
+    </Content>
+    <Content Include="..\..\..\winrt\test.internal\mocks\MockD2DTransformGraph.h">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>Deployed Files\MockD2DTransformGraph.h</Link>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\exe\mock.exe.csproj">

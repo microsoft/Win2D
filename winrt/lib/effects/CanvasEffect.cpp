@@ -3,6 +3,8 @@
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
 #include "pch.h"
+#include "effects/shader/PixelShaderEffect.h"
+#include "effects/shader/PixelShaderEffectImpl.h"
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Effects 
 {
@@ -54,6 +56,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         if (!d2dEffect)
             return false;
 
+        if (!device)
+            ThrowHR(E_INVALIDARG, Strings::ResourceManagerNoDevice);
+
         // Look up which strongly typed Win2D wrapper class matches the effect CLSID.
         IID effectId = d2dEffect->GetValue<IID>(D2D1_PROPERTY_CLSID);
 
@@ -62,12 +67,16 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             if (IsEqualGUID(effectMaker->first, effectId))
             {
                 // Found it! Create the Win2D wrapper class.
-                if (!device)
-                    ThrowHR(E_INVALIDARG, Strings::ResourceManagerNoDevice);
-
                 effectMaker->second(device, d2dEffect.Get(), result);
                 return true;
             }
+        }
+
+        // If this isn't one of the codegenned effect wrappers, could it be our custom pixel shader effect?
+        if (IsEqualGUID(effectId, CLSID_PixelShaderEffect))
+        {
+            MakeEffect<PixelShaderEffect>(device, d2dEffect.Get(), result);
+            return true;
         }
 
         // Unrecognized effect CLSID.
@@ -585,7 +594,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         if (!deviceContext)
         {
-            contextLease = As<ICanvasDeviceInternal>(m_realizationDevice.GetWrapper())->GetResourceCreationDeviceContext();
+            contextLease = As<ICanvasDeviceInternal>(RealizationDevice())->GetResourceCreationDeviceContext();
             deviceContext = contextLease.Get();
         }
 
@@ -682,7 +691,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             {
                 // Get the underlying D2D interface. This call recurses through the effect graph.
                 float realizedDpi;
-                auto realizedSource = As<ICanvasImageInternal>(source)->GetD2DImage(m_realizationDevice.GetWrapper(), deviceContext, flags, targetDpi, &realizedDpi);
+                auto realizedSource = As<ICanvasImageInternal>(source)->GetD2DImage(RealizationDevice(), deviceContext, flags, targetDpi, &realizedDpi);
 
                 bool resourceChanged = sourceInfo.UpdateResource(realizedSource.Get());
 
@@ -731,7 +740,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                 ComPtr<ICanvasDevice> sourceDevice;
                 ThrowIfFailed(sourceWithDevice->get_Device(&sourceDevice));
 
-                if (!IsSameInstance(m_realizationDevice.GetWrapper(), sourceDevice.Get()))
+                if (!IsSameInstance(RealizationDevice(), sourceDevice.Get()))
                 {
                     if ((flags & GetImageFlags::UnrealizeOnFailure) == GetImageFlags::None)
                         ThrowFormattedMessage(E_INVALIDARG, Strings::EffectWrongDevice, index);
@@ -744,7 +753,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             }
 
             // Get the underlying D2D interface. This call recurses through the effect graph.
-            realizedSource = internalSource->GetD2DImage(m_realizationDevice.GetWrapper(), deviceContext, flags, targetDpi, &realizedDpi);
+            realizedSource = internalSource->GetD2DImage(RealizationDevice(), deviceContext, flags, targetDpi, &realizedDpi);
 
             if (!realizedSource)
             {
@@ -790,7 +799,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         {
             if (IsSameInstance(input.Get(), m_sources[index].DpiCompensator.Get()))
             {
-                m_sources[index].DpiCompensator->GetInput(index, &input);
+                m_sources[index].DpiCompensator->GetInput(0, &input);
             }
             else
             {
@@ -799,7 +808,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         }
 
         // Look up a Win2D wrapper for the D2D input image.
-        return m_sources[index].GetOrCreateWrapper(m_realizationDevice.GetWrapper(), input.Get());
+        return m_sources[index].GetOrCreateWrapper(RealizationDevice(), input.Get());
     }
 
 

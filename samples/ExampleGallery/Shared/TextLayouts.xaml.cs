@@ -31,6 +31,8 @@ namespace ExampleGallery
 
         string testString;
 
+        public bool UseEllipsisTrimming { get; set; }
+
         public bool ShowPerCharacterLayoutBounds { get; set; }
         public bool ShowLayoutBounds { get; set; }
         public bool ShowDrawBounds { get; set; }
@@ -59,6 +61,7 @@ namespace ExampleGallery
 
             CurrentTextSampleOption = TextSampleOption.QuickBrownFox;
             ShowPerCharacterLayoutBounds = true;
+            UseEllipsisTrimming = true;
         }
 
         Rect InflateRect(Rect r)
@@ -85,7 +88,7 @@ namespace ExampleGallery
 
         void EnsureResources(ICanvasResourceCreatorWithDpi resourceCreator, Size targetSize)
         {
-            if (resourceRealizationSize != targetSize && !needsResourceRecreation)
+            if (resourceRealizationSize == targetSize && !needsResourceRecreation)
                 return;
 
             float canvasWidth = (float)targetSize.Width;
@@ -156,6 +159,9 @@ namespace ExampleGallery
             }
 
             textFormat.FontFamily = (fontPicker.SelectedItem as ComboBoxItem).Content as string;
+
+            textFormat.TrimmingGranularity = CanvasTextTrimmingGranularity.Word;
+            textFormat.TrimmingSign = UseEllipsisTrimming ? CanvasTrimmingSign.Ellipsis : CanvasTrimmingSign.None;
 
             return new CanvasTextLayout(resourceCreator, testString, textFormat, canvasWidth, canvasHeight);
         }
@@ -254,6 +260,12 @@ namespace ExampleGallery
 
         private void InvalidateCanvas(object sender, RoutedEventArgs e)
         {
+            canvas.Invalidate();
+        }
+
+        private void EllipsisTrimming_Click(object sender, RoutedEventArgs e)
+        {
+            needsResourceRecreation = true;
             canvas.Invalidate();
         }
 

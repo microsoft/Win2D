@@ -1,0 +1,104 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+//
+// Licensed under the MIT License. See LICENSE.txt in the project root for license information.
+
+namespace Microsoft.Graphics.Canvas.Effects
+{
+    runtimeclass PixelShaderEffect;
+
+    [version(VERSION)]
+    typedef enum SamplerCoordinateMapping
+    {
+        Unknown,
+        OneToOne,
+        Offset
+    } SamplerCoordinateMapping;
+
+    [version(VERSION), uuid(FC8C3C31-FA96-45E2-8B72-1741C65CEE8E), exclusiveto(PixelShaderEffect)]
+    interface IPixelShaderEffect : IInspectable
+        requires Microsoft.Graphics.Canvas.ICanvasImage
+    {
+        [propget] HRESULT Properties([out, retval] Windows.Foundation.Collections.IMap<HSTRING, IInspectable*>** value);
+
+        [propget] HRESULT Source1([out, retval] IGRAPHICSEFFECTSOURCE** source);
+        [propget] HRESULT Source2([out, retval] IGRAPHICSEFFECTSOURCE** source);
+        [propget] HRESULT Source3([out, retval] IGRAPHICSEFFECTSOURCE** source);
+        [propget] HRESULT Source4([out, retval] IGRAPHICSEFFECTSOURCE** source);
+        [propget] HRESULT Source5([out, retval] IGRAPHICSEFFECTSOURCE** source);
+        [propget] HRESULT Source6([out, retval] IGRAPHICSEFFECTSOURCE** source);
+        [propget] HRESULT Source7([out, retval] IGRAPHICSEFFECTSOURCE** source);
+        [propget] HRESULT Source8([out, retval] IGRAPHICSEFFECTSOURCE** source);
+
+        [propput] HRESULT Source1([in] IGRAPHICSEFFECTSOURCE* source);
+        [propput] HRESULT Source2([in] IGRAPHICSEFFECTSOURCE* source);
+        [propput] HRESULT Source3([in] IGRAPHICSEFFECTSOURCE* source);
+        [propput] HRESULT Source4([in] IGRAPHICSEFFECTSOURCE* source);
+        [propput] HRESULT Source5([in] IGRAPHICSEFFECTSOURCE* source);
+        [propput] HRESULT Source6([in] IGRAPHICSEFFECTSOURCE* source);
+        [propput] HRESULT Source7([in] IGRAPHICSEFFECTSOURCE* source);
+        [propput] HRESULT Source8([in] IGRAPHICSEFFECTSOURCE* source);
+
+        [propget] HRESULT Source1Mapping([out, retval] SamplerCoordinateMapping* value);
+        [propget] HRESULT Source2Mapping([out, retval] SamplerCoordinateMapping* value);
+        [propget] HRESULT Source3Mapping([out, retval] SamplerCoordinateMapping* value);
+        [propget] HRESULT Source4Mapping([out, retval] SamplerCoordinateMapping* value);
+        [propget] HRESULT Source5Mapping([out, retval] SamplerCoordinateMapping* value);
+        [propget] HRESULT Source6Mapping([out, retval] SamplerCoordinateMapping* value);
+        [propget] HRESULT Source7Mapping([out, retval] SamplerCoordinateMapping* value);
+        [propget] HRESULT Source8Mapping([out, retval] SamplerCoordinateMapping* value);
+
+        [propput] HRESULT Source1Mapping([in] SamplerCoordinateMapping value);
+        [propput] HRESULT Source2Mapping([in] SamplerCoordinateMapping value);
+        [propput] HRESULT Source3Mapping([in] SamplerCoordinateMapping value);
+        [propput] HRESULT Source4Mapping([in] SamplerCoordinateMapping value);
+        [propput] HRESULT Source5Mapping([in] SamplerCoordinateMapping value);
+        [propput] HRESULT Source6Mapping([in] SamplerCoordinateMapping value);
+        [propput] HRESULT Source7Mapping([in] SamplerCoordinateMapping value);
+        [propput] HRESULT Source8Mapping([in] SamplerCoordinateMapping value);
+
+        [propget] HRESULT MaxSamplerOffset([out, retval] INT32* value);
+        [propput] HRESULT MaxSamplerOffset([in] INT32 value);
+
+        HRESULT IsSupported([in] Microsoft.Graphics.Canvas.CanvasDevice* device, [out, retval] boolean* result);
+    };
+
+    [version(VERSION), uuid(9D1727E5-489D-4ABC-B129-5361E3534AF4), exclusiveto(PixelShaderEffect)]
+    interface IPixelShaderEffectFactory : IInspectable
+    {
+        HRESULT Create(
+            [in] UINT32 shaderCodeCount,
+            [in, size_is(shaderCodeCount)] BYTE* shaderCode,
+            [out, retval] PixelShaderEffect** effect);
+    };
+
+    [version(VERSION), activatable(IPixelShaderEffectFactory, VERSION)]
+    runtimeclass PixelShaderEffect
+    {
+        [default] interface IPixelShaderEffect;
+        interface IGRAPHICSEFFECT;
+    }
+
+    declare
+    {
+        interface Windows.Foundation.Collections.IVector<Windows.Foundation.Collections.IKeyValuePair<HSTRING, IInspectable*>*>;
+
+        interface Windows.Foundation.IReference<NUMERICS.Vector2>;
+        interface Windows.Foundation.IReference<NUMERICS.Vector4>;
+        interface Windows.Foundation.IReference<NUMERICS.Matrix3x2>;
+
+#if WINVER <= _WIN32_WINNT_WINBLUE
+        interface Windows.Foundation.IReference<NUMERICS.Vector3>;
+        interface Windows.Foundation.IReference<NUMERICS.Matrix4x4>;
+#endif
+
+        interface Windows.Foundation.IReferenceArray<NUMERICS.Vector2>;
+        interface Windows.Foundation.IReferenceArray<NUMERICS.Vector3>;
+        interface Windows.Foundation.IReferenceArray<NUMERICS.Vector4>;
+        interface Windows.Foundation.IReferenceArray<NUMERICS.Matrix3x2>;
+        interface Windows.Foundation.IReferenceArray<NUMERICS.Matrix4x4>;
+
+        interface Windows.Foundation.IReferenceArray<float>;
+        interface Windows.Foundation.IReferenceArray<int>;
+        interface Windows.Foundation.IReferenceArray<boolean>;
+    }
+}

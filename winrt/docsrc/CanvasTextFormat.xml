@@ -387,6 +387,27 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextFormat.LastLineWrapping" Experimental="true">
       <summary>Specifies whether the last line is wrapped.</summary>
       <remarks>This is set to 'true' by default.</remarks>
+    </member>    
+    
+    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasTrimmingSign"  Experimental="true">
+      <summary>Specifies the trimming sign that is used when drawing a text layout.</summary>
+      <remarks>
+        A trimming sign is a symbol that shows up when the text sticking out
+        of a text layout's requestedWidth and requestedHeight bounds is trimmed.
+        Rather than simply truncate the text, an app may want to show an 
+        ellipsis ("&#8230;") symbol.
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTrimmingSign.None">
+      <summary>When text is trimmed, it is truncated and no trimming sign appears.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTrimmingSign.Ellipsis">
+      <summary>When text is trimmed, an ellipsis ("&#8230;") symbol appears.</summary>
+    </member>
+
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextFormat.TrimmingSign" Experimental="true">
+      <summary>Specifies the type of trimming sign used, when text is drawn outside a text layout's requested size extents.</summary>
+      <remarks>By default, no trimming sign is used. The text will just appear chopped off at the size boundary.</remarks>
     </member>
     
   </members>

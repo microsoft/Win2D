@@ -1,0 +1,281 @@
+<?xml version="1.0"?>
+<!--
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+Licensed under the MIT License. See LICENSE.txt in the project root for license information.
+-->
+
+<doc>
+  <assembly>
+    <name>Microsoft.Graphics.Canvas</name>
+  </assembly>
+  <members>
+    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasFontFileFormatType" Experimental="true">
+      <summary>Indicates the file format of a font face.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasFontFileFormatType.Cff">
+      <summary>An OpenType font face with CFF outlines.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasFontFileFormatType.TrueType">
+      <summary>An OpenType font face with TrueType outlines.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasFontFileFormatType.TrueTypeCollection">
+      <summary>An OpenType font face that is a part of a TrueType collection.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasFontFileFormatType.Type1">
+      <summary>A Type 1 font face.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasFontFileFormatType.Vector">
+      <summary>A vector .FON format font face.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasFontFileFormatType.Bitmap">
+      <summary>A bitmap .FON format font face.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasFontFileFormatType.Unknown">
+      <summary>Font face type is not recognized by the DirectWrite font system.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasFontFileFormatType.RawCff">
+      <summary>The font data includes only the CFF table from an OpenType CFF font. This font face type can be used only for embedded fonts (i.e., custom font file loaders) and the resulting font face object supports only the minimum functionality necessary to render glyphs.</summary>
+    </member>
+    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasFontInformation" Experimental="true">
+      <summary>Specifies an informational string embedded in a font file.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasFontInformation.None">
+      <summary>Indicates the string containing the unspecified name ID.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasFontInformation.CopyrightNotice">
+      <summary>Indicates the string containing the copyright notice provided by the font.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasFontInformation.VersionStrings">
+      <summary>Indicates the string containing a version number.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasFontInformation.Trademark">
+      <summary>Indicates the string containing the trademark information provided by the font.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasFontInformation.Manufacturer">
+      <summary>Indicates the string containing the name of the font manufacturer.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasFontInformation.Designer">
+      <summary>Indicates the string containing the name of the font designer.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasFontInformation.DesignerUrl">
+      <summary>Indicates the string containing the URL of the font designer (with protocol, e.g., http://, ftp://).</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasFontInformation.Description">
+      <summary>Indicates the string containing the description of the font. This may also contain revision information, usage recommendations, history, features, and so on.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasFontInformation.FontVendorUrl">
+      <summary>Indicates the string containing the URL of the font vendor (with protocol, e.g., http://, ftp://). If a unique serial number is embedded in the URL, it can be used to register the font.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasFontInformation.LicenseDescription">
+      <summary>Indicates the string containing the description of how the font may be legally used, or different example scenarios for licensed use.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasFontInformation.LicenseInfoUrl">
+      <summary>Indicates the string containing the URL where additional licensing information can be found.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasFontInformation.Win32FamilyNames">
+      <summary>Indicates the string containing the GDI-compatible family name. Since GDI allows a maximum of four fonts per family, fonts in the same family may have different GDI-compatible family names (e.g., "Arial", "Arial Narrow", "Arial Black").</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasFontInformation.Win32SubfamilyNames">
+      <summary>Indicates the string containing a GDI-compatible subfamily name.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasFontInformation.PreferredFamilyNames">
+      <summary>Indicates the string containing the family name preferred by the designer. This enables font designers to group more than four fonts in a single family without losing compatibility with GDI. This name is typically only present if it differs from the GDI-compatible family name.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasFontInformation.PreferredSubfamilyNames">
+      <summary>Indicates the string containing the subfamily name preferred by the designer. This name is typically only present if it differs from the GDI-compatible subfamily name.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasFontInformation.SampleText">
+      <summary>Contains sample text for display in font lists. This can be the font name or any other text that the designer thinks is the best example to display the font in.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasFontInformation.FullName">
+      <summary>The full name of the font- e.g. "Arial Bold", from name id 4 in the name table.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasFontInformation.PostscriptName">
+      <summary>The postscript name of the font, like GillSans-Bold, from name id 6 in the name table.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasFontInformation.PostscriptCidName">
+      <summary>The postscript CID findfont name, from name id 20 in the name table</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasFontInformation.WwsFamilyName">
+      <summary>Family name for the weight-width-slope model.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasFontInformation.DesignScriptLanguageTag">
+      <summary>Script/language tag to identify the scripts or languages that the font was primarily designed to support.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasFontInformation.SupportedScriptLanguageTag">
+      <summary>Script/language tag to identify the scripts or languages that the font declares it is able to support.</summary>
+    </member>
+    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasFontFace" Experimental="true">
+      <summary>Represents a font, and its associated properties.</summary>
+      <remarks>
+      	The recommended line spacing (baseline-to-baseline distance) for characters in the font is 
+      	represented by the sum of Ascent, Descent, and LineGap. The line gap is usually positive 
+      	or zero but can be negative, in which case the recommended line spacing is less than the 
+      	height of the character alignment box.
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasFontFace.GetRecommendedRenderingMode(System.Single,System.Single,Microsoft.Graphics.Canvas.Text.CanvasTextMeasuringMode,Microsoft.Graphics.Canvas.Text.CanvasTextRenderingParameters)">
+      <summary>Determines the recommended rendering mode for the font, using the specified size and rendering constraints.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasFontFace.GetRecommendedRenderingMode(System.Single,System.Single,Microsoft.Graphics.Canvas.Text.CanvasTextMeasuringMode,Microsoft.Graphics.Canvas.Text.CanvasTextRenderingParameters,Microsoft.Graphics.Canvas.Numerics.Matrix3x2,System.Boolean,Microsoft.Graphics.Canvas.CanvasAntialiasing)">
+      <summary>Determines the recommended rendering mode for the font, using the specified size and rendering constraints.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasFontFace.GetRecommendedGridFit(System.Single,System.Single,Microsoft.Graphics.Canvas.Text.CanvasTextMeasuringMode,Microsoft.Graphics.Canvas.Text.CanvasTextRenderingParameters,Microsoft.Graphics.Canvas.Numerics.Matrix3x2,System.Boolean,Microsoft.Graphics.Canvas.CanvasAntialiasing)">
+      <summary>Determines the recommended grid fit for the font, using the specified size and rendering constraints.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasFontFace.GetVerticalGlyphVariants(System.Int32[])">
+      <summary>Retrieves the vertical forms of the nominal glyphs retrieved from GetGlyphIndices.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasFontFace.GetGlyphIndices(System.UInt32[])">
+      <summary>Returns the nominal mapping of UCS4 Unicode code points to glyph indices as defined by the font 'CMAP' table.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasFontFace.GetInformationalStrings(Microsoft.Graphics.Canvas.Text.CanvasFontInformation)">
+      <summary>Gets an informational string contained by the font.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasFontFace.HasCharacter(System.UInt32)">
+      <summary>Gets whether this font face contains the specified unicode character.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasFontFace.Dispose">
+      <summary>Releases all resources used by the CanvasFontFace.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasFontFace.Ascent">
+      <summary>Gets the ascent value of the font face. Ascent is the distance from the top of font character alignment box to the Latin-script baseline.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasFontFace.CapHeight">
+      <summary>Gts the cap height value of the font face. Cap height is the distance from the Latin-script baseline to the top of a typical Latin-script capital. Capital "H" is often used as a reference character for the purpose of calculating the cap height value.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasFontFace.CaretOffset">
+      <summary>Gets the horizontal offset of the caret along the baseline for good appearance. An offset of 0 is returned for perfectly upright fonts (non-italic).</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasFontFace.CaretSlopeRise">
+      <summary>Gets the vertical rise of the caret. CaretSlopeRise / CaretSlopeRun yields the caret angle. A rise value of 1 is returned for perfectly upright fonts (non-italic).</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasFontFace.CaretSlopeRun">
+      <summary>Gets the horizontal run of the caret. CaretSlopeRise / CaretSlopeRun yields the caret angle. A run value of 0 for perfectly upright fonts (non-italic).</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasFontFace.Descent">
+      <summary>Gets the descent value of the font face in font design units. Descent is the distance from the bottom of font character alignment box to the Latin-script baseline.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasFontFace.FaceNames">
+      <summary>Gets a map of localized strings that contain the face names for the font (for example, Regular or Bold).</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasFontFace.FileFormatType">
+      <summary>Gets the file format type of a font face. </summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasFontFace.GlyphBox">
+      <summary>Gets the accumulated draw bounds of all glyphs in the font.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasFontFace.GlyphCount">
+      <summary>Gets the number of glyphs in the font.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasFontFace.HasTypographicMetrics">
+      <summary>Gets whether the ascent, descent, and lineGap are based on newer 'typographic' values in the font, rather than legacy values.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasFontFace.HasVerticalGlyphVariants">
+      <summary>Gets whether the font has any vertical glyph variants.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasFontFace.IsMonospaced">
+      <summary>Gets whether the font is monospaced; that is, all glyphs' layout boxes are equally sized and spaced apart.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasFontFace.IsSymbolFont">
+      <summary>Gets whether the font is a symbol font.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasFontFace.LineGap">
+      <summary>Gets the line gap for the font. This is the recommended additional white space to add between lines. </summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasFontFace.LowercaseLetterHeight">
+      <summary>Gets the lowercase letter height of the font face. This is the distance from the Latin-script baseline to the top of lowercase letter "x", or a similar lowercase character.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasFontFace.Simulations">
+      <summary>Gets the algorithmic style simulation flags of a font face. </summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasFontFace.Stretch">
+      <summary>Gets the the degree to which the font is stretched, compared to the normal aspect ratio of that font.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasFontFace.StrikethroughPosition">
+      <summary>Gets the strikethrough position, which is relative to the Latin-script baseline. </summary>
+      <remarks>This value is usually positive, which places the strikethrough above the baseline.</remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasFontFace.StrikethroughThickness">
+      <summary>Gets the thickness of the strikethrough for this font.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasFontFace.Style">
+      <summary>Gets whether the typeface is oblique, or italic, or the default.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasFontFace.SubscriptPosition">
+      <summary>Gets the subscript position, which is relative to the baseline origin.</summary>
+      <remarks>This is typically negative (to the left) in italic and oblique fonts, and zero in regular fonts.</remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasFontFace.SubscriptSize">
+      <summary>Gets the size of a subscript.</summary>
+      <remarks>Fonts may opt out of specifying this, in which case the width and/or height are returned as zero.</remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasFontFace.SuperscriptPosition">
+      <summary>Gets the superscript position, which is relative to the baseline origin.</summary>
+      <remarks>This is typically positive (to the right) in italic and oblique fonts, and zero in regular fonts.</remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasFontFace.SuperscriptSize">
+      <summary>Gets the size of a superscript.</summary>
+      <remarks>Fonts may opt out of specifying this, in which case the width and/or height are returned as zero.</remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasFontFace.UnderlinePosition">
+      <summary>Gets the underline position, relative to the Latin-script baseline.</summary>
+      <remarks>The value is usually made negative in order to place the underline below the baseline.</remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasFontFace.UnderlineThickness">
+      <summary>Gets the thickness of underlines.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasFontFace.UnicodeRanges">
+      <summary>Gets a list of character ranges supported by a font.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasFontFace.Weight">
+      <summary>Gets the weight of this font.</summary>
+      <remarks>Font weight indicates the density of a typeface, in terms of the lightness or heaviness of the strokes.</remarks>
+    </member>
+    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasFontSimulations" Experimental="true">
+      <summary>Describes algorithmic style simulations that can be applied to the font face.</summary>
+      <remarks>
+      	<p>
+      	  Simulations are for when an app wants bold or italic faces of
+      	  a font, but the font does not come built-in with bold or italic faces.
+      	  A simulation will automatically generate a bold and/or italic face
+      	  for that font, using an algorithm. 
+      	  The simulation may incur a performance cost, and may 
+      	  lack the visual quality of a face designed by the font author.
+      	  However, simulations can be used to stylize a wide variety of fonts.
+      	</p>
+      	<p>Bold and oblique simulations can be combined, via bitwise OR operation.</p></remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasFontSimulations.None">
+      <summary>Indicates that no simulations are applied to the font face.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasFontSimulations.Bold">
+      <summary>Indicates that algorithmic emboldening is applied to the font face. </summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasFontSimulations.Oblique">
+      <summary>Indicates that algorithmic italicization is applied to the font face.</summary>
+    </member>
+    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasTextMeasuringMode" Experimental="true">
+      <summary>Indicates the measuring method used for a piece of text.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTextMeasuringMode.Natural">
+      <summary>Specifies that text is measured using glyph ideal metrics whose values are independent to the current display resolution.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTextMeasuringMode.GdiClassic">
+      <summary>Specifies that text is measured using glyph display-compatible metrics whose values tuned for the current display resolution.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTextMeasuringMode.GdiNatural">
+      <summary>Specifies that text is measured using the same glyph display metrics as text measured by GDI using a font created with the CLEARTYPE_NATURAL_QUALITY GDI option.</summary>
+    </member>
+    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasUnicodeRange" Experimental="true">
+      <summary>Represents a range, from starting to ending code points, of Unicode characters.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasUnicodeRange.First">
+      <summary>The first code point in the Unicode range.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasUnicodeRange.Last">
+      <summary>The last code point in the Unicode range.</summary>
+    </member>
+  </members>
+</doc>

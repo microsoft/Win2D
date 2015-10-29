@@ -37,6 +37,9 @@
     <Filter Include="composition">
       <UniqueIdentifier>{6833e68e-c2a4-4af0-a737-aa8e537554c8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="effects\shader">
+      <UniqueIdentifier>{2ee3a682-7b83-4f7d-85ca-569607a51de1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <MidlRT Include="$(MSBuildThisFileDirectory)Canvas.abi.idl" />
@@ -250,6 +253,12 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)text\CanvasTextRenderingParameters.cpp">
       <Filter>text</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)text\CanvasFontFace.cpp">
+      <Filter>text</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)text\CanvasFontSet.cpp">
+      <Filter>text</Filter>
+    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)text\CustomFontManager.cpp">
       <Filter>text</Filter>
     </ClCompile>
@@ -357,6 +366,21 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)drawing\CanvasSpriteBatch.cpp">
       <Filter>drawing</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)utils\HashUtilities.cpp">
+      <Filter>utils</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\shader\PixelShaderEffect.cpp">
+      <Filter>effects\shader</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\shader\PixelShaderEffectImpl.cpp">
+      <Filter>effects\shader</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\shader\PixelShaderTransform.cpp">
+      <Filter>effects\shader</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\shader\SharedShaderState.cpp">
+      <Filter>effects\shader</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -586,6 +610,12 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)text\CanvasTextRenderingParameters.h">
       <Filter>text</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)text\CanvasFontFace.h">
+      <Filter>text</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)text\CanvasFontSet.h">
+      <Filter>text</Filter>
+    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)text\CustomFontManager.h">
       <Filter>text</Filter>
     </ClInclude>
@@ -617,6 +647,9 @@
       <Filter>drawing</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)text\TextUtilities.h">
+      <Filter>text</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)text\TrimmingSignInformation.h">
       <Filter>text</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\TemporaryTransform.h">
@@ -723,6 +756,27 @@
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)drawing\CanvasSpriteBatch.h">
       <Filter>drawing</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)utils\HashUtilities.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\shader\PixelShaderEffect.h">
+      <Filter>effects\shader</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\shader\PixelShaderEffectImpl.h">
+      <Filter>effects\shader</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\shader\PixelShaderTransform.h">
+      <Filter>effects\shader</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\shader\ShaderDescription.h">
+      <Filter>effects\shader</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\shader\SharedShaderState.h">
+      <Filter>effects\shader</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)utils\MathUtilities.h">
+      <Filter>utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -946,6 +1000,12 @@
     <None Include="$(MSBuildThisFileDirectory)images\CanvasImage.abi.idl">
       <Filter>images</Filter>
     </None>
+    <None Include="$(MSBuildThisFileDirectory)text\CanvasFontFace.abi.idl">
+      <Filter>text</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)text\CanvasFontSet.abi.idl">
+      <Filter>text</Filter>
+    </None>
     <None Include="$(MSBuildThisFileDirectory)text\CanvasTextFormat.abi.idl">
       <Filter>text</Filter>
     </None>
@@ -975,6 +1035,9 @@
     </None>
     <None Include="$(MSBuildThisFileDirectory)composition\CanvasComposition.abi.idl">
       <Filter>composition</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)effects\shader\PixelShaderEffect.abi.idl">
+      <Filter>effects\shader</Filter>
     </None>
   </ItemGroup>
 </Project>

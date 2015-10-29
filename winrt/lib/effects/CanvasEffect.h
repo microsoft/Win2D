@@ -50,8 +50,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         IID m_effectId;
         WinString m_name;
 
-        std::mutex m_mutex;
-
         ComPtr<IPropertyValueStatics> m_propertyValueFactory;
 
         // What device are we currently realized on?
@@ -121,6 +119,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
 
     protected:
+        // Constructor.
         CanvasEffect(IID const& m_effectId, unsigned int propertiesSize, unsigned int sourcesSize, bool isSourcesSizeFixed, ICanvasDevice* device, ID2D1Effect* effect, IInspectable* outerInspectable);
 
         virtual ~CanvasEffect();
@@ -129,6 +128,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         virtual EffectPropertyMappingTable GetPropertyMappingHandCoded() { return EffectPropertyMappingTable{ nullptr, 0 }; }
 
         ComPtr<SourcesVector> const& Sources() { return m_sourcesVector; }
+        
+        ICanvasDevice* RealizationDevice() { return m_realizationDevice.GetWrapper(); }
+
+        std::mutex m_mutex;
 
     public:
         // Used by ResourceManager::GetOrCreate.
@@ -251,6 +254,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         void ClearSources();
 
 
+        // On-demand creation of the underlying D2D image effect.
+        virtual bool Realize(GetImageFlags flags, float targetDpi, ID2D1DeviceContext* deviceContext);
+        virtual void Unrealize(unsigned int skipSourceIndex = UINT_MAX, bool skipAllSources = false);
+
     private:
         ComPtr<ID2D1Effect> CreateD2DEffect(ID2D1DeviceContext* deviceContext, IID const& effectId);
         bool ApplyDpiCompensation(unsigned int index, ComPtr<ID2D1Image>& inputImage, float inputDpi, GetImageFlags flags, float targetDpi, ID2D1DeviceContext* deviceContext);
@@ -264,9 +271,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         ComPtr<IPropertyValue> GetProperty(unsigned int index);
         ComPtr<IPropertyValue> GetD2DProperty(ID2D1Effect* d2dEffect, unsigned int index);
-
-        bool Realize(GetImageFlags flags, float targetDpi, ID2D1DeviceContext* deviceContext);
-        void Unrealize(unsigned int skipSourceIndex = UINT_MAX, bool skipAllSources = false);
 
         void ThrowIfClosed();
 

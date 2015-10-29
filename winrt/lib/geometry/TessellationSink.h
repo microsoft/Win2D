@@ -7,7 +7,7 @@
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Geometry
 {
     class TessellationSink : public RuntimeClass<RuntimeClassFlags<ClassicCom>, ID2D1TessellationSink>,
-                            private LifespanTracker<TessellationSink>
+                             private LifespanTracker<TessellationSink>
     {
         std::vector<CanvasTriangleVertices> m_triangles;
         HRESULT m_result;

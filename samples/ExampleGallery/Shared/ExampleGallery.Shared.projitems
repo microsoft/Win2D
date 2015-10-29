@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
@@ -60,6 +60,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)EffectsExample.xaml.cs">
       <DependentUpon>EffectsExample.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)CustomEffects.xaml.cs">
+      <DependentUpon>CustomEffects.xaml</DependentUpon>
+    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Infrastructure\ExampleDefinition.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Infrastructure\ExamplePage.xaml.cs">
       <DependentUpon>ExamplePage.xaml</DependentUpon>
@@ -116,6 +119,9 @@
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)TextOutlines.xaml.cs">
       <DependentUpon>TextOutlines.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)FontMetrics.xaml.cs">
+      <DependentUpon>FontMetrics.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)VectorArt.xaml.cs">
       <DependentUpon>VectorArt.xaml</DependentUpon>
@@ -195,6 +201,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="$(MSBuildThisFileDirectory)CustomEffects.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="$(MSBuildThisFileDirectory)Infrastructure\ExamplePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -247,6 +257,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="$(MSBuildThisFileDirectory)FontMetrics.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="$(MSBuildThisFileDirectory)VectorArt.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -259,6 +273,8 @@
   <ItemGroup>
     <Content Include="$(MSBuildThisFileDirectory)Particles\explosion.png" />
     <Content Include="$(MSBuildThisFileDirectory)Particles\smoke.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Thumbnails\CustomEffectsNarrow.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Thumbnails\CustomEffectsWide.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\AnimatedControlNarrow.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\AnimatedControlWide.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\ArcOptionsNarrow.png" />
@@ -285,6 +301,8 @@
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\DrawImageEmulationsWide.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\EffectsNarrow.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\EffectsWide.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Thumbnails\FontMetricsNarrow.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Thumbnails\FontMetricsWide.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\GameofLifeNarrow.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\GameofLifeWide.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\GeometryOperationsNarrow.png" />
@@ -328,5 +346,16 @@
     <Content Include="$(MSBuildThisFileDirectory)BitmapOrientation\orientation_65535.jpg" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\VirtualControlNarrow.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\VirtualControlWide.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Shaders\SketchTexture.jpg" />
+    <Content Include="$(MSBuildThisFileDirectory)Shaders\Sketch.bin" />
+    <Content Include="$(MSBuildThisFileDirectory)Shaders\Ripples.bin" />
+    <Content Include="$(MSBuildThisFileDirectory)Shaders\Dissolve.bin" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)Shaders\Readme.txt" />
+    <None Include="$(MSBuildThisFileDirectory)Shaders\CompileShaders.cmd" />
+    <None Include="$(MSBuildThisFileDirectory)Shaders\Sketch.hlsl" />
+    <None Include="$(MSBuildThisFileDirectory)Shaders\Ripples.hlsl" />
+    <None Include="$(MSBuildThisFileDirectory)Shaders\Dissolve.hlsl" />
   </ItemGroup>
 </Project>

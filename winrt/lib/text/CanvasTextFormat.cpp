@@ -227,6 +227,8 @@ ComPtr<IDWriteTextFormat1> CanvasTextFormat::CreateRealizedTextFormat(bool skipW
     if (!skipWordWrapping) 
         RealizeWordWrapping(textFormat.Get());
 
+    RealizeTrimmingSign(textFormat.Get());
+
     return textFormat;
 }
 
@@ -322,6 +324,8 @@ void CanvasTextFormat::SetShadowPropertiesFromDWrite()
     m_trimmingGranularity = ToCanvasTextTrimmingGranularity(trimmingOptions.granularity);
     m_trimmingDelimiter = ToCanvasTrimmingDelimiter(trimmingOptions.delimiter);
     m_trimmingDelimiterCount = trimmingOptions.delimiterCount;
+
+    m_trimmingSignInformation.SetTrimmingSignFromResource(textFormat.Get());
 }
 
 
@@ -459,6 +463,8 @@ HRESULT __declspec(nothrow) CanvasTextFormat::PropertyPut(T value, TT* dest, FNV
             if (textFormat && realizer)
             {
                 (this->*realizer)(textFormat.Get());
+
+                m_trimmingSignInformation.RecreateInternalTrimmingSignIfNeeded(textFormat.Get());
             }
         });
 }
@@ -595,6 +601,13 @@ IFACEMETHODIMP CanvasTextFormat::put_FontFamily(HSTRING value)
             m_fontCollection.Reset();
 
             SetFrom(&m_fontFamilyName, value);
+
+            //
+            // For properties like this that change something, unrealize and 
+            // don't re-realize, we don't do anything special with the trimming 
+            // sign. The trimming sign will get re-realized along with the 
+            // rest of the text format.
+            //
         });
 }
 
@@ -922,13 +935,18 @@ IFACEMETHODIMP CanvasTextFormat::put_TrimmingDelimiterCount(int32_t value)
 void CanvasTextFormat::RealizeTrimming(IDWriteTextFormat1* textFormat)
 {
     DWRITE_TRIMMING trimmingOptions{};
+
     trimmingOptions.granularity = ToTrimmingGranularity(m_trimmingGranularity);
     trimmingOptions.delimiter = ToTrimmingDelimiter(m_trimmingDelimiter);
     trimmingOptions.delimiterCount = m_trimmingDelimiterCount;
 
+    DWRITE_TRIMMING unused{};
+    ComPtr<IDWriteInlineObject> trimmingSign;
+    textFormat->GetTrimming(&unused, &trimmingSign);
+
     ThrowIfFailed(textFormat->SetTrimming(
         &trimmingOptions,
-        nullptr));        
+        trimmingSign.Get()));
 }
 
 
@@ -1090,18 +1108,28 @@ void CanvasTextFormat::RealizeLastLineWrapping(IDWriteTextFormat1* textFormat)
     ThrowIfFailed(textFormat->SetLastLineWrapping(m_lastLineWrapping));
 }
 
-static WinString GetTextFromLocalizedStrings(
-    int32_t stringIndex,
-    ComPtr<IDWriteLocalizedStrings> const& localizedStrings)
+IFACEMETHODIMP CanvasTextFormat::get_TrimmingSign(CanvasTrimmingSign* value)
 {
-    WinStringBuilder stringBuilder;
-    uint32_t attributeLength;
-    ThrowIfFailed(localizedStrings->GetStringLength(stringIndex, &attributeLength));
-    attributeLength++; // Account for null terminator
+    return PropertyGet(
+        value,
+        m_trimmingSignInformation.GetTrimmingSignShadowState(),
+        [=](IDWriteTextFormat1* textFormat) 
+        {
+            return m_trimmingSignInformation.GetTrimmingSignFromResource(textFormat);
+        });
+}
 
-    auto buffer = stringBuilder.Allocate(attributeLength);
-    ThrowIfFailed(localizedStrings->GetString(stringIndex, buffer, attributeLength));
-    return stringBuilder.Get();
+IFACEMETHODIMP CanvasTextFormat::put_TrimmingSign(CanvasTrimmingSign value)
+{
+    return PropertyPut(
+        value,
+        m_trimmingSignInformation.GetAddressOfTrimmingSign(),
+        &CanvasTextFormat::RealizeTrimmingSign);
+}
+
+void CanvasTextFormat::RealizeTrimmingSign(IDWriteTextFormat1* textFormat)
+{
+    m_trimmingSignInformation.RealizeTrimmingSign(textFormat);
 }
 
 

@@ -14,17 +14,38 @@ namespace NativeComponent
     public:
         static IDirect3DDevice^ CreateDevice()
         {
+            return CreateDevice(false);
+        }
+
+        static IDirect3DDevice^ CreateDevice(bool useFeatureLevel93)
+        {
             using namespace Microsoft::WRL;
 
             ComPtr<ID3D11Device> d3dDevice;
+
+            D3D_FEATURE_LEVEL const* featureLevels;
+            unsigned featureLevelsCount;
+
+            if (useFeatureLevel93)
+            {
+                static const D3D_FEATURE_LEVEL featureLevel93 = D3D_FEATURE_LEVEL_9_3;
+
+                featureLevels = &featureLevel93;
+                featureLevelsCount = 1;
+            }
+            else
+            {
+                featureLevels = nullptr;
+                featureLevelsCount = 0;
+            }
 
             if (FAILED(D3D11CreateDevice(
                 nullptr,            // adapter
                 D3D_DRIVER_TYPE_WARP,
                 nullptr,            // software
-                D3D11_CREATE_DEVICE_DEBUG,
-                nullptr,            // feature levels
-                0,                  // feature levels count
+                D3D11_CREATE_DEVICE_DEBUG | D3D11_CREATE_DEVICE_BGRA_SUPPORT,
+                featureLevels,
+                featureLevelsCount,
                 D3D11_SDK_VERSION,
                 &d3dDevice,
                 nullptr,        // feature level
@@ -34,9 +55,9 @@ namespace NativeComponent
                     nullptr,            // adapter
                     D3D_DRIVER_TYPE_WARP,
                     nullptr,            // software
-                    0,                    // flags
-                    nullptr,            // feature levels
-                    0,                  // feature levels count
+                    D3D11_CREATE_DEVICE_BGRA_SUPPORT,
+                    featureLevels,
+                    featureLevelsCount,
                     D3D11_SDK_VERSION,
                     &d3dDevice,
                     nullptr,        // feature level

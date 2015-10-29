@@ -34,6 +34,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
                           HorizontalAlignment="Stretch"/>
                 <TextBlock>Font:</TextBlock>
                 <ComboBox x:Name="fontPicker" HorizontalAlignment="Stretch" SelectionChanged="fontPicker_SelectionChanged"/>
+                <ToggleButton Content="Use Ellipsis Trimming" IsChecked="{Binding ElementName=control, Path=UseEllipsisTrimming, Mode=TwoWay}" Click="EllipsisTrimming_Click" HorizontalAlignment="Stretch"/>
                 <TextBlock><LineBreak/>Show bounding boxes:</TextBlock>
                 <ToggleButton Content="Per-character layout" IsChecked="{Binding ElementName=control, Path=ShowPerCharacterLayoutBounds, Mode=TwoWay}" Click="InvalidateCanvas" HorizontalAlignment="Stretch"/>
                 <ToggleButton Content="LayoutBounds" IsChecked="{Binding ElementName=control, Path=ShowLayoutBounds, Mode=TwoWay}" Click="InvalidateCanvas" HorizontalAlignment="Stretch"/>

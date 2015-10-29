@@ -547,5 +547,19 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       </remarks>
     </member>
     
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.TrimmingSign" Experimental="true">
+      <summary>Specifies the type of trimming sign used, when text is drawn outside a text layout's requested size extents.</summary>
+      <remarks>
+        <p>
+          By default, no trimming sign is used. The text will just appear chopped off, i.e., truncated.
+        </p>
+        <p>
+          The appearance of an ellipsis trimming sign, if used, will reflect the defaults of this text layout.
+          For example, <see cref="P:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.DefaultFontFamily"/>, and
+          <see cref="P:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.DefaultFontSize"/>.
+        </p>
+      </remarks>
+    </member>
+    
   </members>
 </doc>

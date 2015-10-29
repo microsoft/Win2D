@@ -16,6 +16,8 @@ namespace canvas
 {
     using namespace ABI::Windows::UI::Text;
 
+    static const CanvasTrimmingSign sc_trimmingSigns[] = { CanvasTrimmingSign::None, CanvasTrimmingSign::Ellipsis };
+
     TEST_CLASS(CanvasTextLayoutTests)
     {
     public:
@@ -150,6 +152,7 @@ namespace canvas
             CanvasTextLayoutRegion* hitTestDescArr{};
             ComPtr<ICanvasBrush> canvasBrush;
             ComPtr<ICanvasDevice> canvasDevice;
+            CanvasTrimmingSign ts;
 
             Assert::AreEqual(RO_E_CLOSED, textLayout->GetFormatChangeIndices(&u, &arr));
 
@@ -244,6 +247,9 @@ namespace canvas
             Assert::AreEqual(RO_E_CLOSED, textLayout->get_LastLineWrapping(&b));
             Assert::AreEqual(RO_E_CLOSED, textLayout->put_LastLineWrapping(b));
 
+            Assert::AreEqual(RO_E_CLOSED, textLayout->get_TrimmingSign(&ts));
+            Assert::AreEqual(RO_E_CLOSED, textLayout->put_TrimmingSign(ts));
+
             Assert::AreEqual(RO_E_CLOSED, textLayout->get_LayoutBounds(&rect));
             Assert::AreEqual(RO_E_CLOSED, textLayout->get_LineCount(&i));
             Assert::AreEqual(RO_E_CLOSED, textLayout->get_DrawBounds(&rect));
@@ -318,6 +324,7 @@ namespace canvas
             Assert::AreEqual(E_INVALIDARG, textLayout->GetCharacterRegions(0, 0, nullptr, &hitTestDescArr));
             Assert::AreEqual(E_INVALIDARG, textLayout->GetBrush(0, nullptr));
             Assert::AreEqual(E_INVALIDARG, textLayout->get_Device(nullptr));
+            Assert::AreEqual(E_INVALIDARG, textLayout->get_TrimmingSign(nullptr));
         }
 
         TEST_METHOD_EX(CanvasTextLayoutTests_NegativeIntegralArgs)
@@ -1667,6 +1674,276 @@ namespace canvas
             Assert::AreEqual<size_t>(2, f.MockEffects.size());
             CheckEffectTypeAndInput(f.MockEffects[0].Get(), CLSID_D2D1GaussianBlur, f.MockEffects[1].Get());
             CheckEffectTypeAndInput(f.MockEffects[1].Get(), CLSID_D2D1DpiCompensation, testBitmap.Get(), f.DeviceContext.Get(), dpi);
+        }
+
+        TEST_METHOD_EX(CanvasTextLayoutTests_TrimmingSign_DefaultIsNone)
+        {
+            Fixture f;
+            auto textLayout = f.CreateSimpleTextLayout();
+
+            CanvasTrimmingSign sign;
+            ThrowIfFailed(textLayout->get_TrimmingSign(&sign));
+
+            Assert::AreEqual(CanvasTrimmingSign::None, sign);
+        }
+
+        TEST_METHOD_EX(CanvasTextLayoutTests_TrimmingSign_Property)
+        {
+            Fixture f;
+            auto textLayout = f.CreateSimpleTextLayout();
+
+            ThrowIfFailed(textLayout->put_TrimmingSign(CanvasTrimmingSign::Ellipsis));
+
+            CanvasTrimmingSign sign;
+            ThrowIfFailed(textLayout->get_TrimmingSign(&sign));
+            Assert::AreEqual(CanvasTrimmingSign::Ellipsis, sign);
+
+            ThrowIfFailed(textLayout->put_TrimmingSign(CanvasTrimmingSign::None));
+            ThrowIfFailed(textLayout->get_TrimmingSign(&sign));
+            Assert::AreEqual(CanvasTrimmingSign::None, sign);
+        }
+
+        bool HasTrimmingSign(ComPtr<IDWriteTextLayout> const& dtl)
+        {
+            DWRITE_TRIMMING trimming;
+            ComPtr<IDWriteInlineObject> trimmingSign;
+            ThrowIfFailed(dtl->GetTrimming(&trimming, &trimmingSign));
+
+            return trimmingSign;
+        }
+
+        TEST_METHOD_EX(CanvasTextLayoutTests_TrimmingSign_AffectsWrappedResource)
+        {
+            Fixture f;
+            auto textLayout = f.CreateSimpleTextLayout();
+
+            ThrowIfFailed(textLayout->put_TrimmingSign(CanvasTrimmingSign::Ellipsis));
+            auto dtl1 = GetWrappedResource<IDWriteTextLayout2>(textLayout);
+            Assert::IsTrue(HasTrimmingSign(dtl1));
+
+            ThrowIfFailed(textLayout->put_TrimmingSign(CanvasTrimmingSign::None));
+            auto dtl2 = GetWrappedResource<IDWriteTextLayout2>(textLayout);
+            Assert::IsFalse(HasTrimmingSign(dtl2));
+        }
+
+        TEST_METHOD_EX(CanvasTextLayoutTests_TrimmingSign_InteroppedCustomTrimmingSign_ResetsPropertyToNone)
+        {
+            for (auto sign : sc_trimmingSigns)
+            {
+                Fixture f;
+                auto textLayout = f.CreateSimpleTextLayout();
+
+                ThrowIfFailed(textLayout->put_TrimmingSign(sign));
+
+                auto dtl = GetWrappedResource<IDWriteTextLayout2>(textLayout);
+                DWRITE_TRIMMING trimming{};
+
+                auto factory = f.Adapter->CreateDWriteFactory(DWRITE_FACTORY_TYPE_SHARED);
+                ComPtr<IDWriteInlineObject> customTrimmingSign;
+                ThrowIfFailed(factory->CreateEllipsisTrimmingSign(dtl.Get(), &customTrimmingSign));
+                dtl->SetTrimming(&trimming, customTrimmingSign.Get());
+
+                CanvasTrimmingSign actual;
+                ThrowIfFailed(textLayout->get_TrimmingSign(&actual));
+                Assert::AreEqual(CanvasTrimmingSign::None, actual);
+            }
+        }
+
+        TEST_METHOD_EX(CanvasTextLayoutTests_TrimmingSign_InheritedFromFormat)
+        {
+            for (auto sign : sc_trimmingSigns)
+            {
+                Fixture f;
+
+                auto textFormat = Make<CanvasTextFormat>();
+                ThrowIfFailed(textFormat->put_TrimmingSign(sign));
+
+                auto textLayout = CanvasTextLayout::CreateNew(f.Device.Get(), WinString(L"A string"), textFormat.Get(), 0.0f, 0.0f);
+
+                CanvasTrimmingSign actual;
+                ThrowIfFailed(textLayout->get_TrimmingSign(&actual));
+                Assert::AreEqual(sign, actual);
+            }
+        }
+
+
+        class TrimmingSignFixture : public Fixture
+        {
+            DWRITE_TRIMMING m_trimming;
+            ComPtr<IDWriteInlineObject> m_trimmingSign;
+
+        public:
+            TrimmingSignFixture()
+            {
+                Adapter->MockTextLayout->SetReadingDirectionMethod.AllowAnyCall();
+                Adapter->MockTextLayout->SetFlowDirectionMethod.AllowAnyCall();
+                Adapter->MockTextLayout->SetTextAlignmentMethod.AllowAnyCall();
+                Adapter->MockTextLayout->SetIncrementalTabStopMethod.AllowAnyCall();
+                Adapter->MockTextLayout->SetLastLineWrappingMethod.AllowAnyCall();
+                Adapter->MockTextLayout->SetLineSpacingMethod.AllowAnyCall();
+                Adapter->MockTextLayout->SetOpticalAlignmentMethod.AllowAnyCall();
+                Adapter->MockTextLayout->SetTrimmingMethod.AllowAnyCall(
+                    [=](DWRITE_TRIMMING const* trimming, IDWriteInlineObject* sign)
+                    {
+                        m_trimming = *trimming;
+                        m_trimmingSign = sign;
+                        return S_OK;
+                    });
+
+                Adapter->MockTextLayout->GetTrimmingMethod.AllowAnyCall(
+                    [=](DWRITE_TRIMMING* trimming, IDWriteInlineObject** sign)
+                    {
+                        *trimming = m_trimming;
+                        m_trimmingSign.CopyTo(sign);
+                        return S_OK;
+                    });
+
+                Adapter->MockTextLayout->SetParagraphAlignmentMethod.AllowAnyCall();
+                Adapter->MockTextLayout->SetVerticalGlyphOrientationMethod.AllowAnyCall();
+                Adapter->MockTextLayout->SetWordWrappingMethod.AllowAnyCall();
+            }
+        };
+
+        ComPtr<IDWriteInlineObject> GetTrimmingSign(ComPtr<IDWriteTextLayout> const& textLayout)
+        {
+            DWRITE_TRIMMING unused;
+
+            ComPtr<IDWriteInlineObject> trimmingSign;
+            ThrowIfFailed(textLayout->GetTrimming(&unused, &trimmingSign));
+
+            return trimmingSign;
+        }
+
+        template<typename SetterType>
+        void CanvasTextLayout_TrimmingSign_SurvivesModifyingTextLayoutState_TestCase(
+            HRESULT (__stdcall CanvasTextLayout::*setFn)(SetterType value),
+            SetterType setTo,
+            bool setterRequiresRecreatingEllipsisTrimmingSign = true)
+        {
+            for (auto expected : sc_trimmingSigns)
+            {
+                TrimmingSignFixture f;
+                auto textLayout = f.CreateSimpleTextLayout();
+
+                ThrowIfFailed(textLayout->put_TrimmingSign(expected));
+                auto sign1 = GetTrimmingSign(textLayout->GetResource());
+
+                ((*textLayout.Get()).*setFn)(setTo);
+
+                CanvasTrimmingSign actual;
+                ThrowIfFailed(textLayout->get_TrimmingSign(&actual));
+                auto sign2 = GetTrimmingSign(textLayout->GetResource());
+
+                Assert::AreEqual(expected, actual);
+
+                //
+                // For ellipsis, the trimming sign object should still exist,
+                // but has been changed.
+                // It isn't enough to just check whether we created a new
+                // text layout. There's cases where we need
+                // to create a new trimming sign object, even when the
+                // underlying text Layout resource stays the same.
+                //
+                if (expected == CanvasTrimmingSign::Ellipsis)
+                {
+                    Assert::IsNotNull(sign1.Get());
+                    Assert::IsNotNull(sign2.Get());
+                    if (setterRequiresRecreatingEllipsisTrimmingSign)
+                    {
+                        Assert::AreNotEqual(sign1.Get(), sign2.Get());
+                    }
+                    else
+                    {
+                        Assert::AreEqual(sign1.Get(), sign2.Get());
+                    }
+                }
+            }
+        }
+
+        TEST_METHOD_EX(CanvasTextLayout_TrimmingSign_SurvivesModifyingTextLayoutState)
+        {
+            CanvasTextLayout_TrimmingSign_SurvivesModifyingTextLayoutState_TestCase(
+                &CanvasTextLayout::put_Direction,
+                CanvasTextDirection::RightToLeftThenBottomToTop);
+
+            CanvasTextLayout_TrimmingSign_SurvivesModifyingTextLayoutState_TestCase(
+                &CanvasTextLayout::put_HorizontalAlignment,
+                CanvasHorizontalAlignment::Center);
+
+            CanvasTextLayout_TrimmingSign_SurvivesModifyingTextLayoutState_TestCase(
+                &CanvasTextLayout::put_IncrementalTabStop,
+                3.9f);
+
+            CanvasTextLayout_TrimmingSign_SurvivesModifyingTextLayoutState_TestCase(
+                &CanvasTextLayout::put_LastLineWrapping,
+                static_cast<boolean>(false));
+
+            CanvasTextLayout_TrimmingSign_SurvivesModifyingTextLayoutState_TestCase(
+                &CanvasTextLayout::put_LineSpacing,
+                201.0f);
+
+            CanvasTextLayout_TrimmingSign_SurvivesModifyingTextLayoutState_TestCase(
+                &CanvasTextLayout::put_LineSpacingBaseline,
+                202.0f);
+
+#if WINVER > _WIN32_WINNT_WINBLUE
+            CanvasTextLayout_TrimmingSign_SurvivesModifyingTextLayoutState_TestCase(
+                &CanvasTextLayout::put_LineSpacingMode,
+                CanvasLineSpacingMode::Proportional);
+#endif
+
+            CanvasTextLayout_TrimmingSign_SurvivesModifyingTextLayoutState_TestCase(
+                &CanvasTextLayout::put_OpticalAlignment,
+                CanvasOpticalAlignment::NoSideBearings);
+
+            CanvasTextLayout_TrimmingSign_SurvivesModifyingTextLayoutState_TestCase(
+                &CanvasTextLayout::put_Options,
+                CanvasDrawTextOptions::EnableColorFont,
+                false);
+
+            CanvasTextLayout_TrimmingSign_SurvivesModifyingTextLayoutState_TestCase(
+                &CanvasTextLayout::put_TrimmingDelimiter,
+                static_cast<HSTRING>(WinString(L"K")));
+            
+            CanvasTextLayout_TrimmingSign_SurvivesModifyingTextLayoutState_TestCase(
+                &CanvasTextLayout::put_TrimmingDelimiterCount,
+                2);
+
+            CanvasTextLayout_TrimmingSign_SurvivesModifyingTextLayoutState_TestCase(
+                &CanvasTextLayout::put_TrimmingGranularity,
+                CanvasTextTrimmingGranularity::Character);
+
+            CanvasTextLayout_TrimmingSign_SurvivesModifyingTextLayoutState_TestCase(
+                &CanvasTextLayout::put_VerticalAlignment,
+                CanvasVerticalAlignment::Bottom);
+
+            CanvasTextLayout_TrimmingSign_SurvivesModifyingTextLayoutState_TestCase(
+                &CanvasTextLayout::put_VerticalGlyphOrientation,
+                CanvasVerticalGlyphOrientation::Stacked);
+
+            CanvasTextLayout_TrimmingSign_SurvivesModifyingTextLayoutState_TestCase(
+                &CanvasTextLayout::put_WordWrapping,
+                CanvasWordWrapping::EmergencyBreak);
+        }
+
+        TEST_METHOD_EX(CanvasTextLayoutTests_TrimmingSign_InteropNullsOutSign_ThenCallSetterRequiringNewSign)
+        {
+            TrimmingSignFixture f;
+            auto textLayout = f.CreateSimpleTextLayout();
+
+            ThrowIfFailed(textLayout->put_TrimmingSign(CanvasTrimmingSign::Ellipsis));
+            auto dtl = GetWrappedResource<IDWriteTextLayout2>(textLayout);
+            Assert::IsTrue(HasTrimmingSign(dtl));
+
+            DWRITE_TRIMMING trimming = {};
+            ThrowIfFailed(dtl->SetTrimming(&trimming, nullptr));
+
+            ThrowIfFailed(textLayout->put_Direction(CanvasTextDirection::RightToLeftThenBottomToTop));
+
+            CanvasTrimmingSign sign;
+            ThrowIfFailed(textLayout->get_TrimmingSign(&sign));
+            Assert::AreEqual(CanvasTrimmingSign::None, sign);
+            Assert::IsFalse(HasTrimmingSign(dtl));
         }
     };
 }

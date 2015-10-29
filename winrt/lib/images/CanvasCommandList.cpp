@@ -123,15 +123,25 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     bool IsD2DCommandListClosed(
         ID2D1CommandList* d2dCommandList,
+        ICanvasDevice* device,
         ID2D1DeviceContext* d2dDeviceContext)
     {
         D2D1_RECT_F unusedBounds;
         
+        // If the caller did not provide a device context, get one from the CanvasDevice.
+        DeviceContextLease lease;
+
+        if (!d2dDeviceContext)
+        {
+            lease = As<ICanvasDeviceInternal>(device)->GetResourceCreationDeviceContext();
+            d2dDeviceContext = lease.Get();
+        }
+
         return d2dDeviceContext->GetImageLocalBounds(d2dCommandList, &unusedBounds) != D2DERR_WRONG_STATE;
     }
 
     ComPtr<ID2D1Image> CanvasCommandList::GetD2DImage(
-        ICanvasDevice*,
+        ICanvasDevice* device,
         ID2D1DeviceContext* deviceContext,
         GetImageFlags,
         float /*targetDpi*/,
@@ -148,7 +158,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             // command list to.
             // Therefore, we do a check before closing it.
             //
-            if (!m_hasInteropBeenUsed || !IsD2DCommandListClosed(commandList.Get(), deviceContext))
+            if (!m_hasInteropBeenUsed || !IsD2DCommandListClosed(commandList.Get(), device, deviceContext))
             {
                 ThrowIfFailed(commandList->Close());
             }

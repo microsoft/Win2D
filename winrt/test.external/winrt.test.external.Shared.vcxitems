@@ -34,6 +34,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasRenderTargetTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasStrokeStyleTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasSwapChainTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)CanvasFontSetTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasTextFormatTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasTextLayoutTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasTextRenderingParametersTests.cpp" />

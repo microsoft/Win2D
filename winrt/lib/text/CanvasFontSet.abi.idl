@@ -1,0 +1,119 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+//
+// Licensed under the MIT License. See LICENSE.txt in the project root for license information.
+
+import "inspectable.idl";
+import "Windows.Foundation.idl";
+import "Windows.UI.Text.idl";
+
+namespace Microsoft.Graphics.Canvas.Text
+{          
+    runtimeclass CanvasFontSet;
+
+    //
+    // While a few of these (weight, stretch, style) could be strongly typed, the strong 
+    // typing doesn't generalize. It's common for apps to want to simply poll all the properties
+    // from a font, to display them in a list, and use one code path to do that.
+    //
+    [version(VERSION)]
+    typedef enum CanvasFontPropertyIdentifier
+    {
+        None,
+        FamilyName,
+        PreferredFamilyName,
+        FaceName,
+        FullName,
+        Win32FamilyName,
+        PostscriptName,
+        DesignScriptLanguageTag,
+        SupportedScriptLanguageTag,
+        SemanticTag,
+        Weight,
+        Stretch,
+        Style,
+        Total
+    } CanvasFontPropertyIdentifier;
+
+    [version(VERSION)]
+    typedef struct CanvasFontProperty
+    {
+        CanvasFontPropertyIdentifier Identifier;
+        HSTRING Value;
+        HSTRING Locale;
+    } CanvasFontProperty;
+
+    [version(VERSION), uuid(0A5BFB92-1F3C-459F-9D7E-A6289DD093C0), exclusiveto(CanvasFontSet)]
+    interface ICanvasFontSet : IInspectable
+        requires Windows.Foundation.IClosable
+    {
+        // Returns the index of a font face, and whether it was found in the set.
+        HRESULT TryFindFontFace(
+            [in] CanvasFontFace* fontFace, 
+            [out] int* index, 
+            [out, retval] boolean* succeeded);
+
+        [propget] HRESULT Fonts([out, retval] Windows.Foundation.Collections.IVectorView<CanvasFontFace*>** value);
+#if WINVER > _WIN32_WINNT_WINBLUE
+
+        [overload("GetMatchingFonts")]
+        HRESULT GetMatchingFontsFromProperties(
+            [in] UINT32 propertyCount,
+            [in, size_is(propertyCount)] CanvasFontProperty* propertyElements,
+            [out, retval] CanvasFontSet** matchingFonts);
+
+        [overload("GetMatchingFonts")]
+        HRESULT GetMatchingFontsFromWwsFamily(
+            [in] HSTRING familyName,
+            [in] Windows.UI.Text.FontWeight weight,
+            [in] Windows.UI.Text.FontStretch stretch,
+            [in] Windows.UI.Text.FontStyle style,
+            [out, retval] CanvasFontSet** matchingFonts);
+
+        HRESULT CountFontsMatchingProperty(
+            [in] CanvasFontProperty property,
+            [out, retval] UINT32* count);
+
+        // Returns the property values of a specific font index.
+        [overload("GetPropertyValues"), default_overload]
+        HRESULT GetPropertyValuesFromIndex(
+            [in] UINT32 fontIndex,
+            [in] CanvasFontPropertyIdentifier propertyIdentifier,
+            [out, retval] Windows.Foundation.Collections.IMapView<HSTRING, HSTRING>** values);
+
+        // Returns matching values in priority order according to the language list.
+        [overload("GetPropertyValues")]
+        HRESULT GetPropertyValuesFromIdentifier(
+            [in] CanvasFontPropertyIdentifier propertyIdentifier,
+            [in] HSTRING preferredLocaleNames, // Semicolon-delimited
+            [out] UINT32* valueCount,
+            [out, size_is(, *valueCount), retval] CanvasFontProperty** valueElements);
+
+        //
+        // Returns all property values in the set- can be useful for displaying a family
+        // list or tag cloud.
+        //
+        [overload("GetPropertyValues")]
+        HRESULT GetPropertyValues(
+            [in] CanvasFontPropertyIdentifier propertyIdentifier,
+            [out] UINT32* valueCount,
+            [out, size_is(, *valueCount), retval] CanvasFontProperty** valueElements);
+#endif
+
+        // Not exposed directly: 
+        // FindFontFaceReference, GetFontFaceReference. 
+        // We don't expose a dedicated object for font locality.
+
+    }
+        
+    [version(VERSION), uuid(5F4275CE-BCFA-48C5-9E67-FBE9866D4924), exclusiveto(CanvasFontSet)]
+    interface ICanvasFontSetStatics : IInspectable
+    {
+        HRESULT GetSystemFontSet([out, retval] CanvasFontSet** fontSet);
+    }
+
+    [version(VERSION), activatable(VERSION), static(ICanvasFontSetStatics, VERSION)]
+    runtimeclass CanvasFontSet
+    {
+        [default] interface ICanvasFontSet;
+    }    
+}

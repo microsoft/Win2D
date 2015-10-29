@@ -49,6 +49,11 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)drawing\CanvasActiveLayer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)drawing\CanvasSpriteBatch.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)drawing\DeviceContextPool.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\shader\PixelShaderEffect.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\shader\PixelShaderEffectImpl.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\shader\PixelShaderTransform.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\shader\ShaderDescription.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\shader\SharedShaderState.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\ChromaKeyEffect.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\ContrastEffect.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\EdgeDetectionEffect.h" />
@@ -82,7 +87,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)printing\DeferrableTaskScheduler.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\ApiInformationAdapter.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\CachedResourceReference.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)utils\HashUtilities.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\LockUtilities.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)utils\MathUtilities.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\TemporaryTransform.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)xaml\AnimatedControlAsyncAction.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)xaml\BaseControl.h" />
@@ -155,11 +162,14 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)images\CanvasImage.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)images\CanvasRenderTarget.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)images\TextureUtilities.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)text\CanvasFontFace.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)text\CanvasFontSet.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)text\CanvasTextFormat.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)text\CanvasTextLayout.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)text\CanvasTextRenderingParameters.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)text\CustomFontManager.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)text\TextUtilities.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)text\TrimmingSignInformation.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\Conversion.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\D2DResourceLock.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\DxgiUtilities.h" />
@@ -171,6 +181,10 @@
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)composition\CanvasComposition.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)drawing\CanvasSpriteBatch.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\shader\PixelShaderEffect.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\shader\PixelShaderEffectImpl.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\shader\PixelShaderTransform.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\shader\SharedShaderState.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\ChromaKeyEffect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\ContrastEffect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\EdgeDetectionEffect.cpp" />
@@ -203,6 +217,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)printing\CanvasPrintEventArgs.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)printing\DeferrableTask.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)utils\ApiInformationAdapter.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)utils\HashUtilities.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)utils\ResourceManager.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)xaml\CanvasAnimatedControl.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)xaml\CanvasAnimatedControlAdapter.cpp" />
@@ -270,6 +285,8 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)images\CanvasImage.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)images\CanvasRenderTarget.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)images\TextureUtilities.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)text\CanvasFontFace.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)text\CanvasFontSet.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)text\CanvasTextFormat.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)text\CanvasTextLayout.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)text\CanvasTextRenderingParameters.cpp" />
@@ -360,12 +377,15 @@
     <None Include="$(MSBuildThisFileDirectory)images\CanvasBitmap.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)images\CanvasCommandList.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)images\CanvasImage.abi.idl" />
+    <None Include="$(MSBuildThisFileDirectory)text\CanvasFontFace.abi.idl" />
+    <None Include="$(MSBuildThisFileDirectory)text\CanvasFontSet.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)text\CanvasTextFormat.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)text\CanvasTextLayout.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)text\CanvasTextRenderingParameters.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)directx\WinRTDirect3D11.idl" />
     <None Include="$(MSBuildThisFileDirectory)directx\WinRTDirectXCommon.idl" />
     <None Include="$(MSBuildThisFileDirectory)printing\CanvasPrintDocument.abi.idl" />
+    <None Include="$(MSBuildThisFileDirectory)effects\shader\PixelShaderEffect.abi.idl" />
   </ItemGroup>
   <ItemGroup>
     <ProjectCapability Include="SourceItemsFromImports" />

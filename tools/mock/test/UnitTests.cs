@@ -27,6 +27,9 @@ namespace Mock.Test
         [DeploymentItem("Deployed Files/MockD2DEllipseGeometry.h", "mock/expected")]
         [DeploymentItem("Deployed Files/MockD2DTransformedGeometry.h", "mock/expected")]
         [DeploymentItem("Deployed Files/MockD2DGeometryGroup.h", "mock/expected")]
+        [DeploymentItem("Deployed Files/MockD2DDrawInfo.h", "mock/expected")]
+        [DeploymentItem("Deployed Files/MockD2DEffectContext.h", "mock/expected")]
+        [DeploymentItem("Deployed Files/MockD2DTransformGraph.h", "mock/expected")]
         public void OutputIsInSync()
         {
             //
@@ -49,7 +52,7 @@ namespace Mock.Test
             FileInfo[] expectedGeneratedFiles = expectedDirectoryInfo.GetFiles("*.h");
             FileInfo[] actualGeneratedFiles = actualDirectoryInfo.GetFiles(); // Used for .Length only
 
-            Assert.AreEqual(8, expectedGeneratedFiles.Length);
+            Assert.AreEqual(11, expectedGeneratedFiles.Length);
             Assert.AreEqual(expectedGeneratedFiles.Length, actualGeneratedFiles.Length);
 
             CheckFilesMatch(expectedGeneratedFiles, actualDir);

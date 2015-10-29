@@ -5,22 +5,22 @@
 #pragma once
 
 #if WINVER > _WIN32_WINNT_WINBLUE
-typedef IDWriteRenderingParams3 DwriteTextParamsType;
+typedef IDWriteRenderingParams3 DWriteTextParamsType;
 #else
-typedef IDWriteRenderingParams2 DwriteTextParamsType;
+typedef IDWriteRenderingParams2 DWriteTextParamsType;
 #endif
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Text
 {
     class CanvasTextRenderingParameters : RESOURCE_WRAPPER_RUNTIME_CLASS(
-        DwriteTextParamsType,
+        DWriteTextParamsType,
         CanvasTextRenderingParameters,
         ICanvasTextRenderingParameters)
     {
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_Text_CanvasTextRenderingParameters, BaseTrust);
 
     public:
-        CanvasTextRenderingParameters(DwriteTextParamsType* renderingParams);
+        CanvasTextRenderingParameters(DWriteTextParamsType* renderingParams);
 
         IFACEMETHOD(get_RenderingMode)(CanvasTextRenderingMode* value) override;
 

@@ -10,6 +10,17 @@ using namespace Microsoft::Graphics::Canvas;
 
 TEST_CLASS(CanvasTextFormatTests)
 {
+    ComPtr<IDWriteFactory> m_dwriteFactory;
+
+public:
+    CanvasTextFormatTests()
+    {
+        ThrowIfFailed(DWriteCreateFactory(
+            DWRITE_FACTORY_TYPE_SHARED,
+            __uuidof(&m_dwriteFactory),
+            static_cast<IUnknown**>(&m_dwriteFactory)));
+    }
+
     TEST_METHOD(CanvasTextFormat_Construction)
     {
         auto format = ref new CanvasTextFormat();
@@ -17,12 +28,6 @@ TEST_CLASS(CanvasTextFormatTests)
 
     TEST_METHOD(CanvasTextFormat_Interop)
     {
-        ComPtr<IDWriteFactory2> factory;
-        ThrowIfFailed(DWriteCreateFactory(
-            DWRITE_FACTORY_TYPE_SHARED,
-            __uuidof(&factory),
-            static_cast<IUnknown**>(&factory)));
-
         //
         // Create a dwriteTextFormat with non-default values set for all the
         // properties.  An explicit font collection is set, and this is expected
@@ -33,7 +38,7 @@ TEST_CLASS(CanvasTextFormatTests)
         auto fontCollection = Make<StubDWriteFontCollection>();
 
         ComPtr<IDWriteTextFormat> dwriteTextFormatBase;
-        ThrowIfFailed(factory->CreateTextFormat(
+        ThrowIfFailed(m_dwriteFactory->CreateTextFormat(
             L"Arial",
             fontCollection.Get(),
             DWRITE_FONT_WEIGHT_THIN,
@@ -186,6 +191,7 @@ TEST_CLASS(CanvasTextFormatTests)
         CHECK(VerticalGlyphOrientation, CanvasVerticalGlyphOrientation::Default);
         CHECK(OpticalAlignment,         CanvasOpticalAlignment::Default);
         CHECK(LastLineWrapping,         true);
+        CHECK(TrimmingSign,             CanvasTrimmingSign::None);
 
         //
         // Verify that a new IDWriteTextFormat was indeed created and that it
@@ -231,14 +237,8 @@ TEST_CLASS(CanvasTextFormatTests)
 
     void AssertIsInvalidCombination(DWRITE_READING_DIRECTION readingDirection, DWRITE_FLOW_DIRECTION flowDirection)
     {
-        ComPtr<IDWriteFactory2> factory;
-        ThrowIfFailed(DWriteCreateFactory(
-            DWRITE_FACTORY_TYPE_SHARED,
-            __uuidof(&factory),
-            static_cast<IUnknown**>(&factory)));
-
         ComPtr<IDWriteTextFormat> invalidDWriteTextFormat;
-        ThrowIfFailed(factory->CreateTextFormat(
+        ThrowIfFailed(m_dwriteFactory->CreateTextFormat(
             L"Arial",
             nullptr,
             DWRITE_FONT_WEIGHT_THIN,
@@ -314,6 +314,188 @@ TEST_CLASS(CanvasTextFormatTests)
             }
         }
         Assert::IsTrue(simSunFound);
+    }
+
+    void VerifyTrimmingState(CanvasTextFormat^ canvasTextFormat)
+    {
+        Assert::AreEqual(CanvasTextTrimmingGranularity::Character, canvasTextFormat->TrimmingGranularity);
+        Assert::AreEqual(L"!", canvasTextFormat->TrimmingDelimiter);
+        Assert::AreEqual(2, canvasTextFormat->TrimmingDelimiterCount);
+    }
+
+    TEST_METHOD(CanvasTextFormat_Interop_TrimmingSign_None)
+    {
+        //
+        // This is organized out separately from the main interop test, since
+        // trimming signs need to use an actual (non-mock) font collection.
+        //
+
+        ComPtr<IDWriteFontCollection> fontCollection;
+        ThrowIfFailed(m_dwriteFactory->GetSystemFontCollection(&fontCollection));
+
+        ComPtr<IDWriteTextFormat> dwriteTextFormat;
+        ThrowIfFailed(m_dwriteFactory->CreateTextFormat(
+            L"Arial",
+            fontCollection.Get(),
+            DWRITE_FONT_WEIGHT_THIN,
+            DWRITE_FONT_STYLE_OBLIQUE,
+            DWRITE_FONT_STRETCH_ULTRA_EXPANDED,
+            12.0,
+            L"locale",
+            &dwriteTextFormat));
+
+        ComPtr<IDWriteInlineObject> ellipsisTrimmingSign;
+        ThrowIfFailed(m_dwriteFactory->CreateEllipsisTrimmingSign(dwriteTextFormat.Get(), &ellipsisTrimmingSign));
+
+        auto trimming = DWRITE_TRIMMING{ DWRITE_TRIMMING_GRANULARITY_CHARACTER, L'!', 2 };
+        ThrowIfFailed(dwriteTextFormat->SetTrimming(&trimming, ellipsisTrimmingSign.Get()));
+
+        auto canvasTextFormat = GetOrCreate<CanvasTextFormat>(dwriteTextFormat.Get());
+
+        auto wrappedTextFormat = GetWrappedResource<IDWriteTextFormat>(canvasTextFormat);
+        Assert::AreEqual<void*>(dwriteTextFormat.Get(), wrappedTextFormat.Get());
+
+        //
+        // Even though we manually set a trimming sign, the getter should still report None,
+        // and nothing should clobber the trimming state.
+        //
+        Assert::AreEqual(CanvasTrimmingSign::None, canvasTextFormat->TrimmingSign);
+        VerifyTrimmingState(canvasTextFormat);
+
+        //
+        // Null out the trimming sign; shouldn't cause any misbehavior.
+        //
+        ThrowIfFailed(dwriteTextFormat->SetTrimming(&trimming, nullptr));
+        Assert::AreEqual(CanvasTrimmingSign::None, canvasTextFormat->TrimmingSign);
+        VerifyTrimmingState(canvasTextFormat);
+
+        //
+        // Set a property that would cause re-realization.
+        //
+        canvasTextFormat->FontFamily = L"Comic Sans MS";
+        Assert::AreEqual(CanvasTrimmingSign::None, canvasTextFormat->TrimmingSign);
+        VerifyTrimmingState(canvasTextFormat);
+    }
+
+    TEST_METHOD(CanvasTextFormat_Interop_TrimmingSign_Ellipsis)
+    {
+        ComPtr<IDWriteFontCollection> fontCollection;
+        ThrowIfFailed(m_dwriteFactory->GetSystemFontCollection(&fontCollection));
+
+        ComPtr<IDWriteTextFormat> dwriteTextFormat;
+        ThrowIfFailed(m_dwriteFactory->CreateTextFormat(
+            L"Arial",
+            fontCollection.Get(),
+            DWRITE_FONT_WEIGHT_THIN,
+            DWRITE_FONT_STYLE_OBLIQUE,
+            DWRITE_FONT_STRETCH_ULTRA_EXPANDED,
+            12.0,
+            L"locale",
+            &dwriteTextFormat));
+
+        auto trimming = DWRITE_TRIMMING{ DWRITE_TRIMMING_GRANULARITY_CHARACTER, L'!', 2 };
+        ThrowIfFailed(dwriteTextFormat->SetTrimming(&trimming, nullptr));
+
+        auto canvasTextFormat = GetOrCreate<CanvasTextFormat>(dwriteTextFormat.Get());
+
+        auto wrappedTextFormat = GetWrappedResource<IDWriteTextFormat>(canvasTextFormat);
+        Assert::AreEqual<void*>(dwriteTextFormat.Get(), wrappedTextFormat.Get());
+
+        //
+        // Set the trimming sign to ellipsis. Nnothing should clobber the trimming state.
+        //
+        canvasTextFormat->TrimmingSign = CanvasTrimmingSign::Ellipsis;
+        Assert::AreEqual(CanvasTrimmingSign::Ellipsis, canvasTextFormat->TrimmingSign);
+        VerifyTrimmingState(canvasTextFormat);
+
+        //
+        // Nulling out the interopped trimming sign should reset the trimming sign property.
+        //
+        ThrowIfFailed(dwriteTextFormat->SetTrimming(&trimming, nullptr));
+        Assert::AreEqual(CanvasTrimmingSign::None, canvasTextFormat->TrimmingSign);
+        VerifyTrimmingState(canvasTextFormat);
+    }
+
+    TEST_METHOD(CanvasTextFormat_Interop_TrimmingSign_MaintainsShadowPropertyAfterUnrealize)
+    {
+        ComPtr<IDWriteFontCollection> fontCollection;
+        ThrowIfFailed(m_dwriteFactory->GetSystemFontCollection(&fontCollection));
+
+        ComPtr<IDWriteTextFormat> dwriteTextFormat;
+        ThrowIfFailed(m_dwriteFactory->CreateTextFormat(
+            L"Arial",
+            fontCollection.Get(),
+            DWRITE_FONT_WEIGHT_THIN,
+            DWRITE_FONT_STYLE_OBLIQUE,
+            DWRITE_FONT_STRETCH_ULTRA_EXPANDED,
+            12.0,
+            L"locale",
+            &dwriteTextFormat));
+
+        //
+        // Set the trimming sign on the wrapper to Ellipsis.
+        //
+        auto canvasTextFormat = GetOrCreate<CanvasTextFormat>(dwriteTextFormat.Get());
+        canvasTextFormat->TrimmingSign = CanvasTrimmingSign::Ellipsis;
+
+        //
+        // Null out the trimming sign on the DWrite object.
+        //
+        auto trimming = DWRITE_TRIMMING{ DWRITE_TRIMMING_GRANULARITY_CHARACTER, L'!', 2 };
+        ThrowIfFailed(dwriteTextFormat->SetTrimming(&trimming, nullptr));
+
+        //
+        // Do something that unrealizes the text format. In this case, we change the font family
+        //
+        canvasTextFormat->FontFamily = "Times New Roman";
+
+        //
+        // The trimming sign property should 'know' that we nulled it out, despite being unrealized.
+        //
+        Assert::AreEqual(CanvasTrimmingSign::None, canvasTextFormat->TrimmingSign);
+    }
+
+    TEST_METHOD(CanvasTextFormat_Interop_TrimmingSign_Ellipsis_IntropAssignsCustomTrimmingSign)
+    {
+        ComPtr<IDWriteFontCollection> fontCollection;
+        ThrowIfFailed(m_dwriteFactory->GetSystemFontCollection(&fontCollection));
+
+        ComPtr<IDWriteTextFormat> dwriteTextFormat;
+        ThrowIfFailed(m_dwriteFactory->CreateTextFormat(
+            L"Arial",
+            fontCollection.Get(),
+            DWRITE_FONT_WEIGHT_THIN,
+            DWRITE_FONT_STYLE_OBLIQUE,
+            DWRITE_FONT_STRETCH_ULTRA_EXPANDED,
+            12.0,
+            L"locale",
+            &dwriteTextFormat));
+
+        auto canvasTextFormat = GetOrCreate<CanvasTextFormat>(dwriteTextFormat.Get());
+        canvasTextFormat->TrimmingSign = CanvasTrimmingSign::Ellipsis;
+
+        ComPtr<IDWriteInlineObject> ellipsisTrimmingSign;
+        ThrowIfFailed(m_dwriteFactory->CreateEllipsisTrimmingSign(dwriteTextFormat.Get(), &ellipsisTrimmingSign));
+
+        auto trimming = DWRITE_TRIMMING{ DWRITE_TRIMMING_GRANULARITY_CHARACTER, L'!', 2 };
+        ThrowIfFailed(dwriteTextFormat->SetTrimming(&trimming, ellipsisTrimmingSign.Get()));
+
+        //
+        // Do something that unrealizes the text format. In this case, we change the font family
+        //
+        canvasTextFormat->FontFamily = "Times New Roman";
+
+        //
+        // The custom sign should still be set to the DWrite object.
+        //
+        ComPtr<IDWriteInlineObject> actualDWriteTrimmingSign;
+        ThrowIfFailed(dwriteTextFormat->GetTrimming(&trimming, &actualDWriteTrimmingSign));
+        Assert::IsTrue(IsSameInstance(ellipsisTrimmingSign.Get(), actualDWriteTrimmingSign.Get()));
+
+        //
+        // The trimming sign property should honor the fact that we assigned a custom sign, and it isn't ellipsis anymore
+        //
+        Assert::AreEqual(CanvasTrimmingSign::None, canvasTextFormat->TrimmingSign);
     }
 };
 

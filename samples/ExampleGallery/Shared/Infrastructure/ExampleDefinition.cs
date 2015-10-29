@@ -55,6 +55,7 @@ namespace ExampleGallery
 
             // Show capabilities of the API.
             new ExampleDefinition("Effects", typeof(EffectsExample)),
+            new ExampleDefinition("Custom Effects", typeof(CustomEffects)),
             new ExampleDefinition("Geometry Operations", typeof(GeometryOperations)),
             new ExampleDefinition("Layers", typeof(LayersExample)),
 #if WINDOWS_UWP
@@ -70,6 +71,7 @@ namespace ExampleGallery
             new ExampleDefinition("Text Outlines", typeof(TextOutlines)),
             new ExampleDefinition("Custom Fonts", typeof(CustomFonts)),
             new ExampleDefinition("Text Directions", typeof(TextDirectionsExample)),
+            new ExampleDefinition("Font Metrics", typeof(FontMetrics)),
 
             // Show how to use the API.
             new ExampleDefinition("Custom Control", typeof(CustomControlExample)),

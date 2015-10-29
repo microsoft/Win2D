@@ -1,0 +1,128 @@
+<?xml version="1.0"?>
+<!--
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+Licensed under the MIT License. See LICENSE.txt in the project root for license information.
+-->
+
+<doc>
+  <assembly>
+    <name>Microsoft.Graphics.Canvas</name>
+  </assembly>
+  <members>
+    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasFontProperty" Experimental="true">
+      <summary>Describes a localized string attribute of a font.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasFontProperty.Identifier">
+      <summary>Indentifies which property of the font it is.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasFontProperty.Value">
+      <summary>Specifies the value of the property.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasFontProperty.Locale">
+      <summary>Specifies the locale of a property value.</summary>
+      <remarks>A font may have the same value represented multiple times for different locales.</remarks>
+    </member>
+    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasFontPropertyIdentifier"  Experimental="true">
+      <summary>Indentifies a property of the font.</summary>
+      <remarks>
+      	In a font set's assortment of properties, a PreferredFamilyName property is 
+      	typically only present if it differs from the GDI-compatible family name.
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasFontPropertyIdentifier.None">
+      <summary>An unspecified font property identifier.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasFontPropertyIdentifier.FamilyName">
+      <summary>The name of the font family.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasFontPropertyIdentifier.PreferredFamilyName">
+      <summary>Family name preferred by the designer. This enables font designers to group more than four fonts in a single family without losing compatibility with GDI. </summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasFontPropertyIdentifier.FaceName">
+      <summary>Face name of the font, for example Regular or Bold.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasFontPropertyIdentifier.FullName">
+      <summary>The full name of the font, for example "Arial Bold", from name id 4 in the name table.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasFontPropertyIdentifier.Win32FamilyName">
+      <summary>GDI-compatible family name. Because GDI allows a maximum of four fonts per family, fonts in the same family may have different GDI-compatible family names, for example "Arial", "Arial Narrow", "Arial Black".</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasFontPropertyIdentifier.PostscriptName">
+      <summary>The postscript name of the font, for example "GillSans-Bold", from name id 6 in the name table.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasFontPropertyIdentifier.DesignScriptLanguageTag">
+      <summary>
+        Script/language tag to identify the scripts or languages that the font was 
+        primarily designed to support.
+      </summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasFontPropertyIdentifier.SupportedScriptLanguageTag">
+      <summary>Script/language tag to identify the scripts or languages that the font declares it is able to support.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasFontPropertyIdentifier.SemanticTag">
+      <summary>Semantic tag to describe the font, for example Fancy, Decorative, Handmade, Sans-serif, Swiss, Pixel, Futuristic.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasFontPropertyIdentifier.Weight">
+      <summary>Weight of the font represented as a decimal string in the range 1-999.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasFontPropertyIdentifier.Stretch">
+      <summary>Stretch of the font represented as a decimal string in the range 1-9.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasFontPropertyIdentifier.Style">
+      <summary>Style of the font represented as a decimal string in the range 0-2.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasFontPropertyIdentifier.Total">
+      <summary>The total number of properties.</summary>
+    </member>
+    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasFontSet" Experimental="true">
+      <summary>Represents a grouping of fonts.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasFontSet.#ctor">
+      <summary>Initializes a new instance of the CanvasFontSet class.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasFontSet.TryFindFontFace(Microsoft.Graphics.Canvas.Text.CanvasFontFace,System.Int32@)">
+      <summary>Gets the index of the matching font face in the font set, with the same file, face index, and simulations.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasFontSet.Dispose">
+      <summary>Releases all resources used by the CanvasFontSet.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasFontSet.Fonts">
+      <summary>Gets a collection representing the individual fonts in the set.</summary>
+      <remarks>This method returns a list of <see cref="T:Microsoft.Graphics.Canvas.Text.CanvasFontFace"/> objects.</remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasFontSet.GetSystemFontSet">
+      <summary>Gets a grouping of all the fonts available locally on the system.</summary>
+    </member>
+    
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasFontSet.GetMatchingFontsFromProperties(Microsoft.Graphics.Canvas.Text.CanvasFontProperty[])" Win10="true">
+      <summary>Gets a subset of fonts matching the specified criteria.</summary>
+    </member>
+    
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasFontSet.GetMatchingFontsFromProperties(System.String,Windows.UI.Text.FontWeight,Windows.UI.Text.FontStretch,Windows.UI.Text.FontStyle)" Win10="true">
+      <summary>Gets a subset of fonts within the given WWS family prioritized by WWS distance.</summary>
+    </member>
+    
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasFontSet.CountFontsMatchingProperty(Microsoft.Graphics.Canvas.Text.CanvasFontProperty)" Win10="true">
+      <summary>Returns a count of how many times a given property value occurs in the set.</summary>
+    </member>
+    
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasFontSet.GetPropertyValuesFromIndex(System.UInt32,Microsoft.Graphics.Canvas.Text.CanvasFontPropertyIdentifier)" Win10="true">
+      <summary>Returns the property values of a specific font item index.</summary>
+    </member>
+    
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasFontSet.GetPropertyValuesFromIdentifier(Microsoft.Graphics.Canvas.Text.CanvasFontPropertyIdentifier,System.String)" Win10="true">
+      <summary>Returns all unique property values in the set, which can be used for purposes such as displaying a family list or tag cloud.</summary>
+      <remarks>
+        <p>Values are returned in priority order according to the language list, such that if a font contains more than one localized name, the preferred one will be returned.</p>
+        <p>The language list is a string of semicolon-delimited locales, in order of preference. For example, "fr-FR;en-US". </p>
+      </remarks>
+    </member>
+    
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasFontSet.GetPropertyValuesFromIdentifier(Microsoft.Graphics.Canvas.Text.CanvasFontPropertyIdentifier)" Win10="true">
+      <summary>Returns all unique property values in the set, which can be used for purposes such as displaying a family list or tag cloud.</summary>
+      <remarks>All values are returned regardless of language, including all localized names.</remarks>
+    </member>
+    
+  </members>
+</doc>

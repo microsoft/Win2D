@@ -20,6 +20,19 @@ STRING(CanvasPrintDocumentGetDeferralMayOnlyBeCalledOnce, L"GetDeferral can only
 STRING(CanvasPrintDocumentDeferralCompleteMayOnlyBeCalledOnce, L"CanvasPrintDeferral.Complete may only be called once.")
 STRING(CommandListCannotBeDrawnToAfterItHasBeenUsed, L"CanvasCommandList.CreateDrawingSession cannot be called after the CanvasCommandList has been used as an image.")
 STRING(CreateDrawingSessionCalledBeforeRegionsInvalidated, L"CreateDrawingSession cannot be called before the RegionsInvalidated event has been raised.");
+STRING(CustomEffectBadFeatureLevel, L"This shader requires a higher Direct3D feature level than is supported by the device. Check PixelShaderEffect.IsSupported before using it.");
+STRING(CustomEffectBadShader, L"Unable to load the specified shader. This should be a Direct3D pixel shader compiled for shader model 4.");
+STRING(CustomEffectBadPropertyType, L"Shader property '%S' is an unsupported type.");
+STRING(CustomEffectInputRectTooBig, L"Drawing this effect would require too big an intermediate surface. Make sure PixelShaderEffect.Source%dMapping is set correctly, or wrap the source image with a CropEffect to reduce its size.");
+STRING(CustomEffectMaxOffsetWithoutOffsetMapping, L"When PixelShaderEffect.MaxSamplerOffset is set, at least one source should be using SamplerCoordinateMapping.Offset.");
+STRING(CustomEffectOffsetMappingWithoutMaxOffset, L"When PixelShaderEffect.Source%dMapping is set to Offset, MaxSamplerOffset should also be set.");
+STRING(CustomEffectSourceOutOfRange, L"Source%d must be null when using this pixel shader (shader inputs: %d).");
+STRING(CustomEffectTooManyConstantBuffers, L"Unsupported constant buffer layout. There should be a single constant buffer bound to b0.");
+STRING(CustomEffectTooManyTextures, L"Shader has too many input textures.");
+STRING(CustomEffectUnknownProperty, L"Shader does not have a property named '%s'.");
+STRING(CustomEffectWrongPropertyArraySize, L"Wrong array size. Shader property '%s' is an array of %d elements.");
+STRING(CustomEffectWrongPropertyType, L"Wrong type. Shader property '%s' is of type %s.");
+STRING(CustomEffectWrongPropertyTypeArray, L"Wrong type. Shader property '%s' is an array of %s.");
 STRING(DeviceExpectedToBeLost, L"This API was unexpectedly called when the Direct3D device is not lost.")
 STRING(DidNotPopLayer, L"After calling CanvasDrawingSession.CreateLayer, you must close the resulting CanvasActiveLayer before ending the CanvasDrawingSession.")
 STRING(DrawImageMinBlendNotSupported, L"This DrawImage overload is not valid when CanvasDrawingSession.Blend is set to CanvasBlend.Min.")
@@ -39,6 +52,7 @@ STRING(PathBuilderAddGeometryMidFigure, L"CanvasPathBuilder.AddGeometry may not 
 STRING(PathBuilderClosedMidFigure, L"There was an attempt to use a CanvasPathBuilder, which was missing a call to CanvasPathBuilder.EndFigure.")
 STRING(PixelColorsFormatRestriction, L"This method only supports resources with pixel format DirectXPixelFormat.B8G8R8A8UIntNormalized.")
 STRING(PoppedWrongLayer, L"Attempting to close a CanvasActiveLayer that is not top of the stack. The most recently created layer must be closed first.")
+STRING(RemoteFontUnavailable, L"The requested font is not locally available.")
 STRING(ResourceManagerNoDevice, L"To wrap this resource type, a device parameter must be passed to GetOrCreate.")
 STRING(ResourceManagerNoDpi, L"To wrap this resource type, a dpi parameter must be passed to GetOrCreate.")
 STRING(ResourceManagerUnknownType, L"Unsupported type. Win2D is not able to wrap the specified resource.")

@@ -30,7 +30,7 @@ namespace CodeGen
 
     }
 
-    class Primitive : QualifiableType
+    public class Primitive : QualifiableType
     {
         public Primitive(XmlBindings.Primitive xmlData, Overrides.XmlBindings.Primitive overrides, Dictionary<string, QualifiableType> typeDictionary)
         {

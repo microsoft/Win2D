@@ -872,7 +872,7 @@ TEST_CLASS(CanvasEffectsTests)
         ExpectCOMException(E_NOINTERFACE, L"Unsupported type. Win2D is not able to wrap the specified resource.",
             [&]
             {
-                GetOrCreate<ICanvasImage>(d2dEffect.Get());
+                GetOrCreate<ICanvasImage>(device, d2dEffect.Get());
             });
     }
 
@@ -918,14 +918,28 @@ TEST_CLASS(CanvasEffectsTests)
     {
         auto device = ref new CanvasDevice();
 
-        CanvasBitmap^ images[] =
+        CanvasCommandList^ images[] =
         {
-            ref new CanvasRenderTarget(device, 1, 1, DEFAULT_DPI),
-            ref new CanvasRenderTarget(device, 1, 1, DEFAULT_DPI),
-            ref new CanvasRenderTarget(device, 1, 1, DEFAULT_DPI),
-            ref new CanvasRenderTarget(device, 1, 1, DEFAULT_DPI),
-            ref new CanvasRenderTarget(device, 1, 1, DEFAULT_DPI),
+            ref new CanvasCommandList(device),
+            ref new CanvasCommandList(device),
+            ref new CanvasCommandList(device),
+            ref new CanvasCommandList(device),
+            ref new CanvasCommandList(device),
         };
+
+        ComPtr<ID2D1CommandList> d2dImages[] =
+        {
+            GetWrappedResource<ID2D1CommandList>(images[0]),
+            GetWrappedResource<ID2D1CommandList>(images[1]),
+            GetWrappedResource<ID2D1CommandList>(images[2]),
+            GetWrappedResource<ID2D1CommandList>(images[3]),
+            GetWrappedResource<ID2D1CommandList>(images[4]),
+        };
+
+        for (auto& commandList : d2dImages)
+        {
+            ThrowIfFailed(commandList->Close());
+        }
 
         auto effect = ref new BlendEffect();
 
@@ -933,15 +947,6 @@ TEST_CLASS(CanvasEffectsTests)
         effect->Foreground = images[0];
 
         auto d2dEffect = GetWrappedResource<ID2D1Effect>(device, effect, DEFAULT_DPI);
-
-        ComPtr<ID2D1Image> d2dImages[] =
-        {
-            GetWrappedResource<ID2D1Image>(images[0]),
-            GetWrappedResource<ID2D1Image>(images[1]),
-            GetWrappedResource<ID2D1Image>(images[2]),
-            GetWrappedResource<ID2D1Image>(images[3]),
-            GetWrappedResource<ID2D1Image>(images[4]),
-        };
 
         // Change properties via Win2D.
         effect->Background = images[1];
