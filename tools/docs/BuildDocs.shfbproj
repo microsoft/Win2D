@@ -44,16 +44,13 @@
     <DocumentationSources>
       <!-- Reference assemblies -->
       <DocumentationSource sourceFile="$(MSBuildThisFileDirectory)..\..\obj\docs\Microsoft.Graphics.Canvas.winmd" />
-      <DocumentationSource sourceFile="$(MSBuildThisFileDirectory)..\..\obj\docs\Microsoft.Graphics.Canvas.Numerics.dll" />
 
       <!-- Reference documentation source XML -->
       <DocumentationSource sourceFile="$(MSBuildThisFileDirectory)..\..\obj\docs\docsrc\*.xml" />
 
       <!-- Generated placeholder documentation linking to types on MSDN -->
       <DocumentationSource sourceFile="$(MSBuildThisFileDirectory)..\..\obj\docs\Microsoft.Graphics.Canvas.placeholders.xml" />
-      <DocumentationSource sourceFile="$(MSBuildThisFileDirectory)..\..\obj\docs\Microsoft.Graphics.Canvas.Numerics.placeholders.xml" />
       <DocumentationSource sourceFile="$(MSBuildThisFileDirectory)..\..\obj\docs\PlaceholderNamespaces.xml" />
-      <DocumentationSource sourceFile="$(MSBuildThisFileDirectory)Placeholders.xml" />
     </DocumentationSources>
   </PropertyGroup>
 

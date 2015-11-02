@@ -15,21 +15,15 @@
 
   <!-- Binaries containing the API to be documented -->
   <ItemGroup>
-    <InputAssembly Include="$(BinariesDirectory)\Windowsx86\$(Configuration)\winrt.dll.windows\Microsoft.Graphics.Canvas.winmd">
+    <InputAssembly Include="$(BinariesDirectory)\uapx86\$(Configuration)\winrt.dll.uap\Microsoft.Graphics.Canvas.winmd">
       <DocSrc>..\..\winrt\docsrc\*.xml;..\..\winrt\docsrc\effects\*.xml</DocSrc>
-      <AdditionalApiDescription>..\..\winrt\docsrc\effects\UapApiDescription.cs;..\..\winrt\docsrc\UapApiDescription.cs</AdditionalApiDescription>
-    </InputAssembly>
-
-    <InputAssembly Include="$(BinariesDirectory)\Windowsx86\$(Configuration)\DotNetNumerics.Windows\Microsoft.Graphics.Canvas.Numerics.dll">
-      <DocSrc>..\..\numerics\DotNet\docsrc\*.xml</DocSrc>
-      <References>$(IntermediateOutputPath)Microsoft.Graphics.Canvas.winmd</References>
     </InputAssembly>
   </ItemGroup>
 
 
   <!-- Other files that are not part of the API, but which define types used by it -->
   <ItemGroup>
-    <ReferenceAssembly Include="$(registry:HKEY_LOCAL_MACHINE\Software\Microsoft\Windows Kits\Installed Roots@KitsRoot81)References\CommonConfiguration\Neutral\Windows.winmd" />
+    <ReferenceAssembly Include="$(registry:HKEY_LOCAL_MACHINE\Software\Microsoft\Windows Kits\Installed Roots@KitsRoot10)UnionMetadata\Windows.winmd" />
   </ItemGroup>
 
 

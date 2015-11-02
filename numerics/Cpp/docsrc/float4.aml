@@ -10,7 +10,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
 
     <introduction>
       <para>A vector with four components.</para>
-      <para>This type is only available in C++. Its .NET equivalent is <codeEntityReference>T:System.Numerics.Vector4</codeEntityReference>.</para>
+      <para>This type is only available in C++. Its .NET equivalent is <externalLink><linkText>System.Numerics.Vector4</linkText><linkUri>https://msdn.microsoft.com/library/windows/apps/System.Numerics.Vector4</linkUri></externalLink>.</para>
       <para>
         <markup><br/></markup>
         <legacyBold>Namespace:</legacyBold> <link xlink:href="WindowsNumerics">Windows::Foundation::Numerics</link>

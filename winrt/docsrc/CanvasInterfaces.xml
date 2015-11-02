@@ -25,7 +25,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         session.
       </remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.ICanvasImage.GetBounds(Microsoft.Graphics.Canvas.CanvasDrawingSession,Microsoft.Graphics.Canvas.Numerics.Matrix3x2)">
+    <member name="M:Microsoft.Graphics.Canvas.ICanvasImage.GetBounds(Microsoft.Graphics.Canvas.CanvasDrawingSession,System.Numerics.Matrix3x2)">
       <summary>Retrieves the bounds of the CanvasImage, in device-independent units.</summary>
       <remarks>
         These bounds are the area the image would fill if it were drawn at

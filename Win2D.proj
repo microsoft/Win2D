@@ -299,7 +299,7 @@
   <Target Name="BuildDocs"
           Condition="$(BuildDocs) and
                      $(BuildTools) and
-                     $(BuildWindows) and
+                     $(BuildUAP) and
                      $(BuildPlatforms.Contains('AnyCPU')) and
                      $(BuildPlatforms.Contains('Win32')) and
                      $(BuildConfigurations.Contains('Release'))">

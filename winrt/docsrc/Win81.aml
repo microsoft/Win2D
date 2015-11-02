@@ -1,0 +1,86 @@
+<?xml version="1.0"?>
+<!--
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+Licensed under the MIT License. See LICENSE.txt in the project root for license information.
+-->
+
+<topic id="Win81" revisionNumber="1">
+  <developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <introduction>
+      <para>
+        Win2D can be used to build Windows 8.1 and Windows Phone 8.1 apps.
+      </para>
+    </introduction>
+    
+    <section>
+      <title>Substituted Types</title>
+      <content>
+        <para>
+          Some types that are included as part of the Universal Windows Platform
+          are not available on Windows 8.1.  Where possible, Win2D provides its
+          own implementation of these.
+        </para>
+
+        <table>
+          <title>Universal Windows Platform types used by Win2D</title>
+          <tableHeader>
+            <row>
+              <entry><para>Win2D for Universal Windows Platform</para></entry>
+              <entry><para>Win2D for Windows 8.1 / Windows Phone 8.1</para></entry>
+            </row>
+          </tableHeader>
+          <row>
+            <entry><externalLink><linkText>Windows.Graphics.Imaging.BitmapSize</linkText><linkUri>https://msdn.microsoft.com/library/windows/apps/Windows.Graphics.Imaging.BitmapSize</linkUri></externalLink></entry>
+            <entry>Microsoft.Graphics.Canvas.BitmapSize</entry>
+          </row>
+          <row>
+            <entry><externalLink><linkText>Windows.Graphics.DirectX</linkText><linkUri>https://msdn.microsoft.com/library/windows/apps/Windows.Graphics.DirectX</linkUri></externalLink>.*</entry>
+            <entry>Microsoft.Graphics.Canvas.DirectX.*</entry>
+          </row>
+          <row>
+            <entry><externalLink><linkText>Windows.Graphics.DirectX.Direct3D11</linkText><linkUri>https://msdn.microsoft.com/library/windows/apps/Windows.Graphics.DirectX.Direct3D11</linkUri></externalLink>.*</entry>
+            <entry>Microsoft.Graphics.Canvas.DirectX.Direct3D11.*</entry>
+          </row>
+          <row>
+            <entry><externalLink><linkText>Windows.Graphics.Effects.IGraphicsEffect</linkText><linkUri>https://msdn.microsoft.com/library/windows/apps/Windows.Graphics.Effects.IGraphicsEffect</linkUri></externalLink></entry>
+            <entry>Microsoft.Graphics.Canvas.Effects.IGraphicsEffect</entry>
+          </row>
+          <row>
+            <entry><externalLink><linkText>Windows.Graphics.Effects.IGraphicsEffectSource</linkText><linkUri>https://msdn.microsoft.com/library/windows/apps/Windows.Graphics.Effects.IGraphicsEffectSource</linkUri></externalLink></entry>
+            <entry>Microsoft.Graphics.Canvas.Effects.IGraphicsEffectSource</entry>
+          </row>
+          <row>
+            <entry><externalLink><linkText>Windows.Foundation.Numerics</linkText><linkUri>https://msdn.microsoft.com/library/windows/apps/Windows.Foundation.Numerics</linkUri></externalLink>.*</entry>
+            <entry>Microsoft.Graphics.Canvas.Numerics.*</entry>
+          </row>
+        </table>
+      </content>
+    </section>
+
+    <section>
+      <title>Numerics Types</title>
+      <content>
+        <para>
+          For the Universal Windows Platform, the
+          <externalLink><linkText>System.Numerics</linkText><linkUri>https://msdn.microsoft.com/library/windows/apps/System.Numerics</linkUri></externalLink>
+          namespace is implemented by the CLR assembly System.Numerics.Vectors.
+          The CLR assembly is able to provde more efficient interop with WinRT
+          APIs.  In addition, the runtime is able to perform SIMD optimizations
+          on code using these types.
+        </para>
+        <para>
+          Win2D for Windows 8.1 provides an implementation of the
+          System.Numerics namespace in the
+          Microsoft.Graphics.Canvas.Numerics.dll assembly.
+        </para>
+
+        <para>
+          As a general rule, if you code against System.Numerics then the same
+          code will build with all flavors of Win2D.
+        </para>
+      </content>
+    </section>
+
+  </developerConceptualDocument>
+</topic>

@@ -11,46 +11,6 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
   </assembly>
   <members>
 
-    <member name="T:Microsoft.Graphics.Canvas.Effects.IGraphicsEffect">
-      <summary>Abstract interface representing an effect used for image processing.</summary>
-      <remarks>
-        <p>
-          When targeting the Universal Windows Platform,
-          this interface is moved to the namespace Windows.Graphics.Effects.
-        </p>
-        <p>
-          C++ developers can QI an IGraphicsEffect for the IGraphicsEffectD2D1Interop interface,
-          which exposes all the information needed to construct a matching D2D effect.
-        </p>
-      </remarks>
-    </member>
-    <member name="P:Microsoft.Graphics.Canvas.Effects.IGraphicsEffect.Name">
-      <summary>Attaches a user-defined name string to the effect.</summary>
-      <remarks>
-        The name string is not used directly by Win2D.
-        Applications can use this to store arbitrary information of their choosing,
-        for instance it could be used as an id to locate a particular effect in a graph.
-      </remarks>
-    </member>
-
-
-    <member name="T:Microsoft.Graphics.Canvas.Effects.IGraphicsEffectSource">
-      <summary>Represents a type that can be accepted as input for an IGraphicsEffect.</summary>
-      <remarks>
-        <p>
-          When targeting the Universal Windows Platform,
-          this interface is moved to the namespace Windows.Graphics.Effects.
-        </p>
-        <p>Although IGraphicsEffect objects will accept any IGraphicsEffectSource as their source,
-           <see cref="T:Microsoft.Graphics.Canvas.CanvasDrawingSession"/> can draw only objects
-           which implement <see cref="T:Microsoft.Graphics.Canvas.ICanvasImage"/> such as
-           <see cref="T:Microsoft.Graphics.Canvas.CanvasBitmap"/>,
-           <see cref="T:Microsoft.Graphics.Canvas.CanvasCommandList"/>,
-           or an image processing effect.</p>
-      </remarks>
-    </member>
-
-
     <member name="T:Microsoft.Graphics.Canvas.Effects.EffectBorderMode">
       <summary>Enumeration type that specifies how to process border pixels.</summary>
     </member>

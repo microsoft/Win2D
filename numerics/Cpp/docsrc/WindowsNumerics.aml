@@ -11,10 +11,10 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <introduction>
       <para>
         This namespace defines C++ vector and matrix types. It extends the structs from
-        <codeEntityReference>N:Microsoft.Graphics.Canvas.Numerics</codeEntityReference>
+        <externalLink><linkText>Windows.Foundation.Numerics</linkText><linkUri>https://msdn.microsoft.com/en-us/library/windows/apps/windows.foundation.numerics.aspx</linkUri></externalLink>
         with a range of mathematical operators and functions.
       </para>
-      <para>This namespace is only available in C++. Its .NET equivalent is <codeEntityReference>N:System.Numerics</codeEntityReference>.</para>
+      <para>This namespace is only available in C++. Its .NET equivalent is <externalLink><linkText>System.Numerics</linkText><linkUri>https://msdn.microsoft.com/library/windows/apps/System.Numerics</linkUri></externalLink>.</para>
       <para>
         <markup><br/></markup>
         <legacyBold>Header:</legacyBold> WindowsNumerics.h
@@ -35,49 +35,49 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
             <entry><link xlink:href="WindowsNumerics_float2">float2</link></entry>
             <entry>
               <para>A vector with two components.</para>
-              <para>This type is only available in C++. Its .NET equivalent is <codeEntityReference>T:System.Numerics.Vector2</codeEntityReference>.</para>
+              <para>This type is only available in C++. Its .NET equivalent is <externalLink><linkText>System.Numerics.Vector2</linkText><linkUri>https://msdn.microsoft.com/library/windows/apps/System.Numerics.Vector2</linkUri></externalLink>.</para>
             </entry>
           </row>
           <row>
             <entry><link xlink:href="WindowsNumerics_float3">float3</link></entry>
             <entry>
               <para>A vector with three components.</para>
-              <para>This type is only available in C++. Its .NET equivalent is <codeEntityReference>T:System.Numerics.Vector3</codeEntityReference>.</para>
+              <para>This type is only available in C++. Its .NET equivalent is <externalLink><linkText>System.Numerics.Vector3</linkText><linkUri>https://msdn.microsoft.com/library/windows/apps/System.Numerics.Vector3</linkUri></externalLink>.</para>
             </entry>
           </row>
           <row>
             <entry><link xlink:href="WindowsNumerics_float4">float4</link></entry>
             <entry>
               <para>A vector with four components.</para>
-              <para>This type is only available in C++. Its .NET equivalent is <codeEntityReference>T:System.Numerics.Vector4</codeEntityReference>.</para>
+              <para>This type is only available in C++. Its .NET equivalent is <externalLink><linkText>System.Numerics.Vector4</linkText><linkUri>https://msdn.microsoft.com/library/windows/apps/System.Numerics.Vector4</linkUri></externalLink>.</para>
             </entry>
           </row>
           <row>
             <entry><link xlink:href="WindowsNumerics_float3x2">float3x2</link></entry>
             <entry>
               <para>A 3x2 matrix, used for 2D transforms.</para>
-              <para>This type is only available in C++. Its .NET equivalent is <codeEntityReference>T:System.Numerics.Matrix3x2</codeEntityReference>.</para>
+              <para>This type is only available in C++. Its .NET equivalent is <externalLink><linkText>System.Numerics.Matrix3x2</linkText><linkUri>https://msdn.microsoft.com/library/windows/apps/System.Numerics.Matrix3x2</linkUri></externalLink>.</para>
             </entry>
           </row>
           <row>
             <entry><link xlink:href="WindowsNumerics_float4x4">float4x4</link></entry>
             <entry>
               <para>A 4x4 matrix, used for 3D transforms.</para>
-              <para>This type is only available in C++. Its .NET equivalent is <codeEntityReference>T:System.Numerics.Matrix4x4</codeEntityReference>.</para>
+              <para>This type is only available in C++. Its .NET equivalent is <externalLink><linkText>System.Numerics.Matrix4x4</linkText><linkUri>https://msdn.microsoft.com/library/windows/apps/System.Numerics.Matrix4x4</linkUri></externalLink>.</para>
             </entry>
           </row>
           <row>
             <entry><link xlink:href="WindowsNumerics_plane">plane</link></entry>
             <entry>
               <para>A plane.</para>
-              <para>This type is only available in C++. Its .NET equivalent is <codeEntityReference>T:System.Numerics.Plane</codeEntityReference>.</para>
+              <para>This type is only available in C++. Its .NET equivalent is <externalLink><linkText>System.Numerics.Plane</linkText><linkUri>https://msdn.microsoft.com/library/windows/apps/System.Numerics.Plane</linkUri></externalLink>.</para>
             </entry>
           </row>
           <row>
             <entry><link xlink:href="WindowsNumerics_quaternion">quaternion</link></entry>
             <entry>
               <para>A four dimensional vector, used to represent a rotation.</para>
-              <para>This type is only available in C++. Its .NET equivalent is <codeEntityReference>T:System.Numerics.Quaternion</codeEntityReference>.</para>
+              <para>This type is only available in C++. Its .NET equivalent is <externalLink><linkText>System.Numerics.Quaternion</linkText><linkUri>https://msdn.microsoft.com/library/windows/apps/System.Numerics.Quaternion</linkUri></externalLink>.</para>
             </entry>
           </row>
         </table>

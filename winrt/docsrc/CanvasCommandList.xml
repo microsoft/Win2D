@@ -34,7 +34,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <summary>Retrieves the bounds of this CanvasImage, in device-independent units.</summary>
       <inheritdoc/>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasCommandList.GetBounds(Microsoft.Graphics.Canvas.CanvasDrawingSession,Microsoft.Graphics.Canvas.Numerics.Matrix3x2)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasCommandList.GetBounds(Microsoft.Graphics.Canvas.CanvasDrawingSession,System.Numerics.Matrix3x2)">
       <summary>Retrieves the bounds of the CanvasImage, in device-independent units.</summary>
       <inheritdoc/>
     </member>

@@ -46,37 +46,5 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       </summary>
     </member>
 
-    <member name="N:Microsoft.Graphics.Canvas.DirectX">
-      <summary>This namespace defines DirectX types used for interop with other components.</summary>
-      <remarks>
-        When targeting the Universal Windows Platform,
-        this namespace is renamed to Windows.Graphics.DirectX.
-      </remarks>
-    </member>
-
-    <member name="N:Microsoft.Graphics.Canvas.DirectX.Direct3D11">
-      <summary>This namespace defines Direct3D11 types used for interop with other components.</summary>
-      <remarks>
-        When targeting the Universal Windows Platform,
-        this namespace is renamed to Windows.Graphics.DirectX.Direct3D11.
-      </remarks>
-    </member>
-
-    <member name="N:Microsoft.Graphics.Canvas.Numerics">
-      <summary>This namespace defines Windows Runtime vector and matrix types. These are only used
-               for data exchange, and do not include any methods for doing math with the values.
-               For more complete functionality, see the .NET <see cref="N:System.Numerics"/> and
-               C++ <a href="WindowsNumerics.htm">Windows.Foundation.Numerics</a> namespaces.</summary>
-      <remarks>
-        <p>
-          When targeting the Universal Windows Platform,
-          this namespace is renamed to Windows.Foundation.Numerics.
-        </p>
-        <p>
-          See <conceptualLink target="UAP"/> for more information about the numerics types on Windows 10.
-        </p>
-      </remarks>
-    </member>
-
   </members>
 </doc>

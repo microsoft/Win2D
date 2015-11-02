@@ -69,13 +69,13 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.CreateRoundedRectangle(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Single,System.Single,System.Single,System.Single,System.Single,System.Single)">
       <summary>Creates a new rounded rectangle geometry object with the specified extents.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.CreateEllipse(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.Graphics.Canvas.Numerics.Vector2,System.Single,System.Single)">
+    <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.CreateEllipse(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Numerics.Vector2,System.Single,System.Single)">
       <summary>Creates a new ellipse geometry object with the specified extents.</summary>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.CreateEllipse(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Single,System.Single,System.Single,System.Single)">
       <summary>Creates a new ellipse geometry object with the specified extents.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.CreateCircle(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.Graphics.Canvas.Numerics.Vector2,System.Single)">
+    <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.CreateCircle(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Numerics.Vector2,System.Single)">
       <summary>Creates a new circle geometry object with the specified extents.</summary>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.CreateCircle(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Single,System.Single,System.Single)">
@@ -89,7 +89,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         If your app needs to create multiple paths, say, where one is a strict subset of the other, 
         consider using multiple CanvasPathBuilder objects.</remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.CreatePolygon(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.Graphics.Canvas.Numerics.Vector2[])">
+    <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.CreatePolygon(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Numerics.Vector2[])">
       <summary>Creates a new polygon geometry (triangle, quadrilateral, etc.), connecting the specified points.</summary>
       <remarks>
         <p>The polygon will automatically be closed by connecting the last point back to the first one.</p>
@@ -97,12 +97,12 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       </remarks>
     </member>
 
-    <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.CombineWith(Microsoft.Graphics.Canvas.Geometry.CanvasGeometry,Microsoft.Graphics.Canvas.Numerics.Matrix3x2,Microsoft.Graphics.Canvas.Geometry.CanvasGeometryCombine)">
+    <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.CombineWith(Microsoft.Graphics.Canvas.Geometry.CanvasGeometry,System.Numerics.Matrix3x2,Microsoft.Graphics.Canvas.Geometry.CanvasGeometryCombine)">
       <summary>Returns the combination of this geometry and the specified geometry according to the specified combine operation, 
       such as union, intersection, etc. </summary>
       <remarks>Uses default flattening tolerance and identity transform.</remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.CombineWith(Microsoft.Graphics.Canvas.Geometry.CanvasGeometry,Microsoft.Graphics.Canvas.Numerics.Matrix3x2,Microsoft.Graphics.Canvas.Geometry.CanvasGeometryCombine,System.Single)">
+    <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.CombineWith(Microsoft.Graphics.Canvas.Geometry.CanvasGeometry,System.Numerics.Matrix3x2,Microsoft.Graphics.Canvas.Geometry.CanvasGeometryCombine,System.Single)">
       <summary>Returns the combination of this geometry and the specified geometry according to the specified combine operation, 
       such as union, intersection, etc. </summary>
       <remarks>Uses the specified flattening tolerance and transform.</remarks>
@@ -115,7 +115,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <summary>Returns a geometry equivalent to a stroked area of this geometry, with the specified stroke width and a default stroke style. </summary>
       <remarks>Uses the default flattening tolerance and identity transform.</remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.Stroke(System.Single,Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle,Microsoft.Graphics.Canvas.Numerics.Matrix3x2,System.Single)">
+    <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.Stroke(System.Single,Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle,System.Numerics.Matrix3x2,System.Single)">
       <summary>Returns a geometry equivalent to a stroked area of this geometry, with the specified stroke width and a default stroke style. </summary>
       <remarks>Uses the specified flattening tolerance and transform.</remarks>
     </member>
@@ -125,7 +125,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         Uses default flattening tolerance and identity transform. 
         The output geometry is created such that its fill won't ever depend on the choice of CanvasFilledRegionDetermination.</remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.Outline(Microsoft.Graphics.Canvas.Numerics.Matrix3x2,System.Single)">
+    <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.Outline(System.Numerics.Matrix3x2,System.Single)">
       <summary>Returns a geometry with equivalent fill, but no self-intersections, and figures are all oriented counterclockwise. </summary>
       <remarks>
         Uses the specified flattening tolerance and transform.
@@ -137,7 +137,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         Uses default flattening tolerance and identity transform.
         Any arcs or quadratic beziers in the source geometry will be output as roughly equivalent cubic beziers or lines, depending on the simplification option.</remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.Simplify(Microsoft.Graphics.Canvas.Geometry.CanvasGeometrySimplification,Microsoft.Graphics.Canvas.Numerics.Matrix3x2,System.Single)">
+    <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.Simplify(Microsoft.Graphics.Canvas.Geometry.CanvasGeometrySimplification,System.Numerics.Matrix3x2,System.Single)">
       <summary>Returns a version of the geometry that contains only lines, and, optionally, cubic Bezier curves. </summary>
       <remarks>
         Uses the specified flattening tolerance and transform.
@@ -147,7 +147,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <summary>Returns a value describing the intersection between this geometry and the specified geometry. </summary>
       <remarks>Uses default flattening tolerance and identity transform on the input geometry.</remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.CompareWith(Microsoft.Graphics.Canvas.Geometry.CanvasGeometry,Microsoft.Graphics.Canvas.Numerics.Matrix3x2,System.Single)">
+    <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.CompareWith(Microsoft.Graphics.Canvas.Geometry.CanvasGeometry,System.Numerics.Matrix3x2,System.Single)">
       <summary>Returns a value describing the intersection between this geometry and the specified geometry. </summary>
       <remarks>Uses the specified flattening tolerance, and the specified transform on the input geometry.</remarks>
     </member>
@@ -158,7 +158,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         <p>Area is a two-dimensional quantity.</p>
       </remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.ComputeArea(Microsoft.Graphics.Canvas.Numerics.Matrix3x2,System.Single)">
+    <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.ComputeArea(System.Numerics.Matrix3x2,System.Single)">
       <summary>Returns the area of this geometry. </summary>
       <remarks>
         <p>Uses the specified flattening tolerance and transform.</p>
@@ -169,7 +169,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <summary>Returns the length of the geometry as though the entire path were unrolled into a single straight line. </summary>
       <remarks>Uses default flattening tolerance and identity transform on the input geometry.</remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.ComputePathLength(Microsoft.Graphics.Canvas.Numerics.Matrix3x2,System.Single)">
+    <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.ComputePathLength(System.Numerics.Matrix3x2,System.Single)">
       <summary>Returns the length of the geometry as though the entire path were unrolled into a single straight line.</summary>
       <remarks>Uses the specified flattening tolerance and transform.</remarks>
     </member>
@@ -177,19 +177,19 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <summary>Returns the point at the specified distance along the segments of the geometry.</summary>
       <remarks>Uses default flattening tolerance and identity transform on the input geometry.</remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.ComputePointOnPath(System.Single,Microsoft.Graphics.Canvas.Numerics.Vector2@)">
+    <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.ComputePointOnPath(System.Single,System.Numerics.Vector2@)">
       <summary>Returns the point and tangent vector at the specified distance along the segments of the geometry.</summary>
       <remarks>Uses default flattening tolerance and identity transform on the input geometry.</remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.ComputePointOnPath(System.Single,Microsoft.Graphics.Canvas.Numerics.Matrix3x2,System.Single,Microsoft.Graphics.Canvas.Numerics.Vector2@)">
+    <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.ComputePointOnPath(System.Single,System.Numerics.Matrix3x2,System.Single,System.Numerics.Vector2@)">
       <summary>Returns the point and tangent vector at the specified distance along the segments of the geometry.</summary>
       <remarks>Uses the specified flattening tolerance and transform.</remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.FillContainsPoint(Microsoft.Graphics.Canvas.Numerics.Vector2)">
+    <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.FillContainsPoint(System.Numerics.Vector2)">
       <summary>Returns whether the area filled by the geometry contains the specified point.</summary>
       <remarks>Uses default flattening tolerance and identity transform on the input geometry.</remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.FillContainsPoint(Microsoft.Graphics.Canvas.Numerics.Vector2,Microsoft.Graphics.Canvas.Numerics.Matrix3x2,System.Single)">
+    <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.FillContainsPoint(System.Numerics.Vector2,System.Numerics.Matrix3x2,System.Single)">
       <summary>Returns whether the area filled by the geometry contains the specified point.</summary>
       <remarks>Uses the specified flattening tolerance and transform.</remarks>
     </member>
@@ -197,7 +197,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <summary>Returns the bounds of the geometry.</summary>
       <remarks>Uses default flattening tolerance and identity transform on the input geometry.</remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.ComputeBounds(Microsoft.Graphics.Canvas.Numerics.Matrix3x2)">
+    <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.ComputeBounds(System.Numerics.Matrix3x2)">
       <summary>Returns the bounds of the geometry.</summary>
       <remarks>Uses the specified flattening tolerance and transform.</remarks>
     </member>
@@ -209,19 +209,19 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <summary>Returns the bounds of a stroked area of this geometry, with the specified stroke width and stroke style.</summary>
       <remarks>Uses default flattening tolerance and identity transform on the input geometry.</remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.ComputeStrokeBounds(System.Single,Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle,Microsoft.Graphics.Canvas.Numerics.Matrix3x2,System.Single)">
+    <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.ComputeStrokeBounds(System.Single,Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle,System.Numerics.Matrix3x2,System.Single)">
       <summary>Returns the bounds of a stroked area of this geometry, with the specified stroke width and stroke style.</summary>
       <remarks>Uses the specified flattening tolerance and transform.</remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.StrokeContainsPoint(Microsoft.Graphics.Canvas.Numerics.Vector2,System.Single)">
+    <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.StrokeContainsPoint(System.Numerics.Vector2,System.Single)">
       <summary>Returns whether the stroked area of this geometry, with the specified stroke width and default stroke style, would contain the specified point.</summary>
       <remarks>Uses default flattening tolerance and identity transform on the input geometry.</remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.StrokeContainsPoint(Microsoft.Graphics.Canvas.Numerics.Vector2,System.Single,Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle)">
+    <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.StrokeContainsPoint(System.Numerics.Vector2,System.Single,Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle)">
       <summary>Returns whether the stroked area of this geometry, with the specified stroke width and stroke style, would contain the specified point.</summary>
       <remarks>Uses default flattening tolerance and identity transform on the input geometry.</remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.StrokeContainsPoint(Microsoft.Graphics.Canvas.Numerics.Vector2,System.Single,Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle,Microsoft.Graphics.Canvas.Numerics.Matrix3x2,System.Single)">
+    <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.StrokeContainsPoint(System.Numerics.Vector2,System.Single,Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle,System.Numerics.Matrix3x2,System.Single)">
       <summary>Returns whether the stroked area of this geometry, with the specified stroke width and stroke style, would contain the specified point.</summary>
       <remarks>Uses the specified flattening tolerance and transform.</remarks>
     </member>
@@ -266,7 +266,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <remarks>If there are any curves in the input geometry, the curves are output as roughly equivalent, very short lines.</remarks>
     </member>    
 
-    <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.Transform(Microsoft.Graphics.Canvas.Numerics.Matrix3x2)">
+    <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.Transform(System.Numerics.Matrix3x2)">
       <summary>Returns a transformed version of this geometry.</summary>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.CreateGroup(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.Graphics.Canvas.Geometry.CanvasGeometry[])">
@@ -344,7 +344,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         For more information, see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/dn280327%28v=vs.85%29.aspx">ComputeFlatteningTolerance</a>.
         </remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.ComputeFlatteningTolerance(System.Single,System.Single,Microsoft.Graphics.Canvas.Numerics.Matrix3x2)">
+    <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.ComputeFlatteningTolerance(System.Single,System.Single,System.Numerics.Matrix3x2)">
       <summary>Computes the correct flattening tolerance given the specified DPI, maximum zoom level, and geometry transform.</summary>
       <remarks>
         This computation guarantees that under any scaling up to the maximum zoom level, curves will have no loss of fidelity.
@@ -360,7 +360,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.Tessellate">
       <summary>Returns an array of clockwise-wound triangles that cover the geometry.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.Tessellate(Microsoft.Graphics.Canvas.Numerics.Matrix3x2,System.Single)">
+    <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.Tessellate(System.Numerics.Matrix3x2,System.Single)">
       <summary>Returns an array of clockwise-wound triangles that cover the geometry after it has
                been transformed using the specified matrix and flattened using the specified tolerance.</summary>
     </member>
@@ -389,19 +389,19 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="T:Microsoft.Graphics.Canvas.Geometry.ICanvasPathReceiver">
       <summary>Applications implement this interface in order to read back geometry path data.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.Geometry.ICanvasPathReceiver.BeginFigure(Microsoft.Graphics.Canvas.Numerics.Vector2,Microsoft.Graphics.Canvas.Geometry.CanvasFigureFill)">
+    <member name="M:Microsoft.Graphics.Canvas.Geometry.ICanvasPathReceiver.BeginFigure(System.Numerics.Vector2,Microsoft.Graphics.Canvas.Geometry.CanvasFigureFill)">
       <summary>Signals the beginning of a figure to the app.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.Geometry.ICanvasPathReceiver.AddArc(Microsoft.Graphics.Canvas.Numerics.Vector2,System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.Geometry.CanvasSweepDirection,Microsoft.Graphics.Canvas.Geometry.CanvasArcSize)">
+    <member name="M:Microsoft.Graphics.Canvas.Geometry.ICanvasPathReceiver.AddArc(System.Numerics.Vector2,System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.Geometry.CanvasSweepDirection,Microsoft.Graphics.Canvas.Geometry.CanvasArcSize)">
       <summary>Signals an arc to the app.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.Geometry.ICanvasPathReceiver.AddCubicBezier(Microsoft.Graphics.Canvas.Numerics.Vector2,Microsoft.Graphics.Canvas.Numerics.Vector2,Microsoft.Graphics.Canvas.Numerics.Vector2)">
+    <member name="M:Microsoft.Graphics.Canvas.Geometry.ICanvasPathReceiver.AddCubicBezier(System.Numerics.Vector2,System.Numerics.Vector2,System.Numerics.Vector2)">
       <summary>Signals a cubic bezier to the app.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.Geometry.ICanvasPathReceiver.AddLine(Microsoft.Graphics.Canvas.Numerics.Vector2)">
+    <member name="M:Microsoft.Graphics.Canvas.Geometry.ICanvasPathReceiver.AddLine(System.Numerics.Vector2)">
       <summary>Signals a line to the app.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.Geometry.ICanvasPathReceiver.AddQuadraticBezier(Microsoft.Graphics.Canvas.Numerics.Vector2,Microsoft.Graphics.Canvas.Numerics.Vector2)">
+    <member name="M:Microsoft.Graphics.Canvas.Geometry.ICanvasPathReceiver.AddQuadraticBezier(System.Numerics.Vector2,System.Numerics.Vector2)">
       <summary>Signals a quadratic bezier to the app.</summary>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Geometry.ICanvasPathReceiver.SetFilledRegionDetermination(Microsoft.Graphics.Canvas.Geometry.CanvasFilledRegionDetermination)">

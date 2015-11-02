@@ -65,8 +65,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
 
         <para>
           Or, to use a CanvasRenderTarget as an input to an effect, pass it
-          in wherever the effect expects to use an 
-          <codeEntityReference>T:Microsoft.Graphics.Canvas.Effects.IGraphicsEffectSource</codeEntityReference>
+          in wherever the effect expects to use an <link xlink:href="https://msdn.microsoft.com/en-us/library/windows/apps/windows.graphics.effects.igraphicseffectsource.aspx">IGraphicsEffectSource</link>
           as a source. For example:
           <code>
           GaussianBlurEffect blurEffect = new GaussianBlurEffect()

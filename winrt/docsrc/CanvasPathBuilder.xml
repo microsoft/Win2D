@@ -147,10 +147,10 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasPathBuilder.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreator)">
         <summary>Initializes a new instance of the CanvasPathBuilder class.</summary>
       </member>
-      <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasPathBuilder.BeginFigure(Microsoft.Graphics.Canvas.Numerics.Vector2,Microsoft.Graphics.Canvas.Geometry.CanvasFigureFill)">
+      <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasPathBuilder.BeginFigure(System.Numerics.Vector2,Microsoft.Graphics.Canvas.Geometry.CanvasFigureFill)">
         <summary>Starts a new figure at the specified point, with the specified figure fill option.</summary>
       </member>
-      <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasPathBuilder.BeginFigure(Microsoft.Graphics.Canvas.Numerics.Vector2)">
+      <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasPathBuilder.BeginFigure(System.Numerics.Vector2)">
         <summary>Starts a new figure at the specified point, with the default figure fill option of <see cref="F:Microsoft.Graphics.Canvas.Geometry.CanvasFigureFill.Default"/>.</summary>
       </member>
       <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasPathBuilder.BeginFigure(System.Single,System.Single,Microsoft.Graphics.Canvas.Geometry.CanvasFigureFill)">
@@ -159,7 +159,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasPathBuilder.BeginFigure(System.Single,System.Single)">
         <summary>Starts a new figure at the specified point, with the default figure fill option of <see cref="F:Microsoft.Graphics.Canvas.Geometry.CanvasFigureFill.Default"/>.</summary>
       </member>
-      <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasPathBuilder.AddArc(Microsoft.Graphics.Canvas.Numerics.Vector2,System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.Geometry.CanvasSweepDirection,Microsoft.Graphics.Canvas.Geometry.CanvasArcSize)">
+      <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasPathBuilder.AddArc(System.Numerics.Vector2,System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.Geometry.CanvasSweepDirection,Microsoft.Graphics.Canvas.Geometry.CanvasArcSize)">
         <summary>Adds a single arc to the path, specified by start and end points through which an ellipse will be fitted.</summary>
         <remarks>
           <p>
@@ -170,13 +170,13 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
             is more than one possible solution.
           </p>
           <p>
-            See the <see cref="M:Microsoft.Graphics.Canvas.Geometry.CanvasPathBuilder.AddArc(Microsoft.Graphics.Canvas.Numerics.Vector2,System.Single,System.Single,System.Single,System.Single)"/>
+            See the <see cref="M:Microsoft.Graphics.Canvas.Geometry.CanvasPathBuilder.AddArc(System.Numerics.Vector2,System.Single,System.Single,System.Single,System.Single)"/>
             overload for an alternative (often easier) way to specify arcs.
           </p>
           <p>The ellipse rotation angle is in radians.</p>
         </remarks>
       </member>
-    <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasPathBuilder.AddArc(Microsoft.Graphics.Canvas.Numerics.Vector2,System.Single,System.Single,System.Single,System.Single)">
+    <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasPathBuilder.AddArc(System.Numerics.Vector2,System.Single,System.Single,System.Single,System.Single)">
       <summary>Adds a single arc to the path, specified as a portion of an ellipse.</summary>
       <remarks>
         <p>
@@ -198,24 +198,24 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
           will begin, these will be automatically connected using a straight line.
         </p>
         <p>
-          See the <see cref="M:Microsoft.Graphics.Canvas.Geometry.CanvasPathBuilder.AddArc(Microsoft.Graphics.Canvas.Numerics.Vector2,System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.Geometry.CanvasSweepDirection,Microsoft.Graphics.Canvas.Geometry.CanvasArcSize)"/>
+          See the <see cref="M:Microsoft.Graphics.Canvas.Geometry.CanvasPathBuilder.AddArc(System.Numerics.Vector2,System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.Geometry.CanvasSweepDirection,Microsoft.Graphics.Canvas.Geometry.CanvasArcSize)"/>
           overload for an alternative way to specify arcs, which is more complicated but offers extra
           abilities such as the option to rotate the ellipse.
         </p>
       </remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasPathBuilder.AddCubicBezier(Microsoft.Graphics.Canvas.Numerics.Vector2,Microsoft.Graphics.Canvas.Numerics.Vector2,Microsoft.Graphics.Canvas.Numerics.Vector2)">
+    <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasPathBuilder.AddCubicBezier(System.Numerics.Vector2,System.Numerics.Vector2,System.Numerics.Vector2)">
         <summary>Adds a cubic bezier to the path. The bezier starts where the path left off, and has the specified control points and end point.</summary>
       </member>
-      <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasPathBuilder.AddLine(Microsoft.Graphics.Canvas.Numerics.Vector2)">
+      <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasPathBuilder.AddLine(System.Numerics.Vector2)">
         <summary>Adds a line segment to the path, with the specified end point.</summary>
       </member>
       <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasPathBuilder.AddLine(System.Single,System.Single)">
         <summary>Adds a line segment to the path, with the specified end point.</summary>
       </member>
-      <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasPathBuilder.AddQuadraticBezier(Microsoft.Graphics.Canvas.Numerics.Vector2,Microsoft.Graphics.Canvas.Numerics.Vector2)">
+      <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasPathBuilder.AddQuadraticBezier(System.Numerics.Vector2,System.Numerics.Vector2)">
         <summary>Adds a quadratic bezier to the path. The bezier starts where the path left off, and has the specified control point and end point.</summary>
-        <remarks>To add a bezier with two control points, see <see cref="M:Microsoft.Graphics.Canvas.Geometry.CanvasPathBuilder.AddCubicBezier(Microsoft.Graphics.Canvas.Numerics.Vector2,Microsoft.Graphics.Canvas.Numerics.Vector2,Microsoft.Graphics.Canvas.Numerics.Vector2)"/></remarks>
+        <remarks>To add a bezier with two control points, see <see cref="M:Microsoft.Graphics.Canvas.Geometry.CanvasPathBuilder.AddCubicBezier(System.Numerics.Vector2,System.Numerics.Vector2,System.Numerics.Vector2)"/></remarks>
       </member>
     <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasPathBuilder.AddGeometry(Microsoft.Graphics.Canvas.Geometry.CanvasGeometry)">
       <summary>Adds all the figures of the specified geometry to the path.</summary>

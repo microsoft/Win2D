@@ -378,7 +378,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
           <para>
             Let's break down how <codeInline>DrawText</codeInline> has changed. "<legacyBold>Hello, World!</legacyBold>" remains the same
             as before. The x and y offset parameters have been replaced with a single
-            <codeEntityReference>T:System.Numerics.Vector2</codeEntityReference> which is generated
+            <externalLink><linkText>System.Numerics.Vector2</linkText><linkUri>https://msdn.microsoft.com/library/windows/apps/System.Numerics.Vector2</linkUri></externalLink> which is generated
             by <codeInline>RndPosition</codeInline>. Finally, instead of using a predefined color, <codeInline>Color.FromArgb</codeInline>
             allows you to define a color using A, R, G and B values. A is alpha, or the opacity level; in this case you always want fully
             opaque (<legacyBold>255</legacyBold>).

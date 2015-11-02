@@ -392,7 +392,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <remarks>The bounds are relative to the text's layout box. 
       These bounds are in DIPs, and do not take into account any transforms that might be applied while rendering the text.</remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.HitTest(Microsoft.Graphics.Canvas.Numerics.Vector2)">
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.HitTest(System.Numerics.Vector2)">
       <summary>Gets whether the point overlaps with any text in the text layout.</summary>
       <remarks>
       	<p>Any whitespace before the end of the text, also counts as text.</p>
@@ -412,7 +412,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       	</p>
       </remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.HitTest(Microsoft.Graphics.Canvas.Numerics.Vector2,Microsoft.Graphics.Canvas.Text.CanvasTextLayoutRegion@)">
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.HitTest(System.Numerics.Vector2,Microsoft.Graphics.Canvas.Text.CanvasTextLayoutRegion@)">
       <summary>Gets whether the point overlaps with any text in the text layout.</summary>
       <remarks>
       	<p>Any whitespace before the end of the text, also counts as text.</p>
@@ -432,7 +432,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       	</p>
       </remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.HitTest(Microsoft.Graphics.Canvas.Numerics.Vector2,Microsoft.Graphics.Canvas.Text.CanvasTextLayoutRegion@,System.Boolean@)">
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.HitTest(System.Numerics.Vector2,Microsoft.Graphics.Canvas.Text.CanvasTextLayoutRegion@,System.Boolean@)">
       <summary>Gets whether the point overlaps with any text in the text layout.</summary>
       <remarks>
       	<p>Any whitespace before the end of the text, also counts as text.</p>
