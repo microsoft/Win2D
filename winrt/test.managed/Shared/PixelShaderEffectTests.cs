@@ -543,6 +543,28 @@ namespace test.managed
 
 
         [TestMethod]
+        public void PixelShaderEffect_PropertyTypes()
+        {
+            // Work around VS2015 bug.
+            // The test runner hangs in x64 mode apparently related to total number of individual tests.
+            // Merging these ideally separate tests into one avoids the hang.
+
+            PixelShaderEffect_PropertyType_Float();
+            PixelShaderEffect_PropertyType_Vector2();
+            PixelShaderEffect_PropertyType_Vector3();
+            PixelShaderEffect_PropertyType_Vector4();
+            PixelShaderEffect_PropertyType_Matrix3x2();
+            PixelShaderEffect_PropertyType_Matrix4x4();
+            PixelShaderEffect_PropertyType_Matrix2x3();
+            PixelShaderEffect_PropertyType_Int();
+            PixelShaderEffect_PropertyType_IntVector();
+            PixelShaderEffect_PropertyType_IntMatrix();
+            PixelShaderEffect_PropertyType_Bool();
+            PixelShaderEffect_PropertyType_BoolVector();
+            PixelShaderEffect_PropertyType_BoolMatrix();
+        }
+
+
         public void PixelShaderEffect_PropertyType_Float()
         {
             const string hlsl =
@@ -566,7 +588,6 @@ namespace test.managed
         }
 
 
-        [TestMethod]
         public void PixelShaderEffect_PropertyType_Vector2()
         {
             const string hlsl =
@@ -598,7 +619,6 @@ namespace test.managed
         }
 
 
-        [TestMethod]
         public void PixelShaderEffect_PropertyType_Vector3()
         {
             const string hlsl =
@@ -630,7 +650,6 @@ namespace test.managed
         }
 
 
-        [TestMethod]
         public void PixelShaderEffect_PropertyType_Vector4()
         {
             const string hlsl =
@@ -662,7 +681,6 @@ namespace test.managed
         }
 
 
-        [TestMethod]
         public void PixelShaderEffect_PropertyType_Matrix3x2()
         {
             const string hlsl =
@@ -697,7 +715,6 @@ namespace test.managed
         }
 
 
-        [TestMethod]
         public void PixelShaderEffect_PropertyType_Matrix4x4()
         {
             const string hlsl =
@@ -732,7 +749,6 @@ namespace test.managed
         }
 
 
-        [TestMethod]
         public void PixelShaderEffect_PropertyType_Matrix2x3()
         {
             const string hlsl =
@@ -759,7 +775,6 @@ namespace test.managed
         }
 
 
-        [TestMethod]
         public void PixelShaderEffect_PropertyType_Int()
         {
             const string hlsl =
@@ -783,7 +798,6 @@ namespace test.managed
         }
 
 
-        [TestMethod]
         public void PixelShaderEffect_PropertyType_IntVector()
         {
             const string hlsl =
@@ -807,7 +821,6 @@ namespace test.managed
         }
 
 
-        [TestMethod]
         public void PixelShaderEffect_PropertyType_IntMatrix()
         {
             const string hlsl =
@@ -834,7 +847,6 @@ namespace test.managed
         }
 
 
-        [TestMethod]
         public void PixelShaderEffect_PropertyType_Bool()
         {
             const string hlsl =
@@ -858,7 +870,6 @@ namespace test.managed
         }
 
 
-        [TestMethod]
         public void PixelShaderEffect_PropertyType_BoolVector()
         {
             const string hlsl =
@@ -882,7 +893,6 @@ namespace test.managed
         }
 
 
-        [TestMethod]
         public void PixelShaderEffect_PropertyType_BoolMatrix()
         {
             const string hlsl =
