@@ -60,27 +60,9 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       </summary>
     </member>
 
-    <member name="M:Microsoft.Graphics.Canvas.UI.Composition.CanvasComposition.ResumeDrawing(Windows.UI.Composition.CompositionDrawingSurface)">
-      <summary>
-        Resumes drawing on the given CompositionDrawingSurface.
-      </summary>
-    </member>
-
-    <member name="M:Microsoft.Graphics.Canvas.UI.Composition.CanvasComposition.Scroll(Windows.UI.Composition.CompositionDrawingSurface,System.Nullable{Windows.Foundation.Rect},System.Nullable{Windows.Foundation.Rect},Microsoft.Graphics.Canvas.UI.Composition.Point)">
-      <summary>
-        Scrolls the given CompositionDrawingSurface.
-      </summary>
-    </member>
-
     <member name="M:Microsoft.Graphics.Canvas.UI.Composition.CanvasComposition.SetCanvasDevice(Windows.UI.Composition.CompositionGraphicsDevice,Microsoft.Graphics.Canvas.CanvasDevice)">
       <summary>
         Sets the CanvasDevice associated with the given CompositionGraphicsDevice.
-      </summary>
-    </member>
-
-    <member name="M:Microsoft.Graphics.Canvas.UI.Composition.CanvasComposition.SuspendDrawing(Windows.UI.Composition.CompositionDrawingSurface)">
-      <summary>
-        Suspends drawing on the given CompositionDrawingSurface.
       </summary>
     </member>
     
