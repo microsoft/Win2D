@@ -13,6 +13,7 @@ using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.UI.Composition;
 using Windows.UI.Core;
+using Windows.UI.Popups;
 
 namespace CompositionExample
 {
@@ -54,9 +55,17 @@ namespace CompositionExample
             CoreWindow.GetForCurrentThread().Dispatcher.ProcessEvents(CoreProcessEventsOption.ProcessUntilQuit);
         }
 
-        public void SetWindow(CoreWindow window)
+        public async void SetWindow(CoreWindow window)
         {
             this.window = window;
+
+            if (!Windows.Foundation.Metadata.ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 2))
+            {
+                var dialog = new MessageDialog("This version of Windows does not support the Composition APIs.");
+                await dialog.ShowAsync();
+                CoreApplication.Exit();
+                return;
+            }
 
             CoreApplication.Suspending += CoreApplication_Suspending;
 
