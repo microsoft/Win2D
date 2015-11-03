@@ -49,48 +49,48 @@
       <file target="Win2d.githash.txt"                                                      src="obj\Win2d.githash.txt" />
 
       <file target="bin\Phone\arm\Microsoft.Graphics.Canvas.Numerics.dll"                   src="$bin$\phonearm\release\dotnetnumerics.windowsphone\Microsoft.Graphics.Canvas.Numerics.dll" />
-      <file target="bin\Phone\arm\Microsoft.Graphics.Canvas.Numerics.xml"                   src="bin\intellisense\Microsoft.Graphics.Canvas.Numerics.xml" />
+      <file target="bin\Phone\arm\Microsoft.Graphics.Canvas.Numerics.xml"                   src="numerics\DotNet\docsrc\Microsoft.Graphics.Canvas.Numerics.xml" />
       <file target="bin\Phone\arm\Microsoft.Graphics.Canvas.dll"                            src="$bin$\phonearm\release\winrt.dll.windowsphone\Microsoft.Graphics.Canvas.dll" />
       <file target="bin\Phone\arm\Microsoft.Graphics.Canvas.lib"                            src="bin\phonearm\release\winrt.dll.windowsphone\Microsoft.Graphics.Canvas.lib" />
       <file target="bin\Phone\arm\Microsoft.Graphics.Canvas.winmd"                          src="$bin$\phonearm\release\winrt.dll.windowsphone\Microsoft.Graphics.Canvas.winmd" />
       <file target="bin\Phone\arm\Microsoft.Graphics.Canvas.xml"                            src="bin\intellisense\Microsoft.Graphics.Canvas.xml" />
-      <file target="bin\Phone\arm\en\Microsoft.Graphics.Canvas.Numerics.xml"                src="bin\intellisense\Microsoft.Graphics.Canvas.Numerics.xml" /> <!-- [1] -->
+      <file target="bin\Phone\arm\en\Microsoft.Graphics.Canvas.Numerics.xml"                src="numerics\DotNet\docsrc\Microsoft.Graphics.Canvas.Numerics.xml" /> <!-- [1] -->
       <file target="bin\Phone\arm\en\Microsoft.Graphics.Canvas.xml"                         src="bin\intellisense\Microsoft.Graphics.Canvas.xml" /> <!-- [1] -->
 
       <file target="bin\Phone\x86\Microsoft.Graphics.Canvas.Numerics.dll"                   src="$bin$\phonex86\release\dotnetnumerics.windowsphone\Microsoft.Graphics.Canvas.Numerics.dll" />
-      <file target="bin\Phone\x86\Microsoft.Graphics.Canvas.Numerics.xml"                   src="bin\intellisense\Microsoft.Graphics.Canvas.Numerics.xml" />
+      <file target="bin\Phone\x86\Microsoft.Graphics.Canvas.Numerics.xml"                   src="numerics\DotNet\docsrc\Microsoft.Graphics.Canvas.Numerics.xml" />
       <file target="bin\Phone\x86\Microsoft.Graphics.Canvas.dll"                            src="$bin$\phonex86\release\winrt.dll.windowsphone\Microsoft.Graphics.Canvas.dll" />
       <file target="bin\Phone\x86\Microsoft.Graphics.Canvas.lib"                            src="bin\phonex86\release\winrt.dll.windowsphone\Microsoft.Graphics.Canvas.lib" />
       <file target="bin\Phone\x86\Microsoft.Graphics.Canvas.winmd"                          src="$bin$\phonex86\release\winrt.dll.windowsphone\Microsoft.Graphics.Canvas.winmd" />
       <file target="bin\Phone\x86\Microsoft.Graphics.Canvas.xml"                            src="bin\intellisense\Microsoft.Graphics.Canvas.xml" />
-      <file target="bin\Phone\x86\en\Microsoft.Graphics.Canvas.Numerics.xml"                src="bin\intellisense\Microsoft.Graphics.Canvas.Numerics.xml" /> <!-- [1] -->
+      <file target="bin\Phone\x86\en\Microsoft.Graphics.Canvas.Numerics.xml"                src="numerics\DotNet\docsrc\Microsoft.Graphics.Canvas.Numerics.xml" /> <!-- [1] -->
       <file target="bin\Phone\x86\en\Microsoft.Graphics.Canvas.xml"                         src="bin\intellisense\Microsoft.Graphics.Canvas.xml" /> <!-- [1] -->
 
       <file target="bin\Windows\arm\Microsoft.Graphics.Canvas.Numerics.dll"                 src="$bin$\windowsarm\release\dotnetnumerics.windows\Microsoft.Graphics.Canvas.Numerics.dll" />
-      <file target="bin\Windows\arm\Microsoft.Graphics.Canvas.Numerics.xml"                 src="bin\intellisense\Microsoft.Graphics.Canvas.Numerics.xml" />
+      <file target="bin\Windows\arm\Microsoft.Graphics.Canvas.Numerics.xml"                 src="numerics\DotNet\docsrc\Microsoft.Graphics.Canvas.Numerics.xml" />
       <file target="bin\Windows\arm\Microsoft.Graphics.Canvas.dll"                          src="$bin$\windowsarm\release\winrt.dll.windows\Microsoft.Graphics.Canvas.dll" />
       <file target="bin\Windows\arm\Microsoft.Graphics.Canvas.lib"                          src="bin\windowsarm\release\winrt.dll.windows\Microsoft.Graphics.Canvas.lib" />
       <file target="bin\Windows\arm\Microsoft.Graphics.Canvas.winmd"                        src="$bin$\windowsarm\release\winrt.dll.windows\Microsoft.Graphics.Canvas.winmd" />
       <file target="bin\Windows\arm\Microsoft.Graphics.Canvas.xml"                          src="bin\intellisense\Microsoft.Graphics.Canvas.xml" />
-      <file target="bin\Windows\arm\en\Microsoft.Graphics.Canvas.Numerics.xml"              src="bin\intellisense\Microsoft.Graphics.Canvas.Numerics.xml" /> <!-- [1] -->
+      <file target="bin\Windows\arm\en\Microsoft.Graphics.Canvas.Numerics.xml"              src="numerics\DotNet\docsrc\Microsoft.Graphics.Canvas.Numerics.xml" /> <!-- [1] -->
       <file target="bin\Windows\arm\en\Microsoft.Graphics.Canvas.xml"                       src="bin\intellisense\Microsoft.Graphics.Canvas.xml" /> <!-- [1] -->
 
       <file target="bin\Windows\x64\Microsoft.Graphics.Canvas.Numerics.dll"                 src="$bin$\windowsx64\release\dotnetnumerics.windows\Microsoft.Graphics.Canvas.Numerics.dll" />
-      <file target="bin\Windows\x64\Microsoft.Graphics.Canvas.Numerics.xml"                 src="bin\intellisense\Microsoft.Graphics.Canvas.Numerics.xml" />
+      <file target="bin\Windows\x64\Microsoft.Graphics.Canvas.Numerics.xml"                 src="numerics\DotNet\docsrc\Microsoft.Graphics.Canvas.Numerics.xml" />
       <file target="bin\Windows\x64\Microsoft.Graphics.Canvas.dll"                          src="$bin$\windowsx64\release\winrt.dll.windows\Microsoft.Graphics.Canvas.dll" />
       <file target="bin\Windows\x64\Microsoft.Graphics.Canvas.lib"                          src="bin\windowsx64\release\winrt.dll.windows\Microsoft.Graphics.Canvas.lib" />
       <file target="bin\Windows\x64\Microsoft.Graphics.Canvas.winmd"                        src="$bin$\windowsx64\release\winrt.dll.windows\Microsoft.Graphics.Canvas.winmd" />
       <file target="bin\Windows\x64\Microsoft.Graphics.Canvas.xml"                          src="bin\intellisense\Microsoft.Graphics.Canvas.xml" />
-      <file target="bin\Windows\x64\en\Microsoft.Graphics.Canvas.Numerics.xml"              src="bin\intellisense\Microsoft.Graphics.Canvas.Numerics.xml" /> <!-- [1] -->
+      <file target="bin\Windows\x64\en\Microsoft.Graphics.Canvas.Numerics.xml"              src="numerics\DotNet\docsrc\Microsoft.Graphics.Canvas.Numerics.xml" /> <!-- [1] -->
       <file target="bin\Windows\x64\en\Microsoft.Graphics.Canvas.xml"                       src="bin\intellisense\Microsoft.Graphics.Canvas.xml" /> <!-- [1] -->
 
       <file target="bin\Windows\x86\Microsoft.Graphics.Canvas.Numerics.dll"                 src="$bin$\windowsx86\release\dotnetnumerics.windows\Microsoft.Graphics.Canvas.Numerics.dll" />
-      <file target="bin\Windows\x86\Microsoft.Graphics.Canvas.Numerics.xml"                 src="bin\intellisense\Microsoft.Graphics.Canvas.Numerics.xml" />
+      <file target="bin\Windows\x86\Microsoft.Graphics.Canvas.Numerics.xml"                 src="numerics\DotNet\docsrc\Microsoft.Graphics.Canvas.Numerics.xml" />
       <file target="bin\Windows\x86\Microsoft.Graphics.Canvas.dll"                          src="$bin$\windowsx86\release\winrt.dll.windows\Microsoft.Graphics.Canvas.dll" />
       <file target="bin\Windows\x86\Microsoft.Graphics.Canvas.lib"                          src="bin\windowsx86\release\winrt.dll.windows\Microsoft.Graphics.Canvas.lib" />
       <file target="bin\Windows\x86\Microsoft.Graphics.Canvas.winmd"                        src="$bin$\windowsx86\release\winrt.dll.windows\Microsoft.Graphics.Canvas.winmd" />
       <file target="bin\Windows\x86\Microsoft.Graphics.Canvas.xml"                          src="bin\intellisense\Microsoft.Graphics.Canvas.xml" />
-      <file target="bin\Windows\x86\en\Microsoft.Graphics.Canvas.Numerics.xml"              src="bin\intellisense\Microsoft.Graphics.Canvas.Numerics.xml" /> <!-- [1] -->
+      <file target="bin\Windows\x86\en\Microsoft.Graphics.Canvas.Numerics.xml"              src="numerics\DotNet\docsrc\Microsoft.Graphics.Canvas.Numerics.xml" /> <!-- [1] -->
       <file target="bin\Windows\x86\en\Microsoft.Graphics.Canvas.xml"                       src="bin\intellisense\Microsoft.Graphics.Canvas.xml" /> <!-- [1] -->
 
       <file target="build\native\Win2D.win81.targets"                                       src="build\nuget\Win2D.win81-native.targets" />

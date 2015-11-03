@@ -1,0 +1,1069 @@
+<?xml version="1.0"?>
+<!--
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+Licensed under the MIT License. See LICENSE.txt in the project root for license information.
+-->
+
+<doc>
+  <assembly>
+    <name>Microsoft.Graphics.Canvas.Numerics</name>
+  </assembly>
+  <members>
+    <member name="T:System.Numerics.Matrix3x2">
+      <summary>
+        <p>A 3x2 matrix, used for 2D transforms.</p>
+      </summary>
+    </member>
+    <member name="M:System.Numerics.Matrix3x2.#ctor(System.Single,System.Single,System.Single,System.Single,System.Single,System.Single)">
+      <summary>Initializes a new instance of Matrix3x2.</summary>
+    </member>
+    <member name="M:System.Numerics.Matrix3x2.CreateTranslation(System.Numerics.Vector2)">
+      <summary>Creates a translation matrix.</summary>
+    </member>
+    <member name="M:System.Numerics.Matrix3x2.CreateTranslation(System.Single,System.Single)">
+      <summary>Creates a translation matrix.</summary>
+    </member>
+    <member name="M:System.Numerics.Matrix3x2.CreateScale(System.Single,System.Single)">
+      <summary>Creates a scaling matrix, centered on the origin.</summary>
+    </member>
+    <member name="M:System.Numerics.Matrix3x2.CreateScale(System.Single,System.Single,System.Numerics.Vector2)">
+      <summary>Creates a scaling matrix, centered on the specified point.</summary>
+    </member>
+    <member name="M:System.Numerics.Matrix3x2.CreateScale(System.Numerics.Vector2)">
+      <summary>Creates a scaling matrix, centered on the origin.</summary>
+    </member>
+    <member name="M:System.Numerics.Matrix3x2.CreateScale(System.Numerics.Vector2,System.Numerics.Vector2)">
+      <summary>Creates a scaling matrix, centered on the specified point.</summary>
+    </member>
+    <member name="M:System.Numerics.Matrix3x2.CreateScale(System.Single)">
+      <summary>Creates a scaling matrix, centered on the origin.</summary>
+    </member>
+    <member name="M:System.Numerics.Matrix3x2.CreateScale(System.Single,System.Numerics.Vector2)">
+      <summary>Creates a scaling matrix, centered on the specified point.</summary>
+    </member>
+    <member name="M:System.Numerics.Matrix3x2.CreateSkew(System.Single,System.Single)">
+      <summary>Creates a skew matrix, centered on the origin.</summary>
+    </member>
+    <member name="M:System.Numerics.Matrix3x2.CreateSkew(System.Single,System.Single,System.Numerics.Vector2)">
+      <summary>Creates a skew matrix, centered on the specified point.</summary>
+    </member>
+    <member name="M:System.Numerics.Matrix3x2.CreateRotation(System.Single)">
+      <summary>Creates a rotation matrix, centered on the origin.</summary>
+    </member>
+    <member name="M:System.Numerics.Matrix3x2.CreateRotation(System.Single,System.Numerics.Vector2)">
+      <summary>Creates a rotation matrix, centered on the specified point.</summary>
+    </member>
+    <member name="M:System.Numerics.Matrix3x2.GetDeterminant">
+      <summary>Calculates the determinant of the matrix.</summary>
+    </member>
+    <member name="M:System.Numerics.Matrix3x2.Invert(System.Numerics.Matrix3x2,System.Numerics.Matrix3x2@)">
+      <summary>Calculates the inverse of a matrix.</summary>
+      <param name="matrix">The matrix to be inverted.</param>
+      <param name="result">Outputs the inverted matrix.</param>
+      <returns>true if the matrix can be inverted; false otherwise.</returns>
+    </member>
+    <member name="M:System.Numerics.Matrix3x2.Lerp(System.Numerics.Matrix3x2,System.Numerics.Matrix3x2,System.Single)">
+      <summary>Linearly interpolates between the corresponding values of two matrices.</summary>
+    </member>
+    <member name="M:System.Numerics.Matrix3x2.Negate(System.Numerics.Matrix3x2)">
+      <summary>Negates each component of a matrix.</summary>
+    </member>
+    <member name="M:System.Numerics.Matrix3x2.Add(System.Numerics.Matrix3x2,System.Numerics.Matrix3x2)">
+      <summary>Adds each component of a matrix to another matrix.</summary>
+    </member>
+    <member name="M:System.Numerics.Matrix3x2.Subtract(System.Numerics.Matrix3x2,System.Numerics.Matrix3x2)">
+      <summary>Subtracts each component of a matrix from another matrix.</summary>
+    </member>
+    <member name="M:System.Numerics.Matrix3x2.Multiply(System.Numerics.Matrix3x2,System.Numerics.Matrix3x2)">
+      <summary>Multiplies a matrix by another matrix. This has the effect of concatenating two transforms.</summary>
+    </member>
+    <member name="M:System.Numerics.Matrix3x2.Multiply(System.Numerics.Matrix3x2,System.Single)">
+      <summary>Multiplies each component of a matrix by a scalar value</summary>
+    </member>
+    <member name="M:System.Numerics.Matrix3x2.op_UnaryNegation(System.Numerics.Matrix3x2)">
+      <summary>Negates each component of a matrix.</summary>
+    </member>
+    <member name="M:System.Numerics.Matrix3x2.op_Addition(System.Numerics.Matrix3x2,System.Numerics.Matrix3x2)">
+      <summary>Adds each component of a matrix to another matrix.</summary>
+    </member>
+    <member name="M:System.Numerics.Matrix3x2.op_Subtraction(System.Numerics.Matrix3x2,System.Numerics.Matrix3x2)">
+      <summary>Subtracts each component of a matrix from another matrix.</summary>
+    </member>
+    <member name="M:System.Numerics.Matrix3x2.op_Multiply(System.Numerics.Matrix3x2,System.Numerics.Matrix3x2)">
+      <summary>Multiplies a matrix by another matrix. This has the effect of concatenating two transforms.</summary>
+    </member>
+    <member name="M:System.Numerics.Matrix3x2.op_Multiply(System.Numerics.Matrix3x2,System.Single)">
+      <summary>Multiplies each component of a matrix by a scalar value.</summary>
+    </member>
+    <member name="M:System.Numerics.Matrix3x2.op_Equality(System.Numerics.Matrix3x2,System.Numerics.Matrix3x2)">
+      <summary>Determines whether two instances of Matrix3x2 are equal.</summary>
+    </member>
+    <member name="M:System.Numerics.Matrix3x2.op_Inequality(System.Numerics.Matrix3x2,System.Numerics.Matrix3x2)">
+      <summary>Determines whether two instances of Matrix3x2 are not equal.</summary>
+    </member>
+    <member name="M:System.Numerics.Matrix3x2.Equals(System.Numerics.Matrix3x2)">
+      <summary>Determines whether the specified Matrix3x2 is equal to the Matrix3x2.</summary>
+    </member>
+    <member name="M:System.Numerics.Matrix3x2.Equals(System.Object)">
+      <summary>Determines whether the specified Object is equal to the Matrix3x2.</summary>
+    </member>
+    <member name="M:System.Numerics.Matrix3x2.ToString">
+      <summary>Returns a String that represents the current Matrix3x2.</summary>
+    </member>
+    <member name="M:System.Numerics.Matrix3x2.GetHashCode">
+      <summary>Gets the hash code for this object.</summary>
+    </member>
+    <member name="M:System.Numerics.Matrix3x2.op_Implicit(System.Numerics.Matrix3x2)~Microsoft.Graphics.Canvas.Numerics.Matrix3x2">
+      <summary>Converts a System.Numerics.Matrix3x2 to a Microsoft.Graphics.Canvas.Numerics.Matrix3x2.</summary>
+    </member>
+    <member name="M:System.Numerics.Matrix3x2.op_Implicit(Microsoft.Graphics.Canvas.Numerics.Matrix3x2)~System.Numerics.Matrix3x2">
+      <summary>Converts a Microsoft.Graphics.Canvas.Numerics.Matrix3x2 to a System.Numerics.Matrix3x2.</summary>
+    </member>
+    <member name="F:System.Numerics.Matrix3x2.M11">
+      <summary>Value at row 1 column 1 of the matrix.</summary>
+    </member>
+    <member name="F:System.Numerics.Matrix3x2.M12">
+      <summary>Value at row 1 column 2 of the matrix.</summary>
+    </member>
+    <member name="F:System.Numerics.Matrix3x2.M21">
+      <summary>Value at row 2 column 1 of the matrix.</summary>
+    </member>
+    <member name="F:System.Numerics.Matrix3x2.M22">
+      <summary>Value at row 2 column 2 of the matrix.</summary>
+    </member>
+    <member name="F:System.Numerics.Matrix3x2.M31">
+      <summary>Value at row 3 column 1 of the matrix.</summary>
+    </member>
+    <member name="F:System.Numerics.Matrix3x2.M32">
+      <summary>Value at row 3 column 2 of the matrix.</summary>
+    </member>
+    <member name="P:System.Numerics.Matrix3x2.Identity">
+      <summary>Returns an instance of the identity matrix.</summary>
+    </member>
+    <member name="P:System.Numerics.Matrix3x2.IsIdentity">
+      <summary>Checks whether this is an identity matrix.</summary>
+    </member>
+    <member name="P:System.Numerics.Matrix3x2.Translation">
+      <summary>Gets or sets the translation vector of the matrix.</summary>
+    </member>
+    <member name="T:System.Numerics.Matrix4x4">
+      <summary>
+        <p>A 4x4 matrix, used for 3D transforms.</p>
+      </summary>
+    </member>
+    <member name="M:System.Numerics.Matrix4x4.#ctor(System.Single,System.Single,System.Single,System.Single,System.Single,System.Single,System.Single,System.Single,System.Single,System.Single,System.Single,System.Single,System.Single,System.Single,System.Single,System.Single)">
+      <summary>Initializes a new instance of Matrix4x4.</summary>
+    </member>
+    <member name="M:System.Numerics.Matrix4x4.#ctor(System.Numerics.Matrix3x2)">
+      <summary>Initializes a Matrix4x4 from a Matrix3x2.</summary>
+    </member>
+    <member name="M:System.Numerics.Matrix4x4.CreateBillboard(System.Numerics.Vector3,System.Numerics.Vector3,System.Numerics.Vector3,System.Numerics.Vector3)">
+      <summary>Creates a spherical billboard that rotates around a specified object position, using a right handed coordinate system.</summary>
+    </member>
+    <member name="M:System.Numerics.Matrix4x4.CreateConstrainedBillboard(System.Numerics.Vector3,System.Numerics.Vector3,System.Numerics.Vector3,System.Numerics.Vector3,System.Numerics.Vector3)">
+      <summary>Creates a cylindrical billboard that rotates around a specified axis, using a right handed coordinate system.</summary>
+    </member>
+    <member name="M:System.Numerics.Matrix4x4.CreateTranslation(System.Numerics.Vector3)">
+      <summary>Creates a translation matrix.</summary>
+    </member>
+    <member name="M:System.Numerics.Matrix4x4.CreateTranslation(System.Single,System.Single,System.Single)">
+      <summary>Creates a translation matrix.</summary>
+    </member>
+    <member name="M:System.Numerics.Matrix4x4.CreateScale(System.Single,System.Single,System.Single)">
+      <summary>Creates a scaling matrix, centered on the origin.</summary>
+    </member>
+    <member name="M:System.Numerics.Matrix4x4.CreateScale(System.Single,System.Single,System.Single,System.Numerics.Vector3)">
+      <summary>Creates a scaling matrix, centered on the specified point.</summary>
+    </member>
+    <member name="M:System.Numerics.Matrix4x4.CreateScale(System.Numerics.Vector3)">
+      <summary>Creates a scaling matrix, centered on the origin.</summary>
+    </member>
+    <member name="M:System.Numerics.Matrix4x4.CreateScale(System.Numerics.Vector3,System.Numerics.Vector3)">
+      <summary>Creates a scaling matrix, centered on the specified point.</summary>
+    </member>
+    <member name="M:System.Numerics.Matrix4x4.CreateScale(System.Single)">
+      <summary>Creates a scaling matrix, centered on the origin.</summary>
+    </member>
+    <member name="M:System.Numerics.Matrix4x4.CreateScale(System.Single,System.Numerics.Vector3)">
+      <summary>Creates a scaling matrix, centered on the specified point.</summary>
+    </member>
+    <member name="M:System.Numerics.Matrix4x4.CreateRotationX(System.Single)">
+      <summary>Creates an x-axis rotation matrix, centered on the origin.</summary>
+    </member>
+    <member name="M:System.Numerics.Matrix4x4.CreateRotationX(System.Single,System.Numerics.Vector3)">
+      <summary>Creates an x-axis rotation matrix, centered on the specified point.</summary>
+    </member>
+    <member name="M:System.Numerics.Matrix4x4.CreateRotationY(System.Single)">
+      <summary>Creates a y-axis rotation matrix, centered on the origin.</summary>
+    </member>
+    <member name="M:System.Numerics.Matrix4x4.CreateRotationY(System.Single,System.Numerics.Vector3)">
+      <summary>Creates a y-axis rotation matrix, centered on the specified point.</summary>
+    </member>
+    <member name="M:System.Numerics.Matrix4x4.CreateRotationZ(System.Single)">
+      <summary>Creates a z-axis rotation matrix, centered on the origin.</summary>
+    </member>
+    <member name="M:System.Numerics.Matrix4x4.CreateRotationZ(System.Single,System.Numerics.Vector3)">
+      <summary>Creates a z-axis rotation matrix, centered on the specified point.</summary>
+    </member>
+    <member name="M:System.Numerics.Matrix4x4.CreateFromAxisAngle(System.Numerics.Vector3,System.Single)">
+      <summary>Creates a matrix that rotates around an arbitrary vector.</summary>
+    </member>
+    <member name="M:System.Numerics.Matrix4x4.CreatePerspectiveFieldOfView(System.Single,System.Single,System.Single,System.Single)">
+      <summary>Creates a perspective projection matrix based on a field of view, using a right handed coordinate system.</summary>
+    </member>
+    <member name="M:System.Numerics.Matrix4x4.CreatePerspective(System.Single,System.Single,System.Single,System.Single)">
+      <summary>Creates a perspective projection matrix, using a right handed coordinate system.</summary>
+    </member>
+    <member name="M:System.Numerics.Matrix4x4.CreatePerspectiveOffCenter(System.Single,System.Single,System.Single,System.Single,System.Single,System.Single)">
+      <summary>Creates a customized perspective projection matrix, using a right handed coordinate system.</summary>
+    </member>
+    <member name="M:System.Numerics.Matrix4x4.CreateOrthographic(System.Single,System.Single,System.Single,System.Single)">
+      <summary>Creates an orthographic projection matrix, using a right handed coordinate system.</summary>
+    </member>
+    <member name="M:System.Numerics.Matrix4x4.CreateOrthographicOffCenter(System.Single,System.Single,System.Single,System.Single,System.Single,System.Single)">
+      <summary>Creates a customized orthographic projection matrix, using a right handed coordinate system.</summary>
+    </member>
+    <member name="M:System.Numerics.Matrix4x4.CreateLookAt(System.Numerics.Vector3,System.Numerics.Vector3,System.Numerics.Vector3)">
+      <summary>Creates a view matrix, using a right handed coordinate system.</summary>
+    </member>
+    <member name="M:System.Numerics.Matrix4x4.CreateWorld(System.Numerics.Vector3,System.Numerics.Vector3,System.Numerics.Vector3)">
+      <summary>Creates a world matrix, using a right handed coordinate system.</summary>
+    </member>
+    <member name="M:System.Numerics.Matrix4x4.CreateFromQuaternion(System.Numerics.Quaternion)">
+      <summary>Creates a rotation matrix from a quaternion.</summary>
+    </member>
+    <member name="M:System.Numerics.Matrix4x4.CreateFromYawPitchRoll(System.Single,System.Single,System.Single)">
+      <summary>Creates a rotation matrix from a specified yaw, pitch, and roll.</summary>
+    </member>
+    <member name="M:System.Numerics.Matrix4x4.CreateShadow(System.Numerics.Vector3,System.Numerics.Plane)">
+      <summary>Creates a matrix that flattens geometry into a specified Plane as if casting a shadow from a specified light source.</summary>
+    </member>
+    <member name="M:System.Numerics.Matrix4x4.CreateReflection(System.Numerics.Plane)">
+      <summary>Creates a matrix that reflects the coordinate system about a specified Plane.</summary>
+    </member>
+    <member name="M:System.Numerics.Matrix4x4.GetDeterminant">
+      <summary>Calculates the determinant of the matrix.</summary>
+    </member>
+    <member name="M:System.Numerics.Matrix4x4.Invert(System.Numerics.Matrix4x4,System.Numerics.Matrix4x4@)">
+      <summary>Calculates the inverse of a matrix.</summary>
+      <param name="matrix">The matrix to be inverted.</param>
+      <param name="result">Outputs the inverted matrix.</param>
+      <returns>true if the matrix can be inverted; false otherwise.</returns>
+    </member>
+    <member name="M:System.Numerics.Matrix4x4.Decompose(System.Numerics.Matrix4x4,System.Numerics.Vector3@,System.Numerics.Quaternion@,System.Numerics.Vector3@)">
+      <summary>Extracts the scalar, translation, and rotation components from a 3D scale/rotate/translate (SRT) matrix.</summary>
+      <param name="matrix">The matrix to be decomposed.</param>
+      <param name="scale">Outputs the scalar component of the transform matrix, expressed as a Vector3.</param>
+      <param name="rotation"> Outputs the rotation component of the transform matrix, expressed as a Quaternion.</param>
+      <param name="translation">Outputs the translation component of the transform matrix, expressed as a Vector3.</param>
+      <returns>true if the matrix can be decomposed; false otherwise.</returns>
+    </member>
+    <member name="M:System.Numerics.Matrix4x4.Transform(System.Numerics.Matrix4x4,System.Numerics.Quaternion)">
+      <summary>Transforms a matrix by applying a quaternion rotation.</summary>
+    </member>
+    <member name="M:System.Numerics.Matrix4x4.Transpose(System.Numerics.Matrix4x4)">
+      <summary>Transposes the components of a matrix along its diagonal.</summary>
+    </member>
+    <member name="M:System.Numerics.Matrix4x4.Lerp(System.Numerics.Matrix4x4,System.Numerics.Matrix4x4,System.Single)">
+      <summary>Linearly interpolates between the corresponding values of two matrices.</summary>
+    </member>
+    <member name="M:System.Numerics.Matrix4x4.Negate(System.Numerics.Matrix4x4)">
+      <summary>Negates each component of a matrix.</summary>
+    </member>
+    <member name="M:System.Numerics.Matrix4x4.Add(System.Numerics.Matrix4x4,System.Numerics.Matrix4x4)">
+      <summary>Adds each component of a matrix to another matrix.</summary>
+    </member>
+    <member name="M:System.Numerics.Matrix4x4.Subtract(System.Numerics.Matrix4x4,System.Numerics.Matrix4x4)">
+      <summary>Subtracts each component of a matrix from another matrix.</summary>
+    </member>
+    <member name="M:System.Numerics.Matrix4x4.Multiply(System.Numerics.Matrix4x4,System.Numerics.Matrix4x4)">
+      <summary>Multiplies a matrix by another matrix. This has the effect of concatenating two transforms.</summary>
+    </member>
+    <member name="M:System.Numerics.Matrix4x4.Multiply(System.Numerics.Matrix4x4,System.Single)">
+      <summary>Multiplies each component of a matrix by a scalar value</summary>
+    </member>
+    <member name="M:System.Numerics.Matrix4x4.op_UnaryNegation(System.Numerics.Matrix4x4)">
+      <summary>Negates each component of a matrix.</summary>
+    </member>
+    <member name="M:System.Numerics.Matrix4x4.op_Addition(System.Numerics.Matrix4x4,System.Numerics.Matrix4x4)">
+      <summary>Adds each component of a matrix to another matrix.</summary>
+    </member>
+    <member name="M:System.Numerics.Matrix4x4.op_Subtraction(System.Numerics.Matrix4x4,System.Numerics.Matrix4x4)">
+      <summary>Subtracts each component of a matrix from another matrix.</summary>
+    </member>
+    <member name="M:System.Numerics.Matrix4x4.op_Multiply(System.Numerics.Matrix4x4,System.Numerics.Matrix4x4)">
+      <summary>Multiplies a matrix by another matrix. This has the effect of concatenating two transforms.</summary>
+    </member>
+    <member name="M:System.Numerics.Matrix4x4.op_Multiply(System.Numerics.Matrix4x4,System.Single)">
+      <summary>Multiplies each component of a matrix by a scalar value.</summary>
+    </member>
+    <member name="M:System.Numerics.Matrix4x4.op_Equality(System.Numerics.Matrix4x4,System.Numerics.Matrix4x4)">
+      <summary>Determines whether two instances of Matrix4x4 are equal.</summary>
+    </member>
+    <member name="M:System.Numerics.Matrix4x4.op_Inequality(System.Numerics.Matrix4x4,System.Numerics.Matrix4x4)">
+      <summary>Determines whether two instances of Matrix4x4 are not equal.</summary>
+    </member>
+    <member name="M:System.Numerics.Matrix4x4.Equals(System.Numerics.Matrix4x4)">
+      <summary>Determines whether the specified Matrix4x4 is equal to the Matrix4x4.</summary>
+    </member>
+    <member name="M:System.Numerics.Matrix4x4.Equals(System.Object)">
+      <summary>Determines whether the specified Object is equal to the Matrix4x4.</summary>
+    </member>
+    <member name="M:System.Numerics.Matrix4x4.ToString">
+      <summary>Returns a String that represents the current Matrix4x4.</summary>
+    </member>
+    <member name="M:System.Numerics.Matrix4x4.GetHashCode">
+      <summary>Gets the hash code for this object.</summary>
+    </member>
+    <member name="M:System.Numerics.Matrix4x4.op_Implicit(System.Numerics.Matrix4x4)~Microsoft.Graphics.Canvas.Numerics.Matrix4x4">
+      <summary>Converts a System.Numerics.Matrix4x4 to a Microsoft.Graphics.Canvas.Numerics.Matrix4x4.</summary>
+    </member>
+    <member name="M:System.Numerics.Matrix4x4.op_Implicit(Microsoft.Graphics.Canvas.Numerics.Matrix4x4)~System.Numerics.Matrix4x4">
+      <summary>Converts a Microsoft.Graphics.Canvas.Numerics.Matrix4x4 to a System.Numerics.Matrix4x4.</summary>
+    </member>
+    <member name="F:System.Numerics.Matrix4x4.M11">
+      <summary>Value at row 1 column 1 of the matrix.</summary>
+    </member>
+    <member name="F:System.Numerics.Matrix4x4.M12">
+      <summary>Value at row 1 column 2 of the matrix.</summary>
+    </member>
+    <member name="F:System.Numerics.Matrix4x4.M13">
+      <summary>Value at row 1 column 3 of the matrix.</summary>
+    </member>
+    <member name="F:System.Numerics.Matrix4x4.M14">
+      <summary>Value at row 1 column 4 of the matrix.</summary>
+    </member>
+    <member name="F:System.Numerics.Matrix4x4.M21">
+      <summary>Value at row 2 column 1 of the matrix.</summary>
+    </member>
+    <member name="F:System.Numerics.Matrix4x4.M22">
+      <summary>Value at row 2 column 2 of the matrix.</summary>
+    </member>
+    <member name="F:System.Numerics.Matrix4x4.M23">
+      <summary>Value at row 2 column 3 of the matrix.</summary>
+    </member>
+    <member name="F:System.Numerics.Matrix4x4.M24">
+      <summary>Value at row 2 column 4 of the matrix.</summary>
+    </member>
+    <member name="F:System.Numerics.Matrix4x4.M31">
+      <summary>Value at row 3 column 1 of the matrix.</summary>
+    </member>
+    <member name="F:System.Numerics.Matrix4x4.M32">
+      <summary>Value at row 3 column 2 of the matrix.</summary>
+    </member>
+    <member name="F:System.Numerics.Matrix4x4.M33">
+      <summary>Value at row 3 column 3 of the matrix.</summary>
+    </member>
+    <member name="F:System.Numerics.Matrix4x4.M34">
+      <summary>Value at row 3 column 4 of the matrix.</summary>
+    </member>
+    <member name="F:System.Numerics.Matrix4x4.M41">
+      <summary>Value at row 4 column 1 of the matrix.</summary>
+    </member>
+    <member name="F:System.Numerics.Matrix4x4.M42">
+      <summary>Value at row 4 column 2 of the matrix.</summary>
+    </member>
+    <member name="F:System.Numerics.Matrix4x4.M43">
+      <summary>Value at row 4 column 3 of the matrix.</summary>
+    </member>
+    <member name="F:System.Numerics.Matrix4x4.M44">
+      <summary>Value at row 4 column 4 of the matrix.</summary>
+    </member>
+    <member name="P:System.Numerics.Matrix4x4.Identity">
+      <summary>Returns an instance of the identity matrix.</summary>
+    </member>
+    <member name="P:System.Numerics.Matrix4x4.IsIdentity">
+      <summary>Checks whether this is an identity matrix.</summary>
+    </member>
+    <member name="P:System.Numerics.Matrix4x4.Translation">
+      <summary>Gets or sets the translation vector of the matrix.</summary>
+    </member>
+    <member name="T:System.Numerics.Plane">
+      <summary>
+        <p>A plane.</p>
+      </summary>
+    </member>
+    <member name="M:System.Numerics.Plane.#ctor(System.Single,System.Single,System.Single,System.Single)">
+      <summary>Creates a Plane from 4 floats.</summary>
+    </member>
+    <member name="M:System.Numerics.Plane.#ctor(System.Numerics.Vector3,System.Single)">
+      <summary>Creates a Plane from a Vector3 and a distance.</summary>
+    </member>
+    <member name="M:System.Numerics.Plane.#ctor(System.Numerics.Vector4)">
+      <summary>Creates a Plane from a Vector4.</summary>
+    </member>
+    <member name="M:System.Numerics.Plane.CreateFromVertices(System.Numerics.Vector3,System.Numerics.Vector3,System.Numerics.Vector3)">
+      <summary>Creates a Plane from a set of three vertex positions, which must all be different and not in a straight line.</summary>
+    </member>
+    <member name="M:System.Numerics.Plane.Normalize(System.Numerics.Plane)">
+      <summary>Changes the coefficients of the normal vector of a plane to make it of unit length.</summary>
+    </member>
+    <member name="M:System.Numerics.Plane.Transform(System.Numerics.Plane,System.Numerics.Matrix4x4)">
+      <summary>Transforms a normalized plane by a Matrix4x4.</summary>
+    </member>
+    <member name="M:System.Numerics.Plane.Transform(System.Numerics.Plane,System.Numerics.Quaternion)">
+      <summary>Transforms a normalized plane by a quaternion rotation.</summary>
+    </member>
+    <member name="M:System.Numerics.Plane.Dot(System.Numerics.Plane,System.Numerics.Vector4)">
+      <summary>Calculates the dot product of a plane with a Vector4.</summary>
+    </member>
+    <member name="M:System.Numerics.Plane.DotCoordinate(System.Numerics.Plane,System.Numerics.Vector3)">
+      <summary>Calculates the dot product of a plane with a Vector3 coordinate. Unlike DotNormal, this computation includes the plane D value.</summary>
+    </member>
+    <member name="M:System.Numerics.Plane.DotNormal(System.Numerics.Plane,System.Numerics.Vector3)">
+      <summary>Calculates the dot product of a plane with a Vector3 normal. Unlike DotCoordinate, this computation ignores the plane D value.</summary>
+    </member>
+    <member name="M:System.Numerics.Plane.op_Equality(System.Numerics.Plane,System.Numerics.Plane)">
+      <summary>Determines whether two instances of Plane are equal.</summary>
+    </member>
+    <member name="M:System.Numerics.Plane.op_Inequality(System.Numerics.Plane,System.Numerics.Plane)">
+      <summary>Determines whether two instances of Plane are not equal.</summary>
+    </member>
+    <member name="M:System.Numerics.Plane.Equals(System.Numerics.Plane)">
+      <summary>Determines whether the specified Plane is equal to the Plane.</summary>
+    </member>
+    <member name="M:System.Numerics.Plane.Equals(System.Object)">
+      <summary>Determines whether the specified Object is equal to the Plane.</summary>
+    </member>
+    <member name="M:System.Numerics.Plane.ToString">
+      <summary>Returns a String that represents the current Plane.</summary>
+    </member>
+    <member name="M:System.Numerics.Plane.GetHashCode">
+      <summary>Gets the hash code for this object.</summary>
+    </member>
+    <member name="M:System.Numerics.Plane.op_Implicit(System.Numerics.Plane)~Microsoft.Graphics.Canvas.Numerics.Plane">
+      <summary>Converts a System.Numerics.Plane to a Microsoft.Graphics.Canvas.Numerics.Plane.</summary>
+    </member>
+    <member name="M:System.Numerics.Plane.op_Implicit(Microsoft.Graphics.Canvas.Numerics.Plane)~System.Numerics.Plane">
+      <summary>Converts a Microsoft.Graphics.Canvas.Numerics.Plane to a System.Numerics.Plane.</summary>
+    </member>
+    <member name="F:System.Numerics.Plane.Normal">
+      <summary>Normal vector of the plane.</summary>
+    </member>
+    <member name="F:System.Numerics.Plane.D">
+      <summary>Distance of the plane along its normal from the origin.</summary>
+    </member>
+    <member name="T:System.Numerics.Quaternion">
+      <summary>
+        <p>A four dimensional vector, used to represent a rotation.</p>
+      </summary>
+    </member>
+    <member name="M:System.Numerics.Quaternion.#ctor(System.Single,System.Single,System.Single,System.Single)">
+      <summary>Initializes a new instance of Quaternion.</summary>
+    </member>
+    <member name="M:System.Numerics.Quaternion.#ctor(System.Numerics.Vector3,System.Single)">
+      <summary>Initializes a new instance of Quaternion.</summary>
+    </member>
+    <member name="M:System.Numerics.Quaternion.Length">
+      <summary>Calculates the length of a quaternion.</summary>
+    </member>
+    <member name="M:System.Numerics.Quaternion.LengthSquared">
+      <summary>Calculates the length squared of a quaternion.</summary>
+    </member>
+    <member name="M:System.Numerics.Quaternion.Normalize(System.Numerics.Quaternion)">
+      <summary>Divides each component of a quaternion by the length of the quaternion.</summary>
+    </member>
+    <member name="M:System.Numerics.Quaternion.Conjugate(System.Numerics.Quaternion)">
+      <summary>Calculates the conjugate of a quaternion.</summary>
+    </member>
+    <member name="M:System.Numerics.Quaternion.Inverse(System.Numerics.Quaternion)">
+      <summary>Calculates the inverse of a quaternion.</summary>
+    </member>
+    <member name="M:System.Numerics.Quaternion.CreateFromAxisAngle(System.Numerics.Vector3,System.Single)">
+      <summary>Creates a quaternion from a vector and an angle to rotate about the vector.</summary>
+    </member>
+    <member name="M:System.Numerics.Quaternion.CreateFromYawPitchRoll(System.Single,System.Single,System.Single)">
+      <summary>Creates a quaternion from specified yaw, pitch, and roll angles.</summary>
+    </member>
+    <member name="M:System.Numerics.Quaternion.CreateFromRotationMatrix(System.Numerics.Matrix4x4)">
+      <summary>Creates a quaternion from a rotation matrix.</summary>
+    </member>
+    <member name="M:System.Numerics.Quaternion.Dot(System.Numerics.Quaternion,System.Numerics.Quaternion)">
+      <summary>Calculates the dot product of two quaternions.</summary>
+    </member>
+    <member name="M:System.Numerics.Quaternion.Slerp(System.Numerics.Quaternion,System.Numerics.Quaternion,System.Single)">
+      <summary>Interpolates between two quaternions, using spherical linear interpolation.</summary>
+    </member>
+    <member name="M:System.Numerics.Quaternion.Lerp(System.Numerics.Quaternion,System.Numerics.Quaternion,System.Single)">
+      <summary>Linearly interpolates between two quaternions.</summary>
+    </member>
+    <member name="M:System.Numerics.Quaternion.Concatenate(System.Numerics.Quaternion,System.Numerics.Quaternion)">
+      <summary>Concatenates two quaternions; the result represents the first rotation followed by the second rotation.</summary>
+    </member>
+    <member name="M:System.Numerics.Quaternion.Negate(System.Numerics.Quaternion)">
+      <summary>Flips the sign of each component of the quaternion.</summary>
+    </member>
+    <member name="M:System.Numerics.Quaternion.Add(System.Numerics.Quaternion,System.Numerics.Quaternion)">
+      <summary>Adds two quaternions.</summary>
+    </member>
+    <member name="M:System.Numerics.Quaternion.Subtract(System.Numerics.Quaternion,System.Numerics.Quaternion)">
+      <summary>Subtracts a quaternion from another quaternion.</summary>
+    </member>
+    <member name="M:System.Numerics.Quaternion.Multiply(System.Numerics.Quaternion,System.Numerics.Quaternion)">
+      <summary>Multiplies a quaternion by another quaternion.</summary>
+    </member>
+    <member name="M:System.Numerics.Quaternion.Multiply(System.Numerics.Quaternion,System.Single)">
+      <summary>Multiplies a quaternion by a scalar value.</summary>
+    </member>
+    <member name="M:System.Numerics.Quaternion.Divide(System.Numerics.Quaternion,System.Numerics.Quaternion)">
+      <summary>Divides a quaternion by another quaternion.</summary>
+    </member>
+    <member name="M:System.Numerics.Quaternion.op_UnaryNegation(System.Numerics.Quaternion)">
+      <summary>Flips the sign of each component of the quaternion.</summary>
+    </member>
+    <member name="M:System.Numerics.Quaternion.op_Addition(System.Numerics.Quaternion,System.Numerics.Quaternion)">
+      <summary>Adds two quaternions.</summary>
+    </member>
+    <member name="M:System.Numerics.Quaternion.op_Subtraction(System.Numerics.Quaternion,System.Numerics.Quaternion)">
+      <summary>Subtracts a quaternion from another quaternion.</summary>
+    </member>
+    <member name="M:System.Numerics.Quaternion.op_Multiply(System.Numerics.Quaternion,System.Numerics.Quaternion)">
+      <summary>Multiplies a quaternion by another quaternion.</summary>
+    </member>
+    <member name="M:System.Numerics.Quaternion.op_Multiply(System.Numerics.Quaternion,System.Single)">
+      <summary>Multiplies a quaternion by a scalar value.</summary>
+    </member>
+    <member name="M:System.Numerics.Quaternion.op_Division(System.Numerics.Quaternion,System.Numerics.Quaternion)">
+      <summary>Divides a quaternion by another quaternion.</summary>
+    </member>
+    <member name="M:System.Numerics.Quaternion.op_Equality(System.Numerics.Quaternion,System.Numerics.Quaternion)">
+      <summary>Determines whether two instances of Quaternion are equal.</summary>
+    </member>
+    <member name="M:System.Numerics.Quaternion.op_Inequality(System.Numerics.Quaternion,System.Numerics.Quaternion)">
+      <summary>Determines whether two instances of Quaternion are not equal.</summary>
+    </member>
+    <member name="M:System.Numerics.Quaternion.Equals(System.Numerics.Quaternion)">
+      <summary>Determines whether the specified Quaternion is equal to the Quaternion.</summary>
+    </member>
+    <member name="M:System.Numerics.Quaternion.Equals(System.Object)">
+      <summary>Determines whether the specified Object is equal to the Quaternion.</summary>
+    </member>
+    <member name="M:System.Numerics.Quaternion.ToString">
+      <summary>Returns a String that represents the current Quaternion.</summary>
+    </member>
+    <member name="M:System.Numerics.Quaternion.GetHashCode">
+      <summary>Gets the hash code for this object.</summary>
+    </member>
+    <member name="M:System.Numerics.Quaternion.op_Implicit(System.Numerics.Quaternion)~Microsoft.Graphics.Canvas.Numerics.Quaternion">
+      <summary>Converts a System.Numerics.Quaternion to a Microsoft.Graphics.Canvas.Numerics.Quaternion.</summary>
+    </member>
+    <member name="M:System.Numerics.Quaternion.op_Implicit(Microsoft.Graphics.Canvas.Numerics.Quaternion)~System.Numerics.Quaternion">
+      <summary>Converts a Microsoft.Graphics.Canvas.Numerics.Quaternion to a System.Numerics.Quaternion.</summary>
+    </member>
+    <member name="F:System.Numerics.Quaternion.X">
+      <summary>X value of the vector component of the quaternion.</summary>
+    </member>
+    <member name="F:System.Numerics.Quaternion.Y">
+      <summary>Y value of the vector component of the quaternion.</summary>
+    </member>
+    <member name="F:System.Numerics.Quaternion.Z">
+      <summary>Z value of the vector component of the quaternion.</summary>
+    </member>
+    <member name="F:System.Numerics.Quaternion.W">
+      <summary>Rotation component of the quaternion.</summary>
+    </member>
+    <member name="P:System.Numerics.Quaternion.Identity">
+      <summary>Returns a quaternion representing no rotation.</summary>
+    </member>
+    <member name="P:System.Numerics.Quaternion.IsIdentity">
+      <summary>Checks whether this is an identity (no rotation) quaternion.</summary>
+    </member>
+    <member name="T:System.Numerics.Vector2">
+      <summary>
+        <p>A vector with two components.</p>
+      </summary>
+    </member>
+    <member name="M:System.Numerics.Vector2.#ctor(System.Single,System.Single)">
+      <summary>Creates a new instance of Vector2.</summary>
+      <param name="x">Initial value for the x component of the vector.</param>
+      <param name="y">Initial value for the y component of the vector.</param>
+    </member>
+    <member name="M:System.Numerics.Vector2.#ctor(System.Single)">
+      <summary>Creates a new instance of Vector2.</summary>
+      <param name="value">Value to initialize each component to.</param>
+    </member>
+    <member name="M:System.Numerics.Vector2.Length">
+      <summary>Calculates the length, or Euclidean distance, of the vector.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector2.LengthSquared">
+      <summary>Calculates the length, or Euclidean distance, of the vector squared.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector2.Distance(System.Numerics.Vector2,System.Numerics.Vector2)">
+      <summary>Calculates the Euclidean distance between two vectors.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector2.DistanceSquared(System.Numerics.Vector2,System.Numerics.Vector2)">
+      <summary>Calculates the Euclidean distance between two vectors squared.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector2.Dot(System.Numerics.Vector2,System.Numerics.Vector2)">
+      <summary>Calculates the dot product of two vectors.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector2.Normalize(System.Numerics.Vector2)">
+      <summary>Creates a unit vector from the specified vector.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector2.Min(System.Numerics.Vector2,System.Numerics.Vector2)">
+      <summary>Returns a vector that contains the lowest value from each matching pair of components.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector2.Max(System.Numerics.Vector2,System.Numerics.Vector2)">
+      <summary>Returns a vector that contains the highest value from each matching pair of components.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector2.Clamp(System.Numerics.Vector2,System.Numerics.Vector2,System.Numerics.Vector2)">
+      <summary>Restricts a value to be within a specified range.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector2.Lerp(System.Numerics.Vector2,System.Numerics.Vector2,System.Single)">
+      <summary>Performs a linear interpolation between two vectors.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector2.Reflect(System.Numerics.Vector2,System.Numerics.Vector2)">
+      <summary>Determines the reflect vector of the given vector and normal.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector2.Transform(System.Numerics.Vector2,System.Numerics.Matrix4x4)">
+      <summary>Transforms the vector (x, y, 0, 1) by the specified matrix.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector2.Transform(System.Numerics.Vector2,System.Numerics.Matrix3x2)">
+      <summary>Transforms the vector (x, y, 0, 1) by the specified matrix.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector2.TransformNormal(System.Numerics.Vector2,System.Numerics.Matrix4x4)">
+      <summary>Transforms the normal vector (x, y, 0, 0) by the specified matrix.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector2.TransformNormal(System.Numerics.Vector2,System.Numerics.Matrix3x2)">
+      <summary>Transforms the normal vector (x, y, 0, 0) by the specified matrix.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector2.Transform(System.Numerics.Vector2,System.Numerics.Quaternion)">
+      <summary>Transforms a Vector2 by the given quaternion.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector2.Negate(System.Numerics.Vector2)">
+      <summary>Returns a vector pointing in the opposite direction.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector2.Add(System.Numerics.Vector2,System.Numerics.Vector2)">
+      <summary>Adds two vectors.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector2.Subtract(System.Numerics.Vector2,System.Numerics.Vector2)">
+      <summary>Subtracts a vector from a vector.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector2.Multiply(System.Numerics.Vector2,System.Numerics.Vector2)">
+      <summary>Multiplies the components of two vectors by each other.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector2.Multiply(System.Numerics.Vector2,System.Single)">
+      <summary>Multiplies a vector by a scalar.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector2.Divide(System.Numerics.Vector2,System.Numerics.Vector2)">
+      <summary>Divides the components of a vector by the components of another vector.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector2.Divide(System.Numerics.Vector2,System.Single)">
+      <summary>Divides a vector by a scalar value.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector2.op_UnaryNegation(System.Numerics.Vector2)">
+      <summary>Returns a vector pointing in the opposite direction.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector2.op_Addition(System.Numerics.Vector2,System.Numerics.Vector2)">
+      <summary>Adds two vectors.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector2.op_Subtraction(System.Numerics.Vector2,System.Numerics.Vector2)">
+      <summary>Subtracts a vector from a vector.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector2.op_Multiply(System.Numerics.Vector2,System.Numerics.Vector2)">
+      <summary>Multiplies the components of two vectors by each other.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector2.op_Multiply(System.Numerics.Vector2,System.Single)">
+      <summary>Multiplies a vector by a scalar.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector2.op_Multiply(System.Single,System.Numerics.Vector2)">
+      <summary>Multiplies a vector by a scalar.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector2.op_Division(System.Numerics.Vector2,System.Numerics.Vector2)">
+      <summary>Divides the components of a vector by the components of another vector.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector2.op_Division(System.Numerics.Vector2,System.Single)">
+      <summary>Divides a vector by a scalar value.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector2.op_Equality(System.Numerics.Vector2,System.Numerics.Vector2)">
+      <summary>Determines whether two instances of Vector2 are equal.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector2.op_Inequality(System.Numerics.Vector2,System.Numerics.Vector2)">
+      <summary>Determines whether two instances of Vector2 are not equal.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector2.Equals(System.Numerics.Vector2)">
+      <summary>Determines whether the specified Vector2 is equal to the Vector2.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector2.Equals(System.Object)">
+      <summary>Determines whether the specified Object is equal to the Vector2.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector2.ToString">
+      <summary>Returns a String that represents the current Vector2.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector2.GetHashCode">
+      <summary>Gets the hash code for this object.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector2.op_Implicit(System.Numerics.Vector2)~Microsoft.Graphics.Canvas.Numerics.Vector2">
+      <summary>Converts a System.Numerics.Vector2 to a Microsoft.Graphics.Canvas.Numerics.Vector2.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector2.op_Implicit(Microsoft.Graphics.Canvas.Numerics.Vector2)~System.Numerics.Vector2">
+      <summary>Converts a Microsoft.Graphics.Canvas.Numerics.Vector2 to a System.Numerics.Vector2.</summary>
+    </member>
+    <member name="F:System.Numerics.Vector2.X">
+      <summary>X component of the vector.</summary>
+    </member>
+    <member name="F:System.Numerics.Vector2.Y">
+      <summary>Y component of the vector.</summary>
+    </member>
+    <member name="P:System.Numerics.Vector2.Zero">
+      <summary>Returns a Vector2 with all of its components set to zero.</summary>
+    </member>
+    <member name="P:System.Numerics.Vector2.One">
+      <summary>Returns a Vector2 with all of its components set to one.</summary>
+    </member>
+    <member name="P:System.Numerics.Vector2.UnitX">
+      <summary>Returns the Vector2 (1, 0).</summary>
+    </member>
+    <member name="P:System.Numerics.Vector2.UnitY">
+      <summary>Returns the Vector2 (0, 1).</summary>
+    </member>
+    <member name="T:System.Numerics.Vector3">
+      <summary>
+        <p>A vector with three components.</p>
+      </summary>
+    </member>
+    <member name="M:System.Numerics.Vector3.#ctor(System.Single,System.Single,System.Single)">
+      <summary>Creates a new instance of Vector3.</summary>
+      <param name="x">Initial value for the x component of the vector.</param>
+      <param name="y">Initial value for the y component of the vector.</param>
+      <param name="z">Initial value for the z component of the vector.</param>
+    </member>
+    <member name="M:System.Numerics.Vector3.#ctor(System.Numerics.Vector2,System.Single)">
+      <summary>Creates a new instance of Vector3.</summary>
+      <param name="value">A vector containing the values to initialize x and y components with.</param>
+      <param name="z">Initial value for the z component of the vector.</param>
+    </member>
+    <member name="M:System.Numerics.Vector3.#ctor(System.Single)">
+      <summary>Creates a new instance of Vector3.</summary>
+      <param name="value">Value to initialize each component to.</param>
+    </member>
+    <member name="M:System.Numerics.Vector3.Length">
+      <summary>Calculates the length, or Euclidean distance, of the vector.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector3.LengthSquared">
+      <summary>Calculates the length, or Euclidean distance, of the vector squared.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector3.Distance(System.Numerics.Vector3,System.Numerics.Vector3)">
+      <summary>Calculates the Euclidean distance between two vectors.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector3.DistanceSquared(System.Numerics.Vector3,System.Numerics.Vector3)">
+      <summary>Calculates the Euclidean distance between two vectors squared.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector3.Cross(System.Numerics.Vector3,System.Numerics.Vector3)">
+      <summary>Calculates the cross product of two vectors.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector3.Dot(System.Numerics.Vector3,System.Numerics.Vector3)">
+      <summary>Calculates the dot product of two vectors.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector3.Normalize(System.Numerics.Vector3)">
+      <summary>Creates a unit vector from the specified vector.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector3.Min(System.Numerics.Vector3,System.Numerics.Vector3)">
+      <summary>Returns a vector that contains the lowest value from each matching pair of components.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector3.Max(System.Numerics.Vector3,System.Numerics.Vector3)">
+      <summary>Returns a vector that contains the highest value from each matching pair of components.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector3.Clamp(System.Numerics.Vector3,System.Numerics.Vector3,System.Numerics.Vector3)">
+      <summary>Restricts a value to be within a specified range.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector3.Lerp(System.Numerics.Vector3,System.Numerics.Vector3,System.Single)">
+      <summary>Performs a linear interpolation between two vectors.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector3.Reflect(System.Numerics.Vector3,System.Numerics.Vector3)">
+      <summary>Determines the reflect vector of the given vector and normal.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector3.Transform(System.Numerics.Vector3,System.Numerics.Matrix4x4)">
+      <summary>Transforms the vector (x, y, z, 1) by the specified matrix.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector3.TransformNormal(System.Numerics.Vector3,System.Numerics.Matrix4x4)">
+      <summary>Transforms the normal vector (x, y, z, 0) by the specified matrix.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector3.Transform(System.Numerics.Vector3,System.Numerics.Quaternion)">
+      <summary>Transforms a Vector3 by the given quaternion.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector3.Negate(System.Numerics.Vector3)">
+      <summary>Returns a vector pointing in the opposite direction.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector3.Add(System.Numerics.Vector3,System.Numerics.Vector3)">
+      <summary>Adds two vectors.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector3.Subtract(System.Numerics.Vector3,System.Numerics.Vector3)">
+      <summary>Subtracts a vector from a vector.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector3.Multiply(System.Numerics.Vector3,System.Numerics.Vector3)">
+      <summary>Multiplies the components of two vectors by each other.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector3.Multiply(System.Numerics.Vector3,System.Single)">
+      <summary>Multiplies a vector by a scalar.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector3.Divide(System.Numerics.Vector3,System.Numerics.Vector3)">
+      <summary>Divides the components of a vector by the components of another vector.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector3.Divide(System.Numerics.Vector3,System.Single)">
+      <summary>Divides a vector by a scalar value.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector3.op_UnaryNegation(System.Numerics.Vector3)">
+      <summary>Returns a vector pointing in the opposite direction.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector3.op_Addition(System.Numerics.Vector3,System.Numerics.Vector3)">
+      <summary>Adds two vectors.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector3.op_Subtraction(System.Numerics.Vector3,System.Numerics.Vector3)">
+      <summary>Subtracts a vector from a vector.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector3.op_Multiply(System.Numerics.Vector3,System.Numerics.Vector3)">
+      <summary>Multiplies the components of two vectors by each other.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector3.op_Multiply(System.Numerics.Vector3,System.Single)">
+      <summary>Multiplies a vector by a scalar.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector3.op_Multiply(System.Single,System.Numerics.Vector3)">
+      <summary>Multiplies a vector by a scalar.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector3.op_Division(System.Numerics.Vector3,System.Numerics.Vector3)">
+      <summary>Divides the components of a vector by the components of another vector.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector3.op_Division(System.Numerics.Vector3,System.Single)">
+      <summary>Divides a vector by a scalar value.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector3.op_Equality(System.Numerics.Vector3,System.Numerics.Vector3)">
+      <summary>Determines whether two instances of Vector3 are equal.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector3.op_Inequality(System.Numerics.Vector3,System.Numerics.Vector3)">
+      <summary>Determines whether two instances of Vector3 are not equal.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector3.Equals(System.Numerics.Vector3)">
+      <summary>Determines whether the specified Vector3 is equal to the Vector3.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector3.Equals(System.Object)">
+      <summary>Determines whether the specified Object is equal to the Vector3.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector3.ToString">
+      <summary>Returns a String that represents the current Vector3.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector3.GetHashCode">
+      <summary>Gets the hash code for this object.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector3.op_Implicit(System.Numerics.Vector3)~Microsoft.Graphics.Canvas.Numerics.Vector3">
+      <summary>Converts a System.Numerics.Vector3 to a Microsoft.Graphics.Canvas.Numerics.Vector3.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector3.op_Implicit(Microsoft.Graphics.Canvas.Numerics.Vector3)~System.Numerics.Vector3">
+      <summary>Converts a Microsoft.Graphics.Canvas.Numerics.Vector3 to a System.Numerics.Vector3.</summary>
+    </member>
+    <member name="F:System.Numerics.Vector3.X">
+      <summary>X component of the vector.</summary>
+    </member>
+    <member name="F:System.Numerics.Vector3.Y">
+      <summary>Y component of the vector.</summary>
+    </member>
+    <member name="F:System.Numerics.Vector3.Z">
+      <summary>Z component of the vector.</summary>
+    </member>
+    <member name="P:System.Numerics.Vector3.Zero">
+      <summary>Returns a Vector3 with all of its components set to zero.</summary>
+    </member>
+    <member name="P:System.Numerics.Vector3.One">
+      <summary>Returns a Vector3 with all of its components set to one.</summary>
+    </member>
+    <member name="P:System.Numerics.Vector3.UnitX">
+      <summary>Returns the Vector3 (1, 0, 0).</summary>
+    </member>
+    <member name="P:System.Numerics.Vector3.UnitY">
+      <summary>Returns the Vector3 (0, 1, 0).</summary>
+    </member>
+    <member name="P:System.Numerics.Vector3.UnitZ">
+      <summary>Returns the Vector3 (0, 0, 1).</summary>
+    </member>
+    <member name="T:System.Numerics.Vector4">
+      <summary>
+        <p>A vector with four components.</p>
+      </summary>
+    </member>
+    <member name="M:System.Numerics.Vector4.#ctor(System.Single,System.Single,System.Single,System.Single)">
+      <summary>Creates a new instance of Vector4.</summary>
+      <param name="x">Initial value for the x component of the vector.</param>
+      <param name="y">Initial value for the y component of the vector.</param>
+      <param name="z">Initial value for the z component of the vector.</param>
+      <param name="w">Initial value for the w component of the vector.</param>
+    </member>
+    <member name="M:System.Numerics.Vector4.#ctor(System.Numerics.Vector2,System.Single,System.Single)">
+      <summary>Creates a new instance of Vector4.</summary>
+      <param name="value">A vector containing the values to initialize x and y components with.</param>
+      <param name="z">Initial value for the z component of the vector.</param>
+      <param name="w">Initial value for the w component of the vector.</param>
+    </member>
+    <member name="M:System.Numerics.Vector4.#ctor(System.Numerics.Vector3,System.Single)">
+      <summary>Creates a new instance of Vector4.</summary>
+      <param name="value">A vector containing the values to initialize x, y and z components with.</param>
+      <param name="w">Initial value for the w component of the vector.</param>
+    </member>
+    <member name="M:System.Numerics.Vector4.#ctor(System.Single)">
+      <summary>Creates a new instance of Vector4.</summary>
+      <param name="value">Value to initialize each component to.</param>
+    </member>
+    <member name="M:System.Numerics.Vector4.Length">
+      <summary>Calculates the length, or Euclidean distance, of the vector.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector4.LengthSquared">
+      <summary>Calculates the length, or Euclidean distance, of the vector squared.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector4.Distance(System.Numerics.Vector4,System.Numerics.Vector4)">
+      <summary>Calculates the Euclidean distance between two vectors.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector4.DistanceSquared(System.Numerics.Vector4,System.Numerics.Vector4)">
+      <summary>Calculates the Euclidean distance between two vectors squared.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector4.Dot(System.Numerics.Vector4,System.Numerics.Vector4)">
+      <summary>Calculates the dot product of two vectors.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector4.Normalize(System.Numerics.Vector4)">
+      <summary>Creates a unit vector from the specified vector.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector4.Min(System.Numerics.Vector4,System.Numerics.Vector4)">
+      <summary>Returns a vector that contains the lowest value from each matching pair of components.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector4.Max(System.Numerics.Vector4,System.Numerics.Vector4)">
+      <summary>Returns a vector that contains the highest value from each matching pair of components.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector4.Clamp(System.Numerics.Vector4,System.Numerics.Vector4,System.Numerics.Vector4)">
+      <summary>Restricts a value to be within a specified range.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector4.Lerp(System.Numerics.Vector4,System.Numerics.Vector4,System.Single)">
+      <summary>Performs a linear interpolation between two vectors.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector4.Transform(System.Numerics.Vector2,System.Numerics.Matrix4x4)">
+      <summary>Transforms a Vector2 by the given matrix, returning a Vector4.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector4.Transform(System.Numerics.Vector3,System.Numerics.Matrix4x4)">
+      <summary>Transforms a Vector3 by the given matrix, returning a Vector4.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector4.Transform(System.Numerics.Vector4,System.Numerics.Matrix4x4)">
+      <summary>Transforms a Vector4 by the given matrix.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector4.Transform(System.Numerics.Vector2,System.Numerics.Quaternion)">
+      <summary>Transforms a Vector2 by the given quaternion, returning a Vector4.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector4.Transform(System.Numerics.Vector3,System.Numerics.Quaternion)">
+      <summary>Transforms a Vector3 by the given quaternion, returning a Vector4.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector4.Transform(System.Numerics.Vector4,System.Numerics.Quaternion)">
+      <summary>Transforms a Vector4 by the given quaternion.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector4.Negate(System.Numerics.Vector4)">
+      <summary>Returns a vector pointing in the opposite direction.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector4.Add(System.Numerics.Vector4,System.Numerics.Vector4)">
+      <summary>Adds two vectors.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector4.Subtract(System.Numerics.Vector4,System.Numerics.Vector4)">
+      <summary>Subtracts a vector from a vector.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector4.Multiply(System.Numerics.Vector4,System.Numerics.Vector4)">
+      <summary>Multiplies the components of two vectors by each other.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector4.Multiply(System.Numerics.Vector4,System.Single)">
+      <summary>Multiplies a vector by a scalar.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector4.Divide(System.Numerics.Vector4,System.Numerics.Vector4)">
+      <summary>Divides the components of a vector by the components of another vector.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector4.Divide(System.Numerics.Vector4,System.Single)">
+      <summary>Divides a vector by a scalar value.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector4.op_UnaryNegation(System.Numerics.Vector4)">
+      <summary>Returns a vector pointing in the opposite direction.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector4.op_Addition(System.Numerics.Vector4,System.Numerics.Vector4)">
+      <summary>Adds two vectors.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector4.op_Subtraction(System.Numerics.Vector4,System.Numerics.Vector4)">
+      <summary>Subtracts a vector from a vector.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector4.op_Multiply(System.Numerics.Vector4,System.Numerics.Vector4)">
+      <summary>Multiplies the components of two vectors by each other.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector4.op_Multiply(System.Numerics.Vector4,System.Single)">
+      <summary>Multiplies a vector by a scalar.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector4.op_Multiply(System.Single,System.Numerics.Vector4)">
+      <summary>Multiplies a vector by a scalar.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector4.op_Division(System.Numerics.Vector4,System.Numerics.Vector4)">
+      <summary>Divides the components of a vector by the components of another vector.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector4.op_Division(System.Numerics.Vector4,System.Single)">
+      <summary>Divides a vector by a scalar value.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector4.op_Equality(System.Numerics.Vector4,System.Numerics.Vector4)">
+      <summary>Determines whether two instances of Vector4 are equal.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector4.op_Inequality(System.Numerics.Vector4,System.Numerics.Vector4)">
+      <summary>Determines whether two instances of Vector4 are not equal.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector4.Equals(System.Numerics.Vector4)">
+      <summary>Determines whether the specified Vector4 is equal to the Vector4.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector4.Equals(System.Object)">
+      <summary>Determines whether the specified Object is equal to the Vector4.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector4.ToString">
+      <summary>Returns a String that represents the current Vector4.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector4.GetHashCode">
+      <summary>Gets the hash code for this object.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector4.op_Implicit(System.Numerics.Vector4)~Microsoft.Graphics.Canvas.Numerics.Vector4">
+      <summary>Converts a System.Numerics.Vector4 to a Microsoft.Graphics.Canvas.Numerics.Vector4.</summary>
+    </member>
+    <member name="M:System.Numerics.Vector4.op_Implicit(Microsoft.Graphics.Canvas.Numerics.Vector4)~System.Numerics.Vector4">
+      <summary>Converts a Microsoft.Graphics.Canvas.Numerics.Vector4 to a System.Numerics.Vector4.</summary>
+    </member>
+    <member name="F:System.Numerics.Vector4.X">
+      <summary>X component of the vector.</summary>
+    </member>
+    <member name="F:System.Numerics.Vector4.Y">
+      <summary>Y component of the vector.</summary>
+    </member>
+    <member name="F:System.Numerics.Vector4.Z">
+      <summary>Z component of the vector.</summary>
+    </member>
+    <member name="F:System.Numerics.Vector4.W">
+      <summary>W component of the vector.</summary>
+    </member>
+    <member name="P:System.Numerics.Vector4.Zero">
+      <summary>Returns a Vector4 with all of its components set to zero.</summary>
+    </member>
+    <member name="P:System.Numerics.Vector4.One">
+      <summary>Returns a Vector4 with all of its components set to one.</summary>
+    </member>
+    <member name="P:System.Numerics.Vector4.UnitX">
+      <summary>Returns the Vector4 (1, 0, 0, 0).</summary>
+    </member>
+    <member name="P:System.Numerics.Vector4.UnitY">
+      <summary>Returns the Vector4 (0, 1, 0, 0).</summary>
+    </member>
+    <member name="P:System.Numerics.Vector4.UnitZ">
+      <summary>Returns the Vector4 (0, 0, 1, 0).</summary>
+    </member>
+    <member name="P:System.Numerics.Vector4.UnitW">
+      <summary>Returns the Vector4 (0, 0, 0, 1).</summary>
+    </member>
+    <member name="T:System.Numerics.VectorExtensions">
+      <summary>Extension methods for converting between Vector2, Point, and Size types.</summary>
+    </member>
+    <member name="M:System.Numerics.VectorExtensions.ToPoint(System.Numerics.Vector2)">
+      <summary>Converts a Vector2 to a Windows.Foundation.Point.</summary>
+    </member>
+    <member name="M:System.Numerics.VectorExtensions.ToSize(System.Numerics.Vector2)">
+      <summary>Converts a Vector2 to a Windows.Foundation.Size.</summary>
+    </member>
+    <member name="M:System.Numerics.VectorExtensions.ToVector2(Windows.Foundation.Point)">
+      <summary>Converts a Windows.Foundation.Point to a Vector2.</summary>
+    </member>
+    <member name="M:System.Numerics.VectorExtensions.ToVector2(Windows.Foundation.Size)">
+      <summary>Converts a Windows.Foundation.Size to a Vector2.</summary>
+    </member>
+  </members>
+</doc>
