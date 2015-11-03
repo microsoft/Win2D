@@ -1,0 +1,317 @@
+<?xml version="1.0"?>
+<!--
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+Licensed under the MIT License. See LICENSE.txt in the project root for license information.
+-->
+
+<doc>
+  <assembly>
+    <name>Microsoft.Graphics.Canvas</name>
+  </assembly> 
+  <members>
+    <member name="T:Microsoft.Graphics.Canvas.CanvasSpriteBatch" Experimental="true" TH2="true">
+      <summary>Efficiently draws multiple bitmaps.</summary>
+      <remarks>
+        <p>
+          CanvasSpriteBatch allows multiple bitmaps to be drawn more efficiently
+          than would be possible by calling <see
+          cref="O:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawImage"/>
+          directly.  CanvasSpriteBatch supports the following features:
+          <ul>
+            <li>Sprites can be drawn with their own position, scale, rotation
+            and tint (<see
+            cref="O:Microsoft.Graphics.Canvas.CanvasSpriteBatch.Draw"/> and <see
+            cref="O:Microsoft.Graphics.Canvas.CanvasSpriteBatch.DrawFromSpriteSheet"/>
+            </li>
+
+            <li>Individual sprites may be flipped horizontally or
+            vertically. (<see cref="T:Microsoft.Graphics.Canvas.CanvasSpriteFlip"/>)</li>
+
+            <li>Sprite Sheets (<see
+            cref="O:Microsoft.Graphics.Canvas.CanvasSpriteBatch.DrawFromSpriteSheet"/>)</li>
+
+            <li>Sprites can be <see
+            cref="F:Microsoft.Graphics.Canvas.CanvasSpriteOptions.ClampToSourceRect">clamped
+            to a source rectangle</see>, removing the need to add padding
+            between sprites in a sprite sheet.</li>
+
+            <li>Batches can be <see
+            cref="F:Microsoft.Graphics.Canvas.CanvasSpriteSortMode.Bitmap">sorted
+            by bitmap</see> for better performance.</li>
+          </ul>
+        </p>
+        <p>
+          To use a sprite batch you first create a CanvasSpriteBatch from the
+          CanvasDrawingSession using <see
+          cref="O:Microsoft.Graphics.Canvas.CanvasDrawingSession.CreateSpriteBatch"/>.
+          Sprites can be added to the batch using <see
+          cref="O:Microsoft.Graphics.Canvas.CanvasSpriteBatch.Draw"/> and <see
+          cref="O:Microsoft.Graphics.Canvas.CanvasSpriteBatch.DrawFromSpriteSheet"/>.
+          When you have finished adding sprites call <see
+          cref="M:Microsoft.Graphics.Canvas.CanvasSpriteBatch.Dispose"/>.  At
+          this point all sprites will be send to the drawing session.          
+        </p>
+        <p>
+          In C#, the 'using' statement makes this convenient:
+          <code title="C#">
+            <![CDATA[
+            void DrawSomeSprites(CanvasDrawingSession ds)
+            {
+                using (var spriteBatch = ds.CreateSpriteBatch())
+                {
+                    spriteBatch.DrawSprite(aBitmap, aPosition);
+                }
+            }
+            ]]>
+          </code>
+          In C++, 'delete' can be used to dispose the sprite batch:
+          <code title="C++">
+            <![CDATA[
+            void DrawSomeSprites(CanvasDrawingSession^ ds)
+            {
+                auto spriteBatch = ds->CreateSpriteBatch();
+                spriteBatch->DrawSprite(aBitmap, aPosition);
+                delete spriteBatch;
+            }
+            ]]>
+          </code>
+        </p>
+        <h3>Unit Modes</h3>
+        <p>
+          The value of the drawing session's <see
+          cref="P:Microsoft.Graphics.Canvas.CanvasDrawingSession.Units"/> is
+          checked once when the CanvasSpriteBatch is created.  This is the unit
+          mode that is used for all operations on the sprite batch.
+        </p>
+        <h3>Transform</h3>
+        <p>
+          The drawing session's <see
+          cref="P:Microsoft.Graphics.Canvas.CanvasDrawingSession.Transform"/>
+          affects all the sprites in the sprite batch at the point that <see
+          cref="M:Microsoft.Graphics.Canvas.CanvasSpriteBatch.Dispose"/> is
+          called.
+        </p>
+      </remarks>
+    </member>
+
+    <member name="M:Microsoft.Graphics.Canvas.CanvasSpriteBatch.Draw(Microsoft.Graphics.Canvas.CanvasBitmap,Windows.Foundation.Rect)">
+      <summary>Adds a sprite to the sprite batch, scaled to fill a
+      rectangle.</summary>
+    </member>
+
+    <member name="M:Microsoft.Graphics.Canvas.CanvasSpriteBatch.Draw(Microsoft.Graphics.Canvas.CanvasBitmap,System.Numerics.Vector2)">
+      <summary>Adds a sprite to the sprite batch, drawn at a specified offset.</summary>
+    </member>
+
+    <member name="M:Microsoft.Graphics.Canvas.CanvasSpriteBatch.Draw(Microsoft.Graphics.Canvas.CanvasBitmap,System.Numerics.Matrix3x2)">
+      <summary>Adds a sprite to the sprite batch, drawn using a specific transform.</summary>
+    </member>
+
+    <member name="M:Microsoft.Graphics.Canvas.CanvasSpriteBatch.Draw(Microsoft.Graphics.Canvas.CanvasBitmap,Windows.Foundation.Rect,System.Numerics.Vector4)">
+      <summary>Adds a sprite to the sprite batch, scaled to fill a rectangle and tinted.</summary>
+    </member>
+
+    <member name="M:Microsoft.Graphics.Canvas.CanvasSpriteBatch.Draw(Microsoft.Graphics.Canvas.CanvasBitmap,System.Numerics.Vector2,System.Numerics.Vector4)">
+      <summary>Adds a sprite to the sprite batch, drawn at a specified offset and tinted.</summary>
+    </member>
+
+    <member name="M:Microsoft.Graphics.Canvas.CanvasSpriteBatch.Draw(Microsoft.Graphics.Canvas.CanvasBitmap,System.Numerics.Matrix3x2,System.Numerics.Vector4)">
+      <summary>Adds a sprite to the sprite batch, drawn using a specific transform and tinted</summary>
+    </member>
+
+    <member name="M:Microsoft.Graphics.Canvas.CanvasSpriteBatch.Draw(Microsoft.Graphics.Canvas.CanvasBitmap,Windows.Foundation.Rect,System.Numerics.Vector4,Microsoft.Graphics.Canvas.CanvasSpriteFlip)">
+      <summary>Adds a sprite to the sprite batch, scaled to fill a rectangle, tinted and optionally flipped.</summary>
+    </member>
+
+    <member name="M:Microsoft.Graphics.Canvas.CanvasSpriteBatch.Draw(Microsoft.Graphics.Canvas.CanvasBitmap,System.Numerics.Matrix3x2,System.Numerics.Vector4,Microsoft.Graphics.Canvas.CanvasSpriteFlip)">
+      <summary>Adds a sprite to the sprite batch, drawn using a specific transform, tinted and optionally flipped.</summary>
+    </member>
+
+    <member name="M:Microsoft.Graphics.Canvas.CanvasSpriteBatch.Draw(Microsoft.Graphics.Canvas.CanvasBitmap,System.Numerics.Vector2,System.Numerics.Vector4,System.Numerics.Vector2,System.Single,System.Numerics.Vector2,Microsoft.Graphics.Canvas.CanvasSpriteFlip)">
+      <summary>Adds a sprite to the sprite batch, drawn at a specified offset, tinted with additional rotation and scale and optionally flipped.</summary>
+      <remarks>
+        <p>
+          The origin parameter is specified relative to the source bitmap.  The
+          image is then drawn such that the origin is in the position specified
+          by the offset.  The rotation and scale are performed around the origin.
+        </p>
+      </remarks>
+    </member>
+
+    <member name="M:Microsoft.Graphics.Canvas.CanvasSpriteBatch.DrawFromSpriteSheet(Microsoft.Graphics.Canvas.CanvasBitmap,Windows.Foundation.Rect,Windows.Foundation.Rect)">
+      <summary>Adds a sprite from a sprite sheet to the sprite batch, scaled to fill a rectangle.</summary>
+    </member>
+
+    <member name="M:Microsoft.Graphics.Canvas.CanvasSpriteBatch.DrawFromSpriteSheet(Microsoft.Graphics.Canvas.CanvasBitmap,System.Numerics.Vector2,Windows.Foundation.Rect)">
+      <summary>Adds a sprite from a sprite sheet to the sprite batch, drawn at a specified offset.</summary>
+    </member>
+
+    <member name="M:Microsoft.Graphics.Canvas.CanvasSpriteBatch.DrawFromSpriteSheet(Microsoft.Graphics.Canvas.CanvasBitmap,System.Numerics.Matrix3x2,Windows.Foundation.Rect)">
+      <summary>Adds a sprite from a sprite sheet to the sprite batch, drawn using a specific transform.</summary>
+    </member>
+
+    <member name="M:Microsoft.Graphics.Canvas.CanvasSpriteBatch.DrawFromSpriteSheet(Microsoft.Graphics.Canvas.CanvasBitmap,Windows.Foundation.Rect,Windows.Foundation.Rect,System.Numerics.Vector4)">
+      <summary>Adds a sprite from a sprite sheet to the sprite batch, scaled to fill a rectangle and tinted.</summary>
+    </member>
+
+    <member name="M:Microsoft.Graphics.Canvas.CanvasSpriteBatch.DrawFromSpriteSheet(Microsoft.Graphics.Canvas.CanvasBitmap,System.Numerics.Vector2,Windows.Foundation.Rect,System.Numerics.Vector4)">
+      <summary>Adds a sprite from a sprite sheet to the sprite batch, drawn at a specified offset and tinted.</summary>
+    </member>
+
+    <member name="M:Microsoft.Graphics.Canvas.CanvasSpriteBatch.DrawFromSpriteSheet(Microsoft.Graphics.Canvas.CanvasBitmap,System.Numerics.Matrix3x2,Windows.Foundation.Rect,System.Numerics.Vector4)">
+      <summary>Adds a sprite from a sprite sheet to the sprite batch, drawn using a specific transform and tinted</summary>
+    </member>
+
+    <member name="M:Microsoft.Graphics.Canvas.CanvasSpriteBatch.DrawFromSpriteSheet(Microsoft.Graphics.Canvas.CanvasBitmap,Windows.Foundation.Rect,Windows.Foundation.Rect,System.Numerics.Vector4,Microsoft.Graphics.Canvas.CanvasSpriteFlip)">
+      <summary>Adds a sprite from a sprite sheet to the sprite batch, scaled to fill a rectangle, tinted and optionally flipped.</summary>
+    </member>
+
+    <member name="M:Microsoft.Graphics.Canvas.CanvasSpriteBatch.DrawFromSpriteSheet(Microsoft.Graphics.Canvas.CanvasBitmap,System.Numerics.Matrix3x2,Windows.Foundation.Rect,System.Numerics.Vector4,Microsoft.Graphics.Canvas.CanvasSpriteFlip)">
+      <summary>Adds a sprite from a sprite sheet to the sprite batch, drawn using a specific transform, tinted and optionally flipped.</summary>
+    </member>
+
+    <member name="M:Microsoft.Graphics.Canvas.CanvasSpriteBatch.DrawFromSpriteSheet(Microsoft.Graphics.Canvas.CanvasBitmap,System.Numerics.Vector2,Windows.Foundation.Rect,System.Numerics.Vector4,System.Numerics.Vector2,System.Single,System.Numerics.Vector2,Microsoft.Graphics.Canvas.CanvasSpriteFlip)">
+      <summary>Adds a sprite from a sprite sheet to the sprite batch, drawn at a specified offset, tinted with additional rotation and scale and optionally flipped.</summary>
+      <remarks>
+        <p>
+          The origin parameter is specified relative to the source bitmap.  The
+          image is then drawn such that the origin is in the position specified
+          by the offset.  The rotation and scale are performed around the origin.
+        </p>
+      </remarks>
+    </member>
+
+    <member name="M:Microsoft.Graphics.Canvas.CanvasSpriteBatch.Dispose">
+      <summary>Finalizes the sprite batch and submits it to the CanvasDrawingSession.</summary>
+    </member>
+
+    <member name="M:Microsoft.Graphics.Canvas.CanvasSpriteBatch.ConvertPixelsToDips(System.Int32)">
+      <summary>Converts units from physical pixels to device independent pixels (DIPs) based on the DPI of this sprite batch.</summary>
+      <remarks>For more information, see <a href="DPI.htm">DPI and DIPs</a>.</remarks>
+    </member>
+
+    <member name="M:Microsoft.Graphics.Canvas.CanvasSpriteBatch.ConvertDipsToPixels(System.Single,Microsoft.Graphics.Canvas.CanvasDpiRounding)">
+      <summary>Converts units from device independent pixels (DIPs) to physical pixels based on the DPI of this sprite batch.</summary>
+      <remarks>For more information, see <a href="DPI.htm">DPI and DIPs</a>.</remarks>
+    </member>
+
+    <member name="M:Microsoft.Graphics.Canvas.CanvasSpriteBatch.IsSupported(Microsoft.Graphics.Canvas.CanvasDevice)">
+      <summary>Checks whether CanvasSpriteBatch is supported on the current operating system version.</summary>
+      <remarks>
+        <p>
+          If the application is currently running on an operating system that
+          doesn't support sprite batch then calls to <see
+          cref="O:Microsoft.Graphics.Canvas.CanvasDrawingSession.CreateSpriteBatch">CreateSpriteBatch</see>
+          will fail.
+        </p>
+        <p>
+          If you know that your application will never run on an operating
+          system that doesn't support sprite batch then there is no need to
+          perform this check.
+        </p>
+      </remarks>
+    </member>
+
+    <member name="P:Microsoft.Graphics.Canvas.CanvasSpriteBatch.Device">
+      <summary>Gets the device associated with this sprite batch.</summary>
+    </member>
+
+    <member name="P:Microsoft.Graphics.Canvas.CanvasSpriteBatch.Dpi">
+      <summary>Gets the dots-per-inch (DPI) of this sprite batch.</summary>
+      <remarks>
+        <p>
+          DPI describes the ratio between device independent pixels (DIPs) and actual physical pixels.
+          The identity DPI value is 96, which means DIPs and pixels are the same.
+        </p>
+        <p>
+          Sprite batches inherit their DPI from the <see
+          cref="T:Microsoft.Graphics.Canvas.CanvasDrawingSession"/> they were
+          created from.
+        </p>
+        <p>
+          For more information, see <a href="DPI.htm">DPI and DIPs</a>.
+        </p>
+      </remarks>
+    </member>
+
+    <member name="T:Microsoft.Graphics.Canvas.CanvasSpriteFlip" Experimental="true" TH2="true">
+      <summary>Controls the optional flipping of a sprite.</summary>
+      <remarks>
+        <p>
+          Some overloads of <see
+          cref="O:Microsoft.Graphics.Canvas.CanvasSpriteBatch.Draw">CanvasSpriteBatch.Draw</see>
+          and <see
+          cref="O:Microsoft.Graphics.Canvas.CanvasSpriteBatch.DrawFromSpriteSheet">CanvasSpriteBatch.DrawFromSpriteSheet</see>
+          accept a flip parameter to control flipping of a sprite.
+        </p>
+      </remarks>
+    </member>
+
+    <member name="F:Microsoft.Graphics.Canvas.CanvasSpriteFlip.None">
+      <summary>The sprite is drawn unflipped.</summary>
+    </member>
+
+    <member name="F:Microsoft.Graphics.Canvas.CanvasSpriteFlip.Horizontal">
+      <summary>The sprite is drawn flipped horizontally.</summary>
+    </member>
+
+    <member name="F:Microsoft.Graphics.Canvas.CanvasSpriteFlip.Vertical">
+      <summary>The sprite is drawn flipped vertically.</summary>
+    </member>
+
+    <member name="F:Microsoft.Graphics.Canvas.CanvasSpriteFlip.Both">
+      <summary>The sprite is drawn flipped horizontally and vertically.</summary>
+    </member>
+
+    <member name="T:Microsoft.Graphics.Canvas.CanvasSpriteOptions" Experimental="true" TH2="true">
+      <summary>Options that apply to the entire spritebatch.</summary>
+      <remarks>
+        <p>
+          <see cref="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.CreateSpriteBatch(Microsoft.Graphics.Canvas.CanvasSpriteSortMode,Microsoft.Graphics.Canvas.CanvasImageInterpolation,Microsoft.Graphics.Canvas.CanvasSpriteOptions)"/>
+          accepts an options parameter.
+        </p>
+        <p>
+          When drawing from a sprite sheet the GPU can sometimes sample from
+          outside the source rectangle.  Sprite sheets often need to have
+          padding added between sprites to avoid this issue.  When it is not
+          possible or desirable to add this padding, the
+          CanvasSpriteOptions.ClampToSourceRect option can be used instead.  It
+          adds a small performance cost to rendering, but ensures that nothing
+          outside the source rect is drawn.
+        </p>
+      </remarks>
+    </member>
+
+    <member name="F:Microsoft.Graphics.Canvas.CanvasSpriteOptions.None">
+      <summary>The default, no special options are provided.</summary>
+    </member>
+
+    <member name="F:Microsoft.Graphics.Canvas.CanvasSpriteOptions.ClampToSourceRect">
+      <summary>Ensures that no pixels outside of the source rectangle get drawn.</summary>
+    </member>
+
+
+    <member name="T:Microsoft.Graphics.Canvas.CanvasSpriteSortMode" Experimental="true" TH2="true">
+      <summary>Controls how the sprites in a sprite batch are sorted.</summary>
+      <remarks>
+        <p>
+          The larger the batches that are sent to the graphics hardware the
+          better the performance.  Every time the bitmap changes a new batch
+          must be started.  If the sprites are sorted by bitmap then the batches
+          can be larger.  The downside to this if that if the code is relying on
+          later sprites to draw over earlier sprites then this will break if the
+          batches are sorted.
+        </p>
+      </remarks>
+    </member>
+
+    <member name="F:Microsoft.Graphics.Canvas.CanvasSpriteSortMode.None">
+      <summary>No additional sorting is performed.</summary>
+    </member>
+
+    <member name="F:Microsoft.Graphics.Canvas.CanvasSpriteSortMode.Bitmap">
+      <summary>The sprites are sorted by bitmap, otherwise the order is preserved.</summary>
+    </member>
+  </members>
+</doc>

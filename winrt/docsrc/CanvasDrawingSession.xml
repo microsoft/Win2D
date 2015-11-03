@@ -1116,6 +1116,68 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
          </p>
        </remarks>
     </member>
-    
+
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.CreateSpriteBatch" Experimental="true" TH2="true">
+      <summary>Creates a new sprite batch for efficiently drawing many CanvasBitmaps.</summary>
+      <remarks>
+        <p>
+          See <see cref="T:Microsoft.Graphics.Canvas.CanvasSpriteBatch" /> for details.
+        </p>
+      </remarks>
+    </member>
+
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.CreateSpriteBatch(Microsoft.Graphics.Canvas.CanvasSpriteSortMode)" Experimental="true" TH2="true">
+      <summary>Creates a new sprite batch for efficiently drawing many CanvasBitmaps with a specific sort mode.</summary>
+      <remarks>
+        <p>
+          The default sortMode is <see cref="F:Microsoft.Graphics.Canvas.CanvasSpriteSortMode.None" />.
+        </p>          
+        <p>
+          See <see cref="T:Microsoft.Graphics.Canvas.CanvasSpriteBatch" /> for details.
+        </p>
+      </remarks>
+    </member>
+
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.CreateSpriteBatch(Microsoft.Graphics.Canvas.CanvasSpriteSortMode,Microsoft.Graphics.Canvas.CanvasImageInterpolation)" Experimental="true" TH2="true">
+      <summary>Creates a new sprite batch for efficiently drawing many CanvasBitmaps with a specific sort mode and interpolation.</summary>
+      <remarks>
+        <p>
+          The default sortMode is <see cref="F:Microsoft.Graphics.Canvas.CanvasSpriteSortMode.None" />.
+        </p>
+        <p>
+          The default interpolation is <see
+          cref="F:Microsoft.Graphics.Canvas.CanvasImageInterpolation.Linear"/>.
+          The only other valid interpolation option is <see
+          cref="F:Microsoft.Graphics.Canvas.CanvasImageInterpolation.NearestNeighbor"/>.
+          Any other values will result in the call failing.
+        </p>
+        <p>
+          See <see cref="T:Microsoft.Graphics.Canvas.CanvasSpriteBatch" /> for details.
+        </p>
+      </remarks>
+    </member>
+
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.CreateSpriteBatch(Microsoft.Graphics.Canvas.CanvasSpriteSortMode,Microsoft.Graphics.Canvas.CanvasImageInterpolation,Microsoft.Graphics.Canvas.CanvasSpriteOptions)" Experimental="true" TH2="true">
+      <summary>Creates a new sprite batch for efficiently drawing many CanvasBitmaps with a specific sort mode, interpolation and options.</summary>
+      <remarks>
+        <p>
+          The default sortMode is <see cref="F:Microsoft.Graphics.Canvas.CanvasSpriteSortMode.None" />.
+        </p>
+        <p>
+          The default interpolation is <see
+          cref="F:Microsoft.Graphics.Canvas.CanvasImageInterpolation.Linear"/>.
+          The only other valid interpolation option is <see
+          cref="F:Microsoft.Graphics.Canvas.CanvasImageInterpolation.NearestNeighbor"/>.
+          Any other values will result in the call failing.
+        </p>
+        <p>
+          The default value for options is <see cref="F:Microsoft.Graphics.Canvas.CanvasSpriteOptions.None"/>.
+        </p>
+        <p>
+          See <see cref="T:Microsoft.Graphics.Canvas.CanvasSpriteBatch" /> for details.
+        </p>
+      </remarks>
+    </member>
+
   </members>
 </doc>
