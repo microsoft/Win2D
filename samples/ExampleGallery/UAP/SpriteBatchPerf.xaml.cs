@@ -410,32 +410,35 @@ namespace ExampleGallery
                 while (true)
                 {
                     Stopwatch stopWatch = new Stopwatch();
-                    GpuStopWatch gpuStopWatch = new GpuStopWatch(rt.Device);
 
-                    gpuStopWatch.Start();
-                    stopWatch.Start();
-
-                    using (var ds = rt.CreateDrawingSession())
+                    using (GpuStopWatch gpuStopWatch = new GpuStopWatch(rt.Device))
                     {
-                        ds.Clear(Colors.Black);
-                        runner.RunScenario(ds, SortMode);
+
+                        gpuStopWatch.Start();
+                        stopWatch.Start();
+
+                        using (var ds = rt.CreateDrawingSession())
+                        {
+                            ds.Clear(Colors.Black);
+                            runner.RunScenario(ds, SortMode);
+                        }
+
+                        stopWatch.Stop();
+                        gpuStopWatch.Stop();
+
+                        var gpuTime = gpuStopWatch.GetGpuTimeInMs();
+                        if (gpuTime < 0)
+                        {
+                            // try again until we get a time that isn't disjoint
+                            continue;
+                        }
+
+                        return new CpuGpuTime
+                        {
+                            CpuTimeInMs = stopWatch.Elapsed.TotalMilliseconds,
+                            GpuTimeInMs = gpuTime
+                        };
                     }
-
-                    stopWatch.Stop();
-                    gpuStopWatch.Stop();
-
-                    var gpuTime = gpuStopWatch.GetGpuTimeInMs();
-                    if (gpuTime < 0)
-                    {
-                        // try again until we get a time that isn't disjoint
-                        continue;
-                    }
-
-                    return new CpuGpuTime
-                    {
-                        CpuTimeInMs = stopWatch.Elapsed.TotalMilliseconds,
-                        GpuTimeInMs = gpuTime
-                    };
                 }
             }
 

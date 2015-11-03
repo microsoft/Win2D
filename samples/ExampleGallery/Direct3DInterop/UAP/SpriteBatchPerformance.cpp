@@ -94,6 +94,11 @@ namespace ExampleGallery
                     __abi_ThrowIfFailed(m_d3dDevice->CreateQuery(&desc, &m_timestampStartQuery));
                     __abi_ThrowIfFailed(m_d3dDevice->CreateQuery(&desc, &m_timestampEndQuery));
                 }
+
+                virtual ~GpuStopWatch()
+                {
+                    // having a virtual destructor allows us to Dispose() this object.
+                }
                 
                 void Start()
                 {
