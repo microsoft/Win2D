@@ -23,19 +23,19 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <ScrollViewer VerticalScrollMode="Auto" VerticalScrollBarVisibility="Auto">
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="auto"/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
 
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto"/>
-                <RowDefinition/>
-                <RowDefinition/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition />
+                <RowDefinition />
             </Grid.RowDefinitions>
 
-            <Grid Grid.Column="0" VerticalAlignment="Top" Margin="5">
+            <!-- Controls -->
+            <Grid Grid.Row="0" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="5">
                 <Grid.RowDefinitions>
-                    <RowDefinition/>
                     <RowDefinition/>
                     <RowDefinition/>
                     <RowDefinition/>
@@ -43,8 +43,9 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
                 </Grid.RowDefinitions>
 
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
-                    <ColumnDefinition MinWidth="200"/>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition MaxWidth="300"/>
+                    <ColumnDefinition Width="auto"/>
                 </Grid.ColumnDefinitions>
 
                 <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Text="Graph:" />
@@ -60,15 +61,15 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
                         Value="{Binding DrawCount, Mode=TwoWay}"
                         IsEnabled="{Binding IsDrawCountEnabled}"/>
 
-                <Slider Grid.Row="2" Grid.Column="2" x:Name="BitmapCountSlider" 
+                <Slider Grid.Row="2" Grid.Column="1" x:Name="BitmapCountSlider" 
                         Minimum="1" Maximum="100" TickFrequency="1" 
                         Value="{Binding Path=BitmapCount, Mode=TwoWay}"
                         IsEnabled="{Binding IsBitmapCountEnabled}"/>
 
-                <Button Grid.Row="3" Grid.Column="0"
+                <Button Grid.Row="0" Grid.Column="2"
                         Content="Go" Click="OnGoButtonClicked"/>
 
-                <Button Grid.Row="3" Grid.Column="1" HorizontalAlignment="Right"
+                <Button Grid.Row="1" Grid.Column="2"
                         Content="Reset" Click="OnResetGraphClicked" />
 
                 <Frame Grid.Row="4" Grid.ColumnSpan="2" BorderBrush="Red" BorderThickness="2" Margin="0,10,0,0" Visibility="Collapsed" x:Name="SpriteBatchNotSupportedText" >
@@ -78,7 +79,8 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
                 </Frame>
             </Grid>
 
-            <GridView Grid.Column="1" ItemsSource="{Binding Scenarios}">
+            <!-- Scenarios -->
+            <GridView Grid.Row="1" ItemsSource="{Binding Scenarios}" HorizontalAlignment="Center" Margin="5">
                 <GridView.ItemTemplate>
                     <DataTemplate>
                         <Grid BorderBrush="White" BorderThickness="2" Background="Black" Width="150" Height="150" Margin="0">
@@ -94,7 +96,6 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
                             <Frame Grid.Row="2" BorderBrush="White" Background="{Binding Color}" BorderThickness="0,1,0,0" HorizontalAlignment="Stretch" >
                                 <TextBlock Margin="5" Text="{Binding Summary}" FontSize="10" Foreground="White"/>
                             </Frame>
-
                         </Grid>
                     </DataTemplate>
                 </GridView.ItemTemplate>
@@ -105,9 +106,9 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
                 </GridView.ItemsPanel>
             </GridView>
 
-            <canvas:CanvasControl x:Name="CpuGraphCanvas" Grid.Row="1" Grid.ColumnSpan="2" Margin="5" MinHeight="300"
+            <canvas:CanvasControl x:Name="CpuGraphCanvas" Grid.Row="2" Grid.ColumnSpan="2" Margin="5" MinHeight="300"
                                   ClearColor="Black" Draw="OnDrawCpuGraph" />
-            <canvas:CanvasControl x:Name="GpuGraphCanvas" Grid.Row="2" Grid.ColumnSpan="2" Margin="5" MinHeight="300"
+            <canvas:CanvasControl x:Name="GpuGraphCanvas" Grid.Row="3" Grid.ColumnSpan="2" Margin="5" MinHeight="300"
                                   ClearColor="Black" Draw="OnDrawGpuGraph" />
         </Grid>
     </ScrollViewer>
