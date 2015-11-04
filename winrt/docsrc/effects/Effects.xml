@@ -12,13 +12,13 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
   <members>
 
     <member name="T:Microsoft.Graphics.Canvas.Effects.EffectBorderMode">
-      <summary>Enumeration type that specifies how to process border pixels.</summary>
+      <summary>Enumeration type that specifies how to process pixels that lie outside the input image.</summary>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.Effects.EffectBorderMode.Soft">
-      <summary>Pixels outside the edge are marked as black which makes edge color softer after processing.</summary>
+      <summary>Pixels outside the input image are treated as transparent black, resulting in a soft edge after processing.</summary>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.Effects.EffectBorderMode.Hard">
-      <summary>Pixels outside the bounds are mirrored.</summary>
+      <summary>The effect clamps to the size of the input image.</summary>
     </member>
 
 

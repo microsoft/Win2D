@@ -63,6 +63,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         EFFECT_PROPERTY(Source7Mapping, SamplerCoordinateMapping);
         EFFECT_PROPERTY(Source8Mapping, SamplerCoordinateMapping);
 
+        EFFECT_PROPERTY(Source1BorderMode, EffectBorderMode);
+        EFFECT_PROPERTY(Source2BorderMode, EffectBorderMode);
+        EFFECT_PROPERTY(Source3BorderMode, EffectBorderMode);
+        EFFECT_PROPERTY(Source4BorderMode, EffectBorderMode);
+        EFFECT_PROPERTY(Source5BorderMode, EffectBorderMode);
+        EFFECT_PROPERTY(Source6BorderMode, EffectBorderMode);
+        EFFECT_PROPERTY(Source7BorderMode, EffectBorderMode);
+        EFFECT_PROPERTY(Source8BorderMode, EffectBorderMode);
+
         EFFECT_PROPERTY(MaxSamplerOffset, int);
 
         EFFECT_PROPERTY(Source1Interpolation, CanvasImageInterpolation);
@@ -89,6 +98,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         HRESULT GetCoordinateMapping(unsigned index, SamplerCoordinateMapping* value);
         HRESULT SetCoordinateMapping(unsigned index, SamplerCoordinateMapping value);
+
+        HRESULT GetBorderMode(unsigned index, EffectBorderMode* value);
+        HRESULT SetBorderMode(unsigned index, EffectBorderMode value);
 
         HRESULT GetSourceInterpolation(unsigned index, CanvasImageInterpolation* value);
         HRESULT SetSourceInterpolation(unsigned index, CanvasImageInterpolation value);

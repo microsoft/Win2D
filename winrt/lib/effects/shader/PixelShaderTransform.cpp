@@ -22,74 +22,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
     IFACEMETHODIMP PixelShaderTransform::MapInputRectsToOutputRect(D2D1_RECT_L const* inputRects, D2D1_RECT_L const* inputOpaqueSubRects, UINT32 inputRectCount, D2D1_RECT_L* outputRect, D2D1_RECT_L* outputOpaqueSubRect)
     {
+        UNREFERENCED_PARAMETER(inputRects);
         UNREFERENCED_PARAMETER(inputOpaqueSubRects);
+        UNREFERENCED_PARAMETER(inputRectCount);
 
-        return ExceptionBoundary([&]
-        {
-            if (inputRectCount > MaxShaderInputs)
-                ThrowHR(E_INVALIDARG);
+        // The proper output rect calculation is carried out by ClipTransform, which is inserted after the PixelShaderTransform.
+        *outputRect = D2D1_RECT_L{ INT_MIN, INT_MIN, INT_MAX, INT_MAX };
+        *outputOpaqueSubRect = D2D1_RECT_L{ 0, 0, 0, 0 };
 
-            D2D_RECT_L accumulatedRect = { INT_MIN, INT_MIN, INT_MAX, INT_MAX };
-            bool gotRect = false;
-            bool gotOffset = false;
-
-            for (unsigned i = 0; i < inputRectCount; i++)
-            {
-                D2D_RECT_L rect;
-
-                switch (m_coordinateMapping->Mapping[i])
-                {
-                case SamplerCoordinateMapping::Unknown:
-                    // Due to unknown coordinate mapping, this input does not contribute to the output rectangle.
-                    continue;
-
-                case SamplerCoordinateMapping::OneToOne:
-                    // This input rectangle maps directly to the output.
-                    rect = inputRects[i];
-                    break;
-
-                case SamplerCoordinateMapping::Offset:
-                    // This rectangle must be expanded due to the use of offset texture coordinates.
-                    if (!m_coordinateMapping->MaxOffset)
-                    {
-                        WinStringBuilder message;
-                        message.Format(Strings::CustomEffectOffsetMappingWithoutMaxOffset, i + 1);
-                        ThrowHR(E_INVALIDARG, message.Get());
-                    }
-
-                    rect = ExpandRectangle(inputRects[i], m_coordinateMapping->MaxOffset);
-                    gotOffset = true;
-                    break;
-
-                default:
-                    ThrowHR(E_INVALIDARG);
-                }
-
-                if (!gotRect)
-                {
-                    // This is the first output rectangle we have seen, so store it directly.
-                    accumulatedRect = rect;
-                    gotRect = true;
-                }
-                else
-                {
-                    // Subsequent rectangles are combined with the existing region.
-                    accumulatedRect = RectangleUnion(accumulatedRect, rect);
-                }
-            }
-
-            // Validate that if MaxOffset is set, at least one input should be using SamplerCoordinateMapping::Offset.
-            if (m_coordinateMapping->MaxOffset && !gotOffset)
-            {
-                ThrowHR(E_INVALIDARG, Strings::CustomEffectMaxOffsetWithoutOffsetMapping);
-            }
-
-            // Return the accumulated output rectangle.
-            *outputRect = accumulatedRect;
-
-            // We don't know how this shader handles opacity, so always just report an empty opaque subrect.
-            *outputOpaqueSubRect = D2D1_RECT_L{ 0, 0, 0, 0 };
-        });
+        return S_OK;
     }
 
 

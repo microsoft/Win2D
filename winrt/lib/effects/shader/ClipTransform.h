@@ -8,19 +8,18 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 {
     class ISharedShaderState;
     struct CoordinateMappingState;
-    struct SourceInterpolationState;
 
 
-    // Custom Direct2D draw transform applies our pixel shader.
-    class PixelShaderTransform : public RuntimeClass<RuntimeClassFlags<ClassicCom>, ID2D1DrawTransform, ID2D1Transform, ID2D1TransformNode>
-                               , private LifespanTracker<PixelShaderTransform>
+    // Custom Direct2D draw transform clips the output image back down to the desired size.
+    // This avoids it becoming infinite due to intermediate border transforms.
+    class ClipTransform : public RuntimeClass<RuntimeClassFlags<ClassicCom>, ID2D1DrawTransform, ID2D1Transform, ID2D1TransformNode>
+                        , private LifespanTracker<ClipTransform>
     {
         ComPtr<ISharedShaderState> m_sharedState;
         std::shared_ptr<CoordinateMappingState> m_coordinateMapping;
-        ComPtr<ID2D1DrawInfo> m_drawInfo;
 
     public:
-        PixelShaderTransform(ISharedShaderState* sharedState, std::shared_ptr<CoordinateMappingState> const& coordinateMapping);
+        ClipTransform(ISharedShaderState* sharedState, std::shared_ptr<CoordinateMappingState> const& coordinateMapping);
 
         IFACEMETHOD_(UINT32, GetInputCount)() const override;
 
@@ -29,9 +28,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         IFACEMETHOD(MapInvalidRect)(UINT32 inputIndex, D2D1_RECT_L invalidInputRect, D2D1_RECT_L* invalidOutputRect) const override;
 
         IFACEMETHOD(SetDrawInfo)(ID2D1DrawInfo* drawInfo) override;
-
-        void SetConstants(std::vector<BYTE> const& constants);
-        void SetSourceInterpolation(SourceInterpolationState const* sourceInterpolation);
     };
 
 }}}}}

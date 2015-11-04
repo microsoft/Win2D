@@ -146,6 +146,29 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     IMPLEMENT_COORDINATE_MAPPING_PROPERTY(Source8Mapping, 7)
 
 
+#define IMPLEMENT_BORDER_MODE_PROPERTY(PROPERTY, INDEX)                                 \
+                                                                                        \
+    IFACEMETHODIMP PixelShaderEffect::get_##PROPERTY(EffectBorderMode* value)           \
+    {                                                                                   \
+        return GetBorderMode(INDEX, value);                                             \
+    }                                                                                   \
+                                                                                        \
+    IFACEMETHODIMP PixelShaderEffect::put_##PROPERTY(EffectBorderMode value)            \
+    {                                                                                   \
+        return SetBorderMode(INDEX, value);                                             \
+    }
+
+
+    IMPLEMENT_BORDER_MODE_PROPERTY(Source1BorderMode, 0)
+    IMPLEMENT_BORDER_MODE_PROPERTY(Source2BorderMode, 1)
+    IMPLEMENT_BORDER_MODE_PROPERTY(Source3BorderMode, 2)
+    IMPLEMENT_BORDER_MODE_PROPERTY(Source4BorderMode, 3)
+    IMPLEMENT_BORDER_MODE_PROPERTY(Source5BorderMode, 4)
+    IMPLEMENT_BORDER_MODE_PROPERTY(Source6BorderMode, 5)
+    IMPLEMENT_BORDER_MODE_PROPERTY(Source7BorderMode, 6)
+    IMPLEMENT_BORDER_MODE_PROPERTY(Source8BorderMode, 7)
+
+
 #define IMPLEMENT_SOURCE_INTERPOLATION_PROPERTY(PROPERTY, INDEX)                        \
                                                                                         \
     IFACEMETHODIMP PixelShaderEffect::get_##PROPERTY(CanvasImageInterpolation* value)   \
@@ -310,6 +333,36 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
             // Store the new value into our shared state object.
             m_sharedState->CoordinateMapping().Mapping[index] = value;
+
+            // If we are realized, pass the updated mapping state on to Direct2D.
+            SetD2DCoordinateMapping();
+        });
+    }
+
+
+    HRESULT PixelShaderEffect::GetBorderMode(unsigned index, EffectBorderMode* value)
+    {
+        assert(index < MaxShaderInputs);
+
+        return ExceptionBoundary([&]
+        {
+            CheckInPointer(value);
+
+            *value = m_sharedState->CoordinateMapping().BorderMode[index];
+        });
+    }
+
+
+    HRESULT PixelShaderEffect::SetBorderMode(unsigned index, EffectBorderMode value)
+    {
+        assert(index < MaxShaderInputs);
+
+        return ExceptionBoundary([&]
+        {
+            auto lock = Lock(m_mutex);
+
+            // Store the new value into our shared state object.
+            m_sharedState->CoordinateMapping().BorderMode[index] = value;
 
             // If we are realized, pass the updated mapping state on to Direct2D.
             SetD2DCoordinateMapping();

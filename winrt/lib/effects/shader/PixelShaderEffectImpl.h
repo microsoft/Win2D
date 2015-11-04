@@ -8,6 +8,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 {
     class ISharedShaderState;
     class PixelShaderTransform;
+    class ClipTransform;
     struct CoordinateMappingState;
     struct SourceInterpolationState;
 
@@ -20,6 +21,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     {
         ComPtr<ISharedShaderState> m_sharedState;
         ComPtr<PixelShaderTransform> m_shaderTransform;
+        ComPtr<ClipTransform> m_clipTransform;
         ComPtr<ID2D1EffectContext> m_effectContext;
         ComPtr<ID2D1TransformGraph> m_transformGraph;
 
@@ -31,6 +33,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         std::unique_ptr<SourceInterpolationState> m_sourceInterpolation;
         bool m_sourceInterpolationDirty;
 
+        bool m_graphDirty;
+
     public:
         PixelShaderEffectImpl();
 
@@ -41,6 +45,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         IFACEMETHOD(PrepareForRender)(D2D1_CHANGE_TYPE changeType) override;
 
     private:
+        void PrepareForFirstDraw();
+        void ConfigureTransformGraph();
+
         HRESULT SetSharedStateProperty(IUnknown* sharedState);
         IUnknown* GetSharedStateProperty() const;
 

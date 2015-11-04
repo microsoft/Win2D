@@ -81,6 +81,7 @@ namespace ExampleGallery
             sketchEffect = new PixelShaderEffect(await Utils.ReadAllBytes("Shaders/Sketch.bin"))
             {
                 Source1 = bitmapTiger,
+                Source1BorderMode = EffectBorderMode.Hard,
                 Source1Mapping = SamplerCoordinateMapping.Offset,
                 MaxSamplerOffset = (int)Math.Ceiling(sender.Dpi / 96),
 

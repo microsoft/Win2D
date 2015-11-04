@@ -1134,6 +1134,54 @@ namespace test.managed
 
 
         [TestMethod]
+        public void PixelShaderEffect_BorderModeAccessors()
+        {
+            const string hlsl =
+            @"
+                float4 main() : SV_Target
+                {
+                    return 0;
+                }
+            ";
+
+            var effect = new PixelShaderEffect(ShaderCompiler.CompileShader(hlsl, "ps_4_0"));
+
+            // Check defaults.
+            Assert.AreEqual(EffectBorderMode.Soft, effect.Source1BorderMode);
+            Assert.AreEqual(EffectBorderMode.Soft, effect.Source2BorderMode);
+            Assert.AreEqual(EffectBorderMode.Soft, effect.Source3BorderMode);
+            Assert.AreEqual(EffectBorderMode.Soft, effect.Source4BorderMode);
+            Assert.AreEqual(EffectBorderMode.Soft, effect.Source5BorderMode);
+            Assert.AreEqual(EffectBorderMode.Soft, effect.Source6BorderMode);
+            Assert.AreEqual(EffectBorderMode.Soft, effect.Source7BorderMode);
+            Assert.AreEqual(EffectBorderMode.Soft, effect.Source8BorderMode);
+
+            for (int i = 0; i < 8; i++)
+            {
+                // Setters.
+                effect.Source1BorderMode = (i == 0) ? EffectBorderMode.Hard : EffectBorderMode.Soft;
+                effect.Source2BorderMode = (i == 1) ? EffectBorderMode.Hard : EffectBorderMode.Soft;
+                effect.Source3BorderMode = (i == 2) ? EffectBorderMode.Hard : EffectBorderMode.Soft;
+                effect.Source4BorderMode = (i == 3) ? EffectBorderMode.Hard : EffectBorderMode.Soft;
+                effect.Source5BorderMode = (i == 4) ? EffectBorderMode.Hard : EffectBorderMode.Soft;
+                effect.Source6BorderMode = (i == 5) ? EffectBorderMode.Hard : EffectBorderMode.Soft;
+                effect.Source7BorderMode = (i == 6) ? EffectBorderMode.Hard : EffectBorderMode.Soft;
+                effect.Source8BorderMode = (i == 7) ? EffectBorderMode.Hard : EffectBorderMode.Soft;
+
+                // Getters.
+                Assert.AreEqual((i == 0) ? EffectBorderMode.Hard : EffectBorderMode.Soft, effect.Source1BorderMode);
+                Assert.AreEqual((i == 1) ? EffectBorderMode.Hard : EffectBorderMode.Soft, effect.Source2BorderMode);
+                Assert.AreEqual((i == 2) ? EffectBorderMode.Hard : EffectBorderMode.Soft, effect.Source3BorderMode);
+                Assert.AreEqual((i == 3) ? EffectBorderMode.Hard : EffectBorderMode.Soft, effect.Source4BorderMode);
+                Assert.AreEqual((i == 4) ? EffectBorderMode.Hard : EffectBorderMode.Soft, effect.Source5BorderMode);
+                Assert.AreEqual((i == 5) ? EffectBorderMode.Hard : EffectBorderMode.Soft, effect.Source6BorderMode);
+                Assert.AreEqual((i == 6) ? EffectBorderMode.Hard : EffectBorderMode.Soft, effect.Source7BorderMode);
+                Assert.AreEqual((i == 7) ? EffectBorderMode.Hard : EffectBorderMode.Soft, effect.Source8BorderMode);
+            }
+        }
+
+
+        [TestMethod]
         public void PixelShaderEffect_InputRectTooBigError()
         {
             const string hlsl =

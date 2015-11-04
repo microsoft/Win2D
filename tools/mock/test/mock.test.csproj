@@ -117,6 +117,10 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Link>Deployed Files\MockD2DTransformGraph.h</Link>
     </Content>
+    <Content Include="..\..\..\winrt\test.internal\mocks\MockD2DBorderTransform.h">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>Deployed Files\MockD2DBorderTransform.h</Link>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\exe\mock.exe.csproj">

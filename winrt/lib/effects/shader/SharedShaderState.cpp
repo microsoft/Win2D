@@ -14,6 +14,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         for (int i = 0; i < MaxShaderInputs; i++)
         {
             Mapping[i] = SamplerCoordinateMapping::Unknown;
+            BorderMode[i] = EffectBorderMode::Soft;
         }
     }
 

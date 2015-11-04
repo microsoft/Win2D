@@ -195,6 +195,7 @@ namespace Microsoft
             TO_STRING(IDispatchedHandler);
             TO_STRING(IAsyncAction);
             TO_STRING(IDWriteInlineObject);
+            TO_STRING(ID2D1TransformNode);
 
 #if WINVER > _WIN32_WINNT_WINBLUE
             TO_STRING(ID2D1GradientMesh);
@@ -1224,6 +1225,13 @@ namespace Microsoft
 				ENUM_VALUE(CanvasGlyphOrientation::Clockwise270Degrees);
 				END_ENUM(CanvasGlyphOrientation);
 			}
+
+            ENUM_TO_STRING(EffectBorderMode)
+            {
+                ENUM_VALUE(EffectBorderMode::Soft);
+                ENUM_VALUE(EffectBorderMode::Hard);
+                END_ENUM(EffectBorderMode);
+            }
 
             template<typename T>
             inline std::wstring ToStringAsInt(T value)

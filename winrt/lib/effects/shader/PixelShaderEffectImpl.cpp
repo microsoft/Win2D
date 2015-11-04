@@ -5,6 +5,7 @@
 #include "pch.h"
 #include "PixelShaderEffectImpl.h"
 #include "PixelShaderTransform.h"
+#include "ClipTransform.h"
 #include "SharedShaderState.h"
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Effects
@@ -14,6 +15,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         , m_coordinateMapping(std::make_shared<CoordinateMappingState>())
         , m_sourceInterpolation(std::make_unique<SourceInterpolationState>())
         , m_sourceInterpolationDirty(false)
+        , m_graphDirty(true)
     { }
 
 
@@ -127,25 +129,17 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     {
         return ExceptionBoundary([&]
         {
+            // One-time initialize.
             if (!m_shaderTransform)
             {
-                // Shared state must be set before the effect can be drawn.
-                if (!m_sharedState)
-                    ThrowHR(E_FAIL);
+                PrepareForFirstDraw();
+            }
 
-                // Load our pixel shader into D2D.
-                auto& shader = m_sharedState->Shader();
-
-                HRESULT hr = m_effectContext->LoadPixelShader(shader.Hash, shader.Code.data(), static_cast<UINT32>(shader.Code.size()));
-
-                if (FAILED(hr))
-                    ThrowHR(hr, Strings::CustomEffectBadShader);
-
-                // Configure the effect transform graph.
-                m_shaderTransform = Make<PixelShaderTransform>(m_sharedState.Get(), m_coordinateMapping);
-                CheckMakeResult(m_shaderTransform);
-
-                ThrowIfFailed(m_transformGraph->SetSingleTransformNode(As<ID2D1TransformNode>(m_shaderTransform).Get()));
+            // Make sure our transform graph is up to date.
+            if (m_graphDirty)
+            {
+                ConfigureTransformGraph();
+                m_graphDirty = false;
             }
 
             // Update D2D with our latest shader constants.
@@ -162,6 +156,78 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                 m_sourceInterpolationDirty = false;
             }
         });
+    }
+
+
+    void PixelShaderEffectImpl::PrepareForFirstDraw()
+    {
+        // Shared state must be set before the effect can be drawn.
+        if (!m_sharedState)
+            ThrowHR(E_FAIL);
+
+        // Load our pixel shader into D2D.
+        auto& shader = m_sharedState->Shader();
+
+        HRESULT hr = m_effectContext->LoadPixelShader(shader.Hash, shader.Code.data(), static_cast<UINT32>(shader.Code.size()));
+
+        if (FAILED(hr))
+            ThrowHR(hr, Strings::CustomEffectBadShader);
+
+        // Create our shader and clip transform nodes.
+        m_shaderTransform = Make<PixelShaderTransform>(m_sharedState.Get(), m_coordinateMapping);
+        CheckMakeResult(m_shaderTransform);
+
+        m_clipTransform = Make<ClipTransform>(m_sharedState.Get(), m_coordinateMapping);
+        CheckMakeResult(m_clipTransform);
+    }
+
+
+    void PixelShaderEffectImpl::ConfigureTransformGraph()
+    {
+        m_transformGraph->Clear();
+
+        // Add our pixel shader and clip nodes.
+        auto shaderTransform = As<ID2D1TransformNode>(m_shaderTransform);
+        auto clipTransform = As<ID2D1TransformNode>(m_clipTransform);
+
+        ThrowIfFailed(m_transformGraph->AddNode(shaderTransform.Get()));
+        ThrowIfFailed(m_transformGraph->AddNode(clipTransform.Get()));
+
+        // Connect pixel shader -> clip node -> effect output.
+        ThrowIfFailed(m_transformGraph->ConnectNode(shaderTransform.Get(), clipTransform.Get(), 0));
+        ThrowIfFailed(m_transformGraph->SetOutputNode(clipTransform.Get()));
+
+        for (unsigned i = 0; i < m_sharedState->Shader().InputCount; i++)
+        {
+            switch (m_coordinateMapping->BorderMode[i])
+            {
+                case EffectBorderMode::Soft:
+                    {
+                        // In soft border mode, connect effect inputs directly to the pixel shader.
+                        ThrowIfFailed(m_transformGraph->ConnectToEffectInput(i, shaderTransform.Get(), i));
+                    }
+                    break;
+
+                case EffectBorderMode::Hard:
+                    {
+                        // For hard borders, connect effect input -> border transform -> pixel shader.
+                        ComPtr<ID2D1BorderTransform> borderTransform;
+                        ThrowIfFailed(m_effectContext->CreateBorderTransform(D2D1_EXTEND_MODE_CLAMP, D2D1_EXTEND_MODE_CLAMP, &borderTransform));
+                        ThrowIfFailed(m_transformGraph->AddNode(borderTransform.Get()));
+
+                        ThrowIfFailed(m_transformGraph->ConnectToEffectInput(i, borderTransform.Get(), 0));
+                        ThrowIfFailed(m_transformGraph->ConnectNode(borderTransform.Get(), shaderTransform.Get(), i));
+                    }
+                    break;
+
+                default:
+                    ThrowHR(E_INVALIDARG);
+            }
+
+            // Also connect the original effect inputs to the clip transform.
+            // This lets it access their original extents before any border transforms were applied.
+            ThrowIfFailed(m_transformGraph->ConnectToEffectInput(i, clipTransform.Get(), i + 1));
+        }
     }
 
 
@@ -213,7 +279,19 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         if (dataSize != sizeof(CoordinateMappingState))
             return E_NOT_SUFFICIENT_BUFFER;
         
-        *m_coordinateMapping = *reinterpret_cast<CoordinateMappingState const*>(data);
+        auto newMapping = reinterpret_cast<CoordinateMappingState const*>(data);
+
+        // If any border settings have changed, mark that the transform graph needs to be reconfigured.
+        for (int i = 0; i < MaxShaderInputs; i++)
+        {
+            if (newMapping->BorderMode[i] != m_coordinateMapping->BorderMode[i])
+            {
+                m_graphDirty = true;
+                break;
+            }
+        }
+
+        *m_coordinateMapping = *newMapping;
 
         return S_OK;
     }
