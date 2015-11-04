@@ -282,6 +282,30 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         </p>
       </remarks>
     </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.PixelShaderEffect.Source1Interpolation">
+      <summary>Sets the interpolation mode used when sampling the first input texture.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.PixelShaderEffect.Source2Interpolation">
+      <summary>Sets the interpolation mode used when sampling the second input texture.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.PixelShaderEffect.Source3Interpolation">
+      <summary>Sets the interpolation mode used when sampling the third input texture.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.PixelShaderEffect.Source4Interpolation">
+      <summary>Sets the interpolation mode used when sampling the fourth input texture.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.PixelShaderEffect.Source5Interpolation">
+      <summary>Sets the interpolation mode used when sampling the fifth input texture.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.PixelShaderEffect.Source6Interpolation">
+      <summary>Sets the interpolation mode used when sampling the sixth input texture.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.PixelShaderEffect.Source7Interpolation">
+      <summary>Sets the interpolation mode used when sampling the seventh input texture.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.PixelShaderEffect.Source8Interpolation">
+      <summary>Sets the interpolation mode used when sampling the eighth input texture.</summary>
+    </member>
     <member name="P:Microsoft.Graphics.Canvas.Effects.PixelShaderEffect.Properties">
       <summary>
         Collection of properties configures the constant buffer that will be passed to the custom pixel shader.
