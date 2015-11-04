@@ -266,6 +266,9 @@ namespace canvas
             Assert::AreEqual(RO_E_CLOSED, textLayout->SetColor(0, 0, Color{}));
 
             Assert::AreEqual(RO_E_CLOSED, textLayout->get_Device(&canvasDevice));
+
+            Assert::AreEqual(RO_E_CLOSED, textLayout->DrawToTextRenderer(reinterpret_cast<ICanvasTextRenderer*>(0x12345678), Vector2{ 0, 0 }));
+            Assert::AreEqual(RO_E_CLOSED, textLayout->DrawToTextRendererWithCoords(reinterpret_cast<ICanvasTextRenderer*>(0x12345678), 0, 0));
         }
 
         TEST_METHOD_EX(CanvasTextLayoutTests_NullArgs)

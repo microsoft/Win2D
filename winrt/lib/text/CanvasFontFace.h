@@ -21,19 +21,28 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     typedef IDWriteFont DWritePhysicalFontPropertyContainer;
     typedef DWRITE_RENDERING_MODE DWriteRenderingMode;
 #endif
+	
+	[uuid(0A165926-BCBD-4B02-BF60-F5FC46C22B58)]
+    class ICanvasFontFaceInternal : public IUnknown
+    {
+    public:
+		virtual ComPtr<DWriteFontFaceType> const& GetRealizedFontFace() = 0;
+    };
 
     class CanvasFontFace : RESOURCE_WRAPPER_RUNTIME_CLASS(
         DWriteFontReferenceType,
         CanvasFontFace,
-        ICanvasFontFace)
+		ICanvasFontFace,
+		CloakedIid<ICanvasFontFaceInternal>)
     {
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_Text_CanvasFontFace, BaseTrust);
 
         ComPtr<DWriteFontFaceType> m_realizedFontFace;
 
     public:
-        CanvasFontFace(
-            DWriteFontReferenceType* fontFace);
+        CanvasFontFace(DWriteFontReferenceType* fontFace);
+
+        static ComPtr<ICanvasFontFace> GetOrCreate(IDWriteFontFace2* fontFaceInstance);
 
         IFACEMETHOD(GetRecommendedRenderingMode)(
             float fontSize,
@@ -132,12 +141,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         // IClosable
         //
 
-        IFACEMETHOD(Close)() override;
+		IFACEMETHOD(Close)() override;
+
+		//
+		// Internal
+		//
+		virtual ComPtr<DWriteFontFaceType> const& GetRealizedFontFace() override;
 
     private:
         float DesignSpaceToEmSpace(int designSpaceUnits, unsigned short designUnitsPerEm);
-
-        ComPtr<DWriteFontFaceType> GetRealizedFontFace();
 
         ComPtr<DWritePhysicalFontPropertyContainer> GetPhysicalPropertyContainer();
     };

@@ -7,7 +7,9 @@
 #include "CanvasActiveLayer.h"
 #include "text/CanvasTextFormat.h"
 #include "text/CanvasTextRenderingParameters.h"
+#include "text/CanvasFontFace.h"
 #include "utils/TemporaryTransform.h"
+#include "text/TextUtilities.h"
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
@@ -3724,6 +3726,143 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ICanvasActiveLayer** layer)
     {
         return CreateLayerImpl(opacity, opacityBrush, &clipRectangle, clipGeometry, &geometryTransform, options, layer);
+    }
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawGlyphRun(
+        Vector2 point,
+        ICanvasFontFace* fontFace,
+        float fontSize,
+        uint32_t glyphCount,
+        CanvasGlyph* glyphs,
+        boolean isSideways,
+        uint32_t bidiLevel,
+        ICanvasBrush* brush)
+    {
+        return DrawGlyphRunWithMeasuringModeAndDescription(
+            point,
+            fontFace,
+            fontSize,
+            glyphCount,
+            glyphs,
+            isSideways,
+            bidiLevel,
+            brush,
+            CanvasTextMeasuringMode::Natural,
+            nullptr,
+            nullptr,
+            0,
+            0,
+            0);
+    }
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawGlyphRunWithMeasuringMode(
+        Vector2 point,
+        ICanvasFontFace* fontFace,
+        float fontSize,
+        uint32_t glyphCount,
+        CanvasGlyph* glyphs,
+        boolean isSideways,
+        uint32_t bidiLevel,
+        ICanvasBrush* brush,
+        CanvasTextMeasuringMode textMeasuringMode)
+    {
+        return DrawGlyphRunWithMeasuringModeAndDescription(
+            point,
+            fontFace,
+            fontSize,
+            glyphCount,
+            glyphs,
+            isSideways,
+            bidiLevel,
+            brush,
+            textMeasuringMode,
+            nullptr,
+            nullptr,
+            0,
+            0,
+            0);
+    }
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawGlyphRunWithMeasuringModeAndDescription(
+        Vector2 point,
+        ICanvasFontFace* fontFace,
+        float fontSize,
+        uint32_t glyphCount,
+        CanvasGlyph* glyphs,
+        boolean isSideways,
+        uint32_t bidiLevel,
+        ICanvasBrush* brush,
+        CanvasTextMeasuringMode textMeasuringMode,
+        HSTRING localeName,
+        HSTRING text,
+        uint32_t clusterMapIndicesCount,
+        int* clusterMapIndices,
+        uint32_t textPosition)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                auto& deviceContext = GetResource();
+
+                CheckInPointer(fontFace);
+                CheckInPointer(glyphs);
+
+                DWRITE_GLYPH_RUN dwriteGlyphRun{};
+                dwriteGlyphRun.bidiLevel = bidiLevel;
+                dwriteGlyphRun.fontEmSize = fontSize;
+                dwriteGlyphRun.fontFace = As<ICanvasFontFaceInternal>(fontFace)->GetRealizedFontFace().Get();
+
+                std::vector<float> glyphAdvances;
+                std::vector<unsigned short> glyphIndices;
+                std::vector<DWRITE_GLYPH_OFFSET> glyphOffsets;
+                glyphAdvances.reserve(glyphCount);
+                glyphIndices.reserve(glyphCount);
+                glyphOffsets.reserve(glyphCount);
+                for (uint32_t i = 0; i < glyphCount; ++i)
+                {
+                    glyphAdvances.push_back(glyphs[i].Advance);
+
+                    glyphIndices.push_back(CheckCastAsUShort(glyphs[i].Index));
+
+                    DWRITE_GLYPH_OFFSET offset;
+                    offset.advanceOffset = glyphs[i].AdvanceOffset;
+                    offset.ascenderOffset = glyphs[i].AscenderOffset;
+                    glyphOffsets.push_back(offset);
+                }
+                dwriteGlyphRun.glyphCount = glyphCount;
+                dwriteGlyphRun.glyphAdvances = glyphAdvances.data();
+                dwriteGlyphRun.glyphIndices = glyphIndices.data();
+                dwriteGlyphRun.glyphOffsets = glyphOffsets.data();
+                dwriteGlyphRun.isSideways = isSideways;
+
+                DWRITE_GLYPH_RUN_DESCRIPTION dwriteGlyphRunDescription{};
+
+                uint32_t textStringLength;
+                wchar_t const* textString = WindowsGetStringRawBuffer(text, &textStringLength);
+
+                std::vector<unsigned short> clusterMapElements;
+                clusterMapElements.reserve(textStringLength);
+
+                if (clusterMapIndices)
+                {
+                    for (uint32_t i = 0; i < clusterMapIndicesCount; ++i)
+                    {
+                        clusterMapElements.push_back(CheckCastAsUShort(clusterMapIndices[i]));
+                    }
+                }
+                dwriteGlyphRunDescription.clusterMap = clusterMapElements.data();
+                dwriteGlyphRunDescription.localeName = WindowsGetStringRawBuffer(localeName, nullptr);
+                dwriteGlyphRunDescription.string = textString;
+                dwriteGlyphRunDescription.stringLength = textStringLength;
+                dwriteGlyphRunDescription.textPosition = textPosition;
+
+                deviceContext->DrawGlyphRun(
+                    ToD2DPoint(point),
+                    &dwriteGlyphRun,
+                    &dwriteGlyphRunDescription,
+                    ToD2DBrush(brush).Get(),
+                    ToDWriteMeasuringMode(textMeasuringMode));
+            });
     }
 
     // Returns true if the current transform matrix contains only scaling and translation, but no rotation or skew.

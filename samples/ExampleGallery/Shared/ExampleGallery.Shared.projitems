@@ -131,6 +131,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)VirtualControlExample.xaml.cs">
       <DependentUpon>VirtualControlExample.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Infrastructure\FontPickerComboBox.cs" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="$(MSBuildThisFileDirectory)AnimatedControlExample.xaml">

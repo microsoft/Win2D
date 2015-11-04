@@ -541,7 +541,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         CHECK_ENUM_MEMBER(DWRITE_GRID_FIT_MODE_DISABLED, CanvasTextGridFit::Disable);
         CHECK_ENUM_MEMBER(DWRITE_GRID_FIT_MODE_ENABLED, CanvasTextGridFit::Enable);
         return static_cast<DWRITE_GRID_FIT_MODE>(value);
-    }
+	}
+
+	inline CanvasTextMeasuringMode ToCanvasTextMeasuringMode(DWRITE_MEASURING_MODE value)
+	{
+		// static_asserts in ToDWriteMeasuringMode validate that this cast is ok
+		return static_cast<CanvasTextMeasuringMode>(value);
+	}
 
     inline DWRITE_MEASURING_MODE ToDWriteMeasuringMode(CanvasTextMeasuringMode value)
     {
@@ -641,6 +647,21 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         return static_cast<DWRITE_FONT_PROPERTY_ID>(value);
     }
 #endif
+
+	inline DWRITE_GLYPH_ORIENTATION_ANGLE ToDWriteGlyphOrientationAngle(CanvasGlyphOrientation value)
+	{
+		CHECK_ENUM_MEMBER(DWRITE_GLYPH_ORIENTATION_ANGLE_0_DEGREES, CanvasGlyphOrientation::Upright);
+		CHECK_ENUM_MEMBER(DWRITE_GLYPH_ORIENTATION_ANGLE_90_DEGREES, CanvasGlyphOrientation::Clockwise90Degrees);
+		CHECK_ENUM_MEMBER(DWRITE_GLYPH_ORIENTATION_ANGLE_180_DEGREES, CanvasGlyphOrientation::Clockwise180Degrees);
+		CHECK_ENUM_MEMBER(DWRITE_GLYPH_ORIENTATION_ANGLE_270_DEGREES, CanvasGlyphOrientation::Clockwise270Degrees);
+		return static_cast<DWRITE_GLYPH_ORIENTATION_ANGLE>(value);
+	}
+
+	inline CanvasGlyphOrientation ToCanvasGlyphOrientation(DWRITE_GLYPH_ORIENTATION_ANGLE value)
+	{
+		// static_asserts in ToDWriteGlyphOrientationAngle validate that this cast is ok
+		return static_cast<CanvasGlyphOrientation>(value);
+	}
 
     //
     // The localizedStrings are allowed to be null. If they are, this returns an empty map view.

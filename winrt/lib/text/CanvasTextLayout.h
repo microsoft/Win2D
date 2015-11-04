@@ -343,6 +343,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             uint32_t* descriptionCount,
             CanvasTextLayoutRegion** descriptions));
 
+		IFACEMETHOD(DrawToTextRenderer(
+			ICanvasTextRenderer* textRenderer,
+			Vector2 position));
+
+        IFACEMETHOD(DrawToTextRendererWithCoords(
+            ICanvasTextRenderer* textRenderer,
+            float x,
+            float y));
+
         //
         // IClosable
         //

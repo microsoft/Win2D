@@ -1116,6 +1116,73 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
          </p>
        </remarks>
     </member>
+
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawGlyphRun(System.Numerics.Vector2,Microsoft.Graphics.Canvas.Text.CanvasFontFace,System.Single,Microsoft.Graphics.Canvas.Text.CanvasGlyph[],System.Boolean,System.UInt32,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush)">
+      <summary>Draws a sequence of text characters which share the same formatting.</summary>
+      <remarks>
+          <p>
+            The typical way to use this method is from the 
+            <see cref="M:Microsoft.Graphics.Canvas.Text.ICanvasTextRenderer.DrawGlyphRun(System.Numerics.Vector2,Microsoft.Graphics.Canvas.Text.CanvasFontFace,System.Single,Microsoft.Graphics.Canvas.Text.CanvasGlyph[],System.Boolean,System.UInt32,System.Object,Microsoft.Graphics.Canvas.Text.CanvasTextMeasuringMode,System.String,System.String,System.Int32[],System.UInt32,Microsoft.Graphics.Canvas.Text.CanvasGlyphOrientation)"/> 
+            method, in an application's implementation of <see cref="T:Microsoft.Graphics.Canvas.Text.ICanvasTextRenderer"/>, 
+            rather than to call it standalone.
+            In particular, an application may want to adjust the properties of a glyph run, such as its positioning or font, before
+            passing it on to be drawn by a CanvasDrawingSession.
+          </p>
+          <p>
+            This method's position parameter is different from the position used with 
+            <see cref="O:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.DrawToTextRenderer"/>.
+            For DrawToTextRenderer, the position represents the top left corner of the layout box. 
+            For this method, the position is the baseline origin. For typical rendering with Latin scripts, 
+            the baseline is going to fall below the top left corner of the layout box.
+          </p>
+          <p>
+            This will use a default measuring mode of <see cref="F:Microsoft.Graphics.Canvas.Text.CanvasTextMeasuringMode.Natural"/>.
+          </p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawGlyphRun(System.Numerics.Vector2,Microsoft.Graphics.Canvas.Text.CanvasFontFace,System.Single,Microsoft.Graphics.Canvas.Text.CanvasGlyph[],System.Boolean,System.UInt32,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush,Microsoft.Graphics.Canvas.Text.CanvasTextMeasuringMode)">
+      <summary>Draws a sequence of text characters which share the same formatting.</summary>
+      <remarks>
+          <p>
+            The typical way to use this method is from the 
+            <see cref="M:Microsoft.Graphics.Canvas.Text.ICanvasTextRenderer.DrawGlyphRun(System.Numerics.Vector2,Microsoft.Graphics.Canvas.Text.CanvasFontFace,System.Single,Microsoft.Graphics.Canvas.Text.CanvasGlyph[],System.Boolean,System.UInt32,System.Object,Microsoft.Graphics.Canvas.Text.CanvasTextMeasuringMode,System.String,System.String,System.Int32[],System.UInt32,Microsoft.Graphics.Canvas.Text.CanvasGlyphOrientation)"/> 
+            method, in an application's implementation of <see cref="T:Microsoft.Graphics.Canvas.Text.ICanvasTextRenderer"/>, 
+            rather than to call it standalone.
+            In particular, an application may want to adjust the properties of a glyph run, such as its positioning or font, before
+            passing it on to be drawn by a CanvasDrawingSession.
+          </p>
+          <p>
+            This method's position parameter is different from the position used with 
+            <see cref="O:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.DrawToTextRenderer"/>.
+            For DrawToTextRenderer, the position represents the top left corner of the layout box. 
+            For this method, the position is the baseline origin. For typical rendering with Latin scripts, 
+            the baseline is going to fall below the top left corner of the layout box.
+          </p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawGlyphRun(System.Numerics.Vector2,Microsoft.Graphics.Canvas.Text.CanvasFontFace,System.Single,Microsoft.Graphics.Canvas.Text.CanvasGlyph[],System.Boolean,System.UInt32,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush,Microsoft.Graphics.Canvas.Text.CanvasTextMeasuringMode,System.String,System.String,System.Int32[],System.UInt32)">
+      <summary>Draws a sequence of text characters which share the same formatting.</summary>
+      <remarks>
+          <p>
+            The typical way to use this method is from the 
+            <see cref="M:Microsoft.Graphics.Canvas.Text.ICanvasTextRenderer.DrawGlyphRun(System.Numerics.Vector2,Microsoft.Graphics.Canvas.Text.CanvasFontFace,System.Single,Microsoft.Graphics.Canvas.Text.CanvasGlyph[],System.Boolean,System.UInt32,System.Object,Microsoft.Graphics.Canvas.Text.CanvasTextMeasuringMode,System.String,System.String,System.Int32[],System.UInt32,Microsoft.Graphics.Canvas.Text.CanvasGlyphOrientation)"/> 
+            method, in an application's implementation of <see cref="T:Microsoft.Graphics.Canvas.Text.ICanvasTextRenderer"/>, 
+            rather than to call it standalone.
+            In particular, an application may want to adjust the properties of a glyph run, such as its positioning or font, before
+            passing it on to be drawn by a CanvasDrawingSession.
+          </p>
+          <p>
+            This method's position parameter is different from the position used with 
+            <see cref="O:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.DrawToTextRenderer"/>.
+            For DrawToTextRenderer, the position represents the top left corner of the layout box. 
+            For this method, the position is the baseline origin. For typical rendering with Latin scripts, 
+            the baseline is going to fall below the top left corner of the layout box.
+          </p>
+          <p>
+            It's valid to specify null for the clusterMapIndices."/>.
+          </p>
+      </remarks>
+    </member>    
     
   </members>
 </doc>

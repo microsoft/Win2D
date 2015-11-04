@@ -57,8 +57,6 @@ namespace ExampleGallery
         {
             this.InitializeComponent();
 
-            InitializeFontPicker();
-
             CurrentTextSampleOption = TextSampleOption.QuickBrownFox;
             ShowPerCharacterLayoutBounds = true;
             UseEllipsisTrimming = true;
@@ -69,21 +67,6 @@ namespace ExampleGallery
             return new Rect(
                 new Point(Math.Floor(r.Left), Math.Floor(r.Top)),
                 new Point(Math.Ceiling(r.Right), Math.Ceiling(r.Bottom)));
-        }
-
-        void InitializeFontPicker()
-        {
-            var fontFamilyNames = CanvasTextFormat.GetSystemFontFamilies(ApplicationLanguages.Languages).OrderBy(k => k);
-            
-            foreach (string fontFamilyName in fontFamilyNames)
-            {
-                ComboBoxItem item = new ComboBoxItem();
-                item.Content = fontFamilyName;
-                item.FontFamily = new FontFamily(fontFamilyName);                
-                fontPicker.Items.Add(item);
-            }
-            fontPicker.SelectedIndex = 0;
-
         }
 
         void EnsureResources(ICanvasResourceCreatorWithDpi resourceCreator, Size targetSize)
@@ -158,7 +141,7 @@ namespace ExampleGallery
                     break;
             }
 
-            textFormat.FontFamily = (fontPicker.SelectedItem as ComboBoxItem).Content as string;
+            textFormat.FontFamily = fontPicker.CurrentFontFamily;
 
             textFormat.TrimmingGranularity = CanvasTextTrimmingGranularity.Word;
             textFormat.TrimmingSign = UseEllipsisTrimming ? CanvasTrimmingSign.Ellipsis : CanvasTrimmingSign.None;
@@ -273,7 +256,6 @@ namespace ExampleGallery
         {
             needsResourceRecreation = true;
             canvas.Invalidate();
-            fontPicker.FontFamily = (fontPicker.SelectedItem as ComboBoxItem).FontFamily;
         }
 
         private void control_Unloaded(object sender, RoutedEventArgs e)

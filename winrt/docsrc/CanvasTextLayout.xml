@@ -559,6 +559,21 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
           <see cref="P:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.DefaultFontSize"/>.
         </p>
       </remarks>
+    </member>    
+
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.DrawToTextRenderer(Microsoft.Graphics.Canvas.Text.ICanvasTextRenderer,System.Numerics.Vector2)">
+      <summary>Draws this text layout to an application-defined text renderer.</summary>
+      <remarks>
+        <see cref="T:Microsoft.Graphics.Canvas.Text.ICanvasTextRenderer"/>
+        is an interface that applications implement.
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.DrawToTextRenderer(Microsoft.Graphics.Canvas.Text.ICanvasTextRenderer,System.Single,System.Single)" Experimental="true">
+      <summary>Draws this text layout to an application-defined text renderer.</summary>
+      <remarks>
+        <see cref="T:Microsoft.Graphics.Canvas.Text.ICanvasTextRenderer"/>
+        is a type that applications implement.
+      </remarks>
     </member>
     
   </members>

@@ -1206,7 +1206,24 @@ namespace Microsoft
                 ENUM_VALUE(DWRITE_INFORMATIONAL_STRING_POSTSCRIPT_NAME);
                 ENUM_VALUE(DWRITE_INFORMATIONAL_STRING_POSTSCRIPT_CID_NAME);
                 END_ENUM(DWRITE_INFORMATIONAL_STRING_ID);
-            }
+			}
+
+			ENUM_TO_STRING(CanvasTextMeasuringMode)
+			{
+				ENUM_VALUE(CanvasTextMeasuringMode::Natural);
+				ENUM_VALUE(CanvasTextMeasuringMode::GdiNatural);
+				ENUM_VALUE(CanvasTextMeasuringMode::GdiClassic);
+				END_ENUM(CanvasTextMeasuringMode);
+			}
+
+			ENUM_TO_STRING(CanvasGlyphOrientation)
+			{
+				ENUM_VALUE(CanvasGlyphOrientation::Upright);
+				ENUM_VALUE(CanvasGlyphOrientation::Clockwise90Degrees);
+				ENUM_VALUE(CanvasGlyphOrientation::Clockwise180Degrees);
+				ENUM_VALUE(CanvasGlyphOrientation::Clockwise270Degrees);
+				END_ENUM(CanvasGlyphOrientation);
+			}
 
             template<typename T>
             inline std::wstring ToStringAsInt(T value)
@@ -1425,7 +1442,8 @@ namespace Microsoft
                 wcscmp(a.propertyValue, b.propertyValue) == 0 &&
                 wcscmp(a.localeName, b.localeName) == 0;
         }
-#endif        
+#endif      
+
     }
 }
 
@@ -1468,6 +1486,7 @@ inline bool operator==(D2D1_POINT_2U const& a, D2D1_POINT_2U const& b)
 {
     return a.x == b.x && a.y == b.y;
 }
+
 
 #define ASSERT_IMPLEMENTS_INTERFACE(obj, INTERFACE)                     \
     {                                                                   \

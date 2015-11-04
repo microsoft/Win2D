@@ -26,6 +26,124 @@ CanvasFontFace::CanvasFontFace(DWriteFontReferenceType* fontFace)
 {
 }
 
+class FontFileListEnumerator
+	: public RuntimeClass<RuntimeClassFlags<ClassicCom>, IDWriteFontFileEnumerator>
+	, private LifespanTracker<FontFileListEnumerator>
+{
+	std::vector<ComPtr<IDWriteFontFile>> m_files;
+	int m_index;
+
+public:
+	FontFileListEnumerator(ComPtr<IDWriteFontFace2> const& fontFace)
+		: m_index(-1)
+	{
+		uint32_t numberOfFiles;
+		ThrowIfFailed(fontFace->GetFiles(&numberOfFiles, nullptr));
+
+		std::vector<IDWriteFontFile*> rawPointers;
+		rawPointers.resize(numberOfFiles);
+		ThrowIfFailed(fontFace->GetFiles(&numberOfFiles, rawPointers.data()));
+
+		m_files.resize(numberOfFiles);
+		for (uint32_t i = 0; i < numberOfFiles; ++i)
+		{
+			m_files[i] = rawPointers[i];
+		}
+	}
+
+	IFACEMETHODIMP MoveNext(BOOL* hasCurrentFile) override
+	{
+		m_index++;		
+		*hasCurrentFile = m_index < static_cast<int>(m_files.size());
+
+		return S_OK;
+	}
+
+	IFACEMETHODIMP GetCurrentFontFile(IDWriteFontFile** fontFile) override
+	{
+		return m_files[m_index].CopyTo(fontFile);
+	}
+};
+
+class FontFaceCollectionLoader
+	: public RuntimeClass<RuntimeClassFlags<ClassicCom>, IDWriteFontCollectionLoader>
+	, private LifespanTracker<FontFaceCollectionLoader>
+{
+	ComPtr<IDWriteFactory> m_factory;
+
+public:
+	FontFaceCollectionLoader(ComPtr<IDWriteFactory> const& factory)
+		: m_factory(factory)
+	{
+		ThrowIfFailed(m_factory->RegisterFontCollectionLoader(this));
+	}
+
+	~FontFaceCollectionLoader()
+	{
+		ThrowIfFailed(m_factory->UnregisterFontCollectionLoader(this));
+	}
+
+	IFACEMETHODIMP CreateEnumeratorFromKey(
+		IDWriteFactory*,
+		void const* collectionKey,
+		uint32_t collectionKeySize,
+		IDWriteFontFileEnumerator** fontFileEnumerator) override
+	{
+		return ExceptionBoundary(
+			[=]
+			{
+				if (collectionKey == nullptr || collectionKeySize < sizeof(IDWriteFontFileEnumerator))
+					ThrowHR(E_INVALIDARG);
+
+				ComPtr<IDWriteFontFileEnumerator> enumerator = *reinterpret_cast<IDWriteFontFileEnumerator* const*>(collectionKey);
+				ThrowIfFailed(enumerator.CopyTo(fontFileEnumerator));
+			});
+	}
+};
+
+
+ComPtr<DWriteFontReferenceType> GetContainer(IDWriteFontFace2* fontFaceInstance)
+{
+	auto factory = CustomFontManager::GetInstance()->GetSharedFactory();
+
+    auto fontFileListEnumerator = Make<FontFileListEnumerator>(fontFaceInstance);
+    auto* enumeratorAddress = static_cast<IDWriteFontFileEnumerator*>(fontFileListEnumerator.Get());
+
+    auto fontCollectionLoader = Make<FontFaceCollectionLoader>(factory.Get());
+
+    ComPtr<IDWriteFontCollection> fontCollection;
+    ThrowIfFailed(factory->CreateCustomFontCollection(fontCollectionLoader.Get(), &enumeratorAddress, sizeof(&enumeratorAddress), &fontCollection));
+
+    ComPtr<IDWriteFont> font;
+    ThrowIfFailed(fontCollection->GetFontFromFontFace(fontFaceInstance, &font));
+
+    // 
+    // On 10, this code could be made much simpler by simply creating a font face reference off
+    // of the font face itself. However, there is a DWrite bug breaking QI behavior of such
+    // font face references, preventing it from working with our interop code.
+    // So we funnel both 8 and 10 through this path.
+    //
+
+#if WINVER > _WIN32_WINNT_WINBLUE
+    auto font3 = As<IDWriteFont3>(font);
+    ComPtr<IDWriteFontFaceReference> container;
+    ThrowIfFailed(font3->GetFontFaceReference(&container));
+#else
+    auto container = font;
+#endif
+
+	return container;
+}
+
+
+//static 
+ComPtr<ICanvasFontFace> CanvasFontFace::GetOrCreate(IDWriteFontFace2* fontFaceInstance)
+{
+    auto container = GetContainer(fontFaceInstance);
+
+    return ResourceManager::GetOrCreate<ICanvasFontFace>(container.Get());
+}
+
 IFACEMETHODIMP CanvasFontFace::GetRecommendedRenderingMode(
     float fontSize,
     float dpi,
@@ -650,7 +768,7 @@ IFACEMETHODIMP CanvasFontFace::Close()
     return ResourceWrapper::Close();
 }
 
-ComPtr<DWriteFontFaceType> CanvasFontFace::GetRealizedFontFace()
+ComPtr<DWriteFontFaceType> const& CanvasFontFace::GetRealizedFontFace()
 {
     if (!m_realizedFontFace)
     {

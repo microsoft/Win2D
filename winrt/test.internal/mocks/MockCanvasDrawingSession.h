@@ -209,6 +209,10 @@ namespace canvas
         DONT_EXPECT(DrawGradientMeshAtCoords, ICanvasGradientMesh*, float, float);
 #endif
 
+		DONT_EXPECT(DrawGlyphRun, Vector2, ICanvasFontFace*, float, uint32_t, CanvasGlyph*, boolean, uint32_t, ICanvasBrush*);
+		DONT_EXPECT(DrawGlyphRunWithMeasuringMode, Vector2, ICanvasFontFace*, float, uint32_t, CanvasGlyph*, boolean, uint32_t, ICanvasBrush*, CanvasTextMeasuringMode);
+		DONT_EXPECT(DrawGlyphRunWithMeasuringModeAndDescription, Vector2, ICanvasFontFace*, float, uint32_t, CanvasGlyph*, boolean, uint32_t, ICanvasBrush*, CanvasTextMeasuringMode, HSTRING, HSTRING, uint32_t, int*, uint32_t);
+	
         DONT_EXPECT(get_Antialiasing            , CanvasAntialiasing*);
         DONT_EXPECT(put_Antialiasing            , CanvasAntialiasing);
         DONT_EXPECT(get_Blend                   , CanvasBlend*);

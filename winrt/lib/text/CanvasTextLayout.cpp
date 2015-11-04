@@ -10,6 +10,7 @@
 #include "brushes/CanvasImageBrush.h"
 
 #include "CanvasTextLayout.h"
+#include "CanvasFontFace.h"
 #include "TextUtilities.h"
 
 using namespace ABI::Microsoft::Graphics::Canvas;
@@ -1390,6 +1391,322 @@ IFACEMETHODIMP CanvasTextLayout::GetCharacterRegions(
             ComArray<CanvasTextLayoutRegion> array(hitDescriptions.begin(), hitDescriptions.end());
             array.Detach(descriptionCount, descriptions);
 
+        });
+}
+
+
+class CustomTextRenderer : public RuntimeClass<RuntimeClassFlags<ClassicCom>, IDWriteTextRenderer1>,
+    private LifespanTracker<CustomTextRenderer>
+{
+    ComPtr<ICanvasDevice> m_device;
+    ComPtr<ICanvasTextRenderer> m_textRenderer;
+public:
+    CustomTextRenderer(ComPtr<ICanvasDevice> const& device, ICanvasTextRenderer* textRenderer)
+        : m_device(device)
+        , m_textRenderer(textRenderer)
+    {
+    }
+    
+    IFACEMETHODIMP DrawGlyphRun(
+        void* clientDrawingContext,
+        FLOAT baselineOriginX,
+        FLOAT baselineOriginY,
+        DWRITE_MEASURING_MODE measuringMode,
+        DWRITE_GLYPH_RUN const* glyphRun,
+        DWRITE_GLYPH_RUN_DESCRIPTION const* glyphRunDescription,
+        IUnknown* clientDrawingEffect)
+    {
+        return DrawGlyphRun(
+            clientDrawingContext,
+            baselineOriginX,
+            baselineOriginY,
+            DWRITE_GLYPH_ORIENTATION_ANGLE_0_DEGREES,
+            measuringMode,
+            glyphRun,
+            glyphRunDescription,
+            clientDrawingEffect);
+    }
+
+    IFACEMETHODIMP DrawGlyphRun(
+        void*,
+        FLOAT baselineOriginX,
+        FLOAT baselineOriginY,
+        DWRITE_GLYPH_ORIENTATION_ANGLE orientationAngle,
+        DWRITE_MEASURING_MODE measuringMode,
+        DWRITE_GLYPH_RUN const* glyphRun,
+        DWRITE_GLYPH_RUN_DESCRIPTION const* glyphRunDescription,
+        IUnknown* customDrawingObject)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                auto customDrawingObjectInspectable = GetCustomDrawingObjectInspectable(customDrawingObject);
+
+                auto canvasFontFace = CanvasFontFace::GetOrCreate(As<IDWriteFontFace2>(glyphRun->fontFace).Get());
+
+                std::vector<CanvasGlyph> glyphs;
+                glyphs.reserve(glyphRun->glyphCount);
+                for (uint32_t i = 0; i < glyphRun->glyphCount; ++i)
+                {
+                    CanvasGlyph glyph{};
+                    glyph.Advance = glyphRun->glyphAdvances[i];
+                    glyph.Index = glyphRun->glyphIndices[i];
+                    if (glyphRun->glyphOffsets)
+                    {
+                        glyph.AdvanceOffset = glyphRun->glyphOffsets[i].advanceOffset;
+                        glyph.AscenderOffset = glyphRun->glyphOffsets[i].ascenderOffset;
+                    }
+                    glyphs.push_back(glyph);
+                }
+
+                WinString localeNameString;
+                WinString textString;
+                std::vector<int> clusterMapIndices;
+
+                if (glyphRunDescription)
+                {
+                    localeNameString = WinString(glyphRunDescription->localeName);
+                    textString = WinString(glyphRunDescription->string);
+                    clusterMapIndices.reserve(glyphRunDescription->stringLength);
+                    for (uint32_t i = 0; i < glyphRunDescription->stringLength; ++i)
+                    {
+                        clusterMapIndices.push_back(glyphRunDescription->clusterMap[i]);
+                    }
+                }
+
+                ThrowIfFailed(m_textRenderer->DrawGlyphRun(
+                    Vector2{ baselineOriginX, baselineOriginY },
+                    canvasFontFace.Get(),
+                    glyphRun->fontEmSize,
+                    glyphRun->glyphCount,
+                    glyphs.data(),
+                    static_cast<boolean>(glyphRun->isSideways),
+                    glyphRun->bidiLevel,
+                    customDrawingObjectInspectable.Get(),
+                    ToCanvasTextMeasuringMode(measuringMode),
+                    localeNameString,
+                    textString,
+                    glyphRunDescription ? glyphRunDescription->stringLength : 0u,
+					glyphRunDescription ? clusterMapIndices.data() : nullptr,
+                    glyphRunDescription ? glyphRunDescription->textPosition : 0u,
+                    ToCanvasGlyphOrientation(orientationAngle)));
+                });
+    }
+
+    IFACEMETHODIMP DrawUnderline(
+        void* clientDrawingContext,
+        FLOAT baselineOriginX,
+        FLOAT baselineOriginY,
+        DWRITE_UNDERLINE const* underline,
+        IUnknown* clientDrawingEffect)
+    {
+        return DrawUnderline(
+            clientDrawingContext,
+            baselineOriginX,
+            baselineOriginY,
+            DWRITE_GLYPH_ORIENTATION_ANGLE_0_DEGREES,
+            underline,
+            clientDrawingEffect);
+    }
+
+    IFACEMETHODIMP DrawUnderline(
+        void*,
+        FLOAT baselineOriginX,
+        FLOAT baselineOriginY,
+        DWRITE_GLYPH_ORIENTATION_ANGLE orientationAngle,
+        DWRITE_UNDERLINE const* underline,
+        IUnknown* customDrawingObject)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                //
+                // The renderer isn't required to specify a locale name.
+                //
+                WinString localeName;
+                if (underline->localeName)
+                    localeName = WinString(underline->localeName);
+
+                auto customDrawingObjectInspectable = GetCustomDrawingObjectInspectable(customDrawingObject);
+
+                ThrowIfFailed(m_textRenderer->DrawUnderline(
+                    Vector2{ baselineOriginX, baselineOriginY },
+                    underline->width,
+                    underline->thickness,
+                    underline->offset,
+                    underline->runHeight,
+                    DWriteToCanvasTextDirection::Lookup(underline->readingDirection, underline->flowDirection)->TextDirection,
+                    customDrawingObjectInspectable.Get(),
+                    ToCanvasTextMeasuringMode(underline->measuringMode),
+                    localeName,
+                    ToCanvasGlyphOrientation(orientationAngle)));
+            });
+    }
+
+    IFACEMETHODIMP DrawStrikethrough(
+        void* clientDrawingContext,
+        FLOAT baselineOriginX,
+        FLOAT baselineOriginY,
+        DWRITE_STRIKETHROUGH const* strikethrough,
+        IUnknown* clientDrawingEffect)
+    {
+        return DrawStrikethrough(
+            clientDrawingContext,
+            baselineOriginX,
+            baselineOriginY,
+            DWRITE_GLYPH_ORIENTATION_ANGLE_0_DEGREES,
+            strikethrough,
+            clientDrawingEffect);
+    }
+
+    IFACEMETHODIMP DrawStrikethrough(
+        void*,
+        FLOAT baselineOriginX,
+        FLOAT baselineOriginY,
+        DWRITE_GLYPH_ORIENTATION_ANGLE orientationAngle,
+        DWRITE_STRIKETHROUGH const* strikethrough,
+        IUnknown* customDrawingObject)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                WinString localeName;
+                if (strikethrough->localeName)
+                    localeName = WinString(strikethrough->localeName);
+
+                auto customDrawingObjectInspectable = GetCustomDrawingObjectInspectable(customDrawingObject);
+
+                ThrowIfFailed(m_textRenderer->DrawStrikethrough(
+                    Vector2{ baselineOriginX, baselineOriginY },
+                    strikethrough->width,
+                    strikethrough->thickness,
+                    strikethrough->offset,
+                    DWriteToCanvasTextDirection::Lookup(strikethrough->readingDirection, strikethrough->flowDirection)->TextDirection,
+                    customDrawingObjectInspectable.Get(),
+                    ToCanvasTextMeasuringMode(strikethrough->measuringMode),
+                    localeName,
+                    ToCanvasGlyphOrientation(orientationAngle)));
+            });
+    }
+
+    IFACEMETHODIMP DrawInlineObject(
+        void*,
+        FLOAT,
+        FLOAT,
+        IDWriteInlineObject*,
+        BOOL,
+        BOOL,
+        IUnknown*)
+    {
+        return S_OK;
+    }
+
+    IFACEMETHODIMP DrawInlineObject(
+        void*,
+        FLOAT,
+        FLOAT,
+        DWRITE_GLYPH_ORIENTATION_ANGLE,
+        IDWriteInlineObject*,
+        BOOL,
+        BOOL,
+        IUnknown*)
+    {
+        //
+        // TODO: 5629 Win2D does not have full exposure for inline objects yet.
+        //
+        return S_OK;
+    }
+
+    IFACEMETHODIMP IsPixelSnappingDisabled(
+        void*,
+        BOOL* isDisabled)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                boolean value;
+                ThrowIfFailed(m_textRenderer->get_PixelSnappingDisabled(&value));
+
+                *isDisabled = value;
+            });
+    }
+
+    IFACEMETHODIMP GetCurrentTransform(
+        void*,
+        DWRITE_MATRIX* transform)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                Matrix3x2 value;
+                ThrowIfFailed(m_textRenderer->get_Transform(&value));
+
+                *transform = *ReinterpretAs<DWRITE_MATRIX*>(&value);
+            });
+    }
+
+    IFACEMETHODIMP GetPixelsPerDip(
+        void*,
+        FLOAT* pixelsPerDip)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                float value;
+                ThrowIfFailed(m_textRenderer->get_Dpi(&value));
+
+                *pixelsPerDip = value / DEFAULT_DPI;
+            });
+    }
+
+    private:
+        ComPtr<IInspectable> GetCustomDrawingObjectInspectable(IUnknown* customDrawingObject)
+        {
+            ComPtr<IInspectable> result;
+
+            if (customDrawingObject)
+            {
+                auto d2dBrush = MaybeAs<ID2D1Brush>(customDrawingObject);
+
+                if (d2dBrush)
+                {
+                    result = ResourceManager::GetOrCreate<ICanvasBrush>(m_device.Get(), d2dBrush.Get());
+                }
+            }
+
+            return result;
+        }
+};
+
+IFACEMETHODIMP CanvasTextLayout::DrawToTextRenderer(
+    ICanvasTextRenderer* textRenderer,
+    Vector2 position)
+{
+    return DrawToTextRendererWithCoords(textRenderer, position.X, position.Y);
+}
+
+IFACEMETHODIMP CanvasTextLayout::DrawToTextRendererWithCoords(
+    ICanvasTextRenderer* textRenderer,
+    float x,
+    float y)
+{
+    return ExceptionBoundary(
+        [&]
+        {
+            CheckInPointer(textRenderer);
+
+            auto& resource = GetResource();
+
+            auto& device = m_device.EnsureNotClosed();
+
+            auto dwriteTextRenderer = Make<CustomTextRenderer>(device, textRenderer);
+            CheckMakeResult(dwriteTextRenderer);
+
+            ThrowIfFailed(resource->Draw(
+                nullptr,
+                dwriteTextRenderer.Get(),
+                x,
+                y));
         });
 }
 

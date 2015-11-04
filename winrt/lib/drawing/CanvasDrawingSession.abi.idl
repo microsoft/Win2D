@@ -1408,6 +1408,46 @@ namespace Microsoft.Graphics.Canvas
             [in] NUMERICS.Matrix3x2 geometryTransform,
             [in] CanvasLayerOptions options,
             [out, retval] CanvasActiveLayer** layer);
+
+		[overload("DrawGlyphRun")]
+		HRESULT DrawGlyphRun(
+			[in] NUMERICS.Vector2 point,
+			[in] Microsoft.Graphics.Canvas.Text.CanvasFontFace* fontFace,
+			[in] float fontSize,
+			[in] UINT32 glyphCount,
+			[in, size_is(glyphCount)] Microsoft.Graphics.Canvas.Text.CanvasGlyph* glyphs,
+			[in] boolean isSideways,
+			[in] UINT32 bidiLevel,
+			[in] Microsoft.Graphics.Canvas.Brushes.ICanvasBrush* brush);
+
+		[overload("DrawGlyphRun")]
+		HRESULT DrawGlyphRunWithMeasuringMode(
+			[in] NUMERICS.Vector2 point,
+			[in] Microsoft.Graphics.Canvas.Text.CanvasFontFace* fontFace,
+			[in] float fontSize,
+			[in] UINT32 glyphCount,
+			[in, size_is(glyphCount)] Microsoft.Graphics.Canvas.Text.CanvasGlyph* glyphs,
+			[in] boolean isSideways,
+			[in] UINT32 bidiLevel,
+			[in] Microsoft.Graphics.Canvas.Brushes.ICanvasBrush* brush,
+			[in] Microsoft.Graphics.Canvas.Text.CanvasTextMeasuringMode measuringMode);
+
+		[overload("DrawGlyphRun")]
+		HRESULT DrawGlyphRunWithMeasuringModeAndDescription(
+			[in] NUMERICS.Vector2 point,
+			[in] Microsoft.Graphics.Canvas.Text.CanvasFontFace* fontFace,
+			[in] float fontSize,
+			[in] UINT32 glyphCount,
+			[in, size_is(glyphCount)] Microsoft.Graphics.Canvas.Text.CanvasGlyph* glyphs,
+			[in] boolean isSideways,
+			[in] UINT32 bidiLevel,
+			[in] Microsoft.Graphics.Canvas.Brushes.ICanvasBrush* brush,
+			[in] Microsoft.Graphics.Canvas.Text.CanvasTextMeasuringMode measuringMode,
+			[in] HSTRING localeName,
+			[in] HSTRING textString,
+			[in] UINT32 clusterMapIndicesCount,
+			[in, size_is(clusterMapIndicesCount)] int* clusterMapIndices,
+			[in] UINT32 textPosition);
     };
 
     [version(VERSION)]

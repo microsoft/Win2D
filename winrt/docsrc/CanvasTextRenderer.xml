@@ -1,0 +1,123 @@
+<?xml version="1.0"?>
+<!--
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+Licensed under the MIT License. See LICENSE.txt in the project root for license information.
+-->
+
+<doc>
+  <assembly>
+    <name>Microsoft.Graphics.Canvas</name>
+  </assembly>
+  <members>
+    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasGlyph" Experimental="true">
+      <summary>Describes a single glyph.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasGlyph.Index">
+      <summary>The index into the font where the glyph is located.</summary>
+      <remarks>This value is not a Unicode code point.</remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasGlyph.Advance">
+      <summary>The advance width for this glyph.</summary>
+      <remarks>
+        Advance width is the offset from the origin of the current glyph
+        to the origin of the next glyph. When writing text horizontally,
+        for example, the offset's in the X-direction.
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasGlyph.AdvanceOffset">
+      <summary>The offset of this glyph in the direction of the glyph run.</summary>
+      <remarks>
+        A positive advance offset used with left-to-right text, for example,
+        will move the glyph (in pre-transform coordinates) to the right.
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasGlyph.AscenderOffset">
+      <summary>The offset in the ascent direction.</summary>
+      <remarks>
+        The ascent direction refers to the direction that ascenders point. 
+        Ascenders are features on letters such as 'b' or 'd' or 't' on Latin scripts.
+        A positive ascender offset moves the glyph up (in pre-transform coordinates). 
+        A negative ascender offset moves the glyph down.
+      </remarks>
+    </member>
+    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasGlyphOrientation" Experimental="true">
+      <summary>Specifies what type of rotation will be applied to glyphs.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasGlyphOrientation.Upright">
+      <summary>Specifies that no rotation is applied to the glyph.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasGlyphOrientation.Clockwise90Degrees">
+      <summary>Specifies that a clockwise 90 degree rotation is applied to the glyph.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasGlyphOrientation.Clockwise180Degrees">
+      <summary>Specifies that a 180 degree rotation is applied to the glyph.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasGlyphOrientation.Clockwise270Degrees">
+      <summary>Specifies that a clockwise 270 degree rotation is applied to the glyph.</summary>
+    </member>
+    <member name="T:Microsoft.Graphics.Canvas.Text.ICanvasTextRenderer" Experimental="true">
+      <summary>An application-implemented interface for recieving detailed rendering information about text layouts.</summary>
+      <remarks>
+         <p>
+           Custom text renderers are used for a wide variety of purposes, such as
+           <ul>
+             <li>Querying the metrics of the font which is used when drawing a text layout</li>
+             <li>Arbitrarily choosing the transform at which individual glyphs are drawn</li>
+             <li>Controlling the visibility of certain glyphs</li>
+             <li>Applying different imaging effects to different glyphs within a layout</li>
+             <li>Stylizing strikethroughs and underlines</li>
+           </ul>           
+         </p>
+         <p>
+           Why is this renderer needed for knowing which font is used while drawing
+           a text layout? There's a very deliberate reason why you can't simply measure 
+           text using a text format alone, or even a text format plus a set of characters. 
+           That reason is font fallbacks. 
+         </p>
+         <p>
+           The font face that will ultimately get used when you draw text actually depends 
+           on the text string itself, together with a multitude of other environmental 
+           properties. Sounds surprising, right?  If you ask for, say, a glyph that isn't 
+           in the font specified in your layout's text format, Win2D will take advantage of 
+           DirectWrite's fallback logic and actually switch the font to one that has the glyph. 
+           This is great for making apps that work well on a wide variety of 
+           environments, but it also means the info in that text format is really just 
+           a list of 'suggestions'. It's not a guarantee of which font will get used.
+         </p>
+         <p>
+           It's impossible to make guarantees about what specific font face will be used to
+           measure or draw some text, until you actually have the glyphs on hand that you're 
+           trying to operate on, and the exact context in which you're using them. This is
+           where ICanvasTextRenderer comes in.
+         </p>
+         <p>
+           ICanvasTextRenderer provides a guaranteed way for an app to know what font face
+           is being used for drawing a piece of text, and what the properties of that font
+           face are. Apps may want to intercept DrawGlyphRun to learn about metrics for
+           a piece of text, or adjust some details about the glyph run before passing
+           the parameters on to 
+           <see cref="O:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.DrawToTextRenderer"/>.
+         </p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Text.ICanvasTextRenderer.DrawGlyphRun(System.Numerics.Vector2,Microsoft.Graphics.Canvas.Text.CanvasFontFace,System.Single,Microsoft.Graphics.Canvas.Text.CanvasGlyph[],System.Boolean,System.UInt32,System.Object,Microsoft.Graphics.Canvas.Text.CanvasTextMeasuringMode,System.String,System.String,System.Int32[],System.UInt32,Microsoft.Graphics.Canvas.Text.CanvasGlyphOrientation)">
+      <summary>Signals to the app how it should draw a sequence of identically-formatted text characters.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Text.ICanvasTextRenderer.DrawStrikethrough(System.Numerics.Vector2,System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.Text.CanvasTextDirection,System.Object,Microsoft.Graphics.Canvas.Text.CanvasTextMeasuringMode,System.String,Microsoft.Graphics.Canvas.Text.CanvasGlyphOrientation)">
+      <summary>Signals to the app how it should draw a strikethrough.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Text.ICanvasTextRenderer.DrawUnderline(System.Numerics.Vector2,System.Single,System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.Text.CanvasTextDirection,System.Object,Microsoft.Graphics.Canvas.Text.CanvasTextMeasuringMode,System.String,Microsoft.Graphics.Canvas.Text.CanvasGlyphOrientation)">
+      <summary>Signals to the app how it should draw an underline.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Text.ICanvasTextRenderer.Dpi">
+      <summary>Gets the current DPI.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Text.ICanvasTextRenderer.PixelSnappingDisabled">
+      <summary>Gets whether pixel snapping is disabled.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Text.ICanvasTextRenderer.Transform">
+      <summary>Gets the transform with which text should be drawn.</summary>
+    </member>
+  </members>
+</doc>
