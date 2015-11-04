@@ -12,6 +12,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     PixelShaderEffectImpl::PixelShaderEffectImpl()
         : m_constantsDirty(false)
         , m_coordinateMapping(std::make_shared<CoordinateMappingState>())
+        , m_sourceInterpolation(std::make_unique<SourceInterpolationState>())
+        , m_sourceInterpolationDirty(false)
     { }
 
 
@@ -45,6 +47,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             </Property>
             <Property name='CoordinateMapping' type='blob'>
                 <Property name='DisplayName' type='string' value='CoordinateMapping'/>
+                <Property name='Default' type='blob' value=''/>
+            </Property>
+            <Property name='SourceInterpolation' type='blob'>
+                <Property name='DisplayName' type='string' value='SourceInterpolation'/>
                 <Property name='Default' type='blob' value=''/>
             </Property>
         </Effect>
@@ -86,9 +92,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         static const D2D1_PROPERTY_BINDING bindings[] =
         {
-            D2D1_VALUE_TYPE_BINDING(L"SharedState",       &SetSharedStateProperty,       &GetSharedStateProperty),
-            D2D1_BLOB_TYPE_BINDING (L"Constants",         &SetConstantsProperty,         &GetConstantsProperty),
-            D2D1_BLOB_TYPE_BINDING (L"CoordinateMapping", &SetCoordinateMappingProperty, &GetCoordinateMappingProperty)
+            D2D1_VALUE_TYPE_BINDING(L"SharedState",         &SetSharedStateProperty,         &GetSharedStateProperty),
+            D2D1_BLOB_TYPE_BINDING (L"Constants",           &SetConstantsProperty,           &GetConstantsProperty),
+            D2D1_BLOB_TYPE_BINDING (L"CoordinateMapping",   &SetCoordinateMappingProperty,   &GetCoordinateMappingProperty),
+            D2D1_BLOB_TYPE_BINDING (L"SourceInterpolation", &SetSourceInterpolationProperty, &GetSourceInterpolationProperty),
         };
 
         ThrowIfFailed(factory->RegisterEffectFromString(CLSID_PixelShaderEffect, effectXml, bindings, _countof(bindings), PixelShaderEffectImplFactory));
@@ -146,6 +153,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             {
                 m_shaderTransform->SetConstants(m_constants);
                 m_constantsDirty = false;
+            }
+
+            // Update D2D with our latest filter mode settings.
+            if (m_sourceInterpolationDirty)
+            {
+                m_shaderTransform->SetSourceInterpolation(m_sourceInterpolation.get());
+                m_sourceInterpolationDirty = false;
             }
         });
     }
@@ -216,6 +230,35 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                 return E_NOT_SUFFICIENT_BUFFER;
 
             *reinterpret_cast<CoordinateMappingState*>(data) = *m_coordinateMapping;
+        }
+
+        return S_OK;
+    }
+
+
+    HRESULT PixelShaderEffectImpl::SetSourceInterpolationProperty(BYTE const* data, UINT32 dataSize)
+    {
+        if (dataSize != sizeof(SourceInterpolationState))
+            return E_NOT_SUFFICIENT_BUFFER;
+
+        *m_sourceInterpolation = *reinterpret_cast<SourceInterpolationState const*>(data);
+        m_sourceInterpolationDirty = true;
+
+        return S_OK;
+    }
+
+
+    HRESULT PixelShaderEffectImpl::GetSourceInterpolationProperty(BYTE* data, UINT32 dataSize, UINT32 *actualSize) const
+    {
+        if (actualSize)
+            *actualSize = sizeof(SourceInterpolationState);
+
+        if (data)
+        {
+            if (dataSize != sizeof(SourceInterpolationState))
+                return E_NOT_SUFFICIENT_BUFFER;
+
+            *reinterpret_cast<SourceInterpolationState*>(data) = *m_sourceInterpolation;
         }
 
         return S_OK;

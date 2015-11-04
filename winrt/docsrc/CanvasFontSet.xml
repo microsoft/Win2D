@@ -95,11 +95,11 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <summary>Gets a grouping of all the fonts available locally on the system.</summary>
     </member>
     
-    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasFontSet.GetMatchingFontsFromProperties(Microsoft.Graphics.Canvas.Text.CanvasFontProperty[])" Win10="true">
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasFontSet.GetMatchingFonts(Microsoft.Graphics.Canvas.Text.CanvasFontProperty[])" Win10="true">
       <summary>Gets a subset of fonts matching the specified criteria.</summary>
     </member>
     
-    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasFontSet.GetMatchingFontsFromProperties(System.String,Windows.UI.Text.FontWeight,Windows.UI.Text.FontStretch,Windows.UI.Text.FontStyle)" Win10="true">
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasFontSet.GetMatchingFonts(System.String,Windows.UI.Text.FontWeight,Windows.UI.Text.FontStretch,Windows.UI.Text.FontStyle)" Win10="true">
       <summary>Gets a subset of fonts within the given WWS family prioritized by WWS distance.</summary>
     </member>
     
@@ -107,11 +107,11 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <summary>Returns a count of how many times a given property value occurs in the set.</summary>
     </member>
     
-    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasFontSet.GetPropertyValuesFromIndex(System.UInt32,Microsoft.Graphics.Canvas.Text.CanvasFontPropertyIdentifier)" Win10="true">
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasFontSet.GetPropertyValues(System.UInt32,Microsoft.Graphics.Canvas.Text.CanvasFontPropertyIdentifier)" Win10="true">
       <summary>Returns the property values of a specific font item index.</summary>
     </member>
     
-    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasFontSet.GetPropertyValuesFromIdentifier(Microsoft.Graphics.Canvas.Text.CanvasFontPropertyIdentifier,System.String)" Win10="true">
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasFontSet.GetPropertyValues(Microsoft.Graphics.Canvas.Text.CanvasFontPropertyIdentifier,System.String)" Win10="true">
       <summary>Returns all unique property values in the set, which can be used for purposes such as displaying a family list or tag cloud.</summary>
       <remarks>
         <p>Values are returned in priority order according to the language list, such that if a font contains more than one localized name, the preferred one will be returned.</p>
@@ -119,7 +119,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       </remarks>
     </member>
     
-    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasFontSet.GetPropertyValuesFromIdentifier(Microsoft.Graphics.Canvas.Text.CanvasFontPropertyIdentifier)" Win10="true">
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasFontSet.GetPropertyValues(Microsoft.Graphics.Canvas.Text.CanvasFontPropertyIdentifier)" Win10="true">
       <summary>Returns all unique property values in the set, which can be used for purposes such as displaying a family list or tag cloud.</summary>
       <remarks>All values are returned regardless of language, including all localized names.</remarks>
     </member>

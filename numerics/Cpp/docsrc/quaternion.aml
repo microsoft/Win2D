@@ -11,7 +11,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <introduction>
       <para>A four dimensional vector, used to represent a rotation.</para>
       <para>Quaternions can efficiently rotate an object about the (x, y, z) vector by the angle theta, where w = cos(theta/2). They are typically used for smooth interpolation between two angles, and for avoiding the gimbal lock problem that can occur with Euler angles.</para>
-      <para>This type is only available in C++. Its .NET equivalent is <codeEntityReference>T:System.Numerics.Quaternion</codeEntityReference>.</para>
+      <para>This type is only available in C++. Its .NET equivalent is <externalLink><linkText>System.Numerics.Quaternion</linkText><linkUri>https://msdn.microsoft.com/library/windows/apps/System.Numerics.Quaternion</linkUri></externalLink>.</para>
       <para>
         <markup><br/></markup>
         <legacyBold>Namespace:</legacyBold> <link xlink:href="WindowsNumerics">Windows::Foundation::Numerics</link>

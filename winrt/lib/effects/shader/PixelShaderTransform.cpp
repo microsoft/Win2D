@@ -29,9 +29,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             if (inputRectCount > MaxShaderInputs)
                 ThrowHR(E_INVALIDARG);
 
-            // Store the bounds of our input images, for later use by MapOutputRectToInputRects.
-            m_inputBounds.assign(inputRects, inputRects + inputRectCount);
-
             D2D_RECT_L accumulatedRect = { INT_MIN, INT_MIN, INT_MAX, INT_MAX };
             bool gotRect = false;
             bool gotOffset = false;
@@ -100,45 +97,28 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     {
         return ExceptionBoundary([&]
         {
-            if (inputRectsCount > m_inputBounds.size())
-                ThrowHR(E_INVALIDARG);
-
             for (unsigned i = 0; i < inputRectsCount; i++)
             {
-                D2D1_RECT_L rect;
-
                 switch (m_coordinateMapping->Mapping[i])
                 {
                 case SamplerCoordinateMapping::Unknown:
-                    // Due to unknown coordinate mapping, we must request access to the entire input image.
-                    rect = m_inputBounds[i];
+                    // Due to unknown coordinate mapping, we must request access to an infinite input area.
+                    inputRects[i] = D2D_RECT_L{ INT_MIN, INT_MIN, INT_MAX, INT_MAX };
                     break;
 
                 case SamplerCoordinateMapping::OneToOne:
                     // This output rectangle maps directly to the input.
-                    rect = *outputRect;
+                    inputRects[i] = *outputRect;
                     break;
 
                 case SamplerCoordinateMapping::Offset:
                     // This rectangle must be expanded due to the use of offset texture coordinates.
-                    rect = ExpandRectangle(*outputRect, m_coordinateMapping->MaxOffset);
+                    inputRects[i] = ExpandRectangle(*outputRect, m_coordinateMapping->MaxOffset);
                     break;
 
                 default:
                     ThrowHR(E_INVALIDARG);
                 }
-           
-                // Validate that the input region we are requesting is reasonably sized.
-                if (static_cast<unsigned>(rect.right - rect.left) > MaxDImageIntermediateSize ||
-                    static_cast<unsigned>(rect.bottom - rect.top) > MaxDImageIntermediateSize)
-                {
-                    WinStringBuilder message;
-                    message.Format(Strings::CustomEffectInputRectTooBig, i + 1);
-                    ThrowHR(D2DERR_INTERMEDIATE_TOO_LARGE, message.Get());
-                }
-
-                // Return the desired input rectangle.
-                inputRects[i] = rect;
             }
         });
     }
@@ -175,6 +155,17 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     void PixelShaderTransform::SetConstants(std::vector<BYTE> const& constants)
     {
         ThrowIfFailed(m_drawInfo->SetPixelShaderConstantBuffer(constants.data(), static_cast<UINT32>(constants.size())));
+    }
+
+
+    void PixelShaderTransform::SetSourceInterpolation(SourceInterpolationState const* sourceInterpolation)
+    {
+        auto inputCount = m_sharedState->Shader().InputCount;
+
+        for (unsigned i = 0; i < inputCount; i++)
+        {
+            ThrowIfFailed(m_drawInfo->SetInputDescription(i, D2D1_INPUT_DESCRIPTION{ sourceInterpolation->Filter[i], 0 }));
+        }
     }
 
 }}}}}

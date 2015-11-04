@@ -437,6 +437,28 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         }
     }
 
+    inline D2D1_FILTER ToD2DFilter(CanvasImageInterpolation interpolation)
+    {
+        switch (interpolation)
+        {
+            case CanvasImageInterpolation::NearestNeighbor: return D2D1_FILTER_MIN_MAG_MIP_POINT;
+            case CanvasImageInterpolation::Linear: return D2D1_FILTER_MIN_MAG_MIP_LINEAR;
+            case CanvasImageInterpolation::Anisotropic: return D2D1_FILTER_ANISOTROPIC;
+            default: return D2D1_FILTER_FORCE_DWORD;
+        }
+    }
+
+    inline CanvasImageInterpolation FromD2DFilter(D2D1_FILTER filter)
+    {
+        switch (filter)
+        {
+            case D2D1_FILTER_MIN_MAG_MIP_POINT: return CanvasImageInterpolation::NearestNeighbor;
+            case D2D1_FILTER_MIN_MAG_MIP_LINEAR: return CanvasImageInterpolation::Linear;
+            case D2D1_FILTER_ANISOTROPIC: return CanvasImageInterpolation::Anisotropic;
+            default: assert(false); return CanvasImageInterpolation::NearestNeighbor;
+        }
+    }
+
     inline DWRITE_TEXT_RANGE ToDWriteTextRange(int32_t position, int32_t characterCount)
     {
         ThrowIfNegative(position);

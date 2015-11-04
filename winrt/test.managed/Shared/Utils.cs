@@ -34,6 +34,10 @@ namespace test.managed
             string delimiterString = "\r\n\r\n";
             int delimiterPosition = sourceMessage.LastIndexOf(delimiterString);
             string exceptionMessage = sourceMessage.Substring(delimiterPosition + delimiterString.Length);
+
+            // .NET Native formats HRESULT exception messages differently to other CLR versions.
+            exceptionMessage = exceptionMessage.Replace("Excep_FromHResult", "Exception from HRESULT:");
+
             Assert.AreEqual(expected, exceptionMessage);
         }
     }

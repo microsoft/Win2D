@@ -18,10 +18,20 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     }
 
 
-    SharedShaderState::SharedShaderState(ShaderDescription const& shader, std::vector<BYTE> const& constants, CoordinateMappingState const& coordinateMapping)
+    SourceInterpolationState::SourceInterpolationState()
+    {
+        for (int i = 0; i < MaxShaderInputs; i++)
+        {
+            Filter[i] = D2D1_FILTER_MIN_MAG_MIP_LINEAR;
+        }
+    }
+
+
+    SharedShaderState::SharedShaderState(ShaderDescription const& shader, std::vector<BYTE> const& constants, CoordinateMappingState const& coordinateMapping, SourceInterpolationState const& sourceInterpolation)
         : m_shader(shader)
         , m_constants(constants)
         , m_coordinateMapping(coordinateMapping)
+        , m_sourceInterpolation(sourceInterpolation)
     { }
 
 
@@ -42,7 +52,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
     ComPtr<ISharedShaderState> SharedShaderState::Clone()
     {
-        auto clone = Make<SharedShaderState>(m_shader, m_constants, m_coordinateMapping);
+        auto clone = Make<SharedShaderState>(m_shader, m_constants, m_coordinateMapping, m_sourceInterpolation);
         CheckMakeResult(clone);
 
         return clone;

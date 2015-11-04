@@ -11,7 +11,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <introduction>
       <para>A 4x4 matrix, used for 3D transforms.</para>
       <para>This matrix type uses a row vector layout. The x, y, and z of this matrix's translation vector correspond to the fields m41, m42, m43.</para>
-      <para>This type is only available in C++. Its .NET equivalent is <codeEntityReference>T:System.Numerics.Matrix4x4</codeEntityReference>.</para>
+      <para>This type is only available in C++. Its .NET equivalent is <externalLink><linkText>System.Numerics.Matrix4x4</linkText><linkUri>https://msdn.microsoft.com/library/windows/apps/System.Numerics.Matrix4x4</linkUri></externalLink>.</para>
       <para>
         <markup><br/></markup>
         <legacyBold>Namespace:</legacyBold> <link xlink:href="WindowsNumerics">Windows::Foundation::Numerics</link>

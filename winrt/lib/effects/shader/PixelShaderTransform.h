@@ -8,8 +8,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 {
     class ISharedShaderState;
     struct CoordinateMappingState;
-
-    const int MaxDImageIntermediateSize = 4096;
+    struct SourceInterpolationState;
 
 
     // Custom Direct2D draw transform.
@@ -17,10 +16,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                                , private LifespanTracker<PixelShaderTransform>
     {
         ComPtr<ISharedShaderState> m_sharedState;
-
         std::shared_ptr<CoordinateMappingState> m_coordinateMapping;
-        std::vector<D2D1_RECT_L> m_inputBounds;
-
         ComPtr<ID2D1DrawInfo> m_drawInfo;
 
     public:
@@ -35,6 +31,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         IFACEMETHOD(SetDrawInfo)(ID2D1DrawInfo* drawInfo) override;
 
         void SetConstants(std::vector<BYTE> const& constants);
+        void SetSourceInterpolation(SourceInterpolationState const* sourceInterpolation);
     };
 
 }}}}}

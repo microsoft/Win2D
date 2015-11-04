@@ -16,11 +16,21 @@
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 
+static ComPtr<SharedShaderState> MakeSharedShaderState(
+    ShaderDescription const& shader = ShaderDescription(),
+    std::vector<BYTE> const& constants = std::vector<BYTE>(),
+    CoordinateMappingState const& coordinateMapping = CoordinateMappingState(),
+    SourceInterpolationState const& sourceInterpolation = SourceInterpolationState())
+{
+    return Make<SharedShaderState>(shader, constants, coordinateMapping, sourceInterpolation);
+}
+
+
 TEST_CLASS(PixelShaderEffectUnitTests)
 {
     TEST_METHOD_EX(PixelShaderEffect_UsePropertyMapAfterClose)
     {
-        auto sharedState = Make<SharedShaderState>(ShaderDescription(), std::vector<BYTE>(), CoordinateMappingState());
+        auto sharedState = MakeSharedShaderState();
         auto effect = Make<PixelShaderEffect>(nullptr, nullptr, sharedState.Get());
 
         ComPtr<IMap<HSTRING, IInspectable*>> properties;
@@ -34,7 +44,7 @@ TEST_CLASS(PixelShaderEffectUnitTests)
 
     TEST_METHOD_EX(PixelShaderEffect_UsePropertyMapAfterFinalRelease)
     {
-        auto sharedState = Make<SharedShaderState>(ShaderDescription(), std::vector<BYTE>(), CoordinateMappingState());
+        auto sharedState = MakeSharedShaderState();
         auto effect = Make<PixelShaderEffect>(nullptr, nullptr, sharedState.Get());
 
         ComPtr<IMap<HSTRING, IInspectable*>> properties;
@@ -133,7 +143,11 @@ TEST_CLASS(PixelShaderEffectUnitTests)
         CoordinateMappingState coordinateMapping;
         coordinateMapping.MaxOffset = 123;
 
-        auto sharedState = Make<SharedShaderState>(ShaderDescription(), constants, coordinateMapping);
+        SourceInterpolationState sourceInterpolation;
+        sourceInterpolation.Filter[0] = D2D1_FILTER_MIN_MAG_MIP_POINT;
+        sourceInterpolation.Filter[7] = D2D1_FILTER_ANISOTROPIC;
+
+        auto sharedState = MakeSharedShaderState(ShaderDescription(), constants, coordinateMapping, sourceInterpolation);
         auto effect = Make<PixelShaderEffect>(nullptr, nullptr, sharedState.Get());
 
         // Realize the effect.
@@ -147,6 +161,12 @@ TEST_CLASS(PixelShaderEffectUnitTests)
 
         // And it should have passed the coordinate mapping state.
         Assert::AreEqual(coordinateMapping.MaxOffset, f.GetEffectPropertyValue<CoordinateMappingState>(PixelShaderEffectProperty::CoordinateMapping).MaxOffset);
+
+        // Also too the source interpolation state.
+        auto interpolation = f.GetEffectPropertyValue<SourceInterpolationState>(PixelShaderEffectProperty::SourceInterpolation);
+
+        Assert::AreEqual<int>(D2D1_FILTER_MIN_MAG_MIP_POINT, interpolation.Filter[0]);
+        Assert::AreEqual<int>(D2D1_FILTER_ANISOTROPIC, interpolation.Filter[7]);
     }
 
 
@@ -163,7 +183,7 @@ TEST_CLASS(PixelShaderEffectUnitTests)
         ShaderDescription desc;
         desc.Variables.push_back(variable);
 
-        auto sharedState = Make<SharedShaderState>(desc, std::vector<BYTE>(), CoordinateMappingState());
+        auto sharedState = MakeSharedShaderState(desc);
 
         // Teach the D2D effect how to report its CLSID and shared state.
         f.MockEffect->MockGetValue = [&](UINT32 index, D2D1_PROPERTY_TYPE type, BYTE *data, UINT32 dataSize)
@@ -220,7 +240,7 @@ TEST_CLASS(PixelShaderEffectUnitTests)
         ShaderDescription desc;
         desc.Variables.push_back(variable);
 
-        auto sharedState = Make<SharedShaderState>(desc, std::vector<BYTE>(sizeof(int)), CoordinateMappingState());
+        auto sharedState = MakeSharedShaderState(desc, std::vector<BYTE>(sizeof(int)));
         auto effect = Make<PixelShaderEffect>(nullptr, nullptr, sharedState.Get());
 
         // Change the property value to 3.
@@ -249,7 +269,7 @@ TEST_CLASS(PixelShaderEffectUnitTests)
     {
         Fixture f;
 
-        auto sharedState = Make<SharedShaderState>(ShaderDescription(), std::vector<BYTE>(), CoordinateMappingState());
+        auto sharedState = MakeSharedShaderState();
         auto effect = Make<PixelShaderEffect>(nullptr, nullptr, sharedState.Get());
 
         // Change some coordinate mapping settings.
@@ -262,7 +282,7 @@ TEST_CLASS(PixelShaderEffectUnitTests)
 
         // This should have passed the coordinate mapping state through to D2D.
         auto& d2dMapping = f.GetEffectPropertyValue<CoordinateMappingState>(PixelShaderEffectProperty::CoordinateMapping);
-        
+
         Assert::AreEqual(SamplerCoordinateMapping::OneToOne, d2dMapping.Mapping[0]);
         Assert::AreEqual(SamplerCoordinateMapping::Offset, d2dMapping.Mapping[1]);
         Assert::AreEqual(23, d2dMapping.MaxOffset);
@@ -276,6 +296,36 @@ TEST_CLASS(PixelShaderEffectUnitTests)
         Assert::AreEqual(SamplerCoordinateMapping::Unknown, d2dMapping.Mapping[0]);
         Assert::AreEqual(SamplerCoordinateMapping::OneToOne, d2dMapping.Mapping[1]);
         Assert::AreEqual(42, d2dMapping.MaxOffset);
+    }
+
+
+    TEST_METHOD_EX(PixelShaderEffect_InterpolationModeChangesArePassedThroughToD2D)
+    {
+        Fixture f;
+
+        auto sharedState = MakeSharedShaderState();
+        auto effect = Make<PixelShaderEffect>(nullptr, nullptr, sharedState.Get());
+
+        // Change some interpolation mode settings.
+        ThrowIfFailed(effect->put_Source1Interpolation(CanvasImageInterpolation::NearestNeighbor));
+        ThrowIfFailed(effect->put_Source2Interpolation(CanvasImageInterpolation::Anisotropic));
+
+        // Realize the effect.
+        effect->GetD2DImage(f.CanvasDevice.Get(), f.DeviceContext.Get(), GetImageFlags::None, 0, nullptr);
+
+        // This should have passed the interpolation mode state through to D2D.
+        auto& d2dInterpolation = f.GetEffectPropertyValue<SourceInterpolationState>(PixelShaderEffectProperty::SourceInterpolation);
+
+        Assert::AreEqual<int>(D2D1_FILTER_MIN_MAG_MIP_POINT, d2dInterpolation.Filter[0]);
+        Assert::AreEqual<int>(D2D1_FILTER_ANISOTROPIC, d2dInterpolation.Filter[1]);
+
+        // Change the state.
+        ThrowIfFailed(effect->put_Source1Interpolation(CanvasImageInterpolation::Anisotropic));
+        ThrowIfFailed(effect->put_Source2Interpolation(CanvasImageInterpolation::NearestNeighbor));
+
+        // Changes should immediately be passed along to D2D.
+        Assert::AreEqual<int>(D2D1_FILTER_ANISOTROPIC, d2dInterpolation.Filter[0]);
+        Assert::AreEqual<int>(D2D1_FILTER_MIN_MAG_MIP_POINT, d2dInterpolation.Filter[1]);
     }
 };
 
@@ -395,7 +445,7 @@ public:
         desc.Hash = IID{ 0x8495c8be, 0xd63e, 0x40a0, 0x9f, 0xa5, 0x9, 0x72, 0x4b, 0xaf, 0xf7, 0x15 };
         desc.InputCount = 7;
 
-        auto sharedState = Make<SharedShaderState>(desc, std::vector<BYTE>(), CoordinateMappingState());
+        auto sharedState = MakeSharedShaderState(desc);
 
         ThrowIfFailed(f.FindBinding(L"SharedState").setFunction(impl, reinterpret_cast<BYTE*>(sharedState.GetAddressOf()), sizeof(ISharedShaderState*)));
 
@@ -434,7 +484,7 @@ public:
         PixelShaderEffectImpl::Register(f.Factory.Get());
         auto& binding = f.FindBinding(L"SharedState");
 
-        auto sharedState = Make<SharedShaderState>(ShaderDescription(), std::vector<BYTE>(), CoordinateMappingState());
+        auto sharedState = MakeSharedShaderState();
         auto impl = Make<PixelShaderEffectImpl>();
 
         // SharedState property is initially null.
@@ -472,7 +522,7 @@ public:
 
         auto impl = Make<PixelShaderEffectImpl>();
 
-        auto sharedState = Make<SharedShaderState>(ShaderDescription(), std::vector<BYTE>(), CoordinateMappingState());
+        auto sharedState = MakeSharedShaderState();
         ThrowIfFailed(f.FindBinding(L"SharedState").setFunction(impl.Get(), reinterpret_cast<BYTE*>(sharedState.GetAddressOf()), sizeof(ISharedShaderState*)));
 
         ThrowIfFailed(impl->Initialize(f.MockEffectContext.Get(), f.MockTransformGraph.Get()));
@@ -555,7 +605,7 @@ public:
         PixelShaderEffectImpl::Register(f.Factory.Get());
         auto& binding = f.FindBinding(L"CoordinateMapping");
 
-        auto sharedState = Make<SharedShaderState>(ShaderDescription(), std::vector<BYTE>(), CoordinateMappingState());
+        auto sharedState = MakeSharedShaderState();
         auto impl = Make<PixelShaderEffectImpl>();
 
         // Can query the size of the property.
@@ -600,6 +650,103 @@ public:
 
         Assert::AreEqual(value.MaxOffset, value2.MaxOffset);
     }
+
+
+    TEST_METHOD_EX(PixelShaderEffectImpl_SourceInterpolation)
+    {
+        Fixture f;
+        PixelShaderEffectImpl::Register(f.Factory.Get());
+        auto& binding = f.FindBinding(L"SourceInterpolation");
+
+        auto impl = Make<PixelShaderEffectImpl>();
+
+        ShaderDescription desc;
+        desc.InputCount = 2;
+
+        auto sharedState = MakeSharedShaderState(desc);
+        ThrowIfFailed(f.FindBinding(L"SharedState").setFunction(impl.Get(), reinterpret_cast<BYTE*>(sharedState.GetAddressOf()), sizeof(ISharedShaderState*)));
+
+        ThrowIfFailed(impl->Initialize(f.MockEffectContext.Get(), f.MockTransformGraph.Get()));
+
+        // Can query the size of the property.
+        unsigned valueSize;
+        ThrowIfFailed(binding.getFunction(impl.Get(), nullptr, 0, &valueSize));
+        Assert::AreEqual<size_t>(sizeof(SourceInterpolationState), valueSize);
+
+        // Can read the value of the property.
+        SourceInterpolationState value;
+        ThrowIfFailed(binding.getFunction(impl.Get(), reinterpret_cast<BYTE*>(&value), sizeof(SourceInterpolationState), &valueSize));
+        Assert::AreEqual<size_t>(sizeof(SourceInterpolationState), valueSize);
+
+        for (int i = 0; i < MaxShaderInputs; i++)
+        {
+            Assert::AreEqual<int>(D2D1_FILTER_MIN_MAG_MIP_LINEAR, value.Filter[i]);
+        }
+
+        // Can't read if we specify the wrong size.
+        Assert::AreEqual(E_NOT_SUFFICIENT_BUFFER, binding.getFunction(impl.Get(), reinterpret_cast<BYTE*>(&value), sizeof(SourceInterpolationState) - 1, &valueSize));
+
+        // Can't set it to the wrong size.
+        Assert::AreEqual(E_NOT_SUFFICIENT_BUFFER, binding.setFunction(impl.Get(), reinterpret_cast<BYTE*>(&value), sizeof(SourceInterpolationState) - 1));
+
+        // Set the property.
+        value.Filter[0] = D2D1_FILTER_MIN_MAG_MIP_POINT;
+        value.Filter[1] = D2D1_FILTER_ANISOTROPIC;
+
+        ThrowIfFailed(binding.setFunction(impl.Get(), reinterpret_cast<BYTE*>(&value), sizeof(SourceInterpolationState)));
+
+        // Read it back.
+        SourceInterpolationState value2;
+        ThrowIfFailed(binding.getFunction(impl.Get(), reinterpret_cast<BYTE*>(&value2), sizeof(SourceInterpolationState), &valueSize));
+        Assert::AreEqual<size_t>(sizeof(SourceInterpolationState), valueSize);
+
+        for (int i = 0; i < MaxShaderInputs; i++)
+        {
+            Assert::AreEqual<int>(value.Filter[i], value2.Filter[i]);
+        }
+
+        // PrepareForRender should pass the interpolation mode through to SetInputDescription.
+        auto mockDrawInfo = Make<MockD2DDrawInfo>();
+
+        f.MockEffectContext->LoadPixelShaderMethod.SetExpectedCalls(1);
+
+        f.MockTransformGraph->SetSingleTransformNodeMethod.SetExpectedCalls(1, [&](ID2D1TransformNode* node)
+        {
+            ThrowIfFailed(As<ID2D1DrawTransform>(node)->SetDrawInfo(mockDrawInfo.Get()));
+            return S_OK;
+        });
+
+        mockDrawInfo->SetPixelShaderMethod.SetExpectedCalls(1);
+        mockDrawInfo->SetInstructionCountHintMethod.SetExpectedCalls(1);
+
+        auto validateInputDescription = [&](UINT32 inputIndex, D2D1_INPUT_DESCRIPTION inputDescription)
+        {
+            Assert::IsTrue(inputIndex < 2);
+            Assert::AreEqual<int>(value.Filter[inputIndex], inputDescription.filter);
+            Assert::AreEqual(0u, inputDescription.levelOfDetailCount);
+
+            return S_OK;
+        };
+
+        mockDrawInfo->SetInputDescriptionMethod.SetExpectedCalls(2, validateInputDescription);
+
+        ThrowIfFailed(impl->PrepareForRender(D2D1_CHANGE_TYPE_NONE));
+
+        Expectations::Instance()->Validate();
+
+        // Draw a second time without changing interpolation should not set anything.
+        ThrowIfFailed(impl->PrepareForRender(D2D1_CHANGE_TYPE_NONE));
+
+        // Change interpolation mode, then draw again, should set the new values.
+        value.Filter[0] = D2D1_FILTER_MIN_MAG_MIP_LINEAR;
+        value.Filter[1] = D2D1_FILTER_MIN_MAG_MIP_POINT;
+
+        ThrowIfFailed(binding.setFunction(impl.Get(), reinterpret_cast<BYTE*>(&value), sizeof(SourceInterpolationState)));
+
+        mockDrawInfo->SetInputDescriptionMethod.SetExpectedCalls(2, validateInputDescription);
+
+        ThrowIfFailed(impl->PrepareForRender(D2D1_CHANGE_TYPE_NONE));
+    }
 };
 
 
@@ -611,7 +758,7 @@ public:
         ShaderDescription desc;
         desc.InputCount = 5;
 
-        auto sharedState = Make<SharedShaderState>(desc, std::vector<BYTE>(), CoordinateMappingState());
+        auto sharedState = MakeSharedShaderState(desc);
         auto transform = Make<PixelShaderTransform>(sharedState.Get(), std::make_shared<CoordinateMappingState>());
 
         Assert::AreEqual(5u, transform->GetInputCount());
@@ -624,7 +771,7 @@ public:
         desc.InstructionCount = 123;
         desc.Hash = IID{ 0x8495c8be, 0xd63e, 0x40a0, 0x9f, 0xa5, 0x9, 0x72, 0x4b, 0xaf, 0xf7, 0x15 };
 
-        auto sharedState = Make<SharedShaderState>(desc, std::vector<BYTE>(), CoordinateMappingState());
+        auto sharedState = MakeSharedShaderState(desc);
         auto transform = Make<PixelShaderTransform>(sharedState.Get(), std::make_shared<CoordinateMappingState>());
 
         auto mockDrawInfo = Make<MockD2DDrawInfo>();
@@ -783,7 +930,7 @@ public:
 
         ThrowIfFailed(transform->MapInputRectsToOutputRect(nullptr, nullptr, 0, &output, &outputOpaqueSubRect));
 
-        Assert::AreEqual(D2D_RECT_L{ INT_MIN, INT_MIN, INT_MAX, INT_MAX }, output);
+        Assert::AreEqual(D2D1_RECT_L{ INT_MIN, INT_MIN, INT_MAX, INT_MAX }, output);
         Assert::AreEqual(D2D1_RECT_L{ 0, 0, 0, 0 }, outputOpaqueSubRect);
     }
 
@@ -812,7 +959,7 @@ public:
 
         ThrowIfFailed(transform->MapInputRectsToOutputRect(initialInputs, nullptr, _countof(initialInputs), &output, &outputOpaqueSubRect));
 
-        Assert::AreEqual(D2D_RECT_L{ 5, 6, 13, 14 }, output);
+        Assert::AreEqual(D2D1_RECT_L{ 5, 6, 13, 14 }, output);
         Assert::AreEqual(D2D1_RECT_L{ 0, 0, 0, 0 }, outputOpaqueSubRect);
 
         // Map backward from an output region being drawn to parts of our input images.
@@ -822,13 +969,13 @@ public:
         ThrowIfFailed(transform->MapOutputRectToInputRects(&output, inputs, 3));
 
         // Unknown mapping = return the entire input image bounds.
-        Assert::AreEqual(initialInputs[0], inputs[0]);
+        Assert::AreEqual(D2D1_RECT_L{ INT_MIN, INT_MIN, INT_MAX, INT_MAX }, inputs[0]);
 
         // OneToOne mapping.
         Assert::AreEqual(output, inputs[1]);
 
         // Offset mapping.
-        Assert::AreEqual(D2D_RECT_L{ 8, 9, 25, 44 }, inputs[2]);
+        Assert::AreEqual(D2D1_RECT_L{ 8, 9, 25, 44 }, inputs[2]);
     }
 
 
@@ -916,12 +1063,16 @@ TEST_CLASS(SharedShaderStateUnitTests)
         CoordinateMappingState coordinateMapping;
         coordinateMapping.MaxOffset = 23;
 
-        auto originalState = Make<SharedShaderState>(desc, constants, coordinateMapping);
+        SourceInterpolationState sourceInterpolation;
+        sourceInterpolation.Filter[0] = D2D1_FILTER_ANISOTROPIC;
+
+        auto originalState = MakeSharedShaderState(desc, constants, coordinateMapping, sourceInterpolation);
 
         Assert::AreEqual(desc.InputCount, originalState->Shader().InputCount);
         Assert::AreEqual<size_t>(1, originalState->Constants().size());
         Assert::AreEqual(constants[0], originalState->Constants()[0]);
         Assert::AreEqual(coordinateMapping.MaxOffset, originalState->CoordinateMapping().MaxOffset);
+        Assert::AreEqual<int>(sourceInterpolation.Filter[0], originalState->SourceInterpolation().Filter[0]);
 
         auto clone = originalState->Clone();
 
@@ -929,10 +1080,12 @@ TEST_CLASS(SharedShaderStateUnitTests)
         Assert::AreEqual<size_t>(1, clone->Constants().size());
         Assert::AreEqual(constants[0], clone->Constants()[0]);
         Assert::AreEqual(coordinateMapping.MaxOffset, clone->CoordinateMapping().MaxOffset);
+        Assert::AreEqual<int>(sourceInterpolation.Filter[0], clone->SourceInterpolation().Filter[0]);
 
         Assert::AreNotEqual<void const*>(&originalState->Shader(), &clone->Shader());
         Assert::AreNotEqual<void const*>(&originalState->Constants(), &clone->Constants());
         Assert::AreNotEqual<void const*>(&originalState->CoordinateMapping(), &clone->CoordinateMapping());
+        Assert::AreNotEqual<void const*>(&originalState->SourceInterpolation(), &clone->SourceInterpolation());
     };
 
 

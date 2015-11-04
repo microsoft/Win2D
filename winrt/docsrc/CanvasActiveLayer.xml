@@ -89,7 +89,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <seealso cref="O:Microsoft.Graphics.Canvas.CanvasDrawingSession.CreateLayer"/>
       <seealso cref="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillRectangle(Windows.Foundation.Rect,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush)"/>
       <seealso cref="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillRectangle(System.Single,System.Single,System.Single,System.Single,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush)"/>
-      <seealso cref="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillGeometry(Microsoft.Graphics.Canvas.Geometry.CanvasGeometry,Microsoft.Graphics.Canvas.Numerics.Vector2,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush)"/>
+      <seealso cref="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillGeometry(Microsoft.Graphics.Canvas.Geometry.CanvasGeometry,System.Numerics.Vector2,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush)"/>
       <seealso cref="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillGeometry(Microsoft.Graphics.Canvas.Geometry.CanvasGeometry,System.Single,System.Single,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush)"/>
       <seealso cref="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.FillGeometry(Microsoft.Graphics.Canvas.Geometry.CanvasGeometry,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush)"/>
     </member>

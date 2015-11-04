@@ -118,10 +118,10 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="M:Microsoft.Graphics.Canvas.Text.CanvasFontFace.GetRecommendedRenderingMode(System.Single,System.Single,Microsoft.Graphics.Canvas.Text.CanvasTextMeasuringMode,Microsoft.Graphics.Canvas.Text.CanvasTextRenderingParameters)">
       <summary>Determines the recommended rendering mode for the font, using the specified size and rendering constraints.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasFontFace.GetRecommendedRenderingMode(System.Single,System.Single,Microsoft.Graphics.Canvas.Text.CanvasTextMeasuringMode,Microsoft.Graphics.Canvas.Text.CanvasTextRenderingParameters,Microsoft.Graphics.Canvas.Numerics.Matrix3x2,System.Boolean,Microsoft.Graphics.Canvas.CanvasAntialiasing)">
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasFontFace.GetRecommendedRenderingMode(System.Single,System.Single,Microsoft.Graphics.Canvas.Text.CanvasTextMeasuringMode,Microsoft.Graphics.Canvas.Text.CanvasTextRenderingParameters,System.Numerics.Matrix3x2,System.Boolean,Microsoft.Graphics.Canvas.CanvasAntialiasing)">
       <summary>Determines the recommended rendering mode for the font, using the specified size and rendering constraints.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasFontFace.GetRecommendedGridFit(System.Single,System.Single,Microsoft.Graphics.Canvas.Text.CanvasTextMeasuringMode,Microsoft.Graphics.Canvas.Text.CanvasTextRenderingParameters,Microsoft.Graphics.Canvas.Numerics.Matrix3x2,System.Boolean,Microsoft.Graphics.Canvas.CanvasAntialiasing)">
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasFontFace.GetRecommendedGridFit(System.Single,System.Single,Microsoft.Graphics.Canvas.Text.CanvasTextMeasuringMode,Microsoft.Graphics.Canvas.Text.CanvasTextRenderingParameters,System.Numerics.Matrix3x2,System.Boolean,Microsoft.Graphics.Canvas.CanvasAntialiasing)">
       <summary>Determines the recommended grid fit for the font, using the specified size and rendering constraints.</summary>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Text.CanvasFontFace.GetVerticalGlyphVariants(System.Int32[])">
@@ -159,6 +159,9 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Text.CanvasFontFace.FaceNames">
       <summary>Gets a map of localized strings that contain the face names for the font (for example, Regular or Bold).</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasFontFace.FamilyNames">
+      <summary>FamilyNames</summary>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Text.CanvasFontFace.FileFormatType">
       <summary>Gets the file format type of a font face. </summary>

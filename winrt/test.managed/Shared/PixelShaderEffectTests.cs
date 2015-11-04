@@ -140,7 +140,7 @@ namespace test.managed
                 {
                     drawingSession.DrawImage(effect93);
 
-                    Utils.AssertThrowsException<COMException>(
+                    Utils.AssertThrowsException<Exception>(
                         () => drawingSession.DrawImage(effect40),
                         "This shader requires a higher Direct3D feature level than is supported by the device. Check PixelShaderEffect.IsSupported before using it.");
                 }
@@ -543,6 +543,28 @@ namespace test.managed
 
 
         [TestMethod]
+        public void PixelShaderEffect_PropertyTypes()
+        {
+            // Work around VS2015 bug.
+            // The test runner hangs in x64 mode apparently related to total number of individual tests.
+            // Merging these ideally separate tests into one avoids the hang.
+
+            PixelShaderEffect_PropertyType_Float();
+            PixelShaderEffect_PropertyType_Vector2();
+            PixelShaderEffect_PropertyType_Vector3();
+            PixelShaderEffect_PropertyType_Vector4();
+            PixelShaderEffect_PropertyType_Matrix3x2();
+            PixelShaderEffect_PropertyType_Matrix4x4();
+            PixelShaderEffect_PropertyType_Matrix2x3();
+            PixelShaderEffect_PropertyType_Int();
+            PixelShaderEffect_PropertyType_IntVector();
+            PixelShaderEffect_PropertyType_IntMatrix();
+            PixelShaderEffect_PropertyType_Bool();
+            PixelShaderEffect_PropertyType_BoolVector();
+            PixelShaderEffect_PropertyType_BoolMatrix();
+        }
+
+
         public void PixelShaderEffect_PropertyType_Float()
         {
             const string hlsl =
@@ -566,7 +588,6 @@ namespace test.managed
         }
 
 
-        [TestMethod]
         public void PixelShaderEffect_PropertyType_Vector2()
         {
             const string hlsl =
@@ -598,7 +619,6 @@ namespace test.managed
         }
 
 
-        [TestMethod]
         public void PixelShaderEffect_PropertyType_Vector3()
         {
             const string hlsl =
@@ -630,7 +650,6 @@ namespace test.managed
         }
 
 
-        [TestMethod]
         public void PixelShaderEffect_PropertyType_Vector4()
         {
             const string hlsl =
@@ -662,7 +681,6 @@ namespace test.managed
         }
 
 
-        [TestMethod]
         public void PixelShaderEffect_PropertyType_Matrix3x2()
         {
             const string hlsl =
@@ -697,7 +715,6 @@ namespace test.managed
         }
 
 
-        [TestMethod]
         public void PixelShaderEffect_PropertyType_Matrix4x4()
         {
             const string hlsl =
@@ -732,7 +749,6 @@ namespace test.managed
         }
 
 
-        [TestMethod]
         public void PixelShaderEffect_PropertyType_Matrix2x3()
         {
             const string hlsl =
@@ -759,7 +775,6 @@ namespace test.managed
         }
 
 
-        [TestMethod]
         public void PixelShaderEffect_PropertyType_Int()
         {
             const string hlsl =
@@ -783,7 +798,6 @@ namespace test.managed
         }
 
 
-        [TestMethod]
         public void PixelShaderEffect_PropertyType_IntVector()
         {
             const string hlsl =
@@ -807,7 +821,6 @@ namespace test.managed
         }
 
 
-        [TestMethod]
         public void PixelShaderEffect_PropertyType_IntMatrix()
         {
             const string hlsl =
@@ -834,7 +847,6 @@ namespace test.managed
         }
 
 
-        [TestMethod]
         public void PixelShaderEffect_PropertyType_Bool()
         {
             const string hlsl =
@@ -858,7 +870,6 @@ namespace test.managed
         }
 
 
-        [TestMethod]
         public void PixelShaderEffect_PropertyType_BoolVector()
         {
             const string hlsl =
@@ -882,7 +893,6 @@ namespace test.managed
         }
 
 
-        [TestMethod]
         public void PixelShaderEffect_PropertyType_BoolMatrix()
         {
             const string hlsl =
@@ -1019,7 +1029,59 @@ namespace test.managed
             };
         }
 
-        
+
+        [TestMethod]
+        public void PixelShaderEffect_InterpolationModeAccessors()
+        {
+            const string hlsl =
+            @"
+                float4 main() : SV_Target
+                {
+                    return 0;
+                }
+            ";
+
+            var effect = new PixelShaderEffect(ShaderCompiler.CompileShader(hlsl, "ps_4_0"));
+
+            // Check defaults.
+            Assert.AreEqual(CanvasImageInterpolation.Linear, effect.Source1Interpolation);
+            Assert.AreEqual(CanvasImageInterpolation.Linear, effect.Source2Interpolation);
+            Assert.AreEqual(CanvasImageInterpolation.Linear, effect.Source3Interpolation);
+            Assert.AreEqual(CanvasImageInterpolation.Linear, effect.Source4Interpolation);
+            Assert.AreEqual(CanvasImageInterpolation.Linear, effect.Source5Interpolation);
+            Assert.AreEqual(CanvasImageInterpolation.Linear, effect.Source6Interpolation);
+            Assert.AreEqual(CanvasImageInterpolation.Linear, effect.Source7Interpolation);
+            Assert.AreEqual(CanvasImageInterpolation.Linear, effect.Source8Interpolation);
+
+            // Setters.
+            effect.Source1Interpolation = CanvasImageInterpolation.Anisotropic;
+            effect.Source2Interpolation = CanvasImageInterpolation.Linear;
+            effect.Source3Interpolation = CanvasImageInterpolation.NearestNeighbor;
+            effect.Source4Interpolation = CanvasImageInterpolation.Anisotropic;
+            effect.Source5Interpolation = CanvasImageInterpolation.Linear;
+            effect.Source6Interpolation = CanvasImageInterpolation.NearestNeighbor;
+            effect.Source7Interpolation = CanvasImageInterpolation.Anisotropic;
+            effect.Source8Interpolation = CanvasImageInterpolation.Linear;
+
+            // Getters.
+            Assert.AreEqual(CanvasImageInterpolation.Anisotropic,     effect.Source1Interpolation);
+            Assert.AreEqual(CanvasImageInterpolation.Linear,          effect.Source2Interpolation);
+            Assert.AreEqual(CanvasImageInterpolation.NearestNeighbor, effect.Source3Interpolation);
+            Assert.AreEqual(CanvasImageInterpolation.Anisotropic,     effect.Source4Interpolation);
+            Assert.AreEqual(CanvasImageInterpolation.Linear,          effect.Source5Interpolation);
+            Assert.AreEqual(CanvasImageInterpolation.NearestNeighbor, effect.Source6Interpolation);
+            Assert.AreEqual(CanvasImageInterpolation.Anisotropic,     effect.Source7Interpolation);
+            Assert.AreEqual(CanvasImageInterpolation.Linear,          effect.Source8Interpolation);
+
+            // Illegal values.
+            Assert.ThrowsException<ArgumentException>(() => effect.Source1Interpolation = CanvasImageInterpolation.Cubic);
+            Assert.ThrowsException<ArgumentException>(() => effect.Source1Interpolation = CanvasImageInterpolation.HighQualityCubic);
+            Assert.ThrowsException<ArgumentException>(() => effect.Source1Interpolation = CanvasImageInterpolation.MultiSampleLinear);
+
+            Assert.AreEqual(CanvasImageInterpolation.Anisotropic, effect.Source1Interpolation);
+        }
+
+
         [TestMethod]
         public void PixelShaderEffect_CoordinateMappingAccessors()
         {
@@ -1110,7 +1172,7 @@ namespace test.managed
                 {
                     ds.DrawImage(effect);
                 }
-            }, "Drawing this effect would require too big an intermediate surface. Make sure PixelShaderEffect.Source1Mapping is set correctly, or wrap the source image with a CropEffect to reduce its size.");
+            }, " graph could not be rendered with the context's current tiling settings. (Exception from HRESULT: 0x88990027)");
 
             // But it's ok if we clamp the input back down to finite size.
             effect.Source1 = new CropEffect

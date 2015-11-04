@@ -299,8 +299,8 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         </p>
         <p>
           If you are building for Windows or Windows Phone 8.1, you must specify vector 
-          and matrix property values using the types from <see cref="N:Microsoft.Graphics.Canvas.Numerics"/>
-          rather than <see cref="N:System.Numerics"/>. This is not an issue with UWP, 
+          and matrix property values using the types from Microsoft.Graphics.Canvas.Numerics
+          rather than System.Numerics. This is not an issue with UWP, 
           where the System.Numerics types are automatically projected into WinRT.
         </p>
       </remarks>
@@ -329,13 +329,12 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <summary>Retrieves the bounds of this CanvasImage, in device-independent units.</summary>
       <inheritdoc/>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.Effects.PixelShaderEffect.GetBounds(Microsoft.Graphics.Canvas.CanvasDrawingSession,Microsoft.Graphics.Canvas.Numerics.Matrix3x2)">
+    <member name="M:Microsoft.Graphics.Canvas.Effects.PixelShaderEffect.GetBounds(Microsoft.Graphics.Canvas.CanvasDrawingSession,System.Numerics.Matrix3x2)">
       <summary>Retrieves the bounds of the CanvasImage, in device-independent units.</summary>
       <inheritdoc/>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Effects.PixelShaderEffect.Name">
       <summary>Attaches a user-defined name string to the effect.</summary>
-      <inheritdoc/>
     </member>
     
     <member name="T:Microsoft.Graphics.Canvas.Effects.SamplerCoordinateMapping" Experimental="true">
@@ -357,8 +356,8 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
           or the output of a <see cref="T:Microsoft.Graphics.Canvas.Effects.BorderEffect"/>).
         <p>
         </p>
-          If you get an exception message <i>drawing this effect would require too big an 
-          intermediate surface</i>, consider switching from Unknown to Offset mapping 
+          If you get an exception <i>the graph could not be rendered with the context's
+          current tiling settings</i>, consider switching from Unknown to Offset mapping 
           mode (if that is suitable for your shader) or wrapping the source with a 
           <see cref="T:Microsoft.Graphics.Canvas.Effects.CropEffect"/> to reduce its size.
         </p>

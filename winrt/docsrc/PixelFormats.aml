@@ -9,7 +9,11 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
   <developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
     <introduction>
       <para>
-        The <codeEntityReference>T:Microsoft.Graphics.Canvas.DirectX.DirectXPixelFormat</codeEntityReference>
+        The
+        <externalLink>
+          <linkText>DirectXPixelFormat</linkText>
+          <linkUri>https://msdn.microsoft.com/en-us/library/windows/apps/windows.graphics.directx.directxpixelformat.aspx</linkUri>
+        </externalLink>
         enum includes all the many and varied pixel formats used by Direct3D and DXGI, 
         but only a few of these options are supported by Win2D (or by Direct2D upon which 
         Win2D is built).
@@ -35,7 +39,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         <table>
           <tableHeader>
             <row>
-              <entry><codeEntityReference>T:Microsoft.Graphics.Canvas.DirectX.DirectXPixelFormat</codeEntityReference></entry>
+              <entry>DirectXPixelFormat</entry>
               <entry>Compatible <codeEntityReference>T:Microsoft.Graphics.Canvas.CanvasAlphaMode</codeEntityReference>s</entry>
               <entry>Notes</entry>
             </row>
@@ -131,7 +135,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         <table>
           <tableHeader>
             <row>
-              <entry><codeEntityReference>T:Microsoft.Graphics.Canvas.DirectX.DirectXPixelFormat</codeEntityReference></entry>
+              <entry>DirectXPixelFormat</entry>
               <entry>Compatible <codeEntityReference>T:Microsoft.Graphics.Canvas.CanvasAlphaMode</codeEntityReference>s</entry>
               <entry>Notes</entry>
             </row>
@@ -186,7 +190,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         <table>
           <tableHeader>
             <row>
-              <entry><codeEntityReference>T:Microsoft.Graphics.Canvas.DirectX.DirectXPixelFormat</codeEntityReference></entry>
+              <entry>DirectXPixelFormat</entry>
               <entry>Compatible <codeEntityReference>T:Microsoft.Graphics.Canvas.CanvasAlphaMode</codeEntityReference>s</entry>
               <entry>Notes</entry>
             </row>

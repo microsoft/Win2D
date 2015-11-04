@@ -132,6 +132,9 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         </p>
       </remarks>
     </member>
+    <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGradientMesh.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.Graphics.Canvas.Geometry.CanvasGradientMeshPatch[])">
+      <summary>Initializes a new instance of the CanvasGradientMesh class.</summary>
+    </member>
     <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGradientMesh.Dispose">
       <summary>Releases all resources used by the CanvasGradientMesh.</summary>
     </member>
@@ -148,7 +151,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="P:Microsoft.Graphics.Canvas.Geometry.CanvasGradientMesh.Device">
       <summary>Gets the device associated with this CanvasGradientMesh.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGradientMesh.CreateCoonsPatch(Microsoft.Graphics.Canvas.Numerics.Vector2[],Windows.UI.Color[],Microsoft.Graphics.Canvas.Geometry.CanvasGradientMeshPatchEdge[])">
+    <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGradientMesh.CreateCoonsPatch(System.Numerics.Vector2[],Windows.UI.Color[],Microsoft.Graphics.Canvas.Geometry.CanvasGradientMeshPatchEdge[])">
       <summary>Creates a CanvasGradientMesh using Coons patch semantics.</summary>
       <remarks>
         <p>
@@ -169,7 +172,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         <img src="../media/CanvasGradientMesh_CreateCoonsPatch.png" alt="CanvasGradientMeshPatch.CreateCoonsPatch diagram"/>
       </remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGradientMesh.CreateTensorPatch(Microsoft.Graphics.Canvas.Numerics.Vector2[],Windows.UI.Color[],Microsoft.Graphics.Canvas.Geometry.CanvasGradientMeshPatchEdge[])">
+    <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGradientMesh.CreateTensorPatch(System.Numerics.Vector2[],Windows.UI.Color[],Microsoft.Graphics.Canvas.Geometry.CanvasGradientMeshPatchEdge[])">
       <summary>Creates a CanvasGradientMesh using tensor patch semantics.</summary>
       <remarks>
         <p>

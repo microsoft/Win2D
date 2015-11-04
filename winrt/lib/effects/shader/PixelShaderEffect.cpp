@@ -146,6 +146,29 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     IMPLEMENT_COORDINATE_MAPPING_PROPERTY(Source8Mapping, 7)
 
 
+#define IMPLEMENT_SOURCE_INTERPOLATION_PROPERTY(PROPERTY, INDEX)                        \
+                                                                                        \
+    IFACEMETHODIMP PixelShaderEffect::get_##PROPERTY(CanvasImageInterpolation* value)   \
+    {                                                                                   \
+        return GetSourceInterpolation(INDEX, value);                                    \
+    }                                                                                   \
+                                                                                        \
+    IFACEMETHODIMP PixelShaderEffect::put_##PROPERTY(CanvasImageInterpolation value)    \
+    {                                                                                   \
+        return SetSourceInterpolation(INDEX, value);                                    \
+    }
+
+
+    IMPLEMENT_SOURCE_INTERPOLATION_PROPERTY(Source1Interpolation, 0)
+    IMPLEMENT_SOURCE_INTERPOLATION_PROPERTY(Source2Interpolation, 1)
+    IMPLEMENT_SOURCE_INTERPOLATION_PROPERTY(Source3Interpolation, 2)
+    IMPLEMENT_SOURCE_INTERPOLATION_PROPERTY(Source4Interpolation, 3)
+    IMPLEMENT_SOURCE_INTERPOLATION_PROPERTY(Source5Interpolation, 4)
+    IMPLEMENT_SOURCE_INTERPOLATION_PROPERTY(Source6Interpolation, 5)
+    IMPLEMENT_SOURCE_INTERPOLATION_PROPERTY(Source7Interpolation, 6)
+    IMPLEMENT_SOURCE_INTERPOLATION_PROPERTY(Source8Interpolation, 7)
+
+
     IFACEMETHODIMP PixelShaderEffect::IsSupported(ICanvasDevice* device, boolean* result)
     {
         return ExceptionBoundary([&]
@@ -195,6 +218,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         SetD2DConstants();
         SetD2DCoordinateMapping();
+        SetD2DSourceInterpolation();
 
         return true;
     }
@@ -319,6 +343,42 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     }
 
 
+    HRESULT PixelShaderEffect::GetSourceInterpolation(unsigned index, CanvasImageInterpolation* value)
+    {
+        assert(index < MaxShaderInputs);
+
+        return ExceptionBoundary([&]
+        {
+            CheckInPointer(value);
+
+           *value = FromD2DFilter(m_sharedState->SourceInterpolation().Filter[index]);
+        });
+    }
+
+
+    HRESULT PixelShaderEffect::SetSourceInterpolation(unsigned index, CanvasImageInterpolation value)
+    {
+        assert(index < MaxShaderInputs);
+
+        return ExceptionBoundary([&]
+        {
+            auto lock = Lock(m_mutex);
+
+            // Convert the enum from Win2D -> D2D format.
+            auto d2dFilter = ToD2DFilter(value);
+
+            if (d2dFilter == D2D1_FILTER_FORCE_DWORD)
+                ThrowHR(E_INVALIDARG);
+
+            // Store the new value into our shared state object.
+            m_sharedState->SourceInterpolation().Filter[index] = d2dFilter;
+
+            // If we are realized, pass the updated interpolation state on to Direct2D.
+            SetD2DSourceInterpolation();
+        });
+    }
+
+
     void PixelShaderEffect::SetD2DConstants()
     {
         auto& d2dEffect = MaybeGetResource();
@@ -342,6 +402,19 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             ThrowIfFailed(d2dEffect->SetValue(PixelShaderEffectProperty::CoordinateMapping,
                                               reinterpret_cast<BYTE*>(&m_sharedState->CoordinateMapping()),
                                               sizeof(CoordinateMappingState)));
+        }
+    }
+
+
+    void PixelShaderEffect::SetD2DSourceInterpolation()
+    {
+        auto& d2dEffect = MaybeGetResource();
+
+        if (d2dEffect)
+        {
+            ThrowIfFailed(d2dEffect->SetValue(PixelShaderEffectProperty::SourceInterpolation,
+                                              reinterpret_cast<BYTE*>(&m_sharedState->SourceInterpolation()),
+                                              sizeof(SourceInterpolationState)));
         }
     }
 

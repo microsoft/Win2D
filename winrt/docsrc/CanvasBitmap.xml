@@ -105,13 +105,13 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="P:Microsoft.Graphics.Canvas.CanvasBitmap.Description">
       <summary>The description of this bitmap's underlying surface.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.CreateFromDirect3D11Surface(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.Graphics.Canvas.DirectX.Direct3D11.IDirect3DSurface)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.CreateFromDirect3D11Surface(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.Graphics.DirectX.Direct3D11.IDirect3DSurface)">
       <summary>Creates a CanvasBitmap from an existing Direct3D graphics surface.</summary>
       <remarks>
         <p>
           The bitmap's properties are determined by the properties of the surface. If the surface is able to be used as
           a render target then a CanvasRenderTarget instance is actually returned. However, to avoid needing to cast, use
-          <see cref="M:Microsoft.Graphics.Canvas.CanvasRenderTarget.CreateFromDirect3D11Surface(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.Graphics.Canvas.DirectX.Direct3D11.IDirect3DSurface)"/>.
+          <see cref="M:Microsoft.Graphics.Canvas.CanvasRenderTarget.CreateFromDirect3D11Surface(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.Graphics.DirectX.Direct3D11.IDirect3DSurface)"/>.
         </p>
         <p>
           This will use the default (96) DPI. 
@@ -123,13 +123,13 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         </p>
       </remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.CreateFromDirect3D11Surface(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.Graphics.Canvas.DirectX.Direct3D11.IDirect3DSurface,System.Single)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.CreateFromDirect3D11Surface(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.Graphics.DirectX.Direct3D11.IDirect3DSurface,System.Single)">
       <summary>Creates a CanvasBitmap from an existing Direct3D graphics surface.</summary>
       <remarks>
         <p>        
           The bitmap's properties are determined by the properties of the surface. If the surface is able to be used as
           a render target then a CanvasRenderTarget instance is actually returned. However, to avoid needing to cast, use
-          <see cref="M:Microsoft.Graphics.Canvas.CanvasRenderTarget.CreateFromDirect3D11Surface(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.Graphics.Canvas.DirectX.Direct3D11.IDirect3DSurface)"/>.
+          <see cref="M:Microsoft.Graphics.Canvas.CanvasRenderTarget.CreateFromDirect3D11Surface(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.Graphics.DirectX.Direct3D11.IDirect3DSurface)"/>.
         </p>
         <p>
           The value of AlphaMode is determined by the pixel format of the surface. If the surface supports alpha, then the AlphaMode is set to
@@ -138,23 +138,23 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         </p>
       </remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.CreateFromDirect3D11Surface(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.Graphics.Canvas.DirectX.Direct3D11.IDirect3DSurface,System.Single,Microsoft.Graphics.Canvas.CanvasAlphaMode)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.CreateFromDirect3D11Surface(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.Graphics.DirectX.Direct3D11.IDirect3DSurface,System.Single,Microsoft.Graphics.Canvas.CanvasAlphaMode)">
       <summary>Creates a CanvasBitmap from an existing Direct3D graphics surface, using the specified DPI and alpha behavior.</summary>
       <remarks>
         The bitmap's properties are determined by the properties of the surface. If the surface is able to be used as
         a render target then a CanvasRenderTarget instance is actually returned. However, to avoid needing to cast, use
-        <see cref="M:Microsoft.Graphics.Canvas.CanvasRenderTarget.CreateFromDirect3D11Surface(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.Graphics.Canvas.DirectX.Direct3D11.IDirect3DSurface)"/>.
+        <see cref="M:Microsoft.Graphics.Canvas.CanvasRenderTarget.CreateFromDirect3D11Surface(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.Graphics.DirectX.Direct3D11.IDirect3DSurface)"/>.
       </remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.CreateFromBytes(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Byte[],System.Int32,System.Int32,Microsoft.Graphics.Canvas.DirectX.DirectXPixelFormat)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.CreateFromBytes(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Byte[],System.Int32,System.Int32,Windows.Graphics.DirectX.DirectXPixelFormat)">
       <summary>Creates a CanvasBitmap from an array of bytes, using the specified pixel width/height, premultiplied alpha and default (96) DPI.</summary>
       <remarks>List of <a href="PixelFormats.htm">supported pixel formats</a>.</remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.CreateFromBytes(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Byte[],System.Int32,System.Int32,Microsoft.Graphics.Canvas.DirectX.DirectXPixelFormat,System.Single)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.CreateFromBytes(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Byte[],System.Int32,System.Int32,Windows.Graphics.DirectX.DirectXPixelFormat,System.Single)">
       <summary>Creates a CanvasBitmap from an array of colors, using the specified pixel width/height, specified DPI, and premultiplied alpha.</summary>
       <remarks>List of <a href="PixelFormats.htm">supported pixel formats</a>.</remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.CreateFromBytes(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Byte[],System.Int32,System.Int32,Microsoft.Graphics.Canvas.DirectX.DirectXPixelFormat,System.Single,Microsoft.Graphics.Canvas.CanvasAlphaMode)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.CreateFromBytes(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Byte[],System.Int32,System.Int32,Windows.Graphics.DirectX.DirectXPixelFormat,System.Single,Microsoft.Graphics.Canvas.CanvasAlphaMode)">
       <summary>Creates a CanvasBitmap from an array of bytes, using the specified pixel width/height, DPI and alpha behavior.</summary>
       <remarks>List of <a href="PixelFormats.htm">supported pixel formats</a>.</remarks>
     </member>
@@ -361,7 +361,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <seealso cref="P:Microsoft.Graphics.Canvas.CanvasBitmap.Bounds"/>
       <seealso cref="P:Microsoft.Graphics.Canvas.CanvasBitmap.Size"/>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.GetBounds(Microsoft.Graphics.Canvas.CanvasDrawingSession,Microsoft.Graphics.Canvas.Numerics.Matrix3x2)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.GetBounds(Microsoft.Graphics.Canvas.CanvasDrawingSession,System.Numerics.Matrix3x2)">
       <summary>Retrieves the bounds of the CanvasImage, in device-independent units.</summary>
       <remarks>
         <inheritdoc/>

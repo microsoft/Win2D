@@ -28,6 +28,6 @@
     <Topic id="WithoutControls" title="Using Win2D without built-in controls" />
     <Topic id="LoadingResourcesOutsideCreateResources" title="Loading resources outside of CreateResources" />
     <Topic id="RefCycles" title="Avoiding memory leaks" />
-    <Topic id="UAP" title="Windows 10 support" />
+    <Topic id="Win81" title="Windows 8.1 support" />
   </Topic>
 </Topics>

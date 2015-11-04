@@ -539,15 +539,15 @@ namespace ExtractAPISurface
         }
 
 
+        // The CLR maps some special WinRT types to equivalents from these assemblies, so these count as
+        // WinRT references even though we can't tell that from relecting over the .NET version of the type.
+        static string[] magicWinRTAssemblies = { "System.Runtime.WindowsRuntime", "System.Numerics" };
+
         // Writes dummy versions of WinRT system types, which are not part of our API but needed to compile the generated C#.
         void WriteReferencedTypePlaceholders()
         {
-            // The CLR maps some special WinRT types to equivalents from this assembly, so these count as
-            // WinRT references even though we can't tell that from relecting over the .NET version of the type.
-            const string magicWinRTAssembly = "System.Runtime.WindowsRuntime";
-
             var placeholders = (from type in seenTypes
-                                where assemblies.TypeIsFromReferenceAssembly(type) || type.Assembly.GetName().Name == magicWinRTAssembly
+                                where assemblies.TypeIsFromReferenceAssembly(type) || magicWinRTAssemblies.Contains(type.Assembly.GetName().Name)
                                 where !placeholdersWritten.Contains(type)
                                 select type).ToList();
 
