@@ -63,7 +63,7 @@ namespace ExampleGallery
 
                 enum class State
                 {
-                    New, Started, Stopped
+                    New, Started, Stopped, Error
                 };
 
                 State m_state = State::New;
@@ -88,11 +88,24 @@ namespace ExampleGallery
                     
                     D3D11_QUERY_DESC desc{};
                     desc.Query = D3D11_QUERY_TIMESTAMP_DISJOINT;
-                    __abi_ThrowIfFailed(m_d3dDevice->CreateQuery(&desc, &m_disjointQuery));
 
-                    desc.Query = D3D11_QUERY_TIMESTAMP;
-                    __abi_ThrowIfFailed(m_d3dDevice->CreateQuery(&desc, &m_timestampStartQuery));
-                    __abi_ThrowIfFailed(m_d3dDevice->CreateQuery(&desc, &m_timestampEndQuery));
+                    HRESULT hr = m_d3dDevice->CreateQuery(&desc, &m_disjointQuery);
+
+                    if (SUCCEEDED(hr))
+                    {
+                        desc.Query = D3D11_QUERY_TIMESTAMP;
+                        hr = m_d3dDevice->CreateQuery(&desc, &m_timestampStartQuery);
+                    }
+
+                    if (SUCCEEDED(hr))
+                    {
+                        hr = m_d3dDevice->CreateQuery(&desc, &m_timestampEndQuery);
+                    }
+
+                    if (FAILED(hr))
+                    {
+                        m_state = State::Error;
+                    }
                 }
 
                 virtual ~GpuStopWatch()
@@ -102,6 +115,9 @@ namespace ExampleGallery
                 
                 void Start()
                 {
+                    if (m_state == State::Error)
+                        return;
+                    
                     if (m_state != State::New)
                         throw ref new Platform::FailureException();
                     
@@ -114,6 +130,9 @@ namespace ExampleGallery
 
                 void Stop()
                 {
+                    if (m_state == State::Error)
+                        return;
+                    
                     if (m_state != State::Started)
                         throw ref new Platform::FailureException();
                     
@@ -126,6 +145,9 @@ namespace ExampleGallery
 
                 double GetGpuTimeInMs()
                 {
+                    if (m_state == State::Error)
+                        return 0;
+                    
                     if (m_state != State::Stopped)
                         throw ref new Platform::FailureException();
 
