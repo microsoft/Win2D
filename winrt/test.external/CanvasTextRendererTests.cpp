@@ -150,7 +150,7 @@ public:
         layout->SetUnderline(2, 2, true);
         layout->SetBrush(0, 4, brush);
 
-        auto textRenderer = ref new CustomTextRenderer(brush, false);
+        auto textRenderer = ref new CustomTextRenderer(static_cast<ICanvasBrush^>(brush), false);
 
         layout->DrawToTextRenderer(textRenderer, { 5, 6 } );
 
