@@ -22,15 +22,15 @@ static float const sc_fontSize = 15.0f;
 
 ref class CustomTextRenderer sealed : public ICanvasTextRenderer
 {
-	ICanvasBrush^ m_brush;
+    Platform::Object^ m_expectedBrush;
 	int m_drawGlyphRunCallCount;
 	int m_drawStrikethroughCallCount;
 	int m_drawUnderlineCallCount;
 	bool m_continuousGlyphRun;
 
 public:
-	CustomTextRenderer(ICanvasBrush^ brush, bool continuousGlyphRun)
-		: m_brush(brush)
+    CustomTextRenderer(Platform::Object^ expectedBrush, bool continuousGlyphRun)
+        : m_expectedBrush(expectedBrush)
 		, m_drawGlyphRunCallCount(0)
 		, m_drawStrikethroughCallCount(0)
 		, m_drawUnderlineCallCount(0)
@@ -63,7 +63,7 @@ public:
 		Assert::AreEqual(m_continuousGlyphRun ? 4u : 2u, glyphs->Length); // Strikethrough/underline divides up the glyph run
 		Assert::AreEqual(false, isSideways);
 		Assert::AreEqual(0u, bidiLevel);
-		Assert::IsTrue(ReferenceEquals(static_cast<Platform::Object^>(m_brush), brush));
+        Assert::IsTrue(ReferenceEquals(m_expectedBrush, brush));
 		Assert::AreEqual(CanvasGlyphOrientation::Upright, glyphOrientation);
 
 		m_drawGlyphRunCallCount++;
@@ -83,7 +83,7 @@ public:
 		Assert::AreEqual(CanvasGlyphOrientation::Upright, glyphOrientation);
 		Assert::AreEqual(CanvasTextDirection::LeftToRightThenTopToBottom, textDirection);
 		Assert::AreEqual(CanvasTextMeasuringMode::Natural, measuringMode);
-		Assert::IsTrue(ReferenceEquals(static_cast<Platform::Object^>(m_brush), brush));
+        Assert::IsTrue(ReferenceEquals(m_expectedBrush, brush));
 
 		m_drawStrikethroughCallCount++;
 	}
@@ -103,7 +103,7 @@ public:
 		Assert::AreEqual(CanvasGlyphOrientation::Upright, glyphOrientation);
 		Assert::AreEqual(CanvasTextDirection::LeftToRightThenTopToBottom, textDirection);
 		Assert::AreEqual(CanvasTextMeasuringMode::Natural, measuringMode);
-		Assert::IsTrue(ReferenceEquals(static_cast<Platform::Object^>(m_brush), brush));
+        Assert::IsTrue(ReferenceEquals(m_expectedBrush, brush));
 
 		m_drawUnderlineCallCount++;
 	}
@@ -161,24 +161,47 @@ public:
 
     TEST_METHOD(CanvasTextRenderer_NonBrushDrawingEffect)
     {
-        auto layout = CreateTextLayout();
+        for (int i = 0; i < 2; ++i)
+        {
+            auto layout = CreateTextLayout();
 
-        auto dwriteTextLayout = GetWrappedResource<IDWriteTextLayout>(layout);
+            auto dwriteTextLayout = GetWrappedResource<IDWriteTextLayout>(layout);
 
-        // Pick some non-brush COM object to be a drawing effect. Device arbitrarily chosen here
-        auto d2dDevice = GetWrappedResource<ID2D1Device>(m_device);
+            ComPtr<IUnknown> drawingEffect;
+            Platform::Object^ expectedBrush;
 
-        DWRITE_TEXT_RANGE range;
-        range.startPosition = 0;
-        range.length = 4;
-        dwriteTextLayout->SetDrawingEffect(d2dDevice.Get(), range);
+            if (i == 0)
+            {
+                // Pick some non-brush COM object to be a drawing effect. Device arbitrarily chosen here
+                auto d2dDevice = GetWrappedResource<ID2D1Device>(m_device);
+                drawingEffect = d2dDevice.Get();
+                expectedBrush = nullptr;
+            }
+            else
+            {
+                // Pick some arbitrary IInspectable.
+                auto strokeStyle = ref new CanvasStrokeStyle();
+                drawingEffect = reinterpret_cast<IInspectable*>(strokeStyle);
+                expectedBrush = strokeStyle;
+            }
 
-        auto textRenderer = ref new CustomTextRenderer(nullptr, true);
+            DWRITE_TEXT_RANGE range;
+            range.startPosition = 0;
+            range.length = 4;
+            dwriteTextLayout->SetDrawingEffect(drawingEffect.Get(), range);
 
-		layout->DrawToTextRenderer(textRenderer, 0, 0);
+            auto textRenderer = ref new CustomTextRenderer(expectedBrush, true);
 
-		Assert::AreEqual(1, textRenderer->DrawGlyphRunCallCount);
-		Assert::AreEqual(0, textRenderer->DrawStrikethroughCallCount);
-		Assert::AreEqual(0, textRenderer->DrawUnderlineCallCount);
+            // Enable strikethrough/underline to exercise that all callbacks see the
+            // correct brush.
+            layout->SetStrikethrough(0, 4, true);
+            layout->SetUnderline(0, 4, true);
+
+            layout->DrawToTextRenderer(textRenderer, 0, 0);
+
+            Assert::AreEqual(1, textRenderer->DrawGlyphRunCallCount);
+            Assert::AreEqual(1, textRenderer->DrawStrikethroughCallCount);
+            Assert::AreEqual(1, textRenderer->DrawUnderlineCallCount);
+        }
     }
 };

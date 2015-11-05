@@ -1672,6 +1672,10 @@ public:
                 {
                     result = ResourceManager::GetOrCreate<ICanvasBrush>(m_device.Get(), d2dBrush.Get());
                 }
+                else
+                {
+                    result = MaybeAs<IInspectable>(customDrawingObject);
+                }
             }
 
             return result;

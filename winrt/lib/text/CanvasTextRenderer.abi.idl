@@ -39,7 +39,7 @@ namespace Microsoft.Graphics.Canvas.Text
 			[in, size_is(glyphCount)] CanvasGlyph* glyphs,
 			[in] boolean isSideways,
 			[in] UINT32 bidiLevel,
-			[in] IInspectable* customDrawingObject,
+			[in] IInspectable* brush,
 			[in] CanvasTextMeasuringMode measuringMode,
 			[in] HSTRING localeName,
 			[in] HSTRING textString,
@@ -54,7 +54,7 @@ namespace Microsoft.Graphics.Canvas.Text
 			[in] float strikethroughThickness, // Perpendicular to the baseline.
 			[in] float strikethroughOffset, // Usually negative, placing it above the baseline.
 			[in] CanvasTextDirection textDirection,
-			[in] IInspectable* customDrawingObject,
+			[in] IInspectable* brush,
 			[in] CanvasTextMeasuringMode textMeasuringMode,
 			[in] HSTRING localeName,
 			[in] CanvasGlyphOrientation glyphOrientation);
@@ -66,7 +66,7 @@ namespace Microsoft.Graphics.Canvas.Text
 			[in] float underlineOffset, // Usually negative, placing it above the baseline.
 			[in] float runHeight, // The height of the tallest run where the underline is applied.
 			[in] CanvasTextDirection textDirection,
-			[in] IInspectable* customDrawingObject,
+			[in] IInspectable* brush,
 			[in] CanvasTextMeasuringMode textMeasuringMode,
 			[in] HSTRING localeName,
 			[in] CanvasGlyphOrientation glyphOrientation);
