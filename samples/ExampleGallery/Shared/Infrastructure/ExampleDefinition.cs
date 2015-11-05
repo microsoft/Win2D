@@ -51,6 +51,9 @@ namespace ExampleGallery
             new ExampleDefinition("Video Effect", typeof(BasicVideoEffectExample)),
 #endif
             new ExampleDefinition("Particle System", typeof(ParticleExample)),
+#if WINDOWS_UWP
+            new ExampleDefinition("Sprite Sheets", typeof(SpriteSheets)),
+#endif
             new ExampleDefinition("Vector Art", typeof(VectorArt)),
 
             // Show capabilities of the API.

@@ -1,0 +1,66 @@
+<?xml version="1.0"?>
+<!--
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+Licensed under the MIT License. See LICENSE.txt in the project root for license information.
+-->
+
+<UserControl
+    x:Class="ExampleGallery.SpriteSheets"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:ExampleGallery.SpriteSheets"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:canvas="using:Microsoft.Graphics.Canvas.UI.Xaml"
+    Loaded="OnLoaded"
+    Unloaded="OnUnloaded"
+    mc:Ignorable="d"
+    d:DesignHeight="800"
+    d:DesignWidth="400">
+
+    <Grid>
+        <canvas:CanvasAnimatedControl x:Name="canvas" CreateResources="OnCreateResources" Update="OnUpdate" Draw="OnDraw" ClearColor="Black"
+                                      PointerPressed="OnControlPointerPressed" PointerReleased="OnControlPointerReleased" PointerMoved="OnControlPointerMoved" />
+
+        <Button Content="&#9776;" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="5" Padding="15" x:Name="FlyoutButton">
+            <Button.Flyout>
+                <Flyout Placement="Bottom">
+                    <ScrollViewer HorizontalScrollMode="Disabled" VerticalScrollMode="Auto" VerticalScrollBarVisibility="Auto">
+                        <StackPanel Orientation="Vertical" MaxWidth="300">
+                            <TextBlock TextWrapping="Wrap" Margin="0 10">
+                                This sample demonstrates how the CanvasSpriteBatch API can be used to draw sprites from a sprite sheet.
+                            </TextBlock>
+                            <Rectangle HorizontalAlignment="Stretch" Height="1" Fill="CornflowerBlue" Margin="0 10"/>
+                            <TextBlock TextWrapping="Wrap" Margin="0 10">
+                                The world below is made up of many 64x64 tiles.  Use the checkbox below to make it easier to see each tile:
+                            </TextBlock>
+                            <CheckBox Content="Tint alternate map tiles" IsChecked="{Binding TintSprites, Mode=TwoWay}"/>
+                            <Rectangle HorizontalAlignment="Stretch" Height="1" Fill="CornflowerBlue" Margin="0 10"/>
+                            <TextBlock TextWrapping="Wrap" Margin="0 10">
+                                Move the wizard around by touching / clicking on the screen.  There are some tiles that the wizard cannot walk through.
+                                Use the checkbox below to highlight them:
+                            </TextBlock>
+                            <CheckBox Content="Show collision" IsChecked="{Binding ShowCollision, Mode=TwoWay}"/>
+                            <Rectangle HorizontalAlignment="Stretch" Height="1" Fill="CornflowerBlue" Margin="0 10"/>
+                            <TextBlock TextWrapping="Wrap" Margin="0 10">
+                                The tile set this sample uses does not have any padding between tiles.  This works fine when the tiles are not scaled or rotated.
+                                However, once scaling does occur the GPU can sometimes sample outside of the source rectangle.  The ClampToSourceRect option
+                                does extra steps to ensure this doesn't happen.  Use the options below to experiment with the ClampToSourceRect option and 
+                                interpolation mode:
+                            </TextBlock>
+                            <CheckBox Content="Rotate and scale" IsChecked="{Binding RotateAndScale, Mode=TwoWay}"/>
+                            <CheckBox Content="Clamp to source rect" IsChecked="{Binding ClampToSourceRect, Mode=TwoWay}"/>
+                            <ComboBox SelectedValue="{Binding InterpolationMode, Mode=TwoWay}" Width="200">
+                                <ComboBox.Items>
+                                    <x:String>Linear</x:String>
+                                    <x:String>NearestNeighbor</x:String>
+                                </ComboBox.Items>
+                            </ComboBox>
+                        </StackPanel>
+                    </ScrollViewer>
+                </Flyout>
+            </Button.Flyout>
+        </Button>
+    </Grid>
+</UserControl>
