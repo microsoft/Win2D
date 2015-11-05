@@ -40,6 +40,7 @@ namespace canvas
         }
 
         DONT_EXPECT(Clear , Color);
+        DONT_EXPECT(Flush);
 
         DONT_EXPECT(DrawImageAtOrigin                                                       , ICanvasImage*);
         DONT_EXPECT(DrawImageAtOffset                                                       , ICanvasImage*, Vector2);

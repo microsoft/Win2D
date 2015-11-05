@@ -13,6 +13,11 @@ namespace Microsoft.Graphics.Canvas
         HRESULT Clear([in] Windows.UI.Color color);
 
         //
+        // Calls ID2D1RenderTarget::Flush() on wrapped device context.
+        //
+        HRESULT Flush();
+
+        //
         // Some of these methods have large numbers of overloads.
         //
         // The following naming scheme is used:

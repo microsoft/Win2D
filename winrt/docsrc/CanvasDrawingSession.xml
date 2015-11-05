@@ -46,6 +46,23 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <summary>Clears to the specified color.</summary>
     </member>
 
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.Flush">
+      <summary>Sends any pending drawing commands to the graphics device.</summary>
+      <remarks>
+        <p>
+          In normal usage it is not necessary to call Flush, since the Flush
+          happens automatically when you dispose the drawing session.
+        </p>
+        <p>
+          There's a cost associated with each command submitted to the graphics
+          device, so the drawing session groups together multiple drawing
+          operations into batches.  When the drawing session is disposed the
+          last batch is sent to the device.  This method can be used to force
+          all pending commands to be sent to the device without disposing the
+          session.
+        </p>
+      </remarks>
+    </member>
 
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawImage(Microsoft.Graphics.Canvas.ICanvasImage)">
       <summary>Draws an image.</summary>

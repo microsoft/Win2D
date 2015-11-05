@@ -184,6 +184,16 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
 
+    IFACEMETHODIMP CanvasDrawingSession::Flush()
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                ThrowIfFailed(GetResource()->Flush(nullptr, nullptr));
+            });
+    }
+
+
     // 
     // DrawImage
     //  

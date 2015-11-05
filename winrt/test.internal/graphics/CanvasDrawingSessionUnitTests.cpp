@@ -276,6 +276,28 @@ public:
 
 
     //
+    // Flush
+    //
+
+    TEST_METHOD_EX(CanvasDrawingSession_Flush)
+    {
+        CanvasDrawingSessionFixture f;
+
+        HRESULT anyHResult = 0x87654321;
+        
+        f.DeviceContext->FlushMethod.SetExpectedCalls(1,
+            [=](D2D1_TAG* tag1, D2D1_TAG* tag2)
+            {
+                Assert::IsNull(tag1);
+                Assert::IsNull(tag2);
+                return anyHResult;
+            });
+
+        Assert::AreEqual(anyHResult, f.DS->Flush());
+    }
+
+
+    //
     // DrawImage
     //
 
@@ -4603,6 +4625,7 @@ TEST_CLASS(CanvasDrawingSession_CloseTests)
 #define EXPECT_OBJECT_CLOSED(CODE) Assert::AreEqual(RO_E_CLOSED, CODE)
 
         EXPECT_OBJECT_CLOSED(canvasDrawingSession->Clear(Color{}));
+        EXPECT_OBJECT_CLOSED(canvasDrawingSession->Flush());
 
         // See also CanvasDrawingSession_DrawImage_WhenDrawingSessionisClosed_DrawImageFails 
 

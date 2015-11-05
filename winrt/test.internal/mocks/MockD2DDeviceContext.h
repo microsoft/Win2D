@@ -23,9 +23,11 @@ namespace canvas
             ID2D1Resource>>
     {
     public:
-        // ID2D1DeviceContext
+        
+        // ID2D1DeviceContext / ID2D1RenderTarget
         
         MOCK_METHOD1(Clear                        , void(D2D1_COLOR_F const*));
+        MOCK_METHOD2(Flush                        , HRESULT(D2D1_TAG*, D2D1_TAG*));
         MOCK_METHOD1_CONST(GetTransform           , void(D2D1_MATRIX_3X2_F*));
         MOCK_METHOD1(SetTransform                 , void(D2D1_MATRIX_3X2_F const*));
         MOCK_METHOD0_CONST(GetAntialiasMode       , D2D1_ANTIALIAS_MODE());
@@ -212,12 +214,6 @@ namespace canvas
         IFACEMETHODIMP_(void) PushLayer(const D2D1_LAYER_PARAMETERS *,ID2D1Layer *) override
         {
             Assert::Fail(L"Unexpected call to PushLayer");
-        }
-
-        IFACEMETHODIMP Flush(D2D1_TAG *,D2D1_TAG *) override
-        {
-            Assert::Fail(L"Unexpected call to Flush");
-            return E_NOTIMPL;
         }
 
         IFACEMETHODIMP_(void) SaveDrawingState(ID2D1DrawingStateBlock *) const override
