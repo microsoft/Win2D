@@ -164,6 +164,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
 #if WINVER > _WIN32_WINNT_WINBLUE
         virtual ComPtr<ID2D1GradientMesh> CreateGradientMesh(D2D1_GRADIENT_MESH_PATCH const* patches, uint32_t patchCount) = 0;
+
+        virtual bool IsSpriteBatchQuirkRequired() = 0;
 #endif
     };
 
@@ -200,6 +202,19 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         std::shared_ptr<SharedDeviceState> m_sharedState;
 
         DeviceContextPool m_deviceContextPool;
+
+#if WINVER > _WIN32_WINNT_WINBLUE
+        std::mutex m_quirkMutex;
+        
+        enum class SpriteBatchQuirk
+        {
+            NeedsCheck,
+            Required,
+            NotRequired
+        };
+
+        SpriteBatchQuirk m_spriteBatchQuirk;
+#endif
 
     public:
         static ComPtr<CanvasDevice> CreateNew(bool forceSoftwareRenderer);
@@ -336,6 +351,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
 #if WINVER > _WIN32_WINNT_WINBLUE
         virtual ComPtr<ID2D1GradientMesh> CreateGradientMesh(D2D1_GRADIENT_MESH_PATCH const* patches, uint32_t patchCount) override;
+
+        virtual bool IsSpriteBatchQuirkRequired() override;
 #endif
 
         //
@@ -370,6 +387,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ComPtr<ID2D1Factory2> GetD2DFactory();
 
         void InitializePrimaryOutput(IDXGIDevice3* dxgiDevice);
+
+        bool DetectIfSpriteBatchQuirkIsRequired();
     };
 
 
@@ -465,4 +484,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             float dpi,
             IInspectable** wrapper) override;
     };
+
+    static uint32_t const QUALCOMM_VENDOR_ID = 0x4D4F4351;
+
 }}}}

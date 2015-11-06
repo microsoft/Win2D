@@ -11,85 +11,21 @@ namespace canvas
         ChainInterfaces<IDXGIAdapter2, IDXGIAdapter1, IDXGIAdapter, IDXGIObject >>
     {
     public:
-
-        CALL_COUNTER_WITH_MOCK(GetDesc2Method, HRESULT(DXGI_ADAPTER_DESC2*));
-        CALL_COUNTER_WITH_MOCK(EnumOutputsMethod, HRESULT(UINT, IDXGIOutput**));
-        CALL_COUNTER_WITH_MOCK(CheckInterfaceSupportMethod, HRESULT(REFGUID, LARGE_INTEGER*));
-        CALL_COUNTER_WITH_MOCK(SetPrivateDataMethod, HRESULT(REFGUID, UINT, const void*));
-        CALL_COUNTER_WITH_MOCK(SetPrivateDataInterfaceMethod, HRESULT(REFGUID, const IUnknown*));
-        CALL_COUNTER_WITH_MOCK(GetPrivateDataMethod, HRESULT(REFIID, UINT*, void*));
-        CALL_COUNTER_WITH_MOCK(GetParentMethod, HRESULT(REFIID, void**));
-
-        // IDXGIAdapter2
-
-        virtual HRESULT STDMETHODCALLTYPE GetDesc2(
-            DXGI_ADAPTER_DESC2* desc) override
-        {
-            return GetDesc2Method.WasCalled(desc);
-        }
-
-        // IDXGIAdapter1
-
-        virtual HRESULT STDMETHODCALLTYPE GetDesc1(
-            DXGI_ADAPTER_DESC1* desc) override
-        {
-            Assert::Fail(); // Expected to call GetDesc2 instead
-            return E_NOTIMPL;
-        }
+        // IDXGIObject
+        MOCK_METHOD3(SetPrivateData, HRESULT(REFGUID, UINT, void const*));
+        MOCK_METHOD2(SetPrivateDataInterface, HRESULT(REFGUID, IUnknown const*));
+        MOCK_METHOD3(GetPrivateData, HRESULT(REFGUID, UINT*, void*));
+        MOCK_METHOD2(GetParent, HRESULT(REFIID, void**));
 
         // IDXGIAdapter
+        MOCK_METHOD2(EnumOutputs, HRESULT(UINT, IDXGIOutput**));
+        MOCK_METHOD1(GetDesc, HRESULT(DXGI_ADAPTER_DESC*));
+        MOCK_METHOD2(CheckInterfaceSupport, HRESULT(REFGUID, LARGE_INTEGER*));
 
-        virtual HRESULT STDMETHODCALLTYPE EnumOutputs(
-            UINT index,
-            IDXGIOutput** output) override
-        {
-            return EnumOutputsMethod.WasCalled(index, output);
-        }
+        // IDXGIAdapter1
+        MOCK_METHOD1(GetDesc1, HRESULT(DXGI_ADAPTER_DESC1*));
 
-        virtual HRESULT STDMETHODCALLTYPE GetDesc(
-            DXGI_ADAPTER_DESC* desc) override
-        {
-            Assert::Fail(); // Expected to call GetDesc2 instead
-            return E_NOTIMPL;
-        }
-
-        virtual HRESULT STDMETHODCALLTYPE CheckInterfaceSupport(
-            REFGUID interfaceName,
-            LARGE_INTEGER* umdVersion) override
-        {
-            return CheckInterfaceSupportMethod.WasCalled(interfaceName, umdVersion);
-        }
-
-        // IDXGIObject
-
-        virtual HRESULT STDMETHODCALLTYPE SetPrivateData(
-            REFGUID name,
-            UINT dataSize,
-            const void* data) override
-        {
-            return SetPrivateDataMethod.WasCalled(name, dataSize, data);
-        }
-
-        virtual HRESULT STDMETHODCALLTYPE SetPrivateDataInterface(
-            REFGUID name,
-            const IUnknown* unknown) override
-        {
-            return SetPrivateDataInterfaceMethod.WasCalled(name, unknown);
-        }
-
-        virtual HRESULT STDMETHODCALLTYPE GetPrivateData(
-            REFGUID name,
-            UINT* dataSize,
-            void* data) override
-        {
-            return GetPrivateDataMethod.WasCalled(name, dataSize, data);
-        }
-
-        virtual HRESULT STDMETHODCALLTYPE GetParent(
-            REFIID riid,
-            void** parent) override
-        {
-            return GetParentMethod.WasCalled(riid, parent);
-        }
+        // IDXGIAdapter2
+        MOCK_METHOD1(GetDesc2, HRESULT(DXGI_ADAPTER_DESC2*));
     };
 }

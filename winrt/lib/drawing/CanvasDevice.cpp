@@ -423,6 +423,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         , m_dxgiDevice(dxgiDevice)
         , m_sharedState(SharedDeviceState::GetInstance())
         , m_deviceContextPool(d2dDevice)
+#if WINVER > _WIN32_WINNT_WINBLUE
+        , m_spriteBatchQuirk(SpriteBatchQuirk::NeedsCheck)
+#endif
     {
         if (!dxgiDevice)
         {
@@ -1172,6 +1175,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
 #if WINVER > _WIN32_WINNT_WINBLUE
+
     ComPtr<ID2D1GradientMesh> CanvasDevice::CreateGradientMesh(
         D2D1_GRADIENT_MESH_PATCH const* patches,
         uint32_t patchCount)
@@ -1186,6 +1190,63 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         return gradientMesh;
     }
+
+    bool CanvasDevice::IsSpriteBatchQuirkRequired()
+    {
+        //
+        // A driver bug for older Qualcomm devices (eg Lumia 640) has the net
+        // effect that sprite batches are limited to 256 sprites.  Win2D works
+        // around this limiting the sprite batch size on these devices.
+        //
+        
+        std::unique_lock<std::mutex> lock(m_quirkMutex);
+
+        // The result of the quirk check is cached per-device to avoid
+        // performing the check more than necessary.
+        if (m_spriteBatchQuirk == SpriteBatchQuirk::NeedsCheck)
+        {
+            m_spriteBatchQuirk = DetectIfSpriteBatchQuirkIsRequired()
+                ? SpriteBatchQuirk::Required
+                : SpriteBatchQuirk::NotRequired;
+        }
+
+        switch (m_spriteBatchQuirk)
+        {
+        case SpriteBatchQuirk::Required:
+            return true;
+
+        case SpriteBatchQuirk::NotRequired:
+            return false;
+
+        default:
+            assert(false);
+            ThrowHR(E_UNEXPECTED);
+        }
+    }
+
+    bool CanvasDevice::DetectIfSpriteBatchQuirkIsRequired()
+    {
+        D2DResourceLock d2dLock(GetResource().Get());
+            
+        auto& dxgiDevice = m_dxgiDevice.EnsureNotClosed();
+
+        ComPtr<IDXGIAdapter> dxgiAdapter;
+        ThrowIfFailed(dxgiDevice->GetAdapter(&dxgiAdapter));
+
+        DXGI_ADAPTER_DESC adapterDesc;
+        ThrowIfFailed(dxgiAdapter->GetDesc(&adapterDesc));
+
+        if (adapterDesc.VendorId == QUALCOMM_VENDOR_ID)
+        {
+            auto featureLevel = As<ID3D11Device>(dxgiDevice)->GetFeatureLevel();
+
+            if (featureLevel <= D3D_FEATURE_LEVEL_9_3)
+                return true;
+        }
+
+        return false;
+    }
+
 #endif
 
     HRESULT CanvasDevice::GetDeviceRemovedErrorCode()

@@ -197,9 +197,14 @@ public:
 
     void SetExpectedCalls(int value)
     {
+        SetExpectedCalls(value, value);
+    }
+
+    void SetExpectedCalls(int minCalls, int maxCalls)
+    {
         Validate();
-        m_minimumCallCount = value;
-        m_maximumCallCount = value;
+        m_minimumCallCount = minCalls;
+        m_maximumCallCount = maxCalls;
         m_actualCallCount = 0;
     }
 
@@ -310,6 +315,11 @@ public:
         m_expectation->SetExpectedCalls(value);
     }
 
+    void SetExpectedCalls(int minCalls, int maxCalls)
+    {
+        m_expectation->SetExpectedCalls(minCalls, maxCalls);
+    }
+
     void ExpectAtLeastOneCall()
     {
         m_expectation->ExpectAtLeastOneCall();
@@ -377,7 +387,12 @@ public:
 
     void SetExpectedCalls(int value, std::function<FN> mock = nullptr)
     {
-        CallCounter::SetExpectedCalls(value);
+        SetExpectedCalls(value, value, mock);
+    }
+
+    void SetExpectedCalls(int minCalls, int maxCalls, std::function<FN> mock = nullptr)
+    {
+        CallCounter::SetExpectedCalls(minCalls, maxCalls);
         m_mock = mock;
     }
 

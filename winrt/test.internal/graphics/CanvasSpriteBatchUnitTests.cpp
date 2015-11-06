@@ -182,6 +182,33 @@ private:
 };
 
 
+static void SetReportedVendorIdAndFeatureLevel(
+    MockD2DDeviceContext* deviceContext,
+    uint32_t vendorId,
+    D3D_FEATURE_LEVEL featureLevel)
+{
+    auto dxgiAdapter = Make<StubDxgiAdapter>();
+    dxgiAdapter->GetDescMethod.SetExpectedCalls(0, 1,
+        [=] (DXGI_ADAPTER_DESC* d)
+        {
+            *d = DXGI_ADAPTER_DESC{};
+            d->VendorId = vendorId;
+            return S_OK;
+        });
+    
+    auto d3dDevice = Make<MockD3D11Device>();
+    d3dDevice->GetAdapterMethod.SetExpectedCalls(0, 2,
+        [=] (IDXGIAdapter** a) { return dxgiAdapter.CopyTo(a); });
+
+    d3dDevice->GetFeatureLevelMethod.SetExpectedCalls(0, 1,
+        [=] () { return featureLevel; });
+    
+    auto d2dDevice = Make<MockD2DDevice>(d3dDevice.Get());
+    deviceContext->GetDeviceMethod.SetExpectedCalls(0, 1,
+        [=] (ID2D1Device** d) { return d2dDevice.CopyTo(d); });
+}
+
+
 TEST_CLASS(CanvasSpriteBatchUnitTests)
 {
 public:
@@ -253,6 +280,8 @@ public:
 
             DeviceContext->GetUnitModeMethod.AllowAnyCall([] { return D2D1_UNIT_MODE_DIPS; });
             DeviceContext->GetAntialiasModeMethod.AllowAnyCall([] { return D2D1_ANTIALIAS_MODE_ALIASED; });
+
+            SetReportedVendorIdAndFeatureLevel(DeviceContext.Get(), 0, D3D_FEATURE_LEVEL_11_1);
         }
 
         ComPtr<MockD2DSpriteBatch> ExpectCreateSpriteBatch()
@@ -1302,9 +1331,14 @@ public:
 
         AddSpritesValidator<ExpectedOffsetSprite> ExpectedSprites;
         
-        MultipleBitmapFixture(CanvasSpriteSortMode sortMode = CanvasSpriteSortMode::None)
+        MultipleBitmapFixture(
+            CanvasSpriteSortMode sortMode = CanvasSpriteSortMode::None,
+            uint32_t vendorId = 0,
+            D3D_FEATURE_LEVEL featureLevel = D3D_FEATURE_LEVEL_11_1)
             : DeviceContext(Make<MockD2DDeviceContext>())
         {
+            SetReportedVendorIdAndFeatureLevel(DeviceContext.Get(), vendorId, featureLevel);
+            
             DeviceContext->GetUnitModeMethod.AllowAnyCall([] { return D2D1_UNIT_MODE_DIPS; });
             DeviceContext->GetAntialiasModeMethod.AllowAnyCall([] { return D2D1_ANTIALIAS_MODE_ALIASED; });
            
@@ -1530,6 +1564,53 @@ public:
         f.DeviceContext->DrawSpriteBatchMethod.SetExpectedCalls(100);
 
         f.Validate();
+    }
+
+    TEST_METHOD_EX(CanvasSpriteBatch_WhenQuirkRequired_SpriteBatchesAreNotLargerThan256)
+    {
+        struct TestCase
+        {
+            uint32_t Vendor;
+            D3D_FEATURE_LEVEL FeatureLevel;
+            bool Quirk;
+        };
+
+        for (auto testCase : {
+                TestCase{ 0,                  D3D_FEATURE_LEVEL_9_3,  false },
+                TestCase{ 0,                  D3D_FEATURE_LEVEL_12_1, false },
+                TestCase{ QUALCOMM_VENDOR_ID, D3D_FEATURE_LEVEL_10_0, false },
+                TestCase{ QUALCOMM_VENDOR_ID, D3D_FEATURE_LEVEL_11_0, false },
+                TestCase{ QUALCOMM_VENDOR_ID, D3D_FEATURE_LEVEL_9_3,  true  },
+                TestCase{ QUALCOMM_VENDOR_ID, D3D_FEATURE_LEVEL_9_2,  true  },
+                TestCase{ QUALCOMM_VENDOR_ID, D3D_FEATURE_LEVEL_9_1,  true  } })
+        {
+            MultipleBitmapFixture f(CanvasSpriteSortMode::None, testCase.Vendor, testCase.FeatureLevel);
+            
+            for (int i = 0; i < 1000; ++i)
+                f.AddAndExpect(f.Bitmaps[0], (float)i);
+
+            if (testCase.Quirk)
+            {
+                f.DeviceContext->FlushMethod.SetExpectedCalls(4);
+                
+                f.ExpectBatches(
+                    {
+                        { f.Bitmaps[0], 0, 256 },
+                        { f.Bitmaps[0], 256, 256 },
+                        { f.Bitmaps[0], 512, 256 },
+                        { f.Bitmaps[0], 768, 232 }
+                    });                
+            }
+            else
+            {
+                f.ExpectBatches(
+                    {
+                        { f.Bitmaps[0], 0, 1000 }
+                    });
+            }
+
+            f.Validate();
+        }
     }
 };
 

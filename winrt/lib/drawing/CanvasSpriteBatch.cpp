@@ -437,14 +437,16 @@ template<typename T>
 class BatchFinder
 {
     std::vector<T> const& m_sprites;
+    uint32_t const m_maxSpritesPerBatch;
 
     uint32_t m_startIndex;
     uint32_t m_endIndex;
     ID2D1Bitmap* m_bitmap;
 
 public:
-    BatchFinder(std::vector<T> const& sprites) noexcept
+    BatchFinder(std::vector<T> const& sprites, uint32_t maxSpritesPerBatch) noexcept
         : m_sprites(sprites)
+        , m_maxSpritesPerBatch(maxSpritesPerBatch)
         , m_startIndex(0)
         , m_endIndex(0)
         , m_bitmap(nullptr)
@@ -463,7 +465,7 @@ public:
 
         m_bitmap = m_sprites[m_endIndex].Bitmap.Get();
 
-        for (; m_endIndex != m_sprites.size() && m_sprites[m_endIndex].Bitmap.Get() == m_bitmap; ++m_endIndex)
+        for (; InCurrentBatch(); ++m_endIndex)
         {
             // nothing
         }
@@ -491,7 +493,16 @@ public:
 
 
     BatchFinder(BatchFinder const&) = delete;
-    BatchFinder& operator=(BatchFinder const&) = delete;    
+    BatchFinder& operator=(BatchFinder const&) = delete;
+
+private:
+    bool InCurrentBatch()
+    {
+        if (m_endIndex - m_startIndex >= m_maxSpritesPerBatch)
+            return false;
+        
+        return m_endIndex != m_sprites.size() && m_sprites[m_endIndex].Bitmap.Get() == m_bitmap;
+    }
 };
 
 IFACEMETHODIMP CanvasSpriteBatch::Close()
@@ -559,8 +570,16 @@ IFACEMETHODIMP CanvasSpriteBatch::Close()
         //
         // Draw the sprites - one DrawSpriteBatch call for each bitmap
         //
+
+        // Figure out if we need to quirk the batch size to workaround an issue
+        // with older Qualcomm drivers.
+        ComPtr<ID2D1Device> d2dDevice;
+        deviceContext->GetDevice(&d2dDevice);
+        auto device = ResourceManager::GetOrCreate<ICanvasDeviceInternal>(d2dDevice.Get());
+        bool quirked = device->IsSpriteBatchQuirkRequired();
+        uint32_t maxSpritesPerBatch = quirked ? 256 : std::numeric_limits<uint32_t>::max();
         
-        for (BatchFinder<Sprite> batchFinder(m_sprites); !batchFinder.Done(); batchFinder.FindNext())
+        for (BatchFinder<Sprite> batchFinder(m_sprites, maxSpritesPerBatch); !batchFinder.Done(); batchFinder.FindNext())
         {
             deviceContext->DrawSpriteBatch(
                 spriteBatch.Get(),
@@ -569,6 +588,14 @@ IFACEMETHODIMP CanvasSpriteBatch::Close()
                 batchFinder.CurrentBitmap(),
                 m_interpolationMode,
                 m_spriteOptions);
+
+            if (quirked)
+            {
+                // Direct2D will helpfully batch up our DrawSpriteBatch calls - when
+                // we're manually unbatching them to avoid limits of the maximum sprites per batch!
+                // An explicit Flush here prevents that from happening.
+                deviceContext->Flush();
+            }
         }
 
         //
