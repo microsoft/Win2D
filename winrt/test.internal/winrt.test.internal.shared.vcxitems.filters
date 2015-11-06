@@ -166,6 +166,9 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasSpriteBatchUnitTests.cpp">
       <Filter>graphics</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasTextRendererUnitTests.cpp">
+      <Filter>graphics</Filter>
+    </ClCompile>    
     <ClCompile Include="$(MSBuildThisFileDirectory)utils\HashUtilitiesTests.cpp">
       <Filter>utils</Filter>
     </ClCompile>

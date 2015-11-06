@@ -4,7 +4,9 @@
 
 namespace Microsoft.Graphics.Canvas.Text
 {
-    runtimeclass CanvasTextLayout;
+	runtimeclass CanvasTextLayout;
+
+	interface ICanvasTextRenderer;
     
     [version(VERSION)]
     typedef struct CanvasTextLayoutRegion
@@ -158,9 +160,19 @@ namespace Microsoft.Graphics.Canvas.Text
             [in] INT32 characterCount,
             [in] boolean hasUnderline);
 
+        [overload("DrawToTextRenderer")]
+		HRESULT DrawToTextRenderer(
+			[in] ICanvasTextRenderer* textRenderer,
+			[in] NUMERICS.Vector2 position);
+
+        [overload("DrawToTextRenderer")]
+        HRESULT DrawToTextRendererWithCoords(
+            [in] ICanvasTextRenderer* textRenderer,
+            [in] float x,
+            [in] float y);
+
         // Not exposed:                             Reason
         //---------------                           -------
-        // Draw                                     Used primarily, by custom renderers, out of scope. Part of DWrite completeness
         // GetClusterMetrics                        Advanced usage, out of scope.
         // Get/Set FontCollection                   Relies on IDWriteFontCollection. Separate design issue on how to expose this.
         // Get/Set InlineObject                     Advanced usage, out of scope.

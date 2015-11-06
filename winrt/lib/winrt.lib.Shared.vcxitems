@@ -382,6 +382,7 @@
     <None Include="$(MSBuildThisFileDirectory)text\CanvasTextFormat.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)text\CanvasTextLayout.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)text\CanvasTextRenderingParameters.abi.idl" />
+    <None Include="$(MSBuildThisFileDirectory)text\CanvasTextRenderer.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)directx\WinRTDirect3D11.idl" />
     <None Include="$(MSBuildThisFileDirectory)directx\WinRTDirectXCommon.idl" />
     <None Include="$(MSBuildThisFileDirectory)printing\CanvasPrintDocument.abi.idl" />

@@ -13,6 +13,11 @@ namespace Microsoft.Graphics.Canvas
         HRESULT Clear([in] Windows.UI.Color color);
 
         //
+        // Calls ID2D1RenderTarget::Flush() on wrapped device context.
+        //
+        HRESULT Flush();
+
+        //
         // Some of these methods have large numbers of overloads.
         //
         // The following naming scheme is used:
@@ -1409,6 +1414,46 @@ namespace Microsoft.Graphics.Canvas
             [in] CanvasLayerOptions options,
             [out, retval] CanvasActiveLayer** layer);
 
+		[overload("DrawGlyphRun")]
+		HRESULT DrawGlyphRun(
+			[in] NUMERICS.Vector2 point,
+			[in] Microsoft.Graphics.Canvas.Text.CanvasFontFace* fontFace,
+			[in] float fontSize,
+			[in] UINT32 glyphCount,
+			[in, size_is(glyphCount)] Microsoft.Graphics.Canvas.Text.CanvasGlyph* glyphs,
+			[in] boolean isSideways,
+			[in] UINT32 bidiLevel,
+			[in] Microsoft.Graphics.Canvas.Brushes.ICanvasBrush* brush);
+
+		[overload("DrawGlyphRun")]
+		HRESULT DrawGlyphRunWithMeasuringMode(
+			[in] NUMERICS.Vector2 point,
+			[in] Microsoft.Graphics.Canvas.Text.CanvasFontFace* fontFace,
+			[in] float fontSize,
+			[in] UINT32 glyphCount,
+			[in, size_is(glyphCount)] Microsoft.Graphics.Canvas.Text.CanvasGlyph* glyphs,
+			[in] boolean isSideways,
+			[in] UINT32 bidiLevel,
+			[in] Microsoft.Graphics.Canvas.Brushes.ICanvasBrush* brush,
+			[in] Microsoft.Graphics.Canvas.Text.CanvasTextMeasuringMode measuringMode);
+
+		[overload("DrawGlyphRun")]
+		HRESULT DrawGlyphRunWithMeasuringModeAndDescription(
+			[in] NUMERICS.Vector2 point,
+			[in] Microsoft.Graphics.Canvas.Text.CanvasFontFace* fontFace,
+			[in] float fontSize,
+			[in] UINT32 glyphCount,
+			[in, size_is(glyphCount)] Microsoft.Graphics.Canvas.Text.CanvasGlyph* glyphs,
+			[in] boolean isSideways,
+			[in] UINT32 bidiLevel,
+			[in] Microsoft.Graphics.Canvas.Brushes.ICanvasBrush* brush,
+			[in] Microsoft.Graphics.Canvas.Text.CanvasTextMeasuringMode measuringMode,
+			[in] HSTRING localeName,
+			[in] HSTRING textString,
+			[in] UINT32 clusterMapIndicesCount,
+			[in, size_is(clusterMapIndicesCount)] int* clusterMapIndices,
+			[in] UINT32 textPosition);
+
 #if WINVER > _WIN32_WINNT_WINBLUE
 
         //
@@ -1438,7 +1483,6 @@ namespace Microsoft.Graphics.Canvas
             [out, retval] CanvasSpriteBatch** spriteBatch);
         
 #endif
-
     };
 
     [version(VERSION)]

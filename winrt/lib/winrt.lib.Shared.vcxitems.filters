@@ -1012,6 +1012,9 @@
     <None Include="$(MSBuildThisFileDirectory)text\CanvasTextRenderingParameters.abi.idl">
       <Filter>text</Filter>
     </None>
+    <None Include="$(MSBuildThisFileDirectory)text\CanvasTextRenderer.abi.idl">
+      <Filter>text</Filter>
+    </None>
     <None Include="$(MSBuildThisFileDirectory)directx\WinRTDirect3D11.idl">
       <Filter>directx</Filter>
     </None>

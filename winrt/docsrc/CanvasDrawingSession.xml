@@ -46,6 +46,23 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <summary>Clears to the specified color.</summary>
     </member>
 
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.Flush">
+      <summary>Sends any pending drawing commands to the graphics device.</summary>
+      <remarks>
+        <p>
+          In normal usage it is not necessary to call Flush, since the Flush
+          happens automatically when you dispose the drawing session.
+        </p>
+        <p>
+          There's a cost associated with each command submitted to the graphics
+          device, so the drawing session groups together multiple drawing
+          operations into batches.  When the drawing session is disposed the
+          last batch is sent to the device.  This method can be used to force
+          all pending commands to be sent to the device without disposing the
+          session.
+        </p>
+      </remarks>
+    </member>
 
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawImage(Microsoft.Graphics.Canvas.ICanvasImage)">
       <summary>Draws an image.</summary>
@@ -1117,6 +1134,74 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
        </remarks>
     </member>
 
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawGlyphRun(System.Numerics.Vector2,Microsoft.Graphics.Canvas.Text.CanvasFontFace,System.Single,Microsoft.Graphics.Canvas.Text.CanvasGlyph[],System.Boolean,System.UInt32,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush)">
+      <summary>Draws a sequence of text characters which share the same formatting.</summary>
+      <remarks>
+          <p>
+            The typical way to use this method is from the 
+            <see cref="M:Microsoft.Graphics.Canvas.Text.ICanvasTextRenderer.DrawGlyphRun(System.Numerics.Vector2,Microsoft.Graphics.Canvas.Text.CanvasFontFace,System.Single,Microsoft.Graphics.Canvas.Text.CanvasGlyph[],System.Boolean,System.UInt32,System.Object,Microsoft.Graphics.Canvas.Text.CanvasTextMeasuringMode,System.String,System.String,System.Int32[],System.UInt32,Microsoft.Graphics.Canvas.Text.CanvasGlyphOrientation)"/> 
+            method, in an application's implementation of <see cref="T:Microsoft.Graphics.Canvas.Text.ICanvasTextRenderer"/>, 
+            rather than to call it standalone.
+            In particular, an application may want to adjust the properties of a glyph run, such as its positioning or font, before
+            passing it on to be drawn by a CanvasDrawingSession.
+          </p>
+          <p>
+            This method's position parameter is different from the position used with 
+            <see cref="O:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.DrawToTextRenderer"/>.
+            For DrawToTextRenderer, the position represents the top left corner of the layout box. 
+            For this method, the position is the baseline origin. For typical rendering with Latin scripts, 
+            the baseline is going to fall below the top left corner of the layout box.
+          </p>
+          <p>
+            This will use a default measuring mode of <see cref="F:Microsoft.Graphics.Canvas.Text.CanvasTextMeasuringMode.Natural"/>.
+          </p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawGlyphRun(System.Numerics.Vector2,Microsoft.Graphics.Canvas.Text.CanvasFontFace,System.Single,Microsoft.Graphics.Canvas.Text.CanvasGlyph[],System.Boolean,System.UInt32,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush,Microsoft.Graphics.Canvas.Text.CanvasTextMeasuringMode)">
+      <summary>Draws a sequence of text characters which share the same formatting.</summary>
+      <remarks>
+          <p>
+            The typical way to use this method is from the 
+            <see cref="M:Microsoft.Graphics.Canvas.Text.ICanvasTextRenderer.DrawGlyphRun(System.Numerics.Vector2,Microsoft.Graphics.Canvas.Text.CanvasFontFace,System.Single,Microsoft.Graphics.Canvas.Text.CanvasGlyph[],System.Boolean,System.UInt32,System.Object,Microsoft.Graphics.Canvas.Text.CanvasTextMeasuringMode,System.String,System.String,System.Int32[],System.UInt32,Microsoft.Graphics.Canvas.Text.CanvasGlyphOrientation)"/> 
+            method, in an application's implementation of <see cref="T:Microsoft.Graphics.Canvas.Text.ICanvasTextRenderer"/>, 
+            rather than to call it standalone.
+            In particular, an application may want to adjust the properties of a glyph run, such as its positioning or font, before
+            passing it on to be drawn by a CanvasDrawingSession.
+          </p>
+          <p>
+            This method's position parameter is different from the position used with 
+            <see cref="O:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.DrawToTextRenderer"/>.
+            For DrawToTextRenderer, the position represents the top left corner of the layout box. 
+            For this method, the position is the baseline origin. For typical rendering with Latin scripts, 
+            the baseline is going to fall below the top left corner of the layout box.
+          </p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawGlyphRun(System.Numerics.Vector2,Microsoft.Graphics.Canvas.Text.CanvasFontFace,System.Single,Microsoft.Graphics.Canvas.Text.CanvasGlyph[],System.Boolean,System.UInt32,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush,Microsoft.Graphics.Canvas.Text.CanvasTextMeasuringMode,System.String,System.String,System.Int32[],System.UInt32)">
+      <summary>Draws a sequence of text characters which share the same formatting.</summary>
+      <remarks>
+          <p>
+            The typical way to use this method is from the 
+            <see cref="M:Microsoft.Graphics.Canvas.Text.ICanvasTextRenderer.DrawGlyphRun(System.Numerics.Vector2,Microsoft.Graphics.Canvas.Text.CanvasFontFace,System.Single,Microsoft.Graphics.Canvas.Text.CanvasGlyph[],System.Boolean,System.UInt32,System.Object,Microsoft.Graphics.Canvas.Text.CanvasTextMeasuringMode,System.String,System.String,System.Int32[],System.UInt32,Microsoft.Graphics.Canvas.Text.CanvasGlyphOrientation)"/> 
+            method, in an application's implementation of <see cref="T:Microsoft.Graphics.Canvas.Text.ICanvasTextRenderer"/>, 
+            rather than to call it standalone.
+            In particular, an application may want to adjust the properties of a glyph run, such as its positioning or font, before
+            passing it on to be drawn by a CanvasDrawingSession.
+          </p>
+          <p>
+            This method's position parameter is different from the position used with 
+            <see cref="O:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.DrawToTextRenderer"/>.
+            For DrawToTextRenderer, the position represents the top left corner of the layout box. 
+            For this method, the position is the baseline origin. For typical rendering with Latin scripts, 
+            the baseline is going to fall below the top left corner of the layout box.
+          </p>
+          <p>
+            It's valid to specify null for the clusterMapIndices."/>.
+          </p>
+      </remarks>
+    </member>    
+
+
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.CreateSpriteBatch" Experimental="true" TH2="true">
       <summary>Creates a new sprite batch for efficiently drawing many CanvasBitmaps.</summary>
       <remarks>
@@ -1178,6 +1263,5 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         </p>
       </remarks>
     </member>
-
   </members>
 </doc>

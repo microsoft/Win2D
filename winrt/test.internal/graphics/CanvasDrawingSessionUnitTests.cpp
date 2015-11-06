@@ -276,6 +276,28 @@ public:
 
 
     //
+    // Flush
+    //
+
+    TEST_METHOD_EX(CanvasDrawingSession_Flush)
+    {
+        CanvasDrawingSessionFixture f;
+
+        HRESULT anyHResult = 0x87654321;
+        
+        f.DeviceContext->FlushMethod.SetExpectedCalls(1,
+            [=](D2D1_TAG* tag1, D2D1_TAG* tag2)
+            {
+                Assert::IsNull(tag1);
+                Assert::IsNull(tag2);
+                return anyHResult;
+            });
+
+        Assert::AreEqual(anyHResult, f.DS->Flush());
+    }
+
+
+    //
     // DrawImage
     //
 
@@ -4603,6 +4625,7 @@ TEST_CLASS(CanvasDrawingSession_CloseTests)
 #define EXPECT_OBJECT_CLOSED(CODE) Assert::AreEqual(RO_E_CLOSED, CODE)
 
         EXPECT_OBJECT_CLOSED(canvasDrawingSession->Clear(Color{}));
+        EXPECT_OBJECT_CLOSED(canvasDrawingSession->Flush());
 
         // See also CanvasDrawingSession_DrawImage_WhenDrawingSessionisClosed_DrawImageFails 
 
@@ -4702,6 +4725,10 @@ TEST_CLASS(CanvasDrawingSession_CloseTests)
         EXPECT_OBJECT_CLOSED(canvasDrawingSession->DrawTextAtPointCoordsWithColorAndFormat(nullptr, 0, 0, Color{}, nullptr));
         EXPECT_OBJECT_CLOSED(canvasDrawingSession->DrawTextAtRectCoordsWithColorAndFormat(nullptr, 0, 0, 0, 0, Color{}, nullptr));
 
+        EXPECT_OBJECT_CLOSED(canvasDrawingSession->DrawGlyphRun(Vector2{}, nullptr, 0, 0, nullptr, false, 0u, nullptr));
+        EXPECT_OBJECT_CLOSED(canvasDrawingSession->DrawGlyphRunWithMeasuringMode(Vector2{}, nullptr, 0, 0, nullptr, false, 0u, nullptr, CanvasTextMeasuringMode::Natural));
+        EXPECT_OBJECT_CLOSED(canvasDrawingSession->DrawGlyphRunWithMeasuringModeAndDescription(Vector2{}, nullptr, 0, 0, nullptr, false, 0u, nullptr, CanvasTextMeasuringMode::Natural, nullptr, nullptr, 0, nullptr, 0));
+
 #if WINVER > _WIN32_WINNT_WINBLUE
         EXPECT_OBJECT_CLOSED(canvasDrawingSession->DrawInk(nullptr));
 #endif
@@ -4734,6 +4761,24 @@ TEST_CLASS(CanvasDrawingSession_CloseTests)
         CanvasDrawingSessionFixture f;
 
         Assert::AreEqual(E_INVALIDARG, f.DS->get_Device(nullptr));
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_DrawGlyphRun_NullArg)
+    {
+        CanvasDrawingSessionFixture f;
+
+        ICanvasFontFace* fakeFontFace = reinterpret_cast<ICanvasFontFace*>(0x12345678);
+        CanvasGlyph glyph{};
+
+        Assert::AreEqual(E_INVALIDARG, f.DS->DrawGlyphRun(Vector2{}, nullptr, 0, 1, &glyph, false, 0u, f.Brush.Get()));
+        Assert::AreEqual(E_INVALIDARG, f.DS->DrawGlyphRun(Vector2{}, fakeFontFace, 0, 1, nullptr, false, 0u, f.Brush.Get()));
+
+        Assert::AreEqual(E_INVALIDARG, f.DS->DrawGlyphRunWithMeasuringMode(Vector2{}, nullptr, 0, 1, &glyph, false, 0u, f.Brush.Get(), CanvasTextMeasuringMode::Natural));
+        Assert::AreEqual(E_INVALIDARG, f.DS->DrawGlyphRunWithMeasuringMode(Vector2{}, fakeFontFace, 0, 1, nullptr, false, 0u, f.Brush.Get(), CanvasTextMeasuringMode::Natural));
+
+        Assert::AreEqual(E_INVALIDARG, f.DS->DrawGlyphRunWithMeasuringModeAndDescription(Vector2{}, nullptr, 0, 1, &glyph, false, 0u, f.Brush.Get(), CanvasTextMeasuringMode::Natural, nullptr, nullptr, 0, nullptr, 0));
+        Assert::AreEqual(E_INVALIDARG, f.DS->DrawGlyphRunWithMeasuringModeAndDescription(Vector2{}, fakeFontFace, 0, 1, nullptr, false, 0u, f.Brush.Get(), CanvasTextMeasuringMode::Natural, nullptr, nullptr, 0, nullptr, 0));
+
     }
 };
 

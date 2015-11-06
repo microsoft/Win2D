@@ -103,6 +103,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         IFACEMETHOD(Clear)(
             ABI::Windows::UI::Color color) override;
 
+        IFACEMETHOD(Flush)() override;
+
         // 
         // DrawImage
         // 
@@ -1244,6 +1246,45 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             CanvasLayerOptions options,
             ICanvasActiveLayer** layer) override;
 
+        
+		IFACEMETHOD(DrawGlyphRun)(
+			Vector2 point,
+			ICanvasFontFace* fontFace,
+			float fontSize,
+			uint32_t glyphCount,
+			CanvasGlyph* glyphs,
+			boolean isSideways,
+			uint32_t bidiLevel,
+			ICanvasBrush* brush) override;
+
+		IFACEMETHOD(DrawGlyphRunWithMeasuringMode)(
+			Vector2 point,
+			ICanvasFontFace* fontFace,
+			float fontSize,
+			uint32_t glyphCount,
+			CanvasGlyph* glyphs,
+			boolean isSideways,
+			uint32_t bidiLevel,
+			ICanvasBrush* brush,
+			CanvasTextMeasuringMode textMeasuringMode) override;
+
+		IFACEMETHOD(DrawGlyphRunWithMeasuringModeAndDescription)(
+			Vector2 point,
+			ICanvasFontFace* fontFace,
+			float fontSize,
+			uint32_t glyphCount,
+			CanvasGlyph* glyphs,
+			boolean isSideways,
+			uint32_t bidiLevel,
+			ICanvasBrush* brush,
+			CanvasTextMeasuringMode textMeasuringMode,
+			HSTRING localeName,
+			HSTRING textString,
+			uint32_t clusterMapIndicesCount,
+			int* clusterMapIndices,
+			uint32_t textPosition) override;
+
+
 #if WINVER > _WIN32_WINNT_WINBLUE
 
         //
@@ -1269,6 +1310,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ICanvasSpriteBatch** spriteBatch) override;
 
 #endif
+
         //
         // ICanvasResourceCreator
         //

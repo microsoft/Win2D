@@ -5,6 +5,7 @@
 namespace Microsoft.Graphics.Canvas
 {    
     runtimeclass CanvasDevice;
+    runtimeclass CanvasLock;
 
     [version(VERSION)]
     typedef enum CanvasDpiRounding
@@ -119,6 +120,14 @@ namespace Microsoft.Graphics.Canvas
         // the device is lost.
         //
         HRESULT RaiseDeviceLost();
+
+        //
+        // Locks access to this device to this thread.
+        //
+        // This calls ID2D1MultiThread::Enter.  When the lock object is closed
+        // it calls ID2D1MultiThread::Leave.
+        //
+        HRESULT Lock([out, retval] CanvasLock** lock);
     };
 
     [version(VERSION), activatable(VERSION), activatable(ICanvasDeviceFactory, VERSION), static(ICanvasDeviceStatics, VERSION)]
@@ -126,4 +135,16 @@ namespace Microsoft.Graphics.Canvas
     {
         [default] interface ICanvasDevice;
     }
+
+    [version(VERSION), uuid(7A0E8498-FBA9-4FB0-AA8C-6A48B5EE3E4F), exclusiveto(CanvasLock)]
+    interface ICanvasLock : IInspectable
+    {
+    }
+
+    [version(VERSION)]
+    runtimeclass CanvasLock
+    {
+        [default] interface ICanvasLock;
+        interface Windows.Foundation.IClosable;
+    };
 }

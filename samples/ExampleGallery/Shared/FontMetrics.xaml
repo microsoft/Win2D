@@ -27,18 +27,35 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
 
         <ScrollViewer Grid.Column="0" VerticalScrollMode="Auto" HorizontalScrollMode="Disabled" VerticalScrollBarVisibility="Hidden">
             <StackPanel Orientation="Vertical" MinWidth="100" Margin="5">
-                <TextBlock>Font size:</TextBlock>
+                <TextBlock x:Name="fontSizeLabel">Font size:</TextBlock>
                 <Slider x:Name="fontSizeSlider" Value="{Binding CurrentFontSize, ElementName=control, Mode=TwoWay}"
                             Minimum="100"
                             Maximum="700"
                             ValueChanged="Slider_ValueChanged"/>
-                
-                <TextBlock>Font family:</TextBlock>
-                <ComboBox ItemsSource="{Binding ElementName=control, Path=FontFamilies}"
-                        SelectedItem="{Binding CurrentFontFamilyName, ElementName=control, Mode=TwoWay}"
-                        SelectionChanged="ComboBox_SelectionChanged"
-                        HorizontalAlignment="Stretch"/>
 
+                <TextBlock x:Name="uppercaseFontSizeLabel" Visibility="Collapsed">Uppercase font size:</TextBlock>
+                <Slider x:Name="uppercaseFontSizeSlider" Value="{Binding CurrentUppercaseFontSize, ElementName=control, Mode=TwoWay}"
+                            Minimum="100"
+                            Maximum="700"
+                            ValueChanged="Slider_ValueChanged"
+                            Visibility="Collapsed"/>
+
+                <TextBlock x:Name="lowercaseFontSizeLabel" Visibility="Collapsed">Lowercase font size:</TextBlock>
+                <Slider x:Name="lowercaseFontSizeSlider" Value="{Binding CurrentLowercaseFontSize, ElementName=control, Mode=TwoWay}"
+                            Minimum="100"
+                            Maximum="700"
+                            ValueChanged="Slider_ValueChanged"
+                            Visibility="Collapsed"/>
+
+                <CheckBox Content="Uniform style" Checked="UniformStyle_ValueChanged" Unchecked="UniformStyle_ValueChanged" IsChecked="{Binding ElementName=control, Path=UniformStyle, Mode=TwoWay}"/>
+
+                <TextBlock x:Name="fontLabel">Font:</TextBlock>
+                <local:FontPickerComboBox x:Name="fontPicker" HorizontalAlignment="Stretch" SelectionChanged="fontPicker_SelectionChanged"/>
+
+                <TextBlock x:Name="uppercaseFontLabel" Visibility="Collapsed">Uppercase Font:</TextBlock>
+                <local:FontPickerComboBox x:Name="uppercaseFontPicker" HorizontalAlignment="Stretch" SelectionChanged="fontPicker_SelectionChanged" Visibility="Collapsed"/>
+                <TextBlock x:Name="lowercaseFontLabel" Visibility="Collapsed">Lowercase Font:</TextBlock>
+                <local:FontPickerComboBox x:Name="lowercaseFontPicker" HorizontalAlignment="Stretch" SelectionChanged="fontPicker_SelectionChanged" Visibility="Collapsed"/>
 
                 <CheckBox Content="Bold" Checked="CheckBox_ValueChanged" Unchecked="CheckBox_ValueChanged" IsChecked="{Binding ElementName=control, Path=UseBoldFace, Mode=TwoWay}"/>
                 <CheckBox Content="Italic" Checked="CheckBox_ValueChanged" Unchecked="CheckBox_ValueChanged" IsChecked="{Binding ElementName=control, Path=UseItalicFace, Mode=TwoWay}"/>

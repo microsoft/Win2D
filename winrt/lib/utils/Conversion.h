@@ -550,4 +550,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
 #endif
+
+	inline unsigned short CheckCastAsUShort(int i)
+	{
+		if (static_cast<unsigned>(i) > USHORT_MAX)
+			ThrowHR(E_INVALIDARG);
+
+		return static_cast<unsigned short>(i);
+	}
 }}}}

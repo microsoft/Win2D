@@ -200,6 +200,9 @@ namespace Microsoft
             CX_VALUE_TO_STRING(Microsoft::Graphics::Canvas::CanvasAlphaMode);
             CX_VALUE_TO_STRING(Microsoft::Graphics::Canvas::CanvasImageInterpolation);
             CX_VALUE_TO_STRING(Microsoft::Graphics::Canvas::UI::CanvasCreateResourcesReason);
+            CX_VALUE_TO_STRING(Microsoft::Graphics::Canvas::Text::CanvasGlyphOrientation);
+            CX_VALUE_TO_STRING(Microsoft::Graphics::Canvas::Text::CanvasTextDirection);
+            CX_VALUE_TO_STRING(Microsoft::Graphics::Canvas::Text::CanvasTextMeasuringMode);
 
 #undef CX_VALUE_TO_STRING
 
