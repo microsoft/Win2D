@@ -349,7 +349,12 @@ namespace ExampleGallery
 
                         for (int i = 0; i < 10; ++i)
                         {
-                            times.Add(RunScenario(runner, rt));
+                            // Hold the device lock while we run the scenario - this prevents other threads
+                            // from interacting with the device and interfering with our recorded time.
+                            using (var deviceLock = device.Lock())
+                            {
+                                times.Add(RunScenario(runner, rt));
+                            }
                             if (cancellationToken.IsCancellationRequested)
                                 return new CpuGpuTime();
                         }
