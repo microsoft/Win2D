@@ -4,6 +4,8 @@
 
 #include "pch.h"
 
+#include "CanvasLock.h"
+
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
     DefaultDeviceAdapter::DefaultDeviceAdapter()
@@ -602,6 +604,20 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 }
 
                 ThrowIfFailed(m_deviceLostEventList.InvokeAll(this, nullptr));
+            });
+    }
+
+    IFACEMETHODIMP CanvasDevice::Lock(ICanvasLock** value)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                auto factory = GetD2DFactory();
+
+                auto lock = Make<CanvasLock>(As<ID2D1Multithread>(factory).Get());
+                CheckMakeResult(lock);
+                
+                ThrowIfFailed(lock.CopyTo(value));
             });
     }
 

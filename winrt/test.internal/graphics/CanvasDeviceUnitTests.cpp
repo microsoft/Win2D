@@ -140,6 +140,9 @@ public:
 
         boolean forceSoftwareRenderer;
         Assert::AreEqual(RO_E_CLOSED, canvasDevice->get_ForceSoftwareRenderer(&forceSoftwareRenderer));
+
+        ComPtr<ICanvasLock> lock;
+        Assert::AreEqual(RO_E_CLOSED, canvasDevice->Lock(&lock));
     }
 
     ComPtr<ID2D1Device1> GetD2DDevice(ComPtr<ICanvasDevice> const& canvasDevice)
@@ -891,5 +894,65 @@ public:
 
         Assert::AreEqual(2, mockFactory->GetEnterCount());
         Assert::AreEqual(2, mockFactory->GetLeaveCount());
+    }
+
+    struct LockFixture : public Fixture
+    {
+        ComPtr<CanvasDevice> Device;
+        ComPtr<MockD2DFactory> D2DFactory;
+
+        int InitialEnterCount;
+        int InitialLeaveCount;
+        
+        LockFixture()
+        {
+            Device = CanvasDevice::CreateNew(false);
+
+            ComPtr<ID2D1Factory> d2dFactory;
+            As<ICanvasDeviceInternal>(Device)->GetD2DDevice()->GetFactory(&d2dFactory);
+
+            D2DFactory = static_cast<MockD2DFactory*>(d2dFactory.Get());
+            
+            InitialEnterCount = D2DFactory->GetEnterCount();
+            InitialLeaveCount = D2DFactory->GetLeaveCount();
+        }
+
+        void ValidateEnterLeaveCount(int enter, int leave)
+        {
+            Assert::AreEqual(InitialEnterCount + enter, D2DFactory->GetEnterCount());
+            Assert::AreEqual(InitialLeaveCount + leave, D2DFactory->GetLeaveCount());
+        }
+    };
+
+    TEST_METHOD_EX(CanvasDevice_Lock_Closed_CallsEnterAndLeave)
+    {
+        LockFixture f;
+        
+        ComPtr<ICanvasLock> canvasLock;
+        ThrowIfFailed(f.Device->Lock(&canvasLock));
+
+        f.ValidateEnterLeaveCount(1, 0);
+
+        // any number of Closes is fine
+        ThrowIfFailed(As<IClosable>(canvasLock)->Close());
+        ThrowIfFailed(As<IClosable>(canvasLock)->Close());
+        ThrowIfFailed(As<IClosable>(canvasLock)->Close());
+        ThrowIfFailed(As<IClosable>(canvasLock)->Close());
+
+        f.ValidateEnterLeaveCount(1, 1);
+    }
+
+    TEST_METHOD_EX(CanvasDevice_Lock_Released_CallsEnterAndLeave)
+    {
+        LockFixture f;
+        
+        ComPtr<ICanvasLock> canvasLock;
+        ThrowIfFailed(f.Device->Lock(&canvasLock));
+
+        f.ValidateEnterLeaveCount(1, 0);
+
+        canvasLock.Reset();
+
+        f.ValidateEnterLeaveCount(1, 1);
     }
 };

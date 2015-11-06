@@ -193,6 +193,91 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="F:Microsoft.Graphics.Canvas.CanvasDpiRounding.Ceiling">
       <summary>Fractional amounts are rounded upward, toward positive infinity.</summary>
     </member>
-    
+
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDevice.Lock">
+      <summary>Locks the device for the current thread.</summary>
+      <remarks>
+        <p>
+          If your application does not use multiple threads or Direct2D interop
+          and only uses the default devices created by CanvasControl or
+          CanvasAnimatedControl then you do not need to worry about any of the
+          following!
+        </p>
+        <p>
+          Win2D takes care to ensure that methods on its API can be called from
+          any thread.  However, when sharing resources with non-Win2D APIs
+          (using <a href="Interop.htm">Direct2D interop</a> or the interfaces
+          from <a
+          href="https://msdn.microsoft.com/library/windows/apps/Windows.Graphics.DirectX.Direct3D11">Windows.Graphics.DirectX.Direct3D11</a>
+          for example) it is important to ensure these resources are only ever
+          accessed from a single thread at a time.
+        </p>
+
+        <p>
+          This method allows you to take out a lock on the CanvasDevice so that
+          only the current thread is able to access any Win2D resources created
+          from that device.  The returned object holds the lock until it is
+          disposed.
+        </p>
+
+        <p>
+          For example, <a
+          href="https://msdn.microsoft.com/en-us/library/windows/apps/dn891449.aspx">SoftwareBitmap.CreateCopyFromSurfaceAsync</a>
+          takes a reference to an <a
+          href="https://msdn.microsoft.com/en-us/library/windows/apps/windows.graphics.directx.direct3d11.idirect3dsurface.aspx">IDirect3DSurface</a>.
+          Since SoftwareBitmap is not a part of Win2D it does not know that it
+          needs to use Win2D's lock when accessing the surface.  If the
+          application had another thread running then these could both be
+          accessing the underlying graphics device simultaneously.  This code
+          shows how to do this correctly:
+
+          <code>
+            <![CDATA[
+            SoftwareBitmap softwareBitmap;
+            using (var lock = canvasBitmap.Device.Lock())
+            {
+                softwareBitmap = await SoftwareBitmap.CreateCopyFromSurfaceAsync(canvasBitmap);
+            }
+            ]]>
+          </code>          
+        </p>
+        
+        <p>
+          Win2D is built on top of Direct2D, and inherits the threading model
+          from there.  The <a
+          HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/jj569217(v=vs.85).aspx">MSDN</a>
+          documentation can provide additional insight beyond the quick overview
+          here.
+        </p>
+        
+        <p>
+          In Direct2D terms,
+          <see cref="M:Microsoft.Graphics.Canvas.CanvasDevice.Lock">CanvasDevice.Lock</see>
+          calls
+          <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/hh997714(v=vs.85).aspx">ID2D1MultiThread::Enter</a>
+          and <see cref="M:Microsoft.Graphics.Canvas.CanvasLock.Dispose">CanvasLock.Dispose</see>
+          calls
+          <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/hh997716(v=vs.85).aspx">ID2D1MultiThread::Leave</a>.
+        </p>
+      </remarks>
+    </member>
+
+    <member name="T:Microsoft.Graphics.Canvas.CanvasLock">
+      <summary>Locks the device until disposed.</summary>
+      <remarks>
+        See <see
+        cref="M:Microsoft.Graphics.Canvas.CanvasDevice.Lock">CanvasDevice.Lock</see>
+        for more information.
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasLock.Dispose">
+      <summary>Releases the lock on this device.</summary>
+      <remarks>
+        See <see
+        cref="M:Microsoft.Graphics.Canvas.CanvasDevice.Lock">CanvasDevice.Lock</see>
+        for more information.
+      </remarks>
+    </member>
+
   </members>
 </doc>

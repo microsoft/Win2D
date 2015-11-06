@@ -226,6 +226,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         IFACEMETHOD(RaiseDeviceLost)() override;
 
+        IFACEMETHOD(Lock)(ICanvasLock** value) override;
+
         //
         // ICanvasResourceCreator
         //

@@ -67,6 +67,8 @@ namespace canvas
 
         CALL_COUNTER_WITH_MOCK(RaiseDeviceLostMethod, HRESULT());
 
+        CALL_COUNTER_WITH_MOCK(LockMethod, HRESULT(ICanvasLock**));
+
         CALL_COUNTER_WITH_MOCK(add_DeviceLostMethod, HRESULT(DeviceLostHandlerType*, EventRegistrationToken*));
         CALL_COUNTER_WITH_MOCK(remove_DeviceLostMethod, HRESULT(EventRegistrationToken));
 
@@ -117,6 +119,11 @@ namespace canvas
         IFACEMETHODIMP RaiseDeviceLost()
         {
             return RaiseDeviceLostMethod.WasCalled();
+        }
+
+        IFACEMETHODIMP Lock(ICanvasLock** value)
+        {
+            return LockMethod.WasCalled(value);
         }
 
         //
