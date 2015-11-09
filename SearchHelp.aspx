@@ -13,7 +13,7 @@
 // files created by the help file builder.
 //
 // This code is published under the Microsoft Public License (Ms-PL).  A copy of the license should be
-// distributed with the code.  It can also be found at the project website: http://SHFB.CodePlex.com.  This
+// distributed with the code.  It can also be found at the project website: https://GitHub.com/EWSoftware/SHFB.  This
 // notice, the author's name, and all copyright notices must remain intact in all applications, documentation,
 // and source files.
 //
@@ -221,7 +221,7 @@ private string Search(List<string> keywords, List<string> fileInfo,
 		sb.Append("<ol>");
 
     foreach(Ranking r in rankings)
-        sb.AppendFormat("<li><a href=\"{0}\" \" target=\"_blank\">{1}</a></li>", r.Filename, r.PageTitle);
+        sb.AppendFormat("<li><a href=\"{0}\" target=\"_blank\">{1}</a></li>", r.Filename, r.PageTitle);
 
 		sb.Append("</ol>");
 

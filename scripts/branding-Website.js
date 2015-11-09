@@ -2,14 +2,14 @@
 // System  : Sandcastle Help File Builder
 // File    : branding-Website.js
 // Author  : Eric Woodruff  (Eric@EWoodruff.us)
-// Updated : 10/09/2014
-// Note    : Copyright 2014, Eric Woodruff, All rights reserved
+// Updated : 03/04/2015
+// Note    : Copyright 2014-2015, Eric Woodruff, All rights reserved
 //           Portions Copyright 2014 Sam Harwell, All rights reserved
 //
 // This file contains the methods necessary to implement the lightweight TOC and search functionality.
 //
 // This code is published under the Microsoft Public License (Ms-PL).  A copy of the license should be
-// distributed with the code.  It can also be found at the project website: http://SHFB.CodePlex.com.  This
+// distributed with the code.  It can also be found at the project website: https://GitHub.com/EWSoftware/SHFB.  This
 // notice, the author's name, and all copyright notices must remain intact in all applications, documentation,
 // and source files.
 //
@@ -170,6 +170,7 @@ function BuildChildren(tocDiv, data)
         {
             // The Id attribute is in raw form.  There is no URL (empty container node).  In this case, we'll
             // just ignore it and go nowhere.  It's a rare case that isn't worth trying to get the first child.
+            // Instead, we'll just expand the node (see below).
             childHRef = "#";
             childId = elements[i].getAttribute("Id");
         }
@@ -226,7 +227,9 @@ function BuildChildren(tocDiv, data)
 
             var text = "<div class=\"toclevel" + childTocLevel + "\" data-toclevel=\"" + childLevel + "\">" +
                 expander + "<a data-tochassubtree=\"" + hasChildren + "\" href=\"" + childHRef + "\" title=\"" +
-                childTitle + "\" tocid=\"" + childId + "\">" + childTitle + "</a></div>";
+                childTitle + "\" tocid=\"" + childId + "\"" +
+                (childHRef == "#" ? " onclick=\"javascript: Toggle(this.previousSibling);\"" : "") + ">" +
+                childTitle + "</a></div>";
 
             tocDiv.after(text);
         }
@@ -418,7 +421,7 @@ function PerformSearch()
     });
 
     var letters = [];
-    var wordDictionary = [];
+    var wordDictionary = {};
     var wordNotFound = false;
 
     // Load the keyword files for each keyword starting letter
@@ -536,9 +539,11 @@ function SearchForKeywords(keywords, fileInfo, wordDictionary, sortByTitle)
         matches[word] = occurrences;
         var occurrenceIndices = [];
 
-        // Get a list of the file indices for this match
+        // Get a list of the file indices for this match.  These are 64-bit numbers but JavaScript only does
+        // bit shifts on 32-bit values so we divide by 2^16 to get the same effect as ">> 16" and use floor()
+        // to truncate the result.
         for(var ind in occurrences)
-            occurrenceIndices.push(occurrences[ind] >> 16);
+            occurrenceIndices.push(Math.floor(occurrences[ind] / Math.pow(2, 16)));
 
         if(isFirst)
         {
@@ -582,7 +587,9 @@ function SearchForKeywords(keywords, fileInfo, wordDictionary, sortByTitle)
             {
                 var entry = occurrences[ind];
 
-                if((entry >> 16) == matchingIdx)
+                // These are 64-bit numbers but JavaScript only does bit shifts on 32-bit values so we divide
+                // by 2^16 to get the same effect as ">> 16" and use floor() to truncate the result.
+                if(Math.floor(entry / Math.pow(2, 16)) == matchingIdx)
                     matchCount += (entry & 0xFFFF);
             }
         }

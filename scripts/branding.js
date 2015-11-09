@@ -2,15 +2,15 @@
 // System  : Sandcastle Help File Builder
 // File    : branding.js
 // Author  : Eric Woodruff  (Eric@EWoodruff.us)
-// Updated : 05/15/2014
-// Note    : Copyright 2014, Eric Woodruff, All rights reserved
+// Updated : 10/08/2015
+// Note    : Copyright 2014-2015, Eric Woodruff, All rights reserved
 //           Portions Copyright 2010-2014 Microsoft, All rights reserved
 //
 // This file contains the methods necessary to implement the language filtering, collapsible section, and
 // copy to clipboard options.
 //
 // This code is published under the Microsoft Public License (Ms-PL).  A copy of the license should be
-// distributed with the code.  It can also be found at the project website: http://SHFB.CodePlex.com.  This
+// distributed with the code and can be found at the project website: https://GitHub.com/EWSoftware/SHFB.  This
 // notice, the author's name, and all copyright notices must remain intact in all applications, documentation,
 // and source files.
 //
@@ -148,6 +148,17 @@ function UpdateLST(language)
                 if(keyValue[0] == language)
                 {
                     devLangSpan.innerHTML = keyValue[1];
+
+                    // Help 1 and MS Help Viewer workaround.  Add a space if the following text element starts
+                    // with a space to prevent things running together.
+                    if(devLangSpan.parentNode != null && devLangSpan.parentNode.nextSibling != null)
+                    {
+                        if (devLangSpan.parentNode.nextSibling.nodeValue != null &&
+                          !devLangSpan.parentNode.nextSibling.nodeValue.substring(0, 1).match(/[.,);:!/?]/))
+                        {
+                            devLangSpan.innerHTML = keyValue[1] + " ";
+                        }
+                    }
                     break;
                 }
 
@@ -169,6 +180,17 @@ function UpdateLST(language)
                         if(keyValue[0] == "nu")
                         {
                             devLangSpan.innerHTML = keyValue[1];
+
+                            // Help 1 and MS Help Viewer workaround.  Add a space if the following text element
+                            // starts with a space to prevent things running together.
+                            if(devLangSpan.parentNode != null && devLangSpan.parentNode.nextSibling != null)
+                            {
+                                if(devLangSpan.parentNode.nextSibling.nodeValue != null &&
+                                  !devLangSpan.parentNode.nextSibling.nodeValue.substring(0, 1).match(/[.,);:!/?]/))
+                                {
+                                    devLangSpan.innerHTML = keyValue[1] + " ";
+                                }
+                            }
                             break;
                         }
 
@@ -346,16 +368,19 @@ function SetActiveTab(tabSetId, tabIndex, tabCount)
     {
         var tabTemp = document.getElementById(tabSetId + "_tab" + i);
 
-        if(tabTemp.className == "codeSnippetContainerTabActive")
-            tabTemp.className = "codeSnippetContainerTab";
-        else
-            if(tabTemp.className == "codeSnippetContainerTabPhantom")
-                tabTemp.style.display = "none";
+        if (tabTemp != null)
+        {
+            if(tabTemp.className == "codeSnippetContainerTabActive")
+                tabTemp.className = "codeSnippetContainerTab";
+            else
+                if(tabTemp.className == "codeSnippetContainerTabPhantom")
+                    tabTemp.style.display = "none";
 
-        var codeTemp = document.getElementById(tabSetId + "_code_Div" + i);
+            var codeTemp = document.getElementById(tabSetId + "_code_Div" + i);
 
-        if(codeTemp.style.display != "none")
-            codeTemp.style.display = "none";
+            if(codeTemp.style.display != "none")
+                codeTemp.style.display = "none";
+        }
 
         i++;
     }

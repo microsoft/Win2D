@@ -139,17 +139,8 @@ ul ul {
 ul ul ul {
 	list-style-type: square;
 }
-dl {
-	margin-top: 0px;
-	margin-bottom: 10px;
-}
 dt {
-	font-weight: bold;
-	margin-top: 5px;
-}
-dd {
-	margin-left: 20px;
-	margin-bottom: 5px;
+	font-weight: 600;
 }
 pre {
 	font-family: Consolas, Courier, monospace;
@@ -248,7 +239,7 @@ div.caption {
 	cursor: pointer;
 }
 .collapsibleSection {
-	margin-top: 5px;
+	padding: 0 0 0 20px;
 }
 
 /* Syntax and code snippet styles */
@@ -430,6 +421,10 @@ div.caption {
 	font-weight: normal;
 	-ms-word-wrap: normal;
 }
+.codeSnippetContainerCode .keyword {
+	color: #0000ff;
+	font-weight: normal;
+}
 
 /* Keyword and phrase styles */
 span.code, span.command {
@@ -463,7 +458,7 @@ span.typeparameter {
 span.identifier {
 }
 span.keyword {
-	color: #0000ff;
+	font-weight: bold;
 }
 span.parameter {
 	font-style: italic;
