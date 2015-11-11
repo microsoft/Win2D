@@ -11,64 +11,20 @@ namespace canvas
         ChainInterfaces<ID2D1SolidColorBrush, ID2D1Brush, ID2D1Resource>>
     {
     public:
-        std::function<void(const D2D1_COLOR_F* color)> MockSetColor;
-
-        //
         // ID2D1SolidColorBrush
-        //
-        STDMETHOD_(void, SetColor)(
-            _In_ CONST D2D1_COLOR_F *color
-            )
-        {
-            if (MockSetColor)
-            {
-                MockSetColor(color);
-            }
-            else
-            {
-                Assert::Fail(L"Unexpected call to SetColor");
-            }
-        }
+        MOCK_METHOD1(SetColor, void(D2D1_COLOR_F const*));
+        MOCK_METHOD0_CONST(GetColor, D2D1_COLOR_F());
 
-        STDMETHOD_(D2D1_COLOR_F, GetColor)(
-            ) CONST
-        {
-            Assert::Fail(L"Unexpected call to GetColor");
-            return D2D1::ColorF(0, 0, 0, 0);
-        }
-
-        //
         // ID2D1Brush
-        //
+        MOCK_METHOD1(SetOpacity, void(float));
+        MOCK_METHOD0_CONST(GetOpacity, float());
 
-        STDMETHOD_(void, SetOpacity)(FLOAT opacity)
-        {
-            Assert::Fail(L"Unexpected call to SetOpacity");
-        }
-
-        STDMETHOD_(FLOAT, GetOpacity)() CONST
-        {
-            Assert::Fail(L"Unexpected call to GetOpacity");
-            return 0;
-        }
-
-        STDMETHOD_(void, SetTransform)(_In_ CONST D2D1_MATRIX_3X2_F *transform)
-        {
-            Assert::Fail(L"Unexpected call to SetTransform");
-        }
-
-        STDMETHOD_(void, GetTransform)(_Out_ D2D1_MATRIX_3X2_F *transform) CONST
-        {
-            Assert::Fail(L"Unexpected call to GetTransform");
-        }
+        MOCK_METHOD1(SetTransform, void(D2D1_MATRIX_3X2_F const*));
+        MOCK_METHOD1_CONST(GetTransform, void(D2D1_MATRIX_3X2_F*));
 
         //
         // ID2D1Resource
         //
-
-        IFACEMETHODIMP_(void) GetFactory(ID2D1Factory **factory) const override
-        {
-            Assert::Fail(L"Unexpected call to GetFactory");
-        }
+        MOCK_METHOD1_CONST(GetFactory, void(ID2D1Factory**));
     };
 }

@@ -203,13 +203,13 @@ public:
                     brush.CopyTo(solidColorBrush);
 
                     // Then we should see SetColor called with ArbitraryMarkerColor2.
-                    brush->MockSetColor =
+                    brush->SetColorMethod.AllowAnyCall(
                         [&](const D2D1_COLOR_F* color)
                         {
                             Assert::IsFalse(m_gotColor2);
                             Assert::AreEqual(ToD2DColor(ArbitraryMarkerColor2), *color);
                             m_gotColor2 = true;
-                        };
+                        });
 
                     return S_OK;
                 });

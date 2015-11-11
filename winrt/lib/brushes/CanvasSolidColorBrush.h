@@ -22,13 +22,19 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             ICanvasResourceCreator* resourceCreator,
             ABI::Windows::UI::Color color);
 
+        static ComPtr<CanvasSolidColorBrush> CreateNew(
+            ICanvasResourceCreator* resourceCreator,
+            Numerics::Vector4 colorHdr);
+
         CanvasSolidColorBrush(
             ICanvasDevice* device,
             ID2D1SolidColorBrush* brush);
 
-        IFACEMETHOD(get_Color)(_Out_ ABI::Windows::UI::Color *value) override;
+        IFACEMETHOD(get_Color)(ABI::Windows::UI::Color* value) override;
+        IFACEMETHOD(put_Color)(ABI::Windows::UI::Color value) override;
 
-        IFACEMETHOD(put_Color)(_In_ ABI::Windows::UI::Color value) override;
+        IFACEMETHOD(get_ColorHdr)(Numerics::Vector4* value) override;
+        IFACEMETHOD(put_ColorHdr)(Numerics::Vector4 value) override;
 
         // IClosable
         IFACEMETHOD(Close)() override;
@@ -38,15 +44,29 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     };
 
     class CanvasSolidColorBrushFactory 
-        : public ActivationFactory<ICanvasSolidColorBrushFactory>
+        : public ActivationFactory<ICanvasSolidColorBrushFactory, ICanvasSolidColorBrushStatics>
         , private LifespanTracker<CanvasSolidColorBrushFactory>
     {
         InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_Brushes_CanvasSolidColorBrush, BaseTrust);
 
     public:
+
+        //
+        // ICanvasSolidColorBrushFactory
+        //
+
         IFACEMETHOD(Create)(
             ICanvasResourceCreator* resourceCreator,
             ABI::Windows::UI::Color color,
+            ICanvasSolidColorBrush** canvasSolidColorBrush) override;
+
+        //
+        // ICanvasSolidColorBrushStatics
+        //
+
+        IFACEMETHOD(CreateHdr)(
+            ICanvasResourceCreator* resourceCreator,
+            Numerics::Vector4 colorHdr,
             ICanvasSolidColorBrush** canvasSolidColorBrush) override;
     };
 }}}}}

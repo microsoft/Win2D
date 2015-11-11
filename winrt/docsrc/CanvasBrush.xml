@@ -48,6 +48,9 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="M:Microsoft.Graphics.Canvas.Brushes.CanvasSolidColorBrush.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.UI.Color)">
       <summary>Initializes a new instance of the CanvasSolidColorBrush class.</summary>
     </member>
+    <member name="M:Microsoft.Graphics.Canvas.Brushes.CanvasSolidColorBrush.CreateHdr(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Numerics.Vector4)" Experimental="true">
+      <summary>Initializes a new instance of the CanvasSolidColorBrush class using a specified high-dynamic-range color.</summary>
+    </member>
     <member name="M:Microsoft.Graphics.Canvas.Brushes.CanvasSolidColorBrush.Dispose">
       <summary>Releases all resources used by the CanvasSolidColorBrush.</summary>
     </member>
@@ -60,7 +63,20 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <inheritdoc/>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Brushes.CanvasSolidColorBrush.Color">
-      <summary>Gets or sets the color of the solid brush.</summary>
+      <summary>Gets or sets the color of the brush.</summary>
+      <remarks>
+        If the color was previously set using <see
+        cref="P:Microsoft.Graphics.Canvas.Brushes.CanvasSolidColorBrush.ColorHdr"/>
+        to a value that cannot be represented by a Windows.UI.Color then the
+        value returned by this method is clamped.  For example:
+        <code>
+          brush.ColorHdr = new Vector4(2.0f, 2.0f, 2.0f, 2.0f);
+          var color = brush.Color; // color is 255, 255, 255, 255.
+        </code>
+      </remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Brushes.CanvasSolidColorBrush.ColorHdr" Experimental="true">
+      <summary>Gets or sets the high-dynamic-range color of the brush.</summary>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Brushes.CanvasSolidColorBrush.Device">
       <summary>The device associated with this brush.</summary>

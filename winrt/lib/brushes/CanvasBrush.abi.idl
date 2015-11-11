@@ -43,22 +43,27 @@ namespace Microsoft.Graphics.Canvas.Brushes
             );
     };
 
+    [version(VERSION), uuid(629B7244-5B9E-4EF8-8E09-264714201EE8), exclusiveto(CanvasSolidColorBrush)]
+    interface ICanvasSolidColorBrushStatics : IInspectable
+    {
+        HRESULT CreateHdr(
+            [in] Microsoft.Graphics.Canvas.ICanvasResourceCreator* resourceCreator,
+            [in] NUMERICS.Vector4 colorHdr,
+            [out, retval] CanvasSolidColorBrush** canvasSolidColorBrush);
+    }
+
     [version(VERSION), uuid(8BC30F87-BAD5-4871-88B8-9FE3C63D204A), exclusiveto(CanvasSolidColorBrush)]
     interface ICanvasSolidColorBrush : IInspectable
         requires ICanvasBrush
     {
-        [propget]
-        HRESULT Color(
-            [out, retval] Windows.UI.Color* value
-            );
+        [propget] HRESULT Color([out, retval] Windows.UI.Color* value);
+        [propput] HRESULT Color([in] Windows.UI.Color value);
 
-        [propput]
-        HRESULT Color(
-            [in] Windows.UI.Color value
-            );
+        [propget] HRESULT ColorHdr([out, retval] NUMERICS.Vector4* value);
+        [propput] HRESULT ColorHdr([in] NUMERICS.Vector4 value);
     };
 
-    [version(VERSION), activatable(ICanvasSolidColorBrushFactory, VERSION)]
+    [version(VERSION), activatable(ICanvasSolidColorBrushFactory, VERSION), static(ICanvasSolidColorBrushStatics, VERSION)]
     runtimeclass CanvasSolidColorBrush
     {
         [default] interface ICanvasSolidColorBrush;
