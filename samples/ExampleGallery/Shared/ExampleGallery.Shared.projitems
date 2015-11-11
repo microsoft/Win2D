@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
@@ -62,6 +62,9 @@
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)CustomEffects.xaml.cs">
       <DependentUpon>CustomEffects.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Mandelbrot.xaml.cs">
+      <DependentUpon>Mandelbrot.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Infrastructure\ExampleDefinition.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Infrastructure\ExamplePage.xaml.cs">
@@ -206,6 +209,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Mandelbrot.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="$(MSBuildThisFileDirectory)Infrastructure\ExamplePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -314,6 +321,8 @@
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\KeyboardInputWide.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\LayersNarrow.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\LayersWide.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Thumbnails\MandelbrotNarrow.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Thumbnails\MandelbrotWide.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\ParticleSystemNarrow.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\ParticleSystemWide.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\PrintingNarrow.png" />
@@ -349,6 +358,7 @@
     <Content Include="$(MSBuildThisFileDirectory)Shaders\Sketch.bin" />
     <Content Include="$(MSBuildThisFileDirectory)Shaders\Ripples.bin" />
     <Content Include="$(MSBuildThisFileDirectory)Shaders\Dissolve.bin" />
+    <Content Include="$(MSBuildThisFileDirectory)Shaders\Mandelbrot.bin" />
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)Shaders\Readme.txt" />
@@ -356,5 +366,6 @@
     <None Include="$(MSBuildThisFileDirectory)Shaders\Sketch.hlsl" />
     <None Include="$(MSBuildThisFileDirectory)Shaders\Ripples.hlsl" />
     <None Include="$(MSBuildThisFileDirectory)Shaders\Dissolve.hlsl" />
+    <None Include="$(MSBuildThisFileDirectory)Shaders\Mandelbrot.hlsl" />
   </ItemGroup>
 </Project>

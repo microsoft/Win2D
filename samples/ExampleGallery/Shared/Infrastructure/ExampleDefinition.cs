@@ -45,6 +45,7 @@ namespace ExampleGallery
         {
             // Visual demos.
             new ExampleDefinition("Burning Text", typeof(BurningTextExample)),
+            new ExampleDefinition("Mandelbrot", typeof(Mandelbrot)),
             new ExampleDefinition("Game of Life", typeof(GameOfLife)),
 #if WINDOWS_UWP
             new ExampleDefinition("Camera Effect", typeof(CameraEffectExample)),
