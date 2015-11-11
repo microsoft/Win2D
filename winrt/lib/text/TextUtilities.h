@@ -661,7 +661,22 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 	{
 		// static_asserts in ToDWriteGlyphOrientationAngle validate that this cast is ok
 		return static_cast<CanvasGlyphOrientation>(value);
-	}
+    }
+
+    inline DWRITE_BREAK_CONDITION ToDWriteBreakCondition(CanvasLineBreakCondition value)
+    {
+        CHECK_ENUM_MEMBER(DWRITE_BREAK_CONDITION_NEUTRAL, CanvasLineBreakCondition::Neutral);
+        CHECK_ENUM_MEMBER(DWRITE_BREAK_CONDITION_CAN_BREAK, CanvasLineBreakCondition::CanBreak);
+        CHECK_ENUM_MEMBER(DWRITE_BREAK_CONDITION_MAY_NOT_BREAK, CanvasLineBreakCondition::CannotBreak);
+        CHECK_ENUM_MEMBER(DWRITE_BREAK_CONDITION_MUST_BREAK, CanvasLineBreakCondition::MustBreak);
+        return static_cast<DWRITE_BREAK_CONDITION>(value);
+    }
+
+    inline CanvasLineBreakCondition ToCanvasLineBreakCondition(DWRITE_BREAK_CONDITION value)
+    {
+        // static_asserts in ToDWriteGlyphOrientationAngle validate that this cast is ok
+        return static_cast<CanvasLineBreakCondition>(value);
+    }
 
     //
     // The localizedStrings are allowed to be null. If they are, this returns an empty map view.
@@ -687,6 +702,27 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         }
 
         ThrowIfFailed(map->GetView(values));
+    }
+
+    inline ComPtr<IInspectable> GetCustomDrawingObjectInspectable(ICanvasDevice* device, IUnknown* customDrawingObject)
+    {
+        ComPtr<IInspectable> result;
+
+        if (customDrawingObject)
+        {
+            auto d2dBrush = MaybeAs<ID2D1Brush>(customDrawingObject);
+
+            if (d2dBrush && device)
+            {
+                result = ResourceManager::GetOrCreate<ICanvasBrush>(device, d2dBrush.Get());
+            }
+            else
+            {
+                result = MaybeAs<IInspectable>(customDrawingObject);
+            }
+        }
+
+        return result;
     }
    
 }}}}}

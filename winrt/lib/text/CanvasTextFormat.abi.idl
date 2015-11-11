@@ -217,10 +217,11 @@ namespace Microsoft.Graphics.Canvas.Text
         //
 
         PROPERTY(TrimmingSign, CanvasTrimmingSign);
+
+        PROPERTY(CustomTrimmingSign, ICanvasTextInlineObject*);
         //
-        // TODO #841: A custom trimming sign property will be added in the future that
-        // allows a IDWriteInlineObject equivalent to provide the trimming sign
-        // to SetTrimming. 
+        // The custom trimming sign property allows a IDWriteInlineObject 
+        // equivalent to provide a trimming sign to SetTrimming. 
         // 
         // Example: 
         //    textFormat.TrimmingSign = CanvasTrimmingSign.Ellipsis;

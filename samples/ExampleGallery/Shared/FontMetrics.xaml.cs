@@ -103,9 +103,9 @@ namespace ExampleGallery
                 CanvasFontFace fontFace, 
                 float fontSize, 
                 CanvasGlyph[] glyphs, 
-                bool isSideways, 
-                uint bidiLevel, 
-                object customDrawingObject, 
+                bool isSideways,
+                uint bidiLevel,
+                object brush,
                 CanvasTextMeasuringMode measuringMode, 
                 string locale, 
                 string textString, 
@@ -129,7 +129,7 @@ namespace ExampleGallery
                 float strikethroughThickness, 
                 float strikethroughOffset,
                 CanvasTextDirection textDirection,
-                object customDrawingObject,
+                object brush,
                 CanvasTextMeasuringMode measuringMode,
                 string locale, 
                 CanvasGlyphOrientation glyphOrientation)
@@ -143,9 +143,19 @@ namespace ExampleGallery
                 float underlineOffset, 
                 float runHeight,
                 CanvasTextDirection textDirection,
-                object customDrawingObject,
+                object brush,
                 CanvasTextMeasuringMode measuringMode,
                 string locale,
+                CanvasGlyphOrientation glyphOrientation)
+            {
+            }            
+
+            public void DrawInlineObject(
+                Vector2 baselineOrigin,
+                ICanvasTextInlineObject inlineObject,
+                bool isSideways,
+                bool isRightToLeft,
+                object brush,
                 CanvasGlyphOrientation glyphOrientation)
             {
             }

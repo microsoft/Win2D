@@ -26,6 +26,7 @@ ref class CustomTextRenderer sealed : public ICanvasTextRenderer
 	int m_drawGlyphRunCallCount;
 	int m_drawStrikethroughCallCount;
 	int m_drawUnderlineCallCount;
+    int m_drawInlineObjectCount;
 	bool m_continuousGlyphRun;
 
 public:
@@ -34,6 +35,7 @@ public:
 		, m_drawGlyphRunCallCount(0)
 		, m_drawStrikethroughCallCount(0)
 		, m_drawUnderlineCallCount(0)
+        , m_drawInlineObjectCount(0)
 		, m_continuousGlyphRun(continuousGlyphRun)
 	{}
 
@@ -107,6 +109,17 @@ public:
 
 		m_drawUnderlineCallCount++;
 	}
+
+    virtual void DrawInlineObject(
+        Vector2Type baselineOrigin,
+        ICanvasTextInlineObject^ inlineObject,
+        bool isSideways,
+        bool isRightToLeft,
+        Platform::Object^ brush,
+        CanvasGlyphOrientation glyphOrientation)
+    {
+        m_drawInlineObjectCount++;
+    }
 
 	virtual property float Dpi {float get() { return 0; }}
 

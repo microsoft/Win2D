@@ -9,11 +9,16 @@
 #include "mocks/MockDWriteFontFile.h"
 #include "mocks/MockDWriteFontFamily.h"
 #include "mocks/MockDWriteLocalizedStrings.h"
+#include "mocks/MockDWriteTextRenderer.h"
+#include "stubs/CustomInlineObject.h"
+#include "stubs/CustomTextRenderer.h"
 #include "stubs/LocalizedFontNames.h"
 #include "stubs/StubStorageFileStatics.h"
 #include "stubs/StubFontManagerAdapter.h"
 #include "stubs/StubDWriteTextFormat.h"
 #include "stubs/StubCanvasTextLayoutAdapter.h"
+
+#include <lib/brushes/CanvasSolidColorBrush.h>
 
 namespace canvas
 {
@@ -1469,6 +1474,13 @@ namespace canvas
             }
         }
 
+        TEST_METHOD_EX(CanvasTextFormat_TrimmingSign_NullArg)
+        {
+            auto ctf = Make<CanvasTextFormat>();
+
+            Assert::AreEqual(E_INVALIDARG, ctf->get_TrimmingSign(nullptr));
+        }
+
         TEST_METHOD_EX(CanvasTextFormat_TrimmingSign_DefaultIsNone)
         {
             auto ctf = Make<CanvasTextFormat>();
@@ -1643,6 +1655,216 @@ namespace canvas
             CanvasTextFormat_TrimmingSign_AffectsTextFormatState_TestCase(
                 &CanvasTextFormat::put_WordWrapping,
                 CanvasWordWrapping::EmergencyBreak);
+        }
+
+        TEST_METHOD_EX(CanvasTextFormat_CustomTrimmingSign_NullArg)
+        {
+            auto ctf = Make<CanvasTextFormat>();
+
+            Assert::AreEqual(E_INVALIDARG, ctf->get_CustomTrimmingSign(nullptr));
+        }
+
+        TEST_METHOD_EX(CanvasTextFormat_CustomTrimmingSign_FailsWhenClosed)
+        {
+            auto ctf = Make<CanvasTextFormat>();
+            ThrowIfFailed(ctf->Close());
+
+            ComPtr<ICanvasTextInlineObject> value;
+            Assert::AreEqual(RO_E_CLOSED, ctf->get_CustomTrimmingSign(&value));
+            Assert::AreEqual(RO_E_CLOSED, ctf->put_CustomTrimmingSign(value.Get()));
+        }
+
+        TEST_METHOD_EX(CanvasTextFormat_CustomTrimmingSign_DefaultIsNull)
+        {
+            auto ctf = Make<CanvasTextFormat>();
+
+            ComPtr<ICanvasTextInlineObject> value;
+            Assert::AreEqual(S_OK, ctf->get_CustomTrimmingSign(&value));
+
+            Assert::IsNull(value.Get());
+        }
+
+        TEST_METHOD_EX(CanvasTextFormat_put_CustomTrimmingSign_NullIsOk)
+        {
+            auto ctf = Make<CanvasTextFormat>();
+
+            Assert::AreEqual(S_OK, ctf->put_CustomTrimmingSign(nullptr));
+        }
+
+        struct CustomTrimmingSignFixture
+        {
+            ComPtr<CanvasTextFormat> TextFormat;
+            ComPtr<CustomInlineObject> InlineObject;
+
+            CustomTrimmingSignFixture()
+                : TextFormat(Make<CanvasTextFormat>())
+                , InlineObject(Make<CustomInlineObject>())
+            {
+            }
+
+            ComPtr<ICanvasTextInlineObject> get_TrimmingSign()
+            {
+                ComPtr<ICanvasTextInlineObject> actualTrimmingSign;
+                Assert::AreEqual(S_OK, TextFormat->get_CustomTrimmingSign(&actualTrimmingSign));
+
+                return actualTrimmingSign;
+            }
+
+            void ReRealize()
+            {
+                ThrowIfFailed(TextFormat->put_FontFamily(WinString(L"SomeNewFontFamily")));
+            }
+
+            void VerifyTrimmingPropertySet()
+            {
+                auto actualTrimmingSign = get_TrimmingSign();
+
+                Assert::IsTrue(IsSameInstance(InlineObject.Get(), actualTrimmingSign.Get()));
+            }
+        };
+
+        ComPtr<IDWriteInlineObject> GetTrimmingSignFromDWriteTextFormat(ComPtr<IDWriteTextFormat> const& dtf)
+        {
+            DWRITE_TRIMMING trimming;
+            ComPtr<IDWriteInlineObject> trimmingSign;
+            ThrowIfFailed(dtf->GetTrimming(&trimming, &trimmingSign));
+            return trimmingSign;
+        }
+
+        TEST_METHOD_EX(CanvasTextFormat_CustomTrimmingSign_Property)
+        {
+            CustomTrimmingSignFixture f;
+
+            Assert::AreEqual(S_OK, f.TextFormat->put_CustomTrimmingSign(f.InlineObject.Get()));
+            
+            f.VerifyTrimmingPropertySet();
+        }
+
+        TEST_METHOD_EX(CanvasTextFormat_CustomTrimmingSign_IsAppliedToNativeResource)
+        {
+            CustomTrimmingSignFixture f;
+
+            ThrowIfFailed(f.TextFormat->put_CustomTrimmingSign(f.InlineObject.Get()));
+            auto trimmingSign = GetTrimmingSignFromDWriteTextFormat(GetWrappedResource<IDWriteTextFormat>(f.TextFormat));
+
+            f.InlineObject->DrawMethod.SetExpectedCalls(1);
+            auto dwriteTextRenderer = Make<MockDWriteTextRenderer>();
+            trimmingSign->Draw(nullptr, dwriteTextRenderer.Get(), 0, 0, FALSE, FALSE, nullptr);
+        }
+
+        TEST_METHOD_EX(CanvasTextFormat_CustomTrimmingSign_PropertyUnaffectedByEllipsis)
+        {
+            CustomTrimmingSignFixture f;
+
+            ThrowIfFailed(f.TextFormat->put_CustomTrimmingSign(f.InlineObject.Get()));
+            ThrowIfFailed(f.TextFormat->put_TrimmingSign(CanvasTrimmingSign::Ellipsis));
+
+            f.VerifyTrimmingPropertySet();
+        }
+
+        TEST_METHOD_EX(CanvasTextFormat_CustomTrimmingSign_DWriteResourceUnaffectedByEllipsis)
+        {
+            CustomTrimmingSignFixture f;
+
+            ThrowIfFailed(f.TextFormat->put_CustomTrimmingSign(f.InlineObject.Get()));
+
+            auto dtf = GetWrappedResource<IDWriteTextFormat>(f.TextFormat);
+            auto trimmingSign1 = GetTrimmingSignFromDWriteTextFormat(dtf);
+
+            ThrowIfFailed(f.TextFormat->put_TrimmingSign(CanvasTrimmingSign::Ellipsis));
+
+            auto trimmingSign2 = GetTrimmingSignFromDWriteTextFormat(dtf);
+
+            Assert::IsTrue(IsSameInstance(trimmingSign1.Get(), trimmingSign2.Get()));
+        }
+
+        TEST_METHOD_EX(CanvasTextFormat_CustomTrimmingSign_StillSameAfterReRealization)
+        {
+            CustomTrimmingSignFixture f;
+
+            ThrowIfFailed(f.TextFormat->put_CustomTrimmingSign(f.InlineObject.Get()));
+
+            f.ReRealize();
+
+            f.VerifyTrimmingPropertySet();
+        }
+
+        TEST_METHOD_EX(CanvasTextFormat_CustomTrimmingSign_SetTrimmingSignOnDWriteResource_get_CustomTrimmingSignThrows)
+        {
+            CustomTrimmingSignFixture f;
+
+            auto dtf = GetWrappedResource<IDWriteTextFormat>(f.TextFormat);
+
+            auto dwriteInlineObject = Make<MockDWriteInlineObject>();
+
+            DWRITE_TRIMMING trimming{};
+            ThrowIfFailed(dtf->SetTrimming(&trimming, dwriteInlineObject.Get()));
+
+            ComPtr<ICanvasTextInlineObject> value;
+            Assert::AreEqual(E_NOINTERFACE, f.TextFormat->get_CustomTrimmingSign(&value));
+        }
+
+        struct CustomTrimmingSignFixtureWithDrawingSession : public CustomTrimmingSignFixture
+        {
+            ComPtr<CanvasDevice> Device;
+            ComPtr<CanvasSolidColorBrush> SolidColorBrush;
+            ComPtr<ID2D1SolidColorBrush> D2DSolidColorBrush;
+
+            CustomTrimmingSignFixtureWithDrawingSession()
+            {
+                Device = CanvasDevice::CreateNew(false);
+
+                SolidColorBrush = CanvasSolidColorBrush::CreateNew(Device.Get(), Color{ 1, 2, 3, 4 });
+                D2DSolidColorBrush = GetWrappedResource<ID2D1SolidColorBrush>(SolidColorBrush);
+            }
+
+            void DrawTextWhichGetsTrimmed()
+            {
+                auto textLayout = CanvasTextLayout::CreateNew(Device.Get(), WinString(L"A string that will get trimmed"), TextFormat.Get(), 50.0f, 50.0f);
+                textLayout->put_WordWrapping(CanvasWordWrapping::NoWrap);
+                textLayout->put_TrimmingGranularity(CanvasTextTrimmingGranularity::Word);
+
+                auto dtl = GetWrappedResource<IDWriteTextLayout>(textLayout);
+                ThrowIfFailed(dtl->SetDrawingEffect(D2DSolidColorBrush.Get(), DWRITE_TEXT_RANGE{ 0, 100 }));
+
+                auto renderTarget = CanvasRenderTarget::CreateNew(
+                    Device.Get(),
+                    1.0f,
+                    1.0f,
+                    DEFAULT_DPI,
+                    PIXEL_FORMAT(B8G8R8A8UIntNormalized),
+                    CanvasAlphaMode::Premultiplied);
+
+                ComPtr<ICanvasDrawingSession> drawingSession;
+                ThrowIfFailed(renderTarget->CreateDrawingSession(&drawingSession));
+
+                ThrowIfFailed(drawingSession->DrawTextLayoutAtCoordsWithColor(textLayout.Get(), 0, 0, Color{}));
+
+                ThrowIfFailed(static_cast<CanvasDrawingSession*>(drawingSession.Get())->Close());
+            }
+        };
+
+
+        TEST_METHOD_EX(CanvasTextFormat_CustomTrimmingSign_SetBeforeLayoutExists_NativeInteropSetsBrush_CallbackSeesWrappedBrush)
+        {
+            CustomTrimmingSignFixtureWithDrawingSession f;
+
+            f.InlineObject->DrawMethod.SetExpectedCalls(1,
+                [&](
+                ICanvasTextRenderer*,
+                Vector2,
+                boolean,
+                boolean,
+                IInspectable* brush)
+                {
+                    Assert::IsTrue(IsSameInstance(f.SolidColorBrush.Get(), brush));
+
+                    return S_OK;
+                });
+
+            ThrowIfFailed(f.TextFormat->put_CustomTrimmingSign(f.InlineObject.Get()));
+
+            f.DrawTextWhichGetsTrimmed();
         }
     };
 }

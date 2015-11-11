@@ -41,6 +41,7 @@ STRING(EffectWrongDevice, L"Effect source #%d is associated with a different dev
 STRING(EffectWrongSourceType, L"Effect source #%d is an unsupported type. To draw an effect using Win2D, all its sources must be Win2D ICanvasImage objects.")
 STRING(EndFigureWithoutBeginFigure, L"A call to CanvasPathBuilder.EndFigure occurred without a previous call to CanvasPathBuilder.BeginFigure.")
 STRING(ExpectedPositiveNonzero, L"A positive, non-zero number was expected for this method.")
+STRING(ExternalInlineObject, L"Attempted to retrieve an inline object which was not implemented as an ICanvasTextInlineObject.")
 STRING(GetResourceNoDevice, L"To unwrap this resource type, a device parameter must be passed to GetWrappedResource.")
 STRING(ImageBrushRequiresSourceRectangle, L"When using image types other than CanvasBitmap, CanvasImageBrush.SourceRectangle must not be null.")
 STRING(InvalidAlphaModeForImageSource, L"An invalid alpha mode was specified. Use either CanvasAlphaMode.Ignore or CanvasAlphaMode.Premultiplied.")
@@ -59,6 +60,7 @@ STRING(ResourceManagerWrongDevice, L"Existing resource wrapper is associated wit
 STRING(ResourceManagerWrongDpi, L"Existing resource wrapper has a different DPI.")
 STRING(SetFilledRegionDeterminationAfterBeginFigure, L"This operation is not allowed after the first call to CanvasPathBuilder.BeginFigure.")
 STRING(SetPageCountCalledBeforePreviewing, L"CanvasPrintDocument.SetPageCount or CanvasPrintDocument.SetIntermediatePageCount cannot be called until the Paginate event has been raised.")
+STRING(TextRendererNotValid, L"The application called a method on a text renderer, but this text renderer is no longer valid.")
 STRING(TwoBeginFigures, L"A call to CanvasPathBuilder.BeginFigure occurred, when the figure was already begun.")
 STRING(UnrecognizedImageFileExtension, L"When saving a CanvasBitmap without specifying a CanvasBitmapFileFormat, the file name must include a recognized file extension such as '.jpeg' or '.png'.");
 STRING(WrongArrayLength, L"The array was expected to be of size %d; actual array was of size %d.")

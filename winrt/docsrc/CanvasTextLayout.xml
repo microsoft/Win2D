@@ -561,7 +561,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       </remarks>
     </member>    
 
-    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.DrawToTextRenderer(Microsoft.Graphics.Canvas.Text.ICanvasTextRenderer,System.Numerics.Vector2)">
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.DrawToTextRenderer(Microsoft.Graphics.Canvas.Text.ICanvasTextRenderer,System.Numerics.Vector2)" Experimental="true">
       <summary>Draws this text layout to an application-defined text renderer.</summary>
       <remarks>
         <see cref="T:Microsoft.Graphics.Canvas.Text.ICanvasTextRenderer"/>
@@ -573,6 +573,30 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <remarks>
         <see cref="T:Microsoft.Graphics.Canvas.Text.ICanvasTextRenderer"/>
         is a type that applications implement.
+      </remarks>
+    </member>    
+
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.SetInlineObject(System.Int32,System.Int32,Microsoft.Graphics.Canvas.Text.ICanvasTextInlineObject)" Experimental="true">
+      <summary>Sets the inline object for a specified group of characters.</summary>
+      <remarks>
+        It's valid to use the same inline object for multiple character positions.
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.GetInlineObject(System.Int32)">
+      <summary>Gets the inline object for the character at the position specified.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.CustomTrimmingSign" Experimental="true">
+      <summary>Gets or sets a custom trimming sign.</summary>
+      <remarks>
+        <p>
+          A custom trimming sign is represented by application-implemented interface.
+          The application chooses arbitrary drawing behavior to use as a trimming sign.
+        </p>
+        <p>
+          A custom trimming sign takes precedence over the text layout's TrimmingSign property.
+          For example, if the TrimmingSign property is set to Ellipsis, and a custom trimming
+          sign was set, then the custom trimming sign will get used- not the ellipsis one.
+        </p>
       </remarks>
     </member>
     

@@ -53,12 +53,11 @@ namespace Microsoft.Graphics.Canvas.Text
         PROPERTY(LineSpacingMode, CanvasLineSpacingMode);
 #endif
         PROPERTY(TrimmingSign, CanvasTrimmingSign);
+        PROPERTY(CustomTrimmingSign, ICanvasTextInlineObject*);
 
         // Not exposed:                             Reason
         //---------------                           -------
         // GetDefaultFontCollection                 Relies on exposure of IDWriteFontCollection. Needs design. Out of scope.
-        // SetTrimming's trimmingSign argument      Advanced usage, needs design decisions about IDWriteInlineObject.
-        //                                          The trimmingSign property is used for achieving ellipsis trimming signs (common case).
 
         ///////////////////////////////////////////////////////////////////////
         //
@@ -108,6 +107,10 @@ namespace Microsoft.Graphics.Canvas.Text
         HRESULT GetUnderline(
             [in] INT32 characterIndex,
             [out, retval] boolean* hasUnderline);
+
+        HRESULT GetInlineObject(
+            [in] INT32 characterIndex,
+            [out, retval] ICanvasTextInlineObject** inlineObject);
 
         // SetColor and SetBrush are exposed through IDWriteTextLayout::SetDrawingEffect.
         HRESULT SetColor(
@@ -160,6 +163,11 @@ namespace Microsoft.Graphics.Canvas.Text
             [in] INT32 characterCount,
             [in] boolean hasUnderline);
 
+        HRESULT SetInlineObject(
+            [in] INT32 characterIndex,
+            [in] INT32 characterCount,
+            [in] ICanvasTextInlineObject* inlineObject);
+
         [overload("DrawToTextRenderer")]
 		HRESULT DrawToTextRenderer(
 			[in] ICanvasTextRenderer* textRenderer,
@@ -175,7 +183,6 @@ namespace Microsoft.Graphics.Canvas.Text
         //---------------                           -------
         // GetClusterMetrics                        Advanced usage, out of scope.
         // Get/Set FontCollection                   Relies on IDWriteFontCollection. Separate design issue on how to expose this.
-        // Get/Set InlineObject                     Advanced usage, out of scope.
         // GetLineMetrics                           Advanced usage, out of scope.
         // Get/Set Typography                       Relies on IDWriteTypography. Advanced usage. Separate design issue on how to expose this.
 

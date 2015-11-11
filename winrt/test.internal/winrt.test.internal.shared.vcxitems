@@ -99,6 +99,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDWriteStringList.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDWriteTextFormat.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDWriteTextLayout.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDWriteTextRenderer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockHelpers.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockProperties.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockSurfaceImageSource.h" />
@@ -106,6 +107,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockWICBitmap.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockWICFormatConverter.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockWindow.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)stubs\CustomInlineObject.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\LocalizedFontNames.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubCanvasBrush.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubCanvasDevice.h" />

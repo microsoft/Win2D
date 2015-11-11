@@ -284,6 +284,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         IFACEMETHOD(put_TrimmingSign)(
             CanvasTrimmingSign value) override;
 
+        IFACEMETHOD(get_CustomTrimmingSign)(
+            ICanvasTextInlineObject** value) override;
+
+        IFACEMETHOD(put_CustomTrimmingSign)(
+            ICanvasTextInlineObject* value) override;
+
         //
         // Hit-testing and metrics-related methods
         //
@@ -352,6 +358,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             float x,
             float y));
 
+        IFACEMETHOD(SetInlineObject)(
+            int32_t characterIndex,
+            int32_t characterCount,
+            ICanvasTextInlineObject* inlineObject);
+
+        IFACEMETHOD(GetInlineObject)(
+            int32_t characterIndex,
+            ICanvasTextInlineObject** inlineObject);
+
         //
         // IClosable
         //
@@ -366,6 +381,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         void SetLineSpacingModeInternal(CanvasLineSpacingMode lineSpacingMode);
 
         void SetTrimmingSignInternal(CanvasTrimmingSign trimmingSign);
+
+        void EnsureCustomTrimmingSignDevice(IDWriteTextLayout2* layout, ICanvasDevice* device);
     };
 
 

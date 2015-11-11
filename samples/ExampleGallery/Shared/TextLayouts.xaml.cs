@@ -6,16 +6,23 @@ using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Brushes;
 using Microsoft.Graphics.Canvas.Geometry;
 using Microsoft.Graphics.Canvas.Text;
+using Microsoft.Graphics.Canvas.UI;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using System;
 using System.Collections.Generic;
+using System.Numerics;
 using System.Linq;
+using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Globalization;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
+
+#if !WINDOWS_UWP
+using Vector2 = Microsoft.Graphics.Canvas.Numerics.Vector2;
+#endif
 
 namespace ExampleGallery
 {
@@ -28,10 +35,50 @@ namespace ExampleGallery
         {
             DashStyle = CanvasDashStyle.Dash
         };
+        bool inlineObjectsEnabledChanged;
+
+        //
+        // This is stored as a local static so that SpecialGlyph has access to it.
+        // This app only has one inline object type, but this pattern generalizes
+        // well to apps with multiple inline objects which all need to know about
+        // a drawing session.
+        //
+        static CanvasDrawingSession currentDrawingSession;
+
+        class SpecialGlyph : ICanvasTextInlineObject
+        {
+            CanvasBitmap resourceBitmap;
+            float size;
+
+            public void Draw(ICanvasTextRenderer renderer, Vector2 position, bool isSideways, bool isRightToLeft, object brush)
+            {
+                currentDrawingSession.DrawImage(resourceBitmap, new Rect(position.X, position.Y, size, size));
+            }
+
+            public void SetBitmap(CanvasBitmap bitmap)
+            {
+                resourceBitmap = bitmap;
+            }
+
+            public void SetLayout(CanvasTextLayout layout)
+            {
+                size = layout.DefaultFontSize;
+            }
+
+            public float Baseline { get { return size; } }
+            public Rect DrawBounds { get { return new Rect(0, 0, size, size); } }
+            public Size Size { get { return new Size(size, size); } }
+            public bool SupportsSideways { get { return false; } }
+            public CanvasLineBreakCondition BreakBefore { get { return CanvasLineBreakCondition.CanBreak; } }
+            public CanvasLineBreakCondition BreakAfter { get { return CanvasLineBreakCondition.CanBreak; } }
+        }
+        SpecialGlyph inlineObject = new SpecialGlyph();
 
         string testString;
 
         public bool UseEllipsisTrimming { get; set; }
+
+        public bool ApplyInlineObjects { get; set; }
 
         public bool ShowPerCharacterLayoutBounds { get; set; }
         public bool ShowLayoutBounds { get; set; }
@@ -81,6 +128,8 @@ namespace ExampleGallery
                 textLayout.Dispose();
             textLayout = CreateTextLayout(resourceCreator, canvasWidth, canvasHeight);
 
+            inlineObject.SetLayout(textLayout);
+
             Rect layoutBounds = textLayout.LayoutBounds;
 
             textBrush = new CanvasLinearGradientBrush(resourceCreator, Colors.Red, Colors.Green);
@@ -90,6 +139,8 @@ namespace ExampleGallery
             selectionTextBrush = new CanvasLinearGradientBrush(resourceCreator, Colors.Green, Colors.Red);
             selectionTextBrush.StartPoint = textBrush.StartPoint;
             selectionTextBrush.EndPoint = textBrush.EndPoint;
+
+            inlineObjectsEnabledChanged = true;
 
             needsResourceRecreation = false;
             resourceRealizationSize = targetSize;
@@ -146,12 +197,39 @@ namespace ExampleGallery
             textFormat.TrimmingGranularity = CanvasTextTrimmingGranularity.Word;
             textFormat.TrimmingSign = UseEllipsisTrimming ? CanvasTrimmingSign.Ellipsis : CanvasTrimmingSign.None;
 
-            return new CanvasTextLayout(resourceCreator, testString, textFormat, canvasWidth, canvasHeight);
+            var textLayout = new CanvasTextLayout(resourceCreator, testString, textFormat, canvasWidth, canvasHeight);
+
+            return textLayout;
+        }
+
+        void EnsureInlineObjects()
+        {
+            if (!inlineObjectsEnabledChanged) return;
+
+            //
+            // Changing this option doesn't require re-recreation of the text layout.
+            //
+            if (ApplyInlineObjects)
+            {
+                for (int i = 0; i < testString.Length; ++i)
+                {
+                    if (i % 5 == 0)
+                        textLayout.SetInlineObject(i, 1, inlineObject);
+                }
+            }
+            else
+            {
+                textLayout.SetInlineObject(0, testString.Length, null);
+            }
+
+            inlineObjectsEnabledChanged = false;
         }
 
         private void Canvas_Draw(CanvasControl sender, CanvasDrawEventArgs args)
         {
             EnsureResources(sender, sender.Size);
+
+            currentDrawingSession = args.DrawingSession;
 
             textLayout.SetBrush(0, testString.Length, null);
             if (hasSelection)
@@ -165,6 +243,8 @@ namespace ExampleGallery
                 }
                 textLayout.SetBrush(firstIndex, length, selectionTextBrush);
             }
+
+            EnsureInlineObjects();
 
             args.DrawingSession.DrawTextLayout(textLayout, 0, 0, textBrush);
 
@@ -191,9 +271,17 @@ namespace ExampleGallery
 
         }
 
-        private void Canvas_CreateResources(CanvasControl sender, object args)
+
+        async Task Canvas_CreateResourcesAsync(CanvasControl sender)
+        {
+            inlineObject.SetBitmap(await CanvasBitmap.LoadAsync(sender, "imageTiger.jpg"));
+        }
+
+        private void Canvas_CreateResources(CanvasControl sender, CanvasCreateResourcesEventArgs args)
         {
             needsResourceRecreation = true;
+
+            args.TrackAsyncAction(Canvas_CreateResourcesAsync(sender).AsAsyncAction());
         }
 
         int GetHitIndex(Point mouseOverPt)
@@ -238,6 +326,13 @@ namespace ExampleGallery
         {
             ClearSelection();
             needsResourceRecreation = true;
+            canvas.Invalidate();
+        }
+
+        private void UseInlineObjectsClicked(object sender, RoutedEventArgs e)
+        {
+            inlineObjectsEnabledChanged = true;
+
             canvas.Invalidate();
         }
 

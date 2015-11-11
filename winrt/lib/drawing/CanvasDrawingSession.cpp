@@ -10,6 +10,8 @@
 #include "text/CanvasFontFace.h"
 #include "utils/TemporaryTransform.h"
 #include "text/TextUtilities.h"
+#include "text/InternalDWriteTextRenderer.h"
+#include "text/DrawGlyphRunHelper.h"
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
@@ -3817,61 +3819,30 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 CheckInPointer(fontFace);
                 CheckInPointer(glyphs);
 
-                DWRITE_GLYPH_RUN dwriteGlyphRun{};
-                dwriteGlyphRun.bidiLevel = bidiLevel;
-                dwriteGlyphRun.fontEmSize = fontSize;
-                dwriteGlyphRun.fontFace = As<ICanvasFontFaceInternal>(fontFace)->GetRealizedFontFace().Get();
+                DrawGlyphRunHelper helper(
+                    fontFace, 
+                    fontSize, 
+                    glyphCount, 
+                    glyphs, 
+                    isSideways, 
+                    bidiLevel, 
+                    brush, 
+                    textMeasuringMode, 
+                    localeName, 
+                    text, 
+                    clusterMapIndicesCount, 
+                    clusterMapIndices, 
+                    textPosition,
+                    deviceContext);
 
-                std::vector<float> glyphAdvances;
-                std::vector<unsigned short> glyphIndices;
-                std::vector<DWRITE_GLYPH_OFFSET> glyphOffsets;
-                glyphAdvances.reserve(glyphCount);
-                glyphIndices.reserve(glyphCount);
-                glyphOffsets.reserve(glyphCount);
-                for (uint32_t i = 0; i < glyphCount; ++i)
-                {
-                    glyphAdvances.push_back(glyphs[i].Advance);
-
-                    glyphIndices.push_back(CheckCastAsUShort(glyphs[i].Index));
-
-                    DWRITE_GLYPH_OFFSET offset;
-                    offset.advanceOffset = glyphs[i].AdvanceOffset;
-                    offset.ascenderOffset = glyphs[i].AscenderOffset;
-                    glyphOffsets.push_back(offset);
-                }
-                dwriteGlyphRun.glyphCount = glyphCount;
-                dwriteGlyphRun.glyphAdvances = glyphAdvances.data();
-                dwriteGlyphRun.glyphIndices = glyphIndices.data();
-                dwriteGlyphRun.glyphOffsets = glyphOffsets.data();
-                dwriteGlyphRun.isSideways = isSideways;
-
-                DWRITE_GLYPH_RUN_DESCRIPTION dwriteGlyphRunDescription{};
-
-                uint32_t textStringLength;
-                wchar_t const* textString = WindowsGetStringRawBuffer(text, &textStringLength);
-
-                std::vector<unsigned short> clusterMapElements;
-                clusterMapElements.reserve(textStringLength);
-
-                if (clusterMapIndices)
-                {
-                    for (uint32_t i = 0; i < clusterMapIndicesCount; ++i)
-                    {
-                        clusterMapElements.push_back(CheckCastAsUShort(clusterMapIndices[i]));
-                    }
-                }
-                dwriteGlyphRunDescription.clusterMap = clusterMapElements.data();
-                dwriteGlyphRunDescription.localeName = WindowsGetStringRawBuffer(localeName, nullptr);
-                dwriteGlyphRunDescription.string = textString;
-                dwriteGlyphRunDescription.stringLength = textStringLength;
-                dwriteGlyphRunDescription.textPosition = textPosition;
+                auto d2dBrush = MaybeAs<ID2D1Brush>(helper.ClientDrawingEffect);
 
                 deviceContext->DrawGlyphRun(
                     ToD2DPoint(point),
-                    &dwriteGlyphRun,
-                    &dwriteGlyphRunDescription,
-                    ToD2DBrush(brush).Get(),
-                    ToDWriteMeasuringMode(textMeasuringMode));
+                    &helper.DWriteGlyphRun,
+                    &helper.DWriteGlyphRunDescription,
+                    d2dBrush.Get(),
+                    helper.MeasuringMode);
             });
     }
 

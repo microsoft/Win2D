@@ -36,6 +36,7 @@ import "Windows.UI.Input.Inking.idl";
 #include "brushes\CanvasBrush.abi.idl"
 #include "images\CanvasBitmap.abi.idl"
 #include "drawing\CanvasStrokeStyle.abi.idl"
+#include "text\CanvasTextInlineObject.abi.idl"
 #include "text\CanvasTextFormat.abi.idl"
 #include "text\CanvasTextLayout.abi.idl"
 #include "geometry\CanvasPathBuilder.abi.idl"

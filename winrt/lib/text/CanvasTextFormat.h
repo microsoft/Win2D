@@ -159,6 +159,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         PROPERTY(OpticalAlignment,         CanvasOpticalAlignment);
         PROPERTY(LastLineWrapping,         boolean);
         PROPERTY(TrimmingSign,             CanvasTrimmingSign);
+        PROPERTY(CustomTrimmingSign,       ICanvasTextInlineObject*);
 
 #if WINVER > _WIN32_WINNT_WINBLUE
         PROPERTY(LineSpacingMode,          CanvasLineSpacingMode);
@@ -218,6 +219,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         void RealizeOpticalAlignment(IDWriteTextFormat1* textFormat);
         void RealizeLastLineWrapping(IDWriteTextFormat1* textFormat);
         void RealizeTrimmingSign(IDWriteTextFormat1* textFormat);
+        void RealizeCustomTrimmingSign(IDWriteTextFormat1* textFormat);
 
         ComPtr<IDWriteTextFormat1> CreateRealizedTextFormat(bool skipWordWrapping = false);
 };

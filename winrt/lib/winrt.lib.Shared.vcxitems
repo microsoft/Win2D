@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="Globals">
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
@@ -166,6 +166,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)text\CanvasTextLayout.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)text\CanvasTextRenderingParameters.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)text\CustomFontManager.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)text\DrawGlyphRunHelper.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)text\InternalTextRenderer.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)text\InternalDWriteInlineObject.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)text\TextUtilities.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)text\TrimmingSignInformation.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\Conversion.h" />
@@ -287,6 +290,9 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)text\CanvasTextLayout.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)text\CanvasTextRenderingParameters.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)text\CustomFontManager.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)text\InternalDWriteTextRenderer.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)text\InternalDWriteInlineObject.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)text\DrawGlyphRunHelper.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)utils\Strings.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)directx\Direct3DDevice.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)directx\Direct3DSurface.cpp" />
@@ -374,6 +380,7 @@
     <None Include="$(MSBuildThisFileDirectory)text\CanvasFontFace.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)text\CanvasFontSet.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)text\CanvasTextFormat.abi.idl" />
+    <None Include="$(MSBuildThisFileDirectory)text\CanvasTextInlineObject.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)text\CanvasTextLayout.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)text\CanvasTextRenderingParameters.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)text\CanvasTextRenderer.abi.idl" />

@@ -11,6 +11,9 @@
 #include "stubs/StubCanvasBrush.h"
 #include "stubs/StubCanvasTextLayoutAdapter.h"
 #include "stubs/TestEffect.h"
+#include "stubs/CustomInlineObject.h"
+
+#include "mocks/MockDWriteTextRenderer.h"
 
 namespace canvas
 {
@@ -153,6 +156,7 @@ namespace canvas
             ComPtr<ICanvasBrush> canvasBrush;
             ComPtr<ICanvasDevice> canvasDevice;
             CanvasTrimmingSign ts;
+            ComPtr<ICanvasTextInlineObject> inlineObj;
 
             Assert::AreEqual(RO_E_CLOSED, textLayout->GetFormatChangeIndices(&u, &arr));
 
@@ -269,6 +273,12 @@ namespace canvas
 
             Assert::AreEqual(RO_E_CLOSED, textLayout->DrawToTextRenderer(reinterpret_cast<ICanvasTextRenderer*>(0x12345678), Vector2{ 0, 0 }));
             Assert::AreEqual(RO_E_CLOSED, textLayout->DrawToTextRendererWithCoords(reinterpret_cast<ICanvasTextRenderer*>(0x12345678), 0, 0));
+
+            Assert::AreEqual(RO_E_CLOSED, textLayout->get_CustomTrimmingSign(&inlineObj));
+            Assert::AreEqual(RO_E_CLOSED, textLayout->put_CustomTrimmingSign(inlineObj.Get()));
+
+            Assert::AreEqual(RO_E_CLOSED, textLayout->GetInlineObject(0, &inlineObj));
+            Assert::AreEqual(RO_E_CLOSED, textLayout->SetInlineObject(0, 0, inlineObj.Get()));
         }
 
         TEST_METHOD_EX(CanvasTextLayoutTests_NullArgs)
@@ -328,6 +338,7 @@ namespace canvas
             Assert::AreEqual(E_INVALIDARG, textLayout->GetBrush(0, nullptr));
             Assert::AreEqual(E_INVALIDARG, textLayout->get_Device(nullptr));
             Assert::AreEqual(E_INVALIDARG, textLayout->get_TrimmingSign(nullptr));
+            Assert::AreEqual(E_INVALIDARG, textLayout->get_CustomTrimmingSign(nullptr));
         }
 
         TEST_METHOD_EX(CanvasTextLayoutTests_NegativeIntegralArgs)
@@ -347,6 +358,7 @@ namespace canvas
             Vector2 pt{};
             CanvasTextLayoutRegion* hitTestDescArr{};
             uint32_t u{};
+            ComPtr<ICanvasTextInlineObject> inlineObj;
 
             Assert::AreEqual(E_INVALIDARG, textLayout->put_TrimmingDelimiterCount(-1));
 
@@ -403,6 +415,9 @@ namespace canvas
             Assert::AreEqual(E_INVALIDARG, textLayout->SetBrush(0, -1, stubBrush.Get()));
             Assert::AreEqual(E_INVALIDARG, textLayout->SetColor(-1, 0, Color{}));
             Assert::AreEqual(E_INVALIDARG, textLayout->SetColor(0, -1, Color{}));
+
+            Assert::AreEqual(E_INVALIDARG, textLayout->GetInlineObject(-1, &inlineObj));
+            Assert::AreEqual(E_INVALIDARG, textLayout->SetInlineObject(-1, 0, inlineObj.Get()));
         }
 
         //
@@ -1947,6 +1962,285 @@ namespace canvas
             ThrowIfFailed(textLayout->get_TrimmingSign(&sign));
             Assert::AreEqual(CanvasTrimmingSign::None, sign);
             Assert::IsFalse(HasTrimmingSign(dtl));
+        }
+
+        TEST_METHOD_EX(CanvasTextLayoutTests_put_CustomTrimmingSign_NullIsOk)
+        {
+            TrimmingSignFixture f;
+            auto textLayout = f.CreateSimpleTextLayout();
+
+            Assert::AreEqual(S_OK, textLayout->put_CustomTrimmingSign(nullptr));
+        }
+
+        TEST_METHOD_EX(CanvasTextLayoutTests_CustomTrimmingSign_Property)
+        {
+            TrimmingSignFixture f;
+            auto textLayout = f.CreateSimpleTextLayout();
+
+            auto customTrimmingSign = Make<CustomInlineObject>();
+
+            Assert::AreEqual(S_OK, textLayout->put_CustomTrimmingSign(customTrimmingSign.Get()));
+
+            ComPtr<ICanvasTextInlineObject> actual;
+            Assert::AreEqual(S_OK, textLayout->get_CustomTrimmingSign(&actual));
+
+            Assert::IsTrue(IsSameInstance(customTrimmingSign.Get(), actual.Get()));
+        }
+
+        struct NonStubbedFixture
+        {
+            ComPtr<ICanvasTextFormat> Format;
+            ComPtr<CanvasDevice> Device;
+
+            NonStubbedFixture()
+            {
+                Format = Make<CanvasTextFormat>();
+                Device = CanvasDevice::CreateNew(false);
+            }
+
+            ComPtr<CanvasTextLayout> CreateSimpleTextLayout()
+            {
+                return CanvasTextLayout::CreateNew(Device.Get(), WinString(L"A string"), Format.Get(), 0.0f, 0.0f);
+            }
+
+            void DrawTextLayoutToSomewhere(ComPtr<CanvasTextLayout> const& textLayout)
+            {
+                auto renderTarget = CanvasRenderTarget::CreateNew(
+                    Device.Get(),
+                    1.0f,
+                    1.0f,
+                    DEFAULT_DPI,
+                    PIXEL_FORMAT(B8G8R8A8UIntNormalized),
+                    CanvasAlphaMode::Premultiplied);
+
+                ComPtr<ICanvasDrawingSession> drawingSession;
+                ThrowIfFailed(renderTarget->CreateDrawingSession(&drawingSession));
+
+                ThrowIfFailed(drawingSession->DrawTextLayoutAtCoordsWithColor(textLayout.Get(), 0, 0, Color{}));
+
+                ThrowIfFailed(static_cast<CanvasDrawingSession*>(drawingSession.Get())->Close());
+            }
+        };
+
+        TEST_METHOD_EX(CanvasTextLayoutTests_CustomTrimmingSign_SetsDWriteResource)
+        {
+            NonStubbedFixture f;
+            auto textLayout = f.CreateSimpleTextLayout();
+
+            auto customTrimmingSign = Make<CustomInlineObject>();
+
+            Assert::AreEqual(S_OK, textLayout->put_CustomTrimmingSign(customTrimmingSign.Get()));
+
+            auto dtl = GetWrappedResource<IDWriteTextLayout2>(textLayout);
+
+            DWRITE_TRIMMING trimming;
+            ComPtr<IDWriteInlineObject> dwriteInlineObject;
+            ThrowIfFailed(dtl->GetTrimming(&trimming, &dwriteInlineObject));
+
+            customTrimmingSign->DrawMethod.SetExpectedCalls(1);
+            auto mockTextRenderer = Make<MockDWriteTextRenderer>();
+            dwriteInlineObject->Draw(nullptr, mockTextRenderer.Get(), 0, 0, FALSE, FALSE, nullptr);
+        }
+
+        TEST_METHOD_EX(CanvasTextLayoutTests_CustomTrimmingSign_SetTrimmingSignOnDWriteResource_get_CustomTrimmingSignThrows)
+        {
+            TrimmingSignFixture f;
+            auto textLayout = f.CreateSimpleTextLayout();
+
+            auto dtl = GetWrappedResource<IDWriteTextLayout2>(textLayout);
+
+            auto dwriteInlineObject = Make<MockDWriteInlineObject>();
+
+            DWRITE_TRIMMING trimming{};
+            ThrowIfFailed(dtl->SetTrimming(&trimming, dwriteInlineObject.Get()));
+
+            ComPtr<ICanvasTextInlineObject> value;
+            Assert::AreEqual(E_NOINTERFACE, textLayout->get_CustomTrimmingSign(&value));
+
+            ValidateStoredErrorState(E_NOINTERFACE, Strings::ExternalInlineObject);
+        }
+
+        TEST_METHOD_EX(CanvasTextLayoutTests_SetInlineObject_NullIsOk)
+        {
+            NonStubbedFixture f;
+            auto textLayout = f.CreateSimpleTextLayout();
+
+            Assert::AreEqual(S_OK, textLayout->SetInlineObject(0, 0, nullptr));
+        }
+
+        TEST_METHOD_EX(CanvasTextLayoutTests_GetInlineObject_DefaultIsNull)
+        {
+            NonStubbedFixture f;
+            auto textLayout = f.CreateSimpleTextLayout();
+
+            static const int numCharactersInLayout = 8;
+
+            for (int i = 0; i < numCharactersInLayout; ++i)
+            {
+                ComPtr<ICanvasTextInlineObject> inlineObject;
+                Assert::AreEqual(S_OK, textLayout->GetInlineObject(i, &inlineObject));
+                Assert::IsNull(inlineObject.Get());
+            }
+        }
+
+        TEST_METHOD_EX(CanvasTextLayoutTests_InlineObject_SetAndGetOnRange)
+        {
+            NonStubbedFixture f;
+            auto textLayout = f.CreateSimpleTextLayout();
+
+            static const int startRange = 2;
+            static const int endRange = 6;
+            static const int numCharactersInLayout = 8;
+
+            auto inlineObject = Make<CustomInlineObject>();
+
+            Assert::AreEqual(S_OK, textLayout->SetInlineObject(startRange, endRange - startRange, inlineObject.Get()));
+
+            for (int i = 0; i < numCharactersInLayout; ++i)
+            {
+                ComPtr<ICanvasTextInlineObject> actual;
+                Assert::AreEqual(S_OK, textLayout->GetInlineObject(i, &actual));
+
+                if (i >= startRange && i < endRange)
+                    Assert::IsTrue(IsSameInstance(inlineObject.Get(), actual.Get()));
+                else
+                    Assert::IsNull(actual.Get());
+            }
+        }
+
+        TEST_METHOD_EX(CanvasTextLayoutTests_MultipleInlineObjects)
+        {
+            //
+            // Verifies that inline object of a character doesn't
+            // somehow trample over the inline objects set to other characters.
+            //
+
+            NonStubbedFixture f;
+            auto textLayout = f.CreateSimpleTextLayout();
+
+            ComPtr<CustomInlineObject> inlineObjects[8];
+
+            for (int i = 0; i < 8; ++i)
+            {
+                inlineObjects[i] = Make<CustomInlineObject>();
+                Assert::AreEqual(S_OK, textLayout->SetInlineObject(i, 1, inlineObjects[i].Get()));
+            }
+
+            for (int i = 0; i < 8; ++i)
+            {
+                ComPtr<ICanvasTextInlineObject> actual;
+                Assert::AreEqual(S_OK, textLayout->GetInlineObject(i, &actual));
+
+                Assert::IsTrue(IsSameInstance(inlineObjects[i].Get(), actual.Get()));
+            }
+        }
+
+        TEST_METHOD_EX(CanvasTextLayoutTests_InlineObject_ImplementedViaInterop_GetInlineObject_Throws)
+        {
+            NonStubbedFixture f;
+            auto textLayout = f.CreateSimpleTextLayout();
+
+            auto dtl = GetWrappedResource<IDWriteTextLayout2>(textLayout);
+
+            auto dwriteInlineObject = Make<MockDWriteInlineObject>();
+
+            DWRITE_TEXT_RANGE textRange{0, 1};
+            ThrowIfFailed(dtl->SetInlineObject(dwriteInlineObject.Get(), textRange));
+
+            ComPtr<ICanvasTextInlineObject> value;
+            Assert::AreEqual(E_NOINTERFACE, textLayout->GetInlineObject(0, &value));
+
+            ValidateStoredErrorState(E_NOINTERFACE, Strings::ExternalInlineObject);
+        }
+
+        TEST_METHOD_EX(CanvasTextLayoutTests_InlineObject_DrawGlyphRunReturnsValidRenderer)
+        {
+            NonStubbedFixture f;
+            auto textLayout = f.CreateSimpleTextLayout();
+
+            auto inlineObject = Make<CustomInlineObject>();
+            Assert::AreEqual(S_OK, textLayout->SetInlineObject(0, 1, inlineObject.Get()));
+
+            inlineObject->DrawMethod.SetExpectedCalls(1,
+                [&](
+                ICanvasTextRenderer* textRenderer,
+                Vector2 baselineOrigin,
+                boolean isSideways,
+                boolean isRightToLeft,
+                IInspectable* brush)
+            {
+                // Sanity check the returned renderer.
+                Assert::IsNotNull(textRenderer);
+
+                float dpi;
+                ThrowIfFailed(textRenderer->get_Dpi(&dpi));
+                Assert::AreEqual(DEFAULT_DPI, dpi);
+
+                Matrix3x2 transform;
+                ThrowIfFailed(textRenderer->get_Transform(&transform));
+                Assert::AreEqual(Matrix3x2{ 1, 0, 0, 1, 0, 0 }, transform);
+
+                return S_OK;
+            });
+
+            f.DrawTextLayoutToSomewhere(textLayout);
+        }
+
+        struct BadRendererReferenceFixture : public NonStubbedFixture
+        {
+            ComPtr<ICanvasTextRenderer> BadReference;
+
+            BadRendererReferenceFixture()
+            {
+                auto textLayout = CreateSimpleTextLayout();
+
+                auto inlineObject = Make<CustomInlineObject>();
+                Assert::AreEqual(S_OK, textLayout->SetInlineObject(0, 1, inlineObject.Get()));
+
+                inlineObject->DrawMethod.SetExpectedCalls(1,
+                    [&](
+                    ICanvasTextRenderer* textRenderer,
+                    Vector2 baselineOrigin,
+                    boolean isSideways,
+                    boolean isRightToLeft,
+                    IInspectable* brush)
+                    {
+                        BadReference = textRenderer;
+
+                        return S_OK;
+                    });
+
+                DrawTextLayoutToSomewhere(textLayout);
+
+                Assert::IsNotNull(BadReference.Get());
+            }
+
+        };
+
+        TEST_METHOD_EX(CanvasTextLayoutTests_InlineObject_DrawImplementation_ShouldntHangOnToRenderer)
+        {
+            BadRendererReferenceFixture f;
+
+            Assert::AreEqual(E_INVALIDARG, f.BadReference->DrawGlyphRun(Vector2{}, nullptr, 0, 0, nullptr, false, 0, false, CanvasTextMeasuringMode::Natural, nullptr, nullptr, 0, nullptr, 0, CanvasGlyphOrientation::Upright));
+            ValidateStoredErrorState(E_INVALIDARG, Strings::TextRendererNotValid);
+
+            Assert::AreEqual(E_INVALIDARG, f.BadReference->DrawStrikethrough(Vector2{}, 0, 0, 0, CanvasTextDirection::LeftToRightThenTopToBottom, nullptr, CanvasTextMeasuringMode::Natural, nullptr, CanvasGlyphOrientation::Upright));
+            ValidateStoredErrorState(E_INVALIDARG, Strings::TextRendererNotValid);
+
+            Assert::AreEqual(E_INVALIDARG, f.BadReference->DrawUnderline(Vector2{}, 0, 0, 0, 0, CanvasTextDirection::LeftToRightThenTopToBottom, nullptr, CanvasTextMeasuringMode::Natural, nullptr, CanvasGlyphOrientation::Upright));
+            ValidateStoredErrorState(E_INVALIDARG, Strings::TextRendererNotValid);
+
+            Assert::AreEqual(E_INVALIDARG, f.BadReference->DrawInlineObject(Vector2{}, nullptr, false, false, nullptr, CanvasGlyphOrientation::Upright));
+            ValidateStoredErrorState(E_INVALIDARG, Strings::TextRendererNotValid);
+
+            Assert::AreEqual(E_INVALIDARG, f.BadReference->get_Dpi(nullptr));
+            ValidateStoredErrorState(E_INVALIDARG, Strings::TextRendererNotValid);
+
+            Assert::AreEqual(E_INVALIDARG, f.BadReference->get_PixelSnappingDisabled(nullptr));
+            ValidateStoredErrorState(E_INVALIDARG, Strings::TextRendererNotValid);
+
+            Assert::AreEqual(E_INVALIDARG, f.BadReference->get_Transform(nullptr));
+            ValidateStoredErrorState(E_INVALIDARG, Strings::TextRendererNotValid);
         }
     };
 }

@@ -8,7 +8,10 @@
 #include <lib/text/CanvasTextLayout.h>
 #include <lib/brushes/CanvasSolidColorBrush.h>
 
+#include "stubs/CustomTextRenderer.h"
 #include "stubs/StubCanvasTextLayoutAdapter.h"
+#include "stubs/CustomInlineObject.h"
+
 #include "mocks/MockDWriteFont.h"
 #include "mocks/MockDWriteFontFace.h"
 #include "mocks/MockDWriteFontFaceReference.h"
@@ -28,95 +31,6 @@ namespace canvas
 	typedef IDWriteFontFace FontFaceType;
 #endif
 
-    class CustomTextRenderer : public RuntimeClass<
-        RuntimeClassFlags<WinRtClassicComMix>,
-        ICanvasTextRenderer>
-	{
-	public:
-
-		CALL_COUNTER_WITH_MOCK(DrawGlyphRunMethod, HRESULT(Vector2,ICanvasFontFace*,float,uint32_t,CanvasGlyph*,boolean,uint32_t,IInspectable*,CanvasTextMeasuringMode,HSTRING,HSTRING,uint32_t,int*,unsigned int,CanvasGlyphOrientation));
-		CALL_COUNTER_WITH_MOCK(DrawStrikethroughMethod, HRESULT(Vector2, float, float, float, CanvasTextDirection, IInspectable*, CanvasTextMeasuringMode, HSTRING, CanvasGlyphOrientation));
-		CALL_COUNTER_WITH_MOCK(DrawUnderlineMethod, HRESULT(Vector2, float, float, float, float, CanvasTextDirection, IInspectable*, CanvasTextMeasuringMode, HSTRING, CanvasGlyphOrientation));
-		CALL_COUNTER_WITH_MOCK(get_DpiMethod, HRESULT(float*));
-		CALL_COUNTER_WITH_MOCK(get_PixelSnappingDisabledMethod, HRESULT(boolean*));
-		CALL_COUNTER_WITH_MOCK(get_TransformMethod, HRESULT(Matrix3x2*));
-
-		CustomTextRenderer()
-		{
-			DrawGlyphRunMethod.AllowAnyCall();
-			DrawStrikethroughMethod.AllowAnyCall();
-			DrawUnderlineMethod.AllowAnyCall();
-
-			get_DpiMethod.AllowAnyCall();
-			get_PixelSnappingDisabledMethod.AllowAnyCall();
-			get_TransformMethod.AllowAnyCall();
-		}
-
-        IFACEMETHODIMP DrawGlyphRun(
-			Vector2 baselineOrigin,
-            ICanvasFontFace* fontFace,
-            float fontSize,
-            uint32_t glyphCount,
-            CanvasGlyph* glyphs,
-            boolean isSideways,
-            uint32_t bidiLevel,
-            IInspectable* brush,
-            CanvasTextMeasuringMode measuringMode,
-            HSTRING locale,
-            HSTRING text,
-			uint32_t clusterMapIndicesCount,
-            int* clusterMapIndices,
-            unsigned int characterIndex,
-            CanvasGlyphOrientation glyphOrientation) override
-        {
-			return DrawGlyphRunMethod.WasCalled(baselineOrigin, fontFace, fontSize, glyphCount, glyphs, isSideways, bidiLevel, brush, measuringMode, locale, text, clusterMapIndicesCount, clusterMapIndices, characterIndex, glyphOrientation);
-        }
-
-        IFACEMETHODIMP DrawStrikethrough(
-            Vector2 baselineOrigin,
-            float width,
-            float thickness,
-            float offset,
-			CanvasTextDirection textDirection,
-			IInspectable* brush,
-			CanvasTextMeasuringMode measuringMode,
-			HSTRING text,
-			CanvasGlyphOrientation glyphOrientation)
-        {
-			return DrawStrikethroughMethod.WasCalled(baselineOrigin, width, thickness, offset, textDirection, brush, measuringMode, text, glyphOrientation);
-        }
-
-        IFACEMETHODIMP DrawUnderline(
-            Vector2 baselineOrigin,
-            float width,
-            float thickness,
-            float offset,
-            float runHeight,
-			CanvasTextDirection textDirection,
-			IInspectable* brush,
-			CanvasTextMeasuringMode measuringMode,
-			HSTRING text,
-			CanvasGlyphOrientation glyphOrientation)
-		{
-			return DrawUnderlineMethod.WasCalled(baselineOrigin, width, thickness, offset, runHeight, textDirection, brush, measuringMode, text, glyphOrientation);
-        }
-
-        virtual IFACEMETHODIMP get_Dpi(float* value) 
-        { 
-			return get_DpiMethod.WasCalled(value);
-        }
-
-        virtual IFACEMETHODIMP get_PixelSnappingDisabled(boolean* value) 
-		{
-			return get_PixelSnappingDisabledMethod.WasCalled(value);
-        }
-
-        virtual IFACEMETHODIMP get_Transform(Matrix3x2* value) 
-		{
-			return get_TransformMethod.WasCalled(value);
-        }
-    };
-
     TEST_CLASS(CanvasTextRenderer)
     {
         struct Fixture
@@ -126,6 +40,9 @@ namespace canvas
             ComPtr<StubCanvasDevice> Device;
 
 			ComPtr<CustomTextRenderer> TextRenderer;
+
+            ComPtr<CustomInlineObject> InlineObject;
+            ComPtr<InternalDWriteInlineObject> DWriteInlineObject;
 
 			ComPtr<MockDWriteFont> DWriteFont;
 #if WINVER > _WIN32_WINNT_WINBLUE
@@ -140,14 +57,16 @@ namespace canvas
             Fixture()
                 : Adapter(std::make_shared<StubCanvasTextLayoutAdapter>())
                 , Device(Make<StubCanvasDevice>())
-				, TextRenderer(Make<CustomTextRenderer>())
-				, DWriteFont(Make<MockDWriteFont>())
+                , TextRenderer(Make<CustomTextRenderer>())
+                , DWriteFont(Make<MockDWriteFont>())
 #if WINVER > _WIN32_WINNT_WINBLUE
                 , DWriteFontFaceReference(Make<MockDWriteFontFaceReference>())
 #endif
-				, RealizedDWriteFontFace(Make<MockDWriteFontFace>())
-				, D2DBrush(Make<MockD2DSolidColorBrush>())
+                , RealizedDWriteFontFace(Make<MockDWriteFontFace>())
+                , D2DBrush(Make<MockD2DSolidColorBrush>())
 			{
+                InlineObject = Make<CustomInlineObject>();
+                DWriteInlineObject = Make<InternalDWriteInlineObject>(InlineObject.Get(), Device.Get());
 
 				RealizedDWriteFontFace->GetFilesMethod.AllowAnyCall(
 					[&](uint32_t* numberOfFiles, IDWriteFontFile** fontFiles)
@@ -808,6 +727,61 @@ namespace canvas
 			auto textLayout = f.CreateSimpleTextLayout();
 
 			Assert::AreEqual(sc_someFailureHr, textLayout->DrawToTextRenderer(f.TextRenderer.Get(), Vector2{ 0, 0 }));
-		}
+		}        
+
+        void DrawInlineObjectTestCase(bool useBrush)
+        {
+            Fixture f;
+
+            f.TextRenderer->DrawInlineObjectMethod.SetExpectedCalls(1,
+                [&](
+                Vector2 baselineOrigin,
+                ICanvasTextInlineObject* inlineObject,
+                boolean isSideways,
+                boolean isRightToLeft,
+                IInspectable* brush,
+                CanvasGlyphOrientation glyphOrientation)
+            {
+                Assert::AreEqual(1.2f, baselineOrigin.X);
+                Assert::AreEqual(3.4f, baselineOrigin.Y);
+                Assert::IsTrue(IsSameInstance(f.InlineObject.Get(), inlineObject));
+                Assert::IsTrue(!!isSideways);
+                Assert::IsTrue(!!isRightToLeft);
+
+                if (useBrush)
+                    Assert::IsTrue(IsSameInstance(f.SolidColorBrush.Get(), brush));
+                else
+                    Assert::IsNull(brush);
+
+                Assert::AreEqual(CanvasGlyphOrientation::Upright, glyphOrientation);
+
+                return S_OK;
+            });
+
+			f.Adapter->MockTextLayout->DrawMethod.SetExpectedCalls(1,
+				[&](void* context, IDWriteTextRenderer* renderer, FLOAT originX, FLOAT originY)
+			    {
+				    renderer->DrawInlineObject(
+					    nullptr,
+					    1.2f,
+					    3.4f,
+					    f.DWriteInlineObject.Get(),
+                        true,
+                        true,
+					    useBrush? f.D2DBrush.Get() : nullptr);
+
+				    return S_OK;
+			    });
+
+			auto textLayout = f.CreateSimpleTextLayout();
+
+			Assert::AreEqual(S_OK, textLayout->DrawToTextRenderer(f.TextRenderer.Get(), Vector2{ 0, 0 }));
+        }
+
+        TEST_METHOD_EX(CanvasTextRenderer_DrawInlineObject_CallsThrough)
+        {
+            DrawInlineObjectTestCase(false);
+            DrawInlineObjectTestCase(true);
+        }
     };
 }
