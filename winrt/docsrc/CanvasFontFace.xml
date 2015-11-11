@@ -161,7 +161,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <summary>Gets a map of localized strings that contain the face names for the font (for example, Regular or Bold).</summary>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Text.CanvasFontFace.FamilyNames">
-      <summary>FamilyNames</summary>
+      <summary>Gets a map of localized strings that contain the family name for the font (for example, Arial, Segoe UI, or Comic Sans MS).</summary>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Text.CanvasFontFace.FileFormatType">
       <summary>Gets the file format type of a font face. </summary>

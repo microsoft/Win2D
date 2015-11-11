@@ -134,6 +134,11 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGradientMesh.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.Graphics.Canvas.Geometry.CanvasGradientMeshPatch[])">
       <summary>Initializes a new instance of the CanvasGradientMesh class.</summary>
+      <remarks>
+        <p>
+          The size of the patch array is allowed to be zero.
+        </p>
+      </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGradientMesh.Dispose">
       <summary>Releases all resources used by the CanvasGradientMesh.</summary>
