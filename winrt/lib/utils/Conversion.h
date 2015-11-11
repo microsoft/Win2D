@@ -508,10 +508,16 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     inline RECT ToRECT(ABI::Windows::Foundation::Rect const& rect, float dpi)
     {
-        auto left = SizeDipsToPixels(rect.X, dpi);
-        auto top = SizeDipsToPixels(rect.Y, dpi);
-        auto right = SizeDipsToPixels(rect.X + rect.Width, dpi);
-        auto bottom = SizeDipsToPixels(rect.Y + rect.Height, dpi);
+        auto left = DipsToPixels(rect.X, dpi, CanvasDpiRounding::Round);
+        auto top = DipsToPixels(rect.Y, dpi, CanvasDpiRounding::Round);
+        auto right = DipsToPixels(rect.X + rect.Width, dpi, CanvasDpiRounding::Round);
+        auto bottom = DipsToPixels(rect.Y + rect.Height, dpi, CanvasDpiRounding::Round);
+
+        if (right == left && rect.Width > 0)
+            right++;
+
+        if (bottom == top && rect.Height > 0)
+            bottom++;
 
         return RECT{ left, top, right, bottom };
     }
