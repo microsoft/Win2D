@@ -452,6 +452,55 @@ public:
         ThrowIfFailed(f.ImageSource->CreateDrawingSession(anyColor, anyUpdateRectangle, &drawingSession));
     }
 
+    TEST_METHOD_EX(CanvasVirtualImageSource_CreateDrawingSession_HandlesSurfaceContentsLost)
+    {
+        SimpleFixture f(anySize, anyDpi);
+
+        bool isFirstCreateDrawingSession = true;
+        bool isFirstSetDevice = true;
+
+        f.DrawingSessionFactory->CreateMethod.SetExpectedCalls(2,
+            [&] (ICanvasDevice* owner, ISurfaceImageSourceNativeWithD2D* sisNative, Color const& clearColor, Rect const& updateRectangleInDips, float dpi)
+            {
+                Assert::IsTrue(IsSameInstance(f.Device.Get(), owner));
+                Assert::IsTrue(IsSameInstance(f.Vsis.Get(), sisNative));
+                Assert::AreEqual(anyColor, clearColor);
+                Assert::AreEqual(anyUpdateRectangle, updateRectangleInDips);               
+                Assert::AreEqual(anyDpi, dpi);
+                
+                // First create call fails with surface contents lost - this should trigger a recreate.
+                if (isFirstCreateDrawingSession)
+                {
+                    isFirstCreateDrawingSession = false;
+                    ThrowHR(E_SURFACE_CONTENTS_LOST);
+                }
+
+                // Allow the second call to succeed.
+                return Make<MockCanvasDrawingSession>();
+            });
+
+        // The surface contents lost error should cause the device to be set to
+        // null and then back again, which triggers XAML to reallocate its surfaces.
+        f.Vsis->SetDeviceMethod.SetExpectedCalls(2,
+            [&](IUnknown* device)
+            {
+                if (isFirstSetDevice)
+                {
+                    isFirstSetDevice = false;
+                    Assert::IsNull(device);
+                }
+                else
+                {
+                    Assert::IsTrue(IsSameInstance(f.Device->GetD2DDevice().Get(), device));
+                }
+
+                return S_OK;
+            });
+
+        ComPtr<ICanvasDrawingSession> drawingSession;
+        ThrowIfFailed(f.ImageSource->CreateDrawingSession(anyColor, anyUpdateRectangle, &drawingSession));
+    }
+
     TEST_METHOD_EX(CanvasVirtualImageSource_SuspendDrawingSession_CallsSuspendDrawOnTheVsis)
     {
         SimpleFixture f;

@@ -169,6 +169,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         
     private:
         void SetDevice(ICanvasDevice* device);
+
+        ComPtr<ICanvasDrawingSession> CreateDrawingSession(Color clearColor, Rect updateRectangle);
     };
 
 

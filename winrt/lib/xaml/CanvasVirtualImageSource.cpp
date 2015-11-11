@@ -227,17 +227,45 @@ IFACEMETHODIMP CanvasVirtualImageSource::CreateDrawingSession(
         {
             CheckAndClearOutPointer(drawingSession);
 
-            auto sisNative = As<ISurfaceImageSourceNativeWithD2D>(m_vsis);
-
-            auto ds = m_drawingSessionFactory->Create(
-                m_device.Get(),
-                sisNative.Get(),
-                clearColor,
-                updateRectangle,
-                m_dpi);
+            auto ds = CreateDrawingSession(clearColor, updateRectangle);
 
             ThrowIfFailed(ds.CopyTo(drawingSession));
         });
+}
+
+
+ComPtr<ICanvasDrawingSession> CanvasVirtualImageSource::CreateDrawingSession(Color clearColor, Rect updateRectangle)
+{
+    auto sisNative = As<ISurfaceImageSourceNativeWithD2D>(m_vsis);
+
+    try
+    {
+        // First attempt.
+        return m_drawingSessionFactory->Create(m_device.Get(), sisNative.Get(), clearColor, updateRectangle, m_dpi);
+    }
+    catch (HResultException const& e)
+    {
+        if (e.GetHr() == E_SURFACE_CONTENTS_LOST)
+        {
+            // Handle surface lost by recreating the surface, then retry creating the drawing session.
+            //
+            // The app may be in the middle of looping over a set of rectangles previously reported by
+            // the RegionsInvalidatedEvent, but we don't bother trying to bubble up an exception that
+            // would break out of that loop because we don't want to complicate app code due to this
+            // hopefully rare error case. Keeping the recovery hidden inside Win2D may leave the app
+            // with a stale or partial list of dirty rects, but this is ok - if any additional rects
+            // now also need redrawing, XAML will report those momentarily via a separate event.
+
+            ThrowIfFailed(Recreate(As<ICanvasResourceCreator>(m_device).Get()));
+
+            return m_drawingSessionFactory->Create(m_device.Get(), sisNative.Get(), clearColor, updateRectangle, m_dpi);
+        }
+        else
+        {
+            // Rethrow any other errors.
+            throw;
+        }
+    }
 }
 
 
