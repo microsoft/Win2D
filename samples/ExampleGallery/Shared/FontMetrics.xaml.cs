@@ -43,10 +43,6 @@ namespace ExampleGallery
         {
             this.InitializeComponent();
 
-            fontPicker.SelectDefaultFont();
-            uppercaseFontPicker.SelectDefaultFont();
-            lowercaseFontPicker.SelectDefaultFont();
-
             UniformStyle = true;
         }
 
