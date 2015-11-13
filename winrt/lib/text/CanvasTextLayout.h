@@ -11,8 +11,16 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 {
     using namespace ::Microsoft::WRL;
 
+#if WINVER > _WIN32_WINNT_WINBLUE
+    typedef IDWriteTextLayout3 DWriteTextLayoutType;
+    typedef DWRITE_LINE_METRICS1 DWriteMetricsType;
+#else
+    typedef IDWriteTextLayout2 DWriteTextLayoutType;
+    typedef DWRITE_LINE_METRICS DWriteMetricsType;
+#endif
+
     class CanvasTextLayout : RESOURCE_WRAPPER_RUNTIME_CLASS(
-        IDWriteTextLayout2,
+        DWriteTextLayoutType,
         CanvasTextLayout,
         ICanvasTextLayout,
         CloakedIid<ICanvasResourceWrapperWithDevice>)
@@ -39,7 +47,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         CanvasTextLayout(
             ICanvasDevice* device,
-            IDWriteTextLayout2* layout);
+            DWriteTextLayoutType* layout);
 
         IFACEMETHOD(GetFormatChangeIndices)(
             uint32_t* positionCount,
@@ -366,6 +374,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         IFACEMETHOD(GetInlineObject)(
             int32_t characterIndex,
             ICanvasTextInlineObject** inlineObject);
+
+        IFACEMETHOD(get_LineMetrics)(
+            UINT32* valueCount,
+            CanvasLineMetrics** valueElements);
 
         //
         // IClosable

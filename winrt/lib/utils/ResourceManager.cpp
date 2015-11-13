@@ -30,7 +30,7 @@ std::vector<ResourceManager::TryCreateFunction> ResourceManager::tryCreateFuncti
     TryCreate<IDXGISwapChain1,          CanvasSwapChain,               MakeWrapperWithDeviceAndDpi>,
     TryCreate<ID2D1Geometry,            CanvasGeometry,                MakeWrapperWithDevice>,
     TryCreate<ID2D1GeometryRealization, CanvasCachedGeometry,          MakeWrapperWithDevice>,
-    TryCreate<IDWriteTextLayout2,       CanvasTextLayout,              MakeWrapperWithDevice>,
+    TryCreate<DWriteTextLayoutType,     CanvasTextLayout,              MakeWrapperWithDevice>,
     TryCreate<IDWriteTextFormat1,       CanvasTextFormat,              MakeWrapper>,
     TryCreate<ID2D1StrokeStyle1,        CanvasStrokeStyle,             MakeWrapper>,
     TryCreate<ID2D1SolidColorBrush,     CanvasSolidColorBrush,         MakeWrapperWithDevice>,
