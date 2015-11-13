@@ -191,6 +191,8 @@ namespace ExampleGallery
             // Explicitly remove references to allow the Win2D controls to get garbage collected
             canvas.RemoveFromVisualTree();
             canvas = null;
+
+            DisplayInformation.GetForCurrentView().DpiChanged -= Display_DpiChanged;
         }
     }
 }
