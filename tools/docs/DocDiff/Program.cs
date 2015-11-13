@@ -136,8 +136,8 @@ namespace DocDiff
             if (referenceTarget.StartsWith("O:"))
             {
                 // If the reference target is an overload group, there should be more than one method of that name.
-                string methodName = 'M' + referenceTarget.Substring(1) + '(';
-                int methodCount = docs.Count(doc => doc.ApiName.StartsWith(methodName));
+                string methodName = 'M' + referenceTarget.Substring(1);
+                int methodCount = docs.Count(doc => doc.ApiName == methodName || doc.ApiName.StartsWith(methodName + '('));
                 return methodCount > 1;
             }
             else
