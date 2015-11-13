@@ -15,11 +15,11 @@ static Vector2 testPoints[] = {
     { 0, 6 },{ 9, 1 },{ 9, 1 },{ 200, 1 },
 };
 
-static Color testColors[] = {
-    { 255, 0, 0, 255},
-    { 255, 0, 255, 0 },
-    { 255, 255, 0, 0 },
-    { 127, 127, 127, 127 },
+static Vector4 testColors[] = {
+    {  1,  2,  3,  4 },
+    {  5,  6,  7,  8 },
+    {  9, 10, 11, 12 },
+    { 13, 14, 15, 16 },
 };
 
 static CanvasGradientMeshPatchEdge testEdges[] = {
@@ -34,7 +34,6 @@ inline CanvasGradientMeshPatch GetTestGradientMeshPatch(int index = 0)
     float f = static_cast<float>(index);
 
     assert(index < 256);
-    BYTE b = static_cast<BYTE>(index);
 
     CanvasGradientMeshPatch patch;
     patch.Point00 = { f, 00 };
@@ -57,10 +56,10 @@ inline CanvasGradientMeshPatch GetTestGradientMeshPatch(int index = 0)
     patch.Point32 = { f, 32 };
     patch.Point33 = { f, 33 };
 
-    patch.Color00 = { b, 100, 101, 102 };
-    patch.Color03 = { b, 103, 104, 105 };
-    patch.Color30 = { b, 106, 107, 108 };
-    patch.Color33 = { b, 109, 110, 111 };
+    patch.Color00 = { f, 100, 101, 102 };
+    patch.Color03 = { f, 103, 104, 105 };
+    patch.Color30 = { f, 106, 107, 108 };
+    patch.Color33 = { f, 109, 110, 111 };
 
     patch.Edge00To03 = static_cast<CanvasGradientMeshPatchEdge>((index + 0) % 3);
     patch.Edge03To33 = static_cast<CanvasGradientMeshPatchEdge>((index + 1) % 3);
@@ -148,7 +147,7 @@ public:
         auto canvasGeometryMeshFactory = Make<CanvasGradientMeshFactory>();
 
         Vector2 points[12] {};
-        Color colors[4]{};
+        Vector4 colors[4]{};
         CanvasGradientMeshPatchEdge edges[4]{};
         CanvasGradientMeshPatch gradientMeshPatch {};
 
@@ -177,7 +176,7 @@ public:
         auto canvasGeometryMeshFactory = Make<CanvasGradientMeshFactory>();
 
         Vector2 points[13] {};
-        Color colors[5]{};
+        Vector4 colors[5]{};
         CanvasGradientMeshPatchEdge edges[5]{};
         CanvasGradientMeshPatch gradientMeshPatch{};
 
@@ -209,7 +208,7 @@ public:
         auto canvasGeometryMeshFactory = Make<CanvasGradientMeshFactory>();
 
         Vector2 points[12]{};
-        Color colors[4]{};
+        Vector4 colors[4]{};
         CanvasGradientMeshPatchEdge edges[4]{};
 
         Assert::AreEqual(E_INVALIDARG, canvasGeometryMeshFactory->CreateCoonsPatch(
@@ -260,7 +259,7 @@ public:
         auto canvasGeometryMeshFactory = Make<CanvasGradientMeshFactory>();
 
         Vector2 points[17] {};
-        Color colors[5]{};
+        Vector4 colors[5]{};
         CanvasGradientMeshPatchEdge edges[5]{};
         CanvasGradientMeshPatch gradientMeshPatch{};
 
@@ -292,7 +291,7 @@ public:
         auto canvasGeometryMeshFactory = Make<CanvasGradientMeshFactory>();
 
         Vector2 points[12] {};
-        Color colors[4]{};
+        Vector4 colors[4]{};
         CanvasGradientMeshPatchEdge edges[4]{};
         CanvasGradientMeshPatch gradientMeshPatch{};
 
@@ -315,22 +314,12 @@ public:
             &gradientMeshPatch));
     }
 
-    void VerifyEqualColors(
-        Color const& color,
-        D2D1_COLOR_F const& d2dColor)
-    {
-        Assert::AreEqual(static_cast<float>(color.A)/255.0f, d2dColor.a, 0.01f);
-        Assert::AreEqual(static_cast<float>(color.R)/255.0f, d2dColor.r, 0.01f);
-        Assert::AreEqual(static_cast<float>(color.G)/255.0f, d2dColor.g, 0.01f);
-        Assert::AreEqual(static_cast<float>(color.B)/255.0f, d2dColor.b, 0.01f);
-    }
-
     TEST_METHOD_EX(CanvasGradientMesh_CreateTensorPatch_NullArg)
     {
         auto canvasGeometryMeshFactory = Make<CanvasGradientMeshFactory>();
 
         Vector2 points[16]{};
-        Color colors[4]{};
+        Vector4 colors[4]{};
         CanvasGradientMeshPatchEdge edges[4]{};
 
         Assert::AreEqual(E_INVALIDARG, canvasGeometryMeshFactory->CreateTensorPatch(

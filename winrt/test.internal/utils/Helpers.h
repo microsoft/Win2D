@@ -431,6 +431,19 @@ namespace Microsoft
             }
 
             template<>
+            inline std::wstring ToString<Numerics::Vector4>(Numerics::Vector4 const& value)
+            {
+                wchar_t buf[256];
+                ThrowIfFailed(StringCchPrintf(
+                    buf,
+                    _countof(buf),
+                    L"Vector4{X=%f,Y=%f,Z=%f,W=%f}",
+                    value.X, value.Y, value.Z, value.W));
+
+                return buf;
+            }
+
+            template<>
             inline std::wstring ToString<D2D1_TRIANGLE>(D2D1_TRIANGLE const& value)
             {
                 wchar_t buf[256];
@@ -1366,6 +1379,14 @@ namespace Microsoft
         {
             return a.X == b.X &&
                    a.Y == b.Y;
+        }
+
+        inline bool operator==(Numerics::Vector4 const& a, Numerics::Vector4 const& b)
+        {
+            return a.X == b.X &&
+                   a.Y == b.Y &&
+                   a.Z == b.Z &&
+                   a.W == b.W;
         }
 
         inline bool operator==(D2D1_TRIANGLE const& a, D2D1_TRIANGLE const& b)

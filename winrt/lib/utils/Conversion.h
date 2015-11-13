@@ -193,6 +193,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ToNormalizedFloat(color.A));
     }
 
+    inline D2D1_COLOR_F ToD2DColor(Numerics::Vector4 const& colorHdr)
+    {
+        return *ReinterpretAs<D2D1_COLOR_F const*>(&colorHdr);
+    }
+
     inline Numerics::Vector4 ToVector4(ABI::Windows::UI::Color const& color)
     {
         auto d2dColor = ToD2DColor(color);
