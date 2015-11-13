@@ -35,10 +35,10 @@ CanvasGradientMeshPatch CanvasGradientMeshFactory::PatchFromD2DPatch(D2D1_GRADIE
     out.Point32 = FromD2DPoint(d2dPatch.point32);
     out.Point33 = FromD2DPoint(d2dPatch.point33);
 
-    out.Color00 = *ReinterpretAs<Vector4 const*>(&d2dPatch.color00);
-    out.Color03 = *ReinterpretAs<Vector4 const*>(&d2dPatch.color03);
-    out.Color30 = *ReinterpretAs<Vector4 const*>(&d2dPatch.color30);
-    out.Color33 = *ReinterpretAs<Vector4 const*>(&d2dPatch.color33);
+    out.Color00 = ToWindowsColor(d2dPatch.color00);
+    out.Color03 = ToWindowsColor(d2dPatch.color03);
+    out.Color30 = ToWindowsColor(d2dPatch.color30);
+    out.Color33 = ToWindowsColor(d2dPatch.color33);
 
     out.Edge00To03 = FromD2DPatchEdgeMode(d2dPatch.topEdgeMode);
     out.Edge03To33 = FromD2DPatchEdgeMode(d2dPatch.rightEdgeMode);
@@ -121,7 +121,7 @@ IFACEMETHODIMP CanvasGradientMeshFactory::CreateCoonsPatch(
     uint32_t pointCount,
     Vector2* pointElements,
     uint32_t colorCount,
-    Vector4* colorElements,
+    Color* colorElements,
     uint32_t edgeCount,
     CanvasGradientMeshPatchEdge* edgeElements,
     CanvasGradientMeshPatch* out)
@@ -172,7 +172,7 @@ IFACEMETHODIMP CanvasGradientMeshFactory::CreateTensorPatch(
     uint32_t pointCount,
     Vector2* pointElements,
     uint32_t colorCount,
-    Vector4* colorElements,
+    Color* colorElements,
     uint32_t edgeCount,
     CanvasGradientMeshPatchEdge* edgeElements,
     CanvasGradientMeshPatch* out)

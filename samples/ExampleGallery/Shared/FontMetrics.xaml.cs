@@ -43,6 +43,10 @@ namespace ExampleGallery
         {
             this.InitializeComponent();
 
+            fontPicker.SelectDefaultFont();
+            uppercaseFontPicker.SelectDefaultFont();
+            lowercaseFontPicker.SelectDefaultFont();
+
             UniformStyle = true;
         }
 
@@ -310,6 +314,44 @@ namespace ExampleGallery
 
         }
 
+        float GetGlyphSize(float fontSize, FontMetricsHolder.Metrics metrics)
+        {
+            //
+            // This isn't a universally reliable way of determining baseline height
+            // within a layout, but it's fine for this demo- since we've got no inline objects,
+            // horizontal text and no custom line spacing.
+            //
+            return fontSize * (metrics.Ascent + metrics.LineGap);
+        }
+
+        float GetBaselineInWorldSpace(FontMetricsHolder fmh)
+        {
+            FontMetricsHolder.Metrics metrics;
+            float fontScale;
+
+            if (UniformStyle)
+            {
+                fontScale = CurrentFontSize;
+                metrics = fmh.GlyphRunMetrics[0];
+            }
+            else
+            {
+                // Baseline is decided from whichever is the larger font selection.
+                if (GetGlyphSize(CurrentUppercaseFontSize, fmh.GlyphRunMetrics[0]) > GetGlyphSize(CurrentLowercaseFontSize, fmh.GlyphRunMetrics[fmh.GlyphRunMetrics.Count - 1]))
+                {
+                    fontScale = CurrentUppercaseFontSize;
+                    metrics = fmh.GlyphRunMetrics[0];
+                }
+                else
+                {
+                    fontScale = CurrentLowercaseFontSize;
+                    metrics = fmh.GlyphRunMetrics[fmh.GlyphRunMetrics.Count - 1];
+                }
+            }
+
+            return (float)textLayout.LayoutBounds.Top + (fontScale * (metrics.Ascent + metrics.LineGap));
+        }
+
         private void Canvas_Draw(CanvasControl sender, CanvasDrawEventArgs args)
         {
             args.DrawingSession.Transform = System.Numerics.Matrix3x2.CreateTranslation(0, 5);
@@ -320,7 +362,7 @@ namespace ExampleGallery
 
             args.DrawingSession.DrawTextLayout(textLayout, 0, 0, Colors.White);
 
-            float baselineInWorldSpace = (float)textLayout.LayoutBounds.Top + textLayout.LineMetrics[0].Baseline;
+            float baselineInWorldSpace = GetBaselineInWorldSpace(fmh);
             Labeler.DrawBaseline(args.DrawingSession, sender.Size.ToVector2(), baselineInWorldSpace);
 
             if(UniformStyle)

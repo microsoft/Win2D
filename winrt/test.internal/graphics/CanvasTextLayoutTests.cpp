@@ -157,7 +157,6 @@ namespace canvas
             ComPtr<ICanvasDevice> canvasDevice;
             CanvasTrimmingSign ts;
             ComPtr<ICanvasTextInlineObject> inlineObj;
-            CanvasLineMetrics* lm{};
 
             Assert::AreEqual(RO_E_CLOSED, textLayout->GetFormatChangeIndices(&u, &arr));
 
@@ -280,8 +279,6 @@ namespace canvas
 
             Assert::AreEqual(RO_E_CLOSED, textLayout->GetInlineObject(0, &inlineObj));
             Assert::AreEqual(RO_E_CLOSED, textLayout->SetInlineObject(0, 0, inlineObj.Get()));
-
-            Assert::AreEqual(RO_E_CLOSED, textLayout->get_LineMetrics(&u, &lm));
         }
 
         TEST_METHOD_EX(CanvasTextLayoutTests_NullArgs)
@@ -294,8 +291,6 @@ namespace canvas
             CanvasTextLayoutRegion hitTestDesc{};
             CanvasTextLayoutRegion* hitTestDescArr{};
             boolean b{};
-            CanvasLineMetrics* lm{};
-            uint32_t u{};
             Assert::AreEqual(E_INVALIDARG, textLayout->GetFormatChangeIndices(nullptr, &arr));
             Assert::AreEqual(E_INVALIDARG, textLayout->get_Direction(nullptr));
             Assert::AreEqual(E_INVALIDARG, textLayout->get_DefaultFontFamily(nullptr));
@@ -344,8 +339,6 @@ namespace canvas
             Assert::AreEqual(E_INVALIDARG, textLayout->get_Device(nullptr));
             Assert::AreEqual(E_INVALIDARG, textLayout->get_TrimmingSign(nullptr));
             Assert::AreEqual(E_INVALIDARG, textLayout->get_CustomTrimmingSign(nullptr));
-            Assert::AreEqual(E_INVALIDARG, textLayout->get_LineMetrics(nullptr, &lm));
-            Assert::AreEqual(E_INVALIDARG, textLayout->get_LineMetrics(&u, nullptr));
         }
 
         TEST_METHOD_EX(CanvasTextLayoutTests_NegativeIntegralArgs)
@@ -710,12 +703,12 @@ namespace canvas
                 textLayout->put_LineSpacingMode(testCase.OriginalLineSpacingMode);
                 textLayout->put_LineSpacing(testCase.OriginalLineSpacing);
 
-                auto dtl = GetWrappedResource<DWriteTextLayoutType>(textLayout);
+                auto dtl = GetWrappedResource<IDWriteTextLayout2>(textLayout);
 
                 // Make sure the resulting DWrite text layout has the correct properties.
                 DWRITE_LINE_SPACING_METHOD dwriteMethod;
                 float dwriteSpacing, unusedBaseline;
-                ThrowIfFailed(static_cast<IDWriteTextLayout2*>(dtl.Get())->GetLineSpacing(&dwriteMethod, &dwriteSpacing, &unusedBaseline));
+                ThrowIfFailed(dtl->GetLineSpacing(&dwriteMethod, &dwriteSpacing, &unusedBaseline));
                 Assert::AreEqual(testCase.UnwrappedLineSpacing, dwriteSpacing);
                 Assert::AreEqual(testCase.UnwrappedLineSpacingMethod, dwriteMethod);
 
@@ -2248,98 +2241,6 @@ namespace canvas
 
             Assert::AreEqual(E_INVALIDARG, f.BadReference->get_Transform(nullptr));
             ValidateStoredErrorState(E_INVALIDARG, Strings::TextRendererNotValid);
-        }
-
-        struct GetLineMetricsFixture : public Fixture
-        {
-            DWriteMetricsType GetDWriteLineMetrics(int seed)
-            {
-                uint32_t inc = seed * 7;
-
-                DWriteMetricsType metrics{};
-                metrics.length = 1u + inc;
-                metrics.trailingWhitespaceLength = 2u + inc;
-                metrics.newlineLength = 3u + inc;
-                metrics.height = 4.0f + inc;
-                metrics.baseline = 5.0f + inc;
-                metrics.isTrimmed = seed % 2 == 0 ? TRUE : FALSE;
-
-#if WINVER > _WIN32_WINNT_WINBLUE
-                metrics.leadingBefore = 6.0f + inc;
-                metrics.leadingAfter = 7.0f + inc;
-#endif              
-                return metrics;
-            }
-
-            CanvasLineMetrics GetLineMetrics(int seed)
-            {
-                int inc = seed * 7;
-
-                CanvasLineMetrics metrics{};
-                metrics.CharacterCount = 1 + inc;
-                metrics.TrailingWhitespaceCount = 2 + inc;
-                metrics.TerminalNewlineCount = 3 + inc;
-                metrics.Height = 4.0f + inc;
-                metrics.Baseline = 5.0f + inc;
-                metrics.IsTrimmed = seed % 2 == 0;
-
-#if WINVER > _WIN32_WINNT_WINBLUE
-                metrics.LeadingWhitespaceBefore = 6.0f + inc;
-                metrics.LeadingWhitespaceAfter = 7.0f + inc;
-#endif                    
-                return metrics;
-            }
-
-            void ExpectGetLineMetrics(int callCount, std::function<HRESULT(DWriteMetricsType*, uint32_t, uint32_t*)> mock)
-            {
-#if WINVER > _WIN32_WINNT_WINBLUE
-                auto& lineMetricsMethod = Adapter->MockTextLayout->GetLineMetricsMethod1;
-#else
-                auto& lineMetricsMethod = Adapter->MockTextLayout->GetLineMetricsMethod;
-#endif
-                lineMetricsMethod.SetExpectedCalls(callCount, mock);
-            }
-        };
-
-        TEST_METHOD_EX(CanvasTextLayoutTests_LineMetrics_CallsThrough)
-        {
-            GetLineMetricsFixture f;
-
-            auto textLayout = f.CreateSimpleTextLayout();
-
-            uint32_t callCount = 0;
-
-            f.ExpectGetLineMetrics(2,
-                [&](DWriteMetricsType* lineMetrics, UINT32 maxLineCount, UINT32* actualLineCount)
-                {
-                    callCount++;
-                    if (callCount == 1)
-                    {
-                        Assert::IsNull(lineMetrics);
-                        Assert::AreEqual(0u, maxLineCount);
-                        *actualLineCount = 3;
-                        return E_NOT_SUFFICIENT_BUFFER;
-                    }
-                    else
-                    {
-                        for (uint32_t i = 0; i < 3; ++i)
-                        {
-                            lineMetrics[i] = f.GetDWriteLineMetrics(i);
-                        }
-                        Assert::AreEqual(3u, maxLineCount);
-                        return S_OK;
-                    }
-                });
-
-            uint32_t valueCount;
-            CanvasLineMetrics* valueElements;
-            Assert::AreEqual(S_OK, textLayout->get_LineMetrics(&valueCount, &valueElements));
-            Assert::AreEqual(3u, valueCount);
-            for (uint32_t i = 0; i < 3; ++i)
-            {
-                CanvasLineMetrics expected = f.GetLineMetrics(i);
-                Assert::AreEqual(0, memcmp(&expected, &valueElements[i], sizeof(expected)));
-            }
         }
     };
 }

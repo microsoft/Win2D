@@ -4,6 +4,8 @@
 
 #include "pch.h"
 
+#include <lib/brushes/Gradients.h>
+
 TEST_CLASS(ConversionUnitTests)
 {
     TEST_METHOD_EX(Uint8_NormalizedFloat)

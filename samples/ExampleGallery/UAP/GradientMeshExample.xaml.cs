@@ -35,14 +35,10 @@ namespace ExampleGallery
         
         public class NamedColor
         {
-            public NamedColor(string n, Color c)
-            {
-                Name = n;
-                Color = new Vector4(c.R, c.G, c.B, c.A) / 255.0f;
-            }
+            public NamedColor(string n, Color c) { Name = n;  Color = c; }
 
             public string Name { get; set; }
-            public Vector4 Color { get; set; }
+            public Color Color { get; set; }
 
             public override string ToString()
             {
@@ -100,7 +96,7 @@ namespace ExampleGallery
                 CanvasGradientMeshPatch patch;
 
                 var points = patchPoints[i];
-                var colors = new Vector4[] { Color00.Color, Color03.Color, Color30.Color, Color33.Color };
+                var colors = new Color[] { Color00.Color, Color03.Color, Color30.Color, Color33.Color };
                 var edges = new CanvasGradientMeshPatchEdge[] { Edge00To03, Edge03To33, Edge33To30, Edge30To00 };
 
                 if (patchPoints[i].Length == 12)

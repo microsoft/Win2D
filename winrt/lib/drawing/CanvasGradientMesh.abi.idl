@@ -37,10 +37,10 @@ namespace Microsoft.Graphics.Canvas.Geometry
         NUMERICS.Vector2 Point32;
         NUMERICS.Vector2 Point33;
 
-        NUMERICS.Vector4 Color00;
-        NUMERICS.Vector4 Color03;
-        NUMERICS.Vector4 Color30;
-        NUMERICS.Vector4 Color33;
+        Windows.UI.Color Color00;
+        Windows.UI.Color Color03;
+        Windows.UI.Color Color30;
+        Windows.UI.Color Color33;
 
         // Enumerated clockwise.
         CanvasGradientMeshPatchEdge Edge00To03; // Top
@@ -85,7 +85,7 @@ namespace Microsoft.Graphics.Canvas.Geometry
             [in] UINT32 pointCount,
             [in, size_is(pointCount)] NUMERICS.Vector2* points,
             [in] UINT32 colorCount,
-            [in, size_is(colorCount)] NUMERICS.Vector4* colors,
+            [in, size_is(colorCount)] Windows.UI.Color* colors,
             [in] UINT32 edgeCount,
             [in, size_is(edgeCount)] CanvasGradientMeshPatchEdge* edges,
             [out, retval] CanvasGradientMeshPatch* gradientMeshPatch);
@@ -94,7 +94,7 @@ namespace Microsoft.Graphics.Canvas.Geometry
             [in] UINT32 pointCount,
             [in, size_is(pointCount)] NUMERICS.Vector2* points,
             [in] UINT32 colorCount,
-            [in, size_is(colorCount)] NUMERICS.Vector4* colors,
+            [in, size_is(colorCount)] Windows.UI.Color* colors,
             [in] UINT32 edgeCount,
             [in, size_is(edgeCount)] CanvasGradientMeshPatchEdge* edges,
             [out, retval] CanvasGradientMeshPatch* gradientMeshPatch);

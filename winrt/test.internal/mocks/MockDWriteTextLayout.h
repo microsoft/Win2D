@@ -8,11 +8,7 @@ namespace canvas
 {
     class MockDWriteTextLayout : public RuntimeClass<
         RuntimeClassFlags<ClassicCom>,
-        ChainInterfaces<
-#if WINVER > _WIN32_WINNT_WINBLUE
-        IDWriteTextLayout3,
-#endif
-        IDWriteTextLayout2, IDWriteTextLayout1, IDWriteTextLayout, IDWriteTextFormat>>
+        ChainInterfaces<IDWriteTextLayout2, IDWriteTextLayout1, IDWriteTextLayout, IDWriteTextFormat>>
     {
     public:
         // IDWriteTextFormat
@@ -99,11 +95,6 @@ namespace canvas
         CALL_COUNTER_WITH_MOCK(GetOpticalAlignmentMethod, DWRITE_OPTICAL_ALIGNMENT());
         CALL_COUNTER_WITH_MOCK(SetFontFallbackMethod, HRESULT(IDWriteFontFallback*));
         CALL_COUNTER_WITH_MOCK(GetFontFallbackMethod, HRESULT(IDWriteFontFallback**));
-
-#if WINVER > _WIN32_WINNT_WINBLUE
-        // IDWriteTextLayout3
-        CALL_COUNTER_WITH_MOCK(GetLineMetricsMethod1, HRESULT(DWRITE_LINE_METRICS1*, UINT32, UINT32*));
-#endif
 
 
         ///////////////////////////////////////////////////////////////////////////////////////////
@@ -577,36 +568,5 @@ namespace canvas
         {
             return GetFontFallbackMethod.WasCalled(fontFallback);
         }
-
-#if WINVER > _WIN32_WINNT_WINBLUE
-        //
-        // IDWriteTextLayout3
-        //
-        IFACEMETHODIMP InvalidateLayout() override
-        {
-            Assert::Fail(L"Unexpected call to InvalidateLayout");
-            return E_NOTIMPL;
-        }
-
-        IFACEMETHODIMP SetLineSpacing(DWRITE_LINE_SPACING const*) override
-        {
-            Assert::Fail(L"Unexpected call to SetLineSpacing");
-            return E_NOTIMPL;
-        }
-
-        IFACEMETHODIMP GetLineSpacing(DWRITE_LINE_SPACING*) override
-        {
-            Assert::Fail(L"Unexpected call to GetLineSpacing");
-            return E_NOTIMPL;
-        }
-
-        IFACEMETHODIMP GetLineMetrics(
-            DWRITE_LINE_METRICS1* lineMetrics, 
-            uint32_t maxLineCount, 
-            uint32_t* actualLineCount) override
-        {
-            return GetLineMetricsMethod1.WasCalled(lineMetrics, maxLineCount, actualLineCount);
-        }
-#endif
     };
 }

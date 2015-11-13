@@ -75,7 +75,7 @@ ComPtr<CanvasTextLayout> CanvasTextLayout::CreateNew(
 
     auto textLayout = Make<CanvasTextLayout>(
         device.Get(),
-        As<DWriteTextLayoutType>(dwriteTextLayout).Get());
+        As<IDWriteTextLayout2>(dwriteTextLayout).Get());
     CheckMakeResult(textLayout);
 
     CanvasLineSpacingMode lineSpacingMode{};
@@ -124,7 +124,7 @@ IFACEMETHODIMP CanvasTextLayoutFactory::Create(
 
 CanvasTextLayout::CanvasTextLayout(
     ICanvasDevice* device,
-    DWriteTextLayoutType* layout)
+    IDWriteTextLayout2* layout)
     : ResourceWrapper(layout)
     , m_drawTextOptions(CanvasDrawTextOptions::Default)
     , m_device(device)
@@ -336,18 +336,11 @@ IFACEMETHODIMP CanvasTextLayout::get_LineSpacingBaseline(
         [&]
         {
             CheckInPointer(value);
-            auto& resource = GetResource();
-
-            //
-            // The Win10 IDWriteTextLayout3 interface definition omits a 'using' while
-            // defining method overloads, requiring us to explicitly do a cast 
-            // if we want IDWriteTextLayout2 overloads.
-            //
-            IDWriteTextLayout2* resource2 = static_cast<IDWriteTextLayout2*>(resource.Get());
+            auto& resource = GetResource(); 
 
             DWRITE_LINE_SPACING_METHOD unusedMethod;
             float unusedSpacing;
-            ThrowIfFailed(resource2->GetLineSpacing(&unusedMethod, &unusedSpacing, value));
+            ThrowIfFailed(resource->GetLineSpacing(&unusedMethod, &unusedSpacing, value));
         });
 }
 
@@ -357,21 +350,14 @@ IFACEMETHODIMP CanvasTextLayout::put_LineSpacingBaseline(
     return ExceptionBoundary(
         [&]
         {
-            auto& resource = GetResource();
-
-            //
-            // The Win10 IDWriteTextLayout3 interface definition omits a 'using' while
-            // defining method overloads, requiring us to explicitly do a cast 
-            // if we want IDWriteTextLayout2 overloads.
-            //
-            IDWriteTextLayout2* resource2 = static_cast<IDWriteTextLayout2*>(resource.Get());
+            auto& resource = GetResource(); 
 
             DWRITE_LINE_SPACING_METHOD method;
             float spacing;
             float unusedBaseline;
-            ThrowIfFailed(resource2->GetLineSpacing(&method, &spacing, &unusedBaseline));
+            ThrowIfFailed(resource->GetLineSpacing(&method, &spacing, &unusedBaseline));
 
-            ThrowIfFailed(resource2->SetLineSpacing(method, spacing, value));
+            ThrowIfFailed(resource->SetLineSpacing(method, spacing, value));
 
             m_trimmingSignInformation.RecreateInternalTrimmingSignIfNeeded(resource.Get());
         });
@@ -1526,52 +1512,6 @@ IFACEMETHODIMP CanvasTextLayout::GetInlineObject(
             auto canvasInlineObject = GetCanvasInlineObjectFromDWriteInlineObject(dwriteInlineObject);
 
             ThrowIfFailed(canvasInlineObject.CopyTo(inlineObject));
-        });
-}
-
-
-IFACEMETHODIMP CanvasTextLayout::get_LineMetrics(
-    UINT32* valueCount,
-    CanvasLineMetrics** valueElements)
-{
-    return ExceptionBoundary(
-        [&]
-        {
-            CheckInPointer(valueCount);
-            CheckAndClearOutPointer(valueElements);
-
-            auto& resource = GetResource();
-
-            uint32_t lineCount;
-            HRESULT hr = resource->GetLineMetrics(nullptr, 0, &lineCount);
-
-            assert(hr == E_NOT_SUFFICIENT_BUFFER);
-            if (hr != E_NOT_SUFFICIENT_BUFFER)
-                ThrowHR(E_UNEXPECTED);
-
-            std::vector<DWriteMetricsType> dwriteMetrics(lineCount);
-            ThrowIfFailed(resource->GetLineMetrics(dwriteMetrics.data(), lineCount, &lineCount));
-
-            auto returnedMetrics = TransformToComArray<CanvasLineMetrics>(
-                dwriteMetrics.begin(), 
-                dwriteMetrics.end(),
-                [](DWriteMetricsType const& dwriteMetrics)
-                {                
-                    CanvasLineMetrics metrics{};
-                    metrics.CharacterCount = dwriteMetrics.length;
-                    metrics.TrailingWhitespaceCount = dwriteMetrics.trailingWhitespaceLength;
-                    metrics.TerminalNewlineCount = dwriteMetrics.newlineLength;
-                    metrics.Height = dwriteMetrics.height;
-                    metrics.Baseline = dwriteMetrics.baseline;
-                    metrics.IsTrimmed = !!dwriteMetrics.isTrimmed;
-#if WINVER > _WIN32_WINNT_WINBLUE
-                    metrics.LeadingWhitespaceBefore = dwriteMetrics.leadingBefore;
-                    metrics.LeadingWhitespaceAfter = dwriteMetrics.leadingAfter;
-#endif
-                    return metrics;
-                });
-
-            returnedMetrics.Detach(valueCount, valueElements);
         });
 }
 

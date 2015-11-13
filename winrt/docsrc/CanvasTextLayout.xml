@@ -42,8 +42,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         </p>
         <p>
           When using <a href="Interop.htm">Direct2D interop</a>, this Win2D class
-          corresponds to the Direct2D interface IDWriteTextLayout2 on Windows 8.1, and
-          IDWriteTextLayout3 on Windows 10.
+          corresponds to the Direct2D interface IDWriteTextLayout2.
         </p>
       </remarks>
       <example>
@@ -600,72 +599,6 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         </p>
       </remarks>
     </member>
-    
-
-    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasLineMetrics" Experimental="true">
-      <summary>Describes a line of formatted text within a text layout.</summary>
-    </member>
-    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasLineMetrics.CharacterCount">
-      <summary>The number of characters in the text line.</summary>
-      <remarks>
-         This includes any trailing whitespace and newline characters.
-      </remarks>
-    </member>
-    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasLineMetrics.TrailingWhitespaceCount">
-      <summary>The number of whitespace characters at the end of the text line.</summary>
-      <remarks>
-         Newline sequences are considered whitespace.
-      </remarks>
-    </member>
-    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasLineMetrics.TerminalNewlineCount">
-      <summary>The number of characters in the newline sequence at the end of the text line.</summary>
-      <remarks>
-          If the count is zero, then the text line was either wrapped or it is the end of the text.
-      </remarks>
-    </member>
-    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasLineMetrics.Height">
-      <summary>The height of the text line, in DIPs.</summary>
-    </member>
-    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasLineMetrics.Baseline">
-      <summary>The distance, in DIPs, from the top of the text line to its baseline.</summary>
-    </member>
-    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasLineMetrics.IsTrimmed">
-      <summary>Indicates whether the line was trimmed.</summary>
-    </member>
-    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasLineMetrics.LeadingWhitespaceBefore">
-      <summary>Size of the white space, in DIPs, before the content of the line.</summary>
-      <remarks>
-          <p>
-            This quantity is included in the line height and baseline distances.
-          </p>
-          <p>
-            If the layout's text direction is such that this line is read horizontally,
-            then this value represents the extra space above the content.
-            If the line is read vertically, then this value represents the space
-            to the left of the content.
-          </p>
-      </remarks>=
-    </member>
-    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasLineMetrics.LeadingWhitespaceAfter">
-      <summary>Size of the white space, in DIPs, after the content of the line.</summary>
-      <remarks>
-          <p>
-            This quantity is included in the height of the line.
-          </p>
-          <p>
-            If the layout's text direction is such that this line is read horizontally,
-            then this value represents the extra space below the content.
-            If the line is read vertically, then this value represents the space
-            to the right of the content.
-          </p>
-      </remarks>
-    </member>
-    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.LineMetrics" Experimental="true">
-      <summary>Gets an array of metrics describing each line.</summary>
-      <remarks>
-        As a convention, a text layout for a zero-length piece of text will still contain one line.
-      </remarks>
-    </member>    
     
   </members>
 </doc>

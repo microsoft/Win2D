@@ -10,10 +10,8 @@ using Windows.UI.Xaml.Media;
 
 namespace ExampleGallery
 {
-    public class FontPickerComboBox : UserControl
+    public class FontPickerComboBox : ComboBox
     {
-        ComboBox comboBox = new ComboBox();
-
         public FontPickerComboBox()
         {
             var fontFamilyNames = CanvasTextFormat.GetSystemFontFamilies(ApplicationLanguages.Languages).OrderBy(k => k);
@@ -23,46 +21,37 @@ namespace ExampleGallery
                 ComboBoxItem item = new ComboBoxItem();
                 item.Content = fontFamilyName;
                 item.FontFamily = new FontFamily(fontFamilyName);
-                comboBox.Items.Add(item);
+                this.Items.Add(item);
             }
+            this.SelectedIndex = 0;
 
-            comboBox.SelectionChanged += ComboBox_SelectionChanged;
-
-            Content = comboBox;
-
-            SelectDefaultFont();
+            this.SelectionChanged += FontPickerComboBox_SelectionChanged;
         }
 
-        public event SelectionChangedEventHandler SelectionChanged
-        {
-            add { comboBox.SelectionChanged += value;}
-            remove { comboBox.SelectionChanged -= value; }
-        }
-
-        private void SelectDefaultFont()
+        public void SelectDefaultFont()
         {
             SelectFont("Arial");
         }
 
         public void SelectFont(string name)
         {
-            for (int i = 0; i < comboBox.Items.Count; ++i)
+            for (int i = 0; i < this.Items.Count; ++i)
             {
-                ComboBoxItem item = comboBox.Items[i] as ComboBoxItem;
+                ComboBoxItem item = this.Items[i] as ComboBoxItem;
                 if ((item.Content as string) == name)
                 {
-                    comboBox.SelectedIndex = i;
+                    this.SelectedIndex = i;
                     return;
                 }
             }
         }
 
-        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        void FontPickerComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             // Updates the style of the currently-displayed item to reflect the font.
-            FontFamily = (comboBox.SelectedItem as ComboBoxItem).FontFamily;
+            this.FontFamily = (this.SelectedItem as ComboBoxItem).FontFamily;
         }
 
-        public string CurrentFontFamily { get { return (comboBox.SelectedItem as ComboBoxItem).Content as string; } }
+        public string CurrentFontFamily { get { return (this.SelectedItem as ComboBoxItem).Content as string; } }
     }
 }
