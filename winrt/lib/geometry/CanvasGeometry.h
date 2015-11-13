@@ -55,6 +55,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         static ComPtr<CanvasGeometry> CreateNew(
             ICanvasTextLayout* textLayout);
 
+#if WINVER > _WIN32_WINNT_WINBLUE
+        static ComPtr<CanvasGeometry> CreateNew(
+            ICanvasResourceCreator* resourceCreator,
+            IIterable<InkStroke*>* inkStrokes,
+            Matrix3x2 transform,
+            float flatteningTolerance);
+#endif
+
         CanvasGeometry(
             ICanvasDevice* canvasDevice,
             ID2D1Geometry* d2dGeometry);
@@ -351,6 +359,20 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         IFACEMETHOD(CreateText)(
             ICanvasTextLayout* textLayout,
             ICanvasGeometry** geometry) override;
+
+#if WINVER > _WIN32_WINNT_WINBLUE
+        IFACEMETHOD(CreateInk)(
+            ICanvasResourceCreator* resourceCreator,
+            IIterable<InkStroke*>* inkStrokes,
+            ICanvasGeometry** geometry) override;
+
+        IFACEMETHOD(CreateInkWithTransformAndFlatteningTolerance)(
+            ICanvasResourceCreator* resourceCreator,
+            IIterable<InkStroke*>* inkStrokes,
+            Matrix3x2 transform,
+            float flatteningTolerance,
+            ICanvasGeometry** geometry) override;
+#endif
 
         IFACEMETHOD(ComputeFlatteningTolerance)(
             float dpi,

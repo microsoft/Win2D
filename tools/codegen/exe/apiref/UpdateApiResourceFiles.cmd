@@ -56,6 +56,7 @@ SET FILE_LIST=^
     D2DTypes.xml ^
     D2DTypes2.xml ^
     D2DTypes3.xml ^
+    D2DTypes4.xml ^
     D2DEffectAuthor.xml
 
 CALL :UPDATE_FILES

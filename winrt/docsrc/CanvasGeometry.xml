@@ -447,6 +447,29 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         </p>
       </remarks>
     </member>
-    
+
+    <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.CreateInk(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Collections.Generic.IEnumerable{Windows.UI.Input.Inking.InkStroke})" Experimental="true" Win10="true">
+      <summary>Creates a geometry from a collection of ink strokes.</summary>
+      <remarks>
+        <p>Uses default flattening tolerance and identity transform on the input strokes.</p>
+        <p>
+          Geometry created from ink typically contains many overlapping stroke segments and circles.
+          After using CreateInk, it may be desirable to clean up these self-intersections by calling
+          <see cref="O:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.Outline"/>.
+        </p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.CreateInk(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Collections.Generic.IEnumerable{Windows.UI.Input.Inking.InkStroke},System.Numerics.Matrix3x2,System.Single)" Experimental="true" Win10="true">
+      <summary>Creates a geometry from a collection of ink strokes.</summary>
+      <remarks>
+        <p>Uses the specified flattening tolerance, and the specified transform on the input strokes.</p>
+        <p>
+          Geometry created from ink typically contains many overlapping stroke segments and circles.
+          After using CreateInk, it may be desirable to clean up these self-intersections by calling
+          <see cref="O:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.Outline"/>.
+        </p>
+      </remarks>
+    </member>
+        
   </members>
 </doc>

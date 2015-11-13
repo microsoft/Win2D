@@ -57,6 +57,10 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Link>Deployed Files\Settings.xml</Link>
     </None>
+    <None Include="..\..\codegen\exe\apiref\D2DTypes4.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>Deployed Files\D2DTypes4.xml</Link>
+    </None>
     <None Include="..\..\codegen\exe\apiref\D2DTypes3.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Link>Deployed Files\D2DTypes3.xml</Link>
@@ -120,6 +124,14 @@
     <Content Include="..\..\..\winrt\test.internal\mocks\MockD2DBorderTransform.h">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Link>Deployed Files\MockD2DBorderTransform.h</Link>
+    </Content>
+    <Content Include="..\..\..\winrt\test.internal\mocks\MockD2DInk.h">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>Deployed Files\MockD2DInk.h</Link>
+    </Content>
+    <Content Include="..\..\..\winrt\test.internal\mocks\MockD2DInkStyle.h">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>Deployed Files\MockD2DInkStyle.h</Link>
     </Content>
   </ItemGroup>
   <ItemGroup>

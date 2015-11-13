@@ -67,6 +67,7 @@
     <None Include="apiref\D2DTypes.xml" />
     <None Include="apiref\D2DTypes2.xml" />
     <None Include="apiref\D2DTypes3.xml" />
+    <None Include="apiref\D2DTypes4.xml" />
     <None Include="apiref\effects\2DAffineTransform.xml" />
     <None Include="apiref\effects\3DTransform.xml" />
     <None Include="apiref\effects\Arithmetic.xml" />

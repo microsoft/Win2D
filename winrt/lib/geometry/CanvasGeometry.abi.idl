@@ -374,6 +374,22 @@ namespace Microsoft.Graphics.Canvas.Geometry
             [in] Microsoft.Graphics.Canvas.Text.CanvasTextLayout* textLayout,
             [out, retval] CanvasGeometry** geometry);
 
+#if WINVER > _WIN32_WINNT_WINBLUE
+        [overload("CreateInk")]
+        HRESULT CreateInk(
+            [in] Microsoft.Graphics.Canvas.ICanvasResourceCreator* resourceCreator,
+            [in] Windows.Foundation.Collections.IIterable<Windows.UI.Input.Inking.InkStroke*>* inkStrokes,
+            [out, retval] CanvasGeometry** geometry);
+
+        [overload("CreateInk"), default_overload]
+        HRESULT CreateInkWithTransformAndFlatteningTolerance(
+            [in] Microsoft.Graphics.Canvas.ICanvasResourceCreator* resourceCreator,
+            [in] Windows.Foundation.Collections.IIterable<Windows.UI.Input.Inking.InkStroke*>* inkStrokes,
+            [in] NUMERICS.Matrix3x2 transform,
+            [in] float flatteningTolerance,
+            [out, retval] CanvasGeometry** geometry);
+#endif
+
         [overload("ComputeFlatteningTolerance")]
         HRESULT ComputeFlatteningTolerance(
             [in] float dpi,

@@ -22,26 +22,30 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     public:
         virtual ~ICanvasDrawingSessionAdapter() = default;
 
-#if WINVER > _WIN32_WINNT_WINBLUE
-        virtual ComPtr<IInkD2DRenderer> CreateInkRenderer() = 0;
-        virtual bool IsHighContrastEnabled() = 0;
-#endif
-
         virtual void EndDraw(ID2D1DeviceContext1* d2dDeviceContext) = 0;
     };
 
-    class DrawingSessionBaseAdapter : public ICanvasDrawingSessionAdapter
-    {
 #if WINVER > _WIN32_WINNT_WINBLUE
+    class DefaultInkAdapter;
+
+    class InkAdapter : public Singleton<InkAdapter, DefaultInkAdapter>
+    {
+    public:
+        virtual ~InkAdapter() = default;
+
+        virtual ComPtr<IInkD2DRenderer> CreateInkRenderer() = 0;
+        virtual bool IsHighContrastEnabled() = 0;
+    };
+
+    class DefaultInkAdapter : public InkAdapter
+    {
         ComPtr<IAccessibilitySettings> m_accessibilitySettings;
-#endif
 
     public:
-#if WINVER > _WIN32_WINNT_WINBLUE
         virtual ComPtr<IInkD2DRenderer> CreateInkRenderer() override;
         virtual bool IsHighContrastEnabled() override;
-#endif
     };
+#endif
 
     class CanvasDrawingSession : RESOURCE_WRAPPER_RUNTIME_CLASS(
         ID2D1DeviceContext1,
@@ -1429,7 +1433,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     // A CanvasDrawingSessionAdapter that calls BeginDraw and EndDraw on the
     // device context.
     //
-    class SimpleCanvasDrawingSessionAdapter : public DrawingSessionBaseAdapter,
+    class SimpleCanvasDrawingSessionAdapter : public ICanvasDrawingSessionAdapter,
                                               private LifespanTracker<SimpleCanvasDrawingSessionAdapter>
     {
     public:

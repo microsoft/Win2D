@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="Globals">
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
@@ -69,6 +69,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\StraightenEffect.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\TemperatureAndTintEffect.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\VignetteEffect.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)geometry\InkToGeometryCommandSink.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)pch.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)brushes\CanvasBrush.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)brushes\CanvasImageBrush.h" />

@@ -10,6 +10,7 @@
 
 #if WINVER > _WIN32_WINNT_WINBLUE
 #include <lib/drawing/CanvasGradientMesh.h>
+#include "stubs/StubInkAdapter.h"
 #endif
 
 #include "mocks/MockD2DGeometryRealization.h"
@@ -56,18 +57,6 @@ TEST_CLASS(CanvasDrawingSession_CallsAdapter)
             if (m_endDrawShouldThrow)
                 ThrowHR(DXGI_ERROR_DEVICE_REMOVED);
         }
-
-#if WINVER > _WIN32_WINNT_WINBLUE
-        virtual ComPtr<IInkD2DRenderer> CreateInkRenderer() override
-        {
-            return nullptr;
-        }
-
-        virtual bool IsHighContrastEnabled() override
-        {
-            return false;
-        }
-#endif
     };
 
     struct Fixture
@@ -4103,69 +4092,21 @@ public:
         Assert::AreEqual(E_INVALIDARG, CanvasDrawingSessionFixture().DS->DrawInk(nullptr));
     }
 
-    class StubInkRenderer : public RuntimeClass<RuntimeClassFlags<ClassicCom>, IInkD2DRenderer>
-    {
-    public:
-        CALL_COUNTER_WITH_MOCK(DrawMethod, HRESULT(IUnknown*, IUnknown*, BOOL));
-
-        IFACEMETHODIMP Draw(
-            IUnknown* deviceContext,
-            IUnknown* strokeCollection,
-            BOOL highContrast)
-        {
-            return DrawMethod.WasCalled(deviceContext, strokeCollection, highContrast);
-        }
-    };
-
-    class InkAdapter : public StubCanvasDrawingSessionAdapter
-    {
-        bool m_highContrast;
-        ComPtr<StubInkRenderer> m_inkRenderer;
-    public:
-
-        InkAdapter() : m_highContrast(false), m_inkRenderer(Make<StubInkRenderer>()) {}
-
-        ComPtr<IInkD2DRenderer> CreateInkRenderer() override
-        {
-            return m_inkRenderer;
-        }
-
-        virtual bool IsHighContrastEnabled() override
-        {
-            return m_highContrast;
-        }
-
-        void SetHighContrastEnabled(bool highContrast)
-        {
-            m_highContrast = highContrast;
-        }
-
-        ComPtr<StubInkRenderer> GetInkRenderer()
-        {
-            return m_inkRenderer;
-        }
-    };
-
-    class MockStrokeCollection : public RuntimeClass<IIterable<InkStroke*>>
-    {
-        IFACEMETHODIMP First(IIterator<InkStroke*>**)
-        {
-            return E_NOTIMPL;
-        }
-    };
-
     struct InkFixture
     {
         ComPtr<ICanvasDrawingSession> DrawingSession;
-        std::shared_ptr<InkAdapter> Adapter;
+        std::shared_ptr<StubCanvasDrawingSessionAdapter> DrawingSessionAdapter;
+        std::shared_ptr<StubInkAdapter> InkAdapter;
         ComPtr<StubD2DDeviceContextWithGetFactory> DeviceContext;
         ComPtr<MockStrokeCollection> StrokeCollection;
 
         InkFixture() : StrokeCollection(Make<MockStrokeCollection>())
         {
             DeviceContext = Make<StubD2DDeviceContextWithGetFactory>();
-            Adapter = std::make_shared<InkAdapter>();
-            DrawingSession = CanvasDrawingSession::CreateNew(DeviceContext.Get(), Adapter);
+            DrawingSessionAdapter = std::make_shared<StubCanvasDrawingSessionAdapter>();
+            DrawingSession = CanvasDrawingSession::CreateNew(DeviceContext.Get(), DrawingSessionAdapter);
+            InkAdapter = std::make_shared<StubInkAdapter>();
+            InkAdapter::SetInstance(InkAdapter);
         }
     };
 
@@ -4175,9 +4116,9 @@ public:
         {
             InkFixture f;
 
-            f.Adapter->SetHighContrastEnabled(i == 1);
+            f.InkAdapter->SetHighContrastEnabled(i == 1);
 
-            f.Adapter->GetInkRenderer()->DrawMethod.SetExpectedCalls(1,
+            f.InkAdapter->GetInkRenderer()->DrawMethod.SetExpectedCalls(1,
                 [&](IUnknown* dc, IUnknown* s, BOOL highContrast)
                 {
                     Assert::IsTrue(IsSameInstance(f.DeviceContext.Get(), dc));
@@ -4196,7 +4137,7 @@ public:
         {
             InkFixture f;
 
-            f.Adapter->GetInkRenderer()->DrawMethod.SetExpectedCalls(1,
+            f.InkAdapter->GetInkRenderer()->DrawMethod.SetExpectedCalls(1,
                 [&](IUnknown* dc, IUnknown* s, BOOL highContrast)
                 {
                     Assert::IsTrue(IsSameInstance(f.DeviceContext.Get(), dc));

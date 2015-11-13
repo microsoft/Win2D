@@ -49,6 +49,7 @@ namespace CodeGen.Test
         [DeploymentItem("Deployed Files/D2DTypes.xml", "codegen/effects/in/apiref")]
         [DeploymentItem("Deployed Files/D2DTypes2.xml", "codegen/effects/in/apiref")]
         [DeploymentItem("Deployed Files/D2DTypes3.xml", "codegen/effects/in/apiref")]
+        [DeploymentItem("Deployed Files/D2DTypes4.xml", "codegen/effects/in/apiref")]
         public void OutputEffectsIsSync()
         {
             //
@@ -97,6 +98,7 @@ namespace CodeGen.Test
         [DeploymentItem("Deployed Files/D2DTypes.xml", "codegen/in/apiref")]
         [DeploymentItem("Deployed Files/D2DTypes2.xml", "codegen/in/apiref")]
         [DeploymentItem("Deployed Files/D2DTypes3.xml", "codegen/in/apiref")]
+        [DeploymentItem("Deployed Files/D2DTypes4.xml", "codegen/in/apiref")]
         [DeploymentItem("Deployed Files/Settings.xml", "codegen/in")]
         public void OutputIsInSync()
         {
@@ -156,6 +158,7 @@ namespace CodeGen.Test
         [DeploymentItem("Deployed Files/D2DTypes.xml", "codegen/in/apiref")]
         [DeploymentItem("Deployed Files/D2DTypes2.xml", "codegen/in/apiref")]
         [DeploymentItem("Deployed Files/D2DTypes3.xml", "codegen/in/apiref")]
+        [DeploymentItem("Deployed Files/D2DTypes4.xml", "codegen/in/apiref")]
         [DeploymentItem("Deployed Files/Settings.xml", "codegen/in")]
         public void OverridesAreWellFormed()
         {

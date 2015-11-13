@@ -57,7 +57,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     // ID2D1DeviceContext.  In this wrapper, interop, case we don't want
     // CanvasDrawingSession to call any additional methods in the device context.
     //
-    class NoopCanvasDrawingSessionAdapter : public DrawingSessionBaseAdapter,
+    class NoopCanvasDrawingSessionAdapter : public ICanvasDrawingSessionAdapter,
                                             private LifespanTracker<NoopCanvasDrawingSessionAdapter>
     {
     public:
@@ -95,7 +95,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
 
 #if WINVER > _WIN32_WINNT_WINBLUE
-    ComPtr<IInkD2DRenderer> DrawingSessionBaseAdapter::CreateInkRenderer()
+    ComPtr<IInkD2DRenderer> DefaultInkAdapter::CreateInkRenderer()
     {
         ComPtr<IInkD2DRenderer> inkRenderer;
 
@@ -108,7 +108,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
 
-    bool DrawingSessionBaseAdapter::IsHighContrastEnabled()
+    bool DefaultInkAdapter::IsHighContrastEnabled()
     {
         if (!m_accessibilitySettings)
         {
@@ -3263,10 +3263,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ExceptionBoundary(
             [&]
             {
-                if (!m_adapter)
-                    ThrowHR(RO_E_CLOSED);
-
-                DrawInkImpl(inkStrokeCollection, m_adapter->IsHighContrastEnabled());
+                DrawInkImpl(inkStrokeCollection, InkAdapter::GetInstance()->IsHighContrastEnabled());
             });
     }
 
@@ -3293,7 +3290,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         if (!m_inkD2DRenderer)
         {
-            m_inkD2DRenderer = m_adapter->CreateInkRenderer();
+            m_inkD2DRenderer = InkAdapter::GetInstance()->CreateInkRenderer();
         }
 
         m_inkD2DRenderer->Draw(

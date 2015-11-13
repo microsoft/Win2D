@@ -604,7 +604,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return swapChainDesc;
     }
 
-    class CanvasSwapChainDrawingSessionAdapter : public DrawingSessionBaseAdapter,
+    class CanvasSwapChainDrawingSessionAdapter : public ICanvasDrawingSessionAdapter,
                                                  private LifespanTracker<CanvasSwapChainDrawingSessionAdapter>
     {
     public:

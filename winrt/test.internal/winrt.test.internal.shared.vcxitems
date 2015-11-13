@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="Globals">
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
@@ -28,6 +28,8 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DDrawInfo.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DEffectContext.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DEllipseGeometry.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DInk.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DInkStyle.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DRectangleGeometry.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DRoundedRectangleGeometry.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DTransformGraph.h" />
@@ -40,6 +42,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockVirtualSurfaceImageSource.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockVirtualSurfaceImageSourceFactory.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)pch.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubInkAdapter.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubCanvasVirtualImageSource.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubD2DEffect.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubResourceCreatorWithDpi.h" />

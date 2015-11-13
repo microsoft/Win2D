@@ -8,6 +8,11 @@
 #include "CanvasPathBuilder.h"
 #include "GeometrySink.h"
 #include "TessellationSink.h"
+#include "../images/CanvasCommandList.h"
+
+#if WINVER > _WIN32_WINNT_WINBLUE
+#include "InkToGeometryCommandSink.h"
+#endif
 
 using namespace ABI::Microsoft::Graphics::Canvas::Geometry;
 using namespace ABI::Microsoft::Graphics::Canvas;
@@ -205,6 +210,38 @@ IFACEMETHODIMP CanvasGeometryFactory::CreateText(
             ThrowIfFailed(newCanvasGeometry.CopyTo(geometry));
         });
 }
+
+#if WINVER > _WIN32_WINNT_WINBLUE
+
+IFACEMETHODIMP CanvasGeometryFactory::CreateInk(
+    ICanvasResourceCreator* resourceCreator,
+    IIterable<InkStroke*>* inkStrokes,
+    ICanvasGeometry** geometry)
+{
+    return CreateInkWithTransformAndFlatteningTolerance(resourceCreator, inkStrokes, Identity3x2, D2D1_DEFAULT_FLATTENING_TOLERANCE, geometry);
+}
+
+IFACEMETHODIMP CanvasGeometryFactory::CreateInkWithTransformAndFlatteningTolerance(
+    ICanvasResourceCreator* resourceCreator,
+    IIterable<InkStroke*>* inkStrokes,
+    Matrix3x2 transform,
+    float flatteningTolerance,
+    ICanvasGeometry** geometry)
+{
+    return ExceptionBoundary(
+        [&]
+        {
+            CheckInPointer(resourceCreator);
+            CheckInPointer(inkStrokes);
+            CheckAndClearOutPointer(geometry);
+
+            auto newCanvasGeometry = CanvasGeometry::CreateNew(resourceCreator, inkStrokes, transform, flatteningTolerance);
+
+            ThrowIfFailed(newCanvasGeometry.CopyTo(geometry));
+        });
+}
+
+#endif
 
 IFACEMETHODIMP CanvasGeometryFactory::ComputeFlatteningTolerance(
     float dpi,
@@ -1407,5 +1444,57 @@ ComPtr<CanvasGeometry> CanvasGeometry::CreateNew(
 
     return outlineGeometry;
 }
+
+#if WINVER > _WIN32_WINNT_WINBLUE
+
+ComPtr<CanvasGeometry> CanvasGeometry::CreateNew(
+    ICanvasResourceCreator* resourceCreator,
+    IIterable<InkStroke*>* inkStrokes,
+    Matrix3x2 transform,
+    float flatteningTolerance)
+{
+    ComPtr<ICanvasDevice> device;
+    ThrowIfFailed(resourceCreator->get_Device(&device));
+
+    // Create a temporary command list.
+    auto commandList = CanvasCommandList::CreateNew(device.Get());
+
+    // Draw the ink into the command list.
+    ComPtr<ICanvasDrawingSession> drawingSession;
+    ThrowIfFailed(commandList->CreateDrawingSession(&drawingSession));
+
+    ThrowIfFailed(drawingSession->DrawInkWithHighContrast(inkStrokes, false));
+
+    drawingSession.Reset();
+
+    // Create a path geometry, and open its geometry sink.
+    auto pathGeometry = As<ICanvasDeviceInternal>(device)->CreatePathGeometry();
+
+    ComPtr<ID2D1GeometrySink> geometrySink;
+    ThrowIfFailed(pathGeometry->Open(&geometrySink));
+
+    // Create an InkToGeometryCommandSink, which implements ID2D1CommandSink2
+    // and streams anything passed to DrawInk into our geometrySink.
+    auto commandSink = Make<InkToGeometryCommandSink>(transform, flatteningTolerance, geometrySink.Get());
+    CheckMakeResult(commandSink);
+
+    // Stream the temporary command list (which contains our ink) to the InkToGeometryCommandSink.
+    auto d2dCommandList = GetWrappedResource<ID2D1CommandList>(commandList);
+    
+    ThrowIfFailed(d2dCommandList->Close());
+
+    ThrowIfFailed(d2dCommandList->Stream(commandSink.Get()));
+
+    ThrowIfFailed(commandSink->GetResult());
+    ThrowIfFailed(geometrySink->Close());
+
+    // Wrap a CanvasGeometry around the D2D path geometry.
+    auto canvasGeometry = Make<CanvasGeometry>(device.Get(), pathGeometry.Get());
+    CheckMakeResult(canvasGeometry);
+
+    return canvasGeometry;
+}
+
+#endif
 
 ActivatableClassWithFactory(CanvasGeometry, CanvasGeometryFactory);

@@ -8,7 +8,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 {
     using namespace ABI::Windows::UI::Xaml::Media::Imaging;
 
-    class CanvasImageSourceDrawingSessionAdapter : public DrawingSessionBaseAdapter,
+    class CanvasImageSourceDrawingSessionAdapter : public ICanvasDrawingSessionAdapter,
                                                    private LifespanTracker<CanvasImageSourceDrawingSessionAdapter>
     {
         ComPtr<ISurfaceImageSourceNativeWithD2D> m_sisNative;
