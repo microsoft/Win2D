@@ -45,6 +45,9 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.Clear(Windows.UI.Color)">
       <summary>Clears to the specified color.</summary>
     </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.Clear(System.Numerics.Vector4)" Experimental="true">
+      <summary>Clears to the specified high-dynamic-range color.</summary>
+    </member>
 
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.Flush">
       <summary>Sends any pending drawing commands to the graphics device.</summary>

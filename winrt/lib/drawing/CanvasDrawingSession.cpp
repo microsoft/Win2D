@@ -178,10 +178,18 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ExceptionBoundary(
             [&]
             {
-                auto& deviceContext = GetResource();
+                GetResource()->Clear(ToD2DColor(color));
+            });
+    }
 
-                auto d2dColor = ToD2DColor(color);
-                deviceContext->Clear(&d2dColor);
+
+    IFACEMETHODIMP CanvasDrawingSession::ClearHdr(
+        Vector4 color)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                GetResource()->Clear(ToD2DColor(color));
             });
     }
 

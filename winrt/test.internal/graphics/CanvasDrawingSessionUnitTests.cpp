@@ -274,6 +274,21 @@ public:
         ThrowIfFailed(f.DS->Clear(expectedColor));
     }
 
+    TEST_METHOD_EX(CanvasDrawingSession_ClearHdr)
+    {
+        CanvasDrawingSessionFixture f;
+
+        Vector4 expectedColor{ 1, 2, 3, 4 };
+
+        f.DeviceContext->ClearMethod.SetExpectedCalls(1,
+            [&](const D2D1_COLOR_F* color)
+            {
+                Assert::AreEqual(expectedColor, *ReinterpretAs<Vector4 const*>(color));
+            });
+
+        ThrowIfFailed(f.DS->ClearHdr(expectedColor));
+    }
+
 
     //
     // Flush
@@ -4625,6 +4640,7 @@ TEST_CLASS(CanvasDrawingSession_CloseTests)
 #define EXPECT_OBJECT_CLOSED(CODE) Assert::AreEqual(RO_E_CLOSED, CODE)
 
         EXPECT_OBJECT_CLOSED(canvasDrawingSession->Clear(Color{}));
+        EXPECT_OBJECT_CLOSED(canvasDrawingSession->ClearHdr(Vector4{}));
         EXPECT_OBJECT_CLOSED(canvasDrawingSession->Flush());
 
         // See also CanvasDrawingSession_DrawImage_WhenDrawingSessionisClosed_DrawImageFails 

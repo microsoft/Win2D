@@ -103,6 +103,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         IFACEMETHOD(Clear)(
             ABI::Windows::UI::Color color) override;
 
+        IFACEMETHOD(ClearHdr)(
+            Vector4 colorHdr) override;
+
         IFACEMETHOD(Flush)() override;
 
         // 
