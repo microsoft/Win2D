@@ -12,6 +12,7 @@ using Windows.Foundation;
 using Windows.System;
 using Windows.UI;
 using Windows.UI.Core;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
@@ -25,6 +26,10 @@ namespace ExampleGallery
     public sealed partial class KeyboardInputExample : UserControl
     {
         LetterAttack.Game game;
+
+#if WINDOWS_PHONE_APP || WINDOWS_UWP
+        InputPane inputPane;
+#endif
 
         public KeyboardInputExample()
         {
@@ -42,7 +47,7 @@ namespace ExampleGallery
             if (keyboardCaps.KeyboardPresent == 0)
             {
                 // If we don't have a keyboard show the input pane (aka the on-screen keyboard).
-                var inputPane = Windows.UI.ViewManagement.InputPane.GetForCurrentView();
+                inputPane = InputPane.GetForCurrentView();
                 inputPane.TryShow();
                 inputPane.Showing += inputPane_Showing;
                 inputPane.Hiding += inputPane_Hiding;
@@ -54,11 +59,8 @@ namespace ExampleGallery
         {
 #if WINDOWS_PHONE_APP || WINDOWS_UWP
             // Bring the on-screen keyboard back up when the user taps on the screen.
-            var keyboardCaps = new Windows.Devices.Input.KeyboardCapabilities();
-            if (keyboardCaps.KeyboardPresent == 0)
+            if (inputPane != null)
             {
-                // There's no keyboard present, so show the input pane
-                var inputPane = Windows.UI.ViewManagement.InputPane.GetForCurrentView();
                 inputPane.TryShow();
             }
 #endif
@@ -68,6 +70,15 @@ namespace ExampleGallery
         {
             // Unregister keyboard events
             Window.Current.CoreWindow.KeyDown -= KeyDown_UIThread;
+
+#if WINDOWS_PHONE_APP || WINDOWS_UWP
+            if (inputPane != null)
+            {
+                inputPane.Showing -= inputPane_Showing;
+                inputPane.Hiding -= inputPane_Hiding;
+                inputPane.TryHide();
+            }
+#endif
 
             // Explicitly remove references to allow the Win2D controls to get garbage collected
             animatedControl.RemoveFromVisualTree();
@@ -159,12 +170,12 @@ namespace ExampleGallery
 
         // When the InputPane (ie on-screen keyboard) is shown then we arrange
         // so that the animated control is not obscured.
-        void inputPane_Showing(Windows.UI.ViewManagement.InputPane sender, Windows.UI.ViewManagement.InputPaneVisibilityEventArgs args)
+        void inputPane_Showing(InputPane sender, InputPaneVisibilityEventArgs args)
         {
             RowObscuredByInputPane.Height = new GridLength(args.OccludedRect.Height);
         }
 
-        void inputPane_Hiding(Windows.UI.ViewManagement.InputPane sender, Windows.UI.ViewManagement.InputPaneVisibilityEventArgs args)
+        void inputPane_Hiding(InputPane sender, InputPaneVisibilityEventArgs args)
         {
             // When the input pane rescale the game to fit
             RowObscuredByInputPane.Height = new GridLength(0);
