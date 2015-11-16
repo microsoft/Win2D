@@ -200,6 +200,9 @@ namespace ExampleGallery
 
             swapChainPanel.RemoveFromVisualTree();
             swapChainPanel = null;
+
+            virtualControl.RemoveFromVisualTree();
+            virtualControl = null;
         }
     }
 }
