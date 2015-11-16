@@ -1531,7 +1531,7 @@ IFACEMETHODIMP CanvasTextLayout::GetInlineObject(
 
 
 IFACEMETHODIMP CanvasTextLayout::get_LineMetrics(
-    UINT32* valueCount,
+    uint32_t* valueCount,
     CanvasLineMetrics** valueElements)
 {
     return ExceptionBoundary(
@@ -1568,6 +1568,65 @@ IFACEMETHODIMP CanvasTextLayout::get_LineMetrics(
                     metrics.LeadingWhitespaceBefore = dwriteMetrics.leadingBefore;
                     metrics.LeadingWhitespaceAfter = dwriteMetrics.leadingAfter;
 #endif
+                    return metrics;
+                });
+
+            returnedMetrics.Detach(valueCount, valueElements);
+        });
+}
+
+IFACEMETHODIMP CanvasTextLayout::get_ClusterMetrics(
+    uint32_t* valueCount,
+    CanvasClusterMetrics** valueElements)
+{
+    return ExceptionBoundary(
+        [&]
+        {
+            CheckInPointer(valueCount);
+            CheckAndClearOutPointer(valueElements);
+
+            auto& resource = GetResource();
+
+            uint32_t clusterCount;
+            HRESULT hr = resource->GetClusterMetrics(nullptr, 0, &clusterCount);
+
+            //
+            // GetClusterMetrics can return S_OK here, since it's valid for a 
+            // text layout to contain no clusters.
+            //
+
+            if (FAILED(hr) && hr != E_NOT_SUFFICIENT_BUFFER)
+                ThrowHR(E_UNEXPECTED);
+
+            std::vector<DWRITE_CLUSTER_METRICS> dwriteMetrics(clusterCount);
+
+            if (clusterCount > 0)
+                ThrowIfFailed(resource->GetClusterMetrics(dwriteMetrics.data(), clusterCount, &clusterCount));
+
+            auto returnedMetrics = TransformToComArray<CanvasClusterMetrics>(
+                dwriteMetrics.begin(), 
+                dwriteMetrics.end(),
+                [](DWRITE_CLUSTER_METRICS const& dwriteMetrics)
+                {                
+                    CanvasClusterMetrics metrics{};
+                    metrics.CharacterCount = dwriteMetrics.length;
+                    metrics.Width = dwriteMetrics.width;
+
+                    if(dwriteMetrics.canWrapLineAfter)
+                        metrics.Properties |= CanvasClusterProperties::CanWrapLineAfter;
+
+                    if (dwriteMetrics.isWhitespace)
+                        metrics.Properties |= CanvasClusterProperties::Whitespace;
+
+                    if(dwriteMetrics.isNewline) 
+                        metrics.Properties |= CanvasClusterProperties::Newline;
+
+                    if (dwriteMetrics.isSoftHyphen)
+                        metrics.Properties |= CanvasClusterProperties::SoftHyphen;
+
+                    if (dwriteMetrics.isRightToLeft)
+                        metrics.Properties |= CanvasClusterProperties::RightToLeft;
+
                     return metrics;
                 });
 

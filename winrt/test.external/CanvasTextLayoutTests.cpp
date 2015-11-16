@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 //
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
@@ -12,18 +12,18 @@ using namespace Microsoft::Graphics::Canvas::Effects;
 TEST_CLASS(CanvasTextLayoutTests)
 {
     CanvasDevice^ m_device;
+    CanvasTextFormat^ m_defaultFormat;
 
 public:
     CanvasTextLayoutTests()
         : m_device(ref new CanvasDevice())
+        , m_defaultFormat(ref new CanvasTextFormat())
     {
     }
 
     TEST_METHOD(CanvasTextLayout_Construction)
     {
-        auto format = ref new CanvasTextFormat();
-
-        auto layout = ref new CanvasTextLayout(m_device, L"Asdf", format, 0, 0);
+        auto layout = ref new CanvasTextLayout(m_device, L"Asdf", m_defaultFormat, 0, 0);
     }
 
     TEST_METHOD(CanvasTextLayout_Interop)
@@ -84,11 +84,10 @@ public:
                 L"Abcd", { 1, 2 }, { 0, 1, 3 },
                 L"Abcd", { 0, 1, 2, 3 }, { 0, 4 },
         };
-        auto format = ref new CanvasTextFormat();
 
         for (auto testCase : testCases)
         {
-            auto textLayout = ref new CanvasTextLayout(m_device, testCase.Str, format, 0, 0);
+            auto textLayout = ref new CanvasTextLayout(m_device, testCase.Str, m_defaultFormat, 0, 0);
 
             for (unsigned int i = 0; i < testCase.StrikethroughHere.size(); ++i)
             {
@@ -107,13 +106,30 @@ public:
 
     TEST_METHOD(CanvasTextLayoutTests_get_LineMetrics_EmptyString)
     {
-        auto format = ref new CanvasTextFormat();
-
-        auto layout = ref new CanvasTextLayout(m_device, L"", format, 0, 0);
+        auto layout = ref new CanvasTextLayout(m_device, L"", m_defaultFormat, 0, 0);
 
         auto lineMetrics = layout->LineMetrics;
 
         Assert::AreEqual(1u, lineMetrics->Length);
         Assert::AreEqual(0, lineMetrics[0].CharacterCount);
+    }
+
+    TEST_METHOD(CanvasTextLayoutTests_get_ClusterMetrics_EmptyString)
+    {
+        auto layout = ref new CanvasTextLayout(m_device, L"", m_defaultFormat, 0, 0);
+
+        auto clusterMetrics = layout->ClusterMetrics;
+
+        Assert::AreEqual(0u, clusterMetrics->Length);
+    }
+
+    TEST_METHOD(CanvasTextLayoutTests_get_ClusterMetrics_CharacterCount)
+    {
+        auto layout = ref new CanvasTextLayout(m_device, L"นี้", m_defaultFormat, 0, 0);
+
+        auto clusterMetrics = layout->ClusterMetrics;
+
+        Assert::AreEqual(1u, clusterMetrics->Length);
+        Assert::AreEqual(3, clusterMetrics[0].CharacterCount);
     }
 };

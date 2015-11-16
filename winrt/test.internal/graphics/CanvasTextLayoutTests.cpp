@@ -158,6 +158,7 @@ namespace canvas
             CanvasTrimmingSign ts;
             ComPtr<ICanvasTextInlineObject> inlineObj;
             CanvasLineMetrics* lm{};
+            CanvasClusterMetrics* cm{};
 
             Assert::AreEqual(RO_E_CLOSED, textLayout->GetFormatChangeIndices(&u, &arr));
 
@@ -282,6 +283,8 @@ namespace canvas
             Assert::AreEqual(RO_E_CLOSED, textLayout->SetInlineObject(0, 0, inlineObj.Get()));
 
             Assert::AreEqual(RO_E_CLOSED, textLayout->get_LineMetrics(&u, &lm));
+
+            Assert::AreEqual(RO_E_CLOSED, textLayout->get_ClusterMetrics(&u, &cm));
         }
 
         TEST_METHOD_EX(CanvasTextLayoutTests_NullArgs)
@@ -295,6 +298,7 @@ namespace canvas
             CanvasTextLayoutRegion* hitTestDescArr{};
             boolean b{};
             CanvasLineMetrics* lm{};
+            CanvasClusterMetrics* cm{};
             uint32_t u{};
             Assert::AreEqual(E_INVALIDARG, textLayout->GetFormatChangeIndices(nullptr, &arr));
             Assert::AreEqual(E_INVALIDARG, textLayout->get_Direction(nullptr));
@@ -346,6 +350,8 @@ namespace canvas
             Assert::AreEqual(E_INVALIDARG, textLayout->get_CustomTrimmingSign(nullptr));
             Assert::AreEqual(E_INVALIDARG, textLayout->get_LineMetrics(nullptr, &lm));
             Assert::AreEqual(E_INVALIDARG, textLayout->get_LineMetrics(&u, nullptr));
+            Assert::AreEqual(E_INVALIDARG, textLayout->get_ClusterMetrics(nullptr, &cm));
+            Assert::AreEqual(E_INVALIDARG, textLayout->get_ClusterMetrics(&u, nullptr));
         }
 
         TEST_METHOD_EX(CanvasTextLayoutTests_NegativeIntegralArgs)
@@ -2338,6 +2344,92 @@ namespace canvas
             for (uint32_t i = 0; i < 3; ++i)
             {
                 CanvasLineMetrics expected = f.GetLineMetrics(i);
+                Assert::AreEqual(0, memcmp(&expected, &valueElements[i], sizeof(expected)));
+            }
+        }
+        
+        struct GetClusterMetricsFixture : public Fixture
+        {
+            DWRITE_CLUSTER_METRICS GetDWriteClusterMetrics(int seed)
+            {
+                uint16_t inc = static_cast<uint16_t>(seed) * 2;
+
+                DWRITE_CLUSTER_METRICS metrics{};
+                metrics.width = 1.0f + inc;
+                metrics.length = 2ui16 + inc;
+                metrics.canWrapLineAfter = (seed + 1) % 2 == 0;
+                metrics.isWhitespace = seed % 2 == 0;
+                metrics.isNewline = (seed + 1) % 2 == 0;
+                metrics.isSoftHyphen = seed % 2 == 0;
+                metrics.isRightToLeft = (seed + 1) % 2 == 0;
+
+                return metrics;
+            }
+
+            CanvasClusterMetrics GetClusterMetrics(int seed)
+            {
+                int inc = seed * 2;
+
+                CanvasClusterMetrics metrics{};
+                metrics.CharacterCount = 2 + inc;
+                metrics.Width = 1.0f + inc;
+
+                if ((seed + 1) % 2 == 0)
+                    metrics.Properties |= CanvasClusterProperties::CanWrapLineAfter;
+
+                if (seed % 2 == 0)
+                    metrics.Properties |= CanvasClusterProperties::Whitespace;
+
+                if ((seed + 1) % 2 == 0)
+                    metrics.Properties |= CanvasClusterProperties::Newline;
+
+                if (seed % 2 == 0)
+                    metrics.Properties |= CanvasClusterProperties::SoftHyphen;
+
+                if ((seed + 1) % 2 == 0)
+                    metrics.Properties |= CanvasClusterProperties::RightToLeft;
+
+                return metrics;
+            }
+        };
+
+        TEST_METHOD_EX(CanvasTextLayoutTests_ClusterMetrics_CallsThrough)
+        {
+            GetClusterMetricsFixture f;
+
+            auto textLayout = f.CreateSimpleTextLayout();
+
+            uint32_t callCount = 0;
+
+            f.Adapter->MockTextLayout->GetClusterMetricsMethod.SetExpectedCalls(2,
+                [&](DWRITE_CLUSTER_METRICS* clusterMetrics, UINT32 maxClusterCount, UINT32* actualClusterCount)
+                {
+                    callCount++;
+                    if (callCount == 1)
+                    {
+                        Assert::IsNull(clusterMetrics);
+                        Assert::AreEqual(0u, maxClusterCount);
+                        *actualClusterCount = 3;
+                        return E_NOT_SUFFICIENT_BUFFER;
+                    }
+                    else
+                    {
+                        for (uint32_t i = 0; i < 3; ++i)
+                        {
+                            clusterMetrics[i] = f.GetDWriteClusterMetrics(i);
+                        }
+                        Assert::AreEqual(3u, maxClusterCount);
+                        return S_OK;
+                    }
+                });
+
+            uint32_t valueCount;
+            CanvasClusterMetrics* valueElements;
+            Assert::AreEqual(S_OK, textLayout->get_ClusterMetrics(&valueCount, &valueElements));
+            Assert::AreEqual(3u, valueCount);
+            for (uint32_t i = 0; i < 3; ++i)
+            {
+                CanvasClusterMetrics expected = f.GetClusterMetrics(i);
                 Assert::AreEqual(0, memcmp(&expected, &valueElements[i], sizeof(expected)));
             }
         }

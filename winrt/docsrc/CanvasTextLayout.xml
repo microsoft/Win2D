@@ -632,7 +632,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="F:Microsoft.Graphics.Canvas.Text.CanvasLineMetrics.IsTrimmed">
       <summary>Indicates whether the line was trimmed.</summary>
     </member>
-    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasLineMetrics.LeadingWhitespaceBefore">
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasLineMetrics.LeadingWhitespaceBefore" Win10="true">
       <summary>Size of the white space, in DIPs, before the content of the line.</summary>
       <remarks>
           <p>
@@ -646,7 +646,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
           </p>
       </remarks>=
     </member>
-    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasLineMetrics.LeadingWhitespaceAfter">
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasLineMetrics.LeadingWhitespaceAfter" Win10="true">
       <summary>Size of the white space, in DIPs, after the content of the line.</summary>
       <remarks>
           <p>
@@ -664,6 +664,71 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <summary>Gets an array of metrics describing each line.</summary>
       <remarks>
         As a convention, a text layout for a zero-length piece of text will still contain one line.
+      </remarks>
+    </member>
+
+    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasClusterMetrics" Experimental="true">
+      <summary>Describes a glyph cluster.</summary>
+      <remarks>
+        <p>
+          A glyph cluster represents something drawn as one text character, and moves
+          the text caret over by one position.
+        </p>
+        <p>
+          In Latin script with no diacritics (accents), a glyph cluster is simply
+          one character. But in general, a cluster can span multiple characters
+          in a text string.
+        </p>          
+        <p>
+          For example, a text layout created from "นี้" appears as if it's one glyph,
+          but it spans three characters. It's a cluster with a CharacterCount of 3.
+        </p>
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasClusterMetrics.CharacterCount">
+      <summary>The number of characters in the cluster.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasClusterMetrics.Width">
+      <summary>The advance width of all glyphs in the cluster.</summary>
+      <remarks>
+        Advance width is the distance, in DIPs, from the start of this glyph 
+        cluster to the start of the next glyph cluster when this text layout is
+        drawn.
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasClusterMetrics.Properties">
+      <summary>The glyph cluster's properties.</summary>
+    </member>
+    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasClusterProperties" Experimental="true">
+      <summary>Properties which apply to a glyph cluster.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasClusterProperties.CanWrapLineAfter">
+      <summary>Indicates that a line can be broken right after the cluster.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasClusterProperties.Whitespace">
+      <summary>Indicates that the cluster corresponds to a whitespace character.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasClusterProperties.Newline">
+      <summary>Indicates that the cluster corresponds to a newline character.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasClusterProperties.SoftHyphen">
+      <summary>Indicates that the cluster corresponds to a soft hyphen character.</summary>
+      <remarks>
+        A soft hyphen is a special character for breaking words across lines. 
+        It serves as a usually-invisible marker to place in a really long word
+        where a break would be allowed. If word-wrapping is applied and the really long 
+        word has to be broken, the text renderer can break the line at the position
+        of the soft hyphen.
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasClusterProperties.RightToLeft">
+      <summary>Indicates that the cluster is read from right to left.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.ClusterMetrics" Experimental="true">
+      <summary>Gets an array of metrics describing each cluster.</summary>
+      <remarks>
+        It's valid for a text layout to have zero clusters, in which case this 
+        property returns a zero-sized array.
       </remarks>
     </member>    
     

@@ -16,6 +16,32 @@ namespace Microsoft.Graphics.Canvas.Text
         Windows.Foundation.Rect LayoutBounds; // Layout bounds of characters in the hit region.
     } CanvasTextLayoutRegion;
 
+    //
+    // A cluster is a group of unicode code points which typically result in
+    // one glyph when drawn. In Latin text with no diacritics,
+    // one cluster can be thought of one code point. But in text with diacritics,
+    // a cluster can span multiple code points. For example, 'นี้' looks like
+    // one glyph but has a CharacterCount of 3.
+    //
+
+    [version(VERSION), flags]
+    typedef enum CanvasClusterProperties
+    {
+        CanWrapLineAfter = 0x1,
+        Whitespace = 0x2,
+        Newline = 0x4,
+        SoftHyphen = 0x8,
+        RightToLeft = 0x10
+    } CanvasClusterProperties;
+
+    [version(VERSION)]
+    typedef struct CanvasClusterMetrics
+    {
+        int CharacterCount;
+        float Width;
+        CanvasClusterProperties Properties;
+    } CanvasClusterMetrics;
+
     [version(VERSION)]
     typedef struct CanvasLineMetrics
     {
@@ -197,6 +223,10 @@ namespace Microsoft.Graphics.Canvas.Text
         [propget] HRESULT LineMetrics(
             [out] UINT32* valueCount,
             [out, size_is(, *valueCount), retval] CanvasLineMetrics** valueElements);
+
+        [propget] HRESULT ClusterMetrics(
+            [out] UINT32* valueCount,
+            [out, size_is(, *valueCount), retval] CanvasClusterMetrics** valueElements);
 
         // Not exposed:                             Reason
         //---------------                           -------
