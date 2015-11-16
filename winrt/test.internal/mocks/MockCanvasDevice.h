@@ -23,13 +23,12 @@ namespace canvas
         std::function<ComPtr<ID2D1Bitmap1>(IWICBitmapSource* converter, CanvasAlphaMode alpha, float dpi)> MockCreateBitmapFromWicResource;
 
         std::function<ComPtr<ID2D1GradientStopCollection1>(
-            UINT gradientStopCount,
-            CanvasGradientStop const* gradientStops,
-            CanvasEdgeBehavior edgeBehavior,
-            CanvasColorSpace preInterpolationSpace,
-            CanvasColorSpace postInterpolationSpace,
-            CanvasBufferPrecision bufferPrecision,
-            CanvasAlphaMode alphaMode)> MockCreateGradientStopCollection;
+            std::vector<D2D1_GRADIENT_STOP>&&,
+            D2D1_COLOR_SPACE,
+            D2D1_COLOR_SPACE,
+            D2D1_BUFFER_PRECISION,
+            D2D1_EXTEND_MODE,
+            D2D1_COLOR_INTERPOLATION_MODE)> MockCreateGradientStopCollection;
 
         std::function<ComPtr<ID2D1LinearGradientBrush>(
             ID2D1GradientStopCollection1* stopCollection)> MockCreateLinearGradientBrush;
@@ -256,13 +255,12 @@ namespace canvas
         }
 
         virtual ComPtr<ID2D1GradientStopCollection1> CreateGradientStopCollection(
-            uint32_t gradientStopCount,
-            CanvasGradientStop const* gradientStops,
-            CanvasEdgeBehavior edgeBehavior,
-            CanvasColorSpace preInterpolationSpace,
-            CanvasColorSpace postInterpolationSpace,
-            CanvasBufferPrecision bufferPrecision,
-            CanvasAlphaMode alphaMode) override
+            std::vector<D2D1_GRADIENT_STOP>&& stops,
+            D2D1_COLOR_SPACE preInterpolationSpace,
+            D2D1_COLOR_SPACE postInterpolationSpace,
+            D2D1_BUFFER_PRECISION bufferPrecision,
+            D2D1_EXTEND_MODE extendMode,
+            D2D1_COLOR_INTERPOLATION_MODE interpolationMode) override
         {
             if (!MockCreateGradientStopCollection)
             {
@@ -271,13 +269,12 @@ namespace canvas
             }
 
             return MockCreateGradientStopCollection(
-                gradientStopCount,
-                gradientStops,
-                edgeBehavior,
+                std::move(stops),
                 preInterpolationSpace,
                 postInterpolationSpace,
                 bufferPrecision,
-                alphaMode);
+                extendMode,
+                interpolationMode);
         }
 
         virtual ComPtr<ID2D1LinearGradientBrush> CreateLinearGradientBrush(

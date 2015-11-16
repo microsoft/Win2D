@@ -140,6 +140,13 @@ namespace Microsoft.Graphics.Canvas.Brushes
         Windows.UI.Color Color;
     } CanvasGradientStop;
 
+    [version(VERSION)]
+    typedef struct CanvasGradientStopHdr
+    {
+        float Position;
+        NUMERICS.Vector4 Color;
+    } CanvasGradientStopHdr;
+
     //
     // ICanvasLinearGradientBrush
     //
@@ -165,7 +172,7 @@ namespace Microsoft.Graphics.Canvas.Brushes
         //
         // Defaults to color interpolation sRGB-premultiplied.
         //
-        // While it may also be convenient to have an overload that takese edge
+        // While it may also be convenient to have an overload that takes edge
         // behavior but not alpha mode, the # of projected arguments in that
         // would conflict with CreateSimple. 
         //
@@ -188,7 +195,52 @@ namespace Microsoft.Graphics.Canvas.Brushes
             [in] Microsoft.Graphics.Canvas.CanvasColorSpace postInterpolationSpace,
             [in] Microsoft.Graphics.Canvas.CanvasBufferPrecision bufferPrecision,
             [out, retval] CanvasLinearGradientBrush** canvasLinearGradientBrush);
-     }
+    }
+
+    [version(VERSION), uuid(E9DE3392-8FBF-478C-8E6A-D0A0EA753B37), exclusiveto(CanvasLinearGradientBrush)]
+    interface ICanvasLinearGradientBrushStatics : IInspectable
+    {
+        [overload("CreateHdr")]
+        HRESULT CreateHdrSimple(
+            [in] Microsoft.Graphics.Canvas.ICanvasResourceCreator* resourceCreator,
+            [in] NUMERICS.Vector4 startColorHdr,
+            [in] NUMERICS.Vector4 endColorHdr,
+            [out, retval] CanvasLinearGradientBrush** canvasLinearGradientBrush);
+
+        [overload("CreateHdr")]
+        HRESULT CreateHdrWithStops(
+            [in] Microsoft.Graphics.Canvas.ICanvasResourceCreator* resourceCreator,
+            [in] UINT32 gradientStopCount,
+            [in, size_is(gradientStopCount)] CanvasGradientStopHdr* gradientStopsHdr,
+            [out, retval] CanvasLinearGradientBrush** canvasLinearGradientBrush);
+
+        [overload("CreateHdr")]
+        HRESULT CreateHdrWithEdgeBehaviorAndAlphaMode(
+            [in] Microsoft.Graphics.Canvas.ICanvasResourceCreator* resourceCreator,
+            [in] UINT32 gradientStopCount,
+            [in, size_is(gradientStopCount)] CanvasGradientStopHdr* gradientStopsHdr,
+            [in] Microsoft.Graphics.Canvas.CanvasEdgeBehavior edgeBehavior,
+            [in] Microsoft.Graphics.Canvas.CanvasAlphaMode alphaMode,
+            [out, retval] CanvasLinearGradientBrush** canvasLinearGradientBrush);
+
+        [overload("CreateHdr")]
+        HRESULT CreateHdrWithEdgeBehaviorAndInterpolationOptions(
+            [in] Microsoft.Graphics.Canvas.ICanvasResourceCreator* resourceCreator,
+            [in] UINT32 gradientStopCount,
+            [in, size_is(gradientStopCount)] CanvasGradientStopHdr* gradientStopsHdr,
+            [in] Microsoft.Graphics.Canvas.CanvasEdgeBehavior edgeBehavior,
+            [in] Microsoft.Graphics.Canvas.CanvasAlphaMode alphaMode,
+            [in] Microsoft.Graphics.Canvas.CanvasColorSpace preInterpolationSpace,
+            [in] Microsoft.Graphics.Canvas.CanvasColorSpace postInterpolationSpace,
+            [in] Microsoft.Graphics.Canvas.CanvasBufferPrecision bufferPrecision,
+            [out, retval] CanvasLinearGradientBrush** canvasLinearGradientBrush);
+
+        
+        HRESULT CreateRainbow(
+            [in] Microsoft.Graphics.Canvas.ICanvasResourceCreator* resourceCreator,
+            [in] float eldritchness,
+            [out, retval] CanvasLinearGradientBrush** canvasLinearGradientBrush);
+    }
 
     [version(VERSION), uuid(A4FFBCB1-EC22-48C8-B1AF-09BCFD34EEBD), exclusiveto(CanvasLinearGradientBrush)]
     interface ICanvasLinearGradientBrush : IInspectable
@@ -212,6 +264,11 @@ namespace Microsoft.Graphics.Canvas.Brushes
             [out, size_is(, *valueCount), retval] CanvasGradientStop** valueElements);
 
         [propget]
+        HRESULT StopsHdr(
+            [out] UINT32* valueCount,
+            [out, size_is(, *valueCount), retval] CanvasGradientStopHdr** valueElements);
+
+        [propget]
         HRESULT EdgeBehavior([out, retval] Microsoft.Graphics.Canvas.CanvasEdgeBehavior* value);
 
         [propget]
@@ -225,15 +282,6 @@ namespace Microsoft.Graphics.Canvas.Brushes
 
         [propget]
         HRESULT AlphaMode([out, retval] Microsoft.Graphics.Canvas.CanvasAlphaMode* value);
-    };
-
-    [version(VERSION), uuid(E9DE3392-8FBF-478C-8E6A-D0A0EA753B37), exclusiveto(CanvasLinearGradientBrush)]
-    interface ICanvasLinearGradientBrushStatics : IInspectable
-    {
-        HRESULT CreateRainbow(
-            [in] Microsoft.Graphics.Canvas.ICanvasResourceCreator* resourceCreator,
-            [in] float eldritchness,
-            [out, retval] CanvasLinearGradientBrush** canvasLinearGradientBrush);
     };
 
     [version(VERSION), activatable(ICanvasLinearGradientBrushFactory, VERSION), static(ICanvasLinearGradientBrushStatics, VERSION)]
@@ -286,6 +334,51 @@ namespace Microsoft.Graphics.Canvas.Brushes
             [out, retval] CanvasRadialGradientBrush** canvasRadialGradientBrush);
     }
 
+    [version(VERSION), uuid(3B0D4DAE-3E21-4818-99B4-779ACAAF18BE), exclusiveto(CanvasRadialGradientBrush)]
+    interface ICanvasRadialGradientBrushStatics : IInspectable
+    {
+        [overload("CreateHdr")]
+        HRESULT CreateHdrSimple(
+            [in] Microsoft.Graphics.Canvas.ICanvasResourceCreator* resourceCreator,
+            [in] NUMERICS.Vector4 startColorHdr,
+            [in] NUMERICS.Vector4 endColorHdr,
+            [out, retval] CanvasRadialGradientBrush** canvasRadialGradientBrush);
+
+        [overload("CreateHdr")]
+        HRESULT CreateHdrWithStops(
+            [in] Microsoft.Graphics.Canvas.ICanvasResourceCreator* resourceCreator,
+            [in] UINT32 gradientStopCount,
+            [in, size_is(gradientStopCount)] CanvasGradientStopHdr* gradientStops,
+            [out, retval] CanvasRadialGradientBrush** canvasRadialGradientBrush);
+
+        [overload("CreateHdr")]
+        HRESULT CreateHdrWithEdgeBehaviorAndAlphaMode(
+            [in] Microsoft.Graphics.Canvas.ICanvasResourceCreator* resourceCreator,
+            [in] UINT32 gradientStopCount,
+            [in, size_is(gradientStopCount)] CanvasGradientStopHdr* gradientStops,
+            [in] Microsoft.Graphics.Canvas.CanvasEdgeBehavior edgeBehavior,
+            [in] Microsoft.Graphics.Canvas.CanvasAlphaMode alphaMode,
+            [out, retval] CanvasRadialGradientBrush** canvasRadialGradientBrush);
+
+        [overload("CreateHdr")]
+        HRESULT CreateHdrWithEdgeBehaviorAndInterpolationOptions(
+            [in] Microsoft.Graphics.Canvas.ICanvasResourceCreator* resourceCreator,
+            [in] UINT32 gradientStopCount,
+            [in, size_is(gradientStopCount)] CanvasGradientStopHdr* gradientStops,
+            [in] Microsoft.Graphics.Canvas.CanvasEdgeBehavior edgeBehavior,
+            [in] Microsoft.Graphics.Canvas.CanvasAlphaMode alphaMode,
+            [in] Microsoft.Graphics.Canvas.CanvasColorSpace preInterpolationSpace,
+            [in] Microsoft.Graphics.Canvas.CanvasColorSpace postInterpolationSpace,
+            [in] Microsoft.Graphics.Canvas.CanvasBufferPrecision bufferPrecision,
+            [out, retval] CanvasRadialGradientBrush** canvasRadialGradientBrush);
+
+        
+        HRESULT CreateRainbow(
+            [in] Microsoft.Graphics.Canvas.ICanvasResourceCreator* resourceCreator,
+            [in] float eldritchness,
+            [out, retval] CanvasRadialGradientBrush** canvasRadialGradientBrush);
+    };
+
     [version(VERSION), uuid(4D27D756-14A9-4EB7-973F-E6614D4F89E7), exclusiveto(CanvasRadialGradientBrush)]
     interface ICanvasRadialGradientBrush : IInspectable
         requires ICanvasBrush
@@ -320,6 +413,11 @@ namespace Microsoft.Graphics.Canvas.Brushes
             [out, size_is(, *valueCount), retval] CanvasGradientStop** valueElements);
 
         [propget]
+        HRESULT StopsHdr(
+            [out] UINT32* valueCount,
+            [out, size_is(, *valueCount), retval] CanvasGradientStopHdr** valueElements);
+
+        [propget]
         HRESULT EdgeBehavior([out, retval] Microsoft.Graphics.Canvas.CanvasEdgeBehavior* value);
 
         [propget]
@@ -333,15 +431,6 @@ namespace Microsoft.Graphics.Canvas.Brushes
 
         [propget]
         HRESULT AlphaMode([out, retval] Microsoft.Graphics.Canvas.CanvasAlphaMode* value);
-    };
-
-    [version(VERSION), uuid(3B0D4DAE-3E21-4818-99B4-779ACAAF18BE), exclusiveto(CanvasRadialGradientBrush)]
-    interface ICanvasRadialGradientBrushStatics : IInspectable
-    {
-        HRESULT CreateRainbow(
-            [in] Microsoft.Graphics.Canvas.ICanvasResourceCreator* resourceCreator,
-            [in] float eldritchness,
-            [out, retval] CanvasRadialGradientBrush** canvasRadialGradientBrush);
     };
 
     [version(VERSION), activatable(ICanvasRadialGradientBrushFactory, VERSION), static(ICanvasRadialGradientBrushStatics, VERSION)]
