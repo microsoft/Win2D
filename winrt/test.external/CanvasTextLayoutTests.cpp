@@ -104,4 +104,16 @@ public:
             }
         }
     }
+
+    TEST_METHOD(CanvasTextLayoutTests_get_LineMetrics_EmptyString)
+    {
+        auto format = ref new CanvasTextFormat();
+
+        auto layout = ref new CanvasTextLayout(m_device, L"", format, 0, 0);
+
+        auto lineMetrics = layout->LineMetrics;
+
+        Assert::AreEqual(1u, lineMetrics->Length);
+        Assert::AreEqual(0, lineMetrics[0].CharacterCount);
+    }
 };

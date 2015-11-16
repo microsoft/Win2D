@@ -73,16 +73,12 @@ namespace canvas
         MOCK_METHOD4(FillOpacityMask              , void(ID2D1Bitmap*, ID2D1Brush*, D2D1_RECT_F const*, D2D1_RECT_F const*));
         MOCK_METHOD1(SetTextRenderingParams       , void(IDWriteRenderingParams*));
         MOCK_METHOD1_CONST(GetTextRenderingParams , void(IDWriteRenderingParams**));
-        MOCK_METHOD4(CreateLinearGradientBrush    , HRESULT(D2D1_LINEAR_GRADIENT_BRUSH_PROPERTIES const*, D2D1_BRUSH_PROPERTIES const*, ID2D1GradientStopCollection*, ID2D1LinearGradientBrush**));
-        MOCK_METHOD4(CreateRadialGradientBrush    , HRESULT(D2D1_RADIAL_GRADIENT_BRUSH_PROPERTIES const*, D2D1_BRUSH_PROPERTIES const*, ID2D1GradientStopCollection*, ID2D1RadialGradientBrush**));
 
         // ID2D1DeviceContext1
         
         MOCK_METHOD3(CreateFilledGeometryRealization  , HRESULT(ID2D1Geometry*, FLOAT, ID2D1GeometryRealization**));
         MOCK_METHOD5(CreateStrokedGeometryRealization , HRESULT(ID2D1Geometry*, FLOAT, FLOAT, ID2D1StrokeStyle *, ID2D1GeometryRealization**));
         MOCK_METHOD2(DrawGeometryRealization          , void(ID2D1GeometryRealization*, ID2D1Brush*));
-        MOCK_METHOD8(CreateGradientStopCollection     , HRESULT(D2D1_GRADIENT_STOP const*, uint32_t, D2D1_COLOR_SPACE, D2D1_COLOR_SPACE, D2D1_BUFFER_PRECISION, D2D1_EXTEND_MODE, D2D1_COLOR_INTERPOLATION_MODE, ID2D1GradientStopCollection1**));
-
 
 #if WINVER > _WIN32_WINNT_WINBLUE
 
@@ -150,6 +146,18 @@ namespace canvas
             // This method is a deprecated version and should not be called. 
             // The version which returns ID2D1GradientStopCollection1 should be called instead.
             Assert::Fail(L"Unexpected call to CreateGradientStopCollection");
+            return E_NOTIMPL;
+        }
+
+        IFACEMETHODIMP CreateLinearGradientBrush(const D2D1_LINEAR_GRADIENT_BRUSH_PROPERTIES *,const D2D1_BRUSH_PROPERTIES *,ID2D1GradientStopCollection *,ID2D1LinearGradientBrush **) override
+        {
+            Assert::Fail(L"Unexpected call to CreateLinearGradientBrush");
+            return E_NOTIMPL;
+        }
+
+        IFACEMETHODIMP CreateRadialGradientBrush(const D2D1_RADIAL_GRADIENT_BRUSH_PROPERTIES *,const D2D1_BRUSH_PROPERTIES *,ID2D1GradientStopCollection *,ID2D1RadialGradientBrush **) override
+        {
+            Assert::Fail(L"Unexpected call to CreateRadialGradientBrush");
             return E_NOTIMPL;
         }
 
@@ -265,6 +273,12 @@ namespace canvas
         IFACEMETHODIMP CreateColorContextFromWicColorContext(IWICColorContext *,ID2D1ColorContext **) override
         {
             Assert::Fail(L"Unexpected call to CreateColorContextFromWicColorContext");
+            return E_NOTIMPL;
+        }
+
+        IFACEMETHODIMP CreateGradientStopCollection(const D2D1_GRADIENT_STOP *, uint32_t, D2D1_COLOR_SPACE, D2D1_COLOR_SPACE, D2D1_BUFFER_PRECISION, D2D1_EXTEND_MODE, D2D1_COLOR_INTERPOLATION_MODE, ID2D1GradientStopCollection1 **) override
+        {
+            Assert::Fail(L"Unexpected call to CreateGradientStopCollection");
             return E_NOTIMPL;
         }
 

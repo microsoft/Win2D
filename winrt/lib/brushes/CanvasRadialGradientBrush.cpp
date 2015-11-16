@@ -5,12 +5,46 @@
 #include "pch.h"
 
 #include "CanvasRadialGradientBrush.h"
-#include "Gradients.h"
 
 using namespace ABI::Microsoft::Graphics::Canvas::Brushes;
 using namespace ABI::Microsoft::Graphics::Canvas::Numerics;
 using namespace ABI::Microsoft::Graphics::Canvas;
 using namespace ABI::Windows::UI;
+
+ComPtr<CanvasRadialGradientBrush> CanvasRadialGradientBrush::CreateNew(
+    ICanvasResourceCreator* resourceCreator,
+    UINT32 gradientStopCount,
+    CanvasGradientStop* gradientStops,
+    CanvasEdgeBehavior edgeBehavior,
+    CanvasAlphaMode alphaMode,
+    CanvasColorSpace preInterpolationSpace,
+    CanvasColorSpace postInterpolationSpace,
+    CanvasBufferPrecision bufferPrecision)
+{
+    ComPtr<ICanvasDevice> device;
+    ThrowIfFailed(resourceCreator->get_Device(&device));
+
+    ComPtr<ICanvasDeviceInternal> deviceInternal;
+    ThrowIfFailed(device.As(&deviceInternal));
+
+    ComPtr<ID2D1GradientStopCollection1> stopCollection = deviceInternal->CreateGradientStopCollection(
+        gradientStopCount,
+        gradientStops,
+        edgeBehavior,
+        preInterpolationSpace,
+        postInterpolationSpace,
+        bufferPrecision,
+        alphaMode);
+
+    auto d2dBrush = deviceInternal->CreateRadialGradientBrush(stopCollection.Get());
+
+    auto canvasRadialGradientBrush = Make<CanvasRadialGradientBrush>(
+        device.Get(),
+        d2dBrush.Get());
+    CheckMakeResult(canvasRadialGradientBrush);
+
+    return canvasRadialGradientBrush;
+}
 
 ComPtr<CanvasRadialGradientBrush> CanvasRadialGradientBrush::CreateNew(
     ICanvasResourceCreator* resourceCreator,
@@ -36,29 +70,62 @@ IFACEMETHODIMP CanvasRadialGradientBrushFactory::CreateSimple(
     ICanvasResourceCreator* resourceCreator,
     ABI::Windows::UI::Color startColor,
     ABI::Windows::UI::Color endColor,
-    ICanvasRadialGradientBrush** brush)
+    ICanvasRadialGradientBrush** radialGradientBrush)
 {
-    return CreateSimpleGradientBrush<CanvasRadialGradientBrush>(resourceCreator, startColor, endColor, brush);
+    return ExceptionBoundary(
+        [&]
+        {
+            CheckInPointer(resourceCreator);
+            CheckAndClearOutPointer(radialGradientBrush);
+
+            ComPtr<ICanvasDevice> canvasDevice;
+            ThrowIfFailed(resourceCreator->get_Device(&canvasDevice));
+
+            ComPtr<ID2D1GradientStopCollection1> stopCollection =
+                CreateSimpleGradientStopCollection(canvasDevice.Get(), startColor, endColor, CanvasEdgeBehavior::Clamp);
+
+            auto newRadialBrush = CanvasRadialGradientBrush::CreateNew(resourceCreator, stopCollection.Get());
+
+            ThrowIfFailed(newRadialBrush.CopyTo(radialGradientBrush));
+        });    
  }
 
 IFACEMETHODIMP CanvasRadialGradientBrushFactory::CreateWithStops(
-    ICanvasResourceCreator* resourceCreator,
+    ICanvasResourceCreator* resourceAllocator,
     UINT32 gradientStopCount,
     CanvasGradientStop* gradientStops,
-    ICanvasRadialGradientBrush** brush)
+    ICanvasRadialGradientBrush** radialGradientBrush)
 {
-    return CreateGradientBrush<CanvasRadialGradientBrush>(resourceCreator, gradientStopCount, gradientStops, brush);
+    return CreateWithEdgeBehaviorAndInterpolationOptions(
+        resourceAllocator,
+        gradientStopCount,
+        gradientStops,
+        CanvasEdgeBehavior::Clamp,
+        CanvasAlphaMode::Premultiplied,
+        CanvasColorSpace::Srgb,
+        CanvasColorSpace::Srgb,
+        CanvasBufferPrecision::Precision8UIntNormalized,
+        radialGradientBrush);
 }
 
 IFACEMETHODIMP CanvasRadialGradientBrushFactory::CreateWithEdgeBehaviorAndAlphaMode(
-    ICanvasResourceCreator* resourceCreator,
+    ICanvasResourceCreator* resourceAllocator,
     UINT32 gradientStopCount,
     CanvasGradientStop* gradientStops,
     CanvasEdgeBehavior edgeBehavior,
     CanvasAlphaMode alphaMode,
-    ICanvasRadialGradientBrush** brush)
+    ICanvasRadialGradientBrush** radialGradientBrush)
 {
-    return CreateGradientBrush<CanvasRadialGradientBrush>(resourceCreator, gradientStopCount, gradientStops, edgeBehavior, alphaMode, brush);
+    return CreateWithEdgeBehaviorAndInterpolationOptions(
+        resourceAllocator,
+        gradientStopCount,
+        gradientStops,
+        edgeBehavior,
+        alphaMode,
+        CanvasColorSpace::Srgb,
+        CanvasColorSpace::Srgb,
+        CanvasBufferPrecision::Precision8UIntNormalized,
+        radialGradientBrush);
 }
 
 IFACEMETHODIMP CanvasRadialGradientBrushFactory::CreateWithEdgeBehaviorAndInterpolationOptions(
@@ -70,52 +137,26 @@ IFACEMETHODIMP CanvasRadialGradientBrushFactory::CreateWithEdgeBehaviorAndInterp
     CanvasColorSpace preInterpolationSpace,
     CanvasColorSpace postInterpolationSpace,
     CanvasBufferPrecision bufferPrecision,
-    ICanvasRadialGradientBrush** brush)
+    ICanvasRadialGradientBrush** radialGradientBrush)
 {
-    return CreateGradientBrush<CanvasRadialGradientBrush>(resourceCreator, gradientStopCount, gradientStops, edgeBehavior, alphaMode, preInterpolationSpace, postInterpolationSpace, bufferPrecision, brush);
-}
+    return ExceptionBoundary(
+        [&]
+        {
+            CheckInPointer(resourceCreator);
+            CheckAndClearOutPointer(radialGradientBrush);
 
-IFACEMETHODIMP CanvasRadialGradientBrushFactory::CreateHdrSimple(
-    ICanvasResourceCreator* resourceCreator,
-    Vector4 startColorHdr,
-    Vector4 endColorHdr,
-    ICanvasRadialGradientBrush** brush)
-{
-    return CreateSimpleGradientBrush<CanvasRadialGradientBrush>(resourceCreator, startColorHdr, endColorHdr, brush);
-}
+            auto newRadialBrush = CanvasRadialGradientBrush::CreateNew(
+                resourceCreator,
+                gradientStopCount,
+                gradientStops,
+                edgeBehavior,
+                alphaMode,
+                preInterpolationSpace,
+                postInterpolationSpace,
+                bufferPrecision);
 
-IFACEMETHODIMP CanvasRadialGradientBrushFactory::CreateHdrWithStops(
-    ICanvasResourceCreator* resourceCreator,
-    UINT32 gradientStopCount,
-    CanvasGradientStopHdr* gradientStops,
-    ICanvasRadialGradientBrush** brush)
-{
-    return CreateGradientBrush<CanvasRadialGradientBrush>(resourceCreator, gradientStopCount, gradientStops, brush);
-}
-
-IFACEMETHODIMP CanvasRadialGradientBrushFactory::CreateHdrWithEdgeBehaviorAndAlphaMode(
-    ICanvasResourceCreator* resourceCreator,
-    UINT32 gradientStopCount,
-    CanvasGradientStopHdr* gradientStopsHdr,
-    CanvasEdgeBehavior extend,
-    CanvasAlphaMode alphaMode,
-    ICanvasRadialGradientBrush** brush)
-{
-    return CreateGradientBrush<CanvasRadialGradientBrush>(resourceCreator, gradientStopCount, gradientStopsHdr, extend, alphaMode, brush);
-}
-
-IFACEMETHODIMP CanvasRadialGradientBrushFactory::CreateHdrWithEdgeBehaviorAndInterpolationOptions(
-    ICanvasResourceCreator* resourceCreator,
-    UINT32 gradientStopCount,
-    CanvasGradientStopHdr* gradientStops,
-    CanvasEdgeBehavior edgeBehavior,
-    CanvasAlphaMode alphaMode,
-    CanvasColorSpace preInterpolationSpace,
-    CanvasColorSpace postInterpolationSpace,
-    CanvasBufferPrecision bufferPrecision,
-    ICanvasRadialGradientBrush** brush)
-{
-    return CreateGradientBrush<CanvasRadialGradientBrush>(resourceCreator, gradientStopCount, gradientStops, edgeBehavior, alphaMode, preInterpolationSpace, postInterpolationSpace, bufferPrecision, brush);
+            ThrowIfFailed(newRadialBrush.CopyTo(radialGradientBrush));
+        });
 }
 
 IFACEMETHODIMP CanvasRadialGradientBrushFactory::CreateRainbow(
@@ -152,7 +193,7 @@ CanvasRadialGradientBrush::CanvasRadialGradientBrush(
 IFACEMETHODIMP CanvasRadialGradientBrush::get_Center(_Out_ Vector2* value)
 {
     return ExceptionBoundary(
-        [&]
+        [&]()
         {
             CheckInPointer(value);
             *value = FromD2DPoint(GetResource()->GetCenter());
@@ -162,7 +203,7 @@ IFACEMETHODIMP CanvasRadialGradientBrush::get_Center(_Out_ Vector2* value)
 IFACEMETHODIMP CanvasRadialGradientBrush::put_Center(_In_ Vector2 value)
 {
     return ExceptionBoundary(
-        [&]
+        [&]()
         {
             GetResource()->SetCenter(ToD2DPoint(value));
         });
@@ -171,7 +212,7 @@ IFACEMETHODIMP CanvasRadialGradientBrush::put_Center(_In_ Vector2 value)
 IFACEMETHODIMP CanvasRadialGradientBrush::get_OriginOffset(_Out_ Vector2* value)
 {
     return ExceptionBoundary(
-        [&]
+        [&]()
         {
             CheckInPointer(value);
             *value = FromD2DPoint(GetResource()->GetGradientOriginOffset());
@@ -181,7 +222,7 @@ IFACEMETHODIMP CanvasRadialGradientBrush::get_OriginOffset(_Out_ Vector2* value)
 IFACEMETHODIMP CanvasRadialGradientBrush::put_OriginOffset(_In_ Vector2 value)
 {
     return ExceptionBoundary(
-        [&]
+        [&]()
         {
             GetResource()->SetGradientOriginOffset(ToD2DPoint(value));
         });
@@ -190,7 +231,7 @@ IFACEMETHODIMP CanvasRadialGradientBrush::put_OriginOffset(_In_ Vector2 value)
 IFACEMETHODIMP CanvasRadialGradientBrush::get_RadiusX(_Out_ float* value)
 {
     return ExceptionBoundary(
-        [&]
+        [&]()
         {
             CheckInPointer(value);
             *value = GetResource()->GetRadiusX();
@@ -200,7 +241,7 @@ IFACEMETHODIMP CanvasRadialGradientBrush::get_RadiusX(_Out_ float* value)
 IFACEMETHODIMP CanvasRadialGradientBrush::put_RadiusX(_In_ float value)
 {
     return ExceptionBoundary(
-        [&]
+        [&]()
         {
             GetResource()->SetRadiusX(value);
         });
@@ -209,7 +250,7 @@ IFACEMETHODIMP CanvasRadialGradientBrush::put_RadiusX(_In_ float value)
 IFACEMETHODIMP CanvasRadialGradientBrush::get_RadiusY(_Out_ float* value)
 {
     return ExceptionBoundary(
-        [&]
+        [&]()
         {
             CheckInPointer(value);
             *value = GetResource()->GetRadiusY();
@@ -219,40 +260,31 @@ IFACEMETHODIMP CanvasRadialGradientBrush::get_RadiusY(_Out_ float* value)
 IFACEMETHODIMP CanvasRadialGradientBrush::put_RadiusY(_In_ float value)
 {
     return ExceptionBoundary(
-        [&]
+        [&]()
         {
             GetResource()->SetRadiusY(value);
         });
 }
-
 IFACEMETHODIMP CanvasRadialGradientBrush::get_Stops(UINT32* valueCount, CanvasGradientStop** valueElements)
 {
     return ExceptionBoundary(
-        [&]
+        [&]()
         {
             CheckInPointer(valueCount);
             CheckAndClearOutPointer(valueElements);
 
-            CopyStops(GetResource(), valueCount, valueElements);
-        });
-}
+            auto& resource = GetResource();
 
-IFACEMETHODIMP CanvasRadialGradientBrush::get_StopsHdr(UINT32* valueCount, CanvasGradientStopHdr** valueElements)
-{
-    return ExceptionBoundary(
-        [&]
-        {
-            CheckInPointer(valueCount);
-            CheckAndClearOutPointer(valueElements);
-
-            CopyStops(GetResource(), valueCount, valueElements);
+            ComPtr<ID2D1GradientStopCollection> stopCollection;
+            resource->GetGradientStopCollection(&stopCollection);
+            CopyStops(stopCollection, valueCount, valueElements);
         });
 }
 
 IFACEMETHODIMP CanvasRadialGradientBrush::get_EdgeBehavior(CanvasEdgeBehavior* value)
 {
     return ExceptionBoundary(
-        [&]
+        [&]()
         {
             CheckInPointer(value);
             *value = StaticCastAs<CanvasEdgeBehavior>(GetGradientStopCollection()->GetExtendMode());
@@ -262,7 +294,7 @@ IFACEMETHODIMP CanvasRadialGradientBrush::get_EdgeBehavior(CanvasEdgeBehavior* v
 IFACEMETHODIMP CanvasRadialGradientBrush::get_AlphaMode(CanvasAlphaMode* value)
 {
     return ExceptionBoundary(
-        [&]
+        [&]()
         {
             CheckInPointer(value);
             *value = FromD2DColorInterpolation(GetGradientStopCollection()->GetColorInterpolationMode());
@@ -272,7 +304,7 @@ IFACEMETHODIMP CanvasRadialGradientBrush::get_AlphaMode(CanvasAlphaMode* value)
 IFACEMETHODIMP CanvasRadialGradientBrush::get_PreInterpolationSpace(CanvasColorSpace* value)
 {
     return ExceptionBoundary(
-        [&]
+        [&]()
         {
             CheckInPointer(value);
             *value = StaticCastAs<CanvasColorSpace>(GetGradientStopCollection()->GetPreInterpolationSpace());
@@ -282,7 +314,7 @@ IFACEMETHODIMP CanvasRadialGradientBrush::get_PreInterpolationSpace(CanvasColorS
 IFACEMETHODIMP CanvasRadialGradientBrush::get_PostInterpolationSpace(CanvasColorSpace* value)
 {
     return ExceptionBoundary(
-        [&]
+        [&]()
         {
             CheckInPointer(value);
             *value = StaticCastAs<CanvasColorSpace>(GetGradientStopCollection()->GetPostInterpolationSpace());
@@ -292,7 +324,7 @@ IFACEMETHODIMP CanvasRadialGradientBrush::get_PostInterpolationSpace(CanvasColor
 IFACEMETHODIMP CanvasRadialGradientBrush::get_BufferPrecision(CanvasBufferPrecision* value)
 {
     return ExceptionBoundary(
-        [&]
+        [&]()
         {
             CheckInPointer(value);
             *value = FromD2DBufferPrecision(GetGradientStopCollection()->GetBufferPrecision());

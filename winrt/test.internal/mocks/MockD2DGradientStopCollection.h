@@ -11,20 +11,114 @@ namespace canvas
         ChainInterfaces<ID2D1GradientStopCollection1, ID2D1GradientStopCollection, ID2D1Resource>>
     {
     public:
+        std::function<void(D2D1_GRADIENT_STOP *gradientStops, UINT32 count)> MockGetGradientStops1;
+        std::function<D2D1_COLOR_SPACE()> MockGetPreInterpolationSpace;
+        std::function<D2D1_COLOR_SPACE()> MockGetPostInterpolationSpace;
+        std::function<D2D1_BUFFER_PRECISION()> MockGetBufferPrecision;
+        std::function<D2D1_COLOR_INTERPOLATION_MODE()> MockGetColorInterpolationMode;
+        std::function<D2D1_EXTEND_MODE()> MockGetExtendMode;
+        std::function<UINT32()> MockGetGradientStopCount;
+
+        //
         // ID2D1GradientStopCollection1
-        MOCK_METHOD2_CONST(GetGradientStops1, void(D2D1_GRADIENT_STOP*, UINT32));
-        MOCK_METHOD0_CONST(GetPreInterpolationSpace, D2D1_COLOR_SPACE());
-        MOCK_METHOD0_CONST(GetPostInterpolationSpace, D2D1_COLOR_SPACE());
-        MOCK_METHOD0_CONST(GetBufferPrecision, D2D1_BUFFER_PRECISION());
-        MOCK_METHOD0_CONST(GetColorInterpolationMode, D2D1_COLOR_INTERPOLATION_MODE());
+        //
 
+        STDMETHOD_(void, GetGradientStops1)(
+            D2D1_GRADIENT_STOP *gradientStops,
+            UINT32 gradientStopsCount
+            ) CONST
+        {
+            if (MockGetGradientStops1)
+            {
+                MockGetGradientStops1(gradientStops, gradientStopsCount);
+                return;
+            }
+            Assert::Fail(L"Unexpected call to GetGradientStops1");
+        }
+
+        STDMETHOD_(D2D1_COLOR_SPACE, GetPreInterpolationSpace)() CONST
+        {
+            if (MockGetPreInterpolationSpace)
+            {
+                return MockGetPreInterpolationSpace();
+            }
+            Assert::Fail(L"Unexpected call to GetPreInterpolationSpace");
+            return static_cast<D2D1_COLOR_SPACE>(0);
+        }
+
+        STDMETHOD_(D2D1_COLOR_SPACE, GetPostInterpolationSpace)() CONST 
+        {
+            if (MockGetPostInterpolationSpace)
+            {
+                return MockGetPostInterpolationSpace();
+            }
+            Assert::Fail(L"Unexpected call to GetPostInterpolationSpace");
+            return static_cast<D2D1_COLOR_SPACE>(0);
+        }
+        STDMETHOD_(D2D1_BUFFER_PRECISION, GetBufferPrecision)() CONST
+        {
+            if (MockGetBufferPrecision)
+            {
+                return MockGetBufferPrecision();
+            }
+            Assert::Fail(L"Unexpected call to GetBufferPrecision");
+            return static_cast<D2D1_BUFFER_PRECISION>(0);
+        }
+
+        STDMETHOD_(D2D1_COLOR_INTERPOLATION_MODE, GetColorInterpolationMode)() CONST
+        {
+            if (MockGetColorInterpolationMode)
+            {
+                return MockGetColorInterpolationMode();
+            }
+            Assert::Fail(L"Unexpected call to GetColorInterpolationMode");
+            return static_cast<D2D1_COLOR_INTERPOLATION_MODE>(0);
+        }
+
+        //
         // ID2D1GradientStopCollection
-        MOCK_METHOD0_CONST(GetGradientStopCount, UINT32());
-        MOCK_METHOD2_CONST(GetGradientStops, void(D2D1_GRADIENT_STOP*, UINT32));
-        MOCK_METHOD0_CONST(GetColorInterpolationGamma, D2D1_GAMMA());
-        MOCK_METHOD0_CONST(GetExtendMode, D2D1_EXTEND_MODE());
+        //
 
+        STDMETHOD_(UINT32, GetGradientStopCount)() CONST
+        {
+            if (MockGetGradientStopCount)
+            {
+                return MockGetGradientStopCount();
+            }
+            Assert::Fail(L"Unexpected call to GetGradientStopCount");
+            return 0;
+        }
+
+        STDMETHOD_(void, GetGradientStops)(
+           D2D1_GRADIENT_STOP *gradientStops,
+           UINT32 gradientStopsCount) CONST
+        {
+            Assert::Fail(L"Unexpected call to GetGradientStops");
+        }
+
+        STDMETHOD_(D2D1_GAMMA, GetColorInterpolationGamma)() CONST
+        {
+            Assert::Fail(L"Unexpected call to GetColorInterpolationGamma");
+            return static_cast<D2D1_GAMMA>(0);
+        }
+
+        STDMETHOD_(D2D1_EXTEND_MODE, GetExtendMode)() CONST
+        {
+            if (MockGetExtendMode)
+            {
+                return MockGetExtendMode();
+            }
+            Assert::Fail(L"Unexpected call to GetExtendMode");
+            return static_cast<D2D1_EXTEND_MODE>(0);
+        }
+
+        //
         // ID2D1Resource
-        MOCK_METHOD1_CONST(GetFactory, void(ID2D1Factory**));
+        //
+
+        IFACEMETHODIMP_(void) GetFactory(ID2D1Factory **factory) const override
+        {
+            Assert::Fail(L"Unexpected call to GetFactory");
+        }
     };
 }

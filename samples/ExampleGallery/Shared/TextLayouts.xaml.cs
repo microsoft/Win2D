@@ -103,8 +103,7 @@ namespace ExampleGallery
         public TextLayouts()
         {
             this.InitializeComponent();
-
-            fontPicker.SelectDefaultFont();
+            
             CurrentTextSampleOption = TextSampleOption.QuickBrownFox;
             ShowPerCharacterLayoutBounds = true;
             UseEllipsisTrimming = true;

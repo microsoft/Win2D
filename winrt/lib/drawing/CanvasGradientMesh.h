@@ -60,7 +60,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             uint32_t pointCount,
             Vector2* pointElements,
             uint32_t colorCount,
-            Color* colorElements,
+            Vector4* colorElements,
             uint32_t edgeCount,
             CanvasGradientMeshPatchEdge* edgeElements,
             CanvasGradientMeshPatch* gradientMeshPatch) override;
@@ -69,7 +69,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             uint32_t pointCount,
             Vector2* pointElements,
             uint32_t colorCount,
-            Color* colorElements,
+            Vector4* colorElements,
             uint32_t edgeCount,
             CanvasGradientMeshPatchEdge* edgeElements,
             CanvasGradientMeshPatch* gradientMeshPatch) override;

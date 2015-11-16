@@ -3,14 +3,47 @@
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
 #include "pch.h"
-
 #include "CanvasLinearGradientBrush.h"
-#include "Gradients.h"
 
 using namespace ABI::Microsoft::Graphics::Canvas::Brushes;
 using namespace ABI::Microsoft::Graphics::Canvas::Numerics;
 using namespace ABI::Microsoft::Graphics::Canvas;
 using namespace ABI::Windows::UI;
+
+ComPtr<CanvasLinearGradientBrush> CanvasLinearGradientBrush::CreateNew(
+    ICanvasResourceCreator* resourceCreator,
+    UINT32 gradientStopCount,
+    CanvasGradientStop* gradientStops,
+    CanvasEdgeBehavior edgeBehavior,
+    CanvasAlphaMode alphaMode,
+    CanvasColorSpace preInterpolationSpace,
+    CanvasColorSpace postInterpolationSpace,
+    CanvasBufferPrecision bufferPrecision)
+{
+    ComPtr<ICanvasDevice> device;
+    ThrowIfFailed(resourceCreator->get_Device(&device));
+
+    ComPtr<ICanvasDeviceInternal> deviceInternal;
+    ThrowIfFailed(device.As(&deviceInternal));
+
+    ComPtr<ID2D1GradientStopCollection1> stopCollection = deviceInternal->CreateGradientStopCollection(
+        gradientStopCount,
+        gradientStops,
+        edgeBehavior,
+        preInterpolationSpace,
+        postInterpolationSpace,
+        bufferPrecision,
+        alphaMode);
+
+    auto d2dBrush = deviceInternal->CreateLinearGradientBrush(stopCollection.Get());
+
+    auto canvasLinearGradientBrush = Make<CanvasLinearGradientBrush>(
+        device.Get(),
+        d2dBrush.Get());
+    CheckMakeResult(canvasLinearGradientBrush);
+
+    return canvasLinearGradientBrush;
+}
 
 ComPtr<CanvasLinearGradientBrush> CanvasLinearGradientBrush::CreateNew(
     ICanvasResourceCreator* resourceCreator,
@@ -36,30 +69,63 @@ IFACEMETHODIMP CanvasLinearGradientBrushFactory::CreateSimple(
     ICanvasResourceCreator* resourceCreator,
     ABI::Windows::UI::Color startColor,
     ABI::Windows::UI::Color endColor,
-    ICanvasLinearGradientBrush** brush)
+    ICanvasLinearGradientBrush** linearGradientBrush)
 {
-    return CreateSimpleGradientBrush<CanvasLinearGradientBrush>(resourceCreator, startColor, endColor, brush);
+    return ExceptionBoundary(
+        [&]
+        {
+            CheckInPointer(resourceCreator);
+            CheckAndClearOutPointer(linearGradientBrush);
+
+            ComPtr<ICanvasDevice> canvasDevice;
+            ThrowIfFailed(resourceCreator->get_Device(&canvasDevice));
+
+            ComPtr<ID2D1GradientStopCollection1> stopCollection =
+                CreateSimpleGradientStopCollection(canvasDevice.Get(), startColor, endColor, CanvasEdgeBehavior::Clamp);
+
+            auto newLinearBrush = CanvasLinearGradientBrush::CreateNew(resourceCreator, stopCollection.Get());
+
+            ThrowIfFailed(newLinearBrush.CopyTo(linearGradientBrush));
+        });
 }
 
 IFACEMETHODIMP CanvasLinearGradientBrushFactory::CreateWithStops(
-    ICanvasResourceCreator* resourceCreator,
+    ICanvasResourceCreator* resourceAllocator,
     UINT32 gradientStopCount,
     CanvasGradientStop* gradientStops,
-    ICanvasLinearGradientBrush** brush)
+    ICanvasLinearGradientBrush** linearGradientBrush)
 {
-    return CreateGradientBrush<CanvasLinearGradientBrush>(resourceCreator, gradientStopCount, gradientStops, brush);
+    return CreateWithEdgeBehaviorAndInterpolationOptions(
+        resourceAllocator,
+        gradientStopCount,
+        gradientStops,
+        CanvasEdgeBehavior::Clamp,
+        CanvasAlphaMode::Premultiplied,
+        CanvasColorSpace::Srgb,
+        CanvasColorSpace::Srgb,
+        CanvasBufferPrecision::Precision8UIntNormalized,
+        linearGradientBrush);
 }
 
 IFACEMETHODIMP CanvasLinearGradientBrushFactory::CreateWithEdgeBehaviorAndAlphaMode(
-    ICanvasResourceCreator* resourceCreator,
+    ICanvasResourceCreator* resourceAllocator,
     UINT32 gradientStopCount,
     CanvasGradientStop* gradientStops,
     CanvasEdgeBehavior edgeBehavior,
     CanvasAlphaMode alphaMode,
-    ICanvasLinearGradientBrush** brush)
+    ICanvasLinearGradientBrush** linearGradientBrush)
 {
-    return CreateGradientBrush<CanvasLinearGradientBrush>(resourceCreator, gradientStopCount, gradientStops, edgeBehavior, alphaMode, brush);
-}    
+    return CreateWithEdgeBehaviorAndInterpolationOptions(
+        resourceAllocator,
+        gradientStopCount,
+        gradientStops,
+        edgeBehavior,
+        alphaMode,
+        CanvasColorSpace::Srgb,
+        CanvasColorSpace::Srgb,
+        CanvasBufferPrecision::Precision8UIntNormalized,
+        linearGradientBrush);
+}
 
 IFACEMETHODIMP CanvasLinearGradientBrushFactory::CreateWithEdgeBehaviorAndInterpolationOptions(
     ICanvasResourceCreator* resourceCreator,
@@ -70,52 +136,26 @@ IFACEMETHODIMP CanvasLinearGradientBrushFactory::CreateWithEdgeBehaviorAndInterp
     CanvasColorSpace preInterpolationSpace,
     CanvasColorSpace postInterpolationSpace,
     CanvasBufferPrecision bufferPrecision,
-    ICanvasLinearGradientBrush** brush)
+    ICanvasLinearGradientBrush** linearGradientBrush)
 {
-    return CreateGradientBrush<CanvasLinearGradientBrush>(resourceCreator, gradientStopCount, gradientStops, edgeBehavior, alphaMode, preInterpolationSpace, postInterpolationSpace, bufferPrecision, brush);
-}
+    return ExceptionBoundary(
+        [&]
+        {
+            CheckInPointer(resourceCreator);
+            CheckAndClearOutPointer(linearGradientBrush);
 
-IFACEMETHODIMP CanvasLinearGradientBrushFactory::CreateHdrSimple(
-    ICanvasResourceCreator* resourceCreator,
-    Vector4 startColorHdr,
-    Vector4 endColorHdr,
-    ICanvasLinearGradientBrush** brush)
-{
-    return CreateSimpleGradientBrush<CanvasLinearGradientBrush>(resourceCreator, startColorHdr, endColorHdr, brush);
-}
+            auto newLinearBrush = CanvasLinearGradientBrush::CreateNew(
+                resourceCreator,
+                gradientStopCount,
+                gradientStops,
+                edgeBehavior,
+                alphaMode,
+                preInterpolationSpace,
+                postInterpolationSpace,
+                bufferPrecision);
 
-IFACEMETHODIMP CanvasLinearGradientBrushFactory::CreateHdrWithStops(
-    ICanvasResourceCreator* resourceCreator,
-    UINT32 gradientStopCount,
-    CanvasGradientStopHdr* gradientStopsHdr,
-    ICanvasLinearGradientBrush** brush)
-{
-    return CreateGradientBrush<CanvasLinearGradientBrush>(resourceCreator, gradientStopCount, gradientStopsHdr, brush);
-}
-
-IFACEMETHODIMP CanvasLinearGradientBrushFactory::CreateHdrWithEdgeBehaviorAndAlphaMode(
-    ICanvasResourceCreator* resourceCreator,
-    UINT32 gradientStopCount,
-    CanvasGradientStopHdr* gradientStopsHdr,
-    CanvasEdgeBehavior extend,
-    CanvasAlphaMode alphaMode,
-    ICanvasLinearGradientBrush** brush)
-{
-    return CreateGradientBrush<CanvasLinearGradientBrush>(resourceCreator, gradientStopCount, gradientStopsHdr, extend, alphaMode, brush);
-}
-
-IFACEMETHODIMP CanvasLinearGradientBrushFactory::CreateHdrWithEdgeBehaviorAndInterpolationOptions(
-    ICanvasResourceCreator* resourceCreator,
-    UINT32 gradientStopCount,
-    CanvasGradientStopHdr* gradientStopsHdr,
-    CanvasEdgeBehavior edgeBehavior,
-    CanvasAlphaMode alphaMode,
-    CanvasColorSpace preInterpolationSpace,
-    CanvasColorSpace postInterpolationSpace,
-    CanvasBufferPrecision bufferPrecision,
-    ICanvasLinearGradientBrush** brush)
-{
-    return CreateGradientBrush<CanvasLinearGradientBrush>(resourceCreator, gradientStopCount, gradientStopsHdr, edgeBehavior, alphaMode, preInterpolationSpace, postInterpolationSpace, bufferPrecision, brush);
+            ThrowIfFailed(newLinearBrush.CopyTo(linearGradientBrush));
+        });
 }
 
 IFACEMETHODIMP CanvasLinearGradientBrushFactory::CreateRainbow(
@@ -153,7 +193,7 @@ CanvasLinearGradientBrush::CanvasLinearGradientBrush(
 IFACEMETHODIMP CanvasLinearGradientBrush::get_StartPoint(_Out_ Vector2* value)
 {
     return ExceptionBoundary(
-        [&]
+        [&]()
         {
             CheckInPointer(value);
             *value = FromD2DPoint(GetResource()->GetStartPoint());
@@ -163,7 +203,7 @@ IFACEMETHODIMP CanvasLinearGradientBrush::get_StartPoint(_Out_ Vector2* value)
 IFACEMETHODIMP CanvasLinearGradientBrush::put_StartPoint(_In_ Vector2 value)
 {
     return ExceptionBoundary(
-        [&]
+        [&]()
         {
             GetResource()->SetStartPoint(ToD2DPoint(value));
         });
@@ -172,7 +212,7 @@ IFACEMETHODIMP CanvasLinearGradientBrush::put_StartPoint(_In_ Vector2 value)
 IFACEMETHODIMP CanvasLinearGradientBrush::get_EndPoint(_Out_ Vector2* value)
 {
     return ExceptionBoundary(
-        [&]
+        [&]()
         {
             CheckInPointer(value);
             *value = FromD2DPoint(GetResource()->GetEndPoint());
@@ -182,7 +222,7 @@ IFACEMETHODIMP CanvasLinearGradientBrush::get_EndPoint(_Out_ Vector2* value)
 IFACEMETHODIMP CanvasLinearGradientBrush::put_EndPoint(_In_ Vector2 value)
 {
     return ExceptionBoundary(
-        [&]
+        [&]()
         {
             GetResource()->SetEndPoint(ToD2DPoint(value));
         });
@@ -191,31 +231,23 @@ IFACEMETHODIMP CanvasLinearGradientBrush::put_EndPoint(_In_ Vector2 value)
 IFACEMETHODIMP CanvasLinearGradientBrush::get_Stops(UINT32* valueCount, CanvasGradientStop** valueElements)
 {
     return ExceptionBoundary(
-        [&]
+        [&]()
         {
             CheckInPointer(valueCount);
             CheckAndClearOutPointer(valueElements);
 
-            CopyStops(GetResource(), valueCount, valueElements);
-        });
-}
+            auto& resource = GetResource();
 
-IFACEMETHODIMP CanvasLinearGradientBrush::get_StopsHdr(UINT32* valueCount, CanvasGradientStopHdr** valueElements)
-{
-    return ExceptionBoundary(
-        [&]
-        {
-            CheckInPointer(valueCount);
-            CheckAndClearOutPointer(valueElements);
-
-            CopyStops(GetResource(), valueCount, valueElements);
+            ComPtr<ID2D1GradientStopCollection> stopCollection;
+            resource->GetGradientStopCollection(&stopCollection);
+            CopyStops(stopCollection, valueCount, valueElements);
         });
 }
 
 IFACEMETHODIMP CanvasLinearGradientBrush::get_EdgeBehavior(CanvasEdgeBehavior* value)
 {
     return ExceptionBoundary(
-        [&]
+        [&]()
         {
             CheckInPointer(value);
             *value = static_cast<CanvasEdgeBehavior>(GetGradientStopCollection()->GetExtendMode());
@@ -225,7 +257,7 @@ IFACEMETHODIMP CanvasLinearGradientBrush::get_EdgeBehavior(CanvasEdgeBehavior* v
 IFACEMETHODIMP CanvasLinearGradientBrush::get_AlphaMode(CanvasAlphaMode* value)
 {
     return ExceptionBoundary(
-        [&]
+        [&]()
         {
             CheckInPointer(value);
             *value = FromD2DColorInterpolation(GetGradientStopCollection()->GetColorInterpolationMode());
@@ -235,7 +267,7 @@ IFACEMETHODIMP CanvasLinearGradientBrush::get_AlphaMode(CanvasAlphaMode* value)
 IFACEMETHODIMP CanvasLinearGradientBrush::get_PreInterpolationSpace(CanvasColorSpace* value)
 {
     return ExceptionBoundary(
-        [&]
+        [&]()
         {
             CheckInPointer(value);
             *value = static_cast<CanvasColorSpace>(GetGradientStopCollection()->GetPreInterpolationSpace());
@@ -245,7 +277,7 @@ IFACEMETHODIMP CanvasLinearGradientBrush::get_PreInterpolationSpace(CanvasColorS
 IFACEMETHODIMP CanvasLinearGradientBrush::get_PostInterpolationSpace(CanvasColorSpace* value)
 {
     return ExceptionBoundary(
-        [&]
+        [&]()
         {
             CheckInPointer(value);
             *value = static_cast<CanvasColorSpace>(GetGradientStopCollection()->GetPostInterpolationSpace());
@@ -255,7 +287,7 @@ IFACEMETHODIMP CanvasLinearGradientBrush::get_PostInterpolationSpace(CanvasColor
 IFACEMETHODIMP CanvasLinearGradientBrush::get_BufferPrecision(CanvasBufferPrecision* value)
 {
     return ExceptionBoundary(
-        [&]
+        [&]()
         {
             CheckInPointer(value);
             *value = FromD2DBufferPrecision(GetGradientStopCollection()->GetBufferPrecision());
