@@ -242,6 +242,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         // Marker types, used as TBoxed for values that need special conversion.
         struct ConvertRadiansToDegrees { };
         struct ConvertAlphaMode { };
+        struct ConvertColorHdrToVector3 { };
 
 
         // Methods for manipulating the collection of source images, used by SourcesVector::Traits.
@@ -397,6 +398,26 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                 Numerics::Vector3 value;
                 VectorConverter::Unbox(propertyValue, &value);
                 *result = ToWindowsColor(value);
+            }
+        };
+
+
+        // HDR color (Vector4) can be boxed as a float3 (for properties that only use rgb).
+        template<>
+        struct PropertyTypeConverter<ConvertColorHdrToVector3, Numerics::Vector4>
+        {
+            typedef PropertyTypeConverter<float[3], Numerics::Vector3> VectorConverter;
+
+            static ComPtr<IPropertyValue> Box(IPropertyValueStatics* factory, Numerics::Vector4 const& value)
+            {
+                return VectorConverter::Box(factory, Numerics::Vector3{ value.X, value.Y, value.Z });
+            }
+
+            static void  Unbox(IPropertyValue* propertyValue, Numerics::Vector4* result)
+            {
+                Numerics::Vector3 value;
+                VectorConverter::Unbox(propertyValue, &value);
+                *result = Numerics::Vector4{ value.X, value.Y, value.Z, 1.0f };
             }
         };
 

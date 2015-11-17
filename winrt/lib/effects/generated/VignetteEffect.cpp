@@ -43,14 +43,21 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         D2D1_VIGNETTE_PROP_STRENGTH,
         (value >= 0.0f) && (value <= 1.0f))
 
+    IMPLEMENT_EFFECT_PROPERTY(VignetteEffect,
+        ColorHdr,
+        float[4],
+        Numerics::Vector4,
+        D2D1_VIGNETTE_PROP_COLOR)
+
     IMPLEMENT_EFFECT_SOURCE_PROPERTY(VignetteEffect,
         Source,
         0)
 
     IMPLEMENT_EFFECT_PROPERTY_MAPPING(VignetteEffect,
-        { L"Color",  D2D1_VIGNETTE_PROP_COLOR,           GRAPHICS_EFFECT_PROPERTY_MAPPING_COLOR_TO_VECTOR4 },
-        { L"Amount", D2D1_VIGNETTE_PROP_TRANSITION_SIZE, GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT           },
-        { L"Curve",  D2D1_VIGNETTE_PROP_STRENGTH,        GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT           })
+        { L"Color",    D2D1_VIGNETTE_PROP_COLOR,           GRAPHICS_EFFECT_PROPERTY_MAPPING_COLOR_TO_VECTOR4 },
+        { L"Amount",   D2D1_VIGNETTE_PROP_TRANSITION_SIZE, GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT           },
+        { L"Curve",    D2D1_VIGNETTE_PROP_STRENGTH,        GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT           },
+        { L"ColorHdr", D2D1_VIGNETTE_PROP_COLOR,           GRAPHICS_EFFECT_PROPERTY_MAPPING_UNKNOWN          })
 
     ActivatableClass(VignetteEffect);
 }}}}}

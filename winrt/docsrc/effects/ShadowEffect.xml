@@ -41,6 +41,9 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="P:Microsoft.Graphics.Canvas.Effects.ShadowEffect.ShadowColor">
       <summary>Color of the shadow. Default black.</summary>
     </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.ShadowEffect.ShadowColorHdr" Experimental="true">
+      <summary>High-dynaimc-range color of the shadow. Default black.</summary>
+    </member>
     <member name="P:Microsoft.Graphics.Canvas.Effects.ShadowEffect.Optimization">
       <summary>Level of performance optimization.
                Default value <see cref="F:Microsoft.Graphics.Canvas.Effects.EffectOptimization.Balanced"/>.</summary>

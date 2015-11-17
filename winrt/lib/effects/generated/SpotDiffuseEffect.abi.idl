@@ -67,6 +67,12 @@ namespace Microsoft.Graphics.Canvas.Effects
         HRESULT HeightMapInterpolationMode([in] Microsoft.Graphics.Canvas.CanvasImageInterpolation value);
 
         [propget]
+        HRESULT LightColorHdr([out, retval] NUMERICS.Vector4* value);
+
+        [propput]
+        HRESULT LightColorHdr([in] NUMERICS.Vector4 value);
+
+        [propget]
         HRESULT Source([out, retval] IGRAPHICSEFFECTSOURCE** source);
 
         [propput]

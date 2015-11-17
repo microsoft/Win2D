@@ -68,6 +68,11 @@ namespace CodeGen
                 ShouldProject = true;
             }
 
+            public Property Clone()
+            {
+                return (Property)MemberwiseClone();
+            }
+
             [XmlAttribute("name")]
             public string Name { get; set; }
 
@@ -95,8 +100,10 @@ namespace CodeGen
             public bool ShouldProject { get; set; }
             public bool IsHidden { get; set; }
             public bool IsHandCoded { get; set; }
+            public bool IsHdrAlias { get; set; }
 
             public bool ConvertRadiansToDegrees { get; set; }
+            public bool ConvertColorHdrToVector3 { get; set; }
 
             public string NativePropertyName { get; set; }
 
@@ -206,6 +213,7 @@ namespace CodeGen
             AssignD2DEnums(effects, d2dEnums);
             AssignEffectsClassNames(effects, overrides.Effects, typeDictionary);
             ResolveTypeNames(effects);
+            AddHdrColorProperties(effects);
             RegisterUuids(effects);
             OverrideEnums(overrides.Enums, effects);
             GenerateOutput(effects, outputPath);
@@ -377,6 +385,29 @@ namespace CodeGen
                             property.TypeNameBoxed = "uint32_t";
                         }
                     }
+                }
+            }
+        }
+
+        private static void AddHdrColorProperties(List<Effects.Effect> effects)
+        {
+            foreach (var effect in effects)
+            {
+                var colorProperties = effect.Properties.Where(p => p.TypeNameCpp == "Color").ToList();
+
+                foreach (var property in colorProperties)
+                {
+                    var hdrProperty = property.Clone();
+                    hdrProperty.Name = hdrProperty.Name + "Hdr";
+                    hdrProperty.TypeNameIdl = "NUMERICS.Vector4";
+                    hdrProperty.TypeNameCpp = "Numerics::Vector4";
+
+                    if (hdrProperty.Type == "vector3")
+                        hdrProperty.ConvertColorHdrToVector3 = true;
+
+                    hdrProperty.IsHdrAlias = true;
+
+                    effect.Properties.Add(hdrProperty);
                 }
             }
         }

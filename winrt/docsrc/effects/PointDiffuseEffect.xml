@@ -40,6 +40,9 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="P:Microsoft.Graphics.Canvas.Effects.PointDiffuseEffect.LightColor">
       <summary>Color of the incoming light. Default value white.</summary>
     </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.PointDiffuseEffect.LightColorHdr" Experimental="true">
+      <summary>High-dynamic-range color of the incoming light. Default value white.</summary>
+    </member>
     <member name="P:Microsoft.Graphics.Canvas.Effects.PointDiffuseEffect.HeightMapScale">
       <summary>Height map scale factor in the Z direction. Default value 1.</summary>
     </member>

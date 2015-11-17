@@ -53,6 +53,7 @@ namespace test.managed
 
                 TestEffectSources(effectType, effect, initialSourceImage);
                 TestEffectProperties(effectType, effect);
+                TestEffectHdrProperties(effectType, effect);
 
                 // Test that interop can successfully transfer property values in both directions.
                 TestEffectInterop(device, device2, effectType, effect);
@@ -191,6 +192,82 @@ namespace test.managed
             Assert.AreEqual(whichIndexIsProperty.Count, whichIndexIsProperty.Distinct().Count());
         }
 
+
+        static void TestEffectHdrProperties(TypeInfo effectType, IGraphicsEffect effect)
+        {
+            var properties = GetEffectProperties(effectType).ToList();
+            var hdrProperties = properties.Where(p => p.Name.EndsWith("Hdr"));
+
+            foreach (var hdrProperty in hdrProperties)
+            {
+                var colorPropertyName = hdrProperty.Name.Substring(0, hdrProperty.Name.Length - 3);
+                var colorProperty = properties.Single(p => p.Name == colorPropertyName);
+
+                var originalHdrValue = hdrProperty.GetValue(effect);
+                var originalColorValue = colorProperty.GetValue(effect);
+
+                // Verify that a value set to the color property is picked up on the HDR version of it
+                var color = Color.FromArgb(1, 2, 3, 4);
+                colorProperty.SetValue(effect, color);
+
+                // Color properties may or may not force the alpha channel to 255. Other tests
+                // verify that this is done correctly, so we just read back the property value.
+                color = (Color)colorProperty.GetValue(effect);
+
+                var expectedHdrColor = new Vector4
+                {
+                    X = color.R / 255.0f,
+                    Y = color.G / 255.0f,
+                    Z = color.B / 255.0f,
+                    W = color.A / 255.0f
+                };
+                var retrievedHdrColor = (Vector4)hdrProperty.GetValue(effect);
+
+                Assert.AreEqual(expectedHdrColor, retrievedHdrColor);
+
+                // Verify that a value set to the HDR property is picked up on the non-HDR version.
+                var hdrColor = new Vector4
+                {
+                    X = 0.2f,
+                    Y = 0.4f,
+                    Z = 0.6f,
+                    W = 0.8f
+                };
+                hdrProperty.SetValue(effect, hdrColor);
+                hdrColor = (Vector4)hdrProperty.GetValue(effect);
+
+                var expectedColor = Color.FromArgb((byte)(hdrColor.W * 255.0f), (byte)(hdrColor.X * 255.0f), (byte)(hdrColor.Y * 255.0f), (byte)(hdrColor.Z * 255.0f));
+
+                var retrievedColor = (Color)colorProperty.GetValue(effect);
+                Assert.AreEqual(expectedColor, retrievedColor);
+
+                // Verify that the non-HDR properties are saturated when they return
+                hdrColor = new Vector4 { X = 1.0f, Y = 2.0f, Z = 3.0f, W = 4.0f };
+                hdrProperty.SetValue(effect, hdrColor);
+                hdrColor = (Vector4)hdrProperty.GetValue(effect);
+
+                expectedColor = Color.FromArgb(255, 255, 255, 255);
+                retrievedColor = (Color)colorProperty.GetValue(effect);
+                Assert.AreEqual(expectedColor, retrievedColor);
+
+                // Check the interop settings
+                int mappingIndex;
+                EffectPropertyMapping mapping;
+                EffectAccessor.GetNamedPropertyMapping(effect, colorProperty.Name, out mappingIndex, out mapping);
+
+                int hdrMappingIndex;
+                EffectPropertyMapping hdrMapping;
+                EffectAccessor.GetNamedPropertyMapping(effect, hdrProperty.Name, out hdrMappingIndex, out hdrMapping);
+
+                Assert.AreEqual(mappingIndex, hdrMappingIndex);
+
+                Assert.AreEqual(EffectPropertyMapping.Unknown, hdrMapping);
+
+                // Restore the values
+                hdrProperty.SetValue(effect, originalHdrValue);
+                colorProperty.SetValue(effect, originalColorValue);
+            }
+        }
 
         static ICanvasImage RealizeEffect(CanvasDevice device, TypeInfo effectType, IGraphicsEffect effect)
         {
@@ -733,59 +810,67 @@ namespace test.managed
         static void FilterOutCustomizedEffectProperties(Type effectType, ref List<PropertyInfo> properties, ref IList<object> effectProperties)
         {
             // Customized properties that our general purpose reflection based property test won't understand.
-            string[] propertiesToRemove;
-            int[] indexMapping;
+            List<string> propertiesToRemove = new List<string>();
+            int[] indexMapping = null;
 
             if (effectType == typeof(ArithmeticCompositeEffect))
             {
                 // ArithmeticCompositeEffect has strange customized properties.
                 // Win2D exposes what D2D treats as a single Vector4 as 4 separate float properties. 
-                propertiesToRemove = new string[]
+                propertiesToRemove.AddRange(new string[]
                 {
                     "MultiplyAmount",
                     "Source1Amount",
                     "Source2Amount",
                     "Offset"
-                };
+                });
 
                 indexMapping = new int[] { 1 };
             }
             else if (effectType == typeof(ColorMatrixEffect))
             {
                 // ColorMatrixEffect.AlphaMode has special logic to remap enum values between WinRT and D2D.
-                propertiesToRemove = new string[] { "AlphaMode", };
+                propertiesToRemove.Add("AlphaMode");
                 indexMapping = new int[] { 0, 2 };
             }
 #if WINDOWS_UWP
             else if (effectType == typeof(SepiaEffect))
             {
                 // SepiaEffect.AlphaMode has special logic to remap enum values between WinRT and D2D.
-                propertiesToRemove = new string[] { "AlphaMode", };
+                propertiesToRemove.Add("AlphaMode");
                 indexMapping = new int[] { 0 };
             }
             else if (effectType == typeof(EdgeDetectionEffect))
             {
                 // EdgeDetectionEffect.AlphaMode has special logic to remap enum values between WinRT and D2D.
-                propertiesToRemove = new string[] { "AlphaMode", };
+                propertiesToRemove.Add("AlphaMode");
                 indexMapping = new int[] { 0, 1, 2, 3 };
             }
             else if (effectType == typeof(HighlightsAndShadowsEffect))
             {
                 // HighlightsAndShadowsEffect.SourceIsLinearGamma projects an enum value as a bool.
-                propertiesToRemove = new string[] { "SourceIsLinearGamma", };
+                propertiesToRemove.Add("SourceIsLinearGamma");
                 indexMapping = new int[] { 0, 1, 2, 4 };
             }
 #endif  // WINDOWS_UWP
-            else
+
+            // Remove any HDR properties
+            var hdrProperties = properties.Where(p => p.Name.EndsWith("Hdr")).Select(p => p.Name);
+
+            // Sanity check that HDR properties have matching non-HDR version
+            foreach (var p in hdrProperties)
             {
-                // Other effects do not need special filtering.
-                return;
+                var nonHdr = p.Substring(0, p.Length - 3);
+                properties.Single(cp => cp.Name == nonHdr);
             }
+
+            propertiesToRemove.AddRange(hdrProperties);
 
             // Hide the customized properties, so ReflectOverAllEffects test won't see them.
             properties = properties.Where(p => !propertiesToRemove.Contains(p.Name)).ToList();
 
-            effectProperties = new FilteredViewOfList<object>(effectProperties, indexMapping);
+            if (indexMapping != null)
+                effectProperties = new FilteredViewOfList<object>(effectProperties, indexMapping);
         }
 
 

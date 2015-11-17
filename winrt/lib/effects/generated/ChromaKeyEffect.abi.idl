@@ -39,6 +39,12 @@ namespace Microsoft.Graphics.Canvas.Effects
         HRESULT Feather([in] boolean value);
 
         [propget]
+        HRESULT ColorHdr([out, retval] NUMERICS.Vector4* value);
+
+        [propput]
+        HRESULT ColorHdr([in] NUMERICS.Vector4 value);
+
+        [propget]
         HRESULT Source([out, retval] IGRAPHICSEFFECTSOURCE** source);
 
         [propput]

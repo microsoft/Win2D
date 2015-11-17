@@ -338,7 +338,7 @@ namespace CodeGen
             output.WriteLine(effect.ClassName + "::" + effect.ClassName + "(ICanvasDevice* device, ID2D1Effect* effect)");
             output.WriteIndent();
             output.WriteLine(": CanvasEffect(EffectId(), "
-                             + (effect.Properties.Count(p => !p.IsHandCoded) - 4) + ", "
+                             + (effect.Properties.Count(p => (!p.IsHandCoded && !p.IsHdrAlias)) - 4) + ", "
                              + inputsCount + ", "
                              + isInputSizeFixed.ToString().ToLower() + ", "
                              + "device, effect, static_cast<" + effect.InterfaceName + "*>(this))");
@@ -408,14 +408,18 @@ namespace CodeGen
         {
             // Property with type string describes 
             // name/author/category/description of effect but not input type
-            if (property.Type == "string" || property.IsHandCoded)
+            if (property.Type == "string" || property.IsHandCoded || property.IsHdrAlias)
                 return;
 
             string defaultValue = property.Properties.Find(internalProperty => internalProperty.Name == "Default").Value;
 
             string setFunction = property.IsArray ? "SetArrayProperty" : "SetBoxedProperty";
 
-            output.WriteLine(setFunction + "<" + property.TypeNameBoxed + ">(" + property.NativePropertyName + ", " + FormatPropertyValue(property, defaultValue) + ");");
+            string customConversion = null;
+            if (property.ConvertColorHdrToVector3)
+                customConversion = "ConvertColorHdrToVector3";
+
+            output.WriteLine(setFunction + "<" + (customConversion?? property.TypeNameBoxed) + ">(" + property.NativePropertyName + ", " + FormatPropertyValue(property, defaultValue) + ");");
         }
 
         private static void WritePropertyImplementation(Effects.Effect effect, Formatter output, Effects.Property property)
@@ -435,6 +439,10 @@ namespace CodeGen
             if (property.ConvertRadiansToDegrees)
             {
                 customConversion = "ConvertRadiansToDegrees";
+            }
+            else if (property.ConvertColorHdrToVector3)
+            {
+                customConversion = "ConvertColorHdrToVector3";
             }
             else if (property.Name == "AlphaMode")
             {
@@ -704,6 +712,11 @@ namespace CodeGen
             else if (property.TypeNameCpp == "Color")
             {
                 return "GRAPHICS_EFFECT_PROPERTY_MAPPING_COLOR_TO_VECTOR" + property.Type.Single(char.IsDigit);
+            }
+            else if (property.IsHdrAlias)
+            {
+                // The platform doesn't natively support HDR colors, so we set the mapping type to unknown.
+                return "GRAPHICS_EFFECT_PROPERTY_MAPPING_UNKNOWN";
             }
             else if (property.TypeNameCpp == "Rect")
             {

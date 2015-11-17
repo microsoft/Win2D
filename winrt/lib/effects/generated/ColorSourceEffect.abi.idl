@@ -18,6 +18,12 @@ namespace Microsoft.Graphics.Canvas.Effects
         [propput]
         HRESULT Color([in] Windows.UI.Color value);
 
+        [propget]
+        HRESULT ColorHdr([out, retval] NUMERICS.Vector4* value);
+
+        [propput]
+        HRESULT ColorHdr([in] NUMERICS.Vector4 value);
+
     };
 
     [version(VERSION), activatable(VERSION)]
