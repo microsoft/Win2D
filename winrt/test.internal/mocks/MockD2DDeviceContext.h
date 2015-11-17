@@ -26,55 +26,57 @@ namespace canvas
         
         // ID2D1DeviceContext / ID2D1RenderTarget
         
-        MOCK_METHOD1(Clear                        , void(D2D1_COLOR_F const*));
-        MOCK_METHOD2(Flush                        , HRESULT(D2D1_TAG*, D2D1_TAG*));
-        MOCK_METHOD1_CONST(GetTransform           , void(D2D1_MATRIX_3X2_F*));
-        MOCK_METHOD1(SetTransform                 , void(D2D1_MATRIX_3X2_F const*));
-        MOCK_METHOD0_CONST(GetAntialiasMode       , D2D1_ANTIALIAS_MODE());
-        MOCK_METHOD1(SetAntialiasMode             , void(D2D1_ANTIALIAS_MODE));
-        MOCK_METHOD0_CONST(GetPrimitiveBlend      , D2D1_PRIMITIVE_BLEND());
-        MOCK_METHOD1(SetPrimitiveBlend            , void(D2D1_PRIMITIVE_BLEND));
-        MOCK_METHOD0_CONST(GetTextAntialiasMode   , D2D1_TEXT_ANTIALIAS_MODE());
-        MOCK_METHOD1(SetTextAntialiasMode         , void(D2D1_TEXT_ANTIALIAS_MODE));
-        MOCK_METHOD0_CONST(GetUnitMode            , D2D1_UNIT_MODE());
-        MOCK_METHOD1(SetUnitMode                  , void(D2D1_UNIT_MODE));
-        MOCK_METHOD2(SetDpi                       , void(float dpiX, float dpiY));
-        MOCK_METHOD2_CONST(GetDpi                 , void(float* dpiX, float* dpiY));
-        MOCK_METHOD5(DrawLine                     , void(D2D1_POINT_2F,D2D1_POINT_2F,ID2D1Brush*,float,ID2D1StrokeStyle*));
-        MOCK_METHOD4(DrawRectangle                , void(D2D1_RECT_F const*,ID2D1Brush*,float,ID2D1StrokeStyle*));
-        MOCK_METHOD2(FillRectangle                , void(D2D1_RECT_F const*,ID2D1Brush*));
-        MOCK_METHOD4(DrawRoundedRectangle         , void(D2D1_ROUNDED_RECT const*,ID2D1Brush*,float,ID2D1StrokeStyle*));
-        MOCK_METHOD2(FillRoundedRectangle         , void(D2D1_ROUNDED_RECT const*,ID2D1Brush*));
-        MOCK_METHOD4(DrawEllipse                  , void(D2D1_ELLIPSE const*,ID2D1Brush*,float,ID2D1StrokeStyle*));
-        MOCK_METHOD2(FillEllipse                  , void(D2D1_ELLIPSE const*,ID2D1Brush*));
-        MOCK_METHOD7(DrawText                     , void(wchar_t const*,uint32_t,IDWriteTextFormat*,D2D1_RECT_F const*,ID2D1Brush*,D2D1_DRAW_TEXT_OPTIONS,DWRITE_MEASURING_MODE));
-        MOCK_METHOD5(DrawImage                    , void(ID2D1Image*, D2D1_POINT_2F const*, D2D1_RECT_F const*, D2D1_INTERPOLATION_MODE, D2D1_COMPOSITE_MODE));
-        MOCK_METHOD6(DrawBitmap                   , void(ID2D1Bitmap*, D2D1_RECT_F const*, FLOAT, D2D1_INTERPOLATION_MODE, D2D1_RECT_F const*, D2D1_MATRIX_4X4_F const*));
-        MOCK_METHOD1_CONST(GetDevice              , void(ID2D1Device**));
-        MOCK_METHOD2(CreateEffect                 , HRESULT(IID const&, ID2D1Effect **));
-        MOCK_METHOD1(CreateCommandList            , HRESULT(ID2D1CommandList**));
-        MOCK_METHOD3(CreateSolidColorBrush        , HRESULT(D2D1_COLOR_F const*, D2D1_BRUSH_PROPERTIES const*, ID2D1SolidColorBrush**));
-        MOCK_METHOD2_CONST(GetImageLocalBounds    , HRESULT(ID2D1Image*, D2D1_RECT_F*));
-        MOCK_METHOD2_CONST(GetImageWorldBounds    , HRESULT(ID2D1Image*, D2D1_RECT_F*));
-        MOCK_METHOD0_CONST(GetMaximumBitmapSize   , UINT32());
-        MOCK_METHOD5(CreateBitmap                 , HRESULT(D2D1_SIZE_U, void const*, UINT32, D2D1_BITMAP_PROPERTIES1 const*, ID2D1Bitmap1**));
-        MOCK_METHOD3(CreateBitmapFromDxgiSurface  , HRESULT(IDXGISurface*, const D2D1_BITMAP_PROPERTIES1*, ID2D1Bitmap1**));
-        MOCK_METHOD1(SetTarget                    , void(ID2D1Image*));
-        MOCK_METHOD1_CONST(GetTarget              , void(ID2D1Image**));
-        MOCK_METHOD0(BeginDraw                    , void());
-        MOCK_METHOD2(EndDraw                      , HRESULT(D2D1_TAG*, D2D1_TAG*));
-        MOCK_METHOD4(DrawGeometry                 , void(ID2D1Geometry*, ID2D1Brush*,float,ID2D1StrokeStyle*));
-        MOCK_METHOD3(FillGeometry                 , void(ID2D1Geometry*,ID2D1Brush*,ID2D1Brush*));
-        MOCK_METHOD4(DrawTextLayout               , void(D2D1_POINT_2F, IDWriteTextLayout*, ID2D1Brush*, D2D1_DRAW_TEXT_OPTIONS));
-        MOCK_METHOD2(PushLayer                    , void(const D2D1_LAYER_PARAMETERS1*, ID2D1Layer*));
-        MOCK_METHOD0(PopLayer                     , void());
-        MOCK_METHOD2(PushAxisAlignedClip          , void(D2D1_RECT_F const*, D2D1_ANTIALIAS_MODE));
-        MOCK_METHOD0(PopAxisAlignedClip           , void());
-        MOCK_METHOD4(FillOpacityMask              , void(ID2D1Bitmap*, ID2D1Brush*, D2D1_RECT_F const*, D2D1_RECT_F const*));
-        MOCK_METHOD1(SetTextRenderingParams       , void(IDWriteRenderingParams*));
-        MOCK_METHOD1_CONST(GetTextRenderingParams , void(IDWriteRenderingParams**));
-        MOCK_METHOD4(CreateLinearGradientBrush    , HRESULT(D2D1_LINEAR_GRADIENT_BRUSH_PROPERTIES const*, D2D1_BRUSH_PROPERTIES const*, ID2D1GradientStopCollection*, ID2D1LinearGradientBrush**));
-        MOCK_METHOD4(CreateRadialGradientBrush    , HRESULT(D2D1_RADIAL_GRADIENT_BRUSH_PROPERTIES const*, D2D1_BRUSH_PROPERTIES const*, ID2D1GradientStopCollection*, ID2D1RadialGradientBrush**));
+        MOCK_METHOD1(Clear                            , void(D2D1_COLOR_F const*));
+        MOCK_METHOD2(Flush                            , HRESULT(D2D1_TAG*, D2D1_TAG*));
+        MOCK_METHOD1_CONST(GetTransform               , void(D2D1_MATRIX_3X2_F*));
+        MOCK_METHOD1(SetTransform                     , void(D2D1_MATRIX_3X2_F const*));
+        MOCK_METHOD0_CONST(GetAntialiasMode           , D2D1_ANTIALIAS_MODE());
+        MOCK_METHOD1(SetAntialiasMode                 , void(D2D1_ANTIALIAS_MODE));
+        MOCK_METHOD0_CONST(GetPrimitiveBlend          , D2D1_PRIMITIVE_BLEND());
+        MOCK_METHOD1(SetPrimitiveBlend                , void(D2D1_PRIMITIVE_BLEND));
+        MOCK_METHOD0_CONST(GetTextAntialiasMode       , D2D1_TEXT_ANTIALIAS_MODE());
+        MOCK_METHOD1(SetTextAntialiasMode             , void(D2D1_TEXT_ANTIALIAS_MODE));
+        MOCK_METHOD0_CONST(GetUnitMode                , D2D1_UNIT_MODE());
+        MOCK_METHOD1(SetUnitMode                      , void(D2D1_UNIT_MODE));
+        MOCK_METHOD2(SetDpi                           , void(float dpiX, float dpiY));
+        MOCK_METHOD2_CONST(GetDpi                     , void(float* dpiX, float* dpiY));
+        MOCK_METHOD5(DrawLine                         , void(D2D1_POINT_2F,D2D1_POINT_2F,ID2D1Brush*,float,ID2D1StrokeStyle*));
+        MOCK_METHOD4(DrawRectangle                    , void(D2D1_RECT_F const*,ID2D1Brush*,float,ID2D1StrokeStyle*));
+        MOCK_METHOD2(FillRectangle                    , void(D2D1_RECT_F const*,ID2D1Brush*));
+        MOCK_METHOD4(DrawRoundedRectangle             , void(D2D1_ROUNDED_RECT const*,ID2D1Brush*,float,ID2D1StrokeStyle*));
+        MOCK_METHOD2(FillRoundedRectangle             , void(D2D1_ROUNDED_RECT const*,ID2D1Brush*));
+        MOCK_METHOD4(DrawEllipse                      , void(D2D1_ELLIPSE const*,ID2D1Brush*,float,ID2D1StrokeStyle*));
+        MOCK_METHOD2(FillEllipse                      , void(D2D1_ELLIPSE const*,ID2D1Brush*));
+        MOCK_METHOD7(DrawText                         , void(wchar_t const*,uint32_t,IDWriteTextFormat*,D2D1_RECT_F const*,ID2D1Brush*,D2D1_DRAW_TEXT_OPTIONS,DWRITE_MEASURING_MODE));
+        MOCK_METHOD5(DrawImage                        , void(ID2D1Image*, D2D1_POINT_2F const*, D2D1_RECT_F const*, D2D1_INTERPOLATION_MODE, D2D1_COMPOSITE_MODE));
+        MOCK_METHOD6(DrawBitmap                       , void(ID2D1Bitmap*, D2D1_RECT_F const*, FLOAT, D2D1_INTERPOLATION_MODE, D2D1_RECT_F const*, D2D1_MATRIX_4X4_F const*));
+        MOCK_METHOD1_CONST(GetDevice                  , void(ID2D1Device**));
+        MOCK_METHOD2(CreateEffect                     , HRESULT(IID const&, ID2D1Effect **));
+        MOCK_METHOD1(CreateCommandList                , HRESULT(ID2D1CommandList**));
+        MOCK_METHOD3(CreateSolidColorBrush            , HRESULT(D2D1_COLOR_F const*, D2D1_BRUSH_PROPERTIES const*, ID2D1SolidColorBrush**));
+        MOCK_METHOD2_CONST(GetImageLocalBounds        , HRESULT(ID2D1Image*, D2D1_RECT_F*));
+        MOCK_METHOD2_CONST(GetImageWorldBounds        , HRESULT(ID2D1Image*, D2D1_RECT_F*));
+        MOCK_METHOD0_CONST(GetMaximumBitmapSize       , UINT32());
+        MOCK_METHOD5(CreateBitmap                     , HRESULT(D2D1_SIZE_U, void const*, UINT32, D2D1_BITMAP_PROPERTIES1 const*, ID2D1Bitmap1**));
+        MOCK_METHOD3(CreateBitmapFromDxgiSurface      , HRESULT(IDXGISurface*, const D2D1_BITMAP_PROPERTIES1*, ID2D1Bitmap1**));
+        MOCK_METHOD1(SetTarget                        , void(ID2D1Image*));
+        MOCK_METHOD1_CONST(GetTarget                  , void(ID2D1Image**));
+        MOCK_METHOD0(BeginDraw                        , void());
+        MOCK_METHOD2(EndDraw                          , HRESULT(D2D1_TAG*, D2D1_TAG*));
+        MOCK_METHOD4(DrawGeometry                     , void(ID2D1Geometry*, ID2D1Brush*,float,ID2D1StrokeStyle*));
+        MOCK_METHOD3(FillGeometry                     , void(ID2D1Geometry*,ID2D1Brush*,ID2D1Brush*));
+        MOCK_METHOD4(DrawTextLayout                   , void(D2D1_POINT_2F, IDWriteTextLayout*, ID2D1Brush*, D2D1_DRAW_TEXT_OPTIONS));
+        MOCK_METHOD2(PushLayer                        , void(const D2D1_LAYER_PARAMETERS1*, ID2D1Layer*));
+        MOCK_METHOD0(PopLayer                         , void());
+        MOCK_METHOD2(PushAxisAlignedClip              , void(D2D1_RECT_F const*, D2D1_ANTIALIAS_MODE));
+        MOCK_METHOD0(PopAxisAlignedClip               , void());
+        MOCK_METHOD4(FillOpacityMask                  , void(ID2D1Bitmap*, ID2D1Brush*, D2D1_RECT_F const*, D2D1_RECT_F const*));
+        MOCK_METHOD1(SetTextRenderingParams           , void(IDWriteRenderingParams*));
+        MOCK_METHOD1_CONST(GetTextRenderingParams     , void(IDWriteRenderingParams**));
+        MOCK_METHOD4(CreateLinearGradientBrush        , HRESULT(D2D1_LINEAR_GRADIENT_BRUSH_PROPERTIES const*, D2D1_BRUSH_PROPERTIES const*, ID2D1GradientStopCollection*, ID2D1LinearGradientBrush**));
+        MOCK_METHOD4(CreateRadialGradientBrush        , HRESULT(D2D1_RADIAL_GRADIENT_BRUSH_PROPERTIES const*, D2D1_BRUSH_PROPERTIES const*, ID2D1GradientStopCollection*, ID2D1RadialGradientBrush**));
+        MOCK_METHOD1_CONST(IsDxgiFormatSupported      , BOOL(DXGI_FORMAT));
+        MOCK_METHOD1_CONST(IsBufferPrecisionSupported , BOOL(D2D1_BUFFER_PRECISION));
 
         // ID2D1DeviceContext1
         
@@ -278,18 +280,6 @@ namespace canvas
         {
             Assert::Fail(L"Unexpected call to CreateBitmapBrush");
             return E_NOTIMPL;
-        }
-
-        IFACEMETHODIMP_(BOOL) IsDxgiFormatSupported(DXGI_FORMAT) const override
-        {
-            Assert::Fail(L"Unexpected call to IsDxgiFormatSupported");
-            return FALSE;
-        }
-
-        IFACEMETHODIMP_(BOOL) IsBufferPrecisionSupported(D2D1_BUFFER_PRECISION) const override
-        {
-            Assert::Fail(L"Unexpected call to IsBufferPrecisionSupported");
-            return FALSE;
         }
 
         IFACEMETHODIMP GetGlyphRunWorldBounds(D2D1_POINT_2F,const DWRITE_GLYPH_RUN *,DWRITE_MEASURING_MODE,D2D1_RECT_F *) const override

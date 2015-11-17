@@ -542,6 +542,28 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             });
     }
 
+    IFACEMETHODIMP CanvasDevice::IsPixelFormatSupported(DirectXPixelFormat pixelFormat, boolean* value)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckInPointer(value);
+                
+                *value = !!GetResourceCreationDeviceContext()->IsDxgiFormatSupported(static_cast<DXGI_FORMAT>(pixelFormat));
+            });
+    }
+
+    IFACEMETHODIMP CanvasDevice::IsBufferPrecisionSupported(CanvasBufferPrecision bufferPrecision, boolean* value)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckInPointer(value);
+                
+                *value = !!GetResourceCreationDeviceContext()->IsBufferPrecisionSupported(ToD2DBufferPrecision(bufferPrecision));
+            });
+    }
+
     IFACEMETHODIMP CanvasDevice::add_DeviceLost(
         DeviceLostHandlerType* value, 
         EventRegistrationToken* token)

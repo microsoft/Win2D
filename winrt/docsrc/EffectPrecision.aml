@@ -169,12 +169,11 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <content>
         <para>
           Win2D provides a few ways to control the precision of a graph.
-
-          <!-- TODO #4066 - restore these docs once Win2D exposes IsBufferPrecisionSupported
+        </para>
+        <para>
           Before using high precision formats in Win2D, applications must ensure they are supported 
           sufficiently by the GPU. To check this, use 
-          ID2D1DeviceContext::IsBufferPrecisionSupported.
-          -->
+          <codeEntityReference>M:Microsoft.Graphics.Canvas.CanvasDevice.IsBufferPrecisionSupported(Microsoft.Graphics.Canvas.CanvasBufferPrecision)</codeEntityReference>.
         </para>
         <para>
           Applications may create a Direct3D device using WARP (software emulation) to ensure that 

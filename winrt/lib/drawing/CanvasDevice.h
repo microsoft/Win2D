@@ -217,6 +217,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         IFACEMETHOD(get_MaximumBitmapSizeInPixels)(int32_t* value) override;
 
+        IFACEMETHOD(IsPixelFormatSupported)(DirectXPixelFormat pixelFormat, boolean* value) override;
+
+        IFACEMETHOD(IsBufferPrecisionSupported)(CanvasBufferPrecision bufferPrecision, boolean* value) override;
+
         IFACEMETHOD(add_DeviceLost)(DeviceLostHandlerType* value, EventRegistrationToken* token) override;
 
         IFACEMETHOD(remove_DeviceLost)(EventRegistrationToken token) override;

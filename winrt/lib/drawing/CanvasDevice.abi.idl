@@ -89,6 +89,14 @@ namespace Microsoft.Graphics.Canvas
         HRESULT MaximumBitmapSizeInPixels(
             [out, retval] INT32* value);
 
+        HRESULT IsPixelFormatSupported(
+            [in] DIRECTX_PIXEL_FORMAT pixelFormat,
+            [out, retval] boolean* value);
+
+        HRESULT IsBufferPrecisionSupported(
+            [in] CanvasBufferPrecision bufferPrecision,
+            [out, retval] boolean* value);
+
         //
         // This event is raised whenever the native device resource is lost-
         // for example, due to a user switch, lock screen, or unexpected

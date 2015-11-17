@@ -95,6 +95,18 @@ namespace canvas
             return E_NOTIMPL;
         }
 
+        IFACEMETHODIMP IsPixelFormatSupported(DirectXPixelFormat pixelFormat, boolean* value) override
+        {
+            Assert::Fail(L"Unexpected call to IsPixelFormatSupported");
+            return E_NOTIMPL;
+        }
+
+        IFACEMETHODIMP IsBufferPrecisionSupported(CanvasBufferPrecision bufferPrecision, boolean* value) override
+        {
+            Assert::Fail(L"Unexpected call to IsBufferPrecisionSupported");
+            return E_NOTIMPL;
+        }
+
         IFACEMETHODIMP add_DeviceLost(
             DeviceLostHandlerType* value,
             EventRegistrationToken* token)
