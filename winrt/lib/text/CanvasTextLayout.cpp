@@ -597,20 +597,11 @@ IFACEMETHODIMP CanvasTextLayout::GetBrush(
         {
             CheckAndClearOutPointer(brush);
 
-            ThrowIfNegative(characterIndex);
-
-            auto& resource = GetResource();
-            auto& device = m_device.EnsureNotClosed();
-
-            ComPtr<IUnknown> drawingEffect;
-            ThrowIfFailed(resource->GetDrawingEffect(characterIndex, &drawingEffect, nullptr));
-
             ComPtr<ICanvasBrush> wrappedBrush;
 
-            if (drawingEffect)
-            {
-                wrappedBrush = ResourceManager::GetOrCreate<ICanvasBrush>(device.Get(), drawingEffect.Get());
-            }
+            auto brushInspectable = GetCustomBrushInternal(characterIndex);
+            if (brushInspectable)
+                wrappedBrush = As<ICanvasBrush>(brushInspectable.Get());
 
             ThrowIfFailed(wrappedBrush.CopyTo(brush));
     });
@@ -809,34 +800,7 @@ IFACEMETHODIMP CanvasTextLayout::SetBrush(
     return ExceptionBoundary(
         [&]
         {
-            auto& resource = GetResource();
-
-            //
-            // The brush parameter is allowed to be null. This will reset 
-            // that part of the layout back to its default brush behavior.
-            //
-            ComPtr<ID2D1Brush> d2dBrush;
-
-            if (brush)
-            {
-                auto brushInternal = As<ICanvasBrushInternal>(brush);
-
-                //
-                // The device context passed to GetD2DBrush is *not* used to key off of DPI.
-                // It is used to construct the appropriate DPI compensation effect, if necessary.
-                //
-                // The DPI compensation effect will be inserted into the effect graph and the resulting
-                // d2dbrush will be committed to the text layout.
-                //
-                auto& device = m_device.EnsureNotClosed();
-                auto deviceInternal = As<ICanvasDeviceInternal>(device);
-
-                d2dBrush = brushInternal->GetD2DBrush(deviceInternal->GetResourceCreationDeviceContext().Get(), GetBrushFlags::AlwaysInsertDpiCompensation);
-            }
-
-            auto textRange = ToDWriteTextRange(characterIndex, characterCount);
-
-            ThrowIfFailed(resource->SetDrawingEffect(d2dBrush.Get(), textRange));
+            SetCustomBrushInternal(characterIndex, characterCount, brush);
         });
 }
 
@@ -1632,6 +1596,97 @@ IFACEMETHODIMP CanvasTextLayout::get_ClusterMetrics(
 
             returnedMetrics.Detach(valueCount, valueElements);
         });
+}
+
+IFACEMETHODIMP CanvasTextLayout::GetCustomBrush(
+    int32_t characterIndex,
+    IInspectable** brush)
+{
+    return ExceptionBoundary(
+        [&]
+        {
+            CheckAndClearOutPointer(brush);
+
+            auto inspectable = GetCustomBrushInternal(characterIndex);
+
+            ThrowIfFailed(inspectable.CopyTo(brush));
+        });
+}
+
+ComPtr<IInspectable> CanvasTextLayout::GetCustomBrushInternal(
+    int32_t characterIndex)
+{
+    ThrowIfNegative(characterIndex);
+
+    auto& resource = GetResource();
+    auto& device = m_device.EnsureNotClosed();
+
+    ComPtr<IUnknown> drawingEffect;
+    ThrowIfFailed(resource->GetDrawingEffect(characterIndex, &drawingEffect, nullptr));
+
+    ComPtr<IInspectable> inspectable;
+    if (drawingEffect)
+    {
+        inspectable = GetCustomDrawingObjectInspectable(device.Get(), drawingEffect.Get());
+
+        if (!inspectable)
+            ThrowHR(E_NOINTERFACE);
+    }
+
+    return inspectable;
+}
+
+IFACEMETHODIMP CanvasTextLayout::SetCustomBrush(
+    int32_t characterIndex,
+    int32_t characterCount,
+    IInspectable* brush)
+{
+    return ExceptionBoundary(
+        [&]
+        {
+            SetCustomBrushInternal(characterIndex, characterCount, brush);
+        });
+}
+
+void CanvasTextLayout::SetCustomBrushInternal(
+    int32_t characterIndex,
+    int32_t characterCount, 
+    IInspectable* brush)
+{
+    auto& resource = GetResource();
+
+    auto textRange = ToDWriteTextRange(characterIndex, characterCount);
+
+    ComPtr<IUnknown> drawingEffect;
+
+    if (brush)
+    {
+        //
+        // This has the behavior of unwrapping brushes before setting them to
+        // the text layout. All other types of objects are left unwrapped.
+        //
+        auto wrappedBrushInternal = MaybeAs<ICanvasBrushInternal>(brush);
+        if (wrappedBrushInternal)
+        {
+            //
+            // The device context passed to GetD2DBrush is *not* used to key off of DPI.
+            // It is used to construct the appropriate DPI compensation effect, if necessary.
+            //
+            // The DPI compensation effect will be inserted into the effect graph and the resulting
+            // d2dbrush will be committed to the text layout.
+            //
+            auto& device = m_device.EnsureNotClosed();
+            auto deviceInternal = As<ICanvasDeviceInternal>(device);
+
+            drawingEffect = wrappedBrushInternal->GetD2DBrush(deviceInternal->GetResourceCreationDeviceContext().Get(), GetBrushFlags::AlwaysInsertDpiCompensation);
+        }
+        else
+        {
+            drawingEffect = brush;
+        }
+    }
+
+    ThrowIfFailed(resource->SetDrawingEffect(drawingEffect.Get(), textRange));
 }
 
 IFACEMETHODIMP CanvasTextLayout::Close()

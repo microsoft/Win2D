@@ -236,6 +236,12 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       	Calling <see cref="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.GetBrush(System.Int32)"/> for this same index, after calling this method, will yield a 
       	<see cref="T:Microsoft.Graphics.Canvas.Brushes.CanvasSolidColorBrush"/> with the appropriate color.
       	</p>
+        <p>
+          A color set using this method replaces any brush currently set to those characters using
+          <see cref="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.SetBrush(System.Int32,System.Int32,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush)"/> 
+          or 
+          <see cref="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.SetCustomBrush(System.Int32,System.Int32,System.Object)"/>.
+        </p>
       </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.SetBrush(System.Int32,System.Int32,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush)">
@@ -249,6 +255,12 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       	<p>
       	The brush is allowed to be null. Setting a group of characters' brush to null causes the default behavior, where the brush passed to DrawTextLayout determines the color of the text.
       	</p>
+        <p>
+          A brush set using this method replaces any custom brush or color currently set to those characters using
+          <see cref="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.SetCustomBrush(System.Int32,System.Int32,System.Object)"/> 
+          or 
+          <see cref="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.SetColor(System.Int32,System.Int32,Windows.UI.Color)"/>.
+        </p>
       </remarks>
     </member>
       
@@ -731,6 +743,41 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         property returns a zero-sized array.
       </remarks>
     </member>    
+
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.SetCustomBrush(System.Int32,System.Int32,System.Object)" Experimental="true">
+      <summary>Sets the custom brush associated with a group of characters in the text layout.</summary>
+      <remarks>
+        <p>
+          Custom brush objects are an arbitrary piece of metadata that can be 
+          attached to a character position in a text layout, so that an app's 
+          custom renderer can make sense of them. A custom brush object is
+          passed to a text renderer's DrawGlyphRun, DrawUnderline,
+          DrawStrikethrough, and DrawInlineObject callbacks.
+        </p>
+        <p>
+          CanvasDrawingSession's
+          <see cref="O:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawTextLayout"/> will ignore any custom brush which isn't an ICanvasBrush. 
+        </p>
+        <p>
+          A custom brush replaces any other brush or color currently set to those characters using
+          <see cref="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.SetBrush(System.Int32,System.Int32,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush)"/> 
+          or 
+          <see cref="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.SetColor(System.Int32,System.Int32,Windows.UI.Color)"/>.
+        </p>
+        <p>
+          A null custom brush is valid, and by default the brush assigned to all 
+          characters in a text layout is null.
+        </p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.GetCustomBrush(System.Int32)" Experimental="true">
+      <summary>Gets the custom brush associated with a character index in the text layout.</summary>
+      <remarks>
+        <p>
+          A brush that was set using SetBrush can be retrieved via GetCustomBrush.
+        </p>
+      </remarks>
+    </member>
     
   </members>
 </doc>

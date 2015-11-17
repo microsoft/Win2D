@@ -172,7 +172,7 @@ public:
 		Assert::AreEqual(1, textRenderer->DrawUnderlineCallCount);
     }
 
-    TEST_METHOD(CanvasTextRenderer_NonBrushDrawingEffect)
+    TEST_METHOD(CanvasTextRenderer_NonBrushDrawingEffect_SetUsingInterop)
     {
         for (int i = 0; i < 2; ++i)
         {
@@ -216,5 +216,31 @@ public:
             Assert::AreEqual(1, textRenderer->DrawStrikethroughCallCount);
             Assert::AreEqual(1, textRenderer->DrawUnderlineCallCount);
         }
+    }
+
+    TEST_METHOD(CanvasTextRenderer_NonBrushDrawingEffect_SetCustomBrush)
+    {
+        auto layout = CreateTextLayout();
+
+        auto dwriteTextLayout = GetWrappedResource<IDWriteTextLayout>(layout);
+
+        ComPtr<IUnknown> drawingEffect;
+
+        // Pick some arbitrary IInspectable to be a custom brush.
+        auto strokeStyle = ref new CanvasStrokeStyle();
+        layout->SetCustomBrush(0, 4, strokeStyle);
+
+        auto textRenderer = ref new CustomTextRenderer(strokeStyle, true);
+
+        // Enable strikethrough/underline to exercise that all callbacks see the
+        // correct brush.
+        layout->SetStrikethrough(0, 4, true);
+        layout->SetUnderline(0, 4, true);
+
+        layout->DrawToTextRenderer(textRenderer, 0, 0);
+
+        Assert::AreEqual(1, textRenderer->DrawGlyphRunCallCount);
+        Assert::AreEqual(1, textRenderer->DrawStrikethroughCallCount);
+        Assert::AreEqual(1, textRenderer->DrawUnderlineCallCount);
     }
 };

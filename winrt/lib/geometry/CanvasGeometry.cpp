@@ -1367,7 +1367,8 @@ public:
         IUnknown*)
     {
         //
-        // TODO: 5629 Win2D does not have full exposure for inline objects yet.
+        // TODO: #6048 Decide whether we should do something here to allow inline objects to
+        // contribute outlines.
         //
         return S_OK;
     }

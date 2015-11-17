@@ -159,6 +159,7 @@ namespace canvas
             ComPtr<ICanvasTextInlineObject> inlineObj;
             CanvasLineMetrics* lm{};
             CanvasClusterMetrics* cm{};
+            ComPtr<IInspectable> customBrush;
 
             Assert::AreEqual(RO_E_CLOSED, textLayout->GetFormatChangeIndices(&u, &arr));
 
@@ -285,6 +286,9 @@ namespace canvas
             Assert::AreEqual(RO_E_CLOSED, textLayout->get_LineMetrics(&u, &lm));
 
             Assert::AreEqual(RO_E_CLOSED, textLayout->get_ClusterMetrics(&u, &cm));
+
+            Assert::AreEqual(RO_E_CLOSED, textLayout->GetCustomBrush(0, &customBrush));
+            Assert::AreEqual(RO_E_CLOSED, textLayout->SetCustomBrush(0, 0, nullptr));
         }
 
         TEST_METHOD_EX(CanvasTextLayoutTests_NullArgs)
@@ -352,6 +356,7 @@ namespace canvas
             Assert::AreEqual(E_INVALIDARG, textLayout->get_LineMetrics(&u, nullptr));
             Assert::AreEqual(E_INVALIDARG, textLayout->get_ClusterMetrics(nullptr, &cm));
             Assert::AreEqual(E_INVALIDARG, textLayout->get_ClusterMetrics(&u, nullptr));
+            Assert::AreEqual(E_INVALIDARG, textLayout->GetCustomBrush(0, nullptr));
         }
 
         TEST_METHOD_EX(CanvasTextLayoutTests_NegativeIntegralArgs)
@@ -2432,6 +2437,250 @@ namespace canvas
                 CanvasClusterMetrics expected = f.GetClusterMetrics(i);
                 Assert::AreEqual(0, memcmp(&expected, &valueElements[i], sizeof(expected)));
             }
+        }
+
+        TEST_METHOD_EX(CanvasTextLayoutTests_GetCustomBrush_DefaultIsNull)
+        {
+            NonStubbedFixture f;
+            auto textLayout = f.CreateSimpleTextLayout();
+
+            ComPtr<IInspectable> customBrush;
+            Assert::AreEqual(S_OK, textLayout->GetCustomBrush(0, &customBrush));
+            Assert::IsNull(customBrush.Get());
+        }
+
+        TEST_METHOD_EX(CanvasTextLayoutTests_SetCustomBrush_NullIsOk)
+        {
+            NonStubbedFixture f;
+            auto textLayout = f.CreateSimpleTextLayout();
+            
+            Assert::AreEqual(S_OK, textLayout->SetCustomBrush(0, 0, nullptr));
+        }
+
+        TEST_METHOD_EX(CanvasTextLayoutTests_SetCustomBrush_CallsThrough)
+        {
+            Fixture f;
+            auto textLayout = f.CreateSimpleTextLayout();
+
+            auto expectedDrawingEffect = As<IInspectable>(Make<CanvasStrokeStyle>());
+
+            f.Adapter->MockTextLayout->SetDrawingEffectMethod.SetExpectedCalls(1, 
+                [&](IUnknown* drawingEffect, DWRITE_TEXT_RANGE textRange)
+                { 
+                    Assert::IsTrue(IsSameInstance(expectedDrawingEffect.Get(), drawingEffect));
+                    Assert::AreEqual(2u, textRange.startPosition);
+                    Assert::AreEqual(3u, textRange.length);
+                    return S_OK;
+                });
+
+            Assert::AreEqual(S_OK, textLayout->SetCustomBrush(2, 3, expectedDrawingEffect.Get()));
+        }
+
+        TEST_METHOD_EX(CanvasTextLayoutTests_GetCustomBrush_CallsThrough)
+        {
+            Fixture f;
+            auto textLayout = f.CreateSimpleTextLayout();
+
+            auto expectedDrawingEffect = As<IInspectable>(Make<CanvasStrokeStyle>());
+
+            f.Adapter->MockTextLayout->GetDrawingEffectMethod.SetExpectedCalls(1, 
+                [&](UINT32 characterIndex, IUnknown** drawingEffect, DWRITE_TEXT_RANGE* unused)
+                { 
+                    Assert::AreEqual(2u, characterIndex);
+                    expectedDrawingEffect.CopyTo(drawingEffect);
+                    Assert::IsNull(unused);
+
+                    return S_OK;
+                });
+
+            ComPtr<IInspectable> actualDrawingEffect;
+            Assert::AreEqual(S_OK, textLayout->GetCustomBrush(2, &actualDrawingEffect));
+            Assert::IsTrue(IsSameInstance(expectedDrawingEffect.Get(), actualDrawingEffect.Get()));
+        }
+
+        TEST_METHOD_EX(CanvasTextLayoutTests_SetCustomBrush_UnwrapsBrushes)
+        {
+            NonStubbedFixture f;
+            auto textLayout = f.CreateSimpleTextLayout();
+
+            auto wrappedBrush = As<IInspectable>(CanvasSolidColorBrush::CreateNew(f.Device.Get(), Color{}));
+
+            Assert::AreEqual(S_OK, textLayout->SetCustomBrush(0, 1, wrappedBrush.Get()));
+
+            // 
+            // Verify the unwrapped brush was set on the text layout.
+            //
+            auto dtl = GetWrappedResource<IDWriteTextLayout>(textLayout);
+            auto d2dBrush = GetWrappedResource<ID2D1SolidColorBrush>(wrappedBrush);
+
+            ComPtr<IUnknown> actualDrawingEffect;
+            ThrowIfFailed(dtl->GetDrawingEffect(0, &actualDrawingEffect, nullptr));
+            Assert::IsTrue(IsSameInstance(d2dBrush.Get(), actualDrawingEffect.Get()));
+        }
+
+        TEST_METHOD_EX(CanvasTextLayoutTests_GetBrush_WhenCustomBrushSetToBrush_ReturnsSame)
+        {
+            NonStubbedFixture f;
+            auto textLayout = f.CreateSimpleTextLayout();
+
+            auto brush = As<IInspectable>(CanvasSolidColorBrush::CreateNew(f.Device.Get(), Color{}));
+
+            Assert::AreEqual(S_OK, textLayout->SetCustomBrush(0, 1, brush.Get()));
+
+            ComPtr<ICanvasBrush> actualBrush;
+            Assert::AreEqual(S_OK, textLayout->GetBrush(0, &actualBrush));
+            Assert::IsTrue(IsSameInstance(brush.Get(), actualBrush.Get()));
+        }
+
+        TEST_METHOD_EX(CanvasTextLayoutTests_GetBrush_WhenCustomBrushSetToWrappedBrush_ReturnsWrapper)
+        {
+            NonStubbedFixture f;
+            auto textLayout = f.CreateSimpleTextLayout();
+            auto dtl = GetWrappedResource<IDWriteTextLayout>(textLayout);
+
+            auto wrappedBrush = As<IInspectable>(CanvasSolidColorBrush::CreateNew(f.Device.Get(), Color{}));
+            auto d2dBrush = GetWrappedResource<ID2D1SolidColorBrush>(wrappedBrush);
+
+            ThrowIfFailed(dtl->SetDrawingEffect(d2dBrush.Get(), DWRITE_TEXT_RANGE{ 0, 1 }));
+
+            ComPtr<ICanvasBrush> actualBrush;
+            Assert::AreEqual(S_OK, textLayout->GetBrush(0, &actualBrush));
+            Assert::IsTrue(IsSameInstance(wrappedBrush.Get(), actualBrush.Get()));
+        }
+
+        TEST_METHOD_EX(CanvasTextLayoutTests_GetBrush_WhenCustomBrushSetToNonCanvasBrush_ReturnsError)
+        {
+            NonStubbedFixture f;
+            auto textLayout = f.CreateSimpleTextLayout();
+
+            auto arbitraryBrush = As<IInspectable>(Make<CanvasStrokeStyle>());
+
+            Assert::AreEqual(S_OK, textLayout->SetCustomBrush(0, 1, arbitraryBrush.Get()));
+
+            ComPtr<ICanvasBrush> actualBrush;
+            Assert::AreEqual(E_NOINTERFACE, textLayout->GetBrush(0, &actualBrush));
+        }
+
+        TEST_METHOD_EX(CanvasTextLayoutTests_GetCustomBrush_AfterSetBrush_ReturnsSame)
+        {
+            NonStubbedFixture f;
+            auto textLayout = f.CreateSimpleTextLayout();
+            auto dtl = GetWrappedResource<IDWriteTextLayout>(textLayout);
+
+            auto someBrush = CanvasSolidColorBrush::CreateNew(f.Device.Get(), Color{});
+
+            Assert::AreEqual(S_OK, textLayout->SetBrush(0, 1, someBrush.Get()));
+
+            ComPtr<IInspectable> actualBrush;
+            Assert::AreEqual(S_OK, textLayout->GetCustomBrush(0, &actualBrush));
+            Assert::IsTrue(IsSameInstance(someBrush.Get(), actualBrush.Get()));
+        }
+
+        struct SetBrushOverwriteFixture : public NonStubbedFixture
+        {
+            ComPtr<ICanvasTextLayout> TextLayout;
+            ComPtr<IDWriteTextLayout> DwriteTextLayout;
+
+            ComPtr<ICanvasBrush> SolidColorBrush;
+            ComPtr<ID2D1SolidColorBrush> D2DSolidColorBrush;
+
+            ComPtr<IInspectable> CustomBrush;
+
+            Color CyanColor;
+
+            enum Setter { SetColor, SetBrush, SetCustomBrush };
+
+            SetBrushOverwriteFixture()
+            {
+                TextLayout = CreateSimpleTextLayout();
+                DwriteTextLayout = GetWrappedResource<IDWriteTextLayout>(TextLayout);
+
+                Color magenta { 255, 0, 255 };
+                SolidColorBrush = CanvasSolidColorBrush::CreateNew(Device.Get(), magenta);
+                D2DSolidColorBrush = GetWrappedResource<ID2D1SolidColorBrush>(SolidColorBrush);
+
+                auto strokeStyle = Make<CanvasStrokeStyle>();
+                CustomBrush = As<IInspectable>(strokeStyle.Get());
+
+                CyanColor = { 255, 255, 0 };
+            }
+
+            void DoTestCase(Setter s1, Setter s2)
+            {
+                Set(s1);
+                Set(s2);
+                Verify(s2);
+
+                Set(s1);
+                Verify(s1);
+            }
+
+        private:
+
+            void Set(Setter s)
+            {
+                switch (s)
+                {
+                    case SetColor: ThrowIfFailed(TextLayout->SetColor(2, 1, CyanColor)); break;
+                    case SetBrush: ThrowIfFailed(TextLayout->SetBrush(2, 1, SolidColorBrush.Get())); break;
+                    case SetCustomBrush: ThrowIfFailed(TextLayout->SetCustomBrush(2, 1, CustomBrush.Get())); break;
+                    default:
+                        assert(false);
+                }
+            }
+
+            void Verify(Setter s)
+            {
+                switch (s)
+                {
+                    case SetColor:
+                    {
+                        auto drawingEffect = GetDrawingEffect();
+                        auto drawingEffectBrush = As<ID2D1SolidColorBrush>(drawingEffect.Get());
+
+                        D2D1_COLOR_F d2dColor = drawingEffectBrush->GetColor();
+                        Assert::AreEqual(ToD2DColor(CyanColor), d2dColor);
+                        break;
+                    }
+                    case SetBrush:
+                    {
+                        auto drawingEffect = GetDrawingEffect();
+                        Assert::IsTrue(IsSameInstance(D2DSolidColorBrush.Get(), drawingEffect.Get()));
+                        break;
+                    }
+                    case SetCustomBrush:
+                    {
+                        auto drawingEffect = GetDrawingEffect();
+                        Assert::IsTrue(IsSameInstance(CustomBrush.Get(), drawingEffect.Get()));
+                        break;
+                    }
+                    default:
+                        assert(false);
+                }
+            }
+
+            ComPtr<IUnknown> GetDrawingEffect()
+            {
+                ComPtr<IUnknown> drawingEffect;
+                ThrowIfFailed(DwriteTextLayout->GetDrawingEffect(2, &drawingEffect));
+                return drawingEffect;
+            }
+        };
+
+        TEST_METHOD_EX(CanvasTextLayoutTests_SetBrush_SetCustomBrush_OverwriteBehavior)
+        {
+            // 
+            // This verifies that the three of {SetColor, SetBrush, SetCustomBrush} 
+            // overwrite one another as expected when used with the same text layout.
+            //
+
+            SetBrushOverwriteFixture f;
+
+            f.DoTestCase(SetBrushOverwriteFixture::SetColor, SetBrushOverwriteFixture::SetBrush);
+
+            f.DoTestCase(SetBrushOverwriteFixture::SetBrush, SetBrushOverwriteFixture::SetCustomBrush);
+
+            f.DoTestCase(SetBrushOverwriteFixture::SetCustomBrush, SetBrushOverwriteFixture::SetColor);
         }
     };
 }

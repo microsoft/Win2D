@@ -111,11 +111,23 @@ namespace Microsoft.Graphics.Canvas.Text
 
         //
         // Exposed through IDWriteTextLayout::GetDrawingEffect.
-        // This method fails if the color source, through interop, was set to something other than an ID2D1Brush.
+        // This method fails if the color source, through interop or SetCustomBrush, was set to something other than an ID2D1Brush.
         //
         HRESULT GetBrush(
             [in] INT32 characterIndex,
-            [out, retval] Microsoft.Graphics.Canvas.Brushes.ICanvasBrush** brush); 
+            [out, retval] Microsoft.Graphics.Canvas.Brushes.ICanvasBrush** brush);
+
+        //
+        // Exposed through IDWriteTextLayout::GetDrawingEffect.
+        // This and SetCustomBrush supplement GetBrush and SetBrush. Custom brushes are arbitrary objects
+        // which are sent to a text renderer while drawing the layout.
+        // The built-in D2D renderer doesn't like any D2D resource that isn't an ID2D1Brush. It will
+        // ignore any other objects.
+        // An app may want to pass any arbitrary thing as a brush to its custom renderer, though.
+        //
+        HRESULT GetCustomBrush(
+            [in] INT32 characterIndex,
+            [out, retval] IInspectable** brush);
 
         HRESULT GetFontFamily(
             [in] INT32 characterIndex,
@@ -163,6 +175,11 @@ namespace Microsoft.Graphics.Canvas.Text
             [in] INT32 characterIndex,
             [in] INT32 characterCount,
             [in] Microsoft.Graphics.Canvas.Brushes.ICanvasBrush* brush);
+
+        HRESULT SetCustomBrush(
+            [in] INT32 characterIndex,
+            [in] INT32 characterCount,
+            [in] IInspectable* brush);
 
         HRESULT SetFontFamily(
             [in] INT32 characterIndex,
@@ -356,7 +373,6 @@ namespace Microsoft.Graphics.Canvas.Text
         // Not exposed:                             Reason
         //---------------                           -------
         // Get/SetFontFallback                      Relies on IDWriteFontFallback. Separate design issue on how to expose this.
-        // GetMetrics                               Out of scope for this item. Backlog #820 for getting text metrics
 
         [propget] HRESULT Device([out, retval] Microsoft.Graphics.Canvas.CanvasDevice** value);
 

@@ -376,12 +376,21 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             ICanvasTextInlineObject** inlineObject) override;
 
         IFACEMETHOD(get_LineMetrics)(
-            UINT32* valueCount,
+            uint32_t* valueCount,
             CanvasLineMetrics** valueElements) override;
 
         IFACEMETHOD(get_ClusterMetrics)(
-            UINT32* valueCount,
+            uint32_t* valueCount,
             CanvasClusterMetrics** valueElements) override;
+
+        IFACEMETHOD(GetCustomBrush)(
+            int32_t characterIndex,
+            IInspectable** brush) override;
+
+        IFACEMETHOD(SetCustomBrush)(
+            int32_t characterIndex,
+            int32_t characterCount,
+            IInspectable* brush) override;
 
         //
         // IClosable
@@ -399,6 +408,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         void SetTrimmingSignInternal(CanvasTrimmingSign trimmingSign);
 
         void EnsureCustomTrimmingSignDevice(IDWriteTextLayout2* layout, ICanvasDevice* device);
+
+    private:
+        ComPtr<IInspectable> GetCustomBrushInternal(int32_t characterIndex);
+
+        void SetCustomBrushInternal(
+            int32_t characterIndex,
+            int32_t characterCount,
+            IInspectable* brush);
     };
 
 
