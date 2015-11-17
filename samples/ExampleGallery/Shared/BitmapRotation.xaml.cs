@@ -62,8 +62,8 @@ namespace ExampleGallery
         public BitmapSourceOption NextBitmapSourceOption { get; set; } // databinded
 
         async Task LoadBitmaps(CanvasControl sender)
-        {
-            testBitmaps = new CanvasBitmap[fileNames.Length];
+        {   
+            var newTestBitmaps = new CanvasBitmap[fileNames.Length];
 
             for (int i = 0; i < fileNames.Length; i++)
             {
@@ -76,20 +76,20 @@ namespace ExampleGallery
                     StorageFile storageFile = await StorageFile.GetFileFromPathAsync(pathName);
                     using (IRandomAccessStreamWithContentType stream = await storageFile.OpenReadAsync())
                     {
-                        testBitmaps[i] = await CanvasBitmap.LoadAsync(sender, stream);
+                        newTestBitmaps[i] = await CanvasBitmap.LoadAsync(sender, stream);
                     }
                 }
                 else
                 {
-                    testBitmaps[i] = await CanvasBitmap.LoadAsync(sender, pathName);
+                    newTestBitmaps[i] = await CanvasBitmap.LoadAsync(sender, pathName);
                 }
             }
+
+            testBitmaps = newTestBitmaps;
         }
 
         async Task Canvas_CreateResourcesAsync(CanvasControl sender)
         {
-            var folder = ApplicationData.Current.LocalFolder;
-
             await LoadBitmaps(sender);
         }
 
@@ -100,7 +100,8 @@ namespace ExampleGallery
 
         private void Canvas_Draw(CanvasControl sender, CanvasDrawEventArgs args)
         {
-            if (isRecreatingResources) return;
+            if (testBitmaps == null)
+                return;
 
             var ds = args.DrawingSession;
 
@@ -135,8 +136,6 @@ namespace ExampleGallery
             }
         }
 
-        bool isRecreatingResources = false;
-
         private async void BitmapSourceOption_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (!canvas.ReadyToDraw) return; // CreateResources hasn't been called yet.
@@ -144,17 +143,7 @@ namespace ExampleGallery
             if (currentBitmapSourceOption == NextBitmapSourceOption) return;
             currentBitmapSourceOption = NextBitmapSourceOption;
 
-            //
-            // If the window size changes during the execution of LoadBitmaps, the canvas control's 
-            // draw handler will be called. This may seem uncommon but is especially likely in 
-            // a debugging scenario. This bool keeps the draw handler from doing anything in
-            // that case.
-            //
-            isRecreatingResources = true;
-
             await LoadBitmaps(canvas);
-
-            isRecreatingResources = false;
 
             canvas.Invalidate();
         }
