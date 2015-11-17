@@ -4086,6 +4086,109 @@ public:
         Assert::AreEqual(testValue * DEFAULT_DPI / dpi, dips);
     }
 
+    TEST_METHOD_EX(CanvasDrawingSession_EffectBufferPrecision)
+    {
+        auto deviceContext = Make<StubD2DDeviceContextWithGetFactory>();
+        auto adapter = std::make_shared<StubCanvasDrawingSessionAdapter>();
+        auto drawingSession = CanvasDrawingSession::CreateNew(deviceContext.Get(), adapter);
+
+        ComPtr<IReference<CanvasBufferPrecision>> precisionReference;
+        CanvasBufferPrecision precisionValue;
+
+        D2D_SIZE_U someSize = { 23, 42 };
+
+        // Get null fails.
+        Assert::AreEqual(E_INVALIDARG, drawingSession->get_EffectBufferPrecision(nullptr));
+
+        // Get maps D2D1_BUFFER_PRECISION_UNKNOWN -> null reference.
+        deviceContext->GetRenderingControlsMethod.SetExpectedCalls(1, [&](D2D1_RENDERING_CONTROLS* renderingControls)
+        {
+            *renderingControls = D2D1_RENDERING_CONTROLS{ D2D1_BUFFER_PRECISION_UNKNOWN, someSize };
+        });
+
+        ThrowIfFailed(drawingSession->get_EffectBufferPrecision(&precisionReference));
+        Assert::IsNull(precisionReference.Get());
+
+        // Get maps other precision -> matching reference.
+        deviceContext->GetRenderingControlsMethod.SetExpectedCalls(1, [&](D2D1_RENDERING_CONTROLS* renderingControls)
+        {
+            *renderingControls = D2D1_RENDERING_CONTROLS{ D2D1_BUFFER_PRECISION_16BPC_FLOAT, someSize };
+        });
+
+        ThrowIfFailed(drawingSession->get_EffectBufferPrecision(&precisionReference));
+        ThrowIfFailed(precisionReference->get_Value(&precisionValue));
+        Assert::AreEqual(CanvasBufferPrecision::Precision16Float, precisionValue);
+
+        // Set maps null reference -> D2D1_BUFFER_PRECISION_UNKNOWN (and shouldn't change the tile size).
+        deviceContext->GetRenderingControlsMethod.SetExpectedCalls(1, [&](D2D1_RENDERING_CONTROLS* renderingControls)
+        {
+            *renderingControls = D2D1_RENDERING_CONTROLS{ D2D1_BUFFER_PRECISION_8BPC_UNORM, someSize };
+        });
+
+        deviceContext->SetRenderingControlsMethod.SetExpectedCalls(1, [&](D2D1_RENDERING_CONTROLS const* renderingControls)
+        {
+            Assert::AreEqual(D2D1_BUFFER_PRECISION_UNKNOWN, renderingControls->bufferPrecision);
+            Assert::AreEqual(someSize, renderingControls->tileSize);
+        });
+
+        ThrowIfFailed(drawingSession->put_EffectBufferPrecision(nullptr));
+
+        // Set maps other reference -> matching precision (and shouldn't change the tile size).
+        deviceContext->GetRenderingControlsMethod.SetExpectedCalls(1, [&](D2D1_RENDERING_CONTROLS* renderingControls)
+        {
+            *renderingControls = D2D1_RENDERING_CONTROLS{ D2D1_BUFFER_PRECISION_8BPC_UNORM, someSize };
+        });
+
+        deviceContext->SetRenderingControlsMethod.SetExpectedCalls(1, [&](D2D1_RENDERING_CONTROLS const* renderingControls)
+        {
+            Assert::AreEqual(D2D1_BUFFER_PRECISION_16BPC_FLOAT, renderingControls->bufferPrecision);
+            Assert::AreEqual(someSize, renderingControls->tileSize);
+        });
+
+        precisionReference = Make<Nullable<CanvasBufferPrecision>>(CanvasBufferPrecision::Precision16Float);
+
+        ThrowIfFailed(drawingSession->put_EffectBufferPrecision(precisionReference.Get()));
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_EffectTileSize)
+    {
+        auto deviceContext = Make<StubD2DDeviceContextWithGetFactory>();
+        auto adapter = std::make_shared<StubCanvasDrawingSessionAdapter>();
+        auto drawingSession = CanvasDrawingSession::CreateNew(deviceContext.Get(), adapter);
+
+        D2D_SIZE_U someSize = { 23, 42 };
+        BitmapSize expectedBitmapSize = { 23, 42 };
+
+        // Get null fails.
+        Assert::AreEqual(E_INVALIDARG, drawingSession->get_EffectTileSize(nullptr));
+
+        // Get reads the value from D2D.
+        deviceContext->GetRenderingControlsMethod.SetExpectedCalls(1, [&](D2D1_RENDERING_CONTROLS* renderingControls)
+        {
+            *renderingControls = D2D1_RENDERING_CONTROLS{ D2D1_BUFFER_PRECISION_UNKNOWN, someSize };
+        });
+
+        BitmapSize bitmapSize;
+        ThrowIfFailed(drawingSession->get_EffectTileSize(&bitmapSize));
+        
+        Assert::AreEqual(expectedBitmapSize.Width, bitmapSize.Width);
+        Assert::AreEqual(expectedBitmapSize.Height, bitmapSize.Height);
+
+        // Set passes the value to D2D, and preserves the existing precision.
+        deviceContext->GetRenderingControlsMethod.SetExpectedCalls(1, [&](D2D1_RENDERING_CONTROLS* renderingControls)
+        {
+            *renderingControls = D2D1_RENDERING_CONTROLS{ D2D1_BUFFER_PRECISION_16BPC_FLOAT, { 0, 0 } };
+        });
+
+        deviceContext->SetRenderingControlsMethod.SetExpectedCalls(1, [&](D2D1_RENDERING_CONTROLS const* renderingControls)
+        {
+            Assert::AreEqual(D2D1_BUFFER_PRECISION_16BPC_FLOAT, renderingControls->bufferPrecision);
+            Assert::AreEqual(someSize.width, renderingControls->tileSize.width);
+        });
+
+        ThrowIfFailed(drawingSession->put_EffectTileSize(expectedBitmapSize));
+    }
+
 #if WINVER > _WIN32_WINNT_WINBLUE
     TEST_METHOD_EX(CanvasDrawingSession_DrawInk_NullArg)
     {
@@ -4700,6 +4803,10 @@ TEST_CLASS(CanvasDrawingSession_CloseTests)
         EXPECT_OBJECT_CLOSED(canvasDrawingSession->put_Transform(Numerics::Matrix3x2()));
         EXPECT_OBJECT_CLOSED(canvasDrawingSession->get_Units(nullptr));
         EXPECT_OBJECT_CLOSED(canvasDrawingSession->put_Units(CanvasUnits::Dips));
+        EXPECT_OBJECT_CLOSED(canvasDrawingSession->get_EffectBufferPrecision(nullptr));
+        EXPECT_OBJECT_CLOSED(canvasDrawingSession->put_EffectBufferPrecision(nullptr));
+        EXPECT_OBJECT_CLOSED(canvasDrawingSession->get_EffectTileSize(nullptr));
+        EXPECT_OBJECT_CLOSED(canvasDrawingSession->put_EffectTileSize(BitmapSize{}));
         EXPECT_OBJECT_CLOSED(canvasDrawingSession->get_Device(&deviceVerify));
 
 

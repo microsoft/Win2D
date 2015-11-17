@@ -69,6 +69,19 @@ namespace Microsoft
             }
 
             template<>
+            inline std::wstring ToString<D2D_SIZE_U>(D2D_SIZE_U const& value)
+            {
+                wchar_t buf[256];
+                ThrowIfFailed(StringCchPrintf(
+                    buf,
+                    _countof(buf),
+                    L"D2D_SIZE_U{%u,%u}",
+                    value.width,
+                    value.height));
+                return buf;
+            }
+
+            template<>
             inline std::wstring ToString<D2D1_ROUNDED_RECT>(D2D1_ROUNDED_RECT const& roundedRect)
             {
                 wchar_t buf[256];
@@ -603,6 +616,17 @@ namespace Microsoft
                 ENUM_VALUE(D2D1_FILL_MODE_ALTERNATE);
                 ENUM_VALUE(D2D1_FILL_MODE_WINDING);
                 END_ENUM(D2D1_FILL_MODE);
+            }
+
+            ENUM_TO_STRING(D2D1_BUFFER_PRECISION)
+            {
+                ENUM_VALUE(D2D1_BUFFER_PRECISION_UNKNOWN);
+                ENUM_VALUE(D2D1_BUFFER_PRECISION_8BPC_UNORM);
+                ENUM_VALUE(D2D1_BUFFER_PRECISION_8BPC_UNORM_SRGB);
+                ENUM_VALUE(D2D1_BUFFER_PRECISION_16BPC_UNORM);
+                ENUM_VALUE(D2D1_BUFFER_PRECISION_16BPC_FLOAT);
+                ENUM_VALUE(D2D1_BUFFER_PRECISION_32BPC_FLOAT);
+                END_ENUM(D2D1_BUFFER_PRECISION);
             }
 
             ENUM_TO_STRING(SamplerCoordinateMapping)

@@ -193,31 +193,20 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         </para>
 
         <para>
-          <legacyBold>Precision selection from SetRenderingControls</legacyBold>
+          <legacyBold>Precision selection from the drawing session</legacyBold>
         </para>
-        <para>
-          This option is not yet supported in Win2D. Coming soon!
-        </para>
-        <!-- TODO #4065 - restore these docs once Win2D exposes SetRenderingControls
         <para>
           The simplest way to control the precision of Win2D's intermediate textures is to use the 
-          ID2D1DeviceContext::SetRenderingControls method. This controls the precision of all 
-          intermediate textures, as long as a precision is not also set manually on effects or 
-          transforms directly.
+          <codeEntityReference>P:Microsoft.Graphics.Canvas.CanvasDrawingSession.EffectBufferPrecision</codeEntityReference>
+          property. This controls the precision of all intermediate textures, as long as 
+          a precision is not also set manually on effects directly.
         </para>
         <code>
-          if (Device->IsBufferPrecisionSupported(D2D1_BUFFER_PRECISION_32BPC_FLOAT))
+          if (canvasDevice.IsBufferPrecisionSupported(CanvasBufferPrecision.Precision32Float))
           {
-              // Get the current rendering controls
-              D2D1_RENDERING_CONTROLS renderingControls = {};
-              Context-&gt;GetRenderingControls(&amp;renderingControls);
-
-              // Switch the precision within the rendering controls and set it
-              renderingControls.bufferPrecision = D2D1_BUFFER_PRECISION_32BPC_FLOAT;
-              Context-&gt;SetRenderingControls(&amp;renderingControls);
+              drawingSession.EffectBufferPrecision = CanvasBufferPrecision.Precision32Float;
           }
         </code>
-        -->
         
         <para>
           <legacyBold>Precision selection from inputs and render targets</legacyBold>

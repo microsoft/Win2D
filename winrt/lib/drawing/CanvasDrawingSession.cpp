@@ -3600,6 +3600,89 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             });
     }
 
+    IFACEMETHODIMP CanvasDrawingSession::get_EffectBufferPrecision(IReference<CanvasBufferPrecision>** value)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                auto& deviceContext = GetResource();
+                CheckAndClearOutPointer(value);
+
+                D2D1_RENDERING_CONTROLS renderingControls;
+                deviceContext->GetRenderingControls(&renderingControls);
+
+                // If the value is not unknown, box it as an IReference.
+                // Unknown precision returns null.
+                if (renderingControls.bufferPrecision != D2D1_BUFFER_PRECISION_UNKNOWN)
+                {
+                    auto nullable = Make<Nullable<CanvasBufferPrecision>>(FromD2DBufferPrecision(renderingControls.bufferPrecision));
+                    CheckMakeResult(nullable);
+
+                    ThrowIfFailed(nullable.CopyTo(value));
+                }
+            });
+    }
+
+    IFACEMETHODIMP CanvasDrawingSession::put_EffectBufferPrecision(IReference<CanvasBufferPrecision>* value)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                auto& deviceContext = GetResource();
+
+                D2D1_RENDERING_CONTROLS renderingControls;
+                deviceContext->GetRenderingControls(&renderingControls);
+
+                if (value)
+                {
+                    // Convert non-null values from Win2D to D2D format.
+                    CanvasBufferPrecision bufferPrecision;
+                    ThrowIfFailed(value->get_Value(&bufferPrecision));
+
+                    renderingControls.bufferPrecision = ToD2DBufferPrecision(bufferPrecision);
+                }
+                else
+                {
+                    // Null references -> unknown.
+                    renderingControls.bufferPrecision = D2D1_BUFFER_PRECISION_UNKNOWN;
+                }
+
+                deviceContext->SetRenderingControls(&renderingControls);
+            });
+    }
+
+    IFACEMETHODIMP CanvasDrawingSession::get_EffectTileSize(BitmapSize* value)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                auto& deviceContext = GetResource();
+                CheckInPointer(value);
+
+                D2D1_RENDERING_CONTROLS renderingControls;
+                deviceContext->GetRenderingControls(&renderingControls);
+
+                *value = BitmapSize{ renderingControls.tileSize.width, renderingControls.tileSize.height };
+            });
+    }
+
+    IFACEMETHODIMP CanvasDrawingSession::put_EffectTileSize(BitmapSize value)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                auto& deviceContext = GetResource();
+
+                D2D1_RENDERING_CONTROLS renderingControls;
+                deviceContext->GetRenderingControls(&renderingControls);
+
+                renderingControls.tileSize = D2D_SIZE_U{ value.Width, value.Height };
+
+                deviceContext->SetRenderingControls(&renderingControls);
+            });
+    }
+
+
     IFACEMETHODIMP CanvasDrawingSession::get_Device(ICanvasDevice** value)
     {
         using namespace ::Microsoft::WRL::Wrappers;

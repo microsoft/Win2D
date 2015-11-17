@@ -1200,6 +1200,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         IFACEMETHOD(get_Units)(CanvasUnits* value) override;
         IFACEMETHOD(put_Units)(CanvasUnits value) override;
 
+        IFACEMETHOD(get_EffectBufferPrecision)(IReference<CanvasBufferPrecision>** value) override;
+        IFACEMETHOD(put_EffectBufferPrecision)(IReference<CanvasBufferPrecision>* value) override;
+
+        IFACEMETHOD(get_EffectTileSize)(BitmapSize* value) override;
+        IFACEMETHOD(put_EffectTileSize)(BitmapSize value) override;
+
         //
         // CreateLayer
         //

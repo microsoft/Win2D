@@ -1356,6 +1356,12 @@ namespace Microsoft.Graphics.Canvas
         [propget] HRESULT Units([out, retval] CanvasUnits* value);
         [propput] HRESULT Units([in] CanvasUnits value);
 
+        [propget] HRESULT EffectBufferPrecision([out, retval] Windows.Foundation.IReference<CanvasBufferPrecision>** value);
+        [propput] HRESULT EffectBufferPrecision([in] Windows.Foundation.IReference<CanvasBufferPrecision>* value);
+
+        [propget] HRESULT EffectTileSize([out, retval] BitmapSize* value);
+        [propput] HRESULT EffectTileSize([in] BitmapSize value);
+
         //
         // CreateLayer
         //

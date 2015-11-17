@@ -680,6 +680,45 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="P:Microsoft.Graphics.Canvas.CanvasDrawingSession.Antialiasing">
       <summary>Enables or disables primitive edge antialiasing for this drawing session.</summary>
     </member>  
+    <member name="P:Microsoft.Graphics.Canvas.CanvasDrawingSession.EffectTileSize" Experimental="true">
+      <summary>Specifies the tile size used when drawing image effects.</summary>
+      <remarks>
+        <p>
+          For advanced scenarios, this property allows the application to tune the 
+          performance and resource usage of effect drawing operations.
+        </p>
+        <p>
+          Large image effects are drawn by splitting them up into a number of smaller 
+          tiles, which are sent separately to the GPU. This reduces intermediate 
+          memory usage, and allows processing very large images (potentially larger than
+          <see cref="P:Microsoft.Graphics.Canvas.CanvasDevice.MaximumBitmapSizeInPixels"/>,
+          which can be necessary for instance during printing).
+        </p>
+        <p>
+          The default tile size is 1024x1024.
+        </p>
+      </remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.CanvasDrawingSession.EffectBufferPrecision" Experimental="true">
+      <summary>Specifies the default precision used for intermediate buffers when drawing image effects.</summary>
+      <remarks>
+        <p>
+          If not null, this property specifies what intermediate buffer precision to use 
+          when drawing effect graphs that do not explicitly specify a precision on the 
+          effect itself.
+        </p>
+        <p>
+          If null, and the effect does not specify its own precision, the intermediate 
+          buffer precision will be the maximum precision of the inputs to the effect.
+        </p>
+        <p>
+          If the effect specifies its own precision, this property is ignored.
+        </p>
+        <p>
+          For more information, see <a href="EffectPrecision.htm">Effect precision and clamping</a>.
+        </p>
+      </remarks>
+    </member>
     <member name="P:Microsoft.Graphics.Canvas.CanvasDrawingSession.Device">
       <summary>Gets the underlying device used by this drawing session.</summary>
     </member>

@@ -77,6 +77,8 @@ namespace canvas
         MOCK_METHOD4(CreateRadialGradientBrush        , HRESULT(D2D1_RADIAL_GRADIENT_BRUSH_PROPERTIES const*, D2D1_BRUSH_PROPERTIES const*, ID2D1GradientStopCollection*, ID2D1RadialGradientBrush**));
         MOCK_METHOD1_CONST(IsDxgiFormatSupported      , BOOL(DXGI_FORMAT));
         MOCK_METHOD1_CONST(IsBufferPrecisionSupported , BOOL(D2D1_BUFFER_PRECISION));
+        MOCK_METHOD1(SetRenderingControls             , void(D2D1_RENDERING_CONTROLS const*));
+        MOCK_METHOD1_CONST(GetRenderingControls       , void(D2D1_RENDERING_CONTROLS*));
 
         // ID2D1DeviceContext1
         
@@ -286,16 +288,6 @@ namespace canvas
         {
             Assert::Fail(L"Unexpected call to GetGlyphRunWorldBounds");
             return E_NOTIMPL;
-        }
-
-        IFACEMETHODIMP_(void) SetRenderingControls(const D2D1_RENDERING_CONTROLS *) override
-        {
-            Assert::Fail(L"Unexpected call to SetRenderingControls");
-        }
-
-        IFACEMETHODIMP_(void) GetRenderingControls(D2D1_RENDERING_CONTROLS *) const override
-        {
-            Assert::Fail(L"Unexpected call to GetRenderingControls");
         }
 
         IFACEMETHODIMP_(void) DrawGlyphRun(D2D1_POINT_2F,const DWRITE_GLYPH_RUN *,const DWRITE_GLYPH_RUN_DESCRIPTION *,ID2D1Brush *,DWRITE_MEASURING_MODE) override
