@@ -637,9 +637,44 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     </member>
     <member name="F:Microsoft.Graphics.Canvas.Text.CanvasLineMetrics.Height">
       <summary>The height of the text line, in DIPs.</summary>
+      <remarks>
+        <p>
+          The height of a line in a text layout can be retrieved 
+          straightforwardly through this field; it can also be equivalently
+          calculated using the 
+          <see cref="P:Microsoft.Graphics.Canvas.Text.CanvasFontFace.Ascent"/>, 
+          <see cref="P:Microsoft.Graphics.Canvas.Text.CanvasFontFace.Descent"/>, 
+          and
+          <see cref="P:Microsoft.Graphics.Canvas.Text.CanvasFontFace.LineGap"/>
+          retrieved from the 
+          <see cref="T:Microsoft.Graphics.Canvas.Text.CanvasFontFace"/>
+          passed to an app's custom text renderer's implementation of DrawGlyphRun.
+          The spacing is the maximum, for all glyph runs in the line, of:
+          <code>
+              float defaultLineSpacing = (ascent + descent + lineGap) * fontSize;
+          </code>
+        </p>
+      </remarks>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.Text.CanvasLineMetrics.Baseline">
       <summary>The distance, in DIPs, from the top of the text line to its baseline.</summary>
+      <remarks>
+        <p>
+          The baseline of a line in a text layout can be retrieved 
+          straightforwardly through this field; it can also be equivalently
+          calculated using the 
+          <see cref="P:Microsoft.Graphics.Canvas.Text.CanvasFontFace.Ascent"/>,  
+          and
+          <see cref="P:Microsoft.Graphics.Canvas.Text.CanvasFontFace.LineGap"/>
+          retrieved from the 
+          <see cref="T:Microsoft.Graphics.Canvas.Text.CanvasFontFace"/>
+          passed to an app's custom text renderer's implementation of DrawGlyphRun.          
+          The baseline amount is the maximum, for all glyph runs in the line, of:
+          <code>
+              float defaultBaseline = (ascent + lineGap) * fontSize;
+          </code>
+        </p>
+      </remarks>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.Text.CanvasLineMetrics.IsTrimmed">
       <summary>Indicates whether the line was trimmed.</summary>
