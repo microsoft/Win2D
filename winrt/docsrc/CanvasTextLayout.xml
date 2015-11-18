@@ -277,13 +277,74 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <summary>Specifies the granularity used to trim text overflowing the layout box.</summary>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.TrimmingDelimiterCount">
-      <summary>A value that indicates how many occurrences of the delimiter to step back.</summary>
+      <summary>A value that indicates how many occurrences of the delimiter, counted from the end
+      of the text, are allowed before trimming is desired.</summary>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.TrimmingDelimiter">
       <summary>
-        A character code used as the delimiter that signals the beginning of the portion of text to be preserved.
-        Most useful for path ellipsis, where the delimiter would be a slash.
+        A character used as the delimiter that signals the beginning of the portion of text to be preserved.
        </summary>
+       <remarks>
+         <p>
+           An example in which you'd want to use this is long filename paths. For example:
+           "C:\Windows\Fonts\Comic.ttf", with an ellipsis trimming sign.
+         </p>
+         <p>
+           An app may want to trim this filename path so that it fits on one line. But the 
+           default trimming delimiter options will produce something like "C:\Windows\Fonts\Com...",
+           and chop off the end of the filename.
+           It would be much more useful to still be able to see "Comic.ttf", the filename,
+           and effectively trim the middle portion instead.
+         </p>
+         <p>
+           To accomplish this, the app can set the TrimmingDelimiter to "\" and the 
+           TrimmingDelimiterCount to 1. This would produce "C:\Windows\F...\Comic.ttf".
+         </p>
+         <p>
+           Or, in this scenario, if the filename plus its immediate containing folder were 
+           deemed important, setting the TrimmingDelimiterCount to 2 would produce
+           "C:\Win...\Fonts\Comic.ttf".
+         </p>
+         <p>
+           For example:
+           <code>
+               string text = "C:\\Windows\\Fonts\\Comic.ttf";
+            
+               CanvasTextFormat format = new CanvasTextFormat();
+               format.WordWrapping = CanvasWordWrapping.NoWrap;
+               format.TrimmingSign = CanvasTrimmingSign.Ellipsis;
+               format.TrimmingGranularity = CanvasTextTrimmingGranularity.Character;
+
+               CanvasTextLayout layout = new CanvasTextLayout(sender, text, format, 175, 50);
+
+               float x = 100;
+               float y = 100;
+
+               // Default trimming delimiter options
+               args.DrawingSession.DrawTextLayout(layout, x, y, Colors.White);
+               args.DrawingSession.DrawRectangle(x, y, (float)layout.RequestedSize.Width, (float)layout.RequestedSize.Height, Colors.Cyan);
+
+               y += 100;
+
+               // Trimming delimited by one back-slash
+               layout.TrimmingDelimiter = "\\";
+               layout.TrimmingDelimiterCount = 1;
+               args.DrawingSession.DrawTextLayout(layout, x, y, Colors.White);
+               args.DrawingSession.DrawRectangle(x, y, (float)layout.RequestedSize.Width, (float)layout.RequestedSize.Height, Colors.Cyan);
+
+               y += 100;
+
+               // Trimming delimited by two back-slashes
+               layout.TrimmingDelimiterCount = 2;
+               args.DrawingSession.DrawTextLayout(layout, x, y, Colors.White);
+               args.DrawingSession.DrawRectangle(x, y, (float)layout.RequestedSize.Width, (float)layout.RequestedSize.Height, Colors.Cyan);
+           </code>
+         </p>
+         <p>
+           This draws:
+         </p>
+         <img src="../media/TextTrimmingDelimiters.png" alt="Text trimming delimiters sample code output" />
+       </remarks>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.Direction">
       <summary>Specifies the direction in which the text is read.</summary>

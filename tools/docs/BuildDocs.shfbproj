@@ -103,6 +103,7 @@
     <Image Include="..\..\winrt\docsrc\media\EffectPrecision2.svg">                     <ImageId>EffectPrecision2</ImageId>                     <CopyToMedia>True</CopyToMedia></Image>
     <Image Include="..\..\winrt\docsrc\media\EffectPrecision3.svg">                     <ImageId>EffectPrecision3</ImageId>                     <CopyToMedia>True</CopyToMedia></Image>
     <Image Include="..\..\winrt\docsrc\media\EffectPrecision4.svg">                     <ImageId>EffectPrecision4</ImageId>                     <CopyToMedia>True</CopyToMedia></Image>
+    <Image Include="..\..\winrt\docsrc\media\TextTrimmingDelimiters.png">               <ImageId>TextTrimmingDelimiters</ImageId>               <CopyToMedia>True</CopyToMedia></Image>
 
     <!-- Generated title pages for index topics -->
     <WildcardConceptual Include="$(MSBuildThisFileDirectory)..\..\obj\docs\topics\*.aml" />
