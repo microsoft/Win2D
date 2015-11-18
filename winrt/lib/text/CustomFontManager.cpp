@@ -171,7 +171,7 @@ ComPtr<IDWriteFontCollection> CustomFontManager::GetFontCollectionFromUri(WinStr
 
 ComPtr<IDWriteFactory> const& CustomFontManager::GetIsolatedFactory()
 {
-    Lock lock(m_mutex);
+    RecursiveLock lock(m_mutex);
     
     if (!m_isolatedFactory)
     {
@@ -185,7 +185,7 @@ ComPtr<IDWriteFactory> const& CustomFontManager::GetIsolatedFactory()
 
 ComPtr<IDWriteFactory> const& CustomFontManager::GetSharedFactory()
 {
-    Lock lock(m_mutex);
+    RecursiveLock lock(m_mutex);
     
     if (!m_sharedFactory)
     {
@@ -193,6 +193,23 @@ ComPtr<IDWriteFactory> const& CustomFontManager::GetSharedFactory()
     }
 
     return m_sharedFactory;
+}
+
+ComPtr<IDWriteTextAnalyzer1> const& CustomFontManager::GetTextAnalyzer()
+{
+    RecursiveLock lock(m_mutex);
+
+    auto& sharedFactory = GetSharedFactory();
+
+    if (!m_textAnalyzer)
+    {
+        ComPtr<IDWriteTextAnalyzer> textAnalyzerBase;
+
+        ThrowIfFailed(sharedFactory->CreateTextAnalyzer(&textAnalyzerBase));
+        m_textAnalyzer = As<IDWriteTextAnalyzer1>(textAnalyzerBase);
+    }
+
+    return m_textAnalyzer;
 }
 
 void CustomFontManager::ValidateUri(WinString const& uriString)

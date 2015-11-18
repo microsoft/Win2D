@@ -14,4 +14,5 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         UNREFERENCED_PARAMETER(lock);
     }
 
+    typedef std::unique_lock<std::recursive_mutex> RecursiveLock;
 }}}}

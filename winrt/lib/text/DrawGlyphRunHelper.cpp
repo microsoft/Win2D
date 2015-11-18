@@ -16,6 +16,32 @@ DrawGlyphRunHelper::DrawGlyphRunHelper(
     CanvasGlyph* glyphs,
     boolean isSideways,
     uint32_t bidiLevel,
+    CanvasTextMeasuringMode textMeasuringMode)
+    : DrawGlyphRunHelper(
+        fontFace,
+        fontSize,
+        glyphCount,
+        glyphs,
+        isSideways,
+        bidiLevel,
+        nullptr,
+        textMeasuringMode,
+        nullptr,
+        nullptr,
+        0,
+        nullptr,
+        0,
+        nullptr)
+{
+}
+
+DrawGlyphRunHelper::DrawGlyphRunHelper(
+    ICanvasFontFace* fontFace,
+    float fontSize,
+    uint32_t glyphCount,
+    CanvasGlyph* glyphs,
+    boolean isSideways,
+    uint32_t bidiLevel,
     IInspectable* brush,
     CanvasTextMeasuringMode textMeasuringMode,
     HSTRING localeName,

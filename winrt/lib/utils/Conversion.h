@@ -99,6 +99,16 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         static_assert(offsetof(DWRITE_MATRIX, dy) == offsetof(Numerics::Matrix3x2, M32), "Matrix3x2 layout must match DWRITE_MATRIX");
     };
 
+    template<> struct ValidateReinterpretAs<DWRITE_MATRIX*, D2D1_MATRIX_3X2_F*> : std::true_type
+    {
+        static_assert(offsetof(DWRITE_MATRIX, m11) == offsetof(D2D1_MATRIX_3X2_F, _11), "D2D1_MATRIX_3X2_F layout must match DWRITE_MATRIX");
+        static_assert(offsetof(DWRITE_MATRIX, m12) == offsetof(D2D1_MATRIX_3X2_F, _12), "D2D1_MATRIX_3X2_F layout must match DWRITE_MATRIX");
+        static_assert(offsetof(DWRITE_MATRIX, m21) == offsetof(D2D1_MATRIX_3X2_F, _21), "D2D1_MATRIX_3X2_F layout must match DWRITE_MATRIX");
+        static_assert(offsetof(DWRITE_MATRIX, m22) == offsetof(D2D1_MATRIX_3X2_F, _22), "D2D1_MATRIX_3X2_F layout must match DWRITE_MATRIX");
+        static_assert(offsetof(DWRITE_MATRIX, dx) == offsetof(D2D1_MATRIX_3X2_F, _31), "D2D1_MATRIX_3X2_F layout must match DWRITE_MATRIX");
+        static_assert(offsetof(DWRITE_MATRIX, dy) == offsetof(D2D1_MATRIX_3X2_F, _32), "D2D1_MATRIX_3X2_F layout must match DWRITE_MATRIX");
+    };
+
     template<> struct ValidateReinterpretAs<Numerics::Vector4*, D2D1_COLOR_F*> : std::true_type
     {
         static_assert(offsetof(D2D1_COLOR_F, r) == offsetof(Numerics::Vector4, X), "Vector4 layout must match D2D1_COLOR_F");

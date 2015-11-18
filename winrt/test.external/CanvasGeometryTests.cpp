@@ -228,6 +228,57 @@ public:
         CanvasGeometry::CreateText(textLayout);
     }
 
+    TEST_METHOD(CanvasGeometry_CreateGlyphRun_NullArg)
+    {
+        auto glyphArray = ref new Platform::Array<CanvasGlyph>(1);
+        auto someFontFace = CanvasFontSet::GetSystemFontSet()->Fonts->GetAt(0);
+
+        Assert::ExpectException<Platform::InvalidArgumentException^>(
+            [=]
+            {
+                CanvasGeometry::CreateGlyphRun(
+                    nullptr,
+                    float2{},
+                    someFontFace,
+                    16.0f,
+                    glyphArray,
+                    false,
+                    0,
+                    CanvasTextMeasuringMode::Natural,
+                    CanvasGlyphOrientation::Upright);
+            });
+
+        Assert::ExpectException<Platform::InvalidArgumentException^>(
+            [=]
+            {
+                CanvasGeometry::CreateGlyphRun(
+                    m_device,
+                    float2{},
+                    nullptr,
+                    16.0f,
+                    glyphArray,
+                    false,
+                    0,
+                    CanvasTextMeasuringMode::Natural,
+                    CanvasGlyphOrientation::Upright);
+            });
+
+        Assert::ExpectException<Platform::InvalidArgumentException^>(
+            [=]
+            {
+                CanvasGeometry::CreateGlyphRun(
+                    m_device,
+                    float2{},
+                    someFontFace,
+                    16.0f,
+                    nullptr,
+                    false,
+                    0,
+                    CanvasTextMeasuringMode::Natural,
+                    CanvasGlyphOrientation::Upright);
+            });
+    }
+
 private:
     ComPtr<ID2D1Factory> GetD2DFactory()
     {

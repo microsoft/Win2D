@@ -9,6 +9,7 @@
 #include "GeometrySink.h"
 #include "TessellationSink.h"
 #include "../images/CanvasCommandList.h"
+#include "../text/DrawGlyphRunHelper.h"
 
 #if WINVER > _WIN32_WINNT_WINBLUE
 #include "InkToGeometryCommandSink.h"
@@ -210,6 +211,45 @@ IFACEMETHODIMP CanvasGeometryFactory::CreateText(
             ThrowIfFailed(newCanvasGeometry.CopyTo(geometry));
         });
 }
+
+
+IFACEMETHODIMP CanvasGeometryFactory::CreateGlyphRun(
+    ICanvasResourceCreator* resourceCreator,
+    Vector2 point,
+    ICanvasFontFace* fontFace,
+    float fontSize,
+    uint32_t glyphCount,
+    CanvasGlyph* glyphs,
+    boolean isSideways,
+    uint32_t bidiLevel,
+    CanvasTextMeasuringMode measuringMode,
+    CanvasGlyphOrientation glyphOrientation,
+    ICanvasGeometry** geometry)
+{
+    return ExceptionBoundary(
+        [&]
+        {
+            CheckInPointer(resourceCreator);
+            CheckInPointer(fontFace);
+            CheckInPointer(glyphs);
+            CheckAndClearOutPointer(geometry);
+
+            auto newCanvasGeometry = CanvasGeometry::CreateNew(
+                resourceCreator,
+                point,
+                fontFace,
+                fontSize,
+                glyphCount,
+                glyphs,
+                isSideways,
+                bidiLevel,
+                measuringMode,
+                glyphOrientation);
+
+            ThrowIfFailed(newCanvasGeometry.CopyTo(geometry));
+        });
+}
+
 
 #if WINVER > _WIN32_WINNT_WINBLUE
 
@@ -1153,22 +1193,52 @@ ComPtr<CanvasGeometry> CanvasGeometry::CreateNew(
 }
 
 
+static ComPtr<ID2D1TransformedGeometry> GetGlyphRunGeometry(
+    ComPtr<ICanvasDeviceInternal> const& deviceInternal,
+    FLOAT baselineOriginX,
+    FLOAT baselineOriginY,
+    DWRITE_GLYPH_ORIENTATION_ANGLE orientationAngle,
+    DWRITE_GLYPH_RUN const* glyphRun)
+{
+    auto d2dPathGeometry = deviceInternal->CreatePathGeometry();
+
+    ComPtr<ID2D1GeometrySink> d2dGeometrySink;
+    ThrowIfFailed(d2dPathGeometry->Open(&d2dGeometrySink));
+
+    ThrowIfFailed(glyphRun->fontFace->GetGlyphRunOutline(
+        glyphRun->fontEmSize,
+        glyphRun->glyphIndices,
+        glyphRun->glyphAdvances,
+        glyphRun->glyphOffsets,
+        glyphRun->glyphCount,
+        glyphRun->isSideways,
+        glyphRun->bidiLevel % 2,
+        d2dGeometrySink.Get()));
+
+    ThrowIfFailed(d2dGeometrySink->Close());
+
+    auto textAnalyzer = CustomFontManager::GetInstance()->GetTextAnalyzer();
+
+    DWRITE_MATRIX transform;
+    ThrowIfFailed(textAnalyzer->GetGlyphOrientationTransform(orientationAngle, glyphRun->isSideways, &transform));
+    transform.dx = baselineOriginX;
+    transform.dy = baselineOriginY;
+
+    auto transformedGeometry = deviceInternal->CreateTransformedGeometry(d2dPathGeometry.Get(), ReinterpretAs<D2D1_MATRIX_3X2_F*>(&transform));
+
+    return transformedGeometry;
+}
+
+
 class OutlineTextRenderer : public RuntimeClass<RuntimeClassFlags<ClassicCom>, IDWriteTextRenderer1>,
     private LifespanTracker<OutlineTextRenderer>
 {
     std::vector<ComPtr<ID2D1Geometry>> m_geometries;
     ComPtr<ICanvasDeviceInternal> m_device;
-    ComPtr<IDWriteTextAnalyzer1> m_textAnalyzer;
 public:
     OutlineTextRenderer(ComPtr<ICanvasDevice> const& device)
         : m_device(As<ICanvasDeviceInternal>(device))
     {
-        auto customFontManager = CustomFontManager::GetInstance();
-        auto dwriteFactory = customFontManager->GetSharedFactory();
-
-        ComPtr<IDWriteTextAnalyzer> textAnalyzerBase;
-        ThrowIfFailed(dwriteFactory->CreateTextAnalyzer(&textAnalyzerBase));
-        m_textAnalyzer = As<IDWriteTextAnalyzer1>(textAnalyzerBase);
     }
 
     ComPtr<ID2D1GeometryGroup> CloseAndGetPath()
@@ -1223,29 +1293,7 @@ public:
         DWRITE_GLYPH_RUN_DESCRIPTION const*,
         IUnknown*)
     {
-        auto d2dPathGeometry = m_device->CreatePathGeometry();
-
-        ComPtr<ID2D1GeometrySink> d2dGeometrySink;
-        ThrowIfFailed(d2dPathGeometry->Open(&d2dGeometrySink));
-
-        ThrowIfFailed(glyphRun->fontFace->GetGlyphRunOutline(
-            glyphRun->fontEmSize,
-            glyphRun->glyphIndices,
-            glyphRun->glyphAdvances,
-            glyphRun->glyphOffsets,
-            glyphRun->glyphCount,
-            glyphRun->isSideways,
-            glyphRun->bidiLevel % 2,
-            d2dGeometrySink.Get()));
-
-        ThrowIfFailed(d2dGeometrySink->Close());
-
-        DWRITE_MATRIX transform;
-        m_textAnalyzer->GetGlyphOrientationTransform(orientationAngle, glyphRun->isSideways, &transform);
-        transform.dx = baselineOriginX;
-        transform.dy = baselineOriginY;
-
-        auto transformedGeometry = m_device->CreateTransformedGeometry(d2dPathGeometry.Get(), reinterpret_cast<D2D1_MATRIX_3X2_F*>(&transform));
+        auto transformedGeometry = GetGlyphRunGeometry(m_device, baselineOriginX, baselineOriginY, orientationAngle, glyphRun);
 
         m_geometries.push_back(transformedGeometry);
 
@@ -1445,6 +1493,45 @@ ComPtr<CanvasGeometry> CanvasGeometry::CreateNew(
 
     return outlineGeometry;
 }
+
+
+ComPtr<CanvasGeometry> CanvasGeometry::CreateNew(
+    ICanvasResourceCreator* resourceCreator,
+    Vector2 point,
+    ICanvasFontFace* fontFace,
+    float fontSize,
+    uint32_t glyphCount,
+    CanvasGlyph* glyphs,
+    boolean isSideways,
+    uint32_t bidiLevel,
+    CanvasTextMeasuringMode measuringMode,
+    CanvasGlyphOrientation glyphOrientation)
+{
+    DrawGlyphRunHelper drawGlyphRunHelper(
+        fontFace,
+        fontSize,
+        glyphCount,
+        glyphs,
+        isSideways,
+        bidiLevel,
+        measuringMode);
+
+    ComPtr<ICanvasDevice> device;
+    ThrowIfFailed(resourceCreator->get_Device(&device));
+
+    auto d2dGeometry = GetGlyphRunGeometry(
+        As<ICanvasDeviceInternal>(device),
+        point.X,
+        point.Y,
+        ToDWriteGlyphOrientationAngle(glyphOrientation),
+        &drawGlyphRunHelper.DWriteGlyphRun);
+
+    auto canvasGeometry = Make<CanvasGeometry>(device.Get(), d2dGeometry.Get());
+    CheckMakeResult(canvasGeometry);
+
+    return canvasGeometry;
+}
+
 
 #if WINVER > _WIN32_WINNT_WINBLUE
 

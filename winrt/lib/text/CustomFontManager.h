@@ -34,10 +34,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         std::shared_ptr<CustomFontManagerAdapter> m_adapter;
         ComPtr<IUriRuntimeClassFactory> m_uriFactory;
 
-        std::mutex m_mutex;
+        std::recursive_mutex m_mutex;
         ComPtr<IDWriteFactory> m_isolatedFactory;
         ComPtr<IDWriteFactory> m_sharedFactory;
         ComPtr<IDWriteFontCollectionLoader> m_customLoader;
+        ComPtr<IDWriteTextAnalyzer1> m_textAnalyzer;
 
     public:
         CustomFontManager();
@@ -47,6 +48,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         void ValidateUri(WinString const& uriString);
 
         ComPtr<IDWriteFactory> const& GetSharedFactory();
+
+        ComPtr<IDWriteTextAnalyzer1> const& GetTextAnalyzer();
 
     private:
         ComPtr<IDWriteFactory> const& GetIsolatedFactory();

@@ -33,6 +33,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             uint32_t textPosition,
             ComPtr<ID2D1DeviceContext> const& deviceContext);
 
+        DrawGlyphRunHelper(
+            ICanvasFontFace* fontFace,
+            float fontSize,
+            uint32_t glyphCount,
+            CanvasGlyph* glyphs,
+            boolean isSideways,
+            uint32_t bidiLevel,
+            CanvasTextMeasuringMode textMeasuringMode);
+
         static ComPtr<IUnknown> GetClientDrawingEffect(
             ComPtr<IInspectable> const& inspectable,
             ComPtr<ID2D1DeviceContext> const& deviceContext);
