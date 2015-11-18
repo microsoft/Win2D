@@ -6,6 +6,7 @@
 
 template<typename T>
 class ReferenceArray : public Microsoft::WRL::RuntimeClass<ABI::Windows::Foundation::IReferenceArray<T>>
+                     , private LifespanTracker<ReferenceArray<T>>
 {
     InspectableClass(IReferenceArray<T>::z_get_rc_name_impl(), BaseTrust);
 

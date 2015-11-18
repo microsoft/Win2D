@@ -6,6 +6,7 @@
 
 template<typename T>
 class Nullable : public Microsoft::WRL::RuntimeClass<ABI::Windows::Foundation::IReference<T>>
+               , private LifespanTracker<Nullable<T>>
 {
     InspectableClass(IReference<T>::z_get_rc_name_impl(), BaseTrust);
 
