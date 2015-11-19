@@ -85,6 +85,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)printing\CanvasPrintTaskOptionsChangedEventArgs.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)printing\DeferrableTask.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)printing\DeferrableTaskScheduler.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)text\InternalDWriteTextRenderer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\CachedResourceReference.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\HashUtilities.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\LockUtilities.h" />
@@ -168,7 +169,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)text\CanvasTextRenderingParameters.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)text\CustomFontManager.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)text\DrawGlyphRunHelper.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)text\InternalTextRenderer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)text\InternalDWriteInlineObject.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)text\TextUtilities.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)text\TrimmingSignInformation.h" />
