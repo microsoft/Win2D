@@ -66,6 +66,7 @@ namespace Microsoft.Graphics.Canvas.UI.Xaml
      uuid(3C35E87A-E881-4F44-B0D1-551413AEC66D), 
      exclusiveto(CanvasImageSource)]
     interface ICanvasImageSource : IInspectable
+        requires Microsoft.Graphics.Canvas.ICanvasResourceCreatorWithDpi
     {
         //
         // Returns a new drawing session for redrawing the entire image source.
@@ -87,30 +88,11 @@ namespace Microsoft.Graphics.Canvas.UI.Xaml
             [out, retval] Microsoft.Graphics.Canvas.CanvasDrawingSession** drawingSession);
 
         //
-        // Returns the device used to create this image source
-        //
-        [propget]
-        HRESULT Device(
-            [out, retval] Microsoft.Graphics.Canvas.CanvasDevice** value);
-
-        //
         // Recreates the surface, binding it to a new device.  Should be called
         // after device lost or CompositionTarget.SurfaceContentsLost.
         //
         HRESULT Recreate(
             [in] Microsoft.Graphics.Canvas.ICanvasResourceCreator* value);
-
-        //
-        // Gets the DPI of the image source.
-        //
-        [propget]
-        HRESULT Dpi([out, retval] float* dpi);
-
-        //
-        // Convert units between dips and pixels.
-        //
-        HRESULT ConvertPixelsToDips([in] INT32 pixels, [out, retval] float* dips);
-        HRESULT ConvertDipsToPixels([in] float dips, [in] Microsoft.Graphics.Canvas.CanvasDpiRounding dpiRounding, [out, retval] INT32* pixels);
 
         //
         // Gets the size of the image source, in dips or pixels.

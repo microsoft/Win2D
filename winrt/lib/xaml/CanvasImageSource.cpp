@@ -201,11 +201,13 @@ void CanvasImageSource::CreateBaseClass(
     ComPtr<ISurfaceImageSource> base;
     ComPtr<IInspectable> baseInspectable;
 
+    ICanvasImageSource* outer = this;
+
     ThrowIfFailed(surfaceImageSourceFactory->CreateInstanceWithDimensionsAndOpacity(
         SizeDipsToPixels(m_width, m_dpi),
         SizeDipsToPixels(m_height, m_dpi),
         isOpaque,
-        this,
+        outer,
         &baseInspectable,
         &base));
 

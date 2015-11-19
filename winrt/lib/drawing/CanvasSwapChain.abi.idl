@@ -122,7 +122,8 @@ namespace Microsoft.Graphics.Canvas
 
     [version(VERSION), uuid(882E3C3A-5725-409C-9E76-F80B3BACF1B4), exclusiveto(CanvasSwapChain)]
     interface ICanvasSwapChain : IInspectable
-        requires Windows.Foundation.IClosable
+        requires Windows.Foundation.IClosable, ICanvasResourceCreatorWithDpi
+
     {
         [overload("Present")]
         HRESULT Present();
@@ -154,10 +155,8 @@ namespace Microsoft.Graphics.Canvas
             [in] INT32 bufferCount);
 
         // Returns the properties used to create this swap chain object.
-        [propget] HRESULT Device([out, retval] CanvasDevice** value);
         [propget] HRESULT Size([out, retval] Windows.Foundation.Size* size);
         [propget] HRESULT SizeInPixels([out, retval] BitmapSize* size);
-        [propget] HRESULT Dpi([out, retval] float* dpi);
         [propget] HRESULT Format([out, retval] DIRECTX_PIXEL_FORMAT* value);
         [propget] HRESULT BufferCount([out, retval] INT32* value);
         [propget] HRESULT AlphaMode([out, retval] CanvasAlphaMode* value);
@@ -170,9 +169,6 @@ namespace Microsoft.Graphics.Canvas
 
         [propget] HRESULT TransformMatrix([out, retval] NUMERICS.Matrix3x2* value);
         [propput] HRESULT TransformMatrix([in] NUMERICS.Matrix3x2 value);
-
-        HRESULT ConvertPixelsToDips([in] INT32 pixels, [out, retval] float* dips);
-        HRESULT ConvertDipsToPixels([in] float dips, [in] CanvasDpiRounding dpiRounding, [out, retval] INT32* pixels);
 
         // Used to create a drawing session that targets this swap chain object.
         HRESULT CreateDrawingSession(

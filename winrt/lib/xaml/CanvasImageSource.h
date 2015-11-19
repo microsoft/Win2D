@@ -63,8 +63,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     };
 
 
-    class CanvasImageSource : public RuntimeClass<ICanvasImageSource, ComposableBase<>>,
-                              private LifespanTracker<CanvasImageSource>
+    class CanvasImageSource
+        : public RuntimeClass<
+            ICanvasImageSource,
+            ICanvasResourceCreator,
+            ICanvasResourceCreatorWithDpi,
+            ComposableBase<>>,
+          private LifespanTracker<CanvasImageSource>
     {
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_UI_Xaml_CanvasImageSource, BaseTrust);
 

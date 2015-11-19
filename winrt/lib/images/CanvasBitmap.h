@@ -316,10 +316,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ICanvasImage,
             IGraphicsEffectSource,
             IDirect3DSurface,
-            CloakedIid<ICanvasImageInternal>,
-            CloakedIid<ICanvasBitmapInternal>,
-            CloakedIid<IDirect3DDxgiInterfaceAccess>,
-            CloakedIid<ICanvasResourceWrapperWithDevice>,
+            Implements<
+                RuntimeClassFlags<WinRtClassicComMix>,
+                ICanvasResourceCreator,
+                ICanvasResourceCreatorWithDpi,
+                CloakedIid<ICanvasImageInternal>,
+                CloakedIid<ICanvasBitmapInternal>,
+                CloakedIid<IDirect3DDxgiInterfaceAccess>,
+                CloakedIid<ICanvasResourceWrapperWithDevice>>,
             ChainInterfaces<
                 MixIn<CanvasBitmapImpl<TRAITS>, ResourceWrapper<typename TRAITS::resource_t, typename TRAITS::wrapper_t, typename TRAITS::wrapper_interface_t>>,
                 ABI::Windows::Foundation::IClosable,
