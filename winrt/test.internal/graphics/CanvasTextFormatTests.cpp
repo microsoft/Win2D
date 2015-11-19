@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 //
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
@@ -17,6 +17,7 @@
 #include "stubs/StubFontManagerAdapter.h"
 #include "stubs/StubDWriteTextFormat.h"
 #include "stubs/StubCanvasTextLayoutAdapter.h"
+#include "utils/TextHelpers.h"
 
 #include <lib/brushes/CanvasSolidColorBrush.h>
 
@@ -1865,6 +1866,18 @@ namespace canvas
             ThrowIfFailed(f.TextFormat->put_CustomTrimmingSign(f.InlineObject.Get()));
 
             f.DrawTextWhichGetsTrimmed();
+        }
+
+        TEST_METHOD(CanvasTextFormat_TrimmingDelimiterValidation)
+        {
+            auto textFormat = Make<CanvasTextFormat>();
+
+            // 
+            // Forcing a realization is necessary if we want to exercise the conversion.
+            //
+            auto dtf = GetWrappedResource<IDWriteTextFormat>(textFormat);
+
+            TrimmingDelimiterValidationTest(textFormat);
         }
     };
 }

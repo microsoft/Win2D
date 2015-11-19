@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="Globals">
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
@@ -137,6 +137,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\TestDeviceAdapter.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\TestEffect.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\Helpers.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)utils\TextHelpers.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)xaml\StubDispatcher.h" />
   </ItemGroup>
   <ItemGroup>

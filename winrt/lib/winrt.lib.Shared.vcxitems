@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="Globals">
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
@@ -294,6 +294,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)text\InternalDWriteTextRenderer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)text\InternalDWriteInlineObject.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)text\DrawGlyphRunHelper.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)text\TextUtilities.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)utils\Strings.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)directx\Direct3DDevice.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)directx\Direct3DSurface.cpp" />

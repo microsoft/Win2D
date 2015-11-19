@@ -15,6 +15,8 @@
 
 #include "mocks/MockDWriteTextRenderer.h"
 
+#include "utils/TextHelpers.h"
+
 namespace canvas
 {
     using namespace ABI::Windows::UI::Text;
@@ -2681,6 +2683,15 @@ namespace canvas
             f.DoTestCase(SetBrushOverwriteFixture::SetBrush, SetBrushOverwriteFixture::SetCustomBrush);
 
             f.DoTestCase(SetBrushOverwriteFixture::SetCustomBrush, SetBrushOverwriteFixture::SetColor);
+        }
+
+        TEST_METHOD(CanvasTextLayout_TrimmingDelimiterValidation)
+        {
+            NonStubbedFixture f;
+
+            auto textLayout = f.CreateSimpleTextLayout();
+
+            TrimmingDelimiterValidationTest(textLayout);
         }
     };
 }
