@@ -10,7 +10,7 @@ namespace Microsoft.Graphics.Canvas.Effects
 
     [version(VERSION), uuid(B3DCBE44-1DD7-5CB3-95E5-A48974CD12E8), exclusiveto(SpotDiffuseEffect)]
     interface ISpotDiffuseEffect : IInspectable
-        requires Microsoft.Graphics.Canvas.ICanvasImage
+        requires ICanvasEffect
     {
         [propget]
         HRESULT LightPosition([out, retval] NUMERICS.Vector3* value);
@@ -84,6 +84,5 @@ namespace Microsoft.Graphics.Canvas.Effects
     runtimeclass SpotDiffuseEffect
     {
         [default] interface ISpotDiffuseEffect;
-        interface IGRAPHICSEFFECT;
     }
 }

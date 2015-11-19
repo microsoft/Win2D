@@ -1039,9 +1039,6 @@
     <None Include="$(MSBuildThisFileDirectory)text\CanvasTextLayout.abi.idl">
       <Filter>text</Filter>
     </None>
-    <None Include="$(MSBuildThisFileDirectory)effects\IGraphicsEffect.abi.idl">
-      <Filter>effects</Filter>
-    </None>
     <None Include="$(MSBuildThisFileDirectory)xaml\CanvasVirtualImageSource.abi.idl">
       <Filter>xaml</Filter>
     </None>
@@ -1056,6 +1053,9 @@
     </None>
     <None Include="$(MSBuildThisFileDirectory)text\CanvasTextInlineObject.abi.idl">
       <Filter>text</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)effects\ICanvasEffect.abi.idl">
+      <Filter>effects</Filter>
     </None>
   </ItemGroup>
 </Project>

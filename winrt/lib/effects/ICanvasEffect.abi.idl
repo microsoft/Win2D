@@ -1,0 +1,78 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+//
+// Licensed under the MIT License. See LICENSE.txt in the project root for license information.
+
+#ifndef USE_LOCALLY_EMULATED_UAP_APIS
+
+import "Windows.Graphics.Effects.idl";
+
+#define IGRAPHICSEFFECT Windows.Graphics.Effects.IGraphicsEffect
+#define IGRAPHICSEFFECTSOURCE Windows.Graphics.Effects.IGraphicsEffectSource
+
+#else
+
+#define IGRAPHICSEFFECT Microsoft.Graphics.Canvas.Effects.IGraphicsEffect
+#define IGRAPHICSEFFECTSOURCE Microsoft.Graphics.Canvas.Effects.IGraphicsEffectSource
+
+#endif
+
+namespace Microsoft.Graphics.Canvas.Effects
+{
+#ifdef USE_LOCALLY_EMULATED_UAP_APIS
+
+    [version(VERSION), uuid(FA3AA76D-074E-4EAC-8FC7-306B0629F301)]
+    interface IGraphicsEffectSource : IInspectable
+    {
+    }
+
+    [version(VERSION), uuid(3A339957-A95E-490E-A1BF-2CBF4806C378)]
+    interface IGraphicsEffect : IInspectable
+        requires IGraphicsEffectSource
+    {
+        [propget] HRESULT Name([out, retval] HSTRING* name);
+        [propput] HRESULT Name([in] HSTRING name);
+    }
+
+#endif
+
+    [version(VERSION), uuid(0EF96F8C-9B5E-4BF0-A399-AAD8CE53DB55)]
+    interface ICanvasEffect : IInspectable
+        requires IGRAPHICSEFFECT, Microsoft.Graphics.Canvas.ICanvasImage
+    {
+        [propget] HRESULT CacheOutput([out, retval] boolean* value);
+        [propput] HRESULT CacheOutput([in] boolean value);
+
+        [propget] HRESULT BufferPrecision([out, retval] Windows.Foundation.IReference<Microsoft.Graphics.Canvas.CanvasBufferPrecision>** value);
+        [propput] HRESULT BufferPrecision([in] Windows.Foundation.IReference<Microsoft.Graphics.Canvas.CanvasBufferPrecision>* value);
+
+        HRESULT InvalidateSourceRectangle(
+            [in] Microsoft.Graphics.Canvas.ICanvasResourceCreatorWithDpi* resourceCreator, 
+            [in] UINT32 sourceIndex,
+            [in] Windows.Foundation.Rect invalidRectangle);
+
+        HRESULT GetInvalidRectangles(
+            [in] Microsoft.Graphics.Canvas.ICanvasResourceCreatorWithDpi* resourceCreator,
+            [out] UINT32* valueCount,
+            [out, size_is(, *valueCount), retval] Windows.Foundation.Rect** valueElements);
+
+        HRESULT GetRequiredSourceRectangle(
+            [in] Microsoft.Graphics.Canvas.ICanvasResourceCreatorWithDpi* resourceCreator,
+            [in] Windows.Foundation.Rect outputRectangle,
+            [in] ICanvasEffect* sourceEffect,
+            [in] UINT32 sourceIndex,
+            [in] Windows.Foundation.Rect sourceBounds,
+            [out, retval] Windows.Foundation.Rect* value);
+
+        HRESULT GetRequiredSourceRectangles(
+            [in] Microsoft.Graphics.Canvas.ICanvasResourceCreatorWithDpi* resourceCreator,
+            [in] Windows.Foundation.Rect outputRectangle,
+            [in] UINT32 sourceEffectCount,
+            [in, size_is(sourceEffectCount)] ICanvasEffect** sourceEffects,
+            [in] UINT32 sourceIndexCount,
+            [in, size_is(sourceIndexCount)] UINT32* sourceIndices,
+            [in] UINT32 sourceBoundsCount,
+            [in, size_is(sourceBoundsCount)] Windows.Foundation.Rect* sourceBounds,
+            [out] UINT32* valueCount,
+            [out, size_is(, *valueCount), retval] Windows.Foundation.Rect** valueElements);
+    }
+}

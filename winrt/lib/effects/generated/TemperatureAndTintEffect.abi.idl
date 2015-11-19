@@ -12,7 +12,7 @@ namespace Microsoft.Graphics.Canvas.Effects
 
     [version(VERSION), uuid(8AE43E02-2619-5D78-8980-4ED569549BD8), exclusiveto(TemperatureAndTintEffect)]
     interface ITemperatureAndTintEffect : IInspectable
-        requires Microsoft.Graphics.Canvas.ICanvasImage
+        requires ICanvasEffect
     {
         [propget]
         HRESULT Temperature([out, retval] float* value);
@@ -38,7 +38,6 @@ namespace Microsoft.Graphics.Canvas.Effects
     runtimeclass TemperatureAndTintEffect
     {
         [default] interface ITemperatureAndTintEffect;
-        interface IGRAPHICSEFFECT;
     }
 }
 

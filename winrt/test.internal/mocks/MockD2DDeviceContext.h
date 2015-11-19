@@ -80,6 +80,10 @@ namespace canvas
         MOCK_METHOD1(SetRenderingControls             , void(D2D1_RENDERING_CONTROLS const*));
         MOCK_METHOD1_CONST(GetRenderingControls       , void(D2D1_RENDERING_CONTROLS*));
         MOCK_METHOD4_CONST(GetGlyphRunWorldBounds     , HRESULT(D2D1_POINT_2F, const DWRITE_GLYPH_RUN*, DWRITE_MEASURING_MODE, D2D1_RECT_F*));
+        MOCK_METHOD3(InvalidateEffectInputRectangle   , HRESULT(ID2D1Effect*, UINT32, D2D1_RECT_F const*));
+        MOCK_METHOD2(GetEffectInvalidRectangleCount   , HRESULT(ID2D1Effect*, UINT32*));
+        MOCK_METHOD3(GetEffectInvalidRectangles       , HRESULT(ID2D1Effect*, D2D1_RECT_F*, UINT32));
+        MOCK_METHOD5(GetEffectRequiredInputRectangles , HRESULT(ID2D1Effect*, D2D1_RECT_F const*, D2D1_EFFECT_INPUT_DESCRIPTION const*, D2D1_RECT_F*, UINT32));
 
         // ID2D1DeviceContext1
         
@@ -293,30 +297,6 @@ namespace canvas
         IFACEMETHODIMP_(void) DrawGdiMetafile(ID2D1GdiMetafile *,const D2D1_POINT_2F *) override
         {
             Assert::Fail(L"Unexpected call to DrawGdiMetafile");
-        }
-
-        IFACEMETHODIMP InvalidateEffectInputRectangle(ID2D1Effect *,UINT32,const D2D1_RECT_F *) override
-        {
-            Assert::Fail(L"Unexpected call to InvalidateEffectInputRectangle");
-            return E_NOTIMPL;
-        }
-
-        IFACEMETHODIMP GetEffectInvalidRectangleCount(ID2D1Effect *,UINT32 *) override
-        {
-            Assert::Fail(L"Unexpected call to GetEffectInvalidRectangleCount");
-            return E_NOTIMPL;
-        }
-
-        IFACEMETHODIMP GetEffectInvalidRectangles(ID2D1Effect *,D2D1_RECT_F *,UINT32) override
-        {
-            Assert::Fail(L"Unexpected call to GetEffectInvalidRectangles");
-            return E_NOTIMPL;
-        }
-
-        IFACEMETHODIMP GetEffectRequiredInputRectangles(ID2D1Effect *,const D2D1_RECT_F *,const D2D1_EFFECT_INPUT_DESCRIPTION *,D2D1_RECT_F *,UINT32) override
-        {
-            Assert::Fail(L"Unexpected call to GetEffectRequiredInputRectangles");
-            return E_NOTIMPL;
         }
     };
 }

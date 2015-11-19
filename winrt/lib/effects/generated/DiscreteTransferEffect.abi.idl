@@ -10,7 +10,7 @@ namespace Microsoft.Graphics.Canvas.Effects
 
     [version(VERSION), uuid(7F1F54F9-21B5-5B91-9506-832C536FDDFA), exclusiveto(DiscreteTransferEffect)]
     interface IDiscreteTransferEffect : IInspectable
-        requires Microsoft.Graphics.Canvas.ICanvasImage
+        requires ICanvasEffect
     {
         [propget]
         HRESULT RedTable([out] UINT32* valueCount, [out, size_is(, *valueCount), retval] float** valueElements);
@@ -78,6 +78,5 @@ namespace Microsoft.Graphics.Canvas.Effects
     runtimeclass DiscreteTransferEffect
     {
         [default] interface IDiscreteTransferEffect;
-        interface IGRAPHICSEFFECT;
     }
 }

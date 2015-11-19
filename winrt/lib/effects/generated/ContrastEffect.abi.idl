@@ -12,7 +12,7 @@ namespace Microsoft.Graphics.Canvas.Effects
 
     [version(VERSION), uuid(DA8A2B9F-594E-560A-9EAA-1F912408FE79), exclusiveto(ContrastEffect)]
     interface IContrastEffect : IInspectable
-        requires Microsoft.Graphics.Canvas.ICanvasImage
+        requires ICanvasEffect
     {
         [propget]
         HRESULT Contrast([out, retval] float* value);
@@ -38,7 +38,6 @@ namespace Microsoft.Graphics.Canvas.Effects
     runtimeclass ContrastEffect
     {
         [default] interface IContrastEffect;
-        interface IGRAPHICSEFFECT;
     }
 }
 

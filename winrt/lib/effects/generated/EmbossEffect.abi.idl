@@ -12,7 +12,7 @@ namespace Microsoft.Graphics.Canvas.Effects
 
     [version(VERSION), uuid(617BFF35-481C-5596-ABA5-00A162349D7B), exclusiveto(EmbossEffect)]
     interface IEmbossEffect : IInspectable
-        requires Microsoft.Graphics.Canvas.ICanvasImage
+        requires ICanvasEffect
     {
         [propget]
         HRESULT Amount([out, retval] float* value);
@@ -38,7 +38,6 @@ namespace Microsoft.Graphics.Canvas.Effects
     runtimeclass EmbossEffect
     {
         [default] interface IEmbossEffect;
-        interface IGRAPHICSEFFECT;
     }
 }
 

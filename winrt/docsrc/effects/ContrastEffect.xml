@@ -34,20 +34,6 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="M:Microsoft.Graphics.Canvas.Effects.ContrastEffect.#ctor">
       <summary>Initializes a new instance of the ContrastEffect class.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.Effects.ContrastEffect.GetBounds(Microsoft.Graphics.Canvas.CanvasDrawingSession)">
-      <summary>Retrieves the bounds of this CanvasImage, in device-independent units.</summary>
-      <inheritdoc/>
-    </member>
-    <member name="M:Microsoft.Graphics.Canvas.Effects.ContrastEffect.GetBounds(Microsoft.Graphics.Canvas.CanvasDrawingSession,System.Numerics.Matrix3x2)">
-      <summary>Retrieves the bounds of this CanvasImage, in device-independent units.</summary>
-      <inheritdoc/>
-    </member>
-    <member name="M:Microsoft.Graphics.Canvas.Effects.ContrastEffect.Dispose">
-      <summary>Releases all resources used by the ContrastEffect.</summary>
-    </member>
-    <member name="P:Microsoft.Graphics.Canvas.Effects.ContrastEffect.Name">
-      <summary>Attaches a user-defined name string to the effect.</summary>
-    </member>
     <member name="P:Microsoft.Graphics.Canvas.Effects.ContrastEffect.Source">
       <summary>Gets or sets the input source for Contrast effect.</summary>
       <remarks>
@@ -60,6 +46,9 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="P:Microsoft.Graphics.Canvas.Effects.ContrastEffect.ClampSource">
       <summary>Indicates whether to clamp input values to 0-1 range before contrast adjustment. Default value false.</summary>
     </member>
+
+    <inherittemplate name="EffectTemplate" replacement="ContrastEffect" />
+    <inherittemplate name="ICanvasEffectTemplate" replacement="ContrastEffect" />
 
   </members>
 </doc>

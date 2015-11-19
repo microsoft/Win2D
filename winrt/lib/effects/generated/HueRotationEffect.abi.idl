@@ -10,7 +10,7 @@ namespace Microsoft.Graphics.Canvas.Effects
 
     [version(VERSION), uuid(C172EBF2-E35F-58AE-AD2C-561ECEAF2694), exclusiveto(HueRotationEffect)]
     interface IHueRotationEffect : IInspectable
-        requires Microsoft.Graphics.Canvas.ICanvasImage
+        requires ICanvasEffect
     {
         [propget]
         HRESULT Angle([out, retval] float* value);
@@ -30,6 +30,5 @@ namespace Microsoft.Graphics.Canvas.Effects
     runtimeclass HueRotationEffect
     {
         [default] interface IHueRotationEffect;
-        interface IGRAPHICSEFFECT;
     }
 }

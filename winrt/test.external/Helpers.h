@@ -199,6 +199,7 @@ namespace Microsoft
             CX_VALUE_TO_STRING(Microsoft::Graphics::Canvas::CanvasUnits);
             CX_VALUE_TO_STRING(Microsoft::Graphics::Canvas::CanvasAlphaMode);
             CX_VALUE_TO_STRING(Microsoft::Graphics::Canvas::CanvasImageInterpolation);
+            CX_VALUE_TO_STRING(Microsoft::Graphics::Canvas::CanvasBufferPrecision);
             CX_VALUE_TO_STRING(Microsoft::Graphics::Canvas::UI::CanvasCreateResourcesReason);
             CX_VALUE_TO_STRING(Microsoft::Graphics::Canvas::Text::CanvasGlyphOrientation);
             CX_VALUE_TO_STRING(Microsoft::Graphics::Canvas::Text::CanvasTextDirection);
@@ -343,6 +344,21 @@ namespace Microsoft
                     case CanvasTrimmingSign::None: return L"CanvasTrimmingSign::None";
                     case CanvasTrimmingSign::Ellipsis: return L"CanvasTrimmingSign::Ellipsis";
                     default: assert(false); return L"<unknown CanvasTrimmingSign>";
+                }
+            }
+
+            template<>
+            inline std::wstring ToString<D2D1_BUFFER_PRECISION>(D2D1_BUFFER_PRECISION const& value)
+            {
+                switch (value)
+                {
+                    case D2D1_BUFFER_PRECISION_UNKNOWN: return L"D2D1_BUFFER_PRECISION_UNKNOWN";
+                    case D2D1_BUFFER_PRECISION_8BPC_UNORM: return L"D2D1_BUFFER_PRECISION_8BPC_UNORM";
+                    case D2D1_BUFFER_PRECISION_8BPC_UNORM_SRGB: return L"D2D1_BUFFER_PRECISION_8BPC_UNORM_SRGB";
+                    case D2D1_BUFFER_PRECISION_16BPC_UNORM: return L"D2D1_BUFFER_PRECISION_16BPC_UNORM";
+                    case D2D1_BUFFER_PRECISION_16BPC_FLOAT: return L"D2D1_BUFFER_PRECISION_16BPC_FLOAT";
+                    case D2D1_BUFFER_PRECISION_32BPC_FLOAT: return L"D2D1_BUFFER_PRECISION_32BPC_FLOAT";
+                    default: assert(false); return L"<unknown D2D1_BUFFER_PRECISION>";
                 }
             }
 

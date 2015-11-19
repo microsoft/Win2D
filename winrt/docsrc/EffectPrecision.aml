@@ -234,10 +234,6 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
           <legacyBold>Precision selection directly on effects</legacyBold>
         </para>
         <para>
-          This option is not yet supported in Win2D. Coming soon!
-        </para>
-        <!-- TODO #4074 - restore these docs once Win2D exposes D2D1_PROPERTY_PRECISION
-        <para>
           The minimum precision for intermediate textures may also be set at explicit locations 
           within an effect graph. This is only recommended for advanced applications.
         </para>
@@ -245,16 +241,15 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
           The minimum precision may be set using a property on an effect as follows:
         </para>
         <code>
-          if (Device-&gt;IsBufferPrecisionSupported(D2D1_BUFFER_PRECISION_32BPC_FLOAT))
+          if (canvasDevice.IsBufferPrecisionSupported(CanvasBufferPrecision.Precision32Float))
           {
-              hr = Effect-&gt;SetValue(D2D1_PROPERTY_PRECISION, D2D1_BUFFER_PRECISION_32BPC_FLOAT);
+              blurEffect.BufferPrecision = CanvasBufferPrecision.Precision32Float;
           }
         </code>
         <para>      
           Note that the precision set on an effect will also apply to effects downstream in the 
           same effect graph, unless a different precision is set on those downstream effects.
         </para>
-        -->
 
         <para>
           Below is the full recursive logic used to determine the minimum precision for an 

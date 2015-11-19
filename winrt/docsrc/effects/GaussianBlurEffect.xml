@@ -40,9 +40,6 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="M:Microsoft.Graphics.Canvas.Effects.GaussianBlurEffect.#ctor">
       <summary>Initializes a new instance of the GaussianBlurEffect class.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.Effects.GaussianBlurEffect.Dispose">
-      <summary>Releases all resources used by the GaussianBlurEffect.</summary>
-    </member>
     <member name="P:Microsoft.Graphics.Canvas.Effects.GaussianBlurEffect.BlurAmount">
       <summary>Gets or sets the amount of blur to be applied to the image.</summary>
       <remarks>
@@ -74,17 +71,8 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       </remarks>
     </member>
     
-    <member name="M:Microsoft.Graphics.Canvas.Effects.GaussianBlurEffect.GetBounds(Microsoft.Graphics.Canvas.CanvasDrawingSession)">
-      <summary>Retrieves the bounds of this CanvasImage, in device-independent units.</summary>
-      <inheritdoc/>
-    </member>
-    <member name="M:Microsoft.Graphics.Canvas.Effects.GaussianBlurEffect.GetBounds(Microsoft.Graphics.Canvas.CanvasDrawingSession,System.Numerics.Matrix3x2)">
-      <summary>Retrieves the bounds of the CanvasImage, in device-independent units.</summary>
-      <inheritdoc/>
-    </member>
-    <member name="P:Microsoft.Graphics.Canvas.Effects.GaussianBlurEffect.Name">
-      <summary>Attaches a user-defined name string to the effect.</summary>
-    </member>
+    <inherittemplate name="EffectTemplate" replacement="GaussianBlurEffect" />
+    <inherittemplate name="ICanvasEffectTemplate" replacement="GaussianBlurEffect" />
 
   </members>
 </doc>

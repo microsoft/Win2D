@@ -29,9 +29,6 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="M:Microsoft.Graphics.Canvas.Effects.TurbulenceEffect.#ctor">
       <summary>Initializes a new instance of the TurbulenceEffect class.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.Effects.TurbulenceEffect.Dispose">
-      <summary>Releases all resources used by the TurbulenceEffect.</summary>
-    </member>
     <member name="P:Microsoft.Graphics.Canvas.Effects.TurbulenceEffect.Tileable">
       <summary>Turns stitching on or off. If set, the base frequency is adjusted so the 
                output bitmap can be tiled. Default value false.</summary>
@@ -83,17 +80,8 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <summary>Computes a sum of the absolute value of each noise octave.</summary>
     </member>
     
-    <member name="M:Microsoft.Graphics.Canvas.Effects.TurbulenceEffect.GetBounds(Microsoft.Graphics.Canvas.CanvasDrawingSession)">
-      <summary>Retrieves the bounds of this CanvasImage, in device-independent units.</summary>
-      <inheritdoc/>
-    </member>
-    <member name="M:Microsoft.Graphics.Canvas.Effects.TurbulenceEffect.GetBounds(Microsoft.Graphics.Canvas.CanvasDrawingSession,System.Numerics.Matrix3x2)">
-      <summary>Retrieves the bounds of the CanvasImage, in device-independent units.</summary>
-      <inheritdoc/>
-    </member>
-    <member name="P:Microsoft.Graphics.Canvas.Effects.TurbulenceEffect.Name">
-      <summary>Attaches a user-defined name string to the effect.</summary>
-    </member>
+    <inherittemplate name="EffectTemplate" replacement="TurbulenceEffect" />
+    <inherittemplate name="ICanvasEffectTemplate" replacement="TurbulenceEffect" />
 
   </members>
 </doc>

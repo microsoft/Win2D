@@ -34,6 +34,7 @@ namespace test.managed
 
             var effectTypes = from type in assembly.DefinedTypes
                               where type.ImplementedInterfaces.Contains(typeof(IGraphicsEffect))
+                              where !type.IsInterface
                               where type.AsType() != typeof(PixelShaderEffect)
                               select type;
 
@@ -341,6 +342,8 @@ namespace test.managed
             return from property in effectType.DeclaredProperties
                    where property.Name != "Name"
                    where property.Name != "Sources"
+                   where property.Name != "BufferPrecision"
+                   where property.Name != "CacheOutput"
                    where property.PropertyType != typeof(IGraphicsEffectSource)
                    select property;
         }

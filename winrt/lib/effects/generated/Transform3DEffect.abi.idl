@@ -10,7 +10,7 @@ namespace Microsoft.Graphics.Canvas.Effects
 
     [version(VERSION), uuid(3025ED7F-8F25-5E0B-80C9-56BBDD3E8A10), exclusiveto(Transform3DEffect)]
     interface ITransform3DEffect : IInspectable
-        requires Microsoft.Graphics.Canvas.ICanvasImage
+        requires ICanvasEffect
     {
         [propget]
         HRESULT InterpolationMode([out, retval] Microsoft.Graphics.Canvas.CanvasImageInterpolation* value);
@@ -42,6 +42,5 @@ namespace Microsoft.Graphics.Canvas.Effects
     runtimeclass Transform3DEffect
     {
         [default] interface ITransform3DEffect;
-        interface IGRAPHICSEFFECT;
     }
 }

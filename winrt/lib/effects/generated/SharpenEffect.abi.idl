@@ -12,7 +12,7 @@ namespace Microsoft.Graphics.Canvas.Effects
 
     [version(VERSION), uuid(7EFEF0A1-7578-5F62-8364-46145674EF7E), exclusiveto(SharpenEffect)]
     interface ISharpenEffect : IInspectable
-        requires Microsoft.Graphics.Canvas.ICanvasImage
+        requires ICanvasEffect
     {
         [propget]
         HRESULT Amount([out, retval] float* value);
@@ -38,7 +38,6 @@ namespace Microsoft.Graphics.Canvas.Effects
     runtimeclass SharpenEffect
     {
         [default] interface ISharpenEffect;
-        interface IGRAPHICSEFFECT;
     }
 }
 

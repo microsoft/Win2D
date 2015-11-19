@@ -12,7 +12,7 @@ namespace Microsoft.Graphics.Canvas.Effects
 
     [version(VERSION), uuid(D4ADCDFC-0F60-524D-936A-7F2736AD33D8), exclusiveto(InvertEffect)]
     interface IInvertEffect : IInspectable
-        requires Microsoft.Graphics.Canvas.ICanvasImage
+        requires ICanvasEffect
     {
         [propget]
         HRESULT Source([out, retval] IGRAPHICSEFFECTSOURCE** source);
@@ -26,7 +26,6 @@ namespace Microsoft.Graphics.Canvas.Effects
     runtimeclass InvertEffect
     {
         [default] interface IInvertEffect;
-        interface IGRAPHICSEFFECT;
     }
 }
 

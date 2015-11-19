@@ -10,7 +10,7 @@ namespace Microsoft.Graphics.Canvas.Effects
 
     [version(VERSION), uuid(83AE4CD0-80AA-5783-8572-F15E5F85329E), exclusiveto(SpotSpecularEffect)]
     interface ISpotSpecularEffect : IInspectable
-        requires Microsoft.Graphics.Canvas.ICanvasImage
+        requires ICanvasEffect
     {
         [propget]
         HRESULT LightPosition([out, retval] NUMERICS.Vector3* value);
@@ -90,6 +90,5 @@ namespace Microsoft.Graphics.Canvas.Effects
     runtimeclass SpotSpecularEffect
     {
         [default] interface ISpotSpecularEffect;
-        interface IGRAPHICSEFFECT;
     }
 }

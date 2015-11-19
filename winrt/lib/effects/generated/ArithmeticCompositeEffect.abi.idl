@@ -10,7 +10,7 @@ namespace Microsoft.Graphics.Canvas.Effects
 
     [version(VERSION), uuid(BEEB682B-D64C-5C8B-A1FB-332162ED099C), exclusiveto(ArithmeticCompositeEffect)]
     interface IArithmeticCompositeEffect : IInspectable
-        requires Microsoft.Graphics.Canvas.ICanvasImage
+        requires ICanvasEffect
     {
         [propget]
         HRESULT ClampOutput([out, retval] boolean* value);
@@ -60,6 +60,5 @@ namespace Microsoft.Graphics.Canvas.Effects
     runtimeclass ArithmeticCompositeEffect
     {
         [default] interface IArithmeticCompositeEffect;
-        interface IGRAPHICSEFFECT;
     }
 }

@@ -10,7 +10,7 @@ namespace Microsoft.Graphics.Canvas.Effects
 
     [version(VERSION), uuid(31602441-15DB-5B4A-98DD-BA4247548B41), exclusiveto(BorderEffect)]
     interface IBorderEffect : IInspectable
-        requires Microsoft.Graphics.Canvas.ICanvasImage
+        requires ICanvasEffect
     {
         [propget]
         HRESULT ExtendX([out, retval] Microsoft.Graphics.Canvas.CanvasEdgeBehavior* value);
@@ -36,6 +36,5 @@ namespace Microsoft.Graphics.Canvas.Effects
     runtimeclass BorderEffect
     {
         [default] interface IBorderEffect;
-        interface IGRAPHICSEFFECT;
     }
 }

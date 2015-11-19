@@ -165,7 +165,7 @@ namespace CodeGen
             output.WriteLine("[version(VERSION), uuid(" + effect.Uuid + "), exclusiveto(" + effect.ClassName + ")]");
             output.WriteLine("interface " + effect.InterfaceName + " : IInspectable");
             output.WriteIndent();
-            output.WriteLine("requires Microsoft.Graphics.Canvas.ICanvasImage");
+            output.WriteLine("requires ICanvasEffect");
             output.WriteLine("{");
             output.Indent();
 
@@ -230,7 +230,6 @@ namespace CodeGen
             output.WriteLine("{");
             output.Indent();
             output.WriteLine("[default] interface " + effect.InterfaceName + ";");
-            output.WriteLine("interface IGRAPHICSEFFECT;");
             output.Unindent();
             output.WriteLine("}");
             output.Unindent();

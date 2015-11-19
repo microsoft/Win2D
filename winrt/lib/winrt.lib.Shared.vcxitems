@@ -319,7 +319,7 @@
     <None Include="$(MSBuildThisFileDirectory)drawing\CanvasGradientMesh.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)drawing\CanvasStrokeStyle.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)drawing\CanvasSwapChain.abi.idl" />
-    <None Include="$(MSBuildThisFileDirectory)effects\IGraphicsEffect.abi.idl" />
+    <None Include="$(MSBuildThisFileDirectory)effects\ICanvasEffect.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)effects\Matrix5x4.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)effects\generated\ArithmeticCompositeEffect.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)effects\generated\AtlasEffect.abi.idl" />

@@ -19,7 +19,7 @@ namespace Microsoft.Graphics.Canvas.Effects
 
     [version(VERSION), uuid(69F6CF3A-F38F-5A88-974A-29390B957E5C), exclusiveto(EdgeDetectionEffect)]
     interface IEdgeDetectionEffect : IInspectable
-        requires Microsoft.Graphics.Canvas.ICanvasImage
+        requires ICanvasEffect
     {
         [propget]
         HRESULT Amount([out, retval] float* value);
@@ -63,7 +63,6 @@ namespace Microsoft.Graphics.Canvas.Effects
     runtimeclass EdgeDetectionEffect
     {
         [default] interface IEdgeDetectionEffect;
-        interface IGRAPHICSEFFECT;
     }
 }
 

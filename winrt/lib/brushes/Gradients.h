@@ -222,9 +222,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         auto stops = TransformToComArray<STOP>(d2dStops.begin(), d2dStops.end(),
             [](D2D1_GRADIENT_STOP const& d2dStop)
-        {
-            return STOP{ d2dStop.position, ToWin2DColor<STOP>::Convert(d2dStop.color) };
-        });
+            {
+                return STOP{ d2dStop.position, ToWin2DColor<STOP>::Convert(d2dStop.color) };
+            });
 
         stops.Detach(valueCount, valueElements);
     }

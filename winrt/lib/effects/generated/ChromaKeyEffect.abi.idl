@@ -12,7 +12,7 @@ namespace Microsoft.Graphics.Canvas.Effects
 
     [version(VERSION), uuid(F14B9464-1871-5EAA-9DB6-C0901140E9D3), exclusiveto(ChromaKeyEffect)]
     interface IChromaKeyEffect : IInspectable
-        requires Microsoft.Graphics.Canvas.ICanvasImage
+        requires ICanvasEffect
     {
         [propget]
         HRESULT Color([out, retval] Windows.UI.Color* value);
@@ -56,7 +56,6 @@ namespace Microsoft.Graphics.Canvas.Effects
     runtimeclass ChromaKeyEffect
     {
         [default] interface IChromaKeyEffect;
-        interface IGRAPHICSEFFECT;
     }
 }
 

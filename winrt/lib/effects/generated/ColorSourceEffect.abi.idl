@@ -10,7 +10,7 @@ namespace Microsoft.Graphics.Canvas.Effects
 
     [version(VERSION), uuid(25F942C7-7FEE-518A-BA7B-22A0060AF7F6), exclusiveto(ColorSourceEffect)]
     interface IColorSourceEffect : IInspectable
-        requires Microsoft.Graphics.Canvas.ICanvasImage
+        requires ICanvasEffect
     {
         [propget]
         HRESULT Color([out, retval] Windows.UI.Color* value);
@@ -30,6 +30,5 @@ namespace Microsoft.Graphics.Canvas.Effects
     runtimeclass ColorSourceEffect
     {
         [default] interface IColorSourceEffect;
-        interface IGRAPHICSEFFECT;
     }
 }

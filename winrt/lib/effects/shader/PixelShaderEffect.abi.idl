@@ -16,7 +16,7 @@ namespace Microsoft.Graphics.Canvas.Effects
 
     [version(VERSION), uuid(FC8C3C31-FA96-45E2-8B72-1741C65CEE8E), exclusiveto(PixelShaderEffect)]
     interface IPixelShaderEffect : IInspectable
-        requires Microsoft.Graphics.Canvas.ICanvasImage
+        requires ICanvasEffect
     {
         [propget] HRESULT Properties([out, retval] Windows.Foundation.Collections.IMap<HSTRING, IInspectable*>** value);
 
@@ -111,7 +111,6 @@ namespace Microsoft.Graphics.Canvas.Effects
     runtimeclass PixelShaderEffect
     {
         [default] interface IPixelShaderEffect;
-        interface IGRAPHICSEFFECT;
     }
 
     declare

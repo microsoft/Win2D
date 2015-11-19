@@ -60,6 +60,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)EffectsExample.xaml.cs">
       <DependentUpon>EffectsExample.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)EffectRegionMapping.xaml.cs">
+      <DependentUpon>EffectRegionMapping.xaml</DependentUpon>
+    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)CustomEffects.xaml.cs">
       <DependentUpon>CustomEffects.xaml</DependentUpon>
     </Compile>
@@ -205,6 +208,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="$(MSBuildThisFileDirectory)EffectRegionMapping.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="$(MSBuildThisFileDirectory)CustomEffects.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -307,6 +314,8 @@
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\DPIWide.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\DrawImageEmulationsNarrow.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\DrawImageEmulationsWide.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Thumbnails\EffectRegionMappingNarrow.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Thumbnails\EffectRegionMappingWide.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\EffectsNarrow.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\EffectsWide.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\FontMetricsNarrow.png" />

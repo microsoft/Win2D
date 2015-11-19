@@ -12,7 +12,7 @@ namespace Microsoft.Graphics.Canvas.Effects
 
     [version(VERSION), uuid(B9E20A03-2232-5FD3-B408-15784B79DBB0), exclusiveto(ExposureEffect)]
     interface IExposureEffect : IInspectable
-        requires Microsoft.Graphics.Canvas.ICanvasImage
+        requires ICanvasEffect
     {
         [propget]
         HRESULT Exposure([out, retval] float* value);
@@ -32,7 +32,6 @@ namespace Microsoft.Graphics.Canvas.Effects
     runtimeclass ExposureEffect
     {
         [default] interface IExposureEffect;
-        interface IGRAPHICSEFFECT;
     }
 }
 

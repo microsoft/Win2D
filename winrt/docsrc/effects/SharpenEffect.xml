@@ -24,20 +24,6 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="M:Microsoft.Graphics.Canvas.Effects.SharpenEffect.#ctor">
       <summary>Initializes a new instance of the SharpenEffect class.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.Effects.SharpenEffect.GetBounds(Microsoft.Graphics.Canvas.CanvasDrawingSession)">
-      <summary>Retrieves the bounds of this CanvasImage, in device-independent units.</summary>
-      <inheritdoc/>
-    </member>
-    <member name="M:Microsoft.Graphics.Canvas.Effects.SharpenEffect.GetBounds(Microsoft.Graphics.Canvas.CanvasDrawingSession,System.Numerics.Matrix3x2)">
-      <summary>Retrieves the bounds of this CanvasImage, in device-independent units.</summary>
-      <inheritdoc/>
-    </member>
-    <member name="M:Microsoft.Graphics.Canvas.Effects.SharpenEffect.Dispose">
-      <summary>Releases all resources used by the SharpenEffect.</summary>
-    </member>
-    <member name="P:Microsoft.Graphics.Canvas.Effects.SharpenEffect.Name">
-      <summary>Attaches a user-defined name string to the effect.</summary>
-    </member>
     <member name="P:Microsoft.Graphics.Canvas.Effects.SharpenEffect.Source">
       <summary>Gets or sets the input source for Sharpen effect.</summary>
       <remarks>
@@ -50,6 +36,9 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="P:Microsoft.Graphics.Canvas.Effects.SharpenEffect.Threshold">
       <summary>Adjusts which parts of the image are sharpened. Default value 0, range 0 to 10.</summary>
     </member>
+
+    <inherittemplate name="EffectTemplate" replacement="SharpenEffect" />
+    <inherittemplate name="ICanvasEffectTemplate" replacement="SharpenEffect" />
 
   </members>
 </doc>
