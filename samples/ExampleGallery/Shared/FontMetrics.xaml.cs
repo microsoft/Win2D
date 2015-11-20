@@ -33,6 +33,7 @@ namespace ExampleGallery
         public bool UniformStyle { get; set; }
         public bool UseBoldFace { get; set; }
         public bool UseItalicFace { get; set; }
+        public bool ShowGlyphRunBounds { get; set; }
 
         bool needsResourceRecreation;
         Size resourceRealizationSize;
@@ -90,9 +91,17 @@ namespace ExampleGallery
                 public float Descent;
                 public float CapHeight;
                 public float LowercaseLetterHeight;
+                public Rect Bounds;
             }
 
             public List<Metrics> GlyphRunMetrics = new List<Metrics>();
+
+            CanvasDrawingSession drawingSession;
+
+            public FontMetricsHolder(CanvasDrawingSession ds)
+            {
+                drawingSession = ds;
+            }
 
             public void DrawGlyphRun(
                 Vector2 position,
@@ -115,6 +124,13 @@ namespace ExampleGallery
                 m.Descent = fontFace.Descent;
                 m.CapHeight = fontFace.CapHeight;
                 m.LowercaseLetterHeight = fontFace.LowercaseLetterHeight;
+                m.Bounds = fontFace.GetGlyphRunBounds(
+                    drawingSession,
+                    position,
+                    fontSize,
+                    glyphs,
+                    isSideways,
+                    bidiLevel);
 
                 GlyphRunMetrics.Add(m);
             }
@@ -315,10 +331,18 @@ namespace ExampleGallery
             args.DrawingSession.Transform = System.Numerics.Matrix3x2.CreateTranslation(0, 5);
             EnsureResources(sender, sender.Size);
 
-            FontMetricsHolder fmh = new FontMetricsHolder();
+            FontMetricsHolder fmh = new FontMetricsHolder(args.DrawingSession);
             textLayout.DrawToTextRenderer(fmh, new System.Numerics.Vector2(0, 0));
 
             args.DrawingSession.DrawTextLayout(textLayout, 0, 0, Colors.White);
+
+            if (ShowGlyphRunBounds)
+            {
+                foreach (var metrics in fmh.GlyphRunMetrics)
+                {
+                    args.DrawingSession.DrawRectangle(metrics.Bounds, Colors.Cyan);
+                }
+            }
 
             float baselineInWorldSpace = (float)textLayout.LayoutBounds.Top + textLayout.LineMetrics[0].Baseline;
             Labeler.DrawBaseline(args.DrawingSession, sender.Size.ToVector2(), baselineInWorldSpace);
@@ -393,6 +417,11 @@ namespace ExampleGallery
                 uppercaseFontPicker.SelectFont(fontPicker.CurrentFontFamily);
                 lowercaseFontPicker.SelectFont(fontPicker.CurrentFontFamily);
             }
+        }
+
+        private void ShowGlyphRunBounds_ValueChanged(object sender, RoutedEventArgs e)
+        {
+            canvas.Invalidate();
         }
 
         private void CheckBox_ValueChanged(object sender, RoutedEventArgs e)

@@ -280,5 +280,47 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="F:Microsoft.Graphics.Canvas.Text.CanvasUnicodeRange.Last">
       <summary>The last code point in the Unicode range.</summary>
     </member>
+    
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasFontFace.GetGlyphRunBounds(Microsoft.Graphics.Canvas.CanvasDrawingSession,System.Numerics.Vector2,System.Single,Microsoft.Graphics.Canvas.Text.CanvasGlyph[],System.Boolean,System.UInt32)" Experimental="true">
+      <summary>Gets the bounds of a glyph run using this font face.</summary>
+      <remarks>
+        <p>
+          An app's DrawGlyphRun callback in its custom text renderer can use this 
+          method to get the bounds of a glyph run if it were drawn to
+          a particular drawing session.
+        </p>
+        <p>
+          This method returns layout bounds, not draw bounds. For more information on the
+          difference between the two, see
+          <see cref="F:Microsoft.Graphics.Canvas.Text.CanvasTextLayoutRegion.LayoutBounds"/>.
+        </p>
+        <p>
+          The returned bounds reflect the DPI, transform and unit mode of the 
+          CanvasDrawingSession passed in.
+        </p>
+        <p>
+          This method uses the measuring mode CanvasTextMeasuringMode.Natural.
+        </p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasFontFace.GetGlyphRunBounds(Microsoft.Graphics.Canvas.CanvasDrawingSession,System.Numerics.Vector2,System.Single,Microsoft.Graphics.Canvas.Text.CanvasGlyph[],System.Boolean,System.UInt32,Microsoft.Graphics.Canvas.Text.CanvasTextMeasuringMode)" Experimental="true">
+      <summary>Gets the bounds of a glyph run using this font face, using the specified measuring mode.</summary>
+      <remarks>
+        <p>
+          An app's DrawGlyphRun callback in its custom text renderer can use this 
+          method to get the bounds of a glyph run if it were drawn to
+          a particular drawing session.
+        </p>
+        <p>
+          This method returns layout bounds, not draw bounds. For more information on the
+          difference between the two, see
+          <see cref="F:Microsoft.Graphics.Canvas.Text.CanvasTextLayoutRegion.LayoutBounds"/>.
+        </p>
+        <p>
+          The returned bounds reflect the DPI, transform and unit mode of the 
+          CanvasDrawingSession passed in.
+        </p>
+      </remarks>      
+    </member>
   </members>
 </doc>

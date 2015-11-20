@@ -79,6 +79,7 @@ namespace canvas
         MOCK_METHOD1_CONST(IsBufferPrecisionSupported , BOOL(D2D1_BUFFER_PRECISION));
         MOCK_METHOD1(SetRenderingControls             , void(D2D1_RENDERING_CONTROLS const*));
         MOCK_METHOD1_CONST(GetRenderingControls       , void(D2D1_RENDERING_CONTROLS*));
+        MOCK_METHOD4_CONST(GetGlyphRunWorldBounds     , HRESULT(D2D1_POINT_2F, const DWRITE_GLYPH_RUN*, DWRITE_MEASURING_MODE, D2D1_RECT_F*));
 
         // ID2D1DeviceContext1
         
@@ -281,12 +282,6 @@ namespace canvas
         IFACEMETHODIMP CreateBitmapBrush(ID2D1Bitmap *,const D2D1_BITMAP_BRUSH_PROPERTIES1 *,const D2D1_BRUSH_PROPERTIES *,ID2D1BitmapBrush1 **) override
         {
             Assert::Fail(L"Unexpected call to CreateBitmapBrush");
-            return E_NOTIMPL;
-        }
-
-        IFACEMETHODIMP GetGlyphRunWorldBounds(D2D1_POINT_2F,const DWRITE_GLYPH_RUN *,DWRITE_MEASURING_MODE,D2D1_RECT_F *) const override
-        {
-            Assert::Fail(L"Unexpected call to GetGlyphRunWorldBounds");
             return E_NOTIMPL;
         }
 

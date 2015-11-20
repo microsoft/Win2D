@@ -73,6 +73,15 @@ namespace Microsoft.Graphics.Canvas.Text
         UINT32 Last;
     } CanvasUnicodeRange;
 
+    [version(VERSION)]
+    typedef struct CanvasGlyph
+    {
+        int Index;
+        float Advance;
+        float AdvanceOffset;
+        float AscenderOffset;
+    } CanvasGlyph;
+
     [version(VERSION), uuid(5199D129-4EF9-4DEE-B74C-4DC910201A7F), exclusiveto(CanvasFontFace)]
     interface ICanvasFontFace : IInspectable
         requires Windows.Foundation.IClosable
@@ -182,6 +191,29 @@ namespace Microsoft.Graphics.Canvas.Text
 
         HRESULT HasCharacter([in] UINT32 unicodeValue, [out, retval] boolean* value);
 
+        [overload("GetGlyphRunBounds")]
+        HRESULT GetGlyphRunBounds(
+            [in] Microsoft.Graphics.Canvas.CanvasDrawingSession* drawingSession,
+            [in] NUMERICS.Vector2 point,
+            [in] float fontSize,
+            [in] UINT32 glyphCount,
+            [in, size_is(glyphCount)] CanvasGlyph* glyphs,
+            [in] boolean isSideways,
+            [in] UINT32 bidiLevel,
+            [out, retval] Windows.Foundation.Rect* bounds);
+
+        [overload("GetGlyphRunBounds")]
+        HRESULT GetGlyphRunBoundsWithMeasuringMode(
+            [in] Microsoft.Graphics.Canvas.CanvasDrawingSession* drawingSession,
+            [in] NUMERICS.Vector2 point,
+            [in] float fontSize,
+            [in] UINT32 glyphCount,
+            [in, size_is(glyphCount)] CanvasGlyph* glyphs,
+            [in] boolean isSideways,
+            [in] UINT32 bidiLevel,
+            [in] CanvasTextMeasuringMode measuringMode,
+            [out, retval] Windows.Foundation.Rect* bounds);
+
         // TODO: #5635 Expose GetPanose
 
         // Not exposed: 
@@ -199,8 +231,6 @@ namespace Microsoft.Graphics.Canvas.Text
         // TryGetFontTable, ReleaseFontTable - Out of scope for enumeration scenarios.
 
         // GetDesignGlyphMetrics - Methods that operate solely in design metrics rather than em space are out of scope.
-
-        // GetGlyphRunOutline - Redundant with exposure off of CanvasTextLayout.
 
         // One of the overloads of GetRecommendedRenderingMode; it fits awkwardly with the others.
 

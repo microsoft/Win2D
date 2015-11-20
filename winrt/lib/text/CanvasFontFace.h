@@ -136,6 +136,27 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             IMapView<HSTRING, HSTRING>** values) override;
 
         IFACEMETHOD(HasCharacter)(UINT32 unicodeValue, boolean* value) override;
+        
+        IFACEMETHOD(GetGlyphRunBounds)(
+            ICanvasDrawingSession* drawingSession,
+            Vector2 point,
+            float fontSize,
+            uint32_t glyphCount,
+            CanvasGlyph* glyphs,
+            boolean isSideways,
+            uint32_t bidiLevel,
+            Rect* bounds) override;
+
+        IFACEMETHOD(GetGlyphRunBoundsWithMeasuringMode)(
+            ICanvasDrawingSession* drawingSession,
+            Vector2 point,
+            float fontSize,
+            uint32_t glyphCount,
+            CanvasGlyph* glyphs,
+            boolean isSideways,
+            uint32_t bidiLevel,
+            CanvasTextMeasuringMode measuringMode,
+            Rect* bounds) override;
 
         //
         // IClosable

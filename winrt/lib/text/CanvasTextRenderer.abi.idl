@@ -5,15 +5,6 @@
 namespace Microsoft.Graphics.Canvas.Text
 {
 	[version(VERSION)]
-	typedef struct CanvasGlyph
-	{
-		int Index;
-		float Advance;
-		float AdvanceOffset;
-		float AscenderOffset;
-	} CanvasGlyph;
-
-	[version(VERSION)]
 	typedef enum CanvasGlyphOrientation
 	{
 		Upright,

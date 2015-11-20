@@ -43,6 +43,9 @@ TEST_CLASS(CanvasFontFaceTests)
         uint32_t u;
         int i;
         int* iPointer;
+        auto drawingSession = Make<MockCanvasDrawingSession>();
+        CanvasGlyph glyph{};
+        Rect rect{};
 
         auto canvasFontFace = CreateSimpleFontFace();
 
@@ -103,6 +106,14 @@ TEST_CLASS(CanvasFontFaceTests)
         Assert::AreEqual(E_INVALIDARG, canvasFontFace->GetInformationalStrings(CanvasFontInformation::CopyrightNotice, nullptr));
 
         Assert::AreEqual(E_INVALIDARG, canvasFontFace->HasCharacter(0x1234, nullptr));
+
+        Assert::AreEqual(E_INVALIDARG, canvasFontFace->GetGlyphRunBounds(nullptr, Vector2{}, 0.0f, 0, &glyph, false, 0, &rect));
+        Assert::AreEqual(E_INVALIDARG, canvasFontFace->GetGlyphRunBounds(drawingSession.Get(), Vector2{}, 0.0f, 0, nullptr, false, 0, &rect));
+        Assert::AreEqual(E_INVALIDARG, canvasFontFace->GetGlyphRunBounds(drawingSession.Get(), Vector2{}, 0.0f, 0, &glyph, false, 0, nullptr));
+
+        Assert::AreEqual(E_INVALIDARG, canvasFontFace->GetGlyphRunBoundsWithMeasuringMode(nullptr, Vector2{}, 0.0f, 0, &glyph, false, 0, CanvasTextMeasuringMode::Natural, &rect));
+        Assert::AreEqual(E_INVALIDARG, canvasFontFace->GetGlyphRunBoundsWithMeasuringMode(drawingSession.Get(), Vector2{}, 0.0f, 0, nullptr, false, 0, CanvasTextMeasuringMode::Natural, &rect));
+        Assert::AreEqual(E_INVALIDARG, canvasFontFace->GetGlyphRunBoundsWithMeasuringMode(drawingSession.Get(), Vector2{}, 0.0f, 0, &glyph, false, 0, CanvasTextMeasuringMode::Natural, nullptr));
     }
 
     TEST_METHOD_EX(CanvasFontFace_Closed)
@@ -118,6 +129,8 @@ TEST_CLASS(CanvasFontFaceTests)
         boolean b{};
         float f{};
         ComPtr<IMapView<HSTRING, HSTRING>> map;
+        auto drawingSession = Make<MockCanvasDrawingSession>();
+        CanvasGlyph glyph{};
 
         auto canvasFontFace = CreateSimpleFontFace();
         Assert::AreEqual(S_OK, canvasFontFace->Close());
@@ -183,6 +196,9 @@ TEST_CLASS(CanvasFontFaceTests)
         Assert::AreEqual(RO_E_CLOSED, canvasFontFace->GetInformationalStrings(CanvasFontInformation::CopyrightNotice, &map));
 
         Assert::AreEqual(RO_E_CLOSED, canvasFontFace->HasCharacter(0x1234, &b));
+
+        Assert::AreEqual(RO_E_CLOSED, canvasFontFace->GetGlyphRunBounds(drawingSession.Get(), Vector2{}, 0.0f, 0, &glyph, false, 0, &r));
+        Assert::AreEqual(RO_E_CLOSED, canvasFontFace->GetGlyphRunBoundsWithMeasuringMode(drawingSession.Get(), Vector2{}, 0.0f, 0, &glyph, false, 0, CanvasTextMeasuringMode::Natural, &r));
     }
 
     struct Fixture
@@ -913,6 +929,99 @@ TEST_CLASS(CanvasFontFaceTests)
         Assert::AreEqual(DWRITE_E_REMOTEFONT, f.FontFace->HasCharacter(0x1234u, &value));
     }
 #endif
+
+    struct GetGlyphRunBoundsFixture : public Fixture
+    {
+        ComPtr<MockD2DDeviceContext> m_d2dDeviceContext;
+    public:
+        ComPtr<CanvasDrawingSession> DrawingSession;
+        std::vector<CanvasGlyph> Glyphs;
+
+        GetGlyphRunBoundsFixture()
+            : Fixture(1)
+        {
+            m_d2dDeviceContext = Make<MockD2DDeviceContext>();
+            DrawingSession = Make<CanvasDrawingSession>(m_d2dDeviceContext.Get());
+
+            Glyphs.push_back(CanvasGlyph{ 1, 2.0f, 3.0f, 4.0f });
+            Glyphs.push_back(CanvasGlyph{ 5, 6.0f, 7.0f, 8.0f });
+            Glyphs.push_back(CanvasGlyph{ 9, 10.0f, 11.0f, 12.0f });
+        }
+
+        void ExpectGetGlyphRunWorldBounds(DWRITE_MEASURING_MODE expectedMeasuringMode)
+        {
+            m_d2dDeviceContext->GetGlyphRunWorldBoundsMethod.SetExpectedCalls(1,
+                [=](D2D1_POINT_2F baselineOrigin, const DWRITE_GLYPH_RUN* glyphRun, DWRITE_MEASURING_MODE measuringMode, D2D1_RECT_F* out)
+            {
+                Assert::AreEqual(1.2f, baselineOrigin.x);
+                Assert::AreEqual(3.4f, baselineOrigin.y);
+
+                Assert::IsTrue(IsSameInstance(RealizedDWriteFontFace.Get(), glyphRun->fontFace));
+
+                Assert::AreEqual(11.0f, glyphRun->fontEmSize);
+                Assert::AreEqual(3u, glyphRun->glyphCount);
+
+                for (int i = 0; i < 3; ++i)
+                {
+                    int k = i * 4 + 1;
+                    Assert::AreEqual(static_cast<uint16_t>(k), glyphRun->glyphIndices[i]);
+                    Assert::AreEqual(k + 1.0f, glyphRun->glyphAdvances[i]);
+                    Assert::AreEqual(k + 2.0f, glyphRun->glyphOffsets[i].advanceOffset);
+                    Assert::AreEqual(k + 3.0f, glyphRun->glyphOffsets[i].ascenderOffset);
+                }
+
+                Assert::IsTrue(!!glyphRun->isSideways);
+                Assert::AreEqual(5u, glyphRun->bidiLevel);
+
+                Assert::AreEqual(expectedMeasuringMode, measuringMode);
+
+                *out = D2D1::RectF(100, 200, 104, 205);
+
+                return S_OK;
+            });
+        }
+    };
+
+    TEST_METHOD_EX(CanvasFontFace_GetGlyphRunBounds)
+    {
+        GetGlyphRunBoundsFixture f;
+
+        f.ExpectGetGlyphRunWorldBounds(DWRITE_MEASURING_MODE_NATURAL);
+
+        Rect bounds;
+        Assert::AreEqual(S_OK, f.FontFace->GetGlyphRunBounds(
+            f.DrawingSession.Get(),
+            Vector2{ 1.2f, 3.4f },
+            11.0f,
+            static_cast<uint32_t>(f.Glyphs.size()),
+            f.Glyphs.data(),
+            true,
+            5u,
+            &bounds));
+
+        Assert::AreEqual(Rect{ 100, 200, 4, 5 }, bounds);
+    }
+
+    TEST_METHOD_EX(CanvasFontFace_GetGlyphRunBoundsWithMeasuringMode)
+    {
+        GetGlyphRunBoundsFixture f;
+
+        f.ExpectGetGlyphRunWorldBounds(DWRITE_MEASURING_MODE_GDI_CLASSIC);
+
+        Rect bounds;
+        Assert::AreEqual(S_OK, f.FontFace->GetGlyphRunBoundsWithMeasuringMode(
+            f.DrawingSession.Get(),
+            Vector2{ 1.2f, 3.4f },
+            11.0f,
+            static_cast<uint32_t>(f.Glyphs.size()),
+            f.Glyphs.data(),
+            true,
+            5u,
+            CanvasTextMeasuringMode::GdiClassic,
+            &bounds));
+
+        Assert::AreEqual(Rect{ 100, 200, 4, 5 }, bounds);
+    }
 };
 
 //

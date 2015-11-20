@@ -7,6 +7,7 @@
 #include "CanvasFontFace.h"
 #include "TextUtilities.h"
 #include "effects/shader/PixelShaderEffect.h"
+#include "DrawGlyphRunHelper.h"
 
 using namespace ABI::Microsoft::Graphics::Canvas;
 using namespace ABI::Microsoft::Graphics::Canvas::Text;
@@ -760,6 +761,68 @@ IFACEMETHODIMP CanvasFontFace::HasCharacter(UINT32 unicodeValue, boolean* value)
             ThrowIfFailed(GetPhysicalPropertyContainer()->HasCharacter(unicodeValue, &exists));
             *value = !!exists;
 #endif
+        });
+}
+
+IFACEMETHODIMP CanvasFontFace::GetGlyphRunBounds(
+    ICanvasDrawingSession* drawingSession,
+    Vector2 point,
+    float fontSize,
+    uint32_t glyphCount,
+    CanvasGlyph* glyphs,
+    boolean isSideways,
+    uint32_t bidiLevel,
+    Rect* bounds)
+{
+    return GetGlyphRunBoundsWithMeasuringMode(
+        drawingSession,
+        point,
+        fontSize,
+        glyphCount,
+        glyphs,
+        isSideways,
+        bidiLevel,
+        CanvasTextMeasuringMode::Natural,
+        bounds);
+}
+
+IFACEMETHODIMP CanvasFontFace::GetGlyphRunBoundsWithMeasuringMode(
+    ICanvasDrawingSession* drawingSession,
+    Vector2 point,
+    float fontSize,
+    uint32_t glyphCount,
+    CanvasGlyph* glyphs,
+    boolean isSideways,
+    uint32_t bidiLevel,
+    CanvasTextMeasuringMode measuringMode,
+    Rect* bounds)
+{
+    return ExceptionBoundary(
+        [&]
+        {
+            CheckInPointer(drawingSession);
+            CheckInPointer(glyphs);
+            CheckInPointer(bounds);
+
+            DrawGlyphRunHelper helper(
+                this,
+                fontSize,
+                glyphCount,
+                glyphs,
+                isSideways,
+                bidiLevel,
+                measuringMode);
+
+            auto d2dDeviceContext = GetWrappedResource<ID2D1DeviceContext>(drawingSession);
+
+            D2D1_RECT_F d2dBounds;
+            ThrowIfFailed(d2dDeviceContext->GetGlyphRunWorldBounds(
+                ToD2DPoint(point),
+                &helper.DWriteGlyphRun,
+                helper.MeasuringMode,
+                &d2dBounds));
+
+            *bounds = FromD2DRect(d2dBounds);
         });
 }
 
