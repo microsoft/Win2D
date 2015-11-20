@@ -62,6 +62,17 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
           recommended that the app's implementation of Draw avoids calling
           DrawInlineObject, if it will lead to recursion.
         </p>
+        <p>
+          An inline object's Draw method may be called whenever a text 
+          layout containing that inline object:
+          <ul>
+            <li>Is drawn to a drawing session</li>
+            <li>Is drawn to an app's custom text renderer</li>
+            <li>Is used to produce geometry for <see cref="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.CreateText(Microsoft.Graphics.Canvas.Text.CanvasTextLayout)"/></li>
+          </ul>
+          As such, an inline object may be implemented to draw to a drawing 
+          session, or add to a geometry, for example.
+        </p>
       </remarks>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Text.ICanvasTextInlineObject.Baseline">

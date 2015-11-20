@@ -1293,11 +1293,13 @@ public:
         DWRITE_GLYPH_RUN_DESCRIPTION const*,
         IUnknown*)
     {
-        auto transformedGeometry = GetGlyphRunGeometry(m_device, baselineOriginX, baselineOriginY, orientationAngle, glyphRun);
+        return ExceptionBoundary(
+            [&]
+            {
+                auto transformedGeometry = GetGlyphRunGeometry(m_device, baselineOriginX, baselineOriginY, orientationAngle, glyphRun);
 
-        m_geometries.push_back(transformedGeometry);
-
-        return S_OK;
+                m_geometries.push_back(transformedGeometry);
+            });
     }
 
     D2D1_RECT_F RotateRectangle(DWRITE_GLYPH_ORIENTATION_ANGLE orientationAngle, D2D1_RECT_F const& rect)
@@ -1328,14 +1330,13 @@ public:
         DWRITE_UNDERLINE const* underline,
         IUnknown* clientDrawingEffect)
     {
-        DrawUnderline(
+        return DrawUnderline(
             clientDrawingContext,
             baselineOriginX,
             baselineOriginY,
             DWRITE_GLYPH_ORIENTATION_ANGLE_0_DEGREES,
             underline,
             clientDrawingEffect);
-        return S_OK;
     }
 
     IFACEMETHODIMP DrawUnderline(
@@ -1345,16 +1346,18 @@ public:
         DWRITE_GLYPH_ORIENTATION_ANGLE orientationAngle,
         DWRITE_UNDERLINE const* underline,
         IUnknown*)
-    {
-        D2D1_RECT_F rect = { 0, underline->offset, underline->width, underline->offset + underline->thickness };
-        rect = RotateRectangle(orientationAngle, rect);
-        rect = OffsetRectangle(baselineOriginX, baselineOriginY, rect);
+    {        
+        return ExceptionBoundary(
+            [&]
+            {
+                D2D1_RECT_F rect = { 0, underline->offset, underline->width, underline->offset + underline->thickness };
+                rect = RotateRectangle(orientationAngle, rect);
+                rect = OffsetRectangle(baselineOriginX, baselineOriginY, rect);
 
-        auto rectangleGeometry = m_device->CreateRectangleGeometry(rect);
+                auto rectangleGeometry = m_device->CreateRectangleGeometry(rect);
 
-        m_geometries.push_back(rectangleGeometry);
-
-        return S_OK;
+                m_geometries.push_back(rectangleGeometry);
+            });
     }
 
     IFACEMETHODIMP DrawStrikethrough(
@@ -1381,44 +1384,68 @@ public:
         DWRITE_STRIKETHROUGH const* strikethrough,
         IUnknown*)
     {
-        D2D1_RECT_F rect = { 0, strikethrough->offset, strikethrough->width, strikethrough->offset + strikethrough->thickness };
-        rect = RotateRectangle(orientationAngle, rect);
-        rect = OffsetRectangle(baselineOriginX, baselineOriginY, rect);
+        return ExceptionBoundary(
+            [&]
+            {
+                D2D1_RECT_F rect = { 0, strikethrough->offset, strikethrough->width, strikethrough->offset + strikethrough->thickness };
+                rect = RotateRectangle(orientationAngle, rect);
+                rect = OffsetRectangle(baselineOriginX, baselineOriginY, rect);
 
-        auto rectangleGeometry = m_device->CreateRectangleGeometry(rect);
+                auto rectangleGeometry = m_device->CreateRectangleGeometry(rect);
 
-        m_geometries.push_back(rectangleGeometry);
+                m_geometries.push_back(rectangleGeometry);
 
-        return S_OK;
+            });
     }
 
     IFACEMETHODIMP DrawInlineObject(
         void*,
-        FLOAT,
-        FLOAT,
-        IDWriteInlineObject*,
-        BOOL,
-        BOOL,
-        IUnknown*)
+        FLOAT originX,
+        FLOAT originY,
+        IDWriteInlineObject* inlineObject,
+        BOOL isSideways,
+        BOOL isRightToLeft,
+        IUnknown* brush)
     {
-        return S_OK;
+        return DrawInlineObject(
+            nullptr,
+            originX,
+            originY,
+            DWRITE_GLYPH_ORIENTATION_ANGLE_0_DEGREES,
+            inlineObject,
+            isSideways,
+            isRightToLeft,
+            brush);
     }
 
     IFACEMETHODIMP DrawInlineObject(
         void*,
-        FLOAT,
-        FLOAT,
+        FLOAT originX,
+        FLOAT originY,
         DWRITE_GLYPH_ORIENTATION_ANGLE,
-        IDWriteInlineObject*,
-        BOOL,
-        BOOL,
-        IUnknown*)
+        IDWriteInlineObject* inlineObject,
+        BOOL isSideways,
+        BOOL isRightToLeft,
+        IUnknown* brush)
     {
         //
-        // TODO: #6048 Decide whether we should do something here to allow inline objects to
-        // contribute outlines.
+        // Forwarding this along allows the implementation of the inline object
+        // to draw itself, and make calls to DrawGlyphRun on this renderer.
         //
-        return S_OK;
+        // Our implementation of DrawGlyphRun produces outlines, and so this
+        // allows inline objects' glyph runs to show up as outlines.
+        // 
+        // In particular, ellipsis triming signs are drawn as glyph runs,
+        // and we want them to be outline-able.
+        //
+        return inlineObject->Draw(
+            nullptr, 
+            this, 
+            originX, 
+            originY, 
+            isSideways, 
+            isRightToLeft, 
+            brush);
     }
 
     IFACEMETHODIMP IsPixelSnappingDisabled(
@@ -1447,12 +1474,14 @@ public:
         // output geometry in a transformed geometry, so we don't
         // expose a way of modifying it here.
         //
-        CheckInPointer(transform);
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckInPointer(transform);
 
-        D2D1_MATRIX_3X2_F identity = D2D1::Matrix3x2F::Identity();
-        *(reinterpret_cast<D2D1_MATRIX_3X2_F*>(transform)) = identity;
-
-        return S_OK;
+                D2D1_MATRIX_3X2_F identity = D2D1::Matrix3x2F::Identity();
+                *(reinterpret_cast<D2D1_MATRIX_3X2_F*>(transform)) = identity;
+            });
     }
 
     IFACEMETHODIMP GetPixelsPerDip(

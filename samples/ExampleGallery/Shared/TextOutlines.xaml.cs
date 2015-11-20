@@ -82,6 +82,7 @@ namespace ExampleGallery
             }
 
             ShowNonOutlineText = true;
+            CurrentTextOutlineGranularityOption = TextOutlineGranularity.Layout;
         }
 
         class GlyphRunsToGeometryConverter : ICanvasTextRenderer
@@ -263,6 +264,9 @@ namespace ExampleGallery
                     textLayout.SetStrikethrough(wb.Start, wb.Length, true);
                 }
             }
+
+            textLayout.TrimmingGranularity = CanvasTextTrimmingGranularity.Character;
+            textLayout.TrimmingSign = CanvasTrimmingSign.Ellipsis;
 
             textLayout.VerticalGlyphOrientation = CurrentVerticalGlyphOrientation;
 
