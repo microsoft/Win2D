@@ -154,16 +154,32 @@ IFACEMETHODIMP InternalDWriteTextRenderer::DrawInlineObject(
     return ExceptionBoundary(
         [&]
         {
-            auto canvasInlineObject = GetCanvasInlineObjectFromDWriteInlineObject(inlineObject);
+            auto canvasInlineObject = GetCanvasInlineObjectFromDWriteInlineObject(inlineObject, false);
 
             auto customDrawingObjectInspectable = GetCustomDrawingObjectInspectable(m_device.Get(), brush);
 
-            ThrowIfFailed(m_textRenderer->DrawInlineObject(
-                Vector2{ baselineOriginX, baselineOriginY },
-                canvasInlineObject.Get(),
-                !!isSideways,
-                !!isRightToLeft,
-                customDrawingObjectInspectable.Get(),
-                ToCanvasGlyphOrientation(orientationAngle)));
+            if (canvasInlineObject)
+            {
+                ThrowIfFailed(m_textRenderer->DrawInlineObject(
+                    Vector2{ baselineOriginX, baselineOriginY },
+                    canvasInlineObject.Get(),
+                    !!isSideways,
+                    !!isRightToLeft,
+                    customDrawingObjectInspectable.Get(),
+                    ToCanvasGlyphOrientation(orientationAngle)));
+            }
+            else
+            {
+                //
+                // Inline objects may be implemented by the app. Or, they may be implemented by
+                // DWrite, an important example of which being an ellipsis trimming sign. 
+                // We've reached this spot if it's the latter.
+                // 
+                // In this case, we don't call into the app's custom renderer callback since
+                // it doesn't know anything about the DWrite-implemented inline object.
+                // We forward the Draw call along.
+                //
+                ThrowIfFailed(inlineObject->Draw(nullptr, this, baselineOriginX, baselineOriginY, isSideways, isRightToLeft, brush));
+            }
         });
 }

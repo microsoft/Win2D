@@ -112,6 +112,12 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Text.ICanvasTextRenderer.DrawInlineObject(System.Numerics.Vector2,Microsoft.Graphics.Canvas.Text.ICanvasTextInlineObject,System.Boolean,System.Boolean,System.Object,Microsoft.Graphics.Canvas.Text.CanvasGlyphOrientation)">
       <summary>Signals to the app that it should draw an inline object.</summary>
+      <remarks>
+        <p>
+          A custom text renderer's DrawInlineObject method is only called for inline 
+          objects which implement ICanvasTextInlineObject. 
+        </p>
+      </remarks>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Text.ICanvasTextRenderer.Dpi">
       <summary>Gets the current DPI.</summary>

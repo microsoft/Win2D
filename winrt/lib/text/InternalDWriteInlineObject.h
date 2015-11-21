@@ -63,7 +63,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     };
 
     // Utility function
-    inline ComPtr<ICanvasTextInlineObject> GetCanvasInlineObjectFromDWriteInlineObject(ComPtr<IDWriteInlineObject> const& dwriteInlineObject)
+    inline ComPtr<ICanvasTextInlineObject> GetCanvasInlineObjectFromDWriteInlineObject(
+        ComPtr<IDWriteInlineObject> const& dwriteInlineObject,
+        bool validate = true)
     {
         ComPtr<ICanvasTextInlineObject> canvasInlineObject;
 
@@ -72,14 +74,18 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             ComPtr<IInternalDWriteInlineObject> internalDwriteInlineObject;
 
             HRESULT hr = dwriteInlineObject.As(&internalDwriteInlineObject);
-            if (hr == E_NOINTERFACE)
+            if (validate)
             {
-                ThrowHR(E_NOINTERFACE, Strings::ExternalInlineObject);
+                if (hr == E_NOINTERFACE)
+                {
+                    ThrowHR(E_NOINTERFACE, Strings::ExternalInlineObject);
+                }
+
+                ThrowIfFailed(hr);
             }
 
-            ThrowIfFailed(hr);
-
-            canvasInlineObject = internalDwriteInlineObject->GetCanvasTextInlineObject();
+            if (SUCCEEDED(hr))
+                canvasInlineObject = internalDwriteInlineObject->GetCanvasTextInlineObject();
         }
 
         return canvasInlineObject;

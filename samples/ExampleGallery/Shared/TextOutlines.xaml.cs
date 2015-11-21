@@ -128,6 +128,35 @@ namespace ExampleGallery
                 return CanvasGeometry.CreateGroup(resourceCreator, geometries.ToArray());
             }
 
+            private float GetGlyphOrientationInRadians(CanvasGlyphOrientation glyphOrientation)
+            {
+                switch (glyphOrientation)
+                {
+                    case CanvasGlyphOrientation.Upright: return 0;
+                    case CanvasGlyphOrientation.Clockwise90Degrees: return (float)Math.PI / 2;
+                    case CanvasGlyphOrientation.Clockwise180Degrees: return -(float)Math.PI;
+                    case CanvasGlyphOrientation.Clockwise270Degrees:
+                    default: return -(float)Math.PI / 2;
+                }
+            }
+
+            private CanvasGeometry GetTransformedRectangle(
+                float width,
+                float thickness,
+                float offset,
+                Vector2 position,
+                CanvasGlyphOrientation glyphOrientation)
+            {
+                var geometry = CanvasGeometry.CreateRectangle(
+                    resourceCreator,
+                    new Rect(0, offset, width, thickness));
+
+                var rotate = System.Numerics.Matrix3x2.CreateRotation(GetGlyphOrientationInRadians(glyphOrientation));
+                var translate = System.Numerics.Matrix3x2.CreateTranslation(position);
+
+                return geometry.Transform(rotate * translate);
+            }
+
             public void DrawStrikethrough(
                 Vector2 position,
                 float strikethroughWidth,
@@ -139,6 +168,9 @@ namespace ExampleGallery
                 string locale,
                 CanvasGlyphOrientation glyphOrientation)
             {
+                var geometry = GetTransformedRectangle(strikethroughWidth, strikethroughThickness, strikethroughOffset, position, glyphOrientation);
+
+                geometries.Add(geometry);
             }
 
             public void DrawUnderline(
@@ -153,6 +185,9 @@ namespace ExampleGallery
                 string locale,
                 CanvasGlyphOrientation glyphOrientation)
             {
+                var geometry = GetTransformedRectangle(underlineWidth, underlineThickness, underlineOffset, position, glyphOrientation);
+
+                geometries.Add(geometry);
             }
 
             public void DrawInlineObject(
