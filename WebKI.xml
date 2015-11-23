@@ -123,6 +123,8 @@
   </HelpKINode>
   <HelpKINode Title="Background property" Url="html/P_Microsoft_Graphics_Canvas_Effects_BlendEffect_Background.htm" />
   <HelpKINode Title="Balanced enumeration member" Url="html/T_Microsoft_Graphics_Canvas_Effects_EffectOptimization.htm" />
+  <HelpKINode Title="Baseline field" Url="html/F_Microsoft_Graphics_Canvas_Text_CanvasLineMetrics_Baseline.htm" />
+  <HelpKINode Title="Baseline property" Url="html/P_Microsoft_Graphics_Canvas_Text_ICanvasTextInlineObject_Baseline.htm" />
   <HelpKINode Title="BeginFigure method">
     <HelpKINode Title="CanvasPathBuilder.BeginFigure Method " Url="html/Overload_Microsoft_Graphics_Canvas_Geometry_CanvasPathBuilder_BeginFigure.htm" />
     <HelpKINode Title="ICanvasPathReceiver.BeginFigure Method " Url="html/M_Microsoft_Graphics_Canvas_Geometry_ICanvasPathReceiver_BeginFigure.htm" />
@@ -206,6 +208,8 @@
   <HelpKINode Title="BottomToTopThenRightToLeft enumeration member" Url="html/T_Microsoft_Graphics_Canvas_Text_CanvasTextDirection.htm" />
   <HelpKINode Title="BoundedCopy enumeration member" Url="html/T_Microsoft_Graphics_Canvas_CanvasComposite.htm" />
   <HelpKINode Title="Bounds property" Url="html/P_Microsoft_Graphics_Canvas_CanvasBitmap_Bounds.htm" />
+  <HelpKINode Title="BreakAfter property" Url="html/P_Microsoft_Graphics_Canvas_Text_ICanvasTextInlineObject_BreakAfter.htm" />
+  <HelpKINode Title="BreakBefore property" Url="html/P_Microsoft_Graphics_Canvas_Text_ICanvasTextInlineObject_BreakBefore.htm" />
   <HelpKINode Title="BrightnessEffect class">
     <HelpKINode Title="BrightnessEffect Class" Url="html/T_Microsoft_Graphics_Canvas_Effects_BrightnessEffect.htm" />
     <HelpKINode Title="about BrightnessEffect class" Url="html/T_Microsoft_Graphics_Canvas_Effects_BrightnessEffect.htm" />
@@ -225,6 +229,8 @@
     <HelpKINode Title="CanvasLinearGradientBrush.BufferPrecision Property " Url="html/P_Microsoft_Graphics_Canvas_Brushes_CanvasLinearGradientBrush_BufferPrecision.htm" />
     <HelpKINode Title="CanvasRadialGradientBrush.BufferPrecision Property " Url="html/P_Microsoft_Graphics_Canvas_Brushes_CanvasRadialGradientBrush_BufferPrecision.htm" />
   </HelpKINode>
+  <HelpKINode Title="CanBreak enumeration member" Url="html/T_Microsoft_Graphics_Canvas_Text_CanvasLineBreakCondition.htm" />
+  <HelpKINode Title="CannotBreak enumeration member" Url="html/T_Microsoft_Graphics_Canvas_Text_CanvasLineBreakCondition.htm" />
   <HelpKINode Title="CanvasActiveLayer class">
     <HelpKINode Title="CanvasActiveLayer Class" Url="html/T_Microsoft_Graphics_Canvas_CanvasActiveLayer.htm" />
     <HelpKINode Title="about CanvasActiveLayer class" Url="html/T_Microsoft_Graphics_Canvas_CanvasActiveLayer.htm" />
@@ -328,6 +334,15 @@
   <HelpKINode Title="CanvasCachedGeometry.Device property" Url="html/P_Microsoft_Graphics_Canvas_Geometry_CanvasCachedGeometry_Device.htm" />
   <HelpKINode Title="CanvasCachedGeometry.Dispose method" Url="html/M_Microsoft_Graphics_Canvas_Geometry_CanvasCachedGeometry_Dispose.htm" />
   <HelpKINode Title="CanvasCapStyle enumeration" Url="html/T_Microsoft_Graphics_Canvas_Geometry_CanvasCapStyle.htm" />
+  <HelpKINode Title="CanvasClusterMetrics structure">
+    <HelpKINode Title="CanvasClusterMetrics Structure" Url="html/T_Microsoft_Graphics_Canvas_Text_CanvasClusterMetrics.htm" />
+    <HelpKINode Title="about CanvasClusterMetrics structure" Url="html/T_Microsoft_Graphics_Canvas_Text_CanvasClusterMetrics.htm" />
+    <HelpKINode Title="fields" Url="html/Fields_T_Microsoft_Graphics_Canvas_Text_CanvasClusterMetrics.htm" />
+  </HelpKINode>
+  <HelpKINode Title="CanvasClusterMetrics.CharacterCount field" Url="html/F_Microsoft_Graphics_Canvas_Text_CanvasClusterMetrics_CharacterCount.htm" />
+  <HelpKINode Title="CanvasClusterMetrics.Properties field" Url="html/F_Microsoft_Graphics_Canvas_Text_CanvasClusterMetrics_Properties.htm" />
+  <HelpKINode Title="CanvasClusterMetrics.Width field" Url="html/F_Microsoft_Graphics_Canvas_Text_CanvasClusterMetrics_Width.htm" />
+  <HelpKINode Title="CanvasClusterProperties enumeration" Url="html/T_Microsoft_Graphics_Canvas_Text_CanvasClusterProperties.htm" />
   <HelpKINode Title="CanvasColorSpace enumeration" Url="html/T_Microsoft_Graphics_Canvas_CanvasColorSpace.htm" />
   <HelpKINode Title="CanvasCommandList class">
     <HelpKINode Title="CanvasCommandList Class" Url="html/T_Microsoft_Graphics_Canvas_CanvasCommandList.htm" />
@@ -396,7 +411,9 @@
   <HelpKINode Title="CanvasDevice.Dispose method" Url="html/M_Microsoft_Graphics_Canvas_CanvasDevice_Dispose.htm" />
   <HelpKINode Title="CanvasDevice.ForceSoftwareRenderer property" Url="html/P_Microsoft_Graphics_Canvas_CanvasDevice_ForceSoftwareRenderer.htm" />
   <HelpKINode Title="CanvasDevice.GetSharedDevice method" Url="html/Overload_Microsoft_Graphics_Canvas_CanvasDevice_GetSharedDevice.htm" />
+  <HelpKINode Title="CanvasDevice.IsBufferPrecisionSupported method" Url="html/M_Microsoft_Graphics_Canvas_CanvasDevice_IsBufferPrecisionSupported.htm" />
   <HelpKINode Title="CanvasDevice.IsDeviceLost method" Url="html/M_Microsoft_Graphics_Canvas_CanvasDevice_IsDeviceLost.htm" />
+  <HelpKINode Title="CanvasDevice.IsPixelFormatSupported method" Url="html/M_Microsoft_Graphics_Canvas_CanvasDevice_IsPixelFormatSupported.htm" />
   <HelpKINode Title="CanvasDevice.Lock method" Url="html/M_Microsoft_Graphics_Canvas_CanvasDevice_Lock.htm" />
   <HelpKINode Title="CanvasDevice.MaximumBitmapSizeInPixels property" Url="html/P_Microsoft_Graphics_Canvas_CanvasDevice_MaximumBitmapSizeInPixels.htm" />
   <HelpKINode Title="CanvasDevice.RaiseDeviceLost method" Url="html/M_Microsoft_Graphics_Canvas_CanvasDevice_RaiseDeviceLost.htm" />
@@ -418,7 +435,7 @@
   </HelpKINode>
   <HelpKINode Title="CanvasDrawingSession.Antialiasing property" Url="html/P_Microsoft_Graphics_Canvas_CanvasDrawingSession_Antialiasing.htm" />
   <HelpKINode Title="CanvasDrawingSession.Blend property" Url="html/P_Microsoft_Graphics_Canvas_CanvasDrawingSession_Blend.htm" />
-  <HelpKINode Title="CanvasDrawingSession.Clear method" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_Clear.htm" />
+  <HelpKINode Title="CanvasDrawingSession.Clear method" Url="html/Overload_Microsoft_Graphics_Canvas_CanvasDrawingSession_Clear.htm" />
   <HelpKINode Title="CanvasDrawingSession.ConvertDipsToPixels method" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_ConvertDipsToPixels.htm" />
   <HelpKINode Title="CanvasDrawingSession.ConvertPixelsToDips method" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_ConvertPixelsToDips.htm" />
   <HelpKINode Title="CanvasDrawingSession.CreateLayer method" Url="html/Overload_Microsoft_Graphics_Canvas_CanvasDrawingSession_CreateLayer.htm" />
@@ -438,6 +455,8 @@
   <HelpKINode Title="CanvasDrawingSession.DrawRoundedRectangle method" Url="html/Overload_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawRoundedRectangle.htm" />
   <HelpKINode Title="CanvasDrawingSession.DrawText method" Url="html/Overload_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawText.htm" />
   <HelpKINode Title="CanvasDrawingSession.DrawTextLayout method" Url="html/Overload_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawTextLayout.htm" />
+  <HelpKINode Title="CanvasDrawingSession.EffectBufferPrecision property" Url="html/P_Microsoft_Graphics_Canvas_CanvasDrawingSession_EffectBufferPrecision.htm" />
+  <HelpKINode Title="CanvasDrawingSession.EffectTileSize property" Url="html/P_Microsoft_Graphics_Canvas_CanvasDrawingSession_EffectTileSize.htm" />
   <HelpKINode Title="CanvasDrawingSession.FillCircle method" Url="html/Overload_Microsoft_Graphics_Canvas_CanvasDrawingSession_FillCircle.htm" />
   <HelpKINode Title="CanvasDrawingSession.FillEllipse method" Url="html/Overload_Microsoft_Graphics_Canvas_CanvasDrawingSession_FillEllipse.htm" />
   <HelpKINode Title="CanvasDrawingSession.FillGeometry method" Url="html/Overload_Microsoft_Graphics_Canvas_CanvasDrawingSession_FillGeometry.htm" />
@@ -471,6 +490,7 @@
   <HelpKINode Title="CanvasFontFace.FamilyNames property" Url="html/P_Microsoft_Graphics_Canvas_Text_CanvasFontFace_FamilyNames.htm" />
   <HelpKINode Title="CanvasFontFace.FileFormatType property" Url="html/P_Microsoft_Graphics_Canvas_Text_CanvasFontFace_FileFormatType.htm" />
   <HelpKINode Title="CanvasFontFace.GetGlyphIndices method" Url="html/M_Microsoft_Graphics_Canvas_Text_CanvasFontFace_GetGlyphIndices.htm" />
+  <HelpKINode Title="CanvasFontFace.GetGlyphRunBounds method" Url="html/Overload_Microsoft_Graphics_Canvas_Text_CanvasFontFace_GetGlyphRunBounds.htm" />
   <HelpKINode Title="CanvasFontFace.GetInformationalStrings method" Url="html/M_Microsoft_Graphics_Canvas_Text_CanvasFontFace_GetInformationalStrings.htm" />
   <HelpKINode Title="CanvasFontFace.GetRecommendedGridFit method" Url="html/M_Microsoft_Graphics_Canvas_Text_CanvasFontFace_GetRecommendedGridFit.htm" />
   <HelpKINode Title="CanvasFontFace.GetRecommendedRenderingMode method" Url="html/Overload_Microsoft_Graphics_Canvas_Text_CanvasFontFace_GetRecommendedRenderingMode.htm" />
@@ -540,7 +560,9 @@
   <HelpKINode Title="CanvasGeometry.ComputeStrokeBounds method" Url="html/Overload_Microsoft_Graphics_Canvas_Geometry_CanvasGeometry_ComputeStrokeBounds.htm" />
   <HelpKINode Title="CanvasGeometry.CreateCircle method" Url="html/Overload_Microsoft_Graphics_Canvas_Geometry_CanvasGeometry_CreateCircle.htm" />
   <HelpKINode Title="CanvasGeometry.CreateEllipse method" Url="html/Overload_Microsoft_Graphics_Canvas_Geometry_CanvasGeometry_CreateEllipse.htm" />
+  <HelpKINode Title="CanvasGeometry.CreateGlyphRun method" Url="html/M_Microsoft_Graphics_Canvas_Geometry_CanvasGeometry_CreateGlyphRun.htm" />
   <HelpKINode Title="CanvasGeometry.CreateGroup method" Url="html/Overload_Microsoft_Graphics_Canvas_Geometry_CanvasGeometry_CreateGroup.htm" />
+  <HelpKINode Title="CanvasGeometry.CreateInk method" Url="html/Overload_Microsoft_Graphics_Canvas_Geometry_CanvasGeometry_CreateInk.htm" />
   <HelpKINode Title="CanvasGeometry.CreatePath method" Url="html/M_Microsoft_Graphics_Canvas_Geometry_CanvasGeometry_CreatePath.htm" />
   <HelpKINode Title="CanvasGeometry.CreatePolygon method" Url="html/M_Microsoft_Graphics_Canvas_Geometry_CanvasGeometry_CreatePolygon.htm" />
   <HelpKINode Title="CanvasGeometry.CreateRectangle method" Url="html/Overload_Microsoft_Graphics_Canvas_Geometry_CanvasGeometry_CreateRectangle.htm" />
@@ -621,6 +643,13 @@
   </HelpKINode>
   <HelpKINode Title="CanvasGradientStop.Color field" Url="html/F_Microsoft_Graphics_Canvas_Brushes_CanvasGradientStop_Color.htm" />
   <HelpKINode Title="CanvasGradientStop.Position field" Url="html/F_Microsoft_Graphics_Canvas_Brushes_CanvasGradientStop_Position.htm" />
+  <HelpKINode Title="CanvasGradientStopHdr structure">
+    <HelpKINode Title="CanvasGradientStopHdr Structure" Url="html/T_Microsoft_Graphics_Canvas_Brushes_CanvasGradientStopHdr.htm" />
+    <HelpKINode Title="about CanvasGradientStopHdr structure" Url="html/T_Microsoft_Graphics_Canvas_Brushes_CanvasGradientStopHdr.htm" />
+    <HelpKINode Title="fields" Url="html/Fields_T_Microsoft_Graphics_Canvas_Brushes_CanvasGradientStopHdr.htm" />
+  </HelpKINode>
+  <HelpKINode Title="CanvasGradientStopHdr.Color field" Url="html/F_Microsoft_Graphics_Canvas_Brushes_CanvasGradientStopHdr_Color.htm" />
+  <HelpKINode Title="CanvasGradientStopHdr.Position field" Url="html/F_Microsoft_Graphics_Canvas_Brushes_CanvasGradientStopHdr_Position.htm" />
   <HelpKINode Title="CanvasHorizontalAlignment enumeration" Url="html/T_Microsoft_Graphics_Canvas_Text_CanvasHorizontalAlignment.htm" />
   <HelpKINode Title="CanvasImageBrush class">
     <HelpKINode Title="CanvasImageBrush Class" Url="html/T_Microsoft_Graphics_Canvas_Brushes_CanvasImageBrush.htm" />
@@ -668,6 +697,7 @@
   <HelpKINode Title="CanvasLinearGradientBrush.AlphaMode property" Url="html/P_Microsoft_Graphics_Canvas_Brushes_CanvasLinearGradientBrush_AlphaMode.htm" />
   <HelpKINode Title="CanvasLinearGradientBrush.BufferPrecision property" Url="html/P_Microsoft_Graphics_Canvas_Brushes_CanvasLinearGradientBrush_BufferPrecision.htm" />
   <HelpKINode Title="CanvasLinearGradientBrush.CanvasLinearGradientBrush constructor" Url="html/Overload_Microsoft_Graphics_Canvas_Brushes_CanvasLinearGradientBrush__ctor.htm" />
+  <HelpKINode Title="CanvasLinearGradientBrush.CreateHdr method" Url="html/Overload_Microsoft_Graphics_Canvas_Brushes_CanvasLinearGradientBrush_CreateHdr.htm" />
   <HelpKINode Title="CanvasLinearGradientBrush.CreateRainbow method" Url="html/M_Microsoft_Graphics_Canvas_Brushes_CanvasLinearGradientBrush_CreateRainbow.htm" />
   <HelpKINode Title="CanvasLinearGradientBrush.Device property" Url="html/P_Microsoft_Graphics_Canvas_Brushes_CanvasLinearGradientBrush_Device.htm" />
   <HelpKINode Title="CanvasLinearGradientBrush.Dispose method" Url="html/M_Microsoft_Graphics_Canvas_Brushes_CanvasLinearGradientBrush_Dispose.htm" />
@@ -678,8 +708,23 @@
   <HelpKINode Title="CanvasLinearGradientBrush.PreInterpolationSpace property" Url="html/P_Microsoft_Graphics_Canvas_Brushes_CanvasLinearGradientBrush_PreInterpolationSpace.htm" />
   <HelpKINode Title="CanvasLinearGradientBrush.StartPoint property" Url="html/P_Microsoft_Graphics_Canvas_Brushes_CanvasLinearGradientBrush_StartPoint.htm" />
   <HelpKINode Title="CanvasLinearGradientBrush.Stops property" Url="html/P_Microsoft_Graphics_Canvas_Brushes_CanvasLinearGradientBrush_Stops.htm" />
+  <HelpKINode Title="CanvasLinearGradientBrush.StopsHdr property" Url="html/P_Microsoft_Graphics_Canvas_Brushes_CanvasLinearGradientBrush_StopsHdr.htm" />
   <HelpKINode Title="CanvasLinearGradientBrush.Transform property" Url="html/P_Microsoft_Graphics_Canvas_Brushes_CanvasLinearGradientBrush_Transform.htm" />
+  <HelpKINode Title="CanvasLineBreakCondition enumeration" Url="html/T_Microsoft_Graphics_Canvas_Text_CanvasLineBreakCondition.htm" />
   <HelpKINode Title="CanvasLineJoin enumeration" Url="html/T_Microsoft_Graphics_Canvas_Geometry_CanvasLineJoin.htm" />
+  <HelpKINode Title="CanvasLineMetrics structure">
+    <HelpKINode Title="CanvasLineMetrics Structure" Url="html/T_Microsoft_Graphics_Canvas_Text_CanvasLineMetrics.htm" />
+    <HelpKINode Title="about CanvasLineMetrics structure" Url="html/T_Microsoft_Graphics_Canvas_Text_CanvasLineMetrics.htm" />
+    <HelpKINode Title="fields" Url="html/Fields_T_Microsoft_Graphics_Canvas_Text_CanvasLineMetrics.htm" />
+  </HelpKINode>
+  <HelpKINode Title="CanvasLineMetrics.Baseline field" Url="html/F_Microsoft_Graphics_Canvas_Text_CanvasLineMetrics_Baseline.htm" />
+  <HelpKINode Title="CanvasLineMetrics.CharacterCount field" Url="html/F_Microsoft_Graphics_Canvas_Text_CanvasLineMetrics_CharacterCount.htm" />
+  <HelpKINode Title="CanvasLineMetrics.Height field" Url="html/F_Microsoft_Graphics_Canvas_Text_CanvasLineMetrics_Height.htm" />
+  <HelpKINode Title="CanvasLineMetrics.IsTrimmed field" Url="html/F_Microsoft_Graphics_Canvas_Text_CanvasLineMetrics_IsTrimmed.htm" />
+  <HelpKINode Title="CanvasLineMetrics.LeadingWhitespaceAfter field" Url="html/F_Microsoft_Graphics_Canvas_Text_CanvasLineMetrics_LeadingWhitespaceAfter.htm" />
+  <HelpKINode Title="CanvasLineMetrics.LeadingWhitespaceBefore field" Url="html/F_Microsoft_Graphics_Canvas_Text_CanvasLineMetrics_LeadingWhitespaceBefore.htm" />
+  <HelpKINode Title="CanvasLineMetrics.TerminalNewlineCount field" Url="html/F_Microsoft_Graphics_Canvas_Text_CanvasLineMetrics_TerminalNewlineCount.htm" />
+  <HelpKINode Title="CanvasLineMetrics.TrailingWhitespaceCount field" Url="html/F_Microsoft_Graphics_Canvas_Text_CanvasLineMetrics_TrailingWhitespaceCount.htm" />
   <HelpKINode Title="CanvasLineSpacingMode enumeration" Url="html/T_Microsoft_Graphics_Canvas_Text_CanvasLineSpacingMode.htm" />
   <HelpKINode Title="CanvasLock class">
     <HelpKINode Title="CanvasLock Class" Url="html/T_Microsoft_Graphics_Canvas_CanvasLock.htm" />
@@ -769,6 +814,7 @@
   <HelpKINode Title="CanvasRadialGradientBrush.BufferPrecision property" Url="html/P_Microsoft_Graphics_Canvas_Brushes_CanvasRadialGradientBrush_BufferPrecision.htm" />
   <HelpKINode Title="CanvasRadialGradientBrush.CanvasRadialGradientBrush constructor" Url="html/Overload_Microsoft_Graphics_Canvas_Brushes_CanvasRadialGradientBrush__ctor.htm" />
   <HelpKINode Title="CanvasRadialGradientBrush.Center property" Url="html/P_Microsoft_Graphics_Canvas_Brushes_CanvasRadialGradientBrush_Center.htm" />
+  <HelpKINode Title="CanvasRadialGradientBrush.CreateHdr method" Url="html/Overload_Microsoft_Graphics_Canvas_Brushes_CanvasRadialGradientBrush_CreateHdr.htm" />
   <HelpKINode Title="CanvasRadialGradientBrush.CreateRainbow method" Url="html/M_Microsoft_Graphics_Canvas_Brushes_CanvasRadialGradientBrush_CreateRainbow.htm" />
   <HelpKINode Title="CanvasRadialGradientBrush.Device property" Url="html/P_Microsoft_Graphics_Canvas_Brushes_CanvasRadialGradientBrush_Device.htm" />
   <HelpKINode Title="CanvasRadialGradientBrush.Dispose method" Url="html/M_Microsoft_Graphics_Canvas_Brushes_CanvasRadialGradientBrush_Dispose.htm" />
@@ -780,6 +826,7 @@
   <HelpKINode Title="CanvasRadialGradientBrush.RadiusX property" Url="html/P_Microsoft_Graphics_Canvas_Brushes_CanvasRadialGradientBrush_RadiusX.htm" />
   <HelpKINode Title="CanvasRadialGradientBrush.RadiusY property" Url="html/P_Microsoft_Graphics_Canvas_Brushes_CanvasRadialGradientBrush_RadiusY.htm" />
   <HelpKINode Title="CanvasRadialGradientBrush.Stops property" Url="html/P_Microsoft_Graphics_Canvas_Brushes_CanvasRadialGradientBrush_Stops.htm" />
+  <HelpKINode Title="CanvasRadialGradientBrush.StopsHdr property" Url="html/P_Microsoft_Graphics_Canvas_Brushes_CanvasRadialGradientBrush_StopsHdr.htm" />
   <HelpKINode Title="CanvasRadialGradientBrush.Transform property" Url="html/P_Microsoft_Graphics_Canvas_Brushes_CanvasRadialGradientBrush_Transform.htm" />
   <HelpKINode Title="CanvasRegionsInvalidatedEventArgs class">
     <HelpKINode Title="CanvasRegionsInvalidatedEventArgs Class" Url="html/T_Microsoft_Graphics_Canvas_UI_Xaml_CanvasRegionsInvalidatedEventArgs.htm" />
@@ -809,6 +856,8 @@
   </HelpKINode>
   <HelpKINode Title="CanvasSolidColorBrush.CanvasSolidColorBrush constructor" Url="html/M_Microsoft_Graphics_Canvas_Brushes_CanvasSolidColorBrush__ctor.htm" />
   <HelpKINode Title="CanvasSolidColorBrush.Color property" Url="html/P_Microsoft_Graphics_Canvas_Brushes_CanvasSolidColorBrush_Color.htm" />
+  <HelpKINode Title="CanvasSolidColorBrush.ColorHdr property" Url="html/P_Microsoft_Graphics_Canvas_Brushes_CanvasSolidColorBrush_ColorHdr.htm" />
+  <HelpKINode Title="CanvasSolidColorBrush.CreateHdr method" Url="html/M_Microsoft_Graphics_Canvas_Brushes_CanvasSolidColorBrush_CreateHdr.htm" />
   <HelpKINode Title="CanvasSolidColorBrush.Device property" Url="html/P_Microsoft_Graphics_Canvas_Brushes_CanvasSolidColorBrush_Device.htm" />
   <HelpKINode Title="CanvasSolidColorBrush.Dispose method" Url="html/M_Microsoft_Graphics_Canvas_Brushes_CanvasSolidColorBrush_Dispose.htm" />
   <HelpKINode Title="CanvasSolidColorBrush.Opacity property" Url="html/P_Microsoft_Graphics_Canvas_Brushes_CanvasSolidColorBrush_Opacity.htm" />
@@ -880,6 +929,7 @@
     <HelpKINode Title="properties" Url="html/Properties_T_Microsoft_Graphics_Canvas_Text_CanvasTextFormat.htm" />
   </HelpKINode>
   <HelpKINode Title="CanvasTextFormat.CanvasTextFormat constructor" Url="html/M_Microsoft_Graphics_Canvas_Text_CanvasTextFormat__ctor.htm" />
+  <HelpKINode Title="CanvasTextFormat.CustomTrimmingSign property" Url="html/P_Microsoft_Graphics_Canvas_Text_CanvasTextFormat_CustomTrimmingSign.htm" />
   <HelpKINode Title="CanvasTextFormat.Direction property" Url="html/P_Microsoft_Graphics_Canvas_Text_CanvasTextFormat_Direction.htm" />
   <HelpKINode Title="CanvasTextFormat.Dispose method" Url="html/M_Microsoft_Graphics_Canvas_Text_CanvasTextFormat_Dispose.htm" />
   <HelpKINode Title="CanvasTextFormat.FontFamily property" Url="html/P_Microsoft_Graphics_Canvas_Text_CanvasTextFormat_FontFamily.htm" />
@@ -913,6 +963,8 @@
     <HelpKINode Title="properties" Url="html/Properties_T_Microsoft_Graphics_Canvas_Text_CanvasTextLayout.htm" />
   </HelpKINode>
   <HelpKINode Title="CanvasTextLayout.CanvasTextLayout constructor" Url="html/M_Microsoft_Graphics_Canvas_Text_CanvasTextLayout__ctor.htm" />
+  <HelpKINode Title="CanvasTextLayout.ClusterMetrics property" Url="html/P_Microsoft_Graphics_Canvas_Text_CanvasTextLayout_ClusterMetrics.htm" />
+  <HelpKINode Title="CanvasTextLayout.CustomTrimmingSign property" Url="html/P_Microsoft_Graphics_Canvas_Text_CanvasTextLayout_CustomTrimmingSign.htm" />
   <HelpKINode Title="CanvasTextLayout.DefaultFontFamily property" Url="html/P_Microsoft_Graphics_Canvas_Text_CanvasTextLayout_DefaultFontFamily.htm" />
   <HelpKINode Title="CanvasTextLayout.DefaultFontSize property" Url="html/P_Microsoft_Graphics_Canvas_Text_CanvasTextLayout_DefaultFontSize.htm" />
   <HelpKINode Title="CanvasTextLayout.DefaultFontStretch property" Url="html/P_Microsoft_Graphics_Canvas_Text_CanvasTextLayout_DefaultFontStretch.htm" />
@@ -927,12 +979,14 @@
   <HelpKINode Title="CanvasTextLayout.GetBrush method" Url="html/M_Microsoft_Graphics_Canvas_Text_CanvasTextLayout_GetBrush.htm" />
   <HelpKINode Title="CanvasTextLayout.GetCaretPosition method" Url="html/Overload_Microsoft_Graphics_Canvas_Text_CanvasTextLayout_GetCaretPosition.htm" />
   <HelpKINode Title="CanvasTextLayout.GetCharacterRegions method" Url="html/M_Microsoft_Graphics_Canvas_Text_CanvasTextLayout_GetCharacterRegions.htm" />
+  <HelpKINode Title="CanvasTextLayout.GetCustomBrush method" Url="html/M_Microsoft_Graphics_Canvas_Text_CanvasTextLayout_GetCustomBrush.htm" />
   <HelpKINode Title="CanvasTextLayout.GetFontFamily method" Url="html/M_Microsoft_Graphics_Canvas_Text_CanvasTextLayout_GetFontFamily.htm" />
   <HelpKINode Title="CanvasTextLayout.GetFontSize method" Url="html/M_Microsoft_Graphics_Canvas_Text_CanvasTextLayout_GetFontSize.htm" />
   <HelpKINode Title="CanvasTextLayout.GetFontStretch method" Url="html/M_Microsoft_Graphics_Canvas_Text_CanvasTextLayout_GetFontStretch.htm" />
   <HelpKINode Title="CanvasTextLayout.GetFontStyle method" Url="html/M_Microsoft_Graphics_Canvas_Text_CanvasTextLayout_GetFontStyle.htm" />
   <HelpKINode Title="CanvasTextLayout.GetFontWeight method" Url="html/M_Microsoft_Graphics_Canvas_Text_CanvasTextLayout_GetFontWeight.htm" />
   <HelpKINode Title="CanvasTextLayout.GetFormatChangeIndices method" Url="html/M_Microsoft_Graphics_Canvas_Text_CanvasTextLayout_GetFormatChangeIndices.htm" />
+  <HelpKINode Title="CanvasTextLayout.GetInlineObject method" Url="html/M_Microsoft_Graphics_Canvas_Text_CanvasTextLayout_GetInlineObject.htm" />
   <HelpKINode Title="CanvasTextLayout.GetLeadingCharacterSpacing method" Url="html/M_Microsoft_Graphics_Canvas_Text_CanvasTextLayout_GetLeadingCharacterSpacing.htm" />
   <HelpKINode Title="CanvasTextLayout.GetLocaleName method" Url="html/M_Microsoft_Graphics_Canvas_Text_CanvasTextLayout_GetLocaleName.htm" />
   <HelpKINode Title="CanvasTextLayout.GetMinimumCharacterAdvance method" Url="html/M_Microsoft_Graphics_Canvas_Text_CanvasTextLayout_GetMinimumCharacterAdvance.htm" />
@@ -947,6 +1001,7 @@
   <HelpKINode Title="CanvasTextLayout.LastLineWrapping property" Url="html/P_Microsoft_Graphics_Canvas_Text_CanvasTextLayout_LastLineWrapping.htm" />
   <HelpKINode Title="CanvasTextLayout.LayoutBounds property" Url="html/P_Microsoft_Graphics_Canvas_Text_CanvasTextLayout_LayoutBounds.htm" />
   <HelpKINode Title="CanvasTextLayout.LineCount property" Url="html/P_Microsoft_Graphics_Canvas_Text_CanvasTextLayout_LineCount.htm" />
+  <HelpKINode Title="CanvasTextLayout.LineMetrics property" Url="html/P_Microsoft_Graphics_Canvas_Text_CanvasTextLayout_LineMetrics.htm" />
   <HelpKINode Title="CanvasTextLayout.LineSpacing property" Url="html/P_Microsoft_Graphics_Canvas_Text_CanvasTextLayout_LineSpacing.htm" />
   <HelpKINode Title="CanvasTextLayout.LineSpacingBaseline property" Url="html/P_Microsoft_Graphics_Canvas_Text_CanvasTextLayout_LineSpacingBaseline.htm" />
   <HelpKINode Title="CanvasTextLayout.LineSpacingMode property" Url="html/P_Microsoft_Graphics_Canvas_Text_CanvasTextLayout_LineSpacingMode.htm" />
@@ -956,11 +1011,13 @@
   <HelpKINode Title="CanvasTextLayout.SetBrush method" Url="html/M_Microsoft_Graphics_Canvas_Text_CanvasTextLayout_SetBrush.htm" />
   <HelpKINode Title="CanvasTextLayout.SetCharacterSpacing method" Url="html/M_Microsoft_Graphics_Canvas_Text_CanvasTextLayout_SetCharacterSpacing.htm" />
   <HelpKINode Title="CanvasTextLayout.SetColor method" Url="html/M_Microsoft_Graphics_Canvas_Text_CanvasTextLayout_SetColor.htm" />
+  <HelpKINode Title="CanvasTextLayout.SetCustomBrush method" Url="html/M_Microsoft_Graphics_Canvas_Text_CanvasTextLayout_SetCustomBrush.htm" />
   <HelpKINode Title="CanvasTextLayout.SetFontFamily method" Url="html/M_Microsoft_Graphics_Canvas_Text_CanvasTextLayout_SetFontFamily.htm" />
   <HelpKINode Title="CanvasTextLayout.SetFontSize method" Url="html/M_Microsoft_Graphics_Canvas_Text_CanvasTextLayout_SetFontSize.htm" />
   <HelpKINode Title="CanvasTextLayout.SetFontStretch method" Url="html/M_Microsoft_Graphics_Canvas_Text_CanvasTextLayout_SetFontStretch.htm" />
   <HelpKINode Title="CanvasTextLayout.SetFontStyle method" Url="html/M_Microsoft_Graphics_Canvas_Text_CanvasTextLayout_SetFontStyle.htm" />
   <HelpKINode Title="CanvasTextLayout.SetFontWeight method" Url="html/M_Microsoft_Graphics_Canvas_Text_CanvasTextLayout_SetFontWeight.htm" />
+  <HelpKINode Title="CanvasTextLayout.SetInlineObject method" Url="html/M_Microsoft_Graphics_Canvas_Text_CanvasTextLayout_SetInlineObject.htm" />
   <HelpKINode Title="CanvasTextLayout.SetLocaleName method" Url="html/M_Microsoft_Graphics_Canvas_Text_CanvasTextLayout_SetLocaleName.htm" />
   <HelpKINode Title="CanvasTextLayout.SetPairKerning method" Url="html/M_Microsoft_Graphics_Canvas_Text_CanvasTextLayout_SetPairKerning.htm" />
   <HelpKINode Title="CanvasTextLayout.SetStrikethrough method" Url="html/M_Microsoft_Graphics_Canvas_Text_CanvasTextLayout_SetStrikethrough.htm" />
@@ -1073,6 +1130,7 @@
   <HelpKINode Title="CanvasVirtualImageSource.Source property" Url="html/P_Microsoft_Graphics_Canvas_UI_Xaml_CanvasVirtualImageSource_Source.htm" />
   <HelpKINode Title="CanvasVirtualImageSource.SuspendDrawingSession method" Url="html/M_Microsoft_Graphics_Canvas_UI_Xaml_CanvasVirtualImageSource_SuspendDrawingSession.htm" />
   <HelpKINode Title="CanvasWordWrapping enumeration" Url="html/T_Microsoft_Graphics_Canvas_Text_CanvasWordWrapping.htm" />
+  <HelpKINode Title="CanWrapLineAfter enumeration member" Url="html/T_Microsoft_Graphics_Canvas_Text_CanvasClusterProperties.htm" />
   <HelpKINode Title="CapHeight property" Url="html/P_Microsoft_Graphics_Canvas_Text_CanvasFontFace_CapHeight.htm" />
   <HelpKINode Title="CaretOffset property" Url="html/P_Microsoft_Graphics_Canvas_Text_CanvasFontFace_CaretOffset.htm" />
   <HelpKINode Title="CaretSlopeRise property" Url="html/P_Microsoft_Graphics_Canvas_Text_CanvasFontFace_CaretSlopeRise.htm" />
@@ -1089,7 +1147,11 @@
     <HelpKINode Title="CanvasTextTrimmingGranularity Enumeration" Url="html/T_Microsoft_Graphics_Canvas_Text_CanvasTextTrimmingGranularity.htm" />
     <HelpKINode Title="CanvasWordWrapping Enumeration" Url="html/T_Microsoft_Graphics_Canvas_Text_CanvasWordWrapping.htm" />
   </HelpKINode>
-  <HelpKINode Title="CharacterCount field" Url="html/F_Microsoft_Graphics_Canvas_Text_CanvasTextLayoutRegion_CharacterCount.htm" />
+  <HelpKINode Title="CharacterCount field">
+    <HelpKINode Title="CanvasClusterMetrics.CharacterCount Field" Url="html/F_Microsoft_Graphics_Canvas_Text_CanvasClusterMetrics_CharacterCount.htm" />
+    <HelpKINode Title="CanvasLineMetrics.CharacterCount Field" Url="html/F_Microsoft_Graphics_Canvas_Text_CanvasLineMetrics_CharacterCount.htm" />
+    <HelpKINode Title="CanvasTextLayoutRegion.CharacterCount Field" Url="html/F_Microsoft_Graphics_Canvas_Text_CanvasTextLayoutRegion_CharacterCount.htm" />
+  </HelpKINode>
   <HelpKINode Title="CharacterIndex field" Url="html/F_Microsoft_Graphics_Canvas_Text_CanvasTextLayoutRegion_CharacterIndex.htm" />
   <HelpKINode Title="ChromaKeyEffect class">
     <HelpKINode Title="ChromaKeyEffect Class" Url="html/T_Microsoft_Graphics_Canvas_Effects_ChromaKeyEffect.htm" />
@@ -1100,6 +1162,7 @@
   </HelpKINode>
   <HelpKINode Title="ChromaKeyEffect.ChromaKeyEffect constructor" Url="html/M_Microsoft_Graphics_Canvas_Effects_ChromaKeyEffect__ctor.htm" />
   <HelpKINode Title="ChromaKeyEffect.Color property" Url="html/P_Microsoft_Graphics_Canvas_Effects_ChromaKeyEffect_Color.htm" />
+  <HelpKINode Title="ChromaKeyEffect.ColorHdr property" Url="html/P_Microsoft_Graphics_Canvas_Effects_ChromaKeyEffect_ColorHdr.htm" />
   <HelpKINode Title="ChromaKeyEffect.Dispose method" Url="html/M_Microsoft_Graphics_Canvas_Effects_ChromaKeyEffect_Dispose.htm" />
   <HelpKINode Title="ChromaKeyEffect.Feather property" Url="html/P_Microsoft_Graphics_Canvas_Effects_ChromaKeyEffect_Feather.htm" />
   <HelpKINode Title="ChromaKeyEffect.GetBounds method" Url="html/Overload_Microsoft_Graphics_Canvas_Effects_ChromaKeyEffect_GetBounds.htm" />
@@ -1119,7 +1182,7 @@
   </HelpKINode>
   <HelpKINode Title="ClampSource property" Url="html/P_Microsoft_Graphics_Canvas_Effects_ContrastEffect_ClampSource.htm" />
   <HelpKINode Title="Clarity property" Url="html/P_Microsoft_Graphics_Canvas_Effects_HighlightsAndShadowsEffect_Clarity.htm" />
-  <HelpKINode Title="Clear method" Url="html/M_Microsoft_Graphics_Canvas_CanvasDrawingSession_Clear.htm" />
+  <HelpKINode Title="Clear method" Url="html/Overload_Microsoft_Graphics_Canvas_CanvasDrawingSession_Clear.htm" />
   <HelpKINode Title="ClearColor property">
     <HelpKINode Title="CanvasAnimatedControl.ClearColor Property " Url="html/P_Microsoft_Graphics_Canvas_UI_Xaml_CanvasAnimatedControl_ClearColor.htm" />
     <HelpKINode Title="CanvasControl.ClearColor Property " Url="html/P_Microsoft_Graphics_Canvas_UI_Xaml_CanvasControl_ClearColor.htm" />
@@ -1133,8 +1196,12 @@
   <HelpKINode Title="Clockwise270Degrees enumeration member" Url="html/T_Microsoft_Graphics_Canvas_Text_CanvasGlyphOrientation.htm" />
   <HelpKINode Title="Clockwise90Degrees enumeration member" Url="html/T_Microsoft_Graphics_Canvas_Text_CanvasGlyphOrientation.htm" />
   <HelpKINode Title="Closed enumeration member" Url="html/T_Microsoft_Graphics_Canvas_Geometry_CanvasFigureLoop.htm" />
+  <HelpKINode Title="ClusterMetrics property" Url="html/P_Microsoft_Graphics_Canvas_Text_CanvasTextLayout_ClusterMetrics.htm" />
   <HelpKINode Title="Color enumeration member" Url="html/T_Microsoft_Graphics_Canvas_Effects_BlendEffectMode.htm" />
-  <HelpKINode Title="Color field" Url="html/F_Microsoft_Graphics_Canvas_Brushes_CanvasGradientStop_Color.htm" />
+  <HelpKINode Title="Color field">
+    <HelpKINode Title="CanvasGradientStop.Color Field" Url="html/F_Microsoft_Graphics_Canvas_Brushes_CanvasGradientStop_Color.htm" />
+    <HelpKINode Title="CanvasGradientStopHdr.Color Field" Url="html/F_Microsoft_Graphics_Canvas_Brushes_CanvasGradientStopHdr_Color.htm" />
+  </HelpKINode>
   <HelpKINode Title="Color property">
     <HelpKINode Title="CanvasSolidColorBrush.Color Property " Url="html/P_Microsoft_Graphics_Canvas_Brushes_CanvasSolidColorBrush_Color.htm" />
     <HelpKINode Title="ChromaKeyEffect.Color Property " Url="html/P_Microsoft_Graphics_Canvas_Effects_ChromaKeyEffect_Color.htm" />
@@ -1151,6 +1218,12 @@
   <HelpKINode Title="Color33 field" Url="html/F_Microsoft_Graphics_Canvas_Geometry_CanvasGradientMeshPatch_Color33.htm" />
   <HelpKINode Title="ColorBurn enumeration member" Url="html/T_Microsoft_Graphics_Canvas_Effects_BlendEffectMode.htm" />
   <HelpKINode Title="ColorDodge enumeration member" Url="html/T_Microsoft_Graphics_Canvas_Effects_BlendEffectMode.htm" />
+  <HelpKINode Title="ColorHdr property">
+    <HelpKINode Title="CanvasSolidColorBrush.ColorHdr Property " Url="html/P_Microsoft_Graphics_Canvas_Brushes_CanvasSolidColorBrush_ColorHdr.htm" />
+    <HelpKINode Title="ChromaKeyEffect.ColorHdr Property " Url="html/P_Microsoft_Graphics_Canvas_Effects_ChromaKeyEffect_ColorHdr.htm" />
+    <HelpKINode Title="ColorSourceEffect.ColorHdr Property " Url="html/P_Microsoft_Graphics_Canvas_Effects_ColorSourceEffect_ColorHdr.htm" />
+    <HelpKINode Title="VignetteEffect.ColorHdr Property " Url="html/P_Microsoft_Graphics_Canvas_Effects_VignetteEffect_ColorHdr.htm" />
+  </HelpKINode>
   <HelpKINode Title="ColorMatrix property" Url="html/P_Microsoft_Graphics_Canvas_Effects_ColorMatrixEffect_ColorMatrix.htm" />
   <HelpKINode Title="ColorMatrixEffect class">
     <HelpKINode Title="ColorMatrixEffect Class" Url="html/T_Microsoft_Graphics_Canvas_Effects_ColorMatrixEffect.htm" />
@@ -1175,6 +1248,7 @@
     <HelpKINode Title="properties" Url="html/Properties_T_Microsoft_Graphics_Canvas_Effects_ColorSourceEffect.htm" />
   </HelpKINode>
   <HelpKINode Title="ColorSourceEffect.Color property" Url="html/P_Microsoft_Graphics_Canvas_Effects_ColorSourceEffect_Color.htm" />
+  <HelpKINode Title="ColorSourceEffect.ColorHdr property" Url="html/P_Microsoft_Graphics_Canvas_Effects_ColorSourceEffect_ColorHdr.htm" />
   <HelpKINode Title="ColorSourceEffect.ColorSourceEffect constructor" Url="html/M_Microsoft_Graphics_Canvas_Effects_ColorSourceEffect__ctor.htm" />
   <HelpKINode Title="ColorSourceEffect.Dispose method" Url="html/M_Microsoft_Graphics_Canvas_Effects_ColorSourceEffect_Dispose.htm" />
   <HelpKINode Title="ColorSourceEffect.GetBounds method" Url="html/Overload_Microsoft_Graphics_Canvas_Effects_ColorSourceEffect_GetBounds.htm" />
@@ -1306,7 +1380,14 @@
     <HelpKINode Title="CanvasRenderTarget.CreateFromDirect3D11Surface Method " Url="html/Overload_Microsoft_Graphics_Canvas_CanvasRenderTarget_CreateFromDirect3D11Surface.htm" />
   </HelpKINode>
   <HelpKINode Title="CreateFromSoftwareBitmap method" Url="html/M_Microsoft_Graphics_Canvas_CanvasBitmap_CreateFromSoftwareBitmap.htm" />
+  <HelpKINode Title="CreateGlyphRun method" Url="html/M_Microsoft_Graphics_Canvas_Geometry_CanvasGeometry_CreateGlyphRun.htm" />
   <HelpKINode Title="CreateGroup method" Url="html/Overload_Microsoft_Graphics_Canvas_Geometry_CanvasGeometry_CreateGroup.htm" />
+  <HelpKINode Title="CreateHdr method">
+    <HelpKINode Title="CanvasLinearGradientBrush.CreateHdr Method " Url="html/Overload_Microsoft_Graphics_Canvas_Brushes_CanvasLinearGradientBrush_CreateHdr.htm" />
+    <HelpKINode Title="CanvasRadialGradientBrush.CreateHdr Method " Url="html/Overload_Microsoft_Graphics_Canvas_Brushes_CanvasRadialGradientBrush_CreateHdr.htm" />
+    <HelpKINode Title="CanvasSolidColorBrush.CreateHdr Method " Url="html/M_Microsoft_Graphics_Canvas_Brushes_CanvasSolidColorBrush_CreateHdr.htm" />
+  </HelpKINode>
+  <HelpKINode Title="CreateInk method" Url="html/Overload_Microsoft_Graphics_Canvas_Geometry_CanvasGeometry_CreateInk.htm" />
   <HelpKINode Title="CreateLayer method" Url="html/Overload_Microsoft_Graphics_Canvas_CanvasDrawingSession_CreateLayer.htm" />
   <HelpKINode Title="CreatePath method" Url="html/M_Microsoft_Graphics_Canvas_Geometry_CanvasGeometry_CreatePath.htm" />
   <HelpKINode Title="CreatePolygon method" Url="html/M_Microsoft_Graphics_Canvas_Geometry_CanvasGeometry_CreatePolygon.htm" />
@@ -1350,6 +1431,10 @@
     <HelpKINode Title="CanvasControl.CustomDevice Property " Url="html/P_Microsoft_Graphics_Canvas_UI_Xaml_CanvasControl_CustomDevice.htm" />
     <HelpKINode Title="CanvasVirtualControl.CustomDevice Property " Url="html/P_Microsoft_Graphics_Canvas_UI_Xaml_CanvasVirtualControl_CustomDevice.htm" />
     <HelpKINode Title="ICanvasAnimatedControl.CustomDevice Property " Url="html/P_Microsoft_Graphics_Canvas_UI_Xaml_ICanvasAnimatedControl_CustomDevice.htm" />
+  </HelpKINode>
+  <HelpKINode Title="CustomTrimmingSign property">
+    <HelpKINode Title="CanvasTextFormat.CustomTrimmingSign Property " Url="html/P_Microsoft_Graphics_Canvas_Text_CanvasTextFormat_CustomTrimmingSign.htm" />
+    <HelpKINode Title="CanvasTextLayout.CustomTrimmingSign Property " Url="html/P_Microsoft_Graphics_Canvas_Text_CanvasTextLayout_CustomTrimmingSign.htm" />
   </HelpKINode>
   <HelpKINode Title="Darken enumeration member" Url="html/T_Microsoft_Graphics_Canvas_Effects_BlendEffectMode.htm" />
   <HelpKINode Title="DarkerColor enumeration member" Url="html/T_Microsoft_Graphics_Canvas_Effects_BlendEffectMode.htm" />
@@ -1586,6 +1671,7 @@
   <HelpKINode Title="DistantDiffuseEffect.HeightMapKernelSize property" Url="html/P_Microsoft_Graphics_Canvas_Effects_DistantDiffuseEffect_HeightMapKernelSize.htm" />
   <HelpKINode Title="DistantDiffuseEffect.HeightMapScale property" Url="html/P_Microsoft_Graphics_Canvas_Effects_DistantDiffuseEffect_HeightMapScale.htm" />
   <HelpKINode Title="DistantDiffuseEffect.LightColor property" Url="html/P_Microsoft_Graphics_Canvas_Effects_DistantDiffuseEffect_LightColor.htm" />
+  <HelpKINode Title="DistantDiffuseEffect.LightColorHdr property" Url="html/P_Microsoft_Graphics_Canvas_Effects_DistantDiffuseEffect_LightColorHdr.htm" />
   <HelpKINode Title="DistantDiffuseEffect.Name property" Url="html/P_Microsoft_Graphics_Canvas_Effects_DistantDiffuseEffect_Name.htm" />
   <HelpKINode Title="DistantDiffuseEffect.Source property" Url="html/P_Microsoft_Graphics_Canvas_Effects_DistantDiffuseEffect_Source.htm" />
   <HelpKINode Title="DistantSpecularEffect class">
@@ -1604,6 +1690,7 @@
   <HelpKINode Title="DistantSpecularEffect.HeightMapKernelSize property" Url="html/P_Microsoft_Graphics_Canvas_Effects_DistantSpecularEffect_HeightMapKernelSize.htm" />
   <HelpKINode Title="DistantSpecularEffect.HeightMapScale property" Url="html/P_Microsoft_Graphics_Canvas_Effects_DistantSpecularEffect_HeightMapScale.htm" />
   <HelpKINode Title="DistantSpecularEffect.LightColor property" Url="html/P_Microsoft_Graphics_Canvas_Effects_DistantSpecularEffect_LightColor.htm" />
+  <HelpKINode Title="DistantSpecularEffect.LightColorHdr property" Url="html/P_Microsoft_Graphics_Canvas_Effects_DistantSpecularEffect_LightColorHdr.htm" />
   <HelpKINode Title="DistantSpecularEffect.Name property" Url="html/P_Microsoft_Graphics_Canvas_Effects_DistantSpecularEffect_Name.htm" />
   <HelpKINode Title="DistantSpecularEffect.Source property" Url="html/P_Microsoft_Graphics_Canvas_Effects_DistantSpecularEffect_Source.htm" />
   <HelpKINode Title="DistantSpecularEffect.SpecularAmount property" Url="html/P_Microsoft_Graphics_Canvas_Effects_DistantSpecularEffect_SpecularAmount.htm" />
@@ -1652,7 +1739,11 @@
     <HelpKINode Title="CanvasControl.Draw Event" Url="html/E_Microsoft_Graphics_Canvas_UI_Xaml_CanvasControl_Draw.htm" />
     <HelpKINode Title="ICanvasAnimatedControl.Draw Event" Url="html/E_Microsoft_Graphics_Canvas_UI_Xaml_ICanvasAnimatedControl_Draw.htm" />
   </HelpKINode>
-  <HelpKINode Title="DrawBounds property" Url="html/P_Microsoft_Graphics_Canvas_Text_CanvasTextLayout_DrawBounds.htm" />
+  <HelpKINode Title="Draw method" Url="html/M_Microsoft_Graphics_Canvas_Text_ICanvasTextInlineObject_Draw.htm" />
+  <HelpKINode Title="DrawBounds property">
+    <HelpKINode Title="CanvasTextLayout.DrawBounds Property " Url="html/P_Microsoft_Graphics_Canvas_Text_CanvasTextLayout_DrawBounds.htm" />
+    <HelpKINode Title="ICanvasTextInlineObject.DrawBounds Property " Url="html/P_Microsoft_Graphics_Canvas_Text_ICanvasTextInlineObject_DrawBounds.htm" />
+  </HelpKINode>
   <HelpKINode Title="DrawCachedGeometry method" Url="html/Overload_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawCachedGeometry.htm" />
   <HelpKINode Title="DrawCircle method" Url="html/Overload_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawCircle.htm" />
   <HelpKINode Title="DrawEllipse method" Url="html/Overload_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawEllipse.htm" />
@@ -1669,6 +1760,7 @@
     <HelpKINode Title="CanvasPreviewEventArgs.DrawingSession Property " Url="html/P_Microsoft_Graphics_Canvas_Printing_CanvasPreviewEventArgs_DrawingSession.htm" />
   </HelpKINode>
   <HelpKINode Title="DrawInk method" Url="html/Overload_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawInk.htm" />
+  <HelpKINode Title="DrawInlineObject method" Url="html/M_Microsoft_Graphics_Canvas_Text_ICanvasTextRenderer_DrawInlineObject.htm" />
   <HelpKINode Title="DrawLine method" Url="html/Overload_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawLine.htm" />
   <HelpKINode Title="DrawRectangle method" Url="html/Overload_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawRectangle.htm" />
   <HelpKINode Title="DrawRoundedRectangle method" Url="html/Overload_Microsoft_Graphics_Canvas_CanvasDrawingSession_DrawRoundedRectangle.htm" />
@@ -1704,9 +1796,11 @@
   <HelpKINode Title="EdgeDetectionEffect.Source property" Url="html/P_Microsoft_Graphics_Canvas_Effects_EdgeDetectionEffect_Source.htm" />
   <HelpKINode Title="EdgeDetectionEffectMode enumeration" Url="html/T_Microsoft_Graphics_Canvas_Effects_EdgeDetectionEffectMode.htm" />
   <HelpKINode Title="EffectBorderMode enumeration" Url="html/T_Microsoft_Graphics_Canvas_Effects_EffectBorderMode.htm" />
+  <HelpKINode Title="EffectBufferPrecision property" Url="html/P_Microsoft_Graphics_Canvas_CanvasDrawingSession_EffectBufferPrecision.htm" />
   <HelpKINode Title="EffectChannelSelect enumeration" Url="html/T_Microsoft_Graphics_Canvas_Effects_EffectChannelSelect.htm" />
   <HelpKINode Title="EffectHueColorSpace enumeration" Url="html/T_Microsoft_Graphics_Canvas_Effects_EffectHueColorSpace.htm" />
   <HelpKINode Title="EffectOptimization enumeration" Url="html/T_Microsoft_Graphics_Canvas_Effects_EffectOptimization.htm" />
+  <HelpKINode Title="EffectTileSize property" Url="html/P_Microsoft_Graphics_Canvas_CanvasDrawingSession_EffectTileSize.htm" />
   <HelpKINode Title="ElapsedTime field" Url="html/F_Microsoft_Graphics_Canvas_UI_CanvasTimingInformation_ElapsedTime.htm" />
   <HelpKINode Title="Elevation property">
     <HelpKINode Title="DistantDiffuseEffect.Elevation Property " Url="html/P_Microsoft_Graphics_Canvas_Effects_DistantDiffuseEffect_Elevation.htm" />
@@ -1940,6 +2034,7 @@
   <HelpKINode Title="GetBrush method" Url="html/M_Microsoft_Graphics_Canvas_Text_CanvasTextLayout_GetBrush.htm" />
   <HelpKINode Title="GetCaretPosition method" Url="html/Overload_Microsoft_Graphics_Canvas_Text_CanvasTextLayout_GetCaretPosition.htm" />
   <HelpKINode Title="GetCharacterRegions method" Url="html/M_Microsoft_Graphics_Canvas_Text_CanvasTextLayout_GetCharacterRegions.htm" />
+  <HelpKINode Title="GetCustomBrush method" Url="html/M_Microsoft_Graphics_Canvas_Text_CanvasTextLayout_GetCustomBrush.htm" />
   <HelpKINode Title="GetDeferral method">
     <HelpKINode Title="CanvasPreviewEventArgs.GetDeferral Method " Url="html/M_Microsoft_Graphics_Canvas_Printing_CanvasPreviewEventArgs_GetDeferral.htm" />
     <HelpKINode Title="CanvasPrintEventArgs.GetDeferral Method " Url="html/M_Microsoft_Graphics_Canvas_Printing_CanvasPrintEventArgs_GetDeferral.htm" />
@@ -1952,7 +2047,9 @@
   <HelpKINode Title="GetFontWeight method" Url="html/M_Microsoft_Graphics_Canvas_Text_CanvasTextLayout_GetFontWeight.htm" />
   <HelpKINode Title="GetFormatChangeIndices method" Url="html/M_Microsoft_Graphics_Canvas_Text_CanvasTextLayout_GetFormatChangeIndices.htm" />
   <HelpKINode Title="GetGlyphIndices method" Url="html/M_Microsoft_Graphics_Canvas_Text_CanvasFontFace_GetGlyphIndices.htm" />
+  <HelpKINode Title="GetGlyphRunBounds method" Url="html/Overload_Microsoft_Graphics_Canvas_Text_CanvasFontFace_GetGlyphRunBounds.htm" />
   <HelpKINode Title="GetInformationalStrings method" Url="html/M_Microsoft_Graphics_Canvas_Text_CanvasFontFace_GetInformationalStrings.htm" />
+  <HelpKINode Title="GetInlineObject method" Url="html/M_Microsoft_Graphics_Canvas_Text_CanvasTextLayout_GetInlineObject.htm" />
   <HelpKINode Title="GetLeadingCharacterSpacing method" Url="html/M_Microsoft_Graphics_Canvas_Text_CanvasTextLayout_GetLeadingCharacterSpacing.htm" />
   <HelpKINode Title="GetLocaleName method" Url="html/M_Microsoft_Graphics_Canvas_Text_CanvasTextLayout_GetLocaleName.htm" />
   <HelpKINode Title="GetMatchingFonts method" Url="html/Overload_Microsoft_Graphics_Canvas_Text_CanvasFontSet_GetMatchingFonts.htm" />
@@ -2019,6 +2116,7 @@
   </HelpKINode>
   <HelpKINode Title="HasTypographicMetrics property" Url="html/P_Microsoft_Graphics_Canvas_Text_CanvasFontFace_HasTypographicMetrics.htm" />
   <HelpKINode Title="HasVerticalGlyphVariants property" Url="html/P_Microsoft_Graphics_Canvas_Text_CanvasFontFace_HasVerticalGlyphVariants.htm" />
+  <HelpKINode Title="Height field" Url="html/F_Microsoft_Graphics_Canvas_Text_CanvasLineMetrics_Height.htm" />
   <HelpKINode Title="Height property" Url="html/P_Microsoft_Graphics_Canvas_Effects_MorphologyEffect_Height.htm" />
   <HelpKINode Title="HeightMapInterpolationMode property">
     <HelpKINode Title="DistantDiffuseEffect.HeightMapInterpolationMode Property " Url="html/P_Microsoft_Graphics_Canvas_Effects_DistantDiffuseEffect_HeightMapInterpolationMode.htm" />
@@ -2179,6 +2277,19 @@
   <HelpKINode Title="ICanvasResourceCreatorWithDpi.ConvertDipsToPixels method" Url="html/M_Microsoft_Graphics_Canvas_ICanvasResourceCreatorWithDpi_ConvertDipsToPixels.htm" />
   <HelpKINode Title="ICanvasResourceCreatorWithDpi.ConvertPixelsToDips method" Url="html/M_Microsoft_Graphics_Canvas_ICanvasResourceCreatorWithDpi_ConvertPixelsToDips.htm" />
   <HelpKINode Title="ICanvasResourceCreatorWithDpi.Dpi property" Url="html/P_Microsoft_Graphics_Canvas_ICanvasResourceCreatorWithDpi_Dpi.htm" />
+  <HelpKINode Title="ICanvasTextInlineObject interface">
+    <HelpKINode Title="ICanvasTextInlineObject Interface" Url="html/T_Microsoft_Graphics_Canvas_Text_ICanvasTextInlineObject.htm" />
+    <HelpKINode Title="about ICanvasTextInlineObject interface" Url="html/T_Microsoft_Graphics_Canvas_Text_ICanvasTextInlineObject.htm" />
+    <HelpKINode Title="methods" Url="html/Methods_T_Microsoft_Graphics_Canvas_Text_ICanvasTextInlineObject.htm" />
+    <HelpKINode Title="properties" Url="html/Properties_T_Microsoft_Graphics_Canvas_Text_ICanvasTextInlineObject.htm" />
+  </HelpKINode>
+  <HelpKINode Title="ICanvasTextInlineObject.Baseline property" Url="html/P_Microsoft_Graphics_Canvas_Text_ICanvasTextInlineObject_Baseline.htm" />
+  <HelpKINode Title="ICanvasTextInlineObject.BreakAfter property" Url="html/P_Microsoft_Graphics_Canvas_Text_ICanvasTextInlineObject_BreakAfter.htm" />
+  <HelpKINode Title="ICanvasTextInlineObject.BreakBefore property" Url="html/P_Microsoft_Graphics_Canvas_Text_ICanvasTextInlineObject_BreakBefore.htm" />
+  <HelpKINode Title="ICanvasTextInlineObject.Draw method" Url="html/M_Microsoft_Graphics_Canvas_Text_ICanvasTextInlineObject_Draw.htm" />
+  <HelpKINode Title="ICanvasTextInlineObject.DrawBounds property" Url="html/P_Microsoft_Graphics_Canvas_Text_ICanvasTextInlineObject_DrawBounds.htm" />
+  <HelpKINode Title="ICanvasTextInlineObject.Size property" Url="html/P_Microsoft_Graphics_Canvas_Text_ICanvasTextInlineObject_Size.htm" />
+  <HelpKINode Title="ICanvasTextInlineObject.SupportsSideways property" Url="html/P_Microsoft_Graphics_Canvas_Text_ICanvasTextInlineObject_SupportsSideways.htm" />
   <HelpKINode Title="ICanvasTextRenderer interface">
     <HelpKINode Title="ICanvasTextRenderer Interface" Url="html/T_Microsoft_Graphics_Canvas_Text_ICanvasTextRenderer.htm" />
     <HelpKINode Title="about ICanvasTextRenderer interface" Url="html/T_Microsoft_Graphics_Canvas_Text_ICanvasTextRenderer.htm" />
@@ -2187,6 +2298,7 @@
   </HelpKINode>
   <HelpKINode Title="ICanvasTextRenderer.Dpi property" Url="html/P_Microsoft_Graphics_Canvas_Text_ICanvasTextRenderer_Dpi.htm" />
   <HelpKINode Title="ICanvasTextRenderer.DrawGlyphRun method" Url="html/M_Microsoft_Graphics_Canvas_Text_ICanvasTextRenderer_DrawGlyphRun.htm" />
+  <HelpKINode Title="ICanvasTextRenderer.DrawInlineObject method" Url="html/M_Microsoft_Graphics_Canvas_Text_ICanvasTextRenderer_DrawInlineObject.htm" />
   <HelpKINode Title="ICanvasTextRenderer.DrawStrikethrough method" Url="html/M_Microsoft_Graphics_Canvas_Text_ICanvasTextRenderer_DrawStrikethrough.htm" />
   <HelpKINode Title="ICanvasTextRenderer.DrawUnderline method" Url="html/M_Microsoft_Graphics_Canvas_Text_ICanvasTextRenderer_DrawUnderline.htm" />
   <HelpKINode Title="ICanvasTextRenderer.PixelSnappingDisabled property" Url="html/P_Microsoft_Graphics_Canvas_Text_ICanvasTextRenderer_PixelSnappingDisabled.htm" />
@@ -2263,15 +2375,18 @@
     <HelpKINode Title="IRandomAccessStream Interface" Url="html/T_Windows_Storage_Streams_IRandomAccessStream.htm" />
     <HelpKINode Title="about IRandomAccessStream interface" Url="html/T_Windows_Storage_Streams_IRandomAccessStream.htm" />
   </HelpKINode>
+  <HelpKINode Title="IsBufferPrecisionSupported method" Url="html/M_Microsoft_Graphics_Canvas_CanvasDevice_IsBufferPrecisionSupported.htm" />
   <HelpKINode Title="IsDeviceLost method" Url="html/M_Microsoft_Graphics_Canvas_CanvasDevice_IsDeviceLost.htm" />
   <HelpKINode Title="IsFixedTimeStep property">
     <HelpKINode Title="CanvasAnimatedControl.IsFixedTimeStep Property " Url="html/P_Microsoft_Graphics_Canvas_UI_Xaml_CanvasAnimatedControl_IsFixedTimeStep.htm" />
     <HelpKINode Title="ICanvasAnimatedControl.IsFixedTimeStep Property " Url="html/P_Microsoft_Graphics_Canvas_UI_Xaml_ICanvasAnimatedControl_IsFixedTimeStep.htm" />
   </HelpKINode>
   <HelpKINode Title="IsMonospaced property" Url="html/P_Microsoft_Graphics_Canvas_Text_CanvasFontFace_IsMonospaced.htm" />
+  <HelpKINode Title="IsPixelFormatSupported method" Url="html/M_Microsoft_Graphics_Canvas_CanvasDevice_IsPixelFormatSupported.htm" />
   <HelpKINode Title="IsRunningSlowly field" Url="html/F_Microsoft_Graphics_Canvas_UI_CanvasTimingInformation_IsRunningSlowly.htm" />
   <HelpKINode Title="IsSupported method" Url="html/M_Microsoft_Graphics_Canvas_Effects_PixelShaderEffect_IsSupported.htm" />
   <HelpKINode Title="IsSymbolFont property" Url="html/P_Microsoft_Graphics_Canvas_Text_CanvasFontFace_IsSymbolFont.htm" />
+  <HelpKINode Title="IsTrimmed field" Url="html/F_Microsoft_Graphics_Canvas_Text_CanvasLineMetrics_IsTrimmed.htm" />
   <HelpKINode Title="Jpeg enumeration member" Url="html/T_Microsoft_Graphics_Canvas_CanvasBitmapFileFormat.htm" />
   <HelpKINode Title="JpegXR enumeration member" Url="html/T_Microsoft_Graphics_Canvas_CanvasBitmapFileFormat.htm" />
   <HelpKINode Title="Justified enumeration member" Url="html/T_Microsoft_Graphics_Canvas_Text_CanvasHorizontalAlignment.htm" />
@@ -2288,6 +2403,8 @@
   </HelpKINode>
   <HelpKINode Title="LayoutBounds field" Url="html/F_Microsoft_Graphics_Canvas_Text_CanvasTextLayoutRegion_LayoutBounds.htm" />
   <HelpKINode Title="LayoutBounds property" Url="html/P_Microsoft_Graphics_Canvas_Text_CanvasTextLayout_LayoutBounds.htm" />
+  <HelpKINode Title="LeadingWhitespaceAfter field" Url="html/F_Microsoft_Graphics_Canvas_Text_CanvasLineMetrics_LeadingWhitespaceAfter.htm" />
+  <HelpKINode Title="LeadingWhitespaceBefore field" Url="html/F_Microsoft_Graphics_Canvas_Text_CanvasLineMetrics_LeadingWhitespaceBefore.htm" />
   <HelpKINode Title="Left enumeration member" Url="html/T_Microsoft_Graphics_Canvas_Text_CanvasHorizontalAlignment.htm" />
   <HelpKINode Title="LeftToRightThenBottomToTop enumeration member" Url="html/T_Microsoft_Graphics_Canvas_Text_CanvasTextDirection.htm" />
   <HelpKINode Title="LeftToRightThenTopToBottom enumeration member" Url="html/T_Microsoft_Graphics_Canvas_Text_CanvasTextDirection.htm" />
@@ -2300,6 +2417,14 @@
     <HelpKINode Title="PointSpecularEffect.LightColor Property " Url="html/P_Microsoft_Graphics_Canvas_Effects_PointSpecularEffect_LightColor.htm" />
     <HelpKINode Title="SpotDiffuseEffect.LightColor Property " Url="html/P_Microsoft_Graphics_Canvas_Effects_SpotDiffuseEffect_LightColor.htm" />
     <HelpKINode Title="SpotSpecularEffect.LightColor Property " Url="html/P_Microsoft_Graphics_Canvas_Effects_SpotSpecularEffect_LightColor.htm" />
+  </HelpKINode>
+  <HelpKINode Title="LightColorHdr property">
+    <HelpKINode Title="DistantDiffuseEffect.LightColorHdr Property " Url="html/P_Microsoft_Graphics_Canvas_Effects_DistantDiffuseEffect_LightColorHdr.htm" />
+    <HelpKINode Title="DistantSpecularEffect.LightColorHdr Property " Url="html/P_Microsoft_Graphics_Canvas_Effects_DistantSpecularEffect_LightColorHdr.htm" />
+    <HelpKINode Title="PointDiffuseEffect.LightColorHdr Property " Url="html/P_Microsoft_Graphics_Canvas_Effects_PointDiffuseEffect_LightColorHdr.htm" />
+    <HelpKINode Title="PointSpecularEffect.LightColorHdr Property " Url="html/P_Microsoft_Graphics_Canvas_Effects_PointSpecularEffect_LightColorHdr.htm" />
+    <HelpKINode Title="SpotDiffuseEffect.LightColorHdr Property " Url="html/P_Microsoft_Graphics_Canvas_Effects_SpotDiffuseEffect_LightColorHdr.htm" />
+    <HelpKINode Title="SpotSpecularEffect.LightColorHdr Property " Url="html/P_Microsoft_Graphics_Canvas_Effects_SpotSpecularEffect_LightColorHdr.htm" />
   </HelpKINode>
   <HelpKINode Title="Lighten enumeration member" Url="html/T_Microsoft_Graphics_Canvas_Effects_BlendEffectMode.htm" />
   <HelpKINode Title="LighterColor enumeration member" Url="html/T_Microsoft_Graphics_Canvas_Effects_BlendEffectMode.htm" />
@@ -2349,6 +2474,7 @@
   <HelpKINode Title="LineCount property" Url="html/P_Microsoft_Graphics_Canvas_Text_CanvasTextLayout_LineCount.htm" />
   <HelpKINode Title="LineGap property" Url="html/P_Microsoft_Graphics_Canvas_Text_CanvasFontFace_LineGap.htm" />
   <HelpKINode Title="LineJoin property" Url="html/P_Microsoft_Graphics_Canvas_Geometry_CanvasStrokeStyle_LineJoin.htm" />
+  <HelpKINode Title="LineMetrics property" Url="html/P_Microsoft_Graphics_Canvas_Text_CanvasTextLayout_LineMetrics.htm" />
   <HelpKINode Title="Lines enumeration member" Url="html/T_Microsoft_Graphics_Canvas_Geometry_CanvasGeometrySimplification.htm" />
   <HelpKINode Title="LineSpacing property">
     <HelpKINode Title="CanvasTextFormat.LineSpacing Property " Url="html/P_Microsoft_Graphics_Canvas_Text_CanvasTextFormat_LineSpacing.htm" />
@@ -2442,6 +2568,7 @@
   <HelpKINode Title="Microsoft.Graphics.Canvas namespace" Url="html/N_Microsoft_Graphics_Canvas.htm" />
   <HelpKINode Title="Microsoft.Graphics.Canvas.Brushes namespace" Url="html/N_Microsoft_Graphics_Canvas_Brushes.htm" />
   <HelpKINode Title="Microsoft.Graphics.Canvas.Brushes.CanvasGradientStop structure" Url="html/T_Microsoft_Graphics_Canvas_Brushes_CanvasGradientStop.htm" />
+  <HelpKINode Title="Microsoft.Graphics.Canvas.Brushes.CanvasGradientStopHdr structure" Url="html/T_Microsoft_Graphics_Canvas_Brushes_CanvasGradientStopHdr.htm" />
   <HelpKINode Title="Microsoft.Graphics.Canvas.Brushes.CanvasImageBrush class" Url="html/T_Microsoft_Graphics_Canvas_Brushes_CanvasImageBrush.htm" />
   <HelpKINode Title="Microsoft.Graphics.Canvas.Brushes.CanvasLinearGradientBrush class" Url="html/T_Microsoft_Graphics_Canvas_Brushes_CanvasLinearGradientBrush.htm" />
   <HelpKINode Title="Microsoft.Graphics.Canvas.Brushes.CanvasRadialGradientBrush class" Url="html/T_Microsoft_Graphics_Canvas_Brushes_CanvasRadialGradientBrush.htm" />
@@ -2567,6 +2694,8 @@
   <HelpKINode Title="Microsoft.Graphics.Canvas.Printing.CanvasPrintEventArgs class" Url="html/T_Microsoft_Graphics_Canvas_Printing_CanvasPrintEventArgs.htm" />
   <HelpKINode Title="Microsoft.Graphics.Canvas.Printing.CanvasPrintTaskOptionsChangedEventArgs class" Url="html/T_Microsoft_Graphics_Canvas_Printing_CanvasPrintTaskOptionsChangedEventArgs.htm" />
   <HelpKINode Title="Microsoft.Graphics.Canvas.Text namespace" Url="html/N_Microsoft_Graphics_Canvas_Text.htm" />
+  <HelpKINode Title="Microsoft.Graphics.Canvas.Text.CanvasClusterMetrics structure" Url="html/T_Microsoft_Graphics_Canvas_Text_CanvasClusterMetrics.htm" />
+  <HelpKINode Title="Microsoft.Graphics.Canvas.Text.CanvasClusterProperties enumeration" Url="html/T_Microsoft_Graphics_Canvas_Text_CanvasClusterProperties.htm" />
   <HelpKINode Title="Microsoft.Graphics.Canvas.Text.CanvasDrawTextOptions enumeration" Url="html/T_Microsoft_Graphics_Canvas_Text_CanvasDrawTextOptions.htm" />
   <HelpKINode Title="Microsoft.Graphics.Canvas.Text.CanvasFontFace class" Url="html/T_Microsoft_Graphics_Canvas_Text_CanvasFontFace.htm" />
   <HelpKINode Title="Microsoft.Graphics.Canvas.Text.CanvasFontFileFormatType enumeration" Url="html/T_Microsoft_Graphics_Canvas_Text_CanvasFontFileFormatType.htm" />
@@ -2578,6 +2707,8 @@
   <HelpKINode Title="Microsoft.Graphics.Canvas.Text.CanvasGlyph structure" Url="html/T_Microsoft_Graphics_Canvas_Text_CanvasGlyph.htm" />
   <HelpKINode Title="Microsoft.Graphics.Canvas.Text.CanvasGlyphOrientation enumeration" Url="html/T_Microsoft_Graphics_Canvas_Text_CanvasGlyphOrientation.htm" />
   <HelpKINode Title="Microsoft.Graphics.Canvas.Text.CanvasHorizontalAlignment enumeration" Url="html/T_Microsoft_Graphics_Canvas_Text_CanvasHorizontalAlignment.htm" />
+  <HelpKINode Title="Microsoft.Graphics.Canvas.Text.CanvasLineBreakCondition enumeration" Url="html/T_Microsoft_Graphics_Canvas_Text_CanvasLineBreakCondition.htm" />
+  <HelpKINode Title="Microsoft.Graphics.Canvas.Text.CanvasLineMetrics structure" Url="html/T_Microsoft_Graphics_Canvas_Text_CanvasLineMetrics.htm" />
   <HelpKINode Title="Microsoft.Graphics.Canvas.Text.CanvasLineSpacingMode enumeration" Url="html/T_Microsoft_Graphics_Canvas_Text_CanvasLineSpacingMode.htm" />
   <HelpKINode Title="Microsoft.Graphics.Canvas.Text.CanvasOpticalAlignment enumeration" Url="html/T_Microsoft_Graphics_Canvas_Text_CanvasOpticalAlignment.htm" />
   <HelpKINode Title="Microsoft.Graphics.Canvas.Text.CanvasTextAntialiasing enumeration" Url="html/T_Microsoft_Graphics_Canvas_Text_CanvasTextAntialiasing.htm" />
@@ -2595,6 +2726,7 @@
   <HelpKINode Title="Microsoft.Graphics.Canvas.Text.CanvasVerticalAlignment enumeration" Url="html/T_Microsoft_Graphics_Canvas_Text_CanvasVerticalAlignment.htm" />
   <HelpKINode Title="Microsoft.Graphics.Canvas.Text.CanvasVerticalGlyphOrientation enumeration" Url="html/T_Microsoft_Graphics_Canvas_Text_CanvasVerticalGlyphOrientation.htm" />
   <HelpKINode Title="Microsoft.Graphics.Canvas.Text.CanvasWordWrapping enumeration" Url="html/T_Microsoft_Graphics_Canvas_Text_CanvasWordWrapping.htm" />
+  <HelpKINode Title="Microsoft.Graphics.Canvas.Text.ICanvasTextInlineObject interface" Url="html/T_Microsoft_Graphics_Canvas_Text_ICanvasTextInlineObject.htm" />
   <HelpKINode Title="Microsoft.Graphics.Canvas.Text.ICanvasTextRenderer interface" Url="html/T_Microsoft_Graphics_Canvas_Text_ICanvasTextRenderer.htm" />
   <HelpKINode Title="Microsoft.Graphics.Canvas.UI namespace" Url="html/N_Microsoft_Graphics_Canvas_UI.htm" />
   <HelpKINode Title="Microsoft.Graphics.Canvas.UI.CanvasCreateResourcesEventArgs class" Url="html/T_Microsoft_Graphics_Canvas_UI_CanvasCreateResourcesEventArgs.htm" />
@@ -2642,6 +2774,7 @@
   <HelpKINode Title="Multiply enumeration member" Url="html/T_Microsoft_Graphics_Canvas_Effects_BlendEffectMode.htm" />
   <HelpKINode Title="MultiplyAmount property" Url="html/P_Microsoft_Graphics_Canvas_Effects_ArithmeticCompositeEffect_MultiplyAmount.htm" />
   <HelpKINode Title="MultiSampleLinear enumeration member" Url="html/T_Microsoft_Graphics_Canvas_CanvasImageInterpolation.htm" />
+  <HelpKINode Title="MustBreak enumeration member" Url="html/T_Microsoft_Graphics_Canvas_Text_CanvasLineBreakCondition.htm" />
   <HelpKINode Title="Name property">
     <HelpKINode Title="ArithmeticCompositeEffect.Name Property " Url="html/P_Microsoft_Graphics_Canvas_Effects_ArithmeticCompositeEffect_Name.htm" />
     <HelpKINode Title="AtlasEffect.Name Property " Url="html/P_Microsoft_Graphics_Canvas_Effects_AtlasEffect_Name.htm" />
@@ -2705,7 +2838,9 @@
   <HelpKINode Title="NaturalSymmetric enumeration member" Url="html/T_Microsoft_Graphics_Canvas_Text_CanvasTextRenderingMode.htm" />
   <HelpKINode Title="NaturalSymmetricDownsampled enumeration member" Url="html/T_Microsoft_Graphics_Canvas_Text_CanvasTextRenderingMode.htm" />
   <HelpKINode Title="NearestNeighbor enumeration member" Url="html/T_Microsoft_Graphics_Canvas_CanvasImageInterpolation.htm" />
+  <HelpKINode Title="Neutral enumeration member" Url="html/T_Microsoft_Graphics_Canvas_Text_CanvasLineBreakCondition.htm" />
   <HelpKINode Title="NewDevice enumeration member" Url="html/T_Microsoft_Graphics_Canvas_UI_CanvasCreateResourcesReason.htm" />
+  <HelpKINode Title="Newline enumeration member" Url="html/T_Microsoft_Graphics_Canvas_Text_CanvasClusterProperties.htm" />
   <HelpKINode Title="NewPreviewPageNumber property" Url="html/P_Microsoft_Graphics_Canvas_Printing_CanvasPrintTaskOptionsChangedEventArgs_NewPreviewPageNumber.htm" />
   <HelpKINode Title="Noise property" Url="html/P_Microsoft_Graphics_Canvas_Effects_TurbulenceEffect_Noise.htm" />
   <HelpKINode Title="None enumeration member">
@@ -2861,6 +2996,7 @@
   <HelpKINode Title="PointDiffuseEffect.HeightMapKernelSize property" Url="html/P_Microsoft_Graphics_Canvas_Effects_PointDiffuseEffect_HeightMapKernelSize.htm" />
   <HelpKINode Title="PointDiffuseEffect.HeightMapScale property" Url="html/P_Microsoft_Graphics_Canvas_Effects_PointDiffuseEffect_HeightMapScale.htm" />
   <HelpKINode Title="PointDiffuseEffect.LightColor property" Url="html/P_Microsoft_Graphics_Canvas_Effects_PointDiffuseEffect_LightColor.htm" />
+  <HelpKINode Title="PointDiffuseEffect.LightColorHdr property" Url="html/P_Microsoft_Graphics_Canvas_Effects_PointDiffuseEffect_LightColorHdr.htm" />
   <HelpKINode Title="PointDiffuseEffect.LightPosition property" Url="html/P_Microsoft_Graphics_Canvas_Effects_PointDiffuseEffect_LightPosition.htm" />
   <HelpKINode Title="PointDiffuseEffect.Name property" Url="html/P_Microsoft_Graphics_Canvas_Effects_PointDiffuseEffect_Name.htm" />
   <HelpKINode Title="PointDiffuseEffect.PointDiffuseEffect constructor" Url="html/M_Microsoft_Graphics_Canvas_Effects_PointDiffuseEffect__ctor.htm" />
@@ -2878,13 +3014,17 @@
   <HelpKINode Title="PointSpecularEffect.HeightMapKernelSize property" Url="html/P_Microsoft_Graphics_Canvas_Effects_PointSpecularEffect_HeightMapKernelSize.htm" />
   <HelpKINode Title="PointSpecularEffect.HeightMapScale property" Url="html/P_Microsoft_Graphics_Canvas_Effects_PointSpecularEffect_HeightMapScale.htm" />
   <HelpKINode Title="PointSpecularEffect.LightColor property" Url="html/P_Microsoft_Graphics_Canvas_Effects_PointSpecularEffect_LightColor.htm" />
+  <HelpKINode Title="PointSpecularEffect.LightColorHdr property" Url="html/P_Microsoft_Graphics_Canvas_Effects_PointSpecularEffect_LightColorHdr.htm" />
   <HelpKINode Title="PointSpecularEffect.LightPosition property" Url="html/P_Microsoft_Graphics_Canvas_Effects_PointSpecularEffect_LightPosition.htm" />
   <HelpKINode Title="PointSpecularEffect.Name property" Url="html/P_Microsoft_Graphics_Canvas_Effects_PointSpecularEffect_Name.htm" />
   <HelpKINode Title="PointSpecularEffect.PointSpecularEffect constructor" Url="html/M_Microsoft_Graphics_Canvas_Effects_PointSpecularEffect__ctor.htm" />
   <HelpKINode Title="PointSpecularEffect.Source property" Url="html/P_Microsoft_Graphics_Canvas_Effects_PointSpecularEffect_Source.htm" />
   <HelpKINode Title="PointSpecularEffect.SpecularAmount property" Url="html/P_Microsoft_Graphics_Canvas_Effects_PointSpecularEffect_SpecularAmount.htm" />
   <HelpKINode Title="PointSpecularEffect.SpecularExponent property" Url="html/P_Microsoft_Graphics_Canvas_Effects_PointSpecularEffect_SpecularExponent.htm" />
-  <HelpKINode Title="Position field" Url="html/F_Microsoft_Graphics_Canvas_Brushes_CanvasGradientStop_Position.htm" />
+  <HelpKINode Title="Position field">
+    <HelpKINode Title="CanvasGradientStop.Position Field" Url="html/F_Microsoft_Graphics_Canvas_Brushes_CanvasGradientStop_Position.htm" />
+    <HelpKINode Title="CanvasGradientStopHdr.Position Field" Url="html/F_Microsoft_Graphics_Canvas_Brushes_CanvasGradientStopHdr_Position.htm" />
+  </HelpKINode>
   <HelpKINode Title="PosterizeEffect class">
     <HelpKINode Title="PosterizeEffect Class" Url="html/T_Microsoft_Graphics_Canvas_Effects_PosterizeEffect.htm" />
     <HelpKINode Title="about PosterizeEffect class" Url="html/T_Microsoft_Graphics_Canvas_Effects_PosterizeEffect.htm" />
@@ -2949,6 +3089,7 @@
     <HelpKINode Title="CanvasPrintTaskOptionsChangedEventArgs.PrintTaskOptions Property " Url="html/P_Microsoft_Graphics_Canvas_Printing_CanvasPrintTaskOptionsChangedEventArgs_PrintTaskOptions.htm" />
   </HelpKINode>
   <HelpKINode Title="PrintTaskOptionsChanged event" Url="html/E_Microsoft_Graphics_Canvas_Printing_CanvasPrintDocument_PrintTaskOptionsChanged.htm" />
+  <HelpKINode Title="Properties field" Url="html/F_Microsoft_Graphics_Canvas_Text_CanvasClusterMetrics_Properties.htm" />
   <HelpKINode Title="Properties property" Url="html/P_Microsoft_Graphics_Canvas_Effects_PixelShaderEffect_Properties.htm" />
   <HelpKINode Title="Proportional enumeration member" Url="html/T_Microsoft_Graphics_Canvas_Text_CanvasLineSpacingMode.htm" />
   <HelpKINode Title="Quality enumeration member" Url="html/T_Microsoft_Graphics_Canvas_Effects_EffectOptimization.htm" />
@@ -3028,6 +3169,7 @@
   <HelpKINode Title="RgbToHueEffect.RgbToHueEffect constructor" Url="html/M_Microsoft_Graphics_Canvas_Effects_RgbToHueEffect__ctor.htm" />
   <HelpKINode Title="RgbToHueEffect.Source property" Url="html/P_Microsoft_Graphics_Canvas_Effects_RgbToHueEffect_Source.htm" />
   <HelpKINode Title="Right enumeration member" Url="html/T_Microsoft_Graphics_Canvas_Text_CanvasHorizontalAlignment.htm" />
+  <HelpKINode Title="RightToLeft enumeration member" Url="html/T_Microsoft_Graphics_Canvas_Text_CanvasClusterProperties.htm" />
   <HelpKINode Title="RightToLeftThenBottomToTop enumeration member" Url="html/T_Microsoft_Graphics_Canvas_Text_CanvasTextDirection.htm" />
   <HelpKINode Title="RightToLeftThenTopToBottom enumeration member" Url="html/T_Microsoft_Graphics_Canvas_Text_CanvasTextDirection.htm" />
   <HelpKINode Title="Rotate180 enumeration member" Url="html/T_Microsoft_Graphics_Canvas_CanvasSwapChainRotation.htm" />
@@ -3101,6 +3243,7 @@
   <HelpKINode Title="SetBrush method" Url="html/M_Microsoft_Graphics_Canvas_Text_CanvasTextLayout_SetBrush.htm" />
   <HelpKINode Title="SetCharacterSpacing method" Url="html/M_Microsoft_Graphics_Canvas_Text_CanvasTextLayout_SetCharacterSpacing.htm" />
   <HelpKINode Title="SetColor method" Url="html/M_Microsoft_Graphics_Canvas_Text_CanvasTextLayout_SetColor.htm" />
+  <HelpKINode Title="SetCustomBrush method" Url="html/M_Microsoft_Graphics_Canvas_Text_CanvasTextLayout_SetCustomBrush.htm" />
   <HelpKINode Title="SetFilledRegionDetermination method">
     <HelpKINode Title="CanvasPathBuilder.SetFilledRegionDetermination Method " Url="html/M_Microsoft_Graphics_Canvas_Geometry_CanvasPathBuilder_SetFilledRegionDetermination.htm" />
     <HelpKINode Title="ICanvasPathReceiver.SetFilledRegionDetermination Method " Url="html/M_Microsoft_Graphics_Canvas_Geometry_ICanvasPathReceiver_SetFilledRegionDetermination.htm" />
@@ -3110,6 +3253,7 @@
   <HelpKINode Title="SetFontStretch method" Url="html/M_Microsoft_Graphics_Canvas_Text_CanvasTextLayout_SetFontStretch.htm" />
   <HelpKINode Title="SetFontStyle method" Url="html/M_Microsoft_Graphics_Canvas_Text_CanvasTextLayout_SetFontStyle.htm" />
   <HelpKINode Title="SetFontWeight method" Url="html/M_Microsoft_Graphics_Canvas_Text_CanvasTextLayout_SetFontWeight.htm" />
+  <HelpKINode Title="SetInlineObject method" Url="html/M_Microsoft_Graphics_Canvas_Text_CanvasTextLayout_SetInlineObject.htm" />
   <HelpKINode Title="SetIntermediatePageCount method" Url="html/M_Microsoft_Graphics_Canvas_Printing_CanvasPrintDocument_SetIntermediatePageCount.htm" />
   <HelpKINode Title="SetLocaleName method" Url="html/M_Microsoft_Graphics_Canvas_Text_CanvasTextLayout_SetLocaleName.htm" />
   <HelpKINode Title="SetPageCount method" Url="html/M_Microsoft_Graphics_Canvas_Printing_CanvasPrintDocument_SetPageCount.htm" />
@@ -3123,6 +3267,7 @@
   <HelpKINode Title="SetStrikethrough method" Url="html/M_Microsoft_Graphics_Canvas_Text_CanvasTextLayout_SetStrikethrough.htm" />
   <HelpKINode Title="SetUnderline method" Url="html/M_Microsoft_Graphics_Canvas_Text_CanvasTextLayout_SetUnderline.htm" />
   <HelpKINode Title="ShadowColor property" Url="html/P_Microsoft_Graphics_Canvas_Effects_ShadowEffect_ShadowColor.htm" />
+  <HelpKINode Title="ShadowColorHdr property" Url="html/P_Microsoft_Graphics_Canvas_Effects_ShadowEffect_ShadowColorHdr.htm" />
   <HelpKINode Title="ShadowEffect class">
     <HelpKINode Title="ShadowEffect Class" Url="html/T_Microsoft_Graphics_Canvas_Effects_ShadowEffect.htm" />
     <HelpKINode Title="about ShadowEffect class" Url="html/T_Microsoft_Graphics_Canvas_Effects_ShadowEffect.htm" />
@@ -3136,6 +3281,7 @@
   <HelpKINode Title="ShadowEffect.Name property" Url="html/P_Microsoft_Graphics_Canvas_Effects_ShadowEffect_Name.htm" />
   <HelpKINode Title="ShadowEffect.Optimization property" Url="html/P_Microsoft_Graphics_Canvas_Effects_ShadowEffect_Optimization.htm" />
   <HelpKINode Title="ShadowEffect.ShadowColor property" Url="html/P_Microsoft_Graphics_Canvas_Effects_ShadowEffect_ShadowColor.htm" />
+  <HelpKINode Title="ShadowEffect.ShadowColorHdr property" Url="html/P_Microsoft_Graphics_Canvas_Effects_ShadowEffect_ShadowColorHdr.htm" />
   <HelpKINode Title="ShadowEffect.ShadowEffect constructor" Url="html/M_Microsoft_Graphics_Canvas_Effects_ShadowEffect__ctor.htm" />
   <HelpKINode Title="ShadowEffect.Source property" Url="html/P_Microsoft_Graphics_Canvas_Effects_ShadowEffect_Source.htm" />
   <HelpKINode Title="Shadows property" Url="html/P_Microsoft_Graphics_Canvas_Effects_HighlightsAndShadowsEffect_Shadows.htm" />
@@ -3168,6 +3314,7 @@
     <HelpKINode Title="CanvasVirtualControl.Size Property " Url="html/P_Microsoft_Graphics_Canvas_UI_Xaml_CanvasVirtualControl_Size.htm" />
     <HelpKINode Title="CanvasVirtualImageSource.Size Property " Url="html/P_Microsoft_Graphics_Canvas_UI_Xaml_CanvasVirtualImageSource_Size.htm" />
     <HelpKINode Title="ICanvasAnimatedControl.Size Property " Url="html/P_Microsoft_Graphics_Canvas_UI_Xaml_ICanvasAnimatedControl_Size.htm" />
+    <HelpKINode Title="ICanvasTextInlineObject.Size Property " Url="html/P_Microsoft_Graphics_Canvas_Text_ICanvasTextInlineObject_Size.htm" />
     <HelpKINode Title="TurbulenceEffect.Size Property " Url="html/P_Microsoft_Graphics_Canvas_Effects_TurbulenceEffect_Size.htm" />
   </HelpKINode>
   <HelpKINode Title="Size structure">
@@ -3183,6 +3330,7 @@
   <HelpKINode Title="Small enumeration member" Url="html/T_Microsoft_Graphics_Canvas_Geometry_CanvasArcSize.htm" />
   <HelpKINode Title="Sobel enumeration member" Url="html/T_Microsoft_Graphics_Canvas_Effects_EdgeDetectionEffectMode.htm" />
   <HelpKINode Title="Soft enumeration member" Url="html/T_Microsoft_Graphics_Canvas_Effects_EffectBorderMode.htm" />
+  <HelpKINode Title="SoftHyphen enumeration member" Url="html/T_Microsoft_Graphics_Canvas_Text_CanvasClusterProperties.htm" />
   <HelpKINode Title="SoftLight enumeration member" Url="html/T_Microsoft_Graphics_Canvas_Effects_BlendEffectMode.htm" />
   <HelpKINode Title="SoftwareBitmap class">
     <HelpKINode Title="SoftwareBitmap Class" Url="html/T_Windows_Graphics_Imaging_SoftwareBitmap.htm" />
@@ -3324,6 +3472,7 @@
   <HelpKINode Title="SpotDiffuseEffect.HeightMapKernelSize property" Url="html/P_Microsoft_Graphics_Canvas_Effects_SpotDiffuseEffect_HeightMapKernelSize.htm" />
   <HelpKINode Title="SpotDiffuseEffect.HeightMapScale property" Url="html/P_Microsoft_Graphics_Canvas_Effects_SpotDiffuseEffect_HeightMapScale.htm" />
   <HelpKINode Title="SpotDiffuseEffect.LightColor property" Url="html/P_Microsoft_Graphics_Canvas_Effects_SpotDiffuseEffect_LightColor.htm" />
+  <HelpKINode Title="SpotDiffuseEffect.LightColorHdr property" Url="html/P_Microsoft_Graphics_Canvas_Effects_SpotDiffuseEffect_LightColorHdr.htm" />
   <HelpKINode Title="SpotDiffuseEffect.LightPosition property" Url="html/P_Microsoft_Graphics_Canvas_Effects_SpotDiffuseEffect_LightPosition.htm" />
   <HelpKINode Title="SpotDiffuseEffect.LightTarget property" Url="html/P_Microsoft_Graphics_Canvas_Effects_SpotDiffuseEffect_LightTarget.htm" />
   <HelpKINode Title="SpotDiffuseEffect.LimitingConeAngle property" Url="html/P_Microsoft_Graphics_Canvas_Effects_SpotDiffuseEffect_LimitingConeAngle.htm" />
@@ -3344,6 +3493,7 @@
   <HelpKINode Title="SpotSpecularEffect.HeightMapKernelSize property" Url="html/P_Microsoft_Graphics_Canvas_Effects_SpotSpecularEffect_HeightMapKernelSize.htm" />
   <HelpKINode Title="SpotSpecularEffect.HeightMapScale property" Url="html/P_Microsoft_Graphics_Canvas_Effects_SpotSpecularEffect_HeightMapScale.htm" />
   <HelpKINode Title="SpotSpecularEffect.LightColor property" Url="html/P_Microsoft_Graphics_Canvas_Effects_SpotSpecularEffect_LightColor.htm" />
+  <HelpKINode Title="SpotSpecularEffect.LightColorHdr property" Url="html/P_Microsoft_Graphics_Canvas_Effects_SpotSpecularEffect_LightColorHdr.htm" />
   <HelpKINode Title="SpotSpecularEffect.LightPosition property" Url="html/P_Microsoft_Graphics_Canvas_Effects_SpotSpecularEffect_LightPosition.htm" />
   <HelpKINode Title="SpotSpecularEffect.LightTarget property" Url="html/P_Microsoft_Graphics_Canvas_Effects_SpotSpecularEffect_LightTarget.htm" />
   <HelpKINode Title="SpotSpecularEffect.LimitingConeAngle property" Url="html/P_Microsoft_Graphics_Canvas_Effects_SpotSpecularEffect_LimitingConeAngle.htm" />
@@ -3360,6 +3510,10 @@
   <HelpKINode Title="Stops property">
     <HelpKINode Title="CanvasLinearGradientBrush.Stops Property " Url="html/P_Microsoft_Graphics_Canvas_Brushes_CanvasLinearGradientBrush_Stops.htm" />
     <HelpKINode Title="CanvasRadialGradientBrush.Stops Property " Url="html/P_Microsoft_Graphics_Canvas_Brushes_CanvasRadialGradientBrush_Stops.htm" />
+  </HelpKINode>
+  <HelpKINode Title="StopsHdr property">
+    <HelpKINode Title="CanvasLinearGradientBrush.StopsHdr Property " Url="html/P_Microsoft_Graphics_Canvas_Brushes_CanvasLinearGradientBrush_StopsHdr.htm" />
+    <HelpKINode Title="CanvasRadialGradientBrush.StopsHdr Property " Url="html/P_Microsoft_Graphics_Canvas_Brushes_CanvasRadialGradientBrush_StopsHdr.htm" />
   </HelpKINode>
   <HelpKINode Title="Straight enumeration member" Url="html/T_Microsoft_Graphics_Canvas_CanvasAlphaMode.htm" />
   <HelpKINode Title="StraightenEffect class">
@@ -3394,6 +3548,7 @@
     <HelpKINode Title="CanvasFontInformation Enumeration" Url="html/T_Microsoft_Graphics_Canvas_Text_CanvasFontInformation.htm" />
     <HelpKINode Title="CanvasFontPropertyIdentifier Enumeration" Url="html/T_Microsoft_Graphics_Canvas_Text_CanvasFontPropertyIdentifier.htm" />
   </HelpKINode>
+  <HelpKINode Title="SupportsSideways property" Url="html/P_Microsoft_Graphics_Canvas_Text_ICanvasTextInlineObject_SupportsSideways.htm" />
   <HelpKINode Title="SurfaceImageSource class">
     <HelpKINode Title="SurfaceImageSource Class" Url="html/T_Windows_UI_Xaml_Media_Imaging_SurfaceImageSource.htm" />
     <HelpKINode Title="about SurfaceImageSource class" Url="html/T_Windows_UI_Xaml_Media_Imaging_SurfaceImageSource.htm" />
@@ -3412,6 +3567,7 @@
   <HelpKINode Title="System.Numerics.Matrix4x4 structure" Url="html/T_System_Numerics_Matrix4x4.htm" />
   <HelpKINode Title="System.Numerics.Vector2 structure" Url="html/T_System_Numerics_Vector2.htm" />
   <HelpKINode Title="System.Numerics.Vector3 structure" Url="html/T_System_Numerics_Vector3.htm" />
+  <HelpKINode Title="System.Numerics.Vector4 structure" Url="html/T_System_Numerics_Vector4.htm" />
   <HelpKINode Title="TableTransferEffect class">
     <HelpKINode Title="TableTransferEffect Class" Url="html/T_Microsoft_Graphics_Canvas_Effects_TableTransferEffect.htm" />
     <HelpKINode Title="about TableTransferEffect class" Url="html/T_Microsoft_Graphics_Canvas_Effects_TableTransferEffect.htm" />
@@ -3452,6 +3608,7 @@
   <HelpKINode Title="TemperatureAndTintEffect.Temperature property" Url="html/P_Microsoft_Graphics_Canvas_Effects_TemperatureAndTintEffect_Temperature.htm" />
   <HelpKINode Title="TemperatureAndTintEffect.TemperatureAndTintEffect constructor" Url="html/M_Microsoft_Graphics_Canvas_Effects_TemperatureAndTintEffect__ctor.htm" />
   <HelpKINode Title="TemperatureAndTintEffect.Tint property" Url="html/P_Microsoft_Graphics_Canvas_Effects_TemperatureAndTintEffect_Tint.htm" />
+  <HelpKINode Title="TerminalNewlineCount field" Url="html/F_Microsoft_Graphics_Canvas_Text_CanvasLineMetrics_TerminalNewlineCount.htm" />
   <HelpKINode Title="Tessellate method" Url="html/Overload_Microsoft_Graphics_Canvas_Geometry_CanvasGeometry_Tessellate.htm" />
   <HelpKINode Title="TextAntialiasing property" Url="html/P_Microsoft_Graphics_Canvas_CanvasDrawingSession_TextAntialiasing.htm" />
   <HelpKINode Title="TextRenderingParameters property" Url="html/P_Microsoft_Graphics_Canvas_CanvasDrawingSession_TextRenderingParameters.htm" />
@@ -3484,6 +3641,7 @@
   <HelpKINode Title="TotalTime field" Url="html/F_Microsoft_Graphics_Canvas_UI_CanvasTimingInformation_TotalTime.htm" />
   <HelpKINode Title="TrackAsyncAction method" Url="html/M_Microsoft_Graphics_Canvas_UI_CanvasCreateResourcesEventArgs_TrackAsyncAction.htm" />
   <HelpKINode Title="Trademark enumeration member" Url="html/T_Microsoft_Graphics_Canvas_Text_CanvasFontInformation.htm" />
+  <HelpKINode Title="TrailingWhitespaceCount field" Url="html/F_Microsoft_Graphics_Canvas_Text_CanvasLineMetrics_TrailingWhitespaceCount.htm" />
   <HelpKINode Title="Transform method" Url="html/M_Microsoft_Graphics_Canvas_Geometry_CanvasGeometry_Transform.htm" />
   <HelpKINode Title="Transform property">
     <HelpKINode Title="CanvasDrawingSession.Transform Property " Url="html/P_Microsoft_Graphics_Canvas_CanvasDrawingSession_Transform.htm" />
@@ -3623,6 +3781,10 @@
     <HelpKINode Title="Vector3 Structure" Url="html/T_System_Numerics_Vector3.htm" />
     <HelpKINode Title="about Vector3 structure" Url="html/T_System_Numerics_Vector3.htm" />
   </HelpKINode>
+  <HelpKINode Title="Vector4 structure">
+    <HelpKINode Title="Vector4 Structure" Url="html/T_System_Numerics_Vector4.htm" />
+    <HelpKINode Title="about Vector4 structure" Url="html/T_System_Numerics_Vector4.htm" />
+  </HelpKINode>
   <HelpKINode Title="VersionStrings enumeration member" Url="html/T_Microsoft_Graphics_Canvas_Text_CanvasFontInformation.htm" />
   <HelpKINode Title="Vertex1 field" Url="html/F_Microsoft_Graphics_Canvas_Geometry_CanvasTriangleVertices_Vertex1.htm" />
   <HelpKINode Title="Vertex2 field" Url="html/F_Microsoft_Graphics_Canvas_Geometry_CanvasTriangleVertices_Vertex2.htm" />
@@ -3644,6 +3806,7 @@
   </HelpKINode>
   <HelpKINode Title="VignetteEffect.Amount property" Url="html/P_Microsoft_Graphics_Canvas_Effects_VignetteEffect_Amount.htm" />
   <HelpKINode Title="VignetteEffect.Color property" Url="html/P_Microsoft_Graphics_Canvas_Effects_VignetteEffect_Color.htm" />
+  <HelpKINode Title="VignetteEffect.ColorHdr property" Url="html/P_Microsoft_Graphics_Canvas_Effects_VignetteEffect_ColorHdr.htm" />
   <HelpKINode Title="VignetteEffect.Curve property" Url="html/P_Microsoft_Graphics_Canvas_Effects_VignetteEffect_Curve.htm" />
   <HelpKINode Title="VignetteEffect.Dispose method" Url="html/M_Microsoft_Graphics_Canvas_Effects_VignetteEffect_Dispose.htm" />
   <HelpKINode Title="VignetteEffect.GetBounds method" Url="html/Overload_Microsoft_Graphics_Canvas_Effects_VignetteEffect_GetBounds.htm" />
@@ -3661,7 +3824,9 @@
   <HelpKINode Title="Weight enumeration member" Url="html/T_Microsoft_Graphics_Canvas_Text_CanvasFontPropertyIdentifier.htm" />
   <HelpKINode Title="Weight property" Url="html/P_Microsoft_Graphics_Canvas_Text_CanvasFontFace_Weight.htm" />
   <HelpKINode Title="WhitePoint property" Url="html/P_Microsoft_Graphics_Canvas_Effects_BrightnessEffect_WhitePoint.htm" />
+  <HelpKINode Title="Whitespace enumeration member" Url="html/T_Microsoft_Graphics_Canvas_Text_CanvasClusterProperties.htm" />
   <HelpKINode Title="WholeWord enumeration member" Url="html/T_Microsoft_Graphics_Canvas_Text_CanvasWordWrapping.htm" />
+  <HelpKINode Title="Width field" Url="html/F_Microsoft_Graphics_Canvas_Text_CanvasClusterMetrics_Width.htm" />
   <HelpKINode Title="Width property" Url="html/P_Microsoft_Graphics_Canvas_Effects_MorphologyEffect_Width.htm" />
   <HelpKINode Title="Win32FamilyName enumeration member" Url="html/T_Microsoft_Graphics_Canvas_Text_CanvasFontPropertyIdentifier.htm" />
   <HelpKINode Title="Win32FamilyNames enumeration member" Url="html/T_Microsoft_Graphics_Canvas_Text_CanvasFontInformation.htm" />
