@@ -34,6 +34,11 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
                           HorizontalAlignment="Stretch"/>
                 <TextBlock>Font:</TextBlock>
                 <local:FontPickerComboBox x:Name="fontPicker" HorizontalAlignment="Stretch" SelectionChanged="fontPicker_SelectionChanged"/>
+                <TextBlock>Text direction:</TextBlock>
+                <ComboBox ItemsSource="{Binding ElementName=control, Path=TextDirectionOptions}"
+                          SelectedItem="{Binding CurrentTextDirection, ElementName=control, Mode=TwoWay}"
+                          SelectionChanged="TextDirectionChanged"
+                          HorizontalAlignment="Stretch"/>
                 <ToggleButton Content="Use ellipsis trimming" IsChecked="{Binding ElementName=control, Path=UseEllipsisTrimming, Mode=TwoWay}" Click="EllipsisTrimming_Click" HorizontalAlignment="Stretch"/>
                 <ToggleButton Content="Use inline objects" IsChecked="{Binding ElementName=control, Path=ApplyInlineObjects, Mode=TwoWay}" Click="UseInlineObjectsClicked" HorizontalAlignment="Stretch"/>
                 <TextBlock><LineBreak/>Show bounding boxes:</TextBlock>

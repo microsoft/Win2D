@@ -1204,6 +1204,33 @@ IFACEMETHODIMP CanvasTextLayout::get_LayoutBounds(Rect* value)
 
             Rect rect{ dwriteMetrics.left, dwriteMetrics.top, dwriteMetrics.width, dwriteMetrics.height };
 
+            //
+            // There's an adjustment to do here because 'left' and 'top' fields of this 
+            // struct are not always computed in the same way.
+            //
+            // On left-to-right reading direction, for example, the 'left' field is the left layout bound
+            // and everything is straightforward. As for right-to-left reading direction, however, 'left'
+            // is equal to the {right layout bound- not reported directly} - {widthIncludingTrailingWhitespace}. 
+            // Since the width of the rect we return doesn't include whitespace, its left bound needs to be
+            // adjusted accordingly. Likewise goes for bottom-to-top reading direction.
+            //
+            // Note that on horizontal reading directions, heightIncludingTrailingWhitespace == height.
+            // And on vertical ones, widthIncludingTrailingWhitespace == width.
+            //
+
+            auto readingDirection = resource->GetReadingDirection();
+
+            if (readingDirection == DWRITE_READING_DIRECTION_RIGHT_TO_LEFT)
+            {
+                const float whitespace = dwriteMetrics.widthIncludingTrailingWhitespace - dwriteMetrics.width;
+                rect.X += whitespace;
+            }
+            else if (readingDirection == DWRITE_READING_DIRECTION_BOTTOM_TO_TOP)
+            {
+                const float whitespace = dwriteMetrics.heightIncludingTrailingWhitespace - dwriteMetrics.height;
+                rect.Y += whitespace;
+            }
+
             *value = rect;
         });
 }

@@ -36,6 +36,7 @@ namespace ExampleGallery
             DashStyle = CanvasDashStyle.Dash
         };
         bool inlineObjectsEnabledChanged;
+        bool textDirectionChanged;
 
         //
         // This is stored as a local static so that SpecialGlyph has access to it.
@@ -100,6 +101,9 @@ namespace ExampleGallery
         public List<TextSampleOption> TextSampleOptions { get { return Utils.GetEnumAsList<TextSampleOption>(); } }
         public TextSampleOption CurrentTextSampleOption { get; set; }
 
+        public List<CanvasTextDirection> TextDirectionOptions { get { return Utils.GetEnumAsList<CanvasTextDirection>(); } }
+        public CanvasTextDirection CurrentTextDirection { get; set; }
+
         public TextLayouts()
         {
             this.InitializeComponent();
@@ -141,6 +145,7 @@ namespace ExampleGallery
             selectionTextBrush.EndPoint = textBrush.EndPoint;
 
             inlineObjectsEnabledChanged = true;
+            textDirectionChanged = true;
 
             needsResourceRecreation = false;
             resourceRealizationSize = targetSize;
@@ -204,7 +209,8 @@ namespace ExampleGallery
 
         void EnsureInlineObjects()
         {
-            if (!inlineObjectsEnabledChanged) return;
+            if (!inlineObjectsEnabledChanged) 
+                return;
 
             //
             // Changing this option doesn't require re-recreation of the text layout.
@@ -223,6 +229,16 @@ namespace ExampleGallery
             }
 
             inlineObjectsEnabledChanged = false;
+        }
+
+        void EnsureTextDirection()
+        {
+            if (!textDirectionChanged) 
+                return;
+
+            textLayout.Direction = CurrentTextDirection;
+
+            textDirectionChanged = false;
         }
 
         private void Canvas_Draw(CanvasControl sender, CanvasDrawEventArgs args)
@@ -245,6 +261,8 @@ namespace ExampleGallery
             }
 
             EnsureInlineObjects();
+
+            EnsureTextDirection();
 
             args.DrawingSession.DrawTextLayout(textLayout, 0, 0, textBrush);
 
@@ -332,6 +350,13 @@ namespace ExampleGallery
         private void UseInlineObjectsClicked(object sender, RoutedEventArgs e)
         {
             inlineObjectsEnabledChanged = true;
+
+            canvas.Invalidate();
+        }
+
+        private void TextDirectionChanged(object sender, RoutedEventArgs e)
+        {
+            textDirectionChanged = true;
 
             canvas.Invalidate();
         }
