@@ -291,6 +291,9 @@ namespace canvas
 
             Assert::AreEqual(RO_E_CLOSED, textLayout->GetCustomBrush(0, &customBrush));
             Assert::AreEqual(RO_E_CLOSED, textLayout->SetCustomBrush(0, 0, nullptr));
+
+            Assert::AreEqual(RO_E_CLOSED, textLayout->get_LayoutBoundsIncludingTrailingWhitespace(&rect));
+            Assert::AreEqual(RO_E_CLOSED, textLayout->get_MaximumBidiReorderingDepth(&i));
         }
 
         TEST_METHOD_EX(CanvasTextLayoutTests_NullArgs)
@@ -359,6 +362,8 @@ namespace canvas
             Assert::AreEqual(E_INVALIDARG, textLayout->get_ClusterMetrics(nullptr, &cm));
             Assert::AreEqual(E_INVALIDARG, textLayout->get_ClusterMetrics(&u, nullptr));
             Assert::AreEqual(E_INVALIDARG, textLayout->GetCustomBrush(0, nullptr));
+            Assert::AreEqual(E_INVALIDARG, textLayout->get_LayoutBoundsIncludingTrailingWhitespace(nullptr));
+            Assert::AreEqual(E_INVALIDARG, textLayout->get_MaximumBidiReorderingDepth(nullptr));
         }
 
         TEST_METHOD_EX(CanvasTextLayoutTests_NegativeIntegralArgs)
@@ -2692,6 +2697,51 @@ namespace canvas
             auto textLayout = f.CreateSimpleTextLayout();
 
             TrimmingDelimiterValidationTest(textLayout);
+        }
+
+
+        TEST_METHOD_EX(CanvasTextLayoutTests_get_LayoutBoundsIncludingTrailingWhitespace)
+        {
+            Fixture f;
+
+            f.Adapter->MockTextLayout->GetMetricsMethod.SetExpectedCalls(1,
+                [&](DWRITE_TEXT_METRICS1* out)
+                {
+                    DWRITE_TEXT_METRICS1 metrics{};
+                    metrics.left = 1;
+                    metrics.top = 2;
+                    metrics.widthIncludingTrailingWhitespace = 3;
+                    metrics.heightIncludingTrailingWhitespace = 4;
+                    *out = metrics;
+                    return S_OK;
+                });
+
+            auto textLayout = f.CreateSimpleTextLayout();
+
+            Rect bounds;
+            Assert::AreEqual(S_OK, textLayout->get_LayoutBoundsIncludingTrailingWhitespace(&bounds));
+            Assert::AreEqual(Rect{ 1, 2, 3, 4 }, bounds);
+        }
+
+
+        TEST_METHOD_EX(CanvasTextLayoutTests_get_MaximumBidiReorderingDepth)
+        {
+            Fixture f;
+
+            f.Adapter->MockTextLayout->GetMetricsMethod.SetExpectedCalls(1,
+                [&](DWRITE_TEXT_METRICS1* out)
+                {
+                    DWRITE_TEXT_METRICS1 metrics{};
+                    metrics.maxBidiReorderingDepth = 1234u;
+                    *out = metrics;
+                    return S_OK;
+                });
+
+            auto textLayout = f.CreateSimpleTextLayout();
+
+            int value;
+            Assert::AreEqual(S_OK, textLayout->get_MaximumBidiReorderingDepth(&value));
+            Assert::AreEqual(1234, value);
         }
     };
 }

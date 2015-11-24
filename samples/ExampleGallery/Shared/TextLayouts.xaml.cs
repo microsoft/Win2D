@@ -83,6 +83,7 @@ namespace ExampleGallery
 
         public bool ShowPerCharacterLayoutBounds { get; set; }
         public bool ShowLayoutBounds { get; set; }
+        public bool ShowLayoutBoundsWithTrailingWhitespace { get; set; }
         public bool ShowDrawBounds { get; set; }
 
         bool needsResourceRecreation;
@@ -106,6 +107,8 @@ namespace ExampleGallery
 
         public TextLayouts()
         {
+            DataContext = this;
+
             this.InitializeComponent();
             
             CurrentTextSampleOption = TextSampleOption.QuickBrownFox;
@@ -280,6 +283,11 @@ namespace ExampleGallery
             if (ShowDrawBounds)
             {
                 args.DrawingSession.DrawRectangle(textLayout.DrawBounds, Colors.Green, 2);
+            }
+
+            if (ShowLayoutBoundsWithTrailingWhitespace)
+            {
+                args.DrawingSession.DrawRectangle(textLayout.LayoutBoundsIncludingTrailingWhitespace, Colors.DarkRed, 2);
             }
 
             if (ShowLayoutBounds)

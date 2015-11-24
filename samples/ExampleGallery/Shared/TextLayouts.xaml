@@ -20,37 +20,39 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     Unloaded="control_Unloaded">
 
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
-
-        <ScrollViewer Grid.Column="0" VerticalScrollMode="Auto" HorizontalScrollMode="Disabled" VerticalScrollBarVisibility="Hidden">
-            <StackPanel Orientation="Vertical" MinWidth="100" Margin="5">
-                <TextBlock>Text sample:</TextBlock>
-                <ComboBox ItemsSource="{Binding ElementName=control, Path=TextSampleOptions}"
-                          SelectedItem="{Binding CurrentTextSampleOption, ElementName=control, Mode=TwoWay}"
-                          SelectionChanged="TextSampleOptions_SelectionChanged"
-                          HorizontalAlignment="Stretch"/>
-                <TextBlock>Font:</TextBlock>
-                <local:FontPickerComboBox x:Name="fontPicker" HorizontalAlignment="Stretch" SelectionChanged="fontPicker_SelectionChanged"/>
-                <TextBlock>Text direction:</TextBlock>
-                <ComboBox ItemsSource="{Binding ElementName=control, Path=TextDirectionOptions}"
-                          SelectedItem="{Binding CurrentTextDirection, ElementName=control, Mode=TwoWay}"
-                          SelectionChanged="TextDirectionChanged"
-                          HorizontalAlignment="Stretch"/>
-                <ToggleButton Content="Use ellipsis trimming" IsChecked="{Binding ElementName=control, Path=UseEllipsisTrimming, Mode=TwoWay}" Click="EllipsisTrimming_Click" HorizontalAlignment="Stretch"/>
-                <ToggleButton Content="Use inline objects" IsChecked="{Binding ElementName=control, Path=ApplyInlineObjects, Mode=TwoWay}" Click="UseInlineObjectsClicked" HorizontalAlignment="Stretch"/>
-                <TextBlock><LineBreak/>Show bounding boxes:</TextBlock>
-                <ToggleButton Content="Per-character layout" IsChecked="{Binding ElementName=control, Path=ShowPerCharacterLayoutBounds, Mode=TwoWay}" Click="InvalidateCanvas" HorizontalAlignment="Stretch"/>
-                <ToggleButton Content="LayoutBounds" IsChecked="{Binding ElementName=control, Path=ShowLayoutBounds, Mode=TwoWay}" Click="InvalidateCanvas" HorizontalAlignment="Stretch"/>
-                <ToggleButton Content="DrawBounds" IsChecked="{Binding ElementName=control, Path=ShowDrawBounds, Mode=TwoWay}" Click="InvalidateCanvas" HorizontalAlignment="Stretch"/>
-            </StackPanel>
-        </ScrollViewer>
-        <canvas:CanvasControl x:Name="canvas" Grid.Column="1" Margin="5"
+        <canvas:CanvasControl x:Name="canvas"
                               Draw="Canvas_Draw"
                               CreateResources="Canvas_CreateResources"
                               PointerPressed="Canvas_PointerPressed"
                               PointerMoved="Canvas_PointerMoved"/>
+        <Button Content="&#9776;" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="5" Padding="15" x:Name="FlyoutButton">
+            <Button.Flyout>
+                <Flyout Placement="Bottom">
+                    <ScrollViewer Grid.Column="0" VerticalScrollMode="Auto" HorizontalScrollMode="Disabled" VerticalScrollBarVisibility="Hidden">
+                        <StackPanel Orientation="Vertical" MinWidth="100" Margin="5">
+                            <TextBlock>Text sample:</TextBlock>
+                            <ComboBox ItemsSource="{Binding TextSampleOptions}"
+                                      SelectedItem="{Binding CurrentTextSampleOption, Mode=TwoWay}"
+                                      SelectionChanged="TextSampleOptions_SelectionChanged"
+                                      HorizontalAlignment="Stretch"/>
+                            <TextBlock>Font:</TextBlock>
+                            <local:FontPickerComboBox x:Name="fontPicker" HorizontalAlignment="Stretch" SelectionChanged="fontPicker_SelectionChanged"/>
+                            <TextBlock>Text direction:</TextBlock>
+                            <ComboBox ItemsSource="{Binding TextDirectionOptions}"
+                                      SelectedItem="{Binding CurrentTextDirection, Mode=TwoWay}"
+                                      SelectionChanged="TextDirectionChanged"
+                                      HorizontalAlignment="Stretch"/>
+                            <ToggleButton Content="Use ellipsis trimming" IsChecked="{Binding UseEllipsisTrimming, Mode=TwoWay}" Click="EllipsisTrimming_Click" HorizontalAlignment="Stretch"/>
+                            <ToggleButton Content="Use inline objects" IsChecked="{Binding ApplyInlineObjects, Mode=TwoWay}" Click="UseInlineObjectsClicked" HorizontalAlignment="Stretch"/>
+                            <TextBlock><LineBreak/>Show bounding boxes:</TextBlock>
+                            <ToggleButton Content="Per-character layout" IsChecked="{Binding ShowPerCharacterLayoutBounds, Mode=TwoWay}" Click="InvalidateCanvas" HorizontalAlignment="Stretch"/>
+                            <ToggleButton Content="LayoutBounds" IsChecked="{Binding ShowLayoutBounds, Mode=TwoWay}" Click="InvalidateCanvas" HorizontalAlignment="Stretch"/>
+                            <ToggleButton Content="LayoutBounds w/ whitespace" IsChecked="{Binding ShowLayoutBoundsWithTrailingWhitespace, Mode=TwoWay}" Click="InvalidateCanvas" HorizontalAlignment="Stretch"/>
+                            <ToggleButton Content="DrawBounds" IsChecked="{Binding ShowDrawBounds, Mode=TwoWay}" Click="InvalidateCanvas" HorizontalAlignment="Stretch"/>
+                        </StackPanel>
+                    </ScrollViewer>
+                </Flyout>
+            </Button.Flyout>
+        </Button>
     </Grid>
 </UserControl>

@@ -303,9 +303,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         //
         IFACEMETHOD(get_LayoutBounds)(Rect* rect) override;
 
+        IFACEMETHOD(get_LayoutBoundsIncludingTrailingWhitespace)(Rect* rect) override;
+
         IFACEMETHOD(get_LineCount)(int32_t* lineCount) override;
 
         IFACEMETHOD(get_DrawBounds)(Rect* rect) override;
+
+        IFACEMETHOD(get_MaximumBidiReorderingDepth)(int32_t* depth) override;
 
         IFACEMETHOD(HitTest)(
             Vector2 point,

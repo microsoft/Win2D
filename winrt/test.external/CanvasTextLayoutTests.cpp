@@ -132,4 +132,15 @@ public:
         Assert::AreEqual(1u, clusterMetrics->Length);
         Assert::AreEqual(3, clusterMetrics[0].CharacterCount);
     }
+
+    TEST_METHOD(CanvasTextLayoutTests_MaximumBidiReorderingDepth_DefaultIs1)
+    {
+        auto layout = ref new CanvasTextLayout(m_device, L"", m_defaultFormat, 0, 0);
+
+        Assert::AreEqual(1, layout->MaximumBidiReorderingDepth);
+
+        auto layout2 = ref new CanvasTextLayout(m_device, L"Abc", m_defaultFormat, 0, 0);
+
+        Assert::AreEqual(1, layout2->MaximumBidiReorderingDepth);
+    }
 };

@@ -1235,6 +1235,23 @@ IFACEMETHODIMP CanvasTextLayout::get_LayoutBounds(Rect* value)
         });
 }
 
+IFACEMETHODIMP CanvasTextLayout::get_LayoutBoundsIncludingTrailingWhitespace(Rect* value)
+{
+    return ExceptionBoundary(
+        [&]
+        {
+            CheckInPointer(value);
+            auto& resource = GetResource();
+
+            DWRITE_TEXT_METRICS1 dwriteMetrics;
+            ThrowIfFailed(resource->GetMetrics(&dwriteMetrics));
+
+            Rect rect{ dwriteMetrics.left, dwriteMetrics.top, dwriteMetrics.widthIncludingTrailingWhitespace, dwriteMetrics.heightIncludingTrailingWhitespace };
+
+            *value = rect;
+        });
+}
+
 IFACEMETHODIMP CanvasTextLayout::get_LineCount(int32_t* lineCount)
 {
     return ExceptionBoundary(
@@ -1272,6 +1289,23 @@ IFACEMETHODIMP CanvasTextLayout::get_DrawBounds(Rect* value)
             Rect rect{ left, top, width, height };
 
             *value = rect;
+        });
+}
+
+IFACEMETHODIMP CanvasTextLayout::get_MaximumBidiReorderingDepth(int32_t* value)
+{
+    return ExceptionBoundary(
+        [&]
+        {
+            CheckInPointer(value);
+            auto& resource = GetResource();
+
+            DWRITE_TEXT_METRICS1 dwriteMetrics;
+            ThrowIfFailed(resource->GetMetrics(&dwriteMetrics));
+
+            assert(dwriteMetrics.maxBidiReorderingDepth >= 0);
+
+            *value = static_cast<int32_t>(dwriteMetrics.maxBidiReorderingDepth);
         });
 }
 

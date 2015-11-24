@@ -463,8 +463,17 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     </member>
     <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTextLayoutRegion.LayoutBounds">
       <summary>A rectangle describing the bounds of a piece of text.</summary>
-      <remarks>The bounds are relative to the text's layout box. 
-      These bounds are in DIPs, and do not take into account any transforms that might be applied while rendering the text.</remarks>
+      <remarks>
+        <p>
+          The bounds are relative to the text's layout box. 
+          These bounds are in DIPs, and do not take into account any transforms that might be applied while rendering the text.
+        </p>
+        <p>
+          These bounds do not include any trailing whitespace. To obtain bounds which include the text layout's
+          trailing whitespace, use 
+          <see cref="P:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.LayoutBoundsIncludingTrailingWhitespace"/>.
+        </p>
+      </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.HitTest(System.Numerics.Vector2)">
       <summary>Gets whether the point overlaps with any text in the text layout.</summary>
@@ -873,7 +882,78 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
           A brush that was set using SetBrush can be retrieved via GetCustomBrush.
         </p>
       </remarks>
+    </member>    
+
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.LayoutBoundsIncludingTrailingWhitespace" Experimental="true">
+      <summary>Gets a rectangle describing the bounds of text, plus any trailing whitespace.</summary>
+      <remarks>
+        <p>
+          The bounds are relative to the text's layout box.
+          These bounds are in DIPs, and do not take into account any transforms that might be applied while rendering the text.
+        </p>
+        
+        <p>
+          The location of trailing whitespace is as follows:
+        </p>
+
+        <table>
+          <tr>
+            <th>Text direction</th>
+            <th>Location of trailing whitespace</th>
+          </tr>
+          <tr>
+            <td><see cref="F:Microsoft.Graphics.Canvas.Text.CanvasTextDirection.LeftToRightThenTopToBottom" /></td>
+            <td>At the right</td>
+          </tr>
+          <tr>
+            <td><see cref="F:Microsoft.Graphics.Canvas.Text.CanvasTextDirection.RightToLeftThenTopToBottom" /></td>
+            <td>At the left</td>
+          </tr>
+          <tr>
+            <td><see cref="F:Microsoft.Graphics.Canvas.Text.CanvasTextDirection.LeftToRightThenBottomToTop" /></td>
+            <td>At the right</td>
+          </tr>
+          <tr>
+            <td><see cref="F:Microsoft.Graphics.Canvas.Text.CanvasTextDirection.RightToLeftThenBottomToTop" /></td>
+            <td>At the left</td>
+          </tr>
+          <tr>
+            <td><see cref="F:Microsoft.Graphics.Canvas.Text.CanvasTextDirection.TopToBottomThenLeftToRight" /></td>
+            <td>At the bottom</td>
+          </tr>
+          <tr>
+            <td><see cref="F:Microsoft.Graphics.Canvas.Text.CanvasTextDirection.BottomToTopThenLeftToRight" /></td>
+            <td>At the top</td>
+          </tr>
+          <tr>
+            <td><see cref="F:Microsoft.Graphics.Canvas.Text.CanvasTextDirection.TopToBottomThenRightToLeft" /></td>
+            <td>At the bottom</td>
+          </tr>
+          <tr>
+            <td><see cref="F:Microsoft.Graphics.Canvas.Text.CanvasTextDirection.BottomToTopThenRightToLeft" /></td>
+            <td>At the top</td>
+          </tr>
+        </table> 
+        <p>
+          Word wrapping isn't affected by trailing whitespace. To obtain the bounds against which Win2D word-wraps,
+          use <see cref="F:Microsoft.Graphics.Canvas.Text.CanvasTextLayoutRegion.LayoutBounds"/>.
+        </p>
+        
+      </remarks>
     </member>
-    
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.MaximumBidiReorderingDepth" Experimental="true">
+      <summary>Gets the maximum reordering depth for direction changes of bi-directional text.</summary>
+      <remarks>
+        <p>
+           Every time there's left-to-right script embedded within right-to-left script, or vice-versa, 
+           that represents one 'bidi' (bi-directional text) re-ordering level. Changes of script 
+           direction can be nested within one another. This property gets the maximum level of such 
+           nesting which exists anywhere in the text layout. 
+        </p>
+        <p>
+          As a convention, if there is no text or if the script doesn't change directions, this property is 1.
+        </p>
+      </remarks>
+    </member>
   </members>
 </doc>

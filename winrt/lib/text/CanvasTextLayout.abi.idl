@@ -254,9 +254,14 @@ namespace Microsoft.Graphics.Canvas.Text
         [propget] HRESULT LayoutBounds(
             [out, retval] Windows.Foundation.Rect* bounds);
 
-        // Exposed through IDWriteTextLayout::GetMetrics.
+        [propget] HRESULT LayoutBoundsIncludingTrailingWhitespace(
+            [out, retval] Windows.Foundation.Rect* bounds);
+
         [propget] HRESULT LineCount(
             [out, retval] INT32* lineCount);
+
+        [propget] HRESULT MaximumBidiReorderingDepth(
+            [out, retval] int* depth);
 
         // Exposed through IDWriteTextLayout::GetOverhangMetrics.
         [propget] HRESULT DrawBounds(
