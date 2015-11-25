@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Windows.Foundation.Collections;
+using Windows.Graphics.Display;
 using Windows.Media.Capture;
 using Windows.Media.Devices;
 using Windows.Media.Effects;
@@ -42,7 +43,55 @@ namespace ExampleGallery
         public CameraEffectExample()
         {
             this.InitializeComponent();
+
+            DisplayInformation.GetForCurrentView().OrientationChanged += OnOrientationChanged;
         }
+
+        #region Rotate the preview to match the device orientation
+        //
+        // Adapted from https://github.com/Microsoft/Windows-universal-samples/blob/master/Samples/CameraStarterKit/cs/MainPage.xaml.cs
+        //
+
+        private async void OnOrientationChanged(DisplayInformation sender, object args)
+        {
+            await SetPreviewRotation();
+        }
+
+
+        private static readonly Guid RotationKey = new Guid("C380465D-2271-428C-9B83-ECEA3B4A85C1");
+
+        private async Task SetPreviewRotation()
+        {
+            if (mediaCapture == null)
+                return;
+
+            var orientation = DisplayInformation.GetForCurrentView().CurrentOrientation;
+
+            var rotationDegrees = ConvertDisplayOrientationToDegrees(orientation);
+
+            var props = mediaCapture.VideoDeviceController.GetMediaStreamProperties(MediaStreamType.VideoPreview);
+            props.Properties.Add(RotationKey, rotationDegrees);
+            await mediaCapture.SetEncodingPropertiesAsync(MediaStreamType.VideoPreview, props, null);
+
+        }
+
+
+        private static int ConvertDisplayOrientationToDegrees(DisplayOrientations orientation)
+        {
+            switch (orientation)
+            {
+                case DisplayOrientations.Portrait:
+                    return 90;
+                case DisplayOrientations.LandscapeFlipped:
+                    return 180;
+                case DisplayOrientations.PortraitFlipped:
+                    return 270;
+                case DisplayOrientations.Landscape:
+                default:
+                    return 0;
+            }
+        }
+        #endregion
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
@@ -102,6 +151,7 @@ namespace ExampleGallery
 
             captureElement.Source = mediaCapture;
             await mediaCapture.StartPreviewAsync();
+            await SetPreviewRotation();
         }
 
         private async Task ResetEffectsAsync()
