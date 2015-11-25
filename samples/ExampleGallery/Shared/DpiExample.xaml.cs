@@ -6,13 +6,16 @@ using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Brushes;
 using Microsoft.Graphics.Canvas.Effects;
 using Microsoft.Graphics.Canvas.Text;
+using Microsoft.Graphics.Canvas.UI;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Numerics;
+using System.Threading.Tasks;
 using Windows.Foundation;
+using Windows.Storage.Streams;
 using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
@@ -28,6 +31,9 @@ namespace ExampleGallery
             DefaultDpiBitmap,
             HighDpiBitmap,
             LowDpiBitmap,
+#if WINDOWS_UWP
+            VirtualBitmap,
+#endif
         }
 
         public enum IntermediateMode
@@ -67,6 +73,12 @@ namespace ExampleGallery
         const float lowDpi = 48;
 
 
+#if !WINDOWS_UWP
+        // dummy CanvasVirtualBitmap type to simplify some of the ifdefs
+        class CanvasVirtualBitmap { }
+#endif
+
+
         // We need two copies of all these graphics resources, one for the main CanvasDevice used on the
         // UI thread, plus a second set for use by the CanvasAnimatedControl which runs on a separate thread.
         class PerDeviceResources
@@ -75,7 +87,8 @@ namespace ExampleGallery
 
             public readonly CanvasBitmap DefaultDpiBitmap;
             public readonly CanvasBitmap HighDpiBitmap;
-            public readonly CanvasBitmap LowDpiBitmap;
+            public readonly CanvasBitmap LowDpiBitmap;        
+            public readonly CanvasVirtualBitmap VirtualBitmap;
 
             public readonly CanvasRenderTarget AutoDpiRenderTarget;
             public readonly CanvasRenderTarget HighDpiRenderTarget;
@@ -92,20 +105,27 @@ namespace ExampleGallery
             string message;
             int drawCount;
 
-
-            public PerDeviceResources(ICanvasResourceCreatorWithDpi resourceCreator)
+            PerDeviceResources(ICanvasResourceCreatorWithDpi resourceCreator, CanvasVirtualBitmap virtualBitmap)
             {
                 ResourceCreator = resourceCreator;
 
                 DefaultDpiBitmap = CreateTestBitmap(resourceCreator, defaultDpi);
                 HighDpiBitmap = CreateTestBitmap(resourceCreator, highDpi);
                 LowDpiBitmap = CreateTestBitmap(resourceCreator, lowDpi);
+                VirtualBitmap = virtualBitmap;
 
                 AutoDpiRenderTarget = new CanvasRenderTarget(resourceCreator, testSize, testSize);
                 HighDpiRenderTarget = new CanvasRenderTarget(resourceCreator, testSize, testSize, highDpi);
                 LowDpiRenderTarget = new CanvasRenderTarget(resourceCreator, testSize, testSize, lowDpi);
 
                 SaturationEffect = new SaturationEffect { Saturation = 0 };
+            }
+
+
+            static async public Task<PerDeviceResources> Create(ICanvasResourceCreatorWithDpi resourceCreator)
+            {                
+                var virtualBitmap = await CreateTestVirtualBitmap(resourceCreator);
+                return new PerDeviceResources(resourceCreator, virtualBitmap);
             }
 
 
@@ -169,9 +189,9 @@ namespace ExampleGallery
         }
 
 
-        void Canvas_CreateResources(CanvasControl sender, object args)
+        void Canvas_CreateResources(CanvasControl sender, CanvasCreateResourcesEventArgs args)
         {
-            mainDeviceResources = new PerDeviceResources(sender);
+            args.TrackAsyncAction(LoadCanvasResources(sender).AsAsyncAction());
 
             imageBrush = new CanvasImageBrush(sender);
 
@@ -183,9 +203,21 @@ namespace ExampleGallery
         }
 
 
-        void AnimatedCanvas_CreateResources(ICanvasAnimatedControl sender, object args)
+        async Task LoadCanvasResources(CanvasControl sender)
         {
-            animatedDeviceResources = new PerDeviceResources(sender);
+            mainDeviceResources = await PerDeviceResources.Create(sender);
+        }
+
+
+        void AnimatedCanvas_CreateResources(ICanvasAnimatedControl sender, CanvasCreateResourcesEventArgs args)
+        {
+            args.TrackAsyncAction(LoadAnimatedCanvasResources(sender).AsAsyncAction());
+        }
+
+
+        async Task LoadAnimatedCanvasResources(ICanvasAnimatedControl sender)
+        {
+            animatedDeviceResources = await PerDeviceResources.Create(sender);
         }
 
 
@@ -367,8 +399,17 @@ namespace ExampleGallery
         }
 
 
-        CanvasBitmap GetSourceBitmap(PerDeviceResources resources)
+        ICanvasImage GetSourceBitmap(PerDeviceResources resources)
         {
+#if WINDOWS_UWP
+            if (CurrentSource == SourceMode.VirtualBitmap)
+            {
+                resources.AddMessage("VirtualBitmap (dpi: 96, size: {0}, pixels: {1} ->\n", 
+                    resources.VirtualBitmap.Size, resources.VirtualBitmap.SizeInPixels);
+                return resources.VirtualBitmap;
+            }
+#endif
+
             CanvasBitmap bitmap;
 
             switch (CurrentSource)
@@ -431,6 +472,22 @@ namespace ExampleGallery
             {
                 return CanvasBitmap.CreateFromColors(resourceCreator, colors, pixelSize, pixelSize, dpi);
             }
+        }
+
+
+        static async Task<CanvasVirtualBitmap> CreateTestVirtualBitmap(ICanvasResourceCreatorWithDpi resourceCreator)
+        {
+#if WINDOWS_UWP
+            var canvasBitmap = CreateTestBitmap(resourceCreator, 96);
+
+            var stream = new InMemoryRandomAccessStream();
+            await canvasBitmap.SaveAsync(stream, CanvasBitmapFileFormat.Png);
+
+            return await CanvasVirtualBitmap.LoadAsync(resourceCreator, stream);
+#else
+            await Task.Yield(); // prevent warning about no await in async method
+            return new CanvasVirtualBitmap();
+#endif
         }
 
 

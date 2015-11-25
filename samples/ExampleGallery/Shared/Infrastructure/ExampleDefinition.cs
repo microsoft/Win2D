@@ -78,6 +78,9 @@ namespace ExampleGallery
             new ExampleDefinition("Custom Control", typeof(CustomControlExample)),
             new ExampleDefinition("Virtual Control", typeof(VirtualControlExample)),
             new ExampleDefinition("Animated Control", typeof(AnimatedControlExample)),
+#if WINDOWS_UWP
+            new ExampleDefinition("Virtual Bitmap", typeof(VirtualBitmapExample)),
+#endif
             new ExampleDefinition("Direct3D Interop", typeof(Direct3DInteropExample)),
             new ExampleDefinition("Keyboard Input", typeof(KeyboardInputExample)),
             new ExampleDefinition("Background Task", typeof(BackgroundTaskExample)),

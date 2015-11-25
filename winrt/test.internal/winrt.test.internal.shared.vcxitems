@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="Globals">
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
@@ -28,10 +28,13 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DDrawInfo.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DEffectContext.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DEllipseGeometry.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DImageSource.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DImageSourceFromWic.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DInk.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DInkStyle.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DRectangleGeometry.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DRoundedRectangleGeometry.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DTransformedImageSource.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DTransformGraph.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockPrintControl.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockPrintDocumentPackageTarget.h" />
@@ -41,6 +44,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockSuspendingEventArgs.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockVirtualSurfaceImageSource.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockVirtualSurfaceImageSourceFactory.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockWICBitmapSource.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)pch.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubInkAdapter.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubCanvasVirtualImageSource.h" />
@@ -162,6 +166,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)xaml\ControlFixtures.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)xaml\RecreatableDeviceManagerTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasBitmapUnitTest.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasVirtualBitmapUnitTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasCachedGeometryUnitTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasCommandListUnitTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasDeviceUnitTests.cpp" />

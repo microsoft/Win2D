@@ -136,6 +136,12 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
             <entry>-</entry>
           </row>
           <row>
+            <entry><codeEntityReference>T:Microsoft.Graphics.Canvas.CanvasVirtualBitmap</codeEntityReference></entry>
+            <entry><codeInline>ID2D1ImageSource</codeInline> or <codeInline>ID2D1TransformedImageSource</codeInline></entry>
+            <entry>Device</entry>
+            <entry>-</entry>
+          </row>
+          <row>
             <entry><codeEntityReference>T:Microsoft.Graphics.Canvas.Geometry.CanvasCachedGeometry</codeEntityReference></entry>
             <entry><codeInline>ID2D1GeometryRealization</codeInline></entry>
             <entry>Device</entry>

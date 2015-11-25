@@ -158,6 +158,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)geometry\GeometrySink.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)geometry\TessellationSink.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)images\CanvasBitmap.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)images\CanvasVirtualBitmap.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)images\CanvasCommandList.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)images\CanvasImage.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)images\CanvasRenderTarget.h" />
@@ -281,6 +282,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)geometry\CanvasGeometry.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)geometry\CanvasPathBuilder.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)images\CanvasBitmap.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)images\CanvasVirtualBitmap.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)images\CanvasCommandList.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)images\CanvasImage.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)images\CanvasRenderTarget.cpp" />
@@ -379,6 +381,7 @@
     <None Include="$(MSBuildThisFileDirectory)images\CanvasBitmap.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)images\CanvasCommandList.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)images\CanvasImage.abi.idl" />
+    <None Include="$(MSBuildThisFileDirectory)images\CanvasVirtualBitmap.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)text\CanvasFontFace.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)text\CanvasFontSet.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)text\CanvasTextFormat.abi.idl" />

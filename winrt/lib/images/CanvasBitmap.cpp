@@ -135,6 +135,30 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ThrowIfFailed(encoder->Commit());
     }
 
+    static bool TryEnableIndexing(ComPtr<IWICBitmapFrameDecode> const& frameDecode)
+    {
+#if WINVER > _WIN32_WINNT_WINBLUE
+        auto jpegDecode = MaybeAs<IWICJpegFrameDecode>(frameDecode);
+
+        if (!jpegDecode)
+            return false;
+
+        BOOL supportsIndexing;
+        ThrowIfFailed(jpegDecode->DoesSupportIndexing(&supportsIndexing));
+
+        if (!supportsIndexing)
+            return false;
+
+        auto const indexingGranularity = 64U;
+        ThrowIfFailed(jpegDecode->SetIndexing(WICJpegIndexingOptionsGenerateOnLoad, indexingGranularity));
+
+        return true;
+#else
+        UNREFERENCED_PARAMETER(frameDecode);
+        return false;
+#endif
+    }
+
     static UINT GetOrientationFromFrameDecode(ComPtr<IWICBitmapFrameDecode> const& frameDecode)
     {
         ComPtr<IWICMetadataQueryReader> queryReader;
@@ -192,46 +216,20 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         }
     }
 
-    static ComPtr<IWICBitmapSource> CreateFlipRotator(
-        IWICImagingFactory* wicImagingFactory,
-        IWICBitmapSource* bitmapSource,
-        WICBitmapTransformOptions transformOptions)
+    template<typename T>
+    static ComPtr<IWICBitmapSource> CreateWicBitmapSourceWithExifTransform(T fileNameOrStream)
     {
-        ComPtr<IWICBitmap> bitmap;
-        if (transformOptions != WICBitmapTransformRotate0)
-        {
+        auto adapter = CanvasBitmapAdapter::GetInstance();
 
-            ComPtr<IWICBitmapFlipRotator> bitmapFlipRotator;
-            ThrowIfFailed(wicImagingFactory->CreateBitmapFlipRotator(&bitmapFlipRotator));
-            ThrowIfFailed(bitmapFlipRotator->Initialize(bitmapSource, transformOptions));
+        auto source = adapter->CreateWicBitmapSource(fileNameOrStream);
 
-            // WICBitmapCacheOnLoad is required so that the entire destination buffer is provided to the 
-            // flip/rotator.  Requesting the entire desination in one CopyPixels call enables optimizations.    
-            ThrowIfFailed(wicImagingFactory->CreateBitmapFromSource(bitmapFlipRotator.Get(), WICBitmapCacheOnLoad, &bitmap));
-        }
-        else
-        {
-            // No rotation needed, just cache the source.
-            // Note that because this is passed directly into D2D CreateBitmapFromWicBitmap,
-            // this doesn't introduce any additional memory costs. 
-            // Otherwise, if at some point this changes, we should remove this step.
-            //
-            ThrowIfFailed(wicImagingFactory->CreateBitmapFromSource(bitmapSource, WICBitmapCacheOnLoad, &bitmap));
-        }
+        if (source.Transform == WICBitmapTransformRotate0)
+            return source.Source;
 
-        return bitmap;
+        return adapter->CreateFlipRotator(source.Source, source.Transform);        
     }
 
-    static ComPtr<IWICBitmapSource> ApplyRotationIfNeeded(IWICImagingFactory* wicFactory, ComPtr<IWICBitmapFrameDecode> const& wicBitmapFrameSource, ComPtr<IWICFormatConverter>& postFormatConversion)
-    {
-        const UINT orientation = GetOrientationFromFrameDecode(wicBitmapFrameSource);
-
-        const WICBitmapTransformOptions transformOptions = GetTransformOptionsFromPhotoOrientation(orientation);
-
-        return CreateFlipRotator(wicFactory, postFormatConversion.Get(), transformOptions);
-    }
-
-
+    
     //
     // DefaultBitmapAdapter
     //
@@ -315,7 +313,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             bitmapLock);
     }
 
-    ComPtr<IWICBitmapSource> DefaultBitmapAdapter::CreateWICFormatConverter(HSTRING fileName)
+    WicBitmapSource DefaultBitmapAdapter::CreateWicBitmapSource(HSTRING fileName, bool tryEnableIndexing)
     {
         ComPtr<IWICStream> stream;
         ThrowIfFailed(m_wicFactory->CreateStream(&stream));
@@ -323,13 +321,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         WinString fileNameString(fileName);
         ThrowIfFailed(stream->InitializeFromFilename(static_cast<const wchar_t*>(fileNameString), GENERIC_READ));
 
-        return CreateWICFormatConverter(stream.Get());
+        return CreateWicBitmapSource(stream.Get(), tryEnableIndexing);
     }
 
-    ComPtr<IWICBitmapSource> DefaultBitmapAdapter::CreateWICFormatConverter(IStream* fileStream)
+    WicBitmapSource DefaultBitmapAdapter::CreateWicBitmapSource(IStream* fileStream, bool tryEnableIndexing)
     {
-        ComPtr<IWICFormatConverter> wicFormatConverter;
-
         ComPtr<IWICBitmapDecoder> wicBitmapDecoder;
         ThrowIfFailed(m_wicFactory->CreateDecoderFromStream(
             fileStream,
@@ -337,20 +333,45 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             WICDecodeMetadataCacheOnDemand,
             &wicBitmapDecoder));
 
-        ComPtr<IWICBitmapFrameDecode> wicBitmapFrameSource;
-        ThrowIfFailed(wicBitmapDecoder->GetFrame(0, &wicBitmapFrameSource));
+        ComPtr<IWICBitmapFrameDecode> wicBitmapFrameDecode;
+        ThrowIfFailed(wicBitmapDecoder->GetFrame(0, &wicBitmapFrameDecode));
 
+        bool isIndexed = tryEnableIndexing ? TryEnableIndexing(wicBitmapFrameDecode) : false;
+
+        auto orientation = GetOrientationFromFrameDecode(wicBitmapFrameDecode);
+        auto transformOptions = GetTransformOptionsFromPhotoOrientation(orientation);
+
+        ComPtr<IWICFormatConverter> wicFormatConverter;
         ThrowIfFailed(m_wicFactory->CreateFormatConverter(&wicFormatConverter));
 
         ThrowIfFailed(wicFormatConverter->Initialize(
-            wicBitmapFrameSource.Get(),
+            wicBitmapFrameDecode.Get(),
             GUID_WICPixelFormat32bppPBGRA,
             WICBitmapDitherTypeNone,
             NULL,
             0,
             WICBitmapPaletteTypeMedianCut));
 
-        return ApplyRotationIfNeeded(m_wicFactory.Get(), wicBitmapFrameSource, wicFormatConverter);
+        return WicBitmapSource{ wicFormatConverter, transformOptions, isIndexed };
+    }
+
+    ComPtr<IWICBitmapSource> DefaultBitmapAdapter::CreateFlipRotator(
+        ComPtr<IWICBitmapSource> const& source,
+        WICBitmapTransformOptions transformOptions)
+    {
+        ComPtr<IWICBitmapFlipRotator> bitmapFlipRotator;
+
+        ThrowIfFailed(m_wicFactory->CreateBitmapFlipRotator(&bitmapFlipRotator));
+        ThrowIfFailed(bitmapFlipRotator->Initialize(source.Get(), transformOptions));
+        
+        // WICBitmapCacheOnLoad is required so that the entire destination buffer is provided to the 
+        // flip/rotator.  Requesting the entire destination in one CopyPixels call enables optimizations.
+        //
+        // TODO 6056: Profile & determine if we should cache before or after the flip rotator (or not at all).
+        ComPtr<IWICBitmap> bitmap;
+        ThrowIfFailed(m_wicFactory->CreateBitmapFromSource(bitmapFlipRotator.Get(), WICBitmapCacheOnLoad, &bitmap));
+
+        return bitmap;        
     }
 
 
@@ -363,7 +384,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ComPtr<ICanvasDeviceInternal> canvasDeviceInternal;
         ThrowIfFailed(canvasDevice->QueryInterface(canvasDeviceInternal.GetAddressOf()));
 
-        auto wicBitmapSource = CanvasBitmapAdapter::GetInstance()->CreateWICFormatConverter(fileName);
+        auto wicBitmapSource = CreateWicBitmapSourceWithExifTransform(fileName);
 
         auto d2dBitmap = canvasDeviceInternal->CreateBitmapFromWicResource(wicBitmapSource.Get(), dpi, alpha);
 
@@ -385,7 +406,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ComPtr<ICanvasDeviceInternal> canvasDeviceInternal;
         ThrowIfFailed(canvasDevice->QueryInterface(canvasDeviceInternal.GetAddressOf()));
 
-        auto wicBitmapSource = CanvasBitmapAdapter::GetInstance()->CreateWICFormatConverter(fileStream);
+        auto wicBitmapSource = CreateWicBitmapSourceWithExifTransform(fileStream);
 
         auto d2dBitmap = canvasDeviceInternal->CreateBitmapFromWicResource(wicBitmapSource.Get(), dpi, alpha);
 

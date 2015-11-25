@@ -21,16 +21,27 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     using ABI::Windows::Graphics::Imaging::ISoftwareBitmap;
 #endif
 
-    class DefaultBitmapAdapter;
 
+    struct WicBitmapSource
+    {
+        ComPtr<IWICBitmapSource> Source;
+        WICBitmapTransformOptions Transform;
+        bool Indexed;
+    };
+
+    class DefaultBitmapAdapter;
 
     class CanvasBitmapAdapter : public Singleton<CanvasBitmapAdapter, DefaultBitmapAdapter>
     {
     public:
         virtual ~CanvasBitmapAdapter() = default;
 
-        virtual ComPtr<IWICBitmapSource> CreateWICFormatConverter(HSTRING fileName) = 0;
-        virtual ComPtr<IWICBitmapSource> CreateWICFormatConverter(IStream* fileStream) = 0;
+        virtual WicBitmapSource CreateWicBitmapSource(HSTRING fileName, bool tryEnableIndexing = false) = 0;
+        virtual WicBitmapSource CreateWicBitmapSource(IStream* fileStream, bool tryEnableIndexing = false) = 0;
+
+        virtual ComPtr<IWICBitmapSource> CreateFlipRotator(
+            ComPtr<IWICBitmapSource> const& source,
+            WICBitmapTransformOptions transformOptions) = 0;
 
         virtual void SaveLockedMemoryToFile(
             HSTRING fileName,
@@ -61,8 +72,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     public:
         DefaultBitmapAdapter();
 
-        virtual ComPtr<IWICBitmapSource> CreateWICFormatConverter(HSTRING fileName) override;
-        virtual ComPtr<IWICBitmapSource> CreateWICFormatConverter(IStream* fileStream) override;
+        virtual WicBitmapSource CreateWicBitmapSource(HSTRING fileName, bool tryEnableIndexing) override;
+        virtual WicBitmapSource CreateWicBitmapSource(IStream* fileStream, bool tryEnableIndexing) override;
+
+        virtual ComPtr<IWICBitmapSource> CreateFlipRotator(
+            ComPtr<IWICBitmapSource> const& source,
+            WICBitmapTransformOptions transformOptions) override;
 
         virtual void SaveLockedMemoryToStream(
             IRandomAccessStream* randomAccessStream,

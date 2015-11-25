@@ -164,7 +164,7 @@ TEST_CLASS(CanvasBitmapUnitTest)
         Fixture f;
 
         bool isConverterCreated = false;
-        f.m_adapter->MockCreateWICFormatConverter =
+        f.m_adapter->MockCreateWicBitmapSource =
             [&]
             {
                 Assert::AreEqual(isConverterCreated, false);
@@ -195,7 +195,7 @@ TEST_CLASS(CanvasBitmapUnitTest)
         ABI::Windows::Foundation::Rect bounds;
 
         bool isConverterCreated = false;
-        f.m_adapter->MockCreateWICFormatConverter =
+        f.m_adapter->MockCreateWicBitmapSource =
             [&]
             {
                 Assert::AreEqual(isConverterCreated, false);

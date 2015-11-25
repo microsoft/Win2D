@@ -46,6 +46,9 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasBitmapUnitTest.cpp">
       <Filter>graphics</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasVirtualBitmapUnitTests.cpp">
+      <Filter>graphics</Filter>
+    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasCachedGeometryUnitTests.cpp">
       <Filter>graphics</Filter>
     </ClCompile>
@@ -400,9 +403,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\Helpers.h">
       <Filter>utils</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)utils\TextHelpers.h">
-      <Filter>utils</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DGeometrySink.h">
       <Filter>mocks</Filter>
     </ClInclude>
@@ -520,10 +520,25 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DInkStyle.h">
       <Filter>mocks</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)utils\TextHelpers.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDWriteStringList.h">
+      <Filter>mocks</Filter>
+    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDWriteTextRenderer.h">
       <Filter>mocks</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDWriteStringList.h">
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DImageSource.h">
+      <Filter>mocks</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DImageSourceFromWic.h">
+      <Filter>mocks</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DTransformedImageSource.h">
+      <Filter>mocks</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockWICBitmapSource.h">
       <Filter>mocks</Filter>
     </ClInclude>
   </ItemGroup>

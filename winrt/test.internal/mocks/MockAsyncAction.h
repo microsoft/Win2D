@@ -19,6 +19,8 @@ class MockAsyncAction : public RuntimeClass<MockAsyncBase, IAsyncAction>
 {
     bool m_fireCompletionOnCancel;;
 
+    InspectableClass(InterfaceName_Windows_Foundation_IAsyncAction, BaseTrust);
+
 public:
     MockAsyncAction()
         : m_fireCompletionOnCancel(false)

@@ -398,7 +398,7 @@ namespace Microsoft
                 ThrowIfFailed(StringCchPrintf(
                     buf,
                     _countof(buf),
-                    L"D2D1_POINT_2U{X=%f,Y=%f}",
+                    L"D2D1_POINT_2U{X=%u,Y=%u}",
                     value.x, value.y));
 
                 return buf;
@@ -411,7 +411,7 @@ namespace Microsoft
                 ThrowIfFailed(StringCchPrintf(
                     buf,
                     _countof(buf),
-                    L"D2D1_RECT_U{l=%f,t=%f,r=%f,b=%f}",
+                    L"D2D1_RECT_U{l=%u,t=%u,r=%u,b=%u}",
                     value.left, value.top, value.right, value.bottom));
 
                 return buf;

@@ -1,0 +1,280 @@
+<?xml version="1.0"?>
+<!--
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+Licensed under the MIT License. See LICENSE.txt in the project root for license information.
+-->
+
+<doc>
+  <assembly>
+    <name>Microsoft.Graphics.Canvas</name>
+  </assembly>
+  <members>
+    <member name="T:Microsoft.Graphics.Canvas.CanvasVirtualBitmap" Win10="true" Experimental="true">
+      <summary>Loads a bitmap that may be larger than the maximum size of a CanvasBitmap.</summary>
+      <remarks>
+        <p>
+          CanvasVirtualBitmap can be used to load and draw images that are
+          larger than the maximum size of bitmaps supported on this device.
+          <see
+          cref="P:Microsoft.Graphics.Canvas.CanvasDevice.MaximumBitmapSizeInPixels">CanvasDevice.MaximumBitmapSizeInPixels</see>
+          can be used to determine this size.  Generally, you can assume that
+          this value is at least 4096.  Any attempt to load a CanvasBitmap
+          larger than the maximum bitmap size will fail.  CanvasVirtualBitmap
+          allows you to reliably load any sized image.
+        </p>
+        <p>
+          CanvasVirtualBitmaps are always treated as 96 DPI.  This means that
+          the size in pixels and the size in DIPs have the same numerical
+          values.
+        </p>
+        <p>
+          CanvasVirtualBitmaps can operate in two major modes, controlled by the
+          <see cref="T:Microsoft.Graphics.Canvas.CanvasVirtualBitmapOptions"/>
+          value passed to <see
+          cref="O:Microsoft.Graphics.Canvas.CanvasVirtualBitmap.LoadAsync">LoadAsync</see>. The
+          default, CanvasVirtualBitmapOptions.None, loads the entire image in
+          one go, making it immediately available for drawing.
+        </p>
+        <p>
+          The other mode, CanvasVirtualBitmapOptions.CacheOnDemand, attempts to
+          cache (load) only the parts of the image that are required.  Drawing a
+          part of the image that hasn't previously been cached can trigger IO.
+          The <see
+          cref="O:Microsoft.Graphics.Canvas.CanvasVirtualBitmap.EnsureCachedAsync">EnsureCachedAsync</see>
+          and <see
+          cref="O:Microsoft.Graphics.Canvas.CanvasVirtualBitmap.TrimCache">TrimCache</see>
+          methods can be used to control which regions of the image are cached.
+        </p>
+        <p>
+          Not all images support CacheOnDemand (currently only certain jpeg
+          images support this).  The <see
+          cref="P:Microsoft.Graphics.Canvas.CanvasVirtualBitmap.IsCachedOnDemand"/>
+          property can be used to determine if the image loaded is actually
+          using cache on demand.
+        </p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasVirtualBitmap.EnsureCachedAsync">
+      <summary>Ensures that the entire image is loaded.</summary>
+      <remarks>
+        <p>
+          Note that in XAML apps this can block the UI thread if the same device
+          is being used for a CanvasImageSource, CanvasVirtualImageSource,
+          CanvasControl or CanvasVirtualControl.
+        </p>
+        <p>
+          This method will fail if the image was not loaded with <see
+          cref="F:Microsoft.Graphics.Canvas.CanvasVirtualBitmapOptions.CacheOnDemand"/>
+          specified.  If CacheOnDemand was specified, but the image doesn't
+          support cache on demand, then this method is a no-op.
+        </p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasVirtualBitmap.EnsureCachedAsync(Windows.Foundation.Rect)">
+      <summary>Ensures that a region of the image is loaded.</summary>
+      <remarks>
+        <p>
+          Note that in XAML apps this can block the UI thread if the same device
+          is being used for a CanvasImageSource, CanvasVirtualImageSource,
+          CanvasControl or CanvasVirtualControl.
+        </p>
+        <p>
+          This method will fail if the image was not loaded with <see
+          cref="F:Microsoft.Graphics.Canvas.CanvasVirtualBitmapOptions.CacheOnDemand"/>
+          specified.  If CacheOnDemand was specified, but the image doesn't
+          support cache on demand, then this method is a no-op.
+        </p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasVirtualBitmap.TrimCache">
+      <summary>Unloads the entire image from memory.</summary>
+      <remarks>
+        <p>
+          This method will fail if the image was not loaded with <see
+          cref="F:Microsoft.Graphics.Canvas.CanvasVirtualBitmapOptions.CacheOnDemand"/>
+          specified.  If CacheOnDemand was specified, but the image doesn't
+          support cache on demand, then this method is a no-op.
+        </p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasVirtualBitmap.TrimCache(Windows.Foundation.Rect)">
+      <summary>Unloads the entire image from memory, apart from the specified region.</summary>
+      <remarks>
+        <p>
+          This method will fail if the image was not loaded with <see
+          cref="F:Microsoft.Graphics.Canvas.CanvasVirtualBitmapOptions.CacheOnDemand"/>
+          specified.  If CacheOnDemand was specified, but the image doesn't
+          support cache on demand, then this method is a no-op.
+        </p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasVirtualBitmap.Dispose">
+      <summary>Releases all resources used by the CanvasVirtualBitmap.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasVirtualBitmap.GetBounds(Microsoft.Graphics.Canvas.CanvasDrawingSession)">
+      <summary>Retrieves the bounds of this CanvasImage, in device-independent units.</summary>
+      <remarks>
+        <inheritdoc/>
+        <p>
+          <b>Note:</b> CanvasVirtualBitmap also has the <see
+          cref="P:Microsoft.Graphics.Canvas.CanvasVirtualBitmap.Bounds"/> and <see
+          cref="P:Microsoft.Graphics.Canvas.CanvasVirtualBitmap.Size"/> properties that
+          can be used to directly query the bounds or size without the need for
+          a CanvasDrawingSession.
+        </p>
+      </remarks>
+      <seealso cref="P:Microsoft.Graphics.Canvas.CanvasVirtualBitmap.Bounds"/>
+      <seealso cref="P:Microsoft.Graphics.Canvas.CanvasVirtualBitmap.Size"/>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasVirtualBitmap.GetBounds(Microsoft.Graphics.Canvas.CanvasDrawingSession,System.Numerics.Matrix3x2)">
+      <summary>Retrieves the bounds of this CanvasImage, in device-independent units.</summary>
+      <remarks>
+        <inheritdoc/>
+        <p>
+          <b>Note:</b> CanvasVirtualBitmap also has the <see
+          cref="P:Microsoft.Graphics.Canvas.CanvasVirtualBitmap.Bounds"/> and <see
+          cref="P:Microsoft.Graphics.Canvas.CanvasVirtualBitmap.Size"/> properties that
+          can be used to directly query the bounds or size without the need for
+          a CanvasDrawingSession.
+        </p>
+      </remarks>
+      <seealso cref="P:Microsoft.Graphics.Canvas.CanvasVirtualBitmap.Bounds"/>
+      <seealso cref="P:Microsoft.Graphics.Canvas.CanvasVirtualBitmap.Size"/>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasVirtualBitmap.LoadAsync(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.String)">
+      <summary>Loads a virtual bitmap from an image file.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasVirtualBitmap.LoadAsync(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.String,Microsoft.Graphics.Canvas.CanvasVirtualBitmapOptions)">
+      <summary>Loads a virtual bitmap from an image file.</summary>
+      <remarks>
+        <p>
+          The default options is <see cref="F:Microsoft.Graphics.Canvas.CanvasVirtualBitmapOptions.None"/>.
+        </p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasVirtualBitmap.LoadAsync(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.String,Microsoft.Graphics.Canvas.CanvasVirtualBitmapOptions,Microsoft.Graphics.Canvas.CanvasAlphaMode)">
+      <summary>Loads a virtual bitmap from an image file.</summary>
+      <remarks>
+        <p>
+          The default options is <see cref="F:Microsoft.Graphics.Canvas.CanvasVirtualBitmapOptions.None"/>.
+        </p>
+        <p>
+          The default alpha value is <see cref="F:Microsoft.Graphics.Canvas.CanvasAlphaMode.Premultiplied"/>.
+        </p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasVirtualBitmap.LoadAsync(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Uri)">
+      <summary>Loads a virtual bitmap from a URI.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasVirtualBitmap.LoadAsync(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Uri,Microsoft.Graphics.Canvas.CanvasVirtualBitmapOptions)">
+      <summary>Loads a virtual bitmap from a URI.</summary>
+      <remarks>
+        <p>
+          The default options is <see cref="F:Microsoft.Graphics.Canvas.CanvasVirtualBitmapOptions.None"/>.
+        </p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasVirtualBitmap.LoadAsync(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Uri,Microsoft.Graphics.Canvas.CanvasVirtualBitmapOptions,Microsoft.Graphics.Canvas.CanvasAlphaMode)">
+      <summary>Loads a virtual bitmap from a URI.</summary>
+      <remarks>
+        <p>
+          The default options is <see cref="F:Microsoft.Graphics.Canvas.CanvasVirtualBitmapOptions.None"/>.
+        </p>
+        <p>
+          The default alpha value is <see cref="F:Microsoft.Graphics.Canvas.CanvasAlphaMode.Premultiplied"/>.
+        </p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasVirtualBitmap.LoadAsync(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.Storage.Streams.IRandomAccessStream)">
+      <summary>Loads a virtual bitmap from a stream.</summary>
+      <remarks>
+        <p>
+          The CanvasVirtualBitmap will retain a reference to the stream.
+        </p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasVirtualBitmap.LoadAsync(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.Storage.Streams.IRandomAccessStream,Microsoft.Graphics.Canvas.CanvasVirtualBitmapOptions)">
+      <summary>Loads a virtual bitmap from a stream.</summary>
+      <remarks>
+        <p>
+          The default options is <see cref="F:Microsoft.Graphics.Canvas.CanvasVirtualBitmapOptions.None"/>.
+        </p>
+        <p>
+          Unless <see
+          cref="F:Microsoft.Graphics.Canvas.CanvasVirtualBitmapOptions.ReleaseSource"/>
+          is specified, the CanvasVirtualBitmap will retain a reference to the
+          stream.
+        </p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasVirtualBitmap.LoadAsync(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.Storage.Streams.IRandomAccessStream,Microsoft.Graphics.Canvas.CanvasVirtualBitmapOptions,Microsoft.Graphics.Canvas.CanvasAlphaMode)">
+      <summary>Loads a virtual bitmap from a stream.</summary>
+      <remarks>
+        <p>
+          The default options is <see cref="F:Microsoft.Graphics.Canvas.CanvasVirtualBitmapOptions.None"/>.
+        </p>
+        <p>
+          The default alpha value is <see cref="F:Microsoft.Graphics.Canvas.CanvasAlphaMode.Premultiplied"/>.
+        </p>
+        <p>
+          Unless <see
+          cref="F:Microsoft.Graphics.Canvas.CanvasVirtualBitmapOptions.ReleaseSource"/>
+          is specified, the CanvasVirtualBitmap will retain a reference to the
+          stream.
+        </p>
+      </remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.CanvasVirtualBitmap.Bounds">
+      <summary>Gets the bounds of the virtual bitmap in device independent pixels (DIPs).</summary>
+      <remarks>
+        <p>
+          This property is a convenience shortcut for when you need the bitmap size in Rect format.
+          The value of myBitmap.Bounds is Rect(Point(0, 0), myBitmap.Size).
+        </p>
+        <p>
+          For more information, see <a href="DPI.htm">DPI and DIPs</a>.
+        </p>
+      </remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.CanvasVirtualBitmap.IsCachedOnDemand">
+      <summary>Gets whether or not the current virtual bitmap is cached on demand.</summary>
+      <remarks>
+        <p>
+          If the loading options was set to anything other than <see
+          cref="F:Microsoft.Graphics.Canvas.CanvasVirtualBitmapOptions.CacheOnDemand"/>
+          then this will always return false.  Otherwise, this will return true
+          or false depending on whether not the specific image loaded supports
+          cache on demand.  See <see
+          cref="T:Microsoft.Graphics.Canvas.CanvasVirtualBitmap">CanvasVirtualBitmap
+          remarks</see> for more details.
+        </p>
+      </remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.CanvasVirtualBitmap.Size">
+      <summary>Gets the size of the bitmap, in device independent pixels (DIPs).</summary>
+      <remarks>For more information, see <a href="DPI.htm">DPI and DIPs</a>.</remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.CanvasVirtualBitmap.SizeInPixels">
+      <summary>Gets the size of the bitmap, in pixels.</summary>
+      <remarks>For more information, see <a href="DPI.htm">DPI and DIPs</a>.</remarks>
+    </member>
+    <member name="T:Microsoft.Graphics.Canvas.CanvasVirtualBitmapOptions" Win10="true" Experimental="true">
+      <summary>Options passed to CanvasVirtualBitmap.LoadAsync.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasVirtualBitmapOptions.None">
+      <summary>The default - the entire image is loaded from disk and the bitmap
+      retains a reference to the stream.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasVirtualBitmapOptions.ReleaseSource">
+      <summary>The CanvasVirtualBitmap will release the stream after loading.
+      Setting this disables some quality and speed optimizations when this
+      bitmap is used for printing.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.CanvasVirtualBitmapOptions.CacheOnDemand">
+      <summary>CanvasVirtualBitmap will attempt to load the image in cache on
+      demand mode, only loading the parts of the image that are required for
+      drawing.</summary>
+    </member>
+  </members>
+</doc>

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="effects">
@@ -238,6 +238,9 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)images\CanvasRenderTarget.cpp">
       <Filter>images</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)images\CanvasVirtualBitmap.cpp">
+      <Filter>images</Filter>
+    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)images\TextureUtilities.cpp">
       <Filter>images</Filter>
     </ClCompile>
@@ -263,9 +266,6 @@
       <Filter>text</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)text\DrawGlyphRunHelper.cpp">
-      <Filter>text</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)text\TextUtilities.cpp">
       <Filter>text</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)utils\Strings.cpp">
@@ -383,6 +383,9 @@
       <Filter>effects\shader</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)text\InternalDWriteTextRenderer.cpp">
+      <Filter>text</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)text\TextUtilities.cpp">
       <Filter>text</Filter>
     </ClCompile>
   </ItemGroup>
@@ -599,6 +602,9 @@
       <Filter>images</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)images\CanvasRenderTarget.h">
+      <Filter>images</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)images\CanvasVirtualBitmap.h">
       <Filter>images</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)images\TextureUtilities.h">
@@ -1004,6 +1010,9 @@
       <Filter>images</Filter>
     </None>
     <None Include="$(MSBuildThisFileDirectory)images\CanvasImage.abi.idl">
+      <Filter>images</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)images\CanvasVirtualBitmap.abi.idl">
       <Filter>images</Filter>
     </None>
     <None Include="$(MSBuildThisFileDirectory)text\CanvasFontFace.abi.idl">
