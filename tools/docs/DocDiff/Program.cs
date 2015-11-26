@@ -45,8 +45,8 @@ namespace DocDiff
             Console.WriteLine("Diffing documentation sources to make sure they match the latest API");
 
             // Load the XML doc files.
-            var docSrc = LoadApiMembers(options.DocSrc);
-            var apiRef = LoadApiMembers(options.ApiRef);
+            var docSrc = LoadApiMembers(options.DocSrc, options.DocSrcPath);
+            var apiRef = LoadApiMembers(options.ApiRef, string.Empty);
 
             // Diff them.
             var docsWithSummaries = from doc in docSrc
@@ -149,10 +149,10 @@ namespace DocDiff
 
 
         // Loads API information from XML documentation files.
-        static IEnumerable<ApiMember> LoadApiMembers(IEnumerable<string> filenames)
+        static IEnumerable<ApiMember> LoadApiMembers(IEnumerable<string> filenames, string path)
         {
             var members = from filename in filenames
-                          from member in LoadXDocument(filename).Element("doc").Element("members").Elements()
+                          from member in LoadXDocument(Path.Combine(path, filename)).Element("doc").Element("members").Elements()
                           select new ApiMember(member, filename);
 
             return members.ToList();

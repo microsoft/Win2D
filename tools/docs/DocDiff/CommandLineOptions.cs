@@ -14,5 +14,6 @@ namespace DocDiff
         public readonly List<string> AmlSrc = new List<string>();
 
         public string LogMissingDocs;
+        public string DocSrcPath;
     }
 }
