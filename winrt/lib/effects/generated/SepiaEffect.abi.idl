@@ -12,7 +12,7 @@ namespace Microsoft.Graphics.Canvas.Effects
 
     [version(VERSION), uuid(F933471F-A7AF-5521-BE79-B0DA22976CFF), exclusiveto(SepiaEffect)]
     interface ISepiaEffect : IInspectable
-        requires Microsoft.Graphics.Canvas.ICanvasImage
+        requires ICanvasEffect
     {
         [propget]
         HRESULT Intensity([out, retval] float* value);
@@ -38,7 +38,6 @@ namespace Microsoft.Graphics.Canvas.Effects
     runtimeclass SepiaEffect
     {
         [default] interface ISepiaEffect;
-        interface IGRAPHICSEFFECT;
     }
 }
 

@@ -10,7 +10,11 @@ namespace Microsoft.Graphics.Canvas
     interface ICanvasDrawingSession : IInspectable
         requires Windows.Foundation.IClosable, ICanvasResourceCreatorWithDpi
     {
+        [overload("Clear")]
         HRESULT Clear([in] Windows.UI.Color color);
+
+        [overload("Clear"), default_overload]
+        HRESULT ClearHdr([in] NUMERICS.Vector4 color);
 
         //
         // Calls ID2D1RenderTarget::Flush() on wrapped device context.
@@ -1351,6 +1355,12 @@ namespace Microsoft.Graphics.Canvas
 
         [propget] HRESULT Units([out, retval] CanvasUnits* value);
         [propput] HRESULT Units([in] CanvasUnits value);
+
+        [propget] HRESULT EffectBufferPrecision([out, retval] Windows.Foundation.IReference<CanvasBufferPrecision>** value);
+        [propput] HRESULT EffectBufferPrecision([in] Windows.Foundation.IReference<CanvasBufferPrecision>* value);
+
+        [propget] HRESULT EffectTileSize([out, retval] BitmapSize* value);
+        [propput] HRESULT EffectTileSize([in] BitmapSize value);
 
         //
         // CreateLayer

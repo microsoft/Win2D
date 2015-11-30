@@ -11,6 +11,8 @@
 #include "text/CanvasFontFace.h"
 #include "utils/TemporaryTransform.h"
 #include "text/TextUtilities.h"
+#include "text/InternalDWriteTextRenderer.h"
+#include "text/DrawGlyphRunHelper.h"
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
@@ -56,7 +58,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     // ID2D1DeviceContext.  In this wrapper, interop, case we don't want
     // CanvasDrawingSession to call any additional methods in the device context.
     //
-    class NoopCanvasDrawingSessionAdapter : public DrawingSessionBaseAdapter,
+    class NoopCanvasDrawingSessionAdapter : public ICanvasDrawingSessionAdapter,
                                             private LifespanTracker<NoopCanvasDrawingSessionAdapter>
     {
     public:
@@ -94,7 +96,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
 
 #if WINVER > _WIN32_WINNT_WINBLUE
-    ComPtr<IInkD2DRenderer> DrawingSessionBaseAdapter::CreateInkRenderer()
+    ComPtr<IInkD2DRenderer> DefaultInkAdapter::CreateInkRenderer()
     {
         ComPtr<IInkD2DRenderer> inkRenderer;
 
@@ -107,7 +109,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
 
-    bool DrawingSessionBaseAdapter::IsHighContrastEnabled()
+    bool DefaultInkAdapter::IsHighContrastEnabled()
     {
         if (!m_accessibilitySettings)
         {
@@ -177,10 +179,18 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ExceptionBoundary(
             [&]
             {
-                auto& deviceContext = GetResource();
+                GetResource()->Clear(ToD2DColor(color));
+            });
+    }
 
-                auto d2dColor = ToD2DColor(color);
-                deviceContext->Clear(&d2dColor);
+
+    IFACEMETHODIMP CanvasDrawingSession::ClearHdr(
+        Vector4 color)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                GetResource()->Clear(ToD2DColor(color));
             });
     }
 
@@ -3254,10 +3264,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ExceptionBoundary(
             [&]
             {
-                if (!m_adapter)
-                    ThrowHR(RO_E_CLOSED);
-
-                DrawInkImpl(inkStrokeCollection, m_adapter->IsHighContrastEnabled());
+                DrawInkImpl(inkStrokeCollection, InkAdapter::GetInstance()->IsHighContrastEnabled());
             });
     }
 
@@ -3284,7 +3291,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         if (!m_inkD2DRenderer)
         {
-            m_inkD2DRenderer = m_adapter->CreateInkRenderer();
+            m_inkD2DRenderer = InkAdapter::GetInstance()->CreateInkRenderer();
         }
 
         m_inkD2DRenderer->Draw(
@@ -3594,6 +3601,89 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             });
     }
 
+    IFACEMETHODIMP CanvasDrawingSession::get_EffectBufferPrecision(IReference<CanvasBufferPrecision>** value)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                auto& deviceContext = GetResource();
+                CheckAndClearOutPointer(value);
+
+                D2D1_RENDERING_CONTROLS renderingControls;
+                deviceContext->GetRenderingControls(&renderingControls);
+
+                // If the value is not unknown, box it as an IReference.
+                // Unknown precision returns null.
+                if (renderingControls.bufferPrecision != D2D1_BUFFER_PRECISION_UNKNOWN)
+                {
+                    auto nullable = Make<Nullable<CanvasBufferPrecision>>(FromD2DBufferPrecision(renderingControls.bufferPrecision));
+                    CheckMakeResult(nullable);
+
+                    ThrowIfFailed(nullable.CopyTo(value));
+                }
+            });
+    }
+
+    IFACEMETHODIMP CanvasDrawingSession::put_EffectBufferPrecision(IReference<CanvasBufferPrecision>* value)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                auto& deviceContext = GetResource();
+
+                D2D1_RENDERING_CONTROLS renderingControls;
+                deviceContext->GetRenderingControls(&renderingControls);
+
+                if (value)
+                {
+                    // Convert non-null values from Win2D to D2D format.
+                    CanvasBufferPrecision bufferPrecision;
+                    ThrowIfFailed(value->get_Value(&bufferPrecision));
+
+                    renderingControls.bufferPrecision = ToD2DBufferPrecision(bufferPrecision);
+                }
+                else
+                {
+                    // Null references -> unknown.
+                    renderingControls.bufferPrecision = D2D1_BUFFER_PRECISION_UNKNOWN;
+                }
+
+                deviceContext->SetRenderingControls(&renderingControls);
+            });
+    }
+
+    IFACEMETHODIMP CanvasDrawingSession::get_EffectTileSize(BitmapSize* value)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                auto& deviceContext = GetResource();
+                CheckInPointer(value);
+
+                D2D1_RENDERING_CONTROLS renderingControls;
+                deviceContext->GetRenderingControls(&renderingControls);
+
+                *value = BitmapSize{ renderingControls.tileSize.width, renderingControls.tileSize.height };
+            });
+    }
+
+    IFACEMETHODIMP CanvasDrawingSession::put_EffectTileSize(BitmapSize value)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                auto& deviceContext = GetResource();
+
+                D2D1_RENDERING_CONTROLS renderingControls;
+                deviceContext->GetRenderingControls(&renderingControls);
+
+                renderingControls.tileSize = D2D_SIZE_U{ value.Width, value.Height };
+
+                deviceContext->SetRenderingControls(&renderingControls);
+            });
+    }
+
+
     IFACEMETHODIMP CanvasDrawingSession::get_Device(ICanvasDevice** value)
     {
         using namespace ::Microsoft::WRL::Wrappers;
@@ -3818,61 +3908,30 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 CheckInPointer(fontFace);
                 CheckInPointer(glyphs);
 
-                DWRITE_GLYPH_RUN dwriteGlyphRun{};
-                dwriteGlyphRun.bidiLevel = bidiLevel;
-                dwriteGlyphRun.fontEmSize = fontSize;
-                dwriteGlyphRun.fontFace = As<ICanvasFontFaceInternal>(fontFace)->GetRealizedFontFace().Get();
+                DrawGlyphRunHelper helper(
+                    fontFace, 
+                    fontSize, 
+                    glyphCount, 
+                    glyphs, 
+                    isSideways, 
+                    bidiLevel, 
+                    brush, 
+                    textMeasuringMode, 
+                    localeName, 
+                    text, 
+                    clusterMapIndicesCount, 
+                    clusterMapIndices, 
+                    textPosition,
+                    deviceContext);
 
-                std::vector<float> glyphAdvances;
-                std::vector<unsigned short> glyphIndices;
-                std::vector<DWRITE_GLYPH_OFFSET> glyphOffsets;
-                glyphAdvances.reserve(glyphCount);
-                glyphIndices.reserve(glyphCount);
-                glyphOffsets.reserve(glyphCount);
-                for (uint32_t i = 0; i < glyphCount; ++i)
-                {
-                    glyphAdvances.push_back(glyphs[i].Advance);
-
-                    glyphIndices.push_back(CheckCastAsUShort(glyphs[i].Index));
-
-                    DWRITE_GLYPH_OFFSET offset;
-                    offset.advanceOffset = glyphs[i].AdvanceOffset;
-                    offset.ascenderOffset = glyphs[i].AscenderOffset;
-                    glyphOffsets.push_back(offset);
-                }
-                dwriteGlyphRun.glyphCount = glyphCount;
-                dwriteGlyphRun.glyphAdvances = glyphAdvances.data();
-                dwriteGlyphRun.glyphIndices = glyphIndices.data();
-                dwriteGlyphRun.glyphOffsets = glyphOffsets.data();
-                dwriteGlyphRun.isSideways = isSideways;
-
-                DWRITE_GLYPH_RUN_DESCRIPTION dwriteGlyphRunDescription{};
-
-                uint32_t textStringLength;
-                wchar_t const* textString = WindowsGetStringRawBuffer(text, &textStringLength);
-
-                std::vector<unsigned short> clusterMapElements;
-                clusterMapElements.reserve(textStringLength);
-
-                if (clusterMapIndices)
-                {
-                    for (uint32_t i = 0; i < clusterMapIndicesCount; ++i)
-                    {
-                        clusterMapElements.push_back(CheckCastAsUShort(clusterMapIndices[i]));
-                    }
-                }
-                dwriteGlyphRunDescription.clusterMap = clusterMapElements.data();
-                dwriteGlyphRunDescription.localeName = WindowsGetStringRawBuffer(localeName, nullptr);
-                dwriteGlyphRunDescription.string = textString;
-                dwriteGlyphRunDescription.stringLength = textStringLength;
-                dwriteGlyphRunDescription.textPosition = textPosition;
+                auto d2dBrush = MaybeAs<ID2D1Brush>(helper.ClientDrawingEffect);
 
                 deviceContext->DrawGlyphRun(
                     ToD2DPoint(point),
-                    &dwriteGlyphRun,
-                    &dwriteGlyphRunDescription,
-                    ToD2DBrush(brush).Get(),
-                    ToDWriteMeasuringMode(textMeasuringMode));
+                    &helper.DWriteGlyphRun,
+                    &helper.DWriteGlyphRunDescription,
+                    d2dBrush.Get(),
+                    helper.MeasuringMode);
             });
     }
 

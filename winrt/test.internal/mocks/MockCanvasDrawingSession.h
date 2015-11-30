@@ -40,6 +40,7 @@ namespace canvas
         }
 
         DONT_EXPECT(Clear , Color);
+        DONT_EXPECT(ClearHdr, Vector4);
         DONT_EXPECT(Flush);
 
         DONT_EXPECT(DrawImageAtOrigin                                                       , ICanvasImage*);
@@ -226,6 +227,10 @@ namespace canvas
         DONT_EXPECT(put_Transform               , ABI::Microsoft::Graphics::Canvas::Numerics::Matrix3x2);
         DONT_EXPECT(get_Units                   , CanvasUnits*);
         DONT_EXPECT(put_Units                   , CanvasUnits);
+        DONT_EXPECT(get_EffectBufferPrecision   , IReference<CanvasBufferPrecision>**);
+        DONT_EXPECT(put_EffectBufferPrecision   , IReference<CanvasBufferPrecision>*);
+        DONT_EXPECT(get_EffectTileSize          , BitmapSize*);
+        DONT_EXPECT(put_EffectTileSize          , BitmapSize);
 
         DONT_EXPECT(CreateLayerWithOpacity                                , float, ICanvasActiveLayer**);
         DONT_EXPECT(CreateLayerWithOpacityBrush                           , ICanvasBrush*, ICanvasActiveLayer**);

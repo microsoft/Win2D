@@ -7,6 +7,7 @@
 #include "CanvasFontFace.h"
 #include "TextUtilities.h"
 #include "effects/shader/PixelShaderEffect.h"
+#include "DrawGlyphRunHelper.h"
 
 using namespace ABI::Microsoft::Graphics::Canvas;
 using namespace ABI::Microsoft::Graphics::Canvas::Text;
@@ -129,7 +130,7 @@ ComPtr<DWriteFontReferenceType> GetContainer(IDWriteFontFace2* fontFaceInstance)
     ComPtr<IDWriteFontFaceReference> container;
     ThrowIfFailed(font3->GetFontFaceReference(&container));
 #else
-    auto container = font;
+    auto container = As<IDWriteFont2>(font);
 #endif
 
 	return container;
@@ -760,6 +761,91 @@ IFACEMETHODIMP CanvasFontFace::HasCharacter(UINT32 unicodeValue, boolean* value)
             ThrowIfFailed(GetPhysicalPropertyContainer()->HasCharacter(unicodeValue, &exists));
             *value = !!exists;
 #endif
+        });
+}
+
+IFACEMETHODIMP CanvasFontFace::GetGlyphRunBounds(
+    ICanvasDrawingSession* drawingSession,
+    Vector2 point,
+    float fontSize,
+    uint32_t glyphCount,
+    CanvasGlyph* glyphs,
+    boolean isSideways,
+    uint32_t bidiLevel,
+    Rect* bounds)
+{
+    return GetGlyphRunBoundsWithMeasuringMode(
+        drawingSession,
+        point,
+        fontSize,
+        glyphCount,
+        glyphs,
+        isSideways,
+        bidiLevel,
+        CanvasTextMeasuringMode::Natural,
+        bounds);
+}
+
+IFACEMETHODIMP CanvasFontFace::GetGlyphRunBoundsWithMeasuringMode(
+    ICanvasDrawingSession* drawingSession,
+    Vector2 point,
+    float fontSize,
+    uint32_t glyphCount,
+    CanvasGlyph* glyphs,
+    boolean isSideways,
+    uint32_t bidiLevel,
+    CanvasTextMeasuringMode measuringMode,
+    Rect* bounds)
+{
+    return ExceptionBoundary(
+        [&]
+        {
+            CheckInPointer(drawingSession);
+            CheckInPointer(glyphs);
+            CheckInPointer(bounds);
+
+            DrawGlyphRunHelper helper(
+                this,
+                fontSize,
+                glyphCount,
+                glyphs,
+                isSideways,
+                bidiLevel,
+                measuringMode);
+
+            auto d2dDeviceContext = GetWrappedResource<ID2D1DeviceContext>(drawingSession);
+
+            D2D1_RECT_F d2dBounds;
+            ThrowIfFailed(d2dDeviceContext->GetGlyphRunWorldBounds(
+                ToD2DPoint(point),
+                &helper.DWriteGlyphRun,
+                helper.MeasuringMode,
+                &d2dBounds));
+
+            *bounds = FromD2DRect(d2dBounds);
+        });
+}
+
+
+
+IFACEMETHODIMP CanvasFontFace::get_Panose(uint32_t* valueCount, uint8_t** values)
+{
+    return ExceptionBoundary(
+        [&]
+        {
+            CheckInPointer(valueCount);
+            CheckAndClearOutPointer(values);
+
+            DWRITE_PANOSE panose;
+            GetPhysicalPropertyContainer()->GetPanose(&panose);
+
+            ComArray<uint8_t> out(10);
+            for (int i = 0; i < 10; ++i)
+            {
+                out[i] = panose.values[i];
+            }
+
+            out.Detach(valueCount, values);
         });
 }
 

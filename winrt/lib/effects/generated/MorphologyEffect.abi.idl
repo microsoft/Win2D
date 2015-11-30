@@ -17,7 +17,7 @@ namespace Microsoft.Graphics.Canvas.Effects
 
     [version(VERSION), uuid(FF065FDB-62C8-5808-921E-49EFA43A3D34), exclusiveto(MorphologyEffect)]
     interface IMorphologyEffect : IInspectable
-        requires Microsoft.Graphics.Canvas.ICanvasImage
+        requires ICanvasEffect
     {
         [propget]
         HRESULT Mode([out, retval] MorphologyEffectMode* value);
@@ -49,6 +49,5 @@ namespace Microsoft.Graphics.Canvas.Effects
     runtimeclass MorphologyEffect
     {
         [default] interface IMorphologyEffect;
-        interface IGRAPHICSEFFECT;
     }
 }

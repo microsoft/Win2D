@@ -1,0 +1,506 @@
+<?xml version="1.0"?>
+<!--
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+Licensed under the MIT License. See LICENSE.txt in the project root for license information.
+-->
+
+<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  -->
+<!-- This file contains types defined in D2D1_3. This is maintained -->
+<!-- in a separate file to make it more clear what the new          -->
+<!-- interfaces are. The XML files are simply read sequentially -->
+<!-- to build the object model.                                     -->
+<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  -->
+<D2DTypes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="D2DTypes.xsd">
+
+    <Namespace Name="D2D1">
+
+        <Struct Name="INK_POINT" Comment="Represents a point, radius pair that makes up part of a D2D1_INK_BEZIER_SEGMENT.">
+            <Field Name="x" Type="FLOAT" />
+            <Field Name="y" Type="FLOAT" />
+            <Field Name="radius" Type="FLOAT" />
+        </Struct>
+
+        <Struct Name="INK_BEZIER_SEGMENT" Comment="Represents a Bezier segment to be used in the creation of an ID2D1Ink object. This structure differs from D2D1_BEZIER_SEGMENT in that it is composed of D2D1_INK_POINT s, which contain a radius in addition to x- and y-coordinates.">
+            <Field Name="point1" Type="D2D1::INK_POINT" />
+            <Field Name="point2" Type="D2D1::INK_POINT" />
+            <Field Name="point3" Type="D2D1::INK_POINT" />
+        </Struct>
+
+        <Enum Name="INK_NIB_SHAPE" Comment="Specifies the appearance of the ink nib (pen tip) as part of an D2D1_INK_STYLE_PROPERTIES structure.">
+            <Field Name="ROUND" Value="0" />
+            <Field Name="SQUARE" Value="1" />
+        </Enum>
+
+        <Struct Name="INK_STYLE_PROPERTIES" Comment="Defines the general pen tip shape and the transform used in an ID2D1InkStyle object.">
+            <Field Name="nibShape" Type="D2D1::INK_NIB_SHAPE" Comment="The general shape of the nib used to draw a given ink object." />
+            <Field Name="nibTransform" Type="D2D1::MATRIX_3X2_F" Comment="The transform applied to shape of the nib. _31 and _32 are ignored." />
+        </Struct>
+        
+        <Enum Name="PATCH_EDGE_MODE" Comment="Specifies how to render gradient mesh edges.">
+            <Field Name="ALIASED" Value="0" Comment="Render this edge aliased." />
+            <Field Name="ANTIALIASED" Value="1" Comment="Render this edge antialiased." />
+            <Field Name="ALIASED_INFLATED" Value="2" Comment="Render this edge aliased and inflated out slightly." />
+        </Enum>
+
+        <Enum Name="SPRITE_OPTIONS" IsFlags="true">
+            <Field Name="NONE" Value="0" Comment="Use default sprite rendering behavior." />
+            <Field Name="CLAMP_TO_SOURCE_RECTANGLE" Value="1" Comment="Bitmap interpolation will be clamped to the sprite's source rectangle." />
+        </Enum>
+
+        <Struct Name="GRADIENT_MESH_PATCH" Comment="Represents a tensor patch with 16 control points, 4 corner colors, and boundary flags. An ID2D1GradientMesh is made up of 1 or more gradient mesh patches. Use the GradientMeshPatch function or the GradientMeshPatchFromCoonsPatch function to create one.">
+            <Field Name="point00" Type="D2D1::POINT_2F" Comment="The gradient mesh patch control point at position 00." />
+            <Field Name="point01" Type="D2D1::POINT_2F" Comment="The gradient mesh patch control point at position 01." />
+            <Field Name="point02" Type="D2D1::POINT_2F" Comment="The gradient mesh patch control point at position 02." />
+            <Field Name="point03" Type="D2D1::POINT_2F" Comment="The gradient mesh patch control point at position 03." />
+            <Field Name="point10" Type="D2D1::POINT_2F" Comment="The gradient mesh patch control point at position 10." />
+            <Field Name="point11" Type="D2D1::POINT_2F" Comment="The gradient mesh patch control point at position 11." />
+            <Field Name="point12" Type="D2D1::POINT_2F" Comment="The gradient mesh patch control point at position 12." />
+            <Field Name="point13" Type="D2D1::POINT_2F" Comment="The gradient mesh patch control point at position 13." />
+            <Field Name="point20" Type="D2D1::POINT_2F" Comment="The gradient mesh patch control point at position 20." />
+            <Field Name="point21" Type="D2D1::POINT_2F" Comment="The gradient mesh patch control point at position 21." />
+            <Field Name="point22" Type="D2D1::POINT_2F" Comment="The gradient mesh patch control point at position 22." />
+            <Field Name="point23" Type="D2D1::POINT_2F" Comment="The gradient mesh patch control point at position 23." />
+            <Field Name="point30" Type="D2D1::POINT_2F" Comment="The gradient mesh patch control point at position 30." />
+            <Field Name="point31" Type="D2D1::POINT_2F" Comment="The gradient mesh patch control point at position 31." />
+            <Field Name="point32" Type="D2D1::POINT_2F" Comment="The gradient mesh patch control point at position 32." />
+            <Field Name="point33" Type="D2D1::POINT_2F" Comment="The gradient mesh patch control point at position 33." />
+            <Field Name="color00" Type="D2D1::COLOR_F" Comment="The color associated with control point at position 00." />
+            <Field Name="color03" Type="D2D1::COLOR_F" Comment="The color associated with control point at position 03." />
+            <Field Name="color30" Type="D2D1::COLOR_F" Comment="The color associated with control point at position 30." />
+            <Field Name="color33" Type="D2D1::COLOR_F" Comment="The color associated with control point at position 33." />
+            <Field Name="topEdgeMode" Type="D2D1::PATCH_EDGE_MODE" Comment="The edge mode for the top edge of the patch." />
+            <Field Name="leftEdgeMode" Type="D2D1::PATCH_EDGE_MODE" Comment="The edge mode for the left edge of the patch." />
+            <Field Name="bottomEdgeMode" Type="D2D1::PATCH_EDGE_MODE" Comment="The edge mode for the bottom edge of the patch." />
+            <Field Name="rightEdgeMode" Type="D2D1::PATCH_EDGE_MODE" Comment="The edge mode for the right edge of the patch." />
+        </Struct>
+
+        <Enum Name="ORIENTATION" Comment="Specifies the orientation of an image.">
+            <Field Name="DEFAULT" Value="1" />
+            <Field Name="FLIP_HORIZONTAL" Value="2" />
+            <Field Name="ROTATE_CLOCKWISE180" Value="3" />
+            <Field Name="ROTATE_CLOCKWISE180_FLIP_HORIZONTAL" Value="4" />
+            <Field Name="ROTATE_CLOCKWISE90_FLIP_HORIZONTAL" Value="5" />
+            <Field Name="ROTATE_CLOCKWISE270" Value="6" />
+            <Field Name="ROTATE_CLOCKWISE270_FLIP_HORIZONTAL" Value="7" />
+            <Field Name="ROTATE_CLOCKWISE90" Value="8" />
+        </Enum>
+
+        <Enum Name="IMAGE_SOURCE_LOADING_OPTIONS" IsFlags="true" Comment="Option flags controlling how images sources are loaded during CreateImageSourceFromWic.">
+          <Field Name="NONE" Value="0" />
+          <Field Name="RELEASE_SOURCE" Value="1" />
+          <Field Name="CACHE_ON_DEMAND" Value="2" />
+        </Enum>
+        
+        <Enum Name="IMAGE_SOURCE_FROM_DXGI_OPTIONS" IsFlags="true" Comment="Option flags controlling primary conversion performed by CreateImageSourceFromDxgi, if any.">
+          <Field Name="NONE" Value="0" />
+          <Field Name="LOW_QUALITY_PRIMARY_CONVERSION" Value="1" />
+        </Enum>
+
+        <Enum Name="TRANSFORMED_IMAGE_SOURCE_OPTIONS" IsFlags="true" Comment="Option flags for transformed image sources.">
+          <Field Name="NONE" Value="0" />
+          <Field Name="DISABLE_DPI_SCALE" Value="1" Comment="Prevents the image source from being automatically scaled (by a ratio of the context DPI divided by 96) while drawn." />
+        </Enum>
+        
+        <Struct Name="TRANSFORMED_IMAGE_SOURCE_PROPERTIES" Comment="Properties of a transformed image source.">
+          <Field Name="orientation" Type="D2D1::ORIENTATION" Comment="The orientation at which the image source is drawn." />
+          <Field Name="scaleX" Type="FLOAT" Comment="The horizontal scale factor at which the image source is drawn." />
+          <Field Name="scaleY" Type="FLOAT" Comment="The vertical scale factor at which the image source is drawn." />
+          <Field Name="interpolationMode" Type="D2D1::INTERPOLATION_MODE" Comment="The interpolation mode used when the image source is drawn.  This is ignored if the image source is drawn using the DrawImage method, or using an image brush." />          
+          <Field Name="options" Type="D2D1::TRANSFORMED_IMAGE_SOURCE_OPTIONS" Comment="Option flags." />
+        </Struct>
+
+        <Interface Name="IImageSource" Extends="D2D1::IImage" IID="c9b664e5-74a1-4378-9ac2-eefc37a3f4d8" Comment="Represents a producer of pixels that can fill an arbitrary 2D plane.">
+            <Method Name="OfferResources" />
+            <Method Name="TryReclaimResources">    
+                <Parameter Name="resourcesDiscarded" Type="BOOL" Form="out pointer" />           
+            </Method>
+        </Interface>
+        
+        <Interface Name="IImageSourceFromWic" Extends="D2D1::IImageSource" IID="77395441-1c8f-4555-8683-f50dab0fe792" Comment="Produces 2D pixel data that has been sourced from WIC.">
+            <Method Name="EnsureCached">
+                <Parameter Name="rectangleToFill" Type="D2D1::RECT_U" Form="pointer opt" />
+            </Method>          
+            <Method Name="EnsureCached" OverloadId="1">
+                <Parameter Name="rectangleToFill" Type="D2D1::RECT_U" Form="reference" />
+            </Method>
+            <Method Name="TrimCache">
+                <Parameter Name="rectangleToPreserve" Type="D2D1::RECT_U" Form="pointer opt" />
+            </Method>         
+            <Method Name="TrimCache" OverloadId="1">
+                <Parameter Name="rectangleToPreserve" Type="D2D1::RECT_U" Form="reference" />
+            </Method>    
+            <Method Name="GetSource" Return="void" IsConst="true">
+                <Parameter Name="wicBitmapSource" Type="IWICBitmapSource" Form="deref out opt pointer" />      
+            </Method>
+        </Interface>
+        
+        <Interface Name="ITransformedImageSource" Extends="D2D1::IImage" IID="7f1f79e5-2796-416c-8f55-700f911445e5" Comment="Represents an image source which shares resources with an original image source.">
+            <Method Name="GetSource" Return="void" IsConst="true">
+                <Parameter Name="imageSource" Type="D2D1::IImageSource" Form="deref out opt pointer" /> 
+           </Method>
+            <Method Name="GetProperties" Return="void" IsConst="true">
+                <Parameter Name="properties" Type="D2D1::TRANSFORMED_IMAGE_SOURCE_PROPERTIES" Form="out pointer" /> 
+           </Method>
+        </Interface>
+        
+        <Interface Name="IInkStyle" Extends="D2D1::IResource" IID="bae8b344-23fc-4071-8cb5-d05d6f073848" Comment="Represents a collection of style properties to be used by methods like ID2D1DeviceContext2::DrawInk when rendering ink. The ink style defines the nib (pen tip) shape and transform.">
+            <Method Name="SetNibTransform" Return="void">
+                <Parameter Name="transform" Type="D2D1::MATRIX_3X2_F" Form="pointer" />
+            </Method>
+
+            <Method Name="SetNibTransform" OverloadId="1" Return="void">
+                <Parameter Name="transform" Type="D2D1::MATRIX_3X2_F" Form="reference" />
+            </Method>
+
+            <Method Name="GetNibTransform" Return="void" IsConst="true">
+                <Parameter Name="transform" Type="D2D1::MATRIX_3X2_F" Form="out pointer" />
+            </Method>
+
+            <Method Name="SetNibShape" Return="void">
+                <Parameter Name="nibShape" Type="D2D1::INK_NIB_SHAPE" />
+            </Method>
+
+            <Method Name="GetNibShape" Return="D2D1::INK_NIB_SHAPE" IsConst="true">
+            </Method>
+        </Interface>
+
+        <Interface Name="IInk" Extends="D2D1::IResource" IID="b499923b-7029-478f-a8b3-432c7c5f5312" Comment="Represents a single continuous stroke of variable-width ink, as defined by a series of Bezier segments and widths.">
+            <Method Name="SetStartPoint" Return="void" Comment="Resets the ink start point.">
+                <Parameter Name="startPoint" Type="D2D1::INK_POINT" Form="pointer" />
+            </Method>
+
+            <Method Name="SetStartPoint" OverloadId="1" Return="void" Comment="Resets the ink start point.">
+                <Parameter Name="startPoint" Type="D2D1::INK_POINT" Form="reference" />
+            </Method>
+
+            <Method Name="GetStartPoint" Return="D2D1::INK_POINT" IsConst="true" Comment="Retrieve the start point with which the ink was initialized.">
+            </Method>
+
+            <Method Name="AddSegments" Comment="Add one or more segments to the end of the ink.">
+                <Parameter Name="segments" Type="D2D1::INK_BEZIER_SEGMENT" Form="pointer" IsArray="true" />
+            </Method>
+
+            <Method Name="RemoveSegmentsAtEnd" Comment="Remove one or more segments from the end of the ink.">
+                <Parameter Name="segmentsCount" Type="UINT32" />
+            </Method>
+
+            <Method Name="SetSegments" Comment="Updates the specified segments with new control points.">
+                <Parameter Name="startSegment" Type="UINT32" />
+                <Parameter Name="segments" Type="D2D1::INK_BEZIER_SEGMENT" Form="pointer" IsArray="true" />
+            </Method>
+
+            <Method Name="SetSegmentAtEnd" Comment="Update the last segment with new control points.">
+                <Parameter Name="segment" Type="D2D1::INK_BEZIER_SEGMENT" Form="pointer" />
+            </Method>
+
+            <Method Name="SetSegmentAtEnd" OverloadId="1">
+                <Parameter Name="segment" Type="D2D1::INK_BEZIER_SEGMENT" Form="reference" />
+            </Method>
+
+            <Method Name="GetSegmentCount" Return="UINT32" IsConst="true" Comment="Returns the number of segments the ink is composed of.">
+            </Method>
+
+            <Method Name="GetSegments" IsConst="true" Comment="Retrieve the segments stored in the ink.">
+                <Parameter Name="startSegment" Type="UINT32" />
+                <Parameter Name="segments" Type="D2D1::INK_BEZIER_SEGMENT" Form="out pointer" IsArray="true" IsRetval="true" />
+            </Method>
+
+            <Method Name="StreamAsGeometry" IsConst="true" Comment="Construct a geometric representation of the ink.">
+                <Parameter Name="inkStyle" Type="D2D1::IInkStyle" Form="pointer opt" />
+                <Parameter Name="worldTransform" Type="D2D1::MATRIX_3X2_F" Form="pointer opt" />
+                <Parameter Name="flatteningTolerance" Type="FLOAT" />
+                <Parameter Name="geometrySink" Type="D2D1::ISimplifiedGeometrySink" Form="pointer" />
+            </Method>
+
+            <Method Name="StreamAsGeometry" IsConst="true" OverloadId="1" Comment="Construct a geometric representation of the ink.">
+                <Parameter Name="inkStyle" Type="D2D1::IInkStyle" Form="pointer opt" />
+                <Parameter Name="worldTransform" Type="D2D1::MATRIX_3X2_F" Form="reference" />
+                <Parameter Name="flatteningTolerance" Type="FLOAT" />
+                <Parameter Name="geometrySink" Type="D2D1::ISimplifiedGeometrySink" Form="pointer" />
+            </Method>
+
+            <Method Name="StreamAsGeometry" IsConst="true" OverloadId="2" Comment="Construct a geometric representation of the ink.">
+                <Parameter Name="inkStyle" Type="D2D1::IInkStyle" Form="pointer opt" />
+                <Parameter Name="worldTransform" Type="D2D1::MATRIX_3X2_F" Form="pointer opt" />
+                <Parameter Name="geometrySink" Type="D2D1::ISimplifiedGeometrySink" Form="pointer" />
+            </Method>
+
+            <Method Name="StreamAsGeometry" IsConst="true" OverloadId="3" Comment="Construct a geometric representation of the ink.">
+                <Parameter Name="inkStyle" Type="D2D1::IInkStyle" Form="pointer opt" />
+                <Parameter Name="worldTransform" Type="D2D1::MATRIX_3X2_F" Form="reference" />
+                <Parameter Name="geometrySink" Type="D2D1::ISimplifiedGeometrySink" Form="pointer" />
+            </Method>
+
+            <Method Name="GetBounds" IsConst="true" Comment="Retrieve the bounds of the ink, with an optional applied transform.">
+                <Parameter Name="inkStyle" Type="D2D1::IInkStyle" Form="pointer opt" />
+                <Parameter Name="worldTransform" Type="D2D1::MATRIX_3X2_F" Form="pointer opt" />
+                <Parameter Name="bounds" Type="D2D1::RECT_F" Form="out pointer" />
+            </Method>
+            <Method Name="GetBounds" IsConst="true" OverloadId="1" Comment="Retrieve the bounds of the ink, with an optional applied transform.">
+                <Parameter Name="inkStyle" Type="D2D1::IInkStyle" Form="pointer opt" />
+                <Parameter Name="worldTransform" Type="D2D1::MATRIX_3X2_F" Form="reference" />
+                <Parameter Name="bounds" Type="D2D1::RECT_F" Form="out pointer" />
+            </Method>
+        </Interface>
+
+        <Interface Name="IGradientMesh" Extends="D2D1::IResource" IID="f292e401-c050-4cde-83d7-04962d3b23c2" Comment="Represents a device-dependent representation of a gradient mesh composed of patches. Use the ID2D1DeviceContext2::CreateGradientMesh method to create an instance of ID2D1GradientMesh.">
+            <Method Name="GetPatchCount" Return="UINT32" IsConst="true" Comment="Returns the number of patches of the gradient mesh.">
+            </Method>
+            <Method Name="GetPatches" IsConst="true" Comment="Retrieve the patch data stored in the gradient mesh.">
+                <Parameter Name="startIndex" Type="UINT32" />
+                <Parameter Name="patches" Type="D2D1::GRADIENT_MESH_PATCH" Form="out pointer" IsArray="true" IsRetval="true" />
+            </Method>
+        </Interface>
+
+        <Interface Name="ILookupTable3D" Extends="D2D1::IResource" Comment="A container for 3D lookup table data that can be passed to the LookupTable3D effect." IID="53dd9855-a3b0-4d5b-82e1-26e25c5e5797">
+        </Interface>
+
+        <Interface Name="IFactory3" Extends="D2D1::IFactory2" IID="0869759f-4f00-413f-b03e-2bda45404d0f" ShouldTestQI="true" QIFromBase="true" Comment="Creates Direct2D resources. This interface also enables the creation of ID2D1Device2 objects.">
+
+            <Method Name="CreateDevice" Comment="This creates a new Direct2D device from the given IDXGIDevice.">
+                <Parameter Name="dxgiDevice" Type="IDXGIDevice" Form="pointer" />
+                <Parameter Name="d2dDevice2" Type="D2D1::IDevice2" Form="deref out pointer" IsRetval="true" />
+            </Method>
+        </Interface>
+        
+        <Interface Name="IDevice2" Extends="D2D1::IDevice1" IID="a44472e1-8dfb-4e60-8492-6e2861c9ca8b" ShouldTestQI="true" QIFromBase="true" Comment="Represents a resource domain whose objects and device contexts can be used together. This interface performs all the same functions as the existing ID2D1Device1 interface. It also enables the creation of ID2D1DeviceContext2 objects.">
+            <Method Name="CreateDeviceContext" Comment="Creates a new device context with no initially assigned target.">
+                <Parameter Name="options" Type="D2D1::DEVICE_CONTEXT_OPTIONS" Form="value" />
+                <Parameter Name="deviceContext2" Type="D2D1::IDeviceContext2" Form="deref out pointer" IsRetval="true" />
+            </Method>
+
+            <Method Name="FlushDeviceContexts" Return="void" Comment="Flush all device contexts that reference a given bitmap.">
+                <Parameter Name="bitmap" Type="D2D1::IBitmap" Form="pointer" />
+            </Method>
+
+            <Method Name="GetDxgiDevice" Comment="Returns the DXGI device associated with this D2D device.">
+                <Parameter Name="dxgiDevice" Type="IDXGIDevice" Form="deref out pointer" IsRetval="true" />
+            </Method>
+        </Interface>
+        
+        <Interface Name="IDeviceContext2" Extends="D2D1::IDeviceContext1" IID="394ea6a3-0c34-4321-950b-6ca20f0be6c7" QIFromBase="true" Comment="This interface performs all the same functions as the ID2D1DeviceContext1 interface, plus it enables functionality such as ink rendering, gradient mesh rendering, and improved image loading.">
+
+            <Method Name="CreateInk">
+                <Parameter Name="startPoint" Type="D2D1::INK_POINT" Form="pointer" />
+                <Parameter Name="ink" Type="D2D1::IInk" Form="deref out pointer" />
+            </Method>
+            <Method Name="CreateInk" OverloadId="1">
+                <Parameter Name="startPoint" Type="D2D1::INK_POINT" Form="reference" />
+                <Parameter Name="ink" Type="D2D1::IInk" Form="deref out pointer" />
+            </Method>
+            <Method Name="CreateInkStyle" Comment="Creates a new ink style.">
+                <Parameter Name="inkStyleProperties" Type="D2D1::INK_STYLE_PROPERTIES" Form="pointer opt" />
+                <Parameter Name="inkStyle" Type="D2D1::IInkStyle" Form="deref out pointer" />
+            </Method>
+            <Method Name="CreateInkStyle" Comment="Creates a new ink style." OverloadId="1">
+                <Parameter Name="inkStyleProperties" Type="D2D1::INK_STYLE_PROPERTIES" Form="reference" />
+                <Parameter Name="inkStyle" Type="D2D1::IInkStyle" Form="deref out pointer" />
+            </Method>
+
+            <Method Name="CreateGradientMesh">
+                <Parameter Name="patches" Type="D2D1::GRADIENT_MESH_PATCH" Form="pointer" IsArray="true" />
+                <Parameter Name="gradientMesh" Type="D2D1::IGradientMesh" Form="deref out pointer" />
+            </Method>
+
+            <Method Name="CreateImageSourceFromWic">
+                <Parameter Name="wicBitmapSource" Type="IWICBitmapSource" Form="pointer" />
+                <Parameter Name="loadingOptions" Type="D2D1::IMAGE_SOURCE_LOADING_OPTIONS" />
+                <Parameter Name="alphaMode" Type="D2D1::ALPHA_MODE" />                
+                <Parameter Name="imageSource" Type="D2D1::IImageSourceFromWic" Form="deref out pointer" />
+            </Method>
+            
+            <Method Name="CreateImageSourceFromWic" OverloadId="1">
+                <Parameter Name="wicBitmapSource" Type="IWICBitmapSource" Form="pointer" />
+                <Parameter Name="loadingOptions" Type="D2D1::IMAGE_SOURCE_LOADING_OPTIONS" />
+                <Parameter Name="imageSource" Type="D2D1::IImageSourceFromWic" Form="deref out pointer" />
+            </Method>   
+            
+            <Method Name="CreateImageSourceFromWic" OverloadId="2">
+                <Parameter Name="wicBitmapSource" Type="IWICBitmapSource" Form="pointer" />
+                <Parameter Name="imageSource" Type="D2D1::IImageSourceFromWic" Form="deref out pointer" />
+            </Method>   
+
+            <Method Name="CreateLookupTable3D" Comment="Creates a 3D lookup table for mapping a 3-channel input to a 3-channel output. The table data must be provided in 4-channel format.">
+                <Parameter Name="precision" Type="D2D1::BUFFER_PRECISION" />
+                <Parameter Name="extents" Type="UINT32" Form="pointer ecount" ECount="3" />
+                <Parameter Name="data" IsArray="true" Type="BYTE" Form="pointer" />
+                <Parameter Name="strides" Type="UINT32" Form="pointer ecount" ECount="2" />
+                <Parameter Name="lookupTable" Type="D2D1::ILookupTable3D" Form="deref out pointer" />
+            </Method>
+            
+            <Method Name="CreateImageSourceFromDxgi">
+                <Parameter Name="surfaces" Type="IDXGISurface" Form="pointer pointer" IsArray="true" LengthParameter="surfaceCount" />
+                <Parameter Name="colorSpace" Type="DXGI_COLOR_SPACE_TYPE" />
+                <Parameter Name="options" Type="D2D1::IMAGE_SOURCE_FROM_DXGI_OPTIONS" />
+                <Parameter Name="imageSource" Type="D2D1::IImageSource" Form="deref out pointer" />
+            </Method>
+
+            <Method Name="GetGradientMeshWorldBounds" IsConst="true" Comment="Retrieves the world-space bounds in DIPs of the gradient mesh using the device context DPI.">
+                <Parameter Name="gradientMesh" Type="D2D1::IGradientMesh" Form="pointer" />
+                <Parameter Name="pBounds" Type="D2D1::RECT_F" Form="out pointer" IsRetval="true" />
+            </Method>
+            
+            <Method Name="DrawInk" Return="void">
+                <Parameter Name="ink" Type="D2D1::IInk" Form="pointer" />
+                <Parameter Name="brush" Type="D2D1::IBrush" Form="pointer" />
+                <Parameter Name="inkStyle" Type="D2D1::IInkStyle" Form="pointer opt" />
+            </Method>
+
+            <Method Name="DrawGradientMesh" Return="void">
+                <Parameter Name="gradientMesh" Type="D2D1::IGradientMesh" Form="pointer" />
+            </Method>
+
+            <Method Name="DrawGdiMetafile" Return="void" Comment="Draw a metafile to the device context.">
+                <Parameter Name="gdiMetafile" Type="D2D1::IGdiMetafile" Form="pointer" />
+                <Parameter Name="destinationRectangle" Type="D2D1::RECT_F" Form="pointer opt" />
+                <Parameter Name="sourceRectangle" Type="D2D1::RECT_F" Form="pointer opt" Default="NULL" />
+            </Method>
+
+            <Method Name="CreateTransformedImageSource" Comment="Creates an image source which shares resources with an original.">
+                <Parameter Name="imageSource" Type="D2D1::IImageSource" Form="pointer" />
+                <Parameter Name="properties" Type="D2D1::TRANSFORMED_IMAGE_SOURCE_PROPERTIES" Form="pointer" />
+                <Parameter Name="transformedImageSource" Type="D2D1::ITransformedImageSource" Form="deref out pointer" />
+            </Method>
+            
+            <Method Name="DrawGdiMetafile" Return="void" Comment="Draw a metafile to the device context." OverloadId="1">
+                <Parameter Name="gdiMetafile" Type="D2D1::IGdiMetafile" Form="pointer" />
+                <Parameter Name="destinationRectangle" Type="D2D1::RECT_F" Form="reference" />
+                <Parameter Name="sourceRectangle" Type="D2D1::RECT_F" Form="reference" />
+            </Method>
+
+            <Method Name="DrawGdiMetafile" Return="void" Comment="Draw a metafile to the device context." OverloadId="2">
+                <Parameter Name="gdiMetafile" Type="D2D1::IGdiMetafile" Form="pointer" />
+                <Parameter Name="destinationRectangle" Type="D2D1::RECT_F" Form="reference" />
+                <Parameter Name="sourceRectangle" Type="D2D1::RECT_F" Form="pointer" Default="NULL" />
+            </Method>
+        </Interface>
+
+        <Interface Name="ICommandSink2" Extends="D2D1::ICommandSink1" IID="3bab440e-417e-47df-a2e2-bc0be6a00916" WrapOutgoing="true" ShouldTestQI="false" Revised="false" HasD2DImplementation="false" Comment="This interface performs all the same functions as the existing ID2D1CommandSink1 interface. It also enables access to ink rendering and gradient mesh rendering.">
+
+            <Method Name="DrawInk">
+                <Parameter Name="ink" Type="D2D1::IInk" Form="pointer" />
+                <Parameter Name="brush" Type="D2D1::IBrush" Form="pointer" />
+                <Parameter Name="inkStyle" Type="D2D1::IInkStyle" Form="pointer opt" />
+            </Method>
+            
+            <Method Name="DrawGradientMesh">
+                <Parameter Name="gradientMesh" Type="D2D1::IGradientMesh" Form="pointer" />
+            </Method>
+
+            <Method Name="DrawGdiMetafile">
+                <Parameter Name="gdiMetafile" Type="D2D1::IGdiMetafile" Form="pointer" />
+                <Parameter Name="destinationRectangle" Type="D2D1::RECT_F" Form="pointer opt" />
+                <Parameter Name="sourceRectangle" Type="D2D1::RECT_F" Form="pointer opt" />
+            </Method>
+        </Interface>
+      
+        <Interface Name="IGdiMetafile1" Extends="D2D1::IGdiMetafile" WrapOutgoing="true" Comment="Interface encapsulating a GDI/GDI+ metafile." IID="2e69f9e8-dd3f-4bf9-95ba-c04f49d788df">
+            <Method Name="GetDpi" Comment="Returns the DPI reported by the metafile.">
+                <Parameter Name="dpiX" Type="FLOAT" Form="out pointer" />
+                <Parameter Name="dpiY" Type="FLOAT" Form="out pointer" />
+            </Method>
+            <Method Name="GetSourceBounds" Comment="Gets the bounds (in DIPs) of the metafile (as specified by the frame rect declared in the metafile).">
+                <Parameter Name="bounds" Type="D2D1::RECT_F" Form="out pointer" IsRetval="true" />
+            </Method>
+        </Interface>
+
+        <Interface Name="IGdiMetafileSink1" Extends="D2D1::IGdiMetafileSink" WrapOutgoing="true" ShouldTestQI="false" HasD2DImplementation="false" Comment="User-implementable interface for introspecting on a metafile." IID="fd0ecb6b-91e6-411e-8655-395e760f91b4">
+            <Method Name="ProcessRecord" Comment="Callback for examining a metafile record.">
+                <Parameter Name="recordType" Type="DWORD" />
+                <Parameter Name="recordData" Type="void" Form="pointer opt" ECount="recordDataSize" />
+                <Parameter Name="recordDataSize" Type="DWORD" />
+                <Parameter Name="flags" Type="UINT32" />
+            </Method>
+        </Interface>
+        
+        <Interface Name="ISpriteBatch" Extends="D2D1::IResource" IID="4dc583bf-3a10-438a-8722-e9765224f1f1">
+            <!-- TODO_SPRITEBATCH: possibly change the name of colors to colorWeights. -->
+
+            <Method Name="AddSprites" Comment="Adds sprites to the end of the sprite batch.">
+                <Parameter Name="spriteCount" Type="UINT32" />
+                <Parameter Name="destinationRectangles" Type="D2D1::RECT_F" Form="pointer bcount" ECount="sizeof(D2D1_RECT_F) + (spriteCount - 1) * destinationRectanglesStride" />
+                <Parameter Name="sourceRectangles" Type="D2D1::RECT_U" Form="pointer bcount opt" ECount="sizeof(D2D1_RECT_U) + (spriteCount - 1) * sourceRectanglesStride" Default="NULL" />
+                <Parameter Name="colors" Type="D2D1::COLOR_F" Form="pointer bcount opt" ECount="sizeof(D2D1_COLOR_F) + (spriteCount - 1) * colorsStride" Default="NULL" />
+                <Parameter Name="transforms" Type="D2D1::MATRIX_3X2_F" Form="pointer bcount opt" ECount="sizeof(D2D1_MATRIX_3X2_F) + (spriteCount - 1) * transformsStride" Default="NULL" />
+                <Parameter Name="destinationRectanglesStride" Type="UINT32" Default="sizeof(D2D1_RECT_F)" />
+                <Parameter Name="sourceRectanglesStride" Type="UINT32" Default="sizeof(D2D1_RECT_U)" />
+                <Parameter Name="colorsStride" Type="UINT32" Default="sizeof(D2D1_COLOR_F)" />
+                <Parameter Name="transformsStride" Type="UINT32" Default="sizeof(D2D1_MATRIX_3X2_F)" />
+            </Method>
+
+            <Method Name="SetSprites" Comment="Set properties for existing sprites. All properties not specified are unmodified.">
+                <Parameter Name="startIndex" Type="UINT32" />
+                <Parameter Name="spriteCount" Type="UINT32" />
+                <Parameter Name="destinationRectangles" Type="D2D1::RECT_F" Form="pointer bcount opt" ECount="sizeof(D2D1_RECT_F) + (spriteCount - 1) * destinationRectanglesStride" Default="NULL" />
+                <Parameter Name="sourceRectangles" Type="D2D1::RECT_U" Form="pointer bcount opt" ECount="sizeof(D2D1_RECT_U) + (spriteCount - 1) * sourceRectanglesStride" Default="NULL" />
+                <Parameter Name="colors" Type="D2D1::COLOR_F" Form="pointer bcount opt" ECount="sizeof(D2D1_COLOR_F) + (spriteCount - 1) * colorsStride" Default="NULL" />
+                <Parameter Name="transforms" Type="D2D1::MATRIX_3X2_F" Form="pointer bcount opt" ECount="sizeof(D2D1_MATRIX_3X2_F) + (spriteCount - 1) * transformsStride" Default="NULL" />
+                <Parameter Name="destinationRectanglesStride" Type="UINT32" Default="sizeof(D2D1_RECT_F)" />
+                <Parameter Name="sourceRectanglesStride" Type="UINT32" Default="sizeof(D2D1_RECT_U)" />
+                <Parameter Name="colorsStride" Type="UINT32" Default="sizeof(D2D1_COLOR_F)" />
+                <Parameter Name="transformsStride" Type="UINT32" Default="sizeof(D2D1_MATRIX_3X2_F)" />
+            </Method>
+
+            <Method Name="GetSprites" IsConst="true" Comment="Retrieves sprite properties.">
+                <Parameter Name="startIndex" Type="UINT32" />
+                <Parameter Name="spriteCount" Type="UINT32" />
+                <Parameter Name="destinationRectangles" Type="D2D1::RECT_F" Form="out ecount pointer opt" ECount="spriteCount" Default="NULL" />
+                <Parameter Name="sourceRectangles" Type="D2D1::RECT_U" Form="out ecount pointer opt" ECount="spriteCount" Default="NULL" />
+                <Parameter Name="colors" Type="D2D1::COLOR_F" Form="out ecount pointer opt" ECount="spriteCount" Default="NULL" />
+                <Parameter Name="transforms" Type="D2D1::MATRIX_3X2_F" Form="out ecount pointer opt" ECount="spriteCount" Default="NULL" />
+            </Method>
+
+            <Method Name="GetSpriteCount" Return="UINT32" IsConst="true" Comment="Retrieves the number of sprites in the sprite batch." />
+
+            <Method Name="Clear" Return="void" Comment="Removes all sprites from the sprite batch." />
+        </Interface>
+
+        <Interface Name="IFactory4" Extends="D2D1::IFactory3" IID="bd4ec2d2-0662-4bee-ba8e-6f29f032e096" ShouldTestQI="true" QIFromBase="true">
+            <Method Name="CreateDevice" Comment="This creates a new Direct2D device from the given IDXGIDevice.">
+                <Parameter Name="dxgiDevice" Type="IDXGIDevice" Form="pointer" />
+                <Parameter Name="d2dDevice3" Type="D2D1::IDevice3" Form="deref out pointer" IsRetval="true" />
+            </Method>
+        </Interface>
+
+        <Interface Name="IDevice3" Extends="D2D1::IDevice2" IID="852f2087-802c-4037-ab60-ff2e7ee6fc01" ShouldTestQI="true" QIFromBase="true">
+            <Method Name="CreateDeviceContext" Comment="Creates a new device context with no initially assigned target.">
+                <Parameter Name="options" Type="D2D1::DEVICE_CONTEXT_OPTIONS" Form="value" />
+                <Parameter Name="deviceContext3" Type="D2D1::IDeviceContext3" Form="deref out pointer" IsRetval="true" />
+            </Method>
+        </Interface>
+
+        <Interface Name="IDeviceContext3" Extends="D2D1::IDeviceContext2" IID="235a7496-8351-414c-bcd4-6672ab2d8e00" QIFromBase="true">
+            <Method Name="CreateSpriteBatch" Comment="Creates a new sprite batch.">
+                <Parameter Name="spriteBatch" Type="D2D1::ISpriteBatch" Form="deref out pointer" />
+            </Method>
+            <Method Name="DrawSpriteBatch" Return="void" Comment="Draws sprites in a sprite batch.">
+                <Parameter Name="spriteBatch" Type="D2D1::ISpriteBatch" Form="pointer" />
+                <Parameter Name="startIndex" Type="UINT32" />
+                <Parameter Name="spriteCount" Type="UINT32" />
+                <Parameter Name="bitmap" Type="D2D1::IBitmap" Form="pointer" />
+                <Parameter Name="interpolationMode" Type="D2D1::BITMAP_INTERPOLATION_MODE" Default="D2D1_BITMAP_INTERPOLATION_MODE_LINEAR" />
+                <Parameter Name="spriteOptions" Type="D2D1::SPRITE_OPTIONS" Default="D2D1_SPRITE_OPTIONS_NONE" />
+            </Method>
+            <Method Name="DrawSpriteBatch" Return="void" OverloadId="1" Comment="Draws all sprites in a sprite batch.">
+                <Parameter Name="spriteBatch" Type="D2D1::ISpriteBatch" Form="pointer" />
+                <Parameter Name="bitmap" Type="D2D1::IBitmap" Form="pointer" />
+                <Parameter Name="interpolationMode" Type="D2D1::BITMAP_INTERPOLATION_MODE" Default="D2D1_BITMAP_INTERPOLATION_MODE_LINEAR" />
+                <Parameter Name="spriteOptions" Type="D2D1::SPRITE_OPTIONS" Default="D2D1_SPRITE_OPTIONS_NONE" />
+            </Method>
+        </Interface>
+
+        <Interface Name="ICommandSink3" Extends="D2D1::ICommandSink2" IID="18079135-4cf3-4868-bc8e-06067e6d242d" WrapOutgoing="true" ShouldTestQI="false" Revised="false" HasD2DImplementation="false">
+            <Method Name="DrawSpriteBatch">
+                <Parameter Name="spriteBatch" Type="D2D1::ISpriteBatch" Form="pointer" />
+                <Parameter Name="startIndex" Type="UINT32" />
+                <Parameter Name="spriteCount" Type="UINT32" />
+                <Parameter Name="bitmap" Type="D2D1::IBitmap" Form="pointer" />
+                <Parameter Name="interpolationMode" Type="D2D1::BITMAP_INTERPOLATION_MODE" />
+                <Parameter Name="spriteOptions" Type="D2D1::SPRITE_OPTIONS" />
+            </Method>
+        </Interface>
+
+    </Namespace>
+
+</D2DTypes>

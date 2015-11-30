@@ -10,7 +10,7 @@ namespace Microsoft.Graphics.Canvas.Effects
 
     [version(VERSION), uuid(7522AE90-BEC2-512C-BCC0-4D6A97E3ED34), exclusiveto(ScaleEffect)]
     interface IScaleEffect : IInspectable
-        requires Microsoft.Graphics.Canvas.ICanvasImage
+        requires ICanvasEffect
     {
         [propget]
         HRESULT Scale([out, retval] NUMERICS.Vector2* value);
@@ -54,6 +54,5 @@ namespace Microsoft.Graphics.Canvas.Effects
     runtimeclass ScaleEffect
     {
         [default] interface IScaleEffect;
-        interface IGRAPHICSEFFECT;
     }
 }

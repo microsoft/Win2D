@@ -24,20 +24,6 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="M:Microsoft.Graphics.Canvas.Effects.EdgeDetectionEffect.#ctor">
       <summary>Initializes a new instance of the EdgeDetectionEffect class.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.Effects.EdgeDetectionEffect.GetBounds(Microsoft.Graphics.Canvas.CanvasDrawingSession)">
-      <summary>Retrieves the bounds of this CanvasImage, in device-independent units.</summary>
-      <inheritdoc/>
-    </member>
-    <member name="M:Microsoft.Graphics.Canvas.Effects.EdgeDetectionEffect.GetBounds(Microsoft.Graphics.Canvas.CanvasDrawingSession,System.Numerics.Matrix3x2)">
-      <summary>Retrieves the bounds of this CanvasImage, in device-independent units.</summary>
-      <inheritdoc/>
-    </member>
-    <member name="M:Microsoft.Graphics.Canvas.Effects.EdgeDetectionEffect.Dispose">
-      <summary>Releases all resources used by the EdgeDetectionEffect.</summary>
-    </member>
-    <member name="P:Microsoft.Graphics.Canvas.Effects.EdgeDetectionEffect.Name">
-      <summary>Attaches a user-defined name string to the effect.</summary>
-    </member>
     <member name="P:Microsoft.Graphics.Canvas.Effects.EdgeDetectionEffect.Source">
       <summary>Gets or sets the input source for EdgeDetection effect.</summary>
       <remarks>
@@ -92,6 +78,9 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="F:Microsoft.Graphics.Canvas.Effects.EdgeDetectionEffectMode.Prewitt">
       <summary>Indicates the Prewitt operator should be used for edge detection.</summary>
     </member>
+
+    <inherittemplate name="EffectTemplate" replacement="EdgeDetectionEffect" />
+    <inherittemplate name="ICanvasEffectTemplate" replacement="EdgeDetectionEffect" />
 
   </members>
 </doc>

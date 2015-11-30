@@ -48,6 +48,9 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="M:Microsoft.Graphics.Canvas.Brushes.CanvasSolidColorBrush.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.UI.Color)">
       <summary>Initializes a new instance of the CanvasSolidColorBrush class.</summary>
     </member>
+    <member name="M:Microsoft.Graphics.Canvas.Brushes.CanvasSolidColorBrush.CreateHdr(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Numerics.Vector4)" Experimental="true">
+      <summary>Initializes a new instance of the CanvasSolidColorBrush class using a specified high-dynamic-range color.</summary>
+    </member>
     <member name="M:Microsoft.Graphics.Canvas.Brushes.CanvasSolidColorBrush.Dispose">
       <summary>Releases all resources used by the CanvasSolidColorBrush.</summary>
     </member>
@@ -60,7 +63,20 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <inheritdoc/>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Brushes.CanvasSolidColorBrush.Color">
-      <summary>Gets or sets the color of the solid brush.</summary>
+      <summary>Gets or sets the color of the brush.</summary>
+      <remarks>
+        If the color was previously set using <see
+        cref="P:Microsoft.Graphics.Canvas.Brushes.CanvasSolidColorBrush.ColorHdr"/>
+        to a value that cannot be represented by a Windows.UI.Color then the
+        value returned by this method is clamped.  For example:
+        <code>
+          brush.ColorHdr = new Vector4(2.0f, 2.0f, 2.0f, 2.0f);
+          var color = brush.Color; // color is 255, 255, 255, 255.
+        </code>
+      </remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Brushes.CanvasSolidColorBrush.ColorHdr" Experimental="true">
+      <summary>Gets or sets the high-dynamic-range color of the brush.</summary>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Brushes.CanvasSolidColorBrush.Device">
       <summary>The device associated with this brush.</summary>
@@ -170,6 +186,10 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     
     <member name="T:Microsoft.Graphics.Canvas.Brushes.CanvasGradientStop">
       <summary>Used to describe one gradient stop in a gradient brush.</summary>
+      <remarks>
+        See <see cref="T:Microsoft.Graphics.Canvas.Brushes.CanvasGradientStopHdr"/>
+        for a version that accepts high-dynamic-range colors.
+      </remarks>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.Brushes.CanvasGradientStop.Position">
       <summary>The position of the gradient stop. Expected to be between 0 and 1, inclusive.</summary>
@@ -177,7 +197,18 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="F:Microsoft.Graphics.Canvas.Brushes.CanvasGradientStop.Color">
       <summary>The color at the gradient stop.</summary>
     </member>
-    
+
+
+    <member name="T:Microsoft.Graphics.Canvas.Brushes.CanvasGradientStopHdr" Experimental="true">
+      <summary>Used to describe one high-dynamic-range gradient stop in a gradient brush.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Brushes.CanvasGradientStopHdr.Position">
+      <summary>The position of the gradient stop. Expected to be between 0 and 1, inclusive.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Brushes.CanvasGradientStopHdr.Color">
+      <summary>The color at the gradient stop.</summary>
+    </member>
+
     
     <member name="T:Microsoft.Graphics.Canvas.Brushes.CanvasLinearGradientBrush">
       <summary>A brush used to paint a linear gradient.</summary>
@@ -200,6 +231,24 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="M:Microsoft.Graphics.Canvas.Brushes.CanvasLinearGradientBrush.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.Graphics.Canvas.Brushes.CanvasGradientStop[],Microsoft.Graphics.Canvas.CanvasEdgeBehavior,Microsoft.Graphics.Canvas.CanvasAlphaMode,Microsoft.Graphics.Canvas.CanvasColorSpace,Microsoft.Graphics.Canvas.CanvasColorSpace,Microsoft.Graphics.Canvas.CanvasBufferPrecision)">
       <summary>Initializes a new instance of the CanvasLinearGradientBrush class.</summary>
     </member>
+
+    <member name="M:Microsoft.Graphics.Canvas.Brushes.CanvasLinearGradientBrush.CreateHdr(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Numerics.Vector4,System.Numerics.Vector4)"
+            Experimental="true">
+      <summary>Initializes a new instance of the CanvasLinearGradientBrush class using high-dynamic-range colors.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Brushes.CanvasLinearGradientBrush.CreateHdr(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.Graphics.Canvas.Brushes.CanvasGradientStopHdr[])"
+            Experimental="true">
+      <summary>Initializes a new instance of the CanvasLinearGradientBrush class using high-dynamic-range colors.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Brushes.CanvasLinearGradientBrush.CreateHdr(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.Graphics.Canvas.Brushes.CanvasGradientStopHdr[],Microsoft.Graphics.Canvas.CanvasEdgeBehavior,Microsoft.Graphics.Canvas.CanvasAlphaMode)"
+            Experimental="true">
+      <summary>Initializes a new instance of the CanvasLinearGradientBrush class using high-dynamic-range colors.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Brushes.CanvasLinearGradientBrush.CreateHdr(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.Graphics.Canvas.Brushes.CanvasGradientStopHdr[],Microsoft.Graphics.Canvas.CanvasEdgeBehavior,Microsoft.Graphics.Canvas.CanvasAlphaMode,Microsoft.Graphics.Canvas.CanvasColorSpace,Microsoft.Graphics.Canvas.CanvasColorSpace,Microsoft.Graphics.Canvas.CanvasBufferPrecision)"
+            Experimental="true">
+      <summary>Initializes a new instance of the CanvasLinearGradientBrush class using high-dynamic-range colors.</summary>
+    </member>
+
     <member name="M:Microsoft.Graphics.Canvas.Brushes.CanvasLinearGradientBrush.Dispose">
       <summary>Releases all resources used by the CanvasLinearGradientBrush.</summary>
     </member>
@@ -241,7 +290,11 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <summary>Specifies the color space to be used after interpolation.</summary>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Brushes.CanvasLinearGradientBrush.Stops">
-      <summary>Used to retrieve the gradient stops that comprise the brush.</summary>
+      <summary>Gets the gradient stops that comprise the brush.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Brushes.CanvasLinearGradientBrush.StopsHdr"
+            Experimental="true">
+      <summary>Gets the high-dynamic-range gradient stops that comprise the brush.</summary>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Brushes.CanvasLinearGradientBrush.Device">
       <summary>The device associated with this brush.</summary>
@@ -269,6 +322,23 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="M:Microsoft.Graphics.Canvas.Brushes.CanvasRadialGradientBrush.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.Graphics.Canvas.Brushes.CanvasGradientStop[],Microsoft.Graphics.Canvas.CanvasEdgeBehavior,Microsoft.Graphics.Canvas.CanvasAlphaMode,Microsoft.Graphics.Canvas.CanvasColorSpace,Microsoft.Graphics.Canvas.CanvasColorSpace,Microsoft.Graphics.Canvas.CanvasBufferPrecision)">
       <summary>Initializes a new instance of the CanvasRadialGradientBrush class.</summary>
     </member>
+    <member name="M:Microsoft.Graphics.Canvas.Brushes.CanvasRadialGradientBrush.CreateHdr(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Numerics.Vector4,System.Numerics.Vector4)"
+            Experimental="true">
+      <summary>Initializes a new instance of the CanvasRadialGradientBrush class using high-dynamic-range colors.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Brushes.CanvasRadialGradientBrush.CreateHdr(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.Graphics.Canvas.Brushes.CanvasGradientStopHdr[])"
+            Experimental="true">
+      <summary>Initializes a new instance of the CanvasRadialGradientBrush class using high-dynamic-range colors.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Brushes.CanvasRadialGradientBrush.CreateHdr(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.Graphics.Canvas.Brushes.CanvasGradientStopHdr[],Microsoft.Graphics.Canvas.CanvasEdgeBehavior,Microsoft.Graphics.Canvas.CanvasAlphaMode)"
+            Experimental="true">
+      <summary>Initializes a new instance of the CanvasRadialGradientBrush class using high-dynamic-range colors.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Brushes.CanvasRadialGradientBrush.CreateHdr(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.Graphics.Canvas.Brushes.CanvasGradientStopHdr[],Microsoft.Graphics.Canvas.CanvasEdgeBehavior,Microsoft.Graphics.Canvas.CanvasAlphaMode,Microsoft.Graphics.Canvas.CanvasColorSpace,Microsoft.Graphics.Canvas.CanvasColorSpace,Microsoft.Graphics.Canvas.CanvasBufferPrecision)"
+            Experimental="true">
+      <summary>Initializes a new instance of the CanvasRadialGradientBrush class using high-dynamic-range colors.</summary>
+    </member>
+
     <member name="M:Microsoft.Graphics.Canvas.Brushes.CanvasRadialGradientBrush.Dispose">
       <summary>Releases all resources used by the CanvasRadialGradientBrush.</summary>
     </member>
@@ -310,7 +380,11 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <summary>Specifies the color space to be used after interpolation.</summary>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Brushes.CanvasRadialGradientBrush.Stops">
-      <summary>Used to retrieve the gradient stops that comprise the brush.</summary>
+      <summary>Gets the gradient stops that comprise the brush.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Brushes.CanvasRadialGradientBrush.StopsHdr"
+            Experimental="true">
+      <summary>Gets the high-dynamic-range gradient stops that comprise the brush.</summary>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Brushes.CanvasRadialGradientBrush.Transform">
       <summary>The transform affecting the brush.</summary>

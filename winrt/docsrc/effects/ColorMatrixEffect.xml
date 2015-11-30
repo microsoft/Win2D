@@ -114,9 +114,6 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="M:Microsoft.Graphics.Canvas.Effects.ColorMatrixEffect.#ctor">
       <summary>Initializes a new instance of the ColorMatrixEffect class.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.Effects.ColorMatrixEffect.Dispose">
-      <summary>Releases all resources used by the ColorMatrixEffect.</summary>
-    </member>
     <member name="P:Microsoft.Graphics.Canvas.Effects.ColorMatrixEffect.Source">
       <summary>Gets or sets the input source for ColorMatrix effect.</summary>
       <remarks>
@@ -149,18 +146,6 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       </remarks>
     </member>
 
-    <member name="M:Microsoft.Graphics.Canvas.Effects.ColorMatrixEffect.GetBounds(Microsoft.Graphics.Canvas.CanvasDrawingSession)">
-      <summary>Retrieves the bounds of this CanvasImage, in device-independent units.</summary>
-      <inheritdoc/>
-    </member>
-    <member name="M:Microsoft.Graphics.Canvas.Effects.ColorMatrixEffect.GetBounds(Microsoft.Graphics.Canvas.CanvasDrawingSession,System.Numerics.Matrix3x2)">
-      <summary>Retrieves the bounds of the CanvasImage, in device-independent units.</summary>
-      <inheritdoc/>
-    </member>
-    <member name="P:Microsoft.Graphics.Canvas.Effects.ColorMatrixEffect.Name">
-      <summary>Attaches a user-defined name string to the effect.</summary>
-    </member>
-    
     <member name="T:Microsoft.Graphics.Canvas.Effects.Matrix5x4">
       <summary>A 5x4 matrix, used for color transforms.
                See <see cref="T:Microsoft.Graphics.Canvas.Effects.ColorMatrixEffect"/> 
@@ -226,6 +211,9 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="F:Microsoft.Graphics.Canvas.Effects.Matrix5x4.M54">
       <summary>Value at row 5 column 4 of the matrix.</summary>
     </member>
+
+    <inherittemplate name="EffectTemplate" replacement="ColorMatrixEffect" />
+    <inherittemplate name="ICanvasEffectTemplate" replacement="ColorMatrixEffect" />
     
   </members>
 </doc>

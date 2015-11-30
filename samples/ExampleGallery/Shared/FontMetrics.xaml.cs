@@ -33,6 +33,7 @@ namespace ExampleGallery
         public bool UniformStyle { get; set; }
         public bool UseBoldFace { get; set; }
         public bool UseItalicFace { get; set; }
+        public bool ShowGlyphRunBounds { get; set; }
 
         bool needsResourceRecreation;
         Size resourceRealizationSize;
@@ -42,10 +43,6 @@ namespace ExampleGallery
         public FontMetrics()
         {
             this.InitializeComponent();
-
-            fontPicker.SelectDefaultFont();
-            uppercaseFontPicker.SelectDefaultFont();
-            lowercaseFontPicker.SelectDefaultFont();
 
             UniformStyle = true;
         }
@@ -94,18 +91,26 @@ namespace ExampleGallery
                 public float Descent;
                 public float CapHeight;
                 public float LowercaseLetterHeight;
+                public Rect Bounds;
             }
 
             public List<Metrics> GlyphRunMetrics = new List<Metrics>();
+
+            CanvasDrawingSession drawingSession;
+
+            public FontMetricsHolder(CanvasDrawingSession ds)
+            {
+                drawingSession = ds;
+            }
 
             public void DrawGlyphRun(
                 Vector2 position,
                 CanvasFontFace fontFace, 
                 float fontSize, 
                 CanvasGlyph[] glyphs, 
-                bool isSideways, 
-                uint bidiLevel, 
-                object customDrawingObject, 
+                bool isSideways,
+                uint bidiLevel,
+                object brush,
                 CanvasTextMeasuringMode measuringMode, 
                 string locale, 
                 string textString, 
@@ -119,6 +124,13 @@ namespace ExampleGallery
                 m.Descent = fontFace.Descent;
                 m.CapHeight = fontFace.CapHeight;
                 m.LowercaseLetterHeight = fontFace.LowercaseLetterHeight;
+                m.Bounds = fontFace.GetGlyphRunBounds(
+                    drawingSession,
+                    position,
+                    fontSize,
+                    glyphs,
+                    isSideways,
+                    bidiLevel);
 
                 GlyphRunMetrics.Add(m);
             }
@@ -129,7 +141,7 @@ namespace ExampleGallery
                 float strikethroughThickness, 
                 float strikethroughOffset,
                 CanvasTextDirection textDirection,
-                object customDrawingObject,
+                object brush,
                 CanvasTextMeasuringMode measuringMode,
                 string locale, 
                 CanvasGlyphOrientation glyphOrientation)
@@ -143,9 +155,19 @@ namespace ExampleGallery
                 float underlineOffset, 
                 float runHeight,
                 CanvasTextDirection textDirection,
-                object customDrawingObject,
+                object brush,
                 CanvasTextMeasuringMode measuringMode,
                 string locale,
+                CanvasGlyphOrientation glyphOrientation)
+            {
+            }            
+
+            public void DrawInlineObject(
+                Vector2 baselineOrigin,
+                ICanvasTextInlineObject inlineObject,
+                bool isSideways,
+                bool isRightToLeft,
+                object brush,
                 CanvasGlyphOrientation glyphOrientation)
             {
             }
@@ -304,55 +326,25 @@ namespace ExampleGallery
 
         }
 
-        float GetGlyphSize(float fontSize, FontMetricsHolder.Metrics metrics)
-        {
-            //
-            // This isn't a universally reliable way of determining baseline height
-            // within a layout, but it's fine for this demo- since we've got no inline objects,
-            // horizontal text and no custom line spacing.
-            //
-            return fontSize * (metrics.Ascent + metrics.LineGap);
-        }
-
-        float GetBaselineInWorldSpace(FontMetricsHolder fmh)
-        {
-            FontMetricsHolder.Metrics metrics;
-            float fontScale;
-
-            if (UniformStyle)
-            {
-                fontScale = CurrentFontSize;
-                metrics = fmh.GlyphRunMetrics[0];
-            }
-            else
-            {
-                // Baseline is decided from whichever is the larger font selection.
-                if (GetGlyphSize(CurrentUppercaseFontSize, fmh.GlyphRunMetrics[0]) > GetGlyphSize(CurrentLowercaseFontSize, fmh.GlyphRunMetrics[fmh.GlyphRunMetrics.Count - 1]))
-                {
-                    fontScale = CurrentUppercaseFontSize;
-                    metrics = fmh.GlyphRunMetrics[0];
-                }
-                else
-                {
-                    fontScale = CurrentLowercaseFontSize;
-                    metrics = fmh.GlyphRunMetrics[fmh.GlyphRunMetrics.Count - 1];
-                }
-            }
-
-            return (float)textLayout.LayoutBounds.Top + (fontScale * (metrics.Ascent + metrics.LineGap));
-        }
-
         private void Canvas_Draw(CanvasControl sender, CanvasDrawEventArgs args)
         {
             args.DrawingSession.Transform = System.Numerics.Matrix3x2.CreateTranslation(0, 5);
             EnsureResources(sender, sender.Size);
 
-            FontMetricsHolder fmh = new FontMetricsHolder();
+            FontMetricsHolder fmh = new FontMetricsHolder(args.DrawingSession);
             textLayout.DrawToTextRenderer(fmh, new System.Numerics.Vector2(0, 0));
 
             args.DrawingSession.DrawTextLayout(textLayout, 0, 0, Colors.White);
 
-            float baselineInWorldSpace = GetBaselineInWorldSpace(fmh);
+            if (ShowGlyphRunBounds)
+            {
+                foreach (var metrics in fmh.GlyphRunMetrics)
+                {
+                    args.DrawingSession.DrawRectangle(metrics.Bounds, Colors.Cyan);
+                }
+            }
+
+            float baselineInWorldSpace = (float)textLayout.LayoutBounds.Top + textLayout.LineMetrics[0].Baseline;
             Labeler.DrawBaseline(args.DrawingSession, sender.Size.ToVector2(), baselineInWorldSpace);
 
             if(UniformStyle)
@@ -425,6 +417,11 @@ namespace ExampleGallery
                 uppercaseFontPicker.SelectFont(fontPicker.CurrentFontFamily);
                 lowercaseFontPicker.SelectFont(fontPicker.CurrentFontFamily);
             }
+        }
+
+        private void ShowGlyphRunBounds_ValueChanged(object sender, RoutedEventArgs e)
+        {
+            canvas.Invalidate();
         }
 
         private void CheckBox_ValueChanged(object sender, RoutedEventArgs e)

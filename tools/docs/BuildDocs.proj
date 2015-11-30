@@ -38,7 +38,7 @@
 
   <!-- Master target just chains to a bunch of workers -->
   <Target Name="BuildDocs"
-          DependsOnTargets="BuildTools; ExtractAPISurface; CompileAPISurface; DiffDocs; PreprocessDocs; RunSandcastle; MergeIntellisense" />
+          DependsOnTargets="BuildTools; ExtractAPISurface; CompileAPISurface; PreprocessDocs; DiffDocs; RunSandcastle; MergeIntellisense" />
 
 
   <!-- Build our custom tools -->
@@ -82,7 +82,7 @@
       <DocDiffTool>$(BinariesDirectory)\WindowsAnyCPU\$(Configuration)\DocDiff\DocDiff.exe</DocDiffTool>
     </PropertyGroup>
 
-    <Exec Command="&quot;$(DocDiffTool)&quot; /LogMissingDocs:&quot;$(IntermediateOutputPath)MissingDocs.xml&quot; @(DocSrc->'/DocSrc:&quot;%(Identity)&quot;', ' ') @(InputAssembly->'/ApiRef:&quot;$(IntermediateOutputPath)%(Filename).xml&quot;', ' ') @(WildcardConceptual->'/AmlSrc:&quot;%(Identity)&quot;', ' ')" />
+    <Exec Command="&quot;$(DocDiffTool)&quot; /LogMissingDocs:&quot;$(IntermediateOutputPath)MissingDocs.xml&quot; /DocSrcPath:&quot;$(IntermediateOutputPath)docsrc&quot; @(DocSrc->'/DocSrc:%(Filename)%(Extension)', ' ') @(InputAssembly->'/ApiRef:&quot;$(IntermediateOutputPath)%(Filename).xml&quot;', ' ') @(WildcardConceptual->'/AmlSrc:&quot;%(Identity)&quot;', ' ')" />
   </Target>
 
 

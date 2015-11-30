@@ -111,13 +111,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         virtual ComPtr<ID2D1ImageBrush> CreateImageBrush(ID2D1Image* image) = 0;
 
         virtual ComPtr<ID2D1GradientStopCollection1> CreateGradientStopCollection(
-            uint32_t gradientStopCount,
-            CanvasGradientStop const* gradientStops,
-            CanvasEdgeBehavior edgeBehavior,
-            CanvasColorSpace preInterpolationSpace,
-            CanvasColorSpace postInterpolationSpace,
-            CanvasBufferPrecision bufferPrecision,
-            CanvasAlphaMode alphaMode) = 0;
+            std::vector<D2D1_GRADIENT_STOP>&& stops,
+            D2D1_COLOR_SPACE preInterpolationSpace,
+            D2D1_COLOR_SPACE postInterpolationSpace,
+            D2D1_BUFFER_PRECISION bufferPrecision,
+            D2D1_EXTEND_MODE extendMode,
+            D2D1_COLOR_INTERPOLATION_MODE interpolationMode) = 0;
 
         virtual ComPtr<ID2D1LinearGradientBrush> CreateLinearGradientBrush(
             ID2D1GradientStopCollection1* stopCollection) = 0;
@@ -233,6 +232,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         IFACEMETHOD(get_MaximumBitmapSizeInPixels)(int32_t* value) override;
 
+        IFACEMETHOD(IsPixelFormatSupported)(DirectXPixelFormat pixelFormat, boolean* value) override;
+
+        IFACEMETHOD(IsBufferPrecisionSupported)(CanvasBufferPrecision bufferPrecision, boolean* value) override;
+
         IFACEMETHOD(add_DeviceLost)(DeviceLostHandlerType* value, EventRegistrationToken* token) override;
 
         IFACEMETHOD(remove_DeviceLost)(EventRegistrationToken token) override;
@@ -302,13 +305,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ID2D1GradientStopCollection1* stopCollection) override;
 
         virtual ComPtr<ID2D1GradientStopCollection1> CreateGradientStopCollection(
-            uint32_t gradientStopCount,
-            CanvasGradientStop const* gradientStops,
-            CanvasEdgeBehavior edgeBehavior,
-            CanvasColorSpace preInterpolationSpace,
-            CanvasColorSpace postInterpolationSpace,
-            CanvasBufferPrecision bufferPrecision,
-            CanvasAlphaMode alphaMode) override;
+            std::vector<D2D1_GRADIENT_STOP>&& stops,
+            D2D1_COLOR_SPACE preInterpolationSpace,
+            D2D1_COLOR_SPACE postInterpolationSpace,
+            D2D1_BUFFER_PRECISION bufferPrecision,
+            D2D1_EXTEND_MODE extendMode,
+            D2D1_COLOR_INTERPOLATION_MODE interpolationMode) override;
 
         virtual ComPtr<IDXGISwapChain1> CreateSwapChainForComposition(
             int32_t widthInPixels,

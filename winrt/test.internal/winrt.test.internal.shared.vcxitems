@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="Globals">
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
@@ -27,11 +27,17 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockCompositionGraphicsDevice.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockCompositor.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockCoreWindow.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DBorderTransform.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DDrawInfo.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DEffectContext.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DEllipseGeometry.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DImageSource.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DImageSourceFromWic.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DInk.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DInkStyle.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DRectangleGeometry.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DRoundedRectangleGeometry.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DTransformedImageSource.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DTransformGraph.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockPrintControl.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockPrintDocumentPackageTarget.h" />
@@ -41,7 +47,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockSuspendingEventArgs.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockVirtualSurfaceImageSource.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockVirtualSurfaceImageSourceFactory.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockWICBitmapSource.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)pch.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubInkAdapter.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubCanvasVirtualImageSource.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubD2DEffect.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubResourceCreatorWithDpi.h" />
@@ -102,6 +110,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDWriteStringList.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDWriteTextFormat.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDWriteTextLayout.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDWriteTextRenderer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockHelpers.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockProperties.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockSurfaceImageSource.h" />
@@ -109,6 +118,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockWICBitmap.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockWICFormatConverter.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockWindow.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)stubs\CustomInlineObject.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\LocalizedFontNames.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubCanvasBrush.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubCanvasDevice.h" />
@@ -135,6 +145,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\TestDeviceAdapter.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\TestEffect.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\Helpers.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)utils\TextHelpers.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)xaml\StubDispatcher.h" />
   </ItemGroup>
   <ItemGroup>
@@ -161,6 +172,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)xaml\ControlFixtures.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)xaml\RecreatableDeviceManagerTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasBitmapUnitTest.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasVirtualBitmapUnitTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasCachedGeometryUnitTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasCommandListUnitTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasDeviceUnitTests.cpp" />

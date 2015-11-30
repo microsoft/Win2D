@@ -410,5 +410,20 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <remarks>By default, no trimming sign is used. The text will just appear chopped off at the size boundary.</remarks>
     </member>
     
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextFormat.CustomTrimmingSign" Experimental="true">
+      <summary>Gets or sets a custom trimming sign.</summary>
+      <remarks>
+        <p>
+          A custom trimming sign is represented by an application-implemented interface.
+          The application chooses arbitrary drawing behavior to use as a trimming sign.
+        </p>
+        <p>
+          A custom trimming sign takes precedence over the text format's TrimmingSign property.
+          For example, if the TrimmingSign property is set to Ellipsis, and a custom trimming
+          sign was set, then the custom trimming sign will get used- not the ellipsis one.
+        </p>
+      </remarks>
+    </member>
+    
   </members>
 </doc>

@@ -10,6 +10,7 @@ using Microsoft.Graphics.Canvas.UI.Xaml;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
 using Windows.Foundation;
@@ -47,7 +48,8 @@ namespace ExampleGallery
         public enum DryInkRenderingType
         {
             BuiltIn,
-            CustomGeometry
+            Lines,
+            Geometry,
         }
 
         public List<DryInkRenderingType> DryInkRenderingTypes { get { return Utils.GetEnumAsList<DryInkRenderingType>(); } }
@@ -221,7 +223,7 @@ namespace ExampleGallery
             ds.DrawRectangle(selectionBoundingRect.Value, Colors.Magenta);
         }
 
-        private void DrawDryInk_CustomGeometryMethod(CanvasDrawingSession ds, IReadOnlyList<InkStroke> strokes)
+        private void DrawDryInk_LinesMethod(CanvasDrawingSession ds, IReadOnlyList<InkStroke> strokes)
         {
             //
             // This shows off the fact that apps can use the custom drying path
@@ -232,20 +234,33 @@ namespace ExampleGallery
             {
                 var color = stroke.DrawingAttributes.Color;
 
-                var inkPoints = stroke.GetInkPoints();
-                if (inkPoints.Count > 0)
+                var inkPoints = stroke.GetInkPoints().Select(point => point.Position.ToVector2()).ToList();
+
+                for (int i = 1; i < inkPoints.Count; i++)
                 {
-                    CanvasPathBuilder pathBuilder = new CanvasPathBuilder(canvasControl);
-                    pathBuilder.BeginFigure(inkPoints[0].Position.ToVector2());
-                    for (int i = 1; i < inkPoints.Count; i++)
-                    {
-                        pathBuilder.AddLine(inkPoints[i].Position.ToVector2());
-                        ds.DrawCircle(inkPoints[i].Position.ToVector2(), 3, color);
-                    }
-                    pathBuilder.EndFigure(CanvasFigureLoop.Open);
-                    CanvasGeometry geometry = CanvasGeometry.CreatePath(pathBuilder);
-                    ds.DrawGeometry(geometry, color);
+                    ds.DrawLine(inkPoints[i - 1], inkPoints[i], color);
+                    ds.DrawCircle(inkPoints[i], 3, color);
                 }
+            }
+        }
+
+        private void DrawDryInk_GeometryMethod(CanvasDrawingSession ds, IReadOnlyList<InkStroke> strokes)
+        {
+            //
+            // This converts the ink strokes to geometry, then draws the geometry outline
+            // with a dotted stroke style.
+            //
+            var strokeStyle = new CanvasStrokeStyle { DashStyle = CanvasDashStyle.Dot };
+
+            var strokesGroupedByColor = from stroke in strokes
+                                        group stroke by stroke.DrawingAttributes.Color into strokesOfColor
+                                        select strokesOfColor;
+
+            foreach (var strokesOfColor in strokesGroupedByColor)
+            {
+                var geometry = CanvasGeometry.CreateInk(ds, strokesOfColor).Outline();
+
+                ds.DrawGeometry(geometry, strokesOfColor.Key, 1, strokeStyle);
             }
         }
 
@@ -253,13 +268,19 @@ namespace ExampleGallery
         {
             using (CanvasDrawingSession ds = renderTarget.CreateDrawingSession())
             {
-                if (SelectedDryInkRenderingType == DryInkRenderingType.BuiltIn)
+                switch (SelectedDryInkRenderingType)
                 {
-                    ds.DrawInk(strokes);
-                }
-                else
-                {
-                    DrawDryInk_CustomGeometryMethod(ds, strokes);
+                    case DryInkRenderingType.BuiltIn:
+                        ds.DrawInk(strokes);
+                        break;
+
+                    case DryInkRenderingType.Lines:
+                        DrawDryInk_LinesMethod(ds, strokes);
+                        break;
+
+                    case DryInkRenderingType.Geometry:
+                        DrawDryInk_GeometryMethod(ds, strokes);
+                        break;
                 }
             }
         }

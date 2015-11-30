@@ -49,7 +49,8 @@ namespace Microsoft.Graphics.Canvas
     [version(VERSION), uuid(C57532ED-709E-4AC2-86BE-A1EC3A7FA8FE), exclusiveto(CanvasBitmap)]
     interface ICanvasBitmap : IInspectable
         requires ICanvasImage,
-                 IDIRECT3DSURFACE
+                 IDIRECT3DSURFACE,
+                 ICanvasResourceCreatorWithDpi
     {
         [propget]
         HRESULT SizeInPixels([out, retval] BitmapSize* size);
@@ -59,15 +60,6 @@ namespace Microsoft.Graphics.Canvas
 
         [propget]
         HRESULT Bounds([out, retval] Windows.Foundation.Rect* bounds);
-
-        [propget]
-        HRESULT Dpi([out, retval] float* dpi);
-
-        HRESULT ConvertPixelsToDips([in] INT32 pixels, [out, retval] float* dips);
-        HRESULT ConvertDipsToPixels([in] float dips, [in] CanvasDpiRounding dpiRounding, [out, retval] INT32* pixels);
-
-        [propget]
-        HRESULT Device([out, retval] CanvasDevice** value);
 
         [propget]
         HRESULT Format([out, retval] DIRECTX_PIXEL_FORMAT* value);

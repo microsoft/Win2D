@@ -38,13 +38,37 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
                 <TextBlock Text="{Binding Name}" Style="{StaticResource ExampleListTextBlockStyle}" Margin="10" />
             </Grid>
         </DataTemplate>
+
+        <DataTemplate x:Key="TinyItemTemplate">
+            <Grid Width="300" Margin="5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="50"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Image Grid.Column="0">
+                    <Image.Source>
+                        <BitmapImage UriSource="{Binding ThumbnailNarrow}" DecodePixelWidth="50" DecodePixelHeight="50" />
+                    </Image.Source>
+                </Image>
+                <TextBlock Grid.Column="1" Text="{Binding Name}" Style="{StaticResource ExampleListTextBlockStyle}" 
+                           FontSize="14" VerticalAlignment="Center" Margin="10" HorizontalAlignment="Left" LineHeight="14"/>
+            </Grid>
+        </DataTemplate>
     </Page.Resources>
 
     <ScrollViewer x:Name="scrollViewer" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" VerticalScrollMode="Enabled">
 
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="SizeStates">
-                <VisualState x:Name="SmallScreen">
+                <VisualState x:Name="Tiny">
+                    <Storyboard>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="gridView" Storyboard.TargetProperty="ItemTemplate">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource TinyItemTemplate}" />
+                        </ObjectAnimationUsingKeyFrames>
+                        <DoubleAnimation Duration="0" To="24" Storyboard.TargetProperty="(TextBlock.FontSize)" Storyboard.TargetName="textBlock" d:IsOptimized="True"/>
+                    </Storyboard>
+                </VisualState>
+                <VisualState x:Name="Small">
                     <Storyboard>
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="gridView" Storyboard.TargetProperty="ItemTemplate">
                             <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource NarrowItemTemplate}" />
@@ -52,7 +76,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
                         <DoubleAnimation Duration="0" To="32" Storyboard.TargetProperty="(TextBlock.FontSize)" Storyboard.TargetName="textBlock" d:IsOptimized="True"/>
                     </Storyboard>
                 </VisualState>
-                <VisualState x:Name="BigScreen">
+                <VisualState x:Name="Big">
                     <Storyboard>
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="gridView" Storyboard.TargetProperty="ItemTemplate">
                             <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource WideItemTemplate}" />
@@ -71,7 +95,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <TextBlock x:Name="textBlock" Grid.Row="0" Style="{StaticResource HeaderTextBlockStyle}" TextWrapping="WrapWholeWords" Margin="0,0,0,10" FontFamily="Global User Interface">Win2D Example Gallery</TextBlock>
-            <GridView x:Name="gridView" Grid.Row="1" ItemsSource="{Binding Definitions}" VerticalContentAlignment="Top" ItemClick="GridView_ItemClick" SelectionMode="None" IsItemClickEnabled="True">
+            <GridView x:Name="gridView" Grid.Row="1" ItemsSource="{Binding Definitions}" VerticalContentAlignment="Top" ItemClick="GridView_ItemClick" SelectionMode="None" IsItemClickEnabled="True" ItemTemplate="{StaticResource TinyItemTemplate}">
                 <GridView.ItemContainerTransitions>
                     <TransitionCollection>
                         <EntranceThemeTransition IsStaggeringEnabled="true"/>

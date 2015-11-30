@@ -10,7 +10,7 @@ namespace Microsoft.Graphics.Canvas.Effects
 
     [version(VERSION), uuid(B4576B6B-6C3E-534A-8576-D46DF4FCE93D), exclusiveto(GammaTransferEffect)]
     interface IGammaTransferEffect : IInspectable
-        requires Microsoft.Graphics.Canvas.ICanvasImage
+        requires ICanvasEffect
     {
         [propget]
         HRESULT RedAmplitude([out, retval] float* value);
@@ -126,6 +126,5 @@ namespace Microsoft.Graphics.Canvas.Effects
     runtimeclass GammaTransferEffect
     {
         [default] interface IGammaTransferEffect;
-        interface IGRAPHICSEFFECT;
     }
 }

@@ -123,7 +123,6 @@
 #include "effects/CanvasEffect.h"
 #include "brushes/CanvasBrush.h"
 #include "brushes/CanvasImageBrush.h"
-#include "brushes/Gradients.h"
 #include "drawing/CanvasDevice.h"
 #include "drawing/CanvasGradientMesh.h"
 #include "drawing/CanvasDrawingSession.h"

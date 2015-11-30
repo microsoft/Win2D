@@ -18,6 +18,7 @@ namespace Mock.Test
         [DeploymentItem("Deployed Files/D2DTypes.xml", "mock/in/apiref")]
         [DeploymentItem("Deployed Files/D2DTypes2.xml", "mock/in/apiref")]
         [DeploymentItem("Deployed Files/D2DTypes3.xml", "mock/in/apiref")]
+        [DeploymentItem("Deployed Files/D2DTypes4.xml", "mock/in/apiref")]
         [DeploymentItem("Deployed Files/Settings.xml", "mock/in")]
         [DeploymentItem("Deployed Files/MockD2DGeometrySink.h", "mock/expected")]
         [DeploymentItem("Deployed Files/MockD2DGeometryRealization.h", "mock/expected")]
@@ -30,6 +31,9 @@ namespace Mock.Test
         [DeploymentItem("Deployed Files/MockD2DDrawInfo.h", "mock/expected")]
         [DeploymentItem("Deployed Files/MockD2DEffectContext.h", "mock/expected")]
         [DeploymentItem("Deployed Files/MockD2DTransformGraph.h", "mock/expected")]
+        [DeploymentItem("Deployed Files/MockD2DBorderTransform.h", "mock/expected")]
+        [DeploymentItem("Deployed Files/MockD2DInk.h", "mock/expected")]
+        [DeploymentItem("Deployed Files/MockD2DInkStyle.h", "mock/expected")]
         public void OutputIsInSync()
         {
             //
@@ -52,7 +56,7 @@ namespace Mock.Test
             FileInfo[] expectedGeneratedFiles = expectedDirectoryInfo.GetFiles("*.h");
             FileInfo[] actualGeneratedFiles = actualDirectoryInfo.GetFiles(); // Used for .Length only
 
-            Assert.AreEqual(11, expectedGeneratedFiles.Length);
+            Assert.AreEqual(14, expectedGeneratedFiles.Length);
             Assert.AreEqual(expectedGeneratedFiles.Length, actualGeneratedFiles.Length);
 
             CheckFilesMatch(expectedGeneratedFiles, actualDir);

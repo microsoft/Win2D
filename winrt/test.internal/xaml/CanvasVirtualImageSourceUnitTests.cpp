@@ -329,7 +329,7 @@ public:
         SimpleFixture f;
 
         ComPtr<ICanvasDevice> device;
-        ThrowIfFailed(f.ImageSource->get_Device(&device));
+        ThrowIfFailed(As<ICanvasResourceCreator>(f.ImageSource)->get_Device(&device));
 
         Assert::IsTrue(IsSameInstance(f.Device.Get(), device.Get()), L"imageSource.Device returns the device that was passed in to the constructor.");
     }
@@ -337,7 +337,7 @@ public:
     TEST_METHOD_EX(CanvasVirtualImageSource_get_Device_FailsWhenPassedNullOutParam)
     {
         SimpleFixture f;
-        Assert::AreEqual(E_INVALIDARG, f.ImageSource->get_Device(nullptr));
+        Assert::AreEqual(E_INVALIDARG, As<ICanvasResourceCreator>(f.ImageSource)->get_Device(nullptr));
     }
 
     TEST_METHOD_EX(CanvasVirtualImageSource_get_Dpi_ReturnsTheCorrectDpi)
@@ -348,7 +348,7 @@ public:
             SimpleFixture f(anySize, expectedDpi);
 
             float actualDpi;
-            ThrowIfFailed(f.ImageSource->get_Dpi(&actualDpi));
+            ThrowIfFailed(As<ICanvasResourceCreatorWithDpi>(f.ImageSource)->get_Dpi(&actualDpi));
 
             Assert::AreEqual(expectedDpi, actualDpi);
         }
@@ -357,7 +357,7 @@ public:
     TEST_METHOD_EX(CanvasVirtualImageSource_get_Dpi_FailsWhenPassedNullOutParam)
     {
         SimpleFixture f;
-        Assert::AreEqual(E_INVALIDARG, f.ImageSource->get_Dpi(nullptr));
+        Assert::AreEqual(E_INVALIDARG, As<ICanvasResourceCreatorWithDpi>(f.ImageSource)->get_Dpi(nullptr));
     }
 
     TEST_METHOD_EX(CanvasVirtualImageSource_get_Size_ReturnsTheCorrectSize)
@@ -418,11 +418,11 @@ public:
     {
         SimpleFixture f;
 
-        VerifyConvertDipsToPixels(anyDpi, f.ImageSource);
+        VerifyConvertDipsToPixels(anyDpi, As<ICanvasResourceCreatorWithDpi>(f.ImageSource));
 
         const float testValue = 100;
         float dips = 0;
-        ThrowIfFailed(f.ImageSource->ConvertPixelsToDips((int)testValue, &dips));
+        ThrowIfFailed(As<ICanvasResourceCreatorWithDpi>(f.ImageSource)->ConvertPixelsToDips((int)testValue, &dips));
         Assert::AreEqual(testValue * DEFAULT_DPI / anyDpi, dips);
     }
 
@@ -446,6 +446,55 @@ public:
                 Assert::AreEqual(anyDpi, dpi);
                 
                 return Make<MockCanvasDrawingSession>();
+            });
+
+        ComPtr<ICanvasDrawingSession> drawingSession;
+        ThrowIfFailed(f.ImageSource->CreateDrawingSession(anyColor, anyUpdateRectangle, &drawingSession));
+    }
+
+    TEST_METHOD_EX(CanvasVirtualImageSource_CreateDrawingSession_HandlesSurfaceContentsLost)
+    {
+        SimpleFixture f(anySize, anyDpi);
+
+        bool isFirstCreateDrawingSession = true;
+        bool isFirstSetDevice = true;
+
+        f.DrawingSessionFactory->CreateMethod.SetExpectedCalls(2,
+            [&] (ICanvasDevice* owner, ISurfaceImageSourceNativeWithD2D* sisNative, Color const& clearColor, Rect const& updateRectangleInDips, float dpi)
+            {
+                Assert::IsTrue(IsSameInstance(f.Device.Get(), owner));
+                Assert::IsTrue(IsSameInstance(f.Vsis.Get(), sisNative));
+                Assert::AreEqual(anyColor, clearColor);
+                Assert::AreEqual(anyUpdateRectangle, updateRectangleInDips);               
+                Assert::AreEqual(anyDpi, dpi);
+                
+                // First create call fails with surface contents lost - this should trigger a recreate.
+                if (isFirstCreateDrawingSession)
+                {
+                    isFirstCreateDrawingSession = false;
+                    ThrowHR(E_SURFACE_CONTENTS_LOST);
+                }
+
+                // Allow the second call to succeed.
+                return Make<MockCanvasDrawingSession>();
+            });
+
+        // The surface contents lost error should cause the device to be set to
+        // null and then back again, which triggers XAML to reallocate its surfaces.
+        f.Vsis->SetDeviceMethod.SetExpectedCalls(2,
+            [&](IUnknown* device)
+            {
+                if (isFirstSetDevice)
+                {
+                    isFirstSetDevice = false;
+                    Assert::IsNull(device);
+                }
+                else
+                {
+                    Assert::IsTrue(IsSameInstance(f.Device->GetD2DDevice().Get(), device));
+                }
+
+                return S_OK;
             });
 
         ComPtr<ICanvasDrawingSession> drawingSession;
@@ -787,7 +836,7 @@ public:
         ThrowIfFailed(f.ImageSource->ResizeWithWidthAndHeightAndDpi(anyOtherSize.Width, anyOtherSize.Height, anyOtherDpi));
 
         float actualDpi;
-        ThrowIfFailed(f.ImageSource->get_Dpi(&actualDpi));
+        ThrowIfFailed(As<ICanvasResourceCreatorWithDpi>(f.ImageSource)->get_Dpi(&actualDpi));
         
         Size actualSize;
         ThrowIfFailed(f.ImageSource->get_Size(&actualSize));

@@ -49,6 +49,9 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasBitmapUnitTest.cpp">
       <Filter>graphics</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasVirtualBitmapUnitTests.cpp">
+      <Filter>graphics</Filter>
+    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasCachedGeometryUnitTests.cpp">
       <Filter>graphics</Filter>
     </ClCompile>
@@ -168,7 +171,7 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasTextRendererUnitTests.cpp">
       <Filter>graphics</Filter>
-    </ClCompile>    
+    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)utils\HashUtilitiesTests.cpp">
       <Filter>utils</Filter>
     </ClCompile>
@@ -520,10 +523,45 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DEffectContext.h">
       <Filter>mocks</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)stubs\CustomInlineObject.h">
+      <Filter>stubs</Filter>
+    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\LocalizedFontNames.h">
       <Filter>stubs</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDWriteStringList.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DBorderTransform.h">
+      <Filter>mocks</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubInkAdapter.h">
+      <Filter>stubs</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DInk.h">
+      <Filter>mocks</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DInkStyle.h">
+      <Filter>mocks</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)utils\TextHelpers.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDWriteStringList.h">
+      <Filter>mocks</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDWriteTextRenderer.h">
+      <Filter>mocks</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DImageSource.h">
+      <Filter>mocks</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DImageSourceFromWic.h">
+      <Filter>mocks</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DTransformedImageSource.h">
+      <Filter>mocks</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockWICBitmapSource.h">
+      <Filter>mocks</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="$(MSBuildThisFileDirectory)readme.txt" />

@@ -9,6 +9,7 @@
 #include "drawing/CanvasGradientMesh.h"
 #include "geometry/CanvasCachedGeometry.h"
 #include "images/CanvasCommandList.h"
+#include "images/CanvasVirtualBitmap.h"
 #include "text/CanvasFontFace.h"
 #include "text/CanvasFontSet.h"
 #include "text/CanvasTextLayout.h"
@@ -22,31 +23,33 @@ std::recursive_mutex ResourceManager::m_mutex;
 // When adding new types here, please also update the "Types that support interop" table in winrt\docsrc\Interop.aml.
 std::vector<ResourceManager::TryCreateFunction> ResourceManager::tryCreateFunctions =
 {
-    TryCreate<ID2D1Device1,             CanvasDevice,                  MakeWrapper>,
-    TryCreate<ID2D1DeviceContext1,      CanvasDrawingSession,          MakeWrapper>,
-    TryCreate<ID2D1Bitmap1,             CanvasRenderTarget,            MakeWrapperWithDevice,  IsRenderTargetBitmap>,
-    TryCreate<ID2D1Bitmap1,             CanvasBitmap,                  MakeWrapperWithDevice>,
-    TryCreate<ID2D1CommandList,         CanvasCommandList,             MakeWrapperWithDevice>,
-    TryCreate<IDXGISwapChain1,          CanvasSwapChain,               MakeWrapperWithDeviceAndDpi>,
-    TryCreate<ID2D1Geometry,            CanvasGeometry,                MakeWrapperWithDevice>,
-    TryCreate<ID2D1GeometryRealization, CanvasCachedGeometry,          MakeWrapperWithDevice>,
-    TryCreate<IDWriteTextLayout2,       CanvasTextLayout,              MakeWrapperWithDevice>,
-    TryCreate<IDWriteTextFormat1,       CanvasTextFormat,              MakeWrapper>,
-    TryCreate<ID2D1StrokeStyle1,        CanvasStrokeStyle,             MakeWrapper>,
-    TryCreate<ID2D1SolidColorBrush,     CanvasSolidColorBrush,         MakeWrapperWithDevice>,
-    TryCreate<ID2D1LinearGradientBrush, CanvasLinearGradientBrush,     MakeWrapperWithDevice>,
-    TryCreate<ID2D1RadialGradientBrush, CanvasRadialGradientBrush,     MakeWrapperWithDevice>,
-    TryCreate<ID2D1ImageBrush,          CanvasImageBrush,              MakeWrapperWithDevice>,
-    TryCreate<ID2D1BitmapBrush1,        CanvasImageBrush,              MakeWrapperWithDevice>,
+    TryCreate<ID2D1Device1,                CanvasDevice,                  MakeWrapper>,
+    TryCreate<ID2D1DeviceContext1,         CanvasDrawingSession,          MakeWrapper>,
+    TryCreate<ID2D1Bitmap1,                CanvasRenderTarget,            MakeWrapperWithDevice,  IsRenderTargetBitmap>,
+    TryCreate<ID2D1Bitmap1,                CanvasBitmap,                  MakeWrapperWithDevice>,
+    TryCreate<ID2D1CommandList,            CanvasCommandList,             MakeWrapperWithDevice>,
+    TryCreate<IDXGISwapChain1,             CanvasSwapChain,               MakeWrapperWithDeviceAndDpi>,
+    TryCreate<ID2D1Geometry,               CanvasGeometry,                MakeWrapperWithDevice>,
+    TryCreate<ID2D1GeometryRealization,    CanvasCachedGeometry,          MakeWrapperWithDevice>,
+    TryCreate<DWriteTextLayoutType,        CanvasTextLayout,              MakeWrapperWithDevice>,
+    TryCreate<IDWriteTextFormat1,          CanvasTextFormat,              MakeWrapper>,
+    TryCreate<ID2D1StrokeStyle1,           CanvasStrokeStyle,             MakeWrapper>,
+    TryCreate<ID2D1SolidColorBrush,        CanvasSolidColorBrush,         MakeWrapperWithDevice>,
+    TryCreate<ID2D1LinearGradientBrush,    CanvasLinearGradientBrush,     MakeWrapperWithDevice>,
+    TryCreate<ID2D1RadialGradientBrush,    CanvasRadialGradientBrush,     MakeWrapperWithDevice>,
+    TryCreate<ID2D1ImageBrush,             CanvasImageBrush,              MakeWrapperWithDevice>,
+    TryCreate<ID2D1BitmapBrush1,           CanvasImageBrush,              MakeWrapperWithDevice>,
 #if WINVER > _WIN32_WINNT_WINBLUE
-    TryCreate<ID2D1GradientMesh,        CanvasGradientMesh,            MakeWrapperWithDevice>,
-    TryCreate<IDWriteRenderingParams3,  CanvasTextRenderingParameters, MakeWrapper>,
-    TryCreate<IDWriteFontSet,           CanvasFontSet,                 MakeWrapper>,
-    TryCreate<IDWriteFontFaceReference, CanvasFontFace,                MakeWrapper>,
+    TryCreate<ID2D1GradientMesh,           CanvasGradientMesh,            MakeWrapperWithDevice>,
+    TryCreate<ID2D1ImageSource,            CanvasVirtualBitmap,           MakeWrapperWithDevice>,
+    TryCreate<ID2D1TransformedImageSource, CanvasVirtualBitmap,           MakeWrapperWithDevice>,
+    TryCreate<IDWriteRenderingParams3,     CanvasTextRenderingParameters, MakeWrapper>,
+    TryCreate<IDWriteFontSet,              CanvasFontSet,                 MakeWrapper>,
+    TryCreate<IDWriteFontFaceReference,    CanvasFontFace,                MakeWrapper>,
 #else
-    TryCreate<IDWriteRenderingParams2,  CanvasTextRenderingParameters, MakeWrapper>,
-    TryCreate<IDWriteFontCollection,    CanvasFontSet,                 MakeWrapper>,
-    TryCreate<IDWriteFont,              CanvasFontFace,                MakeWrapper>,
+    TryCreate<IDWriteRenderingParams2,     CanvasTextRenderingParameters, MakeWrapper>,
+    TryCreate<IDWriteFontCollection,       CanvasFontSet,                 MakeWrapper>,
+    TryCreate<IDWriteFont2,                CanvasFontFace,                MakeWrapper>,
 #endif
 
     // Effects get their very own try-create function. These are special because ID2D1Effect

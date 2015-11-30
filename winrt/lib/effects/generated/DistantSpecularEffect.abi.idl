@@ -10,7 +10,7 @@ namespace Microsoft.Graphics.Canvas.Effects
 
     [version(VERSION), uuid(A7A828DF-3072-545F-8D75-86C100F03231), exclusiveto(DistantSpecularEffect)]
     interface IDistantSpecularEffect : IInspectable
-        requires Microsoft.Graphics.Canvas.ICanvasImage
+        requires ICanvasEffect
     {
         [propget]
         HRESULT Azimuth([out, retval] float* value);
@@ -61,6 +61,12 @@ namespace Microsoft.Graphics.Canvas.Effects
         HRESULT HeightMapInterpolationMode([in] Microsoft.Graphics.Canvas.CanvasImageInterpolation value);
 
         [propget]
+        HRESULT LightColorHdr([out, retval] NUMERICS.Vector4* value);
+
+        [propput]
+        HRESULT LightColorHdr([in] NUMERICS.Vector4 value);
+
+        [propget]
         HRESULT Source([out, retval] IGRAPHICSEFFECTSOURCE** source);
 
         [propput]
@@ -72,6 +78,5 @@ namespace Microsoft.Graphics.Canvas.Effects
     runtimeclass DistantSpecularEffect
     {
         [default] interface IDistantSpecularEffect;
-        interface IGRAPHICSEFFECT;
     }
 }

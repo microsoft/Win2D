@@ -10,7 +10,7 @@ namespace Microsoft.Graphics.Canvas.Effects
 
     [version(VERSION), uuid(F85A5ED7-7212-57A6-B357-61038961C58D), exclusiveto(SaturationEffect)]
     interface ISaturationEffect : IInspectable
-        requires Microsoft.Graphics.Canvas.ICanvasImage
+        requires ICanvasEffect
     {
         [propget]
         HRESULT Saturation([out, retval] float* value);
@@ -30,6 +30,5 @@ namespace Microsoft.Graphics.Canvas.Effects
     runtimeclass SaturationEffect
     {
         [default] interface ISaturationEffect;
-        interface IGRAPHICSEFFECT;
     }
 }

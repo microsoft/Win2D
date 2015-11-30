@@ -545,6 +545,28 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             });
     }
 
+    IFACEMETHODIMP CanvasDevice::IsPixelFormatSupported(DirectXPixelFormat pixelFormat, boolean* value)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckInPointer(value);
+                
+                *value = !!GetResourceCreationDeviceContext()->IsDxgiFormatSupported(static_cast<DXGI_FORMAT>(pixelFormat));
+            });
+    }
+
+    IFACEMETHODIMP CanvasDevice::IsBufferPrecisionSupported(CanvasBufferPrecision bufferPrecision, boolean* value)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckInPointer(value);
+                
+                *value = !!GetResourceCreationDeviceContext()->IsBufferPrecisionSupported(ToD2DBufferPrecision(bufferPrecision));
+            });
+    }
+
     IFACEMETHODIMP CanvasDevice::add_DeviceLost(
         DeviceLostHandlerType* value, 
         EventRegistrationToken* token)
@@ -845,38 +867,28 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
     ComPtr<ID2D1GradientStopCollection1> CanvasDevice::CreateGradientStopCollection(
-        uint32_t gradientStopCount,
-        CanvasGradientStop const* gradientStops,
-        CanvasEdgeBehavior edgeBehavior,
-        CanvasColorSpace preInterpolationSpace,
-        CanvasColorSpace postInterpolationSpace,
-        CanvasBufferPrecision bufferPrecision,
-        CanvasAlphaMode alphaMode)
+        std::vector<D2D1_GRADIENT_STOP>&& stops,
+        D2D1_COLOR_SPACE preInterpolationSpace,
+        D2D1_COLOR_SPACE postInterpolationSpace,
+        D2D1_BUFFER_PRECISION bufferPrecision,
+        D2D1_EXTEND_MODE extendMode,
+        D2D1_COLOR_INTERPOLATION_MODE interpolationMode)
     {
         auto deviceContext = GetResourceCreationDeviceContext();
 
-        std::vector<D2D1_GRADIENT_STOP> d2dGradientStops;
-        d2dGradientStops.resize(gradientStopCount);
-        for (uint32_t i = 0; i < gradientStopCount; ++i)
-        {
-            d2dGradientStops[i].color = ToD2DColor(gradientStops[i].Color);
-            d2dGradientStops[i].position = gradientStops[i].Position;
-        }
-
         ComPtr<ID2D1GradientStopCollection1> gradientStopCollection;
         ThrowIfFailed(deviceContext->CreateGradientStopCollection(
-            &d2dGradientStops[0],
-            gradientStopCount,
-            static_cast<D2D1_COLOR_SPACE>(preInterpolationSpace),
-            static_cast<D2D1_COLOR_SPACE>(postInterpolationSpace),
-            ToD2DBufferPrecision(bufferPrecision),
-            static_cast<D2D1_EXTEND_MODE>(edgeBehavior),
-            ToD2DColorInterpolation(alphaMode),
-            gradientStopCollection.GetAddressOf()));
+            stops.data(),
+            static_cast<uint32_t>(stops.size()),
+            preInterpolationSpace,
+            postInterpolationSpace,
+            bufferPrecision,
+            extendMode,
+            interpolationMode,
+            &gradientStopCollection));
 
         return gradientStopCollection;
     }
-
     ComPtr<ID2D1LinearGradientBrush> CanvasDevice::CreateLinearGradientBrush(
         ID2D1GradientStopCollection1* stopCollection)
     {

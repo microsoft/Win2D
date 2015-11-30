@@ -35,6 +35,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             IGraphicsEffect,
             IGraphicsEffectSource,
             IGraphicsEffectD2D1Interop,
+            ICanvasEffect,
             ICanvasImage,
             CloakedIid<ICanvasImageInternal>,
             ChainInterfaces<
@@ -57,6 +58,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         // Effect property values (only used when the effect is not realized).
         std::vector<ComPtr<IPropertyValue>> m_properties;
+
+        boolean m_cacheOutput;
+        D2D1_BUFFER_PRECISION m_bufferPrecision;
 
 
         // State tracking the effect source images. This data is authoritative when
@@ -138,6 +142,25 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         static bool TryCreateEffect(ICanvasDevice* device, IUnknown* resource, float dpi, ComPtr<IInspectable>* result);
             
         //
+        // ICanvasImage
+        //
+
+        IFACEMETHOD(GetBounds)(ICanvasDrawingSession *drawingSession, Rect *bounds) override;
+        IFACEMETHOD(GetBoundsWithTransform)(ICanvasDrawingSession *drawingSession, Numerics::Matrix3x2 transform, Rect *bounds) override;
+
+        //
+        // ICanvasImageInternal
+        //
+
+        virtual ComPtr<ID2D1Image> GetD2DImage(ICanvasDevice* device, ID2D1DeviceContext* deviceContext, GetImageFlags flags, float targetDpi, float* realizedDpi = nullptr) override;
+
+        //
+        // ICanvasResourceWrapperNative
+        //
+
+        IFACEMETHOD(GetNativeResource)(ICanvasDevice* device, float dpi, REFIID iid, void** resource) override;
+
+        //
         // IClosable
         //
 
@@ -162,29 +185,17 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         IFACEMETHOD(GetNamedPropertyMapping)(LPCWSTR name, UINT* index, GRAPHICS_EFFECT_PROPERTY_MAPPING* mapping) override;
 
         //
-        // ICanvasImage
+        // ICanvasEffect
         //
 
-        IFACEMETHOD(GetBounds)(
-            ICanvasDrawingSession *drawingSession,
-            Rect *bounds) override;
-
-        IFACEMETHOD(GetBoundsWithTransform)(
-            ICanvasDrawingSession *drawingSession,
-            Numerics::Matrix3x2 transform,
-            Rect *bounds) override;
-
-        //
-        // ICanvasImageInternal
-        //
-
-        virtual ComPtr<ID2D1Image> GetD2DImage(ICanvasDevice* device, ID2D1DeviceContext* deviceContext, GetImageFlags flags, float targetDpi, float* realizedDpi = nullptr) override;
-
-        //
-        // ICanvasResourceWrapperNative
-        //
-
-        IFACEMETHOD(GetNativeResource)(ICanvasDevice* device, float dpi, REFIID iid, void** resource) override;
+        IFACEMETHOD(get_CacheOutput)(boolean* value) override;
+        IFACEMETHOD(put_CacheOutput)(boolean value) override;
+        IFACEMETHOD(get_BufferPrecision)(IReference<CanvasBufferPrecision>** value) override;
+        IFACEMETHOD(put_BufferPrecision)(IReference<CanvasBufferPrecision>* value) override;
+        IFACEMETHOD(InvalidateSourceRectangle)(ICanvasResourceCreatorWithDpi* resourceCreator, uint32_t sourceIndex, Rect invalidRectangle) override;
+        IFACEMETHOD(GetInvalidRectangles)(ICanvasResourceCreatorWithDpi* resourceCreator, uint32_t* valueCount, Rect** valueElements) override;
+        IFACEMETHOD(GetRequiredSourceRectangle)(ICanvasResourceCreatorWithDpi* resourceCreator, Rect outputRectangle, ICanvasEffect* sourceEffect, uint32_t sourceIndex, Rect sourceBounds, Rect* value) override;
+        IFACEMETHOD(GetRequiredSourceRectangles)(ICanvasResourceCreatorWithDpi* resourceCreator, Rect outputRectangle, uint32_t sourceEffectCount, ICanvasEffect** sourceEffects, uint32_t sourceIndexCount, uint32_t* sourceIndices, uint32_t sourceBoundsCount, Rect* sourceBounds, uint32_t* valueCount, Rect** valueElements) override;
 
 
     protected:
@@ -242,6 +253,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         // Marker types, used as TBoxed for values that need special conversion.
         struct ConvertRadiansToDegrees { };
         struct ConvertAlphaMode { };
+        struct ConvertColorHdrToVector3 { };
 
 
         // Methods for manipulating the collection of source images, used by SourcesVector::Traits.
@@ -397,6 +409,26 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                 Numerics::Vector3 value;
                 VectorConverter::Unbox(propertyValue, &value);
                 *result = ToWindowsColor(value);
+            }
+        };
+
+
+        // HDR color (Vector4) can be boxed as a float3 (for properties that only use rgb).
+        template<>
+        struct PropertyTypeConverter<ConvertColorHdrToVector3, Numerics::Vector4>
+        {
+            typedef PropertyTypeConverter<float[3], Numerics::Vector3> VectorConverter;
+
+            static ComPtr<IPropertyValue> Box(IPropertyValueStatics* factory, Numerics::Vector4 const& value)
+            {
+                return VectorConverter::Box(factory, Numerics::Vector3{ value.X, value.Y, value.Z });
+            }
+
+            static void  Unbox(IPropertyValue* propertyValue, Numerics::Vector4* result)
+            {
+                Numerics::Vector3 value;
+                VectorConverter::Unbox(propertyValue, &value);
+                *result = Numerics::Vector4{ value.X, value.Y, value.Z, 1.0f };
             }
         };
 

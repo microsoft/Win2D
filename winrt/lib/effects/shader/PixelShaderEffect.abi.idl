@@ -16,7 +16,7 @@ namespace Microsoft.Graphics.Canvas.Effects
 
     [version(VERSION), uuid(FC8C3C31-FA96-45E2-8B72-1741C65CEE8E), exclusiveto(PixelShaderEffect)]
     interface IPixelShaderEffect : IInspectable
-        requires Microsoft.Graphics.Canvas.ICanvasImage
+        requires ICanvasEffect
     {
         [propget] HRESULT Properties([out, retval] Windows.Foundation.Collections.IMap<HSTRING, IInspectable*>** value);
 
@@ -56,6 +56,24 @@ namespace Microsoft.Graphics.Canvas.Effects
         [propput] HRESULT Source7Mapping([in] SamplerCoordinateMapping value);
         [propput] HRESULT Source8Mapping([in] SamplerCoordinateMapping value);
 
+        [propget] HRESULT Source1BorderMode([out, retval] EffectBorderMode* value);
+        [propget] HRESULT Source2BorderMode([out, retval] EffectBorderMode* value);
+        [propget] HRESULT Source3BorderMode([out, retval] EffectBorderMode* value);
+        [propget] HRESULT Source4BorderMode([out, retval] EffectBorderMode* value);
+        [propget] HRESULT Source5BorderMode([out, retval] EffectBorderMode* value);
+        [propget] HRESULT Source6BorderMode([out, retval] EffectBorderMode* value);
+        [propget] HRESULT Source7BorderMode([out, retval] EffectBorderMode* value);
+        [propget] HRESULT Source8BorderMode([out, retval] EffectBorderMode* value);
+
+        [propput] HRESULT Source1BorderMode([in] EffectBorderMode value);
+        [propput] HRESULT Source2BorderMode([in] EffectBorderMode value);
+        [propput] HRESULT Source3BorderMode([in] EffectBorderMode value);
+        [propput] HRESULT Source4BorderMode([in] EffectBorderMode value);
+        [propput] HRESULT Source5BorderMode([in] EffectBorderMode value);
+        [propput] HRESULT Source6BorderMode([in] EffectBorderMode value);
+        [propput] HRESULT Source7BorderMode([in] EffectBorderMode value);
+        [propput] HRESULT Source8BorderMode([in] EffectBorderMode value);
+
         [propget] HRESULT MaxSamplerOffset([out, retval] INT32* value);
         [propput] HRESULT MaxSamplerOffset([in] INT32 value);
 
@@ -93,7 +111,6 @@ namespace Microsoft.Graphics.Canvas.Effects
     runtimeclass PixelShaderEffect
     {
         [default] interface IPixelShaderEffect;
-        interface IGRAPHICSEFFECT;
     }
 
     declare

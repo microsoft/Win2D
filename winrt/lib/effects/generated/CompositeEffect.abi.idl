@@ -10,7 +10,7 @@ namespace Microsoft.Graphics.Canvas.Effects
 
     [version(VERSION), uuid(F8808C48-CDC7-5DB4-807C-B9344FF71984), exclusiveto(CompositeEffect)]
     interface ICompositeEffect : IInspectable
-        requires Microsoft.Graphics.Canvas.ICanvasImage
+        requires ICanvasEffect
     {
         [propget]
         HRESULT Mode([out, retval] Microsoft.Graphics.Canvas.CanvasComposite* value);
@@ -27,6 +27,5 @@ namespace Microsoft.Graphics.Canvas.Effects
     runtimeclass CompositeEffect
     {
         [default] interface ICompositeEffect;
-        interface IGRAPHICSEFFECT;
     }
 }

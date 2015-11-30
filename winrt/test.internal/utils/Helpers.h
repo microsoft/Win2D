@@ -69,6 +69,19 @@ namespace Microsoft
             }
 
             template<>
+            inline std::wstring ToString<D2D_SIZE_U>(D2D_SIZE_U const& value)
+            {
+                wchar_t buf[256];
+                ThrowIfFailed(StringCchPrintf(
+                    buf,
+                    _countof(buf),
+                    L"D2D_SIZE_U{%u,%u}",
+                    value.width,
+                    value.height));
+                return buf;
+            }
+
+            template<>
             inline std::wstring ToString<D2D1_ROUNDED_RECT>(D2D1_ROUNDED_RECT const& roundedRect)
             {
                 wchar_t buf[256];
@@ -195,6 +208,7 @@ namespace Microsoft
             TO_STRING(IDispatchedHandler);
             TO_STRING(IAsyncAction);
             TO_STRING(IDWriteInlineObject);
+            TO_STRING(ID2D1TransformNode);
 
 #if WINVER > _WIN32_WINNT_WINBLUE
             TO_STRING(ID2D1GradientMesh);
@@ -384,7 +398,7 @@ namespace Microsoft
                 ThrowIfFailed(StringCchPrintf(
                     buf,
                     _countof(buf),
-                    L"D2D1_POINT_2U{X=%f,Y=%f}",
+                    L"D2D1_POINT_2U{X=%u,Y=%u}",
                     value.x, value.y));
 
                 return buf;
@@ -425,6 +439,19 @@ namespace Microsoft
                     _countof(buf),
                     L"Vector2{X=%f,Y=%f}",
                     value.X, value.Y));
+
+                return buf;
+            }
+
+            template<>
+            inline std::wstring ToString<Numerics::Vector4>(Numerics::Vector4 const& value)
+            {
+                wchar_t buf[256];
+                ThrowIfFailed(StringCchPrintf(
+                    buf,
+                    _countof(buf),
+                    L"Vector4{X=%f,Y=%f,Z=%f,W=%f}",
+                    value.X, value.Y, value.Z, value.W));
 
                 return buf;
             }
@@ -589,6 +616,17 @@ namespace Microsoft
                 ENUM_VALUE(D2D1_FILL_MODE_ALTERNATE);
                 ENUM_VALUE(D2D1_FILL_MODE_WINDING);
                 END_ENUM(D2D1_FILL_MODE);
+            }
+
+            ENUM_TO_STRING(D2D1_BUFFER_PRECISION)
+            {
+                ENUM_VALUE(D2D1_BUFFER_PRECISION_UNKNOWN);
+                ENUM_VALUE(D2D1_BUFFER_PRECISION_8BPC_UNORM);
+                ENUM_VALUE(D2D1_BUFFER_PRECISION_8BPC_UNORM_SRGB);
+                ENUM_VALUE(D2D1_BUFFER_PRECISION_16BPC_UNORM);
+                ENUM_VALUE(D2D1_BUFFER_PRECISION_16BPC_FLOAT);
+                ENUM_VALUE(D2D1_BUFFER_PRECISION_32BPC_FLOAT);
+                END_ENUM(D2D1_BUFFER_PRECISION);
             }
 
             ENUM_TO_STRING(SamplerCoordinateMapping)
@@ -1243,6 +1281,13 @@ namespace Microsoft
 				END_ENUM(CanvasGlyphOrientation);
 			}
 
+            ENUM_TO_STRING(EffectBorderMode)
+            {
+                ENUM_VALUE(EffectBorderMode::Soft);
+                ENUM_VALUE(EffectBorderMode::Hard);
+                END_ENUM(EffectBorderMode);
+            }
+
             template<typename T>
             inline std::wstring ToStringAsInt(T value)
             {
@@ -1376,6 +1421,14 @@ namespace Microsoft
         {
             return a.X == b.X &&
                    a.Y == b.Y;
+        }
+
+        inline bool operator==(Numerics::Vector4 const& a, Numerics::Vector4 const& b)
+        {
+            return a.X == b.X &&
+                   a.Y == b.Y &&
+                   a.Z == b.Z &&
+                   a.W == b.W;
         }
 
         inline bool operator==(D2D1_TRIANGLE const& a, D2D1_TRIANGLE const& b)

@@ -11,6 +11,7 @@
 // now, simple C++ constants are "good enough"(tm).
 
 STRING(AutoFileFormatNotAllowed, L"The option CanvasFileFormat.Auto is not allowed when saving to a stream.")
+STRING(CacheOnDemandNotSet, L"This method may only be called if the CanvasVirtualBitmap was created with CanvasVirtualBitmapOptions.CacheOnDemand.")
 STRING(CanOnlyAddPathDataWhileInFigure, L"This operation is only allowed after a successful call to CanvasPathBuilder.BeginFigure.")
 STRING(CanvasDeviceGetDeviceWhenNotCreated, L"The control does not currently have a CanvasDevice associated with it. Ensure that resources are created from a CreateResources or Draw event handler.");
 STRING(CanvasPrintDocumentMustBeConstructedOnUIThread, L"CanvasPrintDocument must be constructed on a UI thread.");
@@ -41,6 +42,7 @@ STRING(EffectWrongDevice, L"Effect source #%d is associated with a different dev
 STRING(EffectWrongSourceType, L"Effect source #%d is an unsupported type. To draw an effect using Win2D, all its sources must be Win2D ICanvasImage objects.")
 STRING(EndFigureWithoutBeginFigure, L"A call to CanvasPathBuilder.EndFigure occurred without a previous call to CanvasPathBuilder.BeginFigure.")
 STRING(ExpectedPositiveNonzero, L"A positive, non-zero number was expected for this method.")
+STRING(ExternalInlineObject, L"Attempted to retrieve an inline object which was not implemented as an ICanvasTextInlineObject.")
 STRING(GetResourceNoDevice, L"To unwrap this resource type, a device parameter must be passed to GetWrappedResource.")
 STRING(ImageBrushRequiresSourceRectangle, L"When using image types other than CanvasBitmap, CanvasImageBrush.SourceRectangle must not be null.")
 STRING(InvalidAlphaModeForImageSource, L"An invalid alpha mode was specified. Use either CanvasAlphaMode.Ignore or CanvasAlphaMode.Premultiplied.")
@@ -61,6 +63,7 @@ STRING(SetFilledRegionDeterminationAfterBeginFigure, L"This operation is not all
 STRING(SetPageCountCalledBeforePreviewing, L"CanvasPrintDocument.SetPageCount or CanvasPrintDocument.SetIntermediatePageCount cannot be called until the Paginate event has been raised.")
 STRING(SpriteBatchInvalidInterpolation, L"Invalid interpolation mode specified. Sprite batches only support CanvasImageInterpolation.NearestNeighbor or CanvasImageInterpolation.Linear.")
 STRING(SpriteBatchNotAvailable, L"Sprite batches are not supported on this device. Use CanvasSpriteBatch.IsSupported to determine if sprite batches are supported.")
+STRING(TextRendererNotValid, L"The application called a method on a text renderer, but this text renderer is no longer valid.")
 STRING(TwoBeginFigures, L"A call to CanvasPathBuilder.BeginFigure occurred, when the figure was already begun.")
 STRING(UnrecognizedImageFileExtension, L"When saving a CanvasBitmap without specifying a CanvasBitmapFileFormat, the file name must include a recognized file extension such as '.jpeg' or '.png'.");
 STRING(WrongArrayLength, L"The array was expected to be of size %d; actual array was of size %d.")

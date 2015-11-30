@@ -28,7 +28,8 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         hardware (used in desktop computers and most tablets). Feature level 9 GPUs 
         (which are found in phones) only support a subset. If you want to use one of the 
         formats marked as <legacyItalic>Not supported on all devices</legacyItalic>, you 
-        should catch exceptions if the resource creation fails and be prepared to fall 
+        should first check <codeEntityReference>M:Microsoft.Graphics.Canvas.CanvasDevice.IsPixelFormatSupported(Windows.Graphics.DirectX.DirectXPixelFormat)</codeEntityReference>,
+        or catch exceptions if the resource creation fails and be prepared to fall 
         back on one of the universally available options.
       </para>
     </introduction>

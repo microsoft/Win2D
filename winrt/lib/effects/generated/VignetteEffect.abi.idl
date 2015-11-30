@@ -12,7 +12,7 @@ namespace Microsoft.Graphics.Canvas.Effects
 
     [version(VERSION), uuid(574D0F9F-EEC7-5989-AC53-135868CF5E0C), exclusiveto(VignetteEffect)]
     interface IVignetteEffect : IInspectable
-        requires Microsoft.Graphics.Canvas.ICanvasImage
+        requires ICanvasEffect
     {
         [propget]
         HRESULT Color([out, retval] Windows.UI.Color* value);
@@ -33,6 +33,12 @@ namespace Microsoft.Graphics.Canvas.Effects
         HRESULT Curve([in] float value);
 
         [propget]
+        HRESULT ColorHdr([out, retval] NUMERICS.Vector4* value);
+
+        [propput]
+        HRESULT ColorHdr([in] NUMERICS.Vector4 value);
+
+        [propget]
         HRESULT Source([out, retval] IGRAPHICSEFFECTSOURCE** source);
 
         [propput]
@@ -44,7 +50,6 @@ namespace Microsoft.Graphics.Canvas.Effects
     runtimeclass VignetteEffect
     {
         [default] interface IVignetteEffect;
-        interface IGRAPHICSEFFECT;
     }
 }
 

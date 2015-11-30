@@ -26,9 +26,14 @@ namespace ExampleGallery
         public BitmapRotation()
         {
             this.InitializeComponent();
+
+#if !WINDOWS_UWP
+            BitmapTypesList.Visibility = Visibility.Collapsed;
+            BitmapTypesLabel.Visibility = Visibility.Collapsed;
+#endif
         }
 
-        CanvasBitmap[] testBitmaps;
+        ICanvasImage[] testBitmaps;
 
         // The suffix on the filename is the number contained in the EXIF metadata,
         // field 274 (for rotation).
@@ -50,6 +55,14 @@ namespace ExampleGallery
                 "orientation_65535.jpg"
             };
 
+        public enum BitmapType
+        {
+            CanvasBitmap,
+#if WINDOWS_UWP
+            CanvasVirtualBitmap
+#endif
+        }
+    
         public enum BitmapSourceOption
         {
             FromFilename,
@@ -57,13 +70,17 @@ namespace ExampleGallery
         }
 
         public List<BitmapSourceOption> BitmapSourceOptions { get { return Utils.GetEnumAsList<BitmapSourceOption>(); } }
+        public List<BitmapType> BitmapTypes { get { return Utils.GetEnumAsList<BitmapType>(); } }
 
-        private BitmapSourceOption currentBitmapSourceOption;
-        public BitmapSourceOption NextBitmapSourceOption { get; set; } // databinded
+        public BitmapSourceOption CurrentBitmapSource { get; set; }
+        public BitmapType CurrentBitmapType { get; set; }
 
         async Task LoadBitmaps(CanvasControl sender)
         {
-            testBitmaps = new CanvasBitmap[fileNames.Length];
+            var bitmapType = CurrentBitmapType;
+            var bitmapSource = CurrentBitmapSource;
+
+            var newTestBitmaps = new ICanvasImage[fileNames.Length];
 
             for (int i = 0; i < fileNames.Length; i++)
             {
@@ -71,25 +88,35 @@ namespace ExampleGallery
                 StorageFolder installedLocation = package.InstalledLocation;
                 string pathName = installedLocation.Path + "\\" + "BitmapOrientation" + "\\" + fileNames[i];
 
-                if (currentBitmapSourceOption == BitmapSourceOption.FromStream)
+                if (bitmapSource == BitmapSourceOption.FromStream)
                 {
                     StorageFile storageFile = await StorageFile.GetFileFromPathAsync(pathName);
                     using (IRandomAccessStreamWithContentType stream = await storageFile.OpenReadAsync())
                     {
-                        testBitmaps[i] = await CanvasBitmap.LoadAsync(sender, stream);
+                        if (bitmapType == BitmapType.CanvasBitmap)
+                            newTestBitmaps[i] = await CanvasBitmap.LoadAsync(sender, stream);
+#if WINDOWS_UWP
+                        else
+                            newTestBitmaps[i] = await CanvasVirtualBitmap.LoadAsync(sender, stream);
+#endif
                     }
                 }
                 else
                 {
-                    testBitmaps[i] = await CanvasBitmap.LoadAsync(sender, pathName);
+                    if (bitmapType == BitmapType.CanvasBitmap)
+                        newTestBitmaps[i] = await CanvasBitmap.LoadAsync(sender, pathName);
+#if WINDOWS_UWP
+                    else
+                        newTestBitmaps[i] = await CanvasVirtualBitmap.LoadAsync(sender, pathName);
+#endif
                 }
             }
+
+            testBitmaps = newTestBitmaps;
         }
 
         async Task Canvas_CreateResourcesAsync(CanvasControl sender)
         {
-            var folder = ApplicationData.Current.LocalFolder;
-
             await LoadBitmaps(sender);
         }
 
@@ -100,7 +127,8 @@ namespace ExampleGallery
 
         private void Canvas_Draw(CanvasControl sender, CanvasDrawEventArgs args)
         {
-            if (isRecreatingResources) return;
+            if (testBitmaps == null)
+                return;
 
             var ds = args.DrawingSession;
 
@@ -123,7 +151,21 @@ namespace ExampleGallery
                     Rect cellRect = new Rect(cellX * cellWidthInclMargin, cellY * cellHeightInclMargin, cellWidth, cellHeight);
                     if(bitmapIndex < testBitmaps.Length)
                     {
-                        ds.DrawImage(testBitmaps[bitmapIndex], cellRect);
+                        var image = testBitmaps[bitmapIndex];
+
+                        var bitmap = image as CanvasBitmap;
+
+                        if (bitmap != null)
+                        {
+                            ds.DrawImage(bitmap, cellRect);
+                        }
+#if WINDOWS_UWP
+                        else
+                        {
+                            var virtualBitmap = image as CanvasVirtualBitmap;
+                            ds.DrawImage(virtualBitmap, cellRect, virtualBitmap.Bounds);
+                        }
+#endif
                     }
                     else
                     {
@@ -135,26 +177,11 @@ namespace ExampleGallery
             }
         }
 
-        bool isRecreatingResources = false;
-
         private async void BitmapSourceOption_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (!canvas.ReadyToDraw) return; // CreateResources hasn't been called yet.
 
-            if (currentBitmapSourceOption == NextBitmapSourceOption) return;
-            currentBitmapSourceOption = NextBitmapSourceOption;
-
-            //
-            // If the window size changes during the execution of LoadBitmaps, the canvas control's 
-            // draw handler will be called. This may seem uncommon but is especially likely in 
-            // a debugging scenario. This bool keeps the draw handler from doing anything in
-            // that case.
-            //
-            isRecreatingResources = true;
-
             await LoadBitmaps(canvas);
-
-            isRecreatingResources = false;
 
             canvas.Invalidate();
         }

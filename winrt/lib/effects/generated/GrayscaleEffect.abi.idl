@@ -12,7 +12,7 @@ namespace Microsoft.Graphics.Canvas.Effects
 
     [version(VERSION), uuid(78E13B83-0638-53F8-B0B3-5B0B320A9AD2), exclusiveto(GrayscaleEffect)]
     interface IGrayscaleEffect : IInspectable
-        requires Microsoft.Graphics.Canvas.ICanvasImage
+        requires ICanvasEffect
     {
         [propget]
         HRESULT Source([out, retval] IGRAPHICSEFFECTSOURCE** source);
@@ -26,7 +26,6 @@ namespace Microsoft.Graphics.Canvas.Effects
     runtimeclass GrayscaleEffect
     {
         [default] interface IGrayscaleEffect;
-        interface IGRAPHICSEFFECT;
     }
 }
 

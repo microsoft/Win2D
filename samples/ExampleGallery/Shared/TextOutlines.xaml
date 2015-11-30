@@ -27,12 +27,12 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
 
         <ScrollViewer Grid.Column="0" VerticalScrollMode="Auto" HorizontalScrollMode="Disabled" VerticalScrollBarVisibility="Hidden">
             <StackPanel Orientation="Vertical" MinWidth="100" Margin="5">
-              <TextBlock>Text length</TextBlock>
+              <TextBlock>Text length:</TextBlock>
               <ComboBox ItemsSource="{Binding ElementName=control, Path=TextLengthOptions}"
                         SelectedItem="{Binding CurrentTextLengthOption, ElementName=control, Mode=TwoWay}"
                         SelectionChanged="InvalidateCanvas"
                         HorizontalAlignment="Stretch"/>
-              <TextBlock>Text direction</TextBlock>
+              <TextBlock>Text direction:</TextBlock>
               <ComboBox ItemsSource="{Binding ElementName=control, Path=TextDirectionOptions}"
                         SelectedItem="{Binding CurrentTextDirection, ElementName=control, Mode=TwoWay}"
                         SelectionChanged="InvalidateCanvas"
@@ -41,12 +41,17 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
               <ComboBox ItemsSource="{Binding ElementName=control, Path=TextEffectOptions}"
                         SelectedItem="{Binding CurrentTextEffectOption, ElementName=control, Mode=TwoWay}"
                         SelectionChanged="InvalidateCanvas"/>
-              <TextBlock>VerticalGlyphOrientation</TextBlock>
+              <TextBlock>Vertical glyph orientation:</TextBlock>
               <ComboBox ItemsSource="{Binding ElementName=control, Path=VerticalGlyphOrientationOptions}"
                         SelectedItem="{Binding CurrentVerticalGlyphOrientation, ElementName=control, Mode=TwoWay}"
                         SelectionChanged="InvalidateCanvas"
                         HorizontalAlignment="Stretch"/>
-              <ToggleButton Content="Show non-outline text" IsChecked="{Binding ElementName=control, Path=ShowNonOutlineText, Mode=TwoWay}" Click="InvalidateCanvas" HorizontalAlignment="Stretch"/>
+                <TextBlock>Outline granularity:</TextBlock>
+                <ComboBox ItemsSource="{Binding ElementName=control, Path=TextOutlineGranularityOptions}"
+                        SelectedItem="{Binding CurrentTextOutlineGranularityOption, ElementName=control, Mode=TwoWay}"
+                        SelectionChanged="InvalidateCanvas"
+                        HorizontalAlignment="Stretch"/>
+                <ToggleButton Content="Show non-outline text" IsChecked="{Binding ElementName=control, Path=ShowNonOutlineText, Mode=TwoWay}" Click="InvalidateCanvas" HorizontalAlignment="Stretch"/>
             </StackPanel>
         </ScrollViewer>
         <canvas:CanvasControl x:Name="canvas" Grid.Column="1" Margin="5"

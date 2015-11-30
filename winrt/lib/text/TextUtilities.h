@@ -153,56 +153,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         return static_cast<CanvasOpticalAlignment>(value);
     }
 
+    WinString ToCanvasTrimmingDelimiter(uint32_t value);
 
-    inline WinString ToCanvasTrimmingDelimiter(uint32_t value)
-    {
-        // TODO #1658: Do the unicode conversion properly.
-        // http://www.unicode.org/faq/utf_bom.html#utf16-3.  This code needs its
-        // own set of tests.
-
-        WinStringBuilder builder;
-
-        if (value == 0)
-        {
-            return WinString();
-        }
-        else if (value <= 0x0000FFFF)
-        {
-            auto buffer = builder.Allocate(1);
-            buffer[0] = static_cast<wchar_t>(value);
-        }
-        else
-        {
-            auto buffer = builder.Allocate(2);
-            *(reinterpret_cast<uint32_t*>(buffer)) = value;
-        }
-
-        return builder.Get();
-    }
-
-
-    inline uint32_t ToTrimmingDelimiter(WinString const& value)
-    {
-        // TODO #1658: Do the unicode conversion properly.
-        // http://www.unicode.org/faq/utf_bom.html#utf16-3.  This code needs its
-        // own set of tests.
-
-        uint32_t sourceStringLength = 0;
-        auto sourceString = WindowsGetStringRawBuffer(value, &sourceStringLength);
-
-        if (sourceStringLength == 0)
-        {
-            return 0;
-        }
-        else if (sourceStringLength == 1)
-        {
-            return sourceString[0];
-        }
-        else
-        {
-            return (sourceString[0] << 16) | sourceString[1];
-        }
-    }
+    uint32_t ToTrimmingDelimiter(WinString const& value);
 
 
     inline DWRITE_WORD_WRAPPING ToWordWrapping(CanvasWordWrapping value)
@@ -661,7 +614,22 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 	{
 		// static_asserts in ToDWriteGlyphOrientationAngle validate that this cast is ok
 		return static_cast<CanvasGlyphOrientation>(value);
-	}
+    }
+
+    inline DWRITE_BREAK_CONDITION ToDWriteBreakCondition(CanvasLineBreakCondition value)
+    {
+        CHECK_ENUM_MEMBER(DWRITE_BREAK_CONDITION_NEUTRAL, CanvasLineBreakCondition::Neutral);
+        CHECK_ENUM_MEMBER(DWRITE_BREAK_CONDITION_CAN_BREAK, CanvasLineBreakCondition::CanBreak);
+        CHECK_ENUM_MEMBER(DWRITE_BREAK_CONDITION_MAY_NOT_BREAK, CanvasLineBreakCondition::CannotBreak);
+        CHECK_ENUM_MEMBER(DWRITE_BREAK_CONDITION_MUST_BREAK, CanvasLineBreakCondition::MustBreak);
+        return static_cast<DWRITE_BREAK_CONDITION>(value);
+    }
+
+    inline CanvasLineBreakCondition ToCanvasLineBreakCondition(DWRITE_BREAK_CONDITION value)
+    {
+        // static_asserts in ToDWriteGlyphOrientationAngle validate that this cast is ok
+        return static_cast<CanvasLineBreakCondition>(value);
+    }
 
     //
     // The localizedStrings are allowed to be null. If they are, this returns an empty map view.
@@ -687,6 +655,27 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         }
 
         ThrowIfFailed(map->GetView(values));
+    }
+
+    inline ComPtr<IInspectable> GetCustomDrawingObjectInspectable(ICanvasDevice* device, IUnknown* customDrawingObject)
+    {
+        ComPtr<IInspectable> result;
+
+        if (customDrawingObject)
+        {
+            auto d2dBrush = MaybeAs<ID2D1Brush>(customDrawingObject);
+
+            if (d2dBrush && device)
+            {
+                result = ResourceManager::GetOrCreate<ICanvasBrush>(device, d2dBrush.Get());
+            }
+            else
+            {
+                result = MaybeAs<IInspectable>(customDrawingObject);
+            }
+        }
+
+        return result;
     }
    
 }}}}}

@@ -24,20 +24,6 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="M:Microsoft.Graphics.Canvas.Effects.PosterizeEffect.#ctor">
       <summary>Initializes a new instance of the PosterizeEffect class.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.Effects.PosterizeEffect.GetBounds(Microsoft.Graphics.Canvas.CanvasDrawingSession)">
-      <summary>Retrieves the bounds of this CanvasImage, in device-independent units.</summary>
-      <inheritdoc/>
-    </member>
-    <member name="M:Microsoft.Graphics.Canvas.Effects.PosterizeEffect.GetBounds(Microsoft.Graphics.Canvas.CanvasDrawingSession,System.Numerics.Matrix3x2)">
-      <summary>Retrieves the bounds of this CanvasImage, in device-independent units.</summary>
-      <inheritdoc/>
-    </member>
-    <member name="M:Microsoft.Graphics.Canvas.Effects.PosterizeEffect.Dispose">
-      <summary>Releases all resources used by the PosterizeEffect.</summary>
-    </member>
-    <member name="P:Microsoft.Graphics.Canvas.Effects.PosterizeEffect.Name">
-      <summary>Attaches a user-defined name string to the effect.</summary>
-    </member>
     <member name="P:Microsoft.Graphics.Canvas.Effects.PosterizeEffect.Source">
       <summary>Gets or sets the input source for Posterize effect.</summary>
       <remarks>
@@ -65,6 +51,9 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         <p>Default value 4, range 2 to 16.</p>
       </remarks>
     </member>
+
+    <inherittemplate name="EffectTemplate" replacement="PosterizeEffect" />
+    <inherittemplate name="ICanvasEffectTemplate" replacement="PosterizeEffect" />
 
   </members>
 </doc>

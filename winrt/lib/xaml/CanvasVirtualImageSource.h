@@ -67,7 +67,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         : public RuntimeClass<
             RuntimeClassFlags<WinRtClassicComMix>,
             ICanvasVirtualImageSource,
-            IVirtualSurfaceUpdatesCallbackNative>,
+            IVirtualSurfaceUpdatesCallbackNative,
+            ICanvasResourceCreator,
+            ICanvasResourceCreatorWithDpi>,
           private LifespanTracker<CanvasVirtualImageSource>
     {
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_UI_Xaml_CanvasVirtualImageSource, BaseTrust);
@@ -169,6 +171,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         
     private:
         void SetDevice(ICanvasDevice* device);
+
+        ComPtr<ICanvasDrawingSession> CreateDrawingSession(Color clearColor, Rect updateRectangle);
     };
 
 

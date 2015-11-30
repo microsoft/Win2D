@@ -15,6 +15,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         , m_effectId(effectId)
         , m_properties(propertiesSize)
         , m_sources(sourcesSize)
+        , m_cacheOutput(false)
+        , m_bufferPrecision(D2D1_BUFFER_PRECISION_UNKNOWN)
     {
         // If this effect has a variable number of inputs, expose them as an IVector<>.
         if (!isSourcesSizeFixed)
@@ -127,10 +129,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         // Process the ReadDpiFromDeviceContext flag.
         if ((flags & GetImageFlags::ReadDpiFromDeviceContext) != GetImageFlags::None)
         {
-            ComPtr<ID2D1Image> target;
-            deviceContext->GetTarget(&target);
-
-            if (MaybeAs<ID2D1CommandList>(target))
+            if (TargetIsCommandList(deviceContext))
             {
                 // Command lists are DPI independent, so we always
                 // need to insert DPI compensation when drawing to them.
@@ -360,6 +359,310 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                         ThrowHR(E_INVALIDARG);
                     }
                 }
+            });
+    }
+
+
+    //
+    // ICanvasEffect
+    //
+
+    IFACEMETHODIMP CanvasEffect::get_CacheOutput(boolean* value)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckInPointer(value);
+
+                auto lock = Lock(m_mutex);
+
+                // If we are realized, read the latest value from the underlying D2D resource.
+                if (auto& d2dEffect = MaybeGetResource())
+                {
+                    m_cacheOutput = !!d2dEffect->GetValue<BOOL>(D2D1_PROPERTY_CACHED);
+                }
+        
+                *value = m_cacheOutput;
+            });
+    }
+
+
+    IFACEMETHODIMP CanvasEffect::put_CacheOutput(boolean value)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                auto lock = Lock(m_mutex);
+
+                m_cacheOutput = value;
+
+                // If we are realized, set the new value through to the underlying D2D resource.
+                if (auto& d2dEffect = MaybeGetResource())
+                {
+                    ThrowIfFailed(d2dEffect->SetValue(D2D1_PROPERTY_CACHED, static_cast<BOOL>(m_cacheOutput)));
+                }
+            });
+    }
+
+
+    IFACEMETHODIMP CanvasEffect::get_BufferPrecision(IReference<CanvasBufferPrecision>** value)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckAndClearOutPointer(value);
+
+                auto lock = Lock(m_mutex);
+
+                // If we are realized, read the latest value from the underlying D2D resource.
+                if (auto& d2dEffect = MaybeGetResource())
+                {
+                    m_bufferPrecision = d2dEffect->GetValue<D2D1_BUFFER_PRECISION>(D2D1_PROPERTY_PRECISION);
+                }
+
+                // If the value is not unknown, box it as an IReference.
+                // Unknown precision returns null.
+                if (m_bufferPrecision != D2D1_BUFFER_PRECISION_UNKNOWN)
+                {
+                    auto nullable = Make<Nullable<CanvasBufferPrecision>>(FromD2DBufferPrecision(m_bufferPrecision));
+                    CheckMakeResult(nullable);
+
+                    ThrowIfFailed(nullable.CopyTo(value));
+                }
+            });
+    }
+
+
+    IFACEMETHODIMP CanvasEffect::put_BufferPrecision(IReference<CanvasBufferPrecision>* value)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                auto lock = Lock(m_mutex);
+
+                if (value)
+                {
+                    // Convert non-null values from Win2D to D2D format.
+                    CanvasBufferPrecision bufferPrecision;
+                    ThrowIfFailed(value->get_Value(&bufferPrecision));
+
+                    m_bufferPrecision = ToD2DBufferPrecision(bufferPrecision);
+                }
+                else
+                {
+                    // Null references -> unknown.
+                    m_bufferPrecision = D2D1_BUFFER_PRECISION_UNKNOWN;
+                }
+
+                // If we are realized, set the new value through to the underlying D2D resource.
+                if (auto& d2dEffect = MaybeGetResource())
+                {
+                    ThrowIfFailed(d2dEffect->SetValue(D2D1_PROPERTY_PRECISION, m_bufferPrecision));
+                }
+            });
+    }
+
+
+    // Helper used by InvalidateInputRectangle, GetInvalidRectangles, and GetRequiredInputRectangles.
+    // Given any ICanvasResourceCreatorWithDpi, looks up a device context that can be used to realize effects.
+    class EffectRealizationContext
+    {
+        DeviceContextLease m_deviceContext;
+        ComPtr<ICanvasDevice> m_device;
+        GetImageFlags m_flags;
+        float m_dpi;
+
+    public:
+        EffectRealizationContext(ICanvasResourceCreatorWithDpi* resourceCreator)
+            : m_flags(GetImageFlags::AllowNullEffectInputs)
+        {
+            CheckInPointer(resourceCreator);
+
+            // Look up device and DPI from the resource creator interface.
+            ThrowIfFailed(As<ICanvasResourceCreator>(resourceCreator)->get_Device(&m_device));
+            ThrowIfFailed(resourceCreator->get_Dpi(&m_dpi));
+
+            if (auto drawingSession = MaybeAs<ICanvasDrawingSession>(resourceCreator))
+            {
+                // If the specified resource creator is a CanvasDrawingSession, we can use that directly.
+                m_deviceContext = DeviceContextLease(GetWrappedResource<ID2D1DeviceContext1>(drawingSession));
+
+                // Special case for command lists, which always require DPI compensation.
+                if (TargetIsCommandList(m_deviceContext.Get()))
+                {
+                    m_flags |= GetImageFlags::AlwaysInsertDpiCompensation;
+                }
+            }
+            else
+            {
+                // Get a resource creation context from the device.
+                m_deviceContext = As<ICanvasDeviceInternal>(m_device)->GetResourceCreationDeviceContext();
+            }
+        }
+
+        ComPtr<ID2D1Effect> RealizeEffect(ICanvasEffect* effect)
+        {
+            auto imageInternal = As<ICanvasImageInternal>(effect);
+            auto realizedEffect = imageInternal->GetD2DImage(m_device.Get(), m_deviceContext.Get(), m_flags, m_dpi);
+            return As<ID2D1Effect>(realizedEffect);
+        }
+
+        ID2D1DeviceContext1* operator->()
+        {
+            return m_deviceContext.Get();
+        }
+    };
+
+
+    IFACEMETHODIMP CanvasEffect::InvalidateSourceRectangle(ICanvasResourceCreatorWithDpi* resourceCreator, uint32_t sourceIndex, Rect invalidRectangle)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                EffectRealizationContext realizationContext(resourceCreator);
+
+                auto d2dEffect = realizationContext.RealizeEffect(this);
+
+                if (sourceIndex >= d2dEffect->GetInputCount())
+                    ThrowHR(E_INVALIDARG);
+
+                auto d2dInvalidRectangle = ToD2DRect(invalidRectangle);
+
+                ThrowIfFailed(realizationContext->InvalidateEffectInputRectangle(d2dEffect.Get(), sourceIndex, &d2dInvalidRectangle));
+            });
+    }
+
+
+    IFACEMETHODIMP CanvasEffect::GetInvalidRectangles(ICanvasResourceCreatorWithDpi* resourceCreator, uint32_t* valueCount, Rect** valueElements)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckInPointer(valueCount);
+                CheckAndClearOutPointer(valueElements);
+
+                EffectRealizationContext realizationContext(resourceCreator);
+
+                auto d2dEffect = realizationContext.RealizeEffect(this);
+
+                // Query the count.
+                UINT32 invalidRectangleCount;
+
+                ThrowIfFailed(realizationContext->GetEffectInvalidRectangleCount(d2dEffect.Get(), &invalidRectangleCount));
+
+                // Query the rectangles.
+                std::vector<D2D1_RECT_F> result(invalidRectangleCount);
+
+                ThrowIfFailed(realizationContext->GetEffectInvalidRectangles(d2dEffect.Get(), result.data(), invalidRectangleCount));
+
+                // Return the array.
+                auto resultArray = TransformToComArray<Rect>(result.begin(), result.end(), FromD2DRect);
+                
+                resultArray.Detach(valueCount, valueElements);
+            });
+    }
+
+
+    static std::vector<D2D1_RECT_F> GetRequiredSourceRectanglesImpl(
+        ICanvasEffect* effect,
+        ICanvasResourceCreatorWithDpi* resourceCreator,
+        Rect outputRectangle,
+        uint32_t sourceCount,
+        ICanvasEffect** sourceEffects,
+        uint32_t* sourceIndices,
+        Rect* sourceBounds)
+    {
+        EffectRealizationContext realizationContext(resourceCreator);
+
+        auto d2dEffect = realizationContext.RealizeEffect(effect);
+
+        auto d2dOutputRectangle = ToD2DRect(outputRectangle);
+
+        // Convert parameter data to an array of D2D1_EFFECT_INPUT_DESCRIPTION structs.
+        std::vector<D2D1_EFFECT_INPUT_DESCRIPTION> inputDescriptions;
+        std::vector<ComPtr<ID2D1Effect>> keepAliveReferences;
+
+        inputDescriptions.reserve(sourceCount);
+        keepAliveReferences.reserve(sourceCount);
+
+        for (uint32_t i = 0; i < sourceCount; i++)
+        {
+            CheckInPointer(sourceEffects[i]);
+
+            auto d2dSourceEffect = realizationContext.RealizeEffect(sourceEffects[i]);
+
+            if (sourceIndices[i] >= d2dSourceEffect->GetInputCount())
+                ThrowHR(E_INVALIDARG);
+
+            inputDescriptions.push_back(D2D1_EFFECT_INPUT_DESCRIPTION{ d2dSourceEffect.Get(), sourceIndices[i], ToD2DRect(sourceBounds[i]) });
+
+            keepAliveReferences.push_back(std::move(d2dSourceEffect));
+        }
+
+        // Query the input rectangles.
+        std::vector<D2D1_RECT_F> result(sourceCount);
+
+        ThrowIfFailed(realizationContext->GetEffectRequiredInputRectangles(d2dEffect.Get(), &d2dOutputRectangle, inputDescriptions.data(), result.data(), sourceCount));
+
+        return result;
+    }
+
+
+    IFACEMETHODIMP CanvasEffect::GetRequiredSourceRectangle(
+        ICanvasResourceCreatorWithDpi* resourceCreator,
+        Rect outputRectangle,
+        ICanvasEffect* sourceEffect,
+        uint32_t sourceIndex,
+        Rect sourceBounds,
+        Rect* value)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckInPointer(value);
+
+                auto result = GetRequiredSourceRectanglesImpl(this, resourceCreator, outputRectangle, 1, &sourceEffect, &sourceIndex, &sourceBounds);
+
+                assert(result.size() == 1);
+
+                *value = FromD2DRect(result[0]);
+            });
+    }
+
+
+    IFACEMETHODIMP CanvasEffect::GetRequiredSourceRectangles(
+        ICanvasResourceCreatorWithDpi* resourceCreator,
+        Rect outputRectangle,
+        uint32_t sourceEffectCount,
+        ICanvasEffect** sourceEffects,
+        uint32_t sourceIndexCount,
+        uint32_t* sourceIndices,
+        uint32_t sourceBoundsCount,
+        Rect* sourceBounds,
+        uint32_t* valueCount,
+        Rect** valueElements)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckInPointer(sourceEffects);
+                CheckInPointer(sourceIndices);
+                CheckInPointer(sourceBounds);
+                CheckInPointer(valueCount);
+                CheckAndClearOutPointer(valueElements);
+
+                // All three source arrays must be the same size.
+                if (sourceEffectCount != sourceIndexCount ||
+                    sourceEffectCount != sourceBoundsCount)
+                {
+                    ThrowHR(E_INVALIDARG);
+                }
+
+                auto result = GetRequiredSourceRectanglesImpl(this, resourceCreator, outputRectangle, sourceEffectCount, sourceEffects, sourceIndices, sourceBounds);
+
+                auto resultArray = TransformToComArray<Rect>(result.begin(), result.end(), FromD2DRect);
+
+                resultArray.Detach(valueCount, valueElements);
             });
     }
 
@@ -983,6 +1286,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             SetD2DProperty(d2dEffect.Get(), i, m_properties[i].Get());
         }
 
+        // Also transfer the special properties that are common to all effects (CacheOutput and BufferPrecision).
+        if (m_cacheOutput)
+            ThrowIfFailed(d2dEffect->SetValue(D2D1_PROPERTY_CACHED, static_cast<BOOL>(true)));
+
+        if (m_bufferPrecision != D2D1_BUFFER_PRECISION_UNKNOWN)
+            ThrowIfFailed(d2dEffect->SetValue(D2D1_PROPERTY_PRECISION, m_bufferPrecision));
+
         // Transfer input images across to the D2D effect.
         ThrowIfFailed(d2dEffect->SetInputCount((unsigned)m_sources.size()));
 
@@ -1013,6 +1323,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             {
                 m_properties[i] = GetD2DProperty(d2dEffect.Get(), i);
             }
+
+            // Also transfer the special properties that are common to all effects (CacheOutput and BufferPrecision).
+            m_cacheOutput = !!d2dEffect->GetValue<BOOL>(D2D1_PROPERTY_CACHED);
+            m_bufferPrecision = d2dEffect->GetValue<D2D1_BUFFER_PRECISION>(D2D1_PROPERTY_PRECISION);
 
             // Read back the list of source images from the D2D effect.
             if (!skipAllSources)

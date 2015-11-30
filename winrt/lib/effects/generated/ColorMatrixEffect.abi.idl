@@ -10,7 +10,7 @@ namespace Microsoft.Graphics.Canvas.Effects
 
     [version(VERSION), uuid(E6AE54C4-883D-588E-B451-E9EBE3830437), exclusiveto(ColorMatrixEffect)]
     interface IColorMatrixEffect : IInspectable
-        requires Microsoft.Graphics.Canvas.ICanvasImage
+        requires ICanvasEffect
     {
         [propget]
         HRESULT ColorMatrix([out, retval] Matrix5x4* value);
@@ -42,6 +42,5 @@ namespace Microsoft.Graphics.Canvas.Effects
     runtimeclass ColorMatrixEffect
     {
         [default] interface IColorMatrixEffect;
-        interface IGRAPHICSEFFECT;
     }
 }

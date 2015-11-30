@@ -10,7 +10,7 @@ namespace Microsoft.Graphics.Canvas.Effects
 
     [version(VERSION), uuid(45F57C50-D4D9-5AF1-8A6B-50378F3498A2), exclusiveto(DisplacementMapEffect)]
     interface IDisplacementMapEffect : IInspectable
-        requires Microsoft.Graphics.Canvas.ICanvasImage
+        requires ICanvasEffect
     {
         [propget]
         HRESULT Amount([out, retval] float* value);
@@ -48,6 +48,5 @@ namespace Microsoft.Graphics.Canvas.Effects
     runtimeclass DisplacementMapEffect
     {
         [default] interface IDisplacementMapEffect;
-        interface IGRAPHICSEFFECT;
     }
 }

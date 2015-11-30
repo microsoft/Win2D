@@ -169,12 +169,11 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <content>
         <para>
           Win2D provides a few ways to control the precision of a graph.
-
-          <!-- TODO #4066 - restore these docs once Win2D exposes IsBufferPrecisionSupported
+        </para>
+        <para>
           Before using high precision formats in Win2D, applications must ensure they are supported 
           sufficiently by the GPU. To check this, use 
-          ID2D1DeviceContext::IsBufferPrecisionSupported.
-          -->
+          <codeEntityReference>M:Microsoft.Graphics.Canvas.CanvasDevice.IsBufferPrecisionSupported(Microsoft.Graphics.Canvas.CanvasBufferPrecision)</codeEntityReference>.
         </para>
         <para>
           Applications may create a Direct3D device using WARP (software emulation) to ensure that 
@@ -194,31 +193,20 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         </para>
 
         <para>
-          <legacyBold>Precision selection from SetRenderingControls</legacyBold>
+          <legacyBold>Precision selection from the drawing session</legacyBold>
         </para>
-        <para>
-          This option is not yet supported in Win2D. Coming soon!
-        </para>
-        <!-- TODO #4065 - restore these docs once Win2D exposes SetRenderingControls
         <para>
           The simplest way to control the precision of Win2D's intermediate textures is to use the 
-          ID2D1DeviceContext::SetRenderingControls method. This controls the precision of all 
-          intermediate textures, as long as a precision is not also set manually on effects or 
-          transforms directly.
+          <codeEntityReference>P:Microsoft.Graphics.Canvas.CanvasDrawingSession.EffectBufferPrecision</codeEntityReference>
+          property. This controls the precision of all intermediate textures, as long as 
+          a precision is not also set manually on effects directly.
         </para>
         <code>
-          if (Device->IsBufferPrecisionSupported(D2D1_BUFFER_PRECISION_32BPC_FLOAT))
+          if (canvasDevice.IsBufferPrecisionSupported(CanvasBufferPrecision.Precision32Float))
           {
-              // Get the current rendering controls
-              D2D1_RENDERING_CONTROLS renderingControls = {};
-              Context-&gt;GetRenderingControls(&amp;renderingControls);
-
-              // Switch the precision within the rendering controls and set it
-              renderingControls.bufferPrecision = D2D1_BUFFER_PRECISION_32BPC_FLOAT;
-              Context-&gt;SetRenderingControls(&amp;renderingControls);
+              drawingSession.EffectBufferPrecision = CanvasBufferPrecision.Precision32Float;
           }
         </code>
-        -->
         
         <para>
           <legacyBold>Precision selection from inputs and render targets</legacyBold>
@@ -246,10 +234,6 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
           <legacyBold>Precision selection directly on effects</legacyBold>
         </para>
         <para>
-          This option is not yet supported in Win2D. Coming soon!
-        </para>
-        <!-- TODO #4074 - restore these docs once Win2D exposes D2D1_PROPERTY_PRECISION
-        <para>
           The minimum precision for intermediate textures may also be set at explicit locations 
           within an effect graph. This is only recommended for advanced applications.
         </para>
@@ -257,16 +241,15 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
           The minimum precision may be set using a property on an effect as follows:
         </para>
         <code>
-          if (Device-&gt;IsBufferPrecisionSupported(D2D1_BUFFER_PRECISION_32BPC_FLOAT))
+          if (canvasDevice.IsBufferPrecisionSupported(CanvasBufferPrecision.Precision32Float))
           {
-              hr = Effect-&gt;SetValue(D2D1_PROPERTY_PRECISION, D2D1_BUFFER_PRECISION_32BPC_FLOAT);
+              blurEffect.BufferPrecision = CanvasBufferPrecision.Precision32Float;
           }
         </code>
         <para>      
           Note that the precision set on an effect will also apply to effects downstream in the 
           same effect graph, unless a different precision is set on those downstream effects.
         </para>
-        -->
 
         <para>
           Below is the full recursive logic used to determine the minimum precision for an 

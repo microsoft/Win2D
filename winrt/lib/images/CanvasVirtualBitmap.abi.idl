@@ -1,0 +1,148 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+//
+// Licensed under the MIT License. See LICENSE.txt in the project root for license information.
+
+#if WINVER > _WIN32_WINNT_WINBLUE
+
+namespace Microsoft.Graphics.Canvas
+{
+    runtimeclass CanvasVirtualBitmap;
+
+    [version(VERSION)]
+    typedef enum CanvasVirtualBitmapOptions
+    {
+        None,
+        ReleaseSource,
+        CacheOnDemand
+    } CanvasVirtualBitmapOptions;
+
+    [version(VERSION), uuid(B2F1F8E9-0770-4DD4-956D-78D911390957), exclusiveto(CanvasVirtualBitmap)]
+    interface ICanvasVirtualBitmapStatics : IInspectable
+    {
+        //
+        // Load from filename
+        //
+        
+        [overload("LoadAsync")]
+        HRESULT LoadAsyncFromFileName(
+            [in]          ICanvasResourceCreator* resourceCreator,
+            [in]          HSTRING fileName,
+            [out, retval] Windows.Foundation.IAsyncOperation<CanvasVirtualBitmap*>** value);
+
+        [overload("LoadAsync")]
+        HRESULT LoadAsyncFromFileNameWithOptions(
+            [in]          ICanvasResourceCreator* resourceCreator,
+            [in]          HSTRING fileName,
+            [in]          CanvasVirtualBitmapOptions options,
+            [out, retval] Windows.Foundation.IAsyncOperation<CanvasVirtualBitmap*>** value);
+
+        [overload("LoadAsync")]
+        HRESULT LoadAsyncFromFileNameWithOptionsAndAlpha(
+            [in]          ICanvasResourceCreator* resourceCreator,
+            [in]          HSTRING fileName,
+            [in]          CanvasVirtualBitmapOptions options,
+            [in]          CanvasAlphaMode alpha,
+            [out, retval] Windows.Foundation.IAsyncOperation<CanvasVirtualBitmap*>** value);
+
+        //
+        // Load from URI
+        //
+        
+        [overload("LoadAsync")]
+        HRESULT LoadAsyncFromUri(
+            [in]          ICanvasResourceCreator* resourceCreator,
+            [in]          Windows.Foundation.Uri* uri,
+            [out, retval] Windows.Foundation.IAsyncOperation<CanvasVirtualBitmap*>** value);
+
+        [overload("LoadAsync")]
+        HRESULT LoadAsyncFromUriWithOptions(
+            [in]          ICanvasResourceCreator* resourceCreator,
+            [in]          Windows.Foundation.Uri* uri,
+            [in]          CanvasVirtualBitmapOptions options,
+            [out, retval] Windows.Foundation.IAsyncOperation<CanvasVirtualBitmap*>** value);
+
+        [overload("LoadAsync")]
+        HRESULT LoadAsyncFromUriWithOptionsAndAlpha(
+            [in]          ICanvasResourceCreator* resourceCreator,
+            [in]          Windows.Foundation.Uri* uri,
+            [in]          CanvasVirtualBitmapOptions options,
+            [in]          CanvasAlphaMode alpha,
+            [out, retval] Windows.Foundation.IAsyncOperation<CanvasVirtualBitmap*>** value);
+
+        //
+        // Load from stream
+        //
+        
+        [overload("LoadAsync"), default_overload]
+        HRESULT LoadAsyncFromStream(
+            [in]          ICanvasResourceCreator* resourceCreator,
+            [in]          Windows.Storage.Streams.IRandomAccessStream* stream,
+            [out, retval] Windows.Foundation.IAsyncOperation<CanvasVirtualBitmap*>** value);
+
+        [overload("LoadAsync"), default_overload]
+        HRESULT LoadAsyncFromStreamWithOptions(
+            [in]          ICanvasResourceCreator* resourceCreator,
+            [in]          Windows.Storage.Streams.IRandomAccessStream* stream,
+            [in]          CanvasVirtualBitmapOptions options,
+            [out, retval] Windows.Foundation.IAsyncOperation<CanvasVirtualBitmap*>** value);
+
+        [overload("LoadAsync"), default_overload]
+        HRESULT LoadAsyncFromStreamWithOptionsAndAlpha(
+            [in]          ICanvasResourceCreator* resourceCreator,
+            [in]          Windows.Storage.Streams.IRandomAccessStream* stream,
+            [in]          CanvasVirtualBitmapOptions options,
+            [in]          CanvasAlphaMode alpha,
+            [out, retval] Windows.Foundation.IAsyncOperation<CanvasVirtualBitmap*>** value);
+    };
+
+    [version(VERSION), uuid(707D8BB0-05F9-484C-9EE2-179E0681C8A7), exclusiveto(CanvasVirtualBitmap)]
+    interface ICanvasVirtualBitmap : IInspectable
+        requires Windows.Foundation.IClosable, ICanvasImage
+    {
+        //
+        // Returns whether or not the underlying D2D image was actually created
+        // with CACHE_ON_DEMAND set.
+        //
+        // This is always false if CacheOnDemand was not specified during
+        // loading.
+        //
+        // The may be true if CacheOnDemand was specified during loading and the
+        // image supports cache on demand, or if the CanvasVirtualBitmap was
+        // created via interop.
+        //
+        [propget]
+        HRESULT IsCachedOnDemand([out, retval] boolean* value);
+
+        //
+        // These SizeInPixels/Size/Bounds are convenience that allow the size to
+        // be determined without needing a CanvasDrawingSession.  Internally
+        // they work by calling ID2D1DeviceContext::GetImageLocalBounds on a
+        // temporary context.
+        //
+        
+        [propget]
+        HRESULT SizeInPixels([out, retval] BitmapSize* value);
+
+        [propget]
+        HRESULT Size([out, retval] Windows.Foundation.Size* value);
+
+        [propget]
+        HRESULT Bounds([out, retval] Windows.Foundation.Rect* value);
+
+        //
+        // Not included: OfferResources / TryReclaimResources.
+        //
+        // No other Win2D resources have these and it feels out of scope for
+        // Win2D.
+        //
+    };
+
+    [version(VERSION), threading(both), marshaling_behavior(agile),
+     static(ICanvasVirtualBitmapStatics, VERSION)]
+    runtimeclass CanvasVirtualBitmap
+    {
+        [default] interface ICanvasVirtualBitmap;
+    }
+}
+
+#endif

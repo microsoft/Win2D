@@ -63,6 +63,27 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         </p>
       </remarks>
     </member>    
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDevice.IsPixelFormatSupported(Windows.Graphics.DirectX.DirectXPixelFormat)" Experimental="true">
+      <summary>Checks whether the specified pixel format is supported on this device.</summary>
+      <remarks>
+        <p>
+          This will vary depending on the Direct3D feature level of the device, and 
+          whether the device has hardware acceleration enabled.
+        </p>
+        <p>
+          For more information, see <a href="PixelFormats.htm">Pixel Formats</a>.
+        </p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDevice.IsBufferPrecisionSupported(Microsoft.Graphics.Canvas.CanvasBufferPrecision)" Experimental="true">
+      <summary>Checks whether the specified buffer precision is supported on this device.</summary>
+      <remarks>
+        <p>
+          This will vary depending on the Direct3D feature level of the device, and 
+          whether the device has hardware acceleration enabled.
+        </p>
+      </remarks>
+    </member>
 
     <member name="M:Microsoft.Graphics.Canvas.CanvasDevice.IsDeviceLost(System.Int32)">
       <summary>Returns whether this device has lost the ability to be operational.</summary>

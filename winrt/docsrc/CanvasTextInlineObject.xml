@@ -1,0 +1,116 @@
+<?xml version="1.0"?>
+<!--
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+Licensed under the MIT License. See LICENSE.txt in the project root for license information.
+-->
+
+<doc>
+  <assembly>
+    <name>Microsoft.Graphics.Canvas</name>
+  </assembly>
+  <members>
+    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasLineBreakCondition" Experimental="true">
+      <summary>Describes conditions at the edges of inline objects that determine line-breaking behavior.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasLineBreakCondition.Neutral">
+      <summary>Indicates that breaks are determined by the neighboring text span or inline object.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasLineBreakCondition.CanBreak">
+      <summary>Indicates that breaks are allowed, unless overruled by the neighboring text span or inline object: either prohibited by a CannotBreak or forced by a MustBreak. </summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasLineBreakCondition.CannotBreak">
+      <summary>Indicates that there should be no line break, unless overruled by a MustBreak from the neighboring text span or inline object. </summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasLineBreakCondition.MustBreak">
+      <summary>Indicates that a line break must happen, regardless of anything else. </summary>
+    </member>
+    <member name="T:Microsoft.Graphics.Canvas.Text.ICanvasTextInlineObject" Experimental="true">
+      <summary>An application-implemented interface for drawing graphics inserted into text.</summary>
+      <remarks>
+        <p>
+          If your app needs to draw some arbitrary graphics together with a text layout,
+          inline objects are a way to do it. Use CanvasTextLayout's
+          <see cref="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.SetInlineObject(System.Int32,System.Int32,Microsoft.Graphics.Canvas.Text.ICanvasTextInlineObject)"/>
+          to set the inline object for a group of characters in a layout.
+        </p>
+        <p>
+          The Draw callback allows your app  to specify some arbitrary drawing 
+          behavior, be it graphics, or text, or anything else. The
+          application may choose to store a CanvasDrawingSession
+          within its implementation of ICanvasTextInlineObject, and issue
+          drawing commands to it from the Draw callback.
+        </p>
+        <p>
+          Inline objects set to characters within a text layout are drawn along
+          with the rest of the text layout. If the inline object overlaps with
+          the text, the inline object will typically appear on top.
+        </p>
+        <p>
+          The other use for inline objects are custom trimming signs. When a
+          text layout is trimmed, an app may choose the default of truncation,
+          or an ellipsis, or some other arbitrary drawing routine. 
+        </p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Text.ICanvasTextInlineObject.Draw(Microsoft.Graphics.Canvas.Text.ICanvasTextRenderer,System.Numerics.Vector2,System.Boolean,System.Boolean,System.Object)">
+      <summary>Signals to the app that it should draw the inline object.</summary>
+      <remarks>
+        <p>
+          The ICanvasTextRenderer object is only passed through as non-null
+          if the app is using a custom renderer. In this case, it is 
+          recommended that the app's implementation of Draw avoids calling
+          DrawInlineObject, if it will lead to recursion.
+        </p>
+        <p>
+          An inline object's Draw method may be called whenever a text 
+          layout containing that inline object:
+          <ul>
+            <li>Is drawn to a drawing session</li>
+            <li>Is drawn to an app's custom text renderer</li>
+            <li>Is used to produce geometry for <see cref="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.CreateText(Microsoft.Graphics.Canvas.Text.CanvasTextLayout)"/></li>
+          </ul>
+          As such, an inline object may be implemented to draw to a drawing 
+          session, or add to a geometry, for example.
+        </p>
+      </remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Text.ICanvasTextInlineObject.Baseline">
+      <summary>Gets the distance from the top of the object to the point where it is lined up with the adjacent text.</summary>
+      <remarks>If you want the baseline at the bottom, then the baseline simply equals the height of the object.</remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Text.ICanvasTextInlineObject.BreakAfter">
+      <summary>Gets the line-breaking behavior after the inline object.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Text.ICanvasTextInlineObject.BreakBefore">
+      <summary>Gets the line-breaking behavior before the inline object.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Text.ICanvasTextInlineObject.DrawBounds">
+      <summary>Gets the bounds of the parts of the text that would get drawn.</summary>
+      <remarks>
+        <p>
+          These bounds are measured the same way as 
+          <see cref="P:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.DrawBounds"/>
+        </p>
+        <p>
+          Win2D doesn't do anything to validate whether this callback is
+          honest about the bounds of what gets drawn. It's up to the app
+          to report the correct bounds here.
+        </p>
+      </remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Text.ICanvasTextInlineObject.Size">
+      <summary>Gets the size of the inline object.</summary>
+      <remarks>
+        <p>
+          The size reported here can be different from the size of the DrawBounds.
+          It can be used to easily add empty padding around an inline object without
+          reworking any of its drawing.
+        </p>
+      </remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Text.ICanvasTextInlineObject.SupportsSideways">
+      <summary>Gets whether the inline object supports being rotated when it's part of vertical text.</summary>
+    </member>
+  </members>
+</doc>

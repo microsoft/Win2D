@@ -4,6 +4,7 @@
 
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Geometry;
+using Microsoft.Graphics.Canvas.Text;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using System;
 using System.Collections.Generic;
@@ -60,6 +61,7 @@ namespace ExampleGallery
             RoundedRectangle,
             Ellipse,
             Star,
+            Text,
             Group
         }
 
@@ -90,13 +92,31 @@ namespace ExampleGallery
         {
             switch (type)
             {
-                case GeometryType.Rectangle: return CanvasGeometry.CreateRectangle(resourceCreator, 100, 100, 300, 350);
-                case GeometryType.RoundedRectangle: return CanvasGeometry.CreateRoundedRectangle(resourceCreator, 80, 80, 400, 400, 100, 100);
-                case GeometryType.Ellipse: return CanvasGeometry.CreateEllipse(resourceCreator, 275, 275, 225, 275);
+                case GeometryType.Rectangle:
+                    return CanvasGeometry.CreateRectangle(resourceCreator, 100, 100, 300, 350);
+
+                case GeometryType.RoundedRectangle:
+                    return CanvasGeometry.CreateRoundedRectangle(resourceCreator, 80, 80, 400, 400, 100, 100);
+
+                case GeometryType.Ellipse:
+                    return CanvasGeometry.CreateEllipse(resourceCreator, 275, 275, 225, 275);
+
                 case GeometryType.Star:
+                    return Utils.CreateStarGeometry(resourceCreator, 250, new Vector2(250, 250));
+
+                case GeometryType.Text:
                     {
-                        return Utils.CreateStarGeometry(resourceCreator, 250, new Vector2(250, 250));
+                        var textFormat = new CanvasTextFormat
+                        {
+                            FontFamily = "Comic Sans MS",
+                            FontSize = 400,
+                        };
+
+                        var textLayout = new CanvasTextLayout(resourceCreator, "2D", textFormat, 1000, 1000);
+
+                        return CanvasGeometry.CreateText(textLayout);
                     }
+
                 case GeometryType.Group:
                     {
                         CanvasGeometry geo0 = CanvasGeometry.CreateRectangle(resourceCreator, 100, 100, 100, 100);

@@ -4,6 +4,8 @@
 
 #include "pch.h"
 
+#include <lib/brushes/Gradients.h>
+
 TEST_CLASS(ConversionUnitTests)
 {
     TEST_METHOD_EX(Uint8_NormalizedFloat)
@@ -224,5 +226,26 @@ TEST_CLASS(ConversionUnitTests)
         Assert::AreEqual(1, SizeDipsToPixels(0.4f, 192));
         Assert::AreEqual(1, SizeDipsToPixels(0.6f, 192));
         Assert::AreEqual(2, SizeDipsToPixels(0.9f, 192));
+    }
+
+    TEST_METHOD_EX(ToRECTRounding)
+    {
+        // A typical rectangle should round to nearest.
+        Rect rc = { 0.01f, 9.7f, 19.9f, 30.3f };
+
+        Assert::AreEqual(RECT{ 0, 10, 20, 40 }, ToRECT(rc, 96));
+        Assert::AreEqual(RECT{ 0, 15, 30, 60 }, ToRECT(rc, 144));
+
+        // Very small size should never round down to zero.
+        rc = Rect{ 9.9f, 20.1f, 0.4f, 0.0001f };
+
+        Assert::AreEqual(RECT{ 10, 20, 11, 21 }, ToRECT(rc, 96));
+        Assert::AreEqual(RECT{ 20, 40, 21, 41 }, ToRECT(rc, 192));
+
+        // Zero size should output zero.
+        rc = Rect{ 9.9f, 20.1f, 0, 0 };
+
+        Assert::AreEqual(RECT{ 10, 20, 10, 20 }, ToRECT(rc, 96));
+        Assert::AreEqual(RECT{ 20, 40, 20, 40 }, ToRECT(rc, 192));
     }
 };

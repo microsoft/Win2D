@@ -49,22 +49,28 @@ namespace DocPreprocess
 
             Directory.CreateDirectory(options.DocSrcOutput);
 
-            var allDocuments = new List<XDocument>();
+            var allDocuments = (from filename in options.DocSrc
+                                select new
+                                {
+                                    Filename = filename,
+                                    Document = XDocument.Load(filename)
+                                }).ToList();
 
-            foreach (var filename in options.DocSrc)
+            var templates = allDocuments.SelectMany(doc => doc.Document.Descendants("template")).ToList();
+
+            templates.ForEach(template => template.Remove());
+
+            foreach (var doc in allDocuments)
             {
-                var doc = XDocument.Load(filename);
+                ExpandTemplates(doc.Document, templates);
+                PreprocessDocument(doc.Document, doc.Filename);
 
-                PreprocessDocument(doc, filename);
+                string output = Path.Combine(options.DocSrcOutput, Path.GetFileName(doc.Filename));
 
-                string output = Path.Combine(options.DocSrcOutput, Path.GetFileName(filename));
-
-                doc.Save(output);
-
-                allDocuments.Add(doc);
+                doc.Document.Save(output);
             }
 
-            return allDocuments.ToArray();
+            return allDocuments.Select(doc => doc.Document).ToArray();
         }
 
 
@@ -135,6 +141,27 @@ namespace DocPreprocess
 
                 summary.AddFirst(new XElement("b", tag.Summary + " "));
                 remarks.AddFirst(new XElement("p", new XElement("i", tag.Description)));
+            }
+        }
+
+
+        static void ExpandTemplates(XDocument doc, List<XElement> templates)
+        {
+            foreach (var inheritMarker in doc.Descendants("inherittemplate").ToList())
+            {
+                var name = inheritMarker.Attribute("name").Value;
+                var replacement = inheritMarker.Attribute("replacement").Value;
+
+                var template = templates.Single(t => t.Attribute("name").Value == name);
+
+                var clonedTemplate = new XElement(template);
+
+                foreach (var attribute in clonedTemplate.Descendants().Attributes())
+                {
+                    attribute.Value = attribute.Value.Replace(name, replacement);
+                }
+
+                inheritMarker.ReplaceWith(clonedTemplate.Elements());
             }
         }
 

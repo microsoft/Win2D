@@ -9,24 +9,31 @@ class TestBitmapAdapter : public CanvasBitmapAdapter
     ComPtr<IWICBitmapSource> m_converter;
 
 public:
-    std::function<void()> MockCreateWICFormatConverter;
+    std::function<void()> MockCreateWicBitmapSource;
 
     TestBitmapAdapter(ComPtr<IWICFormatConverter> converter)
         : m_converter(converter)
     {
     }
 
-    ComPtr<IWICBitmapSource> CreateWICFormatConverter(HSTRING fileName)
+    virtual WicBitmapSource CreateWicBitmapSource(HSTRING fileName, bool tryEnableIndexing) override
     {
-        if (MockCreateWICFormatConverter)
-            MockCreateWICFormatConverter();
-        return m_converter;
+        if (MockCreateWicBitmapSource)
+            MockCreateWicBitmapSource();
+        return WicBitmapSource{ m_converter, WICBitmapTransformRotate0 };
     }
 
-    ComPtr<IWICBitmapSource> CreateWICFormatConverter(IStream* fileStream)
+    virtual WicBitmapSource CreateWicBitmapSource(IStream* fileStream, bool tryEnableIndexing) override
     {
         Assert::Fail(); // Unexpected
-        return nullptr;
+        return WicBitmapSource{ m_converter, WICBitmapTransformRotate0 };
+    }
+
+    virtual ComPtr<IWICBitmapSource> CreateFlipRotator(
+            ComPtr<IWICBitmapSource> const& source,
+            WICBitmapTransformOptions transformOptions) override
+    {
+        return source;
     }
 
     virtual void SaveLockedMemoryToFile(

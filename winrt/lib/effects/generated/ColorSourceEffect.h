@@ -24,6 +24,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         static IID const& EffectId() { return CLSID_D2D1Flood; }
 
         EFFECT_PROPERTY(Color, Color);
+        EFFECT_PROPERTY(ColorHdr, Numerics::Vector4);
 
         EFFECT_PROPERTY_MAPPING();
     };

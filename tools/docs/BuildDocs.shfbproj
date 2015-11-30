@@ -61,8 +61,49 @@
     <ContentLayout Include="Layout.content" />
 
     <!-- Image files -->
-    <WildcardImages Include="..\..\winrt\docsrc\media\*.png" />
-    <WildcardImages Include="..\..\winrt\docsrc\media\*.svg" />
+    <Image Include="..\..\winrt\docsrc\media\Blend.png">                                <ImageId>Blend</ImageId>                                <CopyToMedia>True</CopyToMedia></Image>
+    <Image Include="..\..\winrt\docsrc\media\BlendEffectMode.png">                      <ImageId>BlendEffectMode</ImageId>                      <CopyToMedia>True</CopyToMedia></Image>
+    <Image Include="..\..\winrt\docsrc\media\BlendEffectMode_Color.png">                <ImageId>BlendEffectMode_Color</ImageId>                <CopyToMedia>True</CopyToMedia></Image>
+    <Image Include="..\..\winrt\docsrc\media\BlendEffectMode_ColorBurn.png">            <ImageId>BlendEffectMode_ColorBurn</ImageId>            <CopyToMedia>True</CopyToMedia></Image>
+    <Image Include="..\..\winrt\docsrc\media\BlendEffectMode_ColorDodge.png">           <ImageId>BlendEffectMode_ColorDodge</ImageId>           <CopyToMedia>True</CopyToMedia></Image>
+    <Image Include="..\..\winrt\docsrc\media\BlendEffectMode_Darken.png">               <ImageId>BlendEffectMode_Darken</ImageId>               <CopyToMedia>True</CopyToMedia></Image>
+    <Image Include="..\..\winrt\docsrc\media\BlendEffectMode_DarkerColor.png">          <ImageId>BlendEffectMode_DarkerColor</ImageId>          <CopyToMedia>True</CopyToMedia></Image>
+    <Image Include="..\..\winrt\docsrc\media\BlendEffectMode_Difference.png">           <ImageId>BlendEffectMode_Difference</ImageId>           <CopyToMedia>True</CopyToMedia></Image>
+    <Image Include="..\..\winrt\docsrc\media\BlendEffectMode_Dissolve.png">             <ImageId>BlendEffectMode_Dissolve</ImageId>             <CopyToMedia>True</CopyToMedia></Image>
+    <Image Include="..\..\winrt\docsrc\media\BlendEffectMode_Division.png">             <ImageId>BlendEffectMode_Division</ImageId>             <CopyToMedia>True</CopyToMedia></Image>
+    <Image Include="..\..\winrt\docsrc\media\BlendEffectMode_Exclusion.png">            <ImageId>BlendEffectMode_Exclusion</ImageId>            <CopyToMedia>True</CopyToMedia></Image>
+    <Image Include="..\..\winrt\docsrc\media\BlendEffectMode_HardLight.png">            <ImageId>BlendEffectMode_HardLight</ImageId>            <CopyToMedia>True</CopyToMedia></Image>
+    <Image Include="..\..\winrt\docsrc\media\BlendEffectMode_HardMix.png">              <ImageId>BlendEffectMode_HardMix</ImageId>              <CopyToMedia>True</CopyToMedia></Image>
+    <Image Include="..\..\winrt\docsrc\media\BlendEffectMode_Hue.png">                  <ImageId>BlendEffectMode_Hue</ImageId>                  <CopyToMedia>True</CopyToMedia></Image>
+    <Image Include="..\..\winrt\docsrc\media\BlendEffectMode_Lighten.png">              <ImageId>BlendEffectMode_Lighten</ImageId>              <CopyToMedia>True</CopyToMedia></Image>
+    <Image Include="..\..\winrt\docsrc\media\BlendEffectMode_LighterColor.png">         <ImageId>BlendEffectMode_LighterColor</ImageId>         <CopyToMedia>True</CopyToMedia></Image>
+    <Image Include="..\..\winrt\docsrc\media\BlendEffectMode_LinearBurn.png">           <ImageId>BlendEffectMode_LinearBurn</ImageId>           <CopyToMedia>True</CopyToMedia></Image>
+    <Image Include="..\..\winrt\docsrc\media\BlendEffectMode_LinearDodge.png">          <ImageId>BlendEffectMode_LinearDodge</ImageId>          <CopyToMedia>True</CopyToMedia></Image>
+    <Image Include="..\..\winrt\docsrc\media\BlendEffectMode_LinearLight.png">          <ImageId>BlendEffectMode_LinearLight</ImageId>          <CopyToMedia>True</CopyToMedia></Image>
+    <Image Include="..\..\winrt\docsrc\media\BlendEffectMode_Luminosity.png">           <ImageId>BlendEffectMode_Luminosity</ImageId>           <CopyToMedia>True</CopyToMedia></Image>
+    <Image Include="..\..\winrt\docsrc\media\BlendEffectMode_Multiply.png">             <ImageId>BlendEffectMode_Multiply</ImageId>             <CopyToMedia>True</CopyToMedia></Image>
+    <Image Include="..\..\winrt\docsrc\media\BlendEffectMode_Overlay.png">              <ImageId>BlendEffectMode_Overlay</ImageId>              <CopyToMedia>True</CopyToMedia></Image>
+    <Image Include="..\..\winrt\docsrc\media\BlendEffectMode_PinLight.png">             <ImageId>BlendEffectMode_PinLight</ImageId>             <CopyToMedia>True</CopyToMedia></Image>
+    <Image Include="..\..\winrt\docsrc\media\BlendEffectMode_Saturation.png">           <ImageId>BlendEffectMode_Saturation</ImageId>           <CopyToMedia>True</CopyToMedia></Image>
+    <Image Include="..\..\winrt\docsrc\media\BlendEffectMode_Screen.png">               <ImageId>BlendEffectMode_Screen</ImageId>               <CopyToMedia>True</CopyToMedia></Image>
+    <Image Include="..\..\winrt\docsrc\media\BlendEffectMode_SoftLight.png">            <ImageId>BlendEffectMode_SoftLight</ImageId>            <CopyToMedia>True</CopyToMedia></Image>
+    <Image Include="..\..\winrt\docsrc\media\BlendEffectMode_Subtract.png">             <ImageId>BlendEffectMode_Subtract</ImageId>             <CopyToMedia>True</CopyToMedia></Image>
+    <Image Include="..\..\winrt\docsrc\media\BlendEffectMode_VividLight.png">           <ImageId>BlendEffectMode_VividLight</ImageId>           <CopyToMedia>True</CopyToMedia></Image>
+    <Image Include="..\..\winrt\docsrc\media\CanvasGradientMeshPatch_Points.png">       <ImageId>CanvasGradientMeshPatch_Points</ImageId>       <CopyToMedia>True</CopyToMedia></Image>
+    <Image Include="..\..\winrt\docsrc\media\CanvasGradientMesh_CreateCoonsPatch.png">  <ImageId>CanvasGradientMesh_CreateCoonsPatch</ImageId>  <CopyToMedia>True</CopyToMedia></Image>
+    <Image Include="..\..\winrt\docsrc\media\CanvasGradientMesh_CreateTensorPatch.png"> <ImageId>CanvasGradientMesh_CreateTensorPatch</ImageId> <CopyToMedia>True</CopyToMedia></Image>
+    <Image Include="..\..\winrt\docsrc\media\CapStyle.png">                             <ImageId>CapStyle</ImageId>                             <CopyToMedia>True</CopyToMedia></Image>
+    <Image Include="..\..\winrt\docsrc\media\Contrast.png">                             <ImageId>Contrast</ImageId>                             <CopyToMedia>True</CopyToMedia></Image>
+    <Image Include="..\..\winrt\docsrc\media\LayerOpacity.png">                         <ImageId>LayerOpacity</ImageId>                         <CopyToMedia>True</CopyToMedia></Image>
+    <Image Include="..\..\winrt\docsrc\media\LineJoin.png">                             <ImageId>LineJoin</ImageId>                             <CopyToMedia>True</CopyToMedia></Image>
+    <Image Include="..\..\winrt\docsrc\media\LuminanceToAlpha.png">                     <ImageId>LuminanceToAlpha</ImageId>                     <CopyToMedia>True</CopyToMedia></Image>
+    <Image Include="..\..\winrt\docsrc\media\TextMetrics.png">                          <ImageId>TextMetrics</ImageId>                          <CopyToMedia>True</CopyToMedia></Image>
+    <Image Include="..\..\winrt\docsrc\media\CanvasAnimatedControlLifeCycle.svg">       <ImageId>CanvasAnimatedControlLifeCycle</ImageId>       <CopyToMedia>True</CopyToMedia></Image>
+    <Image Include="..\..\winrt\docsrc\media\EffectPrecision1.svg">                     <ImageId>EffectPrecision1</ImageId>                     <CopyToMedia>True</CopyToMedia></Image>
+    <Image Include="..\..\winrt\docsrc\media\EffectPrecision2.svg">                     <ImageId>EffectPrecision2</ImageId>                     <CopyToMedia>True</CopyToMedia></Image>
+    <Image Include="..\..\winrt\docsrc\media\EffectPrecision3.svg">                     <ImageId>EffectPrecision3</ImageId>                     <CopyToMedia>True</CopyToMedia></Image>
+    <Image Include="..\..\winrt\docsrc\media\EffectPrecision4.svg">                     <ImageId>EffectPrecision4</ImageId>                     <CopyToMedia>True</CopyToMedia></Image>
+    <Image Include="..\..\winrt\docsrc\media\TextTrimmingDelimiters.png">               <ImageId>TextTrimmingDelimiters</ImageId>               <CopyToMedia>True</CopyToMedia></Image>
 
     <!-- Generated title pages for index topics -->
     <WildcardConceptual Include="$(MSBuildThisFileDirectory)..\..\obj\docs\topics\*.aml" />
@@ -72,10 +113,6 @@
       <Link>conceptual\%(Filename)%(Extension)</Link>
     </None>
 
-    <Image Include="@(WildcardImages)">
-      <ImageId>%(Filename)</ImageId>
-      <CopyToMedia>True</CopyToMedia>
-    </Image>
   </ItemGroup>
 
   <Import Project="$(SHFBROOT)\SandcastleHelpFileBuilder.targets" />

@@ -63,6 +63,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         CanvasImageInterpolation,
         D2D1_POINTDIFFUSE_PROP_SCALE_MODE)
 
+    IMPLEMENT_EFFECT_PROPERTY(PointDiffuseEffect,
+        LightColorHdr,
+        ConvertColorHdrToVector3,
+        Numerics::Vector4,
+        D2D1_POINTDIFFUSE_PROP_COLOR)
+
     IMPLEMENT_EFFECT_SOURCE_PROPERTY(PointDiffuseEffect,
         Source,
         0)
@@ -73,7 +79,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         { L"HeightMapScale",             D2D1_POINTDIFFUSE_PROP_SURFACE_SCALE,      GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT           },
         { L"LightColor",                 D2D1_POINTDIFFUSE_PROP_COLOR,              GRAPHICS_EFFECT_PROPERTY_MAPPING_COLOR_TO_VECTOR3 },
         { L"HeightMapKernelSize",        D2D1_POINTDIFFUSE_PROP_KERNEL_UNIT_LENGTH, GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT           },
-        { L"HeightMapInterpolationMode", D2D1_POINTDIFFUSE_PROP_SCALE_MODE,         GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT           })
+        { L"HeightMapInterpolationMode", D2D1_POINTDIFFUSE_PROP_SCALE_MODE,         GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT           },
+        { L"LightColorHdr",              D2D1_POINTDIFFUSE_PROP_COLOR,              GRAPHICS_EFFECT_PROPERTY_MAPPING_UNKNOWN          })
 
     ActivatableClass(PointDiffuseEffect);
 }}}}}

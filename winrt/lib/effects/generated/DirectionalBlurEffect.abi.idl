@@ -10,7 +10,7 @@ namespace Microsoft.Graphics.Canvas.Effects
 
     [version(VERSION), uuid(5D155C4B-0882-506A-A8E1-12E1EAD17F0A), exclusiveto(DirectionalBlurEffect)]
     interface IDirectionalBlurEffect : IInspectable
-        requires Microsoft.Graphics.Canvas.ICanvasImage
+        requires ICanvasEffect
     {
         [propget]
         HRESULT BlurAmount([out, retval] float* value);
@@ -48,6 +48,5 @@ namespace Microsoft.Graphics.Canvas.Effects
     runtimeclass DirectionalBlurEffect
     {
         [default] interface IDirectionalBlurEffect;
-        interface IGRAPHICSEFFECT;
     }
 }

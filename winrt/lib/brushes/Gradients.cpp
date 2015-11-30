@@ -4,35 +4,11 @@
 
 #include "pch.h"
 
+#include "Gradients.h"
+
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Brushes
 {
-    ComPtr<ID2D1GradientStopCollection1> CreateSimpleGradientStopCollection(
-        ICanvasDevice* canvasDevice,
-        Color startColor,
-        Color endColor,
-        CanvasEdgeBehavior edgeBehavior)
-    {
-        ComPtr<ICanvasDeviceInternal> deviceInternal;
-        ThrowIfFailed(canvasDevice->QueryInterface(deviceInternal.GetAddressOf()));
-
-        CanvasGradientStop stops[2];
-        stops[0].Color = startColor;
-        stops[0].Position = 0.0f;
-        stops[1].Color = endColor;
-        stops[1].Position = 1.0f;
-
-        ComPtr<ID2D1GradientStopCollection1> stopCollection = deviceInternal->CreateGradientStopCollection(
-            2,
-            stops,
-            edgeBehavior,
-            CanvasColorSpace::Srgb,
-            CanvasColorSpace::Srgb,
-            CanvasBufferPrecision::Precision8UIntNormalized,
-            CanvasAlphaMode::Premultiplied);
-
-        return stopCollection;
-    }
-
+    
     Color Desaturate(Color const& color, float amount)
     {
         Color result;
@@ -47,9 +23,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         ICanvasDevice* canvasDevice,
         float eldritchness)
     {
-        ComPtr<ICanvasDeviceInternal> deviceInternal;
-        ThrowIfFailed(canvasDevice->QueryInterface(deviceInternal.GetAddressOf()));
-
         CanvasGradientStop stops[] =
         {
             { 0.0f, { 255, 233, 1, 1 } }, // Red
@@ -66,7 +39,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             stops[i].Color = Desaturate(stops[i].Color, eldritchness);
         }
 
-        ComPtr<ID2D1GradientStopCollection1> stopCollection = deviceInternal->CreateGradientStopCollection(
+        return CreateGradientStopCollection(
+            canvasDevice,
             _countof(stops),
             stops,
             CanvasEdgeBehavior::Clamp,
@@ -74,34 +48,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             CanvasColorSpace::Srgb,
             CanvasBufferPrecision::Precision8UIntNormalized,
             CanvasAlphaMode::Premultiplied);
-
-        return stopCollection;
-    }
-
-    void CopyStops(
-        ComPtr<ID2D1GradientStopCollection> const& stopCollection,
-        UINT32* valueCount,
-        CanvasGradientStop** valueElements)
-    {
-        ComPtr<ID2D1GradientStopCollection1> stopCollection1;
-        ThrowIfFailed(stopCollection.As(&stopCollection1));
-
-        std::vector<D2D1_GRADIENT_STOP> d2dStops;
-        UINT stopCount = stopCollection1->GetGradientStopCount();
-
-        assert(stopCount != 0); // Enforced by D2D
-
-        d2dStops.resize(stopCount);
-        stopCollection1->GetGradientStops1(&(d2dStops[0]), stopCount);
-
-        auto stops = TransformToComArray<CanvasGradientStop>(d2dStops.begin(), d2dStops.end(),
-            [](D2D1_GRADIENT_STOP const& d2dStop)
-        {
-            // TODO #837: Decide what to do about high-color gradient stops.
-            return CanvasGradientStop{ d2dStop.position, ToWindowsColor(d2dStop.color) };
-        });
-
-        stops.Detach(valueCount, valueElements);
     }
 
     uint8_t DesaturateChannel(uint8_t channel, float amount)

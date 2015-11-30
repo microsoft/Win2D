@@ -1288,4 +1288,88 @@ TEST_CLASS(CanvasEffectsTests)
         Assert::IsNotNull(dpiWrapper);
         Assert::AreEqual<IGraphicsEffectSource>(bitmap, dpiWrapper->Source);
     }
+
+    TEST_METHOD(CanvasEffect_BufferPrecision)
+    {
+        auto device1 = ref new CanvasDevice();
+        auto device2 = ref new CanvasDevice();
+        
+        auto effect = ref new ColorSourceEffect();
+
+        // Check the default value.
+        Assert::IsNull(effect->BufferPrecision);
+
+        // Set and get the property while not realized.
+        effect->BufferPrecision = CanvasBufferPrecision::Precision32Float;
+        Assert::AreEqual(CanvasBufferPrecision::Precision32Float, effect->BufferPrecision->Value);
+
+        effect->BufferPrecision = nullptr;
+        Assert::IsNull(effect->BufferPrecision);
+
+        // Realizing the effect should immediately set its value through to D2D.
+        auto d2dEffect = GetWrappedResource<ID2D1Effect>(device1, effect);
+        Assert::AreEqual(D2D1_BUFFER_PRECISION_UNKNOWN, d2dEffect->GetValue<D2D1_BUFFER_PRECISION>(D2D1_PROPERTY_PRECISION));
+
+        // Changing the Win2D property should now immediately affect D2D state.
+        effect->BufferPrecision = CanvasBufferPrecision::Precision16Float;
+        Assert::AreEqual(CanvasBufferPrecision::Precision16Float, effect->BufferPrecision->Value);
+        Assert::AreEqual(D2D1_BUFFER_PRECISION_16BPC_FLOAT, d2dEffect->GetValue<D2D1_BUFFER_PRECISION>(D2D1_PROPERTY_PRECISION));
+
+        effect->BufferPrecision = nullptr;
+        Assert::IsNull(effect->BufferPrecision);
+        Assert::AreEqual(D2D1_BUFFER_PRECISION_UNKNOWN, d2dEffect->GetValue<D2D1_BUFFER_PRECISION>(D2D1_PROPERTY_PRECISION));
+
+        // Changing the D2D property should be immediately reflected to Win2D.
+        d2dEffect->SetValue(D2D1_PROPERTY_PRECISION, D2D1_BUFFER_PRECISION_8BPC_UNORM_SRGB);
+        Assert::AreEqual(CanvasBufferPrecision::Precision8UIntNormalizedSrgb, effect->BufferPrecision->Value);
+
+        d2dEffect->SetValue(D2D1_PROPERTY_PRECISION, D2D1_BUFFER_PRECISION_UNKNOWN);
+        Assert::IsNull(effect->BufferPrecision);
+
+        // Changing the D2D property, then re-realizing onto a different device should read back and preserve the new value.
+        d2dEffect->SetValue(D2D1_PROPERTY_PRECISION, D2D1_BUFFER_PRECISION_32BPC_FLOAT);
+
+        auto d2dEffect2 = GetWrappedResource<ID2D1Effect>(device2, effect);
+        Assert::IsFalse(IsSameInstance(d2dEffect.Get(), d2dEffect2.Get()));
+
+        Assert::AreEqual(CanvasBufferPrecision::Precision32Float, effect->BufferPrecision->Value);
+        Assert::AreEqual(D2D1_BUFFER_PRECISION_32BPC_FLOAT, d2dEffect2->GetValue<D2D1_BUFFER_PRECISION>(D2D1_PROPERTY_PRECISION));
+    }
+
+    TEST_METHOD(CanvasEffect_CacheOutput)
+    {
+        auto device1 = ref new CanvasDevice();
+        auto device2 = ref new CanvasDevice();
+
+        auto effect = ref new ColorSourceEffect();
+
+        // Check the default value.
+        Assert::IsFalse(effect->CacheOutput);
+
+        // Set and get the property while not realized.
+        effect->CacheOutput = true;
+        Assert::IsTrue(effect->CacheOutput);
+
+        // Realizing the effect should immediately set its value through to D2D.
+        auto d2dEffect = GetWrappedResource<ID2D1Effect>(device1, effect);
+        Assert::IsTrue(!!d2dEffect->GetValue<BOOL>(D2D1_PROPERTY_CACHED));
+
+        // Changing the Win2D property should now immediately affect D2D state.
+        effect->CacheOutput = false;
+        Assert::IsFalse(effect->CacheOutput);
+        Assert::IsFalse(!!d2dEffect->GetValue<BOOL>(D2D1_PROPERTY_CACHED));
+
+        // Changing the D2D property should be immediately reflected to Win2D.
+        d2dEffect->SetValue(D2D1_PROPERTY_CACHED, (BOOL)true);
+        Assert::IsTrue(effect->CacheOutput);
+
+        // Changing the D2D property, then re-realizing onto a different device should read back and preserve the new value.
+        d2dEffect->SetValue(D2D1_PROPERTY_CACHED, (BOOL)false);
+
+        auto d2dEffect2 = GetWrappedResource<ID2D1Effect>(device2, effect);
+        Assert::IsFalse(IsSameInstance(d2dEffect.Get(), d2dEffect2.Get()));
+
+        Assert::IsFalse(effect->CacheOutput);
+        Assert::IsFalse(!!d2dEffect2->GetValue<BOOL>(D2D1_PROPERTY_CACHED));
+    }
 };

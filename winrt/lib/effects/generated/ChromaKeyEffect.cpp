@@ -49,6 +49,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         boolean,
         D2D1_CHROMAKEY_PROP_FEATHER)
 
+    IMPLEMENT_EFFECT_PROPERTY(ChromaKeyEffect,
+        ColorHdr,
+        ConvertColorHdrToVector3,
+        Numerics::Vector4,
+        D2D1_CHROMAKEY_PROP_COLOR)
+
     IMPLEMENT_EFFECT_SOURCE_PROPERTY(ChromaKeyEffect,
         Source,
         0)
@@ -57,7 +63,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         { L"Color",       D2D1_CHROMAKEY_PROP_COLOR,        GRAPHICS_EFFECT_PROPERTY_MAPPING_COLOR_TO_VECTOR3 },
         { L"Tolerance",   D2D1_CHROMAKEY_PROP_TOLERANCE,    GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT           },
         { L"InvertAlpha", D2D1_CHROMAKEY_PROP_INVERT_ALPHA, GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT           },
-        { L"Feather",     D2D1_CHROMAKEY_PROP_FEATHER,      GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT           })
+        { L"Feather",     D2D1_CHROMAKEY_PROP_FEATHER,      GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT           },
+        { L"ColorHdr",    D2D1_CHROMAKEY_PROP_COLOR,        GRAPHICS_EFFECT_PROPERTY_MAPPING_UNKNOWN          })
 
     ActivatableClass(ChromaKeyEffect);
 }}}}}

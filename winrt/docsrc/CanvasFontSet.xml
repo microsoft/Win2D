@@ -77,6 +77,13 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     </member>
     <member name="T:Microsoft.Graphics.Canvas.Text.CanvasFontSet" Experimental="true">
       <summary>Represents a grouping of fonts.</summary>
+      <remarks>
+        <p>
+          When using <a href="Interop.htm">Direct2D interop</a>, this Win2D class
+          corresponds to the DirectWrite interface IDWriteFontCollection on Windows 8.1, 
+          and IDWriteFontSet on Windows 10.
+        </p>
+      </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Text.CanvasFontSet.#ctor">
       <summary>Initializes a new instance of the CanvasFontSet class.</summary>

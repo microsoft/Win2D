@@ -99,6 +99,16 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         static_assert(offsetof(DWRITE_MATRIX, dy) == offsetof(Numerics::Matrix3x2, M32), "Matrix3x2 layout must match DWRITE_MATRIX");
     };
 
+    template<> struct ValidateReinterpretAs<DWRITE_MATRIX*, D2D1_MATRIX_3X2_F*> : std::true_type
+    {
+        static_assert(offsetof(DWRITE_MATRIX, m11) == offsetof(D2D1_MATRIX_3X2_F, _11), "D2D1_MATRIX_3X2_F layout must match DWRITE_MATRIX");
+        static_assert(offsetof(DWRITE_MATRIX, m12) == offsetof(D2D1_MATRIX_3X2_F, _12), "D2D1_MATRIX_3X2_F layout must match DWRITE_MATRIX");
+        static_assert(offsetof(DWRITE_MATRIX, m21) == offsetof(D2D1_MATRIX_3X2_F, _21), "D2D1_MATRIX_3X2_F layout must match DWRITE_MATRIX");
+        static_assert(offsetof(DWRITE_MATRIX, m22) == offsetof(D2D1_MATRIX_3X2_F, _22), "D2D1_MATRIX_3X2_F layout must match DWRITE_MATRIX");
+        static_assert(offsetof(DWRITE_MATRIX, dx) == offsetof(D2D1_MATRIX_3X2_F, _31), "D2D1_MATRIX_3X2_F layout must match DWRITE_MATRIX");
+        static_assert(offsetof(DWRITE_MATRIX, dy) == offsetof(D2D1_MATRIX_3X2_F, _32), "D2D1_MATRIX_3X2_F layout must match DWRITE_MATRIX");
+    };
+
     template<> struct ValidateReinterpretAs<Numerics::Vector4*, D2D1_COLOR_F*> : std::true_type
     {
         static_assert(offsetof(D2D1_COLOR_F, r) == offsetof(Numerics::Vector4, X), "Vector4 layout must match D2D1_COLOR_F");
@@ -191,6 +201,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ToNormalizedFloat(color.G),
             ToNormalizedFloat(color.B),
             ToNormalizedFloat(color.A));
+    }
+
+    inline D2D1_COLOR_F ToD2DColor(Numerics::Vector4 const& colorHdr)
+    {
+        return *ReinterpretAs<D2D1_COLOR_F const*>(&colorHdr);
     }
 
     inline Numerics::Vector4 ToVector4(ABI::Windows::UI::Color const& color)
@@ -508,10 +523,16 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     inline RECT ToRECT(ABI::Windows::Foundation::Rect const& rect, float dpi)
     {
-        auto left = SizeDipsToPixels(rect.X, dpi);
-        auto top = SizeDipsToPixels(rect.Y, dpi);
-        auto right = SizeDipsToPixels(rect.X + rect.Width, dpi);
-        auto bottom = SizeDipsToPixels(rect.Y + rect.Height, dpi);
+        auto left = DipsToPixels(rect.X, dpi, CanvasDpiRounding::Round);
+        auto top = DipsToPixels(rect.Y, dpi, CanvasDpiRounding::Round);
+        auto right = DipsToPixels(rect.X + rect.Width, dpi, CanvasDpiRounding::Round);
+        auto bottom = DipsToPixels(rect.Y + rect.Height, dpi, CanvasDpiRounding::Round);
+
+        if (right == left && rect.Width > 0)
+            right++;
+
+        if (bottom == top && rect.Height > 0)
+            bottom++;
 
         return RECT{ left, top, right, bottom };
     }

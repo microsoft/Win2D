@@ -11,7 +11,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     struct SourceInterpolationState;
 
 
-    // Custom Direct2D draw transform.
+    // Custom Direct2D draw transform applies our pixel shader.
     class PixelShaderTransform : public RuntimeClass<RuntimeClassFlags<ClassicCom>, ID2D1DrawTransform, ID2D1Transform, ID2D1TransformNode>
                                , private LifespanTracker<PixelShaderTransform>
     {

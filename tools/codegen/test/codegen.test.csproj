@@ -64,6 +64,10 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Link>Deployed Files\Settings.xml</Link>
     </None>
+    <None Include="..\exe\apiref\D2DTypes4.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>Deployed Files\D2DTypes4.xml</Link>
+    </None>
     <None Include="..\exe\apiref\D2DTypes3.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Link>Deployed Files\D2DTypes3.xml</Link>

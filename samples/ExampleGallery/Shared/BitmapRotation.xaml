@@ -27,11 +27,18 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
 
         <ScrollViewer Grid.Column="0" VerticalScrollMode="Auto" HorizontalScrollMode="Disabled" VerticalScrollBarVisibility="Hidden">
             <StackPanel Orientation="Vertical" MinWidth="100" Margin="5">
-                <TextBlock>Bitmap source:</TextBlock>
-                <ComboBox 
+                <TextBlock x:Name="BitmapTypesLabel">Bitmap type:</TextBlock>
+                <ListBox
+                    x:Name="BitmapTypesList"
+                    ItemsSource="{Binding ElementName=control, Path=BitmapTypes}"
+                    SelectedItem="{Binding ElementName=control, Path=CurrentBitmapType, Mode=TwoWay}"
+                    FontSize="12"
+                    SelectionChanged="BitmapSourceOption_SelectionChanged"/>
+                <TextBlock Margin="0,15,0,0">Bitmap source:</TextBlock>
+                <ListBox
                       ItemsSource="{Binding ElementName=control, Path=BitmapSourceOptions}"
-                      SelectedItem="{Binding NextBitmapSourceOption, ElementName=control, Mode=TwoWay}"
-                      FontSize="15"
+                      SelectedItem="{Binding ElementName=control,Path=CurrentBitmapSource, Mode=TwoWay}"
+                      FontSize="12"
                       SelectionChanged="BitmapSourceOption_SelectionChanged"/>
                 </StackPanel>
         </ScrollViewer>

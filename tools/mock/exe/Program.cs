@@ -317,6 +317,9 @@ namespace Mock
             OutputMock("DrawInfo", inputDir, outputDir);
             OutputMock("EffectContext", inputDir, outputDir);
             OutputMock("TransformGraph", inputDir, outputDir);
+            OutputMock("BorderTransform", inputDir, outputDir);
+            OutputMock("Ink", inputDir, outputDir);
+            OutputMock("InkStyle", inputDir, outputDir);
         }
 
         static void Main(string[] args)

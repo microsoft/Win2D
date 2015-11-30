@@ -29,6 +29,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         EFFECT_PROPERTY(Tolerance, float);
         EFFECT_PROPERTY(InvertAlpha, boolean);
         EFFECT_PROPERTY(Feather, boolean);
+        EFFECT_PROPERTY(ColorHdr, Numerics::Vector4);
         EFFECT_PROPERTY(Source, IGraphicsEffectSource*);
 
         EFFECT_PROPERTY_MAPPING();

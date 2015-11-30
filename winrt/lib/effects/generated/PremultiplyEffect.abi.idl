@@ -10,7 +10,7 @@ namespace Microsoft.Graphics.Canvas.Effects
 
     [version(VERSION), uuid(D29A9D1E-BD57-5F3E-9AE0-009C6AC5B06D), exclusiveto(PremultiplyEffect)]
     interface IPremultiplyEffect : IInspectable
-        requires Microsoft.Graphics.Canvas.ICanvasImage
+        requires ICanvasEffect
     {
         [propget]
         HRESULT Source([out, retval] IGRAPHICSEFFECTSOURCE** source);
@@ -24,6 +24,5 @@ namespace Microsoft.Graphics.Canvas.Effects
     runtimeclass PremultiplyEffect
     {
         [default] interface IPremultiplyEffect;
-        interface IGRAPHICSEFFECT;
     }
 }

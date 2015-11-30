@@ -12,7 +12,7 @@ namespace Microsoft.Graphics.Canvas.Effects
 
     [version(VERSION), uuid(2F631A3B-C89A-507C-9756-299B61434FA4), exclusiveto(PosterizeEffect)]
     interface IPosterizeEffect : IInspectable
-        requires Microsoft.Graphics.Canvas.ICanvasImage
+        requires ICanvasEffect
     {
         [propget]
         HRESULT RedValueCount([out, retval] INT32* value);
@@ -44,7 +44,6 @@ namespace Microsoft.Graphics.Canvas.Effects
     runtimeclass PosterizeEffect
     {
         [default] interface IPosterizeEffect;
-        interface IGRAPHICSEFFECT;
     }
 }
 

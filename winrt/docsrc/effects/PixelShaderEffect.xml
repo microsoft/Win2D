@@ -206,9 +206,6 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         </ul>
       </remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.Effects.PixelShaderEffect.Dispose">
-      <summary>Releases all resources used by the PixelShaderEffect.</summary>
-    </member>
     <member name="P:Microsoft.Graphics.Canvas.Effects.PixelShaderEffect.Source1">
       <summary>Gets or sets the first input source for the custom pixel shader.</summary>
     </member>
@@ -256,6 +253,38 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Effects.PixelShaderEffect.Source8Mapping">
       <summary>Describes what texture coordinates the shader will use when sampling its eighth input texture.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.PixelShaderEffect.Source1BorderMode">
+      <summary>Sets the border mode used when sampling the first input texture.</summary>
+      <remarks>Default border mode is <see cref="F:Microsoft.Graphics.Canvas.Effects.EffectBorderMode.Soft"/>.</remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.PixelShaderEffect.Source2BorderMode">
+      <summary>Sets the border mode used when sampling the second input texture.</summary>
+      <remarks>Default border mode is <see cref="F:Microsoft.Graphics.Canvas.Effects.EffectBorderMode.Soft"/>.</remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.PixelShaderEffect.Source3BorderMode">
+      <summary>Sets the border mode used when sampling the third input texture.</summary>
+      <remarks>Default border mode is <see cref="F:Microsoft.Graphics.Canvas.Effects.EffectBorderMode.Soft"/>.</remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.PixelShaderEffect.Source4BorderMode">
+      <summary>Sets the border mode used when sampling the fourth input texture.</summary>
+      <remarks>Default border mode is <see cref="F:Microsoft.Graphics.Canvas.Effects.EffectBorderMode.Soft"/>.</remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.PixelShaderEffect.Source5BorderMode">
+      <summary>Sets the border mode used when sampling the fifth input texture.</summary>
+      <remarks>Default border mode is <see cref="F:Microsoft.Graphics.Canvas.Effects.EffectBorderMode.Soft"/>.</remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.PixelShaderEffect.Source6BorderMode">
+      <summary>Sets the border mode used when sampling the sixth input texture.</summary>
+      <remarks>Default border mode is <see cref="F:Microsoft.Graphics.Canvas.Effects.EffectBorderMode.Soft"/>.</remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.PixelShaderEffect.Source7BorderMode">
+      <summary>Sets the border mode used when sampling the seventh input texture.</summary>
+      <remarks>Default border mode is <see cref="F:Microsoft.Graphics.Canvas.Effects.EffectBorderMode.Soft"/>.</remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.PixelShaderEffect.Source8BorderMode">
+      <summary>Sets the border mode used when sampling the eighth input texture.</summary>
+      <remarks>Default border mode is <see cref="F:Microsoft.Graphics.Canvas.Effects.EffectBorderMode.Soft"/>.</remarks>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Effects.PixelShaderEffect.MaxSamplerOffset">
       <summary>
@@ -349,18 +378,6 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       </remarks>
     </member>
 
-    <member name="M:Microsoft.Graphics.Canvas.Effects.PixelShaderEffect.GetBounds(Microsoft.Graphics.Canvas.CanvasDrawingSession)">
-      <summary>Retrieves the bounds of this CanvasImage, in device-independent units.</summary>
-      <inheritdoc/>
-    </member>
-    <member name="M:Microsoft.Graphics.Canvas.Effects.PixelShaderEffect.GetBounds(Microsoft.Graphics.Canvas.CanvasDrawingSession,System.Numerics.Matrix3x2)">
-      <summary>Retrieves the bounds of the CanvasImage, in device-independent units.</summary>
-      <inheritdoc/>
-    </member>
-    <member name="P:Microsoft.Graphics.Canvas.Effects.PixelShaderEffect.Name">
-      <summary>Attaches a user-defined name string to the effect.</summary>
-    </member>
-    
     <member name="T:Microsoft.Graphics.Canvas.Effects.SamplerCoordinateMapping" Experimental="true">
       <summary>
         Describes what texture coordinates the shader will use when sampling an input texture.
@@ -425,6 +442,9 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         </p>
       </summary>
     </member>
+
+    <inherittemplate name="EffectTemplate" replacement="PixelShaderEffect" />
+    <inherittemplate name="ICanvasEffectTemplate" replacement="PixelShaderEffect" />
 
   </members>
 </doc>

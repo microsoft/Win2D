@@ -102,6 +102,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         IDXGISwapChain1,
         CanvasSwapChain,
         ICanvasSwapChain,
+        ICanvasResourceCreator,
+        ICanvasResourceCreatorWithDpi,
         CloakedIid<ICanvasResourceWrapperWithDevice>,
         CloakedIid<ICanvasResourceWrapperWithDpi>)
     {

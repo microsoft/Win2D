@@ -21,6 +21,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         CoordinateMappingState();
 
         SamplerCoordinateMapping Mapping[MaxShaderInputs];
+        EffectBorderMode BorderMode[MaxShaderInputs];
         int MaxOffset;
     };
 

@@ -247,6 +247,102 @@ public:
         Assert::AreEqual(someSize, maximumBitmapSize);
     }
 
+    TEST_METHOD_EX(CanvasDevice_IsPixelFormatSupported_NullArg)
+    {
+        Fixture f;
+        auto canvasDevice = CanvasDevice::CreateNew(false);
+
+        Assert::AreEqual(E_INVALIDARG, canvasDevice->IsPixelFormatSupported(PIXEL_FORMAT(B8G8R8A8UIntNormalized), nullptr));
+    }
+
+    TEST_METHOD_EX(CanvasDevice_IsPixelFormatSupported)
+    {
+        auto d2dDevice = Make<MockD2DDevice>();
+
+        d2dDevice->MockCreateDeviceContext =
+            [&](D2D1_DEVICE_CONTEXT_OPTIONS, ID2D1DeviceContext1** value)
+            {
+                auto deviceContext = Make<StubD2DDeviceContext>(d2dDevice.Get());
+
+                deviceContext->IsDxgiFormatSupportedMethod.SetExpectedCalls(2, [](DXGI_FORMAT format)
+                {
+                    switch (format)
+                    {
+                        case DXGI_FORMAT_B8G8R8A8_UNORM:
+                            return true;
+
+                        case DXGI_FORMAT_BC3_UNORM:
+                            return false;
+
+                        default:
+                            Assert::Fail();
+                            return false;
+                    }
+                });
+
+                ThrowIfFailed(deviceContext.CopyTo(value));
+            };
+
+        Fixture f;
+        auto canvasDevice = Make<CanvasDevice>(d2dDevice.Get());
+
+        boolean isSupported;
+
+        ThrowIfFailed(canvasDevice->IsPixelFormatSupported(PIXEL_FORMAT(B8G8R8A8UIntNormalized), &isSupported));
+        Assert::IsTrue(!!isSupported);
+
+        ThrowIfFailed(canvasDevice->IsPixelFormatSupported(PIXEL_FORMAT(BC3UIntNormalized), &isSupported));
+        Assert::IsFalse(!!isSupported);
+    }
+
+    TEST_METHOD_EX(CanvasDevice_IsBufferPrecisionSupported_NullArg)
+    {
+        Fixture f;
+        auto canvasDevice = CanvasDevice::CreateNew(false);
+
+        Assert::AreEqual(E_INVALIDARG, canvasDevice->IsBufferPrecisionSupported(CanvasBufferPrecision::Precision8UIntNormalized, nullptr));
+    }
+
+    TEST_METHOD_EX(CanvasDevice_IsBufferPrecisionSupported)
+    {
+        auto d2dDevice = Make<MockD2DDevice>();
+
+        d2dDevice->MockCreateDeviceContext =
+            [&](D2D1_DEVICE_CONTEXT_OPTIONS, ID2D1DeviceContext1** value)
+            {
+                auto deviceContext = Make<StubD2DDeviceContext>(d2dDevice.Get());
+
+                deviceContext->IsBufferPrecisionSupportedMethod.SetExpectedCalls(2, [](D2D1_BUFFER_PRECISION precision)
+                {
+                    switch (precision)
+                    {
+                        case D2D1_BUFFER_PRECISION_8BPC_UNORM:
+                            return true;
+
+                        case D2D1_BUFFER_PRECISION_32BPC_FLOAT:
+                            return false;
+
+                        default:
+                            Assert::Fail();
+                            return false;
+                    }
+                });
+
+                ThrowIfFailed(deviceContext.CopyTo(value));
+            };
+
+        Fixture f;
+        auto canvasDevice = Make<CanvasDevice>(d2dDevice.Get());
+
+        boolean isSupported;
+
+        ThrowIfFailed(canvasDevice->IsBufferPrecisionSupported(CanvasBufferPrecision::Precision8UIntNormalized, &isSupported));
+        Assert::IsTrue(!!isSupported);
+
+        ThrowIfFailed(canvasDevice->IsBufferPrecisionSupported(CanvasBufferPrecision::Precision32Float, &isSupported));
+        Assert::IsFalse(!!isSupported);
+    }
+
     TEST_METHOD_EX(CanvasDevice_CreateCommandList_ReturnsCommandListFromDeviceContext)
     {
         auto d2dDevice = Make<MockD2DDevice>();

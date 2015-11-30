@@ -55,6 +55,26 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         static ComPtr<CanvasGeometry> CreateNew(
             ICanvasTextLayout* textLayout);
 
+        static ComPtr<CanvasGeometry> CreateNew(
+            ICanvasResourceCreator* resourceCreator,
+            Vector2 point,
+            ICanvasFontFace* fontFace,
+            float fontSize,
+            uint32_t glyphCount,
+            CanvasGlyph* glyphs,
+            boolean isSideways,
+            uint32_t bidiLevel,
+            CanvasTextMeasuringMode measuringMode,
+            CanvasGlyphOrientation glyphOrientation);
+
+#if WINVER > _WIN32_WINNT_WINBLUE
+        static ComPtr<CanvasGeometry> CreateNew(
+            ICanvasResourceCreator* resourceCreator,
+            IIterable<InkStroke*>* inkStrokes,
+            Matrix3x2 transform,
+            float flatteningTolerance);
+#endif
+
         CanvasGeometry(
             ICanvasDevice* canvasDevice,
             ID2D1Geometry* d2dGeometry);
@@ -351,6 +371,33 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         IFACEMETHOD(CreateText)(
             ICanvasTextLayout* textLayout,
             ICanvasGeometry** geometry) override;
+
+        IFACEMETHOD(CreateGlyphRun)(
+            ICanvasResourceCreator* resourceCreator,
+            Vector2 point,
+            ICanvasFontFace* fontFace,
+            float fontSize,
+            uint32_t glyphCount,
+            CanvasGlyph* glyphs,
+            boolean isSideways,
+            uint32_t bidiLevel,
+            CanvasTextMeasuringMode measuringMode,
+            CanvasGlyphOrientation glyphOrientation,
+            ICanvasGeometry** geometry) override;
+
+#if WINVER > _WIN32_WINNT_WINBLUE
+        IFACEMETHOD(CreateInk)(
+            ICanvasResourceCreator* resourceCreator,
+            IIterable<InkStroke*>* inkStrokes,
+            ICanvasGeometry** geometry) override;
+
+        IFACEMETHOD(CreateInkWithTransformAndFlatteningTolerance)(
+            ICanvasResourceCreator* resourceCreator,
+            IIterable<InkStroke*>* inkStrokes,
+            Matrix3x2 transform,
+            float flatteningTolerance,
+            ICanvasGeometry** geometry) override;
+#endif
 
         IFACEMETHOD(ComputeFlatteningTolerance)(
             float dpi,

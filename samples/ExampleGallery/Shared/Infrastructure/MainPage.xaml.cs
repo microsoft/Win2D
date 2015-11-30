@@ -14,7 +14,7 @@ namespace ExampleGallery
 
         // We track the last visual state we set to avoid redundant GoToState calls
         // (these cause flickering on 8.1 apps running on Win10).
-        private enum VisualState { Unknown, Big, Small };
+        private enum VisualState { Unknown, Big, Small, Tiny };
         private VisualState currentVisualState = VisualState.Unknown;
 
         public MainPage()
@@ -47,30 +47,22 @@ namespace ExampleGallery
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            // How much room do we have?
-            double gridMargin = 20;
-            double gridWidth = e.NewSize.Width - gridMargin;
+            var width = e.NewSize.Width;
 
-            // How much do we allow for each item?
-            const double itemWidth = 330;
+            var newVisualState = currentVisualState;
 
-            // We want at least 3 across
-            if (itemWidth * 3 <= gridWidth)
-            {
-                if (currentVisualState != VisualState.Big)
-                {
-                    VisualStateManager.GoToState(this, "BigScreen", false);
-                    currentVisualState = VisualState.Big;
-                }
-            }
+            if (width > 800)
+                newVisualState = VisualState.Big;
+            else if (width > 350)
+                newVisualState = VisualState.Small;
             else
+                newVisualState = VisualState.Tiny;
+
+            if (currentVisualState != newVisualState)
             {
-                if (currentVisualState != VisualState.Small)
-                {
-                    VisualStateManager.GoToState(this, "SmallScreen", false);
-                    currentVisualState = VisualState.Small;
-                }
-            }
+                VisualStateManager.GoToState(this, newVisualState.ToString(), false);
+                currentVisualState = newVisualState;
+            }            
         }
     }
 }

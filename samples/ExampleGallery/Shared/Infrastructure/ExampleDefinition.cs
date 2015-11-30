@@ -45,6 +45,7 @@ namespace ExampleGallery
         {
             // Visual demos.
             new ExampleDefinition("Burning Text", typeof(BurningTextExample)),
+            new ExampleDefinition("Mandelbrot", typeof(Mandelbrot)),
             new ExampleDefinition("Game of Life", typeof(GameOfLife)),
 #if WINDOWS_UWP
             new ExampleDefinition("Camera Effect", typeof(CameraEffectExample)),
@@ -80,6 +81,9 @@ namespace ExampleGallery
             new ExampleDefinition("Custom Control", typeof(CustomControlExample)),
             new ExampleDefinition("Virtual Control", typeof(VirtualControlExample)),
             new ExampleDefinition("Animated Control", typeof(AnimatedControlExample)),
+#if WINDOWS_UWP
+            new ExampleDefinition("Virtual Bitmap", typeof(VirtualBitmapExample)),
+#endif
             new ExampleDefinition("Direct3D Interop", typeof(Direct3DInteropExample)),
             new ExampleDefinition("Keyboard Input", typeof(KeyboardInputExample)),
             new ExampleDefinition("Background Task", typeof(BackgroundTaskExample)),
@@ -90,6 +94,7 @@ namespace ExampleGallery
             // Tests for internal use by the Win2D team.
             new ExampleDefinition("Image Source Update Region", typeof(ImageSourceUpdateRegion)),
             new ExampleDefinition("DPI", typeof(DpiExample)),
+            new ExampleDefinition("Effect Region Mapping", typeof(EffectRegionMapping)),
             new ExampleDefinition("Control Transforms", typeof(ControlTransforms)),
             new ExampleDefinition("DrawImage Emulations", typeof(DrawImageEmulations)),
             new ExampleDefinition("Bitmap Rotation", typeof(BitmapRotation)),

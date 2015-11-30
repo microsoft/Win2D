@@ -8,12 +8,18 @@ using Microsoft.Graphics.Canvas.Text;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using System;
 using System.Collections.Generic;
+using System.Numerics;
 using Windows.Foundation;
 using Windows.Globalization;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
+
+#if !WINDOWS_UWP
+using Vector2 = Microsoft.Graphics.Canvas.Numerics.Vector2;
+using Matrix3x2 = Microsoft.Graphics.Canvas.Numerics.Matrix3x2;
+#endif
 
 namespace ExampleGallery
 {
@@ -47,6 +53,18 @@ namespace ExampleGallery
         public List<TextEffectOption> TextEffectOptions { get { return Utils.GetEnumAsList<TextEffectOption>(); } }
         public TextEffectOption CurrentTextEffectOption { get; set;  }
 
+        //
+        // Apps using text-to-geometry will typically use the 'Layout' option. 
+        //
+        // The 'GlyphRun' option exercises a lower-level API, and demonstrates 
+        // how a custom text renderer could use text-to-geometry. The visual 
+        // output between these two options should be identical.
+        //
+        public enum TextOutlineGranularity { Layout, GlyphRun }
+
+        public List<TextOutlineGranularity> TextOutlineGranularityOptions { get { return Utils.GetEnumAsList<TextOutlineGranularity>(); } }
+        public TextOutlineGranularity CurrentTextOutlineGranularityOption { get; set; }
+
         public TextOutlines()
         {
             this.InitializeComponent();
@@ -55,6 +73,7 @@ namespace ExampleGallery
             CurrentTextDirection = CanvasTextDirection.TopToBottomThenLeftToRight;
             CurrentVerticalGlyphOrientation = CanvasVerticalGlyphOrientation.Default;
             CurrentTextLengthOption = TextLengthOption.Paragraph;
+            CurrentTextOutlineGranularityOption = TextOutlineGranularity.GlyphRun;
 
             if(ThumbnailGenerator.IsDrawingThumbnail)
             {
@@ -63,6 +82,130 @@ namespace ExampleGallery
             }
 
             ShowNonOutlineText = true;
+            CurrentTextOutlineGranularityOption = TextOutlineGranularity.Layout;
+        }
+
+        class GlyphRunsToGeometryConverter : ICanvasTextRenderer
+        {
+            private List<CanvasGeometry> geometries = new List<CanvasGeometry>();
+            private ICanvasResourceCreator resourceCreator;
+
+            public GlyphRunsToGeometryConverter(ICanvasResourceCreator rc)
+            {
+                resourceCreator = rc;
+            }
+
+            public void DrawGlyphRun(
+                Vector2 position,
+                CanvasFontFace fontFace,
+                float fontSize,
+                CanvasGlyph[] glyphs,
+                bool isSideways,
+                uint bidiLevel,
+                object brush,
+                CanvasTextMeasuringMode measuringMode,
+                string locale,
+                string textString,
+                int[] custerMapIndices,
+                uint textPosition,
+                CanvasGlyphOrientation glyphOrientation)
+            {
+                CanvasGeometry geometry = CanvasGeometry.CreateGlyphRun(
+                    resourceCreator,
+                    position,
+                    fontFace,
+                    fontSize,
+                    glyphs,
+                    isSideways,
+                    bidiLevel,
+                    measuringMode,
+                    glyphOrientation);
+                geometries.Add(geometry);
+            }
+
+            public CanvasGeometry GetGeometry()
+            {
+                return CanvasGeometry.CreateGroup(resourceCreator, geometries.ToArray());
+            }
+
+            private float GetGlyphOrientationInRadians(CanvasGlyphOrientation glyphOrientation)
+            {
+                switch (glyphOrientation)
+                {
+                    case CanvasGlyphOrientation.Upright: return 0;
+                    case CanvasGlyphOrientation.Clockwise90Degrees: return (float)Math.PI / 2;
+                    case CanvasGlyphOrientation.Clockwise180Degrees: return -(float)Math.PI;
+                    case CanvasGlyphOrientation.Clockwise270Degrees:
+                    default: return -(float)Math.PI / 2;
+                }
+            }
+
+            private CanvasGeometry GetTransformedRectangle(
+                float width,
+                float thickness,
+                float offset,
+                Vector2 position,
+                CanvasGlyphOrientation glyphOrientation)
+            {
+                var geometry = CanvasGeometry.CreateRectangle(
+                    resourceCreator,
+                    new Rect(0, offset, width, thickness));
+
+                var rotate = System.Numerics.Matrix3x2.CreateRotation(GetGlyphOrientationInRadians(glyphOrientation));
+                var translate = System.Numerics.Matrix3x2.CreateTranslation(position);
+
+                return geometry.Transform(rotate * translate);
+            }
+
+            public void DrawStrikethrough(
+                Vector2 position,
+                float strikethroughWidth,
+                float strikethroughThickness,
+                float strikethroughOffset,
+                CanvasTextDirection textDirection,
+                object brush,
+                CanvasTextMeasuringMode measuringMode,
+                string locale,
+                CanvasGlyphOrientation glyphOrientation)
+            {
+                var geometry = GetTransformedRectangle(strikethroughWidth, strikethroughThickness, strikethroughOffset, position, glyphOrientation);
+
+                geometries.Add(geometry);
+            }
+
+            public void DrawUnderline(
+                Vector2 position,
+                float underlineWidth,
+                float underlineThickness,
+                float underlineOffset,
+                float runHeight,
+                CanvasTextDirection textDirection,
+                object brush,
+                CanvasTextMeasuringMode measuringMode,
+                string locale,
+                CanvasGlyphOrientation glyphOrientation)
+            {
+                var geometry = GetTransformedRectangle(underlineWidth, underlineThickness, underlineOffset, position, glyphOrientation);
+
+                geometries.Add(geometry);
+            }
+
+            public void DrawInlineObject(
+                Vector2 baselineOrigin,
+                ICanvasTextInlineObject inlineObject,
+                bool isSideways,
+                bool isRightToLeft,
+                object brush,
+                CanvasGlyphOrientation glyphOrientation)
+            {
+            }
+
+            public float Dpi { get { return 96; } }
+
+            public bool PixelSnappingDisabled { get { return true; } }
+
+            public Matrix3x2 Transform { get { return System.Numerics.Matrix3x2.Identity; } }
+
         }
 
         void EnsureResources(ICanvasResourceCreatorWithDpi resourceCreator, Size targetSize)
@@ -77,7 +220,19 @@ namespace ExampleGallery
             }
 
             textLayout = CreateTextLayout(resourceCreator, (float)targetSize.Width, (float)targetSize.Height);
-            textGeometry = CanvasGeometry.CreateText(textLayout);
+
+            if (CurrentTextOutlineGranularityOption == TextOutlineGranularity.Layout)
+            {
+                textGeometry = CanvasGeometry.CreateText(textLayout);
+            }
+            else
+            {
+                GlyphRunsToGeometryConverter converter = new GlyphRunsToGeometryConverter(resourceCreator);
+
+                textLayout.DrawToTextRenderer(converter, 0, 0);
+
+                textGeometry = converter.GetGeometry();
+            }
 
             needsResourceRecreation = false;
         }
@@ -144,6 +299,9 @@ namespace ExampleGallery
                     textLayout.SetStrikethrough(wb.Start, wb.Length, true);
                 }
             }
+
+            textLayout.TrimmingGranularity = CanvasTextTrimmingGranularity.Character;
+            textLayout.TrimmingSign = CanvasTrimmingSign.Ellipsis;
 
             textLayout.VerticalGlyphOrientation = CurrentVerticalGlyphOrientation;
 

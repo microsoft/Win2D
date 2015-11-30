@@ -49,6 +49,8 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
 
                 <CheckBox Content="Uniform style" Checked="UniformStyle_ValueChanged" Unchecked="UniformStyle_ValueChanged" IsChecked="{Binding ElementName=control, Path=UniformStyle, Mode=TwoWay}"/>
 
+                <CheckBox Content="Show glyph run bounds" Checked="ShowGlyphRunBounds_ValueChanged" Unchecked="ShowGlyphRunBounds_ValueChanged" IsChecked="{Binding ElementName=control, Path=ShowGlyphRunBounds, Mode=TwoWay}"/>
+
                 <TextBlock x:Name="fontLabel">Font:</TextBlock>
                 <local:FontPickerComboBox x:Name="fontPicker" HorizontalAlignment="Stretch" SelectionChanged="fontPicker_SelectionChanged"/>
 

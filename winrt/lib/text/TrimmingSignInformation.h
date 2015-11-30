@@ -4,12 +4,17 @@
 
 #pragma once
 
+#include "InternalDWriteInlineObject.h"
+#include "TextUtilities.h"
+
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Text
 {
     class TrimmingSignInformation
     {
         ComPtr<IDWriteInlineObject> m_internalEllipsisTrimmingSign;
         CanvasTrimmingSign m_trimmingSign;
+
+        ComPtr<ICanvasTextInlineObject> m_customTrimmingSign;
 
     public:
 
@@ -42,6 +47,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         void RealizeTrimmingSign(IDWriteTextFormat* textFormat)
         {
+            //
+            // If there's a custom trimming sign set, don't clobber it.
+            if (m_customTrimmingSign)
+            {
+                return;
+            }
+
             if (m_trimmingSign == CanvasTrimmingSign::None)
             {
                 //
@@ -62,6 +74,29 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             {
                 ThrowHR(E_INVALIDARG);
             }
+        }
+
+        void RealizeCustomTrimmingSign(IDWriteTextFormat* textFormat)
+        {
+            DWRITE_TRIMMING trimming;
+            ComPtr<IDWriteInlineObject> previousObject;
+            ThrowIfFailed(textFormat->GetTrimming(&trimming, &previousObject));
+
+            if (m_customTrimmingSign)
+            {
+                auto dwriteInlineObject = Make<InternalDWriteInlineObject>(m_customTrimmingSign, nullptr);
+                ThrowIfFailed(textFormat->SetTrimming(&trimming, dwriteInlineObject.Get()));
+            }
+        }
+
+        ComPtr<ICanvasTextInlineObject> GetCustomTrimmingSignFromResource(
+            IDWriteTextFormat* textFormat)
+        {
+            DWRITE_TRIMMING unused;
+            ComPtr<IDWriteInlineObject> trimmingSignObject;
+            ThrowIfFailed(textFormat->GetTrimming(&unused, &trimmingSignObject));
+
+            return GetCanvasInlineObjectFromDWriteInlineObject(trimmingSignObject);
         }
 
         CanvasTrimmingSign GetTrimmingSignFromResource(
@@ -126,6 +161,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         CanvasTrimmingSign GetTrimmingSignShadowState() const { return m_trimmingSign; }
 
+        ComPtr<ICanvasTextInlineObject> GetCustomTrimmingSignShadowState() const { return m_customTrimmingSign; }
+
         CanvasTrimmingSign* GetAddressOfTrimmingSign() { return &m_trimmingSign; }
+
+        ComPtr<ICanvasTextInlineObject>* GetAddressOfCustomTrimmingSign() { return &m_customTrimmingSign; }
     };
 }}}}}

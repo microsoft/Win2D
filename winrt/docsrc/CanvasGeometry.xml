@@ -447,6 +447,97 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         </p>
       </remarks>
     </member>
+
+    <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.CreateGlyphRun(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Numerics.Vector2,Microsoft.Graphics.Canvas.Text.CanvasFontFace,System.Single,Microsoft.Graphics.Canvas.Text.CanvasGlyph[],System.Boolean,System.UInt32,Microsoft.Graphics.Canvas.Text.CanvasTextMeasuringMode,Microsoft.Graphics.Canvas.Text.CanvasGlyphOrientation)" Experimental="true">
+      <summary>Creates a geometry based on a glyph run.</summary>
+      <remarks>
+        <p>
+          A custom text renderer's implementation of DrawGlyphRun 
+          may choose to convert the glyph run data it was passed into a geometry. 
+          This expands the app's options for how it can draw the geometry, and
+          do things not ordinarily possible through 
+          <see cref="O:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawGlyphRun"/>.
+          Once text is turned into geometry, it can be manipulated with 
+          <see cref="O:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.CombineWith"/>, 
+          or used to produce widened strokes, or read back by the app, like any arbitrary geometry.
+        </p>
+        <p>
+        For example, if an app needs to trace the contours of some individual glyph runs 
+        with a dashed line, it could do the following:
+          <code>
+            class MyTextRenderer : ICanvasTextRenderer
+            {
+                ...
+                
+                public void DrawGlyphRun(
+                    Microsoft.Graphics.Canvas.Numerics.Vector2 position,
+                    CanvasFontFace fontFace,
+                    float fontSize,
+                    CanvasGlyph[] glyphs,
+                    bool isSideways,
+                    uint bidiLevel,
+                    object brush,
+                    CanvasTextMeasuringMode measuringMode,
+                    string locale,
+                    string textString,
+                    int[] custerMapIndices,
+                    uint textPosition,
+                    CanvasGlyphOrientation glyphOrientation)
+                    {
+                        CanvasGeometry geometry = CanvasGeometry.CreateGlyphRun(
+                            resourceCreator,
+                            position,
+                            fontFace,
+                            fontSize,
+                            glyphs,
+                            isSideways,
+                            bidiLevel,
+                            measuringMode,
+                            glyphOrientation);
+                            
+                        CanvasStrokeStyle dashedStroke = new CanvasStrokeStyle()
+                        {
+                            DashStyle = CanvasDashStyle.Dash
+                        };
+                                    
+                        drawingSession.DrawGeometry(geometry, Colors.White, 2.0f, dashedStroke);
+                    }
+        
+          </code>
+        </p>
+        <p>
+          For simple text-drawing scenarios which don't actually require text as geometry, it's recommended that you use 
+          <see cref="O:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawGlyphRun"/> to draw the glyph runs.
+        </p>
+        <p>
+          Creating geometry from text is a one-directional operation; it isn't possible to obtain
+          text back from a geometry.
+        </p>
+      </remarks>
+    </member>
     
+    <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.CreateInk(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Collections.Generic.IEnumerable{Windows.UI.Input.Inking.InkStroke})" Experimental="true" Win10="true">
+      <summary>Creates a geometry from a collection of ink strokes.</summary>
+      <remarks>
+        <p>Uses default flattening tolerance and identity transform on the input strokes.</p>
+        <p>
+          Geometry created from ink typically contains many overlapping stroke segments and circles.
+          After using CreateInk, it may be desirable to clean up these self-intersections by calling
+          <see cref="O:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.Outline"/>.
+        </p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.CreateInk(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Collections.Generic.IEnumerable{Windows.UI.Input.Inking.InkStroke},System.Numerics.Matrix3x2,System.Single)" Experimental="true" Win10="true">
+      <summary>Creates a geometry from a collection of ink strokes.</summary>
+      <remarks>
+        <p>Uses the specified flattening tolerance, and the specified transform on the input strokes.</p>
+        <p>
+          Geometry created from ink typically contains many overlapping stroke segments and circles.
+          After using CreateInk, it may be desirable to clean up these self-intersections by calling
+          <see cref="O:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.Outline"/>.
+        </p>
+      </remarks>
+    </member>
+        
   </members>
 </doc>

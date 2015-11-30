@@ -16,9 +16,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     typedef IDWriteFontFace3 DWritePhysicalFontPropertyContainer;
     typedef DWRITE_RENDERING_MODE1 DWriteRenderingMode;
 #else
-    typedef IDWriteFont DWriteFontReferenceType;
+    typedef IDWriteFont2 DWriteFontReferenceType;
     typedef IDWriteFontFace2 DWriteFontFaceType;
-    typedef IDWriteFont DWritePhysicalFontPropertyContainer;
+    typedef IDWriteFont2 DWritePhysicalFontPropertyContainer;
     typedef DWRITE_RENDERING_MODE DWriteRenderingMode;
 #endif
 	
@@ -136,6 +136,29 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             IMapView<HSTRING, HSTRING>** values) override;
 
         IFACEMETHOD(HasCharacter)(UINT32 unicodeValue, boolean* value) override;
+        
+        IFACEMETHOD(GetGlyphRunBounds)(
+            ICanvasDrawingSession* drawingSession,
+            Vector2 point,
+            float fontSize,
+            uint32_t glyphCount,
+            CanvasGlyph* glyphs,
+            boolean isSideways,
+            uint32_t bidiLevel,
+            Rect* bounds) override;
+
+        IFACEMETHOD(GetGlyphRunBoundsWithMeasuringMode)(
+            ICanvasDrawingSession* drawingSession,
+            Vector2 point,
+            float fontSize,
+            uint32_t glyphCount,
+            CanvasGlyph* glyphs,
+            boolean isSideways,
+            uint32_t bidiLevel,
+            CanvasTextMeasuringMode measuringMode,
+            Rect* bounds) override;
+
+        IFACEMETHOD(get_Panose)(uint32_t* valueCount, uint8_t** values) override;
 
         //
         // IClosable

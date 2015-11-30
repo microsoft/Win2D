@@ -42,7 +42,8 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         </p>
         <p>
           When using <a href="Interop.htm">Direct2D interop</a>, this Win2D class
-          corresponds to the Direct2D interface IDWriteTextLayout2.
+          corresponds to the Direct2D interface IDWriteTextLayout2 on Windows 8.1, and
+          IDWriteTextLayout3 on Windows 10.
         </p>
       </remarks>
       <example>
@@ -235,6 +236,12 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       	Calling <see cref="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.GetBrush(System.Int32)"/> for this same index, after calling this method, will yield a 
       	<see cref="T:Microsoft.Graphics.Canvas.Brushes.CanvasSolidColorBrush"/> with the appropriate color.
       	</p>
+        <p>
+          A color set using this method replaces any brush currently set to those characters using
+          <see cref="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.SetBrush(System.Int32,System.Int32,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush)"/> 
+          or 
+          <see cref="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.SetCustomBrush(System.Int32,System.Int32,System.Object)"/>.
+        </p>
       </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.SetBrush(System.Int32,System.Int32,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush)">
@@ -248,6 +255,12 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       	<p>
       	The brush is allowed to be null. Setting a group of characters' brush to null causes the default behavior, where the brush passed to DrawTextLayout determines the color of the text.
       	</p>
+        <p>
+          A brush set using this method replaces any custom brush or color currently set to those characters using
+          <see cref="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.SetCustomBrush(System.Int32,System.Int32,System.Object)"/> 
+          or 
+          <see cref="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.SetColor(System.Int32,System.Int32,Windows.UI.Color)"/>.
+        </p>
       </remarks>
     </member>
       
@@ -264,13 +277,74 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <summary>Specifies the granularity used to trim text overflowing the layout box.</summary>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.TrimmingDelimiterCount">
-      <summary>A value that indicates how many occurrences of the delimiter to step back.</summary>
+      <summary>A value that indicates how many occurrences of the delimiter, counted from the end
+      of the text, are allowed before trimming is desired.</summary>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.TrimmingDelimiter">
       <summary>
-        A character code used as the delimiter that signals the beginning of the portion of text to be preserved.
-        Most useful for path ellipsis, where the delimiter would be a slash.
+        A character used as the delimiter that signals the beginning of the portion of text to be preserved.
        </summary>
+       <remarks>
+         <p>
+           An example in which you'd want to use this is long filename paths. For example:
+           "C:\Windows\Fonts\Comic.ttf", with an ellipsis trimming sign.
+         </p>
+         <p>
+           An app may want to trim this filename path so that it fits on one line. But the 
+           default trimming delimiter options will produce something like "C:\Windows\Fonts\Com...",
+           and chop off the end of the filename.
+           It would be much more useful to still be able to see "Comic.ttf", the filename,
+           and effectively trim the middle portion instead.
+         </p>
+         <p>
+           To accomplish this, the app can set the TrimmingDelimiter to "\" and the 
+           TrimmingDelimiterCount to 1. This would produce "C:\Windows\F...\Comic.ttf".
+         </p>
+         <p>
+           Or, in this scenario, if the filename plus its immediate containing folder were 
+           deemed important, setting the TrimmingDelimiterCount to 2 would produce
+           "C:\Win...\Fonts\Comic.ttf".
+         </p>
+         <p>
+           For example:
+           <code>
+               string text = "C:\\Windows\\Fonts\\Comic.ttf";
+            
+               CanvasTextFormat format = new CanvasTextFormat();
+               format.WordWrapping = CanvasWordWrapping.NoWrap;
+               format.TrimmingSign = CanvasTrimmingSign.Ellipsis;
+               format.TrimmingGranularity = CanvasTextTrimmingGranularity.Character;
+
+               CanvasTextLayout layout = new CanvasTextLayout(sender, text, format, 175, 50);
+
+               float x = 100;
+               float y = 100;
+
+               // Default trimming delimiter options
+               args.DrawingSession.DrawTextLayout(layout, x, y, Colors.White);
+               args.DrawingSession.DrawRectangle(x, y, (float)layout.RequestedSize.Width, (float)layout.RequestedSize.Height, Colors.Cyan);
+
+               y += 100;
+
+               // Trimming delimited by one back-slash
+               layout.TrimmingDelimiter = "\\";
+               layout.TrimmingDelimiterCount = 1;
+               args.DrawingSession.DrawTextLayout(layout, x, y, Colors.White);
+               args.DrawingSession.DrawRectangle(x, y, (float)layout.RequestedSize.Width, (float)layout.RequestedSize.Height, Colors.Cyan);
+
+               y += 100;
+
+               // Trimming delimited by two back-slashes
+               layout.TrimmingDelimiterCount = 2;
+               args.DrawingSession.DrawTextLayout(layout, x, y, Colors.White);
+               args.DrawingSession.DrawRectangle(x, y, (float)layout.RequestedSize.Width, (float)layout.RequestedSize.Height, Colors.Cyan);
+           </code>
+         </p>
+         <p>
+           This draws:
+         </p>
+         <img src="../media/TextTrimmingDelimiters.png" alt="Text trimming delimiters sample code output" />
+       </remarks>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.Direction">
       <summary>Specifies the direction in which the text is read.</summary>
@@ -389,8 +463,17 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     </member>
     <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTextLayoutRegion.LayoutBounds">
       <summary>A rectangle describing the bounds of a piece of text.</summary>
-      <remarks>The bounds are relative to the text's layout box. 
-      These bounds are in DIPs, and do not take into account any transforms that might be applied while rendering the text.</remarks>
+      <remarks>
+        <p>
+          The bounds are relative to the text's layout box. 
+          These bounds are in DIPs, and do not take into account any transforms that might be applied while rendering the text.
+        </p>
+        <p>
+          These bounds do not include any trailing whitespace. To obtain bounds which include the text layout's
+          trailing whitespace, use 
+          <see cref="P:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.LayoutBoundsIncludingTrailingWhitespace"/>.
+        </p>
+      </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.HitTest(System.Numerics.Vector2)">
       <summary>Gets whether the point overlaps with any text in the text layout.</summary>
@@ -561,7 +644,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       </remarks>
     </member>    
 
-    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.DrawToTextRenderer(Microsoft.Graphics.Canvas.Text.ICanvasTextRenderer,System.Numerics.Vector2)">
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.DrawToTextRenderer(Microsoft.Graphics.Canvas.Text.ICanvasTextRenderer,System.Numerics.Vector2)" Experimental="true">
       <summary>Draws this text layout to an application-defined text renderer.</summary>
       <remarks>
         <see cref="T:Microsoft.Graphics.Canvas.Text.ICanvasTextRenderer"/>
@@ -574,7 +657,303 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         <see cref="T:Microsoft.Graphics.Canvas.Text.ICanvasTextRenderer"/>
         is a type that applications implement.
       </remarks>
+    </member>    
+
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.SetInlineObject(System.Int32,System.Int32,Microsoft.Graphics.Canvas.Text.ICanvasTextInlineObject)" Experimental="true">
+      <summary>Sets the inline object for a specified group of characters.</summary>
+      <remarks>
+        It's valid to use the same inline object for multiple character positions.
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.GetInlineObject(System.Int32)">
+      <summary>Gets the inline object for the character at the position specified.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.CustomTrimmingSign" Experimental="true">
+      <summary>Gets or sets a custom trimming sign.</summary>
+      <remarks>
+        <p>
+          A custom trimming sign is represented by application-implemented interface.
+          The application chooses arbitrary drawing behavior to use as a trimming sign.
+        </p>
+        <p>
+          A custom trimming sign takes precedence over the text layout's TrimmingSign property.
+          For example, if the TrimmingSign property is set to Ellipsis, and a custom trimming
+          sign was set, then the custom trimming sign will get used- not the ellipsis one.
+        </p>
+      </remarks>
     </member>
     
+
+    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasLineMetrics" Experimental="true">
+      <summary>Describes a line of formatted text within a text layout.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasLineMetrics.CharacterCount">
+      <summary>The number of characters in the text line.</summary>
+      <remarks>
+         This includes any trailing whitespace and newline characters.
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasLineMetrics.TrailingWhitespaceCount">
+      <summary>The number of whitespace characters at the end of the text line.</summary>
+      <remarks>
+         Newline sequences are considered whitespace.
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasLineMetrics.TerminalNewlineCount">
+      <summary>The number of characters in the newline sequence at the end of the text line.</summary>
+      <remarks>
+          If the count is zero, then the text line was either wrapped or it is the end of the text.
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasLineMetrics.Height">
+      <summary>The height of the text line, in DIPs.</summary>
+      <remarks>
+        <p>
+          The height of a line in a text layout can be retrieved 
+          straightforwardly through this field; it can also be equivalently
+          calculated using the 
+          <see cref="P:Microsoft.Graphics.Canvas.Text.CanvasFontFace.Ascent"/>, 
+          <see cref="P:Microsoft.Graphics.Canvas.Text.CanvasFontFace.Descent"/>, 
+          and
+          <see cref="P:Microsoft.Graphics.Canvas.Text.CanvasFontFace.LineGap"/>
+          retrieved from the 
+          <see cref="T:Microsoft.Graphics.Canvas.Text.CanvasFontFace"/>
+          passed to an app's custom text renderer's implementation of DrawGlyphRun.
+          The spacing is the maximum, for all glyph runs in the line, of:
+          <code>
+              float defaultLineSpacing = (ascent + descent + lineGap) * fontSize;
+          </code>
+        </p>
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasLineMetrics.Baseline">
+      <summary>The distance, in DIPs, from the top of the text line to its baseline.</summary>
+      <remarks>
+        <p>
+          The baseline of a line in a text layout can be retrieved 
+          straightforwardly through this field; it can also be equivalently
+          calculated using the 
+          <see cref="P:Microsoft.Graphics.Canvas.Text.CanvasFontFace.Ascent"/>,  
+          and
+          <see cref="P:Microsoft.Graphics.Canvas.Text.CanvasFontFace.LineGap"/>
+          retrieved from the 
+          <see cref="T:Microsoft.Graphics.Canvas.Text.CanvasFontFace"/>
+          passed to an app's custom text renderer's implementation of DrawGlyphRun.          
+          The baseline amount is the maximum, for all glyph runs in the line, of:
+          <code>
+              float defaultBaseline = (ascent + lineGap) * fontSize;
+          </code>
+        </p>
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasLineMetrics.IsTrimmed">
+      <summary>Indicates whether the line was trimmed.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasLineMetrics.LeadingWhitespaceBefore" Win10="true">
+      <summary>Size of the white space, in DIPs, before the content of the line.</summary>
+      <remarks>
+          <p>
+            This quantity is included in the line height and baseline distances.
+          </p>
+          <p>
+            If the layout's text direction is such that this line is read horizontally,
+            then this value represents the extra space above the content.
+            If the line is read vertically, then this value represents the space
+            to the left of the content.
+          </p>
+      </remarks>=
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasLineMetrics.LeadingWhitespaceAfter" Win10="true">
+      <summary>Size of the white space, in DIPs, after the content of the line.</summary>
+      <remarks>
+          <p>
+            This quantity is included in the height of the line.
+          </p>
+          <p>
+            If the layout's text direction is such that this line is read horizontally,
+            then this value represents the extra space below the content.
+            If the line is read vertically, then this value represents the space
+            to the right of the content.
+          </p>
+      </remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.LineMetrics" Experimental="true">
+      <summary>Gets an array of metrics describing each line.</summary>
+      <remarks>
+        As a convention, a text layout for a zero-length piece of text will still contain one line.
+      </remarks>
+    </member>
+
+    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasClusterMetrics" Experimental="true">
+      <summary>Describes a glyph cluster.</summary>
+      <remarks>
+        <p>
+          A glyph cluster represents something drawn as one text character, and moves
+          the text caret over by one position.
+        </p>
+        <p>
+          In Latin script with no diacritics (accents), a glyph cluster is simply
+          one character. But in general, a cluster can span multiple characters
+          in a text string.
+        </p>          
+        <p>
+          For example, a text layout created from "นี้" appears as if it's one glyph,
+          but it spans three characters. It's a cluster with a CharacterCount of 3.
+        </p>
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasClusterMetrics.CharacterCount">
+      <summary>The number of characters in the cluster.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasClusterMetrics.Width">
+      <summary>The advance width of all glyphs in the cluster.</summary>
+      <remarks>
+        Advance width is the distance, in DIPs, from the start of this glyph 
+        cluster to the start of the next glyph cluster when this text layout is
+        drawn.
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasClusterMetrics.Properties">
+      <summary>The glyph cluster's properties.</summary>
+    </member>
+    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasClusterProperties" Experimental="true">
+      <summary>Properties which apply to a glyph cluster.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasClusterProperties.CanWrapLineAfter">
+      <summary>Indicates that a line can be broken right after the cluster.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasClusterProperties.Whitespace">
+      <summary>Indicates that the cluster corresponds to a whitespace character.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasClusterProperties.Newline">
+      <summary>Indicates that the cluster corresponds to a newline character.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasClusterProperties.SoftHyphen">
+      <summary>Indicates that the cluster corresponds to a soft hyphen character.</summary>
+      <remarks>
+        A soft hyphen is a special character for breaking words across lines. 
+        It serves as a usually-invisible marker to place in a really long word
+        where a break would be allowed. If word-wrapping is applied and the really long 
+        word has to be broken, the text renderer can break the line at the position
+        of the soft hyphen.
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasClusterProperties.RightToLeft">
+      <summary>Indicates that the cluster is read from right to left.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.ClusterMetrics" Experimental="true">
+      <summary>Gets an array of metrics describing each cluster.</summary>
+      <remarks>
+        It's valid for a text layout to have zero clusters, in which case this 
+        property returns a zero-sized array.
+      </remarks>
+    </member>    
+
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.SetCustomBrush(System.Int32,System.Int32,System.Object)" Experimental="true">
+      <summary>Sets the custom brush associated with a group of characters in the text layout.</summary>
+      <remarks>
+        <p>
+          Custom brush objects are an arbitrary piece of metadata that can be 
+          attached to a character position in a text layout, so that an app's 
+          custom renderer can make sense of them. A custom brush object is
+          passed to a text renderer's DrawGlyphRun, DrawUnderline,
+          DrawStrikethrough, and DrawInlineObject callbacks.
+        </p>
+        <p>
+          CanvasDrawingSession's
+          <see cref="O:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawTextLayout"/> will ignore any custom brush which isn't an ICanvasBrush. 
+        </p>
+        <p>
+          A custom brush replaces any other brush or color currently set to those characters using
+          <see cref="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.SetBrush(System.Int32,System.Int32,Microsoft.Graphics.Canvas.Brushes.ICanvasBrush)"/> 
+          or 
+          <see cref="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.SetColor(System.Int32,System.Int32,Windows.UI.Color)"/>.
+        </p>
+        <p>
+          A null custom brush is valid, and by default the brush assigned to all 
+          characters in a text layout is null.
+        </p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.GetCustomBrush(System.Int32)" Experimental="true">
+      <summary>Gets the custom brush associated with a character index in the text layout.</summary>
+      <remarks>
+        <p>
+          A brush that was set using SetBrush can be retrieved via GetCustomBrush.
+        </p>
+      </remarks>
+    </member>    
+
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.LayoutBoundsIncludingTrailingWhitespace" Experimental="true">
+      <summary>Gets a rectangle describing the bounds of text, plus any trailing whitespace.</summary>
+      <remarks>
+        <p>
+          The bounds are relative to the text's layout box.
+          These bounds are in DIPs, and do not take into account any transforms that might be applied while rendering the text.
+        </p>
+        
+        <p>
+          The location of trailing whitespace is as follows:
+        </p>
+
+        <table>
+          <tr>
+            <th>Text direction</th>
+            <th>Location of trailing whitespace</th>
+          </tr>
+          <tr>
+            <td><see cref="F:Microsoft.Graphics.Canvas.Text.CanvasTextDirection.LeftToRightThenTopToBottom" /></td>
+            <td>At the right</td>
+          </tr>
+          <tr>
+            <td><see cref="F:Microsoft.Graphics.Canvas.Text.CanvasTextDirection.RightToLeftThenTopToBottom" /></td>
+            <td>At the left</td>
+          </tr>
+          <tr>
+            <td><see cref="F:Microsoft.Graphics.Canvas.Text.CanvasTextDirection.LeftToRightThenBottomToTop" /></td>
+            <td>At the right</td>
+          </tr>
+          <tr>
+            <td><see cref="F:Microsoft.Graphics.Canvas.Text.CanvasTextDirection.RightToLeftThenBottomToTop" /></td>
+            <td>At the left</td>
+          </tr>
+          <tr>
+            <td><see cref="F:Microsoft.Graphics.Canvas.Text.CanvasTextDirection.TopToBottomThenLeftToRight" /></td>
+            <td>At the bottom</td>
+          </tr>
+          <tr>
+            <td><see cref="F:Microsoft.Graphics.Canvas.Text.CanvasTextDirection.BottomToTopThenLeftToRight" /></td>
+            <td>At the top</td>
+          </tr>
+          <tr>
+            <td><see cref="F:Microsoft.Graphics.Canvas.Text.CanvasTextDirection.TopToBottomThenRightToLeft" /></td>
+            <td>At the bottom</td>
+          </tr>
+          <tr>
+            <td><see cref="F:Microsoft.Graphics.Canvas.Text.CanvasTextDirection.BottomToTopThenRightToLeft" /></td>
+            <td>At the top</td>
+          </tr>
+        </table> 
+        <p>
+          Word wrapping isn't affected by trailing whitespace. To obtain the bounds against which Win2D word-wraps,
+          use <see cref="F:Microsoft.Graphics.Canvas.Text.CanvasTextLayoutRegion.LayoutBounds"/>.
+        </p>
+        
+      </remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.MaximumBidiReorderingDepth" Experimental="true">
+      <summary>Gets the maximum reordering depth for direction changes of bi-directional text.</summary>
+      <remarks>
+        <p>
+           Every time there's left-to-right script embedded within right-to-left script, or vice-versa, 
+           that represents one 'bidi' (bi-directional text) re-ordering level. Changes of script 
+           direction can be nested within one another. This property gets the maximum level of such 
+           nesting which exists anywhere in the text layout. 
+        </p>
+        <p>
+          As a convention, if there is no text or if the script doesn't change directions, this property is 1.
+        </p>
+      </remarks>
+    </member>
   </members>
 </doc>

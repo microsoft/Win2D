@@ -10,7 +10,7 @@
     <OutputType>winmdobj</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ExampleGallery.BackgroundTask</RootNamespace>
-    <AssemblyName>ExampleGallery.BackgroundTask.Windows</AssemblyName>
+    <AssemblyName>ExampleGallery.BackgroundTask</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformVersion>8.1</TargetPlatformVersion>
     <TargetPlatformIdentifier>Windows</TargetPlatformIdentifier>

@@ -7,11 +7,13 @@
 #include <lib/effects/shader/PixelShaderEffect.h>
 #include <lib/effects/shader/PixelShaderEffectImpl.h>
 #include <lib/effects/shader/PixelShaderTransform.h>
+#include <lib/effects/shader/ClipTransform.h>
 #include <lib/effects/shader/SharedShaderState.h>
 
 #include "mocks/MockD2DDrawInfo.h"
 #include "mocks/MockD2DEffectContext.h"
 #include "mocks/MockD2DTransformGraph.h"
+#include "mocks/MockD2DBorderTransform.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
@@ -275,6 +277,7 @@ TEST_CLASS(PixelShaderEffectUnitTests)
         // Change some coordinate mapping settings.
         ThrowIfFailed(effect->put_Source1Mapping(SamplerCoordinateMapping::OneToOne));
         ThrowIfFailed(effect->put_Source2Mapping(SamplerCoordinateMapping::Offset));
+        ThrowIfFailed(effect->put_Source5BorderMode(EffectBorderMode::Hard));
         ThrowIfFailed(effect->put_MaxSamplerOffset(23));
 
         // Realize the effect.
@@ -285,16 +288,20 @@ TEST_CLASS(PixelShaderEffectUnitTests)
 
         Assert::AreEqual(SamplerCoordinateMapping::OneToOne, d2dMapping.Mapping[0]);
         Assert::AreEqual(SamplerCoordinateMapping::Offset, d2dMapping.Mapping[1]);
+        Assert::AreEqual(EffectBorderMode::Hard, d2dMapping.BorderMode[4]);
         Assert::AreEqual(23, d2dMapping.MaxOffset);
 
-        // Change the state.
+        // State changes should immediately be passed along to D2D.
         ThrowIfFailed(effect->put_Source1Mapping(SamplerCoordinateMapping::Unknown));
-        ThrowIfFailed(effect->put_Source2Mapping(SamplerCoordinateMapping::OneToOne));
-        ThrowIfFailed(effect->put_MaxSamplerOffset(42));
-
-        // Changes should immediately be passed along to D2D.
         Assert::AreEqual(SamplerCoordinateMapping::Unknown, d2dMapping.Mapping[0]);
+
+        ThrowIfFailed(effect->put_Source2Mapping(SamplerCoordinateMapping::OneToOne));
         Assert::AreEqual(SamplerCoordinateMapping::OneToOne, d2dMapping.Mapping[1]);
+
+        ThrowIfFailed(effect->put_Source5BorderMode(EffectBorderMode::Soft));
+        Assert::AreEqual(EffectBorderMode::Soft, d2dMapping.BorderMode[4]);
+
+        ThrowIfFailed(effect->put_MaxSamplerOffset(42));
         Assert::AreEqual(42, d2dMapping.MaxOffset);
     }
 
@@ -328,6 +335,31 @@ TEST_CLASS(PixelShaderEffectUnitTests)
         Assert::AreEqual<int>(D2D1_FILTER_MIN_MAG_MIP_POINT, d2dInterpolation.Filter[1]);
     }
 };
+
+
+// Helper state for capturing how an effect transform graph has been configured.
+typedef std::pair<ID2D1TransformNode*, unsigned> NodeAndInput;
+typedef std::pair<unsigned, NodeAndInput> InputToNode;
+typedef std::pair<ID2D1TransformNode*, NodeAndInput> NodeToNode;
+
+struct GraphState
+{
+    std::vector<ID2D1TransformNode*> Nodes;
+    std::vector<InputToNode> Inputs;
+    std::vector<NodeToNode> Connections;
+    ID2D1TransformNode* Output;
+
+    GraphState()
+        : Output(nullptr)
+    { }
+};
+
+
+namespace Microsoft { namespace VisualStudio { namespace CppUnitTestFramework
+{
+    template<> inline std::wstring ToString<InputToNode>(InputToNode const& value) { return L"InputToNode"; }
+    template<> inline std::wstring ToString<NodeToNode> (NodeToNode const& value)  { return L"NodeToNode";  }
+}}}
 
 
 TEST_CLASS(PixelShaderEffectImplUnitTests)
@@ -381,6 +413,58 @@ public:
             Assert::IsTrue(it != Bindings.end());
 
             return *it;
+        }
+
+
+        void ExpectTransformGraph(int expectedInputs, int expectedBorderTransforms, ID2D1DrawInfo* drawInfo = nullptr, GraphState* graphState = nullptr)
+        {
+            MockTransformGraph->ClearMethod.SetExpectedCalls(1, [=]()
+            {
+                if (graphState)
+                {
+                    graphState->Nodes.clear();
+                    graphState->Inputs.clear();
+                    graphState->Connections.clear();
+                    graphState->Output = nullptr;
+                }
+            });
+
+            MockTransformGraph->AddNodeMethod.SetExpectedCalls(2 + expectedBorderTransforms, [=](ID2D1TransformNode* node)
+            {
+                auto drawTransform = MaybeAs<ID2D1DrawTransform>(node);
+
+                if (drawTransform && drawInfo)
+                    ThrowIfFailed(drawTransform->SetDrawInfo(drawInfo));
+
+                if (graphState)
+                    graphState->Nodes.push_back(node);
+
+                return S_OK;
+            });
+
+            MockTransformGraph->ConnectToEffectInputMethod.SetExpectedCalls(expectedInputs * 2, [=](unsigned effectInputIndex, ID2D1TransformNode* toNode, unsigned nodeInputIndex)
+            {
+                if (graphState)
+                    graphState->Inputs.push_back(InputToNode(effectInputIndex, NodeAndInput(toNode, nodeInputIndex)));
+
+                return S_OK;
+            });
+
+            MockTransformGraph->ConnectNodeMethod.SetExpectedCalls(1 + expectedBorderTransforms, [=](ID2D1TransformNode* fromNode, ID2D1TransformNode* toNode, unsigned nodeInputIndex)
+            {
+                if (graphState)
+                    graphState->Connections.push_back(NodeToNode(fromNode, NodeAndInput(toNode, nodeInputIndex)));
+
+                return S_OK;
+            });
+
+            MockTransformGraph->SetOutputNodeMethod.SetExpectedCalls(1, [=](ID2D1TransformNode* node)
+            {
+                if (graphState)
+                    graphState->Output = node;
+
+                return S_OK;
+            });
         }
     };
 
@@ -449,7 +533,7 @@ public:
 
         ThrowIfFailed(f.FindBinding(L"SharedState").setFunction(impl, reinterpret_cast<BYTE*>(sharedState.GetAddressOf()), sizeof(ISharedShaderState*)));
 
-        // The first PrepareForRender should call LoadPixelShader and SetSingleTransformNode.
+        // The first PrepareForRender should call LoadPixelShader and configure the transform graph.
         f.MockEffectContext->LoadPixelShaderMethod.SetExpectedCalls(1, [&](IID const& shaderId, BYTE const* shaderBuffer, unsigned shaderBufferCount)
         {
             Assert::AreEqual(desc.Hash, shaderId);
@@ -463,17 +547,13 @@ public:
             return S_OK;
         });
 
-        f.MockTransformGraph->SetSingleTransformNodeMethod.SetExpectedCalls(1, [&](ID2D1TransformNode* node)
-        {
-            Assert::AreEqual(desc.InputCount, node->GetInputCount());
-            return S_OK;
-        });
+        f.ExpectTransformGraph(desc.InputCount, 0);
 
         ThrowIfFailed(impl->PrepareForRender(D2D1_CHANGE_TYPE_NONE));
 
         Expectations::Instance()->Validate();
 
-        // Subsequent PrepareForRender calls should not reset the pixel shader.
+        // Subsequent PrepareForRender calls should not reset the pixel shader or transform graph.
         ThrowIfFailed(impl->PrepareForRender(D2D1_CHANGE_TYPE_NONE));
     }
 
@@ -557,13 +637,9 @@ public:
         // PrepareForRender should pass the constant buffer through to SetPixelShaderConstantBuffer.
         auto mockDrawInfo = Make<MockD2DDrawInfo>();
 
-        f.MockEffectContext->LoadPixelShaderMethod.SetExpectedCalls(1);
+        f.ExpectTransformGraph(0, 0, mockDrawInfo.Get());
 
-        f.MockTransformGraph->SetSingleTransformNodeMethod.SetExpectedCalls(1, [&](ID2D1TransformNode* node)
-        {
-            ThrowIfFailed(As<ID2D1DrawTransform>(node)->SetDrawInfo(mockDrawInfo.Get()));
-            return S_OK;
-        });
+        f.MockEffectContext->LoadPixelShaderMethod.SetExpectedCalls(1);
 
         mockDrawInfo->SetPixelShaderMethod.SetExpectedCalls(1);
         mockDrawInfo->SetInstructionCountHintMethod.SetExpectedCalls(1);
@@ -605,8 +681,15 @@ public:
         PixelShaderEffectImpl::Register(f.Factory.Get());
         auto& binding = f.FindBinding(L"CoordinateMapping");
 
-        auto sharedState = MakeSharedShaderState();
+        ShaderDescription desc;
+        desc.InputCount = 2;
+
         auto impl = Make<PixelShaderEffectImpl>();
+
+        auto sharedState = MakeSharedShaderState(desc);
+        ThrowIfFailed(f.FindBinding(L"SharedState").setFunction(impl.Get(), reinterpret_cast<BYTE*>(sharedState.GetAddressOf()), sizeof(ISharedShaderState*)));
+
+        ThrowIfFailed(impl->Initialize(f.MockEffectContext.Get(), f.MockTransformGraph.Get()));
 
         // Can query the size of the property.
         unsigned valueSize;
@@ -649,6 +732,100 @@ public:
         }
 
         Assert::AreEqual(value.MaxOffset, value2.MaxOffset);
+
+        // Set up some additional mocks that will let us populate and validate the effect transform graph.
+        auto mockDrawInfo = Make<MockD2DDrawInfo>();
+
+        mockDrawInfo->SetPixelShaderMethod.AllowAnyCall();
+        mockDrawInfo->SetInstructionCountHintMethod.AllowAnyCall();
+
+        f.MockEffectContext->LoadPixelShaderMethod.SetExpectedCalls(1);
+
+        f.MockEffectContext->CreateBorderTransformMethod.AllowAnyCall([](D2D1_EXTEND_MODE extendX, D2D1_EXTEND_MODE extendY, ID2D1BorderTransform** result)
+        {
+            Assert::AreEqual(D2D1_EXTEND_MODE_CLAMP, extendX);
+            Assert::AreEqual(D2D1_EXTEND_MODE_CLAMP, extendY);
+
+            auto borderTransform = Make<MockD2DBorderTransform>();
+
+            return borderTransform.CopyTo(result);
+        });
+
+        // PrepareForRender should create a graph with no intermediate border transforms.
+        GraphState graphState;
+
+        f.ExpectTransformGraph(desc.InputCount, 0, mockDrawInfo.Get(), &graphState);
+
+        ThrowIfFailed(impl->PrepareForRender(D2D1_CHANGE_TYPE_NONE));
+
+        Expectations::Instance()->Validate();
+
+        // We should have two nodes in the graph - first a PixelShaderTransform, then a ClipTransform.
+        Assert::AreEqual<size_t>(2, graphState.Nodes.size());
+
+        // Effect inputs should be connected to both the PixelShaderTransform and the ClipTransform.
+        Assert::AreEqual<size_t>(4, graphState.Inputs.size());
+
+        Assert::AreEqual(InputToNode(0u, NodeAndInput(graphState.Nodes[0], 0u)), graphState.Inputs[0]);
+        Assert::AreEqual(InputToNode(0u, NodeAndInput(graphState.Nodes[1], 1u)), graphState.Inputs[1]);
+        Assert::AreEqual(InputToNode(1u, NodeAndInput(graphState.Nodes[0], 1u)), graphState.Inputs[2]);
+        Assert::AreEqual(InputToNode(1u, NodeAndInput(graphState.Nodes[1], 2u)), graphState.Inputs[3]);
+
+        // PixelShaderTransform output should be connected to the ClipTransform input.
+        Assert::AreEqual<size_t>(1, graphState.Connections.size());
+
+        Assert::AreEqual(NodeToNode(graphState.Nodes[0], NodeAndInput(graphState.Nodes[1], 0u)), graphState.Connections[0]);
+
+        // ClipTransform should be the overall effect output.
+        Assert::AreEqual(graphState.Nodes[1], graphState.Output);
+
+        // Drawing a second time without changing border modes should not change the graph.
+        ThrowIfFailed(impl->PrepareForRender(D2D1_CHANGE_TYPE_NONE));
+
+        // Setting a different coordinate mapping state but with identical border mode settings should not change the graph.
+        value.Mapping[0] = SamplerCoordinateMapping::OneToOne;
+        value.Mapping[1] = SamplerCoordinateMapping::Offset;
+        value.MaxOffset = 23;
+
+        ThrowIfFailed(binding.setFunction(impl.Get(), reinterpret_cast<BYTE*>(&value), sizeof(CoordinateMappingState)));
+
+        ThrowIfFailed(impl->PrepareForRender(D2D1_CHANGE_TYPE_NONE));
+
+        // Changing border mode, then drawing again, should create a graph including border transforms.
+        value.BorderMode[1] = EffectBorderMode::Hard;
+
+        ThrowIfFailed(binding.setFunction(impl.Get(), reinterpret_cast<BYTE*>(&value), sizeof(CoordinateMappingState)));
+
+        f.ExpectTransformGraph(desc.InputCount, 1, mockDrawInfo.Get(), &graphState);
+
+        ThrowIfFailed(impl->PrepareForRender(D2D1_CHANGE_TYPE_NONE));
+
+        Expectations::Instance()->Validate();
+
+        // We should now have three nodes in the graph - first a PixelShaderTransform, then a ClipTransform, then the BorderTransform.
+        Assert::AreEqual<size_t>(3, graphState.Nodes.size());
+
+        // Effect inputs should be connected to both the PixelShaderTransform and the ClipTransform.
+        // The second input goes through a BorderTransform on its way to the PixelShaderTransform.
+        Assert::AreEqual<size_t>(4, graphState.Inputs.size());
+
+        Assert::AreEqual(InputToNode(0u, NodeAndInput(graphState.Nodes[0], 0u)), graphState.Inputs[0]);
+        Assert::AreEqual(InputToNode(0u, NodeAndInput(graphState.Nodes[1], 1u)), graphState.Inputs[1]);
+        Assert::AreEqual(InputToNode(1u, NodeAndInput(graphState.Nodes[2], 0u)), graphState.Inputs[2]);
+        Assert::AreEqual(InputToNode(1u, NodeAndInput(graphState.Nodes[1], 2u)), graphState.Inputs[3]);
+
+        // PixelShaderTransform output should be connected to the ClipTransform input,
+        // and BorderTransform output to a PixelShaderTransform input.
+        Assert::AreEqual<size_t>(2, graphState.Connections.size());
+
+        Assert::AreEqual(NodeToNode(graphState.Nodes[0], NodeAndInput(graphState.Nodes[1], 0u)), graphState.Connections[0]);
+        Assert::AreEqual(NodeToNode(graphState.Nodes[2], NodeAndInput(graphState.Nodes[0], 1u)), graphState.Connections[1]);
+
+        // ClipTransform should be the overall effect output.
+        Assert::AreEqual(graphState.Nodes[1], graphState.Output);
+
+        // Drawing once more with no border change should not change the graph.
+        ThrowIfFailed(impl->PrepareForRender(D2D1_CHANGE_TYPE_NONE));
     }
 
 
@@ -708,13 +885,9 @@ public:
         // PrepareForRender should pass the interpolation mode through to SetInputDescription.
         auto mockDrawInfo = Make<MockD2DDrawInfo>();
 
-        f.MockEffectContext->LoadPixelShaderMethod.SetExpectedCalls(1);
+        f.ExpectTransformGraph(desc.InputCount, 0, mockDrawInfo.Get());
 
-        f.MockTransformGraph->SetSingleTransformNodeMethod.SetExpectedCalls(1, [&](ID2D1TransformNode* node)
-        {
-            ThrowIfFailed(As<ID2D1DrawTransform>(node)->SetDrawInfo(mockDrawInfo.Get()));
-            return S_OK;
-        });
+        f.MockEffectContext->LoadPixelShaderMethod.SetExpectedCalls(1);
 
         mockDrawInfo->SetPixelShaderMethod.SetExpectedCalls(1);
         mockDrawInfo->SetInstructionCountHintMethod.SetExpectedCalls(1);
@@ -812,123 +985,15 @@ public:
     }
 
 
-    TEST_METHOD_EX(PixelShaderTransform_MapInputRectsToOutputRect_WhenMappingIsOneToOne_ReturnPassThrough)
-    {
-        auto mapping = std::make_shared<CoordinateMappingState>();
-
-        mapping->Mapping[0] = SamplerCoordinateMapping::OneToOne;
-
-        auto transform = Make<PixelShaderTransform>(nullptr, mapping);
-
-        D2D1_RECT_L input = { 1, 2, 3, 4 };
-        D2D1_RECT_L output;
-        D2D1_RECT_L outputOpaqueSubRect;
-
-        ThrowIfFailed(transform->MapInputRectsToOutputRect(&input, nullptr, 1, &output, &outputOpaqueSubRect));
-
-        Assert::AreEqual(input, output);
-        Assert::AreEqual(D2D1_RECT_L{ 0, 0, 0, 0 }, outputOpaqueSubRect);
-    }
-
-
-    TEST_METHOD_EX(PixelShaderTransform_MapInputRectsToOutputRect_WhenMappingIsOffset_ReturnsExpandedRect)
-    {
-        auto mapping = std::make_shared<CoordinateMappingState>();
-
-        mapping->Mapping[0] = SamplerCoordinateMapping::Offset;
-        mapping->MaxOffset = 5;
-
-        auto transform = Make<PixelShaderTransform>(nullptr, mapping);
-
-        D2D1_RECT_L input = { 1, 2, 3, 4 };
-        D2D1_RECT_L output;
-        D2D1_RECT_L outputOpaqueSubRect;
-
-        ThrowIfFailed(transform->MapInputRectsToOutputRect(&input, nullptr, 1, &output, &outputOpaqueSubRect));
-
-        Assert::AreEqual(D2D1_RECT_L{ -4, -3, 8, 9 }, output);
-        Assert::AreEqual(D2D1_RECT_L{ 0, 0, 0, 0 }, outputOpaqueSubRect);
-    }
-
-
-    TEST_METHOD_EX(PixelShaderTransform_MapInputRectsToOutputRect_WhenMappingIsUnknown_ReturnsInfinite)
-    {
-        auto mapping = std::make_shared<CoordinateMappingState>();
-
-        mapping->Mapping[0] = SamplerCoordinateMapping::Unknown;
-
-        auto transform = Make<PixelShaderTransform>(nullptr, mapping);
-
-        D2D1_RECT_L input = { 1, 2, 3, 4 };
-        D2D1_RECT_L output;
-        D2D1_RECT_L outputOpaqueSubRect;
-
-        ThrowIfFailed(transform->MapInputRectsToOutputRect(&input, nullptr, 1, &output, &outputOpaqueSubRect));
-
-        Assert::AreEqual(D2D1_RECT_L{ INT_MIN, INT_MIN, INT_MAX, INT_MAX }, output);
-        Assert::AreEqual(D2D1_RECT_L{ 0, 0, 0, 0 }, outputOpaqueSubRect);
-    }
-
-
-    TEST_METHOD_EX(PixelShaderTransform_MapInputRectsToOutputRect_WhenMultipleInputs_ReturnsUnion)
-    {
-        auto mapping = std::make_shared<CoordinateMappingState>();
-
-        mapping->Mapping[0] = SamplerCoordinateMapping::OneToOne;
-        mapping->Mapping[1] = SamplerCoordinateMapping::Offset;
-        mapping->MaxOffset = 1;
-
-        auto transform = Make<PixelShaderTransform>(nullptr, mapping);
-
-        D2D1_RECT_L inputs[] =
-        {
-            { 50, 200, 79, 210 },
-            { -3, 210, 50, 220 },
-        };
-
-        D2D1_RECT_L output;
-        D2D1_RECT_L outputOpaqueSubRect;
-
-        ThrowIfFailed(transform->MapInputRectsToOutputRect(inputs, nullptr, _countof(inputs), &output, &outputOpaqueSubRect));
-
-        Assert::AreEqual(D2D1_RECT_L{ -4, 200, 79, 221 }, output);
-        Assert::AreEqual(D2D1_RECT_L{ 0, 0, 0, 0 }, outputOpaqueSubRect);
-    }
-
-
-    TEST_METHOD_EX(PixelShaderTransform_MapInputRectsToOutputRect_WhenMultipleInputs_IgnoresUnknownMappings)
-    {
-        auto mapping = std::make_shared<CoordinateMappingState>();
-
-        mapping->Mapping[0] = SamplerCoordinateMapping::OneToOne;
-        mapping->Mapping[1] = SamplerCoordinateMapping::Unknown;
-
-        auto transform = Make<PixelShaderTransform>(nullptr, mapping);
-
-        D2D1_RECT_L inputs[] =
-        {
-            { 50, 200, 79, 210 },
-            { -3, 210, 50, 220 },
-        };
-
-        D2D1_RECT_L output;
-        D2D1_RECT_L outputOpaqueSubRect;
-
-        ThrowIfFailed(transform->MapInputRectsToOutputRect(inputs, nullptr, _countof(inputs), &output, &outputOpaqueSubRect));
-
-        Assert::AreEqual(inputs[0], output);
-        Assert::AreEqual(D2D1_RECT_L{ 0, 0, 0, 0 }, outputOpaqueSubRect);
-    }
-
-
-    TEST_METHOD_EX(PixelShaderTransform_MapInputRectsToOutputRect_WhenNoInputs_ReturnsInfinite)
+    TEST_METHOD_EX(PixelShaderTransform_MapInputRectsToOutputRect)
     {
         auto transform = Make<PixelShaderTransform>(nullptr, std::make_shared<CoordinateMappingState>());
 
+        D2D1_RECT_L input = { 1, 2, 3, 4 };
         D2D1_RECT_L output;
         D2D1_RECT_L outputOpaqueSubRect;
 
-        ThrowIfFailed(transform->MapInputRectsToOutputRect(nullptr, nullptr, 0, &output, &outputOpaqueSubRect));
+        ThrowIfFailed(transform->MapInputRectsToOutputRect(&input, nullptr, 1, &output, &outputOpaqueSubRect));
 
         Assert::AreEqual(D2D1_RECT_L{ INT_MIN, INT_MIN, INT_MAX, INT_MAX }, output);
         Assert::AreEqual(D2D1_RECT_L{ 0, 0, 0, 0 }, outputOpaqueSubRect);
@@ -946,29 +1011,13 @@ public:
 
         auto transform = Make<PixelShaderTransform>(nullptr, mapping);
 
-        // Store input image bounds.
-        D2D1_RECT_L initialInputs[] =
-        {
-            { 1, 2, 3, 4 },
-            { 5, 6, 7, 8 },
-            { 9, 10, 11, 12 },
-        };
-
-        D2D1_RECT_L output;
-        D2D1_RECT_L outputOpaqueSubRect;
-
-        ThrowIfFailed(transform->MapInputRectsToOutputRect(initialInputs, nullptr, _countof(initialInputs), &output, &outputOpaqueSubRect));
-
-        Assert::AreEqual(D2D1_RECT_L{ 5, 6, 13, 14 }, output);
-        Assert::AreEqual(D2D1_RECT_L{ 0, 0, 0, 0 }, outputOpaqueSubRect);
-
         // Map backward from an output region being drawn to parts of our input images.
-        output = { 10, 11, 23, 42 };
+        D2D1_RECT_L output = { 10, 11, 23, 42 };
         D2D1_RECT_L inputs[3];
 
         ThrowIfFailed(transform->MapOutputRectToInputRects(&output, inputs, 3));
 
-        // Unknown mapping = return the entire input image bounds.
+        // Unknown mapping = return infinite region.
         Assert::AreEqual(D2D1_RECT_L{ INT_MIN, INT_MIN, INT_MAX, INT_MAX }, inputs[0]);
 
         // OneToOne mapping.
@@ -982,6 +1031,242 @@ public:
     TEST_METHOD_EX(PixelShaderTransform_MapInvalidRect_ReturnsInfinity)
     {
         auto transform = Make<PixelShaderTransform>(nullptr, std::make_shared<CoordinateMappingState>());
+
+        D2D1_RECT_L input = { 1, 2, 3, 4 };
+        D2D1_RECT_L output;
+        D2D1_RECT_L expected = { INT_MIN, INT_MIN, INT_MAX, INT_MAX };
+
+        ThrowIfFailed(transform->MapInvalidRect(1234, input, &output));
+
+        Assert::AreEqual(expected, output);
+    }
+};
+
+
+TEST_CLASS(ClipTransformUnitTests)
+{
+public:
+    TEST_METHOD_EX(ClipTransform_GetInputCount)
+    {
+        ShaderDescription desc;
+        desc.InputCount = 5;
+
+        auto sharedState = MakeSharedShaderState(desc);
+        auto transform = Make<ClipTransform>(sharedState.Get(), std::make_shared<CoordinateMappingState>());
+
+        Assert::AreEqual(6u, transform->GetInputCount());
+    }
+
+
+    TEST_METHOD_EX(ClipTransform_MapInputRectsToOutputRect_WhenMappingIsOneToOne_ReturnPassThrough)
+    {
+        auto mapping = std::make_shared<CoordinateMappingState>();
+
+        mapping->Mapping[0] = SamplerCoordinateMapping::OneToOne;
+
+        auto transform = Make<ClipTransform>(nullptr, mapping);
+
+        D2D1_RECT_L inputs[] = 
+        {
+            { -1234, -1234, 1234, 1234 },
+            { 1, 2, 3, 4 },
+        };
+
+        D2D1_RECT_L output;
+        D2D1_RECT_L outputOpaqueSubRect;
+
+        // Test soft border mode.
+        mapping->BorderMode[0] = EffectBorderMode::Soft;
+
+        ThrowIfFailed(transform->MapInputRectsToOutputRect(inputs, nullptr, _countof(inputs), &output, &outputOpaqueSubRect));
+
+        Assert::AreEqual(inputs[1], output);
+        Assert::AreEqual(D2D1_RECT_L{ 0, 0, 0, 0 }, outputOpaqueSubRect);
+
+        // Hard border mode should give the same result as soft.
+        mapping->BorderMode[0] = EffectBorderMode::Hard;
+
+        ThrowIfFailed(transform->MapInputRectsToOutputRect(inputs, nullptr, _countof(inputs), &output, &outputOpaqueSubRect));
+
+        Assert::AreEqual(inputs[1], output);
+        Assert::AreEqual(D2D1_RECT_L{ 0, 0, 0, 0 }, outputOpaqueSubRect);
+    }
+
+
+    TEST_METHOD_EX(ClipTransform_MapInputRectsToOutputRect_WhenMappingIsOffset_ReturnsExpandedRect)
+    {
+        auto mapping = std::make_shared<CoordinateMappingState>();
+
+        mapping->Mapping[0] = SamplerCoordinateMapping::Offset;
+        mapping->MaxOffset = 5;
+
+        auto transform = Make<ClipTransform>(nullptr, mapping);
+
+        D2D1_RECT_L inputs[] =
+        {
+            { -1234, -1234, 1234, 1234 },
+            { 1, 2, 3, 4 },
+        };
+
+        D2D1_RECT_L output;
+        D2D1_RECT_L outputOpaqueSubRect;
+
+        // Test soft border mode.
+        mapping->BorderMode[0] = EffectBorderMode::Soft;
+
+        ThrowIfFailed(transform->MapInputRectsToOutputRect(inputs, nullptr, _countof(inputs), &output, &outputOpaqueSubRect));
+
+        Assert::AreEqual(D2D1_RECT_L{ -4, -3, 8, 9 }, output);
+        Assert::AreEqual(D2D1_RECT_L{ 0, 0, 0, 0 }, outputOpaqueSubRect);
+
+        // Specifying hard border mode should no longer expand the rectangle.
+        mapping->BorderMode[0] = EffectBorderMode::Hard;
+
+        ThrowIfFailed(transform->MapInputRectsToOutputRect(inputs, nullptr, _countof(inputs), &output, &outputOpaqueSubRect));
+
+        Assert::AreEqual(inputs[1], output);
+        Assert::AreEqual(D2D1_RECT_L{ 0, 0, 0, 0 }, outputOpaqueSubRect);
+    }
+
+
+    TEST_METHOD_EX(ClipTransform_MapInputRectsToOutputRect_WhenMappingIsUnknown_ReturnsInfinite)
+    {
+        auto mapping = std::make_shared<CoordinateMappingState>();
+
+        mapping->Mapping[0] = SamplerCoordinateMapping::Unknown;
+
+        auto transform = Make<ClipTransform>(nullptr, mapping);
+
+        D2D1_RECT_L inputs[] =
+        {
+            { -1234, -1234, 1234, 1234 },
+            { 1, 2, 3, 4 },
+        };
+
+        D2D1_RECT_L output;
+        D2D1_RECT_L outputOpaqueSubRect;
+
+        // Test soft border mode.
+        mapping->BorderMode[0] = EffectBorderMode::Soft;
+
+        ThrowIfFailed(transform->MapInputRectsToOutputRect(inputs, nullptr, _countof(inputs), &output, &outputOpaqueSubRect));
+
+        Assert::AreEqual(D2D1_RECT_L{ INT_MIN, INT_MIN, INT_MAX, INT_MAX }, output);
+        Assert::AreEqual(D2D1_RECT_L{ 0, 0, 0, 0 }, outputOpaqueSubRect);
+
+        // Hard border mode should give the same result as soft.
+        mapping->BorderMode[0] = EffectBorderMode::Hard;
+
+        ThrowIfFailed(transform->MapInputRectsToOutputRect(inputs, nullptr, _countof(inputs), &output, &outputOpaqueSubRect));
+
+        Assert::AreEqual(D2D1_RECT_L{ INT_MIN, INT_MIN, INT_MAX, INT_MAX }, output);
+        Assert::AreEqual(D2D1_RECT_L{ 0, 0, 0, 0 }, outputOpaqueSubRect);
+    }
+
+
+    TEST_METHOD_EX(ClipTransform_MapInputRectsToOutputRect_WhenMultipleInputs_ReturnsUnion)
+    {
+        auto mapping = std::make_shared<CoordinateMappingState>();
+
+        mapping->Mapping[0] = SamplerCoordinateMapping::OneToOne;
+        mapping->Mapping[1] = SamplerCoordinateMapping::Offset;
+        mapping->MaxOffset = 1;
+
+        auto transform = Make<ClipTransform>(nullptr, mapping);
+
+        D2D1_RECT_L inputs[] =
+        {
+            { -1234, -1234, 1234, 1234 },
+            { 50, 200, 79, 210 },
+            { -3, 210, 50, 220 },
+        };
+
+        D2D1_RECT_L output;
+        D2D1_RECT_L outputOpaqueSubRect;
+
+        ThrowIfFailed(transform->MapInputRectsToOutputRect(inputs, nullptr, _countof(inputs), &output, &outputOpaqueSubRect));
+
+        Assert::AreEqual(D2D1_RECT_L{ -4, 200, 79, 221 }, output);
+        Assert::AreEqual(D2D1_RECT_L{ 0, 0, 0, 0 }, outputOpaqueSubRect);
+    }
+
+
+    TEST_METHOD_EX(ClipTransform_MapInputRectsToOutputRect_WhenMultipleInputs_IgnoresUnknownMappings)
+    {
+        auto mapping = std::make_shared<CoordinateMappingState>();
+
+        mapping->Mapping[0] = SamplerCoordinateMapping::OneToOne;
+        mapping->Mapping[1] = SamplerCoordinateMapping::Unknown;
+
+        auto transform = Make<ClipTransform>(nullptr, mapping);
+
+        D2D1_RECT_L inputs[] =
+        {
+            { -1234, -1234, 1234, 1234 },
+            { 50, 200, 79, 210 },
+            { -3, 210, 50, 220 },
+        };
+
+        D2D1_RECT_L output;
+        D2D1_RECT_L outputOpaqueSubRect;
+
+        ThrowIfFailed(transform->MapInputRectsToOutputRect(inputs, nullptr, _countof(inputs), &output, &outputOpaqueSubRect));
+
+        Assert::AreEqual(inputs[1], output);
+        Assert::AreEqual(D2D1_RECT_L{ 0, 0, 0, 0 }, outputOpaqueSubRect);
+    }
+
+
+    TEST_METHOD_EX(ClipTransform_MapInputRectsToOutputRect_WhenNoInputs_ReturnsInfinite)
+    {
+        auto transform = Make<ClipTransform>(nullptr, std::make_shared<CoordinateMappingState>());
+
+        D2D1_RECT_L inputs[] =
+        {
+            { -1234, -1234, 1234, 1234 },
+        };
+
+        D2D1_RECT_L output;
+        D2D1_RECT_L outputOpaqueSubRect;
+
+        ThrowIfFailed(transform->MapInputRectsToOutputRect(inputs, nullptr, _countof(inputs), &output, &outputOpaqueSubRect));
+
+        Assert::AreEqual(D2D1_RECT_L{ INT_MIN, INT_MIN, INT_MAX, INT_MAX }, output);
+        Assert::AreEqual(D2D1_RECT_L{ 0, 0, 0, 0 }, outputOpaqueSubRect);
+    }
+
+
+    TEST_METHOD_EX(ClipTransform_MapOutputRectToInputRects)
+    {
+        auto mapping = std::make_shared<CoordinateMappingState>();
+
+        mapping->Mapping[0] = SamplerCoordinateMapping::Unknown;
+        mapping->Mapping[1] = SamplerCoordinateMapping::OneToOne;
+        mapping->Mapping[2] = SamplerCoordinateMapping::Offset;
+        mapping->MaxOffset = 2;
+
+        auto transform = Make<ClipTransform>(nullptr, mapping);
+
+        // Map backward from an output region being drawn to parts of our input images.
+        D2D1_RECT_L output = { 10, 11, 23, 42 };
+        D2D1_RECT_L inputs[4];
+
+        ThrowIfFailed(transform->MapOutputRectToInputRects(&output, inputs, 4));
+
+        // First clip input is the PixelShaderTransform output, which should get a passthrough region.
+        Assert::AreEqual(output, inputs[0]);
+
+        // Other clip inputs are copies of the PixelShaderTransform inputs.
+        // Clip should ask for empty regions regardless of their SamplerCoordinateMapping mode.
+        Assert::AreEqual(D2D1_RECT_L{ 0, 0, 0, 0 }, inputs[1]);
+        Assert::AreEqual(D2D1_RECT_L{ 0, 0, 0, 0 }, inputs[2]);
+        Assert::AreEqual(D2D1_RECT_L{ 0, 0, 0, 0 }, inputs[3]);
+    }
+
+
+    TEST_METHOD_EX(ClipTransform_MapInvalidRect_ReturnsInfinity)
+    {
+        auto transform = Make<ClipTransform>(nullptr, std::make_shared<CoordinateMappingState>());
 
         D2D1_RECT_L input = { 1, 2, 3, 4 };
         D2D1_RECT_L output;

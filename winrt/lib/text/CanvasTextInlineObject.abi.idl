@@ -1,0 +1,86 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+//
+// Licensed under the MIT License. See LICENSE.txt in the project root for license information.
+
+namespace Microsoft.Graphics.Canvas.Text
+{
+    [version(VERSION)]
+    typedef enum CanvasLineBreakCondition
+    {
+        //
+        // Whether a break is allowed is determined by the condition of
+        // the neighboring text span or inline object.
+        //
+        Neutral,
+
+        // A break is allowed, unless overruled by a neighboring text span/inline object.
+        CanBreak,
+
+        // No breaking, unless overruled by a MustBreak from a neighboring text span/inline object.
+        CannotBreak,
+
+        // Break, regardless of anything else.
+        MustBreak
+
+    } CanvasLineBreakCondition;
+
+    interface ICanvasTextRenderer;
+
+    [version(VERSION), uuid(7A89EE99-CE2A-47FA-9DD2-0A6825F6053F)]
+    interface ICanvasTextInlineObject : IInspectable
+    {
+        //
+        // The IInspectable brush here is allowed to be null. 
+        // Win2D will pass this in as null if the drawing effect
+        // on the DWrite text layout is some IUnknown, and
+        // it is neither an ID2D1Brush nor an IInspectable.
+        //
+
+        HRESULT Draw(
+            [in] ICanvasTextRenderer* textRenderer,
+            [in] NUMERICS.Vector2 point,
+            [in] boolean isSideways,
+            [in] boolean isRightToLeft,
+            [in] IInspectable* brush);
+
+        //
+        // Width and height of the inline object.
+        //
+        [propget] HRESULT Size(
+            [out, retval] Windows.Foundation.Size* value);
+
+        //
+        // Distance from the top of the object to the baseline where
+        // it should be lined up with adjacent text.
+        // If the baseline should be at the bottom, then the baseline
+        // simply equals the height.
+        //
+        [propget] HRESULT Baseline(
+            [out, retval] float* value);
+
+        //
+        // Indicates how the object should appear when it's used for 
+        // vertical text; whether it should appear upright, or sideways
+        // alongside the text.
+        //
+        [propget] HRESULT SupportsSideways(
+            [out, retval] boolean* value);
+
+        //
+        // The rectangle defining the visible area of the inline object.
+        // Corresponds to GetOverhangMetrics.
+        //
+        [propget] HRESULT DrawBounds(
+            [out, retval] Windows.Foundation.Rect* bounds);
+
+        //
+        // Specify how this inline object should affect line breaks.
+        //
+        [propget] HRESULT BreakBefore(
+            [out, retval] CanvasLineBreakCondition* value);
+
+        [propget] HRESULT BreakAfter(
+            [out, retval] CanvasLineBreakCondition* value);
+    };
+
+}

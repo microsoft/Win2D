@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 //
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
@@ -15,6 +15,47 @@ namespace Microsoft.Graphics.Canvas.Text
         int CharacterCount; // Number of characters within the hit region.
         Windows.Foundation.Rect LayoutBounds; // Layout bounds of characters in the hit region.
     } CanvasTextLayoutRegion;
+
+    //
+    // A cluster is a group of unicode code points which typically result in
+    // one glyph when drawn. In Latin text with no diacritics,
+    // one cluster can be thought of one code point. But in text with diacritics,
+    // a cluster can span multiple code points. For example, 'นี้' looks like
+    // one glyph but has a CharacterCount of 3.
+    //
+
+    [version(VERSION), flags]
+    typedef enum CanvasClusterProperties
+    {
+        CanWrapLineAfter = 0x1,
+        Whitespace = 0x2,
+        Newline = 0x4,
+        SoftHyphen = 0x8,
+        RightToLeft = 0x10
+    } CanvasClusterProperties;
+
+    [version(VERSION)]
+    typedef struct CanvasClusterMetrics
+    {
+        int CharacterCount;
+        float Width;
+        CanvasClusterProperties Properties;
+    } CanvasClusterMetrics;
+
+    [version(VERSION)]
+    typedef struct CanvasLineMetrics
+    {
+        int CharacterCount; // Includes TrailingWhitespaceCount and TerminalNewlineCount
+        int TrailingWhitespaceCount;
+        int TerminalNewlineCount;
+        float Height;
+        float Baseline;
+        boolean IsTrimmed;
+#if WINVER > _WIN32_WINNT_WINBLUE
+        float LeadingWhitespaceBefore;
+        float LeadingWhitespaceAfter;
+#endif
+    } CanvasLineMetrics;
 
 #define PROPERTY(NAME, TYPE)                            \
     [propget] HRESULT NAME([out, retval] TYPE* value);  \
@@ -53,12 +94,11 @@ namespace Microsoft.Graphics.Canvas.Text
         PROPERTY(LineSpacingMode, CanvasLineSpacingMode);
 #endif
         PROPERTY(TrimmingSign, CanvasTrimmingSign);
+        PROPERTY(CustomTrimmingSign, ICanvasTextInlineObject*);
 
         // Not exposed:                             Reason
         //---------------                           -------
         // GetDefaultFontCollection                 Relies on exposure of IDWriteFontCollection. Needs design. Out of scope.
-        // SetTrimming's trimmingSign argument      Advanced usage, needs design decisions about IDWriteInlineObject.
-        //                                          The trimmingSign property is used for achieving ellipsis trimming signs (common case).
 
         ///////////////////////////////////////////////////////////////////////
         //
@@ -71,11 +111,23 @@ namespace Microsoft.Graphics.Canvas.Text
 
         //
         // Exposed through IDWriteTextLayout::GetDrawingEffect.
-        // This method fails if the color source, through interop, was set to something other than an ID2D1Brush.
+        // This method fails if the color source, through interop or SetCustomBrush, was set to something other than an ID2D1Brush.
         //
         HRESULT GetBrush(
             [in] INT32 characterIndex,
-            [out, retval] Microsoft.Graphics.Canvas.Brushes.ICanvasBrush** brush); 
+            [out, retval] Microsoft.Graphics.Canvas.Brushes.ICanvasBrush** brush);
+
+        //
+        // Exposed through IDWriteTextLayout::GetDrawingEffect.
+        // This and SetCustomBrush supplement GetBrush and SetBrush. Custom brushes are arbitrary objects
+        // which are sent to a text renderer while drawing the layout.
+        // The built-in D2D renderer doesn't like any D2D resource that isn't an ID2D1Brush. It will
+        // ignore any other objects.
+        // An app may want to pass any arbitrary thing as a brush to its custom renderer, though.
+        //
+        HRESULT GetCustomBrush(
+            [in] INT32 characterIndex,
+            [out, retval] IInspectable** brush);
 
         HRESULT GetFontFamily(
             [in] INT32 characterIndex,
@@ -109,6 +161,10 @@ namespace Microsoft.Graphics.Canvas.Text
             [in] INT32 characterIndex,
             [out, retval] boolean* hasUnderline);
 
+        HRESULT GetInlineObject(
+            [in] INT32 characterIndex,
+            [out, retval] ICanvasTextInlineObject** inlineObject);
+
         // SetColor and SetBrush are exposed through IDWriteTextLayout::SetDrawingEffect.
         HRESULT SetColor(
             [in] INT32 characterIndex,
@@ -119,6 +175,11 @@ namespace Microsoft.Graphics.Canvas.Text
             [in] INT32 characterIndex,
             [in] INT32 characterCount,
             [in] Microsoft.Graphics.Canvas.Brushes.ICanvasBrush* brush);
+
+        HRESULT SetCustomBrush(
+            [in] INT32 characterIndex,
+            [in] INT32 characterCount,
+            [in] IInspectable* brush);
 
         HRESULT SetFontFamily(
             [in] INT32 characterIndex,
@@ -160,6 +221,11 @@ namespace Microsoft.Graphics.Canvas.Text
             [in] INT32 characterCount,
             [in] boolean hasUnderline);
 
+        HRESULT SetInlineObject(
+            [in] INT32 characterIndex,
+            [in] INT32 characterCount,
+            [in] ICanvasTextInlineObject* inlineObject);
+
         [overload("DrawToTextRenderer")]
 		HRESULT DrawToTextRenderer(
 			[in] ICanvasTextRenderer* textRenderer,
@@ -171,21 +237,31 @@ namespace Microsoft.Graphics.Canvas.Text
             [in] float x,
             [in] float y);
 
+        [propget] HRESULT LineMetrics(
+            [out] UINT32* valueCount,
+            [out, size_is(, *valueCount), retval] CanvasLineMetrics** valueElements);
+
+        [propget] HRESULT ClusterMetrics(
+            [out] UINT32* valueCount,
+            [out, size_is(, *valueCount), retval] CanvasClusterMetrics** valueElements);
+
         // Not exposed:                             Reason
         //---------------                           -------
-        // GetClusterMetrics                        Advanced usage, out of scope.
         // Get/Set FontCollection                   Relies on IDWriteFontCollection. Separate design issue on how to expose this.
-        // Get/Set InlineObject                     Advanced usage, out of scope.
-        // GetLineMetrics                           Advanced usage, out of scope.
         // Get/Set Typography                       Relies on IDWriteTypography. Advanced usage. Separate design issue on how to expose this.
 
         // Exposed through IDWriteTextLayout::GetMetrics.
         [propget] HRESULT LayoutBounds(
             [out, retval] Windows.Foundation.Rect* bounds);
 
-        // Exposed through IDWriteTextLayout::GetMetrics.
+        [propget] HRESULT LayoutBoundsIncludingTrailingWhitespace(
+            [out, retval] Windows.Foundation.Rect* bounds);
+
         [propget] HRESULT LineCount(
             [out, retval] INT32* lineCount);
+
+        [propget] HRESULT MaximumBidiReorderingDepth(
+            [out, retval] int* depth);
 
         // Exposed through IDWriteTextLayout::GetOverhangMetrics.
         [propget] HRESULT DrawBounds(
@@ -302,7 +378,6 @@ namespace Microsoft.Graphics.Canvas.Text
         // Not exposed:                             Reason
         //---------------                           -------
         // Get/SetFontFallback                      Relies on IDWriteFontFallback. Separate design issue on how to expose this.
-        // GetMetrics                               Out of scope for this item. Backlog #820 for getting text metrics
 
         [propget] HRESULT Device([out, retval] Microsoft.Graphics.Canvas.CanvasDevice** value);
 

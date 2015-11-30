@@ -241,6 +241,9 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)images\CanvasRenderTarget.cpp">
       <Filter>images</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)images\CanvasVirtualBitmap.cpp">
+      <Filter>images</Filter>
+    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)images\TextureUtilities.cpp">
       <Filter>images</Filter>
     </ClCompile>
@@ -260,6 +263,12 @@
       <Filter>text</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)text\CustomFontManager.cpp">
+      <Filter>text</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)text\InternalDWriteInlineObject.cpp">
+      <Filter>text</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)text\DrawGlyphRunHelper.cpp">
       <Filter>text</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)utils\Strings.cpp">
@@ -381,6 +390,15 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\shader\SharedShaderState.cpp">
       <Filter>effects\shader</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\shader\ClipTransform.cpp">
+      <Filter>effects\shader</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)text\InternalDWriteTextRenderer.cpp">
+      <Filter>text</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)text\TextUtilities.cpp">
+      <Filter>text</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -598,6 +616,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)images\CanvasRenderTarget.h">
       <Filter>images</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)images\CanvasVirtualBitmap.h">
+      <Filter>images</Filter>
+    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)images\TextureUtilities.h">
       <Filter>images</Filter>
     </ClInclude>
@@ -617,6 +638,12 @@
       <Filter>text</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)text\CustomFontManager.h">
+      <Filter>text</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)text\InternalDWriteInlineObject.h">
+      <Filter>text</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)text\DrawGlyphRunHelper.h">
       <Filter>text</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\Conversion.h">
@@ -777,6 +804,15 @@
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\MathUtilities.h">
       <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\shader\ClipTransform.h">
+      <Filter>effects\shader</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)geometry\InkToGeometryCommandSink.h">
+      <Filter>geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)text\InternalDWriteTextRenderer.h">
+      <Filter>text</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1000,6 +1036,9 @@
     <None Include="$(MSBuildThisFileDirectory)images\CanvasImage.abi.idl">
       <Filter>images</Filter>
     </None>
+    <None Include="$(MSBuildThisFileDirectory)images\CanvasVirtualBitmap.abi.idl">
+      <Filter>images</Filter>
+    </None>
     <None Include="$(MSBuildThisFileDirectory)text\CanvasFontFace.abi.idl">
       <Filter>text</Filter>
     </None>
@@ -1024,9 +1063,6 @@
     <None Include="$(MSBuildThisFileDirectory)text\CanvasTextLayout.abi.idl">
       <Filter>text</Filter>
     </None>
-    <None Include="$(MSBuildThisFileDirectory)effects\IGraphicsEffect.abi.idl">
-      <Filter>effects</Filter>
-    </None>
     <None Include="$(MSBuildThisFileDirectory)xaml\CanvasVirtualImageSource.abi.idl">
       <Filter>xaml</Filter>
     </None>
@@ -1041,6 +1077,12 @@
     </None>
     <None Include="$(MSBuildThisFileDirectory)effects\shader\PixelShaderEffect.abi.idl">
       <Filter>effects\shader</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)text\CanvasTextInlineObject.abi.idl">
+      <Filter>text</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)effects\ICanvasEffect.abi.idl">
+      <Filter>effects</Filter>
     </None>
   </ItemGroup>
 </Project>

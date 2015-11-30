@@ -12,7 +12,7 @@ namespace Microsoft.Graphics.Canvas.Effects
 
     [version(VERSION), uuid(7CAEADC6-9EB3-5895-B876-F485C9574847), exclusiveto(RgbToHueEffect)]
     interface IRgbToHueEffect : IInspectable
-        requires Microsoft.Graphics.Canvas.ICanvasImage
+        requires ICanvasEffect
     {
         [propget]
         HRESULT OutputColorSpace([out, retval] EffectHueColorSpace* value);
@@ -32,7 +32,6 @@ namespace Microsoft.Graphics.Canvas.Effects
     runtimeclass RgbToHueEffect
     {
         [default] interface IRgbToHueEffect;
-        interface IGRAPHICSEFFECT;
     }
 }
 

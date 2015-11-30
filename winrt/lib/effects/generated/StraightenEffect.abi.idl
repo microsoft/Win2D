@@ -12,7 +12,7 @@ namespace Microsoft.Graphics.Canvas.Effects
 
     [version(VERSION), uuid(965FC262-2EBA-59E6-935F-2389CB5A305A), exclusiveto(StraightenEffect)]
     interface IStraightenEffect : IInspectable
-        requires Microsoft.Graphics.Canvas.ICanvasImage
+        requires ICanvasEffect
     {
         [propget]
         HRESULT Angle([out, retval] float* value);
@@ -44,7 +44,6 @@ namespace Microsoft.Graphics.Canvas.Effects
     runtimeclass StraightenEffect
     {
         [default] interface IStraightenEffect;
-        interface IGRAPHICSEFFECT;
     }
 }
 

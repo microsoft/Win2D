@@ -4,6 +4,7 @@
 
 #include "pch.h"
 #include <lib/geometry/CanvasPathBuilder.h>
+#include <lib/text/CanvasFontFace.h>
 #include "mocks/MockD2DRectangleGeometry.h"
 #include "mocks/MockD2DEllipseGeometry.h"
 #include "mocks/MockD2DRoundedRectangleGeometry.h"
@@ -11,8 +12,16 @@
 #include "mocks/MockD2DGeometrySink.h"
 #include "mocks/MockD2DTransformedGeometry.h"
 #include "mocks/MockD2DGeometryGroup.h"
+#include "mocks/MockDWriteFont.h"
 #include "stubs/StubGeometrySink.h"
 #include "stubs/StubCanvasTextLayoutAdapter.h"
+
+#if WINVER > _WIN32_WINNT_WINBLUE
+#include "Mocks/MockD2DInk.h"
+#include "Mocks/MockD2DInkStyle.h"
+#include "mocks/MockDWriteFontFaceReference.h"
+#include "Stubs/StubInkAdapter.h"
+#endif
 
 static const D2D1_MATRIX_3X2_F sc_someD2DTransform = { 1, 2, 3, 4, 5, 6 };
 static const D2D1_MATRIX_3X2_F sc_identityD2DTransform = { 1, 0, 0, 1, 0, 0 };
@@ -22,6 +31,17 @@ static const D2D1_TRIANGLE sc_triangle1 = { { 1, 2 }, { 3, 4 }, { 5, 6 } };
 static const D2D1_TRIANGLE sc_triangle2 = { { 7, 8 }, { 9, 10 }, { 11, 12 } };
 static const D2D1_TRIANGLE sc_triangle3 = { { 13, 14 }, { 15, 16 }, { 17, 18 } };
 
+#if WINVER > _WIN32_WINNT_WINBLUE
+typedef MockDWriteFontFaceReference MockDWriteFontFaceContainer;
+#else
+typedef MockDWriteFont MockDWriteFontFaceContainer;
+#endif
+
+ComPtr<CanvasFontFace> CreateSimpleFontFace()
+{
+    auto resource = Make<MockDWriteFontFaceContainer>();
+    return Make<CanvasFontFace>(resource.Get());
+}
 
 TEST_CLASS(CanvasGeometryTests)
 {
@@ -2021,4 +2041,180 @@ public:
 
         Assert::AreEqual(E_INVALIDARG, canvasGeometryFactory->CreateText(stubTextLayout.Get(), nullptr));
     }
+
+    TEST_METHOD_EX(CanvasGeometry_CreateGlyphRun_NullArg)
+    {
+        Fixture f;
+        auto fontFace = CreateSimpleFontFace();
+        ComPtr<ICanvasGeometry> geometry;
+        CanvasGlyph glyph{};
+
+        auto canvasGeometryFactory = Make<CanvasGeometryFactory>();
+
+        Assert::AreEqual(E_INVALIDARG, canvasGeometryFactory->CreateGlyphRun(
+            nullptr,
+            Vector2{},
+            fontFace.Get(),
+            0.0f,
+            1,
+            &glyph,
+            false,
+            0,
+            CanvasTextMeasuringMode::Natural,
+            CanvasGlyphOrientation::Upright,
+            &geometry));
+
+        Assert::AreEqual(E_INVALIDARG, canvasGeometryFactory->CreateGlyphRun(
+            f.Device.Get(),
+            Vector2{},
+            nullptr,
+            0.0f,
+            1,
+            &glyph,
+            false,
+            0,
+            CanvasTextMeasuringMode::Natural,
+            CanvasGlyphOrientation::Upright,
+            &geometry));
+
+        Assert::AreEqual(E_INVALIDARG, canvasGeometryFactory->CreateGlyphRun(
+            f.Device.Get(),
+            Vector2{},
+            fontFace.Get(),
+            0.0f,
+            1,
+            nullptr,
+            false,
+            0,
+            CanvasTextMeasuringMode::Natural,
+            CanvasGlyphOrientation::Upright,
+            &geometry));
+
+        Assert::AreEqual(E_INVALIDARG, canvasGeometryFactory->CreateGlyphRun(
+            f.Device.Get(),
+            Vector2{},
+            fontFace.Get(),
+            0.0f,
+            1,
+            &glyph,
+            false,
+            0,
+            CanvasTextMeasuringMode::Natural,
+            CanvasGlyphOrientation::Upright,
+            nullptr));
+    }
+
+#if WINVER > _WIN32_WINNT_WINBLUE
+
+    static void TestCreateInk(
+        D2D1_MATRIX_3X2_F const& expectedTransform,
+        float expectedFlatteningTolerance,
+        std::function<HRESULT(CanvasGeometryFactory*, ICanvasResourceCreator*, MockStrokeCollection*, ICanvasGeometry**)> createFunction)
+    {
+        GeometryOperationsFixture_OutputsToTempPathBuilder f;
+
+        ComPtr<ICanvasGeometry> canvasGeometry;
+        auto canvasGeometryFactory = Make<CanvasGeometryFactory>();
+
+        auto d2dInk = Make<MockD2DInk>();
+        auto d2dInkStyle = Make<MockD2DInkStyle>();
+        auto inkStrokes = Make<MockStrokeCollection>();
+
+        auto inkAdapter = std::make_shared<StubInkAdapter>();
+        InkAdapter::SetInstance(inkAdapter);
+
+        // CreateInk should create a temporary command list.
+        auto d2dCommandList = Make<MockD2DCommandList>();
+
+        f.Device->CreateCommandListMethod.SetExpectedCalls(1, [&] { return d2dCommandList; });
+
+        // The ink should be drawn into the command list.
+        auto d2dDeviceContext = Make<MockD2DDeviceContext>();
+
+        f.Device->CreateDeviceContextForDrawingSessionMethod.SetExpectedCalls(1, [&] { return d2dDeviceContext; });
+
+        d2dDeviceContext->BeginDrawMethod.SetExpectedCalls(1);
+        d2dDeviceContext->EndDrawMethod.SetExpectedCalls(1);
+        d2dDeviceContext->SetTextAntialiasModeMethod.SetExpectedCalls(1);
+
+        d2dDeviceContext->SetTargetMethod.SetExpectedCalls(1, [&](ID2D1Image* target)
+        {
+            Assert::IsTrue(IsSameInstance(d2dCommandList.Get(), target));
+        });
+
+        inkAdapter->GetInkRenderer()->DrawMethod.SetExpectedCalls(1, [&](IUnknown* deviceContext, IUnknown* strokeCollection, BOOL highContrast)
+        {
+            Assert::IsTrue(IsSameInstance(d2dDeviceContext.Get(), deviceContext));
+            Assert::IsTrue(IsSameInstance(inkStrokes.Get(), strokeCollection));
+            Assert::IsFalse(!!highContrast);
+
+            return S_OK;
+        });
+
+        d2dCommandList->CloseMethod.SetExpectedCalls(1);
+
+        // The command list should be streamed into a geometry sink.
+        d2dCommandList->StreamMethod.SetExpectedCalls(1, [&](ID2D1CommandSink* sink)
+        {
+            ThrowIfFailed(As<ID2D1CommandSink2>(sink)->DrawInk(d2dInk.Get(), nullptr, d2dInkStyle.Get()));
+
+            return S_OK;
+        });
+
+        // When the command list streaming calls DrawInk, that should pass through to ID2D1Ink::StreamAsGeometry.
+        d2dInk->StreamAsGeometryMethod.SetExpectedCalls(1, [&](ID2D1InkStyle* inkStyle, D2D1_MATRIX_3X2_F const* worldTransform, FLOAT flatteningTolerance, ID2D1SimplifiedGeometrySink* geometrySink)
+        {
+            Assert::IsTrue(IsSameInstance(d2dInkStyle.Get(), inkStyle));
+            Assert::AreEqual(expectedTransform, *worldTransform);
+            Assert::AreEqual(expectedFlatteningTolerance, flatteningTolerance);
+            Assert::IsTrue(IsSameInstance(f.SinkForTemporaryPath.Get(), geometrySink));
+
+            return S_OK;
+        });
+
+        ThrowIfFailed(createFunction(canvasGeometryFactory.Get(), f.Device.Get(), inkStrokes.Get(), &canvasGeometry));
+    }
+
+    TEST_METHOD_EX(CanvasGeometry_CreateInk)
+    {
+        TestCreateInk(
+            sc_identityD2DTransform,
+            D2D1_DEFAULT_FLATTENING_TOLERANCE,
+            [](CanvasGeometryFactory* geometryFactory, ICanvasResourceCreator* resourceCreator, MockStrokeCollection* inkStrokes, ICanvasGeometry** geometry)
+            {
+                return geometryFactory->CreateInk(resourceCreator, inkStrokes, geometry);
+            });
+    }
+
+    TEST_METHOD_EX(CanvasGeometry_CreateInkWithTransformAndFlatteningTolerance)
+    {
+        const float someFlatteningTolerance = 23;
+
+        TestCreateInk(
+            sc_someD2DTransform,
+            someFlatteningTolerance,
+            [=](CanvasGeometryFactory* geometryFactory, ICanvasResourceCreator* resourceCreator, MockStrokeCollection* inkStrokes, ICanvasGeometry** geometry)
+            {
+                return geometryFactory->CreateInkWithTransformAndFlatteningTolerance(resourceCreator, inkStrokes, sc_someTransform, someFlatteningTolerance, geometry);
+            });
+    }
+
+    TEST_METHOD_EX(CanvasGeometry_CreateInk_NullArg)
+    {
+        Fixture f;
+
+        auto canvasGeometryFactory = Make<CanvasGeometryFactory>();
+        auto inkStrokes = Make<MockStrokeCollection>();
+        ComPtr<ICanvasGeometry> geometry;
+
+        Assert::AreEqual(E_INVALIDARG, canvasGeometryFactory->CreateInk(nullptr, inkStrokes.Get(), &geometry));
+        Assert::AreEqual(E_INVALIDARG, canvasGeometryFactory->CreateInk(f.Device.Get(), nullptr, &geometry));
+        Assert::AreEqual(E_INVALIDARG, canvasGeometryFactory->CreateInk(f.Device.Get(), inkStrokes.Get(), nullptr));
+
+        Assert::AreEqual(E_INVALIDARG, canvasGeometryFactory->CreateInkWithTransformAndFlatteningTolerance(nullptr, inkStrokes.Get(), Matrix3x2{}, 0, &geometry));
+        Assert::AreEqual(E_INVALIDARG, canvasGeometryFactory->CreateInkWithTransformAndFlatteningTolerance(f.Device.Get(), nullptr, Matrix3x2{}, 0, &geometry));
+        Assert::AreEqual(E_INVALIDARG, canvasGeometryFactory->CreateInkWithTransformAndFlatteningTolerance(f.Device.Get(), inkStrokes.Get(), Matrix3x2{}, 0, nullptr));
+    }
+
+#endif
 };

@@ -54,4 +54,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return dpiX;
     }
 
+    inline bool TargetIsCommandList(ID2D1DeviceContext* deviceContext)
+    {
+        ComPtr<ID2D1Image> target;
+        deviceContext->GetTarget(&target);
+
+        return MaybeAs<ID2D1CommandList>(target) != nullptr;
+    }
+
 }}}}

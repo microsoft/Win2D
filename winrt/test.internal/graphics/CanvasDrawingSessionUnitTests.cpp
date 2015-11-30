@@ -10,6 +10,7 @@
 
 #if WINVER > _WIN32_WINNT_WINBLUE
 #include <lib/drawing/CanvasGradientMesh.h>
+#include "stubs/StubInkAdapter.h"
 #endif
 
 #include "mocks/MockD2DGeometryRealization.h"
@@ -56,18 +57,6 @@ TEST_CLASS(CanvasDrawingSession_CallsAdapter)
             if (m_endDrawShouldThrow)
                 ThrowHR(DXGI_ERROR_DEVICE_REMOVED);
         }
-
-#if WINVER > _WIN32_WINNT_WINBLUE
-        virtual ComPtr<IInkD2DRenderer> CreateInkRenderer() override
-        {
-            return nullptr;
-        }
-
-        virtual bool IsHighContrastEnabled() override
-        {
-            return false;
-        }
-#endif
     };
 
     struct Fixture
@@ -203,13 +192,13 @@ public:
                     brush.CopyTo(solidColorBrush);
 
                     // Then we should see SetColor called with ArbitraryMarkerColor2.
-                    brush->MockSetColor =
+                    brush->SetColorMethod.AllowAnyCall(
                         [&](const D2D1_COLOR_F* color)
                         {
                             Assert::IsFalse(m_gotColor2);
                             Assert::AreEqual(ToD2DColor(ArbitraryMarkerColor2), *color);
                             m_gotColor2 = true;
-                        };
+                        });
 
                     return S_OK;
                 });
@@ -272,6 +261,21 @@ public:
             });
 
         ThrowIfFailed(f.DS->Clear(expectedColor));
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_ClearHdr)
+    {
+        CanvasDrawingSessionFixture f;
+
+        Vector4 expectedColor{ 1, 2, 3, 4 };
+
+        f.DeviceContext->ClearMethod.SetExpectedCalls(1,
+            [&](const D2D1_COLOR_F* color)
+            {
+                Assert::AreEqual(expectedColor, *ReinterpretAs<Vector4 const*>(color));
+            });
+
+        ThrowIfFailed(f.DS->ClearHdr(expectedColor));
     }
 
 
@@ -4082,75 +4086,130 @@ public:
         Assert::AreEqual(testValue * DEFAULT_DPI / dpi, dips);
     }
 
+    TEST_METHOD_EX(CanvasDrawingSession_EffectBufferPrecision)
+    {
+        auto deviceContext = Make<StubD2DDeviceContextWithGetFactory>();
+        auto adapter = std::make_shared<StubCanvasDrawingSessionAdapter>();
+        auto drawingSession = CanvasDrawingSession::CreateNew(deviceContext.Get(), adapter);
+
+        ComPtr<IReference<CanvasBufferPrecision>> precisionReference;
+        CanvasBufferPrecision precisionValue;
+
+        D2D_SIZE_U someSize = { 23, 42 };
+
+        // Get null fails.
+        Assert::AreEqual(E_INVALIDARG, drawingSession->get_EffectBufferPrecision(nullptr));
+
+        // Get maps D2D1_BUFFER_PRECISION_UNKNOWN -> null reference.
+        deviceContext->GetRenderingControlsMethod.SetExpectedCalls(1, [&](D2D1_RENDERING_CONTROLS* renderingControls)
+        {
+            *renderingControls = D2D1_RENDERING_CONTROLS{ D2D1_BUFFER_PRECISION_UNKNOWN, someSize };
+        });
+
+        ThrowIfFailed(drawingSession->get_EffectBufferPrecision(&precisionReference));
+        Assert::IsNull(precisionReference.Get());
+
+        // Get maps other precision -> matching reference.
+        deviceContext->GetRenderingControlsMethod.SetExpectedCalls(1, [&](D2D1_RENDERING_CONTROLS* renderingControls)
+        {
+            *renderingControls = D2D1_RENDERING_CONTROLS{ D2D1_BUFFER_PRECISION_16BPC_FLOAT, someSize };
+        });
+
+        ThrowIfFailed(drawingSession->get_EffectBufferPrecision(&precisionReference));
+        ThrowIfFailed(precisionReference->get_Value(&precisionValue));
+        Assert::AreEqual(CanvasBufferPrecision::Precision16Float, precisionValue);
+
+        // Set maps null reference -> D2D1_BUFFER_PRECISION_UNKNOWN (and shouldn't change the tile size).
+        deviceContext->GetRenderingControlsMethod.SetExpectedCalls(1, [&](D2D1_RENDERING_CONTROLS* renderingControls)
+        {
+            *renderingControls = D2D1_RENDERING_CONTROLS{ D2D1_BUFFER_PRECISION_8BPC_UNORM, someSize };
+        });
+
+        deviceContext->SetRenderingControlsMethod.SetExpectedCalls(1, [&](D2D1_RENDERING_CONTROLS const* renderingControls)
+        {
+            Assert::AreEqual(D2D1_BUFFER_PRECISION_UNKNOWN, renderingControls->bufferPrecision);
+            Assert::AreEqual(someSize, renderingControls->tileSize);
+        });
+
+        ThrowIfFailed(drawingSession->put_EffectBufferPrecision(nullptr));
+
+        // Set maps other reference -> matching precision (and shouldn't change the tile size).
+        deviceContext->GetRenderingControlsMethod.SetExpectedCalls(1, [&](D2D1_RENDERING_CONTROLS* renderingControls)
+        {
+            *renderingControls = D2D1_RENDERING_CONTROLS{ D2D1_BUFFER_PRECISION_8BPC_UNORM, someSize };
+        });
+
+        deviceContext->SetRenderingControlsMethod.SetExpectedCalls(1, [&](D2D1_RENDERING_CONTROLS const* renderingControls)
+        {
+            Assert::AreEqual(D2D1_BUFFER_PRECISION_16BPC_FLOAT, renderingControls->bufferPrecision);
+            Assert::AreEqual(someSize, renderingControls->tileSize);
+        });
+
+        precisionReference = Make<Nullable<CanvasBufferPrecision>>(CanvasBufferPrecision::Precision16Float);
+
+        ThrowIfFailed(drawingSession->put_EffectBufferPrecision(precisionReference.Get()));
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_EffectTileSize)
+    {
+        auto deviceContext = Make<StubD2DDeviceContextWithGetFactory>();
+        auto adapter = std::make_shared<StubCanvasDrawingSessionAdapter>();
+        auto drawingSession = CanvasDrawingSession::CreateNew(deviceContext.Get(), adapter);
+
+        D2D_SIZE_U someSize = { 23, 42 };
+        BitmapSize expectedBitmapSize = { 23, 42 };
+
+        // Get null fails.
+        Assert::AreEqual(E_INVALIDARG, drawingSession->get_EffectTileSize(nullptr));
+
+        // Get reads the value from D2D.
+        deviceContext->GetRenderingControlsMethod.SetExpectedCalls(1, [&](D2D1_RENDERING_CONTROLS* renderingControls)
+        {
+            *renderingControls = D2D1_RENDERING_CONTROLS{ D2D1_BUFFER_PRECISION_UNKNOWN, someSize };
+        });
+
+        BitmapSize bitmapSize;
+        ThrowIfFailed(drawingSession->get_EffectTileSize(&bitmapSize));
+        
+        Assert::AreEqual(expectedBitmapSize.Width, bitmapSize.Width);
+        Assert::AreEqual(expectedBitmapSize.Height, bitmapSize.Height);
+
+        // Set passes the value to D2D, and preserves the existing precision.
+        deviceContext->GetRenderingControlsMethod.SetExpectedCalls(1, [&](D2D1_RENDERING_CONTROLS* renderingControls)
+        {
+            *renderingControls = D2D1_RENDERING_CONTROLS{ D2D1_BUFFER_PRECISION_16BPC_FLOAT, { 0, 0 } };
+        });
+
+        deviceContext->SetRenderingControlsMethod.SetExpectedCalls(1, [&](D2D1_RENDERING_CONTROLS const* renderingControls)
+        {
+            Assert::AreEqual(D2D1_BUFFER_PRECISION_16BPC_FLOAT, renderingControls->bufferPrecision);
+            Assert::AreEqual(someSize.width, renderingControls->tileSize.width);
+        });
+
+        ThrowIfFailed(drawingSession->put_EffectTileSize(expectedBitmapSize));
+    }
+
 #if WINVER > _WIN32_WINNT_WINBLUE
     TEST_METHOD_EX(CanvasDrawingSession_DrawInk_NullArg)
     {
         Assert::AreEqual(E_INVALIDARG, CanvasDrawingSessionFixture().DS->DrawInk(nullptr));
     }
 
-    class StubInkRenderer : public RuntimeClass<RuntimeClassFlags<ClassicCom>, IInkD2DRenderer>
-    {
-    public:
-        CALL_COUNTER_WITH_MOCK(DrawMethod, HRESULT(IUnknown*, IUnknown*, BOOL));
-
-        IFACEMETHODIMP Draw(
-            IUnknown* deviceContext,
-            IUnknown* strokeCollection,
-            BOOL highContrast)
-        {
-            return DrawMethod.WasCalled(deviceContext, strokeCollection, highContrast);
-        }
-    };
-
-    class InkAdapter : public StubCanvasDrawingSessionAdapter
-    {
-        bool m_highContrast;
-        ComPtr<StubInkRenderer> m_inkRenderer;
-    public:
-
-        InkAdapter() : m_highContrast(false), m_inkRenderer(Make<StubInkRenderer>()) {}
-
-        ComPtr<IInkD2DRenderer> CreateInkRenderer() override
-        {
-            return m_inkRenderer;
-        }
-
-        virtual bool IsHighContrastEnabled() override
-        {
-            return m_highContrast;
-        }
-
-        void SetHighContrastEnabled(bool highContrast)
-        {
-            m_highContrast = highContrast;
-        }
-
-        ComPtr<StubInkRenderer> GetInkRenderer()
-        {
-            return m_inkRenderer;
-        }
-    };
-
-    class MockStrokeCollection : public RuntimeClass<IIterable<InkStroke*>>
-    {
-        IFACEMETHODIMP First(IIterator<InkStroke*>**)
-        {
-            return E_NOTIMPL;
-        }
-    };
-
     struct InkFixture
     {
         ComPtr<ICanvasDrawingSession> DrawingSession;
-        std::shared_ptr<InkAdapter> Adapter;
+        std::shared_ptr<StubCanvasDrawingSessionAdapter> DrawingSessionAdapter;
+        std::shared_ptr<StubInkAdapter> InkAdapter;
         ComPtr<StubD2DDeviceContextWithGetFactory> DeviceContext;
         ComPtr<MockStrokeCollection> StrokeCollection;
 
         InkFixture() : StrokeCollection(Make<MockStrokeCollection>())
         {
             DeviceContext = Make<StubD2DDeviceContextWithGetFactory>();
-            Adapter = std::make_shared<InkAdapter>();
-            DrawingSession = CanvasDrawingSession::CreateNew(DeviceContext.Get(), Adapter);
+            DrawingSessionAdapter = std::make_shared<StubCanvasDrawingSessionAdapter>();
+            DrawingSession = CanvasDrawingSession::CreateNew(DeviceContext.Get(), DrawingSessionAdapter);
+            InkAdapter = std::make_shared<StubInkAdapter>();
+            InkAdapter::SetInstance(InkAdapter);
         }
     };
 
@@ -4160,9 +4219,9 @@ public:
         {
             InkFixture f;
 
-            f.Adapter->SetHighContrastEnabled(i == 1);
+            f.InkAdapter->SetHighContrastEnabled(i == 1);
 
-            f.Adapter->GetInkRenderer()->DrawMethod.SetExpectedCalls(1,
+            f.InkAdapter->GetInkRenderer()->DrawMethod.SetExpectedCalls(1,
                 [&](IUnknown* dc, IUnknown* s, BOOL highContrast)
                 {
                     Assert::IsTrue(IsSameInstance(f.DeviceContext.Get(), dc));
@@ -4181,7 +4240,7 @@ public:
         {
             InkFixture f;
 
-            f.Adapter->GetInkRenderer()->DrawMethod.SetExpectedCalls(1,
+            f.InkAdapter->GetInkRenderer()->DrawMethod.SetExpectedCalls(1,
                 [&](IUnknown* dc, IUnknown* s, BOOL highContrast)
                 {
                     Assert::IsTrue(IsSameInstance(f.DeviceContext.Get(), dc));
@@ -4625,6 +4684,7 @@ TEST_CLASS(CanvasDrawingSession_CloseTests)
 #define EXPECT_OBJECT_CLOSED(CODE) Assert::AreEqual(RO_E_CLOSED, CODE)
 
         EXPECT_OBJECT_CLOSED(canvasDrawingSession->Clear(Color{}));
+        EXPECT_OBJECT_CLOSED(canvasDrawingSession->ClearHdr(Vector4{}));
         EXPECT_OBJECT_CLOSED(canvasDrawingSession->Flush());
 
         // See also CanvasDrawingSession_DrawImage_WhenDrawingSessionisClosed_DrawImageFails 
@@ -4743,6 +4803,10 @@ TEST_CLASS(CanvasDrawingSession_CloseTests)
         EXPECT_OBJECT_CLOSED(canvasDrawingSession->put_Transform(Numerics::Matrix3x2()));
         EXPECT_OBJECT_CLOSED(canvasDrawingSession->get_Units(nullptr));
         EXPECT_OBJECT_CLOSED(canvasDrawingSession->put_Units(CanvasUnits::Dips));
+        EXPECT_OBJECT_CLOSED(canvasDrawingSession->get_EffectBufferPrecision(nullptr));
+        EXPECT_OBJECT_CLOSED(canvasDrawingSession->put_EffectBufferPrecision(nullptr));
+        EXPECT_OBJECT_CLOSED(canvasDrawingSession->get_EffectTileSize(nullptr));
+        EXPECT_OBJECT_CLOSED(canvasDrawingSession->put_EffectTileSize(BitmapSize{}));
         EXPECT_OBJECT_CLOSED(canvasDrawingSession->get_Device(&deviceVerify));
 
 

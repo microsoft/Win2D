@@ -10,7 +10,7 @@ namespace Microsoft.Graphics.Canvas.Effects
 
     [version(VERSION), uuid(3947C621-78DA-5489-9927-BE655F4576E2), exclusiveto(ShadowEffect)]
     interface IShadowEffect : IInspectable
-        requires Microsoft.Graphics.Canvas.ICanvasImage
+        requires ICanvasEffect
     {
         [propget]
         HRESULT BlurAmount([out, retval] float* value);
@@ -31,6 +31,12 @@ namespace Microsoft.Graphics.Canvas.Effects
         HRESULT Optimization([in] EffectOptimization value);
 
         [propget]
+        HRESULT ShadowColorHdr([out, retval] NUMERICS.Vector4* value);
+
+        [propput]
+        HRESULT ShadowColorHdr([in] NUMERICS.Vector4 value);
+
+        [propget]
         HRESULT Source([out, retval] IGRAPHICSEFFECTSOURCE** source);
 
         [propput]
@@ -42,6 +48,5 @@ namespace Microsoft.Graphics.Canvas.Effects
     runtimeclass ShadowEffect
     {
         [default] interface IShadowEffect;
-        interface IGRAPHICSEFFECT;
     }
 }

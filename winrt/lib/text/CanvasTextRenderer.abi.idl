@@ -5,15 +5,6 @@
 namespace Microsoft.Graphics.Canvas.Text
 {
 	[version(VERSION)]
-	typedef struct CanvasGlyph
-	{
-		int Index;
-		float Advance;
-		float AdvanceOffset;
-		float AscenderOffset;
-	} CanvasGlyph;
-
-	[version(VERSION)]
 	typedef enum CanvasGlyphOrientation
 	{
 		Upright,
@@ -26,9 +17,12 @@ namespace Microsoft.Graphics.Canvas.Text
     interface ICanvasTextRenderer : IInspectable
 	{
 		//
-		// The brush passed to these text callbacks is allowed to be null. Win2D will pass this
-		// in as null if there is no brush, or if the drawing effect used with the text is
-		// not a brush.
+		// The IInspectable custom brush passed to these text 
+        // callbacks is allowed to be null. 
+        // 
+        // Win2D will pass this in as null if the drawing effect
+        // on the DWrite text layout is some IUnknown, and
+        // it is neither an ID2D1Brush nor an IInspectable.
 		//
 
         HRESULT DrawGlyphRun(
@@ -66,10 +60,18 @@ namespace Microsoft.Graphics.Canvas.Text
 			[in] float underlineOffset, // Usually negative, placing it above the baseline.
 			[in] float runHeight, // The height of the tallest run where the underline is applied.
 			[in] CanvasTextDirection textDirection,
-			[in] IInspectable* brush,
+            [in] IInspectable* brush,
 			[in] CanvasTextMeasuringMode textMeasuringMode,
 			[in] HSTRING localeName,
-			[in] CanvasGlyphOrientation glyphOrientation);
+            [in] CanvasGlyphOrientation glyphOrientation);
+
+        HRESULT DrawInlineObject(
+            [in] NUMERICS.Vector2 point,
+            [in] ICanvasTextInlineObject* inlineObject,
+            [in] boolean isSideways,
+            [in] boolean isRightToLeft,
+            [in] IInspectable* brush,
+            [in] CanvasGlyphOrientation glyphOrientation);
 
 		[propget] HRESULT PixelSnappingDisabled(
 			[out, retval] boolean* value);
@@ -79,8 +81,6 @@ namespace Microsoft.Graphics.Canvas.Text
 
 		[propget] HRESULT Dpi(
 			[out, retval] float* value);
-
-		// TODO:#5629 DrawInlineObject
     };
 
 }

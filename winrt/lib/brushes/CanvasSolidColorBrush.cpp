@@ -11,9 +11,10 @@ using namespace ABI::Microsoft::Graphics::Canvas;
 using namespace ABI::Windows::Foundation;
 using namespace ABI::Windows::UI;
 
-ComPtr<CanvasSolidColorBrush> CanvasSolidColorBrush::CreateNew(
+
+static ComPtr<CanvasSolidColorBrush> CreateSolidColorBrush(
     ICanvasResourceCreator* resourceCreator,
-    Color color)
+    D2D1_COLOR_F d2dColor)
 {
     ComPtr<ICanvasDevice> device;
     ThrowIfFailed(resourceCreator->get_Device(&device));
@@ -21,7 +22,7 @@ ComPtr<CanvasSolidColorBrush> CanvasSolidColorBrush::CreateNew(
     ComPtr<ICanvasDeviceInternal> canvasDeviceInternal;
     ThrowIfFailed(device.As(&canvasDeviceInternal));
 
-    auto d2dBrush = canvasDeviceInternal->CreateSolidColorBrush(ToD2DColor(color));
+    auto d2dBrush = canvasDeviceInternal->CreateSolidColorBrush(d2dColor);
 
     auto canvasSolidColorBrush = Make<CanvasSolidColorBrush>(
         device.Get(),
@@ -30,6 +31,23 @@ ComPtr<CanvasSolidColorBrush> CanvasSolidColorBrush::CreateNew(
 
     return canvasSolidColorBrush;
 };
+
+
+ComPtr<CanvasSolidColorBrush> CanvasSolidColorBrush::CreateNew(
+    ICanvasResourceCreator* resourceCreator,
+    Color color)
+{
+    return CreateSolidColorBrush(resourceCreator, ToD2DColor(color));
+};
+
+
+ComPtr<CanvasSolidColorBrush> CanvasSolidColorBrush::CreateNew(
+    ICanvasResourceCreator* resourceCreator,
+    Vector4 colorHdr)
+{
+    return CreateSolidColorBrush(resourceCreator, *ReinterpretAs<D2D1_COLOR_F*>(&colorHdr));
+}
+
 
 
 IFACEMETHODIMP CanvasSolidColorBrushFactory::Create(
@@ -52,6 +70,26 @@ IFACEMETHODIMP CanvasSolidColorBrushFactory::Create(
 }
 
 
+IFACEMETHODIMP CanvasSolidColorBrushFactory::CreateHdr(
+    ICanvasResourceCreator* resourceCreator,
+    Numerics::Vector4 colorHdr,
+    ICanvasSolidColorBrush** canvasSolidColorBrush)
+{
+    return ExceptionBoundary(
+        [&]
+        {
+            CheckInPointer(resourceCreator);
+            CheckAndClearOutPointer(canvasSolidColorBrush);
+
+            auto newSolidColorBrush = CanvasSolidColorBrush::CreateNew(
+                resourceCreator,
+                colorHdr);
+
+            ThrowIfFailed(newSolidColorBrush.CopyTo(canvasSolidColorBrush));
+        });
+}
+
+
 CanvasSolidColorBrush::CanvasSolidColorBrush(
     ICanvasDevice *device,
     ID2D1SolidColorBrush* brush)
@@ -60,7 +98,7 @@ CanvasSolidColorBrush::CanvasSolidColorBrush(
 {
 }
 
-IFACEMETHODIMP CanvasSolidColorBrush::get_Color(_Out_ Color *value)
+IFACEMETHODIMP CanvasSolidColorBrush::get_Color(Color* value)
 {
     return ExceptionBoundary(
         [&]
@@ -70,13 +108,33 @@ IFACEMETHODIMP CanvasSolidColorBrush::get_Color(_Out_ Color *value)
         });
 }
 
-IFACEMETHODIMP CanvasSolidColorBrush::put_Color(_In_ Color value)
+IFACEMETHODIMP CanvasSolidColorBrush::put_Color(Color value)
 {
     return ExceptionBoundary(
         [&]
         {                
             GetResource()->SetColor(ToD2DColor(value));
         });
+}
+
+IFACEMETHODIMP CanvasSolidColorBrush::get_ColorHdr(Numerics::Vector4* value)
+{
+    return ExceptionBoundary(
+        [&]
+        {
+            auto d2dColor = GetResource()->GetColor();
+            *value = *ReinterpretAs<Vector4*>(&d2dColor);
+        });
+}
+
+IFACEMETHODIMP CanvasSolidColorBrush::put_ColorHdr(Numerics::Vector4 value)
+{
+    return ExceptionBoundary(
+        [&]
+        {
+            GetResource()->SetColor(*ReinterpretAs<D2D1_COLOR_F*>(&value));
+        });
+
 }
 
 IFACEMETHODIMP CanvasSolidColorBrush::Close()

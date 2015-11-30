@@ -374,6 +374,35 @@ namespace Microsoft.Graphics.Canvas.Geometry
             [in] Microsoft.Graphics.Canvas.Text.CanvasTextLayout* textLayout,
             [out, retval] CanvasGeometry** geometry);
 
+        HRESULT CreateGlyphRun(
+            [in] Microsoft.Graphics.Canvas.ICanvasResourceCreator* resourceCreator,
+            [in] NUMERICS.Vector2 point,
+            [in] Microsoft.Graphics.Canvas.Text.CanvasFontFace* fontFace,
+            [in] float fontSize,
+            [in] UINT32 glyphCount,
+            [in, size_is(glyphCount)] Microsoft.Graphics.Canvas.Text.CanvasGlyph* glyphs,
+            [in] boolean isSideways,
+            [in] UINT32 bidiLevel,
+            [in] Microsoft.Graphics.Canvas.Text.CanvasTextMeasuringMode measuringMode,
+            [in] Microsoft.Graphics.Canvas.Text.CanvasGlyphOrientation glyphOrientation,
+            [out, retval] CanvasGeometry** geometry);
+
+#if WINVER > _WIN32_WINNT_WINBLUE
+        [overload("CreateInk")]
+        HRESULT CreateInk(
+            [in] Microsoft.Graphics.Canvas.ICanvasResourceCreator* resourceCreator,
+            [in] Windows.Foundation.Collections.IIterable<Windows.UI.Input.Inking.InkStroke*>* inkStrokes,
+            [out, retval] CanvasGeometry** geometry);
+
+        [overload("CreateInk"), default_overload]
+        HRESULT CreateInkWithTransformAndFlatteningTolerance(
+            [in] Microsoft.Graphics.Canvas.ICanvasResourceCreator* resourceCreator,
+            [in] Windows.Foundation.Collections.IIterable<Windows.UI.Input.Inking.InkStroke*>* inkStrokes,
+            [in] NUMERICS.Matrix3x2 transform,
+            [in] float flatteningTolerance,
+            [out, retval] CanvasGeometry** geometry);
+#endif
+
         [overload("ComputeFlatteningTolerance")]
         HRESULT ComputeFlatteningTolerance(
             [in] float dpi,

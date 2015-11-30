@@ -229,6 +229,8 @@ ComPtr<IDWriteTextFormat1> CanvasTextFormat::CreateRealizedTextFormat(bool skipW
 
     RealizeTrimmingSign(textFormat.Get());
 
+    RealizeCustomTrimmingSign(textFormat.Get());
+
     return textFormat;
 }
 
@@ -365,6 +367,11 @@ static bool IsSame(bool* outputValue, boolean value)
     return *outputValue == !!value;
 }
 
+template<typename T>
+static bool IsSame(ComPtr<T>* outputValue, T* value)
+{
+    return outputValue->Get() == value;
+}
 
 template<typename T>
 static void SetFrom(T* outputValue, T const& value)
@@ -400,6 +407,18 @@ template<typename boolean>
 static void SetFrom(bool* outputValue, boolean value)
 {
     *outputValue = !!value;
+}
+
+template<typename T>
+static void SetFrom(T** outputValue, ComPtr<T> const& value)
+{
+    ThrowIfFailed(value.CopyTo(outputValue));
+}
+
+template<typename T>
+static void SetFrom(ComPtr<T>* outputValue, T* value)
+{
+    *outputValue = value;
 }
 
 
@@ -1127,9 +1146,33 @@ IFACEMETHODIMP CanvasTextFormat::put_TrimmingSign(CanvasTrimmingSign value)
         &CanvasTextFormat::RealizeTrimmingSign);
 }
 
+IFACEMETHODIMP CanvasTextFormat::get_CustomTrimmingSign(ICanvasTextInlineObject** value)
+{
+    return PropertyGet(
+        value,
+        m_trimmingSignInformation.GetCustomTrimmingSignShadowState(),
+        [=](IDWriteTextFormat1* textFormat) 
+        {
+            return m_trimmingSignInformation.GetCustomTrimmingSignFromResource(textFormat);
+        });
+}
+
+IFACEMETHODIMP CanvasTextFormat::put_CustomTrimmingSign(ICanvasTextInlineObject* value)
+{
+    return PropertyPut(
+        value,
+        m_trimmingSignInformation.GetAddressOfCustomTrimmingSign(),
+        &CanvasTextFormat::RealizeCustomTrimmingSign);
+}
+
 void CanvasTextFormat::RealizeTrimmingSign(IDWriteTextFormat1* textFormat)
 {
     m_trimmingSignInformation.RealizeTrimmingSign(textFormat);
+}
+
+void CanvasTextFormat::RealizeCustomTrimmingSign(IDWriteTextFormat1* textFormat)
+{
+    m_trimmingSignInformation.RealizeCustomTrimmingSign(textFormat);
 }
 
 

@@ -136,6 +136,12 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
             <entry>-</entry>
           </row>
           <row>
+            <entry><codeEntityReference>T:Microsoft.Graphics.Canvas.CanvasVirtualBitmap</codeEntityReference></entry>
+            <entry><codeInline>ID2D1ImageSource</codeInline> or <codeInline>ID2D1TransformedImageSource</codeInline></entry>
+            <entry>Device</entry>
+            <entry>-</entry>
+          </row>
+          <row>
             <entry><codeEntityReference>T:Microsoft.Graphics.Canvas.Geometry.CanvasCachedGeometry</codeEntityReference></entry>
             <entry><codeInline>ID2D1GeometryRealization</codeInline></entry>
             <entry>Device</entry>
@@ -250,6 +256,18 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
               <codeEntityReference>T:Microsoft.Graphics.Canvas.Text.CanvasTextRenderingParameters</codeEntityReference>
             </entry>
             <entry><codeInline>IDWriteRenderingParams2</codeInline></entry>
+            <entry>-</entry>
+            <entry>-</entry>
+          </row>
+          <row>
+            <entry><codeEntityReference>T:Microsoft.Graphics.Canvas.Text.CanvasFontSet</codeEntityReference></entry>
+            <entry><codeInline>IDWriteFontCollection</codeInline></entry>
+            <entry>-</entry>
+            <entry>-</entry>
+          </row>
+          <row>
+            <entry><codeEntityReference>T:Microsoft.Graphics.Canvas.Text.CanvasFontFace</codeEntityReference></entry>
+            <entry><codeInline>IDWriteFont2</codeInline></entry>
             <entry>-</entry>
             <entry>-</entry>
           </row>

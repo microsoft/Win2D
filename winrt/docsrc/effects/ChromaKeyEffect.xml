@@ -37,20 +37,6 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="M:Microsoft.Graphics.Canvas.Effects.ChromaKeyEffect.#ctor">
       <summary>Initializes a new instance of the ChromaKeyEffect class.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.Effects.ChromaKeyEffect.GetBounds(Microsoft.Graphics.Canvas.CanvasDrawingSession)">
-      <summary>Retrieves the bounds of this CanvasImage, in device-independent units.</summary>
-      <inheritdoc/>
-    </member>
-    <member name="M:Microsoft.Graphics.Canvas.Effects.ChromaKeyEffect.GetBounds(Microsoft.Graphics.Canvas.CanvasDrawingSession,System.Numerics.Matrix3x2)">
-      <summary>Retrieves the bounds of this CanvasImage, in device-independent units.</summary>
-      <inheritdoc/>
-    </member>
-    <member name="M:Microsoft.Graphics.Canvas.Effects.ChromaKeyEffect.Dispose">
-      <summary>Releases all resources used by the ChromaKeyEffect.</summary>
-    </member>
-    <member name="P:Microsoft.Graphics.Canvas.Effects.ChromaKeyEffect.Name">
-      <summary>Attaches a user-defined name string to the effect.</summary>
-    </member>
     <member name="P:Microsoft.Graphics.Canvas.Effects.ChromaKeyEffect.Source">
       <summary>Gets or sets the input source for ChromaKey effect.</summary>
       <remarks>
@@ -59,6 +45,9 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Effects.ChromaKeyEffect.Color">
       <summary>Specifies the color to be replaced with transparency. Default value black.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.ChromaKeyEffect.ColorHdr" Experimental="true">
+      <summary>Specifies the high-dynamic-range color to be replaced with transparency. Default value black.</summary>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Effects.ChromaKeyEffect.Tolerance">
       <summary>Tolerance for matching the chroma key color. Default value 0.1, range 0 to 1.</summary>
@@ -71,6 +60,9 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="P:Microsoft.Graphics.Canvas.Effects.ChromaKeyEffect.InvertAlpha">
       <summary>Indicates whether the output alpha values should be inverted. Default value false.</summary>
     </member>
+
+    <inherittemplate name="EffectTemplate" replacement="ChromaKeyEffect" />
+    <inherittemplate name="ICanvasEffectTemplate" replacement="ChromaKeyEffect" />
 
   </members>
 </doc>

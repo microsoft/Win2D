@@ -10,7 +10,7 @@ namespace Microsoft.Graphics.Canvas.Effects
 
     [version(VERSION), uuid(636597CD-F94A-55B6-9CF0-694A53D638EA), exclusiveto(DpiCompensationEffect)]
     interface IDpiCompensationEffect : IInspectable
-        requires Microsoft.Graphics.Canvas.ICanvasImage
+        requires ICanvasEffect
     {
         [propget]
         HRESULT InterpolationMode([out, retval] Microsoft.Graphics.Canvas.CanvasImageInterpolation* value);
@@ -42,6 +42,5 @@ namespace Microsoft.Graphics.Canvas.Effects
     runtimeclass DpiCompensationEffect
     {
         [default] interface IDpiCompensationEffect;
-        interface IGRAPHICSEFFECT;
     }
 }

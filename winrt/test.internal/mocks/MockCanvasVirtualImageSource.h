@@ -5,7 +5,10 @@
 #pragma once
 
 class MockCanvasVirtualImageSource
-    : public RuntimeClass<ICanvasVirtualImageSource>
+    : public RuntimeClass<
+        ICanvasVirtualImageSource,
+        ICanvasResourceCreator,
+        ICanvasResourceCreatorWithDpi>
 {
 public:
     CALL_COUNTER_WITH_MOCK(get_SourceMethod, HRESULT(IVirtualSurfaceImageSource**));

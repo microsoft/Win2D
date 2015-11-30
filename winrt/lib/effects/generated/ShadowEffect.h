@@ -26,6 +26,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         EFFECT_PROPERTY(BlurAmount, float);
         EFFECT_PROPERTY(ShadowColor, Color);
         EFFECT_PROPERTY(Optimization, EffectOptimization);
+        EFFECT_PROPERTY(ShadowColorHdr, Numerics::Vector4);
         EFFECT_PROPERTY(Source, IGraphicsEffectSource*);
 
         EFFECT_PROPERTY_MAPPING();
