@@ -130,7 +130,7 @@ ComPtr<DWriteFontReferenceType> GetContainer(IDWriteFontFace2* fontFaceInstance)
     ComPtr<IDWriteFontFaceReference> container;
     ThrowIfFailed(font3->GetFontFaceReference(&container));
 #else
-    auto container = font;
+    auto container = As<IDWriteFont2>(font);
 #endif
 
 	return container;
@@ -823,6 +823,29 @@ IFACEMETHODIMP CanvasFontFace::GetGlyphRunBoundsWithMeasuringMode(
                 &d2dBounds));
 
             *bounds = FromD2DRect(d2dBounds);
+        });
+}
+
+
+
+IFACEMETHODIMP CanvasFontFace::get_Panose(uint32_t* valueCount, uint8_t** values)
+{
+    return ExceptionBoundary(
+        [&]
+        {
+            CheckInPointer(valueCount);
+            CheckAndClearOutPointer(values);
+
+            DWRITE_PANOSE panose;
+            GetPhysicalPropertyContainer()->GetPanose(&panose);
+
+            ComArray<uint8_t> out(10);
+            for (int i = 0; i < 10; ++i)
+            {
+                out[i] = panose.values[i];
+            }
+
+            out.Detach(valueCount, values);
         });
 }
 

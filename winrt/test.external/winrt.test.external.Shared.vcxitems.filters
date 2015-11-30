@@ -16,6 +16,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)EnumTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasControlTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)DWriteExperiments.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)CanvasFontFaceTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasFontSetTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasTextFormatTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasTextLayoutTests.cpp" />

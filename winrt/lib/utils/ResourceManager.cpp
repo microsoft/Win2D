@@ -49,7 +49,7 @@ std::vector<ResourceManager::TryCreateFunction> ResourceManager::tryCreateFuncti
 #else
     TryCreate<IDWriteRenderingParams2,     CanvasTextRenderingParameters, MakeWrapper>,
     TryCreate<IDWriteFontCollection,       CanvasFontSet,                 MakeWrapper>,
-    TryCreate<IDWriteFont,                 CanvasFontFace,                MakeWrapper>,
+    TryCreate<IDWriteFont2,                CanvasFontFace,                MakeWrapper>,
 #endif
 
     // Effects get their very own try-create function. These are special because ID2D1Effect

@@ -259,6 +259,18 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
             <entry>-</entry>
             <entry>-</entry>
           </row>
+          <row>
+            <entry><codeEntityReference>T:Microsoft.Graphics.Canvas.Text.CanvasFontSet</codeEntityReference></entry>
+            <entry><codeInline>IDWriteFontCollection</codeInline></entry>
+            <entry>-</entry>
+            <entry>-</entry>
+          </row>
+          <row>
+            <entry><codeEntityReference>T:Microsoft.Graphics.Canvas.Text.CanvasFontFace</codeEntityReference></entry>
+            <entry><codeInline>IDWriteFont2</codeInline></entry>
+            <entry>-</entry>
+            <entry>-</entry>
+          </row>
         </table>
         
         <para>

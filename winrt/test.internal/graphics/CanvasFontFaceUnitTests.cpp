@@ -46,6 +46,7 @@ TEST_CLASS(CanvasFontFaceTests)
         auto drawingSession = Make<MockCanvasDrawingSession>();
         CanvasGlyph glyph{};
         Rect rect{};
+        uint8_t* u8Pointer;
 
         auto canvasFontFace = CreateSimpleFontFace();
 
@@ -114,6 +115,9 @@ TEST_CLASS(CanvasFontFaceTests)
         Assert::AreEqual(E_INVALIDARG, canvasFontFace->GetGlyphRunBoundsWithMeasuringMode(nullptr, Vector2{}, 0.0f, 0, &glyph, false, 0, CanvasTextMeasuringMode::Natural, &rect));
         Assert::AreEqual(E_INVALIDARG, canvasFontFace->GetGlyphRunBoundsWithMeasuringMode(drawingSession.Get(), Vector2{}, 0.0f, 0, nullptr, false, 0, CanvasTextMeasuringMode::Natural, &rect));
         Assert::AreEqual(E_INVALIDARG, canvasFontFace->GetGlyphRunBoundsWithMeasuringMode(drawingSession.Get(), Vector2{}, 0.0f, 0, &glyph, false, 0, CanvasTextMeasuringMode::Natural, nullptr));
+        
+        Assert::AreEqual(E_INVALIDARG, canvasFontFace->get_Panose(nullptr, &u8Pointer));
+        Assert::AreEqual(E_INVALIDARG, canvasFontFace->get_Panose(&u, nullptr));
     }
 
     TEST_METHOD_EX(CanvasFontFace_Closed)
@@ -131,6 +135,7 @@ TEST_CLASS(CanvasFontFaceTests)
         ComPtr<IMapView<HSTRING, HSTRING>> map;
         auto drawingSession = Make<MockCanvasDrawingSession>();
         CanvasGlyph glyph{};
+        uint8_t* u8Pointer;
 
         auto canvasFontFace = CreateSimpleFontFace();
         Assert::AreEqual(S_OK, canvasFontFace->Close());
@@ -199,6 +204,8 @@ TEST_CLASS(CanvasFontFaceTests)
 
         Assert::AreEqual(RO_E_CLOSED, canvasFontFace->GetGlyphRunBounds(drawingSession.Get(), Vector2{}, 0.0f, 0, &glyph, false, 0, &r));
         Assert::AreEqual(RO_E_CLOSED, canvasFontFace->GetGlyphRunBoundsWithMeasuringMode(drawingSession.Get(), Vector2{}, 0.0f, 0, &glyph, false, 0, CanvasTextMeasuringMode::Natural, &r));
+
+        Assert::AreEqual(RO_E_CLOSED, canvasFontFace->get_Panose(&u, &u8Pointer));
     }
 
     struct Fixture
@@ -1021,6 +1028,28 @@ TEST_CLASS(CanvasFontFaceTests)
             &bounds));
 
         Assert::AreEqual(Rect{ 100, 200, 4, 5 }, bounds);
+    }
+
+
+    TEST_METHOD_EX(CanvasFontFace_get_Panose)
+    {
+        Fixture f(realizeOn10Only);
+        
+        f.GetMockPhysicalPropertyContainer()->GetPanoseMethod.SetExpectedCalls(1,
+            [&](DWRITE_PANOSE* panose)
+            {
+                for (uint8_t i = 0; i < 10; ++i)
+                    panose->values[i] = i;
+            });
+
+        uint32_t valueCount;
+        uint8_t* values;
+
+        Assert::AreEqual(S_OK, f.FontFace->get_Panose(&valueCount, &values));
+        Assert::AreEqual(10u, valueCount);
+
+        for (uint8_t i = 0; i < 10; ++i)
+            Assert::AreEqual(i, values[i]);
     }
 };
 

@@ -214,7 +214,9 @@ namespace Microsoft.Graphics.Canvas.Text
             [in] CanvasTextMeasuringMode measuringMode,
             [out, retval] Windows.Foundation.Rect* bounds);
 
-        // TODO: #5635 Expose GetPanose
+        [propget] HRESULT Panose(
+            [out] UINT32* valueCount,
+            [out, size_is(, *valueCount), retval] BYTE** valueElements);
 
         // Not exposed: 
         // IsColorFont, GetColorPaletteCount, GetPaletteEntryCount, GetPaletteEntries. Color font properties aren't supported in Win2D.
@@ -223,14 +225,12 @@ namespace Microsoft.Graphics.Canvas.Text
         // GetGdiCompatibleGlyphMetrics - Used for legacy features.
         // GetGdiCompatibleGlyphAdvances. Used for legacy features
 
-        // GetGlyphDesignAdvances. Intended for working in design space, and redundant with GetGlyphMetrics
+        // GetDesignGlyphAdvances. Redundant with GetDesignGlyphMetrics
         // GetKerningPairAdjustments, HasKerningPairs. Knobs for pair kerning are part of DWrite completeness.
 
         // GetFiles - Out of scope for enumeration scenarios.
         // GetIndex - Same.
         // TryGetFontTable, ReleaseFontTable - Out of scope for enumeration scenarios.
-
-        // GetDesignGlyphMetrics - Methods that operate solely in design metrics rather than em space are out of scope.
 
         // One of the overloads of GetRecommendedRenderingMode; it fits awkwardly with the others.
 

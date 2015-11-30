@@ -16,9 +16,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     typedef IDWriteFontFace3 DWritePhysicalFontPropertyContainer;
     typedef DWRITE_RENDERING_MODE1 DWriteRenderingMode;
 #else
-    typedef IDWriteFont DWriteFontReferenceType;
+    typedef IDWriteFont2 DWriteFontReferenceType;
     typedef IDWriteFontFace2 DWriteFontFaceType;
-    typedef IDWriteFont DWritePhysicalFontPropertyContainer;
+    typedef IDWriteFont2 DWritePhysicalFontPropertyContainer;
     typedef DWRITE_RENDERING_MODE DWriteRenderingMode;
 #endif
 	
@@ -157,6 +157,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             uint32_t bidiLevel,
             CanvasTextMeasuringMode measuringMode,
             Rect* bounds) override;
+
+        IFACEMETHOD(get_Panose)(uint32_t* valueCount, uint8_t** values) override;
 
         //
         // IClosable

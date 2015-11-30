@@ -109,10 +109,17 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="T:Microsoft.Graphics.Canvas.Text.CanvasFontFace" Experimental="true">
       <summary>Represents a font, and its associated properties.</summary>
       <remarks>
-      	The recommended line spacing (baseline-to-baseline distance) for characters in the font is 
-      	represented by the sum of Ascent, Descent, and LineGap. The line gap is usually positive 
-      	or zero but can be negative, in which case the recommended line spacing is less than the 
-      	height of the character alignment box.
+        <p>
+      	  The recommended line spacing (baseline-to-baseline distance) for characters in the font is 
+      	  represented by the sum of Ascent, Descent, and LineGap. The line gap is usually positive 
+      	  or zero but can be negative, in which case the recommended line spacing is less than the 
+      	  height of the character alignment box.
+        </p>
+        <p>
+          When using <a href="Interop.htm">Direct2D interop</a>, this Win2D class
+          corresponds to the DirectWrite interface IDWriteFont2 on Windows 8.1, 
+          and IDWriteFontFaceReference on Windows 10.
+        </p>
       </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Text.CanvasFontFace.GetRecommendedRenderingMode(System.Single,System.Single,Microsoft.Graphics.Canvas.Text.CanvasTextMeasuringMode,Microsoft.Graphics.Canvas.Text.CanvasTextRenderingParameters)">
@@ -322,5 +329,17 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         </p>
       </remarks>      
     </member>
+
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasFontFace.Panose" Experimental="true">
+      <summary>Gets the PANOSE values for this font face.</summary>
+      <remarks>
+        <p>
+          PANOSE is a visual classification system for identifying typefaces. 
+          For more information about PANOSE, see the 
+          <a href="http://www.w3.org/Fonts/Panose/pan2.html">
+          PANOSE 2.0 specification</a>.
+        </p>
+      </remarks>
+    </member>    
   </members>
 </doc>

@@ -29,6 +29,7 @@ namespace canvas
         CALL_COUNTER_WITH_MOCK(GetMetricsMethod, void(DWRITE_FONT_METRICS*));
         CALL_COUNTER_WITH_MOCK(HasCharacterMethod, HRESULT(uint32_t, BOOL*));
         CALL_COUNTER_WITH_MOCK(CreateFontFaceMethod, HRESULT(IDWriteFontFace**));
+        CALL_COUNTER_WITH_MOCK(GetPanoseMethod, void(DWRITE_PANOSE*));
 #if WINVER > _WIN32_WINNT_WINBLUE
         CALL_COUNTER_WITH_MOCK(GetFontFaceReferenceMethod, HRESULT(IDWriteFontFaceReference** fontFaceReference));
         CALL_COUNTER_WITH_MOCK(CreateFontFaceMethod1, HRESULT(IDWriteFontFace3**));
@@ -105,7 +106,7 @@ namespace canvas
 
         IFACEMETHODIMP_(void) GetPanose(DWRITE_PANOSE* panose)
         {
-            Assert::Fail(L"Unexpected call to GetPanose");
+            GetPanoseMethod.WasCalled(panose);
         }
 
         IFACEMETHODIMP GetUnicodeRanges(
