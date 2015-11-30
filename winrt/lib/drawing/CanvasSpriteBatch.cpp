@@ -83,7 +83,7 @@ static D2D1_RECT_U MakeSourceRect(CanvasSpriteFlip flip, D2D1_UNIT_MODE unitMode
     float dpi = 96.0f;
 
     if (unitMode == D2D1_UNIT_MODE_DIPS)
-        ThrowIfFailed(bitmap->get_Dpi(&dpi));
+        ThrowIfFailed(As<ICanvasResourceCreatorWithDpi>(bitmap)->get_Dpi(&dpi));
     
     auto sourceLeft   = DipsToPixels(sourceRect.X,      dpi, CanvasDpiRounding::Round);
     auto sourceTop    = DipsToPixels(sourceRect.Y,      dpi, CanvasDpiRounding::Round);

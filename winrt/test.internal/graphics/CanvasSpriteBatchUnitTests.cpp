@@ -46,21 +46,21 @@ static ComPtr<CanvasDevice> MakeCanvasDeviceThatDoesNotSupportSpriteBatch()
 }
 
 
-auto gSortModes =
+static CanvasSpriteSortMode gSortModes[] =
 {
     CanvasSpriteSortMode::None,
     CanvasSpriteSortMode::Bitmap
 };
 
 
-auto gValidInterpolations =
+static CanvasImageInterpolation gValidInterpolations[] =
 {
     CanvasImageInterpolation::NearestNeighbor,
     CanvasImageInterpolation::Linear
 };
 
 
-auto gInvalidInterpolations =
+static CanvasImageInterpolation gInvalidInterpolations[] =
 {
     CanvasImageInterpolation::Cubic,
     CanvasImageInterpolation::MultiSampleLinear,
@@ -69,14 +69,14 @@ auto gInvalidInterpolations =
 };
 
 
-auto gSpriteOptions =
+static CanvasSpriteOptions gSpriteOptions[] =
 {
     CanvasSpriteOptions::None,
     CanvasSpriteOptions::ClampToSourceRect
 };
 
 
-auto gOffsets =
+static float2 gOffsets[] =
 {
     float2::zero(),
     float2(1.0f),
@@ -84,10 +84,10 @@ auto gOffsets =
 };
 
 
-Rect gAnyRect{ 0.0f, 1.0f, 2.0f, 3.0f };
+static Rect gAnyRect{ 0.0f, 1.0f, 2.0f, 3.0f };
 
 
-auto gRects =
+static Rect gRects[] =
 {
     Rect{ 0.0f, 1.0f, 2.0f, 3.0f },
     Rect{ -100.0f, 200.0f, 300.0f, 400.0f },
@@ -95,17 +95,17 @@ auto gRects =
 };
 
 
-auto gMatrices =
+static Matrix3x2 gMatrices[] =
 {
     Matrix3x2{ 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f },
     Matrix3x2{ 0.0f, 1.0f, 2.0f, 3.0f, 4.0f, 5.0f }
 };
 
 
-Vector4 gAnyTint{ 0.0f, 1.0f, 2.0f, 3.0f };
+static Vector4 gAnyTint{ 0.0f, 1.0f, 2.0f, 3.0f };
 
 
-auto gTints =
+static Vector4 gTints[] =
 {
     Vector4{ 1.0f, 1.0f, 1.0f, 1.0f },
     Vector4{ 0.0f, 0.0f, 0.0f, 0.0f },

@@ -179,7 +179,7 @@ IFACEMETHODIMP CanvasVirtualBitmapFactory::LoadAsyncFromStreamWithOptionsAndAlph
 
 static D2D1_ORIENTATION ToD2DOrientation(WICBitmapTransformOptions transform)
 {
-    switch (transform)
+    switch (static_cast<uint32_t>(transform))
     {
     case WICBitmapTransformRotate0:                                      return D2D1_ORIENTATION_DEFAULT;
     case WICBitmapTransformRotate270:                                    return D2D1_ORIENTATION_ROTATE_CLOCKWISE270;

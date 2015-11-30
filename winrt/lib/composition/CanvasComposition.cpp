@@ -145,7 +145,7 @@ IFACEMETHODIMP CanvasCompositionStatics::CreateDrawingSessionWithUpdateRect(
 
 
 class CompositionDrawingSurfaceDrawingSessionAdapter
-    : public DrawingSessionBaseAdapter
+    : public ICanvasDrawingSessionAdapter
     , private LifespanTracker<CompositionDrawingSurfaceDrawingSessionAdapter>
 {
     ComPtr<ICompositionDrawingSurfaceInterop> m_drawingSurface;
