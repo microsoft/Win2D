@@ -35,9 +35,6 @@ namespace ExampleGallery
         }
 
         public bool IsImageLoaded { get { return virtualBitmap != null; } }
-        public bool AreCacheMethodsAvailable { get { return IsImageLoaded && virtualBitmapOptions == CanvasVirtualBitmapOptions.CacheOnDemand; } }
-        public bool IsEnsureCachedInProgress { get; private set; }
-
         public string LoadedImageInfo { get; private set; }
 
         bool smallView;
@@ -82,9 +79,6 @@ namespace ExampleGallery
 
         private void ImageVirtualControl_RegionsInvalidated(CanvasVirtualControl sender, CanvasRegionsInvalidatedEventArgs args)
         {
-            if (IsEnsureCachedInProgress)
-                return;
-
             foreach (var region in args.InvalidatedRegions)
             {
                 using (var ds = ImageVirtualControl.CreateDrawingSession(region))
@@ -180,35 +174,6 @@ namespace ExampleGallery
                 PropertyChanged(this, new PropertyChangedEventArgs("IsImageLoaded"));
                 PropertyChanged(this, new PropertyChangedEventArgs("AreCacheMethodsAvailable"));
             }
-        }
-
-
-        private async void OnEnsureCachedClicked(object sender, RoutedEventArgs e)
-        {
-            if (IsEnsureCachedInProgress)
-                return;
-
-            if (virtualBitmap == null)
-                return;
-
-            IsEnsureCachedInProgress = true;
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs("IsEnsureCachedInProgress"));
-
-            await virtualBitmap.EnsureCachedAsync();
-
-            IsEnsureCachedInProgress = false;
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs("IsEnsureCachedInProgress"));
-        }
-
-
-        private void OnTrimCacheClicked(object sender, RoutedEventArgs e)
-        {
-            if (virtualBitmap == null)
-                return;
-
-            virtualBitmap.TrimCache();
         }
 
 

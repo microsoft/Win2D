@@ -15,22 +15,6 @@
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
-static HRESULT const AnyHR = 0x81234567;
-
-class TestVirtualBitmapAdapter : public CanvasVirtualBitmapAdapter
-{
-public:
-    virtual ComPtr<IAsyncAction> RunAsync(std::function<void()>&& fn) override
-    {
-        HRESULT hr = ExceptionBoundary([&] { fn(); });
-
-        auto action = Make<MockAsyncAction>();
-        action->SetResult(hr);
-
-        return action;
-    }
-};
-
 TEST_CLASS(CanvasVirtualBitmapUnitTest)
 {
 
@@ -47,8 +31,6 @@ TEST_CLASS(CanvasVirtualBitmapUnitTest)
 
     struct Fixture
     {
-        std::shared_ptr<TestVirtualBitmapAdapter> Adapter;
-
         ComPtr<StubD2DDeviceContext> DeviceContext;
         WicBitmapSource Bitmap;
 
@@ -57,12 +39,9 @@ TEST_CLASS(CanvasVirtualBitmapUnitTest)
         D2D1_RECT_F D2DBounds;
 
         Fixture(D2D1_RECT_F bounds = { 10, 20, 30, 40 })
-            : Adapter(std::make_shared<TestVirtualBitmapAdapter>())
-            , Bitmap{ Make<MockWICBitmapSource>(), WICBitmapTransformRotate0 }
+            : Bitmap{ Make<MockWICBitmapSource>(), WICBitmapTransformRotate0 }
             , D2DBounds(bounds)
         {
-            CanvasVirtualBitmapAdapter::SetInstance(Adapter);
-
             auto d3dDevice = Make<StubD3D11Device>();
             auto d2dDevice = Make<MockD2DDevice>();
 
@@ -273,177 +252,6 @@ TEST_CLASS(CanvasVirtualBitmapUnitTest)
         Assert::AreEqual(FromD2DRect(f.D2DBounds), bounds);
     }
 
-    TEST_METHOD_EX(CanvasVirtualBitmap_CacheMethods_FailWhenCreatedWithoutCacheOnDemandSet)
-    {
-        CreatedFixture f;
-
-        ComPtr<IAsyncAction> a;
-        Rect anyRegion{};
-
-        std::function<HRESULT()> fns[] =
-        {
-            [&] { return f.VirtualBitmap->EnsureCachedAsync(&a); },
-            [&] { return f.VirtualBitmap->EnsureCachedAsyncWithRegion(anyRegion, &a); },
-            [&] { return f.VirtualBitmap->TrimCache(); },
-            [&] { return f.VirtualBitmap->TrimCacheWithRegion(anyRegion); }
-        };
-
-        for (auto fn : fns)
-        {
-            Assert::AreEqual(E_FAIL, fn());
-            ValidateStoredErrorState(E_FAIL, Strings::CacheOnDemandNotSet);
-        }
-    }
-
-    struct CacheOnDemandFixture : public Fixture
-    {
-        ComPtr<MockD2DImageSourceFromWic> ImageSource;
-        ComPtr<CanvasVirtualBitmap> VirtualBitmap;
-
-        CacheOnDemandFixture(WICBitmapTransformOptions transform, D2D1_RECT_F imageBounds = { 10, 20, 30, 40 })
-            : Fixture(imageBounds)
-        {
-            Bitmap.Transform = transform;
-            Bitmap.Indexed = true;
-
-            ImageSource = ExpectCreateImageSourceFromWic(D2D1_IMAGE_SOURCE_LOADING_OPTIONS_CACHE_ON_DEMAND, D2D1_ALPHA_MODE_PREMULTIPLIED);
-
-            if (transform != WICBitmapTransformRotate0)
-            {
-                DeviceContext->CreateTransformedImageSourceMethod.SetExpectedCalls(1,
-                    [=] (auto, auto, auto result)
-                    {
-                        return Make<MockD2DTransformedImageSource>().CopyTo(result);
-                    });
-            }
-
-            VirtualBitmap = CreateVirtualBitmap(CanvasVirtualBitmapOptions::CacheOnDemand, CanvasAlphaMode::Premultiplied);
-        }
-    };
-
-    template<typename T>
-    void TestCacheOnDemand(T fn)
-    {
-        // Validate the various transforms and that the regions are pass through
-        // correctly.
-        //
-        // All the cases are called with Rect{ 10, 20, 30, 40 } passed as the
-        // region.  The transform needs to be unapplied when calling through
-        // D2D.
-        struct TestCase
-        {
-            WICBitmapTransformOptions Transform;
-            D2D1_RECT_U ExpectedRegion;
-        };
-
-        Rect passedRegion{ 110, 120, 10, 20 };
-        D2D1_RECT_F imageBounds{ 100, 100, 200, 200 };
-
-        // Transforms are around the image center, which is (150, 150)
-        //
-        // Passed region relative to center is ((-40, -30) - (-30, -10)
-
-        auto transpose = static_cast<WICBitmapTransformOptions>(WICBitmapTransformRotate270 | WICBitmapTransformFlipHorizontal);
-        auto transverse = static_cast<WICBitmapTransformOptions>(WICBitmapTransformRotate90 | WICBitmapTransformFlipHorizontal);
-
-        TestCase testCases[]
-        {
-            // TRANSFORM                        (RELATIVE) + (150, 150)   = ABSOLUTE ltrb
-            { WICBitmapTransformRotate0,        /* (-40, -30) (-30, -10) */ { 110, 120, 120, 140 } },
-            { WICBitmapTransformRotate270,      /* (-30,  40) (-10,  30) */ { 120, 190, 140, 180 } },
-            { WICBitmapTransformRotate180,      /* ( 40,  30) ( 30,  10) */ { 190, 180, 180, 160 } },
-            { WICBitmapTransformRotate90,       /* ( 30, -40) ( 10, -30) */ { 180, 110, 160, 120 } },
-            { WICBitmapTransformFlipHorizontal, /* ( 40, -30) ( 30, -10) */ { 190, 120, 180, 140 } },
-            { WICBitmapTransformFlipVertical,   /* (-40,  30) (-30,  10) */ { 110, 180, 120, 160 } },
-            { transpose,                        /* ( 30,  40) ( 10   30) */ { 180, 190, 160, 180 } },
-            { transverse,                       /* (-30, -40) (-10, -30) */ { 120, 110, 140, 120 } }
-        };
-
-        for (auto t : testCases)
-        {
-            CacheOnDemandFixture f(t.Transform, imageBounds);
-            fn(f, passedRegion, t.ExpectedRegion);
-        }
-    }
-
-
-    TEST_METHOD_EX(CanvasVirtualBitmap_EnsureCachedAsync_CallsThrough)
-    {
-        TestCacheOnDemand(
-            [] (auto& f, auto, auto)
-            {
-                f.ImageSource->EnsureCachedMethod.SetExpectedCalls(1,
-                    [] (auto r)
-                    {
-                        Assert::IsNull(r);
-                        return AnyHR;
-                    });
-
-                ComPtr<IAsyncAction> action;
-                ThrowIfFailed(f.VirtualBitmap->EnsureCachedAsync(&action));
-
-                HRESULT errorCode;
-                ThrowIfFailed(As<IAsyncInfo>(action)->get_ErrorCode(&errorCode));
-
-                Assert::AreEqual(AnyHR, errorCode);
-            });
-    }
-
-
-    TEST_METHOD_EX(CanvasVirtualBitmap_EnsureCachedAsyncWithRegion_CallsThrough)
-    {
-        TestCacheOnDemand(
-            [] (auto& f, auto region, auto expectedRegion)
-            {
-                f.ImageSource->EnsureCachedMethod.SetExpectedCalls(1,
-                    [=] (auto r)
-                    {
-                        Assert::AreEqual(expectedRegion, *r);
-                        return AnyHR;
-                    });
-
-                ComPtr<IAsyncAction> action;
-                ThrowIfFailed(f.VirtualBitmap->EnsureCachedAsyncWithRegion(region, &action));
-
-                HRESULT errorCode;
-                ThrowIfFailed(As<IAsyncInfo>(action)->get_ErrorCode(&errorCode));
-
-                Assert::AreEqual(AnyHR, errorCode);
-            });
-    }
-
-    TEST_METHOD_EX(CanvasVirtualBitmap_TrimCache_CallsThrough)
-    {
-        TestCacheOnDemand(
-            [] (auto& f, auto, auto)
-            {
-                f.ImageSource->TrimCacheMethod.SetExpectedCalls(1,
-                    [] (auto r)
-                    {
-                        Assert::IsNull(r);
-                        return AnyHR;
-                    });
-
-                Assert::AreEqual(AnyHR, f.VirtualBitmap->TrimCache());
-            });
-    }
-
-    TEST_METHOD_EX(CanvasVirtualBitmap_TrimCacheWithRegion_CallsThrough)
-    {
-        TestCacheOnDemand(
-            [] (auto& f, auto region, auto expectedRegion)
-            {
-                f.ImageSource->TrimCacheMethod.SetExpectedCalls(1,
-                    [=] (auto r)
-                    {
-                        Assert::AreEqual(expectedRegion, *r);
-                        return AnyHR;
-                    });
-
-                Assert::AreEqual(AnyHR, f.VirtualBitmap->TrimCacheWithRegion(region));
-            });
-    }
-
     TEST_METHOD_EX(CanvasVirtualBitmap_IsCachedOnDemand_UsesEnsureCachedToDetermineResult)
     {
         std::pair<HRESULT, boolean> testCases[]
@@ -528,15 +336,6 @@ TEST_CLASS(CanvasVirtualBitmapUnitTest)
         boolean value;
         ThrowIfFailed(virtualBitmap->get_IsCachedOnDemand(&value));
         Assert::IsTrue(!!value);
-
-        // The orientation was inferred as default
-        imageSource->TrimCacheMethod.SetExpectedCalls(1,
-            [] (auto r)
-            {
-                Assert::AreEqual(D2D1_RECT_U{ 10, 20, 12, 22 }, *r);
-                return S_OK;
-            });
-        ThrowIfFailed(virtualBitmap->TrimCacheWithRegion(Rect{ 10, 20, 2, 2 }));
     }
 
     TEST_METHOD_EX(CanvasVirtualBitmap_Interop_TransformedImageSource)
@@ -579,15 +378,6 @@ TEST_CLASS(CanvasVirtualBitmapUnitTest)
         boolean value;
         ThrowIfFailed(virtualBitmap->get_IsCachedOnDemand(&value));
         Assert::IsTrue(!!value);
-
-        // The orientation was picked up from the properties
-        imageSourceFromWic->TrimCacheMethod.SetExpectedCalls(1,
-            [] (auto r)
-            {
-                Assert::AreEqual(D2D1_RECT_U{ 30, 20, 28, 22 }, *r);
-                return S_OK;
-            });
-        ThrowIfFailed(virtualBitmap->TrimCacheWithRegion(Rect{ 10, 20, 2, 2 }));
     }
 
     TEST_METHOD_EX(CanvasVirtualBitmap_Interop_UnknownImageSource)
@@ -616,10 +406,6 @@ TEST_CLASS(CanvasVirtualBitmapUnitTest)
         boolean value;
         ComPtr<IAsyncAction> action;
         Assert::AreEqual(E_FAIL, virtualBitmap->get_IsCachedOnDemand(&value));
-        Assert::AreEqual(E_FAIL, virtualBitmap->EnsureCachedAsync(&action));
-        Assert::AreEqual(E_FAIL, virtualBitmap->EnsureCachedAsyncWithRegion(Rect{}, &action));
-        Assert::AreEqual(E_FAIL, virtualBitmap->TrimCache());
-        Assert::AreEqual(E_FAIL, virtualBitmap->TrimCacheWithRegion(Rect{}));
     }
 };
 

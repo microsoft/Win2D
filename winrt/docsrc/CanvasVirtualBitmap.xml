@@ -40,11 +40,6 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
           The other mode, CanvasVirtualBitmapOptions.CacheOnDemand, attempts to
           cache (load) only the parts of the image that are required.  Drawing a
           part of the image that hasn't previously been cached can trigger IO.
-          The <see
-          cref="O:Microsoft.Graphics.Canvas.CanvasVirtualBitmap.EnsureCachedAsync">EnsureCachedAsync</see>
-          and <see
-          cref="O:Microsoft.Graphics.Canvas.CanvasVirtualBitmap.TrimCache">TrimCache</see>
-          methods can be used to control which regions of the image are cached.
         </p>
         <p>
           Not all images support CacheOnDemand (currently only certain jpeg
@@ -52,60 +47,6 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
           cref="P:Microsoft.Graphics.Canvas.CanvasVirtualBitmap.IsCachedOnDemand"/>
           property can be used to determine if the image loaded is actually
           using cache on demand.
-        </p>
-      </remarks>
-    </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasVirtualBitmap.EnsureCachedAsync">
-      <summary>Ensures that the entire image is loaded.</summary>
-      <remarks>
-        <p>
-          Note that in XAML apps this can block the UI thread if the same device
-          is being used for a CanvasImageSource, CanvasVirtualImageSource,
-          CanvasControl or CanvasVirtualControl.
-        </p>
-        <p>
-          This method will fail if the image was not loaded with <see
-          cref="F:Microsoft.Graphics.Canvas.CanvasVirtualBitmapOptions.CacheOnDemand"/>
-          specified.  If CacheOnDemand was specified, but the image doesn't
-          support cache on demand, then this method is a no-op.
-        </p>
-      </remarks>
-    </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasVirtualBitmap.EnsureCachedAsync(Windows.Foundation.Rect)">
-      <summary>Ensures that a region of the image is loaded.</summary>
-      <remarks>
-        <p>
-          Note that in XAML apps this can block the UI thread if the same device
-          is being used for a CanvasImageSource, CanvasVirtualImageSource,
-          CanvasControl or CanvasVirtualControl.
-        </p>
-        <p>
-          This method will fail if the image was not loaded with <see
-          cref="F:Microsoft.Graphics.Canvas.CanvasVirtualBitmapOptions.CacheOnDemand"/>
-          specified.  If CacheOnDemand was specified, but the image doesn't
-          support cache on demand, then this method is a no-op.
-        </p>
-      </remarks>
-    </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasVirtualBitmap.TrimCache">
-      <summary>Unloads the entire image from memory.</summary>
-      <remarks>
-        <p>
-          This method will fail if the image was not loaded with <see
-          cref="F:Microsoft.Graphics.Canvas.CanvasVirtualBitmapOptions.CacheOnDemand"/>
-          specified.  If CacheOnDemand was specified, but the image doesn't
-          support cache on demand, then this method is a no-op.
-        </p>
-      </remarks>
-    </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasVirtualBitmap.TrimCache(Windows.Foundation.Rect)">
-      <summary>Unloads the entire image from memory, apart from the specified region.</summary>
-      <remarks>
-        <p>
-          This method will fail if the image was not loaded with <see
-          cref="F:Microsoft.Graphics.Canvas.CanvasVirtualBitmapOptions.CacheOnDemand"/>
-          specified.  If CacheOnDemand was specified, but the image doesn't
-          support cache on demand, then this method is a no-op.
         </p>
       </remarks>
     </member>

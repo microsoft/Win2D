@@ -100,36 +100,6 @@ namespace Microsoft.Graphics.Canvas
         requires Windows.Foundation.IClosable, ICanvasImage
     {
         //
-        // EnsureCachedAsync / TrimCache will always fail if the
-        // CanvasVirtualBitmap was created without
-        // CanvasVirtualBitmapOptions.CacheOnDemand set.
-        //
-        // If CacheOnDemand was set and the underlying image is unable to
-        // support this then EnsureCachedAsync / TrimCache will be no-ops and
-        // always succeed.
-        //
-        // If the CacheOnDemand was set and the underlying image is able to
-        // support this, or if this CanvasVirtualBitmap was created via interop,
-        // then EnsureCachedAsync / TrimCache will always call through to the
-        // D2D API.
-        //
-        
-        [overload("EnsureCachedAsync")]
-        HRESULT EnsureCachedAsync(
-            [out, retval] Windows.Foundation.IAsyncAction** value);
-
-        [overload("EnsureCachedAsync")]
-        HRESULT EnsureCachedAsyncWithRegion(
-            [in]          Windows.Foundation.Rect region,
-            [out, retval] Windows.Foundation.IAsyncAction** value);
-
-        [overload("TrimCache")]
-        HRESULT TrimCache();
-
-        [overload("TrimCache")]
-        HRESULT TrimCacheWithRegion([in] Windows.Foundation.Rect regionToKeep);
-
-        //
         // Returns whether or not the underlying D2D image was actually created
         // with CACHE_ON_DEMAND set.
         //

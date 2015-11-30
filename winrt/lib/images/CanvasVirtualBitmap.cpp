@@ -16,18 +16,6 @@ using namespace ABI::Microsoft::Graphics::Canvas;
 ActivatableClassWithFactory(CanvasVirtualBitmap, CanvasVirtualBitmapFactory);
 
 
-class ABI::Microsoft::Graphics::Canvas::DefaultVirtualBitmapAdapter : public CanvasVirtualBitmapAdapter
-{
-public:
-    virtual ComPtr<IAsyncAction> RunAsync(std::function<void()>&& fn) override
-    {
-        auto action = Make<AsyncAction>(std::move(fn));
-        CheckMakeResult(action);
-        return action;
-    }
-};
-
-
 IFACEMETHODIMP CanvasVirtualBitmapFactory::LoadAsyncFromFileName(
     ICanvasResourceCreator* resourceCreator,
     HSTRING fileName,
@@ -118,8 +106,7 @@ IFACEMETHODIMP CanvasVirtualBitmapFactory::LoadAsyncFromUriWithOptionsAndAlpha(
             
             // Start opening the file.
             ComPtr<IAsyncOperation<IRandomAccessStreamWithContentType*>> openOperation;
-            ThrowIfFailed(streamReference->OpenReadAsync(&openOperation));
-            
+            ThrowIfFailed(streamReference->OpenReadAsync(&openOperation));            
 
             auto operation = Make<AsyncOperation<CanvasVirtualBitmap>>(openOperation,
                 [=]
@@ -225,7 +212,6 @@ ComPtr<CanvasVirtualBitmap> CanvasVirtualBitmap::CreateNew(
     auto deviceContext2 = As<ID2D1DeviceContext2>(deviceContext.Get());
 
     D2D1_IMAGE_SOURCE_LOADING_OPTIONS loadingOptions = D2D1_IMAGE_SOURCE_LOADING_OPTIONS_NONE;
-    bool cacheMethodsEnabled = false;
 
     switch (options)
     {
@@ -234,12 +220,11 @@ ComPtr<CanvasVirtualBitmap> CanvasVirtualBitmap::CreateNew(
         break;
         
     case CanvasVirtualBitmapOptions::CacheOnDemand:
-        cacheMethodsEnabled = true;
         if (source.Indexed)
         {
             // We only honor CacheOnDemand if the provided image source is
             // actually indexed, since CacheOnDemand results in extremely poor
-            // performance.
+            // performance when used with unindexed images.
             loadingOptions = D2D1_IMAGE_SOURCE_LOADING_OPTIONS_CACHE_ON_DEMAND;
         }
         break;
@@ -287,8 +272,7 @@ ComPtr<CanvasVirtualBitmap> CanvasVirtualBitmap::CreateNew(
         imageSource.Get(),
         imageSourceFromWic.Get(),
         FromD2DRect(localBounds),
-        d2dOrientation,
-        cacheMethodsEnabled);
+        d2dOrientation);
     CheckMakeResult(virtualBitmap);
     
     return virtualBitmap;
@@ -301,14 +285,12 @@ CanvasVirtualBitmap::CanvasVirtualBitmap(
     ID2D1Image* imageSource,
     ID2D1ImageSourceFromWic* imageSourceFromWic,
     Rect localBounds,
-    D2D1_ORIENTATION orientation,
-    bool cacheMethodsEnabled)
+    D2D1_ORIENTATION orientation)
     : ResourceWrapper(imageSource)
     , m_device(device)
     , m_imageSourceFromWic(imageSourceFromWic)
     , m_localBounds(localBounds)
     , m_orientation(orientation)
-    , m_cacheMethodsEnabled(cacheMethodsEnabled)
 {
 }
 
@@ -370,8 +352,7 @@ CanvasVirtualBitmap::CanvasVirtualBitmap(
         imageSource,
         FindImageSourceFromWic(imageSource).Get(),
         GetLocalBounds(device, imageSource),
-        GetOrientation(imageSource),
-        true)
+        GetOrientation(imageSource))
 {
 }
 
@@ -386,120 +367,6 @@ IFACEMETHODIMP CanvasVirtualBitmap::Close()
     m_imageSourceFromWic.Reset();
     
     return S_OK;
-}
-
-
-IFACEMETHODIMP CanvasVirtualBitmap::EnsureCachedAsync(IAsyncAction** result)
-{
-    return ExceptionBoundary(
-        [&]
-        {
-            ValidateCanCallCacheMethods();
-            
-            ComPtr<CanvasVirtualBitmap> self(this);
-                
-            auto action = CanvasVirtualBitmapAdapter::GetInstance()->RunAsync(
-                [self]
-                {
-                    ThrowIfFailed(self->m_imageSourceFromWic->EnsureCached(nullptr));
-                });
-            ThrowIfFailed(action.CopyTo(result));
-        });
-}
-
-
-IFACEMETHODIMP CanvasVirtualBitmap::EnsureCachedAsyncWithRegion(Rect region, IAsyncAction** result)
-{
-    return ExceptionBoundary(
-        [&]
-        {
-            ValidateCanCallCacheMethods();
-            
-            ComPtr<CanvasVirtualBitmap> self(this);
-                
-            auto action = CanvasVirtualBitmapAdapter::GetInstance()->RunAsync(
-                [self, region]
-                {
-                    auto d2dRect = self->CalculateBackTransformedRegion(region);
-            
-                    ThrowIfFailed(self->m_imageSourceFromWic->EnsureCached(&d2dRect));
-                });
-            ThrowIfFailed(action.CopyTo(result));
-        });
-}
-
-
-IFACEMETHODIMP CanvasVirtualBitmap::TrimCache()
-{
-    return ExceptionBoundary(
-        [&]
-        {
-            ValidateCanCallCacheMethods();
-            
-            ThrowIfFailed(m_imageSourceFromWic->TrimCache(nullptr));
-        });
-}
-
-
-IFACEMETHODIMP CanvasVirtualBitmap::TrimCacheWithRegion(Rect regionToKeep)
-{
-    return ExceptionBoundary(
-        [&]
-        {
-            ValidateCanCallCacheMethods();
-            
-            auto d2dRect = CalculateBackTransformedRegion(regionToKeep);
-            
-            ThrowIfFailed(m_imageSourceFromWic->TrimCache(&d2dRect));
-        });
-}
-
-
-D2D1_RECT_U CanvasVirtualBitmap::CalculateBackTransformedRegion(Rect r) const
-{
-    auto rect = ToD2DRectU(
-        static_cast<int32_t>(r.X),
-        static_cast<int32_t>(r.Y),
-        static_cast<int32_t>(r.Width),
-        static_cast<int32_t>(r.Height));
-
-    auto a = BackTransform(rect.left,  rect.top);
-    auto b = BackTransform(rect.right, rect.bottom);
-
-    return { a.x, a.y, b.x, b.y };
-}
-
-
-using ::Windows::Foundation::Numerics::float2;
-
-static float2 BackTransform(D2D1_ORIENTATION orientation, float2 p)
-{   
-    switch (orientation)
-    {
-    case D2D1_ORIENTATION_DEFAULT:                             return {  p.x,  p.y };
-    case D2D1_ORIENTATION_ROTATE_CLOCKWISE270:                 return {  p.y, -p.x };
-    case D2D1_ORIENTATION_ROTATE_CLOCKWISE180:                 return { -p.x, -p.y };
-    case D2D1_ORIENTATION_ROTATE_CLOCKWISE90:                  return { -p.y,  p.x };
-    case D2D1_ORIENTATION_FLIP_HORIZONTAL:                     return { -p.x,  p.y };
-    case D2D1_ORIENTATION_ROTATE_CLOCKWISE180_FLIP_HORIZONTAL: return {  p.x, -p.y };
-    case D2D1_ORIENTATION_ROTATE_CLOCKWISE90_FLIP_HORIZONTAL:  return { -p.y, -p.x };
-    case D2D1_ORIENTATION_ROTATE_CLOCKWISE270_FLIP_HORIZONTAL: return {  p.y,  p.x };
-
-    default:
-        assert(false);
-        return { p.x, p.y };
-    }
-}
-
-D2D1_POINT_2U CanvasVirtualBitmap::BackTransform(uint32_t x, uint32_t y) const
-{
-    float2 center(m_localBounds.X + m_localBounds.Width / 2.0f, m_localBounds.Y + m_localBounds.Height / 2.0f);
-
-    float2 p(static_cast<float>(x), static_cast<float>(y));
-
-    p = ::BackTransform(m_orientation, p - center) + center;
-
-    return { static_cast<uint32_t>(p.x), static_cast<uint32_t>(p.y) };
 }
 
 
@@ -536,16 +403,6 @@ IFACEMETHODIMP CanvasVirtualBitmap::get_IsCachedOnDemand(boolean* value)
             else
                 *value = TRUE;
         });
-}
-
-
-void CanvasVirtualBitmap::ValidateCanCallCacheMethods() const
-{
-    if (!m_cacheMethodsEnabled)
-        ThrowHR(E_FAIL, Strings::CacheOnDemandNotSet);
-
-    if (!m_imageSourceFromWic)
-        ThrowHR(E_FAIL);
 }
 
 
@@ -609,7 +466,6 @@ ComPtr<ID2D1Image> CanvasVirtualBitmap::GetD2DImage(ICanvasDevice* , ID2D1Device
 
     return GetResource();
 }
-
 
 
 #endif

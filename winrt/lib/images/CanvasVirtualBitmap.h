@@ -8,16 +8,6 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
-    class DefaultVirtualBitmapAdapter;
-
-    class CanvasVirtualBitmapAdapter : public Singleton<CanvasVirtualBitmapAdapter, DefaultVirtualBitmapAdapter>
-    {
-    public:
-        virtual ~CanvasVirtualBitmapAdapter() = default;
-        
-        virtual ComPtr<IAsyncAction> RunAsync(std::function<void()>&& fn) = 0;
-    };
-
     class CanvasVirtualBitmapFactory :
         public ActivationFactory<ICanvasVirtualBitmapStatics>,
         private LifespanTracker<CanvasVirtualBitmapFactory>
@@ -104,7 +94,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ComPtr<ID2D1ImageSourceFromWic> m_imageSourceFromWic;
         Rect m_localBounds;
         D2D1_ORIENTATION m_orientation;
-        bool m_cacheMethodsEnabled;
         
     public:
         static ComPtr<CanvasVirtualBitmap> CreateNew(
@@ -122,17 +111,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ID2D1Image* imageSource,
             ID2D1ImageSourceFromWic* imageSourceFromWic,
             Rect localBounds,
-            D2D1_ORIENTATION orientation,
-            bool cacheMethodsEnabled);
+            D2D1_ORIENTATION orientation);
 
         // IClosable
         IFACEMETHODIMP Close() override;
         
         // ICanvasVirtualBitmap
-        IFACEMETHODIMP EnsureCachedAsync(IAsyncAction** result) override;
-        IFACEMETHODIMP EnsureCachedAsyncWithRegion(Rect region, IAsyncAction** result) override;
-        IFACEMETHODIMP TrimCache() override;
-        IFACEMETHODIMP TrimCacheWithRegion(Rect regionToKeep) override;
         IFACEMETHODIMP get_Device(ICanvasDevice** result) override;
         IFACEMETHODIMP get_IsCachedOnDemand(boolean* value) override;
         IFACEMETHODIMP get_SizeInPixels(BitmapSize* value) override;
@@ -145,12 +129,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         // ICanvasImageInternal
         ComPtr<ID2D1Image> GetD2DImage(ICanvasDevice* , ID2D1DeviceContext*, GetImageFlags, float, float*) override;
-
-    private:
-        D2D1_RECT_U CalculateBackTransformedRegion(Rect r) const;
-        D2D1_POINT_2U BackTransform(uint32_t x, uint32_t y) const;
-
-        void ValidateCanCallCacheMethods() const;
     };
 
 }}}}
