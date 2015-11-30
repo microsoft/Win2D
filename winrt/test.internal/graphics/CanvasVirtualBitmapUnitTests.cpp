@@ -623,9 +623,4 @@ TEST_CLASS(CanvasVirtualBitmapUnitTest)
     }
 };
 
-//
-// TODO 6063: transformed image sources may have scale as well as orientation.
-// When adding support for custom DPI we'll need to account for this.
-//
-
 #endif
