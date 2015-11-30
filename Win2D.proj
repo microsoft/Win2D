@@ -312,8 +312,12 @@
 
     <!-- Use <Exec> rather than <MSBuild> here, since we want BuildDocs.proj to
          be isolated from the environment that's formed around running
-         Win2D.proj up to this point -->
-    <Exec Command="msbuild $(MSBuildThisFileDirectory)tools\docs\BuildDocs.proj" />
+         Win2D.proj up to this point, and to suppress the Sandcastle
+         false positive warning BHT0001 -->
+    <Exec Command="msbuild $(MSBuildThisFileDirectory)tools\docs\BuildDocs.proj" 
+          IgnoreStandardErrorWarningFormat="true"
+          CustomErrorRegularExpression=": error "
+          CustomWarningRegularExpression=": warning (?!BHT0001)" />
   </Target>
 
 
