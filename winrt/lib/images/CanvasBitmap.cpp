@@ -363,15 +363,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         ThrowIfFailed(m_wicFactory->CreateBitmapFlipRotator(&bitmapFlipRotator));
         ThrowIfFailed(bitmapFlipRotator->Initialize(source.Get(), transformOptions));
-        
-        // WICBitmapCacheOnLoad is required so that the entire destination buffer is provided to the 
-        // flip/rotator.  Requesting the entire destination in one CopyPixels call enables optimizations.
-        //
-        // TODO 6056: Profile & determine if we should cache before or after the flip rotator (or not at all).
-        ComPtr<IWICBitmap> bitmap;
-        ThrowIfFailed(m_wicFactory->CreateBitmapFromSource(bitmapFlipRotator.Get(), WICBitmapCacheOnLoad, &bitmap));
 
-        return bitmap;        
+        return bitmapFlipRotator;
     }
 
 
