@@ -17,6 +17,7 @@ using Windows.Foundation;
 using Windows.Storage.Pickers;
 using Windows.Storage.Streams;
 using Windows.UI;
+using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -34,7 +35,6 @@ namespace ExampleGallery
                 DataContext = this;
         }
 
-        public bool IsImageLoaded { get { return virtualBitmap != null; } }
         public string LoadedImageInfo { get; private set; }
 
         bool smallView;
@@ -119,11 +119,20 @@ namespace ExampleGallery
                 imageStream = null;
             }
 
-            imageStream = new ByteCounterStreamProxy(await file.OpenReadAsync());
-            virtualBitmapOptions = options;
+            try
+            {
+                imageStream = new ByteCounterStreamProxy(await file.OpenReadAsync());
+                virtualBitmapOptions = options;
 
-            IOGraph.Invalidate();
-            await LoadVirtualBitmap();
+                IOGraph.Invalidate();
+                await LoadVirtualBitmap();
+            }
+            catch
+            {
+                var message = string.Format("Error opening '{0}'", file.Name);
+
+                var messageBox = new MessageDialog(message).ShowAsync();
+            }
         }
 
 
@@ -149,7 +158,6 @@ namespace ExampleGallery
             if (PropertyChanged != null)
             {
                 PropertyChanged(this, new PropertyChangedEventArgs("LoadedImageInfo"));
-                PropertyChanged(this, new PropertyChangedEventArgs("IsImageLoaded"));
             }
 
             virtualBitmap = await CanvasVirtualBitmap.LoadAsync(ImageVirtualControl.Device, imageStream, virtualBitmapOptions);
@@ -171,8 +179,6 @@ namespace ExampleGallery
             if (PropertyChanged != null)
             {
                 PropertyChanged(this, new PropertyChangedEventArgs("LoadedImageInfo"));
-                PropertyChanged(this, new PropertyChangedEventArgs("IsImageLoaded"));
-                PropertyChanged(this, new PropertyChangedEventArgs("AreCacheMethodsAvailable"));
             }
         }
 
