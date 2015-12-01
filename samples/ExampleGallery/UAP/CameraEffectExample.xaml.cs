@@ -97,6 +97,7 @@ namespace ExampleGallery
         {
             var action = mediaCapture.StopPreviewAsync();
             mediaCapture.Failed -= mediaCapture_Failed;
+            DisplayInformation.GetForCurrentView().OrientationChanged -= OnOrientationChanged;
         }
 
         private void mediaCapture_Failed(MediaCapture sender, MediaCaptureFailedEventArgs errorEventArgs)
