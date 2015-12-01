@@ -51,7 +51,7 @@ namespace ExampleGallery
 
             var newVisualState = currentVisualState;
 
-            if (width > 800)
+            if (width > 1000)
                 newVisualState = VisualState.Big;
             else if (width > 350)
                 newVisualState = VisualState.Small;
