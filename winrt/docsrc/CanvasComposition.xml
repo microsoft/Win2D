@@ -11,7 +11,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
   </assembly>
   <members>
     
-    <member name="T:Microsoft.Graphics.Canvas.UI.Composition.CanvasComposition" Experimental="true" TH2="true">
+    <member name="T:Microsoft.Graphics.Canvas.UI.Composition.CanvasComposition" Experimental="true" Win10NovUpdate="true">
       <summary>
         Methods for using Win2D with Windows.UI.Composition.
       </summary>

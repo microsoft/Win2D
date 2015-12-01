@@ -51,7 +51,7 @@ Studio, add the Win2D NuGet package to your project, and get started using the A
 ## Building Win2D from source
 
 ##### Requirements
-- Recommended: Visual Studio 2015
+- Recommended: Visual Studio 2015 with Update 1
 - Visual Studio 2013 Update 5 is also supported (for Windows 8.1 or Windows Phone 8.1 development only)
 
 ##### Clone Repository

@@ -10,7 +10,7 @@ namespace DocPreprocess
         {
             new Tag("Experimental", "This API is marked as [Experimental], meaning it may be subject to change in future Win2D releases.") { PropagateTypeTagsToMembers = true },
             new Tag("Win10", "This API is available on Windows 10 (Universal Windows Platform) only. It is not supported on Windows 8.1 or Phone 8.1."),
-            new Tag("TH2", "This API is available on TH2 only.") { PropagateTypeTagsToMembers = true }, // TODO 5874: update with appropriate text
+            new Tag("Win10NovUpdate", "This API is only available when running on the Windows 10 November Update (build 10586 or greater).") { PropagateTypeTagsToMembers = true },
             new Tag("NoComposition", "Supported by Win2D but not Windows.UI.Composition."),
         };
 

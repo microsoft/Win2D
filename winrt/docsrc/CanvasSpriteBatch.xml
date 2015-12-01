@@ -10,7 +10,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <name>Microsoft.Graphics.Canvas</name>
   </assembly> 
   <members>
-    <member name="T:Microsoft.Graphics.Canvas.CanvasSpriteBatch" Experimental="true" TH2="true">
+    <member name="T:Microsoft.Graphics.Canvas.CanvasSpriteBatch" Experimental="true" Win10NovUpdate="true">
       <summary>Efficiently draws multiple bitmaps.</summary>
       <remarks>
         <p>
@@ -235,7 +235,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       </remarks>
     </member>
 
-    <member name="T:Microsoft.Graphics.Canvas.CanvasSpriteFlip" Experimental="true" TH2="true">
+    <member name="T:Microsoft.Graphics.Canvas.CanvasSpriteFlip" Experimental="true" Win10NovUpdate="true">
       <summary>Controls the optional flipping of a sprite.</summary>
       <remarks>
         <p>
@@ -264,7 +264,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <summary>The sprite is drawn flipped horizontally and vertically.</summary>
     </member>
 
-    <member name="T:Microsoft.Graphics.Canvas.CanvasSpriteOptions" Experimental="true" TH2="true">
+    <member name="T:Microsoft.Graphics.Canvas.CanvasSpriteOptions" Experimental="true" Win10NovUpdate="true">
       <summary>Options that apply to the entire spritebatch.</summary>
       <remarks>
         <p>
@@ -292,7 +292,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     </member>
 
 
-    <member name="T:Microsoft.Graphics.Canvas.CanvasSpriteSortMode" Experimental="true" TH2="true">
+    <member name="T:Microsoft.Graphics.Canvas.CanvasSpriteSortMode" Experimental="true" Win10NovUpdate="true">
       <summary>Controls how the sprites in a sprite batch are sorted.</summary>
       <remarks>
         <p>

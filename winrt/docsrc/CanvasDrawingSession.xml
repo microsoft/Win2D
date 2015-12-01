@@ -1244,7 +1244,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     </member>    
 
 
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.CreateSpriteBatch" Experimental="true" TH2="true">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.CreateSpriteBatch" Experimental="true" Win10NovUpdate="true">
       <summary>Creates a new sprite batch for efficiently drawing many CanvasBitmaps.</summary>
       <remarks>
         <p>
@@ -1253,7 +1253,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       </remarks>
     </member>
 
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.CreateSpriteBatch(Microsoft.Graphics.Canvas.CanvasSpriteSortMode)" Experimental="true" TH2="true">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.CreateSpriteBatch(Microsoft.Graphics.Canvas.CanvasSpriteSortMode)" Experimental="true" Win10NovUpdate="true">
       <summary>Creates a new sprite batch for efficiently drawing many CanvasBitmaps with a specific sort mode.</summary>
       <remarks>
         <p>
@@ -1265,7 +1265,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       </remarks>
     </member>
 
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.CreateSpriteBatch(Microsoft.Graphics.Canvas.CanvasSpriteSortMode,Microsoft.Graphics.Canvas.CanvasImageInterpolation)" Experimental="true" TH2="true">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.CreateSpriteBatch(Microsoft.Graphics.Canvas.CanvasSpriteSortMode,Microsoft.Graphics.Canvas.CanvasImageInterpolation)" Experimental="true" Win10NovUpdate="true">
       <summary>Creates a new sprite batch for efficiently drawing many CanvasBitmaps with a specific sort mode and interpolation.</summary>
       <remarks>
         <p>
@@ -1284,7 +1284,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       </remarks>
     </member>
 
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.CreateSpriteBatch(Microsoft.Graphics.Canvas.CanvasSpriteSortMode,Microsoft.Graphics.Canvas.CanvasImageInterpolation,Microsoft.Graphics.Canvas.CanvasSpriteOptions)" Experimental="true" TH2="true">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.CreateSpriteBatch(Microsoft.Graphics.Canvas.CanvasSpriteSortMode,Microsoft.Graphics.Canvas.CanvasImageInterpolation,Microsoft.Graphics.Canvas.CanvasSpriteOptions)" Experimental="true" Win10NovUpdate="true">
       <summary>Creates a new sprite batch for efficiently drawing many CanvasBitmaps with a specific sort mode, interpolation and options.</summary>
       <remarks>
         <p>
