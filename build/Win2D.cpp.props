@@ -43,7 +43,6 @@
 
   <ItemDefinitionGroup Condition="'$(TargetPlatformIdentifier)' == 'UAP'">
     <ClCompile>
-      <!-- TODO: this shouldn't be necessary -->
       <AdditionalOptions>/DNTDDI_VERSION=0x0A000001 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
   </ItemDefinitionGroup>
