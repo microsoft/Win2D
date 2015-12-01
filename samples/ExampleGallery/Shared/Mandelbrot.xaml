@@ -28,14 +28,15 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
                       MinZoomFactor="0.5"
                       MaxZoomFactor="8000"
                       ViewChanged="ScrollViewer_ViewChanged">
-
-            <canvas:CanvasVirtualControl x:Name="canvas" 
-                                         CreateResources="Canvas_CreateResources" 
-                                         RegionsInvalidated="Canvas_RegionsInvalidated"
-                                         KeyDown="Canvas_KeyDown"
-                                         IsTabStop="true"
-                                         Width="512"
-                                         Height="384"/>
+            <Grid>
+                <canvas:CanvasVirtualControl x:Name="canvas" 
+                                             CreateResources="Canvas_CreateResources" 
+                                             RegionsInvalidated="Canvas_RegionsInvalidated"
+                                             KeyDown="Canvas_KeyDown"
+                                             IsTabStop="true"
+                                             Width="512"
+                                             Height="384"/>
+            </Grid>
         </ScrollViewer>
 
         <TextBlock x:Name="helpText" IsHitTestVisible="False"/>

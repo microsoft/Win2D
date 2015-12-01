@@ -34,7 +34,9 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         </ScrollViewer>
         <ScrollViewer Grid.Row="1" HorizontalScrollMode="Enabled" VerticalScrollMode="Enabled" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"
                       ZoomMode="Enabled" MaxZoomFactor="2" MinZoomFactor="0.5">
-            <canvas:CanvasVirtualControl x:Name="virtualControl" Width="10000" Height="10000" RegionsInvalidated="OnRegionsInvalidated" ClearColor="White" />
+            <Grid>
+                <canvas:CanvasVirtualControl x:Name="virtualControl" Width="10000" Height="10000" RegionsInvalidated="OnRegionsInvalidated" ClearColor="White" />
+            </Grid>
         </ScrollViewer>
         <TextBlock Grid.Row="2" x:Name="status" Margin="1" FontSize="10" Text="Status"/>
     </Grid>

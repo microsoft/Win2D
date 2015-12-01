@@ -78,9 +78,11 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         <ScrollViewer Grid.Row="2" HorizontalScrollMode="Enabled" VerticalScrollMode="Enabled" ZoomMode="Disabled"
                       HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"
                       x:Name="ImageScrollViewer">
-            <canvas:CanvasVirtualControl x:Name="ImageVirtualControl"
-                                         CreateResources="ImageVirtualControl_CreateResources"
-                                         RegionsInvalidated="ImageVirtualControl_RegionsInvalidated"/>
+            <Grid>
+                <canvas:CanvasVirtualControl x:Name="ImageVirtualControl"
+                                             CreateResources="ImageVirtualControl_CreateResources"
+                                             RegionsInvalidated="ImageVirtualControl_RegionsInvalidated"/>
+            </Grid>
         </ScrollViewer>
 
     </Grid>
