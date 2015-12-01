@@ -17,6 +17,8 @@ namespace CompositionExample
         SpriteVisual drawingSurfaceVisual;
         CompositionDrawingSurface drawingSurface;
 
+        int drawCount;
+
         public Visual Visual { get { return drawingSurfaceVisual; } }
 
         public Size Size { get { return drawingSurface.Size; } }
@@ -38,6 +40,8 @@ namespace CompositionExample
 
         void DrawDrawingSurface()
         {
+            ++drawCount;
+
             using (var ds = CanvasComposition.CreateDrawingSession(drawingSurface))
             {
                 ds.Clear(Colors.Transparent);
@@ -46,12 +50,20 @@ namespace CompositionExample
 
                 ds.FillRoundedRectangle(rect, 15, 15, Colors.LightBlue);
                 ds.DrawRoundedRectangle(rect, 15, 15, Colors.Gray, 2);
+
                 ds.DrawText("This is a composition drawing surface", rect, Colors.Black, new CanvasTextFormat()
                 {
                     FontFamily = "Comic Sans MS",
                     FontSize = 32,
                     WordWrapping = CanvasWordWrapping.WholeWord,
                     VerticalAlignment = CanvasVerticalAlignment.Center,
+                    HorizontalAlignment = CanvasHorizontalAlignment.Center
+                });
+
+                ds.DrawText("Draws: " + drawCount, rect, Colors.Black, new CanvasTextFormat()
+                {
+                    FontSize = 10,
+                    VerticalAlignment = CanvasVerticalAlignment.Bottom,
                     HorizontalAlignment = CanvasHorizontalAlignment.Center
                 });
             }

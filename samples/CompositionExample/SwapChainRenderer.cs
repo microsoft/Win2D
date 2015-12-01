@@ -20,8 +20,18 @@ namespace CompositionExample
         Compositor compositor;
         CanvasSwapChain swapChain;
         SpriteVisual swapChainVisual;
-        CancellationTokenSource swapChainDrawLoopCancellationTokenSource;
+        CancellationTokenSource drawLoopCancellationTokenSource;
+
         int drawCount;
+        int deviceCount;
+
+        volatile bool paused;
+
+        public bool Paused
+        {
+            get { return paused; }
+            set { paused = value; }
+        }
 
         public Visual Visual { get { return swapChainVisual; } }
 
@@ -44,34 +54,53 @@ namespace CompositionExample
 
         public void Dispose()
         {
-            swapChainDrawLoopCancellationTokenSource?.Cancel();
+            drawLoopCancellationTokenSource?.Cancel();
             swapChain?.Dispose();
         }
 
         public void SetDevice(CanvasDevice device, Size windowSize)
         {
-            swapChainDrawLoopCancellationTokenSource?.Cancel();
+            ++deviceCount;
+
+            drawLoopCancellationTokenSource?.Cancel();
 
             swapChain = new CanvasSwapChain(device, 256, 256, 96);
             swapChainVisual.Brush = compositor.CreateSurfaceBrush(CanvasComposition.CreateCompositionSurfaceForSwapChain(compositor, swapChain));
 
-            swapChainDrawLoopCancellationTokenSource = new CancellationTokenSource();
+            drawLoopCancellationTokenSource = new CancellationTokenSource();
             Task.Factory.StartNew(
                 DrawLoop,
-                swapChainDrawLoopCancellationTokenSource.Token,
+                drawLoopCancellationTokenSource.Token,
                 TaskCreationOptions.LongRunning,
                 TaskScheduler.Default);
         }
 
         void DrawLoop()
         {
-            var canceled = swapChainDrawLoopCancellationTokenSource.Token;
+            var canceled = drawLoopCancellationTokenSource.Token;
 
             try
             {
+                // Tracking the previous pause state lets us draw once even after becoming paused,
+                // so the label text can change to indicate the paused state.
+                bool wasPaused = false;
+
                 while (!canceled.IsCancellationRequested)
                 {
-                    DrawSwapChain(swapChain);
+                    bool isPaused = paused;
+
+                    if (!isPaused || isPaused != wasPaused)
+                    {
+                        DrawSwapChain(swapChain, isPaused);
+                    }
+                    else
+                    {
+                        // A more sophisticated implementation might want to exit the draw loop when paused,
+                        // but to keep things simple we just wait on vblank to yield CPU.
+                        swapChain.WaitForVerticalBlank();
+                    }
+
+                    wasPaused = isPaused;
                 }
 
                 swapChain.Dispose();
@@ -82,7 +111,7 @@ namespace CompositionExample
             }
         }
 
-        void DrawSwapChain(CanvasSwapChain swapChain)
+        void DrawSwapChain(CanvasSwapChain swapChain, bool isPaused)
         {
             ++drawCount;
 
@@ -123,6 +152,15 @@ namespace CompositionExample
                         HorizontalAlignment = CanvasHorizontalAlignment.Center,
                         WordWrapping = CanvasWordWrapping.WholeWord,
                     });
+
+                var label = string.Format("Draws: {0}\nDevices: {1}\nTap to {2}", drawCount, deviceCount, isPaused ? "unpause" : "pause");
+
+                ds.DrawText(label, rect, Colors.Black, new CanvasTextFormat()
+                {
+                    FontSize = 10,
+                    VerticalAlignment = CanvasVerticalAlignment.Bottom,
+                    HorizontalAlignment = CanvasHorizontalAlignment.Center
+                });
             }
 
             swapChain.Present();

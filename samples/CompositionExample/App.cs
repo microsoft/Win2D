@@ -67,6 +67,8 @@ namespace CompositionExample
                 return;
             }
 
+            window.PointerPressed += Window_PointerPressed;
+
             CoreApplication.Suspending += CoreApplication_Suspending;
 
             compositor = new Compositor();
@@ -144,6 +146,11 @@ namespace CompositionExample
             animation.Duration = TimeSpan.FromSeconds(1);
 
             visual.StartAnimation("Offset", animation);
+        }
+
+        void Window_PointerPressed(CoreWindow sender, PointerEventArgs args)
+        {
+            swapChainRenderer.Paused = !swapChainRenderer.Paused;
         }
 
         void CoreApplication_Suspending(object sender, Windows.ApplicationModel.SuspendingEventArgs args)
