@@ -522,8 +522,6 @@ IFACEMETHODIMP CanvasSpriteBatch::Close()
         
         if (m_sortMode == CanvasSpriteSortMode::Bitmap)
         {
-            // TODO 5911: would we be better off adding an index field to Sprite and
-            // using that to preserve order?
             std::stable_sort(m_sprites.begin(), m_sprites.end(),
                 [] (auto const& a, auto const& b)
                 {
