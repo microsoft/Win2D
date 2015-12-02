@@ -7,7 +7,6 @@
 #include "StubDWriteFontCollection.h"
 
 using namespace Microsoft::Graphics::Canvas;
-using namespace Microsoft::Graphics::Canvas::Effects;
 
 TEST_CLASS(CanvasTextLayoutTests)
 {
@@ -142,5 +141,36 @@ public:
         auto layout2 = ref new CanvasTextLayout(m_device, L"Abc", m_defaultFormat, 0, 0);
 
         Assert::AreEqual(1, layout2->MaximumBidiReorderingDepth);
+    }
+
+
+    TEST_METHOD(CanvasTextLayoutTests_DefaultTypographyIsNull)
+    {
+        auto layout = ref new CanvasTextLayout(m_device, L"Abc", m_defaultFormat, 0, 0);
+
+        for(int i=0; i<3; ++i)
+        {
+            auto typography = layout->GetTypography(i);
+            Assert::IsNull(typography);
+        }
+    }
+
+
+    TEST_METHOD(CanvasTextLayoutTests_TypographyIsMutable)
+    {
+        auto layout = ref new CanvasTextLayout(m_device, L"Abc", m_defaultFormat, 0, 0);
+
+        auto typography = ref new CanvasTypography();
+
+        layout->SetTypography(2, 1, typography);
+
+        typography->AddFeature(CanvasTypographyFeatureName::Default, 1);
+
+        //
+        // Make sure the same typography is set to the layout, even though we added a feature.
+        //
+        auto retrievedTypography = layout->GetTypography(2);
+
+        Assert::AreEqual(typography, retrievedTypography);
     }
 };

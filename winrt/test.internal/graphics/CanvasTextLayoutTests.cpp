@@ -7,6 +7,7 @@
 #include <lib/brushes/CanvasSolidColorBrush.h>
 #include <lib/brushes/CanvasLinearGradientBrush.h>
 #include <lib/text/CanvasTextLayout.h>
+#include <lib/text/CanvasTypography.h>
 
 #include "stubs/StubCanvasBrush.h"
 #include "stubs/StubCanvasTextLayoutAdapter.h"
@@ -14,6 +15,7 @@
 #include "stubs/CustomInlineObject.h"
 
 #include "mocks/MockDWriteTextRenderer.h"
+#include "mocks/MockDWriteTypography.h"
 
 #include "utils/TextHelpers.h"
 
@@ -34,6 +36,7 @@ namespace canvas
             ComPtr<MockD2DDeviceContext> DeviceContext;
             ComPtr<StubCanvasDevice> Device;
             std::vector<ComPtr<MockD2DEffectThatCountsCalls>> MockEffects;
+            ComPtr<CanvasTypographyFactory> TypographyFactory;
 
             Fixture()
                 : Adapter(std::make_shared<StubCanvasTextLayoutAdapter>())
@@ -43,6 +46,8 @@ namespace canvas
                 CustomFontManagerAdapter::SetInstance(Adapter);
 
                 Format = Make<CanvasTextFormat>();
+
+                TypographyFactory = Make<CanvasTypographyFactory>();
 
                 Device->GetResourceCreationDeviceContextMethod.AllowAnyCall(
                     [=]
@@ -106,11 +111,27 @@ namespace canvas
                         *dpiX = DEFAULT_DPI;
                         *dpiY = DEFAULT_DPI;
                     });
+
+                Adapter->GetMockDWriteFactory()->CreateTypographyMethod.AllowAnyCall(
+                    [](IDWriteTypography** typography)
+                    {
+                        auto mockTypography = Make<MockDWriteTypography>();
+
+                        return mockTypography.CopyTo(typography);
+                    });
             }
 
             ComPtr<CanvasTextLayout> CreateSimpleTextLayout()
             {
                 return CanvasTextLayout::CreateNew(Device.Get(), WinString(L"A string"), Format.Get(), 0.0f, 0.0f);
+            }
+
+            ComPtr<ICanvasTypography> CreateTypography()
+            {
+                ComPtr<IInspectable> inspectable;
+                ThrowIfFailed(TypographyFactory->ActivateInstance(&inspectable));
+
+                return As<ICanvasTypography>(inspectable);
             }
         };
 
@@ -162,6 +183,7 @@ namespace canvas
             CanvasLineMetrics* lm{};
             CanvasClusterMetrics* cm{};
             ComPtr<IInspectable> customBrush;
+            ComPtr<ICanvasTypography> typography;
 
             Assert::AreEqual(RO_E_CLOSED, textLayout->GetFormatChangeIndices(&u, &arr));
 
@@ -294,6 +316,9 @@ namespace canvas
 
             Assert::AreEqual(RO_E_CLOSED, textLayout->get_LayoutBoundsIncludingTrailingWhitespace(&rect));
             Assert::AreEqual(RO_E_CLOSED, textLayout->get_MaximumBidiReorderingDepth(&i));
+
+            Assert::AreEqual(RO_E_CLOSED, textLayout->GetTypography(0, &typography));
+            Assert::AreEqual(RO_E_CLOSED, textLayout->SetTypography(0, 0, nullptr));
         }
 
         TEST_METHOD_EX(CanvasTextLayoutTests_NullArgs)
@@ -364,6 +389,8 @@ namespace canvas
             Assert::AreEqual(E_INVALIDARG, textLayout->GetCustomBrush(0, nullptr));
             Assert::AreEqual(E_INVALIDARG, textLayout->get_LayoutBoundsIncludingTrailingWhitespace(nullptr));
             Assert::AreEqual(E_INVALIDARG, textLayout->get_MaximumBidiReorderingDepth(nullptr));
+            Assert::AreEqual(E_INVALIDARG, textLayout->GetInlineObject(0, nullptr));
+            Assert::AreEqual(E_INVALIDARG, textLayout->GetTypography(0, nullptr));
         }
 
         TEST_METHOD_EX(CanvasTextLayoutTests_NegativeIntegralArgs)
@@ -384,6 +411,7 @@ namespace canvas
             CanvasTextLayoutRegion* hitTestDescArr{};
             uint32_t u{};
             ComPtr<ICanvasTextInlineObject> inlineObj;
+            ComPtr<ICanvasTypography> typography;
 
             Assert::AreEqual(E_INVALIDARG, textLayout->put_TrimmingDelimiterCount(-1));
 
@@ -443,6 +471,11 @@ namespace canvas
 
             Assert::AreEqual(E_INVALIDARG, textLayout->GetInlineObject(-1, &inlineObj));
             Assert::AreEqual(E_INVALIDARG, textLayout->SetInlineObject(-1, 0, inlineObj.Get()));
+            Assert::AreEqual(E_INVALIDARG, textLayout->SetInlineObject(0, -1, inlineObj.Get()));
+
+            Assert::AreEqual(E_INVALIDARG, textLayout->GetTypography(-1, &typography));
+            Assert::AreEqual(E_INVALIDARG, textLayout->SetTypography(-1, 0, typography.Get()));
+            Assert::AreEqual(E_INVALIDARG, textLayout->SetTypography(0, -1, typography.Get()));
         }
 
         //
@@ -2742,6 +2775,63 @@ namespace canvas
             int value;
             Assert::AreEqual(S_OK, textLayout->get_MaximumBidiReorderingDepth(&value));
             Assert::AreEqual(1234, value);
+        }
+
+        TEST_METHOD_EX(CanvasTextLayoutTests_SetTypography)
+        {
+            Fixture f;
+            auto textLayout = f.CreateSimpleTextLayout();
+
+            auto typography = f.CreateTypography();
+            auto expectedDWriteTypography = GetWrappedResource<IDWriteTypography>(typography);
+
+            f.Adapter->MockTextLayout->SetTypographyMethod.SetExpectedCalls(1,
+                [&](IDWriteTypography* dwriteTypography, DWRITE_TEXT_RANGE range)
+                {
+                    Assert::AreEqual(1u, range.startPosition);
+                    Assert::AreEqual(2u, range.length);
+
+                    Assert::IsTrue(IsSameInstance(expectedDWriteTypography.Get(), dwriteTypography));
+                    return S_OK;
+                });
+
+            Assert::AreEqual(S_OK, textLayout->SetTypography(1, 2, typography.Get()));
+        }
+
+        TEST_METHOD_EX(CanvasTextLayoutTests_SetTypography_NullTypographyIsOk)
+        {
+            Fixture f;
+            auto textLayout = f.CreateSimpleTextLayout();
+
+            f.Adapter->MockTextLayout->SetTypographyMethod.SetExpectedCalls(1,
+                [&](IDWriteTypography* dwriteTypography, DWRITE_TEXT_RANGE)
+                {
+                    Assert::IsNull(dwriteTypography);
+                    return S_OK;
+                });
+
+            Assert::AreEqual(S_OK, textLayout->SetTypography(0, 0, nullptr));
+        }
+
+        TEST_METHOD_EX(CanvasTextLayoutTests_GetTypography)
+        {
+            Fixture f;
+            auto textLayout = f.CreateSimpleTextLayout();
+
+            auto expectedTypography = f.CreateTypography();
+            auto expectedDWriteTypography = GetWrappedResource<IDWriteTypography>(expectedTypography);
+
+            f.Adapter->MockTextLayout->GetTypographyMethod.SetExpectedCalls(1,
+                [&](UINT32 index, IDWriteTypography** dwriteTypography, DWRITE_TEXT_RANGE*)
+                {
+                    Assert::AreEqual(123u, index);
+                    return expectedDWriteTypography.CopyTo(dwriteTypography);
+                });
+
+            ComPtr<ICanvasTypography> typography;
+            Assert::AreEqual(S_OK, textLayout->GetTypography(123u, &typography));
+
+            Assert::IsTrue(IsSameInstance(expectedTypography.Get(), typography.Get()));
         }
     };
 }

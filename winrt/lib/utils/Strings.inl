@@ -48,6 +48,7 @@ STRING(ImageBrushRequiresSourceRectangle, L"When using image types other than Ca
 STRING(InvalidAlphaModeForImageSource, L"An invalid alpha mode was specified. Use either CanvasAlphaMode.Ignore or CanvasAlphaMode.Premultiplied.")
 STRING(InvalidFontFamilyUri, L"The URI specified in the CanvasTextFormat's FontFamily is not a valid application URI that can be opened by StorageFile.GetFileFromApplicationUriAsync.")
 STRING(InvalidFontFamilyUriScheme, L"The URI specified in the CanvasTextFormat's FontFamily has an invalid scheme; the scheme may be omitted, or must be one of ms-appx:// or ms-appdata://.")
+STRING(InvalidTypographyFeatureName, L"Attempted to add a typography feature without setting a valid feature name.")
 STRING(MultipleAsyncCreateResourcesNotSupported, L"Only one asynchronous CreateResources action can be tracked at a time.")
 STRING(PathBuilderAddGeometryMidFigure, L"CanvasPathBuilder.AddGeometry may not be called in the middle of a figure.")
 STRING(PathBuilderClosedMidFigure, L"There was an attempt to use a CanvasPathBuilder, which was missing a call to CanvasPathBuilder.EndFigure.")

@@ -396,6 +396,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             int32_t characterCount,
             IInspectable* brush) override;
 
+        IFACEMETHOD(GetTypography)(
+            int32_t characterIndex,
+            ICanvasTypography** typography) override;
+
+        IFACEMETHOD(SetTypography)(
+            int32_t characterIndex,
+            int32_t characterCount,
+            ICanvasTypography* typography) override;
+
         //
         // IClosable
         //

@@ -677,5 +677,100 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         return result;
     }
+
+    inline DWRITE_FONT_FEATURE_TAG ToDWriteFontFeatureTag(CanvasTypographyFeatureName value)
+    {
+        if (value == CanvasTypographyFeatureName::None)
+            ThrowHR(E_INVALIDARG, Strings::InvalidTypographyFeatureName);
+
+        CHECK_ENUM_MEMBER(DWRITE_FONT_FEATURE_TAG_DEFAULT, CanvasTypographyFeatureName::Default);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_FEATURE_TAG_VERTICAL_WRITING, CanvasTypographyFeatureName::VerticalWriting);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_FEATURE_TAG_VERTICAL_ALTERNATES_AND_ROTATION, CanvasTypographyFeatureName::VerticalAlternatesAndRotation);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_FEATURE_TAG_ALTERNATIVE_FRACTIONS, CanvasTypographyFeatureName::AlternativeFractions);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_FEATURE_TAG_PETITE_CAPITALS_FROM_CAPITALS, CanvasTypographyFeatureName::PetiteCapitalsFromCapitals);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_FEATURE_TAG_SMALL_CAPITALS_FROM_CAPITALS, CanvasTypographyFeatureName::SmallCapitalsFromCapitals);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_FEATURE_TAG_CONTEXTUAL_ALTERNATES, CanvasTypographyFeatureName::ContextualAlternates);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_FEATURE_TAG_CASE_SENSITIVE_FORMS, CanvasTypographyFeatureName::CaseSensitiveForms);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_FEATURE_TAG_GLYPH_COMPOSITION_DECOMPOSITION, CanvasTypographyFeatureName::GlyphCompositionDecomposition);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_FEATURE_TAG_CONTEXTUAL_LIGATURES, CanvasTypographyFeatureName::ContextualLigatures);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_FEATURE_TAG_CAPITAL_SPACING, CanvasTypographyFeatureName::CapitalSpacing);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_FEATURE_TAG_CONTEXTUAL_SWASH, CanvasTypographyFeatureName::ContextualSwash);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_FEATURE_TAG_CURSIVE_POSITIONING, CanvasTypographyFeatureName::CursivePositioning);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_FEATURE_TAG_DISCRETIONARY_LIGATURES, CanvasTypographyFeatureName::DiscretionaryLigatures);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_FEATURE_TAG_EXPERT_FORMS, CanvasTypographyFeatureName::ExpertForms);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_FEATURE_TAG_FRACTIONS, CanvasTypographyFeatureName::Fractions);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_FEATURE_TAG_FULL_WIDTH, CanvasTypographyFeatureName::FullWidth);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_FEATURE_TAG_HALF_FORMS, CanvasTypographyFeatureName::HalfForms);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_FEATURE_TAG_HALANT_FORMS, CanvasTypographyFeatureName::HalantForms);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_FEATURE_TAG_ALTERNATE_HALF_WIDTH, CanvasTypographyFeatureName::AlternateHalfWidth);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_FEATURE_TAG_HISTORICAL_FORMS, CanvasTypographyFeatureName::HistoricalForms);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_FEATURE_TAG_HORIZONTAL_KANA_ALTERNATES, CanvasTypographyFeatureName::HorizontalKanaAlternates);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_FEATURE_TAG_HISTORICAL_LIGATURES, CanvasTypographyFeatureName::HistoricalLigatures);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_FEATURE_TAG_HALF_WIDTH, CanvasTypographyFeatureName::HalfWidth);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_FEATURE_TAG_HOJO_KANJI_FORMS, CanvasTypographyFeatureName::HojoKanjiForms);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_FEATURE_TAG_JIS04_FORMS, CanvasTypographyFeatureName::Jis04Forms);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_FEATURE_TAG_JIS78_FORMS, CanvasTypographyFeatureName::Jis78Forms);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_FEATURE_TAG_JIS83_FORMS, CanvasTypographyFeatureName::Jis83Forms);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_FEATURE_TAG_JIS90_FORMS, CanvasTypographyFeatureName::Jis90Forms);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_FEATURE_TAG_KERNING, CanvasTypographyFeatureName::Kerning);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_FEATURE_TAG_STANDARD_LIGATURES, CanvasTypographyFeatureName::StandardLigatures);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_FEATURE_TAG_LINING_FIGURES, CanvasTypographyFeatureName::LiningFigures);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_FEATURE_TAG_LOCALIZED_FORMS, CanvasTypographyFeatureName::LocalizedForms);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_FEATURE_TAG_MARK_POSITIONING, CanvasTypographyFeatureName::MarkPositioning);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_FEATURE_TAG_MATHEMATICAL_GREEK, CanvasTypographyFeatureName::MathematicalGreek);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_FEATURE_TAG_MARK_TO_MARK_POSITIONING, CanvasTypographyFeatureName::MarkToMarkPositioning);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_FEATURE_TAG_ALTERNATE_ANNOTATION_FORMS, CanvasTypographyFeatureName::AlternateAnnotationForms);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_FEATURE_TAG_NLC_KANJI_FORMS, CanvasTypographyFeatureName::NlcKanjiForms);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_FEATURE_TAG_OLD_STYLE_FIGURES, CanvasTypographyFeatureName::OldStyleFigures);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_FEATURE_TAG_ORDINALS, CanvasTypographyFeatureName::Ordinals);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_FEATURE_TAG_PROPORTIONAL_ALTERNATE_WIDTH, CanvasTypographyFeatureName::ProportionalAlternateWidth);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_FEATURE_TAG_PETITE_CAPITALS, CanvasTypographyFeatureName::PetiteCapitals);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_FEATURE_TAG_PROPORTIONAL_FIGURES, CanvasTypographyFeatureName::ProportionalFigures);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_FEATURE_TAG_PROPORTIONAL_WIDTHS, CanvasTypographyFeatureName::ProportionalWidths);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_FEATURE_TAG_QUARTER_WIDTHS, CanvasTypographyFeatureName::QuarterWidths);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_FEATURE_TAG_REQUIRED_LIGATURES, CanvasTypographyFeatureName::RequiredLigatures);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_FEATURE_TAG_RUBY_NOTATION_FORMS, CanvasTypographyFeatureName::RubyNotationForms);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_FEATURE_TAG_STYLISTIC_ALTERNATES, CanvasTypographyFeatureName::StylisticAlternates);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_FEATURE_TAG_SCIENTIFIC_INFERIORS, CanvasTypographyFeatureName::ScientificInferiors);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_FEATURE_TAG_SMALL_CAPITALS, CanvasTypographyFeatureName::SmallCapitals);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_FEATURE_TAG_SIMPLIFIED_FORMS, CanvasTypographyFeatureName::SimplifiedForms);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_FEATURE_TAG_STYLISTIC_SET_1, CanvasTypographyFeatureName::StylisticSet1);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_FEATURE_TAG_STYLISTIC_SET_2, CanvasTypographyFeatureName::StylisticSet2);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_FEATURE_TAG_STYLISTIC_SET_3, CanvasTypographyFeatureName::StylisticSet3);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_FEATURE_TAG_STYLISTIC_SET_4, CanvasTypographyFeatureName::StylisticSet4);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_FEATURE_TAG_STYLISTIC_SET_5, CanvasTypographyFeatureName::StylisticSet5);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_FEATURE_TAG_STYLISTIC_SET_6, CanvasTypographyFeatureName::StylisticSet6);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_FEATURE_TAG_STYLISTIC_SET_7, CanvasTypographyFeatureName::StylisticSet7);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_FEATURE_TAG_STYLISTIC_SET_8, CanvasTypographyFeatureName::StylisticSet8);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_FEATURE_TAG_STYLISTIC_SET_9, CanvasTypographyFeatureName::StylisticSet9);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_FEATURE_TAG_STYLISTIC_SET_10, CanvasTypographyFeatureName::StylisticSet10);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_FEATURE_TAG_STYLISTIC_SET_11, CanvasTypographyFeatureName::StylisticSet11);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_FEATURE_TAG_STYLISTIC_SET_12, CanvasTypographyFeatureName::StylisticSet12);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_FEATURE_TAG_STYLISTIC_SET_13, CanvasTypographyFeatureName::StylisticSet13);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_FEATURE_TAG_STYLISTIC_SET_14, CanvasTypographyFeatureName::StylisticSet14);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_FEATURE_TAG_STYLISTIC_SET_15, CanvasTypographyFeatureName::StylisticSet15);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_FEATURE_TAG_STYLISTIC_SET_16, CanvasTypographyFeatureName::StylisticSet16);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_FEATURE_TAG_STYLISTIC_SET_17, CanvasTypographyFeatureName::StylisticSet17);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_FEATURE_TAG_STYLISTIC_SET_18, CanvasTypographyFeatureName::StylisticSet18);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_FEATURE_TAG_STYLISTIC_SET_19, CanvasTypographyFeatureName::StylisticSet19);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_FEATURE_TAG_STYLISTIC_SET_20, CanvasTypographyFeatureName::StylisticSet20);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_FEATURE_TAG_SUBSCRIPT, CanvasTypographyFeatureName::Subscript);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_FEATURE_TAG_SUPERSCRIPT, CanvasTypographyFeatureName::Superscript);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_FEATURE_TAG_SWASH, CanvasTypographyFeatureName::Swash);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_FEATURE_TAG_TITLING, CanvasTypographyFeatureName::Titling);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_FEATURE_TAG_TRADITIONAL_NAME_FORMS, CanvasTypographyFeatureName::TraditionalNameForms);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_FEATURE_TAG_TABULAR_FIGURES, CanvasTypographyFeatureName::TabularFigures);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_FEATURE_TAG_TRADITIONAL_FORMS, CanvasTypographyFeatureName::TraditionalForms);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_FEATURE_TAG_THIRD_WIDTHS, CanvasTypographyFeatureName::ThirdWidths);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_FEATURE_TAG_UNICASE, CanvasTypographyFeatureName::Unicase);
+        CHECK_ENUM_MEMBER(DWRITE_FONT_FEATURE_TAG_SLASHED_ZERO, CanvasTypographyFeatureName::SlashedZero);
+        return static_cast<DWRITE_FONT_FEATURE_TAG>(value);
+    }
+
+    inline CanvasTypographyFeatureName ToCanvasTypographyFeatureName(DWRITE_FONT_FEATURE_TAG value)
+    {
+        // static_asserts in ToDWriteFontFeatureTag validate that this cast is ok
+        return static_cast<CanvasTypographyFeatureName>(value);
+    }
    
 }}}}}

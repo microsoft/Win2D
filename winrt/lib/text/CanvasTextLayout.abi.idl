@@ -245,10 +245,18 @@ namespace Microsoft.Graphics.Canvas.Text
             [out] UINT32* valueCount,
             [out, size_is(, *valueCount), retval] CanvasClusterMetrics** valueElements);
 
+        HRESULT SetTypography(
+            [in] INT32 characterIndex,
+            [in] INT32 characterCount,
+            [in] CanvasTypography* typography);
+
+        HRESULT GetTypography(
+            [in] INT32 characterIndex,
+            [out, retval] CanvasTypography** typography);
+
         // Not exposed:                             Reason
         //---------------                           -------
         // Get/Set FontCollection                   Relies on IDWriteFontCollection. Separate design issue on how to expose this.
-        // Get/Set Typography                       Relies on IDWriteTypography. Advanced usage. Separate design issue on how to expose this.
 
         // Exposed through IDWriteTextLayout::GetMetrics.
         [propget] HRESULT LayoutBounds(

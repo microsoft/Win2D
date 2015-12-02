@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+﻿<?xml version="1.0"?>
 <!--
 Copyright (c) Microsoft Corporation. All rights reserved.
 
@@ -955,5 +955,32 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         </p>
       </remarks>
     </member>
+
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.SetTypography(System.Int32,System.Int32,Microsoft.Graphics.Canvas.Text.CanvasTypography)" Experimental="true">
+       <summary>
+         Sets the typography features that affect a specified group of characters.
+       </summary>
+      <remarks>
+        <p>
+           It's valid to specify a null typography.
+        </p>
+        <p>
+           CanvasTypography objects are mutable. Setting a typography object to character 
+           positions in a text layout doesn't 'snap' its state. Rather, modifying a 
+           CanvasTypography will affect any layouts to which it has been set.
+        </p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.GetTypography(System.Int32)" Experimental="true">
+      <summary>
+        Gets the typography features that affect the character at the position specified.
+      </summary>
+      <remarks>
+        <p>
+           The default typography is always null.
+        </p>
+      </remarks>
+    </member>
+
   </members>
 </doc>

@@ -1750,6 +1750,52 @@ void CanvasTextLayout::SetCustomBrushInternal(
     ThrowIfFailed(resource->SetDrawingEffect(drawingEffect.Get(), textRange));
 }
 
+IFACEMETHODIMP CanvasTextLayout::GetTypography(
+    int32_t characterIndex,
+    ICanvasTypography** typography)
+{
+    return ExceptionBoundary(
+        [&]
+        {
+            CheckAndClearOutPointer(typography);
+            ThrowIfNegative(characterIndex);
+
+            auto& resource = GetResource();
+
+            ComPtr<IDWriteTypography> dwriteTypography;
+            ThrowIfFailed(resource->GetTypography(characterIndex, &dwriteTypography, nullptr));
+
+            ComPtr<ICanvasTypography> canvasTypography;
+
+            if(dwriteTypography)
+                canvasTypography = ResourceManager::GetOrCreate<ICanvasTypography>(dwriteTypography.Get());
+
+            ThrowIfFailed(canvasTypography.CopyTo(typography));
+        });
+}
+
+IFACEMETHODIMP CanvasTextLayout::SetTypography(
+    int32_t characterIndex,
+    int32_t characterCount,
+    ICanvasTypography* typography)
+{
+    return ExceptionBoundary(
+        [&]
+        {
+            ThrowIfNegative(characterIndex);
+            ThrowIfNegative(characterCount);
+
+            auto& resource = GetResource();
+
+            ComPtr<IDWriteTypography> dwriteTypography;
+
+            if(typography)
+                dwriteTypography = GetWrappedResource<IDWriteTypography>(typography);
+
+            ThrowIfFailed(resource->SetTypography(dwriteTypography.Get(), ToDWriteTextRange(characterIndex, characterCount)));
+        });
+}
+
 IFACEMETHODIMP CanvasTextLayout::Close()
 {
     m_device.Close();

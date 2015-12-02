@@ -1,0 +1,128 @@
+﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+//
+// Licensed under the MIT License. See LICENSE.txt in the project root for license information.
+
+namespace Microsoft.Graphics.Canvas.Text
+{
+    [version(VERSION)]
+    typedef enum CanvasTypographyFeatureName
+    {
+        None = 0,
+        Default = 0x746c6664,
+        VerticalWriting = 0x74726576,
+        VerticalAlternatesAndRotation = 0x32747276,
+        AlternativeFractions = 0x63726661,
+        PetiteCapitalsFromCapitals = 0x63703263,
+        SmallCapitalsFromCapitals = 0x63733263,
+        ContextualAlternates = 0x746c6163,
+        CaseSensitiveForms = 0x65736163,
+        GlyphCompositionDecomposition = 0x706d6363,
+        ContextualLigatures = 0x67696c63,
+        CapitalSpacing = 0x70737063,
+        ContextualSwash = 0x68777363,
+        CursivePositioning = 0x73727563,
+        DiscretionaryLigatures = 0x67696c64,
+        ExpertForms = 0x74707865,
+        Fractions = 0x63617266,
+        FullWidth = 0x64697766,
+        HalfForms = 0x666c6168,
+        HalantForms = 0x6e6c6168,
+        AlternateHalfWidth = 0x746c6168,
+        HistoricalForms = 0x74736968,
+        HorizontalKanaAlternates = 0x616e6b68,
+        HistoricalLigatures = 0x67696c68,
+        HalfWidth = 0x64697768,
+        HojoKanjiForms = 0x6f6a6f68,
+        Jis04Forms = 0x3430706a,
+        Jis78Forms = 0x3837706a,
+        Jis83Forms = 0x3338706a,
+        Jis90Forms = 0x3039706a,
+        Kerning = 0x6e72656b,
+        StandardLigatures = 0x6167696c,
+        LiningFigures = 0x6d756e6c,
+        LocalizedForms = 0x6c636f6c,
+        MarkPositioning = 0x6b72616d,
+        MathematicalGreek = 0x6b72676d,
+        MarkToMarkPositioning = 0x6b6d6b6d,
+        AlternateAnnotationForms = 0x746c616e,
+        NlcKanjiForms = 0x6b636c6e,
+        OldStyleFigures = 0x6d756e6f,
+        Ordinals = 0x6e64726f,
+        ProportionalAlternateWidth = 0x746c6170,
+        PetiteCapitals = 0x70616370,
+        ProportionalFigures = 0x6d756e70,
+        ProportionalWidths = 0x64697770,
+        QuarterWidths = 0x64697771,
+        RequiredLigatures = 0x67696c72,
+        RubyNotationForms = 0x79627572,
+        StylisticAlternates = 0x746c6173,
+        ScientificInferiors = 0x666e6973,
+        SmallCapitals = 0x70636d73,
+        SimplifiedForms = 0x6c706d73,
+        StylisticSet1 = 0x31307373,
+        StylisticSet2 = 0x32307373,
+        StylisticSet3 = 0x33307373,
+        StylisticSet4 = 0x34307373,
+        StylisticSet5 = 0x35307373,
+        StylisticSet6 = 0x36307373,
+        StylisticSet7 = 0x37307373,
+        StylisticSet8 = 0x38307373,
+        StylisticSet9 = 0x39307373,
+        StylisticSet10 = 0x30317373,
+        StylisticSet11 = 0x31317373,
+        StylisticSet12 = 0x32317373,
+        StylisticSet13 = 0x33317373,
+        StylisticSet14 = 0x34317373,
+        StylisticSet15 = 0x35317373,
+        StylisticSet16 = 0x36317373,
+        StylisticSet17 = 0x37317373,
+        StylisticSet18 = 0x38317373,
+        StylisticSet19 = 0x39317373,
+        StylisticSet20 = 0x30327373,
+        Subscript = 0x73627573,
+        Superscript = 0x73707573,
+        Swash = 0x68737773,
+        Titling = 0x6c746974,
+        TraditionalNameForms = 0x6d616e74,
+        TabularFigures = 0x6d756e74,
+        TraditionalForms = 0x64617274,
+        ThirdWidths = 0x64697774,
+        Unicase = 0x63696e75,
+        SlashedZero = 0x6f72657a
+    } CanvasTypographyFeatureName;
+    
+    [version(VERSION)]
+    typedef struct CanvasTypographyFeature
+    {
+        CanvasTypographyFeatureName Name;
+        UINT32 Parameter;
+    } CanvasTypographyFeature;
+
+    runtimeclass CanvasTypography;
+
+    [version(VERSION), uuid(F15BC312-447F-44ED-8BEC-7E40F4A4DFC8), exclusiveto(CanvasTypography)]
+    interface ICanvasTypography : IInspectable
+        requires Windows.Foundation.IClosable
+    {
+        [overload("AddFeature")]
+        HRESULT AddFeature([in] CanvasTypographyFeature feature);
+
+        [overload("AddFeature")]
+        HRESULT AddFeatureWithNameAndParameter(
+            [in] CanvasTypographyFeatureName name,
+            [in] UINT32 parameter);
+
+        HRESULT GetFeatures(
+            [out] UINT32* featureCount,
+            [out, size_is(, *featureCount), retval] CanvasTypographyFeature** features);
+    }
+
+    // 
+    // Default-activatable using the shared DWrite factory.
+    //
+    [version(VERSION), activatable(VERSION)]
+    runtimeclass CanvasTypography
+    {
+        [default] interface ICanvasTypography;
+    }
+}

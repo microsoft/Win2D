@@ -42,6 +42,11 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
                                       SelectedItem="{Binding CurrentTextDirection, Mode=TwoWay}"
                                       SelectionChanged="TextDirectionChanged"
                                       HorizontalAlignment="Stretch"/>
+                            <TextBlock>Typography option:</TextBlock>
+                            <ComboBox ItemsSource="{Binding TypographyOptions}"
+                                      SelectedItem="{Binding CurrentTypographyOption, Mode=TwoWay}"
+                                      SelectionChanged="TypographyChanged"
+                                      HorizontalAlignment="Stretch"/>
                             <ToggleButton Content="Use ellipsis trimming" IsChecked="{Binding UseEllipsisTrimming, Mode=TwoWay}" Click="EllipsisTrimming_Click" HorizontalAlignment="Stretch"/>
                             <ToggleButton Content="Use inline objects" IsChecked="{Binding ApplyInlineObjects, Mode=TwoWay}" Click="UseInlineObjectsClicked" HorizontalAlignment="Stretch"/>
                             <TextBlock><LineBreak/>Show bounding boxes:</TextBlock>

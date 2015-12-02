@@ -14,6 +14,7 @@
 #include "text/CanvasFontSet.h"
 #include "text/CanvasTextLayout.h"
 #include "text/CanvasTextRenderingParameters.h"
+#include "text/CanvasTypography.h"
 
 
 std::unordered_map<IUnknown*, WeakRef> ResourceManager::m_resources;
@@ -51,6 +52,7 @@ std::vector<ResourceManager::TryCreateFunction> ResourceManager::tryCreateFuncti
     TryCreate<IDWriteFontCollection,       CanvasFontSet,                 MakeWrapper>,
     TryCreate<IDWriteFont2,                CanvasFontFace,                MakeWrapper>,
 #endif
+    TryCreate<IDWriteTypography,           CanvasTypography,              MakeWrapper>,
 
     // Effects get their very own try-create function. These are special because ID2D1Effect
     // can map to many different Win2D wrapper types depending on its D2D1_PROPERTY_CLSID.

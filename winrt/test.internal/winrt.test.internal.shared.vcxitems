@@ -111,6 +111,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDWriteTextFormat.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDWriteTextLayout.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDWriteTextRenderer.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDWriteTypography.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockHelpers.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockProperties.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockSurfaceImageSource.h" />
@@ -194,6 +195,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasTextLayoutTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasTextRenderingParametersUnitTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasTextRendererUnitTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasTypographyUnitTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)graphics\DeviceContextPoolUnitTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)graphics\PolymorphicBitmapInteropUnitTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)stubs\StubD2DResources.cpp" />

@@ -1,0 +1,727 @@
+<?xml version="1.0"?>
+<!--
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+Licensed under the MIT License. See LICENSE.txt in the project root for license information.
+-->
+
+<doc>
+  <assembly>
+    <name>Microsoft.Graphics.Canvas</name>
+  </assembly>
+  <members>
+    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasTypography" Experimental="true">
+      <summary>
+        Represents a collection of typography features.
+      </summary>
+      <remarks>
+        <p>
+          As an example of how to apply a typography option to a piece of text:
+        </p>
+        <code>
+          var typography = new CanvasTypography();
+          typography.AddFeature(CanvasTypographyFeatureName.ContextualSwash, 1);
+
+          var format = new CanvasTextFormat();
+          var textLayout = new CanvasTextLayout(resourceCreator, "Abc", format, 100, 100);
+          textLayout.SetTypography(1, 1, typography);
+        </code>
+        <p>
+          A CanvasTypography is mutable; adding features will modify it.
+          It's valid to add the same feature multiple times, regardless of the parameter.
+        </p>
+        <p>
+          Not all features are supported by all fonts. If a feature is not supported 
+          by the font being used with the typography option, the feature will simply be ignored.
+        </p>
+        <p>
+          While font features treat their parameters in different ways, there is
+          a general convention that setting a feature's parameter to zero disables
+          the feature, and a nonzero parameter enables it.
+        </p>
+        <p>
+          When using <a href="Interop.htm">Direct2D interop</a>, this Win2D class
+          corresponds to the DirectWrite interface IDWriteTypography.
+        </p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTypography.#ctor">
+      <summary>Initializes a new instance of the CanvasTypography class.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTypography.AddFeature(Microsoft.Graphics.Canvas.Text.CanvasTypographyFeature)">
+      <summary>Adds an OpenType font feature.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTypography.AddFeature(Microsoft.Graphics.Canvas.Text.CanvasTypographyFeatureName,System.UInt32)">
+      <summary>Adds an OpenType font feature.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTypography.GetFeatures">
+      <summary>Gets an array of all the OpenType font features that comprise this CanvasTypography.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTypography.Dispose">
+      <summary>Releases all resources used by the CanvasTypography.</summary>
+    </member>
+    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeature" Experimental="true">
+      <summary>Describes an OpenType font feature name and its parameter.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeature.Name">
+      <summary>Identifies which OpenType font feature this is.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeature.Parameter">
+      <summary>A parameter which is passed to an OpenType font feature.</summary>
+    </member>
+    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeatureName" Experimental="true">
+      <summary>Identifies an OpenType font feature.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeatureName.None">
+      <summary>No typography feature specified.</summary>
+      <remarks>
+        <p>
+          This placeholder value doesn't correspond to any OpenType language tag.
+          It's not valid to add typography features with this name. This value serves
+          as a hint for apps to choose a valid OpenType language tag while
+          adding typography features.
+        </p>
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeatureName.Default">
+      <summary>Indicates a set of default language behaviors.</summary>
+      <remarks>
+        <p>
+          The equivalent OpenType tag is 'dflt'.
+        </p>
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeatureName.VerticalWriting">
+      <summary>Indicates that the font is displayed vertically.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeatureName.VerticalAlternatesAndRotation">
+      <summary>Replaces normal figures with figures adjusted for vertical display.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeatureName.AlternativeFractions">
+      <summary>Replaces figures separated by a slash with an alternative form.</summary>
+      <remarks>
+        <p>
+          The equivalent OpenType tag is 'afrc'.
+        </p>
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeatureName.PetiteCapitalsFromCapitals">
+      <summary>
+        Turns capital characters into petite capitals. 
+      </summary>
+      <remarks>
+        <p>
+          The equivalent OpenType tag is 'c2pc'.
+        </p>
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeatureName.SmallCapitalsFromCapitals">
+      <summary>Turns capital characters into small capitals. </summary>
+      <remarks>
+        <p>
+          The equivalent OpenType tag is 'c2sc'.
+        </p>
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeatureName.ContextualAlternates">
+      <summary>In some situations, replaces default glyphs with alternate forms which provide better joining behavior. </summary>
+      <remarks>
+        <p>
+          The equivalent OpenType tag is 'calt'.
+        </p>
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeatureName.CaseSensitiveForms">
+      <summary>Shifts various punctuation marks up to a position that works better with all-capital sequences or sets of lining figures; also changes oldstyle figures to lining figures. </summary>
+      <remarks>
+        <p>
+          The equivalent OpenType tag is 'case'.
+        </p>
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeatureName.GlyphCompositionDecomposition">
+      <summary>Allows for the decomposing of a character into two glyphs or composition of two characters into a single glyph for better glyph processing.</summary>
+      <remarks>
+        <p>
+          The equivalent OpenType tag is 'ccmp'.
+        </p>
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeatureName.ContextualLigatures">
+      <summary>Replaces a sequence of glyphs with a single glyph which is preferred for typographic purposes.</summary>
+      <remarks>
+        <p>
+          The equivalent OpenType tag is 'clig'.
+        </p>
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeatureName.CapitalSpacing">
+      <summary>Globally adjusts inter-glyph spacing for all-capital text.</summary>
+      <remarks>
+        <p>
+          The equivalent OpenType tag is 'cpsp'.
+        </p>
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeatureName.ContextualSwash">
+      <summary>Replaces default character glyphs with corresponding swash glyphs in a specified context. </summary>
+      <remarks>
+        <p>
+          The equivalent OpenType tag is 'cswh'.
+        </p>
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeatureName.CursivePositioning">
+      <summary>In cursive scripts like Arabic, this feature cursively positions adjacent glyphs.</summary>
+      <remarks>
+        <p>
+          The equivalent OpenType tag is 'curs'.
+        </p>
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeatureName.DiscretionaryLigatures">
+      <summary>Replaces a sequence of glyphs with a single glyph which is preferred for typographic purposes. </summary>
+      <remarks>
+        <p>
+          The equivalent OpenType tag is 'dlig'.
+        </p>
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeatureName.ExpertForms">
+      <summary>Replaces standard forms in Japanese fonts with corresponding forms preferred by typographers. </summary>
+      <remarks>
+        <p>
+          The equivalent OpenType tag is 'expt'.
+        </p>
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeatureName.Fractions">
+      <summary>Replaces figures separated by a slash with 'common' (diagonal) fractions.</summary>
+      <remarks>
+        <p>
+          The equivalent OpenType tag is 'frac'.
+        </p>
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeatureName.FullWidth">
+      <summary>Replaces glyphs set on other widths with glyphs set on full (usually em) widths. </summary>
+      <remarks>
+        <p>
+          The equivalent OpenType tag is 'fwid'.
+        </p>
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeatureName.HalfForms">
+      <summary>Produces the half forms of consonants in Indic scripts.</summary>
+      <remarks>
+        <p>
+          The equivalent OpenType tag is 'half'.
+        </p>
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeatureName.HalantForms">
+      <summary>Produces the halant forms of consonants in Indic scripts. </summary>
+      <remarks>
+        <p>
+          The equivalent OpenType tag is 'haln'.
+        </p>
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeatureName.AlternateHalfWidth">
+      <summary>Re-spaces glyphs designed to be set on full-em widths, fitting them onto half-em widths. </summary>
+      <remarks>
+        <p>
+          The equivalent OpenType tag is 'halt'.
+        </p>
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeatureName.HistoricalForms">
+      <summary>Replaces the default (current) forms with the historical alternates.</summary>
+      <remarks>
+        <p>
+          The equivalent OpenType tag is 'hist'.
+        </p>
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeatureName.HorizontalKanaAlternates">
+      <summary>Replaces standard Japanese kana with forms that have been specially designed for only horizontal writing. </summary>
+      <remarks>
+        <p>
+          The equivalent OpenType tag is 'hkna'.
+        </p>
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeatureName.HistoricalLigatures">
+      <summary>Replaces the default (current) forms with the historical alternates. </summary>
+      <remarks>
+        <p>
+          The equivalent OpenType tag is 'hlig'.
+        </p>
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeatureName.HalfWidth">
+      <summary>Replaces glyphs on proportional widths, or fixed widths other than half an em, with glyphs on half-em (en) widths. </summary>
+      <remarks>
+        <p>
+          The equivalent OpenType tag is 'hwid'.
+        </p>
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeatureName.HojoKanjiForms">
+      <summary>Used to access the JIS X 0212-1990 glyphs for the cases when the JIS X 0213:2004 form is encoded. </summary>
+      <remarks>
+        <p>
+          The equivalent OpenType tag is 'hojo'.
+        </p>
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeatureName.Jis04Forms">
+      <summary>Enables a subset of NlcKanjiForms, producing glyph forms consistant with JIS X 0213:2004.</summary>
+      <remarks>
+        <p>
+          The equivalent OpenType tag is 'jp04'.
+        </p>
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeatureName.Jis78Forms">
+      <summary>Replaces default (JIS90) Japanese glyphs with the corresponding forms from the JIS C 6226-1978 (JIS78) specification.</summary>
+      <remarks>
+        <p>
+          The equivalent OpenType tag is 'jp78'.
+        </p>
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeatureName.Jis83Forms">
+      <summary>Replaces default (JIS90) Japanese glyphs with the corresponding forms from the JIS X 0208-1983 (JIS83) specification.</summary>
+      <remarks>
+        <p>
+          The equivalent OpenType tag is 'jp83'.
+        </p>
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeatureName.Jis90Forms">
+      <summary>Replaces Japanese glyphs from the JIS78 or JIS83 specifications with the corresponding forms from the JIS X 0208-1990 (JIS90) specification.</summary>
+      <remarks>
+        <p>
+          The equivalent OpenType tag is 'jp90'.
+        </p>
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeatureName.Kerning">
+      <summary>Adjusts amount of space between glyphs, generally to provide optically consistent spacing between glyphs. </summary>
+      <remarks>
+        <p>
+          The equivalent OpenType tag is 'kern'.
+        </p>
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeatureName.StandardLigatures">
+      <summary>Replaces a sequence of glyphs with a single glyph which is preferred for typographic purposes. </summary>
+      <remarks>
+        <p>
+          The equivalent OpenType tag is 'liga'.
+        </p>
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeatureName.LiningFigures">
+      <summary>Changes selected figures from oldstyle to the default lining form.</summary>
+      <remarks>
+        <p>
+          The equivalent OpenType tag is 'lnum'.
+        </p>
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeatureName.LocalizedForms">
+      <summary>Enables localized forms of glyphs to be substituted for default forms. </summary>
+      <remarks>
+        <p>
+          The equivalent OpenType tag is 'locl'.
+        </p>
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeatureName.MarkPositioning">
+      <summary>Positions mark glyphs with respect to base glyphs. </summary>
+      <remarks>
+        <p>
+          The equivalent OpenType tag is 'mark'.
+        </p>
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeatureName.MathematicalGreek">
+      <summary>Replaces standard typographic forms of Greek glyphs with corresponding forms commonly used in mathematical notation.</summary>
+      <remarks>
+        <p>
+          The equivalent OpenType tag is 'mgrk'.
+        </p>
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeatureName.MarkToMarkPositioning">
+      <summary>Positions marks with respect to other marks. </summary>
+      <remarks>
+        <p>
+          The equivalent OpenType tag is 'mkmk'.
+        </p>
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeatureName.AlternateAnnotationForms">
+      <summary>Replaces default glyphs with various notational forms.</summary>
+      <remarks>
+        <p>
+          The equivalent OpenType tag is 'nalt'.
+        </p>
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeatureName.NlcKanjiForms">
+      <summary>Used to access glyphs made from glyph shapes defined by the National Language Council (NLC) of Japan for a number of JIS characters. </summary>
+      <remarks>
+        <p>
+          The equivalent OpenType tag is 'nlck'.
+        </p>
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeatureName.OldStyleFigures">
+      <summary>Changes selected figures from the default lining style to oldstyle form. </summary>
+      <remarks>
+        <p>
+          The equivalent OpenType tag is 'onum'.
+        </p>
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeatureName.Ordinals">
+      <summary>Replaces default alphabetic glyphs with the corresponding ordinal forms for use after figures. </summary>
+      <remarks>
+        <p>
+          The equivalent OpenType tag is 'ordn'.
+        </p>
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeatureName.ProportionalAlternateWidth">
+      <summary>Respaces glyphs designed to be set on full-em widths, fitting them onto individual (more or less proportional) horizontal widths.</summary>
+      <remarks>
+        <p>
+          The equivalent OpenType tag is 'palt'.
+        </p>
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeatureName.PetiteCapitals">
+      <summary>Turns lowercase characters into petite capitals. </summary>
+      <remarks>
+        <p>
+          The equivalent OpenType tag is 'pcap'.
+        </p>
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeatureName.ProportionalFigures">
+      <summary>Replaces figure glyphs set on uniform (tabular) widths with corresponding glyphs set on glyph-specific (proportional) widths.</summary>
+      <remarks>
+        <p>
+          The equivalent OpenType tag is 'pnum'.
+        </p>
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeatureName.ProportionalWidths">
+      <summary>Replaces glyphs set on uniform widths (typically full or half-em) with proportionally spaced glyphs. </summary>
+      <remarks>
+        <p>
+          The equivalent OpenType tag is 'pwid'.
+        </p>
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeatureName.QuarterWidths">
+      <summary>Replaces glyphs on other widths with glyphs set on widths of one quarter of an em (half an en).</summary>
+      <remarks>
+        <p>
+          The equivalent OpenType tag is 'qwid'.
+        </p>
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeatureName.RequiredLigatures">
+      <summary>Replaces a sequence of glyphs with a single glyph which is preferred for typographic purposes.</summary>
+      <remarks>
+        <p>
+          The equivalent OpenType tag is 'rlig'.
+        </p>
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeatureName.RubyNotationForms">
+      <summary>Identifies glyphs in the font which have been designed for "ruby", from the old typesetting term for four-point-sized type. </summary>
+      <remarks>
+        <p>
+          The equivalent OpenType tag is 'ruby'.
+        </p>
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeatureName.StylisticAlternates">
+      <summary>Replaces the default forms with the stylistic alternates. </summary>
+      <remarks>
+        <p>
+          The equivalent OpenType tag is 'salt'.
+        </p>
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeatureName.ScientificInferiors">
+      <summary>Replaces lining or oldstyle figures with inferior figures.</summary>
+      <remarks>
+        <p>
+          The equivalent OpenType tag is 'sinf'.
+        </p>
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeatureName.SmallCapitals">
+      <summary>Turns lowercase characters into small capitals. </summary>
+      <remarks>
+        <p>
+          The equivalent OpenType tag is 'smcp'.
+        </p>
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeatureName.SimplifiedForms">
+      <summary>Replaces 'traditional' Chinese or Japanese forms with the corresponding 'simplified' forms.</summary>
+      <remarks>
+        <p>
+          The equivalent OpenType tag is 'smpl'.
+        </p>
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeatureName.StylisticSet1">
+      <summary>Enables stylistic alternatives for portions of the character set, for a visual effect chosen by the font author.</summary>
+      <remarks>
+        <p>
+          The equivalent OpenType tag is 'ss01'.
+        </p>
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeatureName.StylisticSet2">
+      <summary>Enables stylistic alternatives for portions of the character set, for a visual effect chosen by the font author.</summary>
+      <remarks>
+        <p>
+          The equivalent OpenType tag is 'ss02'.
+        </p>
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeatureName.StylisticSet3">
+      <summary>Enables stylistic alternatives for portions of the character set, for a visual effect chosen by the font author.</summary>
+      <remarks>
+        <p>
+          The equivalent OpenType tag is 'ss03'.
+        </p>
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeatureName.StylisticSet4">
+      <summary>Enables stylistic alternatives for portions of the character set, for a visual effect chosen by the font author.</summary>
+      <remarks>
+        <p>
+          The equivalent OpenType tag is 'ss04'.
+        </p>
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeatureName.StylisticSet5">
+      <summary>Enables stylistic alternatives for portions of the character set, for a visual effect chosen by the font author.</summary>
+      <remarks>
+        <p>
+          The equivalent OpenType tag is 'ss05'.
+        </p>
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeatureName.StylisticSet6">
+      <summary>Enables stylistic alternatives for portions of the character set, for a visual effect chosen by the font author.</summary>
+      <remarks>
+        <p>
+          The equivalent OpenType tag is 'ss06'.
+        </p>
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeatureName.StylisticSet7">
+      <summary>Enables stylistic alternatives for portions of the character set, for a visual effect chosen by the font author.</summary>
+      <remarks>
+        <p>
+          The equivalent OpenType tag is 'ss07'.
+        </p>
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeatureName.StylisticSet8">
+      <summary>Enables stylistic alternatives for portions of the character set, for a visual effect chosen by the font author.</summary>
+      <remarks>
+        <p>
+          The equivalent OpenType tag is 'ss08'.
+        </p>
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeatureName.StylisticSet9">
+      <summary>Enables stylistic alternatives for portions of the character set, for a visual effect chosen by the font author.</summary>
+      <remarks>
+        <p>
+          The equivalent OpenType tag is 'ss09'.
+        </p>
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeatureName.StylisticSet10">
+      <summary>Enables stylistic alternatives for portions of the character set, for a visual effect chosen by the font author.</summary>
+      <remarks>
+        <p>
+          The equivalent OpenType tag is 'ss10'.
+        </p>
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeatureName.StylisticSet11">
+      <summary>Enables stylistic alternatives for portions of the character set, for a visual effect chosen by the font author.</summary>
+      <remarks>
+        <p>
+          The equivalent OpenType tag is 'ss11'.
+        </p>
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeatureName.StylisticSet12">
+      <summary>Enables stylistic alternatives for portions of the character set, for a visual effect chosen by the font author.</summary>
+      <remarks>
+        <p>
+          The equivalent OpenType tag is 'ss12'.
+        </p>
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeatureName.StylisticSet13">
+      <summary>Enables stylistic alternatives for portions of the character set, for a visual effect chosen by the font author.</summary>
+      <remarks>
+        <p>
+          The equivalent OpenType tag is 'ss13'.
+        </p>
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeatureName.StylisticSet14">
+      <summary>Enables stylistic alternatives for portions of the character set, for a visual effect chosen by the font author.</summary>
+      <remarks>
+        <p>
+          The equivalent OpenType tag is 'ss14'.
+        </p>
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeatureName.StylisticSet15">
+      <summary>Enables stylistic alternatives for portions of the character set, for a visual effect chosen by the font author.</summary>
+      <remarks>
+        <p>
+          The equivalent OpenType tag is 'ss15'.
+        </p>
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeatureName.StylisticSet16">
+      <summary>Enables stylistic alternatives for portions of the character set, for a visual effect chosen by the font author.</summary>
+      <remarks>
+        <p>
+          The equivalent OpenType tag is 'ss16'.
+        </p>
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeatureName.StylisticSet17">
+      <summary>Enables stylistic alternatives for portions of the character set, for a visual effect chosen by the font author.</summary>
+      <remarks>
+        <p>
+          The equivalent OpenType tag is 'ss17'.
+        </p>
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeatureName.StylisticSet18">
+      <summary>Enables stylistic alternatives for portions of the character set, for a visual effect chosen by the font author.</summary>
+      <remarks>
+        <p>
+          The equivalent OpenType tag is 'ss18'.
+        </p>
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeatureName.StylisticSet19">
+      <summary>Enables stylistic alternatives for portions of the character set, for a visual effect chosen by the font author.</summary>
+      <remarks>
+        <p>
+          The equivalent OpenType tag is 'ss19'.
+        </p>
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeatureName.StylisticSet20">
+      <summary>Enables stylistic alternatives for portions of the character set, for a visual effect chosen by the font author.</summary>
+      <remarks>
+        <p>
+          The equivalent OpenType tag is 'ss20'.
+        </p>
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeatureName.Subscript">
+      <summary>May replace a default glyph with a subscript glyph, or it may combine a glyph substitution with positioning adjustments for proper placement.</summary>
+      <remarks>
+        <p>
+          The equivalent OpenType tag is 'subs'.
+        </p>
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeatureName.Superscript">
+      <summary>Replaces lining or oldstyle figures with superior figures, and replaces lowercase letters with superior letters.</summary>
+      <remarks>
+        <p>
+          The equivalent OpenType tag is 'sups'.
+        </p>
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeatureName.Swash">
+      <summary>Replaces default character glyphs with corresponding swash glyphs. </summary>
+      <remarks>
+        <p>
+          The equivalent OpenType tag is 'swsh'.
+        </p>
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeatureName.Titling">
+      <summary>Replaces the default glyphs with corresponding forms designed specifically for titling.</summary>
+      <remarks>
+        <p>
+          The equivalent OpenType tag is 'titl'.
+        </p>
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeatureName.TraditionalNameForms">
+      <summary>Replaces 'simplified' Japanese kanji or Chinese hanzi forms with the corresponding 'traditional' forms. </summary>
+      <remarks>
+        <p>
+          The equivalent OpenType tag is 'tnam'.
+        </p>
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeatureName.TabularFigures">
+      <summary>Replaces figure glyphs set on proportional widths with corresponding glyphs set on uniform (tabular) widths. </summary>
+      <remarks>
+        <p>
+          The equivalent OpenType tag is 'tnum'.
+        </p>
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeatureName.TraditionalForms">
+      <summary>Replaces 'simplified' Chinese hanzi or Japanese kanji forms with the corresponding 'traditional' forms.</summary>
+      <remarks>
+        <p>
+          The equivalent OpenType tag is 'trad'.
+        </p>
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeatureName.ThirdWidths">
+      <summary>Replaces glyphs on other widths with glyphs set on widths of one third of an em unit.</summary>
+      <remarks>
+        <p>
+          The equivalent OpenType tag is 'twid'.
+        </p>
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeatureName.Unicase">
+      <summary>Maps uppercase and lowercase letters to a mixed set of lowercase and small capital forms, resulting in a single case alphabet.</summary>
+      <remarks>
+        <p>
+          The equivalent OpenType tag is 'unic'.
+        </p>
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeatureName.SlashedZero">
+      <summary>Allows the user to change from the default 0 to a slashed form.</summary>
+      <remarks>
+        <p>
+          The equivalent OpenType tag is 'zero'.
+        </p>
+      </remarks>
+    </member>
+  </members>
+</doc>
