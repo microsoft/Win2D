@@ -8,9 +8,11 @@ using System;
 using System.Numerics;
 using System.Threading;
 using System.Threading.Tasks;
+using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;
+using Windows.Graphics.Display;
 using Windows.UI.Composition;
 using Windows.UI.Core;
 using Windows.UI.Popups;
@@ -70,6 +72,7 @@ namespace CompositionExample
             window.PointerPressed += Window_PointerPressed;
 
             CoreApplication.Suspending += CoreApplication_Suspending;
+            DisplayInformation.DisplayContentsInvalidated += DisplayInformation_DisplayContentsInvalidated;
 
             compositor = new Compositor();
 
@@ -153,7 +156,7 @@ namespace CompositionExample
             swapChainRenderer.Paused = !swapChainRenderer.Paused;
         }
 
-        void CoreApplication_Suspending(object sender, Windows.ApplicationModel.SuspendingEventArgs args)
+        void CoreApplication_Suspending(object sender, SuspendingEventArgs args)
         {
             try
             {
@@ -187,6 +190,14 @@ namespace CompositionExample
         {
             device.DeviceLost -= Device_DeviceLost;
             var unwaitedTask = window.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => CreateDevice());
+        }
+
+        void DisplayInformation_DisplayContentsInvalidated(DisplayInformation sender, object args)
+        {
+            // The display contents could be invalidated due to a lost device, or for some other reason.
+            // We check this by calling GetSharedDevice, which will make sure the device is still valid before returning it.
+            // If the shared device has been lost, GetSharedDevice will automatically raise its DeviceLost event.
+            CanvasDevice.GetSharedDevice();
         }
     }
 
