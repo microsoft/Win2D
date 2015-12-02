@@ -97,6 +97,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ID2D1Bitmap1* bitmap);
 
         IFACEMETHOD(CreateDrawingSession)(
-            _COM_Outptr_ ICanvasDrawingSession** drawingSession) override;
+            ICanvasDrawingSession** drawingSession) override;
     };
 }}}}

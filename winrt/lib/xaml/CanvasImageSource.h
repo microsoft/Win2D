@@ -36,30 +36,30 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         CanvasImageSourceFactory();
 
         IFACEMETHOD(CreateWithSize)(
-            _In_         ICanvasResourceCreatorWithDpi* resourceCreator,
-            _In_         Size size,
-            _COM_Outptr_ ICanvasImageSource** imageSource) override;
+            ICanvasResourceCreatorWithDpi* resourceCreator,
+            Size size,
+            ICanvasImageSource** imageSource) override;
 
         IFACEMETHOD(CreateWithWidthAndHeight)(
-            _In_         ICanvasResourceCreatorWithDpi* resourceCreator,
-            _In_         float width,
-            _In_         float height,
-            _COM_Outptr_ ICanvasImageSource** imageSource) override;
+            ICanvasResourceCreatorWithDpi* resourceCreator,
+            float width,
+            float height,
+            ICanvasImageSource** imageSource) override;
 
         IFACEMETHOD(CreateWithWidthAndHeightAndDpi)(
-            _In_         ICanvasResourceCreator* resourceCreator,
-            _In_         float width,
-            _In_         float height,
-            _In_         float dpi,
-            _COM_Outptr_ ICanvasImageSource** imageSource) override;
+            ICanvasResourceCreator* resourceCreator,
+            float width,
+            float height,
+            float dpi,
+            ICanvasImageSource** imageSource) override;
 
         IFACEMETHOD(CreateWithWidthAndHeightAndDpiAndAlphaMode)(
-            _In_         ICanvasResourceCreator* resourceCreator,
-            _In_         float width,
-            _In_         float height,
-            _In_         float dpi,
-            _In_         CanvasAlphaMode alphaMode,
-            _COM_Outptr_ ICanvasImageSource** imageSource) override;
+            ICanvasResourceCreator* resourceCreator,
+            float width,
+            float height,
+            float dpi,
+            CanvasAlphaMode alphaMode,
+            ICanvasImageSource** imageSource) override;
     };
 
 
@@ -82,49 +82,49 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
     public:
         CanvasImageSource(
-            _In_ ICanvasResourceCreator* resourceCreator,
-            _In_ float width,
-            _In_ float height,
-            _In_ float dpi,
-            _In_ CanvasAlphaMode alphaMode,
-            _In_ ISurfaceImageSourceFactory* surfaceImageSourceFactory,
-            _In_ std::shared_ptr<ICanvasImageSourceDrawingSessionFactory> drawingSessionFactory);
+            ICanvasResourceCreator* resourceCreator,
+            float width,
+            float height,
+            float dpi,
+            CanvasAlphaMode alphaMode,
+            ISurfaceImageSourceFactory* surfaceImageSourceFactory,
+            std::shared_ptr<ICanvasImageSourceDrawingSessionFactory> drawingSessionFactory);
 
         IFACEMETHOD(CreateDrawingSession)(
-            _In_         Color clearColor,
-            _COM_Outptr_ ICanvasDrawingSession** drawingSession) override;
+            Color clearColor,
+            ICanvasDrawingSession** drawingSession) override;
 
         IFACEMETHOD(CreateDrawingSessionWithUpdateRectangle)(
-            _In_         Color clearColor,
-            _In_         Rect updateRectangle,
-            _COM_Outptr_ ICanvasDrawingSession** drawingSession) override;
+            Color clearColor,
+            Rect updateRectangle,
+            ICanvasDrawingSession** drawingSession) override;
 
         IFACEMETHOD(get_Device)(
-            _COM_Outptr_ ICanvasDevice** value) override;
+            ICanvasDevice** value) override;
 
         IFACEMETHOD(Recreate)(
-            _In_ ICanvasResourceCreator* value) override;
+            ICanvasResourceCreator* value) override;
 
         IFACEMETHOD(get_Dpi)(
-            _Out_ float* dpi) override;
+            float* dpi) override;
 
         IFACEMETHOD(ConvertPixelsToDips)(
-            _In_  int pixels,
-            _Out_ float* dips) override;
+            int pixels,
+            float* dips) override;
 
         IFACEMETHOD(ConvertDipsToPixels)(
-            _In_  float dips, 
-            _In_ CanvasDpiRounding dpiRounding,
-            _Out_ int* pixels) override;
+            float dips, 
+            CanvasDpiRounding dpiRounding,
+            int* pixels) override;
 
         IFACEMETHOD(get_SizeInPixels)(
-            _Out_ BitmapSize* size) override;
+            BitmapSize* size) override;
 
         IFACEMETHOD(get_Size)(
-            _Out_ ABI::Windows::Foundation::Size* size) override;
+            ABI::Windows::Foundation::Size* size) override;
 
         IFACEMETHOD(get_AlphaMode)(
-            _Out_ CanvasAlphaMode* value) override;
+            CanvasAlphaMode* value) override;
 
     private:
         void CreateBaseClass(

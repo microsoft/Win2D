@@ -25,7 +25,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         , private LifespanTracker<CanvasStrokeStyleFactory>
     {
     public:
-        IFACEMETHOD(ActivateInstance)(_COM_Outptr_ IInspectable** ppvObject) override;
+        IFACEMETHOD(ActivateInstance)(IInspectable** ppvObject) override;
     };
 
     class CanvasStrokeStyle : RESOURCE_WRAPPER_RUNTIME_CLASS(

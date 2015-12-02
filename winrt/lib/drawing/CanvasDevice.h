@@ -450,7 +450,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         // ActivationFactory
         //
 
-        IFACEMETHOD(ActivateInstance)(_COM_Outptr_ IInspectable** ppvObject) override;
+        IFACEMETHOD(ActivateInstance)(IInspectable** ppvObject) override;
 
         //
         // ICanvasDeviceFactory
