@@ -20,9 +20,11 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     Unloaded="OnUnloaded">
     
     <Grid>
+        <Viewbox Stretch="Uniform">
+            <CaptureElement x:Name="captureElement" Width="Auto" Height="Auto"/>
+        </Viewbox>
         <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
             <ProgressRing x:Name="progressRing"/>
-            <CaptureElement x:Name="captureElement" Width="Auto" Height="Auto"/>
             <TextBlock x:Name="progressText" FontSize="{StaticResource TextStyleLargeFontSize}" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap"/>
         </StackPanel>
         <ComboBox x:Name="effectCombo" ItemsSource="{Binding ElementName=control, Path=PossibleEffects}"
