@@ -54,6 +54,8 @@ namespace ExampleGallery
             CanvasImageSource,
             CanvasSwapChain,
             CanvasAnimatedControl,
+            CanvasVirtualControl,
+            CanvasVirtualImageSource,
         }
 
         public SourceMode       CurrentSource       { get; set; }
@@ -154,6 +156,7 @@ namespace ExampleGallery
         CanvasImageBrush imageBrush;
         CanvasImageSource imageSource;
         CanvasSwapChain swapChain;
+        CanvasVirtualImageSource virtualImageSource;
 
         DispatcherTimer cycleTimer = new DispatcherTimer
         {
@@ -186,6 +189,9 @@ namespace ExampleGallery
 
             swapChainPanel.RemoveFromVisualTree();
             swapChainPanel = null;
+
+            virtualControl.RemoveFromVisualTree();
+            virtualControl = null;
         }
 
 
@@ -197,6 +203,9 @@ namespace ExampleGallery
 
             imageSource = new CanvasImageSource(sender, controlSize, controlSize);
             imageControl.Source = imageSource;
+
+            virtualImageSource = new CanvasVirtualImageSource(sender, controlSize, controlSize);
+            virtualImageControl.Source = virtualImageSource.Source;
 
             swapChain = new CanvasSwapChain(sender, controlSize, controlSize);
             swapChainPanel.SwapChain = swapChain;
@@ -225,6 +234,8 @@ namespace ExampleGallery
         {
             mainDeviceResources.InitMessage();
 
+            IAsyncAction pendingDrawTask = null;
+
             switch (CurrentOutput)
             {
                 case OutputMode.CanvasControl:
@@ -236,22 +247,41 @@ namespace ExampleGallery
                     break;
 
                 case OutputMode.CanvasImageSource:
-                    DrawToImageSource(args.DrawingSession);
+                    pendingDrawTask = RunOnUIThread(DrawToImageSource);
                     break;
 
                 case OutputMode.CanvasSwapChain:
                     DrawToSwapChain();
                     break;
+
+                case OutputMode.CanvasVirtualControl:
+                    pendingDrawTask = RunOnUIThread(DrawToVirtualControl);
+                    break;
+
+                case OutputMode.CanvasVirtualImageSource:
+                    pendingDrawTask = RunOnUIThread(DrawToVirtualImageSource);
+                    break;
             }
 
             // Show or hide overlay controls to fit the current mode.
-            imageControl.Visibility    = (CurrentOutput == OutputMode.CanvasImageSource)     ? Visibility.Visible : Visibility.Collapsed;
-            swapChainPanel.Visibility  = (CurrentOutput == OutputMode.CanvasSwapChain)       ? Visibility.Visible : Visibility.Collapsed;
-            animatedControl.Visibility = (CurrentOutput == OutputMode.CanvasAnimatedControl) ? Visibility.Visible : Visibility.Collapsed;
-            animatedControl.Paused     = (CurrentOutput != OutputMode.CanvasAnimatedControl);
+            imageControl.Visibility        = (CurrentOutput == OutputMode.CanvasImageSource)        ? Visibility.Visible : Visibility.Collapsed;
+            swapChainPanel.Visibility      = (CurrentOutput == OutputMode.CanvasSwapChain)          ? Visibility.Visible : Visibility.Collapsed;
+            virtualControl.Visibility      = (CurrentOutput == OutputMode.CanvasVirtualControl)     ? Visibility.Visible : Visibility.Collapsed;
+            virtualImageControl.Visibility = (CurrentOutput == OutputMode.CanvasVirtualImageSource) ? Visibility.Visible : Visibility.Collapsed;
+            animatedControl.Visibility     = (CurrentOutput == OutputMode.CanvasAnimatedControl)    ? Visibility.Visible : Visibility.Collapsed;
+            animatedControl.Paused         = (CurrentOutput != OutputMode.CanvasAnimatedControl);
 
             // Update the info text.
-            textBlock.Text = mainDeviceResources.GetFinalMessage();
+            DispatchedHandler updateText = () => textBlock.Text = mainDeviceResources.GetFinalMessage();
+
+            if (pendingDrawTask == null)
+            {
+                updateText();
+            }
+            else
+            {
+                pendingDrawTask.AsTask().ContinueWith(task => RunOnUIThread(updateText));
+            }
         }
 
 
@@ -264,10 +294,7 @@ namespace ExampleGallery
             // Update the info text.
             var message = animatedDeviceResources.GetFinalMessage();
 
-            var task = textBlock.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-            {
-                textBlock.Text = message;
-            });
+            var task = RunOnUIThread(() => textBlock.Text = message);
         }
 
 
@@ -302,12 +329,8 @@ namespace ExampleGallery
         }
 
 
-        void DrawToImageSource(CanvasDrawingSession canvasControlDrawingSession)
+        void DrawToImageSource()
         {
-            // XAML doesn't support nested image source drawing sessions, so we must close
-            // the main CanvasControl one before drawing to a different CanvasImageSource.
-            canvasControlDrawingSession.Dispose();
-
             using (var ds = imageSource.CreateDrawingSession(Colors.Transparent))
             {
                 DrawToOutput(mainDeviceResources, ds);
@@ -323,6 +346,28 @@ namespace ExampleGallery
             }
 
             swapChain.Present();
+        }
+
+
+        void DrawToVirtualControl()
+        {
+            var bounds = new Rect(new Point(), virtualControl.Size);
+
+            using (var ds = virtualControl.CreateDrawingSession(bounds))
+            {
+                DrawToOutput(mainDeviceResources, ds);
+            }
+        }
+
+
+        void DrawToVirtualImageSource()
+        {
+            var bounds = new Rect(new Point(), virtualImageSource.Size);
+
+            using (var ds = virtualImageSource.CreateDrawingSession(Colors.Transparent, bounds))
+            {
+                DrawToOutput(mainDeviceResources, ds);
+            }
         }
 
 
@@ -366,7 +411,8 @@ namespace ExampleGallery
                         DrawSourceGraphic(resources, ds, 0);
                     }
 
-                    resources.AddMessage("RenderTarget (dpi: {0}, size: {1}, pixels: {2}) ->\n", renderTarget.Dpi, renderTarget.Size, renderTarget.SizeInPixels);
+                    var pixels = renderTarget.SizeInPixels;
+                    resources.AddMessage("RenderTarget (dpi: {0}, size: {1}, pixels: {2},{3}) ->\n", renderTarget.Dpi, renderTarget.Size, pixels.Width, pixels.Height);
 
                     return renderTarget;
             }
@@ -404,8 +450,9 @@ namespace ExampleGallery
 #if WINDOWS_UWP
             if (CurrentSource == SourceMode.VirtualBitmap)
             {
-                resources.AddMessage("VirtualBitmap (dpi: 96, size: {0}, pixels: {1} ->\n", 
-                    resources.VirtualBitmap.Size, resources.VirtualBitmap.SizeInPixels);
+                var virtualBitmap = resources.VirtualBitmap;
+                var pixels = virtualBitmap.SizeInPixels;
+                resources.AddMessage("VirtualBitmap (dpi: 96, size: {0}, pixels: {1},{2} ->\n", virtualBitmap.Size, pixels.Width, pixels.Height);
                 return resources.VirtualBitmap;
             }
 #endif
@@ -422,7 +469,8 @@ namespace ExampleGallery
 
             if (bitmap != null)
             {
-                resources.AddMessage("Bitmap (dpi: {0}, size: {1}, pixels: {2}) ->\n", bitmap.Dpi, bitmap.Size, bitmap.SizeInPixels);
+                var pixels = bitmap.SizeInPixels;
+                resources.AddMessage("Bitmap (dpi: {0}, size: {1}, pixels: {2},{3}) ->\n", bitmap.Dpi, bitmap.Size, pixels.Width, pixels.Height);
             }
 
             return bitmap;
@@ -543,6 +591,12 @@ namespace ExampleGallery
         void SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             canvasControl.Invalidate();
+        }
+
+
+        IAsyncAction RunOnUIThread(DispatchedHandler action)
+        {
+            return control.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, action);
         }
     }
 }

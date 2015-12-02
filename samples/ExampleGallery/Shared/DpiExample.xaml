@@ -21,7 +21,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
 
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="220"/>
+            <ColumnDefinition Width="230"/>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
@@ -74,7 +74,19 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
                                       CreateResources="AnimatedCanvas_CreateResources"
                                       Draw="AnimatedCanvas_Draw"/>
 
+        <canvas:CanvasVirtualControl x:Name="virtualControl"
+                                     Grid.Column="1"
+                                     Margin="5"
+                                     Width="168" Height="168"
+                                     HorizontalAlignment="Left" VerticalAlignment="top"/>
+
         <Image x:Name="imageControl"
+               Grid.Column="1"
+               Margin="5"
+               Width="168" Height="168"
+               HorizontalAlignment="Left" VerticalAlignment="top"/>
+
+        <Image x:Name="virtualImageControl"
                Grid.Column="1"
                Margin="5"
                Width="168" Height="168"
