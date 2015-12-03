@@ -462,7 +462,7 @@ IFACEMETHODIMP CanvasVirtualBitmap::GetBoundsWithTransform(ICanvasDrawingSession
 ComPtr<ID2D1Image> CanvasVirtualBitmap::GetD2DImage(ICanvasDevice* , ID2D1DeviceContext*, GetImageFlags, float, float* realizedDpi)
 {
     if (realizedDpi)
-        *realizedDpi = 96.0f;
+        *realizedDpi = 0;
 
     return GetResource();
 }

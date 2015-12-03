@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 using System.Threading.Tasks;
+using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -255,16 +256,15 @@ namespace ExampleGallery
                     EndPoint = new Vector2(tigerSize.X * 5 / 4, 0),
                 };
 
-                drawingSession.FillRectangle(bitmapTiger.Bounds, brush);
+                // Expand the bounds to avoid going past the edge of the gradient as we rotate it.
+                var expandedBounds = new Rect((-tigerSize).ToPoint(), (tigerSize * 2).ToPoint());
+
+                drawingSession.FillRectangle(expandedBounds, brush);
             }
 
-            // Wrap the gradient with a border effect to avoid edge artifacts as we rotate it.
             linearGradient = new Transform2DEffect
             {
-                Source = new BorderEffect
-                {
-                    Source = commandList
-                }
+                Source = commandList
             };
         }
 

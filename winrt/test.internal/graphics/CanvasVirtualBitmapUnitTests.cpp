@@ -229,7 +229,7 @@ TEST_CLASS(CanvasVirtualBitmapUnitTest)
         auto d2dImage = f.VirtualBitmap->GetD2DImage(nullptr, nullptr, GetImageFlags::None, 0.0f, &realizedDpi);
 
         Assert::IsTrue(IsSameInstance(f.ImageSource.Get(), d2dImage.Get()));
-        Assert::AreEqual(96.0f, realizedDpi);
+        Assert::AreEqual(0.0f, realizedDpi);
     }
 
     TEST_METHOD_EX(CanvasVirtualBitmap_SizeProperties)
