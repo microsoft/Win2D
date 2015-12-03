@@ -47,8 +47,8 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         </para>
         <para>
           The controls can automatically catch and handle device lost exceptions that are 
-          thrown by their CreateResources, Update, or Draw event handlers. If you call 
-          Win2D drawing APIs from other places (for instance in a pointer or keyboard 
+          thrown by their CreateResources, Update, Draw, or RegionsInvalidated event handlers.
+          If you call Win2D drawing APIs from other places (for instance in a pointer or keyboard 
           input event handler) then see the next section.
         </para>
       </content>
