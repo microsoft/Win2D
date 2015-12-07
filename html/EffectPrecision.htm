@@ -104,10 +104,10 @@
           <a href="P_Microsoft_Graphics_Canvas_CanvasDrawingSession_EffectBufferPrecision.htm">EffectBufferPrecision</a>
           property. This controls the precision of all intermediate textures, as long as 
           a precision is not also set manually on effects directly.
-        </p><div class="codeSnippetContainer"><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID3EAKAAAAA_copyCode" href="#" onclick="javascript:CopyToClipboard('ID3EAKAAAAA');return false;" title="Copy">Copy</a></div></div><div id="ID3EAKAAAAA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve"><span class="highlight-keyword">if</span> (canvasDevice.IsBufferPrecisionSupported(CanvasBufferPrecision.Precision32Float))
+        </p><div class="codeSnippetContainer"><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID3EAMAAAAA_copyCode" href="#" onclick="javascript:CopyToClipboard('ID3EAMAAAAA');return false;" title="Copy">Copy</a></div></div><div id="ID3EAMAAAAA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve"><span class="highlight-keyword">if</span> (canvasDevice.IsBufferPrecisionSupported(CanvasBufferPrecision.Precision32Float))
 {
     drawingSession.EffectBufferPrecision = CanvasBufferPrecision.Precision32Float;
-}</pre></div></div></div><script type="text/javascript">AddLanguageTabSet("ID3EAKAAAAA");</script><p><strong>Precision selection from inputs and render targets</strong></p><p>
+}</pre></div></div></div><script type="text/javascript">AddLanguageTabSet("ID3EAMAAAAA");</script><p><strong>Precision selection from inputs and render targets</strong></p><p>
           Applications may also rely on the precision of the inputs to an effect graph to control 
           the precision of intermediate textures.
         </p><p>
@@ -122,7 +122,16 @@
           specific precision. In this case, the precision of intermediate textures is determined 
           from the current render target.
         </p><p><strong>Precision selection directly on effects</strong></p><p>
-          This option is not yet supported in Win2D. Coming soon!
+          The minimum precision for intermediate textures may also be set at explicit locations 
+          within an effect graph. This is only recommended for advanced applications.
+        </p><p>
+          The minimum precision may be set using a property on an effect as follows:
+        </p><div class="codeSnippetContainer"><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID3EADAAAAA_copyCode" href="#" onclick="javascript:CopyToClipboard('ID3EADAAAAA');return false;" title="Copy">Copy</a></div></div><div id="ID3EADAAAAA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve"><span class="highlight-keyword">if</span> (canvasDevice.IsBufferPrecisionSupported(CanvasBufferPrecision.Precision32Float))
+{
+    blurEffect.BufferPrecision = CanvasBufferPrecision.Precision32Float;
+}</pre></div></div></div><script type="text/javascript">AddLanguageTabSet("ID3EADAAAAA");</script><p>      
+          Note that the precision set on an effect will also apply to effects downstream in the 
+          same effect graph, unless a different precision is set on those downstream effects.
         </p><p>
           Below is the full recursive logic used to determine the minimum precision for an 
           intermediate buffer storing the output of a given transform node:

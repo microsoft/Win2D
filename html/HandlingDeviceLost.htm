@@ -25,8 +25,8 @@
           references to the old, no-longer-valid resources.
         </p><p>
           The controls can automatically catch and handle device lost exceptions that are 
-          thrown by their CreateResources, Update, or Draw event handlers. If you call 
-          Win2D drawing APIs from other places (for instance in a pointer or keyboard 
+          thrown by their CreateResources, Update, Draw, or RegionsInvalidated event handlers.
+          If you call Win2D drawing APIs from other places (for instance in a pointer or keyboard 
           input event handler) then see the next section.
         </p></div><div class="collapsibleAreaRegion"><span class="collapsibleRegionTitle" onclick="SectionExpandCollapse('ID3RB')" onkeypress="SectionExpandCollapse_CheckKey('ID3RB', event)" tabindex="0"><img id="ID3RBToggle" class="collapseToggle" src="../icons/SectionExpanded.png" />Manually handling device lost</span></div><div id="ID3RBSection" class="collapsibleSection"><p>
           If you are
