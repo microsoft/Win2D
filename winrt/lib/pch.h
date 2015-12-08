@@ -87,6 +87,7 @@
 
 // Inc
 #include <AsyncOperation.h>
+#include <CanvasUtilities.h>
 #include <ClosablePtr.h>
 #include <ComArray.h>
 #include <Constants.h>

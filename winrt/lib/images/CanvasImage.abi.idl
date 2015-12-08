@@ -25,4 +25,84 @@ namespace Microsoft.Graphics.Canvas
             [in] NUMERICS.Matrix3x2 transform,
             [out, retval] Windows.Foundation.Rect* bounds);
     }
+
+    
+    //
+    // Projection of the encoders described here: 
+    // http://msdn.microsoft.com/en-us/library/windows/desktop/ee690311(v=vs.85).aspx
+    //
+    [version(VERSION)]
+    typedef enum CanvasBitmapFileFormat
+    {
+        Auto,
+        Bmp,
+        Png,
+        Jpeg,
+        Tiff,
+        Gif,
+        JpegXR
+    } CanvasBitmapFileFormat;
+
+    
+    //
+    // CanvasImage has only static members.
+    //
+    
+    runtimeclass CanvasImage;
+
+    [version(VERSION), uuid(C54EEA15-5A14-489A-8FA0-6E84541F922D), exclusiveto(CanvasImage)]
+    interface ICanvasImageStatics : IInspectable
+    {
+        //
+        // CanvasImage.SaveAsync saves any ICanvasImage.  The saved region can
+        // be larger in pixels than CanvasDevice.MaximumBitmapSizeInPixels.
+        //
+        // quality defaults to 0.9
+        //
+        // bufferPrecision defaults to Precision8UIntNormalized.
+        //
+        // If the image is a CanvasBitmap then a DpiCompensationEffect may be
+        // inserted in order to make the behavior consistent across all
+        // ICanvasImage implementations.
+        //
+        
+        [overload("SaveAsync"), default_overload]
+        HRESULT SaveAsync(
+            [in]          ICanvasImage* image,
+            [in]          Windows.Foundation.Rect sourceRectangle,
+            [in]          float dpi,
+            [in]          ICanvasResourceCreator* resourceCreator,
+            [in]          Windows.Storage.Streams.IRandomAccessStream* stream,
+            [in]          CanvasBitmapFileFormat fileFormat,
+            [out, retval] Windows.Foundation.IAsyncAction** action);
+        
+        [overload("SaveAsync"), default_overload]
+        HRESULT SaveWithQualityAsync(
+            [in]          ICanvasImage* image,
+            [in]          Windows.Foundation.Rect sourceRectangle,
+            [in]          float dpi,
+            [in]          ICanvasResourceCreator* resourceCreator,
+            [in]          Windows.Storage.Streams.IRandomAccessStream* stream,
+            [in]          CanvasBitmapFileFormat fileFormat,
+            [in]          float quality,
+            [out, retval] Windows.Foundation.IAsyncAction** action);
+
+        [overload("SaveAsync"), default_overload]
+        HRESULT SaveWithQualityAndBufferPrecisionAsync(
+            [in]          ICanvasImage* image,
+            [in]          Windows.Foundation.Rect sourceRectangle,
+            [in]          float dpi,
+            [in]          ICanvasResourceCreator* resourceCreator,
+            [in]          Windows.Storage.Streams.IRandomAccessStream* stream,
+            [in]          CanvasBitmapFileFormat fileFormat,
+            [in]          float quality,
+            [in]          CanvasBufferPrecision bufferPrecision,
+            [out, retval] Windows.Foundation.IAsyncAction** action);
+    }
+
+    [version(VERSION), threading(both), marshaling_behavior(agile),
+     static(ICanvasImageStatics, VERSION)]
+    runtimeclass CanvasImage
+    {
+    };
 }

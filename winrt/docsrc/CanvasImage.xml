@@ -1,0 +1,84 @@
+<?xml version="1.0"?>
+<!--
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+Licensed under the MIT License. See LICENSE.txt in the project root for license information.
+-->
+
+<doc>
+  <assembly>
+    <name>Microsoft.Graphics.Canvas</name>
+  </assembly>
+  <members>
+    <member name="T:Microsoft.Graphics.Canvas.CanvasImage">
+      <summary>Static operations that can be applied to all ICanvasImage instances.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasImage.SaveAsync(Microsoft.Graphics.Canvas.ICanvasImage,Windows.Foundation.Rect,System.Single,Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.Storage.Streams.IRandomAccessStream,Microsoft.Graphics.Canvas.CanvasBitmapFileFormat)">
+      <summary>Saves an ICanvasImage to the given stream.</summary>
+      <remarks>
+        <inherittemplate name="CanvasImage.SaveAsync-remarks"/>
+      </remarks>
+      <example>
+        <code title="C#">
+          <![CDATA[
+            async void SaveImage(ICanvasImage image, Rect sourceRectangle)
+            {
+                var picker = new FileSavePicker();
+                picker.FileTypeChoices.Add("Images", new List<string>() { ".jpg" });
+            
+                var file = await picker.PickSaveFileAsync();
+                if (file == null)
+                    return;
+            
+                using (var stream = await file.OpenAsync(FileAccessMode.ReadWrite))
+                {
+                    CanvasImage.SaveAsync(image, sourceRectangle, 96, this.canvas, stream, CanvasBitmapFileFormat.Jpeg);
+                }
+            }
+          ]]>
+        </code>
+      </example>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasImage.SaveAsync(Microsoft.Graphics.Canvas.ICanvasImage,Windows.Foundation.Rect,System.Single,Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.Storage.Streams.IRandomAccessStream,Microsoft.Graphics.Canvas.CanvasBitmapFileFormat,System.Single)">
+      <summary>Saves an ICanvasImage to the given stream.</summary>
+      <remarks>
+        <inherittemplate name="CanvasImage.SaveAsync-remarks"/>
+        <inherittemplate name="CanvasImage.SaveAsync-quality"/>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasImage.SaveAsync(Microsoft.Graphics.Canvas.ICanvasImage,Windows.Foundation.Rect,System.Single,Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.Storage.Streams.IRandomAccessStream,Microsoft.Graphics.Canvas.CanvasBitmapFileFormat,System.Single,Microsoft.Graphics.Canvas.CanvasBufferPrecision)">
+      <summary>Saves an ICanvasImage to the given stream.</summary>
+      <remarks>
+        <inherittemplate name="CanvasImage.SaveAsync-remarks"/>
+        <inherittemplate name="CanvasImage.SaveAsync-quality"/>
+        <p>
+          The buffer precision defaults to <see
+          cref="F:Microsoft.Graphics.Canvas.CanvasBufferPrecision.Precision8UIntNormalized"/>.
+        </p>
+      </remarks>
+    </member>
+  </members>
+
+  <template name="CanvasImage.SaveAsync-remarks">
+    <p>
+      This method saves the given image.  The image can be any size, memory
+      or output file format permitting, and is not restricted by the value of <see
+      cref="P:Microsoft.Graphics.Canvas.CanvasDevice.MaximumBitmapSizeInPixels">CanvasDevice.MaximumBitmapSizeInPixels</see>.
+    </p>
+    <p>
+      The ICanvasImage may need to be drawn to a render target before it can be
+      saved - for example, it may be an effect or a command list.  SaveAsync
+      will take care of this automatically and create whatever temporary render
+      targets are required.
+    </p>
+  </template>
+
+  <template name="CanvasImage.SaveAsync-quality">
+    <p>
+      The quality parameter defaults to 0.9, and only applies to the <see
+      cref="F:Microsoft.Graphics.Canvas.CanvasBitmapFileFormat.Jpeg"/> and <see
+      cref="F:Microsoft.Graphics.Canvas.CanvasBitmapFileFormat.JpegXR"/> formats.
+    </p>
+  </template>
+  
+</doc>

@@ -820,6 +820,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)text\InternalDWriteTextRenderer.h">
       <Filter>text</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)images\WicAdapter.h">
+      <Filter>images</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)Canvas.codegen.idl" />

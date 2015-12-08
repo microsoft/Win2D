@@ -3,17 +3,20 @@
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
 using Microsoft.Graphics.Canvas;
+using Microsoft.Graphics.Canvas.Effects;
 using Microsoft.Graphics.Canvas.Geometry;
 using Microsoft.Graphics.Canvas.Text;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.Foundation;
+using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.Storage.Streams;
 using Windows.UI;
@@ -53,6 +56,8 @@ namespace ExampleGallery
                 }
             }
         }
+
+        public bool IsImageLoaded { get { return virtualBitmap != null; } }
 
         ByteCounterStreamProxy imageStream;
         CanvasVirtualBitmap virtualBitmap;
@@ -131,7 +136,7 @@ namespace ExampleGallery
             {
                 var message = string.Format("Error opening '{0}'", file.Name);
 
-                var messageBox = new MessageDialog(message).ShowAsync();
+                var messageBox = new MessageDialog(message, "Virtual Bitmap Example").ShowAsync();
             }
         }
 
@@ -155,10 +160,7 @@ namespace ExampleGallery
 
             LoadedImageInfo = "";
 
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs("LoadedImageInfo"));
-            }
+            NotifyBitmapChanged();
 
             virtualBitmap = await CanvasVirtualBitmap.LoadAsync(ImageVirtualControl.Device, imageStream, virtualBitmapOptions);
 
@@ -176,9 +178,73 @@ namespace ExampleGallery
             LoadedImageInfo = string.Format("{0}x{1} image, is {2}CachedOnDemand",
                 size.Width, size.Height, virtualBitmap.IsCachedOnDemand ? "" : "not ");
 
-            if (PropertyChanged != null)
+            NotifyBitmapChanged();
+        }
+
+
+        private void NotifyBitmapChanged()
+        {
+            if (PropertyChanged == null)
+                return;
+
+            foreach (var property in new string[] { "LoadedImageInfo", "IsImageLoaded"})
             {
-                PropertyChanged(this, new PropertyChangedEventArgs("LoadedImageInfo"));
+                PropertyChanged(this, new PropertyChangedEventArgs(property));
+            }
+        }
+
+
+        private async void OnSaveAsClicked(object sender, RoutedEventArgs e)
+        {
+            // the button should be disabled if there's no bitmap loaded
+            Debug.Assert(virtualBitmap != null);
+
+            var picker = new FileSavePicker();
+            picker.FileTypeChoices.Add("Jpegs", new List<string>() { ".jpg" });
+
+            var file = await picker.PickSaveFileAsync();
+            if (file == null)
+                return;
+
+            using (var stream = await file.OpenAsync(FileAccessMode.ReadWrite))
+            {
+                // Stamp a big "Win2D" over the image before we save it, to demonstrate
+                // that the image really has been processed.
+                var device = CanvasDevice.GetSharedDevice();
+
+                var bounds = virtualBitmap.Bounds;
+
+                var text = new CanvasCommandList(device);
+                using (var ds = text.CreateDrawingSession())
+                {
+                    ds.DrawText("Win2D", bounds, Colors.White,
+                        new CanvasTextFormat()
+                        {
+                            VerticalAlignment = CanvasVerticalAlignment.Center,
+                            HorizontalAlignment = CanvasHorizontalAlignment.Center,
+                            FontFamily = "Comic Sans MS",
+                            FontSize = (float)(bounds.Height / 4)
+                        });
+                }
+
+                var effect = new BlendEffect()
+                {
+                    Background = virtualBitmap,
+                    Foreground = text,
+                    Mode = BlendEffectMode.Difference
+                };
+
+                try
+                {
+                    await CanvasImage.SaveAsync(effect, bounds, 96, device, stream, CanvasBitmapFileFormat.Jpeg);
+                    var message = string.Format("Finished saving '{0}'", file.Name);
+                    var messageBox = new MessageDialog(message, "Virtual Bitmap Example").ShowAsync();
+                }
+                catch
+                {
+                    var message = string.Format("Error saving '{0}'", file.Name);
+                    var messageBox = new MessageDialog(message, "Virtual Bitmap Example").ShowAsync();
+                }
             }
         }
 

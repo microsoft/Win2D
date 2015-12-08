@@ -5,6 +5,7 @@
 #pragma once
 
 #include "TextureUtilities.h"
+#include "WicAdapter.h"
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
@@ -21,6 +22,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     using ABI::Windows::Graphics::Imaging::ISoftwareBitmap;
 #endif
 
+    GUID GetGUIDForFileFormat(CanvasBitmapFileFormat fileFormat);
 
     struct WicBitmapSource
     {
@@ -67,7 +69,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     class DefaultBitmapAdapter : public CanvasBitmapAdapter
     {
-        ComPtr<IWICImagingFactory2> m_wicFactory;
+        std::shared_ptr<WicAdapter> m_wicAdapter;
 
     public:
         DefaultBitmapAdapter();

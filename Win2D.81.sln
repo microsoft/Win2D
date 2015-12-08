@@ -10,6 +10,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Inc", "Inc", "{CEA2F017-5D50-41BE-B46D-A61FF19B4694}"
 	ProjectSection(SolutionItems) = preProject
 		winrt\inc\AsyncOperation.h = winrt\inc\AsyncOperation.h
+		winrt\inc\CanvasUtilities.h = winrt\inc\CanvasUtilities.h
 		winrt\inc\ClosablePtr.h = winrt\inc\ClosablePtr.h
 		winrt\inc\ComArray.h = winrt\inc\ComArray.h
 		winrt\inc\Constants.h = winrt\inc\Constants.h

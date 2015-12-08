@@ -72,6 +72,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\TemperatureAndTintEffect.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\VignetteEffect.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)geometry\InkToGeometryCommandSink.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)images\WicAdapter.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)pch.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)brushes\CanvasBrush.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)brushes\CanvasImageBrush.h" />

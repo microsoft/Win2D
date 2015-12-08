@@ -150,7 +150,7 @@ namespace DocPreprocess
             foreach (var inheritMarker in doc.Descendants("inherittemplate").ToList())
             {
                 var name = inheritMarker.Attribute("name").Value;
-                var replacement = inheritMarker.Attribute("replacement").Value;
+                var replacement = inheritMarker.Attribute("replacement")?.Value;
 
                 var template = templates.Single(t => t.Attribute("name").Value == name);
 
@@ -158,7 +158,8 @@ namespace DocPreprocess
 
                 foreach (var attribute in clonedTemplate.Descendants().Attributes())
                 {
-                    attribute.Value = attribute.Value.Replace(name, replacement);
+                    if (replacement != null)
+                        attribute.Value = attribute.Value.Replace(name, replacement);
                 }
 
                 inheritMarker.ReplaceWith(clonedTemplate.Elements());

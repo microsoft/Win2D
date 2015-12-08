@@ -29,7 +29,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
                         <Setter Target="IOGraph.(Grid.Row)" Value="0"/>
-                        <Setter Target="IOGraph.(Grid.Column)" Value="2"/>
+                        <Setter Target="IOGraph.(Grid.Column)" Value="3"/>
                         <Setter Target="IOGraph.(Grid.ColumnSpan)" Value="1"/>
                     </VisualState.Setters>
                 </VisualState>
@@ -40,7 +40,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
                     <VisualState.Setters>
                         <Setter Target="IOGraph.(Grid.Row)" Value="1"/>
                         <Setter Target="IOGraph.(Grid.Column)" Value="0"/>
-                        <Setter Target="IOGraph.(Grid.ColumnSpan)" Value="2"/>
+                        <Setter Target="IOGraph.(Grid.ColumnSpan)" Value="3"/>
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
@@ -59,6 +59,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*" MaxWidth="200"/>
             </Grid.ColumnDefinitions>
             <Button Grid.Column="0" Margin="5" Content="Open...">
@@ -69,8 +70,9 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
                     </MenuFlyout>
                 </Button.Flyout>
             </Button>
-            <ToggleButton Grid.Column="1" Margin="5" Content="Small View" IsChecked="{Binding SmallView, Mode=TwoWay}"/>
-            <canvas:CanvasControl Grid.Column="2" Margin="5" ClearColor="Black" Draw="OnIOGraphDraw" x:Name="IOGraph" MinHeight="30"/>
+            <Button Grid.Column="1" Margin="5" Content="Save as..." Click="OnSaveAsClicked" IsEnabled="{Binding IsImageLoaded}"/>
+            <ToggleButton Grid.Column="2" Margin="5" Content="Small View" IsChecked="{Binding SmallView, Mode=TwoWay}"/>
+            <canvas:CanvasControl Grid.Column="3" Margin="5" ClearColor="Black" Draw="OnIOGraphDraw" x:Name="IOGraph" MinHeight="30"/>
         </Grid>
 
         <TextBlock Grid.Row="1" Margin="5,5,5,10" Text="{Binding LoadedImageInfo}"/>

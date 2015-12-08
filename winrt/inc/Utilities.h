@@ -103,11 +103,3 @@ inline bool operator!=(ABI::Windows::Foundation::Size const& left, ABI::Windows:
 {
     return (left.Width != right.Width) || (left.Height != right.Height);
 }
-
-template<typename T, typename U>
-inline Microsoft::WRL::ComPtr<T> GetWrappedResource(U&& wrapper)
-{
-    Microsoft::WRL::ComPtr<T> resource;
-    ThrowIfFailed(As<ABI::Microsoft::Graphics::Canvas::ICanvasResourceWrapperNative>(wrapper)->GetNativeResource(nullptr, 0, IID_PPV_ARGS(&resource)));
-    return resource;
-}

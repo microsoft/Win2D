@@ -16,7 +16,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 #endif
 
 
-    static GUID GetGUIDForFileFormat(CanvasBitmapFileFormat fileFormat)
+    GUID GetGUIDForFileFormat(CanvasBitmapFileFormat fileFormat)
     {
         switch (fileFormat)
         {
@@ -235,13 +235,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     //
 
     DefaultBitmapAdapter::DefaultBitmapAdapter()
+        : m_wicAdapter(WicAdapter::GetInstance())
     {
-        ThrowIfFailed(
-            CoCreateInstance(
-            CLSID_WICImagingFactory,
-            nullptr,
-            CLSCTX_INPROC_SERVER,
-            IID_PPV_ARGS(&m_wicFactory)));
     }
 
     void DefaultBitmapAdapter::SaveLockedMemoryToStream(
@@ -255,7 +250,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ScopedBitmapMappedPixelAccess* bitmapLock)
     {
         ComPtr<IWICStream> wicStream;
-        ThrowIfFailed(m_wicFactory->CreateStream(&wicStream));
+        ThrowIfFailed(m_wicAdapter->GetFactory()->CreateStream(&wicStream));
 
         ComPtr<IStream> iStream;
         ThrowIfFailed(CreateStreamOverRandomAccessStream(randomAccessStream, IID_PPV_ARGS(&iStream)));
@@ -263,7 +258,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ThrowIfFailed(wicStream->InitializeFromIStream(iStream.Get()));
 
         SaveLockedMemoryToNativeStream(
-            m_wicFactory.Get(), 
+            m_wicAdapter->GetFactory().Get(), 
             wicStream.Get(), 
             GetGUIDForFileFormat(fileFormat),
             quality, 
@@ -297,12 +292,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         }
 
         ComPtr<IWICStream> wicStream;
-        ThrowIfFailed(m_wicFactory->CreateStream(&wicStream));
+        ThrowIfFailed(m_wicAdapter->GetFactory()->CreateStream(&wicStream));
 
         ThrowIfFailed(wicStream->InitializeFromFilename(static_cast<const wchar_t*>(fileNameString), GENERIC_WRITE));
 
         SaveLockedMemoryToNativeStream(
-            m_wicFactory.Get(),
+            m_wicAdapter->GetFactory().Get(),
             wicStream.Get(), 
             encoderGuid, 
             quality, 
@@ -316,7 +311,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     WicBitmapSource DefaultBitmapAdapter::CreateWicBitmapSource(HSTRING fileName, bool tryEnableIndexing)
     {
         ComPtr<IWICStream> stream;
-        ThrowIfFailed(m_wicFactory->CreateStream(&stream));
+        ThrowIfFailed(m_wicAdapter->GetFactory()->CreateStream(&stream));
 
         WinString fileNameString(fileName);
         ThrowIfFailed(stream->InitializeFromFilename(static_cast<const wchar_t*>(fileNameString), GENERIC_READ));
@@ -327,7 +322,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     WicBitmapSource DefaultBitmapAdapter::CreateWicBitmapSource(IStream* fileStream, bool tryEnableIndexing)
     {
         ComPtr<IWICBitmapDecoder> wicBitmapDecoder;
-        ThrowIfFailed(m_wicFactory->CreateDecoderFromStream(
+        ThrowIfFailed(m_wicAdapter->GetFactory()->CreateDecoderFromStream(
             fileStream,
             nullptr,
             WICDecodeMetadataCacheOnDemand,
@@ -342,7 +337,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         auto transformOptions = GetTransformOptionsFromPhotoOrientation(orientation);
 
         ComPtr<IWICFormatConverter> wicFormatConverter;
-        ThrowIfFailed(m_wicFactory->CreateFormatConverter(&wicFormatConverter));
+        ThrowIfFailed(m_wicAdapter->GetFactory()->CreateFormatConverter(&wicFormatConverter));
 
         ThrowIfFailed(wicFormatConverter->Initialize(
             wicBitmapFrameDecode.Get(),
@@ -361,7 +356,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     {
         ComPtr<IWICBitmapFlipRotator> bitmapFlipRotator;
 
-        ThrowIfFailed(m_wicFactory->CreateBitmapFlipRotator(&bitmapFlipRotator));
+        ThrowIfFailed(m_wicAdapter->GetFactory()->CreateBitmapFlipRotator(&bitmapFlipRotator));
         ThrowIfFailed(bitmapFlipRotator->Initialize(source.Get(), transformOptions));
 
         return bitmapFlipRotator;

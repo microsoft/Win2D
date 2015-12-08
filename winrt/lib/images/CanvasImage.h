@@ -4,10 +4,13 @@
 
 #pragma once
 
+#include "WicAdapter.h"
+
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
     using namespace ::Microsoft::WRL;
     using namespace ABI::Windows::Foundation;
+    using namespace ABI::Windows::Storage::Streams;
 
 
     // Options for fine-tuning the behavior of ICanvasImageInternal::GetD2DImage.
@@ -62,4 +65,90 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ICanvasDrawingSession* drawingSession,
         Numerics::Matrix3x2 const* optionalTransform,
         Rect* bounds);
+
+
+    class DefaultCanvasImageAdapter;
+    
+    class CanvasImageAdapter : public Singleton<CanvasImageAdapter, DefaultCanvasImageAdapter>
+    {
+    public:
+        virtual ~CanvasImageAdapter() = default;
+
+        virtual ComPtr<IAsyncAction> RunAsync(std::function<void()>&& fn) = 0;
+
+        virtual ComPtr<IStream> CreateStreamOverRandomAccessStream(IRandomAccessStream* stream) = 0;
+
+        virtual void SaveImage(
+            ID2D1Image* d2dImage,
+            WICImageParameters const& wicImageParameters,
+            ID2D1Device* device,
+            IStream* stream,
+            GUID const& containerFormat,
+            float quality) = 0;
+    };
+
+
+    class DefaultCanvasImageAdapter : public CanvasImageAdapter
+    {
+        std::shared_ptr<WicAdapter> m_wicAdapter;
+        
+    public:
+        virtual ComPtr<IAsyncAction> RunAsync(std::function<void()>&& fn) override;
+        
+        virtual ComPtr<IStream> CreateStreamOverRandomAccessStream(IRandomAccessStream* stream) override;
+
+        virtual void SaveImage(
+            ID2D1Image* d2dImage,
+            WICImageParameters const& wicImageParameters,
+            ID2D1Device* device,
+            IStream* stream,
+            GUID const& containerFormat,
+            float quality) override;
+
+    private:
+        ComPtr<IWICImagingFactory2> const& GetFactory();
+    };
+
+
+    class CanvasImageFactory
+        : public ActivationFactory<ICanvasImageStatics>
+        , private LifespanTracker<CanvasImageFactory>
+    {
+        InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_CanvasImage, BaseTrust);
+
+        std::shared_ptr<CanvasImageAdapter> m_adapter;
+        
+    public:
+        CanvasImageFactory();
+        
+        IFACEMETHODIMP SaveAsync(
+            ICanvasImage* image,
+            Rect sourceRectangle,
+            float dpi,
+            ICanvasResourceCreator* resourceCreator,
+            IRandomAccessStream* stream,
+            CanvasBitmapFileFormat fileFormat,
+            IAsyncAction** action) override;
+
+        IFACEMETHODIMP SaveWithQualityAsync(
+            ICanvasImage* image,
+            Rect sourceRectangle,
+            float dpi,
+            ICanvasResourceCreator* resourceCreator,
+            IRandomAccessStream* stream,
+            CanvasBitmapFileFormat fileFormat,
+            float quality,
+            IAsyncAction** action) override;
+
+        IFACEMETHODIMP SaveWithQualityAndBufferPrecisionAsync(
+            ICanvasImage* image,
+            Rect sourceRectangle,
+            float dpi,
+            ICanvasResourceCreator* resourceCreator,
+            IRandomAccessStream* stream,
+            CanvasBitmapFileFormat fileFormat,
+            float quality,
+            CanvasBufferPrecision bufferPrecision,
+            IAsyncAction** action) override;
+    };
 }}}}

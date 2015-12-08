@@ -25,22 +25,6 @@ namespace Microsoft.Graphics.Canvas
     } BitmapSize;
 #endif
 
-    //
-    // Projection of the encoders described here: 
-    // http://msdn.microsoft.com/en-us/library/windows/desktop/ee690311(v=vs.85).aspx
-    //
-    [version(VERSION)]
-    typedef enum CanvasBitmapFileFormat
-    {
-        Auto,
-        Bmp,
-        Png,
-        Jpeg,
-        Tiff,
-        Gif,
-        JpegXR
-    } CanvasBitmapFileFormat;
-
     [version(VERSION), uuid(F2D0EB0E-16F3-4BCF-B1D1-04834AB97DE4), exclusiveto(CanvasBitmap)]
     interface ICanvasBitmapFactory : IInspectable
     {
