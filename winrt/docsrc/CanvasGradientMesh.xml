@@ -148,10 +148,10 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <summary>Gets the array of patches that comprise this gradient mesh.</summary>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGradientMesh.GetBounds(Microsoft.Graphics.Canvas.CanvasDrawingSession)">
-      <summary>Gets the bounds of this CanvasGradientMesh, in device-independent units.</summary>
+      <summary>Gets the bounds of this CanvasGradientMesh.</summary>
       <remarks>
         The bounds are the extent of this gradient mesh as if it were drawn relative to the origin, on the given drawing session. 
-        GetBounds takes into account the drawing session's transform and DPI.</remarks>
+        GetBounds takes into account the drawing session's transform, DPI and unit mode.</remarks>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Geometry.CanvasGradientMesh.Device">
       <summary>Gets the device associated with this CanvasGradientMesh.</summary>

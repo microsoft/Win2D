@@ -156,11 +156,19 @@ namespace DocPreprocess
 
                 var clonedTemplate = new XElement(template);
 
-                foreach (var attribute in clonedTemplate.Descendants().Attributes())
+                if (replacement != null)
                 {
-                    if (replacement != null)
+                    foreach (var attribute in clonedTemplate.Descendants().Attributes())
+                    {
                         attribute.Value = attribute.Value.Replace(name, replacement);
+                    }
+
+                    foreach (var text in clonedTemplate.DescendantNodes().OfType<XText>())
+                    {
+                        text.Value = text.Value.Replace(name, replacement);
+                    }
                 }
+
 
                 inheritMarker.ReplaceWith(clonedTemplate.Elements());
             }

@@ -347,7 +347,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     </member>
 
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.GetBounds(Microsoft.Graphics.Canvas.CanvasDrawingSession)">
-      <summary>Retrieves the bounds of this CanvasImage, in device-independent units.</summary>
+      <summary>Retrieves the bounds of this CanvasBitmap.</summary>
       <remarks>
         <inheritdoc/>
         <p>
@@ -362,7 +362,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <seealso cref="P:Microsoft.Graphics.Canvas.CanvasBitmap.Size"/>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.GetBounds(Microsoft.Graphics.Canvas.CanvasDrawingSession,System.Numerics.Matrix3x2)">
-      <summary>Retrieves the bounds of the CanvasImage, in device-independent units.</summary>
+      <summary>Retrieves the bounds of this CanvasBitmap.</summary>
       <remarks>
         <inheritdoc/>
         <p>
