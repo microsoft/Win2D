@@ -20,6 +20,11 @@
   <PropertyGroup Condition=" '$(TargetPlatformIdentifier)' == '' ">
     <TargetPlatformIdentifier>WindowsPhoneApp</TargetPlatformIdentifier>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(StrongNameKey)' != ''">
+    <SignAssembly>true</SignAssembly>
+    <DelaySign>true</DelaySign>
+    <AssemblyOriginatorKeyFile>$(StrongNameKey)</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
   <Import Project="..\..\build\Win2D.cs.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|ARM'">
     <DebugSymbols>true</DebugSymbols>
