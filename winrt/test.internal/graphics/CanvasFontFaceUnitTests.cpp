@@ -40,6 +40,7 @@ TEST_CLASS(CanvasFontFaceTests)
     {
         Matrix3x2 m{};
         CanvasUnicodeRange* rangePointer;
+        CanvasGlyphMetrics* glyphMetricsPointer;
         uint32_t u;
         int i;
         int* iPointer;
@@ -94,6 +95,12 @@ TEST_CLASS(CanvasFontFaceTests)
         Assert::AreEqual(E_INVALIDARG, canvasFontFace->GetGlyphIndices(1, &u, nullptr, &iPointer));
         Assert::AreEqual(E_INVALIDARG, canvasFontFace->GetGlyphIndices(1, &u, &u, nullptr));
 
+        Assert::AreEqual(E_INVALIDARG, canvasFontFace->GetGlyphMetrics(1, &i, true, nullptr, &glyphMetricsPointer));
+        Assert::AreEqual(E_INVALIDARG, canvasFontFace->GetGlyphMetrics(1, &i, true, &u, nullptr));
+
+        Assert::AreEqual(E_INVALIDARG, canvasFontFace->GetGdiCompatibleGlyphMetrics(12, 96, m, true, 1, &i, true, nullptr, &glyphMetricsPointer));
+        Assert::AreEqual(E_INVALIDARG, canvasFontFace->GetGdiCompatibleGlyphMetrics(12, 96, m, true, 1, &i, true, &u, nullptr));
+
         Assert::AreEqual(E_INVALIDARG, canvasFontFace->get_Weight(nullptr));
         Assert::AreEqual(E_INVALIDARG, canvasFontFace->get_Stretch(nullptr));
         Assert::AreEqual(E_INVALIDARG, canvasFontFace->get_Style(nullptr));
@@ -124,6 +131,7 @@ TEST_CLASS(CanvasFontFaceTests)
     {
         Matrix3x2 m{};
         CanvasUnicodeRange* rangePointer{};
+        CanvasGlyphMetrics* glyphMetricsPointer{};
         uint32_t u{};
         int i{};
         int* iPointer{};
@@ -184,6 +192,10 @@ TEST_CLASS(CanvasFontFaceTests)
         Assert::AreEqual(RO_E_CLOSED, canvasFontFace->get_GlyphCount(&u));
 
         Assert::AreEqual(RO_E_CLOSED, canvasFontFace->GetGlyphIndices(1, &u, &u, &iPointer));
+
+        Assert::AreEqual(RO_E_CLOSED, canvasFontFace->GetGlyphMetrics(1, &i, true, &u, &glyphMetricsPointer));
+
+        Assert::AreEqual(RO_E_CLOSED, canvasFontFace->GetGdiCompatibleGlyphMetrics(12, 96, m, true, 1, &i, true, &u, &glyphMetricsPointer));
 
         FontWeight fontWeight;
         FontStretch fontStretch;
@@ -798,6 +810,128 @@ TEST_CLASS(CanvasFontFaceTests)
         Assert::AreEqual(7, outputElements[0]);
         Assert::AreEqual(8, outputElements[1]);
         Assert::AreEqual(9, outputElements[2]);
+    }
+
+    TEST_METHOD_EX(CanvasFontFace_GetGlyphMetrics_BadArgs)
+    {
+        Fixture f(0);
+        uint32_t outputCount;
+        CanvasGlyphMetrics* outputElements;
+
+        int inputElement = -1;
+        Assert::AreEqual(E_INVALIDARG, f.FontFace->GetGlyphMetrics(1, &inputElement, true, &outputCount, &outputElements));
+
+        inputElement = USHORT_MAX + 1;
+        Assert::AreEqual(E_INVALIDARG, f.FontFace->GetGlyphMetrics(1, &inputElement, true, &outputCount, &outputElements));
+    }
+
+    TEST_METHOD_EX(CanvasFontFace_GetGlyphMetrics)
+    {
+        Fixture f;
+
+        f.RealizedDWriteFontFace->GetMetricsMethod1.SetExpectedCalls(1,
+            [&](DWRITE_FONT_METRICS1* out)
+        {
+            *out = DWRITE_FONT_METRICS1{};
+            out->designUnitsPerEm = 10;
+            out->lineGap = 10;
+            out->ascent = 110;
+        });
+
+        f.RealizedDWriteFontFace->GetDesignGlyphMetricsMethod.SetExpectedCalls(1,
+            [&](UINT16 const* glyphIndices, UINT32 glyphCount, DWRITE_GLYPH_METRICS* glyphMetrics, BOOL isSideways)
+        {
+            Assert::AreEqual(TRUE, isSideways);
+
+            Assert::AreEqual(61ui16, glyphIndices[0]);
+            Assert::AreEqual(62ui16, glyphIndices[1]);
+            Assert::AreEqual(63ui16, glyphIndices[2]);
+
+            Assert::AreEqual(3u, glyphCount);
+
+            glyphMetrics[0] = DWRITE_GLYPH_METRICS{ 20, 90u, -10, 10, 70u, -20, 60 };
+            glyphMetrics[1] = DWRITE_GLYPH_METRICS{ 20, 90u, -10, 10, 70u, -20, 60 };
+            glyphMetrics[2] = DWRITE_GLYPH_METRICS{ 20, 90u, -10, 10, 70u, -20, 60 };
+
+            return S_OK;
+        });
+
+        int inputGlyphs[]{ 61u, 62u, 63u };
+        uint32_t outputCount;
+        CanvasGlyphMetrics* outputElements;
+        Assert::AreEqual(S_OK, f.FontFace->GetGlyphMetrics(3, inputGlyphs, true, &outputCount, &outputElements));
+        Assert::AreEqual(3u, outputCount);
+        Assert::AreEqual(2.f, outputElements[0].LeftSideBearing);
+        Assert::AreEqual(9.f, outputElements[0].AdvanceWidth);
+        Assert::AreEqual(-1.f, outputElements[0].RightSideBearing);
+        Assert::AreEqual(1.f, outputElements[0].TopSideBearing);
+        Assert::AreEqual(7.f, outputElements[0].AdvanceHeight);
+        Assert::AreEqual(-2.f, outputElements[0].BottomSideBearing);
+        Assert::AreEqual(6.f, outputElements[0].VerticalOrigin);
+        Assert::AreEqual(Rect{ 2.f, 7.f, 8.f, 8.f }, outputElements[0].DrawBounds);
+    }
+
+    TEST_METHOD_EX(CanvasFontFace_GetGdiCompatibleGlyphMetrics_BadArgs)
+    {
+      Fixture f(0);
+      uint32_t outputCount;
+      CanvasGlyphMetrics* outputElements;
+      Matrix3x2 someTransform = Matrix3x2{ 1, 2, 3, 4, 5, 6 };
+
+      int inputElement = -1;
+      Assert::AreEqual(E_INVALIDARG, f.FontFace->GetGdiCompatibleGlyphMetrics(12, 96, someTransform, true, 1, &inputElement, true, &outputCount, &outputElements));
+
+      inputElement = USHORT_MAX + 1;
+      Assert::AreEqual(E_INVALIDARG, f.FontFace->GetGdiCompatibleGlyphMetrics(12, 96, someTransform, true, 1, &inputElement, true, &outputCount, &outputElements));
+    }
+
+    TEST_METHOD_EX(CanvasFontFace_GetGdiCompatibleGlyphMetrics)
+    {
+        Fixture f;
+
+        f.RealizedDWriteFontFace->GetMetricsMethod1.SetExpectedCalls(1,
+            [&](DWRITE_FONT_METRICS1* out)
+        {
+            *out = DWRITE_FONT_METRICS1{};
+            out->designUnitsPerEm = 10;
+            out->lineGap = 10;
+            out->ascent = 110;
+        });
+        f.RealizedDWriteFontFace->GetGdiCompatibleGlyphMetricsMethod.SetExpectedCalls(1,
+            [&](FLOAT emSize, FLOAT pixelsPerDip, DWRITE_MATRIX const* transform, BOOL useGdiNatural, UINT16 const* glyphIndices, uint32_t glyphCount, DWRITE_GLYPH_METRICS* glyphMetrics, BOOL isSideways)
+        {
+            Assert::AreEqual(20.f, emSize);
+            Assert::AreEqual(1.f, pixelsPerDip);
+            Assert::AreEqual(TRUE, useGdiNatural);
+            Assert::AreEqual(TRUE, isSideways);
+
+            Assert::AreEqual(61ui16, glyphIndices[0]);
+            Assert::AreEqual(62ui16, glyphIndices[1]);
+            Assert::AreEqual(63ui16, glyphIndices[2]);
+
+            Assert::AreEqual(3u, glyphCount);
+
+            glyphMetrics[0] = DWRITE_GLYPH_METRICS{ 20, 90u, -10, 10, 70u, -20, 60 };
+            glyphMetrics[1] = DWRITE_GLYPH_METRICS{ 20, 90u, -10, 10, 70u, -20, 60 };
+            glyphMetrics[2] = DWRITE_GLYPH_METRICS{ 20, 90u, -10, 10, 70u, -20, 60 };
+
+            return S_OK;
+        });
+
+        int inputGlyphs[]{ 61u, 62u, 63u };
+        uint32_t outputCount;
+        CanvasGlyphMetrics* outputElements;
+        Matrix3x2 someTransform = Matrix3x2{ 1, 2, 3, 4, 5, 6 };
+        Assert::AreEqual(S_OK, f.FontFace->GetGdiCompatibleGlyphMetrics(20.f, 96.f, someTransform, true, 3, inputGlyphs, true, &outputCount, &outputElements));
+        Assert::AreEqual(3u, outputCount);
+        Assert::AreEqual(40.f, outputElements[0].LeftSideBearing);
+        Assert::AreEqual(180.f, outputElements[0].AdvanceWidth);
+        Assert::AreEqual(-20.f, outputElements[0].RightSideBearing);
+        Assert::AreEqual(20.f, outputElements[0].TopSideBearing);
+        Assert::AreEqual(140.f, outputElements[0].AdvanceHeight);
+        Assert::AreEqual(-40.f, outputElements[0].BottomSideBearing);
+        Assert::AreEqual(120.f, outputElements[0].VerticalOrigin);
+        Assert::AreEqual(Rect{ 40, 140, 160, 160 }, outputElements[0].DrawBounds);
     }
 
     TEST_METHOD_EX(CanvasFontFace_get_Weight)
