@@ -922,16 +922,17 @@ TEST_CLASS(CanvasFontFaceTests)
         uint32_t outputCount;
         CanvasGlyphMetrics* outputElements;
         Matrix3x2 someTransform = Matrix3x2{ 1, 2, 3, 4, 5, 6 };
+
         Assert::AreEqual(S_OK, f.FontFace->GetGdiCompatibleGlyphMetrics(20.f, 96.f, someTransform, true, 3, inputGlyphs, true, &outputCount, &outputElements));
         Assert::AreEqual(3u, outputCount);
-        Assert::AreEqual(40.f, outputElements[0].LeftSideBearing);
-        Assert::AreEqual(180.f, outputElements[0].AdvanceWidth);
-        Assert::AreEqual(-20.f, outputElements[0].RightSideBearing);
-        Assert::AreEqual(20.f, outputElements[0].TopSideBearing);
-        Assert::AreEqual(140.f, outputElements[0].AdvanceHeight);
-        Assert::AreEqual(-40.f, outputElements[0].BottomSideBearing);
-        Assert::AreEqual(120.f, outputElements[0].VerticalOrigin);
-        Assert::AreEqual(Rect{ 40, 140, 160, 160 }, outputElements[0].DrawBounds);
+        Assert::AreEqual(2.f, outputElements[0].LeftSideBearing);
+        Assert::AreEqual(9.f, outputElements[0].AdvanceWidth);
+        Assert::AreEqual(-1.f, outputElements[0].RightSideBearing);
+        Assert::AreEqual(1.f, outputElements[0].TopSideBearing);
+        Assert::AreEqual(7.f, outputElements[0].AdvanceHeight);
+        Assert::AreEqual(-2.f, outputElements[0].BottomSideBearing);
+        Assert::AreEqual(6.f, outputElements[0].VerticalOrigin);
+        Assert::AreEqual(Rect{ 2.f, 7.f, 8.f, 8.f }, outputElements[0].DrawBounds);
     }
 
     TEST_METHOD_EX(CanvasFontFace_get_Weight)
