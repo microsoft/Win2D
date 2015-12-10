@@ -84,6 +84,34 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         </p>
       </remarks>
     </member>
+    <member name="P:Microsoft.Graphics.Canvas.CanvasDevice.MaximumCacheSize" Experimental="true">
+      <summary>
+        Sets the maximum amount of memory (in bytes) that can be accumulated for cached 
+        images and intermediate surfaces.
+      </summary>
+      <remarks>
+        Note that Win2D may exceed the maximum cache memory set with this property within 
+        a single frame, if that is necessary to render the frame.
+      </remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.CanvasDevice.LowPriority" Experimental="true">
+      <summary>Reduces the priority of drawing work submitted to this device.</summary>
+      <remarks>
+        <p>
+          Low priority devices allow their drawing work to be preempted if any other, 
+          normal priority devices attempt to draw at the same time. When in low priority 
+          mode Direct2D may also split up drawing work into a larger number of smaller 
+          batches or tiles, in order to increase the opportinuties for GPU preemption.
+        </p>
+          This can be useful for apps that draw to more than one device at a time, where 
+          one thread does expensive, long running drawing work at the same time as the UI 
+          thread or a dedicated animation thread is using a different device to update 
+          the display. Setting the long running device to low priority minimizes its 
+          interference with the display animation.
+        <p>
+        </p>
+      </remarks>
+    </member>
 
     <member name="M:Microsoft.Graphics.Canvas.CanvasDevice.IsDeviceLost(System.Int32)">
       <summary>Returns whether this device has lost the ability to be operational.</summary>

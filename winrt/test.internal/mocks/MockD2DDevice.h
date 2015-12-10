@@ -77,36 +77,17 @@ namespace canvas
             return E_NOTIMPL;
         }
 
-        IFACEMETHODIMP_(void) SetMaximumTextureMemory(uint64_t) override
-        {
-            Assert::Fail(L"Unexpected call to SetMaximumTextureMemory");
-        }
+        MOCK_METHOD1(SetMaximumTextureMemory, void(uint64_t));
+        MOCK_METHOD0_CONST(GetMaximumTextureMemory, uint64_t());
 
-        IFACEMETHODIMP_(uint64_t) GetMaximumTextureMemory() const override
-        {
-            Assert::Fail(L"Unexpected call to GetMaximumTextureMemory");
-            return 0L;
-        }
-
-        IFACEMETHODIMP_(void) ClearResources(uint32_t) override
-        {
-            Assert::Fail(L"Unexpected call to ClearResources");
-        }
+        MOCK_METHOD1(ClearResources, void(uint32_t));
 
         //
         // ID2D1Device1
         //
 
-        IFACEMETHODIMP_(D2D1_RENDERING_PRIORITY) GetRenderingPriority() override
-        {
-            Assert::Fail(L"Unexpected call to GetRenderingPriority");
-            return (D2D1_RENDERING_PRIORITY)0;
-        }
-
-        IFACEMETHODIMP_(void) SetRenderingPriority(D2D1_RENDERING_PRIORITY) override
-        {
-            Assert::Fail(L"Unexpected call to SetRenderingPriority");
-        }
+        MOCK_METHOD1(SetRenderingPriority, void(D2D1_RENDERING_PRIORITY));
+        MOCK_METHOD0(GetRenderingPriority, D2D1_RENDERING_PRIORITY());
 
         IFACEMETHODIMP CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS options, ID2D1DeviceContext1** deviceContext) override
         {

@@ -143,6 +143,14 @@ public:
 
         ComPtr<ICanvasLock> lock;
         Assert::AreEqual(RO_E_CLOSED, canvasDevice->Lock(&lock));
+
+        boolean priority;
+        Assert::AreEqual(RO_E_CLOSED, canvasDevice->get_LowPriority(&priority));
+        Assert::AreEqual(RO_E_CLOSED, canvasDevice->put_LowPriority(false));
+
+        uint64_t cacheSize;
+        Assert::AreEqual(RO_E_CLOSED, canvasDevice->get_MaximumCacheSize(&cacheSize));
+        Assert::AreEqual(RO_E_CLOSED, canvasDevice->put_MaximumCacheSize(0));
     }
 
     ComPtr<ID2D1Device1> GetD2DDevice(ComPtr<ICanvasDevice> const& canvasDevice)
@@ -341,6 +349,74 @@ public:
 
         ThrowIfFailed(canvasDevice->IsBufferPrecisionSupported(CanvasBufferPrecision::Precision32Float, &isSupported));
         Assert::IsFalse(!!isSupported);
+    }
+
+    TEST_METHOD_EX(CanvasDevice_LowPriority)
+    {
+        Fixture f;
+        
+        auto d2dDevice = Make<MockD2DDevice>();
+        auto canvasDevice = Make<CanvasDevice>(d2dDevice.Get());
+
+        boolean value;
+
+        // Get null arg.
+        Assert::AreEqual(E_INVALIDARG, canvasDevice->get_LowPriority(nullptr));
+
+        // Get normal priority.
+        d2dDevice->GetRenderingPriorityMethod.SetExpectedCalls(1, [] { return D2D1_RENDERING_PRIORITY_NORMAL; });
+        ThrowIfFailed(canvasDevice->get_LowPriority(&value));
+        Assert::IsFalse(!!value);
+
+        // Get low priority.
+        d2dDevice->GetRenderingPriorityMethod.SetExpectedCalls(1, [] { return D2D1_RENDERING_PRIORITY_LOW; });
+        ThrowIfFailed(canvasDevice->get_LowPriority(&value));
+        Assert::IsTrue(!!value);
+
+        // Set normal priority.
+        d2dDevice->SetRenderingPriorityMethod.SetExpectedCalls(1, [](D2D1_RENDERING_PRIORITY priority)
+        {
+            Assert::AreEqual(D2D1_RENDERING_PRIORITY_NORMAL, priority);
+        });
+
+        ThrowIfFailed(canvasDevice->put_LowPriority(false));
+
+        // Set low priority.
+        d2dDevice->SetRenderingPriorityMethod.SetExpectedCalls(1, [](D2D1_RENDERING_PRIORITY priority)
+        {
+            Assert::AreEqual(D2D1_RENDERING_PRIORITY_LOW, priority);
+        });
+
+        ThrowIfFailed(canvasDevice->put_LowPriority(true));
+    }
+
+    TEST_METHOD_EX(CanvasDevice_MaximumCacheSize)
+    {
+        Fixture f;
+
+        auto d2dDevice = Make<MockD2DDevice>();
+        auto canvasDevice = Make<CanvasDevice>(d2dDevice.Get());
+
+        // Get null arg.
+        Assert::AreEqual(E_INVALIDARG, canvasDevice->get_MaximumCacheSize(nullptr));
+
+        // Get.
+        const uint64_t someValue = 12345;
+        uint64_t value;
+
+        d2dDevice->GetMaximumTextureMemoryMethod.SetExpectedCalls(1, [&] { return someValue; });
+        ThrowIfFailed(canvasDevice->get_MaximumCacheSize(&value));
+        Assert::AreEqual(someValue, value);
+
+        // Set.
+        const uint64_t someOtherValue = 6789;
+
+        d2dDevice->SetMaximumTextureMemoryMethod.SetExpectedCalls(1, [&](uint64_t maximumTextureMemory)
+        {
+            Assert::AreEqual(someOtherValue, maximumTextureMemory);
+        });
+
+        ThrowIfFailed(canvasDevice->put_MaximumCacheSize(someOtherValue));
     }
 
     TEST_METHOD_EX(CanvasDevice_CreateCommandList_ReturnsCommandListFromDeviceContext)
@@ -977,9 +1053,14 @@ public:
         Fixture f;
         auto device = CanvasDevice::CreateNew(false);
 
+        auto d2dDevice = As<ICanvasDeviceInternal>(device)->GetD2DDevice();
+
         ComPtr<ID2D1Factory> d2dFactory;
-        As<ICanvasDeviceInternal>(device)->GetD2DDevice()->GetFactory(&d2dFactory);
+        d2dDevice->GetFactory(&d2dFactory);
         auto mockFactory = static_cast<MockD2DFactory*>(d2dFactory.Get());
+
+        // Trim should also call the D2D ClearResources method.
+        static_cast<MockD2DDevice*>(d2dDevice.Get())->ClearResourcesMethod.SetExpectedCalls(1);
 
         // Creating the device should have taken the lock once, while enumerating DXGI outputs.
         Assert::AreEqual(1, mockFactory->GetEnterCount());

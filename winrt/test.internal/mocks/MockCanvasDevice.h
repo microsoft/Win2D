@@ -108,6 +108,30 @@ namespace canvas
             return E_NOTIMPL;
         }
 
+        IFACEMETHODIMP get_MaximumCacheSize(UINT64* value) override
+        {
+            Assert::Fail(L"Unexpected call to get_MaximumCacheSize");
+            return E_NOTIMPL;
+        }
+
+        IFACEMETHODIMP put_MaximumCacheSize(UINT64 value) override
+        {
+            Assert::Fail(L"Unexpected call to put_MaximumCacheSize");
+            return E_NOTIMPL;
+        }
+
+        IFACEMETHODIMP get_LowPriority(boolean* value) override
+        {
+            Assert::Fail(L"Unexpected call to get_LowPriority");
+            return E_NOTIMPL;
+        }
+
+        IFACEMETHODIMP put_LowPriority(boolean value) override
+        {
+            Assert::Fail(L"Unexpected call to put_LowPriority");
+            return E_NOTIMPL;
+        }
+
         IFACEMETHODIMP add_DeviceLost(
             DeviceLostHandlerType* value,
             EventRegistrationToken* token)

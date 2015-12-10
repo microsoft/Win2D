@@ -236,6 +236,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         IFACEMETHOD(IsBufferPrecisionSupported)(CanvasBufferPrecision bufferPrecision, boolean* value) override;
 
+        IFACEMETHOD(get_MaximumCacheSize)(UINT64* value) override;
+        IFACEMETHOD(put_MaximumCacheSize)(UINT64 value) override;
+
+        IFACEMETHOD(get_LowPriority)(boolean* value) override;
+        IFACEMETHOD(put_LowPriority)(boolean value) override;
+
         IFACEMETHOD(add_DeviceLost)(DeviceLostHandlerType* value, EventRegistrationToken* token) override;
 
         IFACEMETHOD(remove_DeviceLost)(EventRegistrationToken token) override;

@@ -1471,6 +1471,13 @@ namespace Microsoft
                 END_ENUM(CanvasTypographyFeatureName);
             }
 
+            ENUM_TO_STRING(D2D1_RENDERING_PRIORITY)
+            {
+                ENUM_VALUE(D2D1_RENDERING_PRIORITY_NORMAL);
+                ENUM_VALUE(D2D1_RENDERING_PRIORITY_LOW);
+                END_ENUM(D2D1_RENDERING_PRIORITY);
+            }
+
             template<typename T>
             inline std::wstring ToStringAsInt(T value)
             {

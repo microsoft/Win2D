@@ -97,6 +97,12 @@ namespace Microsoft.Graphics.Canvas
             [in] CanvasBufferPrecision bufferPrecision,
             [out, retval] boolean* value);
 
+        [propget] HRESULT MaximumCacheSize([out, retval] UINT64* value);
+        [propput] HRESULT MaximumCacheSize([in] UINT64 value);
+
+        [propget] HRESULT LowPriority([out, retval] boolean* value);
+        [propput] HRESULT LowPriority([in] boolean value);
+
         //
         // This event is raised whenever the native device resource is lost-
         // for example, due to a user switch, lock screen, or unexpected

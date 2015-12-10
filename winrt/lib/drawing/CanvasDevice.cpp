@@ -567,6 +567,46 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             });
     }
 
+    IFACEMETHODIMP CanvasDevice::get_MaximumCacheSize(UINT64* value)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckInPointer(value);
+
+                *value = GetResource()->GetMaximumTextureMemory();
+            });
+    }
+
+    IFACEMETHODIMP CanvasDevice::put_MaximumCacheSize(UINT64 value)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                GetResource()->SetMaximumTextureMemory(value);
+            });
+    }
+
+    IFACEMETHODIMP CanvasDevice::get_LowPriority(boolean* value)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckInPointer(value);
+     
+                *value = (GetResource()->GetRenderingPriority() == D2D1_RENDERING_PRIORITY_LOW);
+            });
+    }
+
+    IFACEMETHODIMP CanvasDevice::put_LowPriority(boolean value)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                GetResource()->SetRenderingPriority(value ? D2D1_RENDERING_PRIORITY_LOW : D2D1_RENDERING_PRIORITY_NORMAL);
+            });
+    }
+
     IFACEMETHODIMP CanvasDevice::add_DeviceLost(
         DeviceLostHandlerType* value, 
         EventRegistrationToken* token)
@@ -850,6 +890,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 auto& dxgiDevice = m_dxgiDevice.EnsureNotClosed();
 
                 D2DResourceLock lock(d2dDevice.Get());
+
+                d2dDevice->ClearResources();
 
                 dxgiDevice->Trim();
             });
