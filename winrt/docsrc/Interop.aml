@@ -277,6 +277,12 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
             <entry>-</entry>
             <entry>-</entry>
           </row>
+          <row>
+            <entry><codeEntityReference>T:Microsoft.Graphics.Canvas.Text.CanvasNumberSubstitution</codeEntityReference></entry>
+            <entry><codeInline>IDWriteNumberSubstitution</codeInline></entry>
+            <entry>-</entry>
+            <entry>-</entry>
+          </row>
         </table>
         
         <para>

@@ -1214,4 +1214,9 @@ IFACEMETHODIMP_(BOOL) IDWriteFontFace1::HasVerticalGlyphVariants()
 {
     return FALSE;
 }
+
+IFACEMETHODIMP IDWriteFontFallback::MapCharacters(IDWriteTextAnalysisSource*, unsigned int, unsigned int, IDWriteFontCollection *, wchar_t const *, DWRITE_FONT_WEIGHT, DWRITE_FONT_STYLE, DWRITE_FONT_STRETCH, unsigned int *, IDWriteFont**, float*)
+{
+    return E_NOTIMPL;
+}
 #endif

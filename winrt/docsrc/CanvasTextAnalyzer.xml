@@ -1,0 +1,184 @@
+<?xml version="1.0"?>
+<!--
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+Licensed under the MIT License. See LICENSE.txt in the project root for license information.
+-->
+
+<doc>
+  <assembly>
+    <name>Microsoft.Graphics.Canvas</name>
+  </assembly>
+  <members>
+  
+    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasCharacterRangeFont" Experimental="true">
+      <summary>Describes a font which has been chosen for a character range.</summary>
+      <remarks>
+        Instances of this class are returned by <see cref="O:Microsoft.Graphics.Canvas.Text.CanvasTextAnalyzer.ChooseFonts"/>.
+      </remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasCharacterRangeFont.FontFace">
+      <summary>The font face which has been chosen for a character range.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasCharacterRangeFont.ScaleFactor">
+      <summary>A scale factor that should be applied to the font size.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasCharacterRangeFont.CharacterCount">
+      <summary>The number of characters that was chosen for a single font.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasCharacterRangeFont.CharacterIndex">
+      <summary>The index into the original string.</summary>
+    </member>
+    
+    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasNumberSubstitution" Experimental="true">
+      <summary>Describes a policy for performing locale-sensitive number substitution in text.</summary>
+      <remarks>
+        <p>
+          When using <a href="Interop.htm">Direct2D interop</a>, this Win2D class
+          corresponds to the DirectWrite interface IDWriteNumberSubstitution.
+        </p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasNumberSubstitution.#ctor(Microsoft.Graphics.Canvas.Text.CanvasNumberSubstitutionMethod)">
+      <summary>Initializes a new instance of the CanvasNumberSubstitution class.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasNumberSubstitution.#ctor(Microsoft.Graphics.Canvas.Text.CanvasNumberSubstitutionMethod,System.String,System.Boolean)">
+      <summary>Initializes a new instance of the CanvasNumberSubstitution class.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasNumberSubstitution.Dispose">
+      <summary>Releases all resources used by the CanvasNumberSubstitution.</summary>
+    </member>
+    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasNumberSubstitutionMethod" Experimental="true">
+      <summary>Identifies the way to perform locale-sensitive number substitution in text.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasNumberSubstitutionMethod.FromCulture">
+      <summary>
+        Specifies that the substitution method should be 
+        determined based in the system environment.
+      </summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasNumberSubstitutionMethod.Contextual">
+      <summary>Either traditional or nominal number shape is used, depending on the nearest preceding strong character.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasNumberSubstitutionMethod.Disabled">
+      <summary>Specifies that code points 0x30-0x39 are always rendered as nominal numeral shapes.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasNumberSubstitutionMethod.National">
+      <summary>Specifies that numbers are rendered using the national number shape as specified by the locale.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasNumberSubstitutionMethod.Traditional">
+      <summary>Specifies that number are rendered using the traditional shape for the specified locale.</summary>
+    </member>
+    
+    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasTextAnalyzer" Experimental="true">
+      <summary>An object that analyzes text in preparation for constructing glyph runs.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextAnalyzer.#ctor(System.String,Microsoft.Graphics.Canvas.Text.CanvasTextDirection)">
+      <summary>Initializes a new instance of the CanvasTextAnalyzer class.</summary>
+      <remarks>
+        <p>
+          This constructor is for analyzing text where the number substitution, vertical glyph orientation,
+          and bidi level are uniform within the text. For whenever that's not the case, use
+          <see cref="M:Microsoft.Graphics.Canvas.Text.CanvasTextAnalyzer.#ctor(System.String,Microsoft.Graphics.Canvas.Text.CanvasTextDirection,Microsoft.Graphics.Canvas.Text.ICanvasTextAnalyzerOptions)"/>
+        </p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextAnalyzer.#ctor(System.String,Microsoft.Graphics.Canvas.Text.CanvasTextDirection,Microsoft.Graphics.Canvas.Text.CanvasNumberSubstitution,Microsoft.Graphics.Canvas.Text.CanvasVerticalGlyphOrientation,System.UInt32)">
+      <summary>Initializes a new instance of the CanvasTextAnalyzer class.</summary>
+      <remarks>
+        <p>
+          This constructor is for analyzing text where the number substitution, vertical glyph orientation,
+          and bidi level are uniform within the text. For whenever that's not the case, use
+          <see cref="M:Microsoft.Graphics.Canvas.Text.CanvasTextAnalyzer.#ctor(System.String,Microsoft.Graphics.Canvas.Text.CanvasTextDirection,Microsoft.Graphics.Canvas.Text.ICanvasTextAnalyzerOptions)"/>
+        </p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextAnalyzer.#ctor(System.String,Microsoft.Graphics.Canvas.Text.CanvasTextDirection,Microsoft.Graphics.Canvas.Text.ICanvasTextAnalyzerOptions)">
+      <summary>Initializes a new instance of the CanvasTextAnalyzer class.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextAnalyzer.ChooseFonts(Microsoft.Graphics.Canvas.Text.CanvasTextFormat)">
+      <summary>Chooses a font for each span of text contained within this text analyzer.</summary>
+      <remarks>
+        <p>
+          This method chooses fonts from the system font set.
+        </p>
+        <p>
+          While a CanvasTextFormat contains a font family name and some other properties, 
+          it's not an explicit reference to a font, nor does it guarantee that a piece of 
+          text can be drawn with that exact font family. 
+          An application needs to apply font fallbacks to match a piece of text to an actual font
+          that will support it. When drawing a CanvasTextLayout constructed with a particular 
+          CanvasTextFormat, for example, Win2D performs that matching automatically. Here, 
+          an application can perform the same matching.
+        </p>
+        <p>
+          If glyphs in the text aren't supported by the text format's font family or aren't
+          compatible with its other properties, this method will try to return another
+          similar font which is compatible.
+        </p>
+        <p>
+          This method only uses the locale, font family, font weight, stretch, and 
+          style from the passed-in text format. It doesn't use its other properties.
+        </p>
+        <p>
+          It can happen that there are some glyphs that don't match any available font.
+          When that's the case, there won't be a CanvasCharacterRangeFont which
+          spans that character. For glyphs not supported by any font, an app may choose 
+          to display nothing, or draw another glyph instead.
+        </p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextAnalyzer.ChooseFonts(Microsoft.Graphics.Canvas.Text.CanvasTextFormat,Microsoft.Graphics.Canvas.Text.CanvasFontSet)">
+      <summary>Chooses a font for each span of text contained within this text analyzer.</summary>
+      <remarks>
+        <p>
+          This method chooses fonts from the passed-in font set.
+        </p>
+        <p>
+          While a CanvasTextFormat contains a font family name and some other properties, 
+          it's not an explicit reference to a font, nor does it guarantee that a piece of 
+          text can be drawn with that exact font family. 
+          An application needs to apply font fallbacks to match a piece of text to an actual font
+          that will support it. When drawing a CanvasTextLayout constructed with a particular 
+          CanvasTextFormat, for example, Win2D performs that matching automatically. Here, 
+          an application can perform the same matching.
+        </p>
+        <p>
+          If glyphs in the text aren't supported by the text format's font family or aren't
+          compatible with its other properties, this method will try to return another
+          similar font which is compatible.
+        </p>
+        <p>
+          This method only uses the locale, font family, font weight, stretch, and 
+          style from the passed-in text format. It doesn't use its other properties.
+        </p>
+        <p>
+          It can happen that there are some glyphs that don't match any available font.
+          When that's the case, there won't be a CanvasCharacterRangeFont which
+          spans that character. For glyphs not supported by any font, an app may choose 
+          to display nothing, or draw another glyph instead.
+        </p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextAnalyzer.Dispose">
+      <summary>Releases all resources used by the CanvasTextAnalyzer.</summary>
+    </member>
+    
+    <member name="T:Microsoft.Graphics.Canvas.Text.ICanvasTextAnalyzerOptions" Experimental="true">
+      <summary>An application-implemented interface for identifying properties that apply to spans of text.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Text.ICanvasTextAnalyzerOptions.GetLocaleName(System.Int32,System.Int32@)">
+      <summary>Gets the locale for this character position, and the character count for this span which shares the same locale.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Text.ICanvasTextAnalyzerOptions.GetNumberSubstitution(System.Int32,System.Int32@)">
+      <summary>Gets the number substitution for this character position, and the character count for this span which shares the same number substitution.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Text.ICanvasTextAnalyzerOptions.GetVerticalGlyphOrientation(System.Int32,System.Int32@)">
+      <summary>Gets the vertical glyph orientation for this character position, and the character count for this span which shares the same vertical glyph orientation.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Text.ICanvasTextAnalyzerOptions.GetBidiLevel(System.Int32,System.Int32@)">
+      <summary>Gets the bidi (bi-directional text) level for this character position, and the character count for this span which shares the same bidi level.</summary>
+    </member>
+    
+  </members>
+</doc>

@@ -166,6 +166,9 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasTextRenderingParametersUnitTests.cpp">
       <Filter>graphics</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasTextAnalyzerUnitTests.cpp">
+      <Filter>graphics</Filter>
+    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)composition\CanvasCompositionUnitTests.cpp">
       <Filter>composition</Filter>
     </ClCompile>

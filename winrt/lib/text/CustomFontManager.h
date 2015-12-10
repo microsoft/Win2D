@@ -39,6 +39,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         ComPtr<IDWriteFactory> m_sharedFactory;
         ComPtr<IDWriteFontCollectionLoader> m_customLoader;
         ComPtr<IDWriteTextAnalyzer1> m_textAnalyzer;
+        ComPtr<IDWriteFontFallback> m_systemFontFallback;
 
     public:
         CustomFontManager();
@@ -50,6 +51,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         ComPtr<IDWriteFactory> const& GetSharedFactory();
 
         ComPtr<IDWriteTextAnalyzer1> const& GetTextAnalyzer();
+
+        ComPtr<IDWriteFontFallback> const& GetSystemFontFallback();
 
     private:
         ComPtr<IDWriteFactory> const& GetIsolatedFactory();

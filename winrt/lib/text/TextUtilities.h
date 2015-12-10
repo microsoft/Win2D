@@ -772,5 +772,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         // static_asserts in ToDWriteFontFeatureTag validate that this cast is ok
         return static_cast<CanvasTypographyFeatureName>(value);
     }
+
+    inline DWRITE_NUMBER_SUBSTITUTION_METHOD ToDWriteNumberSubstitution(CanvasNumberSubstitutionMethod value)
+    {
+        CHECK_ENUM_MEMBER(DWRITE_NUMBER_SUBSTITUTION_METHOD_FROM_CULTURE, CanvasNumberSubstitutionMethod::FromCulture);
+        CHECK_ENUM_MEMBER(DWRITE_NUMBER_SUBSTITUTION_METHOD_CONTEXTUAL, CanvasNumberSubstitutionMethod::Contextual);
+        CHECK_ENUM_MEMBER(DWRITE_NUMBER_SUBSTITUTION_METHOD_NONE, CanvasNumberSubstitutionMethod::Disabled);
+        CHECK_ENUM_MEMBER(DWRITE_NUMBER_SUBSTITUTION_METHOD_NATIONAL, CanvasNumberSubstitutionMethod::National);
+        CHECK_ENUM_MEMBER(DWRITE_NUMBER_SUBSTITUTION_METHOD_TRADITIONAL, CanvasNumberSubstitutionMethod::Traditional);
+        return static_cast<DWRITE_NUMBER_SUBSTITUTION_METHOD>(value);
+    }
    
 }}}}}

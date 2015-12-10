@@ -39,10 +39,14 @@ namespace canvas
  
         CALL_COUNTER_WITH_MOCK(CreateCustomRenderingParamsMethod1, HRESULT(IDWriteRenderingParams2**));
 
+        MOCK_METHOD1(GetSystemFontFallback, HRESULT(IDWriteFontFallback**));
+
 #if WINVER > _WIN32_WINNT_WINBLUE
         CALL_COUNTER_WITH_MOCK(CreateCustomRenderingParamsMethod2, HRESULT(FLOAT,FLOAT,FLOAT,FLOAT,DWRITE_PIXEL_GEOMETRY,DWRITE_RENDERING_MODE1,DWRITE_GRID_FIT_MODE,IDWriteRenderingParams3**));
         CALL_COUNTER_WITH_MOCK(GetSystemFontSetMethod, HRESULT(IDWriteFontSet**));
         CALL_COUNTER_WITH_MOCK(CreateFontSetBuilderMethod, HRESULT(IDWriteFontSetBuilder**));
+
+        MOCK_METHOD2(CreateFontCollectionFromFontSet, HRESULT(IDWriteFontSet*, IDWriteFontCollection1**));
 #endif
 
         IFACEMETHODIMP GetSystemFontCollection(
@@ -251,12 +255,6 @@ namespace canvas
         // IDWriteFactory2
         //
 
-        IFACEMETHODIMP GetSystemFontFallback(IDWriteFontFallback**)
-        {
-            Assert::Fail(L"Unexpected call to GetSystemFontFallback");
-            return E_NOTIMPL;
-        }
-
         IFACEMETHODIMP CreateFontFallbackBuilder(IDWriteFontFallbackBuilder**)
         {
             Assert::Fail(L"Unexpected call to CreateFontFallbackBuilder");
@@ -371,14 +369,6 @@ namespace canvas
             IDWriteFontSetBuilder** fontSetBuilder)
         {
             return CreateFontSetBuilderMethod.WasCalled(fontSetBuilder);
-        }
-
-        IFACEMETHODIMP CreateFontCollectionFromFontSet(
-            IDWriteFontSet*,
-            IDWriteFontCollection1**)
-        {
-            Assert::Fail(L"Unexpected call to CreateFontCollectionFromFontSet");
-            return E_NOTIMPL;
         }
 
         IFACEMETHODIMP GetSystemFontCollection(

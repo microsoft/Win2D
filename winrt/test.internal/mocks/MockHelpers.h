@@ -569,6 +569,24 @@ struct FuncInfo<R(A0, A1, A2, A3, A4, A5, A6, A7, A8, A9)>
     typedef A9 Arg9Type;
 };
 
+template<typename R, typename A0, typename A1, typename A2, typename A3, typename A4, typename A5, typename A6, typename A7, typename A8, typename A9, typename A10>
+struct FuncInfo<R(A0, A1, A2, A3, A4, A5, A6, A7, A8, A9, A10)>
+{
+    typedef R ReturnType;
+    typedef A0 Arg0Type;
+    typedef A1 Arg1Type;
+    typedef A2 Arg2Type;
+    typedef A3 Arg3Type;
+    typedef A4 Arg4Type;
+    typedef A5 Arg5Type;
+    typedef A6 Arg6Type;
+    typedef A7 Arg7Type;
+    typedef A8 Arg8Type;
+    typedef A9 Arg9Type;
+    typedef A10 Arg10Type;
+};
+
+
 #define MOCK_METHOD_IMPL0(name, modifier, ...)                          \
     virtual FuncInfo<__VA_ARGS__>::ReturnType STDMETHODCALLTYPE name() modifier override \
     {                                                                   \
@@ -701,6 +719,24 @@ struct FuncInfo<R(A0, A1, A2, A3, A4, A5, A6, A7, A8, A9)>
     }                                                                   \
     CALL_COUNTER_WITH_MOCK(name ## Method, __VA_ARGS__);
 
+#define MOCK_METHOD_IMPL11(name, modifier, ...)                         \
+    virtual FuncInfo<__VA_ARGS__>::ReturnType STDMETHODCALLTYPE name(   \
+        FuncInfo<__VA_ARGS__>::Arg0Type a0,                             \
+        FuncInfo<__VA_ARGS__>::Arg1Type a1,                             \
+        FuncInfo<__VA_ARGS__>::Arg2Type a2,                             \
+        FuncInfo<__VA_ARGS__>::Arg3Type a3,                             \
+        FuncInfo<__VA_ARGS__>::Arg4Type a4,                             \
+        FuncInfo<__VA_ARGS__>::Arg5Type a5,                             \
+        FuncInfo<__VA_ARGS__>::Arg6Type a6,                             \
+        FuncInfo<__VA_ARGS__>::Arg7Type a7,                             \
+        FuncInfo<__VA_ARGS__>::Arg8Type a8,                             \
+        FuncInfo<__VA_ARGS__>::Arg9Type a9,                             \
+        FuncInfo<__VA_ARGS__>::Arg10Type a10) modifier override         \
+    {                                                                   \
+        return name ## Method.WasCalled(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10); \
+    }                                                                   \
+    CALL_COUNTER_WITH_MOCK(name ## Method, __VA_ARGS__);
+
 
 #define MOCK_METHOD0(name, ...) MOCK_METHOD_IMPL0(name, , __VA_ARGS__)
 #define MOCK_METHOD1(name, ...) MOCK_METHOD_IMPL1(name, , __VA_ARGS__)
@@ -713,6 +749,7 @@ struct FuncInfo<R(A0, A1, A2, A3, A4, A5, A6, A7, A8, A9)>
 #define MOCK_METHOD8(name, ...) MOCK_METHOD_IMPL8(name, , __VA_ARGS__)
 #define MOCK_METHOD9(name, ...) MOCK_METHOD_IMPL9(name, , __VA_ARGS__)
 #define MOCK_METHOD10(name, ...) MOCK_METHOD_IMPL10(name, , __VA_ARGS__)
+#define MOCK_METHOD11(name, ...) MOCK_METHOD_IMPL11(name, , __VA_ARGS__)
 
 #define MOCK_METHOD0_CONST(name, ...) MOCK_METHOD_IMPL0(name, const, __VA_ARGS__)
 #define MOCK_METHOD1_CONST(name, ...) MOCK_METHOD_IMPL1(name, const, __VA_ARGS__)
@@ -725,6 +762,7 @@ struct FuncInfo<R(A0, A1, A2, A3, A4, A5, A6, A7, A8, A9)>
 #define MOCK_METHOD8_CONST(name, ...) MOCK_METHOD_IMPL8(name, const, __VA_ARGS__)
 #define MOCK_METHOD9_CONST(name, ...) MOCK_METHOD_IMPL9(name, const, __VA_ARGS__)
 #define MOCK_METHOD10_CONST(name, ...) MOCK_METHOD_IMPL10(name, const, __VA_ARGS__)
+#define MOCK_METHOD11_CONST(name, ...) MOCK_METHOD_IMPL11(name, const, __VA_ARGS__)
 
 
 //

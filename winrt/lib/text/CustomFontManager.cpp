@@ -212,6 +212,20 @@ ComPtr<IDWriteTextAnalyzer1> const& CustomFontManager::GetTextAnalyzer()
     return m_textAnalyzer;
 }
 
+ComPtr<IDWriteFontFallback> const& CustomFontManager::GetSystemFontFallback()
+{
+    RecursiveLock lock(m_mutex);
+
+    auto& sharedFactory = GetSharedFactory();
+
+    if (!m_systemFontFallback)
+    {
+        ThrowIfFailed(As<IDWriteFactory2>(sharedFactory)->GetSystemFontFallback(&m_systemFontFallback));
+    }
+
+    return m_systemFontFallback;
+}
+
 void CustomFontManager::ValidateUri(WinString const& uriString)
 {
     if (uriString == WinString())

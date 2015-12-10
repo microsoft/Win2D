@@ -259,6 +259,15 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)text\CanvasTypography.cpp">
       <Filter>text</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)text\CanvasNumberSubstitution.cpp">
+      <Filter>text</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)text\CanvasTextAnalyzer.cpp">
+      <Filter>text</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)text\CanvasCharacterRangeFont.cpp">
+      <Filter>text</Filter>
+    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)text\CanvasFontFace.cpp">
       <Filter>text</Filter>
     </ClCompile>
@@ -635,6 +644,15 @@
       <Filter>text</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)text\CanvasTypography.h">
+      <Filter>text</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)text\CanvasNumberSubstitution.h">
+      <Filter>text</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)text\CanvasTextAnalyzer.h">
+      <Filter>text</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)text\CanvasCharacterRangeFont.h">
       <Filter>text</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)text\CanvasFontFace.h">
@@ -1073,6 +1091,9 @@
       <Filter>text</Filter>
     </None>
     <None Include="$(MSBuildThisFileDirectory)text\CanvasTypography.abi.idl">
+      <Filter>text</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)text\CanvasTextAnalyzer.abi.idl">
       <Filter>text</Filter>
     </None>
     <None Include="$(MSBuildThisFileDirectory)xaml\CanvasVirtualImageSource.abi.idl">

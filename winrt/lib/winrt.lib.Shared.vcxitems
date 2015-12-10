@@ -173,6 +173,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)text\CanvasTextLayout.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)text\CanvasTextRenderingParameters.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)text\CanvasTypography.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)text\CanvasNumberSubstitution.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)text\CanvasTextAnalyzer.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)text\CanvasCharacterRangeFont.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)text\CustomFontManager.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)text\DrawGlyphRunHelper.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)text\InternalDWriteInlineObject.h" />
@@ -301,6 +304,9 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)text\CanvasTextLayout.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)text\CanvasTextRenderingParameters.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)text\CanvasTypography.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)text\CanvasNumberSubstitution.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)text\CanvasTextAnalyzer.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)text\CanvasCharacterRangeFont.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)text\CustomFontManager.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)text\InternalDWriteTextRenderer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)text\InternalDWriteInlineObject.cpp" />
@@ -401,6 +407,7 @@
     <None Include="$(MSBuildThisFileDirectory)text\CanvasTextRenderingParameters.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)text\CanvasTextRenderer.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)text\CanvasTypography.abi.idl" />
+    <None Include="$(MSBuildThisFileDirectory)text\CanvasTextAnalyzer.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)directx\WinRTDirect3D11.idl" />
     <None Include="$(MSBuildThisFileDirectory)directx\WinRTDirectXCommon.idl" />
     <None Include="$(MSBuildThisFileDirectory)printing\CanvasPrintDocument.abi.idl" />

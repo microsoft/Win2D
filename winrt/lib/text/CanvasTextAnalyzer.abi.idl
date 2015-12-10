@@ -1,0 +1,158 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+//
+// Licensed under the MIT License. See LICENSE.txt in the project root for license information.
+
+import "inspectable.idl";
+import "Windows.Foundation.idl";
+
+namespace Microsoft.Graphics.Canvas.Text
+{
+    [version(VERSION)]
+    typedef enum CanvasNumberSubstitutionMethod
+    {
+        FromCulture,
+        Contextual,
+        Disabled,
+        National,
+        Traditional
+    } CanvasNumberSubstitutionMethod;
+
+    runtimeclass CanvasNumberSubstitution;
+
+    [version(VERSION), uuid(C81A67AD-0639-4F8F-878B-D937F8A14293), exclusiveto(CanvasNumberSubstitution)]
+    interface ICanvasNumberSubstitution : IInspectable
+        requires Windows.Foundation.IClosable
+    {
+    }
+
+    [version(VERSION), uuid(7496A822-C781-4EB0-AAFB-C078E7FA8E24), exclusiveto(CanvasNumberSubstitution)]
+    interface ICanvasNumberSubstitutionFactory : IInspectable
+    {
+        //
+        // Uses agnostic locale, and does not ignore environment overrides.
+        //
+        HRESULT Create(
+            [in] CanvasNumberSubstitutionMethod method,
+            [out, retval] CanvasNumberSubstitution** canvasNumberSubstitution);
+
+        HRESULT CreateWithLocaleAndIgnoreOverrides(
+            [in] CanvasNumberSubstitutionMethod method,
+            [in] HSTRING localeName,
+            [in] boolean ignoreEnvironmentOverrides,
+            [out, retval] CanvasNumberSubstitution** canvasNumberSubstitution);
+    };
+
+    [version(VERSION), activatable(ICanvasNumberSubstitutionFactory, VERSION)]
+    runtimeclass CanvasNumberSubstitution
+    {
+        [default] interface ICanvasNumberSubstitution;
+    }        
+
+    [version(VERSION), uuid(31F2406A-8C5F-4E12-8BD6-CFBBC7214D02)]
+    interface ICanvasTextAnalyzerOptions : IInspectable
+    {
+        HRESULT GetLocaleName(
+            [in] INT32 characterIndex,
+            [out] INT32* characterCount,
+            [out, retval] HSTRING* value);
+
+        HRESULT GetNumberSubstitution(
+            [in] INT32 characterIndex,
+            [out] INT32* characterCount,
+            [out, retval] CanvasNumberSubstitution** value);
+
+        HRESULT GetVerticalGlyphOrientation(
+            [in] INT32 characterIndex,
+            [out] INT32* characterCount,
+            [out, retval] CanvasVerticalGlyphOrientation* value);
+
+        HRESULT GetBidiLevel(
+            [in] INT32 characterIndex,
+            [out] INT32* characterCount,
+            [out, retval] UINT32* value);
+    }
+
+    runtimeclass CanvasCharacterRangeFont;
+
+    [version(VERSION), uuid(BBC4F8D2-EB2B-45F1-AC2A-CFC1F598BAE3), exclusiveto(CanvasCharacterRangeFont)]
+    interface ICanvasCharacterRangeFont : IInspectable
+    {
+        [propget] HRESULT CharacterIndex([out, retval] INT32* value);
+
+        [propget] HRESULT CharacterCount([out, retval] INT32* value);
+
+        [propget] HRESULT FontFace([out, retval] CanvasFontFace** value);
+
+        [propget] HRESULT ScaleFactor([out, retval] float* value);
+    };
+
+    [version(VERSION), threading(both), marshaling_behavior(agile)]
+    runtimeclass CanvasCharacterRangeFont
+    {
+        [default] interface ICanvasCharacterRangeFont;
+    }
+
+    runtimeclass CanvasTextAnalyzer;
+
+    [version(VERSION), uuid(4298F3D1-645B-40E3-B91B-81986D767FC0), exclusiveto(CanvasTextAnalyzer)]
+    interface ICanvasTextAnalyzer : IInspectable
+        requires Windows.Foundation.IClosable
+    {
+        [overload("ChooseFonts")]
+        HRESULT ChooseFontsUsingSystemFontSet(
+            [in] CanvasTextFormat* textFormat,
+            [out, retval] Windows.Foundation.Collections.IVectorView<CanvasCharacterRangeFont*>** values);
+
+        [overload("ChooseFonts")]
+        HRESULT ChooseFonts(
+            [in] CanvasTextFormat* textFormat,
+            [in] CanvasFontSet* fontSet,
+            [out, retval] Windows.Foundation.Collections.IVectorView<CanvasCharacterRangeFont*>** values);
+    }
+
+    [version(VERSION), uuid(521E433F-F698-44C0-8D7F-FE374FE539E1), exclusiveto(CanvasTextAnalyzer)]
+    interface ICanvasTextAnalyzerFactory : IInspectable
+    {
+        //
+        // Creates a text analyzer with default (null) number substitution,
+        // CanvasVerticalGlyphOrientation.Default and bidi level 0.
+        //
+        HRESULT Create(
+            [in] HSTRING text,
+            [in] CanvasTextDirection textDirection,
+            [out, retval] CanvasTextAnalyzer** canvasTextAnalyzer);
+
+        //
+        // Creates a text analyzer with the specified number substitution 
+        // and vertical glyph orientation, uniform across the entire range of text.
+        //
+        HRESULT CreateWithNumberSubstitutionAndVerticalGlyphOrientationAndBidiLevel(
+            [in] HSTRING text,
+            [in] CanvasTextDirection textDirection,
+            [in] CanvasNumberSubstitution* numberSubstitution,
+            [in] CanvasVerticalGlyphOrientation verticalGlyphOrientation,
+            [in] UINT32 bidiLevel,
+            [out, retval] CanvasTextAnalyzer** canvasTextAnalyzer);
+
+        //
+        // Creates a text analyzer, allowing the application to specify spans of text with specific
+        // number substitution or vertical glyph orientation.
+        //
+        HRESULT CreateWithOptions(
+            [in] HSTRING text,
+            [in] CanvasTextDirection textDirection,
+            [in] ICanvasTextAnalyzerOptions* options,
+            [out, retval] CanvasTextAnalyzer** canvasTextAnalyzer);
+    };
+
+    [version(VERSION), activatable(ICanvasTextAnalyzerFactory, VERSION), threading(both), marshaling_behavior(agile)]
+    runtimeclass CanvasTextAnalyzer
+    {
+        [default] interface ICanvasTextAnalyzer;
+    }
+
+    declare
+    {
+        interface Windows.Foundation.Collections.IVector<CanvasCharacterRangeFont*>;
+    }
+}
