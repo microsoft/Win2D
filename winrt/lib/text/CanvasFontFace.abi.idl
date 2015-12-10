@@ -82,6 +82,19 @@ namespace Microsoft.Graphics.Canvas.Text
         float AscenderOffset;
     } CanvasGlyph;
 
+    [version(VERSION)]
+    typedef struct CanvasGlyphMetrics
+    {
+        float LeftSideBearing;
+        float AdvanceWidth;
+        float RightSideBearing;
+        float TopSideBearing;
+        float AdvanceHeight;
+        float BottomSideBearing;
+        float VerticalOrigin;
+        Windows.Foundation.Rect DrawBounds;
+    } CanvasGlyphMetrics;
+
     [version(VERSION), uuid(5199D129-4EF9-4DEE-B74C-4DC910201A7F), exclusiveto(CanvasFontFace)]
     interface ICanvasFontFace : IInspectable
         requires Windows.Foundation.IClosable
@@ -174,6 +187,24 @@ namespace Microsoft.Graphics.Canvas.Text
             [in, size_is(inputCount)] UINT32* inputElements,
             [out] UINT32* outputCount,
             [out, size_is(, *outputCount), retval] int** outputElements);
+
+        HRESULT GetGlyphMetrics(
+          [in] UINT32 inputCount,
+          [in, size_is(inputCount)] int* inputElements,
+          [in] boolean isSideways,
+          [out] UINT32* outputCount,
+          [out, size_is(, *outputCount), retval] CanvasGlyphMetrics** outputElements);
+
+        HRESULT GetGdiCompatibleGlyphMetrics(
+          [in] float fontSize,
+          [in] float dpi,
+          [in] NUMERICS.Matrix3x2 transform,
+          [in] boolean useGdiNatural,
+          [in] UINT32 inputCount,
+          [in, size_is(inputCount)] int* inputElements,
+          [in] boolean isSideways,
+          [out] UINT32* outputCount,
+          [out, size_is(, *outputCount), retval] CanvasGlyphMetrics** outputElements);
 
         [propget] HRESULT Weight([out, retval] Windows.UI.Text.FontWeight* value);
         [propget] HRESULT Stretch([out, retval] Windows.UI.Text.FontStretch* value);

@@ -122,6 +122,24 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             uint32_t* outputCount,
             int** outputElements) override;
 
+        IFACEMETHOD(GetGlyphMetrics)(
+          uint32_t inputCount,
+          int* inputElements,
+          boolean isSideways,
+          uint32_t* outputCount,
+          CanvasGlyphMetrics** outputElements) override;
+
+        IFACEMETHOD(GetGdiCompatibleGlyphMetrics)(
+          float fontSize,
+          float dpi,
+          Matrix3x2 transform,
+          boolean useGdiNatural,
+          uint32_t inputCount,
+          int* inputElements,
+          boolean isSideways,
+          uint32_t* outputCount,
+          CanvasGlyphMetrics** outputElements) override;
+
         IFACEMETHOD(get_Weight)(FontWeight* value) override;
         IFACEMETHOD(get_Stretch)(FontStretch* value) override;
         IFACEMETHOD(get_Style)(FontStyle* value) override;

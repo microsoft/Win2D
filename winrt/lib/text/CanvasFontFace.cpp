@@ -666,6 +666,130 @@ IFACEMETHODIMP CanvasFontFace::GetGlyphIndices(
         });
 }
 
+IFACEMETHODIMP CanvasFontFace::GetGlyphMetrics(
+    uint32_t inputCount,
+    int* inputElements,
+    boolean isSideways,
+    uint32_t* outputCount,
+    CanvasGlyphMetrics** outputElements)
+{
+    return ExceptionBoundary(
+        [&]
+    {
+        CheckInPointer(inputElements);
+        CheckInPointer(outputCount);
+        CheckAndClearOutPointer(outputElements);
+
+        std::vector<unsigned short> glyphIndices;
+        glyphIndices.reserve(inputCount);
+        for (uint32_t i = 0; i < inputCount; ++i)
+        {
+            if (inputElements[i] < 0 || inputElements[i] > USHORT_MAX)
+                ThrowHR(E_INVALIDARG);
+
+            glyphIndices.push_back(static_cast<unsigned short>(inputElements[i]));
+        }
+
+        std::vector<DWRITE_GLYPH_METRICS> glyphMetrics(inputCount);
+        ThrowIfFailed(GetRealizedFontFace()->GetDesignGlyphMetrics(glyphIndices.data(), inputCount, glyphMetrics.data(), isSideways));
+
+        ComArray<CanvasGlyphMetrics> output(inputCount);
+
+        DWRITE_FONT_METRICS1 metrics;
+        GetRealizedFontFace()->GetMetrics(&metrics);
+
+        for (uint32_t i = 0; i < inputCount; ++i)
+        {
+            auto leftDesignSpace = glyphMetrics[i].leftSideBearing;
+            auto topDesignSpace = metrics.lineGap + metrics.ascent - glyphMetrics[i].verticalOriginY + glyphMetrics[i].topSideBearing;
+            auto widthDesignSpace = glyphMetrics[i].advanceWidth - glyphMetrics[i].leftSideBearing - glyphMetrics[i].rightSideBearing;
+            auto heightDesignSpace = glyphMetrics[i].advanceHeight - glyphMetrics[i].topSideBearing - glyphMetrics[i].bottomSideBearing;
+
+            auto left = DesignSpaceToEmSpace(leftDesignSpace, metrics.designUnitsPerEm);
+            auto top = DesignSpaceToEmSpace(topDesignSpace, metrics.designUnitsPerEm);
+            auto width = DesignSpaceToEmSpace(widthDesignSpace, metrics.designUnitsPerEm);
+            auto height = DesignSpaceToEmSpace(heightDesignSpace, metrics.designUnitsPerEm);
+
+            output[i] = CanvasGlyphMetrics{
+                DesignSpaceToEmSpace(glyphMetrics[i].leftSideBearing, metrics.designUnitsPerEm),
+                DesignSpaceToEmSpace(glyphMetrics[i].advanceWidth, metrics.designUnitsPerEm),
+                DesignSpaceToEmSpace(glyphMetrics[i].rightSideBearing, metrics.designUnitsPerEm),
+                DesignSpaceToEmSpace(glyphMetrics[i].topSideBearing, metrics.designUnitsPerEm),
+                DesignSpaceToEmSpace(glyphMetrics[i].advanceHeight, metrics.designUnitsPerEm),
+                DesignSpaceToEmSpace(glyphMetrics[i].bottomSideBearing, metrics.designUnitsPerEm),
+                DesignSpaceToEmSpace(glyphMetrics[i].verticalOriginY, metrics.designUnitsPerEm),
+                Rect{ left, top, width, height }
+            };
+        }
+
+        output.Detach(outputCount, outputElements);
+    });
+}
+
+IFACEMETHODIMP CanvasFontFace::GetGdiCompatibleGlyphMetrics(
+    float fontSize,
+    float dpi,
+    Matrix3x2 transform,
+    boolean useGdiNatural,
+    uint32_t inputCount,
+    int* inputElements,
+    boolean isSideways,
+    uint32_t* outputCount,
+    CanvasGlyphMetrics** outputElements)
+{
+    return ExceptionBoundary(
+        [&]
+    {
+        CheckInPointer(inputElements);
+        CheckInPointer(outputCount);
+        CheckAndClearOutPointer(outputElements);
+
+        std::vector<unsigned short> glyphIndices;
+        glyphIndices.reserve(inputCount);
+        for (uint32_t i = 0; i < inputCount; ++i)
+        {
+            if (inputElements[i] < 0 || inputElements[i] > USHORT_MAX)
+                ThrowHR(E_INVALIDARG);
+
+            glyphIndices.push_back(static_cast<unsigned short>(inputElements[i]));
+        }
+
+        std::vector<DWRITE_GLYPH_METRICS> glyphMetrics(inputCount);
+        ThrowIfFailed(GetRealizedFontFace()->GetGdiCompatibleGlyphMetrics(fontSize, DpiToPixelsPerDip(dpi), ReinterpretAs<DWRITE_MATRIX*>(&transform), useGdiNatural, glyphIndices.data(), inputCount, glyphMetrics.data(), isSideways));
+
+        ComArray<CanvasGlyphMetrics> output(inputCount);
+
+        DWRITE_FONT_METRICS1 metrics;
+        GetRealizedFontFace()->GetMetrics(&metrics);
+
+        for (uint32_t i = 0; i < inputCount; ++i)
+        {
+            auto leftDesignSpace = glyphMetrics[i].leftSideBearing;
+            auto topDesignSpace = metrics.lineGap + metrics.ascent - glyphMetrics[i].verticalOriginY + glyphMetrics[i].topSideBearing;
+            auto widthDesignSpace = glyphMetrics[i].advanceWidth - glyphMetrics[i].leftSideBearing - glyphMetrics[i].rightSideBearing;
+            auto heightDesignSpace = glyphMetrics[i].advanceHeight - glyphMetrics[i].topSideBearing - glyphMetrics[i].bottomSideBearing;
+
+            auto left = DesignSpaceToEmSpace(leftDesignSpace, metrics.designUnitsPerEm);
+            auto top = DesignSpaceToEmSpace(topDesignSpace, metrics.designUnitsPerEm);
+            auto width = DesignSpaceToEmSpace(widthDesignSpace, metrics.designUnitsPerEm);
+            auto height = DesignSpaceToEmSpace(heightDesignSpace, metrics.designUnitsPerEm);
+
+            output[i] = CanvasGlyphMetrics{
+                DesignSpaceToEmSpace(glyphMetrics[i].leftSideBearing, metrics.designUnitsPerEm),
+                DesignSpaceToEmSpace(glyphMetrics[i].advanceWidth, metrics.designUnitsPerEm),
+                DesignSpaceToEmSpace(glyphMetrics[i].rightSideBearing, metrics.designUnitsPerEm),
+                DesignSpaceToEmSpace(glyphMetrics[i].topSideBearing, metrics.designUnitsPerEm),
+                DesignSpaceToEmSpace(glyphMetrics[i].advanceHeight, metrics.designUnitsPerEm),
+                DesignSpaceToEmSpace(glyphMetrics[i].bottomSideBearing, metrics.designUnitsPerEm),
+                DesignSpaceToEmSpace(glyphMetrics[i].verticalOriginY, metrics.designUnitsPerEm),
+                Rect{ left, top, width, height }
+            };
+        }
+
+        output.Detach(outputCount, outputElements);
+    });
+}
+
 IFACEMETHODIMP CanvasFontFace::get_Weight(FontWeight* value)
 {
     return ExceptionBoundary(
