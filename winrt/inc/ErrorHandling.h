@@ -169,10 +169,16 @@ inline void CheckAndClearOutPointer(T** ptr)
 // Therefore the only way that Make() will return an error is if an allocation
 // fails.
 //
+__declspec(noreturn) __declspec(noinline)
+inline void ThrowBadAlloc()
+{
+    throw std::bad_alloc();
+}
+
 inline void CheckMakeResult(bool result)
 {
     if (!result)
-        throw std::bad_alloc();
+        ThrowBadAlloc();
 }
 
 
