@@ -50,6 +50,7 @@
 #include <DirectXMath.h>
 #include <wincodec.h>
 #include <shcore.h>
+#include <robuffer.h>
 
 #ifndef WINDOWS_PHONE
 #include <DocumentSource.h>

@@ -1009,6 +1009,83 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             });
     }
 
+    IFACEMETHODIMP CanvasBitmapFactory::CreateFromBytesWithBuffer(
+        ICanvasResourceCreator* resourceCreator,
+        IBuffer* buffer,
+        int32_t widthInPixels,
+        int32_t heightInPixels,
+        DirectXPixelFormat format,
+        ICanvasBitmap** canvasBitmap)
+    {
+        return CreateFromBytesWithBufferAndDpiAndAlpha(
+            resourceCreator,
+            buffer,
+            widthInPixels,
+            heightInPixels,
+            format,
+            DEFAULT_DPI,
+            AlphaModeFromFormat(format),
+            canvasBitmap);
+    }
+
+    IFACEMETHODIMP CanvasBitmapFactory::CreateFromBytesWithBufferAndDpi(
+        ICanvasResourceCreator* resourceCreator,
+        IBuffer* buffer,
+        int32_t widthInPixels,
+        int32_t heightInPixels,
+        DirectXPixelFormat format,
+        float dpi,
+        ICanvasBitmap** canvasBitmap)
+    {
+        return CreateFromBytesWithBufferAndDpiAndAlpha(
+            resourceCreator,
+            buffer,
+            widthInPixels,
+            heightInPixels,
+            format,
+            dpi,
+            AlphaModeFromFormat(format),
+            canvasBitmap);
+    }
+
+    IFACEMETHODIMP CanvasBitmapFactory::CreateFromBytesWithBufferAndDpiAndAlpha(
+        ICanvasResourceCreator* resourceCreator,
+        IBuffer* buffer,
+        int32_t widthInPixels,
+        int32_t heightInPixels,
+        DirectXPixelFormat format,
+        float dpi,
+        CanvasAlphaMode alpha,
+        ICanvasBitmap** canvasBitmap)
+    {
+        using ::Windows::Storage::Streams::IBufferByteAccess;
+
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckInPointer(buffer);
+
+                auto byteAccess = As<IBufferByteAccess>(buffer);
+
+                uint32_t byteCount;
+                uint8_t* bytes;
+
+                ThrowIfFailed(buffer->get_Length(&byteCount));
+                ThrowIfFailed(byteAccess->Buffer(&bytes));
+
+                ThrowIfFailed(CreateFromBytesWithDpiAndAlpha(
+                    resourceCreator, 
+                    byteCount, 
+                    bytes,
+                    widthInPixels,
+                    heightInPixels,
+                    format,
+                    dpi,
+                    alpha,
+                    canvasBitmap));
+            });
+    }
+
     IFACEMETHODIMP CanvasBitmapFactory::CreateFromColors(
         ICanvasResourceCreator* resourceCreator,
         uint32_t colorCount,
@@ -1312,6 +1389,19 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             && "CanvasBitmap should never be constructed with a render-target bitmap.  This should have been validated before construction.");
     }
 
+    static void CopyPixelBytesToIterator(
+        BitmapSubRectangle const& r,
+        uint32_t sourceStride,
+        stdext::checked_array_iterator<uint8_t*> source,
+        stdext::checked_array_iterator<uint8_t*> destination)
+    {
+        for (auto i = 0u; i < r.GetBlocksHigh(); ++i)
+        {
+            destination = std::copy(source, source + r.GetBytesPerRow(), destination);
+            source += sourceStride;
+        }
+    }
+
     void GetPixelBytesImpl(
         ComPtr<ID2D1Bitmap1> const& d2dBitmap,
         D2D1_RECT_U const& subRectangle,
@@ -1327,16 +1417,50 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         ComArray<BYTE> array(r.GetTotalBytes());
 
-        auto destination = begin(array);
-        auto source = begin(bitmapPixelAccess);
-
-        for (auto i = 0u; i < r.GetBlocksHigh(); ++i)
-        {
-            destination = std::copy(source, source + r.GetBytesPerRow(), destination);
-            source += bitmapPixelAccess.GetStride();
-        }
+        CopyPixelBytesToIterator(
+            r, 
+            bitmapPixelAccess.GetStride(), 
+            begin(bitmapPixelAccess), 
+            begin(array));
 
         array.Detach(valueCount, valueElements);
+    }
+
+    void GetPixelBytesImpl(
+        ComPtr<ID2D1Bitmap1> const& d2dBitmap,
+        D2D1_RECT_U const& subRectangle,
+        IBuffer* buffer)
+    {
+        using ::Windows::Storage::Streams::IBufferByteAccess;
+
+        CheckInPointer(buffer);
+
+        auto byteAccess = As<IBufferByteAccess>(buffer);
+
+        BitmapSubRectangle r(d2dBitmap, subRectangle);
+
+        ScopedBitmapMappedPixelAccess bitmapPixelAccess(d2dBitmap.Get(), D3D11_MAP_READ, &subRectangle);
+
+        uint32_t capacity;
+        ThrowIfFailed(buffer->get_Capacity(&capacity));
+
+        if (capacity < r.GetTotalBytes())
+        {
+            WinStringBuilder message;
+            message.Format(Strings::WrongArrayLength, r.GetTotalBytes(), capacity);
+            ThrowHR(E_INVALIDARG, message.Get());
+        }
+
+        ThrowIfFailed(buffer->put_Length(r.GetTotalBytes()));
+
+        uint8_t* destination;
+        ThrowIfFailed(byteAccess->Buffer(&destination));
+
+        CopyPixelBytesToIterator(
+            r, 
+            bitmapPixelAccess.GetStride(), 
+            begin(bitmapPixelAccess), 
+            stdext::make_checked_array_iterator(destination, capacity));
     }
 
     void GetPixelColorsImpl(
@@ -1478,6 +1602,26 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             source += r.GetBytesPerRow();
             destination += bitmapPixelAccess.GetStride();
         }
+    }
+
+    void SetPixelBytesImpl(
+        ComPtr<ID2D1Bitmap1> const& d2dBitmap,
+        D2D1_RECT_U const& subRectangle,
+        IBuffer* buffer)
+    {
+        using ::Windows::Storage::Streams::IBufferByteAccess;
+
+        CheckInPointer(buffer);
+
+        auto byteAccess = As<IBufferByteAccess>(buffer);
+
+        uint32_t byteCount;
+        uint8_t* bytes;
+
+        ThrowIfFailed(buffer->get_Length(&byteCount));
+        ThrowIfFailed(byteAccess->Buffer(&bytes));
+
+        SetPixelBytesImpl(d2dBitmap, subRectangle, byteCount, bytes);
     }
 
     void SetPixelColorsImpl(

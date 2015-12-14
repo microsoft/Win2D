@@ -109,6 +109,18 @@ namespace Microsoft.Graphics.Canvas
             [out] UINT32* valueCount,
             [out, size_is(, *valueCount), retval] BYTE** valueElements);
 
+        [overload("GetPixelBytes")]
+        HRESULT GetPixelBytesWithBuffer(
+            [in] Windows.Storage.Streams.IBuffer* buffer);
+
+        [overload("GetPixelBytes")]
+        HRESULT GetPixelBytesWithBufferAndSubrectangle(
+            [in] Windows.Storage.Streams.IBuffer* buffer,
+            [in] INT32 left,
+            [in] INT32 top,
+            [in] INT32 width,
+            [in] INT32 height);
+
         [overload("GetPixelColors")]
         HRESULT GetPixelColors(
             [out] UINT32* valueCount,
@@ -123,15 +135,27 @@ namespace Microsoft.Graphics.Canvas
             [out] UINT32* valueCount,
             [out, size_is(, *valueCount), retval] Windows.UI.Color** valueElements);
 
-        [overload("SetPixelBytes")]
+        [overload("SetPixelBytes"), default_overload]
         HRESULT SetPixelBytes(
             [in] UINT32 valueCount,
             [in, size_is(valueCount)] BYTE* valueElements);
 
-        [overload("SetPixelBytes")]
+        [overload("SetPixelBytes"), default_overload]
         HRESULT SetPixelBytesWithSubrectangle(
             [in] UINT32 valueCount,
             [in, size_is(valueCount)] BYTE* valueElements,
+            [in] INT32 left,
+            [in] INT32 top,
+            [in] INT32 width,
+            [in] INT32 height);
+
+        [overload("SetPixelBytes")]
+        HRESULT SetPixelBytesWithBuffer(
+            [in] Windows.Storage.Streams.IBuffer* buffer);
+
+        [overload("SetPixelBytes")]
+        HRESULT SetPixelBytesWithBufferAndSubrectangle(
+            [in] Windows.Storage.Streams.IBuffer* buffer,
             [in] INT32 left,
             [in] INT32 top,
             [in] INT32 width,
@@ -196,7 +220,7 @@ namespace Microsoft.Graphics.Canvas
             [in] CanvasAlphaMode alpha,
             [out, retval] CanvasBitmap** bitmap);
 
-        [overload("CreateFromBytes")]
+        [overload("CreateFromBytes"), default_overload]
         HRESULT CreateFromBytes(
             [in] ICanvasResourceCreator* resourceCreator,
             [in] UINT32 byteCount,
@@ -205,8 +229,8 @@ namespace Microsoft.Graphics.Canvas
             [in] INT32 heightInPixels,
             [in] DIRECTX_PIXEL_FORMAT format,
             [out, retval] CanvasBitmap** bitmap);
-
-        [overload("CreateFromBytes")]
+        
+        [overload("CreateFromBytes"), default_overload]
         HRESULT CreateFromBytesWithDpi(
             [in] ICanvasResourceCreator* resourceCreator,
             [in] UINT32 byteCount,
@@ -217,11 +241,41 @@ namespace Microsoft.Graphics.Canvas
             [in] float dpi,
             [out, retval] CanvasBitmap** bitmap);
 
-        [overload("CreateFromBytes")]
+        [overload("CreateFromBytes"), default_overload]
         HRESULT CreateFromBytesWithDpiAndAlpha(
             [in] ICanvasResourceCreator* resourceCreator,
             [in] UINT32 byteCount,
             [in, size_is(byteCount)] BYTE* bytes,
+            [in] INT32 widthInPixels,
+            [in] INT32 heightInPixels,
+            [in] DIRECTX_PIXEL_FORMAT format,
+            [in] float dpi,
+            [in] CanvasAlphaMode alpha,
+            [out, retval] CanvasBitmap** bitmap);
+
+        [overload("CreateFromBytes")]
+        HRESULT CreateFromBytesWithBuffer(
+            [in] ICanvasResourceCreator* resourceCreator,
+            [in] Windows.Storage.Streams.IBuffer* buffer,
+            [in] INT32 widthInPixels,
+            [in] INT32 heightInPixels,
+            [in] DIRECTX_PIXEL_FORMAT format,
+            [out, retval] CanvasBitmap** bitmap);
+
+        [overload("CreateFromBytes")]
+        HRESULT CreateFromBytesWithBufferAndDpi(
+            [in] ICanvasResourceCreator* resourceCreator,
+            [in] Windows.Storage.Streams.IBuffer* buffer,
+            [in] INT32 widthInPixels,
+            [in] INT32 heightInPixels,
+            [in] DIRECTX_PIXEL_FORMAT format,
+            [in] float dpi,
+            [out, retval] CanvasBitmap** bitmap);
+
+        [overload("CreateFromBytes")]
+        HRESULT CreateFromBytesWithBufferAndDpiAndAlpha(
+            [in] ICanvasResourceCreator* resourceCreator,
+            [in] Windows.Storage.Streams.IBuffer* buffer,
             [in] INT32 widthInPixels,
             [in] INT32 heightInPixels,
             [in] DIRECTX_PIXEL_FORMAT format,

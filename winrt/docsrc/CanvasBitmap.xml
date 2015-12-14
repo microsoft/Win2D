@@ -151,11 +151,23 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <remarks>List of <a href="PixelFormats.htm">supported pixel formats</a>.</remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.CreateFromBytes(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Byte[],System.Int32,System.Int32,Windows.Graphics.DirectX.DirectXPixelFormat,System.Single)">
-      <summary>Creates a CanvasBitmap from an array of colors, using the specified pixel width/height, specified DPI, and premultiplied alpha.</summary>
+      <summary>Creates a CanvasBitmap from an array of bytes, using the specified pixel width/height, specified DPI, and premultiplied alpha.</summary>
       <remarks>List of <a href="PixelFormats.htm">supported pixel formats</a>.</remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.CreateFromBytes(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Byte[],System.Int32,System.Int32,Windows.Graphics.DirectX.DirectXPixelFormat,System.Single,Microsoft.Graphics.Canvas.CanvasAlphaMode)">
       <summary>Creates a CanvasBitmap from an array of bytes, using the specified pixel width/height, DPI and alpha behavior.</summary>
+      <remarks>List of <a href="PixelFormats.htm">supported pixel formats</a>.</remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.CreateFromBytes(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.Storage.Streams.IBuffer,System.Int32,System.Int32,Windows.Graphics.DirectX.DirectXPixelFormat)">
+      <summary>Creates a CanvasBitmap from the bytes of the specified buffer, using the specified pixel width/height, premultiplied alpha and default (96) DPI.</summary>
+      <remarks>List of <a href="PixelFormats.htm">supported pixel formats</a>.</remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.CreateFromBytes(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.Storage.Streams.IBuffer,System.Int32,System.Int32,Windows.Graphics.DirectX.DirectXPixelFormat,System.Single)">
+      <summary>Creates a CanvasBitmap from the bytes of the specified buffer, using the specified pixel width/height, specified DPI, and premultiplied alpha.</summary>
+      <remarks>List of <a href="PixelFormats.htm">supported pixel formats</a>.</remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.CreateFromBytes(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.Storage.Streams.IBuffer,System.Int32,System.Int32,Windows.Graphics.DirectX.DirectXPixelFormat,System.Single,Microsoft.Graphics.Canvas.CanvasAlphaMode)">
+      <summary>Creates a CanvasBitmap from the bytes of the specified buffer, using the specified pixel width/height, DPI and alpha behavior.</summary>
       <remarks>List of <a href="PixelFormats.htm">supported pixel formats</a>.</remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.CreateFromColors(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.UI.Color[],System.Int32,System.Int32)">
@@ -299,6 +311,25 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         The region is specified in pixels (not DIPs).
       </remarks>    
     </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.GetPixelBytes(Windows.Storage.Streams.IBuffer)">
+      <summary>Copies raw byte data for the entire bitmap into the specified buffer.</summary>
+      <remarks>
+        Works on bitmaps of any format.
+        The capacity of the buffer must be at least (Width of bitmap, in pixels) X (Height of bitmap, in pixels) X (bytes per pixel).
+        The number of bytes per pixel is determined from CanvasBitmap's pixel format.
+        For a CanvasBitmap with the default format of DXGI_FORMAT_B8G8R8A8_UNORM, for example, this is 4.
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.GetPixelBytes(Windows.Storage.Streams.IBuffer,System.Int32,System.Int32,System.Int32,System.Int32)">
+      <summary>Copies raw byte data for a subregion of the bitmap into the specified buffer.</summary>
+      <remarks>
+        Works on bitmaps of any format.
+        The capacity of the buffer must be at least (Width of subregion, in pixels) X (Height of subregion, in pixels) X (bytes per pixel).
+        The number of bytes per pixel is determined from CanvasBitmap's pixel format.
+        For a CanvasBitmap with the default format of DXGI_FORMAT_B8G8R8A8_UNORM, for example, this is 4.
+        The region is specified in pixels (not DIPs).
+      </remarks>    
+    </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.GetPixelColors">
       <summary>Returns an array of color data for the entire bitmap.</summary>
       <remarks>
@@ -327,6 +358,21 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <remarks>
         Works on bitmaps of any format.
         The size of the array must be exactly (Width of subregion, in pixels) X (Height of subregion, in pixels) X (bytes per pixel).
+        The region is specified in pixels (not DIPs).
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.SetPixelBytes(Windows.Storage.Streams.IBuffer)">
+      <summary>Sets the byte data of the bitmap from the specified buffer.</summary>
+      <remarks>
+        Works on bitmaps of any format.
+        The size of the buffer must be exactly (Width of bitmap, in pixels) X (Height of bitmap, in pixels) X (bytes per pixel).        
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.SetPixelBytes(Windows.Storage.Streams.IBuffer,System.Int32,System.Int32,System.Int32,System.Int32)">
+      <summary>Sets the byte data of a subregion of the bitmap from the specified buffer.</summary>
+      <remarks>
+        Works on bitmaps of any format.
+        The size of the buffer must be exactly (Width of subregion, in pixels) X (Height of subregion, in pixels) X (bytes per pixel).
         The region is specified in pixels (not DIPs).
       </remarks>
     </member>

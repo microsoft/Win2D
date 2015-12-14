@@ -170,6 +170,33 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             CanvasAlphaMode alpha,
             ICanvasBitmap** canvasBitmap) override;
 
+        IFACEMETHOD(CreateFromBytesWithBuffer)(
+            ICanvasResourceCreator* resourceCreator,
+            IBuffer* buffer,
+            int32_t widthInPixels,
+            int32_t heightInPixels,
+            DirectXPixelFormat format,
+            ICanvasBitmap** canvasBitmap) override;
+
+        IFACEMETHOD(CreateFromBytesWithBufferAndDpi)(
+            ICanvasResourceCreator* resourceCreator,
+            IBuffer* buffer,
+            int32_t widthInPixels,
+            int32_t heightInPixels,
+            DirectXPixelFormat format,
+            float dpi,
+            ICanvasBitmap** canvasBitmap) override;
+
+        IFACEMETHOD(CreateFromBytesWithBufferAndDpiAndAlpha)(
+            ICanvasResourceCreator* resourceCreator,
+            IBuffer* buffer,
+            int32_t widthInPixels,
+            int32_t heightInPixels,
+            DirectXPixelFormat format,
+            float dpi,
+            CanvasAlphaMode alpha,
+            ICanvasBitmap** canvasBitmap) override;
+
         IFACEMETHOD(CreateFromColors)(
             ICanvasResourceCreator* resourceCreator,
             uint32_t colorCount,
@@ -274,6 +301,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         uint32_t* valueCount,
         uint8_t** valueElements);
 
+    void GetPixelBytesImpl(
+        ComPtr<ID2D1Bitmap1> const& d2dBitmap,
+        D2D1_RECT_U const& subRectangle,
+        IBuffer* buffer);
+
     void GetPixelColorsImpl(
         ComPtr<ID2D1Bitmap1> const& d2dBitmap,
         D2D1_RECT_U const& subRectangle,
@@ -299,6 +331,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         D2D1_RECT_U const& subRectangle,
         uint32_t valueCount,
         uint8_t* valueElements);
+
+    void SetPixelBytesImpl(
+        ComPtr<ID2D1Bitmap1> const& d2dBitmap,
+        D2D1_RECT_U const& subRectangle,
+        IBuffer* buffer);
 
     void SetPixelColorsImpl(
         ComPtr<ID2D1Bitmap1> const& d2dBitmap,
@@ -639,6 +676,40 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 });
         }
 
+        IFACEMETHODIMP GetPixelBytesWithBuffer(
+            IBuffer* buffer) override
+        {
+            return ExceptionBoundary(
+                [&]
+                {
+                    auto& d2dBitmap = GetResource();
+
+                    GetPixelBytesImpl(
+                        d2dBitmap,
+                        GetResourceBitmapExtents(d2dBitmap),
+                        buffer);
+                });
+        }
+
+        IFACEMETHODIMP GetPixelBytesWithBufferAndSubrectangle(
+            IBuffer* buffer,
+            int32_t left,
+            int32_t top,
+            int32_t width,
+            int32_t height) override
+        {
+            return ExceptionBoundary(
+                [&]
+                {
+                    auto& d2dBitmap = GetResource();
+
+                    GetPixelBytesImpl(
+                        d2dBitmap,
+                        ToD2DRectU(left, top, width, height),
+                        buffer);
+                });
+        }
+
         IFACEMETHODIMP GetPixelColors(
             uint32_t* valueCount,
             ABI::Windows::UI::Color **valueElements) override
@@ -712,6 +783,40 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                         ToD2DRectU(left, top, width, height),
                         valueCount, 
                         valueElements);
+                });
+        }
+
+        IFACEMETHODIMP SetPixelBytesWithBuffer(
+            IBuffer* buffer) override
+        {
+            return ExceptionBoundary(
+                [&]
+                {
+                    auto& d2dBitmap = GetResource();
+
+                    SetPixelBytesImpl(
+                        d2dBitmap,
+                        GetResourceBitmapExtents(d2dBitmap),
+                        buffer);
+                });
+        }
+
+        IFACEMETHODIMP SetPixelBytesWithBufferAndSubrectangle(
+            IBuffer* buffer,
+            int32_t left,
+            int32_t top,
+            int32_t width,
+            int32_t height) override
+        {
+            return ExceptionBoundary(
+                [&]
+                {
+                    auto& d2dBitmap = GetResource();
+
+                    SetPixelBytesImpl(
+                        d2dBitmap,
+                        ToD2DRectU(left, top, width, height),
+                        buffer);
                 });
         }
 
