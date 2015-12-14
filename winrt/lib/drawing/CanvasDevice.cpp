@@ -524,10 +524,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 CheckInPointer(value);
                 GetResource();  // this ensures that Close() hasn't been called
                 *value = m_forceSoftwareRenderer;
-                return S_OK;
             });
     }
-
 
     IFACEMETHODIMP CanvasDevice::get_MaximumBitmapSizeInPixels(int32_t* value)
     {

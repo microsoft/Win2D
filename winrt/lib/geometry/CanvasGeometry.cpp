@@ -428,7 +428,7 @@ IFACEMETHODIMP CanvasGeometry::Stroke(
     return ExceptionBoundary(
         [&]
         {
-            return StrokeImpl(strokeWidth, nullptr, nullptr, D2D1_DEFAULT_FLATTENING_TOLERANCE, geometry);
+            StrokeImpl(strokeWidth, nullptr, nullptr, D2D1_DEFAULT_FLATTENING_TOLERANCE, geometry);
         });
 }
 
@@ -441,7 +441,7 @@ IFACEMETHODIMP CanvasGeometry::StrokeWithStrokeStyle(
         [&]
         {
             CheckInPointer(strokeStyle);
-            return StrokeImpl(strokeWidth, strokeStyle, nullptr, D2D1_DEFAULT_FLATTENING_TOLERANCE, geometry);
+            StrokeImpl(strokeWidth, strokeStyle, nullptr, D2D1_DEFAULT_FLATTENING_TOLERANCE, geometry);
         });
 }
 
@@ -456,7 +456,7 @@ IFACEMETHODIMP CanvasGeometry::StrokeWithAllOptions(
         [&]
         {
             CheckInPointer(strokeStyle);
-            return StrokeImpl(strokeWidth, strokeStyle, &transform, flatteningTolerance, geometry);
+            StrokeImpl(strokeWidth, strokeStyle, &transform, flatteningTolerance, geometry);
         });
 }
 

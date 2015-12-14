@@ -621,7 +621,7 @@ IFACEMETHODIMP CanvasSpriteBatch::get_Device(
 
         auto device = ResourceManager::GetOrCreate<ICanvasDevice>(d2dDevice.Get());
 
-        return device.CopyTo(value);
+        ThrowIfFailed(device.CopyTo(value));
     });
 }
 
