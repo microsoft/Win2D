@@ -265,7 +265,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)text\CanvasTextAnalyzer.cpp">
       <Filter>text</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)text\CanvasCharacterRangeFont.cpp">
+    <ClCompile Include="$(MSBuildThisFileDirectory)text\CanvasScaledFont.cpp">
       <Filter>text</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)text\CanvasFontFace.cpp">
@@ -652,7 +652,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)text\CanvasTextAnalyzer.h">
       <Filter>text</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)text\CanvasCharacterRangeFont.h">
+    <ClInclude Include="$(MSBuildThisFileDirectory)text\CanvasScaledFont.h">
       <Filter>text</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)text\CanvasFontFace.h">

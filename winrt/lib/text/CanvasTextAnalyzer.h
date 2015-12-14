@@ -35,12 +35,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         IFACEMETHOD(ChooseFontsUsingSystemFontSet)(
             ICanvasTextFormat* textFormat,
-            IVectorView<CanvasCharacterRangeFont*>** result);
+            IVectorView<IKeyValuePair<CanvasCharacterRange, CanvasScaledFont*>*>** result);
 
         IFACEMETHOD(ChooseFonts)(
             ICanvasTextFormat* textFormat,
             ICanvasFontSet* fontSet,
-            IVectorView<CanvasCharacterRangeFont*>** result);
+            IVectorView<IKeyValuePair<CanvasCharacterRange, CanvasScaledFont*>*>** result);
+
     };
 
 

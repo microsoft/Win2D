@@ -8,7 +8,7 @@
 #include "mocks/MockDWriteFontCollection.h"
 #include "mocks/MockDWriteFontFaceReference.h"
 #include "mocks/MockDWriteFontSet.h"
-#include <lib/text/CanvasCharacterRangeFont.h>
+#include <lib/text/CanvasScaledFont.h>
 #include <lib/text/CanvasNumberSubstitution.h>
 #include <lib/text/CanvasTextAnalyzer.h>
 #include <lib/text/CanvasFontFace.h>
@@ -31,7 +31,7 @@ struct TestCaseForCharacterRange
     { 999, 0 }
 };
 
-TEST_CLASS(CanvasCharacterRangeFontTests)
+TEST_CLASS(CanvasScaledFontTests)
 {
     ComPtr<CanvasFontFace> CreateSimpleFontFace()
     {
@@ -39,38 +39,26 @@ TEST_CLASS(CanvasCharacterRangeFontTests)
         return Make<CanvasFontFace>(resource.Get());
     }
 
-    TEST_METHOD_EX(CanvasCharacterRangeFont_ImplementsExpectedInterfaces)
+    TEST_METHOD_EX(CanvasScaledFont_ImplementsExpectedInterfaces)
     {
-        auto canvasCharacterRangeFont = Make<CanvasCharacterRangeFont>(0, 0, nullptr, 0.0f);
+        auto canvasCharacterRangeFont = Make<CanvasScaledFont>(nullptr, 0.0f);
 
-        ASSERT_IMPLEMENTS_INTERFACE(canvasCharacterRangeFont, ICanvasCharacterRangeFont);
+        ASSERT_IMPLEMENTS_INTERFACE(canvasCharacterRangeFont, ICanvasScaledFont);
     }
 
-    TEST_METHOD_EX(CanvasCharacterRangeFont_NullArgs)
+    TEST_METHOD_EX(CanvasScaledFont_NullArgs)
     {
-        auto canvasCharacterRangeFont = Make<CanvasCharacterRangeFont>(0, 0, nullptr, 0.0f);
-
-        Assert::AreEqual(E_INVALIDARG, canvasCharacterRangeFont->get_CharacterIndex(nullptr));
-
-        Assert::AreEqual(E_INVALIDARG, canvasCharacterRangeFont->get_CharacterCount(nullptr));
+        auto canvasCharacterRangeFont = Make<CanvasScaledFont>(nullptr, 0.0f);
 
         Assert::AreEqual(E_INVALIDARG, canvasCharacterRangeFont->get_FontFace(nullptr));
 
         Assert::AreEqual(E_INVALIDARG, canvasCharacterRangeFont->get_ScaleFactor(nullptr));
     }
 
-    TEST_METHOD_EX(CanvasCharacterRangeFont_Properties)
+    TEST_METHOD_EX(CanvasScaledFont_Properties)
     {
         auto expectedFontFace = CreateSimpleFontFace();
-        auto canvasCharacterRangeFont = Make<CanvasCharacterRangeFont>(123, 456, expectedFontFace.Get(), 7.8f);
-
-        int characterIndex{};
-        Assert::AreEqual(S_OK, canvasCharacterRangeFont->get_CharacterIndex(&characterIndex));
-        Assert::AreEqual(123, characterIndex);
-
-        int characterCount{};
-        Assert::AreEqual(S_OK, canvasCharacterRangeFont->get_CharacterCount(&characterCount));
-        Assert::AreEqual(456, characterCount);
+        auto canvasCharacterRangeFont = Make<CanvasScaledFont>(expectedFontFace.Get(), 7.8f);
 
         ComPtr<ICanvasFontFace> fontFace;
         Assert::AreEqual(S_OK, canvasCharacterRangeFont->get_FontFace(&fontFace));
@@ -401,7 +389,7 @@ TEST_CLASS(CanvasTextAnalyzerTests)
         {
             auto textAnalyzer = Create();
 
-            ComPtr<IVectorView<CanvasCharacterRangeFont*>> result;
+            ComPtr<IVectorView<IKeyValuePair<CanvasCharacterRange, CanvasScaledFont*>*>> result;
             Assert::AreEqual(S_OK, textAnalyzer->ChooseFontsUsingSystemFontSet(TextFormat.Get(), &result));
         }
     };
@@ -425,7 +413,7 @@ TEST_CLASS(CanvasTextAnalyzerTests)
 
         auto textAnalyzer = f.Create();
 
-        ComPtr<IVectorView<CanvasCharacterRangeFont*>> result;
+        ComPtr<IVectorView<IKeyValuePair<CanvasCharacterRange, CanvasScaledFont*>*>> result;
         Assert::AreEqual(S_OK, textAnalyzer->ChooseFonts(Make<CanvasTextFormat>().Get(), nullptr, &result));
     }
     
@@ -481,7 +469,7 @@ TEST_CLASS(CanvasTextAnalyzerTests)
         auto canvasFontSet = ResourceManager::GetOrCreate<ICanvasFontSet>(dwriteFontCollection.Get());
 #endif
 
-        ComPtr<IVectorView<CanvasCharacterRangeFont*>> result;
+        ComPtr<IVectorView<IKeyValuePair<CanvasCharacterRange, CanvasScaledFont*>*>> result;
         Assert::AreEqual(S_OK, textAnalyzer->ChooseFonts(f.TextFormat.Get(), canvasFontSet.Get(), &result));
     }
 
@@ -498,7 +486,7 @@ TEST_CLASS(CanvasTextAnalyzerTests)
 
         auto textAnalyzer = f.Create();
 
-        ComPtr<IVectorView<CanvasCharacterRangeFont*>> result;
+        ComPtr<IVectorView<IKeyValuePair<CanvasCharacterRange, CanvasScaledFont*>*>> result;
         Assert::AreEqual(S_OK, textAnalyzer->ChooseFontsUsingSystemFontSet(f.TextFormat.Get(), &result));
     }
 
@@ -585,7 +573,7 @@ TEST_CLASS(CanvasTextAnalyzerTests)
 
         auto textAnalyzer = f.Create();
 
-        ComPtr<IVectorView<CanvasCharacterRangeFont*>> result;
+        ComPtr<IVectorView<IKeyValuePair<CanvasCharacterRange, CanvasScaledFont*>*>> result;
         Assert::AreEqual(S_OK, textAnalyzer->ChooseFontsUsingSystemFontSet(Make<CanvasTextFormat>().Get(), &result));
     }
 
@@ -651,7 +639,7 @@ TEST_CLASS(CanvasTextAnalyzerTests)
 
         auto textAnalyzer = f.CreateWithOptions();
 
-        ComPtr<IVectorView<CanvasCharacterRangeFont*>> result;
+        ComPtr<IVectorView<IKeyValuePair<CanvasCharacterRange, CanvasScaledFont*>*>> result;
         Assert::AreEqual(S_OK, textAnalyzer->ChooseFontsUsingSystemFontSet(f.TextFormat.Get(), &result));
     }
 
@@ -704,7 +692,7 @@ TEST_CLASS(CanvasTextAnalyzerTests)
 
         auto textAnalyzer = f.CreateWithOptions();
 
-        ComPtr<IVectorView<CanvasCharacterRangeFont*>> result;
+        ComPtr<IVectorView<IKeyValuePair<CanvasCharacterRange, CanvasScaledFont*>*>> result;
         Assert::AreEqual(S_OK, textAnalyzer->ChooseFontsUsingSystemFontSet(f.TextFormat.Get(), &result));
     }
 
@@ -732,7 +720,7 @@ TEST_CLASS(CanvasTextAnalyzerTests)
 
             auto textAnalyzer = f.CreateWithNumberSubstitutionAndVerticalGlyphOrientationAndBidiLevel();
 
-            ComPtr<IVectorView<CanvasCharacterRangeFont*>> result;
+            ComPtr<IVectorView<IKeyValuePair<CanvasCharacterRange, CanvasScaledFont*>*>> result;
             Assert::AreEqual(S_OK, textAnalyzer->ChooseFontsUsingSystemFontSet(f.TextFormat.Get(), &result));
         }
     }
@@ -775,7 +763,7 @@ TEST_CLASS(CanvasTextAnalyzerTests)
 
         auto textAnalyzer = f.CreateWithOptions();
 
-        ComPtr<IVectorView<CanvasCharacterRangeFont*>> result;
+        ComPtr<IVectorView<IKeyValuePair<CanvasCharacterRange, CanvasScaledFont*>*>> result;
         Assert::AreEqual(S_OK, textAnalyzer->ChooseFontsUsingSystemFontSet(f.TextFormat.Get(), &result));
     }
 
@@ -834,7 +822,7 @@ TEST_CLASS(CanvasTextAnalyzerTests)
 
         auto textAnalyzer = f.CreateWithOptions();
 
-        ComPtr<IVectorView<CanvasCharacterRangeFont*>> result;
+        ComPtr<IVectorView<IKeyValuePair<CanvasCharacterRange, CanvasScaledFont*>*>> result;
         Assert::AreEqual(S_OK, textAnalyzer->ChooseFontsUsingSystemFontSet(f.TextFormat.Get(), &result));
     }
 
@@ -860,7 +848,7 @@ TEST_CLASS(CanvasTextAnalyzerTests)
 
             auto textAnalyzer = f.CreateWithNumberSubstitutionAndVerticalGlyphOrientationAndBidiLevel();
 
-            ComPtr<IVectorView<CanvasCharacterRangeFont*>> result;
+            ComPtr<IVectorView<IKeyValuePair<CanvasCharacterRange, CanvasScaledFont*>*>> result;
             Assert::AreEqual(S_OK, textAnalyzer->ChooseFontsUsingSystemFontSet(f.TextFormat.Get(), &result));
         }
     }
@@ -896,7 +884,7 @@ TEST_CLASS(CanvasTextAnalyzerTests)
 
         auto textAnalyzer = f.CreateWithOptions();
 
-        ComPtr<IVectorView<CanvasCharacterRangeFont*>> result;
+        ComPtr<IVectorView<IKeyValuePair<CanvasCharacterRange, CanvasScaledFont*>*>> result;
         Assert::AreEqual(S_OK, textAnalyzer->ChooseFontsUsingSystemFontSet(f.TextFormat.Get(), &result));
     }
 
@@ -949,7 +937,7 @@ TEST_CLASS(CanvasTextAnalyzerTests)
 
         auto textAnalyzer = f.CreateWithOptions();
 
-        ComPtr<IVectorView<CanvasCharacterRangeFont*>> result;
+        ComPtr<IVectorView<IKeyValuePair<CanvasCharacterRange, CanvasScaledFont*>*>> result;
         Assert::AreEqual(S_OK, textAnalyzer->ChooseFontsUsingSystemFontSet(f.TextFormat.Get(), &result));
     }
     
@@ -975,7 +963,7 @@ TEST_CLASS(CanvasTextAnalyzerTests)
 
             auto textAnalyzer = f.CreateWithNumberSubstitutionAndVerticalGlyphOrientationAndBidiLevel();
 
-            ComPtr<IVectorView<CanvasCharacterRangeFont*>> result;
+            ComPtr<IVectorView<IKeyValuePair<CanvasCharacterRange, CanvasScaledFont*>*>> result;
             Assert::AreEqual(S_OK, textAnalyzer->ChooseFontsUsingSystemFontSet(f.TextFormat.Get(), &result));
         }
     }
@@ -1011,7 +999,7 @@ TEST_CLASS(CanvasTextAnalyzerTests)
 
         auto textAnalyzer = f.CreateWithOptions();
 
-        ComPtr<IVectorView<CanvasCharacterRangeFont*>> result;
+        ComPtr<IVectorView<IKeyValuePair<CanvasCharacterRange, CanvasScaledFont*>*>> result;
         Assert::AreEqual(S_OK, textAnalyzer->ChooseFontsUsingSystemFontSet(f.TextFormat.Get(), &result));
     }
 
@@ -1065,7 +1053,7 @@ TEST_CLASS(CanvasTextAnalyzerTests)
 
         auto textAnalyzer = f.CreateWithOptions();
 
-        ComPtr<IVectorView<CanvasCharacterRangeFont*>> result;
+        ComPtr<IVectorView<IKeyValuePair<CanvasCharacterRange, CanvasScaledFont*>*>> result;
         Assert::AreEqual(S_OK, textAnalyzer->ChooseFontsUsingSystemFontSet(f.TextFormat.Get(), &result));
     }
 
@@ -1093,7 +1081,7 @@ TEST_CLASS(CanvasTextAnalyzerTests)
 
         auto textAnalyzer = f.CreateWithOptions();
 
-        ComPtr<IVectorView<CanvasCharacterRangeFont*>> result;
+        ComPtr<IVectorView<IKeyValuePair<CanvasCharacterRange, CanvasScaledFont*>*>> result;
         Assert::AreEqual(S_OK, textAnalyzer->ChooseFontsUsingSystemFontSet(f.TextFormat.Get(), &result));
     }
 };

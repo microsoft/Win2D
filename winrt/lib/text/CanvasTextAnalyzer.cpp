@@ -6,7 +6,7 @@
 
 #include "CanvasTextAnalyzer.h"
 #include "CanvasFontSet.h"
-#include "CanvasCharacterRangeFont.h"
+#include "CanvasScaledFont.h"
 
 using namespace ABI::Microsoft::Graphics::Canvas;
 using namespace ABI::Microsoft::Graphics::Canvas::Text;
@@ -236,7 +236,7 @@ CanvasTextAnalyzer::CanvasTextAnalyzer(
 
 IFACEMETHODIMP CanvasTextAnalyzer::ChooseFontsUsingSystemFontSet(
     ICanvasTextFormat* textFormat,
-    IVectorView<CanvasCharacterRangeFont*>** result)
+    IVectorView<IKeyValuePair<CanvasCharacterRange, CanvasScaledFont*>*>** result)
 {
     return ChooseFonts(textFormat, nullptr, result);
 }
@@ -245,7 +245,7 @@ IFACEMETHODIMP CanvasTextAnalyzer::ChooseFontsUsingSystemFontSet(
 IFACEMETHODIMP CanvasTextAnalyzer::ChooseFonts(
     ICanvasTextFormat* textFormat,
     ICanvasFontSet* requestedFontSet,
-    IVectorView<CanvasCharacterRangeFont*>** result)
+    IVectorView<IKeyValuePair<CanvasCharacterRange, CanvasScaledFont*>*>** result)
 {
     return ExceptionBoundary(
         [&]
@@ -305,7 +305,7 @@ IFACEMETHODIMP CanvasTextAnalyzer::ChooseFonts(
             ComPtr<IDWriteFont> mappedFont;
             float scaleFactor;
 
-            auto vector = Make<Vector<CanvasCharacterRangeFont*>>();
+            auto vector = Make<Vector<IKeyValuePair<CanvasCharacterRange, CanvasScaledFont*>*>>();
 
             while (charactersLeft > 0)
             {
@@ -331,9 +331,14 @@ IFACEMETHODIMP CanvasTextAnalyzer::ChooseFonts(
 #else
                     auto canvasFontFace = ResourceManager::GetOrCreate<ICanvasFontFace>(mappedFont.Get());
 #endif
-                    auto characterRangeFont = Make<CanvasCharacterRangeFont>(characterIndex, mappedLength, canvasFontFace.Get(), scaleFactor);
+                    typedef KeyValuePair<CanvasCharacterRange, CanvasScaledFont*, DefaultMapTraits<CanvasCharacterRange, ICanvasScaledFont*>> KeyValuePairImplementation;
+                    auto canvasScaledFont = Make<CanvasScaledFont>(canvasFontFace.Get(), scaleFactor);
+                    CheckMakeResult(canvasScaledFont);
 
-                    ThrowIfFailed(vector->Append(characterRangeFont.Get()));
+                    auto newPair = Make<KeyValuePairImplementation>(CanvasCharacterRange{ static_cast<int>(characterIndex), static_cast<int>(mappedLength) }, canvasScaledFont.Get());
+                    CheckMakeResult(newPair);
+
+                    ThrowIfFailed(vector->Append(newPair.Get()));
                 }
 
                 characterIndex += mappedLength;

@@ -6,26 +6,18 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Text
 {
-    class CanvasCharacterRangeFont : public RuntimeClass<ICanvasCharacterRangeFont>
-        , private LifespanTracker<CanvasCharacterRangeFont>
+    class CanvasScaledFont : public RuntimeClass<ICanvasScaledFont>
+        , private LifespanTracker<CanvasScaledFont>
     {
-        InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_Text_CanvasCharacterRangeFont, BaseTrust);
+        InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_Text_CanvasScaledFont, BaseTrust);
 
-        int m_characterIndex;
-        int m_characterCount;
         ComPtr<ICanvasFontFace> m_fontFace;
         float m_scaleFactor;
 
     public:
-        CanvasCharacterRangeFont(
-            int characterIndex,
-            int characterCount,
+        CanvasScaledFont(
             ICanvasFontFace* fontFace,
             float scaleFactor);
-
-        IFACEMETHOD(get_CharacterIndex)(int* value);
-
-        IFACEMETHOD(get_CharacterCount)(int* value);
 
         IFACEMETHOD(get_FontFace)(ICanvasFontFace** value);
 

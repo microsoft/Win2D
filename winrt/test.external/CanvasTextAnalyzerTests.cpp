@@ -98,14 +98,14 @@ TEST_CLASS(CanvasTextAnalyzerTests)
 
         Assert::AreEqual(3u, result->Size);
 
-        Assert::AreEqual(0, result->GetAt(0)->CharacterIndex);
-        Assert::AreEqual(10, result->GetAt(0)->CharacterCount);
+        Assert::AreEqual(0, result->GetAt(0)->Key.CharacterIndex);
+        Assert::AreEqual(10, result->GetAt(0)->Key.CharacterCount);
 
-        Assert::AreEqual(10, result->GetAt(1)->CharacterIndex);
-        Assert::AreEqual(2, result->GetAt(1)->CharacterCount);
+        Assert::AreEqual(10, result->GetAt(1)->Key.CharacterIndex);
+        Assert::AreEqual(2, result->GetAt(1)->Key.CharacterCount);
 
-        Assert::AreEqual(12, result->GetAt(2)->CharacterIndex);
-        Assert::AreEqual(6, result->GetAt(2)->CharacterCount); // Each symbolic glyph is two code units
+        Assert::AreEqual(12, result->GetAt(2)->Key.CharacterIndex);
+        Assert::AreEqual(6, result->GetAt(2)->Key.CharacterCount); // Each symbolic glyph is two code units
     }
 
     TEST_METHOD(CanvasTextAnalyzer_ChooseFonts_GlyphDoesntMatchAnyFont)
@@ -132,12 +132,12 @@ TEST_CLASS(CanvasTextAnalyzerTests)
 
         Assert::AreEqual(2u, result->Size);
 
-        Assert::AreEqual(0, result->GetAt(0)->CharacterIndex);
-        Assert::AreEqual(3, result->GetAt(0)->CharacterCount);
+        Assert::AreEqual(0, result->GetAt(0)->Key.CharacterIndex);
+        Assert::AreEqual(3, result->GetAt(0)->Key.CharacterCount);
 
         // Each glyph in the unmatchable range is two code units.
 
-        Assert::AreEqual(7, result->GetAt(1)->CharacterIndex);
-        Assert::AreEqual(3, result->GetAt(1)->CharacterCount);
+        Assert::AreEqual(7, result->GetAt(1)->Key.CharacterIndex);
+        Assert::AreEqual(3, result->GetAt(1)->Key.CharacterCount);
     }
 };

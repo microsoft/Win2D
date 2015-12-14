@@ -72,25 +72,28 @@ namespace Microsoft.Graphics.Canvas.Text
             [out, retval] UINT32* value);
     }
 
-    runtimeclass CanvasCharacterRangeFont;
+    runtimeclass CanvasScaledFont;
 
-    [version(VERSION), uuid(BBC4F8D2-EB2B-45F1-AC2A-CFC1F598BAE3), exclusiveto(CanvasCharacterRangeFont)]
-    interface ICanvasCharacterRangeFont : IInspectable
+    [version(VERSION), uuid(BBC4F8D2-EB2B-45F1-AC2A-CFC1F598BAE3), exclusiveto(CanvasScaledFont)]
+    interface ICanvasScaledFont : IInspectable
     {
-        [propget] HRESULT CharacterIndex([out, retval] INT32* value);
-
-        [propget] HRESULT CharacterCount([out, retval] INT32* value);
-
         [propget] HRESULT FontFace([out, retval] CanvasFontFace** value);
 
         [propget] HRESULT ScaleFactor([out, retval] float* value);
     };
 
     [version(VERSION), threading(both), marshaling_behavior(agile)]
-    runtimeclass CanvasCharacterRangeFont
+    runtimeclass CanvasScaledFont
     {
-        [default] interface ICanvasCharacterRangeFont;
+        [default] interface ICanvasScaledFont;
     }
+
+    [version(VERSION)]
+    typedef struct CanvasCharacterRange
+    {
+        INT32 CharacterIndex;
+        INT32 CharacterCount;
+    } CanvasCharacterRange;
 
     runtimeclass CanvasTextAnalyzer;
 
@@ -101,13 +104,13 @@ namespace Microsoft.Graphics.Canvas.Text
         [overload("ChooseFonts")]
         HRESULT ChooseFontsUsingSystemFontSet(
             [in] CanvasTextFormat* textFormat,
-            [out, retval] Windows.Foundation.Collections.IVectorView<CanvasCharacterRangeFont*>** values);
+            [out, retval] Windows.Foundation.Collections.IVectorView<Windows.Foundation.Collections.IKeyValuePair<CanvasCharacterRange, CanvasScaledFont>*>** values);
 
         [overload("ChooseFonts")]
         HRESULT ChooseFonts(
             [in] CanvasTextFormat* textFormat,
             [in] CanvasFontSet* fontSet,
-            [out, retval] Windows.Foundation.Collections.IVectorView<CanvasCharacterRangeFont*>** values);
+            [out, retval] Windows.Foundation.Collections.IVectorView<Windows.Foundation.Collections.IKeyValuePair<CanvasCharacterRange, CanvasScaledFont>*>** values);        
     }
 
     [version(VERSION), uuid(521E433F-F698-44C0-8D7F-FE374FE539E1), exclusiveto(CanvasTextAnalyzer)]
@@ -153,6 +156,6 @@ namespace Microsoft.Graphics.Canvas.Text
 
     declare
     {
-        interface Windows.Foundation.Collections.IVector<CanvasCharacterRangeFont*>;
+        interface Windows.Foundation.Collections.IVector<Windows.Foundation.Collections.IKeyValuePair<CanvasCharacterRange, CanvasScaledFont>*>;
     }
 }
