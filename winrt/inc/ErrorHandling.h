@@ -181,17 +181,15 @@ inline void CheckMakeResult(bool result)
         ThrowBadAlloc();
 }
 
-
 //
 // Converts exceptions in the callable code into HRESULTs.
 //
-template<typename CALLABLE>
-HRESULT ExceptionBoundary(CALLABLE&& fn)
+__declspec(noinline)
+inline HRESULT ThrownExceptionToHResult()
 {
     try
     {
-        fn();
-        return S_OK;
+        throw;
     }
     catch (HResultException const& e)
     {
@@ -204,5 +202,19 @@ HRESULT ExceptionBoundary(CALLABLE&& fn)
     catch (...)
     {
         return E_UNEXPECTED;
+    }
+}
+
+template<typename CALLABLE>
+HRESULT ExceptionBoundary(CALLABLE&& fn)
+{
+    try
+    {
+        fn();
+        return S_OK;
+    }
+    catch (...)
+    {
+        return ThrownExceptionToHResult();
     }
 }
