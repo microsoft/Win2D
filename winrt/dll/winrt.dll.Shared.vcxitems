@@ -25,6 +25,12 @@
       <WindowsMetadataFile>$(Outdir)\$(ItemsRootNamespace).winmd</WindowsMetadataFile>
     </Link>
   </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)'=='Release'">
+    <ClCompile>
+      <Optimization>MinSpace</Optimization>
+      <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
+    </ClCompile>
+  </ItemDefinitionGroup>
   <ItemGroup>
     <CopyMergedWinMD Include="$(MergedWinmdDirectory)\$(ItemsRootNamespace).winmd" />
   </ItemGroup>
