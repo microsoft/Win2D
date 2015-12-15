@@ -17,7 +17,7 @@ class DWriteTextAnalysisSource : public RuntimeClass<RuntimeClassFlags<ClassicCo
     WinString m_text;
     uint32_t m_textLength;
 
-    std::wstring m_localeName;
+    WinString m_localeName;
     DWRITE_READING_DIRECTION m_dwriteReadingDirection;
     ComPtr<ICanvasTextAnalyzerOptions> m_analyzerOptions;
     std::vector<WinString> m_localeNames;
@@ -29,7 +29,7 @@ public:
     DWriteTextAnalysisSource(
         WinString text,
         uint32_t textLength,
-        std::wstring&& localeName,
+        WinString localeName,
         CanvasTextDirection textDirection,
         ComPtr<ICanvasTextAnalyzerOptions> const& analyzerOptions,
         ComPtr<ICanvasNumberSubstitution> defaultNumberSubstitution,
@@ -113,7 +113,7 @@ public:
                 }
                 else
                 {
-                    *localeName = m_localeName.c_str();
+                    *localeName = static_cast<wchar_t const*>(m_localeName);
 
                     *characterCountWithSameFormatting = GetCharacterCountForRemainderOfText(textPosition);
                 }
@@ -156,7 +156,7 @@ public:
         uint32_t* characterCountWithSameFormatting,
         DWRITE_VERTICAL_GLYPH_ORIENTATION* verticalGlyphOrientation,
         uint8_t* bidiLevel)
-    {    
+    {
         return ExceptionBoundary(
             [&]
             {
@@ -203,6 +203,121 @@ private:
     }
 };
 
+template<typename ValueType, typename ValueInterface=ValueType>
+static ComPtr<IKeyValuePair<CanvasCharacterRange, ValueType>> MakeCharacterRangeKeyValue(int textPosition, int textLength, ValueType value)
+{
+    typedef KeyValuePair<CanvasCharacterRange, ValueType, DefaultMapTraits<CanvasCharacterRange, ValueInterface>> KeyValuePairImplementation;
+
+    auto newPair = Make<KeyValuePairImplementation>(CanvasCharacterRange{ textPosition, textLength }, value);
+    CheckMakeResult(newPair);
+
+    return newPair;
+}
+
+static CanvasAnalyzedScript ToCanvasAnalyzedScript(DWRITE_SCRIPT_ANALYSIS const* scriptAnalysis)
+{
+    CanvasAnalyzedScript analyzedScript{};
+
+    analyzedScript.ScriptIdentifier = static_cast<int>(scriptAnalysis->script);
+    analyzedScript.Shape = ToCanvasScriptShape(scriptAnalysis->shapes);
+
+    return analyzedScript;
+}
+
+static DWRITE_SCRIPT_ANALYSIS ToDWriteScriptAnalysis(CanvasAnalyzedScript const& analyzedScript)
+{
+    DWRITE_SCRIPT_ANALYSIS scriptAnalysis{};
+
+    if (analyzedScript.ScriptIdentifier < 0 || analyzedScript.ScriptIdentifier > UINT16_MAX)
+    {
+        ThrowHR(E_INVALIDARG);
+    }
+    scriptAnalysis.script = static_cast<uint16_t>(analyzedScript.ScriptIdentifier);
+    scriptAnalysis.shapes = ToDWriteScriptShapes(analyzedScript.Shape);
+
+    return scriptAnalysis;
+}
+
+class DWriteTextAnalysisSink : public RuntimeClass<RuntimeClassFlags<ClassicCom>, IDWriteTextAnalysisSink1>,
+    private LifespanTracker<DWriteTextAnalysisSink>
+{
+    ComPtr<Vector<IKeyValuePair<CanvasCharacterRange, CanvasAnalyzedScript>*>> m_analyzedScript;
+
+public:
+
+    STDMETHOD(SetScriptAnalysis)(
+        UINT32 textPosition,
+        UINT32 textLength,
+        DWRITE_SCRIPT_ANALYSIS const* scriptAnalysis) override
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                EnsureAnalyzedScript();
+
+                auto analyzedScript = ToCanvasAnalyzedScript(scriptAnalysis);
+
+                auto newPair = MakeCharacterRangeKeyValue(textPosition, textLength, analyzedScript);
+
+                ThrowIfFailed(m_analyzedScript->Append(newPair.Get()));
+            });
+    }
+
+    STDMETHOD(SetLineBreakpoints)(
+        UINT32,
+        UINT32,
+        DWRITE_LINE_BREAKPOINT const*) override
+    {
+        return E_UNEXPECTED; // TODO: #6142 expose analysis results other than script.
+    }
+
+    STDMETHOD(SetBidiLevel)(
+        UINT32,
+        UINT32,
+        UINT8,
+        UINT8) override
+    {
+        return E_UNEXPECTED;
+    }
+
+    STDMETHOD(SetNumberSubstitution)(
+        UINT32,
+        UINT32,
+        IDWriteNumberSubstitution*) override
+    {
+        return E_UNEXPECTED;
+    }
+
+    IFACEMETHODIMP SetGlyphOrientation(
+        UINT32,
+        UINT32,
+        DWRITE_GLYPH_ORIENTATION_ANGLE,
+        UINT8,
+        BOOL,
+        BOOL) override
+    {
+        return E_UNEXPECTED;
+    }
+
+    ComPtr<Vector<IKeyValuePair<CanvasCharacterRange, CanvasAnalyzedScript>*>> const& GetAnalyzedScript()
+    {
+        EnsureAnalyzedScript();
+        return m_analyzedScript;
+    }
+
+private:
+
+    void EnsureAnalyzedScript()
+    {
+        if (!m_analyzedScript)
+        {
+            m_analyzedScript = Make<Vector<IKeyValuePair<CanvasCharacterRange, CanvasAnalyzedScript>*>>();
+            CheckMakeResult(m_analyzedScript);
+        }
+    }
+
+};
+
 CanvasTextAnalyzer::CanvasTextAnalyzer(
     HSTRING text,
     CanvasTextDirection textDirection,
@@ -241,6 +356,25 @@ IFACEMETHODIMP CanvasTextAnalyzer::ChooseFontsUsingSystemFontSet(
     return ChooseFonts(textFormat, nullptr, result);
 }
 
+ComPtr<IDWriteTextAnalysisSource> CanvasTextAnalyzer::CreateTextAnalysisSource(
+    WinString localeNameString)
+{
+    uint32_t textLength;
+    WindowsGetStringRawBuffer(m_text, &textLength);
+
+    ComPtr<IDWriteTextAnalysisSource> dwriteTextAnalysisSource = Make<DWriteTextAnalysisSource>(
+        m_text,
+        textLength,
+        localeNameString,
+        m_textDirection,
+        m_source,
+        m_defaultNumberSubstitution,
+        m_defaultVerticalGlyphOrientation,
+        m_defaultBidiLevel);
+    CheckMakeResult(dwriteTextAnalysisSource);
+
+    return dwriteTextAnalysisSource;
+}
 
 IFACEMETHODIMP CanvasTextAnalyzer::ChooseFonts(
     ICanvasTextFormat* textFormat,
@@ -255,23 +389,12 @@ IFACEMETHODIMP CanvasTextAnalyzer::ChooseFonts(
 
             auto dwriteTextFormat = GetWrappedResource<IDWriteTextFormat>(textFormat);
 
-            std::wstring localeNameString;
-            localeNameString.resize(dwriteTextFormat->GetLocaleNameLength() + 1);
-            ThrowIfFailed(dwriteTextFormat->GetLocaleName(&localeNameString[0], static_cast<uint32_t>(localeNameString.size())));
+            WinString localeNameString = GetLocaleName(dwriteTextFormat.Get());
 
             uint32_t textLength;
             WindowsGetStringRawBuffer(m_text, &textLength);
 
-            auto dwriteTextAnalysisSource = Make<DWriteTextAnalysisSource>(
-                m_text,
-                textLength,
-                std::move(localeNameString),
-                m_textDirection,
-                m_source,
-                m_defaultNumberSubstitution,
-                m_defaultVerticalGlyphOrientation,
-                m_defaultBidiLevel);
-            CheckMakeResult(dwriteTextAnalysisSource);
+            auto dwriteTextAnalysisSource = CreateTextAnalysisSource(localeNameString);
 
             ComPtr<IDWriteFontCollection> dwriteFontCollection;
 
@@ -331,12 +454,10 @@ IFACEMETHODIMP CanvasTextAnalyzer::ChooseFonts(
 #else
                     auto canvasFontFace = ResourceManager::GetOrCreate<ICanvasFontFace>(mappedFont.Get());
 #endif
-                    typedef KeyValuePair<CanvasCharacterRange, CanvasScaledFont*, DefaultMapTraits<CanvasCharacterRange, ICanvasScaledFont*>> KeyValuePairImplementation;
                     auto canvasScaledFont = Make<CanvasScaledFont>(canvasFontFace.Get(), scaleFactor);
                     CheckMakeResult(canvasScaledFont);
 
-                    auto newPair = Make<KeyValuePairImplementation>(CanvasCharacterRange{ static_cast<int>(characterIndex), static_cast<int>(mappedLength) }, canvasScaledFont.Get());
-                    CheckMakeResult(newPair);
+                    auto newPair = MakeCharacterRangeKeyValue<CanvasScaledFont*, ICanvasScaledFont*>(characterIndex, mappedLength, canvasScaledFont.Get());
 
                     ThrowIfFailed(vector->Append(newPair.Get()));
                 }
@@ -349,6 +470,82 @@ IFACEMETHODIMP CanvasTextAnalyzer::ChooseFonts(
         });
 }
 
+
+IFACEMETHODIMP CanvasTextAnalyzer::AnalyzeScript(
+    IVectorView<IKeyValuePair<CanvasCharacterRange, CanvasAnalyzedScript>*>** values)
+{
+    return AnalyzeScriptWithLocale(nullptr, values);
+}
+    
+IFACEMETHODIMP CanvasTextAnalyzer::AnalyzeScriptWithLocale(
+    HSTRING locale,
+    IVectorView<IKeyValuePair<CanvasCharacterRange, CanvasAnalyzedScript>*>** values)
+{
+    return ExceptionBoundary(
+        [&]
+        {
+            CheckAndClearOutPointer(values);
+
+            WinString localeString(locale);
+            auto dwriteTextAnalysisSource = CreateTextAnalysisSource(localeString);
+
+            auto dwriteTextAnalysisSink = Make<DWriteTextAnalysisSink>();
+
+            uint32_t textLength;
+            WindowsGetStringRawBuffer(m_text, &textLength);
+
+            ThrowIfFailed(CustomFontManager::GetInstance()->GetTextAnalyzer()->AnalyzeScript(dwriteTextAnalysisSource.Get(), 0, textLength, dwriteTextAnalysisSink.Get()));
+
+            ThrowIfFailed(dwriteTextAnalysisSink->GetAnalyzedScript()->GetView(values));
+        });
+}
+
+WinString ToStringIsoCode(uint32_t code)
+{
+    WinStringBuilder builder;
+    auto buffer = builder.Allocate(4);
+
+    buffer[0] = (code >> 0) & 0xFF;
+    buffer[1] = (code >> 8) & 0xFF;
+    buffer[2] = (code >> 16) & 0xFF;
+    buffer[3] = (code >> 24) & 0xFF;
+
+    return builder.Get();
+}
+
+IFACEMETHODIMP CanvasTextAnalyzer::GetScriptProperties(
+    CanvasAnalyzedScript analyzedScript,
+    CanvasScriptProperties* scriptProperties)
+{
+    return ExceptionBoundary(
+        [&]
+        {
+            CheckInPointer(scriptProperties);
+
+            auto dwriteScriptAnalysis = ToDWriteScriptAnalysis(analyzedScript);
+
+            DWRITE_SCRIPT_PROPERTIES dwriteScriptProperties;
+
+            ThrowIfFailed(CustomFontManager::GetInstance()->GetTextAnalyzer()->GetScriptProperties(dwriteScriptAnalysis, &dwriteScriptProperties));
+
+            WinString isoCodeString = ToStringIsoCode(dwriteScriptProperties.isoScriptCode);
+            isoCodeString.CopyTo(&scriptProperties->IsoScriptCode);
+
+            scriptProperties->IsoScriptNumber = static_cast<int>(dwriteScriptProperties.isoScriptNumber);
+            scriptProperties->ClusterLookahead = static_cast<int>(dwriteScriptProperties.clusterLookahead);
+
+            WinString justificationCharacterString = ConvertCharacterCodepointToString(dwriteScriptProperties.justificationCharacter);
+            justificationCharacterString.CopyTo(&scriptProperties->JustificationCharacter);
+
+            scriptProperties->RestrictCaretToClusters = dwriteScriptProperties.restrictCaretToClusters;
+            scriptProperties->UsesWordDividers = dwriteScriptProperties.usesWordDividers;
+            scriptProperties->IsDiscreteWriting = dwriteScriptProperties.isDiscreteWriting;
+            scriptProperties->IsBlockWriting = dwriteScriptProperties.isBlockWriting;
+            scriptProperties->IsDistributedWithinCluster = dwriteScriptProperties.isDistributedWithinCluster;
+            scriptProperties->IsConnectedWriting = dwriteScriptProperties.isConnectedWriting;
+            scriptProperties->IsCursiveWriting = dwriteScriptProperties.isCursiveWriting;
+        });
+}
 
 HRESULT CanvasTextAnalyzerFactory::Create(
     HSTRING text,

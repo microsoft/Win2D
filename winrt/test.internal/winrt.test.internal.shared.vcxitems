@@ -119,6 +119,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDWriteTextFormat.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDWriteTextLayout.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDWriteTextRenderer.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDWriteTextAnalyzer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDWriteTypography.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockHelpers.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockProperties.h" />

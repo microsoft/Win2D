@@ -11,22 +11,22 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
   </assembly>
   <members>
   
-      <member name="T:Microsoft.Graphics.Canvas.Text.CanvasCharacterRange">
-        <summary>Describes a range of characters.</summary>
-      </member>
-      <member name="F:Microsoft.Graphics.Canvas.Text.CanvasCharacterRange.CharacterIndex">
-        <summary>The index into the original string.</summary>
-      </member>
-      <member name="F:Microsoft.Graphics.Canvas.Text.CanvasCharacterRange.CharacterCount">
-        <summary>The number of characters.</summary>
-      </member>
-      <member name="T:Microsoft.Graphics.Canvas.Text.CanvasScaledFont">
-        <summary>Represents a font face and a scale factor.</summary>
-      </member>
-      <member name="P:Microsoft.Graphics.Canvas.Text.CanvasScaledFont.FontFace">
-        <summary>The font face which has been chosen for a character range.</summary>
-      </member>
-      <member name="P:Microsoft.Graphics.Canvas.Text.CanvasScaledFont.ScaleFactor">
+    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasCharacterRange" Experimental="true">
+      <summary>Describes a range of characters.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasCharacterRange.CharacterIndex">
+      <summary>The index into the original string.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasCharacterRange.CharacterCount">
+      <summary>The number of characters.</summary>
+    </member>
+    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasScaledFont" Experimental="true">
+      <summary>Represents a font face and a scale factor.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasScaledFont.FontFace">
+      <summary>The font face which has been chosen for a character range.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasScaledFont.ScaleFactor">
         <summary>A scale factor that should be applied to the font size.</summary>
     </member>
     
@@ -81,6 +81,9 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
           and bidi level are uniform within the text. For whenever that's not the case, use
           <see cref="M:Microsoft.Graphics.Canvas.Text.CanvasTextAnalyzer.#ctor(System.String,Microsoft.Graphics.Canvas.Text.CanvasTextDirection,Microsoft.Graphics.Canvas.Text.ICanvasTextAnalyzerOptions)"/>
         </p>
+        <p>
+          It's valid to pass a zero-length string to this constructor.
+        </p>
       </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextAnalyzer.#ctor(System.String,Microsoft.Graphics.Canvas.Text.CanvasTextDirection,Microsoft.Graphics.Canvas.Text.CanvasNumberSubstitution,Microsoft.Graphics.Canvas.Text.CanvasVerticalGlyphOrientation,System.UInt32)">
@@ -91,10 +94,18 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
           and bidi level are uniform within the text. For whenever that's not the case, use
           <see cref="M:Microsoft.Graphics.Canvas.Text.CanvasTextAnalyzer.#ctor(System.String,Microsoft.Graphics.Canvas.Text.CanvasTextDirection,Microsoft.Graphics.Canvas.Text.ICanvasTextAnalyzerOptions)"/>
         </p>
+        <p>
+          It's valid to pass a zero-length string to this constructor.
+        </p>
       </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextAnalyzer.#ctor(System.String,Microsoft.Graphics.Canvas.Text.CanvasTextDirection,Microsoft.Graphics.Canvas.Text.ICanvasTextAnalyzerOptions)">
       <summary>Initializes a new instance of the CanvasTextAnalyzer class.</summary>
+      <remarks>
+        <p>
+          It's valid to pass a zero-length string to this constructor.
+        </p>
+      </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextAnalyzer.ChooseFonts(Microsoft.Graphics.Canvas.Text.CanvasTextFormat)">
       <summary>Chooses a font for each span of text contained within this text analyzer.</summary>
@@ -179,6 +190,76 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="M:Microsoft.Graphics.Canvas.Text.ICanvasTextAnalyzerOptions.GetBidiLevel(System.Int32,System.Int32@)">
       <summary>Gets the bidi (bi-directional text) level for this character position, and the character count for this span which shares the same bidi level.</summary>
     </member>
+
+    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasAnalyzedScript" Experimental="true">
+      <summary>Represents the script data for a piece of text which has been analyzed.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasAnalyzedScript.ScriptIdentifier">
+      <summary>Identifies the script.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasAnalyzedScript.Shape">
+      <summary>Identifies the shaping requirement of a piece of text.</summary>
+    </member>
+    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasScriptProperties" Experimental="true">
+      <summary>Contains script properties that apply to a piece of text.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasScriptProperties.IsoScriptCode">
+      <summary>The standardized four-character code for the given script.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasScriptProperties.IsoScriptNumber">
+      <summary>The standardized numeric code for the script, ranging from 0 to 999.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasScriptProperties.ClusterLookahead">
+      <summary>Number of characters to estimate look-ahead for complex scripts.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasScriptProperties.JustificationCharacter">
+      <summary>Which character to use to elongate the given script for justification.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasScriptProperties.RestrictCaretToClusters">
+      <summary>Whether the caret is restricted to whole clusters.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasScriptProperties.UsesWordDividers">
+      <summary>The language uses dividers between words.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasScriptProperties.IsDiscreteWriting">
+      <summary>Whether the characters are discrete units from each other; this includes both block scripts and clustered scripts.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasScriptProperties.IsBlockWriting">
+      <summary>Whether the language is a block script, expanding between characters.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasScriptProperties.IsDistributedWithinCluster">
+      <summary>Whether the language is justified within glyph clusters, not just between glyph clusters.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasScriptProperties.IsConnectedWriting">
+      <summary>Whether the script's clusters are connected to each other, and no separation should be added between characters.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasScriptProperties.IsCursiveWriting">
+      <summary>Whether the script is naturally cursive, meaning it uses justification methods other than intercharacter spacing.</summary>
+    </member>
+    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasScriptShape" Experimental="true">
+      <summary>The shaping requirement of a piece of text.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasScriptShape.Default">
+      <summary>No additional shaping requirement. Text is shaped with the writing system default behavior.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasScriptShape.NoVisual">
+      <summary>Text should leave no visual on display, for example, for control or format control characters.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextAnalyzer.AnalyzeScript">
+      <summary>Gets information about the script used by the text.</summary>
+      <remarks>
+        <p>
+          This method uses no particular locale. To specify a locale, use 
+          <see cref="M:Microsoft.Graphics.Canvas.Text.CanvasTextAnalyzer.AnalyzeScript(System.String)"/>.
+        </p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextAnalyzer.AnalyzeScript(System.String)">
+      <summary>Gets information about the script used by the text, applying the specified locale.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextAnalyzer.GetScriptProperties(Microsoft.Graphics.Canvas.Text.CanvasAnalyzedScript)">
+      <summary>Gets the properties for an analyzed script.</summary>
+    </member>    
     
   </members>
 </doc>

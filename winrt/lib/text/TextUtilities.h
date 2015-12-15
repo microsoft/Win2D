@@ -153,7 +153,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         return static_cast<CanvasOpticalAlignment>(value);
     }
 
-    WinString ToCanvasTrimmingDelimiter(uint32_t value);
+    WinString ConvertCharacterCodepointToString(uint32_t value);
 
     uint32_t ToTrimmingDelimiter(WinString const& value);
 
@@ -781,6 +781,19 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         CHECK_ENUM_MEMBER(DWRITE_NUMBER_SUBSTITUTION_METHOD_NATIONAL, CanvasNumberSubstitutionMethod::National);
         CHECK_ENUM_MEMBER(DWRITE_NUMBER_SUBSTITUTION_METHOD_TRADITIONAL, CanvasNumberSubstitutionMethod::Traditional);
         return static_cast<DWRITE_NUMBER_SUBSTITUTION_METHOD>(value);
+    }
+
+    inline DWRITE_SCRIPT_SHAPES ToDWriteScriptShapes(CanvasScriptShape value)
+    {
+        CHECK_ENUM_MEMBER(DWRITE_SCRIPT_SHAPES_DEFAULT, CanvasScriptShape::Default);
+        CHECK_ENUM_MEMBER(DWRITE_SCRIPT_SHAPES_NO_VISUAL, CanvasScriptShape::NoVisual);
+        return static_cast<DWRITE_SCRIPT_SHAPES>(value);
+    }
+
+    inline CanvasScriptShape ToCanvasScriptShape(DWRITE_SCRIPT_SHAPES value)
+    {
+        // static_asserts in ToDWriteScriptShapes validate that this cast is ok
+        return static_cast<CanvasScriptShape>(value);
     }
    
 }}}}}

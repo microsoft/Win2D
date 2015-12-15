@@ -95,6 +95,36 @@ namespace Microsoft.Graphics.Canvas.Text
         INT32 CharacterCount;
     } CanvasCharacterRange;
 
+    [version(VERSION)]
+    typedef enum CanvasScriptShape
+    {
+        Default,
+        NoVisual
+    } CanvasScriptShape;
+
+    [version(VERSION)]
+    typedef struct CanvasAnalyzedScript
+    {
+        INT32 ScriptIdentifier;
+        CanvasScriptShape Shape;
+    } CanvasAnalyzedScript;
+
+    [version(VERSION)]
+    typedef struct CanvasScriptProperties
+    {
+        HSTRING IsoScriptCode;
+        INT32 IsoScriptNumber;
+        INT32 ClusterLookahead;
+        HSTRING JustificationCharacter;
+        boolean RestrictCaretToClusters;
+        boolean UsesWordDividers;
+        boolean IsDiscreteWriting;
+        boolean IsBlockWriting;
+        boolean IsDistributedWithinCluster;
+        boolean IsConnectedWriting;
+        boolean IsCursiveWriting;
+    } CanvasScriptProperties;
+
     runtimeclass CanvasTextAnalyzer;
 
     [version(VERSION), uuid(4298F3D1-645B-40E3-B91B-81986D767FC0), exclusiveto(CanvasTextAnalyzer)]
@@ -111,6 +141,19 @@ namespace Microsoft.Graphics.Canvas.Text
             [in] CanvasTextFormat* textFormat,
             [in] CanvasFontSet* fontSet,
             [out, retval] Windows.Foundation.Collections.IVectorView<Windows.Foundation.Collections.IKeyValuePair<CanvasCharacterRange, CanvasScaledFont>*>** values);        
+
+        [overload("AnalyzeScript")]
+        HRESULT AnalyzeScript(
+            [out, retval] Windows.Foundation.Collections.IVectorView<Windows.Foundation.Collections.IKeyValuePair<CanvasCharacterRange, CanvasAnalyzedScript>*>** values);
+
+        [overload("AnalyzeScript")]
+        HRESULT AnalyzeScriptWithLocale(
+            [in] HSTRING locale,
+            [out, retval] Windows.Foundation.Collections.IVectorView<Windows.Foundation.Collections.IKeyValuePair<CanvasCharacterRange, CanvasAnalyzedScript>*>** values);
+
+        HRESULT GetScriptProperties(
+            [in] CanvasAnalyzedScript analyzedScript,
+            [out, retval] CanvasScriptProperties* scriptProperties);
     }
 
     [version(VERSION), uuid(521E433F-F698-44C0-8D7F-FE374FE539E1), exclusiveto(CanvasTextAnalyzer)]
@@ -156,6 +199,9 @@ namespace Microsoft.Graphics.Canvas.Text
 
     declare
     {
+
         interface Windows.Foundation.Collections.IVector<Windows.Foundation.Collections.IKeyValuePair<CanvasCharacterRange, CanvasScaledFont>*>;
+
+        interface Windows.Foundation.Collections.IVector<Windows.Foundation.Collections.IKeyValuePair<CanvasCharacterRange, CanvasAnalyzedScript>*>;
     }
 }

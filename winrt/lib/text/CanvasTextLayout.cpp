@@ -469,7 +469,7 @@ IFACEMETHODIMP CanvasTextLayout::get_TrimmingDelimiter(
             ComPtr<IDWriteInlineObject> inlineObject;
             ThrowIfFailed(resource->GetTrimming(&trimming, &inlineObject));
 
-            WinString winStr = ToCanvasTrimmingDelimiter(trimming.delimiter);
+            WinString winStr = ConvertCharacterCodepointToString(trimming.delimiter);
             winStr.CopyTo(value);
         });
 }

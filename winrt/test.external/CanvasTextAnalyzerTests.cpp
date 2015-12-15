@@ -140,4 +140,57 @@ TEST_CLASS(CanvasTextAnalyzerTests)
         Assert::AreEqual(7, result->GetAt(1)->Key.CharacterIndex);
         Assert::AreEqual(3, result->GetAt(1)->Key.CharacterCount);
     }
+
+    TEST_METHOD(CanvasTextAnalyzer_AnalyzeScript_DefaultFormatting)
+    {
+        auto analyzer = ref new CanvasTextAnalyzer(L"abcdef", CanvasTextDirection::LeftToRightThenTopToBottom);
+
+        auto result = analyzer->AnalyzeScript();
+        Assert::AreEqual(1u, result->Size);        
+
+        auto scriptProperties = analyzer->GetScriptProperties(result->GetAt(0)->Value);
+
+        Assert::AreEqual("Latn", scriptProperties.IsoScriptCode);
+        Assert::AreEqual(215, scriptProperties.IsoScriptNumber);
+        Assert::AreEqual(1, scriptProperties.ClusterLookahead);
+        Assert::AreEqual(" ", scriptProperties.JustificationCharacter);
+        Assert::IsFalse(scriptProperties.RestrictCaretToClusters);
+        Assert::IsTrue(scriptProperties.UsesWordDividers);
+        Assert::IsTrue(scriptProperties.IsDiscreteWriting);
+        Assert::IsFalse(scriptProperties.IsBlockWriting);
+        Assert::IsFalse(scriptProperties.IsDistributedWithinCluster);
+        Assert::IsFalse(scriptProperties.IsConnectedWriting);
+        Assert::IsFalse(scriptProperties.IsCursiveWriting);
+    }
+
+    TEST_METHOD(CanvasTextAnalyzer_AnalyzeScript_MultipleSpans)
+    {
+        auto analyzer = ref new CanvasTextAnalyzer(L"abc文字テクスト", CanvasTextDirection::LeftToRightThenTopToBottom);
+
+        auto result = analyzer->AnalyzeScript();
+        Assert::AreEqual(3u, result->Size);
+
+        Assert::AreEqual(0, result->GetAt(0)->Key.CharacterIndex);
+        Assert::AreEqual(3, result->GetAt(0)->Key.CharacterCount);
+        auto properties0 = analyzer->GetScriptProperties(result->GetAt(0)->Value);
+        Assert::AreEqual("Latn", properties0.IsoScriptCode);
+
+        Assert::AreEqual(3, result->GetAt(1)->Key.CharacterIndex);
+        Assert::AreEqual(2, result->GetAt(1)->Key.CharacterCount);
+        auto properties1 = analyzer->GetScriptProperties(result->GetAt(1)->Value);
+        Assert::AreEqual("Hani", properties1.IsoScriptCode);
+
+        Assert::AreEqual(5, result->GetAt(2)->Key.CharacterIndex);
+        Assert::AreEqual(4, result->GetAt(2)->Key.CharacterCount);
+        auto properties2 = analyzer->GetScriptProperties(result->GetAt(2)->Value);
+        Assert::AreEqual("Kana", properties2.IsoScriptCode);
+    }
+
+    TEST_METHOD(CanvasTextAnalyzer_AnalyzeScript_ZeroLengthText)
+    {
+        auto analyzer = ref new CanvasTextAnalyzer(L"", CanvasTextDirection::LeftToRightThenTopToBottom);
+
+        auto result = analyzer->AnalyzeScript();
+        Assert::AreEqual(0u, result->Size);
+    }
 };

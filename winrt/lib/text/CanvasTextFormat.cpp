@@ -324,7 +324,7 @@ void CanvasTextFormat::SetShadowPropertiesFromDWrite()
         &inlineObject));
 
     m_trimmingGranularity = ToCanvasTextTrimmingGranularity(trimmingOptions.granularity);
-    m_trimmingDelimiter = ToCanvasTrimmingDelimiter(trimmingOptions.delimiter);
+    m_trimmingDelimiter = ConvertCharacterCodepointToString(trimmingOptions.delimiter);
     m_trimmingDelimiterCount = trimmingOptions.delimiterCount;
 
     m_trimmingSignInformation.SetTrimmingSignFromResource(textFormat.Get());
@@ -915,7 +915,7 @@ IFACEMETHODIMP CanvasTextFormat::get_TrimmingDelimiter(HSTRING* value)
     return PropertyGet(
         value,
         m_trimmingDelimiter,
-        [](IDWriteTextFormat* textFormat) { return ToCanvasTrimmingDelimiter(DWriteTrimming(textFormat).Options.delimiter); });
+        [](IDWriteTextFormat* textFormat) { return ConvertCharacterCodepointToString(DWriteTrimming(textFormat).Options.delimiter); });
 }
 
 

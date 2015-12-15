@@ -55,7 +55,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         }
     }
 
-    WinString ToCanvasTrimmingDelimiter(uint32_t value)
+    WinString ConvertCharacterCodepointToString(uint32_t value)
     {
         WinStringBuilder builder;
 

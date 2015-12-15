@@ -1478,6 +1478,13 @@ namespace Microsoft
                 END_ENUM(D2D1_RENDERING_PRIORITY);
             }
 
+            ENUM_TO_STRING(CanvasScriptShape)
+            {
+                ENUM_VALUE(CanvasScriptShape::Default);
+                ENUM_VALUE(CanvasScriptShape::NoVisual);
+                END_ENUM(CanvasScriptShape);
+            }
+
             template<typename T>
             inline std::wstring ToStringAsInt(T value)
             {

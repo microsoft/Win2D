@@ -42,6 +42,21 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             ICanvasFontSet* fontSet,
             IVectorView<IKeyValuePair<CanvasCharacterRange, CanvasScaledFont*>*>** result);
 
+        IFACEMETHOD(AnalyzeScript)(
+            IVectorView<IKeyValuePair<CanvasCharacterRange, CanvasAnalyzedScript>*>** values) override;
+
+        IFACEMETHOD(AnalyzeScriptWithLocale)(
+            HSTRING locale,
+            IVectorView<IKeyValuePair<CanvasCharacterRange, CanvasAnalyzedScript>*>** values) override;
+
+        IFACEMETHOD(GetScriptProperties)(
+            CanvasAnalyzedScript analyzedScript,
+            CanvasScriptProperties* scriptProperties) override;
+
+    private:
+        ComPtr<IDWriteTextAnalysisSource> CreateTextAnalysisSource(
+            WinString localeNameString);
+
     };
 
 
