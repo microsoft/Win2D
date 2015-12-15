@@ -80,6 +80,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
 #if WINVER > _WIN32_WINNT_WINBLUE
         ComPtr<IInkD2DRenderer> m_inkD2DRenderer;
+        ComPtr<ID2D1DrawingStateBlock1> m_inkStateBlock;
 #endif
 
     public:

@@ -84,6 +84,9 @@ namespace canvas
         MOCK_METHOD2(GetEffectInvalidRectangleCount   , HRESULT(ID2D1Effect*, UINT32*));
         MOCK_METHOD3(GetEffectInvalidRectangles       , HRESULT(ID2D1Effect*, D2D1_RECT_F*, UINT32));
         MOCK_METHOD5(GetEffectRequiredInputRectangles , HRESULT(ID2D1Effect*, D2D1_RECT_F const*, D2D1_EFFECT_INPUT_DESCRIPTION const*, D2D1_RECT_F*, UINT32));
+        MOCK_METHOD1_CONST(SaveDrawingState           , void(ID2D1DrawingStateBlock*));
+        MOCK_METHOD1(RestoreDrawingState              , void(ID2D1DrawingStateBlock*));
+
 
         // ID2D1DeviceContext1
         
@@ -219,16 +222,6 @@ namespace canvas
         IFACEMETHODIMP_(void) PushLayer(const D2D1_LAYER_PARAMETERS *,ID2D1Layer *) override
         {
             Assert::Fail(L"Unexpected call to PushLayer");
-        }
-
-        IFACEMETHODIMP_(void) SaveDrawingState(ID2D1DrawingStateBlock *) const override
-        {
-            Assert::Fail(L"Unexpected call to SaveDrawingState");
-        }
-
-        IFACEMETHODIMP_(void) RestoreDrawingState(ID2D1DrawingStateBlock *) override
-        {
-            Assert::Fail(L"Unexpected call to RestoreDrawingState");
         }
 
         IFACEMETHODIMP_(D2D1_PIXEL_FORMAT) GetPixelFormat() const override

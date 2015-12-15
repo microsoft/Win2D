@@ -3294,10 +3294,22 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             m_inkD2DRenderer = InkAdapter::GetInstance()->CreateInkRenderer();
         }
 
-        m_inkD2DRenderer->Draw(
+        if (!m_inkStateBlock)
+        {
+            ComPtr<ID2D1Factory> d2dFactory;
+            deviceContext->GetFactory(&d2dFactory);
+
+            ThrowIfFailed(As<ID2D1Factory1>(d2dFactory)->CreateDrawingStateBlock(&m_inkStateBlock));
+        }
+
+        deviceContext->SaveDrawingState(m_inkStateBlock.Get());
+
+        auto restoreStateWarden = MakeScopeWarden([&] { deviceContext->RestoreDrawingState(m_inkStateBlock.Get()); });
+
+        ThrowIfFailed(m_inkD2DRenderer->Draw(
             deviceContext.Get(), 
             inkStrokeCollectionAsIUnknown.Get(), 
-            highContrast);
+            highContrast));
     }
 
     IFACEMETHODIMP CanvasDrawingSession::DrawGradientMeshAtOrigin(ICanvasGradientMesh* gradientMesh)

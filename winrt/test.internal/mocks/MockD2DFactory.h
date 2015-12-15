@@ -17,7 +17,7 @@ namespace canvas
         std::function<void(IDXGIDevice *dxgiDevice, ID2D1Device1 **d2dDevice1)> MockCreateDevice;
         std::function<HRESULT(REFCLSID classId, PCWSTR propertyXml, CONST D2D1_PROPERTY_BINDING *bindings, UINT32 bindingsCount, CONST PD2D1_EFFECT_FACTORY effectFactory)> MockRegisterEffectFromString;
         std::function<HRESULT(CLSID *effects, UINT32 effectsCount, UINT32 *effectsReturned, UINT32 *effectsRegistered)> MockGetRegisteredEffects;
-
+        std::function<HRESULT(D2D1_DRAWING_STATE_DESCRIPTION1 const*, IDWriteRenderingParams* , ID2D1DrawingStateBlock1**)> MockCreateDrawingStateBlock;
 
         MockD2DFactory()
           : m_enterCount(0)
@@ -173,7 +173,10 @@ namespace canvas
             _Outptr_ ID2D1DrawingStateBlock1 **drawingStateBlock
             )
         {
-            return E_NOTIMPL;
+            if (MockCreateDrawingStateBlock)
+                return MockCreateDrawingStateBlock(drawingStateDescription, textRenderingParams, drawingStateBlock);
+            else
+                return E_NOTIMPL;
         }
 
         STDMETHOD(CreateGdiMetafile)(

@@ -2129,7 +2129,7 @@ public:
         f.Device->CreateCommandListMethod.SetExpectedCalls(1, [&] { return d2dCommandList; });
 
         // The ink should be drawn into the command list.
-        auto d2dDeviceContext = Make<MockD2DDeviceContext>();
+        auto d2dDeviceContext = Make<StubD2DDeviceContextWithGetFactory>();
 
         f.Device->CreateDeviceContextForDrawingSessionMethod.SetExpectedCalls(1, [&] { return d2dDeviceContext; });
 
@@ -2141,6 +2141,15 @@ public:
         {
             Assert::IsTrue(IsSameInstance(d2dCommandList.Get(), target));
         });
+
+        d2dDeviceContext->m_factory->MockCreateDrawingStateBlock = [](auto, auto, ID2D1DrawingStateBlock1** result)
+        {
+            *result = nullptr;
+            return S_OK;
+        };
+
+        d2dDeviceContext->SaveDrawingStateMethod.SetExpectedCalls(1);
+        d2dDeviceContext->RestoreDrawingStateMethod.SetExpectedCalls(1);
 
         inkAdapter->GetInkRenderer()->DrawMethod.SetExpectedCalls(1, [&](IUnknown* deviceContext, IUnknown* strokeCollection, BOOL highContrast)
         {

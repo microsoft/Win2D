@@ -4210,6 +4210,12 @@ public:
             DrawingSession = CanvasDrawingSession::CreateNew(DeviceContext.Get(), DrawingSessionAdapter);
             InkAdapter = std::make_shared<StubInkAdapter>();
             InkAdapter::SetInstance(InkAdapter);
+
+            DeviceContext->m_factory->MockCreateDrawingStateBlock = [](auto, auto, ID2D1DrawingStateBlock1** result)
+            {
+                *result = nullptr;
+                return S_OK;
+            };
         }
     };
 
@@ -4230,6 +4236,9 @@ public:
                     return S_OK;
                 });
 
+            f.DeviceContext->SaveDrawingStateMethod.SetExpectedCalls(1);
+            f.DeviceContext->RestoreDrawingStateMethod.SetExpectedCalls(1);
+
             Assert::AreEqual(S_OK, f.DrawingSession->DrawInk(f.StrokeCollection.Get()));
         }
     }
@@ -4248,6 +4257,9 @@ public:
                     Assert::AreEqual(i == 1, !!highContrast);
                     return S_OK;
                 });
+
+            f.DeviceContext->SaveDrawingStateMethod.SetExpectedCalls(1);
+            f.DeviceContext->RestoreDrawingStateMethod.SetExpectedCalls(1);
 
             Assert::AreEqual(S_OK, f.DrawingSession->DrawInkWithHighContrast(f.StrokeCollection.Get(), i == 1));
         }
