@@ -27,15 +27,17 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         ~ScopedBitmapMappedPixelAccess();
 
-        void* GetLockedData();
+        uint8_t* GetLockedData();
 
         unsigned int GetLockedBufferSize();
 
         unsigned int GetStride();
     };
 
-
-    unsigned int GetBytesPerPixel(DXGI_FORMAT format);
+    inline stdext::checked_array_iterator<uint8_t*> begin(ScopedBitmapMappedPixelAccess& pixels)
+    {
+        return stdext::make_checked_array_iterator(pixels.GetLockedData(), pixels.GetLockedBufferSize());
+    }
 
 
     ComPtr<ID3D11Texture2D> GetTexture2DForDXGISurface(

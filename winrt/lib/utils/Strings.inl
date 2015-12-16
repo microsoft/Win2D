@@ -11,6 +11,8 @@
 // now, simple C++ constants are "good enough"(tm).
 
 STRING(AutoFileFormatNotAllowed, L"The option CanvasFileFormat.Auto is not allowed when saving to a stream.")
+STRING(BlockCompressedDimensionsMustBeMultipleOf4, L"Block compressed image width & height must be a multiple of 4 pixels.");
+STRING(BlockCompressedSubRectangleMustBeAligned, L"Subrectangles from block compressed images must be aligned to a multiple of 4 pixels.");
 STRING(CacheOnDemandNotSet, L"This method may only be called if the CanvasVirtualBitmap was created with CanvasVirtualBitmapOptions.CacheOnDemand.")
 STRING(CanOnlyAddPathDataWhileInFigure, L"This operation is only allowed after a successful call to CanvasPathBuilder.BeginFigure.")
 STRING(CanvasDeviceGetDeviceWhenNotCreated, L"The control does not currently have a CanvasDevice associated with it. Ensure that resources are created from a CreateResources or Draw event handler.");

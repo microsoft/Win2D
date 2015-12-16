@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)pch.cpp" />
@@ -45,9 +45,80 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="$(AssetDir)imageTiger.jpg" />
-    <Image Include="$(MSBuildThisFileDirectory)Images\x.bmp" />
-    <Image Include="$(MSBuildThisFileDirectory)Images\x.ico" />
-    <Image Include="$(MSBuildThisFileDirectory)Images\x.tif" />
     <Image Include="$(AssetDir)HighDpiGrid.png" />
+    <Image Include="$(MSBuildThisFileDirectory)Images\x.bmp">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)Images\x.ico">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)Images\x.tif">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)Images\x_B8G8R8A8_UNORM.DDS">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)Images\x_BC1_UNORM.DDS">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)Images\x_BC1_UNORM_SRGB.DDS">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)Images\x_BC2_UNORM.DDS">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)Images\x_BC2_UNORM_SRGB.DDS">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)Images\x_BC3_UNORM.DDS">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)Images\x_BC3_UNORM_SRGB.DDS">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)Images\x_D3DFMT_ARGB.DDS">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)Images\x_DXT1.DDS">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)Images\x_DXT2.DDS">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)Images\x_DXT3.DDS">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)Images\x_DXT4.DDS">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)Images\x_DXT5.DDS">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)Images\x_R8G8B8A8_UNORM.DDS">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)Images\x_1x1.DDS">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)Images\x_2x2.DDS">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)Images\x_3x3.DDS">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)Images\x_4x4.DDS">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)Images\x_4x5.DDS">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)Images\x_5x4.DDS">
+      <Filter>Images</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Images">
+      <UniqueIdentifier>{45e7a66f-3187-4212-8faf-72ec7801fb5f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>

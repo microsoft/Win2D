@@ -103,30 +103,19 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
           <row>
             <entry>BC1UIntNormalized</entry>
             <entry>Premultiplied, Ignore</entry>
-            <entry>Not yet fully supported by Win2D<superscript>1</superscript></entry>
+            <entry/>
           </row>
           <row>
             <entry>BC2UIntNormalized</entry>
             <entry>Premultiplied, Ignore</entry>
-            <entry>Not yet fully supported by Win2D<superscript>1</superscript></entry>
+            <entry/>
           </row>
           <row>
             <entry>BC3UIntNormalized</entry>
             <entry>Premultiplied, Ignore</entry>
-            <entry>Not yet fully supported by Win2D<superscript>1</superscript></entry>
+            <entry/>
           </row>
         </table>
-        
-        <para>
-          <superscript>1</superscript>
-          The block compressed formats (BC1, BC2, and BC3) are not yet fully supported by 
-          Win2D. It is possible to create block compressed bitmaps using 
-          CanvasBitmap.CreateFromBytes, to draw using them, and to interop them from 
-          native Direct2D or Direct3D, but Win2D does not provide any way to load images 
-          of these formats, and methods such as GetPixelBytes, SetPixelBytes, and 
-          CopyPixelsFromBitmap do not work correctly on block compressed data. We plan to 
-          improve this in a future version of Win2D.
-        </para>
       </content>
     </section>
 

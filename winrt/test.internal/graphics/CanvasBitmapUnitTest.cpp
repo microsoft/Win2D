@@ -276,8 +276,10 @@ TEST_CLASS(CanvasBitmapUnitTest)
             auto canvasDevice = Make<StubCanvasDevice>();
 
             auto sourceD2DBitmap = Make<StubD2DBitmap>();
+            sourceD2DBitmap->GetPixelFormatMethod.AllowAnyCall([] { return D2D1::PixelFormat(); });
+
             canvasDevice->MockCreateBitmapFromWicResource =
-                [&](IWICBitmapSource*, CanvasAlphaMode, float) -> ComPtr<ID2D1Bitmap1>
+                [&](IWICBitmapSource*, CanvasAlphaMode, float)
                 {
                     return sourceD2DBitmap;
                 };
@@ -306,6 +308,7 @@ TEST_CLASS(CanvasBitmapUnitTest)
             }
 
             auto destD2DBitmap = Make<StubD2DBitmap>();
+            destD2DBitmap->GetPixelFormatMethod.AllowAnyCall([] { return D2D1::PixelFormat(); });
             destD2DBitmap->CopyFromBitmapMethod.SetExpectedCalls(1,
                 [=](D2D1_POINT_2U const* destinationPoint, ID2D1Bitmap *bitmap, D2D1_RECT_U const* sourceRectangle)
                 {
@@ -338,7 +341,7 @@ TEST_CLASS(CanvasBitmapUnitTest)
                 });
 
             canvasDevice->MockCreateBitmapFromWicResource =
-                [&](IWICBitmapSource*, CanvasAlphaMode, float) -> ComPtr<ID2D1Bitmap1>
+                [&](IWICBitmapSource*, CanvasAlphaMode, float)
                 {
                     return destD2DBitmap;
                 };
@@ -390,10 +393,12 @@ TEST_CLASS(CanvasBitmapUnitTest)
         auto canvasDevice = Make<StubCanvasDevice>();
 
         auto sourceD2DBitmap = Make<StubD2DBitmap>();
+        sourceD2DBitmap->GetPixelFormatMethod.AllowAnyCall([] { return D2D1::PixelFormat(); });
         canvasDevice->MockCreateBitmapFromWicResource = [&](IWICBitmapSource*, CanvasAlphaMode, float) -> ComPtr<ID2D1Bitmap1> { return sourceD2DBitmap; };
         auto sourceBitmap = CanvasBitmap::CreateNew(canvasDevice.Get(), f.m_testFileName, DEFAULT_DPI, CanvasAlphaMode::Premultiplied);
 
         auto destD2DBitmap = Make<StubD2DBitmap>();
+        destD2DBitmap->GetPixelFormatMethod.AllowAnyCall([] { return D2D1::PixelFormat(); });
         canvasDevice->MockCreateBitmapFromWicResource = [&](IWICBitmapSource*, CanvasAlphaMode, float) -> ComPtr<ID2D1Bitmap1> { return destD2DBitmap; };
         auto destBitmap = CanvasBitmap::CreateNew(canvasDevice.Get(), f.m_testFileName, DEFAULT_DPI, CanvasAlphaMode::Premultiplied);
 

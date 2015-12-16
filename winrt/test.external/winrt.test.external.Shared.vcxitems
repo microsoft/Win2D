@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="Globals">
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
@@ -59,23 +59,41 @@
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
   </ItemGroup>
-  
   <ItemGroup>
-      <Image Include="$(AssetDir)imageTiger.jpg">
-        <Link>Assets\imageTiger.jpg</Link>
-      </Image>
-      <Image Include="$(AssetDir)HighDpiGrid.png">
-        <Link>Assets\HighDpiGrid.png</Link>
-      </Image>
-      <Image Include="$(MSBuildThisFileDirectory)Images\x.bmp">
-        <Link>Images\x.bmp</Link>
-      </Image>
-      <Image Include="$(MSBuildThisFileDirectory)Images\x.ico">
-        <Link>Images\x.ico</Link>
-      </Image>
-      <Image Include="$(MSBuildThisFileDirectory)Images\x.tif">
-        <Link>Images\x.tif</Link>
-      </Image>
+    <Image Include="$(AssetDir)imageTiger.jpg">
+      <Link>Assets\imageTiger.jpg</Link>
+    </Image>
+    <Image Include="$(AssetDir)HighDpiGrid.png">
+      <Link>Assets\HighDpiGrid.png</Link>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)Images\x.bmp">
+      <Link>Images\x.bmp</Link>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)Images\x.ico">
+      <Link>Images\x.ico</Link>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)Images\x.tif">
+      <Link>Images\x.tif</Link>
+    </Image>
+    <Image Include="$(MSBuildThisFileDirectory)Images\x_1x1.DDS" />
+    <Image Include="$(MSBuildThisFileDirectory)Images\x_2x2.DDS" />
+    <Image Include="$(MSBuildThisFileDirectory)Images\x_3x3.DDS" />
+    <Image Include="$(MSBuildThisFileDirectory)Images\x_4x4.DDS" />
+    <Image Include="$(MSBuildThisFileDirectory)Images\x_4x5.DDS" />
+    <Image Include="$(MSBuildThisFileDirectory)Images\x_5x4.DDS" />
+    <Image Include="$(MSBuildThisFileDirectory)Images\x_B8G8R8A8_UNORM.DDS" />
+    <Image Include="$(MSBuildThisFileDirectory)Images\x_BC1_UNORM.DDS" />
+    <Image Include="$(MSBuildThisFileDirectory)Images\x_BC1_UNORM_SRGB.DDS" />
+    <Image Include="$(MSBuildThisFileDirectory)Images\x_BC2_UNORM.DDS" />
+    <Image Include="$(MSBuildThisFileDirectory)Images\x_BC2_UNORM_SRGB.DDS" />
+    <Image Include="$(MSBuildThisFileDirectory)Images\x_BC3_UNORM.DDS" />
+    <Image Include="$(MSBuildThisFileDirectory)Images\x_BC3_UNORM_SRGB.DDS" />
+    <Image Include="$(MSBuildThisFileDirectory)Images\x_D3DFMT_ARGB.DDS" />
+    <Image Include="$(MSBuildThisFileDirectory)Images\x_DXT1.DDS" />
+    <Image Include="$(MSBuildThisFileDirectory)Images\x_DXT2.DDS" />
+    <Image Include="$(MSBuildThisFileDirectory)Images\x_DXT3.DDS" />
+    <Image Include="$(MSBuildThisFileDirectory)Images\x_DXT4.DDS" />
+    <Image Include="$(MSBuildThisFileDirectory)Images\x_DXT5.DDS" />
+    <Image Include="$(MSBuildThisFileDirectory)Images\x_R8G8B8A8_UNORM.DDS" />
   </ItemGroup>
-  
 </Project>

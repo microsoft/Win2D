@@ -204,6 +204,7 @@ namespace Microsoft
             CX_VALUE_TO_STRING(Microsoft::Graphics::Canvas::Text::CanvasGlyphOrientation);
             CX_VALUE_TO_STRING(Microsoft::Graphics::Canvas::Text::CanvasTextDirection);
             CX_VALUE_TO_STRING(Microsoft::Graphics::Canvas::Text::CanvasTextMeasuringMode);
+            CX_VALUE_TO_STRING(DirectXPixelFormat);
 
 #undef CX_VALUE_TO_STRING
 
@@ -608,8 +609,12 @@ inline void ExpectCOMException(HRESULT expectedHR, wchar_t const* expectedExcept
     {
         Assert::AreEqual<HRESULT>(expectedHR, e->HResult);
 
-        std::wstring msg(e->Message->Data());
-        Assert::IsTrue(msg.find(expectedExceptionText) != std::wstring::npos);
+        if (expectedExceptionText)
+        {
+            std::wstring msg(e->Message->Data());
+            Assert::IsTrue(msg.find(expectedExceptionText) != std::wstring::npos,
+                (std::wstring(L"Expected message: '") + expectedExceptionText + L"' actual: '" + msg + L"'").c_str());
+        }
     }
 }
 

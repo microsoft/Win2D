@@ -15,6 +15,238 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     using ABI::Windows::Graphics::Imaging::BitmapPixelFormat;
 #endif
 
+    //
+    // Block compressed formats have a block size of 4x4 pixels.
+    //
+    // For other formats that work in pixels we treat the "block" size as 1x1.
+    //
+    static unsigned GetBlockSize(DXGI_FORMAT format)
+    {
+        switch (format)
+        {
+        case DXGI_FORMAT_BC1_TYPELESS:
+        case DXGI_FORMAT_BC1_UNORM:
+        case DXGI_FORMAT_BC1_UNORM_SRGB:
+        case DXGI_FORMAT_BC2_TYPELESS:
+        case DXGI_FORMAT_BC2_UNORM:
+        case DXGI_FORMAT_BC2_UNORM_SRGB:
+        case DXGI_FORMAT_BC3_TYPELESS:
+        case DXGI_FORMAT_BC3_UNORM:
+        case DXGI_FORMAT_BC3_UNORM_SRGB:
+        case DXGI_FORMAT_BC4_TYPELESS:
+        case DXGI_FORMAT_BC4_UNORM:
+        case DXGI_FORMAT_BC4_SNORM:
+        case DXGI_FORMAT_BC5_TYPELESS:
+        case DXGI_FORMAT_BC5_UNORM:
+        case DXGI_FORMAT_BC5_SNORM:
+        case DXGI_FORMAT_BC6H_TYPELESS:
+        case DXGI_FORMAT_BC6H_UF16:
+        case DXGI_FORMAT_BC6H_SF16:
+        case DXGI_FORMAT_BC7_TYPELESS:
+        case DXGI_FORMAT_BC7_UNORM:
+        case DXGI_FORMAT_BC7_UNORM_SRGB:
+            return 4;
+
+        default:
+            return 1;
+        }
+    }
+
+    
+    static unsigned GetBytesPerBlock(DXGI_FORMAT format)
+    {
+        switch (format)
+        {
+        case DXGI_FORMAT_R32G32B32A32_TYPELESS: return 16;
+        case DXGI_FORMAT_R32G32B32A32_FLOAT: return 16;
+        case DXGI_FORMAT_R32G32B32A32_UINT: return 16;
+        case DXGI_FORMAT_R32G32B32A32_SINT: return 16;
+        case DXGI_FORMAT_R32G32B32_TYPELESS: return 12;
+        case DXGI_FORMAT_R32G32B32_FLOAT: return 12;
+        case DXGI_FORMAT_R32G32B32_UINT: return 12;
+        case DXGI_FORMAT_R32G32B32_SINT: return 12;
+        case DXGI_FORMAT_R16G16B16A16_TYPELESS: return 8;
+        case DXGI_FORMAT_R16G16B16A16_FLOAT: return 8;
+        case DXGI_FORMAT_R16G16B16A16_UNORM: return 8;
+        case DXGI_FORMAT_R16G16B16A16_UINT: return 8;
+        case DXGI_FORMAT_R16G16B16A16_SNORM: return 8;
+        case DXGI_FORMAT_R16G16B16A16_SINT: return 8;
+        case DXGI_FORMAT_R32G32_TYPELESS: return 8;
+        case DXGI_FORMAT_R32G32_FLOAT: return 8;
+        case DXGI_FORMAT_R32G32_UINT: return 8;
+        case DXGI_FORMAT_R32G32_SINT: return 8;
+        case DXGI_FORMAT_R32G8X24_TYPELESS: return 8;
+        case DXGI_FORMAT_D32_FLOAT_S8X24_UINT: return 8;
+        case DXGI_FORMAT_R32_FLOAT_X8X24_TYPELESS: return 8;
+        case DXGI_FORMAT_X32_TYPELESS_G8X24_UINT: return 8;
+        case DXGI_FORMAT_R10G10B10A2_TYPELESS: return 4;
+        case DXGI_FORMAT_R10G10B10A2_UNORM: return 4;
+        case DXGI_FORMAT_R10G10B10A2_UINT: return 4;
+        case DXGI_FORMAT_R11G11B10_FLOAT: return 4;
+        case DXGI_FORMAT_R8G8B8A8_TYPELESS: return 4;
+        case DXGI_FORMAT_R8G8B8A8_UNORM: return 4;
+        case DXGI_FORMAT_R8G8B8A8_UNORM_SRGB: return 4;
+        case DXGI_FORMAT_R8G8B8A8_UINT: return 4;
+        case DXGI_FORMAT_R8G8B8A8_SNORM: return 4;
+        case DXGI_FORMAT_R8G8B8A8_SINT: return 4;
+        case DXGI_FORMAT_R16G16_TYPELESS: return 4;
+        case DXGI_FORMAT_R16G16_FLOAT: return 4;
+        case DXGI_FORMAT_R16G16_UNORM: return 4;
+        case DXGI_FORMAT_R16G16_UINT: return 4;
+        case DXGI_FORMAT_R16G16_SNORM: return 4;
+        case DXGI_FORMAT_R16G16_SINT: return 4;
+        case DXGI_FORMAT_R32_TYPELESS: return 4;
+        case DXGI_FORMAT_D32_FLOAT: return 4;
+        case DXGI_FORMAT_R32_FLOAT: return 4;
+        case DXGI_FORMAT_R32_UINT: return 4;
+        case DXGI_FORMAT_R32_SINT: return 4;
+        case DXGI_FORMAT_R24G8_TYPELESS: return 4;
+        case DXGI_FORMAT_D24_UNORM_S8_UINT: return 4;
+        case DXGI_FORMAT_R24_UNORM_X8_TYPELESS: return 4;
+        case DXGI_FORMAT_X24_TYPELESS_G8_UINT: return 4;
+        case DXGI_FORMAT_R8G8_TYPELESS: return 2;
+        case DXGI_FORMAT_R8G8_UNORM: return 2;
+        case DXGI_FORMAT_R8G8_UINT: return 2;
+        case DXGI_FORMAT_R8G8_SNORM: return 2;
+        case DXGI_FORMAT_R8G8_SINT: return 2;
+        case DXGI_FORMAT_R16_TYPELESS: return 2;
+        case DXGI_FORMAT_R16_FLOAT: return 2;
+        case DXGI_FORMAT_D16_UNORM: return 2;
+        case DXGI_FORMAT_R16_UNORM: return 2;
+        case DXGI_FORMAT_R16_UINT: return 2;
+        case DXGI_FORMAT_R16_SNORM: return 2;
+        case DXGI_FORMAT_R16_SINT: return 2;
+        case DXGI_FORMAT_R8_TYPELESS: return 1;
+        case DXGI_FORMAT_R8_UNORM: return 1;
+        case DXGI_FORMAT_R8_UINT: return 1;
+        case DXGI_FORMAT_R8_SNORM: return 1;
+        case DXGI_FORMAT_R8_SINT: return 1;
+        case DXGI_FORMAT_A8_UNORM: return 1;
+        case DXGI_FORMAT_R9G9B9E5_SHAREDEXP: return 4;
+        case DXGI_FORMAT_B5G6R5_UNORM: return 2;
+        case DXGI_FORMAT_B5G5R5A1_UNORM: return 2;
+        case DXGI_FORMAT_B8G8R8A8_UNORM: return 4;
+        case DXGI_FORMAT_B8G8R8X8_UNORM: return 4;
+        case DXGI_FORMAT_R10G10B10_XR_BIAS_A2_UNORM: return 4;
+        case DXGI_FORMAT_B8G8R8A8_TYPELESS: return 4;
+        case DXGI_FORMAT_B8G8R8A8_UNORM_SRGB: return 4;
+        case DXGI_FORMAT_B8G8R8X8_TYPELESS: return 4;
+        case DXGI_FORMAT_B8G8R8X8_UNORM_SRGB: return 4;        
+        case DXGI_FORMAT_P8: return 1;
+        case DXGI_FORMAT_A8P8: return 2;
+        case DXGI_FORMAT_B4G4R4A4_UNORM: return 2;
+
+        case DXGI_FORMAT_BC1_TYPELESS:
+        case DXGI_FORMAT_BC1_UNORM:
+        case DXGI_FORMAT_BC1_UNORM_SRGB:
+            return 8;
+
+        case DXGI_FORMAT_BC2_TYPELESS:
+        case DXGI_FORMAT_BC2_UNORM:
+        case DXGI_FORMAT_BC2_UNORM_SRGB:
+            return 16;
+            
+        case DXGI_FORMAT_BC3_TYPELESS:
+        case DXGI_FORMAT_BC3_UNORM:
+        case DXGI_FORMAT_BC3_UNORM_SRGB:
+            return 16;
+            
+        case DXGI_FORMAT_BC4_TYPELESS:
+        case DXGI_FORMAT_BC4_UNORM:
+        case DXGI_FORMAT_BC4_SNORM:
+            return 8;
+            
+        case DXGI_FORMAT_BC5_TYPELESS:
+        case DXGI_FORMAT_BC5_UNORM:
+        case DXGI_FORMAT_BC5_SNORM:
+            return 16;
+
+        case DXGI_FORMAT_BC6H_TYPELESS:
+        case DXGI_FORMAT_BC6H_UF16:
+        case DXGI_FORMAT_BC6H_SF16:
+            return 16;
+
+        case DXGI_FORMAT_BC7_TYPELESS:
+        case DXGI_FORMAT_BC7_UNORM:
+        case DXGI_FORMAT_BC7_UNORM_SRGB:
+            return 16;
+
+        default:
+            // Some formats such as DXGI_FORMAT_UNKNOWN
+            ThrowHR(E_INVALIDARG);
+        }
+    }
+
+
+    static void VerifyWellFormedSubrectangle(D2D1_RECT_U subRectangle, D2D1_SIZE_U targetSize)
+    {
+        if (subRectangle.right <= subRectangle.left ||
+            subRectangle.bottom <= subRectangle.top)
+        {
+            ThrowHR(E_INVALIDARG);
+        }
+
+        if (subRectangle.right > targetSize.width || subRectangle.bottom > targetSize.height)
+        {
+            ThrowHR(E_INVALIDARG);
+        }
+    }
+
+
+    static bool IsBlockAligned(unsigned blockSize, D2D1_POINT_2U const& p)
+    {
+        if (blockSize == 1)
+            return true;
+
+        auto IsAligned = [=] (uint32_t coord) { return (coord % blockSize) == 0; };
+
+        return IsAligned(p.x) && IsAligned(p.y);
+    }
+
+
+    static bool IsBlockAligned(unsigned blockSize, D2D1_RECT_U const& r)
+    {
+        return IsBlockAligned(blockSize, D2D1_POINT_2U{ r.left, r.top })
+            && IsBlockAligned(blockSize, D2D1_POINT_2U{ r.right, r.bottom });
+    }
+
+
+    class BitmapSubRectangle
+    {
+        unsigned m_totalBytes;
+        unsigned m_bytesPerRow;
+        unsigned m_blocksHigh;
+        
+    public:
+        BitmapSubRectangle(ComPtr<ID2D1Bitmap> const& d2dBitmap, D2D1_RECT_U rect)
+        {
+            VerifyWellFormedSubrectangle(rect, d2dBitmap->GetPixelSize());
+
+            auto format = d2dBitmap->GetPixelFormat().format;
+            auto blockSize = GetBlockSize(format);
+
+            if (!IsBlockAligned(blockSize, rect))
+                ThrowHR(E_INVALIDARG, Strings::BlockCompressedSubRectangleMustBeAligned);
+
+            auto bytesPerBlock = GetBytesPerBlock(format);
+
+            auto pixelWidth = (rect.right - rect.left);
+            auto blocksWide = pixelWidth / blockSize;
+
+            auto pixelHeight = (rect.bottom - rect.top);
+            m_blocksHigh = pixelHeight / blockSize;
+
+            auto totalBlocks = blocksWide * m_blocksHigh;
+
+            m_totalBytes = totalBlocks * bytesPerBlock;
+            m_bytesPerRow = blocksWide * bytesPerBlock;
+        }
+
+        unsigned GetTotalBytes() const { return m_totalBytes; }
+        unsigned GetBytesPerRow() const { return m_bytesPerRow; }
+        unsigned GetBlocksHigh() const { return m_blocksHigh; }
+    };
+
 
     GUID GetGUIDForFileFormat(CanvasBitmapFileFormat fileFormat)
     {
@@ -121,7 +353,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             GUID_WICPixelFormat32bppBGRA,
             bitmapLock->GetStride(),
             bitmapLock->GetLockedBufferSize(),
-            static_cast<BYTE*>(bitmapLock->GetLockedData()),
+            bitmapLock->GetLockedData(),
             &memoryBitmap));
 
         WICPixelFormatGUID pixelFormat;
@@ -328,6 +560,28 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             WICDecodeMetadataCacheOnDemand,
             &wicBitmapDecoder));
 
+        auto ddsDecoder = MaybeAs<IWICDdsDecoder>(wicBitmapDecoder);
+        if (ddsDecoder)
+        {
+            // If it's a block compressed DDS file then we want to pass the
+            // frame back unmodified.  This allows us to directly copy the
+            // compressed data from the file into the bitmap.
+            
+            WICDdsParameters ddsParameters;
+            ThrowIfFailed(ddsDecoder->GetParameters(&ddsParameters));
+
+            if (ddsParameters.DxgiFormat == DXGI_FORMAT_BC1_UNORM ||
+                ddsParameters.DxgiFormat == DXGI_FORMAT_BC2_UNORM ||
+                ddsParameters.DxgiFormat == DXGI_FORMAT_BC3_UNORM)
+            {
+                ComPtr<IWICBitmapFrameDecode> ddsFrame;
+                ThrowIfFailed(ddsDecoder->GetFrame(0, 0, 0, &ddsFrame));
+
+                // DDS files never need a transform and are not indexed
+                return WicBitmapSource{ ddsFrame, WICBitmapTransformRotate0, false };
+            }
+        }
+
         ComPtr<IWICBitmapFrameDecode> wicBitmapFrameDecode;
         ThrowIfFailed(wicBitmapDecoder->GetFrame(0, &wicBitmapFrameDecode));
 
@@ -417,16 +671,24 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         DirectXPixelFormat format,
         CanvasAlphaMode alpha)
     {
+        auto dxgiFormat = static_cast<DXGI_FORMAT>(format);
+        auto blockSize = GetBlockSize(dxgiFormat);
+
+        if ((widthInPixels % blockSize) != 0 || (heightInPixels % blockSize) != 0)
+            ThrowHR(E_INVALIDARG, Strings::BlockCompressedDimensionsMustBeMultipleOf4);
+        
+        auto blocksWide = widthInPixels / blockSize;
+        auto pitch = GetBytesPerBlock(dxgiFormat) * blocksWide;
+
         // D2D does not fail attempts to create zero-sized bitmaps. Neither does this.
-        uint32_t pitch = 0;
-        if (heightInPixels > 0)
-        {
-            pitch = byteCount / static_cast<uint32_t>(heightInPixels);
-        }
-        else
-        {
+        if (pitch == 0)
             pitch = byteCount;
-        }
+
+        // Validate that the buffer is large enough
+        auto blocksHigh = heightInPixels / blockSize;
+
+        if (byteCount < blocksHigh * pitch)
+            ThrowHR(E_INVALIDARG);
 
         auto d2dBitmap = As<ICanvasDeviceInternal>(device)->CreateBitmapFromBytes(
             bytes,
@@ -1043,20 +1305,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             && "CanvasBitmap should never be constructed with a render-target bitmap.  This should have been validated before construction.");
     }
 
-    void VerifyWellFormedSubrectangle(D2D1_RECT_U subRectangle, D2D1_SIZE_U targetSize)
-    {
-        if (subRectangle.right <= subRectangle.left ||
-            subRectangle.bottom <= subRectangle.top)
-        {
-            ThrowHR(E_INVALIDARG);
-        }
-
-        if (subRectangle.right > targetSize.width || subRectangle.bottom > targetSize.height)
-        {
-            ThrowHR(E_INVALIDARG);
-        }
-    }
-
     void GetPixelBytesImpl(
         ComPtr<ID2D1Bitmap1> const& d2dBitmap,
         D2D1_RECT_U const& subRectangle,
@@ -1066,31 +1314,19 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         CheckInPointer(valueCount);
         CheckAndClearOutPointer(valueElements);
 
-        VerifyWellFormedSubrectangle(subRectangle, d2dBitmap->GetPixelSize());
+        BitmapSubRectangle r(d2dBitmap, subRectangle);
 
         ScopedBitmapMappedPixelAccess bitmapPixelAccess(d2dBitmap.Get(), D3D11_MAP_READ, &subRectangle);
 
-        const unsigned int bytesPerPixel = GetBytesPerPixel(d2dBitmap->GetPixelFormat().format);
-        const unsigned int bytesPerRow = (subRectangle.right - subRectangle.left) * bytesPerPixel;
-        const unsigned int destSizeInBytes =
-            bytesPerRow * (subRectangle.bottom - subRectangle.top);
+        ComArray<BYTE> array(r.GetTotalBytes());
 
-        ComArray<BYTE> array(destSizeInBytes);
+        auto destination = begin(array);
+        auto source = begin(bitmapPixelAccess);
 
-        byte* destRowStart = array.GetData();
-        byte* sourceRowStart = static_cast<byte*>(bitmapPixelAccess.GetLockedData());
-        for (unsigned int y = subRectangle.top; y < subRectangle.bottom; y++)
+        for (auto i = 0u; i < r.GetBlocksHigh(); ++i)
         {
-            const unsigned int byteCount = (subRectangle.right - subRectangle.left) * bytesPerPixel;
-
-            assert(destRowStart - array.GetData() < UINT_MAX);
-            const unsigned int positionInBuffer = static_cast<unsigned int>(destRowStart - array.GetData());
-            const unsigned int bytesLeftInBuffer = destSizeInBytes - positionInBuffer;
-
-            memcpy_s(destRowStart, bytesLeftInBuffer, sourceRowStart, byteCount);
-
-            destRowStart += bytesPerRow;
-            sourceRowStart += bitmapPixelAccess.GetStride();
+            destination = std::copy(source, source + r.GetBytesPerRow(), destination);
+            source += bitmapPixelAccess.GetStride();
         }
 
         array.Detach(valueCount, valueElements);
@@ -1119,7 +1355,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         const unsigned int destSizeInPixels = subRectangleWidth * subRectangleHeight;
         ComArray<Color> array(destSizeInPixels);
 
-        byte* sourceRowStart = static_cast<byte*>(bitmapPixelAccess.GetLockedData());
+        byte* sourceRowStart = bitmapPixelAccess.GetLockedData();
 
         for (unsigned int y = 0; y < subRectangleHeight; y++)
         {
@@ -1215,36 +1451,25 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     {
         CheckInPointer(valueElements);
 
-        VerifyWellFormedSubrectangle(subRectangle, d2dBitmap->GetPixelSize());
-
-        const unsigned int subRectangleWidth = subRectangle.right - subRectangle.left;
-        const unsigned int subRectangleHeight = subRectangle.bottom - subRectangle.top;
-
-        const unsigned int bytesPerPixel = GetBytesPerPixel(d2dBitmap->GetPixelFormat().format);
-        const unsigned int bytesPerRow = bytesPerPixel * subRectangleWidth;
-        uint32_t expectedArraySize = subRectangleWidth * subRectangleHeight * bytesPerPixel;
-        if (valueCount != expectedArraySize)
-        {
-            WinStringBuilder message;
-            message.Format(Strings::WrongArrayLength, expectedArraySize, valueCount);
-            ThrowHR(E_INVALIDARG, message.Get());
-        }
+        BitmapSubRectangle r(d2dBitmap, subRectangle);
 
         ScopedBitmapMappedPixelAccess bitmapPixelAccess(d2dBitmap.Get(), D3D11_MAP_WRITE, &subRectangle);
 
-        byte* destRowStart = static_cast<byte*>(bitmapPixelAccess.GetLockedData());
-        byte* sourceRowStart = valueElements;
-
-        for (unsigned int y = subRectangle.top; y < subRectangle.bottom; y++)
+        if (valueCount != r.GetTotalBytes())
         {
-            const unsigned int byteCount = (subRectangle.right - subRectangle.left) * bytesPerPixel;
-            const unsigned int positionInBuffer = static_cast<unsigned int>(sourceRowStart - valueElements);
-            const unsigned int bytesLeftInBuffer = valueCount - positionInBuffer;
+            WinStringBuilder message;
+            message.Format(Strings::WrongArrayLength, r.GetTotalBytes(), valueCount);
+            ThrowHR(E_INVALIDARG, message.Get());
+        }
 
-            memcpy_s(destRowStart, bytesLeftInBuffer, sourceRowStart, byteCount);
+        auto destination = begin(bitmapPixelAccess);
+        auto source = stdext::make_checked_array_iterator(valueElements, valueCount);
 
-            destRowStart += bitmapPixelAccess.GetStride();
-            sourceRowStart += bytesPerRow;
+        for (auto i = 0u; i < r.GetBlocksHigh(); ++i)
+        {
+            std::copy(source, source + r.GetBytesPerRow(), destination);
+            source += r.GetBytesPerRow();
+            destination += bitmapPixelAccess.GetStride();
         }
     }
 
@@ -1279,7 +1504,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         const unsigned int destSizeInPixels = subRectangleWidth * subRectangleHeight;
         ComArray<Color> array(destSizeInPixels);
 
-        byte* destRowStart = static_cast<byte*>(bitmapPixelAccess.GetLockedData());
+        byte* destRowStart = bitmapPixelAccess.GetLockedData();
 
         for (unsigned int y = 0; y < subRectangleHeight; y++)
         {
@@ -1327,6 +1552,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                     assert(destY);
                     useDestPt = true;
                     destPoint = ToD2DPointU(*destX, *destY);
+
+                    // D2D validates this internally, but this allows us to
+                    // provide a specific error message
+                    if (!IsBlockAligned(GetBlockSize(toD2dBitmap->GetPixelFormat().format), destPoint))
+                        ThrowHR(E_INVALIDARG, Strings::BlockCompressedSubRectangleMustBeAligned);
                 }
 
                 bool useSourceRect = false;
@@ -1336,7 +1566,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                     assert(sourceRectTop && sourceRectWidth && sourceRectHeight && useDestPt);
                     useSourceRect = true;
                     sourceRect = ToD2DRectU(*sourceRectLeft, *sourceRectTop, *sourceRectWidth, *sourceRectHeight);
-                }                
+
+                    // D2D validates this internally, but this allows us to
+                    // provide a specific error message
+                    if (!IsBlockAligned(GetBlockSize(fromD2dBitmap->GetPixelFormat().format), sourceRect))
+                        ThrowHR(E_INVALIDARG, Strings::BlockCompressedSubRectangleMustBeAligned);
+                }
 
                 ThrowIfFailed(toD2dBitmap->CopyFromBitmap(
                     useDestPt? &destPoint : nullptr,

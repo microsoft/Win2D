@@ -719,13 +719,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return brush;
     }
 
-    ComPtr<ID2D1Bitmap1> CanvasDevice::CreateBitmapFromWicResource(
+    static ComPtr<ID2D1Bitmap1> CreateBitmapFromWicBitmap(
+        ID2D1DeviceContext* deviceContext,
         IWICBitmapSource* wicBitmapSource,
         float dpi,
         CanvasAlphaMode alpha)
     {
-        auto deviceContext = GetResourceCreationDeviceContext();
-
         D2D1_BITMAP_PROPERTIES1 bitmapProperties = D2D1::BitmapProperties1();
         bitmapProperties.pixelFormat.alphaMode = ToD2DAlphaMode(alpha);
         bitmapProperties.dpiX = bitmapProperties.dpiY = dpi;
@@ -734,6 +733,89 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ThrowIfFailed(deviceContext->CreateBitmapFromWicBitmap(wicBitmapSource, &bitmapProperties, &bitmap));
 
         return bitmap;
+    }
+
+    static ComPtr<ID2D1Bitmap1> CreateBitmapFromDdsFrame(
+        ID2D1DeviceContext* deviceContext,
+        IWICBitmapSource* wicBitmapSource,
+        IWICDdsFrameDecode* ddsFrame,
+        float dpi,
+        CanvasAlphaMode alpha)
+    {
+        if (alpha != CanvasAlphaMode::Premultiplied)
+            ThrowHR(E_INVALIDARG);
+
+        WICDdsFormatInfo info;
+        ThrowIfFailed(ddsFrame->GetFormatInfo(&info));
+
+        unsigned width;
+        unsigned height;
+        ThrowIfFailed(wicBitmapSource->GetSize(&width, &height));
+
+        //
+        // Explicitly validate that the width/height are a multiple of 4.  The
+        // CreateBitmap call below will fail with E_INVALIDARG if they're not,
+        // but this gives us a chance to produce a more appropriate error
+        // message.
+        //
+        if ((width % 4) != 0 || (height % 4) != 0)
+        {
+            ThrowHR(E_FAIL, Strings::BlockCompressedDimensionsMustBeMultipleOf4);
+        }
+
+        D2D1_BITMAP_PROPERTIES1 properties = D2D1::BitmapProperties1();
+        properties.pixelFormat.format = info.DxgiFormat;
+        properties.pixelFormat.alphaMode = D2D1_ALPHA_MODE_PREMULTIPLIED;
+        properties.dpiX = properties.dpiY = dpi;
+
+        //
+        // We manually CreateBitmap and copy blocks into it, as opposed to using
+        // CreateBitmapFromWicBitmap.
+        //
+        // This is because CreateBitmapFromWicBitmap is very strict about which
+        // formats it supports.  If it cannot be sure that the DDS was intended
+        // to be used with premultiplied alpha then it will fail.  This means
+        // that the DDS DX10 header extension must be present.  Unfortunately,
+        // many popular DDS generators don't set this header.
+        //
+        // The net result here is that otherwise correct images saved from
+        // Photoshop, Paint.NET, Visual Studio etc. cannot be loaded.  Doing
+        // this ourselves means that we always treat the images as if they
+        // contained premultiplied alpha.
+        //
+        // This does mean that it is possible to load a non-premultiplied image
+        // and have it display incorrectly because it was assumed to be
+        // premultiplied.
+        //
+        ComPtr<ID2D1Bitmap1> bitmap;
+        ThrowIfFailed(deviceContext->CreateBitmap(
+            D2D1_SIZE_U{ width, height },
+            nullptr,
+            0,
+            properties,
+            &bitmap));
+
+        ScopedBitmapMappedPixelAccess pixels(bitmap.Get(), D3D11_MAP_WRITE);
+        ThrowIfFailed(ddsFrame->CopyBlocks(
+            nullptr, // null bounds == entire image
+            pixels.GetStride(),
+            pixels.GetLockedBufferSize(),
+            pixels.GetLockedData()));
+
+        return bitmap;
+    }
+
+    ComPtr<ID2D1Bitmap1> CanvasDevice::CreateBitmapFromWicResource(
+        IWICBitmapSource* wicBitmapSource,
+        float dpi,
+        CanvasAlphaMode alpha)
+    {
+        auto deviceContext = GetResourceCreationDeviceContext();
+
+        if (auto ddsFrame = MaybeAs<IWICDdsFrameDecode>(wicBitmapSource))
+            return CreateBitmapFromDdsFrame(deviceContext.Get(), wicBitmapSource, ddsFrame.Get(), dpi, alpha);
+        else
+            return CreateBitmapFromWicBitmap(deviceContext.Get(), wicBitmapSource, dpi, alpha);
     }
 
     ComPtr<ID2D1Bitmap1> CanvasDevice::CreateBitmapFromBytes(

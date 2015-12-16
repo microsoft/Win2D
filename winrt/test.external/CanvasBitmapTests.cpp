@@ -14,6 +14,11 @@ using namespace Windows::Graphics::Imaging;
 using namespace Windows::Storage::Streams;
 using namespace Windows::UI;
 
+
+auto gMustBeMultipleOf4ErrorText = L"Block compressed image width & height must be a multiple of 4 pixels.";            
+auto gSubRectangleMustBeBlockAligned = L"Subrectangles from block compressed images must be aligned to a multiple of 4 pixels.";
+
+
 const int c_subresourceSliceCount = 3;
 
 struct SignedRect
@@ -606,6 +611,13 @@ public:
             [&]
             {
                 WaitExecution(canvasBitmap->SaveAsync(validPath, CanvasBitmapFileFormat::Jpeg, -FLT_EPSILON));
+            });
+
+        // We do not support saving DDS files
+        Assert::ExpectException<Platform::InvalidArgumentException^>(
+            [&]
+            {
+                WaitExecution(canvasBitmap->SaveAsync(L"foo.dds"));
             });
     }
 
@@ -1253,7 +1265,7 @@ public:
         }
     }
 
-    TEST_METHOD(CanavasBitmap_CopyPixelsFromBitmap_MistmachingDevices)
+    TEST_METHOD(CanavasBitmap_CopyPixelsFromBitmap_MismatchingDevices)
     {
         //
         // This verifies that bitmaps used with CopyPixelsFromBitmap must belong to
@@ -1547,6 +1559,436 @@ public:
             [&]
             {
                 WaitExecution(asyncSave);
+            });
+
+    }
+
+    //
+    // These DDS tests are against real-life DDS files.  The
+    // "Images/build_dds_test.cmd" script generates the source images.
+    //
+    
+    TEST_METHOD(CanvasBitmap_DDS)
+    {
+        struct TestCase
+        {
+            std::wstring Name;
+            HRESULT ExpectedLoadResult;
+            DirectXPixelFormat ExpectedPixelFormat;
+            wchar_t const* ExpectedExceptionMessage;
+
+            TestCase(wchar_t const* name, DirectXPixelFormat format)
+                : Name(name)
+                , ExpectedLoadResult(S_OK)
+                , ExpectedPixelFormat(format)
+                , ExpectedExceptionMessage(nullptr)
+            {}
+
+            TestCase(wchar_t const* name, HRESULT hr, wchar_t const* msg = nullptr)
+                : Name(name)
+                , ExpectedLoadResult(hr)
+                , ExpectedPixelFormat{}
+                , ExpectedExceptionMessage(msg)
+            {}
+        };
+
+        TestCase testCases[]
+        {
+            { L"DXT1",            DirectXPixelFormat::BC1UIntNormalized },
+            { L"DXT2",            DirectXPixelFormat::BC2UIntNormalized },
+            { L"DXT3",            DirectXPixelFormat::BC2UIntNormalized },
+            { L"DXT4",            DirectXPixelFormat::BC3UIntNormalized },
+            { L"DXT5",            DirectXPixelFormat::BC3UIntNormalized },
+            { L"BC1_UNORM",       DirectXPixelFormat::BC1UIntNormalized },
+            { L"BC2_UNORM",       DirectXPixelFormat::BC2UIntNormalized },
+            { L"BC3_UNORM",       DirectXPixelFormat::BC3UIntNormalized },
+
+            // WIC only loads BC[123]_UNORM block compressed formats.  Any other
+            // formats (including non-block compressed formats) fail to load.
+                
+            { L"BC1_UNORM_SRGB",  WINCODEC_ERR_BADHEADER },
+            { L"BC2_UNORM_SRGB",  WINCODEC_ERR_BADHEADER },
+            { L"BC3_UNORM_SRGB",  WINCODEC_ERR_BADHEADER },
+            { L"D3DFMT_ARGB",     WINCODEC_ERR_BADHEADER },
+            { L"R8G8B8A8_UNORM",  WINCODEC_ERR_BADHEADER },
+            { L"B8G8R8A8_UNORM",  WINCODEC_ERR_BADHEADER },
+
+            // Image dimensions must be multiples of 4
+            { L"1x1", E_FAIL, gMustBeMultipleOf4ErrorText },
+            { L"2x2", E_FAIL, gMustBeMultipleOf4ErrorText },
+            { L"3x3", E_FAIL, gMustBeMultipleOf4ErrorText },
+            { L"4x4", DirectXPixelFormat::BC1UIntNormalized },
+            { L"5x4", E_FAIL, gMustBeMultipleOf4ErrorText },
+            { L"4x5", E_FAIL, gMustBeMultipleOf4ErrorText },
+        };
+
+        auto device = ref new CanvasDevice();
+
+        for (auto testCase : testCases)
+        {
+            auto fileName = std::wstring(L"Images/x_") + testCase.Name + L".DDS";
+
+            auto loadOperation = CanvasBitmap::LoadAsync(device, ref new Platform::String(fileName.c_str()));
+
+            if (FAILED(testCase.ExpectedLoadResult))
+            {
+                ExpectCOMException(
+                    testCase.ExpectedLoadResult,
+                    testCase.ExpectedExceptionMessage,
+                    [&] { WaitExecution(loadOperation); });
+            }
+            else
+            {
+                auto bitmap = WaitExecution(loadOperation);
+                Assert::AreEqual(CanvasAlphaMode::Premultiplied, bitmap->AlphaMode);
+                Assert::AreEqual(testCase.ExpectedPixelFormat, bitmap->Format, fileName.c_str());
+            }
+        }
+    }
+
+    TEST_METHOD(CanvasBitmap_DDS_ExplicitAlphaMode)
+    {
+        auto device = ref new CanvasDevice();
+
+        struct TestCase
+        {
+            CanvasAlphaMode AlphaMode;
+            HRESULT ExpectedLoadResult;
+        };
+
+        TestCase testCases[]
+        {
+            { CanvasAlphaMode::Premultiplied, S_OK },
+            { CanvasAlphaMode::Straight,      E_INVALIDARG },
+            { CanvasAlphaMode::Ignore,        E_INVALIDARG }
+        };
+
+        for (auto testCase : testCases)
+        {
+            auto loadOperation = CanvasBitmap::LoadAsync(device, "Images/x_DXT1.DDS", 96, testCase.AlphaMode);
+
+            if (FAILED(testCase.ExpectedLoadResult))
+            {
+                ExpectCOMException(testCase.ExpectedLoadResult, [&] { WaitExecution(loadOperation); });
+            }
+            else
+            {
+                WaitExecution(loadOperation);
+            }
+        }
+    }
+
+    TEST_METHOD(CanvasBitmap_DDS_Dpi)
+    {
+        auto device = ref new CanvasDevice();
+
+        float testCases[] = { 12, 34, 56, 78, 89 };
+
+        for (auto testCase : testCases)
+        {
+            auto bitmap = WaitExecution(CanvasBitmap::LoadAsync(device, "Images/x_DXT1.DDS", testCase));
+                        
+            Assert::AreEqual(testCase, bitmap->Dpi);
+        }
+    }
+
+    static void ForAllBlockCompressedFormats(std::function<void(DirectXPixelFormat)> testFn)
+    {
+        DirectXPixelFormat blockCompressedFormats[]
+        {
+            DirectXPixelFormat::BC1UIntNormalized,
+            DirectXPixelFormat::BC2UIntNormalized,
+            DirectXPixelFormat::BC3UIntNormalized
+        };
+
+        for (auto bcFormat : blockCompressedFormats)
+        {
+            testFn(bcFormat);
+        }
+    }
+
+    TEST_METHOD(CanvasBitmap_CreateFromBytes_FailWhenNotMultipleOf4)
+    {
+        ForAllBlockCompressedFormats(
+            [] (DirectXPixelFormat format)
+            {
+                auto device = ref new CanvasDevice();
+            
+                BitmapSize invalidSizes[]
+                {
+                    { 1, 1 },
+                    { 4, 5 },
+                    { 5, 4 }
+                };
+            
+                auto data = ref new Platform::Array<uint8_t>(100);
+            
+                for (BitmapSize invalidSize : invalidSizes)
+                {
+                    auto width = invalidSize.Width;
+                    auto height = invalidSize.Height;
+                    
+                    ExpectCOMException(
+                        E_INVALIDARG,
+                        gMustBeMultipleOf4ErrorText,
+                        [&] { CanvasBitmap::CreateFromBytes(device, data, width, height, format); });
+                }
+            });
+    }
+
+    static unsigned GetBytesPerBlock(DirectXPixelFormat format)
+    {
+        switch (format)
+        {
+        case DirectXPixelFormat::BC1UIntNormalized: return 8;
+        case DirectXPixelFormat::BC2UIntNormalized: return 16;
+        case DirectXPixelFormat::BC3UIntNormalized: return 16;
+        default: ThrowHR(E_UNEXPECTED);
+        }
+    }
+
+    struct BcFixture
+    {
+        DirectXPixelFormat Format;
+        CanvasDevice^ Device;
+
+        unsigned Width;
+        unsigned Height;
+        
+        unsigned BlocksWide;
+        unsigned BlocksHigh;
+
+        Platform::Array<uint8_t>^ Data;
+
+        BcFixture(DirectXPixelFormat format)
+            : Format(format)
+            , Device(ref new CanvasDevice())
+            , Width(16)
+            , Height(16)
+            , BlocksWide(Width / 4)
+            , BlocksHigh(Height / 4)
+            , Data(ref new Platform::Array<uint8_t>(BlocksWide * BlocksHigh * GetBytesPerBlock(Format)))
+        {
+            std::fill(begin(Data), end(Data), 0);
+        }
+
+        CanvasBitmap^ CreateBitmap()
+        {
+            return CanvasBitmap::CreateFromBytes(Device, Data, Width, Height, Format);
+        }
+    };
+
+    TEST_METHOD(CanvasBitmap_GetPixelBytes)
+    {
+        ForAllBlockCompressedFormats(
+            [] (DirectXPixelFormat format)
+            {
+                BcFixture f(format);
+                
+                for (auto i = 0u; i < f.Data->Length; ++i)
+                {
+                    f.Data[i] = static_cast<uint8_t>(i);
+                }
+
+                auto bitmap = f.CreateBitmap();
+                auto pixelBytes = bitmap->GetPixelBytes();
+
+                Assert::AreEqual(f.Data->Length, pixelBytes->Length);
+        
+                for (auto i = 0u; i < f.Data->Length; ++i)
+                {
+                    Assert::AreEqual(f.Data[i], pixelBytes[i]);
+                }
+            });
+    }
+
+    TEST_METHOD(CanvasBitmap_GetPixelBytes_SubRectangle)
+    {
+        ForAllBlockCompressedFormats(
+            [] (DirectXPixelFormat format)
+            {
+                BcFixture f(format);
+
+                // This test will just extract the bytes for the region (4,4) -
+                // (8,8) (which is a single block).  So we'll write 0's for
+                // everything outside that region.
+
+                uint8_t insideValue = 0;
+                
+                for (auto i = 0u; i < f.Data->Length; ++i)
+                {
+                    auto blockI = (i / GetBytesPerBlock(format));
+                    auto blockX = (blockI % f.BlocksWide);
+                    auto blockY = (blockI / f.BlocksWide);
+
+                    if (blockX == 1 && blockY == 1)
+                        f.Data[i] = insideValue++;
+                    else
+                        f.Data[i] = 0;
+                }
+                
+                auto bitmap = f.CreateBitmap();
+                auto pixelBytes = bitmap->GetPixelBytes(4, 4, 4, 4);
+
+                Assert::AreEqual<uint32_t>(insideValue, pixelBytes->Length);
+                
+                for (auto i = 0u; i < pixelBytes->Length; ++i)
+                {
+                    Assert::AreEqual(static_cast<uint8_t>(i), pixelBytes[i]);
+                }
+            });
+    }
+
+    TEST_METHOD(CanvasBitmap_SetPixelBytes)
+    {
+        ForAllBlockCompressedFormats(
+            [] (DirectXPixelFormat format)
+            {
+                BcFixture f(format);
+                auto bitmap = f.CreateBitmap();
+
+                for (auto i = 0u; i < f.Data->Length; ++i)
+                {
+                    f.Data[i] = static_cast<uint8_t>(i);
+                }
+
+                bitmap->SetPixelBytes(f.Data);
+
+                auto pixelBytes = bitmap->GetPixelBytes();
+
+                Assert::AreEqual(f.Data->Length, pixelBytes->Length);
+                for (auto i = 0u; i < f.Data->Length; ++i)
+                {
+                    Assert::AreEqual(f.Data[i], pixelBytes[i]);
+                }
+            });
+    }
+
+    TEST_METHOD(CanvasBitmap_SetPixelBytes_SubRectangle)
+    {
+        ForAllBlockCompressedFormats(
+            [] (DirectXPixelFormat format)
+            {
+                BcFixture f(format);
+                auto bitmap = f.CreateBitmap();
+
+                auto subRectData = ref new Platform::Array<uint8_t>(GetBytesPerBlock(format));
+
+                for (auto i = 0u; i < subRectData->Length; ++i)
+                {
+                    subRectData[i] = static_cast<uint8_t>(i);
+                }
+
+                bitmap->SetPixelBytes(subRectData, 4, 4, 4, 4);
+
+                auto pixelBytes = bitmap->GetPixelBytes(4, 4, 4, 4);
+
+                Assert::AreEqual(subRectData->Length, pixelBytes->Length);
+                for (auto i = 0u; i < subRectData->Length; ++i)
+                {
+                    Assert::AreEqual(subRectData[i], pixelBytes[i]);
+                }
+            });
+    }
+
+    static void ForAllInvalidBcSubRectangles(std::function<void(int, int, int, int)> testFn)
+    {
+        struct R
+        {
+            int X;
+            int Y;
+            int Width;
+            int Height;
+        };
+
+        R invalidSubRectangles[]
+        {
+            { 1, 4, 4, 4 },
+            { 4, 1, 4, 4 },
+            { 4, 4, 5, 4 },
+            { 4, 4, 4, 5 }
+        };
+
+        for (auto r : invalidSubRectangles)
+        {
+            testFn(r.X, r.Y, r.Width, r.Height);
+        }
+    }
+
+    TEST_METHOD(CanvasBitmap_GetPixelBytes_SubRectangle_FailsWhenUnaligned)
+    {
+        ForAllBlockCompressedFormats(
+            [] (DirectXPixelFormat format)
+            {
+                BcFixture f(format);
+
+                auto bitmap = f.CreateBitmap();
+
+                ForAllInvalidBcSubRectangles(
+                    [&] (uint32_t x, uint32_t y, uint32_t w, uint32_t h)
+                    {
+                        ExpectCOMException(
+                            E_INVALIDARG,
+                            gSubRectangleMustBeBlockAligned,
+                            [&] { bitmap->GetPixelBytes(x, y, w, h); });
+                    });
+            });
+    }
+
+    TEST_METHOD(CanvasBitmap_SetPixelBytes_SubRectangle_FailsWhenUnaligned)
+    {
+        ForAllBlockCompressedFormats(
+            [] (DirectXPixelFormat format)
+            {
+                BcFixture f(format);
+
+                auto bitmap = f.CreateBitmap();
+
+                ForAllInvalidBcSubRectangles(
+                    [&] (uint32_t x, uint32_t y, uint32_t w, uint32_t h)
+                    {
+                        auto data = ref new Platform::Array<uint8_t>(100);
+                        ExpectCOMException(
+                            E_INVALIDARG,
+                            gSubRectangleMustBeBlockAligned,
+                            [&] { bitmap->SetPixelBytes(data, x, y, w, h); });
+                    });
+            });
+    }
+
+    TEST_METHOD(CanvasBitmap_CopyPixelsFromBitmap_BlockCompressed)
+    {
+        ForAllBlockCompressedFormats(
+            [] (DirectXPixelFormat format)
+            {
+                BcFixture f(format);
+
+                auto srcBitmap = f.CreateBitmap();
+                auto dstBitmap = f.CreateBitmap();
+
+                dstBitmap->CopyPixelsFromBitmap(srcBitmap);
+                dstBitmap->CopyPixelsFromBitmap(srcBitmap, 4, 4, 4, 4, 8, 8);
+            });
+    }
+
+    TEST_METHOD(CanvasBitmap_CopyPixelsFromBitmap_BlockCompressed_FailsWhenUnaligned)
+    {
+        ForAllBlockCompressedFormats(
+            [] (DirectXPixelFormat format)
+            {
+                BcFixture f(format);
+
+                auto srcBitmap = f.CreateBitmap();
+                auto dstBitmap = f.CreateBitmap();
+
+                ExpectCOMException(E_INVALIDARG, gSubRectangleMustBeBlockAligned, [&] { dstBitmap->CopyPixelsFromBitmap(srcBitmap, 1, 0, 0, 0, 4, 4); });
+                ExpectCOMException(E_INVALIDARG, gSubRectangleMustBeBlockAligned, [&] { dstBitmap->CopyPixelsFromBitmap(srcBitmap, 0, 1, 0, 0, 4, 4); });
+
+                ForAllInvalidBcSubRectangles(
+                    [&] (uint32_t x, uint32_t y, uint32_t w, uint32_t h)
+                    {
+                        ExpectCOMException(E_INVALIDARG, gSubRectangleMustBeBlockAligned, [&] { dstBitmap->CopyPixelsFromBitmap(srcBitmap, 0, 0, x, y, w, h); });
+                    });
             });
 
     }
