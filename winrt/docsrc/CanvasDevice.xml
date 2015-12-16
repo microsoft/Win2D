@@ -71,6 +71,13 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
           whether the device has hardware acceleration enabled.
         </p>
         <p>
+          Note that even when the A8UIntNormalized, R8UIntNormalized, or R8G8UIntNormalized 
+          formats pass the IsPixelFormatSupported test, these have limited functionality 
+          compared to other pixel formats. Bitmaps of these formats cannot be drawn directly 
+          (eg. via DrawImage). They can only be used as effect source images, plus 
+          A8UIntNormalized bitmaps and rendertargets can be used as opacity masks.
+        </p>
+        <p>
           For more information, see <a href="PixelFormats.htm">Pixel Formats</a>.
         </p>
       </remarks>

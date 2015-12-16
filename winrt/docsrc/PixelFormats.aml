@@ -81,6 +81,11 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
             <entry>Not supported on all devices</entry>
           </row>
           <row>
+            <entry>R10G10B10A2UIntNormalized</entry>
+            <entry>Premultiplied, Ignore</entry>
+            <entry>Not supported on all devices</entry>
+          </row>
+          <row>
             <entry>R16G16B16A16UIntNormalized</entry>
             <entry>Premultiplied, Ignore</entry>
             <entry>Not supported on all devices</entry>
@@ -88,17 +93,17 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
           <row>
             <entry>R8G8UIntNormalized</entry>
             <entry>Ignore</entry>
-            <entry>Not supported on all devices</entry>
+            <entry>Not supported on all devices. Bitmaps of this format can be used as effect sources, but are not directly drawable.</entry>
           </row>
           <row>
             <entry>R8UIntNormalized</entry>
             <entry>Ignore</entry>
-            <entry>Not supported on all devices</entry>
+            <entry>Not supported on all devices. Bitmaps of this format can be used as effect sources, but are not directly drawable.</entry>
           </row>
           <row>
             <entry>A8UIntNormalized</entry>
             <entry>Premultiplied, Straight</entry>
-            <entry/>
+            <entry>Bitmaps of this format can be used as opacity masks or effect sources, but are not directly drawable.</entry>
           </row>
           <row>
             <entry>BC1UIntNormalized</entry>

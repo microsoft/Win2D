@@ -878,14 +878,18 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             canvasBitmap);
     }
 
-    static bool DoesSurfaceSupportAlpha(IDirect3DSurface* surface)
+    static CanvasAlphaMode AlphaModeFromFormat(DirectXPixelFormat format)
     {
-        Direct3DSurfaceDescription surfaceDescription;
-        ThrowIfFailed(surface->get_Description(&surfaceDescription));
+        switch (format)
+        {
+            case PIXEL_FORMAT(B8G8R8X8UIntNormalized):
+            case PIXEL_FORMAT(R8G8UIntNormalized):
+            case PIXEL_FORMAT(R8UIntNormalized):
+                return CanvasAlphaMode::Ignore;
 
-        return surfaceDescription.Format != PIXEL_FORMAT(B8G8R8X8UIntNormalized)
-            && surfaceDescription.Format != PIXEL_FORMAT(R8G8UIntNormalized)
-            && surfaceDescription.Format != PIXEL_FORMAT(R8UIntNormalized);
+            default:
+                return CanvasAlphaMode::Premultiplied;
+        }
     }
 
     HRESULT CanvasBitmapFactory::CreateFromDirect3D11SurfaceImpl(
@@ -912,7 +916,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 }
                 else
                 {
-                    alpha = DoesSurfaceSupportAlpha(surface) ? CanvasAlphaMode::Premultiplied : CanvasAlphaMode::Ignore;
+                    Direct3DSurfaceDescription surfaceDescription;
+                    ThrowIfFailed(surface->get_Description(&surfaceDescription));
+
+                    alpha = AlphaModeFromFormat(surfaceDescription.Format);
                 }
 
                 auto d2dBitmap = As<ICanvasDeviceInternal>(canvasDevice)->CreateBitmapFromSurface(surface, dpi, alpha);
@@ -940,7 +947,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             heightInPixels,
             format,
             DEFAULT_DPI,
-            CanvasAlphaMode::Premultiplied,
+            AlphaModeFromFormat(format),
             canvasBitmap);
     }
 
@@ -962,7 +969,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             heightInPixels,
             format,
             dpi,
-            CanvasAlphaMode::Premultiplied,
+            AlphaModeFromFormat(format),
             canvasBitmap);
     }
 
