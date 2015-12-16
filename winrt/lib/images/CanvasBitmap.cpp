@@ -173,7 +173,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         default:
             // Some formats such as DXGI_FORMAT_UNKNOWN
-            ThrowHR(E_INVALIDARG);
+            ThrowHR(WINCODEC_ERR_UNSUPPORTEDPIXELFORMAT);
         }
     }
 
