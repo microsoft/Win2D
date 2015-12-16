@@ -286,8 +286,8 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="$(MSBuildThisFileDirectory)Particles\explosion.png" />
-    <Content Include="$(MSBuildThisFileDirectory)Particles\smoke.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Particles\explosion.dds" />
+    <Content Include="$(MSBuildThisFileDirectory)Particles\smoke.dds" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\CustomEffectsNarrow.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\CustomEffectsWide.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\AnimatedControlNarrow.png" />

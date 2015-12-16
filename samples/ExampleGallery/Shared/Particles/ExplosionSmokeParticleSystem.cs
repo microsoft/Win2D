@@ -14,7 +14,7 @@ namespace ExampleGallery
         // Set up the constants that will give this particle system its behavior and properties.
         protected override void InitializeConstants()
         {
-            bitmapFilename = "Particles/smoke.png";
+            bitmapFilename = "Particles/smoke.dds";
 
             // Less initial speed than the explosion itself.
             minInitialSpeed = 15;

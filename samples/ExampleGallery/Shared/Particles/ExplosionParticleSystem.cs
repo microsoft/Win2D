@@ -16,7 +16,7 @@ namespace ExampleGallery
         // Set up the constants that will give this particle system its behavior and properties.
         protected override void InitializeConstants()
         {
-            bitmapFilename = "Particles/explosion.png";
+            bitmapFilename = "Particles/explosion.dds";
 
             // High initial speed with lots of variance. Make the values closer
             // together to have more consistently circular explosions.
