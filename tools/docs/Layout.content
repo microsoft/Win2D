@@ -23,6 +23,7 @@
     <Topic id="ChoosingResolution" title="Choosing control resolution" />
     <Topic id="PixelFormats" title="Pixel formats" />
     <Topic id="PremultipliedAlpha" title="Premultiplied alpha" />
+    <Topic id="BlockCompression" title="Bitmap block compression" />
     <Topic id="EffectPrecision" title="Effect precision and clamping" />
     <Topic id="HandlingDeviceLost" title="Handling device lost" />
     <Topic id="WithoutControls" title="Using Win2D without built-in controls" />

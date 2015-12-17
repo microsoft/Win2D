@@ -1,0 +1,162 @@
+<?xml version="1.0"?>
+<!--
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+Licensed under the MIT License. See LICENSE.txt in the project root for license information.
+-->
+
+<topic id="BlockCompression" revisionNumber="1">
+  <developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <introduction>
+      <para>
+        CanvasBitmap supports block compressed bitmaps.  These can be loaded
+        from a DDS file, or created with
+        <codeEntityReference>M:Microsoft.Graphics.Canvas.CanvasBitmap.CreateFromBytes(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Byte[],System.Int32,System.Int32,Windows.Graphics.DirectX.DirectXPixelFormat)</codeEntityReference>.
+      </para>
+      <para>
+        Block compressed bitmaps are great for bitmap heavy applications (such
+        as games) because they take up less memory and can be drawn more
+        efficiently.  A block compressed bitmap uses up to 1/8th of the memory
+        of an uncompressed bitmap.  As a result, the GPU needs to access much
+        less memory when drawing the bitmap, resulting in faster drawing.
+      </para>
+    </introduction>
+    <section>
+      <title>About Block Compression</title>
+      <content>
+        <para>
+          Block compression is different to the compression employed by PNG or
+          JPG files.  Compressed file formats are stored compressed but when
+          they are loaded by Win2D they are decompressed into a bitmap with a
+          format such as DirectXPixelFormat::B8G8R8A8UIntNormalized, which uses
+          32 bits (4 bytes) per pixel.  So a 256x256 bitmap would take up 256 *
+          256 * 4 = 262,144 bytes.
+        </para>
+        <para>
+          A block compressed bitmap uses 8 or 16 bytes (depending on the format
+          -- more on this later) to store a block of 4x4 pixels.  So in this
+          case a 256x256 bitmap would take up 256 * 256 / (4*4) * 8 = 32,768
+          bytes, or 256 * 256 / (4*4) * 16 = 65,536 bytes.  That's up to 8 times
+          smaller!  Since block compression is supported directly by the GPU
+          hardware, the bitmap can be kept compressed in memory and drawn
+          directly from the compressed format without ever having to completely
+          uncompress it.
+        </para>
+        <para>
+          Win2D supports three block compressed formats.  The table below
+          describes these formats, along with an uncompressed format for
+          comparison.
+          <table>
+            <tableHeader>
+              <row>
+                <entry>DirectXPixelFormat</entry>
+                <entry>Size of 4x4 bitmap</entry>
+                <entry>Size of 256x256 bitmap</entry>
+                <entry>Alpha</entry>
+              </row>
+            </tableHeader>
+            <row>
+              <entry>BC1Unorm</entry>
+              <entry>8 bytes</entry>
+              <entry>32,768 bytes</entry>
+              <entry>1 bit</entry>
+            </row>
+            <row>
+              <entry>BC2Unorm</entry>
+              <entry>16 bytes</entry>
+              <entry>65,536 bytes</entry>
+              <entry>4 bit</entry>
+            </row>
+            <row>
+              <entry>BC3Unorm</entry>
+              <entry>16 bytes</entry>
+              <entry>65,536 bytes</entry>
+              <entry>~8 bit (compressed)</entry>
+            </row>
+            <row>
+              <entry>B8G8R8A8UintNormalized</entry>
+              <entry>64 bytes</entry>
+              <entry>262,144 bytes</entry>
+              <entry>8 bit</entry>
+            </row>
+          </table>
+          BC1Unorm, BC2Unorm and BC3Unorm differ mostly in how they support
+          alpha.  BC1 supports only 1-bit alpha.  BC2 supports each pixel in the
+          block having a unique 4-bit alpha value.  BC3 compresses the alpha
+          values.
+        </para>
+        <para>
+          See
+          <externalLink>
+            <linkText>Direct2D Block Compression documentation</linkText>
+            <linkUri>https://msdn.microsoft.com/en-us/library/windows/desktop/dn424084(v=vs.85).aspx</linkUri>
+          </externalLink>
+          and
+          <externalLink>
+            <linkText>Direct3D Block Compression documentation</linkText>
+            <linkUri>https://msdn.microsoft.com/en-us/library/windows/desktop/bb694531(v=vs.85).aspx</linkUri>
+          </externalLink>
+          for more information about how block compression works.
+        </para>
+      </content>
+    </section>
+    <section>
+      <title>Restrictions</title>
+      <content>
+        <list class="bullet">
+          <listItem>
+            All block compressed textures must have a width and height that is a
+            multiple of 4.  This is because block compression works on blocks of
+            4x4 pixels.
+          </listItem>
+          <listItem>
+            Any operation on a sub-rectangle of a block compressed texture
+            (using
+            <codeEntityReference>M:Microsoft.Graphics.Canvas.CanvasBitmap.GetPixelBytes</codeEntityReference>,
+            <codeEntityReference>M:Microsoft.Graphics.Canvas.CanvasBitmap.SetPixelBytes(System.Byte[])</codeEntityReference>,
+            <codeEntityReference>M:Microsoft.Graphics.Canvas.CanvasBitmap.CopyPixelsFromBitmap(Microsoft.Graphics.Canvas.CanvasBitmap,System.Int32,System.Int32)</codeEntityReference>)
+            require that the sub-rectangle is 4-pixel aligned.
+          </listItem>
+          <listItem>
+            Win2D requires premultiplied alpha when using block compressed
+            formats.
+          </listItem>
+        </list>
+      </content>
+    </section>
+    <section>
+      <title>Authoring DDS files</title>
+      <content>
+        <para>
+          Block compressed images can be saved in DDS files.  Although these can
+          be generated by plugins to applications such as Photoshop or
+          Paint.NET, care must be taken to ensure that the resulting file is
+          saved with premultiplied alpha.  Win2D will load any DDS file
+          containing a BC1Unorm, BC2Unorm or BC3Unorm image and assume that it
+          is authored with premultiplied alpha.
+        </para>
+        <para>
+          If you are authoring a C++ project then you can use the Image Content
+          Pipeline to convert the image, as described on
+          <externalLink>
+            <linkText>MSDN</linkText>
+            <linkUri>https://msdn.microsoft.com/library/dn392693(v=vs.140).aspx</linkUri>
+          </externalLink>.
+        </para>
+        <para>
+          Alternatively, you can use texconv.exe from
+          <externalLink>
+            <linkText>https://github.com/Microsoft/DirectXTex</linkText>
+            <linkUri>https://github.com/Microsoft/DirectXTex</linkUri>
+          </externalLink>.  texconv.exe can be built using the DirectXTex_Desktop_2015.sln
+          solution.  The following command converts "smoke.png" to a BC3Unorm
+          with premultiplied alpha:
+          <code>
+            texconv -pmalpha -m 1 -f BC3_UNORM smoke.png
+          </code>
+        </para>
+      </content>
+    </section>      
+  </developerConceptualDocument>
+</topic>
+
