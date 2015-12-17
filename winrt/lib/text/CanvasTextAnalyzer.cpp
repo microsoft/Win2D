@@ -7,6 +7,8 @@
 #include "CanvasTextAnalyzer.h"
 #include "CanvasFontSet.h"
 #include "CanvasScaledFont.h"
+#include "CanvasFontFace.h"
+#include "CanvasTypography.h"
 
 using namespace ABI::Microsoft::Graphics::Canvas;
 using namespace ABI::Microsoft::Graphics::Canvas::Text;
@@ -246,8 +248,8 @@ class DWriteTextAnalysisSink : public RuntimeClass<RuntimeClassFlags<ClassicCom>
 public:
 
     STDMETHOD(SetScriptAnalysis)(
-        UINT32 textPosition,
-        UINT32 textLength,
+        uint32_t textPosition,
+        uint32_t textLength,
         DWRITE_SCRIPT_ANALYSIS const* scriptAnalysis) override
     {
         return ExceptionBoundary(
@@ -264,16 +266,16 @@ public:
     }
 
     STDMETHOD(SetLineBreakpoints)(
-        UINT32,
-        UINT32,
+        uint32_t,
+        uint32_t,
         DWRITE_LINE_BREAKPOINT const*) override
     {
         return E_UNEXPECTED; // TODO: #6142 expose analysis results other than script.
     }
 
     STDMETHOD(SetBidiLevel)(
-        UINT32,
-        UINT32,
+        uint32_t,
+        uint32_t,
         UINT8,
         UINT8) override
     {
@@ -281,16 +283,16 @@ public:
     }
 
     STDMETHOD(SetNumberSubstitution)(
-        UINT32,
-        UINT32,
+        uint32_t,
+        uint32_t,
         IDWriteNumberSubstitution*) override
     {
         return E_UNEXPECTED;
     }
 
     IFACEMETHODIMP SetGlyphOrientation(
-        UINT32,
-        UINT32,
+        uint32_t,
+        uint32_t,
         DWRITE_GLYPH_ORIENTATION_ANGLE,
         UINT8,
         BOOL,
@@ -544,6 +546,288 @@ IFACEMETHODIMP CanvasTextAnalyzer::GetScriptProperties(
             scriptProperties->IsDistributedWithinCluster = dwriteScriptProperties.isDistributedWithinCluster;
             scriptProperties->IsConnectedWriting = dwriteScriptProperties.isConnectedWriting;
             scriptProperties->IsCursiveWriting = dwriteScriptProperties.isCursiveWriting;
+        });
+}
+
+IFACEMETHODIMP CanvasTextAnalyzer::GetGlyphs(
+    CanvasCharacterRange characterRange,
+    ICanvasFontFace* fontFace,
+    float fontSize,
+    boolean isSideways,
+    boolean isRightToLeft,
+    CanvasAnalyzedScript script,
+    uint32_t* valueCount,
+    CanvasGlyph** valueElements)
+{
+    return GetGlyphsWithAllOptions(characterRange, fontFace, fontSize, isSideways, isRightToLeft, script, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, valueCount, valueElements);
+}
+
+IFACEMETHODIMP CanvasTextAnalyzer::GetGlyphsWithAllOptions(
+    CanvasCharacterRange characterRange,
+    ICanvasFontFace* fontFace,
+    float fontSize,
+    boolean isSideways,
+    boolean isRightToLeft,
+    CanvasAnalyzedScript script,
+    HSTRING locale,
+    ICanvasNumberSubstitution* numberSubstitution,
+    IVectorView<IKeyValuePair<CanvasCharacterRange, CanvasTypography*>*>* typographyRanges,
+    uint32_t* clusterMapIndexCount,
+    int** clusterMapIndexElements,
+    uint32_t* isShapedAloneCount,
+    boolean** isShapedAloneElements,
+    uint32_t* glyphShapingCount,
+    CanvasGlyphShaping** glyphShapingElements,
+    uint32_t* valueCount,
+    CanvasGlyph** valueElements)
+{
+    return ExceptionBoundary(
+        [&]
+        {
+            CheckInPointer(fontFace);
+            CheckAndClearOutPointer(valueElements);
+
+            ThrowIfNegative(characterRange.CharacterIndex);
+            ThrowIfNegative(characterRange.CharacterCount);
+
+            wchar_t const* text;
+            uint32_t textLength;
+
+            text = WindowsGetStringRawBuffer(m_text, &textLength);
+
+            if (textLength > 0 && characterRange.CharacterIndex >= static_cast<int>(textLength))
+                ThrowHR(E_INVALIDARG);
+
+            if (characterRange.CharacterIndex + characterRange.CharacterCount > static_cast<int>(textLength))
+                ThrowHR(E_INVALIDARG);
+
+            text += characterRange.CharacterIndex;
+            textLength = characterRange.CharacterCount;
+
+            auto dwriteScriptAnalysis = ToDWriteScriptAnalysis(script);
+
+            std::vector<uint16_t> clusterMap;
+            clusterMap.resize(textLength);
+
+            std::vector<DWRITE_SHAPING_TEXT_PROPERTIES> shapingTextProperties;
+            shapingTextProperties.resize(textLength);
+
+            auto dwriteFontFace = As<ICanvasFontFaceInternal>(fontFace)->GetRealizedFontFace();
+            
+            ComPtr<IDWriteNumberSubstitution> dwriteNumberSubstitution;
+            if (numberSubstitution)
+                dwriteNumberSubstitution = GetWrappedResource<IDWriteNumberSubstitution>(numberSubstitution);
+
+            uint32_t typographyRangeCount = 0;
+            std::vector<uint32_t> featureRangeLengths;
+
+            struct DWriteTypographicFeatureData
+            {
+                DWRITE_TYPOGRAPHIC_FEATURES Features;
+                std::vector<DWRITE_FONT_FEATURE> Data;
+            };
+            std::vector<DWriteTypographicFeatureData> featureData;
+            std::vector<DWRITE_TYPOGRAPHIC_FEATURES const*> featureDataPointers;
+            if (typographyRanges)
+            {
+                ThrowIfFailed(typographyRanges->get_Size(&typographyRangeCount));
+
+                featureRangeLengths.resize(typographyRangeCount);
+                featureData.resize(typographyRangeCount);
+                featureDataPointers.resize(typographyRangeCount);
+
+                int characterIndex = characterRange.CharacterIndex; // For validating the sizes of the spans.
+                int characterRangeEnd = characterRange.CharacterIndex + characterRange.CharacterCount;
+
+                for (uint32_t i = 0; i < typographyRangeCount; ++i)
+                {
+                    ComPtr<IKeyValuePair<CanvasCharacterRange, CanvasTypography*>> typographyRangeElement;
+                    ThrowIfFailed(typographyRanges->GetAt(i, &typographyRangeElement));
+
+                    CanvasCharacterRange typographyCharacterRange;
+                    ThrowIfFailed(typographyRangeElement->get_Key(&typographyCharacterRange));
+
+                    ComPtr<ICanvasTypography> typography;
+                    ThrowIfFailed(typographyRangeElement->get_Value(&typography));
+
+                    //
+                    // Perform some validation, ensuring spans are sequential and don't overlap.
+                    //
+                    ThrowIfNegative(typographyCharacterRange.CharacterIndex);
+                    ThrowIfNegative(typographyCharacterRange.CharacterCount);
+                    
+                    //
+                    // Clamp the typography span character range to the character range passed
+                    // to GetGlyphs.
+                    //
+                    int typographyRangeEnd = typographyCharacterRange.CharacterIndex + typographyCharacterRange.CharacterCount;
+                    bool rangesOverlap =
+                        !(typographyRangeEnd <= characterRange.CharacterIndex ||
+                        characterRangeEnd <= typographyCharacterRange.CharacterIndex);
+
+                    if (rangesOverlap)
+                    {
+                        typographyCharacterRange.CharacterIndex = std::max(
+                            typographyCharacterRange.CharacterIndex,
+                            characterRange.CharacterIndex);
+
+                        typographyRangeEnd = std::min(typographyRangeEnd, characterRangeEnd);
+                        typographyCharacterRange.CharacterCount = typographyRangeEnd - typographyCharacterRange.CharacterIndex;
+
+                        auto features = As<ICanvasTypographyInternal>(typography)->GetFeatureData();
+                        const uint32_t featureCount = static_cast<uint32_t>(features.size());
+
+                        featureData[i].Data = std::move(features);
+                        featureData[i].Features.featureCount = featureCount;
+                        featureData[i].Features.features = featureCount > 0 ? &featureData[i].Data[0] : nullptr;
+                        featureDataPointers[i] = &featureData[i].Features;
+                        featureRangeLengths[i] = typographyCharacterRange.CharacterCount;
+
+                        if (characterIndex != typographyCharacterRange.CharacterIndex)
+                            ThrowHR(E_INVALIDARG);
+                        characterIndex += typographyCharacterRange.CharacterCount;
+                    }
+                    else
+                    {
+                        featureData[i].Features.featureCount = 0;
+                        featureData[i].Features.features = nullptr;
+                        featureDataPointers[i] = nullptr;
+                        featureRangeLengths[i] = 0;
+                    }
+                }
+
+                if (characterIndex != characterRangeEnd)
+                    ThrowHR(E_INVALIDARG);
+            }
+
+            std::vector<DWRITE_TYPOGRAPHIC_FEATURES> featuresPerSpan;
+
+            std::vector<uint16_t> glyphIndices;
+
+            std::vector<DWRITE_SHAPING_GLYPH_PROPERTIES> shapingGlyphProperties;
+
+            //
+            // A text span can map to a (theoretically) unbounded number of glyphs, and there
+            // isn't a way to obtain the count of the glyphs without evaluating the glyphs
+            // themselves. We size a buffer and expand it according to DWrite's 
+            // recommended heuristic.
+            //
+            uint32_t maxGlyphCount = (3 * textLength / 2 + 16);
+
+            HRESULT getGlyphsResult;
+
+            uint32_t actualGlyphCount{};
+
+            for (int resizeAttempt = 0; resizeAttempt < 3; resizeAttempt++)
+            {
+                glyphIndices.resize(maxGlyphCount);
+
+                shapingGlyphProperties.resize(maxGlyphCount);
+
+                getGlyphsResult = CustomFontManager::GetInstance()->GetTextAnalyzer()->GetGlyphs(
+                    text,
+                    textLength,
+                    dwriteFontFace.Get(),
+                    isSideways,
+                    isRightToLeft,
+                    &dwriteScriptAnalysis,
+                    WindowsGetStringRawBuffer(locale, nullptr),
+                    dwriteNumberSubstitution.Get(),
+                    typographyRanges ? featureDataPointers.data() : nullptr,
+                    typographyRanges ? featureRangeLengths.data() : nullptr,
+                    typographyRangeCount,
+                    maxGlyphCount,
+                    clusterMap.data(),
+                    shapingTextProperties.data(),
+                    glyphIndices.data(),
+                    shapingGlyphProperties.data(),
+                    &actualGlyphCount);
+
+                if (SUCCEEDED(getGlyphsResult))
+                {
+                    break;
+                }
+                else if (getGlyphsResult == HRESULT_FROM_WIN32(ERROR_INSUFFICIENT_BUFFER))
+                {
+                    maxGlyphCount *= 3;
+                }
+                else
+                {
+                    ThrowHR(getGlyphsResult);
+                }
+            }
+            ThrowIfFailed(getGlyphsResult);
+
+            std::vector<float> glyphAdvances;
+            glyphAdvances.resize(actualGlyphCount);
+
+            std::vector<DWRITE_GLYPH_OFFSET> glyphOffsets;
+            glyphOffsets.resize(actualGlyphCount);
+
+            ThrowIfFailed(CustomFontManager::GetInstance()->GetTextAnalyzer()->GetGlyphPlacements(
+                text,
+                clusterMap.data(),
+                shapingTextProperties.data(),
+                textLength,
+                glyphIndices.data(),
+                shapingGlyphProperties.data(),
+                actualGlyphCount,
+                dwriteFontFace.Get(),
+                fontSize,
+                isSideways,
+                isRightToLeft,
+                &dwriteScriptAnalysis,
+                WindowsGetStringRawBuffer(locale, nullptr),
+                typographyRanges ? featureDataPointers.data() : nullptr,
+                typographyRanges ? featureRangeLengths.data() : nullptr,
+                typographyRangeCount,
+                glyphAdvances.data(),
+                glyphOffsets.data()));
+
+            ComArray<CanvasGlyph> glyphs(actualGlyphCount);
+            for (uint32_t i = 0; i < actualGlyphCount; ++i)
+            {
+                glyphs[i].Index = glyphIndices[i];
+                glyphs[i].Advance = glyphAdvances[i];
+                glyphs[i].AdvanceOffset = glyphOffsets[i].advanceOffset;
+                glyphs[i].AscenderOffset = glyphOffsets[i].ascenderOffset;
+            }
+            glyphs.Detach(valueCount, valueElements);
+
+            if (clusterMapIndexElements)
+            {
+                auto clusterMapResult = TransformToComArray<int>(clusterMap.begin(), clusterMap.end(), 
+                    [](uint16_t value)
+                    {
+                        return static_cast<int>(value);
+                    });
+                clusterMapResult.Detach(clusterMapIndexCount, clusterMapIndexElements);
+            }
+
+            if (isShapedAloneElements)
+            {
+                auto isShapedAloneResult = TransformToComArray<boolean>(shapingTextProperties.begin(), shapingTextProperties.end(),
+                    [](DWRITE_SHAPING_TEXT_PROPERTIES const& value)
+                    {
+                        return !!value.isShapedAlone;
+                    });
+                isShapedAloneResult.Detach(isShapedAloneCount, isShapedAloneElements);
+            }
+
+            if (glyphShapingElements)
+            {
+                auto glyphShaping = TransformToComArray<CanvasGlyphShaping>(shapingGlyphProperties.begin(), shapingGlyphProperties.begin() + actualGlyphCount,
+                    [](DWRITE_SHAPING_GLYPH_PROPERTIES const& dwriteValue)
+                    {
+                        CanvasGlyphShaping result{};
+                        result.Justification = ToCanvasGlyphJustification(dwriteValue.justification);
+                        result.IsClusterStart = dwriteValue.isClusterStart;
+                        result.IsDiacritic = dwriteValue.isDiacritic;
+                        result.IsZeroWidthSpace = dwriteValue.isZeroWidthSpace;
+                        return result;
+                    });
+                glyphShaping.Detach(glyphShapingCount, glyphShapingElements);
+            }
         });
 }
 

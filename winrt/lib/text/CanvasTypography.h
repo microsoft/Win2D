@@ -7,6 +7,13 @@
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Text
 {
     using namespace ::Microsoft::WRL;
+	
+    [uuid(CAC871EB-EF62-4211-900E-BBD332244307)]
+    class ICanvasTypographyInternal : public IUnknown
+    {
+    public:
+        virtual std::vector<DWRITE_FONT_FEATURE> GetFeatureData() = 0;
+    };
 
     class CanvasTypographyFactory
         : public ActivationFactory<>
@@ -19,7 +26,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     class CanvasTypography : RESOURCE_WRAPPER_RUNTIME_CLASS(
         IDWriteTypography,
         CanvasTypography,
-        ICanvasTypography)
+        ICanvasTypography,
+        CloakedIid<ICanvasTypographyInternal>)
     {
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_Text_CanvasTypography, BaseTrust);
         
@@ -33,6 +41,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         IFACEMETHOD(GetFeatures)(
             uint32_t* positionCount,
             CanvasTypographyFeature** positions) override;
+
+        std::vector<DWRITE_FONT_FEATURE> GetFeatureData() override;
     };
 
 }}}}}

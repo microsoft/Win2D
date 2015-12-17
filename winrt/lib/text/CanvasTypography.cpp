@@ -43,7 +43,7 @@ IFACEMETHODIMP CanvasTypography::GetFeatures(
             std::vector<DWRITE_FONT_FEATURE> dwriteFontFeatures(featureCount);
 
             for (uint32_t i = 0; i < featureCount; ++i)
-                resource->GetFontFeature(i, &dwriteFontFeatures[i]);
+                ThrowIfFailed(resource->GetFontFeature(i, &dwriteFontFeatures[i]));
             
             auto returnedFeatures = TransformToComArray<CanvasTypographyFeature>(
                 dwriteFontFeatures.begin(),
@@ -59,6 +59,26 @@ IFACEMETHODIMP CanvasTypography::GetFeatures(
 
             returnedFeatures.Detach(valueCount, valueElements);
         });
+}
+
+
+std::vector<DWRITE_FONT_FEATURE> CanvasTypography::GetFeatureData()
+{
+    auto& resource = GetResource();
+
+    uint32_t featureCount = resource->GetFontFeatureCount();
+
+    std::vector<DWRITE_FONT_FEATURE> featureData;
+    featureData.reserve(featureCount);
+
+    for (uint32_t i = 0; i < featureCount; ++i)
+    {
+        DWRITE_FONT_FEATURE dwriteFontFeature;
+        ThrowIfFailed(resource->GetFontFeature(i, &dwriteFontFeature));
+        featureData.push_back(dwriteFontFeature);
+    }
+
+    return featureData;
 }
 
 

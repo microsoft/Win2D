@@ -795,5 +795,17 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         // static_asserts in ToDWriteScriptShapes validate that this cast is ok
         return static_cast<CanvasScriptShape>(value);
     }
+
+
+    inline CanvasGlyphJustification ToCanvasGlyphJustification(uint32_t value)
+    {
+        // 
+        // These values are exposed from the Uniscribe API which is not available for
+        // WinRT apps; however, this enum's values have been chosen so that 
+        // they are equivalent.
+        //
+
+        return static_cast<CanvasGlyphJustification>(value);
+    }
    
 }}}}}

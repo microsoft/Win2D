@@ -53,6 +53,35 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             CanvasAnalyzedScript analyzedScript,
             CanvasScriptProperties* scriptProperties) override;
 
+        IFACEMETHOD(GetGlyphs)(
+            CanvasCharacterRange characterRange,
+            ICanvasFontFace* fontFace,
+            float fontSize,
+            boolean isSideways,
+            boolean isRightToLeft,
+            CanvasAnalyzedScript script,
+            uint32_t* valueCount,
+            CanvasGlyph** valueElements) override;
+
+        IFACEMETHOD(GetGlyphsWithAllOptions)(
+            CanvasCharacterRange characterRange,
+            ICanvasFontFace* fontFace,
+            float fontSize,
+            boolean isSideways,
+            boolean isRightToLeft,
+            CanvasAnalyzedScript script,
+            HSTRING locale,
+            ICanvasNumberSubstitution* numberSubstitution,
+            IVectorView<IKeyValuePair<CanvasCharacterRange, CanvasTypography*>*>* typographyRanges,
+            uint32_t* clusterMapIndicesCount,
+            int** clusterMapIndicesElements,
+            uint32_t* isShapedAloneGlyphsCount,
+            boolean** isShapedAloneGlyphsElements,
+            uint32_t* glyphShapingResultsCount,
+            CanvasGlyphShaping** glyphShapingResultsElements,
+            uint32_t* valueCount,
+            CanvasGlyph** valueElements) override;
+
     private:
         ComPtr<IDWriteTextAnalysisSource> CreateTextAnalysisSource(
             WinString localeNameString);

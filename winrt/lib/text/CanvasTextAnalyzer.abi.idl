@@ -125,6 +125,33 @@ namespace Microsoft.Graphics.Canvas.Text
         boolean IsCursiveWriting;
     } CanvasScriptProperties;
 
+    [version(VERSION)]
+    typedef enum CanvasGlyphJustification
+    {
+        None = 0,
+        ArabicBlank = 1,
+        Character = 2,
+        Blank = 4,
+        ArabicNormal = 7,
+        ArabicKashida = 8,
+        ArabicAlef = 9,
+        ArabicHa = 10,
+        ArabicRa = 11,
+        ArabicBa = 12,
+        ArabicBara = 13,
+        ArabicSeen = 14,
+        ArabicSeenM = 15
+    } CanvasGlyphJustification;
+
+    [version(VERSION)]
+    typedef struct CanvasGlyphShaping
+    {
+        CanvasGlyphJustification Justification;
+        boolean IsClusterStart;
+        boolean IsDiacritic;
+        boolean IsZeroWidthSpace;
+    } CanvasGlyphShaping;
+
     runtimeclass CanvasTextAnalyzer;
 
     [version(VERSION), uuid(4298F3D1-645B-40E3-B91B-81986D767FC0), exclusiveto(CanvasTextAnalyzer)]
@@ -154,6 +181,37 @@ namespace Microsoft.Graphics.Canvas.Text
         HRESULT GetScriptProperties(
             [in] CanvasAnalyzedScript analyzedScript,
             [out, retval] CanvasScriptProperties* scriptProperties);
+
+        [overload("GetGlyphs")]
+        HRESULT GetGlyphs(
+            [in] CanvasCharacterRange characterRange,
+            [in] CanvasFontFace* fontFace,
+            [in] float fontSize,
+            [in] boolean isSideways,
+            [in] boolean isRightToLeft,
+            [in] CanvasAnalyzedScript script,
+            [out] UINT32* valueCount,
+            [out, size_is(, *valueCount), retval] CanvasGlyph** valueElements);
+
+        [overload("GetGlyphs")]
+        HRESULT GetGlyphsWithAllOptions(
+            [in] CanvasCharacterRange characterRange,
+            [in] CanvasFontFace* fontFace,
+            [in] float fontSize,
+            [in] boolean isSideways,
+            [in] boolean isRightToLeft,
+            [in] CanvasAnalyzedScript script,
+            [in] HSTRING locale,
+            [in] CanvasNumberSubstitution* numberSubstitution,
+            [in] Windows.Foundation.Collections.IVectorView<Windows.Foundation.Collections.IKeyValuePair<CanvasCharacterRange, CanvasTypography*>*>* typographyRanges,
+            [out] UINT32* clusterMapIndicesCount,
+            [out, size_is(, *clusterMapIndicesCount)] int** clusterMapIndicesElements,
+            [out] UINT32* isShapedAloneGlyphsCount,
+            [out, size_is(, *isShapedAloneGlyphsCount)] boolean** isShapedAloneGlyphsElements,
+            [out] UINT32* glyphShapingResultsCount,
+            [out, size_is(, *glyphShapingResultsCount)] CanvasGlyphShaping** glyphShapingResultsElements,
+            [out] UINT32* valueCount,
+            [out, size_is(, *valueCount), retval] CanvasGlyph** valueElements);
     }
 
     [version(VERSION), uuid(521E433F-F698-44C0-8D7F-FE374FE539E1), exclusiveto(CanvasTextAnalyzer)]
@@ -203,5 +261,7 @@ namespace Microsoft.Graphics.Canvas.Text
         interface Windows.Foundation.Collections.IVector<Windows.Foundation.Collections.IKeyValuePair<CanvasCharacterRange, CanvasScaledFont>*>;
 
         interface Windows.Foundation.Collections.IVector<Windows.Foundation.Collections.IKeyValuePair<CanvasCharacterRange, CanvasAnalyzedScript>*>;
+
+        interface Windows.Foundation.Collections.IVector<Windows.Foundation.Collections.IKeyValuePair<CanvasCharacterRange, CanvasTypography*>*>;
     }
 }

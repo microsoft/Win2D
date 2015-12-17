@@ -259,7 +259,102 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextAnalyzer.GetScriptProperties(Microsoft.Graphics.Canvas.Text.CanvasAnalyzedScript)">
       <summary>Gets the properties for an analyzed script.</summary>
-    </member>    
+    </member>        
+
+    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasGlyphJustification" Experimental="true">
+      <summary>Identifies which what of justification scheme is used for a glyph.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasGlyphJustification.None">
+      <summary>Justification is not used with the glyph.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasGlyphJustification.ArabicBlank">
+      <summary>The glyph represents a blank in an Arabic run.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasGlyphJustification.Character">
+      <summary>An inter-character justification point follows the glyph.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasGlyphJustification.Blank">
+      <summary>The glyph represents a blank outside an Arabic run.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasGlyphJustification.ArabicNormal">
+      <summary>Normal middle-of-word glyph that connects to the right (begin).</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasGlyphJustification.ArabicKashida">
+      <summary>Kashida (U+0640) in the middle of the word.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasGlyphJustification.ArabicAlef">
+      <summary>Final form of an alef-like (U+0627, U+0625, U+0623, U+0622).</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasGlyphJustification.ArabicHa">
+      <summary>Final form of Ha (U+0647).</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasGlyphJustification.ArabicRa">
+      <summary>Final form of Ra (U+0631).</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasGlyphJustification.ArabicBa">
+      <summary>Final form of Ba (U+0628).</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasGlyphJustification.ArabicBara">
+      <summary>Ligature of alike (U+0628,U+0631).</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasGlyphJustification.ArabicSeen">
+      <summary>Highest priority: initial shape of Seen class (U+0633).</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasGlyphJustification.ArabicSeenM">
+      <summary>Highest priority: medial shape of Seen class (U+0633).</summary>
+    </member>
+    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasGlyphShaping" Experimental="true">
+      <summary>Contains shaping properties for a glyph.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasGlyphShaping.Justification">
+      <summary>Identifies which type of justification a glyph uses.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasGlyphShaping.IsClusterStart">
+      <summary>Indicates that the glyph is the start of a cluster.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasGlyphShaping.IsDiacritic">
+      <summary>Indicates that the glyph is a diacritic mark.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasGlyphShaping.IsZeroWidthSpace">
+      <summary>Indicates that the glyph is a word boundary with no visible space.</summary>
+    </member>
+    
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextAnalyzer.GetGlyphs(Microsoft.Graphics.Canvas.Text.CanvasCharacterRange,Microsoft.Graphics.Canvas.Text.CanvasFontFace,System.Single,System.Boolean,System.Boolean,Microsoft.Graphics.Canvas.Text.CanvasAnalyzedScript)">
+      <summary>Gets the array of glyphs which comprise the text.</summary>
+      <remarks>
+        <p>
+          Use the results from ChooseFonts and AnalyzeScript to obtain the font and script data
+          for calling GetGlyphs.
+        </p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextAnalyzer.GetGlyphs(Microsoft.Graphics.Canvas.Text.CanvasCharacterRange,Microsoft.Graphics.Canvas.Text.CanvasFontFace,System.Single,System.Boolean,System.Boolean,Microsoft.Graphics.Canvas.Text.CanvasAnalyzedScript,System.String,Microsoft.Graphics.Canvas.Text.CanvasNumberSubstitution,System.Collections.Generic.IReadOnlyList{System.Collections.Generic.KeyValuePair{Microsoft.Graphics.Canvas.Text.CanvasCharacterRange,Microsoft.Graphics.Canvas.Text.CanvasTypography}},System.Int32[]@,System.Boolean[]@,Microsoft.Graphics.Canvas.Text.CanvasGlyphShaping[]@)">
+      <summary>Gets the array of glyphs which comprise the text.</summary>
+      <remarks>
+        <p>
+          Use the results from ChooseFonts and AnalyzeScript to obtain the font and script data
+          for calling GetGlyphs.
+        </p>
+        <p>
+          The number substitution parameter is optional. 
+        </p>
+        <p>
+          The typographic ranges parameter is optional.
+        </p>
+        <p>
+          If typographic ranges are specified, they must
+          <ul>
+            <li>Follow in sequence, starting at the first character position in the range.</li>
+            <li>Not overlap</li>
+            <li>Cover all text positions in the range.</li>
+          </ul>
+        </p>
+        <p>
+          The output array parameters are optional. If they are not specified, these values will
+          not be returned.
+        </p>
+      </remarks>
+    </member>
     
   </members>
 </doc>

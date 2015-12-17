@@ -1485,6 +1485,13 @@ namespace Microsoft
                 END_ENUM(CanvasScriptShape);
             }
 
+            ENUM_TO_STRING(DWRITE_SCRIPT_SHAPES)
+            {
+                ENUM_VALUE(DWRITE_SCRIPT_SHAPES_DEFAULT);
+                ENUM_VALUE(DWRITE_SCRIPT_SHAPES_NO_VISUAL);
+                END_ENUM(DWRITE_SCRIPT_SHAPES);
+            }
+
             template<typename T>
             inline std::wstring ToStringAsInt(T value)
             {
