@@ -1586,7 +1586,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         ScopedBitmapMappedPixelAccess bitmapPixelAccess(d2dBitmap.Get(), D3D11_MAP_WRITE, &subRectangle);
 
-        if (valueCount != r.GetTotalBytes())
+        if (valueCount < r.GetTotalBytes())
         {
             WinStringBuilder message;
             message.Format(Strings::WrongArrayLength, r.GetTotalBytes(), valueCount);
@@ -1638,7 +1638,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         const unsigned int subRectangleHeight = subRectangle.bottom - subRectangle.top;
 
         const uint32_t expectedArraySize = subRectangleWidth * subRectangleHeight;
-        if (valueCount != expectedArraySize)
+        if (valueCount < expectedArraySize)
         {
             WinStringBuilder message;
             message.Format(Strings::WrongArrayLength, expectedArraySize, valueCount);

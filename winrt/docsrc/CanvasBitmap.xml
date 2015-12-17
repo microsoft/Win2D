@@ -295,100 +295,269 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.GetPixelBytes">
       <summary>Returns an array of raw byte data for the entire bitmap.</summary>
       <remarks>
-        Works on bitmaps of any format.
-        The size of the array is (Width of bitmap, in pixels) X (Height of bitmap, in pixels) X (bytes per pixel).
-        The number of bytes per pixel is determined from CanvasBitmap's pixel format.
-        For a CanvasBitmap with the default format of DXGI_FORMAT_B8G8R8A8_UNORM, for example, this is 4.
+        <ul>
+          <li>
+            Works on bitmaps of any format.
+          </li>
+          <li>
+            For uncompressed texture formats, the size of the array is
+            SizeInPixels.Width * SizeInPixels.Height * (bytes per pixel).  The
+            number of bytes per pixel is determined by <see
+            cref="P:Microsoft.Graphics.Canvas.CanvasBitmap.Format"/>. For a
+            CanvasBitmap with the default format of
+            DirectXPixelFormat.B8G8R8A8UIntNormalized this is 4.
+          </li>
+          <li>
+            For block compressed texture formats, the size of the array is
+            SizeInPixels.Width * SizeInPixels.Height * (bytes per block) /
+            16. See <a href="BlockCompression.htm">Bitmap block compression</a>
+            page for more information.
+          </li>
+        </ul>
       </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.GetPixelBytes(System.Int32,System.Int32,System.Int32,System.Int32)">
       <summary>Returns an array of raw byte data for a subregion of the bitmap.</summary>
       <remarks>
-        Works on bitmaps of any format.
-        The size of the array is (Width of subregion, in pixels) X (Height of subregion, in pixels) X (bytes per pixel).
-        The number of bytes per pixel is determined from CanvasBitmap's pixel format.
-        For a CanvasBitmap with the default format of DXGI_FORMAT_B8G8R8A8_UNORM, for example, this is 4.
-        The region is specified in pixels (not DIPs).
+        <ul>
+          <li>
+            Works on bitmaps of any format.
+          </li>
+          <li>
+            left, top, width and height are specified in pixels (not DIPs).
+          </li>
+          <li>
+            For uncompressed texture formats, the size of the array is width *
+            height * (bytes per pixel).  The number of bytes per pixel is
+            determined by <see
+            cref="P:Microsoft.Graphics.Canvas.CanvasBitmap.Format"/>. For a
+            CanvasBitmap with the default format of
+            DirectXPixelFormat.B8G8R8A8UintNormalized this is 4.
+          </li>
+          <li>
+            For block compressed texture formats, the size of the array is
+            width * height * (bytes per block) /
+            16. See <a href="BlockCompression.htm">Bitmap block compression</a>
+            page for more information.
+          </li>
+        </ul>
       </remarks>    
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.GetPixelBytes(Windows.Storage.Streams.IBuffer)">
       <summary>Copies raw byte data for the entire bitmap into the specified buffer.</summary>
       <remarks>
-        Works on bitmaps of any format.
-        The capacity of the buffer must be at least (Width of bitmap, in pixels) X (Height of bitmap, in pixels) X (bytes per pixel).
-        The number of bytes per pixel is determined from CanvasBitmap's pixel format.
-        For a CanvasBitmap with the default format of DXGI_FORMAT_B8G8R8A8_UNORM, for example, this is 4.
+        <ul>
+          <li>
+            Works on bitmaps of any format.
+          </li>
+          <li>
+            For uncompressed texture formats, the capacity of the buffer must be
+            at least SizeInPixels.Width * SizeInPixels.Height * (bytes per
+            pixel).  The number of bytes per pixel is determined by <see
+            cref="P:Microsoft.Graphics.Canvas.CanvasBitmap.Format"/>. For a
+            CanvasBitmap with the default format of
+            DirectXPixelFormat.B8G8R8A8UintNormalized this is 4.
+          </li>
+          <li>
+            For block compressed texture formats, the capacity of the buffer must be
+            at least SizeInPixels.Width * SizeInPixels.Height * (bytes per
+            block) / 16. See <a href="BlockCompression.htm">Bitmap block
+            compression</a> page for more information.
+          </li>
+        </ul>
       </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.GetPixelBytes(Windows.Storage.Streams.IBuffer,System.Int32,System.Int32,System.Int32,System.Int32)">
       <summary>Copies raw byte data for a subregion of the bitmap into the specified buffer.</summary>
       <remarks>
-        Works on bitmaps of any format.
-        The capacity of the buffer must be at least (Width of subregion, in pixels) X (Height of subregion, in pixels) X (bytes per pixel).
-        The number of bytes per pixel is determined from CanvasBitmap's pixel format.
-        For a CanvasBitmap with the default format of DXGI_FORMAT_B8G8R8A8_UNORM, for example, this is 4.
-        The region is specified in pixels (not DIPs).
+        <ul>
+          <li>
+            Works on bitmaps of any format.
+          </li>
+          <li>
+            left, top, width and height are specified in pixels (not DIPs).
+          </li>
+          <li>
+            For uncompressed texture formats, the capacity of the buffer must be
+            at least width * height * (bytes per pixel).  The number of bytes
+            per pixel is determined by <see
+            cref="P:Microsoft.Graphics.Canvas.CanvasBitmap.Format"/>. For a
+            CanvasBitmap with the default format of
+            DirectXPixelFormat.B8G8R8A8UintNormalized this is 4.
+          </li>
+          <li>
+            For block compressed texture formats, the capacity of the buffer must be
+            at least width * height * (bytes per block) / 16. See <a
+            href="BlockCompression.htm">Bitmap block compression</a> page for
+            more information.
+          </li>
+        </ul>
       </remarks>    
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.GetPixelColors">
       <summary>Returns an array of color data for the entire bitmap.</summary>
       <remarks>
-        The bitmap's format must be DXGI_FORMAT_B8G8R8A8_UNORM.
-        The size of the array is (Width of bitmap, in pixels) X (Height of bitmap, in pixels).
+        <ul>
+          <li>
+            The <see cref="P:Microsoft.Graphics.Canvas.CanvasBitmap.Format"/>
+            must be DirectXPixelFormat.B8G8R8A8UintNormalized.
+          </li>
+          <li>
+            The size of the returned array is SizeInPixels.Width * SizeInPixels.Height.
+          </li>
+        </ul>
       </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.GetPixelColors(System.Int32,System.Int32,System.Int32,System.Int32)">
       <summary>Returns an array of color data for a subregion of the bitmap.</summary>
       <remarks>
-        The bitmap's format must be DXGI_FORMAT_B8G8R8A8_UNORM.
-        The size of the array is (Width of subregion, in pixels) X (Height of subregion, in pixels).
-        The region is specified in pixels (not DIPs).
+        <ul>
+          <li>
+            The <see cref="P:Microsoft.Graphics.Canvas.CanvasBitmap.Format"/>
+            must be DirectXPixelFormat.B8G8R8A8UintNormalized.
+          </li>
+          <li>
+            left, top, width and height are specified in pixels (not DIPs).
+          </li>
+          <li>
+            The size of the returned array is width * height.
+          </li>
+        </ul>
       </remarks>
     </member>
     
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.SetPixelBytes(System.Byte[])">
       <summary>Sets the byte data of the bitmap from the specified array.</summary>
       <remarks>
-        Works on bitmaps of any format.
-        The size of the array must be exactly (Width of bitmap, in pixels) X (Height of bitmap, in pixels) X (bytes per pixel).        
+        <ul>
+          <li>
+            Works on bitmaps of any format.
+          </li>
+          <li>
+            For uncompressed texture formats, the size of the array must be
+            at least SizeInPixels.Width * SizeInPixels.Height * (bytes per
+            pixel).  The number of bytes per pixel is determined by <see
+            cref="P:Microsoft.Graphics.Canvas.CanvasBitmap.Format"/>. For a
+            CanvasBitmap with the default format of
+            DirectXPixelFormat.B8G8R8A8UintNormalized this is 4.
+          </li>
+          <li>
+            For block compressed texture formats, the size of the array must be
+            at least SizeInPixels.Width * SizeInPixels.Height * (bytes per
+            block) / 16. See <a href="BlockCompression.htm">Bitmap block
+            compression</a> page for more information.
+          </li>
+        </ul>
       </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.SetPixelBytes(System.Byte[],System.Int32,System.Int32,System.Int32,System.Int32)">
       <summary>Sets the byte data of a subregion of the bitmap.</summary>
       <remarks>
-        Works on bitmaps of any format.
-        The size of the array must be exactly (Width of subregion, in pixels) X (Height of subregion, in pixels) X (bytes per pixel).
-        The region is specified in pixels (not DIPs).
+        <ul>
+          <li>
+            Works on bitmaps of any format.
+          </li>
+          <li>
+            left, top, width and height are specified in pixels (not DIPs).
+          </li>
+          <li>
+            For uncompressed texture formats, the size of the array must be
+            at least width * height * (bytes per
+            pixel).  The number of bytes per pixel is determined by <see
+            cref="P:Microsoft.Graphics.Canvas.CanvasBitmap.Format"/>. For a
+            CanvasBitmap with the default format of
+            DirectXPixelFormat.B8G8R8A8UintNormalized this is 4.
+          </li>
+          <li>
+            For block compressed texture formats, the size of the array must be
+            at least width * height * (bytes per
+            block) / 16. See <a href="BlockCompression.htm">Bitmap block
+            compression</a> page for more information.
+          </li>
+        </ul>
       </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.SetPixelBytes(Windows.Storage.Streams.IBuffer)">
       <summary>Sets the byte data of the bitmap from the specified buffer.</summary>
       <remarks>
-        Works on bitmaps of any format.
-        The size of the buffer must be exactly (Width of bitmap, in pixels) X (Height of bitmap, in pixels) X (bytes per pixel).        
+        <ul>
+          <li>
+            Works on bitmaps of any format.
+          </li>
+          <li>
+            For uncompressed texture formats, the length of the buffer must be
+            at least SizeInPixels.Width * SizeInPixels.Height * (bytes per
+            pixel).  The number of bytes per pixel is determined by <see
+            cref="P:Microsoft.Graphics.Canvas.CanvasBitmap.Format"/>. For a
+            CanvasBitmap with the default format of
+            DirectXPixelFormat.B8G8R8A8UintNormalized this is 4.
+          </li>
+          <li>
+            For block compressed texture formats, the length of the buffer must be
+            at least SizeInPixels.Width * SizeInPixels.Height * (bytes per
+            block) / 16. See <a href="BlockCompression.htm">Bitmap block
+            compression</a> page for more information.
+          </li>
+        </ul>
       </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.SetPixelBytes(Windows.Storage.Streams.IBuffer,System.Int32,System.Int32,System.Int32,System.Int32)">
       <summary>Sets the byte data of a subregion of the bitmap from the specified buffer.</summary>
       <remarks>
-        Works on bitmaps of any format.
-        The size of the buffer must be exactly (Width of subregion, in pixels) X (Height of subregion, in pixels) X (bytes per pixel).
-        The region is specified in pixels (not DIPs).
+        <ul>
+          <li>
+            Works on bitmaps of any format.
+          </li>
+          <li>
+            left, top, width and height are specified in pixels (not DIPs).
+          </li>
+          <li>
+            For uncompressed texture formats, the length of the buffer must be
+            at least width * height * (bytes per
+            pixel).  The number of bytes per pixel is determined by <see
+            cref="P:Microsoft.Graphics.Canvas.CanvasBitmap.Format"/>. For a
+            CanvasBitmap with the default format of
+            DirectXPixelFormat.B8G8R8A8UintNormalized this is 4.
+          </li>
+          <li>
+            For block compressed texture formats, the length of the buffer must be
+            at least width * height * (bytes per
+            block) / 16. See <a href="BlockCompression.htm">Bitmap block
+            compression</a> page for more information.
+          </li>
+        </ul>
       </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.SetPixelColors(Windows.UI.Color[])">
       <summary>Sets the color data of the bitmap from the specified array.</summary>
       <remarks>
-        The bitmap's format must be DXGI_FORMAT_B8G8R8A8_UNORM.
-        The size of the array must be exactly (Width of bitmap, in pixels) X (Height of bitmap, in pixels).
+        <ul>
+          <li>
+            The <see cref="P:Microsoft.Graphics.Canvas.CanvasBitmap.Format"/>
+            must be DirectXPixelFormat.B8G8R8A8UintNormalized.
+          </li>
+          <li>
+            The size of the array must be at least SizeInPixels.Width *
+            SizeInPixels.Height.
+          </li>
+        </ul>
       </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.SetPixelColors(Windows.UI.Color[],System.Int32,System.Int32,System.Int32,System.Int32)">
       <summary>Sets the color data for a subregion of the bitmap from the specified array.</summary>
       <remarks>
-        The bitmap's format must be DXGI_FORMAT_B8G8R8A8_UNORM.
-        The size of the array must be exactly (Width of subregion, in pixels) X (Height of subregion, in pixels).
-        The region is specified in pixels (not DIPs).
+        <ul>
+          <li>
+            The <see cref="P:Microsoft.Graphics.Canvas.CanvasBitmap.Format"/>
+            must be DirectXPixelFormat.B8G8R8A8UintNormalized.
+          </li>
+          <li>
+            left, top, width and height are specified in pixels (not DIPs).
+          </li>
+          <li>
+            The size of the array must be at least width * height.
+          </li>
+        </ul>
       </remarks>
     </member>
 

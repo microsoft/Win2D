@@ -1188,36 +1188,69 @@ public:
         const int expectedByteSizeOfSubrectangle = subrectangle.Width * subrectangle.Height * 4;
         const int expectedColorCountOfSubrectangle = subrectangle.Width * subrectangle.Height;
 
-        int testCases[] = {-1, +1 }; // Tests array being too small and too large.
+        Assert::ExpectException<Platform::InvalidArgumentException^>(
+            [&]
+            {
+                Platform::Array<byte>^ array = ref new Platform::Array<byte>(expectedByteSizeOfBitmap - 1);
+                canvasBitmap->SetPixelBytes(array);
+            });
+        
+        Assert::ExpectException<Platform::InvalidArgumentException^>(
+            [&]
+            {
+                Platform::Array<Color>^ array = ref new Platform::Array<Color>(expectedColorCountOfBitmap - 1);
+                canvasBitmap->SetPixelColors(array);
+            });
+        Assert::ExpectException<Platform::InvalidArgumentException^>(
+            [&]
+            {
+                Platform::Array<byte>^ array = ref new Platform::Array<byte>(expectedByteSizeOfSubrectangle - 1);
+                canvasBitmap->SetPixelBytes(array, subrectangle.Left, subrectangle.Top, subrectangle.Width, subrectangle.Height);
+            });
+        Assert::ExpectException<Platform::InvalidArgumentException^>(
+            [&]
+            {
+                Platform::Array<Color>^ array = ref new Platform::Array<Color>(expectedColorCountOfSubrectangle - 1);
+                canvasBitmap->SetPixelColors(array, subrectangle.Left, subrectangle.Top, subrectangle.Width, subrectangle.Height);
+            });
+    }
 
-        for (int testCase : testCases)
-        {
-            Assert::ExpectException<Platform::InvalidArgumentException^>(
-                [&]
-                {
-                    Platform::Array<byte>^ array = ref new Platform::Array<byte>(expectedByteSizeOfBitmap + testCase);
-                    canvasBitmap->SetPixelBytes(array);
-                });
+    TEST_METHOD(CanvasBitmap_SetPixelBytes_AcceptsArraysLargerThanRequired)
+    {
+        auto width = 256;
+        auto height = 256;
+        auto bytesPerPixel = 4;
 
-            Assert::ExpectException<Platform::InvalidArgumentException^>(
-                [&]
-                {
-                    Platform::Array<Color>^ array = ref new Platform::Array<Color>(expectedColorCountOfBitmap + testCase);
-                    canvasBitmap->SetPixelColors(array);
-                });
-            Assert::ExpectException<Platform::InvalidArgumentException^>(
-                [&]
-                {
-                    Platform::Array<byte>^ array = ref new Platform::Array<byte>(expectedByteSizeOfSubrectangle + testCase);
-                    canvasBitmap->SetPixelBytes(array, subrectangle.Left, subrectangle.Top, subrectangle.Width, subrectangle.Height);
-                });
-            Assert::ExpectException<Platform::InvalidArgumentException^>(
-                [&]
-                {
-                    Platform::Array<Color>^ array = ref new Platform::Array<Color>(expectedColorCountOfSubrectangle + testCase);
-                    canvasBitmap->SetPixelColors(array, subrectangle.Left, subrectangle.Top, subrectangle.Width, subrectangle.Height);
-                });
-        }
+        auto requiredSize = width * height * bytesPerPixel;
+
+        auto data = ref new Platform::Array<uint8_t>(requiredSize + 1);
+
+        auto bitmap = CanvasBitmap::CreateFromBytes(
+            m_sharedDevice,
+            data,
+            width,
+            height,
+            DirectXPixelFormat::B8G8R8A8UIntNormalized);
+
+        bitmap->SetPixelBytes(data);
+    }
+
+    TEST_METHOD(CanvasBitmap_SetPixelColors_AcceptsArraysLargerThanRequired)
+    {
+        auto width = 256;
+        auto height = 256;
+
+        auto requiredSize = width * height;
+
+        auto data = ref new Platform::Array<Color>(requiredSize + 1);
+
+        auto bitmap = CanvasBitmap::CreateFromColors(
+            m_sharedDevice,
+            data,
+            width,
+            height);
+
+        bitmap->SetPixelColors(data);
     }
 
     TEST_METHOD(CanvasBitmap_WicBitmapCannotRetrieveD3DProperties)
