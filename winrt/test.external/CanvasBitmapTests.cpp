@@ -1298,23 +1298,6 @@ public:
         }
     }
 
-    TEST_METHOD(CanavasBitmap_CopyPixelsFromBitmap_MismatchingDevices)
-    {
-        //
-        // This verifies that bitmaps used with CopyPixelsFromBitmap must belong to
-        // the same device. This is validated by D2D. Still, Win2D should
-        // not do anything to interfere with this behavior or cause
-        // ungraceful errors.
-        //
-        auto canvasDevice0 = ref new CanvasDevice();
-        auto bitmap0 = ref new CanvasRenderTarget(canvasDevice0, 1, 1, DEFAULT_DPI);
-
-        auto canvasDevice1 = ref new CanvasDevice();
-        auto bitmap1 = ref new CanvasRenderTarget(canvasDevice1, 1, 1, DEFAULT_DPI);
-
-        Assert::ExpectException<Platform::COMException^>([&] { bitmap0->CopyPixelsFromBitmap(bitmap1); });        
-    }
-
     TEST_METHOD(CanavasBitmap_CopyPixelsFromBitmap_SameBitmap)
     {
         //
@@ -2023,6 +2006,138 @@ public:
                         ExpectCOMException(E_INVALIDARG, gSubRectangleMustBeBlockAligned, [&] { dstBitmap->CopyPixelsFromBitmap(srcBitmap, 0, 0, x, y, w, h); });
                     });
             });
+    }
 
+    template<typename T, size_t N>
+    static Platform::ArrayReference<BYTE> AsArrayReference(T(&array)[N])
+    {
+        return Platform::ArrayReference<BYTE>(reinterpret_cast<BYTE*>(array), sizeof(T) * N);
+    }
+
+    static void AssertPixelValues(Platform::Array<BYTE>^ expected, Platform::Array<BYTE>^ actual)
+    {
+        Assert::AreEqual(expected->Length, actual->Length);
+
+        for (auto i = 0u; i < expected->Length; i++)
+        {
+            Assert::AreEqual(expected->get(i), actual->get(i));
+        }
+    }
+
+    template<typename TValue>
+    static void TestCopyPixelsFromBitmap(CanvasDevice^ device1, CanvasDevice^ device2, DirectXPixelFormat format, DirectXPixelFormat otherFormat, int blockSize = 1)
+    {
+        TValue initialData1[] =
+        {
+            1,  2,  3,  4,
+            5,  6,  7,  8,
+            9,  10, 11, 12,
+            13, 14, 15, 16
+        };
+
+        TValue initialData2[] =
+        {
+            17, 18, 
+            19, 20
+        };
+
+        auto bitmap1 = CanvasBitmap::CreateFromBytes(device1, AsArrayReference(initialData1), 4 * blockSize, 4 * blockSize, format);
+        auto bitmap2 = CanvasBitmap::CreateFromBytes(device2, AsArrayReference(initialData2), 2 * blockSize, 2 * blockSize, format);
+
+        // Overload #1
+        bitmap1->CopyPixelsFromBitmap(bitmap2);
+
+        TValue expected1[] = 
+        { 
+            17, 18, 3,  4, 
+            19, 20, 7,  8, 
+            9,  10, 11, 12, 
+            13, 14, 15, 16 
+        };
+
+        AssertPixelValues(AsArrayReference(expected1), bitmap1->GetPixelBytes());
+
+        // Overload #2
+        bitmap1->CopyPixelsFromBitmap(bitmap2, 2 * blockSize, 1 * blockSize);
+
+        TValue expected2[] =
+        {
+            17, 18, 3,  4,
+            19, 20, 17, 18,
+            9,  10, 19, 20,
+            13, 14, 15, 16
+        };
+
+        AssertPixelValues(AsArrayReference(expected2), bitmap1->GetPixelBytes());
+
+        // Overload #3
+        bitmap1->CopyPixelsFromBitmap(bitmap2, 1 * blockSize, 3 * blockSize, 0 * blockSize, 1 * blockSize, 2 * blockSize, 1 * blockSize);
+
+        TValue expected3[] =
+        {
+            17, 18, 3,  4,
+            19, 20, 17, 18,
+            9,  10, 19, 20,
+            13, 19, 20, 16
+        };
+
+        AssertPixelValues(AsArrayReference(expected3), bitmap1->GetPixelBytes());
+
+        // Copying between the same bitmap fails.
+        ExpectCOMException(E_INVALIDARG, [&] { bitmap1->CopyPixelsFromBitmap(bitmap1); });
+
+        // Copying between bitmaps of different formats fails.
+        auto otherFormatBitmap = CanvasBitmap::CreateFromBytes(device2, AsArrayReference(initialData1), 4, 4, otherFormat);
+
+        ExpectCOMException(E_INVALIDARG, L"Bitmaps are not the same pixel format.", [&] { bitmap1->CopyPixelsFromBitmap(otherFormatBitmap); });
+
+        // Out-of-bounds copies fail.
+        ExpectCOMException(E_INVALIDARG, [&] { bitmap1->CopyPixelsFromBitmap(bitmap2, -blockSize,    0,             0, 0, blockSize, blockSize); });
+        ExpectCOMException(E_INVALIDARG, [&] { bitmap1->CopyPixelsFromBitmap(bitmap2, 0,             -blockSize,    0, 0, blockSize, blockSize); });
+        ExpectCOMException(E_INVALIDARG, [&] { bitmap1->CopyPixelsFromBitmap(bitmap2, 4 * blockSize, 0,             0, 0, blockSize, blockSize); });
+        ExpectCOMException(E_INVALIDARG, [&] { bitmap1->CopyPixelsFromBitmap(bitmap2, 0,             4 * blockSize, 0, 0, blockSize, blockSize); });
+
+        ExpectCOMException(E_INVALIDARG, [&] { bitmap1->CopyPixelsFromBitmap(bitmap2, 0, 0, -blockSize,    0,             blockSize, blockSize); });
+        ExpectCOMException(E_INVALIDARG, [&] { bitmap1->CopyPixelsFromBitmap(bitmap2, 0, 0, 0,             -blockSize,    blockSize, blockSize); });
+        ExpectCOMException(E_INVALIDARG, [&] { bitmap1->CopyPixelsFromBitmap(bitmap2, 0, 0, 2 * blockSize, 0,             blockSize, blockSize); });
+        ExpectCOMException(E_INVALIDARG, [&] { bitmap1->CopyPixelsFromBitmap(bitmap2, 0, 0, 0,             2 * blockSize, blockSize, blockSize); });
+    }
+
+    TEST_METHOD(CanvasBitmap_CopyPixelsFromBitmap_SameDevice_B8G8R8A8)
+    {
+        auto device = ref new CanvasDevice();
+
+        TestCopyPixelsFromBitmap<uint32_t>(device, device, DirectXPixelFormat::B8G8R8A8UIntNormalized, DirectXPixelFormat::R8G8B8A8UIntNormalized);
+    }
+
+    TEST_METHOD(CanvasBitmap_CopyPixelsFromBitmap_SameDevice_BC1)
+    {
+        auto device = ref new CanvasDevice();
+
+        TestCopyPixelsFromBitmap<uint64_t>(device, device, DirectXPixelFormat::BC1UIntNormalized, DirectXPixelFormat::R8G8B8A8UIntNormalized, 4);
+    }
+
+    TEST_METHOD(CanvasBitmap_CopyPixelsFromBitmap_DifferentDevices_B8G8R8A8)
+    {
+        auto device1 = ref new CanvasDevice();
+        auto device2 = ref new CanvasDevice();
+
+        TestCopyPixelsFromBitmap<uint32_t>(device1, device2, DirectXPixelFormat::B8G8R8A8UIntNormalized, DirectXPixelFormat::R8G8B8A8UIntNormalized);
+    }
+
+    TEST_METHOD(CanvasBitmap_CopyPixelsFromBitmap_DifferentDevices_BC1)
+    {
+        auto device1 = ref new CanvasDevice();
+        auto device2 = ref new CanvasDevice();
+
+        TestCopyPixelsFromBitmap<uint64_t>(device1, device2, DirectXPixelFormat::BC1UIntNormalized, DirectXPixelFormat::R8G8B8A8UIntNormalized, 4);
+    }
+
+    TEST_METHOD(CanvasBitmap_CopyPixelsFromBitmap_DifferentD2DDevices_ButSameD3DDevice)
+    {
+        auto device1 = ref new CanvasDevice();
+        auto device2 = CanvasDevice::CreateFromDirect3D11Device(device1);
+
+        TestCopyPixelsFromBitmap<uint32_t>(device1, device2, DirectXPixelFormat::B8G8R8A8UIntNormalized, DirectXPixelFormat::R8G8B8A8UIntNormalized);
     }
 };

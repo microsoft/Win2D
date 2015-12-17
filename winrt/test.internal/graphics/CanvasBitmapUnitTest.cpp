@@ -265,18 +265,13 @@ TEST_CLASS(CanvasBitmapUnitTest)
         ComPtr<CanvasBitmap> DestBitmap;
         ComPtr<CanvasBitmap> SourceBitmap;
 
-        CopyFromBitmapFixture(
-            int32_t* destX = nullptr,
-            int32_t* destY = nullptr,
-            int32_t* sourceRectLeft = nullptr,
-            int32_t* sourceRectTop = nullptr,
-            int32_t* sourceRectWidth = nullptr,
-            int32_t* sourceRectHeight = nullptr)
+        CopyFromBitmapFixture(D2D1_POINT_2U expectedDestPoint, D2D1_RECT_U expectedSourceRect)
         {
             auto canvasDevice = Make<StubCanvasDevice>();
 
             auto sourceD2DBitmap = Make<StubD2DBitmap>();
-            sourceD2DBitmap->GetPixelFormatMethod.AllowAnyCall([] { return D2D1::PixelFormat(); });
+            sourceD2DBitmap->GetPixelFormatMethod.AllowAnyCall([] { return D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_TYPELESS); });
+            sourceD2DBitmap->GetPixelSizeMethod.AllowAnyCall([] { return D2D1_SIZE_U{ 1024, 1024 }; });
 
             canvasDevice->MockCreateBitmapFromWicResource =
                 [&](IWICBitmapSource*, CanvasAlphaMode, float)
@@ -285,57 +280,21 @@ TEST_CLASS(CanvasBitmapUnitTest)
                 };
             SourceBitmap = CanvasBitmap::CreateNew(canvasDevice.Get(), m_testFileName, DEFAULT_DPI, CanvasAlphaMode::Premultiplied);
 
-            bool expectDestPoint = false;
-            D2D1_POINT_2U expectedDestPoint;
-            if (destX)
-            {
-                assert(destY);
-                expectDestPoint = true;
-                expectedDestPoint = D2D1::Point2U(static_cast<UINT32>(*destX), static_cast<UINT32>(*destY));
-            }
-
-            bool expectSourceRect = false;
-            D2D1_RECT_U expectedSourceRect;
-            if (sourceRectLeft)
-            {
-                assert(sourceRectTop && sourceRectWidth && sourceRectHeight);
-                expectSourceRect = true;
-                expectedSourceRect = D2D1::RectU(
-                    static_cast<UINT32>(*sourceRectLeft),
-                    static_cast<UINT32>(*sourceRectTop),
-                    static_cast<UINT32>(*sourceRectLeft + *sourceRectWidth),
-                    static_cast<UINT32>(*sourceRectTop + *sourceRectHeight));
-            }
-
             auto destD2DBitmap = Make<StubD2DBitmap>();
-            destD2DBitmap->GetPixelFormatMethod.AllowAnyCall([] { return D2D1::PixelFormat(); });
+            destD2DBitmap->GetPixelFormatMethod.AllowAnyCall([] { return D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_TYPELESS); });
+            destD2DBitmap->GetPixelSizeMethod.AllowAnyCall([] { return D2D1_SIZE_U{ 2028, 2028 }; });
+
             destD2DBitmap->CopyFromBitmapMethod.SetExpectedCalls(1,
                 [=](D2D1_POINT_2U const* destinationPoint, ID2D1Bitmap *bitmap, D2D1_RECT_U const* sourceRectangle)
                 {
-                    if (expectDestPoint)
-                    {
-                        Assert::IsNotNull(destinationPoint);
-                        Assert::AreEqual(expectedDestPoint, *destinationPoint);
-
-                    }
-                    else
-                    {
-                        Assert::IsNull(destinationPoint);
-                    }
+                    Assert::IsNotNull(destinationPoint);
+                    Assert::AreEqual(expectedDestPoint, *destinationPoint);
 
                     Assert::IsNotNull(bitmap);
                     Assert::AreEqual(static_cast<ID2D1Bitmap*>(sourceD2DBitmap.Get()), bitmap);
 
-                    if (expectSourceRect)
-                    {
-                        Assert::IsNotNull(sourceRectangle);
-                        Assert::AreEqual(expectedSourceRect, *sourceRectangle);
-
-                    }
-                    else
-                    {
-                        Assert::IsNull(sourceRectangle);
-                    }
+                    Assert::IsNotNull(sourceRectangle);
+                    Assert::AreEqual(expectedSourceRect, *sourceRectangle);
 
                     return S_OK;
                 });
@@ -351,7 +310,10 @@ TEST_CLASS(CanvasBitmapUnitTest)
 
     TEST_METHOD_EX(CanvasBitmap_CopyPixelsFromBitmap)
     {
-        CopyFromBitmapFixture f;
+        D2D1_POINT_2U expectedDestPoint{ 0, 0 };
+        D2D1_RECT_U expectedSourceRect{ 0, 0, 1024, 1024 };
+        
+        CopyFromBitmapFixture f(expectedDestPoint, expectedSourceRect);
         ThrowIfFailed(f.DestBitmap->CopyPixelsFromBitmap(f.SourceBitmap.Get()));
     }
 
@@ -359,22 +321,22 @@ TEST_CLASS(CanvasBitmapUnitTest)
     {
         int32_t destPoint[] = { 234, 2 };
 
-        CopyFromBitmapFixture f(&destPoint[0], &destPoint[1]);
+        D2D1_POINT_2U expectedDestPoint{ 234, 2 };
+        D2D1_RECT_U expectedSourceRect{ 0, 0, 1024, 1024 };
+
+        CopyFromBitmapFixture f(expectedDestPoint, expectedSourceRect);
         ThrowIfFailed(f.DestBitmap->CopyPixelsFromBitmapWithDestPoint(f.SourceBitmap.Get(), destPoint[0], destPoint[1]));
     }
 
     TEST_METHOD_EX(CanvasBitmap_CopyPixelsFromBitmapWithDestPointAndSourceRect)
     {
         int32_t destPoint[] = { 234, 2 };
-        int32_t sourceRect[] = { 444, 555, 666, 772 };
+        int32_t sourceRect[] = { 111, 222, 333, 445 };
 
-        CopyFromBitmapFixture f(
-            &destPoint[0], 
-            &destPoint[1],
-            &sourceRect[0],
-            &sourceRect[1],
-            &sourceRect[2],
-            &sourceRect[3]);
+        D2D1_POINT_2U expectedDestPoint{ 234, 2 };
+        D2D1_RECT_U expectedSourceRect{ 111, 222, 111 + 333, 222 + 445 };
+
+        CopyFromBitmapFixture f(expectedDestPoint, expectedSourceRect);
 
         ThrowIfFailed(f.DestBitmap->CopyPixelsFromBitmapWithDestPointAndSourceRect(
             f.SourceBitmap.Get(), 

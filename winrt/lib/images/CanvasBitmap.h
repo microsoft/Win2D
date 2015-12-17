@@ -343,15 +343,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         uint32_t valueCount,
         Color *valueElements);
 
-    HRESULT CopyPixelsFromBitmapImpl(
+    void CopyPixelsFromBitmapImpl(
         ICanvasBitmap* to,
         ICanvasBitmap* from,
-        int32_t* destX = nullptr,
-        int32_t* destY = nullptr,
-        int32_t* sourceRectLeft = nullptr,
-        int32_t* sourceRectTop = nullptr,
-        int32_t* sourceRectWidth = nullptr,
-        int32_t* sourceRectHeight = nullptr);
+        D2D1_POINT_2U const& destPoint,
+        D2D1_RECT_U const* sourceRect);
 
 
     struct CanvasBitmapTraits
@@ -876,9 +872,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         IFACEMETHODIMP CopyPixelsFromBitmap(
             ICanvasBitmap* otherBitmap)
         {
-            return CopyPixelsFromBitmapImpl(
-                this,
-                otherBitmap);
+            return ExceptionBoundary(
+                [&]
+                {
+                    CopyPixelsFromBitmapImpl(this, otherBitmap, D2D1_POINT_2U{ 0, 0 }, nullptr);
+                });
         }
 
         IFACEMETHODIMP CopyPixelsFromBitmapWithDestPoint(
@@ -886,11 +884,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             int32_t destX,
             int32_t destY)
         {
-            return CopyPixelsFromBitmapImpl(
-                this,
-                otherBitmap,
-                &destX,
-                &destY);
+            return ExceptionBoundary(
+                [&]
+                {
+                    CopyPixelsFromBitmapImpl(this, otherBitmap, ToD2DPointU(destX, destY), nullptr);
+                });
         }
 
         IFACEMETHODIMP CopyPixelsFromBitmapWithDestPointAndSourceRect(
@@ -902,19 +900,17 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             int32_t sourceRectWidth,
             int32_t sourceRectHeight)
         {      
-            return CopyPixelsFromBitmapImpl(
-                this, 
-                otherBitmap, 
-                &destX, 
-                &destY, 
-                &sourceRectLeft, 
-                &sourceRectTop, 
-                &sourceRectWidth, 
-                &sourceRectHeight);
+            return ExceptionBoundary(
+                [&]
+                {
+                    auto sourceRect = ToD2DRectU(sourceRectLeft, sourceRectTop, sourceRectWidth, sourceRectHeight);
+
+                    CopyPixelsFromBitmapImpl(this, otherBitmap, ToD2DPointU(destX, destY), &sourceRect);
+                });
         }
 
     private:
-        D2D1_RECT_U GetResourceBitmapExtents(ComPtr<ID2D1Bitmap1> const d2dBitmap)
+        static D2D1_RECT_U GetResourceBitmapExtents(ComPtr<ID2D1Bitmap1> const& d2dBitmap)
         {
             const D2D1_SIZE_U size = d2dBitmap->GetPixelSize();
             return D2D1::RectU(0, 0, size.width, size.height);

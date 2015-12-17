@@ -192,22 +192,17 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         }
     }
 
-
-    static bool IsBlockAligned(unsigned blockSize, D2D1_POINT_2U const& p)
+    static bool IsBlockAligned(unsigned blockSize, D2D1_RECT_U const& r)
     {
         if (blockSize == 1)
             return true;
 
-        auto IsAligned = [=] (uint32_t coord) { return (coord % blockSize) == 0; };
+        auto IsAligned = [=](uint32_t coord) { return (coord % blockSize) == 0; };
 
-        return IsAligned(p.x) && IsAligned(p.y);
-    }
-
-
-    static bool IsBlockAligned(unsigned blockSize, D2D1_RECT_U const& r)
-    {
-        return IsBlockAligned(blockSize, D2D1_POINT_2U{ r.left, r.top })
-            && IsBlockAligned(blockSize, D2D1_POINT_2U{ r.right, r.bottom });
+        return IsAligned(r.left) &&
+               IsAligned(r.top) &&
+               IsAligned(r.right) &&
+               IsAligned(r.bottom);
     }
 
 
@@ -216,19 +211,21 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         unsigned m_totalBytes;
         unsigned m_bytesPerRow;
         unsigned m_blocksHigh;
+
+        DXGI_FORMAT m_format;
         
     public:
-        BitmapSubRectangle(ComPtr<ID2D1Bitmap> const& d2dBitmap, D2D1_RECT_U rect)
+        BitmapSubRectangle(ComPtr<ID2D1Bitmap> const& d2dBitmap, D2D1_RECT_U const& rect)
         {
             VerifyWellFormedSubrectangle(rect, d2dBitmap->GetPixelSize());
 
-            auto format = d2dBitmap->GetPixelFormat().format;
-            auto blockSize = GetBlockSize(format);
+            m_format = d2dBitmap->GetPixelFormat().format;
+            auto blockSize = GetBlockSize(m_format);
 
             if (!IsBlockAligned(blockSize, rect))
                 ThrowHR(E_INVALIDARG, Strings::BlockCompressedSubRectangleMustBeAligned);
 
-            auto bytesPerBlock = GetBytesPerBlock(format);
+            auto bytesPerBlock = GetBytesPerBlock(m_format);
 
             auto pixelWidth = (rect.right - rect.left);
             auto blocksWide = pixelWidth / blockSize;
@@ -245,6 +242,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         unsigned GetTotalBytes() const { return m_totalBytes; }
         unsigned GetBytesPerRow() const { return m_bytesPerRow; }
         unsigned GetBlocksHigh() const { return m_blocksHigh; }
+
+        DXGI_FORMAT GetFormat() const { return m_format; }
     };
 
 
@@ -1389,16 +1388,28 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             && "CanvasBitmap should never be constructed with a render-target bitmap.  This should have been validated before construction.");
     }
 
-    static void CopyPixelBytesToIterator(
+    static void CopyPixelBytes(
         BitmapSubRectangle const& r,
         uint32_t sourceStride,
-        stdext::checked_array_iterator<uint8_t*> source,
-        stdext::checked_array_iterator<uint8_t*> destination)
+        uint32_t destinationStride,
+        stdext::checked_array_iterator<uint8_t*> const& source,
+        stdext::checked_array_iterator<uint8_t*> const& destination)
     {
+#ifdef NDEBUG
+        // Skip the iterator validation in release builds.
+        auto s = source.base();
+        auto d = destination.base();
+#else
+        auto s = source;
+        auto d = destination;
+#endif
+
         for (auto i = 0u; i < r.GetBlocksHigh(); ++i)
         {
-            destination = std::copy(source, source + r.GetBytesPerRow(), destination);
-            source += sourceStride;
+            std::copy(s, s + r.GetBytesPerRow(), d);
+
+            s += sourceStride;
+            d += destinationStride;
         }
     }
 
@@ -1417,10 +1428,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         ComArray<BYTE> array(r.GetTotalBytes());
 
-        CopyPixelBytesToIterator(
+        CopyPixelBytes(
             r, 
             bitmapPixelAccess.GetStride(), 
-            begin(bitmapPixelAccess), 
+            r.GetBytesPerRow(),
+            begin(bitmapPixelAccess),
             begin(array));
 
         array.Detach(valueCount, valueElements);
@@ -1456,10 +1468,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         uint8_t* destination;
         ThrowIfFailed(byteAccess->Buffer(&destination));
 
-        CopyPixelBytesToIterator(
-            r, 
-            bitmapPixelAccess.GetStride(), 
-            begin(bitmapPixelAccess), 
+        CopyPixelBytes(
+            r,
+            bitmapPixelAccess.GetStride(),
+            r.GetBytesPerRow(),
+            begin(bitmapPixelAccess),
             stdext::make_checked_array_iterator(destination, capacity));
     }
 
@@ -1593,15 +1606,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ThrowHR(E_INVALIDARG, message.Get());
         }
 
-        auto destination = begin(bitmapPixelAccess);
-        auto source = stdext::make_checked_array_iterator(valueElements, valueCount);
-
-        for (auto i = 0u; i < r.GetBlocksHigh(); ++i)
-        {
-            std::copy(source, source + r.GetBytesPerRow(), destination);
-            source += r.GetBytesPerRow();
-            destination += bitmapPixelAccess.GetStride();
-        }
+        CopyPixelBytes(
+            r,
+            r.GetBytesPerRow(),
+            bitmapPixelAccess.GetStride(),
+            stdext::make_checked_array_iterator(valueElements, valueCount),
+            begin(bitmapPixelAccess));
     }
 
     void SetPixelBytesImpl(
@@ -1674,62 +1684,73 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
 
-    HRESULT CopyPixelsFromBitmapImpl(
+    void CopyPixelsFromBitmapImpl(
         ICanvasBitmap* to,
         ICanvasBitmap* from,
-        int32_t* destX,
-        int32_t* destY,
-        int32_t* sourceRectLeft,
-        int32_t* sourceRectTop,
-        int32_t* sourceRectWidth,
-        int32_t* sourceRectHeight)
+        D2D1_POINT_2U const& destPoint,
+        D2D1_RECT_U const* sourceRect)
     {
-        return ExceptionBoundary(
-            [&]
-            {
-                assert(to);
-                CheckInPointer(from);
+        assert(to);
+        CheckInPointer(from);
 
-                auto toBitmapInternal = As<ICanvasBitmapInternal>(to);
-                auto toD2dBitmap = toBitmapInternal->GetD2DBitmap();
+        auto toBitmapInternal = As<ICanvasBitmapInternal>(to);
+        auto toD2dBitmap = toBitmapInternal->GetD2DBitmap();
 
-                auto fromBitmapInternal = As<ICanvasBitmapInternal>(from);
-                auto fromD2dBitmap = fromBitmapInternal->GetD2DBitmap();
+        auto fromBitmapInternal = As<ICanvasBitmapInternal>(from);
+        auto fromD2dBitmap = fromBitmapInternal->GetD2DBitmap();
 
-                bool useDestPt = false;
-                D2D1_POINT_2U destPoint;                
-                if (destX)
-                {
-                    assert(destY);
-                    useDestPt = true;
-                    destPoint = ToD2DPointU(*destX, *destY);
+        // Compute the source rect.
+        D2D1_RECT_U localSourceRect;
 
-                    // D2D validates this internally, but this allows us to
-                    // provide a specific error message
-                    if (!IsBlockAligned(GetBlockSize(toD2dBitmap->GetPixelFormat().format), destPoint))
-                        ThrowHR(E_INVALIDARG, Strings::BlockCompressedSubRectangleMustBeAligned);
-                }
+        if (!sourceRect)
+        {
+            auto sourceSize = fromD2dBitmap->GetPixelSize();
+            localSourceRect = D2D1_RECT_U{ 0, 0, sourceSize.width, sourceSize.height };
+            sourceRect = &localSourceRect;
+        }
 
-                bool useSourceRect = false;
-                D2D1_RECT_U sourceRect;
-                if (sourceRectLeft)
-                {
-                    assert(sourceRectTop && sourceRectWidth && sourceRectHeight && useDestPt);
-                    useSourceRect = true;
-                    sourceRect = ToD2DRectU(*sourceRectLeft, *sourceRectTop, *sourceRectWidth, *sourceRectHeight);
+        // Compute the dest rect.
+        auto sourceWidth = sourceRect->right - sourceRect->left;
+        auto sourceHeight = sourceRect->bottom - sourceRect->top;
 
-                    // D2D validates this internally, but this allows us to
-                    // provide a specific error message
-                    if (!IsBlockAligned(GetBlockSize(fromD2dBitmap->GetPixelFormat().format), sourceRect))
-                        ThrowHR(E_INVALIDARG, Strings::BlockCompressedSubRectangleMustBeAligned);
-                }
+        D2D1_RECT_U destRect{ destPoint.x, destPoint.y, destPoint.x + sourceWidth, destPoint.y + sourceHeight };
 
-                ThrowIfFailed(toD2dBitmap->CopyFromBitmap(
-                    useDestPt? &destPoint : nullptr,
-                    fromD2dBitmap.Get(),
-                    useSourceRect? &sourceRect : nullptr));
-            });
+        // D2D validates block alignment internally, but preparing our own
+        // subrectangles allows us to provide a specific error message, and
+        // also computes size info in case we need to do our own CPU copy.
+        BitmapSubRectangle toRect(toD2dBitmap, destRect);
+        BitmapSubRectangle fromRect(fromD2dBitmap, *sourceRect);
 
+        if (toRect.GetFormat() != fromRect.GetFormat())
+        {
+            ThrowHR(E_INVALIDARG, Strings::BitmapFormatsDiffer);
+        }
+
+        // Are both bitmaps on the same device?
+        ComPtr<ICanvasDevice> toDevice;
+        ComPtr<ICanvasDevice> fromDevice;
+
+        ThrowIfFailed(As<ICanvasResourceCreator>(to)->get_Device(&toDevice));
+        ThrowIfFailed(As<ICanvasResourceCreator>(from)->get_Device(&fromDevice));
+
+        if (IsSameInstance(toDevice.Get(), fromDevice.Get()))
+        {
+            // Tell D2D to copy for us (typically done via GPU HW).
+            ThrowIfFailed(toD2dBitmap->CopyFromBitmap(&destPoint, fromD2dBitmap.Get(), sourceRect));
+        }
+        else
+        {
+            // Devices differ, so we must do our own software copy.
+            ScopedBitmapMappedPixelAccess toAccess(toD2dBitmap.Get(), D3D11_MAP_WRITE, &destRect);
+            ScopedBitmapMappedPixelAccess fromAccess(fromD2dBitmap.Get(), D3D11_MAP_READ, sourceRect);
+
+            CopyPixelBytes(
+                fromRect,
+                fromAccess.GetStride(),
+                toAccess.GetStride(),
+                begin(fromAccess),
+                begin(toAccess));
+        }
     }
 
     ActivatableClassWithFactory(CanvasBitmap, CanvasBitmapFactory);

@@ -601,6 +601,10 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         <p>
           It's an error to copy a bitmap onto itself.
         </p>
+        <p>
+          This method is most efficient when both bitmaps were created from the same
+          CanvasDevice, but is also able to copy between bitmaps of different devices.
+        </p>
       </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.CopyPixelsFromBitmap(Microsoft.Graphics.Canvas.CanvasBitmap,System.Int32,System.Int32)">
@@ -613,6 +617,10 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         <p>
           It's an error to copy a bitmap onto itself.
         </p>
+        <p>
+          This method is most efficient when both bitmaps were created from the same
+          CanvasDevice, but is also able to copy between bitmaps of different devices.
+        </p>
       </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.CopyPixelsFromBitmap(Microsoft.Graphics.Canvas.CanvasBitmap,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32)">
@@ -624,6 +632,10 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         </p>
         <p>
           It's an error to copy a bitmap onto itself.
+        </p>
+        <p>
+          This method is most efficient when both bitmaps were created from the same
+          CanvasDevice, but is also able to copy between bitmaps of different devices.
         </p>
       </remarks>
     </member>
