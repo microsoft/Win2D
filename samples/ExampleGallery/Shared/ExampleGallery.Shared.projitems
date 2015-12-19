@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
@@ -128,6 +128,9 @@
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)FontMetrics.xaml.cs">
       <DependentUpon>FontMetrics.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)CustomTextLayouts.xaml.cs">
+      <DependentUpon>CustomTextLayouts.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)VectorArt.xaml.cs">
       <DependentUpon>VectorArt.xaml</DependentUpon>
@@ -276,6 +279,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="$(MSBuildThisFileDirectory)CustomTextLayouts.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="$(MSBuildThisFileDirectory)VectorArt.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -306,6 +313,8 @@
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\ControlTransformsWide.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\CustomFontsNarrow.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\CustomFontsWide.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Thumbnails\CustomTextLayoutsNarrow.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Thumbnails\CustomTextLayoutsWide.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\DeveloperToolsNarrow.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\DeveloperToolsWide.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\Direct3DInteropNarrow.png" />
