@@ -8,6 +8,7 @@ using Microsoft.Graphics.Canvas.Text;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Numerics;
@@ -29,6 +30,9 @@ namespace ExampleGallery
         InkManager inkManager = new InkManager();
 
         InkSynchronizer inkSynchronizer;
+
+        IReadOnlyList<InkStroke> pendingDry;
+        int deferredDryDelay;
 
         CanvasRenderTarget renderTarget;
 
@@ -89,6 +93,10 @@ namespace ExampleGallery
             {
                 inkManager.AddStroke(s);
             }
+
+            Debug.Assert(pendingDry == null);
+
+            pendingDry = inkSynchronizer.BeginDry();
 
             canvasControl.Invalidate();
         }
@@ -303,17 +311,40 @@ namespace ExampleGallery
 
             DrawBackgroundText(args.DrawingSession);
 
-            var strokes = inkSynchronizer.BeginDry();
+            if (pendingDry != null && deferredDryDelay == 0)
+            {
+                // Incremental draw only.
+                DrawStrokeCollectionToInkSurface(pendingDry);
 
-            DrawStrokeCollectionToInkSurface(strokes); // Incremental draw only.
-
-            inkSynchronizer.EndDry();
+                // Register to call EndDry on the next-but-one draw,
+                // by which time our dry ink will be visible.
+                deferredDryDelay = 1;
+                CompositionTarget.Rendering += DeferredEndDry;
+            }
 
             args.DrawingSession.DrawImage(renderTarget);
 
             DrawForegroundText(args.DrawingSession);
             DrawSelectionBoundingRect(args.DrawingSession);
             DrawSelectionLasso(sender, args.DrawingSession);
+        }
+
+        private void DeferredEndDry(object sender, object e)
+        {
+            Debug.Assert(pendingDry != null);
+
+            if (deferredDryDelay > 0)
+            {
+                deferredDryDelay--;
+            }
+            else
+            {
+                CompositionTarget.Rendering -= DeferredEndDry;
+
+                pendingDry = null;
+
+                inkSynchronizer.EndDry();
+            }
         }
 
         const string saveFileName = "savedFile.bin";
