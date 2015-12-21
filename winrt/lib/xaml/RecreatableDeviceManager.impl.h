@@ -407,6 +407,17 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             // This function must be called from inside a catch block.
             assert(std::current_exception());
 
+            //
+            // When the exception we're handling was thrown, we also called RoOriginateError.
+            //
+            // We need to clear this.  
+            //
+            // Otherwise, if any other errors occur that don't call RoOriginateError, 
+            // this stored error state will override any subsequent errors, resulting
+            // in confusing UnhandledException reporting.
+            //
+            RoClearError();
+
             // No m_device means that this exception has already been handled.
             if (!m_device)
                 return;
