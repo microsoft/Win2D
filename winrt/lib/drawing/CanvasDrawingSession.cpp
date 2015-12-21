@@ -168,7 +168,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                     m_adapter.reset();
 
                     adapter->EndDraw(deviceContext.Get());
-                }        
+                }
+
+                m_solidColorBrush.Reset();
+                m_defaultTextFormat.Reset();
+                m_owner.Reset();
+#if WINVER > _WIN32_WINNT_WINBLUE
+                m_inkD2DRenderer.Reset();
+                m_inkStateBlock.Reset();
+#endif
             });
     }
 
