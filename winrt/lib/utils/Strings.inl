@@ -12,30 +12,30 @@
 
 STRING(AutoFileFormatNotAllowed, L"The option CanvasFileFormat.Auto is not allowed when saving to a stream.")
 STRING(BitmapFormatsDiffer, L"Bitmaps are not the same pixel format.")
-STRING(BlockCompressedDimensionsMustBeMultipleOf4, L"Block compressed image width & height must be a multiple of 4 pixels.");
-STRING(BlockCompressedSubRectangleMustBeAligned, L"Subrectangles from block compressed images must be aligned to a multiple of 4 pixels.");
+STRING(BlockCompressedDimensionsMustBeMultipleOf4, L"Block compressed image width & height must be a multiple of 4 pixels.")
+STRING(BlockCompressedSubRectangleMustBeAligned, L"Subrectangles from block compressed images must be aligned to a multiple of 4 pixels.")
 STRING(CacheOnDemandNotSet, L"This method may only be called if the CanvasVirtualBitmap was created with CanvasVirtualBitmapOptions.CacheOnDemand.")
 STRING(CanOnlyAddPathDataWhileInFigure, L"This operation is only allowed after a successful call to CanvasPathBuilder.BeginFigure.")
-STRING(CanvasDeviceGetDeviceWhenNotCreated, L"The control does not currently have a CanvasDevice associated with it. Ensure that resources are created from a CreateResources or Draw event handler.");
-STRING(CanvasPrintDocumentMustBeConstructedOnUIThread, L"CanvasPrintDocument must be constructed on a UI thread.");
-STRING(CanvasPrintEventArgsDpiCannotBeChangedAfterCreateDrawingSession, L"CanvasPrintEventArgs.Dpi cannot be set after the first call to CanvasPrintEventArgs.CreateDrawingSession.");
-STRING(CanvasPrintEventArgsCannotCreateDrawingSessionUntilPreviousOneClosed, L"The last drawing session returned by CanvasPrintEventArgs.CreateDrawingSession must be disposed before a new one can be created.");
+STRING(CanvasDeviceGetDeviceWhenNotCreated, L"The control does not currently have a CanvasDevice associated with it. Ensure that resources are created from a CreateResources or Draw event handler.")
+STRING(CanvasPrintDocumentMustBeConstructedOnUIThread, L"CanvasPrintDocument must be constructed on a UI thread.")
+STRING(CanvasPrintEventArgsDpiCannotBeChangedAfterCreateDrawingSession, L"CanvasPrintEventArgs.Dpi cannot be set after the first call to CanvasPrintEventArgs.CreateDrawingSession.")
+STRING(CanvasPrintEventArgsCannotCreateDrawingSessionUntilPreviousOneClosed, L"The last drawing session returned by CanvasPrintEventArgs.CreateDrawingSession must be disposed before a new one can be created.")
 STRING(CanvasPrintDocumentGetDeferralMayOnlyBeCalledOnce, L"GetDeferral can only be called once per event.")
 STRING(CanvasPrintDocumentDeferralCompleteMayOnlyBeCalledOnce, L"CanvasPrintDeferral.Complete may only be called once.")
 STRING(CommandListCannotBeDrawnToAfterItHasBeenUsed, L"CanvasCommandList.CreateDrawingSession cannot be called after the CanvasCommandList has been used as an image.")
-STRING(CreateDrawingSessionCalledBeforeRegionsInvalidated, L"CreateDrawingSession cannot be called before the RegionsInvalidated event has been raised.");
-STRING(CustomEffectBadFeatureLevel, L"This shader requires a higher Direct3D feature level than is supported by the device. Check PixelShaderEffect.IsSupported before using it.");
-STRING(CustomEffectBadShader, L"Unable to load the specified shader. This should be a Direct3D pixel shader compiled for shader model 4.");
-STRING(CustomEffectBadPropertyType, L"Shader property '%S' is an unsupported type.");
-STRING(CustomEffectMaxOffsetWithoutOffsetMapping, L"When PixelShaderEffect.MaxSamplerOffset is set, at least one source should be using SamplerCoordinateMapping.Offset.");
-STRING(CustomEffectOffsetMappingWithoutMaxOffset, L"When PixelShaderEffect.Source%dMapping is set to Offset, MaxSamplerOffset should also be set.");
-STRING(CustomEffectSourceOutOfRange, L"Source%d must be null when using this pixel shader (shader inputs: %d).");
-STRING(CustomEffectTooManyConstantBuffers, L"Unsupported constant buffer layout. There should be a single constant buffer bound to b0.");
-STRING(CustomEffectTooManyTextures, L"Shader has too many input textures.");
-STRING(CustomEffectUnknownProperty, L"Shader does not have a property named '%s'.");
-STRING(CustomEffectWrongPropertyArraySize, L"Wrong array size. Shader property '%s' is an array of %d elements.");
-STRING(CustomEffectWrongPropertyType, L"Wrong type. Shader property '%s' is of type %s.");
-STRING(CustomEffectWrongPropertyTypeArray, L"Wrong type. Shader property '%s' is an array of %s.");
+STRING(CreateDrawingSessionCalledBeforeRegionsInvalidated, L"CreateDrawingSession cannot be called before the RegionsInvalidated event has been raised.")
+STRING(CustomEffectBadFeatureLevel, L"This shader requires a higher Direct3D feature level than is supported by the device. Check PixelShaderEffect.IsSupported before using it.")
+STRING(CustomEffectBadShader, L"Unable to load the specified shader. This should be a Direct3D pixel shader compiled for shader model 4.")
+STRING(CustomEffectBadPropertyType, L"Shader property '%S' is an unsupported type.")
+STRING(CustomEffectMaxOffsetWithoutOffsetMapping, L"When PixelShaderEffect.MaxSamplerOffset is set, at least one source should be using SamplerCoordinateMapping.Offset.")
+STRING(CustomEffectOffsetMappingWithoutMaxOffset, L"When PixelShaderEffect.Source%dMapping is set to Offset, MaxSamplerOffset should also be set.")
+STRING(CustomEffectSourceOutOfRange, L"Source%d must be null when using this pixel shader (shader inputs: %d).")
+STRING(CustomEffectTooManyConstantBuffers, L"Unsupported constant buffer layout. There should be a single constant buffer bound to b0.")
+STRING(CustomEffectTooManyTextures, L"Shader has too many input textures.")
+STRING(CustomEffectUnknownProperty, L"Shader does not have a property named '%s'.")
+STRING(CustomEffectWrongPropertyArraySize, L"Wrong array size. Shader property '%s' is an array of %d elements.")
+STRING(CustomEffectWrongPropertyType, L"Wrong type. Shader property '%s' is of type %s.")
+STRING(CustomEffectWrongPropertyTypeArray, L"Wrong type. Shader property '%s' is an array of %s.")
 STRING(DeviceExpectedToBeLost, L"This API was unexpectedly called when the Direct3D device is not lost.")
 STRING(DidNotPopLayer, L"After calling CanvasDrawingSession.CreateLayer, you must close the resulting CanvasActiveLayer before ending the CanvasDrawingSession.")
 STRING(DrawImageMinBlendNotSupported, L"This DrawImage overload is not valid when CanvasDrawingSession.Blend is set to CanvasBlend.Min.")
@@ -69,6 +69,6 @@ STRING(SpriteBatchInvalidInterpolation, L"Invalid interpolation mode specified. 
 STRING(SpriteBatchNotAvailable, L"Sprite batches are not supported on this device. Use CanvasSpriteBatch.IsSupported to determine if sprite batches are supported.")
 STRING(TextRendererNotValid, L"The application called a method on a text renderer, but this text renderer is no longer valid.")
 STRING(TwoBeginFigures, L"A call to CanvasPathBuilder.BeginFigure occurred, when the figure was already begun.")
-STRING(UnrecognizedImageFileExtension, L"When saving a CanvasBitmap without specifying a CanvasBitmapFileFormat, the file name must include a recognized file extension such as '.jpeg' or '.png'.");
+STRING(UnrecognizedImageFileExtension, L"When saving a CanvasBitmap without specifying a CanvasBitmapFileFormat, the file name must include a recognized file extension such as '.jpeg' or '.png'.")
 STRING(WrongArrayLength, L"The array was expected to be of size %d; actual array was of size %d.")
 STRING(WrongNamedArrayLength, L"The array %s was expected to be of size %d; actual array was of size %d.")
