@@ -679,18 +679,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         auto blocksWide = widthInPixels / blockSize;
         auto pitch = GetBytesPerBlock(dxgiFormat) * blocksWide;
 
-        // D2D does not fail attempts to create zero-sized bitmaps. Neither does this.
-        if (pitch == 0)
-            pitch = byteCount;
-
         // Validate that the buffer is large enough
         auto blocksHigh = heightInPixels / blockSize;
+        auto bytesNeeded = blocksHigh * pitch;
 
-        if (byteCount < blocksHigh * pitch)
+        if (byteCount < bytesNeeded)
             ThrowHR(E_INVALIDARG);
 
         auto d2dBitmap = As<ICanvasDeviceInternal>(device)->CreateBitmapFromBytes(
-            bytes,
+            (bytesNeeded > 0) ? bytes : nullptr,
             pitch,
             widthInPixels,
             heightInPixels,

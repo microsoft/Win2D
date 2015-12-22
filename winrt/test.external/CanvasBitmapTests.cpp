@@ -249,37 +249,52 @@ public:
             { 1, 1 },
         };
 
-        Platform::Array<BYTE>^ byteArray1x1 = ref new Platform::Array<BYTE>(1);
-        Platform::Array<Color>^ colorArray1x1 = ref new Platform::Array<Color>(1);
+        struct SourceArrayTestCase
+        {
+            Platform::Array<BYTE>^ byteArray;
+            Platform::Array<Color>^ colorArray;
+        } sourceArrayTestCases[] =
+        {
+            { ref new Platform::Array<BYTE>(1), ref new Platform::Array<Color>(1) },
+            { ref new Platform::Array<BYTE>(0), ref new Platform::Array<Color>(0) },
+            { nullptr, nullptr }
+        };
 
         for (auto& testCase : legalSizeTestCases)
         {
-            auto bitmap = CanvasBitmap::CreateFromBytes(
-                canvasDevice,
-                byteArray1x1,
-                testCase.width,
-                testCase.height,
-                DirectXPixelFormat::A8UIntNormalized, // One of the few formats that is actually supported with straight alpha
-                99.0f,
-                CanvasAlphaMode::Straight);
-            auto d2dBitmap = GetWrappedResource<ID2D1Bitmap1>(bitmap);
-            auto size = bitmap->SizeInPixels;
-            Assert::AreEqual(static_cast<uint32_t>(testCase.width), size.Width);
-            Assert::AreEqual(static_cast<uint32_t>(testCase.height), size.Height);
-            VerifyDpiAndAlpha(d2dBitmap, 99.0f, D2D1_ALPHA_MODE_STRAIGHT);
+            for (auto& sourceArrays : sourceArrayTestCases)
+            {
+                auto bitmap = CanvasBitmap::CreateFromBytes(
+                    canvasDevice,
+                    sourceArrays.byteArray,
+                    testCase.width,
+                    testCase.height,
+                    DirectXPixelFormat::A8UIntNormalized, // One of the few formats that is actually supported with straight alpha
+                    99.0f,
+                    CanvasAlphaMode::Straight);
+                auto d2dBitmap = GetWrappedResource<ID2D1Bitmap1>(bitmap);
+                auto size = bitmap->SizeInPixels;
+                Assert::AreEqual(static_cast<uint32_t>(testCase.width), size.Width);
+                Assert::AreEqual(static_cast<uint32_t>(testCase.height), size.Height);
+                VerifyDpiAndAlpha(d2dBitmap, 99.0f, D2D1_ALPHA_MODE_STRAIGHT);
 
-            bitmap = CanvasBitmap::CreateFromColors(
-                canvasDevice,
-                colorArray1x1,
-                testCase.width,
-                testCase.height,
-                25.0f,
-                CanvasAlphaMode::Ignore);
-            d2dBitmap = GetWrappedResource<ID2D1Bitmap1>(bitmap);
-            size = bitmap->SizeInPixels;
-            Assert::AreEqual(static_cast<uint32_t>(testCase.width), size.Width);
-            Assert::AreEqual(static_cast<uint32_t>(testCase.height), size.Height);
-            VerifyDpiAndAlpha(d2dBitmap, 25.0f, D2D1_ALPHA_MODE_IGNORE);
+                bitmap = CanvasBitmap::CreateFromColors(
+                    canvasDevice,
+                    sourceArrays.colorArray,
+                    testCase.width,
+                    testCase.height,
+                    25.0f,
+                    CanvasAlphaMode::Ignore);
+                d2dBitmap = GetWrappedResource<ID2D1Bitmap1>(bitmap);
+                size = bitmap->SizeInPixels;
+                Assert::AreEqual(static_cast<uint32_t>(testCase.width), size.Width);
+                Assert::AreEqual(static_cast<uint32_t>(testCase.height), size.Height);
+                VerifyDpiAndAlpha(d2dBitmap, 25.0f, D2D1_ALPHA_MODE_IGNORE);
+
+                // Skip the zero or null source array test cases if the bitmap size is non-zero.
+                if (testCase.width > 0 && testCase.height > 0)
+                    break;
+            }
         }
 
         SizeTestCase illegalSizeTestCases[] =
@@ -290,27 +305,30 @@ public:
         };
 
         for (auto& testCase : illegalSizeTestCases)
-        {                
-            Assert::ExpectException<Platform::InvalidArgumentException^>(
-                [&]
-                {
-                    auto bitmap = CanvasBitmap::CreateFromBytes(
-                        canvasDevice,
-                        byteArray1x1,
-                        testCase.width,
-                        testCase.height,
-                        DirectXPixelFormat::B8G8R8A8UIntNormalized,
-                        DEFAULT_DPI,
-                        CanvasAlphaMode::Premultiplied);
+        {
+            for (auto& sourceArrays : sourceArrayTestCases)
+            {
+                Assert::ExpectException<Platform::InvalidArgumentException^>(
+                    [&]
+                    {
+                        auto bitmap = CanvasBitmap::CreateFromBytes(
+                            canvasDevice,
+                            sourceArrays.byteArray,
+                            testCase.width,
+                            testCase.height,
+                            DirectXPixelFormat::B8G8R8A8UIntNormalized,
+                            DEFAULT_DPI,
+                            CanvasAlphaMode::Premultiplied);
 
-                    bitmap = CanvasBitmap::CreateFromColors(
-                        canvasDevice,
-                        colorArray1x1,
-                        testCase.width,
-                        testCase.height,
-                        DEFAULT_DPI,
-                        CanvasAlphaMode::Premultiplied);
-                });
+                        bitmap = CanvasBitmap::CreateFromColors(
+                            canvasDevice,
+                            sourceArrays.colorArray,
+                            testCase.width,
+                            testCase.height,
+                            DEFAULT_DPI,
+                            CanvasAlphaMode::Premultiplied);
+                    });
+            }
         }
     }
 
