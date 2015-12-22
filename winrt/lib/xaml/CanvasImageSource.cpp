@@ -219,14 +219,16 @@ void CanvasImageSource::CreateBaseClass(
 
 void CanvasImageSource::SetDevice(ICanvasDevice* device)
 {
+    auto deviceInternal = MaybeAs<ICanvasDeviceInternal>(device);   // device may be null
+
     //
     // Get the D2D device and pass this to the underlying surface image
     // source.
     //
     ComPtr<ID2D1Device> d2dDevice;
 
-    if (device)
-        d2dDevice = As<ICanvasDeviceInternal>(device)->GetD2DDevice();
+    if (deviceInternal)
+        d2dDevice = deviceInternal->GetD2DDevice();
 
     auto sisNative = As<ISurfaceImageSourceNativeWithD2D>(GetComposableBase());
 
@@ -237,7 +239,12 @@ void CanvasImageSource::SetDevice(ICanvasDevice* device)
     // from SurfaceImageSource and we want to be consistent with the
     // existing XAML behavior.
     //
-    ThrowIfFailed(sisNative->SetDevice(d2dDevice.Get()));
+    HRESULT hr = sisNative->SetDevice(d2dDevice.Get());
+
+    if (deviceInternal)
+        deviceInternal->ThrowIfCreateSurfaceFailed(hr, L"CanvasImageSource", SizeDipsToPixels(m_width, m_dpi), SizeDipsToPixels(m_height, m_dpi));
+    else
+        ThrowIfFailed(hr);
 
     //
     // Remember the canvas device we're now using.  We do this after we're

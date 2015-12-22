@@ -2158,4 +2158,19 @@ public:
 
         TestCopyPixelsFromBitmap<uint32_t>(device1, device2, DirectXPixelFormat::B8G8R8A8UIntNormalized, DirectXPixelFormat::R8G8B8A8UIntNormalized);
     }
+
+    TEST_METHOD(CanvasBitmap_MaxSizeError)
+    {
+        auto device = ref new CanvasDevice();
+        auto maxSize = device->MaximumBitmapSizeInPixels;
+        auto tooBig = maxSize + 1;
+        auto colors = ref new Platform::Array<Color>(tooBig);
+        wchar_t msg[256];
+
+        swprintf_s(msg, L"Cannot create CanvasBitmap sized %d x 1; MaximumBitmapSizeInPixels for this device is %d.", tooBig, maxSize);
+        ExpectCOMException(E_INVALIDARG, msg, [&]() { CanvasBitmap::CreateFromColors(device, colors, tooBig, 1); });
+
+        swprintf_s(msg, L"Cannot create CanvasBitmap sized 1 x %d; MaximumBitmapSizeInPixels for this device is %d.", tooBig, maxSize);
+        ExpectCOMException(E_INVALIDARG, msg, [&]() { CanvasBitmap::CreateFromColors(device, colors, 1, tooBig); });
+    }
 };

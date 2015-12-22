@@ -58,5 +58,58 @@ TEST_CLASS(CanvasImageSourceTests)
         Assert::AreEqual(size1, Size{ 23, 42 });
         Assert::AreEqual(size2, Size{ 7, 21 });
     }
+
+
+    TEST_METHOD(CanvasImageSource_MaxSizeError)
+    {
+        auto device = ref new CanvasDevice();
+        auto maxSize = device->MaximumBitmapSizeInPixels;
+        auto tooBig = maxSize + 1;
+        wchar_t msg[256];
+
+        Platform::COMException^ exception1;
+        Platform::COMException^ exception2;
+        Platform::COMException^ exception3;
+
+        RunOnUIThread(
+            [&]
+            {
+                try
+                {
+                    ref new CanvasImageSource(device, static_cast<float>(tooBig), 1, 96);
+                }
+                catch (Platform::COMException^ e)
+                {
+                    exception1 = e;
+                }
+
+                try
+                {
+                    ref new CanvasImageSource(device, 1, static_cast<float>(tooBig), 96);
+                }
+                catch (Platform::COMException^ e)
+                {
+                    exception2 = e;
+                }
+        
+                try
+                {
+                    ref new CanvasImageSource(device, static_cast<float>(tooBig) / 2, 1, 192);
+                }
+                catch (Platform::COMException^ e)
+                {
+                    exception3 = e;
+                }
+            });
+
+        swprintf_s(msg, L"Cannot create CanvasImageSource sized %d x 1; MaximumBitmapSizeInPixels for this device is %d.", tooBig, maxSize);
+        ExpectCOMException(E_INVALIDARG, msg, [&]() { throw exception1; });
+
+        swprintf_s(msg, L"Cannot create CanvasImageSource sized 1 x %d; MaximumBitmapSizeInPixels for this device is %d.", tooBig, maxSize);
+        ExpectCOMException(E_INVALIDARG, msg, [&]() { throw exception2; });
+
+        swprintf_s(msg, L"Cannot create CanvasImageSource sized %d x 2; MaximumBitmapSizeInPixels for this device is %d.", tooBig, maxSize);
+        ExpectCOMException(E_INVALIDARG, msg, [&]() { throw exception3; });
+    }
 };
 

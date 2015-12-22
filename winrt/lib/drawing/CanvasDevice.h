@@ -161,6 +161,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         virtual ComPtr<IDXGIOutput> GetPrimaryDisplayOutput() = 0;
 
+        virtual void ThrowIfCreateSurfaceFailed(HRESULT hr, wchar_t const* typeName, uint32_t width, uint32_t height) = 0;
+
 #if WINVER > _WIN32_WINNT_WINBLUE
         virtual ComPtr<ID2D1GradientMesh> CreateGradientMesh(D2D1_GRADIENT_MESH_PATCH const* patches, uint32_t patchCount) = 0;
 
@@ -357,6 +359,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         virtual ComPtr<IDXGIOutput> GetPrimaryDisplayOutput() override;
 
+        virtual void ThrowIfCreateSurfaceFailed(HRESULT hr, wchar_t const* typeName, uint32_t width, uint32_t height) override;
+
 #if WINVER > _WIN32_WINNT_WINBLUE
         virtual ComPtr<ID2D1GradientMesh> CreateGradientMesh(D2D1_GRADIENT_MESH_PATCH const* patches, uint32_t patchCount) override;
 
@@ -397,6 +401,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         void InitializePrimaryOutput(IDXGIDevice3* dxgiDevice);
 
         bool DetectIfSpriteBatchQuirkIsRequired();
+
+        ComPtr<ID2D1Bitmap1> CreateBitmapFromWicBitmap(ID2D1DeviceContext* deviceContext, IWICBitmapSource* wicBitmapSource, float dpi, CanvasAlphaMode alpha);
+        ComPtr<ID2D1Bitmap1> CreateBitmapFromDdsFrame(ID2D1DeviceContext* deviceContext, IWICBitmapSource* wicBitmapSource, IWICDdsFrameDecode* ddsFrame, float dpi, CanvasAlphaMode alpha);
     };
 
 

@@ -719,7 +719,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return brush;
     }
 
-    static ComPtr<ID2D1Bitmap1> CreateBitmapFromWicBitmap(
+    ComPtr<ID2D1Bitmap1> CanvasDevice::CreateBitmapFromWicBitmap(
         ID2D1DeviceContext* deviceContext,
         IWICBitmapSource* wicBitmapSource,
         float dpi,
@@ -729,13 +729,17 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         bitmapProperties.pixelFormat.alphaMode = ToD2DAlphaMode(alpha);
         bitmapProperties.dpiX = bitmapProperties.dpiY = dpi;
 
+        uint32_t width, height;
+        ThrowIfFailed(wicBitmapSource->GetSize(&width, &height));
+
         ComPtr<ID2D1Bitmap1> bitmap;
-        ThrowIfFailed(deviceContext->CreateBitmapFromWicBitmap(wicBitmapSource, &bitmapProperties, &bitmap));
+        HRESULT hr = deviceContext->CreateBitmapFromWicBitmap(wicBitmapSource, &bitmapProperties, &bitmap);
+        ThrowIfCreateSurfaceFailed(hr, L"CanvasBitmap", width, height);
 
         return bitmap;
     }
 
-    static ComPtr<ID2D1Bitmap1> CreateBitmapFromDdsFrame(
+    ComPtr<ID2D1Bitmap1> CanvasDevice::CreateBitmapFromDdsFrame(
         ID2D1DeviceContext* deviceContext,
         IWICBitmapSource* wicBitmapSource,
         IWICDdsFrameDecode* ddsFrame,
@@ -788,12 +792,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         // premultiplied.
         //
         ComPtr<ID2D1Bitmap1> bitmap;
-        ThrowIfFailed(deviceContext->CreateBitmap(
+        HRESULT hr = deviceContext->CreateBitmap(
             D2D1_SIZE_U{ width, height },
             nullptr,
             0,
             properties,
-            &bitmap));
+            &bitmap);
+        
+        ThrowIfCreateSurfaceFailed(hr, L"CanvasBitmap", width, height);
 
         ScopedBitmapMappedPixelAccess pixels(bitmap.Get(), D3D11_MAP_WRITE);
         ThrowIfFailed(ddsFrame->CopyBlocks(
@@ -838,12 +844,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         auto size = D2D1::SizeU(widthInPixels, heightInPixels);
 
         ComPtr<ID2D1Bitmap1> d2dBitmap;
-        ThrowIfFailed(deviceContext->CreateBitmap(
+        HRESULT hr = deviceContext->CreateBitmap(
             size,
             bytes,
             pitch,
             &bitmapProperties,
-            &d2dBitmap));
+            &d2dBitmap);
+
+        ThrowIfCreateSurfaceFailed(hr, L"CanvasBitmap", widthInPixels, heightInPixels);
 
         return d2dBitmap;
     }
@@ -920,12 +928,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         auto pixelWidth = static_cast<uint32_t>(SizeDipsToPixels(width, dpi));
         auto pixelHeight = static_cast<uint32_t>(SizeDipsToPixels(height, dpi));
 
-        ThrowIfFailed(deviceContext->CreateBitmap(
+        HRESULT hr = deviceContext->CreateBitmap(
             D2D1_SIZE_U{ pixelWidth, pixelHeight },
             nullptr, // data 
             0,  // data pitch
-            &bitmapProperties, 
-            &bitmap));
+            &bitmapProperties,
+            &bitmap);
+
+        ThrowIfCreateSurfaceFailed(hr, L"CanvasRenderTarget", pixelWidth, pixelHeight);
 
         return bitmap;
     }
@@ -1011,6 +1021,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         return gradientStopCollection;
     }
+
     ComPtr<ID2D1LinearGradientBrush> CanvasDevice::CreateLinearGradientBrush(
         ID2D1GradientStopCollection1* stopCollection)
     {
@@ -1088,7 +1099,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         swapChainDesc.AlphaMode = ToDxgiAlphaMode(alphaMode);
 
         ComPtr<IDXGISwapChain1> swapChain;
-        ThrowIfFailed(createFn(dxgiFactory.Get(), dxgiDevice.Get(), &swapChainDesc, &swapChain));
+        ThrowIfCreateSurfaceFailed(
+            createFn(dxgiFactory.Get(), dxgiDevice.Get(), &swapChainDesc, &swapChain),
+            L"CanvasSwapChain",
+            swapChainDesc.Width, swapChainDesc.Height);
 
         return swapChain;
     }
@@ -1306,6 +1320,23 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     ComPtr<IDXGIOutput> CanvasDevice::GetPrimaryDisplayOutput()
     {
         return m_primaryOutput;
+    }
+
+    void CanvasDevice::ThrowIfCreateSurfaceFailed(HRESULT hr, wchar_t const* typeName, uint32_t width, uint32_t height)
+    {
+        if (hr == E_INVALIDARG)
+        {
+            auto maximumBitmapSize = GetResourceCreationDeviceContext()->GetMaximumBitmapSize();
+
+            if (width > maximumBitmapSize || height > maximumBitmapSize)
+            {
+                WinStringBuilder message;
+                message.Format(Strings::SurfaceTooBig, typeName, width, height, maximumBitmapSize);
+                ThrowHR(E_INVALIDARG, message.Get());
+            }
+        }
+
+        ThrowIfFailed(hr);
     }
 
 #if WINVER > _WIN32_WINNT_WINBLUE

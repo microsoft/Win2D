@@ -69,4 +69,22 @@ TEST_CLASS(CanvasRenderTargetTests)
         Assert::AreEqual(renderTarget1->Size, Size{ 23, 42 });
         Assert::AreEqual(renderTarget2->Size, Size{ 7, 21 });
     }
+
+
+    TEST_METHOD(CanvasRenderTarget_MaxSizeError)
+    {
+        auto device = ref new CanvasDevice();
+        auto maxSize = device->MaximumBitmapSizeInPixels;
+        auto tooBig = maxSize + 1;
+        wchar_t msg[256];
+
+        swprintf_s(msg, L"Cannot create CanvasRenderTarget sized %d x 1; MaximumBitmapSizeInPixels for this device is %d.", tooBig, maxSize);
+        ExpectCOMException(E_INVALIDARG, msg, [&]() { ref new CanvasRenderTarget(device, static_cast<float>(tooBig), 1, 96); });
+
+        swprintf_s(msg, L"Cannot create CanvasRenderTarget sized 1 x %d; MaximumBitmapSizeInPixels for this device is %d.", tooBig, maxSize);
+        ExpectCOMException(E_INVALIDARG, msg, [&]() { ref new CanvasRenderTarget(device, 1, static_cast<float>(tooBig), 96); });
+
+        swprintf_s(msg, L"Cannot create CanvasRenderTarget sized %d x 2; MaximumBitmapSizeInPixels for this device is %d.", tooBig, maxSize);
+        ExpectCOMException(E_INVALIDARG, msg, [&]() { ref new CanvasRenderTarget(device, static_cast<float>(tooBig) / 2, 1, 192); });
+    }
 };

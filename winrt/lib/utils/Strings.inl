@@ -67,6 +67,7 @@ STRING(SetFilledRegionDeterminationAfterBeginFigure, L"This operation is not all
 STRING(SetPageCountCalledBeforePreviewing, L"CanvasPrintDocument.SetPageCount or CanvasPrintDocument.SetIntermediatePageCount cannot be called until the Paginate event has been raised.")
 STRING(SpriteBatchInvalidInterpolation, L"Invalid interpolation mode specified. Sprite batches only support CanvasImageInterpolation.NearestNeighbor or CanvasImageInterpolation.Linear.")
 STRING(SpriteBatchNotAvailable, L"Sprite batches are not supported on this device. Use CanvasSpriteBatch.IsSupported to determine if sprite batches are supported.")
+STRING(SurfaceTooBig, L"Cannot create %s sized %d x %d; MaximumBitmapSizeInPixels for this device is %d.")
 STRING(TextRendererNotValid, L"The application called a method on a text renderer, but this text renderer is no longer valid.")
 STRING(TwoBeginFigures, L"A call to CanvasPathBuilder.BeginFigure occurred, when the figure was already begun.")
 STRING(UnrecognizedImageFileExtension, L"When saving a CanvasBitmap without specifying a CanvasBitmapFileFormat, the file name must include a recognized file extension such as '.jpeg' or '.png'.")

@@ -423,6 +423,11 @@ namespace canvas
             return GetPrimaryDisplayOutputMethod.WasCalled();
         }
 
+        virtual void ThrowIfCreateSurfaceFailed(HRESULT hr, wchar_t const* typeName, uint32_t width, uint32_t height) override
+        {
+            ThrowIfFailed(hr);
+        }
+
 #if WINVER > _WIN32_WINNT_WINBLUE
         virtual ComPtr<ID2D1GradientMesh> CreateGradientMesh(
             D2D1_GRADIENT_MESH_PATCH const* patches,
