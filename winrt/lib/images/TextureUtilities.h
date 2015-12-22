@@ -20,6 +20,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         D2D1_RECT_U m_subRectangle;
         bool m_useSubrectangle;
 
+        bool m_emulateA8WithBgra32;
+        std::vector<byte> m_alphaBuffer;
+        D3D11_MAPPED_SUBRESOURCE m_mappedBgra;
+
         D2DResourceLock m_d2dResourceLock;
 
     public:

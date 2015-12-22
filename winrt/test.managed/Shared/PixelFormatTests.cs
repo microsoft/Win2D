@@ -116,6 +116,14 @@ namespace test.managed
 
                 // But all formats should be drawable when used as effect inputs.
                 ValidateCanDrawImage(device, new ColorMatrixEffect { Source = bitmap });
+
+                // Make sure we can get and set pixels of this format.
+                // This would fail if D2D internally created a DXGI surface of some unexpected format.
+                var bytes = bitmap.GetPixelBytes();
+
+                Assert.IsTrue(bytes.All(b => b == 0));
+
+                bitmap.SetPixelBytes(bytes);
             }
         }
 
