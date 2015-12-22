@@ -407,6 +407,19 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             // This function must be called from inside a catch block.
             assert(std::current_exception());
 
+            if (m_committedDevice)
+            {
+                m_committedDevice->CheckForDeviceLost();
+
+                if (!m_committedDevice->IsUnusable())
+                {
+                    // If m_committedDevice hasn't been lost then m_device also
+                    // cannot have been lost so the exception can't be related
+                    // to either of them.
+                    throw;
+                }
+            }
+
             //
             // When the exception we're handling was thrown, we also called RoOriginateError.
             //
@@ -421,19 +434,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             // No m_device means that this exception has already been handled.
             if (!m_device)
                 return;
-
-            if (m_committedDevice)
-            {
-                m_committedDevice->CheckForDeviceLost();
-
-                if (!m_committedDevice->IsUnusable())
-                {
-                    // If m_committedDevice hasn't been lost then m_device also
-                    // cannot have been lost so the exception can't be related
-                    // to either of them.
-                    throw;
-                }
-            }
 
             // At this point, the committed device is definitely lost
             assert(!m_committedDevice || m_committedDevice->IsUnusable());
