@@ -291,10 +291,13 @@ public:
             [=](ICanvasDevice*, RunWithDeviceFlags)
             {
                 deviceThatGetsLost->MarkAsLost();
-                ThrowHR(DXGI_ERROR_DEVICE_REMOVED);
+                ThrowHR(DXGI_ERROR_DEVICE_REMOVED, L"message");
             });
 
         f.VerifyDeviceGetsRecreated();
+
+        // As the exception was handled there should be no stored error state
+        ValidateStoredErrorState(S_OK, nullptr);
     }
 
     //
