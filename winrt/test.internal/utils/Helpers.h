@@ -1796,6 +1796,8 @@ inline void ValidateStoredErrorState(HRESULT expectedHR, wchar_t const* expected
         return;
     }
 
+    Assert::IsNotNull(errorInfo.Get());
+
     BSTR description = nullptr;
     BSTR restrictedDescription = nullptr;
     BSTR capabilitySid = nullptr;
