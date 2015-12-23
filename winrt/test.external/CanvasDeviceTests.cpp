@@ -87,7 +87,15 @@ TEST_CLASS(CanvasDeviceTests)
 
     TEST_METHOD(CanvasDevice_DefaultDebugLevel)
     {
+#ifdef NDEBUG
         Assert::AreEqual(CanvasDebugLevel::None, CanvasDevice::DebugLevel);
+#else
+        // In debug builds, ModuleInitialize (see DebugLayer.cpp) may have overridden the default
+        // debug level to specify CanvasDebugLevel::Warning. Or it may have left this set to
+        // CanvasDebugLevel::None (if the debug layer is not installed on the current machine).
+        Assert::IsTrue(CanvasDevice::DebugLevel == CanvasDebugLevel::Warning ||
+                       CanvasDevice::DebugLevel == CanvasDebugLevel::None);
+#endif
     }
 
     TEST_METHOD(CanvasDevice_SetAndGetDebugLevels)

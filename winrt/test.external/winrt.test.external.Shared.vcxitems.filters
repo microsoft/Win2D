@@ -37,11 +37,13 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasGradientMeshTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasCreateResourcesEventArgsTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasTextRendererTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)DebugLayer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)pch.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)targetver.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Helpers.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)DebugLayer.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="$(AssetDir)imageTiger.jpg" />

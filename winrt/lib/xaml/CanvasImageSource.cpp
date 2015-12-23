@@ -19,6 +19,9 @@ ComPtr<ICanvasDrawingSession> CanvasImageSourceDrawingSessionFactory::Create(
 {
     CheckInPointer(sisNative);
 
+    if (*hasActiveDrawingSession)
+        ThrowHR(E_FAIL, Strings::CannotCreateDrawingSessionUntilPreviousOneClosed);
+
     RECT updateRectangle = ToRECT(updateRectangleInDips, dpi);
 
     ComPtr<ID2D1DeviceContext1> deviceContext;

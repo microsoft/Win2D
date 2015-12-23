@@ -677,6 +677,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 auto& dxgiSwapChain = GetResource();
                 auto& device = m_device.EnsureNotClosed();
 
+                if (*m_hasActiveDrawingSession)
+                    ThrowHR(E_FAIL, Strings::CannotCreateDrawingSessionUntilPreviousOneClosed);
+
                 auto d2dDevice = As<ICanvasDeviceInternal>(device)->GetD2DDevice();
                 D2DResourceLock lock(d2dDevice.Get());
 

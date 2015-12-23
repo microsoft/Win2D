@@ -71,6 +71,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 if (m_d2dCommandListIsClosed)
                     ThrowHR(E_INVALIDARG, Strings::CommandListCannotBeDrawnToAfterItHasBeenUsed);
 
+                if (*m_hasActiveDrawingSession)
+                    ThrowHR(E_FAIL, Strings::CannotCreateDrawingSessionUntilPreviousOneClosed);
+
                 auto& d2dCommandList = GetResource();
                 auto& device = m_device.EnsureNotClosed();
 

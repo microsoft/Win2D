@@ -231,6 +231,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             {
                 CheckAndClearOutPointer(drawingSession);
                 
+                if (*m_hasActiveDrawingSession)
+                    ThrowHR(E_FAIL, Strings::CannotCreateDrawingSessionUntilPreviousOneClosed);
+
                 auto& resource = GetD2DBitmap();
 
                 auto newDrawingSession = CreateDrawingSessionOverD2DBitmap(

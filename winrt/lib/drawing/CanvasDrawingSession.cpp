@@ -76,14 +76,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         std::shared_ptr<bool> targetHasActiveDrawingSession,
         D2D1_POINT_2F offset)
     {
-        if (targetHasActiveDrawingSession)
-        {
-            if (*targetHasActiveDrawingSession)
-                ThrowHR(E_FAIL, Strings::CannotCreateDrawingSessionUntilPreviousOneClosed);
-
-            *targetHasActiveDrawingSession = true;
-        }
-
         InitializeDefaultState(deviceContext);
 
         auto drawingSession = Make<CanvasDrawingSession>(
@@ -148,6 +140,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         , m_nextLayerId(0)
         , m_owner(owner)
     {
+        if (m_targetHasActiveDrawingSession)
+            *m_targetHasActiveDrawingSession = true;
     }
 
 

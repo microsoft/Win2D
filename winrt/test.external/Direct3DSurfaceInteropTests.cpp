@@ -158,15 +158,19 @@ TEST_CLASS(Direct3DSurfaceInteropTests)
 
     IDirect3DSurface^ CreateSurface(
         D3D11_BIND_FLAG bindFlags,
-        DXGI_FORMAT format = DXGI_FORMAT_B8G8R8A8_UNORM)
+        DXGI_FORMAT format = DXGI_FORMAT_B8G8R8A8_UNORM,
+        CanvasDevice^ device = nullptr)
     {
+        if (!device)
+            device = m_canvasDevice;
+
         //
         // We create a new DXGI surface by creating Texture2D's from the same
         // D3D device that CanvasDevice is bound to.  This way we know that D2D
         // and Win2D will have no prior-knowledge of the surface we create.
         //
         ComPtr<ID3D11Device> d3dDevice;
-        ThrowIfFailed(GetDXGIInterface<ID3D11Device>(m_canvasDevice, &d3dDevice));
+        ThrowIfFailed(GetDXGIInterface<ID3D11Device>(device, &d3dDevice));
 
         D3D11_TEXTURE2D_DESC textureDesc{};
         textureDesc.Width = 1;
@@ -208,22 +212,27 @@ TEST_CLASS(Direct3DSurfaceInteropTests)
         CreateBitmapFromDirect3DSurface_InfersAlphaIgnore_TestCase(DirectXPixelFormat::R8UIntNormalized);
     }
 
-    void CreateBitmapFromDirect3DSurface_DoesNotInferAlphaMode_IfWrongAlphaModeIsExplicitlySpecified_TestCase(DirectXPixelFormat format)
+    void CreateBitmapFromDirect3DSurface_DoesNotInferAlphaMode_IfWrongAlphaModeIsExplicitlySpecified_TestCase(CanvasDevice^ device, DirectXPixelFormat format)
     {
-        auto surface = CreateSurface(D3D11_BIND_SHADER_RESOURCE, static_cast<DXGI_FORMAT>(format));
+        auto surface = CreateSurface(D3D11_BIND_SHADER_RESOURCE, static_cast<DXGI_FORMAT>(format), device);
         
         // The bad alpha mode should fall through and get validated by D2D.
         Assert::ExpectException<Platform::COMException^>(
             [&]
             {
-                CanvasBitmap::CreateFromDirect3D11Surface(m_canvasDevice, surface, 96.0f, CanvasAlphaMode::Premultiplied);
+                CanvasBitmap::CreateFromDirect3D11Surface(device, surface, 96.0f, CanvasAlphaMode::Premultiplied);
             });
     }
 
     TEST_METHOD(CreateBitmapFromDirect3DSurface_DoesNotInferAlphaMode_IfWrongAlphaModeIsExplicitlySpecified)
     {
-        CreateBitmapFromDirect3DSurface_DoesNotInferAlphaMode_IfWrongAlphaModeIsExplicitlySpecified_TestCase(DirectXPixelFormat::B8G8R8X8UIntNormalized);
-        CreateBitmapFromDirect3DSurface_DoesNotInferAlphaMode_IfWrongAlphaModeIsExplicitlySpecified_TestCase(DirectXPixelFormat::R8G8UIntNormalized);
-        CreateBitmapFromDirect3DSurface_DoesNotInferAlphaMode_IfWrongAlphaModeIsExplicitlySpecified_TestCase(DirectXPixelFormat::R8UIntNormalized);
+        // We expect this test to hit debug layer validation failures, so must run it without the debug layer.
+        DisableDebugLayer disableDebug;
+
+        auto device = ref new CanvasDevice();
+
+        CreateBitmapFromDirect3DSurface_DoesNotInferAlphaMode_IfWrongAlphaModeIsExplicitlySpecified_TestCase(device, DirectXPixelFormat::B8G8R8X8UIntNormalized);
+        CreateBitmapFromDirect3DSurface_DoesNotInferAlphaMode_IfWrongAlphaModeIsExplicitlySpecified_TestCase(device, DirectXPixelFormat::R8G8UIntNormalized);
+        CreateBitmapFromDirect3DSurface_DoesNotInferAlphaMode_IfWrongAlphaModeIsExplicitlySpecified_TestCase(device, DirectXPixelFormat::R8UIntNormalized);
     }
 };

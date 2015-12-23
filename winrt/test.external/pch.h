@@ -52,5 +52,6 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 using namespace Microsoft::WRL;
 
 #include "Helpers.h"
+#include "DebugLayer.h"
 #include "MockDxgiDevice.h"
 #include "MockDxgiSurface.h"

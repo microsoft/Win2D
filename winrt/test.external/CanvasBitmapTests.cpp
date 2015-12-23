@@ -1318,10 +1318,14 @@ public:
 
     TEST_METHOD(CanavasBitmap_CopyPixelsFromBitmap_SameBitmap)
     {
+        // We expect this test to hit debug layer validation failures, so must run it without the debug layer.
+        DisableDebugLayer disableDebug;
+
         //
         // This is validated by D2D. Ensure the expected error occurs.
         //
-        auto bitmap = ref new CanvasRenderTarget(m_sharedDevice, 1, 1, DEFAULT_DPI);
+        auto device = ref new CanvasDevice();
+        auto bitmap = ref new CanvasRenderTarget(device, 1, 1, DEFAULT_DPI);
 
         Assert::ExpectException<Platform::InvalidArgumentException^>([&] { bitmap->CopyPixelsFromBitmap(bitmap); });
 
@@ -2100,9 +2104,6 @@ public:
         };
 
         AssertPixelValues(AsArrayReference(expected3), bitmap1->GetPixelBytes());
-
-        // Copying between the same bitmap fails.
-        ExpectCOMException(E_INVALIDARG, [&] { bitmap1->CopyPixelsFromBitmap(bitmap1); });
 
         // Copying between bitmaps of different formats fails.
         auto otherFormatBitmap = CanvasBitmap::CreateFromBytes(device2, AsArrayReference(initialData1), 4, 4, otherFormat);

@@ -162,6 +162,9 @@ TEST_CLASS(CanvasBrushTests)
 
     TEST_METHOD(CanvasGradientBrush_ThrowOnChannelIgnore)
     {
+        // We expect this test to hit debug layer validation failures, so must run it without the debug layer.
+        DisableDebugLayer disableDebug;
+
         auto device = ref new CanvasDevice();
         Assert::ExpectException<Platform::InvalidArgumentException^>(
             [&]
