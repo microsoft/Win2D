@@ -48,6 +48,11 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
           property can be used to determine if the image loaded is actually
           using cache on demand.
         </p>
+        <p>
+          When using <a href="Interop.htm">Direct2D interop</a>, this Win2D class
+          corresponds to one of the Direct2D interfaces ID2D1ImageSource or
+          ID2D1TransformedImageSource.
+        </p>
       </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasVirtualBitmap.Dispose">

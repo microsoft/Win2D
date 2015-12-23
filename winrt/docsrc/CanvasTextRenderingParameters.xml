@@ -93,7 +93,8 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <remarks>
         <p>
           When using <a href="Interop.htm">Direct2D interop</a>, this Win2D class
-          corresponds to the DirectWrite interface IDWriteRenderingParams2.
+          corresponds to the DirectWrite interface IDWriteRenderingParams2 on Windows 8.1, and
+          IDWriteRenderingParams3 on Windows 10.
         </p>
       </remarks>
     </member>
