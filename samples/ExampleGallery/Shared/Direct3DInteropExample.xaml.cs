@@ -10,6 +10,7 @@ using Microsoft.Graphics.Canvas.UI;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using System;
 using System.Numerics;
+using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -48,11 +49,13 @@ namespace ExampleGallery
 
 
         // Bloom postprocess uses Win2D image effects to create a glow around bright parts of the 3D model.
-        CanvasRenderTarget bloomRenderTarget;
         LinearTransferEffect extractBrightAreas;
         GaussianBlurEffect blurBrightAreas;
         LinearTransferEffect adjustBloomIntensity;
         BlendEffect bloomResult;
+
+        CanvasRenderTarget bloomRenderTarget;
+        Size bloomRenderTargetSize;
 
 
         public Direct3DInteropExample()
@@ -246,19 +249,18 @@ namespace ExampleGallery
             drawingSession.DrawImage(bloomResult);
         }
 
-        int DipsToPixelSize(ICanvasAnimatedControl sender, float dips)
-        {
-            System.Diagnostics.Debug.Assert(dips > 0);
-            return Math.Max(sender.ConvertDipsToPixels(dips, CanvasDpiRounding.Round), 1);
-        }
 
         void DemandCreateBloomRenderTarget(ICanvasAnimatedControl sender)
         {
             // Early-out if we already have a rendertarget of the correct size.
-            // Compare sizes as pixels rather than DIPs to avoid rounding artifacts.
+            // This compares against a stored copy of sender.Size, rather than reading back bloomRenderTarget.Size,
+            // because the actual rendertarget size will be rounded to an integer number of pixels, 
+            // thus may not be identical to the size that was passed in when constructing the rendertarget.
+            var senderSize = sender.Size;
+
             if (bloomRenderTarget != null &&
-                bloomRenderTarget.SizeInPixels.Width == DipsToPixelSize(sender, (float)sender.Size.Width) &&
-                bloomRenderTarget.SizeInPixels.Height == DipsToPixelSize(sender, (float)sender.Size.Height))
+                bloomRenderTargetSize == senderSize &&
+                bloomRenderTarget.Dpi == sender.Dpi)
             {
                 return;
             }
@@ -270,7 +272,8 @@ namespace ExampleGallery
             }
 
             // Create the new rendertarget.
-            bloomRenderTarget = new CanvasRenderTarget(sender, sender.Size);
+            bloomRenderTarget = new CanvasRenderTarget(sender, senderSize);
+            bloomRenderTargetSize = senderSize;
 
             // Configure the bloom effect to use this new rendertarget.
             extractBrightAreas.Source = bloomRenderTarget;
