@@ -10,9 +10,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     namespace Strings
     {
         #define STRING(name, value)     extern wchar_t const* const name;
+        #define STRING_A(name, value)   extern char const* const name;
 
         #include "Strings.inl"
   
         #undef STRING
+        #undef STRING_A
     }
 }}}}
