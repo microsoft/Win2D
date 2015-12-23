@@ -129,15 +129,12 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
               <entry><para>GetWrappedResource parameters</para></entry>
             </row>
           </tableHeader>
+          <!--
+            Sorted alphabetically by Win2D class name (not including the namespace)
+          -->
           <row>
             <entry><codeEntityReference>T:Microsoft.Graphics.Canvas.CanvasBitmap</codeEntityReference></entry>
             <entry><codeInline>ID2D1Bitmap1</codeInline> without D2D1_BITMAP_OPTIONS_TARGET</entry>
-            <entry>Device</entry>
-            <entry>-</entry>
-          </row>
-          <row>
-            <entry><codeEntityReference>T:Microsoft.Graphics.Canvas.CanvasVirtualBitmap</codeEntityReference></entry>
-            <entry><codeInline>ID2D1ImageSource</codeInline> or <codeInline>ID2D1TransformedImageSource</codeInline></entry>
             <entry>Device</entry>
             <entry>-</entry>
           </row>
@@ -162,6 +159,18 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
           <row>
             <entry><codeEntityReference>T:Microsoft.Graphics.Canvas.CanvasDrawingSession</codeEntityReference></entry>
             <entry><codeInline>ID2D1DeviceContext1</codeInline></entry>
+            <entry>-</entry>
+            <entry>-</entry>
+          </row>
+          <row>
+            <entry><codeEntityReference>T:Microsoft.Graphics.Canvas.Text.CanvasFontFace</codeEntityReference></entry>
+            <entry><codeInline>IDWriteFont2</codeInline></entry>
+            <entry>-</entry>
+            <entry>-</entry>
+          </row>
+          <row>
+            <entry><codeEntityReference>T:Microsoft.Graphics.Canvas.Text.CanvasFontSet</codeEntityReference></entry>
+            <entry><codeInline>IDWriteFontCollection</codeInline></entry>
             <entry>-</entry>
             <entry>-</entry>
           </row>
@@ -198,6 +207,12 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
             <entry><codeEntityReference>T:Microsoft.Graphics.Canvas.Brushes.CanvasLinearGradientBrush</codeEntityReference></entry>
             <entry><codeInline>ID2D1LinearGradientBrush</codeInline></entry>
             <entry>Device</entry>
+            <entry>-</entry>
+          </row>
+          <row>
+            <entry><codeEntityReference>T:Microsoft.Graphics.Canvas.Text.CanvasNumberSubstitution</codeEntityReference></entry>
+            <entry><codeInline>IDWriteNumberSubstitution</codeInline></entry>
+            <entry>-</entry>
             <entry>-</entry>
           </row>
           <row>
@@ -244,30 +259,9 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
           </row>
           <row>
             <entry>
-              <codeEntityReference>N:Microsoft.Graphics.Canvas.Effects</codeEntityReference>.*
-              (multiple Win2D classes map to the same D2D type)
-            </entry>
-            <entry><codeInline>ID2D1Effect</codeInline> with the appropriate D2D1_PROPERTY_TYPE_CLSID</entry>
-            <entry>Device</entry>
-            <entry>Device, optional DPI<superscript>(1)</superscript></entry>
-          </row>
-          <row>
-            <entry>
               <codeEntityReference>T:Microsoft.Graphics.Canvas.Text.CanvasTextRenderingParameters</codeEntityReference>
             </entry>
             <entry><codeInline>IDWriteRenderingParams2</codeInline></entry>
-            <entry>-</entry>
-            <entry>-</entry>
-          </row>
-          <row>
-            <entry><codeEntityReference>T:Microsoft.Graphics.Canvas.Text.CanvasFontSet</codeEntityReference></entry>
-            <entry><codeInline>IDWriteFontCollection</codeInline></entry>
-            <entry>-</entry>
-            <entry>-</entry>
-          </row>
-          <row>
-            <entry><codeEntityReference>T:Microsoft.Graphics.Canvas.Text.CanvasFontFace</codeEntityReference></entry>
-            <entry><codeInline>IDWriteFont2</codeInline></entry>
             <entry>-</entry>
             <entry>-</entry>
           </row>
@@ -278,10 +272,19 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
             <entry>-</entry>
           </row>
           <row>
-            <entry><codeEntityReference>T:Microsoft.Graphics.Canvas.Text.CanvasNumberSubstitution</codeEntityReference></entry>
-            <entry><codeInline>IDWriteNumberSubstitution</codeInline></entry>
+            <entry><codeEntityReference>T:Microsoft.Graphics.Canvas.CanvasVirtualBitmap</codeEntityReference></entry>
+            <entry><codeInline>ID2D1ImageSource</codeInline> or <codeInline>ID2D1TransformedImageSource</codeInline></entry>
+            <entry>Device</entry>
             <entry>-</entry>
-            <entry>-</entry>
+          </row>
+          <row>
+            <entry>
+              <codeEntityReference>N:Microsoft.Graphics.Canvas.Effects</codeEntityReference>.*
+              (multiple Win2D classes map to the same D2D type)
+            </entry>
+            <entry><codeInline>ID2D1Effect</codeInline> with the appropriate D2D1_PROPERTY_TYPE_CLSID</entry>
+            <entry>Device</entry>
+            <entry>Device, optional DPI<superscript>(1)</superscript></entry>
           </row>
         </table>
         
