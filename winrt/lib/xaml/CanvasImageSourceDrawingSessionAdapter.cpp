@@ -27,10 +27,29 @@ std::shared_ptr<CanvasImageSourceDrawingSessionAdapter> CanvasImageSourceDrawing
     //
     ComPtr<ID2D1DeviceContext> deviceContext;
     POINT offset;
-    ThrowIfFailed(sisNative->BeginDraw(
+    HRESULT hr = sisNative->BeginDraw(
         updateRect,
         IID_PPV_ARGS(&deviceContext),
-        &offset));
+        &offset);
+
+    if (FAILED(hr))
+    {
+        // BeginDraw returns an an unhelpful E_FAIL if it is called from the wrong thread.
+        // We check for that and translate to RPC_E_WRONG_THREAD instead.
+        if (hr == E_FAIL)
+        {
+            ComPtr<ICoreDispatcher> dispatcher;
+            ThrowIfFailed(As<IDependencyObject>(sisNative)->get_Dispatcher(&dispatcher));
+
+            boolean hasThreadAccess;
+            ThrowIfFailed(dispatcher->get_HasThreadAccess(&hasThreadAccess));
+
+            if (!hasThreadAccess)
+                hr = RPC_E_WRONG_THREAD;
+        }
+
+        ThrowHR(hr);
+    }
 
     //
     // If this function fails then we need to call EndDraw

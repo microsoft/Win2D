@@ -111,5 +111,33 @@ TEST_CLASS(CanvasImageSourceTests)
         swprintf_s(msg, L"Cannot create CanvasImageSource sized %d x 2; MaximumBitmapSizeInPixels for this device is %d.", tooBig, maxSize);
         ExpectCOMException(E_INVALIDARG, msg, [&]() { throw exception3; });
     }
+
+
+    TEST_METHOD(CanvasImageSource_DrawOnWrongThread)
+    {
+        auto device = ref new CanvasDevice();
+
+        CanvasImageSource^ imageSource;
+        CanvasVirtualImageSource^ virtualImageSource;
+
+        RunOnUIThread(
+            [&]
+            {
+                imageSource = ref new CanvasImageSource(device, 1, 1, 96);
+                virtualImageSource = ref new CanvasVirtualImageSource(device, 1, 1, 96);
+            });
+
+        ExpectCOMException(RPC_E_WRONG_THREAD,
+            [&]
+            {
+                imageSource->CreateDrawingSession(Colors::Black);
+            });
+
+        ExpectCOMException(RPC_E_WRONG_THREAD,
+            [&]
+            {
+                virtualImageSource->CreateDrawingSession(Colors::Black, Rect{ 0, 0, 1, 1 });
+            });
+    }
 };
 
