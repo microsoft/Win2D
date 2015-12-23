@@ -202,8 +202,8 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       </p>
       <p>
         GetSharedDevice will fail if the <see cref="P:Microsoft.Graphics.Canvas.CanvasDevice.DebugLevel"/>
-        property has been modified in between calls to GetSharedDevice. The debug level should be set
-        before the first shared device is created.
+        property has been modified in between calls to GetSharedDevice. Generally,
+        the debug level should be set before the first shared device is created.
       </p>
     </template>
 

@@ -2,8 +2,10 @@
 //
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
+using Microsoft.Graphics.Canvas;
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Storage;
@@ -69,6 +71,52 @@ namespace ExampleGallery
 #endif
         }
 
+        public CanvasDebugLevel DebugLevel
+        {
+            get { return CanvasDevice.DebugLevel; }
+
+            set
+            {
+                if (value == CanvasDevice.DebugLevel)
+                    return;
+
+                // A shared device might already have been created using a different debug level.
+                // Disposing it forces a new shared device to be created the next time someone asks for one.
+                CanvasDevice.GetSharedDevice().Dispose();
+
+                // Set the new debug level.
+                CanvasDevice.DebugLevel = value;
+
+                // Make sure we can still create devices with this new setting (i.e. that the debug layer is properly installed).
+                if (value != CanvasDebugLevel.None)
+                {
+                    try
+                    {
+                        new CanvasDevice().Dispose();
+                    }
+                    catch (COMException)
+                    {
+                        CanvasDevice.DebugLevel = CanvasDebugLevel.None;
+
+                        const string msg = "Direct2D or Direct3D debug layer is not installed.\n\n" +
+                                           "See http://microsoft.github.io/Win2D/html/P_Microsoft_Graphics_Canvas_CanvasDevice_DebugLevel.htm";
+
+                        var task = new MessageDialog(msg).ShowAsync();
+                    }
+                }
+            }
+        }
+
+        public List<CanvasDebugLevel> DebugLevelNames
+        {
+            get { return Utils.GetEnumAsList<CanvasDebugLevel>(); }
+        }
+
+        void exitButton_Click(object sender, RoutedEventArgs e)
+        {
+            Application.Current.Exit();
+        }
+
         void gcButton_Checked(object sender, RoutedEventArgs e)
         {
             if (timer == null)
@@ -95,11 +143,6 @@ namespace ExampleGallery
             {
                 thePage.GenerateLeakReport();
             }
-        }
-
-        void exitButton_Click(object sender, RoutedEventArgs e)
-        {
-            Application.Current.Exit();
         }
 
         static public void ExampleControlCreated(string name, UserControl control)
