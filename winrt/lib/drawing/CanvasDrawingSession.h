@@ -57,6 +57,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_CanvasDrawingSession, BaseTrust);
 
         std::shared_ptr<ICanvasDrawingSessionAdapter> m_adapter;
+        std::shared_ptr<bool> m_targetHasActiveDrawingSession;
         D2D1_POINT_2F const m_offset;
         
         ComPtr<ID2D1SolidColorBrush> m_solidColorBrush;
@@ -88,12 +89,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ID2D1DeviceContext1* deviceContext,
             std::shared_ptr<ICanvasDrawingSessionAdapter> drawingSessionAdapter,
             ICanvasDevice* owner = nullptr,
+            std::shared_ptr<bool> targetHasActiveDrawingSession = nullptr,
             D2D1_POINT_2F offset = D2D1_POINT_2F{ 0, 0 });
 
         CanvasDrawingSession(
             ID2D1DeviceContext1* deviceContext,
             std::shared_ptr<ICanvasDrawingSessionAdapter> drawingSessionAdapter = nullptr,
             ICanvasDevice* owner = nullptr,
+            std::shared_ptr<bool> targetHasActiveDrawingSession = nullptr,
             D2D1_POINT_2F offset = D2D1_POINT_2F{ 0, 0 });
 
 

@@ -161,7 +161,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     static ComPtr<ICanvasDrawingSession> CreateDrawingSessionOverD2DBitmap(
         ICanvasDevice* owner,
-        ID2D1Bitmap1* targetBitmap)
+        ID2D1Bitmap1* targetBitmap,
+        std::shared_ptr<bool> hasActiveDrawingSession)
     {
         assert(owner != nullptr);
         assert(targetBitmap != nullptr);
@@ -185,7 +186,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         auto adapter = std::make_shared<SimpleCanvasDrawingSessionAdapter>(deviceContext.Get());
 
-        return CanvasDrawingSession::CreateNew(deviceContext.Get(), adapter, owner);
+        return CanvasDrawingSession::CreateNew(deviceContext.Get(), adapter, owner, std::move(hasActiveDrawingSession));
     }
 
 
@@ -215,6 +216,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ICanvasDevice* canvasDevice,
         ID2D1Bitmap1* d2dBitmap)
         : CanvasBitmapImpl(canvasDevice, d2dBitmap)
+        , m_hasActiveDrawingSession(std::make_shared<bool>())
     {
         assert(IsRenderTargetBitmap(d2dBitmap) 
             && "CanvasRenderTarget should never be constructed with a non-target bitmap.  This should have been validated before construction.");
@@ -233,7 +235,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
                 auto newDrawingSession = CreateDrawingSessionOverD2DBitmap(
                     m_device.Get(),
-                    resource.Get());
+                    resource.Get(),
+                    m_hasActiveDrawingSession);
 
                 ThrowIfFailed(newDrawingSession.CopyTo(drawingSession));
             });

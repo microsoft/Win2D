@@ -19,6 +19,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         virtual ComPtr<ICanvasDrawingSession> Create(
             ICanvasDevice* owner,
             ISurfaceImageSourceNativeWithD2D* sisNative,
+            std::shared_ptr<bool> hasActiveDrawingSession,
             Color const& clearColor,
             Rect const& updateRectangleInDips,
             float dpi) const = 0;
@@ -75,6 +76,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         ComPtr<ICanvasDevice> m_device;
         std::shared_ptr<ICanvasImageSourceDrawingSessionFactory> m_drawingSessionFactory;
+        std::shared_ptr<bool> m_hasActiveDrawingSession;
         const float m_width;
         const float m_height;
         const float m_dpi;
@@ -146,6 +148,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         virtual ComPtr<ICanvasDrawingSession> Create(
             ICanvasDevice* owner,
             ISurfaceImageSourceNativeWithD2D* sisNative,
+            std::shared_ptr<bool> hasActiveDrawingSession,
             Color const& clearColor,
             Rect const& updateRectangleInDips,
             float dpi) const override;

@@ -55,6 +55,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         , m_device(device)
         , m_d2dCommandListIsClosed(false)
         , m_hasInteropBeenUsed(hasInteropBeenUsed)
+        , m_hasActiveDrawingSession(std::make_shared<bool>())
     {
     }
 
@@ -78,7 +79,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
                 auto adapter = std::make_shared<SimpleCanvasDrawingSessionAdapter>(deviceContext.Get());
 
-                auto ds = CanvasDrawingSession::CreateNew(deviceContext.Get(), adapter, device.Get());
+                auto ds = CanvasDrawingSession::CreateNew(deviceContext.Get(), adapter, device.Get(), m_hasActiveDrawingSession);
 
                 ThrowIfFailed(ds.CopyTo(drawingSession));
             });

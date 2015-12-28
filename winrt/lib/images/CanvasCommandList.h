@@ -20,6 +20,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ClosablePtr<ICanvasDevice> m_device;
         bool m_d2dCommandListIsClosed;
         bool m_hasInteropBeenUsed;
+        std::shared_ptr<bool> m_hasActiveDrawingSession;
 
     public:
         static ComPtr<CanvasCommandList> CreateNew(

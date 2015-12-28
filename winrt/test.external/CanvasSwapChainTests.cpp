@@ -175,4 +175,19 @@ TEST_CLASS(CanvasSwapChainTests)
         swprintf_s(msg, L"Cannot create CanvasSwapChain sized %d x 2; MaximumBitmapSizeInPixels for this device is %d.", tooBig, maxSize);
         ExpectCOMException(E_INVALIDARG, msg, [&]() { ref new CanvasSwapChain(device, static_cast<float>(tooBig) / 2, 1, 192); });
     }
+
+    TEST_METHOD(CanvasSwapChain_NestedBeginDraw)
+    {
+        auto device = ref new CanvasDevice();
+        auto swapChain = ref new CanvasSwapChain(device, 1, 1, 96);
+        auto drawingSession = swapChain->CreateDrawingSession(Colors::Black);
+
+        ExpectCOMException(
+            E_FAIL, 
+            L"The last drawing session returned by CreateDrawingSession must be disposed before a new one can be created.",
+            [&]
+            {
+                swapChain->CreateDrawingSession(Colors::Black);
+            });
+    }
 };

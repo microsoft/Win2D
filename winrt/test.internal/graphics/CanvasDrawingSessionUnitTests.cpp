@@ -3839,7 +3839,7 @@ public:
             : DeviceContext(Make<StubD2DDeviceContext>())
             , Adapter(std::make_shared<StubCanvasDrawingSessionAdapter>())
             , Offset(D2D1_POINT_2F{offsetX, offsetY})
-            , DrawingSession(CanvasDrawingSession::CreateNew(DeviceContext.Get(), Adapter, nullptr, Offset))
+            , DrawingSession(CanvasDrawingSession::CreateNew(DeviceContext.Get(), Adapter, nullptr, nullptr, Offset))
             , UnitMode(D2D1_UNIT_MODE_DIPS)
         {
             //

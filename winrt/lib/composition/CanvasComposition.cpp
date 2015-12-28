@@ -188,6 +188,7 @@ HRESULT CanvasCompositionStatics::CreateDrawingSessionImpl(ICompositionDrawingSu
                 As<ID2D1DeviceContext1>(deviceContext).Get(),
                 std::make_shared<CompositionDrawingSurfaceDrawingSessionAdapter>(std::move(drawingSurfaceInterop)),
                 owner,
+                nullptr,
                 D2D1_POINT_2F{ (float)offset.x, (float)offset.y });
             ThrowIfFailed(newDs.CopyTo(drawingSession));
         });

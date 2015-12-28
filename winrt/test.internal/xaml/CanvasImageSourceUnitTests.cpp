@@ -546,6 +546,7 @@ public:
         drawingSessionFactory->Create(
             Make<MockCanvasDevice>().Get(),
             As<ISurfaceImageSourceNativeWithD2D>(surfaceImageSource).Get(),
+            std::make_shared<bool>(),
             anyClearColor,
             updateRectangleInDips,
             dpi);

@@ -148,7 +148,7 @@ ComPtr<ICanvasDrawingSession> CanvasPrintEventArgs::CreateDrawingSessionImpl()
     //
 
     if (m_currentCommandList)
-        ThrowHR(E_FAIL, Strings::CanvasPrintEventArgsCannotCreateDrawingSessionUntilPreviousOneClosed);
+        ThrowHR(E_FAIL, Strings::CannotCreateDrawingSessionUntilPreviousOneClosed);
 
     auto d2dCommandList = deviceInternal->CreateCommandList();
     auto d2dDeviceContext = deviceInternal->CreateDeviceContextForDrawingSession();

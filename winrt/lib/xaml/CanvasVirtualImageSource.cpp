@@ -180,6 +180,7 @@ CanvasVirtualImageSource::CanvasVirtualImageSource(
     Size size,
     CanvasAlphaMode alphaMode)
     : m_drawingSessionFactory(drawingSessionFactory)
+    , m_hasActiveDrawingSession(std::make_shared<bool>())
     , m_vsis(vsis)
     , m_dpi(dpi)
     , m_size(size)
@@ -241,7 +242,7 @@ ComPtr<ICanvasDrawingSession> CanvasVirtualImageSource::CreateDrawingSession(Col
     try
     {
         // First attempt.
-        return m_drawingSessionFactory->Create(m_device.Get(), sisNative.Get(), clearColor, updateRectangle, m_dpi);
+        return m_drawingSessionFactory->Create(m_device.Get(), sisNative.Get(), m_hasActiveDrawingSession, clearColor, updateRectangle, m_dpi);
     }
     catch (HResultException const& e)
     {
@@ -258,7 +259,7 @@ ComPtr<ICanvasDrawingSession> CanvasVirtualImageSource::CreateDrawingSession(Col
 
             ThrowIfFailed(Recreate(As<ICanvasResourceCreator>(m_device).Get()));
 
-            return m_drawingSessionFactory->Create(m_device.Get(), sisNative.Get(), clearColor, updateRectangle, m_dpi);
+            return m_drawingSessionFactory->Create(m_device.Get(), sisNative.Get(), m_hasActiveDrawingSession, clearColor, updateRectangle, m_dpi);
         }
         else
         {

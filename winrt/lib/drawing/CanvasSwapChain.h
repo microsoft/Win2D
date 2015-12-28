@@ -113,6 +113,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         bool m_isCoreWindowSwapChain;
         float m_dpi;
         std::shared_ptr<CanvasSwapChainAdapter> m_adapter;
+        std::shared_ptr<bool> m_hasActiveDrawingSession;
 
     public:
         static DirectXPixelFormat const DefaultPixelFormat = PIXEL_FORMAT(B8G8R8A8UIntNormalized);

@@ -12,6 +12,7 @@ using namespace ABI::Microsoft::Graphics::Canvas::UI::Xaml;
 ComPtr<ICanvasDrawingSession> CanvasImageSourceDrawingSessionFactory::Create(
     ICanvasDevice* owner,
     ISurfaceImageSourceNativeWithD2D* sisNative,
+    std::shared_ptr<bool> hasActiveDrawingSession,
     Color const& clearColor,
     Rect const& updateRectangleInDips,
     float dpi) const
@@ -34,6 +35,7 @@ ComPtr<ICanvasDrawingSession> CanvasImageSourceDrawingSessionFactory::Create(
         deviceContext.Get(),
         std::move(adapter),
         owner,
+        std::move(hasActiveDrawingSession),
         offset);
 }
 
@@ -165,6 +167,7 @@ CanvasImageSource::CanvasImageSource(
     ISurfaceImageSourceFactory* surfaceImageSourceFactory,
     std::shared_ptr<ICanvasImageSourceDrawingSessionFactory> drawingSessionFactory)
     : m_drawingSessionFactory(drawingSessionFactory)
+    , m_hasActiveDrawingSession(std::make_shared<bool>())
     , m_width(width)
     , m_height(height)
     , m_dpi(dpi)
@@ -284,6 +287,7 @@ IFACEMETHODIMP CanvasImageSource::CreateDrawingSessionWithUpdateRectangle(
             auto ds = m_drawingSessionFactory->Create(
                 m_device.Get(),
                 sisNative.Get(),
+                m_hasActiveDrawingSession,
                 clearColor,
                 updateRectangle,
                 m_dpi);

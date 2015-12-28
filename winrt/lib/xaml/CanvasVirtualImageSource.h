@@ -75,6 +75,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_UI_Xaml_CanvasVirtualImageSource, BaseTrust);
 
         std::shared_ptr<ICanvasImageSourceDrawingSessionFactory> m_drawingSessionFactory;
+        std::shared_ptr<bool> m_hasActiveDrawingSession;
         ComPtr<ICanvasDevice> m_device;
         ComPtr<IVirtualSurfaceImageSource> m_vsis;
         float m_dpi;

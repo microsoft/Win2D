@@ -1155,7 +1155,7 @@ TEST_CLASS(CanvasPrintEventArgsUnitTests)
         ThrowIfFailed(f.Args->CreateDrawingSession(&ds[0]));
 
         Assert::AreEqual(E_FAIL, f.Args->CreateDrawingSession(&ds[1]));
-        ValidateStoredErrorState(E_FAIL, Strings::CanvasPrintEventArgsCannotCreateDrawingSessionUntilPreviousOneClosed);
+        ValidateStoredErrorState(E_FAIL, Strings::CannotCreateDrawingSessionUntilPreviousOneClosed);
     }
 
     TEST_METHOD_EX(CanvasPrintEventArgs_When_GetDeferralCalledMultipleTimes_SecondCallFails)

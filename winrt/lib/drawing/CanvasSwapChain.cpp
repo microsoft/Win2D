@@ -173,6 +173,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         , m_isCoreWindowSwapChain(isCoreWindowSwapChain)
         , m_dpi(dpi)
         , m_adapter(CanvasSwapChainAdapter::GetInstance())
+        , m_hasActiveDrawingSession(std::make_shared<bool>())
     {
     }
 
@@ -687,7 +688,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                     m_dpi,
                     &deviceContext);
                 
-                auto newDrawingSession = CanvasDrawingSession::CreateNew(deviceContext.Get(), adapter, device.Get());
+                auto newDrawingSession = CanvasDrawingSession::CreateNew(deviceContext.Get(), adapter, device.Get(), m_hasActiveDrawingSession);
 
                 ThrowIfFailed(newDrawingSession.CopyTo(drawingSession));
             });

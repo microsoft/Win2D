@@ -73,14 +73,24 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ID2D1DeviceContext1* deviceContext,
         std::shared_ptr<ICanvasDrawingSessionAdapter> drawingSessionAdapter,
         ICanvasDevice* owner,
+        std::shared_ptr<bool> targetHasActiveDrawingSession,
         D2D1_POINT_2F offset)
     {
+        if (targetHasActiveDrawingSession)
+        {
+            if (*targetHasActiveDrawingSession)
+                ThrowHR(E_FAIL, Strings::CannotCreateDrawingSessionUntilPreviousOneClosed);
+
+            *targetHasActiveDrawingSession = true;
+        }
+
         InitializeDefaultState(deviceContext);
 
         auto drawingSession = Make<CanvasDrawingSession>(
             deviceContext,
             drawingSessionAdapter,
             owner,
+            std::move(targetHasActiveDrawingSession),
             offset);
         CheckMakeResult(drawingSession);
 
@@ -129,9 +139,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ID2D1DeviceContext1* deviceContext,
         std::shared_ptr<ICanvasDrawingSessionAdapter> adapter,
         ICanvasDevice* owner,
+        std::shared_ptr<bool> targetHasActiveDrawingSession,
         D2D1_POINT_2F offset)
         : ResourceWrapper(deviceContext)
         , m_adapter(adapter ? adapter : std::make_shared<NoopCanvasDrawingSessionAdapter>())
+        , m_targetHasActiveDrawingSession(std::move(targetHasActiveDrawingSession))
         , m_offset(offset)
         , m_nextLayerId(0)
         , m_owner(owner)
@@ -157,6 +169,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
                 if (!m_activeLayerIds.empty())
                     ThrowHR(E_FAIL, Strings::DidNotPopLayer);
+
+                if (m_targetHasActiveDrawingSession)
+                    *m_targetHasActiveDrawingSession = false;
 
                 if (m_adapter)
                 {

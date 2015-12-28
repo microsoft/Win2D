@@ -113,4 +113,19 @@ public:
         drawingSession->DrawImage(canvasCommandList);
         delete drawingSession;
     }
+
+    TEST_METHOD(CanvasCommandList_NestedBeginDraw)
+    {
+        auto device = ref new CanvasDevice();
+        auto commandList = ref new CanvasCommandList(device);
+        auto drawingSession = commandList->CreateDrawingSession();
+
+        ExpectCOMException(
+            E_FAIL, 
+            L"The last drawing session returned by CreateDrawingSession must be disposed before a new one can be created.",
+            [&]
+            {
+                commandList->CreateDrawingSession();
+            });
+    }
 };

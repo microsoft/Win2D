@@ -139,5 +139,51 @@ TEST_CLASS(CanvasImageSourceTests)
                 virtualImageSource->CreateDrawingSession(Colors::Black, Rect{ 0, 0, 1, 1 });
             });
     }
-};
 
+
+    TEST_METHOD(CanvasImageSource_NestedBeginDraw)
+    {
+        Platform::COMException^ exception1;
+        Platform::COMException^ exception2;
+
+        RunOnUIThread(
+            [&]
+            {
+                auto device = ref new CanvasDevice();
+
+                auto imageSource = ref new CanvasImageSource(device, 1, 1, 96);
+                auto virtualImageSource = ref new CanvasVirtualImageSource(device, 1, 1, 96);
+
+                auto drawingSession = imageSource->CreateDrawingSession(Colors::Black);
+
+                try
+                {
+                    imageSource->CreateDrawingSession(Colors::Black);
+                }
+                catch (Platform::COMException^ e)
+                {
+                    exception1 = e;
+                }
+
+                delete drawingSession;
+
+                drawingSession = virtualImageSource->CreateDrawingSession(Colors::Black, Rect{ 0, 0, 1, 1 });
+
+                try
+                {
+                    virtualImageSource->CreateDrawingSession(Colors::Black, Rect{ 0, 0, 1, 1 });
+                }
+                catch (Platform::COMException^ e)
+                {
+                    exception2 = e;
+                }
+        
+                delete drawingSession;
+        });
+
+        auto msg = L"The last drawing session returned by CreateDrawingSession must be disposed before a new one can be created.";
+
+        ExpectCOMException(E_FAIL, msg, [&] { throw exception1; });
+        ExpectCOMException(E_FAIL, msg, [&] { throw exception2; });
+    }
+};

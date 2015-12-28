@@ -83,6 +83,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     {
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_CanvasRenderTarget, BaseTrust);
 
+        std::shared_ptr<bool> m_hasActiveDrawingSession;
+
     public:
         static ComPtr<CanvasRenderTarget> CreateNew(
             ICanvasDevice* canvasDevice,

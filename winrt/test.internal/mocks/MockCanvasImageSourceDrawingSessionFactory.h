@@ -14,6 +14,7 @@ namespace canvas
         virtual ComPtr<ICanvasDrawingSession> Create(
             ICanvasDevice* owner,
             ISurfaceImageSourceNativeWithD2D* sisNative,
+            std::shared_ptr<bool> hasActiveDrawingSession,
             Color const& clearColor,
             Rect const& updateRectangleInDips,
             float dpi) const override
