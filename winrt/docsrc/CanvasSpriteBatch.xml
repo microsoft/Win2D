@@ -110,22 +110,37 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
 
     <member name="M:Microsoft.Graphics.Canvas.CanvasSpriteBatch.Draw(Microsoft.Graphics.Canvas.CanvasBitmap,Windows.Foundation.Rect,System.Numerics.Vector4)">
       <summary>Adds a sprite to the sprite batch, scaled to fill a rectangle and tinted.</summary>
+      <remarks>
+        <inherittemplate name="SpriteBatch.Tint-remarks"/>
+      </remarks>        
     </member>
 
     <member name="M:Microsoft.Graphics.Canvas.CanvasSpriteBatch.Draw(Microsoft.Graphics.Canvas.CanvasBitmap,System.Numerics.Vector2,System.Numerics.Vector4)">
       <summary>Adds a sprite to the sprite batch, drawn at a specified offset and tinted.</summary>
+      <remarks>
+        <inherittemplate name="SpriteBatch.Tint-remarks"/>
+      </remarks>        
     </member>
 
     <member name="M:Microsoft.Graphics.Canvas.CanvasSpriteBatch.Draw(Microsoft.Graphics.Canvas.CanvasBitmap,System.Numerics.Matrix3x2,System.Numerics.Vector4)">
       <summary>Adds a sprite to the sprite batch, drawn using a specific transform and tinted</summary>
+      <remarks>
+        <inherittemplate name="SpriteBatch.Tint-remarks"/>
+      </remarks>        
     </member>
 
     <member name="M:Microsoft.Graphics.Canvas.CanvasSpriteBatch.Draw(Microsoft.Graphics.Canvas.CanvasBitmap,Windows.Foundation.Rect,System.Numerics.Vector4,Microsoft.Graphics.Canvas.CanvasSpriteFlip)">
       <summary>Adds a sprite to the sprite batch, scaled to fill a rectangle, tinted and optionally flipped.</summary>
+      <remarks>
+        <inherittemplate name="SpriteBatch.Tint-remarks"/>
+      </remarks>        
     </member>
 
     <member name="M:Microsoft.Graphics.Canvas.CanvasSpriteBatch.Draw(Microsoft.Graphics.Canvas.CanvasBitmap,System.Numerics.Matrix3x2,System.Numerics.Vector4,Microsoft.Graphics.Canvas.CanvasSpriteFlip)">
       <summary>Adds a sprite to the sprite batch, drawn using a specific transform, tinted and optionally flipped.</summary>
+      <remarks>
+        <inherittemplate name="SpriteBatch.Tint-remarks"/>
+      </remarks>        
     </member>
 
     <member name="M:Microsoft.Graphics.Canvas.CanvasSpriteBatch.Draw(Microsoft.Graphics.Canvas.CanvasBitmap,System.Numerics.Vector2,System.Numerics.Vector4,System.Numerics.Vector2,System.Single,System.Numerics.Vector2,Microsoft.Graphics.Canvas.CanvasSpriteFlip)">
@@ -136,6 +151,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
           image is then drawn such that the origin is in the position specified
           by the offset.  The rotation and scale are performed around the origin.
         </p>
+        <inherittemplate name="SpriteBatch.Tint-remarks"/>
       </remarks>
     </member>
 
@@ -153,22 +169,37 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
 
     <member name="M:Microsoft.Graphics.Canvas.CanvasSpriteBatch.DrawFromSpriteSheet(Microsoft.Graphics.Canvas.CanvasBitmap,Windows.Foundation.Rect,Windows.Foundation.Rect,System.Numerics.Vector4)">
       <summary>Adds a sprite from a sprite sheet to the sprite batch, scaled to fill a rectangle and tinted.</summary>
+      <remarks>
+        <inherittemplate name="SpriteBatch.Tint-remarks"/>
+      </remarks>        
     </member>
 
     <member name="M:Microsoft.Graphics.Canvas.CanvasSpriteBatch.DrawFromSpriteSheet(Microsoft.Graphics.Canvas.CanvasBitmap,System.Numerics.Vector2,Windows.Foundation.Rect,System.Numerics.Vector4)">
       <summary>Adds a sprite from a sprite sheet to the sprite batch, drawn at a specified offset and tinted.</summary>
+      <remarks>
+        <inherittemplate name="SpriteBatch.Tint-remarks"/>
+      </remarks>        
     </member>
 
     <member name="M:Microsoft.Graphics.Canvas.CanvasSpriteBatch.DrawFromSpriteSheet(Microsoft.Graphics.Canvas.CanvasBitmap,System.Numerics.Matrix3x2,Windows.Foundation.Rect,System.Numerics.Vector4)">
       <summary>Adds a sprite from a sprite sheet to the sprite batch, drawn using a specific transform and tinted</summary>
+      <remarks>
+        <inherittemplate name="SpriteBatch.Tint-remarks"/>
+      </remarks>        
     </member>
 
     <member name="M:Microsoft.Graphics.Canvas.CanvasSpriteBatch.DrawFromSpriteSheet(Microsoft.Graphics.Canvas.CanvasBitmap,Windows.Foundation.Rect,Windows.Foundation.Rect,System.Numerics.Vector4,Microsoft.Graphics.Canvas.CanvasSpriteFlip)">
       <summary>Adds a sprite from a sprite sheet to the sprite batch, scaled to fill a rectangle, tinted and optionally flipped.</summary>
+      <remarks>
+        <inherittemplate name="SpriteBatch.Tint-remarks"/>
+      </remarks>        
     </member>
 
     <member name="M:Microsoft.Graphics.Canvas.CanvasSpriteBatch.DrawFromSpriteSheet(Microsoft.Graphics.Canvas.CanvasBitmap,System.Numerics.Matrix3x2,Windows.Foundation.Rect,System.Numerics.Vector4,Microsoft.Graphics.Canvas.CanvasSpriteFlip)">
       <summary>Adds a sprite from a sprite sheet to the sprite batch, drawn using a specific transform, tinted and optionally flipped.</summary>
+      <remarks>
+        <inherittemplate name="SpriteBatch.Tint-remarks"/>
+      </remarks>        
     </member>
 
     <member name="M:Microsoft.Graphics.Canvas.CanvasSpriteBatch.DrawFromSpriteSheet(Microsoft.Graphics.Canvas.CanvasBitmap,System.Numerics.Vector2,Windows.Foundation.Rect,System.Numerics.Vector4,System.Numerics.Vector2,System.Single,System.Numerics.Vector2,Microsoft.Graphics.Canvas.CanvasSpriteFlip)">
@@ -179,6 +210,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
           image is then drawn such that the origin is in the position specified
           by the offset.  The rotation and scale are performed around the origin.
         </p>
+        <inherittemplate name="SpriteBatch.Tint-remarks"/>
       </remarks>
     </member>
 
@@ -314,4 +346,16 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <summary>The sprites are sorted by bitmap, otherwise the order is preserved.</summary>
     </member>
   </members>
+
+  <template name="SpriteBatch.Tint-remarks">
+    <p>
+      The value of the tint parameter is a Vector4 that specifies the red,
+      green, blue and alpha amounts to scale the bitmap's color by.  The default
+      value is Vector4.One.  A value of Vector4(2, 1, 1, 1) would tint the
+      sprite red by doubling the red amount of each source color.  A value of
+      Vector4(1, 1, 1, 0.5f) would draw the sprite at half opacity.  The tint
+      parameter is specified in non-premultiplied format.
+    </p>
+  </template>
+
 </doc>
