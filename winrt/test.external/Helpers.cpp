@@ -99,3 +99,15 @@ bool GpuMatchesDescription(CanvasDevice^ canvasDevice, wchar_t const* descriptio
 
     return wcscmp(adapterDesc.Description, description) == 0;
 }
+
+int NextValueRepresentableAsFloat(int value)
+{
+    int nextValue = value + 1;
+
+    while (static_cast<int>(static_cast<float>(nextValue)) <= value)
+    {
+        nextValue++;
+    }
+
+    return nextValue;
+}

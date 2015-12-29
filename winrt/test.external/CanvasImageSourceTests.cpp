@@ -64,7 +64,7 @@ TEST_CLASS(CanvasImageSourceTests)
     {
         auto device = ref new CanvasDevice();
         auto maxSize = device->MaximumBitmapSizeInPixels;
-        auto tooBig = maxSize + 1;
+        auto tooBig = NextValueRepresentableAsFloat(maxSize);
         wchar_t msg[256];
 
         Platform::COMException^ exception1;

@@ -576,6 +576,8 @@ void VerifyDpiAndAlpha(ComPtr<ID2D1Bitmap1> const& d2dBitmap, float expectedDpi,
 
 bool GpuMatchesDescription(CanvasDevice^ canvasDevice, wchar_t const* description);
 
+int NextValueRepresentableAsFloat(int value);
+
 struct WicBitmapTestFixture
 {
     ComPtr<ID2D1DeviceContext1> RenderTarget;

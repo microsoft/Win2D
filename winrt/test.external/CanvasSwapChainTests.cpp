@@ -163,7 +163,7 @@ TEST_CLASS(CanvasSwapChainTests)
     {
         auto device = ref new CanvasDevice();
         auto maxSize = device->MaximumBitmapSizeInPixels;
-        auto tooBig = maxSize + 1;
+        auto tooBig = NextValueRepresentableAsFloat(maxSize);
         wchar_t msg[256];
 
         swprintf_s(msg, L"Cannot create CanvasSwapChain sized %d x 1; MaximumBitmapSizeInPixels for this device is %d.", tooBig, maxSize);
