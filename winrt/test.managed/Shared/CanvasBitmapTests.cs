@@ -213,6 +213,44 @@ namespace test.managed
             Assert.ThrowsException<ArgumentException>(() => bitmap.GetPixelBytes(oneByteBuffer, 0, 0, 0, 1));
             Assert.ThrowsException<ArgumentException>(() => bitmap.GetPixelBytes(oneByteBuffer, 0, 0, 1, 0));
         }
+
+        [TestMethod]
+        public void SetPixelBytesReadHazards()
+        {
+            var device = new CanvasDevice();
+            var bitmap = CanvasBitmap.CreateFromBytes(device, new byte[4], 1, 1, DirectXPixelFormat.B8G8R8A8UIntNormalized);
+            var renderTarget = new CanvasRenderTarget(device, 2, 1, 96);
+
+            using (var ds = renderTarget.CreateDrawingSession())
+            {
+                bitmap.SetPixelBytes(new byte[] { 255, 0, 0, 255 });
+                ds.DrawImage(bitmap, 0, 0);
+
+                bitmap.SetPixelBytes(new byte[] { 0, 0, 255, 255 });
+                ds.DrawImage(bitmap, 1, 0);
+            }
+
+            CollectionAssert.AreEqual(new Color[] { Colors.Blue, Colors.Red }, renderTarget.GetPixelColors());
+        }
+
+        [TestMethod]
+        public void SetPixelColorsReadHazards()
+        {
+            var device = new CanvasDevice();
+            var bitmap = CanvasBitmap.CreateFromColors(device, new Color[1], 1, 1);
+            var renderTarget = new CanvasRenderTarget(device, 2, 1, 96);
+
+            using (var ds = renderTarget.CreateDrawingSession())
+            {
+                bitmap.SetPixelColors(new Color[] { Colors.Blue });
+                ds.DrawImage(bitmap, 0, 0);
+
+                bitmap.SetPixelColors(new Color[] { Colors.Red });
+                ds.DrawImage(bitmap, 1, 0);
+            }
+
+            CollectionAssert.AreEqual(new Color[] { Colors.Blue, Colors.Red }, renderTarget.GetPixelColors());
+        }
     }
 
 #if WINDOWS_UWP

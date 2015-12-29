@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="Globals">
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
@@ -172,7 +172,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)images\CanvasCommandList.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)images\CanvasImage.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)images\CanvasRenderTarget.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)images\TextureUtilities.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)images\ScopedBitmapMappedPixelAccess.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)text\CanvasFontFace.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)text\CanvasFontSet.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)text\CanvasTextFormat.h" />
@@ -235,6 +235,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)printing\CanvasPrintEventArgs.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)printing\DeferrableTask.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)utils\ApiInformationAdapter.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)utils\DxgiUtilities.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)utils\HashUtilities.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)utils\ResourceManager.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)xaml\CanvasAnimatedControl.cpp" />
@@ -303,7 +304,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)images\CanvasCommandList.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)images\CanvasImage.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)images\CanvasRenderTarget.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)images\TextureUtilities.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)images\ScopedBitmapMappedPixelAccess.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)text\CanvasFontFace.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)text\CanvasFontSet.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)text\CanvasTextFormat.cpp" />

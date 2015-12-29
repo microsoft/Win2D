@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "TextureUtilities.h"
+#include "ScopedBitmapMappedPixelAccess.h"
 #include "WicAdapter.h"
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
@@ -296,23 +296,27 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
 
     void GetPixelBytesImpl(
+        ComPtr<ICanvasDevice> const& device,
         ComPtr<ID2D1Bitmap1> const& d2dBitmap,
         D2D1_RECT_U const& subRectangle,
         uint32_t* valueCount,
         uint8_t** valueElements);
 
     void GetPixelBytesImpl(
+        ComPtr<ICanvasDevice> const& device,
         ComPtr<ID2D1Bitmap1> const& d2dBitmap,
         D2D1_RECT_U const& subRectangle,
         IBuffer* buffer);
 
     void GetPixelColorsImpl(
+        ComPtr<ICanvasDevice> const& device,
         ComPtr<ID2D1Bitmap1> const& d2dBitmap,
         D2D1_RECT_U const& subRectangle,
         uint32_t* valueCount,
         Color **valueElements);
 
     void SaveBitmapToFileImpl(
+        ComPtr<ICanvasDevice> const& device,
         ComPtr<ID2D1Bitmap1> const& d2dBitmap,
         HSTRING rawfileName,
         CanvasBitmapFileFormat fileFormat,
@@ -320,6 +324,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         IAsyncAction **resultAsyncAction);
 
     void SaveBitmapToStreamImpl(
+        ComPtr<ICanvasDevice> const& device,
         ComPtr<ID2D1Bitmap1> const& d2dBitmap,
         ComPtr<IRandomAccessStream> const& stream,
         CanvasBitmapFileFormat fileFormat,
@@ -591,7 +596,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                     auto& d2dBitmap = GetResource();
 
                     SaveBitmapToFileImpl(
-                        d2dBitmap.Get(), 
+                        m_device,
+                        d2dBitmap,
                         rawfileName,
                         fileFormat,
                         quality,
@@ -626,7 +632,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                     auto& d2dBitmap = GetResource();
 
                     SaveBitmapToStreamImpl(
-                        d2dBitmap.Get(), 
+                        m_device,
+                        d2dBitmap,
                         stream,
                         fileFormat,
                         quality,
@@ -644,6 +651,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                     auto& d2dBitmap = GetResource();
 
                     GetPixelBytesImpl(
+                        m_device,
                         d2dBitmap,
                         GetResourceBitmapExtents(d2dBitmap),
                         valueCount, 
@@ -665,6 +673,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                     auto& d2dBitmap = GetResource();
 
                     GetPixelBytesImpl(
+                        m_device,
                         d2dBitmap,
                         ToD2DRectU(left, top, width, height),
                         valueCount, 
@@ -681,6 +690,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                     auto& d2dBitmap = GetResource();
 
                     GetPixelBytesImpl(
+                        m_device,
                         d2dBitmap,
                         GetResourceBitmapExtents(d2dBitmap),
                         buffer);
@@ -700,6 +710,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                     auto& d2dBitmap = GetResource();
 
                     GetPixelBytesImpl(
+                        m_device,
                         d2dBitmap,
                         ToD2DRectU(left, top, width, height),
                         buffer);
@@ -716,6 +727,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                     auto& d2dBitmap = GetResource();
 
                     GetPixelColorsImpl(
+                        m_device,
                         d2dBitmap,
                         GetResourceBitmapExtents(d2dBitmap),
                         valueCount, 
@@ -737,6 +749,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                     auto& d2dBitmap = GetResource();
 
                     GetPixelColorsImpl(
+                        m_device,
                         d2dBitmap,
                         ToD2DRectU(left, top, width, height),
                         valueCount, 

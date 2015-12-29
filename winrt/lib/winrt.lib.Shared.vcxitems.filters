@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="effects">
@@ -244,9 +244,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)images\CanvasVirtualBitmap.cpp">
       <Filter>images</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)images\TextureUtilities.cpp">
-      <Filter>images</Filter>
-    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)text\CanvasTextFormat.cpp">
       <Filter>text</Filter>
     </ClCompile>
@@ -411,6 +408,12 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)text\TextUtilities.cpp">
       <Filter>text</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)utils\DxgiUtilities.cpp">
+      <Filter>utils</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)images\ScopedBitmapMappedPixelAccess.cpp">
+      <Filter>images</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -631,9 +634,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)images\CanvasVirtualBitmap.h">
       <Filter>images</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)images\TextureUtilities.h">
-      <Filter>images</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)text\CanvasTextFormat.h">
       <Filter>text</Filter>
     </ClInclude>
@@ -839,6 +839,9 @@
       <Filter>text</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)images\WicAdapter.h">
+      <Filter>images</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)images\ScopedBitmapMappedPixelAccess.h">
       <Filter>images</Filter>
     </ClInclude>
   </ItemGroup>

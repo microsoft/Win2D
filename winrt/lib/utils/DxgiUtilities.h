@@ -62,4 +62,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return MaybeAs<ID2D1CommandList>(target) != nullptr;
     }
 
+    inline bool IsRenderTargetBitmap(ID2D1Bitmap1* d2dBitmap)
+    {
+        auto options = d2dBitmap->GetOptions();
+        return (options & D2D1_BITMAP_OPTIONS_TARGET) != 0;
+    }
+
+    ComPtr<ID3D11Texture2D> GetTexture2DForDXGISurface(IDXGISurface2* dxgiSurface);
+
+    unsigned GetBlockSize(DXGI_FORMAT format);
+    unsigned GetBytesPerBlock(DXGI_FORMAT format);
+
 }}}}

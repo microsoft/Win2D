@@ -120,12 +120,19 @@ namespace test.managed
                     ValidateCanDrawImage(device, new ColorMatrixEffect { Source = bitmap });
 
                     // Make sure we can get and set pixels of this format.
-                    // This would fail if D2D internally created a DXGI surface of some unexpected format.
                     var bytes = bitmap.GetPixelBytes();
 
                     Assert.IsTrue(bytes.All(b => b == 0));
 
-                    bitmap.SetPixelBytes(bytes);
+                    var sequence = Enumerable.Range(0, bytes.Length)
+                                             .Select(value => (byte)value)
+                                             .ToArray();
+
+                    bitmap.SetPixelBytes(sequence);
+
+                    var otherBytes = bitmap.GetPixelBytes();
+
+                    CollectionAssert.AreEqual(sequence, otherBytes);
                 }
             }
         }

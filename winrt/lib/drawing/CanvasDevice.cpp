@@ -769,7 +769,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         // but this gives us a chance to produce a more appropriate error
         // message.
         //
-        if ((width % 4) != 0 || (height % 4) != 0)
+        auto blockSize = GetBlockSize(info.DxgiFormat);
+
+        if ((width % blockSize) != 0 || (height % blockSize) != 0)
         {
             ThrowHR(E_FAIL, Strings::BlockCompressedDimensionsMustBeMultipleOf4);
         }
@@ -778,6 +780,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         properties.pixelFormat.format = info.DxgiFormat;
         properties.pixelFormat.alphaMode = D2D1_ALPHA_MODE_PREMULTIPLIED;
         properties.dpiX = properties.dpiY = dpi;
+
+        auto bytesPerRow = width / blockSize * GetBytesPerBlock(info.DxgiFormat);
+        auto totalBytes = height / blockSize * bytesPerRow;
 
         //
         // We manually CreateBitmap and copy blocks into it, as opposed to using
@@ -798,22 +803,23 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         // and have it display incorrectly because it was assumed to be
         // premultiplied.
         //
+        std::vector<uint8_t> blockData(totalBytes);
+
+        ThrowIfFailed(ddsFrame->CopyBlocks(
+            nullptr, // null bounds == entire image
+            bytesPerRow,
+            totalBytes,
+            blockData.data()));
+
         ComPtr<ID2D1Bitmap1> bitmap;
         HRESULT hr = deviceContext->CreateBitmap(
             D2D1_SIZE_U{ width, height },
-            nullptr,
-            0,
+            blockData.data(),
+            bytesPerRow,
             properties,
             &bitmap);
         
         ThrowIfCreateSurfaceFailed(hr, L"CanvasBitmap", width, height);
-
-        ScopedBitmapMappedPixelAccess pixels(bitmap.Get(), D3D11_MAP_WRITE);
-        ThrowIfFailed(ddsFrame->CopyBlocks(
-            nullptr, // null bounds == entire image
-            pixels.GetStride(),
-            pixels.GetLockedBufferSize(),
-            pixels.GetLockedData()));
 
         return bitmap;
     }
@@ -880,7 +886,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         // D2D requires bitmap flags that match the surface format, if a
         // D2D1_BITMAP_PROPERTIES1 is specified.
         //
-        ComPtr<ID3D11Texture2D> parentResource = GetTexture2DForDXGISurface(dxgiSurface);
+        ComPtr<ID3D11Texture2D> parentResource = GetTexture2DForDXGISurface(dxgiSurface.Get());
 
         ComPtr<IDXGIResource1> dxgiResource;
         ThrowIfFailed(parentResource.As(&dxgiResource));
