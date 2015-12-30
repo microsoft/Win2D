@@ -177,68 +177,72 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="M:Microsoft.Graphics.Canvas.CanvasDevice.GetSharedDevice" Experimental="true">
       <summary>Gets a device that can be shared between multiple different rendering components, such as controls.</summary>
       <remarks>
-          <p>This overload defaults to choosing a hardware accelerated device.</p>
-          <p>
-          Before being returned, the device is checked for whether it is lost. If it is lost, <see cref="M:Microsoft.Graphics.Canvas.CanvasDevice.RaiseDeviceLost"/>
-          is called on the device, and then it is re-created.
-          </p>
-          <p>
-          The shared device returned may not necessary have the debug level in the <see cref="P:Microsoft.Graphics.Canvas.CanvasDevice.DebugLevel"/> property,
-          if the property has been modified in between calls to GetSharedDevice.
-          </p>
+        <p>This overload defaults to choosing a hardware accelerated device.</p>
+        <inherittemplate name="GetSharedDeviceTemplate" />
       </remarks>
     </member>
 
     <member name="M:Microsoft.Graphics.Canvas.CanvasDevice.GetSharedDevice(System.Boolean)">
       <summary>Gets a device that can be shared between multiple different rendering components, such as controls.</summary>
       <remarks>
-          <p>
-          Before being returned, the device is checked for whether it is lost. If it is lost, <see cref="M:Microsoft.Graphics.Canvas.CanvasDevice.RaiseDeviceLost"/>
-          is called on the device, and then it is re-created.
-          </p>
-          <p>
-          The shared device returned may not necessary have the debug level in the <see cref="P:Microsoft.Graphics.Canvas.CanvasDevice.DebugLevel"/> property,
-          if the property has been modified in between calls to GetSharedDevice.
-          </p>
+        <inherittemplate name="GetSharedDeviceTemplate" />
       </remarks>
     </member>    
+
+    <template name="GetSharedDeviceTemplate">
+      <p>
+        Before being returned, the device is checked for whether it is lost. If it is lost, <see cref="M:Microsoft.Graphics.Canvas.CanvasDevice.RaiseDeviceLost"/>
+        is called on the device, and then it is re-created.
+      </p>
+      <p>
+        It is not usually a good idea to call Dispose on a shared device, as this will 
+        break any other code that may be sharing it. Only dispose a shared device if you 
+        are certain that no other components are using it. After a shared device is 
+        disposed, subsequent calls to GetSharedDevice will replace it with a new device.
+      </p>
+      <p>
+        GetSharedDevice will fail if the <see cref="P:Microsoft.Graphics.Canvas.CanvasDevice.DebugLevel"/>
+        property has been modified in between calls to GetSharedDevice. The debug level should be set
+        before the first shared device is created.
+      </p>
+    </template>
 
     <member name="P:Microsoft.Graphics.Canvas.CanvasDevice.DebugLevel">
       <summary>Gets or sets the debug level for devices when they are created.</summary>
       <remarks>
-         <p>
-         This property is not retroactive. Modifying it won't affect devices which have already been created.
-         </p>
-         <p>
-         For any debug level other than None, Win2D will enable the Direct3D debug layer. 
-         Ensure that the Direct3D debug layer is available in environments where you test apps with CanvasDebugLevel options other than None.<br/>
-         On Windows 8.1, <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ff476881(v=vs.85).aspx#Debug">the debug layer is distributed as an SDK component</a>.<br/>
-         On Windows 10, <a href="https://msdn.microsoft.com/en-us/library/mt125501(v=vs.140).aspx#InstallGraphicsTools">the debug layer is distributed as an optional Windows feature</a>.
-         </p>
+        <p>
+          This property is not retroactive. Modifying it won't affect devices which have already been created.
+        </p>
+        <p>
+          For any debug level other than None, Win2D will enable the Direct3D debug layer. 
+          Ensure that the Direct3D debug layer is available in environments where you test apps with CanvasDebugLevel options other than None.<br/>
+          On Windows 8.1, <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ff476881(v=vs.85).aspx#Debug">the debug layer is distributed as an SDK component</a>.<br/>
+          On Windows 10, <a href="https://msdn.microsoft.com/en-us/library/mt125501(v=vs.140).aspx#InstallGraphicsTools">the debug layer is distributed as an optional Windows feature</a>.
+        </p>
       </remarks>
     </member>
     
     <member name="T:Microsoft.Graphics.Canvas.CanvasDpiRounding">
       <summary>Specifies the rounding behavior while performing dips-to-pixels conversions.</summary>
       <remarks>
-      	<p>
-      	After applying DPI scaling to a quantity in dips, this rounding scheme
-      	is applied immediately before conversion to an integer.
-      	The various implementations of
-      	<see cref="M:Microsoft.Graphics.Canvas.ICanvasResourceCreatorWithDpi.ConvertDipsToPixels(System.Single,Microsoft.Graphics.Canvas.CanvasDpiRounding)"/>
-      	return pixels in integral quantities.
-      	</p>
-      	<p>
-      	The Floor option will yield which location in a pixel grid covers the point
-      	specified by the dips value. 
-      	This is useful for things like converting pointer input to pixel
-      	cells in a paint program.
-      	</p>
-      	<p>
-        The Round option will round to the closest representable pixel value.
-        This is useful for things like converting the sizes of bitmap resources.
-      	</p>
-      	</remarks>
+        <p>
+          After applying DPI scaling to a quantity in dips, this rounding scheme
+          is applied immediately before conversion to an integer.
+          The various implementations of
+          <see cref="M:Microsoft.Graphics.Canvas.ICanvasResourceCreatorWithDpi.ConvertDipsToPixels(System.Single,Microsoft.Graphics.Canvas.CanvasDpiRounding)"/>
+          return pixels in integral quantities.
+        </p>
+        <p>
+          The Floor option will yield which location in a pixel grid covers the point
+          specified by the dips value. 
+          This is useful for things like converting pointer input to pixel
+          cells in a paint program.
+        </p>
+        <p>
+          The Round option will round to the closest representable pixel value.
+          This is useful for things like converting the sizes of bitmap resources.
+        </p>
+      </remarks>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.CanvasDpiRounding.Floor">
       <summary>Fractional amounts are rounded downward, toward negative infinity.</summary>

@@ -154,7 +154,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     SharedDeviceState::SharedDeviceState()
         : m_adapter(CanvasDeviceAdapter::GetInstance())
     {
-        m_debugLevel = LoadDebugLevelProperty();
+        std::fill_n(m_sharedDeviceDebugLevels, _countof(m_sharedDeviceDebugLevels), CanvasDebugLevel::None);
+
+        m_currentDebugLevel = LoadDebugLevelProperty();
     }
 
     SharedDeviceState::~SharedDeviceState()
@@ -162,7 +164,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         // 
         // Commit the debug level property back into the application properties.
         //
-        SaveDebugLevelProperty(m_debugLevel);
+        SaveDebugLevelProperty(m_currentDebugLevel);
     }
 
 
@@ -173,7 +175,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         // This code, unlike other non-control APIs, cannot rely on the D2D
         // API lock. SharedDeviceState keeps its own lock for this purpose.
         //
-        Lock lock(m_mutex);
+        RecursiveLock lock(m_mutex);
 
         int cacheIndex = forceSoftwareRenderer ? 1 : 0;
         assert(cacheIndex < _countof(m_sharedDevices));
@@ -181,13 +183,28 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ComPtr<ICanvasDevice> device = LockWeakRef<ICanvasDevice>(m_sharedDevices[cacheIndex]);
         ComPtr<ICanvasDevice> lostDevice;
 
-        if (device && FAILED(static_cast<CanvasDevice*>(device.Get())->GetDeviceRemovedErrorCode()))
+        if (device)
         {
-            // We need to raise DeviceLost when we detect a lost device, but we
-            // can't do that while we're holding the lock, so we need to do it
-            // later.
-            lostDevice = device;
-            device.Reset();
+            auto canvasDevice = static_cast<CanvasDevice*>(device.Get());
+
+            if (!canvasDevice->HasResource())
+            {
+                // The shared device has been closed, so we must create a new one instead.
+                device.Reset();
+            }
+            else if (FAILED(canvasDevice->GetDeviceRemovedErrorCode()))
+            {
+                // We need to raise DeviceLost when we detect a lost device, but we
+                // can't do that while we're holding the lock, so we need to do it
+                // later.
+                lostDevice = device;
+                device.Reset();
+            }
+            else if (m_currentDebugLevel != m_sharedDeviceDebugLevels[cacheIndex])
+            {
+                // Debug level has changed since this shared device was created.
+                ThrowHR(E_FAIL, Strings::SharedDeviceWrongDebugLevel);
+            }
         }
 
         if (!device)
@@ -195,14 +212,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             //
             // Any new devices we create here will honor the debug 
             // level set at the time.
-            // But existing devices that we return do not need to match
-            // the debug level.
-            // This goes along with the debug level option not having
-            // retro-active behavior, and the fact that we expect apps to set the 
-            // debug level at start-up, before creating any devices.
             //
             device = CanvasDevice::CreateNew(forceSoftwareRenderer);
             m_sharedDevices[cacheIndex] = AsWeak(device.Get());
+            m_sharedDeviceDebugLevels[cacheIndex] = m_currentDebugLevel;
         }
 
         lock.unlock();
@@ -276,23 +289,16 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     CanvasDebugLevel SharedDeviceState::GetDebugLevel()
     {
-        //
-        // m_debugLevel requires synchronization. One option might be use the existing mutex
-        // in SharedDeviceState- except GetSharedDevice already uses that lock to control
-        // cached devices, and the new device construction path also needs to look up the
-        // debug level. 
-        //
-        // Rather than complicate things to accomodate this, we use a
-        // std::atomic member to do this simple synchronization.
-        //
-        auto ret = m_debugLevel.load();
+        RecursiveLock lock(m_mutex);
 
-        return ret;
+        return m_currentDebugLevel;
     }
 
     void SharedDeviceState::SetDebugLevel(CanvasDebugLevel const& value)
     {
-        m_debugLevel.store(value);
+        RecursiveLock lock(m_mutex);
+
+        m_currentDebugLevel = value;
     }
 
 
@@ -694,6 +700,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
                 m_dxgiDevice.Close();
                 m_primaryOutput.Reset();
+                m_sharedState.reset();
             });
     }
 

@@ -66,6 +66,7 @@ STRING(ResourceManagerWrongDevice, L"Existing resource wrapper is associated wit
 STRING(ResourceManagerWrongDpi, L"Existing resource wrapper has a different DPI.")
 STRING(SetFilledRegionDeterminationAfterBeginFigure, L"This operation is not allowed after the first call to CanvasPathBuilder.BeginFigure.")
 STRING(SetPageCountCalledBeforePreviewing, L"CanvasPrintDocument.SetPageCount or CanvasPrintDocument.SetIntermediatePageCount cannot be called until the Paginate event has been raised.")
+STRING(SharedDeviceWrongDebugLevel, L"CanvasDevice.DebugLevel has changed since this shared device was created. The debug level must be set before the first call to GetSharedDevice.")
 STRING(SpriteBatchInvalidInterpolation, L"Invalid interpolation mode specified. Sprite batches only support CanvasImageInterpolation.NearestNeighbor or CanvasImageInterpolation.Linear.")
 STRING(SpriteBatchNotAvailable, L"Sprite batches are not supported on this device. Use CanvasSpriteBatch.IsSupported to determine if sprite batches are supported.")
 STRING(SurfaceTooBig, L"Cannot create %s sized %d x %d; MaximumBitmapSizeInPixels for this device is %d.")

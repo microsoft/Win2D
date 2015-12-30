@@ -851,19 +851,6 @@ TEST_CLASS(CanvasDebugLevelTests)
             f.AssertD3DDebugLevel(debugLevel);
         }
     }
-
-    TEST_METHOD_EX(GetSharedDevice_ReturnsExistingDevice_EvenIfDebugLevelDoesntMatch)
-    {
-        DebugLevelFixture f;
-
-        f.SharedDeviceState->SetDebugLevel(CanvasDebugLevel::Information);
-        auto canvasDevice1 = f.SharedDeviceState->GetSharedDevice(false);
-
-        f.SharedDeviceState->SetDebugLevel(CanvasDebugLevel::Warning);
-        auto canvasDevice2 = f.SharedDeviceState->GetSharedDevice(false);
-
-        Assert::IsTrue(IsSameInstance(canvasDevice1.Get(), canvasDevice2.Get()));
-    }
 };
 
 

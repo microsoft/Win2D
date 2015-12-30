@@ -416,9 +416,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         std::shared_ptr<CanvasDeviceAdapter> m_adapter;
 
         WeakRef m_sharedDevices[2];
-        std::mutex m_mutex;
 
-        std::atomic<CanvasDebugLevel> m_debugLevel;
+        CanvasDebugLevel m_sharedDeviceDebugLevels[2];
+        CanvasDebugLevel m_currentDebugLevel;
+
+        std::recursive_mutex m_mutex;
 
     public:
         SharedDeviceState();

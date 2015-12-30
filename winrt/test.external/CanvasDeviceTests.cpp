@@ -85,6 +85,31 @@ TEST_CLASS(CanvasDeviceTests)
         Assert::AreEqual(d1, d2);
     }
 
+    TEST_METHOD(CanvasDevice_GetSharedDevice_WhenDeviceClosed_ReturnsNew)
+    {
+        auto d1 = CanvasDevice::GetSharedDevice(false);
+
+        delete d1;
+
+        auto d2 = CanvasDevice::GetSharedDevice(false);
+
+        Assert::AreNotEqual(d1, d2);
+    }
+
+    TEST_METHOD(CanvasDevice_GetSharedDevice_WhenDebugLevelChanged_Fails)
+    {
+        DisableDebugLayer disableDebug;
+
+        auto d1 = CanvasDevice::GetSharedDevice(false);
+
+        CanvasDevice::DebugLevel = CanvasDebugLevel::Error;
+
+        ExpectCOMException(
+            E_FAIL,
+            L"CanvasDevice.DebugLevel has changed since this shared device was created. The debug level must be set before the first call to GetSharedDevice.",
+            [] { CanvasDevice::GetSharedDevice(false); });
+    }
+
     TEST_METHOD(CanvasDevice_DefaultDebugLevel)
     {
 #ifdef NDEBUG
