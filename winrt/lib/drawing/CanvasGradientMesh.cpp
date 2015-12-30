@@ -313,23 +313,20 @@ ComPtr<CanvasGradientMesh> CanvasGradientMesh::CreateNew(
     auto deviceInternal = As<ICanvasDeviceInternal>(device);
 
     ComPtr<ID2D1GradientMesh> d2dGradientMesh;
+
     if (patchCount > 0)
     {
         CheckInPointer(patchElements);
-
-        std::vector<D2D1_GRADIENT_MESH_PATCH> d2dPatches;
-        d2dPatches.resize(patchCount);
-        for (uint32_t i = 0; i < patchCount; ++i)
-        {
-            d2dPatches[i] = CanvasGradientMeshFactory::PatchToD2DPatch(patchElements[i]);
-        }
-
-        d2dGradientMesh = deviceInternal->CreateGradientMesh(&d2dPatches[0], patchCount);
     }
-    else
+
+    std::vector<D2D1_GRADIENT_MESH_PATCH> d2dPatches(std::max(patchCount, 1u));
+
+    for (uint32_t i = 0; i < patchCount; ++i)
     {
-        d2dGradientMesh = deviceInternal->CreateGradientMesh(nullptr, 0);
+        d2dPatches[i] = CanvasGradientMeshFactory::PatchToD2DPatch(patchElements[i]);
     }
+
+    d2dGradientMesh = deviceInternal->CreateGradientMesh(&d2dPatches[0], patchCount);
 
     auto canvasGradientMesh = Make<CanvasGradientMesh>(
         device.Get(),
