@@ -1184,63 +1184,66 @@ namespace test.managed
         [TestMethod]
         public void PixelShaderEffect_InputRectTooBigError()
         {
-            const string hlsl =
-            @"
-                texture2D t1;
-                sampler s1;
+            using (new DisableDebugLayer())
+            {
+                const string hlsl =
+                @"
+                    texture2D t1;
+                    sampler s1;
 
-                float4 main() : SV_Target
+                    float4 main() : SV_Target
+                    {
+                        return t1.Sample(s1, 0);
+                    }
+                ";
+
+                var effect = new PixelShaderEffect(ShaderCompiler.CompileShader(hlsl, "ps_4_0"))
                 {
-                    return t1.Sample(s1, 0);
-                }
-            ";
+                    Source1Mapping = SamplerCoordinateMapping.Unknown
+                };
 
-            var effect = new PixelShaderEffect(ShaderCompiler.CompileShader(hlsl, "ps_4_0"))
-            {
-                Source1Mapping = SamplerCoordinateMapping.Unknown
-            };
+                var device = new CanvasDevice();
+                var renderTarget = new CanvasRenderTarget(device, 1, 1, 96);
 
-            var device = new CanvasDevice();
-            var renderTarget = new CanvasRenderTarget(device, 1, 1, 96);
+                // Drawing with a fixed size input is ok.
+                effect.Source1 = new CanvasRenderTarget(device, 1, 1, 96);
 
-            // Drawing with a fixed size input is ok.
-            effect.Source1 = new CanvasRenderTarget(device, 1, 1, 96);
-
-            using (var ds = renderTarget.CreateDrawingSession())
-            {
-                ds.DrawImage(effect);
-            }
-
-            // Drawing with an infinite sized input is not!
-            effect.Source1 = new ColorSourceEffect();
-
-            Utils.AssertThrowsException<Exception>(() => 
-            {
                 using (var ds = renderTarget.CreateDrawingSession())
                 {
                     ds.DrawImage(effect);
                 }
-            }, " graph could not be rendered with the context's current tiling settings. (Exception from HRESULT: 0x88990027)");
 
-            // But it's ok if we clamp the input back down to finite size.
-            effect.Source1 = new CropEffect
-            {
-                Source = new ColorSourceEffect(),
-                SourceRectangle = new Rect(0, 0, 100, 100)
-            };
+                // Drawing with an infinite sized input is not!
+                effect.Source1 = new ColorSourceEffect();
 
-            using (var ds = renderTarget.CreateDrawingSession())
-            {
-                ds.DrawImage(effect);
-            }
+                Utils.AssertThrowsException<Exception>(() =>
+                {
+                    using (var ds = renderTarget.CreateDrawingSession())
+                    {
+                        ds.DrawImage(effect);
+                    }
+                }, " graph could not be rendered with the context's current tiling settings. (Exception from HRESULT: 0x88990027)");
 
-            // Also ok if we change our mapping mode to something other than infinite.
-            effect.Source1 = new ColorSourceEffect();
-            effect.Source1Mapping = SamplerCoordinateMapping.OneToOne;
+                // But it's ok if we clamp the input back down to finite size.
+                effect.Source1 = new CropEffect
+                {
+                    Source = new ColorSourceEffect(),
+                    SourceRectangle = new Rect(0, 0, 100, 100)
+                };
 
-            using (var ds = renderTarget.CreateDrawingSession())
-            {
-                ds.DrawImage(effect);
+                using (var ds = renderTarget.CreateDrawingSession())
+                {
+                    ds.DrawImage(effect);
+                }
+
+                // Also ok if we change our mapping mode to something other than infinite.
+                effect.Source1 = new ColorSourceEffect();
+                effect.Source1Mapping = SamplerCoordinateMapping.OneToOne;
+
+                using (var ds = renderTarget.CreateDrawingSession())
+                {
+                    ds.DrawImage(effect);
+                }
             }
         }
 

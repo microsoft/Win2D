@@ -219,8 +219,6 @@ namespace test.managed
     [TestClass]
     public class CanvasBitmapCreateFromSoftwareBitmapTests
     {
-        CanvasDevice device = new CanvasDevice(true);
-
         [TestMethod]
         public void CanvasBitmap_CreateFromSoftwareBitmap_Roundtrip()
         {
@@ -232,6 +230,8 @@ namespace test.managed
             };
 
             float anyDpi = 10;
+
+            var device = new CanvasDevice(true);
 
             var originalBitmap = CanvasBitmap.CreateFromColors(device, colors, 3, 3, anyDpi);
 
@@ -256,35 +256,40 @@ namespace test.managed
         [TestMethod]
         public void CanvasBitmap_CreateFromSoftwareBitmap_PixelFormats()
         {
-            foreach (BitmapPixelFormat e in Enum.GetValues(typeof(BitmapPixelFormat)))
+            using (new DisableDebugLayer())
             {
-                bool hasAlpha = true;
+                var device = new CanvasDevice(true);
 
-                switch (e)
+                foreach (BitmapPixelFormat e in Enum.GetValues(typeof(BitmapPixelFormat)))
                 {
-                    case BitmapPixelFormat.Gray16:
-                    case BitmapPixelFormat.Gray8:
-                    case BitmapPixelFormat.Nv12:
-                    case BitmapPixelFormat.Yuy2:
-                        hasAlpha = false;
-                        break;
-                }
+                    bool hasAlpha = true;
 
-                if (hasAlpha)
-                {
-                    TestCreateFromSoftwareBitmap(e, BitmapAlphaMode.Premultiplied);
-                    TestCreateFromSoftwareBitmap(e, BitmapAlphaMode.Straight);
-                    TestCreateFromSoftwareBitmap(e, BitmapAlphaMode.Ignore);
-                }
-                else
-                {
-                    TestCreateFromSoftwareBitmap(e, BitmapAlphaMode.Ignore);
+                    switch (e)
+                    {
+                        case BitmapPixelFormat.Gray16:
+                        case BitmapPixelFormat.Gray8:
+                        case BitmapPixelFormat.Nv12:
+                        case BitmapPixelFormat.Yuy2:
+                            hasAlpha = false;
+                            break;
+                    }
+
+                    if (hasAlpha)
+                    {
+                        TestCreateFromSoftwareBitmap(device, e, BitmapAlphaMode.Premultiplied);
+                        TestCreateFromSoftwareBitmap(device, e, BitmapAlphaMode.Straight);
+                        TestCreateFromSoftwareBitmap(device, e, BitmapAlphaMode.Ignore);
+                    }
+                    else
+                    {
+                        TestCreateFromSoftwareBitmap(device, e, BitmapAlphaMode.Ignore);
+                    }
                 }
             }
         }
 
 
-        void TestCreateFromSoftwareBitmap(BitmapPixelFormat pixelFormat, BitmapAlphaMode alphaMode)
+        void TestCreateFromSoftwareBitmap(CanvasDevice device, BitmapPixelFormat pixelFormat, BitmapAlphaMode alphaMode)
         {
             if (pixelFormat == BitmapPixelFormat.Unknown)
                 return;

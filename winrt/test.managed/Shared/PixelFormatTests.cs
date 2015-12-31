@@ -65,65 +65,68 @@ namespace test.managed
         [TestMethod]
         public void TestBitmapPixelFormats()
         {
-            var device = new CanvasDevice();
-
-            foreach (var format in AllPixelFormats())
+            using (new DisableDebugLayer())
             {
-                // Unknown formats should not be supported.
-                if (!formatFlags.ContainsKey(format))
+                var device = new CanvasDevice();
+
+                foreach (var format in AllPixelFormats())
                 {
-                    Assert.IsFalse(device.IsPixelFormatSupported(format));
-                    ValidateCannotCreateBitmap(device, format, FirstSupportedAlphaMode(format));
-                    continue;
+                    // Unknown formats should not be supported.
+                    if (!formatFlags.ContainsKey(format))
+                    {
+                        Assert.IsFalse(device.IsPixelFormatSupported(format));
+                        ValidateCannotCreateBitmap(device, format, FirstSupportedAlphaMode(format));
+                        continue;
+                    }
+
+                    // Optional formats may be legitimately not supported, depending on the device.
+                    if (!device.IsPixelFormatSupported(format))
+                    {
+                        Assert.IsTrue((formatFlags[format] & FormatFlags.Optional) != 0);
+                        ValidateCannotCreateBitmap(device, format, FirstSupportedAlphaMode(format));
+                        continue;
+                    }
+
+                    // We should be able to create this format using all its supported alpha modes.
+                    var lotsOfZeroes = new byte[1024];
+
+                    foreach (var alphaMode in SupportedAlphaModes(format))
+                    {
+                        CanvasBitmap.CreateFromBytes(device, lotsOfZeroes, 4, 4, format, 96, alphaMode);
+                    }
+
+                    // Other alpha modes should not be supported.
+                    foreach (var alphaMode in UnsupportedAlphaModes(format))
+                    {
+                        ValidateCannotCreateBitmap(device, format, alphaMode);
+                    }
+
+                    // We should also be able to create this format without explicitly specifying an alpha mode.
+                    var bitmap = CanvasBitmap.CreateFromBytes(device, lotsOfZeroes, 4, 4, format);
+
+                    Assert.AreEqual(FirstSupportedAlphaMode(format), bitmap.AlphaMode);
+
+                    // Some formats can be drawn directly, while others cannot.
+                    if ((formatFlags[format] & FormatFlags.CannotDraw) == 0)
+                    {
+                        ValidateCanDrawImage(device, bitmap);
+                    }
+                    else
+                    {
+                        ValidateCannotDrawImage(device, bitmap);
+                    }
+
+                    // But all formats should be drawable when used as effect inputs.
+                    ValidateCanDrawImage(device, new ColorMatrixEffect { Source = bitmap });
+
+                    // Make sure we can get and set pixels of this format.
+                    // This would fail if D2D internally created a DXGI surface of some unexpected format.
+                    var bytes = bitmap.GetPixelBytes();
+
+                    Assert.IsTrue(bytes.All(b => b == 0));
+
+                    bitmap.SetPixelBytes(bytes);
                 }
-
-                // Optional formats may be legitimately not supported, depending on the device.
-                if (!device.IsPixelFormatSupported(format))
-                {
-                    Assert.IsTrue((formatFlags[format] & FormatFlags.Optional) != 0);
-                    ValidateCannotCreateBitmap(device, format, FirstSupportedAlphaMode(format));
-                    continue;
-                }
-
-                // We should be able to create this format using all its supported alpha modes.
-                var lotsOfZeroes = new byte[1024];
-
-                foreach (var alphaMode in SupportedAlphaModes(format))
-                {
-                    CanvasBitmap.CreateFromBytes(device, lotsOfZeroes, 4, 4, format, 96, alphaMode);
-                }
-
-                // Other alpha modes should not be supported.
-                foreach (var alphaMode in UnsupportedAlphaModes(format))
-                {
-                    ValidateCannotCreateBitmap(device, format, alphaMode);
-                }
-
-                // We should also be able to create this format without explicitly specifying an alpha mode.
-                var bitmap = CanvasBitmap.CreateFromBytes(device, lotsOfZeroes, 4, 4, format);
-
-                Assert.AreEqual(FirstSupportedAlphaMode(format), bitmap.AlphaMode);
-
-                // Some formats can be drawn directly, while others cannot.
-                if ((formatFlags[format] & FormatFlags.CannotDraw) == 0)
-                {
-                    ValidateCanDrawImage(device, bitmap);
-                }
-                else
-                {
-                    ValidateCannotDrawImage(device, bitmap);
-                }
-
-                // But all formats should be drawable when used as effect inputs.
-                ValidateCanDrawImage(device, new ColorMatrixEffect { Source = bitmap });
-
-                // Make sure we can get and set pixels of this format.
-                // This would fail if D2D internally created a DXGI surface of some unexpected format.
-                var bytes = bitmap.GetPixelBytes();
-
-                Assert.IsTrue(bytes.All(b => b == 0));
-
-                bitmap.SetPixelBytes(bytes);
             }
         }
 
@@ -131,51 +134,54 @@ namespace test.managed
         [TestMethod]
         public void TestRenderTargetPixelFormats()
         {
-            var device = new CanvasDevice();
-
-            foreach (var format in AllPixelFormats())
+            using (new DisableDebugLayer())
             {
-                // Unknown formats should not be supported.
-                if (!formatFlags.ContainsKey(format))
+                var device = new CanvasDevice();
+
+                foreach (var format in AllPixelFormats())
                 {
-                    ValidateCannotCreateRenderTarget(device, format, FirstSupportedAlphaMode(format));
-                    continue;
-                }
+                    // Unknown formats should not be supported.
+                    if (!formatFlags.ContainsKey(format))
+                    {
+                        ValidateCannotCreateRenderTarget(device, format, FirstSupportedAlphaMode(format));
+                        continue;
+                    }
 
-                // Non-renderable formats should also not be supported.
-                if ((formatFlags[format] & FormatFlags.RenderTarget) == 0)
-                {
-                    ValidateCannotCreateRenderTarget(device, format, FirstSupportedAlphaMode(format));
-                    continue;
-                }
+                    // Non-renderable formats should also not be supported.
+                    if ((formatFlags[format] & FormatFlags.RenderTarget) == 0)
+                    {
+                        ValidateCannotCreateRenderTarget(device, format, FirstSupportedAlphaMode(format));
+                        continue;
+                    }
 
-                // Validate implementation assumption: all rendertarget formats also support premultiplied
-                // alpha. If D2D ever adds support for a rendertarget format where this is not the case,
-                // CanvasRenderTargetFactory::CreateFromDirect3D11Surface should be updated to know about
-                // that, along the same lines as how CanvasBitmap::CreateFromDirect3D11Surface already has
-                // smarts to choose a suitable alpha mode depending on the pixel format.
-                Assert.IsTrue((formatFlags[format] & FormatFlags.PremultipliedAlpha) != 0);
+                    // Validate implementation assumption: all rendertarget formats also support premultiplied
+                    // alpha. If D2D ever adds support for a rendertarget format where this is not the case,
+                    // CanvasRenderTargetFactory::CreateFromDirect3D11Surface should be updated to know about
+                    // that, along the same lines as how CanvasBitmap::CreateFromDirect3D11Surface already has
+                    // smarts to choose a suitable alpha mode depending on the pixel format.
+                    Assert.IsTrue((formatFlags[format] & FormatFlags.PremultipliedAlpha) != 0);
 
-                // Optional formats may be legitimately not supported, depending on the device.
-                if (!device.IsPixelFormatSupported(format))
-                {
-                    Assert.IsTrue((formatFlags[format] & FormatFlags.Optional) != 0);
-                    ValidateCannotCreateRenderTarget(device, format, FirstSupportedAlphaMode(format));
-                    continue;
-                }
+                    // Optional formats may be legitimately not supported, depending on the device.
+                    if (!device.IsPixelFormatSupported(format))
+                    {
+                        Assert.IsTrue((formatFlags[format] & FormatFlags.Optional) != 0);
+                        ValidateCannotCreateRenderTarget(device, format, FirstSupportedAlphaMode(format));
+                        continue;
+                    }
 
-                // We should be able to create and render to this format using all its supported alpha modes.
-                foreach (var alphaMode in SupportedAlphaModes(format))
-                {
-                    var renderTarget = new CanvasRenderTarget(device, 16, 16, 96, format, alphaMode);
+                    // We should be able to create and render to this format using all its supported alpha modes.
+                    foreach (var alphaMode in SupportedAlphaModes(format))
+                    {
+                        var renderTarget = new CanvasRenderTarget(device, 16, 16, 96, format, alphaMode);
 
-                    ValidateCanDrawToRenderTarget(renderTarget);
-                }
+                        ValidateCanDrawToRenderTarget(renderTarget);
+                    }
 
-                // Other alpha modes should not be supported.
-                foreach (var alphaMode in UnsupportedAlphaModes(format))
-                {
-                    ValidateCannotCreateRenderTarget(device, format, alphaMode);
+                    // Other alpha modes should not be supported.
+                    foreach (var alphaMode in UnsupportedAlphaModes(format))
+                    {
+                        ValidateCannotCreateRenderTarget(device, format, alphaMode);
+                    }
                 }
             }
         }

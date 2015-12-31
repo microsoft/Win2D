@@ -10,6 +10,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)CanvasBitmapTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DebugLayer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DpiTests.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)EffectTests.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GraphicsInterop.cs" />
