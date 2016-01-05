@@ -178,9 +178,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
                 runWithDeviceFunction(m_device.Get(), flags);
             }
-            catch (DeviceLostException const&)
+            catch (DeviceLostException const& e)
             {
-                HandleDeviceLostException();
+                HandleDeviceLostException(e.GetHr());
             }
         }
 
@@ -242,9 +242,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                 {
                     ThrowIfFailed(value->Invoke(sender, eventArgs.Get()));
                 }
-                catch (DeviceLostException const&)
+                catch (DeviceLostException const& e)
                 {
-                    HandleDeviceLostException();
+                    HandleDeviceLostException(e.GetHr());
                 }
             }
 
@@ -319,9 +319,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                 {
                     ProcessCurrentOperationResult();
                 }
-                catch (DeviceLostException const&)
+                catch (DeviceLostException const& e)
                 {
-                    HandleDeviceLostException();
+                    HandleDeviceLostException(e.GetHr());
 
                     // If it was just the committed device that was lost,
                     // m_device might still be valid, but if it isn't we can't
@@ -402,7 +402,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             return device;
         }
 
-        void HandleDeviceLostException()
+        void HandleDeviceLostException(HRESULT hr)
         {
             // This function must be called from inside a catch block.
             assert(std::current_exception());
@@ -429,7 +429,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             // this stored error state will override any subsequent errors, resulting
             // in confusing UnhandledException reporting.
             //
-            RoClearError();
+            RoTransformError(hr, S_OK, nullptr);
 
             // No m_device means that this exception has already been handled.
             if (!m_device)
