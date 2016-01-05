@@ -277,11 +277,12 @@ namespace exportsample
             }
 
             // Otherwise we'll need to copy it somewhere to reference it, and update our element to point to the new location                
-            foreach (var entry in config.DuplicateDirectories)
+            foreach (var entry in config.DuplicateFiles)
             {
                 if (fullPath.StartsWith(entry.Key))
                 {
-                    var dest = fullPath.Replace(entry.Key, Path.Combine(sample.Destination, entry.Value));
+                    var value = entry.Value.Replace("$(ProjectDir)", DestinationDirectory + '\\');
+                    var dest = fullPath.Replace(entry.Key, Path.Combine(sample.Destination, value));
                     FilesToCopy[fullPath] = dest;
 
                     return GetRelativePath(dest, DestinationDirectory);
