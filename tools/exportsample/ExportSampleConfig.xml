@@ -46,4 +46,12 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
   <Win2DProject Name="DotNetNumerics.Windows.csproj" />
   <Win2DProject Name="DotNetNumerics.WindowsPhone.csproj" />
 
+  <!--
+      These properties have a fixed value per project, so MSBuild 'Condition'
+      attributes that reference them can be evaluated during the export.
+  -->
+  <FlattenCondition Property="TargetPlatformIdentifier" />
+  <FlattenCondition Property="ApplicationType" />
+  <FlattenCondition Property="ApplicationTypeRevision" />
+
 </ExportSamples>

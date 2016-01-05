@@ -19,6 +19,7 @@ namespace exportsample
         public List<string> FileReferenceProperties = new List<string>();
         public List<string> Win2DProjects = new List<string>();
         public List<string> FilesToCopy = new List<string>();
+        public List<string> PropertiesToFlatten = new List<string>();
 
         public Configuration(CommandLineOptions options)
         {
@@ -60,6 +61,10 @@ namespace exportsample
 
                     case "File":
                         FilesToCopy.Add(element.Attribute("Source").Value);
+                        break;
+
+                    case "FlattenCondition":
+                        PropertiesToFlatten.Add(element.Attribute("Property").Value);
                         break;
                 }
             }
