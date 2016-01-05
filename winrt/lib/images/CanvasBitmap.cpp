@@ -919,6 +919,86 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             });
     }
 
+#if WINVER > _WIN32_WINNT_WINBLUE
+
+	IFACEMETHODIMP CanvasBitmapFactory::CreateFromBytesWithMemoryBufferReference(
+		ICanvasResourceCreator* resourceCreator,
+		IMemoryBufferReference* buffer,
+		int32_t widthInPixels,
+		int32_t heightInPixels,
+		DirectXPixelFormat format,
+		ICanvasBitmap** canvasBitmap)
+	{
+		return CreateFromBytesWithMemoryBufferReferenceAndDpiAndAlpha(
+			resourceCreator,
+			buffer,
+			widthInPixels,
+			heightInPixels,
+			format,
+			DEFAULT_DPI,
+			AlphaModeFromFormat(format),
+			canvasBitmap);
+	}
+
+	IFACEMETHODIMP CanvasBitmapFactory::CreateFromBytesWithMemoryBufferReferenceAndDpi(
+		ICanvasResourceCreator* resourceCreator,
+		IMemoryBufferReference* buffer,
+		int32_t widthInPixels,
+		int32_t heightInPixels,
+		DirectXPixelFormat format,
+		float dpi,
+		ICanvasBitmap** canvasBitmap)
+	{
+		return CreateFromBytesWithMemoryBufferReferenceAndDpiAndAlpha(
+			resourceCreator,
+			buffer,
+			widthInPixels,
+			heightInPixels,
+			format,
+			dpi,
+			AlphaModeFromFormat(format),
+			canvasBitmap);
+	}
+
+	IFACEMETHODIMP CanvasBitmapFactory::CreateFromBytesWithMemoryBufferReferenceAndDpiAndAlpha(
+		ICanvasResourceCreator* resourceCreator,
+		IMemoryBufferReference* buffer,
+		int32_t widthInPixels,
+		int32_t heightInPixels,
+		DirectXPixelFormat format,
+		float dpi,
+		CanvasAlphaMode alpha,
+		ICanvasBitmap** canvasBitmap)
+	{
+		using ::Windows::Foundation::IMemoryBufferByteAccess;
+
+		return ExceptionBoundary(
+			[&]
+		{
+			CheckInPointer(buffer);
+
+			auto byteAccess = As<IMemoryBufferByteAccess>(buffer);
+
+			uint32_t byteCount;
+			uint8_t* bytes;
+
+			ThrowIfFailed(byteAccess->GetBuffer(&bytes, &byteCount));
+
+			ThrowIfFailed(CreateFromBytesWithDpiAndAlpha(
+				resourceCreator,
+				byteCount,
+				bytes,
+				widthInPixels,
+				heightInPixels,
+				format,
+				dpi,
+				alpha,
+				canvasBitmap));
+		});
+	}
+
+#endif
+
     IFACEMETHODIMP CanvasBitmapFactory::CreateFromColors(
         ICanvasResourceCreator* resourceCreator,
         uint32_t colorCount,
@@ -1312,6 +1392,45 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             stdext::make_checked_array_iterator(destination, capacity));
     }
 
+#if WINVER > _WIN32_WINNT_WINBLUE
+	void GetPixelBytesImpl(
+		ComPtr<ICanvasDevice> const& device,
+		ComPtr<ID2D1Bitmap1> const& d2dBitmap,
+		D2D1_RECT_U const& subRectangle,
+		IMemoryBufferReference* buffer)
+	{
+		using ::Windows::Foundation::IMemoryBufferByteAccess;
+
+		CheckInPointer(buffer);
+
+		auto byteAccess = As<IMemoryBufferByteAccess>(buffer);
+
+		BitmapSubRectangle r(d2dBitmap, subRectangle);
+
+		ScopedBitmapMappedPixelAccess bitmapPixelAccess(device.Get(), d2dBitmap.Get(), &subRectangle);
+
+		uint32_t capacity;
+		ThrowIfFailed(buffer->get_Capacity(&capacity));
+
+		if (capacity < r.GetTotalBytes())
+		{
+			WinStringBuilder message;
+			message.Format(Strings::WrongArrayLength, r.GetTotalBytes(), capacity);
+			ThrowHR(E_INVALIDARG, message.Get());
+		}
+		
+		uint8_t* destination;
+		ThrowIfFailed(byteAccess->GetBuffer(&destination, &capacity));
+
+		CopyPixelBytes(
+			r,
+			bitmapPixelAccess.GetStride(),
+			r.GetBytesPerRow(),
+			begin(bitmapPixelAccess),
+			stdext::make_checked_array_iterator(destination, capacity));
+	}
+#endif
+
     void GetPixelColorsImpl(
         ComPtr<ICanvasDevice> const& device,
         ComPtr<ID2D1Bitmap1> const& d2dBitmap,
@@ -1465,6 +1584,27 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         SetPixelBytesImpl(d2dBitmap, subRectangle, byteCount, bytes);
     }
+
+#if WINVER > _WIN32_WINNT_WINBLUE
+	void SetPixelBytesImpl(
+		ComPtr<ID2D1Bitmap1> const& d2dBitmap,
+		D2D1_RECT_U const& subRectangle,
+		IMemoryBufferReference* buffer)
+	{
+		using ::Windows::Foundation::IMemoryBufferByteAccess;
+
+		CheckInPointer(buffer);
+
+		auto byteAccess = As<IMemoryBufferByteAccess>(buffer);
+
+		uint32_t byteCount;
+		uint8_t* bytes;
+
+		ThrowIfFailed(byteAccess->GetBuffer(&bytes, &byteCount));
+
+		SetPixelBytesImpl(d2dBitmap, subRectangle, byteCount, bytes);
+	}
+#endif
 
     void SetPixelColorsImpl(
         ComPtr<ID2D1Bitmap1> const& d2dBitmap,
