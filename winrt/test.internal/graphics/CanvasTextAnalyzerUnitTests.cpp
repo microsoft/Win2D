@@ -35,6 +35,21 @@ struct TestCaseForCharacterRange
     { 999, 0 }
 };
 
+struct TestBreakpoint
+{
+    DWRITE_LINE_BREAKPOINT DWriteBreakpoint;
+    CanvasAnalyzedBreakpoint Breakpoint;
+} testBreakpoints[] = {
+    { { static_cast<uint8_t>(DWRITE_BREAK_CONDITION_NEUTRAL), static_cast<uint8_t>(DWRITE_BREAK_CONDITION_CAN_BREAK), false, true }, { CanvasLineBreakCondition::Neutral, CanvasLineBreakCondition::CanBreak, false, true } },
+    { { static_cast<uint8_t>(DWRITE_BREAK_CONDITION_CAN_BREAK), static_cast<uint8_t>(DWRITE_BREAK_CONDITION_MAY_NOT_BREAK), true, false }, { CanvasLineBreakCondition::CanBreak, CanvasLineBreakCondition::CannotBreak, true, false } },
+    { { static_cast<uint8_t>(DWRITE_BREAK_CONDITION_MAY_NOT_BREAK), static_cast<uint8_t>(DWRITE_BREAK_CONDITION_MUST_BREAK), false, true }, { CanvasLineBreakCondition::CannotBreak, CanvasLineBreakCondition::MustBreak, false, true } },
+    { { static_cast<uint8_t>(DWRITE_BREAK_CONDITION_MUST_BREAK), static_cast<uint8_t>(DWRITE_BREAK_CONDITION_NEUTRAL), true, false }, { CanvasLineBreakCondition::MustBreak, CanvasLineBreakCondition::Neutral, true, false } },
+};
+TestBreakpoint GetTestBreakpoint(uint32_t index)
+{
+    return testBreakpoints[index % _countof(testBreakpoints)];
+}
+
 TEST_CLASS(CanvasScaledFontTests)
 {
     ComPtr<CanvasFontFace> CreateSimpleFontFace()
@@ -1447,6 +1462,33 @@ TEST_CLASS(CanvasTextAnalyzerTests)
         Assert::AreEqual(E_INVALIDARG, textAnalyzer->AnalyzeScriptWithLocale(WinString(L""), nullptr));
     }
 
+    template<typename RETURN_TYPE, typename ELEMENT_IMPL_TYPE=RETURN_TYPE, typename ANALYSIS_METHOD>
+    RETURN_TYPE AssertUniformSpanAndReturnElement(
+        ComPtr<ICanvasTextAnalyzer> const& textAnalyzer,
+        ANALYSIS_METHOD analysisMethod,
+        int spanLength)
+    {
+        ComPtr<IVectorView<IKeyValuePair<CanvasCharacterRange, ELEMENT_IMPL_TYPE>*>> result;
+        Assert::AreEqual(S_OK, (textAnalyzer.Get()->*analysisMethod)(&result));
+
+        uint32_t size;
+        Assert::AreEqual(S_OK, result->get_Size(&size));
+        Assert::AreEqual(1u, size);
+
+        ComPtr<IKeyValuePair<CanvasCharacterRange, ELEMENT_IMPL_TYPE>> element;
+        ThrowIfFailed(result->GetAt(0, &element));
+
+        CanvasCharacterRange range;
+        ThrowIfFailed(element->get_Key(&range));
+        Assert::AreEqual(0, range.CharacterIndex);
+        Assert::AreEqual(spanLength, range.CharacterCount);
+
+        RETURN_TYPE analyzedElement;
+        ThrowIfFailed(element->get_Value(&analyzedElement));
+
+        return analyzedElement;
+    }
+
     TEST_METHOD_EX(CanvasTextAnalyzer_AnalyzeScript_UniformSpan)
     {
         Fixture f;
@@ -1466,18 +1508,7 @@ TEST_CLASS(CanvasTextAnalyzerTests)
                 return S_OK;
             });
 
-        ComPtr<IVectorView<IKeyValuePair<CanvasCharacterRange, CanvasAnalyzedScript>*>> result;
-        Assert::AreEqual(S_OK, textAnalyzer->AnalyzeScript(&result));
-
-        uint32_t size;
-        Assert::AreEqual(S_OK, result->get_Size(&size));
-        Assert::AreEqual(1u, size);
-
-        ComPtr<IKeyValuePair<CanvasCharacterRange, CanvasAnalyzedScript>> element;
-        ThrowIfFailed(result->GetAt(0, &element));
-
-        CanvasAnalyzedScript analyzedScript{};
-        ThrowIfFailed(element->get_Value(&analyzedScript));
+        auto analyzedScript = AssertUniformSpanAndReturnElement<CanvasAnalyzedScript>(textAnalyzer, &ICanvasTextAnalyzer::AnalyzeScript, static_cast<int>(f.Text.length()));
 
         Assert::AreEqual(123, analyzedScript.ScriptIdentifier);
         Assert::AreEqual(CanvasScriptShape::NoVisual, analyzedScript.Shape);
@@ -1709,5 +1740,167 @@ TEST_CLASS(CanvasTextAnalyzerTests)
             f.AnalyzedScript,
             &glyphCount,
             &glyphElements));
+    }
+
+    TEST_METHOD_EX(CanvasTextAnalyzer_AnalyzeBidi_BadArg)
+    {
+        Fixture f;
+        auto textAnalyzer = f.Create();
+
+        Assert::AreEqual(E_INVALIDARG, textAnalyzer->AnalyzeBidi(nullptr));
+        Assert::AreEqual(E_INVALIDARG, textAnalyzer->AnalyzeBidiWithLocale(WinString(L""), nullptr));
+    }
+
+    TEST_METHOD_EX(CanvasTextAnalyzer_AnalyzeBidi_UniformSpan)
+    {
+        Fixture f;
+        auto textAnalyzer = f.Create();
+
+        f.TextAnalyzer->AnalyzeBidiMethod.SetExpectedCalls(1,
+            [&](IDWriteTextAnalysisSource*, UINT32 textPosition, UINT32 textLength, IDWriteTextAnalysisSink* sink)
+            {
+                Assert::AreEqual(0u, textPosition);
+                Assert::AreEqual(static_cast<uint32_t>(f.Text.length()), textLength);
+
+                ThrowIfFailed(sink->SetBidiLevel(textPosition, textLength, 12, 34));
+
+                return S_OK;
+            });
+
+        auto element = AssertUniformSpanAndReturnElement<CanvasAnalyzedBidi>(textAnalyzer, &ICanvasTextAnalyzer::AnalyzeBidi, static_cast<int>(f.Text.length()));
+
+        Assert::AreEqual(12u, element.ExplicitLevel);
+        Assert::AreEqual(34u, element.ResolvedLevel);
+    }
+
+    TEST_METHOD_EX(CanvasTextAnalyzer_AnalyzeBreakpoints_BadArg)
+    {
+        Fixture f;
+        auto textAnalyzer = f.Create();
+
+        uint32_t breakpointCount;
+        CanvasAnalyzedBreakpoint* breakpoints;
+        Assert::AreEqual(E_INVALIDARG, textAnalyzer->AnalyzeBreakpoints(nullptr, &breakpoints));
+        Assert::AreEqual(E_INVALIDARG, textAnalyzer->AnalyzeBreakpoints(&breakpointCount, nullptr));
+
+        Assert::AreEqual(E_INVALIDARG, textAnalyzer->AnalyzeBreakpointsWithLocale(WinString(L""), nullptr, &breakpoints));
+        Assert::AreEqual(E_INVALIDARG, textAnalyzer->AnalyzeBreakpointsWithLocale(WinString(L""), &breakpointCount, nullptr));
+    }
+
+    TEST_METHOD_EX(CanvasTextAnalyzer_AnalyzeLineBreakpoints)
+    {
+        Fixture f;
+        auto textAnalyzer = f.Create();
+
+        DWRITE_LINE_BREAKPOINT dwriteLineBreakpoint;
+        dwriteLineBreakpoint.breakConditionBefore = DWRITE_BREAK_CONDITION_MAY_NOT_BREAK;
+        dwriteLineBreakpoint.breakConditionAfter = DWRITE_BREAK_CONDITION_MUST_BREAK;
+        dwriteLineBreakpoint.isWhitespace = false;
+        dwriteLineBreakpoint.isSoftHyphen = true;
+
+        f.TextAnalyzer->AnalyzeLineBreakpointsMethod.SetExpectedCalls(1,
+            [&](IDWriteTextAnalysisSource*, UINT32 textPosition, UINT32 textLength, IDWriteTextAnalysisSink* sink)
+            {
+                Assert::AreEqual(0u, textPosition);
+                Assert::AreEqual(static_cast<uint32_t>(f.Text.length()), textLength);
+
+                std::vector<DWRITE_LINE_BREAKPOINT> dwriteLineBreakpoints;
+                dwriteLineBreakpoints.resize(textLength);
+
+                for (uint32_t i = 0; i < textLength; ++i)
+                {
+                    dwriteLineBreakpoints[i] = GetTestBreakpoint(i).DWriteBreakpoint;
+                }
+
+                ThrowIfFailed(sink->SetLineBreakpoints(textPosition, textLength, dwriteLineBreakpoints.data()));
+
+                return S_OK;
+            });
+
+        uint32_t breakpointCount;
+        CanvasAnalyzedBreakpoint* breakpoints;
+        Assert::AreEqual(S_OK, textAnalyzer->AnalyzeBreakpoints(&breakpointCount, &breakpoints));
+
+        Assert::AreEqual(static_cast<uint32_t>(f.Text.length()), breakpointCount);
+
+        for (uint32_t i = 0; i < breakpointCount; ++i)
+        {
+            auto expected = GetTestBreakpoint(i).Breakpoint;
+            Assert::AreEqual(expected.BreakBefore, breakpoints[i].BreakBefore);
+            Assert::AreEqual(expected.BreakAfter, breakpoints[i].BreakAfter);
+            Assert::AreEqual(expected.IsWhitespace, breakpoints[i].IsWhitespace);
+            Assert::AreEqual(expected.IsSoftHyphen, breakpoints[i].IsSoftHyphen);
+        }
+    }
+
+    TEST_METHOD_EX(CanvasTextAnalyzer_AnalyzeNumberSubstitutions_BadArg)
+    {
+        Fixture f;
+        auto textAnalyzer = f.Create();
+
+        Assert::AreEqual(E_INVALIDARG, textAnalyzer->AnalyzeNumberSubstitutions(nullptr));
+    }
+
+    TEST_METHOD_EX(CanvasTextAnalyzer_AnalyzeNumberSubstitutions_UniformSpan)
+    {
+        Fixture f;
+        auto textAnalyzer = f.Create();
+
+        auto dwriteNumberSubstitution = Make<MockDWriteNumberSubstitution>();
+        auto numberSubstitution = ResourceManager::GetOrCreate<ICanvasNumberSubstitution>(dwriteNumberSubstitution.Get());
+
+        f.TextAnalyzer->AnalyzeNumberSubstitutionMethod.SetExpectedCalls(1,
+            [&](IDWriteTextAnalysisSource*, UINT32 textPosition, UINT32 textLength, IDWriteTextAnalysisSink* sink)
+            {
+                Assert::AreEqual(0u, textPosition);
+                Assert::AreEqual(static_cast<uint32_t>(f.Text.length()), textLength);
+
+                ThrowIfFailed(sink->SetNumberSubstitution(textPosition, textLength, dwriteNumberSubstitution.Get()));
+
+                return S_OK;
+            });
+
+        auto element = AssertUniformSpanAndReturnElement<ComPtr<ICanvasNumberSubstitution>, CanvasNumberSubstitution*>(textAnalyzer, &ICanvasTextAnalyzer::AnalyzeNumberSubstitutions, static_cast<int>(f.Text.length()));
+
+        Assert::IsTrue(IsSameInstance(numberSubstitution.Get(), element.Get()));
+    }
+
+    TEST_METHOD_EX(CanvasTextAnalyzer_AnalyzeGlyphOrientations_BadArg)
+    {
+        Fixture f;
+        auto textAnalyzer = f.Create();
+
+        Assert::AreEqual(E_INVALIDARG, textAnalyzer->AnalyzeGlyphOrientations(nullptr));
+        Assert::AreEqual(E_INVALIDARG, textAnalyzer->AnalyzeGlyphOrientationsWithLocale(WinString(L""), nullptr));
+    }
+
+    TEST_METHOD_EX(CanvasTextAnalyzer_AnalyzeGlyphOrientations_UniformSpan)
+    {
+        Fixture f;
+        auto textAnalyzer = f.Create();
+
+        f.TextAnalyzer->AnalyzeVerticalGlyphOrientationMethod.SetExpectedCalls(1,
+            [&](IDWriteTextAnalysisSource*, UINT32 textPosition, UINT32 textLength, IDWriteTextAnalysisSink1* sink)
+            {
+                Assert::AreEqual(0u, textPosition);
+                Assert::AreEqual(static_cast<uint32_t>(f.Text.length()), textLength);
+
+                ThrowIfFailed(sink->SetGlyphOrientation(
+                    textPosition, 
+                    textLength, 
+                    DWRITE_GLYPH_ORIENTATION_ANGLE_90_DEGREES,
+                    123,
+                    false,
+                    true));
+
+                return S_OK;
+            });
+
+        auto element = AssertUniformSpanAndReturnElement<CanvasAnalyzedGlyphOrientation>(textAnalyzer, &ICanvasTextAnalyzer::AnalyzeGlyphOrientations, static_cast<int>(f.Text.length()));
+
+        Assert::AreEqual(CanvasGlyphOrientation::Clockwise90Degrees, element.GlyphOrientation);
+        Assert::AreEqual(123u, element.AdjustedBidiLevel);
+        Assert::IsFalse(!!element.IsSideways);
+        Assert::IsTrue(!!element.IsRightToLeft);
     }
 };

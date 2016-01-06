@@ -354,7 +354,106 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
           not be returned.
         </p>
       </remarks>
+    </member>    
+
+    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasAnalyzedBidi" Experimental="true">
+      <summary>Describes script directionality for a span of text.</summary>
     </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasAnalyzedBidi.ExplicitLevel">
+      <summary>The explicit bi-directional text level.</summary>
+      <remarks>
+        This comes from the text direction together with any embedded control codes.
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasAnalyzedBidi.ResolvedLevel">
+      <summary>
+        The final implicit level considering the explicit level and 
+        characters' natural directionality, after all bi-directional text 
+        rules have been applied.
+      </summary>
+    </member>
+    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasAnalyzedBreakpoint" Experimental="true">
+      <summary>Contains line-breaking information for a character position.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasAnalyzedBreakpoint.BreakBefore">
+      <summary>The break behavior before the character position.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasAnalyzedBreakpoint.BreakAfter">
+      <summary>The break behavior after the character position.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasAnalyzedBreakpoint.IsWhitespace">
+      <summary>Indicates the character is whitespace.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasAnalyzedBreakpoint.IsSoftHyphen">
+      <summary>Indicates the character is a soft hyphen (U+00AD).</summary>
+    </member>
+    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasAnalyzedGlyphOrientation" Experimental="true">
+      <summary>Describes orientation information for a span of text.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasAnalyzedGlyphOrientation.GlyphOrientation">
+      <summary>Indicates the angle at which a glyph should appear.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasAnalyzedGlyphOrientation.AdjustedBidiLevel">
+      <summary>The adjusted bi-directional text level to be used by custom layouts when reordering runs.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasAnalyzedGlyphOrientation.IsSideways">
+      <summary>Whether glyphs are rotated on their side.</summary>
+      <remarks>This is the default for CJK scripts, and Latin with CanvasVerticalGlyphOrientation.Stacked.</remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasAnalyzedGlyphOrientation.IsRightToLeft">
+      <summary>Indicates that the script is shaped right-to-left.</summary>
+      <remarks>With right-to-left scripts such as Arabic, this value is true.</remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextAnalyzer.AnalyzeBidi">
+      <summary>Analyzes text for which bi-directional text levels are mapped to which character positions.</summary>
+      <remarks>
+        This method overload is locale-agnostic. To use a specified locale, use 
+        <see cref="M:Microsoft.Graphics.Canvas.Text.CanvasTextAnalyzer.AnalyzeBidi(System.String)"/>.
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextAnalyzer.AnalyzeBidi(System.String)">
+      <summary>Analyzes text for which bi-directional text levels are mapped to which character positions.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextAnalyzer.AnalyzeBreakpoints">
+      <summary>Analyzes text for the line breaking behavior at each character position.</summary>
+      <remarks>
+        <p>
+          This returns an array whose size is the same as the length of the CanvasTextAnalyzer's text.
+          There is one element per character position.
+        </p>
+        <p>
+        This method overload is locale-agnostic. To use a specified locale, use 
+        <see cref="M:Microsoft.Graphics.Canvas.Text.CanvasTextAnalyzer.AnalyzeBreakpoints(System.String)"/>.
+        </p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextAnalyzer.AnalyzeBreakpoints(System.String)">
+      <summary>Analyzes text for the line breaking behavior at each character position.</summary>
+      <remarks>
+        <p>
+          This returns an array whose size is the same as the length of the CanvasTextAnalyzer's text.
+          There is one element per character position.
+        </p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextAnalyzer.AnalyzeNumberSubstitutions">
+      <summary>Analyzes text for which number substitutions are mapped to which character positions.</summary>
+      <remarks>
+        The locale which affects number substitution is affected solely by the locale set to
+        the CanvasNumberSubstitution object. If an ICanvasTextAnalyzerOptions is used with this
+        text analyzer, its GetLocaleName method is not called.
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextAnalyzer.AnalyzeGlyphOrientations">
+      <summary>Analyzes text for which glyph orientations are mapped to which character positions.</summary>
+      <remarks>
+        This method overload is locale-agnostic. To use a specified locale, use 
+        <see cref="M:Microsoft.Graphics.Canvas.Text.CanvasTextAnalyzer.AnalyzeGlyphOrientations(System.String)"/>.
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextAnalyzer.AnalyzeGlyphOrientations(System.String)">
+      <summary>Analyzes text for which glyph orientations are mapped to which character positions.</summary>
+    </member>    
     
   </members>
 </doc>

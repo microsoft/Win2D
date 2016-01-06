@@ -349,6 +349,19 @@ namespace Microsoft
             }
 
             template<>
+            inline std::wstring ToString<CanvasLineBreakCondition>(CanvasLineBreakCondition const& value)
+            {
+                switch (value)
+                {
+                    case CanvasLineBreakCondition::Neutral: return L"CanvasLineBreakCondition::Neutral";
+                    case CanvasLineBreakCondition::CanBreak: return L"CanvasLineBreakCondition::CanBreak";
+                    case CanvasLineBreakCondition::CannotBreak: return L"CanvasLineBreakCondition::CannotBreak";
+                    case CanvasLineBreakCondition::MustBreak: return L"CanvasLineBreakCondition::MustBreak";
+                    default: assert(false); return L"<unknown CanvasLineBreakCondition>";
+                }
+            }
+
+            template<>
             inline std::wstring ToString<D2D1_BUFFER_PRECISION>(D2D1_BUFFER_PRECISION const& value)
             {
                 switch (value)

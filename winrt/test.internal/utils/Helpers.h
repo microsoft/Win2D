@@ -1492,6 +1492,15 @@ namespace Microsoft
                 END_ENUM(DWRITE_SCRIPT_SHAPES);
             }
 
+            ENUM_TO_STRING(CanvasLineBreakCondition)
+            {
+                ENUM_VALUE(CanvasLineBreakCondition::Neutral);
+                ENUM_VALUE(CanvasLineBreakCondition::CanBreak);
+                ENUM_VALUE(CanvasLineBreakCondition::CannotBreak);
+                ENUM_VALUE(CanvasLineBreakCondition::MustBreak);
+                END_ENUM(CanvasLineBreakCondition);
+            }
+
             template<typename T>
             inline std::wstring ToStringAsInt(T value)
             {

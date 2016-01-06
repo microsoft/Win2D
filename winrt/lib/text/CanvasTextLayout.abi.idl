@@ -27,6 +27,7 @@ namespace Microsoft.Graphics.Canvas.Text
     [version(VERSION), flags]
     typedef enum CanvasClusterProperties
     {
+        None = 0x0,
         CanWrapLineAfter = 0x1,
         Whitespace = 0x2,
         Newline = 0x4,

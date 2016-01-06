@@ -419,7 +419,7 @@ namespace ExampleGallery
             return true;
         }
 
-        List<GlyphRun> CreateGlyphRuns(List<Rect> rectangles, List<FormattingSpan> formattingSpans, string text)
+        List<GlyphRun> CreateGlyphRuns(List<Rect> rectangles, List<FormattingSpan> formattingSpans, CanvasAnalyzedBreakpoint[] analyzedBreakpoints, string text)
         {
             List<GlyphRun> glyphRuns = new List<GlyphRun>();
 
@@ -452,11 +452,16 @@ namespace ExampleGallery
                     int wordBoundary;
                     for (wordBoundary = i; wordBoundary < glyphs.Length; wordBoundary++)
                     {
+
+                        var afterThisCharacter = analyzedBreakpoints[wordBoundary].BreakAfter;
+                        var beforeNextCharacter = (wordBoundary < glyphs.Length - 1) ? analyzedBreakpoints[wordBoundary + 1].BreakBefore : CanvasLineBreakCondition.Neutral;
+                        
+                        // 
+                        // The text for this demo doesn't have any hard line breaks.
                         //
-                        // TODO: #6142 Once we have line break analysis, we should use that
-                        // for evaluating line break boundaries.
-                        //
-                        if (text[wordBoundary] == ' ')
+                        System.Diagnostics.Debug.Assert(afterThisCharacter != CanvasLineBreakCondition.MustBreak);
+
+                        if (afterThisCharacter == CanvasLineBreakCondition.CanBreak && beforeNextCharacter != CanvasLineBreakCondition.CannotBreak)
                             break;
                         wordAdvance += glyphs[wordBoundary].Advance;
                     }
@@ -547,6 +552,11 @@ namespace ExampleGallery
 
             float maxLineSpacing = 0;
             List<FormattingSpan> formattingSpans = EvaluateFormattingSpans(textAnalyzer, fontResult, scriptAnalysis, out maxLineSpacing);
+            
+            //
+            // Perform line break analysis.
+            //
+            var breakpoints = textAnalyzer.AnalyzeBreakpoints();
 
             //
             // Get the rectangles to layout text into.
@@ -556,7 +566,7 @@ namespace ExampleGallery
             //
             // Insert glyph runs into the layout boxes.
             //
-            glyphRuns = CreateGlyphRuns(layoutRectangles, formattingSpans, text);
+            glyphRuns = CreateGlyphRuns(layoutRectangles, formattingSpans, breakpoints, text);
 
             needsLayout = false;
 

@@ -819,6 +819,9 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="T:Microsoft.Graphics.Canvas.Text.CanvasClusterProperties" Experimental="true">
       <summary>Properties which apply to a glyph cluster.</summary>
     </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasClusterProperties.None">
+      <summary>Indicates that no attributes pertain to the cluster.</summary>
+    </member>
     <member name="F:Microsoft.Graphics.Canvas.Text.CanvasClusterProperties.CanWrapLineAfter">
       <summary>Indicates that a line can be broken right after the cluster.</summary>
     </member>

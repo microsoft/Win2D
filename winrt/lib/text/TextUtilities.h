@@ -631,6 +631,26 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         return static_cast<CanvasLineBreakCondition>(value);
     }
 
+    inline CanvasLineBreakCondition ToCanvasLineBreakCondition(uint8_t value)
+    {
+        //
+        // DWrite returns DWRITE_BREAK_CONDITION for this value, and uses a uint8_t for compactness.
+        // We assert that this value is valid.
+        //
+        switch (value)
+        {
+            case DWRITE_BREAK_CONDITION_NEUTRAL:
+            case DWRITE_BREAK_CONDITION_CAN_BREAK:
+            case DWRITE_BREAK_CONDITION_MAY_NOT_BREAK:
+            case DWRITE_BREAK_CONDITION_MUST_BREAK:
+                break;
+            default:
+                assert(false); // Unexpected value
+        }
+
+        return ToCanvasLineBreakCondition(static_cast<DWRITE_BREAK_CONDITION>(value));
+    }
+
     //
     // The localizedStrings are allowed to be null. If they are, this returns an empty map view.
     //

@@ -9,201 +9,189 @@
 #include "CanvasScaledFont.h"
 #include "CanvasFontFace.h"
 #include "CanvasTypography.h"
+#include "CanvasNumberSubstitution.h"
 
 using namespace ABI::Microsoft::Graphics::Canvas;
 using namespace ABI::Microsoft::Graphics::Canvas::Text;
 
-class DWriteTextAnalysisSource : public RuntimeClass<RuntimeClassFlags<ClassicCom>, IDWriteTextAnalysisSource1>,
-    private LifespanTracker<DWriteTextAnalysisSource>
+DWriteTextAnalysisSource::DWriteTextAnalysisSource(
+    WinString text,
+    uint32_t textLength,
+    CanvasTextDirection textDirection,
+    ComPtr<ICanvasTextAnalyzerOptions> const& analyzerOptions,
+    ComPtr<ICanvasNumberSubstitution> defaultNumberSubstitution,
+    CanvasVerticalGlyphOrientation defaultVerticalGlyphOrientation,
+    uint32_t defaultBidiLevel)
+    : m_text(text)
+    , m_textLength(textLength)
+    , m_dwriteReadingDirection(DWriteToCanvasTextDirection::Lookup(textDirection)->ReadingDirection)
+    , m_analyzerOptions(analyzerOptions)
+    , m_defaultVerticalGlyphOrientation(ToVerticalGlyphOrientation(defaultVerticalGlyphOrientation))
+    , m_defaultBidiLevel(static_cast<uint8_t>(defaultBidiLevel))
 {
-    WinString m_text;
-    uint32_t m_textLength;
 
-    WinString m_localeName;
-    DWRITE_READING_DIRECTION m_dwriteReadingDirection;
-    ComPtr<ICanvasTextAnalyzerOptions> m_analyzerOptions;
-    std::vector<WinString> m_localeNames;
-    ComPtr<IDWriteNumberSubstitution> m_defaultNumberSubstitution;
-    DWRITE_VERTICAL_GLYPH_ORIENTATION m_defaultVerticalGlyphOrientation;
-    uint8_t m_defaultBidiLevel;
-
-public:
-    DWriteTextAnalysisSource(
-        WinString text,
-        uint32_t textLength,
-        WinString localeName,
-        CanvasTextDirection textDirection,
-        ComPtr<ICanvasTextAnalyzerOptions> const& analyzerOptions,
-        ComPtr<ICanvasNumberSubstitution> defaultNumberSubstitution,
-        CanvasVerticalGlyphOrientation defaultVerticalGlyphOrientation,
-        uint32_t defaultBidiLevel)
-        : m_text(text)
-        , m_textLength(textLength)
-        , m_localeName(localeName)
-        , m_dwriteReadingDirection(DWriteToCanvasTextDirection::Lookup(textDirection)->ReadingDirection)
-        , m_analyzerOptions(analyzerOptions)
-        , m_defaultVerticalGlyphOrientation(ToVerticalGlyphOrientation(defaultVerticalGlyphOrientation))
-        , m_defaultBidiLevel(static_cast<uint8_t>(defaultBidiLevel))
+    if (defaultNumberSubstitution)
     {
-
-        if (defaultNumberSubstitution)
-        {
-            m_defaultNumberSubstitution = GetWrappedResource<IDWriteNumberSubstitution>(defaultNumberSubstitution);
-        }
+        m_defaultNumberSubstitution = GetWrappedResource<IDWriteNumberSubstitution>(defaultNumberSubstitution);
     }
+}
 
-    IFACEMETHODIMP GetTextAtPosition(
-        uint32_t textPosition,
-        WCHAR const** textString,
-        uint32_t* textLengthRemaining)
+void DWriteTextAnalysisSource::SetLocaleName(WinString localeName)
+{
+    m_localeName = localeName;
+}
+
+IFACEMETHODIMP DWriteTextAnalysisSource::GetTextAtPosition(
+    uint32_t textPosition,
+    WCHAR const** textString,
+    uint32_t* textLengthRemaining)
+{
+    if (textPosition >= m_textLength)
     {
-        if (textPosition >= m_textLength)
-        {
-            *textString = nullptr;
-            *textLengthRemaining = 0;
-        }
-        else
-        {
-            *textString = static_cast<wchar_t const*>(m_text) + textPosition;
-            *textLengthRemaining = m_textLength - textPosition;
-        }
-        return S_OK;
+        *textString = nullptr;
+        *textLengthRemaining = 0;
     }
-
-    IFACEMETHODIMP GetTextBeforePosition(
-        uint32_t textPosition,
-        WCHAR const** textString,
-        uint32_t* textLengthRemaining)
+    else
     {
-        if (textPosition == 0 || textPosition > m_textLength)
-        {
-            *textString = nullptr;
-            *textLengthRemaining = 0;
-        }
-        else
-        {
-            *textString = WindowsGetStringRawBuffer(m_text, nullptr);
-            *textLengthRemaining = textPosition;
-        }
-        return S_OK;
+        *textString = static_cast<wchar_t const*>(m_text) + textPosition;
+        *textLengthRemaining = m_textLength - textPosition;
     }
+    return S_OK;
+}
 
-    IFACEMETHODIMP_(DWRITE_READING_DIRECTION) GetParagraphReadingDirection()
+
+IFACEMETHODIMP DWriteTextAnalysisSource::GetTextBeforePosition(
+    uint32_t textPosition,
+    WCHAR const** textString,
+    uint32_t* textLengthRemaining)
+{
+    if (textPosition == 0 || textPosition > m_textLength)
     {
-        return m_dwriteReadingDirection;
+        *textString = nullptr;
+        *textLengthRemaining = 0;
     }
-
-    IFACEMETHODIMP GetLocaleName(
-        uint32_t textPosition,
-        uint32_t* characterCountWithSameFormatting,
-        WCHAR const** localeName)
+    else
     {
-        return ExceptionBoundary(
-            [&]
+        *textString = WindowsGetStringRawBuffer(m_text, nullptr);
+        *textLengthRemaining = textPosition;
+    }
+    return S_OK;
+}
+
+IFACEMETHODIMP_(DWRITE_READING_DIRECTION) DWriteTextAnalysisSource::GetParagraphReadingDirection()
+{
+    return m_dwriteReadingDirection;
+}
+
+IFACEMETHODIMP DWriteTextAnalysisSource::GetLocaleName(
+    uint32_t textPosition,
+    uint32_t* characterCountWithSameFormatting,
+    WCHAR const** localeName)
+{
+    return ExceptionBoundary(
+        [&]
+        {
+            if (m_analyzerOptions)
             {
-                if (m_analyzerOptions)
-                {
-                    WinString localeString;
-                    int characterCount;
-                    ThrowIfFailed(m_analyzerOptions->GetLocaleName(textPosition, &characterCount, localeString.GetAddressOf()));
+                WinString localeString;
+                int characterCount;
+                ThrowIfFailed(m_analyzerOptions->GetLocaleName(textPosition, &characterCount, localeString.GetAddressOf()));
 
-                    m_localeNames.push_back(localeString);
+                m_localeNames.push_back(localeString);
 
-                    *localeName = static_cast<wchar_t const*>(m_localeNames.back());
+                *localeName = static_cast<wchar_t const*>(m_localeNames.back());
 
-                    *characterCountWithSameFormatting = characterCount;
-                }
-                else
-                {
-                    *localeName = static_cast<wchar_t const*>(m_localeName);
-
-                    *characterCountWithSameFormatting = GetCharacterCountForRemainderOfText(textPosition);
-                }
-            });
-    }
-
-    IFACEMETHODIMP GetNumberSubstitution(
-        uint32_t textPosition,
-        uint32_t* characterCountWithSameFormatting,
-        IDWriteNumberSubstitution** numberSubstitution)
-    {    
-        return ExceptionBoundary(
-            [&]
+                *characterCountWithSameFormatting = characterCount;
+            }
+            else
             {
-                if (m_analyzerOptions)
-                {
-                    ComPtr<ICanvasNumberSubstitution> substitution;
-                    int characterCount;
-                    ThrowIfFailed(m_analyzerOptions->GetNumberSubstitution(textPosition, &characterCount, &substitution));
+                *localeName = static_cast<wchar_t const*>(m_localeName);
 
-                    ComPtr<IDWriteNumberSubstitution> dwriteNumberSubstitution;
-                    if (substitution)
-                        dwriteNumberSubstitution = GetWrappedResource<IDWriteNumberSubstitution>(substitution);
+                *characterCountWithSameFormatting = GetCharacterCountForRemainderOfText(textPosition);
+            }
+        });
+}
 
-                    dwriteNumberSubstitution.CopyTo(numberSubstitution);
-
-                    *characterCountWithSameFormatting = characterCount;
-                }
-                else
-                {
-                    m_defaultNumberSubstitution.CopyTo(numberSubstitution);
-
-                    *characterCountWithSameFormatting = GetCharacterCountForRemainderOfText(textPosition);
-                }
-            });
-    }
-
-    IFACEMETHODIMP GetVerticalGlyphOrientation(
-        uint32_t textPosition,
-        uint32_t* characterCountWithSameFormatting,
-        DWRITE_VERTICAL_GLYPH_ORIENTATION* verticalGlyphOrientation,
-        uint8_t* bidiLevel)
-    {
-        return ExceptionBoundary(
-            [&]
+IFACEMETHODIMP DWriteTextAnalysisSource::GetNumberSubstitution(
+    uint32_t textPosition,
+    uint32_t* characterCountWithSameFormatting,
+    IDWriteNumberSubstitution** numberSubstitution)
+{    
+    return ExceptionBoundary(
+        [&]
+        {
+            if (m_analyzerOptions)
             {
-                if (m_analyzerOptions)
+                ComPtr<ICanvasNumberSubstitution> substitution;
+                int characterCount;
+                ThrowIfFailed(m_analyzerOptions->GetNumberSubstitution(textPosition, &characterCount, &substitution));
+
+                ComPtr<IDWriteNumberSubstitution> dwriteNumberSubstitution;
+                if (substitution)
+                    dwriteNumberSubstitution = GetWrappedResource<IDWriteNumberSubstitution>(substitution);
+
+                dwriteNumberSubstitution.CopyTo(numberSubstitution);
+
+                *characterCountWithSameFormatting = characterCount;
+            }
+            else
+            {
+                m_defaultNumberSubstitution.CopyTo(numberSubstitution);
+
+                *characterCountWithSameFormatting = GetCharacterCountForRemainderOfText(textPosition);
+            }
+        });
+}
+
+IFACEMETHODIMP DWriteTextAnalysisSource::GetVerticalGlyphOrientation(
+    uint32_t textPosition,
+    uint32_t* characterCountWithSameFormatting,
+    DWRITE_VERTICAL_GLYPH_ORIENTATION* verticalGlyphOrientation,
+    uint8_t* bidiLevel)
+{
+    return ExceptionBoundary(
+        [&]
+        {
+            if (m_analyzerOptions)
+            {
+                CanvasVerticalGlyphOrientation glyphOrientation;
+                int glyphOrientationCharacterCount;
+                ThrowIfFailed(m_analyzerOptions->GetVerticalGlyphOrientation(textPosition, &glyphOrientationCharacterCount, &glyphOrientation));
+
+                *verticalGlyphOrientation = ToVerticalGlyphOrientation(glyphOrientation);
+
+                uint32_t bidi;
+                int bidiCharacterCount;
+                ThrowIfFailed(m_analyzerOptions->GetBidiLevel(textPosition, &bidiCharacterCount, &bidi));
+
+                if (bidi > UINT8_MAX)
                 {
-                    CanvasVerticalGlyphOrientation glyphOrientation;
-                    int glyphOrientationCharacterCount;
-                    ThrowIfFailed(m_analyzerOptions->GetVerticalGlyphOrientation(textPosition, &glyphOrientationCharacterCount, &glyphOrientation));
-
-                    *verticalGlyphOrientation = ToVerticalGlyphOrientation(glyphOrientation);
-
-                    uint32_t bidi;
-                    int bidiCharacterCount;
-                    ThrowIfFailed(m_analyzerOptions->GetBidiLevel(textPosition, &bidiCharacterCount, &bidi));
-
-                    if (bidi > UINT8_MAX)
-                    {
-                        ThrowHR(E_INVALIDARG);
-                    }
-
-                    *bidiLevel = static_cast<uint8_t>(bidi);
-
-                    *characterCountWithSameFormatting = std::min(glyphOrientationCharacterCount, bidiCharacterCount);
-
+                    ThrowHR(E_INVALIDARG);
                 }
-                else
-                {
-                    *verticalGlyphOrientation = m_defaultVerticalGlyphOrientation;
 
-                    *bidiLevel = m_defaultBidiLevel;
+                *bidiLevel = static_cast<uint8_t>(bidi);
 
-                    *characterCountWithSameFormatting = GetCharacterCountForRemainderOfText(textPosition);
-                }
-            });
-    }
+                *characterCountWithSameFormatting = std::min(glyphOrientationCharacterCount, bidiCharacterCount);
 
-private:
-    uint32_t GetCharacterCountForRemainderOfText(uint32_t textPosition)
-    {
-        //
-        // Returned as a character count when we have uniform formatting.
-        //
-        return textPosition < m_textLength ? m_textLength - textPosition : 0;
-    }
-};
+            }
+            else
+            {
+                *verticalGlyphOrientation = m_defaultVerticalGlyphOrientation;
+
+                *bidiLevel = m_defaultBidiLevel;
+
+                *characterCountWithSameFormatting = GetCharacterCountForRemainderOfText(textPosition);
+            }
+        });
+}
+
+uint32_t DWriteTextAnalysisSource::GetCharacterCountForRemainderOfText(uint32_t textPosition)
+{
+    //
+    // Returned as a character count when we have uniform formatting.
+    //
+    return textPosition < m_textLength ? m_textLength - textPosition : 0;
+}
 
 template<typename ValueType, typename ValueInterface=ValueType>
 static ComPtr<IKeyValuePair<CanvasCharacterRange, ValueType>> MakeCharacterRangeKeyValue(int textPosition, int textLength, ValueType value)
@@ -240,85 +228,209 @@ static DWRITE_SCRIPT_ANALYSIS ToDWriteScriptAnalysis(CanvasAnalyzedScript const&
     return scriptAnalysis;
 }
 
-class DWriteTextAnalysisSink : public RuntimeClass<RuntimeClassFlags<ClassicCom>, IDWriteTextAnalysisSink1>,
-    private LifespanTracker<DWriteTextAnalysisSink>
+STDMETHODIMP DWriteTextAnalysisSink::SetBidiLevel(
+    uint32_t textPosition,
+    uint32_t textLength,
+    uint8_t explicitLevel,
+    uint8_t resolvedLevel)
 {
-    ComPtr<Vector<IKeyValuePair<CanvasCharacterRange, CanvasAnalyzedScript>*>> m_analyzedScript;
-
-public:
-
-    STDMETHOD(SetScriptAnalysis)(
-        uint32_t textPosition,
-        uint32_t textLength,
-        DWRITE_SCRIPT_ANALYSIS const* scriptAnalysis) override
-    {
-        return ExceptionBoundary(
-            [&]
-            {
-                EnsureAnalyzedScript();
-
-                auto analyzedScript = ToCanvasAnalyzedScript(scriptAnalysis);
-
-                auto newPair = MakeCharacterRangeKeyValue(textPosition, textLength, analyzedScript);
-
-                ThrowIfFailed(m_analyzedScript->Append(newPair.Get()));
-            });
-    }
-
-    STDMETHOD(SetLineBreakpoints)(
-        uint32_t,
-        uint32_t,
-        DWRITE_LINE_BREAKPOINT const*) override
-    {
-        return E_UNEXPECTED; // TODO: #6142 expose analysis results other than script.
-    }
-
-    STDMETHOD(SetBidiLevel)(
-        uint32_t,
-        uint32_t,
-        UINT8,
-        UINT8) override
-    {
-        return E_UNEXPECTED;
-    }
-
-    STDMETHOD(SetNumberSubstitution)(
-        uint32_t,
-        uint32_t,
-        IDWriteNumberSubstitution*) override
-    {
-        return E_UNEXPECTED;
-    }
-
-    IFACEMETHODIMP SetGlyphOrientation(
-        uint32_t,
-        uint32_t,
-        DWRITE_GLYPH_ORIENTATION_ANGLE,
-        UINT8,
-        BOOL,
-        BOOL) override
-    {
-        return E_UNEXPECTED;
-    }
-
-    ComPtr<Vector<IKeyValuePair<CanvasCharacterRange, CanvasAnalyzedScript>*>> const& GetAnalyzedScript()
-    {
-        EnsureAnalyzedScript();
-        return m_analyzedScript;
-    }
-
-private:
-
-    void EnsureAnalyzedScript()
-    {
-        if (!m_analyzedScript)
+    return ExceptionBoundary(
+        [&]
         {
-            m_analyzedScript = Make<Vector<IKeyValuePair<CanvasCharacterRange, CanvasAnalyzedScript>*>>();
-            CheckMakeResult(m_analyzedScript);
-        }
-    }
+            EnsureAnalyzedBidi();
 
-};
+            CanvasAnalyzedBidi analyzedBidi{};
+            analyzedBidi.ExplicitLevel = explicitLevel;
+            analyzedBidi.ResolvedLevel = resolvedLevel;
+
+            auto newPair = MakeCharacterRangeKeyValue(textPosition, textLength, analyzedBidi);
+
+            ThrowIfFailed(m_analyzedBidi->Append(newPair.Get()));
+        });
+}
+
+STDMETHODIMP DWriteTextAnalysisSink::SetLineBreakpoints(
+    uint32_t textPosition,
+    uint32_t textLength,
+    DWRITE_LINE_BREAKPOINT const* dwriteLineBreakpoint)
+{
+    return ExceptionBoundary(
+        [&]
+        {
+            EnsureAnalyzedLineBreakpoints();
+
+            for (uint32_t i = 0; i < textLength; ++i)
+            {
+                auto& b = m_analyzedLineBreakpoints[textPosition + i];
+
+                b.BreakBefore = ToCanvasLineBreakCondition(dwriteLineBreakpoint[i].breakConditionBefore);
+                b.BreakAfter = ToCanvasLineBreakCondition(dwriteLineBreakpoint[i].breakConditionAfter);
+                b.IsWhitespace = dwriteLineBreakpoint[i].isWhitespace;
+                b.IsSoftHyphen = dwriteLineBreakpoint[i].isSoftHyphen;
+            }
+        });
+}
+
+STDMETHODIMP DWriteTextAnalysisSink::SetNumberSubstitution(
+    uint32_t textPosition,
+    uint32_t textLength,
+    IDWriteNumberSubstitution* dwriteNumberSubstitution)
+{
+    return ExceptionBoundary(
+        [&]
+        {
+            EnsureAnalyzedNumberSubstitution();
+
+            auto numberSubstitution = ResourceManager::GetOrCreate<ICanvasNumberSubstitution>(dwriteNumberSubstitution);
+
+            auto newPair = MakeCharacterRangeKeyValue<CanvasNumberSubstitution*, ICanvasNumberSubstitution*>(
+                textPosition, 
+                textLength, 
+                static_cast<CanvasNumberSubstitution*>(numberSubstitution.Get()));
+
+            ThrowIfFailed(m_analyzedNumberSubstitution->Append(newPair.Get()));
+        });
+}
+
+STDMETHODIMP DWriteTextAnalysisSink::SetScriptAnalysis(
+    uint32_t textPosition,
+    uint32_t textLength,
+    DWRITE_SCRIPT_ANALYSIS const* scriptAnalysis)
+{
+    return ExceptionBoundary(
+        [&]
+        {
+            EnsureAnalyzedScript();
+
+            auto analyzedScript = ToCanvasAnalyzedScript(scriptAnalysis);
+
+            auto newPair = MakeCharacterRangeKeyValue(textPosition, textLength, analyzedScript);
+
+            ThrowIfFailed(m_analyzedScript->Append(newPair.Get()));
+        });
+}
+
+STDMETHODIMP DWriteTextAnalysisSink::SetGlyphOrientation(
+    uint32_t textPosition,
+    uint32_t textLength,
+    DWRITE_GLYPH_ORIENTATION_ANGLE dwriteGlyphOrientationAngle,
+    uint8_t adjustedBidiLevel,
+    BOOL isSideways,
+    BOOL isRightToLeft)
+{
+    return ExceptionBoundary(
+        [&]
+        {
+            EnsureAnalyzedGlyphOrientation();
+
+            CanvasAnalyzedGlyphOrientation analyzedGlyphOrientation{};
+            analyzedGlyphOrientation.GlyphOrientation = ToCanvasGlyphOrientation(dwriteGlyphOrientationAngle);
+            analyzedGlyphOrientation.AdjustedBidiLevel = adjustedBidiLevel;
+            analyzedGlyphOrientation.IsSideways = !!isSideways;
+            analyzedGlyphOrientation.IsRightToLeft = !!isRightToLeft;
+
+            auto newPair = MakeCharacterRangeKeyValue(textPosition, textLength, analyzedGlyphOrientation);
+
+            ThrowIfFailed(m_analyzedGlyphOrientation->Append(newPair.Get()));
+        });
+}
+
+ComPtr<Vector<IKeyValuePair<CanvasCharacterRange, CanvasAnalyzedScript>*>> DWriteTextAnalysisSink::GetAnalyzedScript()
+{
+    EnsureAnalyzedScript();
+
+    auto result = m_analyzedScript;
+    
+    m_analyzedScript.Reset();
+
+    return result;
+}
+
+ComPtr<Vector<IKeyValuePair<CanvasCharacterRange, CanvasAnalyzedBidi>*>> DWriteTextAnalysisSink::GetAnalyzedBidi()
+{
+    EnsureAnalyzedBidi();
+
+    auto result = m_analyzedBidi;
+
+    m_analyzedBidi.Reset();
+
+    return result;
+}
+
+ComArray<CanvasAnalyzedBreakpoint> DWriteTextAnalysisSink::GetAnalyzedLineBreakpoints()
+{
+    EnsureAnalyzedLineBreakpoints();
+
+    ComArray<CanvasAnalyzedBreakpoint> result = std::move(m_analyzedLineBreakpoints);
+
+    return result;
+}
+
+ComPtr<Vector<IKeyValuePair<CanvasCharacterRange, CanvasNumberSubstitution*>*>> DWriteTextAnalysisSink::GetAnalyzedNumberSubstitution()
+{
+    EnsureAnalyzedNumberSubstitution();
+
+    auto result = m_analyzedNumberSubstitution;
+
+    m_analyzedNumberSubstitution.Reset();
+
+    return result;
+}
+
+ComPtr<Vector<IKeyValuePair<CanvasCharacterRange, CanvasAnalyzedGlyphOrientation>*>> DWriteTextAnalysisSink::GetAnalyzedGlyphOrientation()
+{
+    EnsureAnalyzedGlyphOrientation();
+
+    auto result = m_analyzedGlyphOrientation;
+
+    m_analyzedGlyphOrientation.Reset();
+
+    return result;
+}
+
+void DWriteTextAnalysisSink::EnsureAnalyzedBidi()
+{
+    if (!m_analyzedBidi)
+    {
+        m_analyzedBidi = Make<Vector<IKeyValuePair<CanvasCharacterRange, CanvasAnalyzedBidi>*>>();
+        CheckMakeResult(m_analyzedBidi);
+    }
+}
+
+void DWriteTextAnalysisSink::EnsureAnalyzedLineBreakpoints()
+{
+    if (!m_analyzedLineBreakpoints.GetData())
+    {
+        m_analyzedLineBreakpoints = ComArray<CanvasAnalyzedBreakpoint>(m_textLength);
+    }
+}
+
+void DWriteTextAnalysisSink::EnsureAnalyzedNumberSubstitution()
+{
+    if (!m_analyzedNumberSubstitution)
+    {
+        m_analyzedNumberSubstitution = Make<Vector<IKeyValuePair<CanvasCharacterRange, CanvasNumberSubstitution*>*>>();
+        CheckMakeResult(m_analyzedNumberSubstitution);
+    }
+}
+
+void DWriteTextAnalysisSink::EnsureAnalyzedScript()
+{
+    if (!m_analyzedScript)
+    {
+        m_analyzedScript = Make<Vector<IKeyValuePair<CanvasCharacterRange, CanvasAnalyzedScript>*>>();
+        CheckMakeResult(m_analyzedScript);
+    }
+}
+
+void DWriteTextAnalysisSink::EnsureAnalyzedGlyphOrientation()
+{
+    if (!m_analyzedGlyphOrientation)
+    {
+        m_analyzedGlyphOrientation = Make<Vector<IKeyValuePair<CanvasCharacterRange, CanvasAnalyzedGlyphOrientation>*>>();
+        CheckMakeResult(m_analyzedGlyphOrientation);
+    }
+}
 
 CanvasTextAnalyzer::CanvasTextAnalyzer(
     HSTRING text,
@@ -329,7 +441,9 @@ CanvasTextAnalyzer::CanvasTextAnalyzer(
     , m_source(source)
     , m_defaultVerticalGlyphOrientation(CanvasVerticalGlyphOrientation::Default)
     , m_defaultBidiLevel(0)
+    , m_customFontManager(CustomFontManager::GetInstance())
 {
+    CreateTextAnalysisSourceAndSink();
 }
 
 
@@ -343,11 +457,14 @@ CanvasTextAnalyzer::CanvasTextAnalyzer(
     , m_textDirection(textDirection)
     , m_defaultNumberSubstitution(numberSubstitution)
     , m_defaultVerticalGlyphOrientation(verticalGlyphOrientation)
+    , m_customFontManager(CustomFontManager::GetInstance())
 {
     if (bidiLevel > UINT8_MAX)
         ThrowHR(E_INVALIDARG);
 
     m_defaultBidiLevel = bidiLevel;
+
+    CreateTextAnalysisSourceAndSink();
 }
 
 
@@ -358,24 +475,23 @@ IFACEMETHODIMP CanvasTextAnalyzer::ChooseFontsUsingSystemFontSet(
     return ChooseFonts(textFormat, nullptr, result);
 }
 
-ComPtr<IDWriteTextAnalysisSource> CanvasTextAnalyzer::CreateTextAnalysisSource(
-    WinString localeNameString)
+void CanvasTextAnalyzer::CreateTextAnalysisSourceAndSink()
 {
     uint32_t textLength;
     WindowsGetStringRawBuffer(m_text, &textLength);
 
-    ComPtr<IDWriteTextAnalysisSource> dwriteTextAnalysisSource = Make<DWriteTextAnalysisSource>(
+    m_dwriteTextAnalysisSource = Make<DWriteTextAnalysisSource>(
         m_text,
         textLength,
-        localeNameString,
         m_textDirection,
         m_source,
         m_defaultNumberSubstitution,
         m_defaultVerticalGlyphOrientation,
         m_defaultBidiLevel);
-    CheckMakeResult(dwriteTextAnalysisSource);
+    CheckMakeResult(m_dwriteTextAnalysisSource);
 
-    return dwriteTextAnalysisSource;
+    m_dwriteTextAnalysisSink = Make<DWriteTextAnalysisSink>(textLength);
+    CheckMakeResult(m_dwriteTextAnalysisSink);
 }
 
 IFACEMETHODIMP CanvasTextAnalyzer::ChooseFonts(
@@ -396,7 +512,7 @@ IFACEMETHODIMP CanvasTextAnalyzer::ChooseFonts(
             uint32_t textLength;
             WindowsGetStringRawBuffer(m_text, &textLength);
 
-            auto dwriteTextAnalysisSource = CreateTextAnalysisSource(localeNameString);
+            m_dwriteTextAnalysisSource->SetLocaleName(localeNameString);
 
             ComPtr<IDWriteFontCollection> dwriteFontCollection;
 
@@ -404,7 +520,7 @@ IFACEMETHODIMP CanvasTextAnalyzer::ChooseFonts(
             {
 #if WINVER > _WIN32_WINNT_WINBLUE
                 auto dwriteFontSet = GetWrappedResource<IDWriteFontSet>(requestedFontSet);
-                auto factory = As<IDWriteFactory3>(CustomFontManager::GetInstance()->GetSharedFactory());
+                auto factory = As<IDWriteFactory3>(m_customFontManager->GetSharedFactory());
                 ComPtr<IDWriteFontCollection1> dwriteFontCollection1;
                 ThrowIfFailed(factory->CreateFontCollectionFromFontSet(dwriteFontSet.Get(), &dwriteFontCollection1));
 
@@ -415,7 +531,7 @@ IFACEMETHODIMP CanvasTextAnalyzer::ChooseFonts(
             }
             else
             {
-                auto factory = CustomFontManager::GetInstance()->GetSharedFactory();
+                auto factory = m_customFontManager->GetSharedFactory();
                 ThrowIfFailed(factory->GetSystemFontCollection(&dwriteFontCollection));
             }
 
@@ -434,8 +550,8 @@ IFACEMETHODIMP CanvasTextAnalyzer::ChooseFonts(
 
             while (charactersLeft > 0)
             {
-                ThrowIfFailed(CustomFontManager::GetInstance()->GetSystemFontFallback()->MapCharacters(
-                    dwriteTextAnalysisSource.Get(),
+                ThrowIfFailed(m_customFontManager->GetSystemFontFallback()->MapCharacters(
+                    m_dwriteTextAnalysisSource.Get(),
                     characterIndex,
                     charactersLeft,
                     dwriteFontCollection.Get(),
@@ -472,6 +588,81 @@ IFACEMETHODIMP CanvasTextAnalyzer::ChooseFonts(
         });
 }
 
+IFACEMETHODIMP CanvasTextAnalyzer::AnalyzeBidi(
+    IVectorView<IKeyValuePair<CanvasCharacterRange, CanvasAnalyzedBidi>*>** values)
+{
+    return AnalyzeBidiWithLocale(nullptr, values);
+}
+
+IFACEMETHODIMP CanvasTextAnalyzer::AnalyzeBidiWithLocale(
+    HSTRING locale,
+    IVectorView<IKeyValuePair<CanvasCharacterRange, CanvasAnalyzedBidi>*>** values)
+{
+    return ExceptionBoundary(
+        [&]
+        {
+            CheckAndClearOutPointer(values);
+
+            WinString localeString(locale);
+            m_dwriteTextAnalysisSource->SetLocaleName(localeString);
+
+            uint32_t textLength;
+            WindowsGetStringRawBuffer(m_text, &textLength);
+            
+            ThrowIfFailed(m_customFontManager->GetTextAnalyzer()->AnalyzeBidi(m_dwriteTextAnalysisSource.Get(), 0, textLength, m_dwriteTextAnalysisSink.Get()));
+
+            ThrowIfFailed(m_dwriteTextAnalysisSink->GetAnalyzedBidi()->GetView(values));
+        });
+}
+
+IFACEMETHODIMP CanvasTextAnalyzer::AnalyzeBreakpoints(
+    uint32_t* valueCount,
+    CanvasAnalyzedBreakpoint** valueElements)
+{
+    return AnalyzeBreakpointsWithLocale(nullptr, valueCount, valueElements);
+}
+
+IFACEMETHODIMP CanvasTextAnalyzer::AnalyzeBreakpointsWithLocale(
+    HSTRING locale,
+    uint32_t* valueCount,
+    CanvasAnalyzedBreakpoint** valueElements)
+{
+    return ExceptionBoundary(
+        [&]
+        {
+            CheckInPointer(valueCount);
+            CheckAndClearOutPointer(valueElements);
+
+            WinString localeString(locale);
+            m_dwriteTextAnalysisSource->SetLocaleName(localeString);
+
+            uint32_t textLength;
+            WindowsGetStringRawBuffer(m_text, &textLength);
+
+            ThrowIfFailed(m_customFontManager->GetTextAnalyzer()->AnalyzeLineBreakpoints(m_dwriteTextAnalysisSource.Get(), 0, textLength, m_dwriteTextAnalysisSink.Get()));
+
+            auto analyzedBreakpoints = m_dwriteTextAnalysisSink->GetAnalyzedLineBreakpoints();
+
+            analyzedBreakpoints.Detach(valueCount, valueElements);
+        });
+}
+
+IFACEMETHODIMP CanvasTextAnalyzer::AnalyzeNumberSubstitutions(
+    IVectorView<IKeyValuePair<CanvasCharacterRange, CanvasNumberSubstitution*>*>** values)
+{
+    return ExceptionBoundary(
+        [&]
+        {
+            CheckAndClearOutPointer(values);
+
+            uint32_t textLength;
+            WindowsGetStringRawBuffer(m_text, &textLength);
+
+            ThrowIfFailed(m_customFontManager->GetTextAnalyzer()->AnalyzeNumberSubstitution(m_dwriteTextAnalysisSource.Get(), 0, textLength, m_dwriteTextAnalysisSink.Get()));
+
+            ThrowIfFailed(m_dwriteTextAnalysisSink->GetAnalyzedNumberSubstitution()->GetView(values));
+        });
+}
 
 IFACEMETHODIMP CanvasTextAnalyzer::AnalyzeScript(
     IVectorView<IKeyValuePair<CanvasCharacterRange, CanvasAnalyzedScript>*>** values)
@@ -489,16 +680,41 @@ IFACEMETHODIMP CanvasTextAnalyzer::AnalyzeScriptWithLocale(
             CheckAndClearOutPointer(values);
 
             WinString localeString(locale);
-            auto dwriteTextAnalysisSource = CreateTextAnalysisSource(localeString);
-
-            auto dwriteTextAnalysisSink = Make<DWriteTextAnalysisSink>();
+            m_dwriteTextAnalysisSource->SetLocaleName(localeString);
 
             uint32_t textLength;
             WindowsGetStringRawBuffer(m_text, &textLength);
 
-            ThrowIfFailed(CustomFontManager::GetInstance()->GetTextAnalyzer()->AnalyzeScript(dwriteTextAnalysisSource.Get(), 0, textLength, dwriteTextAnalysisSink.Get()));
+            ThrowIfFailed(m_customFontManager->GetTextAnalyzer()->AnalyzeScript(m_dwriteTextAnalysisSource.Get(), 0, textLength, m_dwriteTextAnalysisSink.Get()));
 
-            ThrowIfFailed(dwriteTextAnalysisSink->GetAnalyzedScript()->GetView(values));
+            ThrowIfFailed(m_dwriteTextAnalysisSink->GetAnalyzedScript()->GetView(values));
+        });
+}
+
+IFACEMETHODIMP CanvasTextAnalyzer::AnalyzeGlyphOrientations(
+    IVectorView<IKeyValuePair<CanvasCharacterRange, CanvasAnalyzedGlyphOrientation>*>** values)
+{
+    return AnalyzeGlyphOrientationsWithLocale(nullptr, values);
+}
+    
+IFACEMETHODIMP CanvasTextAnalyzer::AnalyzeGlyphOrientationsWithLocale(
+    HSTRING locale,
+    IVectorView<IKeyValuePair<CanvasCharacterRange, CanvasAnalyzedGlyphOrientation>*>** values)
+{
+    return ExceptionBoundary(
+        [&]
+        {
+            CheckAndClearOutPointer(values);
+
+            WinString localeString(locale);
+            m_dwriteTextAnalysisSource->SetLocaleName(localeString);
+
+            uint32_t textLength;
+            WindowsGetStringRawBuffer(m_text, &textLength);
+
+            ThrowIfFailed(m_customFontManager->GetTextAnalyzer()->AnalyzeVerticalGlyphOrientation(m_dwriteTextAnalysisSource.Get(), 0, textLength, m_dwriteTextAnalysisSink.Get()));
+
+            ThrowIfFailed(m_dwriteTextAnalysisSink->GetAnalyzedGlyphOrientation()->GetView(values));
         });
 }
 
@@ -528,7 +744,7 @@ IFACEMETHODIMP CanvasTextAnalyzer::GetScriptProperties(
 
             DWRITE_SCRIPT_PROPERTIES dwriteScriptProperties;
 
-            ThrowIfFailed(CustomFontManager::GetInstance()->GetTextAnalyzer()->GetScriptProperties(dwriteScriptAnalysis, &dwriteScriptProperties));
+            ThrowIfFailed(m_customFontManager->GetTextAnalyzer()->GetScriptProperties(dwriteScriptAnalysis, &dwriteScriptProperties));
 
             WinString isoCodeString = ToStringIsoCode(dwriteScriptProperties.isoScriptCode);
             isoCodeString.CopyTo(&scriptProperties->IsoScriptCode);
@@ -724,7 +940,7 @@ IFACEMETHODIMP CanvasTextAnalyzer::GetGlyphsWithAllOptions(
 
                 shapingGlyphProperties.resize(maxGlyphCount);
 
-                getGlyphsResult = CustomFontManager::GetInstance()->GetTextAnalyzer()->GetGlyphs(
+                getGlyphsResult = m_customFontManager->GetTextAnalyzer()->GetGlyphs(
                     text,
                     textLength,
                     dwriteFontFace.Get(),
@@ -764,7 +980,7 @@ IFACEMETHODIMP CanvasTextAnalyzer::GetGlyphsWithAllOptions(
             std::vector<DWRITE_GLYPH_OFFSET> glyphOffsets;
             glyphOffsets.resize(actualGlyphCount);
 
-            ThrowIfFailed(CustomFontManager::GetInstance()->GetTextAnalyzer()->GetGlyphPlacements(
+            ThrowIfFailed(m_customFontManager->GetTextAnalyzer()->GetGlyphPlacements(
                 text,
                 clusterMap.data(),
                 shapingTextProperties.data(),

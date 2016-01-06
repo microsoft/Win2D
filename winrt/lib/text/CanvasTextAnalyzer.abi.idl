@@ -110,6 +110,22 @@ namespace Microsoft.Graphics.Canvas.Text
     } CanvasAnalyzedScript;
 
     [version(VERSION)]
+    typedef struct CanvasAnalyzedBidi
+    {
+        UINT32 ExplicitLevel;
+        UINT32 ResolvedLevel;
+    } CanvasAnalyzedBidi;
+
+    [version(VERSION)]
+    typedef struct CanvasAnalyzedBreakpoint
+    {
+        CanvasLineBreakCondition BreakBefore;
+        CanvasLineBreakCondition BreakAfter;
+        boolean IsWhitespace;
+        boolean IsSoftHyphen;
+    } CanvasAnalyzedBreakpoint;
+
+    [version(VERSION)]
     typedef struct CanvasScriptProperties
     {
         HSTRING IsoScriptCode;
@@ -152,6 +168,15 @@ namespace Microsoft.Graphics.Canvas.Text
         boolean IsZeroWidthSpace;
     } CanvasGlyphShaping;
 
+    [version(VERSION)]
+    typedef struct CanvasAnalyzedGlyphOrientation
+    {
+        CanvasGlyphOrientation GlyphOrientation;
+        UINT32 AdjustedBidiLevel;
+        boolean IsSideways;
+        boolean IsRightToLeft;
+    } CanvasAnalyzedGlyphOrientation;
+
     runtimeclass CanvasTextAnalyzer;
 
     [version(VERSION), uuid(4298F3D1-645B-40E3-B91B-81986D767FC0), exclusiveto(CanvasTextAnalyzer)]
@@ -169,6 +194,29 @@ namespace Microsoft.Graphics.Canvas.Text
             [in] CanvasFontSet* fontSet,
             [out, retval] Windows.Foundation.Collections.IVectorView<Windows.Foundation.Collections.IKeyValuePair<CanvasCharacterRange, CanvasScaledFont>*>** values);        
 
+        [overload("AnalyzeBidi")]
+        HRESULT AnalyzeBidi(
+            [out, retval] Windows.Foundation.Collections.IVectorView<Windows.Foundation.Collections.IKeyValuePair<CanvasCharacterRange, CanvasAnalyzedBidi>*>** values);
+
+        [overload("AnalyzeBidi")]
+        HRESULT AnalyzeBidiWithLocale(
+            [in] HSTRING locale,
+            [out, retval] Windows.Foundation.Collections.IVectorView<Windows.Foundation.Collections.IKeyValuePair<CanvasCharacterRange, CanvasAnalyzedBidi>*>** values);
+
+        [overload("AnalyzeBreakpoints")]
+        HRESULT AnalyzeBreakpoints(
+            [out] UINT32* valueCount,
+            [out, size_is(, *valueCount), retval] CanvasAnalyzedBreakpoint** valueElements);
+
+        [overload("AnalyzeBreakpoints")]
+        HRESULT AnalyzeBreakpointsWithLocale(
+            [in] HSTRING locale,
+            [out] UINT32* valueCount,
+            [out, size_is(, *valueCount), retval] CanvasAnalyzedBreakpoint** valueElements);
+
+        HRESULT AnalyzeNumberSubstitutions(
+            [out, retval] Windows.Foundation.Collections.IVectorView<Windows.Foundation.Collections.IKeyValuePair<CanvasCharacterRange, CanvasNumberSubstitution*>*>** values);
+
         [overload("AnalyzeScript")]
         HRESULT AnalyzeScript(
             [out, retval] Windows.Foundation.Collections.IVectorView<Windows.Foundation.Collections.IKeyValuePair<CanvasCharacterRange, CanvasAnalyzedScript>*>** values);
@@ -177,6 +225,15 @@ namespace Microsoft.Graphics.Canvas.Text
         HRESULT AnalyzeScriptWithLocale(
             [in] HSTRING locale,
             [out, retval] Windows.Foundation.Collections.IVectorView<Windows.Foundation.Collections.IKeyValuePair<CanvasCharacterRange, CanvasAnalyzedScript>*>** values);
+
+        [overload("AnalyzeGlyphOrientations")]
+        HRESULT AnalyzeGlyphOrientations(
+            [out, retval] Windows.Foundation.Collections.IVectorView<Windows.Foundation.Collections.IKeyValuePair<CanvasCharacterRange, CanvasAnalyzedGlyphOrientation>*>** values);
+
+        [overload("AnalyzeGlyphOrientations")]
+        HRESULT AnalyzeGlyphOrientationsWithLocale(
+            [in] HSTRING locale,
+            [out, retval] Windows.Foundation.Collections.IVectorView<Windows.Foundation.Collections.IKeyValuePair<CanvasCharacterRange, CanvasAnalyzedGlyphOrientation>*>** values);
 
         HRESULT GetScriptProperties(
             [in] CanvasAnalyzedScript analyzedScript,
@@ -260,7 +317,15 @@ namespace Microsoft.Graphics.Canvas.Text
 
         interface Windows.Foundation.Collections.IVector<Windows.Foundation.Collections.IKeyValuePair<CanvasCharacterRange, CanvasScaledFont>*>;
 
+        interface Windows.Foundation.Collections.IVector<Windows.Foundation.Collections.IKeyValuePair<CanvasCharacterRange, CanvasAnalyzedBidi>*>;
+
+        interface Windows.Foundation.Collections.IVector<Windows.Foundation.Collections.IKeyValuePair<CanvasCharacterRange, CanvasAnalyzedBreakpoint>*>;
+
+        interface Windows.Foundation.Collections.IVector<Windows.Foundation.Collections.IKeyValuePair<CanvasCharacterRange, CanvasNumberSubstitution*>*>;
+
         interface Windows.Foundation.Collections.IVector<Windows.Foundation.Collections.IKeyValuePair<CanvasCharacterRange, CanvasAnalyzedScript>*>;
+
+        interface Windows.Foundation.Collections.IVector<Windows.Foundation.Collections.IKeyValuePair<CanvasCharacterRange, CanvasAnalyzedGlyphOrientation>*>;
 
         interface Windows.Foundation.Collections.IVector<Windows.Foundation.Collections.IKeyValuePair<CanvasCharacterRange, CanvasTypography*>*>;
     }

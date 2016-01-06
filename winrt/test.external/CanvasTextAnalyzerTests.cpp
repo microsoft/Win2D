@@ -41,7 +41,7 @@ public:
     }
 };
 
-ref class AnalyzerOptions sealed : public ICanvasTextAnalyzerOptions
+ref class SimpleAnalyzerOptions sealed : public ICanvasTextAnalyzerOptions
 {
 public:
     virtual Platform::String^ GetLocaleName(int characterIndex, int* characterCount)
@@ -95,7 +95,7 @@ public:
 
         auto analyzer2 = ref new CanvasTextAnalyzer(L"", CanvasTextDirection::LeftToRightThenTopToBottom, nullptr, CanvasVerticalGlyphOrientation::Default, 0);
 
-        auto analyzer3 = ref new CanvasTextAnalyzer(L"", CanvasTextDirection::LeftToRightThenTopToBottom, ref new AnalyzerOptions);
+        auto analyzer3 = ref new CanvasTextAnalyzer(L"", CanvasTextDirection::LeftToRightThenTopToBottom, ref new SimpleAnalyzerOptions);
 
         auto result = analyzer1->ChooseFonts(m_defaultTextFormat);
         result = analyzer2->ChooseFonts(m_defaultTextFormat);
@@ -392,6 +392,324 @@ public:
                 {
                     analyzer->GetGlyphs(span, m_defaultFontFace, 10.0f, false, false, m_defaultScript);
                 });
+        }
+    }
+
+
+    TEST_METHOD(CanvasTextAnalyzer_AnalyzeBidi_ZeroLengthText)
+    {
+        auto analyzer = ref new CanvasTextAnalyzer(L"", CanvasTextDirection::LeftToRightThenTopToBottom);
+
+        auto result = analyzer->AnalyzeBidi();
+        Assert::AreEqual(0u, result->Size);
+    }
+
+    TEST_METHOD(CanvasTextAnalyzer_AnalyzeBidi_MultipleSpans)
+    {
+        auto analyzer = ref new CanvasTextAnalyzer(L"abcنصj", CanvasTextDirection::LeftToRightThenTopToBottom);
+
+        auto result = analyzer->AnalyzeBidi();
+        Assert::AreEqual(3u, result->Size);
+        
+        Assert::AreEqual(0, result->GetAt(0)->Key.CharacterIndex);
+        Assert::AreEqual(3, result->GetAt(0)->Key.CharacterCount);
+        Assert::AreEqual(0u, result->GetAt(0)->Value.ResolvedLevel);
+
+        Assert::AreEqual(3, result->GetAt(1)->Key.CharacterIndex);
+        Assert::AreEqual(2, result->GetAt(1)->Key.CharacterCount);
+        Assert::AreEqual(1u, result->GetAt(1)->Value.ResolvedLevel);
+
+        Assert::AreEqual(5, result->GetAt(2)->Key.CharacterIndex);
+        Assert::AreEqual(1, result->GetAt(2)->Key.CharacterCount);
+        Assert::AreEqual(0u, result->GetAt(2)->Value.ResolvedLevel);
+    }
+
+    TEST_METHOD(CanvasTextAnalyzer_AnalyzeBidi_RepeatedCalls)
+    {
+        auto analyzer = ref new CanvasTextAnalyzer(L"aنbن", CanvasTextDirection::LeftToRightThenTopToBottom);
+
+        auto result = analyzer->AnalyzeBidi();
+        Assert::AreEqual(4u, result->Size);
+
+        for (int i = 0; i < 4; i++)
+        {
+            Assert::AreEqual(i, result->GetAt(i)->Key.CharacterIndex);
+            Assert::AreEqual(1, result->GetAt(i)->Key.CharacterCount);
+            Assert::AreEqual(static_cast<uint32_t>(i % 2), result->GetAt(i)->Value.ResolvedLevel);
+        }
+
+        result = analyzer->AnalyzeBidi();
+        Assert::AreEqual(4u, result->Size);
+
+        for (int i = 0; i < 4; i++)
+        {
+            Assert::AreEqual(i, result->GetAt(i)->Key.CharacterIndex);
+            Assert::AreEqual(1, result->GetAt(i)->Key.CharacterCount);
+            Assert::AreEqual(static_cast<uint32_t>(i % 2), result->GetAt(i)->Value.ResolvedLevel);
+        }
+    }
+
+
+    TEST_METHOD(CanvasTextAnalyzer_AnalyzeBreakpoints_ZeroLengthText)
+    {
+        auto analyzer = ref new CanvasTextAnalyzer(L"", CanvasTextDirection::LeftToRightThenTopToBottom);
+
+        auto result = analyzer->AnalyzeBreakpoints();
+        Assert::AreEqual(0u, result->Length);
+    }
+
+    TEST_METHOD(CanvasTextAnalyzer_AnalyzeBreakpoints_SingleGlyph)
+    {
+        struct TestCase
+        {
+            Platform::String^ TestString;
+            CanvasLineBreakCondition ExpectedBreakBefore;
+            CanvasLineBreakCondition ExpectedBreakAfter;
+            bool ExpectedIsWhitespace;
+            bool ExpectedIsSoftHyphen;
+        } testCases[] {
+            { L"a", CanvasLineBreakCondition::CannotBreak, CanvasLineBreakCondition::CanBreak, false, false },
+            { L" ", CanvasLineBreakCondition::CannotBreak, CanvasLineBreakCondition::CanBreak, true, false },
+            { L"\x00AD", CanvasLineBreakCondition::CannotBreak, CanvasLineBreakCondition::CanBreak, false, true }, // Soft hyphen
+            { L"\n", CanvasLineBreakCondition::CannotBreak, CanvasLineBreakCondition::MustBreak, true, false },
+        };
+
+        for (auto testCase : testCases)
+        {
+            auto analyzer = ref new CanvasTextAnalyzer(testCase.TestString, CanvasTextDirection::LeftToRightThenTopToBottom);
+            auto result = analyzer->AnalyzeBreakpoints();
+
+            Assert::AreEqual(1u, result->Length);
+            Assert::AreEqual(testCase.ExpectedBreakBefore, result[0].BreakBefore);
+            Assert::AreEqual(testCase.ExpectedBreakAfter, result[0].BreakAfter);
+            Assert::AreEqual(testCase.ExpectedIsWhitespace, result[0].IsWhitespace);
+            Assert::AreEqual(testCase.ExpectedIsSoftHyphen, result[0].IsSoftHyphen);
+        }
+    }
+
+    TEST_METHOD(CanvasTextAnalyzer_AnalyzeBreakpoints_TypicalBreaks)
+    {
+        auto analyzer = ref new CanvasTextAnalyzer(L"a bc\nd", CanvasTextDirection::LeftToRightThenTopToBottom);
+        auto result = analyzer->AnalyzeBreakpoints();
+
+        Assert::AreEqual(6u, result->Length);
+        Assert::AreEqual(CanvasLineBreakCondition::CannotBreak, result[0].BreakBefore);
+        Assert::AreEqual(CanvasLineBreakCondition::CannotBreak, result[0].BreakAfter);
+
+        Assert::AreEqual(CanvasLineBreakCondition::CannotBreak, result[1].BreakBefore);
+        Assert::AreEqual(CanvasLineBreakCondition::CanBreak, result[1].BreakAfter); // Space causes a break opportunity
+
+        Assert::AreEqual(CanvasLineBreakCondition::CanBreak, result[2].BreakBefore);
+        Assert::AreEqual(CanvasLineBreakCondition::CannotBreak, result[2].BreakAfter);
+
+        Assert::AreEqual(CanvasLineBreakCondition::CannotBreak, result[3].BreakBefore);
+        Assert::AreEqual(CanvasLineBreakCondition::CannotBreak, result[3].BreakAfter);
+
+        Assert::AreEqual(CanvasLineBreakCondition::CannotBreak, result[4].BreakBefore);
+        Assert::AreEqual(CanvasLineBreakCondition::MustBreak, result[4].BreakAfter); // From newline
+
+        Assert::AreEqual(CanvasLineBreakCondition::MustBreak, result[5].BreakBefore);
+        Assert::AreEqual(CanvasLineBreakCondition::CanBreak, result[5].BreakAfter);
+    }
+
+    TEST_METHOD(CanvasTextAnalyzer_AnalyzeBreakpoints_RepeatedCalls)
+    {
+        auto analyzer = ref new CanvasTextAnalyzer(L"a b ", CanvasTextDirection::LeftToRightThenTopToBottom);
+        auto result = analyzer->AnalyzeBreakpoints();
+
+        Assert::AreEqual(4u, result->Length);
+        for (int i = 0; i < 4; ++i)
+        {
+            Assert::AreEqual(i % 2 == 0 ? CanvasLineBreakCondition::CannotBreak : CanvasLineBreakCondition::CanBreak, result[i].BreakAfter);
+        }
+
+        result = analyzer->AnalyzeBreakpoints();
+
+        Assert::AreEqual(4u, result->Length);
+        for (int i = 0; i < 4; ++i)
+        {
+            Assert::AreEqual(i % 2 == 0 ? CanvasLineBreakCondition::CannotBreak : CanvasLineBreakCondition::CanBreak, result[i].BreakAfter);
+        }
+    }
+
+    TEST_METHOD(CanvasTextAnalyzer_AnalyzeNumberSubstitutions_ZeroLengthText)
+    {
+        auto analyzer = ref new CanvasTextAnalyzer(L"", CanvasTextDirection::LeftToRightThenTopToBottom);
+
+        auto result = analyzer->AnalyzeNumberSubstitutions();
+        Assert::AreEqual(0u, result->Size);
+    }
+
+    ref class CustomNumberSubstitutions sealed : public ICanvasTextAnalyzerOptions
+    {
+        CanvasNumberSubstitution^ m_substitutions[2];
+    public:
+        CustomNumberSubstitutions(Platform::String^ locale)
+        {
+            m_substitutions[0] = ref new CanvasNumberSubstitution(CanvasNumberSubstitutionMethod::National, locale, false);
+            m_substitutions[1] = ref new CanvasNumberSubstitution(CanvasNumberSubstitutionMethod::Traditional, locale, false);
+        }
+        virtual Platform::String^ GetLocaleName(int characterIndex, int* characterCount)
+        {
+            //
+            // Number substitution analysis doesn't look here for locale. 
+            // The locale assigned to the number substitution *object* decides which locale affects
+            // substitution for that character, and it takes precedent.
+            //
+            *characterCount = 0;
+            return "";
+        }
+
+        virtual CanvasNumberSubstitution^ GetNumberSubstitution(int characterIndex, int* characterCount)
+        {
+            //
+            // This is designed to return a different substitution method for
+            // every character- Traditional and National, alternating.
+            //
+            *characterCount = 1;
+
+            return GetNumberSubstitution(characterIndex);
+        }
+
+        virtual CanvasVerticalGlyphOrientation GetVerticalGlyphOrientation(int characterIndex, int* characterCount)
+        {
+            *characterCount = 0;
+            return CanvasVerticalGlyphOrientation::Default;
+        }
+
+        virtual uint32_t GetBidiLevel(int characterIndex, int* characterCount)
+        {
+            *characterCount = 0;
+            return 0;
+        }
+
+        CanvasNumberSubstitution^ GetNumberSubstitution(int characterIndex)
+        {
+            return m_substitutions[characterIndex % 2];
+        }
+    };
+
+    TEST_METHOD(CanvasTextAnalyzer_AnalyzeNumberSubstitutions_AlternatingPerGlyph_RepeatedCalls)
+    {
+        auto analysisOptions = ref new CustomNumberSubstitutions("ar-eg");
+
+        auto analyzer = ref new CanvasTextAnalyzer(
+            L"123456789", 
+            CanvasTextDirection::LeftToRightThenTopToBottom, 
+            analysisOptions);
+
+        auto result = analyzer->AnalyzeNumberSubstitutions();
+        Assert::AreEqual(9u, result->Size);
+
+        for (int i = 0; i < 9; ++i)
+        {
+            Assert::AreEqual(i, result->GetAt(i)->Key.CharacterIndex);
+            Assert::AreEqual(1, result->GetAt(i)->Key.CharacterCount);
+            
+            auto expected = analysisOptions->GetNumberSubstitution(i);
+            auto actual = result->GetAt(i)->Value;
+            Assert::AreEqual(expected, actual);
+        }
+
+        result = analyzer->AnalyzeNumberSubstitutions();
+        Assert::AreEqual(9u, result->Size);
+
+        for (int i = 0; i < 9; ++i)
+        {
+            Assert::AreEqual(i, result->GetAt(i)->Key.CharacterIndex);
+            Assert::AreEqual(1, result->GetAt(i)->Key.CharacterCount);
+
+            auto expected = analysisOptions->GetNumberSubstitution(i);
+            auto actual = result->GetAt(i)->Value;
+            Assert::AreEqual(expected, actual);
+        }
+    }
+
+    TEST_METHOD(CanvasTextAnalyzer_AnalyzeGlyphOrientations_ZeroLengthText)
+    {
+        auto analyzer = ref new CanvasTextAnalyzer(L"", CanvasTextDirection::LeftToRightThenTopToBottom);
+
+        auto result = analyzer->AnalyzeGlyphOrientations();
+        Assert::AreEqual(0u, result->Size);
+    }
+
+
+    ref class CustomGlyphOrientations sealed : public ICanvasTextAnalyzerOptions
+    {
+    public:
+        virtual Platform::String^ GetLocaleName(int characterIndex, int* characterCount)
+        {
+            *characterCount = 1;
+            return "";
+        }
+
+        virtual CanvasNumberSubstitution^ GetNumberSubstitution(int characterIndex, int* characterCount)
+        {
+            *characterCount = 1;
+            return nullptr;
+        }
+
+        virtual CanvasVerticalGlyphOrientation GetVerticalGlyphOrientation(int characterIndex, int* characterCount)
+        {
+            *characterCount = 1;
+            return GetVerticalOrientation(characterIndex);
+        }
+
+        virtual uint32_t GetBidiLevel(int characterIndex, int* characterCount)
+        {
+            *characterCount = 1;
+            return 0;
+        }
+
+        CanvasVerticalGlyphOrientation GetVerticalOrientation(int index)
+        {
+            return index % 2 == 0 ? CanvasVerticalGlyphOrientation::Default : CanvasVerticalGlyphOrientation::Stacked;
+        }
+
+        CanvasGlyphOrientation GetAngleOrientation(int index)
+        {
+            auto vertical = GetVerticalOrientation(index);
+
+            if (vertical == CanvasVerticalGlyphOrientation::Default)
+                return CanvasGlyphOrientation::Clockwise90Degrees;
+            else
+                return CanvasGlyphOrientation::Upright; // Stacked vertical Latin text doesn't get rotated.
+        }
+    };
+
+    TEST_METHOD(CanvasTextAnalyzer_AnalyzeGlyphOrientations_AlternatingPerGlyph_RepeatedCalls)
+    {
+        auto analysisOptions = ref new CustomGlyphOrientations();
+
+        auto analyzer = ref new CanvasTextAnalyzer(
+            L"abcd",
+            CanvasTextDirection::TopToBottomThenRightToLeft,
+            analysisOptions);
+
+        auto result = analyzer->AnalyzeGlyphOrientations();
+        Assert::AreEqual(4u, result->Size);
+
+        for (int i = 0; i < 4; ++i)
+        {
+            Assert::AreEqual(i, result->GetAt(i)->Key.CharacterIndex);
+            Assert::AreEqual(1, result->GetAt(i)->Key.CharacterCount);
+
+            auto expected = analysisOptions->GetAngleOrientation(i);
+            auto actual = result->GetAt(i)->Value.GlyphOrientation;
+            Assert::AreEqual(expected, actual);
+        }
+
+        result = analyzer->AnalyzeGlyphOrientations();
+        Assert::AreEqual(4u, result->Size);
+
+        for (int i = 0; i < 4; ++i)
+        {
+            Assert::AreEqual(i, result->GetAt(i)->Key.CharacterIndex);
+            Assert::AreEqual(1, result->GetAt(i)->Key.CharacterCount);
+
+            auto expected = analysisOptions->GetAngleOrientation(i);
+            auto actual = result->GetAt(i)->Value.GlyphOrientation;
+            Assert::AreEqual(expected, actual);
         }
     }
 };
