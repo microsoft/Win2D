@@ -16,14 +16,14 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
    <Namespace Name="D2D1">
 
        <Enum Name="RENDERING_PRIORITY" Comment="Specifies the extent to which D2D will throttle work sent to the GPU.">
-           <Field Name="NORMAL" Value="0"/>
-           <Field Name="LOW" Value="1"/>
+           <Field Name="NORMAL" Value="0" />
+           <Field Name="LOW" Value="1" />
        </Enum>     
 
-        <Interface Name="IDevice1" Extends="D2D1::IDevice" IID="d21768e1-23a4-4823-a14b-7c3eba85d658" ShouldTestQI="true" QIFromBase="true">
-            <Method Name="GetRenderingPriority" Return="D2D1::RENDERING_PRIORITY" Comment="Retrieves the rendering priority currently set on the device."/>
+        <Interface Name="IDevice1" Extends="D2D1::IDevice" IID="d21768e1-23a4-4823-a14b-7c3eba85d658" ShouldTestQI="true" QIFromBase="true" Comment="Represents a resource domain whose objects and device contexts can be used together.">
+            <Method Name="GetRenderingPriority" Return="D2D1::RENDERING_PRIORITY" Comment="Retrieves the rendering priority currently set on the device." />
             <Method Name="SetRenderingPriority" Return="void" Comment="Sets the rendering priority of the device.">
-                <Parameter Name="renderingPriority" Type="D2D1::RENDERING_PRIORITY"/>
+                <Parameter Name="renderingPriority" Type="D2D1::RENDERING_PRIORITY" />
             </Method>
             <Method Name="CreateDeviceContext" Comment="Creates a new device context with no initially assigned target.">
                 <Parameter Name="options" Type="D2D1::DEVICE_CONTEXT_OPTIONS" Form="value" />
@@ -31,32 +31,32 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
             </Method>
         </Interface>
        
-       <Interface Name="IFactory2" Extends="D2D1::IFactory1" IID="94f81a73-9212-4376-9c58-b16a3a0d3992" ShouldTestQI="true" QIFromBase="true">
+       <Interface Name="IFactory2" Extends="D2D1::IFactory1" IID="94f81a73-9212-4376-9c58-b16a3a0d3992" ShouldTestQI="true" QIFromBase="true" Comment="Creates Direct2D resources. This interface also enables the creation of ID2D1Device1 objects.">
            <Method Name="CreateDevice" Comment="This creates a new Direct2D device from the given IDXGIDevice.">
-               <Parameter Name="dxgiDevice" Type="IDXGIDevice" Form="pointer"/>
-               <Parameter Name="d2dDevice1" Type="D2D1::IDevice1" Form="deref out pointer" IsRetval="true"/>
+               <Parameter Name="dxgiDevice" Type="IDXGIDevice" Form="pointer" />
+               <Parameter Name="d2dDevice1" Type="D2D1::IDevice1" Form="deref out pointer" IsRetval="true" />
            </Method>
        </Interface>
 
-       <Interface Name="IGeometryRealization" Extends="D2D1::IResource" IID="a16907d7-bc02-4801-99e8-8cf7f485f774">
+       <Interface Name="IGeometryRealization" Extends="D2D1::IResource" IID="a16907d7-bc02-4801-99e8-8cf7f485f774" Comment="Encapsulates a device- and transform-dependent representation of a filled or stroked geometry.">
        </Interface>
 
-       <Interface Name="IDeviceContext1" Extends="D2D1::IDeviceContext" IID="d37f57e4-6908-459f-a199-e72f24f79987" ShouldTestQI="true" QIFromBase="true">
+       <Interface Name="IDeviceContext1" Extends="D2D1::IDeviceContext" IID="d37f57e4-6908-459f-a199-e72f24f79987" ShouldTestQI="true" QIFromBase="true" Comment="Enables creation and drawing of geometry realization objects.">
          <Method Name="CreateFilledGeometryRealization">
-           <Parameter Name="geometry" Type="D2D1::IGeometry" Form="pointer"/>
-           <Parameter Name="flatteningTolerance" Type="FLOAT"/>
-           <Parameter Name="geometryRealization" Type="D2D1::IGeometryRealization" Form="deref out pointer"/>
+           <Parameter Name="geometry" Type="D2D1::IGeometry" Form="pointer" />
+           <Parameter Name="flatteningTolerance" Type="FLOAT" />
+           <Parameter Name="geometryRealization" Type="D2D1::IGeometryRealization" Form="deref out pointer" />
          </Method>
          <Method Name="CreateStrokedGeometryRealization">
-           <Parameter Name="geometry" Type="D2D1::IGeometry" Form="pointer"/>
-           <Parameter Name="flatteningTolerance" Type="FLOAT"/>
-           <Parameter Name="strokeWidth" Type="FLOAT"/>
-           <Parameter Name="strokeStyle" Type="D2D1::IStrokeStyle" Form="pointer opt"/>
-           <Parameter Name="geometryRealization" Type="D2D1::IGeometryRealization" Form="deref out pointer" IsRetval="true"/>
+           <Parameter Name="geometry" Type="D2D1::IGeometry" Form="pointer" />
+           <Parameter Name="flatteningTolerance" Type="FLOAT" />
+           <Parameter Name="strokeWidth" Type="FLOAT" />
+           <Parameter Name="strokeStyle" Type="D2D1::IStrokeStyle" Form="pointer opt" />
+           <Parameter Name="geometryRealization" Type="D2D1::IGeometryRealization" Form="deref out pointer" IsRetval="true" />
          </Method>
          <Method Name="DrawGeometryRealization" Return="void">
-           <Parameter Name="geometryRealization" Type="D2D1::IGeometryRealization" Form="pointer"/>
-           <Parameter Name="brush" Type="D2D1::IBrush" Form="pointer"/>
+           <Parameter Name="geometryRealization" Type="D2D1::IGeometryRealization" Form="pointer" />
+           <Parameter Name="brush" Type="D2D1::IBrush" Form="pointer" />
          </Method>
        </Interface>     
 
@@ -65,9 +65,9 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
             
             It is expected that some ID2D1CommandSink objects do not provide ID2D1CommandSink1 implementation. That is why this is not a revised interface.
        -->
-        <Interface Name="ICommandSink1" Extends="D2D1::ICommandSink" IID="9eb767fd-4269-4467-b8c2-eb30cb305743" WrapOutgoing="true" ShouldTestQI="false" Revised="false" HasD2DImplementation="false">
+        <Interface Name="ICommandSink1" Extends="D2D1::ICommandSink" IID="9eb767fd-4269-4467-b8c2-eb30cb305743" WrapOutgoing="true" ShouldTestQI="false" Revised="false" HasD2DImplementation="false" Comment="This interface performs all the same functions as the existing ID2D1CommandSink interface. It also enables access to the new primitive blend modes, MIN and ADD, through its SetPrimitiveBlend1 method.">
             <Method Name="SetPrimitiveBlend1" Comment="This method is called if primitiveBlend value was added after Windows 8. SetPrimitiveBlend method is used for Win8 values (_SOURCE_OVER and _COPY).">
-                <Parameter Name="primitiveBlend" Type="D2D1::PRIMITIVE_BLEND" Form="value"/>
+                <Parameter Name="primitiveBlend" Type="D2D1::PRIMITIVE_BLEND" Form="value" />
             </Method>
         </Interface>
 

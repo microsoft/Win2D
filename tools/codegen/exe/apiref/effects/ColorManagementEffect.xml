@@ -1,0 +1,70 @@
+<?xml version="1.0"?>
+<!--
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+Licensed under the MIT License. See LICENSE.txt in the project root for license information.
+-->
+
+<Effect>
+    <!-- Localization -->
+    <_locDefinition>
+        <_locDefault _loc='locNone' />
+        <_locTag _locAttrData='displayname'>Field</_locTag>
+        <_locTag _locAttrData='name'>Input</_locTag>
+        <_locTag _locAttrData='value'>Property</_locTag>
+    </_locDefinition>
+    <!-- System Properties -->
+    <Property name='DisplayName' type='string' value='Color Management'/>
+    <Property name='Author' type='string' value='Microsoft Corporation'/>
+    <Property name='Category' type='string' value='Color'/>
+    <Property name='Description' type='string' value='Changes colors based on user provided color contexts.'/>
+    <Inputs>
+        <Input name='Source'/>
+    </Inputs>
+    <!-- Custom Properties -->
+  <Property name='SourceColorContext' type='colorcontext'>
+      <Property name='DisplayName' type='string' value='Source color context' />
+      <Property name='Default' type='colorcontext' value='null' />
+  </Property>
+  <Property name='SourceRenderingIntent' type='enum'>
+    <Property name='DisplayName' type='string' value='Source rendering intent'/>
+    <Property name='Default' type='enum' value='0' />
+    <Fields>
+        <Field name='Perceptual' displayname='Perceptual' index='0'/>
+        <Field name='RelativeColorimetric' displayname='Relative Colorimetric' index='1'/>
+        <Field name='Saturation' displayname='Saturation' index='2'/>
+        <Field name='AbsoluteColorimetric' displayname='Absolute Colorimetric' index='3'/>
+    </Fields>
+  </Property>
+  <Property name='DestinationColorContext' type='colorcontext'>
+      <Property name='DisplayName' type='string' value='Destination color context' />
+      <Property name='Default' type='colorcontext' value='null' />
+  </Property>
+  <Property name='DestinationRenderingIntent' type='enum'>
+    <Property name='DisplayName' type='string' value='Destination rendering intent'/>
+    <Property name='Default' type='enum' value='0' />
+    <Fields>
+        <Field name='Perceptual' displayname='Perceptual' index='0'/>
+        <Field name='RelativeColorimetric' displayname='Relative Colorimetric' index='1'/>
+        <Field name='Saturation' displayname='Saturation' index='2'/>
+        <Field name='AbsoluteColorimetric' displayname='Absolute Colorimetric' index='3'/>
+    </Fields>
+  </Property>
+  <Property name='AlphaMode' type='enum'>
+    <Property name='DisplayName' type='string' value='Alpha Mode'/>
+    <Property name='Default' type='enum' value='1'/>
+    <Fields>
+      <Field name='Premultiplied' displayname='Premultiplied' index='1'/>
+      <Field name='Straight' displayname='Straight' index='2'/>
+    </Fields>
+  </Property>
+  <Property name='Quality' type='enum'>
+      <Property name='DisplayName' type='string' value='Quality'/>
+      <Property name='Default' type='enum' value='1'/>
+      <Fields>
+          <Field name='Proof' displayname='Proof' index='0'/>
+          <Field name='Normal' displayname='Normal' index='1'/>
+          <Field name='Best' displayname='Best' index='2'/>
+      </Fields>
+  </Property>
+</Effect>

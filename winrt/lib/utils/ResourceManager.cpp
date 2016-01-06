@@ -7,6 +7,8 @@
 #include "brushes/CanvasLinearGradientBrush.h"
 #include "brushes/CanvasRadialGradientBrush.h"
 #include "drawing/CanvasGradientMesh.h"
+#include "effects/ColorManagementProfile.h"
+#include "effects/EffectTransferTable3D.h"
 #include "geometry/CanvasCachedGeometry.h"
 #include "images/CanvasCommandList.h"
 #include "images/CanvasVirtualBitmap.h"
@@ -46,6 +48,7 @@ std::vector<ResourceManager::TryCreateFunction> ResourceManager::tryCreateFuncti
     TryCreate<ID2D1GradientMesh,           CanvasGradientMesh,            MakeWrapperWithDevice>,
     TryCreate<ID2D1ImageSource,            CanvasVirtualBitmap,           MakeWrapperWithDevice>,
     TryCreate<ID2D1TransformedImageSource, CanvasVirtualBitmap,           MakeWrapperWithDevice>,
+    TryCreate<ID2D1LookupTable3D,          EffectTransferTable3D,         MakeWrapperWithDevice>,
     TryCreate<IDWriteRenderingParams3,     CanvasTextRenderingParameters, MakeWrapper>,
     TryCreate<IDWriteFontSet,              CanvasFontSet,                 MakeWrapper>,
     TryCreate<IDWriteFontFaceReference,    CanvasFontFace,                MakeWrapper>,
@@ -56,6 +59,7 @@ std::vector<ResourceManager::TryCreateFunction> ResourceManager::tryCreateFuncti
 #endif
     TryCreate<IDWriteTypography,           CanvasTypography,              MakeWrapper>,
     TryCreate<IDWriteNumberSubstitution,   CanvasNumberSubstitution,      MakeWrapper>,
+    TryCreate<ID2D1ColorContext,           ColorManagementProfile,        MakeWrapperWithDevice>,
 
     // Effects get their very own try-create function. These are special because ID2D1Effect
     // can map to many different Win2D wrapper types depending on its D2D1_PROPERTY_CLSID.

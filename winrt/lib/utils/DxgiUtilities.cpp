@@ -182,4 +182,42 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         }
     }
 
+
+    // Converts color array to bytes according to the default format, B8G8R8A8_UNORM.
+    std::vector<uint8_t> ConvertColorsToBgra(uint32_t colorCount, Color* colors)
+    {
+        std::vector<uint8_t> convertedBytes(colorCount * 4);
+
+        for (uint32_t i = 0; i < colorCount; i++)
+        {
+            convertedBytes[i * 4 + 0] = colors[i].B;
+            convertedBytes[i * 4 + 1] = colors[i].G;
+            convertedBytes[i * 4 + 2] = colors[i].R;
+            convertedBytes[i * 4 + 3] = colors[i].A;
+        }
+
+        assert(convertedBytes.size() <= UINT_MAX);
+
+        return convertedBytes;
+    }
+
+
+    // Converts color array to bytes in the format R8G8B8A8_UNORM.
+    std::vector<uint8_t> ConvertColorsToRgba(uint32_t colorCount, Color* colors)
+    {
+        std::vector<uint8_t> convertedBytes(colorCount * 4);
+
+        for (uint32_t i = 0; i < colorCount; i++)
+        {
+            convertedBytes[i * 4 + 0] = colors[i].R;
+            convertedBytes[i * 4 + 1] = colors[i].G;
+            convertedBytes[i * 4 + 2] = colors[i].B;
+            convertedBytes[i * 4 + 3] = colors[i].A;
+        }
+
+        assert(convertedBytes.size() <= UINT_MAX);
+
+        return convertedBytes;
+    }
+
 }}}}

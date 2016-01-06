@@ -200,6 +200,7 @@ namespace Microsoft
             CX_VALUE_TO_STRING(Microsoft::Graphics::Canvas::CanvasAlphaMode);
             CX_VALUE_TO_STRING(Microsoft::Graphics::Canvas::CanvasImageInterpolation);
             CX_VALUE_TO_STRING(Microsoft::Graphics::Canvas::CanvasBufferPrecision);
+            CX_VALUE_TO_STRING(Microsoft::Graphics::Canvas::CanvasColorSpace);
             CX_VALUE_TO_STRING(Microsoft::Graphics::Canvas::UI::CanvasCreateResourcesReason);
             CX_VALUE_TO_STRING(Microsoft::Graphics::Canvas::Text::CanvasGlyphOrientation);
             CX_VALUE_TO_STRING(Microsoft::Graphics::Canvas::Text::CanvasTextDirection);
@@ -658,3 +659,17 @@ public:
     virtual float ConvertPixelsToDips(int pixels) { Assert::Fail(L"Not implemented"); return 0; }
     virtual int   ConvertDipsToPixels(float dips, CanvasDpiRounding roundingBehavior) { Assert::Fail(L"Not implemented"); return 0; }
 };
+
+
+inline int GetRefCount(IUnknown* unknown)
+{
+    unknown->AddRef();
+    return (int)unknown->Release();
+}
+
+
+template<typename T>
+inline int GetRefCount(T^ const& hatPointer)
+{
+    return GetRefCount(reinterpret_cast<IInspectable*>(hatPointer));
+}

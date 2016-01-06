@@ -1,0 +1,147 @@
+<?xml version="1.0"?>
+<!--
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+Licensed under the MIT License. See LICENSE.txt in the project root for license information.
+-->
+
+<doc>
+  <assembly>
+    <name>Microsoft.Graphics.Canvas</name>
+  </assembly>
+  <members>
+  
+    <member name="T:Microsoft.Graphics.Canvas.Effects.ColorManagementEffect" Experimental="true" NoComposition="true">
+      <summary>Transforms an image from one ICC (International Color Consortium) color profile to another.</summary>
+      <remarks>
+        <p>This Windows Runtime type corresponds to the 
+          <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/hh706318.aspx">D2D Color management effect</a>.</p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Effects.ColorManagementEffect.#ctor">
+      <summary>Initializes a new instance of the ColorManagementEffect class.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Effects.ColorManagementEffect.IsBestQualitySupported(Microsoft.Graphics.Canvas.CanvasDevice)">
+      <summary>Checks whether the specified device supports setting the Quality property to ColorManagementEffectQuality.Best.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.ColorManagementEffect.Source">
+      <summary>Gets or sets the input source for ColorManagement effect.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.ColorManagementEffect.SourceColorProfile">
+      <summary>Gets or sets the ICC color profile of the source image.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.ColorManagementEffect.SourceRenderingIntent">
+      <summary>Gets or sets the ICC rendering intent of the source image.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.ColorManagementEffect.OutputRenderingIntent">
+      <summary>Gets or sets the ICC color profile of the output image.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.ColorManagementEffect.OutputColorProfile">
+      <summary>Gets or sets the ICC rendering intent of the output image.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.ColorManagementEffect.Quality">
+      <summary>Gets or sets the quality to be used when transforming between different color profiles.</summary>
+      <remarks>
+        <p>
+          Default value is <see cref="F:Microsoft.Graphics.Canvas.Effects.ColorManagementEffectQuality.Normal"/>.
+        </p>
+        <p>
+          Best quality mode is not supported by all GPU hardware. Before specifying Best mode, check
+          <see cref="M:Microsoft.Graphics.Canvas.Effects.ColorManagementEffect.IsBestQualitySupported(Microsoft.Graphics.Canvas.CanvasDevice)"/>.
+        </p>
+      </remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.ColorManagementEffect.AlphaMode">
+      <summary>Specifies the treatment of alpha. Default value Premultiplied.</summary>
+      <remarks>
+        <p>
+          Effect inputs and outputs are assumed to be in
+          <a href="PremultipliedAlpha.htm">premultiplied alpha</a> format, so when this 
+          property is set to Premultiplied, color management is applied directly to the 
+          input values with no extra conversions.
+        </p>
+        <p>
+          If AlphaMode set to Straight, input values will be unpremultiplied, then the 
+          color management applied, and finally the result converted back to premultiplied 
+          format.
+        </p>
+      </remarks>
+    </member>
+
+    <inherittemplate name="EffectTemplate" replacement="ColorManagementEffect" />
+    <inherittemplate name="ICanvasEffectTemplate" replacement="ColorManagementEffect" />
+
+    <member name="T:Microsoft.Graphics.Canvas.Effects.ColorManagementProfile" Experimental="true">
+      <summary>Describes an ICC (International Color Consortium) color profile.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Effects.ColorManagementProfile.#ctor(Microsoft.Graphics.Canvas.CanvasColorSpace)">
+      <summary>Initializes a new instance of the ColorManagementProfile class using the specified color space.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Effects.ColorManagementProfile.CreateCustom(System.Byte[])">
+      <summary>Initializes a new instance of the ColorManagementProfile class using the specified ICC color profile.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Effects.ColorManagementProfile.Dispose">
+      <summary>Releases all resources used by the ColorManagementProfile.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.ColorManagementProfile.ColorSpace">
+      <summary>Gets the color space.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.ColorManagementProfile.IccProfile">
+      <summary>Gets the ICC color profile.</summary>
+    </member>
+
+    <member name="T:Microsoft.Graphics.Canvas.Effects.ColorManagementEffectQuality" Experimental="true">
+      <summary>Specifies quality vs. performance tradeoff for ColorManagementEffect.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Effects.ColorManagementEffectQuality.Proof">
+      <summary>The lowest quality mode.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Effects.ColorManagementEffectQuality.Normal">
+      <summary>Normal quality mode.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Effects.ColorManagementEffectQuality.Best">
+      <summary>
+        <p>
+          The best quality mode. This mode requires Direct3D feature level 10_0 or above, as well 
+          as floating point precision buffers. This mode supports floating point precision as well 
+          as extended range as defined in the ICC v4.3 specification.
+        </p>
+        <p>
+          Best quality mode is not supported by all GPU hardware. Before specifying Best mode, check
+          <see cref="M:Microsoft.Graphics.Canvas.Effects.ColorManagementEffect.IsBestQualitySupported(Microsoft.Graphics.Canvas.CanvasDevice)"/>.
+        </p>
+      </summary>
+    </member>
+
+    <member name="T:Microsoft.Graphics.Canvas.Effects.ColorManagementRenderingIntent" Experimental="true">
+      <summary>Specifies the ICC (International Color Consortium) rendering intent for use by ColorManagementEffect.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Effects.ColorManagementRenderingIntent.Perceptual">
+      <summary>
+        The effect compresses or expands the full color gamut of the image to fill the color gamut 
+        of the device, so that gray balance is preserved but colorimetric accuracy may not be 
+        preserved.
+      </summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Effects.ColorManagementRenderingIntent.RelativeColorimetric">
+      <summary>
+        The effect preserves the chroma of colors in the image at the possible expense of hue and 
+        lightness.
+      </summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Effects.ColorManagementRenderingIntent.Saturation">
+      <summary>
+      	The effect adjusts colors that fall outside the range of colors the output device renders 
+      	to the closest color available. It does not preserve the white point.
+      </summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Effects.ColorManagementRenderingIntent.AbsoluteColorimetric">
+      <summary>
+        The effect adjusts any colors that fall outside the range that the output device can render 
+        to the closest color that can be rendered. The effect does not change the other colors and 
+        preserves the white point.
+      </summary>
+    </member>
+
+  </members>
+</doc>

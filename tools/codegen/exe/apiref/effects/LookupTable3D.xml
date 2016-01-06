@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<!--
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+Licensed under the MIT License. See LICENSE.txt in the project root for license information.
+-->
+
+<Effect>
+    <!-- Localization -->
+    <_locDefinition>
+        <_locDefault _loc="locNone" />
+        <_locTag _locAttrData="displayname">Field</_locTag>
+        <_locTag _locAttrData="name">Input</_locTag>
+        <_locTag _locAttrData="value">Property</_locTag>
+    </_locDefinition>
+    <!-- System Properties -->
+    <Property name="DisplayName" type="string" value="Lookup Table 3D" />
+    <Property name="Author" type="string" value="Microsoft Corporation" />
+    <Property name="Category" type="string" value="Color" />
+    <Property name="Description" type="string" value="Remaps colors in an image via a 3D lookup table." />
+    <Inputs>
+        <Input name="Source" />
+    </Inputs>
+    <Property name="Lut" type="iunknown">
+        <Property name="DisplayName" type="string" value="LUT" />
+        <Property name='Default' type='iunknown' value='null'/>
+    </Property>
+    <Property name='AlphaMode' type='enum'>
+        <Property name='DisplayName' type='string' value='Alpha Mode'/>
+        <Property name='Default' type='enum' value='1'/>
+        <Fields>
+            <Field name='Premultiplied' displayname='Premultiplied' index='1'/>
+            <Field name='Straight' displayname='Straight' index='2'/>
+        </Fields>
+    </Property>
+</Effect>

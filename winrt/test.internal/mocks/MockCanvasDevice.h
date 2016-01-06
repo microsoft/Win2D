@@ -64,6 +64,8 @@ namespace canvas
 
         CALL_COUNTER_WITH_MOCK(GetPrimaryDisplayOutputMethod, ComPtr<IDXGIOutput>());
 
+        CALL_COUNTER_WITH_MOCK(IsBufferPrecisionSupportedMethod, HRESULT(CanvasBufferPrecision, boolean*));
+
         CALL_COUNTER_WITH_MOCK(RaiseDeviceLostMethod, HRESULT());
 
         CALL_COUNTER_WITH_MOCK(LockMethod, HRESULT(ICanvasLock**));
@@ -104,8 +106,7 @@ namespace canvas
 
         IFACEMETHODIMP IsBufferPrecisionSupported(CanvasBufferPrecision bufferPrecision, boolean* value) override
         {
-            Assert::Fail(L"Unexpected call to IsBufferPrecisionSupported");
-            return E_NOTIMPL;
+            return IsBufferPrecisionSupportedMethod.WasCalled(bufferPrecision, value);
         }
 
         IFACEMETHODIMP get_MaximumCacheSize(UINT64* value) override

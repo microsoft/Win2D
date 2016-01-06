@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="Globals">
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
@@ -162,6 +162,8 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)composition\CanvasCompositionUnitTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasPrintDocumentUnitTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasSpriteBatchUnitTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)graphics\ColorManagementEffectUnitTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)graphics\EffectTransferTable3DUnitTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)graphics\PixelShaderEffectUnitTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>

@@ -8,15 +8,6 @@ using namespace Microsoft::Graphics::Canvas;
 
 TEST_CLASS(RefCountTests)
 {
-    template<typename T>
-    static int GetRefCount(T^ const& hatPointer)
-    {
-        IInspectable* asInspectable = reinterpret_cast<IInspectable*>(hatPointer);
-        
-        asInspectable->AddRef();
-        return (int)asInspectable->Release();
-    }
-
     TEST_METHOD(CanvasControl_RefCount)
     {
         int refCount = -1;

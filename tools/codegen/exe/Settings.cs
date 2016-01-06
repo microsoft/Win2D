@@ -134,6 +134,9 @@ namespace CodeGen
                 [XmlAttributeAttribute]
                 public string WinVer;
 
+                [XmlAttributeAttribute]
+                public bool HasStatics;
+
                 [XmlElement("Input")]
                 public List<EffectProperty> Inputs { get; set; }
 

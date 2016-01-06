@@ -49,7 +49,7 @@ SET COPYRIGHT_BANNER_FILENAME=%GIT_TREE_LOCATION%\tools\copyright\copyright.txt
 
 :: Copy the Direct2D API description files.
 
-SET SOURCE_DIR=%SDXROOT%\windows\wgi\codegen\publish\
+SET SOURCE_DIR=%SDXROOT%\onecoreuap\windows\wgi\codegen\publish\
 SET DEST_DIR=%GIT_TREE_LOCATION%\tools\codegen\exe\apiref\
 
 SET FILE_LIST=^
@@ -64,7 +64,7 @@ CALL :UPDATE_FILES
 
 :: Copy the DirectImage effect description files.
 
-SET SOURCE_DIR=%SDXROOT%\windows\wgi\dimage\Effects\
+SET SOURCE_DIR=%SDXROOT%\onecoreuap\windows\wgi\dimage\Effects\
 SET DEST_DIR=%GIT_TREE_LOCATION%\tools\codegen\exe\apiref\effects\
 
 SET FILE_LIST=^
@@ -101,6 +101,7 @@ SET FILE_LIST=^
     HueToRgb.xml ^
     Invert.xml ^
     LinearTransfer.xml ^
+    LookupTable3D.xml ^
     LuminanceToAlpha.xml ^
     Morphology.xml ^
     OpacityMetadata.xml ^
@@ -122,6 +123,16 @@ SET FILE_LIST=^
     Turbulence.xml ^
     UnPremultiply.xml ^
     Vignette.xml
+
+CALL :UPDATE_FILES
+
+
+:: Copy the DirectImage ColorManagement effect description.
+
+SET SOURCE_DIR=%SDXROOT%\onecoreuap\windows\wgi\dimage\ColorManagement\
+
+SET FILE_LIST=^
+    ColorManagementEffect.xml
 
 CALL :UPDATE_FILES
 

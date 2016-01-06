@@ -1,0 +1,39 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+//
+// Licensed under the MIT License. See LICENSE.txt in the project root for license information.
+
+namespace Microsoft.Graphics.Canvas.Effects
+{
+    runtimeclass ColorManagementProfile;
+
+    [version(VERSION), uuid(5123A56B-B199-47AB-AEBE-D308044423FE), exclusiveto(ColorManagementProfile)]
+    interface IColorManagementProfile : IInspectable
+        requires Windows.Foundation.IClosable
+    {
+        [propget] HRESULT ColorSpace([out, retval] Microsoft.Graphics.Canvas.CanvasColorSpace* value);
+        [propget] HRESULT IccProfile([out] UINT32* valueCount, [out, size_is(, *valueCount), retval] BYTE** valueElements);
+    };
+
+    [version(VERSION), uuid(7A0F1C98-94C6-4621-9877-C51A17823EDF), exclusiveto(ColorManagementProfile)]
+    interface IColorManagementProfileFactory : IInspectable
+    {
+        HRESULT Create(
+            [in] Microsoft.Graphics.Canvas.CanvasColorSpace colorSpace,
+            [out, retval] ColorManagementProfile** result);
+    };
+
+    [version(VERSION), uuid(94EEF610-03BD-4E82-9479-62A616BE75F1), exclusiveto(ColorManagementProfile)]
+    interface IColorManagementProfileStatics : IInspectable
+    {
+        HRESULT CreateCustom(
+            [in] UINT32 iccProfileCount,
+            [in, size_is(iccProfileCount)] BYTE* iccProfile,
+            [out, retval] ColorManagementProfile** result);
+    };
+
+    [version(VERSION), activatable(IColorManagementProfileFactory, VERSION), static(IColorManagementProfileStatics, VERSION)]
+    runtimeclass ColorManagementProfile
+    {
+        [default] interface IColorManagementProfile;
+    }
+}

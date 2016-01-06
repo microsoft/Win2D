@@ -33,6 +33,11 @@ public:
     {
     }
 
+    WinStringT(std::nullptr_t)
+        : m_value(nullptr)
+    {
+    }
+
     explicit WinStringT(HSTRING str)
     {
         ThrowIfFailed(WindowsDuplicateString(str, &m_value));

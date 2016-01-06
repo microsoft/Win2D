@@ -550,19 +550,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         float dpi,
         CanvasAlphaMode alpha)
     {
-        // Convert color array to bytes according to the default format, B8G8R8A8_UNORM.
-        std::vector<uint8_t> convertedBytes;
-        convertedBytes.resize(colorCount * 4);
-
-        for (uint32_t i = 0; i < colorCount; i++)
-        {
-            convertedBytes[i * 4 + 0] = colors[i].B;
-            convertedBytes[i * 4 + 1] = colors[i].G;
-            convertedBytes[i * 4 + 2] = colors[i].R;
-            convertedBytes[i * 4 + 3] = colors[i].A;
-        }
-
-        assert(convertedBytes.size() <= UINT_MAX);
+        auto convertedBytes = ConvertColorsToBgra(colorCount, colors);
 
         return CreateNew(
             device,
@@ -1492,15 +1480,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ThrowHR(E_INVALIDARG, Strings::PixelColorsFormatRestriction);
         }
 
-        std::vector<uint32_t> convertedValues(expectedArraySize);
-
-        std::transform(valueElements, valueElements + expectedArraySize, convertedValues.begin(), [](Color const& color)
-        {
-            return (static_cast<uint32_t>(color.B) << 0) |
-                   (static_cast<uint32_t>(color.G) << 8) |
-                   (static_cast<uint32_t>(color.R) << 16) |
-                   (static_cast<uint32_t>(color.A) << 24);
-        });
+        auto convertedValues = ConvertColorsToBgra(expectedArraySize, valueElements);
 
         ThrowIfFailed(d2dBitmap->CopyFromMemory(&subRectangle, convertedValues.data(), subRectangleWidth * 4));
     }

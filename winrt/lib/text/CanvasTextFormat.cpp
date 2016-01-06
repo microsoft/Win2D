@@ -1264,7 +1264,7 @@ IFACEMETHODIMP CanvasTextFormatFactory::GetSystemFontFamiliesFromLocaleList(
 
             uint32_t familyCount = systemFontCollection->GetFontFamilyCount();
 
-            ComArray<HSTRING> stringArray(familyCount);
+            ComArray<WinString> stringArray(familyCount);
 
             for (uint32_t i = 0; i < familyCount; ++i)
             {
@@ -1274,8 +1274,7 @@ IFACEMETHODIMP CanvasTextFormatFactory::GetSystemFontFamiliesFromLocaleList(
                 ComPtr<IDWriteLocalizedStrings> familyNames;
                 ThrowIfFailed(fontFamily->GetFamilyNames(&familyNames));
 
-                WinString familyName = GetFamilyName(familyNames, localeList);
-                familyName.CopyTo(&stringArray[i]);
+                stringArray[i] = GetFamilyName(familyNames, localeList);
             }
 
             stringArray.Detach(valueCount, valueElements);

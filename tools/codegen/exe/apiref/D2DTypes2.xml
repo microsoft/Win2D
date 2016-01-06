@@ -13,110 +13,117 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
 <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  -->
 <D2DTypes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="D2DTypes.xsd">
 
-   <Primitive Name="REFCLSID" AlwaysConst="true"/>
-   <Primitive Name="PWSTR"/>
-   <Typedef Name="CLSID" From="GUID"/>
-   <Primitive Name="PD2D1_EFFECT_FACTORY"/>
-   <Primitive Name="UINT"/>
-   <Primitive Name="bool"/>
+   <Primitive Name="REFCLSID" AlwaysConst="true" />
+   <Primitive Name="PWSTR" />
+   <Typedef Name="CLSID" From="GUID" />
+   <Primitive Name="PD2D1_EFFECT_FACTORY" />
+   <Primitive Name="UINT" />
+   <Primitive Name="bool" />
 
-   <Interface Name="IDXGIDevice" Extends="IUnknown" IsInternalPlainDecl="true"/>
-   <Interface Name="IWICColorContext" Extends="IUnknown" IsInternalPlainDecl="true"/>
-   <Interface Name="IPrintDocumentPackageTarget" Extends="IUnknown" IsInternalPlainDecl="true"/>
-   <Interface Name="IWICImagingFactory" Extends="IUnknown" IsInternalPlainDecl="true"/>
-   <Interface Name="IDWriteFactory" Extends="IUnknown" IsInternalPlainDecl="true"/>
-   <Interface Name="IStream" Extends="IUnknown" IsInternalPlainDecl="true"/>
+   <Interface Name="IDXGIDevice" Extends="IUnknown" IsInternalPlainDecl="true" />
+   <Interface Name="IWICColorContext" Extends="IUnknown" IsInternalPlainDecl="true" />
+   <Interface Name="IPrintDocumentPackageTarget" Extends="IUnknown" IsInternalPlainDecl="true" />
+   <Interface Name="IWICImagingFactory" Extends="IUnknown" IsInternalPlainDecl="true" />
+   <Interface Name="IDWriteFactory" Extends="IUnknown" IsInternalPlainDecl="true" />
+   <Interface Name="IStream" Extends="IUnknown" IsInternalPlainDecl="true" />
 
    <Namespace Name="D2D">
 
-        <Typedef Name="POINT_2L" From="POINT"/>
+        <Typedef Name="POINT_2L" From="POINT" />
        
-       <Struct Name="VECTOR_2F">
+       <Struct Name="VECTOR_2F" Comment="A vector of 2 FLOAT values (x, y).">
            <Field Name="x" Type="FLOAT" />
            <Field Name="y" Type="FLOAT" />
        </Struct>
        
-       <Struct Name="VECTOR_3F">
+       <Struct Name="VECTOR_3F" Comment="A vector of 3 FLOAT values (x, y, z).">
            <Field Name="x" Type="FLOAT" />
            <Field Name="y" Type="FLOAT" />
            <Field Name="z" Type="FLOAT" />
        </Struct>
 
-       <Struct Name="VECTOR_4F">
+       <Struct Name="VECTOR_4F" Comment="A vector of 4 FLOAT values (x, y, z, w).">
            <Field Name="x" Type="FLOAT" />
            <Field Name="y" Type="FLOAT" />
            <Field Name="z" Type="FLOAT" />
            <Field Name="w" Type="FLOAT" />
        </Struct>
 
-       <Struct Name="MATRIX_4X3_F">
+       <Struct Name="MATRIX_4X3_F" Comment="Represents a 4-by-3 matrix.">
            <Union>
                <Struct>
                    <Field Type="FLOAT">
-                       <Name Name="_11"/> <Name Name="_12"/> <Name Name="_13"/>
+                       <Name Name="_11" /> <Name Name="_12" /> <Name Name="_13" />
                    </Field>
                    <Field Type="FLOAT">
-                       <Name Name="_21"/> <Name Name="_22"/> <Name Name="_23"/>
+                       <Name Name="_21" /> <Name Name="_22" /> <Name Name="_23" />
                    </Field>
                    <Field Type="FLOAT">
-                       <Name Name="_31"/> <Name Name="_32"/> <Name Name="_33"/>
+                       <Name Name="_31" /> <Name Name="_32" /> <Name Name="_33" />
                    </Field>
                    <Field Type="FLOAT">
-                       <Name Name="_41"/> <Name Name="_42"/> <Name Name="_43"/>
+                       <Name Name="_41" /> <Name Name="_42" /> <Name Name="_43" />
                    </Field>
                </Struct>
                <Field Name="m">
                    <Type Name="FLOAT">
-                        <ArrayDimension Size="4"/>
-                        <ArrayDimension Size="3"/>
+                        <ArrayDimension Size="4" />
+                        <ArrayDimension Size="3" />
                    </Type>
                </Field>
            </Union>
        </Struct>
-       
-       <Struct Name="MATRIX_4X4_F">
-           <Field Name="_11" Type="FLOAT" />
-           <Field Name="_12" Type="FLOAT" />
-           <Field Name="_13" Type="FLOAT" />
-           <Field Name="_14" Type="FLOAT" />
-           <Field Name="_21" Type="FLOAT" />
-           <Field Name="_22" Type="FLOAT" />
-           <Field Name="_23" Type="FLOAT" />
-           <Field Name="_24" Type="FLOAT" />
-           <Field Name="_31" Type="FLOAT" />
-           <Field Name="_32" Type="FLOAT" />
-           <Field Name="_33" Type="FLOAT" />
-           <Field Name="_34" Type="FLOAT" />
-           <Field Name="_41" Type="FLOAT" />
-           <Field Name="_42" Type="FLOAT" />
-           <Field Name="_43" Type="FLOAT" />
-           <Field Name="_44" Type="FLOAT" />
-       </Struct>
 
-       <Struct Name="MATRIX_5X4_F">
+       <Struct Name="MATRIX_4X4_F" Comment="Represents a 4-by-4 matrix.">
            <Union>
                <Struct>
                    <Field Type="FLOAT">
-                       <Name Name="_11"/> <Name Name="_12"/> <Name Name="_13"/> <Name Name="_14"/>
+                       <Name Name="_11" /> <Name Name="_12" /> <Name Name="_13" /> <Name Name="_14" />
                    </Field>
                    <Field Type="FLOAT">
-                       <Name Name="_21"/> <Name Name="_22"/> <Name Name="_23"/> <Name Name="_24"/>
+                       <Name Name="_21" /> <Name Name="_22" /> <Name Name="_23" /> <Name Name="_24" />
                    </Field>
                    <Field Type="FLOAT">
-                       <Name Name="_31"/> <Name Name="_32"/> <Name Name="_33"/> <Name Name="_34"/>
+                       <Name Name="_31" /> <Name Name="_32" /> <Name Name="_33" /> <Name Name="_34" />
                    </Field>
                    <Field Type="FLOAT">
-                       <Name Name="_41"/> <Name Name="_42"/> <Name Name="_43"/> <Name Name="_44"/>
-                    </Field>
-                   <Field Type="FLOAT">
-                       <Name Name="_51"/> <Name Name="_52"/> <Name Name="_53"/> <Name Name="_54"/>
+                       <Name Name="_41" /> <Name Name="_42" /> <Name Name="_43" /> <Name Name="_44" />
                     </Field>
                </Struct>
 
                <Field Name="m">
                    <Type Name="FLOAT">
-                        <ArrayDimension Size="5"/>
-                        <ArrayDimension Size="4"/>
+                        <ArrayDimension Size="4" />
+                        <ArrayDimension Size="4" />
+                   </Type>
+               </Field>
+           </Union>
+       </Struct>
+
+       <Struct Name="MATRIX_5X4_F" Comment="Represents a 5-by-4 matrix.">
+           <Union>
+               <Struct>
+                   <Field Type="FLOAT">
+                       <Name Name="_11" /> <Name Name="_12" /> <Name Name="_13" /> <Name Name="_14" />
+                   </Field>
+                   <Field Type="FLOAT">
+                       <Name Name="_21" /> <Name Name="_22" /> <Name Name="_23" /> <Name Name="_24" />
+                   </Field>
+                   <Field Type="FLOAT">
+                       <Name Name="_31" /> <Name Name="_32" /> <Name Name="_33" /> <Name Name="_34" />
+                   </Field>
+                   <Field Type="FLOAT">
+                       <Name Name="_41" /> <Name Name="_42" /> <Name Name="_43" /> <Name Name="_44" />
+                    </Field>
+                   <Field Type="FLOAT">
+                       <Name Name="_51" /> <Name Name="_52" /> <Name Name="_53" /> <Name Name="_54" />
+                    </Field>
+               </Struct>
+
+               <Field Name="m">
+                   <Type Name="FLOAT">
+                        <ArrayDimension Size="5" />
+                        <ArrayDimension Size="4" />
                    </Type>
                </Field>
            </Union>
@@ -126,236 +133,236 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
 
    <Namespace Name="D2D1">
 
-       <Typedef Name="POINT_2L" From="D2D::POINT_2L"/>
-       <Typedef Name="RECT_L" From="D2D::RECT_L"/>
-       <Typedef Name="VECTOR_2F" From="D2D::VECTOR_2F"/>
-       <Typedef Name="VECTOR_3F" From="D2D::VECTOR_3F"/>
-       <Typedef Name="VECTOR_4F" From="D2D::VECTOR_4F"/>
-       <Typedef Name="MATRIX_4X3_F" From="D2D::MATRIX_4X3_F"/>
-       <Typedef Name="MATRIX_4X4_F" From="D2D::MATRIX_4X4_F"/>
-       <Typedef Name="MATRIX_5X4_F" From="D2D::MATRIX_5X4_F"/>
+       <Typedef Name="POINT_2L" From="D2D::POINT_2L" />
+       <Typedef Name="RECT_L" From="D2D::RECT_L" />
+       <Typedef Name="VECTOR_2F" From="D2D::VECTOR_2F" />
+       <Typedef Name="VECTOR_3F" From="D2D::VECTOR_3F" />
+       <Typedef Name="VECTOR_4F" From="D2D::VECTOR_4F" />
+       <Typedef Name="MATRIX_4X3_F" From="D2D::MATRIX_4X3_F" />
+       <Typedef Name="MATRIX_4X4_F" From="D2D::MATRIX_4X4_F" />
+       <Typedef Name="MATRIX_5X4_F" From="D2D::MATRIX_5X4_F" />
 
        <!-- Enumerations go here. -->
 
        <Enum Name="BITMAP_OPTIONS" IsFlags="true" Comment="Specifies how the bitmap can be used.">
-           <Field Name="NONE" Value="0x00000000" Comment="The bitmap is created with default properties."/>
-           <Field Name="TARGET" Value="0x00000001" Comment="The bitmap can be specified as a target in ID2D1DeviceContext::SetTarget"/>
-           <Field Name="CANNOT_DRAW" Value="0x00000002" Comment="The bitmap cannot be used as an input to DrawBitmap, DrawImage, in a bitmap brush or as an input to an effect."/>
-           <Field Name="CPU_READ" Value="0x00000004" Comment="The bitmap can be read from the CPU."/>
-           <Field Name="GDI_COMPATIBLE" Value="0x00000008" Comment="The bitmap works with the ID2D1GdiInteropRenderTarget::GetDC API."/>
+           <Field Name="NONE" Value="0x00000000" Comment="The bitmap is created with default properties." />
+           <Field Name="TARGET" Value="0x00000001" Comment="The bitmap can be specified as a target in ID2D1DeviceContext::SetTarget" />
+           <Field Name="CANNOT_DRAW" Value="0x00000002" Comment="The bitmap cannot be used as an input to DrawBitmap, DrawImage, in a bitmap brush or as an input to an effect." />
+           <Field Name="CPU_READ" Value="0x00000004" Comment="The bitmap can be read from the CPU." />
+           <Field Name="GDI_COMPATIBLE" Value="0x00000008" Comment="The bitmap works with the ID2D1GdiInteropRenderTarget::GetDC API." />
        </Enum>
 
        <Enum Name="COMPOSITE_MODE" Comment="Specifies the composite mode that will be applied.">
-           <Field Name="SOURCE_OVER" Value="0"/>
-           <Field Name="DESTINATION_OVER" Value="1"/>
-           <Field Name="SOURCE_IN" Value="2"/>
-           <Field Name="DESTINATION_IN" Value="3"/>
-           <Field Name="SOURCE_OUT" Value="4"/>
-           <Field Name="DESTINATION_OUT" Value="5"/>
-           <Field Name="SOURCE_ATOP" Value="6"/>
-           <Field Name="DESTINATION_ATOP" Value="7"/>
-           <Field Name="XOR" Value="8"/>
-           <Field Name="PLUS" Value="9"/>
-           <Field Name="SOURCE_COPY" Value="10"/>
-           <Field Name="BOUNDED_SOURCE_COPY" Value="11"/>
-           <Field Name="MASK_INVERT" Value="12"/>
+           <Field Name="SOURCE_OVER" Value="0" />
+           <Field Name="DESTINATION_OVER" Value="1" />
+           <Field Name="SOURCE_IN" Value="2" />
+           <Field Name="DESTINATION_IN" Value="3" />
+           <Field Name="SOURCE_OUT" Value="4" />
+           <Field Name="DESTINATION_OUT" Value="5" />
+           <Field Name="SOURCE_ATOP" Value="6" />
+           <Field Name="DESTINATION_ATOP" Value="7" />
+           <Field Name="XOR" Value="8" />
+           <Field Name="PLUS" Value="9" />
+           <Field Name="SOURCE_COPY" Value="10" />
+           <Field Name="BOUNDED_SOURCE_COPY" Value="11" />
+           <Field Name="MASK_INVERT" Value="12" />
        </Enum>
 
        <Enum Name="BUFFER_PRECISION" Comment="This specifies the precision that should be used in buffers allocated by D2D.">
-           <Field Name="UNKNOWN" Value="0"/>
-           <Field Name="8BPC_UNORM" Value="1"/>
-           <Field Name="8BPC_UNORM_SRGB" Value="2"/>
-           <Field Name="16BPC_UNORM" Value="3"/>
-           <Field Name="16BPC_FLOAT" Value="4"/>
-           <Field Name="32BPC_FLOAT" Value="5"/>
+           <Field Name="UNKNOWN" Value="0" />
+           <Field Name="8BPC_UNORM" Value="1" />
+           <Field Name="8BPC_UNORM_SRGB" Value="2" />
+           <Field Name="16BPC_UNORM" Value="3" />
+           <Field Name="16BPC_FLOAT" Value="4" />
+           <Field Name="32BPC_FLOAT" Value="5" />
        </Enum>
        
        <Enum Name="MAP_OPTIONS" IsFlags="true" Comment="This describes how the individual mapping operation should be performed.">
-            <Field Name="NONE" Value="0" Comment="The mapped pointer has undefined behavior."/>
-            <Field Name="READ" Value="1" Comment="The mapped pointer can be read from."/>
-            <Field Name="WRITE" Value="2" Comment="The mapped pointer can be written to."/>
-            <Field Name="DISCARD" Value="4" Comment="The previous contents of the bitmap are discarded when it is mapped."/>
+            <Field Name="NONE" Value="0" Comment="The mapped pointer has undefined behavior." />
+            <Field Name="READ" Value="1" Comment="The mapped pointer can be read from." />
+            <Field Name="WRITE" Value="2" Comment="The mapped pointer can be written to." />
+            <Field Name="DISCARD" Value="4" Comment="The previous contents of the bitmap are discarded when it is mapped." />
        </Enum>
 
        <Enum Name="PROPERTY_TYPE" Comment="This defines the valid property types that can be used in an effect property interface.">
-           <Field Name="UNKNOWN" Value="0"/>
-           <Field Name="STRING" Value="1"/>
-           <Field Name="BOOL" Value="2"/>
-           <Field Name="UINT32" Value="3"/>
-           <Field Name="INT32" Value="4"/>
-           <Field Name="FLOAT" Value="5"/>
-           <Field Name="VECTOR2" Value="6"/>
-           <Field Name="VECTOR3" Value="7"/>
-           <Field Name="VECTOR4" Value="8"/>
-           <Field Name="BLOB" Value="9"/>
-           <Field Name="IUNKNOWN" Value="10"/>
-           <Field Name="ENUM" Value="11"/>
-           <Field Name="ARRAY" Value="12"/>
-           <Field Name="CLSID" Value="13"/>
-           <Field Name="MATRIX_3X2" Value="14"/>
-           <Field Name="MATRIX_4X3" Value="15"/>
-           <Field Name="MATRIX_4X4" Value="16"/>
-           <Field Name="MATRIX_5X4" Value="17"/>
-           <Field Name="COLOR_CONTEXT" Value="18"/>
+           <Field Name="UNKNOWN" Value="0" />
+           <Field Name="STRING" Value="1" />
+           <Field Name="BOOL" Value="2" />
+           <Field Name="UINT32" Value="3" />
+           <Field Name="INT32" Value="4" />
+           <Field Name="FLOAT" Value="5" />
+           <Field Name="VECTOR2" Value="6" />
+           <Field Name="VECTOR3" Value="7" />
+           <Field Name="VECTOR4" Value="8" />
+           <Field Name="BLOB" Value="9" />
+           <Field Name="IUNKNOWN" Value="10" />
+           <Field Name="ENUM" Value="11" />
+           <Field Name="ARRAY" Value="12" />
+           <Field Name="CLSID" Value="13" />
+           <Field Name="MATRIX_3X2" Value="14" />
+           <Field Name="MATRIX_4X3" Value="15" />
+           <Field Name="MATRIX_4X4" Value="16" />
+           <Field Name="MATRIX_5X4" Value="17" />
+           <Field Name="COLOR_CONTEXT" Value="18" />
        </Enum>
 
         <Enum Name="PROPERTY" Comment="This defines the list of system properties present on the root effect property interface.">
-            <Field Name="CLSID"              Value="0x80000000"/>
-            <Field Name="DISPLAYNAME"        Value="0x80000001"/>
-            <Field Name="AUTHOR"             Value="0x80000002"/>
-            <Field Name="CATEGORY"           Value="0x80000003"/>
-            <Field Name="DESCRIPTION"        Value="0x80000004"/>
-            <Field Name="INPUTS"             Value="0x80000005"/>
-            <Field Name="CACHED"             Value="0x80000006"/>
-            <Field Name="PRECISION"          Value="0x80000007"/>
-            <Field Name="MIN_INPUTS"         Value="0x80000008"/>
-            <Field Name="MAX_INPUTS"         Value="0x80000009"/>
+            <Field Name="CLSID" Value="0x80000000" />
+            <Field Name="DISPLAYNAME" Value="0x80000001" />
+            <Field Name="AUTHOR" Value="0x80000002" />
+            <Field Name="CATEGORY" Value="0x80000003" />
+            <Field Name="DESCRIPTION" Value="0x80000004" />
+            <Field Name="INPUTS" Value="0x80000005" />
+            <Field Name="CACHED" Value="0x80000006" />
+            <Field Name="PRECISION" Value="0x80000007" />
+            <Field Name="MIN_INPUTS" Value="0x80000008" />
+            <Field Name="MAX_INPUTS" Value="0x80000009" />
         </Enum>
 
         <Enum Name="SUBPROPERTY" Comment="This defines the indices of sub-properties that may be present on any parent property.">
-            <Field Name="DISPLAYNAME"        Value="0x80000000"/>
-            <Field Name="ISREADONLY"         Value="0x80000001"/>
-            <Field Name="MIN"                Value="0x80000002"/>
-            <Field Name="MAX"                Value="0x80000003"/>
-            <Field Name="DEFAULT"            Value="0x80000004"/>
-            <Field Name="FIELDS"             Value="0x80000005"/>
-            <Field Name="INDEX"              Value="0x80000006"/>
+            <Field Name="DISPLAYNAME" Value="0x80000000" />
+            <Field Name="ISREADONLY" Value="0x80000001" />
+            <Field Name="MIN" Value="0x80000002" />
+            <Field Name="MAX" Value="0x80000003" />
+            <Field Name="DEFAULT" Value="0x80000004" />
+            <Field Name="FIELDS" Value="0x80000005" />
+            <Field Name="INDEX" Value="0x80000006" />
         </Enum>
 
         <Enum Name="INTERPOLATION_MODE" Comment="This is used to specify the quality of image scaling with ID2D1DeviceContext::DrawImage and with the 2D Affine Transform Effect.">
-            <Field Name="NEAREST_NEIGHBOR" Value="D2D1_INTERPOLATION_MODE_DEFINITION_NEAREST_NEIGHBOR" NumericalValue="0"/>
-            <Field Name="LINEAR" Value="D2D1_INTERPOLATION_MODE_DEFINITION_LINEAR" NumericalValue="1"/>
-            <Field Name="CUBIC" Value="D2D1_INTERPOLATION_MODE_DEFINITION_CUBIC" NumericalValue="2"/>
-            <Field Name="MULTI_SAMPLE_LINEAR" Value="D2D1_INTERPOLATION_MODE_DEFINITION_MULTI_SAMPLE_LINEAR" NumericalValue="3"/>
-            <Field Name="ANISOTROPIC" Value="D2D1_INTERPOLATION_MODE_DEFINITION_ANISOTROPIC" NumericalValue="4"/>
-            <Field Name="HIGH_QUALITY_CUBIC" Value="D2D1_INTERPOLATION_MODE_DEFINITION_HIGH_QUALITY_CUBIC" NumericalValue="5"/>
+            <Field Name="NEAREST_NEIGHBOR" Value="D2D1_INTERPOLATION_MODE_DEFINITION_NEAREST_NEIGHBOR" NumericalValue="0" />
+            <Field Name="LINEAR" Value="D2D1_INTERPOLATION_MODE_DEFINITION_LINEAR" NumericalValue="1" />
+            <Field Name="CUBIC" Value="D2D1_INTERPOLATION_MODE_DEFINITION_CUBIC" NumericalValue="2" />
+            <Field Name="MULTI_SAMPLE_LINEAR" Value="D2D1_INTERPOLATION_MODE_DEFINITION_MULTI_SAMPLE_LINEAR" NumericalValue="3" />
+            <Field Name="ANISOTROPIC" Value="D2D1_INTERPOLATION_MODE_DEFINITION_ANISOTROPIC" NumericalValue="4" />
+            <Field Name="HIGH_QUALITY_CUBIC" Value="D2D1_INTERPOLATION_MODE_DEFINITION_HIGH_QUALITY_CUBIC" NumericalValue="5" />
         </Enum>
 
         <Enum Name="UNIT_MODE" Comment="This specifies what units should be accepted by the D2D API.">
-            <Field Name="DIPS" Value="0"/>
-            <Field Name="PIXELS" Value="1"/>
+            <Field Name="DIPS" Value="0" />
+            <Field Name="PIXELS" Value="1" />
         </Enum>
 
         <Enum Name="COLOR_SPACE" Comment="Defines a color space.">
-            <Field Name="CUSTOM" Value="0" Comment="The color space is described by accompanying data, such as a color profile."/>
-            <Field Name="SRGB" Value="1" Comment="The sRGB color space."/>
-            <Field Name="SCRGB" Value="2" Comment="The scRGB color space."/>
+            <Field Name="CUSTOM" Value="0" Comment="The color space is described by accompanying data, such as a color profile." />
+            <Field Name="SRGB" Value="1" Comment="The sRGB color space." />
+            <Field Name="SCRGB" Value="2" Comment="The scRGB color space." />
         </Enum>
 
         <Enum Name="DEVICE_CONTEXT_OPTIONS" IsFlags="true" Comment="This specifies options that apply to the device context for its lifetime.">
-            <Field Name="NONE" Value="0"/>
-            <Field Name="ENABLE_MULTITHREADED_OPTIMIZATIONS" Value="1" Comment="Geometry rendering will be performed on many threads in parallel, a single thread is the default."/>
+            <Field Name="NONE" Value="0" />
+            <Field Name="ENABLE_MULTITHREADED_OPTIMIZATIONS" Value="1" Comment="Geometry rendering will be performed on many threads in parallel, a single thread is the default." />
         </Enum>
 
-        <Enum Name="STROKE_TRANSFORM_TYPE">
-            <Field Name="NORMAL" Value="0" Comment="The stroke respects the world transform, the DPI, and the stroke width."/>
-            <Field Name="FIXED" Value="1" Comment="The stroke does not respect the world transform, but it does respect the DPI and the stroke width."/>
-            <Field Name="HAIRLINE" Value="2" Comment="The stroke is forced to one pixel wide."/>
+        <Enum Name="STROKE_TRANSFORM_TYPE" Comment="Defines how the world transform, dots per inch (dpi), and stroke width affect the shape of the pen used to stroke a primitive.">
+            <Field Name="NORMAL" Value="0" Comment="The stroke respects the world transform, the DPI, and the stroke width." />
+            <Field Name="FIXED" Value="1" Comment="The stroke does not respect the world transform, but it does respect the DPI and the stroke width." />
+            <Field Name="HAIRLINE" Value="2" Comment="The stroke is forced to one pixel wide." />
         </Enum>
 
         <Enum Name="PRIMITIVE_BLEND" Comment="A blend mode that applies to all primitives drawn on the context.">
-            <Field Name="SOURCE_OVER" Value="0"/>
-            <Field Name="COPY" Value="1"/>
-            <Field Name="MIN" Value="2"/>
-            <Field Name="ADD" Value="3"/>
+            <Field Name="SOURCE_OVER" Value="0" />
+            <Field Name="COPY" Value="1" />
+            <Field Name="MIN" Value="2" />
+            <Field Name="ADD" Value="3" />
         </Enum>
 
         <Enum Name="LAYER_OPTIONS1" IsFlags="true" Comment="Specifies how the layer contents should be prepared.">
-            <Field Name="NONE" Value="0"/>
-            <Field Name="INITIALIZE_FROM_BACKGROUND" Value="1"/>
-            <Field Name="IGNORE_ALPHA" Value="2"/>
+            <Field Name="NONE" Value="0" />
+            <Field Name="INITIALIZE_FROM_BACKGROUND" Value="1" />
+            <Field Name="IGNORE_ALPHA" Value="2" />
         </Enum>
 
         <Enum Name="THREADING_MODE" Comment="This specifies the threading mode used while simultaneously creating the device, factory, and device context.">
-            <Field Name="SINGLE_THREADED" Value="D2D1_FACTORY_TYPE_SINGLE_THREADED" Comment="Resources may only be invoked serially.  Reference counts on resources are interlocked, however, resource and render target state is not protected from multi-threaded access" NumericalValue="0"/>
-            <Field Name="MULTI_THREADED" Value="D2D1_FACTORY_TYPE_MULTI_THREADED" Comment="Resources may be invoked from multiple threads. Resources use interlocked reference counting and their state is protected." NumericalValue="1"/>
+            <Field Name="SINGLE_THREADED" Value="D2D1_FACTORY_TYPE_SINGLE_THREADED" Comment="Resources may only be invoked serially.  Reference counts on resources are interlocked, however, resource and render target state is not protected from multi-threaded access" NumericalValue="0" />
+            <Field Name="MULTI_THREADED" Value="D2D1_FACTORY_TYPE_MULTI_THREADED" Comment="Resources may be invoked from multiple threads. Resources use interlocked reference counting and their state is protected." NumericalValue="1" />
         </Enum>
 
         <Enum Name="COLOR_INTERPOLATION_MODE" Comment="This specifies how colors are interpolated.">
-           <Field Name="STRAIGHT" Value="0" Comment="Colors will be interpolated in straight alpha space."/>
-           <Field Name="PREMULTIPLIED" Value="1" Comment="Colors will be interpolated in premultiplied alpha space."/>
+           <Field Name="STRAIGHT" Value="0" Comment="Colors will be interpolated in straight alpha space." />
+           <Field Name="PREMULTIPLIED" Value="1" Comment="Colors will be interpolated in premultiplied alpha space." />
         </Enum>
        
-       <Enum Name="BORDER_EDGE_MODE" ShouldValidate="false">
-           <Field Name="CLAMP" Value="0"/>
-           <Field Name="WRAP" Value="1"/>
-           <Field Name="MIRROR" Value="2"/>
+       <Enum Name="BORDER_EDGE_MODE" ShouldValidate="false" Comment="The edge mode for the Border effect.">
+           <Field Name="CLAMP" Value="0" />
+           <Field Name="WRAP" Value="1" />
+           <Field Name="MIRROR" Value="2" />
        </Enum>
        
-       <Enum Name="BORDER_MODE" ShouldValidate="false">
-           <Field Name="SOFT" Value="0"/>
-           <Field Name="HARD" Value="1"/>
+       <Enum Name="BORDER_MODE" ShouldValidate="false" Comment="Specifies how the Crop effect handles the crop rectangle falling on fractional pixel coordinates.">
+           <Field Name="SOFT" Value="0" />
+           <Field Name="HARD" Value="1" />
        </Enum>
        
-       <Enum Name="COLORMANAGEMENT_RENDERING_INTENT" ShouldValidate="false">
-           <Field Name="PERCEPTUAL" Value="0"/>
-           <Field Name="RELATIVE_COLORIMETRIC" Value="1"/>
-           <Field Name="SATURATION" Value="2"/>
-           <Field Name="ABSOLUTE_COLORIMETRIC" Value="3"/>
+       <Enum Name="COLORMANAGEMENT_RENDERING_INTENT" ShouldValidate="false" Comment="Specifies which ICC rendering intent the Color management effect should use.">
+           <Field Name="PERCEPTUAL" Value="0" />
+           <Field Name="RELATIVE_COLORIMETRIC" Value="1" />
+           <Field Name="SATURATION" Value="2" />
+           <Field Name="ABSOLUTE_COLORIMETRIC" Value="3" />
        </Enum>
        
-       <Enum Name="CHANNEL_SELECTOR" ShouldValidate="false">
-           <Field Name="R" Value="0"/>
-           <Field Name="G" Value="1"/>
-           <Field Name="B" Value="2"/>
-           <Field Name="A" Value="3"/>
+       <Enum Name="CHANNEL_SELECTOR" ShouldValidate="false" Comment="Specifies the color channel the Displacement map effect extracts the intensity from and uses it to spatially displace the image in the X or Y direction.">
+           <Field Name="R" Value="0" />
+           <Field Name="G" Value="1" />
+           <Field Name="B" Value="2" />
+           <Field Name="A" Value="3" />
        </Enum>
 
-       <Enum Name="BITMAPSOURCE_ORIENTATION" ShouldValidate="false">
-           <Field Name="DEFAULT" Value="1"/>
-           <Field Name="FLIP_HORIZONTAL" Value="2"/>
-           <Field Name="ROTATE_CLOCKWISE180" Value="3"/>
-           <Field Name="ROTATE_CLOCKWISE180_FLIP_HORIZONTAL" Value="4"/>
-           <Field Name="ROTATE_CLOCKWISE270_FLIP_HORIZONTAL" Value="5"/>
-           <Field Name="ROTATE_CLOCKWISE90" Value="6"/>
-           <Field Name="ROTATE_CLOCKWISE90_FLIP_HORIZONTAL" Value="7"/>
-           <Field Name="ROTATE_CLOCKWISE270" Value="8"/>
+       <Enum Name="BITMAPSOURCE_ORIENTATION" ShouldValidate="false" Comment="Speficies whether a flip and/or rotation operation should be performed by the Bitmap source effect">
+           <Field Name="DEFAULT" Value="1" />
+           <Field Name="FLIP_HORIZONTAL" Value="2" />
+           <Field Name="ROTATE_CLOCKWISE180" Value="3" />
+           <Field Name="ROTATE_CLOCKWISE180_FLIP_HORIZONTAL" Value="4" />
+           <Field Name="ROTATE_CLOCKWISE270_FLIP_HORIZONTAL" Value="5" />
+           <Field Name="ROTATE_CLOCKWISE90" Value="6" />
+           <Field Name="ROTATE_CLOCKWISE90_FLIP_HORIZONTAL" Value="7" />
+           <Field Name="ROTATE_CLOCKWISE270" Value="8" />
        </Enum>
 
        <Struct Name="BITMAP_PROPERTIES1" Extends="D2D1::BITMAP_PROPERTIES" Comment="Extended bitmap properties.">
-            <Field Name="bitmapOptions" Type="D2D1::BITMAP_OPTIONS"  Comment="Specifies how the bitmap can be used." />
-            <Field Name="colorContext" Type="D2D1::IColorContext" Form="mutable pointer opt"/>
+            <Field Name="bitmapOptions" Type="D2D1::BITMAP_OPTIONS" Comment="Specifies how the bitmap can be used." />
+            <Field Name="colorContext" Type="D2D1::IColorContext" Form="mutable pointer opt" />
         </Struct>
 
         <Struct Name="IMAGE_BRUSH_PROPERTIES" Comment="Creation properties for an image brush.">
-            <Field Name="sourceRectangle" Type="D2D1::RECT_F"/>
-            <Field Name="extendModeX" Type="D2D1::EXTEND_MODE"/>
-            <Field Name="extendModeY" Type="D2D1::EXTEND_MODE"/>
-            <Field Name="interpolationMode" Type="D2D1::INTERPOLATION_MODE"/>
+            <Field Name="sourceRectangle" Type="D2D1::RECT_F" />
+            <Field Name="extendModeX" Type="D2D1::EXTEND_MODE" />
+            <Field Name="extendModeY" Type="D2D1::EXTEND_MODE" />
+            <Field Name="interpolationMode" Type="D2D1::INTERPOLATION_MODE" />
         </Struct>
 
-       <Struct Name="BITMAP_BRUSH_PROPERTIES1">
-           <Field Name="extendModeX" Type="D2D1::EXTEND_MODE"/>
-           <Field Name="extendModeY" Type="D2D1::EXTEND_MODE"/>
-           <Field Name="interpolationMode" Type="D2D1::INTERPOLATION_MODE"/>
+       <Struct Name="BITMAP_BRUSH_PROPERTIES1" Comment="Describes the extend modes and the interpolation mode of an ID2D1BitmapBrush.">
+           <Field Name="extendModeX" Type="D2D1::EXTEND_MODE" />
+           <Field Name="extendModeY" Type="D2D1::EXTEND_MODE" />
+           <Field Name="interpolationMode" Type="D2D1::INTERPOLATION_MODE" />
        </Struct>
 
         <Struct Name="LAYER_PARAMETERS1" Comment="All parameters related to pushing a layer.">
-          <Field Name="contentBounds" Type="D2D1::RECT_F"/>
-          <Field Name="geometricMask" Type="D2D1::IGeometry" Form="mutable pointer opt"/>
-          <Field Name="maskAntialiasMode" Type="D2D1::ANTIALIAS_MODE"/>
-          <Field Name="maskTransform" Type="D2D1::MATRIX_3X2_F"/>
-          <Field Name="opacity" Type="FLOAT"/>
-          <Field Name="opacityBrush" Type="D2D1::IBrush" Form="mutable pointer opt"/>
-          <Field Name="layerOptions" Type="D2D1::LAYER_OPTIONS1"/>                 
+          <Field Name="contentBounds" Type="D2D1::RECT_F" />
+          <Field Name="geometricMask" Type="D2D1::IGeometry" Form="mutable pointer opt" />
+          <Field Name="maskAntialiasMode" Type="D2D1::ANTIALIAS_MODE" />
+          <Field Name="maskTransform" Type="D2D1::MATRIX_3X2_F" />
+          <Field Name="opacity" Type="FLOAT" />
+          <Field Name="opacityBrush" Type="D2D1::IBrush" Form="mutable pointer opt" />
+          <Field Name="layerOptions" Type="D2D1::LAYER_OPTIONS1" />                 
         </Struct>
      
        <Struct Name="MAPPED_RECT" Comment="Describes mapped memory from the ID2D1Bitmap1::Map API.">
-            <Field Name="pitch" Type="UINT32"/>
-            <Field Name="bits" Type="BYTE" Form="mutable pointer"/>
+            <Field Name="pitch" Type="UINT32" />
+            <Field Name="bits" Type="BYTE" Form="mutable pointer" />
         </Struct>
 
         <Struct Name="POINT_DESCRIPTION" Comment="Describes a point along a path.">
-            <Field Name="point" Type="D2D1::POINT_2F"/>
-            <Field Name="unitTangentVector" Type="D2D1::POINT_2F"/>
-            <Field Name="endSegment" Type="UINT32"/>
-            <Field Name="endFigure" Type="UINT32"/>
-            <Field Name="lengthToEndSegment" Type="FLOAT"/>
+            <Field Name="point" Type="D2D1::POINT_2F" />
+            <Field Name="unitTangentVector" Type="D2D1::POINT_2F" />
+            <Field Name="endSegment" Type="UINT32" />
+            <Field Name="endFigure" Type="UINT32" />
+            <Field Name="lengthToEndSegment" Type="FLOAT" />
         </Struct>
         
         <Struct Name="RENDERING_CONTROLS" Comment="This controls advanced settings of the Direct2D imaging pipeline.">
-            <Field Name="bufferPrecision" Type="D2D1::BUFFER_PRECISION" Comment="The default buffer precision, used if the precision isn't otherwise specified."/>
-            <Field Name="tileSize" Type="D2D1::SIZE_U" Comment="The size of allocated tiles used to render imaging effects."/>
+            <Field Name="bufferPrecision" Type="D2D1::BUFFER_PRECISION" Comment="The default buffer precision, used if the precision isn't otherwise specified." />
+            <Field Name="tileSize" Type="D2D1::SIZE_U" Comment="The size of allocated tiles used to render imaging effects." />
         </Struct>
 
        <Struct Name="EFFECT_INPUT_DESCRIPTION" Comment="This identifies a certain input connection of a certain effect.">
@@ -365,17 +372,17 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
        </Struct>
 
        <Struct Name="STROKE_STYLE_PROPERTIES1" Extends="D2D1::STROKE_STYLE_PROPERTIES" Comment="This defines how geometries should be drawn and widened.">
-           <Field Name="transformType" Type="D2D1::STROKE_TRANSFORM_TYPE" Comment="How the nib of the stroke is influenced by the context properties."/>
+           <Field Name="transformType" Type="D2D1::STROKE_TRANSFORM_TYPE" Comment="How the nib of the stroke is influenced by the context properties." />
        </Struct>
 
        <Struct Name="DRAWING_STATE_DESCRIPTION1" Extends="D2D1::DRAWING_STATE_DESCRIPTION" Comment="This describes the drawing state.">
-           <Field Name="primitiveBlend" Type="D2D1::PRIMITIVE_BLEND"/>
-           <Field Name="unitMode" Type="D2D1::UNIT_MODE"/>
+           <Field Name="primitiveBlend" Type="D2D1::PRIMITIVE_BLEND" />
+           <Field Name="unitMode" Type="D2D1::UNIT_MODE" />
        </Struct>
 
        
        <Struct Name="CREATION_PROPERTIES" Comment="This specifies the options while simultaneously creating the device, factory, and device context.">
-           <Field Name="threadingMode" Type="D2D1::THREADING_MODE" Comment="Describes locking behavior of D2D resources"/>
+           <Field Name="threadingMode" Type="D2D1::THREADING_MODE" Comment="Describes locking behavior of D2D resources" />
            <Field Name="debugLevel" Type="D2D1::DEBUG_LEVEL" />
            <Field Name="options" Type="D2D1::DEVICE_CONTEXT_OPTIONS" />  
        </Struct>
@@ -383,26 +390,26 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
 
        <!-- New Interfaces and Methods go here. -->
 
-        <Interface Name="IFactory1" Extends="D2D1::IFactory" IID="bb12d362-daee-4b9a-aa1d-14ba401cfa1f">
+        <Interface Name="IFactory1" Extends="D2D1::IFactory" IID="bb12d362-daee-4b9a-aa1d-14ba401cfa1f" Comment="Creates Direct2D resources.">
             <Method Name="CreateDevice" Comment="This creates a new Direct2D device from the given IDXGIDevice.">
-                <Parameter Name="dxgiDevice" Type="IDXGIDevice" Form="pointer"/>
-                <Parameter Name="d2dDevice" Type="D2D1::IDevice" Form="deref out pointer" IsRetval="true"/>
+                <Parameter Name="dxgiDevice" Type="IDXGIDevice" Form="pointer" />
+                <Parameter Name="d2dDevice" Type="D2D1::IDevice" Form="deref out pointer" IsRetval="true" />
             </Method>
 
             <Method Name="CreateStrokeStyle" Comment="This creates a stroke style with the ability to preserve stroke width in various ways.">
-                <Parameter Name="strokeStyleProperties" Type="D2D1::STROKE_STYLE_PROPERTIES1" Form="pointer"/>
-                <Parameter Name="dashes" Type="FLOAT" Form="pointer opt" IsArray="true"/>
-                <Parameter Name="strokeStyle" Type="D2D1::IStrokeStyle1" Form="deref out pointer" IsRetval="true"/>
+                <Parameter Name="strokeStyleProperties" Type="D2D1::STROKE_STYLE_PROPERTIES1" Form="pointer" />
+                <Parameter Name="dashes" Type="FLOAT" Form="pointer opt" IsArray="true" />
+                <Parameter Name="strokeStyle" Type="D2D1::IStrokeStyle1" Form="deref out pointer" IsRetval="true" />
             </Method>
 
             <Method Name="CreateStrokeStyle" OverloadId="1">
-                <Parameter Name="strokeStyleProperties" Type="D2D1::STROKE_STYLE_PROPERTIES1" Form="reference"/>
-                <Parameter Name="dashes" Type="FLOAT" IsArray="true" Form="pointer opt"/>
-                <Parameter Name="strokeStyle" Type="D2D1::IStrokeStyle1" Form="deref out pointer" IsRetval="true"/>
+                <Parameter Name="strokeStyleProperties" Type="D2D1::STROKE_STYLE_PROPERTIES1" Form="reference" />
+                <Parameter Name="dashes" Type="FLOAT" IsArray="true" Form="pointer opt" />
+                <Parameter Name="strokeStyle" Type="D2D1::IStrokeStyle1" Form="deref out pointer" IsRetval="true" />
             </Method>
 
             <Method Name="CreatePathGeometry" Comment="Creates a path geometry with new operational methods.">
-                <Parameter Name="pathGeometry" Type="D2D1::IPathGeometry1" Form="deref out pointer" IsRetval="true"/>
+                <Parameter Name="pathGeometry" Type="D2D1::IPathGeometry1" Form="deref out pointer" IsRetval="true" />
             </Method>
 
             <Method Name="CreateDrawingStateBlock" Comment="Creates a new drawing state block, this can be used in subsequent SaveDrawingState and RestoreDrawingState operations on the render target.">
@@ -421,45 +428,45 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
             </Method>
 
             <Method Name="CreateGdiMetafile" Comment="Creates a new GDI metafile.">
-                <Parameter Name="metafileStream" Type="IStream" Form="pointer"/>
-                <Parameter Name="metafile" Type="D2D1::IGdiMetafile" Form="deref out pointer" IsRetval="true"/>
+                <Parameter Name="metafileStream" Type="IStream" Form="pointer" />
+                <Parameter Name="metafile" Type="D2D1::IGdiMetafile" Form="deref out pointer" IsRetval="true" />
             </Method>
 
             <Method Name="RegisterEffectFromStream" Comment="This globally registers the given effect. The effect can later be instantiated by using the registered class id. The effect registration is reference counted.">
-                <Parameter Name="classId" Type="REFCLSID" Form="in"/>
-                <Parameter Name="propertyXml" Type="IStream" Form="pointer"/>
-                <Parameter Name="bindings" Type="D2D1::PROPERTY_BINDING" IsArray="true" Form="pointer opt"/>
+                <Parameter Name="classId" Type="REFCLSID" Form="in" />
+                <Parameter Name="propertyXml" Type="IStream" Form="pointer" />
+                <Parameter Name="bindings" Type="D2D1::PROPERTY_BINDING" IsArray="true" Form="pointer opt" />
                 <Parameter Name="effectFactory" Type="PD2D1_EFFECT_FACTORY" Form="in" />
             </Method>
 
             <Method Name="RegisterEffectFromString" Comment="This globally registers the given effect. The effect can later be instantiated by using the registered class id. The effect registration is reference counted.">
-                <Parameter Name="classId" Type="REFCLSID" Form="in"/>
-                <Parameter Name="propertyXml" Type="PCWSTR" Form="in"/>
-                <Parameter Name="bindings" Type="D2D1::PROPERTY_BINDING" IsArray="true" Form="pointer opt"/>
+                <Parameter Name="classId" Type="REFCLSID" Form="in" />
+                <Parameter Name="propertyXml" Type="PCWSTR" Form="in" />
+                <Parameter Name="bindings" Type="D2D1::PROPERTY_BINDING" IsArray="true" Form="pointer opt" />
                 <Parameter Name="effectFactory" Type="PD2D1_EFFECT_FACTORY" Form="in" />
             </Method>
 
             <Method Name="UnregisterEffect" Comment="This unregisters the given effect by its class id, you need to call UnregisterEffect for every call to ID2D1Factory1::RegisterEffectFromStream and ID2D1Factory1::RegisterEffectFromString to completely unregister it.">
-                <Parameter Name="classId" Type="REFCLSID" Form="in"/>
+                <Parameter Name="classId" Type="REFCLSID" Form="in" />
             </Method>
 
             <Method Name="GetRegisteredEffects" IsConst="true" Comment="This returns all of the registered effects in the process, including any built-in effects.">
-                <Parameter Name="effects" Type="CLSID" Form="out pointer part opt" IsArray="true" ECount="effectsCount, *effectsReturned"/>
-                <Parameter Name="effectsReturned" Type="UINT32" Form="out pointer opt" Comment="The number of effects returned into the passed in effects array."/>
-                <Parameter Name="effectsRegistered" Type="UINT32" Form="out pointer opt" Comment="The number of effects currently registered in the system."/>
+                <Parameter Name="effects" Type="CLSID" Form="out pointer part opt" IsArray="true" ECount="effectsCount, *effectsReturned" />
+                <Parameter Name="effectsReturned" Type="UINT32" Form="out pointer opt" Comment="The number of effects returned into the passed in effects array." />
+                <Parameter Name="effectsRegistered" Type="UINT32" Form="out pointer opt" Comment="The number of effects currently registered in the system." />
             </Method>
 
             <Method Name="GetEffectProperties" IsConst="true" Comment="This retrieves the effect properties for the given effect, all of the effect properties will be set to a default value since an effect is not instantiated to implement the returned property interface.">
-                <Parameter Name="effectId" Type="REFCLSID" Form="in"/>
-                <Parameter Name="properties" Type="D2D1::IProperties" Form="deref out pointer" IsRetval="true"/>
+                <Parameter Name="effectId" Type="REFCLSID" Form="in" />
+                <Parameter Name="properties" Type="D2D1::IProperties" Form="deref out pointer" IsRetval="true" />
             </Method>
 
         </Interface>
 
-        <Interface Name="IMultithread" Extends="IUnknown" IID="31e6e7bc-e0ff-4d46-8c64-a0a8c41c15d3">
-            <Method Name="GetMultithreadProtected" Return="BOOL" IsConst="true" Comment="Returns whether the D2D factory was created with D2D1_FACTORY_TYPE_MULTI_THREADED."/>
-            <Method Name="Enter" Return="void" Comment="Enters the D2D API critical section, if it exists." LockingModel="Complex"/>
-            <Method Name="Leave" Return="void" Comment="Leaves the D2D API critical section, if it exists." LockingModel="Complex"/>
+        <Interface Name="IMultithread" Extends="IUnknown" IID="31e6e7bc-e0ff-4d46-8c64-a0a8c41c15d3" Comment="A locking mechanism from a Direct2D factory that Direct2D uses to control exclusive resource access in an app that is uses multiple threads.">
+            <Method Name="GetMultithreadProtected" Return="BOOL" IsConst="true" Comment="Returns whether the D2D factory was created with D2D1_FACTORY_TYPE_MULTI_THREADED." />
+            <Method Name="Enter" Return="void" Comment="Enters the D2D API critical section, if it exists." LockingModel="Complex" />
+            <Method Name="Leave" Return="void" Comment="Leaves the D2D API critical section, if it exists." LockingModel="Complex" />
         </Interface>
 
         <Interface Name="IDevice" Extends="D2D1::IResource" Comment="The device defines a resource domain whose objects and device contexts can be used together." IID="47dd575d-ac05-4cdd-8049-9b02cd16f44c">
@@ -490,57 +497,54 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
 
         <Interface Name="IDeviceContext" Extends="D2D1::IRenderTarget" Comment="The device context represents a set of state and a command buffer that is used to render to a target bitmap." IID="e8f7fe7a-191c-466d-ad95-975678bda998">
             <Method Name="CreateBitmap" Comment="Creates a bitmap with extended bitmap properties, potentially from a block of memory.">
-                <Parameter Name="size" Type="D2D1::SIZE_U"/>
+                <Parameter Name="size" Type="D2D1::SIZE_U" />
                 <Parameter Name="sourceData" Type="void" Form="pointer opt" />
-                <Parameter Name="pitch" Type="UINT32"/>
-                <Parameter Name="bitmapProperties" Type="D2D1::BITMAP_PROPERTIES1" Form="pointer"/>
+                <Parameter Name="pitch" Type="UINT32" />
+                <Parameter Name="bitmapProperties" Type="D2D1::BITMAP_PROPERTIES1" Form="pointer" />
                 <Parameter Name="bitmap" Type="D2D1::IBitmap1" Form="deref out pointer" IsRetval="true" />
             </Method>
 
             <Method Name="CreateBitmap" OverloadId="1">
-                <Parameter Name="size" Type="D2D1::SIZE_U"/>
+                <Parameter Name="size" Type="D2D1::SIZE_U" />
                 <Parameter Name="sourceData" Type="void" Form="pointer opt" />
-                <Parameter Name="pitch" Type="UINT32"/>
-                <Parameter Name="bitmapProperties" Type="D2D1::BITMAP_PROPERTIES1" Form="reference"/>
+                <Parameter Name="pitch" Type="UINT32" />
+                <Parameter Name="bitmapProperties" Type="D2D1::BITMAP_PROPERTIES1" Form="reference" />
                 <Parameter Name="bitmap" Type="D2D1::IBitmap1" Form="deref out pointer" IsRetval="true" />
             </Method>
-            <Method Name="CreateBitmapFromWicBitmap"
-                Comment="Create a D2D bitmap by copying a WIC bitmap.">
-                <Parameter Name="wicBitmapSource" Type="IWICBitmapSource" Form="pointer"/>
-                <Parameter Name="bitmapProperties" Type="D2D1::BITMAP_PROPERTIES1" Form="pointer opt"/>
-                <Parameter Name="bitmap" Type="D2D1::IBitmap1" Form="deref out pointer" IsRetval="true"/>
+            <Method Name="CreateBitmapFromWicBitmap" Comment="Create a D2D bitmap by copying a WIC bitmap.">
+                <Parameter Name="wicBitmapSource" Type="IWICBitmapSource" Form="pointer" />
+                <Parameter Name="bitmapProperties" Type="D2D1::BITMAP_PROPERTIES1" Form="pointer opt" />
+                <Parameter Name="bitmap" Type="D2D1::IBitmap1" Form="deref out pointer" IsRetval="true" />
             </Method>
-            <Method Name="CreateBitmapFromWicBitmap" OverloadId="1"
-                Comment="Create a D2D bitmap by copying a WIC bitmap.">
-                <Parameter Name="wicBitmapSource" Type="IWICBitmapSource" Form="pointer"/>
-                <Parameter Name="bitmapProperties" Type="D2D1::BITMAP_PROPERTIES1" Form="reference"/>
-                <Parameter Name="bitmap" Type="D2D1::IBitmap1" Form="deref out pointer" IsRetval="true"/>
+            <Method Name="CreateBitmapFromWicBitmap" OverloadId="1" Comment="Create a D2D bitmap by copying a WIC bitmap.">
+                <Parameter Name="wicBitmapSource" Type="IWICBitmapSource" Form="pointer" />
+                <Parameter Name="bitmapProperties" Type="D2D1::BITMAP_PROPERTIES1" Form="reference" />
+                <Parameter Name="bitmap" Type="D2D1::IBitmap1" Form="deref out pointer" IsRetval="true" />
             </Method>
-            <Method Name="CreateBitmapFromWicBitmap" OverloadId="2"
-                Comment="Create a D2D bitmap by copying a WIC bitmap.">
-                <Parameter Name="wicBitmapSource" Type="IWICBitmapSource" Form="pointer"/>
-                <Parameter Name="bitmap" Type="D2D1::IBitmap1" Form="deref out pointer" IsRetval="true"/>
+            <Method Name="CreateBitmapFromWicBitmap" OverloadId="2" Comment="Create a D2D bitmap by copying a WIC bitmap.">
+                <Parameter Name="wicBitmapSource" Type="IWICBitmapSource" Form="pointer" />
+                <Parameter Name="bitmap" Type="D2D1::IBitmap1" Form="deref out pointer" IsRetval="true" />
             </Method>
             <Method Name="CreateColorContext" Comment="Creates a color context from a color space.  If the space is Custom, the context is initialized from the profile/profileSize arguments.  Otherwise the context is initialized with the profile bytes associated with the space and profile/profileSize are ignored.">
-                <Parameter Name="space" Type="D2D1::COLOR_SPACE"/>
-                <Parameter Name="profile" Type="BYTE" Form="pointer ecount opt" ECount="profileSize"/>
-                <Parameter Name="profileSize" Type="UINT32"/>
-                <Parameter Name="colorContext" Type="D2D1::IColorContext" Form="deref out pointer" IsRetval="true"/>
+                <Parameter Name="space" Type="D2D1::COLOR_SPACE" />
+                <Parameter Name="profile" Type="BYTE" Form="pointer ecount opt" ECount="profileSize" />
+                <Parameter Name="profileSize" Type="UINT32" />
+                <Parameter Name="colorContext" Type="D2D1::IColorContext" Form="deref out pointer" IsRetval="true" />
             </Method>
           
             <Method Name="CreateColorContextFromFilename">
-                <Parameter Name="filename" Type="PCWSTR" Form="in"/>
-                <Parameter Name="colorContext" Type="D2D1::IColorContext" Form="deref out pointer" IsRetval="true"/>
+                <Parameter Name="filename" Type="PCWSTR" Form="in" />
+                <Parameter Name="colorContext" Type="D2D1::IColorContext" Form="deref out pointer" IsRetval="true" />
             </Method>
 
             <Method Name="CreateColorContextFromWicColorContext">
-                <Parameter Name="wicColorContext" Type="IWICColorContext" Form="pointer"/>
-                <Parameter Name="colorContext" Type="D2D1::IColorContext" Form="deref out pointer" IsRetval="true"/>
+                <Parameter Name="wicColorContext" Type="IWICColorContext" Form="pointer" />
+                <Parameter Name="colorContext" Type="D2D1::IColorContext" Form="deref out pointer" IsRetval="true" />
             </Method>
 
             <Method Name="CreateBitmapFromDxgiSurface" Comment="Creates a bitmap from a DXGI surface with a set of extended properties.">
                 <Parameter Name="surface" Type="IDXGISurface" Form="pointer" />
-                <Parameter Name="bitmapProperties" Type="D2D1::BITMAP_PROPERTIES1" Form="pointer opt"/>
+                <Parameter Name="bitmapProperties" Type="D2D1::BITMAP_PROPERTIES1" Form="pointer opt" />
                 <Parameter Name="bitmap" Type="D2D1::IBitmap1" Form="deref out pointer" IsRetval="true" />
             </Method>
             
@@ -551,73 +555,67 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
             </Method>
 
             <Method Name="CreateEffect" Comment="Create a new effect, the effect must either be built in or previously registered through ID2D1Factory1::RegisterEffectFromStream or ID2D1Factory1::RegisterEffectFromString.">
-                <Parameter Name="effectId" Type="REFCLSID" Form="in"/>
+                <Parameter Name="effectId" Type="REFCLSID" Form="in" />
                 <Parameter Name="effect" Type="D2D1::IEffect" Form="deref out pointer" IsRetval="true" />
             </Method>
                    
-            <Method Name="CreateGradientStopCollection"
-                Comment="A gradient stop collection represents a set of stops in an ideal unit length. This is the source resource for a linear gradient and radial gradient brush.">
-                <Parameter Name="straightAlphaGradientStops" Type="D2D1::GRADIENT_STOP" Form="pointer" IsArray="true" Range=">=,1"/>
-                <Parameter Name="preInterpolationSpace" Type="D2D1::COLOR_SPACE"
-                    Comment="Specifies both the input color space and the space in which the color interpolation occurs."/>
-                <Parameter Name="postInterpolationSpace" Type="D2D1::COLOR_SPACE"
-                    Comment="Specifies the color space colors will be converted to after interpolation occurs."/>
-                <Parameter Name="bufferPrecision" Type="D2D1::BUFFER_PRECISION"
-                    Comment="Specifies the precision in which the gradient buffer will be held."/>
-                <Parameter Name="extendMode" Type="D2D1::EXTEND_MODE"
-                    Comment="Specifies how the gradient will be extended outside of the unit length."/>
-              <Parameter Name="colorInterpolationMode" Type="D2D1::COLOR_INTERPOLATION_MODE"
-                    Comment="Determines if colors will be interpolated in straight alpha or premultiplied alpha space."/>
-                <Parameter Name="gradientStopCollection1" Type="D2D1::IGradientStopCollection1" Form="deref out pointer" IsRetval="true"/>
+            <Method Name="CreateGradientStopCollection" Comment="A gradient stop collection represents a set of stops in an ideal unit length. This is the source resource for a linear gradient and radial gradient brush.">
+                <Parameter Name="straightAlphaGradientStops" Type="D2D1::GRADIENT_STOP" Form="pointer" IsArray="true" Range="&gt;=,1" />
+                <Parameter Name="preInterpolationSpace" Type="D2D1::COLOR_SPACE" Comment="Specifies both the input color space and the space in which the color interpolation occurs." />
+                <Parameter Name="postInterpolationSpace" Type="D2D1::COLOR_SPACE" Comment="Specifies the color space colors will be converted to after interpolation occurs." />
+                <Parameter Name="bufferPrecision" Type="D2D1::BUFFER_PRECISION" Comment="Specifies the precision in which the gradient buffer will be held." />
+                <Parameter Name="extendMode" Type="D2D1::EXTEND_MODE" Comment="Specifies how the gradient will be extended outside of the unit length." />
+              <Parameter Name="colorInterpolationMode" Type="D2D1::COLOR_INTERPOLATION_MODE" Comment="Determines if colors will be interpolated in straight alpha or premultiplied alpha space." />
+                <Parameter Name="gradientStopCollection1" Type="D2D1::IGradientStopCollection1" Form="deref out pointer" IsRetval="true" />
             </Method>
 
             <Method Name="CreateImageBrush" Comment="Creates an image brush, the input image can be any type of image, including a bitmap, effect and a command list.">
-                <Parameter Name="image" Type="D2D1::IImage" Form="pointer opt"/>
-                <Parameter Name="imageBrushProperties" Type="D2D1::IMAGE_BRUSH_PROPERTIES" Form="pointer"/>
-                <Parameter Name="brushProperties" Type="D2D1::BRUSH_PROPERTIES" Form="pointer opt"/>
-                <Parameter Name="imageBrush" Type="D2D1::IImageBrush" Form="deref out pointer" IsRetval="true"/>
+                <Parameter Name="image" Type="D2D1::IImage" Form="pointer opt" />
+                <Parameter Name="imageBrushProperties" Type="D2D1::IMAGE_BRUSH_PROPERTIES" Form="pointer" />
+                <Parameter Name="brushProperties" Type="D2D1::BRUSH_PROPERTIES" Form="pointer opt" />
+                <Parameter Name="imageBrush" Type="D2D1::IImageBrush" Form="deref out pointer" IsRetval="true" />
             </Method>
 
             <Method Name="CreateImageBrush" OverloadId="1">
-                <Parameter Name="image" Type="D2D1::IImage" Form="pointer opt"/>
-                <Parameter Name="imageBrushProperties" Type="D2D1::IMAGE_BRUSH_PROPERTIES" Form="reference"/>
-                <Parameter Name="brushProperties" Type="D2D1::BRUSH_PROPERTIES" Form="reference"/>
-                <Parameter Name="imageBrush" Type="D2D1::IImageBrush" Form="deref out pointer" IsRetval="true"/>
+                <Parameter Name="image" Type="D2D1::IImage" Form="pointer opt" />
+                <Parameter Name="imageBrushProperties" Type="D2D1::IMAGE_BRUSH_PROPERTIES" Form="reference" />
+                <Parameter Name="brushProperties" Type="D2D1::BRUSH_PROPERTIES" Form="reference" />
+                <Parameter Name="imageBrush" Type="D2D1::IImageBrush" Form="deref out pointer" IsRetval="true" />
             </Method>
 
             <Method Name="CreateImageBrush" OverloadId="2">
-                <Parameter Name="image" Type="D2D1::IImage" Form="pointer opt"/>
-                <Parameter Name="imageBrushProperties" Type="D2D1::IMAGE_BRUSH_PROPERTIES" Form="reference"/>
-                <Parameter Name="imageBrush" Type="D2D1::IImageBrush" Form="deref out pointer" IsRetval="true"/>
+                <Parameter Name="image" Type="D2D1::IImage" Form="pointer opt" />
+                <Parameter Name="imageBrushProperties" Type="D2D1::IMAGE_BRUSH_PROPERTIES" Form="reference" />
+                <Parameter Name="imageBrush" Type="D2D1::IImageBrush" Form="deref out pointer" IsRetval="true" />
             </Method>
 
             <Method Name="CreateBitmapBrush">
-              <Parameter Name="bitmap" Type="D2D1::IBitmap" Form="pointer opt"/>
-              <Parameter Name="bitmapBrushProperties" Type="D2D1::BITMAP_BRUSH_PROPERTIES1" Form="pointer opt"/>
-              <Parameter Name="brushProperties" Type="D2D1::BRUSH_PROPERTIES" Form="pointer opt"/>
-              <Parameter Name="bitmapBrush" Type="D2D1::IBitmapBrush1" Form="deref out pointer" IsRetval="true"/>
+              <Parameter Name="bitmap" Type="D2D1::IBitmap" Form="pointer opt" />
+              <Parameter Name="bitmapBrushProperties" Type="D2D1::BITMAP_BRUSH_PROPERTIES1" Form="pointer opt" />
+              <Parameter Name="brushProperties" Type="D2D1::BRUSH_PROPERTIES" Form="pointer opt" />
+              <Parameter Name="bitmapBrush" Type="D2D1::IBitmapBrush1" Form="deref out pointer" IsRetval="true" />
             </Method>
 
             <Method Name="CreateBitmapBrush" OverloadId="1">
-              <Parameter Name="bitmap" Type="D2D1::IBitmap" Form="pointer opt"/>
-              <Parameter Name="bitmapBrush" Type="D2D1::IBitmapBrush1" Form="deref out pointer" IsRetval="true"/>
+              <Parameter Name="bitmap" Type="D2D1::IBitmap" Form="pointer opt" />
+              <Parameter Name="bitmapBrush" Type="D2D1::IBitmapBrush1" Form="deref out pointer" IsRetval="true" />
             </Method>
           
             <Method Name="CreateBitmapBrush" OverloadId="2">
-              <Parameter Name="bitmap" Type="D2D1::IBitmap" Form="pointer opt"/>
-              <Parameter Name="bitmapBrushProperties" Type="D2D1::BITMAP_BRUSH_PROPERTIES1" Form="reference"/>
-              <Parameter Name="bitmapBrush" Type="D2D1::IBitmapBrush1" Form="deref out pointer" IsRetval="true"/>
+              <Parameter Name="bitmap" Type="D2D1::IBitmap" Form="pointer opt" />
+              <Parameter Name="bitmapBrushProperties" Type="D2D1::BITMAP_BRUSH_PROPERTIES1" Form="reference" />
+              <Parameter Name="bitmapBrush" Type="D2D1::IBitmapBrush1" Form="deref out pointer" IsRetval="true" />
             </Method>
           
             <Method Name="CreateBitmapBrush" OverloadId="3">
-              <Parameter Name="bitmap" Type="D2D1::IBitmap" Form="pointer opt"/>
-              <Parameter Name="bitmapBrushProperties" Type="D2D1::BITMAP_BRUSH_PROPERTIES1" Form="reference"/>
-              <Parameter Name="brushProperties" Type="D2D1::BRUSH_PROPERTIES" Form="reference"/>
-              <Parameter Name="bitmapBrush" Type="D2D1::IBitmapBrush1" Form="deref out pointer" IsRetval="true"/>
+              <Parameter Name="bitmap" Type="D2D1::IBitmap" Form="pointer opt" />
+              <Parameter Name="bitmapBrushProperties" Type="D2D1::BITMAP_BRUSH_PROPERTIES1" Form="reference" />
+              <Parameter Name="brushProperties" Type="D2D1::BRUSH_PROPERTIES" Form="reference" />
+              <Parameter Name="bitmapBrush" Type="D2D1::IBitmapBrush1" Form="deref out pointer" IsRetval="true" />
             </Method>
 
             <Method Name="CreateCommandList" Comment="Creates a new command list.">
-                <Parameter Name="commandList" Type="D2D1::ICommandList" Form="deref out pointer" IsRetval="true"/>
+                <Parameter Name="commandList" Type="D2D1::ICommandList" Form="deref out pointer" IsRetval="true" />
             </Method>
         
             <Method Name="IsDxgiFormatSupported" IsConst="true" Return="BOOL" Comment="Indicates whether the format is supported by D2D.">
@@ -629,24 +627,24 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
             </Method>
             
             <Method Name="GetImageLocalBounds" IsConst="true" Comment="This retrieves the local-space bounds in DIPs of the current image using the device context DPI.">
-                <Parameter Name="image" Type="D2D1::IImage" Form="pointer"/>
-                <Parameter Name="localBounds" Type="D2D1::RECT_F" Form="out pointer" IsRetval="true"/>
+                <Parameter Name="image" Type="D2D1::IImage" Form="pointer" />
+                <Parameter Name="localBounds" Type="D2D1::RECT_F" Form="out pointer" IsRetval="true" />
             </Method>
 
             <Method Name="GetImageWorldBounds" IsConst="true" Comment="This retrieves the world-space bounds in DIPs of the current image using the device context DPI.">
-                <Parameter Name="image" Type="D2D1::IImage" Form="pointer"/>
-                <Parameter Name="worldBounds" Type="D2D1::RECT_F" Form="out pointer" IsRetval="true"/>
+                <Parameter Name="image" Type="D2D1::IImage" Form="pointer" />
+                <Parameter Name="worldBounds" Type="D2D1::RECT_F" Form="out pointer" IsRetval="true" />
             </Method>
 
             <Method Name="GetGlyphRunWorldBounds" IsConst="true" Comment="Retrieves the world-space bounds in DIPs of the glyph run using the device context DPI.">
-                <Parameter Name="baselineOrigin" Type="D2D1::POINT_2F"/>
-                <Parameter Name="glyphRun" Type="DWRITE_GLYPH_RUN" Form="pointer"/>
-                <Parameter Name="measuringMode" Type="DWRITE_MEASURING_MODE"/>
-                <Parameter Name="bounds" Type="D2D1::RECT_F" Form="out pointer" IsRetval="true"/>
+                <Parameter Name="baselineOrigin" Type="D2D1::POINT_2F" />
+                <Parameter Name="glyphRun" Type="DWRITE_GLYPH_RUN" Form="pointer" />
+                <Parameter Name="measuringMode" Type="DWRITE_MEASURING_MODE" />
+                <Parameter Name="bounds" Type="D2D1::RECT_F" Form="out pointer" IsRetval="true" />
             </Method>
 
             <Method Name="GetDevice" IsConst="true" Return="void" Comment="Retrieves the device associated with this device context.">
-                <Parameter Name="device" Type="D2D1::IDevice" Form="deref out pointer" IsRetval="true"/>
+                <Parameter Name="device" Type="D2D1::IDevice" Form="deref out pointer" IsRetval="true" />
             </Method>
 
             <Method Name="SetTarget" Return="void" Comment="Sets the target for this device context to point to the given image. The image can be a command list or a bitmap created with the D2D1_BITMAP_OPTIONS_TARGET flag.">
@@ -654,159 +652,159 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
             </Method>
 
             <Method Name="GetTarget" Return="void" IsConst="true" Comment="Gets the target that this device context is currently pointing to.">
-                <Parameter Name="image" Type="D2D1::IImage" Form="deref out opt pointer" IsRetval="true"/>
+                <Parameter Name="image" Type="D2D1::IImage" Form="deref out opt pointer" IsRetval="true" />
             </Method>
 
             <Method Name="SetRenderingControls" Return="void" Comment="Sets tuning parameters for internal rendering inside the device context.">
-                <Parameter Name="renderingControls" Type="D2D1::RENDERING_CONTROLS" Form="pointer"/>
+                <Parameter Name="renderingControls" Type="D2D1::RENDERING_CONTROLS" Form="pointer" />
             </Method>
             
-            <Method Name="SetRenderingControls" Return="void" OverloadId="1"  Comment="Sets tuning parameters for internal rendering inside the device context.">
-                <Parameter Name="renderingControls" Type="D2D1::RENDERING_CONTROLS" Form="reference"/>
+            <Method Name="SetRenderingControls" Return="void" OverloadId="1" Comment="Sets tuning parameters for internal rendering inside the device context.">
+                <Parameter Name="renderingControls" Type="D2D1::RENDERING_CONTROLS" Form="reference" />
             </Method>
             
             <Method Name="GetRenderingControls" Return="void" IsConst="true" Comment="This retrieves the rendering controls currently selected into the device context.">
-                <Parameter Name="renderingControls" Type="D2D1::RENDERING_CONTROLS" Form="out pointer" IsRetval="true"/>
+                <Parameter Name="renderingControls" Type="D2D1::RENDERING_CONTROLS" Form="out pointer" IsRetval="true" />
             </Method>
 
             <Method Name="SetPrimitiveBlend" Return="void" Comment="Changes the primitive blending mode for all of the rendering operations.">
-                <Parameter Name="primitiveBlend" Type="D2D1::PRIMITIVE_BLEND"/>
+                <Parameter Name="primitiveBlend" Type="D2D1::PRIMITIVE_BLEND" />
            </Method>
 
-            <Method Name="GetPrimitiveBlend" Return="D2D1::PRIMITIVE_BLEND" IsConst="true" Comment="Returns the primitive blend currently selected into the device context."/>
+            <Method Name="GetPrimitiveBlend" Return="D2D1::PRIMITIVE_BLEND" IsConst="true" Comment="Returns the primitive blend currently selected into the device context." />
 
             <Method Name="SetUnitMode" Return="void" Comment="Changes the units used for all of the rendering operations.">
-                <Parameter Name="unitMode" Type="D2D1::UNIT_MODE"/>
+                <Parameter Name="unitMode" Type="D2D1::UNIT_MODE" />
             </Method>
 
-            <Method Name="GetUnitMode" Return="D2D1::UNIT_MODE" IsConst="true" Comment="Returns the unit mode currently set on the device context."/>
+            <Method Name="GetUnitMode" Return="D2D1::UNIT_MODE" IsConst="true" Comment="Returns the unit mode currently set on the device context." />
 
             <Method Name="DrawGlyphRun" Return="void" Comment="Draws the glyph run with an extended description to describe the glyphs.">
-                <Parameter Name="baselineOrigin" Type="D2D1::POINT_2F"/>
-                <Parameter Name="glyphRun" Type="DWRITE_GLYPH_RUN" Form="pointer"/>
-                <Parameter Name="glyphRunDescription" Type="DWRITE_GLYPH_RUN_DESCRIPTION" Form="pointer opt"/>
-                <Parameter Name="foregroundBrush" Type="D2D1::IBrush" Form="pointer"/>
-                <Parameter Name="measuringMode" Type="DWRITE_MEASURING_MODE" Default="DWRITE_MEASURING_MODE_NATURAL"/>
+                <Parameter Name="baselineOrigin" Type="D2D1::POINT_2F" />
+                <Parameter Name="glyphRun" Type="DWRITE_GLYPH_RUN" Form="pointer" />
+                <Parameter Name="glyphRunDescription" Type="DWRITE_GLYPH_RUN_DESCRIPTION" Form="pointer opt" />
+                <Parameter Name="foregroundBrush" Type="D2D1::IBrush" Form="pointer" />
+                <Parameter Name="measuringMode" Type="DWRITE_MEASURING_MODE" Default="DWRITE_MEASURING_MODE_NATURAL" />
             </Method>
 
             <Method Name="DrawImage" Return="void" Comment="Draw an image to the device context. The image represents either a concrete bitmap or the output of an effect graph.">
-                <Parameter Name="image" Type="D2D1::IImage" Form="pointer"/>
-                <Parameter Name="targetOffset" Type="D2D1::POINT_2F" Form="pointer opt" Default="NULL"/>
-                <Parameter Name="imageRectangle" Type="D2D1::RECT_F" Form="pointer opt" Default="NULL"/>
-                <Parameter Name="interpolationMode" Type="D2D1::INTERPOLATION_MODE" Default="D2D1_INTERPOLATION_MODE_LINEAR"/>
-                <Parameter Name="compositeMode" Type="D2D1::COMPOSITE_MODE" Default="D2D1_COMPOSITE_MODE_SOURCE_OVER"/>
+                <Parameter Name="image" Type="D2D1::IImage" Form="pointer" />
+                <Parameter Name="targetOffset" Type="D2D1::POINT_2F" Form="pointer opt" Default="NULL" />
+                <Parameter Name="imageRectangle" Type="D2D1::RECT_F" Form="pointer opt" Default="NULL" />
+                <Parameter Name="interpolationMode" Type="D2D1::INTERPOLATION_MODE" Default="D2D1_INTERPOLATION_MODE_LINEAR" />
+                <Parameter Name="compositeMode" Type="D2D1::COMPOSITE_MODE" Default="D2D1_COMPOSITE_MODE_SOURCE_OVER" />
             </Method>
 
             <Method Name="DrawImage" Return="void" OverloadId="1" Comment="Draws the output of the effect as an image.">
-                <Parameter Name="effect" Type="D2D1::IEffect" Form="pointer"/>
-                <Parameter Name="targetOffset" Type="D2D1::POINT_2F" Form="pointer opt" Default="NULL"/>
-                <Parameter Name="imageRectangle" Type="D2D1::RECT_F" Form="pointer opt" Default="NULL"/>
-                <Parameter Name="interpolationMode" Type="D2D1::INTERPOLATION_MODE" Default="D2D1_INTERPOLATION_MODE_LINEAR"/>
-                <Parameter Name="compositeMode" Type="D2D1::COMPOSITE_MODE" Default="D2D1_COMPOSITE_MODE_SOURCE_OVER"/>
+                <Parameter Name="effect" Type="D2D1::IEffect" Form="pointer" />
+                <Parameter Name="targetOffset" Type="D2D1::POINT_2F" Form="pointer opt" Default="NULL" />
+                <Parameter Name="imageRectangle" Type="D2D1::RECT_F" Form="pointer opt" Default="NULL" />
+                <Parameter Name="interpolationMode" Type="D2D1::INTERPOLATION_MODE" Default="D2D1_INTERPOLATION_MODE_LINEAR" />
+                <Parameter Name="compositeMode" Type="D2D1::COMPOSITE_MODE" Default="D2D1_COMPOSITE_MODE_SOURCE_OVER" />
             </Method>
             
-            <Method Name="DrawImage" Return="void" OverloadId="2" >
-                <Parameter Name="image" Type="D2D1::IImage" Form="pointer"/>
+            <Method Name="DrawImage" Return="void" OverloadId="2">
+                <Parameter Name="image" Type="D2D1::IImage" Form="pointer" />
                 <Parameter Name="interpolationMode" Type="D2D1::INTERPOLATION_MODE" />
-                <Parameter Name="compositeMode" Type="D2D1::COMPOSITE_MODE" Default="D2D1_COMPOSITE_MODE_SOURCE_OVER"/>
+                <Parameter Name="compositeMode" Type="D2D1::COMPOSITE_MODE" Default="D2D1_COMPOSITE_MODE_SOURCE_OVER" />
             </Method>
             
-            <Method Name="DrawImage" Return="void" OverloadId="3" >
-                <Parameter Name="effect" Type="D2D1::IEffect" Form="pointer"/>
+            <Method Name="DrawImage" Return="void" OverloadId="3">
+                <Parameter Name="effect" Type="D2D1::IEffect" Form="pointer" />
                 <Parameter Name="interpolationMode" Type="D2D1::INTERPOLATION_MODE" />
-                <Parameter Name="compositeMode" Type="D2D1::COMPOSITE_MODE" Default="D2D1_COMPOSITE_MODE_SOURCE_OVER"/>
+                <Parameter Name="compositeMode" Type="D2D1::COMPOSITE_MODE" Default="D2D1_COMPOSITE_MODE_SOURCE_OVER" />
             </Method>
 
-            <Method Name="DrawImage" Return="void" OverloadId="4" >
-                <Parameter Name="image" Type="D2D1::IImage" Form="pointer"/>
-                <Parameter Name="targetOffset" Type="D2D1::POINT_2F"/>
-                <Parameter Name="interpolationMode" Type="D2D1::INTERPOLATION_MODE" Default="D2D1_INTERPOLATION_MODE_LINEAR"/>
-                <Parameter Name="compositeMode" Type="D2D1::COMPOSITE_MODE" Default="D2D1_COMPOSITE_MODE_SOURCE_OVER"/>
+            <Method Name="DrawImage" Return="void" OverloadId="4">
+                <Parameter Name="image" Type="D2D1::IImage" Form="pointer" />
+                <Parameter Name="targetOffset" Type="D2D1::POINT_2F" />
+                <Parameter Name="interpolationMode" Type="D2D1::INTERPOLATION_MODE" Default="D2D1_INTERPOLATION_MODE_LINEAR" />
+                <Parameter Name="compositeMode" Type="D2D1::COMPOSITE_MODE" Default="D2D1_COMPOSITE_MODE_SOURCE_OVER" />
             </Method>
 
-            <Method Name="DrawImage" Return="void" OverloadId="5" >
-                <Parameter Name="effect" Type="D2D1::IEffect" Form="pointer"/>
-                <Parameter Name="targetOffset" Type="D2D1::POINT_2F"/>
-                <Parameter Name="interpolationMode" Type="D2D1::INTERPOLATION_MODE" Default="D2D1_INTERPOLATION_MODE_LINEAR"/>
-                <Parameter Name="compositeMode" Type="D2D1::COMPOSITE_MODE" Default="D2D1_COMPOSITE_MODE_SOURCE_OVER"/>
+            <Method Name="DrawImage" Return="void" OverloadId="5">
+                <Parameter Name="effect" Type="D2D1::IEffect" Form="pointer" />
+                <Parameter Name="targetOffset" Type="D2D1::POINT_2F" />
+                <Parameter Name="interpolationMode" Type="D2D1::INTERPOLATION_MODE" Default="D2D1_INTERPOLATION_MODE_LINEAR" />
+                <Parameter Name="compositeMode" Type="D2D1::COMPOSITE_MODE" Default="D2D1_COMPOSITE_MODE_SOURCE_OVER" />
             </Method>
 
-            <Method Name="DrawImage" Return="void" OverloadId="6" >
-                <Parameter Name="image" Type="D2D1::IImage" Form="pointer"/>
-                <Parameter Name="targetOffset" Type="D2D1::POINT_2F"/>
-                <Parameter Name="imageRectangle" Type="D2D1::RECT_F" Form="reference"/>
-                <Parameter Name="interpolationMode" Type="D2D1::INTERPOLATION_MODE" Default="D2D1_INTERPOLATION_MODE_LINEAR"/>
-                <Parameter Name="compositeMode" Type="D2D1::COMPOSITE_MODE" Default="D2D1_COMPOSITE_MODE_SOURCE_OVER"/>
+            <Method Name="DrawImage" Return="void" OverloadId="6">
+                <Parameter Name="image" Type="D2D1::IImage" Form="pointer" />
+                <Parameter Name="targetOffset" Type="D2D1::POINT_2F" />
+                <Parameter Name="imageRectangle" Type="D2D1::RECT_F" Form="reference" />
+                <Parameter Name="interpolationMode" Type="D2D1::INTERPOLATION_MODE" Default="D2D1_INTERPOLATION_MODE_LINEAR" />
+                <Parameter Name="compositeMode" Type="D2D1::COMPOSITE_MODE" Default="D2D1_COMPOSITE_MODE_SOURCE_OVER" />
             </Method>
 
-            <Method Name="DrawImage" Return="void" OverloadId="7" >
-                <Parameter Name="effect" Type="D2D1::IEffect" Form="pointer"/>
-                <Parameter Name="targetOffset" Type="D2D1::POINT_2F"/>
-                <Parameter Name="imageRectangle" Type="D2D1::RECT_F" Form="reference"/>
-                <Parameter Name="interpolationMode" Type="D2D1::INTERPOLATION_MODE" Default="D2D1_INTERPOLATION_MODE_LINEAR"/>
-                <Parameter Name="compositeMode" Type="D2D1::COMPOSITE_MODE" Default="D2D1_COMPOSITE_MODE_SOURCE_OVER"/>
+            <Method Name="DrawImage" Return="void" OverloadId="7">
+                <Parameter Name="effect" Type="D2D1::IEffect" Form="pointer" />
+                <Parameter Name="targetOffset" Type="D2D1::POINT_2F" />
+                <Parameter Name="imageRectangle" Type="D2D1::RECT_F" Form="reference" />
+                <Parameter Name="interpolationMode" Type="D2D1::INTERPOLATION_MODE" Default="D2D1_INTERPOLATION_MODE_LINEAR" />
+                <Parameter Name="compositeMode" Type="D2D1::COMPOSITE_MODE" Default="D2D1_COMPOSITE_MODE_SOURCE_OVER" />
             </Method>
 
             <Method Name="DrawGdiMetafile" Return="void" Comment="Draw a metafile to the device context.">
-                <Parameter Name="gdiMetafile" Type="D2D1::IGdiMetafile" Form="pointer"/>
-                <Parameter Name="targetOffset" Type="D2D1::POINT_2F" Form="pointer opt" Default="NULL"/>
+                <Parameter Name="gdiMetafile" Type="D2D1::IGdiMetafile" Form="pointer" />
+                <Parameter Name="targetOffset" Type="D2D1::POINT_2F" Form="pointer opt" Default="NULL" />
             </Method>
 
-            <Method Name="DrawGdiMetafile" Return="void" OverloadId="1" >
-                <Parameter Name="gdiMetafile" Type="D2D1::IGdiMetafile" Form="pointer"/>
-                <Parameter Name="targetOffset" Type="D2D1::POINT_2F"/>
+            <Method Name="DrawGdiMetafile" Return="void" OverloadId="1">
+                <Parameter Name="gdiMetafile" Type="D2D1::IGdiMetafile" Form="pointer" />
+                <Parameter Name="targetOffset" Type="D2D1::POINT_2F" />
             </Method>
 
             <Method Name="DrawBitmap" Return="void">
-                <Parameter Name="bitmap" Type="D2D1::IBitmap" Form="pointer"/>
-                <Parameter Name="destinationRectangle" Type="D2D1::RECT_F" Form="pointer opt"/>
-                <Parameter Name="opacity" Type="FLOAT"/>
-                <Parameter Name="interpolationMode" Type="D2D1::INTERPOLATION_MODE"/>
-                <Parameter Name="sourceRectangle" Type="D2D1::RECT_F" Form="pointer opt" Default="NULL"/>
-                <Parameter Name="perspectiveTransform" Type="D2D1::MATRIX_4X4_F" Form="pointer opt" Default="NULL"/>
+                <Parameter Name="bitmap" Type="D2D1::IBitmap" Form="pointer" />
+                <Parameter Name="destinationRectangle" Type="D2D1::RECT_F" Form="pointer opt" />
+                <Parameter Name="opacity" Type="FLOAT" />
+                <Parameter Name="interpolationMode" Type="D2D1::INTERPOLATION_MODE" />
+                <Parameter Name="sourceRectangle" Type="D2D1::RECT_F" Form="pointer opt" Default="NULL" />
+                <Parameter Name="perspectiveTransform" Type="D2D1::MATRIX_4X4_F" Form="pointer opt" Default="NULL" />
             </Method>
 
             <Method Name="DrawBitmap" Return="void" OverloadId="1">
-              <Parameter Name="bitmap" Type="D2D1::IBitmap" Form="pointer"/>
-              <Parameter Name="destinationRectangle" Type="D2D1::RECT_F" Form="reference"/>
-              <Parameter Name="opacity" Type="FLOAT"/>
-              <Parameter Name="interpolationMode" Type="D2D1::INTERPOLATION_MODE"/>
-              <Parameter Name="sourceRectangle" Type="D2D1::RECT_F" Form="pointer opt" Default="NULL"/>
-              <Parameter Name="perspectiveTransform" Type="D2D1::MATRIX_4X4_F" Form="pointer opt" Default="NULL"/>
+              <Parameter Name="bitmap" Type="D2D1::IBitmap" Form="pointer" />
+              <Parameter Name="destinationRectangle" Type="D2D1::RECT_F" Form="reference" />
+              <Parameter Name="opacity" Type="FLOAT" />
+              <Parameter Name="interpolationMode" Type="D2D1::INTERPOLATION_MODE" />
+              <Parameter Name="sourceRectangle" Type="D2D1::RECT_F" Form="pointer opt" Default="NULL" />
+              <Parameter Name="perspectiveTransform" Type="D2D1::MATRIX_4X4_F" Form="pointer opt" Default="NULL" />
             </Method>
           
             <Method Name="DrawBitmap" Return="void" OverloadId="2">
-              <Parameter Name="bitmap" Type="D2D1::IBitmap" Form="pointer"/>
-              <Parameter Name="destinationRectangle" Type="D2D1::RECT_F" Form="reference"/>
-              <Parameter Name="opacity" Type="FLOAT"/>
-              <Parameter Name="interpolationMode" Type="D2D1::INTERPOLATION_MODE"/>
-              <Parameter Name="sourceRectangle" Type="D2D1::RECT_F" Form="reference"/>
-              <Parameter Name="perspectiveTransform" Type="D2D1::MATRIX_4X4_F" Form="pointer opt" Default="NULL"/>
+              <Parameter Name="bitmap" Type="D2D1::IBitmap" Form="pointer" />
+              <Parameter Name="destinationRectangle" Type="D2D1::RECT_F" Form="reference" />
+              <Parameter Name="opacity" Type="FLOAT" />
+              <Parameter Name="interpolationMode" Type="D2D1::INTERPOLATION_MODE" />
+              <Parameter Name="sourceRectangle" Type="D2D1::RECT_F" Form="reference" />
+              <Parameter Name="perspectiveTransform" Type="D2D1::MATRIX_4X4_F" Form="pointer opt" Default="NULL" />
             </Method>
 
             <Method Name="DrawBitmap" Return="void" OverloadId="3">
-              <Parameter Name="bitmap" Type="D2D1::IBitmap" Form="pointer"/>
-              <Parameter Name="destinationRectangle" Type="D2D1::RECT_F" Form="reference"/>
-              <Parameter Name="opacity" Type="FLOAT"/>
-              <Parameter Name="interpolationMode" Type="D2D1::INTERPOLATION_MODE"/>
-              <Parameter Name="sourceRectangle" Type="D2D1::RECT_F" Form="reference"/>
-              <Parameter Name="perspectiveTransform" Type="D2D1::MATRIX_4X4_F" Form="reference"/>
+              <Parameter Name="bitmap" Type="D2D1::IBitmap" Form="pointer" />
+              <Parameter Name="destinationRectangle" Type="D2D1::RECT_F" Form="reference" />
+              <Parameter Name="opacity" Type="FLOAT" />
+              <Parameter Name="interpolationMode" Type="D2D1::INTERPOLATION_MODE" />
+              <Parameter Name="sourceRectangle" Type="D2D1::RECT_F" Form="reference" />
+              <Parameter Name="perspectiveTransform" Type="D2D1::MATRIX_4X4_F" Form="reference" />
             </Method>
 
             <Method Name="PushLayer" Return="void" Comment="Push a layer on the device context.">
-              <Parameter Name="layerParameters" Type="D2D1::LAYER_PARAMETERS1" Form="pointer"/>
-              <Parameter Name="layer" Type="D2D1::ILayer" Form="pointer opt"/>
+              <Parameter Name="layerParameters" Type="D2D1::LAYER_PARAMETERS1" Form="pointer" />
+              <Parameter Name="layer" Type="D2D1::ILayer" Form="pointer opt" />
             </Method>
 
             <Method Name="PushLayer" OverloadId="1" Return="void">
-                <Parameter Name="layerParameters" Type="D2D1::LAYER_PARAMETERS1" Form="reference"/>
-                <Parameter Name="layer" Type="D2D1::ILayer" Form="pointer opt"/>
+                <Parameter Name="layerParameters" Type="D2D1::LAYER_PARAMETERS1" Form="reference" />
+                <Parameter Name="layer" Type="D2D1::ILayer" Form="pointer opt" />
             </Method>
 
             <Method Name="InvalidateEffectInputRectangle" Comment="This indicates that a portion of an effect's input is invalid. This method can be called many times.">
                 <Parameter Name="effect" Type="D2D1::IEffect" Form="pointer" />
-                <Parameter Name="input" Type="UINT32"/>
-                <Parameter Name="inputRectangle" Type="D2D1::RECT_F" Form="pointer"/>
+                <Parameter Name="input" Type="UINT32" />
+                <Parameter Name="inputRectangle" Type="D2D1::RECT_F" Form="pointer" />
             </Method>
             
             <Method Name="GetEffectInvalidRectangleCount" Comment="Gets the number of invalid ouptut rectangles that have accumulated at the effect.">
@@ -816,124 +814,113 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
 
             <Method Name="GetEffectInvalidRectangles" Comment="Gets the invalid rectangles that are at the output of the effect.">
                 <Parameter Name="effect" Type="D2D1::IEffect" Form="pointer" />
-                <Parameter Name="rectangles" Type="D2D1::RECT_F" IsArray="true" LengthParameter="rectanglesCount" Form="out pointer" IsRetval="true"/>
+                <Parameter Name="rectangles" Type="D2D1::RECT_F" IsArray="true" LengthParameter="rectanglesCount" Form="out pointer" IsRetval="true" />
             </Method>  
 
             <Method Name="GetEffectRequiredInputRectangles" Comment="Gets the maximum region of each specified input which would be used during a subsequent rendering operation">
                 <Parameter Name="renderEffect" Type="D2D1::IEffect" Form="pointer" />
                 <Parameter Name="renderImageRectangle" Type="D2D1::RECT_F" Form="pointer opt" />
-                <Parameter Name="inputDescriptions" Type="D2D1::EFFECT_INPUT_DESCRIPTION" Form="pointer ecount" ECount="inputCount"/>
+                <Parameter Name="inputDescriptions" Type="D2D1::EFFECT_INPUT_DESCRIPTION" Form="pointer ecount" ECount="inputCount" />
                 <Parameter Name="requiredInputRects" Type="D2D1::RECT_F" Form="out ecount pointer" ECount="inputCount" IsRetval="true" />
-                <Parameter Name="inputCount" Type="UINT32"/>
+                <Parameter Name="inputCount" Type="UINT32" />
             </Method>
 
-            <Method Name="FillOpacityMask" Return="void"
-                Comment="Fill using the alpha channel of the supplied opacity mask bitmap. The brush opacity will be modulated by the mask. The render target antialiasing mode must be set to aliased.">
-                <Parameter Name="opacityMask" Type="D2D1::IBitmap" Form="pointer"/>
-                <Parameter Name="brush" Type="D2D1::IBrush" Form="pointer"/>
-                <Parameter Name="destinationRectangle" Type="D2D1::RECT_F" Form="pointer opt" Default="NULL"/>
-                <Parameter Name="sourceRectangle" Type="D2D1::RECT_F" Form="pointer opt" Default="NULL"/>
+            <Method Name="FillOpacityMask" Return="void" Comment="Fill using the alpha channel of the supplied opacity mask bitmap. The brush opacity will be modulated by the mask. The render target antialiasing mode must be set to aliased.">
+                <Parameter Name="opacityMask" Type="D2D1::IBitmap" Form="pointer" />
+                <Parameter Name="brush" Type="D2D1::IBrush" Form="pointer" />
+                <Parameter Name="destinationRectangle" Type="D2D1::RECT_F" Form="pointer opt" Default="NULL" />
+                <Parameter Name="sourceRectangle" Type="D2D1::RECT_F" Form="pointer opt" Default="NULL" />
             </Method>
 
             <Method Name="FillOpacityMask" Return="void" OverloadId="1">
-                <Parameter Name="opacityMask" Type="D2D1::IBitmap" Form="pointer"/>
-                <Parameter Name="brush" Type="D2D1::IBrush" Form="pointer"/>
-                <Parameter Name="destinationRectangle" Type="D2D1::RECT_F" Form="reference"/>
-                <Parameter Name="sourceRectangle" Type="D2D1::RECT_F" Form="pointer opt" Default="NULL"/>
+                <Parameter Name="opacityMask" Type="D2D1::IBitmap" Form="pointer" />
+                <Parameter Name="brush" Type="D2D1::IBrush" Form="pointer" />
+                <Parameter Name="destinationRectangle" Type="D2D1::RECT_F" Form="reference" />
+                <Parameter Name="sourceRectangle" Type="D2D1::RECT_F" Form="pointer opt" Default="NULL" />
             </Method>
 
             <Method Name="FillOpacityMask" Return="void" OverloadId="2">
-                <Parameter Name="opacityMask" Type="D2D1::IBitmap" Form="pointer"/>
-                <Parameter Name="brush" Type="D2D1::IBrush" Form="pointer"/>
-                <Parameter Name="destinationRectangle" Type="D2D1::RECT_F" Form="reference"/>
-                <Parameter Name="sourceRectangle" Type="D2D1::RECT_F" Form="reference"/>
+                <Parameter Name="opacityMask" Type="D2D1::IBitmap" Form="pointer" />
+                <Parameter Name="brush" Type="D2D1::IBrush" Form="pointer" />
+                <Parameter Name="destinationRectangle" Type="D2D1::RECT_F" Form="reference" />
+                <Parameter Name="sourceRectangle" Type="D2D1::RECT_F" Form="reference" />
             </Method>
 
         </Interface>
 
-        <Interface Name="IPathGeometry1" Extends="D2D1::IPathGeometry" Revised="true" IID="62baa2d2-ab54-41b7-b872-787e0106a421" ShouldTestQI="true" QIFromBase="true">
+        <Interface Name="IPathGeometry1" Extends="D2D1::IPathGeometry" Revised="true" IID="62baa2d2-ab54-41b7-b872-787e0106a421" ShouldTestQI="true" QIFromBase="true" Comment="The ID2D1PathGeometry1 interface adds functionality to ID2D1PathGeometry. In particular, it provides the path geometry-specific ComputePointAndSegmentAtLength method.">
             <Method Name="ComputePointAndSegmentAtLength" IsConst="true" LockingModel="Local">
-                <Parameter Name="length" Type="FLOAT"/>
-                <Parameter Name="startSegment" Type="UINT32"/>
-                <Parameter Name="worldTransform" Type="D2D1::MATRIX_3X2_F" Form="pointer opt"/>
-                <Parameter Name="flatteningTolerance" Type="FLOAT"/>
-                <Parameter Name="pointDescription" Type="D2D1::POINT_DESCRIPTION" Form="out pointer"/>
+                <Parameter Name="length" Type="FLOAT" />
+                <Parameter Name="startSegment" Type="UINT32" />
+                <Parameter Name="worldTransform" Type="D2D1::MATRIX_3X2_F" Form="pointer opt" />
+                <Parameter Name="flatteningTolerance" Type="FLOAT" />
+                <Parameter Name="pointDescription" Type="D2D1::POINT_DESCRIPTION" Form="out pointer" />
             </Method>
             
             <Method Name="ComputePointAndSegmentAtLength" IsConst="true" OverloadId="1" LockingModel="Local">
-                <Parameter Name="length" Type="FLOAT"/>
-                <Parameter Name="startSegment" Type="UINT32"/>
-                <Parameter Name="worldTransform" Type="D2D1::MATRIX_3X2_F" Form="reference"/>
-                <Parameter Name="flatteningTolerance" Type="FLOAT"/>
-                <Parameter Name="pointDescription" Type="D2D1::POINT_DESCRIPTION" Form="out pointer"/>
+                <Parameter Name="length" Type="FLOAT" />
+                <Parameter Name="startSegment" Type="UINT32" />
+                <Parameter Name="worldTransform" Type="D2D1::MATRIX_3X2_F" Form="reference" />
+                <Parameter Name="flatteningTolerance" Type="FLOAT" />
+                <Parameter Name="pointDescription" Type="D2D1::POINT_DESCRIPTION" Form="out pointer" />
             </Method>
 
             <Method Name="ComputePointAndSegmentAtLength" IsConst="true" OverloadId="2" LockingModel="Local">
-                <Parameter Name="length" Type="FLOAT"/>
-                <Parameter Name="startSegment" Type="UINT32"/>
-                <Parameter Name="worldTransform" Type="D2D1::MATRIX_3X2_F" Form="pointer opt"/>
-                <Parameter Name="pointDescription" Type="D2D1::POINT_DESCRIPTION" Form="out pointer"/>
+                <Parameter Name="length" Type="FLOAT" />
+                <Parameter Name="startSegment" Type="UINT32" />
+                <Parameter Name="worldTransform" Type="D2D1::MATRIX_3X2_F" Form="pointer opt" />
+                <Parameter Name="pointDescription" Type="D2D1::POINT_DESCRIPTION" Form="out pointer" />
             </Method>
 
             <Method Name="ComputePointAndSegmentAtLength" IsConst="true" OverloadId="3" LockingModel="Local">
-                <Parameter Name="length" Type="FLOAT"/>
-                <Parameter Name="startSegment" Type="UINT32"/>
-                <Parameter Name="worldTransform" Type="D2D1::MATRIX_3X2_F" Form="reference"/>
-                <Parameter Name="pointDescription" Type="D2D1::POINT_DESCRIPTION" Form="out pointer"/>
+                <Parameter Name="length" Type="FLOAT" />
+                <Parameter Name="startSegment" Type="UINT32" />
+                <Parameter Name="worldTransform" Type="D2D1::MATRIX_3X2_F" Form="reference" />
+                <Parameter Name="pointDescription" Type="D2D1::POINT_DESCRIPTION" Form="out pointer" />
             </Method>
 
         </Interface>
        
-        <Interface Name="IBitmap1" Extends="D2D1::IBitmap" IID="a898a84c-3873-4588-b08b-ebbf978df041" ShouldTestQI="true" QIFromBase="true">
+        <Interface Name="IBitmap1" Extends="D2D1::IBitmap" IID="a898a84c-3873-4588-b08b-ebbf978df041" ShouldTestQI="true" QIFromBase="true" Comment="Represents a bitmap that can be used as a surface for an ID2D1DeviceContext or mapped into system memory, and can contain additional color context information.">
             <Method Name="GetColorContext" Return="void" IsConst="true" Comment="Retrieves the color context information associated with the bitmap.">
-                <Parameter Name="colorContext" Type="D2D1::IColorContext" Form="deref out opt pointer" IsRetval="true"/>
+                <Parameter Name="colorContext" Type="D2D1::IColorContext" Form="deref out opt pointer" IsRetval="true" />
             </Method>
-            <Method Name="GetOptions" Return="D2D1::BITMAP_OPTIONS" IsConst="true" Comment="Retrieves the bitmap options used when creating the API."/>
+            <Method Name="GetOptions" Return="D2D1::BITMAP_OPTIONS" IsConst="true" Comment="Retrieves the bitmap options used when creating the API." />
             <Method Name="GetSurface" IsConst="true" Comment="Retrieves the DXGI surface from the corresponding bitmap, if the bitmap was created from a device derived from a D3D device.">
-                <Parameter Name="dxgiSurface" Type="IDXGISurface" Form="deref out opt pointer" IsRetval="true"/>
+                <Parameter Name="dxgiSurface" Type="IDXGISurface" Form="deref out opt pointer" IsRetval="true" />
             </Method>
 
             <Method Name="Map" Comment="Maps the given bitmap into memory. The bitmap must have been created with the D2D1_BITMAP_OPTIONS_CPU_READ flag.">
-                <Parameter Name="options" Type="D2D1::MAP_OPTIONS"/>
-                <Parameter Name="mappedRect" Type="D2D1::MAPPED_RECT" Form="out pointer" IsRetval="true"/>
+                <Parameter Name="options" Type="D2D1::MAP_OPTIONS" />
+                <Parameter Name="mappedRect" Type="D2D1::MAPPED_RECT" Form="out pointer" IsRetval="true" />
             </Method>
 
-            <Method Name="Unmap" Comment="Unmaps the given bitmap from memory."/>
+            <Method Name="Unmap" Comment="Unmaps the given bitmap from memory." />
         </Interface>
 
-       <Interface Name="IColorContext" Extends="D2D1::IResource" IID="1c4820bb-5771-4518-a581-2fe4dd0ec657">
+       <Interface Name="IColorContext" Extends="D2D1::IResource" IID="1c4820bb-5771-4518-a581-2fe4dd0ec657" Comment="Represents a color context that can be used with an ID2D1Bitmap1 object.">
             <Method Name="GetColorSpace" Return="D2D1::COLOR_SPACE" IsConst="true" Comment="Retrieves the color space of the color context." />
-            <Method Name="GetProfileSize" Return="UINT32" IsConst="true" Comment="Retrieves the size of the color profile, in bytes."/>
+            <Method Name="GetProfileSize" Return="UINT32" IsConst="true" Comment="Retrieves the size of the color profile, in bytes." />
             <Method Name="GetProfile" IsConst="true" Comment="Retrieves the color profile bytes.">
-                <Parameter Name="profile" Type="BYTE" Form="out pointer" IsArray="true" OutArrayLength="GetProfileSize()" LengthParameter="profileSize" IsRetval="true"/>
+                <Parameter Name="profile" Type="BYTE" Form="out pointer" IsArray="true" OutArrayLength="GetProfileSize()" LengthParameter="profileSize" IsRetval="true" />
             </Method>
        </Interface>
      
-       <Interface Name="IGradientStopCollection1" Extends="D2D1::IGradientStopCollection" Revised="true" 
-            ShouldTestQI="true" QIFromBase="true"
-            Comment="Represents an collection of gradient stops that can then be the source resource for either a linear or radial gradient brush."
-            IID="ae1572f4-5dd0-4777-998b-9279472ae63b">
-            <Method Name="GetGradientStops1" Return="void" IsConst="true"
-                Comment="Copies the gradient stops from the collection into the caller's memory. If this object was created using ID2D1DeviceContext::CreateGradientStopCollection, this method returns the same values as were specified in the creation method. If this object was created using ID2D1RenderTarget::CreateGradientStopCollection, the stops returned here will first be transformed into the gamma space specified by the colorInterpolationGamma parameter.">
-                <Parameter Name="gradientStops" Type="D2D1::GRADIENT_STOP" Form="out pointer inexpressibleArray" IsArray="true" IsRetval="true" OutArrayLength="GetGradientStopCount()"/>
+       <Interface Name="IGradientStopCollection1" Extends="D2D1::IGradientStopCollection" Revised="true" ShouldTestQI="true" QIFromBase="true" Comment="Represents an collection of gradient stops that can then be the source resource for either a linear or radial gradient brush." IID="ae1572f4-5dd0-4777-998b-9279472ae63b">
+            <Method Name="GetGradientStops1" Return="void" IsConst="true" Comment="Copies the gradient stops from the collection into the caller's memory. If this object was created using ID2D1DeviceContext::CreateGradientStopCollection, this method returns the same values as were specified in the creation method. If this object was created using ID2D1RenderTarget::CreateGradientStopCollection, the stops returned here will first be transformed into the gamma space specified by the colorInterpolationGamma parameter.">
+                <Parameter Name="gradientStops" Type="D2D1::GRADIENT_STOP" Form="out pointer inexpressibleArray" IsArray="true" IsRetval="true" OutArrayLength="GetGradientStopCount()" />
             </Method>
-            <Method Name="GetPreInterpolationSpace" Return="D2D1::COLOR_SPACE" IsConst="true"
-                Comment="Returns the color space in which interpolation occurs. If this object was created using ID2D1RenderTarget::CreateGradientStopCollection, this method returns the color space related to the color interpolation gamma."/>
-            <Method Name="GetPostInterpolationSpace" Return="D2D1::COLOR_SPACE" IsConst="true"
-                Comment="Returns the color space colors will be converted to after interpolation occurs. If this object was created using ID2D1RenderTarget::CreateGradientStopCollection, this method returns D2D1_COLOR_SPACE_SRGB."/>
-            <Method Name="GetBufferPrecision" Return="D2D1::BUFFER_PRECISION" IsConst="true"
-                Comment="Returns the buffer precision of this gradient. If this object was created using ID2D1RenderTarget::CreateGradientStopCollection, this method returns D2D1_BUFFER_PRECISION_8BPC_UNORM."/>
-            <Method Name="GetColorInterpolationMode" Return="D2D1::COLOR_INTERPOLATION_MODE" IsConst="true"
-                Comment="Returns the interpolation mode used to interpolate colors in the gradient."/>
+            <Method Name="GetPreInterpolationSpace" Return="D2D1::COLOR_SPACE" IsConst="true" Comment="Returns the color space in which interpolation occurs. If this object was created using ID2D1RenderTarget::CreateGradientStopCollection, this method returns the color space related to the color interpolation gamma." />
+            <Method Name="GetPostInterpolationSpace" Return="D2D1::COLOR_SPACE" IsConst="true" Comment="Returns the color space colors will be converted to after interpolation occurs. If this object was created using ID2D1RenderTarget::CreateGradientStopCollection, this method returns D2D1_COLOR_SPACE_SRGB." />
+            <Method Name="GetBufferPrecision" Return="D2D1::BUFFER_PRECISION" IsConst="true" Comment="Returns the buffer precision of this gradient. If this object was created using ID2D1RenderTarget::CreateGradientStopCollection, this method returns D2D1_BUFFER_PRECISION_8BPC_UNORM." />
+            <Method Name="GetColorInterpolationMode" Return="D2D1::COLOR_INTERPOLATION_MODE" IsConst="true" Comment="Returns the interpolation mode used to interpolate colors in the gradient." />
         </Interface>
 
         <Interface Name="IDrawingStateBlock1" Extends="D2D1::IDrawingStateBlock" Revised="true" Comment="Represents drawing state." IID="689f1f85-c72e-4e33-8f19-85754efd5ace" ShouldTestQI="true" QIFromBase="true">
-            <Method Name="GetDescription" IsConst="true" Return="void"
-                Comment="Retrieves the state currently contained within this state block resource.">
-                <Parameter Name="stateDescription" Type="D2D1::DRAWING_STATE_DESCRIPTION1" Form="out pointer" IsRetval="true"/>
+            <Method Name="GetDescription" IsConst="true" Return="void" Comment="Retrieves the state currently contained within this state block resource.">
+                <Parameter Name="stateDescription" Type="D2D1::DRAWING_STATE_DESCRIPTION1" Form="out pointer" IsRetval="true" />
             </Method>
-            <Method Name="SetDescription" Return="void"
-                Comment="Sets the state description of this state block resource.">
+            <Method Name="SetDescription" Return="void" Comment="Sets the state description of this state block resource.">
                 <Parameter Name="stateDescription" Type="D2D1::DRAWING_STATE_DESCRIPTION1" Form="pointer" />
             </Method>
             <Method Name="SetDescription" Return="void" OverloadId="1">
@@ -941,241 +928,238 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
             </Method>
         </Interface>
 
-        <Interface Name="IProperties" Extends="IUnknown" IID="483473d7-cd46-4f9d-9d3a-3112aa80159d">
+        <Interface Name="IProperties" Extends="IUnknown" IID="483473d7-cd46-4f9d-9d3a-3112aa80159d" Comment="Represents a set of run-time bindable and discoverable properties that allow a data-driven application to modify the state of a Direct2D effect.">
 
-            <Method Name="GetPropertyCount" IsConst="true" Return="UINT32" Comment="Returns the total number of custom properties in this interface."/>
+            <Method Name="GetPropertyCount" IsConst="true" Return="UINT32" Comment="Returns the total number of custom properties in this interface." />
             <Method Name="GetPropertyName" IsConst="true" Comment="Retrieves the property name from the given property index.">
-                <Parameter Name="index" Type="UINT32"/>
+                <Parameter Name="index" Type="UINT32" />
                 <Parameter Name="name" Type="PWSTR" Form="out" IsArray="true" OutArrayLength="GetPropertyNameLength(index)" />
             </Method>
 
             <Method Name="GetPropertyNameLength" Return="UINT32" IsConst="true" Comment="Returns the length of the property name from the given index.">
-                <Parameter Name="index" Type="UINT32"/>
+                <Parameter Name="index" Type="UINT32" />
             </Method>
 
             <Method Name="GetType" IsConst="true" Return="D2D1::PROPERTY_TYPE" Comment="Retrieves the type of the given property.">
-                <Parameter Name="index" Type="UINT32"/>
+                <Parameter Name="index" Type="UINT32" />
             </Method>
 
             <Method Name="GetPropertyIndex" IsConst="true" Return="UINT32" Comment="Retrieves the property index for the given property name.">
-                <Parameter Name="name" Type="PCWSTR" Form="in"/>
+                <Parameter Name="name" Type="PCWSTR" Form="in" />
             </Method>
             
             <Method Name="SetValueByName" Comment="Sets the value of the given property using its name.">
                 <Parameter Name="name" Type="PCWSTR" Form="in" />
                 <Parameter Name="type" Type="D2D1::PROPERTY_TYPE" />
-                <Parameter Name="data" Type="BYTE" Form="pointer" IsArray="true" LengthParameter="dataSize"/>
+                <Parameter Name="data" Type="BYTE" Form="pointer" IsArray="true" LengthParameter="dataSize" />
             </Method>  
             
             <Method Name="SetValueByName" OverloadId="1">
                 <Parameter Name="name" Type="PCWSTR" Form="in" />
-                <Parameter Name="data" Type="BYTE" Form="pointer" IsArray="true" LengthParameter="dataSize"/>
+                <Parameter Name="data" Type="BYTE" Form="pointer" IsArray="true" LengthParameter="dataSize" />
             </Method>
             
             <Method Name="SetValue" Comment="Sets the given value using the property index.">
-                <Parameter Name="index" Type="UINT32"/>
+                <Parameter Name="index" Type="UINT32" />
                 <Parameter Name="type" Type="D2D1::PROPERTY_TYPE" />
-                <Parameter Name="data" Type="BYTE" Form="pointer" IsArray="true" LengthParameter="dataSize"/>
+                <Parameter Name="data" Type="BYTE" Form="pointer" IsArray="true" LengthParameter="dataSize" />
             </Method>
             
             <Method Name="SetValue" OverloadId="1">
-                <Parameter Name="index" Type="UINT32"/>
-                <Parameter Name="data" Type="BYTE" Form="pointer" IsArray="true" LengthParameter="dataSize"/>
+                <Parameter Name="index" Type="UINT32" />
+                <Parameter Name="data" Type="BYTE" Form="pointer" IsArray="true" LengthParameter="dataSize" />
             </Method>
             
             <Method Name="GetValueByName" IsConst="true" Comment="Retrieves the given property or sub-property by name. '.' is the delimiter for sub-properties.">
-                <Parameter Name="name" Type="PCWSTR" Form="in"/>
+                <Parameter Name="name" Type="PCWSTR" Form="in" />
                 <Parameter Name="type" Type="D2D1::PROPERTY_TYPE" />
-                <Parameter Name="data" Type="BYTE" Form="out pointer" IsArray="true" OutArrayLength="GetValueSize(GetPropertyIndex(name))" LengthParameter="dataSize" IsRetval="true"/>
+                <Parameter Name="data" Type="BYTE" Form="out pointer" IsArray="true" OutArrayLength="GetValueSize(GetPropertyIndex(name))" LengthParameter="dataSize" IsRetval="true" />
             </Method>
             
             <Method Name="GetValueByName" IsConst="true" OverloadId="1">
-                <Parameter Name="name" Type="PCWSTR" Form="in"/>
-                <Parameter Name="data" Type="BYTE" Form="out pointer" IsArray="true" OutArrayLength="GetValueSize(GetPropertyIndex(name))" LengthParameter="dataSize" IsRetval="true"/>
+                <Parameter Name="name" Type="PCWSTR" Form="in" />
+                <Parameter Name="data" Type="BYTE" Form="out pointer" IsArray="true" OutArrayLength="GetValueSize(GetPropertyIndex(name))" LengthParameter="dataSize" IsRetval="true" />
             </Method>  
 
             <Method Name="GetValue" IsConst="true" Comment="Retrieves the given value by index.">
-                <Parameter Name="index" Type="UINT32"/>
+                <Parameter Name="index" Type="UINT32" />
                 <Parameter Name="type" Type="D2D1::PROPERTY_TYPE" />
-                <Parameter Name="data" Type="BYTE" Form="out pointer" IsArray="true" OutArrayLength="GetValueSize(index)" LengthParameter="dataSize" IsRetval="true"/>
+                <Parameter Name="data" Type="BYTE" Form="out pointer" IsArray="true" OutArrayLength="GetValueSize(index)" LengthParameter="dataSize" IsRetval="true" />
             </Method>
             
             <Method Name="GetValue" IsConst="true" OverloadId="1">
-                <Parameter Name="index" Type="UINT32"/>
-                <Parameter Name="data" Type="BYTE" Form="out pointer" IsArray="true" OutArrayLength="GetValueSize(index)" LengthParameter="dataSize" IsRetval="true"/>
+                <Parameter Name="index" Type="UINT32" />
+                <Parameter Name="data" Type="BYTE" Form="out pointer" IsArray="true" OutArrayLength="GetValueSize(index)" LengthParameter="dataSize" IsRetval="true" />
             </Method>
 
             <Method Name="GetValueSize" Return="UINT32" IsConst="true" Comment="Returns the value size for the given property index.">
-                <Parameter Name="index" Type="UINT32"/>
+                <Parameter Name="index" Type="UINT32" />
             </Method>
 
             <Method Name="GetSubProperties" IsConst="true" Comment="Retrieves the sub-properties of the given property by index.">
-                <Parameter Name="index" Type="UINT32"/>
-                <Parameter Name="subProperties" Type="D2D1::IProperties" Form="deref out opt pointer"/>
+                <Parameter Name="index" Type="UINT32" />
+                <Parameter Name="subProperties" Type="D2D1::IProperties" Form="deref out opt pointer" />
             </Method>
 
         </Interface>
 
         <Interface Name="IEffect" Extends="D2D1::IProperties" Comment="The effect interface. Properties control how the effect is rendered. The effect is Drawn with the DrawImage call." IID="28211a43-7d89-476f-8181-2d6159b220ad">
             <Method Name="SetInput" Return="void" Comment="Sets the input to the given effect. The input can be a concrete bitmap or the output of another effect.">
-                <Parameter Name="index" Type="UINT32"/>
-                <Parameter Name="input" Type="D2D1::IImage" Form="pointer opt"/>
-                <Parameter Name="invalidate" Type="BOOL" Default="TRUE"/>
+                <Parameter Name="index" Type="UINT32" />
+                <Parameter Name="input" Type="D2D1::IImage" Form="pointer opt" />
+                <Parameter Name="invalidate" Type="BOOL" Default="TRUE" />
             </Method>
 
             <Method Name="SetInputEffect" Return="void" OverloadId="1">
-                <Parameter Name="index" Type="UINT32"/>
-                <Parameter Name="inputEffect" Type="D2D1::IEffect" Form="pointer opt"/>
-                <Parameter Name="invalidate" Type="BOOL" Default="TRUE"/>
+                <Parameter Name="index" Type="UINT32" />
+                <Parameter Name="inputEffect" Type="D2D1::IEffect" Form="pointer opt" />
+                <Parameter Name="invalidate" Type="BOOL" Default="TRUE" />
             </Method>
             
             <Method Name="SetInputCount" Comment="If the effect supports a variable number of inputs, this sets the number of input that are currently active on the effect.">
-                <Parameter Name="inputCount" Type="UINT32"/>
+                <Parameter Name="inputCount" Type="UINT32" />
             </Method>
 
             <Method Name="GetInput" Return="void" IsConst="true" Comment="Returns the input image to the effect. The input could be another effect or a bitmap.">
-                <Parameter Name="index" Type="UINT32"/>
-                <Parameter Name="input" Type="D2D1::IImage" Form="deref out opt pointer"/>
+                <Parameter Name="index" Type="UINT32" />
+                <Parameter Name="input" Type="D2D1::IImage" Form="deref out opt pointer" />
             </Method>
             
-            <Method Name="GetInputCount" Return="UINT32" IsConst="true" Comment="This returns the number of input that are bound into this effect."/>
+            <Method Name="GetInputCount" Return="UINT32" IsConst="true" Comment="This returns the number of input that are bound into this effect." />
 
             <Method Name="GetOutput" Return="void" IsConst="true" Comment="Returns the output image of the given effect. This can be set as the input to another effect or can be drawn with DrawImage.">
-                <Parameter Name="outputImage" Type="D2D1::IImage" Form="deref out pointer" IsRetval="true"/>
+                <Parameter Name="outputImage" Type="D2D1::IImage" Form="deref out pointer" IsRetval="true" />
             </Method>
         </Interface>
 
         <Interface Name="IImageBrush" Extends="D2D1::IBrush" ShouldTestQI="true" Comment="Provides a brush that can take any effect, command list or bitmap and use it to fill a 2D shape." IID="fe9e984d-3f95-407c-b5db-cb94d4e8f87c">
             <Method Name="SetImage" Return="void">
-                <Parameter Name="image" Type="D2D1::IImage" Form="pointer opt"/>
+                <Parameter Name="image" Type="D2D1::IImage" Form="pointer opt" />
             </Method>
 
             <Method Name="SetExtendModeX" Return="void">
-                <Parameter Name="extendModeX" Type="D2D1::EXTEND_MODE"/>
+                <Parameter Name="extendModeX" Type="D2D1::EXTEND_MODE" />
             </Method>
 
             <Method Name="SetExtendModeY" Return="void">
-                <Parameter Name="extendModeY" Type="D2D1::EXTEND_MODE"/>
+                <Parameter Name="extendModeY" Type="D2D1::EXTEND_MODE" />
             </Method>
             
             <Method Name="SetInterpolationMode" Return="void">
-                <Parameter Name="interpolationMode" Type="D2D1::INTERPOLATION_MODE"/>
+                <Parameter Name="interpolationMode" Type="D2D1::INTERPOLATION_MODE" />
             </Method>
 
             <Method Name="SetSourceRectangle" Return="void">
-                <Parameter Name="sourceRectangle" Type="D2D1::RECT_F" Form="pointer"/>
+                <Parameter Name="sourceRectangle" Type="D2D1::RECT_F" Form="pointer" />
             </Method>
 
             <Method Name="GetImage" Return="void" IsConst="true">
-                <Parameter Name="image" Type="D2D1::IImage" Form="deref out pointer" IsRetval="true"/>
+                <Parameter Name="image" Type="D2D1::IImage" Form="deref out pointer" IsRetval="true" />
             </Method>
 
-            <Method Name="GetExtendModeX" Return="D2D1::EXTEND_MODE" IsConst="true"/>
-            <Method Name="GetExtendModeY" Return="D2D1::EXTEND_MODE" IsConst="true"/>
-            <Method Name="GetInterpolationMode" Return="D2D1::INTERPOLATION_MODE" IsConst="true"/>
+            <Method Name="GetExtendModeX" Return="D2D1::EXTEND_MODE" IsConst="true" />
+            <Method Name="GetExtendModeY" Return="D2D1::EXTEND_MODE" IsConst="true" />
+            <Method Name="GetInterpolationMode" Return="D2D1::INTERPOLATION_MODE" IsConst="true" />
 
             <Method Name="GetSourceRectangle" Return="void" IsConst="true">
-                <Parameter Name="sourceRectangle" Type="D2D1::RECT_F" Form="out pointer" IsRetval="true"/>
+                <Parameter Name="sourceRectangle" Type="D2D1::RECT_F" Form="out pointer" IsRetval="true" />
             </Method>
 
         </Interface>
 
          <Interface Name="IStrokeStyle1" Extends="D2D1::IStrokeStyle" ShouldTestQI="true" Revised="true" Comment="Extends a stroke style to allow nominal width strokes." IID="10a72a66-e91c-43f4-993f-ddf4b82b0b4a" QIFromBase="true">
-           <Method Name="GetStrokeTransformType" IsConst="true"  Return="D2D1::STROKE_TRANSFORM_TYPE"/>
+           <Method Name="GetStrokeTransformType" IsConst="true" Return="D2D1::STROKE_TRANSFORM_TYPE" />
          </Interface>
 
-         <Interface Name="IBitmapBrush1" Extends="D2D1::IBitmapBrush" ShouldTestQI="true"
-            Comment="A bitmap brush allows a bitmap to be used to fill a geometry.  Interpolation mode is specified with D2D1_INTERPOLATION_MODE"
-            IID="41343a53-e41a-49a2-91cd-21793bbb62e5">
-           <Method Name="SetInterpolationMode1" Return="void"
-               Comment="Sets the interpolation mode used when this brush is used.">
-             <Parameter Name="interpolationMode" Type="D2D1::INTERPOLATION_MODE"/>
+         <Interface Name="IBitmapBrush1" Extends="D2D1::IBitmapBrush" ShouldTestQI="true" Comment="A bitmap brush allows a bitmap to be used to fill a geometry.  Interpolation mode is specified with D2D1_INTERPOLATION_MODE" IID="41343a53-e41a-49a2-91cd-21793bbb62e5">
+           <Method Name="SetInterpolationMode1" Return="void" Comment="Sets the interpolation mode used when this brush is used.">
+             <Parameter Name="interpolationMode" Type="D2D1::INTERPOLATION_MODE" />
            </Method>
-           <Method Name="GetInterpolationMode1" Return="D2D1::INTERPOLATION_MODE" IsConst="true"/>
+           <Method Name="GetInterpolationMode1" Return="D2D1::INTERPOLATION_MODE" IsConst="true" />
          </Interface>
 
 
          <Interface Name="ICommandSink" Extends="IUnknown" WrapOutgoing="true" ShouldTestQI="false" HasD2DImplementation="false" Comment="Caller-supplied implementation of an interface to receive the recorded command list." IID="54d7898a-a061-40a7-bec7-e465bcba2c4f">
-            <Method Name="BeginDraw"/>
-            <Method Name="EndDraw"/>
+            <Method Name="BeginDraw" />
+            <Method Name="EndDraw" />
             <Method Name="SetAntialiasMode">
-                <Parameter Name="antialiasMode" Type="D2D1::ANTIALIAS_MODE"/>
+                <Parameter Name="antialiasMode" Type="D2D1::ANTIALIAS_MODE" />
             </Method>
 
             <Method Name="SetTags">
-                <Parameter Name="tag1" Type="D2D1::TAG"/>
-                <Parameter Name="tag2" Type="D2D1::TAG"/>
+                <Parameter Name="tag1" Type="D2D1::TAG" />
+                <Parameter Name="tag2" Type="D2D1::TAG" />
             </Method>
 
             <Method Name="SetTextAntialiasMode">
-                <Parameter Name="textAntialiasMode" Type="D2D1::TEXT_ANTIALIAS_MODE"/>
+                <Parameter Name="textAntialiasMode" Type="D2D1::TEXT_ANTIALIAS_MODE" />
             </Method>
 
             <Method Name="SetTextRenderingParams">
-                <Parameter Name="textRenderingParams" Type="IDWriteRenderingParams" Form="pointer opt"/>
+                <Parameter Name="textRenderingParams" Type="IDWriteRenderingParams" Form="pointer opt" />
             </Method>
 
             <Method Name="SetTransform">
-                <Parameter Name="transform" Type="D2D1::MATRIX_3X2_F" Form="pointer"/>
+                <Parameter Name="transform" Type="D2D1::MATRIX_3X2_F" Form="pointer" />
             </Method>
 
             <Method Name="SetPrimitiveBlend">
-                <Parameter Name="primitiveBlend" Type="D2D1::PRIMITIVE_BLEND"/>
+                <Parameter Name="primitiveBlend" Type="D2D1::PRIMITIVE_BLEND" />
             </Method>
 
             <Method Name="SetUnitMode">
-                <Parameter Name="unitMode" Type="D2D1::UNIT_MODE"/>
+                <Parameter Name="unitMode" Type="D2D1::UNIT_MODE" />
             </Method>
 
             <Method Name="Clear">
-                <Parameter Name="color" Type="D2D1::COLOR_F" Form="pointer opt"/>
+                <Parameter Name="color" Type="D2D1::COLOR_F" Form="pointer opt" />
             </Method>
 
             <Method Name="DrawGlyphRun">
-                <Parameter Name="baselineOrigin" Type="D2D1::POINT_2F"/>
-                <Parameter Name="glyphRun" Type="DWRITE_GLYPH_RUN" Form="pointer"/>
-                <Parameter Name="glyphRunDescription" Type="DWRITE_GLYPH_RUN_DESCRIPTION" Form="pointer opt"/>
-                <Parameter Name="foregroundBrush" Type="D2D1::IBrush" Form="pointer"/>
-                <Parameter Name="measuringMode" Type="DWRITE_MEASURING_MODE"/>
+                <Parameter Name="baselineOrigin" Type="D2D1::POINT_2F" />
+                <Parameter Name="glyphRun" Type="DWRITE_GLYPH_RUN" Form="pointer" />
+                <Parameter Name="glyphRunDescription" Type="DWRITE_GLYPH_RUN_DESCRIPTION" Form="pointer opt" />
+                <Parameter Name="foregroundBrush" Type="D2D1::IBrush" Form="pointer" />
+                <Parameter Name="measuringMode" Type="DWRITE_MEASURING_MODE" />
             </Method>
 
             <Method Name="DrawLine">
-                <Parameter Name="point0" Type="D2D1::POINT_2F"/>
-                <Parameter Name="point1" Type="D2D1::POINT_2F"/>
-                <Parameter Name="brush" Type="D2D1::IBrush" Form="pointer"/>
-                <Parameter Name="strokeWidth" Type="FLOAT"/>
-                <Parameter Name="strokeStyle" Type="D2D1::IStrokeStyle" Form="pointer opt"/>
+                <Parameter Name="point0" Type="D2D1::POINT_2F" />
+                <Parameter Name="point1" Type="D2D1::POINT_2F" />
+                <Parameter Name="brush" Type="D2D1::IBrush" Form="pointer" />
+                <Parameter Name="strokeWidth" Type="FLOAT" />
+                <Parameter Name="strokeStyle" Type="D2D1::IStrokeStyle" Form="pointer opt" />
             </Method>            
 
             <Method Name="DrawGeometry">
-                <Parameter Name="geometry" Type="D2D1::IGeometry" Form="pointer"/>
-                <Parameter Name="brush" Type="D2D1::IBrush" Form="pointer"/>
-                <Parameter Name="strokeWidth" Type="FLOAT"/>
-                <Parameter Name="strokeStyle" Type="D2D1::IStrokeStyle" Form="pointer opt"/>
+                <Parameter Name="geometry" Type="D2D1::IGeometry" Form="pointer" />
+                <Parameter Name="brush" Type="D2D1::IBrush" Form="pointer" />
+                <Parameter Name="strokeWidth" Type="FLOAT" />
+                <Parameter Name="strokeStyle" Type="D2D1::IStrokeStyle" Form="pointer opt" />
             </Method>
 
             <Method Name="DrawRectangle">
-                <Parameter Name="rect" Type="D2D1::RECT_F" Form="pointer"/>
-                <Parameter Name="brush" Type="D2D1::IBrush" Form="pointer"/>
-                <Parameter Name="strokeWidth" Type="FLOAT"/>
-                <Parameter Name="strokeStyle" Type="D2D1::IStrokeStyle" Form="pointer opt"/>
+                <Parameter Name="rect" Type="D2D1::RECT_F" Form="pointer" />
+                <Parameter Name="brush" Type="D2D1::IBrush" Form="pointer" />
+                <Parameter Name="strokeWidth" Type="FLOAT" />
+                <Parameter Name="strokeStyle" Type="D2D1::IStrokeStyle" Form="pointer opt" />
             </Method>
 
             <Method Name="DrawBitmap">
-                <Parameter Name="bitmap" Type="D2D1::IBitmap" Form="pointer"/>
-                <Parameter Name="destinationRectangle" Type="D2D1::RECT_F" Form="pointer opt"/>
-                <Parameter Name="opacity" Type="FLOAT"/>
-                <Parameter Name="interpolationMode" Type="D2D1::INTERPOLATION_MODE"/>
-                <Parameter Name="sourceRectangle" Type="D2D1::RECT_F" Form="pointer opt"/>
-                <Parameter Name="perspectiveTransform" Type="D2D1::MATRIX_4X4_F" Form="pointer opt"/>
+                <Parameter Name="bitmap" Type="D2D1::IBitmap" Form="pointer" />
+                <Parameter Name="destinationRectangle" Type="D2D1::RECT_F" Form="pointer opt" />
+                <Parameter Name="opacity" Type="FLOAT" />
+                <Parameter Name="interpolationMode" Type="D2D1::INTERPOLATION_MODE" />
+                <Parameter Name="sourceRectangle" Type="D2D1::RECT_F" Form="pointer opt" />
+                <Parameter Name="perspectiveTransform" Type="D2D1::MATRIX_4X4_F" Form="pointer opt" />
             </Method>
 
             <Method Name="DrawImage">
-                <Parameter Name="image" Type="D2D1::IImage" Form="pointer"/>
-                <Parameter Name="targetOffset" Type="D2D1::POINT_2F" Form="pointer opt"/>
-                <Parameter Name="imageRectangle" Type="D2D1::RECT_F" Form="pointer opt"/>
-                <Parameter Name="interpolationMode" Type="D2D1::INTERPOLATION_MODE"/>
-                <Parameter Name="compositeMode" Type="D2D1::COMPOSITE_MODE"/>
+                <Parameter Name="image" Type="D2D1::IImage" Form="pointer" />
+                <Parameter Name="targetOffset" Type="D2D1::POINT_2F" Form="pointer opt" />
+                <Parameter Name="imageRectangle" Type="D2D1::RECT_F" Form="pointer opt" />
+                <Parameter Name="interpolationMode" Type="D2D1::INTERPOLATION_MODE" />
+                <Parameter Name="compositeMode" Type="D2D1::COMPOSITE_MODE" />
             </Method>
 
             <Method Name="DrawGdiMetafile">
@@ -1184,101 +1168,101 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
             </Method>
                 
             <Method Name="FillMesh">                
-                <Parameter Name="mesh" Type="D2D1::IMesh" Form="pointer"/>
-                <Parameter Name="brush" Type="D2D1::IBrush" Form="pointer"/>
+                <Parameter Name="mesh" Type="D2D1::IMesh" Form="pointer" />
+                <Parameter Name="brush" Type="D2D1::IBrush" Form="pointer" />
             </Method>
 
             <Method Name="FillOpacityMask">
-                <Parameter Name="opacityMask" Type="D2D1::IBitmap" Form="pointer"/>
-                <Parameter Name="brush" Type="D2D1::IBrush" Form="pointer"/>
-                <Parameter Name="destinationRectangle" Type="D2D1::RECT_F" Form="pointer opt"/>
-                <Parameter Name="sourceRectangle" Type="D2D1::RECT_F" Form="pointer opt"/>
+                <Parameter Name="opacityMask" Type="D2D1::IBitmap" Form="pointer" />
+                <Parameter Name="brush" Type="D2D1::IBrush" Form="pointer" />
+                <Parameter Name="destinationRectangle" Type="D2D1::RECT_F" Form="pointer opt" />
+                <Parameter Name="sourceRectangle" Type="D2D1::RECT_F" Form="pointer opt" />
             </Method>
 
             <Method Name="FillGeometry">
-                <Parameter Name="geometry" Type="D2D1::IGeometry" Form="pointer"/>
-                <Parameter Name="brush" Type="D2D1::IBrush" Form="pointer"/>
-                <Parameter Name="opacityBrush" Type="D2D1::IBrush" Form="pointer opt"/>                    
+                <Parameter Name="geometry" Type="D2D1::IGeometry" Form="pointer" />
+                <Parameter Name="brush" Type="D2D1::IBrush" Form="pointer" />
+                <Parameter Name="opacityBrush" Type="D2D1::IBrush" Form="pointer opt" />                    
             </Method>
 
             <Method Name="FillRectangle">
-                <Parameter Name="rect" Type="D2D1::RECT_F" Form="pointer"/>
-                <Parameter Name="brush" Type="D2D1::IBrush" Form="pointer"/>
+                <Parameter Name="rect" Type="D2D1::RECT_F" Form="pointer" />
+                <Parameter Name="brush" Type="D2D1::IBrush" Form="pointer" />
             </Method>
 
             <Method Name="PushAxisAlignedClip">
-                <Parameter Name="clipRect" Type="D2D1::RECT_F" Form="pointer"/>
-                <Parameter Name="antialiasMode" Type="D2D1::ANTIALIAS_MODE"/>
+                <Parameter Name="clipRect" Type="D2D1::RECT_F" Form="pointer" />
+                <Parameter Name="antialiasMode" Type="D2D1::ANTIALIAS_MODE" />
             </Method>
 
             <Method Name="PushLayer">
-                <Parameter Name="layerParameters1" Type="D2D1::LAYER_PARAMETERS1" Form="pointer"/>
-                <Parameter Name="layer" Type="D2D1::ILayer" Form="pointer opt"/>
+                <Parameter Name="layerParameters1" Type="D2D1::LAYER_PARAMETERS1" Form="pointer" />
+                <Parameter Name="layer" Type="D2D1::ILayer" Form="pointer opt" />
             </Method>   
 
-            <Method Name="PopAxisAlignedClip"/>
+            <Method Name="PopAxisAlignedClip" />
 
-            <Method Name="PopLayer"/>
+            <Method Name="PopLayer" />
 
         </Interface>
 
         <Interface Name="ICommandList" Extends="D2D1::IImage" WrapOutgoing="true" Comment="The commandList interface." IID="b4f34a19-2383-4d76-94f6-ec343657c3dc">
             <Method Name="Stream" Comment="Play the command list into a caller-supplied sink interface.">
-                <Parameter Name="sink" Type="D2D1::ICommandSink" Form="pointer"/>
+                <Parameter Name="sink" Type="D2D1::ICommandSink" Form="pointer" />
             </Method>
 
-            <Method Name="Close" Comment="Marks the command list as ready for use."/>
+            <Method Name="Close" Comment="Marks the command list as ready for use." />
         </Interface>
 
         <Interface Name="IGdiMetafile" Extends="D2D1::IResource" WrapOutgoing="true" Comment="Interface encapsulating a GDI/GDI+ metafile." IID="2f543dc3-cfc1-4211-864f-cfd91c6f3395">
             <Method Name="Stream" Comment="Play the metafile into a caller-supplied sink interface.">
-                <Parameter Name="sink" Type="D2D1::IGdiMetafileSink" Form="pointer"/>
+                <Parameter Name="sink" Type="D2D1::IGdiMetafileSink" Form="pointer" />
             </Method>
             <Method Name="GetBounds" Comment="Gets the bounds of the metafile.">
-                <Parameter Name="bounds" Type="D2D1::RECT_F" Form="out pointer" IsRetval="true"/>
+                <Parameter Name="bounds" Type="D2D1::RECT_F" Form="out pointer" IsRetval="true" />
             </Method>
         </Interface>
 
         <Interface Name="IGdiMetafileSink" Extends="IUnknown" WrapOutgoing="true" ShouldTestQI="false" HasD2DImplementation="false" Comment="User-implementable interface for introspecting on a metafile." IID="82237326-8111-4f7c-bcf4-b5c1175564fe">
             <Method Name="ProcessRecord" Comment="Callback for examining a metafile record.">
-                <Parameter Name="recordType" Type="DWORD"/>
-                <Parameter Name="recordData" Type="void" Form="pointer opt" ECount="recordDataSize"/>
-                <Parameter Name="recordDataSize" Type="DWORD"/>
+                <Parameter Name="recordType" Type="DWORD" />
+                <Parameter Name="recordData" Type="void" Form="pointer opt" ECount="recordDataSize" />
+                <Parameter Name="recordDataSize" Type="DWORD" />
             </Method>
         </Interface>
 
        <Interface Name="ID2DMeshTriangleExposable" ShouldTestQI="false" Extends="IUnknown" IsInternalPlainDecl="true">
-           <Method Name="OpenTriangleRead" LockingModel="None"/>
-           <Method Name="CloseTriangleRead" Return="void" LockingModel="None"/>
-           <Method Name="IsTriangleReadOpen" IsConst="true" Return="bool" LockingModel="None"/>
-           <Method Name="GetTriangleCount" IsConst="true" Return="UINT" LockingModel="None"/>
+           <Method Name="OpenTriangleRead" LockingModel="None" />
+           <Method Name="CloseTriangleRead" Return="void" LockingModel="None" />
+           <Method Name="IsTriangleReadOpen" IsConst="true" Return="bool" LockingModel="None" />
+           <Method Name="GetTriangleCount" IsConst="true" Return="UINT" LockingModel="None" />
            <Method Name="GetTriangle" IsConst="true" Return="void" LockingModel="None">
-               <Parameter Name="nTriangleIndex" Type="UINT"/>
-               <Parameter Name="pTriangle" Type="D2D1::TRIANGLE" Form="out pointer" IsRetval="true"/>
+               <Parameter Name="nTriangleIndex" Type="UINT" />
+               <Parameter Name="pTriangle" Type="D2D1::TRIANGLE" Form="out pointer" IsRetval="true" />
            </Method>
        </Interface>
       
-       <Enum Name="PRINT_FONT_SUBSET_MODE">
+       <Enum Name="PRINT_FONT_SUBSET_MODE" Comment="Defines when font resources should be subset during printing.">
            <Field Name="DEFAULT" Value="0" Comment="Subset for used glyphs, send and discard font resource after every five pages" />
-           <Field Name="EACHPAGE" Value="1" Comment="Subset for used glyphs, send and discard font resource after each page"/>
+           <Field Name="EACHPAGE" Value="1" Comment="Subset for used glyphs, send and discard font resource after each page" />
            <Field Name="NONE" Value="2" Comment="Do not subset, reuse font for all pages, send it after first page" />
        </Enum>
        
-       <Struct Name="PRINT_CONTROL_PROPERTIES">
+       <Struct Name="PRINT_CONTROL_PROPERTIES" Comment="The creation properties for a ID2D1PrintControl object.">
            <Field Name="fontSubset" Type="D2D1::PRINT_FONT_SUBSET_MODE" />
-           <Field Name="rasterDPI" Type="FLOAT" Comment="DPI for rasterization of all unsupported D2D commands or options, defaults to 150.0"/>
+           <Field Name="rasterDPI" Type="FLOAT" Comment="DPI for rasterization of all unsupported D2D commands or options, defaults to 150.0" />
            <Field Name="colorSpace" Type="D2D1::COLOR_SPACE" Comment="Color space for vector graphics in XPS package" />
        </Struct>
 
-        <Interface Name="IPrintControl" Extends="IUnknown" ShouldTestQI="false" IID="2c1d867d-c290-41c8-ae7e-34a98702e9a5">
+        <Interface Name="IPrintControl" Extends="IUnknown" ShouldTestQI="false" IID="2c1d867d-c290-41c8-ae7e-34a98702e9a5" Comment="Converts Direct2D primitives stored in an ID2D1CommandList into a fixed page representation. The print sub-system then consumes the primitives.">
             <Method Name="AddPage" Comment="" LockingModel="Complex">
                 <Parameter Name="commandList" Type="D2D1::ICommandList" Form="pointer" />
                 <Parameter Name="pageSize" Type="D2D::SIZE_F" />
                 <Parameter Name="pagePrintTicketStream" Type="IStream" Form="pointer opt" />
-                <Parameter Name="tag1" Type="D2D1::TAG" Form="out pointer opt" Default="NULL"/>
-                <Parameter Name="tag2" Type="D2D1::TAG" Form="out pointer opt" Default="NULL"/>
+                <Parameter Name="tag1" Type="D2D1::TAG" Form="out pointer opt" Default="NULL" />
+                <Parameter Name="tag2" Type="D2D1::TAG" Form="out pointer opt" Default="NULL" />
             </Method>
-            <Method Name="Close" Comment="" LockingModel="Local"/>
+            <Method Name="Close" Comment="" LockingModel="Local" />
         </Interface>
 
    </Namespace>

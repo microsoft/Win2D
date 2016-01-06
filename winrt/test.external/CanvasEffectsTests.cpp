@@ -1372,4 +1372,157 @@ TEST_CLASS(CanvasEffectsTests)
         Assert::IsFalse(effect->CacheOutput);
         Assert::IsFalse(!!d2dEffect2->GetValue<BOOL>(D2D1_PROPERTY_CACHED));
     }
+
+    template<typename TValue, typename TGetter, typename TSetter>
+    static void TestInterfaceProperty_NotRealized(TValue^ const& valueWrapper, TGetter&& getter, TSetter&& setter)
+    {
+        // Initial state.
+        Assert::IsNull(getter());
+        Assert::AreEqual(1, GetRefCount(valueWrapper), L"Initially, we are the only ones holding a refcount.");
+
+        // Set property.
+        setter(valueWrapper);
+        Assert::AreEqual(2, GetRefCount(valueWrapper), L"Now the effect has a refcount as well.");
+
+        // Get property.
+        auto readBack = getter();
+        Assert::AreEqual(valueWrapper, readBack);
+        Assert::AreEqual(3, GetRefCount(valueWrapper), L"Reading back the interface pointer AddRefs it.");
+        readBack = nullptr;
+        Assert::AreEqual(2, GetRefCount(valueWrapper));
+
+        // Clear property.
+        setter(nullptr);
+        Assert::IsNull(getter());
+        Assert::AreEqual(1, GetRefCount(valueWrapper), L"Nulling the effect property releases its refcount.");
+    }
+
+    template<typename TValue, typename TGetter, typename TSetter>
+    static void TestInterfaceProperty_Realized(CanvasDevice^ device, Object^ effect, TValue^ const& valueWrapper, TGetter&& getter, TSetter&& setter, bool expectWorkaround6146411 = false)
+    {
+        // Realize the effect.
+        auto d2dEffect = GetWrappedResource<ID2D1Effect>(device, effect);
+        auto d2dResource = GetWrappedResource<IUnknown>(device, valueWrapper);
+
+        // Initial state.
+        Assert::IsNull(getter());
+        Assert::AreEqual(1, GetRefCount(valueWrapper), L"Initially, we are the only ones holding a refcount on the Win2D wrapper.");
+        Assert::AreEqual(2, GetRefCount(d2dResource.Get()), L"D2D resource has refcounts from the Win2D wrapper and directly from us.");
+
+        // Set property.
+        setter(valueWrapper);
+        Assert::AreEqual(1, GetRefCount(valueWrapper), L"No refcount from the effect to Win2D wrapper, because D2D is directly referencing the D2D resource.");
+        Assert::AreEqual(expectWorkaround6146411 ? 4 : 3, GetRefCount(d2dResource.Get()), L"Now the effect has a refcount on the D2D resource.");
+
+        // Get property.
+        auto readBack = getter();
+        Assert::AreEqual(valueWrapper, readBack);
+        Assert::AreEqual(2, GetRefCount(valueWrapper), L"Reading back the Win2D wrapper AddRefs it.");
+        Assert::AreEqual(expectWorkaround6146411 ? 4 : 3, GetRefCount(d2dResource.Get()), L"No change to the D2D resource.");
+        readBack = nullptr;
+        Assert::AreEqual(1, GetRefCount(valueWrapper));
+        Assert::AreEqual(expectWorkaround6146411 ? 4 : 3, GetRefCount(d2dResource.Get()));
+
+        // Clear property.
+        setter(nullptr);
+        Assert::IsNull(getter());
+        Assert::AreEqual(1, GetRefCount(valueWrapper), L"Nulling the effect property does not alter the Win2D wrapper refcount.");
+        Assert::AreEqual(2, GetRefCount(d2dResource.Get()), L"Nulling the effect property releases the D2D resource refcount.");
+    }
+
+    TEST_METHOD(CanvasEffect_ColorManagementProfile_SourceProperty_NotRealized)
+    {
+        auto effect = ref new ColorManagementEffect();
+        auto colorProfile = ref new ColorManagementProfile(CanvasColorSpace::Srgb);
+
+        TestInterfaceProperty_NotRealized(
+            colorProfile,
+            [&] { return effect->SourceColorProfile; },
+            [&](ColorManagementProfile^ value) { effect->SourceColorProfile = value; }
+        );
+    }
+
+    TEST_METHOD(CanvasEffect_ColorManagementProfile_SourceProperty_Realized)
+    {
+        // The debug layer changes refcounting behavior, so run this test without it.
+        DisableDebugLayer disableDebug;
+
+        auto device = ref new CanvasDevice();
+        auto effect = ref new ColorManagementEffect();
+        auto colorProfile = ref new ColorManagementProfile(CanvasColorSpace::Srgb);
+
+        TestInterfaceProperty_Realized(
+            device,
+            effect,
+            colorProfile,
+            [&] { return effect->SourceColorProfile; },
+            [&](ColorManagementProfile^ value) { effect->SourceColorProfile = value; }
+        );
+    }
+
+    TEST_METHOD(CanvasEffect_ColorManagementProfile_OutputProperty_NotRealized)
+    {
+        auto effect = ref new ColorManagementEffect();
+        auto colorProfile = ref new ColorManagementProfile(CanvasColorSpace::Srgb);
+
+        TestInterfaceProperty_NotRealized(
+            colorProfile,
+            [&] { return effect->OutputColorProfile; },
+            [&](ColorManagementProfile^ value) { effect->OutputColorProfile = value; }
+        );
+    }
+
+    TEST_METHOD(CanvasEffect_ColorManagementProfile_OutputProperty_Realized)
+    {
+        // The debug layer changes refcounting behavior, so run this test without it.
+        DisableDebugLayer disableDebug;
+
+        auto device = ref new CanvasDevice();
+        auto effect = ref new ColorManagementEffect();
+        auto colorProfile = ref new ColorManagementProfile(CanvasColorSpace::Srgb);
+
+        TestInterfaceProperty_Realized(
+            device,
+            effect,
+            colorProfile,
+            [&] { return effect->OutputColorProfile; },
+            [&](ColorManagementProfile^ value) { effect->OutputColorProfile = value; },
+            true
+        );
+    }
+
+#if WINVER > _WIN32_WINNT_WINBLUE
+
+    TEST_METHOD(CanvasEffect_TransferTable3D_TableProperty_NotRealized)
+    {
+        auto device = ref new CanvasDevice();
+        auto effect = ref new TableTransfer3DEffect();
+        auto transferTable = EffectTransferTable3D::CreateFromColors(device, ref new Array<Color>(8), 2, 2, 2);
+
+        TestInterfaceProperty_NotRealized(
+            transferTable,
+            [&] { return effect->Table; },
+            [&](EffectTransferTable3D^ value) { effect->Table = value; }
+        );
+    }
+
+    TEST_METHOD(CanvasEffect_TransferTable3D_TableProperty_Realized)
+    {
+        // The debug layer changes refcounting behavior, so run this test without it.
+        DisableDebugLayer disableDebug;
+
+        auto device = ref new CanvasDevice();
+        auto effect = ref new TableTransfer3DEffect();
+        auto transferTable = EffectTransferTable3D::CreateFromColors(device, ref new Array<Color>(8), 2, 2, 2);
+
+        TestInterfaceProperty_Realized(
+            device,
+            effect,
+            transferTable,
+            [&] { return effect->Table; },
+            [&](EffectTransferTable3D^ value) { effect->Table = value; }
+        );
+    }
+
+#endif  // WINVER > _WIN32_WINNT_WINBLUE
 };

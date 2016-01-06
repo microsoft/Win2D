@@ -1,0 +1,48 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+//
+// Licensed under the MIT License. See LICENSE.txt in the project root for license information.
+
+#if (defined _WIN32_WINNT_WIN10) && (WINVER >= _WIN32_WINNT_WIN10)
+
+namespace Microsoft.Graphics.Canvas.Effects
+{
+    runtimeclass EffectTransferTable3D;
+
+    [version(VERSION), uuid(7AF06B86-2C45-49C8-8F44-E15A6D4FA44E), exclusiveto(EffectTransferTable3D)]
+    interface IEffectTransferTable3D : IInspectable
+        requires Windows.Foundation.IClosable
+    {
+        [propget] HRESULT Device([out, retval] Microsoft.Graphics.Canvas.CanvasDevice** value);
+    };
+
+    [version(VERSION), uuid(3CB83559-216A-4BCA-9BB6-E233C5AD2C48), exclusiveto(EffectTransferTable3D)]
+    interface IEffectTransferTable3DStatics : IInspectable
+    {
+        HRESULT CreateFromColors(
+            [in] Microsoft.Graphics.Canvas.ICanvasResourceCreator* resourceCreator,
+            [in] UINT32 colorCount,
+            [in, size_is(colorCount)] Windows.UI.Color* colors,
+            [in] INT32 sizeB,
+            [in] INT32 sizeG,
+            [in] INT32 sizeR,
+            [out, retval] EffectTransferTable3D** result);
+
+        HRESULT CreateFromBytes(
+            [in] Microsoft.Graphics.Canvas.ICanvasResourceCreator* resourceCreator,
+            [in] UINT32 byteCount,
+            [in, size_is(byteCount)] BYTE* bytes,
+            [in] INT32 sizeB,
+            [in] INT32 sizeG,
+            [in] INT32 sizeR,
+            [in] DIRECTX_PIXEL_FORMAT format,
+            [out, retval] EffectTransferTable3D** result);
+    };
+
+    [version(VERSION), static(IEffectTransferTable3DStatics, VERSION)]
+    runtimeclass EffectTransferTable3D
+    {
+        [default] interface IEffectTransferTable3D;
+    }
+}
+
+#endif // _WIN32_WINNT_WIN10

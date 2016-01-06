@@ -56,16 +56,15 @@ Note: For the bulk of interesting product code, go to /winrt/lib.
 **/samples** - Example projects showing how to use Win2D
 
 **/tools** - Standalone utilities, separate from Win2D product code
+- /checkcode - Verifies the right copyright banner appears at the top of each source file
 - /codegen - Generates headers+IDL from XML resource files (you don't have to build this to build Win2D)
-- /copyright - Verifies the right copyright banner appears at the top of each source file
 - /docs - Tools and scripts for building API reference documentation
 
 **/winrt** - Win2D product code and automated tests
 - /dll - Build resources for the product dll
 - /docsrc - Source files used to create the reference documentation
 - /inc - Common includes
-- /lib - All the projected IDL and runtime class implementations!
-  - /WinRTDirectX - projections for D3D/DXGI types
+- /lib - All the projected IDL and runtime class implementations
 - /published - Headers that are included directly in the NuGet package for 3rd part consumption
 - /test.external - Automated tests that use only the public WinRT interface
 - /test.internal - Automated tests that link directly with winrt.lib to access internals of the implementation

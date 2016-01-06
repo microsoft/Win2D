@@ -14,6 +14,15 @@ namespace Microsoft.Graphics.Canvas.Effects
     } EffectBorderMode;
 
     [version(VERSION)]
+    typedef enum ColorManagementRenderingIntent
+    {
+        Perceptual = 0,
+        RelativeColorimetric = 1,
+        Saturation = 2,
+        AbsoluteColorimetric = 3
+    } ColorManagementRenderingIntent;
+
+    [version(VERSION)]
     typedef enum EffectOptimization
     {
         Speed = 0,

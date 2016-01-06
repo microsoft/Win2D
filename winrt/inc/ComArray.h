@@ -4,7 +4,9 @@
 
 #pragma once
 
+#include <algorithm>
 #include "Utilities.h"
+#include "WinStringWrapper.h"
 
 //
 // RAII type for managing COM arrays.  These are arrays that are passed to/from
@@ -45,15 +47,65 @@
 //
 struct EmptyComArrayBase {};
 
+// Traits describing how to implement a ComArray of plain-old-data.
+template<typename T>
+struct ComArrayTraits
+{
+    static_assert(std::is_pod<T>::value && !std::is_pointer<T>::value, "T must be plain-old non-pointer data");
+
+    typedef T* data_ptr_t;
+
+    static void InitializeElements(T*, uint32_t) { }
+    static void ReleaseElements(T*, uint32_t) { }
+};
+
+// Traits describing how to implement a ComArray of ComPtr<T>.
+template<typename T>
+struct ComArrayTraits<Microsoft::WRL::ComPtr<T>>
+{
+    static_assert(sizeof(Microsoft::WRL::ComPtr<T>) == sizeof(T*), "ComPtr must be reinterpretable as T*");
+
+    typedef T** data_ptr_t;
+
+    static void InitializeElements(Microsoft::WRL::ComPtr<T>* data, uint32_t size)
+    {
+        std::uninitialized_fill_n(data->GetAddressOf(), size, nullptr);
+    }
+
+    static void ReleaseElements(Microsoft::WRL::ComPtr<T>* data, uint32_t size)
+    {
+        std::for_each(data, data + size, std::mem_fn(&Microsoft::WRL::ComPtr<T>::Reset));
+    }
+};
+
+// Traits describing how to implement a ComArray of WinString.
+template<typename Base>
+struct ComArrayTraits<WinStringT<Base>>
+{
+    static_assert(sizeof(WinStringT<Base>) == sizeof(HSTRING), "WinString must be reinterpretable as HSTRING");
+
+    typedef HSTRING* data_ptr_t;
+
+    static void InitializeElements(WinStringT<Base>* data, uint32_t size)
+    {
+        std::uninitialized_fill_n(data, size, nullptr);
+    }
+
+    static void ReleaseElements(WinStringT<Base>* data, uint32_t size)
+    {
+        std::for_each(data, data + size, std::mem_fn(&WinStringT<Base>::Release));
+    }
+};
+
 template<typename T, typename Base=EmptyComArrayBase>
 class ComArray : public Base
 {
     T* m_data;
     uint32_t m_size;
 
-public:
-    static_assert(std::is_pod<T>::value, "T must be plain-old-data");
+    typedef ComArrayTraits<T> Traits;
 
+public:
     ComArray(ComArray const&) = delete;
     ComArray& operator=(ComArray const&) = delete;
 
@@ -70,6 +122,7 @@ public:
         assert(size <= UINT_MAX);
         if (!m_data)
             ThrowHR(E_OUTOFMEMORY);
+        Traits::InitializeElements(m_data, m_size);
     }
 
     template<typename ITERATOR>
@@ -125,16 +178,16 @@ public:
         return &m_size;
     }
 
-    T** GetAddressOfData()
+    typename Traits::data_ptr_t* GetAddressOfData()
     {
         Release();
-        return &m_data;
+        return reinterpret_cast<Traits::data_ptr_t*>(&m_data);
     }
 
-    void Detach(uint32_t* size, T** data)
+    void Detach(uint32_t* size, typename Traits::data_ptr_t* data)
     {
         *size = m_size;
-        *data = m_data;
+        *data = reinterpret_cast<Traits::data_ptr_t>(m_data);
         
         m_size = 0;
         m_data = nullptr;
@@ -143,6 +196,7 @@ public:
 private:
     void Release()
     {
+        Traits::ReleaseElements(m_data, m_size);
         CoTaskMemFree(m_data);
         m_data = nullptr;
         m_size = 0;

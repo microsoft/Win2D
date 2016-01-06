@@ -73,4 +73,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     unsigned GetBlockSize(DXGI_FORMAT format);
     unsigned GetBytesPerBlock(DXGI_FORMAT format);
 
+    std::vector<uint8_t> ConvertColorsToBgra(uint32_t colorCount, Windows::UI::Color* colors);
+    std::vector<uint8_t> ConvertColorsToRgba(uint32_t colorCount, Windows::UI::Color* colors);
+
 }}}}

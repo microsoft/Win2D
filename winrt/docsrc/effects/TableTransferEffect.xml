@@ -13,7 +13,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
 
     <member name="T:Microsoft.Graphics.Canvas.Effects.TableTransferEffect" NoComposition="true">
       <summary>
-        Alters the colors of an image using a transfer function defined by an arbitrary lookup table.
+        Alters the colors of an image using a transfer function defined by arbitrary per-channel lookup tables.
       </summary>
       <remarks>
         <p>

@@ -1,0 +1,44 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+//
+// Licensed under the MIT License. See LICENSE.txt in the project root for license information.
+
+// This file was automatically generated. Please do not edit it manually.
+
+#if (defined _WIN32_WINNT_WIN10) && (WINVER >= _WIN32_WINNT_WIN10)
+
+namespace Microsoft.Graphics.Canvas.Effects
+{
+    runtimeclass TableTransfer3DEffect;
+
+    [version(VERSION), uuid(EF09C6E0-9437-53F7-B7B4-B53C79A0BC37), exclusiveto(TableTransfer3DEffect)]
+    interface ITableTransfer3DEffect : IInspectable
+        requires ICanvasEffect
+    {
+        [propget]
+        HRESULT Table([out, retval] EffectTransferTable3D** value);
+
+        [propput]
+        HRESULT Table([in] EffectTransferTable3D* value);
+
+        [propget]
+        HRESULT AlphaMode([out, retval] Microsoft.Graphics.Canvas.CanvasAlphaMode* value);
+
+        [propput]
+        HRESULT AlphaMode([in] Microsoft.Graphics.Canvas.CanvasAlphaMode value);
+
+        [propget]
+        HRESULT Source([out, retval] IGRAPHICSEFFECTSOURCE** source);
+
+        [propput]
+        HRESULT Source([in] IGRAPHICSEFFECTSOURCE* source);
+
+    };
+
+    [version(VERSION), activatable(VERSION)]
+    runtimeclass TableTransfer3DEffect
+    {
+        [default] interface ITableTransfer3DEffect;
+    }
+}
+
+#endif // _WIN32_WINNT_WIN10

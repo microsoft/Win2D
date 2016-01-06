@@ -43,9 +43,11 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasTextRendererTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasTextRenderingParametersTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasTypographyTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)ColorManagementProfileTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)DebugLayer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Direct3DSurfaceInteropTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)DWriteExperiments.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)EffectTransferTable3DTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Helpers.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Matrix5x4Test.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)RefCountTests.cpp" />

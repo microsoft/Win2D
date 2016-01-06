@@ -27,6 +27,15 @@ namespace test.managed
     [TestClass]
     public class EffectTests
     {
+        CanvasDevice device, device2;
+
+        ColorManagementProfile[] colorProfiles;
+
+#if WINDOWS_UWP
+        EffectTransferTable3D[] transferTables;
+#endif
+
+
         [TestMethod]
         public void ReflectOverAllEffects()
         {
@@ -38,8 +47,8 @@ namespace test.managed
                               where type.AsType() != typeof(PixelShaderEffect)
                               select type;
 
-            var device = new CanvasDevice();
-            var device2 = new CanvasDevice();
+            device = new CanvasDevice();
+            device2 = new CanvasDevice();
 
             foreach (var effectType in effectTypes)
             {
@@ -48,6 +57,7 @@ namespace test.managed
                 // Test an un-realized effect instance.
                 TestEffectSources(effectType, effect, null);
                 TestEffectProperties(effectType, effect);
+                TestEffectHdrProperties(effectType, effect);
 
                 // Realize the effect (creating a backing D2D effect instance), then test it again.
                 var initialSourceImage = RealizeEffect(device, effectType, effect);
@@ -57,7 +67,7 @@ namespace test.managed
                 TestEffectHdrProperties(effectType, effect);
 
                 // Test that interop can successfully transfer property values in both directions.
-                TestEffectInterop(device, device2, effectType, effect);
+                TestEffectInterop(effectType, effect);
             }
         }
 
@@ -119,7 +129,7 @@ namespace test.managed
         }
 
 
-        static void TestEffectProperties(TypeInfo effectType, IGraphicsEffect effect)
+        void TestEffectProperties(TypeInfo effectType, IGraphicsEffect effect)
         {
             var properties = GetEffectProperties(effectType).ToList();
 
@@ -270,6 +280,7 @@ namespace test.managed
             }
         }
 
+
         static ICanvasImage RealizeEffect(CanvasDevice device, TypeInfo effectType, IGraphicsEffect effect)
         {
             var dummySourceImage = new CanvasCommandList(device);
@@ -295,7 +306,7 @@ namespace test.managed
         }
 
 
-        static void TestEffectInterop(CanvasDevice device, CanvasDevice device2, TypeInfo effectType, IGraphicsEffect realizedEffect)
+        void TestEffectInterop(TypeInfo effectType, IGraphicsEffect realizedEffect)
         {
             // One Win2D effect is backed by a realized ID2D1Effect instance, the other is not.
             // Their property values should be the same either way.
@@ -450,6 +461,14 @@ namespace test.managed
                     (float)c.A / 255,
                 };
             }
+            else if (value is ColorManagementProfile
+#if WINDOWS_UWP
+                  || value is EffectTransferTable3D
+#endif
+                    )
+            {
+                return new object[] { value };
+            }
             else
             {
                 throw new NotSupportedException("Unsupported Box type " + value.GetType());
@@ -575,6 +594,17 @@ namespace test.managed
                                       (byte)(a[1] * 255),
                                       (byte)(a[2] * 255));
             }
+            else if (type == typeof(ColorManagementProfile)
+#if WINDOWS_UWP
+                  || type == typeof(EffectTransferTable3D)
+#endif
+                    )
+            {
+                var a = (object[])value;
+                Assert.AreEqual(1, a.Length);
+
+                return a[0];
+            }
             else
             {
                 throw new NotSupportedException("Unsupported Unbox type " + type);
@@ -609,6 +639,13 @@ namespace test.managed
                     a1 = ConvertRgbToRgba(a1);
                     a2 = ConvertRgbToRgba(a2);
                 }
+
+                return a1.SequenceEqual(a2);
+            }
+            else if (value1 is object[])
+            {
+                object[] a1 = (object[])value1;
+                object[] a2 = (object[])value2;
 
                 return a1.SequenceEqual(a2);
             }
@@ -691,7 +728,7 @@ namespace test.managed
         }
 
 
-        static object GetArbitraryTestValue(Type type, bool whichOne)
+        object GetArbitraryTestValue(Type type, bool whichOne)
         {
             if (type == typeof(int))
             {
@@ -789,6 +826,34 @@ namespace test.managed
                 return whichOne ? new float[] { 1, 2, 3 } :
                                   new float[] { 4, 5, 6, 7, 8, 9 };
             }
+            else if (type == typeof(ColorManagementProfile))
+            {
+                if (colorProfiles == null)
+                {
+                    colorProfiles = new ColorManagementProfile[]
+                    {
+                        new ColorManagementProfile(CanvasColorSpace.Srgb),
+                        new ColorManagementProfile(CanvasColorSpace.ScRgb),
+                    };
+                }
+
+                return colorProfiles[whichOne ? 0 : 1];
+            }
+#if WINDOWS_UWP
+            else if (type == typeof(EffectTransferTable3D))
+            {
+                if (transferTables == null)
+                {
+                    transferTables = new EffectTransferTable3D[]
+                    {
+                        EffectTransferTable3D.CreateFromColors(device, new Color[8], 2, 2, 2),
+                        EffectTransferTable3D.CreateFromColors(device, new Color[8], 2, 2, 2),
+                    };
+                }
+
+                return transferTables[whichOne ? 0 : 1];
+            }
+#endif
             else
             {
                 throw new NotSupportedException("Unsupported GetArbitraryTestValue type " + type);
@@ -830,6 +895,12 @@ namespace test.managed
 
                 indexMapping = new int[] { 1 };
             }
+            else if (effectType == typeof(ColorManagementEffect))
+            {
+                // ColorManagementEffect.AlphaMode has special logic to remap enum values between WinRT and D2D.
+                propertiesToRemove.Add("AlphaMode");
+                indexMapping = new int[] { 0, 1, 2, 3, 5 };
+            }
             else if (effectType == typeof(ColorMatrixEffect))
             {
                 // ColorMatrixEffect.AlphaMode has special logic to remap enum values between WinRT and D2D.
@@ -848,6 +919,12 @@ namespace test.managed
                 // EdgeDetectionEffect.AlphaMode has special logic to remap enum values between WinRT and D2D.
                 propertiesToRemove.Add("AlphaMode");
                 indexMapping = new int[] { 0, 1, 2, 3 };
+            }
+            else if (effectType == typeof(TableTransfer3DEffect))
+            {
+                // TableTransfer3DEffect.AlphaMode has special logic to remap enum values between WinRT and D2D.
+                propertiesToRemove.Add("AlphaMode");
+                indexMapping = new int[] { 0 };
             }
             else if (effectType == typeof(HighlightsAndShadowsEffect))
             {
@@ -1020,33 +1097,52 @@ namespace test.managed
         const uint D2D1_ALPHA_MODE_STRAIGHT = 2;
 
 
-        [TestMethod]
-        public void ColorMatrixEffectCustomizations()
+        static void TestAlphaModeCustomizations(IGraphicsEffect effect, int propertyIndex, Func<CanvasAlphaMode> getAlphaMode, Action<CanvasAlphaMode> setAlphaMode)
         {
-            var effect = new ColorMatrixEffect();
-
             // Verify defaults.
-            Assert.AreEqual(CanvasAlphaMode.Premultiplied, effect.AlphaMode);
-            Assert.AreEqual(D2D1_ALPHA_MODE_PREMULTIPLIED, EffectAccessor.GetProperty(effect, 1));
+            Assert.AreEqual(CanvasAlphaMode.Premultiplied, getAlphaMode());
+            Assert.AreEqual(D2D1_ALPHA_MODE_PREMULTIPLIED, EffectAccessor.GetProperty(effect, propertyIndex));
 
             // Change the property, and verify that the boxed value changes to match.
-            effect.AlphaMode = CanvasAlphaMode.Straight;
-            Assert.AreEqual(D2D1_ALPHA_MODE_STRAIGHT, EffectAccessor.GetProperty(effect, 1));
+            setAlphaMode(CanvasAlphaMode.Straight);
+            Assert.AreEqual(D2D1_ALPHA_MODE_STRAIGHT, EffectAccessor.GetProperty(effect, propertyIndex));
 
-            effect.AlphaMode = CanvasAlphaMode.Premultiplied;
-            Assert.AreEqual(D2D1_ALPHA_MODE_PREMULTIPLIED, EffectAccessor.GetProperty(effect, 1));
+            setAlphaMode(CanvasAlphaMode.Premultiplied);
+            Assert.AreEqual(D2D1_ALPHA_MODE_PREMULTIPLIED, EffectAccessor.GetProperty(effect, propertyIndex));
 
             // Verify unsupported value throws.
-            Assert.ThrowsException<ArgumentException>(() => { effect.AlphaMode = CanvasAlphaMode.Ignore; });
-            Assert.AreEqual(CanvasAlphaMode.Premultiplied, effect.AlphaMode);
+            Assert.ThrowsException<ArgumentException>(() => { setAlphaMode(CanvasAlphaMode.Ignore); });
+            Assert.AreEqual(CanvasAlphaMode.Premultiplied, getAlphaMode());
 
             // Validate that IGraphicsEffectD2D1Interop reports the right customizations.
             int index;
             EffectPropertyMapping mapping;
 
             EffectAccessor.GetNamedPropertyMapping(effect, "AlphaMode", out index, out mapping);
-            Assert.AreEqual(1, index);
+            Assert.AreEqual(propertyIndex, index);
             Assert.AreEqual(EffectPropertyMapping.ColorMatrixAlphaMode, mapping);
+        }
+
+
+        [TestMethod]
+        public void ColorManagementEffectCustomizations()
+        {
+            var effect = new ColorManagementEffect();
+
+            TestAlphaModeCustomizations(effect, 4,
+                                        () => effect.AlphaMode,
+                                        alphaMode => effect.AlphaMode = alphaMode);
+        }
+
+
+        [TestMethod]
+        public void ColorMatrixEffectCustomizations()
+        {
+            var effect = new ColorMatrixEffect();
+
+            TestAlphaModeCustomizations(effect, 1,
+                                        () => effect.AlphaMode,
+                                        alphaMode => effect.AlphaMode = alphaMode);
         }
 
 
@@ -1058,28 +1154,9 @@ namespace test.managed
         {
             var effect = new SepiaEffect();
 
-            // Verify defaults.
-            Assert.AreEqual(CanvasAlphaMode.Premultiplied, effect.AlphaMode);
-            Assert.AreEqual(D2D1_ALPHA_MODE_PREMULTIPLIED, EffectAccessor.GetProperty(effect, 1));
-
-            // Change the property, and verify that the boxed value changes to match.
-            effect.AlphaMode = CanvasAlphaMode.Straight;
-            Assert.AreEqual(D2D1_ALPHA_MODE_STRAIGHT, EffectAccessor.GetProperty(effect, 1));
-
-            effect.AlphaMode = CanvasAlphaMode.Premultiplied;
-            Assert.AreEqual(D2D1_ALPHA_MODE_PREMULTIPLIED, EffectAccessor.GetProperty(effect, 1));
-
-            // Verify unsupported value throws.
-            Assert.ThrowsException<ArgumentException>(() => { effect.AlphaMode = CanvasAlphaMode.Ignore; });
-            Assert.AreEqual(CanvasAlphaMode.Premultiplied, effect.AlphaMode);
-
-            // Validate that IGraphicsEffectD2D1Interop reports the right customizations.
-            int index;
-            EffectPropertyMapping mapping;
-
-            EffectAccessor.GetNamedPropertyMapping(effect, "AlphaMode", out index, out mapping);
-            Assert.AreEqual(1, index);
-            Assert.AreEqual(EffectPropertyMapping.ColorMatrixAlphaMode, mapping);
+            TestAlphaModeCustomizations(effect, 1,
+                                        () => effect.AlphaMode,
+                                        alphaMode => effect.AlphaMode = alphaMode);
         }
 
 
@@ -1088,28 +1165,20 @@ namespace test.managed
         {
             var effect = new EdgeDetectionEffect();
 
-            // Verify defaults.
-            Assert.AreEqual(CanvasAlphaMode.Premultiplied, effect.AlphaMode);
-            Assert.AreEqual(D2D1_ALPHA_MODE_PREMULTIPLIED, EffectAccessor.GetProperty(effect, 4));
+            TestAlphaModeCustomizations(effect, 4,
+                                        () => effect.AlphaMode,
+                                        alphaMode => effect.AlphaMode = alphaMode);
+        }
 
-            // Change the property, and verify that the boxed value changes to match.
-            effect.AlphaMode = CanvasAlphaMode.Straight;
-            Assert.AreEqual(D2D1_ALPHA_MODE_STRAIGHT, EffectAccessor.GetProperty(effect, 4));
 
-            effect.AlphaMode = CanvasAlphaMode.Premultiplied;
-            Assert.AreEqual(D2D1_ALPHA_MODE_PREMULTIPLIED, EffectAccessor.GetProperty(effect, 4));
+        [TestMethod]
+        public void TableTransfer3DEffectCustomizations()
+        {
+            var effect = new TableTransfer3DEffect();
 
-            // Verify unsupported value throws.
-            Assert.ThrowsException<ArgumentException>(() => { effect.AlphaMode = CanvasAlphaMode.Ignore; });
-            Assert.AreEqual(CanvasAlphaMode.Premultiplied, effect.AlphaMode);
-
-            // Validate that IGraphicsEffectD2D1Interop reports the right customizations.
-            int index;
-            EffectPropertyMapping mapping;
-
-            EffectAccessor.GetNamedPropertyMapping(effect, "AlphaMode", out index, out mapping);
-            Assert.AreEqual(4, index);
-            Assert.AreEqual(EffectPropertyMapping.ColorMatrixAlphaMode, mapping);
+            TestAlphaModeCustomizations(effect, 1,
+                                        () => effect.AlphaMode,
+                                        alphaMode => effect.AlphaMode = alphaMode);
         }
 
 

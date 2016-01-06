@@ -276,6 +276,18 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
             <entry>-</entry>
           </row>
           <row>
+            <entry><codeEntityReference>T:Microsoft.Graphics.Canvas.Effects.ColorManagementProfile</codeEntityReference></entry>
+            <entry><codeInline>ID2D1ColorContext</codeInline></entry>
+            <entry>Device</entry>
+            <entry>Device</entry>
+          </row>
+          <row>
+            <entry><codeEntityReference>T:Microsoft.Graphics.Canvas.Effects.EffectTransferTable3D</codeEntityReference></entry>
+            <entry><codeInline>ID2D1LookupTable3D</codeInline></entry>
+            <entry>Device</entry>
+            <entry>-</entry>
+          </row>
+          <row>
             <entry>
               <codeEntityReference>N:Microsoft.Graphics.Canvas.Effects</codeEntityReference>.*
               (multiple Win2D classes map to the same D2D type)

@@ -225,7 +225,15 @@ namespace CodeGen
             output.WriteLine("};");
             output.WriteLine();
 
-            output.WriteLine("[version(VERSION), activatable(VERSION)]");
+            string statics = "";
+            
+            if (effect.Overrides != null && effect.Overrides.HasStatics)
+            {
+                statics = ", static(" + effect.InterfaceName + "Statics, VERSION)";
+            }
+
+            output.WriteLine("[version(VERSION), activatable(VERSION)" + statics + "]");
+
             output.WriteLine("runtimeclass " + effect.ClassName);
             output.WriteLine("{");
             output.Indent();
@@ -383,7 +391,10 @@ namespace CodeGen
 
             WritePropertyMapping(effect, output);
 
-            output.WriteLine("ActivatableClass(" + effect.ClassName + ");");
+            if (effect.Overrides == null || !effect.Overrides.HasStatics)
+            {
+                output.WriteLine("ActivatableClass(" + effect.ClassName + ");");
+            }
 
             output.Unindent();
             output.WriteLine("}}}}}");
@@ -581,6 +592,10 @@ namespace CodeGen
             else if (property.IsArray)
             {
                 value = "{ " + value + " }";
+            }
+            else if (value == "null")
+            {
+                value = "static_cast<" + property.TypeNameCpp + ">(nullptr)";
             }
 
             return value;

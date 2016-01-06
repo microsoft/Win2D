@@ -174,7 +174,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <summary>Specifies options that should be applied to the color space.</summary>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.CanvasColorSpace.Custom">
-      <summary>The color space is not sRGB or scRGB, but is described some other way, such as with a color profile set up through Direct2D interop.</summary>
+      <summary>The color space is a custom ICC <see cref="T:Microsoft.Graphics.Canvas.Effects.ColorManagementProfile"/>.</summary>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.CanvasColorSpace.Srgb">
       <summary>The color space is sRGB.</summary>

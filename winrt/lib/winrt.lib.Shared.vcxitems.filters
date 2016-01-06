@@ -415,6 +415,21 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)images\ScopedBitmapMappedPixelAccess.cpp">
       <Filter>images</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\ColorManagementEffect.cpp">
+      <Filter>effects\generated</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\TableTransfer3DEffect.cpp">
+      <Filter>effects\generated</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\ColorManagementProfile.cpp">
+      <Filter>effects</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\EffectTransferTable3D.cpp">
+      <Filter>effects</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\ColorManagementEffectFactory.cpp">
+      <Filter>effects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)pch.h" />
@@ -844,6 +859,21 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)images\ScopedBitmapMappedPixelAccess.h">
       <Filter>images</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\ColorManagementEffect.h">
+      <Filter>effects\generated</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\TableTransfer3DEffect.h">
+      <Filter>effects\generated</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\ColorManagementProfile.h">
+      <Filter>effects</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\EffectTransferTable3D.h">
+      <Filter>effects</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\ColorManagementEffectFactory.h">
+      <Filter>effects</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)Canvas.codegen.idl" />
@@ -1118,6 +1148,21 @@
       <Filter>text</Filter>
     </None>
     <None Include="$(MSBuildThisFileDirectory)effects\ICanvasEffect.abi.idl">
+      <Filter>effects</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)effects\ColorManagementProfile.abi.idl">
+      <Filter>effects</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\ColorManagementEffect.abi.idl">
+      <Filter>effects\generated</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\TableTransfer3DEffect.abi.idl">
+      <Filter>effects\generated</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)effects\EffectTransferTable3D.abi.idl">
+      <Filter>effects</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)effects\ColorManagementEffectStatics.abi.idl">
       <Filter>effects</Filter>
     </None>
   </ItemGroup>

@@ -221,6 +221,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         ReleaseResource();
 
         m_realizationDevice.Reset();
+        m_workaround6146411.Reset();
         m_sources.assign(m_sources.size(), SourceReference());
 
         if (m_sourcesVector)
@@ -1183,6 +1184,24 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             }
             break;
 
+        case PropertyType_InspectableArray:
+            {
+                ComPtr<IInspectable> wrapper;
+                GetValueOfProperty(propertyValue, wrapper.GetAddressOf());
+
+                auto d2dResource = wrapper ? GetWrappedResource<IUnknown>(wrapper, m_realizationDevice.GetWrapper()) : nullptr;
+
+                ThrowIfFailed(d2dEffect->SetValue(index, d2dResource.Get()));
+
+                // Windows has a bug that prevents reading back DESTINATION_COLOR_CONTEXT from a CLSID_D2D1ColorManagement effect.
+                // As a partial workaround, we cache this property value in the Win2D wrapper.
+                if (IsEqualGUID(m_effectId, CLSID_D2D1ColorManagement) && index == D2D1_COLORMANAGEMENT_PROP_DESTINATION_COLOR_CONTEXT)
+                {
+                    m_workaround6146411 = d2dResource;
+                }
+            }
+            break;
+
         default:
             ThrowHR(E_NOTIMPL);
         }
@@ -1258,6 +1277,29 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                 ThrowIfFailed(d2dEffect->GetValue(index, value.data(), sizeInBytes));
 
                 return CreateProperty(m_propertyValueFactory.Get(), sizeInFloats, reinterpret_cast<float*>(value.data()));
+            }
+            break;
+
+        case D2D1_PROPERTY_TYPE_IUNKNOWN:
+        case D2D1_PROPERTY_TYPE_COLOR_CONTEXT:
+            {
+                ComPtr<IUnknown> d2dResource;
+
+                if (IsEqualGUID(m_effectId, CLSID_D2D1ColorManagement) && index == D2D1_COLORMANAGEMENT_PROP_DESTINATION_COLOR_CONTEXT)
+                {
+                    // Windows has a bug that prevents reading back DESTINATION_COLOR_CONTEXT from a CLSID_D2D1ColorManagement effect.
+                    // As a partial workaround, we cache this property value in the Win2D wrapper and return that instead.
+                    // This is correct as long as the Win2D wrapper is kept alive, and the property is not changed via D2D interop.
+                    d2dResource = m_workaround6146411;
+                }
+                else
+                {
+                    d2dResource.Attach(d2dEffect->GetValue<IUnknown*>(index));
+                }
+
+                auto wrapper = d2dResource ? ResourceManager::GetOrCreate(m_realizationDevice.GetWrapper(), d2dResource.Get(), 0) : nullptr;
+
+                return CreateProperty(m_propertyValueFactory.Get(), wrapper.Get());
             }
             break;
 
@@ -1348,6 +1390,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
             // Clear the effect resource.
             ReleaseResource();
+
+            m_workaround6146411.Reset();
         }
     }
 

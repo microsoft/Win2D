@@ -1,0 +1,72 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+//
+// Licensed under the MIT License. See LICENSE.txt in the project root for license information.
+
+// This file was automatically generated. Please do not edit it manually.
+
+namespace Microsoft.Graphics.Canvas.Effects
+{
+    [version(VERSION)]
+    typedef enum ColorManagementEffectQuality
+    {
+        Proof = 0,
+        Normal = 1,
+        Best = 2
+    } ColorManagementEffectQuality;
+
+    runtimeclass ColorManagementEffect;
+
+    [version(VERSION), uuid(6E8BBE37-E1E4-5AD0-B98D-940E3213A54E), exclusiveto(ColorManagementEffect)]
+    interface IColorManagementEffect : IInspectable
+        requires ICanvasEffect
+    {
+        [propget]
+        HRESULT SourceColorProfile([out, retval] ColorManagementProfile** value);
+
+        [propput]
+        HRESULT SourceColorProfile([in] ColorManagementProfile* value);
+
+        [propget]
+        HRESULT SourceRenderingIntent([out, retval] ColorManagementRenderingIntent* value);
+
+        [propput]
+        HRESULT SourceRenderingIntent([in] ColorManagementRenderingIntent value);
+
+        [propget]
+        HRESULT OutputColorProfile([out, retval] ColorManagementProfile** value);
+
+        [propput]
+        HRESULT OutputColorProfile([in] ColorManagementProfile* value);
+
+        [propget]
+        HRESULT OutputRenderingIntent([out, retval] ColorManagementRenderingIntent* value);
+
+        [propput]
+        HRESULT OutputRenderingIntent([in] ColorManagementRenderingIntent value);
+
+        [propget]
+        HRESULT AlphaMode([out, retval] Microsoft.Graphics.Canvas.CanvasAlphaMode* value);
+
+        [propput]
+        HRESULT AlphaMode([in] Microsoft.Graphics.Canvas.CanvasAlphaMode value);
+
+        [propget]
+        HRESULT Quality([out, retval] ColorManagementEffectQuality* value);
+
+        [propput]
+        HRESULT Quality([in] ColorManagementEffectQuality value);
+
+        [propget]
+        HRESULT Source([out, retval] IGRAPHICSEFFECTSOURCE** source);
+
+        [propput]
+        HRESULT Source([in] IGRAPHICSEFFECTSOURCE* source);
+
+    };
+
+    [version(VERSION), activatable(VERSION), static(IColorManagementEffectStatics, VERSION)]
+    runtimeclass ColorManagementEffect
+    {
+        [default] interface IColorManagementEffect;
+    }
+}

@@ -38,6 +38,8 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasCreateResourcesEventArgsTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasTextRendererTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)DebugLayer.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)EffectTransferTable3DTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)ColorManagementProfileTests.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)pch.h" />

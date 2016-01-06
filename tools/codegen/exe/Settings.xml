@@ -115,6 +115,8 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <Field Name="Ignore" Index="2" ShouldProject="false"/>
     </Enum>
     <Enum Name="CompositeEffectMode" ShouldProject="false" ProjectedNameOverride="CanvasComposite" Namespace="Microsoft.Graphics.Canvas"/>
+    <Enum Name="EffectSourceRenderingIntent" ProjectedNameOverride="ColorManagementRenderingIntent"/>
+    <Enum Name="EffectDestinationRenderingIntent" ProjectedNameOverride="ColorManagementRenderingIntent"/>
     <Effect Name="AffineTransform2DEffect" ProjectedNameOverride="Transform2DEffect"/>
     <Effect Name="FloodEffect" ProjectedNameOverride="ColorSourceEffect"/>
     <Effect Name="AtlasEffect">
@@ -124,6 +126,11 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <Effect Name="BorderEffect">
       <Property Name="EdgeModeX" ProjectedNameOverride="ExtendX"/>
       <Property Name="EdgeModeY" ProjectedNameOverride="ExtendY"/>
+    </Effect>
+    <Effect Name="ColorManagementEffect" HasStatics="true">
+      <Property Name="SourceColorContext" ProjectedNameOverride="SourceColorProfile"/>
+      <Property Name="DestinationColorContext" ProjectedNameOverride="OutputColorProfile"/>
+      <Property Name="DestinationRenderingIntent" ProjectedNameOverride="OutputRenderingIntent"/>
     </Effect>
     <Effect Name="CropEffect">
       <Property Name="Rect" ProjectedNameOverride="SourceRectangle"/>
@@ -256,6 +263,9 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <Property Name="InputColorSpace" ProjectedNameOverride="SourceColorSpace"/>
     </Effect>
     <Effect Name="InvertEffect" WinVer="_WIN32_WINNT_WIN10"/>
+    <Effect Name="LookupTable3DEffect" ProjectedNameOverride="TableTransfer3DEffect" WinVer="_WIN32_WINNT_WIN10">
+      <Property Name="Lut" ProjectedNameOverride="Table"/>
+    </Effect>
     <Effect Name="PosterizeEffect" WinVer="_WIN32_WINNT_WIN10"/>
     <Effect Name="RgbToHueEffect" WinVer="_WIN32_WINNT_WIN10"/>
     <Effect Name="SepiaEffect" WinVer="_WIN32_WINNT_WIN10"/>

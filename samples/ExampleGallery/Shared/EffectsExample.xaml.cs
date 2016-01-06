@@ -33,6 +33,7 @@ namespace ExampleGallery
             Blend,
             Border,
             Brightness,
+            ColorManagement,
             ColorMatrix,
             Composite,
             ConvolveMatrix,
@@ -63,6 +64,7 @@ namespace ExampleGallery
             Sepia,
             Sharpen,
             Straighten,
+            TableTransfer3D,
             TemperatureAndTint,
             Vignette,
 #endif
@@ -185,6 +187,10 @@ namespace ExampleGallery
                     effect = CreateBrightness();
                     break;
 
+                case EffectType.ColorManagement:
+                    effect = CreateColorManagement();
+                    break;
+
                 case EffectType.ColorMatrix:
                     effect = CreateColorMatrix();
                     break;
@@ -305,6 +311,10 @@ namespace ExampleGallery
                     effect = CreateStraighten();
                     break;
 
+                case EffectType.TableTransfer3D:
+                    effect = CreateTableTransfer3D();
+                    break;
+
                 case EffectType.TemperatureAndTint:
                     effect = CreateTemperatureAndTint();
                     break;
@@ -414,6 +424,44 @@ namespace ExampleGallery
             };
 
             return brightnessEffect;
+        }
+
+        private ICanvasImage CreateColorManagement()
+        {
+            var srgb = new ColorManagementProfile(CanvasColorSpace.Srgb);
+            var scrgb = new ColorManagementProfile(CanvasColorSpace.ScRgb);
+
+            var srgbToScRgb = new ColorManagementEffect
+            {
+                Source = bitmapTiger,
+                SourceColorProfile = srgb,
+                OutputColorProfile = scrgb,
+            };
+
+            var scRgbToSrgb = new ColorManagementEffect
+            {
+                Source = bitmapTiger,
+                SourceColorProfile = scrgb,
+                OutputColorProfile = srgb,
+            };
+
+            animationFunction = elapsedTime => { };
+
+            currentEffectSize = bitmapTiger.Size.ToVector2() * new Vector2(1, 2.1f);
+
+            return new CompositeEffect
+            {
+                Sources =
+                {
+                    AddTextOverlay(srgbToScRgb, 0, 0, "Srgb -> ScRgb"),
+
+                    new Transform2DEffect
+                    {
+                        Source = AddTextOverlay(scRgbToSrgb, 0, 0, "ScRgb -> Srgb"),
+                        TransformMatrix = Matrix3x2.CreateTranslation(bitmapTiger.Size.ToVector2() * new Vector2(0, 1.1f))
+                    }
+                }
+            };
         }
 
         private ICanvasImage CreateColorMatrix()
@@ -1283,6 +1331,66 @@ namespace ExampleGallery
             return straightenEffect;
         }
 
+        private ICanvasImage CreateTableTransfer3D()
+        {
+            textLabel = requiresWin10;
+
+            animationFunction = elapsedTime => { };
+
+            var transferTable = CreateTransferTableFromFunction(canvas, 16, 16, 16, DesaturateAllButTheReds);
+
+            return new TableTransfer3DEffect
+            {
+                Source = bitmapTiger,
+                Table = transferTable
+            };
+        }
+
+        // Color transfer function desaturates most colors, but increases the saturation of reddish input values.
+        private static Vector3 DesaturateAllButTheReds(Vector3 color)
+        {
+            float redness = color.X - (color.Y + color.Z) / 2;
+
+            float wantedSaturation = (float)Math.Max(0, Math.Pow(redness, 3) * 24);
+
+            Vector3 desaturatedColor = new Vector3(Vector3.Dot(color, Vector3.One) / 3);
+
+            return Vector3.Lerp(desaturatedColor, color, wantedSaturation);
+        }
+
+        // Helper creates an EffectTransferTable3D by evaluating the specified transfer function for every location within the table.
+        private static EffectTransferTable3D CreateTransferTableFromFunction(ICanvasResourceCreator resourceCreator, int sizeB, int sizeG, int sizeR, Func<Vector3, Vector3> transferFunction)
+        {
+            var tableColors = new List<Color>();
+
+            var maxExtents = new Vector3(sizeR, sizeG, sizeB) - Vector3.One;
+
+            for (int r = 0; r < sizeR; r++)
+            {
+                for (int g = 0; g < sizeG; g++)
+                {
+                    for (int b = 0; b < sizeB; b++)
+                    {
+                        Vector3 sourceColor = new Vector3(r, g, b) / maxExtents;
+
+                        Vector3 outputColor = transferFunction(sourceColor);
+
+                        tableColors.Add(ToColor(outputColor));
+                    }
+                }
+            }
+
+            return EffectTransferTable3D.CreateFromColors(resourceCreator, tableColors.ToArray(), sizeB, sizeG, sizeR);
+        }
+
+        // Converts an RGB color value from Vector3 to Windows.UI.Color format.
+        private static Color ToColor(Vector3 value)
+        {
+            var scaled = Vector3.Clamp(value, Vector3.Zero, Vector3.One) * 255;
+
+            return Color.FromArgb(255, (byte)scaled.X, (byte)scaled.Y, (byte)scaled.Z);
+        }
+
         private ICanvasImage CreateTemperatureAndTint()
         {
             textLabel = requiresWin10;
@@ -1349,14 +1457,14 @@ namespace ExampleGallery
             };
         }
 
-        private ICanvasImage AddTextOverlay(ICanvasImage effect, float x, float y)
+        private ICanvasImage AddTextOverlay(ICanvasImage effect, float x, float y, string text = null)
         {
             var textOverlay = new CanvasRenderTarget(canvas, 200, 30);
 
             using (var ds = textOverlay.CreateDrawingSession())
             {
                 ds.Clear(Color.FromArgb(0, 0, 0, 0));
-                ds.DrawText(effect.GetType().Name.Replace("Effect", ""), 0, 0, Colors.White);
+                ds.DrawText(text ?? effect.GetType().Name.Replace("Effect", ""), 0, 0, Colors.White);
             }
 
             return new Transform2DEffect

@@ -1,0 +1,159 @@
+<?xml version="1.0"?>
+<!--
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+Licensed under the MIT License. See LICENSE.txt in the project root for license information.
+-->
+
+<doc>
+  <assembly>
+    <name>Microsoft.Graphics.Canvas</name>
+  </assembly>
+  <members>
+  
+    <member name="T:Microsoft.Graphics.Canvas.Effects.TableTransfer3DEffect" Experimental="true" Win10="true" NoComposition="true">
+      <summary>
+        Alters the colors of an image using a transfer function defined by an arbitrary three dimensional lookup table.
+      </summary>
+      <remarks>
+        <p>
+          A 3D look-up table is a general purpose effect that can be used to encapsulate any 1:1 
+          color transform effect by precomputing how the effect maps inputs to outputs for a subset 
+          of all possible input values.
+        </p>
+        <p>
+          The TableTransfer3D effect modifies an input image by using the image's RGB color value 
+          to index into a 3D lookup table. This table contains precomputed output values of an 
+          arbitrary color transform function.
+        </p>
+        <p>This Windows Runtime type corresponds to the 
+          <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/dn890714.aspx">D2D 3D lookup table effect</a>.</p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Effects.TableTransfer3DEffect.#ctor">
+      <summary>Initializes a new instance of the TableTransfer3DEffect class.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.TableTransfer3DEffect.Source">
+      <summary>Gets or sets the input source for TableTransfer3D effect.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.TableTransfer3DEffect.Table">
+      <summary>Gets or sets the 3D lookup table used to transform color values.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.TableTransfer3DEffect.AlphaMode">
+      <summary>Specifies the treatment of alpha. Default value Premultiplied.</summary>
+      <remarks>
+        <p>
+          Effect inputs and outputs are assumed to be in
+          <a href="PremultipliedAlpha.htm">premultiplied alpha</a> format, so when this 
+          property is set to Premultiplied, the transfer table is applied directly to the 
+          input values with no extra conversions.
+        </p>
+        <p>
+          If AlphaMode set to Straight, input values will be unpremultiplied, then the 
+          transfer table applied, and finally the result converted back to premultiplied 
+          format.
+        </p>
+      </remarks>
+    </member>
+
+    <inherittemplate name="EffectTemplate" replacement="TableTransfer3DEffect" />
+    <inherittemplate name="ICanvasEffectTemplate" replacement="TableTransfer3DEffect" />
+
+    <member name="T:Microsoft.Graphics.Canvas.Effects.EffectTransferTable3D" Experimental="true" Win10="true">
+      <summary>A three dimensional lookup table, for use with TableTransfer3DEffect.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Effects.EffectTransferTable3D.CreateFromColors(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.UI.Color[],System.Int32,System.Int32,System.Int32)">
+      <summary>Creates a 3D transfer table from an array of colors.</summary>
+      <remarks>
+        <inherittemplate name="EffectTransferTable3DRemarks" />
+        <code>
+          EffectTransferTable3D CreateTransferTableFromFunction(ICanvasResourceCreator resourceCreator, int sizeB, int sizeG, int sizeR, Func&lt;Vector3, Vector3&gt; transferFunction)
+          {
+              var tableColors = new List&lt;Color&gt;();
+
+              var maxExtents = new Vector3(sizeR, sizeG, sizeB) - Vector3.One;
+
+              for (int r = 0; r &lt; sizeR; r++)
+              {
+                  for (int g = 0; g &lt; sizeG; g++)
+                  {
+                      for (int b = 0; b &lt; sizeB; b++)
+                      {
+                          Vector3 sourceColor = new Vector3(r, g, b) / maxExtents;
+
+                          Vector3 outputColor = transferFunction(sourceColor);
+
+                          tableColors.Add(ToColor(outputColor));
+                      }
+                  }
+              }
+              
+              return EffectTransferTable3D.CreateFromColors(resourceCreator, tableColors.ToArray(), sizeB, sizeG, sizeR);
+          }
+        </code>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Effects.EffectTransferTable3D.CreateFromBytes(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Byte[],System.Int32,System.Int32,System.Int32,Windows.Graphics.DirectX.DirectXPixelFormat)">
+      <summary>Creates a 3D transfer table from an array of bytes.</summary>
+      <remarks>
+        <p>Supported pixel formats are:</p>
+        <ul>
+          <li>R8G8B8A8UIntNormalized</li>
+          <li>R8G8B8A8UIntNormalizedSrgb</li>
+          <li>R16G16B16A16UIntNormalized</li>
+          <li>R16G16B16A16Float</li>
+          <li>R32G32B32A32Float</li>
+        </ul>
+        <inherittemplate name="EffectTransferTable3DRemarks" />
+        <code>
+          EffectTransferTable3D CreateTransferTableFromFunction(ICanvasResourceCreator resourceCreator, int sizeB, int sizeG, int sizeR, Func&lt;Vector3, Vector3&gt; transferFunction)
+          {
+              var tableBytes = new List&lt;byte&gt;();
+
+              var maxExtents = new Vector3(sizeR, sizeG, sizeB) - Vector3.One;
+
+              for (int r = 0; r &lt; sizeR; r++)
+              {
+                  for (int g = 0; g &lt; sizeG; g++)
+                  {
+                      for (int b = 0; b &lt; sizeB; b++)
+                      {
+                          Vector3 sourceColor = new Vector3(r, g, b) / maxExtents;
+
+                          Vector3 outputColor = transferFunction(sourceColor);
+
+                          tableBytes.Add((byte)(outputColor.R * 255));
+                          tableBytes.Add((byte)(outputColor.G * 255));
+                          tableBytes.Add((byte)(outputColor.B * 255));
+                          tableBytes.Add((byte)(255));
+                      }
+                  }
+              }
+              
+              return EffectTransferTable3D.CreateFromBytes(resourceCreator, tableBytes.ToArray(), sizeB, sizeG, sizeR, DirectXPixelFormat.R8G8B8A8UIntNormalized);
+          }
+        </code>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Effects.EffectTransferTable3D.Dispose">
+      <summary>Releases all resources used by the EffectTransferTable3D.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.EffectTransferTable3D.Device">
+      <summary>Gets the device associated with this EffectTransferTable3D.</summary>
+    </member>
+
+    <template name="EffectTransferTable3DRemarks">
+      <p>
+        The maximum table size is 256 values per axis, but be warned that a 256x256x256 table, 
+        using 32 bits per pixel, takes up 64 megabytes! Thanks to linear interpolation, much 
+        smaller tables will usually give good results.
+      </p>
+      <p>
+        The table data is laid out as a 3D array with the blue values changing with highest
+        frequency. For instance, to generate a table by evaluating an arbitrary color transfer
+        function for every value in it:
+      </p>
+    </template>
+
+  </members>
+</doc>

@@ -11,6 +11,7 @@
 #include "BlendEffect.h"
 #include "BorderEffect.h"
 #include "BrightnessEffect.h"
+#include "ColorManagementEffect.h"
 #include "ColorMatrixEffect.h"
 #include "ColorSourceEffect.h"
 #include "CompositeEffect.h"
@@ -60,6 +61,7 @@
 #include "SepiaEffect.h"
 #include "SharpenEffect.h"
 #include "StraightenEffect.h"
+#include "TableTransfer3DEffect.h"
 #include "TemperatureAndTintEffect.h"
 #include "VignetteEffect.h"
 
@@ -73,6 +75,7 @@ std::pair<IID, CanvasEffect::MakeEffectFunction> CanvasEffect::m_effectMakers[] 
     { BlendEffect::EffectId(),                MakeEffect<BlendEffect>                },
     { BorderEffect::EffectId(),               MakeEffect<BorderEffect>               },
     { BrightnessEffect::EffectId(),           MakeEffect<BrightnessEffect>           },
+    { ColorManagementEffect::EffectId(),      MakeEffect<ColorManagementEffect>      },
     { ColorMatrixEffect::EffectId(),          MakeEffect<ColorMatrixEffect>          },
     { ColorSourceEffect::EffectId(),          MakeEffect<ColorSourceEffect>          },
     { CompositeEffect::EffectId(),            MakeEffect<CompositeEffect>            },
@@ -122,6 +125,7 @@ std::pair<IID, CanvasEffect::MakeEffectFunction> CanvasEffect::m_effectMakers[] 
     { SepiaEffect::EffectId(),                MakeEffect<SepiaEffect>                },
     { SharpenEffect::EffectId(),              MakeEffect<SharpenEffect>              },
     { StraightenEffect::EffectId(),           MakeEffect<StraightenEffect>           },
+    { TableTransfer3DEffect::EffectId(),      MakeEffect<TableTransfer3DEffect>      },
     { TemperatureAndTintEffect::EffectId(),   MakeEffect<TemperatureAndTintEffect>   },
     { VignetteEffect::EffectId(),             MakeEffect<VignetteEffect>             },
 

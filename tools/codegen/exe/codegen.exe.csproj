@@ -122,6 +122,8 @@
     <None Include="apiref\effects\Turbulence.xml" />
     <None Include="apiref\effects\UnPremultiply.xml" />
     <None Include="apiref\effects\Vignette.xml" />
+    <None Include="apiref\effects\ColorManagementEffect.xml" />
+    <None Include="apiref\effects\LookupTable3D.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

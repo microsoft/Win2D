@@ -4,6 +4,10 @@
 
 #include "pch.h"
 
+static int stringCreateCount;
+static int stringDuplicateCount;
+static int stringDeleteCount;
+
 TEST_CLASS(ComArrayTests)
 {
     class Tracker
@@ -172,5 +176,180 @@ TEST_CLASS(ComArrayTests)
         Assert::AreEqual(2.0, d[0]);
         Assert::AreEqual(3.0, d[1]);
         Assert::AreEqual(4.0, d[2]);
+    }
+
+    TEST_METHOD_EX(ComArray_ReleasesInterfacePointers)
+    {
+        struct MockInterface
+        {
+            MockInterface()
+                : refCount(1)
+            { }
+
+            DWORD AddRef() { return ++refCount; }
+            DWORD Release() { return --refCount; };
+
+            int refCount;
+        };
+
+        MockInterface a, b;
+        MockInterface* values[3] = { &a, &b, nullptr };
+
+        {
+            // Constructor addrefs.
+            ComArray<ComPtr<MockInterface>> array(std::begin(values), std::end(values));
+
+            Assert::AreEqual(2, a.refCount);
+            Assert::AreEqual(2, b.refCount);
+        }
+
+        // Destructor releases.
+        Assert::AreEqual(1, a.refCount);
+        Assert::AreEqual(1, b.refCount);
+
+        {
+            // Size based ctor doesn't try to addref nulls.
+            ComArray<ComPtr<MockInterface>> array(2);
+
+            array[0] = &a;
+            Assert::AreEqual(2, a.refCount);
+
+            // GetAddressOfData releases.
+            auto address = array.GetAddressOfData();
+            auto size = array.GetAddressOfSize();
+
+            Assert::AreEqual(1, a.refCount);
+
+            // Emulate a COM API that returns an array of interface pointers.
+            auto mem = reinterpret_cast<MockInterface**>(::CoTaskMemAlloc(sizeof(MockInterface*) * 2));
+
+            mem[0] = &a;
+            mem[1] = &b;
+
+            *address = mem;
+            *size = 2;
+
+            Assert::AreEqual(1, a.refCount);
+            Assert::AreEqual(1, b.refCount);
+
+            // Detach does not release the interfaces.
+            uint32_t sizeOut;
+            MockInterface** memOut;
+
+            array.Detach(&sizeOut, &memOut);
+
+            Assert::AreEqual<void*>(mem, memOut);
+            ::CoTaskMemFree(mem);
+        }
+
+        Assert::AreEqual(1, a.refCount);
+        Assert::AreEqual(1, b.refCount);
+    }
+
+    TEST_METHOD_EX(ComArray_ReleasesStrings)
+    {
+        struct CountStrings
+        {
+            static HRESULT WindowsCreateString(const wchar_t* str, uint32_t length, HSTRING* value)
+            {
+                Assert::IsTrue(str && *str);
+                stringCreateCount++;
+                return ::WindowsCreateString(str, length, value);
+            }
+
+            static HRESULT WindowsDuplicateString(HSTRING s, HSTRING* value)
+            {
+                if (s)
+                    stringDuplicateCount++;
+
+                return ::WindowsDuplicateString(s, value);
+            }
+
+            static HRESULT WindowsDeleteString(HSTRING s)
+            {
+                stringDeleteCount++;
+                return ::WindowsDeleteString(s);
+            }
+        };
+
+        stringCreateCount = 0;
+        stringDuplicateCount = 0;
+        stringDeleteCount = 0;
+
+        typedef WinStringT<CountStrings> CountedString;
+
+        {
+            CountedString values[3] = { CountedString(L"hello"), CountedString(L"world"), CountedString() };
+
+            Assert::AreEqual(2, stringCreateCount);
+            Assert::AreEqual(0, stringDuplicateCount);
+            Assert::AreEqual(0, stringDeleteCount);
+
+            {
+                // Constructor duplicates.
+                ComArray<CountedString> array(std::begin(values), std::end(values));
+
+                Assert::AreEqual(2, stringCreateCount);
+                Assert::AreEqual(2, stringDuplicateCount);
+                Assert::AreEqual(0, stringDeleteCount);
+            }
+
+            // Destructor deletes.
+            Assert::AreEqual(2, stringCreateCount);
+            Assert::AreEqual(2, stringDuplicateCount);
+            Assert::AreEqual(2, stringDeleteCount);
+
+            HSTRING* mem;
+            HSTRING* memOut;
+            uint32_t sizeOut;
+
+            {
+                // Size based ctor doesn't try to duplicate nulls.
+                ComArray<CountedString> array(2);
+
+                array[0] = CountedString(L"hello");
+
+                Assert::AreEqual(3, stringCreateCount);
+                Assert::AreEqual(2, stringDuplicateCount);
+                Assert::AreEqual(2, stringDeleteCount);
+
+                // GetAddressOfData deletes.
+                auto address = array.GetAddressOfData();
+                auto size = array.GetAddressOfSize();
+
+                Assert::AreEqual(3, stringCreateCount);
+                Assert::AreEqual(2, stringDuplicateCount);
+                Assert::AreEqual(3, stringDeleteCount);
+
+                // Emulate a COM API that returns an array of interface pointers.
+                mem = reinterpret_cast<HSTRING*>(::CoTaskMemAlloc(sizeof(HSTRING) * 2));
+
+                CountedString(L"hello").CopyTo(&mem[0]);
+                CountedString(L"world").CopyTo(&mem[1]);
+
+                *address = mem;
+                *size = 2;
+
+                Assert::AreEqual(5, stringCreateCount);
+                Assert::AreEqual(4, stringDuplicateCount);
+                Assert::AreEqual(5, stringDeleteCount);
+
+                // Detach does not release the interfaces.
+                array.Detach(&sizeOut, &memOut);
+            }
+
+            Assert::AreEqual(5, stringCreateCount);
+            Assert::AreEqual(4, stringDuplicateCount);
+            Assert::AreEqual(5, stringDeleteCount);
+
+            Assert::AreEqual<void*>(mem, memOut);
+            CountStrings::WindowsDeleteString(mem[0]);
+            CountStrings::WindowsDeleteString(mem[1]);
+            ::CoTaskMemFree(mem);
+        }
+
+        Assert::AreEqual(5, stringCreateCount);
+        Assert::AreEqual(4, stringDuplicateCount);
+        Assert::AreEqual(9, stringDeleteCount);
     }
 };

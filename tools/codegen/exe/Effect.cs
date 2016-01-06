@@ -311,10 +311,11 @@ namespace CodeGen
         {
             var typeRenames = new Dictionary<string, string[]>
             {
-                // D2D name                 IDL name   C++ name
-                { "bool",   new string[] { "boolean", "boolean" } },
-                { "int32",  new string[] { "INT32",   "int32_t" } },
-                { "uint32", new string[] { "INT32",   "int32_t" } },
+                // D2D name                       IDL name                   C++ name
+                { "bool",         new string[] { "boolean",                 "boolean" } },
+                { "int32",        new string[] { "INT32",                   "int32_t" } },
+                { "uint32",       new string[] { "INT32",                   "int32_t" } },
+                { "colorcontext", new string[] { "ColorManagementProfile*", "IColorManagementProfile*" } },
             };
 
             foreach (var property in GetAllEffectsProperties(effects))
@@ -372,6 +373,12 @@ namespace CodeGen
                         property.TypeNameCpp = "float";
                         property.TypeNameBoxed = "float";
                         property.IsArray = true;
+                    }
+                    else if (xmlName == "iunknown" && property.Name == "Table")
+                    {
+                        // Property of type ID2D1LookupTable3D is projected as EffectTransferTable3D.
+                        property.TypeNameIdl = "EffectTransferTable3D*";
+                        property.TypeNameCpp = property.TypeNameBoxed = "IEffectTransferTable3D*";
                     }
                     else
                     {

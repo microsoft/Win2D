@@ -62,6 +62,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         boolean m_cacheOutput;
         D2D1_BUFFER_PRECISION m_bufferPrecision;
 
+        // Workaround Windows bug 6146411 (crash when reading back DESTINATION_COLOR_CONTEXT from a CLSID_D2D1ColorManagement effect).
+        ComPtr<IUnknown> m_workaround6146411;
+
 
         // State tracking the effect source images. This data is authoritative when
         // the effect is not realized - otherwise just a cache to speed reverse lookups.
@@ -536,6 +539,33 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
 #undef PROPERTY_TYPE_ACCESSOR
 #undef ARRAY_PROPERTY_TYPE_ACCESSOR
+
+
+        // Interface types are stored as a PropertyType_InspectableArray containing a single IInspectable.
+        // This is because IPropertyValue provides CreateInspectableArray, but not CreateInspectable.
+        static ComPtr<IPropertyValue> CreateProperty(IPropertyValueStatics* factory, IInspectable* value)
+        {
+            ComPtr<IPropertyValue> propertyValue;
+            ThrowIfFailed(factory->CreateInspectableArray(1, &value, &propertyValue));
+            return propertyValue;
+        }
+
+        template<typename T>
+        static void GetValueOfProperty(IPropertyValue* propertyValue, T** result)
+        {
+            static_assert(std::is_base_of<IInspectable, T>::value, "Interface types must be IInspectable");
+            
+            ComArray<ComPtr<IInspectable>> value;
+            ThrowIfFailed(propertyValue->GetInspectableArray(value.GetAddressOfSize(), value.GetAddressOfData()));
+
+            if (value.GetSize() != 1)
+                ThrowHR(E_NOTIMPL);
+
+            if (value[0])
+                ThrowIfFailed(value[0].CopyTo(result));
+            else
+                *result = nullptr;
+        }
 
 
         //
