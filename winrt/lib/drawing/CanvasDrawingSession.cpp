@@ -3936,6 +3936,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
                 CheckInPointer(fontFace);
                 CheckInPointer(glyphs);
+                CheckInPointer(brush);
 
                 DrawGlyphRunHelper helper(
                     fontFace, 

@@ -43,7 +43,7 @@ public:
 		Vector2Type baselinePosition,
 		CanvasFontFace^ fontFace,
 		float fontSize,
-		Platform::Array<Microsoft::Graphics::Canvas::Text::CanvasGlyph> const^ glyphs,
+		Platform::Array<CanvasGlyph> const^ glyphs,
 		bool isSideways,
 		unsigned int bidiLevel,
 		Platform::Object^ brush,

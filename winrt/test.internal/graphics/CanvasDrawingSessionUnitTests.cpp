@@ -4848,12 +4848,15 @@ TEST_CLASS(CanvasDrawingSession_CloseTests)
 
         Assert::AreEqual(E_INVALIDARG, f.DS->DrawGlyphRun(Vector2{}, nullptr, 0, 1, &glyph, false, 0u, f.Brush.Get()));
         Assert::AreEqual(E_INVALIDARG, f.DS->DrawGlyphRun(Vector2{}, fakeFontFace, 0, 1, nullptr, false, 0u, f.Brush.Get()));
+        Assert::AreEqual(E_INVALIDARG, f.DS->DrawGlyphRun(Vector2{}, fakeFontFace, 0, 1, &glyph, false, 0u, nullptr));
 
         Assert::AreEqual(E_INVALIDARG, f.DS->DrawGlyphRunWithMeasuringMode(Vector2{}, nullptr, 0, 1, &glyph, false, 0u, f.Brush.Get(), CanvasTextMeasuringMode::Natural));
         Assert::AreEqual(E_INVALIDARG, f.DS->DrawGlyphRunWithMeasuringMode(Vector2{}, fakeFontFace, 0, 1, nullptr, false, 0u, f.Brush.Get(), CanvasTextMeasuringMode::Natural));
+        Assert::AreEqual(E_INVALIDARG, f.DS->DrawGlyphRunWithMeasuringMode(Vector2{}, fakeFontFace, 0, 1, &glyph, false, 0u, nullptr, CanvasTextMeasuringMode::Natural));
 
         Assert::AreEqual(E_INVALIDARG, f.DS->DrawGlyphRunWithMeasuringModeAndDescription(Vector2{}, nullptr, 0, 1, &glyph, false, 0u, f.Brush.Get(), CanvasTextMeasuringMode::Natural, nullptr, nullptr, 0, nullptr, 0));
         Assert::AreEqual(E_INVALIDARG, f.DS->DrawGlyphRunWithMeasuringModeAndDescription(Vector2{}, fakeFontFace, 0, 1, nullptr, false, 0u, f.Brush.Get(), CanvasTextMeasuringMode::Natural, nullptr, nullptr, 0, nullptr, 0));
+        Assert::AreEqual(E_INVALIDARG, f.DS->DrawGlyphRunWithMeasuringModeAndDescription(Vector2{}, fakeFontFace, 0, 1, &glyph, false, 0u, nullptr, CanvasTextMeasuringMode::Natural, nullptr, nullptr, 0, nullptr, 0));
 
     }
 };

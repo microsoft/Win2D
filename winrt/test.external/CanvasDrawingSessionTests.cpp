@@ -6,6 +6,14 @@
 
 using namespace Microsoft::Graphics::Canvas;
 
+#if WINVER > _WIN32_WINNT_WINBLUE
+typedef Windows::Foundation::Numerics::float3x2 MatrixType;
+typedef Windows::Foundation::Numerics::float2 Vector2Type;
+#else
+typedef Microsoft::Graphics::Canvas::Numerics::Matrix3x2 MatrixType;
+typedef Microsoft::Graphics::Canvas::Numerics::Vector2 Vector2Type;
+#endif
+
 TEST_CLASS(CanvasDrawingSessionTests)
 {
     //
@@ -95,6 +103,121 @@ TEST_CLASS(CanvasDrawingSessionTests)
         // Ensure the setter doesn't mess up anything
         drawingSession->TextRenderingParameters = nullptr;
         Assert::IsNull(drawingSession->TextRenderingParameters);
+    }
+
+    ref class DefaultTextParametersLookup sealed : public ICanvasTextRenderer
+    {
+        CanvasFontFace^ m_fontFace;
+        Platform::Array<CanvasGlyph> const^ m_glyphs;
+
+    public:
+
+        virtual void DrawGlyphRun(
+            Vector2Type baselinePosition,
+            CanvasFontFace^ fontFace,
+            float fontSize,
+            Platform::Array<CanvasGlyph> const^ glyphs,
+            bool isSideways,
+            unsigned int bidiLevel,
+            Platform::Object^ brush,
+            CanvasTextMeasuringMode,
+            Platform::String^ locale,
+            Platform::String^ text,
+            Platform::Array<int> const^ clusterMap,
+            unsigned int characterIndex,
+            CanvasGlyphOrientation glyphOrientation)
+        {
+            m_fontFace = fontFace;
+            m_glyphs = glyphs;
+        }
+
+        virtual void DrawStrikethrough(
+            Vector2Type baselineOrigin,
+            float width,
+            float thickness,
+            float offset,
+            CanvasTextDirection textDirection,
+            Platform::Object^ brush,
+            CanvasTextMeasuringMode measuringMode,
+            Platform::String^ locale,
+            CanvasGlyphOrientation glyphOrientation)
+        {
+        }
+
+        virtual void DrawUnderline(
+            Vector2Type baselineOrigin,
+            float width,
+            float thickness,
+            float offset,
+            float runHeight,
+            CanvasTextDirection textDirection,
+            Platform::Object^ brush,
+            CanvasTextMeasuringMode measuringMode,
+            Platform::String^ locale,
+            CanvasGlyphOrientation glyphOrientation)
+        {
+        }
+
+        virtual void DrawInlineObject(
+            Vector2Type baselineOrigin,
+            ICanvasTextInlineObject^ inlineObject,
+            bool isSideways,
+            bool isRightToLeft,
+            Platform::Object^ brush,
+            CanvasGlyphOrientation glyphOrientation)
+        {
+        }
+
+        virtual property float Dpi {float get() { return 0; }}
+
+        virtual property bool PixelSnappingDisabled {bool get() { return true; }}
+
+        virtual property MatrixType Transform {MatrixType get() { return{ 1, 0, 0, 1, 0, 0 }; }}
+
+        CanvasFontFace^ GetFontFace()
+        {
+            return m_fontFace;
+        }
+
+        Platform::Array<CanvasGlyph> const^ GetGlyphs()
+        {
+            return m_glyphs;
+        }
+    };
+
+    TEST_METHOD(CanvasDrawingSession_DrawGlyphRun_DefaultRenderer_NullBrush)
+    {
+        auto device = ref new CanvasDevice();
+
+        auto d2dDevice = GetWrappedResource<ID2D1Device1>(device);
+
+        ComPtr<ID2D1DeviceContext1> d2dDeviceContext;
+        ThrowIfFailed(d2dDevice->CreateDeviceContext(
+            D2D1_DEVICE_CONTEXT_OPTIONS_NONE,
+            &d2dDeviceContext));
+
+        auto textFormat = ref new CanvasTextFormat();
+
+        auto textLayout = ref new CanvasTextLayout(device, L"A", textFormat, 0, 0);
+
+        //
+        // Get reasonable values to use as default font face and set of CanvasGlyphs.
+        //
+        auto defaultTextParametersLookup = ref new DefaultTextParametersLookup();
+        textLayout->DrawToTextRenderer(defaultTextParametersLookup, 0, 0);
+        auto fontFace = defaultTextParametersLookup->GetFontFace();
+        auto glyphs = defaultTextParametersLookup->GetGlyphs();
+
+        Assert::IsNotNull(fontFace);
+        Assert::IsNotNull(glyphs);
+
+        auto drawingSession = GetOrCreate<CanvasDrawingSession>(d2dDeviceContext.Get());
+        
+        Assert::ExpectException<Platform::InvalidArgumentException^>(
+            [&]
+            {
+                drawingSession->DrawGlyphRun(Vector2Type{}, fontFace, 1.0f, glyphs, false, 0, nullptr);
+            });
     }
 };
 
