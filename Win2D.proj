@@ -161,7 +161,7 @@
 
   <!-- Tools projects -->
   <ItemGroup Condition="$(BuildTools)">
-    <AnyCPUProject Include="tools\copyright\copyright.csproj" />
+    <AnyCPUProject Include="tools\checkcode\checkcode.csproj" />
     <AnyCPUProject Include="tools\codegen\exe\codegen.exe.csproj" />
     <AnyCPUProject Include="tools\codegen\test\codegen.test.csproj" Condition="$(BuildTests)">
       <AutomatedTests>desktop</AutomatedTests>
@@ -189,7 +189,7 @@
 
   <!-- Master target just chains to a bunch of workers -->
   <Target Name="Build"
-          DependsOnTargets="BuildProjects; CheckCopyrightBanners; BuildDocs; RunTests" />
+          DependsOnTargets="BuildProjects; CheckCode; BuildDocs; RunTests" />
 
 
   <!-- Use batching to build each project in turn -->
@@ -283,13 +283,13 @@
   </Target>
 
 
-  <!-- Make sure all our source files have the right copyright -->
-  <Target Name="CheckCopyrightBanners"
+  <!-- Make sure all our source files have the right copyright and formatting -->
+  <Target Name="CheckCode"
           Condition="$(BuildTools) and $(BuildPlatforms.Contains('AnyCPU'))">
 
-    <Message Importance="High" Text="Checking copyright banners" />
+    <Message Importance="High" Text="Checking copyright banners and source code formatting" />
 
-    <MSBuild Projects="tools\copyright\CheckCopyrightBanners.proj" />
+    <MSBuild Projects="tools\checkcode\RunCodeChecks.proj" />
   </Target>
 
 

@@ -5,7 +5,7 @@
 using System.Reflection;
 using System.Runtime.InteropServices;
 
-[assembly: AssemblyTitle("Copyright")]
+[assembly: AssemblyTitle("CheckCode")]
 [assembly: AssemblyProduct("Win2D")]
 [assembly: AssemblyCompany("Microsoft Corporation")]
 [assembly: AssemblyCopyright("Copyright (c) Microsoft Corporation")]

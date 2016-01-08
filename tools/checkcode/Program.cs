@@ -6,8 +6,10 @@ using System;
 using System.IO;
 using System.Linq;
 using Shared;
+using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
-namespace Copyright
+namespace CheckCode
 {
     class Program
     {
@@ -90,6 +92,12 @@ namespace Copyright
         {
             var fileContents = File.ReadAllLines(filename);
 
+            // Look for common source code formatting errors (note: FileType.Cpp covers all C-family syntaxes, including C#).
+            if (options.CheckFormatting && fileType == FileType.Cpp)
+            {
+                CheckFormatting(filename, fileContents, options);
+            }
+
             if (Enumerable.SequenceEqual(options.CopyrightBanner[fileType], fileContents.Take(options.CopyrightBanner[fileType].Length)))
             {
                 // This file already has the correct copyright.
@@ -128,6 +136,68 @@ namespace Copyright
                 }
 
                 return 1;
+            }
+        }
+
+
+        static void CheckFormatting(string filename, string[] lines, CommandLineOptions options)
+        {
+            var lineNumbers = Enumerable.Range(0, lines.Length);
+            var allButLastLineNumber = Enumerable.Range(0, lines.Length - 1);
+
+            // We want spaces, not tabs.
+            OutputFormatWarnings(
+                filename,
+                lineNumbers.Where(lineNumber => lines[lineNumber].Contains('\t')),
+                options,
+                "Tabs should be spaces");
+
+            // We want "if (", with a space between the keyword and the open parenthesis.
+            OutputFormatWarnings(
+                filename,
+                lineNumbers.Where(lineNumber => checkForMissingSpaceAfterKeyword.IsMatch(lines[lineNumber])),
+                options,
+                "Missing space after keyword");
+
+            // If a lambda has no parameters, it should be written as just [], without a following ().
+            OutputFormatWarnings(
+                filename,
+                lineNumbers.Where(lineNumber => checkForLambdaWithNoParameters.IsMatch(lines[lineNumber])),
+                options,
+                "Lambda with no parameters should not include ()");
+
+            // If the open { of a lambda is placed on the next line after the [] part, these should be aligned the same.
+            OutputFormatWarnings(
+                filename,
+                allButLastLineNumber.Where(lineNumber => IsWrongLambdaIndentation(lines[lineNumber], lines[lineNumber + 1])),
+                options,
+                "The VS lambda indentation gremlin strikes again!");
+        }
+
+
+        static Regex checkForMissingSpaceAfterKeyword = new Regex(@"(?<![\w_])(catch|do|for|foreach|if|return|switch|using|while)\(");
+        static Regex checkForLambdaWithNoParameters = new Regex(@"]\s*\(\)(?!\s*(mutable|->))");
+
+
+        static bool IsWrongLambdaIndentation(string line, string nextLine)
+        {
+            return line.Trim().StartsWith("[") &&
+                   nextLine.Trim() == "{" &&
+                   GetIndentation(line) != GetIndentation(nextLine);
+        }
+
+
+        static int GetIndentation(string line)
+        {
+            return line.TakeWhile(char.IsWhiteSpace).Count();
+        }
+
+
+        static void OutputFormatWarnings(string filename, IEnumerable<int> linesWithWarnings, CommandLineOptions options, string message)
+        {
+            foreach (var lineNumber in linesWithWarnings)
+            {
+                Console.WriteLine("{0}({1}): Warning: {2}", options.GetRelativeName(filename), lineNumber + 1, message);
             }
         }
     }

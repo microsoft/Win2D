@@ -7,8 +7,8 @@
     <ProjectGuid>{4D0E8606-F235-4879-934A-D954CE94D69F}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Copyright</RootNamespace>
-    <AssemblyName>Copyright</AssemblyName>
+    <RootNamespace>CheckCode</RootNamespace>
+    <AssemblyName>CheckCode</AssemblyName>
     <TargetPlatformIdentifier>Windows</TargetPlatformIdentifier>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

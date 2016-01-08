@@ -6,7 +6,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "codegen.exe", "codegen\exe\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "codegen.test", "codegen\test\codegen.test.csproj", "{A8B337FF-9174-4B20-A976-CFE52657CE07}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "copyright", "copyright\copyright.csproj", "{4D0E8606-F235-4879-934A-D954CE94D69F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "checkcode", "checkcode\checkcode.csproj", "{4D0E8606-F235-4879-934A-D954CE94D69F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExtractAPISurface", "docs\ExtractAPISurface\ExtractAPISurface.csproj", "{4E89E65B-B1DE-4FAF-9E51-E8E183A45FC4}"
 EndProject

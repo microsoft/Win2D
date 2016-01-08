@@ -8,7 +8,7 @@ using System.Linq;
 using System.Collections.Generic;
 using Shared;
 
-namespace Copyright
+namespace CheckCode
 {
     public class CommandLineOptions
     {
@@ -36,6 +36,7 @@ namespace Copyright
         // Other options.
         public bool Validate;
         public bool Verbose;
+        public bool CheckFormatting;
 
 
         // Internal state: private so not settable from the commandline.

@@ -6,7 +6,7 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 
-namespace Copyright
+namespace CheckCode
 {
     // Different types of file that copyright banners can be applied to.
     public enum FileType
