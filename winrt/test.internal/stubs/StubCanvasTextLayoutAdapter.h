@@ -171,7 +171,7 @@ namespace canvas
 
             m_mockDWritefactory->RegisterFontCollectionLoaderMethod.AllowAnyCall();
 
-			m_mockDWritefactory->UnregisterFontCollectionLoaderMethod.AllowAnyCall();
+            m_mockDWritefactory->UnregisterFontCollectionLoaderMethod.AllowAnyCall();
 
             m_mockDWritefactory->CreateEllipsisTrimmingSignMethod.AllowAnyCall(
                 [&](IDWriteTextFormat*, IDWriteInlineObject** out)

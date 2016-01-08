@@ -4,9 +4,9 @@
 
 namespace Microsoft.Graphics.Canvas.Text
 {
-	runtimeclass CanvasTextLayout;
+    runtimeclass CanvasTextLayout;
 
-	interface ICanvasTextRenderer;
+    interface ICanvasTextRenderer;
     
     [version(VERSION)]
     typedef struct CanvasTextLayoutRegion
@@ -228,9 +228,9 @@ namespace Microsoft.Graphics.Canvas.Text
             [in] ICanvasTextInlineObject* inlineObject);
 
         [overload("DrawToTextRenderer")]
-		HRESULT DrawToTextRenderer(
-			[in] ICanvasTextRenderer* textRenderer,
-			[in] NUMERICS.Vector2 position);
+        HRESULT DrawToTextRenderer(
+            [in] ICanvasTextRenderer* textRenderer,
+            [in] NUMERICS.Vector2 position);
 
         [overload("DrawToTextRenderer")]
         HRESULT DrawToTextRendererWithCoords(

@@ -7,7 +7,7 @@
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Text
 {
     using namespace ::Microsoft::WRL;
-	
+    
     [uuid(CAC871EB-EF62-4211-900E-BBD332244307)]
     class ICanvasTypographyInternal : public IUnknown
     {

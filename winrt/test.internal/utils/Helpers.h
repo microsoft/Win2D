@@ -1272,24 +1272,24 @@ namespace Microsoft
                 ENUM_VALUE(DWRITE_INFORMATIONAL_STRING_POSTSCRIPT_NAME);
                 ENUM_VALUE(DWRITE_INFORMATIONAL_STRING_POSTSCRIPT_CID_NAME);
                 END_ENUM(DWRITE_INFORMATIONAL_STRING_ID);
-			}
+            }
 
-			ENUM_TO_STRING(CanvasTextMeasuringMode)
-			{
-				ENUM_VALUE(CanvasTextMeasuringMode::Natural);
-				ENUM_VALUE(CanvasTextMeasuringMode::GdiNatural);
-				ENUM_VALUE(CanvasTextMeasuringMode::GdiClassic);
-				END_ENUM(CanvasTextMeasuringMode);
-			}
+            ENUM_TO_STRING(CanvasTextMeasuringMode)
+            {
+                ENUM_VALUE(CanvasTextMeasuringMode::Natural);
+                ENUM_VALUE(CanvasTextMeasuringMode::GdiNatural);
+                ENUM_VALUE(CanvasTextMeasuringMode::GdiClassic);
+                END_ENUM(CanvasTextMeasuringMode);
+            }
 
-			ENUM_TO_STRING(CanvasGlyphOrientation)
-			{
-				ENUM_VALUE(CanvasGlyphOrientation::Upright);
-				ENUM_VALUE(CanvasGlyphOrientation::Clockwise90Degrees);
-				ENUM_VALUE(CanvasGlyphOrientation::Clockwise180Degrees);
-				ENUM_VALUE(CanvasGlyphOrientation::Clockwise270Degrees);
-				END_ENUM(CanvasGlyphOrientation);
-			}
+            ENUM_TO_STRING(CanvasGlyphOrientation)
+            {
+                ENUM_VALUE(CanvasGlyphOrientation::Upright);
+                ENUM_VALUE(CanvasGlyphOrientation::Clockwise90Degrees);
+                ENUM_VALUE(CanvasGlyphOrientation::Clockwise180Degrees);
+                ENUM_VALUE(CanvasGlyphOrientation::Clockwise270Degrees);
+                END_ENUM(CanvasGlyphOrientation);
+            }
 
             ENUM_TO_STRING(EffectBorderMode)
             {

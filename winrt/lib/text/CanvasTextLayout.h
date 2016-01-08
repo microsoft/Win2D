@@ -361,8 +361,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             uint32_t* descriptionCount,
             CanvasTextLayoutRegion** descriptions)) override;
 
-		IFACEMETHOD(DrawToTextRenderer(
-			ICanvasTextRenderer* textRenderer,
+        IFACEMETHOD(DrawToTextRenderer(
+            ICanvasTextRenderer* textRenderer,
             Vector2 position)) override;
 
         IFACEMETHOD(DrawToTextRendererWithCoords(

@@ -28,84 +28,84 @@ CanvasFontFace::CanvasFontFace(DWriteFontReferenceType* fontFace)
 }
 
 class FontFileListEnumerator
-	: public RuntimeClass<RuntimeClassFlags<ClassicCom>, IDWriteFontFileEnumerator>
-	, private LifespanTracker<FontFileListEnumerator>
+    : public RuntimeClass<RuntimeClassFlags<ClassicCom>, IDWriteFontFileEnumerator>
+    , private LifespanTracker<FontFileListEnumerator>
 {
-	std::vector<ComPtr<IDWriteFontFile>> m_files;
-	int m_index;
+    std::vector<ComPtr<IDWriteFontFile>> m_files;
+    int m_index;
 
 public:
-	FontFileListEnumerator(ComPtr<IDWriteFontFace2> const& fontFace)
-		: m_index(-1)
-	{
-		uint32_t numberOfFiles;
-		ThrowIfFailed(fontFace->GetFiles(&numberOfFiles, nullptr));
+    FontFileListEnumerator(ComPtr<IDWriteFontFace2> const& fontFace)
+        : m_index(-1)
+    {
+        uint32_t numberOfFiles;
+        ThrowIfFailed(fontFace->GetFiles(&numberOfFiles, nullptr));
 
-		std::vector<IDWriteFontFile*> rawPointers;
-		rawPointers.resize(numberOfFiles);
-		ThrowIfFailed(fontFace->GetFiles(&numberOfFiles, rawPointers.data()));
+        std::vector<IDWriteFontFile*> rawPointers;
+        rawPointers.resize(numberOfFiles);
+        ThrowIfFailed(fontFace->GetFiles(&numberOfFiles, rawPointers.data()));
 
-		m_files.resize(numberOfFiles);
-		for (uint32_t i = 0; i < numberOfFiles; ++i)
-		{
-			m_files[i] = rawPointers[i];
-		}
-	}
+        m_files.resize(numberOfFiles);
+        for (uint32_t i = 0; i < numberOfFiles; ++i)
+        {
+            m_files[i] = rawPointers[i];
+        }
+    }
 
-	IFACEMETHODIMP MoveNext(BOOL* hasCurrentFile) override
-	{
-		m_index++;		
-		*hasCurrentFile = m_index < static_cast<int>(m_files.size());
+    IFACEMETHODIMP MoveNext(BOOL* hasCurrentFile) override
+    {
+        m_index++;        
+        *hasCurrentFile = m_index < static_cast<int>(m_files.size());
 
-		return S_OK;
-	}
+        return S_OK;
+    }
 
-	IFACEMETHODIMP GetCurrentFontFile(IDWriteFontFile** fontFile) override
-	{
-		return m_files[m_index].CopyTo(fontFile);
-	}
+    IFACEMETHODIMP GetCurrentFontFile(IDWriteFontFile** fontFile) override
+    {
+        return m_files[m_index].CopyTo(fontFile);
+    }
 };
 
 class FontFaceCollectionLoader
-	: public RuntimeClass<RuntimeClassFlags<ClassicCom>, IDWriteFontCollectionLoader>
-	, private LifespanTracker<FontFaceCollectionLoader>
+    : public RuntimeClass<RuntimeClassFlags<ClassicCom>, IDWriteFontCollectionLoader>
+    , private LifespanTracker<FontFaceCollectionLoader>
 {
-	ComPtr<IDWriteFactory> m_factory;
+    ComPtr<IDWriteFactory> m_factory;
 
 public:
-	FontFaceCollectionLoader(ComPtr<IDWriteFactory> const& factory)
-		: m_factory(factory)
-	{
-		ThrowIfFailed(m_factory->RegisterFontCollectionLoader(this));
-	}
+    FontFaceCollectionLoader(ComPtr<IDWriteFactory> const& factory)
+        : m_factory(factory)
+    {
+        ThrowIfFailed(m_factory->RegisterFontCollectionLoader(this));
+    }
 
-	~FontFaceCollectionLoader()
-	{
-		ThrowIfFailed(m_factory->UnregisterFontCollectionLoader(this));
-	}
+    ~FontFaceCollectionLoader()
+    {
+        ThrowIfFailed(m_factory->UnregisterFontCollectionLoader(this));
+    }
 
-	IFACEMETHODIMP CreateEnumeratorFromKey(
-		IDWriteFactory*,
-		void const* collectionKey,
-		uint32_t collectionKeySize,
-		IDWriteFontFileEnumerator** fontFileEnumerator) override
-	{
-		return ExceptionBoundary(
-			[=]
-			{
-				if (collectionKey == nullptr || collectionKeySize < sizeof(IDWriteFontFileEnumerator))
-					ThrowHR(E_INVALIDARG);
+    IFACEMETHODIMP CreateEnumeratorFromKey(
+        IDWriteFactory*,
+        void const* collectionKey,
+        uint32_t collectionKeySize,
+        IDWriteFontFileEnumerator** fontFileEnumerator) override
+    {
+        return ExceptionBoundary(
+            [=]
+            {
+                if (collectionKey == nullptr || collectionKeySize < sizeof(IDWriteFontFileEnumerator))
+                    ThrowHR(E_INVALIDARG);
 
-				ComPtr<IDWriteFontFileEnumerator> enumerator = *reinterpret_cast<IDWriteFontFileEnumerator* const*>(collectionKey);
-				ThrowIfFailed(enumerator.CopyTo(fontFileEnumerator));
-			});
-	}
+                ComPtr<IDWriteFontFileEnumerator> enumerator = *reinterpret_cast<IDWriteFontFileEnumerator* const*>(collectionKey);
+                ThrowIfFailed(enumerator.CopyTo(fontFileEnumerator));
+            });
+    }
 };
 
 
 ComPtr<DWriteFontReferenceType> GetContainer(IDWriteFontFace2* fontFaceInstance)
 {
-	auto factory = CustomFontManager::GetInstance()->GetSharedFactory();
+    auto factory = CustomFontManager::GetInstance()->GetSharedFactory();
 
     auto fontFileListEnumerator = Make<FontFileListEnumerator>(fontFaceInstance);
     auto* enumeratorAddress = static_cast<IDWriteFontFileEnumerator*>(fontFileListEnumerator.Get());
@@ -133,7 +133,7 @@ ComPtr<DWriteFontReferenceType> GetContainer(IDWriteFontFace2* fontFaceInstance)
     auto container = As<IDWriteFont2>(font);
 #endif
 
-	return container;
+    return container;
 }
 
 

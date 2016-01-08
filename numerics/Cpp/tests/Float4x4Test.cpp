@@ -243,8 +243,8 @@ namespace NumericsTests
             quaternion expectedRotation = make_quaternion_from_yaw_pitch_roll(ToRadians(yaw), ToRadians(pitch), ToRadians(roll));
 
             float4x4 m = make_float4x4_scale(expectedScales) *
-						 make_float4x4_from_quaternion(expectedRotation) *
-						 make_float4x4_translation(expectedTranslation);
+                         make_float4x4_from_quaternion(expectedRotation) *
+                         make_float4x4_translation(expectedTranslation);
 
             float3 scales;
             quaternion rotation;
@@ -253,21 +253,21 @@ namespace NumericsTests
             bool actualResult = decompose(m, &scales, &rotation, &translation);
             Assert::IsTrue(actualResult, L"decompose did not return expected value.");
 
-			bool scaleIsZeroOrNegative = expectedScales.x <= 0 ||
-										 expectedScales.y <= 0 ||
-										 expectedScales.z <= 0;
+            bool scaleIsZeroOrNegative = expectedScales.x <= 0 ||
+                                         expectedScales.y <= 0 ||
+                                         expectedScales.z <= 0;
 
-			if (scaleIsZeroOrNegative)
-			{
-				Assert::IsTrue(Equal(fabs(expectedScales.x), fabs(scales.x)), L"Matrix4x4.Decompose did not return expected value.");
-				Assert::IsTrue(Equal(fabs(expectedScales.y), fabs(scales.y)), L"Matrix4x4.Decompose did not return expected value.");
-				Assert::IsTrue(Equal(fabs(expectedScales.z), fabs(scales.z)), L"Matrix4x4.Decompose did not return expected value.");
-			}
-			else
-			{
-				Assert::IsTrue(Equal(expectedScales, scales), L"decompose did not return expected value.");
-				Assert::IsTrue(EqualRotation(expectedRotation, rotation), L"decompose did not return expected value.");
-			}
+            if (scaleIsZeroOrNegative)
+            {
+                Assert::IsTrue(Equal(fabs(expectedScales.x), fabs(scales.x)), L"Matrix4x4.Decompose did not return expected value.");
+                Assert::IsTrue(Equal(fabs(expectedScales.y), fabs(scales.y)), L"Matrix4x4.Decompose did not return expected value.");
+                Assert::IsTrue(Equal(fabs(expectedScales.z), fabs(scales.z)), L"Matrix4x4.Decompose did not return expected value.");
+            }
+            else
+            {
+                Assert::IsTrue(Equal(expectedScales, scales), L"decompose did not return expected value.");
+                Assert::IsTrue(EqualRotation(expectedRotation, rotation), L"decompose did not return expected value.");
+            }
 
             Assert::IsTrue(Equal(expectedTranslation, translation), L"decompose did not return expected value.");
         }
@@ -312,24 +312,24 @@ namespace NumericsTests
             DecomposeTest(0, 0, 0, float3::zero(), float3(3e-4f, 1e-4f, 2e-4f));
             DecomposeTest(0, 0, 0, float3::zero(), float3(3e-4f, 2e-4f, 1e-4f));
 
-			// Zero scales.
-			DecomposeTest(0, 0, 0, float3(10, 20, 30), float3(0, 0, 0));
-			DecomposeTest(0, 0, 0, float3(10, 20, 30), float3(1, 0, 0));
-			DecomposeTest(0, 0, 0, float3(10, 20, 30), float3(0, 1, 0));
-			DecomposeTest(0, 0, 0, float3(10, 20, 30), float3(0, 0, 1));
-			DecomposeTest(0, 0, 0, float3(10, 20, 30), float3(0, 1, 1));
-			DecomposeTest(0, 0, 0, float3(10, 20, 30), float3(1, 0, 1));
-			DecomposeTest(0, 0, 0, float3(10, 20, 30), float3(1, 1, 0));
+            // Zero scales.
+            DecomposeTest(0, 0, 0, float3(10, 20, 30), float3(0, 0, 0));
+            DecomposeTest(0, 0, 0, float3(10, 20, 30), float3(1, 0, 0));
+            DecomposeTest(0, 0, 0, float3(10, 20, 30), float3(0, 1, 0));
+            DecomposeTest(0, 0, 0, float3(10, 20, 30), float3(0, 0, 1));
+            DecomposeTest(0, 0, 0, float3(10, 20, 30), float3(0, 1, 1));
+            DecomposeTest(0, 0, 0, float3(10, 20, 30), float3(1, 0, 1));
+            DecomposeTest(0, 0, 0, float3(10, 20, 30), float3(1, 1, 0));
 
-			// Negative scales.
-			DecomposeTest(0, 0, 0, float3(10, 20, 30), float3(-1, -1, -1));
-			DecomposeTest(0, 0, 0, float3(10, 20, 30), float3(1, -1, -1));
-			DecomposeTest(0, 0, 0, float3(10, 20, 30), float3(-1, 1, -1));
-			DecomposeTest(0, 0, 0, float3(10, 20, 30), float3(-1, -1, 1));
-			DecomposeTest(0, 0, 0, float3(10, 20, 30), float3(-1, 1, 1));
-			DecomposeTest(0, 0, 0, float3(10, 20, 30), float3(1, -1, 1));
-			DecomposeTest(0, 0, 0, float3(10, 20, 30), float3(1, 1, -1));
-		}
+            // Negative scales.
+            DecomposeTest(0, 0, 0, float3(10, 20, 30), float3(-1, -1, -1));
+            DecomposeTest(0, 0, 0, float3(10, 20, 30), float3(1, -1, -1));
+            DecomposeTest(0, 0, 0, float3(10, 20, 30), float3(-1, 1, -1));
+            DecomposeTest(0, 0, 0, float3(10, 20, 30), float3(-1, -1, 1));
+            DecomposeTest(0, 0, 0, float3(10, 20, 30), float3(-1, 1, 1));
+            DecomposeTest(0, 0, 0, float3(10, 20, 30), float3(1, -1, 1));
+            DecomposeTest(0, 0, 0, float3(10, 20, 30), float3(1, 1, -1));
+        }
 
         void DecomposeScaleTest(float sx, float sy, float sz)
         {
