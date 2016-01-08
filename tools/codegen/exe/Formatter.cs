@@ -107,7 +107,7 @@ namespace CodeGen
 
             foreach (string token in tokens)
             {
-                if(token.Length > 0)
+                if (token.Length > 0)
                 {
                     string r = char.ToUpper(token[0]) + token.Substring(1).ToLower();
                     result.Append(r);

@@ -38,7 +38,7 @@ namespace CodeGen
             typeDictionary[m_name] = this;
 
             m_projectedName = m_name;
-            if(overrides != null && overrides.ProjectedNameOverride != null)
+            if (overrides != null && overrides.ProjectedNameOverride != null)
             {
                 m_projectedName = overrides.ProjectedNameOverride;
             }

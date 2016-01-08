@@ -1637,13 +1637,13 @@ IFACEMETHODIMP CanvasTextLayout::get_ClusterMetrics(
                     metrics.CharacterCount = dwriteMetrics.length;
                     metrics.Width = dwriteMetrics.width;
 
-                    if(dwriteMetrics.canWrapLineAfter)
+                    if (dwriteMetrics.canWrapLineAfter)
                         metrics.Properties |= CanvasClusterProperties::CanWrapLineAfter;
 
                     if (dwriteMetrics.isWhitespace)
                         metrics.Properties |= CanvasClusterProperties::Whitespace;
 
-                    if(dwriteMetrics.isNewline) 
+                    if (dwriteMetrics.isNewline) 
                         metrics.Properties |= CanvasClusterProperties::Newline;
 
                     if (dwriteMetrics.isSoftHyphen)
@@ -1767,7 +1767,7 @@ IFACEMETHODIMP CanvasTextLayout::GetTypography(
 
             ComPtr<ICanvasTypography> canvasTypography;
 
-            if(dwriteTypography)
+            if (dwriteTypography)
                 canvasTypography = ResourceManager::GetOrCreate<ICanvasTypography>(dwriteTypography.Get());
 
             ThrowIfFailed(canvasTypography.CopyTo(typography));
@@ -1789,7 +1789,7 @@ IFACEMETHODIMP CanvasTextLayout::SetTypography(
 
             ComPtr<IDWriteTypography> dwriteTypography;
 
-            if(typography)
+            if (typography)
                 dwriteTypography = GetWrappedResource<IDWriteTypography>(typography);
 
             ThrowIfFailed(resource->SetTypography(dwriteTypography.Get(), ToDWriteTextRange(characterIndex, characterCount)));

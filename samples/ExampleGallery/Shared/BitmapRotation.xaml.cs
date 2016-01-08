@@ -143,13 +143,13 @@ namespace ExampleGallery
             float cellHeight = cellHeightInclMargin - marginSize;
 
             const int cellsPerRow = 4;
-            for(int cellY = 0; cellY < 3; ++cellY)
+            for (int cellY = 0; cellY < 3; ++cellY)
             {
                 for (int cellX = 0; cellX < cellsPerRow; ++cellX)
                 {
                     int bitmapIndex = (cellsPerRow * cellY) + cellX;
                     Rect cellRect = new Rect(cellX * cellWidthInclMargin, cellY * cellHeightInclMargin, cellWidth, cellHeight);
-                    if(bitmapIndex < testBitmaps.Length)
+                    if (bitmapIndex < testBitmaps.Length)
                     {
                         var image = testBitmaps[bitmapIndex];
 

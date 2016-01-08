@@ -25,7 +25,7 @@ namespace Mock
 
             string extends = interfaceType.NativeNameOfIntheritanceParent;
 
-            if(extends != "IUnknown")
+            if (extends != "IUnknown")
             {
                 GetInheritanceHierarchy(extends, processedInputFiles, inheritanceHierarchy);
             }
@@ -100,7 +100,7 @@ namespace Mock
             Dictionary<string, CodeGen.QualifiableType> typeDictionary)
         {
             CodeGen.QualifiableType qualifiable = null;
-            if(typeDictionary.ContainsKey(p.NativeTypeName))
+            if (typeDictionary.ContainsKey(p.NativeTypeName))
                 qualifiable = typeDictionary[p.NativeTypeName];
 
             string constPart = IsParameterConst(p.Form, qualifiable) ? "CONST " : "";
@@ -135,7 +135,7 @@ namespace Mock
                 {
                     output.Write(GetParameterTypeNameIncludingIndirection(m.Parameters[i], typeDictionary));
 
-                    if(m.Parameters[i].IsArray)
+                    if (m.Parameters[i].IsArray)
                     {
                         output.Write(", UINT32");
                     }
@@ -179,7 +179,7 @@ namespace Mock
 
                     output.Write(parameterString);
 
-                    if(m.Parameters[i].IsArray)
+                    if (m.Parameters[i].IsArray)
                     {
                         output.Write(",");
                         output.WriteLine();
@@ -187,7 +187,7 @@ namespace Mock
                         output.Write("UINT32 " + m.Parameters[i].Name + "Count");
                     }
 
-                    if(i < m.Parameters.Count - 1)
+                    if (i < m.Parameters.Count - 1)
                     {
                         output.Write(",");
                     }
@@ -214,7 +214,7 @@ namespace Mock
                 {
                     output.Write(m.Parameters[i].Name);
 
-                    if(m.Parameters[i].IsArray)
+                    if (m.Parameters[i].IsArray)
                     {
                         output.Write(", " + m.Parameters[i].Name + "Count");
                     }
@@ -240,7 +240,7 @@ namespace Mock
 
             // Strip the revision number out of the mock name.
             string mockTypeName = "MockD2D" + name;
-            if(mockTypeName.EndsWith("1") || mockTypeName.EndsWith("2") || mockTypeName.EndsWith("3"))
+            if (mockTypeName.EndsWith("1") || mockTypeName.EndsWith("2") || mockTypeName.EndsWith("3"))
             {
                 mockTypeName = mockTypeName.Remove(mockTypeName.Length - 1);
             }

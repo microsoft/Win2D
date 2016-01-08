@@ -680,7 +680,7 @@ TEST_CLASS(CanvasAnimatedControlTests)
 
             f.SetDpiAndFireEvent(dpiCase);
 
-            if(dpiCase != DEFAULT_DPI)
+            if (dpiCase != DEFAULT_DPI)
                 f.m_createResourcesEventHandler.SetExpectedCalls(1);
 
             f.Adapter->Tick();

@@ -108,7 +108,7 @@ namespace CodeGen
             idlFile.Write(m_stylizedName);
             idlFile.Write(" = ");
 
-            if(!isFlags)
+            if (!isFlags)
             {
                 idlFile.Write("(int)");
             }
@@ -212,11 +212,11 @@ namespace CodeGen
             Namespace = rootProjectedNamespace;
             
             bool shouldProject = false;
-            if(overrides != null)
+            if (overrides != null)
             {
                 shouldProject = overrides.ShouldProject;
 
-                if(overrides.ProjectedNameOverride != null)
+                if (overrides.ProjectedNameOverride != null)
                 {
                     m_stylizedName = Formatter.Prefix + overrides.ProjectedNameOverride;
                 } 

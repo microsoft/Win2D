@@ -619,7 +619,7 @@ namespace CodeGen
 
         static string FloatToString(float value)
         {
-            if(float.IsInfinity(value))
+            if (float.IsInfinity(value))
             {
                 return (value < 0 ? "-" : "") + stdInfinity;
             }

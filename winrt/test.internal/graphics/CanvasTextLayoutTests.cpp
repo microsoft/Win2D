@@ -1492,7 +1492,7 @@ namespace canvas
                         Assert::IsTrue(!!isTrailingHit);
                         *pointX = 2.0f;
                         *pointY = 3.0f;
-                        if(i==1)
+                        if (i==1)
                             WriteHitTestDescription(hitTestMetrics);
                         return S_OK;
                     });

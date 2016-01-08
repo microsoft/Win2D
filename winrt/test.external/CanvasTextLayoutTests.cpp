@@ -148,7 +148,7 @@ public:
     {
         auto layout = ref new CanvasTextLayout(m_device, L"Abc", m_defaultFormat, 0, 0);
 
-        for(int i=0; i<3; ++i)
+        for (int i=0; i<3; ++i)
         {
             auto typography = layout->GetTypography(i);
             Assert::IsNull(typography);

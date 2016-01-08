@@ -46,7 +46,7 @@ namespace CodeGen
             const Namespace globalNamespace = null; // Using null as the namespace parameter indicates the global namespace.
 
             m_primitiveList = new List<Primitive>();
-            foreach(XmlBindings.Primitive p in xmlData.Primitives)
+            foreach (XmlBindings.Primitive p in xmlData.Primitives)
             {
                 Overrides.XmlBindings.Primitive overridePrimitive = null;
                 if (overrides != null) overridePrimitive = overrides.Primitives.Find(x => x.Name == p.Name);

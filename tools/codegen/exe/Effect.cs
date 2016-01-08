@@ -625,7 +625,7 @@ namespace CodeGen
                         enumName = enumName.Substring(5);
                         Enum effectEnum;
                         string key = "D2D1::" + enumName;
-                        if(typeDictionary.ContainsKey(key))
+                        if (typeDictionary.ContainsKey(key))
                         {
                             effectEnum = typeDictionary[key] as Enum;
                         }

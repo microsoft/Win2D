@@ -327,7 +327,7 @@ namespace ExampleGallery
             double fractionSecond;
             int seconds;
 
-            if(sender.IsFixedTimeStep)
+            if (sender.IsFixedTimeStep)
             {
                 double updatesPerSecond = 1000.0 / sender.TargetElapsedTime.TotalMilliseconds;
                 seconds = (int)((timingInformation.UpdateCount / updatesPerSecond) % 10);

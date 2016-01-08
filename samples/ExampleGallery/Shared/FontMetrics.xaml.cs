@@ -347,7 +347,7 @@ namespace ExampleGallery
             float baselineInWorldSpace = (float)textLayout.LayoutBounds.Top + textLayout.LineMetrics[0].Baseline;
             Labeler.DrawBaseline(args.DrawingSession, sender.Size.ToVector2(), baselineInWorldSpace);
 
-            if(UniformStyle)
+            if (UniformStyle)
             {
                 Labeler l = new Labeler(CurrentFontSize, sizeDim, sender.Size.ToVector2(), textLayout.LayoutBounds, baselineInWorldSpace, fmh.GlyphRunMetrics[0], args.DrawingSession);
                 l.DrawAscent();
@@ -377,7 +377,7 @@ namespace ExampleGallery
 
         private void UniformStyle_ValueChanged(object sender, RoutedEventArgs e)
         {
-            if(UniformStyle)
+            if (UniformStyle)
             {
                 fontSizeLabel.Visibility = Visibility.Visible;
                 fontSizeSlider.Visibility = Visibility.Visible;

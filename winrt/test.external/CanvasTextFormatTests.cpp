@@ -285,7 +285,7 @@ public:
         Assert::IsTrue(families->Length > 0);
 
         bool arialFound = false;
-        for(Platform::String^ name : families)
+        for (Platform::String^ name : families)
         {
             if (name == L"Arial")
             {

@@ -29,7 +29,7 @@ namespace ExampleGallery.Effects
             get
             {
                 object val;
-                if(configuration != null && configuration.TryGetValue("BlurAmount", out val))
+                if (configuration != null && configuration.TryGetValue("BlurAmount", out val))
                 {
                     return (double)val;
                 }
@@ -46,7 +46,7 @@ namespace ExampleGallery.Effects
 
         public void Close(MediaEffectClosedReason reason)
         {
-            if(canvasDevice != null) canvasDevice.Dispose();
+            if (canvasDevice != null) canvasDevice.Dispose();
         }
 
         public void DiscardQueuedFrames()
