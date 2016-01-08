@@ -134,6 +134,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         template<typename CALLABLE>
         void Tick(bool forceUpdate, int64_t timeSpentPaused, CALLABLE&& fn)
         {
+            EventWrite_StepTimer(m_elapsedTicks, m_totalTicks, m_leftOverTicks);
+            
             // Query the current time.
             auto currentTime = m_adapter->GetPerformanceCounter();
 

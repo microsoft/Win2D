@@ -1,0 +1,72 @@
+<?xml version="1.0"?>
+<!--
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+Licensed under the MIT License. See LICENSE.txt in the project root for license information.
+-->
+
+<instrumentationManifest xmlns="http://schemas.microsoft.com/win/2004/08/events" 
+                         xmlns:win="http://manifests.microsoft.com/win/2004/08/windows/events"
+                         xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  
+  <!--
+
+    In order to use ETW traces you need to register the manifest on your PC.
+       
+    This is done by the following command (from an admin command prompt):
+
+        wevtutil im win2d.etw.xml /rf:ABSOLUTE_PATH_TO_MICROSOFT.GRAPHICS.CANVAS.DLL /mf:ABSOLUTE_PATH_TO_MICROSOFT.GRAPHICS.CANVAS.DLL
+                 
+    Example of starting a trace:
+      
+        xperf -start -on base -start Win2D -on 23ea6c85-7f23-4a0e-9a68-bd3054d032e7
+      
+    Stopping the trace:
+      
+        xperf -stop -stop Win2D
+      
+    This will output kernel.etl and user.etl.  These should be merged on the
+    same machine that the trace was gathered on:
+    
+        xperf -merge kernel.etl user.etl merged.etl
+
+    If this machine didn't have the manifest installed then you need to merge
+    again on a machine that does have the manifest installed:
+    
+        xperf -merge merged.etl merged2.etl
+
+    Now you should be able to open this merged file in wpa.
+      
+  -->
+
+  <instrumentation>
+    <events>
+      <provider name="Microsoft-Win2D"
+                guid="{23ea6c85-7f23-4a0e-9a68-bd3054d032e7}"
+                symbol="ETW_PROVIDER_Microsoft_Graphics_Canvas"
+                resourceFileName="Microsoft.Graphics.Canvas.dll"
+                messageFileName="Microsoft.Graphics.Canvas.dll">
+        <!-- no channels -->
+        <!-- no levels -->
+        <tasks>
+          <task name="CanvasAnimatedControl" symbol="ETW_TASK_CanvasAnimatedControl" value="1" />
+        </tasks>
+        <!-- no opcodes -->
+
+        <templates>
+          <template tid="StepTimer">
+            <data name="ElapsedTicks" inType="win:UInt64" />
+            <data name="TotalTicks" inType="win:UInt64" />
+            <data name="LeftOverTicks" inType="win:UInt64" />
+          </template>
+        </templates>
+
+        <events>
+          <event value="1" level="win:Verbose" task="CanvasAnimatedControl" template="StepTimer" symbol="ETW_EVENT_StepTimer" />
+        </events>
+        
+      </provider>
+    </events>
+  </instrumentation>
+  
+</instrumentationManifest>

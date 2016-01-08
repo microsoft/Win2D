@@ -108,6 +108,11 @@
 // Generated from local IDLs
 #include <Microsoft.Graphics.Canvas.h>
 
+#pragma warning(push)
+#pragma warning(disable:4459)   // declaration hides global declaration
+#include <win2d.etw.h>
+#pragma warning(pop)
+
 // Pick up the inbox or local WinRT DirectX types as appropriate
 #include "UapApis.h"
 

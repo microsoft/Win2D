@@ -27,6 +27,12 @@
 
   <Import Project="winrt.test.internal.shared.vcxitems" Label="Shared" />
 
+  <ItemDefinitionGroup>
+    <Link>
+      <AdditionalDependencies>mincore.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\lib\winrt.lib.Windows.vcxproj">
       <Project>{8e9fef0d-edb6-4c76-9383-a070314e5ff4}</Project>

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="Globals">
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
@@ -21,7 +21,7 @@
     </Midl>
     <ClCompile>
       <CompileAsWinRT>false</CompileAsWinRT>
-      <AdditionalIncludeDirectories>..\Inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Inc;$(EtwDirectory);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WRT_EXPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <WarningLevel>Level4</WarningLevel>
     </ClCompile>
@@ -49,6 +49,10 @@
       <MetaDataDir Include="$(WindowsSDK_MetadataPath)\Windows.Foundation.UniversalApiContract\2.0.0.0" />
     </ItemGroup>
     <Exec Command="$(MdMergeExe) -v @(MetaDataDir -> '-metadata_dir &quot;%(Identity)&quot;', ' ') -o &quot;$(MergedWinmdDirectory)&quot; -i &quot;$(UnmergedWinmdDirectory)&quot; -partial -n:Microsoft.Graphics.Canvas:3" />
+  </Target>
+  <Target Name="mc" AfterTargets="mdmerge" Inputs="@(mc)" Outputs="$(EtwDirectory)\%(filename).rc">
+    <MakeDir Directories="$(EtwDirectory)" />      
+    <Exec Command="mc @(mc) -um -P ETW_EVENT -r $(EtwDirectory) -h $(EtwDirectory)" />
   </Target>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)composition\CanvasComposition.h" />
@@ -322,6 +326,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)utils\Strings.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)directx\Direct3DDevice.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)directx\Direct3DSurface.cpp" />
+    <mc Include="$(MSBuildThisFileDirectory)win2d.etw.xml" />
   </ItemGroup>
   <ItemGroup>
     <MidlRT Include="$(MSBuildThisFileDirectory)Canvas.abi.idl">

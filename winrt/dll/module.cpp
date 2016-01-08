@@ -4,6 +4,12 @@
 
 #include "pch.h"
 #include <wrl/module.h>
+
+#pragma warning(push)
+#pragma warning(disable:4459)   // declaration hides global declaration
+#include <win2d.etw.h>
+#pragma warning(pop)
+
 #include "../inc/LifespanTracker.h"
 
 STDAPI_(BOOL)
@@ -18,6 +24,10 @@ DllMain(
 
     switch (reason)
     {
+    case DLL_PROCESS_ATTACH:
+        EventRegisterMicrosoft_Win2D();
+        break;
+        
     case DLL_PROCESS_DETACH:
         // WRL normally takes care of this immediately after DllMain returns,
         // but we move it in front of LifespanInfo::ReportLiveObjects to
@@ -26,6 +36,8 @@ DllMain(
         module.Terminate(nullptr, true);
 
         LifespanInfo::ReportLiveObjectsNoLock();
+
+        EventUnregisterMicrosoft_Win2D();
         break;
     }
 

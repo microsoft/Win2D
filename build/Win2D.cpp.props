@@ -54,6 +54,7 @@
     <MergedWinmdDirectory>$(MSBuildThisFileDirectory)..\bin\$(FullPlatform)\$(Configuration)\MergedWinMD</MergedWinmdDirectory>
     <IdlHeaderDirectory>$(MSBuildThisFileDirectory)..\bin\$(FullPlatform)\$(Configuration)\IdlHeader</IdlHeaderDirectory>
     <PublishedHeaderDirectory>$(MSBuildThisFileDirectory)..\winrt\published</PublishedHeaderDirectory>
+    <EtwDirectory>$(MSBuildThisFileDirectory)..\obj\etw\$(FullPlatform)\$(Configuration)</EtwDirectory>
   </PropertyGroup>
 
   <!-- [[IN SAMPLE]] -->

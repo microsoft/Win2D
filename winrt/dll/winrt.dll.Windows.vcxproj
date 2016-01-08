@@ -33,6 +33,7 @@
   <ItemDefinitionGroup>
     <Link>
       <DelayLoadDLLs>d3dcompiler_47.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
+      <AdditionalDependencies>advapi32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
 
@@ -49,9 +50,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="version.rc">
+    <ResourceCompile Include="module.rc">
       <PreprocessorDefinitions Condition="'$(IncludeVersionInfo)' != ''">INCLUDE_VERSION_INFO;$(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\obj</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\obj;$(EtwDirectory)</AdditionalIncludeDirectories>
     </ResourceCompile>
   </ItemGroup>
 

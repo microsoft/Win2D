@@ -20,7 +20,6 @@
     <PrecompiledHeader>Use</PrecompiledHeader>
   </PropertyGroup>
 
-
   <PropertyGroup Condition="'$(Configuration)'=='Debug'">
     <LinkIncremental>true</LinkIncremental>
   </PropertyGroup>
@@ -28,6 +27,12 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
 
   <Import Project="winrt.test.internal.shared.vcxitems" Label="Shared" />
+
+  <ItemDefinitionGroup>
+    <Link>
+      <AdditionalDependencies>mincore.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\lib\winrt.lib.uap.vcxproj">
