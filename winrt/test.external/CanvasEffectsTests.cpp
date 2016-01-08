@@ -608,9 +608,9 @@ TEST_CLASS(CanvasEffectsTests)
         // But we cannot realize onto device2.
         ExpectCOMException(E_INVALIDARG, L"Effect source #0 is associated with a different device.",
             [&]
-        {
-            GetWrappedResource<ID2D1Effect>(device2, effect1);
-        });
+            {
+                GetWrappedResource<ID2D1Effect>(device2, effect1);
+            });
 
         Assert::AreEqual<IGraphicsEffectSource>(effect1->Source, effect2);
         Assert::AreEqual<IGraphicsEffectSource>(effect2->Source, effect3);

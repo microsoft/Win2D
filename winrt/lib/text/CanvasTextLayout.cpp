@@ -384,14 +384,14 @@ IFACEMETHODIMP CanvasTextLayout::get_LineSpacingMode(
 {
     return ExceptionBoundary(
         [&]
-    {
-        CheckInPointer(value);
-        auto& resource = GetResource();
+        {
+            CheckInPointer(value);
+            auto& resource = GetResource();
 
-        DWriteLineSpacing spacing(resource.Get());
-        bool allowUniform = m_lineSpacingMode == CanvasLineSpacingMode::Uniform;
-        *value = spacing.GetAdjustedLineSpacingMode(allowUniform);
-    });
+            DWriteLineSpacing spacing(resource.Get());
+            bool allowUniform = m_lineSpacingMode == CanvasLineSpacingMode::Uniform;
+            *value = spacing.GetAdjustedLineSpacingMode(allowUniform);
+        });
 }
 
 IFACEMETHODIMP CanvasTextLayout::put_LineSpacingMode(
@@ -399,21 +399,21 @@ IFACEMETHODIMP CanvasTextLayout::put_LineSpacingMode(
 {
     return ExceptionBoundary(
         [&]
-    {
-        auto& resource = GetResource();
+        {
+            auto& resource = GetResource();
 
-        DWriteLineSpacing originalSpacing(resource.Get());
+            DWriteLineSpacing originalSpacing(resource.Get());
 
-        DWriteLineSpacing::Set(
-            resource.Get(),
-            value,
-            originalSpacing.GetAdjustedSpacing(),
-            originalSpacing.Baseline);
+            DWriteLineSpacing::Set(
+                resource.Get(),
+                value,
+                originalSpacing.GetAdjustedSpacing(),
+                originalSpacing.Baseline);
 
-        m_lineSpacingMode = value;
+            m_lineSpacingMode = value;
 
-        m_trimmingSignInformation.RecreateInternalTrimmingSignIfNeeded(resource.Get());
-    });
+            m_trimmingSignInformation.RecreateInternalTrimmingSignIfNeeded(resource.Get());
+        });
 }
 
 #endif
@@ -777,19 +777,19 @@ IFACEMETHODIMP CanvasTextLayout::SetColor(
 {
     return ExceptionBoundary(
         [&]
-    {
-        auto& resource = GetResource();
+        {
+            auto& resource = GetResource();
 
-        auto textRange = ToDWriteTextRange(characterIndex, characterCount);
+            auto textRange = ToDWriteTextRange(characterIndex, characterCount);
 
-        auto& device = m_device.EnsureNotClosed();
+            auto& device = m_device.EnsureNotClosed();
 
-        auto deviceInternal = As<ICanvasDeviceInternal>(device);
+            auto deviceInternal = As<ICanvasDeviceInternal>(device);
 
-        auto d2dBrush = deviceInternal->CreateSolidColorBrush(ToD2DColor(color));
+            auto d2dBrush = deviceInternal->CreateSolidColorBrush(ToD2DColor(color));
 
-        ThrowIfFailed(resource->SetDrawingEffect(d2dBrush.Get(), textRange));
-    });
+            ThrowIfFailed(resource->SetDrawingEffect(d2dBrush.Get(), textRange));
+        });
 }
 
 IFACEMETHODIMP CanvasTextLayout::SetBrush(
@@ -1131,13 +1131,13 @@ IFACEMETHODIMP CanvasTextLayout::get_TrimmingSign(
 {
     return ExceptionBoundary(
         [&]
-    {
-        CheckInPointer(value);
+        {
+            CheckInPointer(value);
 
-        auto& resource = GetResource();
+            auto& resource = GetResource();
 
-        *value = m_trimmingSignInformation.GetTrimmingSignFromResource(resource.Get());
-    });
+            *value = m_trimmingSignInformation.GetTrimmingSignFromResource(resource.Get());
+        });
 }
 
 IFACEMETHODIMP CanvasTextLayout::put_TrimmingSign(

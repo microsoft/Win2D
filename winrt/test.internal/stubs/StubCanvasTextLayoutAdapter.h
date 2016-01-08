@@ -33,22 +33,22 @@ namespace canvas
         {
             GetFontCollection_BaseFormat_Method.AllowAnyCall(
                 [](IDWriteFontCollection** fontCollection)
-            {
-                auto mockFontCollection = Make<MockDWriteFontCollection>();
-                mockFontCollection.CopyTo(fontCollection);
-                return S_OK;
-            });
+                {
+                    auto mockFontCollection = Make<MockDWriteFontCollection>();
+                    mockFontCollection.CopyTo(fontCollection);
+                    return S_OK;
+                });
 
             GetFontFamilyNameLength_BaseFormat_Method.AllowAnyCall([] { return 1; });
 
             GetFontFamilyName_BaseFormat_Method.AllowAnyCall(
                 [](WCHAR* localeName, UINT32 nameSize)
-            {
-                Assert::AreEqual(2u, nameSize); // Includes null term
-                localeName[0] = L'A';
-                localeName[1] = 0;
-                return S_OK;
-            });
+                {
+                    Assert::AreEqual(2u, nameSize); // Includes null term
+                    localeName[0] = L'A';
+                    localeName[1] = 0;
+                    return S_OK;
+                });
 
             GetFlowDirectionMethod.AllowAnyCall([] { return DWRITE_FLOW_DIRECTION_TOP_TO_BOTTOM; });
 
@@ -66,11 +66,11 @@ namespace canvas
 
             GetLocaleName_BaseFormat_Method.AllowAnyCall(
                 [](WCHAR* localeName, UINT32 nameSize)
-            {
-                Assert::AreEqual(2u, nameSize);
-                localeName[0] = L'A';
-                return S_OK;
-            });
+                {
+                    Assert::AreEqual(2u, nameSize);
+                    localeName[0] = L'A';
+                    return S_OK;
+                });
 
             GetParagraphAlignmentMethod.AllowAnyCall([] { return DWRITE_PARAGRAPH_ALIGNMENT_CENTER; });
 
@@ -82,21 +82,21 @@ namespace canvas
 
             GetLineSpacingMethod.AllowAnyCall(
                 [=](DWRITE_LINE_SPACING_METHOD* lineSpacingMethod, FLOAT* lineSpacing, FLOAT* baseline)
-            {
-                *lineSpacingMethod = m_lineSpacingMethod;
-                *lineSpacing = m_lineSpacing;
-                *baseline = m_baseline;
-                return S_OK;
-            });
+                {
+                    *lineSpacingMethod = m_lineSpacingMethod;
+                    *lineSpacing = m_lineSpacing;
+                    *baseline = m_baseline;
+                    return S_OK;
+                });
 
             SetLineSpacingMethod.AllowAnyCall(
                 [=](DWRITE_LINE_SPACING_METHOD lineSpacingMethod, FLOAT lineSpacing, FLOAT baseline)
-            {
-                m_lineSpacingMethod = lineSpacingMethod;
-                m_lineSpacing = lineSpacing;
-                m_baseline = baseline;
-                return S_OK;
-            });
+                {
+                    m_lineSpacingMethod = lineSpacingMethod;
+                    m_lineSpacing = lineSpacing;
+                    m_baseline = baseline;
+                    return S_OK;
+                });
 
             GetTrimmingMethod.AllowAnyCall(
                 [=](DWRITE_TRIMMING* trimming, IDWriteInlineObject** sign)

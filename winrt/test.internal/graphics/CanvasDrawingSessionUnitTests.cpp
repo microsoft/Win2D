@@ -1505,9 +1505,9 @@ public:
     {
         TestDrawLine(false, 1, false,
             [](CanvasDrawingSessionFixture const& f, Vector2 p0, Vector2 p1, CanvasStrokeStyle* strokeStyle)
-        {
-            ThrowIfFailed(f.DS->DrawLineWithBrush(p0, p1, f.Brush.Get()));
-        });
+            {
+                ThrowIfFailed(f.DS->DrawLineWithBrush(p0, p1, f.Brush.Get()));
+            });
 
         // Null brush.
         Assert::AreEqual(E_INVALIDARG, CanvasDrawingSessionFixture().DS->DrawLineWithBrush(Vector2{}, Vector2{}, nullptr));
@@ -1517,9 +1517,9 @@ public:
     {
         TestDrawLine(false, 1, false,
             [](CanvasDrawingSessionFixture const& f, Vector2 p0, Vector2 p1, CanvasStrokeStyle* strokeStyle)
-        {
-            ThrowIfFailed(f.DS->DrawLineAtCoordsWithBrush(p0.X, p0.Y, p1.X, p1.Y, f.Brush.Get()));
-        });
+            {
+                ThrowIfFailed(f.DS->DrawLineAtCoordsWithBrush(p0.X, p0.Y, p1.X, p1.Y, f.Brush.Get()));
+            });
 
         // Null brush.
         Assert::AreEqual(E_INVALIDARG, CanvasDrawingSessionFixture().DS->DrawLineAtCoordsWithBrush(0, 0, 0, 0, nullptr));
@@ -1529,29 +1529,29 @@ public:
     {
         TestDrawLine(true, 1, false,
             [](CanvasDrawingSessionFixture const& f, Vector2 p0, Vector2 p1, CanvasStrokeStyle* strokeStyle)
-        {
-            ThrowIfFailed(f.DS->DrawLineWithColor(p0, p1, ArbitraryMarkerColor1));
-            ThrowIfFailed(f.DS->DrawLineWithColor(p0, p1, ArbitraryMarkerColor2));
-        });
+            {
+                ThrowIfFailed(f.DS->DrawLineWithColor(p0, p1, ArbitraryMarkerColor1));
+                ThrowIfFailed(f.DS->DrawLineWithColor(p0, p1, ArbitraryMarkerColor2));
+            });
     }
 
     TEST_METHOD_EX(CanvasDrawingSession_DrawLineAtCoordsWithColor)
     {
         TestDrawLine(true, 1, false,
             [](CanvasDrawingSessionFixture const& f, Vector2 p0, Vector2 p1, CanvasStrokeStyle* strokeStyle)
-        {
-            ThrowIfFailed(f.DS->DrawLineAtCoordsWithColor(p0.X, p0.Y, p1.X, p1.Y, ArbitraryMarkerColor1));
-            ThrowIfFailed(f.DS->DrawLineAtCoordsWithColor(p0.X, p0.Y, p1.X, p1.Y, ArbitraryMarkerColor2));
-        });
+            {
+                ThrowIfFailed(f.DS->DrawLineAtCoordsWithColor(p0.X, p0.Y, p1.X, p1.Y, ArbitraryMarkerColor1));
+                ThrowIfFailed(f.DS->DrawLineAtCoordsWithColor(p0.X, p0.Y, p1.X, p1.Y, ArbitraryMarkerColor2));
+            });
     }
 
     TEST_METHOD_EX(CanvasDrawingSession_DrawLineWithBrushAndStrokeWidth)
     {
         TestDrawLine(false, 123, false,
             [](CanvasDrawingSessionFixture const& f, Vector2 p0, Vector2 p1, CanvasStrokeStyle* strokeStyle)
-        {
-            ThrowIfFailed(f.DS->DrawLineWithBrushAndStrokeWidth(p0, p1, f.Brush.Get(), 123));
-        });
+            {
+                ThrowIfFailed(f.DS->DrawLineWithBrushAndStrokeWidth(p0, p1, f.Brush.Get(), 123));
+            });
 
         // Null brush.
         Assert::AreEqual(E_INVALIDARG, CanvasDrawingSessionFixture().DS->DrawLineWithBrushAndStrokeWidth(Vector2{}, Vector2{}, nullptr, 0));
@@ -1561,9 +1561,9 @@ public:
     {
         TestDrawLine(false, 123, false,
             [](CanvasDrawingSessionFixture const& f, Vector2 p0, Vector2 p1, CanvasStrokeStyle* strokeStyle)
-        {
-            ThrowIfFailed(f.DS->DrawLineAtCoordsWithBrushAndStrokeWidth(p0.X, p0.Y, p1.X, p1.Y, f.Brush.Get(), 123));
-        });
+            {
+                ThrowIfFailed(f.DS->DrawLineAtCoordsWithBrushAndStrokeWidth(p0.X, p0.Y, p1.X, p1.Y, f.Brush.Get(), 123));
+            });
 
         // Null brush.
         Assert::AreEqual(E_INVALIDARG, CanvasDrawingSessionFixture().DS->DrawLineAtCoordsWithBrushAndStrokeWidth(0, 0, 0, 0, nullptr, 0));
@@ -1573,29 +1573,29 @@ public:
     {
         TestDrawLine(true, 123, false,
             [](CanvasDrawingSessionFixture const& f, Vector2 p0, Vector2 p1, CanvasStrokeStyle* strokeStyle)
-        {
-            ThrowIfFailed(f.DS->DrawLineWithColorAndStrokeWidth(p0, p1, ArbitraryMarkerColor1, 123));
-            ThrowIfFailed(f.DS->DrawLineWithColorAndStrokeWidth(p0, p1, ArbitraryMarkerColor2, 123));
-        });
+            {
+                ThrowIfFailed(f.DS->DrawLineWithColorAndStrokeWidth(p0, p1, ArbitraryMarkerColor1, 123));
+                ThrowIfFailed(f.DS->DrawLineWithColorAndStrokeWidth(p0, p1, ArbitraryMarkerColor2, 123));
+            });
     }
 
     TEST_METHOD_EX(CanvasDrawingSession_DrawLineAtCoordsWithColorAndStrokeWidth)
     {
         TestDrawLine(true, 123, false,
             [](CanvasDrawingSessionFixture const& f, Vector2 p0, Vector2 p1, CanvasStrokeStyle* strokeStyle)
-        {
-            ThrowIfFailed(f.DS->DrawLineAtCoordsWithColorAndStrokeWidth(p0.X, p0.Y, p1.X, p1.Y, ArbitraryMarkerColor1, 123));
-            ThrowIfFailed(f.DS->DrawLineAtCoordsWithColorAndStrokeWidth(p0.X, p0.Y, p1.X, p1.Y, ArbitraryMarkerColor2, 123));
-        });
+            {
+                ThrowIfFailed(f.DS->DrawLineAtCoordsWithColorAndStrokeWidth(p0.X, p0.Y, p1.X, p1.Y, ArbitraryMarkerColor1, 123));
+                ThrowIfFailed(f.DS->DrawLineAtCoordsWithColorAndStrokeWidth(p0.X, p0.Y, p1.X, p1.Y, ArbitraryMarkerColor2, 123));
+            });
     }
 
     TEST_METHOD_EX(CanvasDrawingSession_DrawLineWithBrushAndStrokeWidthAndStrokeStyle)
     {
         TestDrawLine(false, 123, true,
             [](CanvasDrawingSessionFixture const& f, Vector2 p0, Vector2 p1, CanvasStrokeStyle* strokeStyle)
-        {
-            ThrowIfFailed(f.DS->DrawLineWithBrushAndStrokeWidthAndStrokeStyle(p0, p1, f.Brush.Get(), 123, strokeStyle));
-        });
+            {
+                ThrowIfFailed(f.DS->DrawLineWithBrushAndStrokeWidthAndStrokeStyle(p0, p1, f.Brush.Get(), 123, strokeStyle));
+            });
 
         // Null brush.
         Assert::AreEqual(E_INVALIDARG, CanvasDrawingSessionFixture().DS->DrawLineWithBrushAndStrokeWidthAndStrokeStyle(Vector2{}, Vector2{}, nullptr, 0, nullptr));
@@ -1605,9 +1605,9 @@ public:
     {
         TestDrawLine(false, 123, true,
             [](CanvasDrawingSessionFixture const& f, Vector2 p0, Vector2 p1, CanvasStrokeStyle* strokeStyle)
-        {
-            ThrowIfFailed(f.DS->DrawLineAtCoordsWithBrushAndStrokeWidthAndStrokeStyle(p0.X, p0.Y, p1.X, p1.Y, f.Brush.Get(), 123, strokeStyle));
-        });
+            {
+                ThrowIfFailed(f.DS->DrawLineAtCoordsWithBrushAndStrokeWidthAndStrokeStyle(p0.X, p0.Y, p1.X, p1.Y, f.Brush.Get(), 123, strokeStyle));
+            });
 
         // Null brush.
         Assert::AreEqual(E_INVALIDARG, CanvasDrawingSessionFixture().DS->DrawLineAtCoordsWithBrushAndStrokeWidthAndStrokeStyle(0, 0, 0, 0, nullptr, 0, nullptr));
@@ -1617,20 +1617,20 @@ public:
     {
         TestDrawLine(true, 123, true,
             [](CanvasDrawingSessionFixture const& f, Vector2 p0, Vector2 p1, CanvasStrokeStyle* strokeStyle)
-        {
-            ThrowIfFailed(f.DS->DrawLineWithColorAndStrokeWidthAndStrokeStyle(p0, p1, ArbitraryMarkerColor1, 123, strokeStyle));
-            ThrowIfFailed(f.DS->DrawLineWithColorAndStrokeWidthAndStrokeStyle(p0, p1, ArbitraryMarkerColor2, 123, strokeStyle));
-        });
+            {
+                ThrowIfFailed(f.DS->DrawLineWithColorAndStrokeWidthAndStrokeStyle(p0, p1, ArbitraryMarkerColor1, 123, strokeStyle));
+                ThrowIfFailed(f.DS->DrawLineWithColorAndStrokeWidthAndStrokeStyle(p0, p1, ArbitraryMarkerColor2, 123, strokeStyle));
+            });
     }
 
     TEST_METHOD_EX(CanvasDrawingSession_DrawLineAtCoordsWithColorAndStrokeWidthAndStrokeStyle)
     {
         TestDrawLine(true, 123, true,
             [](CanvasDrawingSessionFixture const& f, Vector2 p0, Vector2 p1, CanvasStrokeStyle* strokeStyle)
-        {
-            ThrowIfFailed(f.DS->DrawLineAtCoordsWithColorAndStrokeWidthAndStrokeStyle(p0.X, p0.Y, p1.X, p1.Y, ArbitraryMarkerColor1, 123, strokeStyle));
-            ThrowIfFailed(f.DS->DrawLineAtCoordsWithColorAndStrokeWidthAndStrokeStyle(p0.X, p0.Y, p1.X, p1.Y, ArbitraryMarkerColor2, 123, strokeStyle));
-        });
+            {
+                ThrowIfFailed(f.DS->DrawLineAtCoordsWithColorAndStrokeWidthAndStrokeStyle(p0.X, p0.Y, p1.X, p1.Y, ArbitraryMarkerColor1, 123, strokeStyle));
+                ThrowIfFailed(f.DS->DrawLineAtCoordsWithColorAndStrokeWidthAndStrokeStyle(p0.X, p0.Y, p1.X, p1.Y, ArbitraryMarkerColor2, 123, strokeStyle));
+            });
     }
 
 
@@ -1678,9 +1678,9 @@ public:
     {
         TestDrawRectangle(false, 1, false,
             [](CanvasDrawingSessionFixture const& f, Rect rect, CanvasStrokeStyle* strokeStyle)
-        {
-            ThrowIfFailed(f.DS->DrawRectangleWithBrush(rect, f.Brush.Get()));
-        });
+            {
+                ThrowIfFailed(f.DS->DrawRectangleWithBrush(rect, f.Brush.Get()));
+            });
 
         // Null brush.
         Assert::AreEqual(E_INVALIDARG, CanvasDrawingSessionFixture().DS->DrawRectangleWithBrush(Rect{}, nullptr));
@@ -1690,9 +1690,9 @@ public:
     {
         TestDrawRectangle(false, 1, false,
             [](CanvasDrawingSessionFixture const& f, Rect rect, CanvasStrokeStyle* strokeStyle)
-        {
-            ThrowIfFailed(f.DS->DrawRectangleAtCoordsWithBrush(rect.X, rect.Y, rect.Width, rect.Height, f.Brush.Get()));
-        });
+            {
+                ThrowIfFailed(f.DS->DrawRectangleAtCoordsWithBrush(rect.X, rect.Y, rect.Width, rect.Height, f.Brush.Get()));
+            });
 
         // Null brush.
         Assert::AreEqual(E_INVALIDARG, CanvasDrawingSessionFixture().DS->DrawRectangleAtCoordsWithBrush(0, 0, 0, 0, nullptr));
@@ -1702,29 +1702,29 @@ public:
     {
         TestDrawRectangle(true, 1, false,
             [](CanvasDrawingSessionFixture const& f, Rect rect, CanvasStrokeStyle* strokeStyle)
-        {
-            ThrowIfFailed(f.DS->DrawRectangleWithColor(rect, ArbitraryMarkerColor1));
-            ThrowIfFailed(f.DS->DrawRectangleWithColor(rect, ArbitraryMarkerColor2));
-        });
+            {
+                ThrowIfFailed(f.DS->DrawRectangleWithColor(rect, ArbitraryMarkerColor1));
+                ThrowIfFailed(f.DS->DrawRectangleWithColor(rect, ArbitraryMarkerColor2));
+            });
     }
 
     TEST_METHOD_EX(CanvasDrawingSession_DrawRectangleAtCoordsWithColor)
     {
         TestDrawRectangle(true, 1, false,
             [](CanvasDrawingSessionFixture const& f, Rect rect, CanvasStrokeStyle* strokeStyle)
-        {
-            ThrowIfFailed(f.DS->DrawRectangleAtCoordsWithColor(rect.X, rect.Y, rect.Width, rect.Height, ArbitraryMarkerColor1));
-            ThrowIfFailed(f.DS->DrawRectangleAtCoordsWithColor(rect.X, rect.Y, rect.Width, rect.Height, ArbitraryMarkerColor2));
-        });
+            {
+                ThrowIfFailed(f.DS->DrawRectangleAtCoordsWithColor(rect.X, rect.Y, rect.Width, rect.Height, ArbitraryMarkerColor1));
+                ThrowIfFailed(f.DS->DrawRectangleAtCoordsWithColor(rect.X, rect.Y, rect.Width, rect.Height, ArbitraryMarkerColor2));
+            });
     }
 
     TEST_METHOD_EX(CanvasDrawingSession_DrawRectangleWithBrushAndStrokeWidth)
     {
         TestDrawRectangle(false, 123, false,
             [](CanvasDrawingSessionFixture const& f, Rect rect, CanvasStrokeStyle* strokeStyle)
-        {
-            ThrowIfFailed(f.DS->DrawRectangleWithBrushAndStrokeWidth(rect, f.Brush.Get(), 123));
-        });
+            {
+                ThrowIfFailed(f.DS->DrawRectangleWithBrushAndStrokeWidth(rect, f.Brush.Get(), 123));
+            });
 
         // Null brush.
         Assert::AreEqual(E_INVALIDARG, CanvasDrawingSessionFixture().DS->DrawRectangleWithBrushAndStrokeWidth(Rect{}, nullptr, 0));
@@ -1734,9 +1734,9 @@ public:
     {
         TestDrawRectangle(false, 123, false,
             [](CanvasDrawingSessionFixture const& f, Rect rect, CanvasStrokeStyle* strokeStyle)
-        {
-            ThrowIfFailed(f.DS->DrawRectangleAtCoordsWithBrushAndStrokeWidth(rect.X, rect.Y, rect.Width, rect.Height, f.Brush.Get(), 123));
-        });
+            {
+                ThrowIfFailed(f.DS->DrawRectangleAtCoordsWithBrushAndStrokeWidth(rect.X, rect.Y, rect.Width, rect.Height, f.Brush.Get(), 123));
+            });
 
         // Null brush.
         Assert::AreEqual(E_INVALIDARG, CanvasDrawingSessionFixture().DS->DrawRectangleAtCoordsWithBrushAndStrokeWidth(0, 0, 0, 0, nullptr, 0));
@@ -1746,29 +1746,29 @@ public:
     {
         TestDrawRectangle(true, 123, false,
             [](CanvasDrawingSessionFixture const& f, Rect rect, CanvasStrokeStyle* strokeStyle)
-        {
-            ThrowIfFailed(f.DS->DrawRectangleWithColorAndStrokeWidth(rect, ArbitraryMarkerColor1, 123));
-            ThrowIfFailed(f.DS->DrawRectangleWithColorAndStrokeWidth(rect, ArbitraryMarkerColor2, 123));
-        });
+            {
+                ThrowIfFailed(f.DS->DrawRectangleWithColorAndStrokeWidth(rect, ArbitraryMarkerColor1, 123));
+                ThrowIfFailed(f.DS->DrawRectangleWithColorAndStrokeWidth(rect, ArbitraryMarkerColor2, 123));
+            });
     }
 
     TEST_METHOD_EX(CanvasDrawingSession_DrawRectangleAtCoordsWithColorAndStrokeWidth)
     {
         TestDrawRectangle(true, 123, false,
             [](CanvasDrawingSessionFixture const& f, Rect rect, CanvasStrokeStyle* strokeStyle)
-        {
-            ThrowIfFailed(f.DS->DrawRectangleAtCoordsWithColorAndStrokeWidth(rect.X, rect.Y, rect.Width, rect.Height, ArbitraryMarkerColor1, 123));
-            ThrowIfFailed(f.DS->DrawRectangleAtCoordsWithColorAndStrokeWidth(rect.X, rect.Y, rect.Width, rect.Height, ArbitraryMarkerColor2, 123));
-        });
+            {
+                ThrowIfFailed(f.DS->DrawRectangleAtCoordsWithColorAndStrokeWidth(rect.X, rect.Y, rect.Width, rect.Height, ArbitraryMarkerColor1, 123));
+                ThrowIfFailed(f.DS->DrawRectangleAtCoordsWithColorAndStrokeWidth(rect.X, rect.Y, rect.Width, rect.Height, ArbitraryMarkerColor2, 123));
+            });
     }
 
     TEST_METHOD_EX(CanvasDrawingSession_DrawRectangleWithBrushAndStrokeWidthAndStrokeStyle)
     {
         TestDrawRectangle(false, 123, true,
             [](CanvasDrawingSessionFixture const& f, Rect rect, CanvasStrokeStyle* strokeStyle)
-        {
-            ThrowIfFailed(f.DS->DrawRectangleWithBrushAndStrokeWidthAndStrokeStyle(rect, f.Brush.Get(), 123, strokeStyle));
-        });
+            {
+                ThrowIfFailed(f.DS->DrawRectangleWithBrushAndStrokeWidthAndStrokeStyle(rect, f.Brush.Get(), 123, strokeStyle));
+            });
 
         // Null brush.
         Assert::AreEqual(E_INVALIDARG, CanvasDrawingSessionFixture().DS->DrawRectangleWithBrushAndStrokeWidthAndStrokeStyle(Rect{}, nullptr, 0, nullptr));
@@ -1778,9 +1778,9 @@ public:
     {
         TestDrawRectangle(false, 123, true,
             [](CanvasDrawingSessionFixture const& f, Rect rect, CanvasStrokeStyle* strokeStyle)
-        {
-            ThrowIfFailed(f.DS->DrawRectangleAtCoordsWithBrushAndStrokeWidthAndStrokeStyle(rect.X, rect.Y, rect.Width, rect.Height, f.Brush.Get(), 123, strokeStyle));
-        });
+            {
+                ThrowIfFailed(f.DS->DrawRectangleAtCoordsWithBrushAndStrokeWidthAndStrokeStyle(rect.X, rect.Y, rect.Width, rect.Height, f.Brush.Get(), 123, strokeStyle));
+            });
 
         // Null brush.
         Assert::AreEqual(E_INVALIDARG, CanvasDrawingSessionFixture().DS->DrawRectangleAtCoordsWithBrushAndStrokeWidthAndStrokeStyle(0, 0, 0, 0, nullptr, 0, nullptr));
@@ -1790,20 +1790,20 @@ public:
     {
         TestDrawRectangle(true, 123, true,
             [](CanvasDrawingSessionFixture const& f, Rect rect, CanvasStrokeStyle* strokeStyle)
-        {
-            ThrowIfFailed(f.DS->DrawRectangleWithColorAndStrokeWidthAndStrokeStyle(rect, ArbitraryMarkerColor1, 123, strokeStyle));
-            ThrowIfFailed(f.DS->DrawRectangleWithColorAndStrokeWidthAndStrokeStyle(rect, ArbitraryMarkerColor2, 123, strokeStyle));
-        });
+            {
+                ThrowIfFailed(f.DS->DrawRectangleWithColorAndStrokeWidthAndStrokeStyle(rect, ArbitraryMarkerColor1, 123, strokeStyle));
+                ThrowIfFailed(f.DS->DrawRectangleWithColorAndStrokeWidthAndStrokeStyle(rect, ArbitraryMarkerColor2, 123, strokeStyle));
+            });
     }
 
     TEST_METHOD_EX(CanvasDrawingSession_DrawRectangleAtCoordsWithColorAndStrokeWidthAndStrokeStyle)
     {
         TestDrawRectangle(true, 123, true,
             [](CanvasDrawingSessionFixture const& f, Rect rect, CanvasStrokeStyle* strokeStyle)
-        {
-            ThrowIfFailed(f.DS->DrawRectangleAtCoordsWithColorAndStrokeWidthAndStrokeStyle(rect.X, rect.Y, rect.Width, rect.Height, ArbitraryMarkerColor1, 123, strokeStyle));
-            ThrowIfFailed(f.DS->DrawRectangleAtCoordsWithColorAndStrokeWidthAndStrokeStyle(rect.X, rect.Y, rect.Width, rect.Height, ArbitraryMarkerColor2, 123, strokeStyle));
-        });
+            {
+                ThrowIfFailed(f.DS->DrawRectangleAtCoordsWithColorAndStrokeWidthAndStrokeStyle(rect.X, rect.Y, rect.Width, rect.Height, ArbitraryMarkerColor1, 123, strokeStyle));
+                ThrowIfFailed(f.DS->DrawRectangleAtCoordsWithColorAndStrokeWidthAndStrokeStyle(rect.X, rect.Y, rect.Width, rect.Height, ArbitraryMarkerColor2, 123, strokeStyle));
+            });
     }
 
 
@@ -1838,9 +1838,9 @@ public:
     {
         TestFillRectangle(false,
             [](CanvasDrawingSessionFixture const& f, Rect rect)
-        {
-            ThrowIfFailed(f.DS->FillRectangleWithBrush(rect, f.Brush.Get()));
-        });
+            {
+                ThrowIfFailed(f.DS->FillRectangleWithBrush(rect, f.Brush.Get()));
+            });
 
         // Null brush.
         Assert::AreEqual(E_INVALIDARG, CanvasDrawingSessionFixture().DS->FillRectangleWithBrush(Rect{}, nullptr));
@@ -1850,9 +1850,9 @@ public:
     {
         TestFillRectangle(false,
             [](CanvasDrawingSessionFixture const& f, Rect rect)
-        {
-            ThrowIfFailed(f.DS->FillRectangleAtCoordsWithBrush(rect.X, rect.Y, rect.Width, rect.Height, f.Brush.Get()));
-        });
+            {
+                ThrowIfFailed(f.DS->FillRectangleAtCoordsWithBrush(rect.X, rect.Y, rect.Width, rect.Height, f.Brush.Get()));
+            });
 
         // Null brush.
         Assert::AreEqual(E_INVALIDARG, CanvasDrawingSessionFixture().DS->FillRectangleAtCoordsWithBrush(0, 0, 0, 0, nullptr));
@@ -1862,20 +1862,20 @@ public:
     {
         TestFillRectangle(true,
             [](CanvasDrawingSessionFixture const& f, Rect rect)
-        {
-            ThrowIfFailed(f.DS->FillRectangleWithColor(rect, ArbitraryMarkerColor1));
-            ThrowIfFailed(f.DS->FillRectangleWithColor(rect, ArbitraryMarkerColor2));
-        });
+            {
+                ThrowIfFailed(f.DS->FillRectangleWithColor(rect, ArbitraryMarkerColor1));
+                ThrowIfFailed(f.DS->FillRectangleWithColor(rect, ArbitraryMarkerColor2));
+            });
     }
 
     TEST_METHOD_EX(CanvasDrawingSession_FillRectangleAtCoordsWithColor)
     {
         TestFillRectangle(true,
             [](CanvasDrawingSessionFixture const& f, Rect rect)
-        {
-            ThrowIfFailed(f.DS->FillRectangleAtCoordsWithColor(rect.X, rect.Y, rect.Width, rect.Height, ArbitraryMarkerColor1));
-            ThrowIfFailed(f.DS->FillRectangleAtCoordsWithColor(rect.X, rect.Y, rect.Width, rect.Height, ArbitraryMarkerColor2));
-        });
+            {
+                ThrowIfFailed(f.DS->FillRectangleAtCoordsWithColor(rect.X, rect.Y, rect.Width, rect.Height, ArbitraryMarkerColor1));
+                ThrowIfFailed(f.DS->FillRectangleAtCoordsWithColor(rect.X, rect.Y, rect.Width, rect.Height, ArbitraryMarkerColor2));
+            });
     }
 
     class FillOpacityMaskFixture : public CanvasDrawingSessionFixture
@@ -2142,9 +2142,9 @@ public:
     {
         TestFillRectangle(false,
             [](CanvasDrawingSessionFixture const& f, Rect rect)
-        {
-            ThrowIfFailed(f.DS->FillRectangleWithBrushAndOpacityBrush(rect, f.Brush.Get(), nullptr));
-        });
+            {
+                ThrowIfFailed(f.DS->FillRectangleWithBrushAndOpacityBrush(rect, f.Brush.Get(), nullptr));
+            });
     }
 
     TEST_METHOD_EX(CanvasDrawingSession_FillRectangleAtCoordsWithBrushAndOpacityBrush)
@@ -2205,9 +2205,9 @@ public:
     {
         TestDrawRoundedRectangle(false, 1, false,
             [](CanvasDrawingSessionFixture const& f, Rect rect, float rx, float ry, CanvasStrokeStyle* strokeStyle)
-        {
-            ThrowIfFailed(f.DS->DrawRoundedRectangleWithBrush(rect, rx, ry, f.Brush.Get()));
-        });
+            {
+                ThrowIfFailed(f.DS->DrawRoundedRectangleWithBrush(rect, rx, ry, f.Brush.Get()));
+            });
 
         // Null brush.
         Assert::AreEqual(E_INVALIDARG, CanvasDrawingSessionFixture().DS->DrawRoundedRectangleWithBrush(Rect{}, 0, 0, nullptr));
@@ -2217,9 +2217,9 @@ public:
     {
         TestDrawRoundedRectangle(false, 1, false,
             [](CanvasDrawingSessionFixture const& f, Rect rect, float rx, float ry, CanvasStrokeStyle* strokeStyle)
-        {
-            ThrowIfFailed(f.DS->DrawRoundedRectangleAtCoordsWithBrush(rect.X, rect.Y, rect.Width, rect.Height, rx, ry, f.Brush.Get()));
-        });
+            {
+                ThrowIfFailed(f.DS->DrawRoundedRectangleAtCoordsWithBrush(rect.X, rect.Y, rect.Width, rect.Height, rx, ry, f.Brush.Get()));
+            });
 
         // Null brush.
         Assert::AreEqual(E_INVALIDARG, CanvasDrawingSessionFixture().DS->DrawRoundedRectangleAtCoordsWithBrush(0, 0, 0, 0, 0, 0, nullptr));
@@ -2229,29 +2229,29 @@ public:
     {
         TestDrawRoundedRectangle(true, 1, false,
             [](CanvasDrawingSessionFixture const& f, Rect rect, float rx, float ry, CanvasStrokeStyle* strokeStyle)
-        {
-            ThrowIfFailed(f.DS->DrawRoundedRectangleWithColor(rect, rx, ry, ArbitraryMarkerColor1));
-            ThrowIfFailed(f.DS->DrawRoundedRectangleWithColor(rect, rx, ry, ArbitraryMarkerColor2));
-        });
+            {
+                ThrowIfFailed(f.DS->DrawRoundedRectangleWithColor(rect, rx, ry, ArbitraryMarkerColor1));
+                ThrowIfFailed(f.DS->DrawRoundedRectangleWithColor(rect, rx, ry, ArbitraryMarkerColor2));
+            });
     }
 
     TEST_METHOD_EX(CanvasDrawingSession_DrawRoundedRectangleAtCoordsWithColor)
     {
         TestDrawRoundedRectangle(true, 1, false,
             [](CanvasDrawingSessionFixture const& f, Rect rect, float rx, float ry, CanvasStrokeStyle* strokeStyle)
-        {
-            ThrowIfFailed(f.DS->DrawRoundedRectangleAtCoordsWithColor(rect.X, rect.Y, rect.Width, rect.Height, rx, ry, ArbitraryMarkerColor1));
-            ThrowIfFailed(f.DS->DrawRoundedRectangleAtCoordsWithColor(rect.X, rect.Y, rect.Width, rect.Height, rx, ry, ArbitraryMarkerColor2));
-        });
+            {
+                ThrowIfFailed(f.DS->DrawRoundedRectangleAtCoordsWithColor(rect.X, rect.Y, rect.Width, rect.Height, rx, ry, ArbitraryMarkerColor1));
+                ThrowIfFailed(f.DS->DrawRoundedRectangleAtCoordsWithColor(rect.X, rect.Y, rect.Width, rect.Height, rx, ry, ArbitraryMarkerColor2));
+            });
     }
 
     TEST_METHOD_EX(CanvasDrawingSession_DrawRoundedRectangleWithBrushAndStrokeWidth)
     {
         TestDrawRoundedRectangle(false, 123, false,
             [](CanvasDrawingSessionFixture const& f, Rect rect, float rx, float ry, CanvasStrokeStyle* strokeStyle)
-        {
-            ThrowIfFailed(f.DS->DrawRoundedRectangleWithBrushAndStrokeWidth(rect, rx, ry, f.Brush.Get(), 123));
-        });
+            {
+                ThrowIfFailed(f.DS->DrawRoundedRectangleWithBrushAndStrokeWidth(rect, rx, ry, f.Brush.Get(), 123));
+            });
 
         // Null brush.
         Assert::AreEqual(E_INVALIDARG, CanvasDrawingSessionFixture().DS->DrawRoundedRectangleWithBrushAndStrokeWidth(Rect{}, 0, 0, nullptr, 0));
@@ -2261,9 +2261,9 @@ public:
     {
         TestDrawRoundedRectangle(false, 123, false,
             [](CanvasDrawingSessionFixture const& f, Rect rect, float rx, float ry, CanvasStrokeStyle* strokeStyle)
-        {
-            ThrowIfFailed(f.DS->DrawRoundedRectangleAtCoordsWithBrushAndStrokeWidth(rect.X, rect.Y, rect.Width, rect.Height, rx, ry, f.Brush.Get(), 123));
-        });
+            {
+                ThrowIfFailed(f.DS->DrawRoundedRectangleAtCoordsWithBrushAndStrokeWidth(rect.X, rect.Y, rect.Width, rect.Height, rx, ry, f.Brush.Get(), 123));
+            });
 
         // Null brush.
         Assert::AreEqual(E_INVALIDARG, CanvasDrawingSessionFixture().DS->DrawRoundedRectangleAtCoordsWithBrushAndStrokeWidth(0, 0, 0, 0, 0, 0, nullptr, 0));
@@ -2273,29 +2273,29 @@ public:
     {
         TestDrawRoundedRectangle(true, 123, false,
             [](CanvasDrawingSessionFixture const& f, Rect rect, float rx, float ry, CanvasStrokeStyle* strokeStyle)
-        {
-            ThrowIfFailed(f.DS->DrawRoundedRectangleWithColorAndStrokeWidth(rect, rx, ry, ArbitraryMarkerColor1, 123));
-            ThrowIfFailed(f.DS->DrawRoundedRectangleWithColorAndStrokeWidth(rect, rx, ry, ArbitraryMarkerColor2, 123));
-        });
+            {
+                ThrowIfFailed(f.DS->DrawRoundedRectangleWithColorAndStrokeWidth(rect, rx, ry, ArbitraryMarkerColor1, 123));
+                ThrowIfFailed(f.DS->DrawRoundedRectangleWithColorAndStrokeWidth(rect, rx, ry, ArbitraryMarkerColor2, 123));
+            });
     }
 
     TEST_METHOD_EX(CanvasDrawingSession_DrawRoundedRectangleAtCoordsWithColorAndStrokeWidth)
     {
         TestDrawRoundedRectangle(true, 123, false,
             [](CanvasDrawingSessionFixture const& f, Rect rect, float rx, float ry, CanvasStrokeStyle* strokeStyle)
-        {
-            ThrowIfFailed(f.DS->DrawRoundedRectangleAtCoordsWithColorAndStrokeWidth(rect.X, rect.Y, rect.Width, rect.Height, rx, ry, ArbitraryMarkerColor1, 123));
-            ThrowIfFailed(f.DS->DrawRoundedRectangleAtCoordsWithColorAndStrokeWidth(rect.X, rect.Y, rect.Width, rect.Height, rx, ry, ArbitraryMarkerColor2, 123));
-        });
+            {
+                ThrowIfFailed(f.DS->DrawRoundedRectangleAtCoordsWithColorAndStrokeWidth(rect.X, rect.Y, rect.Width, rect.Height, rx, ry, ArbitraryMarkerColor1, 123));
+                ThrowIfFailed(f.DS->DrawRoundedRectangleAtCoordsWithColorAndStrokeWidth(rect.X, rect.Y, rect.Width, rect.Height, rx, ry, ArbitraryMarkerColor2, 123));
+            });
     }
 
     TEST_METHOD_EX(CanvasDrawingSession_DrawRoundedRectangleWithBrushAndStrokeWidthAndStrokeStyle)
     {
         TestDrawRoundedRectangle(false, 123, true,
             [](CanvasDrawingSessionFixture const& f, Rect rect, float rx, float ry, CanvasStrokeStyle* strokeStyle)
-        {
-            ThrowIfFailed(f.DS->DrawRoundedRectangleWithBrushAndStrokeWidthAndStrokeStyle(rect, rx, ry, f.Brush.Get(), 123, strokeStyle));
-        });
+            {
+                ThrowIfFailed(f.DS->DrawRoundedRectangleWithBrushAndStrokeWidthAndStrokeStyle(rect, rx, ry, f.Brush.Get(), 123, strokeStyle));
+            });
 
         // Null brush.
         Assert::AreEqual(E_INVALIDARG, CanvasDrawingSessionFixture().DS->DrawRoundedRectangleWithBrushAndStrokeWidthAndStrokeStyle(Rect{}, 0, 0, nullptr, 0, nullptr));
@@ -2305,9 +2305,9 @@ public:
     {
         TestDrawRoundedRectangle(false, 123, true,
             [](CanvasDrawingSessionFixture const& f, Rect rect, float rx, float ry, CanvasStrokeStyle* strokeStyle)
-        {
-            ThrowIfFailed(f.DS->DrawRoundedRectangleAtCoordsWithBrushAndStrokeWidthAndStrokeStyle(rect.X, rect.Y, rect.Width, rect.Height, rx, ry, f.Brush.Get(), 123, strokeStyle));
-        });
+            {
+                ThrowIfFailed(f.DS->DrawRoundedRectangleAtCoordsWithBrushAndStrokeWidthAndStrokeStyle(rect.X, rect.Y, rect.Width, rect.Height, rx, ry, f.Brush.Get(), 123, strokeStyle));
+            });
 
         // Null brush.
         Assert::AreEqual(E_INVALIDARG, CanvasDrawingSessionFixture().DS->DrawRoundedRectangleAtCoordsWithBrushAndStrokeWidthAndStrokeStyle(0, 0, 0, 0, 0, 0, nullptr, 0, nullptr));
@@ -2317,20 +2317,20 @@ public:
     {
         TestDrawRoundedRectangle(true, 123, true,
             [](CanvasDrawingSessionFixture const& f, Rect rect, float rx, float ry, CanvasStrokeStyle* strokeStyle)
-        {
-            ThrowIfFailed(f.DS->DrawRoundedRectangleWithColorAndStrokeWidthAndStrokeStyle(rect, rx, ry, ArbitraryMarkerColor1, 123, strokeStyle));
-            ThrowIfFailed(f.DS->DrawRoundedRectangleWithColorAndStrokeWidthAndStrokeStyle(rect, rx, ry, ArbitraryMarkerColor2, 123, strokeStyle));
-        });
+            {
+                ThrowIfFailed(f.DS->DrawRoundedRectangleWithColorAndStrokeWidthAndStrokeStyle(rect, rx, ry, ArbitraryMarkerColor1, 123, strokeStyle));
+                ThrowIfFailed(f.DS->DrawRoundedRectangleWithColorAndStrokeWidthAndStrokeStyle(rect, rx, ry, ArbitraryMarkerColor2, 123, strokeStyle));
+            });
     }
 
     TEST_METHOD_EX(CanvasDrawingSession_DrawRoundedRectangleAtCoordsWithColorAndStrokeWidthAndStrokeStyle)
     {
         TestDrawRoundedRectangle(true, 123, true,
             [](CanvasDrawingSessionFixture const& f, Rect rect, float rx, float ry, CanvasStrokeStyle* strokeStyle)
-        {
-            ThrowIfFailed(f.DS->DrawRoundedRectangleAtCoordsWithColorAndStrokeWidthAndStrokeStyle(rect.X, rect.Y, rect.Width, rect.Height, rx, ry, ArbitraryMarkerColor1, 123, strokeStyle));
-            ThrowIfFailed(f.DS->DrawRoundedRectangleAtCoordsWithColorAndStrokeWidthAndStrokeStyle(rect.X, rect.Y, rect.Width, rect.Height, rx, ry, ArbitraryMarkerColor2, 123, strokeStyle));
-        });
+            {
+                ThrowIfFailed(f.DS->DrawRoundedRectangleAtCoordsWithColorAndStrokeWidthAndStrokeStyle(rect.X, rect.Y, rect.Width, rect.Height, rx, ry, ArbitraryMarkerColor1, 123, strokeStyle));
+                ThrowIfFailed(f.DS->DrawRoundedRectangleAtCoordsWithColorAndStrokeWidthAndStrokeStyle(rect.X, rect.Y, rect.Width, rect.Height, rx, ry, ArbitraryMarkerColor2, 123, strokeStyle));
+            });
     }
 
 
@@ -2369,9 +2369,9 @@ public:
     {
         TestFillRoundedRectangle(false,
             [](CanvasDrawingSessionFixture const& f, Rect rect, float rx, float ry)
-        {
-            ThrowIfFailed(f.DS->FillRoundedRectangleWithBrush(rect, rx, ry, f.Brush.Get()));
-        });
+            {
+                ThrowIfFailed(f.DS->FillRoundedRectangleWithBrush(rect, rx, ry, f.Brush.Get()));
+            });
 
         // Null brush.
         Assert::AreEqual(E_INVALIDARG, CanvasDrawingSessionFixture().DS->FillRoundedRectangleWithBrush(Rect{}, 0, 0, nullptr));
@@ -2381,9 +2381,9 @@ public:
     {
         TestFillRoundedRectangle(false,
             [](CanvasDrawingSessionFixture const& f, Rect rect, float rx, float ry)
-        {
-            ThrowIfFailed(f.DS->FillRoundedRectangleAtCoordsWithBrush(rect.X, rect.Y, rect.Width, rect.Height, rx, ry, f.Brush.Get()));
-        });
+            {
+                ThrowIfFailed(f.DS->FillRoundedRectangleAtCoordsWithBrush(rect.X, rect.Y, rect.Width, rect.Height, rx, ry, f.Brush.Get()));
+            });
 
         // Null brush.
         Assert::AreEqual(E_INVALIDARG, CanvasDrawingSessionFixture().DS->FillRoundedRectangleAtCoordsWithBrush(0, 0, 0, 0, 0, 0, nullptr));
@@ -2393,20 +2393,20 @@ public:
     {
         TestFillRoundedRectangle(true,
             [](CanvasDrawingSessionFixture const& f, Rect rect, float rx, float ry)
-        {
-            ThrowIfFailed(f.DS->FillRoundedRectangleWithColor(rect, rx, ry, ArbitraryMarkerColor1));
-            ThrowIfFailed(f.DS->FillRoundedRectangleWithColor(rect, rx, ry, ArbitraryMarkerColor2));
-        });
+            {
+                ThrowIfFailed(f.DS->FillRoundedRectangleWithColor(rect, rx, ry, ArbitraryMarkerColor1));
+                ThrowIfFailed(f.DS->FillRoundedRectangleWithColor(rect, rx, ry, ArbitraryMarkerColor2));
+            });
     }
 
     TEST_METHOD_EX(CanvasDrawingSession_FillRoundedRectangleAtCoordsWithColor)
     {
         TestFillRoundedRectangle(true,
             [](CanvasDrawingSessionFixture const& f, Rect rect, float rx, float ry)
-        {
-            ThrowIfFailed(f.DS->FillRoundedRectangleAtCoordsWithColor(rect.X, rect.Y, rect.Width, rect.Height, rx, ry, ArbitraryMarkerColor1));
-            ThrowIfFailed(f.DS->FillRoundedRectangleAtCoordsWithColor(rect.X, rect.Y, rect.Width, rect.Height, rx, ry, ArbitraryMarkerColor2));
-        });
+            {
+                ThrowIfFailed(f.DS->FillRoundedRectangleAtCoordsWithColor(rect.X, rect.Y, rect.Width, rect.Height, rx, ry, ArbitraryMarkerColor1));
+                ThrowIfFailed(f.DS->FillRoundedRectangleAtCoordsWithColor(rect.X, rect.Y, rect.Width, rect.Height, rx, ry, ArbitraryMarkerColor2));
+            });
     }
 
 
@@ -2454,9 +2454,9 @@ public:
     {
         TestDrawEllipse(false, 23, 42, 1, false,
             [](CanvasDrawingSessionFixture const& f, Vector2 point, CanvasStrokeStyle* strokeStyle)
-        {
-            ThrowIfFailed(f.DS->DrawEllipseWithBrush(point, 23, 42, f.Brush.Get()));
-        });
+            {
+                ThrowIfFailed(f.DS->DrawEllipseWithBrush(point, 23, 42, f.Brush.Get()));
+            });
 
         // Null brush.
         Assert::AreEqual(E_INVALIDARG, CanvasDrawingSessionFixture().DS->DrawEllipseWithBrush(Vector2{}, 0, 0, nullptr));
@@ -2466,9 +2466,9 @@ public:
     {
         TestDrawEllipse(false, 23, 42, 1, false,
             [](CanvasDrawingSessionFixture const& f, Vector2 point, CanvasStrokeStyle* strokeStyle)
-        {
-            ThrowIfFailed(f.DS->DrawEllipseAtCoordsWithBrush(point.X, point.Y, 23, 42, f.Brush.Get()));
-        });
+            {
+                ThrowIfFailed(f.DS->DrawEllipseAtCoordsWithBrush(point.X, point.Y, 23, 42, f.Brush.Get()));
+            });
 
         // Null brush.
         Assert::AreEqual(E_INVALIDARG, CanvasDrawingSessionFixture().DS->DrawEllipseAtCoordsWithBrush(0, 0, 0, 0, nullptr));
@@ -2478,29 +2478,29 @@ public:
     {
         TestDrawEllipse(true, 23, 42, 1, false,
             [](CanvasDrawingSessionFixture const& f, Vector2 point, CanvasStrokeStyle* strokeStyle)
-        {
-            ThrowIfFailed(f.DS->DrawEllipseWithColor(point, 23, 42, ArbitraryMarkerColor1));
-            ThrowIfFailed(f.DS->DrawEllipseWithColor(point, 23, 42, ArbitraryMarkerColor2));
-        });
+            {
+                ThrowIfFailed(f.DS->DrawEllipseWithColor(point, 23, 42, ArbitraryMarkerColor1));
+                ThrowIfFailed(f.DS->DrawEllipseWithColor(point, 23, 42, ArbitraryMarkerColor2));
+            });
     }
 
     TEST_METHOD_EX(CanvasDrawingSession_DrawEllipseAtCoordsWithColor)
     {
         TestDrawEllipse(true, 23, 42, 1, false,
             [](CanvasDrawingSessionFixture const& f, Vector2 point, CanvasStrokeStyle* strokeStyle)
-        {
-            ThrowIfFailed(f.DS->DrawEllipseAtCoordsWithColor(point.X, point.Y, 23, 42, ArbitraryMarkerColor1));
-            ThrowIfFailed(f.DS->DrawEllipseAtCoordsWithColor(point.X, point.Y, 23, 42, ArbitraryMarkerColor2));
-        });
+            {
+                ThrowIfFailed(f.DS->DrawEllipseAtCoordsWithColor(point.X, point.Y, 23, 42, ArbitraryMarkerColor1));
+                ThrowIfFailed(f.DS->DrawEllipseAtCoordsWithColor(point.X, point.Y, 23, 42, ArbitraryMarkerColor2));
+            });
     }
 
     TEST_METHOD_EX(CanvasDrawingSession_DrawEllipseWithBrushAndStrokeWidth)
     {
         TestDrawEllipse(false, 23, 42, 123, false,
             [](CanvasDrawingSessionFixture const& f, Vector2 point, CanvasStrokeStyle* strokeStyle)
-        {
-            ThrowIfFailed(f.DS->DrawEllipseWithBrushAndStrokeWidth(point, 23, 42, f.Brush.Get(), 123));
-        });
+            {
+                ThrowIfFailed(f.DS->DrawEllipseWithBrushAndStrokeWidth(point, 23, 42, f.Brush.Get(), 123));
+            });
 
         // Null brush.
         Assert::AreEqual(E_INVALIDARG, CanvasDrawingSessionFixture().DS->DrawEllipseWithBrushAndStrokeWidth(Vector2{}, 0, 0, nullptr, 0));
@@ -2510,9 +2510,9 @@ public:
     {
         TestDrawEllipse(false, 23, 42, 123, false,
             [](CanvasDrawingSessionFixture const& f, Vector2 point, CanvasStrokeStyle* strokeStyle)
-        {
-            ThrowIfFailed(f.DS->DrawEllipseAtCoordsWithBrushAndStrokeWidth(point.X, point.Y, 23, 42, f.Brush.Get(), 123));
-        });
+            {
+                ThrowIfFailed(f.DS->DrawEllipseAtCoordsWithBrushAndStrokeWidth(point.X, point.Y, 23, 42, f.Brush.Get(), 123));
+            });
 
         // Null brush.
         Assert::AreEqual(E_INVALIDARG, CanvasDrawingSessionFixture().DS->DrawEllipseAtCoordsWithBrushAndStrokeWidth(0, 0, 0, 0, nullptr, 0));
@@ -2522,29 +2522,29 @@ public:
     {
         TestDrawEllipse(true, 23, 42, 123, false,
             [](CanvasDrawingSessionFixture const& f, Vector2 point, CanvasStrokeStyle* strokeStyle)
-        {
-            ThrowIfFailed(f.DS->DrawEllipseWithColorAndStrokeWidth(point, 23, 42, ArbitraryMarkerColor1, 123));
-            ThrowIfFailed(f.DS->DrawEllipseWithColorAndStrokeWidth(point, 23, 42, ArbitraryMarkerColor2, 123));
-        });
+            {
+                ThrowIfFailed(f.DS->DrawEllipseWithColorAndStrokeWidth(point, 23, 42, ArbitraryMarkerColor1, 123));
+                ThrowIfFailed(f.DS->DrawEllipseWithColorAndStrokeWidth(point, 23, 42, ArbitraryMarkerColor2, 123));
+            });
     }
 
     TEST_METHOD_EX(CanvasDrawingSession_DrawEllipseAtCoordsWithColorAndStrokeWidth)
     {
         TestDrawEllipse(true, 23, 42, 123, false,
             [](CanvasDrawingSessionFixture const& f, Vector2 point, CanvasStrokeStyle* strokeStyle)
-        {
-            ThrowIfFailed(f.DS->DrawEllipseAtCoordsWithColorAndStrokeWidth(point.X, point.Y, 23, 42, ArbitraryMarkerColor1, 123));
-            ThrowIfFailed(f.DS->DrawEllipseAtCoordsWithColorAndStrokeWidth(point.X, point.Y, 23, 42, ArbitraryMarkerColor2, 123));
-        });
+            {
+                ThrowIfFailed(f.DS->DrawEllipseAtCoordsWithColorAndStrokeWidth(point.X, point.Y, 23, 42, ArbitraryMarkerColor1, 123));
+                ThrowIfFailed(f.DS->DrawEllipseAtCoordsWithColorAndStrokeWidth(point.X, point.Y, 23, 42, ArbitraryMarkerColor2, 123));
+            });
     }
 
     TEST_METHOD_EX(CanvasDrawingSession_DrawEllipseWithBrushAndStrokeWidthAndStrokeStyle)
     {
         TestDrawEllipse(false, 23, 42, 123, true,
             [](CanvasDrawingSessionFixture const& f, Vector2 point, CanvasStrokeStyle* strokeStyle)
-        {
-            ThrowIfFailed(f.DS->DrawEllipseWithBrushAndStrokeWidthAndStrokeStyle(point, 23, 42, f.Brush.Get(), 123, strokeStyle));
-        });
+            {
+                ThrowIfFailed(f.DS->DrawEllipseWithBrushAndStrokeWidthAndStrokeStyle(point, 23, 42, f.Brush.Get(), 123, strokeStyle));
+            });
 
         // Null brush.
         Assert::AreEqual(E_INVALIDARG, CanvasDrawingSessionFixture().DS->DrawEllipseWithBrushAndStrokeWidthAndStrokeStyle(Vector2{}, 0, 0, nullptr, 0, nullptr));
@@ -2554,9 +2554,9 @@ public:
     {
         TestDrawEllipse(false, 23, 42, 123, true,
             [](CanvasDrawingSessionFixture const& f, Vector2 point, CanvasStrokeStyle* strokeStyle)
-        {
-            ThrowIfFailed(f.DS->DrawEllipseAtCoordsWithBrushAndStrokeWidthAndStrokeStyle(point.X, point.Y, 23, 42, f.Brush.Get(), 123, strokeStyle));
-        });
+            {
+                ThrowIfFailed(f.DS->DrawEllipseAtCoordsWithBrushAndStrokeWidthAndStrokeStyle(point.X, point.Y, 23, 42, f.Brush.Get(), 123, strokeStyle));
+            });
 
         // Null brush.
         Assert::AreEqual(E_INVALIDARG, CanvasDrawingSessionFixture().DS->DrawEllipseAtCoordsWithBrushAndStrokeWidthAndStrokeStyle(0, 0, 0, 0, nullptr, 0, nullptr));
@@ -2566,20 +2566,20 @@ public:
     {
         TestDrawEllipse(true, 23, 42, 123, true,
             [](CanvasDrawingSessionFixture const& f, Vector2 point, CanvasStrokeStyle* strokeStyle)
-        {
-            ThrowIfFailed(f.DS->DrawEllipseWithColorAndStrokeWidthAndStrokeStyle(point, 23, 42, ArbitraryMarkerColor1, 123, strokeStyle));
-            ThrowIfFailed(f.DS->DrawEllipseWithColorAndStrokeWidthAndStrokeStyle(point, 23, 42, ArbitraryMarkerColor2, 123, strokeStyle));
-        });
+            {
+                ThrowIfFailed(f.DS->DrawEllipseWithColorAndStrokeWidthAndStrokeStyle(point, 23, 42, ArbitraryMarkerColor1, 123, strokeStyle));
+                ThrowIfFailed(f.DS->DrawEllipseWithColorAndStrokeWidthAndStrokeStyle(point, 23, 42, ArbitraryMarkerColor2, 123, strokeStyle));
+            });
     }
 
     TEST_METHOD_EX(CanvasDrawingSession_DrawEllipseAtCoordsWithColorAndStrokeWidthAndStrokeStyle)
     {
         TestDrawEllipse(true, 23, 42, 123, true,
             [](CanvasDrawingSessionFixture const& f, Vector2 point, CanvasStrokeStyle* strokeStyle)
-        {
-            ThrowIfFailed(f.DS->DrawEllipseAtCoordsWithColorAndStrokeWidthAndStrokeStyle(point.X, point.Y, 23, 42, ArbitraryMarkerColor1, 123, strokeStyle));
-            ThrowIfFailed(f.DS->DrawEllipseAtCoordsWithColorAndStrokeWidthAndStrokeStyle(point.X, point.Y, 23, 42, ArbitraryMarkerColor2, 123, strokeStyle));
-        });
+            {
+                ThrowIfFailed(f.DS->DrawEllipseAtCoordsWithColorAndStrokeWidthAndStrokeStyle(point.X, point.Y, 23, 42, ArbitraryMarkerColor1, 123, strokeStyle));
+                ThrowIfFailed(f.DS->DrawEllipseAtCoordsWithColorAndStrokeWidthAndStrokeStyle(point.X, point.Y, 23, 42, ArbitraryMarkerColor2, 123, strokeStyle));
+            });
     }
 
 
@@ -2614,9 +2614,9 @@ public:
     {
         TestFillEllipse(false, 23, 42,
             [](CanvasDrawingSessionFixture const& f, Vector2 point)
-        {
-            ThrowIfFailed(f.DS->FillEllipseWithBrush(point, 23, 42, f.Brush.Get()));
-        });
+            {
+                ThrowIfFailed(f.DS->FillEllipseWithBrush(point, 23, 42, f.Brush.Get()));
+            });
 
         // Null brush.
         Assert::AreEqual(E_INVALIDARG, CanvasDrawingSessionFixture().DS->FillEllipseWithBrush(Vector2{}, 0, 0, nullptr));
@@ -2626,9 +2626,9 @@ public:
     {
         TestFillEllipse(false, 23, 42,
             [](CanvasDrawingSessionFixture const& f, Vector2 point)
-        {
-            ThrowIfFailed(f.DS->FillEllipseAtCoordsWithBrush(point.X, point.Y, 23, 42, f.Brush.Get()));
-        });
+            {
+                ThrowIfFailed(f.DS->FillEllipseAtCoordsWithBrush(point.X, point.Y, 23, 42, f.Brush.Get()));
+            });
 
         // Null brush.
         Assert::AreEqual(E_INVALIDARG, CanvasDrawingSessionFixture().DS->FillEllipseAtCoordsWithBrush(0, 0, 0, 0, nullptr));
@@ -2638,20 +2638,20 @@ public:
     {
         TestFillEllipse(true, 23, 42,
             [](CanvasDrawingSessionFixture const& f, Vector2 point)
-        {
-            ThrowIfFailed(f.DS->FillEllipseWithColor(point, 23, 42, ArbitraryMarkerColor1));
-            ThrowIfFailed(f.DS->FillEllipseWithColor(point, 23, 42, ArbitraryMarkerColor2));
-        });
+            {
+                ThrowIfFailed(f.DS->FillEllipseWithColor(point, 23, 42, ArbitraryMarkerColor1));
+                ThrowIfFailed(f.DS->FillEllipseWithColor(point, 23, 42, ArbitraryMarkerColor2));
+            });
     }
 
     TEST_METHOD_EX(CanvasDrawingSession_FillEllipseAtCoordsWithColor)
     {
         TestFillEllipse(true, 23, 42,
             [](CanvasDrawingSessionFixture const& f, Vector2 point)
-        {
-            ThrowIfFailed(f.DS->FillEllipseAtCoordsWithColor(point.X, point.Y, 23, 42, ArbitraryMarkerColor1));
-            ThrowIfFailed(f.DS->FillEllipseAtCoordsWithColor(point.X, point.Y, 23, 42, ArbitraryMarkerColor2));
-        });
+            {
+                ThrowIfFailed(f.DS->FillEllipseAtCoordsWithColor(point.X, point.Y, 23, 42, ArbitraryMarkerColor1));
+                ThrowIfFailed(f.DS->FillEllipseAtCoordsWithColor(point.X, point.Y, 23, 42, ArbitraryMarkerColor2));
+            });
     }
 
 
@@ -2663,9 +2663,9 @@ public:
     {
         TestDrawEllipse(false, 23, 23, 1, false,
             [](CanvasDrawingSessionFixture const& f, Vector2 point, CanvasStrokeStyle* strokeStyle)
-        {
-            ThrowIfFailed(f.DS->DrawCircleWithBrush(point, 23, f.Brush.Get()));
-        });
+            {
+                ThrowIfFailed(f.DS->DrawCircleWithBrush(point, 23, f.Brush.Get()));
+            });
 
         // Null brush.
         Assert::AreEqual(E_INVALIDARG, CanvasDrawingSessionFixture().DS->DrawCircleWithBrush(Vector2{}, 0, nullptr));
@@ -2675,9 +2675,9 @@ public:
     {
         TestDrawEllipse(false, 23, 23, 1, false,
             [](CanvasDrawingSessionFixture const& f, Vector2 point, CanvasStrokeStyle* strokeStyle)
-        {
-            ThrowIfFailed(f.DS->DrawCircleAtCoordsWithBrush(point.X, point.Y, 23, f.Brush.Get()));
-        });
+            {
+                ThrowIfFailed(f.DS->DrawCircleAtCoordsWithBrush(point.X, point.Y, 23, f.Brush.Get()));
+            });
 
         // Null brush.
         Assert::AreEqual(E_INVALIDARG, CanvasDrawingSessionFixture().DS->DrawCircleAtCoordsWithBrush(0, 0, 0, nullptr));
@@ -2687,29 +2687,29 @@ public:
     {
         TestDrawEllipse(true, 23, 23, 1, false,
             [](CanvasDrawingSessionFixture const& f, Vector2 point, CanvasStrokeStyle* strokeStyle)
-        {
-            ThrowIfFailed(f.DS->DrawCircleWithColor(point, 23, ArbitraryMarkerColor1));
-            ThrowIfFailed(f.DS->DrawCircleWithColor(point, 23, ArbitraryMarkerColor2));
-        });
+            {
+                ThrowIfFailed(f.DS->DrawCircleWithColor(point, 23, ArbitraryMarkerColor1));
+                ThrowIfFailed(f.DS->DrawCircleWithColor(point, 23, ArbitraryMarkerColor2));
+            });
     }
 
     TEST_METHOD_EX(CanvasDrawingSession_DrawCircleAtCoordsWithColor)
     {
         TestDrawEllipse(true, 23, 23, 1, false,
             [](CanvasDrawingSessionFixture const& f, Vector2 point, CanvasStrokeStyle* strokeStyle)
-        {
-            ThrowIfFailed(f.DS->DrawCircleAtCoordsWithColor(point.X, point.Y, 23, ArbitraryMarkerColor1));
-            ThrowIfFailed(f.DS->DrawCircleAtCoordsWithColor(point.X, point.Y, 23, ArbitraryMarkerColor2));
-        });
+            {
+                ThrowIfFailed(f.DS->DrawCircleAtCoordsWithColor(point.X, point.Y, 23, ArbitraryMarkerColor1));
+                ThrowIfFailed(f.DS->DrawCircleAtCoordsWithColor(point.X, point.Y, 23, ArbitraryMarkerColor2));
+            });
     }
 
     TEST_METHOD_EX(CanvasDrawingSession_DrawCircleWithBrushAndStrokeWidth)
     {
         TestDrawEllipse(false, 23, 23, 123, false,
             [](CanvasDrawingSessionFixture const& f, Vector2 point, CanvasStrokeStyle* strokeStyle)
-        {
-            ThrowIfFailed(f.DS->DrawCircleWithBrushAndStrokeWidth(point, 23, f.Brush.Get(), 123));
-        });
+            {
+                ThrowIfFailed(f.DS->DrawCircleWithBrushAndStrokeWidth(point, 23, f.Brush.Get(), 123));
+            });
 
         // Null brush.
         Assert::AreEqual(E_INVALIDARG, CanvasDrawingSessionFixture().DS->DrawCircleWithBrushAndStrokeWidth(Vector2{}, 0, nullptr, 0));
@@ -2719,9 +2719,9 @@ public:
     {
         TestDrawEllipse(false, 23, 23, 123, false,
             [](CanvasDrawingSessionFixture const& f, Vector2 point, CanvasStrokeStyle* strokeStyle)
-        {
-            ThrowIfFailed(f.DS->DrawCircleAtCoordsWithBrushAndStrokeWidth(point.X, point.Y, 23, f.Brush.Get(), 123));
-        });
+            {
+                ThrowIfFailed(f.DS->DrawCircleAtCoordsWithBrushAndStrokeWidth(point.X, point.Y, 23, f.Brush.Get(), 123));
+            });
 
         // Null brush.
         Assert::AreEqual(E_INVALIDARG, CanvasDrawingSessionFixture().DS->DrawCircleAtCoordsWithBrushAndStrokeWidth(0, 0, 0, nullptr, 0));
@@ -2731,29 +2731,29 @@ public:
     {
         TestDrawEllipse(true, 23, 23, 123, false,
             [](CanvasDrawingSessionFixture const& f, Vector2 point, CanvasStrokeStyle* strokeStyle)
-        {
-            ThrowIfFailed(f.DS->DrawCircleWithColorAndStrokeWidth(point, 23, ArbitraryMarkerColor1, 123));
-            ThrowIfFailed(f.DS->DrawCircleWithColorAndStrokeWidth(point, 23, ArbitraryMarkerColor2, 123));
-        });
+            {
+                ThrowIfFailed(f.DS->DrawCircleWithColorAndStrokeWidth(point, 23, ArbitraryMarkerColor1, 123));
+                ThrowIfFailed(f.DS->DrawCircleWithColorAndStrokeWidth(point, 23, ArbitraryMarkerColor2, 123));
+            });
     }
 
     TEST_METHOD_EX(CanvasDrawingSession_DrawCircleAtCoordsWithColorAndStrokeWidth)
     {
         TestDrawEllipse(true, 23, 23, 123, false,
             [](CanvasDrawingSessionFixture const& f, Vector2 point, CanvasStrokeStyle* strokeStyle)
-        {
-            ThrowIfFailed(f.DS->DrawCircleAtCoordsWithColorAndStrokeWidth(point.X, point.Y, 23, ArbitraryMarkerColor1, 123));
-            ThrowIfFailed(f.DS->DrawCircleAtCoordsWithColorAndStrokeWidth(point.X, point.Y, 23, ArbitraryMarkerColor2, 123));
-        });
+            {
+                ThrowIfFailed(f.DS->DrawCircleAtCoordsWithColorAndStrokeWidth(point.X, point.Y, 23, ArbitraryMarkerColor1, 123));
+                ThrowIfFailed(f.DS->DrawCircleAtCoordsWithColorAndStrokeWidth(point.X, point.Y, 23, ArbitraryMarkerColor2, 123));
+            });
     }
 
     TEST_METHOD_EX(CanvasDrawingSession_DrawCircleWithBrushAndStrokeWidthAndStrokeStyle)
     {
         TestDrawEllipse(false, 23, 23, 123, true,
             [](CanvasDrawingSessionFixture const& f, Vector2 point, CanvasStrokeStyle* strokeStyle)
-        {
-            ThrowIfFailed(f.DS->DrawCircleWithBrushAndStrokeWidthAndStrokeStyle(point, 23, f.Brush.Get(), 123, strokeStyle));
-        });
+            {
+                ThrowIfFailed(f.DS->DrawCircleWithBrushAndStrokeWidthAndStrokeStyle(point, 23, f.Brush.Get(), 123, strokeStyle));
+            });
 
         // Null brush.
         Assert::AreEqual(E_INVALIDARG, CanvasDrawingSessionFixture().DS->DrawCircleWithBrushAndStrokeWidthAndStrokeStyle(Vector2{}, 0, nullptr, 0, nullptr));
@@ -2763,9 +2763,9 @@ public:
     {
         TestDrawEllipse(false, 23, 23, 123, true,
             [](CanvasDrawingSessionFixture const& f, Vector2 point, CanvasStrokeStyle* strokeStyle)
-        {
-            ThrowIfFailed(f.DS->DrawCircleAtCoordsWithBrushAndStrokeWidthAndStrokeStyle(point.X, point.Y, 23, f.Brush.Get(), 123, strokeStyle));
-        });
+            {
+                ThrowIfFailed(f.DS->DrawCircleAtCoordsWithBrushAndStrokeWidthAndStrokeStyle(point.X, point.Y, 23, f.Brush.Get(), 123, strokeStyle));
+            });
 
         // Null brush.
         Assert::AreEqual(E_INVALIDARG, CanvasDrawingSessionFixture().DS->DrawCircleAtCoordsWithBrushAndStrokeWidthAndStrokeStyle(0, 0, 0, nullptr, 0, nullptr));
@@ -2775,20 +2775,20 @@ public:
     {
         TestDrawEllipse(true, 23, 23, 123, true,
             [](CanvasDrawingSessionFixture const& f, Vector2 point, CanvasStrokeStyle* strokeStyle)
-        {
-            ThrowIfFailed(f.DS->DrawCircleWithColorAndStrokeWidthAndStrokeStyle(point, 23, ArbitraryMarkerColor1, 123, strokeStyle));
-            ThrowIfFailed(f.DS->DrawCircleWithColorAndStrokeWidthAndStrokeStyle(point, 23, ArbitraryMarkerColor2, 123, strokeStyle));
-        });
+            {
+                ThrowIfFailed(f.DS->DrawCircleWithColorAndStrokeWidthAndStrokeStyle(point, 23, ArbitraryMarkerColor1, 123, strokeStyle));
+                ThrowIfFailed(f.DS->DrawCircleWithColorAndStrokeWidthAndStrokeStyle(point, 23, ArbitraryMarkerColor2, 123, strokeStyle));
+            });
     }
 
     TEST_METHOD_EX(CanvasDrawingSession_DrawCircleAtCoordsWithColorAndStrokeWidthAndStrokeStyle)
     {
         TestDrawEllipse(true, 23, 23, 123, true,
             [](CanvasDrawingSessionFixture const& f, Vector2 point, CanvasStrokeStyle* strokeStyle)
-        {
-            ThrowIfFailed(f.DS->DrawCircleAtCoordsWithColorAndStrokeWidthAndStrokeStyle(point.X, point.Y, 23, ArbitraryMarkerColor1, 123, strokeStyle));
-            ThrowIfFailed(f.DS->DrawCircleAtCoordsWithColorAndStrokeWidthAndStrokeStyle(point.X, point.Y, 23, ArbitraryMarkerColor2, 123, strokeStyle));
-        });
+            {
+                ThrowIfFailed(f.DS->DrawCircleAtCoordsWithColorAndStrokeWidthAndStrokeStyle(point.X, point.Y, 23, ArbitraryMarkerColor1, 123, strokeStyle));
+                ThrowIfFailed(f.DS->DrawCircleAtCoordsWithColorAndStrokeWidthAndStrokeStyle(point.X, point.Y, 23, ArbitraryMarkerColor2, 123, strokeStyle));
+            });
     }
 
 
@@ -2800,9 +2800,9 @@ public:
     {
         TestFillEllipse(false, 23, 23,
             [](CanvasDrawingSessionFixture const& f, Vector2 point)
-        {
-            ThrowIfFailed(f.DS->FillCircleWithBrush(point, 23, f.Brush.Get()));
-        });
+            {
+                ThrowIfFailed(f.DS->FillCircleWithBrush(point, 23, f.Brush.Get()));
+            });
 
         // Null brush.
         Assert::AreEqual(E_INVALIDARG, CanvasDrawingSessionFixture().DS->FillCircleWithBrush(Vector2{}, 0, nullptr));
@@ -2812,9 +2812,9 @@ public:
     {
         TestFillEllipse(false, 23, 23,
             [](CanvasDrawingSessionFixture const& f, Vector2 point)
-        {
-            ThrowIfFailed(f.DS->FillCircleAtCoordsWithBrush(point.X, point.Y, 23, f.Brush.Get()));
-        });
+            {
+                ThrowIfFailed(f.DS->FillCircleAtCoordsWithBrush(point.X, point.Y, 23, f.Brush.Get()));
+            });
 
         // Null brush.
         Assert::AreEqual(E_INVALIDARG, CanvasDrawingSessionFixture().DS->FillCircleAtCoordsWithBrush(0, 0, 0, nullptr));
@@ -2824,20 +2824,20 @@ public:
     {
         TestFillEllipse(true, 23, 23,
             [](CanvasDrawingSessionFixture const& f, Vector2 point)
-        {
-            ThrowIfFailed(f.DS->FillCircleWithColor(point, 23, ArbitraryMarkerColor1));
-            ThrowIfFailed(f.DS->FillCircleWithColor(point, 23, ArbitraryMarkerColor2));
-        });
+            {
+                ThrowIfFailed(f.DS->FillCircleWithColor(point, 23, ArbitraryMarkerColor1));
+                ThrowIfFailed(f.DS->FillCircleWithColor(point, 23, ArbitraryMarkerColor2));
+            });
     }
 
     TEST_METHOD_EX(CanvasDrawingSession_FillCircleAtCoordsWithColor)
     {
         TestFillEllipse(true, 23, 23,
             [](CanvasDrawingSessionFixture const& f, Vector2 point)
-        {
-            ThrowIfFailed(f.DS->FillCircleAtCoordsWithColor(point.X, point.Y, 23, ArbitraryMarkerColor1));
-            ThrowIfFailed(f.DS->FillCircleAtCoordsWithColor(point.X, point.Y, 23, ArbitraryMarkerColor2));
-        });
+            {
+                ThrowIfFailed(f.DS->FillCircleAtCoordsWithColor(point.X, point.Y, 23, ArbitraryMarkerColor1));
+                ThrowIfFailed(f.DS->FillCircleAtCoordsWithColor(point.X, point.Y, 23, ArbitraryMarkerColor2));
+            });
     }
 
     //
@@ -4432,20 +4432,20 @@ TEST_CLASS(CanvasDrawingSession_DrawTextTests)
     {
         TestDrawText(false, false, true, D2D1_RECT_F{ 23, 42, 23, 42 },
             [](Fixture const& f, HSTRING text)
-        {
-            ThrowIfFailed(f.DS->DrawTextAtPointWithColor(text, Vector2{ 23, 42 }, ArbitraryMarkerColor1));
-            ThrowIfFailed(f.DS->DrawTextAtPointWithColor(text, Vector2{ 23, 42 }, ArbitraryMarkerColor2));
-        });
+            {
+                ThrowIfFailed(f.DS->DrawTextAtPointWithColor(text, Vector2{ 23, 42 }, ArbitraryMarkerColor1));
+                ThrowIfFailed(f.DS->DrawTextAtPointWithColor(text, Vector2{ 23, 42 }, ArbitraryMarkerColor2));
+            });
     }
     
     TEST_METHOD_EX(CanvasDrawingSession_DrawTextAtPointCoordsWithColor)
     {
         TestDrawText(false, false, true, D2D1_RECT_F{ 23, 42, 23, 42 },
             [](Fixture const& f, HSTRING text)
-        {
-            ThrowIfFailed(f.DS->DrawTextAtPointCoordsWithColor(text, 23, 42, ArbitraryMarkerColor1));
-            ThrowIfFailed(f.DS->DrawTextAtPointCoordsWithColor(text, 23, 42, ArbitraryMarkerColor2));
-        });
+            {
+                ThrowIfFailed(f.DS->DrawTextAtPointCoordsWithColor(text, 23, 42, ArbitraryMarkerColor1));
+                ThrowIfFailed(f.DS->DrawTextAtPointCoordsWithColor(text, 23, 42, ArbitraryMarkerColor2));
+            });
     }
     
     TEST_METHOD_EX(CanvasDrawingSession_DrawTextAtPointWithBrushAndFormat)
@@ -4453,16 +4453,16 @@ TEST_CLASS(CanvasDrawingSession_DrawTextTests)
         // Full version.
         TestDrawText(true, false, false, D2D1_RECT_F{ 23, 42, 23, 42 },
             [](Fixture const& f, HSTRING text)
-        {
-            ThrowIfFailed(f.DS->DrawTextAtPointWithBrushAndFormat(text, Vector2{ 23, 42 }, f.Brush.Get(), f.Format.Get()));
-        });
+            {
+                ThrowIfFailed(f.DS->DrawTextAtPointWithBrushAndFormat(text, Vector2{ 23, 42 }, f.Brush.Get(), f.Format.Get()));
+            });
 
         // Null text format.
         TestDrawText(false, false, false, D2D1_RECT_F{ 23, 42, 23, 42 },
             [](Fixture const& f, HSTRING text)
-        {
-            ThrowIfFailed(f.DS->DrawTextAtPointWithBrushAndFormat(text, Vector2{ 23, 42 }, f.Brush.Get(), nullptr));
-        });
+            {
+                ThrowIfFailed(f.DS->DrawTextAtPointWithBrushAndFormat(text, Vector2{ 23, 42 }, f.Brush.Get(), nullptr));
+            });
         
         // Null brush.
         Assert::AreEqual(E_INVALIDARG, CanvasDrawingSessionFixture().DS->DrawTextAtPointWithBrushAndFormat(WinString(), Vector2{}, nullptr, nullptr));
@@ -4473,16 +4473,16 @@ TEST_CLASS(CanvasDrawingSession_DrawTextTests)
         // Full version.
         TestDrawText(true, true, false, D2D1_RECT_F{ 1, 2, 4, 6 },
             [](Fixture const& f, HSTRING text)
-        {
-            ThrowIfFailed(f.DS->DrawTextAtRectWithBrushAndFormat(text, Rect{ 1, 2, 3, 4 }, f.Brush.Get(), f.Format.Get()));
-        });
+            {
+                ThrowIfFailed(f.DS->DrawTextAtRectWithBrushAndFormat(text, Rect{ 1, 2, 3, 4 }, f.Brush.Get(), f.Format.Get()));
+            });
 
         // Null text format.
         TestDrawText(false, true, false, D2D1_RECT_F{ 1, 2, 4, 6 },
             [](Fixture const& f, HSTRING text)
-        {
-            ThrowIfFailed(f.DS->DrawTextAtRectWithBrushAndFormat(text, Rect{ 1, 2, 3, 4 }, f.Brush.Get(), nullptr));
-        });
+            {
+                ThrowIfFailed(f.DS->DrawTextAtRectWithBrushAndFormat(text, Rect{ 1, 2, 3, 4 }, f.Brush.Get(), nullptr));
+            });
         
         // Null brush.
         Assert::AreEqual(E_INVALIDARG, CanvasDrawingSessionFixture().DS->DrawTextAtRectWithBrushAndFormat(WinString(), Rect{}, nullptr, nullptr));
@@ -4493,16 +4493,16 @@ TEST_CLASS(CanvasDrawingSession_DrawTextTests)
         // Full version.
         TestDrawText(true, false, false, D2D1_RECT_F{ 23, 42, 23, 42 },
             [](Fixture const& f, HSTRING text)
-        {
-            ThrowIfFailed(f.DS->DrawTextAtPointCoordsWithBrushAndFormat(text, 23, 42, f.Brush.Get(), f.Format.Get()));
-        });
+            {
+                ThrowIfFailed(f.DS->DrawTextAtPointCoordsWithBrushAndFormat(text, 23, 42, f.Brush.Get(), f.Format.Get()));
+            });
 
         // Null text format.
         TestDrawText(false, false, false, D2D1_RECT_F{ 23, 42, 23, 42 },
             [](Fixture const& f, HSTRING text)
-        {
-            ThrowIfFailed(f.DS->DrawTextAtPointCoordsWithBrushAndFormat(text, 23, 42, f.Brush.Get(), nullptr));
-        });
+            {
+                ThrowIfFailed(f.DS->DrawTextAtPointCoordsWithBrushAndFormat(text, 23, 42, f.Brush.Get(), nullptr));
+            });
         
         // Null brush.
         Assert::AreEqual(E_INVALIDARG, CanvasDrawingSessionFixture().DS->DrawTextAtPointCoordsWithBrushAndFormat(WinString(), 0, 0, nullptr, nullptr));
@@ -4513,16 +4513,16 @@ TEST_CLASS(CanvasDrawingSession_DrawTextTests)
         // Full version.
         TestDrawText(true, true, false, D2D1_RECT_F{ 1, 2, 4, 6 },
             [](Fixture const& f, HSTRING text)
-        {
-            ThrowIfFailed(f.DS->DrawTextAtRectCoordsWithBrushAndFormat(text, 1, 2, 3, 4, f.Brush.Get(), f.Format.Get()));
-        });
+            {
+                ThrowIfFailed(f.DS->DrawTextAtRectCoordsWithBrushAndFormat(text, 1, 2, 3, 4, f.Brush.Get(), f.Format.Get()));
+            });
 
         // Null text format.
         TestDrawText(false, true, false, D2D1_RECT_F{ 1, 2, 4, 6 },
             [](Fixture const& f, HSTRING text)
-        {
-            ThrowIfFailed(f.DS->DrawTextAtRectCoordsWithBrushAndFormat(text, 1, 2, 3, 4, f.Brush.Get(), nullptr));
-        });
+            {
+                ThrowIfFailed(f.DS->DrawTextAtRectCoordsWithBrushAndFormat(text, 1, 2, 3, 4, f.Brush.Get(), nullptr));
+            });
         
         // Null brush.
         Assert::AreEqual(E_INVALIDARG, CanvasDrawingSessionFixture().DS->DrawTextAtRectCoordsWithBrushAndFormat(WinString(), 0, 0, 0, 0, nullptr, nullptr));
@@ -4533,18 +4533,18 @@ TEST_CLASS(CanvasDrawingSession_DrawTextTests)
         // Full version.
         TestDrawText(true, false, true, D2D1_RECT_F{ 23, 42, 23, 42 },
             [](Fixture const& f, HSTRING text)
-        {
-            ThrowIfFailed(f.DS->DrawTextAtPointWithColorAndFormat(text, Vector2{ 23, 42 }, ArbitraryMarkerColor1, f.Format.Get()));
-            ThrowIfFailed(f.DS->DrawTextAtPointWithColorAndFormat(text, Vector2{ 23, 42 }, ArbitraryMarkerColor2, f.Format.Get()));
-        });
+            {
+                ThrowIfFailed(f.DS->DrawTextAtPointWithColorAndFormat(text, Vector2{ 23, 42 }, ArbitraryMarkerColor1, f.Format.Get()));
+                ThrowIfFailed(f.DS->DrawTextAtPointWithColorAndFormat(text, Vector2{ 23, 42 }, ArbitraryMarkerColor2, f.Format.Get()));
+            });
 
         // Null text format.
         TestDrawText(false, false, true, D2D1_RECT_F{ 23, 42, 23, 42 },
             [](Fixture const& f, HSTRING text)
-        {
-            ThrowIfFailed(f.DS->DrawTextAtPointWithColorAndFormat(text, Vector2{ 23, 42 }, ArbitraryMarkerColor1, nullptr));
-            ThrowIfFailed(f.DS->DrawTextAtPointWithColorAndFormat(text, Vector2{ 23, 42 }, ArbitraryMarkerColor2, nullptr));
-        });
+            {
+                ThrowIfFailed(f.DS->DrawTextAtPointWithColorAndFormat(text, Vector2{ 23, 42 }, ArbitraryMarkerColor1, nullptr));
+                ThrowIfFailed(f.DS->DrawTextAtPointWithColorAndFormat(text, Vector2{ 23, 42 }, ArbitraryMarkerColor2, nullptr));
+            });
     }
     
     TEST_METHOD_EX(CanvasDrawingSession_DrawTextAtRectWithColorAndFormat)
@@ -4552,18 +4552,18 @@ TEST_CLASS(CanvasDrawingSession_DrawTextTests)
         // Full version.
         TestDrawText(true, true, true, D2D1_RECT_F{ 1, 2, 4, 6 },
             [](Fixture const& f, HSTRING text)
-        {
-            ThrowIfFailed(f.DS->DrawTextAtRectWithColorAndFormat(text, Rect{ 1, 2, 3, 4 }, ArbitraryMarkerColor1, f.Format.Get()));
-            ThrowIfFailed(f.DS->DrawTextAtRectWithColorAndFormat(text, Rect{ 1, 2, 3, 4 }, ArbitraryMarkerColor2, f.Format.Get()));
-        });
+            {
+                ThrowIfFailed(f.DS->DrawTextAtRectWithColorAndFormat(text, Rect{ 1, 2, 3, 4 }, ArbitraryMarkerColor1, f.Format.Get()));
+                ThrowIfFailed(f.DS->DrawTextAtRectWithColorAndFormat(text, Rect{ 1, 2, 3, 4 }, ArbitraryMarkerColor2, f.Format.Get()));
+            });
 
         // Null text format.
         TestDrawText(false, true, true, D2D1_RECT_F{ 1, 2, 4, 6 },
             [](Fixture const& f, HSTRING text)
-        {
-            ThrowIfFailed(f.DS->DrawTextAtRectWithColorAndFormat(text, Rect{ 1, 2, 3, 4 }, ArbitraryMarkerColor1, nullptr));
-            ThrowIfFailed(f.DS->DrawTextAtRectWithColorAndFormat(text, Rect{ 1, 2, 3, 4 }, ArbitraryMarkerColor2, nullptr));
-        });
+            {
+                ThrowIfFailed(f.DS->DrawTextAtRectWithColorAndFormat(text, Rect{ 1, 2, 3, 4 }, ArbitraryMarkerColor1, nullptr));
+                ThrowIfFailed(f.DS->DrawTextAtRectWithColorAndFormat(text, Rect{ 1, 2, 3, 4 }, ArbitraryMarkerColor2, nullptr));
+            });
     }
     
     TEST_METHOD_EX(CanvasDrawingSession_DrawTextAtPointCoordsWithColorAndFormat)
@@ -4571,18 +4571,18 @@ TEST_CLASS(CanvasDrawingSession_DrawTextTests)
         // Full version.
         TestDrawText(true, false, true, D2D1_RECT_F{ 23, 42, 23, 42 },
             [](Fixture const& f, HSTRING text)
-        {
-            ThrowIfFailed(f.DS->DrawTextAtPointCoordsWithColorAndFormat(text, 23, 42, ArbitraryMarkerColor1, f.Format.Get()));
-            ThrowIfFailed(f.DS->DrawTextAtPointCoordsWithColorAndFormat(text, 23, 42, ArbitraryMarkerColor2, f.Format.Get()));
-        });
+            {
+                ThrowIfFailed(f.DS->DrawTextAtPointCoordsWithColorAndFormat(text, 23, 42, ArbitraryMarkerColor1, f.Format.Get()));
+                ThrowIfFailed(f.DS->DrawTextAtPointCoordsWithColorAndFormat(text, 23, 42, ArbitraryMarkerColor2, f.Format.Get()));
+            });
 
         // Null text format.
         TestDrawText(false, false, true, D2D1_RECT_F{ 23, 42, 23, 42 },
             [](Fixture const& f, HSTRING text)
-        {
-            ThrowIfFailed(f.DS->DrawTextAtPointCoordsWithColorAndFormat(text, 23, 42, ArbitraryMarkerColor1, nullptr));
-            ThrowIfFailed(f.DS->DrawTextAtPointCoordsWithColorAndFormat(text, 23, 42, ArbitraryMarkerColor2, nullptr));
-        });
+            {
+                ThrowIfFailed(f.DS->DrawTextAtPointCoordsWithColorAndFormat(text, 23, 42, ArbitraryMarkerColor1, nullptr));
+                ThrowIfFailed(f.DS->DrawTextAtPointCoordsWithColorAndFormat(text, 23, 42, ArbitraryMarkerColor2, nullptr));
+            });
     }
     
     TEST_METHOD_EX(CanvasDrawingSession_DrawTextAtRectCoordsWithColorAndFormat)
@@ -4590,18 +4590,18 @@ TEST_CLASS(CanvasDrawingSession_DrawTextTests)
         // Full version.
         TestDrawText(true, true, true, D2D1_RECT_F{ 1, 2, 4, 6 },
             [](Fixture const& f, HSTRING text)
-        {
-            ThrowIfFailed(f.DS->DrawTextAtRectCoordsWithColorAndFormat(text, 1, 2, 3, 4, ArbitraryMarkerColor1, f.Format.Get()));
-            ThrowIfFailed(f.DS->DrawTextAtRectCoordsWithColorAndFormat(text, 1, 2, 3, 4, ArbitraryMarkerColor2, f.Format.Get()));
-        });
+            {
+                ThrowIfFailed(f.DS->DrawTextAtRectCoordsWithColorAndFormat(text, 1, 2, 3, 4, ArbitraryMarkerColor1, f.Format.Get()));
+                ThrowIfFailed(f.DS->DrawTextAtRectCoordsWithColorAndFormat(text, 1, 2, 3, 4, ArbitraryMarkerColor2, f.Format.Get()));
+            });
 
         // Null text format.
         TestDrawText(false, true, true, D2D1_RECT_F{ 1, 2, 4, 6 },
             [](Fixture const& f, HSTRING text)
-        {
-            ThrowIfFailed(f.DS->DrawTextAtRectCoordsWithColorAndFormat(text, 1, 2, 3, 4, ArbitraryMarkerColor1, nullptr));
-            ThrowIfFailed(f.DS->DrawTextAtRectCoordsWithColorAndFormat(text, 1, 2, 3, 4, ArbitraryMarkerColor2, nullptr));
-        });
+            {
+                ThrowIfFailed(f.DS->DrawTextAtRectCoordsWithColorAndFormat(text, 1, 2, 3, 4, ArbitraryMarkerColor1, nullptr));
+                ThrowIfFailed(f.DS->DrawTextAtRectCoordsWithColorAndFormat(text, 1, 2, 3, 4, ArbitraryMarkerColor2, nullptr));
+            });
     }
 
     TEST_METHOD_EX(CanvasDrawingSession_DrawTextAtPoint_DoesNotModifyOriginalFormat)

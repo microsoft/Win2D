@@ -901,9 +901,9 @@ IFACEMETHODIMP CanvasGeometry::StrokeContainsPoint(
 {
     return ExceptionBoundary(
         [&]
-    {
-        StrokeContainsPointImpl(point, strokeWidth, nullptr, nullptr, D2D1_DEFAULT_FLATTENING_TOLERANCE, containsPoint);
-    });
+        {
+            StrokeContainsPointImpl(point, strokeWidth, nullptr, nullptr, D2D1_DEFAULT_FLATTENING_TOLERANCE, containsPoint);
+        });
 }
 
 IFACEMETHODIMP CanvasGeometry::StrokeContainsPointWithStrokeStyle(

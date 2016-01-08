@@ -831,30 +831,30 @@ TEST_CLASS(CanvasFontFaceTests)
 
         f.RealizedDWriteFontFace->GetMetricsMethod1.SetExpectedCalls(1,
             [&](DWRITE_FONT_METRICS1* out)
-        {
-            *out = DWRITE_FONT_METRICS1{};
-            out->designUnitsPerEm = 10;
-            out->lineGap = 10;
-            out->ascent = 110;
-        });
+            {
+                *out = DWRITE_FONT_METRICS1{};
+                out->designUnitsPerEm = 10;
+                out->lineGap = 10;
+                out->ascent = 110;
+            });
 
         f.RealizedDWriteFontFace->GetDesignGlyphMetricsMethod.SetExpectedCalls(1,
             [&](UINT16 const* glyphIndices, UINT32 glyphCount, DWRITE_GLYPH_METRICS* glyphMetrics, BOOL isSideways)
-        {
-            Assert::AreEqual(TRUE, isSideways);
+            {
+                Assert::AreEqual(TRUE, isSideways);
 
-            Assert::AreEqual(61ui16, glyphIndices[0]);
-            Assert::AreEqual(62ui16, glyphIndices[1]);
-            Assert::AreEqual(63ui16, glyphIndices[2]);
+                Assert::AreEqual(61ui16, glyphIndices[0]);
+                Assert::AreEqual(62ui16, glyphIndices[1]);
+                Assert::AreEqual(63ui16, glyphIndices[2]);
 
-            Assert::AreEqual(3u, glyphCount);
+                Assert::AreEqual(3u, glyphCount);
 
-            glyphMetrics[0] = DWRITE_GLYPH_METRICS{ 20, 90u, -10, 10, 70u, -20, 60 };
-            glyphMetrics[1] = DWRITE_GLYPH_METRICS{ 20, 90u, -10, 10, 70u, -20, 60 };
-            glyphMetrics[2] = DWRITE_GLYPH_METRICS{ 20, 90u, -10, 10, 70u, -20, 60 };
+                glyphMetrics[0] = DWRITE_GLYPH_METRICS{ 20, 90u, -10, 10, 70u, -20, 60 };
+                glyphMetrics[1] = DWRITE_GLYPH_METRICS{ 20, 90u, -10, 10, 70u, -20, 60 };
+                glyphMetrics[2] = DWRITE_GLYPH_METRICS{ 20, 90u, -10, 10, 70u, -20, 60 };
 
-            return S_OK;
-        });
+                return S_OK;
+            });
 
         int inputGlyphs[]{ 61u, 62u, 63u };
         uint32_t outputCount;
@@ -891,32 +891,32 @@ TEST_CLASS(CanvasFontFaceTests)
 
         f.RealizedDWriteFontFace->GetMetricsMethod1.SetExpectedCalls(1,
             [&](DWRITE_FONT_METRICS1* out)
-        {
-            *out = DWRITE_FONT_METRICS1{};
-            out->designUnitsPerEm = 10;
-            out->lineGap = 10;
-            out->ascent = 110;
-        });
+            {
+                *out = DWRITE_FONT_METRICS1{};
+                out->designUnitsPerEm = 10;
+                out->lineGap = 10;
+                out->ascent = 110;
+            });
         f.RealizedDWriteFontFace->GetGdiCompatibleGlyphMetricsMethod.SetExpectedCalls(1,
             [&](FLOAT emSize, FLOAT pixelsPerDip, DWRITE_MATRIX const* transform, BOOL useGdiNatural, UINT16 const* glyphIndices, uint32_t glyphCount, DWRITE_GLYPH_METRICS* glyphMetrics, BOOL isSideways)
-        {
-            Assert::AreEqual(20.f, emSize);
-            Assert::AreEqual(1.f, pixelsPerDip);
-            Assert::AreEqual(TRUE, useGdiNatural);
-            Assert::AreEqual(TRUE, isSideways);
+            {
+                Assert::AreEqual(20.f, emSize);
+                Assert::AreEqual(1.f, pixelsPerDip);
+                Assert::AreEqual(TRUE, useGdiNatural);
+                Assert::AreEqual(TRUE, isSideways);
 
-            Assert::AreEqual(61ui16, glyphIndices[0]);
-            Assert::AreEqual(62ui16, glyphIndices[1]);
-            Assert::AreEqual(63ui16, glyphIndices[2]);
+                Assert::AreEqual(61ui16, glyphIndices[0]);
+                Assert::AreEqual(62ui16, glyphIndices[1]);
+                Assert::AreEqual(63ui16, glyphIndices[2]);
 
-            Assert::AreEqual(3u, glyphCount);
+                Assert::AreEqual(3u, glyphCount);
 
-            glyphMetrics[0] = DWRITE_GLYPH_METRICS{ 20, 90u, -10, 10, 70u, -20, 60 };
-            glyphMetrics[1] = DWRITE_GLYPH_METRICS{ 20, 90u, -10, 10, 70u, -20, 60 };
-            glyphMetrics[2] = DWRITE_GLYPH_METRICS{ 20, 90u, -10, 10, 70u, -20, 60 };
+                glyphMetrics[0] = DWRITE_GLYPH_METRICS{ 20, 90u, -10, 10, 70u, -20, 60 };
+                glyphMetrics[1] = DWRITE_GLYPH_METRICS{ 20, 90u, -10, 10, 70u, -20, 60 };
+                glyphMetrics[2] = DWRITE_GLYPH_METRICS{ 20, 90u, -10, 10, 70u, -20, 60 };
 
-            return S_OK;
-        });
+                return S_OK;
+            });
 
         int inputGlyphs[]{ 61u, 62u, 63u };
         uint32_t outputCount;
@@ -1094,33 +1094,33 @@ TEST_CLASS(CanvasFontFaceTests)
         {
             m_d2dDeviceContext->GetGlyphRunWorldBoundsMethod.SetExpectedCalls(1,
                 [=](D2D1_POINT_2F baselineOrigin, const DWRITE_GLYPH_RUN* glyphRun, DWRITE_MEASURING_MODE measuringMode, D2D1_RECT_F* out)
-            {
-                Assert::AreEqual(1.2f, baselineOrigin.x);
-                Assert::AreEqual(3.4f, baselineOrigin.y);
-
-                Assert::IsTrue(IsSameInstance(RealizedDWriteFontFace.Get(), glyphRun->fontFace));
-
-                Assert::AreEqual(11.0f, glyphRun->fontEmSize);
-                Assert::AreEqual(3u, glyphRun->glyphCount);
-
-                for (int i = 0; i < 3; ++i)
                 {
-                    int k = i * 4 + 1;
-                    Assert::AreEqual(static_cast<uint16_t>(k), glyphRun->glyphIndices[i]);
-                    Assert::AreEqual(k + 1.0f, glyphRun->glyphAdvances[i]);
-                    Assert::AreEqual(k + 2.0f, glyphRun->glyphOffsets[i].advanceOffset);
-                    Assert::AreEqual(k + 3.0f, glyphRun->glyphOffsets[i].ascenderOffset);
-                }
+                    Assert::AreEqual(1.2f, baselineOrigin.x);
+                    Assert::AreEqual(3.4f, baselineOrigin.y);
 
-                Assert::IsTrue(!!glyphRun->isSideways);
-                Assert::AreEqual(5u, glyphRun->bidiLevel);
+                    Assert::IsTrue(IsSameInstance(RealizedDWriteFontFace.Get(), glyphRun->fontFace));
 
-                Assert::AreEqual(expectedMeasuringMode, measuringMode);
+                    Assert::AreEqual(11.0f, glyphRun->fontEmSize);
+                    Assert::AreEqual(3u, glyphRun->glyphCount);
 
-                *out = D2D1::RectF(100, 200, 104, 205);
+                    for (int i = 0; i < 3; ++i)
+                    {
+                        int k = i * 4 + 1;
+                        Assert::AreEqual(static_cast<uint16_t>(k), glyphRun->glyphIndices[i]);
+                        Assert::AreEqual(k + 1.0f, glyphRun->glyphAdvances[i]);
+                        Assert::AreEqual(k + 2.0f, glyphRun->glyphOffsets[i].advanceOffset);
+                        Assert::AreEqual(k + 3.0f, glyphRun->glyphOffsets[i].ascenderOffset);
+                    }
 
-                return S_OK;
-            });
+                    Assert::IsTrue(!!glyphRun->isSideways);
+                    Assert::AreEqual(5u, glyphRun->bidiLevel);
+
+                    Assert::AreEqual(expectedMeasuringMode, measuringMode);
+
+                    *out = D2D1::RectF(100, 200, 104, 205);
+
+                    return S_OK;
+                });
         }
     };
 

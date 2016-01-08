@@ -21,58 +21,58 @@ IFACEMETHODIMP InternalDWriteTextRenderer::DrawGlyphRun(
 {
     return ExceptionBoundary(
         [&]
-    {
-        auto customDrawingObjectInspectable = GetCustomDrawingObjectInspectable(m_device.Get(), customDrawingObject);
-
-        auto canvasFontFace = CanvasFontFace::GetOrCreate(As<IDWriteFontFace2>(glyphRun->fontFace).Get());
-
-        std::vector<CanvasGlyph> glyphs;
-        glyphs.reserve(glyphRun->glyphCount);
-        for (uint32_t i = 0; i < glyphRun->glyphCount; ++i)
         {
-            CanvasGlyph glyph{};
-            glyph.Advance = glyphRun->glyphAdvances[i];
-            glyph.Index = glyphRun->glyphIndices[i];
-            if (glyphRun->glyphOffsets)
+            auto customDrawingObjectInspectable = GetCustomDrawingObjectInspectable(m_device.Get(), customDrawingObject);
+
+            auto canvasFontFace = CanvasFontFace::GetOrCreate(As<IDWriteFontFace2>(glyphRun->fontFace).Get());
+
+            std::vector<CanvasGlyph> glyphs;
+            glyphs.reserve(glyphRun->glyphCount);
+            for (uint32_t i = 0; i < glyphRun->glyphCount; ++i)
             {
-                glyph.AdvanceOffset = glyphRun->glyphOffsets[i].advanceOffset;
-                glyph.AscenderOffset = glyphRun->glyphOffsets[i].ascenderOffset;
+                CanvasGlyph glyph{};
+                glyph.Advance = glyphRun->glyphAdvances[i];
+                glyph.Index = glyphRun->glyphIndices[i];
+                if (glyphRun->glyphOffsets)
+                {
+                    glyph.AdvanceOffset = glyphRun->glyphOffsets[i].advanceOffset;
+                    glyph.AscenderOffset = glyphRun->glyphOffsets[i].ascenderOffset;
+                }
+                glyphs.push_back(glyph);
             }
-            glyphs.push_back(glyph);
-        }
 
-        WinString localeNameString;
-        WinString textString;
-        std::vector<int> clusterMapIndices;
+            WinString localeNameString;
+            WinString textString;
+            std::vector<int> clusterMapIndices;
 
-        if (glyphRunDescription)
-        {
-            localeNameString = WinString(glyphRunDescription->localeName);
-            textString = WinString(glyphRunDescription->string);
-            clusterMapIndices.reserve(glyphRunDescription->stringLength);
-            for (uint32_t i = 0; i < glyphRunDescription->stringLength; ++i)
+            if (glyphRunDescription)
             {
-                clusterMapIndices.push_back(glyphRunDescription->clusterMap[i]);
+                localeNameString = WinString(glyphRunDescription->localeName);
+                textString = WinString(glyphRunDescription->string);
+                clusterMapIndices.reserve(glyphRunDescription->stringLength);
+                for (uint32_t i = 0; i < glyphRunDescription->stringLength; ++i)
+                {
+                    clusterMapIndices.push_back(glyphRunDescription->clusterMap[i]);
+                }
             }
-        }
 
-        ThrowIfFailed(m_textRenderer->DrawGlyphRun(
-            Vector2{ baselineOriginX, baselineOriginY },
-            canvasFontFace.Get(),
-            glyphRun->fontEmSize,
-            glyphRun->glyphCount,
-            glyphs.data(),
-            static_cast<boolean>(glyphRun->isSideways),
-            glyphRun->bidiLevel,
-            customDrawingObjectInspectable.Get(),
-            ToCanvasTextMeasuringMode(measuringMode),
-            localeNameString,
-            textString,
-            glyphRunDescription ? glyphRunDescription->stringLength : 0u,
-            glyphRunDescription ? clusterMapIndices.data() : nullptr,
-            glyphRunDescription ? glyphRunDescription->textPosition : 0u,
-            ToCanvasGlyphOrientation(orientationAngle)));
-    });
+            ThrowIfFailed(m_textRenderer->DrawGlyphRun(
+                Vector2{ baselineOriginX, baselineOriginY },
+                canvasFontFace.Get(),
+                glyphRun->fontEmSize,
+                glyphRun->glyphCount,
+                glyphs.data(),
+                static_cast<boolean>(glyphRun->isSideways),
+                glyphRun->bidiLevel,
+                customDrawingObjectInspectable.Get(),
+                ToCanvasTextMeasuringMode(measuringMode),
+                localeNameString,
+                textString,
+                glyphRunDescription ? glyphRunDescription->stringLength : 0u,
+                glyphRunDescription ? clusterMapIndices.data() : nullptr,
+                glyphRunDescription ? glyphRunDescription->textPosition : 0u,
+                ToCanvasGlyphOrientation(orientationAngle)));
+        });
 }
 
 IFACEMETHODIMP InternalDWriteTextRenderer::DrawUnderline(
@@ -85,28 +85,28 @@ IFACEMETHODIMP InternalDWriteTextRenderer::DrawUnderline(
 {
     return ExceptionBoundary(
         [&]
-    {
-        //
-        // The renderer isn't required to specify a locale name.
-        //
-        WinString localeName;
-        if (underline->localeName)
-            localeName = WinString(underline->localeName);
+        {
+            //
+            // The renderer isn't required to specify a locale name.
+            //
+            WinString localeName;
+            if (underline->localeName)
+                localeName = WinString(underline->localeName);
 
-        auto customDrawingObjectInspectable = GetCustomDrawingObjectInspectable(m_device.Get(), customDrawingObject);
+            auto customDrawingObjectInspectable = GetCustomDrawingObjectInspectable(m_device.Get(), customDrawingObject);
 
-        ThrowIfFailed(m_textRenderer->DrawUnderline(
-            Vector2{ baselineOriginX, baselineOriginY },
-            underline->width,
-            underline->thickness,
-            underline->offset,
-            underline->runHeight,
-            DWriteToCanvasTextDirection::Lookup(underline->readingDirection, underline->flowDirection)->TextDirection,
-            customDrawingObjectInspectable.Get(),
-            ToCanvasTextMeasuringMode(underline->measuringMode),
-            localeName,
-            ToCanvasGlyphOrientation(orientationAngle)));
-    });
+            ThrowIfFailed(m_textRenderer->DrawUnderline(
+                Vector2{ baselineOriginX, baselineOriginY },
+                underline->width,
+                underline->thickness,
+                underline->offset,
+                underline->runHeight,
+                DWriteToCanvasTextDirection::Lookup(underline->readingDirection, underline->flowDirection)->TextDirection,
+                customDrawingObjectInspectable.Get(),
+                ToCanvasTextMeasuringMode(underline->measuringMode),
+                localeName,
+                ToCanvasGlyphOrientation(orientationAngle)));
+        });
 }
 
 

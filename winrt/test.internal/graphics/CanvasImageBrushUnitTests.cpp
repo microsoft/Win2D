@@ -229,11 +229,11 @@ public:
             D2D1_MATRIX_3X2_F d2dTransform = D2D1::Matrix3x2F(1, 2, 3, 4, 5, 6);
             backingBrush->MockSetTransform =
                 [&](const D2D1_MATRIX_3X2_F* transform)
-            {
-                Assert::IsFalse(setTransformCalled);
-                setTransformCalled = true;
-                Assert::AreEqual(d2dTransform, *transform);
-            };
+                {
+                    Assert::IsFalse(setTransformCalled);
+                    setTransformCalled = true;
+                    Assert::AreEqual(d2dTransform, *transform);
+                };
             Numerics::Matrix3x2 transform = *(reinterpret_cast<Numerics::Matrix3x2*>(&d2dTransform));
             ThrowIfFailed(brush->put_Transform(transform));
             Assert::IsTrue(setTransformCalled);
@@ -276,11 +276,11 @@ public:
         bool getInterpolationModeCalled = false;
         bitmapBrush->MockGetInterpolationMode1 =
             [&]()
-        {
-            Assert::IsFalse(getInterpolationModeCalled);
-            getInterpolationModeCalled = true;
-            return D2D1_INTERPOLATION_MODE_CUBIC;
-        };
+            {
+                Assert::IsFalse(getInterpolationModeCalled);
+                getInterpolationModeCalled = true;
+                return D2D1_INTERPOLATION_MODE_CUBIC;
+            };
         CanvasImageInterpolation interpolation;
         ThrowIfFailed(brush->get_Interpolation(&interpolation));
         Assert::IsTrue(getInterpolationModeCalled);
@@ -289,11 +289,11 @@ public:
         bool setInterpolationModeCalled = false;
         bitmapBrush->MockSetInterpolationMode1 =
             [&](D2D1_INTERPOLATION_MODE interpolationMode)
-        {
-            Assert::IsFalse(setInterpolationModeCalled);
-            setInterpolationModeCalled = true;
-            Assert::AreEqual(D2D1_INTERPOLATION_MODE_ANISOTROPIC, interpolationMode);
-        };
+            {
+                Assert::IsFalse(setInterpolationModeCalled);
+                setInterpolationModeCalled = true;
+                Assert::AreEqual(D2D1_INTERPOLATION_MODE_ANISOTROPIC, interpolationMode);
+            };
         ThrowIfFailed(brush->put_Interpolation(CanvasImageInterpolation::Anisotropic));
         Assert::IsTrue(setInterpolationModeCalled);
     }

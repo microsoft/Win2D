@@ -378,10 +378,10 @@ TEST_CLASS(CanvasTextAnalyzerTests)
         {
             m_adapter->GetMockDWriteFactory()->GetSystemFontCollectionMethod.SetExpectedCalls(1,
                 [=](IDWriteFontCollection** out, BOOL)
-            {
-                m_mockSystemFontCollection.CopyTo(out);
-                return S_OK;
-            });
+                {
+                    m_mockSystemFontCollection.CopyTo(out);
+                    return S_OK;
+                });
         }
 
         void UseNumberSubstitution()
@@ -827,11 +827,11 @@ TEST_CLASS(CanvasTextAnalyzerTests)
         auto dwriteFontSet = Make<MockDWriteFontSet>();
         f.GetAdapter()->GetMockDWriteFactory()->CreateFontCollectionFromFontSetMethod.SetExpectedCalls(1,
             [&](IDWriteFontSet* fontSet, IDWriteFontCollection1** fontCollection)
-        {
-            Assert::IsTrue(IsSameInstance(dwriteFontSet.Get(), fontSet));
-            dwriteFontCollection.CopyTo(fontCollection);
-            return S_OK;
-        });
+            {
+                Assert::IsTrue(IsSameInstance(dwriteFontSet.Get(), fontSet));
+                dwriteFontCollection.CopyTo(fontCollection);
+                return S_OK;
+            });
         auto canvasFontSet = ResourceManager::GetOrCreate<ICanvasFontSet>(dwriteFontSet.Get());
 #else
         auto canvasFontSet = ResourceManager::GetOrCreate<ICanvasFontSet>(dwriteFontCollection.Get());
@@ -879,13 +879,13 @@ TEST_CLASS(CanvasTextAnalyzerTests)
 
             f.MockDoingThingsToTextAnalysisSource =
                 [&](IDWriteTextAnalysisSource1* source)
-            {
-                wchar_t const* result;
-                uint32_t characterCount;
-                Assert::AreEqual(S_OK, source->GetTextAtPosition(testCase.Position, &result, &characterCount));
-                Assert::AreEqual(testCase.ExpectedText, result);
-                Assert::AreEqual(testCase.ExpectedCharacterCount, characterCount);
-            };
+                {
+                    wchar_t const* result;
+                    uint32_t characterCount;
+                    Assert::AreEqual(S_OK, source->GetTextAtPosition(testCase.Position, &result, &characterCount));
+                    Assert::AreEqual(testCase.ExpectedText, result);
+                    Assert::AreEqual(testCase.ExpectedCharacterCount, characterCount);
+                };
             f.ExpectMapCharacters();
 
             f.CreateAnalyzerAndChooseFonts();
@@ -913,13 +913,13 @@ TEST_CLASS(CanvasTextAnalyzerTests)
 
             f.MockDoingThingsToTextAnalysisSource =
                 [&](IDWriteTextAnalysisSource1* source)
-            {
-                wchar_t const* result;
-                uint32_t characterCount;
-                Assert::AreEqual(S_OK, source->GetTextBeforePosition(testCase.Position, &result, &characterCount));
-                Assert::AreEqual(testCase.ExpectedText, result);
-                Assert::AreEqual(testCase.ExpectedCharacterCount, characterCount);
-            };
+                {
+                    wchar_t const* result;
+                    uint32_t characterCount;
+                    Assert::AreEqual(S_OK, source->GetTextBeforePosition(testCase.Position, &result, &characterCount));
+                    Assert::AreEqual(testCase.ExpectedText, result);
+                    Assert::AreEqual(testCase.ExpectedCharacterCount, characterCount);
+                };
             f.ExpectMapCharacters();
 
             f.CreateAnalyzerAndChooseFonts();
@@ -932,9 +932,9 @@ TEST_CLASS(CanvasTextAnalyzerTests)
 
         f.MockDoingThingsToTextAnalysisSource =
             [](IDWriteTextAnalysisSource1* source)
-        {
-            Assert::AreEqual(DWRITE_READING_DIRECTION_BOTTOM_TO_TOP, source->GetParagraphReadingDirection());
-        };
+            {
+                Assert::AreEqual(DWRITE_READING_DIRECTION_BOTTOM_TO_TOP, source->GetParagraphReadingDirection());
+            };
         f.ExpectMapCharacters();
 
         f.TextDirection = CanvasTextDirection::BottomToTopThenRightToLeft;
@@ -953,13 +953,13 @@ TEST_CLASS(CanvasTextAnalyzerTests)
 
             f.MockDoingThingsToTextAnalysisSource =
                 [&](IDWriteTextAnalysisSource1* source)
-            {
-                wchar_t const* result;
-                uint32_t characterCount;
-                Assert::AreEqual(S_OK, source->GetLocaleName(testCase.Position, &characterCount, &result));
-                Assert::AreEqual(L"xx-yy", result);
-                Assert::AreEqual(testCase.ExpectedCharacterCount, characterCount);
-            };
+                {
+                    wchar_t const* result;
+                    uint32_t characterCount;
+                    Assert::AreEqual(S_OK, source->GetLocaleName(testCase.Position, &characterCount, &result));
+                    Assert::AreEqual(L"xx-yy", result);
+                    Assert::AreEqual(testCase.ExpectedCharacterCount, characterCount);
+                };
             f.ExpectMapCharacters();
 
             ThrowIfFailed(f.TextFormat->put_LocaleName(WinString(L"xx-yy")));
@@ -974,16 +974,16 @@ TEST_CLASS(CanvasTextAnalyzerTests)
 
         f.Options->GetLocaleNameMethod.SetExpectedCalls(3,
             [&](int index, int* characterCount, HSTRING* out)
-        {
-            static WinString locales[] = { WinString(L"00-00"), WinString(L"11-11"), WinString(L"22-22") };
+            {
+                static WinString locales[] = { WinString(L"00-00"), WinString(L"11-11"), WinString(L"22-22") };
 
-            Assert::IsTrue(index >= 0 && index < 3);
-            *out = locales[index];
+                Assert::IsTrue(index >= 0 && index < 3);
+                *out = locales[index];
 
-            *characterCount = 1;
+                *characterCount = 1;
 
-            return S_OK;
-        });
+                return S_OK;
+            });
 
         f.MockDoingThingsToTextAnalysisSource =
             [](IDWriteTextAnalysisSource1* source)
@@ -1017,26 +1017,26 @@ TEST_CLASS(CanvasTextAnalyzerTests)
 
         f.Options->GetLocaleNameMethod.SetExpectedCalls(3,
             [&](int index, int* characterCount, HSTRING* out)
-        {
-            static WinString locales[] = { WinString(L"00-00"), WinString(L"11-11") };
-            if (index == 0)
             {
-                *out = locales[0];
-                *characterCount = 2;
-            }
-            else if (index == 1)
-            {
-                *out = locales[0];
-                *characterCount = 1;
-            }
-            else if (index == 2)
-            {
-                *out = locales[1];
-                *characterCount = 1;
-            }
+                static WinString locales[] = { WinString(L"00-00"), WinString(L"11-11") };
+                if (index == 0)
+                {
+                    *out = locales[0];
+                    *characterCount = 2;
+                }
+                else if (index == 1)
+                {
+                    *out = locales[0];
+                    *characterCount = 1;
+                }
+                else if (index == 2)
+                {
+                    *out = locales[1];
+                    *characterCount = 1;
+                }
 
-            return S_OK;
-        });
+                return S_OK;
+            });
 
         f.MockDoingThingsToTextAnalysisSource =
             [](IDWriteTextAnalysisSource1* source)
@@ -1107,26 +1107,26 @@ TEST_CLASS(CanvasTextAnalyzerTests)
 
         f.Options->GetNumberSubstitutionMethod.SetExpectedCalls(3,
             [&](int index, int* characterCount, ICanvasNumberSubstitution** out)
-        {
-            Assert::IsTrue(index >= 0 && index < 3);
-            numberSubstitutions[index].CopyTo(out);
-            *characterCount = 1;
-            return S_OK;
-        });
+            {
+                Assert::IsTrue(index >= 0 && index < 3);
+                numberSubstitutions[index].CopyTo(out);
+                *characterCount = 1;
+                return S_OK;
+            });
 
         f.MockDoingThingsToTextAnalysisSource =
             [&](IDWriteTextAnalysisSource1* source)
-        {
-            ComPtr<IDWriteNumberSubstitution> result;
-            uint32_t characterCount;
-
-            for (int i = 0; i < 3; i++)
             {
-                Assert::AreEqual(S_OK, source->GetNumberSubstitution(i, &characterCount, &result));
-                Assert::IsTrue(IsSameInstance(dwriteNumberSubstitutions[i].Get(), result.Get()));
-                Assert::AreEqual(1, static_cast<int>(characterCount));
-            }
-        };
+                ComPtr<IDWriteNumberSubstitution> result;
+                uint32_t characterCount;
+
+                for (int i = 0; i < 3; i++)
+                {
+                    Assert::AreEqual(S_OK, source->GetNumberSubstitution(i, &characterCount, &result));
+                    Assert::IsTrue(IsSameInstance(dwriteNumberSubstitutions[i].Get(), result.Get()));
+                    Assert::AreEqual(1, static_cast<int>(characterCount));
+                }
+            };
         f.ExpectMapCharacters();
 
         auto textAnalyzer = f.CreateWithOptions();
@@ -1149,43 +1149,43 @@ TEST_CLASS(CanvasTextAnalyzerTests)
 
         f.Options->GetNumberSubstitutionMethod.SetExpectedCalls(3,
             [&](int index, int* characterCount, ICanvasNumberSubstitution** out)
-        {
-            if (index == 0)
             {
-                numberSubstitutions[0].CopyTo(out);
-                *characterCount = 2;
-            }
-            else if (index == 1)
-            {
-                numberSubstitutions[0].CopyTo(out);
-                *characterCount = 1;
-            }
-            else if (index == 2)
-            {
-                numberSubstitutions[1].CopyTo(out);
-                *characterCount = 1;
-            }
-            return S_OK;
-        });
+                if (index == 0)
+                {
+                    numberSubstitutions[0].CopyTo(out);
+                    *characterCount = 2;
+                }
+                else if (index == 1)
+                {
+                    numberSubstitutions[0].CopyTo(out);
+                    *characterCount = 1;
+                }
+                else if (index == 2)
+                {
+                    numberSubstitutions[1].CopyTo(out);
+                    *characterCount = 1;
+                }
+                return S_OK;
+            });
 
         f.MockDoingThingsToTextAnalysisSource =
             [&](IDWriteTextAnalysisSource1* source)
-        {
-            ComPtr<IDWriteNumberSubstitution> result;
-            uint32_t characterCount;
+            {
+                ComPtr<IDWriteNumberSubstitution> result;
+                uint32_t characterCount;
 
-            Assert::AreEqual(S_OK, source->GetNumberSubstitution(0, &characterCount, &result));
-            Assert::IsTrue(IsSameInstance(dwriteNumberSubstitutions[0].Get(), result.Get()));
-            Assert::AreEqual(2, static_cast<int>(characterCount));
+                Assert::AreEqual(S_OK, source->GetNumberSubstitution(0, &characterCount, &result));
+                Assert::IsTrue(IsSameInstance(dwriteNumberSubstitutions[0].Get(), result.Get()));
+                Assert::AreEqual(2, static_cast<int>(characterCount));
 
-            Assert::AreEqual(S_OK, source->GetNumberSubstitution(1, &characterCount, &result));
-            Assert::IsTrue(IsSameInstance(dwriteNumberSubstitutions[0].Get(), result.Get()));
-            Assert::AreEqual(1, static_cast<int>(characterCount));
+                Assert::AreEqual(S_OK, source->GetNumberSubstitution(1, &characterCount, &result));
+                Assert::IsTrue(IsSameInstance(dwriteNumberSubstitutions[0].Get(), result.Get()));
+                Assert::AreEqual(1, static_cast<int>(characterCount));
 
-            Assert::AreEqual(S_OK, source->GetNumberSubstitution(2, &characterCount, &result));
-            Assert::IsTrue(IsSameInstance(dwriteNumberSubstitutions[1].Get(), result.Get()));
-            Assert::AreEqual(1, static_cast<int>(characterCount));
-        };
+                Assert::AreEqual(S_OK, source->GetNumberSubstitution(2, &characterCount, &result));
+                Assert::IsTrue(IsSameInstance(dwriteNumberSubstitutions[1].Get(), result.Get()));
+                Assert::AreEqual(1, static_cast<int>(characterCount));
+            };
         f.ExpectMapCharacters();
 
         auto textAnalyzer = f.CreateWithOptions();
@@ -1202,14 +1202,14 @@ TEST_CLASS(CanvasTextAnalyzerTests)
 
             f.MockDoingThingsToTextAnalysisSource =
                 [&](IDWriteTextAnalysisSource1* source)
-            {
-                DWRITE_VERTICAL_GLYPH_ORIENTATION result;
-                uint32_t characterCount;
-                uint8_t unused;
-                Assert::AreEqual(S_OK, source->GetVerticalGlyphOrientation(testCase.Position, &characterCount, &result, &unused));
-                Assert::AreEqual(DWRITE_VERTICAL_GLYPH_ORIENTATION_STACKED, result);
-                Assert::AreEqual(testCase.ExpectedCharacterCount, characterCount);
-            };
+                {
+                    DWRITE_VERTICAL_GLYPH_ORIENTATION result;
+                    uint32_t characterCount;
+                    uint8_t unused;
+                    Assert::AreEqual(S_OK, source->GetVerticalGlyphOrientation(testCase.Position, &characterCount, &result, &unused));
+                    Assert::AreEqual(DWRITE_VERTICAL_GLYPH_ORIENTATION_STACKED, result);
+                    Assert::AreEqual(testCase.ExpectedCharacterCount, characterCount);
+                };
             f.ExpectMapCharacters();
 
             f.VerticalGlyphOrientation = CanvasVerticalGlyphOrientation::Stacked;
@@ -1228,26 +1228,26 @@ TEST_CLASS(CanvasTextAnalyzerTests)
 
         f.Options->GetVerticalGlyphOrientationMethod.SetExpectedCalls(3,
             [&](int index, int* characterCount, CanvasVerticalGlyphOrientation* out)
-        {
-            *out = index % 2 == 0 ? CanvasVerticalGlyphOrientation::Stacked : CanvasVerticalGlyphOrientation::Default;
-            *characterCount = 1;
-            return S_OK;
-        });
+            {
+                *out = index % 2 == 0 ? CanvasVerticalGlyphOrientation::Stacked : CanvasVerticalGlyphOrientation::Default;
+                *characterCount = 1;
+                return S_OK;
+            });
 
         f.MockDoingThingsToTextAnalysisSource =
             [](IDWriteTextAnalysisSource1* source)
-        {
-            DWRITE_VERTICAL_GLYPH_ORIENTATION result;
-            uint8_t unused;
-            uint32_t characterCount;
-
-            for (int i = 0; i < 3; i++)
             {
-                Assert::AreEqual(S_OK, source->GetVerticalGlyphOrientation(i, &characterCount, &result, &unused));
-                Assert::AreEqual(i % 2 == 0 ? DWRITE_VERTICAL_GLYPH_ORIENTATION_STACKED : DWRITE_VERTICAL_GLYPH_ORIENTATION_DEFAULT, result);
-                Assert::AreEqual(1, static_cast<int>(characterCount));
-            }
-        };
+                DWRITE_VERTICAL_GLYPH_ORIENTATION result;
+                uint8_t unused;
+                uint32_t characterCount;
+
+                for (int i = 0; i < 3; i++)
+                {
+                    Assert::AreEqual(S_OK, source->GetVerticalGlyphOrientation(i, &characterCount, &result, &unused));
+                    Assert::AreEqual(i % 2 == 0 ? DWRITE_VERTICAL_GLYPH_ORIENTATION_STACKED : DWRITE_VERTICAL_GLYPH_ORIENTATION_DEFAULT, result);
+                    Assert::AreEqual(1, static_cast<int>(characterCount));
+                }
+            };
         f.ExpectMapCharacters();
 
         auto textAnalyzer = f.CreateWithOptions();
@@ -1262,45 +1262,45 @@ TEST_CLASS(CanvasTextAnalyzerTests)
 
         f.Options->GetVerticalGlyphOrientationMethod.SetExpectedCalls(3,
             [&](int index, int* characterCount, CanvasVerticalGlyphOrientation* out)
-        {
-            if (index == 0)
             {
-                *out = CanvasVerticalGlyphOrientation::Stacked;
-                *characterCount = 2;
-            }
-            else if (index == 1)
-            {
-                *out = CanvasVerticalGlyphOrientation::Stacked;
-                *characterCount = 1;
-            }
-            else if (index == 2)
-            {
-                *out = CanvasVerticalGlyphOrientation::Default;
-                *characterCount = 1;
-            }
+                if (index == 0)
+                {
+                    *out = CanvasVerticalGlyphOrientation::Stacked;
+                    *characterCount = 2;
+                }
+                else if (index == 1)
+                {
+                    *out = CanvasVerticalGlyphOrientation::Stacked;
+                    *characterCount = 1;
+                }
+                else if (index == 2)
+                {
+                    *out = CanvasVerticalGlyphOrientation::Default;
+                    *characterCount = 1;
+                }
 
-            return S_OK;
-        });
+                return S_OK;
+            });
 
         f.MockDoingThingsToTextAnalysisSource =
             [](IDWriteTextAnalysisSource1* source)
-        {
-            DWRITE_VERTICAL_GLYPH_ORIENTATION result;
-            uint8_t unused;
-            uint32_t characterCount;
+            {
+                DWRITE_VERTICAL_GLYPH_ORIENTATION result;
+                uint8_t unused;
+                uint32_t characterCount;
 
-            Assert::AreEqual(S_OK, source->GetVerticalGlyphOrientation(0, &characterCount, &result, &unused));
-            Assert::AreEqual(DWRITE_VERTICAL_GLYPH_ORIENTATION_STACKED, result);
-            Assert::AreEqual(2, static_cast<int>(characterCount));
+                Assert::AreEqual(S_OK, source->GetVerticalGlyphOrientation(0, &characterCount, &result, &unused));
+                Assert::AreEqual(DWRITE_VERTICAL_GLYPH_ORIENTATION_STACKED, result);
+                Assert::AreEqual(2, static_cast<int>(characterCount));
 
-            Assert::AreEqual(S_OK, source->GetVerticalGlyphOrientation(1, &characterCount, &result, &unused));
-            Assert::AreEqual(DWRITE_VERTICAL_GLYPH_ORIENTATION_STACKED, result);
-            Assert::AreEqual(1, static_cast<int>(characterCount));
+                Assert::AreEqual(S_OK, source->GetVerticalGlyphOrientation(1, &characterCount, &result, &unused));
+                Assert::AreEqual(DWRITE_VERTICAL_GLYPH_ORIENTATION_STACKED, result);
+                Assert::AreEqual(1, static_cast<int>(characterCount));
 
-            Assert::AreEqual(S_OK, source->GetVerticalGlyphOrientation(2, &characterCount, &result, &unused));
-            Assert::AreEqual(DWRITE_VERTICAL_GLYPH_ORIENTATION_DEFAULT, result);
-            Assert::AreEqual(1, static_cast<int>(characterCount));
-        };
+                Assert::AreEqual(S_OK, source->GetVerticalGlyphOrientation(2, &characterCount, &result, &unused));
+                Assert::AreEqual(DWRITE_VERTICAL_GLYPH_ORIENTATION_DEFAULT, result);
+                Assert::AreEqual(1, static_cast<int>(characterCount));
+            };
         f.ExpectMapCharacters();
 
         auto textAnalyzer = f.CreateWithOptions();
@@ -1318,13 +1318,13 @@ TEST_CLASS(CanvasTextAnalyzerTests)
 
             f.MockDoingThingsToTextAnalysisSource =
                 [&](IDWriteTextAnalysisSource1* source)
-            {
-                DWRITE_VERTICAL_GLYPH_ORIENTATION unused;
-                uint32_t characterCount;
-                uint8_t result;
-                Assert::AreEqual(S_OK, source->GetVerticalGlyphOrientation(testCase.Position, &characterCount, &unused, &result));
-                Assert::AreEqual(123, static_cast<int>(result));
-            };
+                {
+                    DWRITE_VERTICAL_GLYPH_ORIENTATION unused;
+                    uint32_t characterCount;
+                    uint8_t result;
+                    Assert::AreEqual(S_OK, source->GetVerticalGlyphOrientation(testCase.Position, &characterCount, &unused, &result));
+                    Assert::AreEqual(123, static_cast<int>(result));
+                };
             f.ExpectMapCharacters();
 
             f.BidiLevel = 123;
@@ -1343,26 +1343,26 @@ TEST_CLASS(CanvasTextAnalyzerTests)
 
         f.Options->GetBidiLevelMethod.SetExpectedCalls(3,
             [&](int index, int* characterCount, uint32_t* out)
-        {
-            *out = static_cast<uint32_t>(index * 3 + 1);
-            *characterCount = 1;
-            return S_OK;
-        });
+            {
+                *out = static_cast<uint32_t>(index * 3 + 1);
+                *characterCount = 1;
+                return S_OK;
+            });
 
         f.MockDoingThingsToTextAnalysisSource =
             [](IDWriteTextAnalysisSource1* source)
-        {
-            DWRITE_VERTICAL_GLYPH_ORIENTATION unused;
-            uint8_t result;
-            uint32_t characterCount;
-
-            for (int i = 0; i < 3; i++)
             {
-                Assert::AreEqual(S_OK, source->GetVerticalGlyphOrientation(i, &characterCount, &unused, &result));
-                Assert::AreEqual(i * 3 + 1, static_cast<int>(result));
-                Assert::AreEqual(1, static_cast<int>(characterCount));
-            }
-        };
+                DWRITE_VERTICAL_GLYPH_ORIENTATION unused;
+                uint8_t result;
+                uint32_t characterCount;
+
+                for (int i = 0; i < 3; i++)
+                {
+                    Assert::AreEqual(S_OK, source->GetVerticalGlyphOrientation(i, &characterCount, &unused, &result));
+                    Assert::AreEqual(i * 3 + 1, static_cast<int>(result));
+                    Assert::AreEqual(1, static_cast<int>(characterCount));
+                }
+            };
         f.ExpectMapCharacters();
 
         auto textAnalyzer = f.CreateWithOptions();
@@ -1627,13 +1627,13 @@ TEST_CLASS(CanvasTextAnalyzerTests)
 
         f.TextAnalyzer->GetScriptPropertiesMethod.SetExpectedCalls(1,
             [&](DWRITE_SCRIPT_ANALYSIS scriptAnalysis, DWRITE_SCRIPT_PROPERTIES* scriptProperties)
-        {
-            DWRITE_SCRIPT_PROPERTIES result{};
-            result.justificationCharacter = 0x1f197; // 🆗
-            *scriptProperties = result;
+            {
+                DWRITE_SCRIPT_PROPERTIES result{};
+                result.justificationCharacter = 0x1f197; // 🆗
+                *scriptProperties = result;
 
-            return S_OK;
-        });
+                return S_OK;
+            });
 
         CanvasAnalyzedScript analyzedScript{};
         CanvasScriptProperties scriptProperties{};

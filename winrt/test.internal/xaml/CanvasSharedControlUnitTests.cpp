@@ -548,10 +548,10 @@ struct DeviceCreationFixture : public BasicControlWithDrawFixture<TRAITS>
     {
         Adapter->DeviceFactory->GetSharedDeviceWithForceSoftwareRendererMethod.SetExpectedCalls(1,
             [&](boolean, ICanvasDevice** device)
-        {
-            Make<StubCanvasDevice>().CopyTo(device);
-            return S_OK;
-        });
+            {
+                Make<StubCanvasDevice>().CopyTo(device);
+                return S_OK;
+            });
     }
 
     void DoNotExpectGetSharedDevice()
@@ -563,10 +563,10 @@ struct DeviceCreationFixture : public BasicControlWithDrawFixture<TRAITS>
     {
         Adapter->DeviceFactory->CreateWithForceSoftwareRendererOptionMethod.SetExpectedCalls(1,
             [&](boolean, ICanvasDevice** device)
-        {
-            Make<StubCanvasDevice>().CopyTo(device);
-            return S_OK;
-        });
+            {
+                Make<StubCanvasDevice>().CopyTo(device);
+                return S_OK;
+            });
     }
 
     void DoNotExpectCreateDevice()

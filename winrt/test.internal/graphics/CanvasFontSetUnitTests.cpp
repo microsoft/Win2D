@@ -69,10 +69,10 @@ static const struct TestFontProperty
             DWriteResource->GetFontCountMethod.SetExpectedCalls(1, [&]() {return 3; });
             DWriteResource->GetFontFaceReferenceMethod.SetExpectedCalls(3,
                 [&](UINT32 index, IDWriteFontFaceReference** out)
-            {
-                Assert::IsTrue(index < 3);
-                return DWriteFontFaceResources[index].CopyTo(out);
-            });
+                {
+                    Assert::IsTrue(index < 3);
+                    return DWriteFontFaceResources[index].CopyTo(out);
+                });
         }
 
         void ExpectFindThirdFont()
@@ -132,9 +132,9 @@ static const struct TestFontProperty
                 RealizedDWriteFontFace = Make<MockDWriteFontFace>();
                 DWriteFontFaceResources[i]->CreateFontFaceMethod.AllowAnyCall(
                     [&](IDWriteFontFace** out)
-                {
-                    return RealizedDWriteFontFace.CopyTo(out);
-                });
+                    {
+                        return RealizedDWriteFontFace.CopyTo(out);
+                    });
             }
 
             DWriteResource = Make<MockDWriteFontCollection>();
@@ -176,27 +176,27 @@ static const struct TestFontProperty
             FontFamilies[0]->GetFontCountMethod.AllowAnyCall([&] {return 2u; });
             FontFamilies[0]->GetFontMethod.AllowAnyCall(
                 [&](UINT32 index, IDWriteFont** out)
-            {
-                Assert::IsTrue(index == 0 || index == 1);
-                return DWriteFontFaceResources[index].CopyTo(out);
-            });
+                {
+                    Assert::IsTrue(index == 0 || index == 1);
+                    return DWriteFontFaceResources[index].CopyTo(out);
+                });
 
             FontFamilies[1] = Make<MockDWriteFontFamily>();
             FontFamilies[1]->GetFontCountMethod.AllowAnyCall([&] {return 1u; });
             FontFamilies[1]->GetFontMethod.AllowAnyCall(
                 [&](UINT32 index, IDWriteFont** out)
-            {
-                Assert::AreEqual(0u, index);
-                return DWriteFontFaceResources[2].CopyTo(out);
-            });
+                {
+                    Assert::AreEqual(0u, index);
+                    return DWriteFontFaceResources[2].CopyTo(out);
+                });
 
             DWriteResource->GetFontFamilyCountMethod.SetExpectedCalls(1, [&]() {return 2; });
             DWriteResource->GetFontFamilyMethod.SetExpectedCalls(2,
                 [&](uint32_t index, IDWriteFontFamily** out)
-            {
-                Assert::IsTrue(index == 0 || index == 1);
-                return FontFamilies[index].CopyTo(out);
-            });
+                {
+                    Assert::IsTrue(index == 0 || index == 1);
+                    return FontFamilies[index].CopyTo(out);
+                });
         }
     };
 #endif
@@ -299,11 +299,11 @@ TEST_CLASS(CanvasFontSetTests)
 #if WINVER > _WIN32_WINNT_WINBLUE
             m_adapter->GetMockDWriteFactory()->CreateFontSetBuilderMethod.AllowAnyCall(
                 [&](IDWriteFontSetBuilder** out)
-            {
-                auto stubFontSetBuilder = Make<StubDWriteFontSetBuilder>();
-                stubFontSetBuilder.CopyTo(out);
-                return S_OK;
-            });
+                {
+                    auto stubFontSetBuilder = Make<StubDWriteFontSetBuilder>();
+                    stubFontSetBuilder.CopyTo(out);
+                    return S_OK;
+                });
 
             m_systemFontSet = Make<StubDWriteFontSet>();
 
@@ -317,9 +317,9 @@ TEST_CLASS(CanvasFontSetTests)
 
             m_adapter->GetMockDWriteFactory()->GetSystemFontCollectionMethod.SetExpectedCalls(1,
                 [&](IDWriteFontCollection** out, BOOL)
-            {
-                return m_systemFontSet.CopyTo(out);
-            });
+                {
+                    return m_systemFontSet.CopyTo(out);
+                });
 #endif
         }
     };
@@ -475,15 +475,15 @@ TEST_CLASS(CanvasFontSetTests)
 
         dwriteResource->GetMatchingFontsMethod1.SetExpectedCalls(1,
             [&](WCHAR const* familyName, DWRITE_FONT_WEIGHT fontWeight, DWRITE_FONT_STRETCH fontStretch, DWRITE_FONT_STYLE fontStyle, IDWriteFontSet** filteredSet)
-        {
-            Assert::AreEqual(L"SomeFamily", familyName);
-            Assert::AreEqual(DWRITE_FONT_WEIGHT_ULTRA_BOLD, fontWeight);
-            Assert::AreEqual(DWRITE_FONT_STRETCH_SEMI_CONDENSED, fontStretch);
-            Assert::AreEqual(DWRITE_FONT_STYLE_ITALIC, fontStyle);
+            {
+                Assert::AreEqual(L"SomeFamily", familyName);
+                Assert::AreEqual(DWRITE_FONT_WEIGHT_ULTRA_BOLD, fontWeight);
+                Assert::AreEqual(DWRITE_FONT_STRETCH_SEMI_CONDENSED, fontStretch);
+                Assert::AreEqual(DWRITE_FONT_STYLE_ITALIC, fontStyle);
 
-            ThrowIfFailed(filteredDWriteResource.CopyTo(filteredSet));
-            return S_OK;
-        });
+                ThrowIfFailed(filteredDWriteResource.CopyTo(filteredSet));
+                return S_OK;
+            });
 
         auto canvasFontSet = Make<CanvasFontSet>(dwriteResource.Get());
 
@@ -522,18 +522,18 @@ TEST_CLASS(CanvasFontSetTests)
 
         dwriteResource->GetPropertyValuesMethod0.SetExpectedCalls(1,
             [&](UINT32 listIndex, DWRITE_FONT_PROPERTY_ID propertyId, BOOL* exists, IDWriteLocalizedStrings** values)
-        {
-            Assert::AreEqual(123u, listIndex);
-            Assert::AreEqual(DWRITE_FONT_PROPERTY_ID_SEMANTIC_TAG, propertyId);
+            {
+                Assert::AreEqual(123u, listIndex);
+                Assert::AreEqual(DWRITE_FONT_PROPERTY_ID_SEMANTIC_TAG, propertyId);
 
-            *exists = true;
+                *exists = true;
 
-            auto localizedNames = Make<LocalizedFontNames>(
-                L"SomeName1", L"xx-aa",
-                L"SomeName2", L"xx-bb");
-            ThrowIfFailed(localizedNames.CopyTo(values));
-            return S_OK;
-        });
+                auto localizedNames = Make<LocalizedFontNames>(
+                    L"SomeName1", L"xx-aa",
+                    L"SomeName2", L"xx-bb");
+                ThrowIfFailed(localizedNames.CopyTo(values));
+                return S_OK;
+            });
 
         auto canvasFontSet = Make<CanvasFontSet>(dwriteResource.Get());
 

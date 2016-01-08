@@ -111,20 +111,20 @@ inline void BasicControlFixture<CanvasAnimatedControlTraits>::PrepareAdapterForR
 {
     Adapter->CreateCanvasSwapChainMethod.AllowAnyCall(
         [=](ICanvasDevice*, float, float, float, CanvasAlphaMode)
-    {
-        auto mockSwapChain = Make<MockCanvasSwapChain>();
-        mockSwapChain->CreateDrawingSessionMethod.AllowAnyCall(
-            [](Color, ICanvasDrawingSession** value)
         {
-            auto ds = Make<MockCanvasDrawingSession>();
-            return ds.CopyTo(value);
+            auto mockSwapChain = Make<MockCanvasSwapChain>();
+            mockSwapChain->CreateDrawingSessionMethod.AllowAnyCall(
+                [](Color, ICanvasDrawingSession** value)
+                {
+                    auto ds = Make<MockCanvasDrawingSession>();
+                    return ds.CopyTo(value);
+                });
+            mockSwapChain->PresentMethod.AllowAnyCall();
+
+            mockSwapChain->put_TransformMethod.AllowAnyCall();
+
+            return mockSwapChain;
         });
-        mockSwapChain->PresentMethod.AllowAnyCall();
-
-        mockSwapChain->put_TransformMethod.AllowAnyCall();
-
-        return mockSwapChain;
-    });
 }
 
 struct Static_BasicControlFixture : public BasicControlWithDrawFixture<CanvasControlTraits>

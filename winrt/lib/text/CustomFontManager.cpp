@@ -85,11 +85,11 @@ public:
     {
         return ExceptionBoundary(
             [=]
-        {
-            auto enumerator = Make<CustomFontFileEnumerator>(factory, collectionKey, collectionKeySize);
-            CheckMakeResult(enumerator);
-            ThrowIfFailed(enumerator.CopyTo(fontFileEnumerator));
-        });
+            {
+                auto enumerator = Make<CustomFontFileEnumerator>(factory, collectionKey, collectionKeySize);
+                CheckMakeResult(enumerator);
+                ThrowIfFailed(enumerator.CopyTo(fontFileEnumerator));
+            });
     }
 };
 

@@ -133,12 +133,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         {
             return ExceptionBoundary(
                 [&]
-            {
-                boolean value;
-                ThrowIfFailed(m_textRenderer->get_PixelSnappingDisabled(&value));
+                {
+                    boolean value;
+                    ThrowIfFailed(m_textRenderer->get_PixelSnappingDisabled(&value));
 
-                *isDisabled = value;
-            });
+                    *isDisabled = value;
+                });
         }
 
         IFACEMETHODIMP GetCurrentTransform(
@@ -147,12 +147,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         {
             return ExceptionBoundary(
                 [&]
-            {
-                Matrix3x2 value;
-                ThrowIfFailed(m_textRenderer->get_Transform(&value));
+                {
+                    Matrix3x2 value;
+                    ThrowIfFailed(m_textRenderer->get_Transform(&value));
 
-                *transform = *ReinterpretAs<DWRITE_MATRIX*>(&value);
-            });
+                    *transform = *ReinterpretAs<DWRITE_MATRIX*>(&value);
+                });
         }
 
         IFACEMETHODIMP GetPixelsPerDip(
@@ -161,12 +161,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         {
             return ExceptionBoundary(
                 [&]
-            {
-                float value;
-                ThrowIfFailed(m_textRenderer->get_Dpi(&value));
+                {
+                    float value;
+                    ThrowIfFailed(m_textRenderer->get_Dpi(&value));
 
-                *pixelsPerDip = value / DEFAULT_DPI;
-            });
+                    *pixelsPerDip = value / DEFAULT_DPI;
+                });
         }
     };
 

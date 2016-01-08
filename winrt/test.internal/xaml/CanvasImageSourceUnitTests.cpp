@@ -43,19 +43,19 @@ public:
         IInspectable* actualOuter;
         mockSurfaceImageSourceFactory->MockCreateInstanceWithDimensionsAndOpacity =
             [&](int32_t actualWidth, int32_t actualHeight, bool isOpaque, IInspectable* outer)
-        {
-            Assert::IsFalse(mockCreateInstanceCalled);
-            Assert::AreEqual(expectedWidth, actualWidth);
-            Assert::AreEqual(expectedHeight, actualHeight);
+            {
+                Assert::IsFalse(mockCreateInstanceCalled);
+                Assert::AreEqual(expectedWidth, actualWidth);
+                Assert::AreEqual(expectedHeight, actualHeight);
 
-            auto actualAlphaMode = isOpaque ? CanvasAlphaMode::Ignore : CanvasAlphaMode::Premultiplied;
-            Assert::AreEqual(expectedAlphaMode, actualAlphaMode);
+                auto actualAlphaMode = isOpaque ? CanvasAlphaMode::Ignore : CanvasAlphaMode::Premultiplied;
+                Assert::AreEqual(expectedAlphaMode, actualAlphaMode);
 
-            actualOuter = outer;
+                actualOuter = outer;
 
-            mockCreateInstanceCalled = true;
-            return mockSurfaceImageSource;
-        };
+                mockCreateInstanceCalled = true;
+                return mockSurfaceImageSource;
+            };
 
         //
         // Verify that SetDevice is called on the SurfaceImageSource with the

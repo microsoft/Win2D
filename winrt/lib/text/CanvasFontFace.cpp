@@ -675,55 +675,55 @@ IFACEMETHODIMP CanvasFontFace::GetGlyphMetrics(
 {
     return ExceptionBoundary(
         [&]
-    {
-        CheckInPointer(inputElements);
-        CheckInPointer(outputCount);
-        CheckAndClearOutPointer(outputElements);
-
-        std::vector<unsigned short> glyphIndices;
-        glyphIndices.reserve(inputCount);
-        for (uint32_t i = 0; i < inputCount; ++i)
         {
-            if (inputElements[i] < 0 || inputElements[i] > USHORT_MAX)
-                ThrowHR(E_INVALIDARG);
+            CheckInPointer(inputElements);
+            CheckInPointer(outputCount);
+            CheckAndClearOutPointer(outputElements);
 
-            glyphIndices.push_back(static_cast<unsigned short>(inputElements[i]));
-        }
+            std::vector<unsigned short> glyphIndices;
+            glyphIndices.reserve(inputCount);
+            for (uint32_t i = 0; i < inputCount; ++i)
+            {
+                if (inputElements[i] < 0 || inputElements[i] > USHORT_MAX)
+                    ThrowHR(E_INVALIDARG);
 
-        std::vector<DWRITE_GLYPH_METRICS> glyphMetrics(inputCount);
-        ThrowIfFailed(GetRealizedFontFace()->GetDesignGlyphMetrics(glyphIndices.data(), inputCount, glyphMetrics.data(), isSideways));
+                glyphIndices.push_back(static_cast<unsigned short>(inputElements[i]));
+            }
 
-        ComArray<CanvasGlyphMetrics> output(inputCount);
+            std::vector<DWRITE_GLYPH_METRICS> glyphMetrics(inputCount);
+            ThrowIfFailed(GetRealizedFontFace()->GetDesignGlyphMetrics(glyphIndices.data(), inputCount, glyphMetrics.data(), isSideways));
 
-        DWRITE_FONT_METRICS1 metrics;
-        GetRealizedFontFace()->GetMetrics(&metrics);
+            ComArray<CanvasGlyphMetrics> output(inputCount);
 
-        for (uint32_t i = 0; i < inputCount; ++i)
-        {
-            auto leftDesignSpace = glyphMetrics[i].leftSideBearing;
-            auto topDesignSpace = metrics.lineGap + metrics.ascent - glyphMetrics[i].verticalOriginY + glyphMetrics[i].topSideBearing;
-            auto widthDesignSpace = glyphMetrics[i].advanceWidth - glyphMetrics[i].leftSideBearing - glyphMetrics[i].rightSideBearing;
-            auto heightDesignSpace = glyphMetrics[i].advanceHeight - glyphMetrics[i].topSideBearing - glyphMetrics[i].bottomSideBearing;
+            DWRITE_FONT_METRICS1 metrics;
+            GetRealizedFontFace()->GetMetrics(&metrics);
 
-            auto left = DesignSpaceToEmSpace(leftDesignSpace, metrics.designUnitsPerEm);
-            auto top = DesignSpaceToEmSpace(topDesignSpace, metrics.designUnitsPerEm);
-            auto width = DesignSpaceToEmSpace(widthDesignSpace, metrics.designUnitsPerEm);
-            auto height = DesignSpaceToEmSpace(heightDesignSpace, metrics.designUnitsPerEm);
+            for (uint32_t i = 0; i < inputCount; ++i)
+            {
+                auto leftDesignSpace = glyphMetrics[i].leftSideBearing;
+                auto topDesignSpace = metrics.lineGap + metrics.ascent - glyphMetrics[i].verticalOriginY + glyphMetrics[i].topSideBearing;
+                auto widthDesignSpace = glyphMetrics[i].advanceWidth - glyphMetrics[i].leftSideBearing - glyphMetrics[i].rightSideBearing;
+                auto heightDesignSpace = glyphMetrics[i].advanceHeight - glyphMetrics[i].topSideBearing - glyphMetrics[i].bottomSideBearing;
 
-            output[i] = CanvasGlyphMetrics{
-                DesignSpaceToEmSpace(glyphMetrics[i].leftSideBearing, metrics.designUnitsPerEm),
-                DesignSpaceToEmSpace(glyphMetrics[i].advanceWidth, metrics.designUnitsPerEm),
-                DesignSpaceToEmSpace(glyphMetrics[i].rightSideBearing, metrics.designUnitsPerEm),
-                DesignSpaceToEmSpace(glyphMetrics[i].topSideBearing, metrics.designUnitsPerEm),
-                DesignSpaceToEmSpace(glyphMetrics[i].advanceHeight, metrics.designUnitsPerEm),
-                DesignSpaceToEmSpace(glyphMetrics[i].bottomSideBearing, metrics.designUnitsPerEm),
-                DesignSpaceToEmSpace(glyphMetrics[i].verticalOriginY, metrics.designUnitsPerEm),
-                Rect{ left, top, width, height }
-            };
-        }
+                auto left = DesignSpaceToEmSpace(leftDesignSpace, metrics.designUnitsPerEm);
+                auto top = DesignSpaceToEmSpace(topDesignSpace, metrics.designUnitsPerEm);
+                auto width = DesignSpaceToEmSpace(widthDesignSpace, metrics.designUnitsPerEm);
+                auto height = DesignSpaceToEmSpace(heightDesignSpace, metrics.designUnitsPerEm);
 
-        output.Detach(outputCount, outputElements);
-    });
+                output[i] = CanvasGlyphMetrics{
+                    DesignSpaceToEmSpace(glyphMetrics[i].leftSideBearing, metrics.designUnitsPerEm),
+                    DesignSpaceToEmSpace(glyphMetrics[i].advanceWidth, metrics.designUnitsPerEm),
+                    DesignSpaceToEmSpace(glyphMetrics[i].rightSideBearing, metrics.designUnitsPerEm),
+                    DesignSpaceToEmSpace(glyphMetrics[i].topSideBearing, metrics.designUnitsPerEm),
+                    DesignSpaceToEmSpace(glyphMetrics[i].advanceHeight, metrics.designUnitsPerEm),
+                    DesignSpaceToEmSpace(glyphMetrics[i].bottomSideBearing, metrics.designUnitsPerEm),
+                    DesignSpaceToEmSpace(glyphMetrics[i].verticalOriginY, metrics.designUnitsPerEm),
+                    Rect{ left, top, width, height }
+                };
+            }
+
+            output.Detach(outputCount, outputElements);
+        });
 }
 
 IFACEMETHODIMP CanvasFontFace::GetGdiCompatibleGlyphMetrics(
@@ -739,55 +739,55 @@ IFACEMETHODIMP CanvasFontFace::GetGdiCompatibleGlyphMetrics(
 {
     return ExceptionBoundary(
         [&]
-    {
-        CheckInPointer(inputElements);
-        CheckInPointer(outputCount);
-        CheckAndClearOutPointer(outputElements);
-
-        std::vector<unsigned short> glyphIndices;
-        glyphIndices.reserve(inputCount);
-        for (uint32_t i = 0; i < inputCount; ++i)
         {
-            if (inputElements[i] < 0 || inputElements[i] > USHORT_MAX)
-                ThrowHR(E_INVALIDARG);
+            CheckInPointer(inputElements);
+            CheckInPointer(outputCount);
+            CheckAndClearOutPointer(outputElements);
 
-            glyphIndices.push_back(static_cast<unsigned short>(inputElements[i]));
-        }
+            std::vector<unsigned short> glyphIndices;
+            glyphIndices.reserve(inputCount);
+            for (uint32_t i = 0; i < inputCount; ++i)
+            {
+                if (inputElements[i] < 0 || inputElements[i] > USHORT_MAX)
+                    ThrowHR(E_INVALIDARG);
 
-        std::vector<DWRITE_GLYPH_METRICS> glyphMetrics(inputCount);
-        ThrowIfFailed(GetRealizedFontFace()->GetGdiCompatibleGlyphMetrics(fontSize, DpiToPixelsPerDip(dpi), ReinterpretAs<DWRITE_MATRIX*>(&transform), useGdiNatural, glyphIndices.data(), inputCount, glyphMetrics.data(), isSideways));
+                glyphIndices.push_back(static_cast<unsigned short>(inputElements[i]));
+            }
 
-        ComArray<CanvasGlyphMetrics> output(inputCount);
+            std::vector<DWRITE_GLYPH_METRICS> glyphMetrics(inputCount);
+            ThrowIfFailed(GetRealizedFontFace()->GetGdiCompatibleGlyphMetrics(fontSize, DpiToPixelsPerDip(dpi), ReinterpretAs<DWRITE_MATRIX*>(&transform), useGdiNatural, glyphIndices.data(), inputCount, glyphMetrics.data(), isSideways));
 
-        DWRITE_FONT_METRICS1 metrics;
-        GetRealizedFontFace()->GetMetrics(&metrics);
+            ComArray<CanvasGlyphMetrics> output(inputCount);
 
-        for (uint32_t i = 0; i < inputCount; ++i)
-        {
-            auto leftDesignSpace = glyphMetrics[i].leftSideBearing;
-            auto topDesignSpace = metrics.lineGap + metrics.ascent - glyphMetrics[i].verticalOriginY + glyphMetrics[i].topSideBearing;
-            auto widthDesignSpace = glyphMetrics[i].advanceWidth - glyphMetrics[i].leftSideBearing - glyphMetrics[i].rightSideBearing;
-            auto heightDesignSpace = glyphMetrics[i].advanceHeight - glyphMetrics[i].topSideBearing - glyphMetrics[i].bottomSideBearing;
+            DWRITE_FONT_METRICS1 metrics;
+            GetRealizedFontFace()->GetMetrics(&metrics);
 
-            auto left = DesignSpaceToEmSpace(leftDesignSpace, metrics.designUnitsPerEm);
-            auto top = DesignSpaceToEmSpace(topDesignSpace, metrics.designUnitsPerEm);
-            auto width = DesignSpaceToEmSpace(widthDesignSpace, metrics.designUnitsPerEm);
-            auto height = DesignSpaceToEmSpace(heightDesignSpace, metrics.designUnitsPerEm);
+            for (uint32_t i = 0; i < inputCount; ++i)
+            {
+                auto leftDesignSpace = glyphMetrics[i].leftSideBearing;
+                auto topDesignSpace = metrics.lineGap + metrics.ascent - glyphMetrics[i].verticalOriginY + glyphMetrics[i].topSideBearing;
+                auto widthDesignSpace = glyphMetrics[i].advanceWidth - glyphMetrics[i].leftSideBearing - glyphMetrics[i].rightSideBearing;
+                auto heightDesignSpace = glyphMetrics[i].advanceHeight - glyphMetrics[i].topSideBearing - glyphMetrics[i].bottomSideBearing;
 
-            output[i] = CanvasGlyphMetrics{
-                DesignSpaceToEmSpace(glyphMetrics[i].leftSideBearing, metrics.designUnitsPerEm),
-                DesignSpaceToEmSpace(glyphMetrics[i].advanceWidth, metrics.designUnitsPerEm),
-                DesignSpaceToEmSpace(glyphMetrics[i].rightSideBearing, metrics.designUnitsPerEm),
-                DesignSpaceToEmSpace(glyphMetrics[i].topSideBearing, metrics.designUnitsPerEm),
-                DesignSpaceToEmSpace(glyphMetrics[i].advanceHeight, metrics.designUnitsPerEm),
-                DesignSpaceToEmSpace(glyphMetrics[i].bottomSideBearing, metrics.designUnitsPerEm),
-                DesignSpaceToEmSpace(glyphMetrics[i].verticalOriginY, metrics.designUnitsPerEm),
-                Rect{ left, top, width, height }
-            };
-        }
+                auto left = DesignSpaceToEmSpace(leftDesignSpace, metrics.designUnitsPerEm);
+                auto top = DesignSpaceToEmSpace(topDesignSpace, metrics.designUnitsPerEm);
+                auto width = DesignSpaceToEmSpace(widthDesignSpace, metrics.designUnitsPerEm);
+                auto height = DesignSpaceToEmSpace(heightDesignSpace, metrics.designUnitsPerEm);
 
-        output.Detach(outputCount, outputElements);
-    });
+                output[i] = CanvasGlyphMetrics{
+                    DesignSpaceToEmSpace(glyphMetrics[i].leftSideBearing, metrics.designUnitsPerEm),
+                    DesignSpaceToEmSpace(glyphMetrics[i].advanceWidth, metrics.designUnitsPerEm),
+                    DesignSpaceToEmSpace(glyphMetrics[i].rightSideBearing, metrics.designUnitsPerEm),
+                    DesignSpaceToEmSpace(glyphMetrics[i].topSideBearing, metrics.designUnitsPerEm),
+                    DesignSpaceToEmSpace(glyphMetrics[i].advanceHeight, metrics.designUnitsPerEm),
+                    DesignSpaceToEmSpace(glyphMetrics[i].bottomSideBearing, metrics.designUnitsPerEm),
+                    DesignSpaceToEmSpace(glyphMetrics[i].verticalOriginY, metrics.designUnitsPerEm),
+                    Rect{ left, top, width, height }
+                };
+            }
+
+            output.Detach(outputCount, outputElements);
+        });
 }
 
 IFACEMETHODIMP CanvasFontFace::get_Weight(FontWeight* value)

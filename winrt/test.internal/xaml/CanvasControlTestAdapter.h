@@ -77,9 +77,9 @@ public:
         auto sisFactory = Make<MockSurfaceImageSourceFactory>();
         sisFactory->MockCreateInstanceWithDimensionsAndOpacity =
             [&](int32_t actualWidth, int32_t actualHeight, bool isOpaque, IInspectable* outer)
-        {
-            return Make<StubSurfaceImageSource>();
-        };
+            {
+                return Make<StubSurfaceImageSource>();
+            };
 
         auto dsFactory = std::make_shared<MockCanvasImageSourceDrawingSessionFactory>();
         dsFactory->CreateMethod.AllowAnyCall(

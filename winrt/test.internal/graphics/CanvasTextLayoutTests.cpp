@@ -996,10 +996,10 @@ namespace canvas
 
             f.Adapter->MockTextLayout->DetermineMinWidthMethod.SetExpectedCalls(1,
                 [&](FLOAT* out)
-            {
-                *out = 123.0f;
-                return S_OK;
-            });
+                {
+                    *out = 123.0f;
+                    return S_OK;
+                });
 
             float value;
             Assert::AreEqual(S_OK, textLayout->GetMinimumLineLength(&value));
@@ -1369,14 +1369,14 @@ namespace canvas
 
                 f.Adapter->MockTextLayout->HitTestPointMethod.SetExpectedCalls(1,
                     [&](FLOAT x, FLOAT y, BOOL* isTrailingHit, BOOL* isInside, DWRITE_HIT_TEST_METRICS* hitTestMetrics)
-                {
-                    Assert::AreEqual(1.0f, x);
-                    Assert::AreEqual(2.0f, y);
-                    *isTrailingHit = FALSE;
-                    *isInside = TRUE;
-                    *hitTestMetrics = DWRITE_HIT_TEST_METRICS{};
-                    return S_OK;
-                });
+                    {
+                        Assert::AreEqual(1.0f, x);
+                        Assert::AreEqual(2.0f, y);
+                        *isTrailingHit = FALSE;
+                        *isInside = TRUE;
+                        *hitTestMetrics = DWRITE_HIT_TEST_METRICS{};
+                        return S_OK;
+                    });
 
                 auto textLayout = f.CreateSimpleTextLayout();
 

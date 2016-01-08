@@ -190,13 +190,13 @@ public:
             // but do not otherwise hold onto any references to the active async operation.
             asyncOperation->Completed = ref new AsyncOperationCompletedHandler<CanvasBitmap^>(
                 [&bitmaps, &loadedEvents, i](IAsyncOperation<CanvasBitmap^>^ asyncInfo, Windows::Foundation::AsyncStatus asyncStatus)
-            {
-                Assert::AreEqual((int)Windows::Foundation::AsyncStatus::Completed, (int)asyncStatus);
+                {
+                    Assert::AreEqual((int)Windows::Foundation::AsyncStatus::Completed, (int)asyncStatus);
 
-                bitmaps[i] = asyncInfo->GetResults();
+                    bitmaps[i] = asyncInfo->GetResults();
 
-                SetEvent(loadedEvents[i].Get());
-            });
+                    SetEvent(loadedEvents[i].Get());
+                });
         }
 
         // Wait for loading to complete.

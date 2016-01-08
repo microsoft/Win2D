@@ -38,40 +38,40 @@ public:
 
         m_dxgiSwapChain->GetDesc1Method.AllowAnyCall(
             [=](DXGI_SWAP_CHAIN_DESC1* desc)
-        {
-            desc->Width = 1;
-            desc->Height = 1;
-            desc->Format = DXGI_FORMAT_B8G8R8A8_UNORM;
-            desc->BufferCount = 2;
-            desc->AlphaMode = DXGI_ALPHA_MODE_IGNORE;
-            return S_OK;
-        });
+            {
+                desc->Width = 1;
+                desc->Height = 1;
+                desc->Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+                desc->BufferCount = 2;
+                desc->AlphaMode = DXGI_ALPHA_MODE_IGNORE;
+                return S_OK;
+            });
 
         m_dxgiSwapChain->GetBufferMethod.AllowAnyCall(
             [=](UINT index, const IID& iid, void** out)
-        {
-            Assert::AreEqual(__uuidof(IDXGISurface2), iid);
-            auto surface = Make<MockDxgiSurface>();
+            {
+                Assert::AreEqual(__uuidof(IDXGISurface2), iid);
+                auto surface = Make<MockDxgiSurface>();
 
-            return surface.CopyTo(reinterpret_cast<IDXGISurface2**>(out));
-        });
+                return surface.CopyTo(reinterpret_cast<IDXGISurface2**>(out));
+            });
 
         Adapter->CreateCanvasSwapChainMethod.AllowAnyCall(
             [=](ICanvasDevice* device, float width, float height, float dpi, CanvasAlphaMode alphaMode)
-        {
-            StubCanvasDevice* stubDevice = static_cast<StubCanvasDevice*>(device); // Ensured by test construction
-
-            stubDevice->CreateSwapChainForCompositionMethod.AllowAnyCall([=](int32_t, int32_t, DirectXPixelFormat, int32_t, CanvasAlphaMode)
             {
-                return m_dxgiSwapChain;
+                StubCanvasDevice* stubDevice = static_cast<StubCanvasDevice*>(device); // Ensured by test construction
+
+                stubDevice->CreateSwapChainForCompositionMethod.AllowAnyCall([=](int32_t, int32_t, DirectXPixelFormat, int32_t, CanvasAlphaMode)
+                {
+                    return m_dxgiSwapChain;
+                });
+
+                auto canvasSwapChain = ResourceManager::GetOrCreate(device, m_dxgiSwapChain.Get(), dpi);
+
+                ComPtr<CanvasSwapChain> typedPtr = static_cast<CanvasSwapChain*>(As<ICanvasSwapChain>(canvasSwapChain).Get());
+
+                return typedPtr;
             });
-
-            auto canvasSwapChain = ResourceManager::GetOrCreate(device, m_dxgiSwapChain.Get(), dpi);
-
-            ComPtr<CanvasSwapChain> typedPtr = static_cast<CanvasSwapChain*>(As<ICanvasSwapChain>(canvasSwapChain).Get());
-
-            return typedPtr;
-        });
     }
 };
 
@@ -554,10 +554,10 @@ TEST_CLASS(CanvasAnimatedControlTests)
             int sleepCount = 0;
             f.Adapter->m_sleepFn =
                 [&](DWORD timeInMs)
-            {
-                Assert::AreEqual(static_cast<DWORD>(16), timeInMs);
-                sleepCount++;
-            };
+                {
+                    Assert::AreEqual(static_cast<DWORD>(16), timeInMs);
+                    sleepCount++;
+                };
 
             f.Adapter->ProgressTime(TicksPerFrame);
             f.Execute(Size{ 0, 0 });
@@ -648,10 +648,10 @@ TEST_CLASS(CanvasAnimatedControlTests)
 
             deviceContext->SetDpiMethod.SetExpectedCalls(1,
                 [&](float dpiX, float dpiY)
-            {
-                Assert::AreEqual(dpiCase, dpiX);
-                Assert::AreEqual(dpiCase, dpiY);
-            });
+                {
+                    Assert::AreEqual(dpiCase, dpiX);
+                    Assert::AreEqual(dpiCase, dpiY);
+                });
             f.Adapter->ProgressTime(TicksPerFrame);
 
             // Target will get re-created (or resized) with correct DPI.
@@ -930,10 +930,10 @@ TEST_CLASS(CanvasAnimatedControlTests)
 
         f.OnDraw.SetExpectedCalls(1,
             [&](ICanvasAnimatedControl*, ICanvasAnimatedDrawEventArgs*)
-        {
-            customDevice->MarkAsLost();
-            return DXGI_ERROR_DEVICE_REMOVED;
-        });
+            {
+                customDevice->MarkAsLost();
+                return DXGI_ERROR_DEVICE_REMOVED;
+            });
 
         f.DoChangedAndTick(); // Allow for device lost to be noticed.
         f.Adapter->DoChanged(); // Control's device lost handler is called.
@@ -963,10 +963,10 @@ TEST_CLASS(CanvasAnimatedControlTests)
 
         f.OnDraw.SetExpectedCalls(1,
             [&](ICanvasAnimatedControl*, ICanvasAnimatedDrawEventArgs*)
-        {
-            customDevice->MarkAsLost();
-            return DXGI_ERROR_DEVICE_REMOVED;
-        });
+            {
+                customDevice->MarkAsLost();
+                return DXGI_ERROR_DEVICE_REMOVED;
+            });
 
         f.DoChangedAndTick(); // Allow for device lost to be noticed.
         f.Adapter->DoChanged(); // Control's device lost handler is called.

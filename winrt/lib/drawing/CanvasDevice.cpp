@@ -342,14 +342,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     {
         return ExceptionBoundary(
             [&]
-        {
-            CheckAndClearOutPointer(object);
+            {
+                CheckAndClearOutPointer(object);
 
-            auto newCanvasDevice = CanvasDevice::CreateNew(
-                false); // Do not force software renderer
+                auto newCanvasDevice = CanvasDevice::CreateNew(
+                    false); // Do not force software renderer
 
-            ThrowIfFailed(newCanvasDevice.CopyTo(object));
-        });
+                ThrowIfFailed(newCanvasDevice.CopyTo(object));
+            });
     }
 
     IFACEMETHODIMP CanvasDeviceFactory::GetSharedDevice(
