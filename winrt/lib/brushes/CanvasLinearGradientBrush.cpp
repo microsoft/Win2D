@@ -218,7 +218,7 @@ IFACEMETHODIMP CanvasLinearGradientBrush::get_EdgeBehavior(CanvasEdgeBehavior* v
         [&]
         {
             CheckInPointer(value);
-            *value = static_cast<CanvasEdgeBehavior>(GetGradientStopCollection()->GetExtendMode());
+            *value = StaticCastAs<CanvasEdgeBehavior>(GetGradientStopCollection()->GetExtendMode());
         });
 }
 
@@ -238,7 +238,7 @@ IFACEMETHODIMP CanvasLinearGradientBrush::get_PreInterpolationSpace(CanvasColorS
         [&]
         {
             CheckInPointer(value);
-            *value = static_cast<CanvasColorSpace>(GetGradientStopCollection()->GetPreInterpolationSpace());
+            *value = StaticCastAs<CanvasColorSpace>(GetGradientStopCollection()->GetPreInterpolationSpace());
         });
 }
 
@@ -248,7 +248,7 @@ IFACEMETHODIMP CanvasLinearGradientBrush::get_PostInterpolationSpace(CanvasColor
         [&]
         {
             CheckInPointer(value);
-            *value = static_cast<CanvasColorSpace>(GetGradientStopCollection()->GetPostInterpolationSpace());
+            *value = StaticCastAs<CanvasColorSpace>(GetGradientStopCollection()->GetPostInterpolationSpace());
         });
 }
 

@@ -37,10 +37,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         return As<ICanvasDeviceInternal>(canvasDevice)->CreateGradientStopCollection(
             std::move(d2dStops),
-            static_cast<D2D1_COLOR_SPACE>(preInterpolationSpace),
-            static_cast<D2D1_COLOR_SPACE>(postInterpolationSpace),
+            StaticCastAs<D2D1_COLOR_SPACE>(preInterpolationSpace),
+            StaticCastAs<D2D1_COLOR_SPACE>(postInterpolationSpace),
             ToD2DBufferPrecision(bufferPrecision),
-            static_cast<D2D1_EXTEND_MODE>(edgeBehavior),
+            StaticCastAs<D2D1_EXTEND_MODE>(edgeBehavior),
             ToD2DColorInterpolation(alphaMode));
     }
 
