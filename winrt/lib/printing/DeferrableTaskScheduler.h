@@ -47,7 +47,7 @@ public:
         
         // Deferred completed tasks we dispatch via the dispatcher
         auto handler = Callback<AddFtmBase<IDispatchedHandler>::Type>(
-            [task] () mutable
+            [task]() mutable
             {
                 return ExceptionBoundary(
                     [&]
@@ -90,7 +90,7 @@ private:
         DeferrableTask* t = m_currentTask.get();
         
         auto handler = Callback<AddFtmBase<IDispatchedHandler>::Type>(
-            [t] () mutable
+            [t]() mutable
             {
                 return ExceptionBoundary(
                     [&]

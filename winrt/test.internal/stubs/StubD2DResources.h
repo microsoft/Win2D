@@ -63,7 +63,7 @@ public:
         GetTextRenderingParamsMethod.AllowAnyCall([=](IDWriteRenderingParams** params) {m_textRenderingParams.CopyTo(params); });
 
         SetTextAntialiasModeMethod.AllowAnyCall([=](D2D1_TEXT_ANTIALIAS_MODE mode) {m_textAntialiasMode = mode; });
-        GetTextAntialiasModeMethod.AllowAnyCall([=]() { return m_textAntialiasMode; });
+        GetTextAntialiasModeMethod.AllowAnyCall([=] { return m_textAntialiasMode; });
     }
 
     IFACEMETHODIMP_(void) GetFactory(ID2D1Factory** factory) const override

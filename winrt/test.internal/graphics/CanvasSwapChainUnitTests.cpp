@@ -875,7 +875,7 @@ TEST_CLASS(CanvasSwapChainUnitTests)
             });
 
         f.m_canvasDevice->CreateDeviceContextForDrawingSessionMethod.SetExpectedCalls(1,
-            [&] ()
+            [&]
             {
                 return deviceContext;
             });
@@ -977,7 +977,7 @@ TEST_CLASS(CanvasSwapChainUnitTests)
                         });
 
                     m_deviceContext->BeginDrawMethod.SetExpectedCalls(1,
-                        []()
+                        []
                         {
 
                         });
@@ -1185,7 +1185,7 @@ TEST_CLASS(CanvasSwapChainUnitTests)
         auto mockDxgiOutput = Make<MockDxgiOutput>();
 
         f.m_canvasDevice->GetPrimaryDisplayOutputMethod.SetExpectedCalls(1, 
-            [&]()
+            [&]
             {
                 return mockDxgiOutput;
             });
@@ -1210,7 +1210,7 @@ TEST_CLASS(CanvasSwapChainUnitTests)
             });
 
         f.m_canvasDevice->GetPrimaryDisplayOutputMethod.SetExpectedCalls(1,
-            [&]()
+            [&]
             {
                 return nullptr;
             });

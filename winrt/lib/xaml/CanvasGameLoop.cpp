@@ -18,7 +18,7 @@ CanvasGameLoop::CanvasGameLoop(
     , m_gameLoopThread(std::move(gameLoopThread))
 { 
     m_tickHandler = Callback<AddFtmBase<IDispatchedHandler>::Type>(
-        [this] ()
+        [this]
         {
             return ExceptionBoundary([&] { Tick(); });
         });

@@ -133,7 +133,7 @@ public:
         {
             bool getExtendXCalled = false;
             backingBrush->MockGetExtendModeX =
-                [&]()
+                [&]
                 {
                     Assert::IsFalse(getExtendXCalled);
                     getExtendXCalled = true;
@@ -159,7 +159,7 @@ public:
         {
             bool getExtendYCalled = false;
             backingBrush->MockGetExtendModeY =
-                [&]()
+                [&]
                 {
                     Assert::IsFalse(getExtendYCalled);
                     getExtendYCalled = true;
@@ -185,7 +185,7 @@ public:
         {
             bool getOpacityCalled = false;
             backingBrush->MockGetOpacity =
-                [&]()
+                [&]
                 {
                     Assert::IsFalse(getOpacityCalled);
                     getOpacityCalled = true;
@@ -275,7 +275,7 @@ public:
 
         bool getInterpolationModeCalled = false;
         bitmapBrush->MockGetInterpolationMode1 =
-            [&]()
+            [&]
             {
                 Assert::IsFalse(getInterpolationModeCalled);
                 getInterpolationModeCalled = true;
@@ -421,7 +421,7 @@ public:
         
         bool getInterpolationModeCalled = false;
         f.m_imageBrush->MockGetInterpolationMode =
-            [&]()
+            [&]
             {
                 Assert::IsFalse(getInterpolationModeCalled);
                 getInterpolationModeCalled = true;

@@ -66,7 +66,7 @@ static const struct TestFontProperty
 
         void ExpectGetFonts()
         {
-            DWriteResource->GetFontCountMethod.SetExpectedCalls(1, [&]() {return 3; });
+            DWriteResource->GetFontCountMethod.SetExpectedCalls(1, [&] {return 3; });
             DWriteResource->GetFontFaceReferenceMethod.SetExpectedCalls(3,
                 [&](UINT32 index, IDWriteFontFaceReference** out)
                 {
@@ -190,7 +190,7 @@ static const struct TestFontProperty
                     return DWriteFontFaceResources[2].CopyTo(out);
                 });
 
-            DWriteResource->GetFontFamilyCountMethod.SetExpectedCalls(1, [&]() {return 2; });
+            DWriteResource->GetFontFamilyCountMethod.SetExpectedCalls(1, [&] {return 2; });
             DWriteResource->GetFontFamilyMethod.SetExpectedCalls(2,
                 [&](uint32_t index, IDWriteFontFamily** out)
                 {

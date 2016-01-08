@@ -223,7 +223,7 @@ public:
                         };
 
                     mockEffect->MockGetInputCount =
-                        []()
+                        []
                         {
                             return 1;
                         };

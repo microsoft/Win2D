@@ -42,10 +42,10 @@ namespace canvas
                         m_targetImage = bitmap;
                     };
 
-                    m_bitmapBrush->MockGetExtendModeX = [&]() { return D2D1_EXTEND_MODE_MIRROR; };
-                    m_bitmapBrush->MockGetExtendModeY = [&]() { return D2D1_EXTEND_MODE_WRAP; };
-                    m_bitmapBrush->MockGetInterpolationMode1 = [&]() { return D2D1_INTERPOLATION_MODE_ANISOTROPIC; };
-                    m_bitmapBrush->MockGetOpacity = [&]() { return 0.1f; };
+                    m_bitmapBrush->MockGetExtendModeX = [&] { return D2D1_EXTEND_MODE_MIRROR; };
+                    m_bitmapBrush->MockGetExtendModeY = [&] { return D2D1_EXTEND_MODE_WRAP; };
+                    m_bitmapBrush->MockGetInterpolationMode1 = [&] { return D2D1_INTERPOLATION_MODE_ANISOTROPIC; };
+                    m_bitmapBrush->MockGetOpacity = [&] { return 0.1f; };
                     m_bitmapBrush->MockGetTransform = [&](D2D1_MATRIX_3X2_F* transform) { *transform = m_transform; };
 
                     m_bitmapBrush->MockSetExtendModeX = [&](D2D1_EXTEND_MODE extend) { Assert::AreEqual(D2D1_EXTEND_MODE_MIRROR, extend); };
@@ -72,10 +72,10 @@ namespace canvas
                         m_targetImage = image;
                     };
 
-                    m_imageBrush->MockGetExtendModeX = [&]() { return D2D1_EXTEND_MODE_MIRROR; };
-                    m_imageBrush->MockGetExtendModeY = [&]() { return D2D1_EXTEND_MODE_WRAP; };
-                    m_imageBrush->MockGetInterpolationMode = [&]() { return D2D1_INTERPOLATION_MODE_ANISOTROPIC; };
-                    m_imageBrush->MockGetOpacity = [&]() { return 0.1f; };
+                    m_imageBrush->MockGetExtendModeX = [&] { return D2D1_EXTEND_MODE_MIRROR; };
+                    m_imageBrush->MockGetExtendModeY = [&] { return D2D1_EXTEND_MODE_WRAP; };
+                    m_imageBrush->MockGetInterpolationMode = [&] { return D2D1_INTERPOLATION_MODE_ANISOTROPIC; };
+                    m_imageBrush->MockGetOpacity = [&] { return 0.1f; };
                     m_imageBrush->MockGetTransform = [&](D2D1_MATRIX_3X2_F* transform) { *transform = m_transform; };
                     m_imageBrush->MockGetSourceRectangle = [&](D2D1_RECT_F* rect) { *rect = D2D1::RectF(0, 0, 10, 10); };
 

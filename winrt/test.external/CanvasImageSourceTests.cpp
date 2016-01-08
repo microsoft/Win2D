@@ -103,13 +103,13 @@ TEST_CLASS(CanvasImageSourceTests)
             });
 
         swprintf_s(msg, L"Cannot create CanvasImageSource sized %d x 1; MaximumBitmapSizeInPixels for this device is %d.", tooBig, maxSize);
-        ExpectCOMException(E_INVALIDARG, msg, [&]() { throw exception1; });
+        ExpectCOMException(E_INVALIDARG, msg, [&] { throw exception1; });
 
         swprintf_s(msg, L"Cannot create CanvasImageSource sized 1 x %d; MaximumBitmapSizeInPixels for this device is %d.", tooBig, maxSize);
-        ExpectCOMException(E_INVALIDARG, msg, [&]() { throw exception2; });
+        ExpectCOMException(E_INVALIDARG, msg, [&] { throw exception2; });
 
         swprintf_s(msg, L"Cannot create CanvasImageSource sized %d x 2; MaximumBitmapSizeInPixels for this device is %d.", tooBig, maxSize);
-        ExpectCOMException(E_INVALIDARG, msg, [&]() { throw exception3; });
+        ExpectCOMException(E_INVALIDARG, msg, [&] { throw exception3; });
     }
 
 

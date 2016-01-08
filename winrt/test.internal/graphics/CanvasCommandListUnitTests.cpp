@@ -154,7 +154,7 @@ TEST_CLASS(CanvasCommandListTests)
                 Assert::IsTrue(IsSameInstance(wrappedCommandList.Get(), target));
                 
                 dc->BeginDrawMethod.SetExpectedCalls(1,
-                    [=]()
+                    [=]
                     {
                         dc->EndDrawMethod.SetExpectedCalls(1);
                     });

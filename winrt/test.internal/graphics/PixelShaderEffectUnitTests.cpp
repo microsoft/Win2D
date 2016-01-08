@@ -418,7 +418,7 @@ public:
 
         void ExpectTransformGraph(int expectedInputs, int expectedBorderTransforms, ID2D1DrawInfo* drawInfo = nullptr, GraphState* graphState = nullptr)
         {
-            MockTransformGraph->ClearMethod.SetExpectedCalls(1, [=]()
+            MockTransformGraph->ClearMethod.SetExpectedCalls(1, [=]
             {
                 if (graphState)
                 {

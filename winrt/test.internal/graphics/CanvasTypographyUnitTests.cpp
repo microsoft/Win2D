@@ -105,7 +105,7 @@ namespace canvas
         {
             Fixture f;
 
-            f.DWriteTypography->GetFontFeatureCountMethod.SetExpectedCalls(1, [&]() { return 3; });
+            f.DWriteTypography->GetFontFeatureCountMethod.SetExpectedCalls(1, [&] { return 3; });
 
             f.DWriteTypography->GetFontFeatureMethod.SetExpectedCalls(3,
                 [&](UINT32 index, DWRITE_FONT_FEATURE* out)

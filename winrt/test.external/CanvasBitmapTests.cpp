@@ -2169,9 +2169,9 @@ public:
         wchar_t msg[256];
 
         swprintf_s(msg, L"Cannot create CanvasBitmap sized %d x 1; MaximumBitmapSizeInPixels for this device is %d.", tooBig, maxSize);
-        ExpectCOMException(E_INVALIDARG, msg, [&]() { CanvasBitmap::CreateFromColors(device, colors, tooBig, 1); });
+        ExpectCOMException(E_INVALIDARG, msg, [&] { CanvasBitmap::CreateFromColors(device, colors, tooBig, 1); });
 
         swprintf_s(msg, L"Cannot create CanvasBitmap sized 1 x %d; MaximumBitmapSizeInPixels for this device is %d.", tooBig, maxSize);
-        ExpectCOMException(E_INVALIDARG, msg, [&]() { CanvasBitmap::CreateFromColors(device, colors, 1, tooBig); });
+        ExpectCOMException(E_INVALIDARG, msg, [&] { CanvasBitmap::CreateFromColors(device, colors, 1, tooBig); });
     }
 };

@@ -402,7 +402,7 @@ public:
     {
         Fixture f;
 
-        f.D2DGradientMesh->GetPatchCountMethod.SetExpectedCalls(1, [&]() { return 0; });
+        f.D2DGradientMesh->GetPatchCountMethod.SetExpectedCalls(1, [&] { return 0; });
         f.D2DGradientMesh->GetPatchesMethod.SetExpectedCalls(0);
 
         auto gradientMesh = CanvasGradientMesh::CreateNew(f.Device.Get(), 0, nullptr);
@@ -418,7 +418,7 @@ public:
     {
         Fixture f;
 
-        f.D2DGradientMesh->GetPatchCountMethod.SetExpectedCalls(1, [&]() { return 1; });
+        f.D2DGradientMesh->GetPatchCountMethod.SetExpectedCalls(1, [&] { return 1; });
         f.D2DGradientMesh->GetPatchesMethod.SetExpectedCalls(1,
             [&](uint32_t startIndex, D2D1_GRADIENT_MESH_PATCH* patches, uint32_t numPatches)
             {
@@ -441,7 +441,7 @@ public:
     {
         Fixture f;
 
-        f.D2DGradientMesh->GetPatchCountMethod.SetExpectedCalls(1, [&]() { return 3; });
+        f.D2DGradientMesh->GetPatchCountMethod.SetExpectedCalls(1, [&] { return 3; });
         f.D2DGradientMesh->GetPatchesMethod.SetExpectedCalls(1,
             [&](uint32_t startIndex, D2D1_GRADIENT_MESH_PATCH* patches, uint32_t numPatches)
             {

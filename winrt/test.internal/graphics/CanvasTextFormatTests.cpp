@@ -1327,7 +1327,7 @@ namespace canvas
                 m_fontCollection = Make<MockDWriteFontCollection>();
 
                 m_fontCollection->GetFontFamilyCountMethod.SetExpectedCalls(1,
-                    [fontCollectionSize]()
+                    [fontCollectionSize]
                     {
                         return fontCollectionSize; 
                     });

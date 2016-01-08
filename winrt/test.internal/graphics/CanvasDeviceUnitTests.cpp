@@ -241,7 +241,7 @@ public:
             {
                 auto deviceContext = Make<StubD2DDeviceContext>(d2dDevice.Get());
 
-                deviceContext->GetMaximumBitmapSizeMethod.SetExpectedCalls(1, [&]() { return someSize; });
+                deviceContext->GetMaximumBitmapSizeMethod.SetExpectedCalls(1, [&] { return someSize; });
 
                 ThrowIfFailed(deviceContext.CopyTo(value));
             };
@@ -981,7 +981,7 @@ public:
         Fixture f;
 
         auto d3dDevice = Make<StubD3D11Device>();
-        f.Adapter->CreateStubD3D11DeviceMethod.AllowAnyCall([&](){ return d3dDevice; });
+        f.Adapter->CreateStubD3D11DeviceMethod.AllowAnyCall([&] { return d3dDevice; });
 
         auto device = f.SharedDeviceState->GetSharedDevice(false);
 

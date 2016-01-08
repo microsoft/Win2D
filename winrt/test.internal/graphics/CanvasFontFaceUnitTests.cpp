@@ -653,7 +653,7 @@ TEST_CLASS(CanvasFontFaceTests)
         Fixture f;
 
         f.RealizedDWriteFontFace->IsMonospacedFontMethod.SetExpectedCalls(1,
-            [&]()
+            [&]
             {
                 return TRUE;
             });
@@ -712,7 +712,7 @@ TEST_CLASS(CanvasFontFaceTests)
         Fixture f;
 
         f.RealizedDWriteFontFace->HasVerticalGlyphVariantsMethod.SetExpectedCalls(1,
-            [&]()
+            [&]
             {
                 return TRUE;
             });
@@ -727,7 +727,7 @@ TEST_CLASS(CanvasFontFaceTests)
         Fixture f;
 
         f.RealizedDWriteFontFace->GetTypeMethod.SetExpectedCalls(1,
-            [&]()
+            [&]
             {
                 return DWRITE_FONT_FACE_TYPE_RAW_CFF;
             });
@@ -742,7 +742,7 @@ TEST_CLASS(CanvasFontFaceTests)
         Fixture f;
 
         f.RealizedDWriteFontFace->GetSimulationsMethod.SetExpectedCalls(1,
-            [&]()
+            [&]
             {
                 return DWRITE_FONT_SIMULATIONS_BOLD | DWRITE_FONT_SIMULATIONS_OBLIQUE;
             });
@@ -757,7 +757,7 @@ TEST_CLASS(CanvasFontFaceTests)
         Fixture f;
 
         f.RealizedDWriteFontFace->IsSymbolFontMethod.SetExpectedCalls(1,
-            [&]()
+            [&]
             {
                 return TRUE;
             });
@@ -772,7 +772,7 @@ TEST_CLASS(CanvasFontFaceTests)
         Fixture f;
 
         f.RealizedDWriteFontFace->GetGlyphCountMethod.SetExpectedCalls(1,
-            [&]()
+            [&]
             {
                 return 123ui16;
             });
@@ -940,7 +940,7 @@ TEST_CLASS(CanvasFontFaceTests)
         Fixture f(realizeOn10Only);
 
         f.GetMockPhysicalPropertyContainer()->GetWeightMethod.SetExpectedCalls(1,
-            [&]()
+            [&]
             {
                 return DWRITE_FONT_WEIGHT_ULTRA_BOLD;
             });
@@ -955,7 +955,7 @@ TEST_CLASS(CanvasFontFaceTests)
         Fixture f(realizeOn10Only);
 
         f.GetMockPhysicalPropertyContainer()->GetStretchMethod.SetExpectedCalls(1,
-            [&]()
+            [&]
             {
                 return DWRITE_FONT_STRETCH_EXPANDED;
             });
@@ -970,7 +970,7 @@ TEST_CLASS(CanvasFontFaceTests)
         Fixture f(realizeOn10Only);
 
         f.GetMockPhysicalPropertyContainer()->GetStyleMethod.SetExpectedCalls(1,
-            [&]()
+            [&]
             {
                 return DWRITE_FONT_STYLE_ITALIC;
             });

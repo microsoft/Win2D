@@ -167,13 +167,13 @@ TEST_CLASS(CanvasSwapChainTests)
         wchar_t msg[256];
 
         swprintf_s(msg, L"Cannot create CanvasSwapChain sized %d x 1; MaximumBitmapSizeInPixels for this device is %d.", tooBig, maxSize);
-        ExpectCOMException(E_INVALIDARG, msg, [&]() { ref new CanvasSwapChain(device, static_cast<float>(tooBig), 1, 96); });
+        ExpectCOMException(E_INVALIDARG, msg, [&] { ref new CanvasSwapChain(device, static_cast<float>(tooBig), 1, 96); });
 
         swprintf_s(msg, L"Cannot create CanvasSwapChain sized 1 x %d; MaximumBitmapSizeInPixels for this device is %d.", tooBig, maxSize);
-        ExpectCOMException(E_INVALIDARG, msg, [&]() { ref new CanvasSwapChain(device, 1, static_cast<float>(tooBig), 96); });
+        ExpectCOMException(E_INVALIDARG, msg, [&] { ref new CanvasSwapChain(device, 1, static_cast<float>(tooBig), 96); });
 
         swprintf_s(msg, L"Cannot create CanvasSwapChain sized %d x 2; MaximumBitmapSizeInPixels for this device is %d.", tooBig, maxSize);
-        ExpectCOMException(E_INVALIDARG, msg, [&]() { ref new CanvasSwapChain(device, static_cast<float>(tooBig) / 2, 1, 192); });
+        ExpectCOMException(E_INVALIDARG, msg, [&] { ref new CanvasSwapChain(device, static_cast<float>(tooBig) / 2, 1, 192); });
     }
 
     TEST_METHOD(CanvasSwapChain_NestedBeginDraw)

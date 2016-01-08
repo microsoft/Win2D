@@ -21,7 +21,7 @@ public:
 
         Microsoft::WRL::ComPtr<SOURCE> source(eventSource);
         m_unregisterFunction = 
-            [source, removeMethod, token]()
+            [source, removeMethod, token]
             {
                 ThrowIfFailed((source.Get()->*removeMethod)(token));
             };

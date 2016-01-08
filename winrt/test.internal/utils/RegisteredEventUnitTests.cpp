@@ -60,7 +60,7 @@ TEST_CLASS(RegisteredEventTests)
         fn.SetExpectedCalls(1);
 
         {
-            RegisteredEvent r([&]() { fn.WasCalled(); });
+            RegisteredEvent r([&] { fn.WasCalled(); });
         }
     }
 
@@ -70,7 +70,7 @@ TEST_CLASS(RegisteredEventTests)
         fn.SetExpectedCalls(1);
 
         {
-            RegisteredEvent r([&]() { fn.WasCalled(); });
+            RegisteredEvent r([&] { fn.WasCalled(); });
             r.Release();
             fn.SetExpectedCalls(0);
         }
@@ -82,7 +82,7 @@ TEST_CLASS(RegisteredEventTests)
         fn.SetExpectedCalls(0);
 
         {
-            RegisteredEvent r([&]() { fn.WasCalled(); });
+            RegisteredEvent r([&] { fn.WasCalled(); });
             r.Detach();
             r.Release();
         }

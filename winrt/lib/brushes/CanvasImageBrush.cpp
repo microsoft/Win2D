@@ -351,7 +351,7 @@ IFACEMETHODIMP CanvasImageBrush::get_Interpolation(CanvasImageInterpolation* val
 IFACEMETHODIMP CanvasImageBrush::put_Interpolation(CanvasImageInterpolation value)
 {
     return ExceptionBoundary(
-        [&]()
+        [&]
         {
             Lock lock(m_mutex);    
 

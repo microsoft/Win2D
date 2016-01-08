@@ -188,11 +188,11 @@ namespace canvas
                 {
                     auto mockDWriteParams = Make<MockDWriteRenderingParams>();
 
-                    mockDWriteParams->GetGammaMethod.AllowAnyCall([&](){ return 2.2f; });
-                    mockDWriteParams->GetEnhancedContrastMethod.AllowAnyCall([&](){ return 1.0f; });
-                    mockDWriteParams->GetGrayscaleEnhancedContrastMethod.AllowAnyCall([&](){ return 1.0f; });
-                    mockDWriteParams->GetClearTypeLevelMethod.AllowAnyCall([&](){ return 1.0f; });
-                    mockDWriteParams->GetPixelGeometryMethod.AllowAnyCall([&](){ return DWRITE_PIXEL_GEOMETRY_FLAT; });
+                    mockDWriteParams->GetGammaMethod.AllowAnyCall([&] { return 2.2f; });
+                    mockDWriteParams->GetEnhancedContrastMethod.AllowAnyCall([&] { return 1.0f; });
+                    mockDWriteParams->GetGrayscaleEnhancedContrastMethod.AllowAnyCall([&] { return 1.0f; });
+                    mockDWriteParams->GetClearTypeLevelMethod.AllowAnyCall([&] { return 1.0f; });
+                    mockDWriteParams->GetPixelGeometryMethod.AllowAnyCall([&] { return DWRITE_PIXEL_GEOMETRY_FLAT; });
 
                     ThrowIfFailed(mockDWriteParams.CopyTo(renderingParams));
 

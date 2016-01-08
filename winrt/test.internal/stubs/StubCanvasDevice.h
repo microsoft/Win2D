@@ -82,7 +82,7 @@ namespace canvas
                 });
 
             RaiseDeviceLostMethod.AllowAnyCall(
-                [=]()
+                [=]
                 {
                     return m_deviceLostEventSource->InvokeAll(this, nullptr);
                 });

@@ -79,12 +79,12 @@ namespace canvas
                     return S_OK; 
                 });
 
-            GetTextAlignmentMethod.AllowAnyCall([&]() {return m_textAlignment; });
-            GetParagraphAlignmentMethod.AllowAnyCall([&]() {return m_paragraphAlignment; });
-            GetWordWrappingMethod.AllowAnyCall([&]() {return m_wordWrapping; });
-            GetReadingDirectionMethod.AllowAnyCall([&]() {return m_readingDirection; });
-            GetFlowDirectionMethod.AllowAnyCall([&]() {return m_flowDirection; });
-            GetIncrementalTabStopMethod.AllowAnyCall([&]() {return m_incrementalTabStop; });
+            GetTextAlignmentMethod.AllowAnyCall([&] {return m_textAlignment; });
+            GetParagraphAlignmentMethod.AllowAnyCall([&] {return m_paragraphAlignment; });
+            GetWordWrappingMethod.AllowAnyCall([&] {return m_wordWrapping; });
+            GetReadingDirectionMethod.AllowAnyCall([&] {return m_readingDirection; });
+            GetFlowDirectionMethod.AllowAnyCall([&] {return m_flowDirection; });
+            GetIncrementalTabStopMethod.AllowAnyCall([&] {return m_incrementalTabStop; });
 
             GetTrimmingMethod.AllowAnyCall(
                 [&](DWRITE_TRIMMING* trimming, IDWriteInlineObject** obj) 
@@ -110,7 +110,7 @@ namespace canvas
                     return S_OK;
                 });
 
-            GetFontFamilyNameLengthMethod.AllowAnyCall([&]() {return static_cast<uint32_t>(m_fontFamilyName.length()); });
+            GetFontFamilyNameLengthMethod.AllowAnyCall([&] {return static_cast<uint32_t>(m_fontFamilyName.length()); });
 
             GetFontFamilyNameMethod.AllowAnyCall(
                 [&](WCHAR* buf, UINT32 length)
@@ -120,12 +120,12 @@ namespace canvas
                     return S_OK;
                 });
 
-            GetFontWeightMethod.AllowAnyCall([&]() {return m_fontWeight; });
-            GetFontStyleMethod.AllowAnyCall([&]() {return m_fontStyle; });
-            GetFontStretchMethod.AllowAnyCall([&]() {return m_fontStretch; });
-            GetFontSizeMethod.AllowAnyCall([&]() {return m_fontSize; });
+            GetFontWeightMethod.AllowAnyCall([&] {return m_fontWeight; });
+            GetFontStyleMethod.AllowAnyCall([&] {return m_fontStyle; });
+            GetFontStretchMethod.AllowAnyCall([&] {return m_fontStretch; });
+            GetFontSizeMethod.AllowAnyCall([&] {return m_fontSize; });
 
-            GetLocaleNameLengthMethod.AllowAnyCall([&]() {return static_cast<uint32_t>(m_localeName.length()); });
+            GetLocaleNameLengthMethod.AllowAnyCall([&] {return static_cast<uint32_t>(m_localeName.length()); });
 
             GetLocaleNameMethod.AllowAnyCall(
                 [&](WCHAR* buf, UINT32 length)
@@ -136,9 +136,9 @@ namespace canvas
                     return S_OK;
                 });
 
-            GetVerticalGlyphOrientationMethod.AllowAnyCall([&]() { return m_verticalGlyphOrientation; });
-            GetOpticalAlignmentMethod.AllowAnyCall([&]() { return m_opticalAlignment; });
-            GetLastLineWrappingMethod.AllowAnyCall([&]() { return m_lastLineWrapping; });
+            GetVerticalGlyphOrientationMethod.AllowAnyCall([&] { return m_verticalGlyphOrientation; });
+            GetOpticalAlignmentMethod.AllowAnyCall([&] { return m_opticalAlignment; });
+            GetLastLineWrappingMethod.AllowAnyCall([&] { return m_lastLineWrapping; });
         }
     };
 }

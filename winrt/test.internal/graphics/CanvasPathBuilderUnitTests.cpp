@@ -19,7 +19,7 @@ TEST_CLASS(CanvasPathBuilderUnitTests)
             : Device(Make<StubCanvasDevice>())
         {
             Device->CreatePathGeometryMethod.AllowAnyCall(
-                []()
+                []
                 {
                     auto pathGeometry = Make<MockD2DPathGeometry>();
 
@@ -75,7 +75,7 @@ TEST_CLASS(CanvasPathBuilderUnitTests)
         SetupFixture f;
 
         f.Device->CreatePathGeometryMethod.SetExpectedCalls(1,
-            []()
+            []
             {
                 auto pathGeometry = Make<MockD2DPathGeometry>();
 
@@ -118,7 +118,7 @@ TEST_CLASS(CanvasPathBuilderUnitTests)
             });
 
         f.Device->CreatePathGeometryMethod.AllowAnyCall(
-            [=]()
+            [=]
             {
                 return pathGeometry;
             });
@@ -138,7 +138,7 @@ TEST_CLASS(CanvasPathBuilderUnitTests)
             auto pathGeometry = Make<MockD2DPathGeometry>();
             GeometrySink = Make<MockD2DGeometrySink>();
 
-            Device->CreatePathGeometryMethod.AllowAnyCall([=]() { return pathGeometry; });
+            Device->CreatePathGeometryMethod.AllowAnyCall([=] { return pathGeometry; });
             pathGeometry->OpenMethod.AllowAnyCall([=](ID2D1GeometrySink** out) { return GeometrySink.CopyTo(out); });
 
             PathBuilder = Make<CanvasPathBuilder>(Device.Get());

@@ -282,7 +282,7 @@ IFACEMETHODIMP CanvasImageSource::CreateDrawingSessionWithUpdateRectangle(
     ICanvasDrawingSession** drawingSession)
 {
     return ExceptionBoundary(
-        [&]()
+        [&]
         {
             ComPtr<ISurfaceImageSourceNativeWithD2D> sisNative;
             ThrowIfFailed(GetComposableBase().As(&sisNative));

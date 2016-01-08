@@ -88,7 +88,7 @@ public:
         if (MockGetEvictionPriority)
         {
             return ExceptionBoundary(
-                [&]()
+                [&]
                 {
                     *val = MockGetEvictionPriority();
                 });
@@ -117,7 +117,7 @@ public:
         if (MockSetEvictionPriority)
         {
             return ExceptionBoundary(
-                [&]()
+                [&]
                 {
                     MockSetEvictionPriority(val);
                 });
@@ -134,7 +134,7 @@ public:
         if (MockGetDesc)
         {
             return ExceptionBoundary(
-                [&]()
+                [&]
                 {
                     *desc = MockGetDesc();
                 });

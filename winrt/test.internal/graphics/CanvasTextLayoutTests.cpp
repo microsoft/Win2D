@@ -61,10 +61,10 @@ namespace canvas
                         auto bitmapBrush = Make<MockD2DBitmapBrush>();
                         bitmapBrush->MockGetBitmap = [&](ID2D1Bitmap** bitmap){  *bitmap = nullptr; };
                         bitmapBrush->MockSetBitmap = [&](ID2D1Bitmap* bitmap){};
-                        bitmapBrush->MockGetExtendModeX = [&]() { return D2D1_EXTEND_MODE_MIRROR; };
-                        bitmapBrush->MockGetExtendModeY = [&]() { return D2D1_EXTEND_MODE_WRAP; };
-                        bitmapBrush->MockGetInterpolationMode1 = [&]() { return D2D1_INTERPOLATION_MODE_ANISOTROPIC; };
-                        bitmapBrush->MockGetOpacity = [&]() { return 0.1f; };
+                        bitmapBrush->MockGetExtendModeX = [&] { return D2D1_EXTEND_MODE_MIRROR; };
+                        bitmapBrush->MockGetExtendModeY = [&] { return D2D1_EXTEND_MODE_WRAP; };
+                        bitmapBrush->MockGetInterpolationMode1 = [&] { return D2D1_INTERPOLATION_MODE_ANISOTROPIC; };
+                        bitmapBrush->MockGetOpacity = [&] { return 0.1f; };
                         bitmapBrush->MockGetTransform = [&](D2D1_MATRIX_3X2_F* transform) { *transform = D2D1_MATRIX_3X2_F{}; };
                         bitmapBrush->MockSetExtendModeX = [&](D2D1_EXTEND_MODE extend) {};
                         bitmapBrush->MockSetExtendModeY = [&](D2D1_EXTEND_MODE extend) {};
@@ -81,10 +81,10 @@ namespace canvas
                         auto currentImage = std::make_shared<ComPtr<ID2D1Image>>(initialImage);
                         imageBrush->MockGetImage = [currentImage](ID2D1Image** image) { currentImage->CopyTo(image); };
                         imageBrush->MockSetImage = [currentImage](ID2D1Image* image) { *currentImage = image; };
-                        imageBrush->MockGetExtendModeX = [&]() { return D2D1_EXTEND_MODE_MIRROR; };
-                        imageBrush->MockGetExtendModeY = [&]() { return D2D1_EXTEND_MODE_WRAP; };
-                        imageBrush->MockGetInterpolationMode = [&]() { return D2D1_INTERPOLATION_MODE_ANISOTROPIC; };
-                        imageBrush->MockGetOpacity = [&]() { return 0.1f; };
+                        imageBrush->MockGetExtendModeX = [&] { return D2D1_EXTEND_MODE_MIRROR; };
+                        imageBrush->MockGetExtendModeY = [&] { return D2D1_EXTEND_MODE_WRAP; };
+                        imageBrush->MockGetInterpolationMode = [&] { return D2D1_INTERPOLATION_MODE_ANISOTROPIC; };
+                        imageBrush->MockGetOpacity = [&] { return 0.1f; };
                         imageBrush->MockGetTransform = [&](D2D1_MATRIX_3X2_F* transform) { *transform = D2D1_MATRIX_3X2_F{}; };
                         imageBrush->MockGetSourceRectangle = [&](D2D1_RECT_F* rect) { *rect = D2D1::RectF(0, 0, 10, 10); };
                         imageBrush->MockSetExtendModeX = [&](D2D1_EXTEND_MODE extend) {};
@@ -532,10 +532,10 @@ namespace canvas
             auto textLayout = f.CreateSimpleTextLayout();               \
                                                                         \
             f.Adapter->MockTextLayout->##mockName##.SetExpectedCalls(1, \
-                [&]()                                                   \
-            {                                                           \
-                return dwriteValue;                                     \
-            });                                                         \
+                [&]                                                     \
+                {                                                       \
+                    return dwriteValue;                                 \
+                });                                                     \
                                                                         \
             decltype(canvasValue) value;                                \
             Assert::AreEqual(S_OK, textLayout->get_##name##(&value));   \
@@ -967,8 +967,8 @@ namespace canvas
 
             auto textLayout = f.CreateSimpleTextLayout();
             
-            f.Adapter->MockTextLayout->GetMaxWidthMethod.SetExpectedCalls(1, [&]() { return 123.0f; });
-            f.Adapter->MockTextLayout->GetMaxHeightMethod.SetExpectedCalls(1, [&]() { return 456.0f; });
+            f.Adapter->MockTextLayout->GetMaxWidthMethod.SetExpectedCalls(1, [&] { return 123.0f; });
+            f.Adapter->MockTextLayout->GetMaxHeightMethod.SetExpectedCalls(1, [&] { return 456.0f; });
 
             Size size;
             Assert::AreEqual(S_OK, textLayout->get_RequestedSize(&size));
@@ -1332,10 +1332,10 @@ namespace canvas
             Fixture f;
 
             f.Adapter->MockTextLayout->GetMaxWidthMethod.SetExpectedCalls(1,
-                [&](){ return 10.0f;  });
+                [&] { return 10.0f;  });
 
             f.Adapter->MockTextLayout->GetMaxHeightMethod.SetExpectedCalls(1,
-                [&](){ return 20.0f;  });
+                [&] { return 20.0f;  });
 
             f.Adapter->MockTextLayout->GetOverhangMetricsMethod.SetExpectedCalls(1,
                 [&](DWRITE_OVERHANG_METRICS* out)

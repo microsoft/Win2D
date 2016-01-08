@@ -3867,7 +3867,7 @@ public:
                 });
 
             DeviceContext->GetUnitModeMethod.AllowAnyCall(
-                [&] ()
+                [&]
                 {
                     return UnitMode;
                 });
@@ -5211,7 +5211,7 @@ TEST_CLASS(CanvasDrawingSession_CreateLayerTests)
         auto dwriteRenderingParams = Make<MockDWriteRenderingParams>();
         auto canvasTextRenderingParameters = ResourceManager::GetOrCreate<ICanvasTextRenderingParameters>(dwriteRenderingParams.Get());
 
-        dwriteRenderingParams->GetRenderingModeMethod.AllowAnyCall([=]() { return DWRITE_RENDERING_MODE_DEFAULT; });
+        dwriteRenderingParams->GetRenderingModeMethod.AllowAnyCall([=] { return DWRITE_RENDERING_MODE_DEFAULT; });
 
         f.DeviceContext->SetTextRenderingParamsMethod.SetExpectedCalls(1,
             [&](IDWriteRenderingParams* params)

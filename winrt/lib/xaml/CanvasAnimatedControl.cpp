@@ -625,7 +625,7 @@ void CanvasAnimatedControl::Changed(ChangeReason reason)
 
     WeakRef weakSelf = AsWeak(this);
     auto callback = Callback<AddFtmBase<IDispatchedHandler>::Type>(
-        [weakSelf] () mutable
+        [weakSelf]() mutable
         {
             return ExceptionBoundary(
                 [&]

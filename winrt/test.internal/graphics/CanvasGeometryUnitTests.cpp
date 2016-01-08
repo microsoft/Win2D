@@ -136,7 +136,7 @@ public:
             : currentVertex(0)
         {
             Device->CreatePathGeometryMethod.SetExpectedCalls(1,
-                [=]()
+                [=]
                 {
                     auto pathGeometry = Make<MockD2DPathGeometry>();
 
@@ -373,7 +373,7 @@ public:
                 });
             
             Device->CreatePathGeometryMethod.AllowAnyCall(
-                []()
+                []
                 {
                     auto pathGeometry = Make<MockD2DPathGeometry>();
 
@@ -407,7 +407,7 @@ public:
             SinkForTemporaryPath->CloseMethod.AllowAnyCall();
 
             Device->CreatePathGeometryMethod.SetExpectedCalls(1,
-                [this]()
+                [this]
                 {
                     TemporaryPathGeometry->OpenMethod.SetExpectedCalls(1,
                         [this](ID2D1GeometrySink** out)

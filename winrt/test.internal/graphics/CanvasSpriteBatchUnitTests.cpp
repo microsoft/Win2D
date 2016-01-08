@@ -201,7 +201,7 @@ static void SetReportedVendorIdAndFeatureLevel(
         [=] (IDXGIAdapter** a) { return dxgiAdapter.CopyTo(a); });
 
     d3dDevice->GetFeatureLevelMethod.SetExpectedCalls(0, 1,
-        [=] () { return featureLevel; });
+        [=] { return featureLevel; });
     
     auto d2dDevice = Make<MockD2DDevice>(d3dDevice.Get());
     deviceContext->GetDeviceMethod.SetExpectedCalls(0, 1,

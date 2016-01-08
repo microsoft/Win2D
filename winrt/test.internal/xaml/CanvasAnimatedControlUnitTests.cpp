@@ -87,7 +87,7 @@ public:
     MockDispatchedHandler()
     {
         m_handler = Callback<AddFtmBase<IDispatchedHandler>::Type>(
-            [=]()
+            [=]
             {
                 return OnInvoke.WasCalled();
             });
@@ -1842,7 +1842,7 @@ TEST_CLASS(CanvasAnimatedControlTests)
         auto mockDxgiOutput = Make<MockDxgiOutput>();
 
         f.Device->GetPrimaryDisplayOutputMethod.SetExpectedCalls(1,
-            [&]()
+            [&]
             {
                 return mockDxgiOutput;
             });
@@ -1860,7 +1860,7 @@ TEST_CLASS(CanvasAnimatedControlTests)
 
         auto mockDxgiOutput = Make<MockDxgiOutput>();
         f.Device->GetPrimaryDisplayOutputMethod.SetExpectedCalls(1,
-            [&]()
+            [&]
             {
                 return mockDxgiOutput;
             });
@@ -1868,7 +1868,7 @@ TEST_CLASS(CanvasAnimatedControlTests)
         int order = 0;
 
         mockDxgiOutput->WaitForVBlankMethod.SetExpectedCalls(1,
-            [&]()
+            [&]
             {
                 Assert::AreEqual(0, order);
                 order++;
@@ -1877,7 +1877,7 @@ TEST_CLASS(CanvasAnimatedControlTests)
 
         MockDispatchedHandler dispatchedHandler;
         dispatchedHandler.OnInvoke.SetExpectedCalls(1,
-            [&]()
+            [&]
             {
                 Assert::AreEqual(1, order);
                 order++;
@@ -2833,7 +2833,7 @@ TEST_CLASS(CanvasAnimatedControl_AppAccessingWorkerThreadTests)
         for (int i = 0; i < actionCount; ++i)
         {
             dispatchedHandlers[i].OnInvoke.SetExpectedCalls(1,
-                [i, &callbackIndex] () 
+                [i, &callbackIndex] 
                 {
                     Assert::AreEqual(i, callbackIndex); 
                     callbackIndex++; 
