@@ -41,32 +41,54 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
 
   <instrumentation>
     <events>
-      <provider name="Microsoft-Win2D"
+      <provider name="Win2D"
                 guid="{23ea6c85-7f23-4a0e-9a68-bd3054d032e7}"
-                symbol="ETW_PROVIDER_Microsoft_Graphics_Canvas"
+                symbol="ETW_PROVIDER_Win2D"
                 resourceFileName="Microsoft.Graphics.Canvas.dll"
                 messageFileName="Microsoft.Graphics.Canvas.dll">
         <!-- no channels -->
         <!-- no levels -->
         <tasks>
-          <task name="CanvasAnimatedControl" symbol="ETW_TASK_CanvasAnimatedControl" value="1" />
+          <task value="1" name="StepTimer_Tick"               symbol="ETW_TASK_StepTimer_Tick" />
+          <task value="2" name="StepTimer_CloseToTargetClamp" symbol="ETW_TASK_StepTimerCloseToTargetClamp" />
+          <task value="3" name="StepTimer_FixedTimeStep"      symbol="ETW_TASK_StepTimer_FixedTimeStep" />
+          <task value="4" name="StepTimer_Update"             symbol="ETW_TASK_StepTimer_Update" />
         </tasks>
         <!-- no opcodes -->
-
         <templates>
-          <template tid="StepTimer">
-            <data name="ElapsedTicks" inType="win:UInt64" />
-            <data name="TotalTicks" inType="win:UInt64" />
-            <data name="LeftOverTicks" inType="win:UInt64" />
+          <template tid="StepTimer_Tick">
+            <data name="forceUpdate" inType="win:Boolean" />
+            <data name="timeSpentPaused" inType="win:Int64" />
+          </template>
+
+          <template tid="StepTimer_CloseToTargetClamp">
+            <data name="timeDelta" inType="win:UInt64" />
+            <data name="m_targetElapsedTicks" inType="win:UInt64" />
+          </template>
+
+          <template tid="StepTimer_FixedTimeStep">
+            <data name="timeDelta" inType="win:UInt64" />
+            <data name="m_leftOverTicks" inType="win:UInt64" />
+          </template>
+
+          <template tid="StepTimer_Update">
+            <data name="m_elapsedTicks" inType="win:UInt64" />
+            <data name="m_leftOverTicks" inType="win:UInt64" />
+            <data name="m_totalTicks" inType="win:UInt64" />
+            <data name="m_frameCount" inType="win:UInt32" />
+            <data name="forceUpdate" inType="win:Boolean" />
           </template>
         </templates>
 
         <events>
-          <event value="1" level="win:Verbose" task="CanvasAnimatedControl" template="StepTimer" symbol="ETW_EVENT_StepTimer" />
+          <event value="1" level="win:Verbose" task="StepTimer_Tick"               template="StepTimer_Tick"               symbol="ETW_EVENT_StepTimer_Tick" />
+          <event value="2" level="win:Verbose" task="StepTimer_CloseToTargetClamp" template="StepTimer_CloseToTargetClamp" symbol="ETW_EVENT_StepTimer_CloseToTargetClamp" />
+          <event value="3" level="win:Verbose" task="StepTimer_FixedTimeStep"      template="StepTimer_FixedTimeStep"      symbol="ETW_EVENT_StepTimer_FixedTimeStep" />
+          <event value="4" level="win:Verbose" task="StepTimer_Update"             template="StepTimer_Update"             symbol="ETW_EVENT_StepTimer_Update" />
         </events>
         
       </provider>
     </events>
   </instrumentation>
-  
+
 </instrumentationManifest>

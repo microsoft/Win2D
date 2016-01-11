@@ -134,7 +134,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         template<typename CALLABLE>
         void Tick(bool forceUpdate, int64_t timeSpentPaused, CALLABLE&& fn)
         {
-            EventWrite_StepTimer(m_elapsedTicks, m_totalTicks, m_leftOverTicks);
+            EventWrite_StepTimer_Tick(forceUpdate, timeSpentPaused);
             
             // Query the current time.
             auto currentTime = m_adapter->GetPerformanceCounter();
@@ -178,8 +178,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
                 if (llabs(static_cast<uint64_t>(timeDelta - m_targetElapsedTicks)) < TicksPerSecond / 4000)
                 {
+                    EventWrite_StepTimer_CloseToTargetClamp(timeDelta, m_targetElapsedTicks);
                     timeDelta = m_targetElapsedTicks;
                 }
+
+                EventWrite_StepTimer_FixedTimeStep(timeDelta, m_leftOverTicks);
 
                 m_leftOverTicks += timeDelta;
 
@@ -198,6 +201,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                     m_frameCount++;
 
                     fn(isRunningSlowly);
+                    EventWrite_StepTimer_Update(m_elapsedTicks, m_leftOverTicks, m_totalTicks, m_frameCount, false);
                 }
 
                 if (forceUpdate)
@@ -205,6 +209,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                     m_frameCount++;
                     assert(!isRunningSlowly);
                     fn(false);
+                    EventWrite_StepTimer_Update(m_elapsedTicks, m_leftOverTicks, m_totalTicks, m_frameCount, true);
                 }
             }
             else
@@ -216,6 +221,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                 m_frameCount++;
 
                 fn(false);
+                EventWrite_StepTimer_Update(m_elapsedTicks, m_leftOverTicks, m_totalTicks, m_frameCount, true);
             }
 
             // Track the current framerate.

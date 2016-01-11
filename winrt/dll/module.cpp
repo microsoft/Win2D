@@ -25,7 +25,7 @@ DllMain(
     switch (reason)
     {
     case DLL_PROCESS_ATTACH:
-        EventRegisterMicrosoft_Win2D();
+        EventRegisterWin2D();
         break;
         
     case DLL_PROCESS_DETACH:
@@ -37,7 +37,7 @@ DllMain(
 
         LifespanInfo::ReportLiveObjectsNoLock();
 
-        EventUnregisterMicrosoft_Win2D();
+        EventUnregisterWin2D();
         break;
     }
 
