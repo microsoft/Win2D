@@ -2,12 +2,9 @@
 //
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
-using System;
-using System.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Text;
-using System.Xml.Serialization;
 using System.Collections.Generic;
+using System.IO;
 
 namespace CodeGen.Test
 {

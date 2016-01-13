@@ -2,13 +2,13 @@
 //
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
+using Shared;
 using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
-using System.IO;
-using Shared;
 
 namespace MergeIntellisense
 {

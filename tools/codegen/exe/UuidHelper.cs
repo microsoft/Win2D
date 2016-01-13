@@ -3,10 +3,10 @@
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
 using System;
-using System.Linq;
-using System.Text;
-using System.Security.Cryptography;
 using System.Diagnostics;
+using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace CodeGen
 {

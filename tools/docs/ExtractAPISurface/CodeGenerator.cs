@@ -3,12 +3,12 @@
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
 using System;
-using System.Linq;
 using System.Collections.Generic;
-using System.Xml.Linq;
+using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using System.IO;
+using System.Xml.Linq;
 
 namespace ExtractAPISurface
 {

@@ -2,12 +2,8 @@
 //
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
-using System.Diagnostics;
-using System.Xml.Serialization;
 using System.Collections.Generic;
-using System.Text;
-using System.IO;
-using System;
+using System.Xml.Serialization;
 
 namespace CodeGen
 {

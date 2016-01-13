@@ -2,11 +2,11 @@
 //
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
+using Shared;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Shared;
-using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 namespace CheckCode
