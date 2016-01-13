@@ -885,6 +885,9 @@ bool CanvasAnimatedControl::Tick(
     CanvasSwapChain* swapChain, 
     bool areResourcesCreated)
 {
+    EventWrite_CanvasAnimatedControl_Tick_Start();
+    auto tickEnd = MakeScopeWarden([] { EventWrite_CanvasAnimatedControl_Tick_Stop(); });
+    
     RenderTarget* renderTarget = GetCurrentRenderTarget();
 
     //
@@ -914,6 +917,7 @@ bool CanvasAnimatedControl::Tick(
     // IDXGIAdapter::EnumOutputs will fail. In this case, WaitForVerticalBlank
     // will yield.
     //
+    EventWrite_CanvasAnimatedControl_WaitForVerticalBlank_Start();
     if (swapChain)
     {
         ThrowIfFailed(swapChain->WaitForVerticalBlank());
@@ -926,6 +930,7 @@ bool CanvasAnimatedControl::Tick(
         //
         GetAdapter()->Sleep(static_cast<DWORD>(StepTimer::TicksToMilliseconds(StepTimer::DefaultTargetElapsedTime)));
     }
+    EventWrite_CanvasAnimatedControl_WaitForVerticalBlank_Stop();
 
     if (IsSuspended())
         return false;
@@ -1054,6 +1059,7 @@ bool CanvasAnimatedControl::Tick(
 
     UpdateResult updateResult{};
 
+    EventWrite_CanvasAnimatedControl_Update_Start(areResourcesCreated, isPaused);
     if (areResourcesCreated && !isPaused)
     {
         bool forceUpdate = false;
@@ -1071,6 +1077,7 @@ bool CanvasAnimatedControl::Tick(
 
         m_hasUpdated |= updateResult.Updated;
     }
+    EventWrite_CanvasAnimatedControl_Update_Stop(updateResult.Updated);
 
     //
     // We only ever Draw/Present if an Update has actually happened.  This
@@ -1134,8 +1141,12 @@ bool CanvasAnimatedControl::Tick(
         {
             bool invokeDrawHandlers = (areResourcesCreated && (m_hasUpdated || invalidated));
 
+            EventWrite_CanvasAnimatedControl_Draw_Start(invokeDrawHandlers, updateResult.IsRunningSlowly);
             Draw(renderTarget->Target.Get(), clearColor, invokeDrawHandlers, updateResult.IsRunningSlowly);
+            EventWrite_CanvasAnimatedControl_Draw_Stop();
+            EventWrite_CanvasAnimatedControl_Present_Start();
             ThrowIfFailed(renderTarget->Target->Present());
+            EventWrite_CanvasAnimatedControl_Present_Stop();
         }
     }
 

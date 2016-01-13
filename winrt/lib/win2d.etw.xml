@@ -49,10 +49,18 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         <!-- no channels -->
         <!-- no levels -->
         <tasks>
+
           <task value="1" name="StepTimer_Tick"               symbol="ETW_TASK_StepTimer_Tick" />
           <task value="2" name="StepTimer_CloseToTargetClamp" symbol="ETW_TASK_StepTimerCloseToTargetClamp" />
           <task value="3" name="StepTimer_FixedTimeStep"      symbol="ETW_TASK_StepTimer_FixedTimeStep" />
           <task value="4" name="StepTimer_Update"             symbol="ETW_TASK_StepTimer_Update" />
+
+          <task value="10" name="CanvasAnimatedControl_Tick"                 symbol="ETW_TASK_CanvasAnimatedControl_Tick" />
+          <task value="11" name="CanvasAnimatedControl_WaitForVerticalBlank" symbol="ETW_TASK_CanvasAnimatedControl_WaitForVerticalBlank" />
+          <task value="12" name="CanvasAnimatedControl_Update"               symbol="ETW_TASK_CanvasAnimatedControl_Update" />
+          <task value="13" name="CanvasAnimatedControl_Draw"                 symbol="ETW_TASK_CanvasAnimatedControl_Draw" />
+          <task value="14" name="CanvasAnimatedControl_Present"              symbol="ETW_TASK_CanvasAnimatedControl_Present" />
+          
         </tasks>
         <!-- no opcodes -->
         <templates>
@@ -78,6 +86,21 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
             <data name="m_frameCount" inType="win:UInt32" />
             <data name="forceUpdate" inType="win:Boolean" />
           </template>
+
+          <template tid="CanvasAnimatedControl_Update_Start">
+            <data name="areResourcesCreated" inType="win:Boolean" />
+            <data name="isPaused" inType="win:Boolean" />
+          </template>
+          
+          <template tid="CanvasAnimatedControl_Update_Stop">
+            <data name="updated" inType="win:Boolean" />
+          </template>
+          
+          <template tid="CanvasAnimatedControl_Draw_Start">
+            <data name="invokeDrawHandlers" inType="win:Boolean" />
+            <data name="IsRunningSlowly" inType="win:Boolean" />
+          </template>
+          
         </templates>
 
         <events>
@@ -85,6 +108,17 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
           <event value="2" level="win:Verbose" task="StepTimer_CloseToTargetClamp" template="StepTimer_CloseToTargetClamp" symbol="ETW_EVENT_StepTimer_CloseToTargetClamp" />
           <event value="3" level="win:Verbose" task="StepTimer_FixedTimeStep"      template="StepTimer_FixedTimeStep"      symbol="ETW_EVENT_StepTimer_FixedTimeStep" />
           <event value="4" level="win:Verbose" task="StepTimer_Update"             template="StepTimer_Update"             symbol="ETW_EVENT_StepTimer_Update" />
+
+          <event value="10" level="win:Verbose" opcode="win:Start" task="CanvasAnimatedControl_Tick"                 symbol="ETW_EVENT_CanvasAnimatedControl_Tick_Start" />
+          <event value="11" level="win:Verbose" opcode="win:Stop"  task="CanvasAnimatedControl_Tick"                 symbol="ETW_EVENT_CanvasAnimatedControl_Tick_Stop" />
+          <event value="12" level="win:Verbose" opcode="win:Start" task="CanvasAnimatedControl_WaitForVerticalBlank" symbol="ETW_EVENT_CanvasAnimatedControl_WaitForVerticalBlank_Start" />
+          <event value="13" level="win:Verbose" opcode="win:Stop"  task="CanvasAnimatedControl_WaitForVerticalBlank" symbol="ETW_EVENT_CanvasAnimatedControl_WaitForVerticalBlank_Stop" />
+          <event value="14" level="win:Verbose" opcode="win:Start" task="CanvasAnimatedControl_Update"               symbol="ETW_EVENT_CanvasAnimatedControl_Update_Start" template="CanvasAnimatedControl_Update_Start" />
+          <event value="15" level="win:Verbose" opcode="win:Stop"  task="CanvasAnimatedControl_Update"               symbol="ETW_EVENT_CanvasAnimatedControl_Update_Stop"  template="CanvasAnimatedControl_Update_Stop" />
+          <event value="16" level="win:Verbose" opcode="win:Start" task="CanvasAnimatedControl_Draw"                 symbol="ETW_EVENT_CanvasAnimatedControl_Draw_Start"   template="CanvasAnimatedControl_Draw_Start" />
+          <event value="17" level="win:Verbose" opcode="win:Stop"  task="CanvasAnimatedControl_Draw"                 symbol="ETW_EVENT_CanvasAnimatedControl_Draw_Stop" />
+          <event value="18" level="win:Verbose" opcode="win:Start" task="CanvasAnimatedControl_Present"              symbol="ETW_EVENT_CanvasAnimatedControl_Present_Start" />
+          <event value="19" level="win:Verbose" opcode="win:Stop"  task="CanvasAnimatedControl_Present"              symbol="ETW_EVENT_CanvasAnimatedControl_Present_Stop" />
         </events>
         
       </provider>
