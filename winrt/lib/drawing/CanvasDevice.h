@@ -163,6 +163,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         virtual void ThrowIfCreateSurfaceFailed(HRESULT hr, wchar_t const* typeName, uint32_t width, uint32_t height) = 0;
 
+        virtual ComPtr<ID2D1Effect> LeaseHistogramEffect(ID2D1DeviceContext* d2dContext) = 0;
+        virtual void ReleaseHistogramEffect(ComPtr<ID2D1Effect>&& effect) = 0;
+
 #if WINVER > _WIN32_WINNT_WINBLUE
         virtual ComPtr<ID2D1GradientMesh> CreateGradientMesh(D2D1_GRADIENT_MESH_PATCH const* patches, uint32_t patchCount) = 0;
 
@@ -203,6 +206,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         std::shared_ptr<SharedDeviceState> m_sharedState;
 
         DeviceContextPool m_deviceContextPool;
+
+        ComPtr<ID2D1Effect> m_histogramEffect;
 
 #if WINVER > _WIN32_WINNT_WINBLUE
         std::mutex m_quirkMutex;
@@ -360,6 +365,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         virtual ComPtr<IDXGIOutput> GetPrimaryDisplayOutput() override;
 
         virtual void ThrowIfCreateSurfaceFailed(HRESULT hr, wchar_t const* typeName, uint32_t width, uint32_t height) override;
+
+        virtual ComPtr<ID2D1Effect> LeaseHistogramEffect(ID2D1DeviceContext* d2dContext) override;
+        virtual void ReleaseHistogramEffect(ComPtr<ID2D1Effect>&& effect) override;
 
 #if WINVER > _WIN32_WINNT_WINBLUE
         virtual ComPtr<ID2D1GradientMesh> CreateGradientMesh(D2D1_GRADIENT_MESH_PATCH const* patches, uint32_t patchCount) override;

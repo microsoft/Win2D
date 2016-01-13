@@ -569,3 +569,288 @@ TEST_CLASS(DefaultCanvasImageAdapter_Tests)
         }
     }
 };
+
+TEST_CLASS(CanvasImageHistogramUnitTests)
+{
+    TEST_METHOD_EX(CanvasImage_IsHistogramSupported)
+    {
+        auto factory = Make<CanvasImageFactory>();
+        auto d2dDevice = Make<StubD2DDevice>();
+        auto d3dDevice = Make<MockD3D11Device>();
+        auto canvasDevice = Make<StubCanvasDevice>(d2dDevice, d3dDevice);
+
+        boolean result;
+
+        Assert::AreEqual(E_INVALIDARG, factory->IsHistogramSupported(canvasDevice.Get(), nullptr));
+        Assert::AreEqual(E_INVALIDARG, factory->IsHistogramSupported(nullptr, &result));
+
+        D3D_FEATURE_LEVEL featureLevel;
+
+        d3dDevice->GetFeatureLevelMethod.AllowAnyCall([&]
+        {
+            return featureLevel;
+        });
+
+        bool supportCompute;
+        HRESULT checkFeatureSupportResult;
+
+        d3dDevice->CheckFeatureSupportMethod.AllowAnyCall([&](D3D11_FEATURE feature, void *data, UINT dataSize)
+        {
+            Assert::AreEqual<uint32_t>(D3D11_FEATURE_D3D10_X_HARDWARE_OPTIONS, feature);
+            Assert::AreEqual<size_t>(sizeof(D3D11_FEATURE_DATA_D3D10_X_HARDWARE_OPTIONS), dataSize);
+            reinterpret_cast<D3D11_FEATURE_DATA_D3D10_X_HARDWARE_OPTIONS*>(data)->ComputeShaders_Plus_RawAndStructuredBuffers_Via_Shader_4_x = supportCompute;
+            return checkFeatureSupportResult;
+        });
+
+        // Feature level 11 = yes.
+        featureLevel = D3D_FEATURE_LEVEL_11_0;
+        ThrowIfFailed(factory->IsHistogramSupported(canvasDevice.Get(), &result));
+        Assert::IsTrue(!!result);
+
+        // Feature level 10 with ComputeShaders_Plus_RawAndStructuredBuffers_Via_Shader_4_x = yes.
+        featureLevel = D3D_FEATURE_LEVEL_10_0;
+        supportCompute = true;
+        checkFeatureSupportResult = S_OK;
+        ThrowIfFailed(factory->IsHistogramSupported(canvasDevice.Get(), &result));
+        Assert::IsTrue(!!result);
+
+        // Feature level 10 without ComputeShaders_Plus_RawAndStructuredBuffers_Via_Shader_4_x = no.
+        supportCompute = false;
+        ThrowIfFailed(factory->IsHistogramSupported(canvasDevice.Get(), &result));
+        Assert::IsFalse(!!result);
+
+        // Also no if CheckFeatureSupport fails.
+        supportCompute = true;
+        checkFeatureSupportResult = E_FAIL;
+        ThrowIfFailed(factory->IsHistogramSupported(canvasDevice.Get(), &result));
+        Assert::IsFalse(!!result);
+    }
+
+    TEST_METHOD_EX(CanvasImage_ComputeHistogram_InvalidArgs)
+    {
+        auto factory = Make<CanvasImageFactory>();
+        auto canvasDevice = Make<StubCanvasDevice>();
+        auto bitmap = CreateStubCanvasBitmap();
+        Rect rect{ 1, 2, 3, 4 };
+        ComArray<float> result;
+
+        Assert::AreEqual(E_INVALIDARG, factory->ComputeHistogram(nullptr,      rect, canvasDevice.Get(), EffectChannelSelect::Red, 64,   result.GetAddressOfSize(), result.GetAddressOfData()));
+        Assert::AreEqual(E_INVALIDARG, factory->ComputeHistogram(bitmap.Get(), rect, nullptr,            EffectChannelSelect::Red, 64,   result.GetAddressOfSize(), result.GetAddressOfData()));
+        Assert::AreEqual(E_INVALIDARG, factory->ComputeHistogram(bitmap.Get(), rect, canvasDevice.Get(), EffectChannelSelect::Red, 64,   nullptr,                   result.GetAddressOfData()));
+        Assert::AreEqual(E_INVALIDARG, factory->ComputeHistogram(bitmap.Get(), rect, canvasDevice.Get(), EffectChannelSelect::Red, 64,   result.GetAddressOfSize(), nullptr));
+        Assert::AreEqual(E_INVALIDARG, factory->ComputeHistogram(bitmap.Get(), rect, canvasDevice.Get(), EffectChannelSelect::Red, 1,    result.GetAddressOfSize(), result.GetAddressOfData()));
+        Assert::AreEqual(E_INVALIDARG, factory->ComputeHistogram(bitmap.Get(), rect, canvasDevice.Get(), EffectChannelSelect::Red, 1025, result.GetAddressOfSize(), result.GetAddressOfData()));
+    }
+
+    static void TestComputeHistogram(float dpi)
+    {
+        auto factory = Make<CanvasImageFactory>();
+        auto canvasDevice = Make<StubCanvasDevice>();
+        auto d2dContext = Make<MockD2DDeviceContext>();
+        auto effect = Make<MockD2DEffect>();
+        auto d2dBitmap = Make<StubD2DBitmap>(D2D1_BITMAP_OPTIONS_NONE, dpi);
+        auto canvasBitmap = Make<CanvasBitmap>(nullptr, d2dBitmap.Get());
+        ComPtr<MockD2DEffectThatCountsCalls> dpiCompensator;
+        Rect rect{ 1, 2, 3, 4 };
+        auto channelSelect = EffectChannelSelect::Green;
+        const int numBins = 42;
+        ComArray<float> result;
+
+        canvasDevice->GetResourceCreationDeviceContextMethod.SetExpectedCalls(1, [&]
+        {
+            return DeviceContextLease(d2dContext);
+        });
+
+        canvasDevice->LeaseHistogramEffectMethod.SetExpectedCalls(1, [&](ID2D1DeviceContext* context)
+        {
+            Assert::IsTrue(IsSameInstance(context, d2dContext.Get()));
+            return effect;
+        });
+
+        canvasDevice->ReleaseHistogramEffectMethod.SetExpectedCalls(1, [&](ComPtr<ID2D1Effect> releasingEffect)
+        {
+            Assert::IsTrue(IsSameInstance(effect.Get(), releasingEffect.Get()));
+        });
+
+        int setInputCallCount = 0;
+
+        effect->MockSetInput = [&](UINT32 index, ID2D1Image* input)
+        {
+            Assert::AreEqual(0u, index);
+
+            switch (setInputCallCount++)
+            {
+            case 0:
+                if (dpiCompensator)
+                    Assert::IsTrue(IsSameInstance(dpiCompensator.Get(), input));
+                else
+                    Assert::IsTrue(IsSameInstance(d2dBitmap.Get(), input));
+                break;
+
+            case 1:
+                Assert::IsNull(input);
+                break;
+
+            default:
+                Assert::Fail();
+            }
+        };
+
+        int setValueCallCount = 0;
+
+        effect->MockSetValue = [&](UINT32 index, D2D1_PROPERTY_TYPE type, CONST BYTE* data, UINT32 dataSize)
+        {
+            switch (setValueCallCount++)
+            {
+            case 0:
+                Assert::AreEqual<uint32_t>(D2D1_HISTOGRAM_PROP_CHANNEL_SELECT, index);
+                Assert::AreEqual<size_t>(sizeof(int), dataSize);
+                Assert::AreEqual(*reinterpret_cast<int const*>(data), static_cast<int>(channelSelect));
+                break;
+
+            case 1:
+                Assert::AreEqual<uint32_t>(D2D1_HISTOGRAM_PROP_NUM_BINS, index);
+                Assert::AreEqual<size_t>(sizeof(int), dataSize);
+                Assert::AreEqual(*reinterpret_cast<int const*>(data), numBins);
+                break;
+
+            default:
+                Assert::Fail();
+            }
+
+            return S_OK;
+        };
+
+        effect->MockGetValue = [&](UINT32 index, D2D1_PROPERTY_TYPE, BYTE*, UINT32 dataSize)
+        {
+            Assert::AreEqual<uint32_t>(D2D1_HISTOGRAM_PROP_HISTOGRAM_OUTPUT, index);
+            Assert::AreEqual<size_t>(numBins * sizeof(float), dataSize);
+
+            return S_OK;
+        };
+
+        if (dpi != DEFAULT_DPI)
+        {
+            d2dContext->CreateEffectMethod.SetExpectedCalls(1, [&](IID const& iid, ID2D1Effect** effect)
+            {
+                Assert::AreEqual(CLSID_D2D1DpiCompensation, iid);
+                Assert::IsNull(dpiCompensator.Get());
+                
+                dpiCompensator = Make<MockD2DEffectThatCountsCalls>();
+                
+                dpiCompensator->MockGetOutput = [&](ID2D1Image** output)
+                {
+                    dpiCompensator.CopyTo(output);
+                };
+
+                return dpiCompensator.CopyTo(effect);
+            });
+        }
+
+        d2dContext->BeginDrawMethod.SetExpectedCalls(1);
+        d2dContext->EndDrawMethod.SetExpectedCalls(1);
+
+        d2dContext->DrawImageMethod.SetExpectedCalls(1, [&](ID2D1Image* image, D2D1_POINT_2F const*, D2D1_RECT_F const*, D2D1_INTERPOLATION_MODE actualInterpolation, D2D1_COMPOSITE_MODE)
+        {
+            Assert::IsTrue(IsSameInstance(effect.Get(), image));
+        });
+
+        ThrowIfFailed(factory->ComputeHistogram(canvasBitmap.Get(), rect, canvasDevice.Get(), channelSelect, numBins, result.GetAddressOfSize(), result.GetAddressOfData()));
+
+        Assert::AreEqual(2, setInputCallCount);
+        Assert::AreEqual(2, setValueCallCount);
+
+        if (dpiCompensator)
+        {
+            Assert::IsTrue(IsSameInstance(d2dBitmap.Get(), dpiCompensator->m_inputs[0].Get()));
+
+            Assert::AreEqual(sizeof(Vector2), dpiCompensator->m_properties[D2D1_DPICOMPENSATION_PROP_INPUT_DPI].size());
+            Assert::AreEqual(Vector2{ dpi, dpi }, *reinterpret_cast<Vector2*>(dpiCompensator->m_properties[D2D1_DPICOMPENSATION_PROP_INPUT_DPI].data()));
+        }
+    }
+
+    TEST_METHOD_EX(CanvasImage_ComputeHistogram_DefaultDpi)
+    {
+        TestComputeHistogram(DEFAULT_DPI);
+    }
+
+    TEST_METHOD_EX(CanvasImage_ComputeHistogram_HighDpi)
+    {
+        TestComputeHistogram(123);
+    }
+
+    TEST_METHOD_EX(CanvasImage_ComputeHistogram_ReusesHistogramEffect)
+    {
+        auto deviceAdapter = std::make_shared<TestDeviceAdapter>();
+        CanvasDeviceAdapter::SetInstance(deviceAdapter);
+
+        auto d2dDevice = Make<MockD2DDevice>(Make<MockD2DFactory>().Get());
+        auto canvasDevice = Make<CanvasDevice>(d2dDevice.Get());
+        auto deviceInternal = As<ICanvasDeviceInternal>(canvasDevice);
+        auto d2dContext = Make<MockD2DDeviceContext>();
+        auto d2dEffect1 = Make<StubD2DEffect>(CLSID_D2D1Histogram);
+        auto d2dEffect2 = Make<StubD2DEffect>(CLSID_D2D1Histogram);
+
+        // First call to LeaseHistogramEffect should allocate a new D2D effect.
+        d2dContext->CreateEffectMethod.SetExpectedCalls(1, [&](IID const& iid, ID2D1Effect** effect)
+        {
+            Assert::AreEqual(CLSID_D2D1Histogram, iid);
+            return d2dEffect1.CopyTo(effect);
+        });
+
+        auto histogram = deviceInternal->LeaseHistogramEffect(d2dContext.Get());
+        Assert::AreEqual<void*>(histogram.Get(), d2dEffect1.Get());
+
+        deviceInternal->ReleaseHistogramEffect(std::move(histogram));
+        Assert::IsNull(histogram.Get());
+
+        Expectations::Instance()->Validate();
+
+        // After ReleaseHistogramEffect, subsequent calls to LeaseHistogramEffect should return the same D2D effect.
+        histogram = deviceInternal->LeaseHistogramEffect(d2dContext.Get());
+        Assert::AreEqual<void*>(histogram.Get(), d2dEffect1.Get());
+
+        Expectations::Instance()->Validate();
+
+        // Nested calls to LeaseHistogramEffect (without ReleaseHistogramEffect) should allocate new D2D effects.
+        d2dContext->CreateEffectMethod.SetExpectedCalls(1, [&](IID const& iid, ID2D1Effect** effect)
+        {
+            Assert::AreEqual(CLSID_D2D1Histogram , iid);
+            return d2dEffect2.CopyTo(effect);
+        });
+
+        auto histogram2 = deviceInternal->LeaseHistogramEffect(d2dContext.Get());
+        Assert::AreEqual<void*>(histogram2.Get(), d2dEffect2.Get());
+
+        // Releasing the first effect should transfer its ownership back to the device.
+        AssertExpectedRefCount(d2dEffect1.Get(), 2);
+        AssertExpectedRefCount(d2dEffect2.Get(), 2);
+
+        deviceInternal->ReleaseHistogramEffect(std::move(histogram));
+        Assert::IsNull(histogram.Get());
+
+        AssertExpectedRefCount(d2dEffect1.Get(), 2);
+        AssertExpectedRefCount(d2dEffect2.Get(), 2);
+
+        // Releasing the second effect should swap it with the one the device is currently holding.
+        deviceInternal->ReleaseHistogramEffect(std::move(histogram2));
+        Assert::IsNull(histogram2.Get());
+
+        AssertExpectedRefCount(d2dEffect1.Get(), 1);
+        AssertExpectedRefCount(d2dEffect2.Get(), 2);
+
+        // Closing the device should release everything.
+        canvasDevice->Close();
+
+        AssertExpectedRefCount(d2dEffect1.Get(), 1);
+        AssertExpectedRefCount(d2dEffect2.Get(), 1);
+    }
+
+    static void AssertExpectedRefCount(ID2D1Effect* ptr, unsigned long expected)
+    {
+        ptr->AddRef();
+        auto refCount = ptr->Release();
+
+        Assert::AreEqual(expected, refCount);
+    }
+};

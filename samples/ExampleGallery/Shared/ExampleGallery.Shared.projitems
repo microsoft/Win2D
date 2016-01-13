@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
@@ -78,6 +78,9 @@
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)GeometryOperations.xaml.cs">
       <DependentUpon>GeometryOperations.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)HistogramExample.xaml.cs">
+      <DependentUpon>HistogramExample.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)ImageSourceUpdateRegion.xaml.cs">
       <DependentUpon>ImageSourceUpdateRegion.xaml</DependentUpon>
@@ -227,6 +230,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="$(MSBuildThisFileDirectory)HistogramExample.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="$(MSBuildThisFileDirectory)ImageSourceUpdateRegion.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -333,6 +340,8 @@
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\GameofLifeWide.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\GeometryOperationsNarrow.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\GeometryOperationsWide.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Thumbnails\HistogramNarrow.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Thumbnails\HistogramWide.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\ImageSourceUpdateRegionNarrow.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\ImageSourceUpdateRegionWide.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\KeyboardInputNarrow.png" />

@@ -150,5 +150,18 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             float quality,
             CanvasBufferPrecision bufferPrecision,
             IAsyncAction** action) override;
+
+        IFACEMETHODIMP ComputeHistogram(
+            ICanvasImage* image,
+            Rect sourceRectangle,
+            ICanvasResourceCreator* resourceCreator,
+            Effects::EffectChannelSelect channelSelect,
+            int32_t numberOfBins,
+            uint32_t* valueCount,
+            float** valueElements) override;
+
+        IFACEMETHODIMP IsHistogramSupported(
+            ICanvasDevice* device,
+            boolean* result) override;
     };
 }}}}

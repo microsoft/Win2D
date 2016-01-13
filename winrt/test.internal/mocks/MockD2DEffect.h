@@ -16,6 +16,7 @@ namespace canvas
         std::function<HRESULT(UINT32 count)> MockSetInputCount;
         std::function<void(UINT32 index, ID2D1Image** input)> MockGetInput;
         std::function<UINT32()> MockGetInputCount;
+        std::function<void(ID2D1Image** output)> MockGetOutput;
         std::function<HRESULT(UINT32 index, D2D1_PROPERTY_TYPE type, CONST BYTE* data, UINT32 dataSize)> MockSetValue;
         std::function<D2D1_PROPERTY_TYPE(UINT32 index)> MockGetType;
         std::function<HRESULT(UINT32 index, D2D1_PROPERTY_TYPE type, BYTE *data, UINT32 dataSize)> MockGetValue;
@@ -77,7 +78,11 @@ namespace canvas
             _Outptr_ ID2D1Image **outputImage
             ) CONST
         {
-            Assert::Fail(L"Unexpected call to GetOutput");
+            if (!MockGetOutput)
+            {
+                Assert::Fail(L"Unexpected call to GetOutput");
+            }
+            MockGetOutput(outputImage);
         }
 
         //

@@ -98,6 +98,19 @@ namespace Microsoft.Graphics.Canvas
             [in]          float quality,
             [in]          CanvasBufferPrecision bufferPrecision,
             [out, retval] Windows.Foundation.IAsyncAction** action);
+
+        HRESULT ComputeHistogram(
+            [in] ICanvasImage* image,
+            [in] Windows.Foundation.Rect sourceRectangle,
+            [in] ICanvasResourceCreator* resourceCreator,
+            [in] Microsoft.Graphics.Canvas.Effects.EffectChannelSelect channelSelect,
+            [in] INT32 numberOfBins,
+            [out] UINT32* valueCount,
+            [out, size_is(, *valueCount), retval] float** valueElements);
+
+        HRESULT IsHistogramSupported(
+            [in] CanvasDevice* device,
+            [out, retval] boolean* result);
     }
 
     [version(VERSION), threading(both), marshaling_behavior(agile),

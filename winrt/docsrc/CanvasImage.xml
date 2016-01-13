@@ -57,6 +57,37 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         </p>
       </remarks>
     </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasImage.ComputeHistogram(Microsoft.Graphics.Canvas.ICanvasImage,Windows.Foundation.Rect,Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.Graphics.Canvas.Effects.EffectChannelSelect,System.Int32)">
+      <summary>Generates a histogram from one color channel of the specified image.</summary>
+      <remarks>
+        <p>
+          The range 0-1 is divided over the specified number of bins, then the number of color 
+          values falling into each bin are counted. Color values outside this range are clamped. 
+          The range of a particular bin depends on the number of bins.
+        </p>
+        <p>
+          The number of bins can be from 2 to 1024.
+        </p>
+        <p>
+          The histogram is always evaluated at default (96) DPI. If you want to measure some other 
+          pixel density, scale the input image (using Transform2DEffect) before passing it to 
+          ComputeHistogram.
+        </p>
+        <p>
+          The source image is assumed to be in
+          <a href="PremultipliedAlpha.htm">premultiplied alpha</a> format, but this 
+          method operates on straight alpha values, so the input colors will be 
+          unpremultiplied before computing the histogram.
+        </p>
+        <p>
+          ComputeHistogram requires a GPU that supports DirectCompute. To check whether this is 
+          available, call <see cref="M:Microsoft.Graphics.Canvas.CanvasImage.IsHistogramSupported(Microsoft.Graphics.Canvas.CanvasDevice)"/>.
+        </p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasImage.IsHistogramSupported(Microsoft.Graphics.Canvas.CanvasDevice)">
+      <summary>Checks whether the ComputeHistogram method is compatible with the GPU capabilities of the specified device.</summary>
+    </member>
   </members>
 
   <template name="CanvasImage.SaveAsync-remarks">

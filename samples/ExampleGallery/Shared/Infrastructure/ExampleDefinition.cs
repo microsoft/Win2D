@@ -71,6 +71,7 @@ namespace ExampleGallery
 #if WINDOWS_UWP
             new ExampleDefinition("Gradient Mesh", typeof(GradientMeshExample)),
 #endif
+            new ExampleDefinition("Histogram", typeof(HistogramExample)),
             new ExampleDefinition("Text Layouts", typeof(TextLayouts)),
             new ExampleDefinition("Text Outlines", typeof(TextOutlines)),
             new ExampleDefinition("Custom Fonts", typeof(CustomFonts)),

@@ -701,6 +701,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 m_dxgiDevice.Close();
                 m_primaryOutput.Reset();
                 m_sharedState.reset();
+                m_histogramEffect.Reset();
             });
     }
 
@@ -1350,6 +1351,34 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         }
 
         ThrowIfFailed(hr);
+    }
+
+    static ComPtr<ID2D1Effect> InterlockedExchangeComPtr(ComPtr<ID2D1Effect>& target, ComPtr<ID2D1Effect>&& value)
+    {
+        auto addressOfTarget = reinterpret_cast<void* volatile*>(target.GetAddressOf());
+
+        auto exchanged = InterlockedExchangePointer(addressOfTarget, value.Detach());
+
+        ComPtr<ID2D1Effect> result;
+        result.Attach(reinterpret_cast<ID2D1Effect*>(exchanged));
+        return result;
+    }
+
+    ComPtr<ID2D1Effect> CanvasDevice::LeaseHistogramEffect(ID2D1DeviceContext* d2dContext)
+    {
+        ComPtr<ID2D1Effect> effect = InterlockedExchangeComPtr(m_histogramEffect, nullptr);
+
+        if (!effect)
+        {
+            ThrowIfFailed(d2dContext->CreateEffect(CLSID_D2D1Histogram, &effect));
+        }
+
+        return effect;
+    }
+
+    void CanvasDevice::ReleaseHistogramEffect(ComPtr<ID2D1Effect>&& effect)
+    {
+        InterlockedExchangeComPtr(m_histogramEffect, std::move(effect));
     }
 
 #if WINVER > _WIN32_WINNT_WINBLUE

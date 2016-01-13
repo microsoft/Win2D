@@ -267,13 +267,7 @@ namespace canvas
             return E_NOTIMPL;
         }
 
-        HRESULT STDMETHODCALLTYPE CheckFeatureSupport(
-            D3D11_FEATURE Feature,
-            _Out_writes_bytes_(FeatureSupportDataSize)  void *pFeatureSupportData,
-            UINT FeatureSupportDataSize)
-        {
-            return E_NOTIMPL;
-        }
+        MOCK_METHOD3(CheckFeatureSupport, HRESULT(D3D11_FEATURE, void *, UINT));
 
         HRESULT STDMETHODCALLTYPE GetPrivateData(
             _In_  REFGUID guid,

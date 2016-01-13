@@ -191,6 +191,116 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
 
+    IFACEMETHODIMP CanvasImageFactory::ComputeHistogram(
+        ICanvasImage* image,
+        Rect sourceRectangle,
+        ICanvasResourceCreator* resourceCreator,
+        Effects::EffectChannelSelect channelSelect,
+        int32_t numberOfBins,
+        uint32_t* valueCount,
+        float** valueElements)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckInPointer(image);
+                CheckInPointer(resourceCreator);
+                CheckInPointer(valueCount);
+                CheckAndClearOutPointer(valueElements);
+
+                if (numberOfBins < 2 || numberOfBins > 1024)
+                    ThrowHR(E_INVALIDARG);
+
+                // Look up a device context.
+                ComPtr<ICanvasDevice> device;
+                ThrowIfFailed(resourceCreator->get_Device(&device));
+                
+                auto deviceInternal = As<ICanvasDeviceInternal>(device);
+
+                auto deviceContext = deviceInternal->GetResourceCreationDeviceContext();
+                
+                // Look up a histogram effect.
+                ComPtr<ID2D1Effect> histogram = deviceInternal->LeaseHistogramEffect(deviceContext.Get());
+
+                auto releaseHistogram = MakeScopeWarden(
+                    [&]
+                    {
+                        histogram->SetInput(0, nullptr);
+                        deviceInternal->ReleaseHistogramEffect(std::move(histogram));
+                    });
+
+                // Configure the histogram effect.
+                float realizedDpi;
+
+                auto d2dImage = As<ICanvasImageInternal>(image)->GetD2DImage(device.Get(), deviceContext.Get(), GetImageFlags::None, DEFAULT_DPI, &realizedDpi);
+
+                if (realizedDpi != DEFAULT_DPI)
+                {
+                    ThrowIfFailed(D2D1::SetDpiCompensatedEffectInput(deviceContext.Get(), histogram.Get(), 0, As<ID2D1Bitmap>(d2dImage).Get()));
+                }
+                else
+                {
+                    histogram->SetInput(0, d2dImage.Get());
+                }
+
+                histogram->SetValue(D2D1_HISTOGRAM_PROP_CHANNEL_SELECT, channelSelect);
+                histogram->SetValue(D2D1_HISTOGRAM_PROP_NUM_BINS, numberOfBins);
+
+                // Evaluate the histogram by drawing the effect.
+                deviceContext->BeginDraw();
+
+                deviceContext->DrawImage(As<ID2D1Image>(histogram).Get(), D2D1_POINT_2F{ 0, 0 }, ToD2DRect(sourceRectangle));
+
+                ThrowIfFailed(deviceContext->EndDraw());
+
+                // Read back the results.
+                ComArray<float> array(numberOfBins);
+
+                ThrowIfFailed(histogram->GetValue(D2D1_HISTOGRAM_PROP_HISTOGRAM_OUTPUT,
+                                                  reinterpret_cast<BYTE*>(array.GetData()),
+                                                  array.GetSize() * sizeof(float)));
+
+                array.Detach(valueCount, valueElements);
+            });
+    }
+
+
+    IFACEMETHODIMP CanvasImageFactory::IsHistogramSupported(
+        ICanvasDevice* device,
+        boolean* result)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckInPointer(device);
+                CheckInPointer(result);
+
+                ComPtr<ID3D11Device> d3dDevice;
+                ThrowIfFailed(As<IDirect3DDxgiInterfaceAccess>(device)->GetInterface(IID_PPV_ARGS(&d3dDevice)));
+
+                bool isSupported = false;
+
+                if (d3dDevice->GetFeatureLevel() >= D3D_FEATURE_LEVEL_11_0)
+                {
+                    // Feature level 11 and above always supports compute shaders.
+                    isSupported = true;
+                }
+                else
+                {
+                    // On feature level 10, compute shaders are optional.
+                    D3D11_FEATURE_DATA_D3D10_X_HARDWARE_OPTIONS features = { 0 };
+                    
+                    if (SUCCEEDED(d3dDevice->CheckFeatureSupport(D3D11_FEATURE_D3D10_X_HARDWARE_OPTIONS, &features, sizeof(features))))
+                    {
+                        isSupported = !!features.ComputeShaders_Plus_RawAndStructuredBuffers_Via_Shader_4_x;
+                    }
+                }
+
+                *result = isSupported;
+            });
+    }
+
+
     ComPtr<IAsyncAction> DefaultCanvasImageAdapter::RunAsync(
         std::function<void()>&& fn)
     {
