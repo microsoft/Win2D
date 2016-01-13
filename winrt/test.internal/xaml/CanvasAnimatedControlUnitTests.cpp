@@ -1833,7 +1833,7 @@ TEST_CLASS(CanvasAnimatedControlTests)
         f.RenderSingleFrame();
     }
 
-    TEST_METHOD_EX(CanvasAnimatedControl_RenderThreadWaitsForVBlank)
+    TEST_METHOD_EX(CanvasAnimatedControl_FixedTimeStep_RenderThreadWaitsForVBlank_IfNoDraw)
     {
         CanvasAnimatedControlFixture f;
         f.Load();
@@ -1841,6 +1841,13 @@ TEST_CLASS(CanvasAnimatedControlTests)
 
         auto mockDxgiOutput = Make<MockDxgiOutput>();
 
+        // First ticks always updates/draws/presents, so we don't expect a
+        // vblank.
+        f.Adapter->Tick();
+
+
+        // Second tick, because we didn't progress time, will no
+        // update/draw/present, and so instead will wait on a vblank.
         f.Device->GetPrimaryDisplayOutputMethod.SetExpectedCalls(1,
             [&]
             {
@@ -1852,61 +1859,24 @@ TEST_CLASS(CanvasAnimatedControlTests)
         f.Adapter->Tick();
     }
 
-    TEST_METHOD_EX(CanvasAnimatedControl_RenderThreadWaitsForVBlank_BeforeDrawOrUpdateOrAsyncActions)
+    TEST_METHOD_EX(CanvasAnimatedControl_VariableTimeStep_AlwaysWaitsForVBlank)
     {
         CanvasAnimatedControlFixture f;
         f.Load();
         f.Adapter->DoChanged();
+        ThrowIfFailed(f.Control->put_IsFixedTimeStep(false));
 
         auto mockDxgiOutput = Make<MockDxgiOutput>();
-        f.Device->GetPrimaryDisplayOutputMethod.SetExpectedCalls(1,
+
+        f.Device->GetPrimaryDisplayOutputMethod.SetExpectedCalls(2,
             [&]
             {
                 return mockDxgiOutput;
             });
 
-        int order = 0;
+        mockDxgiOutput->WaitForVBlankMethod.SetExpectedCalls(2);
 
-        mockDxgiOutput->WaitForVBlankMethod.SetExpectedCalls(1,
-            [&]
-            {
-                Assert::AreEqual(0, order);
-                order++;
-                return S_OK;
-            });
-
-        MockDispatchedHandler dispatchedHandler;
-        dispatchedHandler.OnInvoke.SetExpectedCalls(1,
-            [&]
-            {
-                Assert::AreEqual(1, order);
-                order++;
-                return S_OK;
-            });
-        dispatchedHandler.RunOnGameLoopThreadAsync(f.Control);
-
-        MockEventHandler<Animated_UpdateEventHandler> OnUpdate;
-        OnUpdate = MockEventHandler<Animated_UpdateEventHandler>(L"Update", ExpectedEventParams::Both);
-        f.AddUpdateHandler(OnUpdate.Get());
-        OnUpdate.SetExpectedCalls(1,
-            [&](ICanvasAnimatedControl*, ICanvasAnimatedUpdateEventArgs*)
-            {
-                Assert::AreEqual(2, order);
-                order++;
-                return S_OK;
-            });
-                
-        MockEventHandler<Animated_DrawEventHandler> OnDraw;
-        OnDraw = MockEventHandler<Animated_DrawEventHandler>(L"Draw", ExpectedEventParams::Both);
-        f.AddDrawHandler(OnDraw.Get());
-        OnDraw.SetExpectedCalls(1,
-            [&](ICanvasAnimatedControl*, ICanvasAnimatedDrawEventArgs*)
-            {
-                Assert::AreEqual(3, order);
-                order++;
-                return S_OK;
-            });
-
+        f.Adapter->Tick();
         f.Adapter->Tick();
     }
 

@@ -890,48 +890,6 @@ bool CanvasAnimatedControl::Tick(
     
     RenderTarget* renderTarget = GetCurrentRenderTarget();
 
-    //
-    // On hardware rendering, the control synchronizes to vertical blank 
-    // in order to
-    //
-    // 1) Reduce the amount of busy-spinning for targetElapsedTime on fixed timestep 
-    // 2) Avoid performing imperceptible work on variable timestep.
-    //
-    // Unlike an awaitable timer for the swap chain object, this
-    // behaves identically regardless of whether any Present was
-    // actually issued.
-    //
-    // The exact behavior depends on the device of this control- whether
-    // it is hardware or software. CanvasAnimatedControl does not typically 
-    // run on software 'render-only' mode. It may run on basic display, but that has 
-    // no special implications for synching with v-blank. 
-    //
-    // The only way it may be initialized with WARP render-only is if
-    // something is malfunctioning in the system's driver, causing
-    // WARP to be used as a fallback (see CanvasDevice::MakeD3D11Device). 
-    // 
-    // In the future, we may allow the app to use its own device with
-    // the control, making the software path to be more accessible to an app.
-    //
-    // On a software render-only device, the display is not accessible and
-    // IDXGIAdapter::EnumOutputs will fail. In this case, WaitForVerticalBlank
-    // will yield.
-    //
-    EventWrite_CanvasAnimatedControl_WaitForVerticalBlank_Start();
-    if (swapChain)
-    {
-        ThrowIfFailed(swapChain->WaitForVerticalBlank());
-    }
-    else
-    {
-        //
-        // If there is no swap chain available, 
-        // a sleep is used instead to avoid pegging the CPU.
-        //
-        GetAdapter()->Sleep(static_cast<DWORD>(StepTimer::TicksToMilliseconds(StepTimer::DefaultTargetElapsedTime)));
-    }
-    EventWrite_CanvasAnimatedControl_WaitForVerticalBlank_Stop();
-
     if (IsSuspended())
         return false;
 
@@ -1085,6 +1043,7 @@ bool CanvasAnimatedControl::Tick(
     // This is desireable since using Present to wait for the vsync can
     // result in missed frames.
     //
+    bool drew = false;
     if ((updateResult.Updated || forceDraw || invalidated) && isVisible)
     {
         bool zeroSizedTarget = currentSize.Width <= 0 || currentSize.Height <= 0;
@@ -1144,12 +1103,55 @@ bool CanvasAnimatedControl::Tick(
             EventWrite_CanvasAnimatedControl_Draw_Start(invokeDrawHandlers, updateResult.IsRunningSlowly);
             Draw(renderTarget->Target.Get(), clearColor, invokeDrawHandlers, updateResult.IsRunningSlowly);
             EventWrite_CanvasAnimatedControl_Draw_Stop();
-            EventWrite_CanvasAnimatedControl_Present_Start();
+            EventWrite_CanvasAnimatedControl_Present_Start();            
             ThrowIfFailed(renderTarget->Target->Present());
             EventWrite_CanvasAnimatedControl_Present_Stop();
+
+            drew = true;
         }
     }
 
+    //
+    // The call to Present() usually blocks until a previous frame has been
+    // composed into the scene.  The happens because the swap chain has a
+    // limited number of buffers available, and Present() won't return until
+    // there's a buffer available to draw the next frame on.
+    //
+    // In some cases the Present() may return quickly.  For example, there may
+    // already be a buffer free because the GPU is starting to catch up with the
+    // GPU.  In fixed time step mode this will result in the next Tick happening
+    // soon enough that there is no work to do, and so we don't do a
+    // Draw/Present.
+    //
+    // Without the Present() call to block the CPU the game loop thread ends up
+    // busy waiting, pegging a CPU, drawing more power and draining the battery
+    // on a mobile device.  This is undesireable!
+    //
+    // To prevent this from happening we call WaitForVerticalBlank to delay the
+    // next tick.
+    //
+    // Some caveats here:
+    //
+    //   - software devices do not support WaitForVerticalBlank. In this case
+    //     the CanvasSwapChain does a Sleep(0).
+    //
+    //   - if there's no swap chain (eg the window is invisible) then we just
+    //     sleep
+    //
+    if (!drew || !m_stepTimer.IsFixedTimeStep())
+    {
+        EventWrite_CanvasAnimatedControl_WaitForVerticalBlank_Start();
+        if (swapChain)
+        {
+            ThrowIfFailed(swapChain->WaitForVerticalBlank());
+        }
+        else
+        {
+            GetAdapter()->Sleep(static_cast<DWORD>(StepTimer::TicksToMilliseconds(StepTimer::DefaultTargetElapsedTime)));
+        }
+        EventWrite_CanvasAnimatedControl_WaitForVerticalBlank_Stop();
+    }
+    
     return areResourcesCreated && !isPaused;
 }
 
