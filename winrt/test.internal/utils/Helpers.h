@@ -1501,6 +1501,24 @@ namespace Microsoft
                 END_ENUM(CanvasLineBreakCondition);
             }
 
+            ENUM_TO_STRING(CanvasGlyphJustification)
+            {
+                ENUM_VALUE(CanvasGlyphJustification::None);
+                ENUM_VALUE(CanvasGlyphJustification::ArabicBlank);
+                ENUM_VALUE(CanvasGlyphJustification::Character);
+                ENUM_VALUE(CanvasGlyphJustification::Blank);
+                ENUM_VALUE(CanvasGlyphJustification::ArabicNormal);
+                ENUM_VALUE(CanvasGlyphJustification::ArabicKashida);
+                ENUM_VALUE(CanvasGlyphJustification::ArabicAlef);
+                ENUM_VALUE(CanvasGlyphJustification::ArabicHa);
+                ENUM_VALUE(CanvasGlyphJustification::ArabicRa);
+                ENUM_VALUE(CanvasGlyphJustification::ArabicBa);
+                ENUM_VALUE(CanvasGlyphJustification::ArabicBara);
+                ENUM_VALUE(CanvasGlyphJustification::ArabicSeen);
+                ENUM_VALUE(CanvasGlyphJustification::ArabicSeenM);
+                END_ENUM(CanvasGlyphJustification);
+            }
+
             template<typename T>
             inline std::wstring ToStringAsInt(T value)
             {

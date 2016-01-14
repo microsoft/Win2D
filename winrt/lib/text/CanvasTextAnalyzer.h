@@ -238,6 +238,59 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             uint32_t* valueCount,
             CanvasGlyph** valueElements) override;
 
+        IFACEMETHOD(GetJustificationOpportunities)(
+            CanvasCharacterRange characterRange,
+            ICanvasFontFace* fontFace,
+            float fontSize,
+            CanvasAnalyzedScript script,
+            uint32_t clusterMapIndicesCount,
+            int* clusterMapIndicesElements,
+            uint32_t glyphShapingResultsCount,
+            CanvasGlyphShaping* glyphShapingResultsElements,
+            uint32_t* valueCount,
+            CanvasJustificationOpportunity** valueElements) override;
+
+        IFACEMETHOD(ApplyJustificationOpportunities)(
+            float lineWidth,
+            uint32_t justificationOpportunitiesCount,
+            CanvasJustificationOpportunity* justificationOpportunitiesElements,
+            uint32_t sourceGlyphsElementsCount,
+            CanvasGlyph* sourceGlyphsElements,
+            uint32_t* valueCount,
+            CanvasGlyph** valueElements) override;
+
+        IFACEMETHOD(AddGlyphsAfterJustification)(
+            ICanvasFontFace* fontFace,
+            float fontSize,
+            CanvasAnalyzedScript script,
+            uint32_t clusterMapIndicesCount,
+            int* clusterMapIndicesElements,
+            uint32_t originalGlyphsCount,
+            CanvasGlyph* originalGlyphsElements,
+            uint32_t justifiedGlyphsCount,
+            CanvasGlyph* justifiedGlyphsElements,
+            uint32_t glyphShapingResultsCount,
+            CanvasGlyphShaping* glyphShapingResultsElements,
+            uint32_t* valueCount,
+            CanvasGlyph** valueElements) override;
+
+        IFACEMETHOD(AddGlyphsAfterJustificationWithClusterMap)(
+            ICanvasFontFace* fontFace,
+            float fontSize,
+            CanvasAnalyzedScript script,
+            uint32_t clusterMapIndicesCount,
+            int* clusterMapIndicesElements,
+            uint32_t originalGlyphsCount,
+            CanvasGlyph* originalGlyphsElements,
+            uint32_t justifiedGlyphsCount,
+            CanvasGlyph* justifiedGlyphsElements,
+            uint32_t glyphShapingResultsCount,
+            CanvasGlyphShaping* glyphShapingResultsElements,
+            uint32_t* outputClusterMapIndicesCount,
+            int** outputClusterMapIndicesElements,
+            uint32_t* valueCount,
+            CanvasGlyph** valueElements) override;
+
     private:
         void CreateTextAnalysisSourceAndSink();
 

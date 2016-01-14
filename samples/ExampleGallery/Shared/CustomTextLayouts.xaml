@@ -53,6 +53,8 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
                                  Visibility="Collapsed"/>
                             <ToggleButton Content="Show layout rectangles" IsChecked="{Binding ShowLayoutRectangles, Mode=TwoWay}" Click="InvalidateCanvas" HorizontalAlignment="Stretch"/>
                             <ToggleButton Content="Show selection box" IsChecked="{Binding ShowSelectionBox, Mode=TwoWay}" Click="InvalidateCanvas" HorizontalAlignment="Stretch"/>
+
+                            <CheckBox Content="Justify" Checked="Justify_ValueChanged" Unchecked="Justify_ValueChanged" IsChecked="{Binding ShouldJustify, Mode=TwoWay}"/>
                         </StackPanel>
                     </ScrollViewer>
                 </Flyout>

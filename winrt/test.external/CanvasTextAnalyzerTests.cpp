@@ -373,7 +373,7 @@ public:
         }
     }
 
-    TEST_METHOD(CanvasTextAnalyzer_GetGlyphs_InvalidCharacterRanges)
+    TEST_METHOD(CanvasTextAnalyzer_InvalidCharacterRanges)
     {
         auto analyzer = ref new CanvasTextAnalyzer(L"abcd", CanvasTextDirection::LeftToRightThenTopToBottom);
 
@@ -385,12 +385,21 @@ public:
             { 4, 1 }, // Starts past the end
         };
 
+        Platform::Array<int>^ clusterMap = { 0, 1, 2, 3 };
+        Platform::Array<CanvasGlyphShaping>^ glyphShaping = { CanvasGlyphShaping{}, CanvasGlyphShaping{}, CanvasGlyphShaping{}, CanvasGlyphShaping{} }; 
+
         for (auto span : spans)
         {     
             Assert::ExpectException<Platform::InvalidArgumentException^>(
                 [&]
                 {
                     analyzer->GetGlyphs(span, m_defaultFontFace, 10.0f, false, false, m_defaultScript);
+                });
+            
+            Assert::ExpectException<Platform::InvalidArgumentException^>(
+                [&]
+                {
+                    analyzer->GetJustificationOpportunities(span, m_defaultFontFace, 1.0f, m_defaultScript, clusterMap, glyphShaping);
                 });
         }
     }
@@ -711,5 +720,45 @@ public:
             auto actual = result->GetAt(i)->Value.GlyphOrientation;
             Assert::AreEqual(expected, actual);
         }
+    }
+
+    TEST_METHOD(CanvasTextAnalyzer_GetJustificationOpportunities_EmptyArray_ZeroLengthText)
+    {
+        auto analyzer = ref new CanvasTextAnalyzer(L"", CanvasTextDirection::LeftToRightThenTopToBottom);
+        Platform::Array<int>^ clusterMap = {};
+        Platform::Array<CanvasGlyphShaping>^ glyphShaping = {};
+
+        Assert::ExpectException<Platform::InvalidArgumentException^>(
+            [&]
+            {
+                // Empty arrays are sent across as null pointers. Ensure expected failure
+                analyzer->GetJustificationOpportunities(CanvasCharacterRange{ 0, 0 }, m_defaultFontFace, 1.0f, m_defaultScript, clusterMap, glyphShaping);
+            });
+    }
+
+    TEST_METHOD(CanvasTextAnalyzer_GetJustificationOpportunities_ClusterMapMustBeCorrectLength)
+    {
+        auto analyzer = ref new CanvasTextAnalyzer(L"A", CanvasTextDirection::LeftToRightThenTopToBottom);
+        Platform::Array<int>^ tooLongClusterMap = {0, 1, 2};
+        Platform::Array<CanvasGlyphShaping>^ glyphShaping = { CanvasGlyphShaping{} }; // Zeroed-out CanvasGlyphShaping is okay here
+
+        Assert::ExpectException<Platform::InvalidArgumentException^>(
+            [&]
+            {
+                analyzer->GetJustificationOpportunities(CanvasCharacterRange{ 0, 1 }, m_defaultFontFace, 1.0f, m_defaultScript, tooLongClusterMap, glyphShaping);
+            });
+    }
+
+    TEST_METHOD(CanvasTextAnalyzer_GetJustificationOpportunities_ClusterMapHasABadValue)
+    {
+        auto analyzer = ref new CanvasTextAnalyzer(L"Ab", CanvasTextDirection::LeftToRightThenTopToBottom);
+        Platform::Array<int>^ clusterMap = { 0, -1 };
+        Platform::Array<CanvasGlyphShaping>^ glyphShaping = { CanvasGlyphShaping{}, CanvasGlyphShaping{} };
+
+        Assert::ExpectException<Platform::InvalidArgumentException^>(
+            [&]
+            {
+                analyzer->GetJustificationOpportunities(CanvasCharacterRange{ 0, 2 }, m_defaultFontFace, 1.0f, m_defaultScript, clusterMap, glyphShaping);
+            });
     }
 };

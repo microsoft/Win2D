@@ -176,7 +176,7 @@ TEST_CLASS(CanvasTextAnalyzerTests)
         IDWriteFontFallback >
     {
     public:
-        MOCK_METHOD11(MapCharacters, HRESULT(IDWriteTextAnalysisSource*, UINT32, UINT32, IDWriteFontCollection*, wchar_t const*, DWRITE_FONT_WEIGHT, DWRITE_FONT_STYLE, DWRITE_FONT_STRETCH, UINT32*, IDWriteFont**, FLOAT*));
+        MOCK_METHOD11(MapCharacters, HRESULT(IDWriteTextAnalysisSource*, uint32_t, uint32_t, IDWriteFontCollection*, wchar_t const*, DWRITE_FONT_WEIGHT, DWRITE_FONT_STYLE, DWRITE_FONT_STRETCH, uint32_t*, IDWriteFont**, FLOAT*));
     };
 
     class TextAnalyzerOptions : public RuntimeClass <
@@ -219,8 +219,8 @@ TEST_CLASS(CanvasTextAnalyzerTests)
 
     public:
 
-        UINT32 ExpectedTextPosition;
-        UINT32 ExpectedTextLength;
+        uint32_t ExpectedTextPosition;
+        uint32_t ExpectedTextLength;
         ComPtr<IDWriteFontCollection> ExpectedFontCollection;
         std::wstring ExpectedFamilyName;
         DWRITE_FONT_WEIGHT ExpectedWeight;
@@ -229,7 +229,7 @@ TEST_CLASS(CanvasTextAnalyzerTests)
 
         std::function<void(IDWriteTextAnalysisSource1*)> MockDoingThingsToTextAnalysisSource;
 
-        UINT32 ReturnedMappedLength;
+        uint32_t ReturnedMappedLength;
         ComPtr<MockDWriteFont> ReturnedFont;
         float ReturnedScale;
 
@@ -263,8 +263,12 @@ TEST_CLASS(CanvasTextAnalyzerTests)
         CanvasAnalyzedScript AnalyzedScript;
         ComPtr<MockDWriteNumberSubstitution> DWriteNumberSubstitution;
         ComPtr<IVectorView<IKeyValuePair<CanvasCharacterRange, CanvasTypography*>*>> TypographyRanges;
-        int AdditionalGlyphsToAddDuringGetGlyphs;
+        int AdditionalGlyphsToAddDuringExpansion;
         CanvasCharacterRange CharacterRange;
+
+        // Used for justification.
+        std::vector<int> ClusterMap;
+        float LineWidth;
 
         Fixture()
         {
@@ -367,9 +371,17 @@ TEST_CLASS(CanvasTextAnalyzerTests)
             IsSideways = true;
             IsRightToLeft = true;
             Locale = L"";
-            AdditionalGlyphsToAddDuringGetGlyphs = 2;
+            AdditionalGlyphsToAddDuringExpansion = 2;
             CharacterRange.CharacterIndex = 0;
             CharacterRange.CharacterCount = static_cast<int>(this->Text.length());
+
+            ClusterMap.resize(this->Text.length());
+            for (uint32_t i = 0; i < static_cast<uint32_t>(this->Text.length()); ++i)
+            {
+                ClusterMap[i] = i * 2 + 1;
+            }
+
+            LineWidth = 1234.5f;
         }
 
         std::shared_ptr<StubCanvasTextLayoutAdapter>& GetAdapter() { return m_adapter; }
@@ -425,14 +437,14 @@ TEST_CLASS(CanvasTextAnalyzerTests)
         {
             m_mockSystemFontFallback->MapCharactersMethod.SetExpectedCalls(1,
                 [=](IDWriteTextAnalysisSource* analysisSource,
-                UINT32 textPosition,
-                UINT32 textLength,
+                uint32_t textPosition,
+                uint32_t textLength,
                 IDWriteFontCollection* baseFontCollection,
                 wchar_t const* baseFamilyName,
                 DWRITE_FONT_WEIGHT baseWeight,
                 DWRITE_FONT_STYLE baseStyle,
                 DWRITE_FONT_STRETCH baseStretch,
-                UINT32* mappedLength,
+                uint32_t* mappedLength,
                 IDWriteFont** mappedFont,
                 FLOAT* scale)
             {
@@ -540,15 +552,14 @@ TEST_CLASS(CanvasTextAnalyzerTests)
                     //
                     // For these contrived tests, the glyph breakdown will add some extra glyphs.
                     //
-                    const int extraGlyphs = AdditionalGlyphsToAddDuringGetGlyphs;
-                    const int calculatedGlyphCount = static_cast<int>(this->Text.length()) + extraGlyphs;
+                    const int calculatedGlyphCount = GetGlyphCount();
 
                     if (calculatedGlyphCount > static_cast<int>(maxGlyphCount))
                         return HRESULT_FROM_WIN32(ERROR_INSUFFICIENT_BUFFER);
 
                     for (int i = 0; i < static_cast<int>(this->Text.length()); ++i)
                     {
-                        clusterMap[i] = static_cast<uint16_t>(i * 2 + 1);
+                        clusterMap[i] = static_cast<uint16_t>(ClusterMap[i]);
                         textProps[i].isShapedAlone = i % 2 == 0;
                     }
 
@@ -556,11 +567,13 @@ TEST_CLASS(CanvasTextAnalyzerTests)
 
                     for (int i = 0; i < calculatedGlyphCount; ++i)
                     {
-                        glyphIndices[i] = static_cast<uint16_t>(i * 3 + 2);
-                        glyphProps[i].justification = 15;
-                        glyphProps[i].isClusterStart = i % 2 == 0;
-                        glyphProps[i].isDiacritic = i % 2 != 0;
-                        glyphProps[i].isZeroWidthSpace = i % 2 == 0;
+                        glyphIndices[i] = static_cast<uint16_t>(GetGlyphIndex(i));
+
+                        auto shaping = GetDWriteShaping(i);
+                        glyphProps[i].justification = shaping.justification;
+                        glyphProps[i].isClusterStart = shaping.isClusterStart;
+                        glyphProps[i].isDiacritic = shaping.isDiacritic;
+                        glyphProps[i].isZeroWidthSpace = shaping.isZeroWidthSpace;
                     }
 
                     return S_OK;
@@ -570,10 +583,10 @@ TEST_CLASS(CanvasTextAnalyzerTests)
                 [&](WCHAR const* textString,
                     UINT16 const* clusterMap,
                     DWRITE_SHAPING_TEXT_PROPERTIES* textProps,
-                    UINT32 textLength,
+                    uint32_t textLength,
                     UINT16 const* glyphIndices,
                     DWRITE_SHAPING_GLYPH_PROPERTIES const* glyphProps,
-                    UINT32 glyphCount,
+                    uint32_t glyphCount,
                     IDWriteFontFace * fontFace,
                     FLOAT fontEmSize,
                     BOOL isSideways,
@@ -581,8 +594,8 @@ TEST_CLASS(CanvasTextAnalyzerTests)
                     DWRITE_SCRIPT_ANALYSIS const* scriptAnalysis,
                     WCHAR const* localeName,
                     DWRITE_TYPOGRAPHIC_FEATURES const** features,
-                    UINT32 const* featureRangeLengths,
-                    UINT32 featureRanges,
+                    uint32_t const* featureRangeLengths,
+                    uint32_t featureRanges,
                     FLOAT* glyphAdvances,
                     DWRITE_GLYPH_OFFSET* glyphOffsets)
                 {
@@ -590,7 +603,7 @@ TEST_CLASS(CanvasTextAnalyzerTests)
 
                     for (int i = 0; i < static_cast<int>(this->Text.length()); ++i)
                     {
-                        Assert::AreEqual(static_cast<uint16_t>(i * 2 + 1), clusterMap[i]);
+                        Assert::AreEqual(ClusterMap[i], static_cast<int>(clusterMap[i]));
                         Assert::AreEqual(i % 2 == 0, static_cast<bool>(textProps[i].isShapedAlone));
                     }
 
@@ -598,14 +611,16 @@ TEST_CLASS(CanvasTextAnalyzerTests)
 
                     for (uint32_t i = 0; i < glyphCount; i++)
                     {
-                        Assert::AreEqual(static_cast<uint16_t>(i * 3 + 2), glyphIndices[i]);
-                        Assert::AreEqual(static_cast<uint16_t>(15), glyphProps[i].justification);
-                        Assert::AreEqual(i % 2 == 0, static_cast<bool>(glyphProps[i].isClusterStart));
-                        Assert::AreEqual(i % 2 != 0, static_cast<bool>(glyphProps[i].isDiacritic));
-                        Assert::AreEqual(i % 2 == 0, static_cast<bool>(glyphProps[i].isZeroWidthSpace));
+                        Assert::AreEqual(GetGlyphIndex(i), static_cast<int>(glyphIndices[i]));
+
+                        auto expectedShaping = GetDWriteShaping(i);
+                        Assert::AreEqual(expectedShaping.justification, glyphProps[i].justification);
+                        Assert::AreEqual(expectedShaping.isClusterStart, glyphProps[i].isClusterStart);
+                        Assert::AreEqual(expectedShaping.isDiacritic, glyphProps[i].isDiacritic);
+                        Assert::AreEqual(expectedShaping.isZeroWidthSpace, glyphProps[i].isZeroWidthSpace);
                     }
 
-                    const int extraGlyphs = AdditionalGlyphsToAddDuringGetGlyphs;
+                    const int extraGlyphs = AdditionalGlyphsToAddDuringExpansion;
                     Assert::AreEqual(static_cast<int>(this->Text.length()) + extraGlyphs, static_cast<int>(glyphCount));
 
                     Assert::IsTrue(IsSameInstance(RealizedFontFace.Get(), fontFace));
@@ -623,9 +638,10 @@ TEST_CLASS(CanvasTextAnalyzerTests)
 
                     for (uint32_t i = 0; i < glyphCount; ++i)
                     {
-                        glyphAdvances[i] = static_cast<float>(i) * 11.0f + 1.0f;
-                        glyphOffsets[i].advanceOffset = static_cast<float>(i)* 12.0f + 2.0f;
-                        glyphOffsets[i].ascenderOffset = static_cast<float>(i)* 13.0f + 3.0f;
+                        glyphAdvances[i] = GetGlyphAdvance(i);
+                        auto offset = GetGlyphOffset(i);
+                        glyphOffsets[i].advanceOffset = offset.advanceOffset;
+                        glyphOffsets[i].ascenderOffset = offset.ascenderOffset;
                     }
 
                     return S_OK;
@@ -647,15 +663,17 @@ TEST_CLASS(CanvasTextAnalyzerTests)
                 &glyphCount,
                 &glyphElements));
 
-            const int extraGlyphs = AdditionalGlyphsToAddDuringGetGlyphs;
+            const int extraGlyphs = AdditionalGlyphsToAddDuringExpansion;
             Assert::AreEqual(static_cast<int>(this->Text.length()) + extraGlyphs, static_cast<int>(glyphCount));
 
             for (int i = 0; i < static_cast<int>(Text.length()) + extraGlyphs; ++i)
             {
-                Assert::AreEqual(i * 3 + 2, glyphElements[i].Index);
-                Assert::AreEqual(static_cast<float>(i)* 11.0f + 1.0f, glyphElements[i].Advance);
-                Assert::AreEqual(static_cast<float>(i)* 12.0f + 2.0f, glyphElements[i].AdvanceOffset);
-                Assert::AreEqual(static_cast<float>(i)* 13.0f + 3.0f, glyphElements[i].AscenderOffset);
+                Assert::AreEqual(GetGlyphIndex(i), glyphElements[i].Index);
+                Assert::AreEqual(GetGlyphAdvance(i), glyphElements[i].Advance);
+
+                auto expectedOffset = GetGlyphOffset(i);
+                Assert::AreEqual(expectedOffset.advanceOffset, glyphElements[i].AdvanceOffset);
+                Assert::AreEqual(expectedOffset.ascenderOffset, glyphElements[i].AscenderOffset);
             }
         }
 
@@ -695,27 +713,400 @@ TEST_CLASS(CanvasTextAnalyzerTests)
             Assert::AreEqual(static_cast<uint32_t>(this->Text.length()), clusterMapIndexCount);
             Assert::AreEqual(static_cast<uint32_t>(this->Text.length()), isShapedAloneCount);
 
-            const int extraGlyphs = AdditionalGlyphsToAddDuringGetGlyphs;
+            const int extraGlyphs = AdditionalGlyphsToAddDuringExpansion;
             Assert::AreEqual(static_cast<int>(this->Text.length()) + extraGlyphs, static_cast<int>(glyphShapingCount));
             Assert::AreEqual(static_cast<int>(this->Text.length()) + extraGlyphs, static_cast<int>(glyphCount));
 
             for (int i = 0; i < static_cast<int>(Text.length()); ++i)
             {
-                Assert::AreEqual(i * 2 + 1, clusterMapIndexElements[i]);
+                Assert::AreEqual(ClusterMap[i], clusterMapIndexElements[i]);
                 Assert::AreEqual(i % 2 == 0, !!isShapedAloneElements[i]);
             }
 
             for (int i = 0; i < static_cast<int>(Text.length()) + extraGlyphs; ++i)
             {
-                Assert::AreEqual(15, static_cast<int>(glyphShapingElements[i].Justification));
-                Assert::AreEqual(i % 2 == 0, !!glyphShapingElements[i].IsClusterStart);
-                Assert::AreEqual(i % 2 != 0, !!glyphShapingElements[i].IsDiacritic);
-                Assert::AreEqual(i % 2 == 0, !!glyphShapingElements[i].IsZeroWidthSpace);
+                auto expectedShaping = GetShaping(i);
 
-                Assert::AreEqual(i * 3 + 2, glyphElements[i].Index);
-                Assert::AreEqual(static_cast<float>(i)* 11.0f + 1.0f, glyphElements[i].Advance);
-                Assert::AreEqual(static_cast<float>(i)* 12.0f + 2.0f, glyphElements[i].AdvanceOffset);
-                Assert::AreEqual(static_cast<float>(i)* 13.0f + 3.0f, glyphElements[i].AscenderOffset);
+                Assert::AreEqual(expectedShaping.Justification, glyphShapingElements[i].Justification);
+                Assert::AreEqual(expectedShaping.IsClusterStart, glyphShapingElements[i].IsClusterStart);
+                Assert::AreEqual(expectedShaping.IsDiacritic, glyphShapingElements[i].IsDiacritic);
+                Assert::AreEqual(expectedShaping.IsZeroWidthSpace, glyphShapingElements[i].IsZeroWidthSpace);
+
+                Assert::AreEqual(GetGlyphIndex(i), glyphElements[i].Index);
+                Assert::AreEqual(GetGlyphAdvance(i), glyphElements[i].Advance);
+
+                auto expectedOffset = GetGlyphOffset(i);
+                Assert::AreEqual(expectedOffset.advanceOffset, glyphElements[i].AdvanceOffset);
+                Assert::AreEqual(expectedOffset.ascenderOffset, glyphElements[i].AscenderOffset);
+            }
+        }
+
+        void ExpectGetJustificationOpportunities()
+        {
+            TextAnalyzer->GetJustificationOpportunitiesMethod.SetExpectedCalls(1,
+                [&](
+                    IDWriteFontFace* fontFace,
+                    FLOAT fontSize,
+                    DWRITE_SCRIPT_ANALYSIS script,
+                    uint32_t textLength,
+                    uint32_t glyphCount,
+                    WCHAR const* text,
+                    UINT16 const* dwriteClusterMap,
+                    DWRITE_SHAPING_GLYPH_PROPERTIES const* dwriteShapingProperties,
+                    DWRITE_JUSTIFICATION_OPPORTUNITY* dwriteOutput)
+            {
+                Assert::IsTrue(IsSameInstance(RealizedFontFace.Get(), fontFace));
+                Assert::AreEqual(FontSize, fontSize);
+
+                Assert::AreEqual(static_cast<uint16_t>(123), script.script);
+                Assert::AreEqual(DWRITE_SCRIPT_SHAPES_NO_VISUAL, script.shapes);
+
+                Assert::AreEqual(static_cast<uint32_t>(this->Text.length()), textLength);
+
+                const int calculatedGlyphCount = GetGlyphCount();
+                Assert::AreEqual(calculatedGlyphCount, static_cast<int>(glyphCount));
+
+                Assert::AreEqual(0, wcscmp(this->Text.c_str(), text));
+
+                for (int i = 0; i < static_cast<int>(this->Text.length()); ++i)
+                {
+                    Assert::AreEqual(static_cast<uint16_t>(ClusterMap[i]), dwriteClusterMap[i]);
+                }
+
+                for (int i = 0; i < calculatedGlyphCount; ++i)
+                {
+                    auto expectedShaping = GetDWriteShaping(i);
+                    Assert::AreEqual(expectedShaping.justification, dwriteShapingProperties[i].justification);
+                    Assert::AreEqual(expectedShaping.isClusterStart, dwriteShapingProperties[i].isClusterStart);
+                    Assert::AreEqual(expectedShaping.isDiacritic, dwriteShapingProperties[i].isDiacritic);
+                    Assert::AreEqual(expectedShaping.isZeroWidthSpace, dwriteShapingProperties[i].isZeroWidthSpace);
+                }
+
+                for (int i = 0; i < calculatedGlyphCount; ++i)
+                {
+                    dwriteOutput[i] = GetDWriteJustificationOpportunity(i);
+                }
+
+                return S_OK;
+            });
+        }
+
+        void GetJustificationOpportunities(ComPtr<ICanvasTextAnalyzer> const& textAnalyzer)
+        {
+            uint32_t valueCount;
+            CanvasJustificationOpportunity* valueElements;
+
+            auto glyphCount = GetGlyphCount();
+            std::vector<CanvasGlyphShaping> glyphShaping;
+            glyphShaping.resize(glyphCount);
+            for (uint32_t i = 0; i < glyphCount; ++i)
+            {
+                glyphShaping[i] = GetShaping(i);
+            }
+
+            Assert::AreEqual(S_OK, textAnalyzer->GetJustificationOpportunities(
+                CharacterRange,
+                FontFace.Get(),
+                FontSize,
+                AnalyzedScript,
+                static_cast<uint32_t>(ClusterMap.size()),
+                ClusterMap.data(),
+                static_cast<uint32_t>(glyphShaping.size()),
+                glyphShaping.data(),
+                &valueCount,
+                &valueElements));
+
+            Assert::AreEqual(GetGlyphCount(), valueCount);
+
+            for (int i = 0; i < static_cast<int>(valueCount); ++i)
+            {
+                auto expectedJustificationOpportunity = GetJustificationOpportunity(i);
+
+                Assert::AreEqual(expectedJustificationOpportunity.ExpansionMinimum, valueElements[i].ExpansionMinimum);
+                Assert::AreEqual(expectedJustificationOpportunity.ExpansionMaximum, valueElements[i].ExpansionMaximum);
+                Assert::AreEqual(expectedJustificationOpportunity.CompressionMaximum, valueElements[i].CompressionMaximum);
+                Assert::AreEqual(expectedJustificationOpportunity.ExpansionPriority, valueElements[i].ExpansionPriority);
+                Assert::AreEqual(expectedJustificationOpportunity.CompressionPriority, valueElements[i].CompressionPriority);
+                Assert::AreEqual(expectedJustificationOpportunity.AllowResidualExpansion, valueElements[i].AllowResidualExpansion);
+                Assert::AreEqual(expectedJustificationOpportunity.AllowResidualCompression, valueElements[i].AllowResidualCompression);
+                Assert::AreEqual(expectedJustificationOpportunity.ApplyToLeadingEdge, valueElements[i].ApplyToLeadingEdge);
+                Assert::AreEqual(expectedJustificationOpportunity.ApplyToTrailingEdge, valueElements[i].ApplyToTrailingEdge);
+            }
+        }
+
+        void ExpectJustifyGlyphAdvances()
+        {
+            TextAnalyzer->JustifyGlyphAdvancesMethod.SetExpectedCalls(1,
+                [&](FLOAT lineWidth, 
+                    uint32_t glyphCount,
+                    DWRITE_JUSTIFICATION_OPPORTUNITY const* justificationOpportunitiesElements, 
+                    FLOAT const* dwriteGlyphAdvances, 
+                    DWRITE_GLYPH_OFFSET const* dwriteGlyphOffsets, 
+                    FLOAT* outputGlyphAdvances, 
+                    DWRITE_GLYPH_OFFSET* outputGlyphOffsets)
+                {
+                    Assert::AreEqual(LineWidth, lineWidth);
+                    Assert::AreEqual(GetGlyphCount(), glyphCount);
+
+                    for (uint32_t i = 0; i < glyphCount; ++i)
+                    {
+                        auto expectedJustificationOpportunity = GetDWriteJustificationOpportunity(i);
+                        Assert::AreEqual(expectedJustificationOpportunity.expansionMinimum, justificationOpportunitiesElements[i].expansionMinimum);
+                        Assert::AreEqual(expectedJustificationOpportunity.expansionMaximum, justificationOpportunitiesElements[i].expansionMaximum);
+                        Assert::AreEqual(expectedJustificationOpportunity.compressionMaximum, justificationOpportunitiesElements[i].compressionMaximum);
+                        Assert::AreEqual(expectedJustificationOpportunity.expansionPriority, justificationOpportunitiesElements[i].expansionPriority);
+                        Assert::AreEqual(expectedJustificationOpportunity.compressionPriority, justificationOpportunitiesElements[i].compressionPriority);
+                        Assert::AreEqual(expectedJustificationOpportunity.allowResidualExpansion, justificationOpportunitiesElements[i].allowResidualExpansion);
+                        Assert::AreEqual(expectedJustificationOpportunity.allowResidualCompression, justificationOpportunitiesElements[i].allowResidualCompression);
+                        Assert::AreEqual(expectedJustificationOpportunity.applyToLeadingEdge, justificationOpportunitiesElements[i].applyToLeadingEdge);
+                        Assert::AreEqual(expectedJustificationOpportunity.applyToTrailingEdge, justificationOpportunitiesElements[i].applyToTrailingEdge);
+
+                        auto expectedAdvance = GetGlyphAdvance(i);
+                        Assert::AreEqual(expectedAdvance, dwriteGlyphAdvances[i]);
+
+                        auto expectedOffset = GetGlyphOffset(i);
+                        Assert::AreEqual(expectedOffset.advanceOffset, dwriteGlyphOffsets[i].advanceOffset);
+                        Assert::AreEqual(expectedOffset.ascenderOffset, dwriteGlyphOffsets[i].ascenderOffset);
+
+                        outputGlyphAdvances[i] = expectedAdvance + 1;
+                        outputGlyphOffsets[i].advanceOffset = expectedOffset.advanceOffset + 1;
+                        outputGlyphOffsets[i].ascenderOffset = expectedOffset.ascenderOffset + 1;
+                    }
+
+                    return S_OK;
+                });
+        }
+
+        void ApplyJustificationOpportunities(
+            ComPtr<ICanvasTextAnalyzer> const& textAnalyzer, 
+            bool injectInvalidGlyphIndex = false,
+            HRESULT expectedHr = S_OK)
+        {
+            const uint32_t glyphCount = GetGlyphCount();
+
+            std::vector<CanvasJustificationOpportunity> justificationOpportunities;
+            justificationOpportunities.reserve(glyphCount);
+            for (uint32_t i = 0; i < glyphCount; ++i)
+            {
+                justificationOpportunities.push_back(GetJustificationOpportunity(i));
+            }
+
+            std::vector<CanvasGlyph> glyphs;
+            glyphs.resize(glyphCount);
+            for (uint32_t i = 0; i < glyphCount; ++i)
+            {
+                glyphs[i].Index = GetGlyphIndex(i);
+                glyphs[i].Advance = GetGlyphAdvance(i);
+
+                auto offset = GetGlyphOffset(i);
+                glyphs[i].AdvanceOffset = offset.advanceOffset;
+                glyphs[i].AscenderOffset = offset.ascenderOffset;
+            }
+
+            if (injectInvalidGlyphIndex)
+            {
+                glyphs[1].Index = -1;
+            }
+
+            uint32_t valueCount;
+            CanvasGlyph* valueElements;
+
+            Assert::AreEqual(expectedHr, textAnalyzer->ApplyJustificationOpportunities(
+                LineWidth,
+                static_cast<uint32_t>(justificationOpportunities.size()),
+                justificationOpportunities.data(),
+                static_cast<uint32_t>(glyphs.size()),
+                glyphs.data(),
+                &valueCount,
+                &valueElements));
+
+            if (expectedHr == S_OK)
+            {
+                Assert::AreEqual(GetGlyphCount(), valueCount);
+
+                for (int i = 0; i < static_cast<int>(valueCount); ++i)
+                {
+                    Assert::AreEqual(GetGlyphIndex(i), valueElements[i].Index); // Index should be the same.
+                    Assert::AreEqual(GetGlyphAdvance(i) + 1, valueElements[i].Advance);
+
+                    auto offset = GetGlyphOffset(i);
+                    Assert::AreEqual(offset.advanceOffset + 1, valueElements[i].AdvanceOffset);
+                    Assert::AreEqual(offset.ascenderOffset + 1, valueElements[i].AscenderOffset);
+                }
+            }
+        }
+        
+        void ExpectGetJustifiedGlyphs(int callCount=1)
+        {
+            TextAnalyzer->GetJustifiedGlyphsMethod.SetExpectedCalls(callCount,
+                [&](IDWriteFontFace* fontFace,
+                    FLOAT fontSize, 
+                    DWRITE_SCRIPT_ANALYSIS script, 
+                    uint32_t textLength, 
+                    uint32_t originalGlyphCount,
+                    uint32_t maxGlyphCount, 
+                    const UINT16* dwriteClusterMap, 
+                    const UINT16* indices, 
+                    const FLOAT* advances, 
+                    const FLOAT* justifiedAdvances, 
+                    const DWRITE_GLYPH_OFFSET* justifiedOffsets, 
+                    const DWRITE_SHAPING_GLYPH_PROPERTIES* dwriteShapingProperties,
+                    uint32_t* actualGlyphCount, 
+                    UINT16* modifiedClusterMap, 
+                    UINT16* modifiedGlyphIndices, 
+                    FLOAT* modifiedGlyphAdvances, 
+                    DWRITE_GLYPH_OFFSET* modifiedGlyphOffsets)
+                {
+                    Assert::IsTrue(IsSameInstance(RealizedFontFace.Get(), fontFace));
+                    Assert::AreEqual(FontSize, fontSize);
+
+                    Assert::AreEqual(static_cast<uint16_t>(123), script.script);
+                    Assert::AreEqual(DWRITE_SCRIPT_SHAPES_NO_VISUAL, script.shapes);
+
+                    Assert::AreEqual(static_cast<uint32_t>(this->Text.length()), textLength);
+
+                    auto originalCalculatedGlyphCount = GetGlyphCount();
+                    Assert::AreEqual(originalCalculatedGlyphCount, originalGlyphCount);
+
+                    if (originalCalculatedGlyphCount > static_cast<int>(maxGlyphCount))
+                        return HRESULT_FROM_WIN32(ERROR_INSUFFICIENT_BUFFER);
+
+                    for (int i = 0; i < static_cast<int>(this->Text.length()); ++i)
+                    {
+                        Assert::AreEqual(static_cast<uint16_t>(ClusterMap[i]), dwriteClusterMap[i]);
+                    }
+
+                    for (uint32_t i = 0; i < originalCalculatedGlyphCount; ++i)
+                    {
+                        Assert::AreEqual(GetGlyphIndex(i), static_cast<int>(indices[i]));
+                        Assert::AreEqual(GetGlyphAdvance(i), advances[i]);
+                        Assert::AreEqual(GetGlyphAdvance(i) + 1, justifiedAdvances[i]);
+
+                        auto offset = GetGlyphOffset(i);
+                        Assert::AreEqual(offset.advanceOffset + 1, justifiedOffsets[i].advanceOffset);
+                        Assert::AreEqual(offset.ascenderOffset + 1, justifiedOffsets[i].ascenderOffset);
+
+                        auto expectedShaping = GetDWriteShaping(i);
+                        Assert::AreEqual(expectedShaping.justification, dwriteShapingProperties[i].justification);
+                        Assert::AreEqual(expectedShaping.isClusterStart, dwriteShapingProperties[i].isClusterStart);
+                        Assert::AreEqual(expectedShaping.isDiacritic, dwriteShapingProperties[i].isDiacritic);
+                        Assert::AreEqual(expectedShaping.isZeroWidthSpace, dwriteShapingProperties[i].isZeroWidthSpace);
+                    }
+
+                    auto newGlyphCount = originalCalculatedGlyphCount + 1; // We just add one glyph to the end.
+                    *actualGlyphCount = newGlyphCount;
+
+                    for (int i = 0; i < static_cast<int>(this->Text.length()); ++i)
+                    {
+                        modifiedClusterMap[i] = static_cast<uint16_t>(ClusterMap[i] + 1);
+                    }
+
+                    for (uint32_t i = 0; i < newGlyphCount; ++i)
+                    {
+                        auto offset = GetGlyphOffset(i);
+
+                        modifiedGlyphIndices[i] = static_cast<uint16_t>(GetGlyphIndex(i) + 1);
+                        modifiedGlyphAdvances[i] = GetGlyphAdvance(i) + 2;
+                        modifiedGlyphOffsets[i].advanceOffset = offset.advanceOffset + 2;
+                        modifiedGlyphOffsets[i].ascenderOffset = offset.ascenderOffset + 2;
+                    }
+
+                    return S_OK;
+                });
+        }
+
+        void AddGlyphsAfterJustification(
+            ComPtr<ICanvasTextAnalyzer> const& textAnalyzer,
+            bool outputClusterMap)
+        {
+            uint32_t valueCount;
+            CanvasGlyph* valueElements;
+
+            const uint32_t glyphCount = GetGlyphCount();
+
+            std::vector<CanvasGlyph> originalGlyphs;
+            std::vector<CanvasGlyph> justifiedGlyphs;
+            std::vector<CanvasGlyphShaping> glyphShaping;
+            originalGlyphs.resize(glyphCount);
+            justifiedGlyphs.resize(glyphCount);
+            glyphShaping.resize(glyphCount);
+
+            for (uint32_t i = 0; i < glyphCount; ++i)
+            {
+                originalGlyphs[i].Index = GetGlyphIndex(i);
+                originalGlyphs[i].Advance = GetGlyphAdvance(i);
+
+                auto offset = GetGlyphOffset(i);
+                originalGlyphs[i].AdvanceOffset = offset.advanceOffset;
+                originalGlyphs[i].AscenderOffset = offset.ascenderOffset;
+
+                justifiedGlyphs[i].Index = GetGlyphIndex(i);
+                justifiedGlyphs[i].Advance = originalGlyphs[i].Advance + 1;
+                justifiedGlyphs[i].AdvanceOffset = offset.advanceOffset + 1;
+                justifiedGlyphs[i].AscenderOffset = offset.ascenderOffset + 1;
+
+                glyphShaping[i] = GetShaping(i);
+            }
+
+            uint32_t modifiedClusterMapIndicesCount{};
+            int* modifiedClusterMapIndicesElements{};
+
+            if (outputClusterMap)
+            {
+                Assert::AreEqual(S_OK, textAnalyzer->AddGlyphsAfterJustificationWithClusterMap(
+                    FontFace.Get(),
+                    FontSize,
+                    AnalyzedScript,
+                    static_cast<uint32_t>(ClusterMap.size()),
+                    ClusterMap.data(),
+                    static_cast<uint32_t>(originalGlyphs.size()),
+                    originalGlyphs.data(),
+                    static_cast<uint32_t>(justifiedGlyphs.size()),
+                    justifiedGlyphs.data(),
+                    static_cast<uint32_t>(glyphShaping.size()),
+                    glyphShaping.data(),
+                    &modifiedClusterMapIndicesCount,
+                    &modifiedClusterMapIndicesElements,
+                    &valueCount,
+                    &valueElements));
+            }
+            else
+            {
+                Assert::AreEqual(S_OK, textAnalyzer->AddGlyphsAfterJustification(
+                    FontFace.Get(),
+                    FontSize,
+                    AnalyzedScript,
+                    static_cast<uint32_t>(ClusterMap.size()),
+                    ClusterMap.data(),
+                    static_cast<uint32_t>(originalGlyphs.size()),
+                    originalGlyphs.data(),
+                    static_cast<uint32_t>(justifiedGlyphs.size()),
+                    justifiedGlyphs.data(),
+                    static_cast<uint32_t>(glyphShaping.size()),
+                    glyphShaping.data(),
+                    &valueCount,
+                    &valueElements));
+            }
+
+            Assert::AreEqual(glyphCount + 1, valueCount); // Should've added one glyph
+
+            for (int i = 0; i < static_cast<int>(valueCount); ++i)
+            {
+                Assert::AreEqual(GetGlyphIndex(i) + 1, valueElements[i].Index); // Index should be the same.
+                Assert::AreEqual(GetGlyphAdvance(i) + 2, valueElements[i].Advance);
+
+                auto offset = GetGlyphOffset(i);
+                Assert::AreEqual(offset.advanceOffset + 2, valueElements[i].AdvanceOffset);
+                Assert::AreEqual(offset.ascenderOffset + 2, valueElements[i].AscenderOffset);
+            }
+
+            if (outputClusterMap)
+            {
+                Assert::AreEqual(static_cast<uint32_t>(ClusterMap.size()), modifiedClusterMapIndicesCount);
+                for (int i = 0; i < static_cast<int>(ClusterMap.size()); ++i)
+                {
+                    Assert::AreEqual(ClusterMap[i] + 1, modifiedClusterMapIndicesElements[i]);
+                }
             }
         }
 
@@ -759,6 +1150,80 @@ TEST_CLASS(CanvasTextAnalyzerTests)
 
             ComPtr<IVectorView<IKeyValuePair<CanvasCharacterRange, CanvasScaledFont*>*>> result;
             Assert::AreEqual(S_OK, textAnalyzer->ChooseFontsUsingSystemFontSet(TextFormat.Get(), &result));
+        }
+
+    private:
+
+        uint32_t GetGlyphCount()
+        {
+            return static_cast<int>(this->Text.length()) + AdditionalGlyphsToAddDuringExpansion;
+        }
+        
+        DWRITE_SHAPING_GLYPH_PROPERTIES GetDWriteShaping(int i)
+        {
+            DWRITE_SHAPING_GLYPH_PROPERTIES s{};
+            s.justification = static_cast<uint16_t>(15);
+            s.isClusterStart = i % 2 == 0;
+            s.isDiacritic = i % 2 != 0;
+            s.isZeroWidthSpace = i % 2 == 0;
+
+            return s;
+        }
+
+        CanvasGlyphShaping GetShaping(int i)
+        {
+            CanvasGlyphShaping s{};
+            s.Justification = CanvasGlyphJustification::ArabicSeenM;
+            s.IsClusterStart = i % 2 == 0;
+            s.IsDiacritic = i % 2 != 0;
+            s.IsZeroWidthSpace = i % 2 == 0;
+
+            return s;
+        }
+
+        DWRITE_JUSTIFICATION_OPPORTUNITY GetDWriteJustificationOpportunity(int i)
+        {
+            DWRITE_JUSTIFICATION_OPPORTUNITY o{};
+            o.expansionMinimum = static_cast<float>(i * 1.0f);
+            o.expansionMaximum = static_cast<float>(i * 2.0f);
+            o.compressionMaximum = static_cast<float>(i * 3.0f);
+            o.expansionPriority = i;
+            o.compressionPriority = i + 1;
+            o.allowResidualExpansion = static_cast<uint32_t>(i % 2 == 0);
+            o.allowResidualCompression = static_cast<uint32_t>(i % 2 != 0);
+            o.applyToLeadingEdge = static_cast<uint32_t>(i % 2 == 0);
+            o.applyToTrailingEdge = static_cast<uint32_t>(i % 2 != 0);
+            return o;
+        }
+
+        CanvasJustificationOpportunity GetJustificationOpportunity(int i)
+        {
+            CanvasJustificationOpportunity o{};
+            o.ExpansionMinimum = static_cast<float>(i * 1.0f);
+            o.ExpansionMaximum = static_cast<float>(i * 2.0f);
+            o.CompressionMaximum = static_cast<float>(i * 3.0f);
+            o.ExpansionPriority = static_cast<uint8_t>(i);
+            o.CompressionPriority = static_cast<uint8_t>(i + 1);
+            o.AllowResidualExpansion = static_cast<boolean>(i % 2 == 0);
+            o.AllowResidualCompression = static_cast<boolean>(i % 2 != 0);
+            o.ApplyToLeadingEdge = static_cast<boolean>(i % 2 == 0);
+            o.ApplyToTrailingEdge = static_cast<boolean>(i % 2 != 0);
+            return o;
+        }
+
+        int GetGlyphIndex(int i)
+        {
+            return i * 3 + 2;
+        }
+
+        float GetGlyphAdvance(int i)
+        {
+            return static_cast<float>(i) * 11.0f + 1.0f;
+        }
+
+        DWRITE_GLYPH_OFFSET GetGlyphOffset(int i)
+        {
+            return DWRITE_GLYPH_OFFSET{ static_cast<float>(i)* 12.0f + 2.0f, static_cast<float>(i)* 13.0f + 3.0f };
         }
     };
 
@@ -1495,7 +1960,7 @@ TEST_CLASS(CanvasTextAnalyzerTests)
         auto textAnalyzer = f.Create();
 
         f.TextAnalyzer->AnalyzeScriptMethod.SetExpectedCalls(1,
-            [&](IDWriteTextAnalysisSource*, UINT32 textPosition, UINT32 textLength, IDWriteTextAnalysisSink* sink)
+            [&](IDWriteTextAnalysisSource*, uint32_t textPosition, uint32_t textLength, IDWriteTextAnalysisSink* sink)
             {
                 Assert::AreEqual(0u, textPosition);
                 Assert::AreEqual(static_cast<uint32_t>(f.Text.length()), textLength);
@@ -1714,7 +2179,7 @@ TEST_CLASS(CanvasTextAnalyzerTests)
         const int bufferSize = 3 * static_cast<int>(f.Text.length()) / 2 + 16;
 
         f.ExpectGetGlyphs(2);
-        f.AdditionalGlyphsToAddDuringGetGlyphs = bufferSize - static_cast<int>(f.Text.length()) + 1;
+        f.AdditionalGlyphsToAddDuringExpansion = bufferSize - static_cast<int>(f.Text.length()) + 1;
 
         f.GetGlyphs(textAnalyzer);
     }
@@ -1725,7 +2190,7 @@ TEST_CLASS(CanvasTextAnalyzerTests)
         auto textAnalyzer = f.Create();
 
         f.ExpectGetGlyphs(3, 0);
-        f.AdditionalGlyphsToAddDuringGetGlyphs = 999;
+        f.AdditionalGlyphsToAddDuringExpansion = 999;
 
         uint32_t glyphCount;
         CanvasGlyph* glyphElements;
@@ -1757,7 +2222,7 @@ TEST_CLASS(CanvasTextAnalyzerTests)
         auto textAnalyzer = f.Create();
 
         f.TextAnalyzer->AnalyzeBidiMethod.SetExpectedCalls(1,
-            [&](IDWriteTextAnalysisSource*, UINT32 textPosition, UINT32 textLength, IDWriteTextAnalysisSink* sink)
+            [&](IDWriteTextAnalysisSource*, uint32_t textPosition, uint32_t textLength, IDWriteTextAnalysisSink* sink)
             {
                 Assert::AreEqual(0u, textPosition);
                 Assert::AreEqual(static_cast<uint32_t>(f.Text.length()), textLength);
@@ -1799,7 +2264,7 @@ TEST_CLASS(CanvasTextAnalyzerTests)
         dwriteLineBreakpoint.isSoftHyphen = true;
 
         f.TextAnalyzer->AnalyzeLineBreakpointsMethod.SetExpectedCalls(1,
-            [&](IDWriteTextAnalysisSource*, UINT32 textPosition, UINT32 textLength, IDWriteTextAnalysisSink* sink)
+            [&](IDWriteTextAnalysisSource*, uint32_t textPosition, uint32_t textLength, IDWriteTextAnalysisSink* sink)
             {
                 Assert::AreEqual(0u, textPosition);
                 Assert::AreEqual(static_cast<uint32_t>(f.Text.length()), textLength);
@@ -1850,7 +2315,7 @@ TEST_CLASS(CanvasTextAnalyzerTests)
         auto numberSubstitution = ResourceManager::GetOrCreate<ICanvasNumberSubstitution>(dwriteNumberSubstitution.Get());
 
         f.TextAnalyzer->AnalyzeNumberSubstitutionMethod.SetExpectedCalls(1,
-            [&](IDWriteTextAnalysisSource*, UINT32 textPosition, UINT32 textLength, IDWriteTextAnalysisSink* sink)
+            [&](IDWriteTextAnalysisSource*, uint32_t textPosition, uint32_t textLength, IDWriteTextAnalysisSink* sink)
             {
                 Assert::AreEqual(0u, textPosition);
                 Assert::AreEqual(static_cast<uint32_t>(f.Text.length()), textLength);
@@ -1880,7 +2345,7 @@ TEST_CLASS(CanvasTextAnalyzerTests)
         auto textAnalyzer = f.Create();
 
         f.TextAnalyzer->AnalyzeVerticalGlyphOrientationMethod.SetExpectedCalls(1,
-            [&](IDWriteTextAnalysisSource*, UINT32 textPosition, UINT32 textLength, IDWriteTextAnalysisSink1* sink)
+            [&](IDWriteTextAnalysisSource*, uint32_t textPosition, uint32_t textLength, IDWriteTextAnalysisSink1* sink)
             {
                 Assert::AreEqual(0u, textPosition);
                 Assert::AreEqual(static_cast<uint32_t>(f.Text.length()), textLength);
@@ -1902,5 +2367,101 @@ TEST_CLASS(CanvasTextAnalyzerTests)
         Assert::AreEqual(123u, element.AdjustedBidiLevel);
         Assert::IsFalse(!!element.IsSideways);
         Assert::IsTrue(!!element.IsRightToLeft);
+    }
+
+    TEST_METHOD_EX(CanvasTextAnalyzer_GetJustificationOpportunities_InvalidArgs)
+    {
+        Fixture f;
+        auto textAnalyzer = f.Create();
+
+        CanvasAnalyzedScript analyzedScript{};
+        int clusterMap{};
+        CanvasGlyphShaping glyphShaping{};
+        uint32_t valueCount;
+        CanvasJustificationOpportunity* valueElements;
+
+        Assert::AreEqual(E_INVALIDARG, textAnalyzer->GetJustificationOpportunities(CanvasCharacterRange{ 0, 1 }, f.FontFace.Get(), 0, analyzedScript, 0, nullptr, 1, &glyphShaping, &valueCount, &valueElements));
+
+        Assert::AreEqual(E_INVALIDARG, textAnalyzer->GetJustificationOpportunities(CanvasCharacterRange{ 0, 1 }, f.FontFace.Get(), 0, analyzedScript, 1, &clusterMap, 0, nullptr, &valueCount, &valueElements));
+
+        Assert::AreEqual(E_INVALIDARG, textAnalyzer->GetJustificationOpportunities(CanvasCharacterRange{ 0, 1 }, f.FontFace.Get(), 0, analyzedScript, 1, &clusterMap, 1, &glyphShaping, 0, nullptr));
+
+        Assert::AreEqual(E_INVALIDARG, textAnalyzer->GetJustificationOpportunities(CanvasCharacterRange{ -1, 1 }, f.FontFace.Get(), 0, analyzedScript, 1, &clusterMap, 1, &glyphShaping, &valueCount, &valueElements));
+
+        Assert::AreEqual(E_INVALIDARG, textAnalyzer->GetJustificationOpportunities(CanvasCharacterRange{ 0, -1 }, f.FontFace.Get(), 0, analyzedScript, 1, &clusterMap, 1, &glyphShaping, &valueCount, &valueElements));
+    }
+
+    TEST_METHOD_EX(CanvasTextAnalyzer_GetJustificationOpportunities_Typical)
+    {
+        Fixture f;
+        auto textAnalyzer = f.Create();
+
+        f.ExpectGetJustificationOpportunities();
+
+        f.GetJustificationOpportunities(textAnalyzer);
+    }
+
+    TEST_METHOD_EX(CanvasTextAnalyzer_GetJustificationOpportunities_NullFontFace)
+    {
+        Fixture f;
+        auto textAnalyzer = f.Create();
+
+        f.FontFace = nullptr;
+        f.RealizedFontFace = nullptr;
+
+        f.ExpectGetJustificationOpportunities();
+
+        f.GetJustificationOpportunities(textAnalyzer);
+    }
+
+    TEST_METHOD_EX(CanvasTextAnalyzer_ApplyJustificationOpportunities_Typical)
+    {
+        Fixture f;
+        auto textAnalyzer = f.Create();
+
+        f.ExpectJustifyGlyphAdvances();
+
+        f.ApplyJustificationOpportunities(textAnalyzer);
+    }
+
+    TEST_METHOD_EX(CanvasTextAnalyzer_ApplyJustificationOpportunities_BadGlyphIndex)
+    {
+        Fixture f;
+        auto textAnalyzer = f.Create();
+
+        f.ApplyJustificationOpportunities(textAnalyzer, true, E_INVALIDARG);
+    }
+
+    TEST_METHOD_EX(CanvasTextAnalyzer_AddGlyphsAfterJustification_NoClusterMap)
+    {
+        Fixture f;
+        auto textAnalyzer = f.Create();
+
+        f.ExpectGetJustifiedGlyphs();
+
+        f.AddGlyphsAfterJustification(textAnalyzer, false);
+    }
+
+    TEST_METHOD_EX(CanvasTextAnalyzer_AddGlyphsAfterJustification_ClusterMap)
+    {
+        Fixture f;
+        auto textAnalyzer = f.Create();
+
+        f.ExpectGetJustifiedGlyphs();
+
+        f.AddGlyphsAfterJustification(textAnalyzer, true);
+    }
+
+    TEST_METHOD_EX(CanvasTextAnalyzer_AddGlyphsAfterJustification_NeedsToResizeBuffer)
+    {
+        Fixture f;
+        auto textAnalyzer = f.Create();
+
+        const int bufferSize = 3 * static_cast<int>(f.Text.length()) / 2 + 16;
+
+        f.ExpectGetJustifiedGlyphs(2);
+        f.AdditionalGlyphsToAddDuringExpansion = bufferSize - static_cast<int>(f.Text.length()) + 1;
+
+        f.AddGlyphsAfterJustification(textAnalyzer, false);
     }
 };

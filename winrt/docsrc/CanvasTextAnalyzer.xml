@@ -454,6 +454,119 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextAnalyzer.AnalyzeGlyphOrientations(System.String)">
       <summary>Analyzes text for which glyph orientations are mapped to which character positions.</summary>
     </member>    
+
+    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasJustificationOpportunity" Experimental="true">
+      <summary>Specifies how to apply justification for a glyph.</summary>
+      <remarks>
+        <p>
+          An app doesn't need to decipher or manipulate CanvasJustificationOpportunity data
+          in order to perform justification. The array of justification data from 
+          <see cref="M:Microsoft.Graphics.Canvas.Text.CanvasTextAnalyzer.GetJustificationOpportunities(Microsoft.Graphics.Canvas.Text.CanvasCharacterRange,Microsoft.Graphics.Canvas.Text.CanvasFontFace,System.Single,Microsoft.Graphics.Canvas.Text.CanvasAnalyzedScript,System.Int32[],Microsoft.Graphics.Canvas.Text.CanvasGlyphShaping[])"/>
+          can simply be passed to 
+          <see cref="M:Microsoft.Graphics.Canvas.Text.CanvasTextAnalyzer.ApplyJustificationOpportunities(System.Single,Microsoft.Graphics.Canvas.Text.CanvasJustificationOpportunity[],Microsoft.Graphics.Canvas.Text.CanvasGlyph[])"/>
+          unmodified.
+          Exposing CanvasJustificationOpportunity data gives apps the opportunity to customize 
+          justification behavior.
+        </p>
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasJustificationOpportunity.ExpansionMinimum">
+      <summary>Minimum amount of expansion to apply to the glyph.</summary>
+      <remarks>
+        ApplyToLeadingEdge and ApplyToTrailingEdge describe how to apply the expansion.
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasJustificationOpportunity.ExpansionMaximum">
+      <summary>Maximum amount of expansion to apply to the glyph.</summary>
+      <remarks>
+        ApplyToLeadingEdge and ApplyToTrailingEdge describe how to apply the expansion.
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasJustificationOpportunity.CompressionMaximum">
+      <summary>Maximum amount of compression to apply to the glyph. </summary>
+      <remarks>
+        ApplyToLeadingEdge and ApplyToTrailingEdge describe how to apply the compression.
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasJustificationOpportunity.ExpansionPriority">
+      <summary>Priority of this expansion point. Larger priorities are applied later, while priority zero does nothing.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasJustificationOpportunity.CompressionPriority">
+      <summary>Priority of this compression point. Larger priorities are applied later, while priority zero does nothing.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasJustificationOpportunity.AllowResidualExpansion">
+      <summary>Allow this expansion point to use up any remaining slack space even after all expansion priorities have been used up.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasJustificationOpportunity.AllowResidualCompression">
+      <summary>Allow this compression point to use up any remaining space even after all compression priorities have been used up.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasJustificationOpportunity.ApplyToLeadingEdge">
+      <summary>Apply expansion and compression to the leading edge of the glyph.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasJustificationOpportunity.ApplyToTrailingEdge">
+      <summary>Apply expansion and compression to the trailing edge of the glyph.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextAnalyzer.GetJustificationOpportunities(Microsoft.Graphics.Canvas.Text.CanvasCharacterRange,Microsoft.Graphics.Canvas.Text.CanvasFontFace,System.Single,Microsoft.Graphics.Canvas.Text.CanvasAnalyzedScript,System.Int32[],Microsoft.Graphics.Canvas.Text.CanvasGlyphShaping[])">
+      <summary>Retrieves justification opportunity information, per-glyph.</summary>
+      <remarks>
+        <p>
+          This is the place to start when performing justification on custom text layouts.
+          The order of things is to:
+          <ul>
+            <li>Split up your text spans into glyph runs.</li>
+            <li>Fit your glyph runs into the layout boxes. Perform word wrapping if desired.</li>
+            <li>For each glyph run, call GetJustificationOpportunities to obtain an array of CanvasJustificationOpportunity.</li>
+            <li>Pass an array of all CanvasJustificationOpportunity's for each layout box to
+              <see cref="M:Microsoft.Graphics.Canvas.Text.CanvasTextAnalyzer.ApplyJustificationOpportunities(System.Single,Microsoft.Graphics.Canvas.Text.CanvasJustificationOpportunity[],Microsoft.Graphics.Canvas.Text.CanvasGlyph[])"/>.
+            </li>
+            <li>Assign the justified glyph data back into your app's glyph runs.</li>
+            <li>Optionally, call 
+              <see cref="M:Microsoft.Graphics.Canvas.Text.CanvasTextAnalyzer.AddGlyphsAfterJustification(Microsoft.Graphics.Canvas.Text.CanvasFontFace,System.Single,Microsoft.Graphics.Canvas.Text.CanvasAnalyzedScript,System.Int32[],Microsoft.Graphics.Canvas.Text.CanvasGlyph[],Microsoft.Graphics.Canvas.Text.CanvasGlyph[],Microsoft.Graphics.Canvas.Text.CanvasGlyphShaping[],System.Int32[]@)"/>
+              to insert extra justification glyphs- for example, if you would like to use Arabic kashida.
+            </li>
+            <li>Draw the glyph runs.</li>
+          </ul>
+          For an example which performs custom text layout justification, see
+          <a href="https://github.com/Microsoft/Win2D-Samples/blob/master/ExampleGallery/Shared/CustomTextLayouts.xaml.cs">CustomTextLayouts.xaml.cs</a>.
+        </p>
+        <p>
+          If a null font face is specified, the default font face will be used.
+        </p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextAnalyzer.ApplyJustificationOpportunities(System.Single,Microsoft.Graphics.Canvas.Text.CanvasJustificationOpportunity[],Microsoft.Graphics.Canvas.Text.CanvasGlyph[])">
+      <summary>Justifies an array of glyph advances to fit the line width.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextAnalyzer.AddGlyphsAfterJustification(Microsoft.Graphics.Canvas.Text.CanvasFontFace,System.Single,Microsoft.Graphics.Canvas.Text.CanvasAnalyzedScript,System.Int32[],Microsoft.Graphics.Canvas.Text.CanvasGlyph[],Microsoft.Graphics.Canvas.Text.CanvasGlyph[],Microsoft.Graphics.Canvas.Text.CanvasGlyphShaping[])">
+      <summary>Fills in new glyphs for scripts where justification increased the advances of glyphs.</summary>
+      <remarks>
+        <p>
+          This is used when inserting Arabic kashida. 
+        </p>
+        <p>
+          To determine whether a script may add justification characters, call
+          <see cref="M:Microsoft.Graphics.Canvas.Text.CanvasTextAnalyzer.GetScriptProperties(Microsoft.Graphics.Canvas.Text.CanvasAnalyzedScript)"/>
+          after analyzing the text's script, and check whether 
+          <see cref="F:Microsoft.Graphics.Canvas.Text.CanvasScriptProperties.JustificationCharacter"/>
+          is non-null.
+        </p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextAnalyzer.AddGlyphsAfterJustification(Microsoft.Graphics.Canvas.Text.CanvasFontFace,System.Single,Microsoft.Graphics.Canvas.Text.CanvasAnalyzedScript,System.Int32[],Microsoft.Graphics.Canvas.Text.CanvasGlyph[],Microsoft.Graphics.Canvas.Text.CanvasGlyph[],Microsoft.Graphics.Canvas.Text.CanvasGlyphShaping[],System.Int32[]@)">
+      <summary>Fills in new glyphs for scripts where justification increased the advances of glyphs.</summary>
+      <remarks>
+        <p>
+          This is used when inserting Arabic kashida.
+        </p>
+        <p>
+          To determine whether a script may add justification characters, call
+          <see cref="M:Microsoft.Graphics.Canvas.Text.CanvasTextAnalyzer.GetScriptProperties(Microsoft.Graphics.Canvas.Text.CanvasAnalyzedScript)"/>
+          after analyzing the text's script, and check whether 
+          <see cref="F:Microsoft.Graphics.Canvas.Text.CanvasScriptProperties.JustificationCharacter"/>
+          is non-null.
+        </p>
+      </remarks>
+    </member>
     
   </members>
 </doc>

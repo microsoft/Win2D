@@ -177,6 +177,20 @@ namespace Microsoft.Graphics.Canvas.Text
         boolean IsRightToLeft;
     } CanvasAnalyzedGlyphOrientation;
 
+    [version(VERSION)]
+    typedef struct CanvasJustificationOpportunity
+    {
+        float ExpansionMinimum;
+        float ExpansionMaximum;
+        float CompressionMaximum;
+        BYTE ExpansionPriority; // Larger priorities are applied later. Minimum priority is zero.
+        BYTE CompressionPriority;
+        boolean AllowResidualExpansion;
+        boolean AllowResidualCompression;
+        boolean ApplyToLeadingEdge;
+        boolean ApplyToTrailingEdge;
+    } CanvasJustificationOpportunity;
+
     runtimeclass CanvasTextAnalyzer;
 
     [version(VERSION), uuid(4298F3D1-645B-40E3-B91B-81986D767FC0), exclusiveto(CanvasTextAnalyzer)]
@@ -267,6 +281,86 @@ namespace Microsoft.Graphics.Canvas.Text
             [out, size_is(, *isShapedAloneGlyphsCount)] boolean** isShapedAloneGlyphsElements,
             [out] UINT32* glyphShapingResultsCount,
             [out, size_is(, *glyphShapingResultsCount)] CanvasGlyphShaping** glyphShapingResultsElements,
+            [out] UINT32* valueCount,
+            [out, size_is(, *valueCount), retval] CanvasGlyph** valueElements);
+
+        //
+        // The below three methods are for performing justification.
+        // They can be called, in turn, passing the output of one as the input to the other,
+        // or GetJustificationOpportunities or AddGlyphsAfterJustification can be omitted.
+        //
+
+        //
+        // An advanced app may forego calling GetJustificationOpportunities and populate the justification priorities itself.
+        // Alternatively, it may choose to massage the priorities that come out of this method
+        // before passing them along- for example, to make letters in the middle of words bind
+        // more tightly together, and make the spaces between words greater, which can sometimes look better.
+        //
+        // This method's returned array is the same size as the input CanvasGlyphShaping array.
+        //
+        HRESULT GetJustificationOpportunities(
+            [in] CanvasCharacterRange characterRange, // Expected match the length of the cluster map
+            [in] CanvasFontFace* fontFace,
+            [in] float fontSize,
+            [in] CanvasAnalyzedScript script,
+            [in] UINT32 clusterMapIndicesCount, // Portion of the cluster map that corresponds to the text
+            [in, size_is(clusterMapIndicesCount)] int* clusterMapIndicesElements,
+            [in] UINT32 glyphShapingResultsCount,
+            [in, size_is(glyphShapingResultsCount)] CanvasGlyphShaping* glyphShapingResultsElements,
+            [out] UINT32* valueCount,
+            [out, size_is(, *valueCount), retval] CanvasJustificationOpportunity** valueElements);
+
+        //
+        // This takes an input glyph array and returns a new, justified glyph array.
+        // It doesn't need to look at the CanvasTextAnalyzer's source text.
+        //
+        HRESULT ApplyJustificationOpportunities(
+            [in] float lineWidth,
+            [in] UINT32 justificationOpportunitiesCount,
+            [in, size_is(justificationOpportunitiesCount)] CanvasJustificationOpportunity* justificationOpportunitiesElements,
+            [in] UINT32 sourceGlyphsCount,
+            [in, size_is(sourceGlyphsCount)] CanvasGlyph* sourceGlyphsElements,
+            [out] UINT32* valueCount,
+            [out, size_is(, *valueCount), retval] CanvasGlyph** valueElements);
+
+        //
+        // This adds glyphs, in the (rare) cases where justification is capable of doing that.
+        // This occurs for Arabic kashida.
+        // This outputs a new, possibly larger array of glyphs and a new cluster map.
+        // It doesn't need to look at the CanvasTextAnalyzer's source text.
+        // An app may forego calling this if it doesn't need to output kashida.
+        //
+        [overload("AddGlyphsAfterJustification")]
+        HRESULT AddGlyphsAfterJustification(
+            [in] CanvasFontFace* fontFace,
+            [in] float fontSize,
+            [in] CanvasAnalyzedScript script,
+            [in] UINT32 clusterMapIndicesCount, // Portion of the cluster map that corresponds to the text
+            [in, size_is(clusterMapIndicesCount)] int* clusterMapIndicesElements,
+            [in] UINT32 originalGlyphsCount,
+            [in, size_is(originalGlyphsCount)] CanvasGlyph* originalGlyphsElements,
+            [in] UINT32 justifiedGlyphsCount,
+            [in, size_is(justifiedGlyphsCount)] CanvasGlyph* justifiedGlyphsElements,
+            [in] UINT32 glyphShapingResultsCount,
+            [in, size_is(glyphShapingResultsCount)] CanvasGlyphShaping* glyphShapingResultsElements,
+            [out] UINT32* valueCount,
+            [out, size_is(, *valueCount), retval] CanvasGlyph** valueElements);
+
+        [overload("AddGlyphsAfterJustification"), default_overload]
+        HRESULT AddGlyphsAfterJustificationWithClusterMap(
+            [in] CanvasFontFace* fontFace,
+            [in] float fontSize,
+            [in] CanvasAnalyzedScript script,
+            [in] UINT32 clusterMapIndicesCount, // Portion of the cluster map that corresponds to the text
+            [in, size_is(clusterMapIndicesCount)] int* clusterMapIndicesElements,
+            [in] UINT32 originalGlyphsCount,
+            [in, size_is(originalGlyphsCount)] CanvasGlyph* originalGlyphsElements,
+            [in] UINT32 justifiedGlyphsCount,
+            [in, size_is(justifiedGlyphsCount)] CanvasGlyph* justifiedGlyphsElements,
+            [in] UINT32 glyphShapingResultsCount,
+            [in, size_is(glyphShapingResultsCount)] CanvasGlyphShaping* glyphShapingResultsElements,
+            [out] UINT32* outputClusterMapIndicesCount,
+            [out, size_is(, *outputClusterMapIndicesCount)] int** outputClusterMapIndicesElements,
             [out] UINT32* valueCount,
             [out, size_is(, *valueCount), retval] CanvasGlyph** valueElements);
     }
