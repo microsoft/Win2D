@@ -57,6 +57,7 @@
     <Compile Include="Utilities.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="apiref\UpdateApiResourceFiles.cmd" />
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
@@ -96,7 +97,6 @@
     <None Include="apiref\effects\GaussianBlur.xml" />
     <None Include="apiref\effects\Grayscale.xml" />
     <None Include="apiref\effects\HighlightsShadows.xml" />
-    <None Include="apiref\effects\Histogram.xml" />
     <None Include="apiref\effects\HueRotation.xml" />
     <None Include="apiref\effects\HueToRgb.xml" />
     <None Include="apiref\effects\Invert.xml" />

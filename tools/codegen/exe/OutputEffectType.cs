@@ -57,9 +57,8 @@ namespace CodeGen
                     // Check if property represent enum that is common to some group of effects
                     if (property.Type == "enum" && property.EnumFields.IsRepresentative && property.ShouldProject)
                     {
-                        var registeredEffects = effects.Where(EffectGenerator.IsEffectEnabled);
                         // Check if any registred property need this enum
-                        if (registeredEffects.Any(e => e.Properties.Any(p => p.TypeNameIdl == property.TypeNameIdl)))
+                        if (effects.Any(e => e.Properties.Any(p => p.TypeNameIdl == property.TypeNameIdl)))
                         {
                             if (isFirstOutput)
                             {
@@ -85,11 +84,7 @@ namespace CodeGen
             output.WriteLine("#include \"pch.h\"");
             output.WriteLine();
 
-            var enabledEffects = from effect in effects
-                                 where EffectGenerator.IsEffectEnabled(effect)
-                                 select effect;
-
-            var effectsByVersion = from effect in enabledEffects
+            var effectsByVersion = from effect in effects
                                    orderby effect.ClassName
                                    group effect by (effect.Overrides != null ? effect.Overrides.WinVer : null) into versionGroup
                                    orderby versionGroup.Key
@@ -112,7 +107,7 @@ namespace CodeGen
             output.WriteLine("std::pair<IID, CanvasEffect::MakeEffectFunction> CanvasEffect::m_effectMakers[] =");
             output.WriteLine("{");
 
-            int longestName = enabledEffects.Select(effect => effect.ClassName.Length).Max();
+            int longestName = effects.Select(effect => effect.ClassName.Length).Max();
 
             foreach (var versionGroup in effectsByVersion)
             {

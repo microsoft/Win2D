@@ -96,7 +96,6 @@ SET FILE_LIST=^
     GaussianBlur.xml ^
     Grayscale.xml ^
     HighlightsShadows.xml ^
-    Histogram.xml ^
     HueRotation.xml ^
     HueToRgb.xml ^
     Invert.xml ^

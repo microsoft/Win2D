@@ -232,19 +232,6 @@ namespace CodeGen
             }
         }
 
-        public static bool IsEffectEnabled(Effects.Effect effect)
-        {
-            switch (effect.Properties[0].Value)
-            {
-                // TODO #2648: figure out how to project effects that output computation results rather than images.
-                case "Histogram":
-                    return false;
-
-                default:
-                    return true;
-            }
-        }
-
         private static List<Effects.Property> GetAllEffectsProperties(List<Effects.Effect> effects)
         {
             List<Effects.Property> allProperties = new List<Effects.Property>();
@@ -715,7 +702,7 @@ namespace CodeGen
                 OutputEffectType.OutputEffectMakers(effects, effectMakersStreamWriter);
             }
 
-            foreach (var effect in effects.Where(IsEffectEnabled))
+            foreach (var effect in effects)
             {
                 Directory.CreateDirectory(outDirectory);
                 using (Formatter idlStreamWriter = new Formatter(Path.Combine(outDirectory, effect.ClassName + ".abi.idl")),
