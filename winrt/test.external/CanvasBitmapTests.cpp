@@ -649,6 +649,9 @@ public:
 
         for (auto testCase : testCases)
         {
+            if (!device->IsPixelFormatSupported(testCase.Format))
+                continue;
+            
             auto data = ref new Platform::Array<uint8_t>(1024);
             auto width = 4;
             auto height = 4;
