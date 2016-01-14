@@ -7,6 +7,7 @@ using Microsoft.Graphics.Canvas.UI;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Numerics;
 using System.Threading.Tasks;
 using Windows.UI.Xaml;
@@ -15,7 +16,7 @@ using Windows.UI.Xaml.Controls.Primitives;
 
 namespace ExampleGallery
 {
-    public sealed partial class ParticleExample : UserControl
+    public sealed partial class ParticleExample : UserControl, INotifyPropertyChanged
     {
         public enum ParticleMode
         {
@@ -43,6 +44,8 @@ namespace ExampleGallery
         const float TimeBetweenSmokePlumePuffs = .5f;
         float timeTillPuff = 0.0f;
 
+        public event PropertyChangedEventHandler PropertyChanged;
+
 
         public ParticleExample()
         {
@@ -55,12 +58,20 @@ namespace ExampleGallery
             if (args.Reason == CanvasCreateResourcesReason.DpiChanged)
                 return;
 
-            bool spriteBatchSupported = false;
+            if (args.Reason == CanvasCreateResourcesReason.FirstTime)
+            {
+                bool spriteBatchSupported = false;
+
 #if WINDOWS_UWP
-            spriteBatchSupported = CanvasSpriteBatch.IsSupported(sender.Device);
+                spriteBatchSupported = CanvasSpriteBatch.IsSupported(sender.Device);
 #endif
-            UseSpriteBatch = UseSpriteBatchCheckBox.IsChecked.GetValueOrDefault(false);
-            UseSpriteBatchCheckBox.Visibility = spriteBatchSupported ? Visibility.Visible : Visibility.Collapsed;
+
+                UseSpriteBatch = spriteBatchSupported;
+                if (PropertyChanged != null)
+                    PropertyChanged(this, new PropertyChangedEventArgs("UseSpriteBatch"));
+
+                UseSpriteBatchCheckBox.Visibility = spriteBatchSupported ? Visibility.Visible : Visibility.Collapsed;
+            }
 
             args.TrackAsyncAction(CreateResourcesAsync(sender).AsAsyncAction());
         }
