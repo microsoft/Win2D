@@ -179,6 +179,10 @@ TEST_CLASS(CanvasVirtualBitmapUnitTest)
             auto virtualBitmap = f.CreateVirtualBitmap(CanvasVirtualBitmapOptions::None, CanvasAlphaMode::Premultiplied);
             auto actualImageSource = GetWrappedResource<ID2D1TransformedImageSource>(virtualBitmap.Get());
             Assert::IsTrue(IsSameInstance(transformedImageSource.Get(), actualImageSource.Get()));
+
+            ComPtr<ICanvasDevice> actualDevice;
+            ThrowIfFailed(virtualBitmap->get_Device(&actualDevice));
+            Assert::IsTrue(IsSameInstance(f.Device.Get(), actualDevice.Get()));
         }
     }
 
@@ -336,6 +340,11 @@ TEST_CLASS(CanvasVirtualBitmapUnitTest)
         boolean value;
         ThrowIfFailed(virtualBitmap->get_IsCachedOnDemand(&value));
         Assert::IsTrue(!!value);
+
+        // The device property is set correctly.
+        ComPtr<ICanvasDevice> actualDevice;
+        ThrowIfFailed(virtualBitmap->get_Device(&actualDevice));
+        Assert::IsTrue(IsSameInstance(f.Device.Get(), actualDevice.Get()));
     }
 
     TEST_METHOD_EX(CanvasVirtualBitmap_Interop_TransformedImageSource)
@@ -378,6 +387,11 @@ TEST_CLASS(CanvasVirtualBitmapUnitTest)
         boolean value;
         ThrowIfFailed(virtualBitmap->get_IsCachedOnDemand(&value));
         Assert::IsTrue(!!value);
+
+        // The device property is set correctly.
+        ComPtr<ICanvasDevice> actualDevice;
+        ThrowIfFailed(virtualBitmap->get_Device(&actualDevice));
+        Assert::IsTrue(IsSameInstance(f.Device.Get(), actualDevice.Get()));
     }
 
     TEST_METHOD_EX(CanvasVirtualBitmap_Interop_UnknownImageSource)
@@ -406,6 +420,11 @@ TEST_CLASS(CanvasVirtualBitmapUnitTest)
         boolean value;
         ComPtr<IAsyncAction> action;
         Assert::AreEqual(E_FAIL, virtualBitmap->get_IsCachedOnDemand(&value));
+
+        // The device property is set correctly.
+        ComPtr<ICanvasDevice> actualDevice;
+        ThrowIfFailed(virtualBitmap->get_Device(&actualDevice));
+        Assert::IsTrue(IsSameInstance(f.Device.Get(), actualDevice.Get()));
     }
 };
 

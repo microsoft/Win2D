@@ -234,7 +234,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
                 auto d2dImage = As<ICanvasImageInternal>(image)->GetD2DImage(device.Get(), deviceContext.Get(), GetImageFlags::None, DEFAULT_DPI, &realizedDpi);
 
-                if (realizedDpi != DEFAULT_DPI)
+                if (realizedDpi != 0 && realizedDpi != DEFAULT_DPI)
                 {
                     ThrowIfFailed(D2D1::SetDpiCompensatedEffectInput(deviceContext.Get(), histogram.Get(), 0, As<ID2D1Bitmap>(d2dImage).Get()));
                 }

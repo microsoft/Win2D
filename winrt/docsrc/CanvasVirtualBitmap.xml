@@ -55,6 +55,9 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         </p>
       </remarks>
     </member>
+    <member name="P:Microsoft.Graphics.Canvas.CanvasVirtualBitmap.Device">
+      <summary>The device associated with this CanvasVirtualBitmap.</summary>
+    </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasVirtualBitmap.Dispose">
       <summary>Releases all resources used by the CanvasVirtualBitmap.</summary>
     </member>
