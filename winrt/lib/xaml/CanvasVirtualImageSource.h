@@ -82,6 +82,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         Size m_size;
         CanvasAlphaMode m_alphaMode;
         bool m_registeredForUpdates;
+        bool m_deviceIsMultithreadProtected;
         EventSource<ImageSourceRegionsInvalidatedHandler, InvokeModeOptions<StopOnFirstError>> m_regionsInvalidatedEventSource;
 
     public:
@@ -174,6 +175,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         void SetDevice(ICanvasDevice* device);
 
         ComPtr<ICanvasDrawingSession> CreateDrawingSession(Color clearColor, Rect updateRectangle);
+
+        bool IsOnUIThread();
+        void EnsureMultithreadDeviceIfNotOnUIThread();
     };
 
 

@@ -116,6 +116,7 @@ TEST_CLASS(CanvasImageSourceTests)
     TEST_METHOD(CanvasImageSource_DrawOnWrongThread)
     {
         auto device = ref new CanvasDevice();
+        auto multithread = GetDXGIInterface<ID3D10Multithread>(device);
 
         CanvasImageSource^ imageSource;
         CanvasVirtualImageSource^ virtualImageSource;
@@ -125,19 +126,25 @@ TEST_CLASS(CanvasImageSourceTests)
             {
                 imageSource = ref new CanvasImageSource(device, 1, 1, 96);
                 virtualImageSource = ref new CanvasVirtualImageSource(device, 1, 1, 96);
+
+                // Drawing on the UI thread is always fine.
+                delete imageSource->CreateDrawingSession(Colors::Black);
+                delete virtualImageSource->CreateDrawingSession(Colors::Black, Rect{ 0, 0, 1, 1 });
             });
 
+        // CanvasImageSource does not support drawing off the UI thread.
         ExpectCOMException(RPC_E_WRONG_THREAD,
             [&]
             {
                 imageSource->CreateDrawingSession(Colors::Black);
             });
 
-        ExpectCOMException(RPC_E_WRONG_THREAD,
-            [&]
-            {
-                virtualImageSource->CreateDrawingSession(Colors::Black, Rect{ 0, 0, 1, 1 });
-            });
+        // CanvasVirtualImageSource can draw on any thread, and automatically turns on device multithread protection to enable this.
+        Assert::IsFalse(!!multithread->GetMultithreadProtected());
+
+        virtualImageSource->CreateDrawingSession(Colors::Black, Rect{ 0, 0, 1, 1 });
+
+        Assert::IsTrue(!!multithread->GetMultithreadProtected());
     }
 
 

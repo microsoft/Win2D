@@ -186,6 +186,7 @@ CanvasVirtualImageSource::CanvasVirtualImageSource(
     , m_size(size)
     , m_alphaMode(alphaMode)
     , m_registeredForUpdates(false)
+    , m_deviceIsMultithreadProtected(false)
 {
     SetDevice(GetCanvasDevice(resourceCreator).Get());
 }
@@ -203,6 +204,7 @@ void CanvasVirtualImageSource::SetDevice(ICanvasDevice* device)
     ThrowIfFailed(vsisNative->SetDevice(d2dDevice.Get()));
 
     m_device = device;
+    m_deviceIsMultithreadProtected = false;
 }
 
 
@@ -238,6 +240,8 @@ IFACEMETHODIMP CanvasVirtualImageSource::CreateDrawingSession(
 ComPtr<ICanvasDrawingSession> CanvasVirtualImageSource::CreateDrawingSession(Color clearColor, Rect updateRectangle)
 {
     auto sisNative = As<ISurfaceImageSourceNativeWithD2D>(m_vsis);
+    
+    EnsureMultithreadDeviceIfNotOnUIThread();
 
     try
     {
@@ -293,6 +297,8 @@ IFACEMETHODIMP CanvasVirtualImageSource::ResumeDrawingSession(
             CheckInPointer(drawingSession);
             auto sisNative = As<ISurfaceImageSourceNativeWithD2D>(m_vsis);
 
+            EnsureMultithreadDeviceIfNotOnUIThread();
+
             ThrowIfFailed(sisNative->ResumeDraw());
         });
 }
@@ -331,13 +337,7 @@ IFACEMETHODIMP CanvasVirtualImageSource::RaiseRegionsInvalidatedIfAny()
         [&]
         {
             // This must be called on the UI thread
-            ComPtr<ICoreDispatcher> dispatcher;
-            ThrowIfFailed(As<IDependencyObject>(m_vsis)->get_Dispatcher(&dispatcher));
-
-            boolean hasThreadAccess;
-            ThrowIfFailed(dispatcher->get_HasThreadAccess(&hasThreadAccess));
-
-            if (!hasThreadAccess)
+            if (!IsOnUIThread())
                 ThrowHR(RPC_E_WRONG_THREAD);
 
             // The UpdatesNeeded handler will raise RegionsInvalidated for us.
@@ -563,6 +563,58 @@ IFACEMETHODIMP CanvasVirtualImageSource::UpdatesNeeded()
             
             ThrowIfFailed(m_regionsInvalidatedEventSource.InvokeAll(this, args.Get()));
         });
+}
+
+
+bool CanvasVirtualImageSource::IsOnUIThread()
+{
+    ComPtr<ICoreDispatcher> dispatcher;
+    ThrowIfFailed(As<IDependencyObject>(m_vsis)->get_Dispatcher(&dispatcher));
+
+    boolean hasThreadAccess;
+    ThrowIfFailed(dispatcher->get_HasThreadAccess(&hasThreadAccess));
+
+    return !!hasThreadAccess;
+}
+
+
+void CanvasVirtualImageSource::EnsureMultithreadDeviceIfNotOnUIThread()
+{
+    // Facts:
+    //  - D2D and D3D have separate (optional) device locks
+    //
+    // Win2D facts:
+    //  - Win2D rendering is always protected by the D2D lock (not the D3D one)
+    //  - CanvasImageSource is always used on the UI thread, so does not care about locking
+    //  - But CanvasVirtualImageSource supports rendering on any thread
+    //
+    // XAML facts:
+    //  - DComp sometimes draws via the app-owned device that is set on a SiS/VSiS
+    //  - It always does this on the UI thread
+    //  - XAML and DComp always acquire both the D2D and D3D locks before using the device
+    //  - They take the D2D lock before the D3D one
+    //  - EndDraw must be called on the UI thread
+    //  - Begin|Suspend|ResumeDraw may be called on any thread
+    //  - If not on the UI thread, XAML validates that the D3D device has multithread protection enabled
+    //
+    // Conclusions:
+    //  - Win2D rendering is safely protected by only the D2D lock - no need to also acquire the D3D one
+    //  - (it would not be safe to only acquire the D3D lock, as that could deadlock due to reversed lock order)
+    //  - Therefore it is irrelevant to us whether the D3D device has multithread protection enabled
+    //  - But since XAML checks this state, we must turn it on to make drawing calls succeed on non-UI threads
+    //  - So be it
+
+    if (!IsOnUIThread() && !m_deviceIsMultithreadProtected)
+    {
+        auto multithread = MaybeAs<ID3D10Multithread>(GetDXGIInterface<ID3D11Device>(m_device.Get()));
+
+        if (!multithread)
+            ThrowHR(RPC_E_WRONG_THREAD);
+
+        multithread->SetMultithreadProtected(true);
+
+        m_deviceIsMultithreadProtected = true;
+    }
 }
 
 

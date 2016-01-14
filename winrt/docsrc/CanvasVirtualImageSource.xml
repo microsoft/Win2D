@@ -81,13 +81,16 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="M:Microsoft.Graphics.Canvas.UI.Xaml.CanvasVirtualImageSource.CreateDrawingSession(Windows.UI.Color,Windows.Foundation.Rect)">
       <summary>Returns a new drawing session for updating a region of the image source.</summary>
       <remarks>
-        The specified region of the image is cleared to the specified color
-        before this method returns.  The region is in device independent pixels
-        (DIPs).  Regions that need to be updated are provided by the <see
-        cref="P:Microsoft.Graphics.Canvas.UI.Xaml.CanvasRegionsInvalidatedEventArgs.InvalidatedRegions"/>
-        property passed to the <see
-        cref="E:Microsoft.Graphics.Canvas.UI.Xaml.CanvasVirtualImageSource.RegionsInvalidated"/>
-        event handler.
+        <p>
+          The specified region of the image is cleared to the specified color
+          before this method returns.  The region is in device independent pixels
+          (DIPs).  Regions that need to be updated are provided by the <see
+          cref="P:Microsoft.Graphics.Canvas.UI.Xaml.CanvasRegionsInvalidatedEventArgs.InvalidatedRegions"/>
+          property passed to the <see
+          cref="E:Microsoft.Graphics.Canvas.UI.Xaml.CanvasVirtualImageSource.RegionsInvalidated"/>
+          event handler.
+        </p>
+        <inherittemplate name="VirtualImageSourceThreadingTemplate" replacement="CanvasVirtualImageSource"/>
       </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.UI.Xaml.CanvasVirtualImageSource.SuspendDrawingSession(Microsoft.Graphics.Canvas.CanvasDrawingSession)">
@@ -194,4 +197,52 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       </remarks>
     </member>
   </members>
+  
+  <template name="VirtualImageSourceThreadingTemplate">
+    <p>
+      CreateDrawingSession may be called on any thread, but the returned drawing session must
+      be disposed on the UI thread. If you want to move your drawing work to a different thread, either:
+    </p>
+    <ol>
+      <li>
+        On an arbitrary non-UI thread:
+        <ul>
+          <li>CreateDrawingSession</li>
+          <li>Issue drawing calls</li>
+          <li><see cref="M:Microsoft.Graphics.Canvas.UI.Xaml.VirtualImageSourceThreadingTemplate.SuspendDrawingSession(Microsoft.Graphics.Canvas.CanvasDrawingSession)"/></li>
+        </ul>
+      </li>
+      <li>
+        Back on the UI thread:
+        <ul>
+          <li>drawingSession.Dispose()</li>
+        </ul>
+      </li>
+    </ol>
+    <p>or:</p>
+    <ol>
+      <li>
+        On the UI thread:
+        <ul>
+          <li>CreateDrawingSession</li>
+          <li><see cref="M:Microsoft.Graphics.Canvas.UI.Xaml.VirtualImageSourceThreadingTemplate.SuspendDrawingSession(Microsoft.Graphics.Canvas.CanvasDrawingSession)"/></li>
+        </ul>
+      </li>
+      <li>
+        Move to an arbitrary non-UI thread:
+        <ul>
+          <li><see cref="M:Microsoft.Graphics.Canvas.UI.Xaml.VirtualImageSourceThreadingTemplate.ResumeDrawingSession(Microsoft.Graphics.Canvas.CanvasDrawingSession)"/></li>
+          <li>Issue drawing calls</li>
+          <li><see cref="M:Microsoft.Graphics.Canvas.UI.Xaml.VirtualImageSourceThreadingTemplate.SuspendDrawingSession(Microsoft.Graphics.Canvas.CanvasDrawingSession)"/></li>
+        </ul>
+      </li>
+      <li>
+        Back on the UI thread:
+        <ul>
+          <li>drawingSession.Dispose()</li>
+        </ul>
+      </li>
+    </ol>
+  </template>
+    
 </doc>

@@ -19,7 +19,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
             <li>the image you are drawing is very large</li>
             <li>you don't want to spend time drawing non-visible parts of the image</li>
             <li>you don't want the entire image to be resident in memory</li>
-            <li>you want to redraw the image on a background thread</li>
+            <li>or you want to control what thread the drawing happens on</li>
           </ul>
 
           CanvasVirtualControl is built on top of <see
@@ -87,6 +87,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
           cref="E:Microsoft.Graphics.Canvas.UI.Xaml.CanvasVirtualImageSource.RegionsInvalidated"/>
           event handler.
         </p>
+        <inherittemplate name="VirtualImageSourceThreadingTemplate" replacement="CanvasVirtualControl"/>
       </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.UI.Xaml.CanvasVirtualControl.SuspendDrawingSession(Microsoft.Graphics.Canvas.CanvasDrawingSession)">

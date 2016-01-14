@@ -9,6 +9,7 @@ namespace canvas
     class MockD3D11Device : public RuntimeClass<
         RuntimeClassFlags<ClassicCom>,
         ID3D11Device, 
+        ID3D10Multithread,
         ChainInterfaces<IDXGIDevice3, IDXGIDevice2, IDXGIDevice1, IDXGIDevice> >
     {
     public:
@@ -410,5 +411,10 @@ namespace canvas
         {
         }
 
+        // ID3D10Multithread
+        MOCK_METHOD0(Enter, void());
+        MOCK_METHOD0(Leave, void());
+        MOCK_METHOD1(SetMultithreadProtected, BOOL(BOOL));
+        MOCK_METHOD0(GetMultithreadProtected, BOOL());
     };
 }

@@ -25,6 +25,7 @@ public:
         ComPtr<MockVirtualSurfaceImageSourceFactory> VsisFactory;
         std::shared_ptr<MockCanvasImageSourceDrawingSessionFactory> DrawingSessionFactory;
         ComPtr<CanvasVirtualImageSourceFactory> Factory;
+        ComPtr<MockD3D11Device> D3D11Device;
         ComPtr<StubCanvasDevice> Device;
         ComPtr<StubResourceCreatorWithDpi> ResourceCreator;
         
@@ -32,7 +33,8 @@ public:
             : VsisFactory(Make<MockVirtualSurfaceImageSourceFactory>())
             , DrawingSessionFactory(std::make_shared<MockCanvasImageSourceDrawingSessionFactory>())
             , Factory(Make<CanvasVirtualImageSourceFactory>(VsisFactory.Get(), DrawingSessionFactory))
-            , Device(Make<StubCanvasDevice>())
+            , D3D11Device(Make<MockD3D11Device>())
+            , Device(Make<StubCanvasDevice>(Make<StubD2DDevice>(), D3D11Device))
             , ResourceCreator(Make<StubResourceCreatorWithDpi>(Device.Get()))
         {
         }
@@ -93,6 +95,18 @@ public:
         {
             Vsis = ExpectCreateVsis();
             ThrowIfFailed(Factory->CreateWithWidthAndHeightAndDpiAndAlphaMode(ResourceCreator.Get(), size.Width, size.Height, dpi, alphaMode, &ImageSource));
+        }
+
+        void ExpectHasThreadAccess(bool hasThreadAccess)
+        {
+            auto mockDispatcher = Make<MockDispatcher>();
+            mockDispatcher->get_HasThreadAccessMethod.AllowAnyCall([=](boolean* value) { *value = hasThreadAccess; return S_OK; });
+
+            Vsis->get_DispatcherMethod.SetExpectedCalls(1,
+                [=](ICoreDispatcher** value)
+                {
+                    return mockDispatcher.CopyTo(value);
+                });
         }
     };
     
@@ -448,6 +462,31 @@ public:
                 return Make<MockCanvasDrawingSession>();
             });
 
+        f.ExpectHasThreadAccess(true);
+
+        ComPtr<ICanvasDrawingSession> drawingSession;
+        ThrowIfFailed(f.ImageSource->CreateDrawingSession(anyColor, anyUpdateRectangle, &drawingSession));
+    }
+
+    TEST_METHOD_EX(CanvasVirtualImageSource_CreateDrawingSession_WhenNotOnUIThread_EnablesDeviceMultithreadProtection)
+    {
+        SimpleFixture f(anySize, anyDpi);
+
+        f.DrawingSessionFactory->CreateMethod.SetExpectedCalls(1,
+            [&](ICanvasDevice* owner, ISurfaceImageSourceNativeWithD2D* sisNative, Color const& clearColor, Rect const& updateRectangleInDips, float dpi)
+            {
+                return Make<MockCanvasDrawingSession>();
+            });
+
+        f.ExpectHasThreadAccess(false);
+
+        f.D3D11Device->SetMultithreadProtectedMethod.SetExpectedCalls(1,
+            [](BOOL value)
+            {
+                Assert::IsTrue(!!value);
+                return false;
+            });
+
         ComPtr<ICanvasDrawingSession> drawingSession;
         ThrowIfFailed(f.ImageSource->CreateDrawingSession(anyColor, anyUpdateRectangle, &drawingSession));
     }
@@ -497,6 +536,8 @@ public:
                 return S_OK;
             });
 
+        f.ExpectHasThreadAccess(true);
+
         ComPtr<ICanvasDrawingSession> drawingSession;
         ThrowIfFailed(f.ImageSource->CreateDrawingSession(anyColor, anyUpdateRectangle, &drawingSession));
     }
@@ -510,6 +551,8 @@ public:
             {
                 return Make<MockCanvasDrawingSession>();
             });
+
+        f.ExpectHasThreadAccess(true);
 
         ComPtr<ICanvasDrawingSession> drawingSession;
         ThrowIfFailed(f.ImageSource->CreateDrawingSession(anyColor, anyUpdateRectangle, &drawingSession));
@@ -534,8 +577,40 @@ public:
                 return Make<MockCanvasDrawingSession>();
             });
 
+        f.ExpectHasThreadAccess(true);
+
         ComPtr<ICanvasDrawingSession> drawingSession;
         ThrowIfFailed(f.ImageSource->CreateDrawingSession(anyColor, anyUpdateRectangle, &drawingSession));
+
+        f.ExpectHasThreadAccess(true);
+
+        f.Vsis->ResumeDrawMethod.SetExpectedCalls(1);
+        ThrowIfFailed(f.ImageSource->ResumeDrawingSession(drawingSession.Get()));
+    }
+
+    TEST_METHOD_EX(CanvasVirtualImageSource_ResumeDrawingSession_WhenNotOnUIThread_EnablesDeviceMultithreadProtection)
+    {
+        SimpleFixture f;
+
+        f.DrawingSessionFactory->CreateMethod.SetExpectedCalls(1,
+            [&](ICanvasDevice* owner, ISurfaceImageSourceNativeWithD2D* sisNative, Color const& clearColor, Rect const& updateRectangleInDips, float dpi)
+            {
+                return Make<MockCanvasDrawingSession>();
+            });
+
+        f.ExpectHasThreadAccess(true);
+
+        ComPtr<ICanvasDrawingSession> drawingSession;
+        ThrowIfFailed(f.ImageSource->CreateDrawingSession(anyColor, anyUpdateRectangle, &drawingSession));
+
+        f.ExpectHasThreadAccess(false);
+
+        f.D3D11Device->SetMultithreadProtectedMethod.SetExpectedCalls(1,
+            [](BOOL value)
+            {
+                Assert::IsTrue(!!value);
+                return false;
+            });
 
         f.Vsis->ResumeDrawMethod.SetExpectedCalls(1);
         ThrowIfFailed(f.ImageSource->ResumeDrawingSession(drawingSession.Get()));
@@ -732,14 +807,7 @@ public:
 
         onRegionsInvalidated.SetExpectedCalls(1);
 
-        auto mockDispatcher = Make<MockDispatcher>();
-        mockDispatcher->get_HasThreadAccessMethod.AllowAnyCall([] (boolean* value) { *value = TRUE; return S_OK; });
-        
-        f.Vsis->get_DispatcherMethod.SetExpectedCalls(1,
-            [=] (ICoreDispatcher** value)
-            {
-                return mockDispatcher.CopyTo(value);
-            });
+        f.ExpectHasThreadAccess(true);
 
         ThrowIfFailed(f.ImageSource->RaiseRegionsInvalidatedIfAny());
     }
@@ -748,14 +816,7 @@ public:
     {
         CallbackFixture f;
         
-        auto mockDispatcher = Make<MockDispatcher>();
-        mockDispatcher->get_HasThreadAccessMethod.AllowAnyCall([] (boolean* value) { *value = FALSE; return S_OK; });
-        
-        f.Vsis->get_DispatcherMethod.SetExpectedCalls(1,
-            [=] (ICoreDispatcher** value)
-            {
-                return mockDispatcher.CopyTo(value);
-            });
+        f.ExpectHasThreadAccess(false);
 
         Assert::AreEqual(RPC_E_WRONG_THREAD, f.ImageSource->RaiseRegionsInvalidatedIfAny());
     }
