@@ -35,33 +35,6 @@ public:
     {
         return source;
     }
-
-    virtual void SaveLockedMemoryToFile(
-        HSTRING fileName,
-        CanvasBitmapFileFormat fileFormat,
-        float quality,
-        unsigned int width,
-        unsigned int height,
-        float dpiX,
-        float dpiY,
-        ScopedBitmapMappedPixelAccess* bitmapLock)
-    {
-        Assert::Fail(); // Unexpected
-    }
-
-
-    virtual void SaveLockedMemoryToStream(
-        IRandomAccessStream* stream,
-        CanvasBitmapFileFormat fileFormat,
-        float quality,
-        unsigned int width,
-        unsigned int height,
-        float dpiX,
-        float dpiY,
-        ScopedBitmapMappedPixelAccess* bitmapLock)
-    {
-        Assert::Fail(); // Unexpected
-    }
 };
 
 

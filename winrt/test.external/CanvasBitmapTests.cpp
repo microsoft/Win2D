@@ -465,7 +465,9 @@ public:
 
     TEST_METHOD(CanvasBitmap_SaveToFileAsync_DetermineEncoderFromFileExtension)
     {
-        auto canvasBitmap = WaitExecution(CanvasBitmap::LoadAsync(m_sharedDevice, testImageFileName));
+        DisableDebugLayer disableDebug; // 6184116 causes the debug layer to fail when CanvasBitmap::SaveAsync is called
+        auto device = ref new CanvasDevice();
+        auto canvasBitmap = WaitExecution(CanvasBitmap::LoadAsync(device, testImageFileName));
 
         String^ tempFolder = Windows::Storage::ApplicationData::Current->TemporaryFolder->Path;
         String^ pathPrefix = String::Concat(tempFolder, L"\\test.");
@@ -507,7 +509,9 @@ public:
 
     TEST_METHOD(CanvasBitmap_SaveToFileAndStreamAsync_UseSpecifiedEncoder)
     {
-        auto canvasBitmap = WaitExecution(CanvasBitmap::LoadAsync(m_sharedDevice, testImageFileName));
+        DisableDebugLayer disableDebug; // 6184116 causes the debug layer to fail when CanvasBitmap::SaveAsync is called
+        auto device = ref new CanvasDevice();
+        auto canvasBitmap = WaitExecution(CanvasBitmap::LoadAsync(device, testImageFileName));
 
         String^ tempFolder = Windows::Storage::ApplicationData::Current->TemporaryFolder->Path;
         String^ targetPath = String::Concat(tempFolder, L"\\test.bin");
@@ -557,7 +561,9 @@ public:
 
     TEST_METHOD(CanvasBitmap_SaveToBitmapAsync_ImageQuality)
     {
-        auto canvasBitmap = WaitExecution(CanvasBitmap::LoadAsync(m_sharedDevice, testImageFileName));
+        DisableDebugLayer disableDebug; // 6184116 causes the debug layer to fail when CanvasBitmap::SaveAsync is called
+        auto device = ref new CanvasDevice();
+        auto canvasBitmap = WaitExecution(CanvasBitmap::LoadAsync(device, testImageFileName));
 
         String^ tempFolder = Windows::Storage::ApplicationData::Current->TemporaryFolder->Path;
 
@@ -592,6 +598,74 @@ public:
 
             if (testCase.SupportsQuality) Assert::IsTrue(lowQSize < highQSize);
             else Assert::AreEqual(lowQSize, highQSize);
+        }
+    }
+
+    TEST_METHOD(CanvasBitmap_SaveToFileAsync_PixelFormats)
+    {
+        DisableDebugLayer disableDebug; // 6184116 causes the debug layer to fail when CanvasBitmap::SaveAsync is called
+        auto device = ref new CanvasDevice(true);
+
+        // This checks that we can at least save all supported bitmap formats,
+        // but doesn't validate what actually gets saved.
+
+        struct TestCase
+        {
+            DirectXPixelFormat Format;
+            CanvasAlphaMode AlphaMode;
+            HRESULT ExpectedHResult;
+
+            TestCase(DirectXPixelFormat format, HRESULT hr = S_OK)
+                : Format(format)
+                , AlphaMode(CanvasAlphaMode::Ignore)
+                , ExpectedHResult(hr)
+            {}
+
+            TestCase(DirectXPixelFormat format, CanvasAlphaMode alphaMode, HRESULT hr = S_OK)
+                : Format(format)
+                , AlphaMode(alphaMode)
+                , ExpectedHResult(hr)
+            {}
+        };
+
+        TestCase testCases[] =
+            {
+                { DirectXPixelFormat::B8G8R8A8UIntNormalized },
+                { DirectXPixelFormat::B8G8R8A8UIntNormalizedSrgb },
+                { DirectXPixelFormat::B8G8R8X8UIntNormalized },
+                { DirectXPixelFormat::R8G8B8A8UIntNormalized },
+                { DirectXPixelFormat::R8G8B8A8UIntNormalizedSrgb },
+                { DirectXPixelFormat::R16G16B16A16Float },
+                { DirectXPixelFormat::R32G32B32A32Float },
+                { DirectXPixelFormat::R10G10B10A2UIntNormalized },
+                { DirectXPixelFormat::R16G16B16A16UIntNormalized },
+                { DirectXPixelFormat::BC1UIntNormalized },
+                { DirectXPixelFormat::BC2UIntNormalized },
+                { DirectXPixelFormat::BC3UIntNormalized },
+                { DirectXPixelFormat::A8UIntNormalized,   CanvasAlphaMode::Straight },
+                { DirectXPixelFormat::R8G8UIntNormalized, WINCODEC_ERR_UNSUPPORTEDPIXELFORMAT },
+                { DirectXPixelFormat::R8UIntNormalized,   WINCODEC_ERR_UNSUPPORTEDPIXELFORMAT },
+            };
+
+        for (auto testCase : testCases)
+        {
+            auto data = ref new Platform::Array<uint8_t>(1024);
+            auto width = 4;
+            auto height = 4;
+            auto bitmap = CanvasBitmap::CreateFromBytes(device, data, width, height, testCase.Format, DEFAULT_DPI, testCase.AlphaMode);
+
+            auto stream = ref new InMemoryRandomAccessStream();
+
+            auto operation = bitmap->SaveAsync(stream, CanvasBitmapFileFormat::Bmp);
+
+            if (SUCCEEDED(testCase.ExpectedHResult))
+            {
+                WaitExecution(operation);
+            }
+            else
+            {
+                ExpectCOMException(testCase.ExpectedHResult, [&] { WaitExecution(operation); });
+            }
         }
     }
 
@@ -708,7 +782,9 @@ public:
 
     TEST_METHOD(CanvasBitmap_SaveToFile_Subresource)
     {
-        SubresourceTestFixture f(m_sharedDevice);
+        DisableDebugLayer disableDebug; // 6184116 causes the debug layer to fail when CanvasBitmap::SaveAsync is called
+        auto device = ref new CanvasDevice();
+        SubresourceTestFixture f(device);
 
         String^ savePath = String::Concat(Windows::Storage::ApplicationData::Current->TemporaryFolder->Path, L"\\test.bin");
 
@@ -1449,17 +1525,20 @@ public:
 
     TEST_METHOD(CanvasBitmap_InvalidStreams)
     {
+        DisableDebugLayer disableDebug; // 6184116 causes the debug layer to fail when CanvasBitmap::SaveAsync is called
+        auto device = ref new CanvasDevice();
+        
         // Ensure an unreadable stream causes LoadAsync to fail.
         StreamWithRestrictions^ streamWithNoRead = ref new StreamWithRestrictions(false, true); 
                
-        auto asyncLoad = CanvasBitmap::LoadAsync(m_sharedDevice, streamWithNoRead);
+        auto asyncLoad = CanvasBitmap::LoadAsync(device, streamWithNoRead);
         Assert::ExpectException<Platform::NotImplementedException^>(
             [&]
             {
                 WaitExecution(asyncLoad);
             });
 
-        asyncLoad = CanvasBitmap::LoadAsync(m_sharedDevice, streamWithNoRead);
+        asyncLoad = CanvasBitmap::LoadAsync(device, streamWithNoRead);
         Assert::ExpectException<Platform::NotImplementedException^>(
             [&]
             {
@@ -1468,7 +1547,7 @@ public:
 
         // Ensure an unwritable stream causes SaveToStreamAsync to fail.
         StreamWithRestrictions^ streamWithNoWrite = ref new StreamWithRestrictions(true, false);
-        auto bitmap = ref new CanvasRenderTarget(m_sharedDevice, 1, 1, DEFAULT_DPI);
+        auto bitmap = ref new CanvasRenderTarget(device, 1, 1, DEFAULT_DPI);
         auto asyncSave = bitmap->SaveAsync(streamWithNoWrite, CanvasBitmapFileFormat::Bmp);
         Assert::ExpectException<Platform::NotImplementedException^>(
             [&]
@@ -1583,7 +1662,10 @@ public:
                 WaitExecution(asyncLoad);
             });
 
-        auto bitmap = ref new CanvasRenderTarget(m_sharedDevice, 1, 1, DEFAULT_DPI);
+        DisableDebugLayer disableDebug; // 6184116 causes the debug layer to fail when CanvasBitmap::SaveAsync is called
+        auto device = ref new CanvasDevice();
+
+        auto bitmap = ref new CanvasRenderTarget(device, 1, 1, DEFAULT_DPI);
 
         auto asyncSave = bitmap->SaveAsync(unreliableStream, CanvasBitmapFileFormat::Bmp);
         ExpectCOMException(INET_E_CONNECTION_TIMEOUT,

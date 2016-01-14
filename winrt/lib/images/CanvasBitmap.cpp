@@ -102,7 +102,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
     static GUID GetEncoderFromFileExtension(
-        std::wstring const& fileName)
+        WinString fileName)
     {
         static const struct ExtensionTable
         {
@@ -126,82 +126,23 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             { L"jxr", GUID_ContainerFormatWmp },
         };
 
-        size_t separatorIndex = fileName.find_last_of('.');
-        std::wstring fileExtension(fileName.substr(separatorIndex + 1));
-        for (auto const& tableEntry : extensionTable)
+        auto rend = std::reverse_iterator<wchar_t const*>(begin(fileName));
+        auto rbegin = std::reverse_iterator<wchar_t const*>(end(fileName));
+        auto rseparatorIt = std::find(rbegin, rend, L'.');
+        if (rseparatorIt != rend)
         {
-            if (_wcsicmp(fileExtension.c_str(), tableEntry.Extension) == 0)
+            auto extension = rseparatorIt.base();
+
+            for (auto const& tableEntry : extensionTable)
             {
-                return tableEntry.Guid;
+                if (_wcsicmp(extension, tableEntry.Extension) == 0)
+                    return tableEntry.Guid;
             }
         }
+
         ThrowHR(E_INVALIDARG, Strings::UnrecognizedImageFileExtension);
     }
 
-    static void SaveLockedMemoryToNativeStream(
-        IWICImagingFactory2* wicFactory,
-        IWICStream* nativeStream,
-        GUID encoderGuid,
-        float quality,
-        unsigned int width,
-        unsigned int height,
-        float dpiX,
-        float dpiY,
-        ScopedBitmapMappedPixelAccess* bitmapLock)
-    {
-        ComPtr<IWICBitmapEncoder> encoder;
-        ThrowIfFailed(wicFactory->CreateEncoder(encoderGuid, NULL, &encoder));
-
-        ThrowIfFailed(encoder->Initialize(nativeStream, WICBitmapEncoderNoCache));
-
-        ComPtr<IWICBitmapFrameEncode> frameEncode;
-        ComPtr<IPropertyBag2> frameProperties;
-        encoder->CreateNewFrame(&frameEncode, &frameProperties);
-
-        if (quality < 0.0f || quality > 1.0f)
-        {
-            ThrowHR(E_INVALIDARG);
-        }
-
-        bool supportsQualityOption =
-            encoderGuid == GUID_ContainerFormatJpeg ||
-            encoderGuid == GUID_ContainerFormatWmp;
-
-        if (supportsQualityOption)
-        {
-            PROPBAG2 option = { 0 };
-            option.pstrName = L"ImageQuality";
-            VARIANT value;
-            value.vt = VT_R4;
-            value.fltVal = quality;
-            ThrowIfFailed(frameProperties->Write(1, &option, &value));
-        }
-
-        ThrowIfFailed(frameEncode->Initialize(frameProperties.Get()));
-
-        ThrowIfFailed(frameEncode->SetSize(width, height));
-
-        // TODO: #2767 Support saving formats other than 32bppBGRA.
-        ComPtr<IWICBitmap> memoryBitmap;
-        ThrowIfFailed(wicFactory->CreateBitmapFromMemory(
-            width,
-            height,
-            GUID_WICPixelFormat32bppBGRA,
-            bitmapLock->GetStride(),
-            bitmapLock->GetLockedBufferSize(),
-            bitmapLock->GetLockedData(),
-            &memoryBitmap));
-
-        WICPixelFormatGUID pixelFormat;
-        ThrowIfFailed(memoryBitmap->GetPixelFormat(&pixelFormat));
-        ThrowIfFailed(frameEncode->SetPixelFormat(&pixelFormat));
-
-        ThrowIfFailed(frameEncode->SetResolution(dpiX, dpiY));
-
-        ThrowIfFailed(frameEncode->WriteSource(memoryBitmap.Get(), NULL));
-        ThrowIfFailed(frameEncode->Commit());
-        ThrowIfFailed(encoder->Commit());
-    }
 
     static bool TryEnableIndexing(ComPtr<IWICBitmapFrameDecode> const& frameDecode)
     {
@@ -305,75 +246,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     DefaultBitmapAdapter::DefaultBitmapAdapter()
         : m_wicAdapter(WicAdapter::GetInstance())
     {
-    }
-
-    void DefaultBitmapAdapter::SaveLockedMemoryToStream(
-        IRandomAccessStream* randomAccessStream,
-        CanvasBitmapFileFormat fileFormat,
-        float quality,
-        unsigned int width,
-        unsigned int height,
-        float dpiX,
-        float dpiY,
-        ScopedBitmapMappedPixelAccess* bitmapLock)
-    {
-        ComPtr<IWICStream> wicStream;
-        ThrowIfFailed(m_wicAdapter->GetFactory()->CreateStream(&wicStream));
-
-        ComPtr<IStream> iStream;
-        ThrowIfFailed(CreateStreamOverRandomAccessStream(randomAccessStream, IID_PPV_ARGS(&iStream)));
-
-        ThrowIfFailed(wicStream->InitializeFromIStream(iStream.Get()));
-
-        SaveLockedMemoryToNativeStream(
-            m_wicAdapter->GetFactory().Get(), 
-            wicStream.Get(), 
-            GetGUIDForFileFormat(fileFormat),
-            quality, 
-            width, 
-            height, 
-            dpiX,
-            dpiY, 
-            bitmapLock);
-    }
-
-    void DefaultBitmapAdapter::SaveLockedMemoryToFile(
-        HSTRING fileName,
-        CanvasBitmapFileFormat fileFormat,
-        float quality,
-        unsigned int width,
-        unsigned int height,
-        float dpiX,
-        float dpiY,
-        ScopedBitmapMappedPixelAccess* bitmapLock)
-    {
-        WinString fileNameString(fileName);
-
-        GUID encoderGuid;
-        if (fileFormat == CanvasBitmapFileFormat::Auto)
-        {
-            encoderGuid = GetEncoderFromFileExtension(static_cast<const wchar_t*>(fileNameString));
-        }
-        else
-        {
-            encoderGuid = GetGUIDForFileFormat(fileFormat);
-        }
-
-        ComPtr<IWICStream> wicStream;
-        ThrowIfFailed(m_wicAdapter->GetFactory()->CreateStream(&wicStream));
-
-        ThrowIfFailed(wicStream->InitializeFromFilename(static_cast<const wchar_t*>(fileNameString), GENERIC_WRITE));
-
-        SaveLockedMemoryToNativeStream(
-            m_wicAdapter->GetFactory().Get(),
-            wicStream.Get(), 
-            encoderGuid, 
-            quality, 
-            width, 
-            height, 
-            dpiX, 
-            dpiY, 
-            bitmapLock);
     }
 
     WicBitmapSource DefaultBitmapAdapter::CreateWicBitmapSource(HSTRING fileName, bool tryEnableIndexing)
@@ -1343,8 +1215,41 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         array.Detach(valueCount, valueElements);
     }
 
+    static void SaveBitmap(
+        ID2D1Bitmap1* d2dBitmap,
+        ID2D1Device* d2dDevice,
+        IStream* stream,
+        GUID const& containerFormat,
+        float quality)
+    {
+        if (quality < 0.0f || quality > 1.0f)
+            ThrowHR(E_INVALIDARG);
+        
+        const D2D1_SIZE_U size = d2dBitmap->GetPixelSize();
+        float dpiX, dpiY;
+        d2dBitmap->GetDpi(&dpiX, &dpiY);
+
+        WICImageParameters parameters{};
+        parameters.PixelFormat.format = DXGI_FORMAT_B8G8R8A8_UNORM;
+        parameters.PixelFormat.alphaMode = D2D1_ALPHA_MODE_PREMULTIPLIED;
+        parameters.DpiX = dpiX;
+        parameters.DpiY = dpiY;
+        parameters.Top = 0;
+        parameters.Left = 0;
+        parameters.PixelWidth = size.width;
+        parameters.PixelHeight = size.height;
+
+        CanvasImageAdapter::GetInstance()->SaveImage(
+            d2dBitmap,
+            parameters,
+            d2dDevice,
+            stream,
+            containerFormat,
+            quality);
+    }
+
     void SaveBitmapToFileImpl(
-        ComPtr<ICanvasDevice> const& device,
+        ComPtr<ID2D1Device> const& d2dDevice,
         ComPtr<ID2D1Bitmap1> const& d2dBitmap,
         HSTRING rawfileName,
         CanvasBitmapFileFormat fileFormat,
@@ -1356,21 +1261,18 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         auto asyncAction = Make<AsyncAction>(
             [=]
             {
-                const D2D1_SIZE_U size = d2dBitmap->GetPixelSize();
-                float dpiX, dpiY;
-                d2dBitmap->GetDpi(&dpiX, &dpiY);
+                GUID encoderGuid;
+                if (fileFormat == CanvasBitmapFileFormat::Auto)
+                    encoderGuid = GetEncoderFromFileExtension(fileName);
+                else
+                    encoderGuid = GetGUIDForFileFormat(fileFormat);
 
-                ScopedBitmapMappedPixelAccess bitmapPixelAccess(device.Get(), d2dBitmap.Get());
+                ComPtr<IWICStream> wicStream;
+                ThrowIfFailed(WicAdapter::GetInstance()->GetFactory()->CreateStream(&wicStream));
+                
+                ThrowIfFailed(wicStream->InitializeFromFilename(static_cast<wchar_t const*>(fileName), GENERIC_WRITE));
 
-                CanvasBitmapAdapter::GetInstance()->SaveLockedMemoryToFile(
-                    fileName,
-                    fileFormat,
-                    quality,
-                    size.width,
-                    size.height,
-                    dpiX,
-                    dpiY,
-                    &bitmapPixelAccess);
+                SaveBitmap(d2dBitmap.Get(), d2dDevice.Get(), wicStream.Get(), encoderGuid, quality);
             });
 
         CheckMakeResult(asyncAction);
@@ -1378,9 +1280,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
     void SaveBitmapToStreamImpl(
-        ComPtr<ICanvasDevice> const& device,
+        ComPtr<ID2D1Device> const& d2dDevice,
         ComPtr<ID2D1Bitmap1> const& d2dBitmap,
-        ComPtr<IRandomAccessStream> const& stream,
+        ComPtr<IRandomAccessStream> const& randomAccessStream,
         CanvasBitmapFileFormat fileFormat,
         float quality,
         IAsyncAction **resultAsyncAction)
@@ -1393,21 +1295,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         auto asyncAction = Make<AsyncAction>(
             [=]
             {
-                const D2D1_SIZE_U size = d2dBitmap->GetPixelSize();
-                float dpiX, dpiY;
-                d2dBitmap->GetDpi(&dpiX, &dpiY);
+                ComPtr<IStream> stream;
+                ThrowIfFailed(CreateStreamOverRandomAccessStream(randomAccessStream.Get(), IID_PPV_ARGS(&stream)));
 
-                ScopedBitmapMappedPixelAccess bitmapPixelAccess(device.Get(), d2dBitmap.Get());
-
-                CanvasBitmapAdapter::GetInstance()->SaveLockedMemoryToStream(
-                    stream.Get(),
-                    fileFormat,
-                    quality,
-                    size.width,
-                    size.height,
-                    dpiX,
-                    dpiY,
-                    &bitmapPixelAccess);
+                SaveBitmap(d2dBitmap.Get(), d2dDevice.Get(), stream.Get(), GetGUIDForFileFormat(fileFormat), quality);
             });
 
         CheckMakeResult(asyncAction);

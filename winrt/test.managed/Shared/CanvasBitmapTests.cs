@@ -29,7 +29,7 @@ namespace test.managed
         public void MultithreadedSaveToFile()
         {
             //
-            // This test can create a deadlock if that SaveAsync code holds on to the
+            // This test can create a deadlock if the SaveAsync code holds on to the
             // ID2D1Multithread resource lock longer than necessary.
             //
             // A previous implementation waited until destruction of the IAsyncAction before calling Leave().  
@@ -37,19 +37,22 @@ namespace test.managed
             // where other worker threads were waiting for a Leave on the original thread that never arrived.
             //
 
-            var task = Task.Run(async () =>
-           {
-               var device = new CanvasDevice();
-               var rt = new CanvasRenderTarget(device, 16, 16, 96);
+            using (new DisableDebugLayer()) // 6184116 causes the debug layer to fail when CanvasBitmap::SaveAsync is called
+            {
+                var task = Task.Run(async () =>
+                {
+                    var device = new CanvasDevice();
+                    var rt = new CanvasRenderTarget(device, 16, 16, 96);
 
-               var filename = Path.Combine(ApplicationData.Current.TemporaryFolder.Path, "testfile.jpg");
+                    var filename = Path.Combine(ApplicationData.Current.TemporaryFolder.Path, "testfile.jpg");
 
-               await rt.SaveAsync(filename);
+                    await rt.SaveAsync(filename);
 
-               rt.Dispose();
-           });
+                    rt.Dispose();
+                });
 
-            task.Wait();
+                task.Wait();
+            }
         }
 
         [TestMethod]
@@ -57,18 +60,21 @@ namespace test.managed
         {
             // This is the stream version of the above test
 
-            var task = Task.Run(async () =>
+            using (new DisableDebugLayer()) // 6184116 causes the debug layer to fail when CanvasBitmap::SaveAsync is called
             {
-                var device = new CanvasDevice();
-                var rt = new CanvasRenderTarget(device, 16, 16, 96);
+                var task = Task.Run(async () =>
+                {
+                    var device = new CanvasDevice();
+                    var rt = new CanvasRenderTarget(device, 16, 16, 96);
 
-                var stream = new MemoryStream();
-                await rt.SaveAsync(stream.AsRandomAccessStream(), CanvasBitmapFileFormat.Bmp);
+                    var stream = new MemoryStream();
+                    await rt.SaveAsync(stream.AsRandomAccessStream(), CanvasBitmapFileFormat.Bmp);
 
-                rt.Dispose();
-            });
+                    rt.Dispose();
+                });
 
-            task.Wait();
+                task.Wait();
+            }
         }
 
         [TestMethod]

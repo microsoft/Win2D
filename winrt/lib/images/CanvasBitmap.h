@@ -44,26 +44,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         virtual ComPtr<IWICBitmapSource> CreateFlipRotator(
             ComPtr<IWICBitmapSource> const& source,
             WICBitmapTransformOptions transformOptions) = 0;
-
-        virtual void SaveLockedMemoryToFile(
-            HSTRING fileName,
-            CanvasBitmapFileFormat fileFormat,
-            float quality,
-            unsigned int width,
-            unsigned int height,
-            float dpiX,
-            float dpiY,
-            ScopedBitmapMappedPixelAccess* bitmapLock) = 0;
-
-        virtual void SaveLockedMemoryToStream(
-            IRandomAccessStream* stream,
-            CanvasBitmapFileFormat fileFormat,
-            float quality,
-            unsigned int width,
-            unsigned int height,
-            float dpiX,
-            float dpiY,
-            ScopedBitmapMappedPixelAccess* bitmapLock) = 0;
     };
 
 
@@ -80,26 +60,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         virtual ComPtr<IWICBitmapSource> CreateFlipRotator(
             ComPtr<IWICBitmapSource> const& source,
             WICBitmapTransformOptions transformOptions) override;
-
-        virtual void SaveLockedMemoryToStream(
-            IRandomAccessStream* randomAccessStream,
-            CanvasBitmapFileFormat fileFormat,
-            float quality,
-            unsigned int width,
-            unsigned int height,
-            float dpiX,
-            float dpiY,
-            ScopedBitmapMappedPixelAccess* bitmapLock) override;
-
-        virtual void SaveLockedMemoryToFile(
-            HSTRING fileName,
-            CanvasBitmapFileFormat fileFormat,
-            float quality,
-            unsigned int width,
-            unsigned int height,
-            float dpiX,
-            float dpiY,
-            ScopedBitmapMappedPixelAccess* bitmapLock) override;
     };
 
 
@@ -316,7 +276,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         Color **valueElements);
 
     void SaveBitmapToFileImpl(
-        ComPtr<ICanvasDevice> const& device,
+        ComPtr<ID2D1Device> const& d2dDevice,
         ComPtr<ID2D1Bitmap1> const& d2dBitmap,
         HSTRING rawfileName,
         CanvasBitmapFileFormat fileFormat,
@@ -324,7 +284,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         IAsyncAction **resultAsyncAction);
 
     void SaveBitmapToStreamImpl(
-        ComPtr<ICanvasDevice> const& device,
+        ComPtr<ID2D1Device> const& d2dDevice,
         ComPtr<ID2D1Bitmap1> const& d2dBitmap,
         ComPtr<IRandomAccessStream> const& stream,
         CanvasBitmapFileFormat fileFormat,
@@ -593,11 +553,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                     CheckInPointer(rawfileName);
                     CheckAndClearOutPointer(resultAsyncAction);
 
-                    auto& d2dBitmap = GetResource();
-
                     SaveBitmapToFileImpl(
-                        m_device,
-                        d2dBitmap,
+                        GetWrappedResource<ID2D1Device>(m_device),
+                        GetResource(),
                         rawfileName,
                         fileFormat,
                         quality,
@@ -629,11 +587,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                     CheckInPointer(stream);
                     CheckAndClearOutPointer(asyncAction);
 
-                    auto& d2dBitmap = GetResource();
-
                     SaveBitmapToStreamImpl(
-                        m_device,
-                        d2dBitmap,
+                        GetWrappedResource<ID2D1Device>(m_device),
+                        GetResource(),
                         stream,
                         fileFormat,
                         quality,
