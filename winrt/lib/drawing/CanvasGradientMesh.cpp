@@ -279,6 +279,13 @@ IFACEMETHODIMP CanvasGradientMesh::GetBounds(
 
             auto deviceContext = GetWrappedResource<ID2D1DeviceContext2>(drawingSession);
 
+            D2D1_MATRIX_3X2_F previousTransform;
+            deviceContext->GetTransform(&previousTransform);
+
+            auto restoreTransformWarden = MakeScopeWarden([&] { deviceContext->SetTransform(previousTransform); });
+
+            deviceContext->SetTransform(D2D1::IdentityMatrix());
+
             D2D1_RECT_F d2dRect;
             ThrowIfFailed(deviceContext->GetGradientMeshWorldBounds(resource.Get(), &d2dRect));
             *bounds = FromD2DRect(d2dRect);
