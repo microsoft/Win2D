@@ -22,13 +22,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         DeferrableTask* const m_task;
 
         ComPtr<ICanvasDevice> const m_device;
-        ComPtr<IPrintDocumentPackageTarget> const m_target;
         ComPtr<IPrintTaskOptionsCore> const m_printTaskOptions;
 
         std::mutex m_mutex;
 
         float m_dpi;
 
+        ComPtr<IPrintDocumentPackageTarget> m_target;
         ComPtr<ID2D1PrintControl> m_printControl;
 
         ComPtr<ID2D1CommandList> m_currentCommandList;

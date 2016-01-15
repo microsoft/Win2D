@@ -18,9 +18,9 @@ CanvasPrintEventArgs::CanvasPrintEventArgs(
     float initialDpi)
     : m_task(task)
     , m_device(device)
-    , m_target(target)
     , m_printTaskOptions(printTaskOptions)
     , m_dpi(initialDpi)
+    , m_target(target)
     , m_currentPage(0)
 {
 }
@@ -106,6 +106,11 @@ void CanvasPrintEventArgs::EndPrinting()
             
     if (m_printControl)
         ThrowIfFailed(m_printControl->Close());
+
+    // We release our reference to the IPrintDocumentPackageTarget since while
+    // it is alive some target implementations (eg the PDF printer) don't
+    // flush/close the output file.
+    m_target.Reset();
 }
 
 
@@ -133,7 +138,9 @@ ComPtr<ICanvasDrawingSession> CanvasPrintEventArgs::CreateDrawingSessionImpl()
     Lock lock(m_mutex);
             
     auto deviceInternal = As<ICanvasDeviceInternal>(m_device);
-            
+
+    // We defer creating the print control until the first call to
+    // CreateDrawingSession.  This is to give the app a chance to set the DPI.
     if (!m_printControl)
     {
         m_printControl = deviceInternal->CreatePrintControl(m_target.Get(), m_dpi);
