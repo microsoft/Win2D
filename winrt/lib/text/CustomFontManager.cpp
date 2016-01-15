@@ -195,7 +195,7 @@ ComPtr<IDWriteFactory> const& CustomFontManager::GetSharedFactory()
     return m_sharedFactory;
 }
 
-ComPtr<IDWriteTextAnalyzer1> const& CustomFontManager::GetTextAnalyzer()
+ComPtr<IDWriteTextAnalyzer2> const& CustomFontManager::GetTextAnalyzer()
 {
     RecursiveLock lock(m_mutex);
 
@@ -206,7 +206,7 @@ ComPtr<IDWriteTextAnalyzer1> const& CustomFontManager::GetTextAnalyzer()
         ComPtr<IDWriteTextAnalyzer> textAnalyzerBase;
 
         ThrowIfFailed(sharedFactory->CreateTextAnalyzer(&textAnalyzerBase));
-        m_textAnalyzer = As<IDWriteTextAnalyzer1>(textAnalyzerBase);
+        m_textAnalyzer = As<IDWriteTextAnalyzer2>(textAnalyzerBase);
     }
 
     return m_textAnalyzer;

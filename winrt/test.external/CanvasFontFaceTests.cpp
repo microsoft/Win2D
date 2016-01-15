@@ -213,7 +213,6 @@ TEST_CLASS(CanvasFontFaceTests)
         return nullptr;
     }
 
-
     TEST_METHOD(CanvasFontFace_Interop)
     {
         auto font = GetTestFont();
@@ -223,5 +222,47 @@ TEST_CLASS(CanvasFontFaceTests)
         auto unwrapped = GetWrappedResource<DWriteFontContainerType>(wrapper);
 
         Assert::AreEqual<void*>(font.Get(), unwrapped.Get());
+    }
+
+    TEST_METHOD(CanvasFontFace_GetTypographicGlyphSupport)
+    {
+        auto dwriteFont = GetTestFont();
+        auto font = GetOrCreate<CanvasFontFace>(dwriteFont.Get());
+
+        Platform::String^ testString = L"A";
+        
+        auto textAnalyzer = ref new CanvasTextAnalyzer(testString, CanvasTextDirection::LeftToRightThenTopToBottom);
+        auto analyzedScript = textAnalyzer->AnalyzeScript();
+        auto script = analyzedScript->GetAt(0)->Value;
+
+        auto sourceCodePoints = ref new Platform::Array<unsigned int>(1) { testString->Data()[0] };
+        auto glyphIndices = font->GetGlyphIndices(sourceCodePoints);
+
+        auto glyphs = ref new Platform::Array<CanvasGlyph>(1);
+        glyphs[0].Index = glyphIndices[0];
+        glyphs[0].Advance = 0;
+        glyphs[0].AdvanceOffset = 0;
+        glyphs[0].AscenderOffset = 0;
+
+        struct TestCase
+        {
+            CanvasTypographyFeatureName FeatureName;
+            bool ExpectSupport;
+        } testCases[] =
+        {
+            { CanvasTypographyFeatureName::Kerning, true },
+            { CanvasTypographyFeatureName::StylisticSet20, false }
+        };
+
+        for (auto testCase : testCases)
+        {
+            Platform::Array<bool>^ support = font->GetTypographicFeatureGlyphSupport(
+                script,
+                testCase.FeatureName,
+                glyphs);
+
+            Assert::AreEqual(1u, support->Length);
+            Assert::AreEqual(testCase.ExpectSupport, support[0]);
+        }
     }
 };

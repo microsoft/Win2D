@@ -98,5 +98,37 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             return ConvertUtf16ToUtf32Codepoint(sourceString);
         }
     }
+
+    DWriteGlyphData GetDWriteGlyphData(uint32_t glyphCount, CanvasGlyph* sourceGlyphsElements, int whichFields)
+    {
+        assert(whichFields != 0);
+
+        DWriteGlyphData ret;
+
+        if (whichFields & static_cast<int>(DWriteGlyphField::Indices))
+            ret.Indices.reserve(glyphCount);
+
+        if (whichFields & static_cast<int>(DWriteGlyphField::Offsets))
+            ret.Offsets.reserve(glyphCount);
+
+        if (whichFields & static_cast<int>(DWriteGlyphField::Advances))
+            ret.Advances.reserve(glyphCount);
+
+        for (uint32_t i = 0; i < glyphCount; ++i)
+        {
+            ThrowIfNegative(sourceGlyphsElements[i].Index);
+
+            if (whichFields & static_cast<int>(DWriteGlyphField::Indices))
+                ret.Indices.push_back(static_cast<uint16_t>(sourceGlyphsElements[i].Index));
+
+            if (whichFields & static_cast<int>(DWriteGlyphField::Offsets))
+                ret.Offsets.push_back(DWRITE_GLYPH_OFFSET{ sourceGlyphsElements[i].AdvanceOffset, sourceGlyphsElements[i].AscenderOffset });
+
+            if (whichFields & static_cast<int>(DWriteGlyphField::Advances))
+                ret.Advances.push_back(sourceGlyphsElements[i].Advance);
+        }
+
+        return ret;
+    }
     
 }}}}}

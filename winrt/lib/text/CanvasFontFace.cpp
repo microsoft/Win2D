@@ -871,7 +871,7 @@ IFACEMETHODIMP CanvasFontFace::GetInformationalStrings(
         });
 }
 
-IFACEMETHODIMP CanvasFontFace::HasCharacter(UINT32 unicodeValue, boolean* value)
+IFACEMETHODIMP CanvasFontFace::HasCharacter(uint32_t unicodeValue, boolean* value)
 {
     return ExceptionBoundary(
         [&]
@@ -970,6 +970,135 @@ IFACEMETHODIMP CanvasFontFace::get_Panose(uint32_t* valueCount, uint8_t** values
             }
 
             out.Detach(valueCount, values);
+        });
+}
+
+
+IFACEMETHODIMP CanvasFontFace::GetSupportedTypographicFeatureNames(
+    CanvasAnalyzedScript script,
+    uint32_t* valueCount,
+    CanvasTypographyFeatureName** valueElements)
+{
+    return GetSupportedTypographicFeatureNamesWithLocale(script, nullptr, valueCount, valueElements);
+}
+
+IFACEMETHODIMP CanvasFontFace::GetSupportedTypographicFeatureNamesWithLocale(
+    CanvasAnalyzedScript script,
+    HSTRING locale,
+    uint32_t* valueCount,
+    CanvasTypographyFeatureName** valueElements)
+{
+    return ExceptionBoundary(
+        [&]
+        {
+            CheckInPointer(valueCount);
+            CheckAndClearOutPointer(valueElements);
+
+            auto textAnalyzer = CustomFontManager::GetInstance()->GetTextAnalyzer();
+
+            auto dwriteScriptAnalysis = ToDWriteScriptAnalysis(script);
+
+            auto& dwriteFontFace = GetRealizedFontFace();
+
+            WinString localeString(locale);
+
+            uint32_t actualTagCount;
+
+            HRESULT hr = textAnalyzer->GetTypographicFeatures(
+                dwriteFontFace.Get(),
+                dwriteScriptAnalysis,
+                static_cast<wchar_t const*>(localeString),
+                0,
+                &actualTagCount,
+                nullptr);
+            if (hr == E_NOT_SUFFICIENT_BUFFER)
+            {
+                std::vector<DWRITE_FONT_FEATURE_TAG> dwriteFontFeatureTags;
+                dwriteFontFeatureTags.resize(actualTagCount);
+
+                ThrowIfFailed(textAnalyzer->GetTypographicFeatures(
+                    dwriteFontFace.Get(),
+                    dwriteScriptAnalysis,
+                    static_cast<wchar_t const*>(localeString),
+                    static_cast<uint32_t>(dwriteFontFeatureTags.size()),
+                    &actualTagCount,
+                    dwriteFontFeatureTags.data()));
+
+                auto result = TransformToComArray<CanvasTypographyFeatureName>(dwriteFontFeatureTags.begin(), dwriteFontFeatureTags.end(),
+                    [](DWRITE_FONT_FEATURE_TAG value)
+                    {
+                        return ToCanvasTypographyFeatureName(value);
+                    });
+
+                result.Detach(valueCount, valueElements);
+            }
+            else
+            {
+                //
+                // Supported feature list of size zero.
+                // 
+                ThrowIfFailed(hr);
+
+                ComArray<CanvasTypographyFeatureName> result(0);
+
+                result.Detach(valueCount, valueElements);
+            }
+        });
+
+}
+
+IFACEMETHODIMP CanvasFontFace::GetTypographicFeatureGlyphSupport(
+    CanvasAnalyzedScript script,
+    CanvasTypographyFeatureName typographicFeatureName,
+    uint32_t glyphsCount,
+    CanvasGlyph* glyphsElements,
+    uint32_t* valueCount,
+    boolean** valueElements)
+{
+    return GetTypographicFeatureGlyphSupportWithLocale(script, typographicFeatureName, glyphsCount, glyphsElements, nullptr, valueCount, valueElements);
+}
+
+IFACEMETHODIMP CanvasFontFace::GetTypographicFeatureGlyphSupportWithLocale(
+    CanvasAnalyzedScript script,
+    CanvasTypographyFeatureName typographicFeatureName,
+    uint32_t glyphsCount,
+    CanvasGlyph* glyphsElements,
+    HSTRING locale,
+    uint32_t* valueCount,
+    boolean** valueElements)
+{
+    return ExceptionBoundary(
+        [&]
+        {
+            auto textAnalyzer = CustomFontManager::GetInstance()->GetTextAnalyzer();
+
+            WinString localeString(locale);
+
+            auto dwriteGlyphData = GetDWriteGlyphData(glyphsCount, glyphsElements, static_cast<int>(DWriteGlyphField::Indices));
+
+            std::vector<uint8_t> featureApplies;
+            featureApplies.resize(glyphsCount);
+
+            auto fontFeatureTag = ToDWriteFontFeatureTag(typographicFeatureName);
+
+            auto& dwriteFontFace = GetRealizedFontFace();
+
+            ThrowIfFailed(textAnalyzer->CheckTypographicFeature(
+                dwriteFontFace.Get(),
+                ToDWriteScriptAnalysis(script),
+                static_cast<wchar_t const*>(localeString),
+                fontFeatureTag,
+                glyphsCount,
+                dwriteGlyphData.Indices.data(),
+                featureApplies.data()));
+            
+            auto result = TransformToComArray<boolean>(featureApplies.begin(), featureApplies.end(),
+                [](uint8_t value)
+                {
+                    return !!value;
+                });
+
+            result.Detach(valueCount, valueElements);
         });
 }
 

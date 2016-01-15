@@ -95,6 +95,20 @@ namespace Microsoft.Graphics.Canvas.Text
         Windows.Foundation.Rect DrawBounds;
     } CanvasGlyphMetrics;
 
+    [version(VERSION)]
+    typedef enum CanvasScriptShape
+    {
+        Default,
+        NoVisual
+    } CanvasScriptShape;
+
+    [version(VERSION)]
+    typedef struct CanvasAnalyzedScript
+    {
+        INT32 ScriptIdentifier;
+        CanvasScriptShape Shape;
+    } CanvasAnalyzedScript;
+
     [version(VERSION), uuid(5199D129-4EF9-4DEE-B74C-4DC910201A7F), exclusiveto(CanvasFontFace)]
     interface ICanvasFontFace : IInspectable
         requires Windows.Foundation.IClosable
@@ -248,6 +262,49 @@ namespace Microsoft.Graphics.Canvas.Text
         [propget] HRESULT Panose(
             [out] UINT32* valueCount,
             [out, size_is(, *valueCount), retval] BYTE** valueElements);
+
+        //
+        // Gets an array of all feature names supported by this font and script.
+        // The feature may not be available for all glyphs, though.
+        //
+        // This method will only return tags that match OpenType features
+        // represented by the CanvasTypographyFeatureName enum. 
+        //
+        [overload("GetSupportedTypographicFeatureNames")]
+        HRESULT GetSupportedTypographicFeatureNames(
+            [in] CanvasAnalyzedScript script,
+            [out] UINT32* valueCount,
+            [out, size_is(, *valueCount), retval] CanvasTypographyFeatureName** valueElements);
+
+        [overload("GetSupportedTypographicFeatureNames")]
+        HRESULT GetSupportedTypographicFeatureNamesWithLocale(
+            [in] CanvasAnalyzedScript script,
+            [in] HSTRING locale,
+            [out] UINT32* valueCount,
+            [out, size_is(, *valueCount), retval] CanvasTypographyFeatureName** valueElements);
+
+        //
+        // Takes an array of glyphs, and returns an array of bools as to whether
+        // that glyph can use the feature.
+        //
+        [overload("GetTypographicFeatureGlyphSupport")]
+        HRESULT GetTypographicFeatureGlyphSupport(
+            [in] CanvasAnalyzedScript script,
+            [in] CanvasTypographyFeatureName typographicFeatureName,
+            [in] UINT32 glyphsCount,
+            [in, size_is(glyphsCount)] CanvasGlyph* glyphsElements,
+            [out] UINT32* valueCount,
+            [out, size_is(, *valueCount), retval] boolean** valueElements);
+
+        [overload("GetTypographicFeatureGlyphSupport")]
+        HRESULT GetTypographicFeatureGlyphSupportWithLocale(
+            [in] CanvasAnalyzedScript script,
+            [in] CanvasTypographyFeatureName typographicFeatureName,
+            [in] UINT32 glyphsCount,
+            [in, size_is(glyphsCount)] CanvasGlyph* glyphsElements,
+            [in] HSTRING locale,
+            [out] UINT32* valueCount,
+            [out, size_is(, *valueCount), retval] boolean** valueElements);
 
         // Not exposed: 
         // IsColorFont, GetColorPaletteCount, GetPaletteEntryCount, GetPaletteEntries. Color font properties aren't supported in Win2D.

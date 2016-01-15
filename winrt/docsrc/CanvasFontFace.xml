@@ -373,6 +373,73 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
           PANOSE 2.0 specification</a>.
         </p>
       </remarks>
+    </member>
+    
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasFontFace.GetSupportedTypographicFeatureNames(Microsoft.Graphics.Canvas.Text.CanvasAnalyzedScript)">
+      <summary>Gets an array of the supported typographic features for this font face.</summary>
+      <remarks>
+        <p>
+          This method may return elements which do not map to actual 
+          <see cref="T:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeatureName"/>
+          values. This is intended. Fonts are free to expose their own custom features,
+          which may not belong to the frequently-used set enumerated from CanvasTypographyFeatureName.
+          These feature identifiers and behaviors vary, depending on the font.
+        </p>
+        <p>
+          This method uses the default locale.
+        </p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasFontFace.GetSupportedTypographicFeatureNames(Microsoft.Graphics.Canvas.Text.CanvasAnalyzedScript,System.String)">
+      <summary>Gets an array of the supported typographic features for this font face.</summary>
+      <remarks>
+        <p>
+          This method may return elements which do not map to actual 
+          <see cref="T:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeatureName"/>
+          values. This is intended. Fonts are free to expose their own custom features,
+          which may not belong to the frequently-used set enumerated from CanvasTypographyFeatureName.
+          These feature identifiers and behaviors vary, depending on the font.
+        </p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasFontFace.GetTypographicFeatureGlyphSupport(Microsoft.Graphics.Canvas.Text.CanvasAnalyzedScript,Microsoft.Graphics.Canvas.Text.CanvasTypographyFeatureName,Microsoft.Graphics.Canvas.Text.CanvasGlyph[])">
+      <summary>Gets an array of booleans, as to whether a set of glyphs can be used with the specified typographic feature.</summary>
+      <remarks>
+        <inherittemplate name="GetTypographicFeatureGlyphSupportTemplate" />
+        <p>
+          This method uses the default locale.
+        </p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasFontFace.GetTypographicFeatureGlyphSupport(Microsoft.Graphics.Canvas.Text.CanvasAnalyzedScript,Microsoft.Graphics.Canvas.Text.CanvasTypographyFeatureName,Microsoft.Graphics.Canvas.Text.CanvasGlyph[],System.String)">
+      <summary>Gets an array of booleans, as to whether a set of glyphs can be used with the specified typographic feature.</summary>
+      <remarks>
+        <inherittemplate name="GetTypographicFeatureGlyphSupportTemplate" />
+      </remarks>
     </member>    
+
+    <template name="GetTypographicFeatureGlyphSupportTemplate">
+      <p>
+        Calling GetTypographicFeatureGlyphSupport is a good way to determine
+        whether a set of glyphs are eligible for a typographic feature,
+        when that typographic feature has not yet been enabled.
+      </p>
+      <p>
+        If the feature has already been enabled, it's worth noting that 
+        typographic features cause glyph substitution. For example, if an app:
+        <ul>
+          <li>has a custom ICanvasTextRenderer, and </li>
+          <li>passes CanvasGlyphs from its DrawGlyphRun handler to GetTypographicFeatureGlyphSupport, and </li>
+          <li>that DrawGlyphRun was caused by drawing a text layout which already has the feature enabled,</li>
+        </ul>        
+        then some glyphs will be reported as ineligible for the feature! Reason being, they've already been substituted. 
+      </p>
+      <p>
+        It is an error to pass 
+        <see cref="F:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeatureName.None">CanvasTypographyFeatureName.None</see> 
+        to this method.
+      </p>
+    </template>
+    
   </members>
 </doc>

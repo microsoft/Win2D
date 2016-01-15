@@ -284,21 +284,21 @@ TEST_CLASS(CanvasTextAnalyzerTests)
             m_adapter->GetMockDWriteFactory()->GetSystemFontCollectionMethod.AllowAnyCall(
                 [=](IDWriteFontCollection** out, BOOL)
                 {
-                    m_mockSystemFontCollection.CopyTo(out);
+                    ThrowIfFailed(m_mockSystemFontCollection.CopyTo(out));
                     return S_OK;
                 });
 
             m_adapter->GetMockDWriteFactory()->GetSystemFontFallbackMethod.AllowAnyCall(
                 [=](IDWriteFontFallback** out)
                 {
-                    m_mockSystemFontFallback.CopyTo(out);
+                    ThrowIfFailed(m_mockSystemFontFallback.CopyTo(out));
                     return S_OK;
                 });
 
             m_adapter->GetMockDWriteFactory()->CreateTextAnalyzerMethod.AllowAnyCall(
                 [=](IDWriteTextAnalyzer** out)
                 {
-                    TextAnalyzer.CopyTo(out);
+                    ThrowIfFailed(TextAnalyzer.CopyTo(out));
                     return S_OK;
                 });
 

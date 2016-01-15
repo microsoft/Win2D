@@ -1220,7 +1220,7 @@ static ComPtr<ID2D1TransformedGeometry> GetGlyphRunGeometry(
     auto textAnalyzer = CustomFontManager::GetInstance()->GetTextAnalyzer();
 
     DWRITE_MATRIX transform;
-    ThrowIfFailed(textAnalyzer->GetGlyphOrientationTransform(orientationAngle, glyphRun->isSideways, &transform));
+    ThrowIfFailed(As<IDWriteTextAnalyzer1>(textAnalyzer)->GetGlyphOrientationTransform(orientationAngle, glyphRun->isSideways, &transform));
     transform.dx = baselineOriginX;
     transform.dy = baselineOriginY;
 

@@ -214,20 +214,6 @@ static CanvasAnalyzedScript ToCanvasAnalyzedScript(DWRITE_SCRIPT_ANALYSIS const*
     return analyzedScript;
 }
 
-static DWRITE_SCRIPT_ANALYSIS ToDWriteScriptAnalysis(CanvasAnalyzedScript const& analyzedScript)
-{
-    DWRITE_SCRIPT_ANALYSIS scriptAnalysis{};
-
-    if (analyzedScript.ScriptIdentifier < 0 || analyzedScript.ScriptIdentifier > UINT16_MAX)
-    {
-        ThrowHR(E_INVALIDARG);
-    }
-    scriptAnalysis.script = static_cast<uint16_t>(analyzedScript.ScriptIdentifier);
-    scriptAnalysis.shapes = ToDWriteScriptShapes(analyzedScript.Shape);
-
-    return scriptAnalysis;
-}
-
 STDMETHODIMP DWriteTextAnalysisSink::SetBidiLevel(
     uint32_t textPosition,
     uint32_t textLength,
@@ -1207,41 +1193,6 @@ IFACEMETHODIMP CanvasTextAnalyzer::GetJustificationOpportunities(
         });
 }
 
-struct DWriteGlyphData
-{
-    std::vector<float> Advances;
-    std::vector<DWRITE_GLYPH_OFFSET> Offsets;
-    std::vector<uint16_t> Indices;
-}; 
-
-static DWriteGlyphData GetDWriteGlyphAdvances(uint32_t glyphCount, CanvasGlyph* sourceGlyphsElements, bool returnIndices = false, bool returnOffsets = false)
-{
-    DWriteGlyphData ret;
-
-    ret.Advances.reserve(glyphCount);
-
-    if (returnIndices)
-        ret.Indices.reserve(glyphCount);
-
-    if (returnOffsets)
-        ret.Offsets.reserve(glyphCount);
-
-    for (uint32_t i = 0; i < glyphCount; ++i)
-    {
-        ret.Advances.push_back(sourceGlyphsElements[i].Advance);
-
-        ThrowIfNegative(sourceGlyphsElements[i].Index);
-
-        if (returnIndices)
-            ret.Indices.push_back(static_cast<uint16_t>(sourceGlyphsElements[i].Index));
-
-        if (returnOffsets)
-            ret.Offsets.push_back(DWRITE_GLYPH_OFFSET{ sourceGlyphsElements[i].AdvanceOffset, sourceGlyphsElements[i].AscenderOffset });
-    }
-
-    return ret;
-}
-
 IFACEMETHODIMP CanvasTextAnalyzer::ApplyJustificationOpportunities(
     float lineWidth,
     uint32_t justificationOpportunitiesCount,
@@ -1271,7 +1222,10 @@ IFACEMETHODIMP CanvasTextAnalyzer::ApplyJustificationOpportunities(
                 dwriteJustificationOpportunities[i].expansionPriority = justificationOpportunitiesElements[i].ExpansionPriority;
             }
 
-            auto dwriteGlyphData = GetDWriteGlyphAdvances(glyphCount, sourceGlyphsElements, false, true);
+            auto dwriteGlyphData = GetDWriteGlyphData(
+                glyphCount, 
+                sourceGlyphsElements, 
+                static_cast<int>(DWriteGlyphField::Advances) | static_cast<int>(DWriteGlyphField::Offsets));
 
             std::vector<float> newDwriteGlyphAdvances;
             std::vector<DWRITE_GLYPH_OFFSET> newDwriteGlyphOffsets;
@@ -1360,9 +1314,15 @@ IFACEMETHODIMP CanvasTextAnalyzer::AddGlyphsAfterJustificationWithClusterMap(
 
             auto dwriteClusterMap = GetDWriteClusterMap(clusterMapIndicesCount, clusterMapIndicesElements);
 
-            auto dwriteGlyphData = GetDWriteGlyphAdvances(originalGlyphsCount, originalGlyphsElements, true, false);
+            auto dwriteGlyphData = GetDWriteGlyphData(
+                originalGlyphsCount, 
+                originalGlyphsElements, 
+                static_cast<int>(DWriteGlyphField::Advances) | static_cast<int>(DWriteGlyphField::Indices));
 
-            auto dwriteJustifiedGlyphData = GetDWriteGlyphAdvances(justifiedGlyphsCount, justifiedGlyphsElements, false, true);
+            auto dwriteJustifiedGlyphData = GetDWriteGlyphData(
+                justifiedGlyphsCount, 
+                justifiedGlyphsElements, 
+                static_cast<int>(DWriteGlyphField::Advances) | static_cast<int>(DWriteGlyphField::Offsets));
 
             auto dwriteShapingGlyphProperties = GetDWriteGlyphShapingProperties(glyphShapingResultsCount, glyphShapingResultsElements);
 

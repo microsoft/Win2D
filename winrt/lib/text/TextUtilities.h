@@ -827,5 +827,29 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         return static_cast<CanvasGlyphJustification>(value);
     }
+
+    inline DWRITE_SCRIPT_ANALYSIS ToDWriteScriptAnalysis(CanvasAnalyzedScript const& analyzedScript)
+    {
+        DWRITE_SCRIPT_ANALYSIS scriptAnalysis{};
+
+        if (analyzedScript.ScriptIdentifier < 0 || analyzedScript.ScriptIdentifier > UINT16_MAX)
+        {
+            ThrowHR(E_INVALIDARG);
+        }
+        scriptAnalysis.script = static_cast<uint16_t>(analyzedScript.ScriptIdentifier);
+        scriptAnalysis.shapes = ToDWriteScriptShapes(analyzedScript.Shape);
+
+        return scriptAnalysis;
+    }
+
+    struct DWriteGlyphData
+    {
+        std::vector<uint16_t> Indices;
+        std::vector<DWRITE_GLYPH_OFFSET> Offsets;
+        std::vector<float> Advances;
+    };
+    enum class DWriteGlyphField { Indices = 0x1, Offsets = 0x2, Advances = 0x4 };
+
+    DWriteGlyphData GetDWriteGlyphData(uint32_t glyphCount, CanvasGlyph* sourceGlyphsElements, int whichFields);
    
 }}}}}

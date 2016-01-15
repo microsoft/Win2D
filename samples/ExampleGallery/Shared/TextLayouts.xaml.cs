@@ -11,14 +11,11 @@ using Microsoft.Graphics.Canvas.UI.Xaml;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
-using System.Linq;
 using System.Threading.Tasks;
 using Windows.Foundation;
-using Windows.Globalization;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
 
 #if !WINDOWS_UWP
 using Vector2 = Microsoft.Graphics.Canvas.Numerics.Vector2;
@@ -37,7 +34,6 @@ namespace ExampleGallery
         };
         bool inlineObjectsEnabledChanged;
         bool textDirectionChanged;
-        bool typographyChanged;
 
         //
         // This is stored as a local static so that SpecialGlyph has access to it.
@@ -106,9 +102,6 @@ namespace ExampleGallery
         public List<CanvasTextDirection> TextDirectionOptions { get { return Utils.GetEnumAsList<CanvasTextDirection>(); } }
         public CanvasTextDirection CurrentTextDirection { get; set; }
 
-        public List<CanvasTypographyFeatureName> TypographyOptions { get { return Utils.GetEnumAsList<CanvasTypographyFeatureName>(); } }
-        public CanvasTypographyFeatureName CurrentTypographyOption { get; set; }
-
         public TextLayouts()
         {
             DataContext = this;
@@ -153,7 +146,6 @@ namespace ExampleGallery
 
             inlineObjectsEnabledChanged = true;
             textDirectionChanged = true;
-            typographyChanged = true;
 
             needsResourceRecreation = false;
             resourceRealizationSize = targetSize;
@@ -249,24 +241,6 @@ namespace ExampleGallery
             textDirectionChanged = false;
         }
 
-        void EnsureTypography()
-        {
-            if (!typographyChanged)
-                return;
-
-            CanvasTypography typography = null;
-            
-            if (CurrentTypographyOption != CanvasTypographyFeatureName.None)
-            {
-                typography = new CanvasTypography();
-                typography.AddFeature(CurrentTypographyOption, 1u);
-            }
-
-            textLayout.SetTypography(0, testString.Length, typography);
-
-            typographyChanged = false;
-        }
-
         private void Canvas_Draw(CanvasControl sender, CanvasDrawEventArgs args)
         {
             EnsureResources(sender, sender.Size);
@@ -289,8 +263,6 @@ namespace ExampleGallery
             EnsureInlineObjects();
 
             EnsureTextDirection();
-
-            EnsureTypography();
 
             args.DrawingSession.DrawTextLayout(textLayout, 0, 0, textBrush);
 
@@ -390,13 +362,6 @@ namespace ExampleGallery
         private void TextDirectionChanged(object sender, RoutedEventArgs e)
         {
             textDirectionChanged = true;
-
-            canvas.Invalidate();
-        }
-
-        private void TypographyChanged(object sender, RoutedEventArgs e)
-        {
-            typographyChanged = true;
 
             canvas.Invalidate();
         }

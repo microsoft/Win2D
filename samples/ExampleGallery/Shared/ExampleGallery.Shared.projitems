@@ -126,6 +126,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)TextLayouts.xaml.cs">
       <DependentUpon>TextLayouts.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)TypographyExample.xaml.cs">
+      <DependentUpon>TypographyExample.xaml</DependentUpon>
+    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)TextOutlines.xaml.cs">
       <DependentUpon>TextOutlines.xaml</DependentUpon>
     </Compile>
@@ -278,6 +281,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="$(MSBuildThisFileDirectory)TypographyExample.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="$(MSBuildThisFileDirectory)TextOutlines.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -366,6 +373,8 @@
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\TextLayoutsWide.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\TextOutlinesNarrow.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\TextOutlinesWide.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Thumbnails\TypographyNarrow.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Thumbnails\TypographyWide.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\VectorArtNarrow.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\VectorArtWide.png" />
     <Content Include="$(MSBuildThisFileDirectory)BitmapOrientation\orientation_0.jpg" />

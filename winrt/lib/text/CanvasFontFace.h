@@ -153,7 +153,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             CanvasFontInformation fontInformation,
             IMapView<HSTRING, HSTRING>** values) override;
 
-        IFACEMETHOD(HasCharacter)(UINT32 unicodeValue, boolean* value) override;
+        IFACEMETHOD(HasCharacter)(uint32_t unicodeValue, boolean* value) override;
         
         IFACEMETHOD(GetGlyphRunBounds)(
             ICanvasDrawingSession* drawingSession,
@@ -177,6 +177,34 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             Rect* bounds) override;
 
         IFACEMETHOD(get_Panose)(uint32_t* valueCount, uint8_t** values) override;
+
+        IFACEMETHOD(GetSupportedTypographicFeatureNames)(
+            CanvasAnalyzedScript script,
+            uint32_t* valueCount,
+            CanvasTypographyFeatureName** valueElements) override;
+
+        IFACEMETHOD(GetSupportedTypographicFeatureNamesWithLocale)(
+            CanvasAnalyzedScript script,
+            HSTRING locale,
+            uint32_t* valueCount,
+            CanvasTypographyFeatureName** valueElements) override;
+
+        IFACEMETHOD(GetTypographicFeatureGlyphSupport)(
+            CanvasAnalyzedScript script,
+            CanvasTypographyFeatureName typographicFeatureName,
+            uint32_t glyphsCount,
+            CanvasGlyph* glyphsElements,
+            uint32_t* valueCount,
+            boolean** valueElements) override;
+
+        IFACEMETHOD(GetTypographicFeatureGlyphSupportWithLocale)(
+            CanvasAnalyzedScript script,
+            CanvasTypographyFeatureName typographicFeatureName,
+            uint32_t glyphsCount,
+            CanvasGlyph* glyphsElements,
+            HSTRING locale,
+            uint32_t* valueCount,
+            boolean** valueElements) override;
 
         //
         // IClosable

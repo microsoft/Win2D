@@ -76,6 +76,7 @@ namespace ExampleGallery
             new ExampleDefinition("Text Outlines", typeof(TextOutlines)),
             new ExampleDefinition("Custom Fonts", typeof(CustomFonts)),
             new ExampleDefinition("Text Directions", typeof(TextDirectionsExample)),
+            new ExampleDefinition("Typography", typeof(TypographyExample)),
             new ExampleDefinition("Font Metrics", typeof(FontMetrics)),
             new ExampleDefinition("Custom Text Layouts", typeof(CustomTextLayouts)),
 

@@ -96,20 +96,6 @@ namespace Microsoft.Graphics.Canvas.Text
     } CanvasCharacterRange;
 
     [version(VERSION)]
-    typedef enum CanvasScriptShape
-    {
-        Default,
-        NoVisual
-    } CanvasScriptShape;
-
-    [version(VERSION)]
-    typedef struct CanvasAnalyzedScript
-    {
-        INT32 ScriptIdentifier;
-        CanvasScriptShape Shape;
-    } CanvasAnalyzedScript;
-
-    [version(VERSION)]
     typedef struct CanvasAnalyzedBidi
     {
         UINT32 ExplicitLevel;

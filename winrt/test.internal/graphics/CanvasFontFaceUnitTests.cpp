@@ -6,6 +6,7 @@
 #include "mocks/MockDWriteFontFace.h"
 #include "mocks/MockDWriteFontFaceReference.h"
 #include "mocks/MockDWriteFont.h"
+#include "mocks/MockDWriteTextAnalyzer.h"
 #include "stubs/LocalizedFontNames.h"
 #include "stubs/StubCanvasTextLayoutAdapter.h"
 #include "stubs/StubDWriteFontFaceReference.h"
@@ -227,17 +228,20 @@ TEST_CLASS(CanvasFontFaceTests)
         ComPtr<CanvasFontFace> FontFace;
         ComPtr<IDWriteRenderingParams> DWriteRenderingParameters;
         ComPtr<CanvasTextRenderingParameters> RenderingParameters;
+        ComPtr<MockDWriteTextAnalyzer> DWriteTextAnalyzer;
 
 #if WINVER > _WIN32_WINNT_WINBLUE
         ComPtr<StubDWriteFontFaceReference> DWriteFontFaceReference;
 #endif
 
+        std::shared_ptr<StubCanvasTextLayoutAdapter> Adapter;
+
         Fixture(
             int realizationCount = 1, 
             HRESULT realizationHr = S_OK)
         {
-            auto adapter = std::make_shared<StubCanvasTextLayoutAdapter>();
-            CustomFontManagerAdapter::SetInstance(adapter);
+            Adapter = std::make_shared<StubCanvasTextLayoutAdapter>();
+            CustomFontManagerAdapter::SetInstance(Adapter);
 
 #if WINVER > _WIN32_WINNT_WINBLUE
             DWriteFontFaceReference = Make<StubDWriteFontFaceReference>();
@@ -267,6 +271,14 @@ TEST_CLASS(CanvasFontFaceTests)
                     return realizationHr;
                 });
 #endif
+            DWriteTextAnalyzer = Make<MockDWriteTextAnalyzer>();
+
+            Adapter->GetMockDWriteFactory()->CreateTextAnalyzerMethod.AllowAnyCall(
+                [=](IDWriteTextAnalyzer** out)
+                {
+                    ThrowIfFailed(DWriteTextAnalyzer.CopyTo(out));
+                    return S_OK;
+                });
         }
 
 #if WINVER > _WIN32_WINNT_WINBLUE
@@ -1165,7 +1177,6 @@ TEST_CLASS(CanvasFontFaceTests)
         Assert::AreEqual(Rect{ 100, 200, 4, 5 }, bounds);
     }
 
-
     TEST_METHOD_EX(CanvasFontFace_get_Panose)
     {
         Fixture f(realizeOn10Only);
@@ -1185,6 +1196,256 @@ TEST_CLASS(CanvasFontFaceTests)
 
         for (uint8_t i = 0; i < 10; ++i)
             Assert::AreEqual(i, values[i]);
+    }
+
+    TEST_METHOD_EX(CanvasFontFace_GetSupportedTypographicFeatureNames_NullArg)
+    {
+        Fixture f(0);
+
+        CanvasAnalyzedScript analyzedScript{ 1, CanvasScriptShape::Default };
+        uint32_t valueCount;
+        CanvasTypographyFeatureName* values;
+
+        Assert::AreEqual(E_INVALIDARG, f.FontFace->GetSupportedTypographicFeatureNames(analyzedScript, nullptr, &values));
+        Assert::AreEqual(E_INVALIDARG, f.FontFace->GetSupportedTypographicFeatureNames(analyzedScript, &valueCount, nullptr));
+    }
+
+    TEST_METHOD_EX(CanvasFontFace_GetSupportedTypographicFeatureNames_InvalidScript)
+    {
+        Fixture f(0);
+
+        CanvasAnalyzedScript analyzedScript{ -1, CanvasScriptShape::NoVisual };
+
+        uint32_t valueCount;
+        CanvasTypographyFeatureName* values;
+        Assert::AreEqual(E_INVALIDARG, f.FontFace->GetSupportedTypographicFeatureNames(analyzedScript, &valueCount, &values));
+
+        analyzedScript.ScriptIdentifier = UINT16_MAX + 1;
+        Assert::AreEqual(E_INVALIDARG, f.FontFace->GetSupportedTypographicFeatureNames(analyzedScript, &valueCount, &values));
+    }
+
+    TEST_METHOD_EX(CanvasFontFace_GetSupportedTypographicFeatureNames_CallsThrough)
+    {
+        for (int useLocale = 0; useLocale < 2; useLocale++)
+        {
+            Fixture f(1);
+
+            f.DWriteTextAnalyzer->GetTypographicFeaturesMethod.SetExpectedCalls(2,
+                [&](IDWriteFontFace* fontFace,
+                DWRITE_SCRIPT_ANALYSIS script,
+                WCHAR const* locale,
+                uint32_t maxTagCount,
+                uint32_t* actualTagCount,
+                DWRITE_FONT_FEATURE_TAG* out)
+                {
+                    Assert::AreEqual(static_cast<uint16_t>(123), script.script);
+                    Assert::AreEqual(DWRITE_SCRIPT_SHAPES_NO_VISUAL, script.shapes);
+
+                    if (useLocale == 0)
+                        Assert::AreEqual(L"", locale);
+                    else
+                        Assert::AreEqual(L"xx-yy", locale);
+
+                    *actualTagCount = 2;
+
+                    if (maxTagCount < 2)
+                    {
+                        return E_NOT_SUFFICIENT_BUFFER;
+                    }
+                    else
+                    {
+                        out[0] = DWRITE_FONT_FEATURE_TAG_STYLISTIC_SET_1;
+                        out[1] = DWRITE_FONT_FEATURE_TAG_STYLISTIC_SET_2;
+                        return S_OK;
+                    }
+                });
+
+            CanvasAnalyzedScript analyzedScript{ 123, CanvasScriptShape::NoVisual };
+            uint32_t valueCount;
+            CanvasTypographyFeatureName* values;
+
+            if (useLocale == 0)
+                Assert::AreEqual(S_OK, f.FontFace->GetSupportedTypographicFeatureNames(analyzedScript, &valueCount, &values));
+            else
+                Assert::AreEqual(S_OK, f.FontFace->GetSupportedTypographicFeatureNamesWithLocale(analyzedScript, WinString(L"xx-yy"), &valueCount, &values));
+
+            Assert::AreEqual(2u, valueCount);
+            Assert::AreEqual(CanvasTypographyFeatureName::StylisticSet1, values[0]);
+            Assert::AreEqual(CanvasTypographyFeatureName::StylisticSet2, values[1]);
+        }
+    }
+
+    TEST_METHOD_EX(CanvasFontFace_GetSupportedTypographicFeatureNames_UnknownFeatures)
+    {
+        Fixture f(1);
+
+        f.DWriteTextAnalyzer->GetTypographicFeaturesMethod.SetExpectedCalls(2,
+            [&](IDWriteFontFace* fontFace,
+            DWRITE_SCRIPT_ANALYSIS script,
+            WCHAR const* locale,
+            uint32_t maxTagCount,
+            uint32_t* actualTagCount,
+            DWRITE_FONT_FEATURE_TAG* out)
+            {
+                *actualTagCount = 5;
+                if (maxTagCount < 5)
+                {
+                    return E_NOT_SUFFICIENT_BUFFER;
+                }
+                else
+                {
+                    out[0] = static_cast<DWRITE_FONT_FEATURE_TAG>(0xace01234);
+                    out[1] = DWRITE_FONT_FEATURE_TAG_STYLISTIC_SET_1;
+                    out[2] = static_cast<DWRITE_FONT_FEATURE_TAG>(0xace08888);
+                    out[3] = DWRITE_FONT_FEATURE_TAG_STYLISTIC_SET_2;
+                    out[4] = static_cast<DWRITE_FONT_FEATURE_TAG>(0xace09999);
+                    return S_OK;
+                }
+            });
+
+        CanvasAnalyzedScript analyzedScript{ 1, CanvasScriptShape::Default };
+        uint32_t valueCount;
+        CanvasTypographyFeatureName* values;
+
+        Assert::AreEqual(S_OK, f.FontFace->GetSupportedTypographicFeatureNames(analyzedScript, &valueCount, &values));
+
+        Assert::AreEqual(5u, valueCount);
+        Assert::AreEqual(static_cast<CanvasTypographyFeatureName>(0xace01234), values[0]);
+        Assert::AreEqual(CanvasTypographyFeatureName::StylisticSet1, values[1]);
+        Assert::AreEqual(static_cast<CanvasTypographyFeatureName>(0xace08888), values[2]);
+        Assert::AreEqual(CanvasTypographyFeatureName::StylisticSet2, values[3]);
+        Assert::AreEqual(static_cast<CanvasTypographyFeatureName>(0xace09999), values[4]);
+    }
+
+    TEST_METHOD_EX(CanvasFontFace_GetSupportedTypographicFeatureNames_FontSupportsNoFeatures)
+    {
+        Fixture f(1);
+
+        //
+        // This is extremely unlikely in any real font, but it's a test case.
+        //
+
+        f.DWriteTextAnalyzer->GetTypographicFeaturesMethod.SetExpectedCalls(1,
+            [&](IDWriteFontFace* fontFace,
+            DWRITE_SCRIPT_ANALYSIS script,
+            WCHAR const* locale,
+            uint32_t maxTagCount,
+            uint32_t* actualTagCount,
+            DWRITE_FONT_FEATURE_TAG* out)
+            {
+                *actualTagCount = 0;
+                return S_OK;
+            });
+
+        CanvasAnalyzedScript analyzedScript{ 1, CanvasScriptShape::Default };
+        uint32_t valueCount;
+        CanvasTypographyFeatureName* values;
+
+        Assert::AreEqual(S_OK, f.FontFace->GetSupportedTypographicFeatureNames(analyzedScript, &valueCount, &values));
+
+        Assert::AreEqual(0u, valueCount);
+    }
+
+    TEST_METHOD_EX(CanvasFontFace_GetTypographicFeatureGlyphSupport_NoneTypography_Error)
+    {
+        //
+        // As a convention, this returns an error because other parts in our API fail on None typography,
+        // and because it's impossible to query the underlying font object about None typography.
+        //
+        Fixture f(0);
+
+        CanvasAnalyzedScript analyzedScript{ 1, CanvasScriptShape::Default };
+
+        std::vector<CanvasGlyph> glyphs;
+        glyphs.push_back(CanvasGlyph{ 1, 0, 0, 0 });
+
+        uint32_t valueCount;
+        boolean* values;
+
+        Assert::AreEqual(E_INVALIDARG, f.FontFace->GetTypographicFeatureGlyphSupport(
+            analyzedScript,
+            CanvasTypographyFeatureName::None,
+            static_cast<uint32_t>(glyphs.size()),
+            glyphs.data(),
+            &valueCount,
+            &values));
+    }
+
+    TEST_METHOD_EX(CanvasFontFace_GetTypographicFeatureGlyphSupport_Typical)
+    {
+        for (int useLocale = 0; useLocale < 2; useLocale++)
+        {
+            Fixture f(1);
+
+            f.DWriteTextAnalyzer->CheckTypographicFeatureMethod.SetExpectedCalls(1,
+                [&](IDWriteFontFace* fontFace,
+                    DWRITE_SCRIPT_ANALYSIS script,
+                    wchar_t const* locale,
+                    DWRITE_FONT_FEATURE_TAG dwriteFeatureTag,
+                    UINT32 glyphCount,
+                    UINT16 const* glyphIndices,
+                    UINT8* featureApplies)
+                {
+                    Assert::AreEqual(static_cast<uint16_t>(123), script.script);
+                    Assert::AreEqual(DWRITE_SCRIPT_SHAPES_NO_VISUAL, script.shapes);
+
+                    if (useLocale == 0)
+                        Assert::AreEqual(L"", locale);
+                    else
+                        Assert::AreEqual(L"xx-yy", locale);
+
+                    Assert::AreEqual(DWRITE_FONT_FEATURE_TAG_STYLISTIC_SET_1, dwriteFeatureTag);
+
+                    Assert::AreEqual(3u, glyphCount);
+                    Assert::AreEqual(static_cast<uint16_t>(1), glyphIndices[0]);
+                    Assert::AreEqual(static_cast<uint16_t>(2), glyphIndices[1]);
+                    Assert::AreEqual(static_cast<uint16_t>(3), glyphIndices[2]);
+
+                    featureApplies[0] = 0;
+                    featureApplies[1] = 1;
+                    featureApplies[2] = 0;
+
+                    return S_OK;
+                });
+
+            CanvasAnalyzedScript analyzedScript{ 123, CanvasScriptShape::NoVisual };
+
+            std::vector<CanvasGlyph> glyphs;
+            glyphs.push_back(CanvasGlyph{ 1, 0, 0, 0 });
+            glyphs.push_back(CanvasGlyph{ 2, 0, 0, 0 });
+            glyphs.push_back(CanvasGlyph{ 3, 0, 0, 0 });
+
+            uint32_t valueCount;
+            boolean* values;
+
+            if (useLocale == 0)
+            {
+                Assert::AreEqual(S_OK, f.FontFace->GetTypographicFeatureGlyphSupport(
+                    analyzedScript,
+                    CanvasTypographyFeatureName::StylisticSet1,
+                    static_cast<uint32_t>(glyphs.size()),
+                    glyphs.data(), 
+                    &valueCount, 
+                    &values));
+            }
+            else
+            {
+                Assert::AreEqual(S_OK, f.FontFace->GetTypographicFeatureGlyphSupportWithLocale(
+                    analyzedScript,
+                    CanvasTypographyFeatureName::StylisticSet1,
+                    static_cast<uint32_t>(glyphs.size()),
+                    glyphs.data(), 
+                    WinString(L"xx-yy"),
+                    &valueCount, 
+                    &values));
+            }
+
+
+            Assert::AreEqual(3u, valueCount);
+            Assert::IsFalse(!!values[0]);
+            Assert::IsTrue(!!values[1]);
+            Assert::IsFalse(!!values[2]);
+        }
     }
 };
 
