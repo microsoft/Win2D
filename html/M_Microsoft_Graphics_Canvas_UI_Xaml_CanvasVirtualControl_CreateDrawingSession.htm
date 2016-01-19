@@ -7,4 +7,17 @@
           <a href="P_Microsoft_Graphics_Canvas_UI_Xaml_CanvasRegionsInvalidatedEventArgs_InvalidatedRegions.htm">InvalidatedRegions</a>
           property passed to the <a href="E_Microsoft_Graphics_Canvas_UI_Xaml_CanvasVirtualImageSource_RegionsInvalidated.htm">RegionsInvalidated</a>
           event handler.
-        </p></div><div class="collapsibleAreaRegion" id="seeAlsoSection"><span class="collapsibleRegionTitle" onclick="SectionExpandCollapse('ID3RB')" onkeypress="SectionExpandCollapse_CheckKey('ID3RB', event)" tabindex="0"><img id="ID3RBToggle" class="collapseToggle" src="../icons/SectionExpanded.png" />See Also</span></div><div id="ID3RBSection" class="collapsibleSection"><h4 class="subHeading">Reference</h4><div class="seeAlsoStyle"><a href="T_Microsoft_Graphics_Canvas_UI_Xaml_CanvasVirtualControl.htm">CanvasVirtualControl Class</a></div><div class="seeAlsoStyle"><a href="N_Microsoft_Graphics_Canvas_UI_Xaml.htm">Microsoft.Graphics.Canvas.UI.Xaml Namespace</a></div></div></div></div><div id="pageFooter" class="pageFooter"><p><a href="http://github.com/Microsoft/Win2D/blob/master/LICENSE.txt" target="_blank">Copyright (c) Microsoft Corporation. All rights reserved.</a></p> </div></body></html>
+        </p><p>
+      CreateDrawingSession may be called on any thread, but the returned drawing session must
+      be disposed on the UI thread. If you want to move your drawing work to a different thread, either:
+    </p><ol><li>
+        On an arbitrary non-UI thread:
+        <ul><li>CreateDrawingSession</li><li>Issue drawing calls</li><li><a href="M_Microsoft_Graphics_Canvas_UI_Xaml_CanvasVirtualControl_SuspendDrawingSession.htm">SuspendDrawingSession(CanvasDrawingSession)</a></li></ul></li><li>
+        Back on the UI thread:
+        <ul><li>drawingSession.Dispose()</li></ul></li></ol><p>or:</p><ol><li>
+        On the UI thread:
+        <ul><li>CreateDrawingSession</li><li><a href="M_Microsoft_Graphics_Canvas_UI_Xaml_CanvasVirtualControl_SuspendDrawingSession.htm">SuspendDrawingSession(CanvasDrawingSession)</a></li></ul></li><li>
+        Move to an arbitrary non-UI thread:
+        <ul><li><a href="M_Microsoft_Graphics_Canvas_UI_Xaml_CanvasVirtualControl_ResumeDrawingSession.htm">ResumeDrawingSession(CanvasDrawingSession)</a></li><li>Issue drawing calls</li><li><a href="M_Microsoft_Graphics_Canvas_UI_Xaml_CanvasVirtualControl_SuspendDrawingSession.htm">SuspendDrawingSession(CanvasDrawingSession)</a></li></ul></li><li>
+        Back on the UI thread:
+        <ul><li>drawingSession.Dispose()</li></ul></li></ol></div><div class="collapsibleAreaRegion" id="seeAlsoSection"><span class="collapsibleRegionTitle" onclick="SectionExpandCollapse('ID3RB')" onkeypress="SectionExpandCollapse_CheckKey('ID3RB', event)" tabindex="0"><img id="ID3RBToggle" class="collapseToggle" src="../icons/SectionExpanded.png" />See Also</span></div><div id="ID3RBSection" class="collapsibleSection"><h4 class="subHeading">Reference</h4><div class="seeAlsoStyle"><a href="T_Microsoft_Graphics_Canvas_UI_Xaml_CanvasVirtualControl.htm">CanvasVirtualControl Class</a></div><div class="seeAlsoStyle"><a href="N_Microsoft_Graphics_Canvas_UI_Xaml.htm">Microsoft.Graphics.Canvas.UI.Xaml Namespace</a></div></div></div></div><div id="pageFooter" class="pageFooter"><p><a href="http://github.com/Microsoft/Win2D/blob/master/LICENSE.txt" target="_blank">Copyright (c) Microsoft Corporation. All rights reserved.</a></p> </div></body></html>
