@@ -46,6 +46,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         ComPtr<IDWriteFontCollection> GetFontCollectionFromUri(WinString const& uri);
 
+        ComPtr<IDWriteFontCollection> GetFontCollectionFromUri(IUriRuntimeClass* uri);
+
         void ValidateUri(WinString const& uriString);
 
         ComPtr<IDWriteFactory> const& GetSharedFactory();
@@ -58,6 +60,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         ComPtr<IDWriteFactory> const& GetIsolatedFactory();
 
         WinString GetAbsolutePathFromUri(WinString const& uriString);
+
+        WinString GetAbsolutePathFromUri(IUriRuntimeClass* uri);
+
+        ComPtr<IDWriteFontCollection> GetFontCollectionFromPath(WinString& path);
 
     };
 }}}}}

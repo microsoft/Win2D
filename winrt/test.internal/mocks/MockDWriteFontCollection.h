@@ -48,11 +48,7 @@ namespace canvas
         }
 
 #if WINVER > _WIN32_WINNT_WINBLUE
-        IFACEMETHODIMP GetFontSet(IDWriteFontSet**) override
-        {
-            Assert::Fail(L"Unexpected call to GetFontSet");
-            return E_NOTIMPL;
-        }
+        MOCK_METHOD1(GetFontSet, HRESULT(IDWriteFontSet**));
 
         IFACEMETHODIMP GetFontFamily(uint32_t, IDWriteFontFamily1**) override
         {

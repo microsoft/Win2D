@@ -131,5 +131,28 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <remarks>All values are returned regardless of language, including all localized names.</remarks>
     </member>
     
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasFontSet.#ctor(System.Uri)">
+      <summary>Initializes a new instance of the CanvasFontSet class from an application URI.</summary>
+      <remarks>
+        <p>
+          The passed-in URI must be a valid application URI, which begins with
+          either <tt>ms-appx://</tt> or <tt>ms-appdata://</tt>.
+          This allows apps to specify a font file- for example, a TTF file, that's 
+          distributed with the application.
+        </p>
+        <p>
+          The resulting CanvasFontSet contains font faces from the specified URI, and
+          no other fonts.
+        </p>
+        <p>
+          Often, a single font file contains not just one font face, but several. For
+          example, the built-in system font Gabriola contains the font faces "Regular",
+          "Oblique", and "Bold", all within the file "Gabriola.ttf". For this reason
+          a URI is used to produce a CanvasFontSet, rather than a single 
+          CanvasFontFace.
+        </p>
+      </remarks>
+    </member>
+    
   </members>
 </doc>

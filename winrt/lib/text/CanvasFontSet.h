@@ -26,6 +26,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 #if WINVER <= _WIN32_WINNT_WINBLUE
         std::vector<ComPtr<IDWriteFont>> m_flatCollection;
 #endif
+        std::shared_ptr<CustomFontManager> m_customFontManager;
 
     public:
 
@@ -77,18 +78,27 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 #endif
     };
 
-
     //
-    // CanvasFontSetStatics
+    // CanvasFontSetFactory
     //
 
-    class CanvasFontSetStatics
-        : public ActivationFactory<ICanvasFontSetStatics>
-        , private LifespanTracker<CanvasFontSetStatics>
+    class CanvasFontSetFactory
+        : public ActivationFactory<ICanvasFontSetFactory, ICanvasFontSetStatics>
+        , private LifespanTracker<CanvasFontSetFactory>
     {
         InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_Text_CanvasFontSet, BaseTrust);
 
     public:
+        //
+        // ICanvasFontSetFactory
+        //
+        IFACEMETHOD(Create)(
+            IUriRuntimeClass* uri,
+            ICanvasFontSet** fontSet);
+
+        //
+        // ICanvasFontSetStatics
+        //
         IFACEMETHOD(GetSystemFontSet)(
             ICanvasFontSet** systemFontSet);
     };

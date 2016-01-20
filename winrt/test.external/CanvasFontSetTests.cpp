@@ -48,4 +48,35 @@ TEST_CLASS(CanvasFontSetTests)
         auto wrappedFontCollection = GetWrappedResource<DWriteFontSetResourceType>(canvasFontSet);
         Assert::AreEqual<void*>(fontSetResource.Get(), wrappedFontCollection.Get());
     }
+
+    TEST_METHOD(CanvasFontSet_CreateFontSetFromUri)
+    {
+        auto fontSet = ref new CanvasFontSet(ref new Uri("ms-appx:///Symbols.ttf"));
+        Assert::IsNotNull(fontSet);
+
+        //
+        // We could normally use the IsSymbol property on the font set to sanity check this. 
+        // Interestingly enough this font is not actually flagged as a symbol font. So, we 
+        // just use the family name.
+        //
+        auto face = fontSet->Fonts->GetAt(0);
+
+        auto familyNames = face->GetInformationalStrings(CanvasFontInformation::Win32FamilyNames);
+        Assert::AreEqual("Symbols", familyNames->Lookup("en-us"));
+    }
+
+    TEST_METHOD(CanvasFontSet_CreateFontSetFromUri_InvalidArgs)
+    {
+        ExpectCOMException(HRESULT_FROM_WIN32(ERROR_FILE_NOT_FOUND),
+            [&]
+            {
+                ref new CanvasFontSet(ref new Uri("ms-appx:///not_a_font"));
+            });
+
+        Assert::ExpectException<Platform::InvalidArgumentException^>(
+            [&]
+            {
+                ref new CanvasFontSet(ref new Uri("http://not_a_valid_application_uri.msdn.com"));
+            });
+    }
 };

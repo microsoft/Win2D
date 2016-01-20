@@ -173,7 +173,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="P:Microsoft.Graphics.Canvas.Text.CanvasFontFace.FaceNames">
       <summary>Gets a map of localized strings that contain the face names for the font (for example, Regular or Bold).</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasFontFace.FamilyNames">
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasFontFace.FamilyNames" Win10="true">
       <summary>Gets a map of localized strings that contain the family name for the font (for example, Arial, Segoe UI, or Comic Sans MS).</summary>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Text.CanvasFontFace.FileFormatType">

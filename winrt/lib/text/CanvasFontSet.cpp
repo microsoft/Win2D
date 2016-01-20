@@ -14,6 +14,36 @@ using namespace ABI::Microsoft::Graphics::Canvas::Text;
 //
 // CanvasFontSetFactory implementation
 //
+IFACEMETHODIMP CanvasFontSetFactory::Create(
+    IUriRuntimeClass* uri,
+    ICanvasFontSet** fontSet)
+{
+    return ExceptionBoundary(
+        [&]
+        {
+            CheckInPointer(uri);
+            CheckAndClearOutPointer(fontSet);
+
+            auto customFontManager = CustomFontManager::GetInstance();
+
+            auto fontCollection = customFontManager->GetFontCollectionFromUri(uri);
+
+            if (!fontCollection)
+                ThrowHR(E_INVALIDARG);
+
+            ComPtr<DWriteFontSetType> fontResource;
+#if WINVER > _WIN32_WINNT_WINBLUE
+            ThrowIfFailed(As<IDWriteFontCollection1>(fontCollection)->GetFontSet(&fontResource));
+#else
+            fontResource = fontCollection;
+#endif
+            auto newFontSet = Make<CanvasFontSet>(fontResource.Get());
+            CheckMakeResult(newFontSet);
+
+            ThrowIfFailed(newFontSet.CopyTo(fontSet));
+        });
+}
+
 
 #if WINVER > _WIN32_WINNT_WINBLUE
 ComPtr<IDWriteFontSet> GetLocalFonts(ComPtr<IDWriteFontSet> const& fonts)
@@ -42,7 +72,7 @@ ComPtr<IDWriteFontSet> GetLocalFonts(ComPtr<IDWriteFontSet> const& fonts)
 }
 #endif
 
-IFACEMETHODIMP CanvasFontSetStatics::GetSystemFontSet(
+IFACEMETHODIMP CanvasFontSetFactory::GetSystemFontSet(
     ICanvasFontSet** fontSet)
 {
     return ExceptionBoundary(
@@ -70,6 +100,7 @@ IFACEMETHODIMP CanvasFontSetStatics::GetSystemFontSet(
 
 CanvasFontSet::CanvasFontSet(DWriteFontSetType* dwriteFontSet)
     : ResourceWrapper(dwriteFontSet)
+    , m_customFontManager(CustomFontManager::GetInstance())
 {
 }
 
@@ -356,4 +387,4 @@ IFACEMETHODIMP CanvasFontSet::GetPropertyValues(
 
 #endif
 
-ActivatableClassWithFactory(CanvasFontSet, CanvasFontSetStatics);
+ActivatableClassWithFactory(CanvasFontSet, CanvasFontSetFactory);

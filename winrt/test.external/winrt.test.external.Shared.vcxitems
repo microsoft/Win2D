@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="Globals">
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
@@ -99,5 +99,6 @@
     <Image Include="$(MSBuildThisFileDirectory)Images\x_DXT4.DDS" />
     <Image Include="$(MSBuildThisFileDirectory)Images\x_DXT5.DDS" />
     <Image Include="$(MSBuildThisFileDirectory)Images\x_R8G8B8A8_UNORM.DDS" />
+    <Font Include="$(AssetDir)Symbols.ttf" />
   </ItemGroup>
 </Project>

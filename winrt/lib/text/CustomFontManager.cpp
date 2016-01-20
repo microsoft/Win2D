@@ -107,10 +107,15 @@ WinString CustomFontManager::GetAbsolutePathFromUri(WinString const& uriString)
     ComPtr<IUriRuntimeClass> uri;
     ThrowIfFailed(m_uriFactory->CreateWithRelativeUri(WinString(L"ms-appx://"), uriString, &uri));
 
+    return GetAbsolutePathFromUri(uri.Get());
+}
+
+WinString CustomFontManager::GetAbsolutePathFromUri(IUriRuntimeClass* uri)
+{
     auto storageFileStatics = m_adapter->GetStorageFileStatics();
     ComPtr<IAsyncOperation<StorageFile*>> operation;
 
-    HRESULT hr = storageFileStatics->GetFileFromApplicationUriAsync(uri.Get(), &operation);
+    HRESULT hr = storageFileStatics->GetFileFromApplicationUriAsync(uri, &operation);
     if (FAILED(hr))
     {
         ThrowHR(hr, HStringReference(Strings::InvalidFontFamilyUri).Get());
@@ -153,6 +158,18 @@ ComPtr<IDWriteFontCollection> CustomFontManager::GetFontCollectionFromUri(WinStr
 
     auto path = GetAbsolutePathFromUri(uri);
 
+    return GetFontCollectionFromPath(path);
+}
+
+ComPtr<IDWriteFontCollection> CustomFontManager::GetFontCollectionFromUri(IUriRuntimeClass* uri)
+{
+    auto path = GetAbsolutePathFromUri(uri);
+
+    return GetFontCollectionFromPath(path);
+}
+
+ComPtr<IDWriteFontCollection> CustomFontManager::GetFontCollectionFromPath(WinString& path)
+{
     auto pathBegin = begin(path);
     auto pathEnd = end(path);
 

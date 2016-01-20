@@ -9,9 +9,11 @@
 #include "mocks/MockDWriteFontFamily.h"
 #include "mocks/MockDWriteFontSet.h"
 #include "mocks/MockDWriteFontCollection.h"
+#include "mocks/MockDWriteFontFile.h"
 #include "stubs/LocalizedFontNames.h"
 #include "stubs/StubDWriteFontSetBuilder.h"
 #include "stubs/StubCanvasTextLayoutAdapter.h"
+#include "stubs/StubUri.h"
 #include <lib/text/CanvasFontFace.h>
 #include <lib/text/CanvasFontSet.h>
 
@@ -226,8 +228,8 @@ TEST_CLASS(CanvasFontSetTests)
         int i{};
         boolean b{};
 
-        auto statics = Make<CanvasFontSetStatics>();
-        Assert::AreEqual(E_INVALIDARG, statics->GetSystemFontSet(nullptr));
+        auto factory = Make<CanvasFontSetFactory>();
+        Assert::AreEqual(E_INVALIDARG, factory->GetSystemFontSet(nullptr));
 
         auto canvasFontSet = CreateSimpleTestFontSet();
         Assert::AreEqual(E_INVALIDARG, canvasFontSet->TryFindFontFace(nullptr, &i, &b));
@@ -328,9 +330,9 @@ TEST_CLASS(CanvasFontSetTests)
     {
         SystemFontSetFixture f;
 
-        auto statics = Make<CanvasFontSetStatics>();
+        auto factory = Make<CanvasFontSetFactory>();
         ComPtr<ICanvasFontSet> actualCanvasFontSet;
-        Assert::AreEqual(S_OK, statics->GetSystemFontSet(&actualCanvasFontSet));
+        Assert::AreEqual(S_OK, factory->GetSystemFontSet(&actualCanvasFontSet));
 
 #if WINVER > _WIN32_WINNT_WINBLUE
         auto actualFontCollection = GetWrappedResource<IDWriteFontSet>(actualCanvasFontSet);
@@ -361,9 +363,9 @@ TEST_CLASS(CanvasFontSetTests)
             //
             static_cast<StubDWriteFontFaceReference*>(f.m_systemFontSet->GetFontFaceReferenceInternal(1).Get())->SetLocality(locality);
 
-            auto statics = Make<CanvasFontSetStatics>();
+            auto factory = Make<CanvasFontSetFactory>();
             ComPtr<ICanvasFontSet> actualCanvasFontSet;
-            Assert::AreEqual(S_OK, statics->GetSystemFontSet(&actualCanvasFontSet));
+            Assert::AreEqual(S_OK, factory->GetSystemFontSet(&actualCanvasFontSet));
 
             auto actualFontCollection = GetWrappedResource<IDWriteFontSet>(actualCanvasFontSet);
             ComPtr<StubDWriteFontSet> actualStubFontSet = static_cast<StubDWriteFontSet*>(actualFontCollection.Get());
@@ -608,4 +610,126 @@ TEST_CLASS(CanvasFontSetTests)
         AssertStringsEqual(sc_testProperties[1].Win2DProperty.Value, valueElements[1].Value);
     }
 #endif
+    
+    struct CustomFontFixture
+    {
+        std::shared_ptr<StubCanvasTextLayoutAdapter> m_adapter;
+
+#if WINVER > _WIN32_WINNT_WINBLUE
+        ComPtr<MockDWriteFontSet> m_mockDWriteFontSet;
+#endif
+
+        CustomFontFixture()
+            : m_adapter(std::make_shared<StubCanvasTextLayoutAdapter>())
+        {
+            CustomFontManagerAdapter::SetInstance(m_adapter);
+
+            m_adapter->GetMockDWriteFactory()->RegisterFontCollectionLoaderMethod.AllowAnyCall();
+
+#if WINVER > _WIN32_WINNT_WINBLUE
+            m_mockDWriteFontSet = Make<MockDWriteFontSet>();
+#endif
+        }
+
+        ComPtr<DWriteFontSetType> ExpectCreateCustomFontCollection(std::wstring expectedFilename)
+        {
+            auto collection = Make<MockDWriteFontCollection>();
+            auto fontFile = Make<MockDWriteFontFile>();
+
+            m_adapter->GetMockDWriteFactory()->CreateCustomFontCollectionMethod.SetExpectedCalls(1,
+                [=] (IDWriteFontCollectionLoader* loader, void const* key, uint32_t keySize, IDWriteFontCollection** outCollection)
+                {
+                    std::wstring actualFilename(static_cast<wchar_t const*>(key), keySize / 2);
+                    Assert::AreEqual(expectedFilename, actualFilename);
+
+                    //
+                    // DWriteFactory will call methods on the loader to try
+                    // and load the one font file.  We imitate that behavior here.
+                    //
+
+                    ComPtr<IDWriteFontFileEnumerator> enumerator;
+                    ThrowIfFailed(loader->CreateEnumeratorFromKey(
+                        m_adapter->GetMockDWriteFactory().Get(),
+                        key,
+                        keySize,
+                        &enumerator));
+
+                    BOOL hasFile = FALSE;
+                    ThrowIfFailed(enumerator->MoveNext(&hasFile));
+
+                    ComPtr<IDWriteFontFile> currentFile;
+                    ThrowIfFailed(enumerator->GetCurrentFontFile(&currentFile));
+
+                    ThrowIfFailed(enumerator->MoveNext(&hasFile));
+
+                    return collection.CopyTo(outCollection);
+                });
+
+            m_adapter->GetMockDWriteFactory()->CreateFontFileReferenceMethod.SetExpectedCalls(1,
+                [=] (wchar_t const* filePath, FILETIME const* lastWriteTime, IDWriteFontFile** outFontFile)
+                {
+                    Assert::AreEqual(expectedFilename.c_str(), filePath);
+                    Assert::IsNull(lastWriteTime);
+                    return fontFile.CopyTo(outFontFile);
+                });
+
+#if WINVER > _WIN32_WINNT_WINBLUE
+            collection->GetFontSetMethod.SetExpectedCalls(1,
+                [&](IDWriteFontSet** fontSet)
+                {
+                    ThrowIfFailed(m_mockDWriteFontSet.CopyTo(fontSet));
+                    return S_OK;
+                });
+            return m_mockDWriteFontSet;
+#else
+            return collection;
+#endif
+        }
+    };
+
+    TEST_METHOD_EX(CanvasFontSet_CreateFromUri)
+    {
+        CustomFontFixture f;
+
+        WinString somePath(L"ms-appx:///any_uri");
+
+        auto expectedDWriteResource = f.ExpectCreateCustomFontCollection(StubStorageFileStatics::GetFakePath(somePath));
+
+        auto factory = Make<CanvasFontSetFactory>();
+        ComPtr<ICanvasFontSet> fontSet;
+
+        auto uri = Make<StubUri>(somePath);
+        Assert::AreEqual(S_OK, factory->Create(uri.Get(), &fontSet));
+
+        auto dwriteResource = GetWrappedResource<DWriteFontSetType>(fontSet.Get());
+        Assert::IsTrue(IsSameInstance(expectedDWriteResource.Get(), dwriteResource.Get()));
+    }
+
+    TEST_METHOD_EX(CanvasFontSet_CreateFromUri_InvalidArg)
+    {
+        auto factory = Make<CanvasFontSetFactory>();
+        ComPtr<ICanvasFontSet> fontSet;
+
+        Assert::AreEqual(E_INVALIDARG, factory->Create(nullptr, &fontSet));
+    }
+
+    TEST_METHOD_EX(CanvasFontSet_CreateFromUri_WhenGetFileFromApplicationUriFails_HelpfulErrorMessageIsThrown)
+    {
+        auto adapter = std::make_shared<StubCanvasTextLayoutAdapter>();
+
+        CustomFontManagerAdapter::SetInstance(adapter);
+
+        adapter->StorageFileStatics->GetFileFromApplicationUriAsyncMethod.SetExpectedCalls(1,
+            [](IUriRuntimeClass*, IAsyncOperation<StorageFile*>**)
+            {
+                // Pretend that this was a valid-constructed URI, but it's not an application URI.
+                return E_INVALIDARG;
+            });
+
+        auto factory = Make<CanvasFontSetFactory>();
+        ComPtr<ICanvasFontSet> fontSet;
+        auto uri = Make<StubUri>(nullptr);
+        Assert::AreEqual(E_INVALIDARG, factory->Create(uri.Get(), &fontSet));
+        ValidateStoredErrorState(E_INVALIDARG, Strings::InvalidFontFamilyUri);
+    }
 };

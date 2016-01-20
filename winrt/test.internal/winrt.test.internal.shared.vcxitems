@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="Globals">
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
@@ -150,6 +150,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubSurfaceImageSourceFactory.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubSwapChainPanel.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubUserControl.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubUri.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\SwitchableTestBrushFixture.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\TestBitmapAdapter.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\TestDeviceAdapter.h" />

@@ -104,6 +104,14 @@ namespace Microsoft.Graphics.Canvas.Text
         // We don't expose a dedicated object for font locality.
 
     }
+
+    [version(VERSION), uuid(3C9C9BDA-70F9-4FF9-AAB2-3B42923286EE), exclusiveto(CanvasFontSet)]
+    interface ICanvasFontSetFactory : IInspectable
+    {
+        HRESULT Create(
+            [in] Windows.Foundation.Uri* uri,
+            [out, retval] CanvasFontSet** fontSet);
+    };
         
     [version(VERSION), uuid(5F4275CE-BCFA-48C5-9E67-FBE9866D4924), exclusiveto(CanvasFontSet)]
     interface ICanvasFontSetStatics : IInspectable
@@ -111,7 +119,7 @@ namespace Microsoft.Graphics.Canvas.Text
         HRESULT GetSystemFontSet([out, retval] CanvasFontSet** fontSet);
     }
 
-    [version(VERSION), activatable(VERSION), static(ICanvasFontSetStatics, VERSION)]
+    [version(VERSION), activatable(VERSION), activatable(ICanvasFontSetFactory, VERSION), static(ICanvasFontSetStatics, VERSION)]
     runtimeclass CanvasFontSet
     {
         [default] interface ICanvasFontSet;
