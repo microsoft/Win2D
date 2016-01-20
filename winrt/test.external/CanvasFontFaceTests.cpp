@@ -265,4 +265,23 @@ TEST_CLASS(CanvasFontFaceTests)
             Assert::AreEqual(testCase.ExpectSupport, support[0]);
         }
     }
+
+#if WINVER > _WIN32_WINNT_WINBLUE
+    TEST_METHOD(CanvasFontFace_FontFacePassedToDrawGlyphRun_PresenceInSystemFontSet)
+    {
+        CanvasDevice^ device = ref new CanvasDevice();
+        CanvasTextFormat^ format = ref new CanvasTextFormat();
+        format->FontFamily = L"Arial";
+        auto layout = ref new CanvasTextLayout(device, L"123", format, 9999.0f, 0);
+
+        auto listBuilder = ref new GlyphRunListBuilder();
+        layout->DrawToTextRenderer(listBuilder, 0, 0);
+        auto fontFace = listBuilder->GetGlyphRun(0)->GetFontFace();
+
+        int index;
+        auto systemFonts = CanvasFontSet::GetSystemFontSet();
+        bool found = systemFonts->TryFindFontFace(fontFace, &index);
+        Assert::IsTrue(found);
+    }
+#endif
 };

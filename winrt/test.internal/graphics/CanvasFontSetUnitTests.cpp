@@ -225,16 +225,10 @@ TEST_CLASS(CanvasFontSetTests)
 
     TEST_METHOD_EX(CanvasFontSet_NullArgs)
     {
-        int i{};
-        boolean b{};
-
         auto factory = Make<CanvasFontSetFactory>();
         Assert::AreEqual(E_INVALIDARG, factory->GetSystemFontSet(nullptr));
 
         auto canvasFontSet = CreateSimpleTestFontSet();
-        Assert::AreEqual(E_INVALIDARG, canvasFontSet->TryFindFontFace(nullptr, &i, &b));
-        Assert::AreEqual(E_INVALIDARG, canvasFontSet->TryFindFontFace(reinterpret_cast<ICanvasFontFace*>(0x1234), nullptr, &b));
-        Assert::AreEqual(E_INVALIDARG, canvasFontSet->TryFindFontFace(reinterpret_cast<ICanvasFontFace*>(0x1234), &i, nullptr));
 
         Assert::AreEqual(E_INVALIDARG, canvasFontSet->get_Fonts(nullptr));
 
@@ -242,7 +236,12 @@ TEST_CLASS(CanvasFontSetTests)
         CanvasFontProperty fp{};
         CanvasFontProperty* fpArray{};
         uint32_t u{};
+        int i{};
+        boolean b{};
 
+        Assert::AreEqual(E_INVALIDARG, canvasFontSet->TryFindFontFace(nullptr, &i, &b));
+        Assert::AreEqual(E_INVALIDARG, canvasFontSet->TryFindFontFace(reinterpret_cast<ICanvasFontFace*>(0x1234), nullptr, &b));
+        Assert::AreEqual(E_INVALIDARG, canvasFontSet->TryFindFontFace(reinterpret_cast<ICanvasFontFace*>(0x1234), &i, nullptr));
         Assert::AreEqual(E_INVALIDARG, canvasFontSet->GetMatchingFontsFromProperties(1, &fp, nullptr));
         Assert::AreEqual(E_INVALIDARG, canvasFontSet->GetMatchingFontsFromWwsFamily(WinString(L""), FontWeight{ 100 }, FontStretch_Normal, FontStyle_Normal, nullptr));
         Assert::AreEqual(E_INVALIDARG, canvasFontSet->CountFontsMatchingProperty(fp, nullptr));
@@ -256,8 +255,6 @@ TEST_CLASS(CanvasFontSetTests)
 
     TEST_METHOD_EX(CanvasFontSet_Closed)
     {
-        int i{};
-        boolean b{};
         ComPtr<ICanvasFontSet> fontSet;
         ComPtr<IVectorView<CanvasFontFace*>> vector;
         ComPtr<IMapView<HSTRING, HSTRING>> map;
@@ -266,14 +263,15 @@ TEST_CLASS(CanvasFontSetTests)
 
         Assert::AreEqual(S_OK, canvasFontSet->Close());
 
-        Assert::AreEqual(RO_E_CLOSED, canvasFontSet->TryFindFontFace(reinterpret_cast<ICanvasFontFace*>(0x1234), &i, &b));
-
         Assert::AreEqual(RO_E_CLOSED, canvasFontSet->get_Fonts(&vector));
 
 #if WINVER > _WIN32_WINNT_WINBLUE
         CanvasFontProperty fp{};
         CanvasFontProperty* fpArray{};
         uint32_t u{};
+        int i{};
+        boolean b{};
+        Assert::AreEqual(RO_E_CLOSED, canvasFontSet->TryFindFontFace(reinterpret_cast<ICanvasFontFace*>(0x1234), &i, &b));
         Assert::AreEqual(RO_E_CLOSED, canvasFontSet->GetMatchingFontsFromProperties(1, &fp, &fontSet));
         Assert::AreEqual(RO_E_CLOSED, canvasFontSet->GetMatchingFontsFromWwsFamily(WinString(L""), FontWeight{ 100 }, FontStretch_Normal, FontStyle_Normal, &fontSet));
         Assert::AreEqual(RO_E_CLOSED, canvasFontSet->CountFontsMatchingProperty(fp, &u));
@@ -375,9 +373,8 @@ TEST_CLASS(CanvasFontSetTests)
             Assert::IsTrue(IsSameInstance(f.m_systemFontSet->GetFontFaceReferenceInternal(2).Get(), actualStubFontSet->GetFontFaceReferenceInternal(1).Get()));
         }
     }
-#endif
 
-    TEST_METHOD_EX(CanvasFontSet_FindFontFace)
+    TEST_METHOD_EX(CanvasFontSet_TryFindFontFace)
     {
         FontSetFixture f;
         auto thirdFontFace = Make<CanvasFontFace>(f.DWriteFontFaceResources[2].Get());
@@ -393,7 +390,7 @@ TEST_CLASS(CanvasFontSetTests)
         Assert::AreEqual(2, value);
     }
 
-    TEST_METHOD_EX(CanvasFontSet_FindFontFace_NotThere)
+    TEST_METHOD_EX(CanvasFontSet_TryFindFontFace_NotThere)
     {
         FontSetFixture f;
 
@@ -408,6 +405,7 @@ TEST_CLASS(CanvasFontSetTests)
         Assert::AreEqual(S_OK, canvasFontSet->TryFindFontFace(someFontFace.Get(), &value, &succeeded));
         Assert::IsFalse(!!succeeded);
     }
+#endif
 
     TEST_METHOD_EX(CanvasFontSet_get_Fonts)
     {

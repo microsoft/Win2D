@@ -33,11 +33,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         CanvasFontSet(
             DWriteFontSetType* dwriteFontSet);
 
-        IFACEMETHOD(TryFindFontFace)(ICanvasFontFace* fontFace, int* index, boolean* succeeded) override;
-
         IFACEMETHOD(get_Fonts)(IVectorView<CanvasFontFace*>** value) override;
 
 #if WINVER > _WIN32_WINNT_WINBLUE
+
+        IFACEMETHOD(TryFindFontFace)(ICanvasFontFace* fontFace, int* index, boolean* succeeded) override;
 
         IFACEMETHOD(GetMatchingFontsFromProperties)(
             UINT32 propertyCount,

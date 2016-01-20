@@ -46,14 +46,15 @@ namespace Microsoft.Graphics.Canvas.Text
     interface ICanvasFontSet : IInspectable
         requires Windows.Foundation.IClosable
     {
+        [propget] HRESULT Fonts([out, retval] Windows.Foundation.Collections.IVectorView<CanvasFontFace*>** value);
+
+#if WINVER > _WIN32_WINNT_WINBLUE
+
         // Returns the index of a font face, and whether it was found in the set.
         HRESULT TryFindFontFace(
             [in] CanvasFontFace* fontFace, 
             [out] int* index, 
             [out, retval] boolean* succeeded);
-
-        [propget] HRESULT Fonts([out, retval] Windows.Foundation.Collections.IVectorView<CanvasFontFace*>** value);
-#if WINVER > _WIN32_WINNT_WINBLUE
 
         [overload("GetMatchingFonts")]
         HRESULT GetMatchingFontsFromProperties(

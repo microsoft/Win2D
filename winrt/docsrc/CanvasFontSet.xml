@@ -85,7 +85,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         </p>
       </remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasFontSet.TryFindFontFace(Microsoft.Graphics.Canvas.Text.CanvasFontFace,System.Int32@)">
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasFontSet.TryFindFontFace(Microsoft.Graphics.Canvas.Text.CanvasFontFace,System.Int32@)" Win10="true">
       <summary>Gets the index of the matching font face in the font set, with the same file, face index, and simulations.</summary>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Text.CanvasFontSet.Dispose">
