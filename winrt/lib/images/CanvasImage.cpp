@@ -54,10 +54,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         Numerics::Matrix3x2 const* transform,
         Rect* bounds)
     {
-        static Numerics::Matrix3x2 identity = { 1, 0, 0, 1, 0, 0 };
-
         if (!transform)
-            transform = &identity;
+            transform = &Identity3x2();
 
         return ExceptionBoundary(
             [&]

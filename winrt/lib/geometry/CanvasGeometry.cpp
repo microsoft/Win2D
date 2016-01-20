@@ -18,8 +18,6 @@
 using namespace ABI::Microsoft::Graphics::Canvas::Geometry;
 using namespace ABI::Microsoft::Graphics::Canvas;
 
-static const Matrix3x2 Identity3x2 = { 1, 0, 0, 1, 0, 0 };
-
 IFACEMETHODIMP CanvasGeometryFactory::CreateRectangle(
     ICanvasResourceCreator* resourceCreator,
     Rect rect,
@@ -258,7 +256,7 @@ IFACEMETHODIMP CanvasGeometryFactory::CreateInk(
     IIterable<InkStroke*>* inkStrokes,
     ICanvasGeometry** geometry)
 {
-    return CreateInkWithTransformAndFlatteningTolerance(resourceCreator, inkStrokes, Identity3x2, D2D1_DEFAULT_FLATTENING_TOLERANCE, geometry);
+    return CreateInkWithTransformAndFlatteningTolerance(resourceCreator, inkStrokes, Identity3x2(), D2D1_DEFAULT_FLATTENING_TOLERANCE, geometry);
 }
 
 IFACEMETHODIMP CanvasGeometryFactory::CreateInkWithTransformAndFlatteningTolerance(
@@ -288,7 +286,7 @@ IFACEMETHODIMP CanvasGeometryFactory::ComputeFlatteningTolerance(
     float maximumZoomFactor,
     float* flatteningTolerance)
 {
-    return ComputeFlatteningToleranceWithTransform(dpi, maximumZoomFactor, Identity3x2, flatteningTolerance);
+    return ComputeFlatteningToleranceWithTransform(dpi, maximumZoomFactor, Identity3x2(), flatteningTolerance);
 }
 
 // Ideally we would just call D2D1::ComputeFlatteningTolerance here, which internally uses
@@ -490,7 +488,7 @@ IFACEMETHODIMP CanvasGeometry::Outline(
     ICanvasGeometry** geometry)
 {
     return OutlineWithTransformAndFlatteningTolerance(
-        Identity3x2,
+        Identity3x2(),
         D2D1_DEFAULT_FLATTENING_TOLERANCE,
         geometry);
 }
@@ -527,7 +525,7 @@ IFACEMETHODIMP CanvasGeometry::Simplify(
 {
     return SimplifyWithTransformAndFlatteningTolerance(
         simplification,
-        Identity3x2,
+        Identity3x2(),
         D2D1_DEFAULT_FLATTENING_TOLERANCE,
         geometry);
 }
@@ -592,7 +590,7 @@ IFACEMETHODIMP CanvasGeometry::CompareWith(
 {
     return CompareWithUsingTransformAndFlatteningTolerance(
         otherGeometry,
-        Identity3x2,
+        Identity3x2(),
         D2D1_DEFAULT_FLATTENING_TOLERANCE,
         relation);
 }
@@ -637,7 +635,7 @@ IFACEMETHODIMP CanvasGeometry::ComputeArea(
     float* area)
 {
     return ComputeAreaWithTransformAndFlatteningTolerance(
-        Identity3x2,
+        Identity3x2(),
         D2D1_DEFAULT_FLATTENING_TOLERANCE,
         area);
 }
@@ -669,7 +667,7 @@ IFACEMETHODIMP CanvasGeometry::ComputePathLength(
     float* length)
 {
     return ComputePathLengthWithTransformAndFlatteningTolerance(
-        Identity3x2,
+        Identity3x2(),
         D2D1_DEFAULT_FLATTENING_TOLERANCE,
         length);
 }
@@ -775,7 +773,7 @@ IFACEMETHODIMP CanvasGeometry::FillContainsPoint(
 {
     return FillContainsPointWithTransformAndFlatteningTolerance(
         point,
-        Identity3x2,
+        Identity3x2(),
         D2D1_DEFAULT_FLATTENING_TOLERANCE,
         containsPoint);
 }
@@ -808,7 +806,7 @@ IFACEMETHODIMP CanvasGeometry::FillContainsPointWithTransformAndFlatteningTolera
 IFACEMETHODIMP CanvasGeometry::ComputeBounds(
     Rect* bounds)
 {
-    return ComputeBoundsWithTransform(Identity3x2, bounds);
+    return ComputeBoundsWithTransform(Identity3x2(), bounds);
 }
 
 IFACEMETHODIMP CanvasGeometry::ComputeBoundsWithTransform(
@@ -966,7 +964,7 @@ IFACEMETHODIMP CanvasGeometry::Tessellate(
     CanvasTriangleVertices** triangles)
 {
     return TessellateWithTransformAndFlatteningTolerance(
-        Identity3x2,
+        Identity3x2(),
         D2D1_DEFAULT_FLATTENING_TOLERANCE,
         trianglesCount,
         triangles);

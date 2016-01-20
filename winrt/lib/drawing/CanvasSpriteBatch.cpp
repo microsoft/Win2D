@@ -39,7 +39,6 @@ IFACEMETHODIMP CanvasSpriteBatchStatics::IsSupported(ICanvasDevice* device, bool
 //
 
 
-Matrix3x2 const CanvasSpriteBatch::IDENTITY_3X2{ 1, 0, 0, 1, 0, 0 };
 Vector4 const CanvasSpriteBatch::DEFAULT_TINT{ 1.0f, 1.0f, 1.0f, 1.0f };
 
 

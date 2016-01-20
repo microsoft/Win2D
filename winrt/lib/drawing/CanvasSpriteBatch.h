@@ -30,8 +30,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         D2D1_SPRITE_OPTIONS m_spriteOptions;
         D2D1_UNIT_MODE m_unitMode;
         
-        static Matrix3x2 const IDENTITY_3X2;
-
         struct Sprite
         {
             ComPtr<ID2D1Bitmap> Bitmap;
@@ -59,7 +57,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 D2D1_RECT_F const& destinationRect,
                 D2D1_RECT_U const& sourceRect,
                 Vector4 const& tint)
-                : Sprite(std::move(bitmap), destinationRect, sourceRect, tint, IDENTITY_3X2)
+                : Sprite(std::move(bitmap), destinationRect, sourceRect, tint, Identity3x2())
             {
             }
         };

@@ -269,8 +269,7 @@ IFACEMETHODIMP CanvasGradientMesh::GetBounds(
     ICanvasResourceCreator* resourceCreator,
     Rect* bounds)
 {
-    static Numerics::Matrix3x2 identity = { 1, 0, 0, 1, 0, 0 };
-    return GetBoundsWithTransform(resourceCreator, identity, bounds);
+    return GetBoundsWithTransform(resourceCreator, Identity3x2(), bounds);
 }
 
 IFACEMETHODIMP CanvasGradientMesh::GetBoundsWithTransform(

@@ -39,4 +39,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         };
     }
 
+
+    inline Numerics::Matrix3x2 const& Identity3x2()
+    {
+        static Numerics::Matrix3x2 identity{ 1, 0, 0, 1, 0, 0 };
+        return identity;
+    }
+
 }}}}
