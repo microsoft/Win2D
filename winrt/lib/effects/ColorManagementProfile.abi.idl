@@ -31,7 +31,7 @@ namespace Microsoft.Graphics.Canvas.Effects
             [out, retval] ColorManagementProfile** result);
     };
 
-    [version(VERSION), activatable(IColorManagementProfileFactory, VERSION), static(IColorManagementProfileStatics, VERSION)]
+    [STANDARD_ATTRIBUTES, activatable(IColorManagementProfileFactory, VERSION), static(IColorManagementProfileStatics, VERSION)]
     runtimeclass ColorManagementProfile
     {
         [default] interface IColorManagementProfile;

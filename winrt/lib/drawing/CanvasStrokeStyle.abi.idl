@@ -100,7 +100,7 @@ namespace Microsoft.Graphics.Canvas.Geometry
         HRESULT TransformBehavior([in] CanvasStrokeTransformBehavior value);
     }
 
-    [version(VERSION), activatable(VERSION)]
+    [STANDARD_ATTRIBUTES, activatable(VERSION)]
     runtimeclass CanvasStrokeStyle
     {
         [default] interface ICanvasStrokeStyle;

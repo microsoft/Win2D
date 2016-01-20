@@ -130,8 +130,7 @@ namespace Microsoft.Graphics.Canvas.Printing
         HRESULT SetIntermediatePageCount([in] UINT32 count);
     }
 
-    [version(VERSION), threading(both), marshaling_behavior(agile),
-     activatable(VERSION), activatable(ICanvasPrintDocumentFactory, VERSION)]
+    [STANDARD_ATTRIBUTES, activatable(VERSION), activatable(ICanvasPrintDocumentFactory, VERSION)]
     runtimeclass CanvasPrintDocument
     {
         [default] interface ICanvasPrintDocument;
@@ -179,7 +178,7 @@ namespace Microsoft.Graphics.Canvas.Printing
     }
 
     
-    [version(VERSION), threading(both), marshaling_behavior(agile)]
+    [STANDARD_ATTRIBUTES]
     runtimeclass CanvasPrintTaskOptionsChangedEventArgs
     {
         [default] interface ICanvasPrintTaskOptionsChangedEventArgs;
@@ -222,7 +221,7 @@ namespace Microsoft.Graphics.Canvas.Printing
         [propget] HRESULT DrawingSession([out, retval] Microsoft.Graphics.Canvas.CanvasDrawingSession** value);
     }
 
-    [version(VERSION), threading(both), marshaling_behavior(agile)]
+    [STANDARD_ATTRIBUTES]
     runtimeclass CanvasPreviewEventArgs
     {
         [default] interface ICanvasPreviewEventArgs;
@@ -266,7 +265,7 @@ namespace Microsoft.Graphics.Canvas.Printing
         HRESULT CreateDrawingSession([out, retval] Microsoft.Graphics.Canvas.CanvasDrawingSession** value);
     }
 
-    [version(VERSION), threading(both), marshaling_behavior(agile)]
+    [STANDARD_ATTRIBUTES]
     runtimeclass CanvasPrintEventArgs
     {
         [default] interface ICanvasPrintEventArgs;
@@ -283,7 +282,7 @@ namespace Microsoft.Graphics.Canvas.Printing
         HRESULT Complete();
     }
 
-    [version(VERSION), threading(both), marshaling_behavior(agile)]
+    [STANDARD_ATTRIBUTES]
     runtimeclass CanvasPrintDeferral
     {
         [default] interface ICanvasPrintDeferral;

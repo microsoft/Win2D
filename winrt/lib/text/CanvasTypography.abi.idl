@@ -120,7 +120,7 @@ namespace Microsoft.Graphics.Canvas.Text
     // 
     // Default-activatable using the shared DWrite factory.
     //
-    [version(VERSION), activatable(VERSION), threading(both), marshaling_behavior(agile)]
+    [STANDARD_ATTRIBUTES, activatable(VERSION)]
     runtimeclass CanvasTypography
     {
         [default] interface ICanvasTypography;

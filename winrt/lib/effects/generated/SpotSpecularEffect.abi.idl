@@ -86,7 +86,7 @@ namespace Microsoft.Graphics.Canvas.Effects
 
     };
 
-    [version(VERSION), activatable(VERSION)]
+    [STANDARD_ATTRIBUTES, activatable(VERSION)]
     runtimeclass SpotSpecularEffect
     {
         [default] interface ISpotSpecularEffect;

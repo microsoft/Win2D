@@ -12,7 +12,7 @@ namespace Microsoft.Graphics.Canvas
     {
     };
 
-    [version(VERSION)]
+    [STANDARD_ATTRIBUTES]
     runtimeclass CanvasActiveLayer
     {
         [default] interface ICanvasActiveLayer;

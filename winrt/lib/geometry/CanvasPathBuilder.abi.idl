@@ -87,7 +87,7 @@ namespace Microsoft.Graphics.Canvas.Geometry
             [out, retval] CanvasPathBuilder** canvasPathBuilder);
     };
 
-    [version(VERSION), activatable(ICanvasPathBuilderFactory, VERSION)]
+    [STANDARD_ATTRIBUTES, activatable(ICanvasPathBuilderFactory, VERSION)]
     runtimeclass CanvasPathBuilder
     {
         [default] interface ICanvasPathBuilder;

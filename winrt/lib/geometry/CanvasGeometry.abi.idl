@@ -419,7 +419,7 @@ namespace Microsoft.Graphics.Canvas.Geometry
         [propget] HRESULT DefaultFlatteningTolerance([out, retval] float* value);
     }
 
-    [version(VERSION), static(ICanvasGeometryStatics, VERSION)]
+    [STANDARD_ATTRIBUTES, static(ICanvasGeometryStatics, VERSION)]
     runtimeclass CanvasGeometry
     {
         [default] interface ICanvasGeometry;

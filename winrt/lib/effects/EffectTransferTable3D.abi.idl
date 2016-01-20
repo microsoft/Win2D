@@ -38,7 +38,7 @@ namespace Microsoft.Graphics.Canvas.Effects
             [out, retval] EffectTransferTable3D** result);
     };
 
-    [version(VERSION), static(IEffectTransferTable3DStatics, VERSION)]
+    [STANDARD_ATTRIBUTES, static(IEffectTransferTable3DStatics, VERSION)]
     runtimeclass EffectTransferTable3D
     {
         [default] interface IEffectTransferTable3D;

@@ -144,7 +144,7 @@ namespace Microsoft.Graphics.Canvas
         HRESULT Lock([out, retval] CanvasLock** lock);
     };
 
-    [version(VERSION), activatable(VERSION), activatable(ICanvasDeviceFactory, VERSION), static(ICanvasDeviceStatics, VERSION)]
+    [STANDARD_ATTRIBUTES, activatable(VERSION), activatable(ICanvasDeviceFactory, VERSION), static(ICanvasDeviceStatics, VERSION)]
     runtimeclass CanvasDevice
     {
         [default] interface ICanvasDevice;
@@ -155,7 +155,7 @@ namespace Microsoft.Graphics.Canvas
     {
     }
 
-    [version(VERSION)]
+    [STANDARD_ATTRIBUTES]
     runtimeclass CanvasLock
     {
         [default] interface ICanvasLock;

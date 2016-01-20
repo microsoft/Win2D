@@ -116,8 +116,7 @@ namespace Microsoft.Graphics.Canvas
             [out, retval] boolean* result);
     }
 
-    [version(VERSION), threading(both), marshaling_behavior(agile),
-     static(ICanvasImageStatics, VERSION)]
+    [STANDARD_ATTRIBUTES, static(ICanvasImageStatics, VERSION)]
     runtimeclass CanvasImage
     {
     };

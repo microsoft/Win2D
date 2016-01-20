@@ -384,7 +384,7 @@ namespace Microsoft.Graphics.Canvas
             [out, retval] Windows.Foundation.IAsyncOperation<CanvasBitmap*>** canvasBitmap);
     };
 
-    [version(VERSION), composable(ICanvasBitmapFactory, public, VERSION), threading(both), marshaling_behavior(agile), static(ICanvasBitmapStatics, VERSION)]
+    [STANDARD_ATTRIBUTES, composable(ICanvasBitmapFactory, public, VERSION), static(ICanvasBitmapStatics, VERSION)]
     runtimeclass CanvasBitmap : Windows.UI.Xaml.DependencyObject
     {
         [default] interface ICanvasBitmap;
@@ -466,7 +466,7 @@ namespace Microsoft.Graphics.Canvas
         HRESULT CreateDrawingSession([out, retval] CanvasDrawingSession** drawingSession);
     };
 
-    [version(VERSION), threading(both), marshaling_behavior(agile), activatable(ICanvasRenderTargetFactory, VERSION), static(ICanvasRenderTargetStatics, VERSION)]
+    [STANDARD_ATTRIBUTES, activatable(ICanvasRenderTargetFactory, VERSION), static(ICanvasRenderTargetStatics, VERSION)]
     runtimeclass CanvasRenderTarget : CanvasBitmap
     {
         [default] interface ICanvasRenderTarget;

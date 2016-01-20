@@ -67,7 +67,7 @@ namespace Microsoft.Graphics.Canvas.UI.Composition
             [in] Windows.Foundation.Size sizeInPixels);
     }
 
-    [version(VERSION), static(ICanvasCompositionStatics, VERSION)]
+    [STANDARD_ATTRIBUTES, static(ICanvasCompositionStatics, VERSION)]
     runtimeclass CanvasComposition
     {
     }

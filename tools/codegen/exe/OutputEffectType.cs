@@ -224,7 +224,7 @@ namespace CodeGen
                 statics = ", static(" + effect.InterfaceName + "Statics, VERSION)";
             }
 
-            output.WriteLine("[version(VERSION), activatable(VERSION)" + statics + "]");
+            output.WriteLine("[STANDARD_ATTRIBUTES, activatable(VERSION)" + statics + "]");
 
             output.WriteLine("runtimeclass " + effect.ClassName);
             output.WriteLine("{");

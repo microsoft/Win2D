@@ -42,7 +42,7 @@ namespace Microsoft.Graphics.Canvas.Text
             [out, retval] CanvasNumberSubstitution** canvasNumberSubstitution);
     };
 
-    [version(VERSION), activatable(ICanvasNumberSubstitutionFactory, VERSION)]
+    [STANDARD_ATTRIBUTES, activatable(ICanvasNumberSubstitutionFactory, VERSION)]
     runtimeclass CanvasNumberSubstitution
     {
         [default] interface ICanvasNumberSubstitution;
@@ -82,7 +82,7 @@ namespace Microsoft.Graphics.Canvas.Text
         [propget] HRESULT ScaleFactor([out, retval] float* value);
     };
 
-    [version(VERSION), threading(both), marshaling_behavior(agile)]
+    [STANDARD_ATTRIBUTES]
     runtimeclass CanvasScaledFont
     {
         [default] interface ICanvasScaledFont;
@@ -386,7 +386,7 @@ namespace Microsoft.Graphics.Canvas.Text
             [out, retval] CanvasTextAnalyzer** canvasTextAnalyzer);
     };
 
-    [version(VERSION), activatable(ICanvasTextAnalyzerFactory, VERSION), threading(both), marshaling_behavior(agile)]
+    [STANDARD_ATTRIBUTES, activatable(ICanvasTextAnalyzerFactory, VERSION)]
     runtimeclass CanvasTextAnalyzer
     {
         [default] interface ICanvasTextAnalyzer;

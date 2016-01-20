@@ -404,7 +404,7 @@ namespace Microsoft.Graphics.Canvas.Text
             [out, retval] CanvasTextLayout** canvasTextLayout);
     };
 
-    [version(VERSION), activatable(ICanvasTextLayoutFactory, VERSION)]
+    [STANDARD_ATTRIBUTES, activatable(ICanvasTextLayoutFactory, VERSION)]
     runtimeclass CanvasTextLayout
     {
         [default] interface ICanvasTextLayout;

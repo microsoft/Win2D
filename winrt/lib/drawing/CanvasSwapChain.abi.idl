@@ -178,7 +178,7 @@ namespace Microsoft.Graphics.Canvas
         HRESULT WaitForVerticalBlank();
     };
 
-    [version(VERSION), activatable(ICanvasSwapChainFactory, VERSION), static(ICanvasSwapChainStatics, VERSION), marshaling_behavior(agile), threading(both)]
+    [STANDARD_ATTRIBUTES, activatable(ICanvasSwapChainFactory, VERSION), static(ICanvasSwapChainStatics, VERSION)]
     runtimeclass CanvasSwapChain
     {
         [default] interface ICanvasSwapChain;

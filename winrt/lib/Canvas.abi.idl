@@ -25,6 +25,8 @@ import "Windows.UI.Composition.idl";
 #define VERSION NTDDI_WINTHRESHOLD
 #endif
 
+#define STANDARD_ATTRIBUTES version(VERSION), marshaling_behavior(agile), threading(both)
+
 #include "..\..\numerics\WinRT\WinRTNumerics.idl"
 #include "Canvas.codegen.idl"
 #include "directx\WinRTDirectXCommon.idl"

@@ -34,7 +34,7 @@ namespace Microsoft.Graphics.Canvas.Effects
 
     };
 
-    [version(VERSION), activatable(VERSION)]
+    [STANDARD_ATTRIBUTES, activatable(VERSION)]
     runtimeclass TableTransfer3DEffect
     {
         [default] interface ITableTransfer3DEffect;

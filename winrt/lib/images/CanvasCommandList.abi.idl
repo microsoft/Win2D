@@ -28,7 +28,7 @@ namespace Microsoft.Graphics.Canvas
         HRESULT Device([out, retval] CanvasDevice** value);
     }
 
-    [version(VERSION), threading(both), marshaling_behavior(agile), activatable(ICanvasCommandListFactory, VERSION)]
+    [STANDARD_ATTRIBUTES, activatable(ICanvasCommandListFactory, VERSION)]
     runtimeclass CanvasCommandList
     {
         [default] interface ICanvasCommandList;

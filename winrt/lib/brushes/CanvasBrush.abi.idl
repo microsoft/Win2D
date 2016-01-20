@@ -63,7 +63,7 @@ namespace Microsoft.Graphics.Canvas.Brushes
         [propput] HRESULT ColorHdr([in] NUMERICS.Vector4 value);
     };
 
-    [version(VERSION), activatable(ICanvasSolidColorBrushFactory, VERSION), static(ICanvasSolidColorBrushStatics, VERSION)]
+    [STANDARD_ATTRIBUTES, activatable(ICanvasSolidColorBrushFactory, VERSION), static(ICanvasSolidColorBrushStatics, VERSION)]
     runtimeclass CanvasSolidColorBrush
     {
         [default] interface ICanvasSolidColorBrush;
@@ -124,7 +124,7 @@ namespace Microsoft.Graphics.Canvas.Brushes
         HRESULT Interpolation([in] Microsoft.Graphics.Canvas.CanvasImageInterpolation value);
     };
 
-    [version(VERSION), activatable(ICanvasImageBrushFactory, VERSION)]
+    [STANDARD_ATTRIBUTES, activatable(ICanvasImageBrushFactory, VERSION)]
     runtimeclass CanvasImageBrush
     {
         [default] interface ICanvasImageBrush;
@@ -284,7 +284,7 @@ namespace Microsoft.Graphics.Canvas.Brushes
         HRESULT AlphaMode([out, retval] Microsoft.Graphics.Canvas.CanvasAlphaMode* value);
     };
 
-    [version(VERSION), activatable(ICanvasLinearGradientBrushFactory, VERSION), static(ICanvasLinearGradientBrushStatics, VERSION)]
+    [STANDARD_ATTRIBUTES, activatable(ICanvasLinearGradientBrushFactory, VERSION), static(ICanvasLinearGradientBrushStatics, VERSION)]
     runtimeclass CanvasLinearGradientBrush
     {
         [default] interface ICanvasLinearGradientBrush;
@@ -433,7 +433,7 @@ namespace Microsoft.Graphics.Canvas.Brushes
         HRESULT AlphaMode([out, retval] Microsoft.Graphics.Canvas.CanvasAlphaMode* value);
     };
 
-    [version(VERSION), activatable(ICanvasRadialGradientBrushFactory, VERSION), static(ICanvasRadialGradientBrushStatics, VERSION)]
+    [STANDARD_ATTRIBUTES, activatable(ICanvasRadialGradientBrushFactory, VERSION), static(ICanvasRadialGradientBrushStatics, VERSION)]
     runtimeclass CanvasRadialGradientBrush
     {
         [default] interface ICanvasRadialGradientBrush;

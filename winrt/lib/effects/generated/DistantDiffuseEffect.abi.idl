@@ -68,7 +68,7 @@ namespace Microsoft.Graphics.Canvas.Effects
 
     };
 
-    [version(VERSION), activatable(VERSION)]
+    [STANDARD_ATTRIBUTES, activatable(VERSION)]
     runtimeclass DistantDiffuseEffect
     {
         [default] interface IDistantDiffuseEffect;

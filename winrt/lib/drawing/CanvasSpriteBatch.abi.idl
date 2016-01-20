@@ -175,7 +175,7 @@ namespace Microsoft.Graphics.Canvas
     }
 
 
-    [version(VERSION), static(ICanvasSpriteBatchStatics, VERSION)]
+    [STANDARD_ATTRIBUTES, static(ICanvasSpriteBatchStatics, VERSION)]
     runtimeclass CanvasSpriteBatch
     {
         [default] interface ICanvasSpriteBatch;

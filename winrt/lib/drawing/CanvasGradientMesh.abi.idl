@@ -107,7 +107,7 @@ namespace Microsoft.Graphics.Canvas.Geometry
             [out, retval] CanvasGradientMeshPatch* gradientMeshPatch);
     }
 
-    [version(VERSION), activatable(ICanvasGradientMeshFactory, VERSION), static(ICanvasGradientMeshStatics, VERSION)]
+    [STANDARD_ATTRIBUTES, activatable(ICanvasGradientMeshFactory, VERSION), static(ICanvasGradientMeshStatics, VERSION)]
     runtimeclass CanvasGradientMesh
     {
         [default] interface ICanvasGradientMesh;

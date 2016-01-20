@@ -326,7 +326,7 @@ namespace Microsoft.Graphics.Canvas.Text
     }
 
     // Instances of CanvasFontFace are produced out of CanvasFontSet- not activated by the app.
-    [version(VERSION)]
+    [STANDARD_ATTRIBUTES]
     runtimeclass CanvasFontFace
     {
         [default] interface ICanvasFontFace;

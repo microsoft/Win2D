@@ -140,8 +140,7 @@ namespace Microsoft.Graphics.Canvas
         //
     };
 
-    [version(VERSION), threading(both), marshaling_behavior(agile),
-     static(ICanvasVirtualBitmapStatics, VERSION)]
+    [STANDARD_ATTRIBUTES, static(ICanvasVirtualBitmapStatics, VERSION)]
     runtimeclass CanvasVirtualBitmap
     {
         [default] interface ICanvasVirtualBitmap;

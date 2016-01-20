@@ -264,7 +264,7 @@ namespace Microsoft.Graphics.Canvas.Text
             [out, size_is(, *valueCount), retval] HSTRING** valueElements);
     }
 
-    [version(VERSION), activatable(VERSION), static(ICanvasTextFormatStatics, VERSION)]
+    [STANDARD_ATTRIBUTES, activatable(VERSION), static(ICanvasTextFormatStatics, VERSION)]
     runtimeclass CanvasTextFormat
     {
         [default] interface ICanvasTextFormat;

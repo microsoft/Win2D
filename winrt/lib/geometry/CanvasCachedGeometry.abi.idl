@@ -49,7 +49,7 @@ namespace Microsoft.Graphics.Canvas.Geometry
             [out, retval] CanvasCachedGeometry** cachedGeometry);
     }
 
-    [version(VERSION), static(ICanvasCachedGeometryStatics, VERSION)]
+    [STANDARD_ATTRIBUTES, static(ICanvasCachedGeometryStatics, VERSION)]
     runtimeclass CanvasCachedGeometry
     {
         [default] interface ICanvasCachedGeometry;

@@ -1495,7 +1495,7 @@ namespace Microsoft.Graphics.Canvas
 #endif
     };
 
-    [version(VERSION)]
+    [STANDARD_ATTRIBUTES]
     runtimeclass CanvasDrawingSession
     {
         [default] interface ICanvasDrawingSession;

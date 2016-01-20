@@ -49,7 +49,7 @@ namespace Microsoft.Graphics.Canvas.Text
             [out, retval] CanvasTextRenderingParameters** textRenderingParameters);
     };
 
-    [version(VERSION), activatable(ICanvasTextRenderingParametersFactory, VERSION)]
+    [STANDARD_ATTRIBUTES, activatable(ICanvasTextRenderingParametersFactory, VERSION)]
     runtimeclass CanvasTextRenderingParameters
     {
         [default] interface ICanvasTextRenderingParameters;
