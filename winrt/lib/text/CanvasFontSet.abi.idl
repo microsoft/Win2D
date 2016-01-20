@@ -119,7 +119,7 @@ namespace Microsoft.Graphics.Canvas.Text
         HRESULT GetSystemFontSet([out, retval] CanvasFontSet** fontSet);
     }
 
-    [version(VERSION), activatable(VERSION), activatable(ICanvasFontSetFactory, VERSION), static(ICanvasFontSetStatics, VERSION)]
+    [version(VERSION), activatable(ICanvasFontSetFactory, VERSION), static(ICanvasFontSetStatics, VERSION)]
     runtimeclass CanvasFontSet
     {
         [default] interface ICanvasFontSet;
