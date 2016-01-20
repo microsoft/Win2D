@@ -32,15 +32,20 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         
         IFACEMETHOD(get_Patches)(
             uint32_t* valueCount,
-            CanvasGradientMeshPatch** valueElements);
+            CanvasGradientMeshPatch** valueElements) override;
 
         IFACEMETHOD(GetBounds)(
-            ICanvasDrawingSession* drawingSession,
-            Rect* bounds);
+            ICanvasResourceCreator* resourceCreator,
+            Rect* bounds) override;
 
-        IFACEMETHOD(Close)();
+        IFACEMETHOD(GetBoundsWithTransform)(
+            ICanvasResourceCreator* resourceCreator,
+            Numerics::Matrix3x2 transform,
+            Rect* bounds) override;
 
-        IFACEMETHOD(get_Device)(ICanvasDevice** device);
+        IFACEMETHOD(Close)() override;
+
+        IFACEMETHOD(get_Device)(ICanvasDevice** device) override;
     };
 
     class CanvasGradientMeshFactory

@@ -110,19 +110,19 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
 
     IFACEMETHODIMP CanvasCommandList::GetBounds(
-        ICanvasDrawingSession* drawingSession,
+        ICanvasResourceCreator* resourceCreator,
         Rect* bounds)
     {
-        return GetImageBoundsImpl(this, drawingSession, nullptr, bounds);
+        return GetImageBoundsImpl(this, resourceCreator, nullptr, bounds);
     }
 
 
     IFACEMETHODIMP CanvasCommandList::GetBoundsWithTransform(
-        ICanvasDrawingSession* drawingSession,
+        ICanvasResourceCreator* resourceCreator,
         Numerics::Matrix3x2 transform,
         Rect* bounds)
     {
-        return GetImageBoundsImpl(this, drawingSession, &transform, bounds);
+        return GetImageBoundsImpl(this, resourceCreator, &transform, bounds);
     }
 
     bool IsD2DCommandListClosed(

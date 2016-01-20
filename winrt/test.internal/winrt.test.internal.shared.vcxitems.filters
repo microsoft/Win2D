@@ -604,6 +604,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockDWriteTypography.h">
       <Filter>mocks</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)graphics\GetBoundsFixture.h">
+      <Filter>graphics</Filter>
+    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubUri.h">
       <Filter>stubs</Filter>
     </ClInclude>

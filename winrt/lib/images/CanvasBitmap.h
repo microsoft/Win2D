@@ -824,18 +824,18 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         }
 
         IFACEMETHODIMP GetBounds(
-            ICanvasDrawingSession *drawingSession,
-            Rect *bounds) override
+            ICanvasResourceCreator* resourceCreator,
+            Rect* bounds) override
         {
-            return GetImageBoundsImpl(this, drawingSession, nullptr, bounds);
+            return GetImageBoundsImpl(this, resourceCreator, nullptr, bounds);
         }
 
         IFACEMETHODIMP GetBoundsWithTransform(
-            ICanvasDrawingSession *drawingSession,
+            ICanvasResourceCreator* resourceCreator,
             Numerics::Matrix3x2 transform,
-            Rect *bounds) override
+            Rect* bounds) override
         {
-            return GetImageBoundsImpl(this, drawingSession, &transform, bounds);
+            return GetImageBoundsImpl(this, resourceCreator, &transform, bounds);
         }
 
         IFACEMETHODIMP CopyPixelsFromBitmap(

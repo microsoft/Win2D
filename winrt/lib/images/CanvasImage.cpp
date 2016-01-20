@@ -7,31 +7,42 @@
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
     using namespace ABI::Windows::Foundation;
+
+    DeviceContextLease GetDeviceContextForGetBounds(ICanvasDevice* device, ICanvasResourceCreator* resourceCreator)
+    {
+        if (auto drawingSession = MaybeAs<ICanvasDrawingSession>(resourceCreator))
+        {
+            // A CanvasDrawingSession is already wrapping a device context that
+            // may have interesting state set on it (ie unit mode and dpi) so we
+            // return that.
+            ComPtr<ID2D1DeviceContext1> deviceContext;
+            ThrowIfFailed(As<ICanvasResourceWrapperNative>(drawingSession)->GetNativeResource(nullptr, 0, IID_PPV_ARGS(&deviceContext)));
+            return DeviceContextLease(std::move(deviceContext));
+        }
+
+        return As<ICanvasDeviceInternal>(device)->GetResourceCreationDeviceContext();
+    }
     
     static Rect GetImageBoundsImpl(
         ICanvasImageInternal* imageInternal,
-        ICanvasDrawingSession *drawingSession,
+        ICanvasResourceCreator* resourceCreator,
         Numerics::Matrix3x2 const* transform)
     {
-        ComPtr<ICanvasDevice> canvasDevice;
-        ThrowIfFailed(As<ICanvasResourceCreator>(drawingSession)->get_Device(&canvasDevice));
+        ComPtr<ICanvasDevice> device;
+        ThrowIfFailed(resourceCreator->get_Device(&device));
 
-        auto drawingSessionResourceWrapper = As<ICanvasResourceWrapperNative>(drawingSession);
+        auto d2dDeviceContext = GetDeviceContextForGetBounds(device.Get(), resourceCreator);
 
-        ComPtr<ID2D1DeviceContext1> d2dDeviceContext;
-        ThrowIfFailed(drawingSessionResourceWrapper->GetNativeResource(nullptr, 0, IID_PPV_ARGS(&d2dDeviceContext)));
+        auto d2dImage = imageInternal->GetD2DImage(device.Get(), d2dDeviceContext.Get());
 
-        auto d2dImage = imageInternal->GetD2DImage(canvasDevice.Get(), d2dDeviceContext.Get());
-
-        D2D1_RECT_F d2dBounds;
-        
         D2D1_MATRIX_3X2_F previousTransform;
         d2dDeviceContext->GetTransform(&previousTransform);
 
         auto restoreTransformWarden = MakeScopeWarden([&] { d2dDeviceContext->SetTransform(previousTransform); });
 
         d2dDeviceContext->SetTransform(ReinterpretAs<D2D1_MATRIX_3X2_F const*>(transform));
-
+        
+        D2D1_RECT_F d2dBounds;
         ThrowIfFailed(d2dDeviceContext->GetImageWorldBounds(d2dImage.Get(), &d2dBounds));
 
         return FromD2DRect(d2dBounds);
@@ -39,7 +50,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     HRESULT GetImageBoundsImpl(
         ICanvasImageInternal* imageInternal,
-        ICanvasDrawingSession* drawingSession,
+        ICanvasResourceCreator* resourceCreator,
         Numerics::Matrix3x2 const* transform,
         Rect* bounds)
     {
@@ -51,10 +62,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ExceptionBoundary(
             [&]
             {
-                CheckInPointer(drawingSession);
+                CheckInPointer(resourceCreator);
                 CheckInPointer(bounds);
 
-                *bounds = GetImageBoundsImpl(imageInternal, drawingSession, transform);
+                *bounds = GetImageBoundsImpl(imageInternal, resourceCreator, transform);
             });
     }
 

@@ -61,8 +61,15 @@ namespace Microsoft.Graphics.Canvas.Geometry
             [out] UINT32* valueCount,
             [out, size_is(, *valueCount), retval] CanvasGradientMeshPatch** valueElements);
 
+        [overload("GetBounds")]
         HRESULT GetBounds(
-            [in] Microsoft.Graphics.Canvas.CanvasDrawingSession* drawingSession,
+            [in] Microsoft.Graphics.Canvas.ICanvasResourceCreator* resourceCreator,
+            [out, retval] Windows.Foundation.Rect* bounds);
+
+        [overload("GetBounds")]
+        HRESULT GetBoundsWithTransform(
+            [in] Microsoft.Graphics.Canvas.ICanvasResourceCreator* resourceCreator,
+            [in] NUMERICS.Matrix3x2 transform,
             [out, retval] Windows.Foundation.Rect* bounds);
 
         [propget] HRESULT Device([out, retval] Microsoft.Graphics.Canvas.CanvasDevice** value);

@@ -124,8 +124,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         IFACEMETHODIMP get_Bounds(Rect* value) override;
 
         // ICanvasImage
-        IFACEMETHODIMP GetBounds(ICanvasDrawingSession*, Rect*) override;
-        IFACEMETHODIMP GetBoundsWithTransform(ICanvasDrawingSession*, Matrix3x2, Rect*) override;
+        IFACEMETHODIMP GetBounds(ICanvasResourceCreator*, Rect*) override;
+        IFACEMETHODIMP GetBoundsWithTransform(ICanvasResourceCreator*, Matrix3x2, Rect*) override;
 
         // ICanvasImageInternal
         ComPtr<ID2D1Image> GetD2DImage(ICanvasDevice* , ID2D1DeviceContext*, GetImageFlags, float, float*) override;

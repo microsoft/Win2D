@@ -68,11 +68,11 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
 
 
   <template name="EffectTemplate">
-    <member name="M:Microsoft.Graphics.Canvas.Effects.EffectTemplate.GetBounds(Microsoft.Graphics.Canvas.CanvasDrawingSession)">
+    <member name="M:Microsoft.Graphics.Canvas.Effects.EffectTemplate.GetBounds(Microsoft.Graphics.Canvas.ICanvasResourceCreator)">
       <summary>Retrieves the bounds of this EffectTemplate.</summary>
       <inheritdoc/>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.Effects.EffectTemplate.GetBounds(Microsoft.Graphics.Canvas.CanvasDrawingSession,System.Numerics.Matrix3x2)">
+    <member name="M:Microsoft.Graphics.Canvas.Effects.EffectTemplate.GetBounds(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Numerics.Matrix3x2)">
       <summary>Retrieves the bounds of this EffectTemplate.</summary>
       <inheritdoc/>
     </member>

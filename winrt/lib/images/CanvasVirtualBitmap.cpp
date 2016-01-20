@@ -447,15 +447,15 @@ IFACEMETHODIMP CanvasVirtualBitmap::get_Bounds(Rect* value)
 }
 
 
-IFACEMETHODIMP CanvasVirtualBitmap::GetBounds(ICanvasDrawingSession* ds, Rect* bounds)
+IFACEMETHODIMP CanvasVirtualBitmap::GetBounds(ICanvasResourceCreator* rc, Rect* bounds)
 {
-    return GetImageBoundsImpl(this, ds, nullptr, bounds);
+    return GetImageBoundsImpl(this, rc, nullptr, bounds);
 }
 
 
-IFACEMETHODIMP CanvasVirtualBitmap::GetBoundsWithTransform(ICanvasDrawingSession* ds, Matrix3x2 transform, Rect* bounds)
+IFACEMETHODIMP CanvasVirtualBitmap::GetBoundsWithTransform(ICanvasResourceCreator* rc, Matrix3x2 transform, Rect* bounds)
 {
-    return GetImageBoundsImpl(this, ds, &transform, bounds);
+    return GetImageBoundsImpl(this, rc, &transform, bounds);
 }
 
 

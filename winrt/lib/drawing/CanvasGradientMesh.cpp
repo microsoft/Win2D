@@ -266,31 +266,44 @@ IFACEMETHODIMP CanvasGradientMesh::get_Patches(
 }
 
 IFACEMETHODIMP CanvasGradientMesh::GetBounds(
-    ICanvasDrawingSession* drawingSession,
+    ICanvasResourceCreator* resourceCreator,
+    Rect* bounds)
+{
+    static Numerics::Matrix3x2 identity = { 1, 0, 0, 1, 0, 0 };
+    return GetBoundsWithTransform(resourceCreator, identity, bounds);
+}
+
+IFACEMETHODIMP CanvasGradientMesh::GetBoundsWithTransform(
+    ICanvasResourceCreator* resourceCreator,
+    Numerics::Matrix3x2 transform,
     Rect* bounds)
 {
     return ExceptionBoundary(
         [&]
         {
-            CheckInPointer(drawingSession);
+            CheckInPointer(resourceCreator);
             CheckInPointer(bounds);
+
+            ComPtr<ICanvasDevice> device;
+            ThrowIfFailed(resourceCreator->get_Device(&device));
 
             auto& resource = GetResource();
 
-            auto deviceContext = GetWrappedResource<ID2D1DeviceContext2>(drawingSession);
+            auto deviceContext = GetDeviceContextForGetBounds(device.Get(), resourceCreator);
 
             D2D1_MATRIX_3X2_F previousTransform;
             deviceContext->GetTransform(&previousTransform);
 
             auto restoreTransformWarden = MakeScopeWarden([&] { deviceContext->SetTransform(previousTransform); });
 
-            deviceContext->SetTransform(D2D1::IdentityMatrix());
+            deviceContext->SetTransform(ReinterpretAs<D2D1_MATRIX_3X2_F const*>(&transform));
 
             D2D1_RECT_F d2dRect;
-            ThrowIfFailed(deviceContext->GetGradientMeshWorldBounds(resource.Get(), &d2dRect));
+            ThrowIfFailed(As<ID2D1DeviceContext2>(deviceContext.Get())->GetGradientMeshWorldBounds(resource.Get(), &d2dRect));
             *bounds = FromD2DRect(d2dRect);
         });
 }
+
 
 IFACEMETHODIMP CanvasGradientMesh::Close()
 {

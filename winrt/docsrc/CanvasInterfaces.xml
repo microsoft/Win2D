@@ -17,33 +17,33 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
                command list, or image processing effect.</summary>
     </member>
 
-    <member name="M:Microsoft.Graphics.Canvas.ICanvasImage.GetBounds(Microsoft.Graphics.Canvas.CanvasDrawingSession)">
+    <member name="M:Microsoft.Graphics.Canvas.ICanvasImage.GetBounds(Microsoft.Graphics.Canvas.ICanvasResourceCreator)">
       <summary>Retrieves the bounds of this ICanvasImage.</summary>
       <remarks>
         <p>
           These bounds are the area the image would fill if it were drawn at
-          target offset (0, 0), and identity transform on the specified drawing
-          session.
+          target offset (0, 0), and identity transform.
         </p>
         <p>
-          The units used depends on the current value of the <see
+          If the resourceCreator parameter is a CanvasDrawingSession instance
+          then the units used depends on the current value of the <see
           cref="P:Microsoft.Graphics.Canvas.CanvasDrawingSession.Units">CanvasDrawingSession.Units</see>
-          property.
+          property.  Otherwise the result is in Dips.
         </p>
       </remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.ICanvasImage.GetBounds(Microsoft.Graphics.Canvas.CanvasDrawingSession,System.Numerics.Matrix3x2)">
+    <member name="M:Microsoft.Graphics.Canvas.ICanvasImage.GetBounds(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Numerics.Matrix3x2)">
       <summary>Retrieves the bounds of this ICanvasImage.</summary>
       <remarks>
         <p>
           These bounds are the area the image would fill if it were drawn at
-          target offset (0, 0) with the specified transform transform on the
-          specified drawing session.
+          target offset (0, 0) with the specified transform transform
         </p>
         <p>
-          The units used depends on the current value of the <see
+          If the resourceCreator parameter is a CanvasDrawingSession instance
+          then the units used depends on the current value of the <see
           cref="P:Microsoft.Graphics.Canvas.CanvasDrawingSession.Units">CanvasDrawingSession.Units</see>
-          property.
+          property.  Otherwise the result is in Dips.
         </p>
       </remarks>
     </member>    

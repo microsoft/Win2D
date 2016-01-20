@@ -14,67 +14,62 @@
 #include "../mocks/MockWICFactory.h"
 #include "../mocks/MockWICImageEncoder.h"
 
-TEST_CLASS(CanvasImageUnitTests)
-{
-    struct Fixture
-    {
-        ComPtr<StubCanvasDevice> m_canvasDevice;
+#include "GetBoundsFixture.h"
 
+TEST_CLASS(CanvasImageGetBoundsUnitTests)
+{
+    //
+    // GetBoundsFixture knows how to test GetBounds methods - we just have to
+    // tell it about images:
+    //
+    class Fixture : public GetBoundsFixture
+    {
+        ComPtr<ICanvasImage> m_image;
+        ComPtr<ID2D1Image> m_d2dImage;
+
+    public:
         Fixture()
         {
-            m_canvasDevice = Make<StubCanvasDevice>();
-            
-            m_canvasDevice->CreateRenderTargetBitmapMethod.AllowAnyCall(
-                [&](float, float, float, DirectXPixelFormat, CanvasAlphaMode)
+            // All Win2D implementations of ICanvasImage call the same
+            // underlying implementation of GetBounds / GetBoundsWithTransform,
+            // so we pick a random implementation at test with that.
+            auto d2dBitmap = Make<StubD2DBitmap>();
+            m_image = Make<CanvasBitmap>(GetDevice(), d2dBitmap.Get());
+            m_d2dImage = d2dBitmap;
+        }
+
+        virtual void ExpectGetBounds(MockD2DDeviceContext* deviceContext, D2D1_RECT_F boundsToReturn, std::function<void()> fn) override
+        {
+            deviceContext->GetImageWorldBoundsMethod.SetExpectedCalls(1,
+                [=](ID2D1Image* image, D2D1_RECT_F* returnedBounds)
                 {
-                    return Make<StubD2DBitmap>(D2D1_BITMAP_OPTIONS_TARGET);
+                    Assert::AreEqual(m_d2dImage.Get(), image);
+                    *returnedBounds = boundsToReturn;
+
+                    fn();
+
+                    return S_OK;
                 });
         }
-    };
 
-    TEST_METHOD_EX(CanvasImage_GetBounds_CorrectContext)
+        virtual void CallGetBounds(ICanvasResourceCreator* resourceCreator, Matrix3x2 transform, Rect* bounds) override
+        {
+            // GetBounds calls GetBoundsWithTransform, so we just need to test
+            // the latter.
+            ThrowIfFailed(m_image->GetBoundsWithTransform(resourceCreator, transform, bounds));
+        }
+    };
+    
+    TEST_METHOD_EX(CanvasImage_GetBounds_WhenPassedDrawingSession_BoundsRetrievedFromDrawingSession)
     {
         Fixture f;
+        f.TestGetBoundsPassingDrawingSession();
+    }
 
-        ABI::Windows::Foundation::Rect bounds;
-
-        D2D1_MATRIX_3X2_F someTransform = D2D1::Matrix3x2F(1, 2, 3, 4, 5, 6);
-        D2D1_MATRIX_3X2_F currentTransform = someTransform;
-
-        auto d2dDeviceContext = Make<MockD2DDeviceContext>();
-
-        d2dDeviceContext->GetDeviceMethod.AllowAnyCallAlwaysCopyValueToParam(Make<StubD2DDevice>());
-
-        d2dDeviceContext->GetTransformMethod.AllowAnyCall(
-            [&](D2D1_MATRIX_3X2_F* matrix)
-            {
-                *matrix = currentTransform;
-            });        
-
-        d2dDeviceContext->SetTransformMethod.AllowAnyCall(
-            [&](const D2D1_MATRIX_3X2_F* matrix)
-            {
-                currentTransform = *matrix;
-            });
-
-        d2dDeviceContext->GetImageWorldBoundsMethod.SetExpectedCalls(1,
-            [&](ID2D1Image* image, D2D1_RECT_F* bounds)
-            {
-                return S_OK;
-            });
-
-        auto drawingSession = Make<CanvasDrawingSession>(d2dDeviceContext.Get());
-
-        auto canvasBitmap = CanvasRenderTarget::CreateNew(
-            f.m_canvasDevice.Get(),
-            1.0f,
-            1.0f,
-            DEFAULT_DPI,
-            PIXEL_FORMAT(B8G8R8A8UIntNormalized),
-            CanvasAlphaMode::Premultiplied);
-        canvasBitmap->GetBounds(drawingSession.Get(), &bounds);
-
-        Assert::AreEqual(someTransform, currentTransform); 
+    TEST_METHOD_EX(CanvasImage_GetBounds_WhenPassedNonDrawingSession_BoundsRetrievedFromLeasedContext)
+    {
+        Fixture f;
+        f.TestGetBoundsPassingDevice();
     }
 };
 

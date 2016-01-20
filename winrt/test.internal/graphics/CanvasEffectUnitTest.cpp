@@ -77,12 +77,12 @@ public:
         Numerics::Matrix3x2 matrix = { 0 };
 
         auto canvasEffect = Make<TestEffect>(m_blurGuid, m_realPropertiesSize, m_realSourcesSize, false);
-        auto drawingSession = CreateStubDrawingSession();
+        auto device = Make<StubCanvasDevice>();
 
         Assert::AreEqual(S_OK, canvasEffect->Close());
 
-        Assert::AreEqual(RO_E_CLOSED, canvasEffect->GetBounds(drawingSession.Get(), &bounds));
-        Assert::AreEqual(RO_E_CLOSED, canvasEffect->GetBoundsWithTransform(drawingSession.Get(), matrix, &bounds));
+        Assert::AreEqual(RO_E_CLOSED, canvasEffect->GetBounds(device.Get(), &bounds));
+        Assert::AreEqual(RO_E_CLOSED, canvasEffect->GetBoundsWithTransform(device.Get(), matrix, &bounds));
 
         ComPtr<ID2D1Effect> resource;
         Assert::AreEqual(RO_E_CLOSED, canvasEffect->GetNativeResource(nullptr, 0, IID_PPV_ARGS(&resource)));
@@ -337,12 +337,12 @@ public:
         Numerics::Matrix3x2 matrix = { 0 };
 
         auto canvasEffect = Make<TestEffect>(m_blurGuid, m_realPropertiesSize, m_realSourcesSize, false);
-        auto drawingSession = CreateStubDrawingSession();
+        auto device = Make<StubCanvasDevice>();
 
         Assert::AreEqual(E_INVALIDARG, canvasEffect->GetBounds(nullptr, &bounds));
-        Assert::AreEqual(E_INVALIDARG, canvasEffect->GetBounds(drawingSession.Get(), nullptr));
+        Assert::AreEqual(E_INVALIDARG, canvasEffect->GetBounds(device.Get(), nullptr));
         Assert::AreEqual(E_INVALIDARG, canvasEffect->GetBoundsWithTransform(nullptr, matrix, &bounds));
-        Assert::AreEqual(E_INVALIDARG, canvasEffect->GetBoundsWithTransform(drawingSession.Get(), matrix, nullptr));
+        Assert::AreEqual(E_INVALIDARG, canvasEffect->GetBoundsWithTransform(device.Get(), matrix, nullptr));
     }
 
     TEST_METHOD_EX(CanvasEffect_RealizationRecursion)

@@ -148,8 +148,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         // ICanvasImage
         //
 
-        IFACEMETHOD(GetBounds)(ICanvasDrawingSession *drawingSession, Rect *bounds) override;
-        IFACEMETHOD(GetBoundsWithTransform)(ICanvasDrawingSession *drawingSession, Numerics::Matrix3x2 transform, Rect *bounds) override;
+        IFACEMETHOD(GetBounds)(ICanvasResourceCreator* resourceCreator, Rect *bounds) override;
+        IFACEMETHOD(GetBoundsWithTransform)(ICanvasResourceCreator* resourceCreator, Numerics::Matrix3x2 transform, Rect *bounds) override;
 
         //
         // ICanvasImageInternal

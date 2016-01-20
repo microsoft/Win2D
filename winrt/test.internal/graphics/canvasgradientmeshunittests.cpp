@@ -8,6 +8,8 @@
 
 #include <lib/drawing/CanvasGradientMesh.h>
 
+#include "GetBoundsFixture.h"
+
 static Vector2 testPoints[] = {
     { 0, 31 },{ 0, 2 },{ 0, 84 },{ 35, 8 },
     { 4, 2 },{ 33, 1 },{ 1, 11 },{ 6, 8 },
@@ -113,9 +115,9 @@ public:
         CanvasGradientMeshPatch* elements;
         Assert::AreEqual(RO_E_CLOSED, gradientMesh->get_Patches(&valueCount, &elements));
 
-        auto drawingSession = CreateStubDrawingSession();
         Rect bounds;
-        Assert::AreEqual(RO_E_CLOSED, gradientMesh->GetBounds(drawingSession.Get(), &bounds));
+        Assert::AreEqual(RO_E_CLOSED, gradientMesh->GetBounds(f.Device.Get(), &bounds));
+        Assert::AreEqual(RO_E_CLOSED, gradientMesh->GetBoundsWithTransform(f.Device.Get(), Numerics::Matrix3x2{}, &bounds));
 
         ComPtr<ICanvasDevice> device;
         Assert::AreEqual(RO_E_CLOSED, gradientMesh->get_Device(&device));
@@ -371,57 +373,59 @@ public:
         Assert::IsNotNull(gradientMesh.Get());
     }
 
-
-    TEST_METHOD_EX(CanvasGradientMesh_GetBounds)
+    //
+    // The CanvasGradientMesh GetBounds and GetBoundsWithTransform methods are
+    // expected to behave in the same way as the ICanvasImage methods, even
+    // though CanvasGradientMesh doesn't implement the ICanvasImage interface.
+    //
+    // GetBoundsFixture knows how to test GetBounds methods - we just have to
+    // tell it about gradient meshes:
+    //
+    class GradientMeshBoundsFixture : public GetBoundsFixture
     {
-        Fixture f;
-        D2D1_MATRIX_3X2_F someTransform{ 1,2,3,4,5,6 };
+        ComPtr<ID2D1GradientMesh> m_d2dGradientMesh;
+        ComPtr<CanvasGradientMesh> m_gradientMesh;
 
-        auto d2dDeviceContext = Make<MockD2DDeviceContext>();
-        d2dDeviceContext->GetGradientMeshWorldBoundsMethod.SetExpectedCalls(1,
-            [&](ID2D1GradientMesh* thisD2dGradientMesh, D2D1_RECT_F* bounds)
-            {
-                Assert::IsTrue(IsSameInstance(f.D2DGradientMesh.Get(), thisD2dGradientMesh));
-                *bounds = D2D1::RectF(1, 2, 30, 40);
-                return S_OK;
-            });
+    public:
+        GradientMeshBoundsFixture()
+            : m_d2dGradientMesh(Make<MockD2DGradientMesh>())
+            , m_gradientMesh(Make<CanvasGradientMesh>(GetDevice(), m_d2dGradientMesh.Get()))
+        {
+        }
 
-        d2dDeviceContext->GetTransformMethod.SetExpectedCalls(1,
-            [&](D2D1_MATRIX_3X2_F* m)
-            {
-                *m = someTransform;
-            });
-
-        int setTransformCount = 0;
-
-        d2dDeviceContext->SetTransformMethod.SetExpectedCalls(2,
-            [&](D2D1_MATRIX_3X2_F const* m)
-            {
-                switch (setTransformCount++)
+        virtual void ExpectGetBounds(MockD2DDeviceContext* deviceContext, D2D1_RECT_F boundsToReturn, std::function<void()> fn) override
+        {
+            deviceContext->GetGradientMeshWorldBoundsMethod.SetExpectedCalls(1,
+                [=](ID2D1GradientMesh* gradientMesh, D2D1_RECT_F* returnedBounds)
                 {
-                case 0:
-                    // Set to identity.
-                    Assert::AreEqual(D2D1::IdentityMatrix(), *m);
-                    break;
+                    Assert::AreEqual(m_d2dGradientMesh.Get(), gradientMesh);
+                    *returnedBounds = boundsToReturn;
 
-                case 1:
-                    // Then put back the original value.
-                    Assert::AreEqual(someTransform, *m);
-                    break;
-                }
-            });
+                    fn();
 
-        auto gradientMesh = CanvasGradientMesh::CreateNew(f.Device.Get(), 1, &f.DefaultPatches[0]);
+                    return S_OK;
+                });
+        }
 
-        auto drawingSession = Make<CanvasDrawingSession>(d2dDeviceContext.Get());
+        virtual void CallGetBounds(ICanvasResourceCreator* resourceCreator, Matrix3x2 transform, Rect* bounds) override
+        {
+            // GetBounds calls GetBoundsWithTransform, so we just need to test
+            // the latter.
+            ThrowIfFailed(m_gradientMesh->GetBoundsWithTransform(resourceCreator, transform, bounds));
+        }
+    };
+    
 
-        Rect bounds;
-        Assert::AreEqual(S_OK, gradientMesh->GetBounds(drawingSession.Get(), &bounds));
+    TEST_METHOD_EX(CanvasGradientMesh_GetBounds_WhenPassedDrawingSession_BoundsRetrievedFromDrawingSession)
+    {
+        GradientMeshBoundsFixture f;
+        f.TestGetBoundsPassingDrawingSession();
+    }
 
-        Assert::AreEqual(1.0f, bounds.X);
-        Assert::AreEqual(2.0f, bounds.Y);
-        Assert::AreEqual(30.0f - 1.0f, bounds.Width);
-        Assert::AreEqual(40.0f - 2.0f, bounds.Height);
+    TEST_METHOD_EX(CanvasGradientMesh_GetBounds_WhenPassedNonDrawingSession_BoundsRetrievedFromLeasedContext)
+    {
+        GradientMeshBoundsFixture f;
+        f.TestGetBoundsPassingDevice();
     }
 
     TEST_METHOD_EX(CanvasGradientMesh_get_Patches_Zero)

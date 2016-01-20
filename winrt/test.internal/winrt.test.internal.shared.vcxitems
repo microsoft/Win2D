@@ -22,6 +22,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)graphics\GetBoundsFixture.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockCanvasVirtualImageSource.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockCompositionDrawingSurface.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockCompositionGraphicsDevice.h" />

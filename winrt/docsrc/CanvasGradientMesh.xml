@@ -147,11 +147,25 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="P:Microsoft.Graphics.Canvas.Geometry.CanvasGradientMesh.Patches">
       <summary>Gets the array of patches that comprise this gradient mesh.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGradientMesh.GetBounds(Microsoft.Graphics.Canvas.CanvasDrawingSession)">
+    <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGradientMesh.GetBounds(Microsoft.Graphics.Canvas.ICanvasResourceCreator)">
       <summary>Gets the bounds of this CanvasGradientMesh.</summary>
       <remarks>
-        The bounds are the extent of this gradient mesh as if it were drawn relative to the origin, on the given drawing session. 
-        GetBounds ignores the drawing session's transform.</remarks>
+        <p>
+          The bounds are the extent of this gradient mesh as if it were drawn
+          relative to the origin with the drawing session's Transform set to the
+          identity.
+        </p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGradientMesh.GetBounds(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Numerics.Matrix3x2)">
+      <summary>Gets the bounds of this CanvasGradientMesh.</summary>
+      <remarks>
+        <p>
+          The bounds are the extent of this gradient mesh as if it were drawn
+          relative to the origin with the drawing session's Transform set to the
+          specified transform.
+        </p>
+      </remarks>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Geometry.CanvasGradientMesh.Device">
       <summary>Gets the device associated with this CanvasGradientMesh.</summary>

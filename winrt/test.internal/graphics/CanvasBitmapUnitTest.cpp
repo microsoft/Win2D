@@ -91,9 +91,8 @@ TEST_CLASS(CanvasBitmapUnitTest)
         Assert::AreEqual(RO_E_CLOSED, canvasBitmap->get_Description(&surfaceDescription));
         Assert::AreEqual(RO_E_CLOSED, canvasBitmap->GetInterface(IID_PPV_ARGS(&dxgiSurface)));
 
-        auto drawingSession = CreateStubDrawingSession();
-        Assert::AreEqual(RO_E_CLOSED, canvasBitmap->GetBounds(drawingSession.Get(), &bounds));
-        Assert::AreEqual(RO_E_CLOSED, canvasBitmap->GetBoundsWithTransform(drawingSession.Get(), matrix, &bounds));
+        Assert::AreEqual(RO_E_CLOSED, canvasBitmap->GetBounds(f.m_canvasDevice.Get(), &bounds));
+        Assert::AreEqual(RO_E_CLOSED, canvasBitmap->GetBoundsWithTransform(f.m_canvasDevice.Get(), matrix, &bounds));
 
         auto otherBitmap = CanvasBitmap::CreateNew(f.m_canvasDevice.Get(), f.m_testFileName, DEFAULT_DPI, CanvasAlphaMode::Premultiplied);
         Assert::AreEqual(RO_E_CLOSED, canvasBitmap->CopyPixelsFromBitmap(otherBitmap.Get()));
@@ -223,11 +222,10 @@ TEST_CLASS(CanvasBitmapUnitTest)
 
         auto canvasBitmap = CanvasBitmap::CreateNew(f.m_canvasDevice.Get(), f.m_testFileName, DEFAULT_DPI, CanvasAlphaMode::Premultiplied);
 
-        auto drawingSession = CreateStubDrawingSession();
         Assert::AreEqual(E_INVALIDARG, canvasBitmap->GetBounds(nullptr, &bounds));
-        Assert::AreEqual(E_INVALIDARG, canvasBitmap->GetBounds(drawingSession.Get(), nullptr));
+        Assert::AreEqual(E_INVALIDARG, canvasBitmap->GetBounds(f.m_canvasDevice.Get(), nullptr));
         Assert::AreEqual(E_INVALIDARG, canvasBitmap->GetBoundsWithTransform(nullptr, matrix, &bounds));
-        Assert::AreEqual(E_INVALIDARG, canvasBitmap->GetBoundsWithTransform(drawingSession.Get(), matrix, nullptr));
+        Assert::AreEqual(E_INVALIDARG, canvasBitmap->GetBoundsWithTransform(f.m_canvasDevice.Get(), matrix, nullptr));
     }
 
     TEST_METHOD_EX(CanvasBitmap_DpiProperties)
