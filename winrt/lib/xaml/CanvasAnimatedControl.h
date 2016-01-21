@@ -152,6 +152,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                 , NeedsDraw(true)
                 , Invalidated(false)
                 , DeviceNeedsReCreationWithNewOptions(false)
+                , SizeSeenByGameLoop{}
+                , IsInTick(false)
             {}
 
             bool IsPaused;
@@ -163,6 +165,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             bool NeedsDraw;
             bool Invalidated;
             bool DeviceNeedsReCreationWithNewOptions;
+            Size SizeSeenByGameLoop;
+            bool IsInTick;
             std::vector<ComPtr<AnimatedControlAsyncAction>> PendingAsyncActions;
         };
 
@@ -176,7 +180,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         virtual ~CanvasAnimatedControl();
 
         //
-        // ICanvasControl
+        // ICanvasAnimatedControl
         //
 
         IFACEMETHODIMP add_Update(
@@ -212,6 +216,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         IFACEMETHODIMP get_Paused(boolean* value) override;
         
+        IFACEMETHODIMP get_Size(Size* value) override;
+
         IFACEMETHODIMP Invalidate() override;
         
         IFACEMETHODIMP ResetElapsedTime() override;

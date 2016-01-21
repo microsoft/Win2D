@@ -327,6 +327,30 @@ IFACEMETHODIMP CanvasAnimatedControl::get_Paused(boolean* value)
         });
 }
 
+IFACEMETHODIMP CanvasAnimatedControl::get_Size(Size* value)
+{
+    return ExceptionBoundary(
+        [&]
+        {
+            CheckInPointer(value);
+
+            // While a game loop tick is running we want to only return the size
+            // that this tick is operating with.  This avoids a race condition
+            // where, mid tick, the control is resized, resulting in get_Size
+            // returning a value that's different to the size of the swap chain
+            // that'll be drawn to.
+            auto lock = Lock(m_sharedStateMutex);
+            if (m_sharedState.IsInTick)
+            {
+                *value = m_sharedState.SizeSeenByGameLoop;
+                return;
+            }
+            lock.unlock();
+
+            *value = GetCurrentSize();
+        });
+}
+
 IFACEMETHODIMP CanvasAnimatedControl::Invalidate()
 {
     return ExceptionBoundary(
@@ -887,7 +911,7 @@ bool CanvasAnimatedControl::Tick(
 {
     EventWrite_CanvasAnimatedControl_Tick_Start();
     auto tickEnd = MakeScopeWarden([] { EventWrite_CanvasAnimatedControl_Tick_Stop(); });
-    
+
     RenderTarget* renderTarget = GetCurrentRenderTarget();
 
     if (IsSuspended())
@@ -908,6 +932,18 @@ bool CanvasAnimatedControl::Tick(
     GetClearColorSizeAndDpi(&clearColor, &currentSize, &currentDpi);
 
     auto lock = Lock(m_sharedStateMutex);
+
+    m_sharedState.SizeSeenByGameLoop = currentSize;
+    m_sharedState.IsInTick = true;
+
+    auto tickEnd2 = MakeScopeWarden(
+        [&]
+        {
+            if (!lock.owns_lock())
+                lock.lock();
+            
+            m_sharedState.IsInTick = false;
+        });
 
     m_stepTimer.SetTargetElapsedTicks(m_sharedState.TargetElapsedTime);
     m_stepTimer.SetFixedTimeStep(m_sharedState.IsStepTimerFixedStep);

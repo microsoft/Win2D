@@ -566,6 +566,55 @@ TEST_CLASS(CanvasAnimatedControlTests)
         }
     }
 
+    TEST_METHOD_EX(CanvasAnimatedControl_SeesConsistentSizeInUpdateRenderHandlers)
+    {
+        ResizeFixture f;
+        
+        Size initialSize{ 1, 1 };
+        Size otherSize{ 2, 2 };
+        
+        MockEventHandler<Animated_UpdateEventHandler> onUpdate(L"OnUpdate");
+        MockEventHandler<Animated_DrawEventHandler> onDraw(L"OnDraw");
+        f.AddUpdateHandler(onUpdate.Get());
+        f.AddDrawHandler(onDraw.Get());
+        
+        Size sizeSeenByUpdate, sizeSeenByDraw;
+
+        onUpdate.SetExpectedCalls(2,
+            [&](ICanvasAnimatedControl* c, ICanvasAnimatedUpdateEventArgs*)
+            {
+                // Calling Resize here simulates the UI thread receiving a
+                // resize event while a game loop tick is running.
+                //
+                // We want to ensure that Update/Draw see the same size for the
+                // control within a single tick.
+                f.UserControl->Resize(otherSize);
+                
+                ThrowIfFailed(c->get_Size(&sizeSeenByUpdate));
+                return S_OK;
+            });
+
+        onDraw.SetExpectedCalls(2,
+            [&](ICanvasAnimatedControl* c, ICanvasAnimatedDrawEventArgs*)
+            {
+                ThrowIfFailed(c->get_Size(&sizeSeenByDraw));
+                return S_OK;
+            });
+
+        ThrowIfFailed(f.Control->put_IsFixedTimeStep(FALSE));
+
+        f.UserControl->Resize(initialSize);
+        f.Adapter->Tick();
+
+        Assert::AreEqual(initialSize, sizeSeenByUpdate);
+        Assert::AreEqual(initialSize, sizeSeenByDraw);
+        
+        f.Adapter->Tick();
+
+        Assert::AreEqual(otherSize, sizeSeenByUpdate);
+        Assert::AreEqual(otherSize, sizeSeenByDraw);
+    }
+
     class DpiFixture : public ResizeFixture
     {
     public:
