@@ -268,6 +268,19 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
             </dd>
           </dl>
         </p>
+        <p>
+          Passing in an applicationUri which is well-formed, but doesn't correspond to
+          a valid font file will still succeed. It's equivalent to having no FontFamily
+          specified. To be stricter and test that the font file was loaded and supported,
+          <see cref="M:Microsoft.Graphics.Canvas.Text.CanvasFontSet.#ctor(System.Uri)">
+          create a CanvasFontSet
+          </see>
+          and verify that its 
+          <see cref="P:Microsoft.Graphics.Canvas.Text.CanvasFontSet.Fonts">
+          Fonts
+          </see>
+          count is at least one.
+        </p>
       </remarks>
     </member>    
 

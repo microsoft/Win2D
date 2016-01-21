@@ -148,6 +148,25 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
           a URI is used to produce a CanvasFontSet, rather than a single 
           CanvasFontFace.
         </p>
+        <p>
+          Constructing a font set is a way of verifying that a font file is valid and
+          supported by Win2D. 
+        </p>
+        <p>
+          For example:
+        </p>
+        <code>
+            var fontSet = new CanvasFontSet(new Uri("ms-appx:///imageTiger.jpg"));
+            if (fontSet.Fonts.Count == 0)
+            {
+                // No fonts could be loaded from the set.
+                // ...
+            }
+        </code>
+        <p>
+          Constructing a font set from a URI which isn't a supported font file
+          will yield an empty font set.
+        </p>
       </remarks>
     </member>
     
