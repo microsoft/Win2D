@@ -76,16 +76,11 @@ namespace ExampleGallery
         {
             this.Page = page;
 
-#if WINDOWS_PHONE_APP
-            this.HasHardwareButtons = true;
-#elif WINDOWS_UWP
-            this.HasHardwareButtons = Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.Phone.UI.Input.HardwareButtons");
-#else
+#if WINDOWS_APP
             this.HasHardwareButtons = false;
+#else
+            this.HasHardwareButtons = true;
 #endif
-
-
-
 
             // When this page is part of the visual tree make two changes:
             // 1) Map application view state to visual state for the page
@@ -97,25 +92,19 @@ namespace ExampleGallery
 #endif
 
 #if WINDOWS_UWP
-                if (this.HasHardwareButtons)
-                {
-                    Windows.Phone.UI.Input.HardwareButtons.BackPressed += HardwareButtons_BackPressed;
-                }
-                else
+                Windows.UI.Core.SystemNavigationManager.GetForCurrentView().BackRequested += NavigationHelper_BackRequested;
 #endif
-#if !WINDOWS_PHONE_APP
-                {
 
-                    // Keyboard and mouse navigation only apply when occupying the entire window
-                    if (this.Page.ActualHeight == Window.Current.Bounds.Height &&
-                        this.Page.ActualWidth == Window.Current.Bounds.Width)
-                    {
-                        // Listen to the window directly so focus isn't required
-                        Window.Current.CoreWindow.Dispatcher.AcceleratorKeyActivated +=
-                            CoreDispatcher_AcceleratorKeyActivated;
-                        Window.Current.CoreWindow.PointerPressed +=
-                            this.CoreWindow_PointerPressed;
-                    }
+#if !WINDOWS_PHONE_APP
+                // Keyboard and mouse navigation only apply when occupying the entire window
+                if (this.Page.ActualHeight == Window.Current.Bounds.Height &&
+                    this.Page.ActualWidth == Window.Current.Bounds.Width)
+                {
+                    // Listen to the window directly so focus isn't required
+                    Window.Current.CoreWindow.Dispatcher.AcceleratorKeyActivated +=
+                        CoreDispatcher_AcceleratorKeyActivated;
+                    Window.Current.CoreWindow.PointerPressed +=
+                        this.CoreWindow_PointerPressed;
                 }
 #endif
             };
@@ -128,24 +117,19 @@ namespace ExampleGallery
 #endif
 
 #if WINDOWS_UWP
-                if (this.HasHardwareButtons)
-                {
-                    Windows.Phone.UI.Input.HardwareButtons.BackPressed -= HardwareButtons_BackPressed;
-                }
-                else
+                Windows.UI.Core.SystemNavigationManager.GetForCurrentView().BackRequested -= NavigationHelper_BackRequested;
 #endif
+
 #if !WINDOWS_PHONE_APP
-                {
-                    Window.Current.CoreWindow.Dispatcher.AcceleratorKeyActivated -=
-                    CoreDispatcher_AcceleratorKeyActivated;
-                    Window.Current.CoreWindow.PointerPressed -=
-                        this.CoreWindow_PointerPressed;
-                }
+                Window.Current.CoreWindow.Dispatcher.AcceleratorKeyActivated -=
+                CoreDispatcher_AcceleratorKeyActivated;
+                Window.Current.CoreWindow.PointerPressed -=
+                    this.CoreWindow_PointerPressed;
 #endif
             };
         }
 
-        #region Navigation support
+#region Navigation support
 
         RelayCommand _goBackCommand;
         RelayCommand _goForwardCommand;
@@ -241,13 +225,24 @@ namespace ExampleGallery
             if (this.Frame != null && this.Frame.CanGoForward) this.Frame.GoForward();
         }
 
-#if WINDOWS_PHONE_APP || WINDOWS_UWP
+#if WINDOWS_PHONE_APP
         /// <summary>
         /// Invoked when the hardware back button is pressed. For Windows Phone only.
         /// </summary>
         /// <param name="sender">Instance that triggered the event.</param>
         /// <param name="e">Event data describing the conditions that led to the event.</param>
         private void HardwareButtons_BackPressed(object sender, Windows.Phone.UI.Input.BackPressedEventArgs e)
+        {
+            if (this.GoBackCommand.CanExecute(null))
+            {
+                e.Handled = true;
+                this.GoBackCommand.Execute(null);
+            }
+        }
+#endif
+
+#if WINDOWS_UWP
+        private void NavigationHelper_BackRequested(object sender, BackRequestedEventArgs e)
         {
             if (this.GoBackCommand.CanExecute(null))
             {
@@ -331,9 +326,9 @@ namespace ExampleGallery
         }
 #endif
 
-        #endregion
+#endregion
 
-        #region Process lifetime management
+#region Process lifetime management
 
         private String _pageKey;
 
@@ -360,6 +355,10 @@ namespace ExampleGallery
         /// property provides the group to be displayed.</param>
         public void OnNavigatedTo(NavigationEventArgs e)
         {
+#if WINDOWS_UWP
+            Windows.UI.Core.SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = CanGoBack() ? AppViewBackButtonVisibility.Visible : AppViewBackButtonVisibility.Collapsed;
+#endif
+
             var frameState = SuspensionManager.SessionStateForFrame(this.Frame);
             this._pageKey = "Page-" + this.Frame.BackStackDepth;
 
@@ -411,7 +410,7 @@ namespace ExampleGallery
             frameState[_pageKey] = pageState;
         }
 
-        #endregion
+#endregion
     }
 
     /// <summary>
