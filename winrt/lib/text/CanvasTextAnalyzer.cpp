@@ -454,11 +454,11 @@ CanvasTextAnalyzer::CanvasTextAnalyzer(
 }
 
 
-IFACEMETHODIMP CanvasTextAnalyzer::ChooseFontsUsingSystemFontSet(
+IFACEMETHODIMP CanvasTextAnalyzer::GetFontsUsingSystemFontSet(
     ICanvasTextFormat* textFormat,
     IVectorView<IKeyValuePair<CanvasCharacterRange, CanvasScaledFont*>*>** result)
 {
-    return ChooseFonts(textFormat, nullptr, result);
+    return GetFonts(textFormat, nullptr, result);
 }
 
 void CanvasTextAnalyzer::CreateTextAnalysisSourceAndSink()
@@ -480,7 +480,7 @@ void CanvasTextAnalyzer::CreateTextAnalysisSourceAndSink()
     CheckMakeResult(m_dwriteTextAnalysisSink);
 }
 
-IFACEMETHODIMP CanvasTextAnalyzer::ChooseFonts(
+IFACEMETHODIMP CanvasTextAnalyzer::GetFonts(
     ICanvasTextFormat* textFormat,
     ICanvasFontSet* requestedFontSet,
     IVectorView<IKeyValuePair<CanvasCharacterRange, CanvasScaledFont*>*>** result)
@@ -574,13 +574,13 @@ IFACEMETHODIMP CanvasTextAnalyzer::ChooseFonts(
         });
 }
 
-IFACEMETHODIMP CanvasTextAnalyzer::AnalyzeBidi(
+IFACEMETHODIMP CanvasTextAnalyzer::GetBidi(
     IVectorView<IKeyValuePair<CanvasCharacterRange, CanvasAnalyzedBidi>*>** values)
 {
-    return AnalyzeBidiWithLocale(nullptr, values);
+    return GetBidiWithLocale(nullptr, values);
 }
 
-IFACEMETHODIMP CanvasTextAnalyzer::AnalyzeBidiWithLocale(
+IFACEMETHODIMP CanvasTextAnalyzer::GetBidiWithLocale(
     HSTRING locale,
     IVectorView<IKeyValuePair<CanvasCharacterRange, CanvasAnalyzedBidi>*>** values)
 {
@@ -601,14 +601,14 @@ IFACEMETHODIMP CanvasTextAnalyzer::AnalyzeBidiWithLocale(
         });
 }
 
-IFACEMETHODIMP CanvasTextAnalyzer::AnalyzeBreakpoints(
+IFACEMETHODIMP CanvasTextAnalyzer::GetBreakpoints(
     uint32_t* valueCount,
     CanvasAnalyzedBreakpoint** valueElements)
 {
-    return AnalyzeBreakpointsWithLocale(nullptr, valueCount, valueElements);
+    return GetBreakpointsWithLocale(nullptr, valueCount, valueElements);
 }
 
-IFACEMETHODIMP CanvasTextAnalyzer::AnalyzeBreakpointsWithLocale(
+IFACEMETHODIMP CanvasTextAnalyzer::GetBreakpointsWithLocale(
     HSTRING locale,
     uint32_t* valueCount,
     CanvasAnalyzedBreakpoint** valueElements)
@@ -633,7 +633,7 @@ IFACEMETHODIMP CanvasTextAnalyzer::AnalyzeBreakpointsWithLocale(
         });
 }
 
-IFACEMETHODIMP CanvasTextAnalyzer::AnalyzeNumberSubstitutions(
+IFACEMETHODIMP CanvasTextAnalyzer::GetNumberSubstitutions(
     IVectorView<IKeyValuePair<CanvasCharacterRange, CanvasNumberSubstitution*>*>** values)
 {
     return ExceptionBoundary(
@@ -650,13 +650,13 @@ IFACEMETHODIMP CanvasTextAnalyzer::AnalyzeNumberSubstitutions(
         });
 }
 
-IFACEMETHODIMP CanvasTextAnalyzer::AnalyzeScript(
+IFACEMETHODIMP CanvasTextAnalyzer::GetScript(
     IVectorView<IKeyValuePair<CanvasCharacterRange, CanvasAnalyzedScript>*>** values)
 {
-    return AnalyzeScriptWithLocale(nullptr, values);
+    return GetScriptWithLocale(nullptr, values);
 }
     
-IFACEMETHODIMP CanvasTextAnalyzer::AnalyzeScriptWithLocale(
+IFACEMETHODIMP CanvasTextAnalyzer::GetScriptWithLocale(
     HSTRING locale,
     IVectorView<IKeyValuePair<CanvasCharacterRange, CanvasAnalyzedScript>*>** values)
 {
@@ -677,13 +677,13 @@ IFACEMETHODIMP CanvasTextAnalyzer::AnalyzeScriptWithLocale(
         });
 }
 
-IFACEMETHODIMP CanvasTextAnalyzer::AnalyzeGlyphOrientations(
+IFACEMETHODIMP CanvasTextAnalyzer::GetGlyphOrientations(
     IVectorView<IKeyValuePair<CanvasCharacterRange, CanvasAnalyzedGlyphOrientation>*>** values)
 {
-    return AnalyzeGlyphOrientationsWithLocale(nullptr, values);
+    return GetGlyphOrientationsWithLocale(nullptr, values);
 }
     
-IFACEMETHODIMP CanvasTextAnalyzer::AnalyzeGlyphOrientationsWithLocale(
+IFACEMETHODIMP CanvasTextAnalyzer::GetGlyphOrientationsWithLocale(
     HSTRING locale,
     IVectorView<IKeyValuePair<CanvasCharacterRange, CanvasAnalyzedGlyphOrientation>*>** values)
 {

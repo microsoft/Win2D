@@ -246,7 +246,7 @@ TEST_CLASS(CanvasTextAnalyzerTests)
         uint32_t BidiLevel;
 
         //
-        // Passed to ChooseFonts.
+        // Passed to GetFonts.
         //
         ComPtr<ICanvasTextFormat> TextFormat;
 
@@ -1144,12 +1144,12 @@ TEST_CLASS(CanvasTextAnalyzerTests)
             return analyzer;
         }
 
-        void CreateAnalyzerAndChooseFonts()
+        void CreateAnalyzerAndGetFonts()
         {
             auto textAnalyzer = Create();
 
             ComPtr<IVectorView<IKeyValuePair<CanvasCharacterRange, CanvasScaledFont*>*>> result;
-            Assert::AreEqual(S_OK, textAnalyzer->ChooseFontsUsingSystemFontSet(TextFormat.Get(), &result));
+            Assert::AreEqual(S_OK, textAnalyzer->GetFontsUsingSystemFontSet(TextFormat.Get(), &result));
         }
 
     private:
@@ -1227,17 +1227,17 @@ TEST_CLASS(CanvasTextAnalyzerTests)
         }
     };
 
-    TEST_METHOD_EX(CanvasTextAnalyzer_ChooseFonts_UsesSystemFontCollection)
+    TEST_METHOD_EX(CanvasTextAnalyzer_GetFonts_UsesSystemFontCollection)
     {
         Fixture f;
 
         f.ExpectGetSystemFontCollection();
         f.ExpectMapCharacters();
 
-        f.CreateAnalyzerAndChooseFonts();
+        f.CreateAnalyzerAndGetFonts();
     }
 
-    TEST_METHOD_EX(CanvasTextAnalyzer_ChooseFonts_NullFontSet_UsesSystemFontCollection)
+    TEST_METHOD_EX(CanvasTextAnalyzer_GetFonts_NullFontSet_UsesSystemFontCollection)
     {
         Fixture f;
 
@@ -1247,10 +1247,10 @@ TEST_CLASS(CanvasTextAnalyzerTests)
         auto textAnalyzer = f.Create();
 
         ComPtr<IVectorView<IKeyValuePair<CanvasCharacterRange, CanvasScaledFont*>*>> result;
-        Assert::AreEqual(S_OK, textAnalyzer->ChooseFonts(Make<CanvasTextFormat>().Get(), nullptr, &result));
+        Assert::AreEqual(S_OK, textAnalyzer->GetFonts(Make<CanvasTextFormat>().Get(), nullptr, &result));
     }
 
-    TEST_METHOD_EX(CanvasTextAnalyzer_ChooseFonts_PassesThrough_TextFormatProperties)
+    TEST_METHOD_EX(CanvasTextAnalyzer_GetFonts_PassesThrough_TextFormatProperties)
     {
         Fixture f;
 
@@ -1263,10 +1263,10 @@ TEST_CLASS(CanvasTextAnalyzerTests)
         ThrowIfFailed(f.TextFormat->put_FontStyle(ABI::Windows::UI::Text::FontStyle_Italic));
         ThrowIfFailed(f.TextFormat->put_FontStretch(ABI::Windows::UI::Text::FontStretch_Expanded));
 
-        f.CreateAnalyzerAndChooseFonts();
+        f.CreateAnalyzerAndGetFonts();
     }
 
-    TEST_METHOD_EX(CanvasTextAnalyzer_ChooseFonts_PassesThrough_TextFormatFontFamily)
+    TEST_METHOD_EX(CanvasTextAnalyzer_GetFonts_PassesThrough_TextFormatFontFamily)
     {
         Fixture f;
 
@@ -1275,10 +1275,10 @@ TEST_CLASS(CanvasTextAnalyzerTests)
 
         ThrowIfFailed(f.TextFormat->put_FontFamily(WinString(L"Parchment")));
 
-        f.CreateAnalyzerAndChooseFonts();
+        f.CreateAnalyzerAndGetFonts();
     }
 
-    TEST_METHOD_EX(CanvasTextAnalyzer_ChooseFontsUsingSystemFontSet_PassesThroughCorrectFontSet)
+    TEST_METHOD_EX(CanvasTextAnalyzer_GetFontsUsingSystemFontSet_PassesThroughCorrectFontSet)
     {
         Fixture f;
 
@@ -1303,10 +1303,10 @@ TEST_CLASS(CanvasTextAnalyzerTests)
 #endif
 
         ComPtr<IVectorView<IKeyValuePair<CanvasCharacterRange, CanvasScaledFont*>*>> result;
-        Assert::AreEqual(S_OK, textAnalyzer->ChooseFonts(f.TextFormat.Get(), canvasFontSet.Get(), &result));
+        Assert::AreEqual(S_OK, textAnalyzer->GetFonts(f.TextFormat.Get(), canvasFontSet.Get(), &result));
     }
 
-    TEST_METHOD_EX(CanvasTextAnalyzer_ChooseFonts_UsesCorrectTextPositionAndLength)
+    TEST_METHOD_EX(CanvasTextAnalyzer_GetFonts_UsesCorrectTextPositionAndLength)
     {
         Fixture f;
 
@@ -1320,10 +1320,10 @@ TEST_CLASS(CanvasTextAnalyzerTests)
         auto textAnalyzer = f.Create();
 
         ComPtr<IVectorView<IKeyValuePair<CanvasCharacterRange, CanvasScaledFont*>*>> result;
-        Assert::AreEqual(S_OK, textAnalyzer->ChooseFontsUsingSystemFontSet(f.TextFormat.Get(), &result));
+        Assert::AreEqual(S_OK, textAnalyzer->GetFontsUsingSystemFontSet(f.TextFormat.Get(), &result));
     }
 
-    TEST_METHOD_EX(CanvasTextAnalyzer_ChooseFonts_TextAtPosition)
+    TEST_METHOD_EX(CanvasTextAnalyzer_GetFonts_TextAtPosition)
     {
         struct TestCase
         {
@@ -1353,11 +1353,11 @@ TEST_CLASS(CanvasTextAnalyzerTests)
                 };
             f.ExpectMapCharacters();
 
-            f.CreateAnalyzerAndChooseFonts();
+            f.CreateAnalyzerAndGetFonts();
         }
     }
 
-    TEST_METHOD_EX(CanvasTextAnalyzer_ChooseFonts_TextBeforePosition)
+    TEST_METHOD_EX(CanvasTextAnalyzer_GetFonts_TextBeforePosition)
     {
         struct TestCase
         {
@@ -1387,11 +1387,11 @@ TEST_CLASS(CanvasTextAnalyzerTests)
                 };
             f.ExpectMapCharacters();
 
-            f.CreateAnalyzerAndChooseFonts();
+            f.CreateAnalyzerAndGetFonts();
         }
     }
 
-    TEST_METHOD_EX(CanvasTextAnalyzer_ChooseFonts_ParagraphReadingDirection)
+    TEST_METHOD_EX(CanvasTextAnalyzer_GetFonts_ParagraphReadingDirection)
     {
         Fixture f;
 
@@ -1407,10 +1407,10 @@ TEST_CLASS(CanvasTextAnalyzerTests)
         auto textAnalyzer = f.Create();
 
         ComPtr<IVectorView<IKeyValuePair<CanvasCharacterRange, CanvasScaledFont*>*>> result;
-        Assert::AreEqual(S_OK, textAnalyzer->ChooseFontsUsingSystemFontSet(Make<CanvasTextFormat>().Get(), &result));
+        Assert::AreEqual(S_OK, textAnalyzer->GetFontsUsingSystemFontSet(Make<CanvasTextFormat>().Get(), &result));
     }
 
-    TEST_METHOD_EX(CanvasTextAnalyzer_ChooseFonts_LocaleName_FromTextFormat)
+    TEST_METHOD_EX(CanvasTextAnalyzer_GetFonts_LocaleName_FromTextFormat)
     {
         for (auto testCase : testCasesForCharacterRanges)
         {
@@ -1429,11 +1429,11 @@ TEST_CLASS(CanvasTextAnalyzerTests)
 
             ThrowIfFailed(f.TextFormat->put_LocaleName(WinString(L"xx-yy")));
 
-            f.CreateAnalyzerAndChooseFonts();
+            f.CreateAnalyzerAndGetFonts();
         }
     }
 
-    TEST_METHOD_EX(CanvasTextAnalyzer_ChooseFonts_LocaleName_FromOptions_FormatChangeAtEachCharacter)
+    TEST_METHOD_EX(CanvasTextAnalyzer_GetFonts_LocaleName_FromOptions_FormatChangeAtEachCharacter)
     {
         Fixture f;
 
@@ -1473,10 +1473,10 @@ TEST_CLASS(CanvasTextAnalyzerTests)
         auto textAnalyzer = f.CreateWithOptions();
 
         ComPtr<IVectorView<IKeyValuePair<CanvasCharacterRange, CanvasScaledFont*>*>> result;
-        Assert::AreEqual(S_OK, textAnalyzer->ChooseFontsUsingSystemFontSet(f.TextFormat.Get(), &result));
+        Assert::AreEqual(S_OK, textAnalyzer->GetFontsUsingSystemFontSet(f.TextFormat.Get(), &result));
     }
 
-    TEST_METHOD_EX(CanvasTextAnalyzer_ChooseFonts_LocaleName_FromOptions_TwoCharactersWithOneFormatThenOneWithAnother)
+    TEST_METHOD_EX(CanvasTextAnalyzer_GetFonts_LocaleName_FromOptions_TwoCharactersWithOneFormatThenOneWithAnother)
     {
         Fixture f;
 
@@ -1526,10 +1526,10 @@ TEST_CLASS(CanvasTextAnalyzerTests)
         auto textAnalyzer = f.CreateWithOptions();
 
         ComPtr<IVectorView<IKeyValuePair<CanvasCharacterRange, CanvasScaledFont*>*>> result;
-        Assert::AreEqual(S_OK, textAnalyzer->ChooseFontsUsingSystemFontSet(f.TextFormat.Get(), &result));
+        Assert::AreEqual(S_OK, textAnalyzer->GetFontsUsingSystemFontSet(f.TextFormat.Get(), &result));
     }
 
-    TEST_METHOD_EX(CanvasTextAnalyzer_ChooseFonts_NumberSubstitution_FromDefault)
+    TEST_METHOD_EX(CanvasTextAnalyzer_GetFonts_NumberSubstitution_FromDefault)
     {
         auto dwriteNumberSubstitution = Make<MockDWriteNumberSubstitution>();
         auto numberSubstitution = ResourceManager::GetOrCreate<ICanvasNumberSubstitution>(dwriteNumberSubstitution.Get());
@@ -1554,11 +1554,11 @@ TEST_CLASS(CanvasTextAnalyzerTests)
             auto textAnalyzer = f.CreateWithNumberSubstitutionAndVerticalGlyphOrientationAndBidiLevel();
 
             ComPtr<IVectorView<IKeyValuePair<CanvasCharacterRange, CanvasScaledFont*>*>> result;
-            Assert::AreEqual(S_OK, textAnalyzer->ChooseFontsUsingSystemFontSet(f.TextFormat.Get(), &result));
+            Assert::AreEqual(S_OK, textAnalyzer->GetFontsUsingSystemFontSet(f.TextFormat.Get(), &result));
         }
     }
 
-    TEST_METHOD_EX(CanvasTextAnalyzer_ChooseFonts_NumberSubstitution_FromOptions_FormatChangeAtEachCharacter)
+    TEST_METHOD_EX(CanvasTextAnalyzer_GetFonts_NumberSubstitution_FromOptions_FormatChangeAtEachCharacter)
     {
         ComPtr<MockDWriteNumberSubstitution> dwriteNumberSubstitutions[3];
         ComPtr<ICanvasNumberSubstitution> numberSubstitutions[3];
@@ -1597,10 +1597,10 @@ TEST_CLASS(CanvasTextAnalyzerTests)
         auto textAnalyzer = f.CreateWithOptions();
 
         ComPtr<IVectorView<IKeyValuePair<CanvasCharacterRange, CanvasScaledFont*>*>> result;
-        Assert::AreEqual(S_OK, textAnalyzer->ChooseFontsUsingSystemFontSet(f.TextFormat.Get(), &result));
+        Assert::AreEqual(S_OK, textAnalyzer->GetFontsUsingSystemFontSet(f.TextFormat.Get(), &result));
     }
 
-    TEST_METHOD_EX(CanvasTextAnalyzer_ChooseFonts_NumberSubstitution_FromOptions_TwoCharactersWithOneFormatThenOneWithAnother)
+    TEST_METHOD_EX(CanvasTextAnalyzer_GetFonts_NumberSubstitution_FromOptions_TwoCharactersWithOneFormatThenOneWithAnother)
     {
         ComPtr<MockDWriteNumberSubstitution> dwriteNumberSubstitutions[2];
         ComPtr<ICanvasNumberSubstitution> numberSubstitutions[2];
@@ -1656,10 +1656,10 @@ TEST_CLASS(CanvasTextAnalyzerTests)
         auto textAnalyzer = f.CreateWithOptions();
 
         ComPtr<IVectorView<IKeyValuePair<CanvasCharacterRange, CanvasScaledFont*>*>> result;
-        Assert::AreEqual(S_OK, textAnalyzer->ChooseFontsUsingSystemFontSet(f.TextFormat.Get(), &result));
+        Assert::AreEqual(S_OK, textAnalyzer->GetFontsUsingSystemFontSet(f.TextFormat.Get(), &result));
     }
 
-    TEST_METHOD_EX(CanvasTextAnalyzer_ChooseFonts_VerticalGlyphOrientation_FromDefault)
+    TEST_METHOD_EX(CanvasTextAnalyzer_GetFonts_VerticalGlyphOrientation_FromDefault)
     {
         for (auto testCase : testCasesForCharacterRanges)
         {
@@ -1682,12 +1682,12 @@ TEST_CLASS(CanvasTextAnalyzerTests)
             auto textAnalyzer = f.CreateWithNumberSubstitutionAndVerticalGlyphOrientationAndBidiLevel();
 
             ComPtr<IVectorView<IKeyValuePair<CanvasCharacterRange, CanvasScaledFont*>*>> result;
-            Assert::AreEqual(S_OK, textAnalyzer->ChooseFontsUsingSystemFontSet(f.TextFormat.Get(), &result));
+            Assert::AreEqual(S_OK, textAnalyzer->GetFontsUsingSystemFontSet(f.TextFormat.Get(), &result));
         }
     }
 
 
-    TEST_METHOD_EX(CanvasTextAnalyzer_ChooseFonts_VerticalGlyphOrientation_FromOptions_FormatChangeAtEachCharacter)
+    TEST_METHOD_EX(CanvasTextAnalyzer_GetFonts_VerticalGlyphOrientation_FromOptions_FormatChangeAtEachCharacter)
     {
         Fixture f;
 
@@ -1718,10 +1718,10 @@ TEST_CLASS(CanvasTextAnalyzerTests)
         auto textAnalyzer = f.CreateWithOptions();
 
         ComPtr<IVectorView<IKeyValuePair<CanvasCharacterRange, CanvasScaledFont*>*>> result;
-        Assert::AreEqual(S_OK, textAnalyzer->ChooseFontsUsingSystemFontSet(f.TextFormat.Get(), &result));
+        Assert::AreEqual(S_OK, textAnalyzer->GetFontsUsingSystemFontSet(f.TextFormat.Get(), &result));
     }
 
-    TEST_METHOD_EX(CanvasTextAnalyzer_ChooseFonts_VerticalGlyphOrientation_FromOptions_TwoCharactersWithOneFormatThenOneWithAnother)
+    TEST_METHOD_EX(CanvasTextAnalyzer_GetFonts_VerticalGlyphOrientation_FromOptions_TwoCharactersWithOneFormatThenOneWithAnother)
     {
         Fixture f;
 
@@ -1771,11 +1771,11 @@ TEST_CLASS(CanvasTextAnalyzerTests)
         auto textAnalyzer = f.CreateWithOptions();
 
         ComPtr<IVectorView<IKeyValuePair<CanvasCharacterRange, CanvasScaledFont*>*>> result;
-        Assert::AreEqual(S_OK, textAnalyzer->ChooseFontsUsingSystemFontSet(f.TextFormat.Get(), &result));
+        Assert::AreEqual(S_OK, textAnalyzer->GetFontsUsingSystemFontSet(f.TextFormat.Get(), &result));
     }
 
 
-    TEST_METHOD_EX(CanvasTextAnalyzer_ChooseFonts_Bidi_FromDefault)
+    TEST_METHOD_EX(CanvasTextAnalyzer_GetFonts_Bidi_FromDefault)
     {
         for (auto testCase : testCasesForCharacterRanges)
         {
@@ -1797,12 +1797,12 @@ TEST_CLASS(CanvasTextAnalyzerTests)
             auto textAnalyzer = f.CreateWithNumberSubstitutionAndVerticalGlyphOrientationAndBidiLevel();
 
             ComPtr<IVectorView<IKeyValuePair<CanvasCharacterRange, CanvasScaledFont*>*>> result;
-            Assert::AreEqual(S_OK, textAnalyzer->ChooseFontsUsingSystemFontSet(f.TextFormat.Get(), &result));
+            Assert::AreEqual(S_OK, textAnalyzer->GetFontsUsingSystemFontSet(f.TextFormat.Get(), &result));
         }
     }
 
 
-    TEST_METHOD_EX(CanvasTextAnalyzer_ChooseFonts_BidiLevel_FromOptions_FormatChangeAtEachCharacter)
+    TEST_METHOD_EX(CanvasTextAnalyzer_GetFonts_BidiLevel_FromOptions_FormatChangeAtEachCharacter)
     {
         Fixture f;
 
@@ -1833,11 +1833,11 @@ TEST_CLASS(CanvasTextAnalyzerTests)
         auto textAnalyzer = f.CreateWithOptions();
 
         ComPtr<IVectorView<IKeyValuePair<CanvasCharacterRange, CanvasScaledFont*>*>> result;
-        Assert::AreEqual(S_OK, textAnalyzer->ChooseFontsUsingSystemFontSet(f.TextFormat.Get(), &result));
+        Assert::AreEqual(S_OK, textAnalyzer->GetFontsUsingSystemFontSet(f.TextFormat.Get(), &result));
     }
 
 
-    TEST_METHOD_EX(CanvasTextAnalyzer_ChooseFonts_BidiLevel_FromOptions_TwoCharactersWithOneFormatThenOneWithAnother)
+    TEST_METHOD_EX(CanvasTextAnalyzer_GetFonts_BidiLevel_FromOptions_TwoCharactersWithOneFormatThenOneWithAnother)
     {
         Fixture f;
 
@@ -1887,10 +1887,10 @@ TEST_CLASS(CanvasTextAnalyzerTests)
         auto textAnalyzer = f.CreateWithOptions();
 
         ComPtr<IVectorView<IKeyValuePair<CanvasCharacterRange, CanvasScaledFont*>*>> result;
-        Assert::AreEqual(S_OK, textAnalyzer->ChooseFontsUsingSystemFontSet(f.TextFormat.Get(), &result));
+        Assert::AreEqual(S_OK, textAnalyzer->GetFontsUsingSystemFontSet(f.TextFormat.Get(), &result));
     }
 
-    TEST_METHOD_EX(CanvasTextAnalyzer_ChooseFonts_AppReturnsBadBidi_CausesError)
+    TEST_METHOD_EX(CanvasTextAnalyzer_GetFonts_AppReturnsBadBidi_CausesError)
     {
         Fixture f;
 
@@ -1915,16 +1915,16 @@ TEST_CLASS(CanvasTextAnalyzerTests)
         auto textAnalyzer = f.CreateWithOptions();
 
         ComPtr<IVectorView<IKeyValuePair<CanvasCharacterRange, CanvasScaledFont*>*>> result;
-        Assert::AreEqual(S_OK, textAnalyzer->ChooseFontsUsingSystemFontSet(f.TextFormat.Get(), &result));
+        Assert::AreEqual(S_OK, textAnalyzer->GetFontsUsingSystemFontSet(f.TextFormat.Get(), &result));
     }
 
-    TEST_METHOD_EX(CanvasTextAnalyzer_AnalyzeScript_BadArg)
+    TEST_METHOD_EX(CanvasTextAnalyzer_GetScript_BadArg)
     {
         Fixture f;
         auto textAnalyzer = f.Create();
 
-        Assert::AreEqual(E_INVALIDARG, textAnalyzer->AnalyzeScript(nullptr));
-        Assert::AreEqual(E_INVALIDARG, textAnalyzer->AnalyzeScriptWithLocale(WinString(L""), nullptr));
+        Assert::AreEqual(E_INVALIDARG, textAnalyzer->GetScript(nullptr));
+        Assert::AreEqual(E_INVALIDARG, textAnalyzer->GetScriptWithLocale(WinString(L""), nullptr));
     }
 
     template<typename RETURN_TYPE, typename ELEMENT_IMPL_TYPE=RETURN_TYPE, typename ANALYSIS_METHOD>
@@ -1954,7 +1954,7 @@ TEST_CLASS(CanvasTextAnalyzerTests)
         return analyzedElement;
     }
 
-    TEST_METHOD_EX(CanvasTextAnalyzer_AnalyzeScript_UniformSpan)
+    TEST_METHOD_EX(CanvasTextAnalyzer_GetScript_UniformSpan)
     {
         Fixture f;
         auto textAnalyzer = f.Create();
@@ -1973,7 +1973,7 @@ TEST_CLASS(CanvasTextAnalyzerTests)
                 return S_OK;
             });
 
-        auto analyzedScript = AssertUniformSpanAndReturnElement<CanvasAnalyzedScript>(textAnalyzer, &ICanvasTextAnalyzer::AnalyzeScript, static_cast<int>(f.Text.length()));
+        auto analyzedScript = AssertUniformSpanAndReturnElement<CanvasAnalyzedScript>(textAnalyzer, &ICanvasTextAnalyzer::GetScript, static_cast<int>(f.Text.length()));
 
         Assert::AreEqual(123, analyzedScript.ScriptIdentifier);
         Assert::AreEqual(CanvasScriptShape::NoVisual, analyzedScript.Shape);
@@ -2207,16 +2207,16 @@ TEST_CLASS(CanvasTextAnalyzerTests)
             &glyphElements));
     }
 
-    TEST_METHOD_EX(CanvasTextAnalyzer_AnalyzeBidi_BadArg)
+    TEST_METHOD_EX(CanvasTextAnalyzer_GetBidi_BadArg)
     {
         Fixture f;
         auto textAnalyzer = f.Create();
 
-        Assert::AreEqual(E_INVALIDARG, textAnalyzer->AnalyzeBidi(nullptr));
-        Assert::AreEqual(E_INVALIDARG, textAnalyzer->AnalyzeBidiWithLocale(WinString(L""), nullptr));
+        Assert::AreEqual(E_INVALIDARG, textAnalyzer->GetBidi(nullptr));
+        Assert::AreEqual(E_INVALIDARG, textAnalyzer->GetBidiWithLocale(WinString(L""), nullptr));
     }
 
-    TEST_METHOD_EX(CanvasTextAnalyzer_AnalyzeBidi_UniformSpan)
+    TEST_METHOD_EX(CanvasTextAnalyzer_GetBidi_UniformSpan)
     {
         Fixture f;
         auto textAnalyzer = f.Create();
@@ -2232,24 +2232,24 @@ TEST_CLASS(CanvasTextAnalyzerTests)
                 return S_OK;
             });
 
-        auto element = AssertUniformSpanAndReturnElement<CanvasAnalyzedBidi>(textAnalyzer, &ICanvasTextAnalyzer::AnalyzeBidi, static_cast<int>(f.Text.length()));
+        auto element = AssertUniformSpanAndReturnElement<CanvasAnalyzedBidi>(textAnalyzer, &ICanvasTextAnalyzer::GetBidi, static_cast<int>(f.Text.length()));
 
         Assert::AreEqual(12u, element.ExplicitLevel);
         Assert::AreEqual(34u, element.ResolvedLevel);
     }
 
-    TEST_METHOD_EX(CanvasTextAnalyzer_AnalyzeBreakpoints_BadArg)
+    TEST_METHOD_EX(CanvasTextAnalyzer_GetBreakpoints_BadArg)
     {
         Fixture f;
         auto textAnalyzer = f.Create();
 
         uint32_t breakpointCount;
         CanvasAnalyzedBreakpoint* breakpoints;
-        Assert::AreEqual(E_INVALIDARG, textAnalyzer->AnalyzeBreakpoints(nullptr, &breakpoints));
-        Assert::AreEqual(E_INVALIDARG, textAnalyzer->AnalyzeBreakpoints(&breakpointCount, nullptr));
+        Assert::AreEqual(E_INVALIDARG, textAnalyzer->GetBreakpoints(nullptr, &breakpoints));
+        Assert::AreEqual(E_INVALIDARG, textAnalyzer->GetBreakpoints(&breakpointCount, nullptr));
 
-        Assert::AreEqual(E_INVALIDARG, textAnalyzer->AnalyzeBreakpointsWithLocale(WinString(L""), nullptr, &breakpoints));
-        Assert::AreEqual(E_INVALIDARG, textAnalyzer->AnalyzeBreakpointsWithLocale(WinString(L""), &breakpointCount, nullptr));
+        Assert::AreEqual(E_INVALIDARG, textAnalyzer->GetBreakpointsWithLocale(WinString(L""), nullptr, &breakpoints));
+        Assert::AreEqual(E_INVALIDARG, textAnalyzer->GetBreakpointsWithLocale(WinString(L""), &breakpointCount, nullptr));
     }
 
     TEST_METHOD_EX(CanvasTextAnalyzer_AnalyzeLineBreakpoints)
@@ -2284,7 +2284,7 @@ TEST_CLASS(CanvasTextAnalyzerTests)
 
         uint32_t breakpointCount;
         CanvasAnalyzedBreakpoint* breakpoints;
-        Assert::AreEqual(S_OK, textAnalyzer->AnalyzeBreakpoints(&breakpointCount, &breakpoints));
+        Assert::AreEqual(S_OK, textAnalyzer->GetBreakpoints(&breakpointCount, &breakpoints));
 
         Assert::AreEqual(static_cast<uint32_t>(f.Text.length()), breakpointCount);
 
@@ -2298,15 +2298,15 @@ TEST_CLASS(CanvasTextAnalyzerTests)
         }
     }
 
-    TEST_METHOD_EX(CanvasTextAnalyzer_AnalyzeNumberSubstitutions_BadArg)
+    TEST_METHOD_EX(CanvasTextAnalyzer_GetNumberSubstitutions_BadArg)
     {
         Fixture f;
         auto textAnalyzer = f.Create();
 
-        Assert::AreEqual(E_INVALIDARG, textAnalyzer->AnalyzeNumberSubstitutions(nullptr));
+        Assert::AreEqual(E_INVALIDARG, textAnalyzer->GetNumberSubstitutions(nullptr));
     }
 
-    TEST_METHOD_EX(CanvasTextAnalyzer_AnalyzeNumberSubstitutions_UniformSpan)
+    TEST_METHOD_EX(CanvasTextAnalyzer_GetNumberSubstitutions_UniformSpan)
     {
         Fixture f;
         auto textAnalyzer = f.Create();
@@ -2325,21 +2325,21 @@ TEST_CLASS(CanvasTextAnalyzerTests)
                 return S_OK;
             });
 
-        auto element = AssertUniformSpanAndReturnElement<ComPtr<ICanvasNumberSubstitution>, CanvasNumberSubstitution*>(textAnalyzer, &ICanvasTextAnalyzer::AnalyzeNumberSubstitutions, static_cast<int>(f.Text.length()));
+        auto element = AssertUniformSpanAndReturnElement<ComPtr<ICanvasNumberSubstitution>, CanvasNumberSubstitution*>(textAnalyzer, &ICanvasTextAnalyzer::GetNumberSubstitutions, static_cast<int>(f.Text.length()));
 
         Assert::IsTrue(IsSameInstance(numberSubstitution.Get(), element.Get()));
     }
 
-    TEST_METHOD_EX(CanvasTextAnalyzer_AnalyzeGlyphOrientations_BadArg)
+    TEST_METHOD_EX(CanvasTextAnalyzer_GetGlyphOrientations_BadArg)
     {
         Fixture f;
         auto textAnalyzer = f.Create();
 
-        Assert::AreEqual(E_INVALIDARG, textAnalyzer->AnalyzeGlyphOrientations(nullptr));
-        Assert::AreEqual(E_INVALIDARG, textAnalyzer->AnalyzeGlyphOrientationsWithLocale(WinString(L""), nullptr));
+        Assert::AreEqual(E_INVALIDARG, textAnalyzer->GetGlyphOrientations(nullptr));
+        Assert::AreEqual(E_INVALIDARG, textAnalyzer->GetGlyphOrientationsWithLocale(WinString(L""), nullptr));
     }
 
-    TEST_METHOD_EX(CanvasTextAnalyzer_AnalyzeGlyphOrientations_UniformSpan)
+    TEST_METHOD_EX(CanvasTextAnalyzer_GetGlyphOrientations_UniformSpan)
     {
         Fixture f;
         auto textAnalyzer = f.Create();
@@ -2361,7 +2361,7 @@ TEST_CLASS(CanvasTextAnalyzerTests)
                 return S_OK;
             });
 
-        auto element = AssertUniformSpanAndReturnElement<CanvasAnalyzedGlyphOrientation>(textAnalyzer, &ICanvasTextAnalyzer::AnalyzeGlyphOrientations, static_cast<int>(f.Text.length()));
+        auto element = AssertUniformSpanAndReturnElement<CanvasAnalyzedGlyphOrientation>(textAnalyzer, &ICanvasTextAnalyzer::GetGlyphOrientations, static_cast<int>(f.Text.length()));
 
         Assert::AreEqual(CanvasGlyphOrientation::Clockwise90Degrees, element.GlyphOrientation);
         Assert::AreEqual(123u, element.AdjustedBidiLevel);

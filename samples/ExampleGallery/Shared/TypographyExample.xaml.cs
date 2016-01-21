@@ -57,7 +57,7 @@ namespace ExampleGallery
             public TypographyHandler(string text)
             {
                 var textAnalyzer = new CanvasTextAnalyzer(text, CanvasTextDirection.TopToBottomThenLeftToRight);
-                analyzedScript = textAnalyzer.AnalyzeScript();
+                analyzedScript = textAnalyzer.GetScript();
 
                 TypographyOptions = new List<TypographyFeatureInfo>();
                 TypographyOptions.Add(new TypographyFeatureInfo(CanvasTypographyFeatureName.None));

@@ -107,8 +107,8 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         </p>
       </remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextAnalyzer.ChooseFonts(Microsoft.Graphics.Canvas.Text.CanvasTextFormat)">
-      <summary>Chooses a font for each span of text contained within this text analyzer.</summary>
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextAnalyzer.GetFonts(Microsoft.Graphics.Canvas.Text.CanvasTextFormat)">
+      <summary>Gets a font for each span of text contained within this text analyzer.</summary>
       <remarks>
         <p>
           This method chooses fonts from the system font set.
@@ -139,8 +139,8 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         </p>
       </remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextAnalyzer.ChooseFonts(Microsoft.Graphics.Canvas.Text.CanvasTextFormat,Microsoft.Graphics.Canvas.Text.CanvasFontSet)">
-      <summary>Chooses a font for each span of text contained within this text analyzer.</summary>
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextAnalyzer.GetFonts(Microsoft.Graphics.Canvas.Text.CanvasTextFormat,Microsoft.Graphics.Canvas.Text.CanvasFontSet)">
+      <summary>Gets a font for each span of text contained within this text analyzer.</summary>
       <remarks>
         <p>
           This method chooses fonts from the passed-in font set.
@@ -245,16 +245,16 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="F:Microsoft.Graphics.Canvas.Text.CanvasScriptShape.NoVisual">
       <summary>Text should leave no visual on display, for example, for control or format control characters.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextAnalyzer.AnalyzeScript">
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextAnalyzer.GetScript">
       <summary>Gets information about the script used by the text.</summary>
       <remarks>
         <p>
           This method uses no particular locale. To specify a locale, use 
-          <see cref="M:Microsoft.Graphics.Canvas.Text.CanvasTextAnalyzer.AnalyzeScript(System.String)"/>.
+          <see cref="M:Microsoft.Graphics.Canvas.Text.CanvasTextAnalyzer.GetScript(System.String)"/>.
         </p>
       </remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextAnalyzer.AnalyzeScript(System.String)">
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextAnalyzer.GetScript(System.String)">
       <summary>Gets information about the script used by the text, applying the specified locale.</summary>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextAnalyzer.GetScriptProperties(Microsoft.Graphics.Canvas.Text.CanvasAnalyzedScript)">
@@ -323,7 +323,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <summary>Gets the array of glyphs which comprise the text.</summary>
       <remarks>
         <p>
-          Use the results from ChooseFonts and AnalyzeScript to obtain the font and script data
+          Use the results from GetFonts and GetScript to obtain the font and script data
           for calling GetGlyphs.
         </p>
       </remarks>
@@ -332,7 +332,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <summary>Gets the array of glyphs which comprise the text.</summary>
       <remarks>
         <p>
-          Use the results from ChooseFonts and AnalyzeScript to obtain the font and script data
+          Use the results from GetFonts and GetScript to obtain the font and script data
           for calling GetGlyphs.
         </p>
         <p>
@@ -404,18 +404,18 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <summary>Indicates that the script is shaped right-to-left.</summary>
       <remarks>With right-to-left scripts such as Arabic, this value is true.</remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextAnalyzer.AnalyzeBidi">
-      <summary>Analyzes text for which bi-directional text levels are mapped to which character positions.</summary>
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextAnalyzer.GetBidi">
+      <summary>Gets which bi-directional text levels are mapped to which character positions.</summary>
       <remarks>
         This method overload is locale-agnostic. To use a specified locale, use 
-        <see cref="M:Microsoft.Graphics.Canvas.Text.CanvasTextAnalyzer.AnalyzeBidi(System.String)"/>.
+        <see cref="M:Microsoft.Graphics.Canvas.Text.CanvasTextAnalyzer.GetBidi(System.String)"/>.
       </remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextAnalyzer.AnalyzeBidi(System.String)">
-      <summary>Analyzes text for which bi-directional text levels are mapped to which character positions.</summary>
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextAnalyzer.GetBidi(System.String)">
+      <summary>Gets which bi-directional text levels are mapped to which character positions.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextAnalyzer.AnalyzeBreakpoints">
-      <summary>Analyzes text for the line breaking behavior at each character position.</summary>
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextAnalyzer.GetBreakpoints">
+      <summary>Gets the line breaking behavior at each character position.</summary>
       <remarks>
         <p>
           This returns an array whose size is the same as the length of the CanvasTextAnalyzer's text.
@@ -423,12 +423,12 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         </p>
         <p>
         This method overload is locale-agnostic. To use a specified locale, use 
-        <see cref="M:Microsoft.Graphics.Canvas.Text.CanvasTextAnalyzer.AnalyzeBreakpoints(System.String)"/>.
+        <see cref="M:Microsoft.Graphics.Canvas.Text.CanvasTextAnalyzer.GetBreakpoints(System.String)"/>.
         </p>
       </remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextAnalyzer.AnalyzeBreakpoints(System.String)">
-      <summary>Analyzes text for the line breaking behavior at each character position.</summary>
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextAnalyzer.GetBreakpoints(System.String)">
+      <summary>Gets the line breaking behavior at each character position.</summary>
       <remarks>
         <p>
           This returns an array whose size is the same as the length of the CanvasTextAnalyzer's text.
@@ -436,23 +436,23 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         </p>
       </remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextAnalyzer.AnalyzeNumberSubstitutions">
-      <summary>Analyzes text for which number substitutions are mapped to which character positions.</summary>
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextAnalyzer.GetNumberSubstitutions">
+      <summary>Gets which number substitutions are mapped to which character positions.</summary>
       <remarks>
         The locale which affects number substitution is affected solely by the locale set to
         the CanvasNumberSubstitution object. If an ICanvasTextAnalyzerOptions is used with this
         text analyzer, its GetLocaleName method is not called.
       </remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextAnalyzer.AnalyzeGlyphOrientations">
-      <summary>Analyzes text for which glyph orientations are mapped to which character positions.</summary>
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextAnalyzer.GetGlyphOrientations">
+      <summary>Gets which glyph orientations are mapped to which character positions.</summary>
       <remarks>
         This method overload is locale-agnostic. To use a specified locale, use 
-        <see cref="M:Microsoft.Graphics.Canvas.Text.CanvasTextAnalyzer.AnalyzeGlyphOrientations(System.String)"/>.
+        <see cref="M:Microsoft.Graphics.Canvas.Text.CanvasTextAnalyzer.GetGlyphOrientations(System.String)"/>.
       </remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextAnalyzer.AnalyzeGlyphOrientations(System.String)">
-      <summary>Analyzes text for which glyph orientations are mapped to which character positions.</summary>
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextAnalyzer.GetGlyphOrientations(System.String)">
+      <summary>Gets which glyph orientations are mapped to which character positions.</summary>
     </member>    
 
     <member name="T:Microsoft.Graphics.Canvas.Text.CanvasJustificationOpportunity" Experimental="true">

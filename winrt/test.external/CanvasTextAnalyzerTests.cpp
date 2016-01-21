@@ -82,14 +82,14 @@ public:
 
         auto analyzer = ref new CanvasTextAnalyzer(L"text", CanvasTextDirection::LeftToRightThenTopToBottom);
 
-        auto fontResult = analyzer->ChooseFonts(m_defaultTextFormat);
+        auto fontResult = analyzer->GetFonts(m_defaultTextFormat);
         m_defaultFontFace = fontResult->GetAt(0)->Value->FontFace;
 
-        auto scriptResult = analyzer->AnalyzeScript();
+        auto scriptResult = analyzer->GetScript();
         m_defaultScript = scriptResult->GetAt(0)->Value;
     }
 
-    TEST_METHOD(CanvasTextAnalyzer_ChooseFonts_ZeroLengthString_NothingBadHappens)
+    TEST_METHOD(CanvasTextAnalyzer_GetFonts_ZeroLengthString_NothingBadHappens)
     {
         auto analyzer1 = ref new CanvasTextAnalyzer(L"", CanvasTextDirection::LeftToRightThenTopToBottom);
 
@@ -97,12 +97,12 @@ public:
 
         auto analyzer3 = ref new CanvasTextAnalyzer(L"", CanvasTextDirection::LeftToRightThenTopToBottom, ref new SimpleAnalyzerOptions);
 
-        auto result = analyzer1->ChooseFonts(m_defaultTextFormat);
-        result = analyzer2->ChooseFonts(m_defaultTextFormat);
-        result = analyzer3->ChooseFonts(m_defaultTextFormat);
+        auto result = analyzer1->GetFonts(m_defaultTextFormat);
+        result = analyzer2->GetFonts(m_defaultTextFormat);
+        result = analyzer3->GetFonts(m_defaultTextFormat);
     }
 
-    TEST_METHOD(CanvasTextAnalyzer_ChooseFonts_DividesTextIntoSpans)
+    TEST_METHOD(CanvasTextAnalyzer_GetFonts_DividesTextIntoSpans)
     {
         auto textFormat = ref new CanvasTextFormat();
         textFormat->FontFamily = "Arial";
@@ -113,7 +113,7 @@ public:
         //
         auto analyzer = ref new CanvasTextAnalyzer(L"Some text-文字📖📖📖", CanvasTextDirection::LeftToRightThenTopToBottom);
 
-        auto result = analyzer->ChooseFonts(textFormat);
+        auto result = analyzer->GetFonts(textFormat);
 
         Assert::AreEqual(3u, result->Size);
 
@@ -127,23 +127,23 @@ public:
         Assert::AreEqual(6, result->GetAt(2)->Key.CharacterCount); // Each symbolic glyph is two code units
     }
 
-    TEST_METHOD(CanvasTextAnalyzer_ChooseFonts_GlyphDoesntMatchAnyFont)
+    TEST_METHOD(CanvasTextAnalyzer_GetFonts_GlyphDoesntMatchAnyFont)
     {
         // 
         // Choose a very obscure glyph (U+1F984) which isn't supported by built-in fonts.
         //
         auto analyzer = ref new CanvasTextAnalyzer(L"🦄", CanvasTextDirection::LeftToRightThenTopToBottom);
 
-        auto result = analyzer->ChooseFonts(m_defaultTextFormat);
+        auto result = analyzer->GetFonts(m_defaultTextFormat);
 
         Assert::AreEqual(0u, result->Size);
     }
 
-    TEST_METHOD(CanvasTextAnalyzer_ChooseFonts_TextContainsUnmatchableRange)
+    TEST_METHOD(CanvasTextAnalyzer_GetFonts_TextContainsUnmatchableRange)
     {
         auto analyzer = ref new CanvasTextAnalyzer(L"abc🦄🦄def", CanvasTextDirection::LeftToRightThenTopToBottom);
 
-        auto result = analyzer->ChooseFonts(m_defaultTextFormat);
+        auto result = analyzer->GetFonts(m_defaultTextFormat);
 
         Assert::AreEqual(2u, result->Size);
 
@@ -156,11 +156,11 @@ public:
         Assert::AreEqual(3, result->GetAt(1)->Key.CharacterCount);
     }
 
-    TEST_METHOD(CanvasTextAnalyzer_AnalyzeScript_DefaultFormatting)
+    TEST_METHOD(CanvasTextAnalyzer_GetScript_DefaultFormatting)
     {
         auto analyzer = ref new CanvasTextAnalyzer(L"abcdef", CanvasTextDirection::LeftToRightThenTopToBottom);
 
-        auto result = analyzer->AnalyzeScript();
+        auto result = analyzer->GetScript();
         Assert::AreEqual(1u, result->Size);        
 
         auto scriptProperties = analyzer->GetScriptProperties(result->GetAt(0)->Value);
@@ -178,11 +178,11 @@ public:
         Assert::IsFalse(scriptProperties.IsCursiveWriting);
     }
 
-    TEST_METHOD(CanvasTextAnalyzer_AnalyzeScript_MultipleSpans)
+    TEST_METHOD(CanvasTextAnalyzer_GetScript_MultipleSpans)
     {
         auto analyzer = ref new CanvasTextAnalyzer(L"abc文字テクスト", CanvasTextDirection::LeftToRightThenTopToBottom);
 
-        auto result = analyzer->AnalyzeScript();
+        auto result = analyzer->GetScript();
         Assert::AreEqual(3u, result->Size);
 
         Assert::AreEqual(0, result->GetAt(0)->Key.CharacterIndex);
@@ -201,11 +201,11 @@ public:
         Assert::AreEqual("Kana", properties2.IsoScriptCode);
     }
 
-    TEST_METHOD(CanvasTextAnalyzer_AnalyzeScript_ZeroLengthText)
+    TEST_METHOD(CanvasTextAnalyzer_GetScript_ZeroLengthText)
     {
         auto analyzer = ref new CanvasTextAnalyzer(L"", CanvasTextDirection::LeftToRightThenTopToBottom);
 
-        auto result = analyzer->AnalyzeScript();
+        auto result = analyzer->GetScript();
         Assert::AreEqual(0u, result->Size);
     }
 
@@ -405,19 +405,19 @@ public:
     }
 
 
-    TEST_METHOD(CanvasTextAnalyzer_AnalyzeBidi_ZeroLengthText)
+    TEST_METHOD(CanvasTextAnalyzer_GetBidi_ZeroLengthText)
     {
         auto analyzer = ref new CanvasTextAnalyzer(L"", CanvasTextDirection::LeftToRightThenTopToBottom);
 
-        auto result = analyzer->AnalyzeBidi();
+        auto result = analyzer->GetBidi();
         Assert::AreEqual(0u, result->Size);
     }
 
-    TEST_METHOD(CanvasTextAnalyzer_AnalyzeBidi_MultipleSpans)
+    TEST_METHOD(CanvasTextAnalyzer_GetBidi_MultipleSpans)
     {
         auto analyzer = ref new CanvasTextAnalyzer(L"abcنصj", CanvasTextDirection::LeftToRightThenTopToBottom);
 
-        auto result = analyzer->AnalyzeBidi();
+        auto result = analyzer->GetBidi();
         Assert::AreEqual(3u, result->Size);
         
         Assert::AreEqual(0, result->GetAt(0)->Key.CharacterIndex);
@@ -433,11 +433,11 @@ public:
         Assert::AreEqual(0u, result->GetAt(2)->Value.ResolvedLevel);
     }
 
-    TEST_METHOD(CanvasTextAnalyzer_AnalyzeBidi_RepeatedCalls)
+    TEST_METHOD(CanvasTextAnalyzer_GetBidi_RepeatedCalls)
     {
         auto analyzer = ref new CanvasTextAnalyzer(L"aنbن", CanvasTextDirection::LeftToRightThenTopToBottom);
 
-        auto result = analyzer->AnalyzeBidi();
+        auto result = analyzer->GetBidi();
         Assert::AreEqual(4u, result->Size);
 
         for (int i = 0; i < 4; i++)
@@ -447,7 +447,7 @@ public:
             Assert::AreEqual(static_cast<uint32_t>(i % 2), result->GetAt(i)->Value.ResolvedLevel);
         }
 
-        result = analyzer->AnalyzeBidi();
+        result = analyzer->GetBidi();
         Assert::AreEqual(4u, result->Size);
 
         for (int i = 0; i < 4; i++)
@@ -459,15 +459,15 @@ public:
     }
 
 
-    TEST_METHOD(CanvasTextAnalyzer_AnalyzeBreakpoints_ZeroLengthText)
+    TEST_METHOD(CanvasTextAnalyzer_GetBreakpoints_ZeroLengthText)
     {
         auto analyzer = ref new CanvasTextAnalyzer(L"", CanvasTextDirection::LeftToRightThenTopToBottom);
 
-        auto result = analyzer->AnalyzeBreakpoints();
+        auto result = analyzer->GetBreakpoints();
         Assert::AreEqual(0u, result->Length);
     }
 
-    TEST_METHOD(CanvasTextAnalyzer_AnalyzeBreakpoints_SingleGlyph)
+    TEST_METHOD(CanvasTextAnalyzer_GetBreakpoints_SingleGlyph)
     {
         struct TestCase
         {
@@ -486,7 +486,7 @@ public:
         for (auto testCase : testCases)
         {
             auto analyzer = ref new CanvasTextAnalyzer(testCase.TestString, CanvasTextDirection::LeftToRightThenTopToBottom);
-            auto result = analyzer->AnalyzeBreakpoints();
+            auto result = analyzer->GetBreakpoints();
 
             Assert::AreEqual(1u, result->Length);
             Assert::AreEqual(testCase.ExpectedBreakBefore, result[0].BreakBefore);
@@ -496,10 +496,10 @@ public:
         }
     }
 
-    TEST_METHOD(CanvasTextAnalyzer_AnalyzeBreakpoints_TypicalBreaks)
+    TEST_METHOD(CanvasTextAnalyzer_GetBreakpoints_TypicalBreaks)
     {
         auto analyzer = ref new CanvasTextAnalyzer(L"a bc\nd", CanvasTextDirection::LeftToRightThenTopToBottom);
-        auto result = analyzer->AnalyzeBreakpoints();
+        auto result = analyzer->GetBreakpoints();
 
         Assert::AreEqual(6u, result->Length);
         Assert::AreEqual(CanvasLineBreakCondition::CannotBreak, result[0].BreakBefore);
@@ -521,10 +521,10 @@ public:
         Assert::AreEqual(CanvasLineBreakCondition::CanBreak, result[5].BreakAfter);
     }
 
-    TEST_METHOD(CanvasTextAnalyzer_AnalyzeBreakpoints_RepeatedCalls)
+    TEST_METHOD(CanvasTextAnalyzer_GetBreakpoints_RepeatedCalls)
     {
         auto analyzer = ref new CanvasTextAnalyzer(L"a b ", CanvasTextDirection::LeftToRightThenTopToBottom);
-        auto result = analyzer->AnalyzeBreakpoints();
+        auto result = analyzer->GetBreakpoints();
 
         Assert::AreEqual(4u, result->Length);
         for (int i = 0; i < 4; ++i)
@@ -532,7 +532,7 @@ public:
             Assert::AreEqual(i % 2 == 0 ? CanvasLineBreakCondition::CannotBreak : CanvasLineBreakCondition::CanBreak, result[i].BreakAfter);
         }
 
-        result = analyzer->AnalyzeBreakpoints();
+        result = analyzer->GetBreakpoints();
 
         Assert::AreEqual(4u, result->Length);
         for (int i = 0; i < 4; ++i)
@@ -541,11 +541,11 @@ public:
         }
     }
 
-    TEST_METHOD(CanvasTextAnalyzer_AnalyzeNumberSubstitutions_ZeroLengthText)
+    TEST_METHOD(CanvasTextAnalyzer_GetNumberSubstitutions_ZeroLengthText)
     {
         auto analyzer = ref new CanvasTextAnalyzer(L"", CanvasTextDirection::LeftToRightThenTopToBottom);
 
-        auto result = analyzer->AnalyzeNumberSubstitutions();
+        auto result = analyzer->GetNumberSubstitutions();
         Assert::AreEqual(0u, result->Size);
     }
 
@@ -598,7 +598,7 @@ public:
         }
     };
 
-    TEST_METHOD(CanvasTextAnalyzer_AnalyzeNumberSubstitutions_AlternatingPerGlyph_RepeatedCalls)
+    TEST_METHOD(CanvasTextAnalyzer_GetNumberSubstitutions_AlternatingPerGlyph_RepeatedCalls)
     {
         auto analysisOptions = ref new CustomNumberSubstitutions("ar-eg");
 
@@ -607,7 +607,7 @@ public:
             CanvasTextDirection::LeftToRightThenTopToBottom, 
             analysisOptions);
 
-        auto result = analyzer->AnalyzeNumberSubstitutions();
+        auto result = analyzer->GetNumberSubstitutions();
         Assert::AreEqual(9u, result->Size);
 
         for (int i = 0; i < 9; ++i)
@@ -620,7 +620,7 @@ public:
             Assert::AreEqual(expected, actual);
         }
 
-        result = analyzer->AnalyzeNumberSubstitutions();
+        result = analyzer->GetNumberSubstitutions();
         Assert::AreEqual(9u, result->Size);
 
         for (int i = 0; i < 9; ++i)
@@ -634,11 +634,11 @@ public:
         }
     }
 
-    TEST_METHOD(CanvasTextAnalyzer_AnalyzeGlyphOrientations_ZeroLengthText)
+    TEST_METHOD(CanvasTextAnalyzer_GetGlyphOrientations_ZeroLengthText)
     {
         auto analyzer = ref new CanvasTextAnalyzer(L"", CanvasTextDirection::LeftToRightThenTopToBottom);
 
-        auto result = analyzer->AnalyzeGlyphOrientations();
+        auto result = analyzer->GetGlyphOrientations();
         Assert::AreEqual(0u, result->Size);
     }
 
@@ -686,7 +686,7 @@ public:
         }
     };
 
-    TEST_METHOD(CanvasTextAnalyzer_AnalyzeGlyphOrientations_AlternatingPerGlyph_RepeatedCalls)
+    TEST_METHOD(CanvasTextAnalyzer_GetGlyphOrientations_AlternatingPerGlyph_RepeatedCalls)
     {
         auto analysisOptions = ref new CustomGlyphOrientations();
 
@@ -695,7 +695,7 @@ public:
             CanvasTextDirection::TopToBottomThenRightToLeft,
             analysisOptions);
 
-        auto result = analyzer->AnalyzeGlyphOrientations();
+        auto result = analyzer->GetGlyphOrientations();
         Assert::AreEqual(4u, result->Size);
 
         for (int i = 0; i < 4; ++i)
@@ -708,7 +708,7 @@ public:
             Assert::AreEqual(expected, actual);
         }
 
-        result = analyzer->AnalyzeGlyphOrientations();
+        result = analyzer->GetGlyphOrientations();
         Assert::AreEqual(4u, result->Size);
 
         for (int i = 0; i < 4; ++i)

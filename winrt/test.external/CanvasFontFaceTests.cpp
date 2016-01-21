@@ -232,7 +232,7 @@ TEST_CLASS(CanvasFontFaceTests)
         Platform::String^ testString = L"A";
         
         auto textAnalyzer = ref new CanvasTextAnalyzer(testString, CanvasTextDirection::LeftToRightThenTopToBottom);
-        auto analyzedScript = textAnalyzer->AnalyzeScript();
+        auto analyzedScript = textAnalyzer->GetScript();
         auto script = analyzedScript->GetAt(0)->Value;
 
         auto sourceCodePoints = ref new Platform::Array<unsigned int>(1) { testString->Data()[0] };

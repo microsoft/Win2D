@@ -183,55 +183,55 @@ namespace Microsoft.Graphics.Canvas.Text
     interface ICanvasTextAnalyzer : IInspectable
         requires Windows.Foundation.IClosable
     {
-        [overload("ChooseFonts")]
-        HRESULT ChooseFontsUsingSystemFontSet(
+        [overload("GetFonts")]
+        HRESULT GetFontsUsingSystemFontSet(
             [in] CanvasTextFormat* textFormat,
             [out, retval] Windows.Foundation.Collections.IVectorView<Windows.Foundation.Collections.IKeyValuePair<CanvasCharacterRange, CanvasScaledFont>*>** values);
 
-        [overload("ChooseFonts")]
-        HRESULT ChooseFonts(
+        [overload("GetFonts")]
+        HRESULT GetFonts(
             [in] CanvasTextFormat* textFormat,
             [in] CanvasFontSet* fontSet,
             [out, retval] Windows.Foundation.Collections.IVectorView<Windows.Foundation.Collections.IKeyValuePair<CanvasCharacterRange, CanvasScaledFont>*>** values);        
 
-        [overload("AnalyzeBidi")]
-        HRESULT AnalyzeBidi(
+        [overload("GetBidi")]
+        HRESULT GetBidi(
             [out, retval] Windows.Foundation.Collections.IVectorView<Windows.Foundation.Collections.IKeyValuePair<CanvasCharacterRange, CanvasAnalyzedBidi>*>** values);
 
-        [overload("AnalyzeBidi")]
-        HRESULT AnalyzeBidiWithLocale(
+        [overload("GetBidi")]
+        HRESULT GetBidiWithLocale(
             [in] HSTRING locale,
             [out, retval] Windows.Foundation.Collections.IVectorView<Windows.Foundation.Collections.IKeyValuePair<CanvasCharacterRange, CanvasAnalyzedBidi>*>** values);
 
-        [overload("AnalyzeBreakpoints")]
-        HRESULT AnalyzeBreakpoints(
+        [overload("GetBreakpoints")]
+        HRESULT GetBreakpoints(
             [out] UINT32* valueCount,
             [out, size_is(, *valueCount), retval] CanvasAnalyzedBreakpoint** valueElements);
 
-        [overload("AnalyzeBreakpoints")]
-        HRESULT AnalyzeBreakpointsWithLocale(
+        [overload("GetBreakpoints")]
+        HRESULT GetBreakpointsWithLocale(
             [in] HSTRING locale,
             [out] UINT32* valueCount,
             [out, size_is(, *valueCount), retval] CanvasAnalyzedBreakpoint** valueElements);
 
-        HRESULT AnalyzeNumberSubstitutions(
+        HRESULT GetNumberSubstitutions(
             [out, retval] Windows.Foundation.Collections.IVectorView<Windows.Foundation.Collections.IKeyValuePair<CanvasCharacterRange, CanvasNumberSubstitution*>*>** values);
 
-        [overload("AnalyzeScript")]
-        HRESULT AnalyzeScript(
+        [overload("GetScript")]
+        HRESULT GetScript(
             [out, retval] Windows.Foundation.Collections.IVectorView<Windows.Foundation.Collections.IKeyValuePair<CanvasCharacterRange, CanvasAnalyzedScript>*>** values);
 
-        [overload("AnalyzeScript")]
-        HRESULT AnalyzeScriptWithLocale(
+        [overload("GetScript")]
+        HRESULT GetScriptWithLocale(
             [in] HSTRING locale,
             [out, retval] Windows.Foundation.Collections.IVectorView<Windows.Foundation.Collections.IKeyValuePair<CanvasCharacterRange, CanvasAnalyzedScript>*>** values);
 
-        [overload("AnalyzeGlyphOrientations")]
-        HRESULT AnalyzeGlyphOrientations(
+        [overload("GetGlyphOrientations")]
+        HRESULT GetGlyphOrientations(
             [out, retval] Windows.Foundation.Collections.IVectorView<Windows.Foundation.Collections.IKeyValuePair<CanvasCharacterRange, CanvasAnalyzedGlyphOrientation>*>** values);
 
-        [overload("AnalyzeGlyphOrientations")]
-        HRESULT AnalyzeGlyphOrientationsWithLocale(
+        [overload("GetGlyphOrientations")]
+        HRESULT GetGlyphOrientationsWithLocale(
             [in] HSTRING locale,
             [out, retval] Windows.Foundation.Collections.IVectorView<Windows.Foundation.Collections.IKeyValuePair<CanvasCharacterRange, CanvasAnalyzedGlyphOrientation>*>** values);
 

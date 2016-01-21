@@ -780,12 +780,12 @@ namespace ExampleGallery
             //
             // Figure out what fonts to use.
             //
-            var fontResult = textAnalyzer.ChooseFonts(textFormat);
+            var fontResult = textAnalyzer.GetFonts(textFormat);
 
             //
             // Perform a script analysis on the text.
             //
-            var scriptAnalysis = textAnalyzer.AnalyzeScript();
+            var scriptAnalysis = textAnalyzer.GetScript();
 
             float maxLineSpacing = 0;
             List<FormattingSpan> formattingSpans = EvaluateFormattingSpans(textAnalyzer, fontResult, scriptAnalysis, out maxLineSpacing);
@@ -793,7 +793,7 @@ namespace ExampleGallery
             //
             // Perform line break analysis.
             //
-            var breakpoints = textAnalyzer.AnalyzeBreakpoints();
+            var breakpoints = textAnalyzer.GetBreakpoints();
 
             //
             // Get the rectangles to layout text into.

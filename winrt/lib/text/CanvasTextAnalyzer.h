@@ -163,45 +163,45 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             CanvasVerticalGlyphOrientation verticalGlyphOrientation,
             uint32_t bidiLevel);
 
-        IFACEMETHOD(ChooseFontsUsingSystemFontSet)(
+        IFACEMETHOD(GetFontsUsingSystemFontSet)(
             ICanvasTextFormat* textFormat,
             IVectorView<IKeyValuePair<CanvasCharacterRange, CanvasScaledFont*>*>** result);
 
-        IFACEMETHOD(ChooseFonts)(
+        IFACEMETHOD(GetFonts)(
             ICanvasTextFormat* textFormat,
             ICanvasFontSet* fontSet,
             IVectorView<IKeyValuePair<CanvasCharacterRange, CanvasScaledFont*>*>** result);
 
-        IFACEMETHOD(AnalyzeBidi)(
+        IFACEMETHOD(GetBidi)(
             IVectorView<IKeyValuePair<CanvasCharacterRange, CanvasAnalyzedBidi>*>** values) override;
 
-        IFACEMETHOD(AnalyzeBidiWithLocale)(
+        IFACEMETHOD(GetBidiWithLocale)(
             HSTRING locale,
             IVectorView<IKeyValuePair<CanvasCharacterRange, CanvasAnalyzedBidi>*>** values) override;
 
-        IFACEMETHOD(AnalyzeBreakpoints)(
+        IFACEMETHOD(GetBreakpoints)(
             uint32_t* valueCount,
             CanvasAnalyzedBreakpoint** valueElements) override;
 
-        IFACEMETHOD(AnalyzeBreakpointsWithLocale)(
+        IFACEMETHOD(GetBreakpointsWithLocale)(
             HSTRING locale,
             uint32_t* valueCount,
             CanvasAnalyzedBreakpoint** valueElements) override;
 
-        IFACEMETHOD(AnalyzeNumberSubstitutions)(
+        IFACEMETHOD(GetNumberSubstitutions)(
             IVectorView<IKeyValuePair<CanvasCharacterRange, CanvasNumberSubstitution*>*>** values) override;
 
-        IFACEMETHOD(AnalyzeScript)(
+        IFACEMETHOD(GetScript)(
             IVectorView<IKeyValuePair<CanvasCharacterRange, CanvasAnalyzedScript>*>** values) override;
 
-        IFACEMETHOD(AnalyzeScriptWithLocale)(
+        IFACEMETHOD(GetScriptWithLocale)(
             HSTRING locale,
             IVectorView<IKeyValuePair<CanvasCharacterRange, CanvasAnalyzedScript>*>** values) override;
 
-        IFACEMETHOD(AnalyzeGlyphOrientations)(
+        IFACEMETHOD(GetGlyphOrientations)(
             IVectorView<IKeyValuePair<CanvasCharacterRange, CanvasAnalyzedGlyphOrientation>*>** values) override;
 
-        IFACEMETHOD(AnalyzeGlyphOrientationsWithLocale)(
+        IFACEMETHOD(GetGlyphOrientationsWithLocale)(
             HSTRING locale,
             IVectorView<IKeyValuePair<CanvasCharacterRange, CanvasAnalyzedGlyphOrientation>*>** values) override;
 
