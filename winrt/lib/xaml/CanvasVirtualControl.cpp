@@ -269,19 +269,19 @@ void CanvasVirtualControl::Changed(ChangeReason reason)
     if (!IsLoaded())
         return;
             
-    bool deferCallingChangedImpl = false;
+    bool deferCallingChangedImpl;
 
     ComPtr<ICoreDispatcher> dispatcher;
     ThrowIfFailed(GetWindow()->get_Dispatcher(&dispatcher));
 
     if (!dispatcher)
     {
-        // There's no dispatcher but get_Dispatcher didn't fail means that we're
-        // in the designer.
-        return;
+        // There's no dispatcher but get_Dispatcher didn't fail - this could
+        // mean we're running in the designer.
+        assert(GetAdapter()->IsDesignModeEnabled());
+        deferCallingChangedImpl = false;
     }
-
-    if (reason == ChangeReason::DeviceLost)
+    else if (reason == ChangeReason::DeviceLost)
     {
         //
         // When a device lost has happened we are likely to have a large
@@ -426,7 +426,7 @@ void CanvasVirtualControl::OnRegionsInvalidatedImpl(ICanvasVirtualImageSource*, 
     RunWithCurrentRenderTarget(
         [=] (ICanvasVirtualImageSource* imageSource, Color const& clearColor, bool areResourcesCreated)
         {
-            if (!areResourcesCreated)
+            if (!areResourcesCreated || m_regionsInvalidatedEventSource.GetSize() == 0)
             {
                 m_lastImageSourceThatHasBeenDrawn = nullptr;
                 ClearAllRegions(imageSource, clearColor, args);

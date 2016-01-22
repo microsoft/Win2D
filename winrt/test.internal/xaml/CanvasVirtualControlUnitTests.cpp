@@ -307,6 +307,16 @@ TEST_CLASS(CanvasVirtualControlTests)
         ThrowIfFailed(f.Control->remove_RegionsInvalidated(token));
         onRegionsInvalidated.SetExpectedCalls(0);
 
+        // When there are no RegionsInvalidated handlers the control will clear
+        // itself by creating drawing sessions.
+        imageSource->CreateDrawingSessionMethod.SetExpectedCalls(2,
+            [&] (Color, Rect, ICanvasDrawingSession** ds)
+            {
+                auto newDs = Make<MockCanvasDrawingSession>();
+                return newDs.CopyTo(ds);
+            });
+
+
         imageSource->RaiseRegionsInvalidated(expectedRegions, expectedVisibleRegion);
     }
 
@@ -554,7 +564,7 @@ TEST_CLASS(CanvasVirtualControlTests)
 
         auto replacementImageSource = f.ExpectCreateImageSource();
         f.Adapter->TickUiThread();
-        
+
         // The old image source should have had its events disconnected
         onRegionsInvalidated.SetExpectedCalls(0);
         imageSource->RaiseRegionsInvalidated(std::vector<Rect> { anyRegion }, anyRegion);
@@ -605,6 +615,6 @@ TEST_CLASS(CanvasVirtualControlTests)
         imageSource->InvalidateMethod.SetExpectedCalls(1);
 
         f.Adapter->SetHasUIThreadAccess(true);
-        f.Adapter->TickUiThread();        
+        f.Adapter->TickUiThread();
     }
 };

@@ -569,7 +569,17 @@ IFACEMETHODIMP CanvasVirtualImageSource::UpdatesNeeded()
 bool CanvasVirtualImageSource::IsOnUIThread()
 {
     ComPtr<ICoreDispatcher> dispatcher;
-    ThrowIfFailed(As<IDependencyObject>(m_vsis)->get_Dispatcher(&dispatcher));
+    HRESULT hr = As<IDependencyObject>(m_vsis)->get_Dispatcher(&dispatcher);
+    if (hr == E_FAIL)
+    {
+        // When running in the XAML designer, get_Dispatcher will fail with
+        // E_FAIL.  In this case we assume that we're running on the UI thread.
+        return true;
+    }
+    else
+    {
+        ThrowIfFailed(hr);
+    }
 
     boolean hasThreadAccess;
     ThrowIfFailed(dispatcher->get_HasThreadAccess(&hasThreadAccess));

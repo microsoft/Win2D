@@ -491,6 +491,27 @@ public:
         ThrowIfFailed(f.ImageSource->CreateDrawingSession(anyColor, anyUpdateRectangle, &drawingSession));
     }
 
+    TEST_METHOD_EX(CanvasVirtualImageSource_CreateDrawingSession_WhenInDesigner_Succeeds)
+    {
+        SimpleFixture f(anySize, anyDpi);
+
+        f.Vsis->get_DispatcherMethod.SetExpectedCalls(1,
+            [](ICoreDispatcher**)
+            {
+                // When running in the designer get_Dispatcher returns E_FAIL.
+                return E_FAIL;
+            });
+
+        f.DrawingSessionFactory->CreateMethod.SetExpectedCalls(1,
+            [&](ICanvasDevice* owner, ISurfaceImageSourceNativeWithD2D* sisNative, Color const& clearColor, Rect const& updateRectangleInDips, float dpi)
+            {
+                return Make<MockCanvasDrawingSession>();
+            });
+
+        ComPtr<ICanvasDrawingSession> drawingSession;
+        ThrowIfFailed(f.ImageSource->CreateDrawingSession(anyColor, anyUpdateRectangle, &drawingSession));
+    }
+
     TEST_METHOD_EX(CanvasVirtualImageSource_CreateDrawingSession_HandlesSurfaceContentsLost)
     {
         SimpleFixture f(anySize, anyDpi);
