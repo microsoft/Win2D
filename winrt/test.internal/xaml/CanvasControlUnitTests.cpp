@@ -169,6 +169,36 @@ TEST_CLASS(CanvasControlTests_CommonAdapter)
         Assert::AreEqual(S_OK, f.Control->get_UseSharedDevice(&useSharedDevice));
         Assert::IsTrue(!!useSharedDevice);
     }
+
+    TEST_METHOD_EX(CanvasControl_WhenBeginDrawFailsWithSurfaceContentsLost_ImageSourceIsRecreatedAndDrawAttemptedAgain)
+    {
+        CanvasControlFixture f;
+
+        f.Adapter->CreateCanvasImageSourceMethod.SetExpectedCalls(1);
+        f.Load();
+
+        f.Adapter->OnCanvasImageSourceDrawingSessionFactory_Create =
+            [&] () -> ComPtr<MockCanvasDrawingSession>
+            {
+                f.Adapter->CreateCanvasImageSourceMethod.SetExpectedCalls(1);
+                f.Adapter->OnCanvasImageSourceDrawingSessionFactory_Create = nullptr;
+                ThrowHR(E_SURFACE_CONTENTS_LOST);
+            };
+
+        f.Adapter->RaiseCompositionRenderingEvent();
+
+        // Make sure that this hasn't triggered an additional redraw for some
+        // reason.
+        
+        f.Adapter->OnCanvasImageSourceDrawingSessionFactory_Create =
+            [] () -> ComPtr<MockCanvasDrawingSession>
+            {
+                Assert::Fail(L"Did not expect the control to redraw itself");
+                return nullptr;
+            };
+
+        f.Adapter->RaiseCompositionRenderingEvent();
+    }
 };
 
 TEST_CLASS(CanvasControlTests_SizeTests)

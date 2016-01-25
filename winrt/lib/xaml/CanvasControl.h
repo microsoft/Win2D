@@ -138,6 +138,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         void UnregisterEventHandlers();
 
         HRESULT OnCompositionRendering(IInspectable* sender, IInspectable* args);
+        void DrawControl();
     };
 
 }}}}}}

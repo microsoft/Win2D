@@ -190,16 +190,44 @@ HRESULT CanvasControl::OnCompositionRendering(IInspectable*, IInspectable*)
             if (!IsWindowVisible())
                 return;
 
-            RunWithRenderTarget(
-                [&](CanvasImageSource* target, ICanvasDevice*, Color const& clearColor, bool callDrawHandlers)
+            try
+            {
+                DrawControl();
+            }
+            catch (HResultException const& e)
+            {
+                // Sometimes, the XAML SurfaceImageSource gets into a state
+                // where it returns E_SURFACE_CONTENTS_LOST, even though it
+                // probably shouldn't.  We handle this case by recreating the
+                // SurfaceImageSource and retrying the draw.  If it doesn't work
+                // the second time we'll allow the error to bubble out.
+                if (e.GetHr() == E_SURFACE_CONTENTS_LOST)
                 {
-                    if (!target)
-                        return;
-
-                    Draw(target, clearColor, callDrawHandlers, false);
-                });
+                    GetCurrentRenderTarget()->Target = nullptr; // force the SiS to get recreated on the next draw
+                    DrawControl();
+                }
+                else
+                {
+                    // Rethrow other errors.
+                    throw;
+                }
+            }
         });
 }
+
+
+void CanvasControl::DrawControl()
+{
+    RunWithRenderTarget(
+        [=](CanvasImageSource* target, ICanvasDevice*, Color const& clearColor, bool callDrawHandlers)
+        {
+            if (!target)
+                return;
+                            
+            Draw(target, clearColor, callDrawHandlers, false);
+        });
+}
+
 
 void CanvasControl::CreateOrUpdateRenderTarget(
     ICanvasDevice* device,
