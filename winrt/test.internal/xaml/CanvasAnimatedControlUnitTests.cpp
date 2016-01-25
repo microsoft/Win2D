@@ -3,7 +3,10 @@
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
 #include "pch.h"
+
 #include "stubs/StubDxgiSwapChain.h"
+
+#include "MockXamlSolidColorBrush.h"
 
 static Color const AnyColor                 {   1,   2,   3,   4 };
 static Color const AnyOtherColor            {   5,   6,   7,   8 };
@@ -3446,5 +3449,93 @@ TEST_CLASS(CanvasAnimatedControl_DpiScaling)
             f.ExpectResizeBuffersWithDpi(testCase.DpiScale * testCase.Dpi);
             f.Adapter->DoChanged();
         }
+    }
+};
+
+//
+// In the XAML designer, background threads, dispatchers and swapchains are not
+// supported.  Since CanvasAnimatedControl relies on these it doesn't work well
+// in the designer.  At the very least we want the clear color to be displayed.
+//
+TEST_CLASS(CanvasAnimatedControl_DesignMode)
+{
+    struct Fixture : public CanvasAnimatedControlFixture
+    {
+        Fixture()
+        {
+            Adapter->DesignModeEnabled = true;
+
+            CreateControl();
+        }
+    };
+
+    TEST_METHOD_EX(CanvasAnimatedControl_DesignMode_ContentIsARectangle)
+    {
+        Fixture f;
+
+        ComPtr<IUIElement> actualContent;
+        ThrowIfFailed(f.UserControl->get_Content(&actualContent));
+
+        Assert::IsTrue(IsSameInstance(actualContent.Get(), f.Adapter->GetShape()));        
+    }
+
+    TEST_METHOD_EX(CanvasAnimatedControl_DesignMode_MostOperationsAreNoOps)
+    {
+        Fixture f;
+
+        f.Load();
+        f.Adapter->DoChanged();
+
+        // In test.internal, RemoveFromVisualTree will fail because we don't
+        // actually have an underlying XAML control to remove.  However, this
+        // method should not AV: it should fail with this specific error code.
+        Assert::AreEqual(E_NOINTERFACE, f.Control->RemoveFromVisualTree());
+        
+        f.RaiseUnloadedEvent();
+    }
+
+    TEST_METHOD_EX(CanvasAnimatedControl_DesignMode_CreateCoreIndependentInputSource_Fails)
+    {
+        Fixture f;
+
+        auto anyDeviceTypes = static_cast<CoreInputDeviceTypes>(123);
+        auto anyReturnValue = reinterpret_cast<ICoreInputSourceBase**>(456);
+
+        Assert::AreEqual(E_NOTIMPL, f.Control->CreateCoreIndependentInputSource(anyDeviceTypes, anyReturnValue));
+    }
+
+    TEST_METHOD_EX(CanvasAnimatedControl_DesignMode_SettingClearColor_SetsTheRectanglesFillColor)
+    {
+        Fixture f;
+
+        Color anyColor{ 1, 2, 3, 4 };
+
+        auto brush = Make<MockXamlSolidColorBrush>();
+
+        f.Adapter->GetShape()->get_FillMethod.SetExpectedCalls(2,
+            [&] (IBrush** b)
+            {
+                return brush.CopyTo(b);
+            });
+
+        brush->put_ColorMethod.SetExpectedCalls(1,
+            [&] (Color color)
+            {
+                Assert::AreEqual(anyColor, color);
+                return S_OK;
+            });
+        
+        ThrowIfFailed(f.Control->put_ClearColor(anyColor));
+
+        brush->get_ColorMethod.SetExpectedCalls(1,
+            [&] (Color* color)
+            {
+                *color = anyColor;
+                return S_OK;
+            });
+
+        Color retrievedColor;
+        ThrowIfFailed(f.Control->get_ClearColor(&retrievedColor));
+        Assert::AreEqual(anyColor, retrievedColor);
     }
 };

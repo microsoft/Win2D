@@ -9,6 +9,7 @@
 using namespace ::ABI::Microsoft::Graphics::Canvas;
 using namespace ::ABI::Microsoft::Graphics::Canvas::UI;
 using namespace ::ABI::Microsoft::Graphics::Canvas::UI::Xaml;
+using namespace ::ABI::Microsoft::Graphics::Canvas::UI::Xaml::Media;
 using namespace ::Microsoft::WRL::Wrappers;
 
 //
@@ -147,9 +148,7 @@ CanvasAnimatedControl::CanvasAnimatedControl(std::shared_ptr<ICanvasAnimatedCont
     , m_stepTimer(adapter)
     , m_hasUpdated(false)
 {
-    CreateSwapChainPanel();
-
-    auto swapChainPanel = As<ISwapChainPanel>(m_canvasSwapChainPanel);
+    CreateContentControl();
 
     m_sharedState.IsStepTimerFixedStep = m_stepTimer.IsFixedTimeStep();
     m_sharedState.TargetElapsedTime = m_stepTimer.GetTargetElapsedTicks();
@@ -159,6 +158,46 @@ CanvasAnimatedControl::~CanvasAnimatedControl()
 {
     // These should all have been canceled on unload
     assert(m_sharedState.PendingAsyncActions.empty());
+}
+
+IFACEMETHODIMP CanvasAnimatedControl::put_ClearColor(
+    Color value)
+{
+    if (m_designModeShape)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                ComPtr<IBrush> brush;
+                ThrowIfFailed(m_designModeShape->get_Fill(&brush));
+
+                ThrowIfFailed(As<ISolidColorBrush>(brush)->put_Color(value));
+            });
+    }
+    else
+    {
+        return BaseControlWithDrawHandler::put_ClearColor(value);
+    }
+}
+
+IFACEMETHODIMP CanvasAnimatedControl::get_ClearColor(
+    Color* value)
+{
+    if (m_designModeShape)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                ComPtr<IBrush> brush;
+                ThrowIfFailed(m_designModeShape->get_Fill(&brush));
+
+                ThrowIfFailed(As<ISolidColorBrush>(brush)->get_Color(value));
+            });
+    }
+    else
+    {
+        return BaseControlWithDrawHandler::get_ClearColor(value);
+    }
 }
 
 IFACEMETHODIMP CanvasAnimatedControl::add_Update(
@@ -389,6 +428,14 @@ IFACEMETHODIMP CanvasAnimatedControl::CreateCoreIndependentInputSource(
     return ExceptionBoundary(
         [&]
         {
+            if (!m_canvasSwapChainPanel)
+            {
+                assert(GetAdapter()->IsDesignModeEnabled());
+                // When running in the designer there is no swap chain panel and
+                // we don't support CreateCoreIndependentInputSource.
+                ThrowHR(E_NOTIMPL);
+            }
+            
             auto swapChainPanel = As<ISwapChainPanel>(m_canvasSwapChainPanel);
             ThrowIfFailed(swapChainPanel->CreateCoreIndependentInputSource(deviceTypes, returnValue));
         });
@@ -399,6 +446,13 @@ IFACEMETHODIMP CanvasAnimatedControl::RemoveFromVisualTree()
     HRESULT hr = ExceptionBoundary(
         [&]
         {
+            // In the designer there is no swap chain panel.
+            if (!m_canvasSwapChainPanel)
+            {
+                assert(GetAdapter()->IsDesignModeEnabled());
+                return;
+            }
+            
             ThrowIfFailed(m_canvasSwapChainPanel->RemoveFromVisualTree());
             m_canvasSwapChainPanel.Reset();
         });
@@ -547,6 +601,15 @@ ComPtr<CanvasAnimatedDrawEventArgs> CanvasAnimatedControl::CreateDrawEventArgs(
 void CanvasAnimatedControl::Loaded()
 {
     assert(!m_gameLoop);
+
+    // When running in the designer there isn't a swap chain panel - and we
+    // don't create the game loop.
+    if (!m_canvasSwapChainPanel)
+    {
+        assert(GetAdapter()->IsDesignModeEnabled());
+        return;
+    }
+    
     m_gameLoop = GetAdapter()->CreateAndStartGameLoop(this, As<ISwapChainPanel>(m_canvasSwapChainPanel).Get());
 }
 
@@ -822,15 +885,25 @@ void CanvasAnimatedControl::ChangedImpl()
         });
 }
 
-void CanvasAnimatedControl::CreateSwapChainPanel()
+void CanvasAnimatedControl::CreateContentControl()
 {
-    auto swapChainPanelAdapter = GetAdapter();
-    m_canvasSwapChainPanel = swapChainPanelAdapter->CreateCanvasSwapChainPanel();
+    auto adapter = GetAdapter();
 
-    auto swapChainPanelAsUIElement = As<IUIElement>(m_canvasSwapChainPanel);
+    ComPtr<IUIElement> content;
+
+    if (adapter->IsDesignModeEnabled())
+    {
+        m_designModeShape = adapter->CreateDesignModeShape();
+        content = As<IUIElement>(m_designModeShape);
+    }
+    else
+    {
+        m_canvasSwapChainPanel = adapter->CreateCanvasSwapChainPanel();
+        content = As<IUIElement>(m_canvasSwapChainPanel);
+    }
 
     auto thisAsUserControl = As<IUserControl>(GetComposableBase());
-    ThrowIfFailed(thisAsUserControl->put_Content(swapChainPanelAsUIElement.Get()));
+    ThrowIfFailed(thisAsUserControl->put_Content(content.Get()));
 }
 
 void CanvasAnimatedControl::IssueAsyncActions(

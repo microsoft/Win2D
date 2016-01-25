@@ -72,7 +72,9 @@
 #include <windows.storage.h>
 #include <windows.ui.h>
 #include <windows.ui.xaml.controls.h>
+#include <windows.ui.xaml.media.h>
 #include <windows.ui.xaml.media.dxinterop.h>
+#include <windows.ui.xaml.shapes.h>
 #include <windows.graphics.display.h>
 
 #if WINVER > _WIN32_WINNT_WINBLUE

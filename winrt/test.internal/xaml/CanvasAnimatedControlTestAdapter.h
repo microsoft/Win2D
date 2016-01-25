@@ -8,6 +8,7 @@
 
 #include "BaseControlTestAdapter.h"
 #include "CanvasSwapChainPanelTestAdapter.h"
+#include "MockShape.h"
 #include "StubDispatcher.h"
 
 class FakeGameThread : public IGameLoopThread
@@ -88,6 +89,7 @@ class CanvasAnimatedControlTestAdapter : public BaseControlTestAdapter<CanvasAni
     int64_t m_performanceCounter;
     ComPtr<StubSwapChainPanel> m_swapChainPanel;
     std::weak_ptr<FakeGameThread> m_gameThread;
+    ComPtr<MockShape> m_shape;
 
 public:
     CALL_COUNTER_WITH_MOCK(CreateCanvasSwapChainMethod, ComPtr<CanvasSwapChain>(ICanvasDevice*, float, float, float, CanvasAlphaMode));
@@ -124,9 +126,20 @@ public:
         return swapChainPanel;
     }
 
+    virtual ComPtr<IShape> CreateDesignModeShape() override
+    {
+        m_shape = Make<MockShape>();
+        return m_shape;
+    }
+
     StubSwapChainPanel* GetSwapChainPanel()
     {
         return m_swapChainPanel.Get();
+    }
+
+    MockShape* GetShape()
+    {
+        return m_shape.Get();
     }
 
     StubDispatcher* GetGameThreadDispatcher()
