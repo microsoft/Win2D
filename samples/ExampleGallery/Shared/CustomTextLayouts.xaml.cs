@@ -88,7 +88,7 @@ namespace ExampleGallery
 
             public int Compare(Rect a, Rect b)
             {
-                if(!m_isRightToLeft)
+                if (!m_isRightToLeft)
                 {
                     return a.Left < b.Left ? -1 : 1;
                 }
