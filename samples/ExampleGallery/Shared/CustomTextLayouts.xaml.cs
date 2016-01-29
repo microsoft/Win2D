@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 //
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
@@ -31,7 +31,7 @@ namespace ExampleGallery
         Rect layoutBox;
         const float desiredFontSize = 20.0f;
         List<Rect> layoutRectangles;
-        List<GlyphRun> glyphRuns;
+        List<LayoutBox> layoutBoxes;
         bool needsLayout;
         Point pointerPressPosition;
 
@@ -43,10 +43,18 @@ namespace ExampleGallery
 
             ShowLayoutRectangles = false;
             ShowSelectionBox = false;
-            CurrentForcedTextDirectionOption = ForcedTextDirectionOption.ScriptDependent;
+            CurrentTextOption = TextOption.English;
+            CurrentTextDirection = TextDirection.LeftToRight;
             CurrentLayoutShapeOption = LayoutShapeOption.TextOutline;
             ShouldJustify = true;
         }
+        public enum TextOption
+        {
+            English,
+            حسنا
+        }
+        public List<TextOption> TextOptions { get { return Utils.GetEnumAsList<TextOption>(); } }
+        public TextOption CurrentTextOption { get; set; }
 
         public enum LayoutShapeOption
         {
@@ -59,22 +67,35 @@ namespace ExampleGallery
         public LayoutShapeOption CurrentLayoutShapeOption { get; set; }
         public bool ShouldJustify { get; set; }
 
-        public enum ForcedTextDirectionOption
+        public enum TextDirection
         {
-            AlwaysLeftToRight,
-            AlwaysRightToLeft,
-            ScriptDependent
+            LeftToRight,
+            RightToLeft
         }
-        public List<ForcedTextDirectionOption> ForcedTextDirectionOptions { get { return Utils.GetEnumAsList<ForcedTextDirectionOption>(); } }
-        public ForcedTextDirectionOption CurrentForcedTextDirectionOption { get; set; }
+        public List<TextDirection> TextDirections { get { return Utils.GetEnumAsList<TextDirection>(); } }
+        public TextDirection CurrentTextDirection { get; set; }
         public bool ShowLayoutRectangles { get; set; }
         public bool ShowSelectionBox { get; set; }
 
         class RectangleComparer : IComparer<Rect>
         {
+            bool m_isRightToLeft;
+
+            public RectangleComparer(bool isRightToLeft)
+            {
+                m_isRightToLeft = isRightToLeft;
+            }
+
             public int Compare(Rect a, Rect b)
             {
-                return a.Left < b.Left ? -1 : 1;
+                if(!m_isRightToLeft)
+                {
+                    return a.Left < b.Left ? -1 : 1;
+                }
+                else
+                {
+                    return a.Left > b.Left ? -1 : 1;
+                }
             }
         }
 
@@ -223,7 +244,7 @@ namespace ExampleGallery
                     intersection.Simplify(CanvasGeometrySimplification.Lines).SendPathTo(pathReader);
 
                     var rectangles = pathReader.GetRectangles();
-                    rectangles.Sort(new RectangleComparer());
+                    rectangles.Sort(new RectangleComparer(CurrentTextDirection == TextDirection.RightToLeft));
                     result.AddRange(rectangles);
                 }
 
@@ -285,113 +306,164 @@ namespace ExampleGallery
             public CanvasGlyph[] Glyphs;
             public CanvasFontFace FontFace;
             public float FontSize;
-            public bool IsRightToLeft;
             public CanvasAnalyzedScript Script;
             public int[] ClusterMap;
             public CanvasGlyphShaping[] GlyphShaping;
             public CanvasCharacterRange Range;
             public bool NeedsAdditionalJustificationCharacters;
+            public uint BidiLevel;
         }
 
-        bool IsRightToLeft(int scriptNumber)
+        class FormattingSpanHelper
         {
-            if (CurrentForcedTextDirectionOption == ForcedTextDirectionOption.AlwaysLeftToRight)
+            int fontRunIndex = 0;
+            int scriptRunIndex = 0;
+            int bidiRunIndex = 0;
+
+            CanvasCharacterRange characterRange;
+
+            IReadOnlyList<KeyValuePair<CanvasCharacterRange, CanvasScaledFont>> fontRuns;
+            IReadOnlyList<KeyValuePair<CanvasCharacterRange, CanvasAnalyzedScript>> scriptRuns;
+            IReadOnlyList<KeyValuePair<CanvasCharacterRange, CanvasAnalyzedBidi>> bidiRuns;
+
+            public FormattingSpanHelper(
+                IReadOnlyList<KeyValuePair<CanvasCharacterRange, CanvasScaledFont>> f,
+                IReadOnlyList<KeyValuePair<CanvasCharacterRange, CanvasAnalyzedScript>> s,
+                IReadOnlyList<KeyValuePair<CanvasCharacterRange, CanvasAnalyzedBidi>> b)
             {
-                return false;
+                fontRuns = f;
+                scriptRuns = s;
+                bidiRuns = b;
+
+                characterRange.CharacterCount = Min(fontRuns[0].Key.CharacterCount, scriptRuns[0].Key.CharacterCount, bidiRuns[0].Key.CharacterCount);
             }
-            else if (CurrentForcedTextDirectionOption == ForcedTextDirectionOption.AlwaysRightToLeft)
+
+            public void MoveNext()
             {
-                return true;
-            }
-            else
-            {
-                if (scriptNumber >= 100 && scriptNumber < 200)
+                int fontRunBoundary = GetBoundary(fontRuns[fontRunIndex].Key);
+                int scriptRunBoundary = GetBoundary(scriptRuns[scriptRunIndex].Key);
+                int bidiRunBoundary = GetBoundary(bidiRuns[bidiRunIndex].Key);
+
+                int soonestBoundary = characterRange.CharacterIndex + characterRange.CharacterCount;
+
+                if (soonestBoundary == fontRunBoundary)
                 {
-                    return true;
+                    fontRunIndex++;
+
+                    if (fontRunIndex < fontRuns.Count)
+                        fontRunBoundary = GetBoundary(fontRuns[fontRunIndex].Key);
                 }
-                else
+
+                if (soonestBoundary == scriptRunBoundary)
                 {
-                    return false;
+                    scriptRunIndex++;
+
+                    if (scriptRunIndex < scriptRuns.Count)
+                        scriptRunBoundary = GetBoundary(scriptRuns[scriptRunIndex].Key);
                 }
+
+                if (soonestBoundary == bidiRunBoundary)
+                {
+                    bidiRunIndex++;
+
+                    if (bidiRunIndex < bidiRuns.Count)
+                        bidiRunBoundary = GetBoundary(bidiRuns[bidiRunIndex].Key);
+                }
+
+                int nextBoundary = Min(fontRunBoundary, scriptRunBoundary, bidiRunBoundary);
+
+                characterRange.CharacterIndex += characterRange.CharacterCount;
+                characterRange.CharacterCount = nextBoundary - characterRange.CharacterIndex;
             }
+
+            public bool IsDone()
+            {
+                return !(fontRunIndex < fontRuns.Count &&
+                    scriptRunIndex < scriptRuns.Count &&
+                    bidiRunIndex < bidiRuns.Count);
+            }
+
+            public CanvasScaledFont ScaledFont { get { return fontRuns[fontRunIndex].Value; } }
+            public CanvasAnalyzedScript Script { get { return scriptRuns[scriptRunIndex].Value; } }
+            public CanvasAnalyzedBidi Bidi { get { return bidiRuns[bidiRunIndex].Value; } }
+
+            public CanvasCharacterRange Range { get { return characterRange; } }
+            
+
+            int GetBoundary(CanvasCharacterRange range)
+            {
+                return range.CharacterIndex + range.CharacterCount;
+            }
+
+            int Min(int a, int b, int c)
+            {
+                return Math.Min(Math.Min(a, b), c);
+            }
+            
         }
 
         List<FormattingSpan> EvaluateFormattingSpans(
             CanvasTextAnalyzer textAnalyzer,
             IReadOnlyList<KeyValuePair<CanvasCharacterRange, CanvasScaledFont>> fontRuns,
             IReadOnlyList<KeyValuePair<CanvasCharacterRange, CanvasAnalyzedScript>> scriptRuns,
+            IReadOnlyList<KeyValuePair<CanvasCharacterRange, CanvasAnalyzedBidi>> bidiRuns,
             out float maxLineSpacing)
         {
             maxLineSpacing = 0;
 
+            //
+            // Divide up our text space into spans of uniform font face, script and bidi.
+            //
+
             List<FormattingSpan> formattingSpans = new List<FormattingSpan>();
 
-            //
-            // Divide up our text space into spans of uniform font face and uniform script.
-            //
-            foreach (var scriptRun in scriptRuns)
+            FormattingSpanHelper formattingSpanHelper = new FormattingSpanHelper(fontRuns, scriptRuns, bidiRuns);
+
+            while (!formattingSpanHelper.IsDone())
             {
-                var scriptProperties = textAnalyzer.GetScriptProperties(scriptRun.Value);
+                var scriptProperties = textAnalyzer.GetScriptProperties(formattingSpanHelper.Script);
 
-                bool isRightToLeft = IsRightToLeft(scriptProperties.IsoScriptNumber);
+                float fontSize = desiredFontSize * formattingSpanHelper.ScaledFont.ScaleFactor;
 
-                foreach (var fontRun in fontRuns)
-                {
-                    int fontMatchEnd = fontRun.Key.CharacterIndex + fontRun.Key.CharacterCount;
-                    int scriptEnd = scriptRun.Key.CharacterIndex + scriptRun.Key.CharacterCount;
+                FormattingSpan formattingSpan = new FormattingSpan();
+                
+                int[] clusterMap;
+                bool[] isShapedAlone;
+                CanvasGlyphShaping[] glyphShaping;
+                
+                // Evaluate which glyphs comprise the text.
+                formattingSpan.Glyphs = textAnalyzer.GetGlyphs(
+                    formattingSpanHelper.Range,
+                    formattingSpanHelper.ScaledFont.FontFace,
+                    fontSize,
+                    false, // isSideways
+                    formattingSpanHelper.Bidi.ResolvedLevel % 2 == 1,
+                    formattingSpanHelper.Script,
+                    "",
+                    null,
+                    null,
+                    out clusterMap,
+                    out isShapedAlone,
+                    out glyphShaping);
 
-                    if (fontRun.Key.CharacterIndex > scriptEnd)
-                        continue;
+                formattingSpan.FontFace = formattingSpanHelper.ScaledFont.FontFace;
+                formattingSpan.FontSize = fontSize;
+                formattingSpan.Script = formattingSpanHelper.Script;
+                formattingSpan.ClusterMap = clusterMap;
+                formattingSpan.GlyphShaping = glyphShaping;
+                formattingSpan.Range = formattingSpanHelper.Range;
+                formattingSpan.BidiLevel = formattingSpanHelper.Bidi.ResolvedLevel;
+                formattingSpan.NeedsAdditionalJustificationCharacters = scriptProperties.JustificationCharacter != null;
 
-                    if (fontMatchEnd < scriptRun.Key.CharacterIndex)
-                        continue;
+                formattingSpans.Add(formattingSpan);
 
-                    int rangeStart = System.Math.Max(fontRun.Key.CharacterIndex, scriptRun.Key.CharacterIndex);
-                    int rangeEnd = System.Math.Min(fontMatchEnd, scriptEnd);
-                    int length = rangeEnd - rangeStart;
+                //
+                // For text which contains non-uniform font faces, CanvasTextLayout takes the maximum of
+                // all of line spacings and applies it as the overall line spacing. We do the same thing, here.
+                //
+                maxLineSpacing = System.Math.Max(maxLineSpacing, GetLineSpacing(formattingSpan.FontFace, fontSize));
 
-                    float fontSize = desiredFontSize * fontRun.Value.ScaleFactor;
-
-                    FormattingSpan formattingSpan = new FormattingSpan();
-                    formattingSpan.IsRightToLeft = isRightToLeft;
-
-                    int[] clusterMap;
-                    bool[] isShapedAlone;
-                    CanvasGlyphShaping[] glyphShaping;
-
-                    CanvasCharacterRange range = new CanvasCharacterRange { CharacterIndex = rangeStart, CharacterCount = length };
-
-                    // Evaluate which glyphs comprise the text.
-                    formattingSpan.Glyphs = textAnalyzer.GetGlyphs(
-                        range,
-                        fontRun.Value.FontFace,
-                        fontSize,
-                        false, // isSideways
-                        formattingSpan.IsRightToLeft,
-                        scriptRun.Value,
-                        "",
-                        null,
-                        null,
-                        out clusterMap,
-                        out isShapedAlone,
-                        out glyphShaping);
-
-                    formattingSpan.FontFace = fontRun.Value.FontFace;
-                    formattingSpan.FontSize = fontSize;
-                    formattingSpan.Script = scriptRun.Value;
-                    formattingSpan.ClusterMap = clusterMap;
-                    formattingSpan.GlyphShaping = glyphShaping;
-                    formattingSpan.Range = range;
-                    formattingSpan.NeedsAdditionalJustificationCharacters = scriptProperties.JustificationCharacter != null;
-
-                    formattingSpans.Add(formattingSpan);
-
-                    //
-                    // For text which contains non-uniform font faces, CanvasTextLayout takes the maximum of
-                    // all of line spacings and applies it as the overall line spacing. We do the same thing, here.
-                    //
-                    maxLineSpacing = System.Math.Max(maxLineSpacing, GetLineSpacing(formattingSpan.FontFace, fontSize));
-                }
+                formattingSpanHelper.MoveNext();
             }
 
             return formattingSpans;
@@ -401,9 +473,6 @@ namespace ExampleGallery
         {
             public FormattingSpan FormattingSpan;
             public List<CanvasGlyph> Glyphs;
-            public System.Numerics.Vector2 Position;
-            
-            public int LineNumber;
 
             private int firstGlyphIndex; // Indices within the formatting span.
             private int lastGlyphIndex;
@@ -466,20 +535,152 @@ namespace ExampleGallery
                 }
                 return shaping;
             }
+
+            public float GetAdvance()
+            {
+                float advance = 0;
+                foreach (var g in Glyphs)
+                {
+                    advance += g.Advance;
+                }
+                return advance;
+            }
+        }
+
+        class LayoutBox
+        {
+            List<GlyphRun> glyphRuns;
+            Rect rectangle;
+            uint highestBidiLevel = 0;
+            uint lowestOddBidiLevel = uint.MaxValue;
+
+            public LayoutBox(Rect r)
+            {
+                glyphRuns = new List<GlyphRun>();
+                rectangle = r;
+            }
+
+            public void AddGlyphRun(GlyphRun run)
+            {
+                glyphRuns.Add(run);
+
+                uint bidiLevel = run.FormattingSpan.BidiLevel;
+                highestBidiLevel = Math.Max(highestBidiLevel, bidiLevel);
+
+                if (bidiLevel % 2 == 1)
+                    lowestOddBidiLevel = Math.Min(lowestOddBidiLevel, run.FormattingSpan.BidiLevel);
+            }
+
+            public List<GlyphRun> GlyphRuns { get { return glyphRuns; } }
+            public Rect Rectangle { get { return rectangle; } }
+
+            public int GetGlyphCount()
+            {
+                int count = 0;
+                foreach (var g in glyphRuns)
+                {
+                    count += g.Glyphs.Count;
+                }
+                return count;
+            }
+
+            public int[] ProduceBidiOrdering()
+            {
+                int spanStart = 0;
+
+                int spanCount = GlyphRuns.Count;
+
+                //
+                // Produces an index mapping from sequential order to visual bidi order.
+                // The function progresses forward, checking the bidi level of each
+                // pair of spans, reversing when needed.
+                //
+                // See the Unicode technical report 9 for an explanation.
+                // http://www.unicode.org/reports/tr9/tr9-17.html 
+                //
+                int[] spanIndices = new int[spanCount];
+
+                for (int i = 0; i < spanCount; ++i)
+                    spanIndices[i] = spanStart + i;
+
+                if (spanCount <= 1)
+                    return spanIndices;
+
+                int runStart = 0;
+                uint currentLevel = glyphRuns[spanStart].FormattingSpan.BidiLevel;
+
+                // Rearrange each run to produced reordered spans.
+                for (int i=0; i< spanCount; ++i)
+                {
+                    int runEnd = i + 1;
+                    uint nextLevel = (runEnd < spanCount) ? glyphRuns[spanIndices[runEnd]].FormattingSpan.BidiLevel : 0;
+
+                    if (currentLevel <= nextLevel)
+                    {
+                        if (currentLevel < nextLevel)
+                        {
+                            currentLevel = nextLevel;
+                            runStart = i + 1;
+                        }
+                        continue; // Skip past equal levels, or increasing stairsteps.
+                    }
+
+                    do
+                    {
+                        // Recede to find start of the run and previous level.
+                        uint previousLevel;
+                        for (;;)
+                        {
+                            if (runStart <= 0)
+                            {
+                                previousLevel = 0; // position before string has bidi level of 0
+                                break;
+                            }
+                            if (glyphRuns[spanIndices[--runStart]].FormattingSpan.BidiLevel < currentLevel)
+                            {
+                                previousLevel = glyphRuns[spanIndices[runStart]].FormattingSpan.BidiLevel;
+                                ++runStart; // compensate for going one element past
+                                break;
+                            }
+                        }
+
+                        // Reverse the indices, if the difference between the current and
+                        // next/previous levels is odd. Otherwise, it would be a no-op, so
+                        // don't bother.
+                        if (Math.Min(currentLevel - nextLevel, currentLevel - previousLevel) % 2 != 0)
+                        {
+                            ReverseArrayElements(spanIndices, runStart, runEnd);
+                        }
+
+                        // Descend to the next lower level, the greater of previous and next
+                        currentLevel = Math.Max(previousLevel, nextLevel);
+                    } while (currentLevel > nextLevel);
+                }
+
+                return spanIndices;
+            }
+
+            void ReverseArrayElements(int[] indices, int start, int end)
+            {
+                int length = end - start;
+                for (int i=0; i<length / 2; i++)
+                {
+                    int temp = indices[start + i];
+                    indices[start + i] = indices[end - i - 1];
+                    indices[end - i - 1] = temp;
+                }
+            }   
         }
 
         // This method returns the current glyph run.
-        GlyphRun BeginGlyphRun(Rect rectangle, float advance, List<GlyphRun> glyphRuns, FormattingSpan formattingSpan, int lineNumber)
+        GlyphRun BeginGlyphRun(Rect rectangle, float advance, LayoutBox currentLayoutBox, FormattingSpan formattingSpan, int lineNumber)
         {
             GlyphRun glyphRun = new GlyphRun();
 
             glyphRun.FormattingSpan = formattingSpan;
-
-            float glyphRunXPosition = formattingSpan.IsRightToLeft ? (float)rectangle.Right - advance : (float)rectangle.Left + advance;
-            glyphRun.Position = new System.Numerics.Vector2(glyphRunXPosition, (float)rectangle.Bottom);
+            
             glyphRun.Glyphs = new List<CanvasGlyph>();
-            glyphRun.LineNumber = lineNumber;
-            glyphRuns.Add(glyphRun);
+            currentLayoutBox.AddGlyphRun(glyphRun);
 
             return glyphRun;
         }
@@ -487,16 +688,21 @@ namespace ExampleGallery
         //
         // Returns the current glyph run, or null if there's no more layout boxes.
         //
-        GlyphRun BeginNewLayoutBox(ref int rectangleIndex, List<Rect> rectangles, ref float glyphRunAdvance, ref int wordsPerLine, FormattingSpan formattingSpan, List<GlyphRun> glyphRuns)
+        GlyphRun BeginNewLayoutBox(ref int rectangleIndex, List<Rect> rectangles, ref float glyphRunAdvance, ref int wordsPerLine, FormattingSpan formattingSpan, List<LayoutBox> layoutBoxes)
         {
             rectangleIndex++;
             if (rectangleIndex >= rectangles.Count)
                 return null;
 
+            LayoutBox layoutBox = new LayoutBox(rectangles[rectangleIndex]);
+            layoutBoxes.Add(layoutBox);
+
             glyphRunAdvance = 0;
             wordsPerLine = 0;
 
-            return BeginGlyphRun(rectangles[rectangleIndex], glyphRunAdvance, glyphRuns, formattingSpan, rectangleIndex);
+            GlyphRun newGlyphRun = BeginGlyphRun(rectangles[rectangleIndex], glyphRunAdvance, layoutBox, formattingSpan, rectangleIndex);
+
+            return newGlyphRun;
         }
 
         static int GetCharacterIndex(int glyphIndex, int[] clusterMap)
@@ -510,32 +716,33 @@ namespace ExampleGallery
             return correspondingTextPosition;
         }
 
-        List<GlyphRun> CreateGlyphRuns(List<Rect> rectangles, List<FormattingSpan> formattingSpans, CanvasAnalyzedBreakpoint[] analyzedBreakpoints)
+        List<LayoutBox> CreateGlyphRuns(List<Rect> rectangles, List<FormattingSpan> formattingSpans, CanvasAnalyzedBreakpoint[] analyzedBreakpoints)
         {
-            List<GlyphRun> glyphRuns = new List<GlyphRun>();
+            List<LayoutBox> layoutBoxes = new List<LayoutBox>();
 
-            if (rectangles.Count == 0) return glyphRuns;
+            if (rectangles.Count == 0) return layoutBoxes;
 
-            int rectangleIndex = 0;
-
+            int rectangleIndex = -1;
             float glyphRunAdvance = 0;
-
-            int wordsPerLine = 0;
+            int wordsPerLine = 0;            
 
             for (int formattingSpanIndex = 0; formattingSpanIndex < formattingSpans.Count; formattingSpanIndex++)
             {
                 var formattingSpan = formattingSpans[formattingSpanIndex];
 
-                bool formattingSpanEndsInAdvancingTheLayoutBox = false;
+                GlyphRun currentGlyphRun;
+                if (layoutBoxes.Count == 0)
+                    currentGlyphRun = BeginNewLayoutBox(ref rectangleIndex, rectangles, ref glyphRunAdvance, ref wordsPerLine, formattingSpan, layoutBoxes);
+                else
+                    currentGlyphRun = BeginGlyphRun(rectangles[rectangleIndex], glyphRunAdvance, layoutBoxes[layoutBoxes.Count - 1], formattingSpan, rectangleIndex);
 
-                var currentGlyphRun = BeginGlyphRun(rectangles[rectangleIndex], glyphRunAdvance, glyphRuns, formattingSpan, rectangleIndex);
+                if (currentGlyphRun == null)
+                    return layoutBoxes;
 
                 var glyphs = formattingSpan.Glyphs;
 
                 for (int i = 0; i < glyphs.Length; ++i)
                 {
-                    formattingSpanEndsInAdvancingTheLayoutBox = false;
-
                     //
                     // Will the next word fit in the box?
                     //
@@ -543,11 +750,11 @@ namespace ExampleGallery
                     int wordBoundary;
                     for (wordBoundary = i; wordBoundary < glyphs.Length; wordBoundary++)
                     {
-                        int correspondingTextPosition = GetCharacterIndex(wordBoundary, formattingSpan.ClusterMap);
+                        int correspondingTextPosition = formattingSpan.Range.CharacterIndex + GetCharacterIndex(wordBoundary, formattingSpan.ClusterMap);
 
                         var afterThisCharacter = analyzedBreakpoints[correspondingTextPosition].BreakAfter;
-                        var beforeNextCharacter = (correspondingTextPosition < formattingSpan.ClusterMap.Length - 1) ? analyzedBreakpoints[correspondingTextPosition + 1].BreakBefore : CanvasLineBreakCondition.Neutral;
-
+                        var beforeNextCharacter = (correspondingTextPosition < analyzedBreakpoints.Length - 1) ? analyzedBreakpoints[correspondingTextPosition + 1].BreakBefore : CanvasLineBreakCondition.Neutral;
+                        
                         // 
                         // The text for this demo doesn't have any hard line breaks.
                         //
@@ -555,6 +762,7 @@ namespace ExampleGallery
 
                         if (afterThisCharacter == CanvasLineBreakCondition.CanBreak && beforeNextCharacter != CanvasLineBreakCondition.CannotBreak)
                             break;
+
                         wordAdvance += glyphs[wordBoundary].Advance;
                     }
 
@@ -592,176 +800,131 @@ namespace ExampleGallery
                             i--; // Retry the glyph against the next rectangle.
                         }
 
-                        currentGlyphRun = BeginNewLayoutBox(ref rectangleIndex, rectangles, ref glyphRunAdvance, ref wordsPerLine, formattingSpan, glyphRuns);
+                        currentGlyphRun = BeginNewLayoutBox(ref rectangleIndex, rectangles, ref glyphRunAdvance, ref wordsPerLine, formattingSpan, layoutBoxes);
 
                         if (currentGlyphRun == null)
-                            return glyphRuns;
-
-                        formattingSpanEndsInAdvancingTheLayoutBox = true;
-                    }
-                }
-
-                if (!formattingSpanEndsInAdvancingTheLayoutBox)
-                {
-                    //
-                    // Every formatting span with a text direction change, we advance the layout box if we haven't already.
-                    // A fuller-featured custom renderer may want to do something more complicated to support changes in 
-                    // text direction inside the same layout box.
-                    //
-                    bool textDirectionWillChange = formattingSpanIndex < formattingSpans.Count - 1 &&
-                        formattingSpan.IsRightToLeft != formattingSpans[formattingSpanIndex + 1].IsRightToLeft;
-
-                    if (textDirectionWillChange)
-                    {
-                        currentGlyphRun = BeginNewLayoutBox(ref rectangleIndex, rectangles, ref glyphRunAdvance, ref wordsPerLine, formattingSpan, glyphRuns);
-
-                        if (currentGlyphRun == null)
-                            return glyphRuns;
+                            return layoutBoxes;
                     }
                 }
             }
 
-            return glyphRuns;
+            return layoutBoxes;
         }
 
-        CanvasJustificationOpportunity[] GetJustificationOpportunities(CanvasTextAnalyzer textAnalyzer, int startingGlyphRunIndex, int endingGlyphRunIndex, int glyphCount, out CanvasGlyph[] allGlyphs)
+        CanvasJustificationOpportunity[] GetJustificationOpportunities(CanvasTextAnalyzer textAnalyzer, LayoutBox layoutBox, out CanvasGlyph[] allGlyphs)
         {
-            CanvasJustificationOpportunity[] justificationOpportunities = new CanvasJustificationOpportunity[glyphCount];
-            allGlyphs = new CanvasGlyph[glyphCount];
+            int layoutBoxGlyphCount = layoutBox.GetGlyphCount();
+
+            CanvasJustificationOpportunity[] justificationOpportunities = new CanvasJustificationOpportunity[layoutBoxGlyphCount];
+            allGlyphs = new CanvasGlyph[layoutBoxGlyphCount];
 
             int glyphIndex = 0;
 
-            for (int i = startingGlyphRunIndex; i < endingGlyphRunIndex; ++i)
+            for (int i=0; i<layoutBox.GlyphRuns.Count; i++)
             {
-                if (glyphRuns[i].Glyphs.Count == 0)
+                if (layoutBox.GlyphRuns[i].Glyphs.Count == 0)
                     continue;
 
-                CanvasCharacterRange range = glyphRuns[i].GetRange();
+                CanvasCharacterRange range = layoutBox.GlyphRuns[i].GetRange();
 
-                var glyphRunClusterMap = glyphRuns[i].GetClusterMap(range);
-                var glyphRunShaping = glyphRuns[i].GetShaping();
+                var glyphRunClusterMap = layoutBox.GlyphRuns[i].GetClusterMap(range);
+                var glyphRunShaping = layoutBox.GlyphRuns[i].GetShaping();
 
                 var justificationOpportunitiesThisGlyphRun = textAnalyzer.GetJustificationOpportunities(
                     range,
-                    glyphRuns[i].FormattingSpan.FontFace,
-                    glyphRuns[i].FormattingSpan.FontSize,
-                    glyphRuns[i].FormattingSpan.Script,
+                    layoutBox.GlyphRuns[i].FormattingSpan.FontFace,
+                    layoutBox.GlyphRuns[i].FormattingSpan.FontSize,
+                    layoutBox.GlyphRuns[i].FormattingSpan.Script,
                     glyphRunClusterMap,
                     glyphRunShaping);
 
-                for (int j=0; j < glyphRuns[i].Glyphs.Count; ++j )
+                for (int j = 0; j < layoutBox.GlyphRuns[i].Glyphs.Count; ++j)
                 {
                     justificationOpportunities[glyphIndex + j] = justificationOpportunitiesThisGlyphRun[j];
-                    allGlyphs[glyphIndex + j] = glyphRuns[i].Glyphs[j];
+                    allGlyphs[glyphIndex + j] = layoutBox.GlyphRuns[i].Glyphs[j];
                 }
-                glyphIndex += glyphRuns[i].Glyphs.Count;
+                glyphIndex += layoutBox.GlyphRuns[i].Glyphs.Count;
             }
 
             return justificationOpportunities;
         }
 
-        void SplitJustifiedGlyphsIntoRuns(CanvasTextAnalyzer textAnalyzer, int startingGlyphRunIndex, int endingGlyphRunIndex, CanvasGlyph[] justifiedGlyphs, bool needsAdditionalJustificationCharacters)
+        void SplitJustifiedGlyphsIntoRuns(CanvasTextAnalyzer textAnalyzer, LayoutBox layoutBox, CanvasGlyph[] justifiedGlyphs, bool needsAdditionalJustificationCharacters)
         {
             int glyphIndex = 0;
 
-            float xPosition = glyphRuns[startingGlyphRunIndex].Position.X;
-            for (int i = startingGlyphRunIndex; i < endingGlyphRunIndex; ++i)
+            float xPosition = (float)layoutBox.Rectangle.Right;
+            for (int i=0; i<layoutBox.GlyphRuns.Count; i++)
             {
-                if (glyphRuns[i].Glyphs.Count == 0)
+                if (layoutBox.GlyphRuns[i].Glyphs.Count == 0)
                     continue;
-
-                // Adjust glyph run positioning based on justification
-                glyphRuns[i].Position = new Vector2() { X = xPosition, Y = glyphRuns[i].Position.Y };
-
-                // Update running total glyph run advance
-                for (int j = 0; j < glyphRuns[i].Glyphs.Count; j++)
-                {
-                    xPosition += glyphRuns[i].Glyphs[j].Advance;
-                }
+                
+                int originalGlyphCountForThisRun = layoutBox.GlyphRuns[i].Glyphs.Count;
 
                 if (needsAdditionalJustificationCharacters)
                 {
                     // Replace the glyph data, since justification can modify glyphs                
-                    CanvasGlyph[] justifiedGlyphsForThisGlyphRun = new CanvasGlyph[glyphRuns[i].Glyphs.Count];
-                    for (int j = 0; j < glyphRuns[i].Glyphs.Count; j++)
+                    CanvasGlyph[] justifiedGlyphsForThisGlyphRun = new CanvasGlyph[layoutBox.GlyphRuns[i].Glyphs.Count];
+                    for (int j = 0; j < layoutBox.GlyphRuns[i].Glyphs.Count; j++)
                     {
                         justifiedGlyphsForThisGlyphRun[j] = justifiedGlyphs[glyphIndex + j];
                     }
 
-                    CanvasCharacterRange range = glyphRuns[i].GetRange();
+                    CanvasCharacterRange range = layoutBox.GlyphRuns[i].GetRange();
 
-                    var glyphRunClusterMap = glyphRuns[i].GetClusterMap(range);
-                    var glyphRunShaping = glyphRuns[i].GetShaping();
+                    var glyphRunClusterMap = layoutBox.GlyphRuns[i].GetClusterMap(range);
+                    var glyphRunShaping = layoutBox.GlyphRuns[i].GetShaping();
                     
                     CanvasGlyph[] newSetOfGlyphs = textAnalyzer.AddGlyphsAfterJustification(
-                        glyphRuns[i].FormattingSpan.FontFace,
-                        glyphRuns[i].FormattingSpan.FontSize,
-                        glyphRuns[i].FormattingSpan.Script,
+                        layoutBox.GlyphRuns[i].FormattingSpan.FontFace,
+                        layoutBox.GlyphRuns[i].FormattingSpan.FontSize,
+                        layoutBox.GlyphRuns[i].FormattingSpan.Script,
                         glyphRunClusterMap,
-                        glyphRuns[i].Glyphs.ToArray(),
+                        layoutBox.GlyphRuns[i].Glyphs.ToArray(),
                         justifiedGlyphsForThisGlyphRun,
                         glyphRunShaping);
 
-                    glyphRuns[i].Glyphs = new List<CanvasGlyph>(newSetOfGlyphs);
+                    layoutBox.GlyphRuns[i].Glyphs = new List<CanvasGlyph>(newSetOfGlyphs);
                 }
                 else
                 {
-                    for (int j = 0; j < glyphRuns[i].Glyphs.Count; j++)
+                    for (int j = 0; j < layoutBox.GlyphRuns[i].Glyphs.Count; j++)
                     {
-                        glyphRuns[i].Glyphs[j] = justifiedGlyphs[glyphIndex + j];
+                        layoutBox.GlyphRuns[i].Glyphs[j] = justifiedGlyphs[glyphIndex + j];
                     }
                 }
 
-                glyphIndex += glyphRuns[i].Glyphs.Count;
+                glyphIndex += originalGlyphCountForThisRun;
             }
         }
 
-        void JustifyLine(CanvasTextAnalyzer textAnalyzer, List<GlyphRun> glyphRuns, int startingGlyphRunIndex, int endingGlyphRunIndex, float layoutWidth, int glyphCountForLine)
+        void JustifyLine(CanvasTextAnalyzer textAnalyzer, LayoutBox layoutBox)
         {
             CanvasGlyph[] allGlyphs;
-            var justificationOpportunities = GetJustificationOpportunities(textAnalyzer, startingGlyphRunIndex, endingGlyphRunIndex, glyphCountForLine, out allGlyphs);
+            var justificationOpportunities = GetJustificationOpportunities(textAnalyzer, layoutBox, out allGlyphs);
 
             CanvasGlyph[] justifiedGlyphs = textAnalyzer.ApplyJustificationOpportunities(
-                layoutWidth,
+                (float)layoutBox.Rectangle.Width,
                 justificationOpportunities,
                 allGlyphs);
 
-            bool needsJustificationCharacters = glyphRuns[startingGlyphRunIndex].FormattingSpan.NeedsAdditionalJustificationCharacters;
+            bool needsJustificationCharacters = layoutBox.GlyphRuns[0].FormattingSpan.NeedsAdditionalJustificationCharacters;
 
-            SplitJustifiedGlyphsIntoRuns(textAnalyzer, startingGlyphRunIndex, endingGlyphRunIndex, justifiedGlyphs, needsJustificationCharacters);
+            SplitJustifiedGlyphsIntoRuns(textAnalyzer, layoutBox, justifiedGlyphs, needsJustificationCharacters);
         }
 
-        void Justify(CanvasTextAnalyzer textAnalyzer, List<GlyphRun> glyphRuns, List<Rect> layoutRectangles)
+        void Justify(CanvasTextAnalyzer textAnalyzer, List<LayoutBox> layoutBoxes)
         {
-            if (glyphRuns.Count == 0)
-                return;
+            if (layoutBoxes.Count == 0)
+                return;            
 
-            int startingGlyphRunIndex = 0;
-            int glyphCountForLine = 0;
-
-            for (int i = 0; i < glyphRuns.Count; i++ )
+            for (int i=0; i<layoutBoxes.Count; i++)
             {
-                if (glyphRuns[i].Glyphs.Count == 0)
-                    continue;
+                if (layoutBoxes[i].GlyphRuns.Count == 0)
+                    return;
 
-                bool lineNumberChanged = i > 0 && glyphRuns[i].LineNumber != glyphRuns[i - 1].LineNumber;
-
-                if (lineNumberChanged)
-                {
-                    int endingGlyphRunIndex = i;
-                    var layoutWidth = (float)layoutRectangles[glyphRuns[i - 1].LineNumber].Width;
-                    JustifyLine(textAnalyzer, glyphRuns, startingGlyphRunIndex, endingGlyphRunIndex, layoutWidth, glyphCountForLine);
-
-                    startingGlyphRunIndex = endingGlyphRunIndex;
-                    glyphCountForLine = 0;
-                }
-
-                glyphCountForLine += glyphRuns[i].Glyphs.Count;
-            }
-
-            // Do the last line, too.
-            var lastLineLayoutWidth = (float)layoutRectangles[glyphRuns[glyphRuns.Count - 1].LineNumber].Width;
-            JustifyLine(textAnalyzer, glyphRuns, startingGlyphRunIndex, glyphRuns.Count, lastLineLayoutWidth, glyphCountForLine);
+                JustifyLine(textAnalyzer, layoutBoxes[i]);
+            }            
         }
 
         private void EnsureLayout(CanvasControl sender)
@@ -771,11 +934,46 @@ namespace ExampleGallery
 
             var geometry = GetLayoutGeometry(sender);
 
-            string text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer lacinia odio lectus, eget luctus felis tincidunt sit amet. Maecenas vel ex porttitor, ultrices nunc feugiat, porttitor quam. Cras non interdum urna. In sagittis tempor leo quis laoreet. Sed pretium tellus ut commodo viverra. Ut volutpat in risus at aliquam. Sed faucibus vitae dolor ut commodo. Mauris mollis rhoncus libero ut porttitor. Suspendisse at egestas nunc. Proin non neque nibh. Mauris eu ornare arcu. Etiam non sem eleifend, imperdiet erat at, hendrerit ante. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Integer porttitor mauris eu pulvinar commodo. Interdum et malesuada fames ac ante ipsum primis in faucibus. Mauris ultricies fermentum sem sed consequat. Vestibulum iaculis dui nulla, nec pharetra dolor gravida in. Pellentesque vel nisi urna. Donec gravida nunc sed pellentesque feugiat. Aliquam iaculis enim non enim ultrices aliquam. In at leo sed lorem interdum bibendum at non enim.";
+            string text;
+            if (CurrentTextOption == TextOption.English)
+            {
+                text =
+                    "Win2D is an easy-to-use Windows Runtime API for immediate mode 2D graphics rendering with GPU acceleration. " +
+                    "It is available to C# and C++ developers writing Windows apps for Windows 8.1, Windows Phone 8.1 and Windows " +
+                    "10. It utilizes the power of Direct2D, and integrates seamlessly with XAML and CoreWindow. The CanvasTextAnalyzer " +
+                    "class identifies what glyphs are needed to render a piece of text, including the font fallbacks to properly " +
+                    "handle different languages.  Example Gallery uses it to create this Custom Text Layouts example, which wordwraps text " +
+                    "to fill an arbitrary geometric shape.";
+            }
+            else
+            {
+                //
+                // Storing bi-directional text as a contiguous literal causes problems in VS; it will attempt to reorder the bi-di levels 
+                // in the script, and it reorders them wrongly (doesn't match Word, Outlook, other programs). This works around it
+                // by separating some of them out.
+                //
+                // This text string contains control characters around 'C#' and C++' to ensure they are drawn with the correct
+                // directionality. Higher-level editors like Word use this same mechanism, since a full, correct Bidi ordering 
+                // isn't sufficient for them.
+                //
+                text =
+                    "Win2D هو API  لنظام التشغيل ويندوز سهل الاستخدام لتقديم الرسومات الثنائية الابعاد " + "(2D)" +
+                    "مع تسارع المعالج الجرافيك. متاح للمطورين \u202aC#\u202c و \u202aC+ +\u202c لتطوير تطبيقات الويندوز لإصدارات " +
+                    "8.1،   10 و هاتف الويندوز إصدار 8.1. فإنه يستخدم قوة Direct2D، ويدمج بسهولة مع XAML وCoreWindows ." +
+                    "الفئة CanvasTextAnalyzer يحدد ما هي الرموز المطلوبة لتقديم قطعة من " +
+                    "النص، بما في ذلك أساسات الخط إلى التعامل مع لغات مختلفة. Example Gallery يستخدم هذه الطقنيه لعرض كيفية التعامل مع النصوص.";
+            }
+
+            // Duplicate the text, so that it fills more reading space.
+            text = text + text;
+
             var textFormat = new CanvasTextFormat();
             textFormat.FontFamily = fontPicker.CurrentFontFamily;
 
-            CanvasTextAnalyzer textAnalyzer = new CanvasTextAnalyzer(text, CanvasTextDirection.LeftToRightThenTopToBottom);
+            var textDirection = CurrentTextDirection == TextDirection.LeftToRight ?
+                CanvasTextDirection.LeftToRightThenTopToBottom : CanvasTextDirection.RightToLeftThenTopToBottom;
+
+            CanvasTextAnalyzer textAnalyzer = new CanvasTextAnalyzer(text, textDirection);
 
             //
             // Figure out what fonts to use.
@@ -787,8 +985,13 @@ namespace ExampleGallery
             //
             var scriptAnalysis = textAnalyzer.GetScript();
 
+            //
+            // Perform bidi analysis.
+            //
+            var bidiAnalysis = textAnalyzer.GetBidi();
+
             float maxLineSpacing = 0;
-            List<FormattingSpan> formattingSpans = EvaluateFormattingSpans(textAnalyzer, fontResult, scriptAnalysis, out maxLineSpacing);
+            List<FormattingSpan> formattingSpans = EvaluateFormattingSpans(textAnalyzer, fontResult, scriptAnalysis, bidiAnalysis, out maxLineSpacing);
             
             //
             // Perform line break analysis.
@@ -803,11 +1006,11 @@ namespace ExampleGallery
             //
             // Insert glyph runs into the layout boxes.
             //
-            glyphRuns = CreateGlyphRuns(layoutRectangles, formattingSpans, breakpoints);
+            layoutBoxes = CreateGlyphRuns(layoutRectangles, formattingSpans, breakpoints);
 
             if (ShouldJustify)
             {
-                Justify(textAnalyzer, glyphRuns, layoutRectangles);
+                Justify(textAnalyzer, layoutBoxes);
             }
 
             needsLayout = false;
@@ -840,20 +1043,57 @@ namespace ExampleGallery
 
             var brush = new CanvasSolidColorBrush(sender, Colors.LightSkyBlue);
 
-            foreach (GlyphRun g in glyphRuns)
+            foreach (LayoutBox l in layoutBoxes)
             {
-                if (g.Glyphs.Count > 0)
+                if (l.GlyphRuns.Count > 0)
                 {
-                    uint bidiLevel = g.FormattingSpan.IsRightToLeft ? 1u : 0u;
+                    float layoutAdvance = 0;
+                    foreach (var g in l.GlyphRuns)
+                    {
+                        layoutAdvance += g.GetAdvance();
+                    }
 
-                    args.DrawingSession.DrawGlyphRun(
-                        g.Position,
-                        g.FormattingSpan.FontFace,
-                        g.FormattingSpan.FontSize,
-                        g.Glyphs.ToArray(),
-                        false, // isSideways
-                        bidiLevel,
-                        brush);
+                    float x = (float)l.Rectangle.Left;
+
+
+                    if (CurrentTextDirection == TextDirection.RightToLeft)
+                        x = (float)l.Rectangle.Right - layoutAdvance;
+
+                    int[] bidiOrdering = l.ProduceBidiOrdering();
+
+                    foreach (int glyphRunIndex in bidiOrdering)
+                    {
+                        GlyphRun g = l.GlyphRuns[glyphRunIndex];
+
+                        //
+                        // The Arabic test string contains control characters. A typical text renderer will just not draw these.
+                        //
+                        if (g.FormattingSpan.Script.Shape == CanvasScriptShape.NoVisual)
+                            continue;
+
+                        if (g.Glyphs.Count > 0)
+                        {
+                            float advance = g.GetAdvance();
+
+                            Vector2 position;
+                            position.X = x;
+                            position.Y = (float)l.Rectangle.Bottom;
+
+                            if (g.FormattingSpan.BidiLevel % 2 != 0)
+                                position.X += advance;
+
+                            args.DrawingSession.DrawGlyphRun(
+                                position,
+                                g.FormattingSpan.FontFace,
+                                g.FormattingSpan.FontSize,
+                                g.Glyphs.ToArray(),
+                                false, // isSideways
+                                g.FormattingSpan.BidiLevel,
+                                brush);
+
+                            x += advance;
+                        }
+                    }
                 }
             }
         }
@@ -905,20 +1145,14 @@ namespace ExampleGallery
             canvas.Invalidate();
         }
 
-        private void ForcedTextDirectionOptions_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void SelectionChanged_InvalidateLayout(object sender, SelectionChangedEventArgs e)
         {
             needsLayout = true;
             canvas.Invalidate();
-        }
+        }        
 
         private void InvalidateCanvas(object sender, RoutedEventArgs e)
         {
-            canvas.Invalidate();
-        }
-
-        private void fontPicker_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            needsLayout = true;
             canvas.Invalidate();
         }
 

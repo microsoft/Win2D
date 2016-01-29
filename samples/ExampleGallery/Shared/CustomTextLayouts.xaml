@@ -32,18 +32,23 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
                 <Flyout Placement="Bottom">
                     <ScrollViewer Grid.Column="0" VerticalScrollMode="Auto" HorizontalScrollMode="Disabled" VerticalScrollBarVisibility="Hidden">
                         <StackPanel Orientation="Vertical" MinWidth="100" Margin="5">
+                            <TextBlock>Text option:</TextBlock>
+                            <ComboBox ItemsSource="{Binding TextOptions}"
+                                      SelectedItem="{Binding CurrentTextOption, Mode=TwoWay}"
+                                      SelectionChanged="SelectionChanged_InvalidateLayout"
+                                      HorizontalAlignment="Stretch"/>
                             <TextBlock>Layout shape:</TextBlock>
                             <ComboBox ItemsSource="{Binding LayoutShapeOptions}"
                                       SelectedItem="{Binding CurrentLayoutShapeOption, Mode=TwoWay}"
                                       SelectionChanged="LayoutShapeOptions_SelectionChanged"
                                       HorizontalAlignment="Stretch"/>
-                            <TextBlock>Forced text direction:</TextBlock>
-                            <ComboBox ItemsSource="{Binding ForcedTextDirectionOptions}"
-                                      SelectedItem="{Binding CurrentForcedTextDirectionOption, Mode=TwoWay}"
-                                      SelectionChanged="ForcedTextDirectionOptions_SelectionChanged"
+                            <TextBlock>Text direction:</TextBlock>
+                            <ComboBox ItemsSource="{Binding TextDirections}"
+                                      SelectedItem="{Binding CurrentTextDirection, Mode=TwoWay}"
+                                      SelectionChanged="SelectionChanged_InvalidateLayout"
                                       HorizontalAlignment="Stretch"/>
                             <TextBlock x:Name="fontLabel">Font:</TextBlock>
-                            <local:FontPickerComboBox x:Name="fontPicker" HorizontalAlignment="Stretch" SelectionChanged="fontPicker_SelectionChanged"/>
+                            <local:FontPickerComboBox x:Name="fontPicker" HorizontalAlignment="Stretch" SelectionChanged="SelectionChanged_InvalidateLayout"/>
                             <TextBlock x:Name="textOutlineInputLabel" Visibility="Collapsed">Text outline:</TextBlock>
                             <TextBox x:Name="textLayoutBoxInput"
                                  Margin="5"
