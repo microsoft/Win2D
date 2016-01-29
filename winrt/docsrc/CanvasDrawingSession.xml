@@ -1082,7 +1082,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <seealso cref="T:Microsoft.Graphics.Canvas.CanvasActiveLayer"/>
     </member>
 
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawInk(System.Collections.Generic.IEnumerable{Windows.UI.Input.Inking.InkStroke})" Experimental="true" Win10="true">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawInk(System.Collections.Generic.IEnumerable{Windows.UI.Input.Inking.InkStroke})" Win10="true">
       <summary>
         Draws a collection of ink strokes.
       </summary>
@@ -1117,7 +1117,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         </p>
       </remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawInk(System.Collections.Generic.IEnumerable{Windows.UI.Input.Inking.InkStroke},System.Boolean)" Experimental="true" Win10="true">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawInk(System.Collections.Generic.IEnumerable{Windows.UI.Input.Inking.InkStroke},System.Boolean)" Win10="true">
       <summary>
         Draws a collection of ink strokes.
       </summary>
@@ -1155,13 +1155,13 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       </remarks>
     </member>
 
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawGradientMesh(Microsoft.Graphics.Canvas.Geometry.CanvasGradientMesh)" Experimental="true" Win10="true">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawGradientMesh(Microsoft.Graphics.Canvas.Geometry.CanvasGradientMesh)" Win10="true">
       <summary>Draws a gradient mesh, relative to the origin.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawGradientMesh(Microsoft.Graphics.Canvas.Geometry.CanvasGradientMesh,System.Single,System.Single)" Experimental="true" Win10="true">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawGradientMesh(Microsoft.Graphics.Canvas.Geometry.CanvasGradientMesh,System.Single,System.Single)" Win10="true">
       <summary>Draws a gradient mesh, relative to the specified position.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawGradientMesh(Microsoft.Graphics.Canvas.Geometry.CanvasGradientMesh,System.Numerics.Vector2)" Experimental="true" Win10="true">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawGradientMesh(Microsoft.Graphics.Canvas.Geometry.CanvasGradientMesh,System.Numerics.Vector2)" Win10="true">
       <summary>Draws a gradient mesh, relative to the specified position.</summary>
     </member>
 
@@ -1244,7 +1244,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     </member>    
 
 
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.CreateSpriteBatch" Experimental="true" Win10NovUpdate="true">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.CreateSpriteBatch" Win10NovUpdate="true">
       <summary>Creates a new sprite batch for efficiently drawing many CanvasBitmaps.</summary>
       <remarks>
         <p>
@@ -1253,7 +1253,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       </remarks>
     </member>
 
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.CreateSpriteBatch(Microsoft.Graphics.Canvas.CanvasSpriteSortMode)" Experimental="true" Win10NovUpdate="true">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.CreateSpriteBatch(Microsoft.Graphics.Canvas.CanvasSpriteSortMode)" Win10NovUpdate="true">
       <summary>Creates a new sprite batch for efficiently drawing many CanvasBitmaps with a specific sort mode.</summary>
       <remarks>
         <p>
@@ -1265,7 +1265,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       </remarks>
     </member>
 
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.CreateSpriteBatch(Microsoft.Graphics.Canvas.CanvasSpriteSortMode,Microsoft.Graphics.Canvas.CanvasImageInterpolation)" Experimental="true" Win10NovUpdate="true">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.CreateSpriteBatch(Microsoft.Graphics.Canvas.CanvasSpriteSortMode,Microsoft.Graphics.Canvas.CanvasImageInterpolation)" Win10NovUpdate="true">
       <summary>Creates a new sprite batch for efficiently drawing many CanvasBitmaps with a specific sort mode and interpolation.</summary>
       <remarks>
         <p>
@@ -1284,7 +1284,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       </remarks>
     </member>
 
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.CreateSpriteBatch(Microsoft.Graphics.Canvas.CanvasSpriteSortMode,Microsoft.Graphics.Canvas.CanvasImageInterpolation,Microsoft.Graphics.Canvas.CanvasSpriteOptions)" Experimental="true" Win10NovUpdate="true">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.CreateSpriteBatch(Microsoft.Graphics.Canvas.CanvasSpriteSortMode,Microsoft.Graphics.Canvas.CanvasImageInterpolation,Microsoft.Graphics.Canvas.CanvasSpriteOptions)" Win10NovUpdate="true">
       <summary>Creates a new sprite batch for efficiently drawing many CanvasBitmaps with a specific sort mode, interpolation and options.</summary>
       <remarks>
         <p>

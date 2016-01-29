@@ -594,7 +594,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <summary>Gets the device associated with this text layout.</summary>
     </member>    
 
-    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.LineSpacingMode" Experimental="true" Win10="true">
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.LineSpacingMode" Win10="true">
       <summary>Specifies how lines are spaced apart.</summary>
       <remarks>
         <p>
@@ -684,7 +684,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     </member>
     
 
-    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasLineMetrics" Experimental="true">
+    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasLineMetrics">
       <summary>Describes a line of formatted text within a text layout.</summary>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.Text.CanvasLineMetrics.CharacterCount">
@@ -777,14 +777,14 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
           </p>
       </remarks>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.LineMetrics" Experimental="true">
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.LineMetrics">
       <summary>Gets an array of metrics describing each line.</summary>
       <remarks>
         As a convention, a text layout for a zero-length piece of text will still contain one line.
       </remarks>
     </member>
 
-    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasClusterMetrics" Experimental="true">
+    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasClusterMetrics">
       <summary>Describes a glyph cluster.</summary>
       <remarks>
         <p>
@@ -816,7 +816,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="F:Microsoft.Graphics.Canvas.Text.CanvasClusterMetrics.Properties">
       <summary>The glyph cluster's properties.</summary>
     </member>
-    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasClusterProperties" Experimental="true">
+    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasClusterProperties">
       <summary>Properties which apply to a glyph cluster.</summary>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.Text.CanvasClusterProperties.None">
@@ -844,7 +844,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="F:Microsoft.Graphics.Canvas.Text.CanvasClusterProperties.RightToLeft">
       <summary>Indicates that the cluster is read from right to left.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.ClusterMetrics" Experimental="true">
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.ClusterMetrics">
       <summary>Gets an array of metrics describing each cluster.</summary>
       <remarks>
         It's valid for a text layout to have zero clusters, in which case this 
@@ -887,7 +887,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       </remarks>
     </member>    
 
-    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.LayoutBoundsIncludingTrailingWhitespace" Experimental="true">
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.LayoutBoundsIncludingTrailingWhitespace">
       <summary>Gets a rectangle describing the bounds of text, plus any trailing whitespace.</summary>
       <remarks>
         <p>
@@ -944,7 +944,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         
       </remarks>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.MaximumBidiReorderingDepth" Experimental="true">
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.MaximumBidiReorderingDepth">
       <summary>Gets the maximum reordering depth for direction changes of bi-directional text.</summary>
       <remarks>
         <p>

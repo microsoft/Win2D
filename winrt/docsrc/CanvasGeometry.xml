@@ -414,7 +414,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <summary>Signals the end of a figure to the app.</summary>
     </member>    
 
-    <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.CreateText(Microsoft.Graphics.Canvas.Text.CanvasTextLayout)" Experimental="true">
+    <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.CreateText(Microsoft.Graphics.Canvas.Text.CanvasTextLayout)">
       <summary>Creates a geometry based on a text layout.</summary>
       <remarks>
         <p>
@@ -516,7 +516,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       </remarks>
     </member>
     
-    <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.CreateInk(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Collections.Generic.IEnumerable{Windows.UI.Input.Inking.InkStroke})" Experimental="true" Win10="true">
+    <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.CreateInk(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Collections.Generic.IEnumerable{Windows.UI.Input.Inking.InkStroke})" Win10="true">
       <summary>Creates a geometry from a collection of ink strokes.</summary>
       <remarks>
         <p>Uses default flattening tolerance and identity transform on the input strokes.</p>
@@ -527,7 +527,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         </p>
       </remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.CreateInk(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Collections.Generic.IEnumerable{Windows.UI.Input.Inking.InkStroke},System.Numerics.Matrix3x2,System.Single)" Experimental="true" Win10="true">
+    <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.CreateInk(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Collections.Generic.IEnumerable{Windows.UI.Input.Inking.InkStroke},System.Numerics.Matrix3x2,System.Single)" Win10="true">
       <summary>Creates a geometry from a collection of ink strokes.</summary>
       <remarks>
         <p>Uses the specified flattening tolerance, and the specified transform on the input strokes.</p>

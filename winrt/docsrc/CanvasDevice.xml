@@ -174,7 +174,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       </remarks>
     </member>
 
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDevice.GetSharedDevice" Experimental="true">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDevice.GetSharedDevice">
       <summary>Gets a device that can be shared between multiple different rendering components, such as controls.</summary>
       <remarks>
         <p>This overload defaults to choosing a hardware accelerated device.</p>

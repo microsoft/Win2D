@@ -284,7 +284,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       </remarks>
     </member>    
 
-    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextFormat.GetSystemFontFamilies" Experimental="true">
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextFormat.GetSystemFontFamilies">
       <summary>Gets a list of font families available.</summary>
       <remarks>
         <p>
@@ -334,7 +334,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       </remarks>
     </member>
 
-    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasLineSpacingMode" Experimental="true"  Win10="true">
+    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasLineSpacingMode" Win10="true">
       <summary>Options for specifying how lines are spaced apart.</summary>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.Text.CanvasLineSpacingMode.Default">
@@ -353,7 +353,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       </summary>
     </member>
 
-    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextFormat.LineSpacingMode" Experimental="true" Win10="true">
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextFormat.LineSpacingMode" Win10="true">
       <summary>Specifies how lines are spaced apart.</summary>
       <remarks>
         <p>
@@ -387,17 +387,17 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       </remarks>
     </member>    
 
-    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextFormat.VerticalGlyphOrientation" Experimental="true">
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextFormat.VerticalGlyphOrientation">
       <summary>Specifies the orientation of glyphs when a vertical reading direction is used.</summary>
       <remarks>By default, some naturally horizontal scripts may be rotated if they're drawn using a vertical text direction.</remarks>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextFormat.OpticalAlignment" Experimental="true">
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextFormat.OpticalAlignment">
       <summary>Specifies how glyphs are aligned to the margin.</summary>
       <remarks>
           By default, there is allowed to be some whitespace in between the margin edge and the glyph edge.
       </remarks>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextFormat.LastLineWrapping" Experimental="true">
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextFormat.LastLineWrapping">
       <summary>Specifies whether the last line is wrapped.</summary>
       <remarks>This is set to 'true' by default.</remarks>
     </member>    
