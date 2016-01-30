@@ -18,10 +18,8 @@ CoreWindow.
     *also available in the [Store](https://www.microsoft.com/store/apps/9NBLGGGXWT9F)*
 
 ##### More info
-- [Features](http://github.com/Microsoft/Win2D/wiki/Features) - *what's implemented so far*
-- [Backlog](http://github.com/Microsoft/Win2D/wiki/Backlog) - *what we plan to add next*
-- [Team blog](http://blogs.msdn.com/b/win2d)
 - [Report a bug or ask a question](http://github.com/Microsoft/Win2D/issues)
+- [Team blog](http://blogs.msdn.com/b/win2d)
 - [License](http://opensource.org/licenses/MIT)
 - [Contributing](http://github.com/Microsoft/Win2D/blob/master/CONTRIBUTING.md)
 

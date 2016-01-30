@@ -61,28 +61,14 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <list class="bullet">
         <listItem>
           <externalLink>
-            <linkText>Features</linkText>
-            <linkUri>http://github.com/Microsoft/Win2D/wiki/Features</linkUri>
+            <linkText>Report a bug or ask a question</linkText>
+            <linkUri>http://github.com/Microsoft/Win2D/issues</linkUri>
           </externalLink>
-          - <legacyItalic>what's implemented so far</legacyItalic>
-        </listItem>
-        <listItem>
-          <externalLink>
-            <linkText>Backlog</linkText>
-            <linkUri>http://github.com/Microsoft/Win2D/wiki/Backlog</linkUri>
-          </externalLink>
-          - <legacyItalic>what we plan to add next</legacyItalic>
         </listItem>
         <listItem>
           <externalLink>
             <linkText>Team blog</linkText>
             <linkUri>http://blogs.msdn.com/b/win2d</linkUri>
-          </externalLink>
-        </listItem>
-        <listItem>
-          <externalLink>
-            <linkText>Report a bug or ask a question</linkText>
-            <linkUri>http://github.com/Microsoft/Win2D/issues</linkUri>
           </externalLink>
         </listItem>
       </list>

@@ -23,6 +23,10 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <summary>This namespace defines the API for drawing geometry (lines, filled shapes etc.) with Win2D.</summary>
     </member>
 
+    <member name="N:Microsoft.Graphics.Canvas.Printing">
+      <summary>This namespace defines the API for printing Win2D content.</summary>
+    </member>
+
     <member name="N:Microsoft.Graphics.Canvas.Text">
       <summary>This namespace defines the API for drawing text with Win2D.</summary>
     </member>

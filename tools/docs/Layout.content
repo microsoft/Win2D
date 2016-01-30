@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Topics>
   <Topic id="Introduction" title="Introduction" isDefault="true" />
+  <Topic id="Features" title="Features" />
   <Topic id="QuickStart" title="Quick start" />
 
   <Topic id="APIReference" title="API Reference" generateTopic="true">

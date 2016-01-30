@@ -1,0 +1,179 @@
+<?xml version="1.0"?>
+<!--
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+Licensed under the MIT License. See LICENSE.txt in the project root for license information.
+-->
+
+<topic id="Features" revisionNumber="1">
+  <developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <introduction>
+
+      <para><legacyBold>Bitmap graphics</legacyBold></para>
+      <list class="bullet">
+        <listItem>
+          Load, save and draw
+          <codeEntityReference linkText="bitmap">T:Microsoft.Graphics.Canvas.CanvasBitmap</codeEntityReference>
+          images
+        </listItem>
+        <listItem>
+          <codeEntityReference linkText="Render to texture">T:Microsoft.Graphics.Canvas.CanvasRenderTarget</codeEntityReference>
+        </listItem>
+        <listItem>
+          Use bitmaps as
+          <codeEntityReference linkText="opacity masks">M:Microsoft.Graphics.Canvas.CanvasDrawingSession.CreateLayer(Microsoft.Graphics.Canvas.Brushes.ICanvasBrush)</codeEntityReference>
+        </listItem>
+        <listItem>
+          <codeEntityReference linkText="Sprite batch">T:Microsoft.Graphics.Canvas.CanvasSpriteBatch</codeEntityReference>
+          API for efficiently drawing large numbers of bitmaps
+        </listItem>
+        <listItem>
+          Use <link xlink:href="BlockCompression">block compressed</link> bitmap formats to save memory
+        </listItem>
+        <listItem>
+          Load, <codeEntityReference linkText="save">M:Microsoft.Graphics.Canvas.CanvasImage.SaveAsync(Microsoft.Graphics.Canvas.ICanvasImage,Windows.Foundation.Rect,System.Single,Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.Storage.Streams.IRandomAccessStream,Microsoft.Graphics.Canvas.CanvasBitmapFileFormat)</codeEntityReference>,
+          and draw <codeEntityReference linkText="virtual bitmaps">T:Microsoft.Graphics.Canvas.CanvasVirtualBitmap</codeEntityReference>,
+          which can be larger than the maximum GPU texture size and are automatically split into tiles
+        </listItem>
+      </list>
+
+      <para><legacyBold>Vector graphics</legacyBold></para>
+      <list class="bullet">
+        <listItem>
+          <codeEntityReference linkText="Draw">T:Microsoft.Graphics.Canvas.CanvasDrawingSession</codeEntityReference>
+          primitive shapes (lines, rectangles, circles, etc.) or arbitrarily complex geometry
+        </listItem>
+        <listItem>
+          Fill shapes using solid colors,
+          <codeEntityReference linkText="image brushes">T:Microsoft.Graphics.Canvas.Brushes.CanvasImageBrush</codeEntityReference>, or
+          <codeEntityReference linkText="linear">T:Microsoft.Graphics.Canvas.Brushes.CanvasLinearGradientBrush</codeEntityReference> and
+          <codeEntityReference linkText="radial">T:Microsoft.Graphics.Canvas.Brushes.CanvasRadialGradientBrush</codeEntityReference> gradients
+        </listItem>
+        <listItem>
+          Draw lines of any width with flexible
+          <codeEntityReference linkText="stroke styles">T:Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle</codeEntityReference>
+          (dotted, dashed, etc.)
+        </listItem>
+        <listItem>
+          High quality antialiasing
+        </listItem>
+        <listItem>
+          Rich <codeEntityReference linkText="geometry manipulation">T:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry</codeEntityReference>
+          (union, intersect, compute point on path, tessellate, etc.)
+        </listItem>
+        <listItem>
+          <codeEntityReference linkText="Clip drawing">M:Microsoft.Graphics.Canvas.CanvasDrawingSession.CreateLayer(System.Single,Microsoft.Graphics.Canvas.Geometry.CanvasGeometry)</codeEntityReference>
+          to arbitrary geometric regions
+        </listItem>
+        <listItem>
+          Capture drawing operations in
+          <codeEntityReference linkText="command lists">T:Microsoft.Graphics.Canvas.CanvasCommandList</codeEntityReference>
+          for later replay
+        </listItem>
+        <listItem>
+          Rasterize
+          <codeEntityReference linkText="ink strokes">M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawInk(System.Collections.Generic.IEnumerable{Windows.UI.Input.Inking.InkStroke})</codeEntityReference>
+          (from a stylus)
+        </listItem>
+      </list>
+
+      <para><legacyBold>Powerful image processing effects</legacyBold></para>
+      <list class="bullet">
+        <listItem>
+          <codeEntityReference linkText="Blurs">T:Microsoft.Graphics.Canvas.Effects.GaussianBlurEffect</codeEntityReference>
+        </listItem>
+        <listItem>
+          <codeEntityReference linkText="Blends">T:Microsoft.Graphics.Canvas.Effects.BlendEffect</codeEntityReference>
+        </listItem>
+        <listItem>
+          Color adjustments
+          (<codeEntityReference linkText="brightness">T:Microsoft.Graphics.Canvas.Effects.BrightnessEffect</codeEntityReference>,
+          <codeEntityReference linkText="contrast">T:Microsoft.Graphics.Canvas.Effects.ContrastEffect</codeEntityReference>,
+          <codeEntityReference linkText="exposure">T:Microsoft.Graphics.Canvas.Effects.ExposureEffect</codeEntityReference>,
+          <codeEntityReference linkText="highlights &amp; shadows">T:Microsoft.Graphics.Canvas.Effects.HighlightsAndShadowsEffect</codeEntityReference>, etc.)
+        </listItem>
+        <listItem>
+          Filters
+          (<codeEntityReference linkText="convolve">T:Microsoft.Graphics.Canvas.Effects.ConvolveMatrixEffect</codeEntityReference>,
+          <codeEntityReference linkText="edge detection">T:Microsoft.Graphics.Canvas.Effects.EdgeDetectionEffect</codeEntityReference>,
+          <codeEntityReference linkText="emboss">T:Microsoft.Graphics.Canvas.Effects.EmbossEffect</codeEntityReference>,
+          <codeEntityReference linkText="sharpen">T:Microsoft.Graphics.Canvas.Effects.SharpenEffect</codeEntityReference>)
+        </listItem>
+        <listItem>
+          <codeEntityReference linkText="Lighting">T:Microsoft.Graphics.Canvas.Effects.SpotSpecularEffect</codeEntityReference>
+        </listItem>
+        <listItem>
+          <codeEntityReference linkText="Custom pixel shaders">T:Microsoft.Graphics.Canvas.Effects.PixelShaderEffect</codeEntityReference>
+        </listItem>
+        <listItem>
+          <codeEntityReference linkText="And many more">N:Microsoft.Graphics.Canvas.Effects</codeEntityReference>...
+        </listItem>
+      </list>
+
+      <para><legacyBold>Text</legacyBold></para>
+      <list class="bullet">
+        <listItem>
+          Fully internationalized <codeEntityReference linkText="Unicode text rendering">N:Microsoft.Graphics.Canvas.Text</codeEntityReference>
+        </listItem>
+        <listItem>
+          <codeEntityReference linkText="Text layouts">T:Microsoft.Graphics.Canvas.Text.CanvasTextLayout</codeEntityReference>
+          can be drawn, measured, or hit-tested against
+        </listItem>
+        <listItem>
+          Convert <codeEntityReference linkText="text outlines to geometry">M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.CreateText(Microsoft.Graphics.Canvas.Text.CanvasTextLayout)</codeEntityReference>
+        </listItem>
+        <listItem>
+          <codeEntityReference linkText="Enumerate fonts">M:Microsoft.Graphics.Canvas.Text.CanvasFontSet.GetSystemFontSet</codeEntityReference>
+          and query their metrics
+        </listItem>
+        <listItem>
+          Draw or manipulate individual
+          <codeEntityReference linkText="glyph runs">T:Microsoft.Graphics.Canvas.Text.ICanvasTextRenderer</codeEntityReference>
+          to create
+          <externalLink>
+            <linkText>custom text layouts</linkText>
+            <linkUri>http://github.com/Microsoft/Win2D-Samples/blob/master/ExampleGallery/Shared/CustomTextLayouts.xaml.cs</linkUri>
+          </externalLink>
+        </listItem>
+      </list>
+
+      <para><legacyBold>UI integration</legacyBold></para>
+      <list class="bullet">
+        <listItem>
+          XAML <codeEntityReference linkText="CanvasControl">T:Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl</codeEntityReference>
+          make it easy to get up and running
+        </listItem>
+        <listItem>
+          Create
+          <externalLink>
+            <linkText>owner-draw XAML controls</linkText>
+            <linkUri>http://github.com/Microsoft/Win2D-Samples/blob/master/ExampleGallery/Shared/GlowTextCustomControl.cs</linkUri>
+          </externalLink>
+        </listItem>
+        <listItem>
+          XAML <codeEntityReference linkText="CanvasAnimatedControl">T:Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl</codeEntityReference>
+          provides Update/Draw game loop programming model
+        </listItem>
+        <listItem>
+          XAML <codeEntityReference linkText="CanvasVirtualControl">T:Microsoft.Graphics.Canvas.UI.Xaml.CanvasVirtualControl</codeEntityReference>
+          for drawing to very large virtualized surfaces
+        </listItem>
+        <listItem>
+          Draw onto <codeEntityReference linkText="Windows.UI.Composition">T:Microsoft.Graphics.Canvas.UI.Composition.CanvasComposition</codeEntityReference>
+          drawing surfaces and swapchains
+        </listItem>
+        <listItem>
+          Or draw directly to a
+          <externalLink>
+            <linkText>CoreWindow</linkText>
+            <linkUri>http://github.com/Microsoft/Win2D-Samples/tree/master/CoreWindowExample</linkUri>
+          </externalLink>
+        </listItem>
+        <listItem>
+          <codeEntityReference linkText="Printing">N:Microsoft.Graphics.Canvas.Printing</codeEntityReference>
+        </listItem>
+      </list>
+
+    </introduction>
+  </developerConceptualDocument>
+</topic>
