@@ -247,7 +247,7 @@ namespace ExampleGallery
 
             foreach (var strokesOfColor in strokesGroupedByColor)
             {
-                var geometry = CanvasGeometry.CreateInk(ds, strokesOfColor).Outline();
+                var geometry = CanvasGeometry.CreateInk(ds, strokesOfColor.ToList()).Outline();
 
                 ds.DrawGeometry(geometry, strokesOfColor.Key, 1, strokeStyle);
             }
