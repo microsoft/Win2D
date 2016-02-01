@@ -1492,6 +1492,15 @@ namespace Microsoft
                 END_ENUM(DWRITE_SCRIPT_SHAPES);
             }
 
+            ENUM_TO_STRING(DWRITE_GLYPH_ORIENTATION_ANGLE)
+            {
+                ENUM_VALUE(DWRITE_GLYPH_ORIENTATION_ANGLE_0_DEGREES);
+                ENUM_VALUE(DWRITE_GLYPH_ORIENTATION_ANGLE_90_DEGREES);
+                ENUM_VALUE(DWRITE_GLYPH_ORIENTATION_ANGLE_180_DEGREES);
+                ENUM_VALUE(DWRITE_GLYPH_ORIENTATION_ANGLE_270_DEGREES);
+                END_ENUM(DWRITE_GLYPH_ORIENTATION_ANGLE);
+            }
+
             ENUM_TO_STRING(CanvasLineBreakCondition)
             {
                 ENUM_VALUE(CanvasLineBreakCondition::Neutral);

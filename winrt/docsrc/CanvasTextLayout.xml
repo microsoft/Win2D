@@ -985,5 +985,27 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       </remarks>
     </member>
 
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.GetGlyphOrientationTransform(Microsoft.Graphics.Canvas.Text.CanvasGlyphOrientation,System.Boolean,System.Numerics.Vector2)" Experimental="true">
+      <summary>Gets a transform matrix to use when drawing a glyph run.</summary>
+      <remarks>
+        <p>
+          The returned transform matrix has the correct rotation and translation
+          components for drawing text at the specified position and orientation. 
+          Custom text renderers can use this method to determine glyph
+          rotation, particularly if they wish to pass the DrawGlyphRun call along to 
+          <see cref="O:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawGlyphRun">CanvasDrawingSession.DrawGlyphRun</see>,
+          since CanvasDrawingSession.DrawGlyphRun doesn't auto-rotate glyphs.
+        </p>
+        <p>
+          Moreover, this method exists for apps which want to draw a glyph run 
+          using something other than the built-in renderer, CanvasDrawingSession.
+        </p>
+        <p>
+          Apps shouldn't use this method when constructing geometry from text; 
+          Win2D bakes that transform into the geometry.
+        </p>
+      </remarks>
+    </member>
+
   </members>
 </doc>

@@ -4,15 +4,6 @@
 
 namespace Microsoft.Graphics.Canvas.Text
 {
-    [version(VERSION)]
-    typedef enum CanvasGlyphOrientation
-    {
-        Upright,
-        Clockwise90Degrees,
-        Clockwise180Degrees,
-        Clockwise270Degrees
-    } CanvasGlyphOrientation;
-
     [version(VERSION), uuid(9AAEECE5-8D09-4A64-B322-AF030421B2E4)]
     interface ICanvasTextRenderer : IInspectable
     {

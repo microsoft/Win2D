@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
@@ -131,6 +131,9 @@
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)TextOutlines.xaml.cs">
       <DependentUpon>TextOutlines.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)GlyphRotation.xaml.cs">
+      <DependentUpon>GlyphRotation.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)FontMetrics.xaml.cs">
       <DependentUpon>FontMetrics.xaml</DependentUpon>
@@ -289,6 +292,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="$(MSBuildThisFileDirectory)GlyphRotation.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="$(MSBuildThisFileDirectory)FontMetrics.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -347,6 +354,8 @@
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\GameofLifeWide.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\GeometryOperationsNarrow.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\GeometryOperationsWide.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Thumbnails\GlyphRotationNarrow.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Thumbnails\GlyphRotationWide.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\HistogramNarrow.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\HistogramWide.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\ImageSourceUpdateRegionNarrow.png" />

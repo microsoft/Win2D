@@ -122,6 +122,32 @@ IFACEMETHODIMP CanvasTextLayoutFactory::Create(
 }
 
 
+IFACEMETHODIMP CanvasTextLayoutFactory::GetGlyphOrientationTransform(
+    CanvasGlyphOrientation glyphOrientation,
+    boolean isSideways,
+    Vector2 position,
+    Matrix3x2* transform)
+{
+    return ExceptionBoundary(
+        [&]
+        {
+            CheckInPointer(transform);
+
+            auto analyzer = CustomFontManager::GetInstance()->GetTextAnalyzer();
+
+            DWRITE_MATRIX dwriteTransform;
+            ThrowIfFailed(analyzer->GetGlyphOrientationTransform(
+                ToDWriteGlyphOrientationAngle(glyphOrientation),
+                isSideways,
+                position.X,
+                position.Y,
+                &dwriteTransform));
+
+            *transform = *(ReinterpretAs<Matrix3x2*>(&dwriteTransform));
+        });
+}
+
+
 CanvasTextLayout::CanvasTextLayout(
     ICanvasDevice* device,
     DWriteTextLayoutType* layout)

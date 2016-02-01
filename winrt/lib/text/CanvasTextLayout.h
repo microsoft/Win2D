@@ -437,7 +437,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     //
 
     class CanvasTextLayoutFactory
-        : public ActivationFactory<ICanvasTextLayoutFactory>
+        : public ActivationFactory<ICanvasTextLayoutFactory, ICanvasTextLayoutStatics>
         , private LifespanTracker<CanvasTextLayoutFactory>
     {
         InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_Text_CanvasTextLayout, BaseTrust);
@@ -450,5 +450,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             float requestedWidth,
             float requestedHeight,
             ICanvasTextLayout** textLayout);
+
+        IFACEMETHOD(GetGlyphOrientationTransform)(
+            CanvasGlyphOrientation glyphOrientation,
+            boolean isSideways,
+            Vector2 position,
+            Matrix3x2* transform) override;
     };
 }}}}}

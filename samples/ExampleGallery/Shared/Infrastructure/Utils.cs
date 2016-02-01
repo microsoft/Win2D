@@ -10,7 +10,6 @@ using System.Linq;
 using System.Numerics;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
-using Windows.Foundation;
 using Windows.Storage;
 
 namespace ExampleGallery
@@ -112,6 +111,29 @@ namespace ExampleGallery
             {
                 throw new TimeoutException();
             }
+        }
+
+        public struct WordBoundary { public int Start; public int Length; }
+
+        public static List<WordBoundary> GetEveryOtherWord(string str)
+        {
+            List<WordBoundary> result = new List<WordBoundary>();
+
+            for (int i = 0; i < str.Length; ++i)
+            {
+                if (str[i] == ' ')
+                {
+                    int nextSpace = str.IndexOf(' ', i + 1);
+                    int limit = nextSpace == -1 ? str.Length : nextSpace;
+
+                    WordBoundary wb = new WordBoundary();
+                    wb.Start = i + 1;
+                    wb.Length = limit - i - 1;
+                    result.Add(wb);
+                    i = limit;
+                }
+            }
+            return result;
         }
     }
 }

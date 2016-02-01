@@ -16,6 +16,7 @@
 
 #include "mocks/MockDWriteTextRenderer.h"
 #include "mocks/MockDWriteTypography.h"
+#include "mocks/MockDWriteTextAnalyzer.h"
 
 #include "utils/TextHelpers.h"
 
@@ -2832,6 +2833,54 @@ namespace canvas
             Assert::AreEqual(S_OK, textLayout->GetTypography(123u, &typography));
 
             Assert::IsTrue(IsSameInstance(expectedTypography.Get(), typography.Get()));
+        }
+
+        TEST_METHOD_EX(CanvasTextLayoutTests_GetGlyphOrientationTransform_InvalidArg)
+        {
+            auto factory = Make<CanvasTextLayoutFactory>();
+
+            Assert::AreEqual(
+                E_INVALIDARG, 
+                factory->GetGlyphOrientationTransform(CanvasGlyphOrientation::Upright, true, Vector2{ 0, 0 }, nullptr));
+        }
+
+        TEST_METHOD_EX(CanvasTextLayoutTests_GetGlyphOrientationTransform_PassesThrough)
+        {
+            auto factory = Make<CanvasTextLayoutFactory>();
+
+            ComPtr<MockDWriteTextAnalyzer> dwriteTextAnalyzer = Make<MockDWriteTextAnalyzer>();
+
+            auto adapter = std::make_shared<StubCanvasTextLayoutAdapter>();
+            CustomFontManagerAdapter::SetInstance(adapter);
+
+            adapter->GetMockDWriteFactory()->CreateTextAnalyzerMethod.AllowAnyCall(
+                [&](IDWriteTextAnalyzer** out)
+                {
+                    ThrowIfFailed(dwriteTextAnalyzer.CopyTo(out));
+                    return S_OK;
+                });
+
+            dwriteTextAnalyzer->GetGlyphOrientationTransformMethod.SetExpectedCalls(1,
+                [&](DWRITE_GLYPH_ORIENTATION_ANGLE orientationAngle,
+                    BOOL isSideways,
+                    float x,
+                    float y,
+                    DWRITE_MATRIX* out)
+                {
+                    Assert::AreEqual(DWRITE_GLYPH_ORIENTATION_ANGLE_90_DEGREES, orientationAngle);
+                    Assert::IsTrue(!!isSideways);
+                    Assert::AreEqual(12.0f, x);
+                    Assert::AreEqual(34.0f, y);
+                    *out = DWRITE_MATRIX{ 1, 2, 3, 4, 5, 6 };
+
+                    return S_OK;
+                });
+
+            Matrix3x2 transform;
+            Assert::AreEqual(
+                S_OK,
+                factory->GetGlyphOrientationTransform(CanvasGlyphOrientation::Clockwise90Degrees, true, Vector2{ 12, 34 }, &transform));
+            Assert::AreEqual(Matrix3x2{ 1, 2, 3, 4, 5, 6 }, transform);
         }
     };
 }
