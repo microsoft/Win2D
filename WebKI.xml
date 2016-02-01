@@ -80,11 +80,6 @@
     <HelpKINode Title="SharpenEffect.Amount Property " Url="html/P_Microsoft_Graphics_Canvas_Effects_SharpenEffect_Amount.htm" />
     <HelpKINode Title="VignetteEffect.Amount Property " Url="html/P_Microsoft_Graphics_Canvas_Effects_VignetteEffect_Amount.htm" />
   </HelpKINode>
-  <HelpKINode Title="AnalyzeBidi method" Url="html/Overload_Microsoft_Graphics_Canvas_Text_CanvasTextAnalyzer_AnalyzeBidi.htm" />
-  <HelpKINode Title="AnalyzeBreakpoints method" Url="html/Overload_Microsoft_Graphics_Canvas_Text_CanvasTextAnalyzer_AnalyzeBreakpoints.htm" />
-  <HelpKINode Title="AnalyzeGlyphOrientations method" Url="html/Overload_Microsoft_Graphics_Canvas_Text_CanvasTextAnalyzer_AnalyzeGlyphOrientations.htm" />
-  <HelpKINode Title="AnalyzeNumberSubstitutions method" Url="html/M_Microsoft_Graphics_Canvas_Text_CanvasTextAnalyzer_AnalyzeNumberSubstitutions.htm" />
-  <HelpKINode Title="AnalyzeScript method" Url="html/Overload_Microsoft_Graphics_Canvas_Text_CanvasTextAnalyzer_AnalyzeScript.htm" />
   <HelpKINode Title="Angle property">
     <HelpKINode Title="DirectionalBlurEffect.Angle Property " Url="html/P_Microsoft_Graphics_Canvas_Effects_DirectionalBlurEffect_Angle.htm" />
     <HelpKINode Title="EmbossEffect.Angle Property " Url="html/P_Microsoft_Graphics_Canvas_Effects_EmbossEffect_Angle.htm" />
@@ -875,7 +870,7 @@
   <HelpKINode Title="CanvasGradientMesh.CreateTensorPatch method" Url="html/M_Microsoft_Graphics_Canvas_Geometry_CanvasGradientMesh_CreateTensorPatch.htm" />
   <HelpKINode Title="CanvasGradientMesh.Device property" Url="html/P_Microsoft_Graphics_Canvas_Geometry_CanvasGradientMesh_Device.htm" />
   <HelpKINode Title="CanvasGradientMesh.Dispose method" Url="html/M_Microsoft_Graphics_Canvas_Geometry_CanvasGradientMesh_Dispose.htm" />
-  <HelpKINode Title="CanvasGradientMesh.GetBounds method" Url="html/M_Microsoft_Graphics_Canvas_Geometry_CanvasGradientMesh_GetBounds.htm" />
+  <HelpKINode Title="CanvasGradientMesh.GetBounds method" Url="html/Overload_Microsoft_Graphics_Canvas_Geometry_CanvasGradientMesh_GetBounds.htm" />
   <HelpKINode Title="CanvasGradientMesh.Patches property" Url="html/P_Microsoft_Graphics_Canvas_Geometry_CanvasGradientMesh_Patches.htm" />
   <HelpKINode Title="CanvasGradientMeshPatch structure">
     <HelpKINode Title="CanvasGradientMeshPatch Structure" Url="html/T_Microsoft_Graphics_Canvas_Geometry_CanvasGradientMeshPatch.htm" />
@@ -1269,17 +1264,17 @@
     <HelpKINode Title="methods" Url="html/Methods_T_Microsoft_Graphics_Canvas_Text_CanvasTextAnalyzer.htm" />
   </HelpKINode>
   <HelpKINode Title="CanvasTextAnalyzer.AddGlyphsAfterJustification method" Url="html/Overload_Microsoft_Graphics_Canvas_Text_CanvasTextAnalyzer_AddGlyphsAfterJustification.htm" />
-  <HelpKINode Title="CanvasTextAnalyzer.AnalyzeBidi method" Url="html/Overload_Microsoft_Graphics_Canvas_Text_CanvasTextAnalyzer_AnalyzeBidi.htm" />
-  <HelpKINode Title="CanvasTextAnalyzer.AnalyzeBreakpoints method" Url="html/Overload_Microsoft_Graphics_Canvas_Text_CanvasTextAnalyzer_AnalyzeBreakpoints.htm" />
-  <HelpKINode Title="CanvasTextAnalyzer.AnalyzeGlyphOrientations method" Url="html/Overload_Microsoft_Graphics_Canvas_Text_CanvasTextAnalyzer_AnalyzeGlyphOrientations.htm" />
-  <HelpKINode Title="CanvasTextAnalyzer.AnalyzeNumberSubstitutions method" Url="html/M_Microsoft_Graphics_Canvas_Text_CanvasTextAnalyzer_AnalyzeNumberSubstitutions.htm" />
-  <HelpKINode Title="CanvasTextAnalyzer.AnalyzeScript method" Url="html/Overload_Microsoft_Graphics_Canvas_Text_CanvasTextAnalyzer_AnalyzeScript.htm" />
   <HelpKINode Title="CanvasTextAnalyzer.ApplyJustificationOpportunities method" Url="html/M_Microsoft_Graphics_Canvas_Text_CanvasTextAnalyzer_ApplyJustificationOpportunities.htm" />
   <HelpKINode Title="CanvasTextAnalyzer.CanvasTextAnalyzer constructor" Url="html/Overload_Microsoft_Graphics_Canvas_Text_CanvasTextAnalyzer__ctor.htm" />
-  <HelpKINode Title="CanvasTextAnalyzer.ChooseFonts method" Url="html/Overload_Microsoft_Graphics_Canvas_Text_CanvasTextAnalyzer_ChooseFonts.htm" />
   <HelpKINode Title="CanvasTextAnalyzer.Dispose method" Url="html/M_Microsoft_Graphics_Canvas_Text_CanvasTextAnalyzer_Dispose.htm" />
+  <HelpKINode Title="CanvasTextAnalyzer.GetBidi method" Url="html/Overload_Microsoft_Graphics_Canvas_Text_CanvasTextAnalyzer_GetBidi.htm" />
+  <HelpKINode Title="CanvasTextAnalyzer.GetBreakpoints method" Url="html/Overload_Microsoft_Graphics_Canvas_Text_CanvasTextAnalyzer_GetBreakpoints.htm" />
+  <HelpKINode Title="CanvasTextAnalyzer.GetFonts method" Url="html/Overload_Microsoft_Graphics_Canvas_Text_CanvasTextAnalyzer_GetFonts.htm" />
+  <HelpKINode Title="CanvasTextAnalyzer.GetGlyphOrientations method" Url="html/Overload_Microsoft_Graphics_Canvas_Text_CanvasTextAnalyzer_GetGlyphOrientations.htm" />
   <HelpKINode Title="CanvasTextAnalyzer.GetGlyphs method" Url="html/Overload_Microsoft_Graphics_Canvas_Text_CanvasTextAnalyzer_GetGlyphs.htm" />
   <HelpKINode Title="CanvasTextAnalyzer.GetJustificationOpportunities method" Url="html/M_Microsoft_Graphics_Canvas_Text_CanvasTextAnalyzer_GetJustificationOpportunities.htm" />
+  <HelpKINode Title="CanvasTextAnalyzer.GetNumberSubstitutions method" Url="html/M_Microsoft_Graphics_Canvas_Text_CanvasTextAnalyzer_GetNumberSubstitutions.htm" />
+  <HelpKINode Title="CanvasTextAnalyzer.GetScript method" Url="html/Overload_Microsoft_Graphics_Canvas_Text_CanvasTextAnalyzer_GetScript.htm" />
   <HelpKINode Title="CanvasTextAnalyzer.GetScriptProperties method" Url="html/M_Microsoft_Graphics_Canvas_Text_CanvasTextAnalyzer_GetScriptProperties.htm" />
   <HelpKINode Title="CanvasTextAntialiasing enumeration" Url="html/T_Microsoft_Graphics_Canvas_Text_CanvasTextAntialiasing.htm" />
   <HelpKINode Title="CanvasTextDirection enumeration" Url="html/T_Microsoft_Graphics_Canvas_Text_CanvasTextDirection.htm" />
@@ -1348,6 +1343,7 @@
   <HelpKINode Title="CanvasTextLayout.GetFontStyle method" Url="html/M_Microsoft_Graphics_Canvas_Text_CanvasTextLayout_GetFontStyle.htm" />
   <HelpKINode Title="CanvasTextLayout.GetFontWeight method" Url="html/M_Microsoft_Graphics_Canvas_Text_CanvasTextLayout_GetFontWeight.htm" />
   <HelpKINode Title="CanvasTextLayout.GetFormatChangeIndices method" Url="html/M_Microsoft_Graphics_Canvas_Text_CanvasTextLayout_GetFormatChangeIndices.htm" />
+  <HelpKINode Title="CanvasTextLayout.GetGlyphOrientationTransform method" Url="html/M_Microsoft_Graphics_Canvas_Text_CanvasTextLayout_GetGlyphOrientationTransform.htm" />
   <HelpKINode Title="CanvasTextLayout.GetInlineObject method" Url="html/M_Microsoft_Graphics_Canvas_Text_CanvasTextLayout_GetInlineObject.htm" />
   <HelpKINode Title="CanvasTextLayout.GetLeadingCharacterSpacing method" Url="html/M_Microsoft_Graphics_Canvas_Text_CanvasTextLayout_GetLeadingCharacterSpacing.htm" />
   <HelpKINode Title="CanvasTextLayout.GetLocaleName method" Url="html/M_Microsoft_Graphics_Canvas_Text_CanvasTextLayout_GetLocaleName.htm" />
@@ -1559,7 +1555,6 @@
     <HelpKINode Title="CanvasCharacterRange.CharacterIndex Field" Url="html/F_Microsoft_Graphics_Canvas_Text_CanvasCharacterRange_CharacterIndex.htm" />
     <HelpKINode Title="CanvasTextLayoutRegion.CharacterIndex Field" Url="html/F_Microsoft_Graphics_Canvas_Text_CanvasTextLayoutRegion_CharacterIndex.htm" />
   </HelpKINode>
-  <HelpKINode Title="ChooseFonts method" Url="html/Overload_Microsoft_Graphics_Canvas_Text_CanvasTextAnalyzer_ChooseFonts.htm" />
   <HelpKINode Title="ChromaKeyEffect class">
     <HelpKINode Title="ChromaKeyEffect Class" Url="html/T_Microsoft_Graphics_Canvas_Effects_ChromaKeyEffect.htm" />
     <HelpKINode Title="about ChromaKeyEffect class" Url="html/T_Microsoft_Graphics_Canvas_Effects_ChromaKeyEffect.htm" />
@@ -2602,6 +2597,7 @@
     <HelpKINode Title="CanvasTextMeasuringMode Enumeration" Url="html/T_Microsoft_Graphics_Canvas_Text_CanvasTextMeasuringMode.htm" />
     <HelpKINode Title="CanvasTextRenderingMode Enumeration" Url="html/T_Microsoft_Graphics_Canvas_Text_CanvasTextRenderingMode.htm" />
   </HelpKINode>
+  <HelpKINode Title="GetBidi method" Url="html/Overload_Microsoft_Graphics_Canvas_Text_CanvasTextAnalyzer_GetBidi.htm" />
   <HelpKINode Title="GetBidiLevel method" Url="html/M_Microsoft_Graphics_Canvas_Text_ICanvasTextAnalyzerOptions_GetBidiLevel.htm" />
   <HelpKINode Title="GetBounds method">
     <HelpKINode Title="ArithmeticCompositeEffect.GetBounds Method " Url="html/Overload_Microsoft_Graphics_Canvas_Effects_ArithmeticCompositeEffect_GetBounds.htm" />
@@ -2611,7 +2607,7 @@
     <HelpKINode Title="BrightnessEffect.GetBounds Method " Url="html/Overload_Microsoft_Graphics_Canvas_Effects_BrightnessEffect_GetBounds.htm" />
     <HelpKINode Title="CanvasBitmap.GetBounds Method " Url="html/Overload_Microsoft_Graphics_Canvas_CanvasBitmap_GetBounds.htm" />
     <HelpKINode Title="CanvasCommandList.GetBounds Method " Url="html/Overload_Microsoft_Graphics_Canvas_CanvasCommandList_GetBounds.htm" />
-    <HelpKINode Title="CanvasGradientMesh.GetBounds Method " Url="html/M_Microsoft_Graphics_Canvas_Geometry_CanvasGradientMesh_GetBounds.htm" />
+    <HelpKINode Title="CanvasGradientMesh.GetBounds Method " Url="html/Overload_Microsoft_Graphics_Canvas_Geometry_CanvasGradientMesh_GetBounds.htm" />
     <HelpKINode Title="CanvasVirtualBitmap.GetBounds Method " Url="html/Overload_Microsoft_Graphics_Canvas_CanvasVirtualBitmap_GetBounds.htm" />
     <HelpKINode Title="ChromaKeyEffect.GetBounds Method " Url="html/Overload_Microsoft_Graphics_Canvas_Effects_ChromaKeyEffect_GetBounds.htm" />
     <HelpKINode Title="ColorManagementEffect.GetBounds Method " Url="html/Overload_Microsoft_Graphics_Canvas_Effects_ColorManagementEffect_GetBounds.htm" />
@@ -2666,6 +2662,7 @@
     <HelpKINode Title="UnPremultiplyEffect.GetBounds Method " Url="html/Overload_Microsoft_Graphics_Canvas_Effects_UnPremultiplyEffect_GetBounds.htm" />
     <HelpKINode Title="VignetteEffect.GetBounds Method " Url="html/Overload_Microsoft_Graphics_Canvas_Effects_VignetteEffect_GetBounds.htm" />
   </HelpKINode>
+  <HelpKINode Title="GetBreakpoints method" Url="html/Overload_Microsoft_Graphics_Canvas_Text_CanvasTextAnalyzer_GetBreakpoints.htm" />
   <HelpKINode Title="GetBrush method" Url="html/M_Microsoft_Graphics_Canvas_Text_CanvasTextLayout_GetBrush.htm" />
   <HelpKINode Title="GetCanvasDevice method" Url="html/M_Microsoft_Graphics_Canvas_UI_Composition_CanvasComposition_GetCanvasDevice.htm" />
   <HelpKINode Title="GetCaretPosition method" Url="html/Overload_Microsoft_Graphics_Canvas_Text_CanvasTextLayout_GetCaretPosition.htm" />
@@ -2678,6 +2675,7 @@
   </HelpKINode>
   <HelpKINode Title="GetFeatures method" Url="html/M_Microsoft_Graphics_Canvas_Text_CanvasTypography_GetFeatures.htm" />
   <HelpKINode Title="GetFontFamily method" Url="html/M_Microsoft_Graphics_Canvas_Text_CanvasTextLayout_GetFontFamily.htm" />
+  <HelpKINode Title="GetFonts method" Url="html/Overload_Microsoft_Graphics_Canvas_Text_CanvasTextAnalyzer_GetFonts.htm" />
   <HelpKINode Title="GetFontSize method" Url="html/M_Microsoft_Graphics_Canvas_Text_CanvasTextLayout_GetFontSize.htm" />
   <HelpKINode Title="GetFontStretch method" Url="html/M_Microsoft_Graphics_Canvas_Text_CanvasTextLayout_GetFontStretch.htm" />
   <HelpKINode Title="GetFontStyle method" Url="html/M_Microsoft_Graphics_Canvas_Text_CanvasTextLayout_GetFontStyle.htm" />
@@ -2686,6 +2684,8 @@
   <HelpKINode Title="GetGdiCompatibleGlyphMetrics method" Url="html/M_Microsoft_Graphics_Canvas_Text_CanvasFontFace_GetGdiCompatibleGlyphMetrics.htm" />
   <HelpKINode Title="GetGlyphIndices method" Url="html/M_Microsoft_Graphics_Canvas_Text_CanvasFontFace_GetGlyphIndices.htm" />
   <HelpKINode Title="GetGlyphMetrics method" Url="html/M_Microsoft_Graphics_Canvas_Text_CanvasFontFace_GetGlyphMetrics.htm" />
+  <HelpKINode Title="GetGlyphOrientations method" Url="html/Overload_Microsoft_Graphics_Canvas_Text_CanvasTextAnalyzer_GetGlyphOrientations.htm" />
+  <HelpKINode Title="GetGlyphOrientationTransform method" Url="html/M_Microsoft_Graphics_Canvas_Text_CanvasTextLayout_GetGlyphOrientationTransform.htm" />
   <HelpKINode Title="GetGlyphRunBounds method" Url="html/Overload_Microsoft_Graphics_Canvas_Text_CanvasFontFace_GetGlyphRunBounds.htm" />
   <HelpKINode Title="GetGlyphs method" Url="html/Overload_Microsoft_Graphics_Canvas_Text_CanvasTextAnalyzer_GetGlyphs.htm" />
   <HelpKINode Title="GetInformationalStrings method" Url="html/M_Microsoft_Graphics_Canvas_Text_CanvasFontFace_GetInformationalStrings.htm" />
@@ -2759,6 +2759,7 @@
   <HelpKINode Title="GetMinimumCharacterAdvance method" Url="html/M_Microsoft_Graphics_Canvas_Text_CanvasTextLayout_GetMinimumCharacterAdvance.htm" />
   <HelpKINode Title="GetMinimumLineLength method" Url="html/M_Microsoft_Graphics_Canvas_Text_CanvasTextLayout_GetMinimumLineLength.htm" />
   <HelpKINode Title="GetNumberSubstitution method" Url="html/M_Microsoft_Graphics_Canvas_Text_ICanvasTextAnalyzerOptions_GetNumberSubstitution.htm" />
+  <HelpKINode Title="GetNumberSubstitutions method" Url="html/M_Microsoft_Graphics_Canvas_Text_CanvasTextAnalyzer_GetNumberSubstitutions.htm" />
   <HelpKINode Title="GetPairKerning method" Url="html/M_Microsoft_Graphics_Canvas_Text_CanvasTextLayout_GetPairKerning.htm" />
   <HelpKINode Title="GetPixelBytes method" Url="html/Overload_Microsoft_Graphics_Canvas_CanvasBitmap_GetPixelBytes.htm" />
   <HelpKINode Title="GetPixelColors method" Url="html/Overload_Microsoft_Graphics_Canvas_CanvasBitmap_GetPixelColors.htm" />
@@ -2883,6 +2884,7 @@
     <HelpKINode Title="UnPremultiplyEffect.GetRequiredSourceRectangles Method " Url="html/M_Microsoft_Graphics_Canvas_Effects_UnPremultiplyEffect_GetRequiredSourceRectangles.htm" />
     <HelpKINode Title="VignetteEffect.GetRequiredSourceRectangles Method " Url="html/M_Microsoft_Graphics_Canvas_Effects_VignetteEffect_GetRequiredSourceRectangles.htm" />
   </HelpKINode>
+  <HelpKINode Title="GetScript method" Url="html/Overload_Microsoft_Graphics_Canvas_Text_CanvasTextAnalyzer_GetScript.htm" />
   <HelpKINode Title="GetScriptProperties method" Url="html/M_Microsoft_Graphics_Canvas_Text_CanvasTextAnalyzer_GetScriptProperties.htm" />
   <HelpKINode Title="GetSharedDevice method" Url="html/Overload_Microsoft_Graphics_Canvas_CanvasDevice_GetSharedDevice.htm" />
   <HelpKINode Title="GetStrikethrough method" Url="html/M_Microsoft_Graphics_Canvas_Text_CanvasTextLayout_GetStrikethrough.htm" />

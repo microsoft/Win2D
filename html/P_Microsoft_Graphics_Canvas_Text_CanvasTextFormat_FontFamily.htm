@@ -10,4 +10,16 @@
             </dd><dt>filename#familyname</dt><dd>
               As for applicationUri above, the filename is treated as a URI that
               starts with ms-appx:///.
-            </dd></dl></p></div><div class="collapsibleAreaRegion" id="seeAlsoSection"><span class="collapsibleRegionTitle" onclick="SectionExpandCollapse('ID3RB')" onkeypress="SectionExpandCollapse_CheckKey('ID3RB', event)" tabindex="0"><img id="ID3RBToggle" class="collapseToggle" src="../icons/SectionExpanded.png" />See Also</span></div><div id="ID3RBSection" class="collapsibleSection"><h4 class="subHeading">Reference</h4><div class="seeAlsoStyle"><a href="T_Microsoft_Graphics_Canvas_Text_CanvasTextFormat.htm">CanvasTextFormat Class</a></div><div class="seeAlsoStyle"><a href="N_Microsoft_Graphics_Canvas_Text.htm">Microsoft.Graphics.Canvas.Text Namespace</a></div></div></div></div><div id="pageFooter" class="pageFooter"><p><a href="http://github.com/Microsoft/Win2D/blob/master/LICENSE.txt" target="_blank">Copyright (c) Microsoft Corporation. All rights reserved.</a></p> </div></body></html>
+            </dd></dl></p><p>
+          Passing in an applicationUri which is well-formed, but doesn't correspond to
+          a valid font file will still succeed. It's equivalent to having no FontFamily
+          specified. To be stricter and test that the font file was loaded and supported,
+          <a href="M_Microsoft_Graphics_Canvas_Text_CanvasFontSet__ctor.htm">
+          create a CanvasFontSet
+          </a>
+          and verify that its 
+          <a href="P_Microsoft_Graphics_Canvas_Text_CanvasFontSet_Fonts.htm">
+          Fonts
+          </a>
+          count is at least one.
+        </p></div><div class="collapsibleAreaRegion" id="seeAlsoSection"><span class="collapsibleRegionTitle" onclick="SectionExpandCollapse('ID3RB')" onkeypress="SectionExpandCollapse_CheckKey('ID3RB', event)" tabindex="0"><img id="ID3RBToggle" class="collapseToggle" src="../icons/SectionExpanded.png" />See Also</span></div><div id="ID3RBSection" class="collapsibleSection"><h4 class="subHeading">Reference</h4><div class="seeAlsoStyle"><a href="T_Microsoft_Graphics_Canvas_Text_CanvasTextFormat.htm">CanvasTextFormat Class</a></div><div class="seeAlsoStyle"><a href="N_Microsoft_Graphics_Canvas_Text.htm">Microsoft.Graphics.Canvas.Text Namespace</a></div></div></div></div><div id="pageFooter" class="pageFooter"><p><a href="http://github.com/Microsoft/Win2D/blob/master/LICENSE.txt" target="_blank">Copyright (c) Microsoft Corporation. All rights reserved.</a></p> </div></body></html>
