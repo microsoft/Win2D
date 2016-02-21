@@ -11,7 +11,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
   </assembly>
   <members>
 
-    <member name="T:Microsoft.Graphics.Canvas.Effects.PixelShaderEffect" NoComposition="true" Experimental="true">
+    <member name="T:Microsoft.Graphics.Canvas.Effects.PixelShaderEffect" NoComposition="true">
       <summary>Custom image effect which uses a pixel shader to apply arbitrary user-defined processing.</summary>
       <remarks>
         <p>
@@ -378,7 +378,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       </remarks>
     </member>
 
-    <member name="T:Microsoft.Graphics.Canvas.Effects.SamplerCoordinateMapping" Experimental="true">
+    <member name="T:Microsoft.Graphics.Canvas.Effects.SamplerCoordinateMapping">
       <summary>
         Describes what texture coordinates the shader will use when sampling an input texture.
       </summary>

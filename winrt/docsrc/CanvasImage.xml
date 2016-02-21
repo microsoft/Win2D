@@ -10,7 +10,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <name>Microsoft.Graphics.Canvas</name>
   </assembly>
   <members>
-    <member name="T:Microsoft.Graphics.Canvas.CanvasImage" Experimental="true">
+    <member name="T:Microsoft.Graphics.Canvas.CanvasImage">
       <summary>Static operations that can be applied to all ICanvasImage instances.</summary>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasImage.SaveAsync(Microsoft.Graphics.Canvas.ICanvasImage,Windows.Foundation.Rect,System.Single,Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.Storage.Streams.IRandomAccessStream,Microsoft.Graphics.Canvas.CanvasBitmapFileFormat)">

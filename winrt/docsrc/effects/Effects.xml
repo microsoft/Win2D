@@ -53,7 +53,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     </member>
 
 
-    <member name="T:Microsoft.Graphics.Canvas.Effects.ICanvasEffect" Experimental="true">
+    <member name="T:Microsoft.Graphics.Canvas.Effects.ICanvasEffect">
       <summary>Defines common functionality that is shared by all Win2D effects.</summary>
       <remarks>
         Unlike <a href="http://msdn.microsoft.com/library/windows/apps/Windows.Graphics.Effects.IGraphicsEffect">IGraphicsEffect</a>,
@@ -91,7 +91,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
 
 
   <template name="ICanvasEffectTemplate">
-    <member name="M:Microsoft.Graphics.Canvas.Effects.ICanvasEffectTemplate.InvalidateSourceRectangle(Microsoft.Graphics.Canvas.ICanvasResourceCreatorWithDpi,System.UInt32,Windows.Foundation.Rect)" Experimental="true">
+    <member name="M:Microsoft.Graphics.Canvas.Effects.ICanvasEffectTemplate.InvalidateSourceRectangle(Microsoft.Graphics.Canvas.ICanvasResourceCreatorWithDpi,System.UInt32,Windows.Foundation.Rect)">
       <summary>Notifies the effect that one of its source images has changed.</summary>
       <remarks>
         <p>
@@ -106,7 +106,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         </p>
       </remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.Effects.ICanvasEffectTemplate.GetInvalidRectangles(Microsoft.Graphics.Canvas.ICanvasResourceCreatorWithDpi)" Experimental="true">
+    <member name="M:Microsoft.Graphics.Canvas.Effects.ICanvasEffectTemplate.GetInvalidRectangles(Microsoft.Graphics.Canvas.ICanvasResourceCreatorWithDpi)">
       <summary>Queries what regions of the effect output have changed since it was last drawn.</summary>
       <remarks>
         <p>
@@ -123,7 +123,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         </p>
       </remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.Effects.ICanvasEffectTemplate.GetRequiredSourceRectangle(Microsoft.Graphics.Canvas.ICanvasResourceCreatorWithDpi,Windows.Foundation.Rect,Microsoft.Graphics.Canvas.Effects.ICanvasEffect,System.UInt32,Windows.Foundation.Rect)" Experimental="true">
+    <member name="M:Microsoft.Graphics.Canvas.Effects.ICanvasEffectTemplate.GetRequiredSourceRectangle(Microsoft.Graphics.Canvas.ICanvasResourceCreatorWithDpi,Windows.Foundation.Rect,Microsoft.Graphics.Canvas.Effects.ICanvasEffect,System.UInt32,Windows.Foundation.Rect)">
       <summary>Queries what part of an effect source image is needed to draw an output region.</summary>
       <remarks>
         To query multiple sources, use <see cref="M:Microsoft.Graphics.Canvas.Effects.ICanvasEffect.GetRequiredSourceRectangles(Microsoft.Graphics.Canvas.ICanvasResourceCreatorWithDpi,Windows.Foundation.Rect,Microsoft.Graphics.Canvas.Effects.ICanvasEffect[],System.UInt32[],Windows.Foundation.Rect[])"/>.
@@ -152,14 +152,14 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         </code>
       </example>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.Effects.ICanvasEffectTemplate.GetRequiredSourceRectangles(Microsoft.Graphics.Canvas.ICanvasResourceCreatorWithDpi,Windows.Foundation.Rect,Microsoft.Graphics.Canvas.Effects.ICanvasEffect[],System.UInt32[],Windows.Foundation.Rect[])" Experimental="true">
+    <member name="M:Microsoft.Graphics.Canvas.Effects.ICanvasEffectTemplate.GetRequiredSourceRectangles(Microsoft.Graphics.Canvas.ICanvasResourceCreatorWithDpi,Windows.Foundation.Rect,Microsoft.Graphics.Canvas.Effects.ICanvasEffect[],System.UInt32[],Windows.Foundation.Rect[])">
       <summary>Queries what parts of the effect source images are needed to draw an output region.</summary>
       <remarks>
         This method is similar to <see cref="M:Microsoft.Graphics.Canvas.Effects.ICanvasEffect.GetRequiredSourceRectangle(Microsoft.Graphics.Canvas.ICanvasResourceCreatorWithDpi,Windows.Foundation.Rect,Microsoft.Graphics.Canvas.Effects.ICanvasEffect,System.UInt32,Windows.Foundation.Rect)"/>,
         but can query multiple sources at the same time.
       </remarks>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.Effects.ICanvasEffectTemplate.BufferPrecision" Experimental="true">
+    <member name="P:Microsoft.Graphics.Canvas.Effects.ICanvasEffectTemplate.BufferPrecision">
       <summary>Specifies what precision to use for intermediate buffers when drawing this effect.</summary>
       <remarks>
         <p>
@@ -174,7 +174,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         </p>
       </remarks>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.Effects.ICanvasEffectTemplate.CacheOutput" Experimental="true">
+    <member name="P:Microsoft.Graphics.Canvas.Effects.ICanvasEffectTemplate.CacheOutput">
       <summary>Enables caching the output from drawing this effect.</summary>
       <remarks>
         <p>

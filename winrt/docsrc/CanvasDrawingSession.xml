@@ -680,7 +680,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="P:Microsoft.Graphics.Canvas.CanvasDrawingSession.Antialiasing">
       <summary>Enables or disables primitive edge antialiasing for this drawing session.</summary>
     </member>  
-    <member name="P:Microsoft.Graphics.Canvas.CanvasDrawingSession.EffectTileSize" Experimental="true">
+    <member name="P:Microsoft.Graphics.Canvas.CanvasDrawingSession.EffectTileSize">
       <summary>Specifies the tile size used when drawing image effects.</summary>
       <remarks>
         <p>
@@ -699,7 +699,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         </p>
       </remarks>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasDrawingSession.EffectBufferPrecision" Experimental="true">
+    <member name="P:Microsoft.Graphics.Canvas.CanvasDrawingSession.EffectBufferPrecision">
       <summary>Specifies the default precision used for intermediate buffers when drawing image effects.</summary>
       <remarks>
         <p>

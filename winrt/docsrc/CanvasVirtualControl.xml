@@ -10,7 +10,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <name>Microsoft.Graphics.Canvas</name>
   </assembly>
   <members>
-    <member name="T:Microsoft.Graphics.Canvas.UI.Xaml.CanvasVirtualControl" Experimental="true">
+    <member name="T:Microsoft.Graphics.Canvas.UI.Xaml.CanvasVirtualControl">
       <summary>XAML control providing immediate mode 2D rendering to a virtualized surface.</summary>
       <remarks>
         <p>

@@ -10,7 +10,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <name>Microsoft.Graphics.Canvas</name>
   </assembly>
   <members>
-    <member name="T:Microsoft.Graphics.Canvas.UI.Xaml.CanvasRegionsInvalidatedEventArgs" Experimental="true">
+    <member name="T:Microsoft.Graphics.Canvas.UI.Xaml.CanvasRegionsInvalidatedEventArgs">
       <summary>Provides data for the <see cref="E:Microsoft.Graphics.Canvas.UI.Xaml.CanvasVirtualImageSource.RegionsInvalidated"/> event.</summary>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.UI.Xaml.CanvasRegionsInvalidatedEventArgs.#ctor">
@@ -22,7 +22,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="P:Microsoft.Graphics.Canvas.UI.Xaml.CanvasRegionsInvalidatedEventArgs.VisibleRegion">
       <summary>Gets the region of the image that is currently visible on screen.</summary>
     </member>
-    <member name="T:Microsoft.Graphics.Canvas.UI.Xaml.CanvasVirtualImageSource" Experimental="true">
+    <member name="T:Microsoft.Graphics.Canvas.UI.Xaml.CanvasVirtualImageSource">
       <summary>Provides a virtualized ImageSource that can be used with XAML controls.</summary>
       <remarks>
         <p>

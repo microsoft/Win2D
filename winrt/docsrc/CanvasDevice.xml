@@ -63,7 +63,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         </p>
       </remarks>
     </member>    
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDevice.IsPixelFormatSupported(Windows.Graphics.DirectX.DirectXPixelFormat)" Experimental="true">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDevice.IsPixelFormatSupported(Windows.Graphics.DirectX.DirectXPixelFormat)">
       <summary>Checks whether the specified pixel format is supported on this device.</summary>
       <remarks>
         <p>
@@ -82,7 +82,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         </p>
       </remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDevice.IsBufferPrecisionSupported(Microsoft.Graphics.Canvas.CanvasBufferPrecision)" Experimental="true">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDevice.IsBufferPrecisionSupported(Microsoft.Graphics.Canvas.CanvasBufferPrecision)">
       <summary>Checks whether the specified buffer precision is supported on this device.</summary>
       <remarks>
         <p>
@@ -91,7 +91,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         </p>
       </remarks>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasDevice.MaximumCacheSize" Experimental="true">
+    <member name="P:Microsoft.Graphics.Canvas.CanvasDevice.MaximumCacheSize">
       <summary>
         Sets the maximum amount of memory (in bytes) that can be accumulated for cached 
         images and intermediate surfaces.
@@ -101,7 +101,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         a single frame, if that is necessary to render the frame.
       </remarks>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.CanvasDevice.LowPriority" Experimental="true">
+    <member name="P:Microsoft.Graphics.Canvas.CanvasDevice.LowPriority">
       <summary>Reduces the priority of drawing work submitted to this device.</summary>
       <remarks>
         <p>

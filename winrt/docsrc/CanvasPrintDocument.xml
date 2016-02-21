@@ -11,7 +11,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
   </assembly>
   <members>
     
-    <member name="T:Microsoft.Graphics.Canvas.Printing.CanvasPrintDocument" Experimental="true">
+    <member name="T:Microsoft.Graphics.Canvas.Printing.CanvasPrintDocument">
       <summary>The main object that enables printing of Win2D content.  To use,
       pass a CanvasPrintDocument to
       PrintTaskSourceRequestedArgs.SetSource.</summary>
@@ -343,7 +343,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     </member>
 
 
-    <member name="T:Microsoft.Graphics.Canvas.Printing.CanvasPrintTaskOptionsChangedEventArgs" Experimental="true">
+    <member name="T:Microsoft.Graphics.Canvas.Printing.CanvasPrintTaskOptionsChangedEventArgs">
       <summary>Provides data to the <see cref="E:Microsoft.Graphics.Canvas.Printing.CanvasPrintDocument.PrintTaskOptionsChanged"/> event.</summary>
       <remarks>
         <p>
@@ -381,7 +381,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     </member>
 
 
-    <member name="T:Microsoft.Graphics.Canvas.Printing.CanvasPreviewEventArgs" Experimental="true">
+    <member name="T:Microsoft.Graphics.Canvas.Printing.CanvasPreviewEventArgs">
       <summary>Provides data to the <see cref="E:Microsoft.Graphics.Canvas.Printing.CanvasPrintDocument.Preview"/> event.</summary>
       <remarks>
         <p>
@@ -426,7 +426,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     </member>
 
 
-    <member name="T:Microsoft.Graphics.Canvas.Printing.CanvasPrintEventArgs" Experimental="true">
+    <member name="T:Microsoft.Graphics.Canvas.Printing.CanvasPrintEventArgs">
       <summary>Provides data to the <see cref="E:Microsoft.Graphics.Canvas.Printing.CanvasPrintDocument.Print"/> event.</summary>
       <remarks>
         <p>
@@ -477,7 +477,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     </member>
 
 
-    <member name="T:Microsoft.Graphics.Canvas.Printing.CanvasPrintDeferral" Experimental="true">
+    <member name="T:Microsoft.Graphics.Canvas.Printing.CanvasPrintDeferral">
       <summary>Allows an event handler to defer completion.</summary>
       <remarks>
         <p>

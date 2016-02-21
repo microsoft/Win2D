@@ -10,7 +10,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <name>Microsoft.Graphics.Canvas</name>
   </assembly>
   <members>
-    <member name="T:Microsoft.Graphics.Canvas.CanvasVirtualBitmap" Win10="true" Experimental="true">
+    <member name="T:Microsoft.Graphics.Canvas.CanvasVirtualBitmap" Win10="true">
       <summary>Loads a bitmap that may be larger than the maximum size of a CanvasBitmap.</summary>
       <remarks>
         <p>
@@ -206,7 +206,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <summary>Gets the size of the bitmap, in pixels.</summary>
       <remarks>For more information, see <a href="DPI.htm">DPI and DIPs</a>.</remarks>
     </member>
-    <member name="T:Microsoft.Graphics.Canvas.CanvasVirtualBitmapOptions" Win10="true" Experimental="true">
+    <member name="T:Microsoft.Graphics.Canvas.CanvasVirtualBitmapOptions" Win10="true">
       <summary>Options passed to CanvasVirtualBitmap.LoadAsync.</summary>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.CanvasVirtualBitmapOptions.None">
