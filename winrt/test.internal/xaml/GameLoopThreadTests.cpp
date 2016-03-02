@@ -94,7 +94,10 @@ public:
                 lock.lock();
             }
 
-            m_conditionVariable.wait(lock);
+            if (actions.empty())
+            {
+                m_conditionVariable.wait(lock);
+            }
         }
 
         return S_OK;
