@@ -35,7 +35,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "winrt.lib.Shared", "winrt\l
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "winrt.dll", "winrt.dll", "{FD915EAF-4152-48C0-B5DD-603865B78B49}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "winrt.test.external.Shared", "winrt\test.external\winrt.test.external.Shared.vcxitems", "{1E7BD769-CF5A-4D05-A2F7-761372C24746}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "winrt.test.external.Shared", "winrt\test.external\Shared\winrt.test.external.Shared.vcxitems", "{1E7BD769-CF5A-4D05-A2F7-761372C24746}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "winrt.test.external", "winrt.test.external", "{77FBABCD-F338-49AB-939D-38511978510D}"
 EndProject
@@ -68,7 +68,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "winrt.test.internal", "winr
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "winrt.dll.uap", "winrt\dll\winrt.dll.uap.vcxproj", "{8CF21E5D-E0A2-4FE7-8E2B-A025CF52DCFB}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "winrt.test.external.uap", "winrt\test.external\winrt.test.external.uap.vcxproj", "{F33C7CB9-5ECA-47B7-9393-81E6E8F0BD34}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "winrt.test.external.uap", "winrt\test.external\UAP\winrt.test.external.uap.vcxproj", "{F33C7CB9-5ECA-47B7-9393-81E6E8F0BD34}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExampleGallery.uap", "samples\ExampleGallery\UAP\ExampleGallery.uap.csproj", "{F6867923-3A6E-4102-B546-E3A6A5F8EC36}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -113,7 +113,7 @@ Global
 		winrt\test.nativecomponent\winrt.test.nativecomponent.Shared.vcxitems*{7c0a8506-002b-4169-989f-ea5723dad6fb}*SharedItemsImports = 9
 		winrt\test.managed\Shared\winrt.test.managed.Shared.projitems*{ef6dbc39-a50d-47c4-b790-d459d4904d84}*SharedItemsImports = 13
 		samples\CoreWindowExample\Shared\CoreWindowExample.Shared.projitems*{fd83bf4b-d82c-463a-be38-84f8b9374ccf}*SharedItemsImports = 13
-		winrt\test.external\winrt.test.external.Shared.vcxitems*{1e7bd769-cf5a-4d05-a2f7-761372c24746}*SharedItemsImports = 9
+		winrt\test.external\Shared\winrt.test.external.Shared.vcxitems*{1e7bd769-cf5a-4d05-a2f7-761372c24746}*SharedItemsImports = 9
 		winrt\lib\winrt.lib.Shared.vcxitems*{1574c4de-318f-4555-b72e-97532f720a13}*SharedItemsImports = 9
 		winrt\dll\winrt.dll.Shared.vcxitems*{d3d2a425-69d2-4f8c-98dc-760abc25e535}*SharedItemsImports = 9
 		winrt\dll\winrt.dll.Shared.vcxitems*{8cf21e5d-e0a2-4fe7-8e2b-a025cf52dcfb}*SharedItemsImports = 4
@@ -124,7 +124,7 @@ Global
 		samples\ExampleGallery\BackgroundTask\Shared\ExampleGallery.BackgroundTask.Shared.projitems*{d77eb5be-c840-4ade-b4f6-1ba9512c4768}*SharedItemsImports = 4
 		winrt\test.internal\winrt.test.internal.shared.vcxitems*{063ab629-aadf-4749-b259-ab815b1aeb01}*SharedItemsImports = 4
 		winrt\test.internal\winrt.test.internal.shared.vcxitems*{b038b2a3-0ff2-4313-a0db-b7b59dc2dc4c}*SharedItemsImports = 9
-		winrt\test.external\winrt.test.external.Shared.vcxitems*{f33c7cb9-5eca-47b7-9393-81e6e8f0bd34}*SharedItemsImports = 4
+		winrt\test.external\Shared\winrt.test.external.Shared.vcxitems*{f33c7cb9-5eca-47b7-9393-81e6e8f0bd34}*SharedItemsImports = 4
 		samples\ExampleGallery\Shared\ExampleGallery.Shared.projitems*{f6867923-3a6e-4102-b546-e3a6a5f8ec36}*SharedItemsImports = 4
 		samples\ExampleGallery\BackgroundTask\Shared\ExampleGallery.BackgroundTask.Shared.projitems*{75a7926b-b1ae-4806-b332-9561bfe0edf9}*SharedItemsImports = 13
 	EndGlobalSection

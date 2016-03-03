@@ -4,4 +4,6 @@
 
 #include "pch.h"
 
+#if WINVER <= _WIN32_WINNT_WINBLUE
 CPPUNIT_SET_STA_THREADING
+#endif

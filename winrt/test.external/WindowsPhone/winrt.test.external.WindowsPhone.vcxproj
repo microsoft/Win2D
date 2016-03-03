@@ -12,7 +12,7 @@
     <TestApplication>true</TestApplication>
     <AppxPackage>True</AppxPackage>
   </PropertyGroup>
-  <Import Project="..\..\build\Win2D.cpp.props" />
+  <Import Project="..\..\..\build\Win2D.cpp.props" />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup>
     <PackageCertificateKeyFile>$(AssetDir)TemporaryKey.pfx</PackageCertificateKeyFile>
@@ -24,11 +24,11 @@
     <ConfigurationType>DynamicLibrary</ConfigurationType>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
-  <Import Project="winrt.test.external.Shared.vcxitems" Label="Shared" />
+  <Import Project="..\Shared\winrt.test.external.Shared.vcxitems" Label="Shared" />
   <ItemDefinitionGroup>
     <ClCompile>
       <PreprocessorDefinitions>PSAPI_VERSION=2;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(VCInstallDir)UnitTest\include;..\Inc;..\..\Numerics\Cpp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(VCInstallDir)UnitTest\include;..\..\Inc;..\..\..\Numerics\Cpp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(VCInstallDir)UnitTest\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -68,12 +68,12 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsPhone\v$(TargetPlatformVersion)\Microsoft.Cpp.WindowsPhone.$(TargetPlatformVersion).targets" />
   <ItemGroup>
-    <ProjectReference Include="..\dll\winrt.dll.WindowsPhone.vcxproj">
+    <ProjectReference Include="..\..\dll\winrt.dll.WindowsPhone.vcxproj">
       <Project>{6eabd217-3fd8-4298-929d-857811d8f3fa}</Project>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <_DefineDefaultConvergedProjectType>False</_DefineDefaultConvergedProjectType>
   </PropertyGroup>
-  <Import Project="..\..\build\Win2D.cpp.targets" />
+  <Import Project="..\..\..\build\Win2D.cpp.targets" />
 </Project>

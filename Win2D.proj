@@ -95,7 +95,7 @@
       <Platforms>Win32;x64</Platforms>
       <AutomatedTests>desktop</AutomatedTests>
     </WindowsProject>
-    <WindowsProject Include="winrt\test.external\winrt.test.external.Windows.vcxproj">
+    <WindowsProject Include="winrt\test.external\Windows\winrt.test.external.Windows.vcxproj">
       <AutomatedTests>store</AutomatedTests>
     </WindowsProject>
     <WindowsProject Include="winrt\test.nativecomponent\winrt.test.nativecomponent.Windows.vcxproj" />
@@ -122,7 +122,7 @@
 
   <!-- Windows Phone test projects -->
   <ItemGroup Condition="$(BuildPhone) and $(BuildTests)">
-    <PhoneProject Include="winrt\test.external\winrt.test.external.WindowsPhone.vcxproj" />
+    <PhoneProject Include="winrt\test.external\WindowsPhone\winrt.test.external.WindowsPhone.vcxproj" />
     <PhoneProject Include="winrt\test.nativecomponent\winrt.test.nativecomponent.WindowsPhone.vcxproj" />
     <PhoneProject Include="winrt\test.managed\WindowsPhone\winrt.test.managed.WindowsPhone.csproj" />
     <PhoneProject Include="samples\SimpleSample\WindowsPhone\SimpleSample.WindowsPhone.csproj" />
@@ -142,7 +142,8 @@
       <Platforms>Win32;x64</Platforms>
       <AutomatedTests Condition="$(ShouldRunUAPTests)">desktop</AutomatedTests>
     </UAPProject>
-    <UAPProject Include="winrt\test.external\winrt.test.external.uap.vcxproj">
+    <UAPProject Include="winrt\test.external\UAP\winrt.test.external.uap.vcxproj">
+      <Platforms>Win32;x64</Platforms>
       <AutomatedTests Condition="$(ShouldRunUAPTests)">store</AutomatedTests>
     </UAPProject>
     <UAPProject Include="winrt\test.nativecomponent\winrt.test.nativecomponent.uap.vcxproj" />

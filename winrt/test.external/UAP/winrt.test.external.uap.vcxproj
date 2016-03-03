@@ -17,10 +17,10 @@
     <ApplicationTypeRevision>10.0</ApplicationTypeRevision>
     <AppxBundle>Never</AppxBundle>
   </PropertyGroup>
-  <Import Project="..\..\build\Win2D.cpp.props" />
+  <Import Project="..\..\..\build\Win2D.cpp.props" />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <PropertyGroup>
@@ -28,17 +28,33 @@
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
-      <AdditionalIncludeDirectories>$(VCInstallDir)UnitTest\include;..\Inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(VCInstallDir)UnitTest\include\UWP;..\..\Inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>$(VCInstallDir)UnitTest\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(VCInstallDir)UnitTest\lib\UWP;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>dxguid.lib;d3d11.lib;d2d1.lib;dwrite.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
-  <Import Project="winrt.test.external.Shared.vcxitems" Label="Shared" />
+  <Import Project="..\Shared\winrt.test.external.Shared.vcxitems" Label="Shared" />
   <ItemGroup>
-    <SDKReference Include="CppUnitTestFramework, Version=$(UnitTestPlatformVersion)" />
-    <SDKReference Include="TestPlatform, Version=$(UnitTestPlatformVersion)" />
+    <ClInclude Include="pch.h" />
+    <ClInclude Include="UnitTestApp.xaml.h">
+      <DependentUpon>UnitTestApp.xaml</DependentUpon>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="UnitTestApp.xaml">
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="UnitTestApp.xaml.cpp">
+      <DependentUpon>UnitTestApp.xaml</DependentUpon>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <SDKReference Include="CppUnitTestFramework.Universal, Version=$(UnitTestPlatformVersion)" />
+    <SDKReference Include="TestPlatform.Universal, Version=$(UnitTestPlatformVersion)" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="winrt.test.external.uap.appxmanifest">
@@ -61,12 +77,12 @@
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\dll\winrt.dll.uap.vcxproj">
+    <ProjectReference Include="..\..\dll\winrt.dll.uap.vcxproj">
       <Project>{8cf21e5d-e0a2-4fe7-8e2b-a025cf52dcfb}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />
   <Import Project="$(VCInstallDir)\..\Common7\IDE\CommonExtensions\Microsoft\TestWindow\Microsoft.TestTools.Cpp.targets" Condition="Exists('$(VCInstallDir)\..\Common7\IDE\CommonExtensions\Microsoft\TestWindow\Microsoft.TestTools.Cpp.targets')" />
-  <Import Project="..\..\build\Win2D.cpp.targets" />
+  <Import Project="..\..\..\build\Win2D.cpp.targets" />
 </Project>

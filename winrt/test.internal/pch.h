@@ -24,8 +24,8 @@ using namespace canvas;
 using namespace ABI::Microsoft::Graphics::Canvas;
 using namespace ABI::Microsoft::Graphics::Canvas::Effects;
 
-#include "../test.external/MockDxgiDevice.h"
-#include "../test.external/MockDxgiSurface.h"
+#include "../test.external/Shared/MockDxgiDevice.h"
+#include "../test.external/Shared/MockDxgiSurface.h"
 
 #include "utils/Helpers.h"
 #include "utils/ApiInformationTestAdapter.h"

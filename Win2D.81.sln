@@ -5,7 +5,7 @@ VisualStudioVersion = 12.0.40629.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "winrt", "winrt", "{0F212400-0A8B-4E26-9BA8-CE7165FF8717}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "winrt.test.external.Windows", "winrt\test.external\winrt.test.external.Windows.vcxproj", "{D6CB5CB7-499B-4980-84C6-F0099CF309DA}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "winrt.test.external.Windows", "winrt\test.external\Windows\winrt.test.external.Windows.vcxproj", "{D6CB5CB7-499B-4980-84C6-F0099CF309DA}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Inc", "Inc", "{CEA2F017-5D50-41BE-B46D-A61FF19B4694}"
 	ProjectSection(SolutionItems) = preProject
@@ -43,11 +43,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "winrt.lib.WindowsPhone", "w
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "winrt.dll", "winrt.dll", "{FD915EAF-4152-48C0-B5DD-603865B78B49}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "winrt.test.external.Shared", "winrt\test.external\winrt.test.external.Shared.vcxitems", "{1E7BD769-CF5A-4D05-A2F7-761372C24746}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "winrt.test.external.Shared", "winrt\test.external\Shared\winrt.test.external.Shared.vcxitems", "{1E7BD769-CF5A-4D05-A2F7-761372C24746}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "winrt.test.external", "winrt.test.external", "{77FBABCD-F338-49AB-939D-38511978510D}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "winrt.test.external.WindowsPhone", "winrt\test.external\winrt.test.external.WindowsPhone.vcxproj", "{FBB57887-39F9-47E2-BCA9-C4B620223610}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "winrt.test.external.WindowsPhone", "winrt\test.external\WindowsPhone\winrt.test.external.WindowsPhone.vcxproj", "{FBB57887-39F9-47E2-BCA9-C4B620223610}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "winrt.test.nativecomponent", "winrt.test.nativecomponent", "{EA4A8B3A-56D1-4B01-BBAE-8F00F818CAA8}"
 EndProject
@@ -172,7 +172,7 @@ Global
 		winrt\test.managed\Shared\winrt.test.managed.Shared.projitems*{6d29a10e-e538-47fc-9775-143df718a78d}*SharedItemsImports = 4
 		winrt\test.managed\Shared\winrt.test.managed.Shared.projitems*{ef6dbc39-a50d-47c4-b790-d459d4904d84}*SharedItemsImports = 13
 		samples\CoreWindowExample\Shared\CoreWindowExample.Shared.projitems*{fd83bf4b-d82c-463a-be38-84f8b9374ccf}*SharedItemsImports = 13
-		winrt\test.external\winrt.test.external.Shared.vcxitems*{1e7bd769-cf5a-4d05-a2f7-761372c24746}*SharedItemsImports = 9
+		winrt\test.external\Shared\winrt.test.external.Shared.vcxitems*{1e7bd769-cf5a-4d05-a2f7-761372c24746}*SharedItemsImports = 9
 		winrt\lib\winrt.lib.Shared.vcxitems*{1574c4de-318f-4555-b72e-97532f720a13}*SharedItemsImports = 9
 		numerics\Cpp\tests\CppNumericsTests.Shared.vcxitems*{d125d087-f3a5-44c7-9bbf-952fb30b2d7e}*SharedItemsImports = 9
 		winrt\lib\winrt.lib.Shared.vcxitems*{8e9fef0d-edb6-4c76-9383-a070314e5ff4}*SharedItemsImports = 4
@@ -188,7 +188,7 @@ Global
 		winrt\lib\winrt.lib.Shared.vcxitems*{8c279709-e303-4546-a218-9b6e03521574}*SharedItemsImports = 4
 		samples\ExampleGallery\Shared\ExampleGallery.Shared.projitems*{f6f2b4ad-0b11-4919-bf8b-08de6fe76170}*SharedItemsImports = 13
 		samples\ExampleGallery\Direct3DInterop\Shared\ExampleGallery.Direct3DInterop.Shared.vcxitems*{1f7818d7-0d0e-49fe-99a3-110977227fc0}*SharedItemsImports = 4
-		winrt\test.external\winrt.test.external.Shared.vcxitems*{fbb57887-39f9-47e2-bca9-c4b620223610}*SharedItemsImports = 4
+		winrt\test.external\Shared\winrt.test.external.Shared.vcxitems*{fbb57887-39f9-47e2-bca9-c4b620223610}*SharedItemsImports = 4
 		winrt\test.internal\winrt.test.internal.shared.vcxitems*{b038b2a3-0ff2-4313-a0db-b7b59dc2dc4c}*SharedItemsImports = 9
 		samples\ExampleGallery\Shared\ExampleGallery.Shared.projitems*{5c9d7c27-14c6-44f7-8a1b-447cdb939cbc}*SharedItemsImports = 4
 		numerics\DotNet\tests\Shared\DotNetNumericsTests.Shared.projitems*{198d676f-fed6-4501-a083-ea9d288db611}*SharedItemsImports = 4
@@ -200,7 +200,7 @@ Global
 		samples\ExampleGallery\Shared\ExampleGallery.Shared.projitems*{6f06c88d-b227-405b-a0d4-8e03dcba8191}*SharedItemsImports = 4
 		samples\ExampleGallery\Direct3DInterop\Shared\ExampleGallery.Direct3DInterop.Shared.vcxitems*{063032f0-dcb8-4ca6-9719-b8391525db37}*SharedItemsImports = 4
 		winrt\test.internal\winrt.test.internal.shared.vcxitems*{1fe831f7-6773-4445-b570-1f5570fad88d}*SharedItemsImports = 4
-		winrt\test.external\winrt.test.external.Shared.vcxitems*{d6cb5cb7-499b-4980-84c6-f0099cf309da}*SharedItemsImports = 4
+		winrt\test.external\Shared\winrt.test.external.Shared.vcxitems*{d6cb5cb7-499b-4980-84c6-f0099cf309da}*SharedItemsImports = 4
 		winrt\dll\winrt.dll.Shared.vcxitems*{0ae978bb-52e2-40fb-9d0f-2e3a4bd64837}*SharedItemsImports = 4
 		winrt\test.nativecomponent\winrt.test.nativecomponent.Shared.vcxitems*{e09c8be2-ac5a-4c87-9c2e-35290853448e}*SharedItemsImports = 4
 	EndGlobalSection
