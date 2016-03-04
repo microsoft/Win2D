@@ -121,8 +121,18 @@ namespace ExampleGallery
             displayedOptions.Add(StandardPrintTaskOptions.MediaSize);
             displayedOptions.Add(StandardPrintTaskOptions.Orientation);
             displayedOptions.Add("PageRange");
+
+            detailedOptions.OptionChanged += PrintDetailedOptions_OptionChanged;
         }
 
+        private void PrintDetailedOptions_OptionChanged(PrintTaskOptionDetails sender, PrintTaskOptionChangedEventArgs args)
+        {
+            if (args.OptionId == null)
+            {
+                // Invalidate the preview when switching printers.
+                this.printDocument.InvalidatePreview();
+            }
+        }
 
         private async void PrintDocument_PrintTaskOptionsChanged(CanvasPrintDocument sender, CanvasPrintTaskOptionsChangedEventArgs args)
         {
