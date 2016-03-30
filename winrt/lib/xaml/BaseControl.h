@@ -104,6 +104,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         std::shared_ptr<adapter_t> m_adapter;
         std::unique_ptr<IRecreatableDeviceManager<TRAITS>> m_recreatableDeviceManager;
+        std::atomic<int> m_loadedCount;
         bool m_isLoaded;
         bool m_isSuspended;
         bool m_isVisible;
@@ -132,6 +133,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         BaseControl(std::shared_ptr<adapter_t> adapter, bool useSharedDevice)
             : m_adapter(adapter)
             , m_recreatableDeviceManager(adapter->CreateRecreatableDeviceManager())
+            , m_loadedCount(0)
             , m_isLoaded(false)
             , m_isSuspended(false)
             , m_isVisible(true)
@@ -801,15 +803,18 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             return ExceptionBoundary(
                 [&]
                 {
-                    RegisterEventHandlers();
-                    UpdateLastSeenParent();
-                    Loaded();
+                    if (++m_loadedCount == 1)
+                    {
+                        RegisterEventHandlers();
+                        UpdateLastSeenParent();
+                        Loaded();
 
-                    auto lock = GetLock();
-                    m_isLoaded = true;
-                    lock.unlock();
-                    
-                    Changed(ChangeReason::Other);
+                        auto lock = GetLock();
+                        m_isLoaded = true;
+                        lock.unlock();
+
+                        Changed(ChangeReason::Other);
+                    }
                 });
         }
 
@@ -823,12 +828,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             return ExceptionBoundary(
                 [&]
                 {
-                    auto lock = GetLock();
-                    m_isLoaded = false;
-                    lock.unlock();
+                    if (--m_loadedCount == 0)
+                    {
+                        auto lock = GetLock();
+                        m_isLoaded = false;
+                        lock.unlock();
 
-                    Unloaded();
-                    UnregisterEventHandlers();
+                        Unloaded();
+                        UnregisterEventHandlers();
+                    }
                 });
         }
 

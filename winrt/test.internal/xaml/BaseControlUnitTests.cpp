@@ -313,3 +313,46 @@ TEST_CLASS(BaseControl_Interaction_With_RecreatableDeviceManager)
             });
     }
 };
+
+
+TEST_CLASS(BaseControl_LoadedAndUnloaded_OutOfOrder)
+{
+    struct Fixture : public BasicControlFixture<AnyTraits>
+    {
+        Fixture()
+        {
+            CreateAdapter();
+            CreateControl();
+
+            this->Control->ChangedMethod.AllowAnyCall();
+        }
+    };
+
+    TEST_METHOD_EX(BaseControl_WhenLoadedCalledTwice_SecondLoadIsIgnored)
+    {
+        Fixture f;
+
+        // First load event actually does our init work.
+        f.Control->LoadedMethod.SetExpectedCalls(1);
+        f.Load();
+        Expectations::Instance()->Validate();
+
+        // Second load event is ignored.
+        f.Load();
+
+        // First unload event is ignored.
+        f.RaiseUnloadedEvent();
+
+        // Second unload event actually does our cleanup work.
+        f.Control->UnloadedMethod.SetExpectedCalls(1);
+        f.RaiseUnloadedEvent();
+    }
+
+    TEST_METHOD_EX(BaseControl_WhenUnloadedBeforeLoaded_BothAreIgnored)
+    {
+        Fixture f;
+
+        f.RaiseUnloadedEvent();
+        f.Load();
+    }
+};
