@@ -45,7 +45,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.Clear(Windows.UI.Color)">
       <summary>Clears to the specified color.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.Clear(System.Numerics.Vector4)" Experimental="true">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.Clear(System.Numerics.Vector4)">
       <summary>Clears to the specified high-dynamic-range color.</summary>
     </member>
 
@@ -1165,7 +1165,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <summary>Draws a gradient mesh, relative to the specified position.</summary>
     </member>
 
-    <member name="P:Microsoft.Graphics.Canvas.CanvasDrawingSession.TextRenderingParameters" Experimental="true">
+    <member name="P:Microsoft.Graphics.Canvas.CanvasDrawingSession.TextRenderingParameters">
       <summary>Describes advanced options which are applied when text is being drawn.</summary>
       <remarks>
           <p>

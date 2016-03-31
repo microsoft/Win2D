@@ -630,7 +630,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       </remarks>
     </member>
     
-    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.TrimmingSign" Experimental="true">
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.TrimmingSign">
       <summary>Specifies the type of trimming sign used, when text is drawn outside a text layout's requested size extents.</summary>
       <remarks>
         <p>
@@ -644,14 +644,14 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       </remarks>
     </member>    
 
-    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.DrawToTextRenderer(Microsoft.Graphics.Canvas.Text.ICanvasTextRenderer,System.Numerics.Vector2)" Experimental="true">
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.DrawToTextRenderer(Microsoft.Graphics.Canvas.Text.ICanvasTextRenderer,System.Numerics.Vector2)">
       <summary>Draws this text layout to an application-defined text renderer.</summary>
       <remarks>
         <see cref="T:Microsoft.Graphics.Canvas.Text.ICanvasTextRenderer"/>
         is an interface that applications implement.
       </remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.DrawToTextRenderer(Microsoft.Graphics.Canvas.Text.ICanvasTextRenderer,System.Single,System.Single)" Experimental="true">
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.DrawToTextRenderer(Microsoft.Graphics.Canvas.Text.ICanvasTextRenderer,System.Single,System.Single)">
       <summary>Draws this text layout to an application-defined text renderer.</summary>
       <remarks>
         <see cref="T:Microsoft.Graphics.Canvas.Text.ICanvasTextRenderer"/>
@@ -659,7 +659,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       </remarks>
     </member>    
 
-    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.SetInlineObject(System.Int32,System.Int32,Microsoft.Graphics.Canvas.Text.ICanvasTextInlineObject)" Experimental="true">
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.SetInlineObject(System.Int32,System.Int32,Microsoft.Graphics.Canvas.Text.ICanvasTextInlineObject)">
       <summary>Sets the inline object for a specified group of characters.</summary>
       <remarks>
         It's valid to use the same inline object for multiple character positions.
@@ -668,7 +668,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.GetInlineObject(System.Int32)">
       <summary>Gets the inline object for the character at the position specified.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.CustomTrimmingSign" Experimental="true">
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.CustomTrimmingSign">
       <summary>Gets or sets a custom trimming sign.</summary>
       <remarks>
         <p>
@@ -852,7 +852,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       </remarks>
     </member>    
 
-    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.SetCustomBrush(System.Int32,System.Int32,System.Object)" Experimental="true">
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.SetCustomBrush(System.Int32,System.Int32,System.Object)">
       <summary>Sets the custom brush associated with a group of characters in the text layout.</summary>
       <remarks>
         <p>
@@ -878,7 +878,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         </p>
       </remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.GetCustomBrush(System.Int32)" Experimental="true">
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.GetCustomBrush(System.Int32)">
       <summary>Gets the custom brush associated with a character index in the text layout.</summary>
       <remarks>
         <p>
@@ -959,7 +959,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       </remarks>
     </member>
 
-    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.SetTypography(System.Int32,System.Int32,Microsoft.Graphics.Canvas.Text.CanvasTypography)" Experimental="true">
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.SetTypography(System.Int32,System.Int32,Microsoft.Graphics.Canvas.Text.CanvasTypography)">
        <summary>
          Sets the typography features that affect a specified group of characters.
        </summary>
@@ -974,7 +974,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         </p>
       </remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.GetTypography(System.Int32)" Experimental="true">
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.GetTypography(System.Int32)">
       <summary>
         Gets the typography features that affect the character at the position specified.
       </summary>
@@ -985,7 +985,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       </remarks>
     </member>
 
-    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.GetGlyphOrientationTransform(Microsoft.Graphics.Canvas.Text.CanvasGlyphOrientation,System.Boolean,System.Numerics.Vector2)" Experimental="true">
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.GetGlyphOrientationTransform(Microsoft.Graphics.Canvas.Text.CanvasGlyphOrientation,System.Boolean,System.Numerics.Vector2)">
       <summary>Gets a transform matrix to use when drawing a glyph run.</summary>
       <remarks>
         <p>

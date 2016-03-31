@@ -11,7 +11,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
   </assembly>
   <members>
   
-    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasCharacterRange" Experimental="true">
+    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasCharacterRange">
       <summary>Describes a range of characters.</summary>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.Text.CanvasCharacterRange.CharacterIndex">
@@ -20,7 +20,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="F:Microsoft.Graphics.Canvas.Text.CanvasCharacterRange.CharacterCount">
       <summary>The number of characters.</summary>
     </member>
-    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasScaledFont" Experimental="true">
+    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasScaledFont">
       <summary>Represents a font face and a scale factor.</summary>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Text.CanvasScaledFont.FontFace">
@@ -30,7 +30,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         <summary>A scale factor that should be applied to the font size.</summary>
     </member>
     
-    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasNumberSubstitution" Experimental="true">
+    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasNumberSubstitution">
       <summary>Describes a policy for performing locale-sensitive number substitution in text.</summary>
       <remarks>
         <p>
@@ -48,7 +48,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="M:Microsoft.Graphics.Canvas.Text.CanvasNumberSubstitution.Dispose">
       <summary>Releases all resources used by the CanvasNumberSubstitution.</summary>
     </member>
-    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasNumberSubstitutionMethod" Experimental="true">
+    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasNumberSubstitutionMethod">
       <summary>Identifies the way to perform locale-sensitive number substitution in text.</summary>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.Text.CanvasNumberSubstitutionMethod.FromCulture">
@@ -70,7 +70,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <summary>Specifies that number are rendered using the traditional shape for the specified locale.</summary>
     </member>
     
-    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasTextAnalyzer" Experimental="true">
+    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasTextAnalyzer">
       <summary>An object that analyzes text in preparation for constructing glyph runs.</summary>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextAnalyzer.#ctor(System.String,Microsoft.Graphics.Canvas.Text.CanvasTextDirection)">
@@ -175,7 +175,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <summary>Releases all resources used by the CanvasTextAnalyzer.</summary>
     </member>
     
-    <member name="T:Microsoft.Graphics.Canvas.Text.ICanvasTextAnalyzerOptions" Experimental="true">
+    <member name="T:Microsoft.Graphics.Canvas.Text.ICanvasTextAnalyzerOptions">
       <summary>An application-implemented interface for identifying properties that apply to spans of text.</summary>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Text.ICanvasTextAnalyzerOptions.GetLocaleName(System.Int32,System.Int32@)">
@@ -191,7 +191,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <summary>Gets the bidi (bi-directional text) level for this character position, and the character count for this span which shares the same bidi level.</summary>
     </member>
 
-    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasAnalyzedScript" Experimental="true">
+    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasAnalyzedScript">
       <summary>Represents the script data for a piece of text which has been analyzed.</summary>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.Text.CanvasAnalyzedScript.ScriptIdentifier">
@@ -200,7 +200,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="F:Microsoft.Graphics.Canvas.Text.CanvasAnalyzedScript.Shape">
       <summary>Identifies the shaping requirement of a piece of text.</summary>
     </member>
-    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasScriptProperties" Experimental="true">
+    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasScriptProperties">
       <summary>Contains script properties that apply to a piece of text.</summary>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.Text.CanvasScriptProperties.IsoScriptCode">
@@ -236,7 +236,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="F:Microsoft.Graphics.Canvas.Text.CanvasScriptProperties.IsCursiveWriting">
       <summary>Whether the script is naturally cursive, meaning it uses justification methods other than intercharacter spacing.</summary>
     </member>
-    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasScriptShape" Experimental="true">
+    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasScriptShape">
       <summary>The shaping requirement of a piece of text.</summary>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.Text.CanvasScriptShape.Default">
@@ -261,7 +261,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <summary>Gets the properties for an analyzed script.</summary>
     </member>        
 
-    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasGlyphJustification" Experimental="true">
+    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasGlyphJustification">
       <summary>Identifies which what of justification scheme is used for a glyph.</summary>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.Text.CanvasGlyphJustification.None">
@@ -303,7 +303,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="F:Microsoft.Graphics.Canvas.Text.CanvasGlyphJustification.ArabicSeenM">
       <summary>Highest priority: medial shape of Seen class (U+0633).</summary>
     </member>
-    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasGlyphShaping" Experimental="true">
+    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasGlyphShaping">
       <summary>Contains shaping properties for a glyph.</summary>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.Text.CanvasGlyphShaping.Justification">
@@ -356,7 +356,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       </remarks>
     </member>    
 
-    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasAnalyzedBidi" Experimental="true">
+    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasAnalyzedBidi">
       <summary>Describes script directionality for a span of text.</summary>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.Text.CanvasAnalyzedBidi.ExplicitLevel">
@@ -372,7 +372,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         rules have been applied.
       </summary>
     </member>
-    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasAnalyzedBreakpoint" Experimental="true">
+    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasAnalyzedBreakpoint">
       <summary>Contains line-breaking information for a character position.</summary>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.Text.CanvasAnalyzedBreakpoint.BreakBefore">
@@ -387,7 +387,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="F:Microsoft.Graphics.Canvas.Text.CanvasAnalyzedBreakpoint.IsSoftHyphen">
       <summary>Indicates the character is a soft hyphen (U+00AD).</summary>
     </member>
-    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasAnalyzedGlyphOrientation" Experimental="true">
+    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasAnalyzedGlyphOrientation">
       <summary>Describes orientation information for a span of text.</summary>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.Text.CanvasAnalyzedGlyphOrientation.GlyphOrientation">
@@ -455,7 +455,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <summary>Gets which glyph orientations are mapped to which character positions.</summary>
     </member>    
 
-    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasJustificationOpportunity" Experimental="true">
+    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasJustificationOpportunity">
       <summary>Specifies how to apply justification for a glyph.</summary>
       <remarks>
         <p>

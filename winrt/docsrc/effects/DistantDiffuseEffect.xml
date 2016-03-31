@@ -34,7 +34,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="P:Microsoft.Graphics.Canvas.Effects.DistantDiffuseEffect.LightColor">
       <summary>Color of the incoming light. Default value white.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.Effects.DistantDiffuseEffect.LightColorHdr" Experimental="true">
+    <member name="P:Microsoft.Graphics.Canvas.Effects.DistantDiffuseEffect.LightColorHdr">
       <summary>High-dynamic-range color of the incoming light. Default value white.</summary>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Effects.DistantDiffuseEffect.HeightMapScale">

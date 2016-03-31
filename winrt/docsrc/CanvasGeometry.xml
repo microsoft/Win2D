@@ -448,7 +448,8 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       </remarks>
     </member>
 
-    <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.CreateGlyphRun(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Numerics.Vector2,Microsoft.Graphics.Canvas.Text.CanvasFontFace,System.Single,Microsoft.Graphics.Canvas.Text.CanvasGlyph[],System.Boolean,System.UInt32,Microsoft.Graphics.Canvas.Text.CanvasTextMeasuringMode,Microsoft.Graphics.Canvas.Text.CanvasGlyphOrientation)" Experimental="true">
+
+    <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.CreateGlyphRun(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Numerics.Vector2,Microsoft.Graphics.Canvas.Text.CanvasFontFace,System.Single,Microsoft.Graphics.Canvas.Text.CanvasGlyph[],System.Boolean,System.UInt32,Microsoft.Graphics.Canvas.Text.CanvasTextMeasuringMode,Microsoft.Graphics.Canvas.Text.CanvasGlyphOrientation)">
       <summary>Creates a geometry based on a glyph run.</summary>
       <remarks>
         <p>

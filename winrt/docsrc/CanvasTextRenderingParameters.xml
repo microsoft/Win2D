@@ -10,7 +10,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <name>Microsoft.Graphics.Canvas</name>
   </assembly>
   <members>
-    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasTextGridFit" Experimental="true">
+    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasTextGridFit">
       <summary>Specifies whether to enable gridfitting behavior for glyphs.</summary>
       <remarks>
         <p>
@@ -27,7 +27,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTextGridFit.Enable">
       <summary>Gridfitting is always enabled.</summary>
     </member>
-    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasTextRenderingMode" Experimental="true">
+    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasTextRenderingMode">
       <summary>Specifies the behavior when glyphs are rendered.</summary>
       <remarks>
         <p>
@@ -88,7 +88,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTextRenderingMode.Outline">
       <summary>Specifies that text rendering should be perfomed using geometric outlines.</summary>
     </member>
-    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasTextRenderingParameters" Experimental="true">
+    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasTextRenderingParameters">
       <summary>Represents text-drawing parameters which may be applied to a CanvasDrawingSession.</summary>
       <remarks>
         <p>

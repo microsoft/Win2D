@@ -10,7 +10,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <name>Microsoft.Graphics.Canvas</name>
   </assembly>
   <members>
-    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasLineBreakCondition" Experimental="true">
+    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasLineBreakCondition">
       <summary>Describes conditions at the edges of inline objects that determine line-breaking behavior.</summary>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.Text.CanvasLineBreakCondition.Neutral">
@@ -25,7 +25,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="F:Microsoft.Graphics.Canvas.Text.CanvasLineBreakCondition.MustBreak">
       <summary>Indicates that a line break must happen, regardless of anything else. </summary>
     </member>
-    <member name="T:Microsoft.Graphics.Canvas.Text.ICanvasTextInlineObject" Experimental="true">
+    <member name="T:Microsoft.Graphics.Canvas.Text.ICanvasTextInlineObject">
       <summary>An application-implemented interface for drawing graphics inserted into text.</summary>
       <remarks>
         <p>

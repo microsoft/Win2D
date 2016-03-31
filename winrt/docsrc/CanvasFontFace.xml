@@ -10,7 +10,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <name>Microsoft.Graphics.Canvas</name>
   </assembly>
   <members>
-    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasFontFileFormatType" Experimental="true">
+    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasFontFileFormatType">
       <summary>Indicates the file format of a font face.</summary>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.Text.CanvasFontFileFormatType.Cff">
@@ -37,7 +37,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="F:Microsoft.Graphics.Canvas.Text.CanvasFontFileFormatType.RawCff">
       <summary>The font data includes only the CFF table from an OpenType CFF font. This font face type can be used only for embedded fonts (i.e., custom font file loaders) and the resulting font face object supports only the minimum functionality necessary to render glyphs.</summary>
     </member>
-    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasFontInformation" Experimental="true">
+    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasFontInformation">
       <summary>Specifies an informational string embedded in a font file.</summary>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.Text.CanvasFontInformation.None">
@@ -106,7 +106,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="F:Microsoft.Graphics.Canvas.Text.CanvasFontInformation.SupportedScriptLanguageTag">
       <summary>Script/language tag to identify the scripts or languages that the font declares it is able to support.</summary>
     </member>
-    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasFontFace" Experimental="true">
+    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasFontFace">
       <summary>Represents a font, and its associated properties.</summary>
       <remarks>
         <p>
@@ -249,7 +249,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <summary>Gets the weight of this font.</summary>
       <remarks>Font weight indicates the density of a typeface, in terms of the lightness or heaviness of the strokes.</remarks>
     </member>
-    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasFontSimulations" Experimental="true">
+    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasFontSimulations">
       <summary>Describes algorithmic style simulations that can be applied to the font face.</summary>
       <remarks>
       	<p>
@@ -272,7 +272,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="F:Microsoft.Graphics.Canvas.Text.CanvasFontSimulations.Oblique">
       <summary>Indicates that algorithmic italicization is applied to the font face.</summary>
     </member>
-    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasTextMeasuringMode" Experimental="true">
+    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasTextMeasuringMode">
       <summary>Indicates the measuring method used for a piece of text.</summary>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTextMeasuringMode.Natural">
@@ -284,7 +284,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTextMeasuringMode.GdiNatural">
       <summary>Specifies that text is measured using the same glyph display metrics as text measured by GDI using a font created with the CLEARTYPE_NATURAL_QUALITY GDI option.</summary>
     </member>
-    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasUnicodeRange" Experimental="true">
+    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasUnicodeRange">
       <summary>Represents a range, from starting to ending code points, of Unicode characters.</summary>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.Text.CanvasUnicodeRange.First">
@@ -293,7 +293,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="F:Microsoft.Graphics.Canvas.Text.CanvasUnicodeRange.Last">
       <summary>The last code point in the Unicode range.</summary>
     </member>
-    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasGlyphMetrics" Experimental="true">
+    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasGlyphMetrics">
       <summary>Represents the metrics of an individual glyph in em units.</summary>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.Text.CanvasGlyphMetrics.LeftSideBearing">
@@ -321,7 +321,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <summary>Specifies the bounds of the parts of the glyph are covered if the glyph is drawn.</summary>
     </member>
     
-    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasFontFace.GetGlyphRunBounds(Microsoft.Graphics.Canvas.CanvasDrawingSession,System.Numerics.Vector2,System.Single,Microsoft.Graphics.Canvas.Text.CanvasGlyph[],System.Boolean,System.UInt32)" Experimental="true">
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasFontFace.GetGlyphRunBounds(Microsoft.Graphics.Canvas.CanvasDrawingSession,System.Numerics.Vector2,System.Single,Microsoft.Graphics.Canvas.Text.CanvasGlyph[],System.Boolean,System.UInt32)">
       <summary>Gets the bounds of a glyph run using this font face.</summary>
       <remarks>
         <p>
@@ -343,7 +343,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         </p>
       </remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasFontFace.GetGlyphRunBounds(Microsoft.Graphics.Canvas.CanvasDrawingSession,System.Numerics.Vector2,System.Single,Microsoft.Graphics.Canvas.Text.CanvasGlyph[],System.Boolean,System.UInt32,Microsoft.Graphics.Canvas.Text.CanvasTextMeasuringMode)" Experimental="true">
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasFontFace.GetGlyphRunBounds(Microsoft.Graphics.Canvas.CanvasDrawingSession,System.Numerics.Vector2,System.Single,Microsoft.Graphics.Canvas.Text.CanvasGlyph[],System.Boolean,System.UInt32,Microsoft.Graphics.Canvas.Text.CanvasTextMeasuringMode)">
       <summary>Gets the bounds of a glyph run using this font face, using the specified measuring mode.</summary>
       <remarks>
         <p>
@@ -363,7 +363,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       </remarks>      
     </member>
 
-    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasFontFace.Panose" Experimental="true">
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasFontFace.Panose">
       <summary>Gets the PANOSE values for this font face.</summary>
       <remarks>
         <p>

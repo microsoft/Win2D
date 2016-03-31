@@ -46,7 +46,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="P:Microsoft.Graphics.Canvas.Effects.ChromaKeyEffect.Color">
       <summary>Specifies the color to be replaced with transparency. Default value black.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.Effects.ChromaKeyEffect.ColorHdr" Experimental="true">
+    <member name="P:Microsoft.Graphics.Canvas.Effects.ChromaKeyEffect.ColorHdr">
       <summary>Specifies the high-dynamic-range color to be replaced with transparency. Default value black.</summary>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Effects.ChromaKeyEffect.Tolerance">

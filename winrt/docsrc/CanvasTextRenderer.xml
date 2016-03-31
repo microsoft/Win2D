@@ -10,7 +10,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <name>Microsoft.Graphics.Canvas</name>
   </assembly>
   <members>
-    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasGlyph" Experimental="true">
+    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasGlyph">
       <summary>Describes a single glyph.</summary>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.Text.CanvasGlyph.Index">
@@ -41,7 +41,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         A negative ascender offset moves the glyph down.
       </remarks>
     </member>
-    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasGlyphOrientation" Experimental="true">
+    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasGlyphOrientation">
       <summary>Specifies what type of rotation will be applied to glyphs.</summary>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.Text.CanvasGlyphOrientation.Upright">
@@ -56,7 +56,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="F:Microsoft.Graphics.Canvas.Text.CanvasGlyphOrientation.Clockwise270Degrees">
       <summary>Specifies that a clockwise 270 degree rotation is applied to the glyph.</summary>
     </member>
-    <member name="T:Microsoft.Graphics.Canvas.Text.ICanvasTextRenderer" Experimental="true">
+    <member name="T:Microsoft.Graphics.Canvas.Text.ICanvasTextRenderer">
       <summary>An application-implemented interface for receiving detailed rendering information about text layouts.</summary>
       <remarks>
          <p>

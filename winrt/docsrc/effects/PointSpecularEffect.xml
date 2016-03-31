@@ -44,7 +44,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="P:Microsoft.Graphics.Canvas.Effects.PointSpecularEffect.LightColor">
       <summary>Color of the incoming light. Default value white.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.Effects.PointSpecularEffect.LightColorHdr" Experimental="true">
+    <member name="P:Microsoft.Graphics.Canvas.Effects.PointSpecularEffect.LightColorHdr">
       <summary>High-dynamic-range color of the incoming light. Default value white.</summary>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Effects.PointSpecularEffect.HeightMapScale">

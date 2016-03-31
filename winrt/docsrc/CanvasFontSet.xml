@@ -10,7 +10,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <name>Microsoft.Graphics.Canvas</name>
   </assembly>
   <members>
-    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasFontProperty" Experimental="true">
+    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasFontProperty">
       <summary>Describes a localized string attribute of a font.</summary>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.Text.CanvasFontProperty.Identifier">
@@ -23,7 +23,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <summary>Specifies the locale of a property value.</summary>
       <remarks>A font may have the same value represented multiple times for different locales.</remarks>
     </member>
-    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasFontPropertyIdentifier"  Experimental="true">
+    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasFontPropertyIdentifier">
       <summary>Indentifies a property of the font.</summary>
       <remarks>
       	In a font set's assortment of properties, a PreferredFamilyName property is 
@@ -75,7 +75,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="F:Microsoft.Graphics.Canvas.Text.CanvasFontPropertyIdentifier.Total">
       <summary>The total number of properties.</summary>
     </member>
-    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasFontSet" Experimental="true">
+    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasFontSet">
       <summary>Represents a grouping of fonts.</summary>
       <remarks>
         <p>

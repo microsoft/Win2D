@@ -300,7 +300,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       </remarks>
     </member>
     
-    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextFormat.GetSystemFontFamilies(System.Collections.Generic.IReadOnlyList{System.String})" Experimental="true">
+    <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTextFormat.GetSystemFontFamilies(System.Collections.Generic.IReadOnlyList{System.String})">
       <summary>Gets a list of font families available, prioritizing the specified locales.</summary>
       <remarks>
         <p>
@@ -402,7 +402,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <remarks>This is set to 'true' by default.</remarks>
     </member>    
     
-    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasTrimmingSign"  Experimental="true">
+    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasTrimmingSign">
       <summary>Specifies the trimming sign that is used when drawing a text layout.</summary>
       <remarks>
         A trimming sign is a symbol that shows up when the text sticking out
@@ -418,12 +418,12 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <summary>When text is trimmed, an ellipsis ("&#8230;") symbol appears.</summary>
     </member>
 
-    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextFormat.TrimmingSign" Experimental="true">
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextFormat.TrimmingSign">
       <summary>Specifies the type of trimming sign used, when text is drawn outside a text layout's requested size extents.</summary>
       <remarks>By default, no trimming sign is used. The text will just appear chopped off at the size boundary.</remarks>
     </member>
     
-    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextFormat.CustomTrimmingSign" Experimental="true">
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextFormat.CustomTrimmingSign">
       <summary>Gets or sets a custom trimming sign.</summary>
       <remarks>
         <p>

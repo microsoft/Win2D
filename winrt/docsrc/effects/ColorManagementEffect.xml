@@ -11,7 +11,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
   </assembly>
   <members>
   
-    <member name="T:Microsoft.Graphics.Canvas.Effects.ColorManagementEffect" Experimental="true" NoComposition="true">
+    <member name="T:Microsoft.Graphics.Canvas.Effects.ColorManagementEffect" NoComposition="true">
       <summary>Transforms an image from one ICC (International Color Consortium) color profile to another.</summary>
       <remarks>
         <p>This Windows Runtime type corresponds to the 
@@ -71,7 +71,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <inherittemplate name="EffectTemplate" replacement="ColorManagementEffect" />
     <inherittemplate name="ICanvasEffectTemplate" replacement="ColorManagementEffect" />
 
-    <member name="T:Microsoft.Graphics.Canvas.Effects.ColorManagementProfile" Experimental="true">
+    <member name="T:Microsoft.Graphics.Canvas.Effects.ColorManagementProfile">
       <summary>Describes an ICC (International Color Consortium) color profile.</summary>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Effects.ColorManagementProfile.#ctor(Microsoft.Graphics.Canvas.CanvasColorSpace)">
@@ -90,7 +90,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <summary>Gets the ICC color profile.</summary>
     </member>
 
-    <member name="T:Microsoft.Graphics.Canvas.Effects.ColorManagementEffectQuality" Experimental="true">
+    <member name="T:Microsoft.Graphics.Canvas.Effects.ColorManagementEffectQuality">
       <summary>Specifies quality vs. performance tradeoff for ColorManagementEffect.</summary>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.Effects.ColorManagementEffectQuality.Proof">
@@ -113,7 +113,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       </summary>
     </member>
 
-    <member name="T:Microsoft.Graphics.Canvas.Effects.ColorManagementRenderingIntent" Experimental="true">
+    <member name="T:Microsoft.Graphics.Canvas.Effects.ColorManagementRenderingIntent">
       <summary>Specifies the ICC (International Color Consortium) rendering intent for use by ColorManagementEffect.</summary>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.Effects.ColorManagementRenderingIntent.Perceptual">

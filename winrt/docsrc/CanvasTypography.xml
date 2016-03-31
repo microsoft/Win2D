@@ -10,7 +10,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <name>Microsoft.Graphics.Canvas</name>
   </assembly>
   <members>
-    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasTypography" Experimental="true">
+    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasTypography">
       <summary>
         Represents a collection of typography features.
       </summary>
@@ -60,7 +60,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="M:Microsoft.Graphics.Canvas.Text.CanvasTypography.Dispose">
       <summary>Releases all resources used by the CanvasTypography.</summary>
     </member>
-    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeature" Experimental="true">
+    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeature">
       <summary>Describes an OpenType font feature name and its parameter.</summary>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeature.Name">
@@ -69,7 +69,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeature.Parameter">
       <summary>A parameter which is passed to an OpenType font feature.</summary>
     </member>
-    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeatureName" Experimental="true">
+    <member name="T:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeatureName">
       <summary>Identifies an OpenType font feature.</summary>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTypographyFeatureName.None">

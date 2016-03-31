@@ -45,7 +45,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="P:Microsoft.Graphics.Canvas.Effects.VignetteEffect.Color">
       <summary>Specifies the color to fade toward. Default value black.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.Effects.VignetteEffect.ColorHdr" Experimental="true">
+    <member name="P:Microsoft.Graphics.Canvas.Effects.VignetteEffect.ColorHdr">
       <summary>Specifies the high-dynamic-range color to fade toward. Default value black.</summary>
     </member>
 
