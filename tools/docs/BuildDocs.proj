@@ -80,9 +80,14 @@
 
     <PropertyGroup>
       <DocDiffTool>$(BinariesDirectory)\WindowsAnyCPU\$(Configuration)\DocDiff\DocDiff.exe</DocDiffTool>
+      <DocDiffResponseFile>$(IntermediateOutputPath)DocDiff.args</DocDiffResponseFile>
     </PropertyGroup>
 
-    <Exec Command="&quot;$(DocDiffTool)&quot; /LogMissingDocs:&quot;$(IntermediateOutputPath)MissingDocs.xml&quot; /DocSrcPath:&quot;$(IntermediateOutputPath)docsrc&quot; @(DocSrc->'/DocSrc:%(Filename)%(Extension)', ' ') @(InputAssembly->'/ApiRef:&quot;$(IntermediateOutputPath)%(Filename).xml&quot;', ' ') @(WildcardConceptual->'/AmlSrc:&quot;%(Identity)&quot;', ' ')" />
+    <WriteLinesToFile File="$(DocDiffResponseFile)" Lines="@(DocSrc->'/DocSrc:%(Filename)%(Extension)')" Overwrite="true" />
+    <WriteLinesToFile File="$(DocDiffResponseFile)" Lines="@(WildcardConceptual->'/AmlSrc:%(Identity)')" Overwrite="false" />
+    <WriteLinesToFile File="$(DocDiffResponseFile)" Lines="@(InputAssembly->'/ApiRef:$(IntermediateOutputPath)%(Filename).xml')" Overwrite="false" />
+
+    <Exec Command="&quot;$(DocDiffTool)&quot; /LogMissingDocs:&quot;$(IntermediateOutputPath)MissingDocs.xml&quot; /DocSrcPath:&quot;$(IntermediateOutputPath)docsrc&quot; @$(DocDiffResponseFile)" />
   </Target>
 
 
@@ -96,9 +101,13 @@
 
     <PropertyGroup>
       <DocPreprocessTool>$(BinariesDirectory)\WindowsAnyCPU\$(Configuration)\DocPreprocess\DocPreprocess.exe</DocPreprocessTool>
+      <DocPreprocessResponseFile>$(IntermediateOutputPath)DocPreprocess.args</DocPreprocessResponseFile>
     </PropertyGroup>
 
-    <Exec Command="&quot;$(DocPreprocessTool)&quot; /LayoutContent:$(MsBuildThisFileDirectory)Layout.content /DocSrcOutput:$(IntermediateOutputPath)docsrc /TopicsOutput:$(IntermediateOutputPath)topics @(DocSrc, ' ') @(WildcardConceptual->'/AmlSrc:&quot;%(Identity)&quot;', ' ')" />
+    <WriteLinesToFile File="$(DocPreprocessResponseFile)" Lines="@(DocSrc)" Overwrite="true" />
+    <WriteLinesToFile File="$(DocPreprocessResponseFile)" Lines="@(WildcardConceptual->'/AmlSrc:%(Identity)')" Overwrite="false" />
+
+    <Exec Command="&quot;$(DocPreprocessTool)&quot; /LayoutContent:$(MsBuildThisFileDirectory)Layout.content /DocSrcOutput:$(IntermediateOutputPath)docsrc /TopicsOutput:$(IntermediateOutputPath)topics @$(DocPreprocessResponseFile)" />
   </Target>
 
 
@@ -124,9 +133,12 @@
 
     <PropertyGroup>
       <MergeIntellisenseTool>$(BinariesDirectory)\WindowsAnyCPU\$(Configuration)\MergeIntellisense\MergeIntellisense.exe</MergeIntellisenseTool>
+      <MergeIntellisenseResponseFile>$(IntermediateOutputPath)MergeIntellisense.args</MergeIntellisenseResponseFile>
     </PropertyGroup>
 
-    <Exec Command="&quot;$(MergeIntellisenseTool)&quot; &quot;$(BinariesDirectory)\intellisense\%(InputAssembly.Filename).xml&quot; @(DocSrc->'&quot;$(IntermediateOutputPath)docsrc\%(Filename)%(Extension)&quot;', ' ')" />
+    <WriteLinesToFile File="$(MergeIntellisenseResponseFile)" Lines="@(DocSrc->'$(IntermediateOutputPath)docsrc\%(Filename)%(Extension)')" Overwrite="true" />
+
+    <Exec Command="&quot;$(MergeIntellisenseTool)&quot; &quot;$(BinariesDirectory)\intellisense\%(InputAssembly.Filename).xml&quot; @$(MergeIntellisenseResponseFile)" />
   </Target>
 
   <Import Project="$(MsBuildThisFileDirectory)..\..\build\nuget-restore.targets" />
