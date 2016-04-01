@@ -86,7 +86,12 @@ namespace Shared
 
         bool ParseArgument(string arg)
         {
-            if (arg.StartsWith("/"))
+            if (arg.StartsWith("@"))
+            {
+                // Parse a response file.
+                return ParseResponseFile(arg.Substring(1));
+            }
+            else if (arg.StartsWith("/"))
             {
                 // Parse an optional argument.
                 char[] separators = { ':' };
@@ -124,6 +129,26 @@ namespace Shared
 
                 return SetOption(field, arg);
             }
+        }
+
+
+        bool ParseResponseFile(string filename)
+        {
+            string[] lines;
+
+            try
+            {
+                lines = File.ReadAllLines(filename);
+            }
+            catch
+            {
+                ShowError("Error reading response file '{0}'", filename);
+                return false;
+            }
+
+            return lines.Select(line => line.Trim())
+                        .Where(line => !string.IsNullOrEmpty(line))
+                        .All(line => ParseArgument(line));
         }
 
 
@@ -205,16 +230,15 @@ namespace Shared
             Console.Error.WriteLine();
             Console.Error.WriteLine("Usage: {0} {1}", name, string.Join(" ", requiredUsageHelp));
 
-            if (optionalUsageHelp.Count > 0)
-            {
-                Console.Error.WriteLine();
-                Console.Error.WriteLine("Options:");
+            Console.Error.WriteLine();
+            Console.Error.WriteLine("Options:");
 
-                foreach (string optional in optionalUsageHelp)
-                {
-                    Console.Error.WriteLine("    {0}", optional);
-                }
+            foreach (string optional in optionalUsageHelp)
+            {
+                Console.Error.WriteLine("    {0}", optional);
             }
+
+            Console.Error.WriteLine("    @responseFile");
         }
 
 
