@@ -350,15 +350,15 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
   <template name="SpriteBatch.Tint-remarks">
     <p>The tint parameter is specified in non-premultiplied format.</p>
     <p>
-      The value of the tint parameter is a <c>Vector4</c> that specifies the red,
+      The value of the tint parameter is a Vector4 that specifies the red,
       green, blue and alpha amounts to scale the bitmap's color by. The default
-      value is <c>Vector4.One</c>, which would result in scaling all four color channels by 1,
-      keeping everything the same. A value of <c>Vector4(2, 1, 1, 1)</c> would tint the
+      value is Vector4.One, which would result in scaling all four color channels by 1,
+      keeping everything the same. A value of Vector4(2, 1, 1, 1) would tint the
       sprite red by doubling the red amount of each source color. A value of
-      <c>Vector4(1, 1, 1, 0.5f)</c> would draw the sprite at half opacity.
+      Vector4(1, 1, 1, 0.5f) would draw the sprite at half opacity.
     </p>
     <p>
-      You can tint with a <c>Windows.UI.Color</c> type by using:
+      You can tint with a Windows.UI.Color type by using:
     </p>
     <code language="C#">
         <![CDATA[
