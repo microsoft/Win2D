@@ -93,6 +93,18 @@ namespace System.Numerics
         }
 
 
+        public Matrix4x4(double m11, double m12, double m13, double m14,
+                         double m21, double m22, double m23, double m24,
+                         double m31, double m32, double m33, double m34,
+                         double m41, double m42, double m43, double m44)
+        {
+            M11 = m11.ToFloat(); M12 = m12.ToFloat(); M13 = m13.ToFloat(); M14 = m14.ToFloat();
+            M21 = m21.ToFloat(); M22 = m22.ToFloat(); M23 = m23.ToFloat(); M24 = m24.ToFloat();
+            M31 = m31.ToFloat(); M32 = m32.ToFloat(); M33 = m33.ToFloat(); M34 = m34.ToFloat();
+            M41 = m41.ToFloat(); M42 = m42.ToFloat(); M43 = m43.ToFloat(); M44 = m44.ToFloat();
+        }
+
+
         public Matrix4x4(Matrix3x2 value)
         {
             M11 = value.M11; M12 = value.M12; M13 = 0f; M14 = 0f;
@@ -242,6 +254,12 @@ namespace System.Numerics
         }
 
 
+        public static Matrix4x4 CreateTranslation(double xPosition, double yPosition, double zPosition)
+        {
+            return CreateTranslation(xPosition.ToFloat(), yPosition.ToFloat(), zPosition.ToFloat());
+        }
+
+
         public static Matrix4x4 CreateScale(float xScale, float yScale, float zScale)
         {
             Matrix4x4 result;
@@ -254,6 +272,11 @@ namespace System.Numerics
             return result;
         }
 
+
+        public static Matrix4x4 CreateScale(double xScale, double yScale, double zScale)
+        {
+            return CreateScale(xScale.ToFloat(), yScale.ToFloat(), zScale.ToFloat());
+        }
 
         public static Matrix4x4 CreateScale(float xScale, float yScale, float zScale, Vector3 centerPoint)
         { 
@@ -269,6 +292,11 @@ namespace System.Numerics
             result.M41 = tx;     result.M42 = ty;     result.M43 = tz;     result.M44 = 1.0f;
 
             return result;
+        }
+
+        public static Matrix4x4 CreateScale(double xScale, double yScale, double zScale, Vector3 centerPoint)
+        {
+            return CreateScale(xScale.ToFloat(), yScale.ToFloat(), zScale.ToFloat(), centerPoint);
         }
 
 
@@ -315,6 +343,12 @@ namespace System.Numerics
         }
 
 
+        public static Matrix4x4 CreateScale(double scale)
+        {
+            return CreateScale(scale.ToFloat());
+        }
+
+
         public static Matrix4x4 CreateScale(float scale, Vector3 centerPoint)
         {
             Matrix4x4 result;
@@ -329,6 +363,12 @@ namespace System.Numerics
             result.M41 = tx;    result.M42 = ty;    result.M43 = tz;    result.M44 = 1.0f;
 
             return result;
+        }
+
+
+        public static Matrix4x4 CreateScale(double scale, Vector3 centerPoint)
+        {
+            return CreateScale(scale.ToFloat(), centerPoint);
         }
 
 
@@ -349,6 +389,12 @@ namespace System.Numerics
             result.M41 = 0.0f; result.M42 = 0.0f; result.M43 = 0.0f; result.M44 = 1.0f;
 
             return result;
+        }
+
+
+        public static Matrix4x4 CreateRotationX(double radians)
+        {
+            return CreateRotationX(radians.ToFloat());
         }
 
 
@@ -375,6 +421,12 @@ namespace System.Numerics
         }
 
 
+        public static Matrix4x4 CreateRotationX(double radians, Vector3 centerPoint)
+        {
+            return CreateRotationX(radians.ToFloat(), centerPoint);
+        }
+
+
         public static Matrix4x4 CreateRotationY(float radians)
         {
             Matrix4x4 result;
@@ -392,6 +444,12 @@ namespace System.Numerics
             result.M41 = 0.0f; result.M42 = 0.0f; result.M43 = 0.0f; result.M44 = 1.0f;
 
             return result;
+        }
+
+
+        public static Matrix4x4 CreateRotationY(double radians)
+        {
+            return CreateRotationY(radians.ToFloat());
         }
 
 
@@ -418,6 +476,12 @@ namespace System.Numerics
         }
 
 
+        public static Matrix4x4 CreateRotationY(double radians, Vector3 centerPoint)
+        {
+            return CreateRotationY(radians.ToFloat(), centerPoint);
+        }
+
+
         public static Matrix4x4 CreateRotationZ(float radians)
         {
             Matrix4x4 result;
@@ -437,6 +501,11 @@ namespace System.Numerics
             return result;
         }
 
+
+        public static Matrix4x4 CreateRotationZ(double radians)
+        {
+            return CreateRotationZ(radians.ToFloat());
+        }
 
         public static Matrix4x4 CreateRotationZ(float radians, Vector3 centerPoint)
         {
@@ -458,6 +527,11 @@ namespace System.Numerics
             result.M41 =    x; result.M42 =    y; result.M43 = 0.0f; result.M44 = 1.0f;
 
             return result;
+        }
+
+        public static Matrix4x4 CreateRotationZ(double radians, Vector3 centerPoint)
+        {
+            return CreateRotationZ(radians.ToFloat(), centerPoint);
         }
 
 
@@ -504,6 +578,12 @@ namespace System.Numerics
         }
 
 
+        public static Matrix4x4 CreateFromAxisAngle(Vector3 axis, double angle)
+        {
+            return CreateFromAxisAngle(axis, angle.ToFloat());
+        }
+
+
         public static Matrix4x4 CreatePerspectiveFieldOfView(float fieldOfView, float aspectRatio, float nearPlaneDistance, float farPlaneDistance)
         {
             if (fieldOfView <= 0.0f || fieldOfView >= SM.PI)
@@ -540,6 +620,13 @@ namespace System.Numerics
         }
 
 
+        public static Matrix4x4 CreatePerspectiveFieldOfView(double fieldOfView, double aspectRatio,
+            double nearPlaneDistance, double farPlaneDistance)
+        {
+            return CreatePerspectiveFieldOfView(fieldOfView.ToFloat(), aspectRatio.ToFloat(),
+                nearPlaneDistance.ToFloat(), farPlaneDistance.ToFloat());
+        }
+
         public static Matrix4x4 CreatePerspective(float width, float height, float nearPlaneDistance, float farPlaneDistance)
         {
             if (nearPlaneDistance <= 0.0f)
@@ -567,6 +654,13 @@ namespace System.Numerics
             result.M43 = nearPlaneDistance * farPlaneDistance / (nearPlaneDistance - farPlaneDistance);
 
             return result;
+        }
+
+        public static Matrix4x4 CreatePerspective(double width, double height, double nearPlaneDistance,
+            double farPlaneDistance)
+        {
+            return CreatePerspective(width.ToFloat(), height.ToFloat(), nearPlaneDistance.ToFloat(),
+                farPlaneDistance.ToFloat());
         }
 
 
@@ -601,6 +695,14 @@ namespace System.Numerics
         }
 
 
+        public static Matrix4x4 CreatePerspectiveOffCenter(double left, double right, double bottom, double top,
+            double nearPlaneDistance, double farPlaneDistance)
+        {
+            return CreatePerspectiveOffCenter(left.ToFloat(), right.ToFloat(), bottom.ToFloat(), top.ToFloat(),
+                nearPlaneDistance.ToFloat(), farPlaneDistance.ToFloat());
+        }
+
+
         public static Matrix4x4 CreateOrthographic(float width, float height, float zNearPlane, float zFarPlane)
         {
             Matrix4x4 result;
@@ -619,6 +721,12 @@ namespace System.Numerics
             result.M44 = 1.0f;
 
             return result;
+        }
+
+
+        public static Matrix4x4 CreateOrthographic(double width, double height, double zNearPlane, double zFarPlane)
+        {
+            return CreateOrthographic(width.ToFloat(), height.ToFloat(), zNearPlane.ToFloat(), zFarPlane.ToFloat());
         }
 
 
@@ -641,6 +749,14 @@ namespace System.Numerics
             result.M44 = 1.0f;
 
             return result;
+        }
+
+
+        public static Matrix4x4 CreateOrthographicOffCenter(double left, double right, double bottom, double top,
+            double zNearPlane, double zFarPlane)
+        {
+            return CreateOrthographicOffCenter(left.ToFloat(), right.ToFloat(), bottom.ToFloat(), top.ToFloat(),
+                zNearPlane.ToFloat(), zFarPlane.ToFloat());
         }
 
 
@@ -709,6 +825,14 @@ namespace System.Numerics
 
 
         public static Matrix4x4 CreateFromYawPitchRoll(float yaw, float pitch, float roll)
+        {
+            Quaternion q = Quaternion.CreateFromYawPitchRoll(yaw, pitch, roll);
+
+            return Matrix4x4.CreateFromQuaternion(q);
+        }
+
+
+        public static Matrix4x4 CreateFromYawPitchRoll(double yaw, double pitch, double roll)
         {
             Quaternion q = Quaternion.CreateFromYawPitchRoll(yaw, pitch, roll);
 
@@ -1394,6 +1518,11 @@ namespace System.Numerics
             return result;
         }
 
+        public static Matrix4x4 Multiply(Matrix4x4 value1, double value2)
+        {
+            return Multiply(value1, value2.ToFloat());
+        }
+
 
         public static Matrix4x4 operator -(Matrix4x4 value)
         {
@@ -1476,6 +1605,12 @@ namespace System.Numerics
             m.M41 = value1.M41 * value2; m.M42 = value1.M42 * value2; m.M43 = value1.M43 * value2; m.M44 = value1.M44 * value2;
 
             return m;
+        }
+
+
+        public static Matrix4x4 operator *(Matrix4x4 value1, double value2)
+        {
+            return Multiply(value1, value2);
         }
 
 

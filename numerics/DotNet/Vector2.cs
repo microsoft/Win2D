@@ -14,29 +14,37 @@ namespace System.Numerics
         public float Y;
 
 
-        public static Vector2 Zero  { get { return new Vector2(); } }
-        public static Vector2 One   { get { return new Vector2(1.0f, 1.0f); } }
+        public static Vector2 Zero { get { return new Vector2(); } }
+        public static Vector2 One { get { return new Vector2(1.0f, 1.0f); } }
         public static Vector2 UnitX { get { return new Vector2(1.0f, 0.0f); } }
         public static Vector2 UnitY { get { return new Vector2(0.0f, 1.0f); } }
 
-
         public Vector2(float x, float y)
         {
-            X = x; 
+            X = x;
             Y = y;
         }
 
+        public Vector2(double x, double y)
+        {
+            X = x.ToFloat();
+            Y = y.ToFloat();
+        }
 
         public Vector2(float value)
         {
             X = Y = value;
         }
 
+        public Vector2(double value)
+        {
+            X = Y = value.ToFloat();
+        }
 
         public float Length()
         {
             float ls = X * X + Y * Y;
-            
+
             return (float)SM.Sqrt((double)ls);
         }
 
@@ -51,7 +59,7 @@ namespace System.Numerics
         {
             float dx = value1.X - value2.X;
             float dy = value1.Y - value2.Y;
-            
+
             float ls = dx * dx + dy * dy;
 
             return (float)SM.Sqrt((double)ls);
@@ -62,14 +70,14 @@ namespace System.Numerics
         {
             float dx = value1.X - value2.X;
             float dy = value1.Y - value2.Y;
-            
+
             return dx * dx + dy * dy;
         }
 
 
         public static float Dot(Vector2 value1, Vector2 value2)
         {
-            return value1.X * value2.X + 
+            return value1.X * value2.X +
                    value1.Y * value2.Y;
         }
 
@@ -77,7 +85,7 @@ namespace System.Numerics
         public static Vector2 Normalize(Vector2 value)
         {
             Vector2 ans;
-            
+
             float ls = value.X * value.X + value.Y * value.Y;
             float invNorm = 1.0f / (float)SM.Sqrt((double)ls);
 
@@ -104,10 +112,10 @@ namespace System.Numerics
         public static Vector2 Min(Vector2 value1, Vector2 value2)
         {
             Vector2 ans;
-            
+
             ans.X = (value1.X < value2.X) ? value1.X : value2.X;
             ans.Y = (value1.Y < value2.Y) ? value1.Y : value2.Y;
-            
+
             return ans;
         }
 
@@ -115,10 +123,10 @@ namespace System.Numerics
         public static Vector2 Max(Vector2 value1, Vector2 value2)
         {
             Vector2 ans;
-            
+
             ans.X = (value1.X > value2.X) ? value1.X : value2.X;
             ans.Y = (value1.Y > value2.Y) ? value1.Y : value2.Y;
-            
+
             return ans;
         }
 
@@ -150,6 +158,17 @@ namespace System.Numerics
 
             ans.X = value1.X + (value2.X - value1.X) * amount;
             ans.Y = value1.Y + (value2.Y - value1.Y) * amount;
+
+            return ans;
+        }
+
+
+        public static Vector2 Lerp(Vector2 value1, Vector2 value2, double amount)
+        {
+            Vector2 ans;
+
+            ans.X = value1.X + (value2.X - value1.X) * amount.ToFloat();
+            ans.Y = value1.Y + (value2.Y - value1.Y) * amount.ToFloat();
 
             return ans;
         }
@@ -275,6 +294,17 @@ namespace System.Numerics
         }
 
 
+        public static Vector2 Multiply(Vector2 value1, double value2)
+        {
+            Vector2 ans;
+
+            ans.X = value1.X * value2.ToFloat();
+            ans.Y = value1.Y * value2.ToFloat();
+
+            return ans;
+        }
+
+
         public static Vector2 Divide(Vector2 value1, Vector2 value2)
         {
             Vector2 ans;
@@ -291,6 +321,19 @@ namespace System.Numerics
             Vector2 ans;
 
             float invDiv = 1.0f / value2;
+
+            ans.X = value1.X * invDiv;
+            ans.Y = value1.Y * invDiv;
+
+            return ans;
+        }
+
+
+        public static Vector2 Divide(Vector2 value1, double value2)
+        {
+            Vector2 ans;
+
+            float invDiv = (1.0 / value2).ToFloat();
 
             ans.X = value1.X * invDiv;
             ans.Y = value1.Y * invDiv;
@@ -354,12 +397,34 @@ namespace System.Numerics
         }
 
 
+        public static Vector2 operator *(Vector2 value1, double value2)
+        {
+            Vector2 ans;
+
+            ans.X = value1.X * value2.ToFloat();
+            ans.Y = value1.Y * value2.ToFloat();
+
+            return ans;
+        }
+
+
         public static Vector2 operator *(float value1, Vector2 value2)
         {
             Vector2 ans;
 
             ans.X = value2.X * value1;
             ans.Y = value2.Y * value1;
+
+            return ans;
+        }
+
+
+        public static Vector2 operator *(double value1, Vector2 value2)
+        {
+            Vector2 ans;
+
+            ans.X = value2.X * value1.ToFloat();
+            ans.Y = value2.Y * value1.ToFloat();
 
             return ans;
         }
@@ -381,7 +446,20 @@ namespace System.Numerics
             Vector2 ans;
 
             float invDiv = 1.0f / value2;
-            
+
+            ans.X = value1.X * invDiv;
+            ans.Y = value1.Y * invDiv;
+
+            return ans;
+        }
+
+
+        public static Vector2 operator /(Vector2 value1, double value2)
+        {
+            Vector2 ans;
+
+            float invDiv = (1.0 / value2).ToFloat();
+
             ans.X = value1.X * invDiv;
             ans.Y = value1.Y * invDiv;
 
@@ -434,7 +512,7 @@ namespace System.Numerics
             return X.GetHashCode() + Y.GetHashCode();
         }
 
-        
+
 #if INCLUDE_WINRT_CANVAS_INTEROP
 
         public static unsafe implicit operator Microsoft.Graphics.Canvas.Numerics.Vector2(Vector2 value)
