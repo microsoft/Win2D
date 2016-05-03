@@ -104,6 +104,7 @@
       <DocPreprocessResponseFile>$(IntermediateOutputPath)DocPreprocess.args</DocPreprocessResponseFile>
     </PropertyGroup>
 
+    <MakeDir Directories="$(IntermediateOutputPath)" />
     <WriteLinesToFile File="$(DocPreprocessResponseFile)" Lines="@(DocSrc)" Overwrite="true" />
     <WriteLinesToFile File="$(DocPreprocessResponseFile)" Lines="@(WildcardConceptual->'/AmlSrc:%(Identity)')" Overwrite="false" />
 
