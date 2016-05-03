@@ -337,3 +337,52 @@ TEST_CLASS(GameLoopThreadTests)
         // If this test fails then CreateThread will never return.
     }
 };
+
+
+TEST_CLASS(CanvasGameLoopTests)
+{
+    //
+    // This repros a specific issue that may be the root cause of
+    // https://github.com/Microsoft/Win2D/issues/338 that happens when
+    // ScheduleTick runs something on a dispatcher such that the IAsyncAction
+    // completes before it gets a chance to call put_Completed.  This can result
+    // in a mutex being taken recursively.
+    //
+    TEST_METHOD_EX(CanvasGameLoop_When_TickCompletes_BeforeCompletionHandlerRegistered_NothingBadHappens)
+    {
+        MockGameLoopClient gameLoopClient;
+
+        class MockGameLoopThread : public IGameLoopThread
+        {
+            bool m_first;
+
+        public:
+            MockGameLoopThread()
+                : m_first(true)
+            {}
+            
+            virtual ComPtr<IAsyncAction> RunAsync(IDispatchedHandler* handler) override
+            {
+                auto action = Make<AnimatedControlAsyncAction>(handler);
+                if (m_first)
+                {
+                    action->InvokeAndFireCompletion();
+                    m_first = false;
+                }
+                return action;
+            }
+
+            virtual void StartDispatcher() override {}
+            virtual void StopDispatcher() override {}
+            virtual bool HasThreadAccess() override { return true; }
+        };
+
+        CanvasGameLoop gameLoop(&gameLoopClient, std::make_unique<MockGameLoopThread>());
+
+        CanvasSwapChain* anySwapChain{};
+        bool anyAreResourcesCreated{};
+        gameLoop.StartTickLoop(anySwapChain, anyAreResourcesCreated);
+        
+    }
+};
+

@@ -27,7 +27,13 @@ CanvasGameLoop::CanvasGameLoop(
     m_tickCompletedHandler = Callback<AddFtmBase<IAsyncActionCompletedHandler>::Type>(
         [this] (IAsyncAction* action, AsyncStatus status)
         {
-            return ExceptionBoundary([&] { TickCompleted(action, status); });
+            HRESULT hr = ExceptionBoundary([&] { TickCompleted(action, status); });
+
+            // We don't expect this to fail.  If it does we want to know immediately.
+            if (FAILED(hr))
+                RoFailFastWithErrorContext(hr); // (this never returns)
+            
+            return S_OK;
         });
     CheckMakeResult(m_tickCompletedHandler);
 }
@@ -51,7 +57,7 @@ void CanvasGameLoop::TickCompleted(IAsyncAction* action, AsyncStatus status)
 
     // This is called when the Tick completes, even if Tick threw an exception.
     
-    auto lock = Lock(m_mutex);
+    auto lock = RecursiveLock(m_mutex);
     
     if (m_tickLoopShouldContinue && status == AsyncStatus::Completed)
     {
@@ -68,7 +74,7 @@ void CanvasGameLoop::StartTickLoop(
     CanvasSwapChain* target,
     bool areResourcesCreated)
 {
-    auto lock = Lock(m_mutex);
+    auto lock = RecursiveLock(m_mutex);
 
     assert(!m_tickLoopAction);
     m_completedTickLoopInfo.Reset();
@@ -79,7 +85,7 @@ void CanvasGameLoop::StartTickLoop(
     ScheduleTick(lock);
 }
 
-void CanvasGameLoop::ScheduleTick(Lock const& lock)
+void CanvasGameLoop::ScheduleTick(RecursiveLock const& lock)
 {
     MustOwnLock(lock);
 
@@ -87,7 +93,7 @@ void CanvasGameLoop::ScheduleTick(Lock const& lock)
     ThrowIfFailed(m_tickLoopAction->put_Completed(m_tickCompletedHandler.Get()));    
 }
 
-void CanvasGameLoop::EndTickLoop(Lock const& lock)
+void CanvasGameLoop::EndTickLoop(RecursiveLock const& lock)
 {
     MustOwnLock(lock);
 
@@ -97,7 +103,7 @@ void CanvasGameLoop::EndTickLoop(Lock const& lock)
 
 void CanvasGameLoop::TakeTickLoopState(bool* isRunning, ComPtr<IAsyncInfo>* completedTickLoopState)
 {
-    auto lock = Lock(m_mutex);
+    auto lock = RecursiveLock(m_mutex);
     *isRunning = static_cast<bool>(m_tickLoopAction);
     *completedTickLoopState = m_completedTickLoopInfo;
     m_completedTickLoopInfo.Reset();

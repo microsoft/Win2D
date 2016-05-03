@@ -23,7 +23,7 @@ public:
 
 class CanvasGameLoop : private LifespanTracker<CanvasGameLoop>
 {
-    std::mutex m_mutex;
+    std::recursive_mutex m_mutex;
 
     // The client (ie the CanvasAnimatedControl) owns the CanvasGameLoop,
     // and we ensure that this object never outlives the clietn, so we can
@@ -69,6 +69,6 @@ private:
     void Tick();
     void TickCompleted(IAsyncAction* action, AsyncStatus status);
 
-    void ScheduleTick(Lock const& lock);
-    void EndTickLoop(Lock const& lock);
+    void ScheduleTick(RecursiveLock const& lock);
+    void EndTickLoop(RecursiveLock const& lock);
 };
