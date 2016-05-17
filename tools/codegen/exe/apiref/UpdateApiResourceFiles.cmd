@@ -44,7 +44,7 @@ IF NOT "%1"=="" (
    SET GIT_TREE_LOCATION=%1
 )
 
-SET COPYRIGHT_BANNER_FILENAME=%GIT_TREE_LOCATION%\tools\copyright\copyright.txt
+SET COPYRIGHT_BANNER_FILENAME=%GIT_TREE_LOCATION%\tools\checkcode\copyright.txt
 
 
 :: Copy the Direct2D API description files.
