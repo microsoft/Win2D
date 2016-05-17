@@ -427,8 +427,17 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\EffectTransferTable3D.cpp">
       <Filter>effects</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)effects\ColorManagementEffectFactory.cpp">
-      <Filter>effects</Filter>
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\TintEffect.cpp">
+      <Filter>effects\generated</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\AlphaMaskEffect.cpp">
+      <Filter>effects\generated</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\CrossFadeEffect.cpp">
+      <Filter>effects\generated</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\OpacityEffect.cpp">
+      <Filter>effects\generated</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -871,8 +880,17 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\EffectTransferTable3D.h">
       <Filter>effects</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)effects\ColorManagementEffectFactory.h">
-      <Filter>effects</Filter>
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\TintEffect.h">
+      <Filter>effects\generated</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\AlphaMaskEffect.h">
+      <Filter>effects\generated</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\CrossFadeEffect.h">
+      <Filter>effects\generated</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\OpacityEffect.h">
+      <Filter>effects\generated</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1162,8 +1180,17 @@
     <None Include="$(MSBuildThisFileDirectory)effects\EffectTransferTable3D.abi.idl">
       <Filter>effects</Filter>
     </None>
-    <None Include="$(MSBuildThisFileDirectory)effects\ColorManagementEffectStatics.abi.idl">
-      <Filter>effects</Filter>
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\TintEffect.abi.idl">
+      <Filter>effects\generated</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\AlphaMaskEffect.abi.idl">
+      <Filter>effects\generated</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\CrossFadeEffect.abi.idl">
+      <Filter>effects\generated</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\OpacityEffect.abi.idl">
+      <Filter>effects\generated</Filter>
     </None>
   </ItemGroup>
 </Project>

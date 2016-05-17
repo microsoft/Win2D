@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<!--
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+Licensed under the MIT License. See LICENSE.txt in the project root for license information.
+-->
+
+<doc>
+  <assembly>
+    <name>Microsoft.Graphics.Canvas</name>
+  </assembly>
+  <members>
+
+    <member name="T:Microsoft.Graphics.Canvas.Effects.CrossFadeEffect" Win10_14346="true">
+      <summary>
+        Cross-fades (interpolates) between two images.
+      </summary>
+      <remarks>
+        <!-- TODO once D2D updates MSDN
+        <p>This Windows Runtime type corresponds to the 
+          <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/TODO.aspx">D2D CrossFade effect</a>.</p>
+        -->
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Effects.CrossFadeEffect.#ctor">
+      <summary>Initializes a new instance of the CrossFadeEffect class.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.CrossFadeEffect.Source1">
+      <summary>Gets or sets the first input source for CrossFade effect.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.CrossFadeEffect.Source2">
+      <summary>Gets or sets the second input source for CrossFade effect.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.CrossFadeEffect.CrossFade">
+      <summary>Specifies the interpolation position between the two images. Default value 0.5, range 0 to 1.</summary>
+      <remarks>
+        <p>When CrossFade is 0, the Source1 image is output.</p>
+        <p>When CrossFade is 1, the Source2 image is output.</p>
+        <p>When CrossFade is 0.5, the output is a 50/50 blend of the two images.</p>
+      </remarks>
+    </member>
+    
+    <inherittemplate name="EffectTemplate" replacement="CrossFadeEffect" />
+    <inherittemplate name="ICanvasEffectTemplate" replacement="CrossFadeEffect" />
+    <inherittemplate name="EffectRequires14346Template" replacement="CrossFadeEffect" />
+
+  </members>
+</doc>

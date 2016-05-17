@@ -64,6 +64,12 @@ namespace Microsoft.Graphics.Canvas.Effects
 
     };
 
+    [version(VERSION), uuid(31C7AF98-F2D4-55FC-B129-A70736E6DA05), exclusiveto(ColorManagementEffect)]
+    interface IColorManagementEffectStatics : IInspectable
+    {
+        HRESULT IsBestQualitySupported(Microsoft.Graphics.Canvas.CanvasDevice* device, [out, retval] boolean* result);
+    }
+
     [STANDARD_ATTRIBUTES, activatable(VERSION), static(IColorManagementEffectStatics, VERSION)]
     runtimeclass ColorManagementEffect
     {

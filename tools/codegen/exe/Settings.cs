@@ -131,13 +131,19 @@ namespace CodeGen
                 public string WinVer;
 
                 [XmlAttributeAttribute]
-                public bool HasStatics;
+                public string IsSupportedCheck;
 
                 [XmlElement("Input")]
                 public List<EffectProperty> Inputs { get; set; }
 
                 [XmlElement("Property")]
                 public List<EffectProperty> Properties { get; set; }
+
+                [XmlElement]
+                public List<string> CustomStaticMethodIdl { get; set; }
+
+                [XmlElement]
+                public List<string> CustomStaticMethodDecl { get; set; }
             }
 
             public class Namespace

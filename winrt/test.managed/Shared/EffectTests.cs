@@ -52,6 +52,10 @@ namespace test.managed
 
             foreach (var effectType in effectTypes)
             {
+                // Skip testing eg. CrossFadeEffect if we are running on an OS that doesn't support it.
+                if (!IsEffectSupported(effectType))
+                    continue;
+
                 IGraphicsEffect effect = (IGraphicsEffect)Activator.CreateInstance(effectType.AsType());
 
                 // Test an un-realized effect instance.
@@ -355,8 +359,22 @@ namespace test.managed
                    where property.Name != "Sources"
                    where property.Name != "BufferPrecision"
                    where property.Name != "CacheOutput"
+                   where property.Name != "IsSupported"
                    where property.PropertyType != typeof(IGraphicsEffectSource)
                    select property;
+        }
+
+
+        static bool IsEffectSupported(TypeInfo effectType)
+        {
+            var isSupported = from property in effectType.DeclaredProperties
+                              where property.Name == "IsSupported"
+                              select property;
+
+            if (!isSupported.Any())
+                return true;
+
+            return (bool)isSupported.Single().GetValue(null);
         }
 
 

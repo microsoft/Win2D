@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+<!--
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+Licensed under the MIT License. See LICENSE.txt in the project root for license information.
+-->
+
+<doc>
+  <assembly>
+    <name>Microsoft.Graphics.Canvas</name>
+  </assembly>
+  <members>
+
+    <member name="T:Microsoft.Graphics.Canvas.Effects.TintEffect" Win10_14346="true">
+      <summary>
+        Tints an image using a specified color value.
+      </summary>
+      <remarks>
+        <p>
+          TintEffect multiplies its source image by the specified tint color.
+        </p>
+        <p>
+          If the color is white, the output is an exact copy of the source image.
+          If the source image is white, the output is the tint color.
+          Where a channel of the tint color is darker than white, that channel of
+          the output image is darkened by a corresponding amount.
+        </p>
+        <p>
+          A common use of TintEffect is to dynamically change the color of application
+          icons, for instance to match a chosen UI color scheme. An application could
+          ship all its icons as pure white images with their shape determined by alpha
+          channel, then use TintEffect to alter the icon RGB to whatever color is desired.
+        </p>
+        <!-- TODO once D2D updates MSDN
+        <p>This Windows Runtime type corresponds to the 
+          <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/TODO.aspx">D2D Tint effect</a>.</p>
+        -->
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Effects.TintEffect.#ctor">
+      <summary>Initializes a new instance of the TintEffect class.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.TintEffect.Source">
+      <summary>Gets or sets the input source for Tint effect.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.TintEffect.Color">
+      <summary>Specifies the tint color to be applied. Default value white.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.TintEffect.ColorHdr">
+      <summary>Specifies the high-dynamic-range tint to be applied.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.TintEffect.ClampOutput">
+      <summary>If set, the effect clamps color values to between 0 and 1 before passing 
+               them on to the next effect in the graph. If false, the effect will not clamp 
+               values, although subsequent effects or the output surface may later clamp if 
+               they are not of high enough precision. Default value false.</summary>
+    </member>
+    
+    <inherittemplate name="EffectTemplate" replacement="TintEffect" />
+    <inherittemplate name="ICanvasEffectTemplate" replacement="TintEffect" />
+    <inherittemplate name="EffectRequires14346Template" replacement="TintEffect" />
+
+  </members>
+</doc>

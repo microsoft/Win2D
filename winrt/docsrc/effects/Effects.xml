@@ -197,4 +197,21 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     </member>
   </template>
 
+
+  <template name="EffectRequires14346Template">
+    <member name="P:Microsoft.Graphics.Canvas.Effects.EffectRequires14346Template.IsSupported" Win10_14346="false" Win10="true">
+      <summary>Checks whether EffectRequires14346Template is supported on the current operating system version.</summary>
+      <remarks>
+        <p>
+          If the application is currently running on an operating system that doesn't
+          support EffectRequires14346Template then calls to create this effect will fail.
+        </p>
+        <p>
+          If you know that your application will never run on an operating system that
+          doesn't support EffectRequires14346Template then there is no need to perform this check.
+        </p>
+      </remarks>
+    </member>
+  </template>
+
 </doc>

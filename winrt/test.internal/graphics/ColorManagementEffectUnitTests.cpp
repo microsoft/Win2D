@@ -4,7 +4,7 @@
 
 #include "pch.h"
 
-#include <lib/effects/ColorManagementEffectFactory.h>
+#include <lib/effects/generated/ColorManagementEffect.h>
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 

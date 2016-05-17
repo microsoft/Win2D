@@ -70,6 +70,7 @@ SET DEST_DIR=%GIT_TREE_LOCATION%\tools\codegen\exe\apiref\effects\
 SET FILE_LIST=^
     2DAffineTransform.xml ^
     3DTransform.xml ^
+    AlphaMask.xml ^
     Arithmetic.xml ^
     Atlas.xml ^
     Blend.xml ^
@@ -81,6 +82,7 @@ SET FILE_LIST=^
     Composite.xml ^
     Contrast.xml ^
     Convolve.xml ^
+    CrossFade.xml ^
     DiffuseDistant.xml ^
     DiffusePoint.xml ^
     DiffuseSpot.xml ^
@@ -103,6 +105,7 @@ SET FILE_LIST=^
     LookupTable3D.xml ^
     LuminanceToAlpha.xml ^
     Morphology.xml ^
+    Opacity.xml ^
     OpacityMetadata.xml ^
     Posterize.xml ^
     Premultiply.xml ^
@@ -119,6 +122,7 @@ SET FILE_LIST=^
     TableTransfer.xml ^
     TemperatureTint.xml ^
     Tile.xml ^
+    Tint.xml ^
     Turbulence.xml ^
     UnPremultiply.xml ^
     Vignette.xml

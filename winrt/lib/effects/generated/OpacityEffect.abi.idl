@@ -1,0 +1,44 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+//
+// Licensed under the MIT License. See LICENSE.txt in the project root for license information.
+
+// This file was automatically generated. Please do not edit it manually.
+
+#if (defined _WIN32_WINNT_WIN10) && (WINVER >= _WIN32_WINNT_WIN10)
+
+namespace Microsoft.Graphics.Canvas.Effects
+{
+    runtimeclass OpacityEffect;
+
+    [version(VERSION), uuid(94B6AD75-C540-51B8-A9D1-544174ADC68D), exclusiveto(OpacityEffect)]
+    interface IOpacityEffect : IInspectable
+        requires ICanvasEffect
+    {
+        [propget]
+        HRESULT Opacity([out, retval] float* value);
+
+        [propput]
+        HRESULT Opacity([in] float value);
+
+        [propget]
+        HRESULT Source([out, retval] IGRAPHICSEFFECTSOURCE** source);
+
+        [propput]
+        HRESULT Source([in] IGRAPHICSEFFECTSOURCE* source);
+
+    };
+
+    [version(VERSION), uuid(91A7CDE3-B9B7-5437-8878-FB2E14100E6D), exclusiveto(OpacityEffect)]
+    interface IOpacityEffectStatics : IInspectable
+    {
+        [propget] HRESULT IsSupported([out, retval] boolean* value);
+    }
+
+    [STANDARD_ATTRIBUTES, activatable(VERSION), static(IOpacityEffectStatics, VERSION)]
+    runtimeclass OpacityEffect
+    {
+        [default] interface IOpacityEffect;
+    }
+}
+
+#endif // _WIN32_WINNT_WIN10

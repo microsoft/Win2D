@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<!--
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+Licensed under the MIT License. See LICENSE.txt in the project root for license information.
+-->
+
+<Effect>
+    <!-- Localization -->
+    <_locDefinition>
+        <_locDefault _loc="locNone" />
+        <_locTag _locAttrData="displayname">Field</_locTag>
+        <_locTag _locAttrData="name">Input</_locTag>
+        <_locTag _locAttrData="value">Property</_locTag>
+    </_locDefinition>
+    <!-- System Properties -->
+    <Property name='DisplayName' type='string' value='Tint'/>
+    <Property name='Author' type='string' value='Microsoft Corporation'/>
+    <Property name='Category' type='string' value='Color'/>
+    <Property name='Description' type='string' 
+        value='This effect tints the source image by multiplying the specified color by the source image.'/>
+
+    <!-- This effect have one input -->
+    <Inputs>
+        <Input name='Source'/>
+    </Inputs>
+
+    <Property name='Color' type='vector4'>
+        <Property name='DisplayName' type='string' value='Color'/>
+        <Property name="Default" type="vector4" value="(1, 1, 1, 1)" />
+    </Property>
+    <Property name="ClampOutput" type="bool">
+        <Property name="DisplayName" type="string" value="Clamp Output" />
+        <Property name="Default" type="bool" value="false" />
+    </Property>
+</Effect>

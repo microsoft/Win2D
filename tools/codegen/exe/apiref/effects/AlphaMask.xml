@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!--
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+Licensed under the MIT License. See LICENSE.txt in the project root for license information.
+-->
+
+<Effect>
+    <!-- Localization -->
+    <_locDefinition>
+        <_locDefault _loc="locNone" />
+        <_locTag _locAttrData="displayname">Field</_locTag>
+        <_locTag _locAttrData="name">Input</_locTag>
+        <_locTag _locAttrData="value">Property</_locTag>
+    </_locDefinition>
+    <!-- System Properties -->
+    <Property name='DisplayName' type='string' value='Alpha Mask'/>
+    <Property name='Author' type='string' value='Microsoft Corporation'/>
+    <Property name='Category' type='string' value='Composite'/>
+    <Property name='Description' type='string' 
+        value='This effect changes the destination bitmap by multiplying the mask alpha by the destination.'/>
+
+    <Inputs>
+        <Input name='Destination'/>
+        <Input name='Mask'/>        
+    </Inputs>
+</Effect>

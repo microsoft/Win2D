@@ -4,6 +4,7 @@
 
 #include "pch.h"
 #include "generated\ArithmeticCompositeEffect.h"
+#include "generated\ColorManagementEffect.h"
 #include "generated\HighlightsAndShadowsEffect.h"
 
 
@@ -68,6 +69,28 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         { L"Source1Amount",  D2D1_ARITHMETICCOMPOSITE_PROP_COEFFICIENTS, GRAPHICS_EFFECT_PROPERTY_MAPPING_VECTORY },
         { L"Source2Amount",  D2D1_ARITHMETICCOMPOSITE_PROP_COEFFICIENTS, GRAPHICS_EFFECT_PROPERTY_MAPPING_VECTORZ },
         { L"Offset",         D2D1_ARITHMETICCOMPOSITE_PROP_COEFFICIENTS, GRAPHICS_EFFECT_PROPERTY_MAPPING_VECTORW })
+
+
+    // ColorManagementEffect has a custom GPU caps query.
+    IFACEMETHODIMP ColorManagementEffectFactory::IsBestQualitySupported(ICanvasDevice* device, boolean* result)
+    {
+        return ExceptionBoundary([&]
+        {
+            CheckInPointer(device);
+            CheckInPointer(result);
+
+            // Best quality mode requires floating point buffer precision.
+            boolean isFloatPrecisionSupported;
+            ThrowIfFailed(device->IsBufferPrecisionSupported(CanvasBufferPrecision::Precision32Float, &isFloatPrecisionSupported));
+
+            // It also requires at least D3D feature level 10.
+            ComPtr<ID3D11Device> d3dDevice;
+            ThrowIfFailed(As<IDirect3DDxgiInterfaceAccess>(device)->GetInterface(IID_PPV_ARGS(&d3dDevice)));
+            auto isFeatureLevel10 = d3dDevice->GetFeatureLevel() >= D3D_FEATURE_LEVEL_10_0;
+
+            *result = isFloatPrecisionSupported && isFeatureLevel10;
+        });
+    }
 
 
 #if (defined _WIN32_WINNT_WIN10) && (WINVER >= _WIN32_WINNT_WIN10)
