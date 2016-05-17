@@ -90,6 +90,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <Enum Name="DRAW_TEXT_OPTIONS" ShouldProject="true" Namespace="Text">
       <Field Name="NONE" ProjectedNameOverride="Default"/>
       <Field Name="NO_SNAP" ProjectedNameOverride="NoPixelSnap"/>
+      <Field Name="DISABLE_COLOR_BITMAP_SNAPPING" ShouldProject="false"/>
     </Enum>
   </Namespace>
   

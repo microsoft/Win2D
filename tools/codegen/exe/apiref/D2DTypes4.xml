@@ -260,14 +260,14 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
 
             <Method Name="CreateDevice" Comment="This creates a new Direct2D device from the given IDXGIDevice.">
                 <Parameter Name="dxgiDevice" Type="IDXGIDevice" Form="pointer" />
-                <Parameter Name="d2dDevice2" Type="D2D1::IDevice2" Form="deref out pointer" IsRetval="true" />
+                <Parameter Name="d2dDevice2" Type="D2D1::IDevice2" Form="deref out pointer com" IsRetval="true" />
             </Method>
         </Interface>
         
         <Interface Name="IDevice2" Extends="D2D1::IDevice1" IID="a44472e1-8dfb-4e60-8492-6e2861c9ca8b" ShouldTestQI="true" QIFromBase="true" Comment="Represents a resource domain whose objects and device contexts can be used together. This interface performs all the same functions as the existing ID2D1Device1 interface. It also enables the creation of ID2D1DeviceContext2 objects.">
             <Method Name="CreateDeviceContext" Comment="Creates a new device context with no initially assigned target.">
                 <Parameter Name="options" Type="D2D1::DEVICE_CONTEXT_OPTIONS" Form="value" />
-                <Parameter Name="deviceContext2" Type="D2D1::IDeviceContext2" Form="deref out pointer" IsRetval="true" />
+                <Parameter Name="deviceContext2" Type="D2D1::IDeviceContext2" Form="deref out pointer com" IsRetval="true" />
             </Method>
 
             <Method Name="FlushDeviceContexts" Return="void" Comment="Flush all device contexts that reference a given bitmap.">
@@ -275,7 +275,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
             </Method>
 
             <Method Name="GetDxgiDevice" Comment="Returns the DXGI device associated with this D2D device.">
-                <Parameter Name="dxgiDevice" Type="IDXGIDevice" Form="deref out pointer" IsRetval="true" />
+                <Parameter Name="dxgiDevice" Type="IDXGIDevice" Form="deref out pointer com" IsRetval="true" />
             </Method>
         </Interface>
         
@@ -283,42 +283,42 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
 
             <Method Name="CreateInk">
                 <Parameter Name="startPoint" Type="D2D1::INK_POINT" Form="pointer" />
-                <Parameter Name="ink" Type="D2D1::IInk" Form="deref out pointer" />
+                <Parameter Name="ink" Type="D2D1::IInk" Form="deref out pointer com" />
             </Method>
             <Method Name="CreateInk" OverloadId="1">
                 <Parameter Name="startPoint" Type="D2D1::INK_POINT" Form="reference" />
-                <Parameter Name="ink" Type="D2D1::IInk" Form="deref out pointer" />
+                <Parameter Name="ink" Type="D2D1::IInk" Form="deref out pointer com" />
             </Method>
             <Method Name="CreateInkStyle" Comment="Creates a new ink style.">
                 <Parameter Name="inkStyleProperties" Type="D2D1::INK_STYLE_PROPERTIES" Form="pointer opt" />
-                <Parameter Name="inkStyle" Type="D2D1::IInkStyle" Form="deref out pointer" />
+                <Parameter Name="inkStyle" Type="D2D1::IInkStyle" Form="deref out pointer com" />
             </Method>
             <Method Name="CreateInkStyle" Comment="Creates a new ink style." OverloadId="1">
                 <Parameter Name="inkStyleProperties" Type="D2D1::INK_STYLE_PROPERTIES" Form="reference" />
-                <Parameter Name="inkStyle" Type="D2D1::IInkStyle" Form="deref out pointer" />
+                <Parameter Name="inkStyle" Type="D2D1::IInkStyle" Form="deref out pointer com" />
             </Method>
 
             <Method Name="CreateGradientMesh">
                 <Parameter Name="patches" Type="D2D1::GRADIENT_MESH_PATCH" Form="pointer" IsArray="true" />
-                <Parameter Name="gradientMesh" Type="D2D1::IGradientMesh" Form="deref out pointer" />
+                <Parameter Name="gradientMesh" Type="D2D1::IGradientMesh" Form="deref out pointer com" />
             </Method>
 
             <Method Name="CreateImageSourceFromWic">
                 <Parameter Name="wicBitmapSource" Type="IWICBitmapSource" Form="pointer" />
                 <Parameter Name="loadingOptions" Type="D2D1::IMAGE_SOURCE_LOADING_OPTIONS" />
                 <Parameter Name="alphaMode" Type="D2D1::ALPHA_MODE" />                
-                <Parameter Name="imageSource" Type="D2D1::IImageSourceFromWic" Form="deref out pointer" />
+                <Parameter Name="imageSource" Type="D2D1::IImageSourceFromWic" Form="deref out pointer com" />
             </Method>
             
             <Method Name="CreateImageSourceFromWic" OverloadId="1">
                 <Parameter Name="wicBitmapSource" Type="IWICBitmapSource" Form="pointer" />
                 <Parameter Name="loadingOptions" Type="D2D1::IMAGE_SOURCE_LOADING_OPTIONS" />
-                <Parameter Name="imageSource" Type="D2D1::IImageSourceFromWic" Form="deref out pointer" />
+                <Parameter Name="imageSource" Type="D2D1::IImageSourceFromWic" Form="deref out pointer com" />
             </Method>   
             
             <Method Name="CreateImageSourceFromWic" OverloadId="2">
                 <Parameter Name="wicBitmapSource" Type="IWICBitmapSource" Form="pointer" />
-                <Parameter Name="imageSource" Type="D2D1::IImageSourceFromWic" Form="deref out pointer" />
+                <Parameter Name="imageSource" Type="D2D1::IImageSourceFromWic" Form="deref out pointer com" />
             </Method>   
 
             <Method Name="CreateLookupTable3D" Comment="Creates a 3D lookup table for mapping a 3-channel input to a 3-channel output. The table data must be provided in 4-channel format.">
@@ -326,14 +326,14 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
                 <Parameter Name="extents" Type="UINT32" Form="pointer ecount" ECount="3" />
                 <Parameter Name="data" IsArray="true" Type="BYTE" Form="pointer" />
                 <Parameter Name="strides" Type="UINT32" Form="pointer ecount" ECount="2" />
-                <Parameter Name="lookupTable" Type="D2D1::ILookupTable3D" Form="deref out pointer" />
+                <Parameter Name="lookupTable" Type="D2D1::ILookupTable3D" Form="deref out pointer com" />
             </Method>
             
             <Method Name="CreateImageSourceFromDxgi">
                 <Parameter Name="surfaces" Type="IDXGISurface" Form="pointer pointer" IsArray="true" LengthParameter="surfaceCount" />
                 <Parameter Name="colorSpace" Type="DXGI_COLOR_SPACE_TYPE" />
                 <Parameter Name="options" Type="D2D1::IMAGE_SOURCE_FROM_DXGI_OPTIONS" />
-                <Parameter Name="imageSource" Type="D2D1::IImageSource" Form="deref out pointer" />
+                <Parameter Name="imageSource" Type="D2D1::IImageSource" Form="deref out pointer com" />
             </Method>
 
             <Method Name="GetGradientMeshWorldBounds" IsConst="true" Comment="Retrieves the world-space bounds in DIPs of the gradient mesh using the device context DPI.">
@@ -360,7 +360,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
             <Method Name="CreateTransformedImageSource" Comment="Creates an image source which shares resources with an original.">
                 <Parameter Name="imageSource" Type="D2D1::IImageSource" Form="pointer" />
                 <Parameter Name="properties" Type="D2D1::TRANSFORMED_IMAGE_SOURCE_PROPERTIES" Form="pointer" />
-                <Parameter Name="transformedImageSource" Type="D2D1::ITransformedImageSource" Form="deref out pointer" />
+                <Parameter Name="transformedImageSource" Type="D2D1::ITransformedImageSource" Form="deref out pointer com" />
             </Method>
             
             <Method Name="DrawGdiMetafile" Return="void" Comment="Draw a metafile to the device context." OverloadId="1">
@@ -456,23 +456,23 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
             <Method Name="Clear" Return="void" Comment="Removes all sprites from the sprite batch." />
         </Interface>
 
-        <Interface Name="IFactory4" Extends="D2D1::IFactory3" IID="bd4ec2d2-0662-4bee-ba8e-6f29f032e096" ShouldTestQI="true" QIFromBase="true">
+        <Interface Name="IFactory4" Extends="D2D1::IFactory3" IID="bd4ec2d2-0662-4bee-ba8e-6f29f032e096" ShouldTestQI="true" QIFromBase="true" Comment="Creates Direct2D resources. This interface also enables the creation of ID2D1Device3 objects.">
             <Method Name="CreateDevice" Comment="This creates a new Direct2D device from the given IDXGIDevice.">
                 <Parameter Name="dxgiDevice" Type="IDXGIDevice" Form="pointer" />
-                <Parameter Name="d2dDevice3" Type="D2D1::IDevice3" Form="deref out pointer" IsRetval="true" />
+                <Parameter Name="d2dDevice3" Type="D2D1::IDevice3" Form="deref out pointer com" IsRetval="true" />
             </Method>
         </Interface>
 
         <Interface Name="IDevice3" Extends="D2D1::IDevice2" IID="852f2087-802c-4037-ab60-ff2e7ee6fc01" ShouldTestQI="true" QIFromBase="true">
             <Method Name="CreateDeviceContext" Comment="Creates a new device context with no initially assigned target.">
                 <Parameter Name="options" Type="D2D1::DEVICE_CONTEXT_OPTIONS" Form="value" />
-                <Parameter Name="deviceContext3" Type="D2D1::IDeviceContext3" Form="deref out pointer" IsRetval="true" />
+                <Parameter Name="deviceContext3" Type="D2D1::IDeviceContext3" Form="deref out pointer com" IsRetval="true" />
             </Method>
         </Interface>
 
         <Interface Name="IDeviceContext3" Extends="D2D1::IDeviceContext2" IID="235a7496-8351-414c-bcd4-6672ab2d8e00" QIFromBase="true">
             <Method Name="CreateSpriteBatch" Comment="Creates a new sprite batch.">
-                <Parameter Name="spriteBatch" Type="D2D1::ISpriteBatch" Form="deref out pointer" />
+                <Parameter Name="spriteBatch" Type="D2D1::ISpriteBatch" Form="deref out pointer com" />
             </Method>
             <Method Name="DrawSpriteBatch" Return="void" Comment="Draws sprites in a sprite batch.">
                 <Parameter Name="spriteBatch" Type="D2D1::ISpriteBatch" Form="pointer" />
@@ -498,6 +498,193 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
                 <Parameter Name="bitmap" Type="D2D1::IBitmap" Form="pointer" />
                 <Parameter Name="interpolationMode" Type="D2D1::BITMAP_INTERPOLATION_MODE" />
                 <Parameter Name="spriteOptions" Type="D2D1::SPRITE_OPTIONS" />
+            </Method>
+        </Interface>
+
+        <Enum Name="COLOR_BITMAP_GLYPH_SNAP_OPTION" Comment="Specifies the pixel snapping policy when rendering color bitmap glyphs.">
+            <Field Name="DEFAULT" Value="0" Comment="Color bitmap glyph positions are snapped to the nearest pixel if the bitmap resolution matches that of the device context."/>
+            <Field Name="DISABLE" Value="1" Comment="Color bitmap glyph positions are not snapped."/>
+        </Enum>
+
+        <Interface Name="ISvgGlyphStyle" Extends="D2D1::IResource" IID="af671749-d241-4db8-8e41-dcc2e5c1a438" ShouldTestQI="true"
+            Comment="This object supplies the values for context-fill, context-stroke, and context-value
+                     that are used when rendering SVG glyphs.">
+            <Method Name="SetFill"
+                Comment="Provides values to an SVG glyph for fill. The brush with opacity set to 1 is used as the 'context-fill'.
+                         The opacity of the brush is used as the 'context-fill-opacity' value.">
+                <Parameter Name="brush" Type="D2D1::IBrush" Form="pointer opt"
+                    Comment="A null brush will cause the context-fill value to come from the defaultFillBrush.
+                             If the defaultFillBrush is also null, the context-fill value will be 'none'."/>
+            </Method>
+            <Method Name="GetFill" Comment="Returns the requested fill parameters." Return="void">
+                <Parameter Name="brush" Type="D2D1::IBrush" Form="deref out opt pointer" />
+            </Method>
+            <Method Name="SetStroke"
+                Comment="Provides values to an SVG glyph for stroke properties. The brush with opacity set to 1 is used as the 'context-stroke'.
+                         The opacity of the brush is used as the 'context-stroke-opacity' value.">
+                <Parameter Name="brush" Type="D2D1::IBrush" Form="pointer opt"
+                    Comment="A null brush will cause the context-stroke value to be 'none'."/>
+                <Parameter Name="strokeWidth" Type="FLOAT" Default="1.0f"
+                    Comment="Specifies the 'context-value' for the 'stroke-width' property."/>
+                <Parameter Name="dashes" Type="FLOAT" Form="pointer opt" IsArray="true" Default="NULL"
+                    Comment="Specifies the 'context-value' for the 'stroke-dasharray' property.
+                             A null value will cause the stroke-dasharray to be set to 'none'."/>
+                <Parameter Name="dashOffset" Type="FLOAT" Default="1.0f"
+                    Comment="Specifies the 'context-value' for the 'stroke-dashoffset' property."/>
+            </Method>
+            <Method Name="GetStrokeDashesCount" Return="UINT32" Comment="Returns the number of dashes in the dash array."/>
+            <Method Name="GetStroke" Comment="Returns the requested stroke parameters." Return="void">
+                <Parameter Name="brush" Type="D2D1::IBrush" Form="deref opt out opt pointer" />
+                <Parameter Name="strokeWidth" Type="FLOAT" Form="out pointer opt" Default="NULL"/>
+                <Parameter Name="dashes" Type="FLOAT" Form="out pointer opt" IsArray="true" Default="NULL" OutArrayLength="GetStrokeDashesCount()" />
+                <Parameter Name="dashOffset" Type="FLOAT" Form="out pointer opt" Default="NULL" />
+            </Method>
+        </Interface>
+
+        <Interface Name="IFactory5" Extends="D2D1::IFactory4" IID="c4349994-838e-4b0f-8cab-44997d9eeacc" ShouldTestQI="true" QIFromBase="true" Comment="Creates Direct2D resources. This interface also enables the creation of ID2D1Device4 objects.">
+            <Method Name="CreateDevice" Comment="This creates a new Direct2D device from the given IDXGIDevice.">
+                <Parameter Name="dxgiDevice" Type="IDXGIDevice" Form="pointer" />
+                <Parameter Name="d2dDevice4" Type="D2D1::IDevice4" Form="deref out pointer com" IsRetval="true" />
+            </Method>
+        </Interface>
+
+        <Interface Name="IDevice4" Extends="D2D1::IDevice3" IID="d7bdb159-5683-4a46-bc9c-72dc720b858b" ShouldTestQI="true" QIFromBase="true">
+            <Method Name="CreateDeviceContext" Comment="Creates a new device context with no initially assigned target.">
+                <Parameter Name="options" Type="D2D1::DEVICE_CONTEXT_OPTIONS" Form="value" />
+                <Parameter Name="deviceContext4" Type="D2D1::IDeviceContext4" Form="deref out pointer com" IsRetval="true" />
+            </Method>
+
+            <Method Name="SetMaximumColorGlyphCacheMemory" Return="void"
+                Comment="Sets the maximum capacity of the color glyph cache.
+                         This cache is used to store color bitmap glyphs and SVG glyphs, enabling faster performance
+                         if the same glyphs are needed again. If the application still references a glyph using
+                         GetColorBitmapGlyphImage or GetSvgGlyphImage after it has been evicted, this glyph does not
+                         count toward the cache capacity.">
+                <Parameter Name="maximumInBytes" Type="UINT64"/>
+            </Method>
+
+            <Method Name="GetMaximumColorGlyphCacheMemory" Return="UINT64" IsConst="true" Comment="Gets the maximum capacity of the color glyph cache."/>
+        </Interface>
+
+        <Interface Name="IDeviceContext4" Extends="D2D1::IDeviceContext3" IID="8c427831-3d90-4476-b647-c4fae349e4db" QIFromBase="true">
+            <Method Name="CreateSvgGlyphStyle" Comment="Creates an SVG glyph style object.">
+                <Parameter Name="svgGlyphStyle" Type="D2D1::ISvgGlyphStyle" Form="deref out pointer com"/>
+            </Method>
+
+            <Method Name="DrawText" Return="void"
+                Comment="Draws the text within the given layout rectangle. By default, this method performs baseline snapping
+                         and renders color versions of glyphs in color fonts.">
+                <Parameter Name="string" Type="WCHAR" Form="pointer" IsArray="true" LengthParameter="stringLength" />
+                <Parameter Name="textFormat" Type="IDWriteTextFormat" Form="pointer" />
+                <Parameter Name="layoutRect" Type="D2D1::RECT_F" Form="pointer" />
+                <Parameter Name="defaultFillBrush" Type="D2D1::IBrush" Form="pointer opt" />
+                <Parameter Name="svgGlyphStyle" Type="D2D1::ISvgGlyphStyle" Form="pointer opt"
+                    Comment="Object used to style SVG glyphs."/>
+                <Parameter Name="colorPaletteIndex" Type="UINT32" Default="0"
+                    Comment="The index used to select a color palette within a color font."/>
+                <Parameter Name="options" Type="D2D1::DRAW_TEXT_OPTIONS" Default="D2D1_DRAW_TEXT_OPTIONS_ENABLE_COLOR_FONT" />
+                <Parameter Name="measuringMode" Type="DWRITE_MEASURING_MODE" Default="DWRITE_MEASURING_MODE_NATURAL" />
+            </Method>
+
+            <Method Name="DrawText" Return="void" OverloadId="1"
+                Comment="Draws the text within the given layout rectangle. By default, this method performs baseline snapping
+                         and renders color versions of glyphs in color fonts.">
+                <Parameter Name="string" Type="WCHAR" Form="pointer" IsArray="true" LengthParameter="stringLength" />
+                <Parameter Name="textFormat" Type="IDWriteTextFormat" Form="pointer" />
+                <Parameter Name="layoutRect" Type="D2D1::RECT_F" Form="reference" />
+                <Parameter Name="defaultFillBrush" Type="D2D1::IBrush" Form="pointer opt" />
+                <Parameter Name="svgGlyphStyle" Type="D2D1::ISvgGlyphStyle" Form="pointer opt"
+                    Comment="Object used to style SVG glyphs."/>
+                <Parameter Name="colorPaletteIndex" Type="UINT32" Default="0"
+                    Comment="The index used to select a color palette within a color font."/>
+                <Parameter Name="options" Type="D2D1::DRAW_TEXT_OPTIONS" Default="D2D1_DRAW_TEXT_OPTIONS_ENABLE_COLOR_FONT" />
+                <Parameter Name="measuringMode" Type="DWRITE_MEASURING_MODE" Default="DWRITE_MEASURING_MODE_NATURAL" />
+            </Method>
+
+            <Method Name="DrawTextLayout" Return="void"
+                Comment="Draw a text layout object. If the layout is not subsequently changed, this can be more efficient than DrawText
+                         when drawing the same layout repeatedly.">
+                <Parameter Name="origin" Type="D2D1::POINT_2F" />
+                <Parameter Name="textLayout" Type="IDWriteTextLayout" Form="pointer" />
+                <Parameter Name="defaultFillBrush" Type="D2D1::IBrush" Form="pointer opt" />
+                <Parameter Name="svgGlyphStyle" Type="D2D1::ISvgGlyphStyle" Form="pointer opt"
+                    Comment="Object used to style SVG glyphs."/>
+                <Parameter Name="colorPaletteIndex" Type="UINT32" Default="0"
+                    Comment="The index used to select a color palette within a color font."/>
+                <Parameter Name="options" Type="D2D1::DRAW_TEXT_OPTIONS" Default="D2D1_DRAW_TEXT_OPTIONS_ENABLE_COLOR_FONT"
+                    Comment="The specified text options. If D2D1_DRAW_TEXT_OPTIONS_CLIP is used, the text is clipped to the layout bounds.
+                             These bounds are derived from the origin and the layout bounds of the corresponding IDWriteTextLayout object." />
+            </Method>
+
+            <Method Name="DrawColorBitmapGlyphRun" Return="void"
+                Comment="Draws a color glyph run using one (and only one) of the bitmap formats-
+                         DWRITE_GLYPH_IMAGE_FORMATS_PNG, DWRITE_GLYPH_IMAGE_FORMATS_JPEG, DWRITE_GLYPH_IMAGE_FORMATS_TIFF,
+                         or DWRITE_GLYPH_IMAGE_FORMATS_PREMULTIPLIED_B8G8R8A8.">
+                <Parameter Name="glyphImageFormat" Type="DWRITE_GLYPH_IMAGE_FORMATS"/>
+                <Parameter Name="baselineOrigin" Type="D2D1::POINT_2F" />
+                <Parameter Name="glyphRun" Type="DWRITE_GLYPH_RUN" Form="pointer" />
+                <Parameter Name="measuringMode" Type="DWRITE_MEASURING_MODE" Default="DWRITE_MEASURING_MODE_NATURAL" />
+                <Parameter Name="bitmapSnapOption" Type="D2D1::COLOR_BITMAP_GLYPH_SNAP_OPTION" Default="D2D1_COLOR_BITMAP_GLYPH_SNAP_OPTION_DEFAULT" />
+            </Method>
+
+            <Method Name="DrawSvgGlyphRun" Return="void" Comment="Draws a color glyph run that has the format of DWRITE_GLYPH_IMAGE_FORMATS_SVG.">
+                <Parameter Name="baselineOrigin" Type="D2D1::POINT_2F" />
+                <Parameter Name="glyphRun" Type="DWRITE_GLYPH_RUN" Form="pointer" />
+                <Parameter Name="defaultFillBrush" Type="D2D1::IBrush" Form="pointer opt" Default="NULL" />
+                <Parameter Name="svgGlyphStyle" Type="D2D1::ISvgGlyphStyle" Form="pointer opt" Default="NULL"
+                    Comment="Object used to style SVG glyphs."/>
+                <Parameter Name="colorPaletteIndex" Type="UINT32" Default="0"
+                    Comment="The index used to select a color palette within a color font.
+                             Note that this not the same as the paletteIndex in the DWRITE_COLOR_GLYPH_RUN struct,
+                             which is not relevant for SVG glyphs."/>
+                <Parameter Name="measuringMode" Type="DWRITE_MEASURING_MODE" Default="DWRITE_MEASURING_MODE_NATURAL" />
+            </Method>
+
+            <Method Name="GetColorBitmapGlyphImage"
+                Comment="Retrieves an image of the color bitmap glyph from the color glyph cache.
+                         If the cache does not already contain the requested resource, it will be created.
+                         This method may be used to extend the lifetime of a glyph image even after
+                         it is evicted from the color glyph cache.">
+                <Parameter Name="glyphImageFormat" Type="DWRITE_GLYPH_IMAGE_FORMATS"/>
+                <Parameter Name="glyphOrigin" Type="D2D1::POINT_2F" />
+                <Parameter Name="fontFace" Type="IDWriteFontFace" Form="pointer" />
+                <Parameter Name="fontEmSize" Type="FLOAT"
+                    Comment="The specified font size affects the choice of which bitmap to use from the font.
+                             It also affects the output glyphTransform, causing it to properly scale the glyph."/>
+                <Parameter Name="glyphIndex" Type="UINT16" />
+                <Parameter Name="isSideways" Type="BOOL" />
+                <Parameter Name="worldTransform" Type="D2D1::MATRIX_3X2_F" Form="pointer opt"/>
+                <Parameter Name="dpiX" Type="FLOAT"/>
+                <Parameter Name="dpiY" Type="FLOAT"/>
+                <Parameter Name="glyphTransform" Type="D2D1::MATRIX_3X2_F" Form="out pointer"
+                    Comment="Output transform, which transforms from the glyph's space to the same output space as the worldTransform.
+                             This includes the input glyphOrigin, the glyph's offset from the glyphOrigin, and any other required transformations."/>
+                <Parameter Name="glyphImage" Type="D2D1::IImage" Form="deref out pointer com"/>
+            </Method>
+
+            <Method Name="GetSvgGlyphImage"
+                Comment="Retrieves an image of the SVG glyph from the color glyph cache.
+                         If the cache does not already contain the requested resource, it will be created.
+                         This method may be used to extend the lifetime of a glyph image even after
+                         it is evicted from the color glyph cache.">
+                <Parameter Name="glyphOrigin" Type="D2D1::POINT_2F" />
+                <Parameter Name="fontFace" Type="IDWriteFontFace" Form="pointer" />
+                <Parameter Name="fontEmSize" Type="FLOAT"
+                    Comment="The specified font size affects the output glyphTransform, causing it to properly scale the glyph."/>
+                <Parameter Name="glyphIndex" Type="UINT16" />
+                <Parameter Name="isSideways" Type="BOOL" />
+                <Parameter Name="worldTransform" Type="D2D1::MATRIX_3X2_F" Form="pointer opt"/>
+                <Parameter Name="defaultFillBrush" Type="D2D1::IBrush" Form="pointer opt"/>
+                <Parameter Name="svgGlyphStyle" Type="D2D1::ISvgGlyphStyle" Form="pointer opt"
+                    Comment="Object used to style SVG glyphs."/>
+                <Parameter Name="colorPaletteIndex" Type="UINT32"
+                    Comment="The index used to select a color palette within a color font.
+                             Note that this not the same as the paletteIndex in the DWRITE_COLOR_GLYPH_RUN struct,
+                             which is not relevant for SVG glyphs."/>
+                <Parameter Name="glyphTransform" Type="D2D1::MATRIX_3X2_F" Form="out pointer"
+                    Comment="Output transform, which transforms from the glyph's space to the same output space as the worldTransform.
+                             This includes the input glyphOrigin, the glyph's offset from the glyphOrigin, and any other required transformations."/>
+                <Parameter Name="glyphImage" Type="D2D1::ICommandList" Form="deref out pointer com"/>
             </Method>
         </Interface>
 

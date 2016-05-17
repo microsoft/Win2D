@@ -20,7 +20,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <Property name='Description' type='string' 
         value='Adjusts the contrast of an image.'/>
 
-    <!-- This effect can have only inputs -->
+    <!-- This effect has only one input -->
     <Inputs>
         <Input name='Source'/>
     </Inputs>
