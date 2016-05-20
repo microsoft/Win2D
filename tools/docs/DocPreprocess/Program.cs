@@ -111,6 +111,7 @@ namespace DocPreprocess
             // Find members (methods, fields) of these types that should also be tagged.
             var membersToTag = from member in members
                                where taggedTypes.Any(type => MemberName(member).StartsWith(type))
+                               where member.Attribute(tag.Attribute) == null
                                select member;
 
             foreach (var member in membersToTag)
