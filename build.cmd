@@ -6,14 +6,15 @@ IF "%VisualStudioVersion%" LSS "12.0" (
     GOTO WRONG_COMMAND_PROMPT
 )
 
+SET NO81=
 SET NOUAP=
 
-IF "%1" NEQ "" (
-    IF "%1" == "nouap" (
-        SET NOUAP=1
-    ) ELSE (
-        GOTO SHOW_USAGE
-    )
+IF "%1" == "no81" (
+    SET NO81=1
+) ELSE IF "%1" == "nouap" (
+    SET NOUAP=1
+) ELSE IF "%1" NEQ "" (
+    GOTO SHOW_USAGE
 )
 
 IF NOT "%NOUAP%" == "1" (
@@ -33,12 +34,15 @@ IF %ERRORLEVEL% NEQ 0 (
 )
 
 
-SET BUILD_UAP=
+SET BUILD_ARGS=
+IF "%NO81%" == "1" (
+    SET BUILD_ARGS=/p:BuildWindows=false /p:BuildPhone=false
+)
 IF "%NOUAP%" == "1" (
-    SET BUILD_UAP=/p:BuildUAP=false
+    SET BUILD_ARGS=/p:BuildUAP=false
 )
 
-msbuild "%~dp0Win2D.proj" /v:m /maxcpucount /nr:false /p:BuildTests=false /p:BuildTools=false /p:BuildDocs=false %BUILD_UAP%
+msbuild "%~dp0Win2D.proj" /v:m /maxcpucount /nr:false /p:BuildTests=false /p:BuildTools=false /p:BuildDocs=false %BUILD_ARGS%
 
 IF %ERRORLEVEL% NEQ 0 (
     ECHO Build failed; aborting.
@@ -54,14 +58,15 @@ IF %ERRORLEVEL% NEQ 0 (
 
 ECHO.
 
-CALL "%~dp0build\nuget\build-nupkg.cmd" local
+CALL "%~dp0build\nuget\build-nupkg.cmd" %* local
 GOTO END
 
 
 :SHOW_USAGE
 
-ECHO %0 [nouap]
+ECHO %0 [no81^|nouap]
 ECHO.
+ECHO  no81: pass this to disable building Windows 8.1 and Windows Phone 8.1 support
 ECHO  nouap: pass this to disable building Universal Windows Platform support
 GOTO END
 
