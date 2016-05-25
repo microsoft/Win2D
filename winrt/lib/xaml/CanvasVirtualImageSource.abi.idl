@@ -222,7 +222,6 @@ namespace Microsoft.Graphics.Canvas.UI.Xaml
     }
 
     [version(VERSION),
-     activatable(VERSION),
      marshaling_behavior(agile),
      threading(both)]
     runtimeclass CanvasRegionsInvalidatedEventArgs

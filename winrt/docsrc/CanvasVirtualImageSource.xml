@@ -13,9 +13,6 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="T:Microsoft.Graphics.Canvas.UI.Xaml.CanvasRegionsInvalidatedEventArgs">
       <summary>Provides data for the <see cref="E:Microsoft.Graphics.Canvas.UI.Xaml.CanvasVirtualImageSource.RegionsInvalidated"/> event.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.UI.Xaml.CanvasRegionsInvalidatedEventArgs.#ctor">
-      <summary>Initializes a new instance of the CanvasRegionsInvalidatedEventArgs class.</summary>
-    </member>
     <member name="P:Microsoft.Graphics.Canvas.UI.Xaml.CanvasRegionsInvalidatedEventArgs.InvalidatedRegions">
       <summary>Gets an array of rectangular regions that need to be drawn.</summary>
     </member>
