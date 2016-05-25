@@ -39,7 +39,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     //
 
     class CanvasTextRenderingParametersFactory
-        : public ActivationFactory<ICanvasTextRenderingParametersFactory>
+        : public AgileActivationFactory<ICanvasTextRenderingParametersFactory>
         , private LifespanTracker<CanvasTextRenderingParametersFactory>
     {
         InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_Text_CanvasTextRenderingParameters, BaseTrust);

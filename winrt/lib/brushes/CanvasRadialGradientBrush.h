@@ -68,7 +68,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     };
 
     class CanvasRadialGradientBrushFactory
-        : public ActivationFactory<ICanvasRadialGradientBrushFactory, ICanvasRadialGradientBrushStatics>
+        : public AgileActivationFactory<ICanvasRadialGradientBrushFactory, ICanvasRadialGradientBrushStatics>
         , private LifespanTracker<CanvasRadialGradientBrushFactory>
     {
         InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_Brushes_CanvasRadialGradientBrush, BaseTrust);

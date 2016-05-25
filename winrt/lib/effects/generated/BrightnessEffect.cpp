@@ -42,5 +42,5 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         { L"WhitePoint", D2D1_BRIGHTNESS_PROP_WHITE_POINT, GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT },
         { L"BlackPoint", D2D1_BRIGHTNESS_PROP_BLACK_POINT, GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT })
 
-    ActivatableClass(BrightnessEffect);
+    ActivatableClassWithFactory(BrightnessEffect, SimpleAgileActivationFactory<BrightnessEffect>);
 }}}}}

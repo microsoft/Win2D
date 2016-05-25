@@ -6,7 +6,7 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace UI
 {
-    class CanvasCreateResourcesEventArgsFactory : public ActivationFactory<ICanvasCreateResourcesEventArgsFactory>
+    class CanvasCreateResourcesEventArgsFactory : public AgileActivationFactory<ICanvasCreateResourcesEventArgsFactory>
                                                 , private LifespanTracker<CanvasCreateResourcesEventArgsFactory>
     {
         InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_UI_CanvasCreateResourcesEventArgs, BaseTrust);

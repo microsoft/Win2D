@@ -44,7 +44,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     };
 
     class CanvasSolidColorBrushFactory 
-        : public ActivationFactory<ICanvasSolidColorBrushFactory, ICanvasSolidColorBrushStatics>
+        : public AgileActivationFactory<ICanvasSolidColorBrushFactory, ICanvasSolidColorBrushStatics>
         , private LifespanTracker<CanvasSolidColorBrushFactory>
     {
         InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_Brushes_CanvasSolidColorBrush, BaseTrust);

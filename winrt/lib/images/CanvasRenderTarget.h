@@ -11,7 +11,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
 
     class CanvasRenderTargetFactory 
-        : public ActivationFactory<ICanvasRenderTargetFactory, ICanvasRenderTargetStatics>
+        : public AgileActivationFactory<ICanvasRenderTargetFactory, ICanvasRenderTargetStatics>
         , private LifespanTracker<CanvasRenderTargetFactory>
     {
     public:

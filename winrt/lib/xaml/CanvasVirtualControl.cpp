@@ -55,7 +55,7 @@ public:
 
 #pragma warning(default: 4250)
 
-class CanvasVirtualControlFactory : public ActivationFactory<>
+class CanvasVirtualControlFactory : public AgileActivationFactory<>
                                   , private LifespanTracker<CanvasVirtualControlFactory>
 {
     std::weak_ptr<CanvasVirtualControlAdapter> m_adapter;

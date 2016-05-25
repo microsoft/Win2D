@@ -12,7 +12,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
 
     // WinRT activation factory.
-    class PixelShaderEffectFactory : public ActivationFactory<IPixelShaderEffectFactory>
+    class PixelShaderEffectFactory : public AgileActivationFactory<IPixelShaderEffectFactory>
                                    , private LifespanTracker<PixelShaderEffectFactory>
     {
         InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_Effects_PixelShaderEffect, BaseTrust);

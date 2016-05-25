@@ -12,7 +12,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     using namespace ABI::Windows::Graphics::Printing;
 
     class CanvasPrintDocumentFactory
-        : public ActivationFactory<ICanvasPrintDocumentFactory>
+        : public AgileActivationFactory<ICanvasPrintDocumentFactory>
         , private LifespanTracker<CanvasPrintDocumentFactory>
     {
         InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_Printing_CanvasPrintDocument, BaseTrust);

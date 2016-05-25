@@ -49,7 +49,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     };
 
     class CanvasGradientMeshFactory
-        : public ActivationFactory<ICanvasGradientMeshStatics, ICanvasGradientMeshFactory>
+        : public AgileActivationFactory<ICanvasGradientMeshStatics, ICanvasGradientMeshFactory>
         , private LifespanTracker<CanvasGradientMeshFactory>
     {
         InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_Geometry_CanvasGradientMesh, BaseTrust);

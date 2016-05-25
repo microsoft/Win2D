@@ -44,7 +44,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         { L"Amount",    D2D1_SHARPEN_PROP_SHARPNESS, GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT },
         { L"Threshold", D2D1_SHARPEN_PROP_THRESHOLD, GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT })
 
-    ActivatableClass(SharpenEffect);
+    ActivatableClassWithFactory(SharpenEffect, SimpleAgileActivationFactory<SharpenEffect>);
 }}}}}
 
 #endif // _WIN32_WINNT_WIN10

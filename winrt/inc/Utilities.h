@@ -103,3 +103,13 @@ inline bool operator!=(ABI::Windows::Foundation::Size const& left, ABI::Windows:
 {
     return (left.Width != right.Width) || (left.Height != right.Height);
 }
+
+template<typename T>
+class SimpleAgileActivationFactory WrlSealed : public Microsoft::WRL::AgileActivationFactory<>
+{
+public:
+    STDMETHOD(ActivateInstance)(_Outptr_result_nullonfailure_ IInspectable **ppvObject)
+    {
+        return MakeAndInitialize<T>(ppvObject);
+    }
+};

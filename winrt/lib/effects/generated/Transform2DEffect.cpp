@@ -57,5 +57,5 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         { L"TransformMatrix",   D2D1_2DAFFINETRANSFORM_PROP_TRANSFORM_MATRIX,   GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT },
         { L"Sharpness",         D2D1_2DAFFINETRANSFORM_PROP_SHARPNESS,          GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT })
 
-    ActivatableClass(Transform2DEffect);
+    ActivatableClassWithFactory(Transform2DEffect, SimpleAgileActivationFactory<Transform2DEffect>);
 }}}}}

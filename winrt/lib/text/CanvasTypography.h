@@ -16,7 +16,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     };
 
     class CanvasTypographyFactory
-        : public ActivationFactory<>
+        : public AgileActivationFactory<>
         , private LifespanTracker<CanvasTypographyFactory>
     {
     public:

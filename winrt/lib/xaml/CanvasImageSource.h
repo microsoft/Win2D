@@ -26,7 +26,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     };
 
 
-    class CanvasImageSourceFactory : public ActivationFactory<ICanvasImageSourceFactory>,
+    class CanvasImageSourceFactory : public AgileActivationFactory<ICanvasImageSourceFactory>,
                                      private LifespanTracker<CanvasImageSourceFactory>
     {
         InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_UI_Xaml_CanvasImageSource, BaseTrust);

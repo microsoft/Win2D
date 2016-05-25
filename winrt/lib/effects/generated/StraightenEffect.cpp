@@ -51,7 +51,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         { L"MaintainSize",      D2D1_STRAIGHTEN_PROP_MAINTAIN_SIZE, GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT             },
         { L"InterpolationMode", D2D1_STRAIGHTEN_PROP_SCALE_MODE,    GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT             })
 
-    ActivatableClass(StraightenEffect);
+    ActivatableClassWithFactory(StraightenEffect, SimpleAgileActivationFactory<StraightenEffect>);
 }}}}}
 
 #endif // _WIN32_WINNT_WIN10

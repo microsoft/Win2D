@@ -68,7 +68,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         { L"OverlayEdges", D2D1_EDGEDETECTION_PROP_OVERLAY_EDGES, GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT                 },
         { L"AlphaMode",    D2D1_EDGEDETECTION_PROP_ALPHA_MODE,    GRAPHICS_EFFECT_PROPERTY_MAPPING_COLORMATRIX_ALPHA_MODE })
 
-    ActivatableClass(EdgeDetectionEffect);
+    ActivatableClassWithFactory(EdgeDetectionEffect, SimpleAgileActivationFactory<EdgeDetectionEffect>);
 }}}}}
 
 #endif // _WIN32_WINNT_WIN10

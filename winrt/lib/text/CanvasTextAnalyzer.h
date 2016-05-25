@@ -302,7 +302,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     //
 
     class CanvasTextAnalyzerFactory
-        : public ActivationFactory<ICanvasTextAnalyzerFactory>
+        : public AgileActivationFactory<ICanvasTextAnalyzerFactory>
         , private LifespanTracker<CanvasTextAnalyzerFactory>
     {
         InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_Text_CanvasTextAnalyzer, BaseTrust);

@@ -30,5 +30,5 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     IMPLEMENT_EFFECT_PROPERTY_MAPPING(CompositeEffect,
         { L"Mode", D2D1_COMPOSITE_PROP_MODE, GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT })
 
-    ActivatableClass(CompositeEffect);
+    ActivatableClassWithFactory(CompositeEffect, SimpleAgileActivationFactory<CompositeEffect>);
 }}}}}

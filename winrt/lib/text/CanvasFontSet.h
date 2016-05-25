@@ -83,7 +83,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     //
 
     class CanvasFontSetFactory
-        : public ActivationFactory<ICanvasFontSetFactory, ICanvasFontSetStatics>
+        : public AgileActivationFactory<ICanvasFontSetFactory, ICanvasFontSetStatics>
         , private LifespanTracker<CanvasFontSetFactory>
     {
         InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_Text_CanvasFontSet, BaseTrust);

@@ -44,7 +44,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
 
     class CanvasCachedGeometryFactory
-        : public ActivationFactory<ICanvasCachedGeometryStatics>
+        : public AgileActivationFactory<ICanvasCachedGeometryStatics>
         , private LifespanTracker<CanvasCachedGeometryFactory>
     {
         InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_Geometry_CanvasCachedGeometry, BaseTrust);

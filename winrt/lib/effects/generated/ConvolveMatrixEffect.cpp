@@ -115,5 +115,5 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         { L"BorderMode",        D2D1_CONVOLVEMATRIX_PROP_BORDER_MODE,        GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT },
         { L"ClampOutput",       D2D1_CONVOLVEMATRIX_PROP_CLAMP_OUTPUT,       GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT })
 
-    ActivatableClass(ConvolveMatrixEffect);
+    ActivatableClassWithFactory(ConvolveMatrixEffect, SimpleAgileActivationFactory<ConvolveMatrixEffect>);
 }}}}}

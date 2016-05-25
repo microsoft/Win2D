@@ -45,7 +45,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
 
     class EffectTransferTable3DFactory
-        : public ActivationFactory<IEffectTransferTable3DStatics>
+        : public AgileActivationFactory<IEffectTransferTable3DStatics>
         , private LifespanTracker<EffectTransferTable3DFactory>
     {
         InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_Effects_EffectTransferTable3D, BaseTrust);

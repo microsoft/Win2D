@@ -21,7 +21,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     };
 
     class CanvasStrokeStyleFactory
-        : public ActivationFactory<>
+        : public AgileActivationFactory<>
         , private LifespanTracker<CanvasStrokeStyleFactory>
     {
     public:

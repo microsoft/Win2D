@@ -47,7 +47,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
 
     class ColorManagementProfileFactory
-        : public ActivationFactory<IColorManagementProfileFactory, IColorManagementProfileStatics>
+        : public AgileActivationFactory<IColorManagementProfileFactory, IColorManagementProfileStatics>
         , private LifespanTracker<ColorManagementProfileFactory>
     {
         InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_Effects_ColorManagementProfile, BaseTrust);

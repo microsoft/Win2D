@@ -33,5 +33,5 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     IMPLEMENT_EFFECT_PROPERTY_MAPPING(SaturationEffect,
         { L"Saturation", D2D1_SATURATION_PROP_SATURATION, GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT })
 
-    ActivatableClass(SaturationEffect);
+    ActivatableClassWithFactory(SaturationEffect, SimpleAgileActivationFactory<SaturationEffect>);
 }}}}}

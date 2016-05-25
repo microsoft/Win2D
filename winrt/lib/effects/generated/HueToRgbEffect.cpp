@@ -34,7 +34,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     IMPLEMENT_EFFECT_PROPERTY_MAPPING(HueToRgbEffect,
         { L"SourceColorSpace", D2D1_HUETORGB_PROP_INPUT_COLOR_SPACE, GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT })
 
-    ActivatableClass(HueToRgbEffect);
+    ActivatableClassWithFactory(HueToRgbEffect, SimpleAgileActivationFactory<HueToRgbEffect>);
 }}}}}
 
 #endif // _WIN32_WINNT_WIN10

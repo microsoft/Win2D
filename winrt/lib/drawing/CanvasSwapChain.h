@@ -14,7 +14,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     using namespace WinRTDirectX;
 
     class CanvasSwapChainFactory
-        : public ActivationFactory<ICanvasSwapChainFactory, ICanvasSwapChainStatics>
+        : public AgileActivationFactory<ICanvasSwapChainFactory, ICanvasSwapChainStatics>
         , private LifespanTracker<CanvasSwapChainFactory>
     {
         InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_CanvasSwapChain, BaseTrust);

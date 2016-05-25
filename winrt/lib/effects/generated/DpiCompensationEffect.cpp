@@ -48,5 +48,5 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         { L"BorderMode",        D2D1_DPICOMPENSATION_PROP_BORDER_MODE,        GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT },
         { L"SourceDpi",         D2D1_DPICOMPENSATION_PROP_INPUT_DPI,          GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT })
 
-    ActivatableClass(DpiCompensationEffect);
+    ActivatableClassWithFactory(DpiCompensationEffect, SimpleAgileActivationFactory<DpiCompensationEffect>);
 }}}}}

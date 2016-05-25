@@ -32,5 +32,5 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     IMPLEMENT_EFFECT_PROPERTY_MAPPING(TileEffect,
         { L"SourceRectangle", D2D1_TILE_PROP_RECT, GRAPHICS_EFFECT_PROPERTY_MAPPING_RECT_TO_VECTOR4 })
 
-    ActivatableClass(TileEffect);
+    ActivatableClassWithFactory(TileEffect, SimpleAgileActivationFactory<TileEffect>);
 }}}}}

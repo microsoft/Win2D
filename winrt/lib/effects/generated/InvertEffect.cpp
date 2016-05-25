@@ -24,7 +24,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         Source,
         0)
 
-    ActivatableClass(InvertEffect);
+    ActivatableClassWithFactory(InvertEffect, SimpleAgileActivationFactory<InvertEffect>);
 }}}}}
 
 #endif // _WIN32_WINNT_WIN10

@@ -48,5 +48,5 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         { L"AlphaMode",   D2D1_COLORMATRIX_PROP_ALPHA_MODE,   GRAPHICS_EFFECT_PROPERTY_MAPPING_COLORMATRIX_ALPHA_MODE },
         { L"ClampOutput", D2D1_COLORMATRIX_PROP_CLAMP_OUTPUT, GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT                 })
 
-    ActivatableClass(ColorMatrixEffect);
+    ActivatableClassWithFactory(ColorMatrixEffect, SimpleAgileActivationFactory<ColorMatrixEffect>);
 }}}}}

@@ -32,7 +32,7 @@ ComPtr<IInspectable> CanvasSwapChainPanelAdapter::CreateSwapChainPanel(IInspecta
     return swapChainPanelInspectable;
 }
 
-class CanvasSwapChainPanelFactory : public ActivationFactory<>,
+class CanvasSwapChainPanelFactory : public AgileActivationFactory<>,
                                     private LifespanTracker<CanvasSwapChainPanelFactory>
 {
     //

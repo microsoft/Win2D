@@ -49,5 +49,5 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         { L"BorderMode",        D2D1_3DTRANSFORM_PROP_BORDER_MODE,        GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT },
         { L"TransformMatrix",   D2D1_3DTRANSFORM_PROP_TRANSFORM_MATRIX,   GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT })
 
-    ActivatableClass(Transform3DEffect);
+    ActivatableClassWithFactory(Transform3DEffect, SimpleAgileActivationFactory<Transform3DEffect>);
 }}}}}

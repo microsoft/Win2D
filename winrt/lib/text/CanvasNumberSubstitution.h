@@ -23,7 +23,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     //
 
     class CanvasNumberSubstitutionFactory
-        : public ActivationFactory<ICanvasNumberSubstitutionFactory>
+        : public AgileActivationFactory<ICanvasNumberSubstitutionFactory>
         , private LifespanTracker<CanvasNumberSubstitutionFactory>
     {
         InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_Text_CanvasNumberSubstitution, BaseTrust);

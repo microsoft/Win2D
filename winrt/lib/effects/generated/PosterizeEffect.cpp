@@ -53,7 +53,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         { L"GreenValueCount", D2D1_POSTERIZE_PROP_GREEN_VALUE_COUNT, GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT },
         { L"BlueValueCount",  D2D1_POSTERIZE_PROP_BLUE_VALUE_COUNT,  GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT })
 
-    ActivatableClass(PosterizeEffect);
+    ActivatableClassWithFactory(PosterizeEffect, SimpleAgileActivationFactory<PosterizeEffect>);
 }}}}}
 
 #endif // _WIN32_WINNT_WIN10

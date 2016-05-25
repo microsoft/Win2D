@@ -43,7 +43,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         { L"Amount", D2D1_EMBOSS_PROP_HEIGHT,    GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT             },
         { L"Angle",  D2D1_EMBOSS_PROP_DIRECTION, GRAPHICS_EFFECT_PROPERTY_MAPPING_RADIANS_TO_DEGREES })
 
-    ActivatableClass(EmbossEffect);
+    ActivatableClassWithFactory(EmbossEffect, SimpleAgileActivationFactory<EmbossEffect>);
 }}}}}
 
 #endif // _WIN32_WINNT_WIN10

@@ -59,7 +59,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         { L"Curve",    D2D1_VIGNETTE_PROP_STRENGTH,        GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT           },
         { L"ColorHdr", D2D1_VIGNETTE_PROP_COLOR,           GRAPHICS_EFFECT_PROPERTY_MAPPING_UNKNOWN          })
 
-    ActivatableClass(VignetteEffect);
+    ActivatableClassWithFactory(VignetteEffect, SimpleAgileActivationFactory<VignetteEffect>);
 }}}}}
 
 #endif // _WIN32_WINNT_WIN10

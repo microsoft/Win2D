@@ -33,7 +33,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         IFACEMETHODIMP get_Timing(CanvasTimingInformation* value);
     };
 
-    class CanvasAnimatedUpdateEventArgsFactory : public ActivationFactory<ICanvasAnimatedUpdateEventArgsFactory>,
+    class CanvasAnimatedUpdateEventArgsFactory : public AgileActivationFactory<ICanvasAnimatedUpdateEventArgsFactory>,
                                                  private LifespanTracker<CanvasAnimatedUpdateEventArgsFactory>
     {
         InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_UI_Xaml_CanvasAnimatedUpdateEventArgs, BaseTrust);
@@ -44,7 +44,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             ICanvasAnimatedUpdateEventArgs** updateEventArgs);
     };
 
-    class CanvasAnimatedDrawEventArgsFactory : public ActivationFactory<ICanvasAnimatedDrawEventArgsFactory>,
+    class CanvasAnimatedDrawEventArgsFactory : public AgileActivationFactory<ICanvasAnimatedDrawEventArgsFactory>,
                                                private LifespanTracker<CanvasAnimatedDrawEventArgsFactory>
     {
         InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_UI_Xaml_CanvasAnimatedDrawEventArgs, BaseTrust);

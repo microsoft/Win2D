@@ -66,5 +66,5 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         { L"BorderMode",        D2D1_SCALE_PROP_BORDER_MODE,        GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT },
         { L"Sharpness",         D2D1_SCALE_PROP_SHARPNESS,          GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT })
 
-    ActivatableClass(ScaleEffect);
+    ActivatableClassWithFactory(ScaleEffect, SimpleAgileActivationFactory<ScaleEffect>);
 }}}}}

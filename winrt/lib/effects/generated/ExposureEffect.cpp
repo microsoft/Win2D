@@ -35,7 +35,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     IMPLEMENT_EFFECT_PROPERTY_MAPPING(ExposureEffect,
         { L"Exposure", D2D1_EXPOSURE_PROP_EXPOSURE_VALUE, GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT })
 
-    ActivatableClass(ExposureEffect);
+    ActivatableClassWithFactory(ExposureEffect, SimpleAgileActivationFactory<ExposureEffect>);
 }}}}}
 
 #endif // _WIN32_WINNT_WIN10

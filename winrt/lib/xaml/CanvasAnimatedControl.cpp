@@ -113,7 +113,7 @@ IFACEMETHODIMP CanvasAnimatedDrawEventArgs::get_Timing(CanvasTimingInformation* 
 // CanvasAnimatedControlFactory
 //
 
-class CanvasAnimatedControlFactory : public ActivationFactory<>,
+class CanvasAnimatedControlFactory : public AgileActivationFactory<>,
                                      private LifespanTracker<CanvasAnimatedControlFactory>
 {
     std::weak_ptr<ICanvasAnimatedControlAdapter> m_adapter;

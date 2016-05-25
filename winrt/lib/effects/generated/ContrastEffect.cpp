@@ -43,7 +43,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         { L"Contrast",    D2D1_CONTRAST_PROP_CONTRAST,    GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT },
         { L"ClampSource", D2D1_CONTRAST_PROP_CLAMP_INPUT, GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT })
 
-    ActivatableClass(ContrastEffect);
+    ActivatableClassWithFactory(ContrastEffect, SimpleAgileActivationFactory<ContrastEffect>);
 }}}}}
 
 #endif // _WIN32_WINNT_WIN10

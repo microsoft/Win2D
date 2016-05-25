@@ -26,7 +26,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     // CanvasTextFormatFactory
     //
     class CanvasTextFormatFactory
-        : public ActivationFactory<ICanvasTextFormatStatics>
+        : public AgileActivationFactory<ICanvasTextFormatStatics>
         , private LifespanTracker<CanvasTextFormatFactory>
     {
         InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_Text_CanvasTextFormat, BaseTrust);

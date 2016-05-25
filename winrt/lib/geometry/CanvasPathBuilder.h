@@ -10,7 +10,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     using namespace ABI::Microsoft::Graphics::Canvas::Numerics;
 
     class CanvasPathBuilderFactory
-        : public ActivationFactory<ICanvasPathBuilderFactory>,
+        : public AgileActivationFactory<ICanvasPathBuilderFactory>,
           private LifespanTracker<CanvasPathBuilderFactory>
     {
         InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_Geometry_CanvasPathBuilder, BaseTrust);

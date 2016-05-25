@@ -9,7 +9,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     using namespace ::Microsoft::WRL;
 
     class CanvasImageBrushFactory
-        : public ActivationFactory<ICanvasImageBrushFactory>
+        : public AgileActivationFactory<ICanvasImageBrushFactory>
         , private LifespanTracker<CanvasImageBrushFactory>
     {
         InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_Brushes_CanvasImageBrush, BaseTrust);

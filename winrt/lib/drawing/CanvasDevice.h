@@ -462,7 +462,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     // WinRT activation factory for the CanvasDevice runtimeclass.
     //
     class CanvasDeviceFactory 
-        : public ActivationFactory<ICanvasDeviceFactory, ICanvasDeviceStatics, CloakedIid<ICanvasFactoryNative>>
+        : public AgileActivationFactory<ICanvasDeviceFactory, ICanvasDeviceStatics, CloakedIid<ICanvasFactoryNative>>
         , private LifespanTracker<CanvasDeviceFactory>
                                 
     {

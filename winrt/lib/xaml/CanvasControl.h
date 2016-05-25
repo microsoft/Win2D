@@ -17,7 +17,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     using namespace ABI::Windows::UI::Xaml::Media;
     using namespace ABI::Windows::UI::Xaml;
 
-    class CanvasDrawEventArgsFactory : public ActivationFactory<ICanvasDrawEventArgsFactory>,
+    class CanvasDrawEventArgsFactory : public AgileActivationFactory<ICanvasDrawEventArgsFactory>,
                                        private LifespanTracker<CanvasDrawEventArgsFactory>
     {
         InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_UI_Xaml_CanvasDrawEventArgs, BaseTrust);

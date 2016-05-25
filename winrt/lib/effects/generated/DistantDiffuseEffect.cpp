@@ -90,5 +90,5 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         { L"HeightMapInterpolationMode", D2D1_DISTANTDIFFUSE_PROP_SCALE_MODE,         GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT             },
         { L"LightColorHdr",              D2D1_DISTANTDIFFUSE_PROP_COLOR,              GRAPHICS_EFFECT_PROPERTY_MAPPING_UNKNOWN            })
 
-    ActivatableClass(DistantDiffuseEffect);
+    ActivatableClassWithFactory(DistantDiffuseEffect, SimpleAgileActivationFactory<DistantDiffuseEffect>);
 }}}}}

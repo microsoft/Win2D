@@ -9,7 +9,7 @@
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
     class CanvasVirtualBitmapFactory :
-        public ActivationFactory<ICanvasVirtualBitmapStatics>,
+        public AgileActivationFactory<ICanvasVirtualBitmapStatics>,
         private LifespanTracker<CanvasVirtualBitmapFactory>
     {
         InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_CanvasVirtualBitmap, BaseTrust);

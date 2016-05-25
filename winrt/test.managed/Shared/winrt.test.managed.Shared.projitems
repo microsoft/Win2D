@@ -17,6 +17,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)PathReceiver.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PixelFormatTests.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PixelShaderEffectTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ReflectionTests.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utils.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)VectorInterop.cs" />
   </ItemGroup>

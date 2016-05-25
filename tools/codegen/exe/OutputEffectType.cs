@@ -385,7 +385,7 @@ namespace CodeGen
 
             if (effect.Overrides == null || !effect.Overrides.HasStatics)
             {
-                output.WriteLine("ActivatableClass(" + effect.ClassName + ");");
+                output.WriteLine("ActivatableClassWithFactory(" + effect.ClassName + ", SimpleAgileActivationFactory<" + effect.ClassName + ">);");
             }
 
             output.Unindent();

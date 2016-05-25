@@ -10,7 +10,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 {
     using namespace ABI::Windows::UI::Composition;
 
-    class CanvasCompositionStatics : public ActivationFactory<ICanvasCompositionStatics>
+    class CanvasCompositionStatics : public AgileActivationFactory<ICanvasCompositionStatics>
     {
         InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_UI_Composition_CanvasComposition, BaseTrust);
 

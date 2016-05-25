@@ -60,7 +60,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     };
 
     class CanvasLinearGradientBrushFactory
-        : public ActivationFactory<ICanvasLinearGradientBrushFactory, ICanvasLinearGradientBrushStatics>
+        : public AgileActivationFactory<ICanvasLinearGradientBrushFactory, ICanvasLinearGradientBrushStatics>
         , private LifespanTracker<CanvasLinearGradientBrushFactory>
     {
         InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_Brushes_CanvasLinearGradientBrush, BaseTrust);

@@ -9,7 +9,7 @@
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
     class CanvasSpriteBatchStatics
-        : public ActivationFactory<ICanvasSpriteBatchStatics>
+        : public AgileActivationFactory<ICanvasSpriteBatchStatics>
     {
         InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_CanvasSpriteBatch, BaseTrust);
 

@@ -22,5 +22,5 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         Source,
         0)
 
-    ActivatableClass(LuminanceToAlphaEffect);
+    ActivatableClassWithFactory(LuminanceToAlphaEffect, SimpleAgileActivationFactory<LuminanceToAlphaEffect>);
 }}}}}

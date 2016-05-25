@@ -7,7 +7,7 @@
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace UI { namespace Xaml
 {
     class CanvasVirtualImageSourceFactory
-        : public ActivationFactory<ICanvasVirtualImageSourceFactory>,
+        : public AgileActivationFactory<ICanvasVirtualImageSourceFactory>,
           private LifespanTracker<CanvasVirtualImageSourceFactory>
     {
         InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_UI_Xaml_CanvasVirtualImageSource, BaseTrust);
