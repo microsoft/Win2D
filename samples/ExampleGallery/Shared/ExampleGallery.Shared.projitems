@@ -117,6 +117,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)StrokeStyles.xaml.cs">
       <DependentUpon>StrokeStyles.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)SubscriptSuperscript.xaml.cs">
+      <DependentUpon>SubscriptSuperscript.xaml</DependentUpon>
+    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Infrastructure\SuspensionManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Infrastructure\Utils.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TextDirectionControl.cs" />
@@ -276,6 +279,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="$(MSBuildThisFileDirectory)SubscriptSuperscript.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="$(MSBuildThisFileDirectory)TextDirectionsExample.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -376,6 +383,8 @@
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\AboutWide.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\StrokeStylesNarrow.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\StrokeStylesWide.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Thumbnails\SubscriptAndSuperscriptNarrow.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Thumbnails\SubscriptAndSuperscriptWide.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\TextDirectionsNarrow.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\TextDirectionsWide.png" />
     <Content Include="$(MSBuildThisFileDirectory)Thumbnails\TextLayoutsNarrow.png" />
