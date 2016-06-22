@@ -75,3 +75,8 @@ Studio, add the Win2D NuGet package to your project, and get started using the A
 
 Locally built versions of Win2D are marked as prerelease, so you must change the 'Stable 
 Only' setting to 'Include Prerelease' when adding them to your project.
+
+---
+This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
+For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact
+[opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
