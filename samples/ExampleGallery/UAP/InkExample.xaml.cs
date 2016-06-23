@@ -73,7 +73,6 @@ namespace ExampleGallery
             inkCanvas.InkPresenter.StrokeInput.StrokeStarted += StrokeInput_StrokeStarted;
 
             inkCanvas.InkPresenter.StrokesCollected += InkPresenter_StrokesCollected;
-            inkCanvas.InkPresenter.StrokesErased += InkPresenter_StrokesErased;
 
             inkSynchronizer = inkCanvas.InkPresenter.ActivateCustomDrying();
 
@@ -103,19 +102,6 @@ namespace ExampleGallery
 
         private void StrokeInput_StrokeStarted(InkStrokeInput sender, Windows.UI.Core.PointerEventArgs args)
         {
-            ClearSelection();
-
-            canvasControl.Invalidate();
-        }
-
-        private void InkPresenter_StrokesErased(InkPresenter sender, InkStrokesErasedEventArgs args)
-        {
-            var removed = args.Strokes;
-            var strokeList = inkManager.GetStrokes().Except(removed).ToList();
-
-            inkManager = new InkManager();
-            strokeList.ForEach(inkManager.AddStroke);
-
             ClearSelection();
 
             canvasControl.Invalidate();
@@ -515,7 +501,6 @@ namespace ExampleGallery
             inkCanvas.InkPresenter.UnprocessedInput.PointerReleased -= UnprocessedInput_PointerReleased;
             inkCanvas.InkPresenter.StrokeInput.StrokeStarted -= StrokeInput_StrokeStarted;
             inkCanvas.InkPresenter.StrokesCollected -= InkPresenter_StrokesCollected;
-            inkCanvas.InkPresenter.StrokesErased -= InkPresenter_StrokesErased;
         }
     }
 }
