@@ -22,8 +22,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     typedef DWRITE_RENDERING_MODE DWriteRenderingMode;
 #endif
     
-    [uuid(0A165926-BCBD-4B02-BF60-F5FC46C22B58)]
-    class ICanvasFontFaceInternal : public IUnknown
+    class __declspec(uuid("0A165926-BCBD-4B02-BF60-F5FC46C22B58"))
+    ICanvasFontFaceInternal : public IUnknown
     {
     public:
         virtual ComPtr<DWriteFontFaceType> const& GetRealizedFontFace() = 0;

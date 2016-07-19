@@ -6,8 +6,8 @@
 
 namespace
 {
-    [uuid(92378CDA-713F-416D-99EE-EC0DFF5D238E)]
-    class IDummyResource : public IUnknown
+    class __declspec(uuid("92378CDA-713F-416D-99EE-EC0DFF5D238E"))
+    IDummyResource : public IUnknown
     {
     };
 
@@ -17,8 +17,8 @@ namespace
     };
 
 
-    [uuid(B7E157E0-99C7-463B-8DDC-F72B10221FEC)]
-    class IDummyWrapper : public IInspectable
+    class __declspec(uuid("B7E157E0-99C7-463B-8DDC-F72B10221FEC"))
+    IDummyWrapper : public IInspectable
     {
     public:
         virtual int GetId() = 0;
@@ -401,18 +401,18 @@ TEST_CLASS(ResourceManagerUnitTests)
 
 namespace
 {
-    [uuid(52FB7C6A-20A5-4F6E-888F-F23FECF966D8)]
-    struct IBaseInterface : public IUnknown
+    struct __declspec(uuid("52FB7C6A-20A5-4F6E-888F-F23FECF966D8"))
+    IBaseInterface : public IUnknown
     {
     };
 
-    [uuid(B0507E89-42F7-4087-BCE9-326F259FDA2C)]
-    struct IInterface1 : public IBaseInterface
+    struct __declspec(uuid("B0507E89-42F7-4087-BCE9-326F259FDA2C"))
+    IInterface1 : public IBaseInterface
     {
     };
 
-    [uuid(3B4BDC33-059A-4353-B870-69D42711AE24)]
-    struct IInterface2 : public IBaseInterface
+    struct __declspec(uuid("3B4BDC33-059A-4353-B870-69D42711AE24"))
+    IInterface2 : public IBaseInterface
     {
     };
 
@@ -420,8 +420,8 @@ namespace
     {
     };
 
-    [uuid(5647EAB4-2EA9-4374-9D02-9C1D35E4BC43)]
-    class IMultipleInterface : public IInspectable
+    class __declspec(uuid("5647EAB4-2EA9-4374-9D02-9C1D35E4BC43"))
+    IMultipleInterface : public IInspectable
     {
     };
 

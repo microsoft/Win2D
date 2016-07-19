@@ -8,8 +8,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 {
     using namespace ::Microsoft::WRL;
     
-    [uuid(CAC871EB-EF62-4211-900E-BBD332244307)]
-    class ICanvasTypographyInternal : public IUnknown
+    class __declspec(uuid("CAC871EB-EF62-4211-900E-BBD332244307"))
+    ICanvasTypographyInternal : public IUnknown
     {
     public:
         virtual std::vector<DWRITE_FONT_FEATURE> GetFeatureData() = 0;

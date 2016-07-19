@@ -17,8 +17,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     DEFINE_ENUM_FLAG_OPERATORS(GetBrushFlags)
 
-    [uuid(3A6BF1D2-731A-4EBB-AA40-1419A89302F6)]
-    class ICanvasBrushInternal : public IUnknown
+    class __declspec(uuid("3A6BF1D2-731A-4EBB-AA40-1419A89302F6"))
+    ICanvasBrushInternal : public IUnknown
     {
     public:
         virtual ComPtr<ID2D1Brush> GetD2DBrush(ID2D1DeviceContext* deviceContext, GetBrushFlags flags) = 0;

@@ -28,8 +28,8 @@ STDAPI CreateDirect3D11SurfaceFromDXGISurface(
 
 namespace Microsoft { namespace Graphics { namespace Canvas { namespace DirectX { namespace Direct3D11 {
 
-    [uuid(6173F6BA-35C0-46F9-A944-BD7661DA6E6E)]
-    class IDirect3DDxgiInterfaceAccess : public IUnknown
+    class __declspec(uuid("6173F6BA-35C0-46F9-A944-BD7661DA6E6E"))
+    IDirect3DDxgiInterfaceAccess : public IUnknown
     {
     public:
         IFACEMETHOD(GetInterface)(REFIID iid, void** p) = 0;

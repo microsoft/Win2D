@@ -70,8 +70,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     // cross DLL boundaries these use exceptions for error handling and can
     // take/return C++ types.
     //
-    [uuid(E2C64DD1-4126-4C7A-A5D2-D5E8B2C7235C)]
-    class ICanvasDeviceInternal : public IUnknown
+    class __declspec(uuid("E2C64DD1-4126-4C7A-A5D2-D5E8B2C7235C"))
+    ICanvasDeviceInternal : public IUnknown
     {
     public:
         virtual ComPtr<ID2D1Device1> GetD2DDevice() = 0;

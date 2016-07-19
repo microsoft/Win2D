@@ -6,8 +6,8 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Text
 {
-    [uuid(49320795-5DC9-42B8-97A3-230E44846BD8)]
-    class IInternalDWriteInlineObject : public IUnknown
+    class __declspec(uuid("49320795-5DC9-42B8-97A3-230E44846BD8"))
+    IInternalDWriteInlineObject : public IUnknown
     {
     public:
         virtual void SetDevice(ICanvasDevice* device) = 0;

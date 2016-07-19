@@ -23,8 +23,8 @@ namespace ABI
                 // Interface provided by the CanvasDevice factory that is
                 // able to get or create objects that wrap resources.
                 //
-                [uuid(695C440D-04B3-4EDD-BFD9-63E51E9F7202)]
-                class ICanvasFactoryNative : public IInspectable
+                class __declspec(uuid("695C440D-04B3-4EDD-BFD9-63E51E9F7202"))
+                ICanvasFactoryNative : public IInspectable
                 {
                 public:
                     IFACEMETHOD(GetOrCreate)(ICanvasDevice* device, IUnknown* resource, float dpi, IInspectable** wrapper) = 0;
@@ -34,8 +34,8 @@ namespace ABI
                 // Interface provided by various Canvas objects that is able to
                 // retrieve the wrapped resource.
                 //
-                [uuid(5F10688D-EA55-4D55-A3B0-4DDB55C0C20A)]
-                class ICanvasResourceWrapperNative : public IUnknown
+                class __declspec(uuid("5F10688D-EA55-4D55-A3B0-4DDB55C0C20A"))
+                ICanvasResourceWrapperNative : public IUnknown
                 {
                 public:
                     IFACEMETHOD(GetNativeResource)(ICanvasDevice* device, float dpi, REFIID iid, void** resource) = 0;
