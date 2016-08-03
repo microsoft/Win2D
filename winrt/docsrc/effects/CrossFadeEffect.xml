@@ -11,7 +11,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
   </assembly>
   <members>
 
-    <member name="T:Microsoft.Graphics.Canvas.Effects.CrossFadeEffect" Win10_14346="true">
+    <member name="T:Microsoft.Graphics.Canvas.Effects.CrossFadeEffect" Win10_14393="true">
       <summary>
         Cross-fades (interpolates) between two images.
       </summary>
@@ -42,7 +42,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     
     <inherittemplate name="EffectTemplate" replacement="CrossFadeEffect" />
     <inherittemplate name="ICanvasEffectTemplate" replacement="CrossFadeEffect" />
-    <inherittemplate name="EffectRequires14346Template" replacement="CrossFadeEffect" />
+    <inherittemplate name="EffectRequires14393Template" replacement="CrossFadeEffect" />
 
   </members>
 </doc>

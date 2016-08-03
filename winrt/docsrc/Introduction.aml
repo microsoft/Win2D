@@ -89,6 +89,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
           <listItem>
             To develop for Windows 10 (Universal Windows Platform):
             <list class="bullet">
+              <listItem>Recommended version: Visual Studio Community 2015 with Update 3 and Universal Windows App Development Tools 1.4.1</listItem>
               <listItem>Minimum version: Visual Studio Community 2015 with Update 1</listItem>
             </list>
             

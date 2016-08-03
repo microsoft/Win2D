@@ -1059,17 +1059,16 @@ namespace ExampleGallery
 #if WINDOWS_UWP
 
         const string requiresWin10 = "This effect is new in the\nUniversal Windows Platform.\nIt is not supported on \nWindows 8.1 or Phone 8.1.";
-        // TODO: replace 14346 with final RS1 SDK version (once known)
-        const string requiresWin10_14346 = "This effect is new in\nWindows 10 build 14346.\nIt is not supported on\nolder versions of Windows.";
+        const string requiresWin10_14393 = "This effect is new in\nWindows 10 Anniversary Update.\nIt is not supported on\nolder versions of Windows.";
 
         private ICanvasImage CreateAlphaMask()
         {
             if (!AlphaMaskEffect.IsSupported)
             {
-                return CreateNotSupportedMessage(requiresWin10_14346);
+                return CreateNotSupportedMessage(requiresWin10_14393);
             }
 
-            textLabel = requiresWin10_14346;
+            textLabel = requiresWin10_14393;
 
             // Draw an alpha gradient into a command list.
             var alphaGradientBrush = new CanvasRadialGradientBrush(canvas, Colors.Black, Colors.Transparent)
@@ -1153,10 +1152,10 @@ namespace ExampleGallery
         {
             if (!CrossFadeEffect.IsSupported)
             {
-                return CreateNotSupportedMessage(requiresWin10_14346);
+                return CreateNotSupportedMessage(requiresWin10_14393);
             }
 
-            textLabel = requiresWin10_14346;
+            textLabel = requiresWin10_14393;
 
             var upsideDownTiger = new Transform2DEffect
             {
@@ -1283,10 +1282,10 @@ namespace ExampleGallery
         {
             if (!OpacityEffect.IsSupported)
             {
-                return CreateNotSupportedMessage(requiresWin10_14346);
+                return CreateNotSupportedMessage(requiresWin10_14393);
             }
 
-            textLabel = requiresWin10_14346;
+            textLabel = requiresWin10_14393;
 
             var opacityEffect = new OpacityEffect
             {
@@ -1509,10 +1508,10 @@ namespace ExampleGallery
         {
             if (!TintEffect.IsSupported)
             {
-                return CreateNotSupportedMessage(requiresWin10_14346);
+                return CreateNotSupportedMessage(requiresWin10_14393);
             }
 
-            textLabel = requiresWin10_14346;
+            textLabel = requiresWin10_14393;
 
             var tintEffect = new TintEffect
             {
