@@ -30,8 +30,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     DEFINE_ENUM_FLAG_OPERATORS(GetImageFlags)
 
 
-    [uuid(2F434224-053C-4978-87C4-CFAAFA2F4FAC)]
-    class ICanvasImageInternal : public IUnknown
+    class __declspec(uuid("2F434224-053C-4978-87C4-CFAAFA2F4FAC"))
+    ICanvasImageInternal : public IUnknown
     {
     public:
         // For bitmaps and command lists, GetD2DImage is a trivial getter.

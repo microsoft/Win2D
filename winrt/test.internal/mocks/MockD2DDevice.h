@@ -12,8 +12,8 @@ namespace canvas
     ComPtr<ID2D1Factory2> MakeMockD2DFactory();
 
 
-    [uuid(D5B2FFD5-882E-4CB5-98FA-2342E52FC6F2)]
-    class ID2DDeviceWithDxgiDevice : public IUnknown
+    class __declspec(uuid("D5B2FFD5-882E-4CB5-98FA-2342E52FC6F2"))
+    ID2DDeviceWithDxgiDevice : public IUnknown
     {
     public:
         virtual ComPtr<IDXGIDevice3> GetDxgiDevice() = 0;

@@ -49,8 +49,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     // ICanvasTextFormatInternal
     //
 
-    [uuid(E295AC1E-B763-49D4-9AE3-6E75D0C429AA)]
-    class ICanvasTextFormatInternal : public IUnknown
+    class __declspec(uuid("E295AC1E-B763-49D4-9AE3-6E75D0C429AA"))
+    ICanvasTextFormatInternal : public IUnknown
     {
     public:
         virtual ComPtr<IDWriteTextFormat1> GetRealizedTextFormat() = 0;

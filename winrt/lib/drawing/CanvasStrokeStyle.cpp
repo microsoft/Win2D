@@ -289,11 +289,13 @@ IFACEMETHODIMP CanvasStrokeStyle::put_CustomDashStyle(
             
             ThrowIfClosed();
 
+            if (valueCount)
+                CheckInPointer(valueElements);
+
             if ((m_customDashElements.size() != valueCount) ||
-                !std::equal(
-                    m_customDashElements.begin(),
-                    m_customDashElements.end(),
-                    stdext::checked_array_iterator<float*>(valueElements, valueCount)))
+                (valueCount && !std::equal(m_customDashElements.begin(),
+                                           m_customDashElements.end(),
+                                           stdext::checked_array_iterator<float*>(valueElements, valueCount))))
             {
                 ReleaseResource();
                 m_customDashElements.assign(valueElements, valueElements + valueCount);

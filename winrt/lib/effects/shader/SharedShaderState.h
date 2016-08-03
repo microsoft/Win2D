@@ -45,8 +45,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     // which greatly simplifies binding PixelShaderEffectImpl to its Win2D wrapper at
     // the cost of limiting ability to use it directly from native D2D.
 
-    [uuid("9B81CB94-C07D-4635-9507-D9857B7B281F")]
-    class ISharedShaderState : public IUnknown
+    class __declspec(uuid("9B81CB94-C07D-4635-9507-D9857B7B281F"))
+    ISharedShaderState : public IUnknown
     {
     public:
         virtual ComPtr<ISharedShaderState> Clone() = 0;

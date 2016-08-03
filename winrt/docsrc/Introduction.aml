@@ -11,7 +11,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <introduction>
       <para>
         Win2D is an easy-to-use Windows Runtime API for immediate mode 2D graphics
-        rendering with GPU acceleration. It is available to C# and C++ developers
+        rendering with GPU acceleration. It is available to C#, C++ and VB developers
         writing Windows apps for Windows 8.1, Windows Phone 8.1 and Windows 10. It
         utilizes the power of Direct2D, and integrates seamlessly with XAML and
         CoreWindow.
@@ -106,7 +106,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         <para>Create your project:</para>
         <list class="bullet">
           <listItem>Go to 'File' -> 'New' -> 'Project...'</listItem>
-          <listItem>Select 'Visual C#'</listItem>
+          <listItem>Select 'Visual C#' or 'Visual Basic'</listItem>
           <listItem>Create a 'Blank App (Universal Apps)' (Visual Studio 2013) or 'Blank App (Windows Universal)' (Visual Studio 2015)</listItem>
           <listItem>Enter a project name of your choosing</listItem>
           <listItem>Click 'OK'</listItem>
@@ -170,7 +170,26 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
               }
           }
         </code>
+		
+        <para>Or edit MainPage.xaml.vb if you have created a VB project:</para>
+        <code>
+          Imports Windows.UI
+          Imports Windows.UI.Xaml.Controls
+          Imports Microsoft.Graphics.Canvas.UI.Xaml
+          
+          Public NotInheritable Class MainPage
+              Inherits Page
+	          Public Sub New()
+                  Me.InitializeComponent()
+              End Sub
 
+              Private Sub CanvasControl_Draw(sender As CanvasControl, args As CanvasDrawEventArgs)
+                  args.DrawingSession.DrawEllipse(155, 115, 80, 30, Colors.Black, 3)
+                  args.DrawingSession.DrawText("Hello, world!", 100, 100, Colors.Yellow)
+              End Sub
+          End Class
+        </code>
+		
         <para>
           If you prefer to build your own version of Win2D from source, see the 
           <externalLink>

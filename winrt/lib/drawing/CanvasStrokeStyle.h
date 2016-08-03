@@ -12,8 +12,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
     class CanvasStrokeStyle;
 
-    [uuid(45BBB5CD-F9FB-4786-9491-D9BF0354DFF6)]
-    class ICanvasStrokeStyleInternal : public IUnknown
+    class __declspec(uuid("45BBB5CD-F9FB-4786-9491-D9BF0354DFF6"))
+    ICanvasStrokeStyleInternal : public IUnknown
     {
     public:
         // This realizes the stroke style if necessary.

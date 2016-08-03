@@ -162,6 +162,9 @@ public:
 
         Assert::AreEqual(CanvasDashStyle::Dot, dashStyle);
         Assert::AreEqual(D2D1_DASH_STYLE_DOT, testFactory->m_dashStyle);
+
+        // Passing null data pointer for a non-empty array is illegal.
+        Assert::AreEqual(E_INVALIDARG, canvasStrokeStyle->put_CustomDashStyle(1, nullptr));
     }
 
     class RealizationBehaviorVerifier

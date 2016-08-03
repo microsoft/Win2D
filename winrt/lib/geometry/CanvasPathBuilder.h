@@ -21,8 +21,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             ICanvasPathBuilder** canvasPathBuilder) override;
     };
     
-    [uuid(DC532EB2-A103-4EEA-914A-FC1B99E3F657)]
-    class ICanvasPathBuilderInternal : public IUnknown
+    class __declspec(uuid("DC532EB2-A103-4EEA-914A-FC1B99E3F657"))
+    ICanvasPathBuilderInternal : public IUnknown
     {
     public:
         virtual ComPtr<ICanvasDevice> GetDevice() = 0;

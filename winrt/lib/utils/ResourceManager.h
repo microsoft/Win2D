@@ -6,16 +6,16 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
-    [uuid(D8CF19FE-8064-423E-B649-8B458BA86116)]
-    class ICanvasResourceWrapperWithDevice : public IUnknown
+    class __declspec(uuid("D8CF19FE-8064-423E-B649-8B458BA86116"))
+    ICanvasResourceWrapperWithDevice : public IUnknown
     {
     public:
         IFACEMETHOD(get_Device)(ICanvasDevice** value) = 0;
     };
 
 
-    [uuid(D4142C4E-024D-45C3-85D1-B058314D9204)]
-    class ICanvasResourceWrapperWithDpi : public IUnknown
+    class __declspec(uuid("D4142C4E-024D-45C3-85D1-B058314D9204"))
+    ICanvasResourceWrapperWithDpi : public IUnknown
     {
     public:
         IFACEMETHOD(get_Dpi)(float* value) = 0;

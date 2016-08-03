@@ -91,13 +91,16 @@
       <SDLCheck>true</SDLCheck>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <AdditionalUsingDirectories>$(WindowsSDK_WindowsMetadata);$(AdditionalUsingDirectories)</AdditionalUsingDirectories>
-      <AdditionalOptions>/bigobj /Zm450 /wd4503 /D_CRT_STDIO_LEGACY_WIDE_SPECIFIERS=1 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/bigobj /Zm450 /wd4503 /wd4467 /D_CRT_STDIO_LEGACY_WIDE_SPECIFIERS=1 %(AdditionalOptions)</AdditionalOptions>
       <!--
           /Zm999 - this value needs to be bumped occasionally when as our PCH grows
 
           /wd4503 - this disables the warning about decorated names being too
                     long.  There isn't much we can do about this so the warning isn't very
                     helpful.
+
+          /wd4467 - this disables the VS 2015 Update 3 warning about [uuid] attribute
+                    syntax being deprecated. Win2D no longer uses that, but WRL headers do.
 
           _CRT_STDIO_LEGACY_WIDE_SPECIFIERS - this makes %s in printf behave the
                     same in VS2015 as it did in VS2013.

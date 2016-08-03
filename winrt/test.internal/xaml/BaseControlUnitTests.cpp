@@ -35,8 +35,8 @@ namespace
         typedef ITypedEventHandler<IAnyControlInterface*, CanvasCreateResourcesEventArgs*> createResourcesEventHandler_t;        
     };
 
-    [uuid(8BEBD9A8-8512-4C76-8FB7-BDF923F8D4E1)]
-    struct IAnyControlInterface : public IInspectable
+    struct __declspec(uuid("8BEBD9A8-8512-4C76-8FB7-BDF923F8D4E1"))
+    IAnyControlInterface : public IInspectable
     {
         IFACEMETHOD(put_ClearColor)(Color) = 0;
         IFACEMETHOD(get_ClearColor)(Color*) = 0;

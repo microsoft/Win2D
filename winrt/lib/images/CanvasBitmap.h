@@ -63,8 +63,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     };
 
 
-    [uuid(4684FA78-C721-4531-8CCE-BEA927F95E5D)]
-    class ICanvasBitmapInternal : public IUnknown
+    class __declspec(uuid("4684FA78-C721-4531-8CCE-BEA927F95E5D"))
+    ICanvasBitmapInternal : public IUnknown
     {
     public:
         virtual ComPtr<ID2D1Bitmap1> const& GetD2DBitmap() = 0;
