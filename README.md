@@ -1,7 +1,7 @@
 # Win2D
 
 Win2D is an easy-to-use Windows Runtime API for immediate mode 2D graphics
-rendering with GPU acceleration. It is available to C# and C++ developers
+rendering with GPU acceleration. It is available to C#, C++ and VB developers
 writing Windows apps for Windows 8.1, Windows Phone 8.1 and Windows 10. It
 utilizes the power of Direct2D, and integrates seamlessly with XAML and
 CoreWindow.
@@ -39,6 +39,13 @@ void canvasControl_Draw(CanvasControl sender, CanvasDrawEventArgs args)
     args.DrawingSession.DrawEllipse(155, 115, 80, 30, Colors.Black, 3);
     args.DrawingSession.DrawText("Hello, world!", 100, 100, Colors.Yellow);
 }
+```
+or VB:
+```vb
+Sub canvasControl_Draw(sender As CanvasControl, args As CanvasDrawEventArgs)
+    args.DrawingSession.DrawEllipse(155, 115, 80, 30, Colors.Black, 3)
+    args.DrawingSession.DrawText("Hello, world!", 100, 100, Colors.Yellow)
+End Sub
 ```
 
 ## Using Win2D
