@@ -11,7 +11,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
   </assembly>
   <members>
 
-    <member name="T:Microsoft.Graphics.Canvas.Effects.CrossFadeEffect" Win10_14393="true">
+    <member name="T:Microsoft.Graphics.Canvas.Effects.CrossFadeEffect" Win10_14393="true" Experimental="true">
       <summary>
         Cross-fades (interpolates) between two images.
       </summary>
