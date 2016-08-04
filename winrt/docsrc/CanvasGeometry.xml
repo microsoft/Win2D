@@ -526,6 +526,10 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
           After using CreateInk, it may be desirable to clean up these self-intersections by calling
           <see cref="O:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.Outline"/>.
         </p>
+        <p>
+          Note that CanvasGeometry does not support pencil ink strokes (InkDrawingAttributesKind.Pencil).
+          Passing pencil strokes will produce an empty geometry.
+        </p>
       </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.CreateInk(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Collections.Generic.IEnumerable{Windows.UI.Input.Inking.InkStroke},System.Numerics.Matrix3x2,System.Single)" Win10="true">
@@ -536,6 +540,10 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
           Geometry created from ink typically contains many overlapping stroke segments and circles.
           After using CreateInk, it may be desirable to clean up these self-intersections by calling
           <see cref="O:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.Outline"/>.
+        </p>
+        <p>
+          Note that CanvasGeometry does not support pencil ink strokes (InkDrawingAttributesKind.Pencil).
+          Passing pencil strokes will produce an empty geometry.
         </p>
       </remarks>
     </member>
