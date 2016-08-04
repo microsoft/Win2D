@@ -165,7 +165,16 @@ public:
         if (m_startDispatcher)
         {
             ComPtr<IAsyncAction> action;
-            ThrowIfFailed(m_dispatcher->RunAsync(CoreDispatcherPriority_Low, handler, &action));
+            HRESULT hr = m_dispatcher->RunAsync(CoreDispatcherPriority_Low, handler, &action);
+
+            // Work around MSFT:8381339. CoreDispatcher.RunAsync can fail with E_INVALIDARG
+            // when an internal counter wraps. We can recover from this by a simple retry.
+            if (hr == E_INVALIDARG)
+            {
+                hr = m_dispatcher->RunAsync(CoreDispatcherPriority_Low, handler, &action);
+            }
+
+            ThrowIfFailed(hr);
             return action;
         }
         else
