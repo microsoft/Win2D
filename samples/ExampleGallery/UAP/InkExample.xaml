@@ -27,7 +27,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         </Grid.ColumnDefinitions>
 
         <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto">
-            <StackPanel >
+            <StackPanel>
                 <!-- Color picker grid -->
                 <Grid Height="80">
                     <Grid.RowDefinitions>
@@ -50,20 +50,34 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
                     <Button Grid.Row="3" Grid.Column="1" x:Name="color7" Background="Navy" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Click="ColorPickerButton_Clicked"/>
                 </Grid>
 
+                <CheckBox x:Name="usePencilCheckbox" Content="Use Pencil" Checked="UsePencil_Checked" Unchecked="UsePencil_Unchecked" />
+
                 <TextBlock>Stroke Width:</TextBlock>
                 <Slider Minimum="1"
-                    Maximum="100"
-                    ValueChanged="StrokeWidth_ValueChanged"/>
+                        Maximum="100"
+                        Value="10"
+                        ValueChanged="StrokeWidth_ValueChanged"/>
 
-                <TextBlock>Stroke Height:</TextBlock>
-                <Slider Minimum="1"
-                    Maximum="100"
-                    ValueChanged="StrokeHeight_ValueChanged"/>
+                <StackPanel x:Name="inkOptions">
+                    <TextBlock>Stroke Height:</TextBlock>
+                    <Slider Minimum="1"
+                            Maximum="100"
+                            ValueChanged="StrokeHeight_ValueChanged"/>
 
-                <TextBlock>Rotation:</TextBlock>
-                <Slider Minimum="0"
-                    Maximum="360"
-                    ValueChanged="Rotation_ValueChanged"/>
+                    <TextBlock>Rotation:</TextBlock>
+                    <Slider Minimum="0"
+                            Maximum="360"
+                            ValueChanged="Rotation_ValueChanged"/>
+                </StackPanel>
+
+                <StackPanel x:Name="pencilOptions" Visibility="Collapsed">
+                    <TextBlock>Pencil Opacity:</TextBlock>
+                    <Slider Minimum="0.1"
+                            Maximum="4"
+                            Value="2"
+                            StepFrequency="0.1"
+                            ValueChanged="PencilOpacity_ValueChanged"/>
+                </StackPanel>
 
                 <TextBlock>Dry Ink Rendering:</TextBlock>
                 <ComboBox
