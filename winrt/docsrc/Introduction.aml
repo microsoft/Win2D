@@ -106,8 +106,8 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         <para>Create your project:</para>
         <list class="bullet">
           <listItem>Go to 'File' -> 'New' -> 'Project...'</listItem>
-          <listItem>Select 'Visual C#' or 'Visual Basic'</listItem>
-          <listItem>Create a 'Blank App (Universal Apps)' (Visual Studio 2013) or 'Blank App (Windows Universal)' (Visual Studio 2015)</listItem>
+          <listItem>Select 'Visual C#', 'Visual C++', or 'Visual Basic'</listItem>
+          <listItem>Create a 'Blank App (Universal Windows)' (Visual Studio 2015) or 'Blank App (Universal Apps)' (Visual Studio 2013)</listItem>
           <listItem>Enter a project name of your choosing</listItem>
           <listItem>Click 'OK'</listItem>
         </list>
@@ -150,46 +150,81 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
           </listItem>
         </list>
 
-        <para>Edit MainPage.xaml.cs, and add some Win2D drawing code:</para>
-        <code>
-          using Windows.UI;
-          using Windows.UI.Xaml.Controls;
-          using Microsoft.Graphics.Canvas.UI.Xaml;
+        <para>Then add some Win2D drawing code.</para>
+        <list class="bullet">
+          <listItem>
+            If you created a C# project, edit MainPage.xaml.cs:
+            <code>
+              using Windows.UI;
+              using Windows.UI.Xaml.Controls;
+              using Microsoft.Graphics.Canvas.UI.Xaml;
 
-          public sealed partial class MainPage : Page
-          {
-              public MainPage()
+              public sealed partial class MainPage : Page
               {
-                  this.InitializeComponent();
+                  public MainPage()
+                  {
+                      this.InitializeComponent();
+                  }
+
+                  void CanvasControl_Draw(CanvasControl sender, CanvasDrawEventArgs args)
+                  {
+                      args.DrawingSession.DrawEllipse(155, 115, 80, 30, Colors.Black, 3);
+                      args.DrawingSession.DrawText("Hello, world!", 100, 100, Colors.Yellow);
+                  }
+              }
+            </code>
+          </listItem>
+
+          <listItem>
+            If you created a C++/CX project, edit MainPage.xaml.h and add a function declaration to the MainPage class:
+            <code>
+              void CanvasControl_Draw(Microsoft::Graphics::Canvas::UI::Xaml::CanvasControl^ sender,
+                                      Microsoft::Graphics::Canvas::UI::Xaml::CanvasDrawEventArgs^ args);
+            </code>
+            Then edit MainPage.xaml.cpp:
+            <code>
+              #include "pch.h"
+              #include "MainPage.xaml.h"
+
+              using namespace App1;
+              using namespace Windows::UI;
+              using namespace Microsoft::Graphics::Canvas::UI::Xaml;
+
+              MainPage::MainPage()
+              {
+                  InitializeComponent();
               }
 
-              void CanvasControl_Draw(CanvasControl sender, CanvasDrawEventArgs args)
+              void MainPage::CanvasControl_Draw(CanvasControl^ sender, CanvasDrawEventArgs^ args)
               {
-                  args.DrawingSession.DrawEllipse(155, 115, 80, 30, Colors.Black, 3);
-                  args.DrawingSession.DrawText("Hello, world!", 100, 100, Colors.Yellow);
+                  args->DrawingSession->DrawEllipse(155, 115, 80, 30, Colors::Black, 3);
+                  args->DrawingSession->DrawText("Hello, world!", 100, 100, Colors::Yellow);
               }
-          }
-        </code>
-		
-        <para>Or edit MainPage.xaml.vb if you have created a VB project:</para>
-        <code>
-          Imports Windows.UI
-          Imports Windows.UI.Xaml.Controls
-          Imports Microsoft.Graphics.Canvas.UI.Xaml
-          
-          Public NotInheritable Class MainPage
-              Inherits Page
-	          Public Sub New()
-                  Me.InitializeComponent()
-              End Sub
+            </code>
+          </listItem>
 
-              Private Sub CanvasControl_Draw(sender As CanvasControl, args As CanvasDrawEventArgs)
-                  args.DrawingSession.DrawEllipse(155, 115, 80, 30, Colors.Black, 3)
-                  args.DrawingSession.DrawText("Hello, world!", 100, 100, Colors.Yellow)
-              End Sub
-          End Class
-        </code>
-		
+          <listItem>
+            Or if you created a VB project, edit MainPage.xaml.vb:
+            <code>
+              Imports Windows.UI
+              Imports Windows.UI.Xaml.Controls
+              Imports Microsoft.Graphics.Canvas.UI.Xaml
+              
+              Public NotInheritable Class MainPage
+                  Inherits Page
+                  Public Sub New()
+                      Me.InitializeComponent()
+                  End Sub
+
+                  Private Sub CanvasControl_Draw(sender As CanvasControl, args As CanvasDrawEventArgs)
+                      args.DrawingSession.DrawEllipse(155, 115, 80, 30, Colors.Black, 3)
+                      args.DrawingSession.DrawText("Hello, world!", 100, 100, Colors.Yellow)
+                  End Sub
+              End Class
+            </code>
+          </listItem>
+        </list>
+        
         <para>
           If you prefer to build your own version of Win2D from source, see the 
           <externalLink>
