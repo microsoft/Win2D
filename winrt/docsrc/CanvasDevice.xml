@@ -299,7 +299,9 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
                 softwareBitmap = await SoftwareBitmap.CreateCopyFromSurfaceAsync(canvasBitmap);
             }
             ]]>
-          </code>          
+          </code>
+          
+          If you are programming in C++/CX, the 'delete' keyword should be used to release the lock object.
         </p>
         
         <p>

@@ -29,8 +29,8 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         </p>
         <p>
           Note that drawing work is not usually actually carried out by the GPU until the 
-          returned drawing session object is closed. In C#, this is typically done with a 
-          "using" statement, or in C++/CX, via the "delete" keyword. Be sure to close the 
+          returned drawing session object is closed. In C# this is typically done with a 
+          'using' statement, or in C++/CX the 'delete' keyword. Be sure to close the 
           drawing session before using the rendertarget as a source for some other 
           operation (for example 
           <see cref="O:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawImage"/>,
@@ -39,15 +39,24 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         </p>
       </remarks>
       <example>
-              <p>Like <see cref="T:Microsoft.Graphics.Canvas.CanvasBitmap"/>, CanvasRenderTargets are created against an ICanvasResourceCreator, such as a device or control.</p>
-              <code>
-                CanvasRenderTarget renderTarget = new CanvasRenderTarget(canvasControl, 100, 150);
-                
-                using (CanvasDrawingSession drawingSession = renderTarget.CreateDrawingSession())
-                {
-                    drawingSession.Clear(Colors.Blue);
-                }
-              </code>
+        <p>Like <see cref="T:Microsoft.Graphics.Canvas.CanvasBitmap"/>, CanvasRenderTargets are created against an ICanvasResourceCreator, such as a device or control.</p>
+        <code>
+          CanvasRenderTarget renderTarget = new CanvasRenderTarget(canvasControl, 100, 150);
+          
+          using (CanvasDrawingSession drawingSession = renderTarget.CreateDrawingSession())
+          {
+              drawingSession.Clear(Colors.Blue);
+          }
+        </code>
+        <p>Or if you are programming in C++/CX:</p>
+        <code>
+          CanvasRenderTarget^ renderTarget = ref new CanvasRenderTarget(canvasControl, 100, 150);
+          CanvasDrawingSession^ drawingSession = renderTarget->CreateDrawingSession();
+
+          drawingSession->Clear(Colors::Blue);
+
+          delete drawingSession;
+        </code>
       </example>
     </member>
     
