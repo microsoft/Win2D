@@ -272,6 +272,30 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     </section>
 
     <section>
+      <title>Effect DPI</title>
+      <content>
+        <para>
+          The image effect pipeline inherits its DPI from whatever 
+          <codeEntityReference>T:Microsoft.Graphics.Canvas.CanvasDrawingSession</codeEntityReference> 
+          an effect is being drawn onto. Internally, effect processing always 
+          operates in pixels. Parameter values such as sizes or positions are specified 
+          in DIPs, but these units are converted to pixels before any actual image 
+          manipulation takes place.
+        </para>
+        <para>
+          When a bitmap of different DPI than the target drawing session is used as an 
+          effect source image, an internal 
+          <codeEntityReference>T:Microsoft.Graphics.Canvas.Effects.DpiCompensationEffect</codeEntityReference> 
+          is automatically inserted in between the bitmap and the effect. This 
+          scales the bitmap to match the target DPI, which is usually what 
+          you want. If it's not what you want, you can insert your own instance of 
+          <codeEntityReference>T:Microsoft.Graphics.Canvas.Effects.DpiCompensationEffect</codeEntityReference> 
+          to customize the behavior.
+        </para>
+      </content>
+    </section>
+
+    <section>
       <title>How to test DPI handling</title>
       <content>
         <para>

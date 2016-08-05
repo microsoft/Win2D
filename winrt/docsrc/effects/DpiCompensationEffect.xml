@@ -13,10 +13,47 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
   
     <member name="T:Microsoft.Graphics.Canvas.Effects.DpiCompensationEffect" NoComposition="true">
       <summary>
-        Scales an input bitmap to match a different DPI. This is useful for situations 
-        where a bitmap is created or loaded at a different DPI than the screen.
+        Scales a bitmap to match a different DPI. This is usually handled automatically, 
+        but DpiCompensationEffect can also be used directly if you want to customize the 
+        compensation behavior.
       </summary>
       <remarks>
+        <p>
+          When a bitmap of different DPI than the target drawing session is used as an 
+          effect source image, an internal DpiCompensationEffect is automatically 
+          inserted in between the bitmap and the effect. This scales the 
+          bitmap to match the target DPI, which is usually what you want.
+        </p>
+        <p>
+          In a few cases, this automatic DPI scaling may not be desirable. For example, 
+          consider a 96 DPI bitmap which as part of an effect graph is being scaled up 
+          16x using nearest neighbor image interpolation. The intent is to produce a 
+          crisply pixelated output, but if this app is run on a 144 DPI display, first 
+          the automatically inserted DpiCompensationEffect will scale up the image by a 
+          factor of 1.5 (to adjust for 144/96 DPI). This compensation uses linear 
+          interpolation, after which the 16x scale will be fed an undesirably 
+          blurry source image.
+        </p>
+        <p>
+          In situations like this, automatic DPI compensation can be overridden by 
+          inserting your own instance of DpiCompensationEffect in between the bitmap and 
+          the rest of the effect graph. There are two possible approaches:
+        </p>
+        <ol>
+          <li>
+            Set DpiCompensationEffect.SourceDpi to match the DPI of your bitmap, which 
+            will exactly reproduce the automatic default compensation behavior. Then 
+            adjust other properties of the DpiCompensationEffect (eg. InterpolationMode 
+            or BorderMode) to suit your needs.
+          </li>
+          <li>
+            Alternatively, set DpiCompensationEffect.SourceDpi to match the DPI of the 
+            target drawing session. This will disable DPI compensation entirely, which 
+            means your bitmap will appear the wrong size if its DPI is not the same as 
+            the target. You must therefore explicitly include a DPI scaling factor 
+            (targetDPI/sourceDPI) at a suitable point in your effect graph.
+          </li>
+        </ol>
         <p>This Windows Runtime type corresponds to the 
           <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/hh780341.aspx">D2D DPI compensation effect</a>.</p>
       </remarks>
