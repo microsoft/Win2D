@@ -217,14 +217,36 @@ namespace CodeGen
             output.WriteLine("};");
             output.WriteLine();
 
-            string statics = "";
-            
-            if (effect.Overrides != null && effect.Overrides.HasStatics)
-            {
-                statics = ", static(" + effect.InterfaceName + "Statics, VERSION)";
-            }
+            string staticAttribute = "";
 
-            output.WriteLine("[STANDARD_ATTRIBUTES, activatable(VERSION)" + statics + "]");
+            if (HasStatics(effect))
+            {
+                string staticsInterfaceName = effect.InterfaceName + "Statics";
+                string staticsUuid = EffectGenerator.GenerateUuid(staticsInterfaceName);
+
+                staticAttribute = ", static(" + staticsInterfaceName + ", VERSION)";
+
+                output.WriteLine("[version(VERSION), uuid(" + staticsUuid + "), exclusiveto(" + effect.ClassName + ")]");
+                output.WriteLine("interface " + staticsInterfaceName + " : IInspectable");
+                output.WriteLine("{");
+                output.Indent();
+
+                foreach (var customIdl in effect.Overrides.CustomStaticMethodIdl)
+                {
+                    output.WriteLine(customIdl.Trim());
+                }
+
+                if (!string.IsNullOrEmpty(effect.Overrides.IsSupportedCheck))
+                {
+                    output.WriteLine("[propget] HRESULT IsSupported([out, retval] boolean* value);");
+                }
+
+                output.Unindent();
+                output.WriteLine("}");
+                output.WriteLine();
+            }
+            
+            output.WriteLine("[STANDARD_ATTRIBUTES, activatable(VERSION)" + staticAttribute + "]");
 
             output.WriteLine("runtimeclass " + effect.ClassName);
             output.WriteLine("{");
@@ -312,6 +334,38 @@ namespace CodeGen
 
             output.Unindent();
             output.WriteLine("};");
+
+            if (HasStatics(effect))
+            {
+                output.WriteLine();
+                output.WriteLine("class " + effect.ClassName + "Factory");
+                output.Indent();
+                output.WriteLine(": public AgileActivationFactory<I" + effect.ClassName + "Statics>");
+                output.WriteLine(", private LifespanTracker<" + effect.ClassName + "Factory>");
+                output.Unindent();
+                output.WriteLine("{");
+                output.Indent();
+                output.WriteLine("InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_Effects_" + effect.ClassName + ", BaseTrust);");
+                output.WriteLine();
+                output.Unindent();
+                output.WriteLine("public:");
+                output.Indent();
+                output.WriteLine("IFACEMETHODIMP ActivateInstance(IInspectable**) override;");
+
+                foreach (var customDecl in effect.Overrides.CustomStaticMethodDecl)
+                {
+                    output.WriteLine(customDecl.Trim());
+                }
+
+                if (!string.IsNullOrEmpty(effect.Overrides.IsSupportedCheck))
+                {
+                    output.WriteLine("IFACEMETHOD(get_IsSupported)(boolean* value) override;");
+                }
+
+                output.Unindent();
+                output.WriteLine("};");
+            }
+            
             output.Unindent();
             output.WriteLine("}}}}}");
 
@@ -343,6 +397,16 @@ namespace CodeGen
                              + "device, effect, static_cast<" + effect.InterfaceName + "*>(this))");
             output.WriteLine("{");
             output.Indent();
+
+            if (effect.Overrides != null && !string.IsNullOrEmpty(effect.Overrides.IsSupportedCheck))
+            {
+                output.WriteLine("if (!SharedDeviceState::GetInstance()->Is" + effect.Overrides.IsSupportedCheck + "Supported())");
+                output.Indent();
+                output.WriteLine("ThrowHR(E_NOTIMPL, Strings::NotSupportedOnThisVersionOfWindows);");
+                output.Unindent();
+                output.WriteLine();
+            }
+            
             output.WriteLine("if (!effect)");
             output.WriteLine("{");
             output.Indent();
@@ -383,7 +447,44 @@ namespace CodeGen
 
             WritePropertyMapping(effect, output);
 
-            if (effect.Overrides == null || !effect.Overrides.HasStatics)
+            if (HasStatics(effect))
+            {
+                output.WriteLine("IFACEMETHODIMP " + effect.ClassName + "Factory::ActivateInstance(IInspectable** instance)");
+                output.WriteLine("{");
+                output.Indent();
+                output.WriteLine("return ExceptionBoundary([&]");
+                output.WriteLine("{");
+                output.Indent();
+                output.WriteLine("auto effect = Make<" + effect.ClassName + ">();");
+                output.WriteLine("CheckMakeResult(effect);");
+                output.WriteLine();
+                output.WriteLine("ThrowIfFailed(effect.CopyTo(instance));");
+                output.Unindent();
+                output.WriteLine("});");
+                output.Unindent();
+                output.WriteLine("}");
+                output.WriteLine();
+
+                if (!string.IsNullOrEmpty(effect.Overrides.IsSupportedCheck))
+                {
+                    output.WriteLine("IFACEMETHODIMP " + effect.ClassName + "Factory::get_IsSupported(_Out_ boolean* result)");
+                    output.WriteLine("{");
+                    output.Indent();
+                    output.WriteLine("return ExceptionBoundary([&]");
+                    output.WriteLine("{");
+                    output.Indent();
+                    output.WriteLine("CheckInPointer(result);");
+                    output.WriteLine("*result = SharedDeviceState::GetInstance()->Is" + effect.Overrides.IsSupportedCheck + "Supported();");
+                    output.Unindent();
+                    output.WriteLine("});");
+                    output.Unindent();
+                    output.WriteLine("}");
+                    output.WriteLine();
+                }
+
+                output.WriteLine("ActivatableClassWithFactory(" + effect.ClassName + ", " + effect.ClassName + "Factory);");
+            }
+            else
             {
                 output.WriteLine("ActivatableClassWithFactory(" + effect.ClassName + ", SimpleAgileActivationFactory<" + effect.ClassName + ">);");
             }
@@ -404,6 +505,16 @@ namespace CodeGen
             {
                 return "CLSID_D2D1" + EffectGenerator.FormatClassName(effect.Properties[0].Value);
             }
+        }
+
+        private static bool HasStatics(Effects.Effect effect)
+        {
+            if (effect.Overrides == null)
+                return false;
+
+            return effect.Overrides.CustomStaticMethodIdl.Count > 0 ||
+                   effect.Overrides.CustomStaticMethodDecl.Count > 0 ||
+                   !string.IsNullOrEmpty(effect.Overrides.IsSupportedCheck);
         }
 
         private static void WritePropertyInitialization(Formatter output, Effects.Property property)

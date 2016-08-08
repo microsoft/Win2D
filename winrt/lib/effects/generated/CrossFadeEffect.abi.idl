@@ -1,0 +1,50 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+//
+// Licensed under the MIT License. See LICENSE.txt in the project root for license information.
+
+// This file was automatically generated. Please do not edit it manually.
+
+#if (defined _WIN32_WINNT_WIN10) && (WINVER >= _WIN32_WINNT_WIN10)
+
+namespace Microsoft.Graphics.Canvas.Effects
+{
+    runtimeclass CrossFadeEffect;
+
+    [version(VERSION), uuid(BE161A9F-43D2-5613-8600-D51E3D7CE288), exclusiveto(CrossFadeEffect)]
+    interface ICrossFadeEffect : IInspectable
+        requires ICanvasEffect
+    {
+        [propget]
+        HRESULT CrossFade([out, retval] float* value);
+
+        [propput]
+        HRESULT CrossFade([in] float value);
+
+        [propget]
+        HRESULT Source2([out, retval] IGRAPHICSEFFECTSOURCE** source);
+
+        [propput]
+        HRESULT Source2([in] IGRAPHICSEFFECTSOURCE* source);
+
+        [propget]
+        HRESULT Source1([out, retval] IGRAPHICSEFFECTSOURCE** source);
+
+        [propput]
+        HRESULT Source1([in] IGRAPHICSEFFECTSOURCE* source);
+
+    };
+
+    [version(VERSION), uuid(A3B67330-6284-5EF6-99E8-B4B05D2B8BFC), exclusiveto(CrossFadeEffect)]
+    interface ICrossFadeEffectStatics : IInspectable
+    {
+        [propget] HRESULT IsSupported([out, retval] boolean* value);
+    }
+
+    [STANDARD_ATTRIBUTES, activatable(VERSION), static(ICrossFadeEffectStatics, VERSION)]
+    runtimeclass CrossFadeEffect
+    {
+        [default] interface ICrossFadeEffect;
+    }
+}
+
+#endif // _WIN32_WINNT_WIN10

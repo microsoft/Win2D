@@ -14,26 +14,21 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         <_locTag _locAttrData="value">Property</_locTag>
     </_locDefinition>
     <!-- System Properties -->
-    <Property name='DisplayName' type='string' value='Contrast'/>
+    <Property name='DisplayName' type='string' value='Opacity'/>
     <Property name='Author' type='string' value='Microsoft Corporation'/>
-    <Property name='Category' type='string' value='Photo'/>
+    <Property name='Category' type='string' value='Transparency'/>
     <Property name='Description' type='string' 
-        value='Adjusts the contrast of an image.'/>
+        value='Adjusts the opacity of an image by multiplying the alpha channel by the specified opacity.'/>
 
-    <!-- This effect has only one input -->
     <Inputs>
         <Input name='Source'/>
     </Inputs>
 
-    <!-- Custom Properties go here -->
-    <Property name='Contrast' type='float'>
-        <Property name='DisplayName' type='string' value='Contrast'/>
-        <Property name='Min' type='float' value='-1.0' />
+    <!-- Custom Properties -->
+    <Property name='Opacity' type='float'>
+        <Property name='DisplayName' type='string' value='Opacity'/>
+        <Property name='Min' type='float' value='0.0' />
         <Property name='Max' type='float' value='1.0' />
-        <Property name="Default" type="float" value="0" />
-    </Property>
-    <Property name="ClampInput" type="bool">
-        <Property name="DisplayName" type="string" value="Clamp Input" />
-        <Property name="Default" type="bool" value="false" />
+        <Property name="Default" type="float" value="1.0" />
     </Property>
 </Effect>

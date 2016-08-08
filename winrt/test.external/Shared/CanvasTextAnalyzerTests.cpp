@@ -130,9 +130,9 @@ public:
     TEST_METHOD(CanvasTextAnalyzer_GetFonts_GlyphDoesntMatchAnyFont)
     {
         // 
-        // Choose a very obscure glyph (U+1F984) which isn't supported by built-in fonts.
+        // Choose a glyph from the Private Use Area (U+EOO1) which isn't supported by built-in fonts.
         //
-        auto analyzer = ref new CanvasTextAnalyzer(L"🦄", CanvasTextDirection::LeftToRightThenTopToBottom);
+        auto analyzer = ref new CanvasTextAnalyzer(L"", CanvasTextDirection::LeftToRightThenTopToBottom);
 
         auto result = analyzer->GetFonts(m_defaultTextFormat);
 
@@ -141,7 +141,7 @@ public:
 
     TEST_METHOD(CanvasTextAnalyzer_GetFonts_TextContainsUnmatchableRange)
     {
-        auto analyzer = ref new CanvasTextAnalyzer(L"abc🦄🦄def", CanvasTextDirection::LeftToRightThenTopToBottom);
+        auto analyzer = ref new CanvasTextAnalyzer(L"abcdef", CanvasTextDirection::LeftToRightThenTopToBottom);
 
         auto result = analyzer->GetFonts(m_defaultTextFormat);
 
@@ -150,9 +150,7 @@ public:
         Assert::AreEqual(0, result->GetAt(0)->Key.CharacterIndex);
         Assert::AreEqual(3, result->GetAt(0)->Key.CharacterCount);
 
-        // Each glyph in the unmatchable range is two code units.
-
-        Assert::AreEqual(7, result->GetAt(1)->Key.CharacterIndex);
+        Assert::AreEqual(5, result->GetAt(1)->Key.CharacterIndex);
         Assert::AreEqual(3, result->GetAt(1)->Key.CharacterCount);
     }
 

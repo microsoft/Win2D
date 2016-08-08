@@ -90,6 +90,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <Enum Name="DRAW_TEXT_OPTIONS" ShouldProject="true" Namespace="Text">
       <Field Name="NONE" ProjectedNameOverride="Default"/>
       <Field Name="NO_SNAP" ProjectedNameOverride="NoPixelSnap"/>
+      <Field Name="DISABLE_COLOR_BITMAP_SNAPPING" ShouldProject="false"/>
     </Enum>
   </Namespace>
   
@@ -127,10 +128,16 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <Property Name="EdgeModeX" ProjectedNameOverride="ExtendX"/>
       <Property Name="EdgeModeY" ProjectedNameOverride="ExtendY"/>
     </Effect>
-    <Effect Name="ColorManagementEffect" HasStatics="true">
+    <Effect Name="ColorManagementEffect">
       <Property Name="SourceColorContext" ProjectedNameOverride="SourceColorProfile"/>
       <Property Name="DestinationColorContext" ProjectedNameOverride="OutputColorProfile"/>
       <Property Name="DestinationRenderingIntent" ProjectedNameOverride="OutputRenderingIntent"/>
+      <CustomStaticMethodIdl>
+        HRESULT IsBestQualitySupported(Microsoft.Graphics.Canvas.CanvasDevice* device, [out, retval] boolean* result);
+      </CustomStaticMethodIdl>
+      <CustomStaticMethodDecl>
+        IFACEMETHODIMP IsBestQualitySupported(ICanvasDevice* device, boolean* result) override;
+      </CustomStaticMethodDecl>
     </Effect>
     <Effect Name="CropEffect">
       <Property Name="Rect" ProjectedNameOverride="SourceRectangle"/>
@@ -281,5 +288,16 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <Property Name="TransitionSize" ProjectedNameOverride="Amount"/>
       <Property Name="Strength" ProjectedNameOverride="Curve"/>
     </Effect>
+    <Effect Name="AlphaMaskEffect" WinVer="_WIN32_WINNT_WIN10" IsSupportedCheck="ID2D1Factory5">
+      <Input Name="Destination" ProjectedNameOverride="Source"/>
+      <Input Name="Mask" ProjectedNameOverride="AlphaMask"/>
+    </Effect>
+    <Effect Name="CrossFadeEffect" WinVer="_WIN32_WINNT_WIN10" IsSupportedCheck="ID2D1Factory5">
+      <Input Name="Source" ProjectedNameOverride="Source1"/>
+      <Input Name="Destination" ProjectedNameOverride="Source2"/>
+      <Property Name="Weight" ProjectedNameOverride="CrossFade"/>
+    </Effect>
+    <Effect Name="OpacityEffect" WinVer="_WIN32_WINNT_WIN10" IsSupportedCheck="ID2D1Factory5"/>
+    <Effect Name="TintEffect" WinVer="_WIN32_WINNT_WIN10" IsSupportedCheck="ID2D1Factory5"/>
   </Namespace>
 </Settings>

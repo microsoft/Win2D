@@ -54,6 +54,7 @@ STRING(InvalidFontFamilyUri, L"The font URI specified is not a valid application
 STRING(InvalidFontFamilyUriScheme, L"The URI specified in the CanvasTextFormat's FontFamily has an invalid scheme; the scheme may be omitted, or must be one of ms-appx:// or ms-appdata://.")
 STRING(InvalidTypographyFeatureName, L"Attempted to add a typography feature without setting a valid feature name.")
 STRING(MultipleAsyncCreateResourcesNotSupported, L"Only one asynchronous CreateResources action can be tracked at a time.")
+STRING(NotSupportedOnThisVersionOfWindows, L"This API is not supported on this version of Windows.")
 STRING(PathBuilderAddGeometryMidFigure, L"CanvasPathBuilder.AddGeometry may not be called in the middle of a figure.")
 STRING(PathBuilderClosedMidFigure, L"There was an attempt to use a CanvasPathBuilder, which was missing a call to CanvasPathBuilder.EndFigure.")
 STRING(PixelColorsFormatRestriction, L"This method only supports resources with pixel format DirectXPixelFormat.B8G8R8A8UIntNormalized.")

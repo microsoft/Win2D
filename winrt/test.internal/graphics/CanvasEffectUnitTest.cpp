@@ -9,6 +9,13 @@
 #include "stubs/TestEffect.h"
 #include "stubs/StubD2DEffect.h"
 
+#if WINVER > _WIN32_WINNT_WINBLUE
+#include <lib/effects/generated/AlphaMaskEffect.h>
+#include <lib/effects/generated/CrossFadeEffect.h>
+#include <lib/effects/generated/OpacityEffect.h>
+#include <lib/effects/generated/TintEffect.h>
+#endif
+
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 TEST_CLASS(CanvasEffectUnitTest)
@@ -993,6 +1000,110 @@ public:
         Assert::AreEqual(CLSID_D2D1GaussianBlur, f.m_mockEffects[0]->m_effectId);
         Assert::AreEqual(CLSID_D2D1DpiCompensation, f.m_mockEffects[1]->m_effectId);
     }
+
+#if WINVER > _WIN32_WINNT_WINBLUE
+
+    class D2DFactoryWithOptional5Support : public MockD2DFactory
+    {
+        bool m_supportFactory5;
+
+    public:
+        D2DFactoryWithOptional5Support(bool supportFactory5)
+            : m_supportFactory5(supportFactory5)
+        { }
+
+        STDMETHOD(QueryInterface)(REFIID riid, void **ppvObject) override
+        {
+            if (IsEqualGUID(riid, __uuidof(ID2D1Factory5)))
+            {
+                // Major cheat here! We don't actually bother implementing all of ID2D1Factory5, but
+                // instead QI for the base ID2D1Factory interface. This is not even remotely correct
+                // COM, but good enough for these tests because we happen to know that the
+                // implementation only checks the return pointer for being non-null, then releases it.
+                if (m_supportFactory5)
+                    return MockD2DFactory::QueryInterface(__uuidof(ID2D1Factory), ppvObject);
+                else
+                    return E_NOINTERFACE;
+            }
+
+            return MockD2DFactory::QueryInterface(riid, ppvObject);
+        }
+    };
+
+    struct NewEffectsAreSupportedFixture
+    {
+        std::shared_ptr<TestDeviceAdapter> m_deviceAdapter;
+
+        NewEffectsAreSupportedFixture(bool supportFactory5)
+            : m_deviceAdapter(std::make_shared<TestDeviceAdapter>())
+        {
+            m_deviceAdapter->m_overrideD2DFactory = Make<D2DFactoryWithOptional5Support>(supportFactory5);
+
+            CanvasDeviceAdapter::SetInstance(m_deviceAdapter);
+        }
+    };
+
+    TEST_METHOD_EX(CanvasEffect_NewEffectConstructorsFailWhenID2D1Factory5NotSupported)
+    {
+        NewEffectsAreSupportedFixture fixture(false);
+
+        ExpectHResultException(E_NOTIMPL, [] { Make<AlphaMaskEffect>(); });
+        ValidateStoredErrorState(E_NOTIMPL, Strings::NotSupportedOnThisVersionOfWindows);
+
+        ExpectHResultException(E_NOTIMPL, [] { Make<CrossFadeEffect>(); });
+        ValidateStoredErrorState(E_NOTIMPL, Strings::NotSupportedOnThisVersionOfWindows);
+
+        ExpectHResultException(E_NOTIMPL, [] { Make<OpacityEffect>(); });
+        ValidateStoredErrorState(E_NOTIMPL, Strings::NotSupportedOnThisVersionOfWindows);
+
+        ExpectHResultException(E_NOTIMPL, [] { Make<TintEffect>(); });
+        ValidateStoredErrorState(E_NOTIMPL, Strings::NotSupportedOnThisVersionOfWindows);
+    }
+
+    TEST_METHOD_EX(CanvasEffect_NewEffectConstructorsSucceedWhenID2D1Factory5Supported)
+    {
+        NewEffectsAreSupportedFixture fixture(true);
+
+        CheckMakeResult(Make<AlphaMaskEffect>());
+        CheckMakeResult(Make<CrossFadeEffect>());
+        CheckMakeResult(Make<OpacityEffect>());
+        CheckMakeResult(Make<TintEffect>());
+    }
+
+    template<typename TFactory>
+    static void TestIsSupported(boolean expected)
+    {
+        auto factory = Make<TFactory>();
+
+        boolean result;
+        ThrowIfFailed(factory->get_IsSupported(&result));
+
+        Assert::AreEqual(expected, result);
+
+        Assert::AreEqual(E_INVALIDARG, factory->get_IsSupported(nullptr));
+    }
+
+    TEST_METHOD_EX(CanvasEffect_NewEffectIsSupportedReturnsFalseWhenID2D1Factory5NotSupported)
+    {
+        NewEffectsAreSupportedFixture fixture(false);
+
+        TestIsSupported<AlphaMaskEffectFactory>(false);
+        TestIsSupported<CrossFadeEffectFactory>(false);
+        TestIsSupported<OpacityEffectFactory>(false);
+        TestIsSupported<TintEffectFactory>(false);
+    }
+
+    TEST_METHOD_EX(CanvasEffect_NewEffectIsSupportedReturnsTrueWhenID2D1Factory5Supported)
+    {
+        NewEffectsAreSupportedFixture fixture(true);
+
+        TestIsSupported<AlphaMaskEffectFactory>(true);
+        TestIsSupported<CrossFadeEffectFactory>(true);
+        TestIsSupported<OpacityEffectFactory>(true);
+        TestIsSupported<TintEffectFactory>(true);
+    }
+
+#endif
 
     // DImage defines separate (but identical) enum types for different effects.
     // Effects codegen tool collapses this duplication in the WinRT projection.

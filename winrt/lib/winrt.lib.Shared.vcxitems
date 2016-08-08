@@ -45,8 +45,8 @@
       <MetaDataDir Include="$(WindowsSDK_MetadataPath)" />
     </ItemGroup>
     <ItemGroup Condition="'$(ApplicationTypeRevision)' == '10.0'">
-      <MetaDataDir Include="$(WindowsSDK_MetadataPath)\Windows.Foundation.FoundationContract\1.0.0.0" />
-      <MetaDataDir Include="$(WindowsSDK_MetadataPath)\Windows.Foundation.UniversalApiContract\2.0.0.0" />
+      <MetaDataDir Include="$(WindowsSDK_MetadataPath)\Windows.Foundation.FoundationContract\2.0.0.0" />
+      <MetaDataDir Include="$(WindowsSDK_MetadataPath)\Windows.Foundation.UniversalApiContract\3.0.0.0" />
     </ItemGroup>
     <Exec Command="$(MdMergeExe) -v @(MetaDataDir -> '-metadata_dir &quot;%(Identity)&quot;', ' ') -o &quot;$(MergedWinmdDirectory)&quot; -i &quot;$(UnmergedWinmdDirectory)&quot; -partial -n:Microsoft.Graphics.Canvas:3" />
   </Target>
@@ -59,11 +59,14 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)drawing\CanvasActiveLayer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)drawing\CanvasSpriteBatch.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)drawing\DeviceContextPool.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)effects\ColorManagementEffectFactory.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\ColorManagementProfile.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\EffectTransferTable3D.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\AlphaMaskEffect.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\ColorManagementEffect.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\CrossFadeEffect.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\OpacityEffect.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\TableTransfer3DEffect.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\TintEffect.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\shader\ClipTransform.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\shader\PixelShaderEffect.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\shader\PixelShaderEffectImpl.h" />
@@ -207,11 +210,14 @@
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)composition\CanvasComposition.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)drawing\CanvasSpriteBatch.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)effects\ColorManagementEffectFactory.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\ColorManagementProfile.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\EffectTransferTable3D.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\AlphaMaskEffect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\ColorManagementEffect.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\CrossFadeEffect.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\OpacityEffect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\TableTransfer3DEffect.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\TintEffect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\shader\ClipTransform.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\shader\PixelShaderEffect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\shader\PixelShaderEffectImpl.cpp" />
@@ -438,7 +444,10 @@
     <None Include="$(MSBuildThisFileDirectory)effects\EffectTransferTable3D.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)effects\generated\ColorManagementEffect.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)effects\generated\TableTransfer3DEffect.abi.idl" />
-    <None Include="$(MSBuildThisFileDirectory)effects\ColorManagementEffectStatics.abi.idl" />
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\AlphaMaskEffect.abi.idl" />
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\CrossFadeEffect.abi.idl" />
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\OpacityEffect.abi.idl" />
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\TintEffect.abi.idl" />
   </ItemGroup>
   <ItemGroup>
     <ProjectCapability Include="SourceItemsFromImports" />

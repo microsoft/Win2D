@@ -72,4 +72,16 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         { L"AlphaMode",             D2D1_COLORMANAGEMENT_PROP_ALPHA_MODE,                   GRAPHICS_EFFECT_PROPERTY_MAPPING_COLORMATRIX_ALPHA_MODE },
         { L"Quality",               D2D1_COLORMANAGEMENT_PROP_QUALITY,                      GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT                 })
 
+    IFACEMETHODIMP ColorManagementEffectFactory::ActivateInstance(IInspectable** instance)
+    {
+        return ExceptionBoundary([&]
+        {
+            auto effect = Make<ColorManagementEffect>();
+            CheckMakeResult(effect);
+
+            ThrowIfFailed(effect.CopyTo(instance));
+        });
+    }
+
+    ActivatableClassWithFactory(ColorManagementEffect, ColorManagementEffectFactory);
 }}}}}

@@ -47,8 +47,10 @@
 
 #if (defined _WIN32_WINNT_WIN10) && (WINVER >= _WIN32_WINNT_WIN10)
 
+#include "AlphaMaskEffect.h"
 #include "ChromaKeyEffect.h"
 #include "ContrastEffect.h"
+#include "CrossFadeEffect.h"
 #include "EdgeDetectionEffect.h"
 #include "EmbossEffect.h"
 #include "ExposureEffect.h"
@@ -56,6 +58,7 @@
 #include "HighlightsAndShadowsEffect.h"
 #include "HueToRgbEffect.h"
 #include "InvertEffect.h"
+#include "OpacityEffect.h"
 #include "PosterizeEffect.h"
 #include "RgbToHueEffect.h"
 #include "SepiaEffect.h"
@@ -63,6 +66,7 @@
 #include "StraightenEffect.h"
 #include "TableTransfer3DEffect.h"
 #include "TemperatureAndTintEffect.h"
+#include "TintEffect.h"
 #include "VignetteEffect.h"
 
 #endif // _WIN32_WINNT_WIN10
@@ -111,8 +115,10 @@ std::pair<IID, CanvasEffect::MakeEffectFunction> CanvasEffect::m_effectMakers[] 
 
 #if (defined _WIN32_WINNT_WIN10) && (WINVER >= _WIN32_WINNT_WIN10)
 
+    { AlphaMaskEffect::EffectId(),            MakeEffect<AlphaMaskEffect>            },
     { ChromaKeyEffect::EffectId(),            MakeEffect<ChromaKeyEffect>            },
     { ContrastEffect::EffectId(),             MakeEffect<ContrastEffect>             },
+    { CrossFadeEffect::EffectId(),            MakeEffect<CrossFadeEffect>            },
     { EdgeDetectionEffect::EffectId(),        MakeEffect<EdgeDetectionEffect>        },
     { EmbossEffect::EffectId(),               MakeEffect<EmbossEffect>               },
     { ExposureEffect::EffectId(),             MakeEffect<ExposureEffect>             },
@@ -120,6 +126,7 @@ std::pair<IID, CanvasEffect::MakeEffectFunction> CanvasEffect::m_effectMakers[] 
     { HighlightsAndShadowsEffect::EffectId(), MakeEffect<HighlightsAndShadowsEffect> },
     { HueToRgbEffect::EffectId(),             MakeEffect<HueToRgbEffect>             },
     { InvertEffect::EffectId(),               MakeEffect<InvertEffect>               },
+    { OpacityEffect::EffectId(),              MakeEffect<OpacityEffect>              },
     { PosterizeEffect::EffectId(),            MakeEffect<PosterizeEffect>            },
     { RgbToHueEffect::EffectId(),             MakeEffect<RgbToHueEffect>             },
     { SepiaEffect::EffectId(),                MakeEffect<SepiaEffect>                },
@@ -127,6 +134,7 @@ std::pair<IID, CanvasEffect::MakeEffectFunction> CanvasEffect::m_effectMakers[] 
     { StraightenEffect::EffectId(),           MakeEffect<StraightenEffect>           },
     { TableTransfer3DEffect::EffectId(),      MakeEffect<TableTransfer3DEffect>      },
     { TemperatureAndTintEffect::EffectId(),   MakeEffect<TemperatureAndTintEffect>   },
+    { TintEffect::EffectId(),                 MakeEffect<TintEffect>                 },
     { VignetteEffect::EffectId(),             MakeEffect<VignetteEffect>             },
 
 #endif // _WIN32_WINNT_WIN10

@@ -87,7 +87,7 @@ public:
 
         // Mock factory is used here, because, in execution of these tests, product code will 
         // actually call methods on the factory and expect them to succeed.
-        return Make<MockD2DFactory>();
+        return m_overrideD2DFactory ? m_overrideD2DFactory : Make<MockD2DFactory>();
     }
 
     virtual bool TryCreateD3DDevice(
@@ -154,4 +154,6 @@ public:
     int m_numD3dDeviceCreationCalls;
     bool m_retrievableForceSoftwareRenderer;
     bool m_retrievableUseDebugD3DDevice;
+
+    ComPtr<ID2D1Factory2> m_overrideD2DFactory;
 };

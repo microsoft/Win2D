@@ -1,0 +1,44 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+//
+// Licensed under the MIT License. See LICENSE.txt in the project root for license information.
+
+// This file was automatically generated. Please do not edit it manually.
+
+#if (defined _WIN32_WINNT_WIN10) && (WINVER >= _WIN32_WINNT_WIN10)
+
+namespace Microsoft.Graphics.Canvas.Effects
+{
+    runtimeclass AlphaMaskEffect;
+
+    [version(VERSION), uuid(9BA6607E-75C9-5388-892F-DD3440564D98), exclusiveto(AlphaMaskEffect)]
+    interface IAlphaMaskEffect : IInspectable
+        requires ICanvasEffect
+    {
+        [propget]
+        HRESULT Source([out, retval] IGRAPHICSEFFECTSOURCE** source);
+
+        [propput]
+        HRESULT Source([in] IGRAPHICSEFFECTSOURCE* source);
+
+        [propget]
+        HRESULT AlphaMask([out, retval] IGRAPHICSEFFECTSOURCE** source);
+
+        [propput]
+        HRESULT AlphaMask([in] IGRAPHICSEFFECTSOURCE* source);
+
+    };
+
+    [version(VERSION), uuid(CC31105C-0377-5708-8484-1AD8EE3E554B), exclusiveto(AlphaMaskEffect)]
+    interface IAlphaMaskEffectStatics : IInspectable
+    {
+        [propget] HRESULT IsSupported([out, retval] boolean* value);
+    }
+
+    [STANDARD_ATTRIBUTES, activatable(VERSION), static(IAlphaMaskEffectStatics, VERSION)]
+    runtimeclass AlphaMaskEffect
+    {
+        [default] interface IAlphaMaskEffect;
+    }
+}
+
+#endif // _WIN32_WINNT_WIN10

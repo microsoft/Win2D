@@ -27,14 +27,14 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
             </Method>
             <Method Name="CreateDeviceContext" Comment="Creates a new device context with no initially assigned target.">
                 <Parameter Name="options" Type="D2D1::DEVICE_CONTEXT_OPTIONS" Form="value" />
-                <Parameter Name="deviceContext1" Type="D2D1::IDeviceContext1" Form="deref out pointer" IsRetval="true" />
+                <Parameter Name="deviceContext1" Type="D2D1::IDeviceContext1" Form="deref out pointer com" IsRetval="true" />
             </Method>
         </Interface>
        
        <Interface Name="IFactory2" Extends="D2D1::IFactory1" IID="94f81a73-9212-4376-9c58-b16a3a0d3992" ShouldTestQI="true" QIFromBase="true" Comment="Creates Direct2D resources. This interface also enables the creation of ID2D1Device1 objects.">
            <Method Name="CreateDevice" Comment="This creates a new Direct2D device from the given IDXGIDevice.">
                <Parameter Name="dxgiDevice" Type="IDXGIDevice" Form="pointer" />
-               <Parameter Name="d2dDevice1" Type="D2D1::IDevice1" Form="deref out pointer" IsRetval="true" />
+               <Parameter Name="d2dDevice1" Type="D2D1::IDevice1" Form="deref out pointer com" IsRetval="true" />
            </Method>
        </Interface>
 
@@ -45,14 +45,14 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
          <Method Name="CreateFilledGeometryRealization">
            <Parameter Name="geometry" Type="D2D1::IGeometry" Form="pointer" />
            <Parameter Name="flatteningTolerance" Type="FLOAT" />
-           <Parameter Name="geometryRealization" Type="D2D1::IGeometryRealization" Form="deref out pointer" />
+           <Parameter Name="geometryRealization" Type="D2D1::IGeometryRealization" Form="deref out pointer com" />
          </Method>
          <Method Name="CreateStrokedGeometryRealization">
            <Parameter Name="geometry" Type="D2D1::IGeometry" Form="pointer" />
            <Parameter Name="flatteningTolerance" Type="FLOAT" />
            <Parameter Name="strokeWidth" Type="FLOAT" />
            <Parameter Name="strokeStyle" Type="D2D1::IStrokeStyle" Form="pointer opt" />
-           <Parameter Name="geometryRealization" Type="D2D1::IGeometryRealization" Form="deref out pointer" IsRetval="true" />
+           <Parameter Name="geometryRealization" Type="D2D1::IGeometryRealization" Form="deref out pointer com" IsRetval="true" />
          </Method>
          <Method Name="DrawGeometryRealization" Return="void">
            <Parameter Name="geometryRealization" Type="D2D1::IGeometryRealization" Form="pointer" />

@@ -405,7 +405,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
                         
             <Method Name="CreateEffect" Comment="Create a new effect, the effect must either be built in or previously registered through ID2D1Factory1::RegisterEffect.">
               <Parameter Name="effectId" Type="REFCLSID" Form="in"/>
-              <Parameter Name="effect" Type="D2D1::IEffect" Form="deref out pointer" IsRetval="true" />
+              <Parameter Name="effect" Type="D2D1::IEffect" Form="deref out pointer com" IsRetval="true" />
             </Method>
 
             <Method Name="GetMaximumSupportedFeatureLevel" IsConst="true">
@@ -416,29 +416,29 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
 
             <Method Name="CreateTransformNodeFromEffect" Comment="Create a transform node from the passed in effect.">
                 <Parameter Name="effect" Type="D2D1::IEffect" Form="pointer"/>
-                <Parameter Name="transformNode" Type="D2D1::ITransformNode" Form="deref out pointer"/>
+                <Parameter Name="transformNode" Type="D2D1::ITransformNode" Form="deref out pointer com"/>
             </Method>
 
             <Method Name="CreateBlendTransform">
                 <Parameter Name="numInputs" Type="UINT32"/>
                 <Parameter Name="blendDescription" Type="D2D1::BLEND_DESCRIPTION" Form="pointer"/>
-                <Parameter Name="transform" Type="D2D1::IBlendTransform" Form="deref out pointer"/>
+                <Parameter Name="transform" Type="D2D1::IBlendTransform" Form="deref out pointer com"/>
             </Method>
             
             <Method Name="CreateBorderTransform">
                 <Parameter Name="extendModeX" Type="D2D1::EXTEND_MODE" />
                 <Parameter Name="extendModeY" Type="D2D1::EXTEND_MODE" />
-                <Parameter Name="transform" Type="D2D1::IBorderTransform" Form="deref out pointer"/>
+                <Parameter Name="transform" Type="D2D1::IBorderTransform" Form="deref out pointer com"/>
             </Method>
             
             <Method Name="CreateOffsetTransform">
                 <Parameter Name="offset" Type="D2D1::POINT_2L" />
-                <Parameter Name="transform" Type="D2D1::IOffsetTransform" Form="deref out pointer"/>
+                <Parameter Name="transform" Type="D2D1::IOffsetTransform" Form="deref out pointer com"/>
             </Method>
             
             <Method Name="CreateBoundsAdjustmentTransform">
                 <Parameter Name="outputRectangle" Type="D2D1::RECT_L" Form="pointer"/>
-                <Parameter Name="transform" Type="D2D1::IBoundsAdjustmentTransform" Form="deref out pointer"/>
+                <Parameter Name="transform" Type="D2D1::IBoundsAdjustmentTransform" Form="deref out pointer com"/>
             </Method>
 
             <Method Name="LoadPixelShader">
@@ -466,41 +466,41 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
                 <Parameter Name="data" Type="BYTE" Form="pointer ecount opt" ECount="dataSize"/>
                 <Parameter Name="strides" Type="UINT32" Form="pointer ecount opt" ECount="resourceTextureProperties->dimensions - 1"/>
                 <Parameter Name="dataSize" Type="UINT32"/>
-                <Parameter Name="resourceTexture" Type="D2D1::IResourceTexture" Form="deref out pointer"/>
+                <Parameter Name="resourceTexture" Type="D2D1::IResourceTexture" Form="deref out pointer com"/>
             </Method>
 
             <Method Name="FindResourceTexture">
                 <Parameter Name="resourceId" Type="GUID" Form="pointer"/>
-                <Parameter Name="resourceTexture" Type="D2D1::IResourceTexture" Form="deref out pointer"/>
+                <Parameter Name="resourceTexture" Type="D2D1::IResourceTexture" Form="deref out pointer com"/>
             </Method>
             
             <Method Name="CreateVertexBuffer">
                 <Parameter Name="vertexBufferProperties" Type="D2D1::VERTEX_BUFFER_PROPERTIES" Form="pointer"/>
                 <Parameter Name="resourceId" Type="GUID" Form="pointer opt"/>
                 <Parameter Name="customVertexBufferProperties" Type="D2D1::CUSTOM_VERTEX_BUFFER_PROPERTIES" Form="pointer opt"/>
-                <Parameter Name="buffer" Type="D2D1::IVertexBuffer" Form="deref out pointer"/>
+                <Parameter Name="buffer" Type="D2D1::IVertexBuffer" Form="deref out pointer com"/>
             </Method>
             
             <Method Name="FindVertexBuffer">
                 <Parameter Name="resourceId" Type="GUID" Form="pointer"/>
-                <Parameter Name="buffer" Type="D2D1::IVertexBuffer" Form="deref out pointer"/>
+                <Parameter Name="buffer" Type="D2D1::IVertexBuffer" Form="deref out pointer com"/>
             </Method>
 
             <Method Name="CreateColorContext" Comment="Creates a color context from a color space.  If the space is Custom, the context is initialized from the profile/profileSize arguments.  Otherwise the context is initialized with the profile bytes associated with the space and profile/profileSize are ignored.">
               <Parameter Name="space" Type="D2D1::COLOR_SPACE"/>
               <Parameter Name="profile" Type="BYTE" Form="pointer ecount opt" ECount="profileSize"/>
               <Parameter Name="profileSize" Type="UINT32"/>
-              <Parameter Name="colorContext" Type="D2D1::IColorContext" Form="deref out pointer"/>
+              <Parameter Name="colorContext" Type="D2D1::IColorContext" Form="deref out pointer com"/>
             </Method>
 
             <Method Name="CreateColorContextFromFilename">
               <Parameter Name="filename" Type="PCWSTR" Form="in"/>
-              <Parameter Name="colorContext" Type="D2D1::IColorContext" Form="deref out pointer"/>
+              <Parameter Name="colorContext" Type="D2D1::IColorContext" Form="deref out pointer com"/>
             </Method>
 
             <Method Name="CreateColorContextFromWicColorContext">
               <Parameter Name="wicColorContext" Type="IWICColorContext" Form="pointer"/>
-              <Parameter Name="colorContext" Type="D2D1::IColorContext" Form="deref out pointer"/>
+              <Parameter Name="colorContext" Type="D2D1::IColorContext" Form="deref out pointer com"/>
             </Method>
 
             <Method Name="CheckFeatureSupport" IsConst="true">

@@ -428,6 +428,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         CanvasDebugLevel m_sharedDeviceDebugLevels[2];
         CanvasDebugLevel m_currentDebugLevel;
 
+        int m_isID2D1Factory5Supported; // negative = not yet checked.
+
         std::recursive_mutex m_mutex;
 
     public:
@@ -439,6 +441,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         CanvasDebugLevel GetDebugLevel();
         void SetDebugLevel(CanvasDebugLevel const& value);
+
+        bool IsID2D1Factory5Supported();
 
         CanvasDeviceAdapter* GetAdapter() const { return m_adapter.get(); }
 

@@ -153,6 +153,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     SharedDeviceState::SharedDeviceState()
         : m_adapter(CanvasDeviceAdapter::GetInstance())
+        , m_isID2D1Factory5Supported(-1)
     {
         std::fill_n(m_sharedDeviceDebugLevels, _countof(m_sharedDeviceDebugLevels), CanvasDebugLevel::None);
 
@@ -299,6 +300,27 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         RecursiveLock lock(m_mutex);
 
         m_currentDebugLevel = value;
+    }
+
+    // Presence of the new ID2D1Factory5 interface is used to check if we are running on a version of Windows that
+    // supports the latest D2D API functionality (AlphaMaskEffect, CrossFadeEffect, OpacityEffect, and TintEffect).
+    bool SharedDeviceState::IsID2D1Factory5Supported()
+    {
+        RecursiveLock lock(m_mutex);
+
+        if (m_isID2D1Factory5Supported < 0)
+        {
+            m_isID2D1Factory5Supported = 0;
+
+#if WINVER > _WIN32_WINNT_WINBLUE
+            if (MaybeAs<ID2D1Factory5>(m_adapter->CreateD2DFactory(CanvasDebugLevel::None)))
+            {
+                m_isID2D1Factory5Supported = 1;
+            }
+#endif
+        }
+
+        return !!m_isID2D1Factory5Supported;
     }
 
 

@@ -10,7 +10,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <name>Microsoft.Graphics.Canvas</name>
   </assembly> 
   <members>
-    <member name="T:Microsoft.Graphics.Canvas.CanvasSpriteBatch" Win10NovUpdate="true">
+    <member name="T:Microsoft.Graphics.Canvas.CanvasSpriteBatch" Win10_10586="true">
       <summary>Efficiently draws multiple bitmaps.</summary>
       <remarks>
         <p>
@@ -228,7 +228,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <remarks>For more information, see <a href="DPI.htm">DPI and DIPs</a>.</remarks>
     </member>
 
-    <member name="M:Microsoft.Graphics.Canvas.CanvasSpriteBatch.IsSupported(Microsoft.Graphics.Canvas.CanvasDevice)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasSpriteBatch.IsSupported(Microsoft.Graphics.Canvas.CanvasDevice)" Win10_10586="false" Win10="true">
       <summary>Checks whether CanvasSpriteBatch is supported on the current operating system version.</summary>
       <remarks>
         <p>
@@ -267,7 +267,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       </remarks>
     </member>
 
-    <member name="T:Microsoft.Graphics.Canvas.CanvasSpriteFlip" Win10NovUpdate="true">
+    <member name="T:Microsoft.Graphics.Canvas.CanvasSpriteFlip" Win10_10586="true">
       <summary>Controls the optional flipping of a sprite.</summary>
       <remarks>
         <p>
@@ -296,7 +296,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <summary>The sprite is drawn flipped horizontally and vertically.</summary>
     </member>
 
-    <member name="T:Microsoft.Graphics.Canvas.CanvasSpriteOptions" Win10NovUpdate="true">
+    <member name="T:Microsoft.Graphics.Canvas.CanvasSpriteOptions" Win10_10586="true">
       <summary>Options that apply to the entire spritebatch.</summary>
       <remarks>
         <p>
@@ -324,7 +324,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     </member>
 
 
-    <member name="T:Microsoft.Graphics.Canvas.CanvasSpriteSortMode" Win10NovUpdate="true">
+    <member name="T:Microsoft.Graphics.Canvas.CanvasSpriteSortMode" Win10_10586="true">
       <summary>Controls how the sprites in a sprite batch are sorted.</summary>
       <remarks>
         <p>

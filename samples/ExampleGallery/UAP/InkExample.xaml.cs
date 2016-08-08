@@ -14,6 +14,7 @@ using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
 using Windows.Foundation;
+using Windows.Foundation.Metadata;
 using Windows.Storage;
 using Windows.UI;
 using Windows.UI.Input.Inking;
@@ -40,6 +41,20 @@ namespace ExampleGallery
         Rect? selectionBoundingRect;
 
         CanvasTextFormat textFormat;
+
+        CanvasTextFormat centerTextFormat = new CanvasTextFormat
+        {
+            HorizontalAlignment = CanvasHorizontalAlignment.Center,
+            VerticalAlignment = CanvasVerticalAlignment.Center,
+            FontSize = 10
+        };
+
+        InkDrawingAttributes inkAttributes;
+        InkDrawingAttributes pencilAttributes;
+
+        bool isPencilSupported = ApiInformation.IsMethodPresent("Windows.UI.Input.Inking.InkDrawingAttributes", "CreateForPencil");
+
+        bool usePencil;
 
         bool needToCreateSizeDependentResources;
         bool needToRedrawInkSurface;
@@ -75,6 +90,20 @@ namespace ExampleGallery
             inkCanvas.InkPresenter.StrokesCollected += InkPresenter_StrokesCollected;
 
             inkSynchronizer = inkCanvas.InkPresenter.ActivateCustomDrying();
+
+            inkAttributes = inkCanvas.InkPresenter.CopyDefaultDrawingAttributes();
+            inkAttributes.Size = new Size(10, inkAttributes.Size.Height);
+
+            if (isPencilSupported)
+            {
+                pencilAttributes = InkDrawingAttributes.CreateForPencil();
+                pencilAttributes.Size = new Size(10, pencilAttributes.Size.Height);
+                pencilAttributes.PencilProperties.Opacity = 2;
+            }
+            else
+            {
+                usePencilCheckbox.Visibility = Visibility.Collapsed;
+            }
 
             textFormat = new CanvasTextFormat();
 
@@ -228,6 +257,7 @@ namespace ExampleGallery
             var strokeStyle = new CanvasStrokeStyle { DashStyle = CanvasDashStyle.Dot };
 
             var strokesGroupedByColor = from stroke in strokes
+                                        where !IsPencilStroke(stroke)
                                         group stroke by stroke.DrawingAttributes.Color into strokesOfColor
                                         select strokesOfColor;
 
@@ -237,6 +267,23 @@ namespace ExampleGallery
 
                 ds.DrawGeometry(geometry, strokesOfColor.Key, 1, strokeStyle);
             }
+
+            // Display text labels in place of any pencil strokes, because we cannot create geometry for those.
+            foreach (var pencilStroke in strokes.Where(IsPencilStroke))
+            {
+                ds.DrawText("CanvasGeometry.CreateInk does not support pencil strokes",
+                            pencilStroke.BoundingRect,
+                            pencilStroke.DrawingAttributes.Color,
+                            centerTextFormat);
+            }
+        }
+
+        private bool IsPencilStroke(InkStroke stroke)
+        {
+            if (!isPencilSupported)
+                return false;
+
+            return (stroke.DrawingAttributes.Kind == InkDrawingAttributesKind.Pencil);
         }
 
         private void DrawStrokeCollectionToInkSurface(IReadOnlyList<InkStroke> strokes)
@@ -302,10 +349,23 @@ namespace ExampleGallery
                 // Incremental draw only.
                 DrawStrokeCollectionToInkSurface(pendingDry);
 
-                // Register to call EndDry on the next-but-one draw,
-                // by which time our dry ink will be visible.
-                deferredDryDelay = 1;
-                CompositionTarget.Rendering += DeferredEndDry;
+                // We want to transition from displaying wet ink to our newly drawn dry ink with minimum possible risk of flicker.
+                // If the ink is opaque, the safest approach is to delay calling EndDry for a couple of frames, deferring it via
+                // the CompositionTarget.Rendering event. This will usually briefly overlap the wet and dry ink, which looks fine
+                // for regular pen strokes but not for pencil or highlighter rendering. When using such non-opaque drawing modes,
+                // we must call EndDry immediately to minimize risk of any overlap.
+                if (usePencil)
+                {
+                    inkSynchronizer.EndDry();
+                    pendingDry = null;
+                }
+                else
+                {
+                    // Register to call EndDry on the next-but-one draw,
+                    // by which time our dry ink will be visible.
+                    deferredDryDelay = 1;
+                    CompositionTarget.Rendering += DeferredEndDry;
+                }
             }
 
             args.DrawingSession.DrawImage(renderTarget);
@@ -412,9 +472,17 @@ namespace ExampleGallery
             button.BorderBrush = new SolidColorBrush(Colors.Red);
             button.BorderThickness = new Thickness(3);
 
-            InkDrawingAttributes drawingAttributes = inkCanvas.InkPresenter.CopyDefaultDrawingAttributes();
-            drawingAttributes.Color = ((SolidColorBrush)(button.Background)).Color;
-            inkCanvas.InkPresenter.UpdateDefaultDrawingAttributes(drawingAttributes);
+            var color = ((SolidColorBrush)button.Background).Color;
+
+            // Color applies to both ink and pencil rendering.
+            inkAttributes.Color = color;
+
+            if (isPencilSupported)
+            {
+                pencilAttributes.Color = color;
+            }
+
+            inkCanvas.InkPresenter.UpdateDefaultDrawingAttributes(usePencil ? pencilAttributes : inkAttributes);
         }
 
         private void ColorPickerButton_Clicked(object sender, RoutedEventArgs e)
@@ -426,9 +494,15 @@ namespace ExampleGallery
         {
             if (inkCanvas != null)
             {
-                InkDrawingAttributes drawingAttributes = inkCanvas.InkPresenter.CopyDefaultDrawingAttributes();
-                drawingAttributes.Size = new Size(e.NewValue, drawingAttributes.Size.Height);
-                inkCanvas.InkPresenter.UpdateDefaultDrawingAttributes(drawingAttributes);
+                // Width applies to both ink and pencil rendering.
+                inkAttributes.Size = new Size(e.NewValue, inkAttributes.Size.Height);
+
+                if (isPencilSupported)
+                {
+                    pencilAttributes.Size = new Size(e.NewValue, pencilAttributes.Size.Height);
+                }
+
+                inkCanvas.InkPresenter.UpdateDefaultDrawingAttributes(usePencil ? pencilAttributes : inkAttributes);
             }
         }
 
@@ -436,9 +510,9 @@ namespace ExampleGallery
         {
             if (inkCanvas != null)
             {
-                InkDrawingAttributes drawingAttributes = inkCanvas.InkPresenter.CopyDefaultDrawingAttributes();
-                drawingAttributes.Size = new Size(drawingAttributes.Size.Width, e.NewValue);
-                inkCanvas.InkPresenter.UpdateDefaultDrawingAttributes(drawingAttributes);
+                // Height only applies to ink rendering (not pencil).
+                inkAttributes.Size = new Size(inkAttributes.Size.Width, e.NewValue);
+                inkCanvas.InkPresenter.UpdateDefaultDrawingAttributes(inkAttributes);
             }
         }
 
@@ -446,10 +520,20 @@ namespace ExampleGallery
         {
             if (inkCanvas != null)
             {
-                InkDrawingAttributes drawingAttributes = inkCanvas.InkPresenter.CopyDefaultDrawingAttributes();
+                // Rotation only applies to ink rendering (not pencil).
                 float radians = Utils.DegreesToRadians((float)e.NewValue);
-                drawingAttributes.PenTipTransform = Matrix3x2.CreateRotation(radians);
-                inkCanvas.InkPresenter.UpdateDefaultDrawingAttributes(drawingAttributes);
+                inkAttributes.PenTipTransform = Matrix3x2.CreateRotation(radians);
+                inkCanvas.InkPresenter.UpdateDefaultDrawingAttributes(inkAttributes);
+            }
+        }
+
+        private void PencilOpacity_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
+        {
+            if (inkCanvas != null)
+            {
+                // Opacity only applies to pencil rendering (not ink).
+                pencilAttributes.PencilProperties.Opacity = e.NewValue;
+                inkCanvas.InkPresenter.UpdateDefaultDrawingAttributes(pencilAttributes);
             }
         }
 
@@ -487,6 +571,26 @@ namespace ExampleGallery
 
             if (canvasControl != null)
                 canvasControl.Invalidate();
+        }
+
+        void UsePencil_Checked(object sender, RoutedEventArgs e)
+        {
+            usePencil = true;
+
+            inkCanvas.InkPresenter.UpdateDefaultDrawingAttributes(pencilAttributes);
+
+            inkOptions.Visibility = Visibility.Collapsed;
+            pencilOptions.Visibility = Visibility.Visible;
+        }
+
+        void UsePencil_Unchecked(object sender, RoutedEventArgs e)
+        {
+            usePencil = false;
+
+            inkCanvas.InkPresenter.UpdateDefaultDrawingAttributes(inkAttributes);
+
+            inkOptions.Visibility = Visibility.Visible;
+            pencilOptions.Visibility = Visibility.Collapsed;
         }
 
         private void control_Unloaded(object sender, RoutedEventArgs e)

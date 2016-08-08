@@ -14,26 +14,22 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         <_locTag _locAttrData="value">Property</_locTag>
     </_locDefinition>
     <!-- System Properties -->
-    <Property name='DisplayName' type='string' value='Contrast'/>
+    <Property name='DisplayName' type='string' value='Cross Fade'/>
     <Property name='Author' type='string' value='Microsoft Corporation'/>
-    <Property name='Category' type='string' value='Photo'/>
+    <Property name='Category' type='string' value='Composite'/>
     <Property name='Description' type='string' 
-        value='Adjusts the contrast of an image.'/>
+        value='This effect combines two images by adding weighted pixels from input images. The formula can be expressed as output = weight * Destination + (1 - weight) * Source'/>
 
-    <!-- This effect has only one input -->
+    <!-- This effect has 2 inputs -->
     <Inputs>
-        <Input name='Source'/>
+        <Input name="Destination" />
+        <Input name="Source" />
     </Inputs>
 
-    <!-- Custom Properties go here -->
-    <Property name='Contrast' type='float'>
-        <Property name='DisplayName' type='string' value='Contrast'/>
-        <Property name='Min' type='float' value='-1.0' />
+    <Property name='Weight' type='float'>
+        <Property name='DisplayName' type='string' value='Weight'/>
+        <Property name='Min' type='float' value='0.0' />
         <Property name='Max' type='float' value='1.0' />
-        <Property name="Default" type="float" value="0" />
-    </Property>
-    <Property name="ClampInput" type="bool">
-        <Property name="DisplayName" type="string" value="Clamp Input" />
-        <Property name="Default" type="bool" value="false" />
+        <Property name="Default" type="float" value="0.5" />
     </Property>
 </Effect>
