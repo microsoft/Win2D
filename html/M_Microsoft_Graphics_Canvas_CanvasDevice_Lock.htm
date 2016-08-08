@@ -24,11 +24,14 @@
           accessing the underlying graphics device simultaneously.  This code
           shows how to do this correctly:
 
-          <div class="codeSnippetContainer"><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID0EAACABA_copyCode" href="#" onclick="javascript:CopyToClipboard('ID0EAACABA');return false;" title="Copy">Copy</a></div></div><div id="ID0EAACABA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve">SoftwareBitmap softwareBitmap;
+          <div class="codeSnippetContainer"><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID0EABCABA_copyCode" href="#" onclick="javascript:CopyToClipboard('ID0EABCABA');return false;" title="Copy">Copy</a></div></div><div id="ID0EABCABA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve">SoftwareBitmap softwareBitmap;
 <span class="highlight-keyword">using</span> (<span class="highlight-keyword">var</span> <span class="highlight-keyword">lock</span> = canvasBitmap.Device.Lock())
 {
     softwareBitmap = <span class="highlight-keyword">await</span> SoftwareBitmap.CreateCopyFromSurfaceAsync(canvasBitmap);
-}</pre></div></div></div><script type="text/javascript">AddLanguageTabSet("ID0EAACABA");</script></p><p>
+}</pre></div></div></div><script type="text/javascript">AddLanguageTabSet("ID0EABCABA");</script>
+          
+          If you are programming in C++/CX, the 'delete' keyword should be used to release the lock object.
+        </p><p>
           Win2D is built on top of Direct2D, and inherits the threading model
           from there.  The <a HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/jj569217(v=vs.85).aspx">MSDN</a>
           documentation can provide additional insight beyond the quick overview
