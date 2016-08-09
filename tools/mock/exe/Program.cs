@@ -55,6 +55,7 @@ namespace Mock
                     return "";
 
                 case "deref out pointer":
+                case "deref out pointer com":
                 case "pointer pointer":
                 case "out pointer pointer":
                 case "deref opt out pointer":
