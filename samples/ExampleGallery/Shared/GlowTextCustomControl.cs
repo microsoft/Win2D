@@ -121,7 +121,7 @@ namespace ExampleGallery
             {
                 instance.canvas.Invalidate();
                 instance.InvalidateMeasure();
-            }            
+            }
         }
 
         // This is the amount that we grow the desired size by (to account for the glow)
@@ -142,7 +142,11 @@ namespace ExampleGallery
             var layout = CreateTextLayout(device, availableSize);
             var bounds = layout.LayoutBounds;
 
-            return new Size(Math.Min(availableSize.Width, bounds.Width + ExpandAmount), Math.Min(availableSize.Height, bounds.Height + ExpandAmount));
+            Size desiredSize = new Size(Math.Min(availableSize.Width, bounds.Width + ExpandAmount), Math.Min(availableSize.Height, bounds.Height + ExpandAmount));
+            if (canvas != null)
+                canvas.Measure(desiredSize);
+
+            return desiredSize;
         }
 
         private void OnDraw(CanvasControl sender, CanvasDrawEventArgs args)
