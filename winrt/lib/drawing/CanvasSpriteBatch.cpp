@@ -604,6 +604,13 @@ IFACEMETHODIMP CanvasSpriteBatch::Close()
 
         if (originalAntialiasMode == D2D1_ANTIALIAS_MODE_PER_PRIMITIVE)
             deviceContext->SetAntialiasMode(originalAntialiasMode);
+
+        //
+        // Release our working memory
+        //
+
+        m_sprites.clear();
+        m_sprites.shrink_to_fit();
     });
 }
 
