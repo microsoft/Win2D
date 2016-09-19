@@ -315,8 +315,7 @@
          be isolated from the environment that's formed around running
          Win2D.proj up to this point, and to suppress the Sandcastle
          false positive warning BHT0001 -->
-    <!-- TODO remove IntellisenseOnly option once github #390 is fixed -->
-    <Exec Command="msbuild $(MSBuildThisFileDirectory)tools\docs\BuildDocs.proj /p:IntellisenseOnly=true" 
+    <Exec Command="msbuild $(MSBuildThisFileDirectory)tools\docs\BuildDocs.proj" 
           IgnoreStandardErrorWarningFormat="true"
           CustomErrorRegularExpression=": error "
           CustomWarningRegularExpression=": warning (?!BHT0001)" />
