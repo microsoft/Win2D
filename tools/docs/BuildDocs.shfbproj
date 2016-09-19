@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
-    <SHFBROOT>$(MSBuildThisFileDirectory)..\..\packages\EWSoftware.SHFB.2015.10.10.0\Tools\</SHFBROOT>
+    <SHFBROOT>$(MSBuildThisFileDirectory)..\..\packages\EWSoftware.SHFB.2016.9.17.0\Tools\</SHFBROOT>
 
     <!-- Sandcastle configuration options -->
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{ec5bd60b-d070-432b-bf14-ab50cfc1d7f8}</ProjectGuid>
     <SHFBSchemaVersion>1.9.9.0</SHFBSchemaVersion>
     <FrameworkVersion>.NET for Universal Windows</FrameworkVersion>
-    <ComponentPath>$(MSBuildThisFileDirectory)..\..\packages\EWSoftware.SHFB.UniversalWindows.1.0\</ComponentPath>
+    <ComponentPath>$(MSBuildThisFileDirectory)..\..\packages\EWSoftware.SHFB.UniversalWindows.1.0.1\</ComponentPath>
     <HtmlHelpName>Documentation</HtmlHelpName>
     <Language>en-US</Language>
     <BuildAssemblerVerbosity>OnlyErrors</BuildAssemblerVerbosity>
