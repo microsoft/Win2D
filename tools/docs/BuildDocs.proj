@@ -4,6 +4,10 @@
   <Import Project="$(MsBuildThisFileDirectory)..\..\build\Win2D.common.props" />
   <Import Project="$(MSBuildThisFileDirectory)DocItems.proj" />
 
+  <ItemGroup>
+    <NuGetRestore Include="$(MSBuildThisFileDirectory)packages.config" />
+  </ItemGroup>
+
 
   <!-- Settings -->
   <PropertyGroup>
@@ -58,13 +62,22 @@
 
 
   <!-- Compile the generated C# code to create new assemblies -->
-  <Target Name="CompileAPISurface" Condition="!$(IntellisenseOnly)">
+  <Target Name="CompileAPISurface" Condition="!$(IntellisenseOnly)" DependsOnTargets="RestoreNuGetPackages">
+    <PropertyGroup>
+      <FrameworkRoot>$(MSBuildThisFileDirectory)..\..\packages\System.Runtime.4.0.20\ref\dotnet</FrameworkRoot>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <FrameworkAssembly Include="$(FrameworkRoot)\System.Runtime.dll" />
+    </ItemGroup>
 
     <Csc Sources="$(IntermediateOutputPath)%(InputAssembly.Filename).cs;%(InputAssembly.AdditionalApiDescription)"
          OutputAssembly="$(IntermediateOutputPath)%(InputAssembly.Filename)%(InputAssembly.Extension)"
          DocumentationFile="$(IntermediateOutputPath)%(InputAssembly.Filename).xml"
-         References="%(InputAssembly.References)"
+         References="%(InputAssembly.References);@(FrameworkAssembly)"
          TargetType="library"
+         NoConfig="true"
+         NoStandardLib="true"
          DisabledWarnings="67;1591;108" />
   </Target>
 
@@ -111,10 +124,6 @@
     <Exec Command="&quot;$(DocPreprocessTool)&quot; /LayoutContent:$(MsBuildThisFileDirectory)Layout.content /DocSrcOutput:$(IntermediateOutputPath)docsrc /TopicsOutput:$(IntermediateOutputPath)topics @$(DocPreprocessResponseFile)" />
   </Target>
 
-
-  <ItemGroup>
-    <NuGetRestore Include="$(MSBuildThisFileDirectory)packages.config" />
-  </ItemGroup>
 
   <!-- Run the Sandcastle tool to create HTML reference documentation -->
   <Target Name="RunSandcastle" Condition="!$(IntellisenseOnly)" DependsOnTargets="RestoreNuGetPackages">
