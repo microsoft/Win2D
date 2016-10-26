@@ -480,25 +480,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             return m_window.Get(); 
         }
 
-        bool IsWindowVisible() const
-        {
-            boolean visible;
-
-            HRESULT hr = m_window->get_Visible(&visible);
-
-            if (hr == E_FAIL)
-            {
-                // In design mode get_Visible will return E_FAIL.  In this case we
-                // just treat the window as visible.
-                return true;
-            }
-            else
-            {
-                ThrowIfFailed(hr);
-                return !!visible;
-            }
-        }
-
         bool IsReadyToDraw() const
         {
             return m_recreatableDeviceManager->IsReadyToDraw();
@@ -806,6 +787,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                     if (++m_loadedCount == 1)
                     {
                         RegisterEventHandlers();
+                        UpdateIsVisible();
                         UpdateLastSeenParent();
                         Loaded();
 
@@ -816,6 +798,17 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                         Changed(ChangeReason::Other);
                     }
                 });
+        }
+
+        void UpdateIsVisible()
+        {
+            boolean isVisible;
+
+            // get_Visible fails when running in the designer, in which case we leave m_isVisible set to true.
+            if (SUCCEEDED(m_window->get_Visible(&isVisible)))
+            {
+                m_isVisible = !!isVisible;
+            }
         }
 
         void UpdateLastSeenParent()

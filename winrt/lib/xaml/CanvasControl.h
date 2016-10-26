@@ -132,6 +132,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         virtual void WindowVisibilityChanged() override final;
 
     private:
+        void ChangedImpl();
         void HookCompositionRenderingIfNecessary(Lock const&);
 
         void RegisterEventHandlers();

@@ -187,7 +187,7 @@ HRESULT CanvasControl::OnCompositionRendering(IInspectable*, IInspectable*)
             m_renderingEventRegistration.Release();
             lock.unlock();
 
-            if (!IsWindowVisible())
+            if (!IsVisible())
                 return;
 
             try
@@ -279,14 +279,65 @@ void CanvasControl::Changed(ChangeReason)
     if (!IsLoaded())
         return;
 
+    // Are we on the UI thread?
+    boolean hasThreadAccess;
+
+    ComPtr<ICoreDispatcher> dispatcher;
+    ThrowIfFailed(GetWindow()->get_Dispatcher(&dispatcher));
+
+    if (dispatcher)
+    {
+        ThrowIfFailed(dispatcher->get_HasThreadAccess(&hasThreadAccess));
+    }
+    else
+    {
+        // Running in the designer.
+        assert(GetAdapter()->IsDesignModeEnabled());
+        hasThreadAccess = true;
+    }
+
+    if (hasThreadAccess)
+    {
+        // Do the work immediately.
+        ChangedImpl();
+    }
+    else
+    {
+        // Marshal back to the UI thread.
+        WeakRef weakSelf = AsWeak(this);
+        auto callback = Callback<AddFtmBase<IDispatchedHandler>::Type>([weakSelf]() mutable
+        {
+            return ExceptionBoundary([&]
+            {
+                auto strongSelf = LockWeakRef<ICanvasControl>(weakSelf);
+                auto self = static_cast<CanvasControl*>(strongSelf.Get());
+
+                if (self)
+                {
+                    self->ChangedImpl();
+                }
+            });
+        });
+        CheckMakeResult(callback);
+        ComPtr<IAsyncAction> asyncAction;
+        ThrowIfFailed(dispatcher->RunAsync(CoreDispatcherPriority_Normal, callback.Get(), &asyncAction));
+    }
+}
+
+void CanvasControl::ChangedImpl()
+{
+    //
+    // This is called on the UI thread (Changed() makes sure of it)
+    //
+
     auto lock = Lock(m_renderingEventMutex);
-    
+
     if (m_renderingEventRegistration)
         return;
 
     m_needToHookCompositionRendering = true;
 
-    if (!IsWindowVisible())
+    if (!IsVisible())
         return;
 
     HookCompositionRenderingIfNecessary(lock);

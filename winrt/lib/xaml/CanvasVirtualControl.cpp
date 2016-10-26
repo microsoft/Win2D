@@ -420,7 +420,7 @@ HRESULT CanvasVirtualControl::OnRegionsInvalidated(ICanvasVirtualImageSource* se
 
 void CanvasVirtualControl::OnRegionsInvalidatedImpl(ICanvasVirtualImageSource*, ICanvasRegionsInvalidatedEventArgs* args)
 {
-    if (!IsWindowVisible())
+    if (!IsVisible())
         return;
     
     RunWithCurrentRenderTarget(
