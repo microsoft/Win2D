@@ -179,23 +179,35 @@ namespace CodeGen
                 effects.Add(ParseEffectXML(xmlFilePath));
             }
 
-            string windowsKitPath = Environment.ExpandEnvironmentVariables(@"%WindowsSdkDir%");
+            string windowsKitPath = Path.Combine(Environment.ExpandEnvironmentVariables("%WindowsSdkDir%"), "Include");
 
             // Check if %WindowsSdkDir% path is set
             if (!Directory.Exists(windowsKitPath))
             {
                 // Try the default path 
-                windowsKitPath = @"C:\Program Files (x86)\Windows Kits\8.1";
+                windowsKitPath = @"C:\Program Files (x86)\Windows Kits\8.1\Include";
                 if (!Directory.Exists(windowsKitPath))
                 {
                     throw new Exception(@"Missing WindowsSdkDir environment variable. Please run this application from VS command prompt");
                 }
             }
 
+            string windowsSdkVersion = Environment.GetEnvironmentVariable("WindowsSdkVersion");
+
+            if (!string.IsNullOrEmpty(windowsSdkVersion))
+            {
+                string pathWithSdkVersion = Path.Combine(windowsKitPath, windowsSdkVersion);
+
+                if (Directory.Exists(pathWithSdkVersion))
+                {
+                    windowsKitPath = pathWithSdkVersion;
+                }
+            }
+
             List<string> d2dHeaders = new List<string>
             {
-                windowsKitPath + @"/Include/um/d2d1effects.h",
-                windowsKitPath + @"/Include/um/d2d1_1.h"
+                Path.Combine(windowsKitPath, "um/d2d1effects.h"),
+                Path.Combine(windowsKitPath, "um/d2d1_1.h")
             };
 
             AssignEffectsNamesToProperties(effects);
