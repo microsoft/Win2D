@@ -1443,7 +1443,7 @@ TEST_CLASS(CanvasTextAnalyzerTests)
                 static WinString locales[] = { WinString(L"00-00"), WinString(L"11-11"), WinString(L"22-22") };
 
                 Assert::IsTrue(index >= 0 && index < 3);
-                *out = locales[index];
+                locales[index].CopyTo(out);
 
                 *characterCount = 1;
 
@@ -1486,17 +1486,17 @@ TEST_CLASS(CanvasTextAnalyzerTests)
                 static WinString locales[] = { WinString(L"00-00"), WinString(L"11-11") };
                 if (index == 0)
                 {
-                    *out = locales[0];
+                    locales[0].CopyTo(out);
                     *characterCount = 2;
                 }
                 else if (index == 1)
                 {
-                    *out = locales[0];
+                    locales[0].CopyTo(out);
                     *characterCount = 1;
                 }
                 else if (index == 2)
                 {
-                    *out = locales[1];
+                    locales[1].CopyTo(out);
                     *characterCount = 1;
                 }
 
