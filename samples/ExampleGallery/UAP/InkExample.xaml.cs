@@ -408,7 +408,14 @@ namespace ExampleGallery
 
         private async void LoadStrokesFromStream(Stream stream)
         {
-            await inkManager.LoadAsync(stream.AsInputStream());
+            if (stream.Length > 0)
+            {
+                await inkManager.LoadAsync(stream.AsInputStream());
+            }
+            else
+            {
+                inkManager = new InkManager();
+            }
 
             needToRedrawInkSurface = true;
         }
@@ -434,7 +441,11 @@ namespace ExampleGallery
         {
             using (var stream = await ApplicationData.Current.LocalFolder.OpenStreamForWriteAsync(saveFileName, CreationCollisionOption.ReplaceExisting))
             {
-                await inkManager.SaveAsync(stream.AsOutputStream());
+                // InkManager.SaveAsync fails if there are zero strokes, so we just leave the file empty if there is no actual ink.
+                if (inkManager.GetStrokes().Any())
+                {
+                    await inkManager.SaveAsync(stream.AsOutputStream());
+                }
             }
         }
 
