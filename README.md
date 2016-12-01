@@ -19,7 +19,7 @@ CoreWindow.
 
 ##### More info
 - [Report a bug or ask a question](http://github.com/Microsoft/Win2D/issues)
-- [Team blog](http://blogs.msdn.com/b/win2d)
+- [Team blog](https://blogs.msdn.microsoft.com/win2d/)
 - [License](http://opensource.org/licenses/MIT)
 - [Contributing](http://github.com/Microsoft/Win2D/blob/master/CONTRIBUTING.md)
 
