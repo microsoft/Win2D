@@ -68,7 +68,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         <listItem>
           <externalLink>
             <linkText>Team blog</linkText>
-            <linkUri>http://blogs.msdn.com/b/win2d</linkUri>
+            <linkUri>https://blogs.msdn.microsoft.com/win2d/</linkUri>
           </externalLink>
         </listItem>
       </list>
