@@ -100,130 +100,227 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.CombineWith(Microsoft.Graphics.Canvas.Geometry.CanvasGeometry,System.Numerics.Matrix3x2,Microsoft.Graphics.Canvas.Geometry.CanvasGeometryCombine)">
       <summary>Returns the combination of this geometry and the specified geometry according to the specified combine operation, 
       such as union, intersection, etc. </summary>
-      <remarks>Uses default flattening tolerance and identity transform.</remarks>
+      <remarks>
+        Uses the
+        <see cref="P:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.DefaultFlatteningTolerance">default flattening tolerance</see> 
+        and identity transform applied to the input geometry.
+      </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.CombineWith(Microsoft.Graphics.Canvas.Geometry.CanvasGeometry,System.Numerics.Matrix3x2,Microsoft.Graphics.Canvas.Geometry.CanvasGeometryCombine,System.Single)">
       <summary>Returns the combination of this geometry and the specified geometry according to the specified combine operation, 
       such as union, intersection, etc. </summary>
-      <remarks>Uses the specified flattening tolerance and transform.</remarks>
+      <remarks>
+        Uses the 
+        <see cref="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.ComputeFlatteningTolerance(System.Single,System.Single,System.Numerics.Matrix3x2)">specified flattening tolerance</see>
+        and transform applied to the input geometry.
+      </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.Stroke(System.Single)">
       <summary>Returns a geometry equivalent to a stroked area of this geometry, with the specified stroke width and a default stroke style. </summary>
-      <remarks>Uses default flattening tolerance and identity transform.</remarks>
+      <remarks>
+        Uses the
+        <see cref="P:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.DefaultFlatteningTolerance">default flattening tolerance</see> 
+        and identity transform applied to the input geometry.
+      </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.Stroke(System.Single,Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle)">
       <summary>Returns a geometry equivalent to a stroked area of this geometry, with the specified stroke width and a default stroke style. </summary>
-      <remarks>Uses the default flattening tolerance and identity transform.</remarks>
+      <remarks>
+        Uses the 
+        <see cref="P:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.DefaultFlatteningTolerance">default flattening tolerance</see> 
+        and identity transform applied to the input geometry.
+      </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.Stroke(System.Single,Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle,System.Numerics.Matrix3x2,System.Single)">
       <summary>Returns a geometry equivalent to a stroked area of this geometry, with the specified stroke width and a default stroke style. </summary>
-      <remarks>Uses the specified flattening tolerance and transform.</remarks>
+      <remarks>
+        Uses the 
+        <see cref="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.ComputeFlatteningTolerance(System.Single,System.Single,System.Numerics.Matrix3x2)">specified flattening tolerance</see>
+        and transform applied to the input geometry.
+      </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.Outline">
       <summary>Returns a geometry with equivalent fill, but no self-intersections, and figures are all oriented counterclockwise. </summary>
       <remarks>
-        Uses default flattening tolerance and identity transform. 
-        The output geometry is created such that its fill won't ever depend on the choice of CanvasFilledRegionDetermination.</remarks>
+        Uses the
+          <see cref="P:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.DefaultFlatteningTolerance">default flattening tolerance</see> 
+        and identity transform applied to the input geometry. 
+        The output geometry is created such that its fill won't ever depend on the choice of CanvasFilledRegionDetermination.
+      </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.Outline(System.Numerics.Matrix3x2,System.Single)">
       <summary>Returns a geometry with equivalent fill, but no self-intersections, and figures are all oriented counterclockwise. </summary>
       <remarks>
-        Uses the specified flattening tolerance and transform.
-        The output geometry is created such that its fill won't ever depend on the choice of CanvasFilledRegionDetermination. </remarks>
+        Uses the 
+        <see cref="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.ComputeFlatteningTolerance(System.Single,System.Single,System.Numerics.Matrix3x2)">specified flattening tolerance</see> 
+        and transform applied to the input geometry.
+        The output geometry is created such that its fill won't ever depend on the choice of CanvasFilledRegionDetermination.
+      </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.Simplify(Microsoft.Graphics.Canvas.Geometry.CanvasGeometrySimplification)">
       <summary>Returns a version of the geometry that contains only lines, and, optionally, cubic Bezier curves. </summary>
       <remarks>
-        Uses default flattening tolerance and identity transform.
+        Uses the
+        <see cref="P:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.DefaultFlatteningTolerance">default flattening tolerance</see>
+        and identity transform applied to the input geometry.
         Any arcs or quadratic beziers in the source geometry will be output as roughly equivalent cubic beziers or lines, depending on the simplification option.</remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.Simplify(Microsoft.Graphics.Canvas.Geometry.CanvasGeometrySimplification,System.Numerics.Matrix3x2,System.Single)">
       <summary>Returns a version of the geometry that contains only lines, and, optionally, cubic Bezier curves. </summary>
       <remarks>
-        Uses the specified flattening tolerance and transform.
-        Any arcs or quadratic beziers in the source geometry will be output as roughly equivalent cubic beziers or lines, depending on the simplification option.</remarks>
+        Uses the 
+        <see cref="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.ComputeFlatteningTolerance(System.Single,System.Single,System.Numerics.Matrix3x2)">specified flattening tolerance</see>
+        and transform applied to the input geometry.
+        Any arcs or quadratic beziers in the source geometry will be output as roughly equivalent cubic beziers or lines, depending on the simplification option.
+      </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.CompareWith(Microsoft.Graphics.Canvas.Geometry.CanvasGeometry)">
       <summary>Returns a value describing the intersection between this geometry and the specified geometry. </summary>
-      <remarks>Uses default flattening tolerance and identity transform on the input geometry.</remarks>
+      <remarks>
+        Uses the
+        <see cref="P:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.DefaultFlatteningTolerance">default flattening tolerance</see>
+        and identity transform on the input geometry.
+      </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.CompareWith(Microsoft.Graphics.Canvas.Geometry.CanvasGeometry,System.Numerics.Matrix3x2,System.Single)">
       <summary>Returns a value describing the intersection between this geometry and the specified geometry. </summary>
-      <remarks>Uses the specified flattening tolerance, and the specified transform on the input geometry.</remarks>
+      <remarks>Uses the 
+        <see cref="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.ComputeFlatteningTolerance(System.Single,System.Single,System.Numerics.Matrix3x2)">specified flattening tolerance</see>
+        and the specified transform on the input geometry.
+      </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.ComputeArea">
       <summary>Returns the area of this geometry. </summary>
       <remarks>
-        <p>Uses default flattening tolerance and identity transform.</p>
+        <p>Uses the
+          <see cref="P:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.DefaultFlatteningTolerance">default flattening tolerance</see> 
+          and identity transform applied to the input geometry.
+        </p>
         <p>Area is a two-dimensional quantity.</p>
       </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.ComputeArea(System.Numerics.Matrix3x2,System.Single)">
       <summary>Returns the area of this geometry. </summary>
       <remarks>
-        <p>Uses the specified flattening tolerance and transform.</p>
+        <p>Uses the 
+        <see cref="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.ComputeFlatteningTolerance(System.Single,System.Single,System.Numerics.Matrix3x2)">specified flattening tolerance</see> 
+        and transform applied to the input geometry.</p>
         <p>Area is a two-dimensional quantity.</p>
       </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.ComputePathLength">
       <summary>Returns the length of the geometry as though the entire path were unrolled into a single straight line. </summary>
-      <remarks>Uses default flattening tolerance and identity transform on the input geometry.</remarks>
+      <remarks>
+        Uses the
+        <see cref="P:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.DefaultFlatteningTolerance">default flattening tolerance</see>
+        and identity transform on the input geometry.
+      </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.ComputePathLength(System.Numerics.Matrix3x2,System.Single)">
       <summary>Returns the length of the geometry as though the entire path were unrolled into a single straight line.</summary>
-      <remarks>Uses the specified flattening tolerance and transform.</remarks>
+      <remarks>Uses the 
+        <see cref="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.ComputeFlatteningTolerance(System.Single,System.Single,System.Numerics.Matrix3x2)">specified flattening tolerance</see> 
+        and transform applied to the input geometry.
+    </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.ComputePointOnPath(System.Single)">
       <summary>Returns the point at the specified distance along the segments of the geometry.</summary>
-      <remarks>Uses default flattening tolerance and identity transform on the input geometry.</remarks>
+      <remarks>
+        Uses the
+        <see cref="P:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.DefaultFlatteningTolerance">default flattening tolerance</see>
+        and identity transform on the input geometry.
+      </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.ComputePointOnPath(System.Single,System.Numerics.Vector2@)">
       <summary>Returns the point and tangent vector at the specified distance along the segments of the geometry.</summary>
-      <remarks>Uses default flattening tolerance and identity transform on the input geometry.</remarks>
+      <remarks>
+        Uses the
+        <see cref="P:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.DefaultFlatteningTolerance">default flattening tolerance</see>
+        and identity transform on the input geometry.
+      </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.ComputePointOnPath(System.Single,System.Numerics.Matrix3x2,System.Single,System.Numerics.Vector2@)">
       <summary>Returns the point and tangent vector at the specified distance along the segments of the geometry.</summary>
-      <remarks>Uses the specified flattening tolerance and transform.</remarks>
+      <remarks>Uses the 
+        <see cref="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.ComputeFlatteningTolerance(System.Single,System.Single,System.Numerics.Matrix3x2)">specified flattening tolerance</see>
+        and transform applied to the input geometry.
+    </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.FillContainsPoint(System.Numerics.Vector2)">
       <summary>Returns whether the area filled by the geometry contains the specified point.</summary>
-      <remarks>Uses default flattening tolerance and identity transform on the input geometry.</remarks>
+      <remarks>
+        Uses the
+        <see cref="P:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.DefaultFlatteningTolerance">default flattening tolerance</see>
+        and identity transform on the input geometry.
+      </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.FillContainsPoint(System.Numerics.Vector2,System.Numerics.Matrix3x2,System.Single)">
       <summary>Returns whether the area filled by the geometry contains the specified point.</summary>
-      <remarks>Uses the specified flattening tolerance and transform.</remarks>
+      <remarks>Uses the 
+        <see cref="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.ComputeFlatteningTolerance(System.Single,System.Single,System.Numerics.Matrix3x2)">specified flattening tolerance</see>
+        and transform applied to the input geometry.
+      </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.ComputeBounds">
       <summary>Returns the bounds of the geometry.</summary>
-      <remarks>Uses default flattening tolerance and identity transform on the input geometry.</remarks>
+      <remarks>
+        Uses the
+        <see cref="P:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.DefaultFlatteningTolerance">default flattening tolerance</see>
+        and identity transform on the input geometry.
+      </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.ComputeBounds(System.Numerics.Matrix3x2)">
       <summary>Returns the bounds of the geometry.</summary>
-      <remarks>Uses the specified flattening tolerance and transform.</remarks>
+      <remarks>Uses the 
+        <see cref="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.ComputeFlatteningTolerance(System.Single,System.Single,System.Numerics.Matrix3x2)">specified flattening tolerance</see>
+        and transform applied to the input geometry.
+      </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.ComputeStrokeBounds(System.Single)">
       <summary>Returns the bounds of a stroked area of this geometry, with the specified stroke width.</summary>
-      <remarks>Uses default flattening tolerance and identity transform on the input geometry.</remarks>
+      <remarks>
+        Uses the
+        <see cref="P:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.DefaultFlatteningTolerance">default flattening tolerance</see>
+        and identity transform on the input geometry.
+      </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.ComputeStrokeBounds(System.Single,Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle)">
       <summary>Returns the bounds of a stroked area of this geometry, with the specified stroke width and stroke style.</summary>
-      <remarks>Uses default flattening tolerance and identity transform on the input geometry.</remarks>
+      <remarks>
+        Uses the
+        <see cref="P:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.DefaultFlatteningTolerance">default flattening tolerance</see>
+        and identity transform on the input geometry.
+      </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.ComputeStrokeBounds(System.Single,Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle,System.Numerics.Matrix3x2,System.Single)">
       <summary>Returns the bounds of a stroked area of this geometry, with the specified stroke width and stroke style.</summary>
-      <remarks>Uses the specified flattening tolerance and transform.</remarks>
+      <remarks>Uses the 
+        <see cref="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.ComputeFlatteningTolerance(System.Single,System.Single,System.Numerics.Matrix3x2)">specified flattening tolerance</see>
+        and transform applied to the input geometry.
+      </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.StrokeContainsPoint(System.Numerics.Vector2,System.Single)">
       <summary>Returns whether the stroked area of this geometry, with the specified stroke width and default stroke style, would contain the specified point.</summary>
-      <remarks>Uses default flattening tolerance and identity transform on the input geometry.</remarks>
+      <remarks>
+        Uses the
+        <see cref="P:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.DefaultFlatteningTolerance">default flattening tolerance</see>
+        and identity transform on the input geometry.
+      </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.StrokeContainsPoint(System.Numerics.Vector2,System.Single,Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle)">
       <summary>Returns whether the stroked area of this geometry, with the specified stroke width and stroke style, would contain the specified point.</summary>
-      <remarks>Uses default flattening tolerance and identity transform on the input geometry.</remarks>
+      <remarks>
+        Uses the
+        <see cref="P:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.DefaultFlatteningTolerance">default flattening tolerance</see>
+        and identity transform on the input geometry.
+      </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.StrokeContainsPoint(System.Numerics.Vector2,System.Single,Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle,System.Numerics.Matrix3x2,System.Single)">
       <summary>Returns whether the stroked area of this geometry, with the specified stroke width and stroke style, would contain the specified point.</summary>
-      <remarks>Uses the specified flattening tolerance and transform.</remarks>
+      <remarks>Uses the 
+        <see cref="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.ComputeFlatteningTolerance(System.Single,System.Single,System.Numerics.Matrix3x2)">specified flattening tolerance</see>
+        and transform applied to the input geometry.
+      </remarks>
     </member>
     <member name="T:Microsoft.Graphics.Canvas.Geometry.CanvasGeometryCombine">
       <summary>Used for specifying how two geometries should be combined to form a third, new geometry.</summary>
@@ -520,11 +617,15 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.CreateInk(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Collections.Generic.IEnumerable{Windows.UI.Input.Inking.InkStroke})" Win10="true">
       <summary>Creates a geometry from a collection of ink strokes.</summary>
       <remarks>
-        <p>Uses default flattening tolerance and identity transform on the input strokes.</p>
+        <p>
+          Uses the
+          <see cref="P:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.DefaultFlatteningTolerance">default flattening tolerance</see>
+          and identity transform on the input strokes.
+        </p>
         <p>
           Geometry created from ink typically contains many overlapping stroke segments and circles.
           After using CreateInk, it may be desirable to clean up these self-intersections by calling
-          <see cref="O:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.Outline"/>.
+          <see cref="O:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.Outline">Outline</see>.
         </p>
         <p>
           Note that CanvasGeometry does not support pencil ink strokes (InkDrawingAttributesKind.Pencil).
@@ -535,11 +636,13 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.CreateInk(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Collections.Generic.IEnumerable{Windows.UI.Input.Inking.InkStroke},System.Numerics.Matrix3x2,System.Single)" Win10="true">
       <summary>Creates a geometry from a collection of ink strokes.</summary>
       <remarks>
-        <p>Uses the specified flattening tolerance, and the specified transform on the input strokes.</p>
+        <p>Uses the 
+          <see cref="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.ComputeFlatteningTolerance(System.Single,System.Single,System.Numerics.Matrix3x2)">specified flattening tolerance</see>
+          and the specified transform on the input strokes.</p>
         <p>
           Geometry created from ink typically contains many overlapping stroke segments and circles.
           After using CreateInk, it may be desirable to clean up these self-intersections by calling
-          <see cref="O:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.Outline"/>.
+          <see cref="O:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.Outline">Outline</see>.
         </p>
         <p>
           Note that CanvasGeometry does not support pencil ink strokes (InkDrawingAttributesKind.Pencil).
