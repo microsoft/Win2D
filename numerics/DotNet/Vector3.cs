@@ -30,6 +30,14 @@ namespace System.Numerics
         }
 
 
+        public Vector3(double x, double y, double z)
+        {
+            X = x.ToFloat();
+            Y = y.ToFloat();
+            Z = z.ToFloat();
+        }
+
+
         public Vector3(Vector2 value, float z)
         {
             X = value.X; 
@@ -38,11 +46,25 @@ namespace System.Numerics
         }
 
 
+        public Vector3(Vector2 value, double z)
+        {
+            X = value.X; 
+            Y = value.Y; 
+            Z = z.ToFloat();
+        }
+
+
         public Vector3(float value)
         {
             X = Y = Z = value;
         }
         
+
+
+        public Vector3(double value)
+        {
+            X = Y = Z = value.ToFloat();
+        }
         
         public float Length()
         {
@@ -191,6 +213,18 @@ namespace System.Numerics
         }
 
 
+        public static Vector3 Lerp(Vector3 value1, Vector3 value2, double amount)
+        {
+            Vector3 ans;
+
+            ans.X = value1.X + (value2.X - value1.X) * amount.ToFloat();
+            ans.Y = value1.Y + (value2.Y - value1.Y) * amount.ToFloat();
+            ans.Z = value1.Z + (value2.Z - value1.Z) * amount.ToFloat();
+
+            return ans;
+        }
+
+
         public static Vector3 Transform(Vector3 position, Matrix4x4 matrix)
         {
             Vector3 result;
@@ -301,6 +335,18 @@ namespace System.Numerics
         }
 
 
+        public static Vector3 Multiply(Vector3 value1, double value2)
+        {
+            Vector3 ans;
+
+            ans.X = value1.X * value2.ToFloat();
+            ans.Y = value1.Y * value2.ToFloat();
+            ans.Z = value1.Z * value2.ToFloat();
+
+            return ans;
+        }
+
+
         public static Vector3 Divide(Vector3 value1, Vector3 value2)
         {
             Vector3 ans;
@@ -318,6 +364,20 @@ namespace System.Numerics
             Vector3 ans;
 
             float invDiv = 1.0f / value2;
+
+            ans.X = value1.X * invDiv;
+            ans.Y = value1.Y * invDiv;
+            ans.Z = value1.Z * invDiv;
+
+            return ans;
+        }
+
+
+        public static Vector3 Divide(Vector3 value1, double value2)
+        {
+            Vector3 ans;
+
+            float invDiv = (1.0f / value2).ToFloat();
 
             ans.X = value1.X * invDiv;
             ans.Y = value1.Y * invDiv;
@@ -387,6 +447,18 @@ namespace System.Numerics
         }
 
 
+        public static Vector3 operator *(Vector3 value1, double value2)
+        {
+            Vector3 ans;
+
+            ans.X = value1.X * value2.ToFloat();
+            ans.Y = value1.Y * value2.ToFloat();
+            ans.Z = value1.Z * value2.ToFloat();
+
+            return ans;
+        }
+
+
         public static Vector3 operator *(float value1, Vector3 value2)
         {
             Vector3 ans;
@@ -394,6 +466,18 @@ namespace System.Numerics
             ans.X = value2.X * value1;
             ans.Y = value2.Y * value1;
             ans.Z = value2.Z * value1;
+
+            return ans;
+        }
+
+
+        public static Vector3 operator *(double value1, Vector3 value2)
+        {
+            Vector3 ans;
+
+            ans.X = value2.X * value1.ToFloat();
+            ans.Y = value2.Y * value1.ToFloat();
+            ans.Z = value2.Z * value1.ToFloat();
 
             return ans;
         }
@@ -416,6 +500,20 @@ namespace System.Numerics
             Vector3 ans;
 
             float invDiv = 1.0f / value2;
+            
+            ans.X = value1.X * invDiv;
+            ans.Y = value1.Y * invDiv;
+            ans.Z = value1.Z * invDiv;
+
+            return ans;
+        }
+
+
+        public static Vector3 operator /(Vector3 value1, double value2)
+        {
+            Vector3 ans;
+
+            float invDiv = (1.0f / value2).ToFloat();
             
             ans.X = value1.X * invDiv;
             ans.Y = value1.Y * invDiv;

@@ -33,12 +33,30 @@ namespace System.Numerics
         }
 
 
+        public Vector4(double x, double y, double z, double w)
+        {
+            X = x.ToFloat(); 
+            Y = y.ToFloat(); 
+            Z = z.ToFloat(); 
+            W = w.ToFloat();
+        }
+
+
         public Vector4(Vector2 value, float z, float w)
         {
             X = value.X; 
             Y = value.Y; 
             Z = z; 
             W = w;
+        }
+
+
+        public Vector4(Vector2 value, double z, double w)
+        {
+            X = value.X; 
+            Y = value.Y; 
+            Z = z.ToFloat(); 
+            W = w.ToFloat();
         }
 
 
@@ -51,9 +69,23 @@ namespace System.Numerics
         }
 
 
+        public Vector4(Vector3 value, double w)
+        {
+            X = value.X; 
+            Y = value.Y; 
+            Z = value.Z; 
+            W = w.ToFloat();
+        }
+
+
         public Vector4(float value)
         {
             X = Y = Z = W = value;
+        }
+
+        public Vector4(double value)
+        {
+            X = Y = Z = W = value.ToFloat();
         }
         
         
@@ -185,6 +217,19 @@ namespace System.Numerics
             ans.Y = value1.Y + (value2.Y - value1.Y) * amount;
             ans.Z = value1.Z + (value2.Z - value1.Z) * amount;
             ans.W = value1.W + (value2.W - value1.W) * amount;
+
+            return ans;
+        }
+
+
+        public static Vector4 Lerp(Vector4 value1, Vector4 value2, double amount)
+        {
+            Vector4 ans;
+
+            ans.X = value1.X + (value2.X - value1.X) * amount.ToFloat();
+            ans.Y = value1.Y + (value2.Y - value1.Y) * amount.ToFloat();
+            ans.Z = value1.Z + (value2.Z - value1.Z) * amount.ToFloat();
+            ans.W = value1.W + (value2.W - value1.W) * amount.ToFloat();
 
             return ans;
         }
@@ -375,6 +420,19 @@ namespace System.Numerics
         }
 
 
+        public static Vector4 Multiply(Vector4 value1, double value2)
+        {
+            Vector4 ans;
+
+            ans.X = value1.X * value2.ToFloat();
+            ans.Y = value1.Y * value2.ToFloat();
+            ans.Z = value1.Z * value2.ToFloat();
+            ans.W = value1.W * value2.ToFloat();
+
+            return ans;
+        }
+
+
         public static Vector4 Divide(Vector4 value1, Vector4 value2)
         {
             Vector4 ans;
@@ -393,6 +451,21 @@ namespace System.Numerics
             Vector4 ans;
 
             float invDiv = 1.0f / value2;
+
+            ans.X = value1.X * invDiv;
+            ans.Y = value1.Y * invDiv;
+            ans.Z = value1.Z * invDiv;
+            ans.W = value1.W * invDiv;
+
+            return ans;
+        }
+
+
+        public static Vector4 Divide(Vector4 value1, double value2)
+        {
+            Vector4 ans;
+
+            float invDiv = (1.0f / value2).ToFloat();
 
             ans.X = value1.X * invDiv;
             ans.Y = value1.Y * invDiv;
@@ -468,6 +541,19 @@ namespace System.Numerics
         }
 
 
+        public static Vector4 operator *(Vector4 value1, double value2)
+        {
+            Vector4 ans;
+
+            ans.X = value1.X * value2.ToFloat();
+            ans.Y = value1.Y * value2.ToFloat();
+            ans.Z = value1.Z * value2.ToFloat();
+            ans.W = value1.W * value2.ToFloat();
+
+            return ans;
+        }
+
+
         public static Vector4 operator *(float value1, Vector4 value2)
         {
             Vector4 ans;
@@ -476,6 +562,19 @@ namespace System.Numerics
             ans.Y = value2.Y * value1;
             ans.Z = value2.Z * value1;
             ans.W = value2.W * value1;
+
+            return ans;
+        }
+
+
+        public static Vector4 operator *(double value1, Vector4 value2)
+        {
+            Vector4 ans;
+
+            ans.X = value2.X * value1.ToFloat();
+            ans.Y = value2.Y * value1.ToFloat();
+            ans.Z = value2.Z * value1.ToFloat();
+            ans.W = value2.W * value1.ToFloat();
 
             return ans;
         }
@@ -499,6 +598,21 @@ namespace System.Numerics
             Vector4 ans;
 
             float invDiv = 1.0f / value2;
+            
+            ans.X = value1.X * invDiv;
+            ans.Y = value1.Y * invDiv;
+            ans.Z = value1.Z * invDiv;
+            ans.W = value1.W * invDiv;
+
+            return ans;
+        }
+
+
+        public static Vector4 operator /(Vector4 value1, double value2)
+        {
+            Vector4 ans;
+
+            float invDiv = (1.0f / value2).ToFloat();
             
             ans.X = value1.X * invDiv;
             ans.Y = value1.Y * invDiv;

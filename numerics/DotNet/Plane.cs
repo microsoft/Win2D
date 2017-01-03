@@ -23,10 +23,26 @@ namespace System.Numerics
         }
 
 
+        public Plane(double x, double y, double z, double d)
+        {
+            Normal.X = x.ToFloat();
+            Normal.Y = y.ToFloat();
+            Normal.Z = z.ToFloat();
+            D = d.ToFloat();
+        }
+
+
         public Plane(Vector3 normal, float d)
         {
             Normal = normal;
             D = d;
+        }
+
+
+        public Plane(Vector3 normal, double d)
+        {
+            Normal = normal;
+            D = d.ToFloat();
         }
 
 

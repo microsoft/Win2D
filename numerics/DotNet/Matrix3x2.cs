@@ -74,6 +74,16 @@ namespace System.Numerics
             M21 = m21; M22 = m22;
             M31 = m31; M32 = m32;
         }
+
+
+        public Matrix3x2(double m11, double m12,
+                         double m21, double m22,
+                         double m31, double m32)
+        {
+            M11 = m11.ToFloat(); M12 = m12.ToFloat();
+            M21 = m21.ToFloat(); M22 = m22.ToFloat();
+            M31 = m31.ToFloat(); M32 = m32.ToFloat();
+        }
         
         
         public static Matrix3x2 CreateTranslation(Vector2 position)
@@ -104,6 +114,12 @@ namespace System.Numerics
         }
 
 
+        public static Matrix3x2 CreateTranslation(double xPosition, double yPosition)
+        {
+            return CreateTranslation(xPosition.ToFloat(), yPosition.ToFloat());
+        }
+
+
         public static Matrix3x2 CreateScale(float xScale, float yScale)
         {
             Matrix3x2 result;
@@ -113,6 +129,12 @@ namespace System.Numerics
             result.M31 = 0.0f;   result.M32 = 0.0f;
 
             return result;
+        }
+
+
+        public static Matrix3x2 CreateScale(double xScale, double yScale)
+        {
+            return CreateScale(xScale.ToFloat(), yScale.ToFloat());
         }
 
 
@@ -128,6 +150,12 @@ namespace System.Numerics
             result.M31 = tx;     result.M32 = ty;
 
             return result;
+        }
+
+
+        public static Matrix3x2 CreateScale(double xScale, double yScale, Vector2 centerPoint)
+        {
+            return CreateScale(xScale.ToFloat(), yScale.ToFloat(), centerPoint);
         }
 
 
@@ -169,6 +197,12 @@ namespace System.Numerics
             return result;
         }
         
+            
+        public static Matrix3x2 CreateScale(double scale)
+        {
+            return CreateScale(scale.ToFloat());
+        }
+        
         
         public static Matrix3x2 CreateScale(float scale, Vector2 centerPoint)
         {
@@ -182,6 +216,12 @@ namespace System.Numerics
             result.M31 = tx;    result.M32 = ty;
 
             return result;
+        }
+        
+        
+        public static Matrix3x2 CreateScale(double scale, Vector2 centerPoint)
+        {
+            return CreateScale(scale.ToFloat(), centerPoint);
         }
 
 
@@ -200,6 +240,12 @@ namespace System.Numerics
         }
 
 
+        public static Matrix3x2 CreateSkew(double radiansX, double radiansY)
+        {
+            return CreateSkew(radiansX.ToFloat(), radiansY.ToFloat());
+        }
+
+
         public static Matrix3x2 CreateSkew(float radiansX, float radiansY, Vector2 centerPoint)
         {
             Matrix3x2 result;
@@ -215,6 +261,12 @@ namespace System.Numerics
             result.M31 = tx;   result.M32 = ty;
 
             return result;
+        }
+
+
+        public static Matrix3x2 CreateSkew(double radiansX, double radiansY, Vector2 centerPoint)
+        {
+            return CreateSkew(radiansX.ToFloat(), radiansY.ToFloat(), centerPoint);
         }
 
 
@@ -267,6 +319,12 @@ namespace System.Numerics
             result.M31 = 0.0f; result.M32 = 0.0f;
 
             return result;
+        }
+
+
+        public static Matrix3x2 CreateRotation(double radians)
+        {
+            return CreateRotation(radians.ToFloat());
         }
 
 
@@ -324,6 +382,11 @@ namespace System.Numerics
             return result;
         }
 
+
+        public static Matrix3x2 CreateRotation(double radians, Vector2 centerPoint)
+        {
+            return CreateRotation(radians.ToFloat(), centerPoint);
+        }
 
         public float GetDeterminant()
         {
@@ -387,6 +450,12 @@ namespace System.Numerics
             result.M32 = matrix1.M32 + (matrix2.M32 - matrix1.M32) * amount;
 
             return result;
+        }
+
+
+        public static Matrix3x2 Lerp(Matrix3x2 matrix1, Matrix3x2 matrix2, double amount)
+        {
+            return Lerp(matrix1, matrix2, amount.ToFloat());
         }
         
         
@@ -458,6 +527,19 @@ namespace System.Numerics
         }
 
 
+        public static Matrix3x2 Multiply(Matrix3x2 value1, double value2)
+        {
+            Matrix3x2 result;
+            float value2f = value2.ToFloat();
+
+            result.M11 = value1.M11 * value2f; result.M12 = value1.M12 * value2f;
+            result.M21 = value1.M21 * value2f; result.M22 = value1.M22 * value2f;
+            result.M31 = value1.M31 * value2f; result.M32 = value1.M32 * value2f;
+
+            return result;
+        }
+
+
         public static Matrix3x2 operator -(Matrix3x2 value)
         {
             Matrix3x2 m;
@@ -521,6 +603,20 @@ namespace System.Numerics
             m.M11 = value1.M11 * value2; m.M12 = value1.M12 * value2;
             m.M21 = value1.M21 * value2; m.M22 = value1.M22 * value2;
             m.M31 = value1.M31 * value2; m.M32 = value1.M32 * value2;
+
+            return m;
+        }
+
+
+        public static Matrix3x2 operator *(Matrix3x2 value1, double value2)
+        {
+            Matrix3x2 m;
+
+            float value2f = value2.ToFloat();
+
+            m.M11 = value1.M11 * value2f; m.M12 = value1.M12 * value2f;
+            m.M21 = value1.M21 * value2f; m.M22 = value1.M22 * value2f;
+            m.M31 = value1.M31 * value2f; m.M32 = value1.M32 * value2f;
 
             return m;
         }

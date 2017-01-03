@@ -37,12 +37,30 @@ namespace System.Numerics
         }
 
 
+        public Quaternion(double x, double y, double z, double w)
+        {
+            X = x.ToFloat(); 
+            Y = y.ToFloat(); 
+            Z = z.ToFloat(); 
+            W = w.ToFloat();
+        }
+
+
         public Quaternion(Vector3 vectorPart, float scalarPart)
         {
             X = vectorPart.X; 
             Y = vectorPart.Y; 
             Z = vectorPart.Z; 
             W = scalarPart;
+        }
+
+
+        public Quaternion(Vector3 vectorPart, double scalarPart)
+        {
+            X = vectorPart.X; 
+            Y = vectorPart.Y; 
+            Z = vectorPart.Z; 
+            W = scalarPart.ToFloat();
         }
 
 
@@ -125,6 +143,23 @@ namespace System.Numerics
 
             return ans;
         }
+        
+        
+        public static Quaternion CreateFromAxisAngle(Vector3 axis, double angle)
+        {
+            Quaternion ans;
+
+            float halfAngle = angle.ToFloat() * 0.5f;
+            float s = (float)SM.Sin(halfAngle);
+            float c = (float)SM.Cos(halfAngle);
+
+            ans.X = axis.X * s;
+            ans.Y = axis.Y * s;
+            ans.Z = axis.Z * s;
+            ans.W = c;
+
+            return ans;
+        }
 
 
         public static Quaternion CreateFromYawPitchRoll(float yaw, float pitch, float roll)
@@ -140,6 +175,32 @@ namespace System.Numerics
             sp = (float)SM.Sin(halfPitch); cp = (float)SM.Cos(halfPitch);
 
             float halfYaw = yaw * 0.5f;
+            sy = (float)SM.Sin(halfYaw); cy = (float)SM.Cos(halfYaw);
+
+            Quaternion result;
+            
+            result.X = cy * sp * cr + sy * cp * sr;
+            result.Y = sy * cp * cr - cy * sp * sr;
+            result.Z = cy * cp * sr - sy * sp * cr;
+            result.W = cy * cp * cr + sy * sp * sr;
+
+            return result;
+        }
+
+
+        public static Quaternion CreateFromYawPitchRoll(double yaw, double pitch, double roll)
+        {
+            //  Roll first, about axis the object is facing, then
+            //  pitch upward, then yaw to face into the new heading
+            float sr, cr, sp, cp, sy, cy;
+
+            float halfRoll = roll.ToFloat() * 0.5f;
+            sr = (float)SM.Sin(halfRoll); cr = (float)SM.Cos(halfRoll);
+
+            float halfPitch = pitch.ToFloat() * 0.5f;
+            sp = (float)SM.Sin(halfPitch); cp = (float)SM.Cos(halfPitch);
+
+            float halfYaw = yaw.ToFloat() * 0.5f;
             sy = (float)SM.Sin(halfYaw); cy = (float)SM.Cos(halfYaw);
 
             Quaternion result;
@@ -259,9 +320,94 @@ namespace System.Numerics
         }
 
 
+        public static Quaternion Slerp(Quaternion quaternion1, Quaternion quaternion2, double amount)
+        {
+            const float epsilon = 1e-6f;
+
+            float t = amount.ToFloat();
+            
+            float cosOmega = quaternion1.X * quaternion2.X + quaternion1.Y * quaternion2.Y +
+                             quaternion1.Z * quaternion2.Z + quaternion1.W * quaternion2.W;
+
+            bool flip = false;
+            
+            if (cosOmega < 0.0f)
+            {
+                flip = true;
+                cosOmega = -cosOmega;
+            }
+
+            float s1, s2;
+            
+            if (cosOmega > (1.0f - epsilon))
+            {
+                // Too close, do straight linear interpolation.
+                s1 = 1.0f - t;
+                s2 = (flip) ? -t : t;
+            }
+            else
+            {
+                float omega = (float)SM.Acos(cosOmega);
+                float invSinOmega = (float)(1 / SM.Sin(omega));
+
+                s1 = (float)SM.Sin((1.0f - t) * omega) * invSinOmega;
+                s2 = (flip)
+                    ? (float)-SM.Sin(t * omega) * invSinOmega
+                    : (float)SM.Sin(t * omega) * invSinOmega;
+            }
+
+            Quaternion ans;
+
+            ans.X = s1 * quaternion1.X + s2 * quaternion2.X;
+            ans.Y = s1 * quaternion1.Y + s2 * quaternion2.Y;
+            ans.Z = s1 * quaternion1.Z + s2 * quaternion2.Z;
+            ans.W = s1 * quaternion1.W + s2 * quaternion2.W;
+
+            return ans;
+        }
+
+
         public static Quaternion Lerp(Quaternion quaternion1, Quaternion quaternion2, float amount)
         {
             float t = amount;
+            float t1 = 1.0f - t;
+
+            Quaternion r = new Quaternion();
+
+            float dot = quaternion1.X * quaternion2.X + quaternion1.Y * quaternion2.Y +
+                        quaternion1.Z * quaternion2.Z + quaternion1.W * quaternion2.W;
+
+            if (dot >= 0.0f)
+            {
+                r.X = t1 * quaternion1.X + t * quaternion2.X;
+                r.Y = t1 * quaternion1.Y + t * quaternion2.Y;
+                r.Z = t1 * quaternion1.Z + t * quaternion2.Z;
+                r.W = t1 * quaternion1.W + t * quaternion2.W;
+            }
+            else
+            {
+                r.X = t1 * quaternion1.X - t * quaternion2.X;
+                r.Y = t1 * quaternion1.Y - t * quaternion2.Y;
+                r.Z = t1 * quaternion1.Z - t * quaternion2.Z;
+                r.W = t1 * quaternion1.W - t * quaternion2.W;
+            }
+
+            // Normalize it.
+            float ls = r.X * r.X + r.Y * r.Y + r.Z * r.Z + r.W * r.W;
+            float invNorm = 1.0f / (float)SM.Sqrt((double)ls);
+
+            r.X *= invNorm;
+            r.Y *= invNorm;
+            r.Z *= invNorm;
+            r.W *= invNorm;
+
+            return r;
+        }
+
+
+        public static Quaternion Lerp(Quaternion quaternion1, Quaternion quaternion2, double amount)
+        {
+            float t = amount.ToFloat();
             float t1 = 1.0f - t;
 
             Quaternion r = new Quaternion();
@@ -411,6 +557,19 @@ namespace System.Numerics
         }
 
 
+        public static Quaternion Multiply(Quaternion value1, double value2)
+        {
+            Quaternion ans;
+
+            ans.X = value1.X * value2.ToFloat();
+            ans.Y = value1.Y * value2.ToFloat();
+            ans.Z = value1.Z * value2.ToFloat();
+            ans.W = value1.W * value2.ToFloat();
+
+            return ans;
+        }
+
+
         public static Quaternion Divide(Quaternion value1, Quaternion value2)
         {
             Quaternion ans;
@@ -527,6 +686,19 @@ namespace System.Numerics
             ans.Y = value1.Y * value2;
             ans.Z = value1.Z * value2;
             ans.W = value1.W * value2;
+
+            return ans;
+        }
+
+
+        public static Quaternion operator *(Quaternion value1, double value2)
+        {
+            Quaternion ans;
+
+            ans.X = value1.X * value2.ToFloat();
+            ans.Y = value1.Y * value2.ToFloat();
+            ans.Z = value1.Z * value2.ToFloat();
+            ans.W = value1.W * value2.ToFloat();
 
             return ans;
         }
