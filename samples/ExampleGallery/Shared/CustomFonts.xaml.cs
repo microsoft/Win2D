@@ -138,8 +138,12 @@ namespace ExampleGallery
             args.Handled = true;
         }
 
+        ulong lastTimestamp = 0;
         private void Input_PointerMoved(object sender, PointerEventArgs args)      
         {
+             //we are not interested in multitouch, so interpret multiple events with same timestamp as one
+            if(args.CurrentPoint.Timestamp <= lastTimestamp) return;
+            lastTimestamp = args.CurrentPoint.Timestamp;
             gestureRecognizer.ProcessMoveEvents(args.GetIntermediatePoints());
             args.Handled = true;
         }
