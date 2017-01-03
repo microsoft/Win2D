@@ -6,6 +6,7 @@
 
 #include "CanvasTextFormat.h"
 #include "TextUtilities.h"
+#include <vector>
 
 using namespace ABI::Microsoft::Graphics::Canvas::Text;
 using namespace ABI::Windows::Storage;
@@ -1264,18 +1265,43 @@ IFACEMETHODIMP CanvasTextFormatFactory::GetSystemFontFamiliesFromLocaleList(
 
             uint32_t familyCount = systemFontCollection->GetFontFamilyCount();
 
-            ComArray<WinString> stringArray(familyCount);
+			std::vector<WinString> fontFamilies;
 
             for (uint32_t i = 0; i < familyCount; ++i)
             {
                 ComPtr<IDWriteFontFamily> fontFamily;
                 ThrowIfFailed(systemFontCollection->GetFontFamily(i, &fontFamily));
 
+				ComPtr<IDWriteFont> pFont;
+
+				if (FAILED(fontFamily->GetFont(0, &pFont)))
+				{
+					continue;
+				}
+
+				ComPtr<IDWriteFontFace> pFace;
+
+				// Some fonts installed by third party apps will cause UWP apps to crash 
+				if (FAILED(pFont->CreateFontFace(&pFace)))
+				{
+					continue;
+				}
+
                 ComPtr<IDWriteLocalizedStrings> familyNames;
+
                 ThrowIfFailed(fontFamily->GetFamilyNames(&familyNames));
 
-                stringArray[i] = GetFamilyName(familyNames, localeList);
+				fontFamilies.push_back(GetFamilyName(familyNames, localeList));
+
+                //stringArray[i] = GetFamilyName(familyNames, localeList);
             }
+
+			ComArray<WinString> stringArray(fontFamilies.size());
+
+			for(auto i = 0u; i < fontFamilies.size(); i++)
+			{
+				stringArray[i] = fontFamilies[i];
+			}
 
             stringArray.Detach(valueCount, valueElements);
         });
