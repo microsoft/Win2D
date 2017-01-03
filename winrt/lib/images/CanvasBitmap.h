@@ -157,6 +157,35 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             CanvasAlphaMode alpha,
             ICanvasBitmap** canvasBitmap) override;
 
+#if WINVER > _WIN32_WINNT_WINBLUE
+		IFACEMETHOD(CreateFromBytesWithMemoryBufferReference)(
+			ICanvasResourceCreator* resourceCreator,
+			IMemoryBufferReference* buffer,
+			int32_t widthInPixels,
+			int32_t heightInPixels,
+			DirectXPixelFormat format,
+			ICanvasBitmap** canvasBitmap) override;
+
+		IFACEMETHOD(CreateFromBytesWithMemoryBufferReferenceAndDpi)(
+			ICanvasResourceCreator* resourceCreator,
+			IMemoryBufferReference* buffer,
+			int32_t widthInPixels,
+			int32_t heightInPixels,
+			DirectXPixelFormat format,
+			float dpi,
+			ICanvasBitmap** canvasBitmap) override;
+
+		IFACEMETHOD(CreateFromBytesWithMemoryBufferReferenceAndDpiAndAlpha)(
+			ICanvasResourceCreator* resourceCreator,
+			IMemoryBufferReference* buffer,
+			int32_t widthInPixels,
+			int32_t heightInPixels,
+			DirectXPixelFormat format,
+			float dpi,
+			CanvasAlphaMode alpha,
+			ICanvasBitmap** canvasBitmap) override;
+#endif
+
         IFACEMETHOD(CreateFromColors)(
             ICanvasResourceCreator* resourceCreator,
             uint32_t colorCount,
@@ -268,6 +297,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         D2D1_RECT_U const& subRectangle,
         IBuffer* buffer);
 
+#if WINVER > _WIN32_WINNT_WINBLUE
+	void GetPixelBytesImpl(
+		ComPtr<ICanvasDevice> const& device,
+		ComPtr<ID2D1Bitmap1> const& d2dBitmap,
+		D2D1_RECT_U const& subRectangle,
+		IMemoryBufferReference* buffer);
+#endif
+
     void GetPixelColorsImpl(
         ComPtr<ICanvasDevice> const& device,
         ComPtr<ID2D1Bitmap1> const& d2dBitmap,
@@ -301,6 +338,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ComPtr<ID2D1Bitmap1> const& d2dBitmap,
         D2D1_RECT_U const& subRectangle,
         IBuffer* buffer);
+
+#if WINVER > _WIN32_WINNT_WINBLUE
+	void SetPixelBytesImpl(
+		ComPtr<ID2D1Bitmap1> const& d2dBitmap,
+		D2D1_RECT_U const& subRectangle,
+		IMemoryBufferReference* buffer);
+#endif
 
     void SetPixelColorsImpl(
         ComPtr<ID2D1Bitmap1> const& d2dBitmap,
@@ -673,6 +717,44 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 });
         }
 
+#if WINVER > _WIN32_WINNT_WINBLUE
+		IFACEMETHODIMP GetPixelBytesWithMemoryBufferReference(
+			IMemoryBufferReference* buffer) override
+		{
+			return ExceptionBoundary(
+				[&]
+			{
+				auto& d2dBitmap = GetResource();
+
+				GetPixelBytesImpl(
+					m_device,
+					d2dBitmap,
+					GetResourceBitmapExtents(d2dBitmap),
+					buffer);
+			});
+		}
+
+		IFACEMETHODIMP GetPixelBytesWithMemoryBufferReferenceAndSubrectangle(
+			IMemoryBufferReference* buffer,
+			int32_t left,
+			int32_t top,
+			int32_t width,
+			int32_t height) override
+		{
+			return ExceptionBoundary(
+				[&]
+			{
+				auto& d2dBitmap = GetResource();
+
+				GetPixelBytesImpl(
+					m_device,
+					d2dBitmap,
+					ToD2DRectU(left, top, width, height),
+					buffer);
+			});
+		}
+#endif
+
         IFACEMETHODIMP GetPixelColors(
             uint32_t* valueCount,
             ABI::Windows::UI::Color **valueElements) override
@@ -784,6 +866,42 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                         buffer);
                 });
         }
+
+#if WINVER > _WIN32_WINNT_WINBLUE
+		IFACEMETHODIMP SetPixelBytesWithMemoryBufferReference(
+			IMemoryBufferReference* buffer) override
+		{
+			return ExceptionBoundary(
+				[&]
+			{
+				auto& d2dBitmap = GetResource();
+
+				SetPixelBytesImpl(
+					d2dBitmap,
+					GetResourceBitmapExtents(d2dBitmap),
+					buffer);
+			});
+		}
+
+		IFACEMETHODIMP SetPixelBytesWithMemoryBufferReferenceAndSubrectangle(
+			IMemoryBufferReference* buffer,
+			int32_t left,
+			int32_t top,
+			int32_t width,
+			int32_t height) override
+		{
+			return ExceptionBoundary(
+				[&]
+			{
+				auto& d2dBitmap = GetResource();
+
+				SetPixelBytesImpl(
+					d2dBitmap,
+					ToD2DRectU(left, top, width, height),
+					buffer);
+			});
+		}
+#endif
 
         IFACEMETHODIMP SetPixelColors(
             uint32_t valueCount,

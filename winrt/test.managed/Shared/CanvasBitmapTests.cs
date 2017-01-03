@@ -13,7 +13,7 @@ using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.Storage.Streams;
 using Windows.UI;
-
+using Buffer = Windows.Storage.Streams.Buffer;
 #if WINDOWS_UWP
 using Windows.Graphics.DirectX;
 #else
@@ -136,7 +136,7 @@ namespace test.managed
             // Too small a buffer.
             Assert.ThrowsException<ArgumentException>(() => CanvasBitmap.CreateFromBytes(device, buffer, 3, 3, DirectXPixelFormat.A8UIntNormalized));
         }
-
+        
         [TestMethod]
         public void SetPixelBytesUsingBuffer()
         {
@@ -219,6 +219,157 @@ namespace test.managed
             Assert.ThrowsException<ArgumentException>(() => bitmap.GetPixelBytes(oneByteBuffer, 0, 0, 0, 1));
             Assert.ThrowsException<ArgumentException>(() => bitmap.GetPixelBytes(oneByteBuffer, 0, 0, 1, 0));
         }
+
+#if WINDOWS_UWP
+        [TestMethod]
+        public void CreateFromIMemoryBufferReference()
+        {
+            var device = new CanvasDevice();
+
+            byte[] somePixelData = { 1, 2, 3, 4 };
+
+            var buffer = somePixelData.AsBuffer();
+            var memoryBuffer = Buffer.CreateMemoryBufferOverIBuffer(buffer);
+            var memoryBufferReference = memoryBuffer.CreateReference();
+
+            // Overload #1
+            var bitmap = CanvasBitmap.CreateFromBytes(device, memoryBufferReference, 2, 2, DirectXPixelFormat.A8UIntNormalized);
+
+            Assert.AreEqual(2u, bitmap.SizeInPixels.Width);
+            Assert.AreEqual(2u, bitmap.SizeInPixels.Height);
+            Assert.AreEqual(96, bitmap.Dpi);
+            Assert.AreEqual(DirectXPixelFormat.A8UIntNormalized, bitmap.Format);
+            Assert.AreEqual(CanvasAlphaMode.Premultiplied, bitmap.AlphaMode);
+
+            CollectionAssert.AreEqual(somePixelData, bitmap.GetPixelBytes());
+
+            // Overload #2
+            const float someDpi = 123.0f;
+
+            bitmap = CanvasBitmap.CreateFromBytes(device, memoryBufferReference, 2, 2, DirectXPixelFormat.A8UIntNormalized, someDpi);
+
+            Assert.AreEqual(2u, bitmap.SizeInPixels.Width);
+            Assert.AreEqual(2u, bitmap.SizeInPixels.Height);
+            Assert.AreEqual(someDpi, bitmap.Dpi);
+            Assert.AreEqual(DirectXPixelFormat.A8UIntNormalized, bitmap.Format);
+            Assert.AreEqual(CanvasAlphaMode.Premultiplied, bitmap.AlphaMode);
+
+            CollectionAssert.AreEqual(somePixelData, bitmap.GetPixelBytes());
+
+            // Overload #3
+            bitmap = CanvasBitmap.CreateFromBytes(device, memoryBufferReference, 2, 2, DirectXPixelFormat.A8UIntNormalized, someDpi, CanvasAlphaMode.Straight);
+
+            Assert.AreEqual(2u, bitmap.SizeInPixels.Width);
+            Assert.AreEqual(2u, bitmap.SizeInPixels.Height);
+            Assert.AreEqual(someDpi, bitmap.Dpi);
+            Assert.AreEqual(DirectXPixelFormat.A8UIntNormalized, bitmap.Format);
+            Assert.AreEqual(CanvasAlphaMode.Straight, bitmap.AlphaMode);
+
+            CollectionAssert.AreEqual(somePixelData, bitmap.GetPixelBytes());
+
+            // Null device.
+            Assert.ThrowsException<ArgumentException>(() => CanvasBitmap.CreateFromBytes(null, memoryBufferReference, 2, 2, DirectXPixelFormat.A8UIntNormalized));
+            Assert.ThrowsException<ArgumentException>(() => CanvasBitmap.CreateFromBytes(null, memoryBufferReference, 2, 2, DirectXPixelFormat.A8UIntNormalized, someDpi));
+            Assert.ThrowsException<ArgumentException>(() => CanvasBitmap.CreateFromBytes(null, memoryBufferReference, 2, 2, DirectXPixelFormat.A8UIntNormalized, someDpi, CanvasAlphaMode.Straight));
+
+            // Null buffer.
+            IMemoryBufferReference nullBuffer = null;
+
+            Assert.ThrowsException<ArgumentException>(() => CanvasBitmap.CreateFromBytes(device, nullBuffer, 2, 2, DirectXPixelFormat.A8UIntNormalized));
+            Assert.ThrowsException<ArgumentException>(() => CanvasBitmap.CreateFromBytes(device, nullBuffer, 2, 2, DirectXPixelFormat.A8UIntNormalized, someDpi));
+            Assert.ThrowsException<ArgumentException>(() => CanvasBitmap.CreateFromBytes(device, nullBuffer, 2, 2, DirectXPixelFormat.A8UIntNormalized, someDpi, CanvasAlphaMode.Straight));
+
+            // Too small a buffer.
+            Assert.ThrowsException<ArgumentException>(() => CanvasBitmap.CreateFromBytes(device, memoryBufferReference, 3, 3, DirectXPixelFormat.A8UIntNormalized));
+        }
+        
+        [TestMethod]
+        public void SetPixelBytesUsingIMemoryBufferReference()
+        {
+            var device = new CanvasDevice();
+            var bitmap = CanvasBitmap.CreateFromBytes(device, new byte[4], 2, 2, DirectXPixelFormat.A8UIntNormalized);
+
+            // SetPixelBytes(buffer)
+            var buffer = new byte[] { 1, 2, 3, 4 }.AsBuffer();
+            var memoryBuffer = Buffer.CreateMemoryBufferOverIBuffer(buffer);
+            bitmap.SetPixelBytes(memoryBuffer.CreateReference());
+
+            CollectionAssert.AreEqual(new byte[] { 1, 2, 3, 4 }, bitmap.GetPixelBytes());
+
+            // SetPixelBytes(buffer, rectangle)
+            buffer = new byte[] { 5, 6 }.AsBuffer();
+            memoryBuffer = Buffer.CreateMemoryBufferOverIBuffer(buffer);
+            bitmap.SetPixelBytes(memoryBuffer.CreateReference(), 1, 0, 1, 2);
+
+            CollectionAssert.AreEqual(new byte[] { 1, 5, 3, 6 }, bitmap.GetPixelBytes());
+
+            // Null buffer.
+            IMemoryBufferReference nullBuffer = null;
+
+            Assert.ThrowsException<ArgumentException>(() => bitmap.SetPixelBytes(nullBuffer));
+            Assert.ThrowsException<ArgumentException>(() => bitmap.SetPixelBytes(nullBuffer, 0, 0, 1, 1));
+
+            // Too small buffer.
+            buffer = new byte[1].AsBuffer();
+            memoryBuffer = Buffer.CreateMemoryBufferOverIBuffer(buffer);
+            var oneByteMemoryBufferReference = memoryBuffer.CreateReference();
+
+            Utils.AssertThrowsException<ArgumentException>(() => bitmap.SetPixelBytes(oneByteMemoryBufferReference), "The array was expected to be of size 4; actual array was of size 1.");
+            Utils.AssertThrowsException<ArgumentException>(() => bitmap.SetPixelBytes(oneByteMemoryBufferReference, 1, 0, 1, 2), "The array was expected to be of size 2; actual array was of size 1.");
+
+            // Bad rectangles.
+            Assert.ThrowsException<ArgumentException>(() => bitmap.SetPixelBytes(oneByteMemoryBufferReference, -1, 0, 1, 1));
+            Assert.ThrowsException<ArgumentException>(() => bitmap.SetPixelBytes(oneByteMemoryBufferReference, 0, -1, 1, 1));
+            Assert.ThrowsException<ArgumentException>(() => bitmap.SetPixelBytes(oneByteMemoryBufferReference, 2, 0, 1, 1));
+            Assert.ThrowsException<ArgumentException>(() => bitmap.SetPixelBytes(oneByteMemoryBufferReference, 0, 2, 1, 1));
+            Assert.ThrowsException<ArgumentException>(() => bitmap.SetPixelBytes(oneByteMemoryBufferReference, 0, 0, 0, 1));
+            Assert.ThrowsException<ArgumentException>(() => bitmap.SetPixelBytes(oneByteMemoryBufferReference, 0, 0, 1, 0));
+        }
+
+        [TestMethod]
+        public void GetPixelBytesUsingIMemoryBufferReference()
+        {
+            var device = new CanvasDevice();
+            var bitmap = CanvasBitmap.CreateFromBytes(device, new byte[4] { 1, 2, 3, 4 }, 2, 2, DirectXPixelFormat.A8UIntNormalized);
+
+            var array = new byte[4];
+            var buffer = array.AsBuffer();
+            var memoryBuffer = Buffer.CreateMemoryBufferOverIBuffer(buffer);
+            var memoryBufferReference = memoryBuffer.CreateReference();
+
+            // GetPixelBytes(buffer)
+            bitmap.GetPixelBytes(memoryBufferReference);
+            
+            CollectionAssert.AreEqual(new byte[] { 1, 2, 3, 4 }, array);
+
+            // GetPixelBytes(buffer, rectangle)
+            bitmap.GetPixelBytes(memoryBufferReference, 1, 0, 1, 2);
+
+            CollectionAssert.AreEqual(new byte[] { 2, 4, 3, 4 }, array);
+
+            // Null buffer.
+            IMemoryBufferReference nullBuffer = null;
+
+            Assert.ThrowsException<ArgumentException>(() => bitmap.GetPixelBytes(nullBuffer));
+            Assert.ThrowsException<ArgumentException>(() => bitmap.GetPixelBytes(nullBuffer, 0, 0, 1, 1));
+
+            // Too small buffer.
+            buffer = new byte[1].AsBuffer();
+            memoryBuffer = Buffer.CreateMemoryBufferOverIBuffer(buffer);
+            var oneByteMemoryBufferReference = memoryBuffer.CreateReference();
+
+            Utils.AssertThrowsException<ArgumentException>(() => bitmap.GetPixelBytes(oneByteMemoryBufferReference), "The array was expected to be of size 4; actual array was of size 1.");
+            Utils.AssertThrowsException<ArgumentException>(() => bitmap.GetPixelBytes(oneByteMemoryBufferReference, 1, 0, 1, 2), "The array was expected to be of size 2; actual array was of size 1.");
+
+            // Bad rectangles.
+            Assert.ThrowsException<ArgumentException>(() => bitmap.GetPixelBytes(oneByteMemoryBufferReference, -1, 0, 1, 1));
+            Assert.ThrowsException<ArgumentException>(() => bitmap.GetPixelBytes(oneByteMemoryBufferReference, 0, -1, 1, 1));
+            Assert.ThrowsException<ArgumentException>(() => bitmap.GetPixelBytes(oneByteMemoryBufferReference, 2, 0, 1, 1));
+            Assert.ThrowsException<ArgumentException>(() => bitmap.GetPixelBytes(oneByteMemoryBufferReference, 0, 2, 1, 1));
+            Assert.ThrowsException<ArgumentException>(() => bitmap.GetPixelBytes(oneByteMemoryBufferReference, 0, 0, 0, 1));
+            Assert.ThrowsException<ArgumentException>(() => bitmap.GetPixelBytes(oneByteMemoryBufferReference, 0, 0, 1, 0));
+        }
+#endif
 
         [TestMethod]
         public void SetPixelBytesReadHazards()

@@ -109,17 +109,31 @@ namespace Microsoft.Graphics.Canvas
             [out] UINT32* valueCount,
             [out, size_is(, *valueCount), retval] BYTE** valueElements);
 
-        [overload("GetPixelBytes")]
+        [overload("GetPixelBytes"), default_overload]
         HRESULT GetPixelBytesWithBuffer(
             [in] Windows.Storage.Streams.IBuffer* buffer);
 
-        [overload("GetPixelBytes")]
+        [overload("GetPixelBytes"), default_overload]
         HRESULT GetPixelBytesWithBufferAndSubrectangle(
             [in] Windows.Storage.Streams.IBuffer* buffer,
             [in] INT32 left,
             [in] INT32 top,
             [in] INT32 width,
             [in] INT32 height);
+
+#if WINVER > _WIN32_WINNT_WINBLUE
+		[overload("GetPixelBytes")]
+		HRESULT GetPixelBytesWithMemoryBufferReference(
+			[in] Windows.Foundation.IMemoryBufferReference* buffer);
+
+		[overload("GetPixelBytes")]
+		HRESULT GetPixelBytesWithMemoryBufferReferenceAndSubrectangle(
+			[in] Windows.Foundation.IMemoryBufferReference* buffer,
+			[in] INT32 left,
+			[in] INT32 top,
+			[in] INT32 width,
+			[in] INT32 height);
+#endif
 
         [overload("GetPixelColors")]
         HRESULT GetPixelColors(
@@ -160,6 +174,20 @@ namespace Microsoft.Graphics.Canvas
             [in] INT32 top,
             [in] INT32 width,
             [in] INT32 height);
+
+#if WINVER > _WIN32_WINNT_WINBLUE
+		[overload("SetPixelBytes")]
+		HRESULT SetPixelBytesWithMemoryBufferReference(
+			[in] Windows.Foundation.IMemoryBufferReference* buffer);
+
+		[overload("SetPixelBytes")]
+		HRESULT SetPixelBytesWithMemoryBufferReferenceAndSubrectangle(
+			[in] Windows.Foundation.IMemoryBufferReference* buffer,
+			[in] INT32 left,
+			[in] INT32 top,
+			[in] INT32 width,
+			[in] INT32 height);
+#endif
 
         [overload("SetPixelColors")]
         HRESULT SetPixelColors(
@@ -282,6 +310,38 @@ namespace Microsoft.Graphics.Canvas
             [in] float dpi,
             [in] CanvasAlphaMode alpha,
             [out, retval] CanvasBitmap** bitmap);
+
+#if WINVER > _WIN32_WINNT_WINBLUE
+		[overload("CreateFromBytes")]
+		HRESULT CreateFromBytesWithMemoryBufferReference(
+			[in] ICanvasResourceCreator* resourceCreator,
+			[in] Windows.Foundation.IMemoryBufferReference* buffer,
+			[in] INT32 widthInPixels,
+			[in] INT32 heightInPixels,
+			[in] DIRECTX_PIXEL_FORMAT format,
+			[out, retval] CanvasBitmap** bitmap);
+
+		[overload("CreateFromBytes")]
+		HRESULT CreateFromBytesWithMemoryBufferReferenceAndDpi(
+			[in] ICanvasResourceCreator* resourceCreator,
+			[in] Windows.Foundation.IMemoryBufferReference* buffer,
+			[in] INT32 widthInPixels,
+			[in] INT32 heightInPixels,
+			[in] DIRECTX_PIXEL_FORMAT format,
+			[in] float dpi,
+			[out, retval] CanvasBitmap** bitmap);
+
+		[overload("CreateFromBytes")]
+		HRESULT CreateFromBytesWithMemoryBufferReferenceAndDpiAndAlpha(
+			[in] ICanvasResourceCreator* resourceCreator,
+			[in] Windows.Foundation.IMemoryBufferReference* buffer,
+			[in] INT32 widthInPixels,
+			[in] INT32 heightInPixels,
+			[in] DIRECTX_PIXEL_FORMAT format,
+			[in] float dpi,
+			[in] CanvasAlphaMode alpha,
+			[out, retval] CanvasBitmap** bitmap);
+#endif
 
         [overload("CreateFromColors")]
         HRESULT CreateFromColors(

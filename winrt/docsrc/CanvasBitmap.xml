@@ -170,6 +170,18 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <summary>Creates a CanvasBitmap from the bytes of the specified buffer, using the specified pixel width/height, DPI and alpha behavior.</summary>
       <remarks>List of <a href="PixelFormats.htm">supported pixel formats</a>.</remarks>
     </member>
+	<member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.CreateFromBytes(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.Foundation.IMemoryBufferReference,System.Int32,System.Int32,Windows.Graphics.DirectX.DirectXPixelFormat)">
+      <summary>Creates a CanvasBitmap from the bytes of the specified buffer, using the specified pixel width/height, premultiplied alpha and default (96) DPI.</summary>
+      <remarks>List of <a href="PixelFormats.htm">supported pixel formats</a>.</remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.CreateFromBytes(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.Foundation.IMemoryBufferReference,System.Int32,System.Int32,Windows.Graphics.DirectX.DirectXPixelFormat,System.Single)">
+      <summary>Creates a CanvasBitmap from the bytes of the specified buffer, using the specified pixel width/height, specified DPI, and premultiplied alpha.</summary>
+      <remarks>List of <a href="PixelFormats.htm">supported pixel formats</a>.</remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.CreateFromBytes(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.Foundation.IMemoryBufferReference,System.Int32,System.Int32,Windows.Graphics.DirectX.DirectXPixelFormat,System.Single,Microsoft.Graphics.Canvas.CanvasAlphaMode)">
+      <summary>Creates a CanvasBitmap from the bytes of the specified buffer, using the specified pixel width/height, DPI and alpha behavior.</summary>
+      <remarks>List of <a href="PixelFormats.htm">supported pixel formats</a>.</remarks>
+    </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.CreateFromColors(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.UI.Color[],System.Int32,System.Int32)">
       <summary>Creates a CanvasBitmap from an array of colors, using the specified pixel width/height, premultiplied alpha and default (96) DPI.</summary>
     </member>
@@ -394,6 +406,57 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         </ul>
       </remarks>    
     </member>
+	<member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.GetPixelBytes(Windows.Foundation.IMemoryBufferReference)">
+      <summary>Copies raw byte data for the entire bitmap into the specified buffer.</summary>
+      <remarks>
+        <ul>
+          <li>
+            Works on bitmaps of any format.
+          </li>
+          <li>
+            For uncompressed texture formats, the capacity of the buffer must be
+            at least SizeInPixels.Width * SizeInPixels.Height * (bytes per
+            pixel).  The number of bytes per pixel is determined by <see
+            cref="P:Microsoft.Graphics.Canvas.CanvasBitmap.Format"/>. For a
+            CanvasBitmap with the default format of
+            DirectXPixelFormat.B8G8R8A8UintNormalized this is 4.
+          </li>
+          <li>
+            For block compressed texture formats, the capacity of the buffer must be
+            at least SizeInPixels.Width * SizeInPixels.Height * (bytes per
+            block) / 16. See <a href="BlockCompression.htm">Bitmap block
+            compression</a> page for more information.
+          </li>
+        </ul>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.GetPixelBytes(Windows.Foundation.IMemoryBufferReference,System.Int32,System.Int32,System.Int32,System.Int32)">
+      <summary>Copies raw byte data for a subregion of the bitmap into the specified buffer.</summary>
+      <remarks>
+        <ul>
+          <li>
+            Works on bitmaps of any format.
+          </li>
+          <li>
+            left, top, width and height are specified in pixels (not DIPs).
+          </li>
+          <li>
+            For uncompressed texture formats, the capacity of the buffer must be
+            at least width * height * (bytes per pixel).  The number of bytes
+            per pixel is determined by <see
+            cref="P:Microsoft.Graphics.Canvas.CanvasBitmap.Format"/>. For a
+            CanvasBitmap with the default format of
+            DirectXPixelFormat.B8G8R8A8UintNormalized this is 4.
+          </li>
+          <li>
+            For block compressed texture formats, the capacity of the buffer must be
+            at least width * height * (bytes per block) / 16. See <a
+            href="BlockCompression.htm">Bitmap block compression</a> page for
+            more information.
+          </li>
+        </ul>
+      </remarks>    
+    </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.GetPixelColors">
       <summary>Returns an array of color data for the entire bitmap.</summary>
       <remarks>
@@ -502,6 +565,57 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.SetPixelBytes(Windows.Storage.Streams.IBuffer,System.Int32,System.Int32,System.Int32,System.Int32)">
+      <summary>Sets the byte data of a subregion of the bitmap from the specified buffer.</summary>
+      <remarks>
+        <ul>
+          <li>
+            Works on bitmaps of any format.
+          </li>
+          <li>
+            left, top, width and height are specified in pixels (not DIPs).
+          </li>
+          <li>
+            For uncompressed texture formats, the length of the buffer must be
+            at least width * height * (bytes per
+            pixel).  The number of bytes per pixel is determined by <see
+            cref="P:Microsoft.Graphics.Canvas.CanvasBitmap.Format"/>. For a
+            CanvasBitmap with the default format of
+            DirectXPixelFormat.B8G8R8A8UintNormalized this is 4.
+          </li>
+          <li>
+            For block compressed texture formats, the length of the buffer must be
+            at least width * height * (bytes per
+            block) / 16. See <a href="BlockCompression.htm">Bitmap block
+            compression</a> page for more information.
+          </li>
+        </ul>
+      </remarks>
+    </member>
+	<member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.SetPixelBytes(Windows.Foundation.IMemoryBufferReference)">
+      <summary>Sets the byte data of the bitmap from the specified buffer.</summary>
+      <remarks>
+        <ul>
+          <li>
+            Works on bitmaps of any format.
+          </li>
+          <li>
+            For uncompressed texture formats, the length of the buffer must be
+            at least SizeInPixels.Width * SizeInPixels.Height * (bytes per
+            pixel).  The number of bytes per pixel is determined by <see
+            cref="P:Microsoft.Graphics.Canvas.CanvasBitmap.Format"/>. For a
+            CanvasBitmap with the default format of
+            DirectXPixelFormat.B8G8R8A8UintNormalized this is 4.
+          </li>
+          <li>
+            For block compressed texture formats, the length of the buffer must be
+            at least SizeInPixels.Width * SizeInPixels.Height * (bytes per
+            block) / 16. See <a href="BlockCompression.htm">Bitmap block
+            compression</a> page for more information.
+          </li>
+        </ul>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.SetPixelBytes(Windows.Foundation.IMemoryBufferReference,System.Int32,System.Int32,System.Int32,System.Int32)">
       <summary>Sets the byte data of a subregion of the bitmap from the specified buffer.</summary>
       <remarks>
         <ul>
