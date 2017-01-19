@@ -31,10 +31,8 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
           ship all its icons as pure white images with their shape determined by alpha
           channel, then use TintEffect to alter the icon RGB to whatever color is desired.
         </p>
-        <!-- TODO once D2D updates MSDN
         <p>This Windows Runtime type corresponds to the 
-          <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/TODO.aspx">D2D Tint effect</a>.</p>
-        -->
+          <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/mt745077.aspx">D2D Tint effect</a>.</p>
       </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Effects.TintEffect.#ctor">

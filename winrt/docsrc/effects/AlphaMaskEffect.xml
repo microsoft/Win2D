@@ -20,10 +20,8 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
           This effect combines the alpha channel of its AlphaMask input image with
           the specified Source image. RGB values of the AlphaMask are ignored.
         </p>
-        <!-- TODO once D2D updates MSDN
         <p>This Windows Runtime type corresponds to the 
-          <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/TODO.aspx">D2D AlphaMask effect</a>.</p>
-        -->
+          <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/mt745029.aspx">D2D Alpha mask effect</a>.</p>
       </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Effects.AlphaMaskEffect.#ctor">
