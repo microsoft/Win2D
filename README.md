@@ -64,7 +64,7 @@ Studio, add the Win2D NuGet package to your project, and get started using the A
 ## Building Win2D from source
 
 ##### Requirements
-- Recommended: Visual Studio 2015 with Update 3 and Universal Windows App Development Tools 1.4.1
+- Recommended: Visual Studio 2017 with Visual Studio Tools for Universal Windows Apps 15.0.26430.06
 - Visual Studio 2013 Update 5 is also supported (for Windows 8.1 or Windows Phone 8.1 development only)
 
 ##### Clone Repository
@@ -72,8 +72,8 @@ Studio, add the Win2D NuGet package to your project, and get started using the A
 - Add the Win2D repository URL (https://github.com/Microsoft/Win2D.git) and hit 'Clone'
 
 ##### Build NuGet Packages
-- If using Visual Studio 2015:
-  - Launch 'MSBuild Command Prompt for VS2015'
+- If using Visual Studio 2017:
+  - Launch 'Developer Command Prompt for VS2017'
 - If using Visual Studio 2013:
   - In Windows search, type 'Visual Studio Tools', and select that folder to open it
   - Launch 'Developer Command Prompt for VS2013' 

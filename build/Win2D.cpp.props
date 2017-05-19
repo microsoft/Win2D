@@ -37,13 +37,13 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(TargetPlatformIdentifier)' == 'UAP'">
-    <WindowsTargetPlatformVersion>10.0.14393.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.15063.0</WindowsTargetPlatformVersion>
     <WindowsTargetPlatformMinVersion>10.0.10240.0</WindowsTargetPlatformMinVersion>
   </PropertyGroup>
 
   <ItemDefinitionGroup Condition="'$(TargetPlatformIdentifier)' == 'UAP'">
     <ClCompile>
-      <AdditionalOptions>/DNTDDI_VERSION=0x0A000002 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/DNTDDI_VERSION=0x0A000003 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
   </ItemDefinitionGroup>
   

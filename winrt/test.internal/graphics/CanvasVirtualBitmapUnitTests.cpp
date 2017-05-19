@@ -260,10 +260,10 @@ TEST_CLASS(CanvasVirtualBitmapUnitTest)
     {
         std::pair<HRESULT, boolean> testCases[]
         {
-            { S_OK                         , TRUE },
-            { D2DERR_WRONG_STATE           , TRUE },
-            { D2DERR_UNSUPPORTED_OPERATION , FALSE },
-            { E_FAIL                       , TRUE }
+            { S_OK                         , true },
+            { D2DERR_WRONG_STATE           , true },
+            { D2DERR_UNSUPPORTED_OPERATION , false },
+            { E_FAIL                       , true }
         };
 
         for (auto testCase : testCases)

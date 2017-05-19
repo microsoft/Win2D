@@ -17,6 +17,13 @@
 using namespace ABI::Microsoft::Graphics::Canvas;
 using namespace ABI::Microsoft::Graphics::Canvas::Text;
 
+// There are cases in which a DWrite method has two overloads where only one of them is valid, and
+// we want to create a pointer-to-member to one overload. However, as of VS2017. the compiler can't automatically 
+// determine the valid one, so we need to explicitly choose the overload. The typedefs below are for doing that.
+
+typedef HRESULT(__stdcall IDWriteTextLayout::*getStringLengthMethod_t)(uint32_t, uint32_t*, DWRITE_TEXT_RANGE*);
+typedef HRESULT(__stdcall IDWriteTextLayout::*getStringMethod_t)(uint32_t, wchar_t*, uint32_t, DWRITE_TEXT_RANGE*);
+
 template <class GET_ATTRIBUTE_LENGTH_METHOD, class GET_ATTRIBUTE_METHOD>
 static WinString GetTextFromLayoutResource(
     GET_ATTRIBUTE_LENGTH_METHOD fnGetLength,
@@ -647,8 +654,8 @@ IFACEMETHODIMP CanvasTextLayout::GetFontFamily(
             auto& resource = GetResource();
 
             auto fontFamilyName = GetTextFromLayoutResource(
-                &IDWriteTextLayout::GetFontFamilyNameLength,
-                &IDWriteTextLayout::GetFontFamilyName,
+                static_cast<getStringLengthMethod_t>(&IDWriteTextLayout::GetFontFamilyNameLength),
+                static_cast<getStringMethod_t>(&IDWriteTextLayout::GetFontFamilyName),
                 characterIndex,
                 resource.Get());
 
@@ -747,8 +754,8 @@ IFACEMETHODIMP CanvasTextLayout::GetLocaleName(
             auto& resource = GetResource();
 
             auto name = GetTextFromLayoutResource(
-                &IDWriteTextLayout::GetLocaleNameLength,
-                &IDWriteTextLayout::GetLocaleName,
+                static_cast<getStringLengthMethod_t>(&IDWriteTextLayout::GetLocaleNameLength),
+                static_cast<getStringMethod_t>(&IDWriteTextLayout::GetLocaleName),
                 characterIndex,
                 resource.Get());
 
@@ -1594,7 +1601,7 @@ IFACEMETHODIMP CanvasTextLayout::get_LineMetrics(
             auto& resource = GetResource();
 
             uint32_t lineCount;
-            HRESULT hr = resource->GetLineMetrics(nullptr, 0, &lineCount);
+            HRESULT hr = resource->GetLineMetrics(static_cast<DWriteMetricsType*>(nullptr), 0, &lineCount);
 
             assert(hr == E_NOT_SUFFICIENT_BUFFER);
             if (hr != E_NOT_SUFFICIENT_BUFFER)

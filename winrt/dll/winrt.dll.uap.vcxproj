@@ -33,7 +33,7 @@
   <ItemDefinitionGroup>
     <Link>
       <DelayLoadDLLs>d3dcompiler_47.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
-      <AdditionalDependencies>mincore.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
 

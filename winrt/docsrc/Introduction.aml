@@ -89,14 +89,14 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
           <listItem>
             To develop for Windows 10 (Universal Windows Platform):
             <list class="bullet">
-              <listItem>Recommended version: Visual Studio Community 2015 with Update 3 and Universal Windows App Development Tools 1.4.1</listItem>
+              <listItem>Recommended version: Visual Studio Community 2017 with Visual Studio Tools for Universal Windows Apps 15.0.26430.06</listItem>
               <listItem>Minimum version: Visual Studio Community 2015 with Update 1</listItem>
             </list>
             
             <listItem>
               To develop for Windows 8.1 or Windows Phone 8.1:
               <list class="bullet">
-                <listItem>Recommended version: Visual Studio Community 2015</listItem>
+                <listItem>Recommended version: Visual Studio Community 2017</listItem>
                 <listItem>Minimum version: Visual Studio Community 2013 with Update 5</listItem>
                 <listItem>If using Visual Studio Express, requires the 'for Windows' version (not 'for Windows Desktop')</listItem>
               </list>
@@ -108,7 +108,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         <list class="bullet">
           <listItem>Go to 'File' -> 'New' -> 'Project...'</listItem>
           <listItem>Select 'Visual C#', 'Visual C++', or 'Visual Basic'</listItem>
-          <listItem>Create a 'Blank App (Universal Windows)' (Visual Studio 2015) or 'Blank App (Universal Apps)' (Visual Studio 2013)</listItem>
+          <listItem>Create a 'Blank App (Universal Windows)' (Visual Studio 2017) or 'Blank App (Universal Apps)' (Visual Studio 2013)</listItem>
           <listItem>Enter a project name of your choosing</listItem>
           <listItem>Click 'OK'</listItem>
         </list>
