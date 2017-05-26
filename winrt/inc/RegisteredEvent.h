@@ -23,7 +23,13 @@ public:
         m_unregisterFunction = 
             [source, removeMethod, token]
             {
-                ThrowIfFailed((source.Get()->*removeMethod)(token));
+                (source.Get()->*removeMethod)(token);
+
+                // We ignore the return value from removeMethod, because events can get
+                // unregistered arbitrarily late (eg. during garbage collection) at which
+                // point the target object might have already been destroyed. Some event
+                // implementations fail the unregister in that situation, which is unhelpful
+                // and not actionable for the app. Better to just swallow any such errors.
             };
     }
 
