@@ -179,7 +179,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 auto canvasDevice = GetCanvasDevice(resourceCreator);
                 auto d2dDevice = GetWrappedResource<ID2D1Device>(canvasDevice);
 
-                auto d2dImage = GetWrappedResource<ID2D1Image>(image, canvasDevice.Get());
+                auto d2dImage = As<ICanvasImageInternal>(image)->GetD2DImage(canvasDevice.Get(), nullptr, GetImageFlags::None, dpi);
 
                 auto adapter = m_adapter;
                 auto istream = adapter->CreateStreamOverRandomAccessStream(stream);

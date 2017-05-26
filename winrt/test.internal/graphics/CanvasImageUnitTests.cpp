@@ -4,7 +4,7 @@
 
 #include "pch.h"
 
-#include <lib/effects/generated/GaussianBlurEffect.h>
+#include <lib/effects/generated/ColorSourceEffect.h>
 
 #include "../mocks/MockPropertyBag.h"
 #include "../mocks/MockRandomAccessStream.h"
@@ -233,7 +233,7 @@ TEST_CLASS(CanvasImageSaveUnitTests)
 
         ImageFixture()
         {
-            AnyCanvasImage = Make<Effects::GaussianBlurEffect>();
+            AnyCanvasImage = Make<Effects::ColorSourceEffect>();
             D2DImage = GetWrappedResource<ID2D1Image>(AnyCanvasImage, Device.Get(), DEFAULT_DPI);
             RandomAccessStream = Make<MockRandomAccessStream>();
             Stream = Make<MockStream>();
