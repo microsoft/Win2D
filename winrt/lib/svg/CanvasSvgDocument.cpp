@@ -93,12 +93,13 @@ IFACEMETHODIMP CanvasSvgDocument::GetXml(HSTRING* result)
 
             // Note that the string pointed at by lockedBytes is not null terminated. Therefore, we need to 
             // pass the locked size to the function below.
-
+            
+            assert(lockedBytesLength <= INT_MAX);
             int wideCharacterCount = MultiByteToWideChar(
                 CP_UTF8,
                 0, // Default flags
                 reinterpret_cast<char* const>(lockedBytes),
-                lockedBytesLength,
+                static_cast<int32_t>(lockedBytesLength),
                 nullptr,
                 0); // Write nothing, and retrieve size
 
@@ -110,7 +111,7 @@ IFACEMETHODIMP CanvasSvgDocument::GetXml(HSTRING* result)
                 CP_UTF8,
                 0, // Default flags
                 reinterpret_cast<char* const>(lockedBytes),
-                lockedBytesLength,
+                static_cast<int32_t>(lockedBytesLength),
                 buffer,
                 wideCharacterCount) == 0)
             {
@@ -206,7 +207,10 @@ public:
         }
 
         if (outputNumberOfBytesRead)
-            *outputNumberOfBytesRead = numberOfBytesToRead;
+        {
+            assert(numberOfBytesToRead <= ULONG_MAX);
+            *outputNumberOfBytesRead = static_cast<ULONG>(numberOfBytesToRead);
+        }
 
         m_seekLocation += numberOfBytesRequested;
 
@@ -285,7 +289,9 @@ public:
                 if (newSeekLocation)
                 {
                     newSeekLocation->HighPart = 0;
-                    newSeekLocation->LowPart = m_seekLocation;
+
+                    assert(m_seekLocation < DWORD_MAX);
+                    newSeekLocation->LowPart = static_cast<DWORD>(m_seekLocation);
                 }
             });
     }

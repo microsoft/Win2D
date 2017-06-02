@@ -8,12 +8,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
     using namespace ABI::Microsoft::Graphics::Canvas::Geometry;
     using namespace ABI::Microsoft::Graphics::Canvas::Numerics;
-    using namespace ABI::Microsoft::Graphics::Canvas::Svg;
     using namespace ABI::Windows::Foundation;
 
 #if WINVER > _WIN32_WINNT_WINBLUE
     using namespace ABI::Windows::UI::Input::Inking;
     using namespace ABI::Windows::UI::ViewManagement;
+    using namespace ABI::Microsoft::Graphics::Canvas::Svg;
 #endif
 
     using namespace ::Microsoft::WRL;
