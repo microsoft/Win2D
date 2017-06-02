@@ -13,67 +13,15 @@ namespace canvas
         ChainInterfaces<ID2D1BorderTransform, ID2D1ConcreteTransform, ID2D1TransformNode>>
     {
     public:
-        CALL_COUNTER_WITH_MOCK(SetExtendModeXMethod, void(D2D1_EXTEND_MODE));
-        CALL_COUNTER_WITH_MOCK(SetExtendModeYMethod, void(D2D1_EXTEND_MODE));
-        CALL_COUNTER_WITH_MOCK(GetExtendModeXMethod, D2D1_EXTEND_MODE());
-        CALL_COUNTER_WITH_MOCK(GetExtendModeYMethod, D2D1_EXTEND_MODE());
+        MOCK_METHOD1(SetExtendModeX, void(D2D1_EXTEND_MODE));
+        MOCK_METHOD1(SetExtendModeY, void(D2D1_EXTEND_MODE));
+        MOCK_METHOD0_CONST(GetExtendModeX, D2D1_EXTEND_MODE());
+        MOCK_METHOD0_CONST(GetExtendModeY, D2D1_EXTEND_MODE());
 
-        CALL_COUNTER_WITH_MOCK(SetOutputBufferMethod, HRESULT(D2D1_BUFFER_PRECISION, D2D1_CHANNEL_DEPTH));
-        CALL_COUNTER_WITH_MOCK(SetCachedMethod, void(BOOL));
+        MOCK_METHOD2(SetOutputBuffer, HRESULT(D2D1_BUFFER_PRECISION, D2D1_CHANNEL_DEPTH));
+        MOCK_METHOD1(SetCached, void(BOOL));
 
-        CALL_COUNTER_WITH_MOCK(GetInputCountMethod, UINT32());
-
-        //
-        // ID2D1BorderTransform
-        //
-
-        STDMETHOD_(void, SetExtendModeX)(
-            D2D1_EXTEND_MODE extendMode) override
-        {
-            SetExtendModeXMethod.WasCalled(extendMode);
-        }
-
-        STDMETHOD_(void, SetExtendModeY)(
-            D2D1_EXTEND_MODE extendMode) override
-        {
-            SetExtendModeYMethod.WasCalled(extendMode);
-        }
-
-        STDMETHOD_(D2D1_EXTEND_MODE, GetExtendModeX)() const override
-        {
-            return GetExtendModeXMethod.WasCalled();
-        }
-
-        STDMETHOD_(D2D1_EXTEND_MODE, GetExtendModeY)() const override
-        {
-            return GetExtendModeYMethod.WasCalled();
-        }
-
-        //
-        // ID2D1ConcreteTransform
-        //
-
-        STDMETHOD(SetOutputBuffer)(
-            D2D1_BUFFER_PRECISION bufferPrecision,
-            D2D1_CHANNEL_DEPTH channelDepth) override
-        {
-            return SetOutputBufferMethod.WasCalled(bufferPrecision, channelDepth);
-        }
-
-        STDMETHOD_(void, SetCached)(
-            BOOL isCached) override
-        {
-            SetCachedMethod.WasCalled(isCached);
-        }
-
-        //
-        // ID2D1TransformNode
-        //
-
-        STDMETHOD_(UINT32, GetInputCount)() const override
-        {
-            return GetInputCountMethod.WasCalled();
-        }
+        MOCK_METHOD0_CONST(GetInputCount, UINT32());
 
     };
 }

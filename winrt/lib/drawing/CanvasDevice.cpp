@@ -1476,6 +1476,28 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return false;
     }
 
+    ComPtr<ID2D1SvgDocument> CanvasDevice::CreateSvgDocument(IStream* inputXmlStream)
+    {
+        auto lease = GetResourceCreationDeviceContext();
+
+        ComPtr<ID2D1DeviceContext5> deviceContext5;
+        HRESULT hr = lease->QueryInterface(IID_PPV_ARGS(&deviceContext5));
+        if (hr == E_NOINTERFACE)
+        {
+            ThrowHR(hr, Strings::SvgNotAvailable);
+        }
+        else
+        {
+            ThrowIfFailed(hr);
+        }
+
+        D2D1_SIZE_F defaultViewportSize = D2D1::SizeF(1, 1);
+        ComPtr<ID2D1SvgDocument> d2dSvgDocument;
+        ThrowIfFailed(deviceContext5->CreateSvgDocument(inputXmlStream, defaultViewportSize, &d2dSvgDocument));
+
+        return d2dSvgDocument;
+    }
+
 #endif
 
     HRESULT CanvasDevice::GetDeviceRemovedErrorCode()

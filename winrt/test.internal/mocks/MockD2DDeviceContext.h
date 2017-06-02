@@ -15,6 +15,8 @@ namespace canvas
         RuntimeClassFlags<ClassicCom>,
         ChainInterfaces<
 #if WINVER > _WIN32_WINNT_WINBLUE
+            ID2D1DeviceContext5,
+            ID2D1DeviceContext4,
             ID2D1DeviceContext3,
             ID2D1DeviceContext2,
 #endif
@@ -116,6 +118,11 @@ namespace canvas
         
         MOCK_METHOD1(CreateSpriteBatch , HRESULT(ID2D1SpriteBatch**));
         MOCK_METHOD6(DrawSpriteBatch   , void(ID2D1SpriteBatch*, UINT32, UINT32, ID2D1Bitmap*, D2D1_BITMAP_INTERPOLATION_MODE, D2D1_SPRITE_OPTIONS));
+
+        // ID2D1DeviceContext5
+        MOCK_METHOD1(DrawSvgDocument, void(ID2D1SvgDocument*));
+        MOCK_METHOD3(CreateSvgDocument, HRESULT(IStream*, D2D1_SIZE_F, ID2D1SvgDocument**));
+        
 #endif
 
         MockD2DDeviceContext()
@@ -295,5 +302,114 @@ namespace canvas
         {
             Assert::Fail(L"Unexpected call to DrawGdiMetafile");
         }
+
+#if WINVER > _WIN32_WINNT_WINBLUE
+
+        // ID2D1DeviceContext4
+
+        IFACEMETHODIMP CreateSvgGlyphStyle(ID2D1SvgGlyphStyle**) override
+        {
+            Assert::Fail(L"Unexpected call to CreateSvgGlyphStyle");
+			return E_NOTIMPL;
+        }
+
+        IFACEMETHODIMP_(void) DrawText(
+            CONST WCHAR*,
+            UINT32,
+            _In_ IDWriteTextFormat *,
+            _In_ CONST D2D1_RECT_F *,
+            _In_opt_ ID2D1Brush *,
+            _In_opt_ ID2D1SvgGlyphStyle *,
+            UINT32,
+            D2D1_DRAW_TEXT_OPTIONS,
+            DWRITE_MEASURING_MODE) override
+        {
+            Assert::Fail(L"Unexpected call to DrawText");
+        }
+
+        IFACEMETHODIMP_(void) DrawTextLayout(
+            D2D1_POINT_2F origin,
+            _In_ IDWriteTextLayout *,
+            _In_opt_ ID2D1Brush *,
+            _In_opt_ ID2D1SvgGlyphStyle *,
+            UINT32,
+            D2D1_DRAW_TEXT_OPTIONS) override
+        {
+            Assert::Fail(L"Unexpected call to DrawTextLayout");
+        }
+
+        IFACEMETHODIMP_(void) DrawColorBitmapGlyphRun(
+            DWRITE_GLYPH_IMAGE_FORMATS,
+            D2D1_POINT_2F,
+            CONST DWRITE_GLYPH_RUN*,
+            DWRITE_MEASURING_MODE,
+            D2D1_COLOR_BITMAP_GLYPH_SNAP_OPTION) override
+        {
+            Assert::Fail(L"Unexpected call to DrawColorBitmapGlyphRun");
+        }
+
+        IFACEMETHODIMP_(void) DrawSvgGlyphRun(
+            D2D1_POINT_2F,
+            _In_ CONST DWRITE_GLYPH_RUN *,
+            _In_opt_ ID2D1Brush*,
+            _In_opt_ ID2D1SvgGlyphStyle *,
+            UINT32,
+            DWRITE_MEASURING_MODE) override
+        {
+            Assert::Fail(L"Unexpected call to DrawSvgGlyphRun");
+        }
+
+        IFACEMETHODIMP GetColorBitmapGlyphImage(
+            DWRITE_GLYPH_IMAGE_FORMATS,
+            D2D1_POINT_2F,
+            IDWriteFontFace *,
+            FLOAT,
+            UINT16,
+            BOOL,
+            CONST D2D1_MATRIX_3X2_F *,
+            FLOAT,
+            FLOAT,
+            D2D1_MATRIX_3X2_F *,
+            ID2D1Image **) override
+        {
+            Assert::Fail(L"Unexpected call to GetColorBitmapGlyphImage");
+			return E_NOTIMPL;
+        }
+
+        IFACEMETHODIMP GetSvgGlyphImage(
+            D2D1_POINT_2F,
+            IDWriteFontFace *,
+            FLOAT,
+            UINT16,
+            BOOL,
+            CONST D2D1_MATRIX_3X2_F *,
+            ID2D1Brush *,
+            ID2D1SvgGlyphStyle *,
+            UINT32,
+            D2D1_MATRIX_3X2_F *,
+            ID2D1CommandList**) override
+        {
+            Assert::Fail(L"Unexpected call to GetSvgGlyphImage");
+			return E_NOTIMPL;
+        }
+        
+        // ID2D1DeviceContext5
+        
+        IFACEMETHODIMP CreateColorContextFromDxgiColorSpace(
+            DXGI_COLOR_SPACE_TYPE,
+            ID2D1ColorContext1**) override
+        {
+            Assert::Fail(L"Unexpected call to CreateColorContextFromDxgiColorSpace");
+			return E_NOTIMPL;
+        }
+
+        IFACEMETHODIMP CreateColorContextFromSimpleColorProfile(
+            CONST D2D1_SIMPLE_COLOR_PROFILE*,
+            ID2D1ColorContext1**) override
+        {
+            Assert::Fail(L"Unexpected call to CreateColorContextFromSimpleColorProfile");
+			return E_NOTIMPL;
+        }
+#endif
     };
 }

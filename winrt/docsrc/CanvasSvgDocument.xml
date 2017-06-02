@@ -1,0 +1,145 @@
+<?xml version="1.0"?>
+<!--
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+Licensed under the MIT License. See LICENSE.txt in the project root for license information.
+-->
+
+<doc>
+  <assembly>
+    <name>Microsoft.Graphics.Canvas</name>
+  </assembly>
+  <members>
+    <member name="T:Microsoft.Graphics.Canvas.Svg.CanvasSvgDocument" Win10_15063="true" Experimental="true">
+      <summary>Specifies an SVG document that can be drawn.</summary>
+      <remarks>
+        <p>
+          To draw SVG, first create a document using 
+          <see cref="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgDocument.Load(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.String)">Load</see> 
+          or 
+          <see cref="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgDocument.LoadAsync(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.Storage.Streams.IRandomAccessStream)">LoadAsync</see>.
+          Then, draw it to a drawing session using
+          <see cref="O:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawSvg">DrawSvg</see>. For example, in C#,
+          <code title="C#">
+            <![CDATA[
+            using namespace Microsoft.Graphics.Canvas.Svg;     
+
+            CanvasSvgDocument svgDocument;
+
+            void canvasControl_CreateResources(CanvasControl sender, Microsoft.Graphics.Canvas.UI.CanvasCreateResourcesEventArgs args)
+            {
+                svgDocument = CanvasSvgDocument.Load(sender, "<svg><circle fill=\"#660000\" r=\"500\"/></svg>");
+            }
+
+            void canvasControl_Draw(CanvasControl sender, CanvasDrawEventArgs args)
+            {
+                args.DrawingSession.DrawSvg(svgDocument, sender.Size);
+            }            
+            ]]>
+          </code>
+          It's recommended that apps load their SVG resources only once, rather than every time they are drawn.
+        </p>
+        <p>
+          In addition to being drawn directly, SVG can also be used as an image- for example, to used as source for an image brush, 
+          or an input to an effect. To do this, use a command list. For example, in C#:
+          <code title="C#">
+            <![CDATA[
+            void canvasControl_Draw(CanvasControl sender, CanvasDrawEventArgs args)
+            {
+                CanvasCommandList commandList = new CanvasCommandList(sender);
+
+                using (var ds = commandList.CreateDrawingSession())
+                {
+                    ds.DrawSvg(svgDocument, sender.Size);
+                }
+
+                OpacityEffect opacityEffect = new OpacityEffect();
+                opacityEffect.Opacity = 0.5f;
+                opacityEffect.Source = commandList;
+
+                args.DrawingSession.DrawImage(opacityEffect);
+            }
+            ]]>
+          </code>
+          If your application may run on operating systems prior to Windows 10 Creators Edition, it should call
+          <see cref="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgDocument.IsSupported(Microsoft.Graphics.Canvas.CanvasDevice)">CanvasSvgDocument.IsSupported</see>
+          to query whether SVG is supported before using it.
+        </p>
+        <p>
+          Currently, Win2D supports a subset of SVG 1.1. For more details, see 
+          <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/mt790715(v=vs.85).aspx">Direct2D's page about SVG support</a>.
+        </p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgDocument.GetXml">
+      <summary>Gets a string containing the SVG for this document.</summary>
+      <remarks>
+        The returned XML may be different from what was originally used in constructing this document. For example it may
+        contain differently-formatted attributes, differently-ordered attributes, or some elements dropped if they are not
+        supported by Direct2D.
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgDocument.SaveAsync(Windows.Storage.Streams.IRandomAccessStream)">
+      <summary>Saves a string containing the SVG for this document.</summary>
+      <remarks>
+        <p>
+          The saved string is encoded in UTF-8, and is not terminated with a null character.
+        </p>
+        <p>
+          The saved XML may be different from what was originally used in constructing this document. For example it may
+          contain differently-formatted attributes, differently-ordered attributes, or some elements dropped if they are not
+          supported by Direct2D.
+        </p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgDocument.Dispose">
+      <summary>Releases all resources used by the CanvasSvgDocument.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgDocument.Load(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.String)">
+      <summary>Loads an SVG document from a string.</summary>
+      <remarks>
+      <p>
+        The passed-in string must be a valid SVG document. 
+        Currently, Win2D supports a subset of SVG 1.1. For more details, see 
+        <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/mt790715(v=vs.85).aspx">Direct2D's page about SVG support</a>.
+        Content which is valid SVG but is unsupported by Win2D will not cause a failure; it will be ignored.
+      </p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgDocument.LoadAsync(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.Storage.Streams.IRandomAccessStream)">
+      <summary>Loads an SVG document from a stream.</summary>
+      <remarks>
+        <p>
+          Both UTF-8 and UTF-16 text are supported.
+        </p>
+      <p>
+        The passed-in string must be a valid SVG document. 
+        Currently, Win2D supports a subset of SVG 1.1. For more details, see 
+        <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/mt790715(v=vs.85).aspx">Direct2D's page about SVG support</a>.
+        Content which is valid SVG but is unsupported by Win2D will not cause a failure; it will be ignored.
+      </p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgDocument.IsSupported(Microsoft.Graphics.Canvas.CanvasDevice)">
+      <summary>Checks whether CanvasSvgDocument is supported on the current operating system version.</summary>
+      <remarks>
+        <p>
+          If the application is currently running on an operating system that
+          doesn't support SVG features, then calls to 
+          <see cref="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgDocument.Load(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.String)">Load</see> 
+          or 
+          <see cref="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgDocument.LoadAsync(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.Storage.Streams.IRandomAccessStream)">LoadAsync</see>
+          will fail.
+        </p>
+        <p>
+          If you know that your application will never run on an operating
+          system that doesn't support SVG documents then there is no need to
+          perform this check.
+        </p>
+      </remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Svg.CanvasSvgDocument.Device">
+      <summary>Gets the device associated with this SVG document.</summary>
+    </member>
+  </members>
+</doc>

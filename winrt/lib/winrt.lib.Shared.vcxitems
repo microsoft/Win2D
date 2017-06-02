@@ -185,6 +185,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)images\CanvasImage.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)images\CanvasRenderTarget.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)images\ScopedBitmapMappedPixelAccess.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)svg\CanvasSvgDocument.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)text\CanvasFontFace.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)text\CanvasFontSet.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)text\CanvasTextFormat.h" />
@@ -325,6 +326,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)images\CanvasImage.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)images\CanvasRenderTarget.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)images\ScopedBitmapMappedPixelAccess.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)svg\CanvasSvgDocument.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)text\CanvasFontFace.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)text\CanvasFontSet.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)text\CanvasTextFormat.cpp" />
@@ -427,6 +429,7 @@
     <None Include="$(MSBuildThisFileDirectory)images\CanvasCommandList.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)images\CanvasImage.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)images\CanvasVirtualBitmap.abi.idl" />
+    <None Include="$(MSBuildThisFileDirectory)svg\CanvasSvgDocument.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)text\CanvasFontFace.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)text\CanvasFontSet.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)text\CanvasTextFormat.abi.idl" />

@@ -40,7 +40,7 @@
 #include <wrl.h>
 #include <wrl\async.h>
 #include <strsafe.h>
-#include <d2d1_2.h>
+#include <d2d1_3.h>
 #include <d3d11.h>
 #include <dwrite_2.h>
 #include <dxgi1_3.h>

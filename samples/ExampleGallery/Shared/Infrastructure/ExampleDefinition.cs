@@ -69,6 +69,7 @@ namespace ExampleGallery
             new ExampleDefinition("Stroke Styles", typeof(StrokeStyles)),
             new ExampleDefinition("Arc Options", typeof(ArcOptions)),          
 #if WINDOWS_UWP
+            new ExampleDefinition("SVG", typeof(SvgExample)),
             new ExampleDefinition("Gradient Mesh", typeof(GradientMeshExample)),
 #endif
             new ExampleDefinition("Histogram", typeof(HistogramExample)),

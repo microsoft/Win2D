@@ -1332,6 +1332,27 @@ namespace Microsoft.Graphics.Canvas
             [in] Microsoft.Graphics.Canvas.Geometry.CanvasGradientMesh* gradientMesh,
             [in] float x,
             [in] float y);
+
+        //
+        // DrawSvg
+        //
+        [overload("DrawSvg")]
+        HRESULT DrawSvgAtOrigin(
+            [in] Microsoft.Graphics.Canvas.Svg.CanvasSvgDocument* svgDocument,
+            [in] Windows.Foundation.Size viewportSize);
+
+        [overload("DrawSvg")]
+        HRESULT DrawSvgAtPoint(
+            [in] Microsoft.Graphics.Canvas.Svg.CanvasSvgDocument* svgDocument,
+            [in] Windows.Foundation.Size viewportSize,
+            [in] NUMERICS.Vector2 point);
+
+        [overload("DrawSvg")]
+        HRESULT DrawSvgAtCoords(
+            [in] Microsoft.Graphics.Canvas.Svg.CanvasSvgDocument* svgDocument,
+            [in] Windows.Foundation.Size viewportSize,
+            [in] float x,
+            [in] float y);
 #endif
 
         //

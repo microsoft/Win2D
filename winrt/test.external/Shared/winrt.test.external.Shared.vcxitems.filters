@@ -40,6 +40,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)EffectTransferTable3DTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)ColorManagementProfileTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\numerics\WinRT\tests\WinRTNumericsTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)CanvasSvgDocumentTests.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)pch.h" />

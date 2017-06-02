@@ -1,0 +1,55 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+//
+// Licensed under the MIT License. See LICENSE.txt in the project root for license information.
+
+#if WINVER > _WIN32_WINNT_WINBLUE
+
+namespace Microsoft.Graphics.Canvas.Svg
+{
+    runtimeclass CanvasSvgDocument;
+
+    // This type interops to ID2D1SvgDocument.
+    [version(VERSION), uuid(A0E34929-3551-44FE-A670-D9B3FD800516), exclusiveto(CanvasSvgDocument)]
+    interface ICanvasSvgDocument : IInspectable
+        requires Windows.Foundation.IClosable
+    {
+        [propget] HRESULT Device([out, retval] Microsoft.Graphics.Canvas.CanvasDevice** value);
+        
+        // Serializes the document's content out to an XML string. Note that serialized XML may differ from what was
+        // originally passed in to construct the document. For example it may contain differently-formatted attributes,
+        // differently-ordered attributes, or some elements dropped if they are not supported by Direct2D.
+        HRESULT GetXml([out, retval] HSTRING* xmlString);
+
+        // Serializes a document to a stream.
+        HRESULT SaveAsync(
+            [in] Windows.Storage.Streams.IRandomAccessStream* stream,
+            [out][retval] Windows.Foundation.IAsyncAction** asyncAction);
+    }
+    
+    [version(VERSION), uuid(7740E748-CB9A-453F-A678-8B3B3A7254D3), exclusiveto(CanvasSvgDocument)]
+    interface ICanvasSvgDocumentStatics : IInspectable
+    {
+        // Loads a document from an XML string.
+        HRESULT Load(
+            [in] Microsoft.Graphics.Canvas.ICanvasResourceCreator* resourceCreator,
+            [in] HSTRING xmlString,
+            [out, retval] CanvasSvgDocument** svgDocument);
+
+        // Loads a document from a stream.
+        HRESULT LoadAsync(
+            [in] Microsoft.Graphics.Canvas.ICanvasResourceCreator* resourceCreator,
+            [in] Windows.Storage.Streams.IRandomAccessStream* stream,
+            [out, retval] Windows.Foundation.IAsyncOperation<CanvasSvgDocument*>** svgDocument);
+
+        // Returns whether the SVG Direct2D feature is supported on this system.
+        HRESULT IsSupported(Microsoft.Graphics.Canvas.CanvasDevice* device, [out, retval] boolean* value);
+    }
+
+    [STANDARD_ATTRIBUTES, static(ICanvasSvgDocumentStatics, VERSION)]
+    runtimeclass CanvasSvgDocument
+    {
+        [default] interface ICanvasSvgDocument;
+    }
+}
+
+#endif

@@ -9,6 +9,8 @@ using namespace Microsoft::Graphics::Canvas;
 #if WINVER > _WIN32_WINNT_WINBLUE
 typedef Windows::Foundation::Numerics::float3x2 MatrixType;
 typedef Windows::Foundation::Numerics::float2 Vector2Type;
+using namespace Microsoft::Graphics::Canvas::Svg;
+
 #else
 typedef Microsoft::Graphics::Canvas::Numerics::Matrix3x2 MatrixType;
 typedef Microsoft::Graphics::Canvas::Numerics::Vector2 Vector2Type;
@@ -217,6 +219,28 @@ TEST_CLASS(CanvasDrawingSessionTests)
             [&]
             {
                 drawingSession->DrawGlyphRun(Vector2Type{}, fontFace, 1.0f, glyphs, false, 0, nullptr);
+            });
+    }
+
+    TEST_METHOD(CanvasDrawingSession_DrawSvgDocument_ZeroSizedViewportIsInvalid)
+    {
+        auto device = ref new CanvasDevice();
+
+        auto d2dDevice = GetWrappedResource<ID2D1Device1>(device);
+
+        ComPtr<ID2D1DeviceContext1> d2dDeviceContext;
+        ThrowIfFailed(d2dDevice->CreateDeviceContext(
+            D2D1_DEVICE_CONTEXT_OPTIONS_NONE,
+            &d2dDeviceContext));
+
+        auto drawingSession = GetOrCreate<CanvasDrawingSession>(d2dDeviceContext.Get());
+
+        auto svgDocument = CanvasSvgDocument::Load(device, "<svg/>");
+        
+        Assert::ExpectException<Platform::InvalidArgumentException^>(
+            [&]
+            {
+                drawingSession->DrawSvg(svgDocument, Size{});
             });
     }
 };

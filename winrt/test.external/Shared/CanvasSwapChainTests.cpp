@@ -11,7 +11,6 @@ using namespace WinRTDirectX;
 using namespace Windows::Devices::Enumeration;
 using namespace Windows::Foundation;
 using namespace Windows::Graphics::Imaging;
-using namespace Windows::Storage::Streams;
 using namespace Windows::UI;
 
 TEST_CLASS(CanvasSwapChainTests)

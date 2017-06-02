@@ -40,6 +40,9 @@
     <Filter Include="effects\shader">
       <UniqueIdentifier>{2ee3a682-7b83-4f7d-85ca-569607a51de1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="svg">
+      <UniqueIdentifier>{805ea252-3559-4026-854a-65a3fc8880b8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <MidlRT Include="$(MSBuildThisFileDirectory)Canvas.abi.idl" />
@@ -438,6 +441,9 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\OpacityEffect.cpp">
       <Filter>effects\generated</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)svg\CanvasSvgDocument.cpp">
+      <Filter>svg</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -892,6 +898,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\OpacityEffect.h">
       <Filter>effects\generated</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)svg\CanvasSvgDocument.h">
+      <Filter>svg</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)Canvas.codegen.idl" />
@@ -1191,6 +1200,9 @@
     </None>
     <None Include="$(MSBuildThisFileDirectory)effects\generated\OpacityEffect.abi.idl">
       <Filter>effects\generated</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)svg\CanvasSvgDocument.abi.idl">
+      <Filter>svg</Filter>
     </None>
   </ItemGroup>
 </Project>

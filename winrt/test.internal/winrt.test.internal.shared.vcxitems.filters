@@ -193,6 +193,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)graphics\ColorManagementEffectUnitTests.cpp">
       <Filter>graphics</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasSvgDocumentUnitTests.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)pch.h" />
@@ -615,6 +616,9 @@
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)xaml\MockXamlSolidColorBrush.h">
       <Filter>xaml</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DSvgDocument.h">
+      <Filter>mocks</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

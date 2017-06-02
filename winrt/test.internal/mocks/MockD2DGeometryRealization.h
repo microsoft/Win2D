@@ -14,21 +14,7 @@ namespace canvas
     {
     public:
 
-        CALL_COUNTER_WITH_MOCK(GetFactoryMethod, void(ID2D1Factory**));
-
-        //
-        // ID2D1GeometryRealization
-        //
-
-        //
-        // ID2D1Resource
-        //
-
-        STDMETHOD_(void, GetFactory)(
-            ID2D1Factory** factory) const override
-        {
-            GetFactoryMethod.WasCalled(factory);
-        }
+        MOCK_METHOD1_CONST(GetFactory, void(ID2D1Factory**));
 
     };
 }

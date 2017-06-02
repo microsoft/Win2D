@@ -1308,5 +1308,40 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         </p>
       </remarks>
     </member>
+
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawSvg(Microsoft.Graphics.Canvas.Svg.CanvasSvgDocument,Windows.Foundation.Size,System.Numerics.Vector2)" Win10_15063="true" Experimental="true">
+      <summary>Draws an SVG document with the specified viewport size, at the specified coordinate location.</summary>
+      <remarks>
+        <p>
+          The viewport size is in device-independent units. Its width and height must be positive and nonzero. 
+          The viewport is separate from the SVG &lt;viewbox&gt; element; a viewbox is within a viewport.
+        </p>
+        <p>
+          The specified coordinates are in device-independent units.
+        </p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawSvg(Microsoft.Graphics.Canvas.Svg.CanvasSvgDocument,Windows.Foundation.Size,System.Single,System.Single)" Win10_15063="true" Experimental="true">
+      <summary>Draws an SVG document with the specified viewport size, at the specified coordinates.</summary>
+      <remarks>
+        <p>
+          The viewport size is in device-independent units. Its width and height must be positive and nonzero.
+          The viewport is separate from the SVG &lt;viewbox&gt; element; a viewbox is within a viewport.
+        </p>
+        <p>
+          The specified coordinates are in device-independent units.
+        </p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawSvg(Microsoft.Graphics.Canvas.Svg.CanvasSvgDocument,Windows.Foundation.Size)" Win10_15063="true" Experimental="true">
+      <summary>Draws an SVG document with the specified viewport size at the origin.</summary>
+      <remarks>
+        <p>
+          The viewport size is in device-independent units. Its width and height must be positive and nonzero.
+          The viewport is separate from the SVG &lt;viewbox&gt; element; a viewbox is within a viewport.
+        </p>
+      </remarks>
+    </member>
+    
   </members>
 </doc>

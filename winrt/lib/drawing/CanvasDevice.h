@@ -170,6 +170,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         virtual ComPtr<ID2D1GradientMesh> CreateGradientMesh(D2D1_GRADIENT_MESH_PATCH const* patches, uint32_t patchCount) = 0;
 
         virtual bool IsSpriteBatchQuirkRequired() = 0;
+
+        virtual ComPtr<ID2D1SvgDocument> CreateSvgDocument(IStream* inputXmlStream) = 0;
 #endif
     };
 
@@ -373,6 +375,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         virtual ComPtr<ID2D1GradientMesh> CreateGradientMesh(D2D1_GRADIENT_MESH_PATCH const* patches, uint32_t patchCount) override;
 
         virtual bool IsSpriteBatchQuirkRequired() override;
+
+        virtual ComPtr<ID2D1SvgDocument> CreateSvgDocument(IStream* inputXmlStream) override;
 #endif
 
         //

@@ -162,7 +162,7 @@ TEST_CLASS(CanvasGradientBrushTests)
         ThrowIfFailed(brush->put_Transform(m));
 
         ComPtr<ICanvasDevice> actualDevice;
-        brush->get_Device(&actualDevice);
+        ThrowIfFailed(brush->get_Device(&actualDevice));
         Assert::AreEqual<ICanvasDevice*>(testDevice.Get(), actualDevice.Get());
     }
 

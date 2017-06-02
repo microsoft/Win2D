@@ -7,6 +7,7 @@
 #include <lib/effects/generated/GaussianBlurEffect.h>
 #include <lib/geometry/CanvasCachedGeometry.h>
 #include <lib/images/CanvasCommandList.h>
+#include <lib/svg/CanvasSvgDocument.h>
 
 #if WINVER > _WIN32_WINNT_WINBLUE
 #include <lib/drawing/CanvasGradientMesh.h>
@@ -16,6 +17,7 @@
 #include "mocks/MockD2DGeometryRealization.h"
 #include "mocks/MockD2DRectangleGeometry.h"
 #include "mocks/MockDWriteRenderingParams.h"
+#include "mocks/MockStream.h"
 #include "stubs/StubCanvasBrush.h"
 #include "stubs/StubCanvasTextLayoutAdapter.h"
 #include "stubs/StubD2DEffect.h"
@@ -4190,6 +4192,7 @@ public:
     }
 
 #if WINVER > _WIN32_WINNT_WINBLUE
+
     TEST_METHOD_EX(CanvasDrawingSession_DrawInk_NullArg)
     {
         Assert::AreEqual(E_INVALIDARG, CanvasDrawingSessionFixture().DS->DrawInk(nullptr));
@@ -4334,6 +4337,135 @@ public:
         // Null gradient mesh.
         CanvasDrawingSessionFixture f;
         Assert::AreEqual(E_INVALIDARG, f.DS->DrawGradientMeshAtCoords(nullptr, 0, 0));
+    }
+
+    //
+    // DrawSvgDocument
+    //
+
+    class DrawSvgFixture : public FixtureWithTemporaryTranslation
+    {
+    public:
+        ComPtr<CanvasSvgDocument> SvgDocument;
+        ComPtr<MockD2DSvgDocument> D2DSvgDocument;
+        D2D1_SIZE_F InitialViewportSize;
+        D2D1_SIZE_F ExpectedViewportSize;
+        bool IsTemporaryViewportSizeSet;
+
+        Size ViewportSize;
+
+        DrawSvgFixture()
+        {
+            auto mockStream = Make<MockStream>();
+            D2DSvgDocument = Make<MockD2DSvgDocument>();
+            InitialViewportSize = D2D1::SizeF(1, 2);
+            IsTemporaryViewportSizeSet = false;
+
+            ExpectedViewportSize = D2D1::SizeF(3, 4);
+            ViewportSize = Size{ 3, 4 };
+            
+            this->CanvasDevice->CreateSvgDocumentMethod.AllowAnyCall(
+                [=](IStream* stream)
+                {
+                    return D2DSvgDocument;
+                });
+
+            SvgDocument = CanvasSvgDocument::CreateNew(CanvasDevice.Get(), mockStream.Get());
+        }
+
+        void ExpectTemporaryViewportSizeChange()
+        {
+            D2DSvgDocument->GetViewportSizeMethod.SetExpectedCalls(1,
+                [&]
+                {
+                     return InitialViewportSize;
+                });
+
+            D2DSvgDocument->SetViewportSizeMethod.SetExpectedCalls(2,
+                [&](D2D1_SIZE_F const& newSize)
+                {
+                    IsTemporaryViewportSizeSet = !IsTemporaryViewportSizeSet;
+
+                    if (IsTemporaryViewportSizeSet)
+                    {
+                        // Setting the temporary viewport size.
+                        Assert::AreEqual(ExpectedViewportSize, newSize);
+                    }
+                    else
+                    {
+                        // Restoring the original viewport size.
+                        Assert::AreEqual(InitialViewportSize, newSize);
+                    }
+
+                    return S_OK;
+                });
+        }
+    };
+
+    template<typename TDraw>
+    void TestDrawSvgDocument(bool usedDrawOffset, TDraw const& callDrawFunction)
+    {
+        DrawSvgFixture f;
+
+        ComPtr<ID2D1SvgDocument> nativeSvgDocumentResource = f.SvgDocument->GetResource();
+
+        static const int expectedDrawSvgDocumentCalls = 1;
+
+        if (!usedDrawOffset)
+        {
+            f.ExpectedTransform = f.InitialTransform;
+        }
+        f.ExpectTemporaryTranslation(expectedDrawSvgDocumentCalls);
+        f.ExpectTemporaryViewportSizeChange();
+
+        f.DeviceContext->DrawSvgDocumentMethod.SetExpectedCalls(expectedDrawSvgDocumentCalls,
+            [&](ID2D1SvgDocument* svgDocument)
+            {
+                Assert::IsTrue(f.IsTemporaryTransformSet);
+
+                Assert::AreEqual(nativeSvgDocumentResource.Get(), svgDocument);
+            });
+
+        callDrawFunction(f, f.SvgDocument.Get());
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_DrawSvgDocumentAtOrigin)
+    {
+        TestDrawSvgDocument(false,
+            [](DrawSvgFixture const& f, CanvasSvgDocument* svgDocument)
+            {
+                ThrowIfFailed(f.DS->DrawSvgAtOrigin(svgDocument, f.ViewportSize));
+            });
+
+        // Null document, should be an error
+        DrawSvgFixture f;
+        Assert::AreEqual(E_INVALIDARG, f.DS->DrawSvgAtOrigin(nullptr, f.ViewportSize));
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_DrawSvgDocument)
+    {
+        TestDrawSvgDocument(true,
+            [](DrawSvgFixture const& f, CanvasSvgDocument* svgDocument)
+            {
+                ThrowIfFailed(f.DS->DrawSvgAtPoint(svgDocument, f.ViewportSize, f.DrawOffset));
+            });
+
+        // Null svg document
+        DrawSvgFixture f;
+        Assert::AreEqual(E_INVALIDARG, f.DS->DrawSvgAtPoint(nullptr, Size{}, Vector2{}));
+    }
+
+    TEST_METHOD_EX(CanvasDrawingSession_DrawSvgDocumentAtCoords)
+    {
+        TestDrawSvgDocument(true,
+            [](DrawSvgFixture const& f, CanvasSvgDocument* svgDocument)
+            {
+                ThrowIfFailed(f.DS->DrawSvgAtCoords(svgDocument, f.ViewportSize, f.DrawOffset.X, f.DrawOffset.Y));
+            });
+
+        // Null svg document
+        CanvasDrawingSessionFixture f;
+        Assert::AreEqual(E_INVALIDARG, f.DS->DrawSvgAtCoords(nullptr, Size{}, 0, 0));
     }
      
 #endif

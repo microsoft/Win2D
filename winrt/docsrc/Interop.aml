@@ -240,6 +240,12 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
             <entry>Device</entry>
           </row>
           <row>
+            <entry><codeEntityReference>T:Microsoft.Graphics.Canvas.Svg.CanvasSvgDocument</codeEntityReference></entry>
+            <entry><codeInline>ID2D1SvgDocument</codeInline><superscript>(2)</superscript></entry>
+            <entry>Device</entry>
+            <entry>-</entry>
+          </row>
+          <row>
             <entry><codeEntityReference>T:Microsoft.Graphics.Canvas.CanvasSwapChain</codeEntityReference></entry>
             <entry><codeInline>IDXGISwapChain1</codeInline></entry>
             <entry>Device, DPI</entry>
@@ -306,6 +312,13 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
           GetWrappedResource on an effect, or on a CanvasImageBrush that has an effect as 
           its source image.
         </para>
+        
+        <para>
+          <superscript>(2)</superscript> When a CanvasSvgDocument is produced from an 
+          ID2D1SvgDocument using native C++ interop, the ID2D1SvgDocument's viewport
+          size is ignored.
+        </para>
+        
       </content>
     </section>
 

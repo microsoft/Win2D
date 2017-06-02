@@ -1,0 +1,1003 @@
+<?xml version="1.0"?>
+<!--
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+Licensed under the MIT License. See LICENSE.txt in the project root for license information.
+-->
+
+<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    This file contains types defined in D2D1Svg.h. This is maintained
+    in a separate file to make it more clear what the
+    interfaces are. The XML files are simply read sequentially  
+    to build the object model.                                  
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  -->
+<D2DTypes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="D2DTypes.xsd">
+
+    <Namespace Name="D2D1">
+        <Enum Name="SVG_LENGTH_UNITS" Comment="Specifies the units for an SVG length.">
+            <Field Name="NUMBER" Value="0" Comment="
+                The length is unitless."/>
+            <Field Name="PERCENTAGE" Value="1" Comment="
+                The length is a percentage value."/>
+        </Enum>
+
+        <Enum Name="SVG_PAINT_TYPE" Comment="Specifies the paint type for an SVG fill or stroke.">
+            <Field Name="NONE" Value="0" Comment="
+                The fill or stroke is not rendered."/>
+            <Field Name="COLOR" Value="1" Comment="
+                A solid color is rendered."/>
+            <Field Name="CURRENT_COLOR" Value="2" Comment="
+                The current color is rendered."/>
+            <Field Name="URI" Value="3" Comment="
+                A paint server, defined by another element in the SVG document, is used."/>
+            <Field Name="URI_NONE" Value="4" Comment="
+                A paint server, defined by another element in the SVG document, is used.
+                If the paint server reference is invalid, fall back to D2D1_SVG_PAINT_TYPE_NONE."/>
+            <Field Name="URI_COLOR" Value="5" Comment="
+                A paint server, defined by another element in the SVG document, is used.
+                If the paint server reference is invalid, fall back to D2D1_SVG_PAINT_TYPE_COLOR."/>
+            <Field Name="URI_CURRENT_COLOR" Value="6" Comment="
+                A paint server, defined by another element in the SVG document, is used.
+                If the paint server reference is invalid, fall back to D2D1_SVG_PAINT_TYPE_CURRENT_COLOR."/>
+        </Enum>
+
+        <Enum Name="SVG_DISPLAY" Comment="Specifies a value for the SVG display property.">
+            <Field Name="INLINE" Value="0" Comment="
+                The element uses the default display behavior."/>
+            <Field Name="NONE" Value="1" Comment="
+                The element and all children are not rendered directly."/>
+        </Enum>
+
+        <Enum Name="SVG_VISIBILITY" Comment="Specifies a value for the SVG visibility property.">
+            <Field Name="VISIBLE" Value="0" Comment="
+                The element is visible."/>
+            <Field Name="HIDDEN" Value="1" Comment="
+                The element is invisible."/>
+        </Enum>
+
+        <Enum Name="SVG_OVERFLOW" Comment="Specifies a value for the SVG overflow property.">
+            <Field Name="VISIBLE" Value="0" Comment="
+                The element is not clipped to its viewport."/>
+            <Field Name="HIDDEN" Value="1" Comment="
+                The element is clipped to its viewport."/>
+        </Enum>
+
+        <Enum Name="SVG_LINE_CAP" Comment="Specifies a value for the SVG stroke-linecap property.">
+            <Field Name="BUTT" Value="D2D1_CAP_STYLE_FLAT" NumericalValue="0" Comment="
+                The property is set to SVG's 'butt' value."/>
+            <Field Name="SQUARE" Value="D2D1_CAP_STYLE_SQUARE" NumericalValue="1" Comment="
+                The property is set to SVG's 'square' value."/>
+            <Field Name="ROUND" Value="D2D1_CAP_STYLE_ROUND" NumericalValue="2" Comment="
+                The property is set to SVG's 'round' value."/>
+        </Enum>
+
+        <Enum Name="SVG_LINE_JOIN" Comment="Specifies a value for the SVG stroke-linejoin property.">
+            <Field Name="BEVEL" Value="D2D1_LINE_JOIN_BEVEL" NumericalValue="1" Comment="
+                The property is set to SVG's 'bevel' value."/>
+            <Field Name="MITER" Value="D2D1_LINE_JOIN_MITER_OR_BEVEL" NumericalValue="3" Comment="
+                The property is set to SVG's 'miter' value.
+                Note that this is equivalent to D2D1_LINE_JOIN_MITER_OR_BEVEL, not D2D1_LINE_JOIN_MITER."/>
+            <Field Name="ROUND" Value="D2D1_LINE_JOIN_ROUND" NumericalValue="2" Comment="\
+                The property is set to SVG's 'round' value."/>
+        </Enum>
+        
+        <Enum Name="SVG_ASPECT_ALIGN" Comment="The alignment portion of the SVG preserveAspectRatio attribute.">
+            <Field Name="NONE" Value="0" Comment="
+                The alignment is set to SVG's 'none' value."/>
+            <Field Name="X_MIN_Y_MIN" Value="1" Comment="
+                The alignment is set to SVG's 'xMinYMin' value."/>
+            <Field Name="X_MID_Y_MIN" Value="2" Comment="
+                The alignment is set to SVG's 'xMidYMin' value."/>
+            <Field Name="X_MAX_Y_MIN" Value="3" Comment="
+                The alignment is set to SVG's 'xMaxYMin' value."/>
+            <Field Name="X_MIN_Y_MID" Value="4" Comment="
+                The alignment is set to SVG's 'xMinYMid' value."/>
+            <Field Name="X_MID_Y_MID" Value="5" Comment="
+                The alignment is set to SVG's 'xMidYMid' value."/>
+            <Field Name="X_MAX_Y_MID" Value="6" Comment="
+                The alignment is set to SVG's 'xMaxYMid' value."/>
+            <Field Name="X_MIN_Y_MAX" Value="7" Comment="
+                The alignment is set to SVG's 'xMinYMax' value."/>
+            <Field Name="X_MID_Y_MAX" Value="8" Comment="
+                The alignment is set to SVG's 'xMidYMax' value."/>
+            <Field Name="X_MAX_Y_MAX" Value="9" Comment="
+                The alignment is set to SVG's 'xMaxYMax' value."/>
+        </Enum>
+        
+        <Enum Name="SVG_ASPECT_SCALING" Comment="The meetOrSlice portion of the SVG preserveAspectRatio attribute.">
+            <Field Name="MEET" Value="0" Comment="
+                Scale the viewBox up as much as possible such that the entire viewBox is visible within the viewport."/>
+            <Field Name="SLICE" Value="1" Comment="
+                Scale the viewBox down as much as possible such that the entire viewport is covered by the viewBox."/>
+        </Enum>
+        
+        <Enum Name="SVG_PATH_COMMAND" Comment="
+            Represents a path commmand.
+            Each command may reference floats from the segment data.
+            Commands ending in _ABSOLUTE interpret data as absolute coordinate.
+            Commands ending in _RELATIVE interpret data as being relative to the previous point.">
+            <Field Name="CLOSE_PATH" Value="0" Comment="
+                Closes the current subpath.
+                Uses no segment data."/>
+            <Field Name="MOVE_ABSOLUTE" Value="1" Comment="
+                Starts a new subpath at the coordinate (x y).
+                Uses 2 floats of segment data."/>
+            <Field Name="MOVE_RELATIVE" Value="2" Comment="
+                Starts a new subpath at the coordinate (x y).
+                Uses 2 floats of segment data."/>
+            <Field Name="LINE_ABSOLUTE" Value="3" Comment="
+                Draws a line to the coordinate (x y).
+                Uses 2 floats of segment data."/>
+            <Field Name="LINE_RELATIVE" Value="4" Comment="
+                Draws a line to the coordinate (x y).
+                Uses 2 floats of segment data."/>
+            <Field Name="CUBIC_ABSOLUTE" Value="5" Comment="
+                Draws a cubic Bezier curve (x1 y1 x2 y2 x y).
+                The curve ends at (x, y) and is defined by the two control points (x1, y1) and (x2, y2).
+                Uses 6 floats of segment data." />
+            <Field Name="CUBIC_RELATIVE" Value="6" Comment="
+                Draws a cubic Bezier curve (x1 y1 x2 y2 x y).
+                The curve ends at (x, y) and is defined by the two control points (x1, y1) and (x2, y2).
+                Uses 6 floats of segment data."/>
+            <Field Name="QUADRADIC_ABSOLUTE" Value="7" Comment="
+                Draws a quadratic Bezier curve (x1 y1 x y).
+                The curve ends at (x, y) and is defined by the control point (x1 y1).
+                Uses 4 floats of segment data."/>
+            <Field Name="QUADRADIC_RELATIVE" Value="8" Comment="
+                Draws a quadratic Bezier curve (x1 y1 x y).
+                The curve ends at (x, y) and is defined by the control point (x1 y1).
+                Uses 4 floats of segment data."/>
+            <Field Name="ARC_ABSOLUTE" Value="9" Comment="
+                Draws an elliptical arc (rx ry x-axis-rotation large-arc-flag sweep-flag x y).
+                The curve ends at (x, y) and is defined by the arc parameters. The two flags
+                are considered set if their values are non-zero.
+                Uses 7 floats of segment data."/>
+            <Field Name="ARC_RELATIVE" Value="10" Comment="
+                Draws an elliptical arc (rx ry x-axis-rotation large-arc-flag sweep-flag x y).
+                The curve ends at (x, y) and is defined by the arc parameters. The two flags
+                are considered set if their values are non-zero.
+                Uses 7 floats of segment data."/>
+            <Field Name="HORIZONTAL_ABSOLUTE" Value="11" Comment="
+                Draws a horizontal line to the coordinate (x).
+                Uses 1 float of segment data."/>
+            <Field Name="HORIZONTAL_RELATIVE" Value="12" Comment="
+                Draws a horizontal line to the coordinate (x).
+                Uses 1 float of segment data."/>
+            <Field Name="VERTICAL_ABSOLUTE" Value="13" Comment="
+                Draws a vertical line to the coordinate (y).
+                Uses 1 float of segment data."/>
+            <Field Name="VERTICAL_RELATIVE" Value="14" Comment="
+                Draws a vertical line to the coordinate (y).
+                Uses 1 float of segment data."/>
+            <Field Name="CUBIC_SMOOTH_ABSOLUTE" Value="15" Comment="
+                Draws a smooth cubic Bezier curve (x2 y2 x y).
+                The curve ends at (x, y) and is defined by the control point (x2, y2).
+                Uses 4 floats of segment data."/>
+            <Field Name="CUBIC_SMOOTH_RELATIVE" Value="16" Comment="
+                Draws a smooth cubic Bezier curve (x2 y2 x y).
+                The curve ends at (x, y) and is defined by the control point (x2, y2).
+                Uses 4 floats of segment data."/>
+            <Field Name="QUADRADIC_SMOOTH_ABSOLUTE" Value="17" Comment="
+                Draws a smooth quadratic Bezier curve ending at (x, y).
+                Uses 2 floats of segment data."/>
+            <Field Name="QUADRADIC_SMOOTH_RELATIVE" Value="18" Comment="
+                Draws a smooth quadratic Bezier curve ending at (x, y).
+                Uses 2 floats of segment data."/>
+        </Enum>
+        
+        <Enum Name="SVG_UNIT_TYPE" Comment="Defines the coordinate system used for SVG gradient or clipPath elements.">
+            <Field Name="USER_SPACE_ON_USE" Value="0" Comment="
+                The property is set to SVG's 'userSpaceOnUse' value."/>
+            <Field Name="OBJECT_BOUNDING_BOX" Value="1" Comment="
+                The property is set to SVG's 'objectBoundingBox' value."/>
+        </Enum>
+
+        <Enum Name="SVG_ATTRIBUTE_STRING_TYPE" Comment="Defines the type of SVG string attribute to set or get.">
+            <Field Name="SVG" Value="0" Comment="
+                The attribute is a string in the same form as it would appear in the SVG XML.
+
+                Note that when getting values of this type, the value returned may not exactly
+                match the value that was set. Instead, the output value is a normalized version
+                of the value. For example, an input color of 'red' may be output as '#FF0000'."/>
+            <Field Name="ID" Value="1" Comment="
+                The attribute is an element ID."/>
+        </Enum>
+
+        <Enum Name="SVG_ATTRIBUTE_POD_TYPE" Comment="Defines the type of SVG POD attribute to set or get.">
+            <Field Name="FLOAT" Value="0" Comment="
+                The attribute is a FLOAT."/>
+            <Field Name="COLOR" Value="1" Comment="
+                The attribute is a D2D1_COLOR_F."/>
+            <Field Name="FILL_MODE" Value="2" Comment="
+                The attribute is a D2D1_FILL_MODE."/>
+            <Field Name="DISPLAY" Value="3" Comment="
+                The attribute is a D2D1_SVG_DISPLAY."/>
+            <Field Name="OVERFLOW" Value="4" Comment="
+                The attribute is a D2D1_SVG_OVERFLOW."/>
+            <Field Name="LINE_CAP" Value="5" Comment="
+                The attribute is a D2D1_SVG_LINE_CAP."/>
+            <Field Name="LINE_JOIN" Value="6" Comment="
+                The attribute is a D2D1_SVG_LINE_JOIN."/>
+            <Field Name="VISIBILITY" Value="7" Comment="
+                The attribute is a D2D1_SVG_VISIBILITY."/>
+            <Field Name="MATRIX" Value="8" Comment="
+                The attribute is a D2D1_MATRIX_3X2_F."/>
+            <Field Name="UNIT_TYPE" Value="9" Comment="
+                The attribute is a D2D1_SVG_UNIT_TYPE."/>
+            <Field Name="EXTEND_MODE" Value="10" Comment="
+                The attribute is a D2D1_EXTEND_MODE."/>
+            <Field Name="PRESERVE_ASPECT_RATIO" Value="11" Comment="
+                The attribute is a D2D1_SVG_PRESERVE_ASPECT_RATIO."/>
+            <Field Name="VIEWBOX" Value="12" Comment="
+                The attribute is a D2D1_SVG_VIEWBOX."/>
+            <Field Name="LENGTH" Value="13" Comment="
+                The attribute is a D2D1_SVG_LENGTH."/>
+        </Enum>
+
+        <Struct Name="SVG_LENGTH" Comment="Represents an SVG length.">
+            <Field Name="value" Type="FLOAT"/>
+            <Field Name="units" Type="D2D1::SVG_LENGTH_UNITS"/>
+        </Struct>
+       
+        <Struct Name="SVG_PRESERVE_ASPECT_RATIO" Comment="Represents all SVG preserveAspectRatio settings.">
+            <Field Name="defer" Type="BOOL" Comment="
+                Sets the 'defer' portion of the preserveAspectRatio settings.
+                This field only has an effect on an 'image' element that references another SVG document.
+                As this is not currently supported, the field has no impact on rendering."/>
+            <Field Name="align" Type="D2D1::SVG_ASPECT_ALIGN" Comment="
+                Sets the align portion of the preserveAspectRatio settings."/>
+            <Field Name="meetOrSlice" Type="D2D1::SVG_ASPECT_SCALING" Comment="
+                Sets the meetOrSlice portion of the preserveAspectRatio settings."/>
+        </Struct>
+
+        <Struct Name="SVG_VIEWBOX" Comment="Represents an SVG viewBox.">
+            <Field Name="x" Type="FLOAT"/>
+            <Field Name="y" Type="FLOAT"/>
+            <Field Name="width" Type="FLOAT"/>
+            <Field Name="height" Type="FLOAT"/>
+        </Struct>
+
+        <Interface Name="ISvgAttribute" Extends="D2D1::IResource" IID="c9cdb0dd-f8c9-4e70-b7c2-301c80292c5e" Comment="
+            Interface describing an SVG attribute.">
+            <Method Name="GetElement" Return="void" Comment="Returns the element on which this attribute is set. Returns null if the attribute is not set on any element.">
+                <Parameter Name="element" Type="D2D1::ISvgElement" Form="deref out opt pointer"/>
+            </Method>
+
+            <Method Name="Clone" Comment="Creates a clone of this attribute value. On creation, the cloned attribute is not set on any element.">
+                <Parameter Name="attribute" Type="D2D1::ISvgAttribute" Form="deref out pointer com"/>
+            </Method>
+        </Interface>
+
+        <Interface Name="ISvgPaint" Extends="D2D1::ISvgAttribute" IID="d59bab0a-68a2-455b-a5dc-9eb2854e2490" Comment="
+            Interface describing an SVG 'fill' or 'stroke' value.">
+            
+            <Method Name="SetPaintType" Comment="
+                Sets the paint type.">
+                <Parameter Name="paintType" Type="D2D1::SVG_PAINT_TYPE"/>
+            </Method>
+
+            <Method Name="GetPaintType" Return="D2D1::SVG_PAINT_TYPE" Comment="
+                Gets the paint type."/>
+
+            <Method Name="SetColor" Comment="
+                Sets the paint color that is used if the paint type is D2D1_SVG_PAINT_TYPE_COLOR.">
+                <Parameter Name="color" Type="D2D1::COLOR_F" Form="pointer"/>
+            </Method>
+
+            <Method Name="SetColor" OverloadId="1" Comment="
+                Sets the paint color that is used if the paint type is D2D1_SVG_PAINT_TYPE_COLOR.">
+                <Parameter Name="color" Type="D2D1::COLOR_F" Form="reference"/>
+            </Method>
+
+            <Method Name="GetColor" Return="void" Comment="
+                Gets the paint color that is used if the paint type is D2D1_SVG_PAINT_TYPE_COLOR.">
+                <Parameter Name="color" Type="D2D1::COLOR_F" Form="out pointer"/>
+            </Method>
+
+            <Method Name="SetId" Comment="
+                Sets the element id which acts as the paint server. This id is used
+                if the paint type is D2D1_SVG_PAINT_TYPE_URI.">
+                <Parameter Name="id" Type="PCWSTR" Form="in"/>
+            </Method>
+
+            <Method Name="GetId" Comment="
+                Gets the element id which acts as the paint server. This id is used
+                if the paint type is D2D1_SVG_PAINT_TYPE_URI.">
+                <Parameter Name="id" Type="PWSTR" Form="out" IsArray="true"/>
+            </Method>
+
+            <Method Name="GetIdLength" Return="UINT32" Comment="
+                Gets the string length of the element id which acts as the paint server. This id is used
+                if the paint type is D2D1_SVG_PAINT_TYPE_URI.
+                The returned string length does not include room for the null terminator."/>
+        </Interface>
+
+            
+        <Interface Name="ISvgStrokeDashArray" Extends="D2D1::ISvgAttribute" IID="f1c0ca52-92a3-4f00-b4ce-f35691efd9d9" Comment="
+            Interface describing an SVG 'stroke-dasharray' value.">
+
+            <Method Name="RemoveDashesAtEnd" Comment="
+                Removes dashes from the end of the array.">
+                <Parameter Name="dashesCount" Type="UINT32" Comment="Specifies how many dashes to remove."/>
+            </Method>
+
+            <Method Name="UpdateDashes" Comment="
+                Updates the array. Existing dashes not updated by this method are preserved.
+                The array is resized larger if necessary to accomodate the new dashes.">
+                <Parameter Name="dashes" Type="FLOAT" Form="pointer" IsArray="true"
+                           Comment="The dashes array."
+                           LengthComment="The number of dashes to update."/>
+                <Parameter Name="startIndex" Type="UINT32" Default="0"  Comment="
+                    The index at which to begin updating dashes.
+                    Must be less than or equal to the size of the array."/>
+            </Method>
+
+            <Method Name="UpdateDashes" Comment="
+                Updates the array. Existing dashes not updated by this method are preserved.
+                The array is resized larger if necessary to accomodate the new dashes.">
+                <Parameter Name="dashes" Type="D2D1::SVG_LENGTH" Form="pointer" IsArray="true"
+                           Comment="The dashes array."
+                           LengthComment="The number of dashes to update."/>
+                <Parameter Name="startIndex" Type="UINT32" Default="0"  Comment="
+                    The index at which to begin updating dashes.
+                    Must be less than or equal to the size of the array."/>
+            </Method>
+
+            <Method Name="GetDashes" Comment="
+                Gets dashes from the array.">
+                <Parameter Name="dashes" Type="FLOAT" Form="out pointer" IsArray="true"
+                           Comment="Buffer to contain the dashes."
+                           LengthComment="The element count of buffer."/>
+                <Parameter Name="startIndex" Type="UINT32" Default="0" Comment="The index of the first dash to retrieve."/>
+            </Method>
+
+            <Method Name="GetDashes" Comment="
+                Gets dashes from the array.">
+                <Parameter Name="dashes" Type="D2D1::SVG_LENGTH" Form="out pointer" IsArray="true"
+                           Comment="Buffer to contain the dashes."
+                           LengthComment="The element count of buffer."/>
+                <Parameter Name="startIndex" Type="UINT32" Default="0" Comment="The index of the first dash to retrieve."/>
+            </Method>
+
+            <Method Name="GetDashesCount" Return="UINT32" Comment="
+                Gets the number of the dashes in the array."/>
+        </Interface>
+
+        <Interface Name="ISvgPointCollection" Extends="D2D1::ISvgAttribute" IID="9dbe4c0d-3572-4dd9-9825-5530813bb712" Comment="
+            Interface describing an SVG 'points' value in a 'polyline' or 'polygon' element.">
+            
+            <Method Name="RemovePointsAtEnd" Comment="
+                Removes points from the end of the array.">
+                <Parameter Name="pointsCount" Type="UINT32" Comment="Specifies how many points to remove."/>
+            </Method>
+
+            <Method Name="UpdatePoints" Comment="
+                Updates the points array. Existing points not updated by this method are preserved.
+                The array is resized larger if necessary to accomodate the new points.">
+                <Parameter Name="points" Type="D2D1::POINT_2F" Form="pointer" IsArray="true"
+                           Comment="The points array."
+                           LengthComment="The number of points to update."/>
+                <Parameter Name="startIndex" Type="UINT32" Default="0"  Comment="
+                    The index at which to begin updating points.
+                    Must be less than or equal to the size of the array."/>
+            </Method>
+
+            <Method Name="GetPoints" Comment="
+                Gets points from the points array.">
+                <Parameter Name="points" Type="D2D1::POINT_2F" Form="out pointer" IsArray="true"
+                           Comment="Buffer to contain the points."
+                           LengthComment="The element count of the buffer."/>
+                <Parameter Name="startIndex" Type="UINT32" Default="0" Comment="The index of the first point to retrieve."/>
+            </Method>
+
+            <Method Name="GetPointsCount" Return="UINT32" Comment="
+                Gets the number of points in the array."/>
+        </Interface>
+
+        <Interface Name="ISvgPathData" Extends="D2D1::ISvgAttribute" IID="c095e4f4-bb98-43d6-9745-4d1b84ec9888" Comment="
+            Interface describing SVG path data. Path data can be set as the 'd' attribute on a 'path' element.
+            
+            The path data set is factored into two arrays. The segment data array
+            stores all numbers and the commands array stores the set of commands. Unlike the
+            string data set in the d attribute, each command in this representation uses a fixed
+            number of elements in the segment data array. Therefore, the path 'M 0,0 100,0 0,100 Z'
+            is represented as: 'M0,0 L100,0 L0,100 Z'. This is split into two arrays, with the
+            segment data containing '0,0 100,0 0,100', and the commands containing 'M L L Z'.">
+            
+            <Method Name="RemoveSegmentDataAtEnd" Comment="
+                Removes data from the end of the segment data array.">
+                <Parameter Name="dataCount" Type="UINT32" Comment="Specifies how much data to remove."/>
+            </Method>
+
+            <Method Name="UpdateSegmentData" Comment="
+                Updates the segment data array. Existing segment data not updated by this method are preserved.
+                The array is resized larger if necessary to accomodate the new segment data.">
+                <Parameter Name="data" Type="FLOAT" Form="pointer" IsArray="true"
+                           Comment="The data array."
+                           LengthComment="The number of data to update."/>
+                <Parameter Name="startIndex" Type="UINT32" Default="0"  Comment="The index at which to begin updating segment data.
+                           Must be less than or equal to the size of the segment data array."/>
+            </Method>
+
+            <Method Name="GetSegmentData" Comment="
+                Gets data from the segment data array.">
+                <Parameter Name="data" Type="FLOAT" Form="out pointer" IsArray="true"
+                           Comment="Buffer to contain the segment data array."
+                           LengthComment="The element count of the buffer."/>
+                <Parameter Name="startIndex" Type="UINT32" Default="0" Comment="The index of the first segment data to retrieve."/>
+            </Method>
+
+            <Method Name="GetSegmentDataCount" Return="UINT32" Comment="
+                Gets the size of the segment data array."/>
+            
+            <Method Name="RemoveCommandsAtEnd" Comment="
+                Removes commands from the end of the commands array.">
+                <Parameter Name="commandsCount" Type="UINT32" Comment="Specifies how many commands to remove."/>
+            </Method>
+
+            <Method Name="UpdateCommands" Comment="
+                Updates the commands array. Existing commands not updated by this method are preserved.
+                The array is resized larger if necessary to accomodate the new commands.">
+                <Parameter Name="commands" Type="D2D1::SVG_PATH_COMMAND" Form="pointer" IsArray="true"
+                           Comment="The commands array."
+                           LengthComment="The number of commands to update."/>
+                <Parameter Name="startIndex" Type="UINT32" Default="0"  Comment="The index at which to begin updating commands.
+                           Must be less than or equal to the size of the commands array."/>
+            </Method>
+
+            <Method Name="GetCommands" Comment="
+                Gets commands from the commands array.">
+                <Parameter Name="commands" Type="D2D1::SVG_PATH_COMMAND" Form="out pointer" IsArray="true"
+                           Comment="Buffer to contain the commands"
+                           LengthComment="The element count of the buffer."/>
+                <Parameter Name="startIndex" Type="UINT32" Default="0" Comment="The index of the first commands to retrieve."/>
+            </Method>
+
+            <Method Name="GetCommandsCount" Return="UINT32" Comment="
+                Gets the size of the commands array."/>
+        
+            <Method Name="CreatePathGeometry" Comment="
+                Creates a path geometry object representing the path data.">
+                <Parameter Name="fillMode" Type="D2D1::FILL_MODE"/>
+                <Parameter Name="pathGeometry" Type="D2D1::IPathGeometry1" Form="deref out pointer com"/>
+            </Method>
+        </Interface>
+
+        <Interface Name="ISvgElement" Extends="D2D1::IResource" IID="ac7b67a6-183e-49c1-a823-0ebe40b0db29" Comment="
+            Interface for all SVG elements.">
+        
+            <Method Name="GetDocument" Return="void" Comment="
+                Gets the document that contains this element. Returns null if the element has been removed from the tree.">
+                <Parameter Name="document" Type="D2D1::ISvgDocument" Form="deref out opt pointer"/>
+            </Method>
+        
+            <Method Name="GetTagName" Comment="Gets the tag name.">
+                <Parameter Name="name" Type="PWSTR" Form="out" IsArray="true"/>
+            </Method>
+        
+            <Method Name="GetTagNameLength" Return="UINT32" Comment="
+                Gets the string length of the tag name.
+                The returned string length does not include room for the null terminator."/>
+        
+            <Method Name="IsTextContent" Return="BOOL" Comment="
+                Returns TRUE if this element represents text content, e.g. the content of a 'title' or 'desc' element.
+                Text content does not have a tag name."/>
+            
+            <Method Name="GetParent" Return="void" Comment="Gets the parent element.">
+                <Parameter Name="parent" Type="D2D1::ISvgElement" Form="deref out opt pointer"/>
+            </Method>
+            
+            <Method Name="HasChildren" Return="BOOL" Comment="Returns whether this element has children."/>
+
+            <Method Name="GetFirstChild" Return="void" Comment="Gets the first child of this element.">
+                <Parameter Name="child" Type="D2D1::ISvgElement" Form="deref out opt pointer"/>
+            </Method>
+
+            <Method Name="GetLastChild" Return="void" Comment="Gets the last child of this element.">
+                <Parameter Name="child" Type="D2D1::ISvgElement" Form="deref out opt pointer"/>
+            </Method>
+
+            <Method Name="GetPreviousChild" Comment="Gets the previous sibling of the referenceChild element.">
+                <Parameter Name="referenceChild" Type="D2D1::ISvgElement" Form="pointer" Comment="
+                    The referenceChild must be an immediate child of this element."/>
+                <Parameter Name="previousChild" Type="D2D1::ISvgElement" Form="deref out opt pointer com" Comment="
+                    The output previousChild element will be non-null if the referenceChild has a previous
+                    sibling. If the referenceChild is the first child, the output is null."/>
+            </Method>
+
+            <Method Name="GetNextChild" Comment="Gets the next sibling of the referenceChild element.">
+                <Parameter Name="referenceChild" Type="D2D1::ISvgElement" Form="pointer" Comment="
+                    The referenceChild must be an immediate child of this element."/>
+                <Parameter Name="nextChild" Type="D2D1::ISvgElement" Form="deref out opt pointer com" Comment="
+                    The output nextChild element will be non-null if the referenceChild has a next
+                    sibling. If the referenceChild is the last child, the output is null."/>
+            </Method>
+
+            <Method Name="InsertChildBefore" Comment="
+                Inserts newChild as a child of this element, before the referenceChild element.
+                If the newChild element already has a parent, it is removed from this parent as part of the insertion.
+                Returns an error if this element cannot accept children of the type of newChild.
+                Returns an error if the newChild is an ancestor of this element.">
+                <Parameter Name="newChild" Type="D2D1::ISvgElement" Form="pointer" Comment="The element to be inserted."/>
+                <Parameter Name="referenceChild" Type="D2D1::ISvgElement" Form="pointer opt" Default="NULL" Comment="
+                    The element that the child should be inserted before.
+                    If referenceChild is null, the newChild is placed as the last child.
+                    If referenceChild is non-null, it must be an immediate child of this element."/>
+            </Method>
+
+            <Method Name="AppendChild" Comment="
+                Appends newChild to the list of children.
+                If the newChild element already has a parent, it is removed from this parent as part of the append operation.
+                Returns an error if this element cannot accept children of the type of newChild.
+                Returns an error if the newChild is an ancestor of this element.">
+                <Parameter Name="newChild" Type="D2D1::ISvgElement" Form="pointer" Comment="The element to be appended."/>
+            </Method>
+
+            <Method Name="ReplaceChild" Comment="
+                Replaces the oldChild element with the newChild. This operation removes the oldChild from the tree.
+                If the newChild element already has a parent, it is removed from this parent as part of the replace operation.
+                Returns an error if this element cannot accept children of the type of newChild.
+                Returns an error if the newChild is an ancestor of this element.">
+                <Parameter Name="newChild" Type="D2D1::ISvgElement" Form="pointer" Comment="The element to be inserted."/>
+                <Parameter Name="oldChild" Type="D2D1::ISvgElement" Form="pointer" Comment="
+                    The child element to be replaced.
+                    The oldChild element must be an immediate child of this element."/>
+            </Method>
+
+            <Method Name="RemoveChild" Comment="
+                Removes the oldChild from the tree. Children of oldChild remain children of oldChild.">
+                <Parameter Name="oldChild" Type="D2D1::ISvgElement" Form="pointer" Comment="
+                    The child element to be removed.
+                    The oldChild element must be an immediate child of this element."/>
+            </Method>
+
+            <Method Name="CreateChild" Comment="
+                Creates an element from a tag name.
+                The element is appended to the list of children.
+                Returns an error if this element cannot accept children of the specified type.">
+                <Parameter Name="tagName" Type="PCWSTR" Form="in opt" Comment="
+                    The tag name of the new child.
+                    A NULL tagName or an empty string is interpreted to be a text content element."/>
+                <Parameter Name="newChild" Type="D2D1::ISvgElement" Form="deref out pointer com" Comment="The new child element."/>
+            </Method>
+
+            <Method Name="IsAttributeSpecified" Return="BOOL" Comment="
+                Returns true if the attribute is explicitly set on the element
+                or if it is present within an inline style. Returns FALSE if the
+                attribute is not a valid attribute on this element.">
+                <Parameter Name="name" Type="PCWSTR" Form="in" Comment="
+                    The name of the attribute."/>
+                <Parameter Name="inherited" Type="BOOL" Form="out pointer opt" Default="NULL" Comment="
+                    Outputs whether the attribute is set to the 'inherit' value."/>
+            </Method>
+            
+            <Method Name="GetSpecifiedAttributeCount" Return="UINT32" Comment="
+                Returns the number of specified attributes on this element.
+                Attributes are only considered specified if they are explicitly set
+                on the element or present within an inline style. Properties that
+                receive their value through CSS inheritance are not considered specified.
+                An attribute can become specified if it is set through a method call. It can
+                become unspecified if it is removed via RemoveAttribute."/>
+            
+            <Method Name="GetSpecifiedAttributeName" Comment="
+                Gets the name of the specified attribute at the given index.">
+                <Parameter Name="index" Type="UINT32" Comment="
+                    The specified index of the attribute."/>
+                <Parameter Name="name" Type="PWSTR" Form="out" IsArray="true" Comment="
+                    Outputs the name of the attribute."/>
+                <Parameter Name="inherited" Type="BOOL" Form="out pointer opt" Default="NULL" Comment="
+                    Outputs whether the attribute is set to the 'inherit' value."/>
+            </Method>
+            
+            <Method Name="GetSpecifiedAttributeNameLength" Comment="
+                Gets the string length of the name of the specified attribute at the given index.
+                The output string length does not include room for the null terminator.">
+                <Parameter Name="index" Type="UINT32" Comment="
+                    The specified index of the attribute."/>
+                <Parameter Name="nameLength" Type="UINT32" Form="out pointer" Comment="
+                    Outputs the string length of the name of the specified attribute."/>
+                <Parameter Name="inherited" Type="BOOL" Form="out pointer opt" Default="NULL" Comment="
+                    Outputs whether the attribute is set to the 'inherit' value."/>
+            </Method>
+            
+            <Method Name="RemoveAttribute" Comment="
+                Removes the attribute from this element. Also removes this attribute from
+                within an inline style if present.
+                Returns an error if the attribute name is not valid on this element.">
+                <Parameter Name="name" Type="PCWSTR" Form="in"/>
+            </Method>
+
+            <Method Name="SetTextValue" Comment="Sets the value of a text content element.">
+                <Parameter Name="name" Type="WCHAR" Form="pointer" IsArray="true"/>
+            </Method>
+
+            <Method Name="GetTextValue" Comment="Gets the value of a text content element.">
+                <Parameter Name="name" Type="PWSTR" Form="out" IsArray="true"/>
+            </Method>
+        
+            <Method Name="GetTextValueLength" Return="UINT32" Comment="
+                Gets the length of the text content value.
+                The returned string length does not include room for the null terminator."/>
+            
+            <Method Name="SetAttributeValue" Comment="
+                Sets an attribute of this element using a string.
+                Returns an error if the attribute name is not valid on this element.
+                Returns an error if the attribute cannot be expressed as the specified type.">
+                <Parameter Name="name" Type="PCWSTR" Form="in"/>
+                <Parameter Name="type" Type="D2D1::SVG_ATTRIBUTE_STRING_TYPE"/>
+                <Parameter Name="value" Type="PCWSTR" Form="in"/>
+            </Method>
+        
+            <Method Name="GetAttributeValue" DebugId="String" Comment="
+                Gets an attribute of this element as a string.
+                Returns an error if the attribute is not specified.
+                Returns an error if the attribute name is not valid on this element.
+                Returns an error if the attribute cannot be expressed as the specified string type.">
+                <Parameter Name="name" Type="PCWSTR" Form="in"/>
+                <Parameter Name="type" Type="D2D1::SVG_ATTRIBUTE_STRING_TYPE"/>
+                <Parameter Name="value" Type="PWSTR" Form="out" IsArray="true"/>
+            </Method>
+        
+            <Method Name="GetAttributeValueLength" Comment="
+                Gets the string length of an attribute of this element.
+                The returned string length does not include room for the null terminator.
+                Returns an error if the attribute is not specified.
+                Returns an error if the attribute name is not valid on this element.
+                Returns an error if the attribute cannot be expressed as the specified string type.">
+                <Parameter Name="name" Type="PCWSTR" Form="in"/>
+                <Parameter Name="type" Type="D2D1::SVG_ATTRIBUTE_STRING_TYPE"/>
+                <Parameter Name="valueLength" Type="UINT32" Form="out pointer"/>
+            </Method>
+            
+            <Method Name="SetAttributeValue" Comment="
+                Sets an attribute of this element using a POD type.
+                Returns an error if the attribute name is not valid on this element.
+                Returns an error if the attribute cannot be expressed as the specified type.">
+                <Parameter Name="name" Type="PCWSTR" Form="in"/>
+                <Parameter Name="type" Type="D2D1::SVG_ATTRIBUTE_POD_TYPE"/>
+                <Parameter Name="value" Type="void" Form="pointer bcount" IsArray="true" LengthParameter="valueSizeInBytes"/>
+            </Method>
+        
+            <Method Name="GetAttributeValue" DebugId="POD" Comment="
+                Gets an attribute of this element as a POD type.
+                Returns an error if the attribute is not specified.
+                Returns an error if the attribute name is not valid on this element.
+                Returns an error if the attribute cannot be expressed as the specified POD type.">
+                <Parameter Name="name" Type="PCWSTR" Form="in"/>
+                <Parameter Name="type" Type="D2D1::SVG_ATTRIBUTE_POD_TYPE"/>
+                <Parameter Name="value" Type="void" Form="out bcount pointer" IsArray="true" LengthParameter="valueSizeInBytes"/>
+            </Method>
+            
+            <Method Name="SetAttributeValue" Comment="
+                Sets an attribute of this element using an interface.
+                Returns an error if the attribute name is not valid on this element.
+                Returns an error if the attribute cannot be expressed as the specified interface type.
+                Returns an error if the attribute object is already set on an element. A given
+                attribute object may only be set on one element in one attribute location at a time.">
+                <Parameter Name="name" Type="PCWSTR" Form="in"/>
+                <Parameter Name="value" Type="D2D1::ISvgAttribute" Form="pointer"/>
+            </Method>
+        
+            <Method Name="GetAttributeValue" DebugId="Interface" Comment="
+                Gets an attribute of this element as an interface type.
+                Returns an error if the attribute is not specified.
+                Returns an error if the attribute name is not valid on this element.
+                Returns an error if the attribute cannot be expressed as the specified interface type.">
+                <Parameter Name="name" Type="PCWSTR" Form="in"/>
+                <Parameter Name="riid" Type="REFIID" Form="in" Comment="The interface ID of the attribute value."/>
+                <Parameter Name="value" Type="void" Form="deref out opt pointer com"/>
+            </Method>
+
+            <Method Name="SetAttributeValue" OverloadId="FLOAT" Comment="
+                Sets an attribute of this element using a float.">
+                <Parameter Name="name" Type="PCWSTR" Form="in"/>
+                <Parameter Name="value" Type="FLOAT"/>
+            </Method>
+
+            <Method Name="GetAttributeValue" OverloadId="FLOAT" Comment="
+                Gets an attribute of this element as a float.">
+                <Parameter Name="name" Type="PCWSTR" Form="in"/>
+                <Parameter Name="value" Type="FLOAT" Form="out pointer"/>
+            </Method>
+
+            <Method Name="SetAttributeValue" OverloadId="COLOR" Comment="
+                Sets an attribute of this element as a color.">
+                <Parameter Name="name" Type="PCWSTR" Form="in"/>
+                <Parameter Name="value" Type="D2D1::COLOR_F" Form="reference"/>
+            </Method>
+
+            <Method Name="GetAttributeValue" OverloadId="COLOR" Comment="
+                Gets an attribute of this element as a color.">
+                <Parameter Name="name" Type="PCWSTR" Form="in"/>
+                <Parameter Name="value" Type="D2D1::COLOR_F" Form="out pointer"/>
+            </Method>
+
+            <Method Name="SetAttributeValue" OverloadId="FILL_MODE" Comment="
+                Sets an attribute of this element as a fill mode.
+                This method can be used to set the value of the 'fill-rule' or 'clip-rule' properties.">
+                <Parameter Name="name" Type="PCWSTR" Form="in"/>
+                <Parameter Name="value" Type="D2D1::FILL_MODE"/>
+            </Method>
+
+            <Method Name="GetAttributeValue" OverloadId="FILL_MODE" Comment="
+                Gets an attribute of this element as a fill mode.
+                This method can be used to get the value of the 'fill-rule' or 'clip-rule' properties.">
+                <Parameter Name="name" Type="PCWSTR" Form="in"/>
+                <Parameter Name="value" Type="D2D1::FILL_MODE" Form="out pointer"/>
+            </Method>
+
+            <Method Name="SetAttributeValue" OverloadId="DISPLAY" Comment="
+                Sets an attribute of this element as a display value.
+                This method can be used to set the value of the 'display' property.">
+                <Parameter Name="name" Type="PCWSTR" Form="in"/>
+                <Parameter Name="value" Type="D2D1::SVG_DISPLAY"/>
+            </Method>
+
+            <Method Name="GetAttributeValue" OverloadId="DISPLAY" Comment="
+                Gets an attribute of this element as a display value.
+                This method can be used to get the value of the 'display' property.">
+                <Parameter Name="name" Type="PCWSTR" Form="in"/>
+                <Parameter Name="value" Type="D2D1::SVG_DISPLAY" Form="out pointer"/>
+            </Method>
+
+            <Method Name="SetAttributeValue" OverloadId="OVERFLOW" Comment="
+                Sets an attribute of this element as an overflow value.
+                This method can be used to set the value of the 'overflow' property.">
+                <Parameter Name="name" Type="PCWSTR" Form="in"/>
+                <Parameter Name="value" Type="D2D1::SVG_OVERFLOW"/>
+            </Method>
+
+            <Method Name="GetAttributeValue" OverloadId="OVERFLOW" Comment="
+                Gets an attribute of this element as an overflow value.
+                This method can be used to get the value of the 'overflow' property.">
+                <Parameter Name="name" Type="PCWSTR" Form="in"/>
+                <Parameter Name="value" Type="D2D1::SVG_OVERFLOW" Form="out pointer"/>
+            </Method>
+
+            <Method Name="SetAttributeValue" OverloadId="LINE_CAP" Comment="
+                Sets an attribute of this element as a line cap value.
+                This method can be used to set the value of the 'stroke-linecap' property.">
+                <Parameter Name="name" Type="PCWSTR" Form="in"/>
+                <Parameter Name="value" Type="D2D1::SVG_LINE_CAP"/>
+            </Method>
+
+            <Method Name="GetAttributeValue" OverloadId="LINE_CAP" Comment="
+                Gets an attribute of this element as a line cap value.
+                This method can be used to get the value of the 'stroke-linecap' property.">
+                <Parameter Name="name" Type="PCWSTR" Form="in"/>
+                <Parameter Name="value" Type="D2D1::SVG_LINE_CAP" Form="out pointer"/>
+            </Method>
+
+            <Method Name="SetAttributeValue" OverloadId="LINE_JOIN" Comment="
+                Sets an attribute of this element as a line join value.
+                This method can be used to set the value of the 'stroke-linejoin' property.">
+                <Parameter Name="name" Type="PCWSTR" Form="in"/>
+                <Parameter Name="value" Type="D2D1::SVG_LINE_JOIN"/>
+            </Method>
+
+            <Method Name="GetAttributeValue" OverloadId="LINE_JOIN" Comment="
+                Gets an attribute of this element as a line join value.
+                This method can be used to get the value of the 'stroke-linejoin' property.">
+                <Parameter Name="name" Type="PCWSTR" Form="in"/>
+                <Parameter Name="value" Type="D2D1::SVG_LINE_JOIN" Form="out pointer"/>
+            </Method>
+
+            <Method Name="SetAttributeValue" OverloadId="VISIBILITY" Comment="
+                Sets an attribute of this element as a visibility value.
+                This method can be used to set the value of the 'visibility' property.">
+                <Parameter Name="name" Type="PCWSTR" Form="in"/>
+                <Parameter Name="value" Type="D2D1::SVG_VISIBILITY"/>
+            </Method>
+
+            <Method Name="GetAttributeValue" OverloadId="VISIBILITY" Comment="
+                Gets an attribute of this element as a visibility value.
+                This method can be used to get the value of the 'visibility' property.">
+                <Parameter Name="name" Type="PCWSTR" Form="in"/>
+                <Parameter Name="value" Type="D2D1::SVG_VISIBILITY" Form="out pointer"/>
+            </Method>
+
+            <Method Name="SetAttributeValue" OverloadId="MATRIX" Comment="
+                Sets an attribute of this element as a matrix value.
+                This method can be used to set the value of a 'transform' or 'gradientTransform' attribute.">
+                <Parameter Name="name" Type="PCWSTR" Form="in"/>
+                <Parameter Name="value" Type="D2D1::MATRIX_3X2_F" Form="reference"/>
+            </Method>
+
+            <Method Name="GetAttributeValue" OverloadId="MATRIX" Comment="
+                Gets an attribute of this element as a matrix value.
+                This method can be used to get the value of a 'transform' or 'gradientTransform' attribute.">
+                <Parameter Name="name" Type="PCWSTR" Form="in"/>
+                <Parameter Name="value" Type="D2D1::MATRIX_3X2_F" Form="out pointer"/>
+            </Method>
+
+            <Method Name="SetAttributeValue" OverloadId="UNIT_TYPE" Comment="
+                Sets an attribute of this element as a unit type value.
+                This method can be used to set the value of a 'gradientUnits' or 'clipPathUnits' attribute.">
+                <Parameter Name="name" Type="PCWSTR" Form="in"/>
+                <Parameter Name="value" Type="D2D1::SVG_UNIT_TYPE"/>
+            </Method>
+
+            <Method Name="GetAttributeValue" OverloadId="UNIT_TYPE" Comment="
+                Gets an attribute of this element as a unit type value.
+                This method can be used to get the value of a 'gradientUnits' or 'clipPathUnits' attribute.">
+                <Parameter Name="name" Type="PCWSTR" Form="in"/>
+                <Parameter Name="value" Type="D2D1::SVG_UNIT_TYPE" Form="out pointer"/>
+            </Method>
+
+            <Method Name="SetAttributeValue" OverloadId="EXTEND_MODE" Comment="
+                Sets an attribute of this element as an extend mode value.
+                This method can be used to set the value of a 'spreadMethod' attribute.">
+                <Parameter Name="name" Type="PCWSTR" Form="in"/>
+                <Parameter Name="value" Type="D2D1::EXTEND_MODE"/>
+            </Method>
+
+            <Method Name="GetAttributeValue" OverloadId="EXTEND_MODE" Comment="
+                Gets an attribute of this element as a extend mode value.
+                This method can be used to get the value of a 'spreadMethod' attribute.">
+                <Parameter Name="name" Type="PCWSTR" Form="in"/>
+                <Parameter Name="value" Type="D2D1::EXTEND_MODE" Form="out pointer"/>
+            </Method>
+
+            <Method Name="SetAttributeValue" OverloadId="PRESERVE_ASPECT_RATIO" Comment="
+                Sets an attribute of this element as a preserve aspect ratio value.
+                This method can be used to set the value of a 'preserveAspectRatio' attribute.">
+                <Parameter Name="name" Type="PCWSTR" Form="in"/>
+                <Parameter Name="value" Type="D2D1::SVG_PRESERVE_ASPECT_RATIO" Form="reference"/>
+            </Method>
+
+            <Method Name="GetAttributeValue" OverloadId="PRESERVE_ASPECT_RATIO" Comment="
+                Gets an attribute of this element as a preserve aspect ratio value.
+                This method can be used to get the value of a 'preserveAspectRatio' attribute.">
+                <Parameter Name="name" Type="PCWSTR" Form="in"/>
+                <Parameter Name="value" Type="D2D1::SVG_PRESERVE_ASPECT_RATIO" Form="out pointer"/>
+            </Method>
+
+            <Method Name="SetAttributeValue" OverloadId="VIEWBOX" Comment="
+                Sets an attribute of this element as a viewBox value.
+                This method can be used to set the value of a 'viewBox' attribute.">
+                <Parameter Name="name" Type="PCWSTR" Form="in"/>
+                <Parameter Name="value" Type="D2D1::SVG_VIEWBOX" Form="reference"/>
+            </Method>
+
+            <Method Name="GetAttributeValue" OverloadId="VIEWBOX" Comment="
+                Gets an attribute of this element as a viewBox value.
+                This method can be used to get the value of a 'viewBox' attribute.">
+                <Parameter Name="name" Type="PCWSTR" Form="in"/>
+                <Parameter Name="value" Type="D2D1::SVG_VIEWBOX" Form="out pointer"/>
+            </Method>
+
+            <Method Name="SetAttributeValue" OverloadId="LENGTH" Comment="
+                Sets an attribute of this element as a length value.">
+                <Parameter Name="name" Type="PCWSTR" Form="in"/>
+                <Parameter Name="value" Type="D2D1::SVG_LENGTH" Form="reference"/>
+            </Method>
+
+            <Method Name="GetAttributeValue" OverloadId="LENGTH" Comment="
+                Gets an attribute of this element as length value.">
+                <Parameter Name="name" Type="PCWSTR" Form="in"/>
+                <Parameter Name="value" Type="D2D1::SVG_LENGTH" Form="out pointer"/>
+            </Method>
+
+            <Method Name="GetAttributeValue" OverloadId="D2D1::ISvgAttribute" Comment="
+                Gets an attribute of this element.">
+                <Parameter Name="name" Type="PCWSTR" Form="in"/>
+                <Parameter Name="value" Type="D2D1::ISvgAttribute" Form="deref out opt pointer com"/>
+            </Method>
+
+            <Method Name="GetAttributeValue" OverloadId="D2D1::ISvgPaint" Comment="
+                Gets an attribute of this element as a paint.
+                This method can be used to get the value of the 'fill' or 'stroke' properties.">
+                <Parameter Name="name" Type="PCWSTR" Form="in"/>
+                <Parameter Name="value" Type="D2D1::ISvgPaint" Form="deref out opt pointer com"/>
+            </Method>
+
+            <Method Name="GetAttributeValue" OverloadId="D2D1::ISvgStrokeDashArray" Comment="
+                Gets an attribute of this element as a stroke dash array.
+                This method can be used to get the value of the 'stroke-dasharray' property.">
+                <Parameter Name="name" Type="PCWSTR" Form="in"/>
+                <Parameter Name="value" Type="D2D1::ISvgStrokeDashArray" Form="deref out opt pointer com"/>
+            </Method>
+
+            <Method Name="GetAttributeValue" OverloadId="D2D1::ISvgPointCollection" Comment="
+                Gets an attribute of this element as points.
+                This method can be used to get the value of the 'points' attribute on a 'polygon' or 'polyline' element.">
+                <Parameter Name="name" Type="PCWSTR" Form="in"/>
+                <Parameter Name="value" Type="D2D1::ISvgPointCollection" Form="deref out opt pointer com"/>
+            </Method>
+
+            <Method Name="GetAttributeValue" OverloadId="D2D1::ISvgPathData" Comment="
+                Gets an attribute of this element as path data.
+                This method can be used to get the value of the 'd' attribute on a 'path' element.">
+                <Parameter Name="name" Type="PCWSTR" Form="in"/>
+                <Parameter Name="value" Type="D2D1::ISvgPathData" Form="deref out opt pointer com"/>
+            </Method>
+        </Interface>
+
+        <Interface Name="ISvgDocument" Extends="D2D1::IResource" IID="86b88e4d-afa4-4d7b-88e4-68a51c4a0aec">
+            <Method Name="SetViewportSize" Comment="Sets the size of the initial viewport.">
+                <Parameter Name="viewportSize" Type="D2D1::SIZE_F"/>
+            </Method>
+            
+            <Method Name="GetViewportSize" Return="D2D1::SIZE_F" IsConst="true" Comment="Returns the size of the initial viewport." />
+            
+            <Method Name="SetRoot"
+                Comment="Sets the root element of the document.
+                         The root element must be an 'svg' element.
+                         If the element already exists within an svg tree, it is first removed.">
+                <Parameter Name="root" Type="D2D1::ISvgElement" Form="pointer opt"/>
+            </Method>
+            
+            <Method Name="GetRoot" Return="void"
+                Comment="Gets the root element of the document.">
+                <Parameter Name="root" Type="D2D1::ISvgElement" Form="deref out opt pointer"/>
+            </Method>
+            
+            <Method Name="FindElementById"
+                Comment="Gets the SVG element with the specified ID. If the element
+                         cannot be found, the returned element will be null.">
+                <Parameter Name="id" Type="PCWSTR" Form="in"/>
+                <Parameter Name="svgElement" Type="D2D1::ISvgElement" Form="deref out opt pointer com"/>
+            </Method>
+
+            <Method Name="Serialize" Comment="
+                Serializes an element and its subtree to XML. The output XML is encoded as UTF-8.">
+                <Parameter Name="outputXmlStream" Type="IStream" Form="pointer" Comment="
+                    An output stream to contain the SVG XML subtree."/>
+                <Parameter Name="subtree" Type="D2D1::ISvgElement" Form="pointer opt" Default="NULL" Comment="
+                    The root of the subtree. If null, the entire document is serialized."/>
+            </Method>
+
+            <Method Name="Deserialize" Comment="
+                Deserializes a subtree from the stream.
+                The stream must have only one root element, but that root element need not be an 'svg' element.
+                The output element is not inserted into this document tree.">
+                <Parameter Name="inputXmlStream" Type="IStream" Form="pointer" Comment="
+                    An input stream containing the SVG XML subtree."/>
+                <Parameter Name="subtree" Type="D2D1::ISvgElement" Form="deref out pointer com" Comment="The root of the subtree."/>
+            </Method>
+
+            <Method Name="CreatePaint" Comment="
+                Creates a paint object which can be used to set the 'fill' or 'stroke' properties.">
+                <Parameter Name="paintType" Type="D2D1::SVG_PAINT_TYPE"/>
+                <Parameter Name="color" Type="D2D1::COLOR_F" Form="pointer opt" Comment="
+                    The color used if the paintType is D2D1_SVG_PAINT_TYPE_COLOR."/>
+                <Parameter Name="id" Type="PCWSTR" Form="in opt" Comment="
+                    The element id which acts as the paint server. This id is used
+                    if the paint type is D2D1_SVG_PAINT_TYPE_URI."/>
+                <Parameter Name="paint" Type="D2D1::ISvgPaint" Form="deref out pointer com"/>
+            </Method>
+
+            <Method Name="CreatePaint" OverloadId="1" Comment="
+                Creates a paint object which can be used to set the 'fill' or 'stroke' properties.">
+                <Parameter Name="paintType" Type="D2D1::SVG_PAINT_TYPE"/>
+                <Parameter Name="color" Type="D2D1::COLOR_F" Form="reference" Comment="
+                    The color used if the paintType is D2D1_SVG_PAINT_TYPE_COLOR."/>
+                <Parameter Name="id" Type="PCWSTR" Form="in opt" Comment="
+                    The element id which acts as the paint server. This id is used
+                    if the paint type is D2D1_SVG_PAINT_TYPE_URI."/>
+                <Parameter Name="paint" Type="D2D1::ISvgPaint" Form="deref out pointer com"/>
+            </Method>
+
+            <Method Name="CreateStrokeDashArray" Comment="
+                Creates a dash array object which can be used to set the 'stroke-dasharray' property.">
+                <Parameter Name="dashes" Type="D2D1::SVG_LENGTH" Form="pointer opt" IsArray="true"/>
+                <Parameter Name="strokeDashArray" Type="D2D1::ISvgStrokeDashArray" Form="deref out pointer com"/>
+            </Method>
+
+            <Method Name="CreatePointCollection" Comment="
+                Creates a points object which can be used to set a 'points' attribute on a 'polygon' or 'polyline' element.">
+                <Parameter Name="points" Type="D2D1::POINT_2F" Form="pointer opt" IsArray="true"/>
+                <Parameter Name="pointCollection" Type="D2D1::ISvgPointCollection" Form="deref out pointer com"/>
+            </Method>
+
+            <Method Name="CreatePathData" Comment="
+                Creates a path data object which can be used to set a 'd' attribute on a 'path' element.">
+                <Parameter Name="segmentData" Type="FLOAT" Form="pointer opt" IsArray="true"/>
+                <Parameter Name="commands" Type="D2D1::SVG_PATH_COMMAND" Form="pointer opt" IsArray="true"/>
+                <Parameter Name="pathData" Type="D2D1::ISvgPathData" Form="deref out pointer com"/>
+            </Method>
+        </Interface>
+
+    </Namespace>
+
+</D2DTypes>

@@ -4,7 +4,6 @@ Copyright (c) Microsoft Corporation. All rights reserved.
 
 Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 -->
-
 <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  -->
 <!-- This file contains types defined in D2D1_3. This is maintained -->
 <!-- in a separate file to make it more clear what the new          -->
@@ -109,6 +108,26 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
           <Field Name="interpolationMode" Type="D2D1::INTERPOLATION_MODE" Comment="The interpolation mode used when the image source is drawn.  This is ignored if the image source is drawn using the DrawImage method, or using an image brush." />          
           <Field Name="options" Type="D2D1::TRANSFORMED_IMAGE_SOURCE_OPTIONS" Comment="Option flags." />
         </Struct>
+
+        <Enum Name="GAMMA1" Comment="This determines what gamma is used for interpolation/blending.">
+            <Field Name="G22"    Value="D2D1_GAMMA_2_2" Comment="Colors are manipulated in 2.2 gamma color space." NumericalValue="0"/>
+            <Field Name="G10"    Value="D2D1_GAMMA_1_0" Comment="Colors are manipulated in 1.0 gamma color space." NumericalValue="1"/>
+            <Field Name="G2084"  Value="2" Comment="Colors are manipulated in ST.2084 PQ gamma color space."/>
+        </Enum>
+
+        <Struct Name="SIMPLE_COLOR_PROFILE" Comment="Simple description of a color space.">
+            <Field Name="redPrimary" Type="D2D1::POINT_2F" Comment="The XY coordinates of the red primary in CIEXYZ space."/>
+            <Field Name="greenPrimary" Type="D2D1::POINT_2F" Comment="The XY coordinates of the green primary in CIEXYZ space."/>
+            <Field Name="bluePrimary" Type="D2D1::POINT_2F" Comment="The XY coordinates of the blue primary in CIEXYZ space."/>
+            <Field Name="whitePointXZ" Type="D2D1::POINT_2F" Comment="The X/Z tristimulus values for the whitepoint, normalized for relative luminance."/>
+            <Field Name="gamma" Type="D2D1::GAMMA1" Comment="The gamma encoding to use for this color space."/>
+        </Struct>
+
+        <Enum Name="COLOR_CONTEXT_TYPE" Comment="Specifies which way a color profile is defined.">
+            <Field Name="ICC" Value="0" />
+            <Field Name="SIMPLE" Value="1" />
+            <Field Name="DXGI" Value="2" />
+        </Enum>
 
         <Interface Name="IImageSource" Extends="D2D1::IImage" IID="c9b664e5-74a1-4378-9ac2-eefc37a3f4d8" Comment="Represents a producer of pixels that can fill an arbitrary 2D plane.">
             <Method Name="OfferResources" />
@@ -314,12 +333,12 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
                 <Parameter Name="wicBitmapSource" Type="IWICBitmapSource" Form="pointer" />
                 <Parameter Name="loadingOptions" Type="D2D1::IMAGE_SOURCE_LOADING_OPTIONS" />
                 <Parameter Name="imageSource" Type="D2D1::IImageSourceFromWic" Form="deref out pointer com" />
-            </Method>   
+            </Method>	
             
             <Method Name="CreateImageSourceFromWic" OverloadId="2">
                 <Parameter Name="wicBitmapSource" Type="IWICBitmapSource" Form="pointer" />
                 <Parameter Name="imageSource" Type="D2D1::IImageSourceFromWic" Form="deref out pointer com" />
-            </Method>   
+            </Method>	
 
             <Method Name="CreateLookupTable3D" Comment="Creates a 3D lookup table for mapping a 3-channel input to a 3-channel output. The table data must be provided in 4-channel format.">
                 <Parameter Name="precision" Type="D2D1::BUFFER_PRECISION" />
@@ -687,7 +706,73 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
                 <Parameter Name="glyphImage" Type="D2D1::ICommandList" Form="deref out pointer com"/>
             </Method>
         </Interface>
+        
+        <Interface Name="ICommandSink4" Extends="D2D1::ICommandSink3" IID="c78a6519-40d6-4218-b2de-beeeb744bb3e" WrapOutgoing="true" ShouldTestQI="false" Revised="false" HasD2DImplementation="false" >
+            <Method Name="SetPrimitiveBlend2" Comment="
+                A new function to set blend mode that respects the new MAX blend.
+                
+                
+                Implementers of SetPrimitiveBlend2 should expect and handle blend mode: D2D1_PRIMITIVE_BLEND_MAX
 
+                Implementers of SetPrimitiveBlend1 should expect and handle blend modes: 
+                    D2D1_PRIMITIVE_BLEND_MIN and
+                    D2D1_PRIMITIVE_BLEND_ADD
+                    
+                Implementers of SetPrimitiveBlend should expect and handle blend modes:
+                    D2D1_PRIMITIVE_BLEND_SOURCE_OVER and
+                    D2D1_PRIMITIVE_BLEND_COPY
+                ">
+                <Parameter Name="primitiveBlend" Type="D2D1::PRIMITIVE_BLEND" Form="value" />
+            </Method>
+        </Interface>
+
+        <Interface Name="IColorContext1" Extends="D2D1::IColorContext" IID="1ab42875-c57f-4be9-bd85-9cd78d6f55ee" Comment="Represents a color context to be used with the Color Management Effect.">
+            <Method Name="GetColorContextType" Return="D2D1::COLOR_CONTEXT_TYPE" IsConst="true" Comment="Retrieves the color context type." />
+            <Method Name="GetDXGIColorSpace" Return="DXGI_COLOR_SPACE_TYPE" IsConst="true" Comment="Retrieves the DXGI color space of this context. Returns DXGI_COLOR_SPACE_CUSTOM when color context type is ICC." />
+            <Method Name="GetSimpleColorProfile" IsConst="true" Comment="Retrieves a set simple color profile.">
+                <Parameter Name="simpleProfile" Type="D2D1::SIMPLE_COLOR_PROFILE" Form="out pointer" IsRetval="true"/>
+            </Method>
+        </Interface>
+
+        <Interface Name="IDeviceContext5" Extends="D2D1::IDeviceContext4" IID="7836d248-68cc-4df6-b9e8-de991bf62eb7" QIFromBase="true">
+            <Method Name="CreateSvgDocument" Comment="Creates an SVG document from a stream.">
+                <Parameter Name="inputXmlStream" Type="IStream" Form="pointer opt"
+                    Comment="An input stream containing the SVG XML document. If null, an empty document is created."/>
+                <Parameter Name="viewportSize" Type="D2D1::SIZE_F"
+                    Comment="Size of the initial viewport of the document."/>
+                <Parameter Name="svgDocument" Type="D2D1::ISvgDocument" Form="deref out pointer com" IsRetval="true"
+                    Comment="When this method returns, contains a pointer to the SVG document."/>
+            </Method>
+            <Method Name="DrawSvgDocument" Return="void" Comment="Draw an SVG document.">
+                <Parameter Name="svgDocument" Type="D2D1::ISvgDocument" Form="pointer"/>
+            </Method>
+            <Method Name="CreateColorContextFromDxgiColorSpace" Comment="Creates a color context from a DXGI color space type. It is only valid to use this with the Color Management Effect in 'Best' mode.">
+                <Parameter Name="colorSpace" Type="DXGI_COLOR_SPACE_TYPE"/>
+                <Parameter Name="colorContext" Type="D2D1::IColorContext1" Form="deref out pointer com" IsRetval="true"/>
+            </Method>
+            <Method Name="CreateColorContextFromSimpleColorProfile" Comment="Creates a color context from a simple color profile. It is only valid to use this with the Color Management Effect in 'Best' mode.">
+                <Parameter Name="simpleProfile" Type="D2D1::SIMPLE_COLOR_PROFILE" Form="pointer" />
+                <Parameter Name="colorContext" Type="D2D1::IColorContext1" Form="deref out pointer com" IsRetval="true"/>
+            </Method>
+            <Method Name="CreateColorContextFromSimpleColorProfile" OverloadId="1" Comment="Creates a color context from a simple color profile.">
+                <Parameter Name="simpleProfile" Type="D2D1::SIMPLE_COLOR_PROFILE" Form="reference" />
+                <Parameter Name="colorContext" Type="D2D1::IColorContext1" Form="deref out pointer com" IsRetval="true"/>
+            </Method>
+        </Interface>
+
+        <Interface Name="IDevice5" Extends="D2D1::IDevice4" IID="d55ba0a4-6405-4694-aef5-08ee1a4358b4" ShouldTestQI="true" QIFromBase="true">
+            <Method Name="CreateDeviceContext" Comment="Creates a new device context with no initially assigned target.">
+                <Parameter Name="options" Type="D2D1::DEVICE_CONTEXT_OPTIONS" Form="value" />
+                <Parameter Name="deviceContext5" Type="D2D1::IDeviceContext5" Form="deref out pointer com" IsRetval="true" />
+            </Method>
+        </Interface>
+
+        <Interface Name="IFactory6" Extends="D2D1::IFactory5" IID="f9976f46-f642-44c1-97ca-da32ea2a2635" ShouldTestQI="true" QIFromBase="true" Comment="Creates Direct2D resources. This interface also enables the creation of ID2D1Device5 objects.">
+            <Method Name="CreateDevice" Comment="This creates a new Direct2D device from the given IDXGIDevice.">
+                <Parameter Name="dxgiDevice" Type="IDXGIDevice" Form="pointer" />
+                <Parameter Name="d2dDevice5" Type="D2D1::IDevice5" Form="deref out pointer com" IsRetval="true" />
+            </Method>
+        </Interface>
     </Namespace>
 
 </D2DTypes>

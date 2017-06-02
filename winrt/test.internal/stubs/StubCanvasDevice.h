@@ -7,6 +7,7 @@
 #include "mocks/MockD2DRectangleGeometry.h"
 #include "mocks/MockD2DGeometryRealization.h"
 #include "mocks/MockD2DGradientMesh.h"
+#include "mocks/MockD2DSvgDocument.h"
 
 namespace canvas
 {
@@ -100,6 +101,12 @@ namespace canvas
                 [=](D2D1_GRADIENT_MESH_PATCH const*, UINT32)
                 {
                     return Make<MockD2DGradientMesh>();
+                });
+
+            CreateSvgDocumentMethod.AllowAnyCall(
+                [=](IStream* stream)
+                {
+                    return Make<MockD2DSvgDocument>();
                 });
 #endif
         }

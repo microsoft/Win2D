@@ -55,6 +55,7 @@ import "Windows.UI.Composition.idl";
 #include "text\CanvasFontSet.abi.idl"
 #include "text\CanvasTextAnalyzer.abi.idl"
 #include "drawing\CanvasSpriteBatch.abi.idl"
+#include "svg\CanvasSvgDocument.abi.idl"
 #include "drawing\CanvasDrawingSession.abi.idl"
 #include "xaml\CanvasImageSource.abi.idl"
 #include "drawing\CanvasSwapChain.abi.idl"

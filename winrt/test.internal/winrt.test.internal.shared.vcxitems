@@ -39,6 +39,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DRectangleGeometry.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DRoundedRectangleGeometry.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DSpriteBatch.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DSvgDocument.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DTransformedImageSource.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DTransformGraph.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockPrintControl.h" />
@@ -206,6 +207,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasSolidColorBrushUnitTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasStrokeStyleTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasSwapChainUnitTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasSvgDocumentUnitTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasTextAnalyzerUnitTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasTextFormatTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasTextLayoutTests.cpp" />

@@ -247,6 +247,10 @@ namespace canvas
         DONT_EXPECT(CreateSpriteBatchWithSortMode                           , CanvasSpriteSortMode, ICanvasSpriteBatch**);
         DONT_EXPECT(CreateSpriteBatchWithSortModeAndInterpolation           , CanvasSpriteSortMode, CanvasImageInterpolation, ICanvasSpriteBatch**);
         DONT_EXPECT(CreateSpriteBatchWithSortModeAndInterpolationAndOptions , CanvasSpriteSortMode, CanvasImageInterpolation, CanvasSpriteOptions, ICanvasSpriteBatch**);
+
+        DONT_EXPECT(DrawSvgAtOrigin, ICanvasSvgDocument*, Size);
+        DONT_EXPECT(DrawSvgAtPoint, ICanvasSvgDocument*, Size, Vector2);
+        DONT_EXPECT(DrawSvgAtCoords, ICanvasSvgDocument*, Size, float, float);
 #endif
         
         // ICanvasResourceWrapperNative

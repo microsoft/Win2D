@@ -111,6 +111,7 @@ namespace CodeGen
             files.Add("apiref/D2DEffectAuthor.xml");
             files.Add("apiref/D2DTypes3.xml");
             files.Add("apiref/D2DTypes4.xml");
+            files.Add("apiref/D2DSvgTypes.xml");
             return files;
         }
 

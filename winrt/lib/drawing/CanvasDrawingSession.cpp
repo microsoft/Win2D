@@ -13,6 +13,7 @@
 #include "text/TextUtilities.h"
 #include "text/InternalDWriteTextRenderer.h"
 #include "text/DrawGlyphRunHelper.h"
+#include "svg/CanvasSvgDocument.h"
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
@@ -4167,6 +4168,40 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
             ThrowIfFailed(newSpriteBatch.CopyTo(spriteBatch));
         });
+    }
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawSvgAtOrigin(ICanvasSvgDocument *svgDocument, Size viewportSize)
+    {
+        return DrawSvgAtCoords(svgDocument, viewportSize, 0, 0);
+    }
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawSvgAtPoint(ICanvasSvgDocument *svgDocument, Size viewportSize, Vector2 point)
+    {
+        return DrawSvgAtCoords(svgDocument, viewportSize, point.X, point.Y);
+    }
+
+    IFACEMETHODIMP CanvasDrawingSession::DrawSvgAtCoords(ICanvasSvgDocument *svgDocument, Size viewportSize, float x, float y)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                auto deviceContext5 = MaybeAs<ID2D1DeviceContext5>(GetResource());
+
+                if (!deviceContext5)
+                    ThrowHR(E_NOTIMPL, Strings::SvgNotAvailable);
+
+                CheckInPointer(svgDocument);
+
+                if (viewportSize.Width <= 0 || viewportSize.Height <= 0)
+                    ThrowHR(E_INVALIDARG, Strings::SvgViewportSizeNotValid);
+
+                auto d2dSvgDocument = GetWrappedResource<ID2D1SvgDocument>(svgDocument);
+
+                TemporaryTransform<ID2D1DeviceContext1> transform(GetResource().Get(), Vector2{ x, y });
+                TemporaryViewportSize viewportSizer(d2dSvgDocument.Get(), viewportSize);
+
+                deviceContext5->DrawSvgDocument(d2dSvgDocument.Get());
+            });
     }
     
 #endif

@@ -83,6 +83,8 @@ namespace canvas
 #if WINVER > _WIN32_WINNT_WINBLUE
         CALL_COUNTER_WITH_MOCK(CreateGradientMeshMethod, ComPtr<ID2D1GradientMesh>(D2D1_GRADIENT_MESH_PATCH const*, UINT32));
         CALL_COUNTER_WITH_MOCK(IsSpriteBatchQuirkRequiredMethod, bool());
+
+        CALL_COUNTER_WITH_MOCK(CreateSvgDocumentMethod, ComPtr<ID2D1SvgDocument>(IStream*));
 #endif
 
         //
@@ -453,6 +455,11 @@ namespace canvas
         virtual bool IsSpriteBatchQuirkRequired()
         {
             return IsSpriteBatchQuirkRequiredMethod.WasCalled();
+        }
+
+        ComPtr<ID2D1SvgDocument> CreateSvgDocument(IStream* inputXmlStream)
+        {
+            return CreateSvgDocumentMethod.WasCalled(inputXmlStream);
         }
 #endif
     };

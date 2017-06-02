@@ -37,7 +37,7 @@ namespace Mock
                 case "pointer":
                 case "pointer opt":
                 case "pointer ecount opt":
-                    return qualifiable is CodeGen.Struct || qualifiable is CodeGen.Primitive;
+                    return qualifiable is CodeGen.Struct || qualifiable is CodeGen.Enum || qualifiable is CodeGen.Primitive;
                 default:
                     return false;
             }
@@ -52,6 +52,7 @@ namespace Mock
                 case "in":
                 case "out":
                 case "value":
+                case "in opt":
                     return "";
 
                 case "deref out pointer":
@@ -60,13 +61,14 @@ namespace Mock
                 case "out pointer pointer":
                 case "deref opt out pointer":
                 case "deref out pointer pointer bcount":
+                case "deref out opt pointer com":
+                case "deref out opt pointer":
                     return "**";
 
                 case "out pointer":
                 case "out pointer inexpressibleArray":
                 case "pointer opt":
                 case "pointer":
-                case "deref out opt pointer":
                 case "inout pointer":
                 case "out pointer opt":
                 case "out pointer part opt":
@@ -115,8 +117,21 @@ namespace Mock
             {
                 if (m.IsOverload) continue;
 
+                int projectedParameterCount = 0;
+                for (int i = 0; i < m.Parameters.Count; i++)
+                {
+                    projectedParameterCount++;
+
+                    if (m.Parameters[i].IsArray)
+                    {
+                        projectedParameterCount++;
+                    }
+                }
+
+                string constSuffix = m.IsConst ? "_CONST" : "";
+
                 output.WriteIndent();
-                output.Write("CALL_COUNTER_WITH_MOCK(" + m.Name + "Method, ");
+                output.Write($"MOCK_METHOD{projectedParameterCount}{constSuffix}({m.Name}, ");
 
                 if (m.ReturnsHResult())
                 {
@@ -143,90 +158,7 @@ namespace Mock
                 output.WriteLine();
             }
             output.WriteLine();
-        }
-
-        static void OutputClassMethodDefinitions(CodeGen.Formatter output, CodeGen.Interface classData, Dictionary<string, CodeGen.QualifiableType> typeDictionary)
-        {
-            output.WriteLine("//");
-            output.WriteLine("// " + classData.NativeName);
-            output.WriteLine("//");
-            output.WriteLine();
-            foreach (CodeGen.Interface.Method m in classData.Methods)
-            {
-                if (m.IsOverload) continue;
-
-                output.WriteIndent();
-                if (m.ReturnsHResult())
-                {
-                    output.Write("STDMETHOD(" + m.Name + ")(");
-                }
-                else
-                {
-                    output.Write("STDMETHOD_(" + typeDictionary[m.NativeReturnType].NativeName + ", " + m.Name + ")(");
-                }
-                output.Indent();
-
-                for (int i = 0; i < m.Parameters.Count; i++)
-                {
-                    output.WriteLine();
-
-                    string parameterString = GetParameterTypeNameIncludingIndirection(m.Parameters[i], typeDictionary) + " " + m.Parameters[i].Name;
-
-                    output.WriteIndent();
-
-                    output.Write(parameterString);
-
-                    if (m.Parameters[i].IsArray)
-                    {
-                        output.Write(",");
-                        output.WriteLine();
-                        output.WriteIndent();
-                        output.Write("UINT32 " + m.Parameters[i].Name + "Count");
-                    }
-
-                    if (i < m.Parameters.Count - 1)
-                    {
-                        output.Write(",");
-                    }
-                }
-
-                string constString = m.IsConst ? " const" : "";
-                output.Write(")" + constString + " override");
-                output.WriteLine();
-
-                output.Unindent();
-
-                output.WriteLine("{");
-                output.Indent();
-
-                output.WriteIndent();
-
-                if (m.NativeReturnType != "void")
-                {
-                    output.Write("return ");
-                }
-                output.Write(m.Name + "Method.WasCalled(");
-
-                for (int i = 0; i < m.Parameters.Count; i++)
-                {
-                    output.Write(m.Parameters[i].Name);
-
-                    if (m.Parameters[i].IsArray)
-                    {
-                        output.Write(", " + m.Parameters[i].Name + "Count");
-                    }
-
-                    if (i < m.Parameters.Count - 1) output.Write(", ");
-                }
-
-                output.Write(");");
-                output.WriteLine();
-
-                output.Unindent();
-                output.WriteLine("}");
-                output.WriteLine();
-            }
-        }
+        }        
 
         static void OutputMock(string name, string inputDir, string outputDir)
         {
@@ -286,10 +218,6 @@ namespace Mock
                 {
                     OutputClassMethodMockDeclarations(output, classData, processedInputFiles.TypeDictionary);
                 }
-                foreach (CodeGen.Interface classData in inheritanceHierarchy)
-                {
-                    OutputClassMethodDefinitions(output, classData, processedInputFiles.TypeDictionary);
-                }
 
                 output.Unindent();
                 output.WriteLine("};");
@@ -317,6 +245,7 @@ namespace Mock
             OutputMock("BorderTransform", inputDir, outputDir);
             OutputMock("Ink", inputDir, outputDir);
             OutputMock("InkStyle", inputDir, outputDir);
+            OutputMock("SvgDocument", inputDir, outputDir);
         }
 
         static void Main(string[] args)

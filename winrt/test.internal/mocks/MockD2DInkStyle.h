@@ -13,49 +13,12 @@ namespace canvas
         ChainInterfaces<ID2D1InkStyle, ID2D1Resource>>
     {
     public:
-        CALL_COUNTER_WITH_MOCK(SetNibTransformMethod, void(CONST D2D1_MATRIX_3X2_F*));
-        CALL_COUNTER_WITH_MOCK(GetNibTransformMethod, void(D2D1_MATRIX_3X2_F*));
-        CALL_COUNTER_WITH_MOCK(SetNibShapeMethod, void(D2D1_INK_NIB_SHAPE));
-        CALL_COUNTER_WITH_MOCK(GetNibShapeMethod, D2D1_INK_NIB_SHAPE());
+        MOCK_METHOD1(SetNibTransform, void(CONST D2D1_MATRIX_3X2_F*));
+        MOCK_METHOD1_CONST(GetNibTransform, void(D2D1_MATRIX_3X2_F*));
+        MOCK_METHOD1(SetNibShape, void(D2D1_INK_NIB_SHAPE));
+        MOCK_METHOD0_CONST(GetNibShape, D2D1_INK_NIB_SHAPE());
 
-        CALL_COUNTER_WITH_MOCK(GetFactoryMethod, void(ID2D1Factory**));
-
-        //
-        // ID2D1InkStyle
-        //
-
-        STDMETHOD_(void, SetNibTransform)(
-            CONST D2D1_MATRIX_3X2_F* transform) override
-        {
-            SetNibTransformMethod.WasCalled(transform);
-        }
-
-        STDMETHOD_(void, GetNibTransform)(
-            D2D1_MATRIX_3X2_F* transform) const override
-        {
-            GetNibTransformMethod.WasCalled(transform);
-        }
-
-        STDMETHOD_(void, SetNibShape)(
-            D2D1_INK_NIB_SHAPE nibShape) override
-        {
-            SetNibShapeMethod.WasCalled(nibShape);
-        }
-
-        STDMETHOD_(D2D1_INK_NIB_SHAPE, GetNibShape)() const override
-        {
-            return GetNibShapeMethod.WasCalled();
-        }
-
-        //
-        // ID2D1Resource
-        //
-
-        STDMETHOD_(void, GetFactory)(
-            ID2D1Factory** factory) const override
-        {
-            GetFactoryMethod.WasCalled(factory);
-        }
+        MOCK_METHOD1_CONST(GetFactory, void(ID2D1Factory**));
 
     };
 }

@@ -209,9 +209,11 @@ namespace Microsoft
             TO_STRING(IAsyncAction);
             TO_STRING(IDWriteInlineObject);
             TO_STRING(ID2D1TransformNode);
+            TO_STRING(IStream);
 
 #if WINVER > _WIN32_WINNT_WINBLUE
             TO_STRING(ID2D1GradientMesh);
+            TO_STRING(ID2D1SvgDocument);
 #endif
 
 #undef TO_STRING
