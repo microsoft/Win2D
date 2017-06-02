@@ -7,7 +7,10 @@
 #include "mocks/MockD2DRectangleGeometry.h"
 #include "mocks/MockD2DGeometryRealization.h"
 #include "mocks/MockD2DGradientMesh.h"
+
+#if WINVER > _WIN32_WINNT_WINBLUE
 #include "mocks/MockD2DSvgDocument.h"
+#endif
 
 namespace canvas
 {

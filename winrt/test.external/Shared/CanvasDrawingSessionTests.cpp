@@ -222,6 +222,7 @@ TEST_CLASS(CanvasDrawingSessionTests)
             });
     }
 
+#if WINVER > _WIN32_WINNT_WINBLUE
     TEST_METHOD(CanvasDrawingSession_DrawSvgDocument_ZeroSizedViewportIsInvalid)
     {
         auto device = ref new CanvasDevice();
@@ -243,5 +244,6 @@ TEST_CLASS(CanvasDrawingSessionTests)
                 drawingSession->DrawSvg(svgDocument, Size{});
             });
     }
+#endif
 };
 
