@@ -310,7 +310,7 @@ namespace canvas
         IFACEMETHODIMP CreateSvgGlyphStyle(ID2D1SvgGlyphStyle**) override
         {
             Assert::Fail(L"Unexpected call to CreateSvgGlyphStyle");
-			return E_NOTIMPL;
+            return E_NOTIMPL;
         }
 
         IFACEMETHODIMP_(void) DrawText(
@@ -373,7 +373,7 @@ namespace canvas
             ID2D1Image **) override
         {
             Assert::Fail(L"Unexpected call to GetColorBitmapGlyphImage");
-			return E_NOTIMPL;
+            return E_NOTIMPL;
         }
 
         IFACEMETHODIMP GetSvgGlyphImage(
@@ -390,7 +390,7 @@ namespace canvas
             ID2D1CommandList**) override
         {
             Assert::Fail(L"Unexpected call to GetSvgGlyphImage");
-			return E_NOTIMPL;
+            return E_NOTIMPL;
         }
         
         // ID2D1DeviceContext5
@@ -400,7 +400,7 @@ namespace canvas
             ID2D1ColorContext1**) override
         {
             Assert::Fail(L"Unexpected call to CreateColorContextFromDxgiColorSpace");
-			return E_NOTIMPL;
+            return E_NOTIMPL;
         }
 
         IFACEMETHODIMP CreateColorContextFromSimpleColorProfile(
@@ -408,7 +408,7 @@ namespace canvas
             ID2D1ColorContext1**) override
         {
             Assert::Fail(L"Unexpected call to CreateColorContextFromSimpleColorProfile");
-			return E_NOTIMPL;
+            return E_NOTIMPL;
         }
 #endif
     };
