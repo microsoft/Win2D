@@ -7,9 +7,11 @@
 #if WINVER > _WIN32_WINNT_WINBLUE
 
 #include <lib/svg/CanvasSvgDocument.h>
+#include <lib/svg/CanvasSvgElement.h>
 #include <AsyncOperation.h>
 #include <LifespanTracker.h>
 #include "mocks/MockD2DSvgDocument.h"
+#include "mocks/MockD2DSvgElement.h"
 #include "mocks/MockStream.h"
 #include "mocks/MockRandomAccessStream.h"
 
@@ -70,6 +72,16 @@ namespace canvas
             IRandomAccessStream* fakeStream = reinterpret_cast<IRandomAccessStream*>(0x1234);
             IAsyncAction* action;
             Assert::AreEqual(RO_E_CLOSED, svgDocument->SaveAsync(fakeStream, &action));
+
+            ICanvasSvgElement* fakeElement = reinterpret_cast<ICanvasSvgElement*>(0x1234);
+            Assert::AreEqual(RO_E_CLOSED, svgDocument->put_Root(fakeElement));
+            Assert::AreEqual(RO_E_CLOSED, svgDocument->get_Root(&fakeElement));
+
+            ComPtr<ICanvasSvgElement> element;
+            Assert::AreEqual(RO_E_CLOSED, svgDocument->LoadElementFromXml(WinString(L"<svg/>"), &element));
+
+            IAsyncOperation<CanvasSvgElement*>* operation;
+            Assert::AreEqual(RO_E_CLOSED, svgDocument->LoadElementAsync(fakeStream, &operation));
         }
 
         TEST_METHOD_EX(CanvasSvgDocumentTests_NullArgs)
@@ -85,6 +97,18 @@ namespace canvas
             IAsyncAction* action;
             Assert::AreEqual(E_INVALIDARG, svgDocument->SaveAsync(nullptr, &action));
             Assert::AreEqual(E_INVALIDARG, svgDocument->SaveAsync(fakeStream, nullptr));
+            
+            Assert::AreEqual(E_INVALIDARG, svgDocument->put_Root(nullptr));
+
+            Assert::AreEqual(E_INVALIDARG, svgDocument->get_Root(nullptr));
+
+            ComPtr<ICanvasSvgElement> element;
+            Assert::AreEqual(E_INVALIDARG, svgDocument->LoadElementFromXml(nullptr, &element));
+            Assert::AreEqual(E_INVALIDARG, svgDocument->LoadElementFromXml(WinString(L""), nullptr));
+
+            IAsyncOperation<CanvasSvgElement*>* operation;
+            Assert::AreEqual(E_INVALIDARG, svgDocument->LoadElementAsync(nullptr, &operation));
+            Assert::AreEqual(E_INVALIDARG, svgDocument->LoadElementAsync(fakeStream, nullptr));
         }
 
         TEST_METHOD_EX(CanvasSvgDocumentTests_Device)
@@ -123,6 +147,73 @@ namespace canvas
             WinString returnedXml;
             Assert::AreEqual(S_OK, svgDocument->GetXml(returnedXml.GetAddressOf()));
             Assert::AreEqual(L"something", static_cast<wchar_t const*>(returnedXml));
+        }
+
+        static ComPtr<CanvasSvgDocumentStatics> GetSvgDocumentStatics()
+        {
+            ComPtr<CanvasSvgDocumentStatics> svgDocumentStatics;
+            ThrowIfFailed(MakeAndInitialize<CanvasSvgDocumentStatics>(&svgDocumentStatics));
+            return svgDocumentStatics;
+        }
+
+        TEST_METHOD_EX(CanvasSvgDocumentTests_CreateEmpty)
+        {
+            auto device = Make<StubCanvasDevice>();
+            ComPtr<MockD2DSvgDocument> mockD2DSvgDocument = Make<MockD2DSvgDocument>();
+            device->CreateSvgDocumentMethod.ExpectAtLeastOneCall(
+                [=](IStream* stream)
+                {
+                    Assert::IsNull(stream);
+                    return mockD2DSvgDocument;
+                });
+            
+            auto svgDocumentStatics = GetSvgDocumentStatics();
+            ComPtr<ICanvasSvgDocument> emptyDocument;
+            Assert::AreEqual(S_OK, svgDocumentStatics->CreateEmpty(As<ICanvasResourceCreator>(device).Get(), &emptyDocument));
+
+            auto nativeResource = static_cast<CanvasSvgDocument*>(emptyDocument.Get())->GetResource();
+            Assert::AreEqual<ID2D1SvgDocument*>(nativeResource.Get(), mockD2DSvgDocument.Get());
+        }
+
+        TEST_METHOD_EX(CanvasSvgDocumentTests_SetRoot)
+        {
+            Fixture f;
+            auto svgDocument = f.CreateSvgDocument();
+
+            ComPtr<MockD2DSvgElement> mockD2DSvgElement = Make<MockD2DSvgElement>();
+
+            f.m_createdDocument->SetRootMethod.SetExpectedCalls(1,
+                [=](ID2D1SvgElement* newRoot)
+                {
+                    Assert::IsNotNull(newRoot);
+                    Assert::AreEqual<ID2D1SvgElement*>(mockD2DSvgElement.Get(), newRoot);
+
+                    return S_OK;
+                });
+
+            auto canvasSvgElement = ResourceManager::GetOrCreate<ICanvasSvgElement>(f.m_canvasDevice.Get(), mockD2DSvgElement.Get());
+            Assert::AreEqual(S_OK, svgDocument->put_Root(canvasSvgElement.Get()));
+        }
+
+        TEST_METHOD_EX(CanvasSvgDocumentTests_GetRoot)
+        {
+            Fixture f;
+            auto svgDocument = f.CreateSvgDocument();
+
+            ComPtr<MockD2DSvgElement> mockD2DSvgElement = Make<MockD2DSvgElement>();
+
+            f.m_createdDocument->GetRootMethod.SetExpectedCalls(1,
+                [=](ID2D1SvgElement** root)
+                {
+                    return mockD2DSvgElement.CopyTo(root);
+                });
+
+            ComPtr<ICanvasSvgElement> retrievedRoot;
+            Assert::AreEqual(S_OK, svgDocument->get_Root(&retrievedRoot));
+
+            Assert::IsTrue(IsSameInstance(
+                mockD2DSvgElement.Get(), 
+                static_cast<CanvasSvgElement*>(retrievedRoot.Get())->GetResource().Get()));
         }
     };
 }

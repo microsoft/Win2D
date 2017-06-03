@@ -7,9 +7,13 @@
 #if WINVER > _WIN32_WINNT_WINBLUE
 
 #include "CanvasSvgDocument.h"
+#include "CanvasSvgElement.h"
+#include "BufferStreamWrapper.h"
 
-using namespace ABI::Microsoft::Graphics::Canvas::Svg;
 using namespace Microsoft::WRL::Wrappers;
+
+namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Svg
+{
 
 ActivatableStaticOnlyFactory(CanvasSvgDocumentStatics);
 
@@ -55,7 +59,6 @@ IFACEMETHODIMP CanvasSvgDocument::get_Device(ICanvasDevice** device)
             ThrowIfFailed(m_canvasDevice.EnsureNotClosed().CopyTo(device));
         });
 }
-
 
 IFACEMETHODIMP CanvasSvgDocument::GetXml(HSTRING* result)
 {
@@ -151,158 +154,110 @@ IFACEMETHODIMP CanvasSvgDocument::SaveAsync(IRandomAccessStream* rawStream, IAsy
         });
 }
 
-// This allows us to wrap an IStream around an existing, arbitrary buffer which has not necessarily been allocated 
-// using GlobalAlloc. It is set up eliminate the need for copying anything.
-class BufferStreamWrapper : public RuntimeClass<RuntimeClassFlags<ClassicCom>, IStream>
-    , private LifespanTracker<BufferStreamWrapper>
+IFACEMETHODIMP CanvasSvgDocument::put_Root(ICanvasSvgElement* root)
 {
-    byte const* m_buffer;
-    size_t m_bufferSizeInBytes;
-    size_t m_seekLocation;
-
-public:
-    BufferStreamWrapper(byte const* buffer, size_t bufferSizeInBytes)
-        : m_buffer(buffer)
-        , m_bufferSizeInBytes(bufferSizeInBytes)
-        , m_seekLocation(0)
-    {}
-
-    // ISequentialStream Interface
-
-    virtual HRESULT STDMETHODCALLTYPE Read(void* dest, ULONG numberOfBytesRequested, ULONG* outputNumberOfBytesRead)
-    {
-        if (!dest)
-            return STG_E_INVALIDPOINTER;
-
-        if (numberOfBytesRequested == 0)
-            return S_OK; // Nothing to do
-
-        if (m_seekLocation >= m_bufferSizeInBytes)
+    return ExceptionBoundary(
+        [=]
         {
-            // We've reached the end of the stream.
-            if (outputNumberOfBytesRead)
-                *outputNumberOfBytesRead = 0;
+            CheckInPointer(root);
 
-            return S_FALSE;
-        }
+            auto& resource = GetResource();
 
-        size_t bytesLeft = m_bufferSizeInBytes - m_seekLocation;
-        size_t numberOfBytesToRead;
-        bool partialRead;
+            CanvasSvgElement* implementation = static_cast<CanvasSvgElement*>(root);
 
-        if (numberOfBytesRequested <= bytesLeft)
+            VerifyDeviceBoundary(m_canvasDevice, implementation);
+
+            resource->SetRoot(implementation->GetResource().Get());
+        });
+}
+
+IFACEMETHODIMP CanvasSvgDocument::get_Root(ICanvasSvgElement** result)
+{
+    return ExceptionBoundary(
+        [=]
         {
-            numberOfBytesToRead = numberOfBytesRequested;
-            partialRead = false;
-        }
-        else
+            CheckAndClearOutPointer(result);
+
+            auto& resource = GetResource();
+
+            ComPtr<ID2D1SvgElement> d2dSvgElement;
+            resource->GetRoot(&d2dSvgElement);
+
+            auto& device = m_canvasDevice.EnsureNotClosed();
+
+            auto rootElement = ResourceManager::GetOrCreate<ICanvasSvgElement>(device.Get(), d2dSvgElement.Get());
+            ThrowIfFailed(rootElement.CopyTo(result));
+        });
+}
+
+
+IFACEMETHODIMP CanvasSvgDocument::LoadElementFromXml(
+    HSTRING xmlString,
+    ICanvasSvgElement** svgElement)
+{ 
+    return ExceptionBoundary(
+        [=]
         {
-            numberOfBytesToRead = bytesLeft;
-            partialRead = true;
-        }
+            CheckAndClearOutPointer(svgElement);
 
-        if (memcpy_s(dest, numberOfBytesToRead, &m_buffer[m_seekLocation], numberOfBytesToRead) != 0)
+            m_canvasDevice.EnsureNotClosed();
+
+            ComPtr<IStream> stream = WrapSvgStringInStream(xmlString);
+                        
+            ComPtr<CanvasSvgElement> newElement = CanvasSvgElement::CreateNew(
+                this,
+                stream.Get());
+            ThrowIfFailed(newElement.CopyTo(svgElement));
+        });
+}
+
+IFACEMETHODIMP CanvasSvgDocument::LoadElementAsync(
+    IRandomAccessStream *rawStream,
+    IAsyncOperation<CanvasSvgElement*>** resultAsyncOperation)
+{
+    return ExceptionBoundary(
+        [=]
+        { 
+            CheckInPointer(rawStream);
+            CheckAndClearOutPointer(resultAsyncOperation);
+
+            m_canvasDevice.EnsureNotClosed();
+
+            ComPtr<IRandomAccessStream> randomAccessStream = rawStream;
+
+            auto asyncOperation = Make<AsyncOperation<CanvasSvgElement>>(
+                [=]
+                {
+                    ComPtr<IStream> stream;
+                    ThrowIfFailed(CreateStreamOverRandomAccessStream(randomAccessStream.Get(), IID_PPV_ARGS(&stream)));
+
+                    auto svgElement = CanvasSvgElement::CreateNew(this, stream.Get());
+                    CheckMakeResult(svgElement);
+
+                    return svgElement;
+                });
+
+            CheckMakeResult(asyncOperation);
+            ThrowIfFailed(asyncOperation.CopyTo(resultAsyncOperation));
+        });
+}
+
+IFACEMETHODIMP CanvasSvgDocumentStatics::CreateEmpty(
+    ICanvasResourceCreator *resourceCreator,
+    ICanvasSvgDocument **canvasSvgDocument)
+{
+    return ExceptionBoundary(
+        [&]
         {
-            return E_OUTOFMEMORY;
-        }
+            CheckInPointer(resourceCreator);
+            CheckAndClearOutPointer(canvasSvgDocument);
 
-        if (outputNumberOfBytesRead)
-        {
-            assert(numberOfBytesToRead <= ULONG_MAX);
-            *outputNumberOfBytesRead = static_cast<ULONG>(numberOfBytesToRead);
-        }
+            ComPtr<CanvasSvgDocument> newDocument = CanvasSvgDocument::CreateNew(resourceCreator, nullptr);
+            ThrowIfFailed(newDocument.CopyTo(canvasSvgDocument));
+        });
+}
 
-        m_seekLocation += numberOfBytesRequested;
-
-        if (partialRead)
-            return S_FALSE;
-
-        return S_OK;
-    }
-
-    virtual HRESULT STDMETHODCALLTYPE Write(void const*, ULONG, ULONG*)
-    {
-        return E_NOTIMPL; // This stream supports read only.
-    }
-
-    // IStream Interface  
-
-    virtual HRESULT STDMETHODCALLTYPE SetSize(ULARGE_INTEGER)
-    {
-        return E_NOTIMPL; // This stream is not resizable.
-    }
-
-    virtual HRESULT STDMETHODCALLTYPE CopyTo(IStream*, ULARGE_INTEGER, ULARGE_INTEGER*,
-        ULARGE_INTEGER*)
-    {
-        return E_NOTIMPL; // Copying to other streams is not supported
-    }
-
-    virtual HRESULT STDMETHODCALLTYPE Commit(DWORD)
-    {
-        return S_OK; // Nothing is transacted (e.g., requires flushing), so this has no effect.
-    }
-
-    virtual HRESULT STDMETHODCALLTYPE Revert(void)
-    {
-        return S_OK; // Nothing is transacted, so this has no effect.
-    }
-
-    virtual HRESULT STDMETHODCALLTYPE LockRegion(ULARGE_INTEGER, ULARGE_INTEGER, DWORD)
-    {
-        return E_NOTIMPL; // Region locking is not supported
-    }
-
-    virtual HRESULT STDMETHODCALLTYPE UnlockRegion(ULARGE_INTEGER, ULARGE_INTEGER, DWORD)
-    {
-        return E_NOTIMPL; // Region locking is not supported
-    }
-
-    virtual HRESULT STDMETHODCALLTYPE Clone(IStream **)
-    {
-        return E_NOTIMPL; // Nothing should be cloning this stream.
-    }
-
-    virtual HRESULT STDMETHODCALLTYPE Seek(LARGE_INTEGER liDistanceToMove, DWORD dwOrigin,
-        ULARGE_INTEGER* newSeekLocation)
-    {
-        return ExceptionBoundary(
-            [&]
-            {
-                if (dwOrigin == STREAM_SEEK_SET)
-                {
-                    m_seekLocation = liDistanceToMove.LowPart;
-                }
-                else if (dwOrigin == STREAM_SEEK_CUR)
-                {
-                    m_seekLocation += liDistanceToMove.LowPart;
-                }
-                else if (dwOrigin == STREAM_SEEK_END)
-                {
-                    m_seekLocation = m_bufferSizeInBytes + liDistanceToMove.LowPart;
-                }
-                else
-                {
-                    ThrowHR(E_INVALIDARG);
-                }
-
-                if (newSeekLocation)
-                {
-                    newSeekLocation->HighPart = 0;
-
-                    assert(m_seekLocation < DWORD_MAX);
-                    newSeekLocation->LowPart = static_cast<DWORD>(m_seekLocation);
-                }
-            });
-    }
-
-    virtual HRESULT STDMETHODCALLTYPE Stat(STATSTG*, DWORD)
-    {
-        return E_NOTIMPL; // Not supported
-    }
-};
-
-IFACEMETHODIMP CanvasSvgDocumentStatics::Load(
+IFACEMETHODIMP CanvasSvgDocumentStatics::LoadFromXml(
     ICanvasResourceCreator* resourceCreator,
     HSTRING xmlString,
     ICanvasSvgDocument** svgDocument)
@@ -313,15 +268,8 @@ IFACEMETHODIMP CanvasSvgDocumentStatics::Load(
             CheckInPointer(resourceCreator);
             CheckAndClearOutPointer(svgDocument);
 
-            uint32_t textLength;
-            auto textBuffer = WindowsGetStringRawBuffer(xmlString, &textLength);
-            ThrowIfNullPointer(textBuffer, E_INVALIDARG);
-
-            if (textLength == 0)
-                ThrowHR(E_INVALIDARG, Strings::SvgTextShouldHaveNonZeroLength);
-
             // Wrap the input text into an IStream.
-            ComPtr<BufferStreamWrapper> inputXmlStream = Make<BufferStreamWrapper>(reinterpret_cast<byte const*>(textBuffer), textLength * sizeof(wchar_t));
+            ComPtr<IStream> inputXmlStream = WrapSvgStringInStream(xmlString);
 
             ComPtr<CanvasSvgDocument> newDocument = CanvasSvgDocument::CreateNew(resourceCreator, inputXmlStream.Get());
             ThrowIfFailed(newDocument.CopyTo(svgDocument));
@@ -372,5 +320,19 @@ IFACEMETHODIMP CanvasSvgDocumentStatics::IsSupported(ICanvasDevice* device, bool
         });
 }
 
+template<typename IMPLEMENTATION_TYPE>
+void VerifyDeviceBoundary(
+    ClosablePtr<ICanvasDevice> thisDeviceClosable,
+    IMPLEMENTATION_TYPE* otherObjectImplementationType)
+{
+    auto thisDevice = thisDeviceClosable.EnsureNotClosed();
+    auto otherDevice = otherObjectImplementationType->GetDevice();
+    if (!IsSameInstance(thisDevice.Get(), otherDevice.Get()))
+    {
+        ThrowHR(E_INVALIDARG, Strings::SvgDocumentTreeMustHaveConsistentDevice);
+    }
+}
+
+}}}}}
 
 #endif

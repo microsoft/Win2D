@@ -33,17 +33,34 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         IFACEMETHOD(GetXml)(HSTRING* string) override;
 
         IFACEMETHOD(SaveAsync(IRandomAccessStream* stream, IAsyncAction** asyncAction)) override;
+
+        IFACEMETHOD(put_Root)(ICanvasSvgElement* root) override;
+
+        IFACEMETHOD(get_Root)(ICanvasSvgElement** root) override;
+
+        IFACEMETHOD(LoadElementFromXml)(
+            HSTRING xmlString,
+            ICanvasSvgElement** svgElement) override;
+
+        IFACEMETHOD(LoadElementAsync)(
+            IRandomAccessStream *stream,
+            IAsyncOperation<CanvasSvgElement*>** svgElement) override;
+
+        // No exception boundary
+        ComPtr<ICanvasDevice> GetDevice() { return m_canvasDevice.EnsureNotClosed(); }
     };
 
-
     class CanvasSvgDocumentStatics
-        : public AgileActivationFactory<ICanvasSvgDocumentStatics>
+        : public AgileActivationFactory<ICanvasSvgDocumentFactory, ICanvasSvgDocumentStatics>
     {
         InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_Svg_CanvasSvgDocument, BaseTrust);
 
     public:
+        IFACEMETHODIMP CreateEmpty(
+            ICanvasResourceCreator *resourceCreator,
+            ICanvasSvgDocument **canvasSvgDocument) override;
 
-        IFACEMETHODIMP Load(
+        IFACEMETHODIMP LoadFromXml(
             ICanvasResourceCreator* resourceCreator, 
             HSTRING xmlString, 
             ICanvasSvgDocument** svgDocument) override;
@@ -85,10 +102,20 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         {
             if (m_svgDocument)
             {
-                m_svgDocument->SetViewportSize(m_previousViewportSize);
+                if (FAILED(m_svgDocument->SetViewportSize(m_previousViewportSize)))
+                {
+                    assert(false); // This should never fail, since the previous viewport size should have been valid.
+                }
             }
         }
     };
+
+    // Helper method
+
+    template<typename IMPLEMENTATION_TYPE>
+    void VerifyDeviceBoundary(
+        ClosablePtr<ICanvasDevice> thisDeviceClosable,
+        IMPLEMENTATION_TYPE* otherObjectImplementationType);
 }}}}}
 
 #endif

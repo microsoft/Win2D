@@ -20,6 +20,7 @@
 #include "text/CanvasTextAnalyzer.h"
 #include "text/CanvasNumberSubstitution.h"
 #include "svg/CanvasSvgDocument.h"
+#include "svg/CanvasSvgElement.h"
 
 
 std::unordered_map<IUnknown*, WeakRef> ResourceManager::m_resources;
@@ -54,6 +55,7 @@ std::vector<ResourceManager::TryCreateFunction> ResourceManager::tryCreateFuncti
     TryCreate<IDWriteFontSet,              CanvasFontSet,                 MakeWrapper>,
     TryCreate<IDWriteFontFaceReference,    CanvasFontFace,                MakeWrapper>,
     TryCreate<ID2D1SvgDocument,            CanvasSvgDocument,             MakeWrapperWithDevice>,
+    TryCreate<ID2D1SvgElement,             CanvasSvgElement,              MakeWrapperWithDevice>,
 #else
     TryCreate<IDWriteRenderingParams2,     CanvasTextRenderingParameters, MakeWrapper>,
     TryCreate<IDWriteFontCollection,       CanvasFontSet,                 MakeWrapper>,

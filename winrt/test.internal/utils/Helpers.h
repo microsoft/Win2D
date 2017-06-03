@@ -214,6 +214,7 @@ namespace Microsoft
 #if WINVER > _WIN32_WINNT_WINBLUE
             TO_STRING(ID2D1GradientMesh);
             TO_STRING(ID2D1SvgDocument);
+            TO_STRING(ID2D1SvgElement);
 #endif
 
 #undef TO_STRING

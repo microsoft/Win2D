@@ -236,7 +236,7 @@ TEST_CLASS(CanvasDrawingSessionTests)
 
         auto drawingSession = GetOrCreate<CanvasDrawingSession>(d2dDeviceContext.Get());
 
-        auto svgDocument = CanvasSvgDocument::Load(device, "<svg/>");
+        auto svgDocument = CanvasSvgDocument::LoadFromXml(device, "<svg/>");
         
         Assert::ExpectException<Platform::InvalidArgumentException^>(
             [&]

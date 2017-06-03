@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<!--
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+Licensed under the MIT License. See LICENSE.txt in the project root for license information.
+-->
+
+<doc>
+  <assembly>
+    <name>Microsoft.Graphics.Canvas</name>
+  </assembly>
+  <members>  
+
+    <member name="T:Microsoft.Graphics.Canvas.Svg.CanvasSvgElement">
+      <summary>Specifies an SVG element which can be part of an SVG document.</summary>
+      <remarks>
+        <p>
+          An SVG element belongs to at most one document. An element created using
+          <see cref="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgDocument.LoadElementFromXml(System.String)"/>
+          or
+          <see cref="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgDocument.LoadElementAsync(Windows.Storage.Streams.IRandomAccessStream)"/>
+          is initially assigned no parent document. Here's an example of what it looks like to create an element and assign it to a document:
+          <code title="C#">
+            <![CDATA[
+            svgDocument = new CanvasSvgDocument(sender);
+        
+            var path = svgDocument.LoadElementFromXml("<path d=\"M50,0 100,0 75,100 z\"/>");
+            var rectangle = svgDocument.LoadElementFromXml("<rect width=\"10\" height=\"10\"/>");
+
+            svgDocument.Root.AppendChild(path);
+            svgDocument.Root.AppendChild(rectangle);
+            ]]>
+          </code>
+        </p>
+        <p>
+          An SVG element can be assigned to a different document than the one it was created with, but any document it's assigned to
+          needs to share the same device as the element.
+        </p>
+      </remarks>
+    </member>
+    
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgElement.AppendChild(Microsoft.Graphics.Canvas.Svg.CanvasSvgElement)">
+      <summary>Appends a child element to this element.</summary>
+    </member>
+    
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgElement.Dispose">
+      <summary>Releases all resources used by the CanvasSvgElement.</summary>
+    </member>
+    
+  </members>
+</doc>

@@ -445,6 +445,12 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)svg\CanvasSvgDocument.cpp">
       <Filter>svg</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)svg\CanvasSvgElement.cpp">
+      <Filter>svg</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)svg\BufferStreamWrapper.cpp">
+      <Filter>svg</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)pch.h" />
@@ -901,6 +907,12 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)svg\CanvasSvgDocument.h">
       <Filter>svg</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)svg\CanvasSvgElement.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)svg\BufferStreamWrapper.h">
+      <Filter>svg</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)Canvas.codegen.idl" />
@@ -1202,6 +1214,9 @@
       <Filter>effects\generated</Filter>
     </None>
     <None Include="$(MSBuildThisFileDirectory)svg\CanvasSvgDocument.abi.idl">
+      <Filter>svg</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)svg\CanvasSvgElement.abi.idl">
       <Filter>svg</Filter>
     </None>
   </ItemGroup>

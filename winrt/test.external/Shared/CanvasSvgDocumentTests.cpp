@@ -29,7 +29,7 @@ public:
 
     TEST_METHOD(CanvasSvgDocument_InteropFailAfterClosure)
     {
-        auto canvasSvgDocument = CanvasSvgDocument::Load(m_device, "<svg/>");
+        auto canvasSvgDocument = CanvasSvgDocument::LoadFromXml(m_device, "<svg/>");
 
         delete canvasSvgDocument;
 
@@ -39,7 +39,6 @@ public:
     TEST_METHOD(CanvasSvgDocument_NativeInterop)
     {
         auto d2dDeviceContext = As<ID2D1DeviceContext5>(CreateTestD2DDeviceContext(m_device));
-        D2D1_GRADIENT_MESH_PATCH patch = {};
 
         ComPtr<ID2D1SvgDocument> originalSvgDocument;
         ThrowIfFailed(d2dDeviceContext->CreateSvgDocument(nullptr, D2D1::SizeF(1, 1), &originalSvgDocument));
@@ -56,13 +55,13 @@ public:
         Assert::ExpectException<Platform::InvalidArgumentException^>(
             [&]
             {
-                CanvasSvgDocument::Load(nullptr, "<svg/>");
+                CanvasSvgDocument::LoadFromXml(nullptr, "<svg/>");
             });
 
         Assert::ExpectException<Platform::InvalidArgumentException^>(
             [&]
             {
-                CanvasSvgDocument::Load(m_device, nullptr);
+                CanvasSvgDocument::LoadFromXml(m_device, nullptr);
             });
     }
 
@@ -71,31 +70,31 @@ public:
         Assert::ExpectException<Platform::InvalidArgumentException^>(
             [&]
             {
-                CanvasSvgDocument::Load(m_device, "");
+                CanvasSvgDocument::LoadFromXml(m_device, "");
             });
         
         Assert::ExpectException<Platform::InvalidArgumentException^>(
             [&]
             {
-                CanvasSvgDocument::Load(m_device, "not SVG");
+                CanvasSvgDocument::LoadFromXml(m_device, "not SVG");
             });
 
         Assert::ExpectException<Platform::InvalidArgumentException^>(
             [&]
             {
-                CanvasSvgDocument::Load(m_device, L"<svg>");
+                CanvasSvgDocument::LoadFromXml(m_device, L"<svg>");
             });
 
         Assert::ExpectException<Platform::InvalidArgumentException^>(
             [&]
             {
-                CanvasSvgDocument::Load(m_device, L"这个文字不是SVG");
+                CanvasSvgDocument::LoadFromXml(m_device, L"这个文字不是SVG");
             });
 
         Assert::ExpectException<Platform::InvalidArgumentException^>(
             [&]
             {
-                CanvasSvgDocument::Load(m_device, L"🌄🌄🌄🌄🌄🌄");
+                CanvasSvgDocument::LoadFromXml(m_device, L"🌄🌄🌄🌄🌄🌄");
             });
     }
 
@@ -113,17 +112,26 @@ public:
         {
             if (loadMethod == 0)
             {
-                m_document = CanvasSvgDocument::Load(m_device, input);
+                m_document = CanvasSvgDocument::LoadFromXml(m_device, input);
             }
             else
             {
-                InMemoryRandomAccessStream^ memoryStream = ref new InMemoryRandomAccessStream();
-                DataWriter^ dataWriter = ref new DataWriter(memoryStream->GetOutputStreamAt(0));
-                dataWriter->WriteString(input);
-                WaitExecution(dataWriter->StoreAsync());
-
-                m_document = WaitExecution(CanvasSvgDocument::LoadAsync(m_device, memoryStream));
+                m_document = WaitExecution(CanvasSvgDocument::LoadAsync(m_device, WrapStringInInputStream(input)));
             }
+        }
+
+        CanvasSvgElement^ CreateElement(int loadMethod, Platform::String^ input)
+        {
+            CanvasSvgElement^ result;
+            if (loadMethod == 0)
+            {
+                result = m_document->LoadElementFromXml(input);
+            }
+            else
+            {
+                result = WaitExecution(m_document->LoadElementAsync(WrapStringInInputStream(input)));
+            }
+            return result;
         }
 
         Platform::String^ SaveDocument(int saveMethod)
@@ -139,15 +147,31 @@ public:
                 InMemoryRandomAccessStream^ memoryStream = ref new InMemoryRandomAccessStream();
                 WaitExecution(m_document->SaveAsync(memoryStream));
 
-                auto streamSize = static_cast<uint32_t>(memoryStream->Size);
-
-                DataReader^ dataReader = ref new DataReader(memoryStream->GetInputStreamAt(0));
-                WaitExecution(dataReader->LoadAsync(streamSize));
-
-                readbackString = dataReader->ReadString(streamSize);
+                readbackString = GetStringFromOutputStream(memoryStream);
             }
 
             return readbackString;
+        }
+
+    private:
+        InMemoryRandomAccessStream^ WrapStringInInputStream(Platform::String^ input)
+        {
+            InMemoryRandomAccessStream^ memoryStream = ref new InMemoryRandomAccessStream();
+            DataWriter^ dataWriter = ref new DataWriter(memoryStream->GetOutputStreamAt(0));
+            dataWriter->WriteString(input);
+            WaitExecution(dataWriter->StoreAsync());
+
+            return memoryStream;
+        }
+
+        Platform::String^ GetStringFromOutputStream(InMemoryRandomAccessStream^ output)
+        {
+            auto streamSize = static_cast<uint32_t>(output->Size);
+
+            DataReader^ dataReader = ref new DataReader(output->GetInputStreamAt(0));
+            WaitExecution(dataReader->LoadAsync(streamSize));
+
+            return dataReader->ReadString(streamSize);
         }
     };
 
@@ -192,6 +216,102 @@ public:
                 }
             }
         }
+    }
+
+    TEST_METHOD(CanvasSvgDocument_CreateEmptyDocument)
+    {
+        for (int saveMethod = 0; saveMethod < 2; saveMethod++)
+        {
+            LoadingAndSavingFixture f(m_device);
+
+            f.m_document = ref new CanvasSvgDocument(m_device);
+
+            Platform::String^ readbackString = f.SaveDocument(saveMethod);
+
+            Assert::AreEqual(
+                "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">\r\n</svg>",
+                readbackString);
+        }
+    }
+
+    TEST_METHOD(CanvasSvgDocument_CreateElements)
+    {
+        struct TestCase
+        {
+            Platform::String^ Input;
+            Platform::String^ Expected;
+        } testCases[] =
+        {
+            {
+                // ASCII
+                "<g/>",
+                L"<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">\r\n  <g>\r\n  </g>\r\n</svg>"
+            },
+            {
+                // Non-ASCII
+                LR"SVG(<g id="テスト・ストリング"/>)SVG",
+                L"<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">\r\n  <g id=\"テスト・ストリング\">\r\n  </g>\r\n</svg>"
+            },
+            {
+                // Instances where single characters have multiple UTF-16 codepoints
+                LR"SVG(<g id="☀🌤🌥🌦"/>)SVG",
+                L"<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">\r\n  <g id=\"☀🌤🌥🌦\">\r\n  </g>\r\n</svg>"
+            }
+        };
+
+        for (int loadMethod = 0; loadMethod < 2; loadMethod++)
+        {
+            for (auto const& testCase : testCases)
+            {
+                LoadingAndSavingFixture f(m_device);
+                f.m_document = ref new CanvasSvgDocument(m_device);
+
+                CanvasSvgElement^ element = f.CreateElement(loadMethod, testCase.Input);
+                f.m_document->Root->AppendChild(element);
+
+                Platform::String^ readbackString = f.m_document->GetXml();
+
+                Assert::AreEqual(testCase.Expected, readbackString);
+            }
+        }
+    }
+
+    TEST_METHOD(CanvasSvgDocument_MismatchingDeviceBoundaries)
+    {
+        auto primaryDocument = CanvasSvgDocument::LoadFromXml(m_device, "<svg/>");
+
+        auto secondaryDevice = ref new CanvasDevice();
+        auto secondaryDocument = CanvasSvgDocument::LoadFromXml(secondaryDevice, "<svg/>");
+        auto secondaryDocumentElement = secondaryDocument->LoadElementFromXml("<g/>");
+
+        Assert::ExpectException<Platform::InvalidArgumentException^>(
+            [&]
+            {
+                primaryDocument->Root = secondaryDocumentElement;
+            });
+
+        Assert::ExpectException<Platform::InvalidArgumentException^>(
+            [&]
+            {
+                primaryDocument->Root->AppendChild(secondaryDocumentElement);
+            });
+    }
+
+    TEST_METHOD(CanvasSvgElement_NativeInterop)
+    {
+        auto d2dDeviceContext = As<ID2D1DeviceContext5>(CreateTestD2DDeviceContext(m_device));
+
+        ComPtr<ID2D1SvgDocument> d2dSvgDocument;
+        ThrowIfFailed(d2dDeviceContext->CreateSvgDocument(nullptr, D2D1::SizeF(1, 1), &d2dSvgDocument));
+
+        ComPtr<ID2D1SvgElement> originalD2DSvgRootElement;
+        d2dSvgDocument->GetRoot(&originalD2DSvgRootElement);
+
+        auto canvasSvgElement = GetOrCreate<CanvasSvgElement>(m_device, originalD2DSvgRootElement.Get());
+
+        auto retrievedSvgElement = GetWrappedResource<ID2D1SvgElement>(canvasSvgElement);
+
+        Assert::IsTrue(IsSameInstance(originalD2DSvgRootElement.Get(), retrievedSvgElement.Get()));
     }
 };
 

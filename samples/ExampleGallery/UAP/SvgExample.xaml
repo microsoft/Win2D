@@ -28,12 +28,31 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
 
         <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto">
             <StackPanel Orientation="Vertical" MinWidth="100" Margin="5">
-              <TextBlock>Effect</TextBlock>
-              <ComboBox 
+
+                <Button Content="New Document" HorizontalAlignment="Stretch" Click="NewDocument_Click"/>
+
+                <TextBlock>Shape:</TextBlock>
+                <ComboBox 
+                  ItemsSource="{Binding ElementName=control, Path=Shapes}"
+                  SelectedItem="{Binding CurrentShapeType, ElementName=control, Mode=TwoWay}"
+                  FontSize="15"
+                  SelectionChanged="SettingsCombo_SelectionChanged"/>
+
+                <TextBlock>Fill color:</TextBlock>
+                <local:ColorPicker x:Name="colorPicker" HorizontalAlignment="Stretch"/>
+
+                <Button Content="Load Sample File" HorizontalAlignment="Stretch" Click="LoadSampleFile_Click"/>
+
+                <Button Content="Clear" HorizontalAlignment="Stretch" Click="Clear_Clicked"/>
+              
+                <TextBlock>Effect:</TextBlock>
+                <ComboBox 
                   ItemsSource="{Binding ElementName=control, Path=Effects}"
                   SelectedItem="{Binding CurrentEffectType, ElementName=control, Mode=TwoWay}"
                   FontSize="15"
                   SelectionChanged="SettingsCombo_SelectionChanged"/>
+
+                <Button Content="Save XML" HorizontalAlignment="Stretch" Click="Save_Clicked"/>
             </StackPanel>
         </ScrollViewer>
 
@@ -41,6 +60,9 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
                               x:Name="canvasControl"
                               ClearColor="White"
                               CreateResources="canvasControl_CreateResources"
-                              Draw="canvasControl_Draw"/>
+                              Draw="canvasControl_Draw"
+                              PointerPressed="canvasControl_PointerPressed"
+                              PointerReleased="canvasControl_PointerReleased"
+                              PointerMoved="canvasControl_PointerMoved"/>
     </Grid>
 </UserControl>

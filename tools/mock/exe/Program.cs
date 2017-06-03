@@ -76,6 +76,7 @@ namespace Mock
                 case "pointer ecount":
                 case "out ecount pointer":
                 case "out bcount pointer":
+                case "pointer bcount":
                     return "*";
 
                 case "reference":

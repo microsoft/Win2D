@@ -28,27 +28,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
 
         <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto">
             <StackPanel>
-                <!-- Color picker grid -->
-                <Grid Height="80">
-                    <Grid.RowDefinitions>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition/>
-                        <ColumnDefinition/>
-                    </Grid.ColumnDefinitions>
-                    <Button Grid.Row="0" Grid.Column="0" x:Name="color0" Background="White" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Click="ColorPickerButton_Clicked"/>
-                    <Button Grid.Row="0" Grid.Column="1" x:Name="color1" Background="Green" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Click="ColorPickerButton_Clicked"/>
-                    <Button Grid.Row="1" Grid.Column="0" x:Name="color2" Background="Yellow" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Click="ColorPickerButton_Clicked"/>
-                    <Button Grid.Row="1" Grid.Column="1" x:Name="color3" Background="DarkRed" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Click="ColorPickerButton_Clicked"/>
-                    <Button Grid.Row="2" Grid.Column="0" x:Name="color4" Background="CornflowerBlue" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Click="ColorPickerButton_Clicked"/>
-                    <Button Grid.Row="2" Grid.Column="1" x:Name="color5" Background="OrangeRed" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Click="ColorPickerButton_Clicked"/>
-                    <Button Grid.Row="3" Grid.Column="0" x:Name="color6" Background="Silver" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Click="ColorPickerButton_Clicked"/>
-                    <Button Grid.Row="3" Grid.Column="1" x:Name="color7" Background="Navy" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Click="ColorPickerButton_Clicked"/>
-                </Grid>
+                <local:ColorPicker x:Name="colorPicker" HorizontalAlignment="Stretch" SelectionChanged="colorPicker_SelectionChanged"/>
 
                 <CheckBox x:Name="usePencilCheckbox" Content="Use Pencil" Checked="UsePencil_Checked" Unchecked="UsePencil_Unchecked" />
 

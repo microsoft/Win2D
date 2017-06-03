@@ -106,6 +106,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)printing\CanvasPrintTaskOptionsChangedEventArgs.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)printing\DeferrableTask.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)printing\DeferrableTaskScheduler.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)svg\BufferStreamWrapper.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\ApiInformationAdapter.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)text\InternalDWriteTextRenderer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\CachedResourceReference.h" />
@@ -186,6 +187,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)images\CanvasRenderTarget.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)images\ScopedBitmapMappedPixelAccess.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)svg\CanvasSvgDocument.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)svg\CanvasSvgElement.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)text\CanvasFontFace.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)text\CanvasFontSet.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)text\CanvasTextFormat.h" />
@@ -255,6 +257,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)printing\CanvasPrintDocumentAdapter.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)printing\CanvasPrintEventArgs.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)printing\DeferrableTask.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)svg\BufferStreamWrapper.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)utils\ApiInformationAdapter.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)utils\DxgiUtilities.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)utils\HashUtilities.cpp" />
@@ -327,6 +330,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)images\CanvasRenderTarget.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)images\ScopedBitmapMappedPixelAccess.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)svg\CanvasSvgDocument.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)svg\CanvasSvgElement.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)text\CanvasFontFace.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)text\CanvasFontSet.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)text\CanvasTextFormat.cpp" />
@@ -430,6 +434,7 @@
     <None Include="$(MSBuildThisFileDirectory)images\CanvasImage.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)images\CanvasVirtualBitmap.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)svg\CanvasSvgDocument.abi.idl" />
+    <None Include="$(MSBuildThisFileDirectory)svg\CanvasSvgElement.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)text\CanvasFontFace.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)text\CanvasFontSet.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)text\CanvasTextFormat.abi.idl" />

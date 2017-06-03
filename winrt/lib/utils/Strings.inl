@@ -71,6 +71,7 @@ STRING(SharedDeviceWrongDebugLevel, L"CanvasDevice.DebugLevel has changed since 
 STRING(SpriteBatchInvalidInterpolation, L"Invalid interpolation mode specified. Sprite batches only support CanvasImageInterpolation.NearestNeighbor or CanvasImageInterpolation.Linear.")
 STRING(SpriteBatchNotAvailable, L"Sprite batches are not supported on this device. Use CanvasSpriteBatch.IsSupported to determine if sprite batches are supported.")
 STRING(SurfaceTooBig, L"Cannot create %s sized %d x %d; MaximumBitmapSizeInPixels for this device is %d.")
+STRING(SvgDocumentTreeMustHaveConsistentDevice, L"There was an attempt to create an SVG document tree involving two different devices, which is not allowed. All parts of an SVG document tree should have the same device.");
 STRING(SvgNotAvailable, L"SVG features are not supported on this version of Windows. Use CanvasSvgDocument.IsSupported to determine if SVG features are supported.")
 STRING(SvgTextShouldHaveNonZeroLength, L"The specified SVG string has length zero; a valid SVG string was expected.")
 STRING(SvgViewportSizeNotValid, L"The width and height of an SVG viewport must be positive, and nonzero.")

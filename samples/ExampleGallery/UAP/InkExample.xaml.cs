@@ -109,7 +109,7 @@ namespace ExampleGallery
 
             // Set defaults
             SelectedDryInkRenderingType = DryInkRenderingType.BuiltIn;
-            SelectColor(color0);
+            UpdateColorSelection();
             showTextLabels = true;
 
             needToCreateSizeDependentResources = true;
@@ -466,24 +466,9 @@ namespace ExampleGallery
             canvasControl.Invalidate();
         }
 
-        void ResetColorSelectors()
+        void UpdateColorSelection()
         {
-            Button[] buttons = { color0, color1, color2, color3, color4, color5, color6, color7 };
-            foreach (Button button in buttons)
-            {
-                button.BorderBrush = null;
-                button.BorderThickness = new Thickness(0);
-            }
-        }
-
-        void SelectColor(Button button)
-        {
-            ResetColorSelectors();
-
-            button.BorderBrush = new SolidColorBrush(Colors.Red);
-            button.BorderThickness = new Thickness(3);
-
-            var color = ((SolidColorBrush)button.Background).Color;
+            var color = colorPicker.CurrentColor;
 
             // Color applies to both ink and pencil rendering.
             inkAttributes.Color = color;
@@ -496,9 +481,9 @@ namespace ExampleGallery
             inkCanvas.InkPresenter.UpdateDefaultDrawingAttributes(usePencil ? pencilAttributes : inkAttributes);
         }
 
-        private void ColorPickerButton_Clicked(object sender, RoutedEventArgs e)
+        private void colorPicker_SelectionChanged()
         {
-            SelectColor((Button)e.OriginalSource);
+            UpdateColorSelection();
         }
 
         private void StrokeWidth_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)

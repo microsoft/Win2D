@@ -40,6 +40,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DRoundedRectangleGeometry.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DSpriteBatch.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DSvgDocument.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DSvgElement.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DTransformedImageSource.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DTransformGraph.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockPrintControl.h" />
@@ -167,6 +168,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)composition\CanvasCompositionUnitTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasPrintDocumentUnitTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasSpriteBatchUnitTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasSvgElementUnitTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)graphics\ColorManagementEffectUnitTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)graphics\EffectTransferTable3DUnitTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)graphics\PixelShaderEffectUnitTests.cpp" />

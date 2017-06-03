@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
@@ -47,6 +47,7 @@
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)GlowTextCustomControl.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Infrastructure\AppIconGenerator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Infrastructure\ColorPicker.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Infrastructure\CustomThumbnails.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Infrastructure\DeveloperTools.xaml.cs">
       <DependentUpon>DeveloperTools.xaml</DependentUpon>

@@ -15,7 +15,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <remarks>
         <p>
           To draw SVG, first create a document using 
-          <see cref="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgDocument.Load(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.String)">Load</see> 
+          <see cref="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgDocument.LoadFromXml(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.String)">Load</see> 
           or 
           <see cref="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgDocument.LoadAsync(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.Storage.Streams.IRandomAccessStream)">LoadAsync</see>.
           Then, draw it to a drawing session using
@@ -28,7 +28,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
 
             void canvasControl_CreateResources(CanvasControl sender, Microsoft.Graphics.Canvas.UI.CanvasCreateResourcesEventArgs args)
             {
-                svgDocument = CanvasSvgDocument.Load(sender, "<svg><circle fill=\"#660000\" r=\"500\"/></svg>");
+                svgDocument = CanvasSvgDocument.LoadFromXml(sender, "<svg><circle fill=\"#660000\" r=\"500\"/></svg>");
             }
 
             void canvasControl_Draw(CanvasControl sender, CanvasDrawEventArgs args)
@@ -95,7 +95,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgDocument.Dispose">
       <summary>Releases all resources used by the CanvasSvgDocument.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgDocument.Load(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.String)">
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgDocument.LoadFromXml(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.String)">
       <summary>Loads an SVG document from a string.</summary>
       <remarks>
       <p>
@@ -126,7 +126,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         <p>
           If the application is currently running on an operating system that
           doesn't support SVG features, then calls to 
-          <see cref="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgDocument.Load(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.String)">Load</see> 
+          <see cref="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgDocument.LoadFromXml(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.String)">Load</see> 
           or 
           <see cref="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgDocument.LoadAsync(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.Storage.Streams.IRandomAccessStream)">LoadAsync</see>
           will fail.
@@ -141,5 +141,60 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="P:Microsoft.Graphics.Canvas.Svg.CanvasSvgDocument.Device">
       <summary>Gets the device associated with this SVG document.</summary>
     </member>
+    
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgDocument.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreator)">
+      <summary>Initializes a new instance of the CanvasSvgDocument class.</summary>
+      <remarks>
+        <p>
+          This creates a blank document. A blank document is automatically given a single empty root &lt;svg/&gt; node.
+        </p>
+        <p>
+          To add content to the document, replace the root node using <see cref="P:Microsoft.Graphics.Canvas.Svg.CanvasSvgDocument.Root"/>
+          or add to it using <see cref="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgElement.AppendChild(Microsoft.Graphics.Canvas.Svg.CanvasSvgElement)"/>.
+        </p>
+      </remarks>
+    </member>
+    
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgDocument.LoadElementFromXml(System.String)">
+      <summary>Loads an SVG element from string containing an XML fragment.</summary>
+      <remarks>
+        <p>
+          The passed-in string needs to be valid SVG XML. It should have one root node. It doesn't necessarily
+          have to be a complete document, though.
+        </p>
+        <p>
+          After creation, the element is not automatically added to the tree. You can add it to the document tree, for example,
+          using 
+          <see cref="P:Microsoft.Graphics.Canvas.Svg.CanvasSvgDocument.Root"/>
+          or <see cref="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgElement.AppendChild(Microsoft.Graphics.Canvas.Svg.CanvasSvgElement)"/>.
+          You can add an element to a document that isn't the one used to create it. Just, the document and the element need to share the
+          same device.
+        </p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgDocument.LoadElementAsync(Windows.Storage.Streams.IRandomAccessStream)">
+      <summary>Loads an SVG element from a stream containing an XML fragment.</summary>
+      <remarks>
+        <p>
+          The passed-in stream needs to contain valid SVG XML. It should have one root node. It doesn't necessarily
+          have to be a complete document, though.
+        </p>
+        <p>
+          After creation, the element is not automatically added to the tree. You can add it to the document tree, for example,
+          using 
+          <see cref="P:Microsoft.Graphics.Canvas.Svg.CanvasSvgDocument.Root"/>
+          or <see cref="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgElement.AppendChild(Microsoft.Graphics.Canvas.Svg.CanvasSvgElement)"/>.
+          You can add an element to a document that isn't the one used to create it. Just, the document and the element need to share the
+          same device.
+        </p>
+      </remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Svg.CanvasSvgDocument.Root">
+      <summary>Gets or sets the root element of the SVG document.</summary>
+      <remarks>
+        The root element of an svg document is always an &lt;svg&gt; element.
+      </remarks>
+    </member>    
+    
   </members>
 </doc>

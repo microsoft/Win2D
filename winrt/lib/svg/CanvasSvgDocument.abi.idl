@@ -24,13 +24,40 @@ namespace Microsoft.Graphics.Canvas.Svg
         HRESULT SaveAsync(
             [in] Windows.Storage.Streams.IRandomAccessStream* stream,
             [out][retval] Windows.Foundation.IAsyncAction** asyncAction);
+
+        [propput]
+        HRESULT Root([in] CanvasSvgElement* value);
+
+        [propget]
+        HRESULT Root([out, retval] CanvasSvgElement** value);
+
+        // Deserializes XML into a new element.
+        // A string used to create an XML element must consist of valid XML. 
+        // It must contain one root node. 
+        // It must be a valid SVG fragment (not necessarily an entire document).
+
+        // An element can belong to zero or one documents. By default, an element isn't
+        // associated with any document.
+
+        // Like documents, elements have a device association. A document and all its elements
+        // must belong to the same device.
+
+        // Loads an element from an XML string.
+        HRESULT LoadElementFromXml(
+            [in] HSTRING xmlString,
+            [out, retval] CanvasSvgElement** svgElement);
+
+        // Loads an element from a stream.
+        HRESULT LoadElementAsync(
+            [in] Windows.Storage.Streams.IRandomAccessStream* stream,
+            [out, retval] Windows.Foundation.IAsyncOperation<CanvasSvgElement*>** svgElement);
     }
     
     [version(VERSION), uuid(7740E748-CB9A-453F-A678-8B3B3A7254D3), exclusiveto(CanvasSvgDocument)]
     interface ICanvasSvgDocumentStatics : IInspectable
     {
         // Loads a document from an XML string.
-        HRESULT Load(
+        HRESULT LoadFromXml(
             [in] Microsoft.Graphics.Canvas.ICanvasResourceCreator* resourceCreator,
             [in] HSTRING xmlString,
             [out, retval] CanvasSvgDocument** svgDocument);
@@ -45,7 +72,15 @@ namespace Microsoft.Graphics.Canvas.Svg
         HRESULT IsSupported(Microsoft.Graphics.Canvas.CanvasDevice* device, [out, retval] boolean* value);
     }
 
-    [STANDARD_ATTRIBUTES, static(ICanvasSvgDocumentStatics, VERSION)]
+    [version(VERSION), uuid(BAB0F16D-4050-4EF6-8022-8A07E9E74A9D), exclusiveto(CanvasSvgDocument)]
+    interface ICanvasSvgDocumentFactory : IInspectable
+    {
+        HRESULT CreateEmpty(
+            [in] Microsoft.Graphics.Canvas.ICanvasResourceCreator* resourceCreator,
+            [out, retval] CanvasSvgDocument** canvasSvgDocument);
+    };
+
+    [STANDARD_ATTRIBUTES, activatable(ICanvasSvgDocumentFactory, VERSION), static(ICanvasSvgDocumentStatics, VERSION)]
     runtimeclass CanvasSvgDocument
     {
         [default] interface ICanvasSvgDocument;

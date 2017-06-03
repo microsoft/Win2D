@@ -1,0 +1,26 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+//
+// Licensed under the MIT License. See LICENSE.txt in the project root for license information.
+
+#if WINVER > _WIN32_WINNT_WINBLUE
+
+namespace Microsoft.Graphics.Canvas.Svg
+{
+    runtimeclass CanvasSvgElement;
+
+    // This type interops to ID2D1SvgElement.
+    [version(VERSION), uuid(0775CB81-C555-45BF-9795-0FF59151C3BE), exclusiveto(CanvasSvgElement)]
+    interface ICanvasSvgElement : IInspectable
+        requires Windows.Foundation.IClosable
+    {
+        HRESULT AppendChild([in] CanvasSvgElement* child);
+    }
+
+    [STANDARD_ATTRIBUTES]
+    runtimeclass CanvasSvgElement
+    {
+        [default] interface ICanvasSvgElement;
+    }
+}
+
+#endif
