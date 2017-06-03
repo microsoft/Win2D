@@ -69,6 +69,10 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Link>Deployed Files\D2DTypes2.xml</Link>
     </None>
+    <None Include="..\..\codegen\exe\apiref\D2DSvgTypes.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>Deployed Files\D2DSvgTypes.xml</Link>
+    </None>
     <None Include="..\..\codegen\exe\apiref\D2DTypes.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Link>Deployed Files\D2DTypes.xml</Link>
@@ -132,6 +136,10 @@
     <Content Include="..\..\..\winrt\test.internal\mocks\MockD2DInkStyle.h">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Link>Deployed Files\MockD2DInkStyle.h</Link>
+    </Content>
+    <Content Include="..\..\..\winrt\test.internal\mocks\MockD2DSvgDocument.h">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>Deployed Files\MockD2DSvgDocument.h</Link>
     </Content>
   </ItemGroup>
   <ItemGroup>

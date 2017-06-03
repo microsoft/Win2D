@@ -80,6 +80,10 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Link>Deployed Files\D2DTypes.xml</Link>
     </None>
+    <None Include="..\exe\apiref\D2DSvgTypes.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>Deployed Files\D2DSvgTypes.xml</Link>
+    </None>
     <None Include="..\exe\apiref\D2DEffectAuthor.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Link>Deployed Files\D2DEffectAuthor.xml</Link>
