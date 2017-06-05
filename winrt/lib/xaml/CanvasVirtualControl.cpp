@@ -408,6 +408,10 @@ void CanvasVirtualControl::WindowVisibilityChanged()
         {
             ThrowIfFailed(imageSource->RaiseRegionsInvalidatedIfAny());
         }
+        else
+        {
+            Changed(ChangeReason::Other);
+        }
     }
 }
 

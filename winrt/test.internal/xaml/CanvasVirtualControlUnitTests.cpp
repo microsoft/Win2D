@@ -320,6 +320,29 @@ TEST_CLASS(CanvasVirtualControlTests)
         imageSource->RaiseRegionsInvalidated(expectedRegions, expectedVisibleRegion);
     }
 
+    TEST_METHOD_EX(CanvasVirtualControl_WhenControlBecomesVisibleAfterLoading_RegionsInvalidatedIsCalled)
+    {
+        Fixture f;
+
+        // Start with the window hidden.
+        f.Adapter->GetCurrentMockWindow()->SetVisible(false);
+
+        // Loading the control while the window is hidden should not raise RegionsInvalidated.
+        auto onRegionsInvalidated = MockEventHandler<ControlRegionsInvalidatedHandler>(L"onRegionsInvalidated");
+        EventRegistrationToken token;
+        ThrowIfFailed(f.Control->add_RegionsInvalidated(onRegionsInvalidated.Get(), &token));
+
+        f.Load();
+
+        // Now make the window visible. This should create the image source and raise RegionsInvalidated.
+        auto imageSource = f.ExpectCreateImageSource();
+
+        f.Adapter->GetCurrentMockWindow()->SetVisible(true);
+
+        onRegionsInvalidated.SetExpectedCalls(1);
+        imageSource->RaiseRegionsInvalidated(std::vector<Rect> { anyRegion }, anyRegion);
+    }
+
     TEST_METHOD_EX(CanvasVirtualControl_CreateDrawingSession_FailsWhenPassedBadParameters)
     {
         Fixture f;
