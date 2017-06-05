@@ -724,7 +724,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 m_primaryOutput.Reset();
                 m_sharedState.reset();
                 m_histogramEffect.Reset();
-            });
+                m_atlasEffect.Reset();
+        });
     }
 
     ComPtr<ID2D1Device1> CanvasDevice::GetD2DDevice()
@@ -1386,21 +1387,29 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return result;
     }
 
-    ComPtr<ID2D1Effect> CanvasDevice::LeaseHistogramEffect(ID2D1DeviceContext* d2dContext)
+    CanvasDevice::HistogramAndAtlasEffects CanvasDevice::LeaseHistogramEffect(ID2D1DeviceContext* d2dContext)
     {
-        ComPtr<ID2D1Effect> effect = InterlockedExchangeComPtr(m_histogramEffect, nullptr);
+        ComPtr<ID2D1Effect> histogram = InterlockedExchangeComPtr(m_histogramEffect, nullptr);
 
-        if (!effect)
+        if (!histogram)
         {
-            ThrowIfFailed(d2dContext->CreateEffect(CLSID_D2D1Histogram, &effect));
+            ThrowIfFailed(d2dContext->CreateEffect(CLSID_D2D1Histogram, &histogram));
         }
 
-        return effect;
+        ComPtr<ID2D1Effect> atlas = InterlockedExchangeComPtr(m_atlasEffect, nullptr);
+
+        if (!atlas)
+        {
+            ThrowIfFailed(d2dContext->CreateEffect(CLSID_D2D1Atlas, &atlas));
+        }
+
+        return HistogramAndAtlasEffects{ histogram, atlas };
     }
 
-    void CanvasDevice::ReleaseHistogramEffect(ComPtr<ID2D1Effect>&& effect)
+    void CanvasDevice::ReleaseHistogramEffect(HistogramAndAtlasEffects&& effects)
     {
-        InterlockedExchangeComPtr(m_histogramEffect, std::move(effect));
+        InterlockedExchangeComPtr(m_histogramEffect, std::move(effects.HistogramEffect));
+        InterlockedExchangeComPtr(m_atlasEffect, std::move(effects.AtlasEffect));
     }
 
 #if WINVER > _WIN32_WINNT_WINBLUE

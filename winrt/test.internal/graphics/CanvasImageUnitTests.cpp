@@ -642,7 +642,8 @@ TEST_CLASS(CanvasImageHistogramUnitTests)
         auto factory = Make<CanvasImageFactory>();
         auto canvasDevice = Make<StubCanvasDevice>();
         auto d2dContext = Make<MockD2DDeviceContext>();
-        auto effect = Make<MockD2DEffect>();
+        auto histogramEffect = Make<MockD2DEffect>();
+        auto atlasEffect = Make<MockD2DEffect>();
         auto d2dBitmap = Make<StubD2DBitmap>(D2D1_BITMAP_OPTIONS_NONE, dpi);
         auto canvasBitmap = Make<CanvasBitmap>(nullptr, d2dBitmap.Get());
         ComPtr<MockD2DEffectThatCountsCalls> dpiCompensator;
@@ -659,21 +660,27 @@ TEST_CLASS(CanvasImageHistogramUnitTests)
         canvasDevice->LeaseHistogramEffectMethod.SetExpectedCalls(1, [&](ID2D1DeviceContext* context)
         {
             Assert::IsTrue(IsSameInstance(context, d2dContext.Get()));
-            return effect;
+            return CanvasDevice::HistogramAndAtlasEffects{ histogramEffect, atlasEffect };
         });
 
-        canvasDevice->ReleaseHistogramEffectMethod.SetExpectedCalls(1, [&](ComPtr<ID2D1Effect> releasingEffect)
+        canvasDevice->ReleaseHistogramEffectMethod.SetExpectedCalls(1, [&](CanvasDevice::HistogramAndAtlasEffects releasing)
         {
-            Assert::IsTrue(IsSameInstance(effect.Get(), releasingEffect.Get()));
+            Assert::IsTrue(IsSameInstance(histogramEffect.Get(), releasing.HistogramEffect.Get()));
+            Assert::IsTrue(IsSameInstance(atlasEffect.Get(), releasing.AtlasEffect.Get()));
         });
 
-        int setInputCallCount = 0;
+        atlasEffect->MockGetOutput = [&](ID2D1Image** output)
+        {
+            atlasEffect.CopyTo(output);
+        };
 
-        effect->MockSetInput = [&](UINT32 index, ID2D1Image* input)
+        int setAtlasInputCallCount = 0;
+
+        atlasEffect->MockSetInput = [&](UINT32 index, ID2D1Image* input)
         {
             Assert::AreEqual(0u, index);
 
-            switch (setInputCallCount++)
+            switch (setAtlasInputCallCount++)
             {
             case 0:
                 if (dpiCompensator)
@@ -691,11 +698,47 @@ TEST_CLASS(CanvasImageHistogramUnitTests)
             }
         };
 
-        int setValueCallCount = 0;
+        int setAtlasValueCallCount = 0;
 
-        effect->MockSetValue = [&](UINT32 index, D2D1_PROPERTY_TYPE type, CONST BYTE* data, UINT32 dataSize)
+        atlasEffect->MockSetValue = [&](UINT32 index, D2D1_PROPERTY_TYPE type, CONST BYTE* data, UINT32 dataSize)
         {
-            switch (setValueCallCount++)
+            switch (setAtlasValueCallCount++)
+            {
+            case 0:
+                Assert::AreEqual<uint32_t>(D2D1_ATLAS_PROP_INPUT_RECT, index);
+                Assert::AreEqual<size_t>(sizeof(D2D1_RECT_F), dataSize);
+                Assert::AreEqual(*reinterpret_cast<D2D1_RECT_F const*>(data), ToD2DRect(rect));
+                break;
+
+            default:
+                Assert::Fail();
+            }
+
+            return S_OK;
+        };
+
+        int setHistogramInputCallCount = 0;
+
+        histogramEffect->MockSetInput = [&](UINT32 index, ID2D1Image* input)
+        {
+            Assert::AreEqual(0u, index);
+
+            switch (setHistogramInputCallCount++)
+            {
+            case 0:
+                Assert::IsTrue(IsSameInstance(atlasEffect.Get(), input));
+                break;
+
+            default:
+                Assert::Fail();
+            }
+        };
+
+        int setHistogramValueCallCount = 0;
+
+        histogramEffect->MockSetValue = [&](UINT32 index, D2D1_PROPERTY_TYPE type, CONST BYTE* data, UINT32 dataSize)
+        {
+            switch (setHistogramValueCallCount++)
             {
             case 0:
                 Assert::AreEqual<uint32_t>(D2D1_HISTOGRAM_PROP_CHANNEL_SELECT, index);
@@ -716,7 +759,7 @@ TEST_CLASS(CanvasImageHistogramUnitTests)
             return S_OK;
         };
 
-        effect->MockGetValue = [&](UINT32 index, D2D1_PROPERTY_TYPE, BYTE*, UINT32 dataSize)
+        histogramEffect->MockGetValue = [&](UINT32 index, D2D1_PROPERTY_TYPE, BYTE*, UINT32 dataSize)
         {
             Assert::AreEqual<uint32_t>(D2D1_HISTOGRAM_PROP_HISTOGRAM_OUTPUT, index);
             Assert::AreEqual<size_t>(numBins * sizeof(float), dataSize);
@@ -747,13 +790,16 @@ TEST_CLASS(CanvasImageHistogramUnitTests)
 
         d2dContext->DrawImageMethod.SetExpectedCalls(1, [&](ID2D1Image* image, D2D1_POINT_2F const*, D2D1_RECT_F const*, D2D1_INTERPOLATION_MODE actualInterpolation, D2D1_COMPOSITE_MODE)
         {
-            Assert::IsTrue(IsSameInstance(effect.Get(), image));
+            Assert::IsTrue(IsSameInstance(histogramEffect.Get(), image));
         });
 
         ThrowIfFailed(factory->ComputeHistogram(canvasBitmap.Get(), rect, canvasDevice.Get(), channelSelect, numBins, result.GetAddressOfSize(), result.GetAddressOfData()));
 
-        Assert::AreEqual(2, setInputCallCount);
-        Assert::AreEqual(2, setValueCallCount);
+        Assert::AreEqual(2, setAtlasInputCallCount);
+        Assert::AreEqual(1, setAtlasValueCallCount);
+        
+        Assert::AreEqual(1, setHistogramInputCallCount);
+        Assert::AreEqual(2, setHistogramValueCallCount);
 
         if (dpiCompensator)
         {
@@ -783,62 +829,110 @@ TEST_CLASS(CanvasImageHistogramUnitTests)
         auto canvasDevice = Make<CanvasDevice>(d2dDevice.Get());
         auto deviceInternal = As<ICanvasDeviceInternal>(canvasDevice);
         auto d2dContext = Make<MockD2DDeviceContext>();
-        auto d2dEffect1 = Make<StubD2DEffect>(CLSID_D2D1Histogram);
-        auto d2dEffect2 = Make<StubD2DEffect>(CLSID_D2D1Histogram);
+        auto d2dHistogram1 = Make<StubD2DEffect>(CLSID_D2D1Histogram);
+        auto d2dHistogram2 = Make<StubD2DEffect>(CLSID_D2D1Histogram);
+        auto d2dAtlas1 = Make<StubD2DEffect>(CLSID_D2D1Atlas);
+        auto d2dAtlas2 = Make<StubD2DEffect>(CLSID_D2D1Atlas);
 
-        // First call to LeaseHistogramEffect should allocate a new D2D effect.
-        d2dContext->CreateEffectMethod.SetExpectedCalls(1, [&](IID const& iid, ID2D1Effect** effect)
+        int whichEffect = 0;
+
+        // First call to LeaseHistogramEffect should allocate new D2D effects.
+        d2dContext->CreateEffectMethod.SetExpectedCalls(2, [&](IID const& iid, ID2D1Effect** effect)
         {
-            Assert::AreEqual(CLSID_D2D1Histogram, iid);
-            return d2dEffect1.CopyTo(effect);
+            switch (whichEffect++)
+            {
+            case 0:
+                Assert::AreEqual(CLSID_D2D1Histogram, iid);
+                return d2dHistogram1.CopyTo(effect);
+
+            case 1:
+                Assert::AreEqual(CLSID_D2D1Atlas, iid);
+                return d2dAtlas1.CopyTo(effect);
+
+            default:
+                Assert::Fail();
+                return E_UNEXPECTED;
+            }
         });
 
-        auto histogram = deviceInternal->LeaseHistogramEffect(d2dContext.Get());
-        Assert::AreEqual<void*>(histogram.Get(), d2dEffect1.Get());
+        auto effects = deviceInternal->LeaseHistogramEffect(d2dContext.Get());
 
-        deviceInternal->ReleaseHistogramEffect(std::move(histogram));
-        Assert::IsNull(histogram.Get());
+        Assert::AreEqual<void*>(effects.HistogramEffect.Get(), d2dHistogram1.Get());
+        Assert::AreEqual<void*>(effects.AtlasEffect.Get(), d2dAtlas1.Get());
+
+        deviceInternal->ReleaseHistogramEffect(std::move(effects));
+
+        Assert::IsNull(effects.HistogramEffect.Get());
+        Assert::IsNull(effects.AtlasEffect.Get());
 
         Expectations::Instance()->Validate();
 
-        // After ReleaseHistogramEffect, subsequent calls to LeaseHistogramEffect should return the same D2D effect.
-        histogram = deviceInternal->LeaseHistogramEffect(d2dContext.Get());
-        Assert::AreEqual<void*>(histogram.Get(), d2dEffect1.Get());
+        // After ReleaseHistogramEffect, subsequent calls to LeaseHistogramEffect should return the same D2D effects.
+        effects = deviceInternal->LeaseHistogramEffect(d2dContext.Get());
+        
+        Assert::AreEqual<void*>(effects.HistogramEffect.Get(), d2dHistogram1.Get());
+        Assert::AreEqual<void*>(effects.AtlasEffect.Get(), d2dAtlas1.Get());
 
         Expectations::Instance()->Validate();
 
         // Nested calls to LeaseHistogramEffect (without ReleaseHistogramEffect) should allocate new D2D effects.
-        d2dContext->CreateEffectMethod.SetExpectedCalls(1, [&](IID const& iid, ID2D1Effect** effect)
+        d2dContext->CreateEffectMethod.SetExpectedCalls(2, [&](IID const& iid, ID2D1Effect** effect)
         {
-            Assert::AreEqual(CLSID_D2D1Histogram , iid);
-            return d2dEffect2.CopyTo(effect);
+            switch (whichEffect++)
+            {
+            case 2:
+                Assert::AreEqual(CLSID_D2D1Histogram, iid);
+                return d2dHistogram2.CopyTo(effect);
+
+            case 3:
+                Assert::AreEqual(CLSID_D2D1Atlas, iid);
+                return d2dAtlas2.CopyTo(effect);
+
+            default:
+                Assert::Fail();
+                return E_UNEXPECTED;
+            }
         });
 
-        auto histogram2 = deviceInternal->LeaseHistogramEffect(d2dContext.Get());
-        Assert::AreEqual<void*>(histogram2.Get(), d2dEffect2.Get());
+        auto effects2 = deviceInternal->LeaseHistogramEffect(d2dContext.Get());
 
-        // Releasing the first effect should transfer its ownership back to the device.
-        AssertExpectedRefCount(d2dEffect1.Get(), 2);
-        AssertExpectedRefCount(d2dEffect2.Get(), 2);
+        Assert::AreEqual<void*>(effects2.HistogramEffect.Get(), d2dHistogram2.Get());
+        Assert::AreEqual<void*>(effects2.AtlasEffect.Get(), d2dAtlas2.Get());
 
-        deviceInternal->ReleaseHistogramEffect(std::move(histogram));
-        Assert::IsNull(histogram.Get());
+        // Releasing the first effects should transfer their ownership back to the device.
+        AssertExpectedRefCount(d2dHistogram1.Get(), 2);
+        AssertExpectedRefCount(d2dHistogram2.Get(), 2);
+        AssertExpectedRefCount(d2dAtlas1.Get(), 2);
+        AssertExpectedRefCount(d2dAtlas2.Get(), 2);
 
-        AssertExpectedRefCount(d2dEffect1.Get(), 2);
-        AssertExpectedRefCount(d2dEffect2.Get(), 2);
+        deviceInternal->ReleaseHistogramEffect(std::move(effects));
 
-        // Releasing the second effect should swap it with the one the device is currently holding.
-        deviceInternal->ReleaseHistogramEffect(std::move(histogram2));
-        Assert::IsNull(histogram2.Get());
+        Assert::IsNull(effects.HistogramEffect.Get());
+        Assert::IsNull(effects.AtlasEffect.Get());
 
-        AssertExpectedRefCount(d2dEffect1.Get(), 1);
-        AssertExpectedRefCount(d2dEffect2.Get(), 2);
+        AssertExpectedRefCount(d2dHistogram1.Get(), 2);
+        AssertExpectedRefCount(d2dHistogram2.Get(), 2);
+        AssertExpectedRefCount(d2dAtlas1.Get(), 2);
+        AssertExpectedRefCount(d2dAtlas2.Get(), 2);
+
+        // Releasing the second effects should swap them with the ones the device is currently holding.
+        deviceInternal->ReleaseHistogramEffect(std::move(effects2));
+
+        Assert::IsNull(effects2.HistogramEffect.Get());
+        Assert::IsNull(effects2.AtlasEffect.Get());
+
+        AssertExpectedRefCount(d2dHistogram1.Get(), 1);
+        AssertExpectedRefCount(d2dHistogram2.Get(), 2);
+        AssertExpectedRefCount(d2dAtlas1.Get(), 1);
+        AssertExpectedRefCount(d2dAtlas2.Get(), 2);
 
         // Closing the device should release everything.
         canvasDevice->Close();
 
-        AssertExpectedRefCount(d2dEffect1.Get(), 1);
-        AssertExpectedRefCount(d2dEffect2.Get(), 1);
+        AssertExpectedRefCount(d2dHistogram1.Get(), 1);
+        AssertExpectedRefCount(d2dHistogram2.Get(), 1);
+        AssertExpectedRefCount(d2dAtlas1.Get(), 1);
+        AssertExpectedRefCount(d2dAtlas2.Get(), 1);
     }
 
     static void AssertExpectedRefCount(ID2D1Effect* ptr, unsigned long expected)

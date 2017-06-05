@@ -163,8 +163,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         virtual void ThrowIfCreateSurfaceFailed(HRESULT hr, wchar_t const* typeName, uint32_t width, uint32_t height) = 0;
 
-        virtual ComPtr<ID2D1Effect> LeaseHistogramEffect(ID2D1DeviceContext* d2dContext) = 0;
-        virtual void ReleaseHistogramEffect(ComPtr<ID2D1Effect>&& effect) = 0;
+        struct HistogramAndAtlasEffects
+        {
+            ComPtr<ID2D1Effect> HistogramEffect;
+            ComPtr<ID2D1Effect> AtlasEffect;
+        };
+
+        virtual HistogramAndAtlasEffects LeaseHistogramEffect(ID2D1DeviceContext* d2dContext) = 0;
+        virtual void ReleaseHistogramEffect(HistogramAndAtlasEffects&& effects) = 0;
 
 #if WINVER > _WIN32_WINNT_WINBLUE
         virtual ComPtr<ID2D1GradientMesh> CreateGradientMesh(D2D1_GRADIENT_MESH_PATCH const* patches, uint32_t patchCount) = 0;
@@ -210,6 +216,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         DeviceContextPool m_deviceContextPool;
 
         ComPtr<ID2D1Effect> m_histogramEffect;
+        ComPtr<ID2D1Effect> m_atlasEffect;
 
 #if WINVER > _WIN32_WINNT_WINBLUE
         std::mutex m_quirkMutex;
@@ -368,8 +375,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         virtual void ThrowIfCreateSurfaceFailed(HRESULT hr, wchar_t const* typeName, uint32_t width, uint32_t height) override;
 
-        virtual ComPtr<ID2D1Effect> LeaseHistogramEffect(ID2D1DeviceContext* d2dContext) override;
-        virtual void ReleaseHistogramEffect(ComPtr<ID2D1Effect>&& effect) override;
+        virtual HistogramAndAtlasEffects LeaseHistogramEffect(ID2D1DeviceContext* d2dContext) override;
+        virtual void ReleaseHistogramEffect(HistogramAndAtlasEffects&& effects) override;
 
 #if WINVER > _WIN32_WINNT_WINBLUE
         virtual ComPtr<ID2D1GradientMesh> CreateGradientMesh(D2D1_GRADIENT_MESH_PATCH const* patches, uint32_t patchCount) override;

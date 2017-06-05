@@ -64,8 +64,8 @@ namespace canvas
 
         CALL_COUNTER_WITH_MOCK(GetPrimaryDisplayOutputMethod, ComPtr<IDXGIOutput>());
 
-        CALL_COUNTER_WITH_MOCK(LeaseHistogramEffectMethod, ComPtr<ID2D1Effect>(ID2D1DeviceContext*));
-        CALL_COUNTER_WITH_MOCK(ReleaseHistogramEffectMethod, void(ComPtr<ID2D1Effect>));
+        CALL_COUNTER_WITH_MOCK(LeaseHistogramEffectMethod, HistogramAndAtlasEffects(ID2D1DeviceContext*));
+        CALL_COUNTER_WITH_MOCK(ReleaseHistogramEffectMethod, void(HistogramAndAtlasEffects));
 
         CALL_COUNTER_WITH_MOCK(IsBufferPrecisionSupportedMethod, HRESULT(CanvasBufferPrecision, boolean*));
 
@@ -434,14 +434,14 @@ namespace canvas
             ThrowIfFailed(hr);
         }
 
-        virtual ComPtr<ID2D1Effect> LeaseHistogramEffect(ID2D1DeviceContext* d2dContext) override
+        virtual HistogramAndAtlasEffects LeaseHistogramEffect(ID2D1DeviceContext* d2dContext) override
         {
             return LeaseHistogramEffectMethod.WasCalled(d2dContext);
         }
 
-        virtual void ReleaseHistogramEffect(ComPtr<ID2D1Effect>&& effect) override
+        virtual void ReleaseHistogramEffect(HistogramAndAtlasEffects&& effects) override
         {
-            return ReleaseHistogramEffectMethod.WasCalled(effect);
+            return ReleaseHistogramEffectMethod.WasCalled(effects);
         }
 
 #if WINVER > _WIN32_WINNT_WINBLUE
