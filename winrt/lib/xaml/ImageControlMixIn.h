@@ -13,6 +13,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     public:
         virtual RegisteredEvent AddSurfaceContentsLostCallback(IEventHandler<IInspectable*>*) = 0;
         virtual ComPtr<IImage> CreateImageControl() = 0;
+        virtual void DisableAccessibilityView(IImage*) = 0;
     };
 
     
@@ -118,7 +119,17 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             
             return image;
         }
-        
+
+        virtual void DisableAccessibilityView(IImage* imageControl) override
+        {
+            using namespace ::ABI::Windows::UI::Xaml::Automation;
+
+            ComPtr<IAutomationPropertiesStatics2> automationProperties;
+            ThrowIfFailed(GetActivationFactory(HStringReference(RuntimeClass_Windows_UI_Xaml_Automation_AutomationProperties).Get(), &automationProperties));
+
+            automationProperties->SetAccessibilityView(As<IDependencyObject>(imageControl).Get(), Peers::AccessibilityView::AccessibilityView_Raw);
+        }
+
         ICompositionTargetStatics* GetCompositionTargetStatics()
         {
             return m_compositionTargetStatics.Get();

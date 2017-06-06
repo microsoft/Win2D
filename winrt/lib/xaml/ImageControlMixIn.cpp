@@ -25,6 +25,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         ThrowIfFailed(m_imageControl->put_Stretch(Stretch_Fill));
 
         //
+        // Disable the accessibility view of our internal image control.
+        // This stops Narrator reading out the word "image" when the Win2D control is focused.
+        // Full accessibility support for custom controls is left as an exercise for the reader,
+        // but at least this gives a blank slate to start from.
+        //
+        adapter->DisableAccessibilityView(m_imageControl.Get());
+
+        //
         // Set the image control as the content of this control.
         //
         ComPtr<IUIElement> imageAsUIElement;

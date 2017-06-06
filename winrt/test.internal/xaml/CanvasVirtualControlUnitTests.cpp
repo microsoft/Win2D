@@ -65,6 +65,10 @@ public:
     {
         return Image;
     }
+
+    virtual void DisableAccessibilityView(IImage*) override
+    {
+    }
 };
 
 

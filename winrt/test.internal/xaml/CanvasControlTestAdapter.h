@@ -117,4 +117,8 @@ public:
     {
         return Make<StubImageControl>();
     }
+
+    virtual void DisableAccessibilityView(IImage*) override
+    {
+    }
 };
