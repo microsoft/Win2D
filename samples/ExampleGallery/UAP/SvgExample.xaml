@@ -27,7 +27,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         </Grid.ColumnDefinitions>
 
         <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto">
-            <StackPanel Orientation="Vertical" MinWidth="100" Margin="5">
+            <StackPanel Orientation="Vertical" MinWidth="100" Margin="5" x:Name="optionsPanel">
 
                 <Button Content="New Document" HorizontalAlignment="Stretch" Click="NewDocument_Click"/>
 

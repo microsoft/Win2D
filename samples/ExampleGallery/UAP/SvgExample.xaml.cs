@@ -5,6 +5,7 @@
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Effects;
 using Microsoft.Graphics.Canvas.Svg;
+using Microsoft.Graphics.Canvas.Text;
 using Microsoft.Graphics.Canvas.UI;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using System;
@@ -103,16 +104,28 @@ namespace ExampleGallery
         public List<EffectType> Effects { get { return Utils.GetEnumAsList<EffectType>(); } }
         public EffectType CurrentEffectType { get; set; }
 
+        bool svgSupported;
+
         public SvgExample()
         {
             this.InitializeComponent();
 
             if (ThumbnailGenerator.IsDrawingThumbnail)
                 CurrentEffectType = EffectType.EdgeDetection;
+
+            svgSupported = CanvasSvgDocument.IsSupported(CanvasDevice.GetSharedDevice());
+
+            if (!svgSupported)
+            {
+                optionsPanel.Visibility = Visibility.Collapsed;
+            }
         }
 
         void canvasControl_CreateResources(CanvasControl sender, CanvasCreateResourcesEventArgs args)
         {
+            if (!svgSupported)
+                return;
+
             if (ThumbnailGenerator.IsDrawingThumbnail)
             {
                 LoadSampleFile();
@@ -122,9 +135,26 @@ namespace ExampleGallery
                 CreateSomeSimplePlaceholderDocument();
             }
         }
+
+        private void DrawNotSupportedMessage(CanvasDrawingSession ds, Size layoutRectangle)
+        {
+            ds.DrawText("This version of Windows does not support SVG features, so this example is not available.",
+                new Rect(new Point(0, 0), layoutRectangle), Colors.White, new CanvasTextFormat()
+                {
+                    HorizontalAlignment = CanvasHorizontalAlignment.Center,
+                    VerticalAlignment = CanvasVerticalAlignment.Center
+                });
+        }
         
         private void canvasControl_Draw(CanvasControl sender, CanvasDrawEventArgs args)
         {
+            if (!svgSupported)
+            {
+                args.DrawingSession.Clear(Colors.Black);
+                DrawNotSupportedMessage(args.DrawingSession, sender.Size);
+                return;
+            }
+
             Size viewportSize = new Size() { Width = 1000, Height = 1000 };
 
             if (CurrentEffectType == EffectType.None)
@@ -248,6 +278,9 @@ namespace ExampleGallery
 
         private void canvasControl_PointerPressed(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs e)
         {
+            if (!svgSupported)
+                return;
+
             pointerDrag = new PointerDrag(e.GetCurrentPoint(canvasControl).Position);
             canvasControl.Invalidate();
         }

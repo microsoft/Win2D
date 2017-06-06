@@ -12,23 +12,31 @@ using namespace Windows::Storage::Streams;
 TEST_CLASS(CanvasSvgDocumentTests)
 {
     CanvasDevice^ m_device;
+    CanvasDebugLevel m_previousDebugLevel;
+    bool m_isSupported;
 
 public:
     CanvasSvgDocumentTests()
     {
         // Win2D activity which causes a D2D error will be bubbled up as a "WinRT originate error" if the
         // debug layer is turned on.
+        m_previousDebugLevel = CanvasDevice::DebugLevel;
         CanvasDevice::DebugLevel = CanvasDebugLevel::None;
         m_device = ref new CanvasDevice();
+
+        m_isSupported = CanvasSvgDocument::IsSupported(m_device);
     }
 
-    TEST_METHOD(CanvasSvgDocument_IsSupported)
+    ~CanvasSvgDocumentTests()
     {
-        Assert::IsTrue(CanvasSvgDocument::IsSupported(m_device));
+        CanvasDevice::DebugLevel = m_previousDebugLevel;
     }
 
     TEST_METHOD(CanvasSvgDocument_InteropFailAfterClosure)
     {
+        if (!m_isSupported)
+            return;
+
         auto canvasSvgDocument = CanvasSvgDocument::LoadFromXml(m_device, "<svg/>");
 
         delete canvasSvgDocument;
@@ -38,6 +46,9 @@ public:
 
     TEST_METHOD(CanvasSvgDocument_NativeInterop)
     {
+        if (!m_isSupported)
+            return;
+
         auto d2dDeviceContext = As<ID2D1DeviceContext5>(CreateTestD2DDeviceContext(m_device));
 
         ComPtr<ID2D1SvgDocument> originalSvgDocument;
@@ -52,6 +63,9 @@ public:
 
     TEST_METHOD(CanvasSvgDocument_NullParameters)
     {
+        if (!m_isSupported)
+            return;
+
         Assert::ExpectException<Platform::InvalidArgumentException^>(
             [&]
             {
@@ -67,6 +81,9 @@ public:
 
     TEST_METHOD(CanvasSvgDocument_StringIsNotValidSvg)
     {
+        if (!m_isSupported)
+            return;
+
         Assert::ExpectException<Platform::InvalidArgumentException^>(
             [&]
             {
@@ -177,6 +194,9 @@ public:
 
     TEST_METHOD(CanvasSvgDocument_LoadingAndSaving)
     {
+        if (!m_isSupported)
+            return;
+
         struct TestCase
         {
             Platform::String^ Input;
@@ -220,6 +240,9 @@ public:
 
     TEST_METHOD(CanvasSvgDocument_CreateEmptyDocument)
     {
+        if (!m_isSupported)
+            return;
+
         for (int saveMethod = 0; saveMethod < 2; saveMethod++)
         {
             LoadingAndSavingFixture f(m_device);
@@ -236,6 +259,9 @@ public:
 
     TEST_METHOD(CanvasSvgDocument_CreateElements)
     {
+        if (!m_isSupported)
+            return;
+
         struct TestCase
         {
             Platform::String^ Input;
@@ -278,6 +304,9 @@ public:
 
     TEST_METHOD(CanvasSvgDocument_MismatchingDeviceBoundaries)
     {
+        if (!m_isSupported)
+            return;
+
         auto primaryDocument = CanvasSvgDocument::LoadFromXml(m_device, "<svg/>");
 
         auto secondaryDevice = ref new CanvasDevice();
@@ -299,6 +328,9 @@ public:
 
     TEST_METHOD(CanvasSvgElement_NativeInterop)
     {
+        if (!m_isSupported)
+            return;
+
         auto d2dDeviceContext = As<ID2D1DeviceContext5>(CreateTestD2DDeviceContext(m_device));
 
         ComPtr<ID2D1SvgDocument> d2dSvgDocument;

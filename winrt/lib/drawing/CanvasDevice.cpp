@@ -1493,7 +1493,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         HRESULT hr = lease->QueryInterface(IID_PPV_ARGS(&deviceContext5));
         if (hr == E_NOINTERFACE)
         {
-            ThrowHR(hr, Strings::SvgNotAvailable);
+            // Convention is to use E_NOTIMPL for features belonging to a newer OS.
+            ThrowHR(E_NOTIMPL, Strings::SvgNotAvailable);
         }
         else
         {

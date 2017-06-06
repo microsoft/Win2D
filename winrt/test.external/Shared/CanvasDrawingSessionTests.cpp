@@ -227,6 +227,9 @@ TEST_CLASS(CanvasDrawingSessionTests)
     {
         auto device = ref new CanvasDevice();
 
+        if (!CanvasSvgDocument::IsSupported(device))
+            return;
+
         auto d2dDevice = GetWrappedResource<ID2D1Device1>(device);
 
         ComPtr<ID2D1DeviceContext1> d2dDeviceContext;
