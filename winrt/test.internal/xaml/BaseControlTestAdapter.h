@@ -21,7 +21,7 @@ public:
     ComPtr<MockEventSource<DpiChangedEventHandler>> DpiChangedEventSource;
     ComPtr<MockEventSource<IEventHandler<SuspendingEventArgs*>>> SuspendingEventSource;
     ComPtr<MockEventSource<IEventHandler<IInspectable*>>> ResumingEventSource;
-    CALL_COUNTER_WITH_MOCK(CreateRecreatableDeviceManagerMethod, std::unique_ptr<IRecreatableDeviceManager<TRAITS>>());
+    CALL_COUNTER_WITH_MOCK(CreateRecreatableDeviceManagerMethod, std::unique_ptr<IRecreatableDeviceManager<TRAITS>>(IInspectable*));
 
     ComPtr<MockCanvasDeviceActivationFactory> DeviceFactory;
 
@@ -126,13 +126,13 @@ public:
         return m_mockWindow;
     }
 
-    virtual std::unique_ptr<IRecreatableDeviceManager<TRAITS>> CreateRecreatableDeviceManager() override
+    virtual std::unique_ptr<IRecreatableDeviceManager<TRAITS>> CreateRecreatableDeviceManager(IInspectable* parentControl) override
     {
-        auto manager = CreateRecreatableDeviceManagerMethod.WasCalled();
+        auto manager = CreateRecreatableDeviceManagerMethod.WasCalled(parentControl);
         if (manager)
             return manager;
 
-        return std::make_unique<RecreatableDeviceManager<TRAITS>>(DeviceFactory.Get());
+        return std::make_unique<RecreatableDeviceManager<TRAITS>>(DeviceFactory.Get(), parentControl);
     }
 
     void SetHasUIThreadAccess(bool value)

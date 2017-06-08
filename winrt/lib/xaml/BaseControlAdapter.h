@@ -148,9 +148,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             return currentWindow;
         }
 
-        virtual std::unique_ptr<IRecreatableDeviceManager<TRAITS>> CreateRecreatableDeviceManager() override
+        virtual std::unique_ptr<IRecreatableDeviceManager<TRAITS>> CreateRecreatableDeviceManager(IInspectable* parentControl) override
         {
-            return std::make_unique<RecreatableDeviceManager<TRAITS>>(m_canvasDeviceFactory.Get());
+            return std::make_unique<RecreatableDeviceManager<TRAITS>>(m_canvasDeviceFactory.Get(), parentControl);
         }
 
     private:

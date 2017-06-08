@@ -531,9 +531,9 @@ struct DeviceCreationFixture : public BasicControlWithDrawFixture<TRAITS>
         CreateAdapter();
 
         Adapter->CreateRecreatableDeviceManagerMethod.AllowAnyCall(
-            [=]
+            [=](IInspectable*)
             {
-                auto manager = std::make_unique<RecreatableDeviceManager<TRAITS>>(Adapter->DeviceFactory.Get());
+                auto manager = std::make_unique<RecreatableDeviceManager<TRAITS>>(Adapter->DeviceFactory.Get(), nullptr);
 
                 LastDeviceManager = manager.get();
 

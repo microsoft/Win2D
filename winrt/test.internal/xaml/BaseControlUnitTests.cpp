@@ -192,7 +192,7 @@ TEST_CLASS(BaseControl_Interaction_With_RecreatableDeviceManager)
             CreateAdapter();
 
             Adapter->CreateRecreatableDeviceManagerMethod.SetExpectedCalls(1,
-                [=]
+                [=](IInspectable*)
                 {
                     Assert::IsNull(DeviceManager);
                     auto manager = std::make_unique<MockRecreatableDeviceManager<AnyTraits>>();

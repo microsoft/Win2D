@@ -260,7 +260,7 @@ struct ControlFixtureWithRecreatableDeviceManager : public ControlFixture<TRAITS
         CreateAdapter();
 
         Adapter->CreateRecreatableDeviceManagerMethod.SetExpectedCalls(1,
-            [=]
+            [=](IInspectable*)
             {
                 Assert::IsNull(DeviceManager);
                 auto manager = std::make_unique<MockRecreatableDeviceManager<TRAITS>>();
