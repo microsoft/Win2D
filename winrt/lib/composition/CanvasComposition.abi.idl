@@ -60,6 +60,13 @@ namespace Microsoft.Graphics.Canvas.UI.Composition
             [in]          Windows.Foundation.Rect updateRect,
             [out, retval] Microsoft.Graphics.Canvas.CanvasDrawingSession** drawingSession);
 
+        [overload("CreateDrawingSession")]
+        HRESULT CreateDrawingSessionWithUpdateRectAndDpi(
+            [in]          Windows.UI.Composition.CompositionDrawingSurface* drawingSurface,
+            [in]          Windows.Foundation.Rect updateRectInPixels,
+            [in]          float dpi,
+            [out, retval] Microsoft.Graphics.Canvas.CanvasDrawingSession** drawingSession);
+
         // NOTE: sizeInPixels is converted to integer by rounding (rather than
         // truncating).  This is to match the behavior of CreateDrawingSurface.
         HRESULT Resize(

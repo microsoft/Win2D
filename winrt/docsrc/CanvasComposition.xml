@@ -39,6 +39,9 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
           should ensure that they either call Clear or draw over the entire
           surface.
         </p>
+        <p>
+          The drawing session will use default DPI (96), in which DIPs and pixels are the same.
+        </p>
       </remarks>
     </member>
 
@@ -46,6 +49,28 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <summary>
         Creates a CanvasDrawingSession for updating a region of the given CompositionDrawingSurface.
       </summary>
+      <remarks>
+        <p>
+          The drawing session will use default DPI (96), in which DIPs and pixels are the same.
+        </p>
+      </remarks>
+    </member>
+
+    <member name="M:Microsoft.Graphics.Canvas.UI.Composition.CanvasComposition.CreateDrawingSession(Windows.UI.Composition.CompositionDrawingSurface,Windows.Foundation.Rect,System.Single)">
+      <summary>
+        Creates a CanvasDrawingSession for updating a region of the given CompositionDrawingSurface, using a custom DPI setting.
+      </summary>
+      <remarks>
+        <p>
+          The drawing session will use the specified DPI. If this is any value other than 
+          the default 96, DIPs and pixels will not be the same, so drawing will be scaled 
+          up or down accordingly. Note that this DPI setting only affects the scale of 
+          drawing performed by the returned drawing session. Other composition APIs, 
+          including the updateRectInPixels parameter to this method, always operate in 
+          pixel units.
+        </p>
+        <p>For more information, see <a href="DPI.htm">DPI and DIPs</a>.</p>
+      </remarks>
     </member>
 
     <member name="M:Microsoft.Graphics.Canvas.UI.Composition.CanvasComposition.GetCanvasDevice(Windows.UI.Composition.CompositionGraphicsDevice)">

@@ -44,12 +44,18 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             Rect updateRect,
             ICanvasDrawingSession** drawingSession) override;
 
+        IFACEMETHODIMP CreateDrawingSessionWithUpdateRectAndDpi(
+            ICompositionDrawingSurface* drawingSurface,
+            Rect updateRectInPixels,
+            float dpi,
+            ICanvasDrawingSession** drawingSession) override;
+
         IFACEMETHODIMP Resize( 
             ICompositionDrawingSurface* drawingSurface,
             Size size) override;
 
     private:
-        HRESULT CreateDrawingSessionImpl(ICompositionDrawingSurface* drawingSurface, RECT const* rect, ICanvasDrawingSession** drawingSession);
+        HRESULT CreateDrawingSessionImpl(ICompositionDrawingSurface* drawingSurface, RECT const* rect, float dpi, ICanvasDrawingSession** drawingSession);
     };
 
 } } } } } }

@@ -118,7 +118,7 @@ IFACEMETHODIMP CanvasCompositionStatics::CreateDrawingSession(
     ICompositionDrawingSurface* drawingSurface,
     ICanvasDrawingSession** drawingSession)
 {
-    return CreateDrawingSessionImpl(drawingSurface, nullptr, drawingSession);
+    return CreateDrawingSessionImpl(drawingSurface, nullptr, DEFAULT_DPI, drawingSession);
 }
 
 
@@ -140,7 +140,19 @@ IFACEMETHODIMP CanvasCompositionStatics::CreateDrawingSessionWithUpdateRect(
 {
     RECT rect = ToRECTForCompositor(updateRect);
 
-    return CreateDrawingSessionImpl(drawingSurface, &rect, drawingSession);
+    return CreateDrawingSessionImpl(drawingSurface, &rect, DEFAULT_DPI, drawingSession);
+}
+
+
+IFACEMETHODIMP CanvasCompositionStatics::CreateDrawingSessionWithUpdateRectAndDpi(
+    ICompositionDrawingSurface* drawingSurface,
+    Rect updateRectInPixels,
+    float dpi,
+    ICanvasDrawingSession** drawingSession)
+{
+    RECT rect = ToRECTForCompositor(updateRectInPixels);
+
+    return CreateDrawingSessionImpl(drawingSurface, &rect, dpi, drawingSession);
 }
 
 
@@ -163,7 +175,7 @@ public:
 };
 
 
-HRESULT CanvasCompositionStatics::CreateDrawingSessionImpl(ICompositionDrawingSurface* drawingSurface, RECT const* updateRect, ICanvasDrawingSession** drawingSession)
+HRESULT CanvasCompositionStatics::CreateDrawingSessionImpl(ICompositionDrawingSurface* drawingSurface, RECT const* updateRect, float dpi, ICanvasDrawingSession** drawingSession)
 {
     return ExceptionBoundary(
         [&]
@@ -177,7 +189,11 @@ HRESULT CanvasCompositionStatics::CreateDrawingSessionImpl(ICompositionDrawingSu
             POINT offset;            
             ThrowIfFailed(drawingSurfaceInterop->BeginDraw(updateRect, IID_PPV_ARGS(&deviceContext), &offset));
 
-            deviceContext->SetTransform(D2D1::Matrix3x2F::Translation((float)offset.x, (float)offset.y));
+            float offsetX = PixelsToDips(offset.x, dpi);
+            float offsetY = PixelsToDips(offset.y, dpi);
+
+            deviceContext->SetTransform(D2D1::Matrix3x2F::Translation(offsetX, offsetY));
+            deviceContext->SetDpi(dpi, dpi);
 
             // Although we could look up the owner using interop, via the
             // deviceContext, drawing session will do this lazily for us if
@@ -189,7 +205,7 @@ HRESULT CanvasCompositionStatics::CreateDrawingSessionImpl(ICompositionDrawingSu
                 std::make_shared<CompositionDrawingSurfaceDrawingSessionAdapter>(std::move(drawingSurfaceInterop)),
                 owner,
                 nullptr,
-                D2D1_POINT_2F{ (float)offset.x, (float)offset.y });
+                D2D1_POINT_2F{ offsetX, offsetY });
             ThrowIfFailed(newDs.CopyTo(drawingSession));
         });
 }

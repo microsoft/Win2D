@@ -195,17 +195,24 @@ public:
     {
         ComPtr<StubD2DDeviceContext> D2DDeviceContext = Make<StubD2DDeviceContext>();
 
-        DrawingSessionFixture()
+        DrawingSessionFixture(float expectedDpi = DEFAULT_DPI)
         {
             D2DDeviceContext->SetTransformMethod.SetExpectedCalls(1,
-                [&] (D2D1_MATRIX_3X2_F const* m)
+                [=] (D2D1_MATRIX_3X2_F const* m)
                 {
                     Assert::AreEqual(1.0f, m->_11);
                     Assert::AreEqual(0.0f, m->_12);
                     Assert::AreEqual(0.0f, m->_21);
                     Assert::AreEqual(1.0f, m->_22);
-                    Assert::AreEqual((float)AnyOffsetX, m->_31);
-                    Assert::AreEqual((float)AnyOffsetY, m->_32);                
+                    Assert::AreEqual((float)AnyOffsetX * DEFAULT_DPI / expectedDpi, m->_31);
+                    Assert::AreEqual((float)AnyOffsetY * DEFAULT_DPI / expectedDpi, m->_32);
+                });
+
+            D2DDeviceContext->SetDpiMethod.SetExpectedCalls(1,
+                [=](float dpiX, float dpiY)
+                {
+                    Assert::AreEqual(expectedDpi, dpiX);
+                    Assert::AreEqual(expectedDpi, dpiY);
                 });
         }
 
@@ -277,6 +284,38 @@ public:
 
         ComPtr<ICanvasDrawingSession> drawingSession;
         ThrowIfFailed(f.Composition->CreateDrawingSessionWithUpdateRect(f.DrawingSurface.Get(), anyRect, &drawingSession));
+
+        f.Check(drawingSession);
+    }
+
+    TEST_METHOD_EX(CanvasComposition_CreateDrawingSessionWithUpdateRectAndDpi)
+    {
+        const float anyDpi = 192;
+
+        DrawingSessionFixture f(anyDpi);
+
+        Rect anyRect{};
+        anyRect.X = 1.1f;
+        anyRect.Y = 2.1f;
+        anyRect.Width = 3.1f;
+        anyRect.Height = 4.4f;
+
+        RECT anyRECT;
+        anyRECT.left = 1;
+        anyRECT.right = 4;      // (1.1 + 3.1) = (4.2) - Composition rounds, so this becomes 4
+        anyRECT.top = 2;
+        anyRECT.bottom = 7;     // (2.1 + 4.4) = (6.5) - Composition rounds, so this becomes 7.
+
+        f.DrawingSurface->BeginDrawMethod.SetExpectedCalls(1,
+            [&] (const RECT* updateRect, REFIID iid, void** updateObject, POINT* updateOffset)
+            {
+                Assert::IsNotNull(updateRect);
+                Assert::AreEqual(anyRECT, *updateRect);
+                return f.DoBeginDraw(iid, updateObject, updateOffset);
+            });
+
+        ComPtr<ICanvasDrawingSession> drawingSession;
+        ThrowIfFailed(f.Composition->CreateDrawingSessionWithUpdateRectAndDpi(f.DrawingSurface.Get(), anyRect, anyDpi, &drawingSession));
 
         f.Check(drawingSession);
     }

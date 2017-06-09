@@ -296,6 +296,27 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     </section>
 
     <section>
+      <title>Composition DPI</title>
+      <content>
+        <para>
+          The Microsoft.Graphics.Canvas.Composition APIs operate at a lower level than 
+          Win2D XAML controls, so they do not attempt to automatically handle DPI on your 
+          behalf. It is up to you to decide what units you prefer to operate in, and set 
+          whatever transforms are necessary to achieve that as part of your composition 
+          visual tree.
+        </para>
+        <para>
+          Windows.UI.Composition APIs such as CreateDrawingSurface always specify sizes 
+          in pixel units. When using Win2D to draw onto a composition surface, you can 
+          specify whatever DPI you want to use when calling 
+          <codeEntityReference>M:Microsoft.Graphics.Canvas.UI.Composition.CanvasComposition.CreateDrawingSession(Windows.UI.Composition.CompositionDrawingSurface,Windows.Foundation.Rect,System.Single)</codeEntityReference>.
+          All drawing performed through the returned CanvasDrawingSession will be scaled 
+          up or down accordingly.
+        </para>
+      </content>
+    </section>
+
+    <section>
       <title>How to test DPI handling</title>
       <content>
         <para>
