@@ -22,6 +22,7 @@ STRING(CanvasPrintDocumentMustBeConstructedOnUIThread, L"CanvasPrintDocument mus
 STRING(CanvasPrintEventArgsDpiCannotBeChangedAfterCreateDrawingSession, L"CanvasPrintEventArgs.Dpi cannot be set after the first call to CanvasPrintEventArgs.CreateDrawingSession.")
 STRING(CanvasPrintDocumentGetDeferralMayOnlyBeCalledOnce, L"GetDeferral can only be called once per event.")
 STRING(CanvasPrintDocumentDeferralCompleteMayOnlyBeCalledOnce, L"CanvasPrintDeferral.Complete may only be called once.")
+STRING(ColorManagementProfileTypeNotSupported, L"This type of ColorManagementProfile is not supported on this version of Windows. Use ColorManagementProfile.IsSupported to determine which types are available.")
 STRING(CommandListCannotBeDrawnToAfterItHasBeenUsed, L"CanvasCommandList.CreateDrawingSession cannot be called after the CanvasCommandList has been used as an image.")
 STRING(CreateDrawingSessionCalledBeforeRegionsInvalidated, L"CreateDrawingSession cannot be called before the RegionsInvalidated event has been raised.")
 STRING(CustomEffectBadFeatureLevel, L"This shader requires a higher Direct3D feature level than is supported by the device. Check PixelShaderEffect.IsSupported before using it.")

@@ -226,6 +226,12 @@ namespace Microsoft
             CX_VALUE_TO_STRING(Microsoft::Graphics::Canvas::Text::CanvasTextMeasuringMode);
             CX_VALUE_TO_STRING(DirectXPixelFormat);
 
+#if WINVER > _WIN32_WINNT_WINBLUE
+            CX_VALUE_TO_STRING(Microsoft::Graphics::Canvas::Effects::ColorManagementProfileType);
+            CX_VALUE_TO_STRING(Microsoft::Graphics::Canvas::Effects::ColorManagementGamma);
+            CX_VALUE_TO_STRING(Microsoft::Graphics::Canvas::Effects::ExtendedColorSpace);
+#endif
+
 #undef CX_VALUE_TO_STRING
 
             template<>

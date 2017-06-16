@@ -44,6 +44,20 @@ static uint8_t someIccProfile[] =
 };
 
 
+#if WINVER > _WIN32_WINNT_WINBLUE
+
+static ColorManagementSimpleProfile someSimpleProfile =
+{
+    { 1, 2 },
+    { 3, 4 },
+    { 5, 6 },
+    { 7, 8 },
+    ColorManagementGamma::G2084
+};
+
+#endif
+
+
 TEST_CLASS(ColorManagementProfileTests)
 {
     TEST_METHOD(ColorManagementProfile_Constructor)
@@ -56,6 +70,17 @@ TEST_CLASS(ColorManagementProfileTests)
 
         Assert::AreEqual(0u, srgb->IccProfile->Length);
         Assert::AreEqual(0u, scrgb->IccProfile->Length);
+
+#if WINVER > _WIN32_WINNT_WINBLUE
+        Assert::AreEqual(ColorManagementProfileType::Icc, srgb->Type);
+        Assert::AreEqual(ColorManagementProfileType::Icc, scrgb->Type);
+
+        Assert::IsNull(srgb->SimpleProfile);
+        Assert::IsNull(scrgb->SimpleProfile);
+
+        Assert::AreEqual(ExtendedColorSpace::FullG22P709, srgb->ExtendedColorSpace);
+        Assert::AreEqual(ExtendedColorSpace::FullG10P709, scrgb->ExtendedColorSpace);
+#endif
 
         ExpectCOMException(E_INVALIDARG, []
         {
@@ -72,11 +97,98 @@ TEST_CLASS(ColorManagementProfileTests)
 
         AssertExpectedIccProfile(custom->IccProfile);
 
+#if WINVER > _WIN32_WINNT_WINBLUE
+        Assert::AreEqual(ColorManagementProfileType::Icc, custom->Type);
+        Assert::IsNull(custom->SimpleProfile);
+        Assert::AreEqual(ExtendedColorSpace::Custom, custom->ExtendedColorSpace);
+#endif
+
         ExpectCOMException(E_INVALIDARG, []
         {
             ColorManagementProfile::CreateCustom(nullptr);
         });
     }
+
+
+#if WINVER > _WIN32_WINNT_WINBLUE
+
+
+    TEST_METHOD(ColorManagementProfile_CreateSimple)
+    {
+        auto simple = ColorManagementProfile::CreateSimple(someSimpleProfile);
+
+        Assert::AreEqual(ColorManagementProfileType::Simple, simple->Type);
+
+        AssertExpectedSimpleProfile(simple->SimpleProfile->Value);
+
+        Assert::AreEqual(CanvasColorSpace::Custom, simple->ColorSpace);
+        Assert::AreEqual(ExtendedColorSpace::Custom, simple->ExtendedColorSpace);
+        Assert::AreEqual(0u, simple->IccProfile->Length);
+    }
+
+
+    TEST_METHOD(ColorManagementProfile_CreateExtended)
+    {
+        auto extendedSrgb = ColorManagementProfile::CreateExtended(ExtendedColorSpace::FullG22P709);
+        auto extendedScrgb = ColorManagementProfile::CreateExtended(ExtendedColorSpace::FullG10P709);
+        auto extendedStudio = ColorManagementProfile::CreateExtended(ExtendedColorSpace::StudioG22P709);
+
+        Assert::AreEqual(ColorManagementProfileType::Extended, extendedSrgb->Type);
+        Assert::AreEqual(ColorManagementProfileType::Extended, extendedScrgb->Type);
+        Assert::AreEqual(ColorManagementProfileType::Extended, extendedStudio->Type);
+
+        Assert::AreEqual(ExtendedColorSpace::FullG22P709, extendedSrgb->ExtendedColorSpace);
+        Assert::AreEqual(ExtendedColorSpace::FullG10P709, extendedScrgb->ExtendedColorSpace);
+        Assert::AreEqual(ExtendedColorSpace::StudioG22P709, extendedStudio->ExtendedColorSpace);
+
+        Assert::AreEqual(CanvasColorSpace::Srgb, extendedSrgb->ColorSpace);
+        Assert::AreEqual(CanvasColorSpace::ScRgb, extendedScrgb->ColorSpace);
+        Assert::AreEqual(CanvasColorSpace::Custom, extendedStudio->ColorSpace);
+
+        Assert::AreEqual(0u, extendedSrgb->IccProfile->Length);
+        Assert::AreEqual(0u, extendedScrgb->IccProfile->Length);
+        Assert::AreEqual(0u, extendedStudio->IccProfile->Length);
+
+        Assert::IsNull(extendedSrgb->SimpleProfile);
+        Assert::IsNull(extendedScrgb->SimpleProfile);
+        Assert::IsNull(extendedStudio->SimpleProfile);
+
+        ExpectCOMException(E_INVALIDARG, []
+        {
+            ColorManagementProfile::CreateExtended(ExtendedColorSpace::Custom);
+        });
+    }
+
+
+    TEST_METHOD(ColorManagementProfile_IsSupported)
+    {
+        auto device = ref new CanvasDevice();
+
+        // ICC profiles are always supported.
+        Assert::IsTrue(ColorManagementProfile::IsSupported(ColorManagementProfileType::Icc, device));
+
+        // Invalid profile types are never supported.
+        Assert::IsFalse(ColorManagementProfile::IsSupported((ColorManagementProfileType)123, device));
+
+        // Simple and Extended types depend on the OS version.
+        bool isSimpleSupported = ColorManagementProfile::IsSupported(ColorManagementProfileType::Simple, device);
+        bool isExtendedSupported = ColorManagementProfile::IsSupported(ColorManagementProfileType::Extended, device);
+
+        Assert::AreEqual(isSimpleSupported, isExtendedSupported);
+
+        if (!isSimpleSupported)
+        {
+            auto simple = ColorManagementProfile::CreateSimple(someSimpleProfile);
+
+            ExpectCOMException(E_NOTIMPL, L"This type of ColorManagementProfile is not supported on this version of Windows. Use ColorManagementProfile.IsSupported to determine which types are available.", [&]
+            {
+                GetWrappedResource<ID2D1ColorContext>(device, simple);
+            });
+        }
+    }
+
+
+#endif  // WINVER > _WIN32_WINNT_WINBLUE
 
 
     TEST_METHOD(ColorManagementProfile_CreateViaInterop)
@@ -86,20 +198,79 @@ TEST_CLASS(ColorManagementProfileTests)
         auto drawingSession = commandList->CreateDrawingSession();
         auto d2dContext = GetWrappedResource<ID2D1DeviceContext>(drawingSession);
 
-        ComPtr<ID2D1ColorContext> d2dSrgb, d2dCustom;
+        ComPtr<ID2D1ColorContext> d2dSrgb, d2dScrgb, d2dCustom;
         
         ThrowIfFailed(d2dContext->CreateColorContext(D2D1_COLOR_SPACE_SRGB, nullptr, 0, &d2dSrgb));
+        ThrowIfFailed(d2dContext->CreateColorContext(D2D1_COLOR_SPACE_SCRGB, nullptr, 0, &d2dScrgb));
         ThrowIfFailed(d2dContext->CreateColorContext(D2D1_COLOR_SPACE_CUSTOM, someIccProfile, sizeof(someIccProfile), &d2dCustom));
 
         auto srgb = GetOrCreate<ColorManagementProfile>(device, d2dSrgb.Get());
+        auto scrgb = GetOrCreate<ColorManagementProfile>(device, d2dScrgb.Get());
         auto custom = GetOrCreate<ColorManagementProfile>(device, d2dCustom.Get());
 
         Assert::AreEqual(CanvasColorSpace::Srgb, srgb->ColorSpace);
+        Assert::AreEqual(CanvasColorSpace::ScRgb, scrgb->ColorSpace);
         Assert::AreEqual(CanvasColorSpace::Custom, custom->ColorSpace);
 
         Assert::AreEqual(0u, srgb->IccProfile->Length);
+        Assert::AreEqual(0u, scrgb->IccProfile->Length);
 
         AssertExpectedIccProfile(custom->IccProfile);
+
+#if WINVER > _WIN32_WINNT_WINBLUE
+        Assert::AreEqual(ColorManagementProfileType::Icc, srgb->Type);
+        Assert::AreEqual(ColorManagementProfileType::Icc, scrgb->Type);
+        Assert::AreEqual(ColorManagementProfileType::Icc, custom->Type);
+
+        Assert::IsNull(srgb->SimpleProfile);
+        Assert::IsNull(scrgb->SimpleProfile);
+        Assert::IsNull(custom->SimpleProfile);
+
+        Assert::AreEqual(ExtendedColorSpace::FullG22P709, srgb->ExtendedColorSpace);
+        Assert::AreEqual(ExtendedColorSpace::FullG10P709, scrgb->ExtendedColorSpace);
+        Assert::AreEqual(ExtendedColorSpace::Custom, custom->ExtendedColorSpace);
+
+        if (ColorManagementProfile::IsSupported(ColorManagementProfileType::Extended, device))
+        {
+            ComPtr<ID2D1ColorContext1> d2dSimple, d2dExtendedSrgb, d2dExtendedScrgb, d2dExtendedStudio;
+
+            auto d2dContext5 = As<ID2D1DeviceContext5>(d2dContext);
+
+            ThrowIfFailed(d2dContext5->CreateColorContextFromSimpleColorProfile(reinterpret_cast<D2D1_SIMPLE_COLOR_PROFILE*>(&someSimpleProfile), &d2dSimple));
+            ThrowIfFailed(d2dContext5->CreateColorContextFromDxgiColorSpace(DXGI_COLOR_SPACE_RGB_FULL_G22_NONE_P709, &d2dExtendedSrgb));
+            ThrowIfFailed(d2dContext5->CreateColorContextFromDxgiColorSpace(DXGI_COLOR_SPACE_RGB_FULL_G10_NONE_P709, &d2dExtendedScrgb));
+            ThrowIfFailed(d2dContext5->CreateColorContextFromDxgiColorSpace(DXGI_COLOR_SPACE_RGB_STUDIO_G22_NONE_P709, &d2dExtendedStudio));
+
+            auto simple = GetOrCreate<ColorManagementProfile>(device, d2dSimple.Get());
+            auto extendedSrgb = GetOrCreate<ColorManagementProfile>(device, d2dExtendedSrgb.Get());
+            auto extendedScrgb = GetOrCreate<ColorManagementProfile>(device, d2dExtendedScrgb.Get());
+            auto extendedStudio = GetOrCreate<ColorManagementProfile>(device, d2dExtendedStudio.Get());
+
+            Assert::AreEqual(ColorManagementProfileType::Simple, simple->Type);
+            Assert::AreEqual(CanvasColorSpace::Custom, simple->ColorSpace);
+            Assert::AreEqual(ExtendedColorSpace::Custom, simple->ExtendedColorSpace);
+            Assert::AreEqual(0u, simple->IccProfile->Length);
+            AssertExpectedSimpleProfile(simple->SimpleProfile->Value);
+
+            Assert::AreEqual(ColorManagementProfileType::Extended, extendedSrgb->Type);
+            Assert::AreEqual(CanvasColorSpace::Srgb, extendedSrgb->ColorSpace);
+            Assert::AreEqual(ExtendedColorSpace::FullG22P709, extendedSrgb->ExtendedColorSpace);
+            Assert::AreEqual(0u, extendedSrgb->IccProfile->Length);
+            Assert::IsNull(extendedSrgb->SimpleProfile);
+
+            Assert::AreEqual(ColorManagementProfileType::Extended, extendedScrgb->Type);
+            Assert::AreEqual(CanvasColorSpace::ScRgb, extendedScrgb->ColorSpace);
+            Assert::AreEqual(ExtendedColorSpace::FullG10P709, extendedScrgb->ExtendedColorSpace);
+            Assert::AreEqual(0u, extendedScrgb->IccProfile->Length);
+            Assert::IsNull(extendedScrgb->SimpleProfile);
+
+            Assert::AreEqual(ColorManagementProfileType::Extended, extendedStudio->Type);
+            Assert::AreEqual(CanvasColorSpace::Custom, extendedStudio->ColorSpace);
+            Assert::AreEqual(ExtendedColorSpace::StudioG22P709, extendedStudio->ExtendedColorSpace);
+            Assert::AreEqual(0u, extendedStudio->IccProfile->Length);
+            Assert::IsNull(extendedStudio->SimpleProfile);
+        }
+#endif
     }
 
 
@@ -119,6 +290,41 @@ TEST_CLASS(ColorManagementProfileTests)
         Assert::AreEqual(0u, srgb->IccProfile->Length);
 
         AssertExpectedIccProfile(custom->IccProfile);
+
+#if WINVER > _WIN32_WINNT_WINBLUE
+        Assert::AreEqual(ColorManagementProfileType::Icc, srgb->Type);
+        Assert::AreEqual(ColorManagementProfileType::Icc, custom->Type);
+
+        Assert::IsNull(srgb->SimpleProfile);
+        Assert::IsNull(custom->SimpleProfile);
+
+        Assert::AreEqual(ExtendedColorSpace::FullG22P709, srgb->ExtendedColorSpace);
+        Assert::AreEqual(ExtendedColorSpace::Custom, custom->ExtendedColorSpace);
+
+        if (ColorManagementProfile::IsSupported(ColorManagementProfileType::Extended, device))
+        {
+            auto simple = ColorManagementProfile::CreateSimple(someSimpleProfile);
+            auto extended = ColorManagementProfile::CreateExtended(ExtendedColorSpace::StudioG2084P2020);
+
+            GetWrappedResource<ID2D1ColorContext>(device, simple);
+            GetWrappedResource<ID2D1ColorContext>(device, extended);
+
+            Assert::AreEqual(CanvasColorSpace::Custom, simple->ColorSpace);
+            Assert::AreEqual(CanvasColorSpace::Custom, extended->ColorSpace);
+
+            Assert::AreEqual(0u, simple->IccProfile->Length);
+            Assert::AreEqual(0u, extended->IccProfile->Length);
+
+            Assert::AreEqual(ColorManagementProfileType::Simple, simple->Type);
+            Assert::AreEqual(ColorManagementProfileType::Extended, extended->Type);
+
+            AssertExpectedSimpleProfile(simple->SimpleProfile->Value);
+            Assert::IsNull(extended->SimpleProfile);
+
+            Assert::AreEqual(ExtendedColorSpace::Custom, simple->ExtendedColorSpace);
+            Assert::AreEqual(ExtendedColorSpace::StudioG2084P2020, extended->ExtendedColorSpace);
+        }
+#endif
     }
 
 
@@ -137,6 +343,23 @@ TEST_CLASS(ColorManagementProfileTests)
         {
             profile->IccProfile;
         });
+
+#if WINVER > _WIN32_WINNT_WINBLUE
+        Assert::ExpectException<Platform::ObjectDisposedException^>([&]
+        {
+            profile->Type;
+        });
+
+        Assert::ExpectException<Platform::ObjectDisposedException^>([&]
+        {
+            profile->SimpleProfile;
+        });
+
+        Assert::ExpectException<Platform::ObjectDisposedException^>([&]
+        {
+            profile->ExtendedColorSpace;
+        });
+#endif
 
         Assert::ExpectException<Platform::ObjectDisposedException^>([&]
         {
@@ -184,6 +407,37 @@ TEST_CLASS(ColorManagementProfileTests)
 
         AssertExpectedIccProfile(custom->IccProfile);
 
+#if WINVER > _WIN32_WINNT_WINBLUE
+        // Make sure realization does the right thing with the various ID2D1ColorContext1 variants.
+        if (ColorManagementProfile::IsSupported(ColorManagementProfileType::Extended, device))
+        {
+            D2D1_SIMPLE_COLOR_PROFILE simpleProfile{};
+
+            auto d2dSrgb1 = As<ID2D1ColorContext1>(d2dSrgb);
+            Assert::AreEqual<int>(D2D1_COLOR_CONTEXT_TYPE_ICC, d2dSrgb1->GetColorContextType());
+            Assert::AreEqual<int>(DXGI_COLOR_SPACE_RGB_FULL_G22_NONE_P709, d2dSrgb1->GetDXGIColorSpace());
+            Assert::AreEqual(E_INVALIDARG, d2dSrgb1->GetSimpleColorProfile(&simpleProfile));
+
+            auto d2dCustom1 = As<ID2D1ColorContext1>(d2dCustom);
+            Assert::AreEqual<int>(D2D1_COLOR_CONTEXT_TYPE_ICC, d2dCustom1->GetColorContextType());
+            Assert::AreEqual<int>(DXGI_COLOR_SPACE_CUSTOM, d2dCustom1->GetDXGIColorSpace());
+            Assert::AreEqual(E_INVALIDARG, d2dCustom1->GetSimpleColorProfile(&simpleProfile));
+
+            auto simple = ColorManagementProfile::CreateSimple(someSimpleProfile);
+            auto d2dSimple1 = GetWrappedResource<ID2D1ColorContext1>(device, simple);
+            Assert::AreEqual<int>(D2D1_COLOR_CONTEXT_TYPE_SIMPLE, d2dSimple1->GetColorContextType());
+            Assert::AreEqual<int>(DXGI_COLOR_SPACE_CUSTOM, d2dSimple1->GetDXGIColorSpace());
+            Assert::AreEqual(S_OK, d2dSimple1->GetSimpleColorProfile(&simpleProfile));
+            AssertExpectedSimpleProfile(*reinterpret_cast<ColorManagementSimpleProfile*>(&simpleProfile));
+
+            auto extended = ColorManagementProfile::CreateExtended(ExtendedColorSpace::StudioG2084P2020);
+            auto d2dExtended1 = GetWrappedResource<ID2D1ColorContext1>(device, extended);
+            Assert::AreEqual<int>(D2D1_COLOR_CONTEXT_TYPE_DXGI, d2dExtended1->GetColorContextType());
+            Assert::AreEqual<int>(DXGI_COLOR_SPACE_RGB_STUDIO_G2084_NONE_P2020, d2dExtended1->GetDXGIColorSpace());
+            Assert::AreEqual(E_INVALIDARG, d2dExtended1->GetSimpleColorProfile(&simpleProfile));
+        }
+#endif
+
         // Cannot interop without a device.
         ExpectCOMException(E_INVALIDARG, L"To unwrap this resource type, a device parameter must be passed to GetWrappedResource.", [&]
         {
@@ -211,4 +465,18 @@ TEST_CLASS(ColorManagementProfileTests)
             Assert::AreEqual(someIccProfile[i], data[i]);
         }
     }
+
+
+#if WINVER > _WIN32_WINNT_WINBLUE
+
+    static void AssertExpectedSimpleProfile(ColorManagementSimpleProfile const& profile)
+    {
+        Assert::AreEqual(someSimpleProfile.RedPrimary,   profile.RedPrimary);
+        Assert::AreEqual(someSimpleProfile.GreenPrimary, profile.GreenPrimary);
+        Assert::AreEqual(someSimpleProfile.BluePrimary,  profile.BluePrimary);
+        Assert::AreEqual(someSimpleProfile.WhitePointXZ, profile.WhitePointXZ);
+        Assert::AreEqual(someSimpleProfile.Gamma,        profile.Gamma);
+    }
+
+#endif
 };

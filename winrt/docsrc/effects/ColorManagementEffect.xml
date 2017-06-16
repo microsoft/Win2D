@@ -12,7 +12,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
   <members>
   
     <member name="T:Microsoft.Graphics.Canvas.Effects.ColorManagementEffect" NoComposition="true">
-      <summary>Transforms an image from one ICC (International Color Consortium) color profile to another.</summary>
+      <summary>Transforms an image from one color profile to another.</summary>
       <remarks>
         <p>This Windows Runtime type corresponds to the 
           <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/hh706318.aspx">D2D Color management effect</a>.</p>
@@ -28,13 +28,13 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <summary>Gets or sets the input source for ColorManagement effect.</summary>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Effects.ColorManagementEffect.SourceColorProfile">
-      <summary>Gets or sets the ICC color profile of the source image.</summary>
+      <summary>Gets or sets the color profile of the source image.</summary>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Effects.ColorManagementEffect.SourceRenderingIntent">
       <summary>Gets or sets the ICC rendering intent of the source image.</summary>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Effects.ColorManagementEffect.OutputRenderingIntent">
-      <summary>Gets or sets the ICC color profile of the output image.</summary>
+      <summary>Gets or sets the color profile of the output image.</summary>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Effects.ColorManagementEffect.OutputColorProfile">
       <summary>Gets or sets the ICC rendering intent of the output image.</summary>
@@ -72,22 +72,183 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <inherittemplate name="ICanvasEffectTemplate" replacement="ColorManagementEffect" />
 
     <member name="T:Microsoft.Graphics.Canvas.Effects.ColorManagementProfile">
-      <summary>Describes an ICC (International Color Consortium) color profile.</summary>
+      <summary>Describes an ICC (International Color Consortium), simple, or extended color profile.</summary>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Effects.ColorManagementProfile.#ctor(Microsoft.Graphics.Canvas.CanvasColorSpace)">
       <summary>Initializes a new instance of the ColorManagementProfile class using the specified color space.</summary>
+      <remarks>
+        The resulting color profile will have a type of <see cref="F:Microsoft.Graphics.Canvas.Effects.ColorManagementProfileType.Icc"/>.
+      </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Effects.ColorManagementProfile.CreateCustom(System.Byte[])">
       <summary>Initializes a new instance of the ColorManagementProfile class using the specified ICC color profile.</summary>
+      <remarks>
+        The resulting color profile will have a type of <see cref="F:Microsoft.Graphics.Canvas.Effects.ColorManagementProfileType.Icc"/>.
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Effects.ColorManagementProfile.CreateSimple(Microsoft.Graphics.Canvas.Effects.ColorManagementSimpleProfile)" Win10_15063="true" Experimental="true">
+      <summary>Initializes a new instance of the ColorManagementProfile class using the specified ColorManagementSimpleProfile.</summary>
+      <remarks>
+        <p>
+          Use <see cref="M:Microsoft.Graphics.Canvas.Effects.ColorManagementProfile.IsSupported(Microsoft.Graphics.Canvas.Effects.ColorManagementProfileType,Microsoft.Graphics.Canvas.CanvasDevice)"/>
+          to check whether simple color profiles are supported on the current version of Windows.
+        </p>
+        <p>
+          The resulting color profile will have a type of <see cref="F:Microsoft.Graphics.Canvas.Effects.ColorManagementProfileType.Simple"/>.
+          To use <see cref="T:Microsoft.Graphics.Canvas.Effects.ColorManagementEffect"/> with a simple color profile,
+          <see cref="P:Microsoft.Graphics.Canvas.Effects.ColorManagementEffect.Quality"/>
+          must be set to <see cref="F:Microsoft.Graphics.Canvas.Effects.ColorManagementEffectQuality.Best"/>.
+        </p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Effects.ColorManagementProfile.CreateExtended(Microsoft.Graphics.Canvas.Effects.ExtendedColorSpace)" Win10_15063="true" Experimental="true">
+      <summary>Initializes a new instance of the ColorManagementProfile class using the specified ExtendedColorSpace.</summary>
+      <remarks>
+        <p>
+          Use <see cref="M:Microsoft.Graphics.Canvas.Effects.ColorManagementProfile.IsSupported(Microsoft.Graphics.Canvas.Effects.ColorManagementProfileType,Microsoft.Graphics.Canvas.CanvasDevice)"/>
+          to check whether extended color profiles are supported on the current version of Windows.
+        </p>
+        <p>
+          The resulting color profile will have a type of <see cref="F:Microsoft.Graphics.Canvas.Effects.ColorManagementProfileType.Extended"/>.
+          To use <see cref="T:Microsoft.Graphics.Canvas.Effects.ColorManagementEffect"/> with an extended color profile,
+          <see cref="P:Microsoft.Graphics.Canvas.Effects.ColorManagementEffect.Quality"/>
+          must be set to <see cref="F:Microsoft.Graphics.Canvas.Effects.ColorManagementEffectQuality.Best"/>.
+        </p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Effects.ColorManagementProfile.IsSupported(Microsoft.Graphics.Canvas.Effects.ColorManagementProfileType,Microsoft.Graphics.Canvas.CanvasDevice)" Win10="true" Experimental="true">
+      <summary>Checks whether the specified type of color profile is supported on the specified device.</summary>
+      <remarks>ICC color profiles are always supported. Simple and Extended profiles require Windows 10 build 15063 (Creators Update) or greater.</remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Effects.ColorManagementProfile.Dispose">
       <summary>Releases all resources used by the ColorManagementProfile.</summary>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Effects.ColorManagementProfile.ColorSpace">
       <summary>Gets the color space.</summary>
+      <remarks>Returns Custom if the <see cref="P:Microsoft.Graphics.Canvas.Effects.ColorManagementProfile.Type"/> of the color profile is not Icc.</remarks>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Effects.ColorManagementProfile.IccProfile">
       <summary>Gets the ICC color profile.</summary>
+      <remarks>Returns an empty array if the <see cref="P:Microsoft.Graphics.Canvas.Effects.ColorManagementProfile.Type"/> of the color profile is not Icc.</remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.ColorManagementProfile.SimpleProfile" Win10_15063="true" Experimental="true">
+      <summary>Gets the simple color profile description.</summary>
+      <remarks>Returns null if the <see cref="P:Microsoft.Graphics.Canvas.Effects.ColorManagementProfile.Type"/> of the color profile is not Simple.</remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.ColorManagementProfile.ExtendedColorSpace" Win10_15063="true" Experimental="true">
+      <summary>Gets the extended color space.</summary>
+      <remarks>Returns Custom if the <see cref="P:Microsoft.Graphics.Canvas.Effects.ColorManagementProfile.Type"/> of the color profile is not Extended.</remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.ColorManagementProfile.Type" Win10="true" Experimental="true">
+      <summary>Gets the type of the color profile.</summary>
+    </member>
+
+    <member name="T:Microsoft.Graphics.Canvas.Effects.ColorManagementProfileType" Win10="true" Experimental="true">
+      <summary>Describes the type of a ColorManagementProfile.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Effects.ColorManagementProfileType.Icc">
+      <summary>The color space is specified by an ICC color profile.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Effects.ColorManagementProfileType.Simple">
+      <summary>The color space is specified by a ColorManagementSimpleProfile struct.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Effects.ColorManagementProfileType.Extended">
+      <summary>The color space is specified by an ExtendedColorSpace enum value.</summary>
+    </member>
+
+    <member name="T:Microsoft.Graphics.Canvas.Effects.ColorManagementSimpleProfile" Win10_15063="true" Experimental="true">
+      <summary>Simple description of a color space.</summary>
+      <remarks>
+        ColorManagementSimpleProfile structures are used with
+        <see cref="M:Microsoft.Graphics.Canvas.Effects.ColorManagementProfile.CreateSimple(Microsoft.Graphics.Canvas.Effects.ColorManagementSimpleProfile)"/>,
+        to create color management profiles of type
+        <see cref="F:Microsoft.Graphics.Canvas.Effects.ColorManagementProfileType.Simple"/>.
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Effects.ColorManagementSimpleProfile.RedPrimary">
+      <summary>The XY coordinates of the red primary in CIEXYZ space.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Effects.ColorManagementSimpleProfile.GreenPrimary">
+      <summary>The XY coordinates of the green primary in CIEXYZ space.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Effects.ColorManagementSimpleProfile.BluePrimary">
+      <summary>The XY coordinates of the blue primary in CIEXYZ space.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Effects.ColorManagementSimpleProfile.WhitePointXZ">
+      <summary>The X/Z tristimulus values for the whitepoint, normalized for relative luminance.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Effects.ColorManagementSimpleProfile.Gamma">
+      <summary>The gamma encoding to use for this color space.</summary>
+    </member>
+
+    <member name="T:Microsoft.Graphics.Canvas.Effects.ColorManagementGamma" Win10_15063="true" Experimental="true">
+      <summary>Describes the gamma of a ColorManagementSimpleProfile.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Effects.ColorManagementGamma.G22">
+      <summary>Colors are in 2.2 gamma color space.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Effects.ColorManagementGamma.G10">
+      <summary>Colors are in 1.0 gamma color space.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Effects.ColorManagementGamma.G2084">
+      <summary>Colors are in ST.2084 PQ gamma color space.</summary>
+    </member>
+
+    <member name="T:Microsoft.Graphics.Canvas.Effects.ExtendedColorSpace" Win10_15063="true" Experimental="true">
+      <summary>Defines an extended set of color spaces.</summary>
+      <remarks>
+        This enum is used with
+        <see cref="M:Microsoft.Graphics.Canvas.Effects.ColorManagementProfile.CreateExtended(Microsoft.Graphics.Canvas.Effects.ExtendedColorSpace)"/>,
+        to create color management profiles of type
+        <see cref="F:Microsoft.Graphics.Canvas.Effects.ColorManagementProfileType.Extended"/>.
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Effects.ExtendedColorSpace.FullG22P709">
+      <summary>
+        RGB color space with range 0-255, gamma 2.2, and BT.709 primaries.
+        This is the standard definition for sRGB. Note that this is often implemented with a linear segment, but in that case the exponent is corrected to stay aligned with a gamma 2.2 curve. This is usually used with 8 bit and 10 bit color channels.
+      </summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Effects.ExtendedColorSpace.FullG10P709">
+      <summary>
+        RGB color space with range 0-255, gamma 1.0, and BT.709 primaries.
+        This is the standard definition for scRGB, and is usually used with 16 bit integer, 16 bit floating point, and 32 bit floating point channels.
+      </summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Effects.ExtendedColorSpace.StudioG22P709">
+      <summary>
+        RGB color space with range 16-235, gamma 2.2, and BT.709 primaries.
+        This is the standard definition for ITU-R Recommendation BT.709. Note that due to the inclusion of a linear segment, the transfer curve looks similar to a pure exponential gamma of 1.9. This is usually used with 8 bit and 10 bit color channels.
+      </summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Effects.ExtendedColorSpace.StudioG22P2020">
+      <summary>
+        RGB color space with range 16-235, gamma 2.2 and BT.2020 primaries.
+        This is usually used with 10, 12, or 16 bit color channels.
+      </summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Effects.ExtendedColorSpace.FullG2084P2020">
+      <summary>
+        RGB color space with range 0-255, ST.2084 gamma and BT.2020 primaries.
+        This is usually used with 10, 12, or 16 bit color channels.
+      </summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Effects.ExtendedColorSpace.StudioG2084P2020">
+      <summary>
+        RGB color space with range 16-235, ST.2084 gamma and BT.2020 primaries.
+        This is usually used with 10, 12, or 16 bit color channels.
+      </summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Effects.ExtendedColorSpace.FullG22P2020">
+      <summary>
+        RGB color space with range 0-255, gamma 2.2 and BT.2020 primaries.
+        This is usually used with 10, 12, or 16 bit color channels.
+      </summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Effects.ExtendedColorSpace.Custom">
+      <summary>
+        Indicates that some other type of color space is being used.
+      </summary>
     </member>
 
     <member name="T:Microsoft.Graphics.Canvas.Effects.ColorManagementEffectQuality">

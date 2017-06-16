@@ -282,6 +282,42 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         static_assert(offsetof(DWRITE_UNICODE_RANGE, last) == offsetof(CanvasUnicodeRange, Last), "CanvasUnicodeRange layout must match DWRITE_UNICODE_RANGE");
     };
 
+#if WINVER > _WIN32_WINNT_WINBLUE
+
+    template<> struct ValidateStaticCastAs<Effects::ColorManagementProfileType, D2D1_COLOR_CONTEXT_TYPE> : std::true_type
+    {
+        static_assert(static_cast<uint32_t>(Effects::ColorManagementProfileType::Icc)      == static_cast<uint32_t>(D2D1_COLOR_CONTEXT_TYPE_ICC),    "ColorManagementProfileType must match D2D1_COLOR_CONTEXT_TYPE");
+        static_assert(static_cast<uint32_t>(Effects::ColorManagementProfileType::Simple)   == static_cast<uint32_t>(D2D1_COLOR_CONTEXT_TYPE_SIMPLE), "ColorManagementProfileType must match D2D1_COLOR_CONTEXT_TYPE");
+        static_assert(static_cast<uint32_t>(Effects::ColorManagementProfileType::Extended) == static_cast<uint32_t>(D2D1_COLOR_CONTEXT_TYPE_DXGI),   "ColorManagementProfileType must match D2D1_COLOR_CONTEXT_TYPE");
+    };
+
+    template<> struct ValidateReinterpretAs<Effects::ColorManagementSimpleProfile*, D2D1_SIMPLE_COLOR_PROFILE*> : std::true_type
+    {
+        static_assert(offsetof(Effects::ColorManagementSimpleProfile, RedPrimary)   == offsetof(D2D1_SIMPLE_COLOR_PROFILE, redPrimary),   "ColorManagementSimpleProfile layout must match D2D1_SIMPLE_COLOR_PROFILE");
+        static_assert(offsetof(Effects::ColorManagementSimpleProfile, GreenPrimary) == offsetof(D2D1_SIMPLE_COLOR_PROFILE, greenPrimary), "ColorManagementSimpleProfile layout must match D2D1_SIMPLE_COLOR_PROFILE");
+        static_assert(offsetof(Effects::ColorManagementSimpleProfile, BluePrimary)  == offsetof(D2D1_SIMPLE_COLOR_PROFILE, bluePrimary),  "ColorManagementSimpleProfile layout must match D2D1_SIMPLE_COLOR_PROFILE");
+        static_assert(offsetof(Effects::ColorManagementSimpleProfile, WhitePointXZ) == offsetof(D2D1_SIMPLE_COLOR_PROFILE, whitePointXZ), "ColorManagementSimpleProfile layout must match D2D1_SIMPLE_COLOR_PROFILE");
+        static_assert(offsetof(Effects::ColorManagementSimpleProfile, Gamma)        == offsetof(D2D1_SIMPLE_COLOR_PROFILE, gamma),        "ColorManagementSimpleProfile layout must match D2D1_SIMPLE_COLOR_PROFILE");
+
+        static_assert(static_cast<uint32_t>(Effects::ColorManagementGamma::G22)   == static_cast<uint32_t>(D2D1_GAMMA1_G22),   "ColorManagementGamma must match D2D1_GAMMA1");
+        static_assert(static_cast<uint32_t>(Effects::ColorManagementGamma::G10)   == static_cast<uint32_t>(D2D1_GAMMA1_G10),   "ColorManagementGamma must match D2D1_GAMMA1");
+        static_assert(static_cast<uint32_t>(Effects::ColorManagementGamma::G2084) == static_cast<uint32_t>(D2D1_GAMMA1_G2084), "ColorManagementGamma must match D2D1_GAMMA1");
+    };
+
+    template<> struct ValidateStaticCastAs<Effects::ExtendedColorSpace, DXGI_COLOR_SPACE_TYPE> : std::true_type
+    {
+        static_assert(static_cast<uint32_t>(Effects::ExtendedColorSpace::FullG22P709)      == static_cast<uint32_t>(DXGI_COLOR_SPACE_RGB_FULL_G22_NONE_P709),           "ExtendedColorSpace must match DXGI_COLOR_SPACE_TYPE");
+        static_assert(static_cast<uint32_t>(Effects::ExtendedColorSpace::FullG10P709)      == static_cast<uint32_t>(DXGI_COLOR_SPACE_RGB_FULL_G10_NONE_P709),           "ExtendedColorSpace must match DXGI_COLOR_SPACE_TYPE");
+        static_assert(static_cast<uint32_t>(Effects::ExtendedColorSpace::StudioG22P709)    == static_cast<uint32_t>(DXGI_COLOR_SPACE_RGB_STUDIO_G22_NONE_P709),         "ExtendedColorSpace must match DXGI_COLOR_SPACE_TYPE");
+        static_assert(static_cast<uint32_t>(Effects::ExtendedColorSpace::StudioG22P2020)   == static_cast<uint32_t>(DXGI_COLOR_SPACE_RGB_STUDIO_G22_NONE_P2020),        "ExtendedColorSpace must match DXGI_COLOR_SPACE_TYPE");
+        static_assert(static_cast<uint32_t>(Effects::ExtendedColorSpace::FullG2084P2020)   == static_cast<uint32_t>(DXGI_COLOR_SPACE_RGB_FULL_G2084_NONE_P2020),        "ExtendedColorSpace must match DXGI_COLOR_SPACE_TYPE");
+        static_assert(static_cast<uint32_t>(Effects::ExtendedColorSpace::StudioG2084P2020) == static_cast<uint32_t>(DXGI_COLOR_SPACE_RGB_STUDIO_G2084_NONE_P2020),      "ExtendedColorSpace must match DXGI_COLOR_SPACE_TYPE");
+        static_assert(static_cast<uint32_t>(Effects::ExtendedColorSpace::FullG22P2020)     == static_cast<uint32_t>(DXGI_COLOR_SPACE_RGB_FULL_G22_NONE_P2020),          "ExtendedColorSpace must match DXGI_COLOR_SPACE_TYPE");
+        static_assert(static_cast<uint32_t>(Effects::ExtendedColorSpace::Custom)           == static_cast<uint32_t>(DXGI_COLOR_SPACE_CUSTOM),                           "ExtendedColorSpace must match DXGI_COLOR_SPACE_TYPE");
+    };
+
+#endif  // WINVER > _WIN32_WINNT_WINBLUE
+
     inline float ToNormalizedFloat(uint8_t v)
     {
         return static_cast<float>(v) / 255.0f;

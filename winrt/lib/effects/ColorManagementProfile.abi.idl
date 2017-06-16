@@ -6,12 +6,72 @@ namespace Microsoft.Graphics.Canvas.Effects
 {
     runtimeclass ColorManagementProfile;
 
+#if (defined _WIN32_WINNT_WIN10) && (WINVER >= _WIN32_WINNT_WIN10)
+
+    // Equivalent to D2D1_COLOR_CONTEXT_TYPE.
+    [version(VERSION)]
+    typedef enum ColorManagementProfileType
+    {
+        Icc      = 0,
+        Simple   = 1,
+        Extended = 2,
+    } ColorManagementProfileType;
+
+    // Equivalent to D2D1_GAMMA1.
+    [version(VERSION)]
+    typedef enum ColorManagementGamma
+    {
+        G22 = 0,
+        G10 = 1,
+        G2084 = 2,
+    } ColorManagementGamma;
+
+    // Equivalent to D2D1_SIMPLE_COLOR_PROFILE.
+    [version(VERSION)]
+    typedef struct ColorManagementSimpleProfile
+    {
+        NUMERICS.Vector2 RedPrimary;
+        NUMERICS.Vector2 GreenPrimary;
+        NUMERICS.Vector2 BluePrimary;
+        NUMERICS.Vector2 WhitePointXZ;
+        ColorManagementGamma Gamma;
+    } ColorManagementSimpleProfile;
+
+    // Subset of DXGI_COLOR_SPACE_TYPE supported by D2D color management.
+    [version(VERSION)]
+    typedef enum ExtendedColorSpace
+    {
+        FullG22P709      = 0,
+        FullG10P709      = 1,
+        StudioG22P709    = 2,
+        StudioG22P2020   = 3,
+        FullG2084P2020   = 12,
+        StudioG2084P2020 = 14,
+        FullG22P2020     = 17,
+        Custom           = -1,
+    } ExtendedColorSpace;
+
+#endif // _WIN32_WINNT_WIN10
+
     [version(VERSION), uuid(5123A56B-B199-47AB-AEBE-D308044423FE), exclusiveto(ColorManagementProfile)]
     interface IColorManagementProfile : IInspectable
         requires Windows.Foundation.IClosable
     {
+        // Returns CanvasColorSpace.Custom if Type != ColorManagementProfileType.Icc.
         [propget] HRESULT ColorSpace([out, retval] Microsoft.Graphics.Canvas.CanvasColorSpace* value);
         [propget] HRESULT IccProfile([out] UINT32* valueCount, [out, size_is(, *valueCount), retval] BYTE** valueElements);
+
+#if (defined _WIN32_WINNT_WIN10) && (WINVER >= _WIN32_WINNT_WIN10)
+
+        [propget] HRESULT Type([out, retval] ColorManagementProfileType* value);
+
+        // Returns null if Type != ColorManagementProfileType.Simple.
+        [propget] HRESULT SimpleProfile([out, retval] Windows.Foundation.IReference<ColorManagementSimpleProfile>** value);
+
+        // Returns ExtendedColorSpace.Custom if Type != ColorManagementProfileType.Extended.
+        [propget] HRESULT ExtendedColorSpace([out, retval] ExtendedColorSpace* value);
+
+#endif // _WIN32_WINNT_WIN10
     };
 
     [version(VERSION), uuid(7A0F1C98-94C6-4621-9877-C51A17823EDF), exclusiveto(ColorManagementProfile)]
@@ -29,6 +89,23 @@ namespace Microsoft.Graphics.Canvas.Effects
             [in] UINT32 iccProfileCount,
             [in, size_is(iccProfileCount)] BYTE* iccProfile,
             [out, retval] ColorManagementProfile** result);
+
+#if (defined _WIN32_WINNT_WIN10) && (WINVER >= _WIN32_WINNT_WIN10)
+
+        HRESULT CreateSimple(
+            [in] ColorManagementSimpleProfile simpleProfile,
+            [out, retval] ColorManagementProfile** result);
+
+        HRESULT CreateExtended(
+            [in] ExtendedColorSpace colorSpace,
+            [out, retval] ColorManagementProfile** result);
+
+        HRESULT IsSupported(
+            [in] ColorManagementProfileType type,
+            [in] Microsoft.Graphics.Canvas.CanvasDevice* device,
+            [out, retval] boolean* result);
+
+#endif // _WIN32_WINNT_WIN10
     };
 
     [STANDARD_ATTRIBUTES, activatable(IColorManagementProfileFactory, VERSION), static(IColorManagementProfileStatics, VERSION)]
