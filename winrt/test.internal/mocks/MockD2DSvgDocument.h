@@ -6,8 +6,6 @@
 
 #pragma once
 
-#if WINVER > _WIN32_WINNT_WINBLUE
-
 namespace canvas
 {
     class MockD2DSvgDocument : public RuntimeClass<
@@ -31,5 +29,3 @@ namespace canvas
 
     };
 }
-
-#endif
