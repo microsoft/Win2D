@@ -214,17 +214,46 @@ namespace ExampleGallery
         {
             svgDocument = new CanvasSvgDocument(canvasControl);
 
-            svgDocument.Root.AppendChild(svgDocument.LoadElementFromXml(
-                "<rect stroke=\"#000000\" stroke-width=\"5\" fill=\"#FFFF00\" x=\"20\" y=\"20\" width=\"100\" height=\"100\"/>"));
+            {
+                var rect = svgDocument.Root.CreateAndAppendNamedChildElement("rect");
+                UseDefaultStroke(rect);
+                rect.SetColorAttribute("fill", Color.FromArgb(0xFF, 0xFF, 0xFF, 0x0));
+                rect.SetFloatAttribute("x", 20);
+                rect.SetFloatAttribute("y", 20);
+                rect.SetFloatAttribute("width", 100);
+                rect.SetFloatAttribute("height", 100);
+            }
+            {
+                var circle = svgDocument.Root.CreateAndAppendNamedChildElement("circle");
+                UseDefaultStroke(circle);
+                circle.SetColorAttribute("fill", Color.FromArgb(0xFF, 0x8B, 0x0, 0x0));
+                circle.SetFloatAttribute("cx", 140);
+                circle.SetFloatAttribute("cy", 140);
+                circle.SetFloatAttribute("r", 70);
+            }
+            {
+                var ellipse = svgDocument.Root.CreateAndAppendNamedChildElement("ellipse");
+                UseDefaultStroke(ellipse);
+                ellipse.SetColorAttribute("fill", Color.FromArgb(0xFF, 0x64, 0x95, 0xED));
+                ellipse.SetFloatAttribute("cx", 200);
+                ellipse.SetFloatAttribute("cy", 200);
+                ellipse.SetFloatAttribute("rx", 150);
+                ellipse.SetFloatAttribute("ry", 15);
+            }
+            {
+                var line = svgDocument.Root.CreateAndAppendNamedChildElement("line");
+                UseDefaultStroke(line);
+                line.SetFloatAttribute("x1", 20);
+                line.SetFloatAttribute("y1", 20);
+                line.SetFloatAttribute("x2", 300);
+                line.SetFloatAttribute("y2", 180);
+            }
+        }
 
-            svgDocument.Root.AppendChild(svgDocument.LoadElementFromXml(
-                "<circle stroke=\"#000000\" stroke-width=\"5\" fill=\"#8B0000\" cx=\"140\" cy=\"140\" r=\"70\"/>"));
-
-            svgDocument.Root.AppendChild(svgDocument.LoadElementFromXml(
-                "<ellipse stroke=\"#000000\" stroke-width=\"5\" fill=\"#6495ED\" cx=\"200\" cy=\"200\" rx=\"150\" ry=\"15\"/>"));
-
-            svgDocument.Root.AppendChild(svgDocument.LoadElementFromXml(
-                "<line stroke=\"#000000\" stroke-width=\"5\" x1=\"20\" y1=\"20\" x2=\"300\" y2=\"180\"/>"));
+        private static void UseDefaultStroke(CanvasSvgNamedElement rect)
+        {
+            rect.SetColorAttribute("stroke", Colors.Black);
+            rect.SetFloatAttribute("stroke-width", 5);
         }
 
         private void NewDocument_Click(object sender, RoutedEventArgs e)
@@ -259,14 +288,14 @@ namespace ExampleGallery
             using (var fileStream = await file.OpenReadAsync())
             {
                 svgDocument = await CanvasSvgDocument.LoadAsync(canvasControl, fileStream);
+
+                canvasControl.Invalidate();
             }
         }
 
         private void LoadSampleFile_Click(object sender, RoutedEventArgs e)
         {
             LoadSampleFile();
-
-            canvasControl.Invalidate();
         }
 
         private void control_Unloaded(object sender, RoutedEventArgs e)
@@ -300,41 +329,47 @@ namespace ExampleGallery
                 return; // Nothing to do
 
             // Commit the shape into the document
-            string xml = null;
-
-            // TODO: Use programmatic attributes once supported.
-            Color fillColor = colorPicker.CurrentColor;
-            string svgColor = fillColor.ToString().Remove(1, 2);
-            string style = $"fill=\"{svgColor}\" stroke=\"#000000\" stroke-width=\"4\"";
+            CanvasSvgNamedElement newChild = null;
 
             if (CurrentShapeType == ShapeType.Rectangle)
             {
                 Rect r = pointerDrag.GetRectangle();
-                xml =
-                    $"<rect x=\"{ r.Left.ToString() }\" y=\"{ r.Top.ToString() }\" width=\"{ r.Width.ToString() }\" height=\"{ r.Height.ToString() }\" {style} />";
+                newChild = svgDocument.Root.CreateAndAppendNamedChildElement("rect");
+                newChild.SetFloatAttribute("x", (float)r.Left);
+                newChild.SetFloatAttribute("y", (float)r.Top);
+                newChild.SetFloatAttribute("width", (float)r.Width);
+                newChild.SetFloatAttribute("height", (float)r.Height);
             }
             else if (CurrentShapeType == ShapeType.Ellipse)
             {
                 var ellipse = pointerDrag.GetEllipse();
-                xml =
-                    $"<ellipse cx=\"{ ellipse.CenterX }\" cy=\"{ ellipse.CenterY }\" rx=\"{ ellipse.RadiusX }\" ry=\"{ ellipse.RadiusY }\" {style} />";
+                newChild = svgDocument.Root.CreateAndAppendNamedChildElement("ellipse");
+                newChild.SetFloatAttribute("cx", ellipse.CenterX);
+                newChild.SetFloatAttribute("cy", ellipse.CenterY);
+                newChild.SetFloatAttribute("rx", ellipse.RadiusX);
+                newChild.SetFloatAttribute("ry", ellipse.RadiusY);
             }
             else if (CurrentShapeType == ShapeType.Circle)
             {
                 var circle = pointerDrag.GetCircle();
-                xml =
-                    $"<circle cx=\"{ circle.Center.X }\" cy=\"{ circle.Center.Y }\" r=\"{ circle.Radius }\" {style} />";
+                newChild = svgDocument.Root.CreateAndAppendNamedChildElement("circle");
+                newChild.SetFloatAttribute("cx", circle.Center.X);
+                newChild.SetFloatAttribute("cy", circle.Center.Y);
+                newChild.SetFloatAttribute("r", circle.Radius);
             }
             else if (CurrentShapeType == ShapeType.Line)
             {
                 var start = pointerDrag.StartLocation.ToVector2();
                 var end = pointerDrag.CurrentLocation.ToVector2();
-                xml =
-                    $"<line x1=\"{ start.X }\" y1=\"{ start.Y }\" x2=\"{ end.X }\" y2=\"{ end.Y }\" {style} />";
+                newChild = svgDocument.Root.CreateAndAppendNamedChildElement("line");
+                newChild.SetFloatAttribute("x1", start.X);
+                newChild.SetFloatAttribute("y1", start.Y);
+                newChild.SetFloatAttribute("x2", end.X);
+                newChild.SetFloatAttribute("y2", end.Y);
             }
-
-            var newChild = svgDocument.LoadElementFromXml(xml);
-            svgDocument.Root.AppendChild(newChild);
+            newChild.SetColorAttribute("fill", colorPicker.CurrentColor);
+            newChild.SetColorAttribute("stroke", Colors.Black);
+            newChild.SetFloatAttribute("stroke-width", 4.0f);
 
             pointerDrag = null;
             canvasControl.Invalidate();

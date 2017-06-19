@@ -7,6 +7,10 @@
 namespace Microsoft.Graphics.Canvas.Svg
 {
     runtimeclass CanvasSvgDocument;
+    runtimeclass CanvasSvgPaintAttribute;
+    runtimeclass CanvasSvgPathAttribute;
+    runtimeclass CanvasSvgPointsAttribute;
+    runtimeclass CanvasSvgDashArrayAttribute;
 
     // This type interops to ID2D1SvgDocument.
     [version(VERSION), uuid(A0E34929-3551-44FE-A670-D9B3FD800516), exclusiveto(CanvasSvgDocument)]
@@ -26,10 +30,57 @@ namespace Microsoft.Graphics.Canvas.Svg
             [out][retval] Windows.Foundation.IAsyncAction** asyncAction);
 
         [propput]
-        HRESULT Root([in] CanvasSvgElement* value);
+        HRESULT Root([in] CanvasSvgNamedElement* value);
 
         [propget]
-        HRESULT Root([out, retval] CanvasSvgElement** value);
+        HRESULT Root([out, retval] CanvasSvgNamedElement** value);
+
+        HRESULT FindElementById([in] HSTRING id, [out, retval] CanvasSvgNamedElement** element);
+
+        // Methods for creating new attributes of 'complex' (object) types.
+        // These attributes have a device associated. They will be associated
+        // with the same device as the document against which they were created.
+
+        [overload("CreatePaintAttribute")]
+        HRESULT CreatePaintAttributeWithDefaults([out, retval] CanvasSvgPaintAttribute** result);
+
+        [overload("CreatePaintAttribute"), default_overload]
+        HRESULT CreatePaintAttribute(
+            [in] CanvasSvgPaintType paintType, 
+            [in] Windows.UI.Color color,
+            [in] HSTRING id,
+            [out, retval] CanvasSvgPaintAttribute** result);
+
+        [overload("CreatePathAttribute")]
+        HRESULT CreatePathAttributeWithDefaults([out, retval] CanvasSvgPathAttribute** result);
+
+        [overload("CreatePathAttribute"), default_overload]
+        HRESULT CreatePathAttribute(
+            [in] UINT32 segmentDataCount,
+            [in, size_is(segmentDataCount)] float* segmentData,
+            [in] UINT32 commandCount,
+            [in, size_is(commandCount)] CanvasSvgPathCommand* commands,
+            [out, retval] CanvasSvgPathAttribute** result);
+
+        [overload("CreatePointsAttribute")]
+        HRESULT CreatePointsAttributeWithDefaults([out, retval] CanvasSvgPointsAttribute** result);
+
+        [overload("CreatePointsAttribute"), default_overload]
+        HRESULT CreatePointsAttribute(
+            [in] UINT32 pointCount,
+            [in, size_is(pointCount)] NUMERICS.Vector2* points,
+            [out, retval] CanvasSvgPointsAttribute** result);
+
+        [overload("CreateStrokeDashArrayAttribute")]
+        HRESULT CreateStrokeDashArrayAttributeWithDefaults([out, retval] CanvasSvgStrokeDashArrayAttribute** result);
+
+        [overload("CreateStrokeDashArrayAttribute"), default_overload]
+        HRESULT CreateStrokeDashArrayAttribute(
+            [in] UINT32 dashValueCount,
+            [in, size_is(dashValueCount)] float* dashValues,
+            [in] UINT32 unitValueCount,
+            [in, size_is(unitValueCount)] CanvasSvgLengthUnits* unitValues,
+            [out, retval] CanvasSvgStrokeDashArrayAttribute** result);
 
         // Deserializes XML into a new element.
         // A string used to create an XML element must consist of valid XML. 
@@ -45,12 +96,12 @@ namespace Microsoft.Graphics.Canvas.Svg
         // Loads an element from an XML string.
         HRESULT LoadElementFromXml(
             [in] HSTRING xmlString,
-            [out, retval] CanvasSvgElement** svgElement);
+            [out, retval] CanvasSvgNamedElement** svgElement);
 
         // Loads an element from a stream.
         HRESULT LoadElementAsync(
             [in] Windows.Storage.Streams.IRandomAccessStream* stream,
-            [out, retval] Windows.Foundation.IAsyncOperation<CanvasSvgElement*>** svgElement);
+            [out, retval] Windows.Foundation.IAsyncOperation<CanvasSvgNamedElement*>** svgElement);
     }
     
     [version(VERSION), uuid(7740E748-CB9A-453F-A678-8B3B3A7254D3), exclusiveto(CanvasSvgDocument)]

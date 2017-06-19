@@ -106,7 +106,12 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)printing\CanvasPrintTaskOptionsChangedEventArgs.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)printing\DeferrableTask.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)printing\DeferrableTaskScheduler.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)svg\AttributeHelpers.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)svg\BufferStreamWrapper.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)svg\CanvasSvgPaintAttribute.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)svg\CanvasSvgPathAttribute.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)svg\CanvasSvgPointsAttribute.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)svg\CanvasSvgStrokeDashArrayAttribute.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\ApiInformationAdapter.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)text\InternalDWriteTextRenderer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\CachedResourceReference.h" />
@@ -257,7 +262,12 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)printing\CanvasPrintDocumentAdapter.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)printing\CanvasPrintEventArgs.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)printing\DeferrableTask.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)svg\AttributeHelpers.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)svg\BufferStreamWrapper.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)svg\CanvasSvgPaintAttribute.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)svg\CanvasSvgPathAttribute.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)svg\CanvasSvgPointsAttribute.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)svg\CanvasSvgStrokeDashArrayAttribute.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)utils\ApiInformationAdapter.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)utils\DxgiUtilities.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)utils\HashUtilities.cpp" />

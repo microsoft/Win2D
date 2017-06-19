@@ -166,3 +166,16 @@ public:
 
 typedef WinStringT<> WinString;
 
+// Helper method for quickly getting a string buffer and validating it's not zero-length
+inline wchar_t const* GetStringBuffer(HSTRING string, uint32_t* outputLength = nullptr)
+{
+    uint32_t textLength;
+    auto textBuffer = WindowsGetStringRawBuffer(string, &textLength);
+    ThrowIfNullPointer(textBuffer, E_INVALIDARG);
+
+    if (outputLength)
+        *outputLength = textLength;
+
+    return textBuffer;
+}
+

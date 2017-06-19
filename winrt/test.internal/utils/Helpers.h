@@ -333,6 +333,21 @@ namespace Microsoft
             }
 
             template<>
+            inline std::wstring ToString<D2D1::Matrix3x2F>(D2D1::Matrix3x2F const& value)
+            {
+                wchar_t buf[256];
+                ThrowIfFailed(StringCchPrintf(
+                    buf,
+                    _countof(buf),
+                    L"D2D1_MATRIX_3X2_F{_11=%f,_12=%f,_21=%f,_22=%f,_31=%f,_32=%f}",
+                    value._11, value._12,
+                    value._21, value._22,
+                    value._31, value._32));
+
+                return buf;
+            }
+
+            template<>
             inline std::wstring ToString<D2D1_MATRIX_4X4_F>(D2D1_MATRIX_4X4_F const& value)
             {
                 wchar_t buf[256];
@@ -379,6 +394,22 @@ namespace Microsoft
 
                 return buf;
             }
+
+#if WINVER > _WIN32_WINNT_WINBLUE
+            template<>
+            inline std::wstring ToString<D2D1_SVG_VIEWBOX>(D2D1_SVG_VIEWBOX const& value)
+            {
+                wchar_t buf[256];
+                ThrowIfFailed(StringCchPrintf(
+                    buf,
+                    _countof(buf),
+                    L"Rect{X=%f,Y=%f,W=%f,H=%f}",
+                    value.x, value.y,
+                    value.width, value.height));
+
+                return buf;
+            }
+#endif
 
             template<>
             inline std::wstring ToString<ABI::Windows::Foundation::Rect>(ABI::Windows::Foundation::Rect const& value)
@@ -1531,6 +1562,236 @@ namespace Microsoft
                 END_ENUM(CanvasGlyphJustification);
             }
 
+#if WINVER > _WIN32_WINNT_WINBLUE
+
+            ENUM_TO_STRING(CanvasSvgPaintType)
+            {
+                ENUM_VALUE(CanvasSvgPaintType::None);
+                ENUM_VALUE(CanvasSvgPaintType::Color);
+                ENUM_VALUE(CanvasSvgPaintType::CurrentColor);
+                ENUM_VALUE(CanvasSvgPaintType::Uri);
+                ENUM_VALUE(CanvasSvgPaintType::UriThenNone);
+                ENUM_VALUE(CanvasSvgPaintType::UriThenColor);
+                ENUM_VALUE(CanvasSvgPaintType::UriThenCurrentColor);
+                END_ENUM(CanvasSvgPaintType);
+            }
+
+            ENUM_TO_STRING(D2D1_SVG_PAINT_TYPE)
+            {
+                ENUM_VALUE(D2D1_SVG_PAINT_TYPE_NONE);
+                ENUM_VALUE(D2D1_SVG_PAINT_TYPE_COLOR);
+                ENUM_VALUE(D2D1_SVG_PAINT_TYPE_CURRENT_COLOR);
+                ENUM_VALUE(D2D1_SVG_PAINT_TYPE_URI);
+                ENUM_VALUE(D2D1_SVG_PAINT_TYPE_URI_NONE);
+                ENUM_VALUE(D2D1_SVG_PAINT_TYPE_URI_COLOR);
+                ENUM_VALUE(D2D1_SVG_PAINT_TYPE_URI_CURRENT_COLOR);
+                END_ENUM(D2D1_SVG_PAINT_TYPE);
+            }
+
+            ENUM_TO_STRING(CanvasSvgPathCommand)
+            {
+                ENUM_VALUE(CanvasSvgPathCommand::ClosePath);
+                ENUM_VALUE(CanvasSvgPathCommand::MoveAbsolute);
+                ENUM_VALUE(CanvasSvgPathCommand::MoveRelative);
+                ENUM_VALUE(CanvasSvgPathCommand::LineAbsolute);
+                ENUM_VALUE(CanvasSvgPathCommand::LineRelative);
+                ENUM_VALUE(CanvasSvgPathCommand::CubicAbsolute);
+                ENUM_VALUE(CanvasSvgPathCommand::CubicRelative);
+                ENUM_VALUE(CanvasSvgPathCommand::QuadraticAbsolute);
+                ENUM_VALUE(CanvasSvgPathCommand::QuadraticRelative);
+                ENUM_VALUE(CanvasSvgPathCommand::ArcAbsolute);
+                ENUM_VALUE(CanvasSvgPathCommand::ArcRelative);
+                ENUM_VALUE(CanvasSvgPathCommand::HorizontalAbsolute);
+                ENUM_VALUE(CanvasSvgPathCommand::HorizontalRelative);
+                ENUM_VALUE(CanvasSvgPathCommand::VerticalAbsolute);
+                ENUM_VALUE(CanvasSvgPathCommand::VerticalRelative);
+                ENUM_VALUE(CanvasSvgPathCommand::CubicSmoothAbsolute);
+                ENUM_VALUE(CanvasSvgPathCommand::CubicSmoothRelative);
+                ENUM_VALUE(CanvasSvgPathCommand::QuadraticSmoothAbsolute);
+                ENUM_VALUE(CanvasSvgPathCommand::QuadraticSmoothRelative);
+                END_ENUM(CanvasSvgPathCommand);
+            }
+
+            ENUM_TO_STRING(D2D1_SVG_PATH_COMMAND)
+            {
+                ENUM_VALUE(D2D1_SVG_PATH_COMMAND_CLOSE_PATH);
+                ENUM_VALUE(D2D1_SVG_PATH_COMMAND_MOVE_ABSOLUTE);
+                ENUM_VALUE(D2D1_SVG_PATH_COMMAND_MOVE_RELATIVE);
+                ENUM_VALUE(D2D1_SVG_PATH_COMMAND_LINE_ABSOLUTE);
+                ENUM_VALUE(D2D1_SVG_PATH_COMMAND_LINE_RELATIVE);
+                ENUM_VALUE(D2D1_SVG_PATH_COMMAND_CUBIC_ABSOLUTE);
+                ENUM_VALUE(D2D1_SVG_PATH_COMMAND_CUBIC_RELATIVE);
+                ENUM_VALUE(D2D1_SVG_PATH_COMMAND_QUADRADIC_ABSOLUTE);
+                ENUM_VALUE(D2D1_SVG_PATH_COMMAND_QUADRADIC_RELATIVE);
+                ENUM_VALUE(D2D1_SVG_PATH_COMMAND_ARC_ABSOLUTE);
+                ENUM_VALUE(D2D1_SVG_PATH_COMMAND_ARC_RELATIVE);
+                ENUM_VALUE(D2D1_SVG_PATH_COMMAND_HORIZONTAL_ABSOLUTE);
+                ENUM_VALUE(D2D1_SVG_PATH_COMMAND_HORIZONTAL_RELATIVE);
+                ENUM_VALUE(D2D1_SVG_PATH_COMMAND_VERTICAL_ABSOLUTE);
+                ENUM_VALUE(D2D1_SVG_PATH_COMMAND_VERTICAL_RELATIVE);
+                ENUM_VALUE(D2D1_SVG_PATH_COMMAND_CUBIC_SMOOTH_ABSOLUTE);
+                ENUM_VALUE(D2D1_SVG_PATH_COMMAND_CUBIC_SMOOTH_RELATIVE);
+                ENUM_VALUE(D2D1_SVG_PATH_COMMAND_QUADRADIC_SMOOTH_ABSOLUTE);
+                ENUM_VALUE(D2D1_SVG_PATH_COMMAND_QUADRADIC_SMOOTH_RELATIVE);
+                END_ENUM(D2D1_SVG_PATH_COMMAND);
+            }
+
+            ENUM_TO_STRING(CanvasSvgLengthUnits)
+            {
+                ENUM_VALUE(CanvasSvgLengthUnits::Number);
+                ENUM_VALUE(CanvasSvgLengthUnits::Percentage);
+                END_ENUM(CanvasSvgLengthUnits);
+            }
+
+            ENUM_TO_STRING(D2D1_SVG_LENGTH_UNITS)
+            {
+                ENUM_VALUE(D2D1_SVG_LENGTH_UNITS_NUMBER);
+                ENUM_VALUE(D2D1_SVG_LENGTH_UNITS_PERCENTAGE);
+                END_ENUM(D2D1_SVG_LENGTH_UNITS);
+            }
+
+            ENUM_TO_STRING(D2D1_SVG_ATTRIBUTE_STRING_TYPE)
+            {
+                ENUM_VALUE(D2D1_SVG_ATTRIBUTE_STRING_TYPE_ID);
+                ENUM_VALUE(D2D1_SVG_ATTRIBUTE_STRING_TYPE_SVG);
+                END_ENUM(D2D1_SVG_ATTRIBUTE_STRING_TYPE);
+            }
+
+            ENUM_TO_STRING(D2D1_SVG_ATTRIBUTE_POD_TYPE)
+            {
+                ENUM_VALUE(D2D1_SVG_ATTRIBUTE_POD_TYPE_FLOAT);
+                ENUM_VALUE(D2D1_SVG_ATTRIBUTE_POD_TYPE_COLOR);
+                ENUM_VALUE(D2D1_SVG_ATTRIBUTE_POD_TYPE_FILL_MODE);
+                ENUM_VALUE(D2D1_SVG_ATTRIBUTE_POD_TYPE_DISPLAY);
+                ENUM_VALUE(D2D1_SVG_ATTRIBUTE_POD_TYPE_OVERFLOW);
+                ENUM_VALUE(D2D1_SVG_ATTRIBUTE_POD_TYPE_LINE_CAP);
+                ENUM_VALUE(D2D1_SVG_ATTRIBUTE_POD_TYPE_LINE_JOIN);
+                ENUM_VALUE(D2D1_SVG_ATTRIBUTE_POD_TYPE_VISIBILITY);
+                ENUM_VALUE(D2D1_SVG_ATTRIBUTE_POD_TYPE_MATRIX);
+                ENUM_VALUE(D2D1_SVG_ATTRIBUTE_POD_TYPE_UNIT_TYPE);
+                ENUM_VALUE(D2D1_SVG_ATTRIBUTE_POD_TYPE_EXTEND_MODE);
+                ENUM_VALUE(D2D1_SVG_ATTRIBUTE_POD_TYPE_PRESERVE_ASPECT_RATIO);
+                ENUM_VALUE(D2D1_SVG_ATTRIBUTE_POD_TYPE_VIEWBOX);
+                ENUM_VALUE(D2D1_SVG_ATTRIBUTE_POD_TYPE_LENGTH);
+                END_ENUM(D2D1_SVG_ATTRIBUTE_POD_TYPE);
+            }
+
+            ENUM_TO_STRING(D2D1_SVG_DISPLAY)
+            {
+                ENUM_VALUE(D2D1_SVG_DISPLAY_INLINE);
+                ENUM_VALUE(D2D1_SVG_DISPLAY_NONE);
+                END_ENUM(D2D1_SVG_DISPLAY);
+            }
+
+            ENUM_TO_STRING(CanvasSvgDisplay)
+            {
+                ENUM_VALUE(CanvasSvgDisplay::Inline);
+                ENUM_VALUE(CanvasSvgDisplay::None);
+                END_ENUM(CanvasSvgDisplay);
+            }
+
+            ENUM_TO_STRING(D2D1_SVG_OVERFLOW)
+            {
+                ENUM_VALUE(D2D1_SVG_OVERFLOW_VISIBLE);
+                ENUM_VALUE(D2D1_SVG_OVERFLOW_HIDDEN);
+                END_ENUM(D2D1_SVG_OVERFLOW);
+            }
+
+            ENUM_TO_STRING(CanvasSvgOverflow)
+            {
+                ENUM_VALUE(CanvasSvgOverflow::DoNotClipToViewport);
+                ENUM_VALUE(CanvasSvgOverflow::ClipToViewport);
+                END_ENUM(CanvasSvgOverflow);
+            }
+
+            ENUM_TO_STRING(D2D1_SVG_LINE_CAP)
+            {
+                ENUM_VALUE(D2D1_SVG_LINE_CAP_BUTT);
+                ENUM_VALUE(D2D1_SVG_LINE_CAP_SQUARE);
+                ENUM_VALUE(D2D1_SVG_LINE_CAP_ROUND);
+                END_ENUM(D2D1_SVG_LINE_CAP);
+            }
+
+            ENUM_TO_STRING(D2D1_SVG_LINE_JOIN)
+            {
+                ENUM_VALUE(D2D1_SVG_LINE_JOIN_BEVEL);
+                ENUM_VALUE(D2D1_SVG_LINE_JOIN_MITER);
+                ENUM_VALUE(D2D1_SVG_LINE_JOIN_ROUND);
+                END_ENUM(D2D1_SVG_LINE_JOIN);
+            }
+
+            ENUM_TO_STRING(D2D1_SVG_VISIBILITY)
+            {
+                ENUM_VALUE(D2D1_SVG_VISIBILITY_VISIBLE);
+                ENUM_VALUE(D2D1_SVG_VISIBILITY_HIDDEN);
+                END_ENUM(D2D1_SVG_VISIBILITY);
+            }
+
+            ENUM_TO_STRING(CanvasSvgVisibility)
+            {
+                ENUM_VALUE(CanvasSvgVisibility::Visible);
+                ENUM_VALUE(CanvasSvgVisibility::Hidden);
+                END_ENUM(CanvasSvgVisibility);
+            }
+
+            ENUM_TO_STRING(D2D1_SVG_UNIT_TYPE)
+            {
+                ENUM_VALUE(D2D1_SVG_UNIT_TYPE_USER_SPACE_ON_USE);
+                ENUM_VALUE(D2D1_SVG_UNIT_TYPE_OBJECT_BOUNDING_BOX);
+                END_ENUM(D2D1_SVG_UNIT_TYPE);
+            }
+
+            ENUM_TO_STRING(CanvasSvgUnits)
+            {
+                ENUM_VALUE(CanvasSvgUnits::UserSpaceOnUse);
+                ENUM_VALUE(CanvasSvgUnits::ObjectBoundingBox);
+                END_ENUM(CanvasSvgUnits);
+            }
+
+            ENUM_TO_STRING(D2D1_SVG_ASPECT_ALIGN)
+            {
+                ENUM_VALUE(D2D1_SVG_ASPECT_ALIGN_X_MIN_Y_MIN);
+                ENUM_VALUE(D2D1_SVG_ASPECT_ALIGN_X_MID_Y_MIN);
+                ENUM_VALUE(D2D1_SVG_ASPECT_ALIGN_X_MAX_Y_MIN);
+                ENUM_VALUE(D2D1_SVG_ASPECT_ALIGN_X_MIN_Y_MID);
+                ENUM_VALUE(D2D1_SVG_ASPECT_ALIGN_X_MID_Y_MID);
+                ENUM_VALUE(D2D1_SVG_ASPECT_ALIGN_X_MAX_Y_MID);
+                ENUM_VALUE(D2D1_SVG_ASPECT_ALIGN_X_MIN_Y_MAX);
+                ENUM_VALUE(D2D1_SVG_ASPECT_ALIGN_X_MID_Y_MAX);
+                ENUM_VALUE(D2D1_SVG_ASPECT_ALIGN_X_MAX_Y_MAX);
+                END_ENUM(D2D1_SVG_ASPECT_ALIGN);
+            }
+
+            ENUM_TO_STRING(CanvasSvgAspectAlignment)
+            {
+                ENUM_VALUE(CanvasSvgAspectAlignment::None);
+                ENUM_VALUE(CanvasSvgAspectAlignment::XMinYMin);
+                ENUM_VALUE(CanvasSvgAspectAlignment::XMidYMin);
+                ENUM_VALUE(CanvasSvgAspectAlignment::XMaxYMin);
+                ENUM_VALUE(CanvasSvgAspectAlignment::XMinYMid);
+                ENUM_VALUE(CanvasSvgAspectAlignment::XMidYMid);
+                ENUM_VALUE(CanvasSvgAspectAlignment::XMaxYMid);
+                ENUM_VALUE(CanvasSvgAspectAlignment::XMinYMax);
+                ENUM_VALUE(CanvasSvgAspectAlignment::XMidYMax);
+                ENUM_VALUE(CanvasSvgAspectAlignment::XMaxYMax);
+                END_ENUM(CanvasSvgAspectAlignment);
+            }
+
+            ENUM_TO_STRING(D2D1_SVG_ASPECT_SCALING)
+            {
+                ENUM_VALUE(D2D1_SVG_ASPECT_SCALING_MEET);
+                ENUM_VALUE(D2D1_SVG_ASPECT_SCALING_SLICE);
+                END_ENUM(D2D1_SVG_ASPECT_SCALING);
+            }
+
+            ENUM_TO_STRING(CanvasSvgAspectScaling)
+            {
+                ENUM_VALUE(CanvasSvgAspectScaling::Meet);
+                ENUM_VALUE(CanvasSvgAspectScaling::Slice);
+                END_ENUM(CanvasSvgAspectScaling);
+            }
+#endif
+
             template<typename T>
             inline std::wstring ToStringAsInt(T value)
             {
@@ -1636,6 +1897,16 @@ namespace Microsoft
                    a.Width == b.Width &&
                    a.Height == b.Height;
         }
+
+#if WINVER > _WIN32_WINNT_WINBLUE
+        inline bool operator==(D2D1_SVG_VIEWBOX const& a, D2D1_SVG_VIEWBOX const& b)
+        {
+            return a.x == b.x &&
+                a.y == b.y &&
+                a.width == b.width &&
+                a.height == b.height;
+        }
+#endif
 
         inline bool operator==(ABI::Windows::Foundation::Size const& a, ABI::Windows::Foundation::Size const& b)
         {

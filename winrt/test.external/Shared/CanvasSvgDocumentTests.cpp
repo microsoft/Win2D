@@ -137,9 +137,9 @@ public:
             }
         }
 
-        CanvasSvgElement^ CreateElement(int loadMethod, Platform::String^ input)
+        CanvasSvgNamedElement^ CreateElement(int loadMethod, Platform::String^ input)
         {
-            CanvasSvgElement^ result;
+            CanvasSvgNamedElement^ result;
             if (loadMethod == 0)
             {
                 result = m_document->LoadElementFromXml(input);
@@ -292,7 +292,7 @@ public:
                 LoadingAndSavingFixture f(m_device);
                 f.m_document = ref new CanvasSvgDocument(m_device);
 
-                CanvasSvgElement^ element = f.CreateElement(loadMethod, testCase.Input);
+                CanvasSvgNamedElement^ element = f.CreateElement(loadMethod, testCase.Input);
                 f.m_document->Root->AppendChild(element);
 
                 Platform::String^ readbackString = f.m_document->GetXml();
@@ -339,11 +339,100 @@ public:
         ComPtr<ID2D1SvgElement> originalD2DSvgRootElement;
         d2dSvgDocument->GetRoot(&originalD2DSvgRootElement);
 
-        auto canvasSvgElement = GetOrCreate<CanvasSvgElement>(m_device, originalD2DSvgRootElement.Get());
+        // Named elements
+        {
+            auto canvasSvgElement = GetOrCreate<CanvasSvgNamedElement>(m_device, originalD2DSvgRootElement.Get());
 
-        auto retrievedSvgElement = GetWrappedResource<ID2D1SvgElement>(canvasSvgElement);
+            auto retrievedSvgElement = GetWrappedResource<ID2D1SvgElement>(canvasSvgElement);
 
-        Assert::IsTrue(IsSameInstance(originalD2DSvgRootElement.Get(), retrievedSvgElement.Get()));
+            Assert::IsTrue(IsSameInstance(originalD2DSvgRootElement.Get(), retrievedSvgElement.Get()));
+        }
+
+        // Text elements
+        {
+            ComPtr<ID2D1SvgElement> titleElement;
+            originalD2DSvgRootElement->CreateChild(L"title", &titleElement);
+
+            ComPtr<ID2D1SvgElement> originalD2DTextElement;
+            ThrowIfFailed(titleElement->CreateChild(L"", &originalD2DTextElement));
+
+            auto canvasSvgElement = GetOrCreate<CanvasSvgTextElement>(m_device, originalD2DTextElement.Get());
+
+            auto retrievedSvgElement = GetWrappedResource<ID2D1SvgElement>(canvasSvgElement);
+
+            Assert::IsTrue(IsSameInstance(originalD2DTextElement.Get(), retrievedSvgElement.Get()));
+        }
+    }
+
+    TEST_METHOD(CanvasSvgDocument_FindElementById)
+    {
+        if (!m_isSupported)
+            return;
+
+        auto document = CanvasSvgDocument::LoadFromXml(m_device, "<svg/>");
+
+        document->Root->SetIdAttribute("id", "something");
+
+        auto found = document->FindElementById("something");
+
+        Assert::AreEqual(document->Root, found);
+    }
+
+    TEST_METHOD(CanvasSvgDocument_DOM_Manipulation)
+    {
+        if (!m_isSupported)
+            return;
+
+        auto document = CanvasSvgDocument::LoadFromXml(m_device, "<svg/>");
+        auto root = document->Root;
+
+        auto title = root->CreateAndAppendNamedChildElement("title");
+        Assert::AreEqual("title", title->Tag);
+
+        auto text = title->CreateAndAppendTextChildElement("some text");
+        Assert::AreEqual("some text", text->Text);
+
+        auto rect = root->CreateAndAppendNamedChildElement("rect");
+        auto middleChild = rect;
+
+        auto ellipse = root->CreateAndAppendNamedChildElement("ellipse");
+        
+        root->RemoveChild(title);
+        root->InsertChildBefore(title, middleChild);
+
+        Assert::AreEqual<ICanvasSvgElement^>(title, root->FirstChild);
+        Assert::AreEqual<ICanvasSvgElement^>(ellipse, root->LastChild);
+
+        Assert::IsNull(root->GetPreviousSibling(root->FirstChild));
+        Assert::AreEqual<ICanvasSvgElement^>(root->FirstChild, root->GetPreviousSibling(middleChild));
+
+        Assert::IsNull(root->GetNextSibling(root->LastChild));
+        Assert::AreEqual<ICanvasSvgElement^>(root->LastChild, root->GetNextSibling(middleChild));
+
+        rect->SetFloatAttribute("x", 1);
+        rect->SetFloatAttribute("y", 2);
+
+        auto specifiedAttributes = rect->SpecifiedAttributes;
+        Assert::AreEqual(2u, specifiedAttributes->Length);
+        Assert::AreEqual("x", specifiedAttributes[0]);
+        Assert::AreEqual("y", specifiedAttributes[1]);
+
+        Assert::IsTrue(root->HasChildren);
+
+        Assert::IsTrue(rect->IsAttributeSpecified("x"));
+        Assert::IsTrue(rect->IsAttributeSpecified("x", true));
+
+        rect->RemoveAttribute("y");
+
+        root->RemoveChild(ellipse);
+
+        Assert::IsNull(ellipse->ContainingDocument);
+        Assert::AreEqual(document, title->ContainingDocument);
+
+        root->ReplaceChild(ellipse, title);
+
+        Assert::IsNull(title->Parent);
+        Assert::AreEqual(root, ellipse->Parent);
     }
 };
 

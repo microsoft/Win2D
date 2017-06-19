@@ -38,32 +38,43 @@ namespace canvas
         MOCK_METHOD0(GetTextValueLength, UINT32());
 
         MOCK_METHOD3(GetAttributeValueLength, HRESULT(PCWSTR, D2D1_SVG_ATTRIBUTE_STRING_TYPE, UINT32*));
+        
+        CALL_COUNTER_WITH_MOCK(GetAttributeValue_Object_Method, HRESULT(PCWSTR, REFIID, void**));
+        CALL_COUNTER_WITH_MOCK(GetAttributeValue_String_Method, HRESULT(PCWSTR, D2D1_SVG_ATTRIBUTE_STRING_TYPE, PWSTR, UINT32));
+        CALL_COUNTER_WITH_MOCK(GetAttributeValue_POD_Method, HRESULT(PCWSTR, D2D1_SVG_ATTRIBUTE_POD_TYPE, void*, UINT32));
 
-        MOCK_METHOD3(GetAttributeValue, HRESULT(PCWSTR, REFIID, void**));
-
-        IFACEMETHODIMP GetAttributeValue(PCWSTR, D2D1_SVG_ATTRIBUTE_STRING_TYPE, PWSTR, UINT32) override
+        IFACEMETHODIMP GetAttributeValue(PCWSTR a1, REFIID a2, void** a3) override
         {
-            Assert::Fail(L"Unexpected call to GetAttributeValue");
-            return E_NOTIMPL;
-        }
-        IFACEMETHODIMP GetAttributeValue(PCWSTR, D2D1_SVG_ATTRIBUTE_POD_TYPE, void*, UINT32) override
-        {
-            Assert::Fail(L"Unexpected call to GetAttributeValue");
-            return E_NOTIMPL;
+            return GetAttributeValue_Object_Method.WasCalled(a1, a2, a3);
         }
 
-        MOCK_METHOD2(SetAttributeValue, HRESULT(PCWSTR, ID2D1SvgAttribute*));
-
-        IFACEMETHODIMP SetAttributeValue(PCWSTR, D2D1_SVG_ATTRIBUTE_STRING_TYPE, PCWSTR) override
+        IFACEMETHODIMP GetAttributeValue(PCWSTR a1, D2D1_SVG_ATTRIBUTE_STRING_TYPE a2, PWSTR a3, UINT32 a4) override
         {
-            Assert::Fail(L"Unexpected call to SetAttributeValue");
-            return E_NOTIMPL;
+            return GetAttributeValue_String_Method.WasCalled(a1, a2, a3, a4);
         }
 
-        IFACEMETHODIMP SetAttributeValue(PCWSTR, D2D1_SVG_ATTRIBUTE_POD_TYPE, void const*, UINT32) override
+        IFACEMETHODIMP GetAttributeValue(PCWSTR a1, D2D1_SVG_ATTRIBUTE_POD_TYPE a2, void* a3, UINT32 a4) override
         {
-            Assert::Fail(L"Unexpected call to SetAttributeValue");
-            return E_NOTIMPL;
+            return GetAttributeValue_POD_Method.WasCalled(a1, a2, a3, a4);
+        }
+
+        CALL_COUNTER_WITH_MOCK(SetAttributeValue_Object_Method, HRESULT(PCWSTR, ID2D1SvgAttribute*));
+        CALL_COUNTER_WITH_MOCK(SetAttributeValue_String_Method, HRESULT(PCWSTR, D2D1_SVG_ATTRIBUTE_STRING_TYPE, PCWSTR));
+        CALL_COUNTER_WITH_MOCK(SetAttributeValue_POD_Method, HRESULT(PCWSTR, D2D1_SVG_ATTRIBUTE_POD_TYPE, void const*, UINT32));
+        
+        IFACEMETHODIMP SetAttributeValue(PCWSTR a1, ID2D1SvgAttribute* a2) override
+        {
+            return SetAttributeValue_Object_Method.WasCalled(a1, a2);
+        }
+
+        IFACEMETHODIMP SetAttributeValue(PCWSTR a1, D2D1_SVG_ATTRIBUTE_STRING_TYPE a2, PCWSTR a3) override
+        {
+            return SetAttributeValue_String_Method.WasCalled(a1, a2, a3);
+        }
+
+        IFACEMETHODIMP SetAttributeValue(PCWSTR a1, D2D1_SVG_ATTRIBUTE_POD_TYPE a2, void const* a3, UINT32 a4) override
+        {
+            return SetAttributeValue_POD_Method.WasCalled(a1, a2, a3, a4);
         }
 
         MOCK_METHOD1_CONST(GetFactory, void(ID2D1Factory**));

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="Globals">
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
@@ -24,6 +24,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasCreateResourcesEventArgsTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasDeviceTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasBitmapTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)CanvasSvgAttributeTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasVirtualBitmapTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasEffectsTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasDrawingSessionTests.cpp" />

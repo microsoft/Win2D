@@ -138,6 +138,14 @@ inline void ThrowIfNegative(T value)
         ThrowHR(E_INVALIDARG);
 }
 
+inline void ThrowIfZeroOrNegative(uint32_t n)
+{
+    if (n <= 0)
+    {
+        ThrowHR(E_INVALIDARG);
+    }
+}
+
 //
 // Checks that a given pointer argument is valid (ie non-null).  This is
 // expected to be used at the beginning of methods to validate pointer

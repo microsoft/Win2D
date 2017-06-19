@@ -8,6 +8,10 @@
 
 #include "CanvasSvgDocument.h"
 #include "CanvasSvgElement.h"
+#include "CanvasSvgPaintAttribute.h"
+#include "CanvasSvgPathAttribute.h"
+#include "CanvasSvgPointsAttribute.h"
+#include "CanvasSvgStrokeDashArrayAttribute.h"
 #include "BufferStreamWrapper.h"
 
 using namespace Microsoft::WRL::Wrappers;
@@ -154,7 +158,7 @@ IFACEMETHODIMP CanvasSvgDocument::SaveAsync(IRandomAccessStream* rawStream, IAsy
         });
 }
 
-IFACEMETHODIMP CanvasSvgDocument::put_Root(ICanvasSvgElement* root)
+IFACEMETHODIMP CanvasSvgDocument::put_Root(ICanvasSvgNamedElement* root)
 {
     return ExceptionBoundary(
         [=]
@@ -163,7 +167,7 @@ IFACEMETHODIMP CanvasSvgDocument::put_Root(ICanvasSvgElement* root)
 
             auto& resource = GetResource();
 
-            CanvasSvgElement* implementation = static_cast<CanvasSvgElement*>(root);
+            CanvasSvgNamedElement* implementation = static_cast<CanvasSvgNamedElement*>(root);
 
             VerifyDeviceBoundary(m_canvasDevice, implementation);
 
@@ -171,13 +175,13 @@ IFACEMETHODIMP CanvasSvgDocument::put_Root(ICanvasSvgElement* root)
         });
 }
 
-IFACEMETHODIMP CanvasSvgDocument::get_Root(ICanvasSvgElement** result)
+IFACEMETHODIMP CanvasSvgDocument::get_Root(ICanvasSvgNamedElement** result)
 {
     return ExceptionBoundary(
         [=]
         {
             CheckAndClearOutPointer(result);
-
+            
             auto& resource = GetResource();
 
             ComPtr<ID2D1SvgElement> d2dSvgElement;
@@ -193,7 +197,7 @@ IFACEMETHODIMP CanvasSvgDocument::get_Root(ICanvasSvgElement** result)
 
 IFACEMETHODIMP CanvasSvgDocument::LoadElementFromXml(
     HSTRING xmlString,
-    ICanvasSvgElement** svgElement)
+    ICanvasSvgNamedElement** svgElement)
 { 
     return ExceptionBoundary(
         [=]
@@ -204,16 +208,14 @@ IFACEMETHODIMP CanvasSvgDocument::LoadElementFromXml(
 
             ComPtr<IStream> stream = WrapSvgStringInStream(xmlString);
                         
-            ComPtr<CanvasSvgElement> newElement = CanvasSvgElement::CreateNew(
-                this,
-                stream.Get());
+            ComPtr<ICanvasSvgElement> newElement = CreateNewElementFromStream(this, stream.Get());
             ThrowIfFailed(newElement.CopyTo(svgElement));
         });
 }
 
 IFACEMETHODIMP CanvasSvgDocument::LoadElementAsync(
     IRandomAccessStream *rawStream,
-    IAsyncOperation<CanvasSvgElement*>** resultAsyncOperation)
+    IAsyncOperation<CanvasSvgNamedElement*>** resultAsyncOperation)
 {
     return ExceptionBoundary(
         [=]
@@ -225,13 +227,13 @@ IFACEMETHODIMP CanvasSvgDocument::LoadElementAsync(
 
             ComPtr<IRandomAccessStream> randomAccessStream = rawStream;
 
-            auto asyncOperation = Make<AsyncOperation<CanvasSvgElement>>(
+            auto asyncOperation = Make<AsyncOperation<CanvasSvgNamedElement>>(
                 [=]
                 {
                     ComPtr<IStream> stream;
                     ThrowIfFailed(CreateStreamOverRandomAccessStream(randomAccessStream.Get(), IID_PPV_ARGS(&stream)));
 
-                    auto svgElement = CanvasSvgElement::CreateNew(this, stream.Get());
+                    auto svgElement = CreateNewNamedElementFromStream(this, stream.Get());
                     CheckMakeResult(svgElement);
 
                     return svgElement;
@@ -241,6 +243,181 @@ IFACEMETHODIMP CanvasSvgDocument::LoadElementAsync(
             ThrowIfFailed(asyncOperation.CopyTo(resultAsyncOperation));
         });
 }
+
+IFACEMETHODIMP CanvasSvgDocument::FindElementById(HSTRING elementName, ICanvasSvgNamedElement** foundElement)
+{ 
+    return ExceptionBoundary(
+        [=]
+        { 
+            CheckAndClearOutPointer(foundElement);
+
+            auto& resource = GetResource();
+
+            auto& device = m_canvasDevice.EnsureNotClosed();
+
+            ComPtr<ID2D1SvgElement> d2dFoundElement;
+            ThrowIfFailed(resource->FindElementById(GetStringBuffer(elementName), &d2dFoundElement));
+
+            ComPtr<ICanvasSvgNamedElement> wrapped = ResourceManager::GetOrCreate<ICanvasSvgNamedElement>(device.Get(), d2dFoundElement.Get());
+            ThrowIfFailed(wrapped.CopyTo(foundElement));
+        });
+}
+
+void CanvasSvgDocument::CreatePaintAttributeImpl(D2D1_SVG_PAINT_TYPE d2dSvgPaintType, D2D1_COLOR_F d2dColor, wchar_t const* id, ICanvasSvgPaintAttribute** result)
+{
+    auto& resource = GetResource();
+
+    auto& device = m_canvasDevice.EnsureNotClosed();
+
+    ComPtr<ID2D1SvgPaint> d2dPaint;
+    ThrowIfFailed(resource->CreatePaint(d2dSvgPaintType, d2dColor, id, &d2dPaint));
+
+    auto newAttribute = Make<CanvasSvgPaintAttribute>(device.Get(), d2dPaint.Get());
+
+    ThrowIfFailed(newAttribute.CopyTo(result));
+}
+
+IFACEMETHODIMP CanvasSvgDocument::CreatePaintAttributeWithDefaults(ICanvasSvgPaintAttribute** result)
+{
+    return ExceptionBoundary(
+        [=]
+        {
+            CreatePaintAttributeImpl(D2D1_SVG_PAINT_TYPE_NONE, D2D1::ColorF(D2D1::ColorF::Black), L"", result);
+        });
+}
+
+IFACEMETHODIMP CanvasSvgDocument::CreatePaintAttribute(CanvasSvgPaintType paintType, Color color, HSTRING id, ICanvasSvgPaintAttribute** result)
+{
+    return ExceptionBoundary(
+        [=]
+        {
+            CreatePaintAttributeImpl(StaticCastAs<D2D1_SVG_PAINT_TYPE>(paintType), ToD2DColor(color), GetStringBuffer(id), result);
+        });
+}
+
+void CanvasSvgDocument::CreatePathDataAttributeImpl(
+    const float* segmentData, 
+    uint32_t segmentDataCount, 
+    D2D1_SVG_PATH_COMMAND const* commands, 
+    uint32_t commandsCount, 
+    ICanvasSvgPathAttribute** result)
+{
+    auto& resource = GetResource();
+
+    auto& device = m_canvasDevice.EnsureNotClosed();
+
+    ComPtr<ID2D1SvgPathData> d2dPathData;
+    ThrowIfFailed(resource->CreatePathData(segmentData, segmentDataCount, commands, commandsCount, &d2dPathData));
+
+    auto newAttribute = Make<CanvasSvgPathAttribute>(device.Get(), d2dPathData.Get());
+
+    ThrowIfFailed(newAttribute.CopyTo(result));
+}
+
+IFACEMETHODIMP CanvasSvgDocument::CreatePathAttributeWithDefaults(ICanvasSvgPathAttribute** result)
+{
+    return ExceptionBoundary(
+        [=]
+        {
+            CreatePathDataAttributeImpl(nullptr, 0, nullptr, 0, result);
+        });
+}
+
+IFACEMETHODIMP CanvasSvgDocument::CreatePathAttribute(
+    UINT32 segmentDataCount, 
+    float* segmentData, 
+    UINT32 commandCount, 
+    CanvasSvgPathCommand* commands, 
+    ICanvasSvgPathAttribute** result)
+{
+    return ExceptionBoundary(
+        [=]
+        {
+            CreatePathDataAttributeImpl(segmentData, segmentDataCount, ReinterpretAs<D2D1_SVG_PATH_COMMAND const*>(commands), commandCount, result);
+        });
+}
+
+void CanvasSvgDocument::CreatePointsAttributeImpl(
+    D2D1_POINT_2F* points,
+    uint32_t pointsCount,
+    ICanvasSvgPointsAttribute** result)
+{
+    auto& resource = GetResource();
+
+    auto& device = m_canvasDevice.EnsureNotClosed();
+
+    ComPtr<ID2D1SvgPointCollection> d2dPointCollection;
+    ThrowIfFailed(resource->CreatePointCollection(points, pointsCount, &d2dPointCollection));
+
+    auto newAttribute = Make<CanvasSvgPointsAttribute>(device.Get(), d2dPointCollection.Get());
+
+    ThrowIfFailed(newAttribute.CopyTo(result));
+}
+
+IFACEMETHODIMP CanvasSvgDocument::CreatePointsAttributeWithDefaults(ICanvasSvgPointsAttribute** result)
+{
+    return ExceptionBoundary(
+        [=]
+        {
+            CreatePointsAttributeImpl(nullptr, 0, result);
+        });
+}
+
+IFACEMETHODIMP CanvasSvgDocument::CreatePointsAttribute(uint32_t pointCount, Vector2* points, ICanvasSvgPointsAttribute** result)
+{
+    return ExceptionBoundary(
+        [=]
+        {
+            CreatePointsAttributeImpl(ReinterpretAs<D2D1_POINT_2F*>(points), pointCount, result);
+        });
+}
+
+void CanvasSvgDocument::CreateStrokeDashArrayAttributeImpl(
+    D2D1_SVG_LENGTH* dashes,
+    uint32_t dashCount,
+    ICanvasSvgStrokeDashArrayAttribute** result)
+{
+    auto& resource = GetResource();
+
+    auto& device = m_canvasDevice.EnsureNotClosed();
+
+    ComPtr<ID2D1SvgStrokeDashArray> d2dStrokeDashArray;
+    ThrowIfFailed(resource->CreateStrokeDashArray(dashes, dashCount, &d2dStrokeDashArray));
+
+    auto newAttribute = Make<CanvasSvgStrokeDashArrayAttribute>(device.Get(), d2dStrokeDashArray.Get());
+
+    ThrowIfFailed(newAttribute.CopyTo(result));
+}
+
+IFACEMETHODIMP CanvasSvgDocument::CreateStrokeDashArrayAttributeWithDefaults(ICanvasSvgStrokeDashArrayAttribute** result)
+{
+    return ExceptionBoundary(
+        [=]
+        {            
+            CreateStrokeDashArrayAttributeImpl(nullptr, 0, result);
+        });
+}
+
+IFACEMETHODIMP CanvasSvgDocument::CreateStrokeDashArrayAttribute(
+    UINT32 valueCount, 
+    float* values, 
+    UINT32 unitsCount, 
+    CanvasSvgLengthUnits* units, 
+    ICanvasSvgStrokeDashArrayAttribute** result)
+{
+    return ExceptionBoundary(
+        [=]
+        {
+            if (valueCount != unitsCount)
+            {
+                ThrowHR(E_INVALIDARG);
+            }
+
+            std::vector<D2D1_SVG_LENGTH> d2dSvgLengths = CanvasSvgStrokeDashArrayAttribute::GetD2DSvgLengths(valueCount, values, units);
+
+            CreateStrokeDashArrayAttributeImpl(d2dSvgLengths.data(), valueCount, result);
+        });
+    }
 
 IFACEMETHODIMP CanvasSvgDocumentStatics::CreateEmpty(
     ICanvasResourceCreator *resourceCreator,
@@ -318,19 +495,6 @@ IFACEMETHODIMP CanvasSvgDocumentStatics::IsSupported(ICanvasDevice* device, bool
         
             *isSupported = static_cast<bool>(deviceContext5);
         });
-}
-
-template<typename IMPLEMENTATION_TYPE>
-void VerifyDeviceBoundary(
-    ClosablePtr<ICanvasDevice> thisDeviceClosable,
-    IMPLEMENTATION_TYPE* otherObjectImplementationType)
-{
-    auto thisDevice = thisDeviceClosable.EnsureNotClosed();
-    auto otherDevice = otherObjectImplementationType->GetDevice();
-    if (!IsSameInstance(thisDevice.Get(), otherDevice.Get()))
-    {
-        ThrowHR(E_INVALIDARG, Strings::SvgDocumentTreeMustHaveConsistentDevice);
-    }
 }
 
 }}}}}

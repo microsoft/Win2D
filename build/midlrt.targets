@@ -11,6 +11,15 @@
     <Error Condition="'$(UnmergedWinmdDirectory)' == ''" Text="UnmergedWinmdDirectory property is not set."/>
     <ItemGroup>
       <Midl Include="%(MidlRT.Identity)">
+      
+        <!-- Need to compile against win32 environment settings for ARM. 
+          Reason: ARM compilation produces longer code for proxys/stubs which exceed some internal limits of the 
+          Midl compiler given the size of our Idl code. Since we don't use proxys/stubs, we can use the win32 env 
+          option which causes less restrictive limits. For the short term, this works; in the longer term, we should
+          pick up the RS3 toolset and pass the /nomidl param- or if for some reason that doesn't work, then split up 
+          our Idl into multiple files. -->
+        <TargetEnvironment Condition="'$(Platform)' == 'ARM'">win32</TargetEnvironment>
+        
         <WarningLevel>1</WarningLevel>
         <WarnAsError>true</WarnAsError>
         <MetadataFileName>$(UnmergedWinmdDirectory)\%(Filename).winmd</MetadataFileName>

@@ -199,6 +199,9 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasSvgElementUnitTests.cpp">
       <Filter>graphics</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)graphics\CanvasSvgAttributeUnitTests.cpp">
+      <Filter>graphics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)pch.h" />
@@ -626,6 +629,18 @@
       <Filter>mocks</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DSvgElement.h">
+      <Filter>mocks</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DSvgPaint.h">
+      <Filter>mocks</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DSvgPathData.h">
+      <Filter>mocks</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DSvgPointCollection.h">
+      <Filter>mocks</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DSvgStrokeDashArray.h">
       <Filter>mocks</Filter>
     </ClInclude>
   </ItemGroup>

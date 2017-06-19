@@ -1,0 +1,435 @@
+<?xml version="1.0"?>
+<!--
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+Licensed under the MIT License. See LICENSE.txt in the project root for license information.
+-->
+
+<doc>
+  <assembly>
+    <name>Microsoft.Graphics.Canvas</name>
+  </assembly>
+  <members>
+    <member name="T:Microsoft.Graphics.Canvas.Svg.CanvasSvgAspectAlignment">
+      <summary>Represents the alignment portion of the SVG preserveAspectRatio attribute.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Svg.CanvasSvgAspectAlignment.None">
+      <summary>The alignment is set to SVG's 'none' value.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Svg.CanvasSvgAspectAlignment.XMinYMin">
+      <summary>The alignment is set to SVG's 'xMinYMin' value.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Svg.CanvasSvgAspectAlignment.XMidYMin">
+      <summary>The alignment is set to SVG's 'xMidYMin' value.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Svg.CanvasSvgAspectAlignment.XMaxYMin">
+      <summary>The alignment is set to SVG's 'xMaxYMin' value.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Svg.CanvasSvgAspectAlignment.XMinYMid">
+      <summary>The alignment is set to SVG's 'xMinYMid' value.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Svg.CanvasSvgAspectAlignment.XMidYMid">
+      <summary>The alignment is set to SVG's 'xMidYMid' value.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Svg.CanvasSvgAspectAlignment.XMaxYMid">
+      <summary>The alignment is set to SVG's 'xMaxYMid' value.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Svg.CanvasSvgAspectAlignment.XMinYMax">
+      <summary>The alignment is set to SVG's 'xMinYMax' value.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Svg.CanvasSvgAspectAlignment.XMidYMax">
+      <summary>The alignment is set to SVG's 'xMidYMax' value.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Svg.CanvasSvgAspectAlignment.XMaxYMax">
+      <summary>The alignment is set to SVG's 'xMaxYMax' value.</summary>
+    </member>
+    <member name="T:Microsoft.Graphics.Canvas.Svg.CanvasSvgAspectScaling">
+      <summary>Represents the meetOrSlice portion of the SVG preserveAspectRatio attribute.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Svg.CanvasSvgAspectScaling.Meet">
+      <summary>Scale the viewBox up as much as possible such that the entire viewBox is visible within the viewport.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Svg.CanvasSvgAspectScaling.Slice">
+      <summary>Scale the viewBox down as much as possible such that the entire viewport is covered by the viewBox.</summary>
+    </member>
+    <member name="T:Microsoft.Graphics.Canvas.Svg.CanvasSvgDisplay">
+      <summary>Specifies a value for the SVG display property.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Svg.CanvasSvgDisplay.Inline">
+      <summary>The element uses the default display behavior.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Svg.CanvasSvgDisplay.None">
+      <summary>The element and all children are not rendered directly.</summary>
+    </member>
+    <member name="T:Microsoft.Graphics.Canvas.Svg.CanvasSvgLengthUnits">
+      <summary>Specifies the units for an SVG length.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Svg.CanvasSvgLengthUnits.Number">
+      <summary>The length is unitless.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Svg.CanvasSvgLengthUnits.Percentage">
+      <summary>The length is a percentage value.</summary>
+    </member>    
+
+    <member name="T:Microsoft.Graphics.Canvas.Svg.CanvasSvgOverflow">
+      <summary>Specifies a value for the SVG overflow property.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Svg.CanvasSvgOverflow.DoNotClipToViewport">
+      <summary>The element is not clipped to its viewport.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Svg.CanvasSvgOverflow.ClipToViewport">
+      <summary>The element is clipped to its viewport.</summary>
+    </member>
+    
+    <member name="T:Microsoft.Graphics.Canvas.Svg.CanvasSvgPaintAttribute">
+      <summary>Object describing an SVG fill or stroke value.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgPaintAttribute.Dispose">
+      <summary>Releases all resources used by the CanvasSvgPaintAttribute.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgPaintAttribute.Clone">
+      <summary>Creates a clone of this attribute value.</summary>
+      <remarks>On creation, the cloned attribute is not set on any element.</remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgPaintAttribute.GetElement">
+      <summary>Returns the element on which this attribute is set.</summary>
+      <remarks>Returns null if the attribute is not set on any element.</remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Svg.CanvasSvgPaintAttribute.Device">
+      <summary>Gets the device with which this attribute is associated.</summary>
+      <remarks>Attributes can only be assigned to elements which use the same device.</remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Svg.CanvasSvgPaintAttribute.PaintType">
+      <summary>Specifies the paint type (i.e., policy by which color and URI are considered as sources) for this attribute.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Svg.CanvasSvgPaintAttribute.Id">
+      <summary>Gets the element ID which acts as the paint server.</summary>
+      <remarks>This field is used if the paint type is set to
+      	<see cref="F:Microsoft.Graphics.Canvas.Svg.CanvasSvgPaintType.Uri"/>, 
+      	<see cref="F:Microsoft.Graphics.Canvas.Svg.CanvasSvgPaintType.UriThenNone"/>, 
+      	<see cref="F:Microsoft.Graphics.Canvas.Svg.CanvasSvgPaintType.UriThenColor"/>, or
+      	<see cref="F:Microsoft.Graphics.Canvas.Svg.CanvasSvgPaintType.UriThenCurrentColor"/>.
+      </remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Svg.CanvasSvgPaintAttribute.Color">
+      <summary>Gets the paint color.</summary>
+      <remarks>This field is used if the paint type is set to
+      	<see cref="F:Microsoft.Graphics.Canvas.Svg.CanvasSvgPaintType.Color"/>, or
+      	<see cref="F:Microsoft.Graphics.Canvas.Svg.CanvasSvgPaintType.UriThenColor"/>.
+      </remarks>
+    </member>
+    <member name="T:Microsoft.Graphics.Canvas.Svg.CanvasSvgPaintType">
+      <summary>Specifies the paint type for an SVG fill or stroke.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Svg.CanvasSvgPaintType.None">
+      <summary>The fill or stroke is not rendered.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Svg.CanvasSvgPaintType.Color">
+      <summary>A solid color is rendered.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Svg.CanvasSvgPaintType.CurrentColor">
+      <summary>The current color (i.e., color from further up in the DOM) is rendered.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Svg.CanvasSvgPaintType.Uri">
+      <summary>A paint server, defined by another element in the SVG document, is used.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Svg.CanvasSvgPaintType.UriThenNone">
+      <summary>A paint server, defined by another element in the SVG document, is used. If the paint server reference is invalid, fall back to CanvasSvgPaintType.None.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Svg.CanvasSvgPaintType.UriThenColor">
+      <summary>A paint server, defined by another element in the SVG document, is used. If the paint server reference is invalid, fall back to CanvasSvgPaintType.Color.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Svg.CanvasSvgPaintType.UriThenCurrentColor">
+      <summary>A paint server, defined by another element in the SVG document, is used. If the paint server reference is invalid, fall back to CanvasSvgPaintType.CurrentColor.</summary>
+    </member>
+    <member name="T:Microsoft.Graphics.Canvas.Svg.CanvasSvgPathAttribute">
+      <summary>Object describing SVG path data.</summary>
+      <remarks>
+        <p>
+          Path data can be set as the 'd' attribute on a 'path' element.
+        </p>
+        <p>
+          The path data set is organized into two arrays:
+          <li><ul>
+            The segment data array stores all numbers, and
+          </ul></li>
+          <li><ul>
+            the commands array stores the set of commands.
+          </ul></li>
+          
+          Unlike the string data set in the d attribute, each command in this 
+          representation uses a fixed number of elements in the segment data array. Therefore, the path 
+          'M 0,0 100,0 0,100 Z' is represented as: 'M0,0 L100,0 L0,100 Z'. This is split into two arrays, with the 
+          segment data containing '0,0 100,0 0,100', and the commands containing 'M L L Z'.
+        </p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgPathAttribute.CreatePathGeometry">
+      <summary>Creates a path geometry object representing the path data.</summary>
+      <remarks>A CanvasFilledRegionDetermination of CanvasFilledRegionDetermination.Alternate is used.</remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgPathAttribute.CreatePathGeometry(Microsoft.Graphics.Canvas.Geometry.CanvasFilledRegionDetermination)">
+      <summary>Creates a path geometry object representing the path data, using the specified CanvasFilledRegionDetermination.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgPathAttribute.GetCommands(System.Int32,System.Int32)">
+      <summary>Gets commands from the commands array.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgPathAttribute.GetSegmentData(System.Int32,System.Int32)">
+      <summary>Gets data from the segment data array.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgPathAttribute.RemoveCommandsAtEnd(System.Int32)">
+      <summary>Removes commands from the end of the commands array.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgPathAttribute.RemoveSegmentDataAtEnd(System.Int32)">
+      <summary>Removes data from the end of the segment data array.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgPathAttribute.SetCommands(System.Int32,Microsoft.Graphics.Canvas.Svg.CanvasSvgPathCommand[])">
+      <summary>Sets new commands to the commands array.</summary>
+      <remarks>
+        Existing commands not updated by this method are preserved. The array is resized larger if necessary to accomodate the new commands.
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgPathAttribute.SetSegmentData(System.Int32,System.Single[])">
+      <summary>Sets new commands to the segment data array.</summary>
+      <remarks>
+        Existing segment data not updated by this method is preserved. The array is resized larger if necessary to accomodate the new segment data.
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgPathAttribute.Dispose">
+      <summary>Releases all resources used by the CanvasSvgPathAttribute.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgPathAttribute.Clone">
+      <summary>Creates a clone of this attribute value.</summary>
+      <remarks>On creation, the cloned attribute is not set on any element.</remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgPathAttribute.GetElement">
+      <summary>Returns the element on which this attribute is set.</summary>
+      <remarks>Returns null if the attribute is not set on any element.</remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Svg.CanvasSvgPathAttribute.Device">
+      <summary>Gets the device with which this attribute is associated.</summary>
+      <remarks>Attributes can only be assigned to elements which use the same device.</remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Svg.CanvasSvgPathAttribute.Commands">
+      <summary>Gets the array of commands.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Svg.CanvasSvgPathAttribute.SegmentData">
+      <summary>Gets the array of segment data.</summary>
+    </member>
+    <member name="T:Microsoft.Graphics.Canvas.Svg.CanvasSvgPathCommand">
+      <summary>Represents a path commmand.</summary>
+      <remarks>Each command may reference elements from the segment data. 
+      Commands ending in Absolute interpret data as absolute coordinate. 
+      Commands ending in Relative interpret data as being relative to the previous point.</remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Svg.CanvasSvgPathCommand.ClosePath">
+      <summary>Closes the current subpath. Uses no segment data.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Svg.CanvasSvgPathCommand.MoveAbsolute">
+      <summary>Starts a new subpath at the coordinate (x y).</summary>
+      <remarks>Uses 2 floats of segment data.</remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Svg.CanvasSvgPathCommand.MoveRelative">
+      <summary>Starts a new subpath at the coordinate (x y).</summary>
+      <remarks>Uses 2 floats of segment data.</remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Svg.CanvasSvgPathCommand.LineAbsolute">
+      <summary>Draws a line to the coordinate (x y).</summary>
+      <remarks>Uses 2 floats of segment data.</remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Svg.CanvasSvgPathCommand.LineRelative">
+      <summary>Draws a line to the coordinate (x y).</summary>
+      <remarks>Uses 2 floats of segment data.</remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Svg.CanvasSvgPathCommand.CubicAbsolute">
+      <summary>Draws a cubic Bezier curve (x1 y1 x2 y2 x y).</summary>
+      <remarks>
+        The curve ends at (x, y) and is defined by the two control points (x1, y1) and (x2, y2).
+        Uses 6 floats of segment data.
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Svg.CanvasSvgPathCommand.CubicRelative">
+      <summary>Draws a cubic Bezier curve (x1 y1 x2 y2 x y).</summary>
+      <remarks>
+        The curve ends at (x, y) and is defined by the two control points (x1, y1) and (x2, y2).
+        Uses 6 floats of segment data.
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Svg.CanvasSvgPathCommand.QuadraticAbsolute">
+      <summary>Draws a quadratic Bezier curve (x1 y1 x y).</summary>
+      <remarks>The curve ends at (x, y) and is defined by the control point (x1 y1). Uses 4 floats of segment data.</remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Svg.CanvasSvgPathCommand.QuadraticRelative">
+      <summary>Draws a quadratic Bezier curve (x1 y1 x y).</summary>
+      <remarks>The curve ends at (x, y) and is defined by the control point (x1 y1). Uses 4 floats of segment data.</remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Svg.CanvasSvgPathCommand.ArcAbsolute">
+      <summary>Draws an elliptical arc (rx ry x-axis-rotation large-arc-flag sweep-flag x y).</summary>
+      <remarks>
+        The curve ends at (x, y) and is defined by the arc parameters. 
+        The two flags 'large-arc-flag' and 'sweep-flag' are considered set if their values are non-zero.
+        Uses 7 floats of segment data.
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Svg.CanvasSvgPathCommand.ArcRelative">
+      <summary>Draws an elliptical arc (rx ry x-axis-rotation large-arc-flag sweep-flag x y).</summary>
+      <remarks>
+        The curve ends at (x, y) and is defined by the arc parameters. 
+        The two flags 'large-arc-flag' and 'sweep-flag' are considered set if their values are non-zero.
+        Uses 7 floats of segment data.
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Svg.CanvasSvgPathCommand.HorizontalAbsolute">
+      <summary>Draws a horizontal line to the coordinate (x).</summary>
+      <remarks>Uses 1 float of segment data.</remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Svg.CanvasSvgPathCommand.HorizontalRelative">
+      <summary>Draws a horizontal line to the coordinate (x).</summary>
+      <remarks>Uses 1 float of segment data.</remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Svg.CanvasSvgPathCommand.VerticalAbsolute">
+      <summary>Draws a vertical line to the coordinate (x).</summary>
+      <remarks>Uses 1 float of segment data.</remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Svg.CanvasSvgPathCommand.VerticalRelative">
+      <summary>Draws a vertical line to the coordinate (x).</summary>
+      <remarks>Uses 1 float of segment data.</remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Svg.CanvasSvgPathCommand.CubicSmoothAbsolute">
+      <summary>Draws a smooth cubic Bezier curve (x2 y2 x y)</summary>
+      <remarks>The curve ends at (x, y) and is defined by the control point (x2, y2). Uses 4 floats of segment data.</remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Svg.CanvasSvgPathCommand.CubicSmoothRelative">
+      <summary>Draws a smooth cubic Bezier curve (x2 y2 x y)</summary>
+      <remarks>The curve ends at (x, y) and is defined by the control point (x2, y2). Uses 4 floats of segment data.</remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Svg.CanvasSvgPathCommand.QuadraticSmoothAbsolute">
+      <summary>Draws a smooth quadratic Bezier curve ending at (x, y).</summary>
+      <remarks>Uses 2 floats of segment data.</remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Svg.CanvasSvgPathCommand.QuadraticSmoothRelative">
+      <summary>Draws a smooth quadratic Bezier curve ending at (x, y).</summary>
+      <remarks>Uses 2 floats of segment data.</remarks>
+    </member>
+    <member name="T:Microsoft.Graphics.Canvas.Svg.CanvasSvgPointsAttribute">
+      <summary>Object describing an SVG points value in a polyline or polygon element.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgPointsAttribute.GetPoints(System.Int32,System.Int32)">
+      <summary>Gets points from the points array.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgPointsAttribute.RemovePointsAtEnd(System.Int32)">
+      <summary>Removes points from the end of the array.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgPointsAttribute.SetPoints(System.Int32,System.Numerics.Vector2[])">
+      <summary>Sets points within the points array.</summary>
+      <remarks>Existing points not updated by this method are preserved. The array is resized larger if necessary to accomodate the new points.</remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgPointsAttribute.Dispose">
+      <summary>Releases all resources used by the CanvasSvgPointsAttribute.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgPointsAttribute.Clone">
+      <summary>Creates a clone of this attribute value.</summary>
+      <remarks>On creation, the cloned attribute is not set on any element.</remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgPointsAttribute.GetElement">
+      <summary>Returns the element on which this attribute is set.</summary>
+      <remarks>Returns null if the attribute is not set on any element.</remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Svg.CanvasSvgPointsAttribute.Device">
+      <summary>Gets the device with which this attribute is associated.</summary>
+      <remarks>Attributes can only be assigned to elements which use the same device.</remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Svg.CanvasSvgPointsAttribute.Points">
+      <summary>Gets the points array.</summary>
+    </member>
+    <member name="T:Microsoft.Graphics.Canvas.Svg.CanvasSvgStrokeDashArrayAttribute">
+      <summary>Object describing an SVG stroke-dasharray value.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgStrokeDashArrayAttribute.GetDashes">
+      <summary>Gets dashes from the array, ignoring unit mode.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgStrokeDashArrayAttribute.GetDashes(System.Int32,System.Int32,Microsoft.Graphics.Canvas.Svg.CanvasSvgLengthUnits[]@)">
+      <summary>Gets dashes from the array, along with their unit mode.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgStrokeDashArrayAttribute.RemoveDashesAtEnd(System.Int32)">
+      <summary>Removes dashes from the end of the array.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgStrokeDashArrayAttribute.SetDashes(System.Int32,System.Single[])">
+      <summary>Sets dashes to the array.</summary>
+      <remarks>Existing dashes not updated by this method are preserved. The array is resized larger if necessary to accomodate the new dashes.</remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgStrokeDashArrayAttribute.SetDashes(System.Int32,System.Single[],Microsoft.Graphics.Canvas.Svg.CanvasSvgLengthUnits)">
+      <summary>Sets dashes, and their unit mode, to the array.</summary>
+      <remarks>
+        <p>
+          This overload is for setting dashes which use one consistent unit mode. If the dashes have different unit modes, use
+          <see cref="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgStrokeDashArrayAttribute.SetDashes(System.Int32,System.Single[],Microsoft.Graphics.Canvas.Svg.CanvasSvgLengthUnits[])"/>.
+        </p>
+        <p>
+          Existing dashes not updated by this method are preserved. The array is resized larger if necessary to accomodate the new dashes.
+        </p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgStrokeDashArrayAttribute.SetDashes(System.Int32,System.Single[],Microsoft.Graphics.Canvas.Svg.CanvasSvgLengthUnits[])">
+      <summary>Sets dashes, and their unit modes, to the array.</summary>
+      <remarks>
+        <p>
+          The number of dashes must equal the number of unit modes specified.
+        </p>
+        <p>
+          Existing dashes not updated by this method are preserved. The array is resized larger if necessary to accomodate the new dashes.
+        </p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgStrokeDashArrayAttribute.Dispose">
+      <summary>Releases all resources used by the CanvasSvgStrokeDashArrayAttribute.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgStrokeDashArrayAttribute.Clone">
+      <summary>Creates a clone of this attribute value.</summary>
+      <remarks>On creation, the cloned attribute is not set on any element.</remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgStrokeDashArrayAttribute.GetElement">
+      <summary>Returns the element on which this attribute is set.</summary>
+      <remarks>Returns null if the attribute is not set on any element.</remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Svg.CanvasSvgStrokeDashArrayAttribute.Device">
+      <summary>Gets the device with which this attribute is associated.</summary>
+      <remarks>Attributes can only be assigned to elements which use the same device.</remarks>
+    </member>
+    <member name="T:Microsoft.Graphics.Canvas.Svg.CanvasSvgUnits">
+      <summary>Defines the coordinate system used for SVG gradient or clipPath elements.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Svg.CanvasSvgUnits.UserSpaceOnUse">
+      <summary>The property is set to SVG's 'userSpaceOnUse' value.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Svg.CanvasSvgUnits.ObjectBoundingBox">
+      <summary>The property is set to SVG's 'objectBoundingBox' value.</summary>
+    </member>
+    <member name="T:Microsoft.Graphics.Canvas.Svg.CanvasSvgVisibility">
+      <summary>Specifies a value for the SVG visibility property.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Svg.CanvasSvgVisibility.Visible">
+      <summary>The element is visible.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Svg.CanvasSvgVisibility.Hidden">
+      <summary>The element is invisible.</summary>
+      <remarks>Elements marked as Hidden will still have space allowed for them in the document, and their children are not affected.</remarks>
+    </member>
+    <member name="T:Microsoft.Graphics.Canvas.Svg.ICanvasSvgAttribute">
+      <summary>Interface describing an SVG attribute.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Svg.ICanvasSvgAttribute.Clone">
+      <summary>Creates a clone of this attribute value.</summary>
+      <remarks>On creation, the cloned attribute is not set on any element.</remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Svg.ICanvasSvgAttribute.GetElement">
+      <summary>Returns the element on which this attribute is set.</summary>
+      <remarks>Returns null if the attribute is not set on any element.</remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Svg.ICanvasSvgAttribute.Device">
+      <summary>Gets the device with which this attribute is associated.</summary>
+      <remarks>Attributes can only be assigned to elements which use the same device.</remarks>
+    </member>
+    
+  </members>
+</doc>

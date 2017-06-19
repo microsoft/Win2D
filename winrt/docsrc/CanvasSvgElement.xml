@@ -11,7 +11,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
   </assembly>
   <members>  
 
-    <member name="T:Microsoft.Graphics.Canvas.Svg.CanvasSvgElement">
+    <member name="T:Microsoft.Graphics.Canvas.Svg.CanvasSvgNamedElement">
       <summary>Specifies an SVG element which can be part of an SVG document.</summary>
       <remarks>
         <p>
@@ -39,12 +39,216 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       </remarks>
     </member>
     
-    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgElement.AppendChild(Microsoft.Graphics.Canvas.Svg.CanvasSvgElement)">
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgNamedElement.Dispose">
+      <summary>Releases all resources used by the CanvasSvgNamedElement.</summary>
+    </member>    
+
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgNamedElement.AppendChild(Microsoft.Graphics.Canvas.Svg.ICanvasSvgElement)">
       <summary>Appends a child element to this element.</summary>
     </member>
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgNamedElement.CreateAndAppendNamedChildElement(System.String)">
+      <summary>Creates a new named element and appends it to this element's children.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgNamedElement.CreateAndAppendTextChildElement(System.String)">
+      <summary>Creates a new text element and appends it to this element's children.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgNamedElement.GetPreviousSibling(Microsoft.Graphics.Canvas.Svg.ICanvasSvgElement)">
+      <summary>Gets the previous sibling of the specified element, or null if there is no previous sibling.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgNamedElement.GetNextSibling(Microsoft.Graphics.Canvas.Svg.ICanvasSvgElement)">
+      <summary>Gets the next sibling of the specified element, or null if there is no next sibling.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgNamedElement.InsertChildBefore(Microsoft.Graphics.Canvas.Svg.ICanvasSvgElement,Microsoft.Graphics.Canvas.Svg.ICanvasSvgElement)">
+      <summary>Inserts a child before the specified child.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgNamedElement.IsAttributeSpecified(System.String)">
+      <summary>Returns whether an attribute was specified for this element.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgNamedElement.IsAttributeSpecified(System.String,System.Boolean)">
+      <summary>Returns whether an attribute was specified for this element.</summary>
+      <remarks>This overload allows you to specify whether attributes count if they're inherited from further up the SVG DOM.</remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgNamedElement.RemoveAttribute(System.String)">
+      <summary>Removes the specified attribute from this element.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgNamedElement.RemoveChild(Microsoft.Graphics.Canvas.Svg.ICanvasSvgElement)">
+      <summary>Removes the a child from this element.</summary>
+      <remarks>Children of the removed child remain that way.</remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgNamedElement.ReplaceChild(Microsoft.Graphics.Canvas.Svg.ICanvasSvgElement,Microsoft.Graphics.Canvas.Svg.ICanvasSvgElement)">
+      <summary>Replaces a child of this element.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgNamedElement.SetStringAttribute(System.String,System.String)">
+      <summary>Sets a string attribute.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgNamedElement.GetStringAttribute(System.String)">
+      <summary>Gets a string attribute.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgNamedElement.SetAttribute(System.String,Microsoft.Graphics.Canvas.Svg.ICanvasSvgAttribute)">
+      <summary>Sets an object attribute.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgNamedElement.GetAttribute(System.String)">
+      <summary>Gets an object attribute.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgNamedElement.SetIdAttribute(System.String,System.String)">
+      <summary>Sets an ID attribute.</summary>
+      <remarks>
+        When setting an ID attribute using this method, the serialized SVG will look identical to that
+        using SetStringAttribute, but the syntax is more convenient for attributes which reference that ID.
+        In particular, there is no need to use "#" or other operators when specifying an ID using this
+        method. However, this method can only be used for attributes which are compatible with IDs.
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgNamedElement.GetIdAttribute(System.String)">
+      <summary>Gets an ID attribute.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgNamedElement.SetFloatAttribute(System.String,System.Single)">
+      <summary>Sets a float attribute.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgNamedElement.GetFloatAttribute(System.String)">
+      <summary>Gets a float attribute.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgNamedElement.SetColorAttribute(System.String,Windows.UI.Color)">
+      <summary>Sets a color attribute.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgNamedElement.GetColorAttribute(System.String)">
+      <summary>Gets a color attribute.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgNamedElement.SetFilledRegionDeterminationAttribute(System.String,Microsoft.Graphics.Canvas.Geometry.CanvasFilledRegionDetermination)">
+      <summary>Sets a filled region determination attribute.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgNamedElement.GetFilledRegionDeterminationAttribute(System.String)">
+      <summary>Gets a filled region determination attribute.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgNamedElement.SetDisplayAttribute(System.String,Microsoft.Graphics.Canvas.Svg.CanvasSvgDisplay)">
+      <summary>Sets a display attribute.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgNamedElement.GetDisplayAttribute(System.String)">
+      <summary>Gets a display attribute.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgNamedElement.SetOverflowAttribute(System.String,Microsoft.Graphics.Canvas.Svg.CanvasSvgOverflow)">
+      <summary>Sets an overflow attribute.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgNamedElement.GetOverflowAttribute(System.String)">
+      <summary>Gets an overflow attribute.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgNamedElement.SetCapStyleAttribute(System.String,Microsoft.Graphics.Canvas.Geometry.CanvasCapStyle)">
+      <summary>Sets a cap style attribute.</summary>
+      <remarks>CapStyle.Triangle is not allowed within SVG.</remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgNamedElement.GetCapStyleAttribute(System.String)">
+      <summary>Gets a cap style attribute.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgNamedElement.SetLineJoinAttribute(System.String,Microsoft.Graphics.Canvas.Geometry.CanvasLineJoin)">
+      <summary>Sets a line join attribute.</summary>
+      <remarks>
+        In consistent semantics with SVG, a Miter line join is actually treated as MiterOrBevel. 
+        Therefore, Miter and MiterOrBevel have the same meaning here.
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgNamedElement.GetLineJoinAttribute(System.String)">
+      <summary>Gets a line join attribute.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgNamedElement.SetVisibilityAttribute(System.String,Microsoft.Graphics.Canvas.Svg.CanvasSvgVisibility)">
+      <summary>Sets a visibility attribute.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgNamedElement.GetVisibilityAttribute(System.String)">
+      <summary>Gets a visibility attribute.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgNamedElement.SetTransformAttribute(System.String,System.Numerics.Matrix3x2)">
+      <summary>Sets a transform attribute.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgNamedElement.GetTransformAttribute(System.String)">
+      <summary>Gets a transform attribute.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgNamedElement.SetUnitsAttribute(System.String,Microsoft.Graphics.Canvas.Svg.CanvasSvgUnits)">
+      <summary>Sets a units attribute.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgNamedElement.GetUnitsAttribute(System.String)">
+      <summary>Gets a units attribute.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgNamedElement.SetEdgeBehaviorAttribute(System.String,Microsoft.Graphics.Canvas.CanvasEdgeBehavior)">
+      <summary>Sets an edge behavior attribute.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgNamedElement.GetEdgeBehaviorAttribute(System.String)">
+      <summary>Gets an edge behavior attribute.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgNamedElement.SetRectangleAttribute(System.String,Windows.Foundation.Rect)">
+      <summary>Sets a rectangle attribute.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgNamedElement.GetRectangleAttribute(System.String)">
+      <summary>Gets a rectangle attribute.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgNamedElement.SetLengthAttribute(System.String,System.Single,Microsoft.Graphics.Canvas.Svg.CanvasSvgLengthUnits)">
+      <summary>Sets a length attribute, specifying both a value and what type of units that value is in.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgNamedElement.GetLengthAttribute(System.String,Microsoft.Graphics.Canvas.Svg.CanvasSvgLengthUnits@)">
+      <summary>Gets a length attribute, where both a value and the type of units that value is in are retrieved.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgNamedElement.SetAspectRatioAttribute(System.String,Microsoft.Graphics.Canvas.Svg.CanvasSvgAspectAlignment,Microsoft.Graphics.Canvas.Svg.CanvasSvgAspectScaling)">
+      <summary>Sets an aspect ratio attribute, which consists of alignment and scaling.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgNamedElement.GetAspectRatioAttribute(System.String,Microsoft.Graphics.Canvas.Svg.CanvasSvgAspectScaling@)">
+      <summary>Gets an aspect ratio attribute, retrieving both the alignment and scaling.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Svg.CanvasSvgNamedElement.ContainingDocument">
+      <summary>Gets the document which contains this element.</summary>
+      <remarks>If this element isn't contained by any document, null is returned.</remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Svg.CanvasSvgNamedElement.Device">
+      <summary>Gets the device associated with this SVG element.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Svg.CanvasSvgNamedElement.Parent">
+      <summary>Gets theis element's parent.</summary>
+      <remarks>If this element doesn't have any parent, null is returned.</remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Svg.CanvasSvgNamedElement.FirstChild">
+      <summary>Gets this element's first child.</summary>
+      <remarks>If this element doesn't have any children, null is returned.</remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Svg.CanvasSvgNamedElement.HasChildren">
+      <summary>Gets whether this element has any children.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Svg.CanvasSvgNamedElement.LastChild">
+      <summary>Gets this element's last child.</summary>
+      <remarks>If this element doesn't have any children, null is returned.</remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Svg.CanvasSvgNamedElement.SpecifiedAttributes">
+      <summary>Gets an array containing the set of attributes specified for this element.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Svg.CanvasSvgNamedElement.Tag">
+      <summary>Gets the name of this element.</summary>
+    </member>    
     
-    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgElement.Dispose">
-      <summary>Releases all resources used by the CanvasSvgElement.</summary>
+    <member name="T:Microsoft.Graphics.Canvas.Svg.CanvasSvgTextElement">
+      <summary>Object representing a part of an SVG document which can contain only text.</summary>
+      <remarks>
+        Win2D only permits text elements where they are allowed, according to what constitutes valid SVG.
+        In particular, title and desc elements may contain text, but other types of named elements
+        might not. For more information, see 
+        <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/mt790715(v=vs.85).aspx">SVG Support</a>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgTextElement.Dispose">
+      <summary>Releases all resources used by the CanvasSvgTextElement.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Svg.CanvasSvgTextElement.Text">
+      <summary>Gets or sets the text for this element.</summary>
+    </member>
+    
+    <member name="T:Microsoft.Graphics.Canvas.Svg.ICanvasSvgElement">
+      <summary>Interface representing an SVG element.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Svg.ICanvasSvgElement.ContainingDocument">
+      <summary>Gets the document which contains this element.</summary>
+      <remarks>If this element isn't contained by any document, null is returned.</remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Svg.ICanvasSvgElement.Device">
+      <summary>Gets the device associated with this SVG element.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Svg.ICanvasSvgElement.Parent">
+      <summary>Gets theis element's parent.</summary>
+      <remarks>If this element doesn't have any parent, null is returned.</remarks>
     </member>
     
   </members>

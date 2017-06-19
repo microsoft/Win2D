@@ -9,6 +9,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     using namespace ::Microsoft::WRL;
     using namespace WinRTDirectX;
     using namespace Brushes;
+#if WINVER > _WIN32_WINNT_WINBLUE
+    using namespace Svg;
+#endif
     using namespace Text;
     using namespace UI;
     using namespace UI::Xaml;
@@ -164,6 +167,113 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         // Using hardcoded constant instead of D2D1_DRAW_TEXT_OPTIONS_ENABLE_COLOR_FONT, because that enum entry is missing from the VS2013 Windows Phone version of d2d1.h
         static_assert(static_cast<uint32_t>(4U) == static_cast<uint32_t>(CanvasDrawTextOptions::EnableColorFont), "CanvasDrawTextOptions must match D2D1_DRAW_TEXT_OPTIONS");
+    };
+
+    template<> struct ValidateStaticCastAs<CanvasFilledRegionDetermination, D2D1_FILL_MODE> : std::true_type
+    {
+        static_assert(static_cast<uint32_t>(D2D1_FILL_MODE_ALTERNATE) == static_cast<uint32_t>(CanvasFilledRegionDetermination::Alternate), "CanvasFilledRegionDetermination must match D2D1_FILL_MODE");
+        static_assert(static_cast<uint32_t>(D2D1_FILL_MODE_WINDING) == static_cast<uint32_t>(CanvasFilledRegionDetermination::Winding), "CanvasFilledRegionDetermination must match D2D1_FILL_MODE");
+    };
+
+
+#if WINVER > _WIN32_WINNT_WINBLUE
+    template<> struct ValidateStaticCastAs<CanvasSvgDisplay, D2D1_SVG_DISPLAY> : std::true_type
+    {
+        static_assert(static_cast<uint32_t>(D2D1_SVG_DISPLAY_INLINE) == static_cast<uint32_t>(CanvasSvgDisplay::Inline), "CanvasSvgDisplay must match D2D1_SVG_DISPLAY");
+        static_assert(static_cast<uint32_t>(D2D1_SVG_DISPLAY_NONE) == static_cast<uint32_t>(CanvasSvgDisplay::None), "CanvasSvgDisplay must match D2D1_SVG_DISPLAY");
+    };
+
+    template<> struct ValidateStaticCastAs<CanvasSvgOverflow, D2D1_SVG_OVERFLOW> : std::true_type
+    {
+        static_assert(static_cast<uint32_t>(D2D1_SVG_OVERFLOW_VISIBLE) == static_cast<uint32_t>(CanvasSvgOverflow::DoNotClipToViewport), "CanvasSvgOverflow must match D2D1_SVG_OVERFLOW");
+        static_assert(static_cast<uint32_t>(D2D1_SVG_OVERFLOW_HIDDEN) == static_cast<uint32_t>(CanvasSvgOverflow::ClipToViewport), "CanvasSvgOverflow must match D2D1_SVG_OVERFLOW");
+    };
+
+    template<> struct ValidateStaticCastAs<CanvasSvgVisibility, D2D1_SVG_VISIBILITY> : std::true_type
+    {
+        static_assert(static_cast<uint32_t>(D2D1_SVG_VISIBILITY_VISIBLE) == static_cast<uint32_t>(CanvasSvgVisibility::Visible), "CanvasSvgVisibility must match D2D1_SVG_VISIBILITY");
+        static_assert(static_cast<uint32_t>(D2D1_SVG_VISIBILITY_HIDDEN) == static_cast<uint32_t>(CanvasSvgVisibility::Hidden), "CanvasSvgVisibility must match D2D1_SVG_VISIBILITY");
+    };
+
+    template<> struct ValidateStaticCastAs<CanvasSvgUnits, D2D1_SVG_UNIT_TYPE> : std::true_type
+    {
+        static_assert(static_cast<uint32_t>(D2D1_SVG_UNIT_TYPE_USER_SPACE_ON_USE) == static_cast<uint32_t>(CanvasSvgUnits::UserSpaceOnUse), "CanvasSvgVisibility must match D2D1_SVG_UNIT_TYPE");
+        static_assert(static_cast<uint32_t>(D2D1_SVG_UNIT_TYPE_OBJECT_BOUNDING_BOX) == static_cast<uint32_t>(CanvasSvgUnits::ObjectBoundingBox), "CanvasSvgVisibility must match D2D1_SVG_UNIT_TYPE");
+    };
+
+    template<> struct ValidateStaticCastAs<CanvasSvgLengthUnits, D2D1_SVG_LENGTH_UNITS> : std::true_type
+    {
+        static_assert(static_cast<uint32_t>(D2D1_SVG_LENGTH_UNITS_NUMBER) == static_cast<uint32_t>(CanvasSvgLengthUnits::Number), "CanvasSvgLengthUnits must match D2D1_SVG_LENGTH");
+        static_assert(static_cast<uint32_t>(D2D1_SVG_LENGTH_UNITS_PERCENTAGE) == static_cast<uint32_t>(CanvasSvgLengthUnits::Percentage), "CanvasSvgLengthUnits must match D2D1_SVG_LENGTH");
+    };
+
+    template<> struct ValidateStaticCastAs<CanvasSvgAspectAlignment, D2D1_SVG_ASPECT_ALIGN> : std::true_type
+    {
+        static_assert(static_cast<uint32_t>(D2D1_SVG_ASPECT_ALIGN_NONE) == static_cast<uint32_t>(CanvasSvgAspectAlignment::None), "CanvasSvgAspectAlignment must match D2D1_SVG_ASPECT_ALIGN");
+        static_assert(static_cast<uint32_t>(D2D1_SVG_ASPECT_ALIGN_X_MIN_Y_MIN) == static_cast<uint32_t>(CanvasSvgAspectAlignment::XMinYMin), "CanvasSvgAspectAlignment must match D2D1_SVG_ASPECT_ALIGN");
+        static_assert(static_cast<uint32_t>(D2D1_SVG_ASPECT_ALIGN_X_MID_Y_MIN) == static_cast<uint32_t>(CanvasSvgAspectAlignment::XMidYMin), "CanvasSvgAspectAlignment must match D2D1_SVG_ASPECT_ALIGN");
+        static_assert(static_cast<uint32_t>(D2D1_SVG_ASPECT_ALIGN_X_MAX_Y_MIN) == static_cast<uint32_t>(CanvasSvgAspectAlignment::XMaxYMin), "CanvasSvgAspectAlignment must match D2D1_SVG_ASPECT_ALIGN");
+        static_assert(static_cast<uint32_t>(D2D1_SVG_ASPECT_ALIGN_X_MIN_Y_MID) == static_cast<uint32_t>(CanvasSvgAspectAlignment::XMinYMid), "CanvasSvgAspectAlignment must match D2D1_SVG_ASPECT_ALIGN");
+        static_assert(static_cast<uint32_t>(D2D1_SVG_ASPECT_ALIGN_X_MID_Y_MID) == static_cast<uint32_t>(CanvasSvgAspectAlignment::XMidYMid), "CanvasSvgAspectAlignment must match D2D1_SVG_ASPECT_ALIGN");
+        static_assert(static_cast<uint32_t>(D2D1_SVG_ASPECT_ALIGN_X_MAX_Y_MID) == static_cast<uint32_t>(CanvasSvgAspectAlignment::XMaxYMid), "CanvasSvgAspectAlignment must match D2D1_SVG_ASPECT_ALIGN");
+        static_assert(static_cast<uint32_t>(D2D1_SVG_ASPECT_ALIGN_X_MIN_Y_MAX) == static_cast<uint32_t>(CanvasSvgAspectAlignment::XMinYMax), "CanvasSvgAspectAlignment must match D2D1_SVG_ASPECT_ALIGN");
+        static_assert(static_cast<uint32_t>(D2D1_SVG_ASPECT_ALIGN_X_MID_Y_MAX) == static_cast<uint32_t>(CanvasSvgAspectAlignment::XMidYMax), "CanvasSvgAspectAlignment must match D2D1_SVG_ASPECT_ALIGN");
+        static_assert(static_cast<uint32_t>(D2D1_SVG_ASPECT_ALIGN_X_MAX_Y_MAX) == static_cast<uint32_t>(CanvasSvgAspectAlignment::XMaxYMax), "CanvasSvgAspectAlignment must match D2D1_SVG_ASPECT_ALIGN");
+    };
+
+    template<> struct ValidateStaticCastAs<CanvasSvgAspectScaling, D2D1_SVG_ASPECT_SCALING> : std::true_type
+    {
+        static_assert(static_cast<uint32_t>(D2D1_SVG_ASPECT_SCALING_MEET) == static_cast<uint32_t>(CanvasSvgAspectScaling::Meet), "CanvasSvgAspectScaling must match D2D1_SVG_ASPECT_SCALING");
+        static_assert(static_cast<uint32_t>(D2D1_SVG_ASPECT_SCALING_SLICE) == static_cast<uint32_t>(CanvasSvgAspectScaling::Slice), "CanvasSvgAspectScaling must match D2D1_SVG_ASPECT_SCALING");
+    };
+
+    template<> struct ValidateStaticCastAs<CanvasSvgPaintType, D2D1_SVG_PAINT_TYPE> : std::true_type
+    {
+        static_assert(static_cast<uint32_t>(D2D1_SVG_PAINT_TYPE_NONE) == static_cast<uint32_t>(CanvasSvgPaintType::None), "CanvasSvgPaintType must match D2D1_SVG_PAINT_TYPE");
+        static_assert(static_cast<uint32_t>(D2D1_SVG_PAINT_TYPE_COLOR) == static_cast<uint32_t>(CanvasSvgPaintType::Color), "CanvasSvgPaintType must match D2D1_SVG_PAINT_TYPE");
+        static_assert(static_cast<uint32_t>(D2D1_SVG_PAINT_TYPE_CURRENT_COLOR) == static_cast<uint32_t>(CanvasSvgPaintType::CurrentColor), "CanvasSvgPaintType must match D2D1_SVG_PAINT_TYPE");
+        static_assert(static_cast<uint32_t>(D2D1_SVG_PAINT_TYPE_URI) == static_cast<uint32_t>(CanvasSvgPaintType::Uri), "CanvasSvgPaintType must match D2D1_SVG_PAINT_TYPE");
+        static_assert(static_cast<uint32_t>(D2D1_SVG_PAINT_TYPE_URI_NONE) == static_cast<uint32_t>(CanvasSvgPaintType::UriThenNone), "CanvasSvgPaintType must match D2D1_SVG_PAINT_TYPE");
+        static_assert(static_cast<uint32_t>(D2D1_SVG_PAINT_TYPE_URI_COLOR) == static_cast<uint32_t>(CanvasSvgPaintType::UriThenColor), "CanvasSvgPaintType must match D2D1_SVG_PAINT_TYPE");
+        static_assert(static_cast<uint32_t>(D2D1_SVG_PAINT_TYPE_URI_CURRENT_COLOR) == static_cast<uint32_t>(CanvasSvgPaintType::UriThenCurrentColor), "CanvasSvgPaintType must match D2D1_SVG_PAINT_TYPE");
+    };
+
+    template<> struct ValidateStaticCastAs<CanvasSvgPathCommand, D2D1_SVG_PATH_COMMAND> : std::true_type
+    {
+        static_assert(static_cast<uint32_t>(D2D1_SVG_PATH_COMMAND_CLOSE_PATH) == static_cast<uint32_t>(CanvasSvgPathCommand::ClosePath), "CanvasSvgPathCommand must match D2D1_SVG_PATH_COMMAND");
+        static_assert(static_cast<uint32_t>(D2D1_SVG_PATH_COMMAND_MOVE_ABSOLUTE) == static_cast<uint32_t>(CanvasSvgPathCommand::MoveAbsolute), "CanvasSvgPathCommand must match D2D1_SVG_PATH_COMMAND");
+        static_assert(static_cast<uint32_t>(D2D1_SVG_PATH_COMMAND_MOVE_RELATIVE) == static_cast<uint32_t>(CanvasSvgPathCommand::MoveRelative), "CanvasSvgPathCommand must match D2D1_SVG_PATH_COMMAND");
+        static_assert(static_cast<uint32_t>(D2D1_SVG_PATH_COMMAND_LINE_ABSOLUTE) == static_cast<uint32_t>(CanvasSvgPathCommand::LineAbsolute), "CanvasSvgPathCommand must match D2D1_SVG_PATH_COMMAND");
+        static_assert(static_cast<uint32_t>(D2D1_SVG_PATH_COMMAND_LINE_RELATIVE) == static_cast<uint32_t>(CanvasSvgPathCommand::LineRelative), "CanvasSvgPathCommand must match D2D1_SVG_PATH_COMMAND");
+        static_assert(static_cast<uint32_t>(D2D1_SVG_PATH_COMMAND_CUBIC_ABSOLUTE) == static_cast<uint32_t>(CanvasSvgPathCommand::CubicAbsolute), "CanvasSvgPathCommand must match D2D1_SVG_PATH_COMMAND");
+        static_assert(static_cast<uint32_t>(D2D1_SVG_PATH_COMMAND_CUBIC_RELATIVE) == static_cast<uint32_t>(CanvasSvgPathCommand::CubicRelative), "CanvasSvgPathCommand must match D2D1_SVG_PATH_COMMAND");
+        static_assert(static_cast<uint32_t>(D2D1_SVG_PATH_COMMAND_QUADRADIC_ABSOLUTE) == static_cast<uint32_t>(CanvasSvgPathCommand::QuadraticAbsolute), "CanvasSvgPathCommand must match D2D1_SVG_PATH_COMMAND");
+        static_assert(static_cast<uint32_t>(D2D1_SVG_PATH_COMMAND_QUADRADIC_RELATIVE) == static_cast<uint32_t>(CanvasSvgPathCommand::QuadraticRelative), "CanvasSvgPathCommand must match D2D1_SVG_PATH_COMMAND");
+        static_assert(static_cast<uint32_t>(D2D1_SVG_PATH_COMMAND_ARC_ABSOLUTE) == static_cast<uint32_t>(CanvasSvgPathCommand::ArcAbsolute), "CanvasSvgPathCommand must match D2D1_SVG_PATH_COMMAND");
+        static_assert(static_cast<uint32_t>(D2D1_SVG_PATH_COMMAND_ARC_RELATIVE) == static_cast<uint32_t>(CanvasSvgPathCommand::ArcRelative), "CanvasSvgPathCommand must match D2D1_SVG_PATH_COMMAND");
+        static_assert(static_cast<uint32_t>(D2D1_SVG_PATH_COMMAND_HORIZONTAL_ABSOLUTE) == static_cast<uint32_t>(CanvasSvgPathCommand::HorizontalAbsolute), "CanvasSvgPathCommand must match D2D1_SVG_PATH_COMMAND");
+        static_assert(static_cast<uint32_t>(D2D1_SVG_PATH_COMMAND_HORIZONTAL_RELATIVE) == static_cast<uint32_t>(CanvasSvgPathCommand::HorizontalRelative), "CanvasSvgPathCommand must match D2D1_SVG_PATH_COMMAND");
+        static_assert(static_cast<uint32_t>(D2D1_SVG_PATH_COMMAND_VERTICAL_ABSOLUTE) == static_cast<uint32_t>(CanvasSvgPathCommand::VerticalAbsolute), "CanvasSvgPathCommand must match D2D1_SVG_PATH_COMMAND");
+        static_assert(static_cast<uint32_t>(D2D1_SVG_PATH_COMMAND_VERTICAL_RELATIVE) == static_cast<uint32_t>(CanvasSvgPathCommand::VerticalRelative), "CanvasSvgPathCommand must match D2D1_SVG_PATH_COMMAND");
+        static_assert(static_cast<uint32_t>(D2D1_SVG_PATH_COMMAND_CUBIC_SMOOTH_ABSOLUTE) == static_cast<uint32_t>(CanvasSvgPathCommand::CubicSmoothAbsolute), "CanvasSvgPathCommand must match D2D1_SVG_PATH_COMMAND");
+        static_assert(static_cast<uint32_t>(D2D1_SVG_PATH_COMMAND_CUBIC_SMOOTH_RELATIVE) == static_cast<uint32_t>(CanvasSvgPathCommand::CubicSmoothRelative), "CanvasSvgPathCommand must match D2D1_SVG_PATH_COMMAND");
+        static_assert(static_cast<uint32_t>(D2D1_SVG_PATH_COMMAND_QUADRADIC_SMOOTH_ABSOLUTE) == static_cast<uint32_t>(CanvasSvgPathCommand::QuadraticSmoothAbsolute), "CanvasSvgPathCommand must match D2D1_SVG_PATH_COMMAND");
+        static_assert(static_cast<uint32_t>(D2D1_SVG_PATH_COMMAND_QUADRADIC_SMOOTH_RELATIVE) == static_cast<uint32_t>(CanvasSvgPathCommand::QuadraticSmoothRelative), "CanvasSvgPathCommand must match D2D1_SVG_PATH_COMMAND");
+    };
+
+    template<> struct ValidateReinterpretAs<D2D1_SVG_PATH_COMMAND*, CanvasSvgPathCommand*> : std::true_type
+    {
+        ValidateStaticCastAs<CanvasSvgPathCommand, D2D1_SVG_PATH_COMMAND> Validation;
+        static_assert(sizeof(CanvasSvgPathCommand) == sizeof(D2D1_SVG_PATH_COMMAND), "size of CanvasSvgPathCommand must match D2D1_SVG_PATH_COMMAND");
+    };
+
+#endif
+
+    template<> struct ValidateReinterpretAs<D2D1_POINT_2F*, Numerics::Vector2*> : std::true_type
+    {
+        static_assert(offsetof(D2D1_POINT_2F, x) == offsetof(Numerics::Vector2, X), "Vector2 layout must match D2D1_POINT_2F layout");
+        static_assert(offsetof(D2D1_POINT_2F, y) == offsetof(Numerics::Vector2, Y), "Vector2 layout must match D2D1_POINT_2F layout");
+        static_assert(sizeof(D2D1_POINT_2F) == sizeof(Numerics::Vector2), "size of D2D1_POINT_2F must match Vector2");
     };
 
     template<> struct ValidateReinterpretAs<DWRITE_UNICODE_RANGE*, CanvasUnicodeRange*> : std::true_type
@@ -571,7 +681,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
 #endif
-
+    
     inline unsigned short CheckCastAsUShort(int i)
     {
         if (static_cast<unsigned>(i) > USHORT_MAX)

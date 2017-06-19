@@ -451,6 +451,21 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)svg\BufferStreamWrapper.cpp">
       <Filter>svg</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)svg\AttributeHelpers.cpp">
+      <Filter>svg</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)svg\CanvasSvgPaintAttribute.cpp">
+      <Filter>svg</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)svg\CanvasSvgPathAttribute.cpp">
+      <Filter>svg</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)svg\CanvasSvgPointsAttribute.cpp">
+      <Filter>svg</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)svg\CanvasSvgStrokeDashArrayAttribute.cpp">
+      <Filter>svg</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)pch.h" />
@@ -911,6 +926,21 @@
       <Filter>svg</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)svg\BufferStreamWrapper.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)svg\AttributeHelpers.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)svg\CanvasSvgPaintAttribute.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)svg\CanvasSvgPathAttribute.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)svg\CanvasSvgPointsAttribute.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)svg\CanvasSvgStrokeDashArrayAttribute.h">
       <Filter>svg</Filter>
     </ClInclude>
   </ItemGroup>

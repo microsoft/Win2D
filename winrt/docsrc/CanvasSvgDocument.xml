@@ -150,7 +150,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         </p>
         <p>
           To add content to the document, replace the root node using <see cref="P:Microsoft.Graphics.Canvas.Svg.CanvasSvgDocument.Root"/>
-          or add to it using <see cref="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgElement.AppendChild(Microsoft.Graphics.Canvas.Svg.CanvasSvgElement)"/>.
+          or add to it using <see cref="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgNamedElement.AppendChild(Microsoft.Graphics.Canvas.Svg.ICanvasSvgElement)"/>.
         </p>
       </remarks>
     </member>
@@ -166,7 +166,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
           After creation, the element is not automatically added to the tree. You can add it to the document tree, for example,
           using 
           <see cref="P:Microsoft.Graphics.Canvas.Svg.CanvasSvgDocument.Root"/>
-          or <see cref="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgElement.AppendChild(Microsoft.Graphics.Canvas.Svg.CanvasSvgElement)"/>.
+          or <see cref="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgNamedElement.AppendChild(Microsoft.Graphics.Canvas.Svg.ICanvasSvgElement)"/>.
           You can add an element to a document that isn't the one used to create it. Just, the document and the element need to share the
           same device.
         </p>
@@ -183,7 +183,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
           After creation, the element is not automatically added to the tree. You can add it to the document tree, for example,
           using 
           <see cref="P:Microsoft.Graphics.Canvas.Svg.CanvasSvgDocument.Root"/>
-          or <see cref="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgElement.AppendChild(Microsoft.Graphics.Canvas.Svg.CanvasSvgElement)"/>.
+          or <see cref="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgNamedElement.AppendChild(Microsoft.Graphics.Canvas.Svg.ICanvasSvgElement)"/>.
           You can add an element to a document that isn't the one used to create it. Just, the document and the element need to share the
           same device.
         </p>
@@ -195,6 +195,38 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         The root element of an svg document is always an &lt;svg&gt; element.
       </remarks>
     </member>    
+
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgDocument.FindElementById(System.String)">
+      <summary>Finds the element in this document which has the specified ID.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgDocument.CreatePaintAttribute">
+      <summary>Creates an attribute that can be used for a stroke or fill value.</summary>
+      <remarks>This attribute is created with a default CanvasSvgPaintType of None, a default color of black, and an empty-string ID.</remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgDocument.CreatePaintAttribute(Microsoft.Graphics.Canvas.Svg.CanvasSvgPaintType,Windows.UI.Color,System.String)">
+      <summary>Creates an attribute that can be used for a stroke or fill value.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgDocument.CreatePathAttribute">
+      <summary>Creates an attribute that can be used for path data, for example on the 'd' attribute of a 'path' element.</summary>
+      <remarks>This overload of CreatePathAttribute creates an attribute with empty path arrays.</remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgDocument.CreatePathAttribute(System.Single[],Microsoft.Graphics.Canvas.Svg.CanvasSvgPathCommand[])">
+      <summary>Creates an attribute that can be used for path data, for example on the 'd' attribute of a 'path' element.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgDocument.CreatePointsAttribute">
+      <summary>Creates an attribute that can be used to describe a collection of points, for example in a polyline or polygon element.</summary>
+      <remarks>This overload of CreatePointsAttribute creates an empty set of points.</remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgDocument.CreatePointsAttribute(System.Numerics.Vector2[])">
+      <summary>Creates an attribute that can be used to describe a collection of points, for example in a polyline or polygon element.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgDocument.CreateStrokeDashArrayAttribute">
+      <summary>Creates an attribute that can be used as a stroke-dasharray vlalue.</summary>
+      <remarks>This overload of CreateStrokeDashArrayAttribute creates an empty set of dashes.</remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgDocument.CreateStrokeDashArrayAttribute(System.Single[],Microsoft.Graphics.Canvas.Svg.CanvasSvgLengthUnits[])">
+      <summary>Creates an attribute that can be used as a stroke-dasharray vlalue.</summary>
+    </member>
     
   </members>
 </doc>

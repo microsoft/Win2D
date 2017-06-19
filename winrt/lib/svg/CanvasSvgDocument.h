@@ -34,20 +34,50 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         IFACEMETHOD(SaveAsync(IRandomAccessStream* stream, IAsyncAction** asyncAction)) override;
 
-        IFACEMETHOD(put_Root)(ICanvasSvgElement* root) override;
+        IFACEMETHOD(put_Root)(ICanvasSvgNamedElement* root) override;
 
-        IFACEMETHOD(get_Root)(ICanvasSvgElement** root) override;
+        IFACEMETHOD(get_Root)(ICanvasSvgNamedElement** root) override;
 
         IFACEMETHOD(LoadElementFromXml)(
             HSTRING xmlString,
-            ICanvasSvgElement** svgElement) override;
+            ICanvasSvgNamedElement** svgElement) override;
 
         IFACEMETHOD(LoadElementAsync)(
             IRandomAccessStream *stream,
-            IAsyncOperation<CanvasSvgElement*>** svgElement) override;
+            IAsyncOperation<CanvasSvgNamedElement*>** svgElement) override;
+        
+        IFACEMETHOD(FindElementById)(HSTRING, ICanvasSvgNamedElement**) override;
+        IFACEMETHOD(CreatePaintAttributeWithDefaults)(ICanvasSvgPaintAttribute **) override;
+        IFACEMETHOD(CreatePaintAttribute)(CanvasSvgPaintType, ABI::Windows::UI::Color, HSTRING, ICanvasSvgPaintAttribute **) override;
+        IFACEMETHOD(CreatePathAttributeWithDefaults)(ICanvasSvgPathAttribute **) override;
+        IFACEMETHOD(CreatePathAttribute)(UINT32, float *, UINT32, CanvasSvgPathCommand *, ICanvasSvgPathAttribute **) override;
+        IFACEMETHOD(CreatePointsAttributeWithDefaults)(ICanvasSvgPointsAttribute **) override;
+        IFACEMETHOD(CreatePointsAttribute)(UINT32, ABI::Windows::Foundation::Numerics::Vector2 *, ICanvasSvgPointsAttribute **) override;
+        IFACEMETHOD(CreateStrokeDashArrayAttributeWithDefaults)(ICanvasSvgStrokeDashArrayAttribute **) override;
+        IFACEMETHOD(CreateStrokeDashArrayAttribute)(UINT32, float*, UINT32, CanvasSvgLengthUnits*, ICanvasSvgStrokeDashArrayAttribute **) override;
 
         // No exception boundary
         ComPtr<ICanvasDevice> GetDevice() { return m_canvasDevice.EnsureNotClosed(); }
+
+    private:
+        void CreatePaintAttributeImpl(D2D1_SVG_PAINT_TYPE d2dSvgPaintType, D2D1_COLOR_F d2dColor, wchar_t const* id, ICanvasSvgPaintAttribute** result);
+
+        void CreatePathDataAttributeImpl(
+            const float* segmentData, 
+            uint32_t segmentDataCount, 
+            D2D1_SVG_PATH_COMMAND const* commands, 
+            uint32_t commandsCount, 
+            ICanvasSvgPathAttribute** result);
+
+        void CreatePointsAttributeImpl(
+            D2D1_POINT_2F* points,
+            uint32_t pointsCount,
+            ICanvasSvgPointsAttribute** result);
+
+        void CreateStrokeDashArrayAttributeImpl(
+            D2D1_SVG_LENGTH* dashes,
+            uint32_t dashCount,
+            ICanvasSvgStrokeDashArrayAttribute** result);
     };
 
     class CanvasSvgDocumentStatics
@@ -115,7 +145,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     template<typename IMPLEMENTATION_TYPE>
     void VerifyDeviceBoundary(
         ClosablePtr<ICanvasDevice> thisDeviceClosable,
-        IMPLEMENTATION_TYPE* otherObjectImplementationType);
+        IMPLEMENTATION_TYPE* otherObjectImplementationType)
+    {
+        auto thisDevice = thisDeviceClosable.EnsureNotClosed();
+        auto otherDevice = otherObjectImplementationType->GetDevice();
+        if (!IsSameInstance(thisDevice.Get(), otherDevice.Get()))
+        {
+            ThrowHR(E_INVALIDARG, Strings::SvgDocumentTreeMustHaveConsistentDevice);
+        }
+    }
 }}}}}
 
 #endif

@@ -10,6 +10,9 @@
 using namespace concurrency;
 using namespace Microsoft::Graphics::Canvas::Brushes;
 using namespace Microsoft::Graphics::Canvas::Geometry;
+#if WINVER > _WIN32_WINNT_WINBLUE
+using namespace Microsoft::Graphics::Canvas::Svg;
+#endif
 using namespace Microsoft::Graphics::Canvas::Text;
 using namespace Microsoft::Graphics::Canvas::UI::Xaml;
 using namespace Microsoft::Graphics::Canvas::UI;
@@ -77,6 +80,9 @@ namespace Microsoft
             TO_STRING(ID2D1PathGeometry);
             TO_STRING(ID2D1GeometryRealization);
             TO_STRING(ID2D1Factory);
+#if WINVER > _WIN32_WINNT_WINBLUE
+            TO_STRING_CX(ICanvasSvgElement);
+#endif
 
 #undef TO_STRING
 #undef TO_STRING_CX
@@ -138,6 +144,19 @@ namespace Microsoft
                     value.top,
                     value.right,
                     value.bottom));
+                return buf;
+            }
+
+            template<>
+            inline std::wstring ToString<float2>(float2 const& value)
+            {
+                wchar_t buf[256];
+                ThrowIfFailed(StringCchPrintf(
+                    buf,
+                    _countof(buf),
+                    L"Numerics.float2{%f,%f}",
+                    value.x, value.y));
+
                 return buf;
             }
 
@@ -376,6 +395,47 @@ namespace Microsoft
                     default: assert(false); return L"<unknown D2D1_BUFFER_PRECISION>";
                 }
             }
+
+#if WINVER > _WIN32_WINNT_WINBLUE
+            template<>
+            inline std::wstring ToString<CanvasSvgPathCommand>(CanvasSvgPathCommand const& value)
+            {
+                switch (value)
+                {
+                    case CanvasSvgPathCommand::ClosePath: return L"CanvasSvgPathCommand::ClosePath";
+                    case CanvasSvgPathCommand::MoveAbsolute: return L"CanvasSvgPathCommand::MoveAbsolute";
+                    case CanvasSvgPathCommand::MoveRelative: return L"CanvasSvgPathCommand::MoveRelative";
+                    case CanvasSvgPathCommand::LineAbsolute: return L"CanvasSvgPathCommand::LineAbsolute";
+                    case CanvasSvgPathCommand::LineRelative: return L"CanvasSvgPathCommand::LineRelative";
+                    case CanvasSvgPathCommand::CubicAbsolute: return L"CanvasSvgPathCommand::CubicAbsolute";
+                    case CanvasSvgPathCommand::CubicRelative: return L"CanvasSvgPathCommand::CubicRelative";
+                    case CanvasSvgPathCommand::QuadraticAbsolute: return L"CanvasSvgPathCommand::QuadraticAbsolute";
+                    case CanvasSvgPathCommand::QuadraticRelative: return L"CanvasSvgPathCommand::QuadraticRelative";
+                    case CanvasSvgPathCommand::ArcAbsolute: return L"CanvasSvgPathCommand::ArcAbsolute";
+                    case CanvasSvgPathCommand::ArcRelative: return L"CanvasSvgPathCommand::ArcRelative";
+                    case CanvasSvgPathCommand::HorizontalAbsolute: return L"CanvasSvgPathCommand::HorizontalAbsolute";
+                    case CanvasSvgPathCommand::HorizontalRelative: return L"CanvasSvgPathCommand::HorizontalRelative";
+                    case CanvasSvgPathCommand::VerticalAbsolute: return L"CanvasSvgPathCommand::VerticalAbsolute";
+                    case CanvasSvgPathCommand::VerticalRelative: return L"CanvasSvgPathCommand::VerticalRelative";
+                    case CanvasSvgPathCommand::CubicSmoothAbsolute: return L"CanvasSvgPathCommand::CubicSmoothAbsolute";
+                    case CanvasSvgPathCommand::CubicSmoothRelative: return L"CanvasSvgPathCommand::CubicSmoothRelative";
+                    case CanvasSvgPathCommand::QuadraticSmoothAbsolute: return L"CanvasSvgPathCommand::QuadraticSmoothAbsolute";
+                    case CanvasSvgPathCommand::QuadraticSmoothRelative: return L"CanvasSvgPathCommand::QuadraticSmoothRelative";
+                    default: assert(false); return L"<unknown CanvasSvgPathCommand>";
+                }
+            }
+
+            template<>
+            inline std::wstring ToString<CanvasSvgLengthUnits>(CanvasSvgLengthUnits const& value)
+            {
+                switch (value)
+                {
+                    case CanvasSvgLengthUnits::Number: return L"CanvasSvgLengthUnits::Number";
+                    case CanvasSvgLengthUnits::Percentage: return L"CanvasSvgLengthUnits::Percentage";
+                    default: assert(false); return L"<unknown CanvasSvgLengthUnits>";
+                }
+            }
+#endif
 
             template<>
             inline std::wstring ToString<Platform::Guid>(Platform::Guid const& value)

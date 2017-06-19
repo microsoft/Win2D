@@ -6,20 +6,467 @@
 
 namespace Microsoft.Graphics.Canvas.Svg
 {
-    runtimeclass CanvasSvgElement;
+    runtimeclass CanvasSvgNamedElement;
+    runtimeclass CanvasSvgTextElement;
+    runtimeclass CanvasSvgDocument;
+    
+    // The difference between 'Display' and 'Visibility':
+    //  - Elements set to hidden by CanvasSvgDisplay (or setting "display=none")
+    //    will not take up any space, and neither will their children.
+    //  - Elements set to invsible (by "visibility=hidden") there will still be 
+    //    given layout space; they just won't appear. And their children are not affected.
+    [version(VERSION)]
+    typedef enum CanvasSvgDisplay
+    {
+        Inline,
+        None
+    } CanvasSvgDisplay;
 
-    // This type interops to ID2D1SvgElement.
-    [version(VERSION), uuid(0775CB81-C555-45BF-9795-0FF59151C3BE), exclusiveto(CanvasSvgElement)]
+    [version(VERSION)]
+    typedef enum CanvasSvgVisibility
+    {
+        Visible,
+        Hidden
+    } CanvasSvgVisibility;
+
+    // This attribute is used on elements that can establish new viewports, for 
+    // example the top-level SVG element or an <image> element.
+    [version(VERSION)]
+    typedef enum CanvasSvgOverflow
+    {
+        DoNotClipToViewport,
+        ClipToViewport
+    } CanvasSvgOverflow;
+
+    // Used with "patternUnits" attribute, which is used only for <pattern> elements. 
+    // Sets the co-ordinate system for x, y, width, and height
+    [version(VERSION)]
+    typedef enum CanvasSvgUnits
+    {
+        UserSpaceOnUse, // Use the co-ordinate system local to the pattern element itself
+        ObjectBoundingBox // Use the co-ordinate system of the element to which the pattern is applied
+    } CanvasSvgUnits;
+    
+    // Used with the preserveAspectRatio attribute of the viewBox element. 
+    // Both of these options involve preservation of the aspect ratio.
+    [version(VERSION)]
+    typedef enum CanvasSvgAspectScaling
+    {
+        Meet,
+        Slice
+    } CanvasSvgAspectScaling;
+
+    [version(VERSION)]
+    typedef enum CanvasSvgAspectAlignment
+    {
+        None, // Don't force any uniform scaling. The other options are polices for forcing uniform scaling.
+        XMinYMin,
+        XMidYMin,
+        XMaxYMin,
+        XMinYMid,
+        XMidYMid,
+        XMaxYMid,
+        XMinYMax,
+        XMidYMax,
+        XMaxYMax
+    } CanvasSvgAspectAlignment;
+
+    [version(VERSION)]
+    typedef enum CanvasSvgLengthUnits
+    {
+        Number,
+        Percentage
+    } CanvasSvgLengthUnits;
+
+    // Types which extend ICanvasSvgElement interop to ID2D1SvgElement.
+    // When interopping from an ID2D1SvgElement to a Win2D type, the Win2D type
+    // will be either CanvasSvgNamedElement or CanvasSvgTextElement
+    // depending on whether the underlying element is text content or not.
+    // A native application can straightforwardly query this, using 
+    // ID2D1SvgElement::IsTextContent.
+    [version(VERSION), uuid(0775CB81-C555-45BF-9795-0FF59151C3BE)]
     interface ICanvasSvgElement : IInspectable
         requires Windows.Foundation.IClosable
     {
-        HRESULT AppendChild([in] CanvasSvgElement* child);
+        // Gets null if the element is not present in the document.
+        [propget] HRESULT ContainingDocument([out, retval] CanvasSvgDocument** value);
+
+        // Gets null if this element has no parent.
+        [propget] HRESULT Parent([out, retval] CanvasSvgNamedElement** value);
+
+        [propget] HRESULT Device([out, retval] Microsoft.Graphics.Canvas.CanvasDevice** value);
+    }
+
+    // Types which extend ICanvasSvgAttribute interop to their respective native types.
+    // There is a one-to-one mapping from Win2D to Direct2D attribute object types. 
+    // For example, ICanvasSvgPaint interops to ID2D1SvgPaint.
+    [version(VERSION), uuid(652786A8-F3AB-4083-991D-9748AA86BD6E)]
+    interface ICanvasSvgAttribute : IInspectable
+        requires Windows.Foundation.IClosable
+    {
+        // Creates a clone of this attribute. On creation, the cloned attribute is not set on any element.
+        HRESULT Clone([out, retval] ICanvasSvgAttribute** result);
+
+        // Returns the element on which this attribute is set, or null if it's not set on any element.
+        HRESULT GetElement([out, retval] CanvasSvgNamedElement** value);
+
+        [propget] HRESULT Device([out, retval] Microsoft.Graphics.Canvas.CanvasDevice** value);
+    }
+
+    [version(VERSION), uuid(D8B7CB94-8167-495D-9C71-5E97E5D08D2B), exclusiveto(CanvasSvgNamedElement)]
+    interface ICanvasSvgNamedElement : IInspectable
+        requires ICanvasSvgElement, Windows.Foundation.IClosable
+    {
+        // Appends an existing element to the tree.
+        HRESULT AppendChild([in] ICanvasSvgElement* child);
+
+        // Create a new element with the specified name, appends it to the tree, and returns it.
+        HRESULT CreateAndAppendNamedChildElement([in] HSTRING childName, [out, retval] CanvasSvgNamedElement** childElement);
+
+        // Create a new text element (which has no element name), appends it to the tree, and returns it.
+        // Note that text elements can only be created where it's valid to do so, for example on a <title> element.
+        HRESULT CreateAndAppendTextChildElement([in] HSTRING textContent, [out, retval] CanvasSvgTextElement** childElement);
+        
+        // The members below return null if there is no element to return.
+
+        [propget] HRESULT FirstChild([out, retval] ICanvasSvgElement** value);
+
+        [propget] HRESULT LastChild([out, retval] ICanvasSvgElement** value);
+
+        HRESULT GetPreviousSibling([in] ICanvasSvgElement* child, [out, retval] ICanvasSvgElement** value);
+
+        HRESULT GetNextSibling([in] ICanvasSvgElement* child, [out, retval] ICanvasSvgElement** value);
+
+        [propget]
+        HRESULT SpecifiedAttributes(
+            [out] UINT32* valueCount,
+            [out, size_is(, *valueCount), retval] HSTRING** valueElements);
+        
+        [propget]
+        HRESULT Tag([out, retval] HSTRING* value);
+
+        [propget]
+        HRESULT HasChildren([out, retval] boolean* value);
+
+        HRESULT InsertChildBefore(
+            [in] ICanvasSvgElement* child,
+            [in] ICanvasSvgElement* referenceChild);
+
+        [overload("IsAttributeSpecified")]
+        HRESULT IsAttributeSpecified(
+            [in] HSTRING attributeName,
+            [out][retval] boolean* value);
+
+        [overload("IsAttributeSpecified"), default_overload]
+        HRESULT IsAttributeSpecifiedWithInherhited(
+            [in] HSTRING attributeName,
+            [in] boolean inherited, 
+            [out, retval] boolean* value);
+
+        HRESULT RemoveAttribute([in] HSTRING attributeName);
+
+        HRESULT RemoveChild([in] ICanvasSvgElement* child);
+
+        HRESULT ReplaceChild([in] ICanvasSvgElement* newChild, [in] ICanvasSvgElement* oldChild);
+
+        // The attribute setters and getters below are a means to programmatically set and get attributes without
+        // any manipulation of SVG text. An app is supposed to use a typed method which is valid for the given
+        // attribute; if it's the wrong type, it's an error. An attribute can always be specified using SVG
+        // with SetStringAttribute.
+        // Attributes are expected to be valid SVG. If an attribute is valid SVG and is not supported by D2D,
+        // however, it just gets ignored.
+
+        HRESULT SetStringAttribute([in] HSTRING attributeName, [in] HSTRING attributeValue);
+        HRESULT GetStringAttribute([in] HSTRING attributeName, [out, retval] HSTRING* attributeValue);
+
+        HRESULT SetAttribute([in] HSTRING attributeName, [in] ICanvasSvgAttribute* attributeValue);
+        HRESULT GetAttribute([in] HSTRING attributeName, [out, retval] ICanvasSvgAttribute** attributeValue);
+
+        // A dedicated convenience for setting ID attributes is exposed through Direct2D, and is exposed here too.
+        // While an application could use the general path for setting an ID attribute, there'd be some ugly string
+        // manipulation involved; for example, prepending a "#", or a "url(#...)", or using "none" instead of an empty string
+        // as a placeholder. This dedicated way of setting ID attributes eliminates the need for the app to perform
+        // any of such string manipulations. Like other attribute methods, it can only be used for SVG attributes of the
+        // correct type (of type 'ID').
+        HRESULT SetIdAttribute([in] HSTRING attributeName, [in] HSTRING attributeValue);
+        HRESULT GetIdAttribute([in] HSTRING attributeName, [out, retval] HSTRING* attributeValue);
+
+        HRESULT SetFloatAttribute([in] HSTRING attributeName, [in] float attributeValue);
+        HRESULT GetFloatAttribute([in] HSTRING attributeName, [out, retval] float* attributeValue);
+
+        HRESULT SetColorAttribute([in] HSTRING attributeName, [in] Windows.UI.Color attributeValue);
+        HRESULT GetColorAttribute([in] HSTRING attributeName, [out, retval] Windows.UI.Color* attributeValue);
+
+        HRESULT SetFilledRegionDeterminationAttribute(
+            [in] HSTRING attributeName, 
+            [in] Microsoft.Graphics.Canvas.Geometry.CanvasFilledRegionDetermination attributeValue);
+        HRESULT GetFilledRegionDeterminationAttribute(
+            [in] HSTRING attributeName, 
+            [out, retval] Microsoft.Graphics.Canvas.Geometry.CanvasFilledRegionDetermination* attributeValue);
+
+        HRESULT SetDisplayAttribute([in] HSTRING attributeName, [in] CanvasSvgDisplay attributeValue);
+        HRESULT GetDisplayAttribute([in] HSTRING attributeName, [out, retval] CanvasSvgDisplay* attributeValue);
+
+        HRESULT SetOverflowAttribute([in] HSTRING attributeName, [in] CanvasSvgOverflow attributeValue);
+        HRESULT GetOverflowAttribute([in] HSTRING attributeName, [out, retval] CanvasSvgOverflow* attributeValue);
+
+        HRESULT SetCapStyleAttribute([in] HSTRING attributeName, [in] Microsoft.Graphics.Canvas.Geometry.CanvasCapStyle attributeValue);
+        HRESULT GetCapStyleAttribute([in] HSTRING attributeName, [out, retval] Microsoft.Graphics.Canvas.Geometry.CanvasCapStyle* attributeValue);
+
+        HRESULT SetLineJoinAttribute([in] HSTRING attributeName, [in] Microsoft.Graphics.Canvas.Geometry.CanvasLineJoin attributeValue);
+        HRESULT GetLineJoinAttribute([in] HSTRING attributeName, [out, retval] Microsoft.Graphics.Canvas.Geometry.CanvasLineJoin* attributeValue);
+
+        HRESULT SetVisibilityAttribute([in] HSTRING attributeName, [in] CanvasSvgVisibility attributeValue);
+        HRESULT GetVisibilityAttribute([in] HSTRING attributeName, [out, retval] CanvasSvgVisibility* attributeValue);
+
+        HRESULT SetTransformAttribute([in] HSTRING attributeName, [in] NUMERICS.Matrix3x2 attributeValue);
+        HRESULT GetTransformAttribute([in] HSTRING attributeName, [out, retval] NUMERICS.Matrix3x2* attributeValue);
+
+        HRESULT SetUnitsAttribute([in] HSTRING attributeName, [in] CanvasSvgUnits attributeValue);
+        HRESULT GetUnitsAttribute([in] HSTRING attributeName, [out, retval] CanvasSvgUnits* attributeValue);
+
+        HRESULT SetEdgeBehaviorAttribute([in] HSTRING attributeName, [in] Microsoft.Graphics.Canvas.CanvasEdgeBehavior attributeValue);
+        HRESULT GetEdgeBehaviorAttribute([in] HSTRING attributeName, [out, retval] Microsoft.Graphics.Canvas.CanvasEdgeBehavior* attributeValue);
+
+        HRESULT SetRectangleAttribute([in] HSTRING attributeName, [in] Windows.Foundation.Rect attributeValue);
+        HRESULT GetRectangleAttribute([in] HSTRING attributeName, [out, retval] Windows.Foundation.Rect* attributeValue);
+
+        HRESULT SetLengthAttribute([in] HSTRING attributeName, [in] float value, [in] CanvasSvgLengthUnits units);
+        HRESULT GetLengthAttribute([in] HSTRING attributeName, [out] CanvasSvgLengthUnits* units, [out, retval] float* value);
+
+        HRESULT SetAspectRatioAttribute([in] HSTRING attributeName, [in] CanvasSvgAspectAlignment alignment, [in] CanvasSvgAspectScaling meetOrSlice);
+        HRESULT GetAspectRatioAttribute([in] HSTRING attributeName, [out] CanvasSvgAspectScaling* meetOrSlice, [out, retval] CanvasSvgAspectAlignment* alignment);
     }
 
     [STANDARD_ATTRIBUTES]
-    runtimeclass CanvasSvgElement
+    runtimeclass CanvasSvgNamedElement
     {
-        [default] interface ICanvasSvgElement;
+        [default] interface ICanvasSvgNamedElement;
+    }
+
+    runtimeclass CanvasSvgTextElement;
+
+    [version(VERSION), uuid(652786A8-F3AB-4083-991D-9748AA86BD6D), exclusiveto(CanvasSvgTextElement)]
+    interface ICanvasSvgTextElement : IInspectable
+        requires Windows.Foundation.IClosable
+    {
+        [propput]
+        HRESULT Text([in] HSTRING value);
+
+        [propget]
+        HRESULT Text([out, retval] HSTRING* value);
+    }
+
+    [STANDARD_ATTRIBUTES]
+    runtimeclass CanvasSvgTextElement
+    {
+        [default] interface ICanvasSvgTextElement;
+    }        
+        
+    [version(VERSION)]
+    typedef enum CanvasSvgPaintType
+    {
+        None,
+        Color,
+        CurrentColor,
+        Uri,
+        UriThenNone,
+        UriThenColor,
+        UriThenCurrentColor
+    } CanvasSvgPaintType;
+    
+    runtimeclass CanvasSvgPaintAttribute;
+
+    [version(VERSION), uuid(653786A8-F3AB-4083-991D-9748AA86BD6E), exclusiveto(CanvasSvgPaintAttribute)]
+    interface ICanvasSvgPaintAttribute : IInspectable
+        requires Windows.Foundation.IClosable, ICanvasSvgAttribute
+    {
+        [propput] HRESULT PaintType([in] CanvasSvgPaintType value);
+        [propget] HRESULT PaintType([out, retval] CanvasSvgPaintType* value);
+
+        // Used if the paint type involves a color.
+        [propput] HRESULT Color([in] Windows.UI.Color value);
+        [propget] HRESULT Color([out, retval] Windows.UI.Color* value);
+
+        // Used if the paint type involves a Uri.
+        [propput] HRESULT Id([in] HSTRING value);
+        [propget] HRESULT Id([out, retval] HSTRING* value);
+    }
+
+    [STANDARD_ATTRIBUTES]
+    runtimeclass CanvasSvgPaintAttribute
+    {
+        [default] interface ICanvasSvgPaintAttribute;
+    }
+                
+    [version(VERSION)]
+    typedef enum CanvasSvgPathCommand
+    {
+        ClosePath,
+        MoveAbsolute,
+        MoveRelative,
+        LineAbsolute,
+        LineRelative,
+        CubicAbsolute,
+        CubicRelative,
+        QuadraticAbsolute,
+        QuadraticRelative,
+        ArcAbsolute,
+        ArcRelative,
+        HorizontalAbsolute,
+        HorizontalRelative,
+        VerticalAbsolute,
+        VerticalRelative,
+        CubicSmoothAbsolute,
+        CubicSmoothRelative,
+        QuadraticSmoothAbsolute,
+        QuadraticSmoothRelative
+    } CanvasSvgPathCommand;
+
+    runtimeclass CanvasSvgPathAttribute;
+
+    [version(VERSION), uuid(652786A8-F3AB-4083-991D-9748AB86BD6E), exclusiveto(CanvasSvgPathAttribute)]
+    interface ICanvasSvgPathAttribute : IInspectable
+        requires Windows.Foundation.IClosable, ICanvasSvgAttribute
+    {
+        [overload("CreatePathGeometry")]
+        HRESULT CreatePathGeometry(
+            [out, retval] Microsoft.Graphics.Canvas.Geometry.CanvasGeometry** outputGeometry);
+
+        [overload("CreatePathGeometry"), default_overload]
+        HRESULT CreatePathGeometryWithFill(
+            [in] Microsoft.Graphics.Canvas.Geometry.CanvasFilledRegionDetermination fill, 
+            [out, retval] Microsoft.Graphics.Canvas.Geometry.CanvasGeometry** outputGeometry);
+
+        [propget]
+        HRESULT Commands(
+            [out] UINT32* valueCount,
+            [out, size_is(, *valueCount), retval] CanvasSvgPathCommand** valueElements);
+
+        HRESULT GetCommands(
+            [in] INT32 startIndex,
+            [in] INT32 elementCount,
+            [out] UINT32* outputValueCount,
+            [out, size_is(, *outputValueCount), retval] CanvasSvgPathCommand** outputValueElements);
+
+        [propget]
+        HRESULT SegmentData(
+            [out] UINT32* valueCount,
+            [out, size_is(, *valueCount), retval] float** valueElements);
+
+        HRESULT GetSegmentData(
+            [in] INT32 startIndex,
+            [in] INT32 elementCount,
+            [out] UINT32* outputValueCount,
+            [out, size_is(, *outputValueCount), retval] float** outputValueElements);
+
+        HRESULT RemoveCommandsAtEnd(
+            [in] INT32 commandsCount);
+
+        HRESULT RemoveSegmentDataAtEnd(
+            [in] INT32 commandsCount);
+
+        HRESULT SetCommands(
+            [in] INT32 startIndex,
+            [in] UINT32 commandCount,
+            [in, size_is(commandCount)] CanvasSvgPathCommand* commands);
+
+        HRESULT SetSegmentData(
+            [in] INT32 startIndex,
+            [in] UINT32 segmentDataCount,
+            [in, size_is(segmentDataCount)] float* segmentData);
+    }
+
+    [STANDARD_ATTRIBUTES]
+    runtimeclass CanvasSvgPathAttribute
+    {
+        [default] interface ICanvasSvgPathAttribute;
+    }
+
+    runtimeclass CanvasSvgPointsAttribute;
+
+    [version(VERSION), uuid(652786A8-F3AB-4083-991D-9748AA86BD6F), exclusiveto(CanvasSvgPointsAttribute)]
+    interface ICanvasSvgPointsAttribute : IInspectable
+        requires Windows.Foundation.IClosable, ICanvasSvgAttribute
+    {
+        [propget]
+        HRESULT Points(
+            [out] UINT32* valueCount,
+            [out, size_is(, *valueCount), retval] NUMERICS.Vector2** valueElements);
+
+        HRESULT GetPoints(
+            [in] INT32 startIndex,
+            [in] INT32 elementCount,
+            [out] UINT32* outputValueCount,
+            [out, size_is(, *outputValueCount), retval] NUMERICS.Vector2** outputValueElements);
+
+        HRESULT RemovePointsAtEnd(
+            [in] INT32 pointCount);
+
+        HRESULT SetPoints(
+            [in] INT32 startIndex,
+            [in] UINT32 pointCount,
+            [in, size_is(pointCount)] NUMERICS.Vector2* points);
+    }
+
+    [STANDARD_ATTRIBUTES]
+    runtimeclass CanvasSvgPointsAttribute
+    {
+        [default] interface ICanvasSvgPointsAttribute;
+    }
+
+    runtimeclass CanvasSvgStrokeDashArrayAttribute;
+
+    [version(VERSION), uuid(652786A8-F3AB-4083-991D-9748AA86BD70), exclusiveto(CanvasSvgStrokeDashArrayAttribute)]
+    interface ICanvasSvgStrokeDashArrayAttribute : IInspectable
+        requires Windows.Foundation.IClosable, ICanvasSvgAttribute
+    {
+        [overload("GetDashes")]
+        HRESULT GetDashes(
+            [out] UINT32* valueCount,
+            [out, size_is(, *valueCount), retval] float** valueElements);
+
+        [overload("GetDashes"), default_overload]
+        HRESULT GetDashesWithUnits(
+            [in] INT32 startIndex,
+            [in] INT32 elementCount,
+            [out] UINT32* outputUnitsCount,
+            [out, size_is(, *outputUnitsCount)] CanvasSvgLengthUnits** outputUnitsElements,
+            [out] UINT32* outputValueCount,
+            [out, size_is(, *outputValueCount), retval] float** outputValueElements);
+
+        HRESULT RemoveDashesAtEnd(
+            [in] INT32 dashCount);
+
+        // Sets dashes which use the default unit type ("Number")
+        [overload("SetDashes")]
+        HRESULT SetDashes(
+            [in] INT32 startIndex,
+            [in] UINT32 dashCount,
+            [in, size_is(dashCount)] float* dashes);
+
+        // Sets dashes which use one consistent unit type
+        [overload("SetDashes")]
+        HRESULT SetDashesWithUnit(
+            [in] INT32 startIndex,
+            [in] UINT32 dashCount,
+            [in, size_is(dashCount)] float* dashes,
+            [in] CanvasSvgLengthUnits units);
+
+        // Sets dashes with a unit type per element
+        [overload("SetDashes"), default_overload]
+        HRESULT SetDashesWithUnits(
+            [in] INT32 startIndex,
+            [in] UINT32 dashValueCount,
+            [in, size_is(dashValueCount)] float* dashValues,
+            [in] UINT32 unitValueCount,
+            [in, size_is(unitValueCount)] CanvasSvgLengthUnits* unitValues);
+    }
+
+    [STANDARD_ATTRIBUTES]
+    runtimeclass CanvasSvgStrokeDashArrayAttribute
+    {
+        [default] interface ICanvasSvgStrokeDashArrayAttribute;
     }
 }
 
