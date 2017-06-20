@@ -27,6 +27,10 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <summary>This namespace defines the API for printing Win2D content.</summary>
     </member>
 
+    <member name="N:Microsoft.Graphics.Canvas.Svg" Win10_15063="true" Experimental="true">
+      <summary>This namespace defines the API for drawing and manipulating vector SVG graphics with Win2D.</summary>
+    </member>
+
     <member name="N:Microsoft.Graphics.Canvas.Text">
       <summary>This namespace defines the API for drawing text with Win2D.</summary>
     </member>
