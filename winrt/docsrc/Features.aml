@@ -75,6 +75,11 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
           <codeEntityReference linkText="ink strokes">M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawInk(System.Collections.Generic.IEnumerable{Windows.UI.Input.Inking.InkStroke})</codeEntityReference>
           (from a stylus)
         </listItem>
+        <listItem>
+          Load, draw, and manipulate
+          <codeEntityReference linkText="SVG">M:Microsoft.Graphics.Canvas.Svg.CanvasSvgDocument.LoadFromXml(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.String)</codeEntityReference>
+          vector graphics
+        </listItem>
       </list>
 
       <para><legacyBold>Powerful image processing effects</legacyBold></para>

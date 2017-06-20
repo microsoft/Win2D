@@ -10,7 +10,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <name>Microsoft.Graphics.Canvas</name>
   </assembly>
   <members>
-    <member name="T:Microsoft.Graphics.Canvas.Svg.CanvasSvgAspectAlignment">
+    <member name="T:Microsoft.Graphics.Canvas.Svg.CanvasSvgAspectAlignment" Win10_15063="true" Experimental="true">
       <summary>Represents the alignment portion of the SVG preserveAspectRatio attribute.</summary>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.Svg.CanvasSvgAspectAlignment.None">
@@ -43,7 +43,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="F:Microsoft.Graphics.Canvas.Svg.CanvasSvgAspectAlignment.XMaxYMax">
       <summary>The alignment is set to SVG's 'xMaxYMax' value.</summary>
     </member>
-    <member name="T:Microsoft.Graphics.Canvas.Svg.CanvasSvgAspectScaling">
+    <member name="T:Microsoft.Graphics.Canvas.Svg.CanvasSvgAspectScaling" Win10_15063="true" Experimental="true">
       <summary>Represents the meetOrSlice portion of the SVG preserveAspectRatio attribute.</summary>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.Svg.CanvasSvgAspectScaling.Meet">
@@ -52,7 +52,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="F:Microsoft.Graphics.Canvas.Svg.CanvasSvgAspectScaling.Slice">
       <summary>Scale the viewBox down as much as possible such that the entire viewport is covered by the viewBox.</summary>
     </member>
-    <member name="T:Microsoft.Graphics.Canvas.Svg.CanvasSvgDisplay">
+    <member name="T:Microsoft.Graphics.Canvas.Svg.CanvasSvgDisplay" Win10_15063="true" Experimental="true">
       <summary>Specifies a value for the SVG display property.</summary>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.Svg.CanvasSvgDisplay.Inline">
@@ -61,7 +61,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="F:Microsoft.Graphics.Canvas.Svg.CanvasSvgDisplay.None">
       <summary>The element and all children are not rendered directly.</summary>
     </member>
-    <member name="T:Microsoft.Graphics.Canvas.Svg.CanvasSvgLengthUnits">
+    <member name="T:Microsoft.Graphics.Canvas.Svg.CanvasSvgLengthUnits" Win10_15063="true" Experimental="true">
       <summary>Specifies the units for an SVG length.</summary>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.Svg.CanvasSvgLengthUnits.Number">
@@ -71,7 +71,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <summary>The length is a percentage value.</summary>
     </member>    
 
-    <member name="T:Microsoft.Graphics.Canvas.Svg.CanvasSvgOverflow">
+    <member name="T:Microsoft.Graphics.Canvas.Svg.CanvasSvgOverflow" Win10_15063="true" Experimental="true">
       <summary>Specifies a value for the SVG overflow property.</summary>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.Svg.CanvasSvgOverflow.DoNotClipToViewport">
@@ -81,7 +81,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <summary>The element is clipped to its viewport.</summary>
     </member>
     
-    <member name="T:Microsoft.Graphics.Canvas.Svg.CanvasSvgPaintAttribute">
+    <member name="T:Microsoft.Graphics.Canvas.Svg.CanvasSvgPaintAttribute" Win10_15063="true" Experimental="true">
       <summary>Object describing an SVG fill or stroke value.</summary>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgPaintAttribute.Dispose">
@@ -118,7 +118,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       	<see cref="F:Microsoft.Graphics.Canvas.Svg.CanvasSvgPaintType.UriThenColor"/>.
       </remarks>
     </member>
-    <member name="T:Microsoft.Graphics.Canvas.Svg.CanvasSvgPaintType">
+    <member name="T:Microsoft.Graphics.Canvas.Svg.CanvasSvgPaintType" Win10_15063="true" Experimental="true">
       <summary>Specifies the paint type for an SVG fill or stroke.</summary>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.Svg.CanvasSvgPaintType.None">
@@ -142,7 +142,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="F:Microsoft.Graphics.Canvas.Svg.CanvasSvgPaintType.UriThenCurrentColor">
       <summary>A paint server, defined by another element in the SVG document, is used. If the paint server reference is invalid, fall back to CanvasSvgPaintType.CurrentColor.</summary>
     </member>
-    <member name="T:Microsoft.Graphics.Canvas.Svg.CanvasSvgPathAttribute">
+    <member name="T:Microsoft.Graphics.Canvas.Svg.CanvasSvgPathAttribute" Win10_15063="true" Experimental="true">
       <summary>Object describing SVG path data.</summary>
       <remarks>
         <p>
@@ -216,7 +216,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="P:Microsoft.Graphics.Canvas.Svg.CanvasSvgPathAttribute.SegmentData">
       <summary>Gets the array of segment data.</summary>
     </member>
-    <member name="T:Microsoft.Graphics.Canvas.Svg.CanvasSvgPathCommand">
+    <member name="T:Microsoft.Graphics.Canvas.Svg.CanvasSvgPathCommand" Win10_15063="true" Experimental="true">
       <summary>Represents a path commmand.</summary>
       <remarks>Each command may reference elements from the segment data. 
       Commands ending in Absolute interpret data as absolute coordinate. 
@@ -311,7 +311,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <summary>Draws a smooth quadratic Bezier curve ending at (x, y).</summary>
       <remarks>Uses 2 floats of segment data.</remarks>
     </member>
-    <member name="T:Microsoft.Graphics.Canvas.Svg.CanvasSvgPointsAttribute">
+    <member name="T:Microsoft.Graphics.Canvas.Svg.CanvasSvgPointsAttribute" Win10_15063="true" Experimental="true">
       <summary>Object describing an SVG points value in a polyline or polygon element.</summary>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgPointsAttribute.GetPoints(System.Int32,System.Int32)">
@@ -342,7 +342,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="P:Microsoft.Graphics.Canvas.Svg.CanvasSvgPointsAttribute.Points">
       <summary>Gets the points array.</summary>
     </member>
-    <member name="T:Microsoft.Graphics.Canvas.Svg.CanvasSvgStrokeDashArrayAttribute">
+    <member name="T:Microsoft.Graphics.Canvas.Svg.CanvasSvgStrokeDashArrayAttribute" Win10_15063="true" Experimental="true">
       <summary>Object describing an SVG stroke-dasharray value.</summary>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgStrokeDashArrayAttribute.GetDashes">
@@ -396,7 +396,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <summary>Gets the device with which this attribute is associated.</summary>
       <remarks>Attributes can only be assigned to elements which use the same device.</remarks>
     </member>
-    <member name="T:Microsoft.Graphics.Canvas.Svg.CanvasSvgUnits">
+    <member name="T:Microsoft.Graphics.Canvas.Svg.CanvasSvgUnits" Win10_15063="true" Experimental="true">
       <summary>Defines the coordinate system used for SVG gradient or clipPath elements.</summary>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.Svg.CanvasSvgUnits.UserSpaceOnUse">
@@ -405,7 +405,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="F:Microsoft.Graphics.Canvas.Svg.CanvasSvgUnits.ObjectBoundingBox">
       <summary>The property is set to SVG's 'objectBoundingBox' value.</summary>
     </member>
-    <member name="T:Microsoft.Graphics.Canvas.Svg.CanvasSvgVisibility">
+    <member name="T:Microsoft.Graphics.Canvas.Svg.CanvasSvgVisibility" Win10_15063="true" Experimental="true">
       <summary>Specifies a value for the SVG visibility property.</summary>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.Svg.CanvasSvgVisibility.Visible">
@@ -415,7 +415,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <summary>The element is invisible.</summary>
       <remarks>Elements marked as Hidden will still have space allowed for them in the document, and their children are not affected.</remarks>
     </member>
-    <member name="T:Microsoft.Graphics.Canvas.Svg.ICanvasSvgAttribute">
+    <member name="T:Microsoft.Graphics.Canvas.Svg.ICanvasSvgAttribute" Win10_15063="true" Experimental="true">
       <summary>Interface describing an SVG attribute.</summary>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Svg.ICanvasSvgAttribute.Clone">
