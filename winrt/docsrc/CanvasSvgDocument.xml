@@ -22,7 +22,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
           <see cref="O:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawSvg">DrawSvg</see>. For example, in C#,
           <code title="C#">
             <![CDATA[
-            using namespace Microsoft.Graphics.Canvas.Svg;     
+            using Microsoft.Graphics.Canvas.Svg;     
 
             CanvasSvgDocument svgDocument;
 
