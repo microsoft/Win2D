@@ -91,6 +91,9 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasVirtualBitmap.LoadAsync(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.String)">
       <summary>Loads a virtual bitmap from an image file.</summary>
+      <remarks>
+        <inherittemplate name="CanvasBitmap.LoadAsync-hdr"/>
+      </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasVirtualBitmap.LoadAsync(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.String,Microsoft.Graphics.Canvas.CanvasVirtualBitmapOptions)">
       <summary>Loads a virtual bitmap from an image file.</summary>
@@ -98,6 +101,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         <p>
           The default options is <see cref="F:Microsoft.Graphics.Canvas.CanvasVirtualBitmapOptions.None"/>.
         </p>
+        <inherittemplate name="CanvasBitmap.LoadAsync-hdr"/>
       </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasVirtualBitmap.LoadAsync(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.String,Microsoft.Graphics.Canvas.CanvasVirtualBitmapOptions,Microsoft.Graphics.Canvas.CanvasAlphaMode)">
@@ -109,10 +113,14 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         <p>
           The default alpha value is <see cref="F:Microsoft.Graphics.Canvas.CanvasAlphaMode.Premultiplied"/>.
         </p>
+        <inherittemplate name="CanvasBitmap.LoadAsync-hdr"/>
       </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasVirtualBitmap.LoadAsync(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Uri)">
       <summary>Loads a virtual bitmap from a URI.</summary>
+      <remarks>
+        <inherittemplate name="CanvasBitmap.LoadAsync-hdr"/>
+      </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasVirtualBitmap.LoadAsync(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Uri,Microsoft.Graphics.Canvas.CanvasVirtualBitmapOptions)">
       <summary>Loads a virtual bitmap from a URI.</summary>
@@ -120,6 +128,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         <p>
           The default options is <see cref="F:Microsoft.Graphics.Canvas.CanvasVirtualBitmapOptions.None"/>.
         </p>
+        <inherittemplate name="CanvasBitmap.LoadAsync-hdr"/>
       </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasVirtualBitmap.LoadAsync(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Uri,Microsoft.Graphics.Canvas.CanvasVirtualBitmapOptions,Microsoft.Graphics.Canvas.CanvasAlphaMode)">
@@ -131,6 +140,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         <p>
           The default alpha value is <see cref="F:Microsoft.Graphics.Canvas.CanvasAlphaMode.Premultiplied"/>.
         </p>
+        <inherittemplate name="CanvasBitmap.LoadAsync-hdr"/>
       </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasVirtualBitmap.LoadAsync(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.Storage.Streams.IRandomAccessStream)">
@@ -139,6 +149,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         <p>
           The CanvasVirtualBitmap will retain a reference to the stream.
         </p>
+        <inherittemplate name="CanvasBitmap.LoadAsync-hdr"/>
       </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasVirtualBitmap.LoadAsync(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.Storage.Streams.IRandomAccessStream,Microsoft.Graphics.Canvas.CanvasVirtualBitmapOptions)">
@@ -153,6 +164,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
           is specified, the CanvasVirtualBitmap will retain a reference to the
           stream.
         </p>
+        <inherittemplate name="CanvasBitmap.LoadAsync-hdr"/>
       </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasVirtualBitmap.LoadAsync(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.Storage.Streams.IRandomAccessStream,Microsoft.Graphics.Canvas.CanvasVirtualBitmapOptions,Microsoft.Graphics.Canvas.CanvasAlphaMode)">
@@ -170,6 +182,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
           is specified, the CanvasVirtualBitmap will retain a reference to the
           stream.
         </p>
+        <inherittemplate name="CanvasBitmap.LoadAsync-hdr"/>
       </remarks>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.CanvasVirtualBitmap.Bounds">

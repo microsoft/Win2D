@@ -141,6 +141,25 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
     
 
+    static GUID const& DxgiFormatToWic(DXGI_FORMAT format)
+    {
+        switch (format)
+        {
+        case DXGI_FORMAT_R16G16B16A16_UNORM:
+            return GUID_WICPixelFormat64bppRGBA;
+        
+        case DXGI_FORMAT_R16G16B16A16_FLOAT:
+            return GUID_WICPixelFormat64bppRGBAHalf;
+        
+        case DXGI_FORMAT_R32G32B32A32_FLOAT:
+            return GUID_WICPixelFormat128bppRGBAFloat;
+
+        default:
+            return GUID_WICPixelFormat32bppBGRA;
+        }
+    }
+
+
     IFACEMETHODIMP CanvasImageFactory::SaveWithQualityAndBufferPrecisionAsync(
         ICanvasImage* image,
         Rect sourceRectangle,
@@ -364,8 +383,16 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             value.fltVal = quality;
             ThrowIfFailed(frameProperties->Write(1, &option, &value));
         }
-        
+
         ThrowIfFailed(frame->Initialize(frameProperties.Get()));
+
+        // If the file format supports extended range (JpegXR) then tell WIC to encode
+        // using the same pixel format that we are rasterizing the D2D image with.
+        if (FileFormatSupportsHdr(containerFormat))
+        {
+            auto wicPixelFormat = DxgiFormatToWic(parameters.PixelFormat.format);
+            ThrowIfFailed(frame->SetPixelFormat(&wicPixelFormat));
+        }
 
         ComPtr<IWICImageEncoder> imageEncoder;
         ThrowIfFailed(factory->CreateImageEncoder(device, &imageEncoder));

@@ -237,61 +237,132 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.LoadAsync(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.String)">
       <summary>Loads a bitmap from an image file (jpeg, png, etc.)</summary>
-      <remarks>The bitmap is set to default (96) DPI and premultiplied alpha.</remarks>
+      <remarks>
+        <p>The bitmap is set to default (96) DPI and premultiplied alpha.</p>
+        <inherittemplate name="CanvasBitmap.LoadAsync-hdr"/>
+      </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.LoadAsync(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.String,System.Single)">
       <summary>Loads a bitmap from an image file (jpeg, png, etc.), and assigns it the specified DPI.</summary>
-      <remarks>The bitmap is set to premultiplied alpha.</remarks>
+      <remarks>
+        <p>The bitmap is set to premultiplied alpha.</p>
+        <inherittemplate name="CanvasBitmap.LoadAsync-hdr"/>
+      </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.LoadAsync(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.String,System.Single,Microsoft.Graphics.Canvas.CanvasAlphaMode)">
       <summary>Loads a bitmap from an image file (jpeg, png, etc.), and assigns it the specified DPI and alpha behavior.</summary>
+      <remarks>
+        <inherittemplate name="CanvasBitmap.LoadAsync-hdr"/>       
+      </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.LoadAsync(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Uri)">
       <summary>Loads a bitmap from an image file (jpeg, png, etc.) located at a URI.</summary>
-      <remarks>The bitmap is set to default (96) DPI and premultiplied alpha.</remarks>
+      <remarks>
+        <p>The bitmap is set to default (96) DPI and premultiplied alpha.</p>
+        <inherittemplate name="CanvasBitmap.LoadAsync-hdr"/>
+      </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.LoadAsync(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Uri,System.Single)">
       <summary>Loads a bitmap from an image file (jpeg, png, etc.) located at a URI, and assigns it the specified DPI.</summary>
-      <remarks>The bitmap is set to premultiplied alpha.</remarks>
+      <remarks>
+        <p>The bitmap is set to premultiplied alpha.</p>
+        <inherittemplate name="CanvasBitmap.LoadAsync-hdr"/>
+      </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.LoadAsync(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Uri,System.Single,Microsoft.Graphics.Canvas.CanvasAlphaMode)">
       <summary>Loads a bitmap from an image file (jpeg, png, etc.) located at a URI, and assigns it the specified DPI and alpha behavior.</summary>
+      <remarks>
+        <inherittemplate name="CanvasBitmap.LoadAsync-hdr"/>      
+      </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.LoadAsync(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.Storage.Streams.IRandomAccessStream)">
       <summary>Loads a bitmap from a stream.</summary>
-      <remarks>This method requires that the stream be readable.
-               The bitmap is set to default (96) DPI and premultiplied alpha.</remarks>
+      <remarks>
+        <p>This method requires that the stream be readable. The bitmap is set to default (96) DPI and premultiplied alpha.</p>
+        <inherittemplate name="CanvasBitmap.LoadAsync-hdr"/>
+      </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.LoadAsync(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.Storage.Streams.IRandomAccessStream,System.Single)">
       <summary>Loads a bitmap from a stream, and assigns it the specified alpha behavior.</summary>
-      <remarks>This method requires that the stream be readable.
-               The bitmap is set to premultiplied alpha.</remarks>
+      <remarks>
+        <p>This method requires that the stream be readable. The bitmap is set to premultiplied alpha.</p>
+        <inherittemplate name="CanvasBitmap.LoadAsync-hdr"/>
+      </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.LoadAsync(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.Storage.Streams.IRandomAccessStream,System.Single,Microsoft.Graphics.Canvas.CanvasAlphaMode)">
       <summary>Loads a bitmap from a stream, and assigns it the specified DPI and alpha behavior.</summary>
-      <remarks>This method requires that the stream be readable.</remarks>
+      <remarks>
+        <p>This method requires that the stream be readable.</p>
+        <inherittemplate name="CanvasBitmap.LoadAsync-hdr"/>
+      </remarks>
     </member>
+
+    <template name="CanvasBitmap.LoadAsync-hdr">
+      <p>
+        When loading a <see cref="F:Microsoft.Graphics.Canvas.CanvasBitmapFileFormat.JpegXR"/>
+        format bitmap that contains high dynamic range (HDR) pixel data, the loaded bitmap
+        may use one of the pixel formats:
+      </p>
+      <ul>
+        <li>DirectXPixelFormat.R16G16B16A16Float</li>
+        <li>DirectXPixelFormat.R32G32B32A32Float</li>
+        <li>DirectXPixelFormat.R16G16B16A16UIntNormalized</li>
+      </ul>
+      <p>
+        For all other file formats, or when the current device does not support high dynamic range pixel formats
+        (as reported by <see cref="M:Microsoft.Graphics.Canvas.CanvasDevice.IsPixelFormatSupported(Windows.Graphics.DirectX.DirectXPixelFormat)"/>),
+        the loaded bitmap will use DirectXPixelFormat.B8G8R8A8UIntNormalized.
+      </p>
+    </template>
 
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.SaveAsync(System.String)">
       <summary>Saves the entire bitmap to a file with the specified file name, using a default quality level of 0.9 and CanvasBitmapFileFormat.Auto.</summary>
-      <remarks>CanvasBitmapFileFormat.Auto will determine which encoding format to use based on the file extension.</remarks>
+      <remarks>
+        <p>CanvasBitmapFileFormat.Auto will determine which encoding format to use based on the file extension.</p>
+        <inherittemplate name="CanvasBitmap.SaveAsync-hdr"/>
+      </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.SaveAsync(System.String,Microsoft.Graphics.Canvas.CanvasBitmapFileFormat)">
       <summary>Saves the entire bitmap to a file with the specified file name and file format, and a default quality level of 0.9.</summary>
+      <remarks>
+        <inherittemplate name="CanvasBitmap.SaveAsync-hdr"/>
+      </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.SaveAsync(System.String,Microsoft.Graphics.Canvas.CanvasBitmapFileFormat,System.Single)">
       <summary>Saves the entire bitmap to a file with the specified file name and file format, and quality level.</summary>
+      <remarks>
+        <inherittemplate name="CanvasBitmap.SaveAsync-hdr"/>
+      </remarks>
     </member>
 
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.SaveAsync(Windows.Storage.Streams.IRandomAccessStream,Microsoft.Graphics.Canvas.CanvasBitmapFileFormat)">
       <summary>Saves the entire bitmap to the specified stream with the specified file format, using a default quality level of 0.9.</summary>
-      <remarks>The stream must be writeable. CanvasBitmapFileFormat.Auto is not allowed with this method.</remarks>
+      <remarks>
+        <p>The stream must be writeable. CanvasBitmapFileFormat.Auto is not allowed with this method.</p>
+        <inherittemplate name="CanvasBitmap.SaveAsync-hdr"/>
+      </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.SaveAsync(Windows.Storage.Streams.IRandomAccessStream,Microsoft.Graphics.Canvas.CanvasBitmapFileFormat,System.Single)">
       <summary>Saves the entire bitmap to the specified stream with the specified file format and quality level.</summary>
-      <remarks>The stream must be writeable. CanvasBitmapFileFormat.Auto is not allowed with this method.</remarks>
+      <remarks>
+        <p>The stream must be writeable. CanvasBitmapFileFormat.Auto is not allowed with this method.</p>
+        <inherittemplate name="CanvasBitmap.SaveAsync-hdr"/>
+      </remarks>
     </member>
-    
+
+    <template name="CanvasBitmap.SaveAsync-hdr">
+      <p>
+        To save image data using a high dynamic range (HDR) pixel format, use
+        <see cref="F:Microsoft.Graphics.Canvas.CanvasBitmapFileFormat.JpegXR"/>
+        format and provide a bitmap using one of the pixel formats:
+      </p>
+      <ul>
+        <li>DirectXPixelFormat.R16G16B16A16Float</li>
+        <li>DirectXPixelFormat.R32G32B32A32Float</li>
+        <li>DirectXPixelFormat.R16G16B16A16UIntNormalized</li>
+      </ul>
+    </template>
+
     <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.GetPixelBytes">
       <summary>Returns an array of raw byte data for the entire bitmap.</summary>
       <remarks>

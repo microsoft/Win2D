@@ -84,6 +84,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     };
 
 
+    bool FileFormatSupportsHdr(GUID const& containerFormat)
+    {
+        return containerFormat == GUID_ContainerFormatWmp;
+    }
+
     GUID GetGUIDForFileFormat(CanvasBitmapFileFormat fileFormat)
     {
         switch (fileFormat)
@@ -226,11 +231,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
     template<typename T>
-    static ComPtr<IWICBitmapSource> CreateWicBitmapSourceWithExifTransform(T fileNameOrStream)
+    static ComPtr<IWICBitmapSource> CreateWicBitmapSourceWithExifTransform(ICanvasDevice* device, T fileNameOrStream)
     {
         auto adapter = CanvasBitmapAdapter::GetInstance();
 
-        auto source = adapter->CreateWicBitmapSource(fileNameOrStream);
+        auto source = adapter->CreateWicBitmapSource(device, fileNameOrStream);
 
         if (source.Transform == WICBitmapTransformRotate0)
             return source.Source;
@@ -248,7 +253,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     {
     }
 
-    WicBitmapSource DefaultBitmapAdapter::CreateWicBitmapSource(HSTRING fileName, bool tryEnableIndexing)
+    WicBitmapSource DefaultBitmapAdapter::CreateWicBitmapSource(ICanvasDevice* device, HSTRING fileName, bool tryEnableIndexing)
     {
         ComPtr<IWICStream> stream;
         ThrowIfFailed(m_wicAdapter->GetFactory()->CreateStream(&stream));
@@ -256,10 +261,16 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         WinString fileNameString(fileName);
         ThrowIfFailed(stream->InitializeFromFilename(static_cast<const wchar_t*>(fileNameString), GENERIC_READ));
 
-        return CreateWicBitmapSource(stream.Get(), tryEnableIndexing);
+        return CreateWicBitmapSource(device, stream.Get(), tryEnableIndexing);
     }
 
-    WicBitmapSource DefaultBitmapAdapter::CreateWicBitmapSource(IStream* fileStream, bool tryEnableIndexing)
+    static bool IsSupportedPixelFormat(ICanvasDevice* device, GUID const& frameFormat, GUID const& wicFormat, DXGI_FORMAT dxgiFormat)
+    {
+        return (frameFormat == wicFormat) &&
+               As<ICanvasDeviceInternal>(device)->GetResourceCreationDeviceContext()->IsDxgiFormatSupported(dxgiFormat);
+    }
+
+    WicBitmapSource DefaultBitmapAdapter::CreateWicBitmapSource(ICanvasDevice* device, IStream* fileStream, bool tryEnableIndexing)
     {
         ComPtr<IWICBitmapDecoder> wicBitmapDecoder;
         ThrowIfFailed(m_wicAdapter->GetFactory()->CreateDecoderFromStream(
@@ -301,9 +312,31 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ComPtr<IWICFormatConverter> wicFormatConverter;
         ThrowIfFailed(m_wicAdapter->GetFactory()->CreateFormatConverter(&wicFormatConverter));
 
+        auto targetPixelFormat = GUID_WICPixelFormat32bppPBGRA;
+
+        GUID containerFormat;
+        ThrowIfFailed(wicBitmapDecoder->GetContainerFormat(&containerFormat));
+
+        // Load the data using an extended range format if:
+        //  - The file format supports extended range (JpegXR)
+        //  - And the pixel format is int16, float16, or float32
+        //  - And the graphics device supports that pixel format
+        if (FileFormatSupportsHdr(containerFormat))
+        {
+            GUID frameFormat;
+            ThrowIfFailed(wicBitmapFrameDecode->GetPixelFormat(&frameFormat));
+
+            if (IsSupportedPixelFormat(device, frameFormat, GUID_WICPixelFormat64bppRGBA,       DXGI_FORMAT_R16G16B16A16_UNORM) ||
+                IsSupportedPixelFormat(device, frameFormat, GUID_WICPixelFormat64bppRGBAHalf,   DXGI_FORMAT_R16G16B16A16_FLOAT) ||
+                IsSupportedPixelFormat(device, frameFormat, GUID_WICPixelFormat128bppRGBAFloat, DXGI_FORMAT_R32G32B32A32_FLOAT))
+            {
+                targetPixelFormat = frameFormat;
+            }
+        }
+
         ThrowIfFailed(wicFormatConverter->Initialize(
             wicBitmapFrameDecode.Get(),
-            GUID_WICPixelFormat32bppPBGRA,
+            targetPixelFormat,
             WICBitmapDitherTypeNone,
             NULL,
             0,
@@ -334,7 +367,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ComPtr<ICanvasDeviceInternal> canvasDeviceInternal;
         ThrowIfFailed(canvasDevice->QueryInterface(canvasDeviceInternal.GetAddressOf()));
 
-        auto wicBitmapSource = CreateWicBitmapSourceWithExifTransform(fileName);
+        auto wicBitmapSource = CreateWicBitmapSourceWithExifTransform(canvasDevice, fileName);
 
         auto d2dBitmap = canvasDeviceInternal->CreateBitmapFromWicResource(wicBitmapSource.Get(), dpi, alpha);
 
@@ -356,7 +389,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ComPtr<ICanvasDeviceInternal> canvasDeviceInternal;
         ThrowIfFailed(canvasDevice->QueryInterface(canvasDeviceInternal.GetAddressOf()));
 
-        auto wicBitmapSource = CreateWicBitmapSourceWithExifTransform(fileStream);
+        auto wicBitmapSource = CreateWicBitmapSourceWithExifTransform(canvasDevice, fileStream);
 
         auto d2dBitmap = canvasDeviceInternal->CreateBitmapFromWicResource(wicBitmapSource.Get(), dpi, alpha);
 
@@ -1229,8 +1262,27 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         float dpiX, dpiY;
         d2dBitmap->GetDpi(&dpiX, &dpiY);
 
+        auto targetPixelFormat = DXGI_FORMAT_B8G8R8A8_UNORM;
+
+        // Save the data using an extended range format if:
+        //  - The file format supports extended range (JpegXR)
+        //  - And the pixel format is int16, float16, or float32
+        if (FileFormatSupportsHdr(containerFormat))
+        {
+            auto bitmapFormat = d2dBitmap->GetPixelFormat().format;
+
+            switch (bitmapFormat)
+            {
+                case DXGI_FORMAT_R16G16B16A16_UNORM:
+                case DXGI_FORMAT_R16G16B16A16_FLOAT:
+                case DXGI_FORMAT_R32G32B32A32_FLOAT:
+                    targetPixelFormat = bitmapFormat;
+                    break;
+            }
+        }
+
         WICImageParameters parameters{};
-        parameters.PixelFormat.format = DXGI_FORMAT_B8G8R8A8_UNORM;
+        parameters.PixelFormat.format = targetPixelFormat;
         parameters.PixelFormat.alphaMode = D2D1_ALPHA_MODE_PREMULTIPLIED;
         parameters.DpiX = dpiX;
         parameters.DpiY = dpiY;

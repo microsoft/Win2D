@@ -17,6 +17,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <summary>Saves an ICanvasImage to the given stream.</summary>
       <remarks>
         <inherittemplate name="CanvasImage.SaveAsync-remarks"/>
+        <inherittemplate name="CanvasImage.SaveAsync-hdr"/>
       </remarks>
       <example>
         <code title="C#">
@@ -44,6 +45,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <remarks>
         <inherittemplate name="CanvasImage.SaveAsync-remarks"/>
         <inherittemplate name="CanvasImage.SaveAsync-quality"/>
+        <inherittemplate name="CanvasImage.SaveAsync-hdr"/>
       </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasImage.SaveAsync(Microsoft.Graphics.Canvas.ICanvasImage,Windows.Foundation.Rect,System.Single,Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.Storage.Streams.IRandomAccessStream,Microsoft.Graphics.Canvas.CanvasBitmapFileFormat,System.Single,Microsoft.Graphics.Canvas.CanvasBufferPrecision)">
@@ -55,6 +57,22 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
           The buffer precision defaults to <see
           cref="F:Microsoft.Graphics.Canvas.CanvasBufferPrecision.Precision8UIntNormalized"/>.
         </p>
+        <p>
+          To save an image using a high dynamic range (HDR) pixel format, use
+          <see cref="F:Microsoft.Graphics.Canvas.CanvasBitmapFileFormat.JpegXR"/>
+          format and specify one of the buffer precisions:
+        </p>
+        <ul>
+          <li>
+            <see cref="F:Microsoft.Graphics.Canvas.CanvasBufferPrecision.Precision16Float"/>
+          </li>
+          <li>
+            <see cref="F:Microsoft.Graphics.Canvas.CanvasBufferPrecision.Precision32Float"/>
+          </li>
+          <li>
+            <see cref="F:Microsoft.Graphics.Canvas.CanvasBufferPrecision.Precision16UIntNormalized"/>
+          </li>
+        </ul>
       </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasImage.ComputeHistogram(Microsoft.Graphics.Canvas.ICanvasImage,Windows.Foundation.Rect,Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.Graphics.Canvas.Effects.EffectChannelSelect,System.Int32)">
@@ -101,6 +119,15 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       saved - for example, it may be an effect or a command list.  SaveAsync
       will take care of this automatically and create whatever temporary render
       targets are required.
+    </p>
+  </template>
+
+  <template name="CanvasImage.SaveAsync-hdr">
+    <p>
+      To save an image using a high dynamic range (HDR) pixel format, use
+      <see cref="M:Microsoft.Graphics.Canvas.CanvasImage.SaveAsync(Microsoft.Graphics.Canvas.ICanvasImage,Windows.Foundation.Rect,System.Single,Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.Storage.Streams.IRandomAccessStream,Microsoft.Graphics.Canvas.CanvasBitmapFileFormat,System.Single,Microsoft.Graphics.Canvas.CanvasBufferPrecision)"/> with
+      <see cref="F:Microsoft.Graphics.Canvas.CanvasBitmapFileFormat.JpegXR"/> format and a suitable
+      <see cref="T:Microsoft.Graphics.Canvas.CanvasBufferPrecision"/>.
     </p>
   </template>
 

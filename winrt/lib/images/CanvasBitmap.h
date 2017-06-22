@@ -22,6 +22,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     using ABI::Windows::Graphics::Imaging::ISoftwareBitmap;
 #endif
 
+    bool FileFormatSupportsHdr(GUID const& containerFormat);
     GUID GetGUIDForFileFormat(CanvasBitmapFileFormat fileFormat);
 
     struct WicBitmapSource
@@ -38,8 +39,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     public:
         virtual ~CanvasBitmapAdapter() = default;
 
-        virtual WicBitmapSource CreateWicBitmapSource(HSTRING fileName, bool tryEnableIndexing = false) = 0;
-        virtual WicBitmapSource CreateWicBitmapSource(IStream* fileStream, bool tryEnableIndexing = false) = 0;
+        virtual WicBitmapSource CreateWicBitmapSource(ICanvasDevice* device, HSTRING fileName, bool tryEnableIndexing = false) = 0;
+        virtual WicBitmapSource CreateWicBitmapSource(ICanvasDevice* device, IStream* fileStream, bool tryEnableIndexing = false) = 0;
 
         virtual ComPtr<IWICBitmapSource> CreateFlipRotator(
             ComPtr<IWICBitmapSource> const& source,
@@ -54,8 +55,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     public:
         DefaultBitmapAdapter();
 
-        virtual WicBitmapSource CreateWicBitmapSource(HSTRING fileName, bool tryEnableIndexing) override;
-        virtual WicBitmapSource CreateWicBitmapSource(IStream* fileStream, bool tryEnableIndexing) override;
+        virtual WicBitmapSource CreateWicBitmapSource(ICanvasDevice* device, HSTRING fileName, bool tryEnableIndexing) override;
+        virtual WicBitmapSource CreateWicBitmapSource(ICanvasDevice* device, IStream* fileStream, bool tryEnableIndexing) override;
 
         virtual ComPtr<IWICBitmapSource> CreateFlipRotator(
             ComPtr<IWICBitmapSource> const& source,

@@ -16,14 +16,14 @@ public:
     {
     }
 
-    virtual WicBitmapSource CreateWicBitmapSource(HSTRING fileName, bool tryEnableIndexing) override
+    virtual WicBitmapSource CreateWicBitmapSource(ICanvasDevice* device, HSTRING fileName, bool tryEnableIndexing) override
     {
         if (MockCreateWicBitmapSource)
             MockCreateWicBitmapSource();
         return WicBitmapSource{ m_converter, WICBitmapTransformRotate0 };
     }
 
-    virtual WicBitmapSource CreateWicBitmapSource(IStream* fileStream, bool tryEnableIndexing) override
+    virtual WicBitmapSource CreateWicBitmapSource(ICanvasDevice* device, IStream* fileStream, bool tryEnableIndexing) override
     {
         Assert::Fail(); // Unexpected
         return WicBitmapSource{ m_converter, WICBitmapTransformRotate0 };

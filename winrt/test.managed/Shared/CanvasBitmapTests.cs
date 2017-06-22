@@ -5,6 +5,7 @@
 using Microsoft.Graphics.Canvas;
 using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
@@ -74,6 +75,77 @@ namespace test.managed
                 });
 
                 task.Wait();
+            }
+        }
+
+        [TestMethod]
+        public void SaveAndLoadHdrBitmapFormats()
+        {
+            var device = new CanvasDevice();
+
+            var pixelFormats = new List<DirectXPixelFormat>
+            {
+                DirectXPixelFormat.B8G8R8A8UIntNormalized,
+                DirectXPixelFormat.R8G8B8A8UIntNormalized,
+                DirectXPixelFormat.A8UIntNormalized,
+            };
+
+            if (device.IsPixelFormatSupported(DirectXPixelFormat.R16G16B16A16Float))
+            {
+                pixelFormats.Add(DirectXPixelFormat.R16G16B16A16Float);
+            }
+
+            if (device.IsPixelFormatSupported(DirectXPixelFormat.R32G32B32A32Float))
+            {
+                pixelFormats.Add(DirectXPixelFormat.R32G32B32A32Float);
+            }
+
+            if (device.IsPixelFormatSupported(DirectXPixelFormat.R16G16B16A16UIntNormalized))
+            {
+                pixelFormats.Add(DirectXPixelFormat.R16G16B16A16UIntNormalized);
+            }
+
+            CanvasBitmapFileFormat[] fileFormats =
+            {
+                CanvasBitmapFileFormat.Bmp,
+                CanvasBitmapFileFormat.Gif,
+                CanvasBitmapFileFormat.Jpeg,
+                CanvasBitmapFileFormat.JpegXR,
+                CanvasBitmapFileFormat.Png,
+                CanvasBitmapFileFormat.Tiff,
+            };
+
+            foreach (var pixelFormat in pixelFormats)
+            {
+                bool pixelFormatSupportsHdr = (pixelFormat == DirectXPixelFormat.R16G16B16A16Float) ||
+                                              (pixelFormat == DirectXPixelFormat.R32G32B32A32Float) ||
+                                              (pixelFormat == DirectXPixelFormat.R16G16B16A16UIntNormalized);
+
+                foreach (var fileFormat in fileFormats)
+                {
+                    bool fileFormatSupportsHdr = (fileFormat == CanvasBitmapFileFormat.JpegXR);
+
+                    using (var sourceBitmap = new CanvasRenderTarget(device, 1, 1, 96, pixelFormat, CanvasAlphaMode.Premultiplied))
+                    using (var stream = new MemoryStream())
+                    {
+                        var saveTask = sourceBitmap.SaveAsync(stream.AsRandomAccessStream(), fileFormat).AsTask();
+                        saveTask.Wait();
+
+                        var loadTask = CanvasBitmap.LoadAsync(device, stream.AsRandomAccessStream()).AsTask();
+                        loadTask.Wait();
+
+                        var loadedBitmap = loadTask.Result;
+
+                        if (pixelFormatSupportsHdr && fileFormatSupportsHdr)
+                        {
+                            Assert.AreEqual(pixelFormat, loadedBitmap.Format, "File format: {0}, pixel format: {1}", fileFormat, pixelFormat);
+                        }
+                        else
+                        {
+                            Assert.AreEqual(DirectXPixelFormat.B8G8R8A8UIntNormalized, loadedBitmap.Format);
+                        }
+                    }
+                }
             }
         }
 

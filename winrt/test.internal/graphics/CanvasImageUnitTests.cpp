@@ -455,7 +455,7 @@ TEST_CLASS(DefaultCanvasImageAdapter_Tests)
                 };            
         }
 
-        void Expect(GUID containerFormat, bool qualitySupported)
+        void Expect(GUID containerFormat, bool qualitySupported, bool hdrSupported)
         {
             auto encoder = Make<MockWICBitmapEncoder>();
             auto frame = Make<MockWICBitmapFrameEncode>();
@@ -507,6 +507,16 @@ TEST_CLASS(DefaultCanvasImageAdapter_Tests)
                     });
             }
 
+            if (hdrSupported)
+            {
+                frame->SetPixelFormatMethod.SetExpectedCalls(1,
+                    [&](GUID* g)
+                    {
+                        Assert::AreEqual(GUID_WICPixelFormat32bppBGRA, *g);
+                        return S_OK;
+                    });
+            }
+
             Adapter->WICFactory->CreateImageEncoderMethod.SetExpectedCalls(1,
                 [=] (ID2D1Device* d, IWICImageEncoder** e)
                 {
@@ -535,24 +545,25 @@ TEST_CLASS(DefaultCanvasImageAdapter_Tests)
     
     TEST_METHOD_EX(CanvasImage_Adapter_SaveImage_WhenFormatSupportQualityItIsSet)
     {
-        std::pair<GUID, bool> formatAndQualitySupported[] =
+        std::pair<GUID, std::pair<bool, bool>> formatAndQualityAndHdrSupported[] =
         {
-            { GUID_ContainerFormatBmp  , false },
-            { GUID_ContainerFormatPng  , false },
-            { GUID_ContainerFormatJpeg , true },
-            { GUID_ContainerFormatTiff , false },
-            { GUID_ContainerFormatGif  , false },
-            { GUID_ContainerFormatWmp  , true }
+            { GUID_ContainerFormatBmp  , { false , false } },
+            { GUID_ContainerFormatPng  , { false , false } },
+            { GUID_ContainerFormatJpeg , { true  , false } },
+            { GUID_ContainerFormatTiff , { false , false } },
+            { GUID_ContainerFormatGif  , { false , false } },
+            { GUID_ContainerFormatWmp  , { true  , true  } }
         };
 
-        for (auto v : formatAndQualitySupported)
+        for (auto v : formatAndQualityAndHdrSupported)
         {
             auto containerFormat = v.first;
-            auto qualitySupported = v.second;
+            auto qualitySupported = v.second.first;
+            auto hdrSupported = v.second.second;
 
             Fixture f;
 
-            f.Expect(containerFormat, qualitySupported);
+            f.Expect(containerFormat, qualitySupported, hdrSupported);
 
             CanvasImageAdapter::GetInstance()->SaveImage(
                 f.AnyD2DImage,

@@ -6,10 +6,17 @@ using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Effects;
 using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.UI;
+
+#if WINDOWS_UWP
+using Windows.Graphics.DirectX;
+#else
+using Microsoft.Graphics.Canvas.DirectX;
+#endif
 
 namespace test.managed
 {
@@ -77,6 +84,66 @@ namespace test.managed
 
                 return cl;
             });
+        }
+
+        [TestMethod]
+        public void CanvasImage_SaveAsync_HdrFormats()
+        {
+            var pixelFormats = new Dictionary<CanvasBufferPrecision, DirectXPixelFormat>
+            {
+                { CanvasBufferPrecision.Precision8UIntNormalized,  DirectXPixelFormat.B8G8R8A8UIntNormalized     },
+                { CanvasBufferPrecision.Precision16Float,          DirectXPixelFormat.R16G16B16A16Float          },
+                { CanvasBufferPrecision.Precision32Float,          DirectXPixelFormat.R32G32B32A32Float          },
+                { CanvasBufferPrecision.Precision16UIntNormalized, DirectXPixelFormat.R16G16B16A16UIntNormalized },
+            };
+
+            CanvasBitmapFileFormat[] fileFormats =
+            {
+                CanvasBitmapFileFormat.Bmp,
+                CanvasBitmapFileFormat.Gif,
+                CanvasBitmapFileFormat.Jpeg,
+                CanvasBitmapFileFormat.JpegXR,
+                CanvasBitmapFileFormat.Png,
+                CanvasBitmapFileFormat.Tiff,
+            };
+
+            var device = new CanvasDevice();
+            var sourceBitmap = new CanvasRenderTarget(device, 1, 1, 96);
+
+            foreach (var pixelFormat in pixelFormats)
+            {
+                foreach (var fileFormat in fileFormats)
+                {
+                    bool fileFormatSupportsHdr = (fileFormat == CanvasBitmapFileFormat.JpegXR);
+
+                    using (var stream = new MemoryStream())
+                    {
+                        var saveTask = CanvasImage.SaveAsync(sourceBitmap,
+                                                             sourceBitmap.Bounds,
+                                                             sourceBitmap.Dpi,
+                                                             device,
+                                                             stream.AsRandomAccessStream(),
+                                                             fileFormat,
+                                                             0.9f,
+                                                             pixelFormat.Key).AsTask();
+                        saveTask.Wait();
+
+                        var loadTask = CanvasBitmap.LoadAsync(device, stream.AsRandomAccessStream()).AsTask();
+                        loadTask.Wait();
+
+                        var loadedBitmap = loadTask.Result;
+
+                        var expectedFormat = pixelFormat.Value;
+
+                        if (!fileFormatSupportsHdr || !device.IsPixelFormatSupported(expectedFormat))
+                        {
+                            expectedFormat = DirectXPixelFormat.B8G8R8A8UIntNormalized;
+                        }
+
+                        Assert.AreEqual(expectedFormat, loadedBitmap.Format, "File format: {0}, pixel format: {1}", fileFormat, pixelFormat);
+                    }
+                }
+            }
         }
 
         [TestMethod]

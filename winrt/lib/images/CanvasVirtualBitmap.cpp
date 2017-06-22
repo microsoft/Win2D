@@ -54,7 +54,8 @@ IFACEMETHODIMP CanvasVirtualBitmapFactory::LoadAsyncFromFileNameWithOptionsAndAl
             auto operation = Make<AsyncOperation<CanvasVirtualBitmap>>(
                 [=]
                 {
-                    auto source = CanvasBitmapAdapter::GetInstance()->CreateWicBitmapSource(fileName, true);
+                    auto device = GetCanvasDevice(resourceCreator.Get());
+                    auto source = CanvasBitmapAdapter::GetInstance()->CreateWicBitmapSource(device.Get(), fileName, true);
                     return CanvasVirtualBitmap::CreateNew(resourceCreator, source, options, alphaMode);
                 });
             CheckMakeResult(operation);
@@ -117,7 +118,8 @@ IFACEMETHODIMP CanvasVirtualBitmapFactory::LoadAsyncFromUriWithOptionsAndAlpha(
                     ComPtr<IStream> stream;
                     ThrowIfFailed(CreateStreamOverRandomAccessStream(randomAccessStream.Get(), IID_PPV_ARGS(&stream)));
 
-                    auto source = CanvasBitmapAdapter::GetInstance()->CreateWicBitmapSource(stream.Get(), true);
+                    auto device = GetCanvasDevice(resourceCreator.Get());
+                    auto source = CanvasBitmapAdapter::GetInstance()->CreateWicBitmapSource(device.Get(), stream.Get(), true);
                     return CanvasVirtualBitmap::CreateNew(resourceCreator, source, options, alphaMode);
                 });
             CheckMakeResult(operation);
@@ -168,7 +170,8 @@ IFACEMETHODIMP CanvasVirtualBitmapFactory::LoadAsyncFromStreamWithOptionsAndAlph
                     ComPtr<IStream> stream;
                     ThrowIfFailed(CreateStreamOverRandomAccessStream(randomAccessStream.Get(), IID_PPV_ARGS(&stream)));
                     
-                    auto source = CanvasBitmapAdapter::GetInstance()->CreateWicBitmapSource(stream.Get(), true);
+                    auto device = GetCanvasDevice(resourceCreator.Get());
+                    auto source = CanvasBitmapAdapter::GetInstance()->CreateWicBitmapSource(device.Get(), stream.Get(), true);
                     return CanvasVirtualBitmap::CreateNew(resourceCreator, source, options, alphaMode);
                 });
             CheckMakeResult(operation);
