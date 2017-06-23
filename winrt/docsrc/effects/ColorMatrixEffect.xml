@@ -11,7 +11,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
   </assembly>
   <members>
     
-    <member name="T:Microsoft.Graphics.Canvas.Effects.ColorMatrixEffect" NoComposition="true">
+    <member name="T:Microsoft.Graphics.Canvas.Effects.ColorMatrixEffect">
       <summary>
         Alters the colors of an image by applying a 5x4 transform matrix.
       </summary>

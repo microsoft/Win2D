@@ -11,7 +11,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
   </assembly>
   <members>
   
-    <member name="T:Microsoft.Graphics.Canvas.Effects.LuminanceToAlphaEffect" NoComposition="true">
+    <member name="T:Microsoft.Graphics.Canvas.Effects.LuminanceToAlphaEffect">
       <summary>
         Generates an image with alpha channel set to the luminance of the source image, and 
         color channels set to 0. Use it to make a semitransparent overlay based on the 

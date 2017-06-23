@@ -11,7 +11,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
   </assembly>
   <members>
   
-    <member name="T:Microsoft.Graphics.Canvas.Effects.BorderEffect" NoComposition="true">
+    <member name="T:Microsoft.Graphics.Canvas.Effects.BorderEffect">
       <summary>
         Extends an image to infinite size, specifying whether areas beyond its original 
         extents are filled by repeating pixels from the edges of the image, 

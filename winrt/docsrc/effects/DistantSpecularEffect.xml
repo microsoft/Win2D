@@ -11,12 +11,12 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
   </assembly>
   <members>
   
-    <member name="T:Microsoft.Graphics.Canvas.Effects.DistantSpecularEffect" NoComposition="true">
+    <member name="T:Microsoft.Graphics.Canvas.Effects.DistantSpecularEffect">
       <summary>
         Lighting effect creates an image that appears to be a reflective surface. This 
         effect uses the alpha channel as a height map, and lights it with an infinitely 
         distant light source (such as the sun) applying the specular portion of the Phong 
-        lighting model.
+        lighting model. Note, height map is not supported with Composition.
       </summary>
       <remarks>
         <p>This Windows Runtime type corresponds to the 
@@ -45,14 +45,14 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="P:Microsoft.Graphics.Canvas.Effects.DistantSpecularEffect.LightColorHdr">
       <summary>High-dynamic-range color of the incoming light. Default value white.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.Effects.DistantSpecularEffect.HeightMapScale">
+    <member name="P:Microsoft.Graphics.Canvas.Effects.DistantSpecularEffect.HeightMapScale" NoComposition="true">
       <summary>Height map scale factor in the Z direction. Default value 1.</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.Effects.DistantSpecularEffect.HeightMapKernelSize">
+    <member name="P:Microsoft.Graphics.Canvas.Effects.DistantSpecularEffect.HeightMapKernelSize" NoComposition="true">
       <summary>Size of the Sobel filter kernel used to convert the input heightmap to 
                surface normal vectors. Default value (1,1).</summary>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.Effects.DistantSpecularEffect.HeightMapInterpolationMode">
+    <member name="P:Microsoft.Graphics.Canvas.Effects.DistantSpecularEffect.HeightMapInterpolationMode" NoComposition="true">
       <summary>Interpolation mode used to filter the height map.
                Default value <see cref="F:Microsoft.Graphics.Canvas.CanvasImageInterpolation.Linear"/>.</summary>
     </member>
