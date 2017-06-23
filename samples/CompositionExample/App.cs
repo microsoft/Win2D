@@ -23,6 +23,8 @@ namespace CompositionExample
     {
         CoreWindow window;
         Compositor compositor;
+        ContainerVisual rootVisual;
+        CompositionTarget compositionTarget;
         CanvasDevice device;
         CompositionGraphicsDevice compositionGraphicsDevice;
 
@@ -86,11 +88,12 @@ namespace CompositionExample
             drawingSurfaceRenderer.Visual.Offset = new Vector3(-drawingSurfaceRenderer.Size.ToVector2(), 0);
             swapChainRenderer.Visual.Offset = new Vector3((float)window.Bounds.Width, (float)window.Bounds.Height, 0);
             
-            var rootVisual = compositor.CreateContainerVisual();
+            rootVisual = compositor.CreateContainerVisual();
             rootVisual.Children.InsertAtTop(swapChainRenderer.Visual);
             rootVisual.Children.InsertAtTop(drawingSurfaceRenderer.Visual);
 
-            compositor.CreateTargetForCurrentView().Root = rootVisual;
+            compositionTarget = compositor.CreateTargetForCurrentView();
+            compositionTarget.Root = rootVisual;
 
             var ignoredTask = UpdateVisualsLoop();
         }
