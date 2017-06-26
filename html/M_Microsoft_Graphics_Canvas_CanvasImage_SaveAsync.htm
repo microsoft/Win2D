@@ -17,6 +17,11 @@
       saved - for example, it may be an effect or a command list.  SaveAsync
       will take care of this automatically and create whatever temporary render
       targets are required.
+    </p><p>
+      To save an image using a high dynamic range (HDR) pixel format, use
+      <a href="M_Microsoft_Graphics_Canvas_CanvasImage_SaveAsync_2.htm">SaveAsync(ICanvasImage, Rect, Single, ICanvasResourceCreator, IRandomAccessStream, CanvasBitmapFileFormat, Single, CanvasBufferPrecision)</a> with
+      <a href="T_Microsoft_Graphics_Canvas_CanvasBitmapFileFormat.htm">JpegXR</a> format and a suitable
+      <a href="T_Microsoft_Graphics_Canvas_CanvasBufferPrecision.htm">CanvasBufferPrecision</a>.
     </p></div><div class="collapsibleAreaRegion"><span class="collapsibleRegionTitle" onclick="SectionExpandCollapse('ID3RB')" onkeypress="SectionExpandCollapse_CheckKey('ID3RB', event)" tabindex="0"><img id="ID3RBToggle" class="collapseToggle" src="../icons/SectionExpanded.png" />Examples</span></div><div id="ID3RBSection" class="collapsibleSection"><div class="codeSnippetContainer"><div class="codeSnippetContainerTabs"><div id="ID0EAAABA_tab1" class="codeSnippetContainerTabSingle">C#</div></div><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID0EAAABA_copyCode" href="#" class="copyCodeSnippet" onclick="javascript:CopyToClipboard('ID0EAAABA');return false;" title="Copy">Copy</a></div></div><div id="ID0EAAABA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve"><span class="highlight-keyword">async</span> <span class="highlight-keyword">void</span> SaveImage(ICanvasImage image, Rect sourceRectangle)
 {
     <span class="highlight-keyword">var</span> picker = <span class="highlight-keyword">new</span> FileSavePicker();

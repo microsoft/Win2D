@@ -41,7 +41,7 @@
           be the same as, larger, or smaller than a physical pixel.
         </p><p>
           The ratio between pixels and DIPs is determined by DPI:
-        </p><div class="codeSnippetContainer"><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID2EAEAHAAA_copyCode" href="#" class="copyCodeSnippet" onclick="javascript:CopyToClipboard('ID2EAEAHAAA');return false;" title="Copy">Copy</a></div></div><div id="ID2EAEAHAAA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve">pixels = dips * dpi / <span class="highlight-number">96</span></pre></div></div></div><script type="text/javascript">AddLanguageTabSet("ID2EAEAHAAA");</script><p>
+        </p><div class="codeSnippetContainer"><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID2EAEAIAAA_copyCode" href="#" class="copyCodeSnippet" onclick="javascript:CopyToClipboard('ID2EAEAIAAA');return false;" title="Copy">Copy</a></div></div><div id="ID2EAEAIAAA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve">pixels = dips * dpi / <span class="highlight-number">96</span></pre></div></div></div><script type="text/javascript">AddLanguageTabSet("ID2EAEAIAAA");</script><p>
           When DPI is 96, pixels and DIPs are the same. When using higher DPI, a single 
           DIP may correspond to more than one pixel (or parts of pixels in the common 
           case where DPI is not an exact multiple of 96).
@@ -104,20 +104,20 @@
         </p><p>
           To make both these usage patterns easy, Win2D provides two types of constructor 
           overload:
-        </p><div class="codeSnippetContainer"><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID2EAEAEAAA_copyCode" href="#" class="copyCodeSnippet" onclick="javascript:CopyToClipboard('ID2EAEAEAAA');return false;" title="Copy">Copy</a></div></div><div id="ID2EAEAEAAA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve">CanvasRenderTarget(ICanvasResourceCreator, width, height, dpi)
-CanvasRenderTarget(ICanvasResourceCreatorWithDpi, width, height)</pre></div></div></div><script type="text/javascript">AddLanguageTabSet("ID2EAEAEAAA");</script><p>
+        </p><div class="codeSnippetContainer"><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID2EAEAFAAA_copyCode" href="#" class="copyCodeSnippet" onclick="javascript:CopyToClipboard('ID2EAEAFAAA');return false;" title="Copy">Copy</a></div></div><div id="ID2EAEAFAAA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve">CanvasRenderTarget(ICanvasResourceCreator, width, height, dpi)
+CanvasRenderTarget(ICanvasResourceCreatorWithDpi, width, height)</pre></div></div></div><script type="text/javascript">AddLanguageTabSet("ID2EAEAFAAA");</script><p>
           The <a href="T_Microsoft_Graphics_Canvas_ICanvasResourceCreator.htm">ICanvasResourceCreator</a> 
           interface is implemented by CanvasDevice as well as the Win2D controls. Because 
           a device does not have any specific DPI of its own, you must explicitly specify 
           the DPI when creating a rendertarget from one. For instance to create a default 
           DPI rendertarget where DIPs and pixels will always be the same thing:
-        </p><div class="codeSnippetContainer"><div class="codeSnippetContainerTabs"><div id="ID2EACAEAAA_tab1" class="codeSnippetContainerTabSingle">C#</div></div><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID2EACAEAAA_copyCode" href="#" class="copyCodeSnippet" onclick="javascript:CopyToClipboard('ID2EACAEAAA');return false;" title="Copy">Copy</a></div></div><div id="ID2EACAEAAA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve"><span class="highlight-keyword">const</span> <span class="highlight-keyword">float</span> defaultDpi = <span class="highlight-number">96</span>;
-<span class="highlight-keyword">var</span> rtWithFixedDpi = <span class="highlight-keyword">new</span> CanvasRenderTarget(canvasDevice, width, height, defaultDpi);</pre></div></div></div><script type="text/javascript">AddLanguageTabSet("ID2EACAEAAA");</script><p><a href="T_Microsoft_Graphics_Canvas_ICanvasResourceCreatorWithDpi.htm">ICanvasResourceCreatorWithDpi</a> 
+        </p><div class="codeSnippetContainer"><div class="codeSnippetContainerTabs"><div id="ID2EACAFAAA_tab1" class="codeSnippetContainerTabSingle">C#</div></div><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID2EACAFAAA_copyCode" href="#" class="copyCodeSnippet" onclick="javascript:CopyToClipboard('ID2EACAFAAA');return false;" title="Copy">Copy</a></div></div><div id="ID2EACAFAAA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve"><span class="highlight-keyword">const</span> <span class="highlight-keyword">float</span> defaultDpi = <span class="highlight-number">96</span>;
+<span class="highlight-keyword">var</span> rtWithFixedDpi = <span class="highlight-keyword">new</span> CanvasRenderTarget(canvasDevice, width, height, defaultDpi);</pre></div></div></div><script type="text/javascript">AddLanguageTabSet("ID2EACAFAAA");</script><p><a href="T_Microsoft_Graphics_Canvas_ICanvasResourceCreatorWithDpi.htm">ICanvasResourceCreatorWithDpi</a> 
           extends ICanvasResourceCreator by adding a DPI property. This interface is 
           implemented by the Win2D controls, and makes it easy to create a rendertarget 
           which will automatically inherit the same DPI as the control it was created 
           from:
-        </p><div class="codeSnippetContainer"><div class="codeSnippetContainerTabs"><div id="ID2EAAAEAAA_tab1" class="codeSnippetContainerTabSingle">C#</div></div><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID2EAAAEAAA_copyCode" href="#" class="copyCodeSnippet" onclick="javascript:CopyToClipboard('ID2EAAAEAAA');return false;" title="Copy">Copy</a></div></div><div id="ID2EAAAEAAA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve"><span class="highlight-keyword">var</span> rtWithSameDpiAsDisplay = <span class="highlight-keyword">new</span> CanvasRenderTarget(canvasControl, width, height);</pre></div></div></div><script type="text/javascript">AddLanguageTabSet("ID2EAAAEAAA");</script></div><div class="collapsibleAreaRegion"><span class="collapsibleRegionTitle" onclick="SectionExpandCollapse('ID7RB')" onkeypress="SectionExpandCollapse_CheckKey('ID7RB', event)" tabindex="0"><img id="ID7RBToggle" class="collapseToggle" src="../icons/SectionExpanded.png" />Bitmap DPI</span></div><div id="ID7RBSection" class="collapsibleSection"><p><a href="T_Microsoft_Graphics_Canvas_CanvasBitmap.htm">CanvasBitmap</a>, 
+        </p><div class="codeSnippetContainer"><div class="codeSnippetContainerTabs"><div id="ID2EAAAFAAA_tab1" class="codeSnippetContainerTabSingle">C#</div></div><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID2EAAAFAAA_copyCode" href="#" class="copyCodeSnippet" onclick="javascript:CopyToClipboard('ID2EAAAFAAA');return false;" title="Copy">Copy</a></div></div><div id="ID2EAAAFAAA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve"><span class="highlight-keyword">var</span> rtWithSameDpiAsDisplay = <span class="highlight-keyword">new</span> CanvasRenderTarget(canvasControl, width, height);</pre></div></div></div><script type="text/javascript">AddLanguageTabSet("ID2EAAAFAAA");</script></div><div class="collapsibleAreaRegion"><span class="collapsibleRegionTitle" onclick="SectionExpandCollapse('ID7RB')" onkeypress="SectionExpandCollapse_CheckKey('ID7RB', event)" tabindex="0"><img id="ID7RBToggle" class="collapseToggle" src="../icons/SectionExpanded.png" />Bitmap DPI</span></div><div id="ID7RBSection" class="collapsibleSection"><p><a href="T_Microsoft_Graphics_Canvas_CanvasBitmap.htm">CanvasBitmap</a>, 
           unlike a rendertarget, does not automatically inherit DPI from a control. The 
           methods for creating and loading bitmaps include overloads to explicitly 
           specify DPI, but if you leave this out, bitmap DPI defaults to 96 regardless of 
@@ -172,7 +172,20 @@ CanvasRenderTarget(ICanvasResourceCreatorWithDpi, width, height)</pre></div></di
           you want. If it's not what you want, you can insert your own instance of 
           <a href="T_Microsoft_Graphics_Canvas_Effects_DpiCompensationEffect.htm">DpiCompensationEffect</a> 
           to customize the behavior.
-        </p></div><div class="collapsibleAreaRegion"><span class="collapsibleRegionTitle" onclick="SectionExpandCollapse('ID10RB')" onkeypress="SectionExpandCollapse_CheckKey('ID10RB', event)" tabindex="0"><img id="ID10RBToggle" class="collapseToggle" src="../icons/SectionExpanded.png" />How to test DPI handling</span></div><div id="ID10RBSection" class="collapsibleSection"><p>
+        </p></div><div class="collapsibleAreaRegion"><span class="collapsibleRegionTitle" onclick="SectionExpandCollapse('ID10RB')" onkeypress="SectionExpandCollapse_CheckKey('ID10RB', event)" tabindex="0"><img id="ID10RBToggle" class="collapseToggle" src="../icons/SectionExpanded.png" />Composition DPI</span></div><div id="ID10RBSection" class="collapsibleSection"><p>
+          The Microsoft.Graphics.Canvas.Composition APIs operate at a lower level than 
+          Win2D XAML controls, so they do not attempt to automatically handle DPI on your 
+          behalf. It is up to you to decide what units you prefer to operate in, and set 
+          whatever transforms are necessary to achieve that as part of your composition 
+          visual tree.
+        </p><p>
+          Windows.UI.Composition APIs such as CreateDrawingSurface always specify sizes 
+          in pixel units. When using Win2D to draw onto a composition surface, you can 
+          specify whatever DPI you want to use when calling 
+          <a href="M_Microsoft_Graphics_Canvas_UI_Composition_CanvasComposition_CreateDrawingSession_2.htm">CreateDrawingSession(CompositionDrawingSurface, Rect, Single)</a>.
+          All drawing performed through the returned CanvasDrawingSession will be scaled 
+          up or down accordingly.
+        </p></div><div class="collapsibleAreaRegion"><span class="collapsibleRegionTitle" onclick="SectionExpandCollapse('ID11RB')" onkeypress="SectionExpandCollapse_CheckKey('ID11RB', event)" tabindex="0"><img id="ID11RBToggle" class="collapseToggle" src="../icons/SectionExpanded.png" />How to test DPI handling</span></div><div id="ID11RBSection" class="collapsibleSection"><p>
           The easiest way to test that your app will do the right thing in response to 
           changing display DPI is to run on Windows 10 and change display settings while 
           the app is running:
