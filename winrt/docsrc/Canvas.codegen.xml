@@ -68,6 +68,9 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     
     <member name="T:Microsoft.Graphics.Canvas.Geometry.CanvasDashStyle">
       <summary>Describes the sequence of dashes, dots, and gaps in a stroke style.</summary>
+      <remarks>
+        If a dash style contains a dash which is zero-length, that dash will only be visible with non-Flat dash caps.
+      </remarks>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.Geometry.CanvasDashStyle.Solid">
       <summary>A solid line with no breaks.</summary>

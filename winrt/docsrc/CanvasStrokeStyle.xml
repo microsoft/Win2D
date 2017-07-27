@@ -22,6 +22,24 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle.#ctor">
       <summary>Initializes a new instance of the CanvasStrokeStyle class.</summary>
+      <remarks>
+        <p>
+          A new stroke style is constructed with the following defaults:
+          <code>            
+            CanvasStrokeStyle defaultStyle = new CanvasStrokeStyle()
+            {
+                StartCap = CanvasCapStyle.Flat,
+                EndCap = CanvasCapStyle.Flat,
+                MiterLimit = 10,
+                DashStyle = CanvasDashStyle.Solid,
+                DashCap = CanvasCapStyle.Square,
+                DashOffset = 0,
+                CustomDashStyle = new float[] { },
+                TransformBehavior = CanvasStrokeTransformBehavior.Normal
+            };
+          </code>
+        </p>
+      </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle.Dispose">
       <summary>Releases all resources used by the CanvasStrokeStyle.</summary>
@@ -64,6 +82,9 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
            the dash pattern is the product of the element value in the array and the stroke width.</p>
         <p>This array must contain an even number of elements.</p>
         <p>This property is initialized to null.</p>
+        <p> If the dash style is configured to contain a dash which is zero-length, that dash will only be visible with
+            a cap style other than Flat.
+        </p>
       </remarks>
     </member>
 
