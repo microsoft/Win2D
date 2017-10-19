@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="Globals">
     <ProjectGuid>{f33c7cb9-5eca-47b7-9393-81e6e8f0bd34}</ProjectGuid>
     <RootNamespace>Canvas.Test</RootNamespace>
@@ -10,7 +10,7 @@
     <AppxPackageIncludePrivateSymbols>true</AppxPackageIncludePrivateSymbols>
     <AppxPackageSigningEnabled>true</AppxPackageSigningEnabled>
     <AppContainerApplication>true</AppContainerApplication>
-    <UnitTestPlatformVersion  Condition="'$(UnitTestPlatformVersion)' == ''">14.0</UnitTestPlatformVersion>
+    <UnitTestPlatformVersion Condition="'$(UnitTestPlatformVersion)' == ''">14.0</UnitTestPlatformVersion>
     <TestApplication>True</TestApplication>
     <CppWindowsStoreUnitTestLibraryType>true</CppWindowsStoreUnitTestLibraryType>
     <ApplicationType>Windows Store</ApplicationType>

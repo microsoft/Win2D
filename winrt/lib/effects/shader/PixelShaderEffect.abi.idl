@@ -117,7 +117,10 @@ namespace Microsoft.Graphics.Canvas.Effects
     {
         interface Windows.Foundation.Collections.IVector<Windows.Foundation.Collections.IKeyValuePair<HSTRING, IInspectable*>*>;
 
+#if NTDDI_VERSION < NTDDI_WIN10_RS2
         interface Windows.Foundation.IReference<NUMERICS.Vector2>;
+#endif
+
         interface Windows.Foundation.IReference<NUMERICS.Vector4>;
         interface Windows.Foundation.IReference<NUMERICS.Matrix3x2>;
 
