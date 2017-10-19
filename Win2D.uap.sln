@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26228.12
+VisualStudioVersion = 15.0.27004.2002
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "winrt", "winrt", "{0F212400-0A8B-4E26-9BA8-CE7165FF8717}"
 EndProject
@@ -15,6 +15,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Inc", "Inc", "{CEA2F017-5D5
 		winrt\inc\ComArray.h = winrt\inc\ComArray.h
 		winrt\inc\Constants.h = winrt\inc\Constants.h
 		winrt\inc\ErrorHandling.h = winrt\inc\ErrorHandling.h
+		winrt\inc\GeometryInterop.h = winrt\inc\GeometryInterop.h
 		winrt\inc\LifespanTracker.h = winrt\inc\LifespanTracker.h
 		winrt\inc\Map.h = winrt\inc\Map.h
 		winrt\inc\Nullable.h = winrt\inc\Nullable.h
@@ -107,26 +108,26 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CompositionExample", "Sampl
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		winrt\test.managed\Shared\winrt.test.managed.Shared.projitems*{70fb7b71-d56c-4bf1-9282-27aa58043cc0}*SharedItemsImports = 4
-		winrt\lib\winrt.lib.Shared.vcxitems*{26b85b6e-3520-42b5-adb6-971010cc99fa}*SharedItemsImports = 4
-		winrt\test.nativecomponent\winrt.test.nativecomponent.Shared.vcxitems*{9936ffef-2686-4df6-8d64-2bfa78b1222a}*SharedItemsImports = 4
-		winrt\test.nativecomponent\winrt.test.nativecomponent.Shared.vcxitems*{7c0a8506-002b-4169-989f-ea5723dad6fb}*SharedItemsImports = 9
-		winrt\test.managed\Shared\winrt.test.managed.Shared.projitems*{ef6dbc39-a50d-47c4-b790-d459d4904d84}*SharedItemsImports = 13
-		samples\CoreWindowExample\Shared\CoreWindowExample.Shared.projitems*{fd83bf4b-d82c-463a-be38-84f8b9374ccf}*SharedItemsImports = 13
-		winrt\test.external\Shared\winrt.test.external.Shared.vcxitems*{1e7bd769-cf5a-4d05-a2f7-761372c24746}*SharedItemsImports = 9
+		winrt\test.internal\winrt.test.internal.shared.vcxitems*{063ab629-aadf-4749-b259-ab815b1aeb01}*SharedItemsImports = 4
 		winrt\lib\winrt.lib.Shared.vcxitems*{1574c4de-318f-4555-b72e-97532f720a13}*SharedItemsImports = 9
-		winrt\dll\winrt.dll.Shared.vcxitems*{d3d2a425-69d2-4f8c-98dc-760abc25e535}*SharedItemsImports = 9
+		winrt\test.external\Shared\winrt.test.external.Shared.vcxitems*{1e7bd769-cf5a-4d05-a2f7-761372c24746}*SharedItemsImports = 9
+		winrt\lib\winrt.lib.Shared.vcxitems*{26b85b6e-3520-42b5-adb6-971010cc99fa}*SharedItemsImports = 4
+		samples\CoreWindowExample\Shared\CoreWindowExample.Shared.projitems*{3aa4fcff-99f7-4746-957f-79303e9a8952}*SharedItemsImports = 4
+		winrt\test.managed\Shared\winrt.test.managed.Shared.projitems*{70fb7b71-d56c-4bf1-9282-27aa58043cc0}*SharedItemsImports = 4
+		samples\ExampleGallery\BackgroundTask\Shared\ExampleGallery.BackgroundTask.Shared.projitems*{75a7926b-b1ae-4806-b332-9561bfe0edf9}*SharedItemsImports = 13
+		winrt\test.nativecomponent\winrt.test.nativecomponent.Shared.vcxitems*{7c0a8506-002b-4169-989f-ea5723dad6fb}*SharedItemsImports = 9
 		winrt\dll\winrt.dll.Shared.vcxitems*{8cf21e5d-e0a2-4fe7-8e2b-a025cf52dcfb}*SharedItemsImports = 4
 		samples\ExampleGallery\Direct3DInterop\Shared\ExampleGallery.Direct3DInterop.Shared.vcxitems*{8e486bca-fe9b-4f99-9d2e-a277905e84eb}*SharedItemsImports = 9
-		samples\CoreWindowExample\Shared\CoreWindowExample.Shared.projitems*{3aa4fcff-99f7-4746-957f-79303e9a8952}*SharedItemsImports = 4
+		winrt\test.nativecomponent\winrt.test.nativecomponent.Shared.vcxitems*{9936ffef-2686-4df6-8d64-2bfa78b1222a}*SharedItemsImports = 4
 		samples\ExampleGallery\Direct3DInterop\Shared\ExampleGallery.Direct3DInterop.Shared.vcxitems*{a81f96d0-4924-40e3-a463-3cb9ee55aa93}*SharedItemsImports = 4
-		samples\ExampleGallery\Shared\ExampleGallery.Shared.projitems*{f6f2b4ad-0b11-4919-bf8b-08de6fe76170}*SharedItemsImports = 13
-		samples\ExampleGallery\BackgroundTask\Shared\ExampleGallery.BackgroundTask.Shared.projitems*{d77eb5be-c840-4ade-b4f6-1ba9512c4768}*SharedItemsImports = 4
-		winrt\test.internal\winrt.test.internal.shared.vcxitems*{063ab629-aadf-4749-b259-ab815b1aeb01}*SharedItemsImports = 4
 		winrt\test.internal\winrt.test.internal.shared.vcxitems*{b038b2a3-0ff2-4313-a0db-b7b59dc2dc4c}*SharedItemsImports = 9
+		winrt\dll\winrt.dll.Shared.vcxitems*{d3d2a425-69d2-4f8c-98dc-760abc25e535}*SharedItemsImports = 9
+		samples\ExampleGallery\BackgroundTask\Shared\ExampleGallery.BackgroundTask.Shared.projitems*{d77eb5be-c840-4ade-b4f6-1ba9512c4768}*SharedItemsImports = 4
+		winrt\test.managed\Shared\winrt.test.managed.Shared.projitems*{ef6dbc39-a50d-47c4-b790-d459d4904d84}*SharedItemsImports = 13
 		winrt\test.external\Shared\winrt.test.external.Shared.vcxitems*{f33c7cb9-5eca-47b7-9393-81e6e8f0bd34}*SharedItemsImports = 4
 		samples\ExampleGallery\Shared\ExampleGallery.Shared.projitems*{f6867923-3a6e-4102-b546-e3a6a5f8ec36}*SharedItemsImports = 4
-		samples\ExampleGallery\BackgroundTask\Shared\ExampleGallery.BackgroundTask.Shared.projitems*{75a7926b-b1ae-4806-b332-9561bfe0edf9}*SharedItemsImports = 13
+		samples\ExampleGallery\Shared\ExampleGallery.Shared.projitems*{f6f2b4ad-0b11-4919-bf8b-08de6fe76170}*SharedItemsImports = 13
+		samples\CoreWindowExample\Shared\CoreWindowExample.Shared.projitems*{fd83bf4b-d82c-463a-be38-84f8b9374ccf}*SharedItemsImports = 13
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|ARM = Debug|ARM
@@ -297,18 +298,6 @@ Global
 		{D77EB5BE-C840-4ADE-B4F6-1BA9512C4768}.Release|Win32.Build.0 = Release|Win32
 		{D77EB5BE-C840-4ADE-B4F6-1BA9512C4768}.Release|x64.ActiveCfg = Release|x64
 		{D77EB5BE-C840-4ADE-B4F6-1BA9512C4768}.Release|x64.Build.0 = Release|x64
-		{4EDD6AD1-0BD4-40CF-8D02-53597B1A76BA}.Debug|ARM.ActiveCfg = Debug|Any CPU
-		{4EDD6AD1-0BD4-40CF-8D02-53597B1A76BA}.Debug|ARM.Build.0 = Debug|Any CPU
-		{4EDD6AD1-0BD4-40CF-8D02-53597B1A76BA}.Debug|Win32.ActiveCfg = Debug|Any CPU
-		{4EDD6AD1-0BD4-40CF-8D02-53597B1A76BA}.Debug|Win32.Build.0 = Debug|Any CPU
-		{4EDD6AD1-0BD4-40CF-8D02-53597B1A76BA}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{4EDD6AD1-0BD4-40CF-8D02-53597B1A76BA}.Debug|x64.Build.0 = Debug|Any CPU
-		{4EDD6AD1-0BD4-40CF-8D02-53597B1A76BA}.Release|ARM.ActiveCfg = Release|Any CPU
-		{4EDD6AD1-0BD4-40CF-8D02-53597B1A76BA}.Release|ARM.Build.0 = Release|Any CPU
-		{4EDD6AD1-0BD4-40CF-8D02-53597B1A76BA}.Release|Win32.ActiveCfg = Release|Any CPU
-		{4EDD6AD1-0BD4-40CF-8D02-53597B1A76BA}.Release|Win32.Build.0 = Release|Any CPU
-		{4EDD6AD1-0BD4-40CF-8D02-53597B1A76BA}.Release|x64.ActiveCfg = Release|Any CPU
-		{4EDD6AD1-0BD4-40CF-8D02-53597B1A76BA}.Release|x64.Build.0 = Release|Any CPU
 		{A81F96D0-4924-40E3-A463-3CB9EE55AA93}.Debug|ARM.ActiveCfg = Debug|ARM
 		{A81F96D0-4924-40E3-A463-3CB9EE55AA93}.Debug|ARM.Build.0 = Debug|ARM
 		{A81F96D0-4924-40E3-A463-3CB9EE55AA93}.Debug|Win32.ActiveCfg = Debug|Win32
@@ -379,5 +368,8 @@ Global
 		{A81F96D0-4924-40E3-A463-3CB9EE55AA93} = {81A681BB-9434-420E-8A27-1656AEFDCA4B}
 		{8E486BCA-FE9B-4F99-9D2E-A277905E84EB} = {81A681BB-9434-420E-8A27-1656AEFDCA4B}
 		{60836F00-A727-402B-AFD7-2779675B29A2} = {EC7BD4FF-9DAE-4698-9FDA-244478B0203B}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3A919B3A-1CA3-4987-9FFB-4CE82D981A60}
 	EndGlobalSection
 EndGlobal

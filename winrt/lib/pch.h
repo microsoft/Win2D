@@ -106,6 +106,7 @@
 #include <Vector.h>
 #include <WinStringWrapper.h>
 #include <WinStringBuilder.h>
+#include <GeometryInterop.h>
 
 // Generated from local IDLs
 #include <Microsoft.Graphics.Canvas.h>
