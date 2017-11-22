@@ -25,6 +25,8 @@ import "Windows.UI.Composition.idl";
 #define VERSION NTDDI_WINTHRESHOLD
 #endif
 
+#include "..\inc\GeometryInterop.h"
+
 #define STANDARD_ATTRIBUTES version(VERSION), marshaling_behavior(agile), threading(both)
 
 #include "..\..\numerics\WinRT\WinRTNumerics.idl"

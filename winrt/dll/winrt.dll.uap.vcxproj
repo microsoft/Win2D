@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="Globals">
     <ProjectGuid>{8cf21e5d-e0a2-4fe7-8e2b-a025cf52dcfb}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
@@ -12,10 +12,8 @@
     <ApplicationTypeRevision>10.0</ApplicationTypeRevision>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
   </PropertyGroup>
-
   <Import Project="..\..\build\Win2D.cpp.props" />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
-
   <PropertyGroup Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
   </PropertyGroup>
@@ -36,9 +34,7 @@
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
-
   <Import Project="winrt.dll.Shared.vcxitems" Label="Shared" />
-
   <ItemGroup>
     <ProjectReference Include="..\lib\winrt.lib.uap.vcxproj">
       <Project>{26b85b6e-3520-42b5-adb6-971010cc99fa}</Project>
@@ -55,8 +51,6 @@
       <AdditionalIncludeDirectories>..\..\obj;$(EtwDirectory)</AdditionalIncludeDirectories>
     </ResourceCompile>
   </ItemGroup>
-
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <Import Project="..\..\build\Win2D.cpp.targets" />
-
 </Project>

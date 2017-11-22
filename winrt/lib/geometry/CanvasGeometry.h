@@ -11,11 +11,25 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     using namespace ::Microsoft::WRL;
     using namespace Numerics;
 
-    class CanvasGeometry : RESOURCE_WRAPPER_RUNTIME_CLASS(
-        ID2D1Geometry,
-        CanvasGeometry,
-        ICanvasGeometry,
+#ifndef ENABLE_GEOMETRY_INTEROP
+#define CANVAS_GEOMETRY_BASE \
+    RESOURCE_WRAPPER_RUNTIME_CLASS( \
+        ID2D1Geometry, \
+        CanvasGeometry, \
+        ICanvasGeometry, \
         CloakedIid<ICanvasResourceWrapperWithDevice>)
+#else
+#define CANVAS_GEOMETRY_BASE \
+    RESOURCE_WRAPPER_RUNTIME_CLASS( \
+        ID2D1Geometry, \
+        CanvasGeometry, \
+        ICanvasGeometry, \
+        CloakedIid<ICanvasResourceWrapperWithDevice>, \
+        ABI::Windows::Graphics::IGeometrySource2D, \
+        ABI::Windows::Graphics::IGeometrySource2DInterop)
+#endif
+
+    class CanvasGeometry : CANVAS_GEOMETRY_BASE
     {
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_Geometry_CanvasGeometry, BaseTrust);
 
@@ -240,6 +254,17 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         IFACEMETHOD(SendPathTo)(
             ICanvasPathReceiver* streamReader) override;
+
+#ifdef ENABLE_GEOMETRY_INTEROP
+
+        IFACEMETHOD(GetGeometry)(
+            ID2D1Geometry** geometry) override;
+
+        IFACEMETHOD(TryGetGeometryUsingFactory)(
+            ID2D1Factory* factory,
+            ID2D1Geometry** geometry) override;
+
+#endif
 
     private:
         void StrokeImpl(
