@@ -45,8 +45,8 @@
       <MetaDataDir Include="$(WindowsSDK_MetadataPath)" />
     </ItemGroup>
     <ItemGroup Condition="'$(ApplicationTypeRevision)' == '10.0'">
-      <MetaDataDir Include="$(WindowsSDK_MetadataPath)\Windows.Foundation.FoundationContract\2.0.0.0" />
-      <MetaDataDir Include="$(WindowsSDK_MetadataPath)\Windows.Foundation.UniversalApiContract\3.0.0.0" />
+      <MetaDataDir Include="$(WindowsSDK_MetadataPath)\$(WindowsTargetPlatformMinVersion)\Windows.Foundation.FoundationContract\3.0.0.0" />
+      <MetaDataDir Include="$(WindowsSDK_MetadataPath)\$(WindowsTargetPlatformMinVersion)\Windows.Foundation.UniversalApiContract\6.0.0.0" />
     </ItemGroup>
     <Exec Command="$(MdMergeExe) -v @(MetaDataDir -> '-metadata_dir &quot;%(Identity)&quot;', ' ') -o &quot;$(MergedWinmdDirectory)&quot; -i &quot;$(UnmergedWinmdDirectory)&quot; -partial -n:Microsoft.Graphics.Canvas:3" />
   </Target>

@@ -26,25 +26,6 @@ import "Windows.UI.Composition.idl";
 #endif
 
 #include "..\inc\GeometryInterop.h"
-#ifdef ENABLE_GEOMETRY_INTEROP
-#ifndef NEED_TO_DEFINE_GEOMETRY_INTEROP_INTERFACES
-
-#import "Windows.Graphics.idl"
-
-#else
-
-namespace Windows.Graphics
-{
-    [uuid(CAFF7902-670C-4181-A624-DA977203B845)]
-    [version(VERSION)]
-    interface IGeometrySource2D : IInspectable
-    {
-    };
-}
-
-#endif
-#endif
-
 
 #define STANDARD_ATTRIBUTES version(VERSION), marshaling_behavior(agile), threading(both)
 
