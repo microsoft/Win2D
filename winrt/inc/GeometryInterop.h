@@ -10,8 +10,6 @@
 #endif
 #endif
 
-#define ENABLE_GEOMETRY_INTEROP 1
-
 #ifndef __midl
 #ifdef ENABLE_GEOMETRY_INTEROP
 #include "Windows.Graphics.Interop.h"
