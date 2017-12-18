@@ -328,6 +328,7 @@
     <_VsTestPathUnderCommonTools>..\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe</_VsTestPathUnderCommonTools>
     <_VsTest Condition="Exists('$(VS120COMNTOOLS)$(_VsTestPathUnderCommonTools)')">$(VS120COMNTOOLS)$(_VsTestPathUnderCommonTools)</_VsTest>
     <_VsTest Condition="Exists('$(VS140COMNTOOLS)$(_VsTestPathUnderCommonTools)')">$(VS140COMNTOOLS)$(_VsTestPathUnderCommonTools)</_VsTest>
+    <_VsTest Condition="Exists('$(VS150COMNTOOLS)$(_VsTestPathUnderCommonTools)')">$(VS150COMNTOOLS)$(_VsTestPathUnderCommonTools)</_VsTest>
     <VsTest>"$([System.IO.Path]::GetFullPath('$(_VsTest)'))"</VsTest>
   </PropertyGroup>
 
