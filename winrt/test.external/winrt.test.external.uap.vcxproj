@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{f33c7cb9-5eca-47b7-9393-81e6e8f0bd34}</ProjectGuid>
+    <RootNamespace>Canvas.Test</RootNamespace>
+    <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
+    <MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>
+    <DefaultLanguage>en-US</DefaultLanguage>
+    <AppxPackage>True</AppxPackage>
+    <AppxPackageIncludePrivateSymbols>true</AppxPackageIncludePrivateSymbols>
+    <AppxPackageSigningEnabled>true</AppxPackageSigningEnabled>
+    <AppContainerApplication>true</AppContainerApplication>
+    <UnitTestPlatformVersion  Condition="'$(UnitTestPlatformVersion)' == ''">14.0</UnitTestPlatformVersion>
+    <TestApplication>True</TestApplication>
+    <CppWindowsStoreUnitTestLibraryType>true</CppWindowsStoreUnitTestLibraryType>
+    <ApplicationType>Windows Store</ApplicationType>
+    <ApplicationTypeRevision>10.0</ApplicationTypeRevision>
+    <AppxBundle>Never</AppxBundle>
+  </PropertyGroup>
+  <Import Project="..\..\build\Win2D.cpp.props" />
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <PropertyGroup>
+    <PackageCertificateKeyFile>$(AssetDir)TemporaryKey.pfx</PackageCertificateKeyFile>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(VCInstallDir)UnitTest\include\UWP;..\Inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <WarningLevel>Level4</WarningLevel>
+    </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>$(VCInstallDir)UnitTest\lib\UWP;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>dxguid.lib;d3d11.lib;d2d1.lib;dwrite.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="CanvasBrushTests.cpp" />
+    <ClCompile Include="CanvasCommandListTests.cpp" />
+    <ClCompile Include="CanvasControlTests.cpp" />
+    <ClCompile Include="CanvasCreateResourcesEventArgsTests.cpp" />
+    <ClCompile Include="CanvasDeviceTests.cpp" />
+    <ClCompile Include="CanvasBitmapTests.cpp" />
+    <ClCompile Include="CanvasSvgAttributeTests.cpp" />
+    <ClCompile Include="CanvasVirtualBitmapTests.cpp" />
+    <ClCompile Include="CanvasEffectsTests.cpp" />
+    <ClCompile Include="CanvasDrawingSessionTests.cpp" />
+    <ClCompile Include="CanvasGeometryTests.cpp" />
+    <ClCompile Include="CanvasGradientMeshTests.cpp" />
+    <ClCompile Include="CanvasImageTests.cpp" />
+    <ClCompile Include="CanvasImageBrushTests.cpp" />
+    <ClCompile Include="CanvasImageSourceTests.cpp" />
+    <ClCompile Include="CanvasRenderTargetTests.cpp" />
+    <ClCompile Include="CanvasStrokeStyleTests.cpp" />
+    <ClCompile Include="CanvasSwapChainTests.cpp" />
+    <ClCompile Include="CanvasFontFaceTests.cpp" />
+    <ClCompile Include="CanvasFontSetTests.cpp" />
+    <ClCompile Include="CanvasSvgDocumentTests.cpp" />
+    <ClCompile Include="CanvasTextAnalyzerTests.cpp" />
+    <ClCompile Include="CanvasTextFormatTests.cpp" />
+    <ClCompile Include="CanvasTextLayoutTests.cpp" />
+    <ClCompile Include="CanvasTextRendererTests.cpp" />
+    <ClCompile Include="CanvasTextRenderingParametersTests.cpp" />
+    <ClCompile Include="CanvasTypographyTests.cpp" />
+    <ClCompile Include="ColorManagementProfileTests.cpp" />
+    <ClCompile Include="DebugLayer.cpp" />
+    <ClCompile Include="Direct3DSurfaceInteropTests.cpp" />
+    <ClCompile Include="DWriteExperiments.cpp" />
+    <ClCompile Include="EffectTransferTable3DTests.cpp" />
+    <ClCompile Include="Helpers.cpp" />
+    <ClCompile Include="Matrix5x4Test.cpp" />
+    <ClCompile Include="RefCountTests.cpp" />
+    <ClInclude Include="DebugLayer.h" />
+    <ClInclude Include="targetver.h" />
+    <ClInclude Include="Helpers.h" />
+    <ClCompile Include="EnumTests.cpp" />
+    <ClCompile Include="DeviceTests.cpp" />
+    <ClCompile Include="PolymorphicBitmapTests.cpp" />
+    <ClCompile Include="SurfaceTests.cpp" />
+    <ClCompile Include="pch.cpp">
+      <PrecompiledHeader>Create</PrecompiledHeader>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="$(AssetDir)imageTiger.jpg">
+      <Link>Assets\imageTiger.jpg</Link>
+    </Image>
+    <Image Include="$(AssetDir)HighDpiGrid.png">
+      <Link>Assets\HighDpiGrid.png</Link>
+    </Image>
+    <Image Include="Images\x.bmp">
+      <Link>Images\x.bmp</Link>
+    </Image>
+    <Image Include="Images\x.ico">
+      <Link>Images\x.ico</Link>
+    </Image>
+    <Image Include="Images\x.tif">
+      <Link>Images\x.tif</Link>
+    </Image>
+    <Image Include="Images\x_1x1.DDS" />
+    <Image Include="Images\x_2x2.DDS" />
+    <Image Include="Images\x_3x3.DDS" />
+    <Image Include="Images\x_4x4.DDS" />
+    <Image Include="Images\x_4x5.DDS" />
+    <Image Include="Images\x_5x4.DDS" />
+    <Image Include="Images\x_B8G8R8A8_UNORM.DDS" />
+    <Image Include="Images\x_BC1_UNORM.DDS" />
+    <Image Include="Images\x_BC1_UNORM_SRGB.DDS" />
+    <Image Include="Images\x_BC2_UNORM.DDS" />
+    <Image Include="Images\x_BC2_UNORM_SRGB.DDS" />
+    <Image Include="Images\x_BC3_UNORM.DDS" />
+    <Image Include="Images\x_BC3_UNORM_SRGB.DDS" />
+    <Image Include="Images\x_D3DFMT_ARGB.DDS" />
+    <Image Include="Images\x_DXT1.DDS" />
+    <Image Include="Images\x_DXT2.DDS" />
+    <Image Include="Images\x_DXT3.DDS" />
+    <Image Include="Images\x_DXT4.DDS" />
+    <Image Include="Images\x_DXT5.DDS" />
+    <Image Include="Images\x_R8G8B8A8_UNORM.DDS" />
+    <Font Include="$(AssetDir)Symbols.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="pch.h" />
+    <ClInclude Include="UnitTestApp.xaml.h">
+      <DependentUpon>UnitTestApp.xaml</DependentUpon>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="UnitTestApp.xaml">
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="UnitTestApp.xaml.cpp">
+      <DependentUpon>UnitTestApp.xaml</DependentUpon>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <SDKReference Include="CppUnitTestFramework.Universal, Version=$(UnitTestPlatformVersion)" />
+    <SDKReference Include="TestPlatform.Universal, Version=$(UnitTestPlatformVersion)" />
+  </ItemGroup>
+  <ItemGroup>
+    <AppxManifest Include="winrt.test.external.uap.appxmanifest">
+      <SubType>Designer</SubType>
+    </AppxManifest>
+    <None Include="$(AssetDir)TemporaryKey.pfx" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="$(AssetDir)UnitTestLogo.scale-100.png">
+      <Link>Assets\UnitTestLogo.scale-100.png</Link>
+    </Image>
+    <Image Include="$(AssetDir)UnitTestSmallLogo44x44.scale-100.png">
+      <Link>Assets\UnitTestSmallLogo44x44.scale-100.png</Link>
+    </Image>
+    <Image Include="$(AssetDir)UnitTestSplashScreen.scale-100.png">
+      <Link>Assets\UnitTestSplashScreen.scale-100.png</Link>
+    </Image>
+    <Image Include="$(AssetDir)UnitTestStoreLogo.scale-100.png">
+      <Link>Assets\UnitTestStoreLogo.scale-100.png</Link>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\dll\winrt.dll.uap.vcxproj">
+      <Project>{8cf21e5d-e0a2-4fe7-8e2b-a025cf52dcfb}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets" />
+  <Import Project="$(VCInstallDir)\..\Common7\IDE\CommonExtensions\Microsoft\TestWindow\Microsoft.TestTools.Cpp.targets" Condition="Exists('$(VCInstallDir)\..\Common7\IDE\CommonExtensions\Microsoft\TestWindow\Microsoft.TestTools.Cpp.targets')" />
+  <Import Project="..\..\build\Win2D.cpp.targets" />
+</Project>

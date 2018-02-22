@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "../test.external/Shared/MockDxgiDevice.h"
+#include "../test.external/MockDxgiDevice.h"
 #include "stubs/StubDxgiAdapter.h"
 
 namespace canvas

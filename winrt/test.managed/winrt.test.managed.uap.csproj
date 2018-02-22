@@ -17,7 +17,7 @@
     <UnitTestPlatformVersion Condition="'$(UnitTestPlatformVersion)' == ''">14.0</UnitTestPlatformVersion>
     <EnableDotNetNativeCompatibleProfile>true</EnableDotNetNativeCompatibleProfile>
   </PropertyGroup>
-  <Import Project="..\..\..\build\Win2D.cs.props" />
+  <Import Project="..\..\build\Win2D.cs.props" />
   <PropertyGroup>
     <PackageCertificateKeyFile>$(AssetDir)TemporaryKey.pfx</PackageCertificateKeyFile>
   </PropertyGroup>
@@ -128,18 +128,29 @@
     <Compile Include="UnitTestApp.xaml.cs">
       <DependentUpon>UnitTestApp.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)CanvasBitmapTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CanvasImageTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DebugLayer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DpiTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)EffectTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)GraphicsInterop.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)PathReceiver.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)PixelFormatTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)PixelShaderEffectTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ReflectionTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utils.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)VectorInterop.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\dll\winrt.dll.uap.vcxproj">
+    <ProjectReference Include="..\dll\winrt.dll.uap.vcxproj">
       <Project>{8cf21e5d-e0a2-4fe7-8e2b-a025cf52dcfb}</Project>
       <Name>winrt.dll.uap</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\test.nativecomponent\winrt.test.nativecomponent.uap.vcxproj">
+    <ProjectReference Include="..\test.nativecomponent\winrt.test.nativecomponent.uap.vcxproj">
       <Project>{9936ffef-2686-4df6-8d64-2bfa78b1222a}</Project>
       <Name>winrt.test.nativecomponent.uap</Name>
     </ProjectReference>
   </ItemGroup>
-  <Import Project="..\Shared\winrt.test.managed.Shared.projitems" Label="Shared" />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>
@@ -151,5 +162,5 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-  <Import Project="..\..\..\build\Win2D.cs.targets" />
+  <Import Project="..\..\build\Win2D.cs.targets" />
 </Project>
