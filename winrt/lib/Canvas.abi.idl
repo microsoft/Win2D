@@ -6,28 +6,22 @@ import "inspectable.idl";
 import "Windows.Foundation.idl";
 import "Windows.UI.idl";
 import "Windows.UI.Xaml.Media.Imaging.idl";
-
-#ifndef WINDOWS_PHONE
 import "Windows.Graphics.Printing.idl";
-#endif
+import "Windows.UI.Input.Inking.idl";
+import "Windows.UI.Composition.idl";
 
 #include <sdkddkver.h>
 
-#if WINVER > _WIN32_WINNT_WINBLUE
-import "Windows.UI.Input.Inking.idl";
-import "Windows.UI.Composition.idl";
-#endif
-
-#if WINVER <= _WIN32_WINNT_WINBLUE
-#define VERSION NTDDI_WINBLUE
-#define USE_LOCALLY_EMULATED_UAP_APIS
-#else
 #define VERSION NTDDI_WINTHRESHOLD
-#endif
 
 #define STANDARD_ATTRIBUTES version(VERSION), marshaling_behavior(agile), threading(both)
 
-#include "..\..\numerics\WinRT\WinRTNumerics.idl"
+#define NUMERICS Windows.Foundation.Numerics
+
+cpp_quote("#if defined(__cplusplus)")
+cpp_quote("namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Numerics = ::ABI::Windows::Foundation::Numerics; } } } }")
+cpp_quote("#endif")
+
 #include "Canvas.codegen.idl"
 #include "directx\WinRTDirectXCommon.idl"
 #include "directx\WinRTDirect3D11.idl"

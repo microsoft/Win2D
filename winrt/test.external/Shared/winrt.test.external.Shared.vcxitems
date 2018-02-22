@@ -17,7 +17,6 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\numerics\WinRT\tests\WinRTNumericsTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasBrushTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasCommandListTests.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CanvasControlTests.cpp" />
