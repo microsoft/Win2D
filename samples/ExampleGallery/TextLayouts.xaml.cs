@@ -17,10 +17,6 @@ using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
-#if !WINDOWS_UWP
-using Vector2 = Microsoft.Graphics.Canvas.Numerics.Vector2;
-#endif
-
 namespace ExampleGallery
 {
     public sealed partial class TextLayouts : UserControl

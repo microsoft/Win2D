@@ -72,20 +72,6 @@ namespace ExampleGallery
 
         static IconInfo[] requiredIcons =
         {
-            new IconInfo("Windows",      "Logo.scale-100.png",            150,  150)  { BottomPadding = 0.25f },
-            new IconInfo("Windows",      "Wide310x150Logo.scale-100.png", 310,  150)  { BottomPadding = 0.25f },
-            new IconInfo("Windows",      "SmallLogo.scale-100.png",       30,   30),
-            new IconInfo("Windows",      "SplashScreen.scale-100.png",    620,  300)  { BottomPadding = 0.1f, TransparentBackground = true },
-            new IconInfo("Windows",      "StoreLogo.scale-100.png",       50,   50),
-            new IconInfo("Windows",      "BadgeLogo.scale-100.png",       24,   24)   { TransparentBackground = true, Monochrome = true },
-
-            new IconInfo("WindowsPhone", "Logo.scale-240.png",            360,  360)  { BottomPadding = 0.25f },
-            new IconInfo("WindowsPhone", "WideLogo.scale-240.png",        744,  360)  { BottomPadding = 0.25f },
-            new IconInfo("WindowsPhone", "SmallLogo.scale-240.png",       106,  106),
-            new IconInfo("WindowsPhone", "Square71x71Logo.scale-240.png", 170,  170),
-            new IconInfo("WindowsPhone", "SplashScreen.scale-240.png",    1152, 1920) { TransparentBackground = true},
-            new IconInfo("WindowsPhone", "StoreLogo.scale-240.png",       120,  120),
-
             new IconInfo("UAP",          "Logo.scale-100.png",            150,  150)  { BottomPadding = 0.25f },
             new IconInfo("UAP",          "WideLogo.scale-100.png",        310,  150)  { BottomPadding = 0.25f },
             new IconInfo("UAP",          "SmallLogo.scale-100.png",       44,   44),

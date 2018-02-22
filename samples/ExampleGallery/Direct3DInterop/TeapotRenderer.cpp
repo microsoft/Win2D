@@ -6,7 +6,6 @@
 #include "TeapotRenderer.h"
 
 using namespace ExampleGallery::Direct3DInterop;
-using namespace Windows::Foundation::Numerics;
 
 
 TeapotRenderer::TeapotRenderer(ICanvasResourceCreator^ resourceCreator)
@@ -33,27 +32,21 @@ TeapotRenderer::TeapotRenderer(ICanvasResourceCreator^ resourceCreator)
 }
 
 
-void TeapotRenderer::SetWorld(Matrix4x4 value)
+void TeapotRenderer::SetWorld(float4x4 value)
 {
-    float4x4 temp(value);
-
-    m_basicEffect->SetWorld(XMLoadFloat4x4(&temp));
+    m_basicEffect->SetWorld(XMLoadFloat4x4(&value));
 }
 
 
-void TeapotRenderer::SetView(Matrix4x4 value)
+void TeapotRenderer::SetView(float4x4 value)
 {
-    float4x4 temp(value);
-
-    m_basicEffect->SetView(XMLoadFloat4x4(&temp));
+    m_basicEffect->SetView(XMLoadFloat4x4(&value));
 }
 
 
-void TeapotRenderer::SetProjection(Matrix4x4 value)
+void TeapotRenderer::SetProjection(float4x4 value)
 {
-    float4x4 temp(value);
-
-    m_basicEffect->SetProjection(XMLoadFloat4x4(&temp));
+    m_basicEffect->SetProjection(XMLoadFloat4x4(&value));
 }
 
 

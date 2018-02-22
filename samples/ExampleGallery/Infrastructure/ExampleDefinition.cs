@@ -47,14 +47,10 @@ namespace ExampleGallery
             new ExampleDefinition("Burning Text", typeof(BurningTextExample)),
             new ExampleDefinition("Mandelbrot", typeof(Mandelbrot)),
             new ExampleDefinition("Game of Life", typeof(GameOfLife)),
-#if WINDOWS_UWP
             new ExampleDefinition("Camera Effect", typeof(CameraEffectExample)),
             new ExampleDefinition("Video Effect", typeof(BasicVideoEffectExample)),
-#endif
             new ExampleDefinition("Particle System", typeof(ParticleExample)),
-#if WINDOWS_UWP
             new ExampleDefinition("Sprite Sheets", typeof(SpriteSheets)),
-#endif
             new ExampleDefinition("Vector Art", typeof(VectorArt)),
 
             // Show capabilities of the API.
@@ -62,16 +58,12 @@ namespace ExampleGallery
             new ExampleDefinition("Custom Effects", typeof(CustomEffects)),
             new ExampleDefinition("Geometry Operations", typeof(GeometryOperations)),
             new ExampleDefinition("Layers", typeof(LayersExample)),
-#if WINDOWS_UWP
             new ExampleDefinition("Ink", typeof(InkExample)),
-#endif
             new ExampleDefinition("Shapes", typeof(ShapesExample)),
             new ExampleDefinition("Stroke Styles", typeof(StrokeStyles)),
             new ExampleDefinition("Arc Options", typeof(ArcOptions)),          
-#if WINDOWS_UWP
             new ExampleDefinition("SVG", typeof(SvgExample)),
             new ExampleDefinition("Gradient Mesh", typeof(GradientMeshExample)),
-#endif
             new ExampleDefinition("Histogram", typeof(HistogramExample)),
             new ExampleDefinition("Text Layouts", typeof(TextLayouts)),
             new ExampleDefinition("Text Outlines", typeof(TextOutlines)),
@@ -87,15 +79,11 @@ namespace ExampleGallery
             new ExampleDefinition("Custom Control", typeof(CustomControlExample)),
             new ExampleDefinition("Virtual Control", typeof(VirtualControlExample)),
             new ExampleDefinition("Animated Control", typeof(AnimatedControlExample)),
-#if WINDOWS_UWP
             new ExampleDefinition("Virtual Bitmap", typeof(VirtualBitmapExample)),
-#endif
             new ExampleDefinition("Direct3D Interop", typeof(Direct3DInteropExample)),
             new ExampleDefinition("Keyboard Input", typeof(KeyboardInputExample)),
             new ExampleDefinition("Background Task", typeof(BackgroundTaskExample)),
-#if !WINDOWS_PHONE_APP
             new ExampleDefinition("Printing", typeof(PrintingExample)),
-#endif
 
             // Tests for internal use by the Win2D team.
             new ExampleDefinition("Image Source Update Region", typeof(ImageSourceUpdateRegion)),
@@ -104,9 +92,7 @@ namespace ExampleGallery
             new ExampleDefinition("Control Transforms", typeof(ControlTransforms)),
             new ExampleDefinition("DrawImage Emulations", typeof(DrawImageEmulations)),
             new ExampleDefinition("Bitmap Rotation", typeof(BitmapRotation)),
-#if WINDOWS_UWP
             new ExampleDefinition("SpriteBatch Performance", typeof(SpriteBatchPerf)),
-#endif
             new ExampleDefinition("Developer Tools", typeof(DeveloperTools)),
             new ExampleDefinition("About", typeof(About)),
         };

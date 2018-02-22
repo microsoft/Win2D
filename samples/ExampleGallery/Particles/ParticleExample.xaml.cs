@@ -60,11 +60,7 @@ namespace ExampleGallery
 
             if (args.Reason == CanvasCreateResourcesReason.FirstTime)
             {
-                bool spriteBatchSupported = false;
-
-#if WINDOWS_UWP
-                spriteBatchSupported = CanvasSpriteBatch.IsSupported(sender.Device);
-#endif
+                bool spriteBatchSupported = CanvasSpriteBatch.IsSupported(sender.Device);
 
                 UseSpriteBatch = spriteBatchSupported;
                 if (PropertyChanged != null)

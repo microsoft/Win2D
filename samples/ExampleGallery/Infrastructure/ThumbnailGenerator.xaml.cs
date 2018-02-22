@@ -2,14 +2,10 @@
 //
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
-#if WINDOWS_UWP
-using Windows.Graphics.DirectX;
-#else
-using Microsoft.Graphics.Canvas.DirectX;
-#endif
-
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Effects;
+using Microsoft.Graphics.Canvas.UI;
+using Microsoft.Graphics.Canvas.UI.Xaml;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -20,7 +16,9 @@ using System.Reflection;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Windows.Foundation;
+using Windows.Graphics.DirectX;
 using Windows.Storage;
+using Windows.Storage.Streams;
 using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.Popups;
@@ -28,9 +26,6 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
-using Windows.Storage.Streams;
-using Microsoft.Graphics.Canvas.UI.Xaml;
-using Microsoft.Graphics.Canvas.UI;
 
 namespace ExampleGallery
 {

@@ -76,18 +76,13 @@ namespace ExampleGallery
             switch (BackgroundExecutionManager.GetAccessStatus())
             {
                 case BackgroundAccessStatus.Unspecified:
-#if WINDOWS_UWP
-                // DeniedByUser is new in OS version 14393.
                 case BackgroundAccessStatus.DeniedByUser:
 
                 // Denied was marked deprecated in 14393, but we must still handle it in case we are run on an older OS.
                 // Therefore we temporarily disable the deprecated API warning.
 #pragma warning disable 618
-#endif
                 case BackgroundAccessStatus.Denied:
-#if WINDOWS_UWP
 #pragma warning restore 618
-#endif
                     return false;
 
                 default:

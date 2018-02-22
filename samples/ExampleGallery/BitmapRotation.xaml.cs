@@ -3,14 +3,11 @@
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
 using Microsoft.Graphics.Canvas;
-using Microsoft.Graphics.Canvas.Effects;
-using Microsoft.Graphics.Canvas.Text;
 using Microsoft.Graphics.Canvas.UI;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using System;
-using System.Numerics;
-using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.Foundation;
 using Windows.Storage;
@@ -26,11 +23,6 @@ namespace ExampleGallery
         public BitmapRotation()
         {
             this.InitializeComponent();
-
-#if !WINDOWS_UWP
-            BitmapTypesList.Visibility = Visibility.Collapsed;
-            BitmapTypesLabel.Visibility = Visibility.Collapsed;
-#endif
         }
 
         ICanvasImage[] testBitmaps;
@@ -58,9 +50,7 @@ namespace ExampleGallery
         public enum BitmapType
         {
             CanvasBitmap,
-#if WINDOWS_UWP
             CanvasVirtualBitmap
-#endif
         }
     
         public enum BitmapSourceOption
@@ -95,20 +85,16 @@ namespace ExampleGallery
                     {
                         if (bitmapType == BitmapType.CanvasBitmap)
                             newTestBitmaps[i] = await CanvasBitmap.LoadAsync(sender, stream);
-#if WINDOWS_UWP
                         else
                             newTestBitmaps[i] = await CanvasVirtualBitmap.LoadAsync(sender, stream);
-#endif
                     }
                 }
                 else
                 {
                     if (bitmapType == BitmapType.CanvasBitmap)
                         newTestBitmaps[i] = await CanvasBitmap.LoadAsync(sender, pathName);
-#if WINDOWS_UWP
                     else
                         newTestBitmaps[i] = await CanvasVirtualBitmap.LoadAsync(sender, pathName);
-#endif
                 }
             }
 
@@ -159,13 +145,11 @@ namespace ExampleGallery
                         {
                             ds.DrawImage(bitmap, cellRect);
                         }
-#if WINDOWS_UWP
                         else
                         {
                             var virtualBitmap = image as CanvasVirtualBitmap;
                             ds.DrawImage(virtualBitmap, cellRect, virtualBitmap.Bounds);
                         }
-#endif
                     }
                     else
                     {

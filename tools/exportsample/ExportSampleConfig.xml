@@ -12,7 +12,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
   <Sample Source="samples\CoreWindowExample"  Destination="CoreWindowExample" />
   <Sample Source="samples\ExampleGallery"     Destination="ExampleGallery" />
   <Sample Source="samples\SimpleSample"       Destination="SimpleSample"  />
-  <Sample Source="samples\CompositionExample" Destination="CompositionExample\UAP" />
+  <Sample Source="samples\CompositionExample" Destination="CompositionExample" />
 
   <Property Name="AssetDir" Value="build\assets\" />
 

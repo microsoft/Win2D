@@ -70,11 +70,7 @@ namespace ExampleGallery
             Vector2 translate = baseScale * sender.Size.ToVector2() * new Vector2(-0.75f, -0.5f);
 
             mandelbrotEffect.Properties["scale"] = scale;
-#if WINDOWS_UWP
             mandelbrotEffect.Properties["translate"] = translate;
-#else
-            mandelbrotEffect.Properties["translate"] = (Microsoft.Graphics.Canvas.Numerics.Vector2)translate;
-#endif
 
             // Draw the effect to whatever regions of the CanvasVirtualControl have been invalidated.
             foreach (var region in args.InvalidatedRegions)

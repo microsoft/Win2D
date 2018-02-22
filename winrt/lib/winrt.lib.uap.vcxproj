@@ -473,9 +473,6 @@
     <None Include="$(MSBuildThisFileDirectory)effects\generated\OpacityEffect.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)effects\generated\TintEffect.abi.idl" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectCapability Include="SourceItemsFromImports" />
-  </ItemGroup>
   <Import Project="$(MSBuildThisFileDir)..\..\build\midlrt.targets" />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <Import Project="..\..\build\Win2D.cpp.targets" />

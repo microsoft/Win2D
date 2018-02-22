@@ -55,11 +55,6 @@ namespace ExampleGallery
 
         async Task<StorageFolder> PickOutputFolder(string title)
         {
-#if WINDOWS_PHONE_APP
-            await new MessageDialog("Not supported on Windows Phone. Please run on a Windows PC instead.").ShowAsync();
-
-            return null;
-#else
             var folderPicker = new FolderPicker
             {
                 CommitButtonText = title,
@@ -68,7 +63,6 @@ namespace ExampleGallery
             };
 
             return await folderPicker.PickSingleFolderAsync();
-#endif
         }
 
         public CanvasDebugLevel DebugLevel

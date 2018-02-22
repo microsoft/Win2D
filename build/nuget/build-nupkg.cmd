@@ -33,19 +33,6 @@ IF %ERRORLEVEL% NEQ 0 (
 
 SET /p VERSION=<VERSION
 
-SET NO81=
-SET NOUAP=
-
-IF "%1" == "no81" (
-    SHIFT
-    SET NO81=1
-)
-
-IF "%1" == "nouap" (
-    SHIFT
-    SET NOUAP=1
-)
-
 IF "%1" == "signed" (
     SHIFT
     SET BIN=bin\signed
@@ -70,15 +57,7 @@ SET NUGET_ARGS=^
     -version %VERSION% ^
     -properties bin=%BIN%;LicenseUrl=%LICENSE_URL%;RequireLicenseAcceptance=%REQUIRE_LICENSE_ACCEPTANCE%
 
-IF NOT "%NO81%" == "1" (
-    nuget pack Win2D.win81.nuspec %NUGET_ARGS%
-    IF %ERRORLEVEL% NEQ 0 GOTO END
-)
-
-IF NOT "%NOUAP%" == "1" (
-    nuget pack Win2D.uwp.nuspec %NUGET_ARGS%
-    IF %ERRORLEVEL% NEQ 0 GOTO END
-)
+nuget pack Win2D.uwp.nuspec %NUGET_ARGS%
 
 :END
 

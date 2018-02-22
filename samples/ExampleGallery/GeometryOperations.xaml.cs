@@ -216,13 +216,7 @@ namespace ExampleGallery
                 float animationDistanceThisFrame = CurrentContourTracingAnimation == ContourTracingAnimationOption.Slow ? 1.0f : 20.0f;
                 currentDistanceOnContourPath = (currentDistanceOnContourPath + animationDistanceThisFrame) % totalDistanceOnContourPath;
 
-#if WINDOWS_UWP
-                Vector2 outTangent;
-#else
-                Microsoft.Graphics.Canvas.Numerics.Vector2 outTangent;
-#endif
-                pointOnContourPath = combinedGeometry.ComputePointOnPath(currentDistanceOnContourPath, out outTangent);
-                tangentOnContourPath = outTangent;
+                pointOnContourPath = combinedGeometry.ComputePointOnPath(currentDistanceOnContourPath, out tangentOnContourPath);
             }
         }
 

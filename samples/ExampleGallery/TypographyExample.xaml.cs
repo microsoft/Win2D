@@ -4,7 +4,6 @@
 
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Brushes;
-using Microsoft.Graphics.Canvas.Geometry;
 using Microsoft.Graphics.Canvas.Text;
 using Microsoft.Graphics.Canvas.UI;
 using Microsoft.Graphics.Canvas.UI.Xaml;
@@ -16,12 +15,6 @@ using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-
-#if !WINDOWS_UWP
-using Vector2 = Microsoft.Graphics.Canvas.Numerics.Vector2;
-using Matrix3x2 = Microsoft.Graphics.Canvas.Numerics.Matrix3x2;
-
-#endif
 
 namespace ExampleGallery
 {

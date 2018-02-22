@@ -31,9 +31,7 @@ namespace ExampleGallery
             DefaultDpiBitmap,
             HighDpiBitmap,
             LowDpiBitmap,
-#if WINDOWS_UWP
             VirtualBitmap,
-#endif
         }
 
         public enum IntermediateMode
@@ -73,12 +71,6 @@ namespace ExampleGallery
         const float defaultDpi = 96;
         const float highDpi = 192;
         const float lowDpi = 48;
-
-
-#if !WINDOWS_UWP
-        // dummy CanvasVirtualBitmap type to simplify some of the ifdefs
-        class CanvasVirtualBitmap { }
-#endif
 
 
         // We need two copies of all these graphics resources, one for the main CanvasDevice used on the
@@ -447,7 +439,6 @@ namespace ExampleGallery
 
         ICanvasImage GetSourceBitmap(PerDeviceResources resources)
         {
-#if WINDOWS_UWP
             if (CurrentSource == SourceMode.VirtualBitmap)
             {
                 var virtualBitmap = resources.VirtualBitmap;
@@ -455,7 +446,6 @@ namespace ExampleGallery
                 resources.AddMessage("VirtualBitmap (dpi: 96, size: {0}, pixels: {1},{2} ->\n", virtualBitmap.Size, pixels.Width, pixels.Height);
                 return resources.VirtualBitmap;
             }
-#endif
 
             CanvasBitmap bitmap;
 
@@ -525,17 +515,12 @@ namespace ExampleGallery
 
         static async Task<CanvasVirtualBitmap> CreateTestVirtualBitmap(ICanvasResourceCreatorWithDpi resourceCreator)
         {
-#if WINDOWS_UWP
             var canvasBitmap = CreateTestBitmap(resourceCreator, 96);
 
             var stream = new InMemoryRandomAccessStream();
             await canvasBitmap.SaveAsync(stream, CanvasBitmapFileFormat.Png);
 
             return await CanvasVirtualBitmap.LoadAsync(resourceCreator, stream);
-#else
-            await Task.Yield(); // prevent warning about no await in async method
-            return new CanvasVirtualBitmap();
-#endif
         }
 
 

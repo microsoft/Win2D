@@ -722,8 +722,8 @@ public:
         virtual float get() { return m_dpi; }
     }
 
-    virtual float ConvertPixelsToDips(int pixels) { Assert::Fail(L"Not implemented"); return 0; }
-    virtual int   ConvertDipsToPixels(float dips, CanvasDpiRounding roundingBehavior) { Assert::Fail(L"Not implemented"); return 0; }
+    virtual float ConvertPixelsToDips(int pixels) { Assert::Fail(L"Not implemented"); }
+    virtual int   ConvertDipsToPixels(float dips, CanvasDpiRounding roundingBehavior) { Assert::Fail(L"Not implemented"); }
 };
 
 

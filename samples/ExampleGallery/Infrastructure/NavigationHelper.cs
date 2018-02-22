@@ -4,10 +4,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
 using Windows.System;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
@@ -76,26 +72,15 @@ namespace ExampleGallery
         {
             this.Page = page;
 
-#if WINDOWS_APP
-            this.HasHardwareButtons = false;
-#else
             this.HasHardwareButtons = true;
-#endif
 
             // When this page is part of the visual tree make two changes:
             // 1) Map application view state to visual state for the page
             // 2) Handle hardware navigation requests
             this.Page.Loaded += (sender, e) =>
             {
-#if WINDOWS_PHONE_APP
-                Windows.Phone.UI.Input.HardwareButtons.BackPressed += HardwareButtons_BackPressed;
-#endif
-
-#if WINDOWS_UWP
                 Windows.UI.Core.SystemNavigationManager.GetForCurrentView().BackRequested += NavigationHelper_BackRequested;
-#endif
 
-#if !WINDOWS_PHONE_APP
                 // Keyboard and mouse navigation only apply when occupying the entire window
                 if (this.Page.ActualHeight == Window.Current.Bounds.Height &&
                     this.Page.ActualWidth == Window.Current.Bounds.Width)
@@ -106,26 +91,17 @@ namespace ExampleGallery
                     Window.Current.CoreWindow.PointerPressed +=
                         this.CoreWindow_PointerPressed;
                 }
-#endif
             };
 
             // Undo the same changes when the page is no longer visible
             this.Page.Unloaded += (sender, e) =>
             {
-#if WINDOWS_PHONE_APP
-                Windows.Phone.UI.Input.HardwareButtons.BackPressed -= HardwareButtons_BackPressed;
-#endif
-
-#if WINDOWS_UWP
                 Windows.UI.Core.SystemNavigationManager.GetForCurrentView().BackRequested -= NavigationHelper_BackRequested;
-#endif
 
-#if !WINDOWS_PHONE_APP
                 Window.Current.CoreWindow.Dispatcher.AcceleratorKeyActivated -=
                 CoreDispatcher_AcceleratorKeyActivated;
                 Window.Current.CoreWindow.PointerPressed -=
                     this.CoreWindow_PointerPressed;
-#endif
             };
         }
 
@@ -225,23 +201,6 @@ namespace ExampleGallery
             if (this.Frame != null && this.Frame.CanGoForward) this.Frame.GoForward();
         }
 
-#if WINDOWS_PHONE_APP
-        /// <summary>
-        /// Invoked when the hardware back button is pressed. For Windows Phone only.
-        /// </summary>
-        /// <param name="sender">Instance that triggered the event.</param>
-        /// <param name="e">Event data describing the conditions that led to the event.</param>
-        private void HardwareButtons_BackPressed(object sender, Windows.Phone.UI.Input.BackPressedEventArgs e)
-        {
-            if (this.GoBackCommand.CanExecute(null))
-            {
-                e.Handled = true;
-                this.GoBackCommand.Execute(null);
-            }
-        }
-#endif
-
-#if WINDOWS_UWP
         private void NavigationHelper_BackRequested(object sender, BackRequestedEventArgs e)
         {
             if (this.GoBackCommand.CanExecute(null))
@@ -250,9 +209,7 @@ namespace ExampleGallery
                 this.GoBackCommand.Execute(null);
             }
         }
-#endif
 
-#if !WINDOWS_PHONE_APP
         /// <summary>
         /// Invoked on every keystroke, including system keys such as Alt key combinations, when
         /// this page is active and occupies the entire window.  Used to detect keyboard navigation
@@ -324,7 +281,6 @@ namespace ExampleGallery
                 if (forwardPressed) this.GoForwardCommand.Execute(null);
             }
         }
-#endif
 
 #endregion
 
@@ -355,9 +311,7 @@ namespace ExampleGallery
         /// property provides the group to be displayed.</param>
         public void OnNavigatedTo(NavigationEventArgs e)
         {
-#if WINDOWS_UWP
             Windows.UI.Core.SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = CanGoBack() ? AppViewBackButtonVisibility.Visible : AppViewBackButtonVisibility.Collapsed;
-#endif
 
             var frameState = SuspensionManager.SessionStateForFrame(this.Frame);
             this._pageKey = "Page-" + this.Frame.BackStackDepth;

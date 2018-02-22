@@ -27,9 +27,7 @@ namespace ExampleGallery
     {
         LetterAttack.Game game;
 
-#if WINDOWS_PHONE_APP || WINDOWS_UWP
         InputPane inputPane;
-#endif
 
         public KeyboardInputExample()
         {
@@ -42,7 +40,6 @@ namespace ExampleGallery
             // Register for keyboard events
             Window.Current.CoreWindow.KeyDown += KeyDown_UIThread;
 
-#if WINDOWS_PHONE_APP || WINDOWS_UWP
             var keyboardCaps = new Windows.Devices.Input.KeyboardCapabilities();
             if (keyboardCaps.KeyboardPresent == 0)
             {
@@ -52,18 +49,15 @@ namespace ExampleGallery
                 inputPane.Showing += inputPane_Showing;
                 inputPane.Hiding += inputPane_Hiding;
             }
-#endif
         }
 
         private void animatedControl_PointerPressed(object sender, PointerRoutedEventArgs e)
         {
-#if WINDOWS_PHONE_APP || WINDOWS_UWP
             // Bring the on-screen keyboard back up when the user taps on the screen.
             if (inputPane != null)
             {
                 inputPane.TryShow();
             }
-#endif
         }
 
         private void control_Unloaded(object sender, RoutedEventArgs e)
@@ -71,14 +65,12 @@ namespace ExampleGallery
             // Unregister keyboard events
             Window.Current.CoreWindow.KeyDown -= KeyDown_UIThread;
 
-#if WINDOWS_PHONE_APP || WINDOWS_UWP
             if (inputPane != null)
             {
                 inputPane.Showing -= inputPane_Showing;
                 inputPane.Hiding -= inputPane_Hiding;
                 inputPane.TryHide();
             }
-#endif
 
             // Explicitly remove references to allow the Win2D controls to get garbage collected
             animatedControl.RemoveFromVisualTree();

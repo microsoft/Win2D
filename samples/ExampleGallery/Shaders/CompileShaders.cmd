@@ -37,7 +37,7 @@ goto END
 	exit /b
 
 :WRONG_COMMAND_PROMPT
-echo Please run from a Developer Command Prompt for VS2015.
+echo Please run from a Developer Command Prompt for VS2017.
 
 :END
 popd

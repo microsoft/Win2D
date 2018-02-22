@@ -12,7 +12,7 @@
       <Configuration>Debug</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
-    <ProjectConfiguration Include="Debug|x64" Condition="'$(ApplicationType)' != 'Windows Phone'">
+    <ProjectConfiguration Include="Debug|x64">
       <Configuration>Debug</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
@@ -24,24 +24,22 @@
       <Configuration>Release</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
-    <ProjectConfiguration Include="Release|x64" Condition="'$(ApplicationType)' != 'Windows Phone'">
+    <ProjectConfiguration Include="Release|x64">
       <Configuration>Release</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
 
   <PropertyGroup Label="Configuration">
-    <PlatformToolset Condition="'$(ApplicationType)' == 'Windows Store' And '$(ApplicationTypeRevision)' == '8.1'">v120</PlatformToolset>
-    <PlatformToolset Condition="'$(ApplicationType)' == 'Windows Store' And '$(ApplicationTypeRevision)' == '10.0'">v140</PlatformToolset>
-    <PlatformToolset Condition="'$(ApplicationType)' == 'Windows Phone'">v120_wp81</PlatformToolset>
+    <PlatformToolset Condition="'$(ApplicationType)' == 'Windows Store' And '$(ApplicationTypeRevision)' == '10.0'">v141</PlatformToolset>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(TargetPlatformIdentifier)' == 'UAP'">
+  <PropertyGroup>
     <WindowsTargetPlatformVersion>10.0.15063.0</WindowsTargetPlatformVersion>
     <WindowsTargetPlatformMinVersion>10.0.10240.0</WindowsTargetPlatformMinVersion>
   </PropertyGroup>
 
-  <ItemDefinitionGroup Condition="'$(TargetPlatformIdentifier)' == 'UAP'">
+  <ItemDefinitionGroup>
     <ClCompile>
       <AdditionalOptions>/DNTDDI_VERSION=0x0A000003 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>

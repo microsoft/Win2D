@@ -10,16 +10,9 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 using Windows.Foundation;
-using Windows.Globalization;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
-
-#if !WINDOWS_UWP
-using Vector2 = Microsoft.Graphics.Canvas.Numerics.Vector2;
-using Matrix3x2 = Microsoft.Graphics.Canvas.Numerics.Matrix3x2;
-#endif
 
 namespace ExampleGallery
 {

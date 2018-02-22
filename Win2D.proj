@@ -10,13 +10,10 @@
 
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="12.0" DefaultTargets="Build">
 
-  <!-- Parameters that can be configured by the caller, eg. "msbuild Win2D.proj /p:BuildPhone=false" -->
+  <!-- Parameters that can be configured by the caller, eg. "msbuild Win2D.proj /p:BuildTests=false" -->
   <PropertyGroup>
     <BuildPlatforms>Win32;x64;ARM;AnyCPU</BuildPlatforms>
     <BuildConfigurations>Debug;Release</BuildConfigurations>
-    <BuildWindows>true</BuildWindows>
-    <BuildPhone>true</BuildPhone>
-    <BuildUAP>true</BuildUAP>
     <BuildTests>true</BuildTests>
     <BuildTools>true</BuildTools>
     <BuildDocs>true</BuildDocs>
@@ -24,40 +21,12 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <Has81Sdk Condition="'$(registry:HKEY_LOCAL_MACHINE\Software\Microsoft\Windows Kits\Installed Roots@KitsRoot81)' != ''">true</Has81Sdk>
-    <Has10Sdk Condition="'$(registry:HKEY_LOCAL_MACHINE\Software\Microsoft\Windows Kits\Installed Roots@KitsRoot10)' != ''">true</Has10Sdk>
-    <RunningFrom2017Prompt Condition="'$(VisualStudioVersion)' &gt;= '15.0'">true</RunningFrom2017Prompt>
     <ShouldRunUAPTests>false</ShouldRunUAPTests>
     <ShouldRunUAPTests Condition="'$(registry:HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion@CurrentBuildNumber)' &gt;= '10000'">true</ShouldRunUAPTests>
   </PropertyGroup>
 
-  <!-- Disable building targets when the SDK isn't installed -->
-
-  <PropertyGroup Condition="'$(Has81Sdk)' != 'true' and $(BuildWindows)">
-    <BuildWindows>false</BuildWindows>
-    <SkippedBuildWindows>true</SkippedBuildWindows>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Has81Sdk)' != 'true' and $(BuildPhone)">
-    <BuildPhone>false</BuildPhone>
-    <SkippedBuildPhone>true</SkippedBuildPhone>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="('$(Has10Sdk)' != 'true' or '$(RunningFrom2017Prompt)' != 'true') and $(BuildUAP)">
-    <BuildUAP>false</BuildUAP>
-    <SkippedBuildUAP>true</SkippedBuildUAP>
-  </PropertyGroup>
-
   <!-- Set default platforms for each project type -->
   <ItemDefinitionGroup>
-    <WindowsProject>
-      <Platforms>Win32;x64;ARM</Platforms>
-      <BinDir>Windows</BinDir>
-    </WindowsProject>
-    <PhoneProject>
-      <Platforms>Win32;ARM</Platforms>
-      <BinDir>Phone</BinDir>
-    </PhoneProject>
     <UAPProject>
       <Platforms>Win32;x64;ARM</Platforms>
       <BinDir>UAP</BinDir>
@@ -69,95 +38,34 @@
   </ItemDefinitionGroup>
 
 
-  <!-- Windows projects implementing the Canvas API -->
-  <ItemGroup Condition="$(BuildWindows)">
-    <WindowsProject Include="winrt\lib\winrt.lib.Windows.vcxproj" />
-    <WindowsProject Include="winrt\dll\winrt.dll.Windows.vcxproj" />
-    <WindowsProject Include="numerics\DotNet\DotNetNumerics.Windows.csproj" />
-  </ItemGroup>
-
-  <!-- Windows Phone projects implementing the Canvas API -->
-  <ItemGroup Condition="$(BuildPhone)">
-    <PhoneProject Include="winrt\lib\winrt.lib.WindowsPhone.vcxproj" />
-    <PhoneProject Include="winrt\dll\winrt.dll.WindowsPhone.vcxproj" />
-    <PhoneProject Include="numerics\DotNet\DotNetNumerics.WindowsPhone.csproj" />
-  </ItemGroup>
-
-  <!-- UAP projects implementing the Canvas API -->
-  <ItemGroup Condition="$(BuildUAP)">
+  <!-- Projects implementing the Canvas API -->
+  <ItemGroup>
     <UAPProject Include="winrt\lib\winrt.lib.uap.vcxproj" />
     <UAPProject Include="winrt\dll\winrt.dll.uap.vcxproj" />
   </ItemGroup>
 
-  <!-- Windows test projects -->
-  <ItemGroup Condition="$(BuildWindows) and $(BuildTests)">
-    <WindowsProject Include="winrt\test.internal\winrt.test.internal.Windows.vcxproj">
-      <Platforms>Win32;x64</Platforms>
-      <AutomatedTests>desktop</AutomatedTests>
-    </WindowsProject>
-    <WindowsProject Include="winrt\test.external\Windows\winrt.test.external.Windows.vcxproj">
-      <AutomatedTests>store</AutomatedTests>
-    </WindowsProject>
-    <WindowsProject Include="winrt\test.nativecomponent\winrt.test.nativecomponent.Windows.vcxproj" />
-    <WindowsProject Include="winrt\test.managed\Windows\winrt.test.managed.Windows.csproj">
-      <AutomatedTests>store</AutomatedTests>
-    </WindowsProject>
-    <WindowsProject Include="samples\SimpleSample\Windows\SimpleSample.Windows.csproj" />
-    <WindowsProject Include="samples\CoreWindowExample\Windows\CoreWindowExample.Windows.csproj" />
-    <WindowsProject Include="samples\ExampleGallery\Direct3DInterop\Windows\ExampleGallery.Direct3DInterop.Windows.vcxproj">
-      <BuildInParallel>false</BuildInParallel>
-    </WindowsProject>
-    <WindowsProject Include="samples\ExampleGallery\BackgroundTask\Windows\ExampleGallery.BackgroundTask.Windows.csproj" />
-    <WindowsProject Include="samples\ExampleGallery\Windows\ExampleGallery.Windows.csproj" />
-    <WindowsProject Include="numerics\Cpp\tests\CppNumericsTests.Windows.vcxproj">
-      <AutomatedTests>store</AutomatedTests>
-    </WindowsProject>
-    <WindowsProject Include="numerics\DotNet\tests\Windows\DotNetNumericsTests.Windows.csproj">
-      <AutomatedTests>store</AutomatedTests>
-    </WindowsProject>
-    <WindowsProject Include="numerics\Cpp\perftest\CppNumericsPerfTest.vcxproj">
-      <Platforms>Win32;x64</Platforms>
-    </WindowsProject>
-  </ItemGroup>
-
-  <!-- Windows Phone test projects -->
-  <ItemGroup Condition="$(BuildPhone) and $(BuildTests)">
-    <PhoneProject Include="winrt\test.external\WindowsPhone\winrt.test.external.WindowsPhone.vcxproj" />
-    <PhoneProject Include="winrt\test.nativecomponent\winrt.test.nativecomponent.WindowsPhone.vcxproj" />
-    <PhoneProject Include="winrt\test.managed\WindowsPhone\winrt.test.managed.WindowsPhone.csproj" />
-    <PhoneProject Include="samples\SimpleSample\WindowsPhone\SimpleSample.WindowsPhone.csproj" />
-    <PhoneProject Include="samples\CoreWindowExample\WindowsPhone\CoreWindowExample.WindowsPhone.csproj" />
-    <PhoneProject Include="samples\ExampleGallery\Direct3DInterop\WindowsPhone\ExampleGallery.Direct3DInterop.WindowsPhone.vcxproj">
-      <BuildInParallel>false</BuildInParallel>
-    </PhoneProject>
-    <PhoneProject Include="samples\ExampleGallery\BackgroundTask\WindowsPhone\ExampleGallery.BackgroundTask.WindowsPhone.csproj"/>
-    <PhoneProject Include="samples\ExampleGallery\WindowsPhone\ExampleGallery.WindowsPhone.csproj"/>
-    <PhoneProject Include="numerics\Cpp\tests\CppNumericsTests.WindowsPhone.vcxproj" />
-    <PhoneProject Include="numerics\DotNet\tests\WindowsPhone\DotNetNumericsTests.WindowsPhone.csproj" />
-  </ItemGroup>
-
-  <!-- UAP test projects -->
-  <ItemGroup Condition="$(BuildUAP) and $(BuildTests)">
+  <!-- Test projects -->
+  <ItemGroup Condition="$(BuildTests)">
     <UAPProject Include="winrt\test.internal\winrt.test.internal.uap.vcxproj">
       <Platforms>Win32;x64</Platforms>
       <AutomatedTests Condition="$(ShouldRunUAPTests)">desktop</AutomatedTests>
     </UAPProject>
-    <UAPProject Include="winrt\test.external\UAP\winrt.test.external.uap.vcxproj">
+    <UAPProject Include="winrt\test.external\winrt.test.external.uap.vcxproj">
       <Platforms>Win32;x64</Platforms>
       <AutomatedTests Condition="$(ShouldRunUAPTests)">store</AutomatedTests>
     </UAPProject>
     <UAPProject Include="winrt\test.nativecomponent\winrt.test.nativecomponent.uap.vcxproj" />
-    <UAPProject Include="winrt\test.managed\UAP\winrt.test.managed.uap.csproj">
+    <UAPProject Include="winrt\test.managed\winrt.test.managed.uap.csproj">
       <AutomatedTests Condition="$(ShouldRunUAPTests)">store</AutomatedTests>
     </UAPProject>
-    <UAPProject Include="samples\SimpleSample\UAP\SimpleSample.uap.csproj" />
-    <UAPProject Include="samples\CoreWindowExample\UAP\CoreWindowExample.uap.csproj" />
+    <UAPProject Include="samples\SimpleSample\SimpleSample.uap.csproj" />
+    <UAPProject Include="samples\CoreWindowExample\CoreWindowExample.uap.csproj" />
     <UAPProject Include="samples\CompositionExample\CompositionExample.csproj" />
-    <UAPProject Include="samples\ExampleGallery\Direct3DInterop\UAP\ExampleGallery.Direct3DInterop.uap.vcxproj">
+    <UAPProject Include="samples\ExampleGallery\Direct3DInterop\ExampleGallery.Direct3DInterop.uap.vcxproj">
       <BuildInParallel>false</BuildInParallel>
     </UAPProject>
-    <UAPProject Include="samples\ExampleGallery\BackgroundTask\UAP\ExampleGallery.BackgroundTask.uap.csproj" />
-    <UAPProject Include="samples\ExampleGallery\UAP\ExampleGallery.uap.csproj" />
+    <UAPProject Include="samples\ExampleGallery\BackgroundTask\ExampleGallery.BackgroundTask.uap.csproj" />
+    <UAPProject Include="samples\ExampleGallery\ExampleGallery.uap.csproj" />
   </ItemGroup>
 
   <!-- Tools projects -->
@@ -181,9 +89,8 @@
   <!-- Restore NuGet packages for all projects -->
   <ItemGroup>
     <NuGetRestore Include="samples\**\packages.config"         Condition="$(BuildTests)" />
-    <NuGetRestore Include="samples\**\project.json"            Condition="$(BuildUAP) and $(BuildTests)" />
-    <NuGetRestore Include="winrt\**\project.json"              Condition="$(BuildUAP) and $(BuildTests)" />
-    <NuGetRestore Include="numerics\**\project.json"           Condition="$(BuildUAP)" />
+    <NuGetRestore Include="samples\**\project.json"            Condition="$(BuildTests)" />
+    <NuGetRestore Include="winrt\**\project.json"              Condition="$(BuildTests)" />
     <NuGetRestore Include="tools\exportsample\packages.config" Condition="$(BuildTools)" />
   </ItemGroup>
 
@@ -195,7 +102,7 @@
 
   <!-- Use batching to build each project in turn -->
   <Target Name="BuildProjects"
-          DependsOnTargets="PrepareVersionInfo; ChooseProjectsToBuild; ListSkippedTargets; RestoreNuGetPackages"
+          DependsOnTargets="PrepareVersionInfo; ChooseProjectsToBuild; RestoreNuGetPackages"
           Inputs="@(ProjectsToBuild)"
           Outputs="%(PlatformIndependentName)">
 
@@ -214,7 +121,7 @@
       <BuildConfiguration Include="$(BuildConfigurations)" />
 
       <!-- Generate the cartesian product of all projects * all platforms we are building -->
-      <CandidateProjects Include="@(WindowsProject);@(PhoneProject);@(UAPProject);@(AnyCPUProject)">
+      <CandidateProjects Include="@(UAPProject);@(AnyCPUProject)">
         <Platform>%(BuildPlatform.Identity)</Platform>
       </CandidateProjects>
 
@@ -300,7 +207,6 @@
   <Target Name="BuildDocs"
           Condition="$(BuildDocs) and
                      $(BuildTools) and
-                     $(BuildUAP) and
                      $(BuildPlatforms.Contains('AnyCPU')) and
                      $(BuildPlatforms.Contains('Win32')) and
                      $(BuildConfigurations.Contains('Release'))">
@@ -369,20 +275,6 @@
   </Target>
 
   
-  <Target Name="ListSkippedTargets">
-    <Warning Condition="'$(SkippedBuildWindows)' == 'true'"
-             Text="Skipped building for Windows 8.1 since Windows 8.1 SDK is not installed." />
-
-    <Warning Condition="'$(SkippedBuildPhone)' == 'true'"
-             Text="Skipped building for Windows Phone 8.1 since Windows 8.1 SDK is not installed." />
-
-    <Warning Condition="'$(SkippedBuildUAP)' == 'true' and '$(Has10Sdk)' != 'true'"
-             Text="Skipped building for Windows 10 UAP since Windows 10 SDK is not installed." />
-
-    <Warning Condition="'$(SkippedBuildUAP)' == 'true' and '$(Has10Sdk)' == 'true' and '$(RunningFrom2017Prompt)' != 'true'"
-             Text="Skipped building for Windows 10 UAP since not running from a MSBuild Command Prompt for VS2017" />
-  </Target>
-
   <Import Project="$(MsBuildThisFileDirectory)build\nuget-restore.targets" />
 
 </Project>

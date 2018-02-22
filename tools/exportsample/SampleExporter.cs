@@ -39,14 +39,22 @@ namespace exportsample
 
         void CleanDestinationDirectory()
         {
-            // Delete all the directories under the sample (leaving any files in the root).  This is to allow
-            // us to catch (re)moved files.
+            // Delete all the directories and files under the sample (except for the .sln, which is
+            // unique to the exported samples repro).  This is to allow us to catch (re)moved files.
             if (!Directory.Exists(sample.Destination))
                 return;
 
             foreach (var dir in Directory.EnumerateDirectories(sample.Destination))
             {
                 Directory.Delete(dir, true);
+            }
+
+            foreach (var file in Directory.EnumerateFiles(sample.Destination))
+            {
+                if (Path.GetExtension(file) != ".sln")
+                {
+                    File.Delete(file);
+                }
             }
         }
 

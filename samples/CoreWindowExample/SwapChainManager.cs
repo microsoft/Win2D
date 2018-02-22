@@ -30,43 +30,8 @@ namespace CoreWindowExample
             {
                 // Note: swapchain size & window size may not be exactly equal since they are represented with
                 // floating point numbers and are calculated via different code paths.
-#if WINDOWS_PHONE_APP
-                // Windows Phone does not support ResizeBuffers for CoreWindow swap chains
-                //
-                var device = SwapChain.Device;
-                SwapChain.Dispose();
-                SwapChain = CanvasSwapChain.CreateForCoreWindow(device, window, dpi);
-#else
                 SwapChain.ResizeBuffers((float)windowSize.Width, (float)windowSize.Height, dpi);
-#endif
             }
-
-#if WINDOWS_PHONE_APP
-            var orientation = DisplayInformation.GetForCurrentView().CurrentOrientation;
-            CanvasSwapChainRotation rotation = CanvasSwapChainRotation.None;
-
-            switch (orientation)
-            {
-                case DisplayOrientations.Portrait:
-                    rotation = CanvasSwapChainRotation.None;
-                    break;
-
-                case DisplayOrientations.Landscape:
-                    rotation = CanvasSwapChainRotation.Rotate270;
-                    break;
-
-                case DisplayOrientations.LandscapeFlipped:
-                    rotation = CanvasSwapChainRotation.Rotate90;
-                    break;
-
-                case DisplayOrientations.PortraitFlipped:
-                    rotation = CanvasSwapChainRotation.Rotate180;
-                    break;
-            }
-
-            if (SwapChain.Rotation != rotation)
-                SwapChain.Rotation = rotation;
-#endif
         }
 
         static public bool SizeEqualsWithTolerance(Size sizeA, Size sizeB)

@@ -1522,7 +1522,6 @@ public:
         virtual IRandomAccessStream^ CloneStream()
         {
             Assert::Fail(); // Not impl
-            return nullptr;
         }
     };
 
@@ -1641,7 +1640,6 @@ public:
         virtual IRandomAccessStream^ CloneStream()
         {
             Assert::Fail(); // Not impl
-            return nullptr;
         }
     };
 
@@ -1892,7 +1890,7 @@ public:
             , BlocksHigh(Height / 4)
             , Data(ref new Platform::Array<uint8_t>(BlocksWide * BlocksHigh * GetBytesPerBlock(Format)))
         {
-            std::fill(begin(Data), end(Data), 0);
+            std::fill(begin(Data), end(Data), static_cast<uint8_t>(0));
         }
 
         CanvasBitmap^ CreateBitmap()

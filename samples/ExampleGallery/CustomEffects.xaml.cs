@@ -110,17 +110,7 @@ namespace ExampleGallery
 
             rippleEffect.Properties["frequency"] = 0.15f;
             rippleEffect.Properties["dpi"] = sender.Dpi;
-#if WINDOWS_UWP
             rippleEffect.Properties["center"] = tigerSize / 3;
-#else
-            rippleEffect.Properties["center"] = (Microsoft.Graphics.Canvas.Numerics.Vector2)(tigerSize / 3);
-
-            // When compiling for Windows 8.1, we must explicitly convert vector and matrix values
-            // from System.Numerics to their Microsoft.Graphics.Canvas.Numerics equivalents before
-            // passing them to PixelShaderEffect.Properties. This is not neccessary when targetting
-            // UWP, which handles the conversion automatically. For more info, see the article:
-            // http://blogs.msdn.com/b/win2d/archive/2015/06/02/winrt-vector-and-matrix-types-in-windows-10.aspx
-#endif
 
             // Create other dissolve mask images.
             CreateTurbulence();

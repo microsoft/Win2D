@@ -94,7 +94,7 @@ namespace ExampleGallery
         }
     }
 
-#if WINDOWS_UWP
+
     // VirtualBitmapExample needs the user to pick an image, so we need to draw our own thumbnail
     partial class VirtualBitmapExample : ICustomThumbnailSource
     {
@@ -106,5 +106,4 @@ namespace ExampleGallery
             }
         }
     }
-#endif
 }

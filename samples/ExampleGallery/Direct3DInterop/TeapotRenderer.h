@@ -11,18 +11,8 @@ namespace ExampleGallery
         using namespace ::DirectX;
         using namespace Microsoft::Graphics::Canvas;
         using namespace Microsoft::WRL;
-
-#if WINVER <= _WIN32_WINNT_WINBLUE
-        // On Windows 8.1, we must use the Microsoft::Graphics::Canvas::Numerics types
-        // when exchanging matrices between different WinRT components.
-        using namespace Microsoft::Graphics::Canvas::Numerics;
-        using namespace Microsoft::Graphics::Canvas::DirectX::Direct3D11;
-#else
-        // On Windows 10, we can directly use the Windows::Foundation::Numerics::float4x4 type.
-        // See http://blogs.msdn.com/b/win2d/archive/2015/06/02/winrt-vector-and-matrix-types-in-windows-10.aspx
-        using Matrix4x4 = Windows::Foundation::Numerics::float4x4;
+        using namespace Windows::Foundation::Numerics;
         using namespace Windows::Graphics::DirectX::Direct3D11;
-#endif
 
 
         // Interop helper shows how to mix Win2D with Direct3D rendering.
@@ -34,9 +24,9 @@ namespace ExampleGallery
         public:
             TeapotRenderer(ICanvasResourceCreator^ resourceCreator);
 
-            void SetWorld(Matrix4x4 value);
-            void SetView(Matrix4x4 value);
-            void SetProjection(Matrix4x4 value);
+            void SetWorld(float4x4 value);
+            void SetView(float4x4 value);
+            void SetProjection(float4x4 value);
             
             void SetTexture(IDirect3DSurface^ texture);
 

@@ -210,7 +210,6 @@ TEST_CLASS(CanvasFontFaceTests)
         }
 
         Assert::Fail();
-        return nullptr;
     }
 
     TEST_METHOD(CanvasFontFace_Interop)

@@ -3,6 +3,7 @@
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
 using Microsoft.Graphics.Canvas;
+using Microsoft.Graphics.Canvas.Printing;
 using Microsoft.Graphics.Canvas.Text;
 using System;
 using System.Collections.Generic;
@@ -10,40 +11,16 @@ using System.Numerics;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.Foundation;
+using Windows.Graphics.Printing;
+using Windows.Graphics.Printing.OptionDetails;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-
-#if !WINDOWS_PHONE_APP
-using Microsoft.Graphics.Canvas.Printing;
-using Windows.Graphics.Printing;
-using Windows.Graphics.Printing.OptionDetails;
-#endif
 
 namespace ExampleGallery
 {
     public sealed partial class PrintingExample : UserControl
     {
-        public PrintingExample()
-        {
-            this.InitializeComponent();
-        }
-
-#if WINDOWS_PHONE_APP
-
-        // This example is disabled for Windows Phone (since it doesn't support printing), so
-        // we just have empty stubs here to allow compilation to succeed.
-
-        void OnPrintClicked(object sender, RoutedEventArgs e)
-        {
-        }
-
-        private void UserControl_Unloaded(object sender, RoutedEventArgs e)
-        {
-        }    
-
-#else
-
         CanvasPrintDocument printDocument;
 
         struct BitmapInfo
@@ -64,6 +41,12 @@ namespace ExampleGallery
         int rows;
         int bitmapsPerPage;
         int pageCount = -1;
+
+
+        public PrintingExample()
+        {
+            this.InitializeComponent();
+        }
 
 
         private void UserControl_Unloaded(object sender, RoutedEventArgs e)
@@ -366,8 +349,5 @@ namespace ExampleGallery
             ds.FillRectangle(rect, Colors.White);
             ds.DrawTextLayout(textLayout, paddedTopLeft, Colors.Black);
         }
-
-
-#endif
     }
 }

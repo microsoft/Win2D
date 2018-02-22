@@ -3,6 +3,7 @@
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
 using Microsoft.Graphics.Canvas;
+using Microsoft.Graphics.Canvas.Brushes;
 using Microsoft.Graphics.Canvas.Effects;
 using Microsoft.Graphics.Canvas.Text;
 using Microsoft.Graphics.Canvas.UI;
@@ -15,14 +16,10 @@ using System.Numerics;
 using System.Reflection;
 using System.Threading.Tasks;
 using Windows.Foundation;
+using Windows.Graphics.Effects;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Microsoft.Graphics.Canvas.Brushes;
-
-#if WINDOWS_UWP
-using Windows.Graphics.Effects;
-#endif
 
 namespace ExampleGallery
 {
@@ -51,7 +48,6 @@ namespace ExampleGallery
             Shadow,
             Tile,
             Transform3D,
-#if WINDOWS_UWP
             AlphaMask,
             ChromaKey,
             Contrast,
@@ -72,7 +68,6 @@ namespace ExampleGallery
             TemperatureAndTint,
             Tint,
             Vignette,
-#endif
         }
 
         public EffectsExample()
@@ -260,10 +255,6 @@ namespace ExampleGallery
                     effect = CreateTransform3D();
                     break;
 
-#if WINDOWS_UWP
-                // The following effects are new in the Universal Windows Platform.
-                // They are not supported on Windows 8.1 or Phone 8.1.
-
                 case EffectType.AlphaMask:
                     effect = CreateAlphaMask();
                     break;
@@ -343,8 +334,6 @@ namespace ExampleGallery
                 case EffectType.Vignette:
                     effect = CreateVignette();
                     break;
-
-#endif  // WINDOWS_UWP
 
                 default:
                     throw new NotSupportedException();
@@ -1056,9 +1045,6 @@ namespace ExampleGallery
             return transformEffect;
         }
 
-#if WINDOWS_UWP
-
-        const string requiresWin10 = "This effect is new in the\nUniversal Windows Platform.\nIt is not supported on \nWindows 8.1 or Phone 8.1.";
         const string requiresWin10_14393 = "This effect is new in\nWindows 10 Anniversary Update.\nIt is not supported on\nolder versions of Windows.";
 
         private ICanvasImage CreateAlphaMask()
@@ -1106,8 +1092,6 @@ namespace ExampleGallery
 
         private ICanvasImage CreateChromaKey()
         {
-            textLabel = requiresWin10;
-
             var chromaKeyEffect = new ChromaKeyEffect
             {
                 Source = bitmapTiger,
@@ -1132,8 +1116,6 @@ namespace ExampleGallery
 
         private ICanvasImage CreateContrast()
         {
-            textLabel = requiresWin10;
-
             var contrastEffect = new ContrastEffect
             {
                 Source = bitmapTiger
@@ -1180,8 +1162,6 @@ namespace ExampleGallery
 
         private ICanvasImage CreateEdgeDetection()
         {
-            textLabel = requiresWin10;
-
             var edgeDetectionEffect = new EdgeDetectionEffect
             {
                 Source = bitmapTiger
@@ -1199,8 +1179,6 @@ namespace ExampleGallery
 
         private ICanvasImage CreateEmboss()
         {
-            textLabel = requiresWin10;
-
             var embossEffect = new EmbossEffect
             {
                 Source = bitmapTiger
@@ -1218,8 +1196,6 @@ namespace ExampleGallery
 
         private ICanvasImage CreateExposure()
         {
-            textLabel = requiresWin10;
-
             var exposureEffect = new ExposureEffect
             {
                 Source = bitmapTiger
@@ -1236,8 +1212,6 @@ namespace ExampleGallery
 
         private ICanvasImage CreateGrayscale()
         {
-            textLabel = requiresWin10;
-
             animationFunction = elapsedTime => { };
 
             return new GrayscaleEffect
@@ -1248,8 +1222,6 @@ namespace ExampleGallery
 
         private ICanvasImage CreateHighlightsAndShadows()
         {
-            textLabel = requiresWin10;
-
             var highlightsAndShadowsEffect = new HighlightsAndShadowsEffect
             {
                 Source = bitmapTiger
@@ -1268,8 +1240,6 @@ namespace ExampleGallery
 
         private ICanvasImage CreateInvert()
         {
-            textLabel = requiresWin10;
-
             animationFunction = elapsedTime => { };
 
             return new InvertEffect
@@ -1309,8 +1279,6 @@ namespace ExampleGallery
 
         private ICanvasImage CreatePosterize()
         {
-            textLabel = requiresWin10;
-
             var posterizeEffect = new PosterizeEffect
             {
                 Source = bitmapTiger
@@ -1329,8 +1297,6 @@ namespace ExampleGallery
 
         private ICanvasImage CreateRgbToHue()
         {
-            textLabel = requiresWin10;
-
             // Convert the input image from RGB to HSV color space.
             var rgbToHueEffect = new RgbToHueEffect
             {
@@ -1372,8 +1338,6 @@ namespace ExampleGallery
 
         private ICanvasImage CreateSepia()
         {
-            textLabel = requiresWin10;
-
             var sepiaEffect = new SepiaEffect
             {
                 Source = bitmapTiger
@@ -1390,8 +1354,6 @@ namespace ExampleGallery
 
         private ICanvasImage CreateSharpen()
         {
-            textLabel = requiresWin10;
-
             var sharpenEffect = new SharpenEffect
             {
                 Source = bitmapTiger
@@ -1408,8 +1370,6 @@ namespace ExampleGallery
 
         private ICanvasImage CreateStraighten()
         {
-            textLabel = requiresWin10;
-
             var straightenEffect = new StraightenEffect
             {
                 Source = bitmapTiger,
@@ -1427,8 +1387,6 @@ namespace ExampleGallery
 
         private ICanvasImage CreateTableTransfer3D()
         {
-            textLabel = requiresWin10;
-
             animationFunction = elapsedTime => { };
 
             var transferTable = CreateTransferTableFromFunction(canvas, 16, 16, 16, DesaturateAllButTheReds);
@@ -1487,8 +1445,6 @@ namespace ExampleGallery
 
         private ICanvasImage CreateTemperatureAndTint()
         {
-            textLabel = requiresWin10;
-
             var temperatureAndTintEffect = new TemperatureAndTintEffect
             {
                 Source = bitmapTiger
@@ -1533,8 +1489,6 @@ namespace ExampleGallery
 
         private ICanvasImage CreateVignette()
         {
-            textLabel = requiresWin10;
-
             var vignetteEffect = new VignetteEffect
             {
                 Source = bitmapTiger
@@ -1604,8 +1558,6 @@ namespace ExampleGallery
 
             return commandList;
         }
-
-#endif  // WINDOWS_UWP
 
         private ICanvasImage AddSoftEdgedCrop(ICanvasImage effect)
         {
