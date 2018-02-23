@@ -12,7 +12,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
 
   <members>
 
-    <member name="T:Microsoft.Graphics.Canvas.Effects.HighlightsAndShadowsEffect" Win10="true" NoComposition="true">
+    <member name="T:Microsoft.Graphics.Canvas.Effects.HighlightsAndShadowsEffect" NoComposition="true">
       <summary>
         Adjusts the highlights and shadows of an image.
       </summary>

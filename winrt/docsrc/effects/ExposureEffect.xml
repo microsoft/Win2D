@@ -12,7 +12,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
 
   <members>
 
-    <member name="T:Microsoft.Graphics.Canvas.Effects.ExposureEffect" Win10="true">
+    <member name="T:Microsoft.Graphics.Canvas.Effects.ExposureEffect">
       <summary>
         Increases or decreases the exposure of an image.
       </summary>

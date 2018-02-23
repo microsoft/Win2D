@@ -27,10 +27,9 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         <LineBreak/>
         <LineBreak/>
         Win2D is an easy-to-use Windows Runtime API for immediate mode 2D graphics
-        rendering with GPU acceleration. It is available to C# and C++ developers
-        writing Windows apps for Windows 8.1, Windows Phone 8.1 and Windows 10. It
-        utilizes the power of Direct2D, and integrates seamlessly with XAML and
-        CoreWindow.
+        rendering with GPU acceleration. It is available to C#, C++ and VB developers
+        writing apps for the Windows Universal Platform (UWP). It utilizes the power
+        of Direct2D, and integrates seamlessly with XAML and CoreWindow.
         <LineBreak/>
         <LineBreak/>
         More information about Win2D:

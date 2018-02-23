@@ -11,7 +11,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
   </assembly>
   <members>
   
-    <member name="T:Microsoft.Graphics.Canvas.Effects.TableTransfer3DEffect" Win10="true" NoComposition="true">
+    <member name="T:Microsoft.Graphics.Canvas.Effects.TableTransfer3DEffect" NoComposition="true">
       <summary>
         Alters the colors of an image using a transfer function defined by an arbitrary three dimensional lookup table.
       </summary>
@@ -59,7 +59,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <inherittemplate name="EffectTemplate" replacement="TableTransfer3DEffect" />
     <inherittemplate name="ICanvasEffectTemplate" replacement="TableTransfer3DEffect" />
 
-    <member name="T:Microsoft.Graphics.Canvas.Effects.EffectTransferTable3D" Win10="true">
+    <member name="T:Microsoft.Graphics.Canvas.Effects.EffectTransferTable3D">
       <summary>A three dimensional lookup table, for use with TableTransfer3DEffect.</summary>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Effects.EffectTransferTable3D.CreateFromColors(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.UI.Color[],System.Int32,System.Int32,System.Int32)">

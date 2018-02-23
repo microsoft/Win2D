@@ -12,23 +12,16 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <para>
         Win2D is an easy-to-use Windows Runtime API for immediate mode 2D graphics
         rendering with GPU acceleration. It is available to C#, C++ and VB developers
-        writing Windows apps for Windows 8.1, Windows Phone 8.1 and Windows 10. It
-        utilizes the power of Direct2D, and integrates seamlessly with XAML and
-        CoreWindow.
+        writing apps for the Windows Universal Platform (UWP). It utilizes the power
+        of Direct2D, and integrates seamlessly with XAML and CoreWindow.
       </para>
 
       <para>Where to get it:</para>
       <list class="bullet">
         <listItem>
-          NuGet packages for
           <externalLink>
-            <linkText>Windows 10</linkText>
+            <linkText>NuGet package</linkText>
             <linkUri>http://www.nuget.org/packages/Win2D.uwp</linkUri>
-          </externalLink>
-          or
-          <externalLink>
-            <linkText>Windows / Phone 8.1</linkText>
-            <linkUri>http://www.nuget.org/packages/Win2D.win81</linkUri>
           </externalLink>
         </listItem>
         <listItem>
@@ -86,29 +79,15 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         </para>
 
         <list class="bullet">
-          <listItem>
-            To develop for Windows 10 (Universal Windows Platform):
-            <list class="bullet">
-              <listItem>Recommended version: Visual Studio Community 2017 with Visual Studio Tools for Universal Windows Apps 15.0.26430.06</listItem>
-              <listItem>Minimum version: Visual Studio Community 2015 with Update 1</listItem>
-            </list>
-            
-            <listItem>
-              To develop for Windows 8.1 or Windows Phone 8.1:
-              <list class="bullet">
-                <listItem>Recommended version: Visual Studio Community 2017</listItem>
-                <listItem>Minimum version: Visual Studio Community 2013 with Update 5</listItem>
-                <listItem>If using Visual Studio Express, requires the 'for Windows' version (not 'for Windows Desktop')</listItem>
-              </list>
-            </listItem>
-          </listItem>
+          <listItem>Recommended version: Visual Studio Community 2017 with Visual Studio Tools for Universal Windows Apps 15.0.26430.06</listItem>
+          <listItem>Minimum version: Visual Studio Community 2015 with Update 1</listItem>
         </list>
         
         <para>Create your project:</para>
         <list class="bullet">
           <listItem>Go to 'File' -> 'New' -> 'Project...'</listItem>
           <listItem>Select 'Visual C#', 'Visual C++', or 'Visual Basic'</listItem>
-          <listItem>Create a 'Blank App (Universal Windows)' (Visual Studio 2017) or 'Blank App (Universal Apps)' (Visual Studio 2013)</listItem>
+          <listItem>Create a 'Blank App (Universal Windows)'</listItem>
           <listItem>Enter a project name of your choosing</listItem>
           <listItem>Click 'OK'</listItem>
         </list>
@@ -117,14 +96,9 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         <list class="bullet">
           <listItem>Go to 'Tools' -> 'NuGet Package Manager' -> 'Manage NuGet Packages for Solution...'</listItem>
           <listItem>Type 'Win2D' into the 'Search Online' box, and hit Enter</listItem>
-          <listItem>Select the 'Win2D.uwp' or 'Win2D.win81' package and click 'Install', then 'OK'</listItem>
-          <list class="bullet">
-            <listItem>If building for Windows 10, use Win2D.uwp</listItem>
-            <listItem>If building for Windows 8.1 or Windows Phone 8.1, use Win2D.win81</listItem>            
-          </list>
+          <listItem>Select the 'Win2D.uwp' package and click 'Install', then 'OK'</listItem>
           <listItem>Accept the license agreement</listItem>
           <listItem>Click 'Close'</listItem>
-          <listItem>If creating a Windows 8.1 or Windows Phone 8.1 app, change Solution Platform from 'Any CPU' to 'x86', 'x64', or 'ARM'</listItem>
         </list>
       </content>
     </section>
@@ -237,5 +211,31 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       </content>
     </section>
 
+    <section address="Legacy81">
+      <title>Legacy support for Windows 8.1</title>
+      
+      <content>
+        <para>
+          Win2D 1.21.0 was the last release to support the Windows 8.1 and Windows Phone 8.1 
+          platforms. From Win2D 1.22.0 onward, only the Windows Universal Platform (UWP) is 
+          supported.
+        </para>
+
+        <para>
+          Legacy Win2D support for Windows and Phone 8.1 is available as a
+          <externalLink>
+            <linkText>NuGet package</linkText>
+            <linkUri>http://www.nuget.org/packages/Win2D.win81</linkUri>
+          </externalLink>
+          and from the
+          <externalLink>
+            <linkText>win81 branch</linkText>
+            <linkUri>https://github.com/Microsoft/Win2D/tree/win81</linkUri>
+          </externalLink>
+          on github.
+        </para>
+      </content>
+    </section>
+    
   </developerConceptualDocument>
 </topic>

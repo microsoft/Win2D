@@ -42,8 +42,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         </p>
         <p>
           When using <a href="Interop.htm">Direct2D interop</a>, this Win2D class
-          corresponds to the Direct2D interface IDWriteTextLayout2 on Windows 8.1, and
-          IDWriteTextLayout3 on Windows 10.
+          corresponds to the Direct2D interface IDWriteTextLayout3.
         </p>
       </remarks>
       <example>
@@ -594,7 +593,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <summary>Gets the device associated with this text layout.</summary>
     </member>    
 
-    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.LineSpacingMode" Win10="true">
+    <member name="P:Microsoft.Graphics.Canvas.Text.CanvasTextLayout.LineSpacingMode">
       <summary>Specifies how lines are spaced apart.</summary>
       <remarks>
         <p>
@@ -749,7 +748,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="F:Microsoft.Graphics.Canvas.Text.CanvasLineMetrics.IsTrimmed">
       <summary>Indicates whether the line was trimmed.</summary>
     </member>
-    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasLineMetrics.LeadingWhitespaceBefore" Win10="true">
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasLineMetrics.LeadingWhitespaceBefore">
       <summary>Size of the white space, in DIPs, before the content of the line.</summary>
       <remarks>
           <p>
@@ -763,7 +762,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
           </p>
       </remarks>=
     </member>
-    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasLineMetrics.LeadingWhitespaceAfter" Win10="true">
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasLineMetrics.LeadingWhitespaceAfter">
       <summary>Size of the white space, in DIPs, after the content of the line.</summary>
       <remarks>
           <p>

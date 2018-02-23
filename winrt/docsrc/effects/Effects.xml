@@ -199,7 +199,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
 
 
   <template name="EffectRequires14393Template">
-    <member name="P:Microsoft.Graphics.Canvas.Effects.EffectRequires14393Template.IsSupported" Win10_14393="false" Win10="true">
+    <member name="P:Microsoft.Graphics.Canvas.Effects.EffectRequires14393Template.IsSupported" Win10_14393="false">
       <summary>Checks whether EffectRequires14393Template is supported on the current operating system version.</summary>
       <remarks>
         <p>

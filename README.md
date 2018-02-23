@@ -2,14 +2,11 @@
 
 Win2D is an easy-to-use Windows Runtime API for immediate mode 2D graphics
 rendering with GPU acceleration. It is available to C#, C++ and VB developers
-writing Windows apps for Windows 8.1, Windows Phone 8.1 and Windows 10. It
-utilizes the power of Direct2D, and integrates seamlessly with XAML and
-CoreWindow.
+writing apps for the Windows Universal Platform (UWP). It utilizes the power
+of Direct2D, and integrates seamlessly with XAML and CoreWindow.
 
 ##### Where to get it
-- NuGet packages for
-    [Windows 10](http://www.nuget.org/packages/Win2D.uwp) or
-    [Windows / Phone 8.1](http://www.nuget.org/packages/Win2D.win81)
+- [NuGet package](http://www.nuget.org/packages/Win2D.uwp)
 - [Source code](http://github.com/Microsoft/Win2D)
 
 ##### How to use it
@@ -64,19 +61,14 @@ Studio, add the Win2D NuGet package to your project, and get started using the A
 ## Building Win2D from source
 
 ##### Requirements
-- Recommended: Visual Studio 2017 with Visual Studio Tools for Universal Windows Apps 15.0.26430.06
-- Visual Studio 2013 Update 5 is also supported (for Windows 8.1 or Windows Phone 8.1 development only)
+- Visual Studio 2017 with Visual Studio Tools for Universal Windows Apps 15.0.26430.06
 
 ##### Clone Repository
 - Go to 'View' -> 'Team Explorer' -> 'Local Git Repositories' -> 'Clone'
 - Add the Win2D repository URL (https://github.com/Microsoft/Win2D.git) and hit 'Clone'
 
 ##### Build NuGet Packages
-- If using Visual Studio 2017:
-  - Launch 'Developer Command Prompt for VS2017'
-- If using Visual Studio 2013:
-  - In Windows search, type 'Visual Studio Tools', and select that folder to open it
-  - Launch 'Developer Command Prompt for VS2013' 
+- Launch 'Developer Command Prompt for VS2017'
 - Change directory to your cloned Win2D repository and run 'build'
 
 ##### Point Visual Studio at the resulting 'bin' directory
@@ -90,6 +82,15 @@ Studio, add the Win2D NuGet package to your project, and get started using the A
 
 Locally built versions of Win2D are marked as prerelease, so you must change the 'Stable 
 Only' setting to 'Include Prerelease' when adding them to your project.
+
+## Legacy support for Windows 8.1
+Win2D 1.21.0 was the last release to support the Windows 8.1 and Windows Phone 8.1 
+platforms. From Win2D 1.22.0 onward, only the Windows Universal Platform (UWP) is 
+supported.
+
+Legacy Win2D support for Windows and Phone 8.1 is available as a
+[NuGet package](http://www.nuget.org/packages/Win2D.win81) and from the
+[win81 branch](https://github.com/Microsoft/Win2D/tree/win81) on github.
 
 ---
 This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).

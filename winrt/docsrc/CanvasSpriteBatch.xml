@@ -228,7 +228,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <remarks>For more information, see <a href="DPI.htm">DPI and DIPs</a>.</remarks>
     </member>
 
-    <member name="M:Microsoft.Graphics.Canvas.CanvasSpriteBatch.IsSupported(Microsoft.Graphics.Canvas.CanvasDevice)" Win10_10586="false" Win10="true">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasSpriteBatch.IsSupported(Microsoft.Graphics.Canvas.CanvasDevice)" Win10_10586="false">
       <summary>Checks whether CanvasSpriteBatch is supported on the current operating system version.</summary>
       <remarks>
         <p>

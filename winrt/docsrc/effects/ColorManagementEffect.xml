@@ -116,7 +116,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         </p>
       </remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.Effects.ColorManagementProfile.IsSupported(Microsoft.Graphics.Canvas.Effects.ColorManagementProfileType,Microsoft.Graphics.Canvas.CanvasDevice)" Win10="true" Experimental="true">
+    <member name="M:Microsoft.Graphics.Canvas.Effects.ColorManagementProfile.IsSupported(Microsoft.Graphics.Canvas.Effects.ColorManagementProfileType,Microsoft.Graphics.Canvas.CanvasDevice)" Experimental="true">
       <summary>Checks whether the specified type of color profile is supported on the specified device.</summary>
       <remarks>ICC color profiles are always supported. Simple and Extended profiles require Windows 10 build 15063 (Creators Update) or greater.</remarks>
     </member>
@@ -139,11 +139,11 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <summary>Gets the extended color space.</summary>
       <remarks>Returns Custom if the <see cref="P:Microsoft.Graphics.Canvas.Effects.ColorManagementProfile.Type"/> of the color profile is not Extended.</remarks>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.Effects.ColorManagementProfile.Type" Win10="true" Experimental="true">
+    <member name="P:Microsoft.Graphics.Canvas.Effects.ColorManagementProfile.Type" Experimental="true">
       <summary>Gets the type of the color profile.</summary>
     </member>
 
-    <member name="T:Microsoft.Graphics.Canvas.Effects.ColorManagementProfileType" Win10="true" Experimental="true">
+    <member name="T:Microsoft.Graphics.Canvas.Effects.ColorManagementProfileType" Experimental="true">
       <summary>Describes the type of a ColorManagementProfile.</summary>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.Effects.ColorManagementProfileType.Icc">
