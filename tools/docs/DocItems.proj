@@ -3,6 +3,5 @@
   <ItemGroup>
     <!-- Conceptual documentation source XML -->
     <WildcardConceptual Include="$(MSBuildThisFileDirectory)..\..\winrt\docsrc\*.aml" />
-    <WildcardConceptual Include="$(MSBuildThisFileDirectory)..\..\numerics\Cpp\docsrc\*.aml" />
   </ItemGroup>
 </Project>

@@ -94,12 +94,6 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
 
           drawingSession.DrawImage(effect);
         </code>
-        <p>
-          Note: the File.ReadAllBytes API is only available in UWP. If you are building 
-          for Windows or Windows Phone 8.1, replace this call with 
-          StorageFile.GetFileFromApplicationUriAsync and FileIO.ReadBufferAsync.
-          See the ReadAllBytes helper in Example Gallery for details.
-        </p>
       </example>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Effects.PixelShaderEffect.#ctor(System.Byte[])">
@@ -108,8 +102,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         <p>
           Custom pixel shaders are written in HLSL (High Level Shading Language) and 
           compiled with the Direct3D Shader Compiler (fxc.exe). This tool can be found in 
-          the Visual Studio 2015 "Developer Command Prompt" or Visual Studio 2017 
-          "Developer Command Prompt" (note this is different from the "MSBuild Command Prompt").
+          the Visual Studio 2017 "Developer Command Prompt".
         </p>
         <p>
           To compile your shader, invoke fxc twice using the options:
@@ -349,12 +342,6 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         <p>
           Supported property types are Single, Int32, Boolean, Vector2, Vector3, Vector4, 
           Matrix3x2, Matrix4x4, plus arrays of any of these types.
-        </p>
-        <p>
-          If you are building for Windows or Windows Phone 8.1, you must specify vector 
-          and matrix property values using the types from Microsoft.Graphics.Canvas.Numerics
-          rather than System.Numerics. This is not an issue with UWP, 
-          where the System.Numerics types are automatically projected into WinRT.
         </p>
       </remarks>
     </member>

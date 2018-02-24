@@ -106,11 +106,6 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
           property is not available when the CanvasSwapChain is created with
           this method.
         </p>
-        <p>
-          <see cref="O:Microsoft.Graphics.Canvas.CanvasSwapChain.ResizeBuffers"/>
-          will fail for Windows Phone 8.1 apps.  Instead, applications should
-          dispose the old swap chain and create a new one of the required size.
-        </p>
       </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasSwapChain.CreateForCoreWindow(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.UI.Core.CoreWindow,System.Single,System.Single,System.Single,Windows.Graphics.DirectX.DirectXPixelFormat,System.Int32)">
@@ -127,11 +122,6 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
           cref="P:Microsoft.Graphics.Canvas.CanvasSwapChain.TransformMatrix"/>
           property is not available when the CanvasSwapChain is created with
           this method.
-        </p>
-        <p>
-          <see cref="O:Microsoft.Graphics.Canvas.CanvasSwapChain.ResizeBuffers"/>
-          will fail for Windows Phone 8.1 apps.  Instead, applications should
-          dispose the old swap chain and create a new one of the required size.
         </p>
       </remarks>
     </member>
@@ -155,11 +145,6 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         <p>
           Size is in <a href="DPI.htm">device independent pixels (DIPs)</a>.
         </p>
-        <p>
-          On Windows Phone 8.1, this method will fail for swap chains created
-          via <see
-          cref="O:Microsoft.Graphics.Canvas.CanvasSwapChain.CreateForCoreWindow"/>.
-        </p>
       </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasSwapChain.ResizeBuffers(System.Single,System.Single)">
@@ -168,11 +153,6 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         <p>
           Size is in <a href="DPI.htm">device independent pixels (DIPs)</a>.
         </p>
-        <p>
-          On Windows Phone 8.1, this method will fail for swap chains created
-          via <see
-          cref="O:Microsoft.Graphics.Canvas.CanvasSwapChain.CreateForCoreWindow"/>.
-        </p>
       </remarks>
     </member>    
     <member name="M:Microsoft.Graphics.Canvas.CanvasSwapChain.ResizeBuffers(System.Single,System.Single,System.Single)">
@@ -180,11 +160,6 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <remarks>
         <p>
           Size is in <a href="DPI.htm">device independent pixels (DIPs)</a>.
-        </p>
-        <p>
-          On Windows Phone 8.1, this method will fail for swap chains created
-          via <see
-          cref="O:Microsoft.Graphics.Canvas.CanvasSwapChain.CreateForCoreWindow"/>.
         </p>
       </remarks>
     </member>    
@@ -196,11 +171,6 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         </p>
         <p>
           List of <a href="PixelFormats.htm">supported pixel formats</a>.
-        </p>
-        <p>
-          On Windows Phone 8.1, this method will fail for swap chains created
-          via <see
-          cref="O:Microsoft.Graphics.Canvas.CanvasSwapChain.CreateForCoreWindow"/>.
         </p>
       </remarks>
     </member>

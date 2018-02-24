@@ -12,7 +12,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
 
   <members>
 
-    <member name="T:Microsoft.Graphics.Canvas.Effects.ChromaKeyEffect" Win10="true" NoComposition="true">
+    <member name="T:Microsoft.Graphics.Canvas.Effects.ChromaKeyEffect" NoComposition="true">
       <summary>
         Replaces a specified color with transparency.
       </summary>

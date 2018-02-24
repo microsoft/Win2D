@@ -11,6 +11,8 @@
     <ApplicationType>Windows Store</ApplicationType>
     <ApplicationTypeRevision>10.0</ApplicationTypeRevision>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
+    <ItemsRootNamespace>Microsoft.Graphics.Canvas</ItemsRootNamespace>
+    <TargetName>$(ItemsRootNamespace)</TargetName>
   </PropertyGroup>
 
   <Import Project="..\..\build\Win2D.cpp.props" />
@@ -31,14 +33,43 @@
     <IgnoreImportLibrary>false</IgnoreImportLibrary>
   </PropertyGroup>
   <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(EtwDirectory);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <CompileAsWinRT>false</CompileAsWinRT>
+      <WarningLevel>Level4</WarningLevel>
+    </ClCompile>
     <Link>
+      <SubSystem>Console</SubSystem>
+      <AdditionalDependencies>d2d1.lib;d3d11.lib;d3dcompiler.lib;windowscodecs.lib;dwrite.lib;runtimeobject.lib;rpcrt4.lib;shcore.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
+      <ModuleDefinitionFile>module.def</ModuleDefinitionFile>
+      <WindowsMetadataFile>$(Outdir)\$(ItemsRootNamespace).winmd</WindowsMetadataFile>
       <DelayLoadDLLs>d3dcompiler_47.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
-
-  <Import Project="winrt.dll.Shared.vcxitems" Label="Shared" />
-
+  <ItemDefinitionGroup Condition="'$(Configuration)'=='Release'">
+    <ClCompile>
+      <Optimization>MinSpace</Optimization>
+      <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <CopyMergedWinMD Include="$(MergedWinmdDirectory)\$(ItemsRootNamespace).winmd" />
+  </ItemGroup>
+  <Target Name="CopyMergedWinMD" BeforeTargets="Link" Outputs="@(CopiedWinMDFile)">
+    <Copy SourceFiles="@(CopyMergedWinMD)" DestinationFolder="$(Outdir)" SkipUnchangedFiles="true">
+      <Output TaskParameter="CopiedFiles" ItemName="CopiedWinMDFile" />
+    </Copy>
+  </Target>
+  <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)pch.h" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)pch.cpp">
+      <PrecompiledHeader>Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)module.cpp" />
+    <None Include="$(MSBuildThisFileDirectory)module.def" />
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\lib\winrt.lib.uap.vcxproj">
       <Project>{26b85b6e-3520-42b5-adb6-971010cc99fa}</Project>

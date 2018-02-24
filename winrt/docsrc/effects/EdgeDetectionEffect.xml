@@ -12,7 +12,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
 
   <members>
 
-    <member name="T:Microsoft.Graphics.Canvas.Effects.EdgeDetectionEffect" Win10="true" NoComposition="true">
+    <member name="T:Microsoft.Graphics.Canvas.Effects.EdgeDetectionEffect" NoComposition="true">
       <summary>
         Filters out the content of an image leaving lines at the edges of contrasting sections.
       </summary>
@@ -67,7 +67,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       </remarks>
     </member>
 
-    <member name="T:Microsoft.Graphics.Canvas.Effects.EdgeDetectionEffectMode" Win10="true">
+    <member name="T:Microsoft.Graphics.Canvas.Effects.EdgeDetectionEffectMode">
       <summary>
         <p>Specifies what type of filter kernel to use for edge detection.</p>
       </summary>

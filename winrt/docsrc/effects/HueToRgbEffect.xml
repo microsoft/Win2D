@@ -12,7 +12,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
 
   <members>
 
-    <member name="T:Microsoft.Graphics.Canvas.Effects.HueToRgbEffect" Win10="true" NoComposition="true">
+    <member name="T:Microsoft.Graphics.Canvas.Effects.HueToRgbEffect" NoComposition="true">
       <summary>
         Converts an HSV (hue, saturation, value) or HSL (hue, saturation, lightness) image to RGB color space.
       </summary>
@@ -51,7 +51,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
                Default value <see cref="F:Microsoft.Graphics.Canvas.Effects.EffectHueColorSpace.Hsv"/>.</summary>
     </member>
 
-    <member name="T:Microsoft.Graphics.Canvas.Effects.EffectHueColorSpace" Win10="true">
+    <member name="T:Microsoft.Graphics.Canvas.Effects.EffectHueColorSpace">
       <summary>
         <p>Specifies the color space used by
            <see cref="T:Microsoft.Graphics.Canvas.Effects.HueToRgbEffect"/> and

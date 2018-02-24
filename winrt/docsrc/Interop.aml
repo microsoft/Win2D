@@ -164,13 +164,13 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
           </row>
           <row>
             <entry><codeEntityReference>T:Microsoft.Graphics.Canvas.Text.CanvasFontFace</codeEntityReference></entry>
-            <entry><codeInline>IDWriteFontFaceReference</codeInline> (UWP) or <codeInline>IDWriteFont2</codeInline> (8.1)</entry>
+            <entry><codeInline>IDWriteFontFaceReference</codeInline></entry>
             <entry>-</entry>
             <entry>-</entry>
           </row>
           <row>
             <entry><codeEntityReference>T:Microsoft.Graphics.Canvas.Text.CanvasFontSet</codeEntityReference></entry>
-            <entry><codeInline>IDWriteFontSet</codeInline> (UWP) or <codeInline>IDWriteFontCollection</codeInline> (8.1)</entry>
+            <entry><codeInline>IDWriteFontSet</codeInline></entry>
             <entry>-</entry>
             <entry>-</entry>
           </row>
@@ -259,13 +259,13 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
           </row>
           <row>
             <entry><codeEntityReference>T:Microsoft.Graphics.Canvas.Text.CanvasTextLayout</codeEntityReference></entry>
-            <entry><codeInline>IDWriteTextLayout3</codeInline> (UWP) or <codeInline>IDWriteTextLayout2</codeInline> (8.1)</entry>
+            <entry><codeInline>IDWriteTextLayout3</codeInline></entry>
             <entry>Device</entry>
             <entry>-</entry>
           </row>
           <row>
             <entry><codeEntityReference>T:Microsoft.Graphics.Canvas.Text.CanvasTextRenderingParameters</codeEntityReference></entry>
-            <entry><codeInline>IDWriteRenderingParams3</codeInline> (UWP) or <codeInline>IDWriteRenderingParams2</codeInline> (8.1)</entry>
+            <entry><codeInline>IDWriteRenderingParams3</codeInline></entry>
             <entry>-</entry>
             <entry>-</entry>
           </row>

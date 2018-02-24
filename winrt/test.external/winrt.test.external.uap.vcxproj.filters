@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="pch.cpp" />
+    <ClCompile Include="CanvasDeviceTests.cpp" />
+    <ClCompile Include="CanvasBitmapTests.cpp" />
+    <ClCompile Include="CanvasVirtualBitmapTests.cpp" />
+    <ClCompile Include="CanvasEffectsTests.cpp" />
+    <ClCompile Include="CanvasBrushTests.cpp" />
+    <ClCompile Include="CanvasImageSourceTests.cpp" />
+    <ClCompile Include="CanvasStrokeStyleTests.cpp" />
+    <ClCompile Include="DeviceTests.cpp" />
+    <ClCompile Include="SurfaceTests.cpp" />
+    <ClCompile Include="CanvasDrawingSessionTests.cpp" />
+    <ClCompile Include="EnumTests.cpp" />
+    <ClCompile Include="CanvasControlTests.cpp" />
+    <ClCompile Include="DWriteExperiments.cpp" />
+    <ClCompile Include="CanvasFontFaceTests.cpp" />
+    <ClCompile Include="CanvasFontSetTests.cpp" />
+    <ClCompile Include="CanvasTextAnalyzerTests.cpp" />
+    <ClCompile Include="CanvasTextFormatTests.cpp" />
+    <ClCompile Include="CanvasTextLayoutTests.cpp" />
+    <ClCompile Include="CanvasTextRenderingParametersTests.cpp" />
+    <ClCompile Include="CanvasTypographyTests.cpp" />
+    <ClCompile Include="Helpers.cpp" />
+    <ClCompile Include="CanvasRenderTargetTests.cpp" />
+    <ClCompile Include="PolymorphicBitmapTests.cpp" />
+    <ClCompile Include="Direct3DSurfaceInteropTests.cpp" />
+    <ClCompile Include="CanvasImageBrushTests.cpp" />
+    <ClCompile Include="CanvasImageTests.cpp" />
+    <ClCompile Include="Matrix5x4Test.cpp" />
+    <ClCompile Include="CanvasSwapChainTests.cpp" />
+    <ClCompile Include="CanvasCommandListTests.cpp" />
+    <ClCompile Include="RefCountTests.cpp" />
+    <ClCompile Include="CanvasGeometryTests.cpp" />
+    <ClCompile Include="CanvasGradientMeshTests.cpp" />
+    <ClCompile Include="CanvasCreateResourcesEventArgsTests.cpp" />
+    <ClCompile Include="CanvasTextRendererTests.cpp" />
+    <ClCompile Include="DebugLayer.cpp" />
+    <ClCompile Include="EffectTransferTable3DTests.cpp" />
+    <ClCompile Include="ColorManagementProfileTests.cpp" />
+    <ClCompile Include="CanvasSvgDocumentTests.cpp" />
+    <ClCompile Include="CanvasSvgAttributeTests.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="pch.h" />
+    <ClInclude Include="targetver.h" />
+    <ClInclude Include="Helpers.h" />
+    <ClInclude Include="DebugLayer.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="$(AssetDir)UnitTestLogo.scale-100.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="$(AssetDir)UnitTestSmallLogo44x44.scale-100.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="$(AssetDir)UnitTestSplashScreen.scale-100.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="$(AssetDir)UnitTestStoreLogo.scale-100.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="$(AssetDir)imageTiger.jpg">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="$(AssetDir)HighDpiGrid.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Images\x.bmp">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="Images\x.ico">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="Images\x.tif">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="Images\x_B8G8R8A8_UNORM.DDS">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="Images\x_BC1_UNORM.DDS">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="Images\x_BC1_UNORM_SRGB.DDS">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="Images\x_BC2_UNORM.DDS">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="Images\x_BC2_UNORM_SRGB.DDS">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="Images\x_BC3_UNORM.DDS">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="Images\x_BC3_UNORM_SRGB.DDS">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="Images\x_D3DFMT_ARGB.DDS">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="Images\x_DXT1.DDS">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="Images\x_DXT2.DDS">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="Images\x_DXT3.DDS">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="Images\x_DXT4.DDS">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="Images\x_DXT5.DDS">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="Images\x_R8G8B8A8_UNORM.DDS">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="Images\x_1x1.DDS">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="Images\x_2x2.DDS">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="Images\x_3x3.DDS">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="Images\x_4x4.DDS">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="Images\x_4x5.DDS">
+      <Filter>Images</Filter>
+    </Image>
+    <Image Include="Images\x_5x4.DDS">
+      <Filter>Images</Filter>
+    </Image>
+    <Font Include="$(AssetDir)Symbols.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <AppxManifest Include="winrt.test.external.uap.appxmanifest" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="$(AssetDir)TemporaryKey.pfx" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Assets">
+      <UniqueIdentifier>{adf7cc83-37dd-43ce-8a10-bdca0822116e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Images">
+      <UniqueIdentifier>{45e7a66f-3187-4212-8faf-72ec7801fb5f}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

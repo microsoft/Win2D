@@ -1,0 +1,58 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\..\..\packages\directxtk_uwp.2015.7.29.1\build\native\directxtk_uwp.props" Condition="Exists('..\..\..\packages\directxtk_uwp.2015.7.29.1\build\native\directxtk_uwp.props')" />
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\winrt\dll\winrt.dll.uap.vcxproj">
+      <Project>{8cf21e5d-e0a2-4fe7-8e2b-a025cf52dcfb}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="SpriteBatchPerformance.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)TeapotRenderer.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)pch.cpp">
+      <PrecompiledHeader>Create</PrecompiledHeader>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)TeapotRenderer.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)pch.h" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{A81F96D0-4924-40E3-A463-3CB9EE55AA93}</ProjectGuid>
+    <RootNamespace>ExampleGallery.Direct3DInterop</RootNamespace>
+    <DefaultLanguage>en-US</DefaultLanguage>
+    <MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>
+    <AppContainerApplication>true</AppContainerApplication>
+    <ApplicationType>Windows Store</ApplicationType>
+    <ApplicationTypeRevision>10.0</ApplicationTypeRevision>
+    <ConvergedProjectType>CodeSharingWindowsRuntimeComponent</ConvergedProjectType>
+    <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <GenerateManifest>false</GenerateManifest>
+    <NuGetPackageImportStamp>c59169d0</NuGetPackageImportStamp>
+  </PropertyGroup>
+  <Import Project="..\..\..\build\Win2D.cpp.props" />
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <PreprocessorDefinitions>_WINRT_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <WarningLevel>Level4</WarningLevel>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <Import Project="..\..\..\build\Win2D.cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+    <Import Project="..\..\..\packages\directxtk_uwp.2015.7.29.1\build\native\directxtk_uwp.targets" Condition="Exists('..\..\..\packages\directxtk_uwp.2015.7.29.1\build\native\directxtk_uwp.targets')" />
+  </ImportGroup>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\..\..\packages\directxtk_uwp.2015.7.29.1\build\native\directxtk_uwp.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\packages\directxtk_uwp.2015.7.29.1\build\native\directxtk_uwp.props'))" />
+    <Error Condition="!Exists('..\..\..\packages\directxtk_uwp.2015.7.29.1\build\native\directxtk_uwp.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\packages\directxtk_uwp.2015.7.29.1\build\native\directxtk_uwp.targets'))" />
+  </Target>
+</Project>

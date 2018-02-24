@@ -29,7 +29,7 @@
         <HeaderFileName Condition="'%(MidlRT.RenameHeaderTo)' != ''">$(IdlHeaderDirectory)\%(MidlRT.RenameHeaderTo)</HeaderFileName>
         <ProxyFileName>$(IntDir)%(Filename)_p.c</ProxyFileName>
         <InterfaceIdentifierFileName>$(IntDir)%(Filename)_i.c</InterfaceIdentifierFileName>
-        <AdditionalOptions>/target NT62</AdditionalOptions>
+        <MinimumTargetSystem>NT62</MinimumTargetSystem>
       </Midl>
     </ItemGroup>
   </Target>

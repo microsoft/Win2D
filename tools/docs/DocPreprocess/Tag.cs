@@ -9,7 +9,6 @@ namespace DocPreprocess
         public static readonly Tag[] Tags =
         {
             new Tag("Experimental", "This API is marked as [Experimental], meaning it may be subject to change in future Win2D releases.") { PropagateTypeTagsToMembers = true },
-            new Tag("Win10", "This API is available on Windows 10 (Universal Windows Platform) only. It is not supported on Windows 8.1 or Phone 8.1."),
             new Tag("Win10_10586", "This API is only available when running on Windows 10 build 10586 (released November 2015) or greater.") { PropagateTypeTagsToMembers = true },
             new Tag("Win10_14393", "This API is only available when running on Windows 10 build 14393 (Anniversary Update) or greater.") { PropagateTypeTagsToMembers = true },
             new Tag("Win10_15063", "This API is only available when running on Windows 10 build 15063 (Creators Update) or greater.") { PropagateTypeTagsToMembers = true },

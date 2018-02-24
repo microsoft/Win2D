@@ -180,7 +180,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <summary>Creates a CanvasBitmap from an array of colors, using the specified pixel width/height, DPI and alpha behavior.</summary>
     </member>
 
-    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.CreateFromSoftwareBitmap(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.Graphics.Imaging.SoftwareBitmap)" Win10="true">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasBitmap.CreateFromSoftwareBitmap(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.Graphics.Imaging.SoftwareBitmap)">
       <summary>Creates a CanvasBitmap from a SoftwareBitmap.</summary>
       <remarks>
         <p>

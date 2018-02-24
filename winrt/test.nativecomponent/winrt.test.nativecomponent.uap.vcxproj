@@ -11,12 +11,11 @@
     <ApplicationType>Windows Store</ApplicationType>
     <ApplicationTypeRevision>10.0</ApplicationTypeRevision>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
+    <ItemsRootNamespace>NativeComponent</ItemsRootNamespace>
+    <TargetName>$(ItemsRootNamespace)</TargetName>
   </PropertyGroup>
 
   <Import Project="..\..\build\Win2D.cpp.props" />
-  <ItemGroup>
-    <ProjectCapability Include="SourceItemsFromImports" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
@@ -30,7 +29,31 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
 
-  <Import Project="winrt.test.nativecomponent.Shared.vcxitems" Label="Shared" />
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>..\Inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_WINRT_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <WarningLevel>Level4</WarningLevel>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>d3d11.lib;d3dcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)DeviceCreator.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)EffectAccessor.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)pch.cpp">
+      <PrecompiledHeader>Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)SurfaceCreator.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)VectorCreator.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)ShaderCompiler.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)ReflectionHelper.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)pch.h" />
+  </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\..\winrt\dll\winrt.dll.uap.vcxproj">
       <Project>{8cf21e5d-e0a2-4fe7-8e2b-a025cf52dcfb}</Project>

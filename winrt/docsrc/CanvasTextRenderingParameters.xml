@@ -78,7 +78,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         and diagonal lines look smoother.
       </summary>
     </member>
-    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTextRenderingMode.NaturalSymmetricDownsampled" Win10="true">
+    <member name="F:Microsoft.Graphics.Canvas.Text.CanvasTextRenderingMode.NaturalSymmetricDownsampled">
       <summary>
         Similar to NaturalSymmetric except that text is rendered in a
         downsampled form where possible, sacrificing quality for faster
@@ -93,8 +93,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <remarks>
         <p>
           When using <a href="Interop.htm">Direct2D interop</a>, this Win2D class
-          corresponds to the DirectWrite interface IDWriteRenderingParams2 on Windows 8.1, and
-          IDWriteRenderingParams3 on Windows 10.
+          corresponds to the DirectWrite interface IDWriteRenderingParams3.
         </p>
       </remarks>
     </member>

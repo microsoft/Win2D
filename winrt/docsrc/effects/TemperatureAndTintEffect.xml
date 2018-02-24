@@ -12,7 +12,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
 
   <members>
 
-    <member name="T:Microsoft.Graphics.Canvas.Effects.TemperatureAndTintEffect" Win10="true">
+    <member name="T:Microsoft.Graphics.Canvas.Effects.TemperatureAndTintEffect">
       <summary>
         Adjusts the temperature and/or tint of an image.
       </summary>
