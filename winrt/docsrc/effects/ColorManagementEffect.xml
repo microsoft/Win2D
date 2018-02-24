@@ -86,7 +86,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         The resulting color profile will have a type of <see cref="F:Microsoft.Graphics.Canvas.Effects.ColorManagementProfileType.Icc"/>.
       </remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.Effects.ColorManagementProfile.CreateSimple(Microsoft.Graphics.Canvas.Effects.ColorManagementSimpleProfile)" Win10_15063="true" Experimental="true">
+    <member name="M:Microsoft.Graphics.Canvas.Effects.ColorManagementProfile.CreateSimple(Microsoft.Graphics.Canvas.Effects.ColorManagementSimpleProfile)" Win10_15063="true">
       <summary>Initializes a new instance of the ColorManagementProfile class using the specified ColorManagementSimpleProfile.</summary>
       <remarks>
         <p>
@@ -101,7 +101,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         </p>
       </remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.Effects.ColorManagementProfile.CreateExtended(Microsoft.Graphics.Canvas.Effects.ExtendedColorSpace)" Win10_15063="true" Experimental="true">
+    <member name="M:Microsoft.Graphics.Canvas.Effects.ColorManagementProfile.CreateExtended(Microsoft.Graphics.Canvas.Effects.ExtendedColorSpace)" Win10_15063="true">
       <summary>Initializes a new instance of the ColorManagementProfile class using the specified ExtendedColorSpace.</summary>
       <remarks>
         <p>
@@ -116,7 +116,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         </p>
       </remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.Effects.ColorManagementProfile.IsSupported(Microsoft.Graphics.Canvas.Effects.ColorManagementProfileType,Microsoft.Graphics.Canvas.CanvasDevice)" Experimental="true">
+    <member name="M:Microsoft.Graphics.Canvas.Effects.ColorManagementProfile.IsSupported(Microsoft.Graphics.Canvas.Effects.ColorManagementProfileType,Microsoft.Graphics.Canvas.CanvasDevice)">
       <summary>Checks whether the specified type of color profile is supported on the specified device.</summary>
       <remarks>ICC color profiles are always supported. Simple and Extended profiles require Windows 10 build 15063 (Creators Update) or greater.</remarks>
     </member>
@@ -131,19 +131,19 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <summary>Gets the ICC color profile.</summary>
       <remarks>Returns an empty array if the <see cref="P:Microsoft.Graphics.Canvas.Effects.ColorManagementProfile.Type"/> of the color profile is not Icc.</remarks>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.Effects.ColorManagementProfile.SimpleProfile" Win10_15063="true" Experimental="true">
+    <member name="P:Microsoft.Graphics.Canvas.Effects.ColorManagementProfile.SimpleProfile" Win10_15063="true">
       <summary>Gets the simple color profile description.</summary>
       <remarks>Returns null if the <see cref="P:Microsoft.Graphics.Canvas.Effects.ColorManagementProfile.Type"/> of the color profile is not Simple.</remarks>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.Effects.ColorManagementProfile.ExtendedColorSpace" Win10_15063="true" Experimental="true">
+    <member name="P:Microsoft.Graphics.Canvas.Effects.ColorManagementProfile.ExtendedColorSpace" Win10_15063="true">
       <summary>Gets the extended color space.</summary>
       <remarks>Returns Custom if the <see cref="P:Microsoft.Graphics.Canvas.Effects.ColorManagementProfile.Type"/> of the color profile is not Extended.</remarks>
     </member>
-    <member name="P:Microsoft.Graphics.Canvas.Effects.ColorManagementProfile.Type" Experimental="true">
+    <member name="P:Microsoft.Graphics.Canvas.Effects.ColorManagementProfile.Type">
       <summary>Gets the type of the color profile.</summary>
     </member>
 
-    <member name="T:Microsoft.Graphics.Canvas.Effects.ColorManagementProfileType" Experimental="true">
+    <member name="T:Microsoft.Graphics.Canvas.Effects.ColorManagementProfileType">
       <summary>Describes the type of a ColorManagementProfile.</summary>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.Effects.ColorManagementProfileType.Icc">
@@ -156,7 +156,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <summary>The color space is specified by an ExtendedColorSpace enum value.</summary>
     </member>
 
-    <member name="T:Microsoft.Graphics.Canvas.Effects.ColorManagementSimpleProfile" Win10_15063="true" Experimental="true">
+    <member name="T:Microsoft.Graphics.Canvas.Effects.ColorManagementSimpleProfile" Win10_15063="true">
       <summary>Simple description of a color space.</summary>
       <remarks>
         ColorManagementSimpleProfile structures are used with
@@ -181,7 +181,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <summary>The gamma encoding to use for this color space.</summary>
     </member>
 
-    <member name="T:Microsoft.Graphics.Canvas.Effects.ColorManagementGamma" Win10_15063="true" Experimental="true">
+    <member name="T:Microsoft.Graphics.Canvas.Effects.ColorManagementGamma" Win10_15063="true">
       <summary>Describes the gamma of a ColorManagementSimpleProfile.</summary>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.Effects.ColorManagementGamma.G22">
@@ -194,7 +194,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <summary>Colors are in ST.2084 PQ gamma color space.</summary>
     </member>
 
-    <member name="T:Microsoft.Graphics.Canvas.Effects.ExtendedColorSpace" Win10_15063="true" Experimental="true">
+    <member name="T:Microsoft.Graphics.Canvas.Effects.ExtendedColorSpace" Win10_15063="true">
       <summary>Defines an extended set of color spaces.</summary>
       <remarks>
         This enum is used with

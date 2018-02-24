@@ -11,7 +11,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
   </assembly>
   <members>  
 
-    <member name="T:Microsoft.Graphics.Canvas.Svg.CanvasSvgNamedElement" Win10_15063="true" Experimental="true">
+    <member name="T:Microsoft.Graphics.Canvas.Svg.CanvasSvgNamedElement" Win10_15063="true">
       <summary>Specifies an SVG element which can be part of an SVG document.</summary>
       <remarks>
         <p>
@@ -220,7 +220,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <summary>Gets the name of this element.</summary>
     </member>    
     
-    <member name="T:Microsoft.Graphics.Canvas.Svg.CanvasSvgTextElement" Win10_15063="true" Experimental="true">
+    <member name="T:Microsoft.Graphics.Canvas.Svg.CanvasSvgTextElement" Win10_15063="true">
       <summary>Object representing a part of an SVG document which can contain only text.</summary>
       <remarks>
         Win2D only permits text elements where they are allowed, according to what constitutes valid SVG.
@@ -236,7 +236,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <summary>Gets or sets the text for this element.</summary>
     </member>
     
-    <member name="T:Microsoft.Graphics.Canvas.Svg.ICanvasSvgElement" Win10_15063="true" Experimental="true">
+    <member name="T:Microsoft.Graphics.Canvas.Svg.ICanvasSvgElement" Win10_15063="true">
       <summary>Interface representing an SVG element.</summary>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Svg.ICanvasSvgElement.ContainingDocument">

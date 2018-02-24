@@ -10,7 +10,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <name>Microsoft.Graphics.Canvas</name>
   </assembly>
   <members>
-    <member name="T:Microsoft.Graphics.Canvas.Svg.CanvasSvgDocument" Win10_15063="true" Experimental="true">
+    <member name="T:Microsoft.Graphics.Canvas.Svg.CanvasSvgDocument" Win10_15063="true">
       <summary>Specifies an SVG document that can be drawn.</summary>
       <remarks>
         <p>
