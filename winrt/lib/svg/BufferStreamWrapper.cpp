@@ -132,15 +132,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                 {
                     if (dwOrigin == STREAM_SEEK_SET)
                     {
-                        m_seekLocation = liDistanceToMove.LowPart;
+                        m_seekLocation = static_cast<size_t>(liDistanceToMove.QuadPart);
                     }
                     else if (dwOrigin == STREAM_SEEK_CUR)
                     {
-                        m_seekLocation += liDistanceToMove.LowPart;
+                        m_seekLocation += static_cast<size_t>(liDistanceToMove.QuadPart);
                     }
                     else if (dwOrigin == STREAM_SEEK_END)
                     {
-                        m_seekLocation = m_bufferSizeInBytes + liDistanceToMove.LowPart;
+                        m_seekLocation = m_bufferSizeInBytes + static_cast<size_t>(liDistanceToMove.QuadPart);
                     }
                     else
                     {
