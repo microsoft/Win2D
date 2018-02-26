@@ -18,6 +18,104 @@
 using namespace ABI::Microsoft::Graphics::Canvas::Geometry;
 using namespace ABI::Microsoft::Graphics::Canvas;
 
+GeometryDevicePtr::GeometryDevicePtr(ICanvasResourceCreator* resourceCreator)
+    : GeometryDevicePtr(::GetCanvasDevice(resourceCreator).Get())
+{
+}
+
+GeometryDevicePtr::GeometryDevicePtr(ICanvasDevice* canvasDevice)
+    : m_canvasDevice(canvasDevice)
+{
+}
+
+void GeometryDevicePtr::Close()
+{
+    m_canvasDevice.Reset();
+}
+
+GeometryDevicePtr const& GeometryDevicePtr::EnsureNotClosed()
+{
+    if (!m_canvasDevice)
+        ThrowHR(RO_E_CLOSED);
+
+    return *this;
+}
+
+ComPtr<ICanvasDevice> GeometryDevicePtr::GetCanvasDevice() const
+{
+    return m_canvasDevice;
+}
+
+ComPtr<ID2D1Factory2> GeometryDevicePtr::GetD2DFactory() const
+{
+    auto d2dDevice = As<ICanvasDeviceInternal>(m_canvasDevice)->GetD2DDevice();
+
+    ComPtr<ID2D1Factory> d2dFactory;
+    d2dDevice->GetFactory(&d2dFactory);
+
+    return As<ID2D1Factory2>(d2dFactory);
+}
+
+ComPtr<ID2D1RectangleGeometry> DefaultGeometryAdapter::CreateRectangleGeometry(GeometryDevicePtr const& device, D2D1_RECT_F const& rectangle)
+{
+    auto factory = device.GetD2DFactory();
+
+    ComPtr<ID2D1RectangleGeometry> rectangleGeometry;
+    ThrowIfFailed(factory->CreateRectangleGeometry(rectangle, &rectangleGeometry));
+
+    return rectangleGeometry;
+}
+
+ComPtr<ID2D1EllipseGeometry> DefaultGeometryAdapter::CreateEllipseGeometry(GeometryDevicePtr const& device, D2D1_ELLIPSE const& ellipse)
+{
+    auto factory = device.GetD2DFactory();
+
+    ComPtr<ID2D1EllipseGeometry> ellipseGeometry;
+    ThrowIfFailed(factory->CreateEllipseGeometry(ellipse, &ellipseGeometry));
+
+    return ellipseGeometry;
+}
+
+ComPtr<ID2D1RoundedRectangleGeometry> DefaultGeometryAdapter::CreateRoundedRectangleGeometry(GeometryDevicePtr const& device, D2D1_ROUNDED_RECT const& roundedRect)
+{
+    auto factory = device.GetD2DFactory();
+
+    ComPtr<ID2D1RoundedRectangleGeometry> roundedRectangleGeometry;
+    ThrowIfFailed(factory->CreateRoundedRectangleGeometry(roundedRect, &roundedRectangleGeometry));
+
+    return roundedRectangleGeometry;
+}
+
+ComPtr<ID2D1PathGeometry1> DefaultGeometryAdapter::CreatePathGeometry(GeometryDevicePtr const& device)
+{
+    auto factory = device.GetD2DFactory();
+
+    ComPtr<ID2D1PathGeometry1> pathGeometry;
+    ThrowIfFailed(factory->CreatePathGeometry(&pathGeometry));
+
+    return pathGeometry;
+}
+
+ComPtr<ID2D1GeometryGroup> DefaultGeometryAdapter::CreateGeometryGroup(GeometryDevicePtr const& device, D2D1_FILL_MODE fillMode, ID2D1Geometry** d2dGeometries, uint32_t geometryCount)
+{
+    auto factory = device.GetD2DFactory();
+
+    ComPtr<ID2D1GeometryGroup> geometryGroup;
+    ThrowIfFailed(factory->CreateGeometryGroup(fillMode, d2dGeometries, geometryCount, &geometryGroup));
+
+    return geometryGroup;
+}
+
+ComPtr<ID2D1TransformedGeometry> DefaultGeometryAdapter::CreateTransformedGeometry(GeometryDevicePtr const& device, ID2D1Geometry* d2dGeometry, D2D1_MATRIX_3X2_F* transform)
+{
+    auto factory = device.GetD2DFactory();
+
+    ComPtr<ID2D1TransformedGeometry> transformedGeometry;
+    ThrowIfFailed(factory->CreateTransformedGeometry(d2dGeometry, transform, &transformedGeometry));
+
+    return transformedGeometry;
+}
+
 IFACEMETHODIMP CanvasGeometryFactory::CreateRectangle(
     ICanvasResourceCreator* resourceCreator,
     Rect rect,
@@ -348,17 +446,21 @@ IFACEMETHODIMP CanvasGeometryFactory::get_DefaultFlatteningTolerance(float* theV
         });
 }
 
-CanvasGeometry::CanvasGeometry(
-    ICanvasDevice* canvasDevice,
-    ID2D1Geometry* d2dGeometry)
+CanvasGeometry::CanvasGeometry(GeometryDevicePtr const& device, ID2D1Geometry* d2dGeometry)
     : ResourceWrapper(d2dGeometry)
-    , m_canvasDevice(canvasDevice)
+    , m_device(device)
+{
+}
+
+CanvasGeometry::CanvasGeometry(ICanvasDevice* device, ID2D1Geometry* d2dGeometry)
+    : ResourceWrapper(d2dGeometry)
+    , m_device(device)
 {
 }
 
 IFACEMETHODIMP CanvasGeometry::Close()
 {
-    m_canvasDevice.Close();
+    m_device.Close();
     return ResourceWrapper::Close();
 }
 
@@ -369,7 +471,7 @@ IFACEMETHODIMP CanvasGeometry::get_Device(ICanvasDevice** device)
         {
             CheckAndClearOutPointer(device);
 
-            ThrowIfFailed(m_canvasDevice.EnsureNotClosed().CopyTo(device));
+            ThrowIfFailed(m_device.EnsureNotClosed().GetCanvasDevice().CopyTo(device));
         });
 }
 
@@ -403,7 +505,7 @@ IFACEMETHODIMP CanvasGeometry::CombineWithUsingFlatteningTolerance(
 
             auto& resource = GetResource();
 
-            auto temporaryPathBuilder = Make<CanvasPathBuilder>(m_canvasDevice.EnsureNotClosed().Get());
+            auto temporaryPathBuilder = Make<CanvasPathBuilder>(m_device.EnsureNotClosed());
             CheckMakeResult(temporaryPathBuilder);
             auto targetPathBuilderInternal = As<ICanvasPathBuilderInternal>(temporaryPathBuilder);
 
@@ -469,7 +571,7 @@ void CanvasGeometry::StrokeImpl(
 
     auto& resource = GetResource();
 
-    auto temporaryPathBuilder = Make<CanvasPathBuilder>(m_canvasDevice.EnsureNotClosed().Get());
+    auto temporaryPathBuilder = Make<CanvasPathBuilder>(m_device.EnsureNotClosed());
     CheckMakeResult(temporaryPathBuilder);
     auto targetPathBuilderInternal = As<ICanvasPathBuilderInternal>(temporaryPathBuilder);
 
@@ -505,7 +607,7 @@ IFACEMETHODIMP CanvasGeometry::OutlineWithTransformAndFlatteningTolerance(
 
             auto& resource = GetResource();
 
-            auto temporaryPathBuilder = Make<CanvasPathBuilder>(m_canvasDevice.EnsureNotClosed().Get());
+            auto temporaryPathBuilder = Make<CanvasPathBuilder>(m_device.EnsureNotClosed());
             CheckMakeResult(temporaryPathBuilder);
             auto targetPathBuilderInternal = As<ICanvasPathBuilderInternal>(temporaryPathBuilder);
 
@@ -543,7 +645,7 @@ IFACEMETHODIMP CanvasGeometry::SimplifyWithTransformAndFlatteningTolerance(
 
             auto& resource = GetResource();
 
-            auto temporaryPathBuilder = Make<CanvasPathBuilder>(m_canvasDevice.EnsureNotClosed().Get());
+            auto temporaryPathBuilder = Make<CanvasPathBuilder>(m_device.EnsureNotClosed());
             CheckMakeResult(temporaryPathBuilder);
             auto targetPathBuilderInternal = As<ICanvasPathBuilderInternal>(temporaryPathBuilder);
 
@@ -569,15 +671,12 @@ IFACEMETHODIMP CanvasGeometry::Transform(
 
             auto& resource = GetResource();
 
-            auto& device = m_canvasDevice.EnsureNotClosed();
-
-            auto deviceInternal = As<ICanvasDeviceInternal>(device.Get());
-
-            auto d2dGeometry = deviceInternal->CreateTransformedGeometry(
+            auto d2dGeometry = GeometryAdapter::GetInstance()->CreateTransformedGeometry(
+                m_device,
                 resource.Get(),
                 ReinterpretAs<D2D1_MATRIX_3X2_F*>(&transform));
 
-            auto newGeometry = Make<CanvasGeometry>(device.Get(), static_cast<ID2D1Geometry*>(d2dGeometry.Get()));
+            auto newGeometry = Make<CanvasGeometry>(m_device, static_cast<ID2D1Geometry*>(d2dGeometry.Get()));
             CheckMakeResult(newGeometry);
 
             ThrowIfFailed(newGeometry.CopyTo(geometry));
@@ -1029,15 +1128,12 @@ ComPtr<CanvasGeometry> CanvasGeometry::CreateNew(
     ICanvasResourceCreator* resourceCreator,
     Rect rect)
 {
-    ComPtr<ICanvasDevice> device;
-    ThrowIfFailed(resourceCreator->get_Device(&device));
+    GeometryDevicePtr device(resourceCreator);
 
-    auto deviceInternal = As<ICanvasDeviceInternal>(device);
-
-    auto d2dGeometry = deviceInternal->CreateRectangleGeometry(ToD2DRect(rect));
+    auto d2dGeometry = GeometryAdapter::GetInstance()->CreateRectangleGeometry(device, ToD2DRect(rect));
 
     auto canvasGeometry = Make<CanvasGeometry>(
-        device.Get(),
+        device,
         d2dGeometry.Get());
     CheckMakeResult(canvasGeometry);
 
@@ -1050,15 +1146,12 @@ ComPtr<CanvasGeometry> CanvasGeometry::CreateNew(
     float radiusX,
     float radiusY)
 {
-    ComPtr<ICanvasDevice> device;
-    ThrowIfFailed(resourceCreator->get_Device(&device));
+    GeometryDevicePtr device(resourceCreator);
 
-    auto deviceInternal = As<ICanvasDeviceInternal>(device);
-
-    auto d2dGeometry = deviceInternal->CreateEllipseGeometry(D2D1::Ellipse(ToD2DPoint(center), radiusX, radiusY));
+    auto d2dGeometry = GeometryAdapter::GetInstance()->CreateEllipseGeometry(device, D2D1::Ellipse(ToD2DPoint(center), radiusX, radiusY));
 
     auto canvasGeometry = Make<CanvasGeometry>(
-        device.Get(),
+        device,
         d2dGeometry.Get());
     CheckMakeResult(canvasGeometry);
 
@@ -1071,15 +1164,12 @@ ComPtr<CanvasGeometry> CanvasGeometry::CreateNew(
     float radiusX,
     float radiusY)
 {
-    ComPtr<ICanvasDevice> device;
-    ThrowIfFailed(resourceCreator->get_Device(&device));
+    GeometryDevicePtr device(resourceCreator);
 
-    auto deviceInternal = As<ICanvasDeviceInternal>(device);
-
-    auto d2dGeometry = deviceInternal->CreateRoundedRectangleGeometry(D2D1::RoundedRect(ToD2DRect(rect), radiusX, radiusY));
+    auto d2dGeometry = GeometryAdapter::GetInstance()->CreateRoundedRectangleGeometry(device, D2D1::RoundedRect(ToD2DRect(rect), radiusX, radiusY));
 
     auto canvasGeometry = Make<CanvasGeometry>(
-        device.Get(),
+        device,
         d2dGeometry.Get());
     CheckMakeResult(canvasGeometry);
 
@@ -1091,12 +1181,12 @@ ComPtr<CanvasGeometry> CanvasGeometry::CreateNew(
 {
     auto pathBuilderInternal = As<ICanvasPathBuilderInternal>(pathBuilder);
 
-    auto device = pathBuilderInternal->GetDevice();
+    auto device = pathBuilderInternal->GetGeometryDevice();
 
     auto d2dGeometry = pathBuilderInternal->CloseAndReturnPath();
 
     auto canvasGeometry = Make<CanvasGeometry>(
-        device.Get(),
+        device,
         d2dGeometry.Get());
     CheckMakeResult(canvasGeometry);
 
@@ -1113,10 +1203,9 @@ ComPtr<CanvasGeometry> CanvasGeometry::CreateNew(
         CheckInPointer(points);
     }
 
-    ComPtr<ICanvasDevice> device;
-    ThrowIfFailed(resourceCreator->get_Device(&device));
+    GeometryDevicePtr device(resourceCreator);
 
-    auto pathGeometry = As<ICanvasDeviceInternal>(device)->CreatePathGeometry();
+    auto pathGeometry = GeometryAdapter::GetInstance()->CreatePathGeometry(device);
 
     ComPtr<ID2D1GeometrySink> geometrySink;
     ThrowIfFailed(pathGeometry->Open(&geometrySink));
@@ -1135,7 +1224,7 @@ ComPtr<CanvasGeometry> CanvasGeometry::CreateNew(
 
     ThrowIfFailed(geometrySink->Close());
 
-    auto canvasGeometry = Make<CanvasGeometry>(device.Get(), pathGeometry.Get());
+    auto canvasGeometry = Make<CanvasGeometry>(device, pathGeometry.Get());
     CheckMakeResult(canvasGeometry);
 
     return canvasGeometry;
@@ -1147,10 +1236,7 @@ ComPtr<CanvasGeometry> CanvasGeometry::CreateNew(
     ICanvasGeometry** geometryElements,
     CanvasFilledRegionDetermination filledRegionDetermination)
 {
-    ComPtr<ICanvasDevice> device;
-    ThrowIfFailed(resourceCreator->get_Device(&device));
-
-    auto deviceInternal = As<ICanvasDeviceInternal>(device);
+    GeometryDevicePtr device(resourceCreator);
 
     std::vector<ID2D1Geometry*> d2dGeometriesRaw;
     d2dGeometriesRaw.resize(geometryCount);
@@ -1177,13 +1263,14 @@ ComPtr<CanvasGeometry> CanvasGeometry::CreateNew(
         d2dGeometriesRaw.push_back(nullptr);
     }
 
-    auto d2dGeometry = deviceInternal->CreateGeometryGroup(
+    auto d2dGeometry = GeometryAdapter::GetInstance()->CreateGeometryGroup(
+        device,
         static_cast<D2D1_FILL_MODE>(filledRegionDetermination),
         &d2dGeometriesRaw[0], 
         geometryCount);
 
     auto canvasGeometry = Make<CanvasGeometry>(
-        device.Get(),
+        device,
         d2dGeometry.Get());
     CheckMakeResult(canvasGeometry);
 
@@ -1192,13 +1279,14 @@ ComPtr<CanvasGeometry> CanvasGeometry::CreateNew(
 
 
 static ComPtr<ID2D1TransformedGeometry> GetGlyphRunGeometry(
-    ComPtr<ICanvasDeviceInternal> const& deviceInternal,
+    GeometryDevicePtr const& device,
     FLOAT baselineOriginX,
     FLOAT baselineOriginY,
     DWRITE_GLYPH_ORIENTATION_ANGLE orientationAngle,
     DWRITE_GLYPH_RUN const* glyphRun)
 {
-    auto d2dPathGeometry = deviceInternal->CreatePathGeometry();
+    auto adapter = GeometryAdapter::GetInstance();
+    auto d2dPathGeometry = adapter->CreatePathGeometry(device);
 
     ComPtr<ID2D1GeometrySink> d2dGeometrySink;
     ThrowIfFailed(d2dPathGeometry->Open(&d2dGeometrySink));
@@ -1222,7 +1310,7 @@ static ComPtr<ID2D1TransformedGeometry> GetGlyphRunGeometry(
     transform.dx = baselineOriginX;
     transform.dy = baselineOriginY;
 
-    auto transformedGeometry = deviceInternal->CreateTransformedGeometry(d2dPathGeometry.Get(), ReinterpretAs<D2D1_MATRIX_3X2_F*>(&transform));
+    auto transformedGeometry = adapter->CreateTransformedGeometry(device, d2dPathGeometry.Get(), ReinterpretAs<D2D1_MATRIX_3X2_F*>(&transform));
 
     return transformedGeometry;
 }
@@ -1232,11 +1320,14 @@ class OutlineTextRenderer : public RuntimeClass<RuntimeClassFlags<ClassicCom>, I
     private LifespanTracker<OutlineTextRenderer>
 {
     std::vector<ComPtr<ID2D1Geometry>> m_geometries;
-    ComPtr<ICanvasDeviceInternal> m_device;
+    GeometryDevicePtr m_device;
+    std::shared_ptr<GeometryAdapter> m_geometryAdapter;
+
 public:
-    OutlineTextRenderer(ComPtr<ICanvasDevice> const& device)
-        : m_device(As<ICanvasDeviceInternal>(device))
+    OutlineTextRenderer(GeometryDevicePtr const& device)
+        : m_device(device)
     {
+        m_geometryAdapter = GeometryAdapter::GetInstance();
     }
 
     ComPtr<ID2D1GeometryGroup> CloseAndGetPath()
@@ -1251,12 +1342,12 @@ public:
                 rawPtrs[i] = m_geometries[i].Get();
             }
 
-            return m_device->CreateGeometryGroup(D2D1_FILL_MODE_ALTERNATE, &rawPtrs[0], static_cast<uint32_t>(rawPtrs.size()));
+            return m_geometryAdapter->CreateGeometryGroup(m_device, D2D1_FILL_MODE_ALTERNATE, &rawPtrs[0], static_cast<uint32_t>(rawPtrs.size()));
         }
         else
         {
             ID2D1Geometry* unused{};
-            return m_device->CreateGeometryGroup(D2D1_FILL_MODE_ALTERNATE, &unused, 0);
+            return m_geometryAdapter->CreateGeometryGroup(m_device, D2D1_FILL_MODE_ALTERNATE, &unused, 0);
         }
 
     }
@@ -1352,7 +1443,7 @@ public:
                 rect = RotateRectangle(orientationAngle, rect);
                 rect = OffsetRectangle(baselineOriginX, baselineOriginY, rect);
 
-                auto rectangleGeometry = m_device->CreateRectangleGeometry(rect);
+                auto rectangleGeometry = m_geometryAdapter->CreateRectangleGeometry(m_device, rect);
 
                 m_geometries.push_back(rectangleGeometry);
             });
@@ -1389,7 +1480,7 @@ public:
                 rect = RotateRectangle(orientationAngle, rect);
                 rect = OffsetRectangle(baselineOriginX, baselineOriginY, rect);
 
-                auto rectangleGeometry = m_device->CreateRectangleGeometry(rect);
+                auto rectangleGeometry = m_geometryAdapter->CreateRectangleGeometry(m_device, rect);
 
                 m_geometries.push_back(rectangleGeometry);
 
@@ -1507,8 +1598,10 @@ ComPtr<CanvasGeometry> CanvasGeometry::CreateNew(
 {
     auto dwriteTextLayout = GetWrappedResource<IDWriteTextLayout2>(canvasTextLayout);
 
-    ComPtr<ICanvasDevice> device;
-    ThrowIfFailed(canvasTextLayout->get_Device(&device));
+    ComPtr<ICanvasDevice> canvasDevice;
+    ThrowIfFailed(canvasTextLayout->get_Device(&canvasDevice));
+
+    GeometryDevicePtr device(canvasDevice.Get());
 
     auto outlineTextRenderer = Make<OutlineTextRenderer>(device);
 
@@ -1516,7 +1609,7 @@ ComPtr<CanvasGeometry> CanvasGeometry::CreateNew(
 
     auto d2dGeometry = outlineTextRenderer->CloseAndGetPath();
 
-    auto outlineGeometry = Make<CanvasGeometry>(device.Get(), d2dGeometry.Get());
+    auto outlineGeometry = Make<CanvasGeometry>(device, d2dGeometry.Get());
 
     return outlineGeometry;
 }
@@ -1543,17 +1636,16 @@ ComPtr<CanvasGeometry> CanvasGeometry::CreateNew(
         bidiLevel,
         measuringMode);
 
-    ComPtr<ICanvasDevice> device;
-    ThrowIfFailed(resourceCreator->get_Device(&device));
+    GeometryDevicePtr device(resourceCreator);
 
     auto d2dGeometry = GetGlyphRunGeometry(
-        As<ICanvasDeviceInternal>(device),
+        device,
         point.X,
         point.Y,
         ToDWriteGlyphOrientationAngle(glyphOrientation),
         &drawGlyphRunHelper.DWriteGlyphRun);
 
-    auto canvasGeometry = Make<CanvasGeometry>(device.Get(), d2dGeometry.Get());
+    auto canvasGeometry = Make<CanvasGeometry>(device, d2dGeometry.Get());
     CheckMakeResult(canvasGeometry);
 
     return canvasGeometry;
@@ -1568,11 +1660,10 @@ ComPtr<CanvasGeometry> CanvasGeometry::CreateNew(
     Matrix3x2 transform,
     float flatteningTolerance)
 {
-    ComPtr<ICanvasDevice> device;
-    ThrowIfFailed(resourceCreator->get_Device(&device));
+    GeometryDevicePtr device(resourceCreator);
 
     // Create a temporary command list.
-    auto commandList = CanvasCommandList::CreateNew(device.Get());
+    auto commandList = CanvasCommandList::CreateNew(device.GetCanvasDevice().Get());
 
     // Draw the ink into the command list.
     ComPtr<ICanvasDrawingSession> drawingSession;
@@ -1583,7 +1674,7 @@ ComPtr<CanvasGeometry> CanvasGeometry::CreateNew(
     drawingSession.Reset();
 
     // Create a path geometry, and open its geometry sink.
-    auto pathGeometry = As<ICanvasDeviceInternal>(device)->CreatePathGeometry();
+    auto pathGeometry = GeometryAdapter::GetInstance()->CreatePathGeometry(device);
 
     ComPtr<ID2D1GeometrySink> geometrySink;
     ThrowIfFailed(pathGeometry->Open(&geometrySink));
@@ -1604,7 +1695,7 @@ ComPtr<CanvasGeometry> CanvasGeometry::CreateNew(
     ThrowIfFailed(geometrySink->Close());
 
     // Wrap a CanvasGeometry around the D2D path geometry.
-    auto canvasGeometry = Make<CanvasGeometry>(device.Get(), pathGeometry.Get());
+    auto canvasGeometry = Make<CanvasGeometry>(device, pathGeometry.Get());
     CheckMakeResult(canvasGeometry);
 
     return canvasGeometry;

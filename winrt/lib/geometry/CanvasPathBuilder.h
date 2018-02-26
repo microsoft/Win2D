@@ -25,7 +25,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     ICanvasPathBuilderInternal : public IUnknown
     {
     public:
-        virtual ComPtr<ICanvasDevice> GetDevice() = 0;
+        virtual GeometryDevicePtr GetGeometryDevice() = 0;
 
         virtual ComPtr<ID2D1GeometrySink> GetGeometrySink() = 0;
 
@@ -48,15 +48,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         // from multiple threads.
         //
         
-        ClosablePtr<ICanvasDevice> m_canvasDevice;
+        GeometryDevicePtr m_device;
         ClosablePtr<ID2D1GeometrySink> m_d2dGeometrySink;
         ClosablePtr<ID2D1PathGeometry1> m_d2dPathGeometry;
         bool m_isInFigure;
         bool m_beginFigureOccurred;
 
     public:
-        CanvasPathBuilder(
-            ICanvasDevice* canvasDevice);
+        CanvasPathBuilder(GeometryDevicePtr const& device);
 
         IFACEMETHOD(Close)();
 
@@ -123,7 +122,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         // ICanvasPathBuilderInternal
         //
 
-        virtual ComPtr<ICanvasDevice> GetDevice() override;
+        virtual GeometryDevicePtr GetGeometryDevice() override;
 
         virtual ComPtr<ID2D1GeometrySink> GetGeometrySink() override;
 

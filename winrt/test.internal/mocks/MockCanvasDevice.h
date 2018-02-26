@@ -46,15 +46,6 @@ namespace canvas
         CALL_COUNTER_WITH_MOCK(CreateSwapChainForCoreWindowMethod, ComPtr<IDXGISwapChain1>(ICoreWindow*, int32_t, int32_t, DirectXPixelFormat, int32_t, CanvasAlphaMode));
         CALL_COUNTER_WITH_MOCK(CreateCommandListMethod, ComPtr<ID2D1CommandList>());
 
-        CALL_COUNTER_WITH_MOCK(CreateRectangleGeometryMethod, ComPtr<ID2D1RectangleGeometry>(D2D1_RECT_F const&));
-        CALL_COUNTER_WITH_MOCK(CreateEllipseGeometryMethod, ComPtr<ID2D1EllipseGeometry>(D2D1_ELLIPSE const&));
-        CALL_COUNTER_WITH_MOCK(CreateRoundedRectangleGeometryMethod, ComPtr<ID2D1RoundedRectangleGeometry>(D2D1_ROUNDED_RECT const&));
-
-        CALL_COUNTER_WITH_MOCK(CreatePathGeometryMethod, ComPtr<ID2D1PathGeometry1>());
-
-        CALL_COUNTER_WITH_MOCK(CreateGeometryGroupMethod, ComPtr<ID2D1GeometryGroup>(D2D1_FILL_MODE, ID2D1Geometry**, UINT32));
-        CALL_COUNTER_WITH_MOCK(CreateTransformedGeometryMethod, ComPtr<ID2D1TransformedGeometry>(ID2D1Geometry*, D2D1_MATRIX_3X2_F*));
-
         CALL_COUNTER_WITH_MOCK(CreateFilledGeometryRealizationMethod, ComPtr<ID2D1GeometryRealization>(ID2D1Geometry*, float));
         CALL_COUNTER_WITH_MOCK(CreateStrokedGeometryRealizationMethod, ComPtr<ID2D1GeometryRealization>(ID2D1Geometry*, float, ID2D1StrokeStyle*, float));
 
@@ -368,36 +359,6 @@ namespace canvas
         virtual ComPtr<ID2D1CommandList> CreateCommandList() override
         {
             return CreateCommandListMethod.WasCalled();
-        }
-
-        virtual ComPtr<ID2D1RectangleGeometry> CreateRectangleGeometry(D2D1_RECT_F const& rect) override
-        {
-            return CreateRectangleGeometryMethod.WasCalled(rect);
-        }
-
-        virtual ComPtr<ID2D1EllipseGeometry> CreateEllipseGeometry(D2D1_ELLIPSE const& ellipse) override
-        {
-            return CreateEllipseGeometryMethod.WasCalled(ellipse);
-        }
-
-        virtual ComPtr<ID2D1RoundedRectangleGeometry> CreateRoundedRectangleGeometry(D2D1_ROUNDED_RECT const& roundedRect) override
-        {
-            return CreateRoundedRectangleGeometryMethod.WasCalled(roundedRect);
-        }
-
-        virtual ComPtr<ID2D1PathGeometry1> CreatePathGeometry() override
-        {
-            return CreatePathGeometryMethod.WasCalled();
-        }
-
-        virtual ComPtr<ID2D1GeometryGroup> CreateGeometryGroup(D2D1_FILL_MODE fillMode, ID2D1Geometry** d2dGeometries, uint32_t geometryCount) override
-        {
-            return CreateGeometryGroupMethod.WasCalled(fillMode, d2dGeometries, geometryCount);
-        }
-
-        virtual ComPtr<ID2D1TransformedGeometry> CreateTransformedGeometry(ID2D1Geometry* d2dGeometry, D2D1_MATRIX_3X2_F* transform) override
-        {
-            return CreateTransformedGeometryMethod.WasCalled(d2dGeometry, transform);
         }
 
         virtual ComPtr<ID2D1GeometryRealization> CreateFilledGeometryRealization(ID2D1Geometry* geometry, float flatteningTolerance) override

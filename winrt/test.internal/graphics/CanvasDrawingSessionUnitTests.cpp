@@ -17,6 +17,7 @@
 #include "mocks/MockD2DGeometryRealization.h"
 #include "mocks/MockD2DRectangleGeometry.h"
 #include "mocks/MockDWriteRenderingParams.h"
+#include "mocks/MockGeometryAdapter.h"
 #include "mocks/MockStream.h"
 #include "stubs/StubCanvasBrush.h"
 #include "stubs/StubCanvasTextLayoutAdapter.h"
@@ -125,6 +126,7 @@ public:
     ComPtr<CanvasGeometry> Geometry;
     ComPtr<CanvasCachedGeometry> CachedGeometry;
     ComPtr<CanvasTextLayout> TextLayout;
+    std::shared_ptr<MockGeometryAdapter> m_geometryAdapter;
 
 #if WINVER > _WIN32_WINNT_WINBLUE
     ComPtr<CanvasGradientMesh> GradientMesh;
@@ -135,7 +137,16 @@ public:
         , DeviceContext(Make<StubD2DDeviceContextWithGetFactory>())
         , DS(MakeDrawingSession(DeviceContext.Get(), CanvasDevice.Get()))
         , Brush(Make<StubCanvasBrush>())
+        , m_geometryAdapter(std::make_shared<MockGeometryAdapter>())
     {
+        GeometryAdapter::SetInstance(m_geometryAdapter);
+
+        m_geometryAdapter->CreateRectangleGeometryMethod.AllowAnyCall(
+            [](D2D1_RECT_F const&)
+            {
+                return Make<MockD2DRectangleGeometry>();
+            });
+
         Geometry = CanvasGeometry::CreateNew(CanvasDevice.Get(), Rect{ 1, 2, 3, 4 });
 
         CachedGeometry = CanvasCachedGeometry::CreateNew(CanvasDevice.Get(), Geometry.Get(), D2D1_DEFAULT_FLATTENING_TOLERANCE);

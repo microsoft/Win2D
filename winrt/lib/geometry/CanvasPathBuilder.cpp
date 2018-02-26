@@ -19,25 +19,21 @@ IFACEMETHODIMP CanvasPathBuilderFactory::Create(
             CheckInPointer(resourceAllocator);
             CheckAndClearOutPointer(canvasPathBuilder);
 
-            ComPtr<ICanvasDevice> canvasDevice;
-            ThrowIfFailed(resourceAllocator->get_Device(&canvasDevice));
+            GeometryDevicePtr device(resourceAllocator);
 
-            auto newCanvasPathBuilder = Make<CanvasPathBuilder>(canvasDevice.Get());
+            auto newCanvasPathBuilder = Make<CanvasPathBuilder>(device);
             CheckMakeResult(newCanvasPathBuilder);
 
             ThrowIfFailed(newCanvasPathBuilder.CopyTo(canvasPathBuilder));
         });
 }
 
-CanvasPathBuilder::CanvasPathBuilder(
-    ICanvasDevice* canvasDevice)
-    : m_canvasDevice(canvasDevice)
+CanvasPathBuilder::CanvasPathBuilder(GeometryDevicePtr const& device)
+    : m_device(device)
     , m_isInFigure(false)
     , m_beginFigureOccurred(false)
 {
-    auto deviceInternal = As<ICanvasDeviceInternal>(canvasDevice);
-
-    auto d2dPathGeometry = deviceInternal->CreatePathGeometry();
+    auto d2dPathGeometry = GeometryAdapter::GetInstance()->CreatePathGeometry(m_device);
 
     ComPtr<ID2D1GeometrySink> d2dGeometrySink;
     ThrowIfFailed(d2dPathGeometry->Open(&d2dGeometrySink));
@@ -63,7 +59,7 @@ IFACEMETHODIMP CanvasPathBuilder::Close()
 
         m_d2dPathGeometry.Close();
 
-        m_canvasDevice.Close();
+        m_device.Close();
     }
 
     return S_OK;
@@ -335,11 +331,11 @@ IFACEMETHODIMP CanvasPathBuilder::EndFigure(
         });
 }
 
-ComPtr<ICanvasDevice> CanvasPathBuilder::GetDevice()
+GeometryDevicePtr CanvasPathBuilder::GetGeometryDevice()
 {
-    auto& canvasDevice = m_canvasDevice.EnsureNotClosed();
+    auto& device = m_device.EnsureNotClosed();
 
-    return canvasDevice;
+    return device;
 }
 
 ComPtr<ID2D1GeometrySink> CanvasPathBuilder::GetGeometrySink()

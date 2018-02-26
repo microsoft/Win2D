@@ -643,6 +643,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DSvgStrokeDashArray.h">
       <Filter>mocks</Filter>
     </ClInclude>
+    <ClInclude Include="mocks\MockGeometryAdapter.h">
+      <Filter>mocks</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="$(MSBuildThisFileDirectory)readme.txt" />

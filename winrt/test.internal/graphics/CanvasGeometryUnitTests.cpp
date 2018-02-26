@@ -13,6 +13,7 @@
 #include "mocks/MockD2DTransformedGeometry.h"
 #include "mocks/MockD2DGeometryGroup.h"
 #include "mocks/MockDWriteFont.h"
+#include "mocks/MockGeometryAdapter.h"
 #include "stubs/StubGeometrySink.h"
 #include "stubs/StubCanvasTextLayoutAdapter.h"
 
@@ -50,11 +51,15 @@ public:
     struct Fixture
     {
         ComPtr<StubCanvasDevice> Device;
+        std::shared_ptr<MockGeometryAdapter> Adapter;
 
         Fixture()
             : Device(Make<StubCanvasDevice>())
+            , Adapter(std::make_shared<MockGeometryAdapter>())
         {
-            Device->CreateRectangleGeometryMethod.AllowAnyCall(
+            GeometryAdapter::SetInstance(Adapter);
+
+            Adapter->CreateRectangleGeometryMethod.AllowAnyCall(
                 [](D2D1_RECT_F const&)
                 {
                     return Make<MockD2DRectangleGeometry>();
@@ -81,7 +86,7 @@ public:
         const D2D1_RECT_F expectedD2DRect = 
             D2D1::RectF(expectedRect.X, expectedRect.Y, expectedRect.X + expectedRect.Width, expectedRect.Y + expectedRect.Height);
         
-        f.Device->CreateRectangleGeometryMethod.SetExpectedCalls(1, 
+        f.Adapter->CreateRectangleGeometryMethod.SetExpectedCalls(1, 
             [expectedD2DRect](D2D1_RECT_F const& rect)
             {
                 Assert::AreEqual(expectedD2DRect, rect);
@@ -97,7 +102,7 @@ public:
 
         D2D1_ELLIPSE testEllipse = D2D1::Ellipse(D2D1::Point2F(1, 2), 3, 4);
 
-        f.Device->CreateEllipseGeometryMethod.SetExpectedCalls(1,
+        f.Adapter->CreateEllipseGeometryMethod.SetExpectedCalls(1,
             [testEllipse](D2D1_ELLIPSE const& ellipse)
             {
                 Assert::AreEqual(testEllipse, ellipse);
@@ -117,7 +122,7 @@ public:
         float expectedRadiusX = 5;
         float expectedRadiusY = 6;
 
-        f.Device->CreateRoundedRectangleGeometryMethod.SetExpectedCalls(1,
+        f.Adapter->CreateRoundedRectangleGeometryMethod.SetExpectedCalls(1,
             [expectedD2DRect, expectedRadiusX, expectedRadiusY](D2D1_ROUNDED_RECT const& roundedRect)
             {
                 Assert::AreEqual(D2D1::RoundedRect(expectedD2DRect, expectedRadiusX, expectedRadiusY), roundedRect);
@@ -135,7 +140,7 @@ public:
         CreatePolygonFixture(int expectedVertexCount, Vector2 const* expectedVertices)
             : currentVertex(0)
         {
-            Device->CreatePathGeometryMethod.SetExpectedCalls(1,
+            Adapter->CreatePathGeometryMethod.SetExpectedCalls(1,
                 [=]
                 {
                     auto pathGeometry = Make<MockD2DPathGeometry>();
@@ -272,7 +277,7 @@ public:
         {
             GeometryGroupFixture f(geometryCount);
 
-            f.Device->CreateGeometryGroupMethod.SetExpectedCalls(1,
+            f.Adapter->CreateGeometryGroupMethod.SetExpectedCalls(1,
                 [&f](D2D1_FILL_MODE fillMode, ID2D1Geometry** geometries, uint32_t geometryCount)
                 {
                     Assert::AreEqual(D2D1_FILL_MODE_WINDING, fillMode);
@@ -290,7 +295,7 @@ public:
     {
         Fixture f;
 
-        f.Device->CreateGeometryGroupMethod.SetExpectedCalls(1,
+        f.Adapter->CreateGeometryGroupMethod.SetExpectedCalls(1,
             [&f](D2D1_FILL_MODE fillMode, ID2D1Geometry** geometries, uint32_t geometryCount)
             {
                 Assert::AreEqual(0u, geometryCount);
@@ -318,7 +323,7 @@ public:
         auto d2dGeometry = Make<MockD2DRectangleGeometry>();
         ComPtr<ICanvasGeometry> canvasGeometry = Make<CanvasGeometry>(f.Device.Get(), d2dGeometry.Get());
 
-        f.Device->CreateGeometryGroupMethod.SetExpectedCalls(1,
+        f.Adapter->CreateGeometryGroupMethod.SetExpectedCalls(1,
             [&f](D2D1_FILL_MODE fillMode, ID2D1Geometry** geometries, uint32_t geometryCount)
             {
                 Assert::AreEqual(0u, geometryCount);
@@ -372,7 +377,7 @@ public:
                     m_factory.CopyTo(out);
                 });
             
-            Device->CreatePathGeometryMethod.AllowAnyCall(
+            Adapter->CreatePathGeometryMethod.AllowAnyCall(
                 []
                 {
                     auto pathGeometry = Make<MockD2DPathGeometry>();
@@ -406,7 +411,7 @@ public:
         {
             SinkForTemporaryPath->CloseMethod.AllowAnyCall();
 
-            Device->CreatePathGeometryMethod.SetExpectedCalls(1,
+            Adapter->CreatePathGeometryMethod.SetExpectedCalls(1,
                 [this]
                 {
                     TemporaryPathGeometry->OpenMethod.SetExpectedCalls(1,
@@ -659,7 +664,7 @@ public:
     {
         GeometryOperationsFixture_DoesNotOutputToTempPathBuilder f;
 
-        f.Device->CreateTransformedGeometryMethod.SetExpectedCalls(1,
+        f.Adapter->CreateTransformedGeometryMethod.SetExpectedCalls(1,
             [&](ID2D1Geometry* geometry, D2D1_MATRIX_3X2_F* transform)
             {
                 Assert::AreEqual(static_cast<ID2D1Geometry*>(f.D2DRectangleGeometry.Get()), geometry);
@@ -1229,7 +1234,7 @@ public:
 
         auto canvasGeometry = CanvasGeometry::CreateNew(f.Device.Get(), Rect{});
         auto otherCanvasGeometry = CanvasGeometry::CreateNew(f.Device.Get(), Rect{});
-        auto pb = Make<CanvasPathBuilder>(f.Device.Get());
+        auto pb = Make<CanvasPathBuilder>(GeometryDevicePtr(As<ICanvasDevice>(f.Device).Get()));
 
         auto strokeStyle = Make<CanvasStrokeStyle>();
         Matrix3x2 m{};

@@ -172,6 +172,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)xaml\MockShape.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)xaml\MockXamlSolidColorBrush.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)xaml\StubDispatcher.h" />
+    <ClInclude Include="mocks\MockGeometryAdapter.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)composition\CanvasCompositionUnitTests.cpp" />

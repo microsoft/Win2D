@@ -42,12 +42,6 @@ namespace canvas
                     return dc;
                 });
 
-            CreateRectangleGeometryMethod.AllowAnyCall(
-                [](D2D1_RECT_F const&)
-                {
-                    return Make<MockD2DRectangleGeometry>();
-                });
-
             CreateFilledGeometryRealizationMethod.AllowAnyCall(
                 [=](ID2D1Geometry*, FLOAT)
                 {

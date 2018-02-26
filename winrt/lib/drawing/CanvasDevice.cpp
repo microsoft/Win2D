@@ -1194,66 +1194,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return cl;
     }
 
-    ComPtr<ID2D1RectangleGeometry> CanvasDevice::CreateRectangleGeometry(D2D1_RECT_F const& rectangle)
-    {
-        auto factory = GetD2DFactory();
-
-        ComPtr<ID2D1RectangleGeometry> rectangleGeometry;
-        ThrowIfFailed(factory->CreateRectangleGeometry(rectangle, &rectangleGeometry));
-
-        return rectangleGeometry;
-    }
-
-    ComPtr<ID2D1EllipseGeometry> CanvasDevice::CreateEllipseGeometry(D2D1_ELLIPSE const& ellipse)
-    {
-        auto factory = GetD2DFactory();
-
-        ComPtr<ID2D1EllipseGeometry> ellipseGeometry;
-        ThrowIfFailed(factory->CreateEllipseGeometry(ellipse, &ellipseGeometry));
-
-        return ellipseGeometry;
-    }
-
-    ComPtr<ID2D1RoundedRectangleGeometry> CanvasDevice::CreateRoundedRectangleGeometry(D2D1_ROUNDED_RECT const& roundedRect)
-    {
-        auto factory = GetD2DFactory();
-
-        ComPtr<ID2D1RoundedRectangleGeometry> roundedRectangleGeometry;
-        ThrowIfFailed(factory->CreateRoundedRectangleGeometry(roundedRect, &roundedRectangleGeometry));
-
-        return roundedRectangleGeometry;
-    }
-
-    ComPtr<ID2D1PathGeometry1> CanvasDevice::CreatePathGeometry()
-    {
-        auto factory = GetD2DFactory();
-
-        ComPtr<ID2D1PathGeometry1> pathGeometry;
-        ThrowIfFailed(factory->CreatePathGeometry(&pathGeometry));
-
-        return pathGeometry;
-    }
-
-    ComPtr<ID2D1GeometryGroup> CanvasDevice::CreateGeometryGroup(D2D1_FILL_MODE fillMode, ID2D1Geometry** d2dGeometries, uint32_t geometryCount)
-    {
-        auto factory = GetD2DFactory();
-
-        ComPtr<ID2D1GeometryGroup> geometryGroup;
-        ThrowIfFailed(factory->CreateGeometryGroup(fillMode, d2dGeometries, geometryCount, &geometryGroup));
-
-        return geometryGroup;
-    }
-
-    ComPtr<ID2D1TransformedGeometry> CanvasDevice::CreateTransformedGeometry(ID2D1Geometry* d2dGeometry, D2D1_MATRIX_3X2_F* transform)
-    {
-        auto factory = GetD2DFactory();
-
-        ComPtr<ID2D1TransformedGeometry> transformedGeometry;
-        ThrowIfFailed(factory->CreateTransformedGeometry(d2dGeometry, transform, &transformedGeometry));
-
-        return transformedGeometry;
-    }
-
     ComPtr<ID2D1GeometryRealization> CanvasDevice::CreateFilledGeometryRealization(ID2D1Geometry* geometry, float flatteningTolerance)
     {
         auto deviceContext = GetResourceCreationDeviceContext();
