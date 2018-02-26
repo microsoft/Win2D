@@ -19,23 +19,29 @@ using namespace ABI::Microsoft::Graphics::Canvas::Geometry;
 using namespace ABI::Microsoft::Graphics::Canvas;
 
 GeometryDevicePtr::GeometryDevicePtr(ICanvasResourceCreator* resourceCreator)
-    : GeometryDevicePtr(::GetCanvasDevice(resourceCreator).Get())
+    : GeometryDevicePtr(resourceCreator ? ::GetCanvasDevice(resourceCreator).Get() : nullptr)
 {
 }
 
 GeometryDevicePtr::GeometryDevicePtr(ICanvasDevice* canvasDevice)
     : m_canvasDevice(canvasDevice)
 {
+    // If no device association was provided, use the singleton standalone factory instead.
+    if (!canvasDevice)
+    {
+        m_standaloneFactory = StandaloneGeometryFactory::GetInstance();
+    }
 }
 
 void GeometryDevicePtr::Close()
 {
     m_canvasDevice.Reset();
+    m_standaloneFactory.reset();
 }
 
 GeometryDevicePtr const& GeometryDevicePtr::EnsureNotClosed()
 {
-    if (!m_canvasDevice)
+    if (!m_canvasDevice && !m_standaloneFactory)
         ThrowHR(RO_E_CLOSED);
 
     return *this;
@@ -48,12 +54,33 @@ ComPtr<ICanvasDevice> GeometryDevicePtr::GetCanvasDevice() const
 
 ComPtr<ID2D1Factory2> GeometryDevicePtr::GetD2DFactory() const
 {
-    auto d2dDevice = As<ICanvasDeviceInternal>(m_canvasDevice)->GetD2DDevice();
+    if (m_canvasDevice)
+    {
+        // Look up the D2D factory from a CanvasDevice.
+        auto d2dDevice = As<ICanvasDeviceInternal>(m_canvasDevice)->GetD2DDevice();
 
-    ComPtr<ID2D1Factory> d2dFactory;
-    d2dDevice->GetFactory(&d2dFactory);
+        ComPtr<ID2D1Factory> d2dFactory;
+        d2dDevice->GetFactory(&d2dFactory);
 
-    return As<ID2D1Factory2>(d2dFactory);
+        return As<ID2D1Factory2>(d2dFactory);
+    }
+    else if (m_standaloneFactory)
+    {
+        // Use the standalone singleton D2D factory.
+        return m_standaloneFactory->GetD2DFactory();
+    }
+    else
+    {
+        ThrowHR(RO_E_CLOSED);
+    }
+}
+
+// Creates the singleton D2D factory, for use when geometry is created without a device.
+StandaloneGeometryFactory::StandaloneGeometryFactory()
+{
+    auto sharedState = SharedDeviceState::GetInstance();
+    auto debugLevel = sharedState->GetDebugLevel();
+    m_d2dFactory = sharedState->GetAdapter()->CreateD2DFactory(debugLevel);
 }
 
 ComPtr<ID2D1RectangleGeometry> DefaultGeometryAdapter::CreateRectangleGeometry(GeometryDevicePtr const& device, D2D1_RECT_F const& rectangle)
@@ -124,7 +151,6 @@ IFACEMETHODIMP CanvasGeometryFactory::CreateRectangle(
     return ExceptionBoundary(
         [&]
         {
-            CheckInPointer(resourceCreator);
             CheckAndClearOutPointer(geometry);
 
             auto newCanvasGeometry = CanvasGeometry::CreateNew(resourceCreator, rect);
@@ -154,7 +180,6 @@ IFACEMETHODIMP CanvasGeometryFactory::CreateRoundedRectangle(
     return ExceptionBoundary(
         [&]
         {
-            CheckInPointer(resourceCreator);
             CheckAndClearOutPointer(geometry);
 
             auto newCanvasGeometry = CanvasGeometry::CreateNew(resourceCreator, rect, xRadius, yRadius);
@@ -186,7 +211,6 @@ IFACEMETHODIMP CanvasGeometryFactory::CreateEllipse(
     return ExceptionBoundary(
         [&]
         {
-            CheckInPointer(resourceCreator);
             CheckAndClearOutPointer(geometry);
 
             auto newCanvasGeometry = CanvasGeometry::CreateNew(resourceCreator, center, xRadius, yRadius);
@@ -250,7 +274,6 @@ IFACEMETHODIMP CanvasGeometryFactory::CreatePolygon(
     return ExceptionBoundary(
         [&]
         {
-            CheckInPointer(resourceCreator); 
             CheckAndClearOutPointer(geometry);
 
             auto newCanvasGeometry = CanvasGeometry::CreateNew(resourceCreator, pointCount, points);
@@ -283,7 +306,6 @@ IFACEMETHODIMP CanvasGeometryFactory::CreateGroupWithFilledRegionDetermination(
     return ExceptionBoundary(
         [&]
         {
-            CheckInPointer(resourceCreator); 
             CheckAndClearOutPointer(geometry);
 
             auto newCanvasGeometry = CanvasGeometry::CreateNew(resourceCreator, geometryCount, geometryElements, filledRegionDetermination);
@@ -325,7 +347,6 @@ IFACEMETHODIMP CanvasGeometryFactory::CreateGlyphRun(
     return ExceptionBoundary(
         [&]
         {
-            CheckInPointer(resourceCreator);
             CheckInPointer(fontFace);
             CheckInPointer(glyphs);
             CheckAndClearOutPointer(geometry);

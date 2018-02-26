@@ -145,13 +145,205 @@ public:
         }
     }
 
-    TEST_METHOD(CanvasPathBuilder_NullDevice)
-    {        
-        Assert::ExpectException<Platform::InvalidArgumentException^>(
+    TEST_METHOD(CanvasGeometry_CreateCircle_NoDevice)
+    {
+        auto geometry1 = CanvasGeometry::CreateCircle(nullptr, 1, 2, 3);
+        auto geometry2 = CanvasGeometry::CreateCircle(nullptr, float2(1, 2), 3);
+
+        Assert::IsNull(geometry1->Device);
+        Assert::IsNull(geometry2->Device);
+
+        delete geometry1;
+        delete geometry2;
+
+        ExpectObjectClosed([&] { geometry1->Device; });
+        ExpectObjectClosed([&] { geometry2->Device; });
+    }
+
+    TEST_METHOD(CanvasGeometry_CreateEllipse_NoDevice)
+    {
+        auto geometry1 = CanvasGeometry::CreateEllipse(nullptr, 1, 2, 3, 4);
+        auto geometry2 = CanvasGeometry::CreateEllipse(nullptr, float2(1, 2), 3, 4);
+
+        Assert::IsNull(geometry1->Device);
+        Assert::IsNull(geometry2->Device);
+
+        delete geometry1;
+        delete geometry2;
+
+        ExpectObjectClosed([&] { geometry1->Device; });
+        ExpectObjectClosed([&] { geometry2->Device; });
+    }
+
+    TEST_METHOD(CanvasGeometry_CreateGlyphRun_NoDevice)
+    {
+        auto glyphArray = ref new Platform::Array<CanvasGlyph>(1);
+        auto someFontFace = CanvasFontSet::GetSystemFontSet()->Fonts->GetAt(0);
+
+        auto geometry = CanvasGeometry::CreateGlyphRun(
+            nullptr, 
+            float2{},
+            someFontFace,
+            16.0f,
+            glyphArray,
+            false,
+            0,
+            CanvasTextMeasuringMode::Natural,
+            CanvasGlyphOrientation::Upright);
+
+        Assert::IsNull(geometry->Device);
+
+        delete geometry;
+
+        ExpectObjectClosed([&] { geometry->Device; });
+    }
+
+    TEST_METHOD(CanvasGeometry_CreateGroup_NoDevice)
+    {
+        CanvasGeometry^ geometries[] =
+        {
+            CanvasGeometry::CreateEllipse(nullptr, 1, 2, 3, 4),
+            CanvasGeometry::CreateRectangle(nullptr, Rect(1, 2, 3, 4))
+        };
+
+        auto geometry = CanvasGeometry::CreateGroup(nullptr, ref new Platform::Array<CanvasGeometry^>(geometries, _countof(geometries)));
+
+        Assert::IsNull(geometry->Device);
+
+        delete geometry;
+
+        ExpectObjectClosed([&] { geometry->Device; });
+    }
+
+    TEST_METHOD(CanvasGeometry_CreatePolygon_NoDevice)
+    {
+        float2 points[] =
+        {
+            float2(1, 2),
+            float2(3, 4),
+            float2(5, 6)
+        };
+
+        auto geometry = CanvasGeometry::CreatePolygon(nullptr, ref new Platform::Array<float2>(points, _countof(points)));
+
+        Assert::IsNull(geometry->Device);
+
+        delete geometry;
+
+        ExpectObjectClosed([&] { geometry->Device; });
+    }
+
+    TEST_METHOD(CanvasGeometry_CreateRectangle_NoDevice)
+    {
+        auto geometry1 = CanvasGeometry::CreateRectangle(nullptr, 1, 2, 3, 4);
+        auto geometry2 = CanvasGeometry::CreateRectangle(nullptr, Rect(1, 2, 3, 4));
+
+        Assert::IsNull(geometry1->Device);
+        Assert::IsNull(geometry2->Device);
+
+        delete geometry1;
+        delete geometry2;
+
+        ExpectObjectClosed([&] { geometry1->Device; });
+        ExpectObjectClosed([&] { geometry2->Device; });
+    }
+
+    TEST_METHOD(CanvasGeometry_CreateRoundedRectangle_NoDevice)
+    {
+        auto geometry1 = CanvasGeometry::CreateRoundedRectangle(nullptr, 1, 2, 3, 4, 5, 6);
+        auto geometry2 = CanvasGeometry::CreateRoundedRectangle(nullptr, Rect(1, 2, 3, 4), 5, 6);
+
+        Assert::IsNull(geometry1->Device);
+        Assert::IsNull(geometry2->Device);
+
+        delete geometry1;
+        delete geometry2;
+
+        ExpectObjectClosed([&] { geometry1->Device; });
+        ExpectObjectClosed([&] { geometry2->Device; });
+    }
+
+    TEST_METHOD(CanvasGeometry_Transform_NoDevice)
+    {
+        auto source = CanvasGeometry::CreateRectangle(nullptr, 1, 2, 3, 4);
+        auto geometry = source->Transform(float3x2::identity());
+
+        Assert::IsNull(geometry->Device);
+
+        delete geometry;
+
+        ExpectObjectClosed([&] { geometry->Device; });
+    }
+
+    TEST_METHOD(CanvasGeometry_Stroke_NoDevice)
+    {
+        auto source = CanvasGeometry::CreateRectangle(nullptr, 1, 2, 3, 4);
+        auto geometry = source->Stroke(23);
+
+        Assert::IsNull(geometry->Device);
+
+        delete geometry;
+
+        ExpectObjectClosed([&] { geometry->Device; });
+    }
+
+    TEST_METHOD(CanvasGeometry_CreateInk_NoDevice_Fails)
+    {
+        using namespace Windows::UI::Input::Inking;
+
+        auto inkStrokes = ref new Platform::Collections::Vector<InkStroke^>();
+
+        // Ink processing requires a D2D device, so (unlike other geometry creation APIs)
+        // CreateInk does not allow a null resource creator.
+        Assert::ExpectException< Platform::InvalidArgumentException^>(
             [=]
             {
-                ref new CanvasPathBuilder(nullptr);
+                CanvasGeometry::CreateInk(nullptr, inkStrokes);
             });
+    }
+
+    TEST_METHOD(CanvasCachedGeometry_CreateFill_NoDevice_Fails)
+    {
+        auto geometry = CanvasGeometry::CreateRectangle(nullptr, 1, 2, 3, 4);
+
+        Assert::IsNull(geometry->Device);
+
+        Assert::ExpectException< Platform::InvalidArgumentException^>(
+            [=]
+            {
+                CanvasCachedGeometry::CreateFill(geometry);
+            });
+    }
+
+    TEST_METHOD(CanvasCachedGeometry_CreateStroke_NoDevice_Fails)
+    {
+        auto geometry = CanvasGeometry::CreateRectangle(nullptr, 1, 2, 3, 4);
+
+        Assert::IsNull(geometry->Device);
+
+        Assert::ExpectException< Platform::InvalidArgumentException^>(
+            [=]
+            {
+                CanvasCachedGeometry::CreateFill(geometry);
+            });
+    }
+
+    TEST_METHOD(CanvasPathBuilder_NoDevice)
+    {        
+        auto builder = ref new CanvasPathBuilder(nullptr);
+
+        builder->BeginFigure(0, 0);
+        builder->AddLine(1, 2);
+        builder->AddLine(3, 4);
+        builder->EndFigure(CanvasFigureLoop::Closed);
+
+        auto geometry = CanvasGeometry::CreatePath(builder);
+
+        Assert::IsNull(geometry->Device);
+
+        delete geometry;
+
+        ExpectObjectClosed([&] { geometry->Device; });
     }
 
     TEST_METHOD(CanvasPathBuilder_NoInterop)
@@ -232,21 +424,6 @@ public:
     {
         auto glyphArray = ref new Platform::Array<CanvasGlyph>(1);
         auto someFontFace = CanvasFontSet::GetSystemFontSet()->Fonts->GetAt(0);
-
-        Assert::ExpectException<Platform::InvalidArgumentException^>(
-            [=]
-            {
-                CanvasGeometry::CreateGlyphRun(
-                    nullptr,
-                    float2{},
-                    someFontFace,
-                    16.0f,
-                    glyphArray,
-                    false,
-                    0,
-                    CanvasTextMeasuringMode::Natural,
-                    CanvasGlyphOrientation::Upright);
-            });
 
         Assert::ExpectException<Platform::InvalidArgumentException^>(
             [=]

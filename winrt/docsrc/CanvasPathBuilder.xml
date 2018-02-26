@@ -146,6 +146,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       
       <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasPathBuilder.#ctor(Microsoft.Graphics.Canvas.ICanvasResourceCreator)">
         <summary>Initializes a new instance of the CanvasPathBuilder class.</summary>
+        <remarks>The resource creator parameter can be null if the geometry will never be drawn onto a CanvasDevice.</remarks>
       </member>
       <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasPathBuilder.BeginFigure(System.Numerics.Vector2,Microsoft.Graphics.Canvas.Geometry.CanvasFigureFill)">
         <summary>Starts a new figure at the specified point, with the specified figure fill option.</summary>

@@ -15,12 +15,27 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     class DefaultGeometryAdapter;
 
 
+    // When geometry is used without an associated CanvasDevice, this singleton provides
+    // the necessary D2D factory. Thus all deviceless geometry will share the same factory.
+    class StandaloneGeometryFactory : public Singleton<StandaloneGeometryFactory>
+    {
+        ComPtr<ID2D1Factory2> m_d2dFactory;
+
+    public:
+        StandaloneGeometryFactory();
+
+        ComPtr<ID2D1Factory2> GetD2DFactory() const { return m_d2dFactory; }
+    };
+
+
     // Abstracts the details of how CanvasGeometry and CanvasPathBuilder track which device they
-    // are associated with. This currently always stores a ComPtr to a CanvasDevice, but in the
-    // future it will also be possible to use Win2D geometry objects without creating a device.
+    // are associated with. This can be either a ComPtr to a CanvasDevice, or a StandaloneGeometryFactory
+    // if the Win2D geometry objects were created without an associated device.
     class GeometryDevicePtr
     {
+        // These fields are alternatives: one or the other of them will always be null.
         ComPtr<ICanvasDevice> m_canvasDevice;
+        std::shared_ptr<StandaloneGeometryFactory> m_standaloneFactory;
 
     public:
         explicit GeometryDevicePtr(ICanvasResourceCreator* resourceCreator);

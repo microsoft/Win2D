@@ -59,27 +59,35 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.CreateRectangle(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.Foundation.Rect)">
       <summary>Creates a new rectangle geometry object with the specified extents.</summary>
+      <remarks>The resource creator parameter can be null if the geometry will never be drawn onto a CanvasDevice.</remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.CreateRectangle(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Single,System.Single,System.Single,System.Single)">
       <summary>Creates a rectangular geometry primitive with the specified extents.</summary>
+      <remarks>The resource creator parameter can be null if the geometry will never be drawn onto a CanvasDevice.</remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.CreateRoundedRectangle(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.Foundation.Rect,System.Single,System.Single)">
       <summary>Creates a new rounded rectangle geometry object with the specified extents.</summary>
+      <remarks>The resource creator parameter can be null if the geometry will never be drawn onto a CanvasDevice.</remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.CreateRoundedRectangle(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Single,System.Single,System.Single,System.Single,System.Single,System.Single)">
       <summary>Creates a new rounded rectangle geometry object with the specified extents.</summary>
+      <remarks>The resource creator parameter can be null if the geometry will never be drawn onto a CanvasDevice.</remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.CreateEllipse(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Numerics.Vector2,System.Single,System.Single)">
       <summary>Creates a new ellipse geometry object with the specified extents.</summary>
+      <remarks>The resource creator parameter can be null if the geometry will never be drawn onto a CanvasDevice.</remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.CreateEllipse(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Single,System.Single,System.Single,System.Single)">
       <summary>Creates a new ellipse geometry object with the specified extents.</summary>
+      <remarks>The resource creator parameter can be null if the geometry will never be drawn onto a CanvasDevice.</remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.CreateCircle(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Numerics.Vector2,System.Single)">
       <summary>Creates a new circle geometry object with the specified extents.</summary>
+      <remarks>The resource creator parameter can be null if the geometry will never be drawn onto a CanvasDevice.</remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.CreateCircle(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Single,System.Single,System.Single)">
       <summary>Creates a new circle geometry object with the specified extents.</summary>
+      <remarks>The resource creator parameter can be null if the geometry will never be drawn onto a CanvasDevice.</remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.CreatePath(Microsoft.Graphics.Canvas.Geometry.CanvasPathBuilder)">
       <summary>Creates a new path geometry, populated with data from the specified path builder.</summary>
@@ -94,6 +102,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <remarks>
         <p>The polygon will automatically be closed by connecting the last point back to the first one.</p>
         <p>Passing an empty set of points will produce an empty polygon.</p>
+        <p>The resource creator parameter can be null if the geometry will never be drawn onto a CanvasDevice.</p>
       </remarks>
     </member>
 
@@ -388,6 +397,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         <p>
           Passing an empty set of geometries to this method is allowed, and will produce a zero-sized geomtry group.
         </p>
+        <p>The resource creator parameter can be null if the geometry will never be drawn onto a CanvasDevice.</p>
       </remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.CreateGroup(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.Graphics.Canvas.Geometry.CanvasGeometry[],Microsoft.Graphics.Canvas.Geometry.CanvasFilledRegionDetermination)">
@@ -412,6 +422,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         <p>
           Passing an empty set of geometries to this method is allowed, and will produce a zero-sized geomtry group.
         </p>
+        <p>The resource creator parameter can be null if the geometry will never be drawn onto a CanvasDevice.</p>
       </remarks>
     </member>    
     
@@ -611,6 +622,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
           Creating geometry from text is a one-directional operation; it isn't possible to obtain
           text back from a geometry.
         </p>
+        <p>The resource creator parameter can be null if the geometry will never be drawn onto a CanvasDevice.</p>
       </remarks>
     </member>
     

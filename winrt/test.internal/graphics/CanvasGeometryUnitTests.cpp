@@ -2057,19 +2057,6 @@ public:
         auto canvasGeometryFactory = Make<CanvasGeometryFactory>();
 
         Assert::AreEqual(E_INVALIDARG, canvasGeometryFactory->CreateGlyphRun(
-            nullptr,
-            Vector2{},
-            fontFace.Get(),
-            0.0f,
-            1,
-            &glyph,
-            false,
-            0,
-            CanvasTextMeasuringMode::Natural,
-            CanvasGlyphOrientation::Upright,
-            &geometry));
-
-        Assert::AreEqual(E_INVALIDARG, canvasGeometryFactory->CreateGlyphRun(
             f.Device.Get(),
             Vector2{},
             nullptr,

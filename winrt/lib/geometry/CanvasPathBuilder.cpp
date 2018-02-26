@@ -16,7 +16,6 @@ IFACEMETHODIMP CanvasPathBuilderFactory::Create(
     return ExceptionBoundary(
         [&]
         {
-            CheckInPointer(resourceAllocator);
             CheckAndClearOutPointer(canvasPathBuilder);
 
             GeometryDevicePtr device(resourceAllocator);
