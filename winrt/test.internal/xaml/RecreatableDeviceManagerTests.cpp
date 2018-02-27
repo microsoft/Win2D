@@ -1064,6 +1064,40 @@ public:
         Assert::IsTrue(called);
     }
 
+    TEST_METHOD_EX(RecreatableDeviceManager_WhenTrackAsyncActionIsAlreadyCompleted_CallbacksStillOccur)
+    {
+        Fixture f;
+
+        auto onCreateResources = Callback<CreateResourcesHandler>(
+            [&](IInspectable*, ICanvasCreateResourcesEventArgs* args)
+            {
+                return ExceptionBoundary(
+                    [&]
+                    {
+                        auto action = Make<MockAsyncAction>();
+
+                        // Mark the async action as complete before passing it to TrackAsyncAction.
+                        action->SetResultWithoutFireCompletion(S_OK);
+
+                        ThrowIfFailed(args->TrackAsyncAction(action.Get()));
+                    });
+            });
+
+        f.DeviceManager->AddCreateResources(f.AnySender, onCreateResources.Get());
+
+        f.DeviceFactory->ExpectToActivateOne();
+
+        f.ExpectChangedCallback(ChangeReason::Other);
+
+        Assert::IsFalse(f.DeviceManager->IsReadyToDraw());
+
+        f.CallRunWithDeviceExpectFlagsSet(RunWithDeviceFlags::NewlyCreatedDevice);
+
+        // RecreatableDeviceManager should have noticed that the async create resources
+        // action was already completed, which means it is now ready to start drawing.
+        Assert::IsTrue(f.DeviceManager->IsReadyToDraw());
+    }
+
     TEST_METHOD_EX(RecreatableDeviceManager_WhenDpiChangesDuringCreateResourcesAsync_ItIsDeferredUntilTheProperTime)
     {
         FixtureWithCreateResourcesAsync f;

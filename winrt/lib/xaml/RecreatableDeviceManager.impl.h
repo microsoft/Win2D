@@ -546,9 +546,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
             auto onCompleted = Callback<IAsyncActionCompletedHandler>(completedHandler);
             CheckMakeResult(onCompleted);
-            ThrowIfFailed(action->put_Completed(onCompleted.Get()));
             m_currentOperation = As<IAsyncInfo>(action);                
             m_currentOperationIsPending = true;
+
+            // Release the lock before setting the completed handler, because if the action has already
+            // completed this could result in an immediate call to OnAsynchronousCreateResourcesCompleted,
+            // which in turn calls out to m_changedCallback.
+            lock.unlock();
+
+            ThrowIfFailed(action->put_Completed(onCompleted.Get()));
         }
 
         HRESULT OnAsynchronousCreateResourcesCompleted(IAsyncAction*, AsyncStatus)
