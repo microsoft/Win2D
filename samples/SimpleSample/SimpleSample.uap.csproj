@@ -96,7 +96,6 @@
     <AppxManifest Include="SimpleSample.uap.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
-    <None Include="project.json" />
     <None Include="$(AssetDir)TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
@@ -123,6 +122,11 @@
       <Project>{8cf21e5d-e0a2-4fe7-8e2b-a025cf52dcfb}</Project>
       <Name>winrt.dll.uap</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
+      <Version>5.0.0</Version>
+    </PackageReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

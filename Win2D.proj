@@ -89,9 +89,8 @@
   <!-- Restore NuGet packages for all projects -->
   <ItemGroup>
     <NuGetRestore Include="samples\**\packages.config"         Condition="$(BuildTests)" />
-    <NuGetRestore Include="samples\**\project.json"            Condition="$(BuildTests)" />
-    <NuGetRestore Include="winrt\**\project.json"              Condition="$(BuildTests)" />
-    <NuGetRestore Include="tools\exportsample\packages.config" Condition="$(BuildTools)" />
+    <NuGetRestore Include="samples\**\*.csproj"                Condition="$(BuildTests)" />
+    <NuGetRestore Include="winrt\**\*.csproj"                  Condition="$(BuildTests)" />
   </ItemGroup>
 
 

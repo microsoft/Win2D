@@ -54,15 +54,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="ExportSampleConfig.xml" />
   </ItemGroup>
-  <ItemGroup>
-    <NuGetRestore Include="packages.config" />
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildThisFileDirectory)..\..\build\Win2D.cs.targets" />
-  <Import Project="$(MsBuildThisFileDirectory)..\..\build\nuget-restore.targets" />
 </Project>

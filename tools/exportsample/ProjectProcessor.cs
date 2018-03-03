@@ -14,7 +14,7 @@ namespace exportsample
     public enum NuGetProjectType
     {
         PackagesConfig,
-        ProjectJson
+        Csproj
     }
 
     public enum TargetPlatformIdentifier
@@ -72,7 +72,7 @@ namespace exportsample
             bool isUap = (GetTargetPlatformIdentifier() == TargetPlatformIdentifier.UAP);
 
             if (isUap && !this.IsNative)
-                this.NuGetType = NuGetProjectType.ProjectJson;
+                this.NuGetType = NuGetProjectType.Csproj;
             else
                 this.NuGetType = NuGetProjectType.PackagesConfig;
 
@@ -363,8 +363,8 @@ namespace exportsample
                     AddWin2DNuGetPackage();
                     break;
 
-                case NuGetProjectType.ProjectJson:
-                    // nothing - project.json projects don't modify the project file (yay)
+                case NuGetProjectType.Csproj:
+                    AddWin2DPackageReference();
                     break;
 
                 default:
@@ -419,6 +419,7 @@ namespace exportsample
             return true;
         }
         
+        // Old style (still used for .vcxproj): Win2D imports are added directly to the project.
         void AddWin2DNuGetPackage()
         {
             var framework = GetFramework();
@@ -434,6 +435,20 @@ namespace exportsample
 
             var importsTarget = GetEnsureNuGetPackageBuildImportsTarget();
             importsTarget.Add(MakeCheckImport(targetsImport));
+        }
+
+        // New style: use a <PackageReference> MSBuild item.
+        void AddWin2DPackageReference()
+        {
+            var newReference = new XElement(NS + "PackageReference");
+            newReference.SetAttributeValue("Include", "Win2D.uwp");
+
+            var version = new XElement(NS + "Version");
+            version.Value = config.Options.Win2DVersion;
+            newReference.Add(version);
+
+            var existingPackageReference = doc.Descendants(NS + "PackageReference").First();
+            existingPackageReference.AddAfterSelf(newReference);
         }
 
         public string GetFramework()

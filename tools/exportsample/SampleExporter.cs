@@ -2,8 +2,6 @@
 //
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -129,8 +127,8 @@ namespace exportsample
                         CopyPackagesConfigWithAddedWin2DReference(project);
                         break;
 
-                    case NuGetProjectType.ProjectJson:
-                        CopyProjectJsonWithAddedWin2DReference(project);
+                    case NuGetProjectType.Csproj:
+                        // nothing - .csproj <PackageReference> doesn't require any external files
                         break;
 
                     default:
@@ -204,37 +202,6 @@ namespace exportsample
             existingReferences.ToList().ForEach(e => e.Remove());
         }
 
-        void CopyProjectJsonWithAddedWin2DReference(ProjectProcessor project)
-        {
-            var source = Path.Combine(project.SourceDirectory, "project.json");
-            var destination = Path.Combine(project.DestinationDirectory, "project.json");
-
-            if (!File.Exists(source))
-            {
-                // We're not going to try and create new ones of these from scratch; we'll just
-                // update the existing one.
-                throw new Exception(string.Format("Could not find existing {0}", source));
-            }
-
-            using (var reader = File.OpenText(source))
-            {
-                var projectJson = JObject.Load(new JsonTextReader(reader));
-                projectJson["dependencies"].Children().Last().AddAfterSelf(
-                    new JProperty(project.Win2DPackage, config.Options.Win2DVersion));
-
-                using (var writer = File.CreateText(destination))
-                {
-                    var jsonWriter = new JsonTextWriter(writer)
-                    {
-                        Formatting = Formatting.Indented
-                    };
-
-                    projectJson.WriteTo(jsonWriter);
-                    copiedFiles.Add(destination);
-                }
-            }
-        }
-
         void CopyReferencedFiles(ProjectProcessor project)
         {
             foreach (var srcDst in project.FilesToCopy)
@@ -242,7 +209,7 @@ namespace exportsample
                 var source = srcDst.Key;
                 var destination = srcDst.Value;
 
-                if (!copiedFiles.Contains(destination))
+                if (!copiedFiles.Contains(destination) && !destination.EndsWith("proj"))
                 {
                     CopyFile(source, destination);
                     copiedFiles.Add(destination);

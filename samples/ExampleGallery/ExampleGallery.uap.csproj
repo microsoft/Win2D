@@ -108,6 +108,11 @@
     </SDKReference>
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
+      <Version>5.0.0</Version>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
       <SubType>Designer</SubType>
     </ApplicationDefinition>
@@ -285,7 +290,6 @@
       <SubType>Designer</SubType>
     </AppxManifest>
     <None Include="$(AssetDir)TemporaryKey.pfx" />
-    <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="$(AssetDir)RuntimeDirectives.rd.xml" />
