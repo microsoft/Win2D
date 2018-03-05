@@ -214,7 +214,7 @@
          be isolated from the environment that's formed around running
          Win2D.proj up to this point, and to suppress the Sandcastle
          false positive warning BHT0001 -->
-    <Exec Command="msbuild $(MSBuildThisFileDirectory)tools\docs\BuildDocs.proj" 
+    <Exec Command="&quot;$(MSBuildBinPath)\msbuild&quot; $(MSBuildThisFileDirectory)tools\docs\BuildDocs.proj" 
           IgnoreStandardErrorWarningFormat="true"
           CustomErrorRegularExpression=": error "
           CustomWarningRegularExpression=": warning (?!BHT0001)" />
@@ -284,6 +284,9 @@
       <NuGetRestore Include="@(ConfigToRestore)" Condition="%(BuildPlatform.Identity) != AnyCPU">
         <Platform>%(BuildPlatform.Identity)</Platform>
       </NuGetRestore>
+
+      <!-- Internal Microsoft builds can optionally consume the Windows SDK via NuGet -->
+      <NuGetRestore Include="build\pkges\packages.config" Condition="'$(UseNuGetSDK)' != ''" />
     </ItemGroup>
   </Target>
 

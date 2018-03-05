@@ -1,4 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="Win2D.common.targets" />
+
+  <!-- [[NOT IN SAMPLE]] -->
+
+  <!-- Internal Microsoft builds can optionally consume the Windows SDK via NuGet -->
+  <ItemGroup Condition="'$(UseNuGetSDK)' != '' and '$(TargetPlatformIdentifier)' == 'UAP'">
+    <PackageReference Include="MS.Uwp.rs3rls">
+      <Version>10.0.16299.15</Version>
+    </PackageReference>
+  </ItemGroup>
+
 </Project>
