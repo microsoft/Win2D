@@ -57,6 +57,7 @@
     <UAPProject Include="winrt\test.nativecomponent\winrt.test.nativecomponent.uap.vcxproj" />
     <UAPProject Include="winrt\test.managed\winrt.test.managed.uap.csproj">
       <AutomatedTests Condition="$(ShouldRunUAPTests)">store</AutomatedTests>
+      <BuildInParallel>false</BuildInParallel>
     </UAPProject>
     <UAPProject Include="samples\SimpleSample\SimpleSample.uap.csproj" />
     <UAPProject Include="samples\CoreWindowExample\CoreWindowExample.uap.csproj" />

@@ -4,7 +4,7 @@
 
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Effects;
-using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NativeComponent;
 using System;
 using System.Linq;

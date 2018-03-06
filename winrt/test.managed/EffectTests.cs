@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using Windows.Foundation;
 using Windows.UI;
-using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Effects;
 
