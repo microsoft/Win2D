@@ -87,13 +87,6 @@
     <AnyCPUProject Include="tools\exportsample\exportsample.csproj" />
   </ItemGroup>
 
-  <!-- Restore NuGet packages for all projects -->
-  <ItemGroup>
-    <NuGetRestore Include="samples\**\packages.config"         Condition="$(BuildTests)" />
-    <NuGetRestore Include="samples\**\*.csproj"                Condition="$(BuildTests)" />
-    <NuGetRestore Include="winrt\**\*.csproj"                  Condition="$(BuildTests)" />
-  </ItemGroup>
-
 
   <!-- Master target just chains to a bunch of workers -->
   <Target Name="Build"
@@ -102,7 +95,7 @@
 
   <!-- Use batching to build each project in turn -->
   <Target Name="BuildProjects"
-          DependsOnTargets="PrepareVersionInfo; ChooseProjectsToBuild; RestoreNuGetPackages"
+          DependsOnTargets="PrepareVersionInfo; ChooseProjectsToBuild; ChooseConfigurationsToRestore; RestoreNuGetPackages"
           Inputs="@(ProjectsToBuild)"
           Outputs="%(PlatformIndependentName)">
 
@@ -275,6 +268,26 @@
   </Target>
 
   
+  <Target Name="ChooseConfigurationsToRestore">
+    <ItemGroup>
+      <ProjectToRestore Include="$(MSBuildThisFileDirectory)Win2D.uap.sln" />
+
+      <!-- Expand parameter properties into item groups, so we can batch over them -->
+      <BuildPlatform Include="$(BuildPlatforms)" />
+      <BuildConfiguration Include="$(BuildConfigurations)" />
+
+      <!-- Generate the cartesian product of all platforms * configurations that we are building -->
+      <ConfigToRestore Include="@(ProjectToRestore)">
+        <Configuration>%(BuildConfiguration.Identity)</Configuration>
+      </ConfigToRestore>
+
+      <NuGetRestore Include="@(ConfigToRestore)" Condition="%(BuildPlatform.Identity) != AnyCPU">
+        <Platform>%(BuildPlatform.Identity)</Platform>
+      </NuGetRestore>
+    </ItemGroup>
+  </Target>
+
+
   <Import Project="$(MsBuildThisFileDirectory)build\nuget-restore.targets" />
 
 </Project>

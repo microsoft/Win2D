@@ -51,6 +51,6 @@
 
 
   <Target Name="RestoreNuGetPackages" DependsOnTargets="FindNuGet; CheckNuGetVersion" Condition="'@(NuGetRestore)' != ''">
-    <Exec Command="$(NuGetCommand) restore %(NuGetRestore.Identity) -SolutionDirectory $(MsBuildThisFileDirectory)..\ -Verbosity Detailed -NonInteractive" />
+    <Exec Command="(set PLATFORM=%(NuGetRestore.Platform)) &amp; (set CONFIGURATION=%(NuGetRestore.Configuration)) &amp; $(NuGetCommand) restore %(NuGetRestore.Identity) -SolutionDirectory $(MsBuildThisFileDirectory)..\ -Verbosity Detailed -NonInteractive" />
   </Target>
 </Project>
