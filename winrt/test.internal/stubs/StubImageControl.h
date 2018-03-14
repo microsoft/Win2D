@@ -8,6 +8,9 @@ namespace canvas
 {
     using namespace ABI::Windows::UI::Xaml;
 
+#pragma warning(push)
+#pragma warning(disable: 4996)  // Disable warning about PlayToSource being deprecated (we must use it to implement IImage)
+
     class StubImageControl : public RuntimeClass<IImage, IUIElement>
     {
     public:
@@ -128,4 +131,6 @@ namespace canvas
         IFACEMETHODIMP InvalidateArrange(void) override { return S_OK; }
         IFACEMETHODIMP UpdateLayout(void) override { return S_OK; }
     };
+
+#pragma warning(pop)
 }

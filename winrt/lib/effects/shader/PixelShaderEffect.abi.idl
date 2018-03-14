@@ -117,14 +117,8 @@ namespace Microsoft.Graphics.Canvas.Effects
     {
         interface Windows.Foundation.Collections.IVector<Windows.Foundation.Collections.IKeyValuePair<HSTRING, IInspectable*>*>;
 
-        interface Windows.Foundation.IReference<NUMERICS.Vector2>;
         interface Windows.Foundation.IReference<NUMERICS.Vector4>;
         interface Windows.Foundation.IReference<NUMERICS.Matrix3x2>;
-
-#if WINVER <= _WIN32_WINNT_WINBLUE
-        interface Windows.Foundation.IReference<NUMERICS.Vector3>;
-        interface Windows.Foundation.IReference<NUMERICS.Matrix4x4>;
-#endif
 
         interface Windows.Foundation.IReferenceArray<NUMERICS.Vector2>;
         interface Windows.Foundation.IReferenceArray<NUMERICS.Vector3>;
