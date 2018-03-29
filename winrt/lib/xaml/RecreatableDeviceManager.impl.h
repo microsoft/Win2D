@@ -111,6 +111,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     class RecreatableDeviceManager : public IRecreatableDeviceManager<TRAITS>,
                                      private LifespanTracker<RecreatableDeviceManager<TRAITS>>
     {
+    public:
+        typedef IRecreatableDeviceManager<TRAITS>::Sender                 Sender;
+        typedef IRecreatableDeviceManager<TRAITS>::CreateResourcesHandler CreateResourcesHandler;
+
+    private:
         std::function<void(ChangeReason)> m_changedCallback;
         ComPtr<IActivationFactory> m_canvasDeviceFactory;
         IInspectable* m_parentControl;
