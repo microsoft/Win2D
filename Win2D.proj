@@ -95,7 +95,7 @@
 
   <!-- Use batching to build each project in turn -->
   <Target Name="BuildProjects"
-          DependsOnTargets="PrepareVersionInfo; ChooseProjectsToBuild; ChooseConfigurationsToRestore; RestoreNuGetPackages"
+          DependsOnTargets="PrepareVersionInfo; ChooseProjectsToBuild; ChooseConfigurationsToRestore; RestoreNuGetPackages; WorkAroundNuGetRestoreBug"
           Inputs="@(ProjectsToBuild)"
           Outputs="%(PlatformIndependentName)">
 
@@ -288,6 +288,24 @@
       <!-- Internal Microsoft builds can optionally consume the Windows SDK via NuGet -->
       <NuGetRestore Include="build\pkges\packages.config" Condition="'$(UseNuGetSDK)' != ''" />
     </ItemGroup>
+  </Target>
+
+
+  <Target Name="WorkAroundNuGetRestoreBug">
+    <!--
+      Using Visual Studio 2017, version 15.6.0:
+        - New project / Visual C++ / Windows Universal / Unit Test App (Universal Windows)
+        - msbuild UnitTestApp1.sln (ok)
+        - nuget restore UnitTestApp1.sln
+        - msbuild UnitTestApp1.sln (now fails with error about missing UAP framework reference)
+      This breaks the winrt.test.external unit test project.
+      We can work around the issue by deleting the unnecessary assets.json file after running nuget restore.
+    -->
+    <ItemGroup>
+      <FileToDelete Include="obj\winrt.test.external.uap\**\project.assets.json" />
+    </ItemGroup>
+
+    <Delete Files="@(FileToDelete)" />
   </Target>
 
 
