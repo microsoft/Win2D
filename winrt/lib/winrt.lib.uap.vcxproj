@@ -44,14 +44,13 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <Target Name="mdmerge" AfterTargets="Midl" Inputs="@(Midl -> '%(MetadataFileName)')" Outputs="$(MergedWinmdDirectory)\$(RootNamespace).winmd">
-    <!-- MdMerge and reference paths differ depending on locally installed vs. NuGet SDK -->
     <PropertyGroup>
-      <MdMergeExe Condition="'$(UseNuGetSDK)' == ''">"$(WindowsSdkDir)\bin\$(PreferredToolArchitecture)\mdmerge.exe"</MdMergeExe>
-      <MdMergeExe Condition="'$(UseNuGetSDK)' != ''">"$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\$(PreferredToolArchitecture)\mdmerge.exe"</MdMergeExe>
+      <MdMergeExe>"$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\$(PreferredToolArchitecture)\mdmerge.exe"</MdMergeExe>
     </PropertyGroup>
+    <!-- Reference paths differ depending on locally installed vs. NuGet SDK -->
     <ItemGroup Condition="'$(UseNuGetSDK)' == ''">
-      <MetaDataDir Include="$(WindowsSDK_MetadataPath)\Windows.Foundation.FoundationContract\2.0.0.0" />
-      <MetaDataDir Include="$(WindowsSDK_MetadataPath)\Windows.Foundation.UniversalApiContract\3.0.0.0" />
+      <MetaDataDir Include="$(WindowsSDK_MetadataPath)\$(TargetPlatformVersion)\Windows.Foundation.FoundationContract\3.0.0.0" />
+      <MetaDataDir Include="$(WindowsSDK_MetadataPath)\$(TargetPlatformVersion)\Windows.Foundation.UniversalApiContract\5.0.0.0" />
     </ItemGroup>
     <ItemGroup Condition="'$(UseNuGetSDK)' != ''">
       <MetaDataDir Include="$(WindowsSDK_MetadataPath)\$(TargetPlatformVersion)\Windows.Foundation.FoundationContract\3.0.0.0" />
