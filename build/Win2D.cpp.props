@@ -4,8 +4,8 @@
   <!-- [[NOT IN SAMPLE]] -->
 
   <!-- Internal Microsoft builds can optionally consume the Windows SDK via NuGet -->
-  <Import Project="$(MSBuildThisFileDirectory)..\packages\MS.Uwp.rs3rls.Native.10.0.16299.15\build\MS.Uwp.rs3rls.Native.props" Condition="'$(UseNuGetSDK)' != '' and Exists('$(MSBuildThisFileDirectory)..\packages\MS.Uwp.rs3rls.Native.10.0.16299.15\build\MS.Uwp.rs3rls.Native.props')" />
-  <Import Project="$(MSBuildThisFileDirectory)..\packages\MS.Uwp.rs3rls.10.0.16299.15\build\MS.Uwp.rs3rls.props" Condition="'$(UseNuGetSDK)' != '' and Exists('$(MSBuildThisFileDirectory)..\packages\MS.Uwp.rs3rls.10.0.16299.15\build\MS.Uwp.rs3rls.props')" />
+  <Import Project="$(MSBuildThisFileDirectory)..\packages\MS.Uwp.rs4rls.Native.10.0.17133.1\build\MS.Uwp.rs4rls.Native.props" Condition="'$(UseNuGetSDK)' != '' and Exists('$(MSBuildThisFileDirectory)..\packages\MS.Uwp.rs4rls.Native.10.0.17133.1\build\MS.Uwp.rs4rls.Native.props')" />
+  <Import Project="$(MSBuildThisFileDirectory)..\packages\MS.Uwp.rs4rls.10.0.17133.1\build\MS.Uwp.rs4rls.props" Condition="'$(UseNuGetSDK)' != '' and Exists('$(MSBuildThisFileDirectory)..\packages\MS.Uwp.rs4rls.10.0.17133.1\build\MS.Uwp.rs4rls.props')" />
 
   <!-- [[IN SAMPLE]] -->
 
@@ -43,7 +43,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17133.0</WindowsTargetPlatformVersion>
     <WindowsTargetPlatformMinVersion>10.0.10240.0</WindowsTargetPlatformMinVersion>
   </PropertyGroup>
 

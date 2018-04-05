@@ -6,8 +6,8 @@
 
   <!-- Internal Microsoft builds can optionally consume the Windows SDK via NuGet -->
   <ItemGroup Condition="'$(UseNuGetSDK)' != '' and '$(TargetPlatformIdentifier)' == 'UAP'">
-    <PackageReference Include="MS.Uwp.rs3rls">
-      <Version>10.0.16299.15</Version>
+    <PackageReference Include="MS.Uwp.rs4rls">
+      <Version>10.0.17133.1</Version>
     </PackageReference>
   </ItemGroup>
 
