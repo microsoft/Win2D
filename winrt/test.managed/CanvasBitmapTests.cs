@@ -378,6 +378,12 @@ namespace test.managed
 
                 foreach (BitmapPixelFormat e in Enum.GetValues(typeof(BitmapPixelFormat)))
                 {
+                    // The P010 format is currently marked prerelease. The C# compiler can't see it
+                    // (so BitmapPixelFormat.P010 does not resolve) yet Enum.GetValues includes it.
+                    // We should skip this type, because SoftwareBitmap does not recognize it.
+                    if (e.ToString() == "P010")
+                        continue;
+
                     bool hasAlpha = true;
 
                     switch (e)
