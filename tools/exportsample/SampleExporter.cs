@@ -61,8 +61,6 @@ namespace exportsample
             // Process all the projects.  Any files referenced by a project will be exported.
             var projects = FindProjects();
 
-            bool isSingletonProject = (projects.Length == 1);
-
             remainingProjects = new HashSet<string>(from project in projects select project.FullName);
             copiedFiles = new HashSet<string>();
 
@@ -73,7 +71,7 @@ namespace exportsample
 
                 if (!copiedFiles.Contains(destination) && File.Exists(project))
                 {
-                    ExportProject(project, destination, isSingletonProject);
+                    ExportProject(project, destination);
                     copiedFiles.Add(destination);
                 }
 
@@ -107,15 +105,15 @@ namespace exportsample
             return new DirectoryInfo(sourceDir).GetFiles("*proj", SearchOption.AllDirectories);
         }
 
-        void ExportProject(string source, string destination, bool isSingletonProject)
+        void ExportProject(string source, string destination)
         {
-            ProcessAndCopyProject(source, destination, isSingletonProject);
+            ProcessAndCopyProject(source, destination);
             CopyProjectFilters(source);
         }
 
-        void ProcessAndCopyProject(string source, string destination, bool isSingletonProject)
+        void ProcessAndCopyProject(string source, string destination)
         {
-            var project = ProjectProcessor.Export(source, isSingletonProject, config, sample, destination);
+            var project = ProjectProcessor.Export(source, config, sample, destination);
 
             remainingProjects.UnionWith(project.FindImportedProjectsThatNeedExporting());
 

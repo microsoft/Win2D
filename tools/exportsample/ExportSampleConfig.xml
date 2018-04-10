@@ -16,8 +16,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
 
   <Property Name="AssetDir" Value="build\assets\" />
 
-  <DuplicateIntoSample Source="build\assets\RuntimeDirectives.rd.xml" Destination="$(ProjectDir)RuntimeDirectives.rd.xml" />
-  <DuplicateIntoSample Source="build\assets" Destination="Shared" />
+  <DuplicateIntoSample Source="build\assets" Destination="" />
 
   <InlineImport Name="Win2D.cs.props">
     <PropertyGroup>
