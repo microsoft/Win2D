@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="BuildDocs" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-  <Import Project="$(MsBuildThisFileDirectory)..\..\build\Win2D.common.props" />
+  <Import Project="$(MsBuildThisFileDirectory)..\..\build\Win2D.cs.props" />
   <Import Project="$(MSBuildThisFileDirectory)DocItems.proj" />
 
   <ItemGroup>
@@ -27,7 +27,7 @@
 
   <!-- Other files that are not part of the API, but which define types used by it -->
   <ItemGroup>
-    <ReferenceAssembly Include="$(registry:HKEY_LOCAL_MACHINE\Software\Microsoft\Windows Kits\Installed Roots@KitsRoot10)UnionMetadata\Windows.winmd" />
+    <ReferenceAssembly Include="$(registry:HKEY_LOCAL_MACHINE\Software\Microsoft\Windows Kits\Installed Roots@KitsRoot10)UnionMetadata\$(TargetPlatformVersion)\Windows.winmd" />
   </ItemGroup>
 
 
