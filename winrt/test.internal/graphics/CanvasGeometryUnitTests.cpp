@@ -76,6 +76,8 @@ public:
 
         ASSERT_IMPLEMENTS_INTERFACE(canvasGeometry, ICanvasGeometry);
         ASSERT_IMPLEMENTS_INTERFACE(canvasGeometry, ABI::Windows::Foundation::IClosable);
+        ASSERT_IMPLEMENTS_INTERFACE(canvasGeometry, ABI::Windows::Graphics::IGeometrySource2D);
+        ASSERT_IMPLEMENTS_INTERFACE(canvasGeometry, ABI::Windows::Graphics::IGeometrySource2DInterop);
     }
 
     TEST_METHOD_EX(CanvasGeometry_CreatedWithCorrectD2DRectangleResource)
@@ -1298,6 +1300,10 @@ public:
 
         ComPtr<ICanvasDevice> retrievedDevice;
         Assert::AreEqual(RO_E_CLOSED, canvasGeometry->get_Device(&retrievedDevice));
+
+        ComPtr<ID2D1Geometry> d2dGeometry;
+        Assert::AreEqual(RO_E_CLOSED, canvasGeometry->GetGeometry(&d2dGeometry));
+        Assert::AreEqual(RO_E_CLOSED, canvasGeometry->TryGetGeometryUsingFactory(nullptr, &d2dGeometry));
     }
 
     TEST_METHOD_EX(CanvasGeometry_DefaultFlatteningTolerance_CorrectValue)
@@ -2218,4 +2224,71 @@ public:
     }
 
 #endif
+
+    TEST_METHOD_EX(CanvasGeometry_GetGeometry)
+    {
+        Fixture f;
+        auto d2dGeometry = Make<MockD2DRectangleGeometry>();
+
+        f.Adapter->CreateRectangleGeometryMethod.SetExpectedCalls(1,
+            [&](D2D1_RECT_F const& rect)
+            {
+                return d2dGeometry;
+            });
+
+        auto win2DGeometry = CanvasGeometry::CreateNew(f.Device.Get(), Rect{});
+
+        // GetGeometry(null) should fail.
+        Assert::AreEqual(E_INVALIDARG, win2DGeometry->GetGeometry(nullptr));
+
+        // GetGeometry(outptr) should work.
+        ComPtr<ID2D1Geometry> actualGeometry;
+        ThrowIfFailed(win2DGeometry->GetGeometry(&actualGeometry));
+
+        Assert::AreEqual<ID2D1Geometry*>(d2dGeometry.Get(), actualGeometry.Get());
+    }
+
+    TEST_METHOD_EX(CanvasGeometry_TryGetGeometryUsingFactory)
+    {
+        Fixture f;
+        auto d2dGeometry = Make<MockD2DRectangleGeometry>();
+        auto d2dFactory = Make<MockD2DFactory>();
+
+        f.Adapter->CreateRectangleGeometryMethod.SetExpectedCalls(1,
+            [&](D2D1_RECT_F const& rect)
+            {
+                return d2dGeometry;
+            });
+
+        d2dGeometry->GetFactoryMethod.AllowAnyCall(
+            [&](ID2D1Factory** out)
+            {
+                d2dFactory.CopyTo(out);
+            });
+
+        auto win2DGeometry = CanvasGeometry::CreateNew(f.Device.Get(), Rect{});
+
+        // TryGetGeometryUsingFactory(null, null) should fail.
+        Assert::AreEqual(E_INVALIDARG, win2DGeometry->TryGetGeometryUsingFactory(nullptr, nullptr));
+
+        // TryGetGeometryUsingFactory(null, outptr) should work.
+        ComPtr<ID2D1Geometry> actualGeometry;
+        ThrowIfFailed(win2DGeometry->TryGetGeometryUsingFactory(nullptr, &actualGeometry));
+
+        Assert::AreEqual<ID2D1Geometry*>(d2dGeometry.Get(), actualGeometry.Get());
+
+        // TryGetGeometryUsingFactory(factory, outptr) should work.
+        ComPtr<ID2D1Geometry> actualGeometry2;
+        ThrowIfFailed(win2DGeometry->TryGetGeometryUsingFactory(d2dFactory.Get(), &actualGeometry2));
+
+        Assert::AreEqual<ID2D1Geometry*>(d2dGeometry.Get(), actualGeometry2.Get());
+
+        // TryGetGeometryUsingFactory(someOtherFactory, outptr) should succeed but return null.
+        auto d2dFactory2 = Make<MockD2DFactory>();
+
+        ComPtr<ID2D1Geometry> actualGeometry3;
+        ThrowIfFailed(win2DGeometry->TryGetGeometryUsingFactory(d2dFactory2.Get(), &actualGeometry3));
+
+        Assert::IsNull(actualGeometry3.Get());
+    }
 };

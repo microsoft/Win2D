@@ -76,6 +76,7 @@
 #include <windows.ui.xaml.media.dxinterop.h>
 #include <windows.ui.xaml.shapes.h>
 #include <windows.graphics.display.h>
+#include <windows.graphics.interop.h>
 
 #if WINVER > _WIN32_WINNT_WINBLUE
 #include <windows.foundation.metadata.h>

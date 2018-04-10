@@ -1145,6 +1145,43 @@ IFACEMETHODIMP CanvasGeometry::SendPathTo(
     });
 }
 
+IFACEMETHODIMP CanvasGeometry::GetGeometry(
+    ID2D1Geometry** geometry)
+{
+    return ExceptionBoundary([&]
+    {
+        CheckAndClearOutPointer(geometry);
+
+        ThrowIfFailed(GetResource().CopyTo(geometry));
+    });
+}
+
+IFACEMETHODIMP CanvasGeometry::TryGetGeometryUsingFactory(
+    ID2D1Factory* factory,
+    ID2D1Geometry** geometry)
+{
+    return ExceptionBoundary([&]
+    {
+        CheckAndClearOutPointer(geometry);
+
+        auto resource = GetResource();
+
+        // Return null (with no error) if the factories do not match.
+        if (factory)
+        {
+            ComPtr<ID2D1Factory> myFactory;
+            resource->GetFactory(&myFactory);
+
+            if (!IsSameInstance(factory, myFactory.Get()))
+            {
+                return;
+            }
+        }
+
+        ThrowIfFailed(resource.CopyTo(geometry));
+    });
+}
+
 ComPtr<CanvasGeometry> CanvasGeometry::CreateNew(
     ICanvasResourceCreator* resourceCreator,
     Rect rect)

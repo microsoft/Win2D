@@ -423,6 +423,7 @@ namespace Microsoft.Graphics.Canvas.Geometry
     runtimeclass CanvasGeometry
     {
         [default] interface ICanvasGeometry;
+        interface Windows.Graphics.IGeometrySource2D;
     }
 
 }

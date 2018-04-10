@@ -80,6 +80,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         ID2D1Geometry,
         CanvasGeometry,
         ICanvasGeometry,
+        ABI::Windows::Graphics::IGeometrySource2D,
+        ABI::Windows::Graphics::IGeometrySource2DInterop,
         CloakedIid<ICanvasResourceWrapperWithDevice>)
     {
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_Geometry_CanvasGeometry, BaseTrust);
@@ -304,6 +306,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         IFACEMETHOD(SendPathTo)(
             ICanvasPathReceiver* streamReader) override;
+
+        // IGeometrySource2DInterop
+        IFACEMETHOD(GetGeometry)(
+            ID2D1Geometry** geometry) override;
+
+        IFACEMETHOD(TryGetGeometryUsingFactory)(
+            ID2D1Factory* factory,
+            ID2D1Geometry** geometry) override;
 
     private:
         void StrokeImpl(
