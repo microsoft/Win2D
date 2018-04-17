@@ -19,13 +19,14 @@
   </PropertyGroup>
   <Import Project="..\..\build\Win2D.cs.props" />
   <PropertyGroup>
-    <!-- Win2D.common.props tries to gather all obj folders in one place, but overriding
-         the obj location is not compatible with the MSTest.TestAdapter package, so this
-         project has to restore the default obj location. When using a customized obj
-         path, Microsoft.VisualStudio.TestPlatform.MSTest.TestAdapter.dll does not get
-         deployed to the build output location. -->
+    <!--
+      Workaround https://github.com/Microsoft/vstest/issues/1535 by undoing the 
+      Win2D.common.props customization that tries to gather all obj folders in one place.
+    -->
     <IntermediateOutputPath>obj</IntermediateOutputPath>
     <BaseIntermediateOutputPath>obj</BaseIntermediateOutputPath>
+  </PropertyGroup>
+  <PropertyGroup>
     <PackageCertificateKeyFile>$(AssetDir)TemporaryKey.pfx</PackageCertificateKeyFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|Win32'">

@@ -52,7 +52,12 @@
     </UAPProject>
     <UAPProject Include="winrt\test.external\winrt.test.external.uap.vcxproj">
       <Platforms>Win32;x64</Platforms>
+      <!--
+        Workaround https://github.com/Microsoft/vstest/issues/1534 by temporarily 
+        disabling running winrt.test.external unit tests from the command line. 
+        Note these tests can still be run inside the Visual Studio 2017 IDE.
       <AutomatedTests Condition="$(ShouldRunUAPTests)">store</AutomatedTests>
+      -->
     </UAPProject>
     <UAPProject Include="winrt\test.nativecomponent\winrt.test.nativecomponent.uap.vcxproj" />
     <UAPProject Include="winrt\test.managed\winrt.test.managed.uap.csproj">
@@ -291,16 +296,11 @@
   </Target>
 
 
+  <!--
+    Workaround https://github.com/Microsoft/vstest/issues/1533 by deleting the 
+    unnecessary assets.json file after running nuget restore on winrt.test.external.
+  -->
   <Target Name="WorkAroundNuGetRestoreBug">
-    <!--
-      Using Visual Studio 2017, version 15.6.0:
-        - New project / Visual C++ / Windows Universal / Unit Test App (Universal Windows)
-        - msbuild UnitTestApp1.sln (ok)
-        - nuget restore UnitTestApp1.sln
-        - msbuild UnitTestApp1.sln (now fails with error about missing UAP framework reference)
-      This breaks the winrt.test.external unit test project.
-      We can work around the issue by deleting the unnecessary assets.json file after running nuget restore.
-    -->
     <ItemGroup>
       <FileToDelete Include="obj\winrt.test.external.uap\**\project.assets.json" />
     </ItemGroup>
