@@ -74,13 +74,14 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         <para>
           <externalLink>
             <linkText>Download and install Visual Studio</linkText>
-            <linkUri>http://www.visualstudio.com/en-us/downloads/download-visual-studio-vs.aspx</linkUri>
+            <linkUri>https://www.visualstudio.com</linkUri>
           </externalLink>:
         </para>
 
         <list class="bullet">
-          <listItem>Recommended version: Visual Studio Community 2017 with Visual Studio Tools for Universal Windows Apps 15.0.26430.06</listItem>
-          <listItem>Minimum version: Visual Studio Community 2015 with Update 1</listItem>
+          <listItem>Minimum version: Visual Studio Community 2017</listItem>
+          <listItem>Visual Studio Tools for Universal Windows Apps 15.0.27428.01</listItem>
+          <listItem>Windows SDK 17133 (Spring Creators Update)</listItem>
         </list>
         
         <para>Create your project:</para>

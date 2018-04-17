@@ -103,8 +103,7 @@ If you have added new functionality please make sure to add tests to the
 appropriate test suites.
 
 To validate your changes, run "msbuild /m /nr:false Win2D.proj" from a
-Visual Studio command prompt (if using Visual Studio 2013) or MSBuild
-command prompt (if using Visual Studio 2017). This will:
+Visual Studio Developer Command Prompt. This will:
 
 - Build all flavors of all projects (debug, release, x86, x64, and ARM)
 - Run all automated tests
