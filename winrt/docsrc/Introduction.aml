@@ -81,7 +81,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         <list class="bullet">
           <listItem>Minimum version: Visual Studio Community 2017</listItem>
           <listItem>Visual Studio Tools for Universal Windows Apps 15.0.27428.01</listItem>
-          <listItem>Windows SDK 17133 (Spring Creators Update)</listItem>
+          <listItem>Windows SDK 17134 (April 2018 Update)</listItem>
         </list>
         
         <para>Create your project:</para>

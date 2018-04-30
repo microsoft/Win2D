@@ -17,6 +17,7 @@
   <Import Project="Win2D.common.targets" />
 
   <!-- Internal Microsoft builds can optionally consume the Windows SDK via NuGet -->
+  <!--
   <ImportGroup Label="ExtensionTargets" Condition="'$(UseNuGetSDK)' != ''">
     <Import Project="$(MSBuildThisFileDirectory)..\packages\MS.Uwp.rs4rls.10.0.17133.1\build\MS.Uwp.rs4rls.targets" Condition="Exists('$(MSBuildThisFileDirectory)..\packages\MS.Uwp.rs4rls.10.0.17133.1\build\MS.Uwp.rs4rls.targets')" />
     <Import Project="$(MSBuildThisFileDirectory)..\packages\MS.Uwp.rs4rls.Native.10.0.17133.1\build\MS.Uwp.rs4rls.Native.targets" Condition="Exists('$(MSBuildThisFileDirectory)..\packages\MS.Uwp.rs4rls.Native.10.0.17133.1\build\MS.Uwp.rs4rls.Native.targets')" />
@@ -31,5 +32,6 @@
     <Error Condition="!Exists('$(MSBuildThisFileDirectory)..\packages\MS.Uwp.rs4rls.Native.10.0.17133.1\build\MS.Uwp.rs4rls.Native.props')" Text="$([System.String]::Format('$(ErrorText)', '$(MSBuildThisFileDirectory)..\packages\MS.Uwp.rs4rls.Native.10.0.17133.1\build\MS.Uwp.rs4rls.Native.props'))" />
     <Error Condition="!Exists('$(MSBuildThisFileDirectory)..\packages\MS.Uwp.rs4rls.Native.10.0.17133.1\build\MS.Uwp.rs4rls.Native.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(MSBuildThisFileDirectory)..\packages\MS.Uwp.rs4rls.Native.10.0.17133.1\build\MS.Uwp.rs4rls.Native.targets'))" />
   </Target>
+  -->
 
 </Project>
