@@ -20,7 +20,7 @@
           document source</a>.  The following code example shows how to register
           events on PrintManager to get to the point where a CanvasPrintDocument
           can be set as the source:
-          <div class="codeSnippetContainer"><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID1EAAHABA_copyCode" href="#" class="copyCodeSnippet" onclick="javascript:CopyToClipboard('ID1EAAHABA');return false;" title="Copy">Copy</a></div></div><div id="ID1EAAHABA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve">CanvasPrintDocument printDocument;
+          <div class="codeSnippetContainer"><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID1EAAGABA_copyCode" href="#" class="copyCodeSnippet" onclick="javascript:CopyToClipboard('ID1EAAGABA');return false;" title="Copy">Copy</a></div></div><div id="ID1EAAGABA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve">CanvasPrintDocument printDocument;
 
 <span class="highlight-keyword">async</span> <span class="highlight-keyword">void</span> OnPrintClicked(<span class="highlight-keyword">object</span> sender, RoutedEventArgs e)
 {
@@ -54,7 +54,7 @@
         printDocument.Dispose();
         printDocument = <span class="highlight-keyword">null</span>;
     }
-}</pre></div></div></div><script type="text/javascript">AddLanguageTabSet("ID1EAAHABA");</script></p><p>
+}</pre></div></div></div><script type="text/javascript">AddLanguageTabSet("ID1EAAGABA");</script></p><p>
           CanvasPrintDocument must be created on the UI thread.  Once the object
           is created, methods may be called from any thread.  This allows any
           heavy-lifting printing work to be performed on a background thread.
@@ -74,7 +74,7 @@
           using </p><p>
           The following example shows how to configure a CanvasPrintDocument to
           preview and print some text:
-          <div class="codeSnippetContainer"><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID1EAACABA_copyCode" href="#" class="copyCodeSnippet" onclick="javascript:CopyToClipboard('ID1EAACABA');return false;" title="Copy">Copy</a></div></div><div id="ID1EAACABA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve">CanvasPrintDocument printDocument;
+          <div class="codeSnippetContainer"><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID1EAABABA_copyCode" href="#" class="copyCodeSnippet" onclick="javascript:CopyToClipboard('ID1EAABABA');return false;" title="Copy">Copy</a></div></div><div id="ID1EAABABA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve">CanvasPrintDocument printDocument;
 
 CanvasPrintDocument MakePrintDocument()
 {
@@ -120,11 +120,8 @@ CanvasPrintDocument MakePrintDocument()
         printDocument.Dispose();
         printDocument = <span class="highlight-keyword">null</span>;
     }
-}</pre></div></div></div><script type="text/javascript">AddLanguageTabSet("ID1EAACABA");</script></p><p>
+}</pre></div></div></div><script type="text/javascript">AddLanguageTabSet("ID1EAABABA");</script></p><p>
           Throughout the printing API, page numbers start at 1.  So the first
           page is page 1 (not page 0, as might be expected by C++ and C#
           developers).
-        </p><p>
-          This type is not present in the Windows Phone 8.1 version of Win2D
-          since Windows Phone 8.1 doesn't not support printing.
         </p></div><div class="collapsibleAreaRegion" id="seeAlsoSection"><span class="collapsibleRegionTitle" onclick="SectionExpandCollapse('ID8RB')" onkeypress="SectionExpandCollapse_CheckKey('ID8RB', event)" tabindex="0"><img id="ID8RBToggle" class="collapseToggle" src="../icons/SectionExpanded.png" />See Also</span></div><div id="ID8RBSection" class="collapsibleSection"><h4 class="subHeading">Reference</h4><div class="seeAlsoStyle"><a href="N_Microsoft_Graphics_Canvas_Printing.htm">Microsoft.Graphics.Canvas.Printing Namespace</a></div></div></div></div><div id="pageFooter" class="pageFooter"><p><a href="http://github.com/Microsoft/Win2D/blob/master/LICENSE.txt" target="_blank">Copyright (c) Microsoft Corporation. All rights reserved.</a></p> </div></body></html>

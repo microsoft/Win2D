@@ -3578,6 +3578,10 @@
     <HelpKINode Title="IDirect3DSurface Interface" Url="html/T_Windows_Graphics_DirectX_Direct3D11_IDirect3DSurface.htm" />
     <HelpKINode Title="about IDirect3DSurface interface" Url="html/T_Windows_Graphics_DirectX_Direct3D11_IDirect3DSurface.htm" />
   </HelpKINode>
+  <HelpKINode Title="IGeometrySource2D interface">
+    <HelpKINode Title="IGeometrySource2D Interface" Url="html/T_Windows_Graphics_IGeometrySource2D.htm" />
+    <HelpKINode Title="about IGeometrySource2D interface" Url="html/T_Windows_Graphics_IGeometrySource2D.htm" />
+  </HelpKINode>
   <HelpKINode Title="Ignore enumeration member" Url="html/T_Microsoft_Graphics_Canvas_CanvasAlphaMode.htm" />
   <HelpKINode Title="IgnoreAlpha enumeration member" Url="html/T_Microsoft_Graphics_Canvas_CanvasLayerOptions.htm" />
   <HelpKINode Title="IGraphicsEffect interface">
@@ -5695,6 +5699,7 @@
   <HelpKINode Title="Windows.Foundation.Size structure" Url="html/T_Windows_Foundation_Size.htm" />
   <HelpKINode Title="Windows.Foundation.TypedEventHandler(Of T0, T1) delegate" Url="html/T_Windows_Foundation_TypedEventHandler_2.htm" />
   <HelpKINode Title="Windows.Foundation.TypedEventHandler&lt;T0, T1&gt; delegate" Url="html/T_Windows_Foundation_TypedEventHandler_2.htm" />
+  <HelpKINode Title="Windows.Graphics namespace" Url="html/N_Windows_Graphics.htm" />
   <HelpKINode Title="Windows.Graphics.DirectX namespace" Url="html/N_Windows_Graphics_DirectX.htm" />
   <HelpKINode Title="Windows.Graphics.DirectX.Direct3D11 namespace" Url="html/N_Windows_Graphics_DirectX_Direct3D11.htm" />
   <HelpKINode Title="Windows.Graphics.DirectX.Direct3D11.Direct3DSurfaceDescription structure" Url="html/T_Windows_Graphics_DirectX_Direct3D11_Direct3DSurfaceDescription.htm" />
@@ -5704,6 +5709,7 @@
   <HelpKINode Title="Windows.Graphics.Effects namespace" Url="html/N_Windows_Graphics_Effects.htm" />
   <HelpKINode Title="Windows.Graphics.Effects.IGraphicsEffect interface" Url="html/T_Windows_Graphics_Effects_IGraphicsEffect.htm" />
   <HelpKINode Title="Windows.Graphics.Effects.IGraphicsEffectSource interface" Url="html/T_Windows_Graphics_Effects_IGraphicsEffectSource.htm" />
+  <HelpKINode Title="Windows.Graphics.IGeometrySource2D interface" Url="html/T_Windows_Graphics_IGeometrySource2D.htm" />
   <HelpKINode Title="Windows.Graphics.Imaging namespace" Url="html/N_Windows_Graphics_Imaging.htm" />
   <HelpKINode Title="Windows.Graphics.Imaging.BitmapSize structure" Url="html/T_Windows_Graphics_Imaging_BitmapSize.htm" />
   <HelpKINode Title="Windows.Graphics.Imaging.SoftwareBitmap class" Url="html/T_Windows_Graphics_Imaging_SoftwareBitmap.htm" />
