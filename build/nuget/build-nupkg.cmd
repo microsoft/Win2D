@@ -36,7 +36,7 @@ SET /p VERSION=<VERSION
 IF "%1" == "signed" (
     SHIFT
     SET BIN=bin\signed
-    SET OUTDIR=..\..\bin\signed
+    SET OUTDIR=..\..\bin\signed\unsignedpackage
     SET LICENSE_URL=http://www.microsoft.com/web/webpi/eula/eula_win2d_10012014.htm
     SET REQUIRE_LICENSE_ACCEPTANCE=true
 ) else (
