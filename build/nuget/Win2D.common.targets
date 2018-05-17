@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup>
+    <Win2DMinPlatformVersion>10.0.17134.0</Win2DMinPlatformVersion>
+  </PropertyGroup>
+
+
+  <UsingTask TaskName="Win2DIsPlatformTooOld"
+             TaskFactory="CodeTaskFactory"
+             AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll">
+
+    <ParameterGroup>
+      <ActualVersion />
+      <RequiredVersion />
+      <Result ParameterType="System.Boolean" Output="true" />
+    </ParameterGroup>
+    
+    <Task>
+      <Code Type="Fragment" Language="cs">
+        Version actual = Version.Parse(ActualVersion);
+        Version required = Version.Parse(RequiredVersion);
+        Result = actual &lt; required;
+      </Code>
+    </Task>
+  </UsingTask>
+
+
+  <Target Name="Win2DValidatePlatformVersion"
+          BeforeTargets="ResolveAssemblyReferences"
+          Condition="'$(TargetPlatformVersion)' != '' and '$(DisableWin2DPlatformCheck)' == ''">
+
+    <Win2DIsPlatformTooOld ActualVersion="$(TargetPlatformVersion)" RequiredVersion="$(Win2DMinPlatformVersion)">
+      <Output TaskParameter="Result" PropertyName="Win2DPlatformTooOld" />
+    </Win2DIsPlatformTooOld>
+
+    <Error Condition="$(Win2DPlatformTooOld)" Text="This version of Win2D requires Windows SDK &gt;= $(Win2DMinPlatformVersion), but TargetPlatformVersion is $(TargetPlatformVersion)." />
+  </Target>
+
+</Project>
