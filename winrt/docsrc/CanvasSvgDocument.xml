@@ -198,6 +198,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
 
     <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgDocument.FindElementById(System.String)">
       <summary>Finds the element in this document which has the specified ID.</summary>
+      <remarks>If the ID doesn't exist, FindElementById will produce an error.</remarks>
     </member>
     <member name="M:Microsoft.Graphics.Canvas.Svg.CanvasSvgDocument.CreatePaintAttribute">
       <summary>Creates an attribute that can be used for a stroke or fill value.</summary>
