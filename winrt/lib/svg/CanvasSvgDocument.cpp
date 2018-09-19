@@ -258,6 +258,9 @@ IFACEMETHODIMP CanvasSvgDocument::FindElementById(HSTRING elementName, ICanvasSv
             ComPtr<ID2D1SvgElement> d2dFoundElement;
             ThrowIfFailed(resource->FindElementById(GetStringBuffer(elementName), &d2dFoundElement));
 
+            if (!d2dFoundElement)
+                ThrowHR(E_INVALIDARG);
+
             ComPtr<ICanvasSvgNamedElement> wrapped = ResourceManager::GetOrCreate<ICanvasSvgNamedElement>(device.Get(), d2dFoundElement.Get());
             ThrowIfFailed(wrapped.CopyTo(foundElement));
         });

@@ -378,6 +378,20 @@ public:
         Assert::AreEqual(document->Root, found);
     }
 
+    TEST_METHOD(CanvasSvgDocument_FindElementById_ElementNotThere)
+    {
+        if (!m_isSupported)
+            return;
+
+        auto document = CanvasSvgDocument::LoadFromXml(m_device, "<svg/>");
+        
+        Assert::ExpectException<Platform::InvalidArgumentException^>(
+            [&]
+            {
+                document->FindElementById("something");
+            });
+    }
+
     TEST_METHOD(CanvasSvgDocument_DOM_Manipulation)
     {
         if (!m_isSupported)
