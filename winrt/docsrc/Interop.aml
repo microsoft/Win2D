@@ -345,6 +345,65 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         </code>
       </content>
     </section>
+
+    <section>
+      <title>Interop using C++/WinRT</title>
+      <content>
+        <para>
+          You can also perform interop using C++/WinRT with some modification of the above. Note that the C++/WinRT headers for the Win2D Windows Runtime Components
+          should be generated automatically when you add the Win2D NuGet package to your C++/WinRT project. However, for interop you will still need to use the 
+          header file Microsoft.Graphics.Canvas.native.h which contains the low-level ABI interface <codeInline>ICanvasFactoryNative</codeInline>
+          in the namespace <codeInline>ABI::Microsoft::Graphics::Canvas</codeInline>. The interface has the following functions which you can use to perform interop.
+        </para>
+
+        <code>
+          HRESULT GetOrCreate(ICanvasDevice* device, IUnknown* resource, float dpi, IInspectable** wrapper);
+          HRESULT GetNativeResource(ICanvasDevice* device, float dpi, REFIID iid, void** resource);
+        </code>
+
+        Here is an example showing how to create a CanvasVirtualBitmap from an IWICBitmapSource starting with the IWICBitmapSource and the shared CanvasDevice.
+        <code>
+          #include &quot;pch.h&quot;
+          #include &lt;wincodec.h&gt;
+          #include &lt;wincodecsdk.h&gt;
+          #include &lt;winrt/Microsoft.Graphics.Canvas.h&gt; //This defines the C++/WinRT interfaces for the Win2D Windows Runtime Components
+          #include &lt;Microsoft.Graphics.Canvas.h&gt; //This defines the low-level ABI interfaces for the Win2D Windows Runtime Components
+          #include &lt;Microsoft.Graphics.Canvas.native.h&gt; //This is for interop
+          #include &lt;d2d1_3.h&gt;
+
+          using namespace winrt::Microsoft::Graphics::Canvas;
+          namespace abi {
+            using namespace ABI::Microsoft::Graphics::Canvas;
+          }
+
+          namespace winrt::Win2DInteropTest::implementation {
+            CanvasVirtualBitmap CreateVirtualBitmapFromBitmapSource(com_ptr&lt;IWICBitmapSource&gt; const&amp; pBitmapSource){
+              CanvasDevice sharedDevice = CanvasDevice::GetSharedDevice();
+        
+              //First we need to get an ID2D1Device1 pointer from the shared CanvasDevice
+              com_ptr&lt;abi::ICanvasResourceWrapperNative&gt; nativeDeviceWrapper = sharedDevice.as&lt;abi::ICanvasResourceWrapperNative&gt;();
+              com_ptr&lt;ID2D1Device1&gt; pDevice{ nullptr };
+              check_hresult(nativeDeviceWrapper->GetNativeResource(nullptr, 0.0f, guid_of&lt;ID2D1Device1&gt;(), pDevice.put_void()));
+
+              //Next we need to call some Direct2D functions to create the ID2D1ImageSourceFromWic object
+              com_ptr&lt;ID2D1DeviceContext1&gt; pContext{ nullptr };
+              check_hresult(pDevice-&gt;CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS_NONE, pContext.put()));
+              com_ptr&lt;ID2D1DeviceContext2&gt; pContext2 = pContext.as&lt;ID2D1DeviceContext2&gt;();
+              com_ptr&lt;ID2D1ImageSourceFromWic&gt; pImage{ nullptr };
+              check_hresult(pContext2-&gt;CreateImageSourceFromWic(pBitmapSource.get(), D2D1_IMAGE_SOURCE_LOADING_OPTIONS_RELEASE_SOURCE, pImage.put()));
+
+              //Finally we need to wrap the ID2D1ImageSourceFromWic object inside 
+              com_ptr&lt;::IInspectable&gt; pInspectable{ nullptr };
+              auto factory = winrt::get_activation_factory&lt;CanvasDevice, abi::ICanvasFactoryNative&gt;(); //abi::ICanvasFactoryNative is the activation factory for the CanvasDevice class
+              check_hresult(factory-&gt;GetOrCreate(sharedDevice.as&lt;abi::ICanvasDevice>().get(), pImage.as&lt;::IUnknown&gt;().get(), 0.0f, pInspectable.put())); //Note abi::ICanvasDevice is defined in the header Microsoft.Graphics.Canvas.h
+              CanvasVirtualBitmap cvb = pInspectable.as&lt;CanvasVirtualBitmap&gt;();
+              return cvb;
+            }
+          }
+        </code>
+        Remember to include the header &lt;unkwn.h&gt; in pch.h before any winrt headers (required in SDK 17763 and later).
+      </content>
+    </section>
     
   </developerConceptualDocument>
 </topic>
