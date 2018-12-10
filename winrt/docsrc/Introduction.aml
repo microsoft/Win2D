@@ -60,8 +60,8 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         </listItem>
         <listItem>
           <externalLink>
-            <linkText>Team blog</linkText>
-            <linkUri>http://blogs.msdn.com/b/win2d</linkUri>
+            <linkText>Changelog</linkText>
+            <linkUri>http://github.com/Microsoft/Win2D/blob/master/CHANGELOG.md</linkUri>
           </externalLink>
         </listItem>
       </list>

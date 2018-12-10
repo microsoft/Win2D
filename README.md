@@ -16,7 +16,7 @@ of Direct2D, and integrates seamlessly with XAML and CoreWindow.
 
 ##### More info
 - [Report a bug or ask a question](http://github.com/Microsoft/Win2D/issues)
-- [Team blog](http://blogs.msdn.com/b/win2d)
+- [Changelog](http://github.com/Microsoft/Win2D/blob/master/CHANGELOG.md)
 - [License](http://opensource.org/licenses/MIT)
 - [Contributing](http://github.com/Microsoft/Win2D/blob/master/CONTRIBUTING.md)
 

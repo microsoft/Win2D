@@ -275,14 +275,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
           <li>Catch exceptions thrown during CreateResourcesAsync</li>
           <li>Handle device lost exceptions by Canceling any previous IAsyncAction and waiting until they've completed before raising CreateResources again</li>
         </ul>
-        <p>For more background on the design of this API, see the series of blog posts:</p>
-        <ul>
-          <li><a href="http://blogs.msdn.com/b/win2d/archive/2014/12/01/handling-lost-devices-in-win2d.aspx">Handling lost devices in Win2D</a></li>
-          <li><a href="http://blogs.msdn.com/b/win2d/archive/2014/12/02/resource-creation-in-win2d.aspx">Resource creation in Win2D</a></li>
-          <li><a href="http://blogs.msdn.com/b/win2d/archive/2014/12/03/async-loading-is-harder-than-it-looks.aspx">Async loading is harder than it looks</a></li>
-          <li><a href="http://blogs.msdn.com/b/win2d/archive/2014/12/04/rejected-designs-for-async-loading.aspx">Rejected designs for async loading</a></li>
-          <li><a href="http://blogs.msdn.com/b/win2d/archive/2014/12/05/async-resource-loading-in-win2d.aspx">Async resource loading in Win2D</a></li>
-        </ul>
+        <p>For more advanced asynchronous loading scenarios, see <a href="LoadingResourcesOutsideCreateResources.htm">this article</a>.</p>
         <p>
           In the current implementation, only one action per control can be
           tracked at a time.  Attempting to track multiple actions
