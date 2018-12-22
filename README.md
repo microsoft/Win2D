@@ -45,6 +45,14 @@ void MainPage::CanvasControl_Draw(CanvasControl^ sender, CanvasDrawEventArgs^ ar
     args->DrawingSession->DrawText("Hello, world!", 100, 100, Colors::Yellow);
 }
 ```
+or C++/WinRT:
+```cpp
+void MainPage::CanvasControl_Draw(CanvasControl const& sender, CanvasDrawEventArgs const& args)
+{
+    args.DrawingSession().DrawEllipse(155, 115, 80, 30, Colors::Black(), 3);
+    args.DrawingSession().DrawText(L"Hello, world!", 100, 100, Colors::Yellow());
+}
+```
 or VB:
 ```vb
 Sub canvasControl_Draw(sender As CanvasControl, args As CanvasDrawEventArgs)
