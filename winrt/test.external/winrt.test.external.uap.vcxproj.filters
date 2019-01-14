@@ -41,12 +41,14 @@
     <ClCompile Include="ColorManagementProfileTests.cpp" />
     <ClCompile Include="CanvasSvgDocumentTests.cpp" />
     <ClCompile Include="CanvasSvgAttributeTests.cpp" />
+    <ClCompile Include="UnitTestApp.xaml.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Helpers.h" />
     <ClInclude Include="DebugLayer.h" />
+    <ClInclude Include="UnitTestApp.xaml.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="$(AssetDir)UnitTestLogo.scale-100.png">
@@ -151,5 +153,8 @@
     <Filter Include="Images">
       <UniqueIdentifier>{45e7a66f-3187-4212-8faf-72ec7801fb5f}</UniqueIdentifier>
     </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="UnitTestApp.xaml" />
   </ItemGroup>
 </Project>

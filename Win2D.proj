@@ -12,7 +12,7 @@
 
   <!-- Parameters that can be configured by the caller, eg. "msbuild Win2D.proj /p:BuildTests=false" -->
   <PropertyGroup>
-    <BuildPlatforms>Win32;x64;ARM;AnyCPU</BuildPlatforms>
+    <BuildPlatforms>Win32;x64;ARM;ARM64;AnyCPU</BuildPlatforms>
     <BuildConfigurations>Debug;Release</BuildConfigurations>
     <BuildTests>true</BuildTests>
     <BuildTools>true</BuildTools>
@@ -28,7 +28,7 @@
   <!-- Set default platforms for each project type -->
   <ItemDefinitionGroup>
     <UAPProject>
-      <Platforms>Win32;x64;ARM</Platforms>
+      <Platforms>Win32;x64;ARM;ARM64</Platforms>
       <BinDir>UAP</BinDir>
     </UAPProject>
     <AnyCPUProject>

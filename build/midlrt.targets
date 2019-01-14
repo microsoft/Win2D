@@ -19,7 +19,8 @@
           pick up the RS3 toolset and pass the /nomidl param- or if for some reason that doesn't work, then split up 
           our Idl into multiple files. -->
         <TargetEnvironment Condition="'$(Platform)' == 'ARM'">win32</TargetEnvironment>
-        
+        <TargetEnvironment Condition="'$(Platform)' == 'ARM64'">x64</TargetEnvironment>
+
         <WarningLevel>1</WarningLevel>
         <WarnAsError>true</WarnAsError>
         <MetadataFileName>$(UnmergedWinmdDirectory)\%(Filename).winmd</MetadataFileName>
