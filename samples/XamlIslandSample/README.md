@@ -11,6 +11,7 @@ The sample was developed and tested with the following components. Any other con
 The sample consists of 2 projects
 
 ##### XamlIslandSample.Desktop (.NET Core 3 Wpf App)
+One window with a CanvasControl and a CanvasSwapChainPanel. Note that the CanvasControl currently doesn't work in XAML islands (https://github.com/Microsoft/Win2D/issues/643)
 - Only x64 is supported by the sample
 - Set Property RuntimeIdentifiers to win-x64 in .csproj (with "s" at the end!)
 - Reference Windows.winmd (from SDK 18298 or higher)
@@ -24,6 +25,7 @@ The sample consists of 2 projects
 	Adding a simple project reference to winrt.dll.uap fails with `error NETSDK1007: Cannot find project info for 'winrt\lib\winrt.lib.uap.vcxproj'. This can indicate a missing project reference.` So I added a assembly reference with hint path to Microsoft.Graphics.Canvas.winmd
 
 ##### XamlIslandSample.Package (Windows Application Package)
+Loading C++ WinRT components like Win2D into managed processes only works with APPX package
 - Reference XamlIslandSample.Desktop project
 - Add C++ Runtime packages to Package.appxmanifest
 
