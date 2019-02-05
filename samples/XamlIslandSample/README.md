@@ -18,7 +18,7 @@ The sample consists of 2 projects
 - Reference package System.Runtime.WindowsRuntime.UI.Xaml (4.6.0-preview.19073.11)
 - Reference Microsoft.Toolkit.Wpf.UI.XamlHost
 
-	There is a 6.0 preview package on https://dotnet.myget.org/gallery/uwpcommunitytoolkit that supports .NET Core 3 but unfortunately only on Windows 10 19H1 preview. Threrefore I added the 6.0.0 branch of Microsoft.Toolkit.Wpf.UI.XamlHost project to the solution and included https://github.com/windows-toolkit/Microsoft.Toolkit.Win32/pull/74 that adds support for Windows 10 1809.
+	There is a 6.0 preview package on [myget](https://dotnet.myget.org/gallery/uwpcommunitytoolkit) that supports .NET Core 3 but unfortunately only on Windows 10 19H1 preview. Threrefore I added the 6.0.0 branch of Microsoft.Toolkit.Wpf.UI.XamlHost project to the solution and included [PR #74](https://github.com/windows-toolkit/Microsoft.Toolkit.Win32/pull/74) that adds support for Windows 10 1809.
 - Reference Microsoft.Graphics.Canvas
 
 	Adding a simple project reference to winrt.dll.uap fails with "error NETSDK1007: Cannot find project info for 'winrt\lib\winrt.lib.uap.vcxproj'. This can indicate a missing project reference." So I added a assembly reference with hint path to Microsoft.Graphics.Canvas.winmd
@@ -27,7 +27,7 @@ The sample consists of 2 projects
 - Reference XamlIslandSample.Desktop project
 - Add C++ Runtime packages to Package.appxmanifest
 
-		Both packages should be deployed automatically during sample deployment but can be found in C:\Program Files (x86)\Microsoft SDKs\Windows Kits\10\ExtensionSDKs\Microsoft.VCLibs\14.0\Appx)
+		Both packages should be deployed automatically during sample deployment but usually can be found in C:\Program Files (x86)\Microsoft SDKs\Windows Kits\10\ExtensionSDKs\Microsoft.VCLibs\14.0\Appx)
 ```xml
 <PackageDependency Name="Microsoft.VCLibs.140.00" MinVersion="14.0.26706.0" Publisher="CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US" />
 <PackageDependency Name="Microsoft.VCLibs.140.00.Debug" MinVersion="14.0.27305.0" Publisher="CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US" />
