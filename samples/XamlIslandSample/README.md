@@ -31,9 +31,11 @@ The sample consists of 2 projects
 <PackageDependency Name="Microsoft.VCLibs.140.00" MinVersion="14.0.26706.0" Publisher="CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US" />
 <PackageDependency Name="Microsoft.VCLibs.140.00.Debug" MinVersion="14.0.27305.0" Publisher="CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US" />
 ```
+
 		Both packages should be deployed automatically during sample deployment but usually can be found in C:\Program Files (x86)\Microsoft SDKs\Windows Kits\10\ExtensionSDKs\Microsoft.VCLibs\14.0\Appx
 
 ##### How to build, start and debug
 
-To start the sample build, deploy and start XamlIslandSample.Package. At the time of writing there seems to be a bug in VS 2019 that leads to unreliable build after XamlIslandSample.Desktop changed. Rebuild and deploy the package project manually helps.
-To debug the Win2D components select `Mixed (Managed and Native)` under Debug in XamlIslandSample.Package properties.
+To start the sample build, deploy and start XamlIslandSample.Package. At the time of writing there seems to be a bug in VS 2019 that leads to unreliable detecting changes of XamlIslandSample.Desktop. Manually Rebuild and deploy of XamlIslandSample.Package helps.
+
+To debug the Win2D components select `Mixed (Managed and Native)` under Debug / Debugger Type in XamlIslandSample.Package properties.
