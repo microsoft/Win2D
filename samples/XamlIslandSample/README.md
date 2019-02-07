@@ -7,6 +7,7 @@ The sample was developed and tested with the following components. Any other con
 - [Windows SDK 18298](https://go.microsoft.com/fwlink/?prd=11966&pver=1.0&plcid=0x409&clcid=0x409&ar=Flight&sar=Sdsurl&o1=18298)
 - [.NET Core SDK 3.0.100-preview-010184](https://dotnet.microsoft.com/download/thank-you/dotnet-sdk-3.0.100-preview2-windows-x64-installer)
 - [VS 16.0 Preview 2](https://visualstudio.microsoft.com/thank-you-downloading-visual-studio/?sku=enterprise&ch=pre&rel=16)
+	*IMPORTANT for VS 16 Preview 2*: Copy VC\Auxiliary\Build\14.16\Microsoft.VCToolsVersion.14.16.props -> VC\Auxiliary\Build\Microsoft.VCToolsVersion.default.props (https://developercommunity.visualstudio.com/content/problem/434385/vs2019-preview-2-targetframeworkversion-or-platfor.html) 
 
 The sample consists of 2 projects
 
