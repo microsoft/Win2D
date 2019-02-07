@@ -618,7 +618,7 @@ namespace CodeGen
                                 }
 
                                 int value;
-                                if (!int.TryParse(words[2], numberStyle, null, out value))
+                                if (!int.TryParse(words[2], numberStyle, CultureInfo.InvariantCulture, out value))
                                 {
                                     value = enumValues.Count;
                                 }
