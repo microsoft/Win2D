@@ -1,4 +1,8 @@
-﻿using Microsoft.Graphics.Canvas;
+// Copyright (c) Microsoft Corporation. All rights reserved.
+//
+// Licensed under the MIT License. See LICENSE.txt in the project root for license information.
+
+using Microsoft.Graphics.Canvas;
 using System;
 using System.IO;
 using System.Windows;

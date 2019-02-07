@@ -1,4 +1,8 @@
-﻿using Microsoft.Toolkit.Wpf.UI.XamlHost;
+// Copyright (c) Microsoft Corporation. All rights reserved.
+//
+// Licensed under the MIT License. See LICENSE.txt in the project root for license information.
+
+using Microsoft.Toolkit.Wpf.UI.XamlHost;
 using System;
 using System.Collections.Generic;
 using System.Text;
