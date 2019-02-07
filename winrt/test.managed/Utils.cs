@@ -33,6 +33,11 @@ namespace test.managed
 
             string delimiterString = "\r\n\r\n";
             int delimiterPosition = sourceMessage.LastIndexOf(delimiterString);
+
+            // Without delimiter the string depends on culture an cannot be used
+            if (delimiterPosition < 0)
+                Assert.Fail($"'\\r\\n\\r\\n' is expected but not found in exception '{sourceMessage}'");
+
             string exceptionMessage = sourceMessage.Substring(delimiterPosition + delimiterString.Length);
 
             // .NET Native formats HRESULT exception messages differently to other CLR versions.

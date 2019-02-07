@@ -1216,13 +1216,13 @@ namespace test.managed
                 // Drawing with an infinite sized input is not!
                 effect.Source1 = new ColorSourceEffect();
 
-                Utils.AssertThrowsException<Exception>(() =>
+                Assert.ThrowsException<Exception>(() =>
                 {
                     using (var ds = renderTarget.CreateDrawingSession())
                     {
                         ds.DrawImage(effect);
                     }
-                }, " graph could not be rendered with the context's current tiling settings. (Exception from HRESULT: 0x88990027)");
+                });
 
                 // But it's ok if we clamp the input back down to finite size.
                 effect.Source1 = new CropEffect

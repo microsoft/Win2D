@@ -249,7 +249,8 @@ namespace test.managed
             }
             catch (Exception e)
             {
-                Assert.IsTrue(e.Message.Contains("The bitmap pixel format is unsupported."));
+                // This doesn't work with non en culture.
+                // Assert.IsTrue(e.Message.Contains("The bitmap pixel format is unsupported."));
                 Assert.IsTrue(e.Message.Contains("0x88982F80"));
             }
         }
