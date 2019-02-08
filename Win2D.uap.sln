@@ -65,12 +65,9 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "XamlIslandSample", "XamlIslandSample", "{839CF03C-304F-4F5A-909A-CAEA75465217}"
 	ProjectSection(SolutionItems) = preProject
 		samples\XamlIslandSample\global.json = samples\XamlIslandSample\global.json
-		samples\XamlIslandSample\NuGet.config = samples\XamlIslandSample\NuGet.config
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XamlIslandSample.Desktop", "samples\XamlIslandSample\XamlIslandSample.Desktop\XamlIslandSample.Desktop.csproj", "{44D5FA95-B63A-40EA-85CF-91D5C59A09B8}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Toolkit.Wpf.UI.XamlHost", "samples\XamlIslandSample\Microsoft.Toolkit.Wpf.UI.XamlHost\Microsoft.Toolkit.Wpf.UI.XamlHost.csproj", "{15055FA7-2607-4201-AB9D-7FE5B8A88FB9}"
 EndProject
 Project("{C7167F0D-BC9F-4E6E-AFE1-012C56B48DB5}") = "XamlIslandSample.Package", "samples\XamlIslandSample\XamlIslandSample.Package\XamlIslandSample.Package.wapproj", "{BD40EDE6-0A22-4CA1-9F1A-D85799155070}"
 EndProject
@@ -286,18 +283,6 @@ Global
 		{44D5FA95-B63A-40EA-85CF-91D5C59A09B8}.Release|Win32.Build.0 = Release|Any CPU
 		{44D5FA95-B63A-40EA-85CF-91D5C59A09B8}.Release|x64.ActiveCfg = Release|Any CPU
 		{44D5FA95-B63A-40EA-85CF-91D5C59A09B8}.Release|x64.Build.0 = Release|Any CPU
-		{15055FA7-2607-4201-AB9D-7FE5B8A88FB9}.Debug|ARM.ActiveCfg = Debug|Any CPU
-		{15055FA7-2607-4201-AB9D-7FE5B8A88FB9}.Debug|ARM.Build.0 = Debug|Any CPU
-		{15055FA7-2607-4201-AB9D-7FE5B8A88FB9}.Debug|Win32.ActiveCfg = Debug|Any CPU
-		{15055FA7-2607-4201-AB9D-7FE5B8A88FB9}.Debug|Win32.Build.0 = Debug|Any CPU
-		{15055FA7-2607-4201-AB9D-7FE5B8A88FB9}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{15055FA7-2607-4201-AB9D-7FE5B8A88FB9}.Debug|x64.Build.0 = Debug|Any CPU
-		{15055FA7-2607-4201-AB9D-7FE5B8A88FB9}.Release|ARM.ActiveCfg = Release|Any CPU
-		{15055FA7-2607-4201-AB9D-7FE5B8A88FB9}.Release|ARM.Build.0 = Release|Any CPU
-		{15055FA7-2607-4201-AB9D-7FE5B8A88FB9}.Release|Win32.ActiveCfg = Release|Any CPU
-		{15055FA7-2607-4201-AB9D-7FE5B8A88FB9}.Release|Win32.Build.0 = Release|Any CPU
-		{15055FA7-2607-4201-AB9D-7FE5B8A88FB9}.Release|x64.ActiveCfg = Release|Any CPU
-		{15055FA7-2607-4201-AB9D-7FE5B8A88FB9}.Release|x64.Build.0 = Release|Any CPU
 		{BD40EDE6-0A22-4CA1-9F1A-D85799155070}.Debug|ARM.ActiveCfg = Debug|x64
 		{BD40EDE6-0A22-4CA1-9F1A-D85799155070}.Debug|Win32.ActiveCfg = Debug|x64
 		{BD40EDE6-0A22-4CA1-9F1A-D85799155070}.Debug|x64.ActiveCfg = Debug|x64
@@ -331,7 +316,6 @@ Global
 		{F33C7CB9-5ECA-47B7-9393-81E6E8F0BD34} = {0F212400-0A8B-4E26-9BA8-CE7165FF8717}
 		{839CF03C-304F-4F5A-909A-CAEA75465217} = {EC7BD4FF-9DAE-4698-9FDA-244478B0203B}
 		{44D5FA95-B63A-40EA-85CF-91D5C59A09B8} = {839CF03C-304F-4F5A-909A-CAEA75465217}
-		{15055FA7-2607-4201-AB9D-7FE5B8A88FB9} = {839CF03C-304F-4F5A-909A-CAEA75465217}
 		{BD40EDE6-0A22-4CA1-9F1A-D85799155070} = {839CF03C-304F-4F5A-909A-CAEA75465217}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution

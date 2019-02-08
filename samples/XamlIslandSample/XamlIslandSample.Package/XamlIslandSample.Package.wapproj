@@ -19,7 +19,7 @@
   <Import Project="$(WapProjPath)\Microsoft.DesktopBridge.props" />
   <PropertyGroup>
     <ProjectGuid>bd40ede6-0a22-4ca1-9f1a-d85799155070</ProjectGuid>
-    <TargetPlatformVersion>10.0.18298.0</TargetPlatformVersion>
+    <TargetPlatformVersion>10.0.17763.0</TargetPlatformVersion>
     <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
     <DefaultLanguage>en-US</DefaultLanguage>
     <PackageCertificateKeyFile>XamlIslandSample.Package_TemporaryKey.pfx</PackageCertificateKeyFile>

@@ -9,16 +9,13 @@
 
   <ItemGroup>
     <Reference Include="Windows">
-      <HintPath>$(MSBuildProgramFiles32)\Windows Kits\10\UnionMetadata\10.0.18298.0\Windows.winmd</HintPath>
+      <HintPath>$(MSBuildProgramFiles32)\Windows Kits\10\UnionMetadata\10.0.17763.0\Windows.winmd</HintPath>
       <IsWinMDFile>true</IsWinMDFile>
       <Private>False</Private>
     </Reference>
     <PackageReference Include="System.Runtime.WindowsRuntime" Version="4.6.0-preview.19073.11" />
     <PackageReference Include="System.Runtime.WindowsRuntime.UI.Xaml" Version="4.6.0-preview.19073.11" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Microsoft.Toolkit.Wpf.UI.XamlHost\Microsoft.Toolkit.Wpf.UI.XamlHost.csproj" />
+    <PackageReference Include="Microsoft.Toolkit.Wpf.UI.XamlHost" Version="6.0.0-preview1" />
   </ItemGroup>
 
   <ItemGroup>
