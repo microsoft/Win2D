@@ -1216,13 +1216,13 @@ namespace test.managed
                 // Drawing with an infinite sized input is not!
                 effect.Source1 = new ColorSourceEffect();
 
-                Assert.ThrowsException<Exception>(() =>
+                Utils.AssertThrowsException<Exception>(() =>
                 {
                     using (var ds = renderTarget.CreateDrawingSession())
                     {
                         ds.DrawImage(effect);
                     }
-                });
+                }, expectedHResult: 0x88990027);
 
                 // But it's ok if we clamp the input back down to finite size.
                 effect.Source1 = new CropEffect

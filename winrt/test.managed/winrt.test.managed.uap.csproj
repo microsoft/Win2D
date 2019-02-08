@@ -17,6 +17,7 @@
     <UnitTestPlatformVersion Condition="'$(UnitTestPlatformVersion)' == ''">$(VisualStudioVersion)</UnitTestPlatformVersion>
     <EnableDotNetNativeCompatibleProfile>true</EnableDotNetNativeCompatibleProfile>
     <UapDefaultAssetScale>240</UapDefaultAssetScale>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <Import Project="..\..\build\Win2D.cs.props" />
   <PropertyGroup>
