@@ -1222,7 +1222,7 @@ namespace test.managed
                     {
                         ds.DrawImage(effect);
                     }
-                }, " graph could not be rendered with the context's current tiling settings. (Exception from HRESULT: 0x88990027)");
+                }, expectedHResult: 0x88990027);
 
                 // But it's ok if we clamp the input back down to finite size.
                 effect.Source1 = new CropEffect

@@ -31,7 +31,7 @@
     <!-- File extensions and directories to check vs. ignore -->
     <CppExt>cpp;h;inl;cs;idl;rc;hlsl</CppExt>
     <XmlExt>xml;xaml;aml</XmlExt>
-    <SkipExt>;gitattributes;gitignore;orig;jpg;png;dds;txt;md;pfx;cmd;bat;proj;nuspec;props;targets;def;sln;csproj;vcxproj;vcxitems;filters;projitems;shproj;shfbproj;content;config;appxmanifest;suo;ipch;sdf;log;opensdf;user;exe;bmp;ico;tif;vsdx;svg;json;bin;opendb;db</SkipExt>
+    <SkipExt>;gitattributes;gitignore;orig;jpg;png;dds;txt;md;pfx;cmd;bat;proj;nuspec;props;targets;def;sln;csproj;wapproj;vcxproj;vcxitems;filters;projitems;shproj;shfbproj;content;config;appxmanifest;suo;ipch;sdf;log;opensdf;user;exe;bmp;ico;tif;vsdx;svg;json;bin;opendb;db</SkipExt>
     <SkipDir>.git;obj;bin;TestResults;build;.nuget;packages;.vs</SkipDir>
 
     <!-- Commandline arguments for the CheckCode.exe tool -->

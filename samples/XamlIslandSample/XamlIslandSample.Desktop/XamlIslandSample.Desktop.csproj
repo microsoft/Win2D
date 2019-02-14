@@ -1,0 +1,33 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <RuntimeIdentifiers>win-x64</RuntimeIdentifiers>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="Windows">
+      <HintPath>$(MSBuildProgramFiles32)\Windows Kits\10\UnionMetadata\10.0.17763.0\Windows.winmd</HintPath>
+      <IsWinMDFile>true</IsWinMDFile>
+      <Private>False</Private>
+    </Reference>
+    <PackageReference Include="System.Runtime.WindowsRuntime" Version="4.6.0-preview.19073.11" />
+    <PackageReference Include="System.Runtime.WindowsRuntime.UI.Xaml" Version="4.6.0-preview.19073.11" />
+    <PackageReference Include="Microsoft.Toolkit.Wpf.UI.XamlHost" Version="6.0.0-preview1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- WORKAROUND: Dont reference the project output assembly Microsoft.Graphics.Canvas.winmd but include it 
+                     with hint path. Otherwise the build fails with error NETSDK1007: Cannot find project info 
+                     for 'winrt\lib\winrt.lib.uap.vcxproj'. This can indicate a missing project reference. -->
+    <ProjectReference Include="..\..\..\..\win2d\winrt\dll\winrt.dll.uap.vcxproj">
+      <Project>{8cf21e5d-e0a2-4fe7-8e2b-a025cf52dcfb}</Project>
+      <Name>winrt.dll.uap</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <Reference Include="..\..\..\bin\uapx64\$(Configuration)\winrt.dll.uap\Microsoft.Graphics.Canvas.winmd" />
+  </ItemGroup>
+
+</Project>

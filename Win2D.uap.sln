@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27130.2010
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28527.54
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "winrt", "winrt", "{0F212400-0A8B-4E26-9BA8-CE7165FF8717}"
 EndProject
@@ -61,6 +61,15 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "winrt.test.managed.uap", "winrt\test.managed\winrt.test.managed.uap.csproj", "{70FB7B71-D56C-4BF1-9282-27AA58043CC0}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "winrt.test.external.uap", "winrt\test.external\winrt.test.external.uap.vcxproj", "{F33C7CB9-5ECA-47B7-9393-81E6E8F0BD34}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "XamlIslandSample", "XamlIslandSample", "{839CF03C-304F-4F5A-909A-CAEA75465217}"
+	ProjectSection(SolutionItems) = preProject
+		samples\XamlIslandSample\global.json = samples\XamlIslandSample\global.json
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XamlIslandSample.Desktop", "samples\XamlIslandSample\XamlIslandSample.Desktop\XamlIslandSample.Desktop.csproj", "{44D5FA95-B63A-40EA-85CF-91D5C59A09B8}"
+EndProject
+Project("{C7167F0D-BC9F-4E6E-AFE1-012C56B48DB5}") = "XamlIslandSample.Package", "samples\XamlIslandSample\XamlIslandSample.Package\XamlIslandSample.Package.wapproj", "{BD40EDE6-0A22-4CA1-9F1A-D85799155070}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -262,6 +271,28 @@ Global
 		{F33C7CB9-5ECA-47B7-9393-81E6E8F0BD34}.Release|x64.ActiveCfg = Release|x64
 		{F33C7CB9-5ECA-47B7-9393-81E6E8F0BD34}.Release|x64.Build.0 = Release|x64
 		{F33C7CB9-5ECA-47B7-9393-81E6E8F0BD34}.Release|x64.Deploy.0 = Release|x64
+		{44D5FA95-B63A-40EA-85CF-91D5C59A09B8}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{44D5FA95-B63A-40EA-85CF-91D5C59A09B8}.Debug|ARM.Build.0 = Debug|Any CPU
+		{44D5FA95-B63A-40EA-85CF-91D5C59A09B8}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{44D5FA95-B63A-40EA-85CF-91D5C59A09B8}.Debug|Win32.Build.0 = Debug|Any CPU
+		{44D5FA95-B63A-40EA-85CF-91D5C59A09B8}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{44D5FA95-B63A-40EA-85CF-91D5C59A09B8}.Debug|x64.Build.0 = Debug|Any CPU
+		{44D5FA95-B63A-40EA-85CF-91D5C59A09B8}.Release|ARM.ActiveCfg = Release|Any CPU
+		{44D5FA95-B63A-40EA-85CF-91D5C59A09B8}.Release|ARM.Build.0 = Release|Any CPU
+		{44D5FA95-B63A-40EA-85CF-91D5C59A09B8}.Release|Win32.ActiveCfg = Release|Any CPU
+		{44D5FA95-B63A-40EA-85CF-91D5C59A09B8}.Release|Win32.Build.0 = Release|Any CPU
+		{44D5FA95-B63A-40EA-85CF-91D5C59A09B8}.Release|x64.ActiveCfg = Release|Any CPU
+		{44D5FA95-B63A-40EA-85CF-91D5C59A09B8}.Release|x64.Build.0 = Release|Any CPU
+		{BD40EDE6-0A22-4CA1-9F1A-D85799155070}.Debug|ARM.ActiveCfg = Debug|x64
+		{BD40EDE6-0A22-4CA1-9F1A-D85799155070}.Debug|Win32.ActiveCfg = Debug|x64
+		{BD40EDE6-0A22-4CA1-9F1A-D85799155070}.Debug|x64.ActiveCfg = Debug|x64
+		{BD40EDE6-0A22-4CA1-9F1A-D85799155070}.Debug|x64.Build.0 = Debug|x64
+		{BD40EDE6-0A22-4CA1-9F1A-D85799155070}.Debug|x64.Deploy.0 = Debug|x64
+		{BD40EDE6-0A22-4CA1-9F1A-D85799155070}.Release|ARM.ActiveCfg = Release|x64
+		{BD40EDE6-0A22-4CA1-9F1A-D85799155070}.Release|Win32.ActiveCfg = Release|x64
+		{BD40EDE6-0A22-4CA1-9F1A-D85799155070}.Release|x64.ActiveCfg = Release|x64
+		{BD40EDE6-0A22-4CA1-9F1A-D85799155070}.Release|x64.Build.0 = Release|x64
+		{BD40EDE6-0A22-4CA1-9F1A-D85799155070}.Release|x64.Deploy.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -283,6 +314,9 @@ Global
 		{A81F96D0-4924-40E3-A463-3CB9EE55AA93} = {671EACB0-6255-4050-B092-1A874625AD5C}
 		{70FB7B71-D56C-4BF1-9282-27AA58043CC0} = {0F212400-0A8B-4E26-9BA8-CE7165FF8717}
 		{F33C7CB9-5ECA-47B7-9393-81E6E8F0BD34} = {0F212400-0A8B-4E26-9BA8-CE7165FF8717}
+		{839CF03C-304F-4F5A-909A-CAEA75465217} = {EC7BD4FF-9DAE-4698-9FDA-244478B0203B}
+		{44D5FA95-B63A-40EA-85CF-91D5C59A09B8} = {839CF03C-304F-4F5A-909A-CAEA75465217}
+		{BD40EDE6-0A22-4CA1-9F1A-D85799155070} = {839CF03C-304F-4F5A-909A-CAEA75465217}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6398AAE8-0F24-4817-A7E4-FF7067AF67D4}
