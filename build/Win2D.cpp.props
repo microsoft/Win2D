@@ -11,8 +11,6 @@
 
   <!-- [[IN SAMPLE]] -->
 
-  <Import Project="Win2D.common.props" />
-
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|ARM" Condition="'$(ApplicationType)' != ''">
       <Configuration>Debug</Configuration>
@@ -45,8 +43,8 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
-    <WindowsTargetPlatformMinVersion>10.0.10240.0</WindowsTargetPlatformMinVersion>
+    <WindowsTargetPlatformVersion>$(__TargetPlatformVersion)</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformMinVersion>$(__TargetPlatformMinVersion)</WindowsTargetPlatformMinVersion>
   </PropertyGroup>
 
   <ItemDefinitionGroup>
@@ -79,8 +77,8 @@
 
   <PropertyGroup>
     <GenerateManifest>false</GenerateManifest>
-    <OutDir>$(__OutputPath)\</OutDir>
-    <GeneratedFilesDir>$(BaseIntermediateOutputPath)\Generated Files\</GeneratedFilesDir>
+    <OutDir>$(__OutputPath)</OutDir>
+    <GeneratedFilesDir>$(BaseIntermediateOutputPath)Generated Files\</GeneratedFilesDir>
     <GenerateProjectSpecificOutputFolder>false</GenerateProjectSpecificOutputFolder>    
   </PropertyGroup>
 

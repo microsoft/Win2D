@@ -11,24 +11,23 @@
   -->
 
   <PropertyGroup>
-    <DeviceType Condition="'$(DeviceType)' == ''">$(TargetPlatformIdentifier)</DeviceType>
-  </PropertyGroup>
 
-  <PropertyGroup>
+    <!--
+    __TargetPlatform(Min)Version is used in Win2D.cpp.props (as WindowsTargetPlatform(Min)Version) 
+    and in Win2D.cs.props (as TargetPlatform(Min)Version)
+    -->
+    <__TargetPlatformVersion>10.0.17134.0</__TargetPlatformVersion>
+    <__TargetPlatformMinVersion>10.0.10240.0</__TargetPlatformMinVersion>
+
+    <DeviceType Condition="'$(DeviceType)' == ''">$(TargetPlatformIdentifier)</DeviceType>
+
     <__Platform Condition="'$(Platform)' == 'Win32'">x86</__Platform>
     <__Platform Condition="'$(Platform)' != 'Win32'">$(Platform)</__Platform>
-  </PropertyGroup>
-
-  <PropertyGroup>
+  
     <FullPlatform>$(DeviceType)$(__Platform)</FullPlatform>
-  </PropertyGroup>
 
-  <PropertyGroup>
-    <BinariesDirectory>$(MSBuildThisFileDirectory)..\bin</BinariesDirectory>
-  </PropertyGroup>
-
-  <PropertyGroup>
-    
+    <BinariesDirectory>$(MSBuildThisFileDirectory)bin\</BinariesDirectory>
+  
     <!--
 
         <__OutputPath> is used to initialize <OutputPath> for C# and <OutDir> for C++.
@@ -39,10 +38,10 @@
 
     -->
 
-    <__OutputPath>$(BinariesDirectory)\$(FullPlatform)\$(Configuration)\$(MSBuildProjectName)</__OutputPath>
-    <BaseIntermediateOutputPath>$(MSBuildThisFileDirectory)..\obj\$(MSBuildProjectName)\$(FullPlatform)\$(Configuration)\</BaseIntermediateOutputPath>
+    <__OutputPath>$(BinariesDirectory)$(FullPlatform)\$(Configuration)\$(MSBuildProjectName)\</__OutputPath>
+    <BaseIntermediateOutputPath>$(MSBuildThisFileDirectory)obj\$(MSBuildProjectName)\$(FullPlatform)\$(Configuration)\</BaseIntermediateOutputPath>
     <IntermediateOutputPath>$(BaseIntermediateOutputPath)</IntermediateOutputPath>
-    <AssetDir>$(MSBuildThisFileDirectory)assets\</AssetDir>
+    <AssetDir>$(MSBuildThisFileDirectory)build\assets\</AssetDir>
 
     <!-- Force all directories to lower case -->
     <__OutputPath>$(__OutputPath.ToLower())</__OutputPath>
@@ -51,5 +50,8 @@
     <AssetDir>$(AssetDir.ToLower())</AssetDir>
 
   </PropertyGroup>
+
+  <Import Project="$(MSBuildThisFileDirectory)build\Win2D.cpp.props" Condition="'$(MSBuildProjectExtension)' == '.vcxproj'" />
+  <Import Project="$(MSBuildThisFileDirectory)build\Win2D.cs.props" Condition="'$(MSBuildProjectExtension)' == '.csproj' or '$(MSBuildProjectExtension)' == '.wapproj'" />
 
 </Project>

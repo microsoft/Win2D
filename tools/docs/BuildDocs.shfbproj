@@ -115,6 +115,6 @@
 
   </ItemGroup>
 
-  <Import Project="$(SHFBROOT)\SandcastleHelpFileBuilder.targets" />
+  <Import Project="$(SHFBROOT)SandcastleHelpFileBuilder.targets" />
 
 </Project>

@@ -13,7 +13,6 @@
     <ApplicationTypeRevision>10.0</ApplicationTypeRevision>
 
   </PropertyGroup>
-  <Import Project="..\..\build\Win2D.cpp.props" />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -164,5 +163,4 @@
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />
-  <Import Project="..\..\build\Win2D.cpp.targets" />
 </Project>

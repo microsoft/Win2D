@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="Win2D.common.props"/>
 
   <!-- [[NOT IN SAMPLE]] -->
 
   <PropertyGroup>
     <OutputPath>$(__OutputPath)</OutputPath>
-    <OutDir>$(__OutputPath)\</OutDir>
+    <OutDir>$(__OutputPath)</OutDir>
     <GenerateProjectSpecificOutputFolder>false</GenerateProjectSpecificOutputFolder>
   </PropertyGroup>
 
@@ -15,7 +14,8 @@
   <PropertyGroup>
     <WarningLevel>4</WarningLevel>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <TargetPlatformVersion>10.0.17134.0</TargetPlatformVersion>
-    <TargetPlatformMinVersion>10.0.10240.0</TargetPlatformMinVersion>
+    <TargetPlatformVersion Condition="'$(TargetPlatformVersion)' == ''">$(__TargetPlatformVersion)</TargetPlatformVersion>
+    <TargetPlatformMinVersion Condition="'$(TargetPlatformMinVersion)' == ''">$(__TargetPlatformMinVersion)</TargetPlatformMinVersion>
   </PropertyGroup>
+  
 </Project>
