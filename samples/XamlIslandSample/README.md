@@ -13,6 +13,7 @@ The sample consists of 2 projects
 
 ##### XamlIslandSample.Desktop (.NET Core 3 Wpf App)
 One window with a CanvasControl and a CanvasSwapChainPanel. Note that the CanvasControl currently doesn't work in XAML islands (https://github.com/Microsoft/Win2D/issues/643)
+
 - Only x64 is supported by the sample
 - Set Property RuntimeIdentifiers to win-x64 in .csproj (with "s" at the end!)
 - Reference assembly Windows.winmd
@@ -21,7 +22,7 @@ One window with a CanvasControl and a CanvasSwapChainPanel. Note that the Canvas
 - Reference package Microsoft.Toolkit.Wpf.UI.XamlHost 6.0.0-preview1
 - Reference Microsoft.Graphics.Canvas.winmd
 
-	Adding a simple project reference to winrt.dll.uap fails with `error NETSDK1007: Cannot find project info for 'winrt\lib\winrt.lib.uap.vcxproj'. This can indicate a missing project reference.` So I added a assembly reference with hint path to Microsoft.Graphics.Canvas.winmd
+Adding a simple project reference to winrt.dll.uap fails with `error NETSDK1007: Cannot find project info for 'winrt\lib\winrt.lib.uap.vcxproj'. This can indicate a missing project reference.` So I added a assembly reference with hint path to Microsoft.Graphics.Canvas.winmd
 
 ##### XamlIslandSample.Package (Windows Application Package)
 Loading C++ WinRT components like Win2D into managed processes only works with APPX package
@@ -39,3 +40,60 @@ Both packages should be deployed automatically during sample deployment but usua
 To start the sample build, deploy and start XamlIslandSample.Package. At the time of writing there seems to be a bug in VS 2019 that leads to unreliable detecting changes of XamlIslandSample.Desktop. Manually rebuild and deploy of XamlIslandSample.Package helps.
 
 To debug the Win2D components select `Mixed (Managed and Native)` under Debug / Debugger Type in XamlIslandSample.Package properties.
+
+# Use Win2D NuGet package in .NET Core 3 WPF
+
+The current preview package has some support for using Win2D in XAML Islands but there are some manual steps to be done
+1. At the moment the NuGet package is not published so you have to build a local Win2D package from this branch. See https://github.com/Microsoft/Win2D#building-win2d-from-source for details.
+2. Create a .NET Core WPF app that references the Win2D NuGet package along with a Windows Application Packaging Project. An appx / msix package is necessary to run any UWP XAML UI. This package can be installed from the store or sideloaded.
+3. You have to **tweak both project files** manually (details below). This will probably change in the future.
+   - The WPF app needs to get built self-contained (everything included in the appx) and therefore needs to know which runtime should be included.
+   - The appx must reference the VC Runtime. There is no way for this reference to flow from the Win2D NuGet package via the app to the appx project automatically.
+4. Add code that targets Win2D components. Maybe you want to reference `Microsoft.Toolkit.Wpf.UI.XamlHost` and add some XAML UI (like in https://github.com/Microsoft/Win2D/tree/xaml_islands/samples/XamlIslandSample) or you create a XAML island by your own. To smoke test the deployment you can add
+    ```csharp
+    Windows.UI.Xaml.Hosting.WindowsXamlManager.InitializeForCurrentThread();
+    new Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl();
+    ```
+    This is nothing visible but will load all Win2D components at runtime and thus will crash if something is not found or cannot be loaded.
+5. Select `x64` or `x86` as platform (`Any CPU` won't work, `ARM` is not yet supported by XAML islands). Build, deploy and start the Packaging project.
+
+**Steps to create the solution**
+
+- Create a new directory and open a command line
+- `dotnet new sln`
+- `dotnet new nugetconfig`
+- Add this to `nuget.config`
+    ```xml
+    <add key="local" value="{path to Win2D bin directory}" />`
+    ```
+    *NOTE*: Alternative you can add the local source to NuGet Package Manager Settings in VS
+- `dotnet new wpf -n wpfapp`
+- Add this to `wpfapp\wpfapp.csproj`
+	```xml
+    <PropertyGroup>
+      <RuntimeIdentifiers>win-x86;win-x64</RuntimeIdentifiers>
+      <Platforms>x86;x64</Platforms>
+    </PropertyGroup>
+    <ItemGroup>
+      <Reference Include="Windows">
+        <HintPath>$(MSBuildProgramFiles32)\Windows Kits\10\UnionMetadata\10.0.17763.0\Windows.winmd</HintPath>
+        <IsWinMDFile>true</IsWinMDFile>
+        <Private>False</Private>
+      </Reference>
+      <PackageReference Include="Win2D.uwp" Version="1.24.0-local" />
+    </ItemGroup>
+	```
+- `dotnet sln add wpfapp`
+- Open the solution in VS 2019 Preview
+- Add a new Windows Application Packaging Project `wpfapp.package` with Target version `Windows 10.0.17763.0` or higher  
+  *NOTE*: If you want to generate a `.msix` package (instead of `.appx`) choose `Windows 10.0.17763.0` or higher also as Target min version
+- Add this to `wpfapp.package\wpfapp.package.wapproj`
+  ```xml
+  <ItemGroup>
+    <VCLibTargets Include="Microsoft.VCLibs, Version=14.0">
+      <PlatformTarget>$(PlatformTarget)</PlatformTarget>
+    </VCLibTargets>
+  </ItemGroup>
+  ```
+- Add a project reference `wpfapp.package` -> `wpfapp`
+
