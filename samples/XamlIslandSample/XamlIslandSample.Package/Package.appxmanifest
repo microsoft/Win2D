@@ -8,20 +8,18 @@
 
   <Identity
     Name="2d60d121-fb02-4a4e-b9cf-08a161876f05"
-    Publisher="CN=stefa"
+    Publisher="CN=Microsoft Corporation"
     Version="1.0.0.0" />
 
   <Properties>
     <DisplayName>XamlIslandSample.Package</DisplayName>
-    <PublisherDisplayName>stefa</PublisherDisplayName>
+    <PublisherDisplayName>Microsoft Corporation</PublisherDisplayName>
     <Logo>Images\StoreLogo.png</Logo>
   </Properties>
 
   <Dependencies>
     <TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.0.0" MaxVersionTested="10.0.0.0" />
     <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.14393.0" MaxVersionTested="10.0.14393.0" />
-    <PackageDependency Name="Microsoft.VCLibs.140.00" MinVersion="14.0.26706.0" Publisher="CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US" />
-    <PackageDependency Name="Microsoft.VCLibs.140.00.Debug" MinVersion="14.0.27305.0" Publisher="CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US" />
   </Dependencies>
 
   <Resources>
