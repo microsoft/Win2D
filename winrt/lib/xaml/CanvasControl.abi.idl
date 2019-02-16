@@ -147,6 +147,11 @@ namespace Microsoft.Graphics.Canvas.UI.Xaml
         HRESULT Invalidate();
 
         //
+        // Forces rendering of the control.
+        //
+        HRESULT ForceRendering();
+
+        //
         // Gets the current size of the control.
         //
         [propget] HRESULT Size([out, retval] Windows.Foundation.Size* size);
