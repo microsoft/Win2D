@@ -215,13 +215,23 @@ HRESULT CanvasControl::OnCompositionRendering(IInspectable*, IInspectable*)
         });
 }
 
-IFACEMETHODIMP CanvasControl::ForceRendering()
+IFACEMETHODIMP CanvasControl::ManualRenderTick()
 {
     return ExceptionBoundary(
         [&]
     {
         if (!IsLoaded())
             return;
+
+        auto lock = Lock(m_renderingEventMutex);
+
+        if (m_needToHookCompositionRendering == false)
+            return;
+
+        m_needToHookCompositionRendering = false;
+
+        lock.unlock();
+
         try
         {
             DrawControl();

@@ -147,9 +147,9 @@ namespace Microsoft.Graphics.Canvas.UI.Xaml
         HRESULT Invalidate();
 
         //
-        // Forces rendering of the control.
+        // Manual render tick.
         //
-        HRESULT ForceRendering();
+        HRESULT ManualRenderTick();
 
         //
         // Gets the current size of the control.

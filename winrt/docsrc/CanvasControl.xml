@@ -115,6 +115,14 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         </p>       
       </remarks>
     </member>
+    <member name="M:Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl.ManualRenderTick">
+      <summary>Manually invokes the rendering event.</summary>
+      <remarks>
+        <p>
+          This method should only be called in XAML island scenarios where the UWP rendering event is not called.
+        </p>
+      </remarks>
+    </member>
     <member name="P:Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl.Device">
       <summary>Gets the underlying device used by this control.</summary>
     </member>
