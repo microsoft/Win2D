@@ -35,7 +35,8 @@
     </Reference>
   </ItemGroup>
 
-  <!-- WOKAROUND: .deps.json gets not published -->
+  <!-- WOKAROUND: .deps.json gets not published 
+                  https://developercommunity.visualstudio.com/content/problem/462646/referencing-native-winrt-component-in-net-core-wpf.html -->
   <PropertyGroup>
     <DesktopBridgePublishItemsOutputGroupDependsOn>
       $(DesktopBridgePublishItemsOutputGroupDependsOn);

@@ -85,7 +85,8 @@ The current preview package has some support for using Win2D in XAML Islands but
     <PackageReference Include="Win2D.uwp" Version="1.24.0-local" />
   </ItemGroup>
 
-  <!-- WORKAROUND: .deps.json gets not published -->
+  <!-- WOKAROUND: .deps.json gets not published 
+                  https://developercommunity.visualstudio.com/content/problem/462646/referencing-native-winrt-component-in-net-core-wpf.html -->
   <PropertyGroup>
     <DesktopBridgePublishItemsOutputGroupDependsOn>
       $(DesktopBridgePublishItemsOutputGroupDependsOn);
@@ -113,7 +114,9 @@ The current preview package has some support for using Win2D in XAML Islands but
     </VCLibTargets>
   </ItemGroup>
 
-  <!-- WORKAROUND: At startup Microsoft.Graphics.Canvas.winmd is expected in the same directory as the .exe (sideloaded: AppX\XamlIslandSample.Desktop). Duplicate the .winmd item -->
+  <!-- WORKAROUND: At startup Microsoft.Graphics.Canvas.winmd is expected in the same directory as the .exe 
+                   (sideloaded: AppX\XamlIslandSample.Desktop). Duplicate the .winmd item 
+                   https://developercommunity.visualstudio.com/content/problem/462646/referencing-native-winrt-component-in-net-core-wpf.html -->
   <Target Name="__CopyWinMDToProjectDir" BeforeTargets="_CopyPackageFiles">
     <ItemGroup>
       <DuplicatedWinMDFiles Condition="'%(WapProjPackageFile.Extension)' == '.winmd' and '%(WapProjPackageFile.DependencyKind)' == 'Direct'" Include="%(WapProjPackageFile.Identity)">

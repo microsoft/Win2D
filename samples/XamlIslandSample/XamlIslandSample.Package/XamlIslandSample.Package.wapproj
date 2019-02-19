@@ -62,7 +62,9 @@
     </ProjectReference>
   </ItemGroup>
 
-  <!-- WORKAROUND: At startup Microsoft.Graphics.Canvas.winmd is expected in the same directory as the .exe (sideloaded: AppX\XamlIslandSample.Desktop). Duplicate the .winmd item -->
+  <!-- WORKAROUND: At startup Microsoft.Graphics.Canvas.winmd is expected in the same directory as the .exe 
+                   (sideloaded: AppX\XamlIslandSample.Desktop). Duplicate the .winmd item 
+                   https://developercommunity.visualstudio.com/content/problem/462646/referencing-native-winrt-component-in-net-core-wpf.html -->
   <Target Name="__CopyWinMDToProjectDir" BeforeTargets="_CopyPackageFiles">
     <ItemGroup>
       <DuplicatedWinMDFiles Condition="'%(WapProjPackageFile.WinMDFile)' == 'true' and '%(WapProjPackageFile.DependencyKind)' == 'Direct'" Include="%(WapProjPackageFile.Identity)">
