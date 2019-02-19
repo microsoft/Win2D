@@ -18,11 +18,13 @@ namespace XamlIslandSample.Desktop
         public MainWindow()
         {
             InitializeComponent();
-        }
 
-        private void ButtonExit_Click(object sender, RoutedEventArgs e)
-        {
-            Application.Current.Shutdown();
+            // Test the deployment
+            // This only works when the .deps.json file is published
+            if (string.IsNullOrEmpty(AppDomain.CurrentDomain.GetData("FX_PRODUCT_VERSION") as string))
+            {
+                MessageBox.Show("No .deps.json file found.");
+            }
         }
 
         private void CanvasSwapChainPanel_SizeChanged(object sender, SizeChangedEventArgs e)

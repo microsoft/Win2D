@@ -48,5 +48,25 @@
       <SkipGetTargetFrameworkProperties>True</SkipGetTargetFrameworkProperties>
     </ProjectReference>
   </ItemGroup>
+
+  <!-- WORKAROUND: At startup Microsoft.Graphics.Canvas.winmd is expected in the same directory as the .exe (sideloaded: AppX\XamlIslandSample.Desktop). Duplicate the .winmd item -->
+  <Target Name="__CopyWinMDToProjectDir" BeforeTargets="_CopyPackageFiles">
+    <ItemGroup>
+      <DuplicatedWinMDFiles Condition="'%(WapProjPackageFile.WinMDFile)' == 'true' and '%(WapProjPackageFile.DependencyKind)' == 'Direct'" Include="%(WapProjPackageFile.Identity)">
+        <CopyToTargetPath>$([System.IO.Path]::Combine($(TargetDir), %(WapProjPackageFile.SourceProject), %(WapProjPackageFile.TargetPath)))</CopyToTargetPath>
+        <TargetPath>$([System.IO.Path]::Combine(%(WapProjPackageFile.SourceProject), %(WapProjPackageFile.TargetPath)))</TargetPath>
+      </DuplicatedWinMDFiles>
+      <AppxPackagePayload Include="@(DuplicatedWinMDFiles)" />
+      <File Include="@(DuplicatedWinMDFiles)" />
+
+      <DuplicatedUploadWinMDFiles Condition="'%(UploadWapProjPackageFile.WinMDFile)' == 'true' and '%(UploadWapProjPackageFile.DependencyKind)' == 'Direct'" Include="%(UploadWapProjPackageFile.Identity)">
+        <CopyToTargetPath>$([System.IO.Path]::Combine($(TargetDir), %(UploadWapProjPackageFile.SourceProject), %(UploadWapProjPackageFile.TargetPath)))</CopyToTargetPath>
+        <TargetPath>$([System.IO.Path]::Combine(%(UploadWapProjPackageFile.SourceProject), %(UploadWapProjPackageFile.TargetPath)))</TargetPath>
+      </DuplicatedUploadWinMDFiles>
+      <AppxUploadPackagePayload Include="@(DuplicatedUploadWinMDFiles)" />
+      <UploadFile Include="@(DuplicatedUploadWinMDFiles)" />
+    </ItemGroup>
+  </Target>
+
   <Import Project="$(WapProjPath)\Microsoft.DesktopBridge.targets" />
 </Project>
