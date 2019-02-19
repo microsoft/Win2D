@@ -4,6 +4,14 @@
     <VisualStudioVersion>15.0</VisualStudioVersion>
   </PropertyGroup>
   <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
     <ProjectConfiguration Include="Debug|x64">
       <Configuration>Debug</Configuration>
       <Platform>x64</Platform>
@@ -19,8 +27,8 @@
   <Import Project="$(WapProjPath)\Microsoft.DesktopBridge.props" />
   <PropertyGroup>
     <ProjectGuid>bd40ede6-0a22-4ca1-9f1a-d85799155070</ProjectGuid>
-    <TargetPlatformVersion>10.0.17763.0</TargetPlatformVersion>
-    <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
+    <TargetPlatformVersion>$(__TargetPlatformVersion)</TargetPlatformVersion>
+    <TargetPlatformMinVersion>$(__TargetPlatformMinVersion)</TargetPlatformMinVersion>
     <DefaultLanguage>en-US</DefaultLanguage>
     <PackageCertificateKeyFile>XamlIslandSample.Package_TemporaryKey.pfx</PackageCertificateKeyFile>
     <EntryPointProjectUniqueName>..\XamlIslandSample.Desktop\XamlIslandSample.Desktop.csproj</EntryPointProjectUniqueName>
@@ -39,6 +47,11 @@
     <Content Include="Images\Square44x44Logo.targetsize-24_altform-unplated.png" />
     <Content Include="Images\StoreLogo.png" />
     <Content Include="Images\Wide310x150Logo.scale-200.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <VCLibTargets Include="Microsoft.VCLibs, Version=14.0">
+      <PlatformTarget>$(PlatformTarget)</PlatformTarget>
+    </VCLibTargets>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\XamlIslandSample.Desktop\XamlIslandSample.Desktop.csproj">

@@ -13,7 +13,6 @@
     <RootNamespace>Microsoft.Graphics.Canvas</RootNamespace>
     <ItemsRootNamespace>Microsoft.Graphics.Canvas</ItemsRootNamespace>
   </PropertyGroup>
-  <Import Project="..\..\build\Win2D.cpp.props" />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
@@ -477,5 +476,4 @@
   </ItemGroup>
   <Import Project="$(MSBuildThisFileDir)..\..\build\midlrt.targets" />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <Import Project="..\..\build\Win2D.cpp.targets" />
 </Project>

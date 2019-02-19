@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <Import Project="$(MSBuildThisFileDirectory)build\Win2D.cpp.targets" Condition="'$(MSBuildProjectExtension)' == '.vcxproj'" />
+  <Import Project="$(MSBuildThisFileDirectory)build\Win2D.cs.targets" Condition="'$(MSBuildProjectExtension)' == '.csproj'" />
+
+  <PropertyGroup>
+    <!-- 
+    Don't check for device type in sandcastle generated project files
+    Better approach would be to separate src from bin/obj. Then the generated projects in bin cannot find Directory.Build.*
+    Win2D
+      src
+        ...
+        Directory.Build.props
+        Directory.Build.targets
+      obj
+      bin
+        GenerateRefInfo.proj
+    -->
+    <DisableCheckDeviceType Condition="$(MSBuildProjectFile) == 'GenerateRefInfo.proj'">true</DisableCheckDeviceType>
+    <PrepareForBuildDependsOn>CheckForDeviceType;$(PrepareForBuildDependsOn)</PrepareForBuildDependsOn>
+  </PropertyGroup>
+  
+  <Target Name="CheckForDeviceType" Condition="'$(DisableCheckDeviceType)' != 'true' and '$(DeviceType)' == ''">
+    <Error Text="Could not determine DeviceType - ensure that TargetPlatformIdentifier is set."/>
+  </Target>
+
+</Project>
