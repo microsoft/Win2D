@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup>
+    <TargetPlatformIdentifier>DesktopBridge</TargetPlatformIdentifier>
+  </PropertyGroup>
+  
+  <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" />
+
+  <PropertyGroup>
+    <!-- Win32 -> x86 -->
+    <PlatformTarget>$(__Platform)</PlatformTarget>
+  </PropertyGroup>
+
+  <!-- Always determine a runtime to make things (paths) deterministic -->
+  <PropertyGroup Condition="'$(RuntimeIdentifier)' == ''">
+    <RuntimeIdentifier Condition="'$(__Platform)' == 'x64'">win-x64</RuntimeIdentifier>
+    <RuntimeIdentifier Condition="'$(__Platform)' != 'x64'">win-x86</RuntimeIdentifier>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <!-- Projects inside XamlIslandSample don't follow the global windows version requirements! -->
+    
+    <!-- Needed for XAML islands -->
+    <__TargetPlatformVersion>10.0.17763.0</__TargetPlatformVersion>
+    <!-- Needed for Application Package Project -->
+    <__TargetPlatformMinVersion>10.0.14393.0</__TargetPlatformMinVersion>
+  </PropertyGroup>
+
+</Project>

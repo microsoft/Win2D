@@ -242,16 +242,7 @@ namespace test.managed
 
         static void ValidateUnsupportedPixelFormatException(Action action)
         {
-            try
-            {
-                action();
-                Assert.Fail("should throw");
-            }
-            catch (Exception e)
-            {
-                Assert.IsTrue(e.Message.Contains("The bitmap pixel format is unsupported."));
-                Assert.IsTrue(e.Message.Contains("0x88982F80"));
-            }
+            Utils.AssertThrowsException<Exception>(action, expectedHResult: 0x88982F80);
         }
 
 

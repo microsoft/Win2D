@@ -9,7 +9,7 @@ namespace test.managed
 {
     static class Utils
     {
-        public static void AssertThrowsException<T>(Action action, string expectedMessage)
+        public static void AssertThrowsException<T>(Action action, string expectedMessage = default, uint? expectedHResult = default)
             where T : Exception
         {
             try
@@ -19,10 +19,12 @@ namespace test.managed
             }
             catch (T e)
             {
-                VerifyExceptionMessage(expectedMessage, e.Message);
+                if (!string.IsNullOrEmpty(expectedMessage))
+                    VerifyExceptionMessage(expectedMessage, e.Message);
+                if (!(expectedHResult is null))
+                    Assert.AreEqual(expectedHResult.Value, (uint)e.HResult);
             }
         }
-
 
         static void VerifyExceptionMessage(string expected, string sourceMessage)
         {
@@ -33,6 +35,11 @@ namespace test.managed
 
             string delimiterString = "\r\n\r\n";
             int delimiterPosition = sourceMessage.LastIndexOf(delimiterString);
+
+            // Without delimiter the string depends on culture and cannot be used
+            if (delimiterPosition < 0)
+                Assert.Fail($"'\\r\\n\\r\\n' is expected but not found in exception '{sourceMessage}'");
+
             string exceptionMessage = sourceMessage.Substring(delimiterPosition + delimiterString.Length);
 
             // .NET Native formats HRESULT exception messages differently to other CLR versions.

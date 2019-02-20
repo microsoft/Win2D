@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <PropertyGroup>
-    <PrepareForBuildDependsOn>CheckForDeviceType;$(PrepareForBuildDependsOn)</PrepareForBuildDependsOn>
-  </PropertyGroup>
-  <Target Name="CheckForDeviceType" Condition="'$(DeviceType)' == ''">
-    <Error Text="Could not determine DeviceType - ensure that TargetPlatformIdentifier is set."/>
-  </Target>
-</Project>

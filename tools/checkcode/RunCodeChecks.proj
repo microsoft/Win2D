@@ -17,21 +17,23 @@
 -->
 
 <Project ToolsVersion="12.0" DefaultTargets="RunCodeChecks" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-
-  <Import Project="$(MsBuildThisFileDirectory)..\..\build\Win2D.common.props" />
-
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
+  </PropertyGroup>
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
 
+  <PropertyGroup>
     <!-- Paths -->
     <Executable>&quot;$(BinariesDirectory)\WindowsAnyCPU\$(Configuration)\CheckCode\CheckCode.exe&quot;</Executable>
     <CopyrightFile>&quot;$(MSBuildThisFileDirectory)copyright.txt&quot;</CopyrightFile>
     <RootDir>&quot;$(MSBuildThisFileDirectory)..\..&quot;</RootDir>
+    <!-- Microsoft.Common.targets validates for non empty OutputPath -->
+    <OutputPath>Y:\never used</OutputPath>
 
     <!-- File extensions and directories to check vs. ignore -->
     <CppExt>cpp;h;inl;cs;idl;rc;hlsl</CppExt>
     <XmlExt>xml;xaml;aml</XmlExt>
-    <SkipExt>;gitattributes;gitignore;orig;jpg;png;dds;txt;md;pfx;cmd;bat;proj;nuspec;props;targets;def;sln;csproj;vcxproj;vcxitems;filters;projitems;shproj;shfbproj;content;config;appxmanifest;suo;ipch;sdf;log;opensdf;user;exe;bmp;ico;tif;vsdx;svg;json;bin;opendb;db</SkipExt>
+    <SkipExt>;gitattributes;gitignore;orig;jpg;png;dds;txt;md;pfx;cmd;bat;proj;nuspec;props;targets;def;sln;csproj;wapproj;vcxproj;vcxitems;filters;projitems;shproj;shfbproj;content;config;appxmanifest;suo;ipch;sdf;log;opensdf;user;exe;bmp;ico;tif;vsdx;svg;json;bin;opendb;db</SkipExt>
     <SkipDir>.git;obj;bin;TestResults;build;.nuget;packages;.vs</SkipDir>
 
     <!-- Commandline arguments for the CheckCode.exe tool -->
@@ -52,4 +54,5 @@
     <MSBuild Projects="checkcode.csproj" Properties="Configuration=$(Configuration);Platform=AnyCPU" />
   </Target>
 
+   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.Targets" />
 </Project>

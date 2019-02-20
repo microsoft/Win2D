@@ -31,6 +31,10 @@
       <Platforms>Win32;x64;ARM</Platforms>
       <BinDir>UAP</BinDir>
     </UAPProject>
+    <DesktopBridgeProject>
+      <Platforms>Win32;x64</Platforms>
+      <BinDir>DesktopBridge</BinDir>
+    </DesktopBridgeProject>
     <AnyCPUProject>
       <Platforms>AnyCPU</Platforms>
       <BinDir>Windows</BinDir>
@@ -45,19 +49,14 @@
   </ItemGroup>
 
   <!-- Test projects -->
-  <ItemGroup Condition="$(BuildTests)">
+  <ItemGroup Condition="'$(BuildTests)' == 'true'">
     <UAPProject Include="winrt\test.internal\winrt.test.internal.uap.vcxproj">
       <Platforms>Win32;x64</Platforms>
       <AutomatedTests Condition="$(ShouldRunUAPTests)">desktop</AutomatedTests>
     </UAPProject>
     <UAPProject Include="winrt\test.external\winrt.test.external.uap.vcxproj">
       <Platforms>Win32;x64</Platforms>
-      <!--
-        Workaround https://github.com/Microsoft/vstest/issues/1534 by temporarily 
-        disabling running winrt.test.external unit tests from the command line. 
-        Note these tests can still be run inside the Visual Studio 2017 IDE.
       <AutomatedTests Condition="$(ShouldRunUAPTests)">store</AutomatedTests>
-      -->
     </UAPProject>
     <UAPProject Include="winrt\test.nativecomponent\winrt.test.nativecomponent.uap.vcxproj" />
     <UAPProject Include="winrt\test.managed\winrt.test.managed.uap.csproj">
@@ -72,17 +71,19 @@
     </UAPProject>
     <UAPProject Include="samples\ExampleGallery\BackgroundTask\ExampleGallery.BackgroundTask.uap.csproj" />
     <UAPProject Include="samples\ExampleGallery\ExampleGallery.uap.csproj" />
+    <DesktopBridgeProject Include="samples\XamlIslandSample\XamlIslandSample.Desktop\XamlIslandSample.Desktop.csproj" />
+    <DesktopBridgeProject Include="samples\XamlIslandSample\XamlIslandSample.Package\XamlIslandSample.Package.wapproj" />
   </ItemGroup>
 
   <!-- Tools projects -->
-  <ItemGroup Condition="$(BuildTools)">
+  <ItemGroup Condition="'$(BuildTools)' == 'true'">
     <AnyCPUProject Include="tools\checkcode\checkcode.csproj" />
     <AnyCPUProject Include="tools\codegen\exe\codegen.exe.csproj" />
-    <AnyCPUProject Include="tools\codegen\test\codegen.test.csproj" Condition="$(BuildTests)">
+    <AnyCPUProject Include="tools\codegen\test\codegen.test.csproj" Condition="'$(BuildTests)' == 'true'">
       <AutomatedTests>desktop</AutomatedTests>
     </AnyCPUProject>
     <AnyCPUProject Include="tools\mock\exe\mock.exe.csproj" />
-    <AnyCPUProject Include="tools\mock\test\mock.test.csproj" Condition="$(BuildTests)">
+    <AnyCPUProject Include="tools\mock\test\mock.test.csproj" Condition="'$(BuildTests)' == 'true'">
       <AutomatedTests>desktop</AutomatedTests>
     </AnyCPUProject>
     <AnyCPUProject Include="tools\docs\DocDiff\DocDiff.csproj" />
@@ -92,15 +93,31 @@
     <AnyCPUProject Include="tools\exportsample\exportsample.csproj" />
   </ItemGroup>
 
-
   <!-- Master target just chains to a bunch of workers -->
-  <Target Name="Build"
-          DependsOnTargets="BuildProjects; CheckCode; BuildDocs; RunTests" />
+  <PropertyGroup>
+    <BuildDependsOnTargets>BuildProjects</BuildDependsOnTargets>
+    
+    <BuildDependsOnTargets 
+      Condition="'$(BuildTools)' == 'true' and $(BuildPlatforms.Contains('AnyCPU'))">$(BuildDependsOnTargets); CheckCode</BuildDependsOnTargets>
+    
+    <BuildDependsOnTargets 
+      Condition="'$(BuildDocs)' == 'true' and
+                 '$(BuildTools)' == 'true' and
+                  $(BuildPlatforms.Contains('AnyCPU')) and
+                  $(BuildPlatforms.Contains('Win32')) and
+                  $(BuildConfigurations.Contains('Release'))">$(BuildDependsOnTargets); BuildDocs</BuildDependsOnTargets>
+    
+      <BuildDependsOnTargets 
+      Condition="'$(BuildTests)' == 'true' and 
+                 '$(RunTests)' == 'true'">$(BuildDependsOnTargets); RunTests</BuildDependsOnTargets>
+  </PropertyGroup>
+
+  <Target Name="Build" DependsOnTargets="$(BuildDependsOnTargets)" />
 
 
   <!-- Use batching to build each project in turn -->
   <Target Name="BuildProjects"
-          DependsOnTargets="PrepareVersionInfo; ChooseProjectsToBuild; ChooseConfigurationsToRestore; RestoreNuGetPackages; WorkAroundNuGetRestoreBug"
+          DependsOnTargets="PrepareVersionInfo; ChooseProjectsToBuild; ChooseConfigurationsToRestore; RestoreNuGetPackages"
           Inputs="@(ProjectsToBuild)"
           Outputs="%(PlatformIndependentName)">
 
@@ -119,7 +136,7 @@
       <BuildConfiguration Include="$(BuildConfigurations)" />
 
       <!-- Generate the cartesian product of all projects * all platforms we are building -->
-      <CandidateProjects Include="@(UAPProject);@(AnyCPUProject)">
+      <CandidateProjects Include="@(UAPProject);@(AnyCPUProject);@(DesktopBridgeProject)">
         <Platform>%(BuildPlatform.Identity)</Platform>
       </CandidateProjects>
 
@@ -190,8 +207,7 @@
 
 
   <!-- Make sure all our source files have the right copyright and formatting -->
-  <Target Name="CheckCode"
-          Condition="$(BuildTools) and $(BuildPlatforms.Contains('AnyCPU'))">
+  <Target Name="CheckCode">
 
     <Message Importance="High" Text="Checking copyright banners and source code formatting" />
 
@@ -202,12 +218,7 @@
   <!-- Build the reference documentation -->
   <UsingTask TaskName="SetEnv" AssemblyFile="$(VCTargetsPath)Microsoft.Build.CppTasks.Common.dll"/>
 
-  <Target Name="BuildDocs"
-          Condition="$(BuildDocs) and
-                     $(BuildTools) and
-                     $(BuildPlatforms.Contains('AnyCPU')) and
-                     $(BuildPlatforms.Contains('Win32')) and
-                     $(BuildConfigurations.Contains('Release'))">
+  <Target Name="BuildDocs">
 
     <Message Importance="High" Text="Building documentation" />
 
@@ -233,11 +244,11 @@
     <_VsTest Condition="Exists('$(VS120COMNTOOLS)$(_VsTestPathUnderCommonTools)')">$(VS120COMNTOOLS)$(_VsTestPathUnderCommonTools)</_VsTest>
     <_VsTest Condition="Exists('$(VS140COMNTOOLS)$(_VsTestPathUnderCommonTools)')">$(VS140COMNTOOLS)$(_VsTestPathUnderCommonTools)</_VsTest>
     <_VsTest Condition="Exists('$(VS150COMNTOOLS)$(_VsTestPathUnderCommonTools)')">$(VS150COMNTOOLS)$(_VsTestPathUnderCommonTools)</_VsTest>
+    <_VsTest Condition="Exists('$(VS160COMNTOOLS)$(_VsTestPathUnderCommonTools)')">$(VS160COMNTOOLS)$(_VsTestPathUnderCommonTools)</_VsTest>
     <VsTest>"$([System.IO.Path]::GetFullPath('$(_VsTest)'))"</VsTest>
   </PropertyGroup>
 
   <Target Name="RunTests"
-          Condition="$(BuildTests) and $(RunTests)"
           DependsOnTargets="ChooseProjectsToBuild; ChooseTestsToRun"
           Inputs="@(TestProjects)"
           Outputs="%(TestProjects.TestAppX)">
@@ -261,9 +272,9 @@
         <TestAppX Condition="%(ProjectsToBuild.Configuration) == Release">%(ProjectsToBuild.Filename)_1.0.0.0_%(ProjectsToBuild.Platform)</TestAppX>
         <TestAppX Condition="%(ProjectsToBuild.Configuration) != Release">%(ProjectsToBuild.Filename)_1.0.0.0_%(ProjectsToBuild.Platform)_%(ProjectsToBuild.Configuration)</TestAppX>
 
-        <!-- Binaries can be either a .dll for desktop tests, or .appx for store app tests -->
+        <!-- Binaries can be either a .dll for desktop tests, or .appxrecipe for store app tests -->
         <TestBinary Condition="%(ProjectsToBuild.AutomatedTests) == desktop">%(TestProjects.TestPath)\%(ProjectsToBuild.Filename)\%(ProjectsToBuild.Filename).dll</TestBinary>
-        <TestBinary Condition="%(ProjectsToBuild.AutomatedTests) == store">%(TestProjects.TestPath)\%(ProjectsToBuild.Filename)\AppPackages\%(TestProjects.TestAppX)_Test\%(TestProjects.TestAppX).appx</TestBinary>
+        <TestBinary Condition="%(ProjectsToBuild.AutomatedTests) == store">%(TestProjects.TestPath)\%(ProjectsToBuild.Filename)\%(ProjectsToBuild.Filename).build.appxrecipe</TestBinary>
 
         <!-- Do we need the /Platform or /InIsolation arguments for this test project? -->
         <TestArgs Condition="%(ProjectsToBuild.Platform) == x64">%(TestProjects.TestArgs) /Platform:x64</TestArgs>
@@ -293,19 +304,6 @@
       <!-- Internal Microsoft builds can optionally consume the Windows SDK via NuGet -->
       <NuGetRestore Include="build\pkges\packages.config" Condition="'$(UseNuGetSDK)' != ''" />
     </ItemGroup>
-  </Target>
-
-
-  <!--
-    Workaround https://github.com/Microsoft/vstest/issues/1533 by deleting the 
-    unnecessary assets.json file after running nuget restore on winrt.test.external.
-  -->
-  <Target Name="WorkAroundNuGetRestoreBug">
-    <ItemGroup>
-      <FileToDelete Include="obj\winrt.test.external.uap\**\project.assets.json" />
-    </ItemGroup>
-
-    <Delete Files="@(FileToDelete)" />
   </Target>
 
 

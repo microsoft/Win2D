@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 
 namespace CodeGen
@@ -657,11 +658,11 @@ namespace CodeGen
                 }
                 else if (property.IsHidden)
                 {
-                    value = property.NativePropertyName.Replace("PROP_", "") + "_" + property.EnumFields.FieldsList[Int32.Parse(value)].Name.ToUpper();
+                    value = property.NativePropertyName.Replace("PROP_", "") + "_" + property.EnumFields.FieldsList[Int32.Parse(value, CultureInfo.InvariantCulture)].Name.ToUpper();
                 }
                 else
                 {
-                    value = property.TypeNameCpp + "::" + property.EnumFields.FieldsList[Int32.Parse(value)].Name;
+                    value = property.TypeNameCpp + "::" + property.EnumFields.FieldsList[Int32.Parse(value, CultureInfo.InvariantCulture)].Name;
                 }
             }
             else if (property.Type.StartsWith("matrix") || property.Type.StartsWith("vector"))
@@ -772,7 +773,7 @@ namespace CodeGen
             }
             else
             {
-                return float.Parse(value.Replace("f", ""));
+                return float.Parse(value.Replace("f", ""), CultureInfo.InvariantCulture);
             }
         }
 

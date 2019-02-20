@@ -1,0 +1,87 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Condition="'$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '15.0'">
+    <VisualStudioVersion>15.0</VisualStudioVersion>
+  </PropertyGroup>
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup>
+    <WapProjPath Condition="'$(WapProjPath)'==''">$(MSBuildExtensionsPath)\Microsoft\DesktopBridge\</WapProjPath>
+  </PropertyGroup>
+  <Import Project="$(WapProjPath)\Microsoft.DesktopBridge.props" />
+  <PropertyGroup>
+    <ProjectGuid>bd40ede6-0a22-4ca1-9f1a-d85799155070</ProjectGuid>
+    <TargetPlatformVersion>$(__TargetPlatformVersion)</TargetPlatformVersion>
+    <TargetPlatformMinVersion>$(__TargetPlatformMinVersion)</TargetPlatformMinVersion>
+    <DefaultLanguage>en-US</DefaultLanguage>
+    <PackageCertificateKeyFile>XamlIslandSample.Package_TemporaryKey.pfx</PackageCertificateKeyFile>
+    <EntryPointProjectUniqueName>..\XamlIslandSample.Desktop\XamlIslandSample.Desktop.csproj</EntryPointProjectUniqueName>
+  </PropertyGroup>
+  <ItemGroup>
+    <AppxManifest Include="Package.appxmanifest">
+      <SubType>Designer</SubType>
+    </AppxManifest>
+    <None Include="XamlIslandSample.Package_TemporaryKey.pfx" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Images\SplashScreen.scale-200.png" />
+    <Content Include="Images\LockScreenLogo.scale-200.png" />
+    <Content Include="Images\Square150x150Logo.scale-200.png" />
+    <Content Include="Images\Square44x44Logo.scale-200.png" />
+    <Content Include="Images\Square44x44Logo.targetsize-24_altform-unplated.png" />
+    <Content Include="Images\StoreLogo.png" />
+    <Content Include="Images\Wide310x150Logo.scale-200.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <VCLibTargets Include="Microsoft.VCLibs, Version=14.0">
+      <PlatformTarget>$(PlatformTarget)</PlatformTarget>
+    </VCLibTargets>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\XamlIslandSample.Desktop\XamlIslandSample.Desktop.csproj">
+      <DesktopBridgeSelfContained>True</DesktopBridgeSelfContained>
+      <DesktopBridgeIdentifier>$(DesktopBridgeRuntimeIdentifier)</DesktopBridgeIdentifier>
+      <Properties>SelfContained=%(DesktopBridgeSelfContained);RuntimeIdentifier=%(DesktopBridgeIdentifier)</Properties>
+      <SkipGetTargetFrameworkProperties>True</SkipGetTargetFrameworkProperties>
+    </ProjectReference>
+  </ItemGroup>
+
+  <!-- WORKAROUND: At startup Microsoft.Graphics.Canvas.winmd is expected in the same directory as the .exe 
+                   (sideloaded: AppX\XamlIslandSample.Desktop). Duplicate the .winmd item 
+                   https://developercommunity.visualstudio.com/content/problem/462646/referencing-native-winrt-component-in-net-core-wpf.html -->
+  <Target Name="__CopyWinMDToProjectDir" BeforeTargets="_CopyPackageFiles">
+    <ItemGroup>
+      <DuplicatedWinMDFiles Condition="'%(WapProjPackageFile.WinMDFile)' == 'true' and '%(WapProjPackageFile.DependencyKind)' == 'Direct'" Include="%(WapProjPackageFile.Identity)">
+        <CopyToTargetPath>$([System.IO.Path]::Combine($(TargetDir), %(WapProjPackageFile.SourceProject), %(WapProjPackageFile.TargetPath)))</CopyToTargetPath>
+        <TargetPath>$([System.IO.Path]::Combine(%(WapProjPackageFile.SourceProject), %(WapProjPackageFile.TargetPath)))</TargetPath>
+      </DuplicatedWinMDFiles>
+      <AppxPackagePayload Include="@(DuplicatedWinMDFiles)" />
+      <File Include="@(DuplicatedWinMDFiles)" />
+
+      <DuplicatedUploadWinMDFiles Condition="'%(UploadWapProjPackageFile.WinMDFile)' == 'true' and '%(UploadWapProjPackageFile.DependencyKind)' == 'Direct'" Include="%(UploadWapProjPackageFile.Identity)">
+        <CopyToTargetPath>$([System.IO.Path]::Combine($(TargetDir), %(UploadWapProjPackageFile.SourceProject), %(UploadWapProjPackageFile.TargetPath)))</CopyToTargetPath>
+        <TargetPath>$([System.IO.Path]::Combine(%(UploadWapProjPackageFile.SourceProject), %(UploadWapProjPackageFile.TargetPath)))</TargetPath>
+      </DuplicatedUploadWinMDFiles>
+      <AppxUploadPackagePayload Include="@(DuplicatedUploadWinMDFiles)" />
+      <UploadFile Include="@(DuplicatedUploadWinMDFiles)" />
+    </ItemGroup>
+  </Target>
+
+  <Import Project="$(WapProjPath)\Microsoft.DesktopBridge.targets" />
+</Project>
