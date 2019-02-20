@@ -5,7 +5,7 @@
     <DisableWin2DPlatformCheck>true</DisableWin2DPlatformCheck>  
   </PropertyGroup>
   
-  <Target Name="AddNativeImplementation" AfterTargets="ResolvePackageAssets">
+  <Target Name="AddNativeImplementation" AfterTargets="ResolveNuGetPackageAssets">
 
     <PropertyGroup>
       <ImplArchitecture Condition="$(RuntimeIdentifier.Contains('-'))">$(RuntimeIdentifier.Split('-')[1])</ImplArchitecture>
@@ -17,9 +17,9 @@
       Text="$(ProjectFileName) cannot be built for platform '$(ImplArchitecture)'. It is not supported by the referenced Win2D package." />
 
     <ItemGroup>
-      <RuntimeCopyLocalItems Condition="$([System.String]::new('%(RuntimeCopyLocalItems.Identity)').EndsWith('Microsoft.Graphics.Canvas.winmd', System.StringComparison.OrdinalIgnoreCase))">
+      <ReferenceCopyLocalPaths Condition="$([System.String]::new('%(ReferenceCopyLocalPaths.Identity)').EndsWith('Microsoft.Graphics.Canvas.winmd', System.StringComparison.OrdinalIgnoreCase))">
         <Implementation>Microsoft.Graphics.Canvas.dll</Implementation>
-      </RuntimeCopyLocalItems>
+      </ReferenceCopyLocalPaths>
       <ReferenceCopyLocalPaths Include="$(MSBuildThisFileDirectory)..\..\runtimes\win10-$(ImplArchitecture)\native\Microsoft.Graphics.Canvas.dll" />
     </ItemGroup>
 

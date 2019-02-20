@@ -41,16 +41,16 @@ To start the sample build, deploy and start XamlIslandSample.Package. At the tim
 
 To debug the Win2D components select `Mixed (Managed and Native)` under Debug / Debugger Type in XamlIslandSample.Package properties.
 
-# Use Win2D NuGet package in .NET Core 3 WPF
+# Use Win2D NuGet package in WPF XAML islands (.NET Core 3 / .NET Framework)
 
 The current preview package has some support for using Win2D in XAML Islands but there are some manual steps to be done
 1. At the moment the NuGet package is not published so you have to build a local Win2D package from this branch. See https://github.com/Microsoft/Win2D#building-win2d-from-source for details.
-2. Create a .NET Core WPF app that references the Win2D NuGet package along with a Windows Application Packaging Project. An appx / msix package is necessary to run any third party WinRT Components like Win2D. This package can be sideloaded or installed from the store.
+2. Create a WPF app (.NET Core or .NET Framework) that references the Win2D NuGet package along with a Windows Application Packaging Project. An appx / msix package is necessary to run any third party WinRT Components like Win2D in a desktop app. This package can be sideloaded or installed from the store.
 3. You have to **tweak both project files** manually (details below). This will probably change in the future.
    - The WPF app needs to get built self-contained (everything included in the appx) and therefore needs to know which runtime should be included.
    - The appx must reference the VC Runtime. There is no way for this reference to flow from the Win2D NuGet package via the app to the appx project automatically.
-   - WORKAROUND: The project .deps.json file is needed at runtime by a .NET Core app but gets not deployed.
-   - WORKAROUND: At startup the .NET Core app looks up all references in another directory as WinMD files are deployed.
+   - WORKAROUND (.NET Core): The project .deps.json file is needed at runtime by a .NET Core app but gets not deployed.
+   - WORKAROUND (.NET Core): At startup the .NET Core app looks up all references in another directory as WinMD files are deployed.
 4. Add code that targets Win2D components. Maybe you want to reference `Microsoft.Toolkit.Wpf.UI.XamlHost` and add some XAML UI (like in https://github.com/Microsoft/Win2D/tree/xaml_islands/samples/XamlIslandSample) or you create a XAML island by your own. To smoke test the deployment you can add
     ```csharp
     Windows.UI.Xaml.Hosting.WindowsXamlManager.InitializeForCurrentThread();
@@ -61,6 +61,7 @@ The current preview package has some support for using Win2D in XAML Islands but
 
 **Steps to create the solution**
 
+*NOTE*: This describes the steps to create a **.NET Core WPF** app. They apply to **.NET Framework WPF** apps accordingly. Two of the workarounds (".deps.json" and "duplicate in project dir") are NOT necessary in .NET Framework WPF.
 - Create a new directory and open a command line
 - `dotnet new sln`
 - `dotnet new nugetconfig`
