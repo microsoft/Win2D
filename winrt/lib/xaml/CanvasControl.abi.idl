@@ -147,9 +147,9 @@ namespace Microsoft.Graphics.Canvas.UI.Xaml
         HRESULT Invalidate();
 
         //
-        // Manual render tick.
+        // Manually set visibility.
         //
-        HRESULT ManualRenderTick();
+        HRESULT SetVisible([in] boolean value);
 
         //
         // Gets the current size of the control.

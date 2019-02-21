@@ -81,6 +81,11 @@ namespace Microsoft.Graphics.Canvas.UI.Xaml
         requires Microsoft.Graphics.Canvas.ICanvasResourceCreatorWithDpi
     {
         //
+        // Manually set visibility.
+        //
+        HRESULT SetVisible([in] boolean value);
+
+        //
         // Similarly to CanvasControl, CreateResources is issued on the default (UI) thread.
         //
         // By design, add_CreateResources and remove_CreateResources must also be called 

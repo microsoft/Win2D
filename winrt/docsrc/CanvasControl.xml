@@ -115,11 +115,12 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         </p>       
       </remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl.ManualRenderTick">
-      <summary>Manually invokes the rendering event.</summary>
+    <member name="M:Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl.SetVisible(System.Boolean)">
+      <summary>Manually sets the visibility of the control.</summary>
       <remarks>
         <p>
-          This method should only be called in XAML island scenarios where the UWP rendering event is not called.
+          This method should only be called in XAML island scenarios where the visibility cannot
+          be automatically determined.
         </p>
       </remarks>
     </member>

@@ -108,6 +108,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         bool m_isLoaded;
         bool m_isSuspended;
         bool m_isVisible;
+        bool m_isVisibleOverrideEnabled;
+        bool m_isVisibleOverrideValue;
         bool m_useSharedDevice;
         bool m_forceSoftwareRenderer;
 
@@ -137,6 +139,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             , m_isLoaded(false)
             , m_isSuspended(false)
             , m_isVisible(true)
+            , m_isVisibleOverrideEnabled(false)
+            , m_isVisibleOverrideValue(false)
             , m_window(adapter->GetWindowOfCurrentThread())
             , m_logicalDpi(adapter->GetLogicalDpi())
             , m_customDpiScaling(1.0f)
@@ -502,7 +506,17 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         bool IsVisible() const
         {
+            if (m_isVisibleOverrideEnabled)
+            {
+                return(m_isVisibleOverrideValue);
+            }
             return m_isVisible;
+        }
+
+        void SetVisibleOverride(bool isVisible)
+        {
+            m_isVisibleOverrideEnabled = true;
+            m_isVisibleOverrideValue = isVisible;
         }
 
         std::shared_ptr<adapter_t> GetAdapter()

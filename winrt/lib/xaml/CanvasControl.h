@@ -108,7 +108,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         //
 
         IFACEMETHODIMP Invalidate() override;
-        IFACEMETHODIMP ManualRenderTick() override;
+        IFACEMETHODIMP SetVisible(boolean isVisible) override;
 
         //
         // BaseControl
