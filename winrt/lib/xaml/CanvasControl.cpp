@@ -215,6 +215,15 @@ HRESULT CanvasControl::OnCompositionRendering(IInspectable*, IInspectable*)
         });
 }
 
+IFACEMETHODIMP CanvasControl::SetVisible(boolean isVisible)
+{
+    return ExceptionBoundary(
+        [&]
+    {
+            SetVisibleOverride(isVisible);
+            WindowVisibilityChanged();
+    });
+}
 
 void CanvasControl::DrawControl()
 {

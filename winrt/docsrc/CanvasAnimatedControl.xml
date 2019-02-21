@@ -414,6 +414,20 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="M:Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl.#ctor">
       <summary>Initializes a new instance of the CanvasAnimatedControl class.</summary>
     </member>    
+
+    <member name="M:Microsoft.Graphics.Canvas.UI.Xaml.ICanvasAnimatedControl.SetVisible(System.Boolean)">
+      <summary>Manually sets the visibility of the control.</summary>
+      <remarks>
+        <p>
+          This method should only be called in XAML island scenarios where the visibility cannot
+          be automatically determined.
+        </p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl.SetVisible(System.Boolean)">
+      <summary>Manually sets the visibility of the control.</summary>
+      <inheritdoc select="remarks"/>
+    </member>
     
     <member name="M:Microsoft.Graphics.Canvas.UI.Xaml.ICanvasAnimatedControl.ResetElapsedTime">
       <summary>Ensures that only a single Update event will be raised on the next iteration of the game loop.</summary>
