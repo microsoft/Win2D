@@ -515,6 +515,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         void SetVisibleOverride(bool isVisible)
         {
+            auto lock = GetLock();
             m_isVisibleOverrideEnabled = true;
             m_isVisibleOverrideValue = isVisible;
         }
