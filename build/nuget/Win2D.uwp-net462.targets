@@ -20,6 +20,9 @@
       <ReferenceCopyLocalPaths Condition="$([System.String]::new('%(ReferenceCopyLocalPaths.Identity)').EndsWith('Microsoft.Graphics.Canvas.winmd', System.StringComparison.OrdinalIgnoreCase))">
         <Implementation>Microsoft.Graphics.Canvas.dll</Implementation>
       </ReferenceCopyLocalPaths>
+      <Reference Condition="$([System.String]::new('%(Reference.HintPath)').EndsWith('Microsoft.Graphics.Canvas.winmd', System.StringComparison.OrdinalIgnoreCase)) or $([System.String]::new('%(Reference.Identity)').EndsWith('Microsoft.Graphics.Canvas.winmd', System.StringComparison.OrdinalIgnoreCase))">
+        <Implementation>Microsoft.Graphics.Canvas.dll</Implementation>
+      </Reference>
       <ReferenceCopyLocalPaths Include="$(MSBuildThisFileDirectory)..\..\runtimes\win10-$(ImplArchitecture)\native\Microsoft.Graphics.Canvas.dll" />
     </ItemGroup>
 
