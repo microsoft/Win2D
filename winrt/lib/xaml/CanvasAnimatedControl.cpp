@@ -160,16 +160,6 @@ CanvasAnimatedControl::~CanvasAnimatedControl()
     assert(m_sharedState.PendingAsyncActions.empty());
 }
 
-IFACEMETHODIMP CanvasAnimatedControl::SetVisible(boolean isVisible)
-{
-    return ExceptionBoundary(
-        [&]
-        {
-            SetVisibleOverride(isVisible);
-            WindowVisibilityChanged();
-        });
-}
-
 IFACEMETHODIMP CanvasAnimatedControl::put_ClearColor(
     Color value)
 {

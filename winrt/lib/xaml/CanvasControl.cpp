@@ -215,16 +215,6 @@ HRESULT CanvasControl::OnCompositionRendering(IInspectable*, IInspectable*)
         });
 }
 
-IFACEMETHODIMP CanvasControl::SetVisible(boolean isVisible)
-{
-    return ExceptionBoundary(
-        [&]
-    {
-            SetVisibleOverride(isVisible);
-            WindowVisibilityChanged();
-    });
-}
-
 void CanvasControl::DrawControl()
 {
     RunWithRenderTarget(
@@ -236,7 +226,6 @@ void CanvasControl::DrawControl()
             Draw(target, clearColor, callDrawHandlers, false);
         });
 }
-
 
 void CanvasControl::CreateOrUpdateRenderTarget(
     ICanvasDevice* device,

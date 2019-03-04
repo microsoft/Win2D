@@ -149,7 +149,8 @@ namespace Microsoft.Graphics.Canvas.UI.Xaml
         //
         // Manually set visibility.
         //
-        HRESULT SetVisible([in] boolean value);
+        [propput] HRESULT VisibilityMode([in] CanvasVisibilityMode value);
+        [propget] HRESULT VisibilityMode([out, retval] CanvasVisibilityMode* value);
 
         //
         // Gets the current size of the control.
