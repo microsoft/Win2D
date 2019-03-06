@@ -414,6 +414,35 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="M:Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl.#ctor">
       <summary>Initializes a new instance of the CanvasAnimatedControl class.</summary>
     </member>    
+    <member name="P:Microsoft.Graphics.Canvas.UI.Xaml.ICanvasAnimatedControl.VisibilityMode">
+      <summary>Sets the visibility mode of the control.</summary>
+      <remarks>
+        <p>
+          This method should only be called in XAML island scenarios where the visibility cannot
+          be automatically determined.
+        </p>
+      </remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl.VisibilityMode">
+      <summary>Sets the visibility mode of the control.</summary>
+      <inheritdoc select="remarks"/>
+    </member>
+
+    <member name="T:Microsoft.Graphics.Canvas.UI.Xaml.CanvasVisibilityMode">
+      <summary>Changes the way the control determines its visibility.</summary>
+      <remarks>
+        Rendering will be suspended if the control is determined to be hidden.
+      </remarks>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.UI.Xaml.CanvasVisibilityMode.Default">
+      <summary>The control will be assumed to have the same visibility as its window. In XAML island scenarios this detection is currently not working properly and nothing will be rendered.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.UI.Xaml.CanvasVisibilityMode.ForceVisible">
+      <summary>The control is assumed to be visible.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.UI.Xaml.CanvasVisibilityMode.ForceHidden">
+      <summary>The control is assumed to be hidden.</summary>
+    </member>
     
     <member name="M:Microsoft.Graphics.Canvas.UI.Xaml.ICanvasAnimatedControl.ResetElapsedTime">
       <summary>Ensures that only a single Update event will be raised on the next iteration of the game loop.</summary>
@@ -1013,6 +1042,5 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <summary>Gets or sets a scaling factor applied to this control's Dpi.</summary>
       <inheritdoc/>
     </member>
-    
   </members>
 </doc>

@@ -25,6 +25,14 @@ namespace Microsoft.Graphics.Canvas.UI
 
 namespace Microsoft.Graphics.Canvas.UI.Xaml
 {
+    [version(VERSION)]
+    typedef enum CanvasVisibilityMode
+    {
+        Default,
+        ForceVisible,
+        ForceHidden
+    } CanvasVisibilityMode;
+
     runtimeclass CanvasAnimatedUpdateEventArgs;
 
     [version(VERSION), uuid(766F4867-B22A-464B-89B1-0DA6AB62BE68), exclusiveto(CanvasAnimatedUpdateEventArgs)]
@@ -80,6 +88,12 @@ namespace Microsoft.Graphics.Canvas.UI.Xaml
     interface ICanvasAnimatedControl : IInspectable
         requires Microsoft.Graphics.Canvas.ICanvasResourceCreatorWithDpi
     {
+        //
+        // Manually set visibility.
+        //
+        [propput] HRESULT VisibilityMode([in] CanvasVisibilityMode value);
+        [propget] HRESULT VisibilityMode([out, retval] CanvasVisibilityMode* value);
+
         //
         // Similarly to CanvasControl, CreateResources is issued on the default (UI) thread.
         //

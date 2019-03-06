@@ -215,7 +215,6 @@ HRESULT CanvasControl::OnCompositionRendering(IInspectable*, IInspectable*)
         });
 }
 
-
 void CanvasControl::DrawControl()
 {
     RunWithRenderTarget(
@@ -227,7 +226,6 @@ void CanvasControl::DrawControl()
             Draw(target, clearColor, callDrawHandlers, false);
         });
 }
-
 
 void CanvasControl::CreateOrUpdateRenderTarget(
     ICanvasDevice* device,
