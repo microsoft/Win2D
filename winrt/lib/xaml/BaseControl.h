@@ -521,8 +521,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             return m_isSuspended;
         }
 
-        bool IsVisible() const
+        bool IsVisible()
         {
+            auto lock = GetLock();
             switch (m_visibilityMode)
             {
             case CanvasVisibilityMode::ForceVisible:
@@ -536,6 +537,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         CanvasVisibilityMode GetVisibilityMode()
         {
+            auto lock = GetLock();
             return m_visibilityMode;
         }
 
