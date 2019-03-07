@@ -8,13 +8,13 @@ using System.Collections.Generic;
 using System.Numerics;
 using System.Text;
 using Windows.Foundation;
-using Win2d = Microsoft.Graphics.Canvas;
+using Win2D = Microsoft.Graphics.Canvas;
 
 namespace XamlIslandSample.Desktop
 {
     public sealed class CanvasControl : WindowsXamlHostBase
     {
-        public event TypedEventHandler<Win2d.UI.Xaml.CanvasControl, Win2d.UI.CanvasCreateResourcesEventArgs> CreateResources
+        public event TypedEventHandler<Win2D.UI.Xaml.CanvasControl, Win2D.UI.CanvasCreateResourcesEventArgs> CreateResources
         {
             add
             {
@@ -25,7 +25,7 @@ namespace XamlIslandSample.Desktop
                 UwpControl.CreateResources -= value;
             }
         }
-        public event TypedEventHandler<Win2d.UI.Xaml.CanvasControl, Win2d.UI.Xaml.CanvasDrawEventArgs> Draw
+        public event TypedEventHandler<Win2D.UI.Xaml.CanvasControl, Win2D.UI.Xaml.CanvasDrawEventArgs> Draw
         {
             add
             {
@@ -37,12 +37,12 @@ namespace XamlIslandSample.Desktop
             }
         }
 
-        internal Win2d.UI.Xaml.CanvasControl UwpControl => ChildInternal as Win2d.UI.Xaml.CanvasControl;
+        internal Win2D.UI.Xaml.CanvasControl UwpControl => ChildInternal as Win2D.UI.Xaml.CanvasControl;
 
         public CanvasControl()
-            : base(typeof(Win2d.UI.Xaml.CanvasControl).FullName)
+            : base(typeof(Win2D.UI.Xaml.CanvasControl).FullName)
         {
-            UwpControl.SetVisible(true);
+            UwpControl.VisibilityMode = Win2D.UI.Xaml.CanvasVisibilityMode.ForceVisible;
         }
 
         protected override void Dispose(bool disposing)

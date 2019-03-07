@@ -64,12 +64,19 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "winrt.test.external.uap", "
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "XamlIslandSample", "XamlIslandSample", "{839CF03C-304F-4F5A-909A-CAEA75465217}"
 	ProjectSection(SolutionItems) = preProject
+		samples\XamlIslandSample\Directory.Build.props = samples\XamlIslandSample\Directory.Build.props
 		samples\XamlIslandSample\global.json = samples\XamlIslandSample\global.json
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XamlIslandSample.Desktop", "samples\XamlIslandSample\XamlIslandSample.Desktop\XamlIslandSample.Desktop.csproj", "{44D5FA95-B63A-40EA-85CF-91D5C59A09B8}"
 EndProject
 Project("{C7167F0D-BC9F-4E6E-AFE1-012C56B48DB5}") = "XamlIslandSample.Package", "samples\XamlIslandSample\XamlIslandSample.Package\XamlIslandSample.Package.wapproj", "{BD40EDE6-0A22-4CA1-9F1A-D85799155070}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C402215F-7293-41B9-A104-7ECB0CEFC7D5}"
+	ProjectSection(SolutionItems) = preProject
+		Directory.Build.props = Directory.Build.props
+		Directory.Build.targets = Directory.Build.targets
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
