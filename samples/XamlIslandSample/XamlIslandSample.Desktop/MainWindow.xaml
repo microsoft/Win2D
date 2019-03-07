@@ -19,6 +19,6 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
             <RowDefinition Height="1*" />
         </Grid.RowDefinitions>
         <local:CanvasControl x:Name="canvasControl" Grid.Row="0" CreateResources="CanvasControl_CreateResources" Draw="CanvasControl_Draw" />
-        <local:CanvasSwapChainPanel x:Name="canvasSwapChainPanel" Grid.Row="1" SizeChanged="CanvasSwapChainPanel_SizeChanged" />
+        <local:CanvasAnimatedControl x:Name="canvasAnimatedControl" Grid.Row="1" CreateResources="CanvasAnimatedControl_CreateResources" Update="CanvasAnimatedControl_Update" Draw="CanvasAnimatedControl_Draw" />
     </Grid>
 </Window>

@@ -25,6 +25,16 @@
     </ProjectReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Include="..\..\ExampleGallery\Particles\*.cs" Link="Particles\%(Filename)%(Extension)" />
+    <Compile Remove="..\..\ExampleGallery\Particles\*.xaml.cs" />
+    <Compile Include="..\..\ExampleGallery\Infrastructure\Utils.cs" />
+    <Content Include="..\..\ExampleGallery\Particles\*.dds" Link="Particles\%(Filename)%(Extension)">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>true</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+
   <!-- WOKAROUND: .deps.json gets not published 
                   https://developercommunity.visualstudio.com/content/problem/462646/referencing-native-winrt-component-in-net-core-wpf.html -->
   <PropertyGroup>
