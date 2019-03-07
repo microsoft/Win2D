@@ -22,6 +22,12 @@ namespace Microsoft.Graphics.Canvas.UI.Xaml
         [eventremove] HRESULT CreateResources([in] EventRegistrationToken token);
 
         //
+        // Manually set visibility.
+        //
+        [propput] HRESULT VisibilityMode([in] CanvasVisibilityMode value);
+        [propget] HRESULT VisibilityMode([out, retval] CanvasVisibilityMode* value);
+
+        //
         // ReadyToDraw - as for CanvasControl
         //
         [propget] HRESULT ReadyToDraw(

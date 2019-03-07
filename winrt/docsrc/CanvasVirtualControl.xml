@@ -116,6 +116,15 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         </p>
       </remarks>
     </member>
+    <member name="P:Microsoft.Graphics.Canvas.UI.Xaml.CanvasVirtualControl.VisibilityMode">
+      <summary>Sets the visibility mode of the control.</summary>
+      <remarks>
+        <p>
+          This property should only be modified in XAML island scenarios where the visibility cannot
+          be automatically determined.
+        </p>
+      </remarks>
+    </member>
     <member name="M:Microsoft.Graphics.Canvas.UI.Xaml.CanvasVirtualControl.RemoveFromVisualTree">
       <summary>Removes the control from the last FrameworkElement it was parented to.</summary>
       <remarks>

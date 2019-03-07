@@ -108,8 +108,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         bool m_isLoaded;
         bool m_isSuspended;
         bool m_isVisible;
-        bool m_isVisibleOverrideEnabled;
-        bool m_isVisibleOverrideValue;
+        CanvasVisibilityMode m_visibilityMode;
         bool m_useSharedDevice;
         bool m_forceSoftwareRenderer;
 
@@ -139,8 +138,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             , m_isLoaded(false)
             , m_isSuspended(false)
             , m_isVisible(true)
-            , m_isVisibleOverrideEnabled(false)
-            , m_isVisibleOverrideValue(false)
+            , m_visibilityMode(CanvasVisibilityMode::Default)
             , m_window(adapter->GetWindowOfCurrentThread())
             , m_logicalDpi(adapter->GetLogicalDpi())
             , m_customDpiScaling(1.0f)
@@ -374,6 +372,25 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                 });
         }
 
+        IFACEMETHODIMP get_VisibilityMode(CanvasVisibilityMode* value) override
+        {
+            return ExceptionBoundary(
+                [&]
+                {
+                    CheckInPointer(value);
+                    *value = GetVisibilityMode();
+                });
+        }
+        IFACEMETHODIMP put_VisibilityMode(CanvasVisibilityMode value) override
+        {
+            return ExceptionBoundary(
+                [&]
+                {
+                    SetVisibilityMode(value);
+                    WindowVisibilityChanged();
+                });
+        }
+
         //
         // ICanvasResourceCreatorWithDpi
         //
@@ -504,19 +521,30 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             return m_isSuspended;
         }
 
-        bool IsVisible() const
+        bool IsVisible()
         {
-            if (m_isVisibleOverrideEnabled)
+            auto lock = GetLock();
+            switch (m_visibilityMode)
             {
-                return(m_isVisibleOverrideValue);
+            case CanvasVisibilityMode::ForceVisible:
+                return true;
+            case CanvasVisibilityMode::ForceHidden:
+                return false;
             }
+            // m_visibilityMode is CanvasVisibilityMode::Default
             return m_isVisible;
         }
 
-        void SetVisibleOverride(bool isVisible)
+        CanvasVisibilityMode GetVisibilityMode()
         {
-            m_isVisibleOverrideEnabled = true;
-            m_isVisibleOverrideValue = isVisible;
+            auto lock = GetLock();
+            return m_visibilityMode;
+        }
+
+        void SetVisibilityMode(CanvasVisibilityMode mode)
+        {
+            auto lock = GetLock();
+            m_visibilityMode = mode;
         }
 
         std::shared_ptr<adapter_t> GetAdapter()
