@@ -14,25 +14,15 @@
       <IsWinMDFile>true</IsWinMDFile>
       <Private>False</Private>
     </Reference>
-    <PackageReference Include="System.Runtime.WindowsRuntime" Version="4.6.0-preview.19073.11" />
-    <PackageReference Include="System.Runtime.WindowsRuntime.UI.Xaml" Version="4.6.0-preview.19073.11" />
+    <PackageReference Include="System.Runtime.WindowsRuntime" Version="4.6.0-preview3.19128.7" />
+    <PackageReference Include="System.Runtime.WindowsRuntime.UI.Xaml" Version="4.6.0-preview3.19128.7" />
     <PackageReference Include="Microsoft.Toolkit.Wpf.UI.XamlHost" Version="6.0.0-preview1" />
   </ItemGroup>
-
-  <!-- WORKAROUND: Don't reference the project output assembly Microsoft.Graphics.Canvas.winmd but include it 
-                   with hint path. Otherwise the build fails with error NETSDK1007: Cannot find project info 
-                   for 'winrt\lib\winrt.lib.uap.vcxproj'. This can indicate a missing project reference.
-                   https://github.com/dotnet/project-system/issues/4543 -->
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\winrt\dll\winrt.dll.uap.vcxproj">
       <Name>winrt.dll.uap</Name>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
-    <Reference Include="Microsoft.Graphics.Canvas">
-      <HintPath>$(BinariesDirectory)uap$(__Platform)\$(Configuration)\winrt.dll.uap\Microsoft.Graphics.Canvas.winmd</HintPath>
-      <IsWinMDFile>true</IsWinMDFile>
-    </Reference>
   </ItemGroup>
 
   <!-- WOKAROUND: .deps.json gets not published 

@@ -7,48 +7,50 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 using System.Text;
-using Win2d = Microsoft.Graphics.Canvas;
+using Windows.Foundation;
+using Win2D = Microsoft.Graphics.Canvas;
 
 namespace XamlIslandSample.Desktop
 {
     public sealed class CanvasControl : WindowsXamlHostBase
     {
-        public event EventHandler<Win2d.UI.CanvasCreateResourcesEventArgs> CreateResources;
-        public event EventHandler<Win2d.UI.Xaml.CanvasDrawEventArgs> Draw;
+        public event TypedEventHandler<Win2D.UI.Xaml.CanvasControl, Win2D.UI.CanvasCreateResourcesEventArgs> CreateResources
+        {
+            add
+            {
+                UwpControl.CreateResources += value;
+            }
+            remove
+            {
+                UwpControl.CreateResources -= value;
+            }
+        }
+        public event TypedEventHandler<Win2D.UI.Xaml.CanvasControl, Win2D.UI.Xaml.CanvasDrawEventArgs> Draw
+        {
+            add
+            {
+                UwpControl.Draw += value;
+            }
+            remove
+            {
+                UwpControl.Draw -= value;
+            }
+        }
 
-        internal Win2d.UI.Xaml.CanvasControl UwpControl => ChildInternal as Win2d.UI.Xaml.CanvasControl;
+        internal Win2D.UI.Xaml.CanvasControl UwpControl => ChildInternal as Win2D.UI.Xaml.CanvasControl;
 
         public CanvasControl()
-            : base(typeof(Win2d.UI.Xaml.CanvasControl).FullName)
-        { }
-
-        protected override void OnInitialized(EventArgs e)
+            : base(typeof(Win2D.UI.Xaml.CanvasControl).FullName)
         {
-            UwpControl.CreateResources += OnCreateResources;
-            UwpControl.Draw += OnDraw;
-
-            base.OnInitialized(e);
+            UwpControl.VisibilityMode = Win2D.UI.Xaml.CanvasVisibilityMode.ForceVisible;
         }
 
         protected override void Dispose(bool disposing)
         {
-            UwpControl.CreateResources -= OnCreateResources;
-            UwpControl.Draw -= OnDraw;
             UwpControl.RemoveFromVisualTree();
 
             base.Dispose(disposing);
         }
 
-
-        private void OnCreateResources(Win2d.UI.Xaml.CanvasControl sender, Win2d.UI.CanvasCreateResourcesEventArgs args)
-        {
-            CreateResources?.Invoke(this, args);
-        }
-
-
-        private void OnDraw(Win2d.UI.Xaml.CanvasControl sender, Win2d.UI.Xaml.CanvasDrawEventArgs args)
-        {
-            Draw?.Invoke(this, args);
-        }
     }
 }

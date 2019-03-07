@@ -43,5 +43,16 @@ namespace XamlIslandSample.Desktop
 
             swapChain.Present();
         }
+
+        private void CanvasControl_CreateResources(Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl sender, Microsoft.Graphics.Canvas.UI.CanvasCreateResourcesEventArgs args)
+        { }
+
+        private void CanvasControl_Draw(Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl sender, Microsoft.Graphics.Canvas.UI.Xaml.CanvasDrawEventArgs e)
+        {
+            var width = (float)canvasControl.ActualWidth;
+            var height = (float)canvasControl.ActualHeight;
+            e.DrawingSession.FillEllipse(width / 2, height / 2, width / 2 - 20, height / 2 - 20, Colors.LawnGreen);
+        }
+
     }
 }

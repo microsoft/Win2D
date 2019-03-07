@@ -6,29 +6,29 @@ using Microsoft.Toolkit.Wpf.UI.XamlHost;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Win2d = Microsoft.Graphics.Canvas;
+using Win2D = Microsoft.Graphics.Canvas;
 
 namespace XamlIslandSample.Desktop
 {
     public sealed class CanvasSwapChainPanel : WindowsXamlHostBase
     {
-        internal Win2d.UI.Xaml.CanvasSwapChainPanel UwpControl => ChildInternal as Win2d.UI.Xaml.CanvasSwapChainPanel;
+        internal Win2D.UI.Xaml.CanvasSwapChainPanel UwpControl => ChildInternal as Win2D.UI.Xaml.CanvasSwapChainPanel;
 
         public CanvasSwapChainPanel()
-            : base(typeof(Win2d.UI.Xaml.CanvasSwapChainPanel).FullName)
+            : base(typeof(Win2D.UI.Xaml.CanvasSwapChainPanel).FullName)
         { }
+
+        public Win2D.CanvasSwapChain SwapChain
+        {
+            get => UwpControl.SwapChain;
+            set => UwpControl.SwapChain = value;
+        }
 
         protected override void Dispose(bool disposing)
         {
             UwpControl.RemoveFromVisualTree();
 
             base.Dispose(disposing);
-        }
-
-        public Win2d.CanvasSwapChain SwapChain
-        {
-            get => UwpControl.SwapChain;
-            set => UwpControl.SwapChain = value;
         }
 
     }
