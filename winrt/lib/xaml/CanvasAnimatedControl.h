@@ -187,8 +187,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         // ICanvasAnimatedControl
         //
 
-        IFACEMETHODIMP SetVisible(boolean isVisible) override;
-
         IFACEMETHODIMP get_ClearColor(Color* value) override;
         IFACEMETHODIMP put_ClearColor(Color value) override;
 
