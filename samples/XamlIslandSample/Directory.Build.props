@@ -21,8 +21,8 @@
   <PropertyGroup>
     <!-- Projects inside XamlIslandSample don't follow the global windows version requirements! -->
     
-    <!-- Needed for XAML islands (see https://github.com/windows-toolkit/Microsoft.Toolkit.Win32/blob/rel/6.0.0-preview1/Directory.Build.props#L48) -->
-    <__TargetPlatformVersion>10.0.18327.0</__TargetPlatformVersion>
+    <!-- Needed for XAML islands (latest available Windows Preview SDK) -->
+    <__TargetPlatformVersion>10.0.18342.0</__TargetPlatformVersion>
     <!-- Needed for Application Package Project -->
     <__TargetPlatformMinVersion>10.0.14393.0</__TargetPlatformMinVersion>
   </PropertyGroup>
