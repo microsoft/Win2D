@@ -55,6 +55,8 @@ namespace
         IFACEMETHOD(put_CustomDevice)(ICanvasDevice*) = 0;
         IFACEMETHOD(get_DpiScale)(float*) = 0;
         IFACEMETHOD(put_DpiScale)(float) = 0;
+        IFACEMETHOD(get_VisibilityMode)(CanvasVisibilityMode*) = 0;
+        IFACEMETHOD(put_VisibilityMode)(CanvasVisibilityMode) = 0;
     };
 
     class IAnyAdapter : public IBaseControlAdapter<AnyTraits>
