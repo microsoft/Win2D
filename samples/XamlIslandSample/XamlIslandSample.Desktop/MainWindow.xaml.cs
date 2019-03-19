@@ -4,15 +4,14 @@
 
 using ExampleGallery;
 using Microsoft.Graphics.Canvas;
-using Microsoft.Graphics.Canvas.Effects;
 using Microsoft.Graphics.Canvas.UI;
+using Microsoft.Graphics.Canvas.UI.Xaml;
 using System;
 using System.Numerics;
 using System.Threading.Tasks;
 using System.Windows;
 using Windows.UI;
-using Windows.UI.Composition;
-using WUX = Windows.UI.Xaml;
+using Win2D = Microsoft.Graphics.Canvas;
 
 namespace XamlIslandSample.Desktop
 {
@@ -36,23 +35,13 @@ namespace XamlIslandSample.Desktop
             ParticleSystem.RootDirectory = AppDomain.CurrentDomain.BaseDirectory;
         }
 
-        private void CanvasControl_CreateResources(Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl sender, CanvasCreateResourcesEventArgs args)
-        { }
-
-        private void CanvasControl_Draw(Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl sender, Microsoft.Graphics.Canvas.UI.Xaml.CanvasDrawEventArgs e)
-        {
-            var width = (float)canvasControl.ActualWidth;
-            var height = (float)canvasControl.ActualHeight;
-            e.DrawingSession.FillEllipse(width / 2, height / 2, width / 2 - 20, height / 2 - 20, Colors.LawnGreen);
-        }
-
         private bool _useSpriteBatch;
         private ParticleSystem _smoke = new ExplosionSmokeParticleSystem();
         private ParticleSystem _explosion = new ExplosionParticleSystem();
         private float _timeTillExplosion;
         private const float TimeBetweenExplosions = .8f;
 
-        private void CanvasAnimatedControl_CreateResources(Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl sender, CanvasCreateResourcesEventArgs args)
+        private void CanvasAnimatedControl_CreateResources(Win2D.UI.Xaml.CanvasAnimatedControl sender, CanvasCreateResourcesEventArgs args)
         {
             if (args.Reason == CanvasCreateResourcesReason.DpiChanged)
                 return;
@@ -62,14 +51,14 @@ namespace XamlIslandSample.Desktop
 
             args.TrackAsyncAction(CreateResourcesAsync(sender).AsAsyncAction());
 
-            async Task CreateResourcesAsync(Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl sender)
+            async Task CreateResourcesAsync(Win2D.UI.Xaml.CanvasAnimatedControl sender)
             {
                 await _smoke.CreateResourcesAsync(sender);
                 await _explosion.CreateResourcesAsync(sender);
             }
         }
 
-        private void CanvasAnimatedControl_Draw(Microsoft.Graphics.Canvas.UI.Xaml.ICanvasAnimatedControl sender, Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedDrawEventArgs args)
+        private void CanvasAnimatedControl_Draw(ICanvasAnimatedControl sender, CanvasAnimatedDrawEventArgs args)
         {
             var ds = args.DrawingSession;
 
@@ -77,7 +66,7 @@ namespace XamlIslandSample.Desktop
             _explosion.Draw(ds, _useSpriteBatch);
         }
 
-        private void CanvasAnimatedControl_Update(Microsoft.Graphics.Canvas.UI.Xaml.ICanvasAnimatedControl sender, Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedUpdateEventArgs args)
+        private void CanvasAnimatedControl_Update(ICanvasAnimatedControl sender, CanvasAnimatedUpdateEventArgs args)
         {
             var elapsedTime = (float)args.Timing.ElapsedTime.TotalSeconds;
 
@@ -110,13 +99,5 @@ namespace XamlIslandSample.Desktop
 
         }
 
-    }
-}
-
-namespace ExampleGallery
-{
-    public static class ThumbnailGenerator
-    {
-        public static readonly bool IsDrawingThumbnail = false;
     }
 }

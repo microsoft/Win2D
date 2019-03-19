@@ -14,11 +14,6 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="1*" />
-            <RowDefinition Height="1*" />
-        </Grid.RowDefinitions>
-        <local:CanvasControl x:Name="canvasControl" Grid.Row="0" CreateResources="CanvasControl_CreateResources" Draw="CanvasControl_Draw" />
-        <local:CanvasAnimatedControl x:Name="canvasAnimatedControl" Grid.Row="1" CreateResources="CanvasAnimatedControl_CreateResources" Update="CanvasAnimatedControl_Update" Draw="CanvasAnimatedControl_Draw" />
+        <local:CanvasAnimatedControl x:Name="canvasAnimatedControl" CreateResources="CanvasAnimatedControl_CreateResources" Update="CanvasAnimatedControl_Update" Draw="CanvasAnimatedControl_Draw" />
     </Grid>
 </Window>

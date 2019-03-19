@@ -66,6 +66,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "XamlIslandSample", "XamlIsl
 	ProjectSection(SolutionItems) = preProject
 		samples\XamlIslandSample\Directory.Build.props = samples\XamlIslandSample\Directory.Build.props
 		samples\XamlIslandSample\global.json = samples\XamlIslandSample\global.json
+		samples\XamlIslandSample\README.md = samples\XamlIslandSample\README.md
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XamlIslandSample.Desktop", "samples\XamlIslandSample\XamlIslandSample.Desktop\XamlIslandSample.Desktop.csproj", "{44D5FA95-B63A-40EA-85CF-91D5C59A09B8}"
