@@ -11,7 +11,7 @@ The sample was developed and tested with the following components. Any other con
 The sample consists of 2 projects
 
 ##### XamlIslandSample.Desktop (.NET Core 3 Wpf App)
-One window with a CanvasControl and a CanvasSwapChainPanel.
+One window with the particle example.
 
 ##### XamlIslandSample.Package (Windows Application Package)
 Loading C++ WinRT components like Win2D into managed processes only works with an APPX / MSIX package
