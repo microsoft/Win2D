@@ -87,7 +87,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
           When the user chooses to print the <see
           cref="E:Microsoft.Graphics.Canvas.Printing.CanvasPrintDocument.Print"/>
           event is raised.  The application can then draw each page in turn
-          using <cee
+          using <see
           cref="M:Microsoft.Graphics.Canvas.Printing.CanvasPrintEventArgs.CreateDrawingSession"/>
         </p>
         <p>
