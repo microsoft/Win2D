@@ -155,7 +155,7 @@ namespace
     };
 }
 
-using Internal::AggregateType;
+using ABI::Windows::Foundation::Internal::AggregateType;
 
 template<>
 struct ITypedEventHandler<IAnyControlInterface*, CanvasCreateResourcesEventArgs*> 

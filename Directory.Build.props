@@ -16,7 +16,7 @@
     __TargetPlatform(Min)Version is used in Win2D.cpp.props (as WindowsTargetPlatform(Min)Version) 
     and in Win2D.cs.props (as TargetPlatform(Min)Version)
     -->
-    <__TargetPlatformVersion>10.0.17763.0</__TargetPlatformVersion>
+    <__TargetPlatformVersion>10.0.18362.0</__TargetPlatformVersion>
     <__TargetPlatformMinVersion>10.0.10240.0</__TargetPlatformMinVersion>
 
     <DeviceType Condition="'$(DeviceType)' == ''">$(TargetPlatformIdentifier)</DeviceType>
