@@ -6,6 +6,8 @@
 
 namespace canvas
 {
+#pragma warning(push)
+#pragma warning(disable : 4996)
     class MockD2DFactory : public RuntimeClass <
         RuntimeClassFlags<ClassicCom>,
         ChainInterfaces < ID2D1Factory2, ID2D1Factory1, ID2D1Factory >, ID2D1Multithread >
@@ -281,4 +283,5 @@ namespace canvas
     {
         return Make<MockD2DFactory>();
     }
+#pragma warning(pop)
 }
