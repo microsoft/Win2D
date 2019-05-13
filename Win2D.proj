@@ -99,17 +99,54 @@
           DependsOnTargets="BuildProjects; CheckCode; BuildDocs; RunTests" />
 
 
-  <!-- Use batching to build each project in turn -->
-  <Target Name="BuildProjects"
-          DependsOnTargets="PrepareVersionInfo; ChooseProjectsToBuild; ChooseConfigurationsToRestore; RestoreNuGetPackages; WorkAroundNuGetRestoreBug"
+  <!-- TargetPlatformMinVersion 10.0.16299.0 and 10.0.10240 Platforms must be build separately. -->
+  <Target Name="BuildProjects" DependsOnTargets="BuildProjects10240" />
+
+
+  <!-- Since ARM64 requires a TargetPlatformMinVersion of at least 10.0.16299.0,
+       its NuGet restore and subsequent build need to run separately from the other
+       (10240) platforms.
+
+       In order to minimize refactoring of the existing build, this is done just after
+       the existing Platform targets build. This is done by adding !='ARM64' Conditions
+       to RestoreNuGetPackages and BuildProjects, duplicating them with =='ARM64'
+       Conditions, then stitching them into the target graph just after BuildProjects.
+       -->
+  <Target Name="BuildProjectsPrelim" DependsOnTargets="PrepareVersionInfo; ChooseProjectsToBuild; ChooseConfigurationsToRestore" />
+  <!-- Duplicate BuildProjects for just ARM64 -->
+  <!-- TODO: correct sequence of or drop WorkAroundNuGetRestoreBug -->
+  <Target Name="BuildProjects16299"
+          DependsOnTargets="BuildProjectsPrelim; RestoreNuGetPackages16299; WorkAroundNuGetRestoreBug"
           Inputs="@(ProjectsToBuild)"
           Outputs="%(PlatformIndependentName)">
 
-    <Message Importance="High" Text="Building all variants of project %(ProjectsToBuild.PlatformIndependentName):" />
-    <Message Importance="High" Text="  %(ProjectsToBuild.Filename) (%(ProjectsToBuild.Configuration)|%(ProjectsToBuild.Platform))" />
+    <Message Text="Building TargetPlatformMinVersion 16299 variants of project %(ProjectsToBuild.PlatformIndependentName):"
+             Importance="High" />
+    <Message Text="  %(ProjectsToBuild.Filename) (%(ProjectsToBuild.Configuration)|%(ProjectsToBuild.Platform))"
+             Importance="High"
+             Condition="'%(ProjectsToBuild.Platform)'=='ARM64'" />
+
+    <MSBuild Projects="@(ProjectsToBuild)"
+             BuildInParallel="%(ProjectsToBuild.BuildInParallel)"
+             Properties="IncludeVersionInfo=true"
+             Condition="'%(ProjectsToBuild.Platform)'=='ARM64'" />
+  </Target>
+
+
+  <!-- Use batching to build each project in turn -->
+  <Target Name="BuildProjects10240"
+          DependsOnTargets="BuildProjectsPrelim; BuildProjects16299; RestoreNuGetPackages10240; WorkAroundNuGetRestoreBug"
+          Inputs="@(ProjectsToBuild)"
+          Outputs="%(PlatformIndependentName)">
+
+    <Message Importance="High" Text="Building TargetPlatformMinVersion 10240 variants of project %(ProjectsToBuild.PlatformIndependentName):" />
+    <Message Importance="High" Text="  %(ProjectsToBuild.Filename) (%(ProjectsToBuild.Configuration)|%(ProjectsToBuild.Platform))" Condition="'%(ProjectsToBuild.Platform)'!='ARM64'" />
 
     <!-- All the variants (platform and configuration) of most projects can be built in parallel -->
-    <MSBuild Projects="@(ProjectsToBuild)" BuildInParallel="%(ProjectsToBuild.BuildInParallel)" Properties="IncludeVersionInfo=true" />
+    <MSBuild Projects="@(ProjectsToBuild)"
+             BuildInParallel="%(ProjectsToBuild.BuildInParallel)"
+             Properties="IncludeVersionInfo=true"
+             Condition="'%(ProjectsToBuild.Platform)'!='ARM64'" />
   </Target>
 
 
