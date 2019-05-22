@@ -114,9 +114,8 @@
        -->
   <Target Name="BuildProjectsPrelim" DependsOnTargets="PrepareVersionInfo; ChooseProjectsToBuild; ChooseConfigurationsToRestore" />
   <!-- Duplicate BuildProjects for just ARM64 -->
-  <!-- TODO: correct sequence of or drop WorkAroundNuGetRestoreBug -->
   <Target Name="BuildProjects16299"
-          DependsOnTargets="BuildProjectsPrelim; RestoreNuGetPackages16299; WorkAroundNuGetRestoreBug"
+          DependsOnTargets="BuildProjectsPrelim; RestoreNuGetPackages16299"
           Inputs="@(ProjectsToBuild)"
           Outputs="%(PlatformIndependentName)">
 
@@ -135,7 +134,7 @@
 
   <!-- Use batching to build each project in turn -->
   <Target Name="BuildProjects10240"
-          DependsOnTargets="BuildProjectsPrelim; BuildProjects16299; RestoreNuGetPackages10240; WorkAroundNuGetRestoreBug"
+          DependsOnTargets="BuildProjectsPrelim; BuildProjects16299; RestoreNuGetPackages10240"
           Inputs="@(ProjectsToBuild)"
           Outputs="%(PlatformIndependentName)">
 
@@ -331,19 +330,6 @@
       <!-- Internal Microsoft builds can optionally consume the Windows SDK via NuGet -->
       <NuGetRestore Include="build\pkges\packages.config" Condition="'$(UseNuGetSDK)' != ''" />
     </ItemGroup>
-  </Target>
-
-
-  <!--
-    Workaround https://github.com/Microsoft/vstest/issues/1533 by deleting the 
-    unnecessary assets.json file after running nuget restore on winrt.test.external.
-  -->
-  <Target Name="WorkAroundNuGetRestoreBug">
-    <ItemGroup>
-      <FileToDelete Include="obj\winrt.test.external.uap\**\project.assets.json" />
-    </ItemGroup>
-
-    <Delete Files="@(FileToDelete)" />
   </Target>
 
 
