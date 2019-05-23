@@ -7,6 +7,8 @@
 #include "RemoveFromVisualTree.h"
 #include "utils/LockUtilities.h"
 
+#include <Windows.UI.Xaml.Media.h>
+
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace UI { namespace Xaml
 {
     using namespace ::Microsoft::WRL::Wrappers;
@@ -104,7 +106,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         std::shared_ptr<adapter_t> m_adapter;
         std::unique_ptr<IRecreatableDeviceManager<TRAITS>> m_recreatableDeviceManager;
-        std::atomic<int> m_loadedCount;
         bool m_isLoaded;
         bool m_isSuspended;
         bool m_isVisible;
@@ -129,11 +130,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         ComPtr<ICanvasDevice> m_customDevice;
 
+        ComPtr<Media::IVisualTreeHelperStatics> m_VisualTreeHelper;
+
     public:
         BaseControl(std::shared_ptr<adapter_t> adapter, bool useSharedDevice)
             : m_adapter(adapter)
             , m_recreatableDeviceManager(adapter->CreateRecreatableDeviceManager(GetControlInterface()))
-            , m_loadedCount(0)
             , m_isLoaded(false)
             , m_isSuspended(false)
             , m_isVisible(true)
@@ -712,6 +714,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         // be set up immediately when the object is constructed.
         void RegisterEventHandlersOnSelf()
         {
+            GetActivationFactory(Wrappers::HStringReference(RuntimeClass_Windows_UI_Xaml_Media_VisualTreeHelper).Get(), m_VisualTreeHelper.GetAddressOf());
+
             auto frameworkElement = As<IFrameworkElement>(GetControl());
 
             RegisterEventHandlerOnSelf(
@@ -788,7 +792,18 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             return ExceptionBoundary(
                 [&]
                 {
-                    if (++m_loadedCount == 1)
+                    boolean should_load = false;
+                    if (WasLoaded())
+                    {
+                        should_load = true;
+                        auto lock = GetLock();
+                        if (m_isLoaded) {
+                            should_load = false;
+                        }
+                        lock.unlock();
+                    }
+
+                    if (should_load)
                     {
                         RegisterEventHandlers();
                         UpdateIsVisible();
@@ -825,7 +840,18 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             return ExceptionBoundary(
                 [&]
                 {
-                    if (--m_loadedCount == 0)
+                    boolean should_unload = false;
+                    if (!WasLoaded())
+                    {
+                        should_unload = true;
+                        auto lock = GetLock();
+                        if (!m_isLoaded) {
+                            should_unload = false;
+                        }
+                        lock.unlock();
+                    }
+
+                    if (should_unload)
                     {
                         auto lock = GetLock();
                         m_isLoaded = false;
@@ -922,6 +948,18 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                     
                     WindowVisibilityChanged();
                 });
+        }
+
+        bool WasLoaded() {
+            auto control = As<IDependencyObject>(GetControl());
+            ComPtr<IDependencyObject> parent;
+            m_VisualTreeHelper->GetParent(control.Get(), parent.GetAddressOf());
+
+            if (parent) {
+                return true;
+            }
+
+            return false;
         }
     };
 
