@@ -953,11 +953,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             ComPtr<IDependencyObject> parent;
             m_VisualTreeHelper->GetParent(control.Get(), parent.GetAddressOf());
 
-            if (parent) {
-                return true;
-            }
-
-            return false;
+            return parent;
         }
     };
 
