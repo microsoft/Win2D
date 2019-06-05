@@ -800,7 +800,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                         if (m_isLoaded) {
                             should_load = false;
                         }
-                        lock.unlock();
                     }
 
                     if (should_load)
@@ -848,7 +847,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                         if (!m_isLoaded) {
                             should_unload = false;
                         }
-                        lock.unlock();
                     }
 
                     if (should_unload)
