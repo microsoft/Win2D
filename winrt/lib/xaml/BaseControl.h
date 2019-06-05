@@ -132,6 +132,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         ComPtr<Media::IVisualTreeHelperStatics> m_VisualTreeHelper;
 
+        enum class LoadAction
+        {
+            kNoOp = 0,
+            kLoad = 1,
+            kUnload = 2
+        };
+
     public:
         BaseControl(std::shared_ptr<adapter_t> adapter, bool useSharedDevice)
             : m_adapter(adapter)
@@ -792,17 +799,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             return ExceptionBoundary(
                 [&]
                 {
-                    boolean should_load = false;
-                    if (WasLoaded())
-                    {
-                        should_load = true;
-                        auto lock = GetLock();
-                        if (m_isLoaded) {
-                            should_load = false;
-                        }
-                    }
-
-                    if (should_load)
+                    if (GetLoadAction() == LoadAction::kLoad)
                     {
                         RegisterEventHandlers();
                         UpdateIsVisible();
@@ -839,17 +836,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             return ExceptionBoundary(
                 [&]
                 {
-                    boolean should_unload = false;
-                    if (!WasLoaded())
-                    {
-                        should_unload = true;
-                        auto lock = GetLock();
-                        if (!m_isLoaded) {
-                            should_unload = false;
-                        }
-                    }
-
-                    if (should_unload)
+                    if (GetLoadAction() == LoadAction::kUnload)
                     {
                         auto lock = GetLock();
                         m_isLoaded = false;
@@ -948,12 +935,29 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                 });
         }
 
-        bool WasLoaded() {
+        LoadAction GetLoadAction() {
             auto control = As<IDependencyObject>(GetControl());
             ComPtr<IDependencyObject> parent;
             m_VisualTreeHelper->GetParent(control.Get(), parent.GetAddressOf());
 
-            return parent;
+            if (parent)
+            {
+                auto lock = GetLock();
+                if (!m_isLoaded)
+                {
+                    return LoadAction::kLoad;
+                }
+            }
+            else
+            {
+                auto lock = GetLock();
+                if (m_isLoaded)
+                {
+                    return LoadAction::kUnload;
+                }
+            }
+
+            return LoadAction::kNoOp;
         }
     };
 
