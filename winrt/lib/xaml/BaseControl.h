@@ -130,8 +130,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         ComPtr<ICanvasDevice> m_customDevice;
 
-        ComPtr<Media::IVisualTreeHelperStatics> m_VisualTreeHelper;
-
         enum class LoadAction
         {
             kNoOp = 0,
@@ -721,8 +719,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         // be set up immediately when the object is constructed.
         void RegisterEventHandlersOnSelf()
         {
-            GetActivationFactory(Wrappers::HStringReference(RuntimeClass_Windows_UI_Xaml_Media_VisualTreeHelper).Get(), m_VisualTreeHelper.GetAddressOf());
-
             auto frameworkElement = As<IFrameworkElement>(GetControl());
 
             RegisterEventHandlerOnSelf(
@@ -935,26 +931,25 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                 });
         }
 
-        LoadAction GetLoadAction() {
+        LoadAction GetLoadAction()
+        {
+            ComPtr<Media::IVisualTreeHelperStatics> visualTreeHelper;
+            GetActivationFactory(Wrappers::HStringReference(RuntimeClass_Windows_UI_Xaml_Media_VisualTreeHelper).Get(), visualTreeHelper.GetAddressOf());
+
             auto control = As<IDependencyObject>(GetControl());
             ComPtr<IDependencyObject> parent;
-            m_VisualTreeHelper->GetParent(control.Get(), parent.GetAddressOf());
+            visualTreeHelper->GetParent(control.Get(), parent.GetAddressOf());
 
-            if (parent)
+            auto lock = GetLock();
+
+            if (parent && !m_isLoaded)
             {
-                auto lock = GetLock();
-                if (!m_isLoaded)
-                {
-                    return LoadAction::kLoad;
-                }
+                return LoadAction::kLoad;
             }
-            else
+
+            if (!parent && m_isLoaded)
             {
-                auto lock = GetLock();
-                if (m_isLoaded)
-                {
-                    return LoadAction::kUnload;
-                }
+                return LoadAction::kUnload;
             }
 
             return LoadAction::kNoOp;
