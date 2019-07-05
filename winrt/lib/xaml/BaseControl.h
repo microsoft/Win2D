@@ -106,6 +106,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         std::shared_ptr<adapter_t> m_adapter;
         std::unique_ptr<IRecreatableDeviceManager<TRAITS>> m_recreatableDeviceManager;
+        std::atomic<int> m_loadedCount;
         bool m_isLoaded;
         bool m_isSuspended;
         bool m_isVisible;
@@ -132,15 +133,16 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         enum class LoadAction
         {
-            kNoOp = 0,
-            kLoad = 1,
-            kUnload = 2
+            NoOp = 0,
+            Load = 1,
+            Unload = 2
         };
 
     public:
         BaseControl(std::shared_ptr<adapter_t> adapter, bool useSharedDevice)
             : m_adapter(adapter)
             , m_recreatableDeviceManager(adapter->CreateRecreatableDeviceManager(GetControlInterface()))
+            , m_loadedCount(0)
             , m_isLoaded(false)
             , m_isSuspended(false)
             , m_isVisible(true)
@@ -795,7 +797,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             return ExceptionBoundary(
                 [&]
                 {
-                    if (GetLoadAction() == LoadAction::kLoad)
+                    m_loadedCount++;
+                    if (GetLoadAction() == LoadAction::Load)
                     {
                         RegisterEventHandlers();
                         UpdateIsVisible();
@@ -832,7 +835,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             return ExceptionBoundary(
                 [&]
                 {
-                    if (GetLoadAction() == LoadAction::kUnload)
+                    m_loadedCount--;
+                    if (GetLoadAction() == LoadAction::Unload)
                     {
                         auto lock = GetLock();
                         m_isLoaded = false;
@@ -936,23 +940,31 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             ComPtr<Media::IVisualTreeHelperStatics> visualTreeHelper;
             GetActivationFactory(Wrappers::HStringReference(RuntimeClass_Windows_UI_Xaml_Media_VisualTreeHelper).Get(), visualTreeHelper.GetAddressOf());
 
-            auto control = As<IDependencyObject>(GetControl());
+            ComPtr<IDependencyObject> control;
             ComPtr<IDependencyObject> parent;
-            visualTreeHelper->GetParent(control.Get(), parent.GetAddressOf());
+
+            if (GetControl())
+            {
+                GetControl()->QueryInterface(__uuidof(IDependencyObject), (void**)(control.GetAddressOf()));
+                if (control)
+                {
+                    visualTreeHelper->GetParent(control.Get(), parent.GetAddressOf());
+                }
+            }
 
             auto lock = GetLock();
 
-            if (parent && !m_isLoaded)
+            if ((parent || (m_loadedCount > 0)) && !m_isLoaded)
             {
-                return LoadAction::kLoad;
+                return LoadAction::Load;
             }
 
-            if (!parent && m_isLoaded)
+            if ((!parent) && (m_loadedCount <= 0) && m_isLoaded)
             {
-                return LoadAction::kUnload;
+                return LoadAction::Unload;
             }
 
-            return LoadAction::kNoOp;
+            return LoadAction::NoOp;
         }
     };
 
