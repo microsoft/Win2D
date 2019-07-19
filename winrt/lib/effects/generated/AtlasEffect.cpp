@@ -40,5 +40,5 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         { L"SourceRectangle",  D2D1_ATLAS_PROP_INPUT_RECT,         GRAPHICS_EFFECT_PROPERTY_MAPPING_RECT_TO_VECTOR4 },
         { L"PaddingRectangle", D2D1_ATLAS_PROP_INPUT_PADDING_RECT, GRAPHICS_EFFECT_PROPERTY_MAPPING_RECT_TO_VECTOR4 })
 
-    ActivatableClassWithFactory(AtlasEffect, SimpleAgileActivationFactory<AtlasEffect>);
+    ActivatableClassWithFactory(AtlasEffect, ::SimpleAgileActivationFactory<AtlasEffect>);
 }}}}}

@@ -57,5 +57,5 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         { L"Optimization", D2D1_DIRECTIONALBLUR_PROP_OPTIMIZATION,       GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT             },
         { L"BorderMode",   D2D1_DIRECTIONALBLUR_PROP_BORDER_MODE,        GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT             })
 
-    ActivatableClassWithFactory(DirectionalBlurEffect, SimpleAgileActivationFactory<DirectionalBlurEffect>);
+    ActivatableClassWithFactory(DirectionalBlurEffect, ::SimpleAgileActivationFactory<DirectionalBlurEffect>);
 }}}}}

@@ -32,5 +32,5 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     IMPLEMENT_EFFECT_PROPERTY_MAPPING(OpacityMetadataEffect,
         { L"OpaqueRectangle", D2D1_OPACITYMETADATA_PROP_INPUT_OPAQUE_RECT, GRAPHICS_EFFECT_PROPERTY_MAPPING_RECT_TO_VECTOR4 })
 
-    ActivatableClassWithFactory(OpacityMetadataEffect, SimpleAgileActivationFactory<OpacityMetadataEffect>);
+    ActivatableClassWithFactory(OpacityMetadataEffect, ::SimpleAgileActivationFactory<OpacityMetadataEffect>);
 }}}}}
