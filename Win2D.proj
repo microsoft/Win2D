@@ -233,7 +233,7 @@
     <_VsTest Condition="Exists('$(VS120COMNTOOLS)$(_VsTestPathUnderCommonTools)')">$(VS120COMNTOOLS)$(_VsTestPathUnderCommonTools)</_VsTest>
     <_VsTest Condition="Exists('$(VS140COMNTOOLS)$(_VsTestPathUnderCommonTools)')">$(VS140COMNTOOLS)$(_VsTestPathUnderCommonTools)</_VsTest>
     <_VsTest Condition="Exists('$(VS150COMNTOOLS)$(_VsTestPathUnderCommonTools)')">$(VS150COMNTOOLS)$(_VsTestPathUnderCommonTools)</_VsTest>
-    <VsTest>"$([System.IO.Path]::GetFullPath('$(_VsTest)'))"</VsTest>
+    <VsTest Condition="'$(_VsTest)' != ''">"$([System.IO.Path]::GetFullPath('$(_VsTest)'))"</VsTest>
   </PropertyGroup>
 
   <Target Name="RunTests"
@@ -242,6 +242,7 @@
           Inputs="@(TestProjects)"
           Outputs="%(TestProjects.TestAppX)">
 
+    <Error Text="vstest.console.exe not found, please specify using the VsTest property" Condition="'$(VsTest)' == ''" />
     <Message Importance="High" Text="Running tests: %(TestProjects.Filename) (%(TestProjects.Configuration)|%(TestProjects.Platform))" />
 
     <Exec Command="$(VsTest) %(TestProjects.TestBinary)%(TestProjects.TestArgs)" ContinueOnError="ErrorAndContinue" IgnoreStandardErrorWarningFormat="true" />
