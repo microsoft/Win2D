@@ -12,7 +12,6 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
 
   <PropertyGroup Label="Configuration">
-    <PlatformToolset>v141</PlatformToolset>
     <TargetName>winrt.test.internal.uap</TargetName>
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseOfMfc>false</UseOfMfc>
