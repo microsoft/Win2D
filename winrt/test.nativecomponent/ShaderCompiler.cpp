@@ -13,10 +13,13 @@ namespace NativeComponent
     public:
         static Platform::Array<byte>^ CompileShader(Platform::String^ shaderCode, Platform::String^ targetProfile, Platform::String^ entryPoint)
         {
-            // Convert Unicode -> ASCII (sloppily, just casting wchar_t to char, but this is good enough for unit tests).
-            std::string asciiShader(shaderCode->Begin(), shaderCode->End());
-            std::string asciiProfile(targetProfile->Begin(), targetProfile->End());
-            std::string asciiEntryPoint(entryPoint->Begin(), entryPoint->End());
+            // Convert Unicode -> ASCII
+            std::string asciiShader(shaderCode->Length(), ' ');
+            std::transform(shaderCode->Begin(), shaderCode->End(), asciiShader.begin(), [](wchar_t c) { return static_cast<char>(c); });
+            std::string asciiProfile(targetProfile->Length(), ' ');
+            std::transform(targetProfile->Begin(), targetProfile->End(), asciiProfile.begin(), [](wchar_t c) { return static_cast<char>(c); });
+            std::string asciiEntryPoint(entryPoint->Length(), ' ');
+            std::transform(entryPoint->Begin(), entryPoint->End(), asciiEntryPoint.begin(), [](wchar_t c) { return static_cast<char>(c); });
 
             ComPtr<ID3DBlob> result;
             ComPtr<ID3DBlob> errors;
