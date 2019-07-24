@@ -671,6 +671,7 @@ namespace Microsoft
                 END_ENUM(SamplerCoordinateMapping);
             }
 
+#ifndef MS_CPP_UNITTESTFRAMEWORK_ASSERT // This overload is also defined there.
             template<>
             inline std::wstring ToString<__int64>(__int64 const& value)
             {
@@ -683,6 +684,7 @@ namespace Microsoft
 
                 return buf;
             }
+#endif
 
             ENUM_TO_STRING(DWRITE_FLOW_DIRECTION)
             {
