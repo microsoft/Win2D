@@ -44,7 +44,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         { L"Temperature", D2D1_TEMPERATUREANDTINT_PROP_TEMPERATURE, GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT },
         { L"Tint",        D2D1_TEMPERATUREANDTINT_PROP_TINT,        GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT })
 
-    ActivatableClassWithFactory(TemperatureAndTintEffect, SimpleAgileActivationFactory<TemperatureAndTintEffect>);
+    ActivatableClassWithFactory(TemperatureAndTintEffect, ::SimpleAgileActivationFactory<TemperatureAndTintEffect>);
 }}}}}
 
 #endif // _WIN32_WINNT_WIN10

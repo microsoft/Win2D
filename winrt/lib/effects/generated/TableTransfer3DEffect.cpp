@@ -42,7 +42,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         { L"Table",     D2D1_LOOKUPTABLE3D_PROP_LUT,        GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT                 },
         { L"AlphaMode", D2D1_LOOKUPTABLE3D_PROP_ALPHA_MODE, GRAPHICS_EFFECT_PROPERTY_MAPPING_COLORMATRIX_ALPHA_MODE })
 
-    ActivatableClassWithFactory(TableTransfer3DEffect, SimpleAgileActivationFactory<TableTransfer3DEffect>);
+    ActivatableClassWithFactory(TableTransfer3DEffect, ::SimpleAgileActivationFactory<TableTransfer3DEffect>);
 }}}}}
 
 #endif // _WIN32_WINNT_WIN10

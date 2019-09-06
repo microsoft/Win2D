@@ -63,7 +63,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         { L"Clarity",        D2D1_HIGHLIGHTSANDSHADOWS_PROP_CLARITY,          GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT },
         { L"MaskBlurAmount", D2D1_HIGHLIGHTSANDSHADOWS_PROP_MASK_BLUR_RADIUS, GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT })
 
-    ActivatableClassWithFactory(HighlightsAndShadowsEffect, SimpleAgileActivationFactory<HighlightsAndShadowsEffect>);
+    ActivatableClassWithFactory(HighlightsAndShadowsEffect, ::SimpleAgileActivationFactory<HighlightsAndShadowsEffect>);
 }}}}}
 
 #endif // _WIN32_WINNT_WIN10

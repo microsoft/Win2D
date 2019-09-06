@@ -233,7 +233,8 @@
     <_VsTest Condition="Exists('$(VS120COMNTOOLS)$(_VsTestPathUnderCommonTools)')">$(VS120COMNTOOLS)$(_VsTestPathUnderCommonTools)</_VsTest>
     <_VsTest Condition="Exists('$(VS140COMNTOOLS)$(_VsTestPathUnderCommonTools)')">$(VS140COMNTOOLS)$(_VsTestPathUnderCommonTools)</_VsTest>
     <_VsTest Condition="Exists('$(VS150COMNTOOLS)$(_VsTestPathUnderCommonTools)')">$(VS150COMNTOOLS)$(_VsTestPathUnderCommonTools)</_VsTest>
-    <VsTest>"$([System.IO.Path]::GetFullPath('$(_VsTest)'))"</VsTest>
+	<_VsTest Condition="Exists('$(VS160COMNTOOLS)$(_VsTestPathUnderCommonTools)')">$(VS160COMNTOOLS)$(_VsTestPathUnderCommonTools)</_VsTest>
+    <VsTest Condition="'$(_VsTest)' != ''">"$([System.IO.Path]::GetFullPath('$(_VsTest)'))"</VsTest>
   </PropertyGroup>
 
   <Target Name="RunTests"
@@ -242,8 +243,14 @@
           Inputs="@(TestProjects)"
           Outputs="%(TestProjects.TestAppX)">
 
+    <PropertyGroup>
+        <PowerShellExe Condition=" '$(PowerShellExe)'=='' ">%WINDIR%\System32\WindowsPowerShell\v1.0\powershell.exe</PowerShellExe>
+    </PropertyGroup>
+
+    <Error Text="vstest.console.exe not found, please specify using the VsTest property" Condition="'$(VsTest)' == ''" />
     <Message Importance="High" Text="Running tests: %(TestProjects.Filename) (%(TestProjects.Configuration)|%(TestProjects.Platform))" />
 
+	<Exec Command="$(PowerShellExe) -NonInteractive -executionpolicy Unrestricted -command &quot;&amp; { get-appxpackage -name E2C40EB9-8CCE-48B1-9A5C-4C8CA4999631 | remove-appxpackage } &quot;" ConsoleToMsBuild="true" ContinueOnError="ErrorAndContinue" IgnoreStandardErrorWarningFormat="true"/>
     <Exec Command="$(VsTest) %(TestProjects.TestBinary)%(TestProjects.TestArgs)" ContinueOnError="ErrorAndContinue" IgnoreStandardErrorWarningFormat="true" />
   </Target>
 

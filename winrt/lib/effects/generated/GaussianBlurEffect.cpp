@@ -49,5 +49,5 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         { L"Optimization", D2D1_GAUSSIANBLUR_PROP_OPTIMIZATION,       GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT },
         { L"BorderMode",   D2D1_GAUSSIANBLUR_PROP_BORDER_MODE,        GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT })
 
-    ActivatableClassWithFactory(GaussianBlurEffect, SimpleAgileActivationFactory<GaussianBlurEffect>);
+    ActivatableClassWithFactory(GaussianBlurEffect, ::SimpleAgileActivationFactory<GaussianBlurEffect>);
 }}}}}

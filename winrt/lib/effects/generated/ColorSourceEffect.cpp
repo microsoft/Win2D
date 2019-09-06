@@ -35,5 +35,5 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         { L"Color",    D2D1_FLOOD_PROP_COLOR, GRAPHICS_EFFECT_PROPERTY_MAPPING_COLOR_TO_VECTOR4 },
         { L"ColorHdr", D2D1_FLOOD_PROP_COLOR, GRAPHICS_EFFECT_PROPERTY_MAPPING_UNKNOWN          })
 
-    ActivatableClassWithFactory(ColorSourceEffect, SimpleAgileActivationFactory<ColorSourceEffect>);
+    ActivatableClassWithFactory(ColorSourceEffect, ::SimpleAgileActivationFactory<ColorSourceEffect>);
 }}}}}
