@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\..\..\packages\directxtk_uwp.2015.7.29.1\build\native\directxtk_uwp.props" Condition="Exists('..\..\..\packages\directxtk_uwp.2015.7.29.1\build\native\directxtk_uwp.props')" />
+  <Import Project="..\..\..\packages\directxtk_uwp.2019.4.26.1\build\native\directxtk_uwp.props" Condition="Exists('..\..\..\packages\directxtk_uwp.2019.4.26.1\build\native\directxtk_uwp.props')" />
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
@@ -46,13 +46,15 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <Import Project="..\..\..\build\Win2D.cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
-    <Import Project="..\..\..\packages\directxtk_uwp.2015.7.29.1\build\native\directxtk_uwp.targets" Condition="Exists('..\..\..\packages\directxtk_uwp.2015.7.29.1\build\native\directxtk_uwp.targets')" />
+    <Import Project="..\..\..\packages\directxtk_uwp.2019.4.26.1\build\native\directxtk_uwp.targets" Condition="Exists('..\..\..\packages\directxtk_uwp.2019.4.26.1\build\native\directxtk_uwp.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\..\..\packages\directxtk_uwp.2015.7.29.1\build\native\directxtk_uwp.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\packages\directxtk_uwp.2015.7.29.1\build\native\directxtk_uwp.props'))" />
-    <Error Condition="!Exists('..\..\..\packages\directxtk_uwp.2015.7.29.1\build\native\directxtk_uwp.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\packages\directxtk_uwp.2015.7.29.1\build\native\directxtk_uwp.targets'))" />
+    <!-- At some point directxtk_uwp dropped its props file.
+    <Error Condition="!Exists('..\..\..\packages\directxtk_uwp.2019.4.26.1\build\native\directxtk_uwp.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\packages\directxtk_uwp.2019.4.26.1\build\native\directxtk_uwp.props'))" />
+    -->
+    <Error Condition="!Exists('..\..\..\packages\directxtk_uwp.2019.4.26.1\build\native\directxtk_uwp.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\packages\directxtk_uwp.2019.4.26.1\build\native\directxtk_uwp.targets'))" />
   </Target>
 </Project>

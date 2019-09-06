@@ -62,7 +62,7 @@
 
 
   <!-- Compile the generated C# code to create new assemblies -->
-  <Target Name="CompileAPISurface" Condition="!$(IntellisenseOnly)" DependsOnTargets="RestoreNuGetPackages">
+  <Target Name="CompileAPISurface" Condition="!$(IntellisenseOnly)" DependsOnTargets="RestoreNuGetPackages10240">
     <PropertyGroup>
       <FrameworkRoot>$(MSBuildThisFileDirectory)..\..\packages\System.Runtime.4.0.20\ref\dotnet</FrameworkRoot>
     </PropertyGroup>
@@ -126,7 +126,7 @@
 
 
   <!-- Run the Sandcastle tool to create HTML reference documentation -->
-  <Target Name="RunSandcastle" Condition="!$(IntellisenseOnly)" DependsOnTargets="RestoreNuGetPackages">
+  <Target Name="RunSandcastle" Condition="!$(IntellisenseOnly)" DependsOnTargets="RestoreNuGetPackages10240">
     <MSBuild Projects="BuildDocs.shfbproj" />
   </Target>
 

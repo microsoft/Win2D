@@ -35,6 +35,7 @@
       <file target="lib\net45\Microsoft.Graphics.Canvas.winmd"       src="$bin$\UAPx86\release\winrt.dll.UAP\Microsoft.Graphics.Canvas.winmd" />
       <file target="lib\net45\Microsoft.Graphics.Canvas.xml"         src="bin\intellisense\Microsoft.Graphics.Canvas.xml" />
 
+      <file target="runtimes\win10-arm64\native\Microsoft.Graphics.Canvas.dll" src="$bin$\UAPARM64\release\winrt.dll.UAP\Microsoft.Graphics.Canvas.dll" />
       <file target="runtimes\win10-arm\native\Microsoft.Graphics.Canvas.dll" src="$bin$\UAPARM\release\winrt.dll.UAP\Microsoft.Graphics.Canvas.dll" />
       <file target="runtimes\win10-x64\native\Microsoft.Graphics.Canvas.dll" src="$bin$\UAPx64\release\winrt.dll.UAP\Microsoft.Graphics.Canvas.dll" />
       <file target="runtimes\win10-x86\native\Microsoft.Graphics.Canvas.dll" src="$bin$\UAPx86\release\winrt.dll.UAP\Microsoft.Graphics.Canvas.dll" />

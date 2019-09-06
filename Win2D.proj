@@ -12,7 +12,7 @@
 
   <!-- Parameters that can be configured by the caller, eg. "msbuild Win2D.proj /p:BuildTests=false" -->
   <PropertyGroup>
-    <BuildPlatforms>Win32;x64;ARM;AnyCPU</BuildPlatforms>
+    <BuildPlatforms>Win32;x64;ARM;ARM64;AnyCPU</BuildPlatforms>
     <BuildConfigurations>Debug;Release</BuildConfigurations>
     <BuildTests>true</BuildTests>
     <BuildTools>true</BuildTools>
@@ -28,7 +28,7 @@
   <!-- Set default platforms for each project type -->
   <ItemDefinitionGroup>
     <UAPProject>
-      <Platforms>Win32;x64;ARM</Platforms>
+      <Platforms>Win32;x64;ARM;ARM64</Platforms>
       <BinDir>UAP</BinDir>
     </UAPProject>
     <AnyCPUProject>
@@ -61,6 +61,7 @@
     </UAPProject>
     <UAPProject Include="winrt\test.nativecomponent\winrt.test.nativecomponent.uap.vcxproj" />
     <UAPProject Include="winrt\test.managed\winrt.test.managed.uap.csproj">
+      <Platforms>Win32;x64;ARM</Platforms>
       <AutomatedTests Condition="$(ShouldRunUAPTests)">store</AutomatedTests>
       <BuildInParallel>false</BuildInParallel>
     </UAPProject>
@@ -98,17 +99,53 @@
           DependsOnTargets="BuildProjects; CheckCode; BuildDocs; RunTests" />
 
 
-  <!-- Use batching to build each project in turn -->
-  <Target Name="BuildProjects"
-          DependsOnTargets="PrepareVersionInfo; ChooseProjectsToBuild; ChooseConfigurationsToRestore; RestoreNuGetPackages; WorkAroundNuGetRestoreBug"
+  <!-- TargetPlatformMinVersion 10.0.16299.0 and 10.0.10240 Platforms must be build separately. -->
+  <Target Name="BuildProjects" DependsOnTargets="BuildProjects10240" />
+
+
+  <!-- Since ARM64 requires a TargetPlatformMinVersion of at least 10.0.16299.0,
+       its NuGet restore and subsequent build need to run separately from the other
+       (10240) platforms.
+
+       In order to minimize refactoring of the existing build, this is done just after
+       the existing Platform targets build. This is done by adding !='ARM64' Conditions
+       to RestoreNuGetPackages and BuildProjects, duplicating them with =='ARM64'
+       Conditions, then stitching them into the target graph just after BuildProjects.
+       -->
+  <Target Name="BuildProjectsPrelim" DependsOnTargets="PrepareVersionInfo; ChooseProjectsToBuild; ChooseConfigurationsToRestore" />
+  <!-- Duplicate BuildProjects for just ARM64 -->
+  <Target Name="BuildProjects16299"
+          DependsOnTargets="BuildProjectsPrelim; RestoreNuGetPackages16299"
           Inputs="@(ProjectsToBuild)"
           Outputs="%(PlatformIndependentName)">
 
-    <Message Importance="High" Text="Building all variants of project %(ProjectsToBuild.PlatformIndependentName):" />
-    <Message Importance="High" Text="  %(ProjectsToBuild.Filename) (%(ProjectsToBuild.Configuration)|%(ProjectsToBuild.Platform))" />
+    <Message Text="Building TargetPlatformMinVersion 16299 variants of project %(ProjectsToBuild.PlatformIndependentName):"
+             Importance="High" />
+    <Message Text="  %(ProjectsToBuild.Filename) (%(ProjectsToBuild.Configuration)|%(ProjectsToBuild.Platform))"
+             Importance="High"
+             Condition="'%(ProjectsToBuild.Platform)'=='ARM64'" />
+
+    <MSBuild Projects="@(ProjectsToBuild)"
+             BuildInParallel="%(ProjectsToBuild.BuildInParallel)"
+             Properties="IncludeVersionInfo=true"
+             Condition="'%(ProjectsToBuild.Platform)'=='ARM64'" />
+  </Target>
+
+
+  <!-- Use batching to build each project in turn -->
+  <Target Name="BuildProjects10240"
+          DependsOnTargets="BuildProjectsPrelim; BuildProjects16299; RestoreNuGetPackages10240"
+          Inputs="@(ProjectsToBuild)"
+          Outputs="%(PlatformIndependentName)">
+
+    <Message Importance="High" Text="Building TargetPlatformMinVersion 10240 variants of project %(ProjectsToBuild.PlatformIndependentName):" />
+    <Message Importance="High" Text="  %(ProjectsToBuild.Filename) (%(ProjectsToBuild.Configuration)|%(ProjectsToBuild.Platform))" Condition="'%(ProjectsToBuild.Platform)'!='ARM64'" />
 
     <!-- All the variants (platform and configuration) of most projects can be built in parallel -->
-    <MSBuild Projects="@(ProjectsToBuild)" BuildInParallel="%(ProjectsToBuild.BuildInParallel)" Properties="IncludeVersionInfo=true" />
+    <MSBuild Projects="@(ProjectsToBuild)"
+             BuildInParallel="%(ProjectsToBuild.BuildInParallel)"
+             Properties="IncludeVersionInfo=true"
+             Condition="'%(ProjectsToBuild.Platform)'!='ARM64'" />
   </Target>
 
 
@@ -257,7 +294,7 @@
 
   <Target Name="ChooseTestsToRun">
     <ItemGroup>
-      <TestProjects Include="@(ProjectsToBuild)" Condition="%(ProjectsToBuild.AutomatedTests) != '' and %(ProjectsToBuild.Platform) != ARM">
+      <TestProjects Include="@(ProjectsToBuild)" Condition="%(ProjectsToBuild.AutomatedTests) != '' and %(ProjectsToBuild.Platform) != ARM and %(ProjectsToBuild.Platform) != ARM64">
         <!-- Remap Win32 to x86 -->
         <TestPlatform Condition="%(ProjectsToBuild.Platform) == Win32">x86</TestPlatform>
         <TestPlatform Condition="%(ProjectsToBuild.Platform) != Win32">%(ProjectsToBuild.Platform)</TestPlatform>
@@ -300,19 +337,6 @@
       <!-- Internal Microsoft builds can optionally consume the Windows SDK via NuGet -->
       <NuGetRestore Include="build\pkges\packages.config" Condition="'$(UseNuGetSDK)' != ''" />
     </ItemGroup>
-  </Target>
-
-
-  <!--
-    Workaround https://github.com/Microsoft/vstest/issues/1533 by deleting the 
-    unnecessary assets.json file after running nuget restore on winrt.test.external.
-  -->
-  <Target Name="WorkAroundNuGetRestoreBug">
-    <ItemGroup>
-      <FileToDelete Include="obj\winrt.test.external.uap\**\project.assets.json" />
-    </ItemGroup>
-
-    <Delete Files="@(FileToDelete)" />
   </Target>
 
 
