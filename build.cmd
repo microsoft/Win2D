@@ -2,7 +2,7 @@
 
 SETLOCAL
 
-IF "%VisualStudioVersion%" LSS "15.0" (
+IF "%VisualStudioVersion%" LSS "16.0" (
     GOTO WRONG_COMMAND_PROMPT
 )
 
@@ -35,7 +35,7 @@ GOTO END
 
 :WRONG_COMMAND_PROMPT
 
-ECHO Please run this script from a Developer Command Prompt for VS2017
+ECHO Please run this script from a Developer Command Prompt for VS2019
 ECHO.
 PAUSE
 GOTO END

@@ -34,7 +34,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     IMPLEMENT_EFFECT_PROPERTY_MAPPING(RgbToHueEffect,
         { L"OutputColorSpace", D2D1_RGBTOHUE_PROP_OUTPUT_COLOR_SPACE, GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT })
 
-    ActivatableClassWithFactory(RgbToHueEffect, SimpleAgileActivationFactory<RgbToHueEffect>);
+    ActivatableClassWithFactory(RgbToHueEffect, ::SimpleAgileActivationFactory<RgbToHueEffect>);
 }}}}}
 
 #endif // _WIN32_WINNT_WIN10

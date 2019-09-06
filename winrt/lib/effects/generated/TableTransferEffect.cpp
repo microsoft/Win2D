@@ -92,5 +92,5 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         { L"AlphaDisable", D2D1_TABLETRANSFER_PROP_ALPHA_DISABLE, GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT },
         { L"ClampOutput",  D2D1_TABLETRANSFER_PROP_CLAMP_OUTPUT,  GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT })
 
-    ActivatableClassWithFactory(TableTransferEffect, SimpleAgileActivationFactory<TableTransferEffect>);
+    ActivatableClassWithFactory(TableTransferEffect, ::SimpleAgileActivationFactory<TableTransferEffect>);
 }}}}}

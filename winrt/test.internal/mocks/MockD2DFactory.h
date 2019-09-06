@@ -6,6 +6,8 @@
 
 namespace canvas
 {
+#pragma warning(push)
+#pragma warning(disable: 4996) // GetDesktopDpi() is deprecated; don't let that break the build
     class MockD2DFactory : public RuntimeClass <
         RuntimeClassFlags<ClassicCom>,
         ChainInterfaces < ID2D1Factory2, ID2D1Factory1, ID2D1Factory >, ID2D1Multithread >
@@ -275,6 +277,7 @@ namespace canvas
         int GetEnterCount() const { return m_enterCount; }
         int GetLeaveCount() const { return m_leaveCount; }
     };
+#pragma warning(pop)
 
 
     inline ComPtr<ID2D1Factory2> MakeMockD2DFactory()

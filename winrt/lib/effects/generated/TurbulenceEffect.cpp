@@ -80,5 +80,5 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         { L"Noise",     D2D1_TURBULENCE_PROP_NOISE,          GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT },
         { L"Tileable",  D2D1_TURBULENCE_PROP_STITCHABLE,     GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT })
 
-    ActivatableClassWithFactory(TurbulenceEffect, SimpleAgileActivationFactory<TurbulenceEffect>);
+    ActivatableClassWithFactory(TurbulenceEffect, ::SimpleAgileActivationFactory<TurbulenceEffect>);
 }}}}}

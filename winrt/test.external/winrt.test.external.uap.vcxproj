@@ -7,7 +7,7 @@
     <MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>
     <DefaultLanguage>en-US</DefaultLanguage>
     <AppContainerApplication>true</AppContainerApplication>
-    <UnitTestPlatformVersion  Condition="'$(UnitTestPlatformVersion)' == ''">15.0</UnitTestPlatformVersion>
+    <UnitTestPlatformVersion  Condition="'$(UnitTestPlatformVersion)' == ''">16.0</UnitTestPlatformVersion>
     <ProjectSubType>NativeUnitTestProject</ProjectSubType>
     <ApplicationType>Windows Store</ApplicationType>
     <ApplicationTypeRevision>10.0</ApplicationTypeRevision>

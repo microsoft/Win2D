@@ -28,7 +28,7 @@
 
   <Target Name="Win2DValidatePlatformVersion"
           BeforeTargets="ResolveAssemblyReferences"
-          Condition="'$(TargetPlatformVersion)' != '' and '$(DisableWin2DPlatformCheck)' == ''">
+          Condition="('$(TargetPlatformVersion)' != '' and '$(TargetPlatformVersion)' != '10.0') and '$(DisableWin2DPlatformCheck)' == ''">
 
     <Win2DIsPlatformTooOld ActualVersion="$(TargetPlatformVersion)" RequiredVersion="$(Win2DMinPlatformVersion)">
       <Output TaskParameter="Result" PropertyName="Win2DPlatformTooOld" />
