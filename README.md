@@ -69,7 +69,7 @@ Studio, add the Win2D NuGet package to your project, and get started using the A
 ## Building Win2D from source
 
 ##### Requirements
-- Visual Studio 2019 with Tools for Universal Windows Apps 15.0.27428.01 and Windows SDK 18362
+- Visual Studio 2019 16.2 with Tools for Universal Windows Apps 15.0.27428.01 and Windows SDK 18362
 
 ##### Clone Repository
 - Go to 'View' -> 'Team Explorer' -> 'Local Git Repositories' -> 'Clone'
