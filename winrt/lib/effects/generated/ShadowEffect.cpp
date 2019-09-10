@@ -56,5 +56,5 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         { L"Optimization",   D2D1_SHADOW_PROP_OPTIMIZATION,            GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT           },
         { L"ShadowColorHdr", D2D1_SHADOW_PROP_COLOR,                   GRAPHICS_EFFECT_PROPERTY_MAPPING_UNKNOWN          })
 
-    ActivatableClassWithFactory(ShadowEffect, SimpleAgileActivationFactory<ShadowEffect>);
+    ActivatableClassWithFactory(ShadowEffect, ::SimpleAgileActivationFactory<ShadowEffect>);
 }}}}}

@@ -607,11 +607,11 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
 
         <step><content>
           <para>
-            Now you can animate the Gaussian blur. Find the <codeInline>canvas_AnimatedDraw</codeInline> method and add the
+            Now you can animate the Gaussian blur. Find the <codeInline>canvas_DrawAnimated</codeInline> method and add the
             following code:
           </para>
           <code language="cs">
-            private void canvas_AnimatedDraw(
+            private void canvas_DrawAnimated(
                 Microsoft.Graphics.Canvas.UI.Xaml.ICanvasAnimatedControl sender,
                 Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedDrawEventArgs args)
             {

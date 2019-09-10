@@ -8,7 +8,7 @@
 
 #include "mocks/MockCanvasDeviceActivationFactory.h"
 
-using ABI::Windows::Foundation::Internal::AggregateType;
+using ::ABI::Windows::Foundation::Internal::AggregateType;
 
 template<>
 struct ITypedEventHandler<IInspectable*, CanvasCreateResourcesEventArgs*> 

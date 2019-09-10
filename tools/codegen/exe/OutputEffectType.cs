@@ -487,7 +487,7 @@ namespace CodeGen
             }
             else
             {
-                output.WriteLine("ActivatableClassWithFactory(" + effect.ClassName + ", SimpleAgileActivationFactory<" + effect.ClassName + ">);");
+                output.WriteLine("ActivatableClassWithFactory(" + effect.ClassName + ", ::SimpleAgileActivationFactory<" + effect.ClassName + ">);");
             }
 
             output.Unindent();

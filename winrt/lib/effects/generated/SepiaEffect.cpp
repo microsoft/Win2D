@@ -43,7 +43,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         { L"Intensity", D2D1_SEPIA_PROP_INTENSITY,  GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT                 },
         { L"AlphaMode", D2D1_SEPIA_PROP_ALPHA_MODE, GRAPHICS_EFFECT_PROPERTY_MAPPING_COLORMATRIX_ALPHA_MODE })
 
-    ActivatableClassWithFactory(SepiaEffect, SimpleAgileActivationFactory<SepiaEffect>);
+    ActivatableClassWithFactory(SepiaEffect, ::SimpleAgileActivationFactory<SepiaEffect>);
 }}}}}
 
 #endif // _WIN32_WINNT_WIN10

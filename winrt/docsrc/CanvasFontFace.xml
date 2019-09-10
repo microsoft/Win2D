@@ -155,7 +155,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <summary>Gets the ascent value of the font face. Ascent is the distance from the top of font character alignment box to the Latin-script baseline.</summary>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Text.CanvasFontFace.CapHeight">
-      <summary>Gts the cap height value of the font face. Cap height is the distance from the Latin-script baseline to the top of a typical Latin-script capital. Capital "H" is often used as a reference character for the purpose of calculating the cap height value.</summary>
+      <summary>Gets the cap height value of the font face. Cap height is the distance from the Latin-script baseline to the top of a typical Latin-script capital. Capital "H" is often used as a reference character for the purpose of calculating the cap height value.</summary>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Text.CanvasFontFace.CaretOffset">
       <summary>Gets the horizontal offset of the caret along the baseline for good appearance. An offset of 0 is returned for perfectly upright fonts (non-italic).</summary>

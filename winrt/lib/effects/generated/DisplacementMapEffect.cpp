@@ -52,5 +52,5 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         { L"XChannelSelect", D2D1_DISPLACEMENTMAP_PROP_X_CHANNEL_SELECT, GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT },
         { L"YChannelSelect", D2D1_DISPLACEMENTMAP_PROP_Y_CHANNEL_SELECT, GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT })
 
-    ActivatableClassWithFactory(DisplacementMapEffect, SimpleAgileActivationFactory<DisplacementMapEffect>);
+    ActivatableClassWithFactory(DisplacementMapEffect, ::SimpleAgileActivationFactory<DisplacementMapEffect>);
 }}}}}

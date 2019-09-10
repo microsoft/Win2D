@@ -91,5 +91,5 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         { L"HeightMapInterpolationMode", D2D1_POINTSPECULAR_PROP_SCALE_MODE,         GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT           },
         { L"LightColorHdr",              D2D1_POINTSPECULAR_PROP_COLOR,              GRAPHICS_EFFECT_PROPERTY_MAPPING_UNKNOWN          })
 
-    ActivatableClassWithFactory(PointSpecularEffect, SimpleAgileActivationFactory<PointSpecularEffect>);
+    ActivatableClassWithFactory(PointSpecularEffect, ::SimpleAgileActivationFactory<PointSpecularEffect>);
 }}}}}

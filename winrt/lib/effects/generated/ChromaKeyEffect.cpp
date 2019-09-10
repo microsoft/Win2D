@@ -66,7 +66,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         { L"Feather",     D2D1_CHROMAKEY_PROP_FEATHER,      GRAPHICS_EFFECT_PROPERTY_MAPPING_DIRECT           },
         { L"ColorHdr",    D2D1_CHROMAKEY_PROP_COLOR,        GRAPHICS_EFFECT_PROPERTY_MAPPING_UNKNOWN          })
 
-    ActivatableClassWithFactory(ChromaKeyEffect, SimpleAgileActivationFactory<ChromaKeyEffect>);
+    ActivatableClassWithFactory(ChromaKeyEffect, ::SimpleAgileActivationFactory<ChromaKeyEffect>);
 }}}}}
 
 #endif // _WIN32_WINNT_WIN10

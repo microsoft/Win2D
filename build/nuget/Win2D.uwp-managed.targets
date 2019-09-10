@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup>
+    <win2d-Platform Condition="$(RuntimeIdentifier.EndsWith('-x64'))">x64</win2d-Platform>
+    <win2d-Platform Condition="$(RuntimeIdentifier.EndsWith('-x86'))">x86</win2d-Platform>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(win2d-Platform)' == ''">
+    <win2d-Platform Condition="'$(Platform)' == 'Win32'">x86</win2d-Platform>
+    <win2d-Platform Condition="'$(Platform)' != 'Win32'">$(Platform)</win2d-Platform>
+    <win2d-Platform Condition="'$(Platform)' == 'AnyCPU'"></win2d-Platform>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Win2DWarnNoPlatform Condition="'$(Win2DWarnNoPlatform)' == ''">true</Win2DWarnNoPlatform>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="Microsoft.Graphics.Canvas">
+      <HintPath>$(MSBuildThisFileDirectory)..\..\lib\uap10.0\Microsoft.Graphics.Canvas.winmd</HintPath>
+      <Implementation>Microsoft.Graphics.Canvas.dll</Implementation>
+    </Reference>
+    <ReferenceCopyLocalPaths Include="$(MSBuildThisFileDirectory)..\..\runtimes\win10-$(win2d-Platform)\native\Microsoft.Graphics.Canvas.dll" Condition="'$(win2d-Platform)' != ''" />
+  </ItemGroup>
+
+  <Target Name="Win2DWarnNoPlatform" BeforeTargets="BeforeBuild" Condition="'$(win2d-Platform)' == '' and '$(Win2DWarnNoPlatform)' == 'true'">
+    <Warning Text="Microsoft.Graphics.Canvas.dll could not be copied because the AnyCPU platform is being used. Please specify a specific platform to copy this file." />
+  </Target>
+
+  <!--
+  Don't import Win2D.common.targets here, as it will cause build failures because desktop project
+  files don't define $(TargetPlatformVersion) with the same semantics as with UWP or C++ project files.
+  -->
+
+</Project>

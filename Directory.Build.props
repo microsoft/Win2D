@@ -17,7 +17,8 @@
     and in Win2D.cs.props (as TargetPlatform(Min)Version)
     -->
     <__TargetPlatformVersion>10.0.18362.0</__TargetPlatformVersion>
-    <__TargetPlatformMinVersion>10.0.10240.0</__TargetPlatformMinVersion>
+    <__TargetPlatformMinVersion Condition="'$(Platform)' != 'ARM64'">10.0.10240.0</__TargetPlatformMinVersion>
+    <__TargetPlatformMinVersion Condition="'$(Platform)' == 'ARM64'">10.0.16299.0</__TargetPlatformMinVersion>
 
     <DeviceType Condition="'$(DeviceType)' == ''">$(TargetPlatformIdentifier)</DeviceType>
 
