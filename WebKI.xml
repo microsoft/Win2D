@@ -3412,6 +3412,10 @@
   <HelpKINode Title="HueToRgbEffect.Name property" Url="html/P_Microsoft_Graphics_Canvas_Effects_HueToRgbEffect_Name.htm" />
   <HelpKINode Title="HueToRgbEffect.Source property" Url="html/P_Microsoft_Graphics_Canvas_Effects_HueToRgbEffect_Source.htm" />
   <HelpKINode Title="HueToRgbEffect.SourceColorSpace property" Url="html/P_Microsoft_Graphics_Canvas_Effects_HueToRgbEffect_SourceColorSpace.htm" />
+  <HelpKINode Title="IAnimationObject interface">
+    <HelpKINode Title="IAnimationObject Interface" Url="html/T_Windows_UI_Composition_IAnimationObject.htm" />
+    <HelpKINode Title="about IAnimationObject interface" Url="html/T_Windows_UI_Composition_IAnimationObject.htm" />
+  </HelpKINode>
   <HelpKINode Title="IAsyncAction interface">
     <HelpKINode Title="IAsyncAction Interface" Url="html/T_Windows_Foundation_IAsyncAction.htm" />
     <HelpKINode Title="about IAsyncAction interface" Url="html/T_Windows_Foundation_IAsyncAction.htm" />
@@ -3757,6 +3761,10 @@
   <HelpKINode Title="IsTrimmed field" Url="html/F_Microsoft_Graphics_Canvas_Text_CanvasLineMetrics_IsTrimmed.htm" />
   <HelpKINode Title="IsWhitespace field" Url="html/F_Microsoft_Graphics_Canvas_Text_CanvasAnalyzedBreakpoint_IsWhitespace.htm" />
   <HelpKINode Title="IsZeroWidthSpace field" Url="html/F_Microsoft_Graphics_Canvas_Text_CanvasGlyphShaping_IsZeroWidthSpace.htm" />
+  <HelpKINode Title="IVisualElement interface">
+    <HelpKINode Title="IVisualElement Interface" Url="html/T_Windows_UI_Composition_IVisualElement.htm" />
+    <HelpKINode Title="about IVisualElement interface" Url="html/T_Windows_UI_Composition_IVisualElement.htm" />
+  </HelpKINode>
   <HelpKINode Title="Jis04Forms enumeration member" Url="html/T_Microsoft_Graphics_Canvas_Text_CanvasTypographyFeatureName.htm" />
   <HelpKINode Title="Jis78Forms enumeration member" Url="html/T_Microsoft_Graphics_Canvas_Text_CanvasTypographyFeatureName.htm" />
   <HelpKINode Title="Jis83Forms enumeration member" Url="html/T_Microsoft_Graphics_Canvas_Text_CanvasTypographyFeatureName.htm" />
@@ -5725,7 +5733,9 @@
   <HelpKINode Title="Windows.UI.Composition.CompositionDrawingSurface class" Url="html/T_Windows_UI_Composition_CompositionDrawingSurface.htm" />
   <HelpKINode Title="Windows.UI.Composition.CompositionGraphicsDevice class" Url="html/T_Windows_UI_Composition_CompositionGraphicsDevice.htm" />
   <HelpKINode Title="Windows.UI.Composition.Compositor class" Url="html/T_Windows_UI_Composition_Compositor.htm" />
+  <HelpKINode Title="Windows.UI.Composition.IAnimationObject interface" Url="html/T_Windows_UI_Composition_IAnimationObject.htm" />
   <HelpKINode Title="Windows.UI.Composition.ICompositionSurface interface" Url="html/T_Windows_UI_Composition_ICompositionSurface.htm" />
+  <HelpKINode Title="Windows.UI.Composition.IVisualElement interface" Url="html/T_Windows_UI_Composition_IVisualElement.htm" />
   <HelpKINode Title="Windows.UI.Core namespace" Url="html/N_Windows_UI_Core.htm" />
   <HelpKINode Title="Windows.UI.Core.CoreIndependentInputSource class" Url="html/T_Windows_UI_Core_CoreIndependentInputSource.htm" />
   <HelpKINode Title="Windows.UI.Core.CoreInputDeviceTypes enumeration" Url="html/T_Windows_UI_Core_CoreInputDeviceTypes.htm" />
