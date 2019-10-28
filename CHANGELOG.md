@@ -1,5 +1,12 @@
 # Win2D Changelog
 
+## Win2D 1.24.0 - ARM64 support
+_October 28, 2019_
+
+This release adds support for ARM64 platforms, upgrades the Win2D build to Visual Studio 2019, and fixes some documentation errors.
+
+---
+
 ## Win2D 1.23.0 - Windows SDK version validation
 _May 18, 2018_
 
