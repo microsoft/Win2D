@@ -20,27 +20,25 @@ DeviceContextPool::DeviceContextPool(ID2D1Device1* d2dDevice)
 
 DeviceContextLease DeviceContextPool::TakeLease()
 {
-    ID2D1Device1* localDevice;
-    {
-        Lock lock(m_mutex);
+    Lock lock(m_mutex);
 
-        if (!m_deviceContexts.empty())
-        {
-            DeviceContextLease newLease(this, std::move(m_deviceContexts.back()));
-            m_deviceContexts.pop_back();
-            return newLease;
-        }
-        localDevice = m_d2dDevice;
-    }
-    //Release lock before creating the device context to avoid potential deadlock scenarios
-    if (!localDevice)
+    if (!m_d2dDevice)
         ThrowHR(RO_E_CLOSED);
-
-    ComPtr<ID2D1DeviceContext1> deviceContext;
-    ThrowIfFailed(localDevice->CreateDeviceContext(
-        D2D1_DEVICE_CONTEXT_OPTIONS_NONE,
-        &deviceContext));
-    return DeviceContextLease(this, std::move(deviceContext));
+    
+    if (m_deviceContexts.empty())
+    {
+        ComPtr<ID2D1DeviceContext1> deviceContext;
+        ThrowIfFailed(m_d2dDevice->CreateDeviceContext(
+            D2D1_DEVICE_CONTEXT_OPTIONS_NONE,
+            &deviceContext));
+        return DeviceContextLease(this, std::move(deviceContext));
+    }
+    else
+    {
+        DeviceContextLease newLease(this, std::move(m_deviceContexts.back()));
+        m_deviceContexts.pop_back();
+        return newLease;
+    }
 }
 
 
