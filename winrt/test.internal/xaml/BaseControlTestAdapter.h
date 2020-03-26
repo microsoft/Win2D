@@ -111,6 +111,11 @@ public:
         return mockWindow->VisibilityChangedEventSource->Add(value);
     }
 
+    virtual RegisteredEvent AddXamlRootChangedCallback(XamlRootChangedEventHandler* handler, IXamlRoot* xamlRoot) override
+    {
+        ThrowHR(E_NOTIMPL);
+    }
+
     void RaiseDpiChangedEvent()
     {
         ThrowIfFailed(DpiChangedEventSource->InvokeAll(nullptr, nullptr));
