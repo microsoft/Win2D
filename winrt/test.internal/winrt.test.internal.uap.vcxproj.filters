@@ -424,6 +424,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubUserControl.h">
       <Filter>stubs</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubUserControlWithXamlRoot.h">
+      <Filter>stubs</Filter>
+    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\SwitchableTestBrushFixture.h">
       <Filter>stubs</Filter>
     </ClInclude>

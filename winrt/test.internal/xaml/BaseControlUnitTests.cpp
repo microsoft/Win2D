@@ -89,6 +89,7 @@ namespace
         CALL_COUNTER_WITH_MOCK(UnloadedMethod, void());
         CALL_COUNTER_WITH_MOCK(ApplicationSuspendingMethod, void(ISuspendingEventArgs*));
         CALL_COUNTER_WITH_MOCK(ApplicationResumingMethod, void());
+        CALL_COUNTER_WITH_MOCK(WindowVisibilityChangedMethod, void());
 
         virtual void CreateOrUpdateRenderTarget(
             ICanvasDevice* device,
@@ -134,7 +135,7 @@ namespace
 
         virtual void WindowVisibilityChanged() override final
         {
-            Assert::Fail(L"Unexpected call to WindowVisibilityChanged");
+            WindowVisibilityChangedMethod.WasCalled();
         }
 
         template<typename FN>
@@ -354,5 +355,100 @@ TEST_CLASS(BaseControl_LoadedAndUnloaded_OutOfOrder)
 
         f.RaiseUnloadedEvent();
         f.Load();
+    }
+};
+
+
+TEST_CLASS(BaseControl_LoadedAndUnloaded_OutOfOrder_XamlRoot)
+{
+    struct XamlRootFixture : public BasicControlFixture<AnyTraits>
+    {
+        XamlRootFixture()
+        {
+            CreateAdapter();
+            CreateControl();
+            UserControl->EnableXamlRoot();
+
+            this->Control->ChangedMethod.AllowAnyCall();
+        }
+    };
+
+    TEST_METHOD_EX(BaseControl_WhenLoadedCalledTwice_SecondLoadIsIgnored)
+    {
+        XamlRootFixture f;
+
+        // First load event actually does our init work.
+        f.Control->LoadedMethod.SetExpectedCalls(1);
+        f.Load();
+        Expectations::Instance()->Validate();
+
+        // Second load event is ignored.
+        f.Load();
+
+        // First unload event is ignored.
+        f.RaiseUnloadedEvent();
+
+        // Second unload event actually does our cleanup work.
+        f.Control->UnloadedMethod.SetExpectedCalls(1);
+        f.RaiseUnloadedEvent();
+    }
+
+    TEST_METHOD_EX(BaseControl_WhenUnloadedBeforeLoaded_BothAreIgnored)
+    {
+        XamlRootFixture f;
+
+        f.RaiseUnloadedEvent();
+        f.Load();
+    }
+};
+
+
+TEST_CLASS(BaseControl_XamlRootChanged)
+{
+    struct XamlRootFixture : public BasicControlFixture<AnyTraits>
+    {
+        XamlRootFixture()
+        {
+            CreateAdapter();
+            CreateControl();
+            UserControl->EnableXamlRoot();
+
+            this->Control->LoadedMethod.AllowAnyCall();
+            this->Control->ChangedMethod.AllowAnyCall();
+        }
+    };
+
+    TEST_METHOD_EX(BaseControl_IsHostVisibleChanged)
+    {
+        XamlRootFixture f;
+
+        f.Load();
+
+        f.Control->WindowVisibilityChangedMethod.SetExpectedCalls(1);
+        f.UserControl->m_stubXamlRoot->SetIsHostVisible(false);
+        Expectations::Instance()->Validate();
+
+        f.Control->WindowVisibilityChangedMethod.SetExpectedCalls(1);
+        f.UserControl->m_stubXamlRoot->SetIsHostVisible(true);
+        Expectations::Instance()->Validate();
+    }
+
+    TEST_METHOD_EX(BaseControl_RasterizationScaleChanged)
+    {
+        XamlRootFixture f;
+        float dpi;
+
+        f.Load();
+
+        f.Control->get_Dpi(&dpi);
+        Assert::AreEqual(96.0f, dpi);
+
+        f.UserControl->m_stubXamlRoot->SetRasterizationScale(1.5);
+        f.Control->get_Dpi(&dpi);
+        Assert::AreEqual(96 * 1.5f, dpi);
+
+        f.UserControl->m_stubXamlRoot->SetRasterizationScale(1.0);
+        f.Control->get_Dpi(&dpi);
+        Assert::AreEqual(96.0f, dpi);
     }
 };
