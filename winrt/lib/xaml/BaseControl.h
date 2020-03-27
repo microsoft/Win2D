@@ -467,8 +467,21 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             // protect them.
             //
 
+            //
+            // IWindow will not be available in Xaml island scenarios, so prefer
+            // IDependencyObject for getting the dispatcher.
+            //
             ComPtr<ICoreDispatcher> dispatcher;
-            ThrowIfFailed(GetWindow()->get_Dispatcher(&dispatcher));
+            auto control = GetControl();
+            ComPtr<IDependencyObject> dependencyObject;
+            if (SUCCEEDED(control->QueryInterface(IID_PPV_ARGS(&dependencyObject))))
+            {
+                ThrowIfFailed(dependencyObject->get_Dispatcher(&dispatcher));
+            }
+            else
+            {
+                ThrowIfFailed(GetWindow()->get_Dispatcher(&dispatcher));
+            }
 
             //
             // get_Dispatcher may succeed but return null if we're running in

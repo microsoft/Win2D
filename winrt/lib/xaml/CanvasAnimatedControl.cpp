@@ -707,8 +707,21 @@ void CanvasAnimatedControl::Changed(ChangeReason reason)
     if (GetAdapter()->IsDesignModeEnabled())
         return;
 
+    //
+    // IWindow will not be available in Xaml island scenarios, so prefer
+    // IDependencyObject for getting the dispatcher.
+    //
     ComPtr<ICoreDispatcher> dispatcher;
-    ThrowIfFailed(GetWindow()->get_Dispatcher(&dispatcher));
+    auto control = GetControl();
+    ComPtr<IDependencyObject> dependencyObject;
+    if (SUCCEEDED(control->QueryInterface(IID_PPV_ARGS(&dependencyObject))))
+    {
+        ThrowIfFailed(dependencyObject->get_Dispatcher(&dispatcher));
+    }
+    else
+    {
+        ThrowIfFailed(GetWindow()->get_Dispatcher(&dispatcher));
+    }
 
     WeakRef weakSelf = AsWeak(this);
     auto callback = Callback<AddFtmBase<IDispatchedHandler>::Type>(
