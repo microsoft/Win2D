@@ -18,7 +18,7 @@ struct BasicControlFixture
 
     std::shared_ptr<adapter_t> Adapter;
     ComPtr<control_t> Control;
-    ComPtr<StubUserControl> UserControl;
+    ComPtr<StubUserControlWithXamlRoot> UserControl;
 
     BasicControlFixture()
     {
@@ -37,7 +37,7 @@ struct BasicControlFixture
     void CreateControl()
     {
         Control = Make<control_t>(Adapter);
-        UserControl = static_cast<StubUserControl*>(As<IUserControl>(Control).Get());
+        UserControl = static_cast<StubUserControlWithXamlRoot*>(As<IUserControl>(Control).Get());
     }
 
     void Load(float initialWidth = (float)InitialWidth, float initialHeight = (float)InitialHeight)

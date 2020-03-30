@@ -82,7 +82,7 @@ public:
 
     virtual ComPtr<IInspectable> CreateUserControl(IInspectable* canvasControl) override
     {
-        return As<IInspectable>(Make<StubUserControl>());
+        return As<IInspectable>(Make<StubUserControlWithXamlRoot>());
     }
 
     virtual RegisteredEvent AddApplicationSuspendingCallback(IEventHandler<SuspendingEventArgs*>* value) override
@@ -109,6 +109,15 @@ public:
     {
         MockWindow* mockWindow = static_cast<MockWindow*>(window);
         return mockWindow->VisibilityChangedEventSource->Add(value);
+    }
+
+    virtual RegisteredEvent AddXamlRootChangedCallback(XamlRootChangedEventHandler* handler, IXamlRoot* xamlRoot) override
+    {
+        return RegisteredEvent(
+            xamlRoot,
+            &IXamlRoot::add_Changed,
+            &IXamlRoot::remove_Changed,
+            handler);
     }
 
     void RaiseDpiChangedEvent()

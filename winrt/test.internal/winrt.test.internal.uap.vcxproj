@@ -162,6 +162,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubSurfaceImageSourceFactory.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubSwapChainPanel.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubUserControl.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubUserControlWithXamlRoot.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubUri.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\SwitchableTestBrushFixture.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\TestBitmapAdapter.h" />

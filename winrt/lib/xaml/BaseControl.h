@@ -23,6 +23,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     //
 
     typedef ITypedEventHandler<DisplayInformation*, IInspectable*> DpiChangedEventHandler;
+    typedef ITypedEventHandler<XamlRoot*, XamlRootChangedEventArgs*> XamlRootChangedEventHandler;
 
     template<typename TRAITS>
     class IBaseControlAdapter
@@ -42,6 +43,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         virtual RegisteredEvent AddVisibilityChangedCallback(IWindowVisibilityChangedEventHandler* handler, IWindow* window) = 0;
 
+        virtual RegisteredEvent AddXamlRootChangedCallback(XamlRootChangedEventHandler* handler, IXamlRoot* xamlRoot) = 0;
+
         virtual ComPtr<IWindow> GetWindowOfCurrentThread() = 0;
 
         //
@@ -59,6 +62,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         CB_HELPER(AddApplicationResumingCallback, IEventHandler<IInspectable*>);
         CB_HELPER(AddDpiChangedCallback, DpiChangedEventHandler);
         CB_HELPER(AddVisibilityChangedCallback, IWindowVisibilityChangedEventHandler);
+        CB_HELPER(AddXamlRootChangedCallback, XamlRootChangedEventHandler);
 
 #undef CB_HELPER
 
@@ -102,6 +106,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         // called from that window's thread.
         ComPtr<IWindow> m_window;
 
+        // With Xaml islands, we use the XamlRoot for visibility and DPI change
+        // notifications.
+        ComPtr<IXamlRoot> m_xamlRoot;
+
         std::shared_ptr<adapter_t> m_adapter;
         std::unique_ptr<IRecreatableDeviceManager<TRAITS>> m_recreatableDeviceManager;
         std::atomic<int> m_loadedCount;
@@ -115,6 +123,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         RegisteredEvent m_applicationResumingEventRegistration;
         RegisteredEvent m_dpiChangedEventRegistration;
         RegisteredEvent m_windowVisibilityChangedEventRegistration;
+        RegisteredEvent m_xamlRootChangedEventRegistration;
         RegisteredEvent m_deviceLostEventRegistration;
 
         std::mutex m_mutex;
@@ -458,8 +467,20 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             // protect them.
             //
 
+            //
+            // IWindow will not be available in Xaml island scenarios, so prefer
+            // IDependencyObject for getting the dispatcher.
+            //
             ComPtr<ICoreDispatcher> dispatcher;
-            ThrowIfFailed(GetWindow()->get_Dispatcher(&dispatcher));
+            auto control = GetControl();
+            if (auto dependencyObject = MaybeAs<IDependencyObject>(control))
+            {
+                ThrowIfFailed(dependencyObject->get_Dispatcher(&dispatcher));
+            }
+            else
+            {
+                ThrowIfFailed(GetWindow()->get_Dispatcher(&dispatcher));
+            }
 
             //
             // get_Dispatcher may succeed but return null if we're running in
@@ -745,15 +766,34 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                 this,
                 &BaseControl::OnApplicationResuming);
 
-            m_dpiChangedEventRegistration = m_adapter->AddDpiChangedCallback(this, &BaseControl::OnDpiChanged);
+            auto frameworkElement = As<IFrameworkElement>(GetControl());
+            if (auto elementAsUIE10 = MaybeAs<IUIElement10>(frameworkElement))
+            {
+                ThrowIfFailed(elementAsUIE10->get_XamlRoot(&m_xamlRoot));
+            }
 
-            m_windowVisibilityChangedEventRegistration = m_adapter->AddVisibilityChangedCallback(
-                this,
-                &BaseControl::OnWindowVisibilityChanged,
-                GetWindow());
+            // XamlRoot is a 19H1 (18362) API that provides visibility and DPI APIs for Xaml island
+            // scenarios as well as CoreWindow scenarios. Use it if it's available, otherwise fall
+            // back to the CoreWindow's visibility notifications.
+            if (m_xamlRoot)
+            {
+                m_xamlRootChangedEventRegistration = m_adapter->AddXamlRootChangedCallback(
+                    this,
+                    &BaseControl::OnXamlRootChanged,
+                    m_xamlRoot.Get());
+            }
+            else
+            {
+                m_dpiChangedEventRegistration = m_adapter->AddDpiChangedCallback(this, &BaseControl::OnDpiChanged);
+
+                m_windowVisibilityChangedEventRegistration = m_adapter->AddVisibilityChangedCallback(
+                    this,
+                    &BaseControl::OnWindowVisibilityChanged,
+                    GetWindow());
+            }
 
             // Check if the DPI changed while we weren't listening for events.
-            ThrowIfFailed(OnDpiChanged(nullptr, nullptr));
+            UpdateDpi();
         }
 
         void UnregisterEventHandlers()
@@ -762,6 +802,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             m_applicationResumingEventRegistration.Release();
             m_dpiChangedEventRegistration.Release();
             m_windowVisibilityChangedEventRegistration.Release();
+            m_xamlRootChangedEventRegistration.Release();
             m_deviceLostEventRegistration.Release();
         }
 
@@ -788,19 +829,31 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             return ExceptionBoundary(
                 [&]
                 {
+                    // OnLoaded and OnUnloaded are fired from XAML asynchronously, and unfortunately they could
+                    // be out of order. If the element is removed from tree A and added to tree B, we could get
+                    // a Loaded event for tree B *before* we see the Unloaded event for tree A. To handle this:
+                    //  * When we see a Loaded event when we're already loaded, just unregister event handlers
+                    //      for the old tree and register for the new one.
+                    //  * When we get an Unloaded event, check the loaded count. If the element has already been
+                    //      added to another tree, the load count will be nonzero. In that case, we don't update
+                    //      anything because the OnLoaded call has already taken care of things.
+
+                    UnregisterEventHandlers();
+                    RegisterEventHandlers();
+
+                    UpdateIsVisible();
+                    UpdateLastSeenParent();
+
                     if (++m_loadedCount == 1)
                     {
-                        RegisterEventHandlers();
-                        UpdateIsVisible();
-                        UpdateLastSeenParent();
                         Loaded();
 
                         auto lock = GetLock();
                         m_isLoaded = true;
                         lock.unlock();
-
-                        Changed(ChangeReason::Other);
                     }
+
+                    Changed(ChangeReason::Other);
                 });
         }
 
@@ -808,10 +861,53 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         {
             boolean isVisible;
 
+            if (m_xamlRoot)
+            {
+                if (SUCCEEDED(m_xamlRoot->get_IsHostVisible(&isVisible)))
+                {
+                    m_isVisible = !!isVisible;
+                }
+            }
             // get_Visible fails when running in the designer, in which case we leave m_isVisible set to true.
-            if (SUCCEEDED(m_window->get_Visible(&isVisible)))
+            else if (SUCCEEDED(m_window->get_Visible(&isVisible)))
             {
                 m_isVisible = !!isVisible;
+            }
+        }
+
+        void UpdateDpi()
+        {
+            float newDpi = m_logicalDpi;
+
+            if (m_xamlRoot)
+            {
+                double rasterizationScale;
+                if (SUCCEEDED(m_xamlRoot->get_RasterizationScale(&rasterizationScale)))
+                {
+                    newDpi = static_cast<float>(rasterizationScale * 96.0f);
+                }
+            }
+            else
+            {
+                newDpi = m_adapter->GetLogicalDpi();
+            }
+
+            if (newDpi != m_logicalDpi)
+            {
+                auto lock = GetLock();
+
+                m_logicalDpi = newDpi;
+
+                //
+                // The recreatable device manager
+                // may turn around and call Changed() on this 
+                // control, which takes out the lock. In that
+                // case, we want to make sure we don't hold the
+                // lock.
+                //
+                lock.unlock();
+
+                m_recreatableDeviceManager->SetDpiChanged();
             }
         }
 
@@ -886,25 +982,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             return ExceptionBoundary(
                 [&]
                 {
-                    float newDpi = m_adapter->GetLogicalDpi();
-
-                    if (newDpi != m_logicalDpi)
-                    {
-                        auto lock = GetLock();
-
-                        m_logicalDpi = newDpi;
-
-                        //
-                        // The recreatable device manager
-                        // may turn around and call Changed() on this 
-                        // control, which takes out the lock. In that
-                        // case, we want to make sure we don't hold the
-                        // lock.
-                        //
-                        lock.unlock();
-
-                        m_recreatableDeviceManager->SetDpiChanged();
-                    }
+                    UpdateDpi();
                 });
         }
 
@@ -921,6 +999,26 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                     lock.unlock();
                     
                     WindowVisibilityChanged();
+                });
+        }
+
+        HRESULT OnXamlRootChanged(IXamlRoot*, IXamlRootChangedEventArgs*)
+        {
+            return ExceptionBoundary(
+                [&]
+                {
+                    auto lock = GetLock();
+                    boolean wasVisible = m_isVisible;
+                    UpdateIsVisible();
+                    boolean isVisible = m_isVisible;
+                    lock.unlock();
+
+                    if (wasVisible != isVisible)
+                    {
+                        WindowVisibilityChanged();
+                    }
+
+                    UpdateDpi();
                 });
         }
     };

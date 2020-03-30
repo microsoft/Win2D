@@ -141,6 +141,20 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                 handler);
         }
 
+        virtual RegisteredEvent AddXamlRootChangedCallback(XamlRootChangedEventHandler* handler, IXamlRoot* xamlRoot) override
+        {
+            // Don't register for the XamlRoot changed event if we're in design
+            // mode.
+            if (IsDesignModeEnabled())
+                return RegisteredEvent();
+
+            return RegisteredEvent(
+                xamlRoot,
+                &IXamlRoot::add_Changed,
+                &IXamlRoot::remove_Changed,
+                handler);
+        }
+
         virtual ComPtr<IWindow> GetWindowOfCurrentThread() override
         {
             ComPtr<IWindow> currentWindow;
