@@ -473,8 +473,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             //
             ComPtr<ICoreDispatcher> dispatcher;
             auto control = GetControl();
-            ComPtr<IDependencyObject> dependencyObject;
-            if (SUCCEEDED(control->QueryInterface(IID_PPV_ARGS(&dependencyObject))))
+            if (auto dependencyObject = MaybeAs<IDependencyObject>(control))
             {
                 ThrowIfFailed(dependencyObject->get_Dispatcher(&dispatcher));
             }
@@ -768,8 +767,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                 &BaseControl::OnApplicationResuming);
 
             auto frameworkElement = As<IFrameworkElement>(GetControl());
-            ComPtr<IUIElement10> elementAsUIE10;
-            if (SUCCEEDED(frameworkElement->QueryInterface(IID_PPV_ARGS(&elementAsUIE10))))
+            if (auto elementAsUIE10 = MaybeAs<IUIElement10>(frameworkElement))
             {
                 ThrowIfFailed(elementAsUIE10->get_XamlRoot(&m_xamlRoot));
             }

@@ -288,8 +288,7 @@ void CanvasControl::Changed(ChangeReason)
     //
     ComPtr<ICoreDispatcher> dispatcher;
     auto control = GetControl();
-    ComPtr<IDependencyObject> dependencyObject;
-    if (SUCCEEDED(control->QueryInterface(IID_PPV_ARGS(&dependencyObject))))
+    if (auto dependencyObject = MaybeAs<IDependencyObject>(control))
     {
         ThrowIfFailed(dependencyObject->get_Dispatcher(&dispatcher));
     }
