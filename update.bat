@@ -1,11 +1,11 @@
 @echo off
 
 if "%1" == "" (
-    echo Usage: update {buildname}  // eg: update 1803.16018
+    echo Usage: update {path to unzipped docs}
     goto END
 )
 
-set DOCDIR=\\edge-svcs\Release\Win2D\Win2D-release\%1\bin\docs
+set DOCDIR=%1
 
 if not exist %DOCDIR% (
     echo Not found: %DOCDIR%
