@@ -1,5 +1,12 @@
 # Win2D Changelog
 
+## Win2D 1.25.0 - XAML Islands support
+_April 2, 2020_
+
+This change hooks up Win2D with XamlRoot to get it rendering on Xaml islands.
+
+---
+
 ## Win2D 1.24.0 - ARM64 support
 _October 28, 2019_
 
