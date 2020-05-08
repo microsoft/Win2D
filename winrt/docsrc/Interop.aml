@@ -401,7 +401,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
             }
           }
         </code>
-        Remember to include the header &lt;unkwn.h&gt; in pch.h before any winrt headers (required in SDK 17763 and later).
+        Remember to include the header &lt;unknwn.h&gt; in pch.h before any winrt headers (required in SDK 17763 and later).
       </content>
     </section>
     
