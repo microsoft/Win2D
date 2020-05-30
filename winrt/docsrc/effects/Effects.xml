@@ -215,7 +215,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
   </template>
 
   <template name="EffectRequires17763Template">
-    <member name="P:Microsoft.Graphics.Canvas.Effects.EffectRequires17763Template.IsSupported(Microsoft.Graphics.Canvas.ICanvasDevice)" Win10_17763="false">
+    <member name="M:Microsoft.Graphics.Canvas.Effects.EffectRequires17763Template.IsSupported(Microsoft.Graphics.Canvas.CanvasDevice)" Win10_17763="false">
       <summary>Checks whether EffectRequires17763Template is supported on the current operating system version.</summary>
       <remarks>
         <p>
