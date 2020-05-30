@@ -55,6 +55,7 @@
 #include "EmbossEffect.h"
 #include "ExposureEffect.h"
 #include "GrayscaleEffect.h"
+#include "HdrToneMapEffect.h"
 #include "HighlightsAndShadowsEffect.h"
 #include "HueToRgbEffect.h"
 #include "InvertEffect.h"
@@ -124,6 +125,7 @@ std::pair<IID, CanvasEffect::MakeEffectFunction> CanvasEffect::m_effectMakers[] 
     { EmbossEffect::EffectId(),               MakeEffect<EmbossEffect>               },
     { ExposureEffect::EffectId(),             MakeEffect<ExposureEffect>             },
     { GrayscaleEffect::EffectId(),            MakeEffect<GrayscaleEffect>            },
+    { HdrToneMapEffect::EffectId(),           MakeEffect<HdrToneMapEffect>           },
     { HighlightsAndShadowsEffect::EffectId(), MakeEffect<HighlightsAndShadowsEffect> },
     { HueToRgbEffect::EffectId(),             MakeEffect<HueToRgbEffect>             },
     { InvertEffect::EffectId(),               MakeEffect<InvertEffect>               },

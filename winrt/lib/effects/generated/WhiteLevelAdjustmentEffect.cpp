@@ -59,7 +59,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         {
             CheckInPointer(device);
             CheckInPointer(result);
-            *result = SharedDeviceState::GetInstance()->IsEffectSupportedOnAnyDevice(device, WhiteLevelAdjustmentEffect::EffectId(), L"Win10_17763");
+            *result = SharedDeviceState::GetInstance()->IsEffectSupportedWithAnyDevice(device, WhiteLevelAdjustmentEffect::EffectId(), L"Win10_17763");
         });
     }
 

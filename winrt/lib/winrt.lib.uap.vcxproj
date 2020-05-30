@@ -88,6 +88,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\EmbossEffect.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\ExposureEffect.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\GrayscaleEffect.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\HdrToneMapEffect.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\HighlightsAndShadowsEffect.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\HueToRgbEffect.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\InvertEffect.h" />
@@ -248,6 +249,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\EmbossEffect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\ExposureEffect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\GrayscaleEffect.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\HdrToneMapEffect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\HighlightsAndShadowsEffect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\HueToRgbEffect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\InvertEffect.cpp" />
@@ -437,6 +439,7 @@
     <None Include="$(MSBuildThisFileDirectory)effects\generated\EmbossEffect.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)effects\generated\ExposureEffect.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)effects\generated\GrayscaleEffect.abi.idl" />
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\HdrToneMapEffect.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)effects\generated\HighlightsAndShadowsEffect.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)effects\generated\HueToRgbEffect.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)effects\generated\InvertEffect.abi.idl" />

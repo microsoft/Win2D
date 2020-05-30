@@ -323,7 +323,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return !!m_isID2D1Factory5Supported;
     }
 
-    bool SharedDeviceState::IsEffectSupportedOnAnyDevice(ICanvasDevice* device, IID const& effectId, std::wstring const& key) {
+    bool SharedDeviceState::IsEffectSupportedWithAnyDevice(ICanvasDevice* device, IID const& effectId, std::wstring const& key) {
         CheckInPointer(device);
         {
             RecursiveLock lock(m_mutex);
@@ -335,10 +335,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         auto lease = As<ICanvasDeviceInternal>(device)->GetResourceCreationDeviceContext();
         ComPtr<ID2D1Effect> pEffect;
         auto hr = lease->CreateEffect(effectId, pEffect.GetAddressOf());
-        bool result;
-        if (hr == S_OK) {
-            result = true;
-        } else if (hr == E_NOT_SET) {
+        bool result = true;
+        if (hr == E_NOT_SET) {
             result = false;
         } else {
             ThrowIfFailed(hr);

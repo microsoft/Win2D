@@ -139,7 +139,7 @@ namespace CodeGen
                  * By convention it is of the format Win10_17763.
                 */
                 [XmlAttributeAttribute]
-                public string IsSupportedOnAnyDeviceCheck;
+                public string IsSupportedWithAnyDeviceCheck;
 
                 [XmlElement("Input")]
                 public List<EffectProperty> Inputs { get; set; }

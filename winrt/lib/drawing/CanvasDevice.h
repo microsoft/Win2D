@@ -441,7 +441,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         void SetDebugLevel(CanvasDebugLevel const& value);
 
         bool IsID2D1Factory5Supported();
-        bool IsEffectSupportedOnAnyDevice(ICanvasDevice* device, IID const& effectId, std::wstring const& key);
+        bool IsEffectSupportedWithAnyDevice(ICanvasDevice* device, IID const& effectId, std::wstring const& key);
 
         CanvasDeviceAdapter* GetAdapter() const { return m_adapter.get(); }
 

@@ -93,6 +93,7 @@ cpp_quote("#endif")
 #include "effects\generated\GammaTransferEffect.abi.idl"
 #include "effects\generated\GaussianBlurEffect.abi.idl"
 #include "effects\generated\GrayscaleEffect.abi.idl"
+#include "effects\generated\HdrToneMapEffect.abi.idl"
 #include "effects\generated\HighlightsAndShadowsEffect.abi.idl"
 #include "effects\generated\HueRotationEffect.abi.idl"
 #include "effects\generated\HueToRgbEffect.abi.idl"

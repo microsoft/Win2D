@@ -236,7 +236,7 @@ namespace CodeGen
                     output.WriteLine(customIdl.Trim());
                 }
 
-                if (!string.IsNullOrEmpty(effect.Overrides.IsSupportedOnAnyDeviceCheck))
+                if (!string.IsNullOrEmpty(effect.Overrides.IsSupportedWithAnyDeviceCheck))
                 {
                     output.WriteLine("HRESULT IsSupported([in] Microsoft.Graphics.Canvas.CanvasDevice* device, [out, retval] boolean* result);");
                 }
@@ -361,7 +361,7 @@ namespace CodeGen
                     output.WriteLine(customDecl.Trim());
                 }
 
-                if (!string.IsNullOrEmpty(effect.Overrides.IsSupportedOnAnyDeviceCheck)) {
+                if (!string.IsNullOrEmpty(effect.Overrides.IsSupportedWithAnyDeviceCheck)) {
                     output.WriteLine("IFACEMETHOD(IsSupported)(ICanvasDevice* device, boolean* result) override;");
                 }
                 else if (!string.IsNullOrEmpty(effect.Overrides.IsSupportedCheck))
@@ -472,7 +472,7 @@ namespace CodeGen
                 output.WriteLine("}");
                 output.WriteLine();
 
-                if (!string.IsNullOrEmpty(effect.Overrides.IsSupportedOnAnyDeviceCheck)) {
+                if (!string.IsNullOrEmpty(effect.Overrides.IsSupportedWithAnyDeviceCheck)) {
                     output.WriteLine("IFACEMETHODIMP " + effect.ClassName + "Factory::IsSupported(ICanvasDevice* device, boolean* result)");
                     output.WriteLine("{");
                     output.Indent();
@@ -481,7 +481,7 @@ namespace CodeGen
                     output.Indent();
                     output.WriteLine("CheckInPointer(device);");
                     output.WriteLine("CheckInPointer(result);");
-                    output.WriteLine("*result = SharedDeviceState::GetInstance()->IsEffectSupportedOnAnyDevice(device, " + effect.ClassName + "::EffectId(), L\"" + effect.Overrides.IsSupportedOnAnyDeviceCheck + "\");");
+                    output.WriteLine("*result = SharedDeviceState::GetInstance()->IsEffectSupportedWithAnyDevice(device, " + effect.ClassName + "::EffectId(), L\"" + effect.Overrides.IsSupportedWithAnyDeviceCheck + "\");");
                     output.Unindent();
                     output.WriteLine("});");
                     output.Unindent();
@@ -537,7 +537,7 @@ namespace CodeGen
 
             return effect.Overrides.CustomStaticMethodIdl.Count > 0 ||
                    effect.Overrides.CustomStaticMethodDecl.Count > 0 ||
-                   !string.IsNullOrEmpty(effect.Overrides.IsSupportedCheck) || !string.IsNullOrEmpty(effect.Overrides.IsSupportedOnAnyDeviceCheck);
+                   !string.IsNullOrEmpty(effect.Overrides.IsSupportedCheck) || !string.IsNullOrEmpty(effect.Overrides.IsSupportedWithAnyDeviceCheck);
         }
 
         private static void WritePropertyInitialization(Formatter output, Effects.Property property)
