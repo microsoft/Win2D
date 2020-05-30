@@ -299,5 +299,6 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     </Effect>
     <Effect Name="OpacityEffect" WinVer="_WIN32_WINNT_WIN10" IsSupportedCheck="ID2D1Factory5"/>
     <Effect Name="TintEffect" WinVer="_WIN32_WINNT_WIN10" IsSupportedCheck="ID2D1Factory5"/>
+    <Effect Name="WhiteLevelAdjustmentEffect" WinVer="_WIN32_WINNT_WIN10" IsSupportedOnAnyDeviceCheck="Win10_17763"/>
   </Namespace>
 </Settings>

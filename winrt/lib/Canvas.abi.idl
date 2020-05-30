@@ -125,3 +125,4 @@ cpp_quote("#endif")
 #include "effects\generated\TurbulenceEffect.abi.idl"
 #include "effects\generated\UnPremultiplyEffect.abi.idl"
 #include "effects\generated\VignetteEffect.abi.idl"
+#include "effects\generated\WhiteLevelAdjustmentEffect.abi.idl"

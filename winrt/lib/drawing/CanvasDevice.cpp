@@ -153,7 +153,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     SharedDeviceState::SharedDeviceState()
         : m_adapter(CanvasDeviceAdapter::GetInstance())
-        , m_isID2D1Factory5Supported(-1)
+        , m_isID2D1Factory5Supported(-1), m_supportedEffects()
     {
         std::fill_n(m_sharedDeviceDebugLevels, _countof(m_sharedDeviceDebugLevels), CanvasDebugLevel::None);
 
@@ -323,6 +323,32 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return !!m_isID2D1Factory5Supported;
     }
 
+    bool SharedDeviceState::IsEffectSupportedOnAnyDevice(ICanvasDevice* device, IID const& effectId, std::wstring const& key) {
+        CheckInPointer(device);
+        {
+            RecursiveLock lock(m_mutex);
+            auto it = m_supportedEffects.find(key);
+            if (it != m_supportedEffects.end()) {
+                return it->second;
+            }
+        }
+        auto lease = As<ICanvasDeviceInternal>(device)->GetResourceCreationDeviceContext();
+        ComPtr<ID2D1Effect> pEffect;
+        auto hr = lease->CreateEffect(effectId, pEffect.GetAddressOf());
+        bool result;
+        if (hr == S_OK) {
+            result = true;
+        } else if (hr == E_NOT_SET) {
+            result = false;
+        } else {
+            ThrowIfFailed(hr);
+        }
+        {
+            RecursiveLock lock(m_mutex);
+            m_supportedEffects.insert_or_assign(key, result);
+        }
+        return result;
+    }
 
     //
     // CanvasDeviceFactory

@@ -68,6 +68,7 @@
 #include "TemperatureAndTintEffect.h"
 #include "TintEffect.h"
 #include "VignetteEffect.h"
+#include "WhiteLevelAdjustmentEffect.h"
 
 #endif // _WIN32_WINNT_WIN10
 
@@ -136,6 +137,7 @@ std::pair<IID, CanvasEffect::MakeEffectFunction> CanvasEffect::m_effectMakers[] 
     { TemperatureAndTintEffect::EffectId(),   MakeEffect<TemperatureAndTintEffect>   },
     { TintEffect::EffectId(),                 MakeEffect<TintEffect>                 },
     { VignetteEffect::EffectId(),             MakeEffect<VignetteEffect>             },
+    { WhiteLevelAdjustmentEffect::EffectId(), MakeEffect<WhiteLevelAdjustmentEffect> },
 
 #endif // _WIN32_WINNT_WIN10
 

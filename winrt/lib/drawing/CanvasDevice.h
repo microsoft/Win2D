@@ -426,6 +426,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         CanvasDebugLevel m_currentDebugLevel;
 
         int m_isID2D1Factory5Supported; // negative = not yet checked.
+        std::unordered_map<std::wstring, bool> m_supportedEffects;
 
         std::recursive_mutex m_mutex;
 
@@ -440,6 +441,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         void SetDebugLevel(CanvasDebugLevel const& value);
 
         bool IsID2D1Factory5Supported();
+        bool IsEffectSupportedOnAnyDevice(ICanvasDevice* device, IID const& effectId, std::wstring const& key);
 
         CanvasDeviceAdapter* GetAdapter() const { return m_adapter.get(); }
 

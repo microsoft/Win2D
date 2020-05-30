@@ -128,6 +128,7 @@
     <None Include="apiref\effects\CrossFade.xml" />
     <None Include="apiref\effects\Opacity.xml" />
     <None Include="apiref\effects\Tint.xml" />
+    <None Include="apiref\effects\WhiteLevelAdjustment.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

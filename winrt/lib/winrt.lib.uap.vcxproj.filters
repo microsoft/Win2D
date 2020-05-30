@@ -349,6 +349,9 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\VignetteEffect.cpp">
       <Filter>effects\generated</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\WhiteLevelAdjustmentEffect.cpp">
+      <Filter>effects\generated</Filter>
+    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)xaml\CanvasVirtualImageSource.cpp">
       <Filter>xaml</Filter>
     </ClCompile>
@@ -814,6 +817,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\VignetteEffect.h">
       <Filter>effects\generated</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\WhiteLevelAdjustmentEffect.h">
+      <Filter>effects\generated</Filter>
+    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)xaml\CanvasVirtualImageSource.h">
       <Filter>xaml</Filter>
     </ClInclude>
@@ -1145,6 +1151,9 @@
       <Filter>effects\generated</Filter>
     </None>
     <None Include="$(MSBuildThisFileDirectory)effects\generated\VignetteEffect.abi.idl">
+      <Filter>effects\generated</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\WhiteLevelAdjustmentEffect.abi.idl">
       <Filter>effects\generated</Filter>
     </None>
     <None Include="$(MSBuildThisFileDirectory)geometry\CanvasCachedGeometry.abi.idl">

@@ -54,7 +54,8 @@
     </ItemGroup>
     <ItemGroup Condition="'$(UseNuGetSDK)' != ''">
       <MetaDataDir Include="$(WindowsSDK_MetadataPath)\$(TargetPlatformVersion)\Windows.Foundation.FoundationContract\3.0.0.0" />
-      <MetaDataDir Include="$(WindowsSDK_MetadataPath)\$(TargetPlatformVersion)\031\6.0.0.0" /> <!-- Windows.Foundation.UniversalApiContract lives here -->
+      <MetaDataDir Include="$(WindowsSDK_MetadataPath)\$(TargetPlatformVersion)\031\6.0.0.0" />
+      <!-- Windows.Foundation.UniversalApiContract lives here -->
     </ItemGroup>
     <Exec Command="$(MdMergeExe) -v @(MetaDataDir -> '-metadata_dir &quot;%(Identity)&quot;', ' ') -o &quot;$(MergedWinmdDirectory)&quot; -i &quot;$(UnmergedWinmdDirectory)&quot; -partial -n:Microsoft.Graphics.Canvas:3" />
   </Target>
@@ -97,6 +98,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\StraightenEffect.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\TemperatureAndTintEffect.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\VignetteEffect.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\WhiteLevelAdjustmentEffect.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)geometry\InkToGeometryCommandSink.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)images\WicAdapter.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)pch.h" />
@@ -256,6 +258,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\StraightenEffect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\TemperatureAndTintEffect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\VignetteEffect.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\WhiteLevelAdjustmentEffect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
@@ -444,6 +447,7 @@
     <None Include="$(MSBuildThisFileDirectory)effects\generated\StraightenEffect.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)effects\generated\TemperatureAndTintEffect.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)effects\generated\VignetteEffect.abi.idl" />
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\WhiteLevelAdjustmentEffect.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)geometry\CanvasCachedGeometry.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)geometry\CanvasGeometry.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)geometry\CanvasPathBuilder.abi.idl" />

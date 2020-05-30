@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<!--
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+Licensed under the MIT License. See LICENSE.txt in the project root for license information.
+-->
+
+<Effect>
+    <!-- Localization -->
+    <_locDefinition>
+        <_locDefault _loc="locNone" />
+        <_locTag _locAttrData="displayname">Field</_locTag>
+        <_locTag _locAttrData="name">Input</_locTag>
+        <_locTag _locAttrData="value">Property</_locTag>
+    </_locDefinition>
+    <!-- System Properties -->
+    <Property name='DisplayName' type='string' value='WhiteLevelAdjustment'/>
+    <Property name='Author' type='string' value='Microsoft Corporation'/>
+    <Property name='Category' type='string' value='Color'/>
+    <Property name='Description' type='string' 
+        value='This effect allows the white level of an image to be linearly scaled. This is especially helpful when you convert between display-referred luminance space and scene-referred luminance space, or vice versa.'/>
+
+    <Inputs>
+        <Input name='Source'/>
+    </Inputs>
+
+    <!-- Custom Properties -->
+    <Property name='InputWhiteLevel' type='float'>
+        <Property name='DisplayName' type='string' value='Input white level'/>
+        <Property name="Default" type="float" value="80.0" />
+    </Property>
+  <Property name='OutputWhiteLevel' type='float'>
+    <Property name='DisplayName' type='string' value='Output white level'/>
+    <Property name="Default" type="float" value="80.0" />
+  </Property>
+</Effect>

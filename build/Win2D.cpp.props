@@ -64,7 +64,7 @@
 
   <ItemDefinitionGroup>
     <ClCompile>
-      <AdditionalOptions>/DNTDDI_VERSION=0x0A000003 /Qspectre %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/DNTDDI_VERSION=0x0A000006 /Qspectre %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
   </ItemDefinitionGroup>
   
