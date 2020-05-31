@@ -11,7 +11,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
   </assembly>
   <members>
 
-    <member name="T:Microsoft.Graphics.Canvas.Effects.HdrToneMapEffect" Win10_17763="true">
+    <member name="T:Microsoft.Graphics.Canvas.Effects.HdrToneMapEffect" NoComposition="true" Win10_17763="true">
       <summary>
         This effect adjusts the dynamic range of an image to better suit its content to the capability of the output display.
       </summary>

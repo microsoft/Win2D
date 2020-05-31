@@ -11,7 +11,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
   </assembly>
   <members>
 
-    <member name="T:Microsoft.Graphics.Canvas.Effects.WhiteLevelAdjustmentEffect" Win10_17763="true">
+    <member name="T:Microsoft.Graphics.Canvas.Effects.WhiteLevelAdjustmentEffect" NoComposition="true" Win10_17763="true">
       <summary>
         This effect allows the white level of an image to be linearly scaled. This is especially helpful when you convert between display-referred luminance space and scene-referred luminance space, or vice versa.
       </summary>
