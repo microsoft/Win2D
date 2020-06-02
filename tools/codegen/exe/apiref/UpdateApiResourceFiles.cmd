@@ -97,6 +97,7 @@ SET FILE_LIST=^
     GammaTransfer.xml ^
     GaussianBlur.xml ^
     Grayscale.xml ^
+    HdrToneMap.xml ^
     HighlightsShadows.xml ^
     HueRotation.xml ^
     HueToRgb.xml ^
@@ -125,7 +126,8 @@ SET FILE_LIST=^
     Tint.xml ^
     Turbulence.xml ^
     UnPremultiply.xml ^
-    Vignette.xml
+    Vignette.xml ^
+    WhiteLevelAdjustment.xml
 
 CALL :UPDATE_FILES
 
