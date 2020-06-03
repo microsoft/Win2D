@@ -37,7 +37,7 @@ namespace Microsoft.Graphics.Canvas.Effects
     [version(VERSION), uuid(58DACBF8-637A-5DA7-9457-1EEEDF5A191C), exclusiveto(WhiteLevelAdjustmentEffect)]
     interface IWhiteLevelAdjustmentEffectStatics : IInspectable
     {
-        HRESULT IsSupported([in] Microsoft.Graphics.Canvas.CanvasDevice* device, [out, retval] boolean* result);
+        [propget] HRESULT IsSupported([out, retval] boolean* value);
     }
 
     [STANDARD_ATTRIBUTES, activatable(VERSION), static(IWhiteLevelAdjustmentEffectStatics, VERSION)]

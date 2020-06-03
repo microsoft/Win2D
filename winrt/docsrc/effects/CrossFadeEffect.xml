@@ -40,7 +40,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     
     <inherittemplate name="EffectTemplate" replacement="CrossFadeEffect" />
     <inherittemplate name="ICanvasEffectTemplate" replacement="CrossFadeEffect" />
-    <inherittemplate name="EffectRequires14393Template" replacement="CrossFadeEffect" />
+    <inherittemplate name="EffectRequiresOSVersionTemplate" replacement="CrossFadeEffect" />
 
   </members>
 </doc>

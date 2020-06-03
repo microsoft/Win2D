@@ -14,6 +14,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     WhiteLevelAdjustmentEffect::WhiteLevelAdjustmentEffect(ICanvasDevice* device, ID2D1Effect* effect)
         : CanvasEffect(EffectId(), 2, 1, true, device, effect, static_cast<IWhiteLevelAdjustmentEffect*>(this))
     {
+        if (!SharedDeviceState::GetInstance()->IsEffectRegistered(WhiteLevelAdjustmentEffect::EffectId(), true))
+            ThrowHR(E_NOTIMPL, Strings::NotSupportedOnThisVersionOfWindows);
+
         if (!effect)
         {
             // Set default values
@@ -53,13 +56,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         });
     }
 
-    IFACEMETHODIMP WhiteLevelAdjustmentEffectFactory::IsSupported(ICanvasDevice* device, boolean* result)
+    IFACEMETHODIMP WhiteLevelAdjustmentEffectFactory::get_IsSupported(_Out_ boolean* result)
     {
         return ExceptionBoundary([&]
         {
-            CheckInPointer(device);
             CheckInPointer(result);
-            *result = SharedDeviceState::GetInstance()->IsEffectSupportedWithAnyDevice(device, WhiteLevelAdjustmentEffect::EffectId(), L"Win10_17763");
+            *result = SharedDeviceState::GetInstance()->IsEffectRegistered(WhiteLevelAdjustmentEffect::EffectId(), true);
         });
     }
 

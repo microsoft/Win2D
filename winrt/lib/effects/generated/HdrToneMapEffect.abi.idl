@@ -50,7 +50,7 @@ namespace Microsoft.Graphics.Canvas.Effects
     [version(VERSION), uuid(0181F02F-0A7E-55E1-8D2D-42AB99739B27), exclusiveto(HdrToneMapEffect)]
     interface IHdrToneMapEffectStatics : IInspectable
     {
-        HRESULT IsSupported([in] Microsoft.Graphics.Canvas.CanvasDevice* device, [out, retval] boolean* result);
+        [propget] HRESULT IsSupported([out, retval] boolean* value);
     }
 
     [STANDARD_ATTRIBUTES, activatable(VERSION), static(IHdrToneMapEffectStatics, VERSION)]

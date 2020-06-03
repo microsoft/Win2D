@@ -35,7 +35,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     
     <inherittemplate name="EffectTemplate" replacement="WhiteLevelAdjustmentEffect" />
     <inherittemplate name="ICanvasEffectTemplate" replacement="WhiteLevelAdjustmentEffect" />
-    <inherittemplate name="EffectRequires17763Template" replacement="WhiteLevelAdjustmentEffect" />
+    <inherittemplate name="EffectRequiresOSVersionTemplate" replacement="WhiteLevelAdjustmentEffect" />
 
   </members>
 </doc>

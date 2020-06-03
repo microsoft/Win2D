@@ -40,7 +40,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
     public:
         IFACEMETHODIMP ActivateInstance(IInspectable**) override;
-        IFACEMETHOD(IsSupported)(ICanvasDevice* device, boolean* result) override;
+        IFACEMETHOD(get_IsSupported)(boolean* value) override;
     };
 }}}}}
 

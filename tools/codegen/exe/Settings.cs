@@ -130,16 +130,9 @@ namespace CodeGen
                 [XmlAttributeAttribute]
                 public string WinVer;
 
+                //If set to "Registered", this will checck if the effect is registered using its class ID.
                 [XmlAttributeAttribute]
                 public string IsSupportedCheck;
-
-                /** 
-                 * A non-empty value means that an IsSupported function should be added to the effect which takes a device as a parameter, but it can be any
-                 * device as the check is only OS-version dependent. The value is used as a key to cache the result so can be shared with other effect supported checks.
-                 * By convention it is of the format Win10_17763.
-                */
-                [XmlAttributeAttribute]
-                public string IsSupportedWithAnyDeviceCheck;
 
                 [XmlElement("Input")]
                 public List<EffectProperty> Inputs { get; set; }

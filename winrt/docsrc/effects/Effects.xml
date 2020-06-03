@@ -198,36 +198,17 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
   </template>
 
 
-  <template name="EffectRequires14393Template">
-    <member name="P:Microsoft.Graphics.Canvas.Effects.EffectRequires14393Template.IsSupported" Win10_14393="false">
-      <summary>Checks whether EffectRequires14393Template is supported on the current operating system version.</summary>
+  <template name="EffectRequiresOSVersionTemplate">
+    <member name="P:Microsoft.Graphics.Canvas.Effects.EffectRequiresOSVersionTemplate.IsSupported" Win10_14393="false" Win10_17763="false">
+      <summary>Checks whether EffectRequiresOSVersionTemplate is supported on the current operating system version.</summary>
       <remarks>
         <p>
           If the application is currently running on an operating system that doesn't
-          support EffectRequires14393Template then calls to create this effect will fail.
+          support EffectRequiresOSVersionTemplate then calls to create this effect will fail.
         </p>
         <p>
           If you know that your application will never run on an operating system that
-          doesn't support EffectRequires14393Template then there is no need to perform this check.
-        </p>
-      </remarks>
-    </member>
-  </template>
-
-  <template name="EffectRequires17763Template">
-    <member name="M:Microsoft.Graphics.Canvas.Effects.EffectRequires17763Template.IsSupported(Microsoft.Graphics.Canvas.CanvasDevice)" Win10_17763="false">
-      <summary>Checks whether EffectRequires17763Template is supported on the current operating system version.</summary>
-      <remarks>
-        <p>
-          The device parameter can be any (valid) device. The result is cached internally so subsequent calls are fast. May throw an excaption if the device is in an invalid state, e.g. already closed.
-        </p>
-        <p>
-          If the application is currently running on an operating system that doesn't
-          support EffectRequires17763Template then calls to create this effect will fail.
-        </p>
-        <p>
-          If you know that your application will never run on an operating system that
-          doesn't support EffectRequires17763Template then there is no need to perform this check.
+          doesn't support EffectRequiresOSVersionTemplate then there is no need to perform this check.
         </p>
       </remarks>
     </member>

@@ -5,6 +5,7 @@
 #pragma once
 
 #include "DeviceContextPool.h"
+#include "Utils/GuidUtilities.h"
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
@@ -426,7 +427,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         CanvasDebugLevel m_currentDebugLevel;
 
         int m_isID2D1Factory5Supported; // negative = not yet checked.
-        std::unordered_map<std::wstring, bool> m_supportedEffects;
+        std::map<const IID, bool, GuidComparer> m_cachedRegisteredEffects;
 
         std::recursive_mutex m_mutex;
 
@@ -441,7 +442,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         void SetDebugLevel(CanvasDebugLevel const& value);
 
         bool IsID2D1Factory5Supported();
-        bool IsEffectSupportedWithAnyDevice(ICanvasDevice* device, IID const& effectId, std::wstring const& key);
+        bool IsEffectRegistered(IID const& effectId, bool cacheResult); //Only set cacheResult to true for built-in effects, which cannot be unregistered.
 
         CanvasDeviceAdapter* GetAdapter() const { return m_adapter.get(); }
 

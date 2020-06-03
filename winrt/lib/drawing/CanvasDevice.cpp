@@ -153,7 +153,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     SharedDeviceState::SharedDeviceState()
         : m_adapter(CanvasDeviceAdapter::GetInstance())
-        , m_isID2D1Factory5Supported(-1), m_supportedEffects()
+        , m_isID2D1Factory5Supported(-1)
     {
         std::fill_n(m_sharedDeviceDebugLevels, _countof(m_sharedDeviceDebugLevels), CanvasDebugLevel::None);
 
@@ -323,27 +323,26 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return !!m_isID2D1Factory5Supported;
     }
 
-    bool SharedDeviceState::IsEffectSupportedWithAnyDevice(ICanvasDevice* device, IID const& effectId, std::wstring const& key) {
-        CheckInPointer(device);
+    bool SharedDeviceState::IsEffectRegistered(IID const& effectId, bool cacheResult) {
         {
             RecursiveLock lock(m_mutex);
-            auto it = m_supportedEffects.find(key);
-            if (it != m_supportedEffects.end()) {
+            auto it = m_cachedRegisteredEffects.find(effectId);
+            if (it != m_cachedRegisteredEffects.end()) {
                 return it->second;
             }
         }
-        auto lease = As<ICanvasDeviceInternal>(device)->GetResourceCreationDeviceContext();
-        ComPtr<ID2D1Effect> pEffect;
-        auto hr = lease->CreateEffect(effectId, pEffect.GetAddressOf());
+        auto factory = m_adapter->CreateD2DFactory(CanvasDebugLevel::None);
+        ComPtr<ID2D1Properties> effectProperties;
+        auto hr = factory->GetEffectProperties(effectId, effectProperties.GetAddressOf());
         bool result = true;
-        if (hr == E_NOT_SET) {
+        if (hr == D2DERR_EFFECT_IS_NOT_REGISTERED) {
             result = false;
         } else {
             ThrowIfFailed(hr);
         }
-        {
+        if (cacheResult){
             RecursiveLock lock(m_mutex);
-            m_supportedEffects.insert_or_assign(key, result);
+            m_cachedRegisteredEffects.insert_or_assign(effectId, result);
         }
         return result;
     }

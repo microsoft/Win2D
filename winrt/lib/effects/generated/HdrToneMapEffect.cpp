@@ -14,6 +14,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     HdrToneMapEffect::HdrToneMapEffect(ICanvasDevice* device, ID2D1Effect* effect)
         : CanvasEffect(EffectId(), 3, 1, true, device, effect, static_cast<IHdrToneMapEffect*>(this))
     {
+        if (!SharedDeviceState::GetInstance()->IsEffectRegistered(HdrToneMapEffect::EffectId(), true))
+            ThrowHR(E_NOTIMPL, Strings::NotSupportedOnThisVersionOfWindows);
+
         if (!effect)
         {
             // Set default values
@@ -61,13 +64,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         });
     }
 
-    IFACEMETHODIMP HdrToneMapEffectFactory::IsSupported(ICanvasDevice* device, boolean* result)
+    IFACEMETHODIMP HdrToneMapEffectFactory::get_IsSupported(_Out_ boolean* result)
     {
         return ExceptionBoundary([&]
         {
-            CheckInPointer(device);
             CheckInPointer(result);
-            *result = SharedDeviceState::GetInstance()->IsEffectSupportedWithAnyDevice(device, HdrToneMapEffect::EffectId(), L"Win10_17763");
+            *result = SharedDeviceState::GetInstance()->IsEffectRegistered(HdrToneMapEffect::EffectId(), true);
         });
     }
 

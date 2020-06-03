@@ -221,6 +221,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\Conversion.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\D2DResourceLock.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\DxgiUtilities.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)utils\GuidUtilities.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\ResourceManager.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\ResourceWrapper.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\Strings.h" />

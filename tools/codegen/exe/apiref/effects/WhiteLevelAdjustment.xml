@@ -14,23 +14,23 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         <_locTag _locAttrData="value">Property</_locTag>
     </_locDefinition>
     <!-- System Properties -->
-    <Property name='DisplayName' type='string' value='WhiteLevelAdjustment'/>
+    <Property name='DisplayName' type='string' value='White Level Adjustment'/>
     <Property name='Author' type='string' value='Microsoft Corporation'/>
     <Property name='Category' type='string' value='Color'/>
     <Property name='Description' type='string' 
-        value='This effect allows the white level of an image to be linearly scaled. This is especially helpful when you convert between display-referred luminance space and scene-referred luminance space, or vice versa.'/>
+	    value='This effect adjusts the white level of the source image by multiplying the source image color by the ratio of the input and output white levels. Input and output white levels are specified in nits.'/>
 
+    <!-- This effect have one input -->
     <Inputs>
-        <Input name='Source'/>
+	    <Input name='Source'/>
     </Inputs>
 
-    <!-- Custom Properties -->
     <Property name='InputWhiteLevel' type='float'>
-        <Property name='DisplayName' type='string' value='Input white level'/>
-        <Property name="Default" type="float" value="80.0" />
+        <Property name='DisplayName' type='string' value='Input White Level'/>
+        <Property name="Default" type="float" value="80" />
     </Property>
-  <Property name='OutputWhiteLevel' type='float'>
-    <Property name='DisplayName' type='string' value='Output white level'/>
-    <Property name="Default" type="float" value="80.0" />
-  </Property>
+    <Property name="OutputWhiteLevel" type="float">
+        <Property name="DisplayName" type="string" value="Output White Level" />
+        <Property name="Default" type="float" value="80" />
+    </Property>
 </Effect>

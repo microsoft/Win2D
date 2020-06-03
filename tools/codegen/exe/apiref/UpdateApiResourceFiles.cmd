@@ -97,7 +97,7 @@ SET FILE_LIST=^
     GammaTransfer.xml ^
     GaussianBlur.xml ^
     Grayscale.xml ^
-    HdrToneMap.xml ^
+    HDRToneMap.xml ^
     HighlightsShadows.xml ^
     HueRotation.xml ^
     HueToRgb.xml ^
