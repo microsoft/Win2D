@@ -82,7 +82,7 @@ namespace CodeGen.Test
             FileInfo[] actualGeneratedFiles = actualDirectoryInfo.GetFiles();
 
             // Ensure the correct number of files was generated.
-            const int expectedEffectCount = 59;
+            const int expectedEffectCount = 61;
             Assert.AreEqual(expectedEffectCount * 3 + 2, expectedGeneratedFiles.Length);
             Assert.AreEqual(expectedGeneratedFiles.Length, actualGeneratedFiles.Length);
 

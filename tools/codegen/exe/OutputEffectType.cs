@@ -400,7 +400,11 @@ namespace CodeGen
 
             if (effect.Overrides != null && !string.IsNullOrEmpty(effect.Overrides.IsSupportedCheck))
             {
-                output.WriteLine("if (!SharedDeviceState::GetInstance()->Is" + effect.Overrides.IsSupportedCheck + "Supported())");
+                if (effect.Overrides.IsSupportedCheck == "Registered") {
+                    output.WriteLine("if (!SharedDeviceState::GetInstance()->IsEffectRegistered(" + effect.ClassName + "::EffectId(), true))");
+                } else {
+                    output.WriteLine("if (!SharedDeviceState::GetInstance()->Is" + effect.Overrides.IsSupportedCheck + "Supported())");
+                }
                 output.Indent();
                 output.WriteLine("ThrowHR(E_NOTIMPL, Strings::NotSupportedOnThisVersionOfWindows);");
                 output.Unindent();
@@ -474,7 +478,11 @@ namespace CodeGen
                     output.WriteLine("{");
                     output.Indent();
                     output.WriteLine("CheckInPointer(result);");
-                    output.WriteLine("*result = SharedDeviceState::GetInstance()->Is" + effect.Overrides.IsSupportedCheck + "Supported();");
+                    if (effect.Overrides.IsSupportedCheck == "Registered") {
+                        output.WriteLine("*result = SharedDeviceState::GetInstance()->IsEffectRegistered(" + effect.ClassName + "::EffectId(), true);");
+                    } else {
+                        output.WriteLine("*result = SharedDeviceState::GetInstance()->Is" + effect.Overrides.IsSupportedCheck + "Supported();");
+                    }
                     output.Unindent();
                     output.WriteLine("});");
                     output.Unindent();

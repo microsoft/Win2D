@@ -319,6 +319,9 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\GrayscaleEffect.cpp">
       <Filter>effects\generated</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\HdrToneMapEffect.cpp">
+      <Filter>effects\generated</Filter>
+    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\HighlightsAndShadowsEffect.cpp">
       <Filter>effects\generated</Filter>
     </ClCompile>
@@ -347,6 +350,9 @@
       <Filter>effects\generated</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\VignetteEffect.cpp">
+      <Filter>effects\generated</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\WhiteLevelAdjustmentEffect.cpp">
       <Filter>effects\generated</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)xaml\CanvasVirtualImageSource.cpp">
@@ -784,6 +790,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\GrayscaleEffect.h">
       <Filter>effects\generated</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\HdrToneMapEffect.h">
+      <Filter>effects\generated</Filter>
+    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\HighlightsAndShadowsEffect.h">
       <Filter>effects\generated</Filter>
     </ClInclude>
@@ -812,6 +821,9 @@
       <Filter>effects\generated</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\VignetteEffect.h">
+      <Filter>effects\generated</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\WhiteLevelAdjustmentEffect.h">
       <Filter>effects\generated</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)xaml\CanvasVirtualImageSource.h">
@@ -942,6 +954,9 @@
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)svg\CanvasSvgStrokeDashArrayAttribute.h">
       <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)utils\GuidUtilities.h">
+      <Filter>utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1117,6 +1132,9 @@
     <None Include="$(MSBuildThisFileDirectory)effects\generated\GrayscaleEffect.abi.idl">
       <Filter>effects\generated</Filter>
     </None>
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\HdrToneMapEffect.abi.idl">
+      <Filter>effects\generated</Filter>
+    </None>
     <None Include="$(MSBuildThisFileDirectory)effects\generated\HighlightsAndShadowsEffect.abi.idl">
       <Filter>effects\generated</Filter>
     </None>
@@ -1145,6 +1163,9 @@
       <Filter>effects\generated</Filter>
     </None>
     <None Include="$(MSBuildThisFileDirectory)effects\generated\VignetteEffect.abi.idl">
+      <Filter>effects\generated</Filter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\WhiteLevelAdjustmentEffect.abi.idl">
       <Filter>effects\generated</Filter>
     </None>
     <None Include="$(MSBuildThisFileDirectory)geometry\CanvasCachedGeometry.abi.idl">

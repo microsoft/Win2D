@@ -55,6 +55,7 @@
 #include "EmbossEffect.h"
 #include "ExposureEffect.h"
 #include "GrayscaleEffect.h"
+#include "HdrToneMapEffect.h"
 #include "HighlightsAndShadowsEffect.h"
 #include "HueToRgbEffect.h"
 #include "InvertEffect.h"
@@ -68,6 +69,7 @@
 #include "TemperatureAndTintEffect.h"
 #include "TintEffect.h"
 #include "VignetteEffect.h"
+#include "WhiteLevelAdjustmentEffect.h"
 
 #endif // _WIN32_WINNT_WIN10
 
@@ -123,6 +125,7 @@ std::pair<IID, CanvasEffect::MakeEffectFunction> CanvasEffect::m_effectMakers[] 
     { EmbossEffect::EffectId(),               MakeEffect<EmbossEffect>               },
     { ExposureEffect::EffectId(),             MakeEffect<ExposureEffect>             },
     { GrayscaleEffect::EffectId(),            MakeEffect<GrayscaleEffect>            },
+    { HdrToneMapEffect::EffectId(),           MakeEffect<HdrToneMapEffect>           },
     { HighlightsAndShadowsEffect::EffectId(), MakeEffect<HighlightsAndShadowsEffect> },
     { HueToRgbEffect::EffectId(),             MakeEffect<HueToRgbEffect>             },
     { InvertEffect::EffectId(),               MakeEffect<InvertEffect>               },
@@ -136,6 +139,7 @@ std::pair<IID, CanvasEffect::MakeEffectFunction> CanvasEffect::m_effectMakers[] 
     { TemperatureAndTintEffect::EffectId(),   MakeEffect<TemperatureAndTintEffect>   },
     { TintEffect::EffectId(),                 MakeEffect<TintEffect>                 },
     { VignetteEffect::EffectId(),             MakeEffect<VignetteEffect>             },
+    { WhiteLevelAdjustmentEffect::EffectId(), MakeEffect<WhiteLevelAdjustmentEffect> },
 
 #endif // _WIN32_WINNT_WIN10
 

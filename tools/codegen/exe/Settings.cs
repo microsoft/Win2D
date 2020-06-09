@@ -130,6 +130,7 @@ namespace CodeGen
                 [XmlAttributeAttribute]
                 public string WinVer;
 
+                //If set to "Registered", this will checck if the effect is registered using its class ID.
                 [XmlAttributeAttribute]
                 public string IsSupportedCheck;
 

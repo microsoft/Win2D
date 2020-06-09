@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<!--
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+Licensed under the MIT License. See LICENSE.txt in the project root for license information.
+-->
+
+<doc>
+  <assembly>
+    <name>Microsoft.Graphics.Canvas</name>
+  </assembly>
+  <members>
+
+    <member name="T:Microsoft.Graphics.Canvas.Effects.WhiteLevelAdjustmentEffect" NoComposition="true" Win10_17763="true">
+      <summary>
+        This effect allows the white level of an image to be linearly scaled. This is especially helpful when you convert between display-referred luminance space and scene-referred luminance space, or vice versa.
+      </summary>
+      <remarks>
+        <p>This Windows Runtime type corresponds to the 
+          <a href="https://docs.microsoft.com/en-us/windows/win32/direct2d/white-level-adjustment-effect">D2D White level adjustment effect</a>.</p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Effects.WhiteLevelAdjustmentEffect.#ctor">
+      <summary>Initializes a new instance of the WhiteLevelAdjustmentEffect class.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.WhiteLevelAdjustmentEffect.Source">
+      <summary>Gets or sets the input source for the effect.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.WhiteLevelAdjustmentEffect.InputWhiteLevel">
+      <summary>The white level of the input image, in nits. Default value 80.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.WhiteLevelAdjustmentEffect.OutputWhiteLevel">
+      <summary>The white level of the output image, in nits. Default value 80.</summary>
+    </member>
+    
+    <inherittemplate name="EffectTemplate" replacement="WhiteLevelAdjustmentEffect" />
+    <inherittemplate name="ICanvasEffectTemplate" replacement="WhiteLevelAdjustmentEffect" />
+    <inherittemplate name="EffectRequiresOSVersionTemplate" replacement="WhiteLevelAdjustmentEffect" />
+
+  </members>
+</doc>

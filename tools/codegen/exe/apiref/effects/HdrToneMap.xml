@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<!--
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+Licensed under the MIT License. See LICENSE.txt in the project root for license information.
+-->
+
+<Effect>
+    <!-- Localization -->
+    <_locDefinition>
+        <_locDefault _loc="locNone" />
+        <_locTag _locAttrData="displayname">Field</_locTag>
+        <_locTag _locAttrData="name">Input</_locTag>
+        <_locTag _locAttrData="value">Property</_locTag>
+    </_locDefinition>
+    <!-- System Properties -->
+    <Property name='DisplayName' type='string' value='HDR Tone Map'/>
+    <Property name='Author' type='string' value='Microsoft Corporation'/>
+    <Property name='Category' type='string' value='Color'/>
+    <Property name='Description' type='string' value='Adjusts the maximum luminance of the source image to fit within the maximum output luminance supported. Input and output luminance values are specified in nits. Note that the color space of the image is assumed to be scRGB.'/>
+
+    <!-- This effect has one input -->
+    <Inputs>
+	    <Input name='Source'/>
+    </Inputs>
+
+    <Property name='InputMaxLuminance' type='float'>
+        <Property name='DisplayName' type='string' value='Input Max Luminance'/>
+        <Property name="Default" type="float" value="4000" />
+    </Property>
+    <Property name="OutputMaxLuminance" type="float">
+        <Property name="DisplayName" type="string" value="Output Max Luminance" />
+        <Property name="Default" type="float" value="300" />
+    </Property>
+    <Property name='DisplayMode' type='enum'>
+        <Property name='DisplayName' type='string' value='Display Mode'/>
+        <Property name="Default" type="enum" value="0" />
+        <Fields>
+            <Field name='SDR' displayname='SDR' index="0" />
+            <Field name='HDR' displayname='HDR' index="1" />
+        </Fields>
+    </Property>
+</Effect>

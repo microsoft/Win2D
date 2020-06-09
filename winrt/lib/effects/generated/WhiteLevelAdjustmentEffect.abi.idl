@@ -1,0 +1,50 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+//
+// Licensed under the MIT License. See LICENSE.txt in the project root for license information.
+
+// This file was automatically generated. Please do not edit it manually.
+
+#if (defined _WIN32_WINNT_WIN10) && (WINVER >= _WIN32_WINNT_WIN10)
+
+namespace Microsoft.Graphics.Canvas.Effects
+{
+    runtimeclass WhiteLevelAdjustmentEffect;
+
+    [version(VERSION), uuid(0B0B945C-96F7-56B4-8317-01DE629FC904), exclusiveto(WhiteLevelAdjustmentEffect)]
+    interface IWhiteLevelAdjustmentEffect : IInspectable
+        requires ICanvasEffect
+    {
+        [propget]
+        HRESULT InputWhiteLevel([out, retval] float* value);
+
+        [propput]
+        HRESULT InputWhiteLevel([in] float value);
+
+        [propget]
+        HRESULT OutputWhiteLevel([out, retval] float* value);
+
+        [propput]
+        HRESULT OutputWhiteLevel([in] float value);
+
+        [propget]
+        HRESULT Source([out, retval] IGRAPHICSEFFECTSOURCE** source);
+
+        [propput]
+        HRESULT Source([in] IGRAPHICSEFFECTSOURCE* source);
+
+    };
+
+    [version(VERSION), uuid(58DACBF8-637A-5DA7-9457-1EEEDF5A191C), exclusiveto(WhiteLevelAdjustmentEffect)]
+    interface IWhiteLevelAdjustmentEffectStatics : IInspectable
+    {
+        [propget] HRESULT IsSupported([out, retval] boolean* value);
+    }
+
+    [STANDARD_ATTRIBUTES, activatable(VERSION), static(IWhiteLevelAdjustmentEffectStatics, VERSION)]
+    runtimeclass WhiteLevelAdjustmentEffect
+    {
+        [default] interface IWhiteLevelAdjustmentEffect;
+    }
+}
+
+#endif // _WIN32_WINNT_WIN10

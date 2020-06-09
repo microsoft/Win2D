@@ -56,7 +56,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     
     <inherittemplate name="EffectTemplate" replacement="TintEffect" />
     <inherittemplate name="ICanvasEffectTemplate" replacement="TintEffect" />
-    <inherittemplate name="EffectRequires14393Template" replacement="TintEffect" />
+    <inherittemplate name="EffectRequiresOSVersionTemplate" replacement="TintEffect" />
 
   </members>
 </doc>

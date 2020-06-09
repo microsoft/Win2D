@@ -54,7 +54,8 @@
     </ItemGroup>
     <ItemGroup Condition="'$(UseNuGetSDK)' != ''">
       <MetaDataDir Include="$(WindowsSDK_MetadataPath)\$(TargetPlatformVersion)\Windows.Foundation.FoundationContract\3.0.0.0" />
-      <MetaDataDir Include="$(WindowsSDK_MetadataPath)\$(TargetPlatformVersion)\031\6.0.0.0" /> <!-- Windows.Foundation.UniversalApiContract lives here -->
+      <MetaDataDir Include="$(WindowsSDK_MetadataPath)\$(TargetPlatformVersion)\031\6.0.0.0" />
+      <!-- Windows.Foundation.UniversalApiContract lives here -->
     </ItemGroup>
     <Exec Command="$(MdMergeExe) -v @(MetaDataDir -> '-metadata_dir &quot;%(Identity)&quot;', ' ') -o &quot;$(MergedWinmdDirectory)&quot; -i &quot;$(UnmergedWinmdDirectory)&quot; -partial -n:Microsoft.Graphics.Canvas:3" />
   </Target>
@@ -87,6 +88,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\EmbossEffect.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\ExposureEffect.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\GrayscaleEffect.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\HdrToneMapEffect.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\HighlightsAndShadowsEffect.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\HueToRgbEffect.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\InvertEffect.h" />
@@ -97,6 +99,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\StraightenEffect.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\TemperatureAndTintEffect.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\VignetteEffect.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)effects\generated\WhiteLevelAdjustmentEffect.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)geometry\InkToGeometryCommandSink.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)images\WicAdapter.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)pch.h" />
@@ -218,6 +221,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\Conversion.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\D2DResourceLock.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\DxgiUtilities.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)utils\GuidUtilities.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\ResourceManager.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\ResourceWrapper.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\Strings.h" />
@@ -246,6 +250,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\EmbossEffect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\ExposureEffect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\GrayscaleEffect.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\HdrToneMapEffect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\HighlightsAndShadowsEffect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\HueToRgbEffect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\InvertEffect.cpp" />
@@ -256,6 +261,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\StraightenEffect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\TemperatureAndTintEffect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\VignetteEffect.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)effects\generated\WhiteLevelAdjustmentEffect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
@@ -434,6 +440,7 @@
     <None Include="$(MSBuildThisFileDirectory)effects\generated\EmbossEffect.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)effects\generated\ExposureEffect.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)effects\generated\GrayscaleEffect.abi.idl" />
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\HdrToneMapEffect.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)effects\generated\HighlightsAndShadowsEffect.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)effects\generated\HueToRgbEffect.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)effects\generated\InvertEffect.abi.idl" />
@@ -444,6 +451,7 @@
     <None Include="$(MSBuildThisFileDirectory)effects\generated\StraightenEffect.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)effects\generated\TemperatureAndTintEffect.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)effects\generated\VignetteEffect.abi.idl" />
+    <None Include="$(MSBuildThisFileDirectory)effects\generated\WhiteLevelAdjustmentEffect.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)geometry\CanvasCachedGeometry.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)geometry\CanvasGeometry.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)geometry\CanvasPathBuilder.abi.idl" />

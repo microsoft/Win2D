@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<!--
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+Licensed under the MIT License. See LICENSE.txt in the project root for license information.
+-->
+
+<doc>
+  <assembly>
+    <name>Microsoft.Graphics.Canvas</name>
+  </assembly>
+  <members>
+
+    <member name="T:Microsoft.Graphics.Canvas.Effects.HdrToneMapEffect" NoComposition="true" Win10_17763="true">
+      <summary>
+        This effect adjusts the dynamic range of an image to better suit its content to the capability of the output display.
+      </summary>
+      <remarks>
+        <p>This Windows Runtime type corresponds to the 
+          <a href="https://docs.microsoft.com/en-us/windows/win32/direct2d/hdr-tone-map-effect">D2D HDR tone map effect</a>.</p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Effects.HdrToneMapEffect.#ctor">
+      <summary>Initializes a new instance of the HdrToneMapEffect class.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.HdrToneMapEffect.Source">
+      <summary>Gets or sets the input source for the effect.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.HdrToneMapEffect.InputMaxLuminance">
+      <summary>The maximum light level (or MaxCLL) of the image, in nits. Default value 4000.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.HdrToneMapEffect.OutputMaxLuminance">
+      <summary>The MaxCLL supported by the output target, in nits - typically set to the MaxCLL of the display. Default value 300.</summary>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.Effects.HdrToneMapEffect.DisplayMode">
+      <summary>When set to Hdr, the tone mapping curve is adjusted to better fit the fit the behavior of common HDR displays. Default value Sdr.</summary>
+    </member>
+
+    <member name="T:Microsoft.Graphics.Canvas.Effects.HdrToneMapEffectDisplayMode">
+      <summary>The display mode used for the effect.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Effects.HdrToneMapEffectDisplayMode.Sdr">
+      <summary>Specifies that the tone mapper algorithm be optimized for best appearance on a standard dynamic range (SDR) display.</summary>
+    </member>
+    <member name="F:Microsoft.Graphics.Canvas.Effects.HdrToneMapEffectDisplayMode.Hdr">
+      <summary>Specifies that the tone mapper algorithm be optimized for best appearance on a high dynamic range (HDR) display.</summary>
+    </member>
+    
+    <inherittemplate name="EffectTemplate" replacement="HdrToneMapEffect" />
+    <inherittemplate name="ICanvasEffectTemplate" replacement="HdrToneMapEffect" />
+    <inherittemplate name="EffectRequiresOSVersionTemplate" replacement="HdrToneMapEffect" />
+
+  </members>
+</doc>
