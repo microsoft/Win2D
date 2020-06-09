@@ -334,12 +334,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         auto factory = m_adapter->CreateD2DFactory(CanvasDebugLevel::None);
         ComPtr<ID2D1Properties> effectProperties;
         auto hr = factory->GetEffectProperties(effectId, effectProperties.GetAddressOf());
-        bool result = true;
-        if (hr == D2DERR_EFFECT_IS_NOT_REGISTERED || hr == E_NOT_SET) { //E_NOT_SET is returned for UWP apps if the effect is not registered
-            result = false;
-        } else {
-            ThrowIfFailed(hr);
-        }
+        bool result = SUCCEEDED(hr);
         if (cacheResult){
             RecursiveLock lock(m_mutex);
             m_cachedRegisteredEffects.insert_or_assign(effectId, result);
