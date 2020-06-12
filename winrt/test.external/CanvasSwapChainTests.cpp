@@ -11,7 +11,7 @@ using namespace WinRTDirectX;
 using namespace Windows::Devices::Enumeration;
 using namespace Windows::Foundation;
 using namespace Windows::Graphics::Imaging;
-using namespace Windows::UI;
+using namespace Microsoft::UI;
 
 TEST_CLASS(CanvasSwapChainTests)
 {
@@ -65,7 +65,7 @@ TEST_CLASS(CanvasSwapChainTests)
 
         auto canvasSwapChain = ref new CanvasSwapChain(canvasDevice, 1, 1, DEFAULT_DPI);
 
-        Color referenceColor = Colors::Red;
+        Windows::UI::Color referenceColor = Colors::Red;
 
         auto drawingSession = canvasSwapChain->CreateDrawingSession(referenceColor);
         delete drawingSession;

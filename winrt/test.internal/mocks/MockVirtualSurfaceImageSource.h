@@ -4,7 +4,7 @@
 
 #pragma once
 
-using namespace ABI::Windows::UI::Xaml::Media::Imaging;
+using namespace ABI::Microsoft::UI::Xaml::Media::Imaging;
 
 class MockVirtualSurfaceImageSource : public RuntimeClass<
     RuntimeClassFlags<WinRtClassicComMix>,
@@ -31,6 +31,15 @@ public:
     CALL_COUNTER_WITH_MOCK(ReadLocalValueMethod, HRESULT(IDependencyProperty*, IInspectable**));
     CALL_COUNTER_WITH_MOCK(GetAnimationBaseValueMethod, HRESULT(IDependencyProperty*, IInspectable**));
     CALL_COUNTER_WITH_MOCK(get_DispatcherMethod, HRESULT(ICoreDispatcher**));    
+    CALL_COUNTER_WITH_MOCK(get_DispatcherQueueMethod, HRESULT(ABI::Microsoft::System::IDispatcherQueue**));
+
+    CALL_COUNTER_WITH_MOCK(RegisterPropertyChangedCallbackMethod, HRESULT(
+        ABI::Microsoft::UI::Xaml::IDependencyProperty* dp,
+        ABI::Microsoft::UI::Xaml::IDependencyPropertyChangedCallback* callback,
+        INT64* result));
+    CALL_COUNTER_WITH_MOCK(UnregisterPropertyChangedCallbackMethod, HRESULT(
+        ABI::Microsoft::UI::Xaml::IDependencyProperty* dp,
+        INT64 token));
 
     CALL_COUNTER_WITH_MOCK(SetDeviceMethod, HRESULT(IUnknown*));
     CALL_COUNTER_WITH_MOCK(BeginDrawMethod, HRESULT(RECT const&, IID const&, void**, POINT*));
@@ -114,11 +123,33 @@ public:
     {
         return GetAnimationBaseValueMethod.WasCalled(p, v);
     }
+
+    IFACEMETHODIMP RegisterPropertyChangedCallback(
+        ABI::Microsoft::UI::Xaml::IDependencyProperty* dp,
+        ABI::Microsoft::UI::Xaml::IDependencyPropertyChangedCallback* callback,
+        INT64* result
+    )
+    {
+        return RegisterPropertyChangedCallbackMethod.WasCalled(dp, callback, result);
+    }
+
+    IFACEMETHODIMP UnregisterPropertyChangedCallback(
+        ABI::Microsoft::UI::Xaml::IDependencyProperty* dp,
+        INT64 token
+    )
+    {
+        return UnregisterPropertyChangedCallbackMethod.WasCalled(dp, token);
+    }
     
     IFACEMETHODIMP get_Dispatcher(ICoreDispatcher** v) override
     {
         return get_DispatcherMethod.WasCalled(v);
     }    
+
+    IFACEMETHODIMP get_DispatcherQueue(ABI::Microsoft::System::IDispatcherQueue** v) override
+    {
+        return get_DispatcherQueueMethod.WasCalled(v);
+    }
 
     //
     // ISurfaceImageSourceNativeWithD2D

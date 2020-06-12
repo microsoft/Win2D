@@ -5,6 +5,8 @@
 #include "pch.h"
 #include "stubs/StubDxgiSwapChain.h"
 
+#ifdef CANVAS_ANIMATED_CONTROL_IS_ENABLED
+
 std::shared_ptr<CanvasAnimatedControlTestAdapter> CreateAnimatedControlTestAdapter(
     ComPtr<MockD2DDeviceContext> const& deviceContext,
     ComPtr<StubD2DDevice> const& mockD2DDevice,
@@ -103,6 +105,8 @@ std::shared_ptr<CanvasAnimatedControlTestAdapter> CreateAnimatedControlTestAdapt
 
     return adapter;
 }
+
+#endif
 
 DpiScalingTestCase dpiScalingTestCases[]
 {

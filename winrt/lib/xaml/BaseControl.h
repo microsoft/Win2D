@@ -12,18 +12,26 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     using namespace ::Microsoft::WRL::Wrappers;
     using namespace ABI::Windows::ApplicationModel;
     using namespace ABI::Windows::Graphics::Display;
+#ifdef WINUI3
+    using namespace ABI::Microsoft::System;
+#else
     using namespace ABI::Windows::UI::Core;
-    using namespace ABI::Windows::UI::Xaml::Controls;
-    using namespace ABI::Windows::UI::Xaml;
-    using namespace ABI::Windows::UI;
+#endif
+    using namespace ABI::Microsoft::UI::Xaml::Controls;
+    using namespace ABI::Microsoft::UI::Xaml;
+    using namespace ABI::Microsoft::UI;
     using namespace WinRTDirectX;
 
     //
     // See CanvasControl.h / CanvasAnimatedControl.h for the shape of TRAITS.
     //
 
+#ifndef WINUI3
     typedef ITypedEventHandler<DisplayInformation*, IInspectable*> DpiChangedEventHandler;
+#endif
     typedef ITypedEventHandler<XamlRoot*, XamlRootChangedEventArgs*> XamlRootChangedEventHandler;
+    typedef ITypedEventHandler<IInspectable*, WindowVisibilityChangedEventArgs*> WindowVisibilityChangedEventHandler;
+
 
     template<typename TRAITS>
     class IBaseControlAdapter
@@ -37,11 +45,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         virtual std::unique_ptr<IRecreatableDeviceManager<TRAITS>> CreateRecreatableDeviceManager(IInspectable* parentControl) = 0;
         virtual RegisteredEvent AddApplicationSuspendingCallback(IEventHandler<SuspendingEventArgs*>*) = 0;
         virtual RegisteredEvent AddApplicationResumingCallback(IEventHandler<IInspectable*>*) = 0;
-        virtual float GetLogicalDpi() = 0;
+        
+#ifndef WINUI3
+        virtual float GetLogicalDpi(IXamlRoot*) = 0;
 
         virtual RegisteredEvent AddDpiChangedCallback(DpiChangedEventHandler* handler) = 0;
+#endif
 
-        virtual RegisteredEvent AddVisibilityChangedCallback(IWindowVisibilityChangedEventHandler* handler, IWindow* window) = 0;
+        virtual RegisteredEvent AddVisibilityChangedCallback(WindowVisibilityChangedEventHandler* handler, IWindow* window) = 0;
 
         virtual RegisteredEvent AddXamlRootChangedCallback(XamlRootChangedEventHandler* handler, IXamlRoot* xamlRoot) = 0;
 
@@ -60,8 +71,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         CB_HELPER(AddApplicationSuspendingCallback, IEventHandler<SuspendingEventArgs*>);
         CB_HELPER(AddApplicationResumingCallback, IEventHandler<IInspectable*>);
+        
+#ifndef WINUI3
         CB_HELPER(AddDpiChangedCallback, DpiChangedEventHandler);
-        CB_HELPER(AddVisibilityChangedCallback, IWindowVisibilityChangedEventHandler);
+#endif
+        CB_HELPER(AddVisibilityChangedCallback, WindowVisibilityChangedEventHandler);
         CB_HELPER(AddXamlRootChangedCallback, XamlRootChangedEventHandler);
 
 #undef CB_HELPER
@@ -147,7 +161,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             , m_isSuspended(false)
             , m_isVisible(true)
             , m_window(adapter->GetWindowOfCurrentThread())
+#ifdef WINUI3
+            , m_logicalDpi(DEFAULT_DPI)
+#else
             , m_logicalDpi(adapter->GetLogicalDpi())
+#endif
             , m_customDpiScaling(1.0f)
             , m_useSharedDevice(useSharedDevice)
             , m_forceSoftwareRenderer(false)
@@ -471,15 +489,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             // IWindow will not be available in Xaml island scenarios, so prefer
             // IDependencyObject for getting the dispatcher.
             //
-            ComPtr<ICoreDispatcher> dispatcher;
+            ComPtr<IDispatcherQueue> dispatcher;
             auto control = GetControl();
             if (auto dependencyObject = MaybeAs<IDependencyObject>(control))
             {
-                ThrowIfFailed(dependencyObject->get_Dispatcher(&dispatcher));
+                ThrowIfFailed(dependencyObject->get_DispatcherQueue(dispatcher.ReleaseAndGetAddressOf()));
             }
             else
             {
-                ThrowIfFailed(GetWindow()->get_Dispatcher(&dispatcher));
+                ThrowIfFailed(GetWindow()->get_DispatcherQueue(dispatcher.ReleaseAndGetAddressOf()));
             }
 
             //
@@ -493,7 +511,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             }
 
             boolean hasAccess;
-            ThrowIfFailed(dispatcher->get_HasThreadAccess(&hasAccess));
+            ThrowIfFailed(As<IDispatcherQueue2>(dispatcher)->get_HasThreadAccess(&hasAccess));
 
             if (!hasAccess)
             {
@@ -767,11 +785,18 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                 &BaseControl::OnApplicationResuming);
 
             auto frameworkElement = As<IFrameworkElement>(GetControl());
+
+#ifdef WINUI3
+            if (auto elementAsUIE = MaybeAs<IUIElement>(frameworkElement))
+            {
+                ThrowIfFailed(elementAsUIE->get_XamlRoot(&m_xamlRoot));
+            }
+#else
             if (auto elementAsUIE10 = MaybeAs<IUIElement10>(frameworkElement))
             {
                 ThrowIfFailed(elementAsUIE10->get_XamlRoot(&m_xamlRoot));
             }
-
+#endif
             // XamlRoot is a 19H1 (18362) API that provides visibility and DPI APIs for Xaml island
             // scenarios as well as CoreWindow scenarios. Use it if it's available, otherwise fall
             // back to the CoreWindow's visibility notifications.
@@ -784,7 +809,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             }
             else
             {
+#ifndef WINUI3
                 m_dpiChangedEventRegistration = m_adapter->AddDpiChangedCallback(this, &BaseControl::OnDpiChanged);
+#endif
 
                 m_windowVisibilityChangedEventRegistration = m_adapter->AddVisibilityChangedCallback(
                     this,
@@ -879,6 +906,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         {
             float newDpi = m_logicalDpi;
 
+            // Only update the DPI if the IXamlRoot exists, since DPI needs that context
             if (m_xamlRoot)
             {
                 double rasterizationScale;
@@ -889,7 +917,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             }
             else
             {
+#ifndef WINUI3
                 newDpi = m_adapter->GetLogicalDpi();
+#endif
             }
 
             if (newDpi != m_logicalDpi)
@@ -985,8 +1015,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                     UpdateDpi();
                 });
         }
-
+        
+#ifdef WINUI3
+        HRESULT OnWindowVisibilityChanged(IInspectable*, IWindowVisibilityChangedEventArgs* args)
+#else
         HRESULT OnWindowVisibilityChanged(IInspectable*, IVisibilityChangedEventArgs* args)
+#endif
         {
             return ExceptionBoundary(
                 [&]

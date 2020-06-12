@@ -99,11 +99,11 @@ public:
 
         void ExpectHasThreadAccess(bool hasThreadAccess)
         {
-            auto mockDispatcher = Make<MockDispatcher>();
+            auto mockDispatcher = Make<MockDispatcherQueue>();
             mockDispatcher->get_HasThreadAccessMethod.AllowAnyCall([=](boolean* value) { *value = hasThreadAccess; return S_OK; });
 
-            Vsis->get_DispatcherMethod.SetExpectedCalls(1,
-                [=](ICoreDispatcher** value)
+            Vsis->get_DispatcherQueueMethod.SetExpectedCalls(1,
+                [=](IDispatcherQueue** value)
                 {
                     return mockDispatcher.CopyTo(value);
                 });
@@ -495,8 +495,8 @@ public:
     {
         SimpleFixture f(anySize, anyDpi);
 
-        f.Vsis->get_DispatcherMethod.SetExpectedCalls(1,
-            [](ICoreDispatcher**)
+        f.Vsis->get_DispatcherQueueMethod.SetExpectedCalls(1,
+            [](IDispatcherQueue**)
             {
                 // When running in the designer get_Dispatcher returns E_FAIL.
                 return E_FAIL;

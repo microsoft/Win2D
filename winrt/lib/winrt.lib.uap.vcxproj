@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\..\packages\Microsoft.ProjectReunion.0.5.0\build\native\Microsoft.ProjectReunion.props" Condition="Exists('..\..\packages\Microsoft.ProjectReunion.0.5.0\build\native\Microsoft.ProjectReunion.props')" />
+  <Import Project="..\..\packages\Microsoft.ProjectReunion.Foundation.0.5.0\build\native\Microsoft.ProjectReunion.Foundation.props" Condition="Exists('..\..\packages\Microsoft.ProjectReunion.Foundation.0.5.0\build\native\Microsoft.ProjectReunion.Foundation.props')" />
+  <Import Project="..\..\packages\Microsoft.ProjectReunion.WinUI.0.5.0\build\native\Microsoft.ProjectReunion.WinUI.props" Condition="Exists('..\..\packages\Microsoft.ProjectReunion.WinUI.0.5.0\build\native\Microsoft.ProjectReunion.WinUI.props')" />
+  <Import Project="..\..\packages\Microsoft.Windows.AbiWinRT.2.0.210330.2\build\native\Microsoft.Windows.AbiWinRT.props" Condition="Exists('..\..\packages\Microsoft.Windows.AbiWinRT.2.0.210330.2\build\native\Microsoft.Windows.AbiWinRT.props')" />
+  <Import Project="..\..\packages\Microsoft.Windows.MidlRT.2.0.200924.1\build\native\Microsoft.Windows.MidlRT.props" Condition="Exists('..\..\packages\Microsoft.Windows.MidlRT.2.0.200924.1\build\native\Microsoft.Windows.MidlRT.props')" />
   <PropertyGroup Label="Globals">
+    <AbiWinRTEnsureSDKHeaderCompat>true</AbiWinRTEnsureSDKHeaderCompat>
     <ProjectGuid>{26b85b6e-3520-42b5-adb6-971010cc99fa}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <ProjectName>winrt.lib.uap</ProjectName>
@@ -12,6 +18,10 @@
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
     <RootNamespace>Microsoft.Graphics.Canvas</RootNamespace>
     <ItemsRootNamespace>Microsoft.Graphics.Canvas</ItemsRootNamespace>
+    <MidlRTNamespaceMergeDepth>Microsoft.Graphics.Canvas:3</MidlRTNamespaceMergeDepth>
+    <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformMinVersion>10.0.17763.0</WindowsTargetPlatformMinVersion>
+    <!--SkipAddPriPayloadFilesToCopyToOutputDirectoryItems>true</SkipAddPriPayloadFilesToCopyToOutputDirectoryItems-->
   </PropertyGroup>
   <Import Project="..\..\build\Win2D.cpp.props" />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -19,16 +29,16 @@
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <TargetName>winrt</TargetName>
   </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <DesktopCompatible>true</DesktopCompatible>
+  </PropertyGroup>
   <Import Project="$(MSBuildThisFileDir)..\..\build\midlrt.props" />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ItemDefinitionGroup>
-    <Midl>
-      <AdditionalIncludeDirectories>..\..\Numerics\WinRT;directx</AdditionalIncludeDirectories>
-    </Midl>
     <ClCompile>
       <CompileAsWinRT>false</CompileAsWinRT>
       <AdditionalIncludeDirectories>..\Inc;$(EtwDirectory);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WRT_EXPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>ENABLE_WINRT_EXPERIMENTAL_TYPES=1;WRT_EXPORT;WINUI3;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <WarningLevel>Level4</WarningLevel>
     </ClCompile>
     <Link>
@@ -36,29 +46,21 @@
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <GenerateWindowsMetadata>false</GenerateWindowsMetadata>
     </Link>
+    <Midl>
+      <PreprocessorDefinitions>ENABLE_WINRT_EXPERIMENTAL_TYPES=1;WINUI3</PreprocessorDefinitions>
+      <AdditionalOptions>/nomidl %(AdditionalOptions)</AdditionalOptions>
+    </Midl>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)'=='Release'">
     <ClCompile>
       <Optimization>MinSpace</Optimization>
       <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
     </ClCompile>
+    <Midl>
+      <WarningLevel>0</WarningLevel>
+    </Midl>
   </ItemDefinitionGroup>
-  <Target Name="mdmerge" AfterTargets="Midl" Inputs="@(Midl -> '%(MetadataFileName)')" Outputs="$(MergedWinmdDirectory)\$(RootNamespace).winmd">
-    <PropertyGroup>
-      <MdMergeExe>"$(WindowsSdkDir)\bin\$(TargetPlatformVersion)\$(PreferredToolArchitecture)\mdmerge.exe"</MdMergeExe>
-    </PropertyGroup>
-    <!-- Reference paths differ depending on locally installed vs. NuGet SDK -->
-    <ItemGroup Condition="'$(UseNuGetSDK)' == ''">
-      <MetaDataDir Include="$(WindowsSDK_MetadataPath)\$(TargetPlatformVersion)\Windows.Foundation.FoundationContract\3.0.0.0" />
-      <MetaDataDir Include="$(WindowsSDK_MetadataPath)\$(TargetPlatformVersion)\Windows.Foundation.UniversalApiContract\8.0.0.0" />
-    </ItemGroup>
-    <ItemGroup Condition="'$(UseNuGetSDK)' != ''">
-      <MetaDataDir Include="$(WindowsSDK_MetadataPath)\$(TargetPlatformVersion)\Windows.Foundation.FoundationContract\3.0.0.0" />
-      <MetaDataDir Include="$(WindowsSDK_MetadataPath)\$(TargetPlatformVersion)\031\6.0.0.0" /> <!-- Windows.Foundation.UniversalApiContract lives here -->
-    </ItemGroup>
-    <Exec Command="$(MdMergeExe) -v @(MetaDataDir -> '-metadata_dir &quot;%(Identity)&quot;', ' ') -o &quot;$(MergedWinmdDirectory)&quot; -i &quot;$(UnmergedWinmdDirectory)&quot; -partial -n:Microsoft.Graphics.Canvas:3" />
-  </Target>
-  <Target Name="mc" AfterTargets="mdmerge" Inputs="@(mc)" Outputs="$(EtwDirectory)\%(filename).rc">
+  <Target Name="mc" AfterTargets="MidlRTMergeProjectWinMDInputs" Inputs="@(mc)" Outputs="$(EtwDirectory)\%(filename).rc">
     <MakeDir Directories="$(EtwDirectory)" />
     <Exec Command="mc @(mc) -um -P ETW_EVENT -r $(EtwDirectory) -h $(EtwDirectory)" />
   </Target>
@@ -369,9 +371,9 @@
     <mc Include="$(MSBuildThisFileDirectory)win2d.etw.xml" />
   </ItemGroup>
   <ItemGroup>
-    <MidlRT Include="$(MSBuildThisFileDirectory)Canvas.abi.idl">
-      <RenameHeaderTo>Microsoft.Graphics.Canvas.h</RenameHeaderTo>
-    </MidlRT>
+    <Midl Include="$(MSBuildThisFileDirectory)Canvas.abi.idl">
+      <HeaderFileName>$(GeneratedFilesDir)\Microsoft.Graphics.Canvas.h</HeaderFileName>
+    </Midl>
     <None Include="$(MSBuildThisFileDirectory)Canvas.codegen.idl" />
     <None Include="$(MSBuildThisFileDirectory)brushes\CanvasBrush.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)composition\CanvasComposition.abi.idl" />
@@ -474,8 +476,27 @@
     <None Include="$(MSBuildThisFileDirectory)effects\generated\CrossFadeEffect.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)effects\generated\OpacityEffect.abi.idl" />
     <None Include="$(MSBuildThisFileDirectory)effects\generated\TintEffect.abi.idl" />
+    <None Include="packages.config" />
   </ItemGroup>
-  <Import Project="$(MSBuildThisFileDir)..\..\build\midlrt.targets" />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <Import Project="..\..\build\Win2D.cpp.targets" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\..\packages\Microsoft.Windows.MidlRT.2.0.200924.1\build\native\Microsoft.Windows.MidlRT.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.Windows.MidlRT.2.0.200924.1\build\native\Microsoft.Windows.MidlRT.props'))" />
+    <Error Condition="!Exists('..\..\packages\Microsoft.Windows.MidlRT.2.0.200924.1\build\native\Microsoft.Windows.MidlRT.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.Windows.MidlRT.2.0.200924.1\build\native\Microsoft.Windows.MidlRT.targets'))" />
+    <Error Condition="!Exists('..\..\packages\Microsoft.Windows.AbiWinRT.2.0.210330.2\build\native\Microsoft.Windows.AbiWinRT.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.Windows.AbiWinRT.2.0.210330.2\build\native\Microsoft.Windows.AbiWinRT.props'))" />
+    <Error Condition="!Exists('..\..\packages\Microsoft.Windows.AbiWinRT.2.0.210330.2\build\native\Microsoft.Windows.AbiWinRT.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.Windows.AbiWinRT.2.0.210330.2\build\native\Microsoft.Windows.AbiWinRT.targets'))" />
+    <Error Condition="!Exists('..\..\packages\Microsoft.ProjectReunion.Foundation.0.5.0\build\native\Microsoft.ProjectReunion.Foundation.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.ProjectReunion.Foundation.0.5.0\build\native\Microsoft.ProjectReunion.Foundation.props'))" />
+    <Error Condition="!Exists('..\..\packages\Microsoft.ProjectReunion.Foundation.0.5.0\build\native\Microsoft.ProjectReunion.Foundation.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.ProjectReunion.Foundation.0.5.0\build\native\Microsoft.ProjectReunion.Foundation.targets'))" />
+    <Error Condition="!Exists('..\..\packages\Microsoft.ProjectReunion.WinUI.0.5.0\build\native\Microsoft.ProjectReunion.WinUI.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.ProjectReunion.WinUI.0.5.0\build\native\Microsoft.ProjectReunion.WinUI.props'))" />
+    <Error Condition="!Exists('..\..\packages\Microsoft.ProjectReunion.WinUI.0.5.0\build\native\Microsoft.ProjectReunion.WinUI.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.ProjectReunion.WinUI.0.5.0\build\native\Microsoft.ProjectReunion.WinUI.targets'))" />
+    <Error Condition="!Exists('..\..\packages\Microsoft.ProjectReunion.0.5.0\build\native\Microsoft.ProjectReunion.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.ProjectReunion.0.5.0\build\native\Microsoft.ProjectReunion.props'))" />
+  </Target>
+  <Import Project="..\..\packages\Microsoft.Windows.MidlRT.2.0.200924.1\build\native\Microsoft.Windows.MidlRT.targets" Condition="Exists('..\..\packages\Microsoft.Windows.MidlRT.2.0.200924.1\build\native\Microsoft.Windows.MidlRT.targets')" />
+  <Import Project="..\..\packages\Microsoft.Windows.AbiWinRT.2.0.210330.2\build\native\Microsoft.Windows.AbiWinRT.targets" Condition="Exists('..\..\packages\Microsoft.Windows.AbiWinRT.2.0.210330.2\build\native\Microsoft.Windows.AbiWinRT.targets')" />
+  <Import Project="..\..\packages\Microsoft.ProjectReunion.0.5.0\build\native\Microsoft.ProjectReunion.targets" Condition="Exists('..\..\packages\Microsoft.ProjectReunion.0.5.0\build\native\Microsoft.ProjectReunion.targets')" />
+  <Import Project="..\..\packages\Microsoft.ProjectReunion.Foundation.0.5.0\build\native\Microsoft.ProjectReunion.Foundation.targets" Condition="Exists('..\..\packages\Microsoft.ProjectReunion.Foundation.0.5.0\build\native\Microsoft.ProjectReunion.Foundation.targets')" />
+  <Import Project="..\..\packages\Microsoft.ProjectReunion.WinUI.0.5.0\build\native\Microsoft.ProjectReunion.WinUI.targets" Condition="Exists('..\..\packages\Microsoft.ProjectReunion.WinUI.0.5.0\build\native\Microsoft.ProjectReunion.WinUI.targets')" />
 </Project>

@@ -4,6 +4,72 @@
 
 #pragma once
 
+#ifdef WINUI3
+
+class MockDispatcherQueue : public RuntimeClass<ABI::Microsoft::System::IDispatcherQueue, ABI::Microsoft::System::IDispatcherQueue2>
+{
+public:
+    CALL_COUNTER_WITH_MOCK(TryEnqueueWithPriorityMethod, HRESULT(ABI::Microsoft::System::DispatcherQueuePriority, ABI::Microsoft::System::IDispatcherQueueHandler*, boolean*));
+    CALL_COUNTER_WITH_MOCK(get_HasThreadAccessMethod, HRESULT(boolean*));
+
+    virtual IFACEMETHODIMP get_HasThreadAccess(boolean* value) override
+    {
+        return get_HasThreadAccessMethod.WasCalled(value);
+    }
+
+    virtual IFACEMETHODIMP TryEnqueue(
+        ABI::Microsoft::System::IDispatcherQueueHandler* agileCallback,
+        boolean* result) override
+    {
+        Assert::Fail(L"Unexpected call to IDispatcherQueue::TryEnqueue");
+        return E_UNEXPECTED;
+    }
+
+    virtual IFACEMETHODIMP TryEnqueueWithPriority(
+        ABI::Microsoft::System::DispatcherQueuePriority priority,
+        ABI::Microsoft::System::IDispatcherQueueHandler* agileCallback,
+        boolean* result) override
+    {
+        return TryEnqueueWithPriorityMethod.WasCalled(priority, agileCallback, result);
+    }
+
+    virtual IFACEMETHODIMP CreateTimer(ABI::Microsoft::System::IDispatcherQueueTimer** result) override
+    {
+        Assert::Fail(L"Unexpected call to IDispatcherQueue::CreateTimer");
+        return E_UNEXPECTED;
+    }
+
+    virtual IFACEMETHODIMP add_ShutdownStarting(
+        ITypedEventHandler<ABI::Microsoft::System::DispatcherQueue*, ABI::Microsoft::System::DispatcherQueueShutdownStartingEventArgs*>* handler,
+        EventRegistrationToken* token) override
+    {
+        Assert::Fail(L"Unexpected call to IDispatcherQueue::add_ShutdownStarting");
+        return E_UNEXPECTED;
+    }
+
+    virtual IFACEMETHODIMP remove_ShutdownStarting(EventRegistrationToken token) override
+    {
+        Assert::Fail(L"Unexpected call to IDispatcherQueue::remove_ShutdownStarting");
+        return E_UNEXPECTED;
+    }
+
+    virtual IFACEMETHODIMP add_ShutdownCompleted(
+        ITypedEventHandler<ABI::Microsoft::System::DispatcherQueue*, IInspectable*>* handler,
+        EventRegistrationToken* token) override
+    {
+        Assert::Fail(L"Unexpected call to IDispatcherQueue::add_ShutdownCompleted");
+        return E_UNEXPECTED;
+    }
+
+    virtual IFACEMETHODIMP remove_ShutdownCompleted(EventRegistrationToken token) override
+    {
+        Assert::Fail(L"Unexpected call to IDispatcherQueue::remove_ShutdownCompleted");
+        return E_UNEXPECTED;
+    }
+};
+
+#else
+
 class MockDispatcher : public RuntimeClass<ICoreDispatcher, ICoreDispatcherWithTaskPriority>
 {
 public:
@@ -70,3 +136,5 @@ public:
 
 
 };
+
+#endif

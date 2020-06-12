@@ -9,12 +9,12 @@
 
 using namespace ABI::Microsoft::Graphics::Canvas::UI::Xaml;
 using namespace ABI::Microsoft::Graphics::Canvas;
-using namespace ABI::Windows::UI::Xaml::Controls;
+using namespace ABI::Microsoft::UI::Xaml::Controls;
 
 CanvasSwapChainPanelAdapter::CanvasSwapChainPanelAdapter()
 {
     ThrowIfFailed(GetActivationFactory(
-        HStringReference(RuntimeClass_Windows_UI_Xaml_Controls_SwapChainPanel).Get(),
+        HStringReference(RuntimeClass_Microsoft_UI_Xaml_Controls_SwapChainPanel).Get(),
         &m_swapChainPanelFactory));
 }
 

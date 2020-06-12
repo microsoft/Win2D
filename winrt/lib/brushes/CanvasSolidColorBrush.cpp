@@ -9,7 +9,7 @@
 using namespace ABI::Microsoft::Graphics::Canvas::Brushes;
 using namespace ABI::Microsoft::Graphics::Canvas;
 using namespace ABI::Windows::Foundation;
-using namespace ABI::Windows::UI;
+using namespace ABI::Microsoft::UI;
 
 
 static ComPtr<CanvasSolidColorBrush> CreateSolidColorBrush(

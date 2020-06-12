@@ -9,9 +9,11 @@ namespace canvas
     class MockDWriteFactory : public RuntimeClass<
         RuntimeClassFlags<ClassicCom>,
         ChainInterfaces<
+
 #if WINVER > _WIN32_WINNT_WINBLUE
         IDWriteFactory3,
 #endif
+
         IDWriteFactory2, IDWriteFactory1, IDWriteFactory>>
     {
     public:

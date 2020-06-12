@@ -15,6 +15,21 @@ namespace ExtractAPISurface
         List<Assembly> inputAssemblies;
         List<Assembly> referenceAssemblies;
 
+        private IEnumerable<Type> GetDefinedTypes(Assembly assembly)
+        {
+            try
+            {
+                return assembly.DefinedTypes;
+            }
+            catch(System.Reflection.ReflectionTypeLoadException ex)
+            {
+                foreach(var loadException in ex.LoaderExceptions)
+                {
+                    System.Console.WriteLine(loadException.ToString());
+                }
+                throw ex;
+            }
+        }
 
         public AssemblyCollection(CommandLineOptions options)
         {
@@ -34,7 +49,7 @@ namespace ExtractAPISurface
 
                 // Force the assembly to resolve all dependent types, to avoid infinite
                 // recursion if future assemblies depend on types defined by this one.
-                foreach (var type in assembly.DefinedTypes) { }
+                foreach (var type in GetDefinedTypes(assembly)) { }
 
                 inputAssemblies.Add(assembly);
             }
@@ -75,7 +90,7 @@ namespace ExtractAPISurface
         {
             foreach (var assembly in referenceAssemblies.Concat(inputAssemblies))
             {
-                if (assembly.DefinedTypes.Any(type => type.Namespace == e.NamespaceName))
+                if (GetDefinedTypes(assembly).Any(type => type.Namespace == e.NamespaceName))
                 {
                     e.ResolvedAssemblies.Add(assembly);
                 }

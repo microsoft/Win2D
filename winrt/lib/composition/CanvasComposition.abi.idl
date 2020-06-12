@@ -17,14 +17,14 @@ namespace Microsoft.Graphics.Canvas.UI.Composition
         
 
         HRESULT CreateCompositionGraphicsDevice(
-            [in]          Windows.UI.Composition.Compositor* compositor,
+            [in]          Microsoft.UI.Composition.Compositor* compositor,
             [in]          Microsoft.Graphics.Canvas.CanvasDevice* canvasDevice,
-            [out, retval] Windows.UI.Composition.CompositionGraphicsDevice** graphicsDevice);
+            [out, retval] Microsoft.UI.Composition.CompositionGraphicsDevice** graphicsDevice);
 
         HRESULT CreateCompositionSurfaceForSwapChain(
-            [in]          Windows.UI.Composition.Compositor* compositor,
+            [in]          Microsoft.UI.Composition.Compositor* compositor,
             [in]          Microsoft.Graphics.Canvas.CanvasSwapChain* swapChain,
-            [out, retval] Windows.UI.Composition.ICompositionSurface** compositionSurface);
+            [out, retval] Microsoft.UI.Composition.ICompositionSurface** compositionSurface);
 
         
         //
@@ -33,11 +33,11 @@ namespace Microsoft.Graphics.Canvas.UI.Composition
 
         
         HRESULT GetCanvasDevice(
-            [in]          Windows.UI.Composition.CompositionGraphicsDevice* graphicsDevice,
+            [in]          Microsoft.UI.Composition.CompositionGraphicsDevice* graphicsDevice,
             [out, retval] Microsoft.Graphics.Canvas.CanvasDevice** canvasDevice);
 
         HRESULT SetCanvasDevice(
-            [in] Windows.UI.Composition.CompositionGraphicsDevice* graphicsDevice,
+            [in] Microsoft.UI.Composition.CompositionGraphicsDevice* graphicsDevice,
             [in] Microsoft.Graphics.Canvas.CanvasDevice* canvasDevice);
 
         
@@ -51,18 +51,18 @@ namespace Microsoft.Graphics.Canvas.UI.Composition
         // from CanvasImageSource where we apply this policy).
         [overload("CreateDrawingSession")]
         HRESULT CreateDrawingSession(
-            [in]          Windows.UI.Composition.CompositionDrawingSurface* drawingSurface,
+            [in]          Microsoft.UI.Composition.CompositionDrawingSurface* drawingSurface,
             [out, retval] Microsoft.Graphics.Canvas.CanvasDrawingSession** drawingSession);
 
         [overload("CreateDrawingSession")]
         HRESULT CreateDrawingSessionWithUpdateRect(
-            [in]          Windows.UI.Composition.CompositionDrawingSurface* drawingSurface,
+            [in]          Microsoft.UI.Composition.CompositionDrawingSurface* drawingSurface,
             [in]          Windows.Foundation.Rect updateRect,
             [out, retval] Microsoft.Graphics.Canvas.CanvasDrawingSession** drawingSession);
 
         [overload("CreateDrawingSession")]
         HRESULT CreateDrawingSessionWithUpdateRectAndDpi(
-            [in]          Windows.UI.Composition.CompositionDrawingSurface* drawingSurface,
+            [in]          Microsoft.UI.Composition.CompositionDrawingSurface* drawingSurface,
             [in]          Windows.Foundation.Rect updateRectInPixels,
             [in]          float dpi,
             [out, retval] Microsoft.Graphics.Canvas.CanvasDrawingSession** drawingSession);
@@ -70,7 +70,7 @@ namespace Microsoft.Graphics.Canvas.UI.Composition
         // NOTE: sizeInPixels is converted to integer by rounding (rather than
         // truncating).  This is to match the behavior of CreateDrawingSurface.
         HRESULT Resize(
-            [in] Windows.UI.Composition.CompositionDrawingSurface* drawingSurface,
+            [in] Microsoft.UI.Composition.CompositionDrawingSurface* drawingSurface,
             [in] Windows.Foundation.Size sizeInPixels);
     }
 

@@ -10,14 +10,14 @@
 class DeferrableTaskScheduler
     : private LifespanTracker<DeferrableTaskScheduler>
 {
-    ComPtr<ICoreDispatcher> const m_dispatcher;
+    ComPtr<IDispatcherQueue> const m_dispatcher;
 
     std::mutex m_mutex;
     std::unique_ptr<DeferrableTask> m_currentTask;
     std::queue<std::unique_ptr<DeferrableTask>> m_pending;
     
 public:    
-    explicit DeferrableTaskScheduler(ComPtr<ICoreDispatcher> const& dispatcher)
+    explicit DeferrableTaskScheduler(ComPtr<IDispatcherQueue> const& dispatcher)
         : m_dispatcher(dispatcher)
     {
     }
@@ -46,7 +46,7 @@ public:
         assert(task == m_currentTask.get());
         
         // Deferred completed tasks we dispatch via the dispatcher
-        auto handler = Callback<AddFtmBase<IDispatchedHandler>::Type>(
+        auto handler = Callback<AddFtmBase<IDispatcherQueueHandler>::Type>(
             [task]() mutable
             {
                 return ExceptionBoundary(
@@ -57,8 +57,8 @@ public:
             });
         CheckMakeResult(handler);
 
-        ComPtr<IAsyncAction> asyncAction;
-        ThrowIfFailed(m_dispatcher->RunAsync(CoreDispatcherPriority_Normal, handler.Get(), &asyncAction));
+        boolean result;
+        ThrowIfFailed(m_dispatcher->TryEnqueueWithPriority(ABI::Microsoft::System::DispatcherQueuePriority_Normal, handler.Get(), &result));
     }
 
     void TaskCompleted(DeferrableTask* task)
@@ -89,7 +89,7 @@ private:
 
         DeferrableTask* t = m_currentTask.get();
         
-        auto handler = Callback<AddFtmBase<IDispatchedHandler>::Type>(
+        auto handler = Callback<AddFtmBase<IDispatcherQueueHandler>::Type>(
             [t]() mutable
             {
                 return ExceptionBoundary(
@@ -100,8 +100,8 @@ private:
             });
         CheckMakeResult(handler);
         
-        ComPtr<IAsyncAction> asyncAction;
-        ThrowIfFailed(m_dispatcher->RunAsync(CoreDispatcherPriority_Normal, handler.Get(), &asyncAction));
+        boolean result;
+        ThrowIfFailed(m_dispatcher->TryEnqueueWithPriority(ABI::Microsoft::System::DispatcherQueuePriority_Normal, handler.Get(), &result));
     }
     
     

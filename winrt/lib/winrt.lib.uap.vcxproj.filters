@@ -45,9 +45,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <MidlRT Include="$(MSBuildThisFileDirectory)Canvas.abi.idl" />
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)pch.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)brushes\CanvasBrush.cpp">
       <Filter>brushes</Filter>
@@ -1249,5 +1246,9 @@
     <None Include="$(MSBuildThisFileDirectory)svg\CanvasSvgElement.abi.idl">
       <Filter>svg</Filter>
     </None>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Midl Include="$(MSBuildThisFileDirectory)Canvas.abi.idl" />
   </ItemGroup>
 </Project>

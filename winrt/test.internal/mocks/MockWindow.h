@@ -9,12 +9,13 @@ class MockWindow : public RuntimeClass<IWindow>
     bool m_visible;
 
 public:
-    ComPtr<MockEventSource<IWindowVisibilityChangedEventHandler>> VisibilityChangedEventSource;
-    CALL_COUNTER_WITH_MOCK(get_DispatcherMethod, HRESULT(ICoreDispatcher**));
+    ComPtr<MockEventSource<WindowVisibilityChangedEventHandler>> VisibilityChangedEventSource;
+
+    CALL_COUNTER_WITH_MOCK(get_DispatcherQueueMethod, HRESULT(ABI::Microsoft::System::IDispatcherQueue**));
 
     MockWindow()
         : m_visible(true)
-        , VisibilityChangedEventSource(Make<MockEventSource<IWindowVisibilityChangedEventHandler>>(L"VisibilityChanged"))
+        , VisibilityChangedEventSource(Make<MockEventSource<WindowVisibilityChangedEventHandler>>(L"VisibilityChanged"))
     {
     }
 
@@ -22,7 +23,7 @@ public:
     {
         m_visible = visible;
 
-        class VisibilityChangedEventArgs : public RuntimeClass<ABI::Windows::UI::Core::IVisibilityChangedEventArgs>
+        class VisibilityChangedEventArgs : public RuntimeClass<ABI::Microsoft::UI::Xaml::IWindowVisibilityChangedEventArgs>
         {
             bool m_isVisible;
         public:
@@ -34,6 +35,18 @@ public:
             {
                 *value = m_isVisible;
                 return S_OK;
+            }
+
+            IFACEMETHODIMP get_Handled(boolean* value) override
+            {
+                Assert::Fail(L"Unexpected call to IWindowVisibilityChangedEventArgs::get_Handled");
+                return E_UNEXPECTED;
+            }
+
+            IFACEMETHODIMP put_Handled(boolean value) override
+            {
+                Assert::Fail(L"Unexpected call to IWindowVisibilityChangedEventArgs::put_Handled");
+                return E_UNEXPECTED;
             }
         };
 
@@ -57,14 +70,14 @@ public:
     }
                         
     IFACEMETHODIMP get_Content( 
-        ABI::Windows::UI::Xaml::IUIElement **value)
+        ABI::Microsoft::UI::Xaml::IUIElement **value)
     {
         Assert::Fail(L"Unexpected call to IWindow::get_Content");
         return E_UNEXPECTED;
     }
                        
     IFACEMETHODIMP put_Content( 
-        ABI::Windows::UI::Xaml::IUIElement *value)
+        ABI::Microsoft::UI::Xaml::IUIElement *value)
     {
         Assert::Fail(L"Unexpected call to IWindow::put_Content");
         return E_UNEXPECTED;
@@ -76,15 +89,71 @@ public:
         Assert::Fail(L"Unexpected call to IWindow::get_CoreWindow");
         return E_UNEXPECTED;
     }
-                        
+              
+#ifdef WINUI3
+    IFACEMETHODIMP get_Compositor(
+        ABI::Microsoft::UI::Composition::ICompositor** value
+    )
+    {
+        Assert::Fail(L"Unexpected call to IWindow::get_Compositor");
+        return E_UNEXPECTED;
+    }
+
+    IFACEMETHODIMP STDMETHODCALLTYPE get_DispatcherQueue(
+        ABI::Microsoft::System::IDispatcherQueue** value
+    )
+    {
+        return get_DispatcherQueueMethod.WasCalled(value);
+    }
+
+    virtual HRESULT STDMETHODCALLTYPE get_Title(
+        HSTRING* value
+    )
+    {
+        Assert::Fail(L"Unexpected call to IWindow::get_Title");
+        return E_UNEXPECTED;
+    }
+
+    virtual HRESULT STDMETHODCALLTYPE put_Title(
+        HSTRING value
+    )
+    {
+        Assert::Fail(L"Unexpected call to IWindow::put_Title");
+        return E_UNEXPECTED;
+    }
+
+    virtual HRESULT STDMETHODCALLTYPE get_ExtendsContentIntoTitleBar(
+        boolean* value)
+    {
+        Assert::Fail(L"Unexpected call to IWindow::get_ExtendsContentIntoTitleBar");
+        return E_UNEXPECTED;
+    }
+
+    virtual HRESULT STDMETHODCALLTYPE put_ExtendsContentIntoTitleBar(
+        boolean value
+    )
+    {
+        Assert::Fail(L"Unexpected call to IWindow::put_ExtendsContentIntoTitleBar");
+        return E_UNEXPECTED;
+    }
+#endif
+
     IFACEMETHODIMP get_Dispatcher( 
         ABI::Windows::UI::Core::ICoreDispatcher **value)
     {
+#ifndef WINUI3
         return get_DispatcherMethod.WasCalled(value);
+#else
+        Assert::Fail(L"Unexpected call to IWindow::get_Dispatcher");
+#endif
     }
 
     IFACEMETHODIMP add_Activated( 
-        ABI::Windows::UI::Xaml::IWindowActivatedEventHandler *value,
+#ifdef WINUI3
+        __FITypedEventHandler_2_IInspectable_Microsoft__CUI__CXaml__CWindowActivatedEventArgs* handler,
+#else
+        ABI::Windows::UI::Xaml::IWindowActivatedEventHandler* value,
+#endif
         EventRegistrationToken *token)
     {
         Assert::Fail(L"Unexpected call to IWindow::add_Activated");
@@ -97,9 +166,13 @@ public:
         Assert::Fail(L"Unexpected call to IWindow::remove_Activated");
         return E_UNEXPECTED;
     }
-                        
+           
     IFACEMETHODIMP add_Closed( 
-        ABI::Windows::UI::Xaml::IWindowClosedEventHandler *value,
+#ifdef WINUI3
+        __FITypedEventHandler_2_IInspectable_Microsoft__CUI__CXaml__CWindowEventArgs* handler,
+#else
+        ABI::Windows::UI::Xaml::IWindowClosedEventHandler* value,
+#endif
         EventRegistrationToken *token)
     {
         Assert::Fail(L"Unexpected call to IWindow::add_Closed");
@@ -114,7 +187,11 @@ public:
     }
                         
     IFACEMETHODIMP add_SizeChanged( 
-        ABI::Windows::UI::Xaml::IWindowSizeChangedEventHandler *value,
+#ifdef WINUI3
+        __FITypedEventHandler_2_IInspectable_Microsoft__CUI__CXaml__CWindowSizeChangedEventArgs* handler,
+#else
+        ABI::Windows::UI::Xaml::IWindowSizeChangedEventHandler* value,
+#endif
         EventRegistrationToken *token)
     {
         Assert::Fail(L"Unexpected call to IWindow::add_SizeChanged");
@@ -127,12 +204,21 @@ public:
         Assert::Fail(L"Unexpected call to IWindow::remove_SizeChanged");
         return E_UNEXPECTED;
     }
-                        
+                      
     IFACEMETHODIMP add_VisibilityChanged( 
-        ABI::Windows::UI::Xaml::IWindowVisibilityChangedEventHandler *value,
+#ifdef WINUI3
+        __FITypedEventHandler_2_IInspectable_Microsoft__CUI__CXaml__CWindowVisibilityChangedEventArgs* handler,
+#else
+        ABI::Windows::UI::Xaml::WindowVisibilityChangedEventHandler* value,
+#endif
         EventRegistrationToken *token)
     {
+#ifdef WINUI3
+        Assert::Fail(L"Unexpected call to IWindow::add_VisibilityChanged");
+        return E_UNEXPECTED;
+#else
         return VisibilityChangedEventSource->add_Event(value, token);
+#endif
     }
                         
     IFACEMETHODIMP remove_VisibilityChanged( 
@@ -152,4 +238,14 @@ public:
         Assert::Fail(L"Unexpected call to IWindow::Close");
         return E_UNEXPECTED;
     }
+
+#ifdef WINUI3
+    virtual HRESULT STDMETHODCALLTYPE SetTitleBar(
+        ABI::Microsoft::UI::Xaml::IUIElement* titleBar
+    )
+    {
+        Assert::Fail(L"Unexpected call to IWindow::SetTitleBar");
+        return E_UNEXPECTED;
+    }
+#endif
 };

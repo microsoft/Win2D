@@ -12,9 +12,10 @@ using namespace ABI::Microsoft::Graphics::Canvas::UI::Xaml;
 using namespace ABI::Microsoft::Graphics::Canvas;
 using namespace ABI::Windows::ApplicationModel::Core;
 using namespace ABI::Windows::ApplicationModel;
+using namespace ABI::Microsoft::System;
 using namespace ABI::Windows::Graphics::Display;
-using namespace ABI::Windows::UI::Xaml::Media;
-using namespace ABI::Windows::UI::Xaml;
+using namespace ABI::Microsoft::UI::Xaml::Media;
+using namespace ABI::Microsoft::UI::Xaml;
 
 IFACEMETHODIMP CanvasDrawEventArgsFactory::Create(
     ICanvasDrawingSession* drawingSession,
@@ -286,20 +287,20 @@ void CanvasControl::Changed(ChangeReason)
     // IWindow will not be available in Xaml island scenarios, so prefer
     // IDependencyObject for getting the dispatcher.
     //
-    ComPtr<ICoreDispatcher> dispatcher;
+    ComPtr<IDispatcherQueue> dispatcher;
     auto control = GetControl();
     if (auto dependencyObject = MaybeAs<IDependencyObject>(control))
     {
-        ThrowIfFailed(dependencyObject->get_Dispatcher(&dispatcher));
+        ThrowIfFailed(dependencyObject->get_DispatcherQueue(dispatcher.ReleaseAndGetAddressOf()));
     }
     else
     {
-        ThrowIfFailed(GetWindow()->get_Dispatcher(&dispatcher));
+        ThrowIfFailed(GetWindow()->get_DispatcherQueue(dispatcher.ReleaseAndGetAddressOf()));
     }
 
     if (dispatcher)
     {
-        ThrowIfFailed(dispatcher->get_HasThreadAccess(&hasThreadAccess));
+        ThrowIfFailed(As<IDispatcherQueue2>(dispatcher)->get_HasThreadAccess(&hasThreadAccess));
     }
     else
     {
@@ -317,7 +318,7 @@ void CanvasControl::Changed(ChangeReason)
     {
         // Marshal back to the UI thread.
         WeakRef weakSelf = AsWeak(this);
-        auto callback = Callback<AddFtmBase<IDispatchedHandler>::Type>([weakSelf]() mutable
+        auto callback = Callback<AddFtmBase<IDispatcherQueueHandler>::Type>([weakSelf]() mutable
         {
             return ExceptionBoundary([&]
             {
@@ -331,8 +332,8 @@ void CanvasControl::Changed(ChangeReason)
             });
         });
         CheckMakeResult(callback);
-        ComPtr<IAsyncAction> asyncAction;
-        ThrowIfFailed(dispatcher->RunAsync(CoreDispatcherPriority_Normal, callback.Get(), &asyncAction));
+        boolean result = true;
+        dispatcher->TryEnqueueWithPriority(ABI::Microsoft::System::DispatcherQueuePriority_Normal, callback.Get(), &result);
     }
 }
 

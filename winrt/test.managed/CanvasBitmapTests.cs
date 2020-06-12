@@ -13,7 +13,7 @@ using Windows.Foundation;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.Storage.Streams;
-using Windows.UI;
+using Microsoft.UI;
 
 #if WINDOWS_UWP
 using Windows.Graphics.DirectX;
@@ -308,26 +308,26 @@ namespace test.managed
                 ds.DrawImage(bitmap, 1, 0);
             }
 
-            CollectionAssert.AreEqual(new Color[] { Colors.Blue, Colors.Red }, renderTarget.GetPixelColors());
+            CollectionAssert.AreEqual(new Windows.UI.Color[] { Colors.Blue, Colors.Red }, renderTarget.GetPixelColors());
         }
 
         [TestMethod]
         public void SetPixelColorsReadHazards()
         {
             var device = new CanvasDevice();
-            var bitmap = CanvasBitmap.CreateFromColors(device, new Color[1], 1, 1);
+            var bitmap = CanvasBitmap.CreateFromColors(device, new Windows.UI.Color[1], 1, 1);
             var renderTarget = new CanvasRenderTarget(device, 2, 1, 96);
 
             using (var ds = renderTarget.CreateDrawingSession())
             {
-                bitmap.SetPixelColors(new Color[] { Colors.Blue });
+                bitmap.SetPixelColors(new Windows.UI.Color[] { Colors.Blue });
                 ds.DrawImage(bitmap, 0, 0);
 
-                bitmap.SetPixelColors(new Color[] { Colors.Red });
+                bitmap.SetPixelColors(new Windows.UI.Color[] { Colors.Red });
                 ds.DrawImage(bitmap, 1, 0);
             }
 
-            CollectionAssert.AreEqual(new Color[] { Colors.Blue, Colors.Red }, renderTarget.GetPixelColors());
+            CollectionAssert.AreEqual(new Windows.UI.Color[] { Colors.Blue, Colors.Red }, renderTarget.GetPixelColors());
         }
     }
 
@@ -338,7 +338,7 @@ namespace test.managed
         [TestMethod]
         public void CanvasBitmap_CreateFromSoftwareBitmap_Roundtrip()
         {
-            var colors = new Color[]
+            var colors = new Windows.UI.Color[]
             {
                 Colors.Red, Colors.Green, Colors.Yellow,
                 Colors.Green, Colors.Yellow, Colors.Red,

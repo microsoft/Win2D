@@ -6,11 +6,6 @@
 
 #include "CanvasAnimatedControlTestAdapter.h"
 
-std::shared_ptr<CanvasAnimatedControlTestAdapter> CreateAnimatedControlTestAdapter(
-    ComPtr<MockD2DDeviceContext> const& deviceContext,
-    ComPtr<StubD2DDevice> const& mockD2DDevice,
-    ComPtr<StubCanvasDevice> const& canvasDevice);
-
 class CanvasControlTestAdapter_InjectDeviceContext : public CanvasControlTestAdapter
 {
     ComPtr<ID2D1DeviceContext> m_deviceContext;
@@ -22,9 +17,9 @@ public:
     }
 
     virtual ComPtr<CanvasImageSource> CreateCanvasImageSource(
-        ICanvasDevice* device, 
-        float width, 
-        float height, 
+        ICanvasDevice* device,
+        float width,
+        float height,
         float dpi,
         CanvasAlphaMode alphaMode) override
     {
@@ -35,20 +30,20 @@ public:
         auto sisFactory = Make<MockSurfaceImageSourceFactory>();
         sisFactory->MockCreateInstanceWithDimensionsAndOpacity =
             [=](int32_t actualWidth, int32_t actualHeight, bool isOpaque, IInspectable* outer)
-            {
-                auto mockSurfaceImageSource = Make<MockSurfaceImageSource>();
-                                        
-                mockSurfaceImageSource->BeginDrawMethod.AllowAnyCall(
-                    [=](RECT const&, IID const& iid, void** updateObject, POINT*)
-                    {
-                        return m_deviceContext.CopyTo(iid, updateObject);
-                    });
+        {
+            auto mockSurfaceImageSource = Make<MockSurfaceImageSource>();
 
-                mockSurfaceImageSource->SetDeviceMethod.AllowAnyCall();
-                mockSurfaceImageSource->EndDrawMethod.AllowAnyCall();
+            mockSurfaceImageSource->BeginDrawMethod.AllowAnyCall(
+                [=](RECT const&, IID const& iid, void** updateObject, POINT*)
+                {
+                    return m_deviceContext.CopyTo(iid, updateObject);
+                });
 
-                return mockSurfaceImageSource;
-            };
+            mockSurfaceImageSource->SetDeviceMethod.AllowAnyCall();
+            mockSurfaceImageSource->EndDrawMethod.AllowAnyCall();
+
+            return mockSurfaceImageSource;
+        };
 
         auto dsFactory = std::make_shared<CanvasImageSourceDrawingSessionFactory>();
 
@@ -88,27 +83,6 @@ struct TestAdapter<CanvasControlTraits>
     }
 };
 
-template<>
-struct TestAdapter<CanvasAnimatedControlTraits>
-{
-    typedef CanvasAnimatedControlTestAdapter type;
-    typedef CanvasAnimatedControlTestAdapter injectDeviceContextType;
-
-    static std::shared_ptr<CanvasAnimatedControlTestAdapter> Create()
-    {
-        return std::make_shared<CanvasAnimatedControlTestAdapter>();
-    }
-
-    static std::shared_ptr<CanvasAnimatedControlTestAdapter> Create(MockD2DDeviceContext* deviceContext)
-    {
-        auto mockD2DDevice = Make<StubD2DDevice>();
-        auto canvasDevice = Make<StubCanvasDevice>(mockD2DDevice);
-        return CreateAnimatedControlTestAdapter(deviceContext, mockD2DDevice, canvasDevice);
-    }
-};
-
-
-
 template<typename TRAITS>
 struct ClearColorFixture
 {
@@ -135,7 +109,7 @@ struct ClearColorFixture
         DeviceContext->SetDpiMethod.AllowAnyCall();
         DeviceContext->SetTextAntialiasModeMethod.AllowAnyCall();
 
-        Adapter = TestAdapter<TRAITS>::Create(DeviceContext.Get());        
+        Adapter = TestAdapter<TRAITS>::Create(DeviceContext.Get());
 
         Control = Make<control_t>(Adapter);
 
@@ -160,6 +134,46 @@ inline void ClearColorFixture<CanvasControlTraits>::Load()
     ThrowIfFailed(UserControl->LoadedEventSource->InvokeAll(nullptr, nullptr));
 }
 
+extern struct DpiScalingTestCase
+{
+    float DpiScale;
+    float Dpi;
+} dpiScalingTestCases[3];
+
+inline void ClearColorFixture<CanvasControlTraits>::RenderAnyNumberOfFrames()
+{
+    int anyNumberOfTimes = 5;
+    for (auto i = 0; i < anyNumberOfTimes; ++i)
+    {
+        Adapter->RaiseCompositionRenderingEvent();
+    }
+}
+
+#ifdef CANVAS_ANIMATED_CONTROL_IS_ENABLED
+
+std::shared_ptr<CanvasAnimatedControlTestAdapter> CreateAnimatedControlTestAdapter(
+    ComPtr<MockD2DDeviceContext> const& deviceContext,
+    ComPtr<StubD2DDevice> const& mockD2DDevice,
+    ComPtr<StubCanvasDevice> const& canvasDevice);
+
+template<>
+struct TestAdapter<CanvasAnimatedControlTraits>
+{
+    typedef CanvasAnimatedControlTestAdapter type;
+    typedef CanvasAnimatedControlTestAdapter injectDeviceContextType;
+
+    static std::shared_ptr<CanvasAnimatedControlTestAdapter> Create()
+    {
+        return std::make_shared<CanvasAnimatedControlTestAdapter>();
+    }
+
+    static std::shared_ptr<CanvasAnimatedControlTestAdapter> Create(MockD2DDeviceContext* deviceContext)
+    {
+        auto mockD2DDevice = Make<StubD2DDevice>();
+        auto canvasDevice = Make<StubCanvasDevice>(mockD2DDevice);
+        return CreateAnimatedControlTestAdapter(deviceContext, mockD2DDevice, canvasDevice);
+    }
+};
 
 inline void ClearColorFixture<CanvasAnimatedControlTraits>::Load()
 {
@@ -174,16 +188,6 @@ inline void ClearColorFixture<CanvasAnimatedControlTraits>::Load()
     Adapter->DoChanged();
 }
 
-
-inline void ClearColorFixture<CanvasControlTraits>::RenderAnyNumberOfFrames()
-{
-    int anyNumberOfTimes = 5;
-    for (auto i = 0; i < anyNumberOfTimes; ++i)
-    {
-        Adapter->RaiseCompositionRenderingEvent();
-    }            
-}
-
 inline void ClearColorFixture<CanvasAnimatedControlTraits>::RenderAnyNumberOfFrames()
 {
     int anyNumberOfTimes = 5;
@@ -193,8 +197,4 @@ inline void ClearColorFixture<CanvasAnimatedControlTraits>::RenderAnyNumberOfFra
     }            
 }
 
-extern struct DpiScalingTestCase
-{
-    float DpiScale;
-    float Dpi;
-} dpiScalingTestCases[3];
+#endif

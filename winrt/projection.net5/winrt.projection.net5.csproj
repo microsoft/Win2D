@@ -1,0 +1,42 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net5.0-windows10.0.18362.0</TargetFramework>
+
+    <AnalysisLevel>4</AnalysisLevel>
+    <WarningLevel>4</WarningLevel>
+    <LangVersion>preview</LangVersion>
+    <AssemblyVersion>1.0.26</AssemblyVersion>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <AssemblyName>Microsoft.Graphics.Canvas.Interop</AssemblyName>
+    <!-- ignore CanvasRenderTarget.CreateFromDirect3D11Surface hiding CanvasBitmap.CreateFromDirect3D11Surface -->
+    <NoWarn>0108</NoWarn>
+
+    <CSWinRTIncludes>
+      Microsoft.Graphics.Canvas;
+    </CSWinRTIncludes>
+    <CSWinRTWindowsMetadata>local</CSWinRTWindowsMetadata>
+    <CsWinRTGenerateProjection>true</CsWinRTGenerateProjection>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-->PackageReference Include="Microsoft.Windows.SDK.Contracts" Version="10.0.18362.2005" /-->
+    <PackageReference Include="Microsoft.ProjectReunion" Version="0.5.0" />
+    <PackageReference Include="Microsoft.ProjectReunion.WinUI" Version="0.5.0" />
+    <PackageReference Include="Microsoft.ProjectReunion.Foundation" Version="0.5.0" />
+    <PackageReference Include="Microsoft.Windows.CSWinRT" Version="1.1.4" />
+    <PackageReference Include="Microsoft.SourceLink.AzureRepos.Git" Version="1.0.0" PrivateAssets="All" />
+  
+    <CSWinRTInputs Include="$(PkgMicrosoft_WinUI)\lib\uap10.0\*.winmd" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\lib\winrt.lib.uap.vcxproj" PrivateAssets="All" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <FrameworkReference Update="Microsoft.Windows.SDK.NET.Ref">
+      <TargetingPackVersion>10.0.18362.15</TargetingPackVersion>
+      <RuntimeFrameworkVersion>10.0.18362.15</RuntimeFrameworkVersion>
+    </FrameworkReference>
+  </ItemGroup>
+</Project>

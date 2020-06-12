@@ -6,7 +6,7 @@
 
 #if WINVER > _WIN32_WINNT_WINBLUE
 
-using namespace ABI::Windows::UI::Composition;
+using namespace ABI::Microsoft::UI::Composition;
 
 class MockCompositor : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>,
     ICompositor,
@@ -33,7 +33,9 @@ public:
     MOCK_METHOD1(CreateSpriteVisual                      , HRESULT(ISpriteVisual** result));
     MOCK_METHOD1(CreateSurfaceBrush                      , HRESULT(ICompositionSurfaceBrush** result));
     MOCK_METHOD2(CreateSurfaceBrushWithSurface           , HRESULT(ICompositionSurface* surface, ICompositionSurfaceBrush** result));
-    MOCK_METHOD1(CreateTargetForCurrentView              , HRESULT(ABI::Windows::UI::Composition::ICompositionTarget** result));
+#ifndef WINUI3
+    MOCK_METHOD1(CreateTargetForCurrentView              , HRESULT(ABI::Microsoft::UI::Composition::ICompositionTarget** result));
+#endif
     MOCK_METHOD1(CreateVector2KeyFrameAnimation          , HRESULT(IVector2KeyFrameAnimation** result));
     MOCK_METHOD1(CreateVector3KeyFrameAnimation          , HRESULT(IVector3KeyFrameAnimation** result));
     MOCK_METHOD1(CreateVector4KeyFrameAnimation          , HRESULT(IVector4KeyFrameAnimation** result));

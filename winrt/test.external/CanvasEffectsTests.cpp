@@ -7,7 +7,7 @@
 using namespace Microsoft::Graphics::Canvas;
 using namespace Microsoft::Graphics::Canvas::Effects;
 using namespace Windows::Foundation::Collections;
-using namespace Windows::UI;
+using namespace Microsoft::UI;
 using namespace Windows::Devices::Enumeration;
 using namespace Platform;
 
@@ -1497,7 +1497,7 @@ TEST_CLASS(CanvasEffectsTests)
     {
         auto device = ref new CanvasDevice();
         auto effect = ref new TableTransfer3DEffect();
-        auto transferTable = EffectTransferTable3D::CreateFromColors(device, ref new Array<Color>(8), 2, 2, 2);
+        auto transferTable = EffectTransferTable3D::CreateFromColors(device, ref new Array<Windows::UI::Color>(8), 2, 2, 2);
 
         TestInterfaceProperty_NotRealized(
             transferTable,
@@ -1513,7 +1513,7 @@ TEST_CLASS(CanvasEffectsTests)
 
         auto device = ref new CanvasDevice();
         auto effect = ref new TableTransfer3DEffect();
-        auto transferTable = EffectTransferTable3D::CreateFromColors(device, ref new Array<Color>(8), 2, 2, 2);
+        auto transferTable = EffectTransferTable3D::CreateFromColors(device, ref new Array<Windows::UI::Color>(8), 2, 2, 2);
 
         TestInterfaceProperty_Realized(
             device,

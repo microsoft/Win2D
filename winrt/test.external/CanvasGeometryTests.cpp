@@ -197,7 +197,7 @@ public:
 
         ExpectObjectClosed([&] { geometry->Device; });
     }
-
+    
     TEST_METHOD(CanvasGeometry_CreateGroup_NoDevice)
     {
         CanvasGeometry^ geometries[] =
@@ -287,9 +287,10 @@ public:
         ExpectObjectClosed([&] { geometry->Device; });
     }
 
+#ifdef WINUI3_SUPPORTS_INKING
     TEST_METHOD(CanvasGeometry_CreateInk_NoDevice_Fails)
     {
-        using namespace Windows::UI::Input::Inking;
+        using namespace Microsoft::UI::Input::Inking;
 
         auto inkStrokes = ref new Platform::Collections::Vector<InkStroke^>();
 
@@ -301,6 +302,7 @@ public:
                 CanvasGeometry::CreateInk(nullptr, inkStrokes);
             });
     }
+#endif
 
     TEST_METHOD(CanvasCachedGeometry_CreateFill_NoDevice_Fails)
     {

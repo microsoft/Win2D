@@ -55,11 +55,8 @@
   <PropertyGroup>
     <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Platform)' != 'ARM64'">
-    <WindowsTargetPlatformMinVersion>10.0.10240.0</WindowsTargetPlatformMinVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Platform)' == 'ARM64'">
-    <TargetPlatformMinVersion>10.0.16299.0</TargetPlatformMinVersion>
+  <PropertyGroup>
+    <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
   </PropertyGroup>
 
   <ItemDefinitionGroup>
@@ -148,7 +145,7 @@
     <ClCompile>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <Optimization>MaxSpeed</Optimization>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <FunctionLevelLWINUI3_SUPPORTS_INKING>true</FunctionLevelLWINUI3_SUPPORTS_INKING>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <ControlFlowGuard>Guard</ControlFlowGuard>
     </ClCompile>

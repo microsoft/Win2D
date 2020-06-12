@@ -8,7 +8,7 @@ using namespace Microsoft::Graphics::Canvas;
 using namespace Microsoft::WRL::Wrappers;
 using namespace WinRTDirectX;
 using namespace Windows::Foundation;
-using namespace Windows::UI;
+using namespace Microsoft::UI;
 
 TEST_CLASS(CanvasRenderTargetTests)
 {

@@ -30,7 +30,7 @@ public:
         auto ds = cl->CreateDrawingSession();
 
         Rect bounds{-10, -10, 20, 20};
-        ds->FillRectangle(bounds, Windows::UI::Colors::White);
+        ds->FillRectangle(bounds, Microsoft::UI::Colors::White);
 
         delete ds;
 

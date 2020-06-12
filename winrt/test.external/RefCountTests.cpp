@@ -21,6 +21,7 @@ TEST_CLASS(RefCountTests)
         Assert::AreEqual(1, refCount);
     }
 
+#ifdef CANVAS_ANIMATED_CONTROL_IS_ENABLED
     TEST_METHOD(CanvasAnimatedControl_RefCount)
     {
         int refCount = -1;
@@ -33,6 +34,7 @@ TEST_CLASS(RefCountTests)
 
         Assert::AreEqual(1, refCount);
     }
+#endif
 
     TEST_METHOD(CanvasSwapChainPanel_RefCount)
     {

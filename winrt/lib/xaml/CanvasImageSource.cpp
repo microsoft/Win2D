@@ -135,7 +135,7 @@ IFACEMETHODIMP CanvasImageSourceFactory::CreateWithWidthAndHeightAndDpiAndAlphaM
             //
             ComPtr<ISurfaceImageSourceFactory> baseFactory;
             ThrowIfFailed(GetActivationFactory(
-                HStringReference(RuntimeClass_Windows_UI_Xaml_Media_Imaging_SurfaceImageSource).Get(),
+                HStringReference(RuntimeClass_Microsoft_UI_Xaml_Media_Imaging_SurfaceImageSource).Get(),
                 &baseFactory));
 
             //

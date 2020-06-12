@@ -9,7 +9,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     using namespace ::Microsoft::WRL;
     using namespace ABI::Windows::Foundation;
     using namespace ABI::Windows::Foundation::Collections;
-    using namespace ABI::Windows::UI;
+    using namespace ABI::Microsoft::UI;
     using namespace ABI::Microsoft::Graphics::Canvas;
     using namespace ::collections;
 

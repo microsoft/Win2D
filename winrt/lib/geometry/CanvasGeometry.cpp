@@ -370,6 +370,8 @@ IFACEMETHODIMP CanvasGeometryFactory::CreateGlyphRun(
 
 #if WINVER > _WIN32_WINNT_WINBLUE
 
+#ifdef WINUI3_SUPPORTS_INKING
+
 IFACEMETHODIMP CanvasGeometryFactory::CreateInk(
     ICanvasResourceCreator* resourceCreator,
     IIterable<InkStroke*>* inkStrokes,
@@ -397,6 +399,8 @@ IFACEMETHODIMP CanvasGeometryFactory::CreateInkWithTransformAndFlatteningToleran
             ThrowIfFailed(newCanvasGeometry.CopyTo(geometry));
         });
 }
+
+#endif
 
 #endif
 
@@ -1710,7 +1714,7 @@ ComPtr<CanvasGeometry> CanvasGeometry::CreateNew(
 }
 
 
-#if WINVER > _WIN32_WINNT_WINBLUE
+#if WINVER > _WIN32_WINNT_WINBLUE & !WINUI3
 
 ComPtr<CanvasGeometry> CanvasGeometry::CreateNew(
     ICanvasResourceCreator* resourceCreator,

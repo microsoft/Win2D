@@ -18,7 +18,7 @@
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
     using namespace ABI::Windows::Foundation;
-    using namespace ABI::Windows::UI;
+    using namespace ABI::Microsoft::UI;
 
     ComPtr<ID2D1StrokeStyle1> ToD2DStrokeStyle(ICanvasStrokeStyle* strokeStyle, ID2D1DeviceContext* deviceContext)
     {
@@ -183,7 +183,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 m_solidColorBrush.Reset();
                 m_defaultTextFormat.Reset();
                 m_owner.Reset();
-#if WINVER > _WIN32_WINNT_WINBLUE
+#if WINVER > _WIN32_WINNT_WINBLUE && WINUI3_SUPPORTS_INKING
                 m_inkD2DRenderer.Reset();
                 m_inkStateBlock.Reset();
 #endif
@@ -3277,6 +3277,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
 #if WINVER > _WIN32_WINNT_WINBLUE
+
+#ifdef WINUI3_SUPPORTS_INKING
     IFACEMETHODIMP CanvasDrawingSession::DrawInk(IIterable<InkStroke*>* inkStrokeCollection)
     {
         return ExceptionBoundary(
@@ -3329,6 +3331,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             inkStrokeCollectionAsIUnknown.Get(), 
             highContrast));
     }
+
+#endif
 
     IFACEMETHODIMP CanvasDrawingSession::DrawGradientMeshAtOrigin(ICanvasGradientMesh* gradientMesh)
     {

@@ -11,7 +11,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     using namespace ABI::Windows::Foundation;
 
 #if WINVER > _WIN32_WINNT_WINBLUE
+
+#ifdef WINUI3_SUPPORTS_INKING
     using namespace ABI::Windows::UI::Input::Inking;
+#endif
+
     using namespace ABI::Windows::UI::ViewManagement;
     using namespace ABI::Microsoft::Graphics::Canvas::Svg;
 #endif
@@ -80,7 +84,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         //
         ComPtr<ICanvasDevice> m_owner;
 
-#if WINVER > _WIN32_WINNT_WINBLUE
+#if WINVER > _WIN32_WINNT_WINBLUE && WINUI3_SUPPORTS_INKING
         ComPtr<IInkD2DRenderer> m_inkD2DRenderer;
         ComPtr<ID2D1DrawingStateBlock1> m_inkStateBlock;
 #endif
@@ -1166,13 +1170,16 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ABI::Windows::UI::Color color) override;
 
 #if WINVER > _WIN32_WINNT_WINBLUE
+
+#ifdef WINUI3_SUPPORTS_INKING
         //
         // DrawInk
         //
         IFACEMETHOD(DrawInk)(IIterable<InkStroke*>* inkStrokes) override;
 
         IFACEMETHOD(DrawInkWithHighContrast)(IIterable<InkStroke*>* inkStrokes, boolean highContrast) override;
-        
+#endif
+
         //
         // DrawGradientMesh
         //
@@ -1466,7 +1473,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         void PopLayer(int layerId, bool isAxisAlignedClip);
 
 #if WINVER > _WIN32_WINNT_WINBLUE
+
+#ifdef WINUI3_SUPPORTS_INKING
         void DrawInkImpl(IIterable<InkStroke*>* inkStrokeCollection, bool highContrast);
+#endif
+
 #endif
 
         ComPtr<ICanvasDevice> const& GetDevice();

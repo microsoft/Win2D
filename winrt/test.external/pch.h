@@ -40,6 +40,8 @@
 #include <windowsnumerics.h>
 
 #include <Microsoft.Graphics.Canvas.native.h>
+
+// Generated from local IDLs
 #include <Microsoft.Graphics.Canvas.h>
 
 // Pick up the inbox or local WinRT DirectX types as appropriate

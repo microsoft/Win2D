@@ -9,9 +9,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     using namespace ::Microsoft::WRL;
     using namespace WinRTDirectX;
     using namespace Brushes;
+
 #if WINVER > _WIN32_WINNT_WINBLUE
     using namespace Svg;
 #endif
+
     using namespace Text;
     using namespace UI;
     using namespace UI::Xaml;
@@ -175,6 +177,18 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         static_assert(static_cast<uint32_t>(D2D1_FILL_MODE_WINDING) == static_cast<uint32_t>(CanvasFilledRegionDetermination::Winding), "CanvasFilledRegionDetermination must match D2D1_FILL_MODE");
     };
 
+    template<> struct ValidateReinterpretAs<D2D1_POINT_2F*, Numerics::Vector2*> : std::true_type
+    {
+        static_assert(offsetof(D2D1_POINT_2F, x) == offsetof(Numerics::Vector2, X), "Vector2 layout must match D2D1_POINT_2F layout");
+        static_assert(offsetof(D2D1_POINT_2F, y) == offsetof(Numerics::Vector2, Y), "Vector2 layout must match D2D1_POINT_2F layout");
+        static_assert(sizeof(D2D1_POINT_2F) == sizeof(Numerics::Vector2), "size of D2D1_POINT_2F must match Vector2");
+    };
+
+    template<> struct ValidateReinterpretAs<DWRITE_UNICODE_RANGE*, CanvasUnicodeRange*> : std::true_type
+    {
+        static_assert(offsetof(DWRITE_UNICODE_RANGE, first) == offsetof(CanvasUnicodeRange, First), "CanvasUnicodeRange layout must match DWRITE_UNICODE_RANGE");
+        static_assert(offsetof(DWRITE_UNICODE_RANGE, last) == offsetof(CanvasUnicodeRange, Last), "CanvasUnicodeRange layout must match DWRITE_UNICODE_RANGE");
+    };
 
 #if WINVER > _WIN32_WINNT_WINBLUE
     template<> struct ValidateStaticCastAs<CanvasSvgDisplay, D2D1_SVG_DISPLAY> : std::true_type
@@ -266,23 +280,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ValidateStaticCastAs<CanvasSvgPathCommand, D2D1_SVG_PATH_COMMAND> Validation;
         static_assert(sizeof(CanvasSvgPathCommand) == sizeof(D2D1_SVG_PATH_COMMAND), "size of CanvasSvgPathCommand must match D2D1_SVG_PATH_COMMAND");
     };
-
-#endif
-
-    template<> struct ValidateReinterpretAs<D2D1_POINT_2F*, Numerics::Vector2*> : std::true_type
-    {
-        static_assert(offsetof(D2D1_POINT_2F, x) == offsetof(Numerics::Vector2, X), "Vector2 layout must match D2D1_POINT_2F layout");
-        static_assert(offsetof(D2D1_POINT_2F, y) == offsetof(Numerics::Vector2, Y), "Vector2 layout must match D2D1_POINT_2F layout");
-        static_assert(sizeof(D2D1_POINT_2F) == sizeof(Numerics::Vector2), "size of D2D1_POINT_2F must match Vector2");
-    };
-
-    template<> struct ValidateReinterpretAs<DWRITE_UNICODE_RANGE*, CanvasUnicodeRange*> : std::true_type
-    {
-        static_assert(offsetof(DWRITE_UNICODE_RANGE, first) == offsetof(CanvasUnicodeRange, First), "CanvasUnicodeRange layout must match DWRITE_UNICODE_RANGE");
-        static_assert(offsetof(DWRITE_UNICODE_RANGE, last) == offsetof(CanvasUnicodeRange, Last), "CanvasUnicodeRange layout must match DWRITE_UNICODE_RANGE");
-    };
-
-#if WINVER > _WIN32_WINNT_WINBLUE
 
     template<> struct ValidateStaticCastAs<Effects::ColorManagementProfileType, D2D1_COLOR_CONTEXT_TYPE> : std::true_type
     {

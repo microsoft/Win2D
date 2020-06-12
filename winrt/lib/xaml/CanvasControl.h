@@ -12,10 +12,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     using namespace ABI::Windows::ApplicationModel;
     using namespace ABI::Windows::Foundation;
     using namespace ABI::Windows::Graphics::Display;
+#ifndef WINUI3
     using namespace ABI::Windows::UI::Core;
-    using namespace ABI::Windows::UI::Xaml::Controls;
-    using namespace ABI::Windows::UI::Xaml::Media;
-    using namespace ABI::Windows::UI::Xaml;
+#endif
+    using namespace ABI::Microsoft::UI::Xaml::Controls;
+    using namespace ABI::Microsoft::UI::Xaml::Media;
+    using namespace ABI::Microsoft::UI::Xaml;
 
     class CanvasDrawEventArgsFactory : public AgileActivationFactory<ICanvasDrawEventArgsFactory>,
                                        private LifespanTracker<CanvasDrawEventArgsFactory>

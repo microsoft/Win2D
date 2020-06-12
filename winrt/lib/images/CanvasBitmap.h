@@ -16,6 +16,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     using namespace ABI::Windows::Foundation;
     using namespace ABI::Windows::Storage::Streams;
     using namespace ABI::Windows::Storage;
+    using namespace ABI::Microsoft::UI;
     using namespace ABI::Windows::UI;
 
 #if WINVER > _WIN32_WINNT_WINBLUE

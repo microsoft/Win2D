@@ -8,6 +8,8 @@
 
 #include "MockXamlSolidColorBrush.h"
 
+#ifdef CANVAS_ANIMATED_CONTROL_IS_ENABLED
+
 static Color const AnyColor                 {   1,   2,   3,   4 };
 static Color const AnyOtherColor            {   5,   6,   7,   8 };
 static Color const AnyOpaqueColor           { 255,   2,   3,   4 };
@@ -208,7 +210,7 @@ TEST_CLASS(CanvasAnimatedControlTests)
     {
         CanvasAnimatedControlFixture f;
         ASSERT_IMPLEMENTS_INTERFACE(f.Control, ICanvasAnimatedControl);
-        ASSERT_IMPLEMENTS_INTERFACE(f.Control, ABI::Windows::UI::Xaml::Controls::IUserControl);
+        ASSERT_IMPLEMENTS_INTERFACE(f.Control, ABI::Microsoft::UI::Xaml::Controls::IUserControl);
         ASSERT_IMPLEMENTS_INTERFACE(f.Control, ICanvasResourceCreator);
     }
 
@@ -3539,3 +3541,5 @@ TEST_CLASS(CanvasAnimatedControl_DesignMode)
         Assert::AreEqual(anyColor, retrievedColor);
     }
 };
+
+#endif

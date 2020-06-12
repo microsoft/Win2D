@@ -12,8 +12,8 @@ class MockCompositionDrawingSurface : public RuntimeClass<RuntimeClassFlags<WinR
 {
 public:
     // ICompositionDrawingSurface
-    MOCK_METHOD1(get_AlphaMode   , HRESULT(DirectXAlphaMode* value));
-    MOCK_METHOD1(get_PixelFormat , HRESULT(DirectXPixelFormat* value));
+    MOCK_METHOD1(get_AlphaMode   , HRESULT(ABI::Microsoft::Graphics::DirectX::DirectXAlphaMode* value));
+    MOCK_METHOD1(get_PixelFormat , HRESULT(ABI::Microsoft::Graphics::DirectX::DirectXPixelFormat* value));
     MOCK_METHOD1(get_Size        , HRESULT(Size *value));
     
     // ICompositionDrawingSurfaceInterop

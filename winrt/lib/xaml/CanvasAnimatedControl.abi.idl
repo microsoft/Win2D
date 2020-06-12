@@ -2,6 +2,8 @@
 //
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
+#ifdef CANVAS_ANIMATED_CONTROL_IS_ENABLED
+
 namespace Microsoft.Graphics.Canvas.UI
 {
     [version(VERSION)]
@@ -281,9 +283,11 @@ namespace Microsoft.Graphics.Canvas.UI.Xaml
     }
 
     [version(VERSION), activatable(VERSION), marshaling_behavior(agile), threading(both)]
-    runtimeclass CanvasAnimatedControl : Windows.UI.Xaml.Controls.UserControl
+    runtimeclass CanvasAnimatedControl : Microsoft.UI.Xaml.Controls.UserControl
     {
         [default] interface ICanvasAnimatedControl;
     }
 
 }
+
+#endif

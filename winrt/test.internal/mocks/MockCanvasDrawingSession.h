@@ -7,10 +7,10 @@
 namespace canvas
 {
     using namespace ABI::Windows::Foundation;
-    using namespace ABI::Windows::UI;
-
-#if WINVER > _WIN32_WINNT_WINBLUE
-    using namespace ABI::Windows::UI::Input::Inking;
+    using namespace ABI::Microsoft::UI;
+    
+#if WINVER > _WIN32_WINNT_WINBLUE && WINUI3_SUPPORTS_INKING
+    using namespace ABI::Microsoft::UI::Input::Inking;
 #endif
 
     class MockCanvasDrawingSession : public RuntimeClass<
@@ -203,8 +203,11 @@ namespace canvas
         DONT_EXPECT(DrawTextLayoutAtCoordsWithColor, ICanvasTextLayout*, float, float, Color);
 
 #if WINVER > _WIN32_WINNT_WINBLUE
+
+#if WINUI3_SUPPORTS_INKING
         DONT_EXPECT(DrawInk, IIterable<InkStroke*>*);
         DONT_EXPECT(DrawInkWithHighContrast, IIterable<InkStroke*>*, boolean);
+#endif
 
         DONT_EXPECT(DrawGradientMeshAtOrigin, ICanvasGradientMesh*);
         DONT_EXPECT(DrawGradientMesh, ICanvasGradientMesh*, Vector2);

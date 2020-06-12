@@ -47,6 +47,7 @@ public:
     }
 };
 
+#if WINUI3_SUPPORTS_INKING
 class MockStrokeCollection : public RuntimeClass<IIterable<InkStroke*>>
 {
     IFACEMETHODIMP First(IIterator<InkStroke*>**)
@@ -54,4 +55,5 @@ class MockStrokeCollection : public RuntimeClass<IIterable<InkStroke*>>
         return E_NOTIMPL;
     }
 };
+#endif
 

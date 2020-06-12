@@ -77,7 +77,7 @@ namespace Microsoft.Graphics.Canvas.UI.Xaml
         // Returns the VirtualSurfaceImageSource wrapped by this object.
         //
         [propget]
-        HRESULT Source([out, retval] Windows.UI.Xaml.Media.Imaging.VirtualSurfaceImageSource** value);
+        HRESULT Source([out, retval] Microsoft.UI.Xaml.Media.Imaging.VirtualSurfaceImageSource** value);
 
         //
         // Returns a new drawing session for updating a region of the image

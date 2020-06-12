@@ -2,6 +2,8 @@
 //
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
+#ifdef CANVAS_ANIMATED_CONTROL_IS_ENABLED
+
 #pragma once
 
 using namespace ABI::Windows::UI::Core;
@@ -252,3 +254,6 @@ public:
         return action;
     }
 };
+
+
+#endif

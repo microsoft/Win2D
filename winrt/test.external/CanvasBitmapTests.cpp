@@ -12,7 +12,7 @@ using namespace Windows::Devices::Enumeration;
 using namespace Windows::Foundation;
 using namespace Windows::Graphics::Imaging;
 using namespace Windows::Storage::Streams;
-using namespace Windows::UI;
+using namespace Microsoft::UI;
 
 
 auto gMustBeMultipleOf4ErrorText = L"Block compressed image width & height must be a multiple of 4 pixels.";            
@@ -252,11 +252,11 @@ public:
         struct SourceArrayTestCase
         {
             Platform::Array<BYTE>^ byteArray;
-            Platform::Array<Color>^ colorArray;
+            Platform::Array<Windows::UI::Color>^ colorArray;
         } sourceArrayTestCases[] =
         {
-            { ref new Platform::Array<BYTE>(1), ref new Platform::Array<Color>(1) },
-            { ref new Platform::Array<BYTE>(0), ref new Platform::Array<Color>(0) },
+            { ref new Platform::Array<BYTE>(1), ref new Platform::Array<Windows::UI::Color>(1) },
+            { ref new Platform::Array<BYTE>(0), ref new Platform::Array<Windows::UI::Color>(0) },
             { nullptr, nullptr }
         };
 
@@ -351,7 +351,7 @@ public:
         auto device = ref new CanvasDevice();
         auto anyAlphaMode = CanvasAlphaMode::Premultiplied;
 
-        auto zeroSizedArray = ref new Platform::Array<Color>(0);
+        auto zeroSizedArray = ref new Platform::Array<Windows::UI::Color>(0);
         auto bitmap = CanvasBitmap::CreateFromColors(device, zeroSizedArray, 0, 0, DEFAULT_DPI, anyAlphaMode);
         
         auto size = bitmap->SizeInPixels;
@@ -379,7 +379,7 @@ public:
         auto device = ref new CanvasDevice();
         auto anyAlphaMode = CanvasAlphaMode::Premultiplied;
 
-        auto oneElementArray = ref new Platform::Array<Color>(1);
+        auto oneElementArray = ref new Platform::Array<Windows::UI::Color>(1);
 
         Assert::ExpectException<Platform::InvalidArgumentException^>(
             [&]
@@ -757,10 +757,10 @@ public:
             }
         }
 
-        Color GetExpectedColor(int sliceIndex)
+        Windows::UI::Color GetExpectedColor(int sliceIndex)
         {
             assert(sliceIndex >= 0 && sliceIndex < c_subresourceSliceCount);
-            static const Color colors[c_subresourceSliceCount] = { Colors::Red, Colors::Green, Colors::Blue };
+            static const  Windows::UI::Color colors[c_subresourceSliceCount] = { Colors::Red, Colors::Green, Colors::Blue };
             return colors[sliceIndex];
         }
 
@@ -828,9 +828,9 @@ public:
                 Assert::AreEqual(f.GetExpectedByte(i, 3), byteData[j + 3]);
             }
 
-            Platform::Array<Color>^ colorData = f.GetRenderTarget(i)->GetPixelColors();
+            Platform::Array<Windows::UI::Color>^ colorData = f.GetRenderTarget(i)->GetPixelColors();
             Assert::AreEqual(sliceDimension * sliceDimension, colorData->Length);
-            for (Color c : colorData)
+            for (Windows::UI::Color c : colorData)
             {
                 Assert::AreEqual(f.GetExpectedColor(i), c);
             }
@@ -872,9 +872,9 @@ public:
     }
 
     template<>
-    Color ReferenceColorFromIndex(int i)
+    Windows::UI::Color ReferenceColorFromIndex(int i)
     {
-        Color c;
+        Windows::UI::Color c;
         c.R = (i * 4 + 0) % UCHAR_MAX;
         c.G = (i * 4 + 1) % UCHAR_MAX;
         c.B = (i * 4 + 2) % UCHAR_MAX;
@@ -896,7 +896,7 @@ public:
     }
 
     template<>
-    Platform::Array<Color>^ GetDataFunction(CanvasBitmap^ canvasBitmap)
+    Platform::Array<Windows::UI::Color>^ GetDataFunction(CanvasBitmap^ canvasBitmap)
     {
         return canvasBitmap->GetPixelColors();
     }
@@ -915,7 +915,7 @@ public:
     }
 
     template<>
-    Platform::Array<Color>^ GetDataFunction(CanvasBitmap^ canvasBitmap, int left, int top, int width, int height)
+    Platform::Array<Windows::UI::Color>^ GetDataFunction(CanvasBitmap^ canvasBitmap, int left, int top, int width, int height)
     {
         return canvasBitmap->GetPixelColors(left, top, width, height);
     }
@@ -925,7 +925,7 @@ public:
         return canvasBitmap->SetPixelBytes(dataArray);
     }
 
-    void SetBitmapData(CanvasBitmap^ canvasBitmap, Platform::Array<Color>^ dataArray)
+    void SetBitmapData(CanvasBitmap^ canvasBitmap, Platform::Array<Windows::UI::Color>^ dataArray)
     {
         return canvasBitmap->SetPixelColors(dataArray);
     }
@@ -935,7 +935,7 @@ public:
         return canvasBitmap->SetPixelBytes(dataArray, left, top, width, height);
     }
 
-    void SetBitmapData(CanvasBitmap^ canvasBitmap, Platform::Array<Color>^ dataArray, int left, int top, int width, int height)
+    void SetBitmapData(CanvasBitmap^ canvasBitmap, Platform::Array<Windows::UI::Color>^ dataArray, int left, int top, int width, int height)
     {
         return canvasBitmap->SetPixelColors(dataArray, left, top, width, height);
     }
@@ -945,7 +945,7 @@ public:
         b++;
     }
 
-    void IncrementColor(Color& c)
+    void IncrementColor(Windows::UI::Color& c)
     {
         c.R++;
         c.B++;
@@ -1123,10 +1123,10 @@ public:
         const int width = 8;
         const int height = 9;
         const int totalSize = width * height;
-        Platform::Array<Color>^ imageData = ref new Platform::Array<Color>(totalSize);
+        Platform::Array<Windows::UI::Color>^ imageData = ref new Platform::Array<Windows::UI::Color>(totalSize);
         for (int i = 0; i < totalSize; i++)
         {
-            imageData[i] = ReferenceColorFromIndex<Color>(i);
+            imageData[i] = ReferenceColorFromIndex<Windows::UI::Color>(i);
         }
 
         auto canvasBitmap = CanvasBitmap::CreateFromColors(
@@ -1137,9 +1137,9 @@ public:
             DEFAULT_DPI,
             CanvasAlphaMode::Premultiplied);
 
-        VerifyBitmapGetData<Color>(canvasBitmap, width, imageData, 1);
+        VerifyBitmapGetData<Windows::UI::Color>(canvasBitmap, width, imageData, 1);
 
-        VerifyBitmapSetData<Color>(canvasBitmap, width, imageData, 1);
+        VerifyBitmapSetData<Windows::UI::Color>(canvasBitmap, width, imageData, 1);
     }
 
     TEST_METHOD(CanvasBitmap_GetAndSetPixelBytesAndColors_InvalidArguments)
@@ -1156,7 +1156,7 @@ public:
         };
 
         Platform::Array<byte>^ byteArray = ref new Platform::Array<byte>(1);
-        Platform::Array<Color>^ colorArray = ref new Platform::Array<Color>(1);
+        Platform::Array<Windows::UI::Color>^ colorArray = ref new Platform::Array<Windows::UI::Color>(1);
 
         for (SignedRect testCase : testCases)
         {
@@ -1207,7 +1207,7 @@ public:
     TEST_METHOD(CanvasRenderTarget_SetPixelColors_InvalidArraySize_ThrowsDescriptiveException)
     {
         auto rt = ref new CanvasRenderTarget(m_sharedDevice, 2, 2, DEFAULT_DPI);
-        Platform::Array<Color>^ colors = ref new Platform::Array<Color>(1);
+        Platform::Array<Windows::UI::Color>^ colors = ref new Platform::Array<Windows::UI::Color>(1);
 
         ExpectCOMException(
             E_INVALIDARG,
@@ -1221,7 +1221,7 @@ public:
     TEST_METHOD(CanvasRenderTarget_PixelColors_InvalidPixelFormat_ThrowsDescriptiveException)
     {
         auto rt = ref new CanvasRenderTarget(m_sharedDevice, 1, 1, DEFAULT_DPI, DirectXPixelFormat::R8G8B8A8UIntNormalized, CanvasAlphaMode::Premultiplied);
-        Platform::Array<Color>^ colors = ref new Platform::Array<Color>(1);
+        Platform::Array<Windows::UI::Color>^ colors = ref new Platform::Array<Windows::UI::Color>(1);
 
         const wchar_t* expectedMessage = L"This method only supports resources with pixel format DirectXPixelFormat.B8G8R8A8UIntNormalized.";
 
@@ -1259,7 +1259,7 @@ public:
                 canvasBitmap->SetPixelBytes(zeroSizedByteArray, 0, 0, 0, 0);
             });
 
-        Platform::Array<Color>^ zeroSizedColorArray = ref new Platform::Array<Color>(0);
+        Platform::Array<Windows::UI::Color>^ zeroSizedColorArray = ref new Platform::Array<Windows::UI::Color>(0);
         Assert::ExpectException<Platform::InvalidArgumentException^>(
             [&]
             {
@@ -1295,7 +1295,7 @@ public:
         Assert::ExpectException<Platform::InvalidArgumentException^>(
             [&]
             {
-                Platform::Array<Color>^ array = ref new Platform::Array<Color>(expectedColorCountOfBitmap - 1);
+                Platform::Array<Windows::UI::Color>^ array = ref new Platform::Array<Windows::UI::Color>(expectedColorCountOfBitmap - 1);
                 canvasBitmap->SetPixelColors(array);
             });
         Assert::ExpectException<Platform::InvalidArgumentException^>(
@@ -1307,7 +1307,7 @@ public:
         Assert::ExpectException<Platform::InvalidArgumentException^>(
             [&]
             {
-                Platform::Array<Color>^ array = ref new Platform::Array<Color>(expectedColorCountOfSubrectangle - 1);
+                Platform::Array<Windows::UI::Color>^ array = ref new Platform::Array<Windows::UI::Color>(expectedColorCountOfSubrectangle - 1);
                 canvasBitmap->SetPixelColors(array, subrectangle.Left, subrectangle.Top, subrectangle.Width, subrectangle.Height);
             });
     }
@@ -1339,7 +1339,7 @@ public:
 
         auto requiredSize = width * height;
 
-        auto data = ref new Platform::Array<Color>(requiredSize + 1);
+        auto data = ref new Platform::Array<Windows::UI::Color>(requiredSize + 1);
 
         auto bitmap = CanvasBitmap::CreateFromColors(
             m_sharedDevice,
@@ -1391,7 +1391,7 @@ public:
 
             VerifySubresourceSlice<byte>(f.GetRenderTarget(i), sliceDimension, 4);
 
-            VerifySubresourceSlice<Color>(f.GetRenderTarget(i), sliceDimension, 1);
+            VerifySubresourceSlice<Windows::UI::Color>(f.GetRenderTarget(i), sliceDimension, 1);
         }
     }
 
@@ -2248,7 +2248,7 @@ public:
         auto device = ref new CanvasDevice();
         auto maxSize = device->MaximumBitmapSizeInPixels;
         auto tooBig = maxSize + 1;
-        auto colors = ref new Platform::Array<Color>(tooBig);
+        auto colors = ref new Platform::Array<Windows::UI::Color>(tooBig);
         wchar_t msg[256];
 
         swprintf_s(msg, L"Cannot create CanvasBitmap sized %d x 1; MaximumBitmapSizeInPixels for this device is %d.", tooBig, maxSize);

@@ -168,6 +168,8 @@ struct ITypedEventHandler<IAnyControlInterface*, IInspectable*>
 {
 };
 
+
+
 template<>
 struct TestAdapter<AnyTraits>
 {
@@ -178,7 +180,6 @@ struct TestAdapter<AnyTraits>
         return std::make_shared<AnyAdapter>();
     }
 };
-
 
 TEST_CLASS(BaseControl_Interaction_With_RecreatableDeviceManager)
 {
@@ -314,7 +315,6 @@ TEST_CLASS(BaseControl_Interaction_With_RecreatableDeviceManager)
             });
     }
 };
-
 
 TEST_CLASS(BaseControl_LoadedAndUnloaded_OutOfOrder)
 {

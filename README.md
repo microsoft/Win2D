@@ -1,4 +1,10 @@
+# Transitioning Win2D to Reunion is In-Progress
+
+Moving Win2D over to ProjectReunion and WinUI3 is a work in progress, and some features such as CanvasAnimatedControl or CanvasBitmap have partial or no support.
+
 # Win2D
+
+
 
 Win2D is an easy-to-use Windows Runtime API for immediate mode 2D graphics
 rendering with GPU acceleration. It is available to C#, C++ and VB developers
@@ -6,19 +12,19 @@ writing apps for the Windows Universal Platform (UWP). It utilizes the power
 of Direct2D, and integrates seamlessly with XAML and CoreWindow.
 
 ##### Where to get it
-- [NuGet package](http://www.nuget.org/packages/Win2D.uwp)
+- [NuGet package](http://www.nuget.org/packages/Microsoft.Graphics.Win2D)
 - [Source code](http://github.com/Microsoft/Win2D)
 
 ##### How to use it
 - [Documentation](http://microsoft.github.io/Win2D)
 - [Sample code](http://github.com/Microsoft/Win2D-samples) -
-    *also available in the [Store](https://www.microsoft.com/store/apps/9NBLGGGXWT9F)*
+    *also available in the [Store](https://www.microsoft.com/store/apps/9NBLGGGXWT9F)* (not updated for Reunion)
 
 ##### More info
 - [Report a bug or ask a question](http://github.com/Microsoft/Win2D/issues)
-- [Changelog](http://github.com/Microsoft/Win2D/blob/master/CHANGELOG.md)
+- [Changelog](http://github.com/Microsoft/Win2D/blob/WinUI3Master/CHANGELOG.md)
 - [License](http://opensource.org/licenses/MIT)
-- [Contributing](http://github.com/Microsoft/Win2D/blob/master/CONTRIBUTING.md)
+- [Contributing](http://github.com/Microsoft/Win2D/blob/WinUI3Master/CONTRIBUTING.md)
 
 ## Code Example
 To give you a flavor of what the code looks like, here is a snippet of XAML:
@@ -69,7 +75,7 @@ Studio, add the Win2D NuGet package to your project, and get started using the A
 ## Building Win2D from source
 
 ##### Requirements
-- Visual Studio 2019 16.2 with Tools for Universal Windows Apps 15.0.27428.01 and Windows SDK 18362
+- Visual Studio 2019 16.9 with Tools for Universal Windows Apps 15.0.27428.01 and Windows SDK 18362
 
 ##### Clone Repository
 - Go to 'View' -> 'Team Explorer' -> 'Local Git Repositories' -> 'Clone'
@@ -90,15 +96,6 @@ Studio, add the Win2D NuGet package to your project, and get started using the A
 
 Locally built versions of Win2D are marked as prerelease, so you must change the 'Stable 
 Only' setting to 'Include Prerelease' when adding them to your project.
-
-## Legacy support for Windows 8.1
-Win2D 1.21.0 was the last release to support the Windows 8.1 and Windows Phone 8.1 
-platforms. From Win2D 1.22.0 onward, only the Windows Universal Platform (UWP) is 
-supported.
-
-Legacy Win2D support for Windows and Phone 8.1 is available as a
-[NuGet package](http://www.nuget.org/packages/Win2D.win81) and from the
-[win81 branch](https://github.com/Microsoft/Win2D/tree/win81) on github.
 
 ---
 This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).

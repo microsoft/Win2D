@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <microsoft.graphics.canvas.h>
+#include <Microsoft.Graphics.Canvas.h>
 
 template<typename T, typename U>
 inline Microsoft::WRL::ComPtr<T> GetWrappedResource(U&& wrapper, ABI::Microsoft::Graphics::Canvas::ICanvasDevice* device = nullptr, float dpi = 0)

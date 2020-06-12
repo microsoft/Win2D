@@ -4,6 +4,8 @@
 
 #include "pch.h"
 
+#ifdef CANVAS_ANIMATED_CONTROL_IS_ENABLED
+
 #include "CanvasAnimatedControl.h"
 #include "CanvasGameLoop.h"
 #include "GameLoopThread.h"
@@ -79,7 +81,7 @@ public:
         ComPtr<IActivationFactory> rectangleFactory;
 
         ThrowIfFailed(GetActivationFactory(
-            HStringReference(RuntimeClass_Windows_UI_Xaml_Shapes_Rectangle).Get(),
+            HStringReference(RuntimeClass_Microsoft_UI_Xaml_Shapes_Rectangle).Get(),
             &rectangleFactory));
         
         ComPtr<IInspectable> rectangleInspectable;
@@ -87,7 +89,7 @@ public:
 
         ComPtr<IActivationFactory> brushFactory;
         ThrowIfFailed(GetActivationFactory(
-            HStringReference(RuntimeClass_Windows_UI_Xaml_Media_SolidColorBrush).Get(),
+            HStringReference(RuntimeClass_Microsoft_UI_Xaml_Media_SolidColorBrush).Get(),
             &brushFactory));
 
         ComPtr<IInspectable> brushInspectable;
@@ -150,3 +152,5 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     }
 
 } } } } } }
+
+#endif

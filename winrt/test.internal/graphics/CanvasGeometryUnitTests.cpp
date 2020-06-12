@@ -76,7 +76,7 @@ public:
 
         ASSERT_IMPLEMENTS_INTERFACE(canvasGeometry, ICanvasGeometry);
         ASSERT_IMPLEMENTS_INTERFACE(canvasGeometry, ABI::Windows::Foundation::IClosable);
-        ASSERT_IMPLEMENTS_INTERFACE(canvasGeometry, ABI::Windows::Graphics::IGeometrySource2D);
+        ASSERT_IMPLEMENTS_INTERFACE(canvasGeometry, ABI::Microsoft::Graphics::IGeometrySource2D);
         ASSERT_IMPLEMENTS_INTERFACE(canvasGeometry, ABI::Windows::Graphics::IGeometrySource2DInterop);
     }
 
@@ -2102,7 +2102,7 @@ public:
             nullptr));
     }
 
-#if WINVER > _WIN32_WINNT_WINBLUE
+#if WINVER > _WIN32_WINNT_WINBLUE && WINUI3_SUPPORTS_INKING
 
     static void TestCreateInk(
         D2D1_MATRIX_3X2_F const& expectedTransform,

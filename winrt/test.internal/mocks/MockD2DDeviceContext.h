@@ -99,7 +99,6 @@ namespace canvas
 
 
 #if WINVER > _WIN32_WINNT_WINBLUE
-
         // ID2D1DeviceContext2
 
         MOCK_METHOD2(CreateInk                        , HRESULT(CONST D2D1_INK_POINT*, ID2D1Ink**));

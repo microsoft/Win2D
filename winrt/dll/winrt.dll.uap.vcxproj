@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\..\packages\Microsoft.ProjectReunion.0.5.0\build\native\Microsoft.ProjectReunion.props" Condition="Exists('..\..\packages\Microsoft.ProjectReunion.0.5.0\build\native\Microsoft.ProjectReunion.props')" />
+  <Import Project="..\..\packages\Microsoft.ProjectReunion.Foundation.0.5.0\build\native\Microsoft.ProjectReunion.Foundation.props" Condition="Exists('..\..\packages\Microsoft.ProjectReunion.Foundation.0.5.0\build\native\Microsoft.ProjectReunion.Foundation.props')" />
+  <Import Project="..\..\packages\Microsoft.ProjectReunion.WinUI.0.5.0\build\native\Microsoft.ProjectReunion.WinUI.props" Condition="Exists('..\..\packages\Microsoft.ProjectReunion.WinUI.0.5.0\build\native\Microsoft.ProjectReunion.WinUI.props')" />
   <PropertyGroup Label="Globals">
     <ProjectGuid>{8cf21e5d-e0a2-4fe7-8e2b-a025cf52dcfb}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
@@ -13,11 +16,14 @@
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
     <ItemsRootNamespace>Microsoft.Graphics.Canvas</ItemsRootNamespace>
     <TargetName>$(ItemsRootNamespace)</TargetName>
+    <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformMinVersion>10.0.17763.0</WindowsTargetPlatformMinVersion>
   </PropertyGroup>
-
+  <PropertyGroup>
+    <SkipAddPriPayloadFilesToCopyToOutputDirectoryItems>true</SkipAddPriPayloadFilesToCopyToOutputDirectoryItems>
+  </PropertyGroup>
   <Import Project="..\..\build\Win2D.cpp.props" />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
-
   <PropertyGroup Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
   </PropertyGroup>
@@ -28,6 +34,9 @@
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
   </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <DesktopCompatible>true</DesktopCompatible>
+  </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <PropertyGroup>
     <IgnoreImportLibrary>false</IgnoreImportLibrary>
@@ -37,6 +46,7 @@
       <AdditionalIncludeDirectories>$(EtwDirectory);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <CompileAsWinRT>false</CompileAsWinRT>
       <WarningLevel>Level4</WarningLevel>
+      <PreprocessorDefinitions>_WINDLL;%(PreprocessorDefinitions);CANVAS_ANIMATED_CONTROL_IS_DISABLED;WINUI3;ENABLE_WINRT_EXPERIMENTAL_TYPES=1;WRT_EXPORT</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -54,8 +64,12 @@
       <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
     </ClCompile>
   </ItemDefinitionGroup>
+  <PropertyGroup>
+    <PlatformShortName>$(Platform)</PlatformShortName>
+    <PlatformShortName Condition="'$(PlatformShortName)'=='Win32'">x86</PlatformShortName>
+  </PropertyGroup>
   <ItemGroup>
-    <CopyMergedWinMD Include="$(MergedWinmdDirectory)\$(ItemsRootNamespace).winmd" />
+    <CopyMergedWinMD Include="$(MSBuildThisFileDirectory)..\..\bin\uap$(PlatformShortName)\$(Configuration)\winrt.lib.uap\$(ItemsRootNamespace).winmd" />
   </ItemGroup>
   <Target Name="CopyMergedWinMD" BeforeTargets="Link" Outputs="@(CopiedWinMDFile)">
     <Copy SourceFiles="@(CopyMergedWinMD)" DestinationFolder="$(Outdir)" SkipUnchangedFiles="true">
@@ -69,6 +83,7 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)module.cpp" />
     <None Include="$(MSBuildThisFileDirectory)module.def" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\lib\winrt.lib.uap.vcxproj">
@@ -86,8 +101,19 @@
       <AdditionalIncludeDirectories>..\..\obj;$(EtwDirectory)</AdditionalIncludeDirectories>
     </ResourceCompile>
   </ItemGroup>
-
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <Import Project="..\..\build\Win2D.cpp.targets" />
-
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\..\packages\Microsoft.ProjectReunion.Foundation.0.5.0\build\native\Microsoft.ProjectReunion.Foundation.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.ProjectReunion.Foundation.0.5.0\build\native\Microsoft.ProjectReunion.Foundation.props'))" />
+    <Error Condition="!Exists('..\..\packages\Microsoft.ProjectReunion.Foundation.0.5.0\build\native\Microsoft.ProjectReunion.Foundation.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.ProjectReunion.Foundation.0.5.0\build\native\Microsoft.ProjectReunion.Foundation.targets'))" />
+    <Error Condition="!Exists('..\..\packages\Microsoft.ProjectReunion.WinUI.0.5.0\build\native\Microsoft.ProjectReunion.WinUI.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.ProjectReunion.WinUI.0.5.0\build\native\Microsoft.ProjectReunion.WinUI.props'))" />
+    <Error Condition="!Exists('..\..\packages\Microsoft.ProjectReunion.WinUI.0.5.0\build\native\Microsoft.ProjectReunion.WinUI.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.ProjectReunion.WinUI.0.5.0\build\native\Microsoft.ProjectReunion.WinUI.targets'))" />
+    <Error Condition="!Exists('..\..\packages\Microsoft.ProjectReunion.0.5.0\build\native\Microsoft.ProjectReunion.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.ProjectReunion.0.5.0\build\native\Microsoft.ProjectReunion.props'))" />
+  </Target>
+  <Import Project="..\..\packages\Microsoft.ProjectReunion.0.5.0\build\native\Microsoft.ProjectReunion.targets" Condition="Exists('..\..\packages\Microsoft.ProjectReunion.0.5.0\build\native\Microsoft.ProjectReunion.targets')" />
+  <Import Project="..\..\packages\Microsoft.ProjectReunion.Foundation.0.5.0\build\native\Microsoft.ProjectReunion.Foundation.targets" Condition="Exists('..\..\packages\Microsoft.ProjectReunion.Foundation.0.5.0\build\native\Microsoft.ProjectReunion.Foundation.targets')" />
+  <Import Project="..\..\packages\Microsoft.ProjectReunion.WinUI.0.5.0\build\native\Microsoft.ProjectReunion.WinUI.targets" Condition="Exists('..\..\packages\Microsoft.ProjectReunion.WinUI.0.5.0\build\native\Microsoft.ProjectReunion.WinUI.targets')" />
 </Project>

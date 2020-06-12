@@ -2,13 +2,20 @@
 //
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
-import "inspectable.idl";
-import "Windows.Foundation.idl";
-import "Windows.UI.idl";
-import "Windows.UI.Xaml.Media.Imaging.idl";
-import "Windows.Graphics.Printing.idl";
-import "Windows.UI.Input.Inking.idl";
-import "Windows.UI.Composition.idl";
+#ifdef WINUI3
+	import "Microsoft.UI.Composition.idl";
+	import "Microsoft.UI.Xaml.Media.Imaging.idl";
+	import "Microsoft.UI.Xaml.Controls.idl";
+	import "Windows.Graphics.Printing.idl";
+#else
+	import "inspectable.idl";
+	import "Windows.Foundation.idl";
+	import "Windows.UI.idl";
+	import "Windows.UI.Composition.idl";
+	import "Windows.UI.Xaml.Media.Imaging.idl";
+	import "Windows.UI.Xaml.Controls.idl";
+	import "Windows.UI.Input.Inking.idl";
+#endif
 
 #include <sdkddkver.h>
 
@@ -56,7 +63,11 @@ cpp_quote("#endif")
 #include "drawing\CanvasSwapChain.abi.idl"
 #include "images\CanvasCommandList.abi.idl"
 #include "printing\CanvasPrintDocument.abi.idl"
+
+#ifdef CANVAS_ANIMATED_CONTROL_IS_ENABLED
 #include "xaml\CanvasAnimatedControl.abi.idl"
+#endif 
+
 #include "xaml\CanvasControl.abi.idl"
 #include "xaml\CanvasSwapChainPanel.abi.idl"
 #include "xaml\CanvasVirtualImageSource.abi.idl"
@@ -65,7 +76,6 @@ cpp_quote("#endif")
 #include "effects\shader\PixelShaderEffect.abi.idl"
 #include "effects\ColorManagementProfile.abi.idl"
 #include "effects\EffectTransferTable3D.abi.idl"
-
 #include "effects\generated\AlphaMaskEffect.abi.idl"
 #include "effects\generated\ArithmeticCompositeEffect.abi.idl"
 #include "effects\generated\AtlasEffect.abi.idl"

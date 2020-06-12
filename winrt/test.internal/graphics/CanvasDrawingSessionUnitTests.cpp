@@ -8,9 +8,9 @@
 #include <lib/geometry/CanvasCachedGeometry.h>
 #include <lib/images/CanvasCommandList.h>
 #include <lib/svg/CanvasSvgDocument.h>
+#include <lib/drawing/CanvasGradientMesh.h>
 
 #if WINVER > _WIN32_WINNT_WINBLUE
-#include <lib/drawing/CanvasGradientMesh.h>
 #include "stubs/StubInkAdapter.h"
 #endif
 
@@ -4204,6 +4204,8 @@ public:
 
 #if WINVER > _WIN32_WINNT_WINBLUE
 
+#ifdef WINUI3_SUPPORTS_INKING
+
     TEST_METHOD_EX(CanvasDrawingSession_DrawInk_NullArg)
     {
         Assert::AreEqual(E_INVALIDARG, CanvasDrawingSessionFixture().DS->DrawInk(nullptr));
@@ -4278,6 +4280,8 @@ public:
             Assert::AreEqual(S_OK, f.DrawingSession->DrawInkWithHighContrast(f.StrokeCollection.Get(), i == 1));
         }
     }
+
+#endif
 
     //
     // DrawGradientMesh
@@ -4833,7 +4837,7 @@ TEST_CLASS(CanvasDrawingSession_CloseTests)
         //
         // Calling any other method will return RO_E_CLOSED
         //
-        using namespace ABI::Windows::UI;
+        using namespace ABI::Microsoft::UI;
         using namespace ABI::Windows::Foundation;
 
 #define EXPECT_OBJECT_CLOSED(CODE) Assert::AreEqual(RO_E_CLOSED, CODE)
@@ -4944,7 +4948,7 @@ TEST_CLASS(CanvasDrawingSession_CloseTests)
         EXPECT_OBJECT_CLOSED(canvasDrawingSession->DrawGlyphRunWithMeasuringMode(Vector2{}, nullptr, 0, 0, nullptr, false, 0u, nullptr, CanvasTextMeasuringMode::Natural));
         EXPECT_OBJECT_CLOSED(canvasDrawingSession->DrawGlyphRunWithMeasuringModeAndDescription(Vector2{}, nullptr, 0, 0, nullptr, false, 0u, nullptr, CanvasTextMeasuringMode::Natural, nullptr, nullptr, 0, nullptr, 0));
 
-#if WINVER > _WIN32_WINNT_WINBLUE
+#if WINVER > _WIN32_WINNT_WINBLUE && WINUI3_SUPPORTS_INKING
         EXPECT_OBJECT_CLOSED(canvasDrawingSession->DrawInk(nullptr));
 #endif
 

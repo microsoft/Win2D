@@ -4,10 +4,11 @@
 
 #include "pch.h"
 
+#ifdef CANVAS_ANIMATED_CONTROL_IS_ENABLED
+
 #include "GameLoopThread.h"
 
 using namespace ABI::Microsoft::Graphics::Canvas;
-
 //
 // Creates a CoreDispatcher for the current thread.
 //
@@ -19,7 +20,7 @@ static ComPtr<ICoreDispatcher> CreateCoreDispatcher(ISwapChainPanel* swapChainPa
 {
     ComPtr<ICoreInputSourceBase> inputSource;
     ThrowIfFailed(swapChainPanel->CreateCoreIndependentInputSource(
-        CoreInputDeviceTypes_Touch | CoreInputDeviceTypes_Pen | CoreInputDeviceTypes_Mouse, 
+        CoreInputDeviceTypes_Touch | CoreInputDeviceTypes_Pen | CoreInputDeviceTypes_Mouse,
         &inputSource));
 
     ComPtr<ICoreDispatcher> dispatcher;
@@ -194,6 +195,8 @@ public:
         {
             boolean result;
             ThrowIfFailed(m_dispatcher->get_HasThreadAccess(&result));
+
+            
             return !!result;
         }
         else
@@ -305,3 +308,5 @@ std::unique_ptr<IGameLoopThread> CreateGameLoopThread(ISwapChainPanel* swapChain
 {
     return std::make_unique<GameLoopThread>(swapChainPanel, client);
 }
+
+#endif

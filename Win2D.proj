@@ -12,7 +12,7 @@
 
   <!-- Parameters that can be configured by the caller, eg. "msbuild Win2D.proj /p:BuildTests=false" -->
   <PropertyGroup>
-    <BuildPlatforms>Win32;x64;ARM;ARM64;AnyCPU</BuildPlatforms>
+    <BuildPlatforms>Win32;x64;ARM64;AnyCPU</BuildPlatforms>
     <BuildConfigurations>Debug;Release</BuildConfigurations>
     <BuildTests>true</BuildTests>
     <BuildTools>true</BuildTools>
@@ -28,7 +28,7 @@
   <!-- Set default platforms for each project type -->
   <ItemDefinitionGroup>
     <UAPProject>
-      <Platforms>Win32;x64;ARM;ARM64</Platforms>
+      <Platforms>Win32;x64;ARM64</Platforms>
       <BinDir>UAP</BinDir>
     </UAPProject>
     <AnyCPUProject>
@@ -42,6 +42,7 @@
   <ItemGroup>
     <UAPProject Include="winrt\lib\winrt.lib.uap.vcxproj" />
     <UAPProject Include="winrt\dll\winrt.dll.uap.vcxproj" />
+    <AnyCPUProject Include="winrt\projection.net5\winrt.projection.net5.csproj" />
   </ItemGroup>
 
   <!-- Test projects -->
@@ -61,18 +62,10 @@
     </UAPProject>
     <UAPProject Include="winrt\test.nativecomponent\winrt.test.nativecomponent.uap.vcxproj" />
     <UAPProject Include="winrt\test.managed\winrt.test.managed.uap.csproj">
-      <Platforms>Win32;x64;ARM</Platforms>
+      <Platforms>Win32;x64</Platforms>
       <AutomatedTests Condition="$(ShouldRunUAPTests)">store</AutomatedTests>
       <BuildInParallel>false</BuildInParallel>
     </UAPProject>
-    <UAPProject Include="samples\SimpleSample\SimpleSample.uap.csproj" />
-    <UAPProject Include="samples\CoreWindowExample\CoreWindowExample.uap.csproj" />
-    <UAPProject Include="samples\CompositionExample\CompositionExample.csproj" />
-    <UAPProject Include="samples\ExampleGallery\Direct3DInterop\ExampleGallery.Direct3DInterop.uap.vcxproj">
-      <BuildInParallel>false</BuildInParallel>
-    </UAPProject>
-    <UAPProject Include="samples\ExampleGallery\BackgroundTask\ExampleGallery.BackgroundTask.uap.csproj" />
-    <UAPProject Include="samples\ExampleGallery\ExampleGallery.uap.csproj" />
   </ItemGroup>
 
   <!-- Tools projects -->
@@ -319,7 +312,7 @@
   
   <Target Name="ChooseConfigurationsToRestore">
     <ItemGroup>
-      <ProjectToRestore Include="$(MSBuildThisFileDirectory)Win2D.uap.sln" />
+      <ProjectToRestore Include="$(MSBuildThisFileDirectory)Microsoft.Graphics.Win2D.sln" />
 
       <!-- Expand parameter properties into item groups, so we can batch over them -->
       <BuildPlatform Include="$(BuildPlatforms)" />

@@ -9,9 +9,9 @@
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace UI { namespace Xaml
 {
     using namespace ABI::Windows::ApplicationModel::Core;
-    using namespace ABI::Windows::UI::Xaml::Controls;
-    using namespace ABI::Windows::UI::Xaml::Media;
-    using namespace ABI::Windows::UI::Xaml;
+    using namespace ABI::Microsoft::UI::Xaml::Controls;
+    using namespace ABI::Microsoft::UI::Xaml::Media;
+    using namespace ABI::Microsoft::UI::Xaml;
 
     template<typename TRAITS>
     class BaseControlAdapter : public TRAITS::adapter_t,
@@ -38,7 +38,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             auto& module = Module<InProc>::GetModule();
 
             ThrowIfFailed(GetActivationFactory(
-                HStringReference(RuntimeClass_Windows_UI_Xaml_Controls_UserControl).Get(),
+                HStringReference(RuntimeClass_Microsoft_UI_Xaml_Controls_UserControl).Get(),
                 &m_userControlFactory));
 
             ThrowIfFailed(module.GetActivationFactory(
@@ -50,7 +50,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                 &m_displayInformationStatics));
 
             ThrowIfFailed(GetActivationFactory(
-                HStringReference(RuntimeClass_Windows_UI_Xaml_Window).Get(),
+                HStringReference(RuntimeClass_Microsoft_UI_Xaml_Window).Get(),
                 &m_windowStatics));
 
             ThrowIfFailed(GetActivationFactory(
@@ -96,6 +96,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                 handler);
         }
 
+#ifndef WINUI3
         virtual float GetLogicalDpi() override
         {
             // Don't try to look up display information if we're in design mode
@@ -125,8 +126,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                 &IDisplayInformation::remove_DpiChanged,
                 handler);
         }
+#endif
         
-        virtual RegisteredEvent AddVisibilityChangedCallback(IWindowVisibilityChangedEventHandler* handler, IWindow* window)
+        virtual RegisteredEvent AddVisibilityChangedCallback(WindowVisibilityChangedEventHandler* handler, IWindow* window)
         {
             // Don't register for the visiblity changed event if we're in design
             // mode.  Although we have been given a valid IWindow, we'll crash

@@ -17,7 +17,6 @@
 
 using namespace ABI::Microsoft::Graphics::Canvas::Printing;
 
-
 static uint32_t const AnyPageNumber = 123;
 static float const AnyWidth = 12.0f;
 static float const AnyHeight = 34.0f;
@@ -53,7 +52,7 @@ public:
         return SharedDevice;
     }
 
-    virtual ComPtr<ICoreDispatcher> GetDispatcherForCurrentThread() override
+    virtual ComPtr<ABI::Microsoft::System::IDispatcherQueue> GetDispatcherForCurrentThread() override
     {
         return Dispatcher;
     }
@@ -849,12 +848,12 @@ TEST_CLASS(CanvasPrintDocumentUnitTests)
 
 struct DeferrableFixture
 {
-    ComPtr<MockDispatcher> Dispatcher;
+    ComPtr<MockDispatcherQueue> Dispatcher;
     DeferrableTaskScheduler Scheduler;
     std::unique_ptr<DeferrableTask> Task;
 
     DeferrableFixture()
-        : Dispatcher(Make<MockDispatcher>())
+        : Dispatcher(Make<MockDispatcherQueue>())
         , Scheduler(Dispatcher)
     {
         Task = Scheduler.CreateTask(
@@ -879,13 +878,13 @@ struct DeferrableFixture
     void VerifySecondCallToDeferralCompleteFails(ComPtr<ARGS> const& args)
     {
         // The scheduler needs to think that it is running this task
-        Dispatcher->RunAsyncMethod.SetExpectedCalls(1);
+        Dispatcher->TryEnqueueWithPriorityMethod.SetExpectedCalls(1);
         Scheduler.Schedule(std::move(Task));
         
         ComPtr<ICanvasPrintDeferral> deferral;
         ThrowIfFailed(args->GetDeferral(&deferral));
 
-        Dispatcher->RunAsyncMethod.SetExpectedCalls(1);
+        Dispatcher->TryEnqueueWithPriorityMethod.SetExpectedCalls(1);
         ThrowIfFailed(deferral->Complete());
 
         Assert::AreEqual(E_FAIL, deferral->Complete());
@@ -1314,6 +1313,3 @@ TEST_CLASS(CanvasPrintDeferrableTaskUnitTests)
         future.get();
     }
 };
-
-
-

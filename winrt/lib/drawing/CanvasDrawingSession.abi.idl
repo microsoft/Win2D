@@ -1306,6 +1306,8 @@ namespace Microsoft.Graphics.Canvas
         // DrawInk
         //
 #if WINVER > _WIN32_WINNT_WINBLUE
+
+#ifdef WINUI3_SUPPORTS_INKING
         [overload("DrawInk")]
         HRESULT DrawInk(
             [in] Windows.Foundation.Collections.IIterable<Windows.UI.Input.Inking.InkStroke*>* inkStrokes);
@@ -1314,6 +1316,7 @@ namespace Microsoft.Graphics.Canvas
         HRESULT DrawInkWithHighContrast(
             [in] Windows.Foundation.Collections.IIterable<Windows.UI.Input.Inking.InkStroke*>* inkStrokes,
             [in] boolean highContrast);
+#endif
 
         //
         // DrawGradientMesh

@@ -25,7 +25,7 @@ namespace Microsoft.Graphics.Canvas.UI.Xaml
     };
 
     [version(VERSION), activatable(VERSION), marshaling_behavior(agile), threading(both)]
-   runtimeclass CanvasSwapChainPanel : Windows.UI.Xaml.Controls.SwapChainPanel
+   runtimeclass CanvasSwapChainPanel : Microsoft.UI.Xaml.Controls.SwapChainPanel
     {
         [default] interface ICanvasSwapChainPanel;
     }

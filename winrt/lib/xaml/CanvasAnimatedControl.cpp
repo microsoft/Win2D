@@ -4,6 +4,8 @@
 
 #include "pch.h"
 
+#ifdef CANVAS_ANIMATED_CONTROL_IS_ENABLED
+
 #include "CanvasGameLoop.h"
 
 using namespace ::ABI::Microsoft::Graphics::Canvas;
@@ -1315,3 +1317,5 @@ CanvasTimingInformation CanvasAnimatedControl::GetTimingInformationFromTimer()
 ActivatableClassWithFactory(CanvasAnimatedUpdateEventArgs, CanvasAnimatedUpdateEventArgsFactory);
 ActivatableClassWithFactory(CanvasAnimatedDrawEventArgs, CanvasAnimatedDrawEventArgsFactory);
 ActivatableClassWithFactory(CanvasAnimatedControl, CanvasAnimatedControlFactory);
+
+#endif

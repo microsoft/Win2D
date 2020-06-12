@@ -6,19 +6,22 @@
 
 #include "AnimatedControlAsyncAction.h"
 #include "BaseControlAdapter.h"
-#include "CanvasGameLoop.h"
 #include "CanvasSwapChainPanel.h"
 #include "StepTimer.h"
+
+#ifdef CANVAS_ANIMATED_CONTROL_IS_ENABLED
+
+#include "CanvasGameLoop.h"
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace UI { namespace Xaml
 {
     using namespace ABI::Windows::ApplicationModel;
     using namespace ABI::Windows::UI::Core;
-    using namespace ABI::Windows::UI::Xaml::Controls;
-    using namespace ABI::Windows::UI::Xaml::Shapes;
-    using namespace ABI::Windows::UI::Xaml;
+    using namespace ABI::Microsoft::UI::Xaml::Controls;
+    using namespace ABI::Microsoft::UI::Xaml::Shapes;
+    using namespace ABI::Microsoft::UI::Xaml;
     using namespace ABI::Windows::Foundation;
-    using namespace ABI::Windows::System::Threading;
+    ///using namespace ABI::Windows::System::Threading;
 
     class CanvasAnimatedUpdateEventArgs : public RuntimeClass<ICanvasAnimatedUpdateEventArgs>,
                                           private LifespanTracker<CanvasAnimatedUpdateEventArgs>
@@ -297,3 +300,5 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     };
 
 }}}}}}
+
+#endif

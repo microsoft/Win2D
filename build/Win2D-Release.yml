@@ -1,0 +1,12 @@
+name: $[format('{0:yyyyMMdd}.{1}', pipeline.startTime, 'Release')]
+
+pool:
+  name: 'Package ES Standard Build'
+
+variables:
+  version: $[format('{0}', counter(0,0))]
+
+steps:
+- template: AzurePipelinesTemplates\Win2D-Build-Steps.yml
+  parameters:
+    isRelease: true

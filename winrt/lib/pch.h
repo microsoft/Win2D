@@ -16,6 +16,11 @@
 
 #include <windows.h>
 
+// Undef GetCurrentTime because the Win32 API in windows.h collides with Storyboard.GetCurrentTime
+#ifdef GetCurrentTime
+#undef GetCurrentTime
+#endif
+
 // Standard C++
 #include <algorithm>
 #include <assert.h>
@@ -70,24 +75,34 @@
 #include <windows.security.cryptography.h>
 #include <windows.security.cryptography.core.h>
 #include <windows.storage.h>
-#include <windows.ui.h>
-#include <windows.ui.xaml.controls.h>
-#include <windows.ui.xaml.media.h>
-#include <windows.ui.xaml.media.dxinterop.h>
-#include <windows.ui.xaml.shapes.h>
+
+#ifndef WINUI3
+#include <microsoft.graphics.h>
+#include <microsoft.system.h>
+#else
+#include <microsoft.ui.h>
+#include <microsoft.UI.Xaml.Controls.h>
+#include <microsoft.ui.xaml.media.h>
+#include <microsoft.ui.xaml.media.dxinterop.h>
+#include <microsoft.ui.xaml.shapes.h>
+#endif
+
 #include <windows.graphics.display.h>
 #include <windows.graphics.interop.h>
 
 #if WINVER > _WIN32_WINNT_WINBLUE
 #include <windows.foundation.metadata.h>
-#include <windows.ui.composition.h>
-#include <windows.ui.composition.interop.h>
+#include <microsoft.ui.composition.h>
+#include <microsoft.ui.composition.interop.h>
 #endif
 
 #pragma warning(default: 4265)  // "class has virtual functions, but destructor is not virtual"
 
 // Public
 #include <Microsoft.Graphics.Canvas.native.h>
+
+// Generated from local IDLs
+#include <Microsoft.Graphics.Canvas.h>
 
 // Inc
 #include <AsyncOperation.h>
@@ -107,9 +122,6 @@
 #include <Vector.h>
 #include <WinStringWrapper.h>
 #include <WinStringBuilder.h>
-
-// Generated from local IDLs
-#include <Microsoft.Graphics.Canvas.h>
 
 #pragma warning(push)
 #pragma warning(disable:4459)   // declaration hides global declaration

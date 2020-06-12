@@ -7,7 +7,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Reflection;
 using Windows.Foundation;
-using Windows.UI;
+using Microsoft.UI;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Effects;
@@ -222,12 +222,12 @@ namespace test.managed
                 var originalColorValue = colorProperty.GetValue(effect);
 
                 // Verify that a value set to the color property is picked up on the HDR version of it
-                var color = Color.FromArgb(1, 2, 3, 4);
+                var color = Windows.UI.Color.FromArgb(1, 2, 3, 4);
                 colorProperty.SetValue(effect, color);
 
                 // Color properties may or may not force the alpha channel to 255. Other tests
                 // verify that this is done correctly, so we just read back the property value.
-                color = (Color)colorProperty.GetValue(effect);
+                color = (Windows.UI.Color)colorProperty.GetValue(effect);
 
                 var expectedHdrColor = new Vector4
                 {
@@ -251,9 +251,9 @@ namespace test.managed
                 hdrProperty.SetValue(effect, hdrColor);
                 hdrColor = (Vector4)hdrProperty.GetValue(effect);
 
-                var expectedColor = Color.FromArgb((byte)(hdrColor.W * 255.0f), (byte)(hdrColor.X * 255.0f), (byte)(hdrColor.Y * 255.0f), (byte)(hdrColor.Z * 255.0f));
+                var expectedColor = Windows.UI.Color.FromArgb((byte)(hdrColor.W * 255.0f), (byte)(hdrColor.X * 255.0f), (byte)(hdrColor.Y * 255.0f), (byte)(hdrColor.Z * 255.0f));
 
-                var retrievedColor = (Color)colorProperty.GetValue(effect);
+                var retrievedColor = (Windows.UI.Color)colorProperty.GetValue(effect);
                 Assert.AreEqual(expectedColor, retrievedColor);
 
                 // Verify that the non-HDR properties are saturated when they return
@@ -261,8 +261,8 @@ namespace test.managed
                 hdrProperty.SetValue(effect, hdrColor);
                 hdrColor = (Vector4)hdrProperty.GetValue(effect);
 
-                expectedColor = Color.FromArgb(255, 255, 255, 255);
-                retrievedColor = (Color)colorProperty.GetValue(effect);
+                expectedColor = Windows.UI.Color.FromArgb(255, 255, 255, 255);
+                retrievedColor = (Windows.UI.Color)colorProperty.GetValue(effect);
                 Assert.AreEqual(expectedColor, retrievedColor);
 
                 // Check the interop settings
@@ -467,9 +467,9 @@ namespace test.managed
                     (float)r.Bottom,
                 };
             }
-            else if (value is Color)
+            else if (value is Windows.UI.Color)
             {
-                var c = (Color)value;
+                var c = (Windows.UI.Color)value;
 
                 return new float[]
                 { 
@@ -602,12 +602,12 @@ namespace test.managed
                 return new Rect(new Point(a[0], a[1]), 
                                 new Point(a[2], a[3]));
             }
-            else if (type == typeof(Color))
+            else if (type == typeof(Windows.UI.Color))
             {
                 var a = ConvertRgbToRgba((float[])value);
                 Assert.AreEqual(4, a.Length);
 
-                return Color.FromArgb((byte)(a[3] * 255),
+                return Windows.UI.Color.FromArgb((byte)(a[3] * 255),
                                       (byte)(a[0] * 255),
                                       (byte)(a[1] * 255),
                                       (byte)(a[2] * 255));
@@ -652,7 +652,7 @@ namespace test.managed
                 float[] a1 = (float[])value1;
                 float[] a2 = (float[])value2;
 
-                if (property.PropertyType == typeof(Color))
+                if (property.PropertyType == typeof(Windows.UI.Color))
                 {
                     a1 = ConvertRgbToRgba(a1);
                     a2 = ConvertRgbToRgba(a2);
@@ -734,7 +734,7 @@ namespace test.managed
             {
                 return EffectPropertyMapping.RectToVector4;
             }
-            else if (property.PropertyType == typeof(Color))
+            else if (property.PropertyType == typeof(Windows.UI.Color))
             {
                 return ((float[])propertyValue).Length == 3 ? EffectPropertyMapping.ColorToVector3 : 
                                                               EffectPropertyMapping.ColorToVector4;
@@ -835,7 +835,7 @@ namespace test.managed
                 return whichOne ? new Rect(1, 2, 3, 4) :
                                   new Rect(10, 20, 5, 6);
             }
-            else if (type == typeof(Color))
+            else if (type == typeof(Windows.UI.Color))
             {
                 return whichOne ? Colors.CornflowerBlue : Colors.Crimson;
             }
@@ -864,8 +864,8 @@ namespace test.managed
                 {
                     transferTables = new EffectTransferTable3D[]
                     {
-                        EffectTransferTable3D.CreateFromColors(device, new Color[8], 2, 2, 2),
-                        EffectTransferTable3D.CreateFromColors(device, new Color[8], 2, 2, 2),
+                        EffectTransferTable3D.CreateFromColors(device, new Windows.UI.Color[8], 2, 2, 2),
+                        EffectTransferTable3D.CreateFromColors(device, new Windows.UI.Color[8], 2, 2, 2),
                     };
                 }
 

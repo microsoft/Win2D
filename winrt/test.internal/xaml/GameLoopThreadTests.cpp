@@ -8,6 +8,8 @@
 
 #include "MockCoreIndependentInputSource.h"
 
+#ifdef CANVAS_ANIMATED_CONTROL_IS_ENABLED
+
 class Waiter
 {
     Event m_event;
@@ -386,3 +388,4 @@ TEST_CLASS(CanvasGameLoopTests)
     }
 };
 
+#endif

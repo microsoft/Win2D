@@ -1001,7 +1001,7 @@ public:
         Assert::AreEqual(CLSID_D2D1DpiCompensation, f.m_mockEffects[1]->m_effectId);
     }
 
-#if WINVER > _WIN32_WINNT_WINBLUE
+#if WINVER > _WIN32_WINNT_WINBLUE 
 
     class D2DFactoryWithOptional5Support : public MockD2DFactory
     {

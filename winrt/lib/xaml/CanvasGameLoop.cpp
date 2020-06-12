@@ -3,8 +3,9 @@
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
 #include "pch.h"
-
 #include "CanvasGameLoop.h"
+
+#ifdef CANVAS_ANIMATED_CONTROL_IS_ENABLED
 
 using namespace ::ABI::Microsoft::Graphics::Canvas;
 using namespace ::ABI::Microsoft::Graphics::Canvas::UI;
@@ -123,3 +124,5 @@ bool CanvasGameLoop::HasThreadAccess()
 {
     return m_gameLoopThread->HasThreadAccess();
 }
+
+#endif

@@ -4,21 +4,31 @@
 
 #include "pch.h"
 
+#ifdef CANVAS_ANIMATED_CONTROL_IS_ENABLED
+
+    #define TEST_SHARED_CONTROL_BEHAVIOR(NAME)      \
+    TEST_METHOD_EX(CanvasControl_##NAME)            \
+    {                                               \
+        NAME<CanvasControlTraits>();                \
+    }                                               \
+    TEST_METHOD_EX(CanvasAnimatedControl_##NAME)    \
+    {                                               \
+        NAME<CanvasAnimatedControlTraits>();        \
+    }                                               \
+    template<typename TRAITS>                       \
+    void NAME()
+
+#else
+
 #define TEST_SHARED_CONTROL_BEHAVIOR(NAME)          \
     TEST_METHOD_EX(CanvasControl_##NAME)            \
     {                                               \
         NAME<CanvasControlTraits>();                \
     }                                               \
-                                                    \
-    TEST_METHOD_EX(CanvasAnimatedControl_##NAME)    \
-    {                                               \
-        NAME<CanvasAnimatedControlTraits>();        \
-    }                                               \
-                                                    \
     template<typename TRAITS>                       \
     void NAME()
 
-
+#endif
 
 TEST_CLASS(CanvasSharedControlTests_ClearColor)
 {
@@ -123,54 +133,58 @@ TEST_CLASS(CanvasSharedControlTests_ClearColor)
 
 TEST_CLASS(CanvasSharedControlTests_InteractionWithRecreatableDeviceManager)
 {
+
+// Test removed, as DPI now comes from the XamlRoot instead of the adapter
+#ifndef WINUI3
     TEST_SHARED_CONTROL_BEHAVIOR(WhenDpiChangedEventRaised_ForwardsToDeviceManager)
     {
-        ControlFixtureWithRecreatableDeviceManager<TRAITS> f;
-        f.Load();
+       ControlFixtureWithRecreatableDeviceManager<TRAITS> f;
+       f.Load();
 
-        // DPI change event without an actual change to the value should be ignored.
-        f.Adapter->RaiseDpiChangedEvent();
+       // DPI change event without an actual change to the value should be ignored.
+       f.Adapter->RaiseDpiChangedEvent();
 
-        // But if the value changes, this should be passed on to the device manager.
-        f.Adapter->LogicalDpi = 100;
+       // But if the value changes, this should be passed on to the device manager.
+       f.Adapter->LogicalDpi = 100;
 
-        f.DeviceManager->SetDpiChangedMethod.SetExpectedCalls(1);
-        f.Adapter->RaiseDpiChangedEvent();
+       f.DeviceManager->SetDpiChangedMethod.SetExpectedCalls(1);
+       f.Adapter->RaiseDpiChangedEvent();
     }
 
     TEST_SHARED_CONTROL_BEHAVIOR(WhenControlNotLoaded_DpiChangedEventIsIgnored)
     {
-        ControlFixtureWithRecreatableDeviceManager<TRAITS> f;
+       ControlFixtureWithRecreatableDeviceManager<TRAITS> f;
 
-        f.DeviceManager->SetDpiChangedMethod.SetExpectedCalls(0);
+       f.DeviceManager->SetDpiChangedMethod.SetExpectedCalls(0);
 
-        // DPI change events on a new, not yet loaded control should be ignored.
-        f.Adapter->LogicalDpi = 100;
-        f.Adapter->RaiseDpiChangedEvent();
+       // DPI change events on a new, not yet loaded control should be ignored.
+       f.Adapter->LogicalDpi = 100;
+       f.Adapter->RaiseDpiChangedEvent();
 
-        f.Adapter->LogicalDpi = 96;
-        f.Adapter->RaiseDpiChangedEvent();
+       f.Adapter->LogicalDpi = 96;
+       f.Adapter->RaiseDpiChangedEvent();
 
-        // Ditto after loading and then unloading the control again.
-        f.Load();
-        f.RaiseUnloadedEvent();
+       // Ditto after loading and then unloading the control again.
+       f.Load();
+       f.RaiseUnloadedEvent();
 
-        f.Adapter->LogicalDpi = 100;
-        f.Adapter->RaiseDpiChangedEvent();
+       f.Adapter->LogicalDpi = 100;
+       f.Adapter->RaiseDpiChangedEvent();
     }
 
     TEST_SHARED_CONTROL_BEHAVIOR(WhenDpiChangesWhileControlNotLoaded_LoadRaisesDpiChangedEvent)
     {
-        ControlFixtureWithRecreatableDeviceManager<TRAITS> f;
+       ControlFixtureWithRecreatableDeviceManager<TRAITS> f;
 
-        // DPI changes, but is ignored because the control is not yet loaded.
-        f.Adapter->LogicalDpi = 100;
-        f.Adapter->RaiseDpiChangedEvent();
+       // DPI changes, but is ignored because the control is not yet loaded.
+       f.Adapter->LogicalDpi = 100;
+       f.Adapter->RaiseDpiChangedEvent();
 
-        // When the control loads, the DPI change should be picked up.
-        f.DeviceManager->SetDpiChangedMethod.SetExpectedCalls(1);
-        f.Load();
+       // When the control loads, the DPI change should be picked up.
+       f.DeviceManager->SetDpiChangedMethod.SetExpectedCalls(1);
+       f.Load();
     }
+#endif
 
     TEST_SHARED_CONTROL_BEHAVIOR(add_CreateResources_ForwardsToDeviceManager)
     {
@@ -290,6 +304,7 @@ TEST_CLASS(CanvasSharedControlTests_InteractionWithRecreatableDeviceManager)
             Adapter->CreateCanvasImageSourceMethod.AllowAnyCall();
         }
 
+#ifdef CANVAS_ANIMATED_CONTROL_IS_ENABLED
         template<>
         void PrepareAdapter<CanvasAnimatedControlTraits>()
         {
@@ -310,7 +325,7 @@ TEST_CLASS(CanvasSharedControlTests_InteractionWithRecreatableDeviceManager)
                     return mockSwapChain;
                 });
         }
-
+#endif
         void EnsureChangedCallback()
         {
             EnsureChangedCallbackImpl<TRAITS>();
@@ -321,13 +336,16 @@ TEST_CLASS(CanvasSharedControlTests_InteractionWithRecreatableDeviceManager)
         template<typename T>
         void EnsureChangedCallbackImpl() {}
 
+#ifdef CANVAS_ANIMATED_CONTROL_IS_ENABLED
         template<>
         void EnsureChangedCallbackImpl<CanvasAnimatedControlTraits>()
         {
             Adapter->DoChanged();
         }
-    };
+#endif
 
+    };
+    
 
     TEST_SHARED_CONTROL_BEHAVIOR(WhenResourcesAreNotCreated_DrawHandlersAreNotCalled)
     {
@@ -351,34 +369,38 @@ TEST_CLASS(CanvasSharedControlTests_InteractionWithRecreatableDeviceManager)
         f.Load();
         f.EnsureChangedCallback();
         f.RenderSingleFrame();
-    }    
+    }
 };
 
 TEST_CLASS(CanvasSharedControlTests_CommonAdapter)
+
 {
+// Test removed, as DPI now comes from the XamlRoot instead of the adapter
+#ifndef WINUI3    
     TEST_SHARED_CONTROL_BEHAVIOR(DpiProperties)
     {
-        BasicControlFixture<TRAITS> f;
+       BasicControlFixture<TRAITS> f;
 
-        const float dpi = 144;
+       const float dpi = 144;
 
-        f.CreateAdapter();
+       f.CreateAdapter();
 
-        f.Adapter->LogicalDpi = dpi;
-        
-        f.CreateControl();
+       f.Adapter->LogicalDpi = dpi;
+       
+       f.CreateControl();
 
-        float actualDpi = 0;
-        ThrowIfFailed(f.Control->get_Dpi(&actualDpi));
-        Assert::AreEqual(dpi, actualDpi);
+       float actualDpi = 0;
+       ThrowIfFailed(f.Control->get_Dpi(&actualDpi));
+       Assert::AreEqual(dpi, actualDpi);
 
-        VerifyConvertDipsToPixels(dpi, f.Control);
+       VerifyConvertDipsToPixels(dpi, f.Control);
 
-        const float testValue = 100;
-        float dips = 0;
-        ThrowIfFailed(f.Control->ConvertPixelsToDips((int)testValue, &dips));
-        Assert::AreEqual(testValue * DEFAULT_DPI / dpi, dips);
+       const float testValue = 100;
+       float dips = 0;
+       ThrowIfFailed(f.Control->ConvertPixelsToDips((int)testValue, &dips));
+       Assert::AreEqual(testValue * DEFAULT_DPI / dpi, dips);
     }
+#endif
 
     TEST_SHARED_CONTROL_BEHAVIOR(WhenLoadedAndUnloaded_EventsAreRegisteredAndUnregistered)
     {
@@ -387,18 +409,15 @@ TEST_CLASS(CanvasSharedControlTests_CommonAdapter)
         f.CreateAdapter();
 
         // Creating the control should not register events.
-        f.Adapter->DpiChangedEventSource->AddMethod.SetExpectedCalls(0);
         f.Adapter->SuspendingEventSource->AddMethod.SetExpectedCalls(0);
         f.Adapter->ResumingEventSource->AddMethod.SetExpectedCalls(0);
 
-        f.Adapter->DpiChangedEventSource->RemoveMethod.SetExpectedCalls(0);
         f.Adapter->SuspendingEventSource->RemoveMethod.SetExpectedCalls(0);
         f.Adapter->ResumingEventSource->RemoveMethod.SetExpectedCalls(0);
 
         f.CreateControl();
 
         // Loading the control should register events.
-        f.Adapter->DpiChangedEventSource->AddMethod.SetExpectedCalls(1);
         f.Adapter->SuspendingEventSource->AddMethod.SetExpectedCalls(1);
         f.Adapter->ResumingEventSource->AddMethod.SetExpectedCalls(1);
 
@@ -407,7 +426,6 @@ TEST_CLASS(CanvasSharedControlTests_CommonAdapter)
         Expectations::Instance()->Validate();
 
         // Unloading the control should unregister events.
-        f.Adapter->DpiChangedEventSource->RemoveMethod.SetExpectedCalls(1);
         f.Adapter->SuspendingEventSource->RemoveMethod.SetExpectedCalls(1);
         f.Adapter->ResumingEventSource->RemoveMethod.SetExpectedCalls(1);
 
@@ -591,11 +609,13 @@ inline void DeviceCreationFixture<CanvasControlTraits>::EnsureDevice()
     RenderSingleFrame();
 }
 
+#ifdef CANVAS_ANIMATED_CONTROL_IS_ENABLED
 inline void DeviceCreationFixture<CanvasAnimatedControlTraits>::EnsureDevice()
 {
     Adapter->Tick();
     Adapter->DoChanged();
 }
+#endif
 
 TEST_CLASS(CanvasSharedControlTests_DeviceApis)
 {    
@@ -1030,47 +1050,53 @@ TEST_CLASS(CanvasSharedControlTests_DpiScaling)
         Assert::AreEqual(1.0f, dpiScale);
     }
 
+// Test removed, as DPI now comes from the XamlRoot instead of the adapter
+#ifndef WINUI3
     TEST_SHARED_CONTROL_BEHAVIOR(DpiScaling_Affects_get_Dpi)
     {
-        for (auto testCase : dpiScalingTestCases)
-        {
-            Fixture<TRAITS> f(testCase.Dpi);
+       for (auto testCase : dpiScalingTestCases)
+       {
+           Fixture<TRAITS> f(testCase.Dpi);
 
-            ThrowIfFailed(f.Control->put_DpiScale(testCase.DpiScale));
+           ThrowIfFailed(f.Control->put_DpiScale(testCase.DpiScale));
 
-            float dpi;
-            Assert::AreEqual(S_OK, f.Control->get_Dpi(&dpi));
+           float dpi;
+           Assert::AreEqual(S_OK, f.Control->get_Dpi(&dpi));
 
-            Assert::AreEqual(testCase.DpiScale * testCase.Dpi, dpi);
-        }
+           Assert::AreEqual(testCase.DpiScale * testCase.Dpi, dpi);
+       }
     }
 
+    Test removed, as DPI now comes from the XamlRoot instead of the adapter
     TEST_SHARED_CONTROL_BEHAVIOR(DpiScaling_Affects_ConvertDipsToPixels)
     {
-        for (auto testCase : dpiScalingTestCases)
-        {
-            float dpi = testCase.Dpi + 1; // Expects non-integral multiple of default DPI
+       for (auto testCase : dpiScalingTestCases)
+       {
+           float dpi = testCase.Dpi + 1; // Expects non-integral multiple of default DPI
 
-            Fixture<TRAITS> f(dpi);
+           Fixture<TRAITS> f(dpi);
 
-            ThrowIfFailed(f.Control->put_DpiScale(testCase.DpiScale));
+           ThrowIfFailed(f.Control->put_DpiScale(testCase.DpiScale));
 
-            VerifyConvertDipsToPixels(testCase.DpiScale * dpi, f.Control);
-        }
+           VerifyConvertDipsToPixels(testCase.DpiScale * dpi, f.Control);
+       }
     }
 
+    Test removed, as DPI now comes from the XamlRoot instead of the adapter
     TEST_SHARED_CONTROL_BEHAVIOR(DpiScaling_Affects_ConvertPixelsToDips)
     {
-        for (auto testCase : dpiScalingTestCases)
-        {
-            Fixture<TRAITS> f(testCase.Dpi);
+       for (auto testCase : dpiScalingTestCases)
+       {
+           Fixture<TRAITS> f(testCase.Dpi);
 
-            ThrowIfFailed(f.Control->put_DpiScale(testCase.DpiScale));
+           ThrowIfFailed(f.Control->put_DpiScale(testCase.DpiScale));
 
-            const float testValue = 100;
-            float dips = 0;
-            ThrowIfFailed(f.Control->ConvertPixelsToDips((int)testValue, &dips));
-            Assert::AreEqual(testValue * DEFAULT_DPI / (testCase.Dpi * testCase.DpiScale), dips);
-        }
+           const float testValue = 100;
+           float dips = 0;
+           ThrowIfFailed(f.Control->ConvertPixelsToDips((int)testValue, &dips));
+           Assert::AreEqual(testValue * DEFAULT_DPI / (testCase.Dpi * testCase.DpiScale), dips);
+       }
     }
+#endif
+
 };

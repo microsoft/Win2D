@@ -143,6 +143,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="$(AssetDir)TemporaryKey.pfx" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Assets">
@@ -151,5 +152,8 @@
     <Filter Include="Images">
       <UniqueIdentifier>{45e7a66f-3187-4212-8faf-72ec7801fb5f}</UniqueIdentifier>
     </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="UnitTestApp.xaml" />
   </ItemGroup>
 </Project>

@@ -94,18 +94,91 @@ inline void BasicControlWithDrawFixture<CanvasControlTraits>::RenderSingleFrame(
     Adapter->RaiseCompositionRenderingEvent();
 }
 
-
-inline void BasicControlWithDrawFixture<CanvasAnimatedControlTraits>::RenderSingleFrame()
-{
-    Adapter->Tick();
-}
-
-
 inline void BasicControlFixture<CanvasControlTraits>::PrepareAdapterForRenderingResource()
 {
     Adapter->CreateCanvasImageSourceMethod.AllowAnyCall();
 }
 
+struct Static_BasicControlFixture : public BasicControlWithDrawFixture<CanvasControlTraits>
+{
+    void RaiseAnyNumberOfSurfaceContentsLostEvents()
+    {
+        int anyNumberOfTimes = 5;
+        for (auto i = 0; i < anyNumberOfTimes; ++i)
+            Adapter->RaiseSurfaceContentsLostEvent();
+    }
+};
+
+template<typename T>
+struct ControlFixture;
+
+template<>
+struct ControlFixture<CanvasControlTraits> : public Static_BasicControlFixture
+{
+    ControlFixture()
+    {
+        CreateAdapter();
+        CreateControl();
+    }
+};
+
+typedef ControlFixture<CanvasControlTraits> CanvasControlFixture;
+
+template<class TRAITS>
+struct ControlFixtureWithRecreatableDeviceManager : public ControlFixture<TRAITS>
+{
+    MockRecreatableDeviceManager<TRAITS>* DeviceManager;
+    std::function<void(ChangeReason)> ChangedCallback;
+
+    ControlFixtureWithRecreatableDeviceManager()
+        : DeviceManager(nullptr)
+    {
+        CreateAdapter();
+
+        Adapter->CreateRecreatableDeviceManagerMethod.SetExpectedCalls(1,
+            [=](IInspectable*)
+            {
+                Assert::IsNull(DeviceManager);
+                auto manager = std::make_unique<MockRecreatableDeviceManager<TRAITS>>();
+                manager->SetChangedCallbackMethod.SetExpectedCalls(1,
+                    [=](std::function<void(ChangeReason)> fn)
+                    {
+                        ChangedCallback = fn;
+                    });
+
+                DeviceManager = manager.get();
+                return manager;
+            });
+
+        CreateControl();
+    }
+
+    void EnsureChangedCallback()
+    {
+        EnsureChangedCallbackImpl<TRAITS>();
+    }
+
+private:
+
+    template<typename T>
+    void EnsureChangedCallbackImpl() {}
+
+#ifdef CANVAS_ANIMATED_CONTROL_IS_ENABLED
+    template<>
+    void EnsureChangedCallbackImpl<CanvasAnimatedControlTraits>()
+    {
+        Adapter->DoChanged();
+    }
+#endif
+
+};
+
+#ifdef CANVAS_ANIMATED_CONTROL_IS_ENABLED
+
+inline void BasicControlWithDrawFixture<CanvasAnimatedControlTraits>::RenderSingleFrame()
+{
+    Adapter->Tick();
+}
 
 inline void BasicControlFixture<CanvasAnimatedControlTraits>::PrepareAdapterForRenderingResource()
 {
@@ -126,16 +199,6 @@ inline void BasicControlFixture<CanvasAnimatedControlTraits>::PrepareAdapterForR
             return mockSwapChain;
         });
 }
-
-struct Static_BasicControlFixture : public BasicControlWithDrawFixture<CanvasControlTraits>
-{
-    void RaiseAnyNumberOfSurfaceContentsLostEvents()
-    {
-        int anyNumberOfTimes = 5;
-        for (auto i = 0; i < anyNumberOfTimes; ++i)
-            Adapter->RaiseSurfaceContentsLostEvent();
-    }    
-};
 
 struct Animated_BasicControlFixture : public BasicControlWithDrawFixture<CanvasAnimatedControlTraits>
 {
@@ -164,19 +227,6 @@ struct Animated_BasicControlFixture : public BasicControlWithDrawFixture<CanvasA
         Assert::IsFalse(Adapter->HasPendingActionsOnUiThread(), L"No pending change action");
     }
 
-};
-
-template<typename T>
-struct ControlFixture;
-
-template<>
-struct ControlFixture<CanvasControlTraits> : public Static_BasicControlFixture
-{
-    ControlFixture()
-    {
-        CreateAdapter();
-        CreateControl();
-    }
 };
 
 template<>
@@ -243,54 +293,6 @@ struct ControlFixture<CanvasAnimatedControlTraits> : public Animated_BasicContro
     }
 };
 
-
-typedef ControlFixture<CanvasControlTraits> CanvasControlFixture;
 typedef ControlFixture<CanvasAnimatedControlTraits> CanvasAnimatedControlFixture;
-
-
-template<class TRAITS>
-struct ControlFixtureWithRecreatableDeviceManager : public ControlFixture<TRAITS>
-{
-    MockRecreatableDeviceManager<TRAITS>* DeviceManager;
-    std::function<void(ChangeReason)> ChangedCallback;
-
-    ControlFixtureWithRecreatableDeviceManager()
-        : DeviceManager(nullptr)
-    {
-        CreateAdapter();
-
-        Adapter->CreateRecreatableDeviceManagerMethod.SetExpectedCalls(1,
-            [=](IInspectable*)
-            {
-                Assert::IsNull(DeviceManager);
-                auto manager = std::make_unique<MockRecreatableDeviceManager<TRAITS>>();
-                manager->SetChangedCallbackMethod.SetExpectedCalls(1,
-                    [=](std::function<void(ChangeReason)> fn)
-                    {
-                        ChangedCallback = fn;
-                    });
-
-                DeviceManager = manager.get();
-                return manager;
-            });
-
-        CreateControl();
-    }
-
-    void EnsureChangedCallback()
-    {
-        EnsureChangedCallbackImpl<TRAITS>();
-    }
-
-private:
-
-    template<typename T>
-    void EnsureChangedCallbackImpl() {}
-
-    template<>
-    void EnsureChangedCallbackImpl<CanvasAnimatedControlTraits>()
-    {
-        Adapter->DoChanged();
-    }
-};
     
+#endif

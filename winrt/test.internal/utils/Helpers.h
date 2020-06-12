@@ -145,6 +145,7 @@ namespace Microsoft
                 return value;
             }            
 
+#ifdef CANVAS_ANIMATED_CONTROL_IS_ENABLED
             template<>
             inline std::wstring ToString<CanvasTimingInformation>(CanvasTimingInformation const& value)
             {
@@ -157,7 +158,7 @@ namespace Microsoft
 
                 return buf;
             }
-
+#endif
             inline std::wstring PointerToString(const wchar_t* name, void* value)
             {
                 wchar_t buf[64];
@@ -178,8 +179,10 @@ namespace Microsoft
             }
 
             TO_STRING(ICanvasControl);
-            TO_STRING(ICanvasDevice);
             TO_STRING(ICanvasDrawingSession);
+            TO_STRING(ICanvasSwapChain);
+            TO_STRING(ABI::Windows::UI::Core::ICoreCursor);
+            TO_STRING(ICanvasDevice);
             TO_STRING(ID2D1Brush);
             TO_STRING(ID2D1Image);
             TO_STRING(ID2D1Device);
@@ -197,8 +200,6 @@ namespace Microsoft
             TO_STRING(ID2D1Bitmap1);
             TO_STRING(IDXGISurface);
             TO_STRING(IDXGISwapChain);
-            TO_STRING(ICanvasSwapChain);
-            TO_STRING(ABI::Windows::UI::Core::ICoreCursor);
             TO_STRING(ID2D1Geometry);
             TO_STRING(ID2D1PathGeometry);
             TO_STRING(ID2D1SimplifiedGeometrySink);
@@ -1013,6 +1014,7 @@ namespace Microsoft
                 END_ENUM(D2D1_COMPOSITE_MODE);
             }
 
+#ifdef CANVAS_ANIMATED_CONTROL_IS_ENABLED
             ENUM_TO_STRING(ABI::Windows::UI::Core::CoreDispatcherPriority)
             {
                 ENUM_VALUE(ABI::Windows::UI::Core::CoreDispatcherPriority_Idle);
@@ -1021,7 +1023,15 @@ namespace Microsoft
                 ENUM_VALUE(ABI::Windows::UI::Core::CoreDispatcherPriority_High);
                 END_ENUM(ABI::Windows::UI::Core::CoreDispatcherPriority);
             }
-
+#else
+            ENUM_TO_STRING(ABI::Microsoft::System::DispatcherQueuePriority)
+            {
+                ENUM_VALUE(ABI::Microsoft::System::DispatcherQueuePriority_Low);
+                ENUM_VALUE(ABI::Microsoft::System::DispatcherQueuePriority_Normal);
+                ENUM_VALUE(ABI::Microsoft::System::DispatcherQueuePriority_High);
+                END_ENUM(ABI::Microsoft::System::DispatcherQueuePriority);
+            }
+#endif
             ENUM_TO_STRING(D2D1_COMBINE_MODE)
             {
                 ENUM_VALUE(D2D1_COMBINE_MODE_UNION);
@@ -1915,6 +1925,7 @@ namespace Microsoft
             return a.Width == b.Width && a.Height == b.Height;
         }
 
+#if CANVAS_ANIMATED_CONTROL_IS_ENABLED
         inline bool operator==(CanvasTimingInformation const& a, CanvasTimingInformation const& b)
         {
             return a.UpdateCount == b.UpdateCount &&
@@ -1922,6 +1933,7 @@ namespace Microsoft
                    a.ElapsedTime.Duration == b.ElapsedTime.Duration &&
                    a.IsRunningSlowly == b.IsRunningSlowly;
         }
+#endif
 
         inline bool operator==(ABI::Windows::Foundation::Point const& a, ABI::Windows::Foundation::Point const& b)
         {

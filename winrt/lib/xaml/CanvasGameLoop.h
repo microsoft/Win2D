@@ -6,6 +6,8 @@
 
 #include "GameLoopThread.h"
 
+#ifdef CANVAS_ANIMATED_CONTROL_IS_ENABLED
+
 using namespace ABI::Microsoft::Graphics::Canvas;
 
 class ICanvasGameLoopClient
@@ -72,3 +74,4 @@ private:
     void ScheduleTick(RecursiveLock const& lock);
     void EndTickLoop(RecursiveLock const& lock);
 };
+#endif

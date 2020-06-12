@@ -8,7 +8,7 @@
 
 using namespace ABI::Microsoft::Graphics::Canvas;
 using namespace ABI::Microsoft::Graphics::Canvas::Brushes;
-using namespace ABI::Windows::UI;
+using namespace ABI::Microsoft::UI;
 using namespace ABI::Windows::Foundation;
 using namespace Microsoft::WRL::Wrappers;
 

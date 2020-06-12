@@ -14,6 +14,7 @@
 #include "mocks/MockD2DEffectContext.h"
 #include "mocks/MockD2DTransformGraph.h"
 #include "mocks/MockD2DBorderTransform.h"
+#include "Windows.Perception.Spatial.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
@@ -197,7 +198,7 @@ TEST_CLASS(PixelShaderEffectUnitTests)
                 *reinterpret_cast<IID*>(data) = CLSID_PixelShaderEffect;
                 break;
 
-            case PixelShaderEffectProperty::SharedState:
+            case (UINT32)PixelShaderEffectProperty::SharedState:
                 Assert::AreEqual<size_t>(sizeof(IUnknown*), dataSize);
                 *reinterpret_cast<IUnknown**>(data) = As<IUnknown>(sharedState).Detach();
                 break;

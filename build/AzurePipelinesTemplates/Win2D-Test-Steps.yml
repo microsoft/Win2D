@@ -1,0 +1,74 @@
+steps:
+- task: UseDotNet@2
+  displayName: 'Use .NET Core sdk'
+  inputs:
+    packageType: sdk
+    includePreviewVersions: true
+    useGlobalJson: true
+    performMultiLevelLookup: true
+    installationPath: $(Agent.ToolsDirectory)/dotnet
+- task: PowerShell@1
+  displayName: 'Download Nuget'
+  inputs:
+    scriptType: inlineScript
+    inlineScript: |
+      .$env:Build_SourcesDirectory\build\nuget\download-nuget.cmd
+- task: NuGetAuthenticate@0
+  displayName: 'NuGet Authenticate'
+- task: PowerShell@1
+  displayName: 'Nuget Restore'
+  inputs:
+    scriptType: inlineScript
+    inlineScript: |
+      $env:_MSBDIR="C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\"
+      .$env:Build_SourcesDirectory\build\Enter-VSShell.ps1 -vsPath $env:_MSBDIR
+      $env:PATH="$env:Build_SourcesDirectory\build\nuget;$env:PATH"
+      .$env:Build_SourcesDirectory\build\nuget\nuget.exe restore ($env:Build_SourcesDirectory + "\build\pkges\packages.config") -PackagesDirectory ($env:Build_SourcesDirectory + "\packages")
+      $env:Platform="AnyCPU"
+      $env:Configuration="Debug"
+      .$env:Build_SourcesDirectory\build\nuget\nuget.exe restore .\Microsoft.Graphics.Win2D.sln
+      rm env:Configuration
+      rm env:Platform
+- task: PowerShell@1
+  displayName: 'Build Tests'
+  inputs:
+    scriptType: inlineScript
+    inlineScript: |
+      $env:_MSBDIR="C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\"
+      .$env:Build_SourcesDirectory\build\Enter-VSShell.ps1 -vsPath $env:_MSBDIR
+      $env:PATH="$env:Build_SourcesDirectory\build\nuget;$env:PATH"
+      msbuild "$env:Build_SourcesDirectory\Win2D.proj" /maxcpucount /p:BuildConfigurations=Debug /p:BuildPlatforms="Win32" /p:BuildTests=true /p:BuildSamples=false /p:RunTests=false /p:BuildDocs=false /bl:logfile=win2d.tests.binlog
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish test binlogs'
+  condition: Always()
+  inputs:
+    PathtoPublish: $(Build.SourcesDirectory)/win2d.tests.binlog
+    artifactName: 'testbinlogs'
+
+- task: PowerShell@1
+  displayName: 'Enable Developer Mode'
+  inputs:
+    scriptType: inlineScript
+    inlineScript: |
+      $RegistryKeyPath = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock"
+      if (-not(Test-Path -Path $RegistryKeyPath)) {
+        New-Item -Path $RegistryKeyPath -ItemType Directory -Force
+      }
+      New-ItemProperty -Path $RegistryKeyPath -Name AllowDevelopmentWithoutDevLicense -PropertyType DWORD -Value 1 -Force
+- task: VSTest@2
+  displayName: 'Run Unit tests'
+  inputs:
+    uiTests: true
+    testAssemblyVer2: |
+      bin\**\winrt.test.*.dll
+# - task: VSTest@2
+#   displayName: 'Run Integration Tests'
+#   inputs:
+#     testAssemblyVer2: |
+#       bin\**\winrt.test.*.appxrecipe
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish test binaries'
+  inputs:
+    PathtoPublish: $(Build.SourcesDirectory)/bin
+    artifactName: 'bin'

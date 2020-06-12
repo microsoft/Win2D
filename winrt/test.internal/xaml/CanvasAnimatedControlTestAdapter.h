@@ -2,6 +2,8 @@
 //
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
+#ifdef CANVAS_ANIMATED_CONTROL_IS_ENABLED
+
 #pragma once
 
 #include <lib/xaml/CanvasGameLoop.h>
@@ -239,3 +241,5 @@ public:
         return StepTimer::TicksPerSecond;
     }
 };
+
+#endif

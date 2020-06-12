@@ -6,8 +6,8 @@
 
 namespace canvas
 {
-    using namespace ABI::Windows::UI::Xaml::Controls;
-    using namespace ABI::Windows::UI::Xaml;
+    using namespace ABI::Microsoft::UI::Xaml::Controls;
+    using namespace ABI::Microsoft::UI::Xaml;
 
     class StubUserControl : public RuntimeClass<IUserControl, IFrameworkElement>
     {
@@ -74,7 +74,11 @@ namespace canvas
             return S_OK;
         }
 
+#ifdef WINUI3
+        IFACEMETHODIMP get_Triggers(__FIVector_1_Microsoft__CUI__CXaml__CTriggerBase**) override
+#else
         IFACEMETHODIMP get_Triggers(ABI::Windows::Foundation::Collections::__FIVector_1_Windows__CUI__CXaml__CTriggerBase_t **) override 
+#endif
         {
             Assert::Fail(L"Unexpected call to get_Triggers");
             return E_NOTIMPL; 
@@ -266,6 +270,113 @@ namespace canvas
             return E_NOTIMPL; 
         }
 
+        IFACEMETHODIMP get_AllowFocusOnInteraction(boolean*) override
+        {
+            Assert::Fail(L"Unexpected call to get_AllowFocusOnInteraction");
+            return E_NOTIMPL;
+        }
+
+        IFACEMETHODIMP put_AllowFocusOnInteraction(boolean) override
+        {
+            Assert::Fail(L"Unexpected call to put_AllowFocusOnInteraction");
+            return E_NOTIMPL;
+        }
+
+        IFACEMETHODIMP get_FocusVisualMargin(
+            ABI::Microsoft::UI::Xaml::Thickness* value
+        )
+        { 
+            Assert::Fail(L"Unexpected call to get_FocusVisualMargin"); 
+            return E_NOTIMPL; 
+        }
+
+        IFACEMETHODIMP put_FocusVisualMargin(
+            ABI::Microsoft::UI::Xaml::Thickness value
+        )
+        { 
+            Assert::Fail(L"Unexpected call to put_FocusVisualMargin"); 
+            return E_NOTIMPL; 
+        }
+
+        IFACEMETHODIMP get_FocusVisualSecondaryThickness(
+            ABI::Microsoft::UI::Xaml::Thickness* value
+        )
+        { 
+            Assert::Fail(L"Unexpected call to get_FocusVisualSecondaryThickness"); 
+            return E_NOTIMPL; 
+        }
+
+        IFACEMETHODIMP put_FocusVisualSecondaryThickness(
+            ABI::Microsoft::UI::Xaml::Thickness value
+        )
+        { 
+            Assert::Fail(L"Unexpected call to put_FocusVisualSecondaryThickness"); 
+            return E_NOTIMPL; 
+        }
+
+        IFACEMETHODIMP get_FocusVisualPrimaryThickness(
+            ABI::Microsoft::UI::Xaml::Thickness* value
+        )
+        { 
+            Assert::Fail(L"Unexpected call to get_FocusVisualPrimaryThickness"); 
+            return E_NOTIMPL;
+        }
+
+        IFACEMETHODIMP put_FocusVisualPrimaryThickness(
+            ABI::Microsoft::UI::Xaml::Thickness value
+        )
+        { 
+            Assert::Fail(L"Unexpected call to put_FocusVisualPrimaryThickness"); 
+            return E_NOTIMPL; 
+        }
+
+        IFACEMETHODIMP get_FocusVisualSecondaryBrush(
+            ABI::Microsoft::UI::Xaml::Media::IBrush** value
+        )
+        { 
+            Assert::Fail(L"Unexpected call to get_FocusVisualSecondaryBrush"); 
+            return E_NOTIMPL; 
+        }
+
+        IFACEMETHODIMP put_FocusVisualSecondaryBrush(
+            ABI::Microsoft::UI::Xaml::Media::IBrush* value
+        )
+        {
+            Assert::Fail(L"Unexpected call to put_FocusVisualSecondaryBrush"); 
+            return E_NOTIMPL; 
+        }
+
+        IFACEMETHODIMP get_FocusVisualPrimaryBrush(
+            ABI::Microsoft::UI::Xaml::Media::IBrush** value
+        )
+        { 
+            Assert::Fail(L"Unexpected call to get_FocusVisualPrimaryBrush"); 
+            return E_NOTIMPL; 
+        }
+
+        IFACEMETHODIMP put_FocusVisualPrimaryBrush(
+            ABI::Microsoft::UI::Xaml::Media::IBrush* value
+        )
+        { 
+            Assert::Fail(L"Unexpected call to put_FocusVisualPrimaryBrush"); 
+            return E_NOTIMPL; 
+        }
+
+        IFACEMETHODIMP get_AllowFocusWhenDisabled(
+            boolean* value
+        )
+        { 
+            Assert::Fail(L"Unexpected call to get_AllowFocusWhenDisabled"); 
+            return E_NOTIMPL; 
+        }
+
+        IFACEMETHODIMP put_AllowFocusWhenDisabled(
+            boolean value
+        ) 
+        {
+            Assert::Fail(L"Unexpected call to put_AllowFocusWhenDisabled"); return E_NOTIMPL;
+        }
+
         IFACEMETHODIMP get_Style(IStyle **) override 
         {
             Assert::Fail(L"Unexpected call to get_Style");
@@ -295,6 +406,38 @@ namespace canvas
             return E_NOTIMPL; 
         }
 
+        IFACEMETHODIMP get_RequestedTheme(
+            ABI::Microsoft::UI::Xaml::ElementTheme* value
+        )
+        { 
+            Assert::Fail(L"Unexpected call to get_RequestedTheme"); 
+            return E_NOTIMPL; 
+        }
+        
+        IFACEMETHODIMP put_RequestedTheme(
+            ABI::Microsoft::UI::Xaml::ElementTheme value
+        )
+        { 
+            Assert::Fail(L"Unexpected call to put_RequestedTheme"); 
+            return E_NOTIMPL; 
+        }
+        
+        IFACEMETHODIMP get_IsLoaded(
+            boolean* value
+        )
+        { 
+            Assert::Fail(L"Unexpected call to get_IsLoaded"); 
+            return E_NOTIMPL; 
+        }
+        
+        IFACEMETHODIMP get_ActualTheme(
+            ABI::Microsoft::UI::Xaml::ElementTheme* value
+        )
+        { 
+            Assert::Fail(L"Unexpected call to get_ActualTheme"); 
+            return E_NOTIMPL; 
+        }
+
         IFACEMETHODIMP add_Loaded(IRoutedEventHandler* handler, EventRegistrationToken* token) override 
         {
             return LoadedEventSource->add_Event(handler, token);
@@ -313,6 +456,23 @@ namespace canvas
         IFACEMETHODIMP remove_Unloaded(EventRegistrationToken token) override
         {
             return UnloadedEventSource->remove_Event(token);
+        }
+
+        IFACEMETHODIMP add_DataContextChanged(
+            __FITypedEventHandler_2_Microsoft__CUI__CXaml__CFrameworkElement_Microsoft__CUI__CXaml__CDataContextChangedEventArgs* handler,
+            EventRegistrationToken* token
+        )
+        {
+            Assert::Fail(L"Unexpected call to add_DataContextChanged");
+            return E_NOTIMPL;
+        }
+
+        IFACEMETHODIMP remove_DataContextChanged(
+            EventRegistrationToken token
+        )
+        {
+            Assert::Fail(L"Unexpected call to remove_DataContextChanged");
+            return E_NOTIMPL;
         }
 
         IFACEMETHODIMP add_SizeChanged(ISizeChangedEventHandler* handler, EventRegistrationToken* token) override 
@@ -337,6 +497,57 @@ namespace canvas
             return E_NOTIMPL; 
         }
 
+        IFACEMETHODIMP add_Loading(
+            __FITypedEventHandler_2_Microsoft__CUI__CXaml__CFrameworkElement_IInspectable* handler,
+            EventRegistrationToken* token
+        )
+        { 
+            Assert::Fail(L"Unexpected call to add_Loading"); 
+            return E_NOTIMPL;
+        }
+        
+        IFACEMETHODIMP remove_Loading(
+            EventRegistrationToken token
+        )
+        { 
+            Assert::Fail(L"Unexpected call to remove_Loading"); 
+            return E_NOTIMPL; 
+        }
+       
+        IFACEMETHODIMP add_ActualThemeChanged(
+            __FITypedEventHandler_2_Microsoft__CUI__CXaml__CFrameworkElement_IInspectable* handler,
+            EventRegistrationToken* token
+        )
+        {
+            Assert::Fail(L"Unexpected call to add_ActualThemeChanged");
+            return E_NOTIMPL; 
+        }
+       
+        IFACEMETHODIMP remove_ActualThemeChanged(
+            EventRegistrationToken token
+        )
+        { 
+            Assert::Fail(L"Unexpected call to remove_ActualThemeChanged"); 
+            return E_NOTIMPL;
+        }
+        
+        IFACEMETHODIMP add_EffectiveViewportChanged(
+            __FITypedEventHandler_2_Microsoft__CUI__CXaml__CFrameworkElement_Microsoft__CUI__CXaml__CEffectiveViewportChangedEventArgs* handler,
+            EventRegistrationToken* token
+        )
+        {
+            Assert::Fail(L"Unexpected call to add_EffectiveViewportChanged"); 
+            return E_NOTIMPL;
+        }
+        
+        IFACEMETHODIMP remove_EffectiveViewportChanged(
+            EventRegistrationToken token
+        )
+        { 
+            Assert::Fail(L"Unexpected call to remove_EffectiveViewportChanged"); 
+            return E_NOTIMPL; 
+        }
+
         IFACEMETHODIMP FindName(HSTRING,IInspectable **) override 
         {
             Assert::Fail(L"Unexpected call to FindName");
@@ -347,6 +558,15 @@ namespace canvas
         {
             Assert::Fail(L"Unexpected call to SetBinding");
             return E_NOTIMPL; 
+        }
+
+        IFACEMETHODIMP GetBindingExpression(
+            ABI::Microsoft::UI::Xaml::IDependencyProperty* dp,
+            ABI::Microsoft::UI::Xaml::Data::IBindingExpression** result
+        )
+        {
+            Assert::Fail(L"Unexpected call to GetBindingExpression");
+            return E_NOTIMPL;
         }
     };
 }
