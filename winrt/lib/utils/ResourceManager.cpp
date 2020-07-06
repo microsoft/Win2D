@@ -150,7 +150,7 @@ ComPtr<IInspectable> ResourceManager::GetOrCreate(ICanvasDevice* device, IUnknow
             if (endWrapIt != m_wrappingResources.end()) {
                 m_wrappingResources.erase(endWrapIt);
             }
-         });
+        });
 
         for (auto& tryCreateFunction : tryCreateFunctions)
         {
