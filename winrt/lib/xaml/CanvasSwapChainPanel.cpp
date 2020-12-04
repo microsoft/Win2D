@@ -88,7 +88,13 @@ HRESULT CanvasSwapChainPanel::OnLoaded(IInspectable*, IRoutedEventArgs*)
     return ExceptionBoundary(
         [&]
         {
-            As<IFrameworkElement>(GetComposableBase())->get_Parent(&m_lastSeenParent);
+            ComPtr<IDependencyObject> parent;
+            As<IFrameworkElement>(GetComposableBase())->get_Parent(&parent);
+            if (!parent) {
+                m_lastSeenParent.Reset();
+                return;
+            }
+            m_lastSeenParent = AsWeak(parent.Get());
         });
 }
 
@@ -130,7 +136,10 @@ IFACEMETHODIMP CanvasSwapChainPanel::RemoveFromVisualTree()
     return ExceptionBoundary(
         [&]
         {
-            RemoveFromVisualTreeImpl(m_lastSeenParent.Get(), As<IUIElement>(this).Get());
+            if (!m_lastSeenParent) {
+                return;
+            }
+            RemoveFromVisualTreeImpl(LockWeakRef<IDependencyObject>(m_lastSeenParent).Get(), As<IUIElement>(this).Get());
         });
 }
 
