@@ -136,10 +136,11 @@ IFACEMETHODIMP CanvasSwapChainPanel::RemoveFromVisualTree()
     return ExceptionBoundary(
         [&]
         {
+            auto control = As<IUIElement>(this); //Do this first because the unit tests expect a failure when this cast fails.
             if (!m_lastSeenParent) {
                 return;
             }
-            RemoveFromVisualTreeImpl(LockWeakRef<IDependencyObject>(m_lastSeenParent).Get(), As<IUIElement>(this).Get());
+            RemoveFromVisualTreeImpl(LockWeakRef<IDependencyObject>(m_lastSeenParent).Get(), control.Get());
         });
 }
 

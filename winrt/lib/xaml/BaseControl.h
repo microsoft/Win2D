@@ -233,10 +233,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             return ExceptionBoundary(
                 [&]
                 {
+                    auto control = As<IUIElement>(GetControl()); //Do this first because the unit tests expect a failure when this cast fails.
                     if (!m_lastSeenParent) {
                         return;
                     }
-                    RemoveFromVisualTreeImpl(LockWeakRef<IDependencyObject>(m_lastSeenParent).Get(), As<IUIElement>(GetControl()).Get());
+                    RemoveFromVisualTreeImpl(LockWeakRef<IDependencyObject>(m_lastSeenParent).Get(), control.Get());
                 });
         }
 
