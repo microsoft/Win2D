@@ -1,0 +1,66 @@
+﻿<html><head><meta http-equiv="X-UA-Compatible" content="IE=edge" /><link rel="shortcut icon" href="../icons/favicon.ico" /><link rel="stylesheet" type="text/css" href="../styles/branding.css" /><link rel="stylesheet" type="text/css" href="../styles/branding-en-US.css" /><script type="text/javascript" src="../scripts/branding.js"> </script><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>Handling device lost</title><meta name="Language" content="en-us" /><meta name="Microsoft.Help.Id" content="HandlingDeviceLost" /><meta name="Description" content="&quot;Device lost&quot; refers to a situation where the GPU graphics device becomes unusable for further rendering. This can occur due to GPU hardware malfunction, driver bugs, driver software updates, or switching the app from one GPU to another." /><meta name="Microsoft.Help.ContentType" content="Concepts" /><meta name="BrandingAware" content="true" /><link type="text/css" rel="stylesheet" href="../styles/highlight.css" /><script type="text/javascript" src="../scripts/highlight.js"> </script><link rel="stylesheet" type="text/css" href="../styles/branding-Website.css" /><script type="text/javascript" src="../scripts/jquery-1.11.0.min.js"></script><script type="text/javascript" src="../scripts/branding-Website.js"></script><script type="text/javascript" src="../scripts/clipboard.min.js"></script></head><body onload="OnLoad('cs')"><input type="hidden" id="userDataCache" class="userDataStyle" /><div class="pageHeader" id="PageHeader">Win2D for WinUI3 (Work in progress)<form id="SearchForm" method="get" action="#" onsubmit="javascript:TransferToSearchPage(); return false;"><input id="SearchTextBox" type="text" maxlength="200" /><button id="SearchButton" type="submit"></button></form></div><div class="pageBody"><div class="leftNav" id="leftNav"><div id="tocNav"><div class="toclevel0" data-toclevel="0"><a class="tocCollapsed" onclick="javascript: Toggle(this);" href="#!" /><a data-tochassubtree="true" href="Introduction.htm" title="Win2D for WinUI3 (Work in progress)" tocid="roottoc">Win2D for WinUI3 (Work in progress)</a></div><div class="toclevel1" data-toclevel="1" data-childrenloaded="true"><a class="tocExpanded" onclick="javascript: Toggle(this);" href="#!" /><a data-tochassubtree="true" href="Articles.htm" title="Articles" tocid="Articles">Articles</a></div><div class="toclevel2" data-toclevel="2"><a data-tochassubtree="false" href="Interop.htm" title="Interop with Direct2D" tocid="Interop">Interop with Direct2D</a></div><div class="toclevel2" data-toclevel="2"><a data-tochassubtree="false" href="Offscreen.htm" title="Offscreen drawing" tocid="Offscreen">Offscreen drawing</a></div><div class="toclevel2" data-toclevel="2"><a data-tochassubtree="false" href="DPI.htm" title="DPI and DIPs" tocid="DPI">DPI and DIPs</a></div><div class="toclevel2" data-toclevel="2"><a data-tochassubtree="false" href="ChoosingResolution.htm" title="Choosing control resolution" tocid="ChoosingResolution">Choosing control resolution</a></div><div class="toclevel2" data-toclevel="2"><a data-tochassubtree="false" href="PixelFormats.htm" title="Pixel formats" tocid="PixelFormats">Pixel formats</a></div><div class="toclevel2" data-toclevel="2"><a data-tochassubtree="false" href="PremultipliedAlpha.htm" title="Premultiplied alpha" tocid="PremultipliedAlpha">Premultiplied alpha</a></div><div class="toclevel2" data-toclevel="2"><a data-tochassubtree="false" href="BlockCompression.htm" title="Bitmap block compression" tocid="BlockCompression">Bitmap block compression</a></div><div class="toclevel2" data-toclevel="2"><a data-tochassubtree="false" href="EffectPrecision.htm" title="Effect precision and clamping" tocid="EffectPrecision">Effect precision and clamping</a></div><div class="toclevel2 current" data-toclevel="2"><a data-tochassubtree="false" href="HandlingDeviceLost.htm" title="Handling device lost" tocid="HandlingDeviceLost">Handling device lost</a></div><div class="toclevel2" data-toclevel="2"><a data-tochassubtree="false" href="WithoutControls.htm" title="Using Win2D without built-in controls" tocid="WithoutControls">Using Win2D without built-in controls</a></div><div class="toclevel2" data-toclevel="2"><a data-tochassubtree="false" href="LoadingResourcesOutsideCreateResources.htm" title="Loading resources outside of CreateResources" tocid="LoadingResourcesOutsideCreateResources">Loading resources outside of CreateResources</a></div><div class="toclevel2" data-toclevel="2"><a data-tochassubtree="false" href="RefCycles.htm" title="Avoiding memory leaks" tocid="RefCycles">Avoiding memory leaks</a></div></div><div id="tocResizableEW" onmousedown="OnMouseDown(event);"></div><div id="TocResize" class="tocResize"><img id="ResizeImageIncrease" src="../icons/TocOpen.gif" onclick="OnIncreaseToc()" alt="Click or drag to resize" title="Click or drag to resize" /><img id="ResizeImageReset" src="../icons/TocClose.gif" style="display:none" onclick="OnResetToc()" alt="Click or drag to resize" title="Click or drag to resize" /></div></div><div class="topicContent" id="TopicContent"><table class="titleTable"><tr><td class="titleColumn">Handling device lost</td></tr></table><span class="introStyle"></span> <div id="ID0RBSection" class="collapsibleSection"><p>
+          "Device lost" refers to a situation where the GPU graphics device becomes 
+          unusable for further rendering. This can occur due to GPU hardware malfunction, 
+          driver bugs, driver software updates, or switching the app from one GPU to 
+          another. A lost device can no longer be used, and any attempt to do so from 
+          Win2D will throw an exception. To recover from this situation, the app must 
+          create a new device and then recreate all its graphics resources.
+        </p><p>
+          Not all apps bother trying to recover from device lost. This is a (hopefully!) 
+          rare situation, so some developers will just let their apps crash if it occurs. 
+          For those who prefer to handle device lost in a robust way, this article 
+          explains how.
+        </p></div><div class="collapsibleAreaRegion"><span class="collapsibleRegionTitle" onclick="SectionExpandCollapse('ID1RB')" onkeypress="SectionExpandCollapse_CheckKey('ID1RB', event)" tabindex="0"><img id="ID1RBToggle" class="collapseToggle" src="../icons/SectionExpanded.png" />Device lost when using XAML controls</span></div><div id="ID1RBSection" class="collapsibleSection"><p>
+          The Win2D controls (<a href="T_Microsoft_Graphics_Canvas_UI_Xaml_CanvasControl.htm">CanvasControl</a>,
+          <a href="T_Microsoft_Graphics_Canvas_UI_Xaml_CanvasVirtualControl.htm">CanvasVirtualControl</a> 
+          and <a href="T_Microsoft_Graphics_Canvas_UI_Xaml_CanvasAnimatedControl.htm">CanvasAnimatedControl</a>) 
+          attempt to automatically handle device lost on behalf of the app.
+        </p><p>
+          When device lost is detected, these controls will recreate their CanvasDevice 
+          and then raise the CreateResources event passing a
+          <a href="T_Microsoft_Graphics_Canvas_UI_CanvasCreateResourcesReason.htm">CanvasCreateResourcesReason</a> of
+          <a href="T_Microsoft_Graphics_Canvas_UI_CanvasCreateResourcesReason.htm">NewDevice</a>.
+          Apps should respond to this event by recreating all their graphics resources 
+          using the new device, and updating any data structures that may contain 
+          references to the old, no-longer-valid resources.
+        </p><p>
+          The controls can automatically catch and handle device lost exceptions that are 
+          thrown by their CreateResources, Update, Draw, or RegionsInvalidated event handlers.
+          If you call Win2D drawing APIs from other places (for instance in a pointer or keyboard 
+          input event handler) then see the next section.
+        </p></div><div class="collapsibleAreaRegion"><span class="collapsibleRegionTitle" onclick="SectionExpandCollapse('ID3RB')" onkeypress="SectionExpandCollapse_CheckKey('ID3RB', event)" tabindex="0"><img id="ID3RBToggle" class="collapseToggle" src="../icons/SectionExpanded.png" />Manually handling device lost</span></div><div id="ID3RBSection" class="collapsibleSection"><p>
+          If you are
+          <a href="WithoutControls.htm">using Win2D without the built-in controls</a>
+          or from outside the CreateResources, Update or Draw event handlers, then it is 
+          your responsibility to catch and report lost device exceptions. This is done with the 
+          <a href="M_Microsoft_Graphics_Canvas_CanvasDevice_IsDeviceLost.htm">IsDeviceLost(Int32)</a> and 
+          <a href="M_Microsoft_Graphics_Canvas_CanvasDevice_RaiseDeviceLost.htm">RaiseDeviceLost<span id="LST511A8959_0"></span><script type="text/javascript">AddLanguageSpecificTextSet("LST511A8959_0?cs=()|vb=|cpp=()|nu=()|fs=()");</script></a> methods:
+        </p><div class="codeSnippetContainer"><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID2EABABAAA_copyCode" href="#" class="copyCodeSnippet" onclick="javascript:CopyToClipboard('ID2EABABAAA');return false;" title="Copy">Copy</a></div></div><div id="ID2EABABAAA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve"><span class="highlight-keyword">try</span>
+{
+    DrawStuff();
+}
+<span class="highlight-keyword">catch</span> (Exception e) <span class="highlight-keyword">where</span> canvasDevice.IsDeviceLost(e.ErrorCode)
+{
+    canvasDevice.RaiseDeviceLost();
+}</pre></div></div></div><script type="text/javascript">AddLanguageTabSet("ID2EABABAAA");</script><p>
+          Calling RaiseDeviceLost tells any controls that are sharing this device to 
+          initiate their lost device recovery path. If you got your device from somewhere 
+          other than a control, use the 
+          <a href="E_Microsoft_Graphics_Canvas_CanvasDevice_DeviceLost.htm">DeviceLost</a> 
+          event to be informed when it is lost.
+        </p></div><div class="collapsibleAreaRegion"><span class="collapsibleRegionTitle" onclick="SectionExpandCollapse('ID4RB')" onkeypress="SectionExpandCollapse_CheckKey('ID4RB', event)" tabindex="0"><img id="ID4RBToggle" class="collapseToggle" src="../icons/SectionExpanded.png" />How to test device lost handling</span></div><div id="ID4RBSection" class="collapsibleSection"><p>
+          The easiest way to test that your app will do the right thing in response to 
+          device lost is to disable your hardware GPU while the app is running:
+        </p><ul><li>Open Device Manager (Explorer window -&gt; right-click 'This PC' -&gt; 'Properties' -&gt; 'Device Manager')</li><li>Expand the 'Display adapters' node</li><li>Right-click the entry for your GPU and click 'Disable'</li></ul><p>
+          This will bypass your hardware GPU, at which point Windows switches over to a 
+          WARP software rendering device, and all active apps experience a device lost.
+        </p><p>
+          Don't forget to reenable your GPU after performing this test! If you want to 
+          test device lost more than once, it's best to restart your app each time 
+          (always launch it with the GPU enabled). Repeatedly toggling the GPU on and off 
+          while an app is running doesn't reliably cause lost devices as it may just 
+          continue using the WARP software device.
+        </p><p>
+          While testing lost device handling, you probably also want to make sure your 
+          app deals correctly with dynamic <a href="DPI.htm">display DPI changes</a>.
+        </p></div></div></div><div id="pageFooter" class="pageFooter"><p><a href="http://github.com/Microsoft/Win2D/blob/master/LICENSE.txt" target="_blank">Copyright (c) Microsoft Corporation. All rights reserved.</a></p></div></body></html>

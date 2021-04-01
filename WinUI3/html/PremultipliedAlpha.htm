@@ -1,0 +1,74 @@
+﻿<html><head><meta http-equiv="X-UA-Compatible" content="IE=edge" /><link rel="shortcut icon" href="../icons/favicon.ico" /><link rel="stylesheet" type="text/css" href="../styles/branding.css" /><link rel="stylesheet" type="text/css" href="../styles/branding-en-US.css" /><script type="text/javascript" src="../scripts/branding.js"> </script><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>Premultiplied alpha</title><meta name="Language" content="en-us" /><meta name="Microsoft.Help.Id" content="PremultipliedAlpha" /><meta name="Description" content="In computer graphics there are two different ways to represent the opacity of a color value. Win2D uses both methods. This article explains the difference, and which is used where." /><meta name="Microsoft.Help.ContentType" content="Concepts" /><meta name="BrandingAware" content="true" /><link type="text/css" rel="stylesheet" href="../styles/highlight.css" /><script type="text/javascript" src="../scripts/highlight.js"> </script><link rel="stylesheet" type="text/css" href="../styles/branding-Website.css" /><script type="text/javascript" src="../scripts/jquery-1.11.0.min.js"></script><script type="text/javascript" src="../scripts/branding-Website.js"></script><script type="text/javascript" src="../scripts/clipboard.min.js"></script></head><body onload="OnLoad('cs')"><input type="hidden" id="userDataCache" class="userDataStyle" /><div class="pageHeader" id="PageHeader">Win2D for WinUI3 (Work in progress)<form id="SearchForm" method="get" action="#" onsubmit="javascript:TransferToSearchPage(); return false;"><input id="SearchTextBox" type="text" maxlength="200" /><button id="SearchButton" type="submit"></button></form></div><div class="pageBody"><div class="leftNav" id="leftNav"><div id="tocNav"><div class="toclevel0" data-toclevel="0"><a class="tocCollapsed" onclick="javascript: Toggle(this);" href="#!" /><a data-tochassubtree="true" href="Introduction.htm" title="Win2D for WinUI3 (Work in progress)" tocid="roottoc">Win2D for WinUI3 (Work in progress)</a></div><div class="toclevel1" data-toclevel="1" data-childrenloaded="true"><a class="tocExpanded" onclick="javascript: Toggle(this);" href="#!" /><a data-tochassubtree="true" href="Articles.htm" title="Articles" tocid="Articles">Articles</a></div><div class="toclevel2" data-toclevel="2"><a data-tochassubtree="false" href="Interop.htm" title="Interop with Direct2D" tocid="Interop">Interop with Direct2D</a></div><div class="toclevel2" data-toclevel="2"><a data-tochassubtree="false" href="Offscreen.htm" title="Offscreen drawing" tocid="Offscreen">Offscreen drawing</a></div><div class="toclevel2" data-toclevel="2"><a data-tochassubtree="false" href="DPI.htm" title="DPI and DIPs" tocid="DPI">DPI and DIPs</a></div><div class="toclevel2" data-toclevel="2"><a data-tochassubtree="false" href="ChoosingResolution.htm" title="Choosing control resolution" tocid="ChoosingResolution">Choosing control resolution</a></div><div class="toclevel2" data-toclevel="2"><a data-tochassubtree="false" href="PixelFormats.htm" title="Pixel formats" tocid="PixelFormats">Pixel formats</a></div><div class="toclevel2 current" data-toclevel="2"><a data-tochassubtree="false" href="PremultipliedAlpha.htm" title="Premultiplied alpha" tocid="PremultipliedAlpha">Premultiplied alpha</a></div><div class="toclevel2" data-toclevel="2"><a data-tochassubtree="false" href="BlockCompression.htm" title="Bitmap block compression" tocid="BlockCompression">Bitmap block compression</a></div><div class="toclevel2" data-toclevel="2"><a data-tochassubtree="false" href="EffectPrecision.htm" title="Effect precision and clamping" tocid="EffectPrecision">Effect precision and clamping</a></div><div class="toclevel2" data-toclevel="2"><a data-tochassubtree="false" href="HandlingDeviceLost.htm" title="Handling device lost" tocid="HandlingDeviceLost">Handling device lost</a></div><div class="toclevel2" data-toclevel="2"><a data-tochassubtree="false" href="WithoutControls.htm" title="Using Win2D without built-in controls" tocid="WithoutControls">Using Win2D without built-in controls</a></div><div class="toclevel2" data-toclevel="2"><a data-tochassubtree="false" href="LoadingResourcesOutsideCreateResources.htm" title="Loading resources outside of CreateResources" tocid="LoadingResourcesOutsideCreateResources">Loading resources outside of CreateResources</a></div><div class="toclevel2" data-toclevel="2"><a data-tochassubtree="false" href="RefCycles.htm" title="Avoiding memory leaks" tocid="RefCycles">Avoiding memory leaks</a></div></div><div id="tocResizableEW" onmousedown="OnMouseDown(event);"></div><div id="TocResize" class="tocResize"><img id="ResizeImageIncrease" src="../icons/TocOpen.gif" onclick="OnIncreaseToc()" alt="Click or drag to resize" title="Click or drag to resize" /><img id="ResizeImageReset" src="../icons/TocClose.gif" style="display:none" onclick="OnResetToc()" alt="Click or drag to resize" title="Click or drag to resize" /></div></div><div class="topicContent" id="TopicContent"><table class="titleTable"><tr><td class="titleColumn">Premultiplied alpha</td></tr></table><span class="introStyle"></span> <div class="introduction"><p>
+        In computer graphics there are two different ways to represent the opacity of a 
+        color value. Win2D uses both methods. This article explains the difference, and 
+        which is used where.
+      </p></div><div class="collapsibleAreaRegion"><span class="collapsibleRegionTitle" onclick="SectionExpandCollapse('ID1RB')" onkeypress="SectionExpandCollapse_CheckKey('ID1RB', event)" tabindex="0"><img id="ID1RBToggle" class="collapseToggle" src="../icons/SectionExpanded.png" />Straight alpha</span></div><div id="ID1RBSection" class="collapsibleSection"><p>
+          When using straight, also known as linear, alpha:
+        </p><ul><li>RGB values specify the color of the thing being drawn</li><li>The alpha value specifies how solid it is</li></ul><p>
+          In this world, RGB and alpha are independent. You can change one without 
+          affecting the other. To make an object fade out, you would gradually 
+          reduce its alpha value while leaving RGB unchanged.
+        </p><p>
+          To perform a source-over blend between two colors that use straight alpha 
+          format:
+        </p><div class="codeSnippetContainer"><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID0EAAADAAA_copyCode" href="#" class="copyCodeSnippet" onclick="javascript:CopyToClipboard('ID0EAAADAAA');return false;" title="Copy">Copy</a></div></div><div id="ID0EAAADAAA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve">result = (source.RGB * source.A) + (dest.RGB * (<span class="highlight-number">1</span> - source.A))</pre></div></div></div><script type="text/javascript">AddLanguageTabSet("ID0EAAADAAA");</script></div><div class="collapsibleAreaRegion"><span class="collapsibleRegionTitle" onclick="SectionExpandCollapse('ID2RB')" onkeypress="SectionExpandCollapse_CheckKey('ID2RB', event)" tabindex="0"><img id="ID2RBToggle" class="collapseToggle" src="../icons/SectionExpanded.png" />Premultiplied alpha</span></div><div id="ID2RBSection" class="collapsibleSection"><p>
+          When using premultiplied alpha:
+        </p><ul><li>RGB specifies how much color the thing being drawn contributes to the output</li><li>The alpha value specifies how much it obscures whatever is behind it</li></ul><p>
+          In this world, RGB and alpha are linked. To make an object transparent you must 
+          reduce both its RGB (to contribute less color) and also its alpha (to obscure 
+          less of whatever is behind it). Fully transparent objects no longer have any 
+          color at all, so there is only one value that represents 100% transparency: 
+          RGB and alpha all zero.
+        </p><p>
+          To perform a source-over blend between two colors that use premultiplied alpha 
+          format:
+        </p><div class="codeSnippetContainer"><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID0EACACAAA_copyCode" href="#" class="copyCodeSnippet" onclick="javascript:CopyToClipboard('ID0EACACAAA');return false;" title="Copy">Copy</a></div></div><div id="ID0EACACAAA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve">result = source.RGB + (dest.RGB * (<span class="highlight-number">1</span> - source.A))</pre></div></div></div><script type="text/javascript">AddLanguageTabSet("ID0EACACAAA");</script><p>
+          Premultiplied alpha is used in graphics rendering because it gives better 
+          results than straight alpha when filtering images or composing different 
+          layers. For more information see the articles:
+        </p><ul><li><a href="http://blogs.msdn.com/b/shawnhar/archive/2009/11/06/premultiplied-alpha.aspx" target="_blank">http://blogs.msdn.com/b/shawnhar/archive/2009/11/06/premultiplied-alpha.aspx</a></li><li><a href="http://blogs.msdn.com/b/shawnhar/archive/2009/11/07/premultiplied-alpha-and-image-composition.aspx" target="_blank">http://blogs.msdn.com/b/shawnhar/archive/2009/11/07/premultiplied-alpha-and-image-composition.aspx</a></li></ul></div><div class="collapsibleAreaRegion"><span class="collapsibleRegionTitle" onclick="SectionExpandCollapse('ID3RB')" onkeypress="SectionExpandCollapse_CheckKey('ID3RB', event)" tabindex="0"><img id="ID3RBToggle" class="collapseToggle" src="../icons/SectionExpanded.png" />Alpha in Win2D</span></div><div id="ID3RBSection" class="collapsibleSection"><p>
+          Win2D uses straight alpha in its API surface, but premultiplied alpha for 
+          internal rendering operations.
+        </p><p>
+          Windows.UI.Color values use straight alpha. Whenever you pass a color to a 
+          Draw* or Fill* method, set the color of a brush, or clear to a color value, 
+          this color is specified using straight alpha.
+        </p><p>
+          The pixel values stored in a bitmap or rendertarget, and the drawing or 
+          blending operations that operate on these surfaces, use premultiplied alpha. 
+          When bitmaps are loaded from a file their contents are automatically converted 
+          into premultiplied format. When you call a Win2D drawing method, its color 
+          parameter is converted from straight to premultiplied before the actual drawing 
+          takes place.
+        </p><p>
+          Win2D image effects use a mixture of straight and premultiplied alpha. Some 
+          effects operate on one format, some on the other, and some provide a property 
+          to choose. The documentation for each effect type describes which alpha mode it 
+          uses. Effect input data is always assumed to be premultiplied, so when an 
+          effect needs to work with straight alpha it will first apply an unpremultiply 
+          transform, compute the effect, and then re-premultiply the output.
+        </p><p>
+          The bitmap APIs GetPixelBytes, SetPixelBytes, GetPixelColors, and 
+          SetPixelColors, do NOT perform any alpha format conversions. They just directly 
+          transfer bit values to or from the underlying GPU texture. This allows you to 
+          observe what alpha format Win2D is using internally:
+        </p><ul><li>Create a drawing session on a rendertarget</li><li>Call drawingSession.Clear(Colors.Tranparent)</li><li>Colors.Tranparent is defined as R=255, G=255, B=255, A=0</li><li>Win2D will convert this value to premultiplied format, yielding R=0, G=0, B=0, A=0</li><li>Use GetPixelColors to read back the contents of the rendertarget</li><li>Observe that it contains premultiplied format RGB=0, not RGB=255 like the original straight alpha Colors.Tranparent value</li></ul></div><div class="collapsibleAreaRegion"><span class="collapsibleRegionTitle" onclick="SectionExpandCollapse('ID4RB')" onkeypress="SectionExpandCollapse_CheckKey('ID4RB', event)" tabindex="0"><img id="ID4RBToggle" class="collapseToggle" src="../icons/SectionExpanded.png" />Converting between alpha formats</span></div><div id="ID4RBSection" class="collapsibleSection"><p>
+          To convert a straight alpha color value to premultiplied format, multiply its 
+          R, G, and B values by A. To convert premultiplied to straight, divide R, G, and 
+          B by A.
+        </p><p>
+          Note that color information is often represented as byte values ranging from 0 
+          to 255 (for example the Windows.UI.Color structure consists of 4 bytes). This 
+          representation is scaled up by a factor of 255, so a byte value of 255 actually 
+          means 1, while 128 is half intensity. That scaling factor must be taken into 
+          account during format conversions, so to convert a Windows.UI.Color from 
+          straight to premultiplied:
+        </p><div class="codeSnippetContainer"><div class="codeSnippetContainerTabs"><div id="ID0EABAAAAA_tab1" class="codeSnippetContainerTabSingle">C#</div></div><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID0EABAAAAA_copyCode" href="#" class="copyCodeSnippet" onclick="javascript:CopyToClipboard('ID0EABAAAAA');return false;" title="Copy">Copy</a></div></div><div id="ID0EABAAAAA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve">premultiplied.R = (<span class="highlight-keyword">byte</span>)(straight.R * straight.A / <span class="highlight-number">255</span>);
+premultiplied.G = (<span class="highlight-keyword">byte</span>)(straight.G * straight.A / <span class="highlight-number">255</span>);
+premultiplied.B = (<span class="highlight-keyword">byte</span>)(straight.B * straight.A / <span class="highlight-number">255</span>);
+premultiplied.A = straight.A;</pre></div></div></div><script type="text/javascript">AddLanguageTabSet("ID0EABAAAAA");</script><p>
+          If you have image data that is using the wrong alpha format,
+          <a href="T_Microsoft_Graphics_Canvas_Effects_PremultiplyEffect.htm">PremultiplyEffect</a> or
+          <a href="T_Microsoft_Graphics_Canvas_Effects_UnPremultiplyEffect.htm">UnPremultiplyEffect</a> 
+          can be used to convert it.
+        </p></div></div></div><div id="pageFooter" class="pageFooter"><p><a href="http://github.com/Microsoft/Win2D/blob/master/LICENSE.txt" target="_blank">Copyright (c) Microsoft Corporation. All rights reserved.</a></p></div></body></html>

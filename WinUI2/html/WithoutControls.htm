@@ -1,0 +1,162 @@
+﻿<html><head><meta http-equiv="X-UA-Compatible" content="IE=edge" /><link rel="shortcut icon" href="../icons/favicon.ico" /><link rel="stylesheet" type="text/css" href="../styles/branding.css" /><link rel="stylesheet" type="text/css" href="../styles/branding-en-US.css" /><script type="text/javascript" src="../scripts/branding.js"> </script><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>Using Win2D without built-in controls</title><meta name="Language" content="en-us" /><meta name="Microsoft.Help.Id" content="WithoutControls" /><meta name="Description" content="T:Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl, T:Microsoft.Graphics.Canvas.UI.Xaml.CanvasVirtualControl and T:Microsoft.Graphics.Canvas.UI.Xaml." /><meta name="Microsoft.Help.ContentType" content="Concepts" /><meta name="BrandingAware" content="true" /><link type="text/css" rel="stylesheet" href="../styles/highlight.css" /><script type="text/javascript" src="../scripts/highlight.js"> </script><link rel="stylesheet" type="text/css" href="../styles/branding-Website.css" /><script type="text/javascript" src="../scripts/jquery-1.11.0.min.js"></script><script type="text/javascript" src="../scripts/branding-Website.js"></script><script type="text/javascript" src="../scripts/clipboard.min.js"></script></head><body onload="OnLoad('cs')"><input type="hidden" id="userDataCache" class="userDataStyle" /><div class="pageHeader" id="PageHeader">Win2D documentation<form id="SearchForm" method="get" action="#" onsubmit="javascript:TransferToSearchPage(); return false;"><input id="SearchTextBox" type="text" maxlength="200" /><button id="SearchButton" type="submit"></button></form></div><div class="pageBody"><div class="leftNav" id="leftNav"><div id="tocNav"><div class="toclevel0" data-toclevel="0"><a class="tocCollapsed" onclick="javascript: Toggle(this);" href="#!" /><a data-tochassubtree="true" href="Introduction.htm" title="Win2D documentation" tocid="roottoc">Win2D documentation</a></div><div class="toclevel1" data-toclevel="1" data-childrenloaded="true"><a class="tocExpanded" onclick="javascript: Toggle(this);" href="#!" /><a data-tochassubtree="true" href="Articles.htm" title="Articles" tocid="Articles">Articles</a></div><div class="toclevel2" data-toclevel="2"><a data-tochassubtree="false" href="Interop.htm" title="Interop with Direct2D" tocid="Interop">Interop with Direct2D</a></div><div class="toclevel2" data-toclevel="2"><a data-tochassubtree="false" href="Offscreen.htm" title="Offscreen drawing" tocid="Offscreen">Offscreen drawing</a></div><div class="toclevel2" data-toclevel="2"><a data-tochassubtree="false" href="DPI.htm" title="DPI and DIPs" tocid="DPI">DPI and DIPs</a></div><div class="toclevel2" data-toclevel="2"><a data-tochassubtree="false" href="ChoosingResolution.htm" title="Choosing control resolution" tocid="ChoosingResolution">Choosing control resolution</a></div><div class="toclevel2" data-toclevel="2"><a data-tochassubtree="false" href="PixelFormats.htm" title="Pixel formats" tocid="PixelFormats">Pixel formats</a></div><div class="toclevel2" data-toclevel="2"><a data-tochassubtree="false" href="PremultipliedAlpha.htm" title="Premultiplied alpha" tocid="PremultipliedAlpha">Premultiplied alpha</a></div><div class="toclevel2" data-toclevel="2"><a data-tochassubtree="false" href="BlockCompression.htm" title="Bitmap block compression" tocid="BlockCompression">Bitmap block compression</a></div><div class="toclevel2" data-toclevel="2"><a data-tochassubtree="false" href="EffectPrecision.htm" title="Effect precision and clamping" tocid="EffectPrecision">Effect precision and clamping</a></div><div class="toclevel2" data-toclevel="2"><a data-tochassubtree="false" href="HandlingDeviceLost.htm" title="Handling device lost" tocid="HandlingDeviceLost">Handling device lost</a></div><div class="toclevel2 current" data-toclevel="2"><a data-tochassubtree="false" href="WithoutControls.htm" title="Using Win2D without built-in controls" tocid="WithoutControls">Using Win2D without built-in controls</a></div><div class="toclevel2" data-toclevel="2"><a data-tochassubtree="false" href="LoadingResourcesOutsideCreateResources.htm" title="Loading resources outside of CreateResources" tocid="LoadingResourcesOutsideCreateResources">Loading resources outside of CreateResources</a></div><div class="toclevel2" data-toclevel="2"><a data-tochassubtree="false" href="RefCycles.htm" title="Avoiding memory leaks" tocid="RefCycles">Avoiding memory leaks</a></div></div><div id="tocResizableEW" onmousedown="OnMouseDown(event);"></div><div id="TocResize" class="tocResize"><img id="ResizeImageIncrease" src="../icons/TocOpen.gif" onclick="OnIncreaseToc()" alt="Click or drag to resize" title="Click or drag to resize" /><img id="ResizeImageReset" src="../icons/TocClose.gif" style="display:none" onclick="OnResetToc()" alt="Click or drag to resize" title="Click or drag to resize" /></div></div><div class="topicContent" id="TopicContent"><table class="titleTable"><tr><td class="titleColumn">Using Win2D without built-in controls</td></tr></table><span class="introStyle"></span> <div class="introduction"><p><a href="T_Microsoft_Graphics_Canvas_UI_Xaml_CanvasControl.htm">CanvasControl</a>,
+        <a href="T_Microsoft_Graphics_Canvas_UI_Xaml_CanvasVirtualControl.htm">CanvasVirtualControl</a> 
+        and 
+        <a href="T_Microsoft_Graphics_Canvas_UI_Xaml_CanvasAnimatedControl.htm">CanvasAnimatedControl</a> 
+        are XAML controls- they extend UserControl and can exist alongside 
+        other controls in an app's XAML tree. They are good choice for many WinRT
+        apps that use XAML and produce graphical content using Win2D. While 
+        these controls are versatile, they do impose policies pertaining to 
+        layout, resource re-creation, and device lost. Apps may want to 
+        implement their own XAML controls, or not use XAML at all. 
+      </p><p>
+        Win2D is built to support this. This document describes how to use Win2D
+        to draw graphics without use of CanvasControl, CanvasVirtualControl or
+        CanvasAnimatedControl.
+      </p></div><div class="collapsibleAreaRegion"><span class="collapsibleRegionTitle" onclick="SectionExpandCollapse('ID0RB')" onkeypress="SectionExpandCollapse_CheckKey('ID0RB', event)" tabindex="0"><img id="ID0RBToggle" class="collapseToggle" src="../icons/SectionExpanded.png" />Layering</span></div><div id="ID0RBSection" class="collapsibleSection"><p>
+          The Win2D XAML controls are built of top of a low level Win2D type.
+          Each control contains an instance of a lower-level type:
+          <div class="tableSection"><table><tr><th>Control</th><th>Low-level type</th></tr><tr><td>CanvasControl</td><td><a href="T_Microsoft_Graphics_Canvas_UI_Xaml_CanvasImageSource.htm">CanvasImageSource</a></td></tr><tr><td>CanvasVirtualControl</td><td><a href="T_Microsoft_Graphics_Canvas_UI_Xaml_CanvasVirtualImageSource.htm">CanvasVirtualImageSource</a></td></tr><tr><td>CanvasAnimatedControl</td><td><a href="T_Microsoft_Graphics_Canvas_UI_Xaml_CanvasSwapChainPanel.htm">CanvasSwapChainPanel</a> and
+              <a href="T_Microsoft_Graphics_Canvas_CanvasSwapChain.htm">CanvasSwapChain</a></td></tr></table></div></p><p>      
+          The controls consume only the public interfaces of these lower-level types. 
+          This implementation detail lends some confidence that apps can implement 
+          their own XAML controls which are equivalently as powerful as the built-in 
+          Win2D controls.
+        </p></div><div class="collapsibleAreaRegion"><span class="collapsibleRegionTitle" onclick="SectionExpandCollapse('ID1RB')" onkeypress="SectionExpandCollapse_CheckKey('ID1RB', event)" tabindex="0"><img id="ID1RBToggle" class="collapseToggle" src="../icons/SectionExpanded.png" />Choosing a lower-level type</span></div><div id="ID1RBSection" class="collapsibleSection"><p>
+          An application is free to bypass the provided Win2D XAML controls and
+          use the lower-level types directly.  This section provides some
+          guidance on choosing the appropriate lower-level type.
+        </p><p>
+          If there is existing C++ code that works with IDXGISwapChain then
+          <a href="Interop.htm">C++ interop</a> can be used to wrap this
+          with a CanvasSwapChain.  CanvasSwapChainPanel can be used to display a
+          CanvasSwapChain in a XAML app.
+        </p><p>
+          If the app needs to add graphics to a XAML element
+          which expects an ImageSource, it should use CanvasImageSource or CanvasVirtualImageSource.
+        </p><p>
+          Aside from that, it's worth considering:
+          <ul><li>
+              Swap chains are suited for content which will
+              animate very frequently and the animation should be smooth.
+              Direct3D's swap chains are designed for this purpose. The
+              content of a swap chain can be re-drawn with a low latency,
+              as it is not tied to the XAML framework refresh timer.
+            </li><li>
+              CanvasSwapChain has heavier resource costs than CanvasImageSource.
+              It is generally not desirable to have more than one or two swap
+              chains onscreen at a time. For example, if an application has a 
+              page full of widgets, where each widget is a standalone graphical
+              element, it is more appropriate to make each widget use a 
+              CanvasImageSource resource than a CanvasSwapChain.
+            </li><li>
+              CanvasImageSource can be manipulated by other XAML UI elements
+              such as transforms or opacity changes, while CanvasSwapChain 
+              cannot.
+            </li><li>
+              CanvasVirtualImageSource can be used to display images that are
+              much larger than the screen (for example in a ScrollViewer).
+            </li></ul></p></div><div class="collapsibleAreaRegion"><span class="collapsibleRegionTitle" onclick="SectionExpandCollapse('ID3RB')" onkeypress="SectionExpandCollapse_CheckKey('ID3RB', event)" tabindex="0"><img id="ID3RBToggle" class="collapseToggle" src="../icons/SectionExpanded.png" />CanvasSwapChain and CoreWindow</span></div><div id="ID3RBSection" class="collapsibleSection"><p><a href="T_Microsoft_Graphics_Canvas_CanvasSwapChain.htm">CanvasSwapChain</a> 
+          wraps a Direct3D swap chain. CanvasSwapChain is not a XAML type, but the fact 
+          that it has a swap chain means it has a built-in mechanism for being 
+          displayed. That said, 
+          <a href="https://msdn.microsoft.com/en-us/library/windows.ui.core.corewindow.aspx" target="_blank">CoreWindow</a> apps may use CanvasSwapChain for displaying graphical content.
+        </p><p>
+          To create a CanvasSwapChain for use with a CoreWindow, in C#:
+          <div class="codeSnippetContainer"><div class="codeSnippetContainerTabs"><div id="ID2EAEBADAAA_tab1" class="codeSnippetContainerTabSingle">C#</div></div><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID2EAEBADAAA_copyCode" href="#" class="copyCodeSnippet" onclick="javascript:CopyToClipboard('ID2EAEBADAAA');return false;" title="Copy">Copy</a></div></div><div id="ID2EAEBADAAA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve"><span class="highlight-keyword">float</span> currentDpi = DisplayInformation.GetForCurrentView().LogicalDpi;
+SwapChain = CanvasSwapChain.CreateForCoreWindow(device, window, currentDpi);</pre></div></div></div><script type="text/javascript">AddLanguageTabSet("ID2EAEBADAAA");</script>  
+          To draw content using a CanvasSwapChain, call its 
+          <a href="M_Microsoft_Graphics_Canvas_CanvasSwapChain_CreateDrawingSession.htm">CreateDrawingSession(Color)</a> 
+          method:
+          <div class="codeSnippetContainer"><div class="codeSnippetContainerTabs"><div id="ID2EAABADAAA_tab1" class="codeSnippetContainerTabSingle">C#</div></div><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID2EAABADAAA_copyCode" href="#" class="copyCodeSnippet" onclick="javascript:CopyToClipboard('ID2EAABADAAA');return false;" title="Copy">Copy</a></div></div><div id="ID2EAABADAAA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve"><span class="highlight-keyword">using</span> (CanvasDrawingSession ds = swapChain.CreateDrawingSession(Colors.Black))
+{
+    ds.FillRectangle(<span class="highlight-number">100</span>, <span class="highlight-number">200</span>, <span class="highlight-number">3</span>, <span class="highlight-number">5</span>);
+}
+swapChain.Present();</pre></div></div></div><script type="text/javascript">AddLanguageTabSet("ID2EAABADAAA");</script></p><p>
+          The size of the swap chain should match the size of the CoreWindow. If 
+          the size of the window changes, call 
+          <a href="M_Microsoft_Graphics_Canvas_CanvasSwapChain_ResizeBuffers_3.htm">ResizeBuffers(Size)</a> 
+          on the swap chain with the new size. For more information, see the 
+          CoreWindow Win2D sample.
+        </p></div><div class="collapsibleAreaRegion"><span class="collapsibleRegionTitle" onclick="SectionExpandCollapse('ID4RB')" onkeypress="SectionExpandCollapse_CheckKey('ID4RB', event)" tabindex="0"><img id="ID4RBToggle" class="collapseToggle" src="../icons/SectionExpanded.png" />CanvasSwapChainPanel</span></div><div id="ID4RBSection" class="collapsibleSection"><p><a href="T_Microsoft_Graphics_Canvas_UI_Xaml_CanvasSwapChainPanel.htm">CanvasSwapChainPanel</a> 
+          is a XAML type, and a relatively thin wrapper around CanvasSwapChain.
+          It is suitable for XAML apps that require swap chain rendering, but do 
+          not want to use the policies that exist in CanvasAnimatedControl.
+          To create a swap chain in XAML, use the namespace:
+          <div class="codeSnippetContainer"><div class="codeSnippetContainerTabs"><div id="ID2EAIAACAAA_tab1" class="codeSnippetContainerTabSingle">XAML</div></div><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID2EAIAACAAA_copyCode" href="#" class="copyCodeSnippet" onclick="javascript:CopyToClipboard('ID2EAIAACAAA');return false;" title="Copy">Copy</a></div></div><div id="ID2EAIAACAAA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve">xmlns:canvas=<span class="highlight-literal">"using:Microsoft.Graphics.Canvas.UI.Xaml"</span></pre></div></div></div><script type="text/javascript">AddLanguageTabSet("ID2EAIAACAAA");</script>
+          And declare:
+          <div class="codeSnippetContainer"><div class="codeSnippetContainerTabs"><div id="ID2EAGAACAAA_tab1" class="codeSnippetContainerTabSingle">XAML</div></div><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID2EAGAACAAA_copyCode" href="#" class="copyCodeSnippet" onclick="javascript:CopyToClipboard('ID2EAGAACAAA');return false;" title="Copy">Copy</a></div></div><div id="ID2EAGAACAAA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve">&lt;canvas:CanvasSwapChainPanel x:Name=<span class="highlight-literal">"canvasSwapChainPanel"</span>/&gt;</pre></div></div></div><script type="text/javascript">AddLanguageTabSet("ID2EAGAACAAA");</script>
+          A CanvasSwapChainPanel does not have a swap chain automatically assigned 
+          to it. An an example, to assign one:
+          <div class="codeSnippetContainer"><div class="codeSnippetContainerTabs"><div id="ID2EAEAACAAA_tab1" class="codeSnippetContainerTabSingle">C#</div></div><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID2EAEAACAAA_copyCode" href="#" class="copyCodeSnippet" onclick="javascript:CopyToClipboard('ID2EAEAACAAA');return false;" title="Copy">Copy</a></div></div><div id="ID2EAEAACAAA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve">CanvasDevice device = CanvasDevice.GetSharedDevice();
+CanvasSwapChain swapChain = <span class="highlight-keyword">new</span> CanvasSwapChain(device, width, height, <span class="highlight-number">96</span>);
+canvasSwapChainPanel.SwapChain = swapChain;</pre></div></div></div><script type="text/javascript">AddLanguageTabSet("ID2EAEAACAAA");</script>
+          
+          To draw to the swap chain panel, in C#, use its SwapChain property:
+          <div class="codeSnippetContainer"><div class="codeSnippetContainerTabs"><div id="ID2EACAACAAA_tab1" class="codeSnippetContainerTabSingle">C#</div></div><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID2EACAACAAA_copyCode" href="#" class="copyCodeSnippet" onclick="javascript:CopyToClipboard('ID2EACAACAAA');return false;" title="Copy">Copy</a></div></div><div id="ID2EACAACAAA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve"><span class="highlight-keyword">using</span> (CanvasDrawingSession ds = canvasSwapChainPanel.SwapChain.CreateDrawingSession(Colors.Black))
+{
+    ds.FillRectangle(<span class="highlight-number">200</span>, <span class="highlight-number">300</span>, <span class="highlight-number">5</span>, <span class="highlight-number">6</span>, Colors.Blue);
+}
+canvasSwapChainPanel.SwapChain.Present();</pre></div></div></div><script type="text/javascript">AddLanguageTabSet("ID2EACAACAAA");</script>
+          The application decides on the frequency of redrawing. In the same manner
+          as using CanvasSwapChain directly, it is up to the app to resize the swap
+          chain when the control is resized. For example, in C#:
+          <div class="codeSnippetContainer"><div class="codeSnippetContainerTabs"><div id="ID2EAAAACAAA_tab1" class="codeSnippetContainerTabSingle">C#</div></div><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID2EAAAACAAA_copyCode" href="#" class="copyCodeSnippet" onclick="javascript:CopyToClipboard('ID2EAAAACAAA');return false;" title="Copy">Copy</a></div></div><div id="ID2EAAAACAAA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve">canvasSwapChainPanel.SizeChanged += canvasSwapChainPanel_SizeChanged;
+
+<span class="highlight-keyword">void</span> canvasSwapChainPanel_SizeChanged(<span class="highlight-keyword">object</span> sender, Windows.UI.Xaml.SizeChangedEventArgs e)
+{
+    canvasSwapChainPanel.SwapChain.ResizeBuffers(e.NewSize);
+}</pre></div></div></div><script type="text/javascript">AddLanguageTabSet("ID2EAAAACAAA");</script></p></div><div class="collapsibleAreaRegion"><span class="collapsibleRegionTitle" onclick="SectionExpandCollapse('ID5RB')" onkeypress="SectionExpandCollapse_CheckKey('ID5RB', event)" tabindex="0"><img id="ID5RBToggle" class="collapseToggle" src="../icons/SectionExpanded.png" />Image Sources</span></div><div id="ID5RBSection" class="collapsibleSection"><p><a href="T_Microsoft_Graphics_Canvas_UI_Xaml_CanvasImageSource.htm">CanvasImageSource</a> and
+          <a href="T_Microsoft_Graphics_Canvas_UI_Xaml_CanvasVirtualImageSource.htm">CanvasVirtualImageSource</a>
+          provide a way of integrating Win2D graphical content with XAML.  They are
+          suitable for content which does not require swap chain rendering. 
+        </p><h4 class="subHeading">CanvasImageSource</h4><div class="subsection"><p><a href="T_Microsoft_Graphics_Canvas_UI_Xaml_CanvasImageSource.htm">CanvasImageSource</a> extends XAML's 
+              <a href="https://msdn.microsoft.com/en-US/library/windows/apps/windows.ui.xaml.media.imaging.surfaceimagesource.aspx" target="_blank">SurfaceImageSource</a>.
+                Apps can create an instance of CanvasImageSource, and reference it from
+                a XAML type that consumes an ImageSource, such as an 
+                <a href="https://msdn.microsoft.com/library/windows/apps/br242752.aspx" target="_blank">Image</a> or 
+                  <a href="https://msdn.microsoft.com/en-us/library/windows/apps/windows.ui.xaml.media.imagebrush" target="_blank">ImageBrush</a>. For example, in XAML markup:
+                    
+                    <div class="codeSnippetContainer"><div class="codeSnippetContainerTabs"><div id="ID2EAFBABABAAA_tab1" class="codeSnippetContainerTabSingle">XAML</div></div><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID2EAFBABABAAA_copyCode" href="#" class="copyCodeSnippet" onclick="javascript:CopyToClipboard('ID2EAFBABABAAA');return false;" title="Copy">Copy</a></div></div><div id="ID2EAFBABABAAA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve">&lt;Image x:Name=<span class="highlight-literal">"image"</span>/&gt;</pre></div></div></div><script type="text/javascript">AddLanguageTabSet("ID2EAFBABABAAA");</script>
+                    
+                    Then, in C#:
+                    <div class="codeSnippetContainer"><div class="codeSnippetContainerTabs"><div id="ID2EADBABABAAA_tab1" class="codeSnippetContainerTabSingle">C#</div></div><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID2EADBABABAAA_copyCode" href="#" class="copyCodeSnippet" onclick="javascript:CopyToClipboard('ID2EADBABABAAA');return false;" title="Copy">Copy</a></div></div><div id="ID2EADBABABAAA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve">CanvasDevice device = CanvasDevice.GetSharedDevice();
+CanvasImageSource imageSource = <span class="highlight-keyword">new</span> CanvasImageSource(device, width, height);
+image.Source = imageSource;</pre></div></div></div><script type="text/javascript">AddLanguageTabSet("ID2EADBABABAAA");</script>
+                    
+                    Drawing sessions are created directly on the image source object. For 
+                    example:
+                    
+                    <div class="codeSnippetContainer"><div class="codeSnippetContainerTabs"><div id="ID2EABBABABAAA_tab1" class="codeSnippetContainerTabSingle">C#</div></div><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID2EABBABABAAA_copyCode" href="#" class="copyCodeSnippet" onclick="javascript:CopyToClipboard('ID2EABBABABAAA');return false;" title="Copy">Copy</a></div></div><div id="ID2EABBABABAAA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve"><span class="highlight-keyword">using</span> (CanvasDrawingSession ds = imageSource.CreateDrawingSession(Colors.Black))
+{
+    ds.FillRectangle(<span class="highlight-number">200</span>, <span class="highlight-number">300</span>, <span class="highlight-number">5</span>, <span class="highlight-number">6</span>, Colors.Blue);
+}</pre></div></div></div><script type="text/javascript">AddLanguageTabSet("ID2EABBABABAAA");</script>
+                  
+                    Note that a clear color must be passed to CreateDrawingSession. 
+                    Whenever a drawing session is created on a CanvasImageSource, the 
+                    CanvasImageSource is cleared.
+            </p><p>
+              For an example demonstrating how to use CanvasImageSource, see the
+              ImageSourceUpdateRegion Win2D ExampleGallery page.
+            </p></div><h4 class="subHeading">CanvasVirtualImageSource</h4><div class="subsection"><p><a href="T_Microsoft_Graphics_Canvas_UI_Xaml_CanvasVirtualImageSource.htm">CanvasVirtualImageSource</a> wraps XAML's
+              <a href="https://msdn.microsoft.com/en-us/library/windows/apps/windows.ui.xaml.media.imaging.virtualsurfaceimagesource.aspx" target="_blank">VirtualSurfaceImageSource</a>.
+            </p><p>
+              The wrapped VirtualSurfaceImageSource can be obtained by the
+              <a href="P_Microsoft_Graphics_Canvas_UI_Xaml_CanvasVirtualImageSource_Source.htm">Source</a>
+              property.  Apart from this difference it can be used in much the same
+              way as CanvasImageSource:
+            </p><div class="codeSnippetContainer"><div class="codeSnippetContainerTabs"><div id="ID2EABAAABAAA_tab1" class="codeSnippetContainerTabSingle">XAML</div></div><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID2EABAAABAAA_copyCode" href="#" class="copyCodeSnippet" onclick="javascript:CopyToClipboard('ID2EABAAABAAA');return false;" title="Copy">Copy</a></div></div><div id="ID2EABAAABAAA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve">&lt;Image x:Name=<span class="highlight-literal">"image"</span>/&gt;</pre></div></div></div><script type="text/javascript">AddLanguageTabSet("ID2EABAAABAAA");</script><div class="codeSnippetContainer"><div class="codeSnippetContainerTabs"><div id="ID2EAAAAABAAA_tab1" class="codeSnippetContainerTabSingle">C#</div></div><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID2EAAAAABAAA_copyCode" href="#" class="copyCodeSnippet" onclick="javascript:CopyToClipboard('ID2EAAAAABAAA');return false;" title="Copy">Copy</a></div></div><div id="ID2EAAAAABAAA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve"><span class="highlight-keyword">var</span> virtualImageSource = <span class="highlight-keyword">new</span> CanvasVirtualImageSource(device, width, height);
+image.Source = virtualImageSource.Source;</pre></div></div></div><script type="text/javascript">AddLanguageTabSet("ID2EAAAAABAAA");</script></div></div><div class="collapsibleAreaRegion"><span class="collapsibleRegionTitle" onclick="SectionExpandCollapse('ID6RB')" onkeypress="SectionExpandCollapse_CheckKey('ID6RB', event)" tabindex="0"><img id="ID6RBToggle" class="collapseToggle" src="../icons/SectionExpanded.png" />CanvasRenderTarget</span></div><div id="ID6RBSection" class="collapsibleSection"><p>
+          CanvasRenderTarget represents a drawable bitmap, and does not have any 
+          built-in association with XAML. It is suitable for XAML or non-XAML apps 
+          which need to use an intermediate bitmap- for example, for saving image 
+          data to a file, reading back pixel data, or to be used as an 
+          intermediate for another operation.
+        </p><p>
+          CanvasRenderTarget doesn't have an automatic mechanism to cause it to be 
+          displayed. To display the content of a CanvasRenderTarget in your app, 
+          draw it in the drawing session created from a displayed control, image 
+          source, or swap chain.
+        </p><p>
+          For more information about using CanvasRenderTarget, see 
+          <a href="Offscreen.htm">Offscreen drawing</a>.
+        </p></div></div></div><div id="pageFooter" class="pageFooter"><p><a href="http://github.com/Microsoft/Win2D/blob/master/LICENSE.txt" target="_blank">Copyright (c) Microsoft Corporation. All rights reserved.</a></p></div></body></html>

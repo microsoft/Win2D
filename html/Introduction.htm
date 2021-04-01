@@ -1,86 +1,48 @@
-﻿<html><head><meta http-equiv="X-UA-Compatible" content="IE=edge" /><link rel="shortcut icon" href="../icons/favicon.ico" /><link rel="stylesheet" type="text/css" href="../styles/branding.css" /><link rel="stylesheet" type="text/css" href="../styles/branding-en-US.css" /><script type="text/javascript" src="../scripts/branding.js"> </script><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>Introduction</title><meta name="Language" content="en-us" /><meta name="Microsoft.Help.Id" content="Introduction" /><meta name="Description" content="Win2D is an easy-to-use Windows Runtime API for immediate mode 2D graphics rendering with GPU acceleration. It is available to C#, C++ and VB developers writing apps for the Windows Universal Platform (UWP)." /><meta name="Microsoft.Help.ContentType" content="Concepts" /><meta name="BrandingAware" content="true" /><link type="text/css" rel="stylesheet" href="../styles/highlight.css" /><script type="text/javascript" src="../scripts/highlight.js"> </script><link rel="stylesheet" type="text/css" href="../styles/branding-Website.css" /><script type="text/javascript" src="../scripts/jquery-1.11.0.min.js"></script><script type="text/javascript" src="../scripts/branding-Website.js"></script><script type="text/javascript" src="../scripts/clipboard.min.js"></script></head><body onload="OnLoad('cs')"><input type="hidden" id="userDataCache" class="userDataStyle" /><div class="pageHeader" id="PageHeader">Win2D documentation<form id="SearchForm" method="get" action="#" onsubmit="javascript:TransferToSearchPage(); return false;"><input id="SearchTextBox" type="text" maxlength="200" /><button id="SearchButton" type="submit"></button></form></div><div class="pageBody"><div class="leftNav" id="leftNav"><div id="tocNav"><div class="toclevel0" data-toclevel="0" data-childrenloaded="true"><a class="tocExpanded" onclick="javascript: Toggle(this);" href="#!" /><a data-tochassubtree="true" href="Introduction.htm" title="Win2D documentation" tocid="roottoc">Win2D documentation</a></div><div class="toclevel1 current" data-toclevel="1"><a data-tochassubtree="false" href="Introduction.htm" title="Introduction" tocid="Introduction">Introduction</a></div><div class="toclevel1" data-toclevel="1"><a data-tochassubtree="false" href="Features.htm" title="Features" tocid="Features">Features</a></div><div class="toclevel1" data-toclevel="1"><a data-tochassubtree="false" href="QuickStart.htm" title="Quick start" tocid="QuickStart">Quick start</a></div><div class="toclevel1" data-toclevel="1"><a class="tocCollapsed" onclick="javascript: Toggle(this);" href="#!" /><a data-tochassubtree="true" href="APIReference.htm" title="API Reference" tocid="APIReference">API Reference</a></div><div class="toclevel1" data-toclevel="1"><a class="tocCollapsed" onclick="javascript: Toggle(this);" href="#!" /><a data-tochassubtree="true" href="Articles.htm" title="Articles" tocid="Articles">Articles</a></div></div><div id="tocResizableEW" onmousedown="OnMouseDown(event);"></div><div id="TocResize" class="tocResize"><img id="ResizeImageIncrease" src="../icons/TocOpen.gif" onclick="OnIncreaseToc()" alt="Click or drag to resize" title="Click or drag to resize" /><img id="ResizeImageReset" src="../icons/TocClose.gif" style="display:none" onclick="OnResetToc()" alt="Click or drag to resize" title="Click or drag to resize" /></div></div><div class="topicContent" id="TopicContent"><table class="titleTable"><tr><td class="titleColumn">Introduction</td></tr></table><span class="introStyle"></span> <div class="introduction"><p>
-        Win2D is an easy-to-use Windows Runtime API for immediate mode 2D graphics
-        rendering with GPU acceleration. It is available to C#, C++ and VB developers
-        writing apps for the Windows Universal Platform (UWP). It utilizes the power
-        of Direct2D, and integrates seamlessly with XAML and CoreWindow.
-      </p><p>Where to get it:</p><ul><li><a href="http://www.nuget.org/packages/Win2D.uwp" target="_blank">NuGet package</a></li><li><a href="http://github.com/Microsoft/Win2D" target="_blank">Source code</a></li></ul><p>How to use it:</p><ul><li><a href="http://github.com/Microsoft/Win2D-samples" target="_blank">Sample code</a>
-          -
-          <em>
-            also available in the
-            <a href="https://www.microsoft.com/store/apps/9NBLGGGXWT9F" target="_blank">Store</a></em></li></ul><p>More info:</p><ul><li><a href="http://github.com/Microsoft/Win2D/issues" target="_blank">Report a bug or ask a question</a></li><li><a href="http://github.com/Microsoft/Win2D/blob/master/CHANGELOG.md" target="_blank">Changelog</a></li></ul></div><div class="collapsibleAreaRegion" id="GettingSetUp"><span class="collapsibleRegionTitle" onclick="SectionExpandCollapse('ID0RB')" onkeypress="SectionExpandCollapse_CheckKey('ID0RB', event)" tabindex="0"><img id="ID0RBToggle" class="collapseToggle" src="../icons/SectionExpanded.png" />Getting set up</span></div><div id="ID0RBSection" class="collapsibleSection"><p><a href="https://www.visualstudio.com" target="_blank">Download and install Visual Studio</a>:
-        </p><ul><li>Minimum version: Visual Studio Community 2017</li><li>Visual Studio Tools for Universal Windows Apps 15.0.27428.01</li><li>Windows SDK 17134 (April 2018 Update)</li></ul><p>Create your project:</p><ul><li>Go to 'File' -&gt; 'New' -&gt; 'Project...'</li><li>Select 'Visual C#', 'Visual C++', or 'Visual Basic'</li><li>Create a 'Blank App (Universal Windows)'</li><li>Enter a project name of your choosing</li><li>Click 'OK'</li></ul><p>Add the Win2D NuGet package:</p><ul><li>Go to 'Tools' -&gt; 'NuGet Package Manager' -&gt; 'Manage NuGet Packages for Solution...'</li><li>Type 'Win2D' into the 'Search Online' box, and hit Enter</li><li>Select the 'Win2D.uwp' package and click 'Install', then 'OK'</li><li>Accept the license agreement</li><li>Click 'Close'</li></ul></div><div class="collapsibleAreaRegion"><span class="collapsibleRegionTitle" onclick="SectionExpandCollapse('ID2RB')" onkeypress="SectionExpandCollapse_CheckKey('ID2RB', event)" tabindex="0"><img id="ID2RBToggle" class="collapseToggle" src="../icons/SectionExpanded.png" />Write some code</span></div><div id="ID2RBSection" class="collapsibleSection"><p>Add a <a href="T_Microsoft_Graphics_Canvas_UI_Xaml_CanvasControl.htm">CanvasControl</a> to your XAML page:</p><ul><li>Double click on MainPage.xaml in Solution Explorer to open the XAML editor</li><li>
-            Add the <a href="N_Microsoft_Graphics_Canvas_UI_Xaml.htm">Microsoft.Graphics.Canvas.UI.Xaml</a> namespace next to the existing xmlns statements:
-            <div class="codeSnippetContainer"><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID1EAABDABAAA_copyCode" href="#" class="copyCodeSnippet" onclick="javascript:CopyToClipboard('ID1EAABDABAAA');return false;" title="Copy">Copy</a></div></div><div id="ID1EAABDABAAA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve">xmlns:canvas=<span class="highlight-literal">"using:Microsoft.Graphics.Canvas.UI.Xaml"</span></pre></div></div></div><script type="text/javascript">AddLanguageTabSet("ID1EAABDABAAA");</script></li><li>
-            Add a CanvasControl inside the existing Grid control:
-            <div class="codeSnippetContainer"><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID1EAAADABAAA_copyCode" href="#" class="copyCodeSnippet" onclick="javascript:CopyToClipboard('ID1EAAADABAAA');return false;" title="Copy">Copy</a></div></div><div id="ID1EAAADABAAA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve">&lt;Grid&gt;
-    &lt;canvas:CanvasControl Draw=<span class="highlight-literal">"CanvasControl_Draw"</span> ClearColor=<span class="highlight-literal">"CornflowerBlue"</span>/&gt;
-&lt;/Grid&gt;</pre></div></div></div><script type="text/javascript">AddLanguageTabSet("ID1EAAADABAAA");</script></li></ul><p>Then add some Win2D drawing code.</p><ul><li>
-            If you created a C# project, edit MainPage.xaml.cs:
-            <div class="codeSnippetContainer"><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID1EAACBABAAA_copyCode" href="#" class="copyCodeSnippet" onclick="javascript:CopyToClipboard('ID1EAACBABAAA');return false;" title="Copy">Copy</a></div></div><div id="ID1EAACBABAAA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve"><span class="highlight-keyword">using</span> Windows.UI;
-<span class="highlight-keyword">using</span> Windows.UI.Xaml.Controls;
-<span class="highlight-keyword">using</span> Microsoft.Graphics.Canvas.UI.Xaml;
-
-<span class="highlight-keyword">public</span> <span class="highlight-keyword">sealed</span> <span class="highlight-keyword">partial</span> <span class="highlight-keyword">class</span> MainPage : Page
-{
-    <span class="highlight-keyword">public</span> MainPage()
-    {
-        <span class="highlight-keyword">this</span>.InitializeComponent();
-    }
-
-    <span class="highlight-keyword">void</span> CanvasControl_Draw(CanvasControl sender, CanvasDrawEventArgs args)
-    {
-        args.DrawingSession.DrawEllipse(<span class="highlight-number">155</span>, <span class="highlight-number">115</span>, <span class="highlight-number">80</span>, <span class="highlight-number">30</span>, Colors.Black, <span class="highlight-number">3</span>);
-        args.DrawingSession.DrawText(<span class="highlight-literal">"Hello, world!"</span>, <span class="highlight-number">100</span>, <span class="highlight-number">100</span>, Colors.Yellow);
-    }
-}</pre></div></div></div><script type="text/javascript">AddLanguageTabSet("ID1EAACBABAAA");</script></li><li>
-            If you created a C++/CX project, edit MainPage.xaml.h and add a function declaration to the MainPage class:
-            <div class="codeSnippetContainer"><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID1EACBBABAAA_copyCode" href="#" class="copyCodeSnippet" onclick="javascript:CopyToClipboard('ID1EACBBABAAA');return false;" title="Copy">Copy</a></div></div><div id="ID1EACBBABAAA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve"><span class="highlight-keyword">void</span> CanvasControl_Draw(Microsoft::Graphics::Canvas::UI::Xaml::CanvasControl^ sender,
-                        Microsoft::Graphics::Canvas::UI::Xaml::CanvasDrawEventArgs^ args);</pre></div></div></div><script type="text/javascript">AddLanguageTabSet("ID1EACBBABAAA");</script>
-            Then edit MainPage.xaml.cpp:
-            <div class="codeSnippetContainer"><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID1EAABBABAAA_copyCode" href="#" class="copyCodeSnippet" onclick="javascript:CopyToClipboard('ID1EAABBABAAA');return false;" title="Copy">Copy</a></div></div><div id="ID1EAABBABAAA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve"><span class="highlight-preprocessor">#include</span> <span class="highlight-literal">"pch.h"</span>
-<span class="highlight-preprocessor">#include</span> <span class="highlight-literal">"MainPage.xaml.h"</span>
-
-<span class="highlight-keyword">using</span> <span class="highlight-keyword">namespace</span> App1;
-<span class="highlight-keyword">using</span> <span class="highlight-keyword">namespace</span> Windows::UI;
-<span class="highlight-keyword">using</span> <span class="highlight-keyword">namespace</span> Microsoft::Graphics::Canvas::UI::Xaml;
-
-MainPage::MainPage()
-{
-    InitializeComponent();
-}
-
-<span class="highlight-keyword">void</span> MainPage::CanvasControl_Draw(CanvasControl^ sender, CanvasDrawEventArgs^ args)
-{
-    args-&gt;DrawingSession-&gt;DrawEllipse(<span class="highlight-number">155</span>, <span class="highlight-number">115</span>, <span class="highlight-number">80</span>, <span class="highlight-number">30</span>, Colors::Black, <span class="highlight-number">3</span>);
-    args-&gt;DrawingSession-&gt;DrawText(<span class="highlight-literal">"Hello, world!"</span>, <span class="highlight-number">100</span>, <span class="highlight-number">100</span>, Colors::Yellow);
-}</pre></div></div></div><script type="text/javascript">AddLanguageTabSet("ID1EAABBABAAA");</script></li><li>
-            Or if you created a VB project, edit MainPage.xaml.vb:
-            <div class="codeSnippetContainer"><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID1EAAABABAAA_copyCode" href="#" class="copyCodeSnippet" onclick="javascript:CopyToClipboard('ID1EAAABABAAA');return false;" title="Copy">Copy</a></div></div><div id="ID1EAAABABAAA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve">Imports Windows.UI
-Imports Windows.UI.Xaml.Controls
-Imports Microsoft.Graphics.Canvas.UI.Xaml
-
-Public NotInheritable Class MainPage
-    Inherits Page
-    Public Sub New()
-        Me.InitializeComponent()
-    End Sub
-
-    Private Sub CanvasControl_Draw(sender As CanvasControl, args As CanvasDrawEventArgs)
-        args.DrawingSession.DrawEllipse(<span class="highlight-number">155</span>, <span class="highlight-number">115</span>, <span class="highlight-number">80</span>, <span class="highlight-number">30</span>, Colors.Black, <span class="highlight-number">3</span>)
-        args.DrawingSession.DrawText(<span class="highlight-literal">"Hello, world!"</span>, <span class="highlight-number">100</span>, <span class="highlight-number">100</span>, Colors.Yellow)
-    End Sub
-End Class</pre></div></div></div><script type="text/javascript">AddLanguageTabSet("ID1EAAABABAAA");</script></li></ul><p>
-          If you prefer to build your own version of Win2D from source, see the 
-          <a href="https://github.com/Microsoft/Win2D/blob/master/README.md" target="_blank">readme</a>
-          for instructions on how to clone from GitHub and compile it locally.
-        </p></div><div class="collapsibleAreaRegion" id="Legacy81"><span class="collapsibleRegionTitle" onclick="SectionExpandCollapse('ID3RB')" onkeypress="SectionExpandCollapse_CheckKey('ID3RB', event)" tabindex="0"><img id="ID3RBToggle" class="collapseToggle" src="../icons/SectionExpanded.png" />Legacy support for Windows 8.1</span></div><div id="ID3RBSection" class="collapsibleSection"><p>
-          Win2D 1.21.0 was the last release to support the Windows 8.1 and Windows Phone 8.1 
-          platforms. From Win2D 1.22.0 onward, only the Windows Universal Platform (UWP) is 
-          supported.
-        </p><p>
-          Legacy Win2D support for Windows and Phone 8.1 is available as a
-          <a href="http://www.nuget.org/packages/Win2D.win81" target="_blank">NuGet package</a>
-          and from the
-          <a href="https://github.com/Microsoft/Win2D/tree/win81" target="_blank">win81 branch</a>
-          on github.
-        </p></div></div></div><div id="pageFooter" class="pageFooter"><p><a href="http://github.com/Microsoft/Win2D/blob/master/LICENSE.txt" target="_blank">Copyright (c) Microsoft Corporation. All rights reserved.</a></p></div></body></html>
+﻿<html>
+    <head>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <link rel="stylesheet" type="text/css" href="../styles/branding.css" />
+        <link rel="stylesheet" type="text/css" href="../styles/branding-en-US.css" />
+        </script><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>Introduction</title><meta name="Language" content="en-us" />
+        <meta name="Microsoft.Help.Id" content="Introduction" />
+        <meta name="Description" content="Win2D is an easy-to-use Windows Runtime API for immediate mode 2D graphics rendering with GPU acceleration. It is available to C#, C++ and VB developers writing apps for the Windows Universal Platform (UWP)." />
+        <meta name="Microsoft.Help.ContentType" content="Concepts" />
+        <meta name="BrandingAware" content="true" />
+        <link type="text/css" rel="stylesheet" href="../styles/highlight.css" />
+        <link rel="stylesheet" type="text/css" href="../styles/branding-Website.css" />
+    </head>
+    <body>
+        <input type="hidden" id="userDataCache" class="userDataStyle" />
+        <div class="pageHeader" id="PageHeader">Win2D documentation</div>
+            
+        <div class="topicContent" id="TopicContent">
+            <table class="titleTable"><tr><td class="titleColumn">Introduction</td></tr></table>
+            <span class="introStyle"></span>
+            <div class="introduction">
+                <p>
+                    Win2D is an easy-to-use Windows Runtime API for immediate mode 2D graphics
+                    rendering with GPU acceleration. It is available to C#, C++ and VB developers
+                    writing apps for WinUI2 or WinUI3. It utilizes the power
+                    of Direct2D, and integrates seamlessly with XAML.
+                </p>
+                <p>Win2D currently has two packages available:</p>
+                <ul>
+                    <li>
+                        <p><a href="../WinUI2/html/Introduction.htm">Win2D.uwp</a></p>
+                        <ul>
+                            <li>For use with the WinUI2 (Universal Windows Platform only)</li>
+                        </ul>
+                    </li>
+                    <li>
+                        <p><a href="../WinUI3/html/Introduction.htm">Microsoft.Graphics.Win2D</a></p>
+                        <ul>
+                            <li>For use with WinUI3 and Project Reunion</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div id="pageFooter" class="pageFooter"><p><a href="http://github.com/Microsoft/Win2D/blob/master/LICENSE.txt" target="_blank">Copyright (c) Microsoft Corporation. All rights reserved.</a></p></div>
+    </body>
+</html>

@@ -1,0 +1,282 @@
+﻿<html><head><meta http-equiv="X-UA-Compatible" content="IE=edge" /><link rel="shortcut icon" href="../icons/favicon.ico" /><link rel="stylesheet" type="text/css" href="../styles/branding.css" /><link rel="stylesheet" type="text/css" href="../styles/branding-en-US.css" /><script type="text/javascript" src="../scripts/branding.js"> </script><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>Loading resources outside of CreateResources</title><meta name="Language" content="en-us" /><meta name="Microsoft.Help.Id" content="LoadingResourcesOutsideCreateResources" /><meta name="Description" content="This document discusses how apps using Win2D's XAML controls, CanvasControl, CanvasVirtualControl and CanvasAnimatedControl, can load resources from outside the CreateResources handler." /><meta name="Microsoft.Help.ContentType" content="Concepts" /><meta name="BrandingAware" content="true" /><link type="text/css" rel="stylesheet" href="../styles/highlight.css" /><script type="text/javascript" src="../scripts/highlight.js"> </script><link rel="stylesheet" type="text/css" href="../styles/branding-Website.css" /><script type="text/javascript" src="../scripts/jquery-1.11.0.min.js"></script><script type="text/javascript" src="../scripts/branding-Website.js"></script><script type="text/javascript" src="../scripts/clipboard.min.js"></script></head><body onload="OnLoad('cs')"><input type="hidden" id="userDataCache" class="userDataStyle" /><div class="pageHeader" id="PageHeader">Win2D for WinUI3 (Work in progress)<form id="SearchForm" method="get" action="#" onsubmit="javascript:TransferToSearchPage(); return false;"><input id="SearchTextBox" type="text" maxlength="200" /><button id="SearchButton" type="submit"></button></form></div><div class="pageBody"><div class="leftNav" id="leftNav"><div id="tocNav"><div class="toclevel0" data-toclevel="0"><a class="tocCollapsed" onclick="javascript: Toggle(this);" href="#!" /><a data-tochassubtree="true" href="Introduction.htm" title="Win2D for WinUI3 (Work in progress)" tocid="roottoc">Win2D for WinUI3 (Work in progress)</a></div><div class="toclevel1" data-toclevel="1" data-childrenloaded="true"><a class="tocExpanded" onclick="javascript: Toggle(this);" href="#!" /><a data-tochassubtree="true" href="Articles.htm" title="Articles" tocid="Articles">Articles</a></div><div class="toclevel2" data-toclevel="2"><a data-tochassubtree="false" href="Interop.htm" title="Interop with Direct2D" tocid="Interop">Interop with Direct2D</a></div><div class="toclevel2" data-toclevel="2"><a data-tochassubtree="false" href="Offscreen.htm" title="Offscreen drawing" tocid="Offscreen">Offscreen drawing</a></div><div class="toclevel2" data-toclevel="2"><a data-tochassubtree="false" href="DPI.htm" title="DPI and DIPs" tocid="DPI">DPI and DIPs</a></div><div class="toclevel2" data-toclevel="2"><a data-tochassubtree="false" href="ChoosingResolution.htm" title="Choosing control resolution" tocid="ChoosingResolution">Choosing control resolution</a></div><div class="toclevel2" data-toclevel="2"><a data-tochassubtree="false" href="PixelFormats.htm" title="Pixel formats" tocid="PixelFormats">Pixel formats</a></div><div class="toclevel2" data-toclevel="2"><a data-tochassubtree="false" href="PremultipliedAlpha.htm" title="Premultiplied alpha" tocid="PremultipliedAlpha">Premultiplied alpha</a></div><div class="toclevel2" data-toclevel="2"><a data-tochassubtree="false" href="BlockCompression.htm" title="Bitmap block compression" tocid="BlockCompression">Bitmap block compression</a></div><div class="toclevel2" data-toclevel="2"><a data-tochassubtree="false" href="EffectPrecision.htm" title="Effect precision and clamping" tocid="EffectPrecision">Effect precision and clamping</a></div><div class="toclevel2" data-toclevel="2"><a data-tochassubtree="false" href="HandlingDeviceLost.htm" title="Handling device lost" tocid="HandlingDeviceLost">Handling device lost</a></div><div class="toclevel2" data-toclevel="2"><a data-tochassubtree="false" href="WithoutControls.htm" title="Using Win2D without built-in controls" tocid="WithoutControls">Using Win2D without built-in controls</a></div><div class="toclevel2 current" data-toclevel="2"><a data-tochassubtree="false" href="LoadingResourcesOutsideCreateResources.htm" title="Loading resources outside of CreateResources" tocid="LoadingResourcesOutsideCreateResources">Loading resources outside of CreateResources</a></div><div class="toclevel2" data-toclevel="2"><a data-tochassubtree="false" href="RefCycles.htm" title="Avoiding memory leaks" tocid="RefCycles">Avoiding memory leaks</a></div></div><div id="tocResizableEW" onmousedown="OnMouseDown(event);"></div><div id="TocResize" class="tocResize"><img id="ResizeImageIncrease" src="../icons/TocOpen.gif" onclick="OnIncreaseToc()" alt="Click or drag to resize" title="Click or drag to resize" /><img id="ResizeImageReset" src="../icons/TocClose.gif" style="display:none" onclick="OnResetToc()" alt="Click or drag to resize" title="Click or drag to resize" /></div></div><div class="topicContent" id="TopicContent"><table class="titleTable"><tr><td class="titleColumn">Loading resources outside of CreateResources</td></tr></table><span class="introStyle"></span> <div id="ID0RBSection" class="collapsibleSection"><p>
+          This document discusses how apps using Win2D's XAML controls,
+          CanvasControl, CanvasVirtualControl and CanvasAnimatedControl, can
+          load resources from outside the CreateResources handler.
+        </p></div><div class="collapsibleAreaRegion"><span class="collapsibleRegionTitle" onclick="SectionExpandCollapse('ID2RB')" onkeypress="SectionExpandCollapse_CheckKey('ID2RB', event)" tabindex="0"><img id="ID2RBToggle" class="collapseToggle" src="../icons/SectionExpanded.png" />Resource loading and CanvasControl / CanvasVirtualControl</span></div><div id="ID2RBSection" class="collapsibleSection"><p>
+          Normally, apps are expected to use the CreateResources handler for creating controls' resources, 
+          so that device dependent resources are re-recreated as necessary if the device is lost. This includes 
+          resources that are loaded asynchronously. For asynchronous resource loading, controls are encouraged to 
+          use <a href="M_Microsoft_Graphics_Canvas_UI_CanvasCreateResourcesEventArgs_TrackAsyncAction.htm">TrackAsyncAction(IAsyncAction)</a>
+          with CreateResources to ensure correct behavior.
+        </p><p>
+          All of this works well for cases where all resources are loaded at startup only.
+        </p><p>
+          But, what about apps which need to load some resources at startup, and some other 
+    resources later? For example, consider a game with different levels, and the levels need 
+    different graphical assets. Win2D doesn't have something built-in with CreateResources to 
+    enable this- an app cannot manually tell a control, "Re-issue CreateResources now, so 
+    that I can load different assets from before". However, the building blocks are there to make 
+    this work, and allow very good flexibility for how and when the resources are loaded, 
+          and be robust with respect to lost device.
+        </p><p>
+          Really, what an app wants to do in this case, is have a custom LoadResourcesForLevelAsync method, 
+          a 'custom' CreateResources-launched task, like this:
+        <div class="codeSnippetContainer"><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID1EAAEABAAA_copyCode" href="#" class="copyCodeSnippet" onclick="javascript:CopyToClipboard('ID1EAAEABAAA');return false;" title="Copy">Copy</a></div></div><div id="ID1EAAEABAAA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve"><span class="highlight-keyword">async</span> Task LoadResourcesForLevelAsync(CanvasControl resourceCreator, <span class="highlight-keyword">int</span> level)
+{
+    levelBackground = <span class="highlight-keyword">await</span> CanvasBitmap.LoadAsync(resourceCreator, ...);
+    levelThingie = <span class="highlight-keyword">await</span> CanvasBitmap.LoadAsync(resourceCreator, ...);
+    <span class="highlight-comment">// etc.</span>
+}</pre></div></div></div><script type="text/javascript">AddLanguageTabSet("ID1EAAEABAAA");</script></p><p>
+          The app needs to load some of its resources after CreateResources is completed. In particular, 
+    the app will issue the level load after CreateResources has completed- e.g., 
+    from its Draw handler. In the code below, the app's Draw handler controls the progress of its 
+          level-loading Task. 
+        </p><p>
+          To make CreateResources work in this situation, and be robust against lost devices, an app needs to do four things:
+          <ol><li>Track when LoadResourcesForLevelAsync is in progress.</li><li>Allow Win2D to handle any exceptions (in particular, device lost) that the app does't know how to handle.</li><li>If Win2D raises the CreateResources event to recover from a lost device while LoadResourcesForLevelAsync is in progress, your CreateResources handler should cancel that task.</li><li>If Win2D raises CreateResources to recover from a lost device after you have finished loading data  using LoadResourcesForLevelAsync, your CreateResources handler must reload that custom data as well as its usual global resources.</li></ol></p><p>
+          Using a CreateResources handler called CanvasControl_CreateResources, and the LoadResourcesForLevelAsync method shown above, 
+          here is a complete implementation that handles all four requirements:
+        </p><p><div class="codeSnippetContainer"><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID1EAAAABAAA_copyCode" href="#" class="copyCodeSnippet" onclick="javascript:CopyToClipboard('ID1EAAAABAAA');return false;" title="Copy">Copy</a></div></div><div id="ID1EAAAABAAA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve"> <span class="highlight-keyword">int</span>? currentLevel, wantedLevel;
+
+ <span class="highlight-comment">// This implements requirement #1.</span>
+ Task levelLoadTask;
+
+
+ <span class="highlight-keyword">public</span> <span class="highlight-keyword">void</span> LoadNewLevel(<span class="highlight-keyword">int</span> newLevel)
+ {
+     Debug.Assert(levelLoadTask == <span class="highlight-keyword">null</span>);
+     wantedLevel = newLevel;
+     levelLoadTask = LoadResourcesForLevelAsync(canvasControl, newLevel);
+ }
+
+ <span class="highlight-keyword">void</span> CanvasControl_CreateResources(CanvasControl sender,
+                                    CanvasCreateResourcesEventArgs args)
+ {
+     <span class="highlight-comment">// Synchronous resource creation, for globally-required resources goes here:</span>
+     x = <span class="highlight-keyword">new</span> CanvasRenderTarget(sender, ...);
+     y = <span class="highlight-keyword">new</span> CanvasRadialGradientBrush(sender, ...);
+     <span class="highlight-comment">// etc.</span>
+
+     args.TrackAsyncAction(CreateResourcesAsync(sender).AsAsyncAction());
+ }  
+
+ <span class="highlight-keyword">async</span> Task CreateResourcesAsync(CanvasControl sender)
+ {
+     <span class="highlight-comment">// If there is a previous load in progress, stop it, and</span>
+     <span class="highlight-comment">// swallow any stale errors. This implements requirement #3.</span>
+     <span class="highlight-keyword">if</span> (levelLoadTask != <span class="highlight-keyword">null</span>)
+     {
+         levelLoadTask.AsAsyncAction().Cancel();
+         <span class="highlight-keyword">try</span> { <span class="highlight-keyword">await</span> levelLoadTask; } <span class="highlight-keyword">catch</span> { }
+         levelLoadTask = <span class="highlight-keyword">null</span>;
+     }
+
+     <span class="highlight-comment">// Unload resources used by the previous level here.</span>
+
+     <span class="highlight-comment">// Asynchronous resource loading, for globally-required resources goes here:</span>
+     baz = <span class="highlight-keyword">await</span> CanvasBitmap.LoadAsync(sender, ...);
+     qux = <span class="highlight-keyword">await</span> CanvasBitmap.LoadAsync(sender, ...);
+     <span class="highlight-comment">// etc.</span>
+
+     <span class="highlight-comment">// If we are already in a level, reload its per-level resources.</span>
+     <span class="highlight-comment">// This implements requirement #4.</span>
+     <span class="highlight-keyword">if</span> (wantedLevel.HasValue)
+     {
+        LoadNewLevel(wantedLevel.Value);
+     }
+ }
+
+<span class="highlight-comment">// Because of how this is designed to throw an exception, this must only </span>
+<span class="highlight-comment">// ever be called from a Win2D event handler.</span>
+<span class="highlight-keyword">bool</span> IsLoadInProgress()
+{
+    <span class="highlight-comment">// No loading task?</span>
+    <span class="highlight-keyword">if</span> (levelLoadTask == <span class="highlight-keyword">null</span>)
+        <span class="highlight-keyword">return</span> <span class="highlight-keyword">false</span>;
+
+    <span class="highlight-comment">// Loading task is still running?</span>
+    <span class="highlight-keyword">if</span> (!levelLoadTask.IsCompleted)
+        <span class="highlight-keyword">return</span> <span class="highlight-keyword">true</span>;
+
+     <span class="highlight-comment">// Query the load task results and re-throw any exceptions</span>
+     <span class="highlight-comment">// so Win2D can see them. This implements requirement #2.</span>
+     <span class="highlight-keyword">try</span>
+     {
+         levelLoadTask.Wait();
+     }
+     <span class="highlight-keyword">catch</span> (AggregateException aggregateException)
+     {
+         <span class="highlight-comment">// .NET async tasks wrap all errors in an AggregateException.</span>
+         <span class="highlight-comment">// We unpack this so Win2D can directly see any lost device errors.</span>
+         aggregateException.Handle(exception =&gt; { <span class="highlight-keyword">throw</span> exception; });
+     }
+     <span class="highlight-keyword">finally</span>
+     {
+         levelLoadTask = <span class="highlight-keyword">null</span>;
+     }
+
+     currentLevel = wantedLevel;
+     <span class="highlight-keyword">return</span> <span class="highlight-keyword">false</span>;
+ }
+
+
+ <span class="highlight-keyword">void</span> CanvasControl_Draw(CanvasControl sender, CanvasDrawEventArgs args)
+ {
+     <span class="highlight-keyword">if</span> (IsLoadInProgress())
+     {
+         DrawLoadingScreen();
+     }
+     <span class="highlight-keyword">else</span>
+     {
+         DrawCurrentLevel(currentLevel);
+     }
+ }</pre></div></div></div><script type="text/javascript">AddLanguageTabSet("ID1EAAAABAAA");</script></p></div><div class="collapsibleAreaRegion"><span class="collapsibleRegionTitle" onclick="SectionExpandCollapse('ID3RB')" onkeypress="SectionExpandCollapse_CheckKey('ID3RB', event)" tabindex="0"><img id="ID3RBToggle" class="collapseToggle" src="../icons/SectionExpanded.png" />Resource loading and CanvasAnimatedControl</span></div><div id="ID3RBSection" class="collapsibleSection"><p>
+          Much of the above information for CanvasControl generalizes to
+          CanvasAnimatedControl.
+        </p><p>
+          However, CanvasAnimatedControl has a
+          game loop thread, which should be taken into consideration while
+          deciding how an app should load its resources.
+        </p><p>
+          In particular,
+          <ul><li>Apps should avoid blocking or waiting from within the Draw or Update handlers.</li><li>Apps may need to synchronize data which is accessed between multiple threads.</li></ul></p><p>
+          We can adjust the above implementation to be compatible with CanvasAnimatedControl. 
+          In particular, we should ensure that the code checking 'is the level loaded' will poll instead of wait,
+          and no CanvasAnimatedControl event handlers should be marked as async.
+          <div class="codeSnippetContainer"><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID1EAACAAAAA_copyCode" href="#" class="copyCodeSnippet" onclick="javascript:CopyToClipboard('ID1EAACAAAAA');return false;" title="Copy">Copy</a></div></div><div id="ID1EAACAAAAA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve"><span class="highlight-keyword">async</span> Task LoadResourcesForLevelAsync(ICanvasAnimatedControl resourceCreator, <span class="highlight-keyword">int</span> level)
+{
+    <span class="highlight-keyword">return</span> GameLoopSynchronizationContext.RunOnGameLoopThreadAsync(resourceCreator, <span class="highlight-keyword">async</span>() =&gt;
+    {
+        levelBackground = <span class="highlight-keyword">await</span> CanvasBitmap.LoadAsync(resourceCreator, ...);
+        levelThingie = <span class="highlight-keyword">await</span> CanvasBitmap.LoadAsync(resourceCreator, ...);
+        <span class="highlight-comment">// etc.</span>
+    }
+}
+
+
+<span class="highlight-comment">// Shared state between all threads, and a lock to control access to it.</span>
+<span class="highlight-keyword">bool</span> needToLoad;
+<span class="highlight-keyword">int</span>? currentLevel, wantedLevel;
+Task levelLoadTask; <span class="highlight-comment">// This implements requirement #1.</span>
+
+Object lockable = <span class="highlight-keyword">new</span> Object();
+
+<span class="highlight-keyword">void</span> LoadNewLevel(<span class="highlight-keyword">int</span> level)
+{            
+    <span class="highlight-keyword">lock</span>(lockable)
+    {
+        wantedLevel = level;
+        needToLoad = <span class="highlight-keyword">true</span>;
+    }
+}
+
+<span class="highlight-keyword">void</span> canvasAnimatedControl_CreateResources(ICanvasAnimatedControl sender,
+                                   CanvasCreateResourcesEventArgs args)
+{
+     <span class="highlight-comment">// Synchronous resource creation, for globally-required resources goes here:</span>
+     x = <span class="highlight-keyword">new</span> CanvasRenderTarget(sender, ...);
+     y = <span class="highlight-keyword">new</span> CanvasRadialGradientBrush(sender, ...);
+     <span class="highlight-comment">// etc.</span>
+
+     args.TrackAsyncAction(CreateResourcesAsync(sender).AsAsyncAction());
+}
+
+<span class="highlight-keyword">async</span> Task CreateResourcesAsync(CanvasAnimatedControl sender)
+{
+    <span class="highlight-comment">// If there is a previous load in progress, stop it, and</span>
+    <span class="highlight-comment">// swallow any stale errors. This implements requirement #3.</span>
+    <span class="highlight-keyword">lock</span>(lockable)
+    {
+        <span class="highlight-keyword">if</span> (levelLoadTask != <span class="highlight-keyword">null</span>)
+        {
+            levelLoadTask.AsAsyncAction().Cancel();
+            <span class="highlight-keyword">try</span> { <span class="highlight-keyword">await</span> levelLoadTask; } <span class="highlight-keyword">catch</span> { }
+            levelLoadTask = <span class="highlight-keyword">null</span>;
+        }
+    }
+
+    <span class="highlight-comment">// Unload resources used by the previous level here.</span>
+
+    <span class="highlight-comment">// Asynchronous resource loading, for globally-required resources goes here:</span>
+    baz = <span class="highlight-keyword">await</span> CanvasBitmap.LoadAsync(sender, ...);
+    qux = <span class="highlight-keyword">await</span> CanvasBitmap.LoadAsync(sender, ...);
+    <span class="highlight-comment">// etc.</span>
+
+    <span class="highlight-comment">// If we are already in a level, reload its per-level resources.</span>
+    <span class="highlight-comment">// This implements requirement #4.</span>
+    <span class="highlight-keyword">int</span>? levelThatNeedsReloading;
+    <span class="highlight-keyword">lock</span>(lockable)
+    {
+        levelThatNeedsReloading = wantedLevel;
+    }            
+    <span class="highlight-keyword">if</span> (levelThatNeedsReloading.HasValue)
+    {
+        LoadNewLevel(wantedLevel.Value);
+    }
+}
+
+<span class="highlight-keyword">void</span> canvasAnimatedControl_Update(ICanvasAnimatedControl sender, CanvasAnimatedUpdateEventArgs args)
+{
+    <span class="highlight-keyword">lock</span>(lockable)
+    {
+        <span class="highlight-comment">// Check if there is already an outstanding level-loading Task.</span>
+        <span class="highlight-comment">// If so, don't try to spin up a new one.</span>
+        <span class="highlight-keyword">bool</span> beginLoad = levelLoadTask == <span class="highlight-keyword">null</span> &amp;&amp; needToLoad;
+        needToLoad = <span class="highlight-keyword">false</span>;
+
+        <span class="highlight-keyword">if</span> (beginLoad)
+        {
+            levelLoadTask = LoadResourcesForLevelAsync(sender, wantedLevel);
+        }
+
+        <span class="highlight-comment">// Indicates the loading task was run and just finished.</span>
+        <span class="highlight-keyword">if</span>(levelLoadTask != <span class="highlight-keyword">null</span> &amp;&amp; levelLoadTask.IsCompleted)
+        {
+            AggregateException levelLoadException = levelLoadTask.Exception;
+            levelLoadTask = <span class="highlight-keyword">null</span>;
+
+            <span class="highlight-comment">// Query the load task results and re-throw any exceptions</span>
+            <span class="highlight-comment">// so Win2D can see them. This implements requirement #2.</span>
+            <span class="highlight-keyword">if</span>(levelLoadException != <span class="highlight-keyword">null</span>)
+            {
+                <span class="highlight-comment">// .NET async tasks wrap all errors in an AggregateException.</span>
+                <span class="highlight-comment">// We unpack this so Win2D can directly see any lost device errors.</span>
+                levelLoadException.Handle(exception =&gt; { <span class="highlight-keyword">throw</span> exception; });
+            }
+
+            currentLevel = wantedLevel;
+        }
+    }
+}
+
+<span class="highlight-keyword">bool</span> IsLoadInProgress()
+{
+    <span class="highlight-keyword">lock</span>(lockable)
+    {
+        <span class="highlight-keyword">return</span> levelLoadTask != <span class="highlight-keyword">null</span>;
+    }
+}
+
+
+<span class="highlight-keyword">void</span> canvasAnimatedControl_Draw(ICanvasAnimatedControl sender, CanvasAnimatedDrawEventArgs args)
+{
+    <span class="highlight-keyword">if</span> (IsLoadInProgress())
+    {
+        DrawLoadingScreen(args.DrawingSession);
+    }
+    <span class="highlight-keyword">else</span>
+    {
+        DrawCurrentLevel(args.DrawingSession, currentLevel);
+    }
+}</pre></div></div></div><script type="text/javascript">AddLanguageTabSet("ID1EAACAAAAA");</script></p><p>
+          It's worth pointing out that there are special implications of using 'await' from within
+          application code which runs on the game loop thread. For example, when a task is run using 
+          RunOnGameLoopThreadAsync and contains an await, the first await may result in RunOnGameLoopThreadAsync
+          finishing. The remainder of the task is scheduled according a continuation handler. 
+          And by default, this continuation handler is chosen from the application's thread pool, according
+          to the default .NET SynchronizationContext. The remainder of the task might not run on the
+          game loop thread at all.
+        </p><p>
+          To remedy this, and schedule work using RunOnGameLoopThreadAsync which contains 'await'
+          where the work must all be run on the game loop thread, see the GameLoopSynchronizationContext sample.
+        </p></div></div></div><div id="pageFooter" class="pageFooter"><p><a href="http://github.com/Microsoft/Win2D/blob/master/LICENSE.txt" target="_blank">Copyright (c) Microsoft Corporation. All rights reserved.</a></p></div></body></html>

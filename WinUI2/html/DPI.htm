@@ -1,0 +1,196 @@
+﻿<html><head><meta http-equiv="X-UA-Compatible" content="IE=edge" /><link rel="shortcut icon" href="../icons/favicon.ico" /><link rel="stylesheet" type="text/css" href="../styles/branding.css" /><link rel="stylesheet" type="text/css" href="../styles/branding-en-US.css" /><script type="text/javascript" src="../scripts/branding.js"> </script><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>DPI and DIPs</title><meta name="Language" content="en-us" /><meta name="Microsoft.Help.Id" content="DPI" /><meta name="Description" content="This article explains the difference between physical pixels and device independent pixels (DIPs), and how DPI (dots per inch) is handled in Win2D." /><meta name="Microsoft.Help.ContentType" content="Concepts" /><meta name="BrandingAware" content="true" /><link type="text/css" rel="stylesheet" href="../styles/highlight.css" /><script type="text/javascript" src="../scripts/highlight.js"> </script><link rel="stylesheet" type="text/css" href="../styles/branding-Website.css" /><script type="text/javascript" src="../scripts/jquery-1.11.0.min.js"></script><script type="text/javascript" src="../scripts/branding-Website.js"></script><script type="text/javascript" src="../scripts/clipboard.min.js"></script></head><body onload="OnLoad('cs')"><input type="hidden" id="userDataCache" class="userDataStyle" /><div class="pageHeader" id="PageHeader">Win2D documentation<form id="SearchForm" method="get" action="#" onsubmit="javascript:TransferToSearchPage(); return false;"><input id="SearchTextBox" type="text" maxlength="200" /><button id="SearchButton" type="submit"></button></form></div><div class="pageBody"><div class="leftNav" id="leftNav"><div id="tocNav"><div class="toclevel0" data-toclevel="0"><a class="tocCollapsed" onclick="javascript: Toggle(this);" href="#!" /><a data-tochassubtree="true" href="Introduction.htm" title="Win2D documentation" tocid="roottoc">Win2D documentation</a></div><div class="toclevel1" data-toclevel="1" data-childrenloaded="true"><a class="tocExpanded" onclick="javascript: Toggle(this);" href="#!" /><a data-tochassubtree="true" href="Articles.htm" title="Articles" tocid="Articles">Articles</a></div><div class="toclevel2" data-toclevel="2"><a data-tochassubtree="false" href="Interop.htm" title="Interop with Direct2D" tocid="Interop">Interop with Direct2D</a></div><div class="toclevel2" data-toclevel="2"><a data-tochassubtree="false" href="Offscreen.htm" title="Offscreen drawing" tocid="Offscreen">Offscreen drawing</a></div><div class="toclevel2 current" data-toclevel="2"><a data-tochassubtree="false" href="DPI.htm" title="DPI and DIPs" tocid="DPI">DPI and DIPs</a></div><div class="toclevel2" data-toclevel="2"><a data-tochassubtree="false" href="ChoosingResolution.htm" title="Choosing control resolution" tocid="ChoosingResolution">Choosing control resolution</a></div><div class="toclevel2" data-toclevel="2"><a data-tochassubtree="false" href="PixelFormats.htm" title="Pixel formats" tocid="PixelFormats">Pixel formats</a></div><div class="toclevel2" data-toclevel="2"><a data-tochassubtree="false" href="PremultipliedAlpha.htm" title="Premultiplied alpha" tocid="PremultipliedAlpha">Premultiplied alpha</a></div><div class="toclevel2" data-toclevel="2"><a data-tochassubtree="false" href="BlockCompression.htm" title="Bitmap block compression" tocid="BlockCompression">Bitmap block compression</a></div><div class="toclevel2" data-toclevel="2"><a data-tochassubtree="false" href="EffectPrecision.htm" title="Effect precision and clamping" tocid="EffectPrecision">Effect precision and clamping</a></div><div class="toclevel2" data-toclevel="2"><a data-tochassubtree="false" href="HandlingDeviceLost.htm" title="Handling device lost" tocid="HandlingDeviceLost">Handling device lost</a></div><div class="toclevel2" data-toclevel="2"><a data-tochassubtree="false" href="WithoutControls.htm" title="Using Win2D without built-in controls" tocid="WithoutControls">Using Win2D without built-in controls</a></div><div class="toclevel2" data-toclevel="2"><a data-tochassubtree="false" href="LoadingResourcesOutsideCreateResources.htm" title="Loading resources outside of CreateResources" tocid="LoadingResourcesOutsideCreateResources">Loading resources outside of CreateResources</a></div><div class="toclevel2" data-toclevel="2"><a data-tochassubtree="false" href="RefCycles.htm" title="Avoiding memory leaks" tocid="RefCycles">Avoiding memory leaks</a></div></div><div id="tocResizableEW" onmousedown="OnMouseDown(event);"></div><div id="TocResize" class="tocResize"><img id="ResizeImageIncrease" src="../icons/TocOpen.gif" onclick="OnIncreaseToc()" alt="Click or drag to resize" title="Click or drag to resize" /><img id="ResizeImageReset" src="../icons/TocClose.gif" style="display:none" onclick="OnResetToc()" alt="Click or drag to resize" title="Click or drag to resize" /></div></div><div class="topicContent" id="TopicContent"><table class="titleTable"><tr><td class="titleColumn">DPI and DIPs</td></tr></table><span class="introStyle"></span> <div class="introduction"><p>
+        This article explains the difference between physical pixels and device 
+        independent pixels (DIPs), and how DPI (dots per inch) is handled in Win2D.
+      </p><p>
+        Win2D is designed in such a way that many apps can ignore this distinction, as it 
+        provides sensible default behaviors that will do the right thing when run on both 
+        low and high DPI devices. If your app has more specialized needs, or if you have 
+        a different opinion about what "sensible default" means, read on for the gory 
+        details...
+      </p></div><div class="collapsibleAreaRegion"><span class="collapsibleRegionTitle" onclick="SectionExpandCollapse('ID0RB')" onkeypress="SectionExpandCollapse_CheckKey('ID0RB', event)" tabindex="0"><img id="ID0RBToggle" class="collapseToggle" src="../icons/SectionExpanded.png" />What is DPI?</span></div><div id="ID0RBSection" class="collapsibleSection"><p>
+          DPI stands for "dots per inch". This is an approximate measure of the pixel 
+          density of an output display such as a computer monitor or phone screen. The 
+          higher the DPI, the more, smaller dots make up the display.
+        </p><p>
+          DPI is only an approximate measure because not all display hardware can be 
+          relied on to report accurate information. Some computer monitors do not report 
+          DPI to the operating system at all, or the user may have configured their 
+          system to render using a different DPI from the actual hardware (for instance 
+          to change the size of UI text elements). Applications can use DPI to choose how 
+          large things should be drawn, but should not rely on it as an exact physical 
+          measurement of the display size.
+        </p><p>
+          A DPI value of 96 is considered to be a neutral default.
+        </p></div><div class="collapsibleAreaRegion"><span class="collapsibleRegionTitle" onclick="SectionExpandCollapse('ID1RB')" onkeypress="SectionExpandCollapse_CheckKey('ID1RB', event)" tabindex="0"><img id="ID1RBToggle" class="collapseToggle" src="../icons/SectionExpanded.png" />What is a pixel?</span></div><div id="ID1RBSection" class="collapsibleSection"><p>
+          A pixel is a single colored dot. Images in computer graphics are made up of 
+          many pixels arranged in a two dimensional grid. You can think of pixels as the 
+          atoms out of which all images are built.
+        </p><p>
+          The physical size of a pixel can vary greatly from one display to another. When 
+          a computer is connected to a large but low resolution monitor or external 
+          display, pixels can be quite large, but on a phone with a 1080p display only a 
+          few inches across, pixels are tiny.
+        </p><p>
+          In Win2D, whenever you see an API that specifies a position or size using 
+          integer data types (or a struct such as BitmapSize that contains integers), 
+          this means the API is operating in pixel units.
+        </p><p>
+          Most Win2D APIs work with DIPs rather than pixels.
+        </p></div><div class="collapsibleAreaRegion"><span class="collapsibleRegionTitle" onclick="SectionExpandCollapse('ID3RB')" onkeypress="SectionExpandCollapse_CheckKey('ID3RB', event)" tabindex="0"><img id="ID3RBToggle" class="collapseToggle" src="../icons/SectionExpanded.png" />What is a DIP?</span></div><div id="ID3RBSection" class="collapsibleSection"><p>
+          DIP stands for "device independent pixel". This is a virtualized unit that may 
+          be the same as, larger, or smaller than a physical pixel.
+        </p><p>
+          The ratio between pixels and DIPs is determined by DPI:
+        </p><div class="codeSnippetContainer"><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID2EAEAIAAA_copyCode" href="#" class="copyCodeSnippet" onclick="javascript:CopyToClipboard('ID2EAEAIAAA');return false;" title="Copy">Copy</a></div></div><div id="ID2EAEAIAAA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve">pixels = dips * dpi / <span class="highlight-number">96</span></pre></div></div></div><script type="text/javascript">AddLanguageTabSet("ID2EAEAIAAA");</script><p>
+          When DPI is 96, pixels and DIPs are the same. When using higher DPI, a single 
+          DIP may correspond to more than one pixel (or parts of pixels in the common 
+          case where DPI is not an exact multiple of 96).
+        </p><p>
+          Most Windows Runtime APIs, including Win2D, use DIPs rather than pixels. This 
+          has the advantage of keeping graphics approximately the same physical size no 
+          matter what display an app is run on. For instance if an app specifies that a 
+          button is 100 DIPs wide, when run on a high DPI device such as a phone or 4k 
+          monitor this button will automatically scale to be more than 100 pixels in 
+          width, so it remains a sensible size that is possible for the user to click on. 
+          If the button size was specified in pixels, on the other hand, it would appear 
+          ridiculously small on this kind of high DPI display, so the app would have to 
+          do more work to adjust layouts differently for each kind of screen.
+        </p><p>
+          In Win2D, whenever you see an API that specifies a position or size using 
+          floating point data types (or structs such as Vector2 or Size that contain 
+          floating point values), this means the API is operating in DIPs.
+        </p><p>
+          To convert between DIPs and pixels, use the methods
+          <a href="M_Microsoft_Graphics_Canvas_ICanvasResourceCreatorWithDpi_ConvertDipsToPixels.htm">ConvertDipsToPixels(Single, CanvasDpiRounding)</a> and
+          <a href="M_Microsoft_Graphics_Canvas_ICanvasResourceCreatorWithDpi_ConvertPixelsToDips.htm">ConvertPixelsToDips(Int32)</a>.
+        </p></div><div class="collapsibleAreaRegion"><span class="collapsibleRegionTitle" onclick="SectionExpandCollapse('ID4RB')" onkeypress="SectionExpandCollapse_CheckKey('ID4RB', event)" tabindex="0"><img id="ID4RBToggle" class="collapseToggle" src="../icons/SectionExpanded.png" />Win2D resources that have DPI</span></div><div id="ID4RBSection" class="collapsibleSection"><p>
+          All Win2D resources that contain a bitmap image also have an associated DPI property:
+        </p><ul><li><a href="T_Microsoft_Graphics_Canvas_CanvasBitmap.htm">CanvasBitmap</a></li><li><a href="T_Microsoft_Graphics_Canvas_CanvasRenderTarget.htm">CanvasRenderTarget</a></li><li><a href="T_Microsoft_Graphics_Canvas_CanvasSwapChain.htm">CanvasSwapChain</a></li><li><a href="T_Microsoft_Graphics_Canvas_UI_Xaml_CanvasControl.htm">CanvasControl</a></li><li><a href="T_Microsoft_Graphics_Canvas_UI_Xaml_CanvasVirtualControl.htm">CanvasVirtualControl</a></li><li><a href="T_Microsoft_Graphics_Canvas_UI_Xaml_CanvasAnimatedControl.htm">CanvasAnimatedControl</a></li><li><a href="T_Microsoft_Graphics_Canvas_UI_Xaml_CanvasImageSource.htm">CanvasImageSource</a></li></ul><p>
+          All other resource types are independent of DPI. For instance a single 
+          <a href="T_Microsoft_Graphics_Canvas_CanvasDevice.htm">CanvasDevice</a> 
+          instance can be used to draw to controls or rendertargets of many different 
+          DPIs, therefore the device has no DPI of its own.
+        </p><p>
+          Similarly, <a href="T_Microsoft_Graphics_Canvas_CanvasCommandList.htm">CanvasCommandList</a> 
+          does not have a DPI, because it contains vector drawing instructions rather 
+          than a bitmap image. DPI only comes into play during the rasterization process, 
+          when the command list is drawn to a rendertarget or control (which do have DPI).
+        </p></div><div class="collapsibleAreaRegion"><span class="collapsibleRegionTitle" onclick="SectionExpandCollapse('ID5RB')" onkeypress="SectionExpandCollapse_CheckKey('ID5RB', event)" tabindex="0"><img id="ID5RBToggle" class="collapseToggle" src="../icons/SectionExpanded.png" />Control DPI</span></div><div id="ID5RBSection" class="collapsibleSection"><p>
+          The Win2D controls (<a href="T_Microsoft_Graphics_Canvas_UI_Xaml_CanvasControl.htm">CanvasControl</a>,
+          <a href="T_Microsoft_Graphics_Canvas_UI_Xaml_CanvasVirtualControl.htm">CanvasVirtualControl</a>
+          and <a href="T_Microsoft_Graphics_Canvas_UI_Xaml_CanvasAnimatedControl.htm">CanvasAnimatedControl</a>) 
+          automatically use the same DPI as the display the app is running on. This 
+          matches the coordinate system used by XAML, CoreWindow, and other Windows 
+          Runtime APIs.
+        </p><p>
+          If the DPI changes (for instance if the app is moved to a different display), 
+          the control will raise the CreateResources event and pass a
+          <a href="T_Microsoft_Graphics_Canvas_UI_CanvasCreateResourcesReason.htm">CanvasCreateResourcesReason</a> of
+          <a href="T_Microsoft_Graphics_Canvas_UI_CanvasCreateResourcesReason.htm">DpiChanged</a>.
+          Apps should respond to this event by recreating any resources (such as 
+          rendertargets) that depend on the DPI of the control.
+        </p></div><div class="collapsibleAreaRegion"><span class="collapsibleRegionTitle" onclick="SectionExpandCollapse('ID6RB')" onkeypress="SectionExpandCollapse_CheckKey('ID6RB', event)" tabindex="0"><img id="ID6RBToggle" class="collapseToggle" src="../icons/SectionExpanded.png" />Rendertarget DPI</span></div><div id="ID6RBSection" class="collapsibleSection"><p>
+          Things that can be drawn onto (which includes not just 
+          <a href="T_Microsoft_Graphics_Canvas_CanvasRenderTarget.htm">CanvasRenderTarget</a> 
+          but also the rendertarget-like types 
+          <a href="T_Microsoft_Graphics_Canvas_CanvasSwapChain.htm">CanvasSwapChain</a> and
+          <a href="T_Microsoft_Graphics_Canvas_UI_Xaml_CanvasImageSource.htm">CanvasImageSource</a>) 
+          have a DPI of their own, but unlike the controls these types are not directly 
+          connected to a display, so Win2D cannot automatically determine what the DPI 
+          should be. If you are drawing to a rendertarget which will later be copied to 
+          the screen, you probably want that rendertarget to use the same DPI as the 
+          screen, but if you are drawing for some other purpose (eg. generating images 
+          for upload to a website) a default 96 DPI would be more appropriate.
+        </p><p>
+          To make both these usage patterns easy, Win2D provides two types of constructor 
+          overload:
+        </p><div class="codeSnippetContainer"><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID2EAEAFAAA_copyCode" href="#" class="copyCodeSnippet" onclick="javascript:CopyToClipboard('ID2EAEAFAAA');return false;" title="Copy">Copy</a></div></div><div id="ID2EAEAFAAA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve">CanvasRenderTarget(ICanvasResourceCreator, width, height, dpi)
+CanvasRenderTarget(ICanvasResourceCreatorWithDpi, width, height)</pre></div></div></div><script type="text/javascript">AddLanguageTabSet("ID2EAEAFAAA");</script><p>
+          The <a href="T_Microsoft_Graphics_Canvas_ICanvasResourceCreator.htm">ICanvasResourceCreator</a> 
+          interface is implemented by CanvasDevice as well as the Win2D controls. Because 
+          a device does not have any specific DPI of its own, you must explicitly specify 
+          the DPI when creating a rendertarget from one. For instance to create a default 
+          DPI rendertarget where DIPs and pixels will always be the same thing:
+        </p><div class="codeSnippetContainer"><div class="codeSnippetContainerTabs"><div id="ID2EACAFAAA_tab1" class="codeSnippetContainerTabSingle">C#</div></div><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID2EACAFAAA_copyCode" href="#" class="copyCodeSnippet" onclick="javascript:CopyToClipboard('ID2EACAFAAA');return false;" title="Copy">Copy</a></div></div><div id="ID2EACAFAAA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve"><span class="highlight-keyword">const</span> <span class="highlight-keyword">float</span> defaultDpi = <span class="highlight-number">96</span>;
+<span class="highlight-keyword">var</span> rtWithFixedDpi = <span class="highlight-keyword">new</span> CanvasRenderTarget(canvasDevice, width, height, defaultDpi);</pre></div></div></div><script type="text/javascript">AddLanguageTabSet("ID2EACAFAAA");</script><p><a href="T_Microsoft_Graphics_Canvas_ICanvasResourceCreatorWithDpi.htm">ICanvasResourceCreatorWithDpi</a> 
+          extends ICanvasResourceCreator by adding a DPI property. This interface is 
+          implemented by the Win2D controls, and makes it easy to create a rendertarget 
+          which will automatically inherit the same DPI as the control it was created 
+          from:
+        </p><div class="codeSnippetContainer"><div class="codeSnippetContainerTabs"><div id="ID2EAAAFAAA_tab1" class="codeSnippetContainerTabSingle">C#</div></div><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID2EAAAFAAA_copyCode" href="#" class="copyCodeSnippet" onclick="javascript:CopyToClipboard('ID2EAAAFAAA');return false;" title="Copy">Copy</a></div></div><div id="ID2EAAAFAAA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve"><span class="highlight-keyword">var</span> rtWithSameDpiAsDisplay = <span class="highlight-keyword">new</span> CanvasRenderTarget(canvasControl, width, height);</pre></div></div></div><script type="text/javascript">AddLanguageTabSet("ID2EAAAFAAA");</script></div><div class="collapsibleAreaRegion"><span class="collapsibleRegionTitle" onclick="SectionExpandCollapse('ID7RB')" onkeypress="SectionExpandCollapse_CheckKey('ID7RB', event)" tabindex="0"><img id="ID7RBToggle" class="collapseToggle" src="../icons/SectionExpanded.png" />Bitmap DPI</span></div><div id="ID7RBSection" class="collapsibleSection"><p><a href="T_Microsoft_Graphics_Canvas_CanvasBitmap.htm">CanvasBitmap</a>, 
+          unlike a rendertarget, does not automatically inherit DPI from a control. The 
+          methods for creating and loading bitmaps include overloads to explicitly 
+          specify DPI, but if you leave this out, bitmap DPI defaults to 96 regardless of 
+          the current display configuration.
+        </p><p>
+          The reason bitmaps are different to other types is that they are a source of 
+          input data, rather than an output which will be drawn onto. So the important 
+          thing for bitmaps is not the DPI of where that output will end up, but the DPI 
+          of the source image, which is entirely unrelated to the current display 
+          settings.
+        </p><p>
+          If you load say a 100x100 default DPI bitmap and then draw it onto a 
+          rendertarget, the bitmap will be scaled from 100 DIPs at 96 DPI (which is 100 
+          pixels) to 100 DIPs at the DPI of the destination rendertarget (which could be 
+          a larger number of pixels if it is a high DPI rendertarget). The resulting 
+          image will always be 100 DIPs in size (so there will be no unpleasant layout 
+          surprises), but it may suffer some blurring if a low DPI source bitmap was 
+          scaled up to a higher DPI destination.
+        </p><p>
+          For maximum clarity at high DPI, some applications may wish to provide multiple 
+          sets of bitmap images at different resolutions, and at load time select 
+          whichever version most closely matches the DPI of the destination control. 
+          Other apps may prefer to ship only high DPI bitmaps, and let Win2D scale these 
+          down when running on lower DPI displays (scaling down can often look better 
+          than scaling up). In either case, the bitmap DPI can be specified as a 
+          parameter to <a href="M_Microsoft_Graphics_Canvas_CanvasBitmap_LoadAsync_1.htm">LoadAsync(ICanvasResourceCreator, String, Single)</a>.
+        </p><p>
+          Note that some bitmap file formats contain DPI metadata of their own, but Win2D 
+          ignores this since it is often set incorrectly. Instead, DPI must be explicitly 
+          specified when loading the bitmap.
+        </p></div><div class="collapsibleAreaRegion"><span class="collapsibleRegionTitle" onclick="SectionExpandCollapse('ID8RB')" onkeypress="SectionExpandCollapse_CheckKey('ID8RB', event)" tabindex="0"><img id="ID8RBToggle" class="collapseToggle" src="../icons/SectionExpanded.png" />CanvasDrawingSession DPI</span></div><div id="ID8RBSection" class="collapsibleSection"><p><a href="T_Microsoft_Graphics_Canvas_CanvasDrawingSession.htm">CanvasDrawingSession</a> 
+          inherits its DPI from whatever control, rendertarget, swapchain, etc, it is 
+          drawing onto.
+        </p><p>
+          By default, all drawing operations operate in DIPs. If you prefer to work in 
+          pixels, this can be changed via the 
+          <a href="P_Microsoft_Graphics_Canvas_CanvasDrawingSession_Units.htm">Units</a> 
+          property.
+        </p></div><div class="collapsibleAreaRegion"><span class="collapsibleRegionTitle" onclick="SectionExpandCollapse('ID9RB')" onkeypress="SectionExpandCollapse_CheckKey('ID9RB', event)" tabindex="0"><img id="ID9RBToggle" class="collapseToggle" src="../icons/SectionExpanded.png" />Effect DPI</span></div><div id="ID9RBSection" class="collapsibleSection"><p>
+          The image effect pipeline inherits its DPI from whatever 
+          <a href="T_Microsoft_Graphics_Canvas_CanvasDrawingSession.htm">CanvasDrawingSession</a> 
+          an effect is being drawn onto. Internally, effect processing always 
+          operates in pixels. Parameter values such as sizes or positions are specified 
+          in DIPs, but these units are converted to pixels before any actual image 
+          manipulation takes place.
+        </p><p>
+          When a bitmap of different DPI than the target drawing session is used as an 
+          effect source image, an internal 
+          <a href="T_Microsoft_Graphics_Canvas_Effects_DpiCompensationEffect.htm">DpiCompensationEffect</a> 
+          is automatically inserted in between the bitmap and the effect. This 
+          scales the bitmap to match the target DPI, which is usually what 
+          you want. If it's not what you want, you can insert your own instance of 
+          <a href="T_Microsoft_Graphics_Canvas_Effects_DpiCompensationEffect.htm">DpiCompensationEffect</a> 
+          to customize the behavior.
+        </p></div><div class="collapsibleAreaRegion"><span class="collapsibleRegionTitle" onclick="SectionExpandCollapse('ID10RB')" onkeypress="SectionExpandCollapse_CheckKey('ID10RB', event)" tabindex="0"><img id="ID10RBToggle" class="collapseToggle" src="../icons/SectionExpanded.png" />Composition DPI</span></div><div id="ID10RBSection" class="collapsibleSection"><p>
+          The Microsoft.Graphics.Canvas.Composition APIs operate at a lower level than 
+          Win2D XAML controls, so they do not attempt to automatically handle DPI on your 
+          behalf. It is up to you to decide what units you prefer to operate in, and set 
+          whatever transforms are necessary to achieve that as part of your composition 
+          visual tree.
+        </p><p>
+          Windows.UI.Composition APIs such as CreateDrawingSurface always specify sizes 
+          in pixel units. When using Win2D to draw onto a composition surface, you can 
+          specify whatever DPI you want to use when calling 
+          <a href="M_Microsoft_Graphics_Canvas_UI_Composition_CanvasComposition_CreateDrawingSession_2.htm">CreateDrawingSession(CompositionDrawingSurface, Rect, Single)</a>.
+          All drawing performed through the returned CanvasDrawingSession will be scaled 
+          up or down accordingly.
+        </p></div><div class="collapsibleAreaRegion"><span class="collapsibleRegionTitle" onclick="SectionExpandCollapse('ID11RB')" onkeypress="SectionExpandCollapse_CheckKey('ID11RB', event)" tabindex="0"><img id="ID11RBToggle" class="collapseToggle" src="../icons/SectionExpanded.png" />How to test DPI handling</span></div><div id="ID11RBSection" class="collapsibleSection"><p>
+          The easiest way to test that your app will do the right thing in response to 
+          changing display DPI is to run on Windows 10 and change display settings while 
+          the app is running:
+        </p><ul><li>Right-click on the desktop background and choose 'Display settings'</li><li>Move the slider labeled 'Change the size of text, apps, and other items'</li><li>Click the 'Apply' button</li><li>Choose 'Sign out later'</li></ul><p>
+          If you do not have Windows 10, you can also test with the Windows Simulator. In 
+          the Visual Studio toolbar, change the "Local Machine" setting to "Simulator", 
+          then use the Change Resolution icon to switch the simulated display between:
+        </p><ul><li>100% (DPI=96)</li><li>140% (DPI=134.4)</li><li>180% (DPI=172.8)</li></ul></div></div></div><div id="pageFooter" class="pageFooter"><p><a href="http://github.com/Microsoft/Win2D/blob/master/LICENSE.txt" target="_blank">Copyright (c) Microsoft Corporation. All rights reserved.</a></p></div></body></html>

@@ -1,0 +1,126 @@
+﻿<html><head><meta http-equiv="X-UA-Compatible" content="IE=edge" /><link rel="shortcut icon" href="../icons/favicon.ico" /><link rel="stylesheet" type="text/css" href="../styles/branding.css" /><link rel="stylesheet" type="text/css" href="../styles/branding-en-US.css" /><script type="text/javascript" src="../scripts/branding.js"> </script><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>Choosing control resolution</title><meta name="Language" content="en-us" /><meta name="Microsoft.Help.Id" content="ChoosingResolution" /><meta name="Description" content="This article explains how to configure the resolution used by Win2D's XAML controls. It explains how to: Make Win2D controls run at a fixed resolution. Adjust control DPI to improve performance by rendering fewer pixels." /><meta name="Microsoft.Help.ContentType" content="Concepts" /><meta name="BrandingAware" content="true" /><link type="text/css" rel="stylesheet" href="../styles/highlight.css" /><script type="text/javascript" src="../scripts/highlight.js"> </script><link rel="stylesheet" type="text/css" href="../styles/branding-Website.css" /><script type="text/javascript" src="../scripts/jquery-1.11.0.min.js"></script><script type="text/javascript" src="../scripts/branding-Website.js"></script><script type="text/javascript" src="../scripts/clipboard.min.js"></script></head><body onload="OnLoad('cs')"><input type="hidden" id="userDataCache" class="userDataStyle" /><div class="pageHeader" id="PageHeader">Win2D documentation<form id="SearchForm" method="get" action="#" onsubmit="javascript:TransferToSearchPage(); return false;"><input id="SearchTextBox" type="text" maxlength="200" /><button id="SearchButton" type="submit"></button></form></div><div class="pageBody"><div class="leftNav" id="leftNav"><div id="tocNav"><div class="toclevel0" data-toclevel="0"><a class="tocCollapsed" onclick="javascript: Toggle(this);" href="#!" /><a data-tochassubtree="true" href="Introduction.htm" title="Win2D documentation" tocid="roottoc">Win2D documentation</a></div><div class="toclevel1" data-toclevel="1" data-childrenloaded="true"><a class="tocExpanded" onclick="javascript: Toggle(this);" href="#!" /><a data-tochassubtree="true" href="Articles.htm" title="Articles" tocid="Articles">Articles</a></div><div class="toclevel2" data-toclevel="2"><a data-tochassubtree="false" href="Interop.htm" title="Interop with Direct2D" tocid="Interop">Interop with Direct2D</a></div><div class="toclevel2" data-toclevel="2"><a data-tochassubtree="false" href="Offscreen.htm" title="Offscreen drawing" tocid="Offscreen">Offscreen drawing</a></div><div class="toclevel2" data-toclevel="2"><a data-tochassubtree="false" href="DPI.htm" title="DPI and DIPs" tocid="DPI">DPI and DIPs</a></div><div class="toclevel2 current" data-toclevel="2"><a data-tochassubtree="false" href="ChoosingResolution.htm" title="Choosing control resolution" tocid="ChoosingResolution">Choosing control resolution</a></div><div class="toclevel2" data-toclevel="2"><a data-tochassubtree="false" href="PixelFormats.htm" title="Pixel formats" tocid="PixelFormats">Pixel formats</a></div><div class="toclevel2" data-toclevel="2"><a data-tochassubtree="false" href="PremultipliedAlpha.htm" title="Premultiplied alpha" tocid="PremultipliedAlpha">Premultiplied alpha</a></div><div class="toclevel2" data-toclevel="2"><a data-tochassubtree="false" href="BlockCompression.htm" title="Bitmap block compression" tocid="BlockCompression">Bitmap block compression</a></div><div class="toclevel2" data-toclevel="2"><a data-tochassubtree="false" href="EffectPrecision.htm" title="Effect precision and clamping" tocid="EffectPrecision">Effect precision and clamping</a></div><div class="toclevel2" data-toclevel="2"><a data-tochassubtree="false" href="HandlingDeviceLost.htm" title="Handling device lost" tocid="HandlingDeviceLost">Handling device lost</a></div><div class="toclevel2" data-toclevel="2"><a data-tochassubtree="false" href="WithoutControls.htm" title="Using Win2D without built-in controls" tocid="WithoutControls">Using Win2D without built-in controls</a></div><div class="toclevel2" data-toclevel="2"><a data-tochassubtree="false" href="LoadingResourcesOutsideCreateResources.htm" title="Loading resources outside of CreateResources" tocid="LoadingResourcesOutsideCreateResources">Loading resources outside of CreateResources</a></div><div class="toclevel2" data-toclevel="2"><a data-tochassubtree="false" href="RefCycles.htm" title="Avoiding memory leaks" tocid="RefCycles">Avoiding memory leaks</a></div></div><div id="tocResizableEW" onmousedown="OnMouseDown(event);"></div><div id="TocResize" class="tocResize"><img id="ResizeImageIncrease" src="../icons/TocOpen.gif" onclick="OnIncreaseToc()" alt="Click or drag to resize" title="Click or drag to resize" /><img id="ResizeImageReset" src="../icons/TocClose.gif" style="display:none" onclick="OnResetToc()" alt="Click or drag to resize" title="Click or drag to resize" /></div></div><div class="topicContent" id="TopicContent"><table class="titleTable"><tr><td class="titleColumn">Choosing control resolution</td></tr></table><span class="introStyle"></span> <div class="introduction"><p>
+          This article explains how to configure the resolution used by 
+          Win2D's XAML controls. It explains how to:
+          <ul><li>
+                  Make Win2D controls run at a fixed resolution.
+              </li><li>
+                  Adjust control DPI to improve performance by rendering fewer pixels.
+              </li></ul></p></div><div class="collapsibleAreaRegion"><span class="collapsibleRegionTitle" onclick="SectionExpandCollapse('ID0RB')" onkeypress="SectionExpandCollapse_CheckKey('ID0RB', event)" tabindex="0"><img id="ID0RBToggle" class="collapseToggle" src="../icons/SectionExpanded.png" />Resolution and control sizing</span></div><div id="ID0RBSection" class="collapsibleSection"><p>
+              'Resolution', as used in this document, is another word for the size
+              of a bitmap. It consists of a width, and height. 
+          </p><p>
+              The objects that Win2D's XAML controls draw to have a resolution. 
+              They also have a DPI. An object's DPI is a measurement of how dense 
+              the pixels of that object are, when drawn. DPI behaves like a scale 
+              factor- a high DPI increases the number of pixels that comprise the 
+              drawn object. On the other hand, lowering the DPI of an object means 
+              that it will span fewer pixels. For more information about Win2D's 
+              handling of DPI in general, see 
+              <a href="DPI.htm">this page</a>.
+          </p><p>
+              DPI-independent size is sometimes called 'logical size'. And a 
+              DPI-dependent size, in pixels, is called 'physical size'.
+          </p><p>
+              In terms of resolution and sizing, a control's default behavior when 
+              it's loaded is:
+              <ul><li>
+                      The control's logical size is determined by its layout, as 
+                      determined by where it falls in the XAML tree.
+                  </li><li>
+                      A DPI is queried from the environment. The control's DPI 
+                      is set to that.
+                  </li><li>
+                      The amount of physical pixels that comprise the 
+                      control's drawable area is determined by the control's size, 
+                      scaled by its DPI. 
+                          <ul><li>On high DPI, the physical size will be greater (more pixels) compared to the logical size.</li><li>On low DPI, the physical size will be smaller (fewer pixels) compared to the logical size.</li><li>On default DPI, the physical size and logical size of the drawable area are the same.</li></ul></li><li>
+                      The control's drawing resource (CanvasImageSource for
+                      CanvasControl, CanvasVirtualImageSource for
+                      CanvasVirtualControl and CanvasSwapChain for
+                      CanvasAnimatedControl) is set to match the size and DPI of
+                      the control.
+                  </li></ul></p><p>
+              Most Win2D operations are in dips (DPI-independent units), and 
+              Win2D's XAML controls' drawing resources are automatically sized 
+              to take DPI into account. This means applications can often ignore 
+              DPI. Sizes and co-ordinates are always DPI-independent unless 
+              specified otherwise. An application can hard-code various sizes and 
+              co-ordinates at which things are drawn into the controls, and that 
+              content gets scaled when the app is run in environments with different DPIs.
+          </p><p>
+              But for some applications, the default behavior isn't sufficient. This 
+              article outlines a couple scenarios where the default is not sufficient, 
+              and what apps can do to fix it.
+          </p></div><div class="collapsibleAreaRegion"><span class="collapsibleRegionTitle" onclick="SectionExpandCollapse('ID2RB')" onkeypress="SectionExpandCollapse_CheckKey('ID2RB', event)" tabindex="0"><img id="ID2RBToggle" class="collapseToggle" src="../icons/SectionExpanded.png" />Scenario: The control's contents must be a fixed, lower-than-normal resolution</span></div><div id="ID2RBSection" class="collapsibleSection"><p>        
+            This scenario may arise, for instance, on a 2D sprite game that 
+            should always render at a fixed 640x480 resolution, 
+            regardless of what actual display hardware it is run on.
+        </p><p>        
+            Solving this doesn't strictly require writing any new Win2D code at all.
+        </p><p>    
+            The 
+            <a href="https://msdn.microsoft.com/en-us/library/windows/apps/windows.ui.xaml.controls.viewbox.aspx" target="_blank">ViewBox</a>
+            XAML object lets you constrain the sizes of its child visual 
+            elements, automatically adding scaling, with letterboxing or 
+            pillarboxing to preseve aspect ratios as necessary.
+        </p><p>    
+            Simply ensure your CanvasControl, CanvasVirtualControl or
+            CanvasAnimatedControl is a child element of a ViewBox, and restrict
+            the size of that control.
+        </p><p> 
+            For example, to constrain the size of the control to 320 pixels
+            wide, and 224 pixels high, regardless of DPI, then instead of
+                <div class="codeSnippetContainer"><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID1EACCABAAA_copyCode" href="#" class="copyCodeSnippet" onclick="javascript:CopyToClipboard('ID1EACCABAAA');return false;" title="Copy">Copy</a></div></div><div id="ID1EACCABAAA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve">&lt;canvas:CanvasAnimatedControl/&gt;</pre></div></div></div><script type="text/javascript">AddLanguageTabSet("ID1EACCABAAA");</script>
+            Use
+                <div class="codeSnippetContainer"><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID1EAACABAAA_copyCode" href="#" class="copyCodeSnippet" onclick="javascript:CopyToClipboard('ID1EAACABAAA');return false;" title="Copy">Copy</a></div></div><div id="ID1EAACABAAA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve">&lt;Viewbox&gt;
+    &lt;canvas:CanvasAnimatedControl  Width=<span class="highlight-literal">"320"</span> Height=<span class="highlight-literal">"224"</span>/&gt;
+&lt;/Viewbox&gt;</pre></div></div></div><script type="text/javascript">AddLanguageTabSet("ID1EAACABAAA");</script></p><p>
+            If your app should not preserve the aspect ratio by adding
+            letterboxing/pillarboxing, then add the Stretch attribute:
+                <div class="codeSnippetContainer"><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID1EAABABAAA_copyCode" href="#" class="copyCodeSnippet" onclick="javascript:CopyToClipboard('ID1EAABABAAA');return false;" title="Copy">Copy</a></div></div><div id="ID1EAABABAAA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve">&lt;Viewbox Stretch=<span class="highlight-literal">"Fill"</span>&gt;
+    &lt;canvas:CanvasAnimatedControl Width=<span class="highlight-literal">"320"</span> Height=<span class="highlight-literal">"224"</span>/&gt;
+&lt;/Viewbox&gt;</pre></div></div></div><script type="text/javascript">AddLanguageTabSet("ID1EAABABAAA");</script></p><p>
+            Note that the scaling performed by the Viewbox element does not
+            guarantee any control over the interpolation mode. The
+            filtering method may look like CanvasInterpolationMode.Linear,
+            or something similar. If your app needs a particular interpolation
+            mode, then don't use ViewBox with a fixed-size control. Instead,
+            draw to an intermediate, fixed-size CanvasRenderTarget, and
+            use the desired interpolation mode to draw the scaled intermediate
+            to the target.
+        </p></div><div class="collapsibleAreaRegion"><span class="collapsibleRegionTitle" onclick="SectionExpandCollapse('ID3RB')" onkeypress="SectionExpandCollapse_CheckKey('ID3RB', event)" tabindex="0"><img id="ID3RBToggle" class="collapseToggle" src="../icons/SectionExpanded.png" />Scenario: The app cannot perform well at high resolutions</span></div><div id="ID3RBSection" class="collapsibleSection"><p>    
+                Some devices have very high-resolution displays, but their
+                graphics processing unit is not powerful enough to animate
+                that many pixels smoothly. Developers may not be readily aware
+                of how their apps perform on these devices without testing them.
+            </p><p>    
+                One option is to use the DpiScale property of the control
+                to reduce the control's DPI.
+            </p><p>    
+                For example, to fix the control at half-resolution, use:
+                <div class="codeSnippetContainer"><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID1EAAIAAAAA_copyCode" href="#" class="copyCodeSnippet" onclick="javascript:CopyToClipboard('ID1EAAIAAAAA');return false;" title="Copy">Copy</a></div></div><div id="ID1EAAIAAAAA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve">&lt;canvas:CanvasAnimatedControl DpiScale=<span class="highlight-literal">"0.5f"</span> /&gt;</pre></div></div></div><script type="text/javascript">AddLanguageTabSet("ID1EAAIAAAAA");</script></p><p>  
+            The actual DPI scale factor depends upon the needs of your app.
+            One option is to compute a scale factor that will fix the app's
+            DPI at 96, and no higher. 
+            </p><p>    
+                For example:
+                <div class="codeSnippetContainer"><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID1EAAGAAAAA_copyCode" href="#" class="copyCodeSnippet" onclick="javascript:CopyToClipboard('ID1EAAGAAAAA');return false;" title="Copy">Copy</a></div></div><div id="ID1EAAGAAAAA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve"><span class="highlight-keyword">float</span> dpiLimit = <span class="highlight-number">96.0</span>f;
+<span class="highlight-keyword">if</span>(control.Dpi &gt; dpiLimit)
+{
+    control.DpiScale = dpiLimit / control.Dpi;
+}</pre></div></div></div><script type="text/javascript">AddLanguageTabSet("ID1EAAGAAAAA");</script></p>
+                To ensure this setting works across DPI changes, the 
+                application should subscribe to
+                <a href="https://msdn.microsoft.com/en-us/library/windows/apps/windows.graphics.display.displayinformation.dpichanged" target="_blank">DisplayInformation.DpiChanged</a>
+                and use this logic in the handler to set the DPI scale against 
+                the new DPI.
+            <p /><p>  
+                This saves the app some perf overhead, exploiting the fact
+                that users may not be able to easily percieve the reduced
+                resolution on a high-DPI display.
+            </p><p>  
+                The scaling performed in having a lower-than-native resolution 
+                control resource cannot guarantee control over the interpolation
+                mode, similar to ViewBox mentioned above. If your app needs
+                a particular interpolation mode, use an intermediate instead.
+            </p></div></div></div><div id="pageFooter" class="pageFooter"><p><a href="http://github.com/Microsoft/Win2D/blob/master/LICENSE.txt" target="_blank">Copyright (c) Microsoft Corporation. All rights reserved.</a></p></div></body></html>

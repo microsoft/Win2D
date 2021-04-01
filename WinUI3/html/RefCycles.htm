@@ -1,0 +1,79 @@
+﻿<html><head><meta http-equiv="X-UA-Compatible" content="IE=edge" /><link rel="shortcut icon" href="../icons/favicon.ico" /><link rel="stylesheet" type="text/css" href="../styles/branding.css" /><link rel="stylesheet" type="text/css" href="../styles/branding-en-US.css" /><script type="text/javascript" src="../scripts/branding.js"> </script><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>Avoiding memory leaks</title><meta name="Language" content="en-us" /><meta name="Microsoft.Help.Id" content="RefCycles" /><meta name="Description" content="When using Win2D controls in managed XAML applications, care must be taken to avoid reference count cycles that could prevent these controls ever being reclaimed by the garbage collector." /><meta name="Microsoft.Help.ContentType" content="Concepts" /><meta name="BrandingAware" content="true" /><link type="text/css" rel="stylesheet" href="../styles/highlight.css" /><script type="text/javascript" src="../scripts/highlight.js"> </script><link rel="stylesheet" type="text/css" href="../styles/branding-Website.css" /><script type="text/javascript" src="../scripts/jquery-1.11.0.min.js"></script><script type="text/javascript" src="../scripts/branding-Website.js"></script><script type="text/javascript" src="../scripts/clipboard.min.js"></script></head><body onload="OnLoad('cs')"><input type="hidden" id="userDataCache" class="userDataStyle" /><div class="pageHeader" id="PageHeader">Win2D for WinUI3 (Work in progress)<form id="SearchForm" method="get" action="#" onsubmit="javascript:TransferToSearchPage(); return false;"><input id="SearchTextBox" type="text" maxlength="200" /><button id="SearchButton" type="submit"></button></form></div><div class="pageBody"><div class="leftNav" id="leftNav"><div id="tocNav"><div class="toclevel0" data-toclevel="0"><a class="tocCollapsed" onclick="javascript: Toggle(this);" href="#!" /><a data-tochassubtree="true" href="Introduction.htm" title="Win2D for WinUI3 (Work in progress)" tocid="roottoc">Win2D for WinUI3 (Work in progress)</a></div><div class="toclevel1" data-toclevel="1" data-childrenloaded="true"><a class="tocExpanded" onclick="javascript: Toggle(this);" href="#!" /><a data-tochassubtree="true" href="Articles.htm" title="Articles" tocid="Articles">Articles</a></div><div class="toclevel2" data-toclevel="2"><a data-tochassubtree="false" href="Interop.htm" title="Interop with Direct2D" tocid="Interop">Interop with Direct2D</a></div><div class="toclevel2" data-toclevel="2"><a data-tochassubtree="false" href="Offscreen.htm" title="Offscreen drawing" tocid="Offscreen">Offscreen drawing</a></div><div class="toclevel2" data-toclevel="2"><a data-tochassubtree="false" href="DPI.htm" title="DPI and DIPs" tocid="DPI">DPI and DIPs</a></div><div class="toclevel2" data-toclevel="2"><a data-tochassubtree="false" href="ChoosingResolution.htm" title="Choosing control resolution" tocid="ChoosingResolution">Choosing control resolution</a></div><div class="toclevel2" data-toclevel="2"><a data-tochassubtree="false" href="PixelFormats.htm" title="Pixel formats" tocid="PixelFormats">Pixel formats</a></div><div class="toclevel2" data-toclevel="2"><a data-tochassubtree="false" href="PremultipliedAlpha.htm" title="Premultiplied alpha" tocid="PremultipliedAlpha">Premultiplied alpha</a></div><div class="toclevel2" data-toclevel="2"><a data-tochassubtree="false" href="BlockCompression.htm" title="Bitmap block compression" tocid="BlockCompression">Bitmap block compression</a></div><div class="toclevel2" data-toclevel="2"><a data-tochassubtree="false" href="EffectPrecision.htm" title="Effect precision and clamping" tocid="EffectPrecision">Effect precision and clamping</a></div><div class="toclevel2" data-toclevel="2"><a data-tochassubtree="false" href="HandlingDeviceLost.htm" title="Handling device lost" tocid="HandlingDeviceLost">Handling device lost</a></div><div class="toclevel2" data-toclevel="2"><a data-tochassubtree="false" href="WithoutControls.htm" title="Using Win2D without built-in controls" tocid="WithoutControls">Using Win2D without built-in controls</a></div><div class="toclevel2" data-toclevel="2"><a data-tochassubtree="false" href="LoadingResourcesOutsideCreateResources.htm" title="Loading resources outside of CreateResources" tocid="LoadingResourcesOutsideCreateResources">Loading resources outside of CreateResources</a></div><div class="toclevel2 current" data-toclevel="2"><a data-tochassubtree="false" href="RefCycles.htm" title="Avoiding memory leaks" tocid="RefCycles">Avoiding memory leaks</a></div></div><div id="tocResizableEW" onmousedown="OnMouseDown(event);"></div><div id="TocResize" class="tocResize"><img id="ResizeImageIncrease" src="../icons/TocOpen.gif" onclick="OnIncreaseToc()" alt="Click or drag to resize" title="Click or drag to resize" /><img id="ResizeImageReset" src="../icons/TocClose.gif" style="display:none" onclick="OnResetToc()" alt="Click or drag to resize" title="Click or drag to resize" /></div></div><div class="topicContent" id="TopicContent"><table class="titleTable"><tr><td class="titleColumn">Avoiding memory leaks</td></tr></table><span class="introStyle"></span> <div class="introduction"><p>
+        When using Win2D controls in managed XAML applications, care must be taken to 
+        avoid reference count cycles that could prevent these controls ever being 
+        reclaimed by the garbage collector.
+      </p></div><div class="collapsibleAreaRegion"><span class="collapsibleRegionTitle" onclick="SectionExpandCollapse('ID0RB')" onkeypress="SectionExpandCollapse_CheckKey('ID0RB', event)" tabindex="0"><img id="ID0RBToggle" class="collapseToggle" src="../icons/SectionExpanded.png" />You have a problem if...</span></div><div id="ID0RBSection" class="collapsibleSection"><ul><li>You are using Win2D from a .NET language such as C# (not native C++)</li><li>You use one of the Win2D XAML controls:
+            <ul><li><a href="T_Microsoft_Graphics_Canvas_UI_Xaml_CanvasControl.htm">CanvasControl</a></li><li><a href="T_Microsoft_Graphics_Canvas_UI_Xaml_CanvasVirtualControl.htm">CanvasVirtualControl</a></li><li><a href="T_Microsoft_Graphics_Canvas_UI_Xaml_CanvasAnimatedControl.htm">CanvasAnimatedControl</a></li><li><a href="T_Microsoft_Graphics_Canvas_UI_Xaml_CanvasSwapChainPanel.htm">CanvasSwapChainPanel</a></li></ul></li><li>You subscribe to events of the Win2D control (eg. Draw, CreateResources, SizeChanged...)</li><li>Your app moves back and forth between more than one XAML page</li></ul><p>
+          If all these conditions are met, a reference count cycle will keep the Win2D 
+          control from ever being garbage collected. New Win2D resources are allocated 
+          each time the app moves to a different page, but the old ones are never freed 
+          so memory is leaked. To avoid this, you must add code to explicitly break the 
+          cycle.
+        </p></div><div class="collapsibleAreaRegion"><span class="collapsibleRegionTitle" onclick="SectionExpandCollapse('ID2RB')" onkeypress="SectionExpandCollapse_CheckKey('ID2RB', event)" tabindex="0"><img id="ID2RBToggle" class="collapseToggle" src="../icons/SectionExpanded.png" />How to fix it</span></div><div id="ID2RBSection" class="collapsibleSection"><p>
+          To break the reference count cycle and let your page be garbage collected:
+        </p><ul><li>Hook the Unloaded event of the XAML page which contains the Win2D control</li><li>In the Unloaded handler, call RemoveFromVisualTree on the Win2D control</li><li>In the Unloaded handler, release (by setting to null) any explicit references to the Win2D control</li></ul><p>
+          Example code:
+        </p><div class="codeSnippetContainer"><div class="codeSnippetContainerTabs"><div id="ID1EABACAAA_tab1" class="codeSnippetContainerTabSingle">C#</div></div><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID1EABACAAA_copyCode" href="#" class="copyCodeSnippet" onclick="javascript:CopyToClipboard('ID1EABACAAA');return false;" title="Copy">Copy</a></div></div><div id="ID1EABACAAA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve"><span class="highlight-keyword">void</span> page_Unloaded(<span class="highlight-keyword">object</span> sender, RoutedEventArgs e)
+{
+    <span class="highlight-keyword">this</span>.canvas.RemoveFromVisualTree();
+    <span class="highlight-keyword">this</span>.canvas = <span class="highlight-keyword">null</span>;
+}</pre></div></div></div><script type="text/javascript">AddLanguageTabSet("ID1EABACAAA");</script><p>
+          For working examples, see any of the
+          <a href="http://github.com/Microsoft/Win2D-Samples/tree/master/ExampleGallery/Shared" target="_blank">Example Gallery</a>
+          demo pages.
+        </p></div><div class="collapsibleAreaRegion"><span class="collapsibleRegionTitle" onclick="SectionExpandCollapse('ID3RB')" onkeypress="SectionExpandCollapse_CheckKey('ID3RB', event)" tabindex="0"><img id="ID3RBToggle" class="collapseToggle" src="../icons/SectionExpanded.png" />How to test for cycle leaks</span></div><div id="ID3RBSection" class="collapsibleSection"><p>
+          To test whether your application is correctly breaking refcount cycles, add a 
+          finalizer method to any XAML pages which contain Win2D controls:
+        </p><div class="codeSnippetContainer"><div class="codeSnippetContainerTabs"><div id="ID1EAEABAAA_tab1" class="codeSnippetContainerTabSingle">C#</div></div><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID1EAEABAAA_copyCode" href="#" class="copyCodeSnippet" onclick="javascript:CopyToClipboard('ID1EAEABAAA');return false;" title="Copy">Copy</a></div></div><div id="ID1EAEABAAA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve">~MyPage()
+{
+    System.Diagnostics.Debug.WriteLine(<span class="highlight-literal">"~"</span> + GetType().Name);
+}</pre></div></div></div><script type="text/javascript">AddLanguageTabSet("ID1EAEABAAA");</script><p>
+          In your App constructor, set up a timer that will make sure garbage collection 
+          occurs at regular intervals:
+        </p><div class="codeSnippetContainer"><div class="codeSnippetContainerTabs"><div id="ID1EACABAAA_tab1" class="codeSnippetContainerTabSingle">C#</div></div><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID1EACABAAA_copyCode" href="#" class="copyCodeSnippet" onclick="javascript:CopyToClipboard('ID1EACABAAA');return false;" title="Copy">Copy</a></div></div><div id="ID1EACABAAA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve"><span class="highlight-keyword">var</span> gcTimer = <span class="highlight-keyword">new</span> DispatcherTimer();
+gcTimer.Tick += (sender, e) =&gt; { GC.Collect(); };
+gcTimer.Interval = TimeSpan.FromSeconds(<span class="highlight-number">1</span>);
+gcTimer.Start();</pre></div></div></div><script type="text/javascript">AddLanguageTabSet("ID1EACABAAA");</script><p>
+          Navigate to the page, then away from it to some other page. If all cycles have 
+          been broken, you will see Debug.WriteLine output in the Visual Studio output 
+          pane within a second or two.
+        </p><p>
+          Note that calling GC.Collect is disruptive and hurts performace, so you should 
+          remove this test code as soon as you finish testing for leaks!
+        </p></div><div class="collapsibleAreaRegion"><span class="collapsibleRegionTitle" onclick="SectionExpandCollapse('ID4RB')" onkeypress="SectionExpandCollapse_CheckKey('ID4RB', event)" tabindex="0"><img id="ID4RBToggle" class="collapseToggle" src="../icons/SectionExpanded.png" />The gory details</span></div><div id="ID4RBSection" class="collapsibleSection"><p>
+          A cycle occurs when an object A has a reference to B, at the same time as B 
+          also has a reference to A. Or when A references B, and B references C, while C 
+          references A, etc.
+        </p><p>
+          When subscribing to events of a XAML control, this sort of cycle is pretty much 
+          inevitable:
+        </p><ul><li>XAML page holds references to all the controls contained within it</li><li>Controls hold references to the handler delegates that have been 
+          subscribed to their events</li><li>Each delegate holds a reference to its target instance</li><li>Event handlers are typically instance methods of the XAML page class, 
+                    so their target instance references point back to the XAML page, 
+                    creating a cycle</li></ul><p>
+          If all the objects involved are implemented in .NET, such cycles are 
+          not a problem because .NET is garbage collected, and the garbage collection 
+          algorithm is able to identify and reclaim groups of objects even if they are 
+          linked in a cycle.
+        </p><p>
+          Unlike .NET, C++ manages memory by reference counting, which is unable to 
+          detect and reclaim cycles of objects. In spite of this limitation, C++ apps 
+          using Win2D have no problem because C++ event handlers default to holding weak 
+          rather than strong references to their target instance. Therefore the page 
+          references the control, and the control references the event handler delegate, 
+          but this delegate does not reference back to the page so there is no cycle.
+        </p><p>
+          The problem comes when a C++ WinRT component such as Win2D is used by a .NET 
+          application:
+        </p><ul><li>The XAML page is part of the application, so uses garbage collection</li><li>The Win2D control is implemented in C++, so uses reference counting</li><li>The event handler delegate is part of the application, so uses 
+                    garbage collection and holds a strong reference to its target 
+                    instance</li></ul><p>
+          A cycle is present, but the Win2D objects participating in this cycle are not 
+          using .NET garbage collection. This means the garbage collector is unable to 
+          see the entire chain, so it cannot detect or reclaim the objects. When this 
+          occurs, the application must help out by explicitly breaking the cycle. This 
+          can be done either by releasing all references from the page to the control (as 
+          recommended above) or by releasing all references from the control to event 
+          handler delegates that might point back to the page (using the page Unloaded 
+          event to unsubscribe all event handlers).
+        </p></div></div></div><div id="pageFooter" class="pageFooter"><p><a href="http://github.com/Microsoft/Win2D/blob/master/LICENSE.txt" target="_blank">Copyright (c) Microsoft Corporation. All rights reserved.</a></p></div></body></html>

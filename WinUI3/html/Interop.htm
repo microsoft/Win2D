@@ -1,0 +1,149 @@
+﻿<html><head><meta http-equiv="X-UA-Compatible" content="IE=edge" /><link rel="shortcut icon" href="../icons/favicon.ico" /><link rel="stylesheet" type="text/css" href="../styles/branding.css" /><link rel="stylesheet" type="text/css" href="../styles/branding-en-US.css" /><script type="text/javascript" src="../scripts/branding.js"> </script><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>Interop with Direct2D</title><meta name="Language" content="en-us" /><meta name="Microsoft.Help.Id" content="Interop" /><meta name="Description" content="Win2D is implemented as a layer on top of http://msdn.microsoft.com/en-us/library/windows/desktop/dd370990Direct2D, and supports interop in both directions. If you have a Win2D object, you can access the native Direct2D object that is used to implement it." /><meta name="Microsoft.Help.ContentType" content="Concepts" /><meta name="BrandingAware" content="true" /><link type="text/css" rel="stylesheet" href="../styles/highlight.css" /><script type="text/javascript" src="../scripts/highlight.js"> </script><link rel="stylesheet" type="text/css" href="../styles/branding-Website.css" /><script type="text/javascript" src="../scripts/jquery-1.11.0.min.js"></script><script type="text/javascript" src="../scripts/branding-Website.js"></script><script type="text/javascript" src="../scripts/clipboard.min.js"></script></head><body onload="OnLoad('cs')"><input type="hidden" id="userDataCache" class="userDataStyle" /><div class="pageHeader" id="PageHeader">Win2D for WinUI3 (Work in progress)<form id="SearchForm" method="get" action="#" onsubmit="javascript:TransferToSearchPage(); return false;"><input id="SearchTextBox" type="text" maxlength="200" /><button id="SearchButton" type="submit"></button></form></div><div class="pageBody"><div class="leftNav" id="leftNav"><div id="tocNav"><div class="toclevel0" data-toclevel="0"><a class="tocCollapsed" onclick="javascript: Toggle(this);" href="#!" /><a data-tochassubtree="true" href="Introduction.htm" title="Win2D for WinUI3 (Work in progress)" tocid="roottoc">Win2D for WinUI3 (Work in progress)</a></div><div class="toclevel1" data-toclevel="1" data-childrenloaded="true"><a class="tocExpanded" onclick="javascript: Toggle(this);" href="#!" /><a data-tochassubtree="true" href="Articles.htm" title="Articles" tocid="Articles">Articles</a></div><div class="toclevel2 current" data-toclevel="2"><a data-tochassubtree="false" href="Interop.htm" title="Interop with Direct2D" tocid="Interop">Interop with Direct2D</a></div><div class="toclevel2" data-toclevel="2"><a data-tochassubtree="false" href="Offscreen.htm" title="Offscreen drawing" tocid="Offscreen">Offscreen drawing</a></div><div class="toclevel2" data-toclevel="2"><a data-tochassubtree="false" href="DPI.htm" title="DPI and DIPs" tocid="DPI">DPI and DIPs</a></div><div class="toclevel2" data-toclevel="2"><a data-tochassubtree="false" href="ChoosingResolution.htm" title="Choosing control resolution" tocid="ChoosingResolution">Choosing control resolution</a></div><div class="toclevel2" data-toclevel="2"><a data-tochassubtree="false" href="PixelFormats.htm" title="Pixel formats" tocid="PixelFormats">Pixel formats</a></div><div class="toclevel2" data-toclevel="2"><a data-tochassubtree="false" href="PremultipliedAlpha.htm" title="Premultiplied alpha" tocid="PremultipliedAlpha">Premultiplied alpha</a></div><div class="toclevel2" data-toclevel="2"><a data-tochassubtree="false" href="BlockCompression.htm" title="Bitmap block compression" tocid="BlockCompression">Bitmap block compression</a></div><div class="toclevel2" data-toclevel="2"><a data-tochassubtree="false" href="EffectPrecision.htm" title="Effect precision and clamping" tocid="EffectPrecision">Effect precision and clamping</a></div><div class="toclevel2" data-toclevel="2"><a data-tochassubtree="false" href="HandlingDeviceLost.htm" title="Handling device lost" tocid="HandlingDeviceLost">Handling device lost</a></div><div class="toclevel2" data-toclevel="2"><a data-tochassubtree="false" href="WithoutControls.htm" title="Using Win2D without built-in controls" tocid="WithoutControls">Using Win2D without built-in controls</a></div><div class="toclevel2" data-toclevel="2"><a data-tochassubtree="false" href="LoadingResourcesOutsideCreateResources.htm" title="Loading resources outside of CreateResources" tocid="LoadingResourcesOutsideCreateResources">Loading resources outside of CreateResources</a></div><div class="toclevel2" data-toclevel="2"><a data-tochassubtree="false" href="RefCycles.htm" title="Avoiding memory leaks" tocid="RefCycles">Avoiding memory leaks</a></div></div><div id="tocResizableEW" onmousedown="OnMouseDown(event);"></div><div id="TocResize" class="tocResize"><img id="ResizeImageIncrease" src="../icons/TocOpen.gif" onclick="OnIncreaseToc()" alt="Click or drag to resize" title="Click or drag to resize" /><img id="ResizeImageReset" src="../icons/TocClose.gif" style="display:none" onclick="OnResetToc()" alt="Click or drag to resize" title="Click or drag to resize" /></div></div><div class="topicContent" id="TopicContent"><table class="titleTable"><tr><td class="titleColumn">Interop with Direct2D</td></tr></table><span class="introStyle"></span> <div class="introduction"><p>
+        Win2D is implemented as a layer on top of 
+        <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/dd370990" target="_blank">Direct2D</a>,
+        and supports interop in both directions. If you have a Win2D object, you can
+        access the native Direct2D object that is used to implement it. If you have a Direct2D 
+        object, you can look up the Win2D object that wraps it, or create a new wrapper 
+        if one did not already exist.
+      </p><p>
+        Interop allows you to mix and match Win2D with native DirectX APIs. You can write
+        an app that mostly uses Win2D, but drop down to native DirectX at any point -
+        perhaps to call into some other API or 3rd party component that requires native interfaces.
+        Or your app can be mostly native DirectX, yet you can switch over to Win2D in specific
+        places where you want its extra convenience or C# support.
+      </p></div><div class="collapsibleAreaRegion"><span class="collapsibleRegionTitle" onclick="SectionExpandCollapse('ID1RB')" onkeypress="SectionExpandCollapse_CheckKey('ID1RB', event)" tabindex="0"><img id="ID1RBToggle" class="collapseToggle" src="../icons/SectionExpanded.png" />Interop APIs</span></div><div id="ID1RBSection" class="collapsibleSection"><p>C++/CX interop APIs are defined in the header Microsoft.Graphics.Canvas.native.h:</p><div class="codeSnippetContainer"><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID0EAJADAAA_copyCode" href="#" class="copyCodeSnippet" onclick="javascript:CopyToClipboard('ID0EAJADAAA');return false;" title="Copy">Copy</a></div></div><div id="ID0EAJADAAA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve"><span class="highlight-preprocessor">#include</span> &lt;Microsoft.Graphics.Canvas.native.h&gt;
+
+<span class="highlight-keyword">using</span> <span class="highlight-keyword">namespace</span> Microsoft::Graphics::Canvas;</pre></div></div></div><script type="text/javascript">AddLanguageTabSet("ID0EAJADAAA");</script><p>To get the native Direct2D object that is wrapped by a Win2D object:</p><div class="codeSnippetContainer"><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID0EAHADAAA_copyCode" href="#" class="copyCodeSnippet" onclick="javascript:CopyToClipboard('ID0EAHADAAA');return false;" title="Copy">Copy</a></div></div><div id="ID0EAHADAAA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve">template&lt;typename T, typename U&gt;
+Microsoft::WRL::ComPtr&lt;T&gt; GetWrappedResource(U^ wrapper);
+
+template&lt;typename T, typename U&gt;
+Microsoft::WRL::ComPtr&lt;T&gt; GetWrappedResource(CanvasDevice^ device, U^ wrapper);
+
+template&lt;typename T, typename U&gt;
+Microsoft::WRL::ComPtr&lt;T&gt; GetWrappedResource(CanvasDevice^ device, U^ wrapper, <span class="highlight-keyword">float</span> dpi);</pre></div></div></div><script type="text/javascript">AddLanguageTabSet("ID0EAHADAAA");</script><p>
+          For most types GetWrappedResource can be called with only a Win2D wrapper object as 
+          parameter. For a few types (see below table) it must also be passed a device and/or DPI 
+          value. It is not an error to pass a device or DPI when using GetWrappedResource with 
+          types that do not require them.
+        </p><p>To get a Win2D object wrapping a native Direct2D object:</p><div class="codeSnippetContainer"><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID0EAEADAAA_copyCode" href="#" class="copyCodeSnippet" onclick="javascript:CopyToClipboard('ID0EAEADAAA');return false;" title="Copy">Copy</a></div></div><div id="ID0EAEADAAA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve">template&lt;typename WRAPPER&gt;
+WRAPPER^ GetOrCreate(IUnknown* resource);
+
+template&lt;typename WRAPPER&gt;
+WRAPPER^ GetOrCreate(CanvasDevice^ device, IUnknown* resource);
+
+template&lt;typename WRAPPER&gt;
+WRAPPER^ GetOrCreate(ID2D1Device1* device, IUnknown* resource);
+
+template&lt;typename WRAPPER&gt;
+WRAPPER^ GetOrCreate(CanvasDevice^ device, IUnknown* resource, <span class="highlight-keyword">float</span> dpi);
+
+template&lt;typename WRAPPER&gt;
+WRAPPER^ GetOrCreate(ID2D1Device1* device, IUnknown* resource, <span class="highlight-keyword">float</span> dpi);</pre></div></div></div><script type="text/javascript">AddLanguageTabSet("ID0EAEADAAA");</script><p>
+          GetOrCreate returns an existing wrapper instance if one already exists, or creates a new
+          wrapper if one does not. Calling it repeatedly on the same native object will return the
+          same wrapper each time, as long as that wrapper instance continues to exist. If all references
+          to the wrapper are released such that its reference count goes to zero and it is destroyed,
+          any later call to GetOrCreate will have to create a new wrapper.
+        </p><p>
+          For some types GetOrCreate can be called with only a Direct2D resource object as 
+          parameter, while for other types (see below table) it must also be passed a device 
+          and DPI value. It is not an error to pass a device or DPI when using GetOrCreate with 
+          types that do not require them. If a Win2D wrapper already exists, it is ok to omit 
+          the device and DPI even for types that would normally need them: these parameters 
+          are only used when creating new wrapper instances.
+        </p><p>
+          GetOrCreate understands inheritance hierarchies and will always create the 
+          appropriate most-derived wrapper type. For instance if you call 
+          <span class="code">GetOrCreate&lt;CanvasBitmap&gt;(ID2D1Bitmap1*)</span> with an 
+          ID2D1Bitmap1 that has the D2D1_BITMAP_OPTIONS_TARGET flag, the returned wrapper 
+          instance will in fact be a CanvasRenderTarget (which derives from 
+          CanvasBitmap). The other way around, if you call 
+          <span class="code">GetOrCreate&lt;CanvasRenderTarget&gt;(ID2D1Bitmap1*)</span> 
+          with an ID2D1Bitmap1 that does not have D2D1_BITMAP_OPTIONS_TARGET, this will 
+          throw an invalid cast exception.
+        </p><p>
+          Taking this to the extreme, it is valid to call 
+          <span class="code">GetOrCreate&lt;Object&gt;(IUnknown*)</span>,
+          and also <span class="code">GetWrappedResource&lt;IUnknown&gt;(Object^)</span>.
+        </p></div><div class="collapsibleAreaRegion"><span class="collapsibleRegionTitle" onclick="SectionExpandCollapse('ID2RB')" onkeypress="SectionExpandCollapse_CheckKey('ID2RB', event)" tabindex="0"><img id="ID2RBToggle" class="collapseToggle" src="../icons/SectionExpanded.png" />Types that support interop</span></div><div id="ID2RBSection" class="collapsibleSection"><div class="tableSection"><table><tr><th><p>Win2D type</p></th><th><p>Direct2D type</p></th><th><p>GetOrCreate parameters</p></th><th><p>GetWrappedResource parameters</p></th></tr><tr><td><a href="T_Microsoft_Graphics_Canvas_CanvasBitmap.htm">CanvasBitmap</a></td><td><span class="code">ID2D1Bitmap1</span> without D2D1_BITMAP_OPTIONS_TARGET</td><td>Device</td><td>-</td></tr><tr><td><a href="T_Microsoft_Graphics_Canvas_Geometry_CanvasCachedGeometry.htm">CanvasCachedGeometry</a></td><td><span class="code">ID2D1GeometryRealization</span></td><td>Device</td><td>-</td></tr><tr><td><a href="T_Microsoft_Graphics_Canvas_CanvasCommandList.htm">CanvasCommandList</a></td><td><span class="code">ID2D1CommandList</span></td><td>Device</td><td>-</td></tr><tr><td><a href="T_Microsoft_Graphics_Canvas_CanvasDevice.htm">CanvasDevice</a></td><td><span class="code">ID2D1Device1</span></td><td>-</td><td>-</td></tr><tr><td><a href="T_Microsoft_Graphics_Canvas_CanvasDrawingSession.htm">CanvasDrawingSession</a></td><td><span class="code">ID2D1DeviceContext1</span></td><td>-</td><td>-</td></tr><tr><td><a href="T_Microsoft_Graphics_Canvas_Text_CanvasFontFace.htm">CanvasFontFace</a></td><td><span class="code">IDWriteFontFaceReference</span></td><td>-</td><td>-</td></tr><tr><td><a href="T_Microsoft_Graphics_Canvas_Text_CanvasFontSet.htm">CanvasFontSet</a></td><td><span class="code">IDWriteFontSet</span></td><td>-</td><td>-</td></tr><tr><td><a href="T_Microsoft_Graphics_Canvas_Geometry_CanvasGeometry.htm">CanvasGeometry</a></td><td><span class="code">ID2D1Geometry</span>, or one of its derived interfaces 
+              <span class="code">ID2D1PathGeometry</span>, 
+              <span class="code">ID2D1RectangleGeometry</span>, 
+              <span class="code">ID2D1RoundedRectangleGeometry</span>, 
+              <span class="code">ID2D1EllipseGeometry</span>, 
+              <span class="code">ID2D1TransformedGeometry</span>, or 
+              <span class="code">ID2D1GeometryGroup</span></td><td>Device</td><td>-</td></tr><tr><td><a href="T_Microsoft_Graphics_Canvas_Geometry_CanvasGradientMesh.htm">CanvasGradientMesh</a></td><td><span class="code">ID2D1GradientMesh</span></td><td>Device</td><td>-</td></tr><tr><td><a href="T_Microsoft_Graphics_Canvas_Brushes_CanvasImageBrush.htm">CanvasImageBrush</a></td><td><span class="code">ID2D1BitmapBrush1</span> (if Image is a CanvasBitmap and SourceRectangle is null) or 
+              <span class="code">ID2D1ImageBrush</span> (if Image is any other type of ICanvasImage, or if SourceRectangle is set)
+            </td><td>Device</td><td>Optional DPI<sup>(1)</sup></td></tr><tr><td><a href="T_Microsoft_Graphics_Canvas_Brushes_CanvasLinearGradientBrush.htm">CanvasLinearGradientBrush</a></td><td><span class="code">ID2D1LinearGradientBrush</span></td><td>Device</td><td>-</td></tr><tr><td><a href="T_Microsoft_Graphics_Canvas_Text_CanvasNumberSubstitution.htm">CanvasNumberSubstitution</a></td><td><span class="code">IDWriteNumberSubstitution</span></td><td>-</td><td>-</td></tr><tr><td><a href="T_Microsoft_Graphics_Canvas_Brushes_CanvasRadialGradientBrush.htm">CanvasRadialGradientBrush</a></td><td><span class="code">ID2D1RadialGradientBrush</span></td><td>Device</td><td>-</td></tr><tr><td><a href="T_Microsoft_Graphics_Canvas_CanvasRenderTarget.htm">CanvasRenderTarget</a></td><td><span class="code">ID2D1Bitmap1</span> with D2D1_BITMAP_OPTIONS_TARGET</td><td>Device</td><td>-</td></tr><tr><td><a href="T_Microsoft_Graphics_Canvas_Brushes_CanvasSolidColorBrush.htm">CanvasSolidColorBrush</a></td><td><span class="code">ID2D1SolidColorBrush</span></td><td>Device</td><td>-</td></tr><tr><td><a href="T_Microsoft_Graphics_Canvas_Geometry_CanvasStrokeStyle.htm">CanvasStrokeStyle</a></td><td><span class="code">ID2D1StrokeStyle1</span></td><td>-</td><td>Device</td></tr><tr><td><a href="T_Microsoft_Graphics_Canvas_Svg_CanvasSvgDocument.htm">CanvasSvgDocument</a></td><td><span class="code">ID2D1SvgDocument</span><sup>(2)</sup></td><td>Device</td><td>-</td></tr><tr><td><a href="T_Microsoft_Graphics_Canvas_CanvasSwapChain.htm">CanvasSwapChain</a></td><td><span class="code">IDXGISwapChain1</span></td><td>Device, DPI</td><td>-</td></tr><tr><td><a href="T_Microsoft_Graphics_Canvas_Text_CanvasTextFormat.htm">CanvasTextFormat</a></td><td><span class="code">IDWriteTextFormat1</span></td><td>-</td><td>-</td></tr><tr><td><a href="T_Microsoft_Graphics_Canvas_Text_CanvasTextLayout.htm">CanvasTextLayout</a></td><td><span class="code">IDWriteTextLayout3</span></td><td>Device</td><td>-</td></tr><tr><td><a href="T_Microsoft_Graphics_Canvas_Text_CanvasTextRenderingParameters.htm">CanvasTextRenderingParameters</a></td><td><span class="code">IDWriteRenderingParams3</span></td><td>-</td><td>-</td></tr><tr><td><a href="T_Microsoft_Graphics_Canvas_Text_CanvasTypography.htm">CanvasTypography</a></td><td><span class="code">IDWriteTypography</span></td><td>-</td><td>-</td></tr><tr><td><a href="T_Microsoft_Graphics_Canvas_CanvasVirtualBitmap.htm">CanvasVirtualBitmap</a></td><td><span class="code">ID2D1ImageSource</span> or <span class="code">ID2D1TransformedImageSource</span></td><td>Device</td><td>-</td></tr><tr><td><a href="T_Microsoft_Graphics_Canvas_Effects_ColorManagementProfile.htm">ColorManagementProfile</a></td><td><span class="code">ID2D1ColorContext</span></td><td>Device</td><td>Device</td></tr><tr><td><a href="T_Microsoft_Graphics_Canvas_Effects_EffectTransferTable3D.htm">EffectTransferTable3D</a></td><td><span class="code">ID2D1LookupTable3D</span></td><td>Device</td><td>-</td></tr><tr><td><a href="N_Microsoft_Graphics_Canvas_Effects.htm">Microsoft.Graphics.Canvas.Effects</a>.*
+              (multiple Win2D classes map to the same D2D type)
+            </td><td><span class="code">ID2D1Effect</span> with the appropriate D2D1_PROPERTY_TYPE_CLSID</td><td>Device</td><td>Device, optional DPI<sup>(1)</sup></td></tr></table></div><p><sup>(1)</sup> optional DPI means it is valid to call 
+          GetWrappedResource for this type without specifying a DPI value, but if you do 
+          specify DPI, Win2D may be able to more efficiently configure effect graphs by 
+          leaving out redundant DPI compensation nodes. This applies when calling 
+          GetWrappedResource on an effect, or on a CanvasImageBrush that has an effect as 
+          its source image.
+        </p><p><sup>(2)</sup> When a CanvasSvgDocument is produced from an 
+          ID2D1SvgDocument using native C++ interop, the ID2D1SvgDocument's viewport
+          size is ignored.
+        </p></div><div class="collapsibleAreaRegion"><span class="collapsibleRegionTitle" onclick="SectionExpandCollapse('ID3RB')" onkeypress="SectionExpandCollapse_CheckKey('ID3RB', event)" tabindex="0"><img id="ID3RBToggle" class="collapseToggle" src="../icons/SectionExpanded.png" />Example</span></div><div id="ID3RBSection" class="collapsibleSection"><div class="codeSnippetContainer"><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID0EAAABAAA_copyCode" href="#" class="copyCodeSnippet" onclick="javascript:CopyToClipboard('ID0EAAABAAA');return false;" title="Copy">Copy</a></div></div><div id="ID0EAAABAAA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve"><span class="highlight-preprocessor">#include</span> &lt;Microsoft.Graphics.Canvas.native.h&gt;
+<span class="highlight-preprocessor">#include</span> &lt;d2d1_2.h&gt;
+
+<span class="highlight-keyword">using</span> <span class="highlight-keyword">namespace</span> Microsoft::Graphics::Canvas;
+<span class="highlight-keyword">using</span> <span class="highlight-keyword">namespace</span> Microsoft::WRL;
+
+<span class="highlight-comment">// Interop Win2D -&gt; Direct2D.</span>
+CanvasDevice^ canvasDevice = ...;
+CanvasBitmap^ canvasBitmap = ...;
+
+ComPtr&lt;ID2D1Device&gt; nativeDevice = GetWrappedResource&lt;ID2D1Device&gt;(canvasDevice);
+ComPtr&lt;ID2D1Bitmap1&gt; nativeBitmap = GetWrappedResource&lt;ID2D1Bitmap1&gt;(canvasBitmap);
+
+<span class="highlight-comment">// Interop Direct2D -&gt; Win2D.</span>
+canvasDevice = GetOrCreate&lt;CanvasDevice&gt;(nativeDevice.Get());
+bitmap = GetOrCreate&lt;CanvasBitmap&gt;(canvasDevice, nativeBitmap.Get());</pre></div></div></div><script type="text/javascript">AddLanguageTabSet("ID0EAAABAAA");</script></div><div class="collapsibleAreaRegion"><span class="collapsibleRegionTitle" onclick="SectionExpandCollapse('ID4RB')" onkeypress="SectionExpandCollapse_CheckKey('ID4RB', event)" tabindex="0"><img id="ID4RBToggle" class="collapseToggle" src="../icons/SectionExpanded.png" />Interop using C++/WinRT</span></div><div id="ID4RBSection" class="collapsibleSection"><p>
+          You can also perform interop using C++/WinRT with some modification of the above. Note that the C++/WinRT headers for the Win2D Windows Runtime Components
+          should be generated automatically when you add the Win2D NuGet package to your C++/WinRT project. However, for interop you will still need to use the 
+          header file Microsoft.Graphics.Canvas.native.h which contains the low-level ABI interface <span class="code">ICanvasFactoryNative</span>
+          in the namespace <span class="code">ABI::Microsoft::Graphics::Canvas</span>. The interface has the following functions which you can use to perform interop.
+        </p><div class="codeSnippetContainer"><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID0EADAAAAA_copyCode" href="#" class="copyCodeSnippet" onclick="javascript:CopyToClipboard('ID0EADAAAAA');return false;" title="Copy">Copy</a></div></div><div id="ID0EADAAAAA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve">HRESULT GetOrCreate(ICanvasDevice* device, IUnknown* resource, <span class="highlight-keyword">float</span> dpi, IInspectable** wrapper);
+HRESULT GetNativeResource(ICanvasDevice* device, <span class="highlight-keyword">float</span> dpi, REFIID iid, <span class="highlight-keyword">void</span>** resource);</pre></div></div></div><script type="text/javascript">AddLanguageTabSet("ID0EADAAAAA");</script>
+
+        Here is an example showing how to create a CanvasVirtualBitmap from an IWICBitmapSource starting with the IWICBitmapSource and the shared CanvasDevice.
+        <div class="codeSnippetContainer"><div class="codeSnippetContainerCodeContainer"><div class="codeSnippetToolBar"><div class="codeSnippetToolBarText"><a id="ID0EABAAAAA_copyCode" href="#" class="copyCodeSnippet" onclick="javascript:CopyToClipboard('ID0EABAAAAA');return false;" title="Copy">Copy</a></div></div><div id="ID0EABAAAAA_code_Div1" class="codeSnippetContainerCode" style="display: block"><pre xml:space="preserve"><span class="highlight-preprocessor">#include</span> <span class="highlight-literal">"pch.h"</span>
+<span class="highlight-preprocessor">#include</span> &lt;wincodec.h&gt;
+<span class="highlight-preprocessor">#include</span> &lt;wincodecsdk.h&gt;
+<span class="highlight-preprocessor">#include</span> &lt;winrt/Microsoft.Graphics.Canvas.h&gt; <span class="highlight-comment">//This defines the C++/WinRT interfaces for the Win2D Windows Runtime Components</span>
+<span class="highlight-preprocessor">#include</span> &lt;Microsoft.Graphics.Canvas.h&gt; <span class="highlight-comment">//This defines the low-level ABI interfaces for the Win2D Windows Runtime Components</span>
+<span class="highlight-preprocessor">#include</span> &lt;Microsoft.Graphics.Canvas.native.h&gt; <span class="highlight-comment">//This is for interop</span>
+<span class="highlight-preprocessor">#include</span> &lt;d2d1_3.h&gt;
+
+<span class="highlight-keyword">using</span> <span class="highlight-keyword">namespace</span> winrt::Microsoft::Graphics::Canvas;
+<span class="highlight-keyword">namespace</span> abi {
+  <span class="highlight-keyword">using</span> <span class="highlight-keyword">namespace</span> ABI::Microsoft::Graphics::Canvas;
+}
+
+<span class="highlight-keyword">namespace</span> winrt::Win2DInteropTest::implementation {
+  CanvasVirtualBitmap CreateVirtualBitmapFromBitmapSource(com_ptr&lt;IWICBitmapSource&gt; <span class="highlight-keyword">const</span>&amp; pBitmapSource){
+    CanvasDevice sharedDevice = CanvasDevice::GetSharedDevice();
+
+    <span class="highlight-comment">//First we need to get an ID2D1Device1 pointer from the shared CanvasDevice</span>
+    com_ptr&lt;abi::ICanvasResourceWrapperNative&gt; nativeDeviceWrapper = sharedDevice.<span class="highlight-keyword">as</span>&lt;abi::ICanvasResourceWrapperNative&gt;();
+    com_ptr&lt;ID2D1Device1&gt; pDevice{ nullptr };
+    check_hresult(nativeDeviceWrapper-&gt;GetNativeResource(nullptr, <span class="highlight-number">0.0</span>f, guid_of&lt;ID2D1Device1&gt;(), pDevice.put_void()));
+
+    <span class="highlight-comment">//Next we need to call some Direct2D functions to create the ID2D1ImageSourceFromWic object</span>
+    com_ptr&lt;ID2D1DeviceContext1&gt; pContext{ nullptr };
+    check_hresult(pDevice-&gt;CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS_NONE, pContext.put()));
+    com_ptr&lt;ID2D1DeviceContext2&gt; pContext2 = pContext.<span class="highlight-keyword">as</span>&lt;ID2D1DeviceContext2&gt;();
+    com_ptr&lt;ID2D1ImageSourceFromWic&gt; pImage{ nullptr };
+    check_hresult(pContext2-&gt;CreateImageSourceFromWic(pBitmapSource.<span class="highlight-keyword">get</span>(), D2D1_IMAGE_SOURCE_LOADING_OPTIONS_RELEASE_SOURCE, pImage.put()));
+
+    <span class="highlight-comment">//Finally we need to wrap the ID2D1ImageSourceFromWic object inside </span>
+    com_ptr&lt;::IInspectable&gt; pInspectable{ nullptr };
+    auto factory = winrt::get_activation_factory&lt;CanvasDevice, abi::ICanvasFactoryNative&gt;(); <span class="highlight-comment">//abi::ICanvasFactoryNative is the activation factory for the CanvasDevice class</span>
+    check_hresult(factory-&gt;GetOrCreate(sharedDevice.<span class="highlight-keyword">as</span>&lt;abi::ICanvasDevice&gt;().<span class="highlight-keyword">get</span>(), pImage.<span class="highlight-keyword">as</span>&lt;::IUnknown&gt;().<span class="highlight-keyword">get</span>(), <span class="highlight-number">0.0</span>f, pInspectable.put())); <span class="highlight-comment">//Note abi::ICanvasDevice is defined in the header Microsoft.Graphics.Canvas.h</span>
+    CanvasVirtualBitmap cvb = pInspectable.<span class="highlight-keyword">as</span>&lt;CanvasVirtualBitmap&gt;();
+    <span class="highlight-keyword">return</span> cvb;
+  }
+}</pre></div></div></div><script type="text/javascript">AddLanguageTabSet("ID0EABAAAAA");</script>
+        Remember to include the header &lt;unknwn.h&gt; in pch.h before any winrt headers (required in SDK 17763 and later).
+      </div></div></div><div id="pageFooter" class="pageFooter"><p><a href="http://github.com/Microsoft/Win2D/blob/master/LICENSE.txt" target="_blank">Copyright (c) Microsoft Corporation. All rights reserved.</a></p></div></body></html>
