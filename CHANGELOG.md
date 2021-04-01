@@ -1,11 +1,17 @@
 # Win2D Changelog
 
 ## Win2D-WinUI 0.5.0 - Project Reunion 0.5.0 support
-_March 31, 2021_
+_April 1, 2021_
 
-This change moves Win2D onto Project Reunion 0.5.
- - Moving Win2D onto WinUI3 is work in progress, and some features that were available on Win2D-WinUI2 are not supported on Win2D-WinUI3, such as CanvasAnimatedControl and CanvasBitmap
- - The home of the Win2D samples is now the Win2D-Sample Gallery on github (not yet updated for Project Reunion): https://github.com/Microsoft/Win2D-Samples
+This change moves Win2D onto Project Reunion 0.5.0
+ - Moving Win2D onto WinUI3 is work in progress, and some features that were available on Win2D-WinUI2 are not supported on Win2D-WinUI3
+ - Win2D now builds on Project Reunion and WinUI3 instead of WinUI2
+ - CanvasAnimatedControl is removed until it can be supported on WinUI3
+ - CanvasBitmap is not removed, but is only supported on UWP (not on Desktop packaged apps)
+ - WinRT type activation is not yet supported, and relies on manifest-free activation
+ - Building Win2D now requires Visual Studio 2019
+ - Target platform min version is now 17763
+ - The home of the Win2D samples is now the Win2D-Sample Gallery on github: https://github.com/Microsoft/Win2D-Samples
 
 ---
 
