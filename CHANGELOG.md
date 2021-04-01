@@ -1,5 +1,14 @@
 # Win2D Changelog
 
+## Win2D-WinUI 0.5.0 - Project Reunion 0.5.0 support
+_March 31, 2021_
+
+This change moves Win2D onto Project Reunion 0.5.
+ - Moving Win2D onto WinUI3 is work in progress, and some features that were available on Win2D-WinUI2 are not supported on Win2D-WinUI3, such as CanvasAnimatedControl and CanvasBitmap
+ - The home of the Win2D samples is now the Win2D-Sample Gallery on github (not yet updated for Project Reunion): https://github.com/Microsoft/Win2D-Samples
+
+---
+
 ## Win2D 1.25.0 - XAML Islands support
 _April 2, 2020_
 

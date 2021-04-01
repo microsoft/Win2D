@@ -8,7 +8,7 @@ Moving Win2D over to ProjectReunion and WinUI3 is a work in progress, and some f
 
 Win2D is an easy-to-use Windows Runtime API for immediate mode 2D graphics
 rendering with GPU acceleration. It is available to C#, C++ and VB developers
-writing apps for the Windows Universal Platform (UWP). It utilizes the power
+writing apps for WinUI3. It utilizes the power
 of Direct2D, and integrates seamlessly with XAML and CoreWindow.
 
 ##### Where to get it
