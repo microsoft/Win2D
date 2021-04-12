@@ -1,6 +1,13 @@
 # Win2D Changelog
 
-## Win2D-WinUI 0.5.0 - Project Reunion 0.5.0 support
+## Win2D-WinUI 0.5.0.13 - IGeometrySource2DInterop
+_April 12, 2021_
+
+CanvasGeometry now implements the WinUI3 interface Microsoft.Graphics.IGeometrySource2DInterop instead of the system type Windows.Graphics.IGeometrySource2DInterop.
+
+---
+
+## Win2D-WinUI 0.5.0.12 - Project Reunion 0.5.0 support
 _April 1, 2021_
 
 This change moves Win2D onto Project Reunion 0.5.0
