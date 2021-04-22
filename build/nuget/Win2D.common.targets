@@ -19,7 +19,7 @@
     <Task>
       <Code Type="Fragment" Language="cs">
         Version actual = Version.Parse(ActualVersion);
-        Version required = Version.Parse(RequiredVersion);
+        Version required = Version.Parse("10.0.17134.0");
         Result = actual &lt; required;
       </Code>
     </Task>
