@@ -1,5 +1,12 @@
 # Win2D Changelog
 
+## Win2D 1.26.0 - Bugfix for Visual Studio 2019 support
+_April 23, 2021_
+
+This change adds a workaround to avoid failing a Win2DIsPlatformTooOld check when building some projects in Visual Studio 2019.
+
+---
+
 ## Win2D 1.25.0 - XAML Islands support
 _April 2, 2020_
 
