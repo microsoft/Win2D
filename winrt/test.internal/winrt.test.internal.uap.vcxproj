@@ -155,6 +155,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubD2DResources.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubD2DStrokeStyle.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubD3D11Device.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubDependencyObject.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubDWriteTextFormat.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubDxgiAdapter.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubDxgiDevice.h" />

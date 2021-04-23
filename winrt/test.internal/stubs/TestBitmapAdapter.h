@@ -7,12 +7,14 @@
 class TestBitmapAdapter : public CanvasBitmapAdapter
 {
     ComPtr<IWICBitmapSource> m_converter;
+    ComPtr<StubDependencyObject> m_stubDependencyObject;
 
 public:
     std::function<void()> MockCreateWicBitmapSource;
 
     TestBitmapAdapter(ComPtr<IWICFormatConverter> converter)
-        : m_converter(converter)
+        : m_converter(converter),
+        m_stubDependencyObject(Make<StubDependencyObject>())
     {
     }
 
@@ -35,13 +37,27 @@ public:
     {
         return source;
     }
+
+    virtual void SetDependencyObjectBase(CanvasBitmap* bitmap) override
+    {
+        ThrowIfFailed(bitmap->SetComposableBasePointers(m_stubDependencyObject.Get()));
+    }
 };
 
+inline ComPtr<CanvasBitmap> CreateStubCanvasBitmap(ICanvasDevice* device, ID2D1Bitmap1* bitmap)
+{
+    auto converter = Make<MockWICFormatConverter>();
+    auto adapter = std::make_shared<TestBitmapAdapter>(converter);
+    CanvasBitmapAdapter::SetInstance(adapter);
+
+    return Make<CanvasBitmap>(device, bitmap);
+}
 
 inline ComPtr<CanvasBitmap> CreateStubCanvasBitmap(float dpi = DEFAULT_DPI, ICanvasDevice* device = nullptr)
 {
-    return Make<CanvasBitmap>(device, Make<StubD2DBitmap>(D2D1_BITMAP_OPTIONS_NONE, dpi).Get());
+    return CreateStubCanvasBitmap(device, Make<StubD2DBitmap>(D2D1_BITMAP_OPTIONS_NONE, dpi).Get());
 }
+
 
 
 inline ComPtr<ICanvasDrawingSession> CreateStubDrawingSession()

@@ -646,8 +646,11 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DSvgStrokeDashArray.h">
       <Filter>mocks</Filter>
     </ClInclude>
-    <ClInclude Include="mocks\MockGeometryAdapter.h">
+    <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockGeometryAdapter.h">
       <Filter>mocks</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubDependencyObject.h">
+      <Filter>stubs</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

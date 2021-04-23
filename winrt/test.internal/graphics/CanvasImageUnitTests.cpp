@@ -34,7 +34,7 @@ TEST_CLASS(CanvasImageGetBoundsUnitTests)
             // underlying implementation of GetBounds / GetBoundsWithTransform,
             // so we pick a random implementation at test with that.
             auto d2dBitmap = Make<StubD2DBitmap>();
-            m_image = Make<CanvasBitmap>(GetDevice(), d2dBitmap.Get());
+            m_image = CreateStubCanvasBitmap(GetDevice(), d2dBitmap.Get());
             m_d2dImage = d2dBitmap;
         }
 
@@ -656,7 +656,7 @@ TEST_CLASS(CanvasImageHistogramUnitTests)
         auto histogramEffect = Make<MockD2DEffect>();
         auto atlasEffect = Make<MockD2DEffect>();
         auto d2dBitmap = Make<StubD2DBitmap>(D2D1_BITMAP_OPTIONS_NONE, dpi);
-        auto canvasBitmap = Make<CanvasBitmap>(nullptr, d2dBitmap.Get());
+        auto canvasBitmap = CreateStubCanvasBitmap(nullptr, d2dBitmap.Get());
         ComPtr<MockD2DEffectThatCountsCalls> dpiCompensator;
         Rect rect{ 1, 2, 3, 4 };
         auto channelSelect = EffectChannelSelect::Green;

@@ -417,7 +417,7 @@ public:
             d2dBitmap->GetSizeMethod.AllowAnyCall([] { return D2D1_SIZE_F{ 23, 45 }; });
             d2dBitmap->GetPixelSizeMethod.AllowAnyCall([] { return D2D1_SIZE_U{ 67, 89 }; });
 
-            return Make<CanvasBitmap>(CanvasDevice.Get(), d2dBitmap.Get());
+            return CreateStubCanvasBitmap(CanvasDevice.Get(), d2dBitmap.Get());
         }
     };
 

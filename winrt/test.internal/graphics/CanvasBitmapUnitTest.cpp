@@ -66,6 +66,7 @@ TEST_CLASS(CanvasBitmapUnitTest)
         ASSERT_IMPLEMENTS_INTERFACE(canvasBitmap, IDirect3DDxgiInterfaceAccess);
         ASSERT_IMPLEMENTS_INTERFACE(canvasBitmap, ICanvasImageInternal);
         ASSERT_IMPLEMENTS_INTERFACE(canvasBitmap, ICanvasBitmapInternal);
+        ASSERT_IMPLEMENTS_INTERFACE(canvasBitmap, IDependencyObject);
     }
 
     TEST_METHOD_EX(CanvasBitmap_Closed)
