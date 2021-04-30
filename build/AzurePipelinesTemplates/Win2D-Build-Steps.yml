@@ -208,3 +208,16 @@ steps:
      bin\uaparm64\release\winrt.dll.uap\Microsoft.Graphics.Canvas.pdb
     TargetFolder: '$(XES_DFSDROP)'
   condition: succeededOrFailed()
+
+- task: CopyFiles@1
+  displayName: 'Copy Nuget package to: $(Build.SourcesDirectory)/nugetartifact'
+  inputs:
+    Contents: |
+     bin\**\*.nupkg
+    TargetFolder: '$(Build.SourcesDirectory)/nugetartifact'
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish nupkg artifact'
+  inputs:
+    PathtoPublish: $(Build.SourcesDirectory)/nugetartifact
+    artifactName: 'nuget'
