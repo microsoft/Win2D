@@ -1,5 +1,12 @@
 # Win2D Changelog
 
+## Win2D-WinUI 0.5.0.14 - CanvasBitmap implements from IDependencyObject correctly
+_May 7, 2021_
+
+CanvasBitmap now properly inherits from DependencyObject such that the QI to IDependencyObject succeeds.
+
+---
+
 ## Win2D-WinUI 0.5.0.13 - IGeometrySource2DInterop
 _April 12, 2021_
 
