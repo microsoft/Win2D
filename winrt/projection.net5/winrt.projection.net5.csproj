@@ -20,10 +20,10 @@
 
   <ItemGroup>
     <!-->PackageReference Include="Microsoft.Windows.SDK.Contracts" Version="10.0.18362.2005" /-->
-    <PackageReference Include="Microsoft.ProjectReunion" Version="0.5.0" />
-    <PackageReference Include="Microsoft.ProjectReunion.WinUI" Version="0.5.0" />
-    <PackageReference Include="Microsoft.ProjectReunion.Foundation" Version="0.5.0" />
-    <PackageReference Include="Microsoft.Windows.CSWinRT" Version="1.1.4" />
+    <PackageReference Include="Microsoft.ProjectReunion" Version="0.5.7" />
+    <PackageReference Include="Microsoft.ProjectReunion.WinUI" Version="0.5.7" />
+    <PackageReference Include="Microsoft.ProjectReunion.Foundation" Version="0.5.7" />
+    <PackageReference Include="Microsoft.Windows.CSWinRT" Version="1.2.5" />
     <PackageReference Include="Microsoft.SourceLink.AzureRepos.Git" Version="1.0.0" PrivateAssets="All" />
   
     <CSWinRTInputs Include="$(PkgMicrosoft_WinUI)\lib\uap10.0\*.winmd" />
