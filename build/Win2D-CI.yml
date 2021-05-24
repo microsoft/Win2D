@@ -1,5 +1,5 @@
 trigger:
-- WinUI3Master
+- reunion_master
 
 name: $[format('{0:yyyyMMdd}.{1}', pipeline.startTime, 'CI')]
 
