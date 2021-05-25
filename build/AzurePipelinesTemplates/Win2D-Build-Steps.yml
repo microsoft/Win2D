@@ -1,5 +1,6 @@
 parameters:
   isRelease: false
+  sdkVersion: 18362
   codeSignInlineOperation: |
         [
           {
@@ -69,6 +70,12 @@ steps:
     useGlobalJson: true
     performMultiLevelLookup: true
     installationPath: $(Agent.ToolsDirectory)/dotnet
+- task: powershell@2
+  inputs:
+    targetType: filePath
+    filePath: build\Install-WindowsSdkISO.ps1
+    arguments: ${{ parameters.sdkVersion }}
+  displayName: 'Install Insider SDK (${{ parameters.sdkVersion }})'
 - task: PowerShell@1
   displayName: 'Download Nuget'
   inputs:
