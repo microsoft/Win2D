@@ -52,7 +52,7 @@ public:
         return SharedDevice;
     }
 
-    virtual ComPtr<ABI::Microsoft::System::IDispatcherQueue> GetDispatcherForCurrentThread() override
+    virtual ComPtr<ABI::Microsoft::UI::Dispatching::IDispatcherQueue> GetDispatcherForCurrentThread() override
     {
         return Dispatcher;
     }

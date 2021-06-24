@@ -58,7 +58,7 @@ public:
         CheckMakeResult(handler);
 
         boolean result;
-        ThrowIfFailed(m_dispatcher->TryEnqueueWithPriority(ABI::Microsoft::System::DispatcherQueuePriority_Normal, handler.Get(), &result));
+        ThrowIfFailed(m_dispatcher->TryEnqueueWithPriority(ABI::Microsoft::UI::Dispatching::DispatcherQueuePriority_Normal, handler.Get(), &result));
     }
 
     void TaskCompleted(DeferrableTask* task)
@@ -101,7 +101,7 @@ private:
         CheckMakeResult(handler);
         
         boolean result;
-        ThrowIfFailed(m_dispatcher->TryEnqueueWithPriority(ABI::Microsoft::System::DispatcherQueuePriority_Normal, handler.Get(), &result));
+        ThrowIfFailed(m_dispatcher->TryEnqueueWithPriority(ABI::Microsoft::UI::Dispatching::DispatcherQueuePriority_Normal, handler.Get(), &result));
     }
     
     

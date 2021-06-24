@@ -5,7 +5,6 @@
 #pragma once
 
 #include "drawing/CanvasStrokeStyle.h"
-#include "Microsoft.Graphics.Interop.h"
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Geometry
 {
@@ -81,8 +80,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         ID2D1Geometry,
         CanvasGeometry,
         ICanvasGeometry,
-        ABI::Microsoft::Graphics::IGeometrySource2D,
-        ABI::Microsoft::Graphics::IGeometrySource2DInterop,
+        ABI::Windows::Graphics::IGeometrySource2D,
+        ABI::Windows::Graphics::IGeometrySource2DInterop,
         CloakedIid<ICanvasResourceWrapperWithDevice>)
     {
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_Geometry_CanvasGeometry, BaseTrust);

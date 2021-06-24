@@ -65,7 +65,7 @@ public:
 
 #ifdef WINUI3
         m_mockWindow->get_DispatcherQueueMethod.AllowAnyCall(
-            [=](ABI::Microsoft::System::IDispatcherQueue** out)
+            [=](ABI::Microsoft::UI::Dispatching::IDispatcherQueue** out)
             {
                 return m_uiThreadDispatcher.CopyTo(out);
             });

@@ -11,7 +11,7 @@ class MockWindow : public RuntimeClass<IWindow>
 public:
     ComPtr<MockEventSource<WindowVisibilityChangedEventHandler>> VisibilityChangedEventSource;
 
-    CALL_COUNTER_WITH_MOCK(get_DispatcherQueueMethod, HRESULT(ABI::Microsoft::System::IDispatcherQueue**));
+    CALL_COUNTER_WITH_MOCK(get_DispatcherQueueMethod, HRESULT(ABI::Microsoft::UI::Dispatching::IDispatcherQueue**));
 
     MockWindow()
         : m_visible(true)
@@ -100,7 +100,7 @@ public:
     }
 
     IFACEMETHODIMP STDMETHODCALLTYPE get_DispatcherQueue(
-        ABI::Microsoft::System::IDispatcherQueue** value
+        ABI::Microsoft::UI::Dispatching::IDispatcherQueue** value
     )
     {
         return get_DispatcherQueueMethod.WasCalled(value);

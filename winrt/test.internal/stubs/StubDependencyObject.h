@@ -31,7 +31,7 @@ namespace canvas
 
         IFACEMETHODIMP get_Dispatcher(ABI::Windows::UI::Core::ICoreDispatcher** value)  override { return S_OK; }
 
-        IFACEMETHODIMP get_DispatcherQueue(ABI::Microsoft::System::IDispatcherQueue** value)  override { return S_OK; }
+        IFACEMETHODIMP get_DispatcherQueue(ABI::Microsoft::UI::Dispatching::IDispatcherQueue** value)  override { return S_OK; }
 
     };
 }

@@ -13,7 +13,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     using namespace ABI::Windows::ApplicationModel;
     using namespace ABI::Windows::Graphics::Display;
 #ifdef WINUI3
-    using namespace ABI::Microsoft::System;
+    using namespace ABI::Microsoft::UI::Dispatching;
 #else
     using namespace ABI::Windows::UI::Core;
 #endif

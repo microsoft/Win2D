@@ -17,8 +17,8 @@ ComPtr<ICanvasDevice> DefaultPrintDocumentAdapter::GetSharedDevice()
 
 ComPtr<IDispatcherQueue> DefaultPrintDocumentAdapter::GetDispatcherForCurrentThread()
 {
-    ComPtr<ABI::Microsoft::System::IDispatcherQueueStatics> dispatcherQueueStatic;
-    ThrowIfFailed(GetActivationFactory(HStringReference(RuntimeClass_Microsoft_System_DispatcherQueue).Get(), &dispatcherQueueStatic));
+    ComPtr<ABI::Microsoft::UI::Dispatching::IDispatcherQueueStatics> dispatcherQueueStatic;
+    ThrowIfFailed(GetActivationFactory(HStringReference(RuntimeClass_Microsoft_UI_Dispatching_DispatcherQueue).Get(), &dispatcherQueueStatic));
 
     ComPtr<IDispatcherQueue> dispatcherQueue;
     ThrowIfFailed(dispatcherQueueStatic->GetForCurrentThread(&dispatcherQueue));

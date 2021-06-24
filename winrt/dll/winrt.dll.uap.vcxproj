@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\..\packages\Microsoft.ProjectReunion.0.5.7\build\native\Microsoft.ProjectReunion.props" Condition="Exists('..\..\packages\Microsoft.ProjectReunion.0.5.7\build\native\Microsoft.ProjectReunion.props')" />
-  <Import Project="..\..\packages\Microsoft.ProjectReunion.Foundation.0.5.7\build\native\Microsoft.ProjectReunion.Foundation.props" Condition="Exists('..\..\packages\Microsoft.ProjectReunion.Foundation.0.5.7\build\native\Microsoft.ProjectReunion.Foundation.props')" />
-  <Import Project="..\..\packages\Microsoft.ProjectReunion.WinUI.0.5.7\build\native\Microsoft.ProjectReunion.WinUI.props" Condition="Exists('..\..\packages\Microsoft.ProjectReunion.WinUI.0.5.7\build\native\Microsoft.ProjectReunion.WinUI.props')" />
+  <Import Project="..\..\packages\Microsoft.ProjectReunion.0.8.0\build\native\Microsoft.ProjectReunion.props" Condition="Exists('..\..\packages\Microsoft.ProjectReunion.0.8.0\build\native\Microsoft.ProjectReunion.props')" />
+  <Import Project="..\..\packages\Microsoft.ProjectReunion.Foundation.0.8.0\build\native\Microsoft.ProjectReunion.Foundation.props" Condition="Exists('..\..\packages\Microsoft.ProjectReunion.Foundation.0.8.0\build\native\Microsoft.ProjectReunion.Foundation.props')" />
+  <Import Project="..\..\packages\Microsoft.ProjectReunion.WinUI.0.8.0\build\native\Microsoft.ProjectReunion.WinUI.props" Condition="Exists('..\..\packages\Microsoft.ProjectReunion.WinUI.0.8.0\build\native\Microsoft.ProjectReunion.WinUI.props')" />
   <PropertyGroup Label="Globals">
     <ProjectGuid>{8cf21e5d-e0a2-4fe7-8e2b-a025cf52dcfb}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
@@ -17,7 +17,7 @@
     <ItemsRootNamespace>Microsoft.Graphics.Canvas</ItemsRootNamespace>
     <TargetName>$(ItemsRootNamespace)</TargetName>
     <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
-    <WindowsTargetPlatformMinVersion>10.0.17763.0</WindowsTargetPlatformMinVersion>
+    <WindowsTargetPlatformMinVersion>10.0.18362.0</WindowsTargetPlatformMinVersion>
   </PropertyGroup>
   <PropertyGroup>
     <SkipAddPriPayloadFilesToCopyToOutputDirectoryItems>true</SkipAddPriPayloadFilesToCopyToOutputDirectoryItems>
@@ -107,13 +107,13 @@
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\..\packages\Microsoft.ProjectReunion.Foundation.0.5.7\build\native\Microsoft.ProjectReunion.Foundation.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.ProjectReunion.Foundation.0.5.7\build\native\Microsoft.ProjectReunion.Foundation.props'))" />
-    <Error Condition="!Exists('..\..\packages\Microsoft.ProjectReunion.Foundation.0.5.7\build\native\Microsoft.ProjectReunion.Foundation.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.ProjectReunion.Foundation.0.5.7\build\native\Microsoft.ProjectReunion.Foundation.targets'))" />
-    <Error Condition="!Exists('..\..\packages\Microsoft.ProjectReunion.WinUI.0.5.7\build\native\Microsoft.ProjectReunion.WinUI.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.ProjectReunion.WinUI.0.5.7\build\native\Microsoft.ProjectReunion.WinUI.props'))" />
-    <Error Condition="!Exists('..\..\packages\Microsoft.ProjectReunion.WinUI.0.5.7\build\native\Microsoft.ProjectReunion.WinUI.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.ProjectReunion.WinUI.0.5.7\build\native\Microsoft.ProjectReunion.WinUI.targets'))" />
-    <Error Condition="!Exists('..\..\packages\Microsoft.ProjectReunion.0.5.7\build\native\Microsoft.ProjectReunion.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.ProjectReunion.0.5.7\build\native\Microsoft.ProjectReunion.props'))" />
+    <Error Condition="!Exists('..\..\packages\Microsoft.ProjectReunion.Foundation.0.8.0\build\native\Microsoft.ProjectReunion.Foundation.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.ProjectReunion.Foundation.0.8.0\build\native\Microsoft.ProjectReunion.Foundation.props'))" />
+    <Error Condition="!Exists('..\..\packages\Microsoft.ProjectReunion.Foundation.0.8.0\build\native\Microsoft.ProjectReunion.Foundation.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.ProjectReunion.Foundation.0.8.0\build\native\Microsoft.ProjectReunion.Foundation.targets'))" />
+    <Error Condition="!Exists('..\..\packages\Microsoft.ProjectReunion.WinUI.0.8.0\build\native\Microsoft.ProjectReunion.WinUI.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.ProjectReunion.WinUI.0.8.0\build\native\Microsoft.ProjectReunion.WinUI.props'))" />
+    <Error Condition="!Exists('..\..\packages\Microsoft.ProjectReunion.WinUI.0.8.0\build\native\Microsoft.ProjectReunion.WinUI.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.ProjectReunion.WinUI.0.8.0\build\native\Microsoft.ProjectReunion.WinUI.targets'))" />
+    <Error Condition="!Exists('..\..\packages\Microsoft.ProjectReunion.0.8.0\build\native\Microsoft.ProjectReunion.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.ProjectReunion.0.8.0\build\native\Microsoft.ProjectReunion.props'))" />
   </Target>
-  <Import Project="..\..\packages\Microsoft.ProjectReunion.0.5.7\build\native\Microsoft.ProjectReunion.targets" Condition="Exists('..\..\packages\Microsoft.ProjectReunion.0.5.7\build\native\Microsoft.ProjectReunion.targets')" />
-  <Import Project="..\..\packages\Microsoft.ProjectReunion.Foundation.0.5.7\build\native\Microsoft.ProjectReunion.Foundation.targets" Condition="Exists('..\..\packages\Microsoft.ProjectReunion.Foundation.0.5.7\build\native\Microsoft.ProjectReunion.Foundation.targets')" />
-  <Import Project="..\..\packages\Microsoft.ProjectReunion.WinUI.0.5.7\build\native\Microsoft.ProjectReunion.WinUI.targets" Condition="Exists('..\..\packages\Microsoft.ProjectReunion.WinUI.0.5.7\build\native\Microsoft.ProjectReunion.WinUI.targets')" />
+  <Import Project="..\..\packages\Microsoft.ProjectReunion.0.8.0\build\native\Microsoft.ProjectReunion.targets" Condition="Exists('..\..\packages\Microsoft.ProjectReunion.0.8.0\build\native\Microsoft.ProjectReunion.targets')" />
+  <Import Project="..\..\packages\Microsoft.ProjectReunion.Foundation.0.8.0\build\native\Microsoft.ProjectReunion.Foundation.targets" Condition="Exists('..\..\packages\Microsoft.ProjectReunion.Foundation.0.8.0\build\native\Microsoft.ProjectReunion.Foundation.targets')" />
+  <Import Project="..\..\packages\Microsoft.ProjectReunion.WinUI.0.8.0\build\native\Microsoft.ProjectReunion.WinUI.targets" Condition="Exists('..\..\packages\Microsoft.ProjectReunion.WinUI.0.8.0\build\native\Microsoft.ProjectReunion.WinUI.targets')" />
 </Project>

@@ -1024,12 +1024,12 @@ namespace Microsoft
                 END_ENUM(ABI::Windows::UI::Core::CoreDispatcherPriority);
             }
 #else
-            ENUM_TO_STRING(ABI::Microsoft::System::DispatcherQueuePriority)
+            ENUM_TO_STRING(ABI::Microsoft::UI::Dispatching::DispatcherQueuePriority)
             {
-                ENUM_VALUE(ABI::Microsoft::System::DispatcherQueuePriority_Low);
-                ENUM_VALUE(ABI::Microsoft::System::DispatcherQueuePriority_Normal);
-                ENUM_VALUE(ABI::Microsoft::System::DispatcherQueuePriority_High);
-                END_ENUM(ABI::Microsoft::System::DispatcherQueuePriority);
+                ENUM_VALUE(ABI::Microsoft::UI::Dispatching::DispatcherQueuePriority_Low);
+                ENUM_VALUE(ABI::Microsoft::UI::Dispatching::DispatcherQueuePriority_Normal);
+                ENUM_VALUE(ABI::Microsoft::UI::Dispatching::DispatcherQueuePriority_High);
+                END_ENUM(ABI::Microsoft::UI::Dispatching::DispatcherQueuePriority);
             }
 #endif
             ENUM_TO_STRING(D2D1_COMBINE_MODE)

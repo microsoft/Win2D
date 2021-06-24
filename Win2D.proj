@@ -35,6 +35,10 @@
       <Platforms>AnyCPU</Platforms>
       <BinDir>Windows</BinDir>
     </AnyCPUProject>
+    <AnyCPUProject>
+      <Platforms>AnyCPU</Platforms>
+      <BinDir>Windows</BinDir>
+    </AnyCPUProject>
   </ItemDefinitionGroup>
 
 

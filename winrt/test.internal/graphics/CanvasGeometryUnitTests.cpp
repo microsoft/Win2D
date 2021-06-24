@@ -76,8 +76,8 @@ public:
 
         ASSERT_IMPLEMENTS_INTERFACE(canvasGeometry, ICanvasGeometry);
         ASSERT_IMPLEMENTS_INTERFACE(canvasGeometry, ABI::Windows::Foundation::IClosable);
-        ASSERT_IMPLEMENTS_INTERFACE(canvasGeometry, ABI::Microsoft::Graphics::IGeometrySource2D);
-        ASSERT_IMPLEMENTS_INTERFACE(canvasGeometry, ABI::Microsoft::Graphics::IGeometrySource2DInterop);
+        ASSERT_IMPLEMENTS_INTERFACE(canvasGeometry, ABI::Windows::Graphics::IGeometrySource2D);
+        ASSERT_IMPLEMENTS_INTERFACE(canvasGeometry, ABI::Windows::Graphics::IGeometrySource2DInterop);
     }
 
     TEST_METHOD_EX(CanvasGeometry_CreatedWithCorrectD2DRectangleResource)

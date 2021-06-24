@@ -10,7 +10,7 @@
 
 class StubDispatcher : public MockDispatcherQueue
 {
-    typedef std::pair<ComPtr<ABI::Microsoft::System::IDispatcherQueueHandler>, ComPtr<MockAsyncAction>> HandlerAndAction;
+    typedef std::pair<ComPtr<ABI::Microsoft::UI::Dispatching::IDispatcherQueueHandler>, ComPtr<MockAsyncAction>> HandlerAndAction;
 
     std::queue<HandlerAndAction> m_pendingActions;
     bool m_stopped;
@@ -23,8 +23,8 @@ public:
     }
 
     virtual IFACEMETHODIMP TryEnqueueWithPriority(
-        ABI::Microsoft::System::DispatcherQueuePriority priority,
-        ABI::Microsoft::System::IDispatcherQueueHandler* agileCallback,
+        ABI::Microsoft::UI::Dispatching::DispatcherQueuePriority priority,
+        ABI::Microsoft::UI::Dispatching::IDispatcherQueueHandler* agileCallback,
         boolean* result) override
     {
         if (TryEnqueueWithPriorityMethod.HasMock())
@@ -34,7 +34,7 @@ public:
             [&]
             {
                 auto action = Make<MockAsyncAction>();
-                m_pendingActions.push(std::make_pair(ComPtr<ABI::Microsoft::System::IDispatcherQueueHandler>(agileCallback), action));
+                m_pendingActions.push(std::make_pair(ComPtr<ABI::Microsoft::UI::Dispatching::IDispatcherQueueHandler>(agileCallback), action));
             });
     }
 

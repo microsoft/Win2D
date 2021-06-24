@@ -31,7 +31,7 @@ public:
     CALL_COUNTER_WITH_MOCK(ReadLocalValueMethod, HRESULT(IDependencyProperty*, IInspectable**));
     CALL_COUNTER_WITH_MOCK(GetAnimationBaseValueMethod, HRESULT(IDependencyProperty*, IInspectable**));
     CALL_COUNTER_WITH_MOCK(get_DispatcherMethod, HRESULT(ICoreDispatcher**));    
-    CALL_COUNTER_WITH_MOCK(get_DispatcherQueueMethod, HRESULT(ABI::Microsoft::System::IDispatcherQueue**));
+    CALL_COUNTER_WITH_MOCK(get_DispatcherQueueMethod, HRESULT(ABI::Microsoft::UI::Dispatching::IDispatcherQueue**));
 
     CALL_COUNTER_WITH_MOCK(RegisterPropertyChangedCallbackMethod, HRESULT(
         ABI::Microsoft::UI::Xaml::IDependencyProperty* dp,
@@ -146,7 +146,7 @@ public:
         return get_DispatcherMethod.WasCalled(v);
     }    
 
-    IFACEMETHODIMP get_DispatcherQueue(ABI::Microsoft::System::IDispatcherQueue** v) override
+    IFACEMETHODIMP get_DispatcherQueue(ABI::Microsoft::UI::Dispatching::IDispatcherQueue** v) override
     {
         return get_DispatcherQueueMethod.WasCalled(v);
     }

@@ -7,7 +7,7 @@
 #include "CanvasVirtualImageSource.h"
 
 using namespace ABI::Microsoft::Graphics::Canvas::UI::Xaml;
-using namespace ABI::Microsoft::System;
+using namespace ABI::Microsoft::UI::Dispatching;
 
 class CanvasVirtualControlFactory;
 
@@ -344,7 +344,7 @@ void CanvasVirtualControl::Changed(ChangeReason reason)
                     });
             });
         boolean result = true;
-        dispatcher->TryEnqueueWithPriority(ABI::Microsoft::System::DispatcherQueuePriority_Normal, callback.Get(), &result);
+        dispatcher->TryEnqueueWithPriority(ABI::Microsoft::UI::Dispatching::DispatcherQueuePriority_Normal, callback.Get(), &result);
     }
 }
 

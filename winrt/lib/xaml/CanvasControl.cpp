@@ -12,7 +12,7 @@ using namespace ABI::Microsoft::Graphics::Canvas::UI::Xaml;
 using namespace ABI::Microsoft::Graphics::Canvas;
 using namespace ABI::Windows::ApplicationModel::Core;
 using namespace ABI::Windows::ApplicationModel;
-using namespace ABI::Microsoft::System;
+using namespace ABI::Microsoft::UI::Dispatching;
 using namespace ABI::Windows::Graphics::Display;
 using namespace ABI::Microsoft::UI::Xaml::Media;
 using namespace ABI::Microsoft::UI::Xaml;
@@ -333,7 +333,7 @@ void CanvasControl::Changed(ChangeReason)
         });
         CheckMakeResult(callback);
         boolean result = true;
-        dispatcher->TryEnqueueWithPriority(ABI::Microsoft::System::DispatcherQueuePriority_Normal, callback.Get(), &result);
+        dispatcher->TryEnqueueWithPriority(ABI::Microsoft::UI::Dispatching::DispatcherQueuePriority_Normal, callback.Get(), &result);
     }
 }
 
