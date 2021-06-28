@@ -1,5 +1,12 @@
 # Win2D Changelog
 
+## Win2D-WinUI 0.8.0.21
+_June 26, 2021_
+
+Updates Win2D to depend on Project Reunion 0.8.0
+
+---
+
 ## Win2D-WinUI 0.5.7.20 - Support for Project Reunion 0.5.7
 _May 26, 2021_
 
