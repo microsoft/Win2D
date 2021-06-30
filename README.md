@@ -5,6 +5,8 @@ rendering with GPU acceleration. It is available to C#, C++ and VB developers
 writing apps for the Windows Universal Platform (UWP). It utilizes the power
 of Direct2D, and integrates seamlessly with XAML and CoreWindow.
 
+Visit the [DirectX Landing Page](https://devblogs.microsoft.com/directx/landing-page/) for more resources for DirectX developers.
+
 ##### Where to get it
 - [NuGet package](http://www.nuget.org/packages/Win2D.uwp)
 - [Source code](http://github.com/Microsoft/Win2D)
