@@ -7,14 +7,12 @@
 class TestBitmapAdapter : public CanvasBitmapAdapter
 {
     ComPtr<IWICBitmapSource> m_converter;
-    ComPtr<StubDependencyObject> m_stubDependencyObject;
 
 public:
     std::function<void()> MockCreateWicBitmapSource;
 
     TestBitmapAdapter(ComPtr<IWICFormatConverter> converter)
-        : m_converter(converter),
-        m_stubDependencyObject(Make<StubDependencyObject>())
+        : m_converter(converter)
     {
     }
 
@@ -36,11 +34,6 @@ public:
             WICBitmapTransformOptions transformOptions) override
     {
         return source;
-    }
-
-    virtual void SetDependencyObjectBase(CanvasBitmap* bitmap) override
-    {
-        ThrowIfFailed(bitmap->SetComposableBasePointers(m_stubDependencyObject.Get()));
     }
 };
 

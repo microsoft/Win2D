@@ -46,8 +46,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         virtual ComPtr<IWICBitmapSource> CreateFlipRotator(
             ComPtr<IWICBitmapSource> const& source,
             WICBitmapTransformOptions transformOptions) = 0;
-
-        virtual void SetDependencyObjectBase(CanvasBitmap* bitmap) = 0;
     };
 
 
@@ -64,8 +62,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         virtual ComPtr<IWICBitmapSource> CreateFlipRotator(
             ComPtr<IWICBitmapSource> const& source,
             WICBitmapTransformOptions transformOptions) override;
-
-        virtual void SetDependencyObjectBase(CanvasBitmap* bitmap) override;
     };
 
 
@@ -896,8 +892,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     class CanvasBitmap :
         public RuntimeClass<                                    
             RuntimeClassFlags<WinRtClassicComMix>,              
-            MixIn<CanvasBitmap, CanvasBitmapImpl<CanvasBitmapTraits>>,
-            ComposableBase<ABI::Microsoft::UI::Xaml::IDependencyObjectFactory>>
+            MixIn<CanvasBitmap, CanvasBitmapImpl<CanvasBitmapTraits>>>
         , public CanvasBitmapImpl<CanvasBitmapTraits>
     {
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_CanvasBitmap, BaseTrust);

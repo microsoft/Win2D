@@ -357,27 +357,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return bitmapFlipRotator;
     }
 
-    void DefaultBitmapAdapter::SetDependencyObjectBase(CanvasBitmap* bitmap)
-    {
-        ComPtr<IDependencyObjectFactory> innerFactory;
-        ComPtr<IDependencyObject> innerInstance;
-        ComPtr<IInspectable> innerInspectable;
-
-        ThrowIfFailed(GetActivationFactory(
-            HStringReference(RuntimeClass_Microsoft_UI_Xaml_DependencyObject).Get(),
-            &innerFactory));
-
-        ThrowIfFailed(innerFactory->CreateInstance(
-            static_cast<ICanvasBitmap *>(bitmap),
-            &innerInspectable,
-            &innerInstance));
-
-        ThrowIfFailed(bitmap->SetComposableBasePointers(
-            innerInspectable.Get(),
-            innerFactory.Get()));
-    }
-
-
     ComPtr<CanvasBitmap> CanvasBitmap::CreateNew(
         ICanvasDevice* canvasDevice,
         HSTRING fileName,
@@ -1133,8 +1112,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     {
         assert(!IsRenderTargetBitmap(d2dBitmap) 
             && "CanvasBitmap should never be constructed with a render-target bitmap.  This should have been validated before construction.");
-
-        CanvasBitmapAdapter::GetInstance()->SetDependencyObjectBase(this);
     }
 
     static void CopyPixelBytes(
