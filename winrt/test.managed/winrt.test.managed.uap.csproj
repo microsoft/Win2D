@@ -156,7 +156,7 @@
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>6.2.12</Version>
     </PackageReference>
-    <PackageReference Include="Microsoft.ProjectReunion.WinUI" Version="0.8.0" />
+    <PackageReference Include="Microsoft.ProjectReunion.WinUI" Version="0.8.2" />
     <PackageReference Include="MSTest.TestAdapter">
       <Version>2.2.3</Version>
     </PackageReference>

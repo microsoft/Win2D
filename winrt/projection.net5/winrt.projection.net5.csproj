@@ -20,7 +20,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.ProjectReunion.WinUI" Version="0.8.0" />
+    <PackageReference Include="Microsoft.ProjectReunion.WinUI" Version="0.8.2" />
     <PackageReference Include="Microsoft.Windows.CSWinRT" Version="1.3.0" />
     <PackageReference Include="Microsoft.SourceLink.AzureRepos.Git" Version="1.0.0" PrivateAssets="All" />
   
@@ -33,8 +33,8 @@
 
   <ItemGroup>
     <FrameworkReference Update="Microsoft.Windows.SDK.NET.Ref">
-      <TargetingPackVersion>10.0.18362.15</TargetingPackVersion>
-      <RuntimeFrameworkVersion>10.0.18362.15</RuntimeFrameworkVersion>
+      <TargetingPackVersion>10.0.18362.18</TargetingPackVersion>
+      <RuntimeFrameworkVersion>10.0.18362.18</RuntimeFrameworkVersion>
     </FrameworkReference>
   </ItemGroup>
 </Project>
