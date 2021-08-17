@@ -1,5 +1,14 @@
 # Win2D Changelog
 
+## Win2D-WinUI 0.8.2.23
+_August 17, 2021_
+
+Updates Win2D to depend on Project Reunion 0.8.2
+CanvasBitmap no longer is a DependencyObject
+Updates CsWinRT to 1.3
+
+---
+
 ## Win2D-WinUI 0.8.0.21
 _June 26, 2021_
 
