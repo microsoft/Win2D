@@ -59,6 +59,9 @@ ipch/
 # Git merge backup files
 *.orig
 
+# VS Code files
+.vscode/
+
 # =========================
 # Windows detritus
 # =========================

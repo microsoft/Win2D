@@ -1,8 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\..\packages\Microsoft.ProjectReunion.0.8.2\build\native\Microsoft.ProjectReunion.props" Condition="Exists('..\..\packages\Microsoft.ProjectReunion.0.8.2\build\native\Microsoft.ProjectReunion.props')" />
-  <Import Project="..\..\packages\Microsoft.ProjectReunion.Foundation.0.8.2\build\native\Microsoft.ProjectReunion.Foundation.props" Condition="Exists('..\..\packages\Microsoft.ProjectReunion.Foundation.0.8.2\build\native\Microsoft.ProjectReunion.Foundation.props')" />
-  <Import Project="..\..\packages\Microsoft.ProjectReunion.WinUI.0.8.2\build\native\Microsoft.ProjectReunion.WinUI.props" Condition="Exists('..\..\packages\Microsoft.ProjectReunion.WinUI.0.8.2\build\native\Microsoft.ProjectReunion.WinUI.props')" />
+  <Import Project="..\..\packages\Microsoft.WindowsAppSdk.1.0.0-experimental1\build\native\Microsoft.WindowsAppSdk.props" Condition="Exists('..\..\packages\Microsoft.WindowsAppSdk.1.0.0-experimental1\build\native\Microsoft.WindowsAppSdk.props')" />
+  <Import Project="..\..\packages\Microsoft.WindowsAppSdk.Foundation.1.0.0-experimental1\build\native\Microsoft.WindowsAppSdk.Foundation.props" Condition="Exists('..\..\packages\Microsoft.WindowsAppSdk.Foundation.1.0.0-experimental1\build\native\Microsoft.WindowsAppSdk.Foundation.props')" />
+  <Import Project="..\..\packages\Microsoft.WindowsAppSdk.WinUI.1.0.0-experimental1\build\native\Microsoft.WindowsAppSdk.WinUI.props" Condition="Exists('..\..\packages\Microsoft.WindowsAppSdk.WinUI.1.0.0-experimental1\build\native\Microsoft.WindowsAppSdk.WinUI.props')" />
+  <Import Project="..\..\packages\Microsoft.WindowsAppSdk.InteractiveExperiences.1.0.0-experimental1\build\native\Microsoft.WindowsAppSdk.InteractiveExperiences.props" Condition="Exists('..\..\packages\Microsoft.WindowsAppSdk.InteractiveExperiences.1.0.0-experimental1\build\native\Microsoft.WindowsAppSdk.InteractiveExperiences.props')" />
   <Import Project="..\..\packages\Microsoft.Windows.MidlRT.2.0.200924.1\build\native\Microsoft.Windows.MidlRT.props" Condition="Exists('..\..\packages\Microsoft.Windows.MidlRT.2.0.200924.1\build\native\Microsoft.Windows.MidlRT.props')" />
   <Import Project="..\..\packages\Microsoft.Windows.AbiWinRT.2.0.210330.2\build\native\Microsoft.Windows.AbiWinRT.props" Condition="Exists('..\..\packages\Microsoft.Windows.AbiWinRT.2.0.210330.2\build\native\Microsoft.Windows.AbiWinRT.props')" />
   <PropertyGroup Label="Globals">
@@ -263,6 +264,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <None Include="ClassDiagram.cd" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\lib\winrt.lib.uap.vcxproj">
       <Project>{26b85b6e-3520-42b5-adb6-971010cc99fa}</Project>
       <Private>false</Private>
@@ -271,10 +276,6 @@
       <LinkLibraryDependencies>true</LinkLibraryDependencies>
       <UseLibraryDependencyInputs>false</UseLibraryDependencyInputs>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="ClassDiagram.cd" />
-    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <Import Project="..\..\build\Win2D.cpp.targets" />
@@ -286,11 +287,13 @@
     <Error Condition="!Exists('..\..\packages\Microsoft.Windows.AbiWinRT.2.0.210330.2\build\native\Microsoft.Windows.AbiWinRT.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.Windows.AbiWinRT.2.0.210330.2\build\native\Microsoft.Windows.AbiWinRT.targets'))" />
     <Error Condition="!Exists('..\..\packages\Microsoft.Windows.MidlRT.2.0.200924.1\build\native\Microsoft.Windows.MidlRT.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.Windows.MidlRT.2.0.200924.1\build\native\Microsoft.Windows.MidlRT.props'))" />
     <Error Condition="!Exists('..\..\packages\Microsoft.Windows.MidlRT.2.0.200924.1\build\native\Microsoft.Windows.MidlRT.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.Windows.MidlRT.2.0.200924.1\build\native\Microsoft.Windows.MidlRT.targets'))" />
-    <Error Condition="!Exists('..\..\packages\Microsoft.ProjectReunion.Foundation.0.8.2\build\native\Microsoft.ProjectReunion.Foundation.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.ProjectReunion.Foundation.0.8.2\build\native\Microsoft.ProjectReunion.Foundation.props'))" />
-    <Error Condition="!Exists('..\..\packages\Microsoft.ProjectReunion.Foundation.0.8.2\build\native\Microsoft.ProjectReunion.Foundation.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.ProjectReunion.Foundation.0.8.2\build\native\Microsoft.ProjectReunion.Foundation.targets'))" />
-    <Error Condition="!Exists('..\..\packages\Microsoft.ProjectReunion.WinUI.0.8.2\build\native\Microsoft.ProjectReunion.WinUI.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.ProjectReunion.WinUI.0.8.2\build\native\Microsoft.ProjectReunion.WinUI.props'))" />
-    <Error Condition="!Exists('..\..\packages\Microsoft.ProjectReunion.WinUI.0.8.2\build\native\Microsoft.ProjectReunion.WinUI.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.ProjectReunion.WinUI.0.8.2\build\native\Microsoft.ProjectReunion.WinUI.targets'))" />
-    <Error Condition="!Exists('..\..\packages\Microsoft.ProjectReunion.0.8.2\build\native\Microsoft.ProjectReunion.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.ProjectReunion.0.8.2\build\native\Microsoft.ProjectReunion.props'))" />
+    <Error Condition="!Exists('..\..\packages\Microsoft.WindowsAppSdk.Foundation.1.0.0-experimental1\build\native\Microsoft.WindowsAppSdk.Foundation.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.WindowsAppSdk.Foundation.1.0.0-experimental1\build\native\Microsoft.WindowsAppSdk.Foundation.props'))" />
+    <Error Condition="!Exists('..\..\packages\Microsoft.WindowsAppSdk.Foundation.1.0.0-experimental1\build\native\Microsoft.WindowsAppSdk.Foundation.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.WindowsAppSdk.Foundation.1.0.0-experimental1\build\native\Microsoft.WindowsAppSdk.Foundation.targets'))" />
+    <Error Condition="!Exists('..\..\packages\Microsoft.WindowsAppSdk.WinUI.1.0.0-experimental1\build\native\Microsoft.WindowsAppSdk.WinUI.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.WindowsAppSdk.WinUI.1.0.0-experimental1\build\native\Microsoft.WindowsAppSdk.WinUI.props'))" />
+    <Error Condition="!Exists('..\..\packages\Microsoft.WindowsAppSdk.WinUI.1.0.0-experimental1\build\native\Microsoft.WindowsAppSdk.WinUI.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.WindowsAppSdk.WinUI.1.0.0-experimental1\build\native\Microsoft.WindowsAppSdk.WinUI.targets'))" />
+    <Error Condition="!Exists('..\..\packages\Microsoft.WindowsAppSdk.InteractiveExperiences.1.0.0-experimental1\build\native\Microsoft.WindowsAppSdk.InteractiveExperiences.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.WindowsAppSdk.InteractiveExperiences.1.0.0-experimental1\build\native\Microsoft.WindowsAppSdk.InteractiveExperiences.props'))" />
+    <Error Condition="!Exists('..\..\packages\Microsoft.WindowsAppSdk.InteractiveExperiences.1.0.0-experimental1\build\native\Microsoft.WindowsAppSdk.InteractiveExperiences.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.WindowsAppSdk.InteractiveExperiences.1.0.0-experimental1\build\native\Microsoft.WindowsAppSdk.InteractiveExperiences.targets'))" />
+    <Error Condition="!Exists('..\..\packages\Microsoft.WindowsAppSdk.1.0.0-experimental1\build\native\Microsoft.WindowsAppSdk.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.WindowsAppSdk.1.0.0-experimental1\build\native\Microsoft.WindowsAppSdk.props'))" />
   </Target>
   <Import Project="..\..\packages\Microsoft.Windows.AbiWinRT.2.0.210330.2\build\native\Microsoft.Windows.AbiWinRT.targets" Condition="Exists('..\..\packages\Microsoft.Windows.AbiWinRT.2.0.210330.2\build\native\Microsoft.Windows.AbiWinRT.targets')" />
   <Import Project="..\..\packages\Microsoft.Windows.MidlRT.2.0.200924.1\build\native\Microsoft.Windows.MidlRT.targets" Condition="Exists('..\..\packages\Microsoft.Windows.MidlRT.2.0.200924.1\build\native\Microsoft.Windows.MidlRT.targets')" />
@@ -307,7 +310,8 @@
       <AdditionalIncludeDirectories>..\..\obj\winrt.lib.uap\$(FullPlatform)\$(Configuration)\Generated Files;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
-  <Import Project="..\..\packages\Microsoft.ProjectReunion.0.8.2\build\native\Microsoft.ProjectReunion.targets" Condition="Exists('..\..\packages\Microsoft.ProjectReunion.0.8.2\build\native\Microsoft.ProjectReunion.targets')" />
-  <Import Project="..\..\packages\Microsoft.ProjectReunion.Foundation.0.8.2\build\native\Microsoft.ProjectReunion.Foundation.targets" Condition="Exists('..\..\packages\Microsoft.ProjectReunion.Foundation.0.8.2\build\native\Microsoft.ProjectReunion.Foundation.targets')" />
-  <Import Project="..\..\packages\Microsoft.ProjectReunion.WinUI.0.8.2\build\native\Microsoft.ProjectReunion.WinUI.targets" Condition="Exists('..\..\packages\Microsoft.ProjectReunion.WinUI.0.8.2\build\native\Microsoft.ProjectReunion.WinUI.targets')" />
+  <Import Project="..\..\packages\Microsoft.WindowsAppSdk.1.0.0-experimental1\build\native\Microsoft.WindowsAppSdk.targets" Condition="Exists('..\..\packages\Microsoft.WindowsAppSdk.1.0.0-experimental1\build\native\Microsoft.WindowsAppSdk.targets')" />
+  <Import Project="..\..\packages\Microsoft.WindowsAppSdk.Foundation.1.0.0-experimental1\build\native\Microsoft.WindowsAppSdk.Foundation.targets" Condition="Exists('..\..\packages\Microsoft.WindowsAppSdk.Foundation.1.0.0-experimental1\build\native\Microsoft.WindowsAppSdk.Foundation.targets')" />
+  <Import Project="..\..\packages\Microsoft.WindowsAppSdk.WinUI.1.0.0-experimental1\build\native\Microsoft.WindowsAppSdk.WinUI.targets" Condition="Exists('..\..\packages\Microsoft.WindowsAppSdk.WinUI.1.0.0-experimental1\build\native\Microsoft.WindowsAppSdk.WinUI.targets')" />
+  <Import Project="..\..\packages\Microsoft.WindowsAppSdk.InteractiveExperiences.1.0.0-experimental1\build\native\Microsoft.WindowsAppSdk.InteractiveExperiences.targets" Condition="Exists('..\..\packages\Microsoft.WindowsAppSdk.InteractiveExperiences.1.0.0-experimental1\build\native\Microsoft.WindowsAppSdk.InteractiveExperiences.targets')" />
 </Project>

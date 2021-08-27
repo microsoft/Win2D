@@ -1,6 +1,6 @@
 # Transitioning Win2D to Reunion is In-Progress
 
-Moving Win2D over to ProjectReunion and WinUI3 is a work in progress, and some features such as CanvasAnimatedControl have partial or no support.
+Moving Win2D over to WindowsAppSdk and WinUI3 is a work in progress, and some features such as CanvasAnimatedControl have partial or no support.
 
 # Win2D
 

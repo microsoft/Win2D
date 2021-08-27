@@ -88,19 +88,19 @@ namespace Microsoft
 #undef TO_STRING_CX
 
             template<>
-            inline std::wstring ToString<Windows::UI::Color>(Windows::UI::Color* value)
+            inline std::wstring ToString<::Windows::UI::Color>(::Windows::UI::Color* value)
             {
                 return value->ToString()->Data();
             }
 
             template<>
-            inline std::wstring ToString<Windows::UI::Color>(Windows::UI::Color const& value)
+            inline std::wstring ToString<::Windows::UI::Color>(::Windows::UI::Color const& value)
             {
                 return L"Color";
             }
 
             template<>
-            inline std::wstring ToString<Windows::Foundation::Size>(Windows::Foundation::Size const& value)
+            inline std::wstring ToString<::Windows::Foundation::Size>(::Windows::Foundation::Size const& value)
             {
                 wchar_t buf[256];
                 ThrowIfFailed(StringCchPrintf(
@@ -122,7 +122,7 @@ namespace Microsoft
             }
 
             template<>
-            inline std::wstring ToString<Windows::Foundation::Rect>(Windows::Foundation::Rect const& value)
+            inline std::wstring ToString<::Windows::Foundation::Rect>(::Windows::Foundation::Rect const& value)
             {
                 wchar_t buf[256];
                 ThrowIfFailed(StringCchPrintf(
@@ -450,7 +450,7 @@ namespace Microsoft
                 return copy.ToString()->Data();
             }
 
-            inline bool operator==(Windows::UI::Color const& a, Windows::UI::Color const& b)
+            inline bool operator==(::Windows::UI::Color const& a, ::Windows::UI::Color const& b)
             {
                 return a.A == b.A &&
                        a.R == b.R &&
@@ -464,7 +464,7 @@ namespace Microsoft
                        a.Height == b.Height;
             }
 
-            inline bool operator==(Windows::UI::Text::FontWeight const& a, Windows::UI::Text::FontWeight const& b)
+            inline bool operator==(::Windows::UI::Text::FontWeight const& a, ::Windows::UI::Text::FontWeight const& b)
             {
                 return a.Weight == b.Weight;
             }
