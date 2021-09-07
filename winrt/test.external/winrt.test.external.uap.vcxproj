@@ -1,9 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\..\packages\Microsoft.WindowsAppSdk.1.0.0-experimental1\build\native\Microsoft.WindowsAppSdk.props" Condition="Exists('..\..\packages\Microsoft.WindowsAppSdk.1.0.0-experimental1\build\native\Microsoft.WindowsAppSdk.props')" />
-  <Import Project="..\..\packages\Microsoft.WindowsAppSdk.Foundation.1.0.0-experimental1\build\native\Microsoft.WindowsAppSdk.Foundation.props" Condition="Exists('..\..\packages\Microsoft.WindowsAppSdk.Foundation.1.0.0-experimental1\build\native\Microsoft.WindowsAppSdk.Foundation.props')" />
-  <Import Project="..\..\packages\Microsoft.WindowsAppSdk.WinUI.1.0.0-experimental1\build\native\Microsoft.WindowsAppSdk.WinUI.props" Condition="Exists('..\..\packages\Microsoft.WindowsAppSdk.WinUI.1.0.0-experimental1\build\native\Microsoft.WindowsAppSdk.WinUI.props')" />
-  <Import Project="..\..\packages\Microsoft.WindowsAppSdk.InteractiveExperiences.1.0.0-experimental1\build\native\Microsoft.WindowsAppSdk.InteractiveExperiences.props" Condition="Exists('..\..\packages\Microsoft.WindowsAppSdk.InteractiveExperiences.1.0.0-experimental1\build\native\Microsoft.WindowsAppSdk.InteractiveExperiences.props')" />
   <PropertyGroup Label="Globals">
     <ProjectGuid>{f33c7cb9-5eca-47b7-9393-81e6e8f0bd34}</ProjectGuid>
     <RootNamespace>Canvas.Test</RootNamespace>
@@ -20,6 +16,10 @@
   </PropertyGroup>
   <Import Project="..\..\build\Win2D.cpp.props" />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <Import Project="$(WindowsAppSdk_props)" Condition="Exists('$(WindowsAppSdk_props)')" />
+  <Import Project="$(WindowsAppSdk_Foundation_props)" Condition="Exists('$(WindowsAppSdk_Foundation_props)')" />
+  <Import Project="$(WindowsAppSdk_WinUI_props)" Condition="Exists('$(WindowsAppSdk_WinUI_props)')" />
+  <Import Project="$(WindowsAppSdk_InteractiveExperiences_props)" Condition="Exists('$(WindowsAppSdk_InteractiveExperiences_props)')" />
   <PropertyGroup Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
   </PropertyGroup>
@@ -175,11 +175,10 @@
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <ImportGroup Label="ExtensionTargets">
-    <Import Project="..\..\packages\Microsoft.WindowsAppSdk.1.0.0-experimental1\build\native\Microsoft.WindowsAppSdk.targets" Condition="Exists('..\..\packages\Microsoft.WindowsAppSdk.1.0.0-experimental1\build\native\Microsoft.WindowsAppSdk.targets')" />
-    <Import Project="..\..\packages\Microsoft.WindowsAppSdk.Foundation.1.0.0-experimental1\build\native\Microsoft.WindowsAppSdk.Foundation.targets" Condition="Exists('..\..\packages\Microsoft.WindowsAppSdk.Foundation.1.0.0-experimental1\build\native\Microsoft.WindowsAppSdk.Foundation.targets')" />
-    <Import Project="..\..\packages\Microsoft.WindowsAppSdk.WinUI.1.0.0-experimental1\build\native\Microsoft.WindowsAppSdk.WinUI.targets" Condition="Exists('..\..\packages\Microsoft.WindowsAppSdk.WinUI.1.0.0-experimental1\build\native\Microsoft.WindowsAppSdk.WinUI.targets')" />
-    <Import Project="..\..\packages\Microsoft.WindowsAppSdk.InteractiveExperiences.1.0.0-experimental1\build\native\Microsoft.WindowsAppSdk.InteractiveExperiences.targets" Condition="Exists('..\..\packages\Microsoft.WindowsAppSdk.InteractiveExperiences.1.0.0-experimental1\build\native\Microsoft.WindowsAppSdk.InteractiveExperiences.targets')" />
+  <ImportGroup>
+    <Import Project="$(WindowsAppSdk_Foundation_targets)" Condition="Exists('$(WindowsAppSdk_Foundation_targets)')" />
+    <Import Project="$(WindowsAppSdk_WinUI_targets)" Condition="Exists('$(WindowsAppSdk_WinUI_targets)')" />
+    <Import Project="$(WindowsAppSdk_InteractiveExperiences_targets)" Condition="Exists('$(WindowsAppSdk_InteractiveExperiences_targets)')" />
   </ImportGroup>
   <Import Project="..\..\build\Win2D.cpp.targets" />
   <ItemDefinitionGroup>
@@ -199,12 +198,12 @@
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\..\packages\Microsoft.WindowsAppSdk.Foundation.1.0.0-experimental1\build\native\Microsoft.WindowsAppSdk.Foundation.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.WindowsAppSdk.Foundation.1.0.0-experimental1\build\native\Microsoft.WindowsAppSdk.Foundation.props'))" />
-    <Error Condition="!Exists('..\..\packages\Microsoft.WindowsAppSdk.Foundation.1.0.0-experimental1\build\native\Microsoft.WindowsAppSdk.Foundation.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.WindowsAppSdk.Foundation.1.0.0-experimental1\build\native\Microsoft.WindowsAppSdk.Foundation.targets'))" />
-    <Error Condition="!Exists('..\..\packages\Microsoft.WindowsAppSdk.WinUI.1.0.0-experimental1\build\native\Microsoft.WindowsAppSdk.WinUI.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.WindowsAppSdk.WinUI.1.0.0-experimental1\build\native\Microsoft.WindowsAppSdk.WinUI.props'))" />
-    <Error Condition="!Exists('..\..\packages\Microsoft.WindowsAppSdk.WinUI.1.0.0-experimental1\build\native\Microsoft.WindowsAppSdk.WinUI.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.WindowsAppSdk.WinUI.1.0.0-experimental1\build\native\Microsoft.WindowsAppSdk.WinUI.targets'))" />
-    <Error Condition="!Exists('..\..\packages\Microsoft.WindowsAppSdk.1.0.0-experimental1\build\native\Microsoft.WindowsAppSdk.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.WindowsAppSdk.1.0.0-experimental1\build\native\Microsoft.WindowsAppSdk.props'))" />
-    <Error Condition="!Exists('..\..\packages\Microsoft.WindowsAppSdk.InteractiveExperiences.1.0.0-experimental1\build\native\Microsoft.WindowsAppSdk.InteractiveExperiences.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.WindowsAppSdk.InteractiveExperiences.1.0.0-experimental1\build\native\Microsoft.WindowsAppSdk.InteractiveExperiences.props'))" />
-    <Error Condition="!Exists('..\..\packages\Microsoft.WindowsAppSdk.InteractiveExperiences.1.0.0-experimental1\build\native\Microsoft.WindowsAppSdk.InteractiveExperiences.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.WindowsAppSdk.InteractiveExperiences.1.0.0-experimental1\build\native\Microsoft.WindowsAppSdk.InteractiveExperiences.targets'))" />
+      <Error Condition="!Exists('$(WindowsAppSdk_props)')" Text="$([System.String]::Format('$(ErrorText)', '$(WindowsAppSdk_props)'))" />
+      <Error Condition="!Exists('$(WindowsAppSdk_Foundation_props)')" Text="$([System.String]::Format('$(ErrorText)', '$(WindowsAppSdk_Foundation_props)'))" />
+      <Error Condition="!Exists('$(WindowsAppSdk_Foundation_targets)')" Text="$([System.String]::Format('$(ErrorText)', '$(WindowsAppSdk_Foundation_targets)'))" />
+      <Error Condition="!Exists('$(WindowsAppSdk_WinUI_props)')" Text="$([System.String]::Format('$(ErrorText)', '$(WindowsAppSdk_WinUI_props)'))" />
+      <Error Condition="!Exists('$(WindowsAppSdk_WinUI_targets)')" Text="$([System.String]::Format('$(ErrorText)', '$(WindowsAppSdk_WinUI_targets)'))" />
+      <Error Condition="!Exists('$(WindowsAppSdk_InteractiveExperiences_props)')" Text="$([System.String]::Format('$(ErrorText)', '$(WindowsAppSdk_InteractiveExperiences_props)'))" />
+      <Error Condition="!Exists('$(WindowsAppSdk_InteractiveExperiences_targets)')" Text="$([System.String]::Format('$(ErrorText)', '$(WindowsAppSdk_InteractiveExperiences_targets)'))" />
   </Target>
 </Project>

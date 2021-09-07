@@ -9,7 +9,6 @@
     C++ projects.
 
   -->
-
   <PropertyGroup>
     <DeviceType Condition="'$(DeviceType)' == ''">$(TargetPlatformIdentifier)</DeviceType>
   </PropertyGroup>
@@ -51,5 +50,7 @@
     <AssetDir>$(AssetDir.ToLower())</AssetDir>
 
   </PropertyGroup>
+
+  <Import Project="WindowsAppSdk.common.props" />
 
 </Project>

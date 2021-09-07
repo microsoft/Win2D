@@ -156,7 +156,7 @@
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>6.2.12</Version>
     </PackageReference>
-    <PackageReference Include="Microsoft.WindowsAppSdk" Version="1.0.0-experimental1" />
+    <PackageReference Include="Microsoft.WindowsAppSdk" Version="$(WindowsAppSdkVersion)" />
     <PackageReference Include="MSTest.TestAdapter">
       <Version>2.2.3</Version>
     </PackageReference>

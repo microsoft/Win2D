@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <!-- This value controls all of the projects consuming the WindowsAppSdk and centralizes it in one spot.
+            When updating the version, don't forget to update all of the package.config files as well. -->
+        <WindowsAppSdkVersion>1.0.0-experimental1</WindowsAppSdkVersion>
+
+        <_PackagesPath>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\packages'))</_PackagesPath>
+
+        <WindowsAppSdk_props>$(_PackagesPath)\Microsoft.WindowsAppSdk.$(WindowsAppSdkVersion)\build\native\Microsoft.WindowsAppSdk.props</WindowsAppSdk_props>
+        <WindowsAppSdk_Foundation_props>$(_PackagesPath)\Microsoft.WindowsAppSdk.Foundation.$(WindowsAppSdkVersion)\build\native\Microsoft.WindowsAppSdk.Foundation.props</WindowsAppSdk_Foundation_props>
+        <WindowsAppSdk_WinUI_props>$(_PackagesPath)\Microsoft.WindowsAppSdk.WinUI.$(WindowsAppSdkVersion)\build\native\Microsoft.WindowsAppSdk.WinUI.props</WindowsAppSdk_WinUI_props>
+        <WindowsAppSdk_InteractiveExperiences_props>$(_PackagesPath)\Microsoft.WindowsAppSdk.InteractiveExperiences.$(WindowsAppSdkVersion)\build\native\Microsoft.WindowsAppSdk.InteractiveExperiences.props</WindowsAppSdk_InteractiveExperiences_props>
+
+        <!-- The base WindowsAppSdk has no .targets file, so isn't listed here -->
+        <WindowsAppSdk_Foundation_targets>$(_PackagesPath)\Microsoft.WindowsAppSdk.Foundation.$(WindowsAppSdkVersion)\build\native\Microsoft.WindowsAppSdk.Foundation.targets</WindowsAppSdk_Foundation_targets>
+        <WindowsAppSdk_WinUI_targets>$(_PackagesPath)\Microsoft.WindowsAppSdk.WinUI.$(WindowsAppSdkVersion)\build\native\Microsoft.WindowsAppSdk.WinUI.targets</WindowsAppSdk_WinUI_targets>
+        <WindowsAppSdk_InteractiveExperiences_targets>$(_PackagesPath)\Microsoft.WindowsAppSdk.InteractiveExperiences.$(WindowsAppSdkVersion)\build\native\Microsoft.WindowsAppSdk.InteractiveExperiences.targets</WindowsAppSdk_InteractiveExperiences_targets>
+    </PropertyGroup>
+</Project>
