@@ -26,12 +26,6 @@ parameters:
         ]
 
 steps:
-- task: PkgESSetupBuild@10
-  displayName: 'Setup Build'
-  inputs:
-    disableWorkspace: true
-    useDfs: false
-
 - ${{ if eq(parameters.isRelease, true) }}:
   - task: securedevelopmentteam.vss-secure-development-tools.build-task-policheck.PoliCheck@1
     displayName: 'Run PoliCheck'

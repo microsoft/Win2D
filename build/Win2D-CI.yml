@@ -9,7 +9,7 @@ variables:
 jobs:
   - job: BuildProduct
     pool:
-      name: 'Package ES Standard Build'
+      vmImage: 'windows-2019'
     steps:
       - template: AzurePipelinesTemplates\Win2D-Build-Steps.yml
         parameters:
