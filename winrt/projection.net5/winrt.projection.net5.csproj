@@ -17,8 +17,7 @@
     <CSWinRTWindowsMetadata>local</CSWinRTWindowsMetadata>
     <CsWinRTGenerateProjection>true</CsWinRTGenerateProjection>
 
-    <!-- This should be AnyCPU, but WindowsAppSdk 1.0 has issues with it that should be fixed in the future -->
-    <Platforms>x86;x64;arm64</Platforms>
+    <Platforms>AnyCPU</Platforms>
   </PropertyGroup>
 
   <ItemGroup>
@@ -39,4 +38,7 @@
       <RuntimeFrameworkVersion>10.0.18362.18</RuntimeFrameworkVersion>
     </FrameworkReference>
   </ItemGroup>
+
+  <Import Project="$(MSBuildThisFileDirectory)..\..\build\WindowsAppSdk.BootstrapFix.targets" />
+
 </Project>

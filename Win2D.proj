@@ -42,11 +42,7 @@
   <ItemGroup>
     <UAPProject Include="winrt\lib\winrt.lib.uap.vcxproj" />
     <UAPProject Include="winrt\dll\winrt.dll.uap.vcxproj" />
-    <!-- Reunion currently has issues with AnyCpu projects, so as a hack we build the projection project for all the normal platforms -->
-    <!-- <AnyCPUProject Include="winrt\projection.net5\winrt.projection.net5.csproj" /> -->
-    <UAPProject Include="winrt\projection.net5\winrt.projection.net5.csproj">
-      <BinDir>Windows</BinDir>
-    </UAPProject>
+    <AnyCPUProject Include="winrt\projection.net5\winrt.projection.net5.csproj" />
   </ItemGroup>
 
   <!-- Test projects -->

@@ -36,7 +36,7 @@
       <file target="lib\netcoreapp3.0\Microsoft.Graphics.Canvas.winmd"                    src="bin\UAPx86\release\winrt.dll.UAP\Microsoft.Graphics.Canvas.winmd" />
       <file target="lib\net45\Microsoft.Graphics.Canvas.winmd"                            src="bin\UAPx86\release\winrt.dll.UAP\Microsoft.Graphics.Canvas.winmd" />
 
-      <file target="lib\net5.0-windows10.0.18362.0\Microsoft.Graphics.Canvas.Interop.dll" src="bin\x86\release\winrt.projection.net5\Microsoft.Graphics.Canvas.Interop.dll" />
+      <file target="lib\net5.0-windows10.0.18362.0\Microsoft.Graphics.Canvas.Interop.dll" src="bin\anycpu\release\winrt.projection.net5\Microsoft.Graphics.Canvas.Interop.dll" />
 
       <!-- TODO: Doc generation is failing to load Microsoft.System.DispatcherQueue -->
       <!--

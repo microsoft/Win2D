@@ -61,7 +61,7 @@ $env:Platform = "AnyCPU"
 $env:Configuration = "Release"
 Write-Verbose "Restoring Release, AnyCPU"
 & $nugetExe restore $slnPath
-$env:Config = "Debug"
+$env:Configuration = "Debug"
 Write-Verbose "Restoring Debug, AnyCPU"
 & $nugetExe restore $slnPath
 
