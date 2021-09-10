@@ -1,5 +1,13 @@
 # Win2D Changelog
 
+## Win2D-WinUI 1.0.0.26-experimental1
+_September 10, 2021_
+
+Updates Win2D to depend on Project Reunion 1.0.0-experimental1
+This includes a temporary workaround for building for AnyCPU, which is expected to be fully supported in the official 1.0 release.
+
+---
+
 ## Win2D-WinUI 0.8.2.23
 _August 17, 2021_
 
