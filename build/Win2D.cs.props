@@ -20,4 +20,7 @@
   <PropertyGroup>
     <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
   </PropertyGroup>
+  <PropertyGroup>
+    <DefineConstants Condition="'$(EnableWin2DExperimentalFeatures)'=='true'">ENABLE_WIN2D_EXPERIMENTAL_FEATURES</DefineConstants>
+  </PropertyGroup>
 </Project>

@@ -76,6 +76,7 @@ public:
         Assert::IsTrue(IsSameInstance(graphicsDevice.Get(), actualGraphicsDevice.Get()));
     }
 
+#if ENABLE_WIN2D_EXPERIMENTAL_FEATURES
     TEST_METHOD_EX(CanvasComposition_CreateCompositionSurfaceForSwapChain_FailsWhenPassedNullParameters)
     {
         Fixture f;
@@ -111,6 +112,7 @@ public:
 
         Assert::IsTrue(IsSameInstance(compositionSurface.Get(), actualCompositionSurface.Get()));
     }
+#endif
 
     TEST_METHOD_EX(CanvasComposition_GetCanvasDevice_FailsWhenPassedNullParameters)
     {

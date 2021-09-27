@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!-- MidlRT has some collisions with WindowsAppSdk where it doesn't understand to use HintPath to resolve winmd reference paths
+        when it does the .winmd -> .idl conversions.
+        Issue is tracked here: https://github.com/microsoft/xlang/issues/760
+        This target fixes that up by figuring out which winmds are broken and swapping the winmd out for the hintpath. -->
+  <Target Name="ResolveHintPathWinmdsForMidlRT" BeforeTargets="MidlRTMakeReferenceIdl" AfterTargets="GetMidlRTDirectWinMDReferencesForIdl">
+    <ItemGroup>
+      <_UnresolvedMidlRTReferences Include="@(MidlRTDirectWinMDReferencesForIdl)" Condition="!Exists('%(MidlRTDirectWinMDReferencesForIdl.Identity)')" />
+      <_ResolvedAsHintPaths Include="@(_UnresolvedMidlRTReferences)" Condition="Exists('%(_UnresolvedMidlRTReferences.HintPath)')" />
+    </ItemGroup>
+    <Message Text="Excluding references from Midl conversion to idl: @(_ResolvedAsHintPaths)" Importance="High" />
+    <Message Text="Including references from Midl conversion to idl: %(_ResolvedAsHintPaths.HintPath)" Importance="High" />
+    <ItemGroup>
+      <MidlRTDirectWinMDReferencesForIdl Remove="@(_ResolvedAsHintPaths)" />
+      <MidlRTDirectWinMDReferencesForIdl Include="%(_ResolvedAsHintPaths.HintPath)" />
+    </ItemGroup>
+  </Target>
+</Project>

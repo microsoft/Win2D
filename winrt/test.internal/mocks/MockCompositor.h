@@ -10,7 +10,11 @@ using namespace ABI::Microsoft::UI::Composition;
 
 class MockCompositor : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>,
     ICompositor,
-    ICompositorInterop>
+    ICompositorInterop
+#if ENABLE_WIN2D_EXPERIMENTAL_FEATURES
+    , IExpCompositorInterop
+#endif
+    >
 {
 public:
     // ICompositor
@@ -42,9 +46,13 @@ public:
     MOCK_METHOD2(GetCommitBatch                          , HRESULT(CompositionBatchTypes batchType, ICompositionCommitBatch** result));
 
     // ICompositorInterop
-    MOCK_METHOD2(CreateCompositionSurfaceForHandle    , HRESULT(HANDLE hDxgiSwapChain, ICompositionSurface** value));
-    MOCK_METHOD2(CreateCompositionSurfaceForSwapChain , HRESULT(IUnknown* pDxgiSwapChain, ICompositionSurface** value));
     MOCK_METHOD2(CreateGraphicsDevice                 , HRESULT(IUnknown* pRenderingDevice, ICompositionGraphicsDevice** value));
+
+#if ENABLE_WIN2D_EXPERIMENTAL_FEATURES
+    // IExpCompositorInterop
+    MOCK_METHOD2(CreateCompositionSurfaceForHandle, HRESULT(HANDLE hDxgiSwapChain, ICompositionSurface** value));
+    MOCK_METHOD2(CreateCompositionSurfaceForSwapChain, HRESULT(IUnknown* pDxgiSwapChain, ICompositionSurface** value));
+#endif
 };
 
 #endif

@@ -22,8 +22,6 @@
   <Import Project="..\..\build\Win2D.cpp.props" />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <Import Project="$(WindowsAppSdk_props)" Condition="Exists('$(WindowsAppSdk_props)')" />
-  <Import Project="$(WindowsAppSdk_Foundation_props)" Condition="Exists('$(WindowsAppSdk_Foundation_props)')" />
-  <Import Project="$(WindowsAppSdk_WinUI_props)" Condition="Exists('$(WindowsAppSdk_WinUI_props)')" />
   <PropertyGroup Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
   </PropertyGroup>
@@ -108,11 +106,7 @@
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('$(WindowsAppSdk_props)')" Text="$([System.String]::Format('$(ErrorText)', '$(WindowsAppSdk_props)'))" />
-    <Error Condition="!Exists('$(WindowsAppSdk_Foundation_props)')" Text="$([System.String]::Format('$(ErrorText)', '$(WindowsAppSdk_Foundation_props)'))" />
-    <Error Condition="!Exists('$(WindowsAppSdk_Foundation_targets)')" Text="$([System.String]::Format('$(ErrorText)', '$(WindowsAppSdk_Foundation_targets)'))" />
-    <Error Condition="!Exists('$(WindowsAppSdk_WinUI_props)')" Text="$([System.String]::Format('$(ErrorText)', '$(WindowsAppSdk_WinUI_props)'))" />
-    <Error Condition="!Exists('$(WindowsAppSdk_WinUI_targets)')" Text="$([System.String]::Format('$(ErrorText)', '$(WindowsAppSdk_WinUI_targets)'))" />
+    <Error Condition="!Exists('$(WindowsAppSdk_targets)')" Text="$([System.String]::Format('$(ErrorText)', '$(WindowsAppSdk_targets)'))" />
   </Target>
-  <Import Project="$(WindowsAppSdk_Foundation_targets)" Condition="Exists('$(WindowsAppSdk_Foundation_targets)')" />
-  <Import Project="$(WindowsAppSdk_WinUI_targets)" Condition="Exists('$(WindowsAppSdk_WinUI_targets)')" />
+  <Import Project="$(WindowsAppSdk_targets)" Condition="Exists('$(WindowsAppSdk_targets)')" />
 </Project>

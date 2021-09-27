@@ -21,7 +21,7 @@ namespace canvas
         CALL_COUNTER_WITH_MOCK(get_CompositionScaleXMethod, HRESULT(FLOAT*));
         CALL_COUNTER_WITH_MOCK(get_CompositionScaleYMethod, HRESULT(FLOAT*));
 #ifdef WINUI3
-        CALL_COUNTER_WITH_MOCK(CreateCoreIndependentInputSourceMethod, HRESULT(CoreInputDeviceTypes, ABI::Microsoft::UI::Input::Experimental::IExpIndependentPointerInputObserver**));
+        CALL_COUNTER_WITH_MOCK(CreateCoreIndependentInputSourceMethod, HRESULT(ABI::Microsoft::UI::Input::InputPointerSourceDeviceKinds, ABI::Microsoft::UI::Input::IInputPointerSource**));
 #endif
         ComPtr<MockEventSource<IRoutedEventHandler>> LoadedEventSource;
 
@@ -55,7 +55,7 @@ namespace canvas
         }
 
 #ifdef WINUI3
-        IFACEMETHODIMP CreateCoreIndependentInputSource(CoreInputDeviceTypes type, ABI::Microsoft::UI::Input::Experimental::IExpIndependentPointerInputObserver** out) override
+        IFACEMETHODIMP CreateCoreIndependentInputSource(ABI::Microsoft::UI::Input::InputPointerSourceDeviceKinds type, ABI::Microsoft::UI::Input::IInputPointerSource** out) override
         {
             return CreateCoreIndependentInputSourceMethod.WasCalled(type, out);
         }
@@ -814,7 +814,7 @@ namespace canvas
         IFACEMETHODIMP add_BringIntoViewRequested(__FITypedEventHandler_2_Microsoft__CUI__CXaml__CUIElement_Microsoft__CUI__CXaml__CBringIntoViewRequestedEventArgs*, EventRegistrationToken*) override { return S_OK; }
         IFACEMETHODIMP remove_BringIntoViewRequested(EventRegistrationToken) override { return S_OK; }
         IFACEMETHODIMP CancelDirectManipulations(boolean*) override { return S_OK; }
-        IFACEMETHODIMP StartDragAsync(ABI::Microsoft::UI::Input::Experimental::IExpPointerPoint*, __FIAsyncOperation_1_Windows__CApplicationModel__CDataTransfer__CDataPackageOperation**) override { return S_OK; }
+        IFACEMETHODIMP StartDragAsync(ABI::Microsoft::UI::Input::IPointerPoint*, __FIAsyncOperation_1_Windows__CApplicationModel__CDataTransfer__CDataPackageOperation**) override { return S_OK; }
         IFACEMETHODIMP TryInvokeKeyboardAccelerator(ABI::Microsoft::UI::Xaml::Input::IProcessKeyboardAcceleratorEventArgs*) override { return S_OK; }
         IFACEMETHODIMP StartBringIntoView(void) override { return S_OK; }
         IFACEMETHODIMP StartBringIntoViewWithOptions(ABI::Microsoft::UI::Xaml::IBringIntoViewOptions*) override { return S_OK; }

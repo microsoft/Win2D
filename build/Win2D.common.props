@@ -10,6 +10,10 @@
 
   -->
   <PropertyGroup>
+    <EnableWin2DExperimentalFeatures>false</EnableWin2DExperimentalFeatures>
+  </PropertyGroup>
+  
+  <PropertyGroup>
     <DeviceType Condition="'$(DeviceType)' == ''">$(TargetPlatformIdentifier)</DeviceType>
   </PropertyGroup>
 

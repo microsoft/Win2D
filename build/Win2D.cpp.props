@@ -61,7 +61,11 @@
 
   <ItemDefinitionGroup>
     <ClCompile>
-      <AdditionalOptions>/DNTDDI_VERSION=0x0A000003 /Qspectre %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/Qspectre %(AdditionalOptions)</AdditionalOptions>
+
+      <!-- Add the experimental features -->
+      <AditionalOptions Condition="'$(EnableWin2DExperimentalFeatures)'=='true'">/DENABLE_EXPERIMENTAL_WIN2D_FEATURES=1 %(AdditionalOptions)</AditionalOptions>
+      <AditionalOptions Condition="'$(EnableWin2DExperimentalFeatures)'!='true'">/DENABLE_EXPERIMENTAL_WIN2D_FEATURES=0 %(AdditionalOptions)</AditionalOptions>
     </ClCompile>
   </ItemDefinitionGroup>
   

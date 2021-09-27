@@ -22,10 +22,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             ICanvasDevice* canvasDevice,
             ICompositionGraphicsDevice** graphicsDevice) override;
 
+#if ENABLE_WIN2D_EXPERIMENTAL_FEATURES
         IFACEMETHODIMP CreateCompositionSurfaceForSwapChain( 
             ICompositor* compositor,
             ICanvasSwapChain* swapChain,
             ICompositionSurface** compositionSurface) override;
+#endif
         
         IFACEMETHODIMP GetCanvasDevice( 
             ICompositionGraphicsDevice* graphicsDevice,

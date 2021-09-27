@@ -21,10 +21,12 @@ namespace Microsoft.Graphics.Canvas.UI.Composition
             [in]          Microsoft.Graphics.Canvas.CanvasDevice* canvasDevice,
             [out, retval] Microsoft.UI.Composition.CompositionGraphicsDevice** graphicsDevice);
 
+#if ENABLE_WIN2D_EXPERIMENTAL_FEATURES
         HRESULT CreateCompositionSurfaceForSwapChain(
             [in]          Microsoft.UI.Composition.Compositor* compositor,
             [in]          Microsoft.Graphics.Canvas.CanvasSwapChain* swapChain,
             [out, retval] Microsoft.UI.Composition.ICompositionSurface** compositionSurface);
+#endif
 
         
         //
