@@ -7,8 +7,6 @@ Updates Win2D to depend on Windows App SDK 1.0.0-preview1
 
 This includes a breaking change - `CanvasComposition.CreateCompositionSurfaceForSwapChain` has changed to be an experimental API and is stripped from this release. This is because it relies on experimental Windows App SDK apis which do not exist in version preview1.
 
-The plan moving forward is to also establish an experimental channel for Win2D releases, which will be based on the experimental releases of Windows App SDK and include this API. The hope is that this channel will eventually not be needed anymore as features get moved from experimental to fully public.
-
 ---
 
 ## Win2D-WinUI 1.0.0.26-experimental1
