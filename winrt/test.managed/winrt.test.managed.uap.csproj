@@ -156,7 +156,7 @@
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>6.2.12</Version>
     </PackageReference>
-    <PackageReference Include="Microsoft.WindowsAppSdk" Version="$(WindowsAppSdkVersion)" />
+    <PackageReference Include="Microsoft.WindowsAppSdk" Version="$(WindowsAppSdkVersion)" GeneratePathProperty="true" />
     <PackageReference Include="MSTest.TestAdapter">
       <Version>2.2.3</Version>
     </PackageReference>
@@ -169,4 +169,12 @@
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsXaml\v$(VisualStudioVersion)\Microsoft.Windows.UI.Xaml.CSharp.targets" />
   <Import Project="..\..\build\Win2D.cs.targets" />
+
+  <!-- WinUI has an issue where they don't properly include their references if the project isn't using .NET 5+ (their build files assume use of CsWinRT) -->
+  <ItemGroup>
+    <Reference Include="$(PkgMicrosoft_WindowsAppSdk)\build\native\..\..\lib\uap10.0\*.winmd">
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+
 </Project>

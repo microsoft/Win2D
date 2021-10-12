@@ -3,11 +3,12 @@
     <PropertyGroup>
         <!-- This value controls all of the projects consuming the WindowsAppSdk and centralizes it in one spot.
             When updating the version, don't forget to update all of the package.config files as well. -->
-        <WindowsAppSdkVersion>1.0.0-preview1</WindowsAppSdkVersion>
+        <WindowsAppSdkVersion>1.0.0-preview2</WindowsAppSdkVersion>
 
         <_PackagesPath>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\packages'))</_PackagesPath>
+        <_WindowsAppSdkPackageRoot>$(_PackagesPath)\Microsoft.WindowsAppSdk.$(WindowsAppSdkVersion)</_WindowsAppSdkPackageRoot>
 
-        <WindowsAppSdk_props>$(_PackagesPath)\Microsoft.WindowsAppSdk.$(WindowsAppSdkVersion)\build\native\Microsoft.WindowsAppSdk.props</WindowsAppSdk_props>
-        <WindowsAppSdk_targets>$(_PackagesPath)\Microsoft.WindowsAppSdk.$(WindowsAppSdkVersion)\build\native\Microsoft.WindowsAppSdk.targets</WindowsAppSdk_targets>
+        <WindowsAppSdk_props>$(_WindowsAppSdkPackageRoot)\build\native\Microsoft.WindowsAppSdk.props</WindowsAppSdk_props>
+        <WindowsAppSdk_targets>$(_WindowsAppSdkPackageRoot)\build\native\Microsoft.WindowsAppSdk.targets</WindowsAppSdk_targets>
     </PropertyGroup>
 </Project>
