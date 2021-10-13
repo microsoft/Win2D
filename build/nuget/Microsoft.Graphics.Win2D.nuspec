@@ -37,7 +37,6 @@
       <file target="lib\net45\Microsoft.Graphics.Canvas.winmd"                            src="bin\UAPx86\release\winrt.dll.UAP\Microsoft.Graphics.Canvas.winmd" />
 
       <file target="lib\net5.0-windows10.0.18362.0\Microsoft.Graphics.Canvas.Interop.dll" src="bin\anycpu\release\winrt.projection.net5\Microsoft.Graphics.Canvas.Interop.dll" />
-      <file target="lib\net5.0-windows10.0.18362.0\Microsoft.Graphics.Canvas.Interop.pdb" src="bin\anycpu\release\winrt.projection.net5\Microsoft.Graphics.Canvas.Interop.pdb" />
 
       <!-- TODO: Doc generation is failing to load Microsoft.System.DispatcherQueue -->
       <!--
@@ -48,11 +47,8 @@
       -->
 
       <file target="runtimes\win10-arm64\native\Microsoft.Graphics.Canvas.dll" src="bin\UAPARM64\release\winrt.dll.UAP\Microsoft.Graphics.Canvas.dll" />
-      <file target="runtimes\win10-arm64\native\Microsoft.Graphics.Canvas.pdb" src="bin\UAPARM64\release\winrt.dll.UAP\Microsoft.Graphics.Canvas.pdb" />
       <file target="runtimes\win10-x64\native\Microsoft.Graphics.Canvas.dll" src="bin\UAPx64\release\winrt.dll.UAP\Microsoft.Graphics.Canvas.dll" />
-      <file target="runtimes\win10-x64\native\Microsoft.Graphics.Canvas.pdb" src="bin\UAPx64\release\winrt.dll.UAP\Microsoft.Graphics.Canvas.pdb" />
       <file target="runtimes\win10-x86\native\Microsoft.Graphics.Canvas.dll" src="bin\UAPx86\release\winrt.dll.UAP\Microsoft.Graphics.Canvas.dll" />
-      <file target="runtimes\win10-x86\native\Microsoft.Graphics.Canvas.pdb" src="bin\UAPx86\release\winrt.dll.UAP\Microsoft.Graphics.Canvas.pdb" />
 
     </files>
 </package>
