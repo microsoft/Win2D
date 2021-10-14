@@ -1,5 +1,15 @@
 # Win2D Changelog
 
+## Win2D-WinUI 1.0.0.28-preview2
+_September 28, 2021_
+
+Updates Win2D to depend on Windows App SDK 1.0.0-preview2
+
+This version includes a workaround for a reference to a non-existent file Microsoft.Windows.ApplicationModel.WindowsAppSDK.winmd in the Windows App SDK's nuget package. This workaround will be removed when the issue is fixed in future versions of the Windows App SDK.
+
+---
+
+
 ## Win2D-WinUI 1.0.0.27-preview1
 _September 28, 2021_
 
