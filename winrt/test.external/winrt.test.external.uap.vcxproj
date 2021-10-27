@@ -196,6 +196,4 @@
       <Error Condition="!Exists('$(WindowsAppSdk_props)')" Text="$([System.String]::Format('$(ErrorText)', '$(WindowsAppSdk_props)'))" />
       <Error Condition="!Exists('$(WindowsAppSdk_targets)')" Text="$([System.String]::Format('$(ErrorText)', '$(WindowsAppSdk_targets)'))" />
   </Target>
-
-  <Import Project="$(MSBuildThisFileDirectory)..\..\build\WindowsAppSdk.Preview2Fix.props" />
 </Project>

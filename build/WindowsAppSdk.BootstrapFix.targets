@@ -2,17 +2,14 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <!--  The bootstrap dll doesn't exist for AnyCPU, which is an issue with WindowsAppSdk v1.0.
         Temporary hack that forces it to copy over the x86 version (which is what AnyCPU defaults to for native binaries) -->
-  <Target Name="FixupBinPlaceBootstrapDll" Condition="'$(Platform)' == 'AnyCPU'" BeforeTargets="BinPlaceBootstrapDll">
-    <PropertyGroup>
-      <_TempWindowsAppSdkPlatform>$(_WindowsAppSDKFoundationPlatform)</_TempWindowsAppSdkPlatform>
-      <_WindowsAppSDKFoundationPlatform>x86</_WindowsAppSDKFoundationPlatform>
-    </PropertyGroup>
-    <Message Importance="High" Text="Temporarily setting WindowsAppSdk platform: $(_WindowsAppSDKFoundationPlatform)" />
-  </Target>
-  <Target Name="RestoreBinPlaceBootstrapDll" Condition="'$(Platform)' == 'AnyCPU'" AfterTargets="BinPlaceBootstrapDll">
-    <PropertyGroup>
-      <_WindowsAppSDKFoundationPlatform>$(_TempWindowsAppSdkPlatform)</_WindowsAppSDKFoundationPlatform>
-    </PropertyGroup>
-    <Message Importance="High" Text="Restoring WindowsAppSdk platform: $(_WindowsAppSDKFoundationPlatform)" />
-  </Target>
+  <PropertyGroup>
+    <!-- If using <PackageReference>, use the path that generates (from global nuget install path). Otherwise use the local install of WindowsAppSdk nuget.
+         This lets it work in both C# and C++ -->
+    <_RealWASPackageRoot Condition="$(PkgMicrosoft_WindowsAppSdk) != ''">$(PkgMicrosoft_WindowsAppSdk)</_RealWASPackageRoot>
+    <_RealWASPackageRoot Condition="$(PkgMicrosoft_WindowsAppSdk) == ''">$(_WindowsAppSdkPackageRoot)</_RealWASPackageRoot>
+  </PropertyGroup>
+  <ItemGroup Condition="'$(Platform)' == 'AnyCPU'">
+    <ReferenceCopyLocalPaths Remove="$(_RealWASPackageRoot)\build\..\runtimes\lib\native\AnyCPU\Microsoft.WindowsAppRuntime.Bootstrap.dll"/>
+    <ReferenceCopyLocalPaths Include="$(_RealWASPackageRoot)\build\..\runtimes\lib\native\x86\Microsoft.WindowsAppRuntime.Bootstrap.dll"/>
+  </ItemGroup>
 </Project>

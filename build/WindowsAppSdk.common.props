@@ -3,7 +3,7 @@
     <PropertyGroup>
         <!-- This value controls all of the projects consuming the WindowsAppSdk and centralizes it in one spot.
             When updating the version, don't forget to update all of the package.config files as well. -->
-        <WindowsAppSdkVersion>1.0.0-preview2</WindowsAppSdkVersion>
+        <WindowsAppSdkVersion>1.0.0-preview3</WindowsAppSdkVersion>
 
         <_PackagesPath>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\packages'))</_PackagesPath>
         <_WindowsAppSdkPackageRoot>$(_PackagesPath)\Microsoft.WindowsAppSdk.$(WindowsAppSdkVersion)</_WindowsAppSdkPackageRoot>
