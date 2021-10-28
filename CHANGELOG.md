@@ -1,7 +1,16 @@
 # Win2D Changelog
 
+## Win2D-WinUI 1.0.0.29-preview3
+_October 27, 2021_
+
+Updates Win2D to depend on Windows App SDK 1.0.0-preview3
+
+This version includes another workaround for AnyCPU that will be removed when AnyCPU is more fully supported by the Windows App SDK.
+
+---
+
 ## Win2D-WinUI 1.0.0.28-preview2
-_September 28, 2021_
+_October 14, 2021_
 
 Updates Win2D to depend on Windows App SDK 1.0.0-preview2
 
