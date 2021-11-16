@@ -4,7 +4,7 @@ pool:
   vmImage: 'windows-2019'
 
 variables:
-  version: $[format('{0}-preview3', counter(0,0))]
+  version: $[format('{0}', counter(0,0))]
 
 steps:
 - template: AzurePipelinesTemplates\Win2D-Build-Steps.yml

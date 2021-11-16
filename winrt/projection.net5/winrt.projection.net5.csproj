@@ -39,6 +39,4 @@
     </FrameworkReference>
   </ItemGroup>
 
-  <Import Project="$(MSBuildThisFileDirectory)..\..\build\WindowsAppSdk.BootstrapFix.targets" />
-
 </Project>
