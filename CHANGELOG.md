@@ -1,5 +1,12 @@
 # Win2D Changelog
 
+## Win2D-WinUI 1.0.0.30
+_November 16, 2021_
+
+Updates Win2D to depend on Windows App SDK 1.0.0
+
+---
+
 ## Win2D-WinUI 1.0.0.29-preview3
 _October 27, 2021_
 
