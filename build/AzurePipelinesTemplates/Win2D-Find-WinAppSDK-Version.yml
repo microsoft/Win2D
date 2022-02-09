@@ -1,0 +1,21 @@
+steps:
+# Find WinAppSDK version 
+- task: powershell@2
+  name: winappsdkVersionTask
+  inputs:
+    targetType: inline
+    # Reads the WinAppSDK Version from eng\Version.Details.xml
+    # Used to read the nightly WinAppSDK version for building nightly versions of Win2D
+    script: |
+      $file = "eng\Version.Details.xml"
+      $xmlfile = [xml](Get-Content $file)
+
+      Write-Host "Found Version.Details.xml file."
+      $xmlfile.Dependencies.ProductDependencies.Dependency | Where-Object Name -eq 'Microsoft.WindowsAppSDK' | ForEach-Object {
+          $WIN_APP_SDK_VERSION = $_.Version
+          Write-Host "The WinAppSDK Version is $WIN_APP_SDK_VERSION"
+          Write-Host "##vso[task.setvariable variable=winappsdk_version]$WIN_APP_SDK_VERSION"
+          Write-Host "##vso[task.setvariable variable=winappsdk_version;isOutput=true]$WIN_APP_SDK_VERSION"
+      }
+      Write-Host "Done."
+  displayName: 'Find WindowsAppSDK Version for Nightly Build'

@@ -17,16 +17,18 @@ steps:
   displayName: 'NuGet Authenticate'
 - task: PowerShell@1
   displayName: 'Nuget Restore'
+  env:
+    REUNION_FEED: $(REUNION_FEED)
   inputs:
     scriptType: inlineScript
     inlineScript: |
       $env:_MSBDIR="C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\"
       .$env:Build_SourcesDirectory\build\Enter-VSShell.ps1 -vsPath $env:_MSBDIR
       $env:PATH="$env:Build_SourcesDirectory\build\nuget;$env:PATH"
-      .$env:Build_SourcesDirectory\build\nuget\nuget.exe restore ($env:Build_SourcesDirectory + "\build\pkges\packages.config") -PackagesDirectory ($env:Build_SourcesDirectory + "\packages")
+      .$env:Build_SourcesDirectory\build\nuget\nuget.exe restore ($env:Build_SourcesDirectory + "\build\pkges\packages.config") -PackagesDirectory ($env:Build_SourcesDirectory + "\packages") -configFile ($env:Build_SourcesDirectory + "\nuget.config") -NonInteractive
       $env:Platform="AnyCPU"
-      $env:Configuration="Debug"
-      .$env:Build_SourcesDirectory\build\nuget\nuget.exe restore .\Microsoft.Graphics.Win2D.sln
+      $env:Configuration="Release"
+      .$env:Build_SourcesDirectory\build\nuget\nuget.exe restore .\Microsoft.Graphics.Win2D.sln -PackagesDirectory ($env:Build_SourcesDirectory + "\packages") -configFile ($env:Build_SourcesDirectory + "\nuget.config") -NonInteractive
       rm env:Configuration
       rm env:Platform
 - task: PowerShell@1

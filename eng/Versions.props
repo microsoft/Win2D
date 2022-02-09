@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<!--
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+Licensed under the MIT License. See LICENSE.txt in the project root for license information.
+-->
+<Dependencies>
+  <ProductDependencies>
+    <Dependency Name="Microsoft.WindowsAppSDK" Version="1.0.0">
+      <Uri>https://dev.azure.com/microsoft/WindowsAppSDK</Uri>
+      <Sha>400c67880dae14f57e388cf8eb364d60fe814eb6</Sha>
+    </Dependency>
+  </ProductDependencies>
+  <ToolsetDependencies>
+  </ToolsetDependencies>
+</Dependencies>

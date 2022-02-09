@@ -1,12 +1,33 @@
-name: $[format('{0:yyyyMMdd}.{1}', pipeline.startTime, 'Release')]
-
 pool:
   vmImage: 'windows-2019'
 
 variables:
-  version: $[format('{0}', counter(0,0))]
+- name: date
+  value: $[format('{0:yyMMdd}', pipeline.startTime)]
 
-steps:
-- template: AzurePipelinesTemplates\Win2D-Build-Steps.yml
-  parameters:
-    isRelease: true
+name: $[format('{0}.{1}.Release', variables['date'], counter(variables['date']))]
+
+jobs:
+# Set Version for Win2D
+- job: Win2DVersioning
+  pool:
+    vmImage: 'windows-2019'
+  variables:
+  # Codesigning not needed for this job
+  - name: runCodesignValidationInjection
+    value: false
+  steps:
+  - template: AzurePipelinesTemplates\Win2D-VersionNumber.yml
+  
+# Build Win2D
+- job: BuildProduct
+  dependsOn: 'Win2DVersioning'
+  pool:
+    vmImage: 'windows-2019'
+  variables:
+  - name: version
+    value: $[format('{0}.{1}', dependencies.Win2DVersioning.outputs['win2dVersionTask.versionRelease'], counter(dependencies.Win2DVersioning.outputs['win2dVersionTask.versionRelease']))]
+  steps:
+    - template: AzurePipelinesTemplates\Win2D-Build-Steps.yml
+      parameters:
+        isRelease: true

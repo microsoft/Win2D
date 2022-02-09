@@ -1,22 +1,42 @@
 trigger:
 - reunion_master
 
-name: $[format('{0:yyyyMMdd}.{1}', pipeline.startTime, 'CI')]
-
 variables:
-  version: $[format('{0}-CI', counter(0,0))]
+- name: date
+  value: $[format('{0:yyMMdd}', pipeline.startTime)]
+
+name: $[format('{0}.{1}.CI', variables['date'], counter(variables['date']))]
 
 jobs:
-  - job: BuildProduct
-    pool:
-      vmImage: 'windows-2019'
-    steps:
-      - template: AzurePipelinesTemplates\Win2D-Build-Steps.yml
-        parameters:
-          isRelease: false
-  - job: TestProduct
-    pool:
-      name: 'Hosted Windows 2019 with VS2019'
-    steps:
-      - template: AzurePipelinesTemplates\Win2D-Test-Steps.yml
+# Set Version for Win2D
+- job: Win2DVersioning
+  pool:
+    vmImage: 'windows-2019'
+  variables:
+  # Codesigning not needed for this job
+  - name: runCodesignValidationInjection
+    value: false
+  steps:
+  - template: AzurePipelinesTemplates\Win2D-VersionNumber.yml
+  
+# Build Win2D
+- job: BuildProduct
+  dependsOn: 'Win2DVersioning'
+  pool:
+    vmImage: 'windows-2019'
+  variables:
+  - name: version
+    value: $[format('{0}.{1}', dependencies.Win2DVersioning.outputs['win2dVersionTask.versionCI'], counter(dependencies.Win2DVersioning.outputs['win2dVersionTask.versionCI']))]
+  steps:
+    - template: AzurePipelinesTemplates\Win2D-Build-Steps.yml
+      parameters:
+        isRelease: false
+
+# Run tests
+- job: TestProduct
+  dependsOn: 'Win2DVersioning'
+  pool:
+    name: 'Hosted Windows 2019 with VS2019'
+  steps:
+    - template: AzurePipelinesTemplates\Win2D-Test-Steps.yml
 

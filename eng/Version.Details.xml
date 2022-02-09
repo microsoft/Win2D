@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!--
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+Licensed under the MIT License. See LICENSE.txt in the project root for license information.
+-->
+
+<!-- This version is updated automatically by Maestro in the Nightly branch.
+     It is used by the Nightly pipeline, but it is NOT used by the CI pipeline,
+     the Release pipeline, or the local build.cmd script. Those builds use the version
+     defined in build\WindowsAppSdk.common.props -->
+<Dependencies>
+  <ProductDependencies>
+    <Dependency Name="Microsoft.WindowsAppSDK" Version="1.0.0">
+      <Uri>https://dev.azure.com/microsoft/ProjectReunion/_git/ProjectReunionInternal</Uri>
+      <Sha>26a4f01996caf57be507bf8fc5bf5fe1292edec2</Sha>
+    </Dependency>
+  </ProductDependencies>
+  <ToolsetDependencies>
+  </ToolsetDependencies>
+</Dependencies>

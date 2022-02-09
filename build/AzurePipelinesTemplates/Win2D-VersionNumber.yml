@@ -1,0 +1,30 @@
+steps:
+- task: powershell@2
+  name: win2dVersionTask
+  inputs:
+    targetType: inline
+    # Version numbers look like this: 
+    # Nightly - Microsoft.Graphics.Win2D.1.0.0-Nightly-WinAppSDK.1.0.0-20211122.1-CI-stable.0
+    # CI - Microsoft.Graphics.Win2D.1.0.0-CI.257
+    # Release - Microsoft.Graphics.Win2D.1.0.0.0
+    script: |
+      Write-Host "Setting versions for Nightly/CI/Release pipelines"
+
+      Write-Host "Reading from VERSION file"
+      $versionMMP = Get-Content build\nuget\VERSION
+
+      $versionNightly = $versionMMP + '-Nightly-WinAppSDK-' + $env:winappsdk_version
+      Write-Host "##vso[task.setvariable variable=versionNightly;isOutput=true]$versionNightly"
+
+      $versionCI = $versionMMP + '-CI'
+      Write-Host "##vso[task.setvariable variable=versionCI;isOutput=true]$versionCI"
+
+      $versionRelease = $versionMMP
+      Write-Host "##vso[task.setvariable variable=versionRelease;isOutput=true]$versionRelease"
+      
+      Write-Host "Set Nightly version to $versionNightly"
+      Write-Host "Set CI version to $versionCI"
+      Write-Host "Set Release version to $versionRelease"
+
+      Write-Host Done.
+  displayName: Set Win2D Version number and Pipeline number
