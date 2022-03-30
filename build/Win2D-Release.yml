@@ -26,7 +26,7 @@ jobs:
     vmImage: 'windows-2019'
   variables:
   - name: version
-    value: $[format('{0}.{1}', dependencies.Win2DVersioning.outputs['win2dVersionTask.versionRelease'], counter(dependencies.Win2DVersioning.outputs['win2dVersionTask.versionRelease'], 31))]
+    value: $[format('{0}.{1}', dependencies.Win2DVersioning.outputs['win2dVersionTask.versionRelease'], counter(dependencies.Win2DVersioning.outputs['win2dVersionTask.versionRelease']))]
   steps:
     - template: AzurePipelinesTemplates\Win2D-Build-Steps.yml
       parameters:
