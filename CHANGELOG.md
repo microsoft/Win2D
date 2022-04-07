@@ -1,5 +1,13 @@
 # Win2D Changelog
 
+## Win2D-WinUI 1.0.1
+_March 30, 2022_
+
+Updates Win2D to depend on Windows App SDK 1.0.1
+Updates Win2D to use CsWinRT 1.3.5
+
+---
+
 ## Win2D-WinUI 1.0.0.30
 _November 16, 2021_
 
