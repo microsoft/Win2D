@@ -20,9 +20,9 @@ of Direct2D, and integrates seamlessly with XAML.
 
 ##### More info
 - [Report a bug or ask a question](http://github.com/Microsoft/Win2D/issues)
-- [Changelog](http://github.com/Microsoft/Win2D/blob/WinUI3Master/CHANGELOG.md)
+- [Changelog](http://github.com/Microsoft/Win2D/blob/reunion_master/CHANGELOG.md)
 - [License](http://opensource.org/licenses/MIT)
-- [Contributing](http://github.com/Microsoft/Win2D/blob/WinUI3Master/CONTRIBUTING.md)
+- [Contributing](http://github.com/Microsoft/Win2D/blob/reunion_master/CONTRIBUTING.md)
 
 ## Code Example
 To give you a flavor of what the code looks like, here is a snippet of XAML:
