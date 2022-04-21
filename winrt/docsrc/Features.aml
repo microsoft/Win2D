@@ -152,7 +152,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
           Create
           <externalLink>
             <linkText>owner-draw XAML controls</linkText>
-            <linkUri>http://github.com/Microsoft/Win2D-Samples/blob/master/ExampleGallery/Shared/GlowTextCustomControl.cs</linkUri>
+            <linkUri>https://github.com/microsoft/Win2D-Samples/blob/reunion_master/ExampleGallery/GlowTextCustomControl.cs</linkUri>
           </externalLink>
         </listItem>
         <listItem>
