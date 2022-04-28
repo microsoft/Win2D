@@ -10,6 +10,7 @@
     <AssemblyName>Microsoft.Graphics.Canvas.Interop</AssemblyName>
     <!-- ignore CanvasRenderTarget.CreateFromDirect3D11Surface hiding CanvasBitmap.CreateFromDirect3D11Surface -->
     <NoWarn>0108</NoWarn>
+    <WindowsSdkPackageVersion>10.0.18362.22</WindowsSdkPackageVersion>
 
     <CSWinRTIncludes>
       Microsoft.Graphics.Canvas;
@@ -31,12 +32,4 @@
   <ItemGroup>
     <ProjectReference Include="..\lib\winrt.lib.uap.vcxproj" PrivateAssets="All" />
   </ItemGroup>
-
-  <ItemGroup>
-    <FrameworkReference Update="Microsoft.Windows.SDK.NET.Ref">
-      <TargetingPackVersion>10.0.18362.18</TargetingPackVersion>
-      <RuntimeFrameworkVersion>10.0.18362.18</RuntimeFrameworkVersion>
-    </FrameworkReference>
-  </ItemGroup>
-
 </Project>

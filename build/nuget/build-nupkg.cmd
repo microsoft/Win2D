@@ -46,6 +46,8 @@ IF "%1" == "signed" (
 IF NOT "%1" == "" (
     ECHO Setting VERSION to '%1'
     SET VERSION=%1
+) else (
+    ECHO Setting VERSION to '%VERSION%'
 )
 
 SET NUGET_ARGS=^

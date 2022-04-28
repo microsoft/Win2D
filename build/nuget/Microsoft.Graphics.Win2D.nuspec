@@ -13,8 +13,11 @@
         <requireLicenseAcceptance>$RequireLicenseAcceptance$</requireLicenseAcceptance>
         <copyright>© Microsoft Corporation. All rights reserved.</copyright>
         <tags>graphics 2D Direct2D DirectX WinRT XAML canvas drawing C# C++ Windows Reunion ProjectReunion WindowsAppSdk</tags>
+        <dependencies>
+            <dependency id="Microsoft.WindowsAppSDK" version="1.0.3" />
+        </dependencies>
     </metadata>
-
+    
     <files>
 
       <file target="Win2d.githash.txt"                                                    src="obj\Win2d.githash.txt" />

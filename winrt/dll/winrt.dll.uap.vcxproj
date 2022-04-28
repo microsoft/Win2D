@@ -7,19 +7,18 @@
     <RootNamespace>Microsoft.Graphics.Canvas</RootNamespace>
     <DefaultLanguage>en-US</DefaultLanguage>
     <MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>
-    <AppContainerApplication>true</AppContainerApplication>
-    <ApplicationType>Windows Store</ApplicationType>
-    <ApplicationTypeRevision>10.0</ApplicationTypeRevision>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
     <ItemsRootNamespace>Microsoft.Graphics.Canvas</ItemsRootNamespace>
     <TargetName>$(ItemsRootNamespace)</TargetName>
     <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
     <WindowsTargetPlatformMinVersion>10.0.18362.0</WindowsTargetPlatformMinVersion>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup>
     <SkipAddPriPayloadFilesToCopyToOutputDirectoryItems>true</SkipAddPriPayloadFilesToCopyToOutputDirectoryItems>
   </PropertyGroup>
   <Import Project="..\..\build\Win2D.cpp.props" />
+  <Import Project="..\..\build\HybridCRT.props" />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <Import Project="$(WindowsAppSdk_props)" Condition="Exists('$(WindowsAppSdk_props)')" />
   <PropertyGroup Label="Configuration">
@@ -44,7 +43,7 @@
       <AdditionalIncludeDirectories>$(EtwDirectory);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <CompileAsWinRT>false</CompileAsWinRT>
       <WarningLevel>Level4</WarningLevel>
-      <PreprocessorDefinitions>_WINDLL;%(PreprocessorDefinitions);CANVAS_ANIMATED_CONTROL_IS_DISABLED;WINUI3;ENABLE_WINRT_EXPERIMENTAL_TYPES=1;WRT_EXPORT</PreprocessorDefinitions>
+      <PreprocessorDefinitions>UNICODE;_WINDLL;%(PreprocessorDefinitions);CANVAS_ANIMATED_CONTROL_IS_DISABLED;WINUI3;ENABLE_WINRT_EXPERIMENTAL_TYPES=1;WRT_EXPORT</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

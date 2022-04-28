@@ -16,7 +16,7 @@
     <BuildConfigurations>Debug;Release</BuildConfigurations>
     <BuildTests>true</BuildTests>
     <BuildTools>true</BuildTools>
-    <BuildDocs>true</BuildDocs>
+    <BuildDocs>false</BuildDocs>
     <RunTests>true</RunTests>
   </PropertyGroup>
 
@@ -51,21 +51,6 @@
       <Platforms>Win32;x64</Platforms>
       <AutomatedTests Condition="$(ShouldRunUAPTests)">desktop</AutomatedTests>
     </UAPProject>
-    <UAPProject Include="winrt\test.external\winrt.test.external.uap.vcxproj">
-      <Platforms>Win32;x64</Platforms>
-      <!--
-        Workaround https://github.com/Microsoft/vstest/issues/1534 by temporarily 
-        disabling running winrt.test.external unit tests from the command line. 
-        Note these tests can still be run inside the Visual Studio 2017 IDE.
-      <AutomatedTests Condition="$(ShouldRunUAPTests)">store</AutomatedTests>
-      -->
-    </UAPProject>
-    <UAPProject Include="winrt\test.nativecomponent\winrt.test.nativecomponent.uap.vcxproj" />
-    <UAPProject Include="winrt\test.managed\winrt.test.managed.uap.csproj">
-      <Platforms>Win32;x64</Platforms>
-      <AutomatedTests Condition="$(ShouldRunUAPTests)">store</AutomatedTests>
-      <BuildInParallel>false</BuildInParallel>
-    </UAPProject>
   </ItemGroup>
 
   <!-- Tools projects -->
@@ -79,66 +64,34 @@
     <AnyCPUProject Include="tools\mock\test\mock.test.csproj" Condition="$(BuildTests)">
       <AutomatedTests>desktop</AutomatedTests>
     </AnyCPUProject>
-    <AnyCPUProject Include="tools\docs\DocDiff\DocDiff.csproj" />
-    <AnyCPUProject Include="tools\docs\DocPreprocess\DocPreprocess.csproj" />
-    <AnyCPUProject Include="tools\docs\ExtractAPISurface\ExtractAPISurface.csproj" />
-    <AnyCPUProject Include="tools\docs\MergeIntellisense\MergeIntellisense.csproj" />
-    <AnyCPUProject Include="tools\exportsample\exportsample.csproj" />
   </ItemGroup>
 
 
   <!-- Master target just chains to a bunch of workers -->
   <Target Name="Build"
-          DependsOnTargets="BuildProjects; CheckCode; BuildDocs; RunTests" />
+          DependsOnTargets="BuildProjects; CheckCode; RunTests" />
 
 
   <!-- TargetPlatformMinVersion 10.0.16299.0 and 10.0.10240 Platforms must be build separately. -->
-  <Target Name="BuildProjects" DependsOnTargets="BuildProjects10240" />
+  <Target Name="BuildProjects" DependsOnTargets="BuildProjects18362" />
 
 
-  <!-- Since ARM64 requires a TargetPlatformMinVersion of at least 10.0.16299.0,
-       its NuGet restore and subsequent build need to run separately from the other
-       (10240) platforms.
-
-       In order to minimize refactoring of the existing build, this is done just after
-       the existing Platform targets build. This is done by adding !='ARM64' Conditions
-       to RestoreNuGetPackages and BuildProjects, duplicating them with =='ARM64'
-       Conditions, then stitching them into the target graph just after BuildProjects.
-       -->
   <Target Name="BuildProjectsPrelim" DependsOnTargets="PrepareVersionInfo; ChooseProjectsToBuild; ChooseConfigurationsToRestore" />
-  <!-- Duplicate BuildProjects for just ARM64 -->
-  <Target Name="BuildProjects16299"
-          DependsOnTargets="BuildProjectsPrelim; RestoreNuGetPackages16299"
-          Inputs="@(ProjectsToBuild)"
-          Outputs="%(PlatformIndependentName)">
-
-    <Message Text="Building TargetPlatformMinVersion 16299 variants of project %(ProjectsToBuild.PlatformIndependentName):"
-             Importance="High" />
-    <Message Text="  %(ProjectsToBuild.Filename) (%(ProjectsToBuild.Configuration)|%(ProjectsToBuild.Platform))"
-             Importance="High"
-             Condition="'%(ProjectsToBuild.Platform)'=='ARM64'" />
-
-    <MSBuild Projects="@(ProjectsToBuild)"
-             BuildInParallel="%(ProjectsToBuild.BuildInParallel)"
-             Properties="IncludeVersionInfo=true"
-             Condition="'%(ProjectsToBuild.Platform)'=='ARM64'" />
-  </Target>
 
 
   <!-- Use batching to build each project in turn -->
-  <Target Name="BuildProjects10240"
-          DependsOnTargets="BuildProjectsPrelim; BuildProjects16299; RestoreNuGetPackages10240"
+  <Target Name="BuildProjects18362"
+          DependsOnTargets="BuildProjectsPrelim; RestoreNuGetPackages18362"
           Inputs="@(ProjectsToBuild)"
           Outputs="%(PlatformIndependentName)">
 
-    <Message Importance="High" Text="Building TargetPlatformMinVersion 10240 variants of project %(ProjectsToBuild.PlatformIndependentName):" />
-    <Message Importance="High" Text="  %(ProjectsToBuild.Filename) (%(ProjectsToBuild.Configuration)|%(ProjectsToBuild.Platform))" Condition="'%(ProjectsToBuild.Platform)'!='ARM64'" />
+    <Message Importance="High" Text="Building TargetPlatformMinVersion 18362 variants of project %(ProjectsToBuild.PlatformIndependentName):" />
+    <Message Importance="High" Text="  %(ProjectsToBuild.Filename) (%(ProjectsToBuild.Configuration)|%(ProjectsToBuild.Platform))" />
 
     <!-- All the variants (platform and configuration) of most projects can be built in parallel -->
     <MSBuild Projects="@(ProjectsToBuild)"
              BuildInParallel="%(ProjectsToBuild.BuildInParallel)"
-             Properties="IncludeVersionInfo=true"
-             Condition="'%(ProjectsToBuild.Platform)'!='ARM64'" />
+             Properties="IncludeVersionInfo=true" />
   </Target>
 
 
@@ -231,30 +184,6 @@
 
   <!-- Build the reference documentation -->
   <UsingTask TaskName="SetEnv" AssemblyFile="$(VCTargetsPath)Microsoft.Build.CppTasks.Common.dll"/>
-
-  <Target Name="BuildDocs"
-          Condition="$(BuildDocs) and
-                     $(BuildTools) and
-                     $(BuildPlatforms.Contains('AnyCPU')) and
-                     $(BuildPlatforms.Contains('Win32')) and
-                     $(BuildConfigurations.Contains('Release'))">
-
-    <Message Importance="High" Text="Building documentation" />
-
-    <!-- unset SHFBROOT, so that BuildDocs only picks up the version of
-         sandcastle installed via nuget -->
-    <SetEnv Name="SHFBROOT" Prefix="false" />
-
-    <!-- Use <Exec> rather than <MSBuild> here, since we want BuildDocs.proj to
-         be isolated from the environment that's formed around running
-         Win2D.proj up to this point, and to suppress the Sandcastle
-         false positive warning BHT0001 -->
-    <Exec Command="&quot;$(MSBuildBinPath)\msbuild&quot; $(MSBuildThisFileDirectory)tools\docs\BuildDocs.proj" 
-          IgnoreStandardErrorWarningFormat="true"
-          CustomErrorRegularExpression=": error "
-          CustomWarningRegularExpression=": warning (?!BHT0001)" />
-  </Target>
-
 
   <!-- Run the automated tests -->
 

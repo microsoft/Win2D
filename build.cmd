@@ -37,16 +37,11 @@ IF %ERRORLEVEL% NEQ 0 (
     GOTO END
 )
 
-msbuild "%~dp0tools\docs\BuildDocs.proj" /nologo /v:m /p:IntellisenseOnly=true
-
-IF %ERRORLEVEL% NEQ 0 (
-    ECHO Build failed; aborting.
-    GOTO END
-)
-
 ECHO.
 
-CALL "%~dp0build\nuget\build-nupkg.cmd" 0-local
+SET /p VERSION=<build/nuget/VERSION
+
+CALL "%~dp0build\nuget\build-nupkg.cmd" %VERSION%-local
 GOTO END
 
 

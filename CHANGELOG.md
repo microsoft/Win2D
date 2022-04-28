@@ -1,5 +1,13 @@
 # Win2D Changelog
 
+## Win2D-WinUI 1.0.3
+_April 22, 2022_
+
+Update Win2D to WinAppSDK 1.0.3
+Update Win2D to use HybridCRT
+Remove BuildDocs from build process, which isn't intended to be used with WinAppSDK
+Add WinAppSDK as a nuget package dependency, enforcing a minimum version
+
 ## Win2D-WinUI 1.0.1
 _March 30, 2022_
 
