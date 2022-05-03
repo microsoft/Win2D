@@ -13,6 +13,14 @@ steps:
     scriptType: inlineScript
     inlineScript: |
       .$env:Build_SourcesDirectory\build\nuget\download-nuget.cmd
+# Print the WinAppSDK version number to be consumed by build\WindowsAppSDK.common.props
+- script: |
+    echo "WinAppSDK version override (optional): $(winappsdk_version)"
+    
+    if "$(winappsdk_version)"=="" (
+      echo "WinAppSDK version override not set, defaulting to version in build\WindowsAppSdk.common.props"
+    )
+  displayName: Display WinAppSDK version
 - task: NuGetAuthenticate@0
   displayName: 'NuGet Authenticate'
 - task: PowerShell@1

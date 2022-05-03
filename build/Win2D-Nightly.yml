@@ -54,4 +54,11 @@ jobs:
   - name: winappsdk_version
     value: $[dependencies.Win2DVersioning.outputs['winappsdkVersionTask.winappsdk_version']]
   steps:
-    - template: AzurePipelinesTemplates\Win2D-Test-Steps.yml
+  # Update package.config files with Nightly WinAppSDK version
+  - task: powershell@2
+    inputs:
+      targetType: filePath
+      filePath: build\Apply-WinAppSDK-Version-To-Configs.ps1
+    displayName: 'Apply Nightly WinAppSDK version to packages.config files'
+  # Test Win2D
+  - template: AzurePipelinesTemplates\Win2D-Test-Steps.yml

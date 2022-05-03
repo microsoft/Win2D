@@ -24,8 +24,14 @@ parameters:
               "ToolVersion" : "1.0"
           }
         ]
+  winappsdk_version: ""
+  version: ""
 
 steps:
+- script: |
+    echo "Win2D Package Version: $(version)"
+    echo ##vso[build.updatebuildnumber]$(version)
+  displayName: Set Build Number
 - ${{ if eq(parameters.isRelease, true) }}:
   - task: securedevelopmentteam.vss-secure-development-tools.build-task-policheck.PoliCheck@1
     displayName: 'Run PoliCheck'
@@ -56,17 +62,14 @@ steps:
       filename: cmd
       arguments: '/c if exist build\pkges\PoliCheckExclusions.txt exit 1'
 
-# Update the build number
+# Print the WinAppSDK version number to be consumed by build\WindowsAppSDK.common.props
 - script: |
     echo "WinAppSDK version override (optional): $(winappsdk_version)"
     
     if "$(winappsdk_version)"=="" (
       echo "WinAppSDK version override not set, defaulting to version in build\WindowsAppSdk.common.props"
     )
-
-    echo "Win2D Package Version: $(version)"
-    echo ##vso[build.updatebuildnumber]$(version)
-  displayName: Update Build Number
+  displayName: Display WinAppSDK version
 
 # Use .NET Core SDK
 - task: UseDotNet@2

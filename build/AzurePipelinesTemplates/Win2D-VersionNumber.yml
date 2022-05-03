@@ -4,7 +4,7 @@ steps:
   inputs:
     targetType: inline
     # Version numbers look like this: 
-    # Nightly - Microsoft.Graphics.Win2D.1.0.0-Nightly-WinAppSDK.1.0.0-20211122.1-CI-stable.0
+    # Nightly - Microsoft.Graphics.Win2D.1.0.0-WinAppSDK.1.0.0-20211122.1-CI-stable-Nightly.0
     # CI - Microsoft.Graphics.Win2D.1.0.0-CI.257
     # Release - Microsoft.Graphics.Win2D.1.0.0.0
     script: |
@@ -13,7 +13,7 @@ steps:
       Write-Host "Reading from VERSION file"
       $versionMMP = Get-Content build\nuget\VERSION
 
-      $versionNightly = $versionMMP + '-Nightly-WinAppSDK-' + $env:winappsdk_version
+      $versionNightly = $versionMMP + '-WinAppSDK-' + $env:winappsdk_version + '-Nightly'
       Write-Host "##vso[task.setvariable variable=versionNightly;isOutput=true]$versionNightly"
 
       $versionCI = $versionMMP + '-CI'
