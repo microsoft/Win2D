@@ -12,6 +12,9 @@ steps:
 
       Write-Host "Reading from VERSION file"
       $versionMMP = Get-Content build\nuget\VERSION
+      $preRelease = '-preview3'
+
+      $versionMMP = $versionMMP + $preRelease
 
       $versionNightly = $versionMMP + '-WinAppSDK-' + $env:winappsdk_version + '-Nightly'
       Write-Host "##vso[task.setvariable variable=versionNightly;isOutput=true]$versionNightly"

@@ -5,7 +5,7 @@
             When updating the version, don't forget to update all of the package.config files as well.
             The AzureDevOps pipeline will override the version here by setting WINAPPSDK_VERSION in the nightly build.
             That nightly version is read from \eng\Version.Details.xml -->
-        <WindowsAppSdkVersion Condition="'$(WINAPPSDK_VERSION)' == ''">1.0.3</WindowsAppSdkVersion>
+        <WindowsAppSdkVersion Condition="'$(WINAPPSDK_VERSION)' == ''">1.1.0-preview3</WindowsAppSdkVersion>
         <WindowsAppSdkVersion Condition="'$(WINAPPSDK_VERSION)' != ''">$(WINAPPSDK_VERSION)</WindowsAppSdkVersion>
 
         <_PackagesPath>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\packages'))</_PackagesPath>
