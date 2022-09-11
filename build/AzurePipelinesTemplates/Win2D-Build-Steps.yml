@@ -217,17 +217,30 @@ steps:
   inputs:
     PathtoPublish: $(Build.SourcesDirectory)/bin
     artifactName: 'bin'
-- task: CopyFiles@1
-  displayName: 'Copy Files to: $(XES_DFSDROP)'
+    
+# - task: CopyFiles@1
+#   displayName: 'Copy Files to: $(XES_DFSDROP)'
+#   inputs:
+#     Contents: |
+#      bin\signed\**
+#      bin\docs.zip
+#      bin\uapx86\release\winrt.dll.uap\Microsoft.Graphics.Canvas.pdb
+#      bin\uapx64\release\winrt.dll.uap\Microsoft.Graphics.Canvas.pdb
+#      bin\uaparm64\release\winrt.dll.uap\Microsoft.Graphics.Canvas.pdb
+#     TargetFolder: '$(XES_DFSDROP)'
+#   condition: succeededOrFailed()
+
+- task: PublishSymbols@2
+  displayName: 'Publish symbols to symbol server'
   inputs:
-    Contents: |
-     bin\signed\**
-     bin\docs.zip
-     bin\uapx86\release\winrt.dll.uap\Microsoft.Graphics.Canvas.pdb
-     bin\uapx64\release\winrt.dll.uap\Microsoft.Graphics.Canvas.pdb
-     bin\uaparm64\release\winrt.dll.uap\Microsoft.Graphics.Canvas.pdb
-    TargetFolder: '$(XES_DFSDROP)'
-  condition: succeededOrFailed()
+    SymbolsFolder: '$(Build.SourcesDirectory)'
+    SearchPattern: 'bin/**/Microsoft.Graphics.Canvas.pdb'
+    #IndexSources: true # boolean. Index sources. Default: true.
+    #PublishSymbols: true # boolean. Publish symbols. Default: true.
+    SymbolServerType: 'TeamServices'
+    #SymbolsPath: # string. Optional. Use when PublishSymbols = true && SymbolServerType = FileShare. Path to publish symbols. 
+    #CompressSymbols: false # boolean. Required when SymbolServerType = FileShare. Compress symbols. Default: false.
+    #SymbolExpirationInDays: '36530' # string. Optional. Use when PublishSymbols = true && SymbolServerType = TeamServices. Symbol Expiration (in days). Default: '36530'.
 
 - task: CopyFiles@1
   displayName: 'Copy Nuget package to: $(Build.SourcesDirectory)/nugetartifact'
