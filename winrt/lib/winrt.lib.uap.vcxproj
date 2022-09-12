@@ -28,7 +28,6 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <Import Project="$(WindowsAppSdk_props)" Condition="Exists('$(WindowsAppSdk_props)')" />
-
   <PropertyGroup Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <TargetName>winrt</TargetName>
@@ -38,11 +37,14 @@
   </PropertyGroup>
   <Import Project="$(MSBuildThisFileDirectory)..\..\build\midlrt.props" />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <PropertyGroup>
+    <Win2DVersion>$([System.IO.File]::ReadAllText('$(ProjectDir)..\\..\\build\\nuget\\VERSION').TrimEnd())</Win2DVersion>
+  </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
       <CompileAsWinRT>false</CompileAsWinRT>
       <AdditionalIncludeDirectories>..\Inc;$(EtwDirectory);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>ENABLE_WINRT_EXPERIMENTAL_TYPES=1;WRT_EXPORT;WINUI3;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>ENABLE_WINRT_EXPERIMENTAL_TYPES=1;WRT_EXPORT;WINUI3;WIN2D_VERSION="$(Win2DVersion)";%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <WarningLevel>Level4</WarningLevel>
     </ClCompile>
     <Link>
@@ -372,6 +374,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)utils\Strings.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)directx\Direct3DDevice.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)directx\Direct3DSurface.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)telemetry\Win2DTelemetry.cpp" />
     <mc Include="$(MSBuildThisFileDirectory)win2d.etw.xml" />
   </ItemGroup>
   <ItemGroup>
@@ -498,6 +501,5 @@
   <Import Project="..\..\packages\Microsoft.Windows.MidlRT.2.0.200924.1\build\native\Microsoft.Windows.MidlRT.targets" Condition="Exists('..\..\packages\Microsoft.Windows.MidlRT.2.0.200924.1\build\native\Microsoft.Windows.MidlRT.targets')" />
   <Import Project="..\..\packages\Microsoft.Windows.AbiWinRT.2.0.210330.2\build\native\Microsoft.Windows.AbiWinRT.targets" Condition="Exists('..\..\packages\Microsoft.Windows.AbiWinRT.2.0.210330.2\build\native\Microsoft.Windows.AbiWinRT.targets')" />
   <Import Project="$(WindowsAppSdk_targets)" Condition="Exists('$(WindowsAppSdk_targets)')" />
-
   <Import Project="$(MSBuildThisFileDirectory)..\..\build\midlrt.targets" />
 </Project>

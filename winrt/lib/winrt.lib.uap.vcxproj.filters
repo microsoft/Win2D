@@ -43,6 +43,9 @@
     <Filter Include="svg">
       <UniqueIdentifier>{805ea252-3559-4026-854a-65a3fc8880b8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="telemetry">
+      <UniqueIdentifier>{420983e6-6003-4a30-8a07-15b8391c80d1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)pch.cpp" />
@@ -462,6 +465,9 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)svg\CanvasSvgStrokeDashArrayAttribute.cpp">
       <Filter>svg</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)telemetry\Win2DTelemetry.cpp">
+      <Filter>telemetry</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

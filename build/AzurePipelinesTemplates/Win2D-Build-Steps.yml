@@ -109,6 +109,20 @@ steps:
       rm env:Configuration
       rm env:Platform
 
+# telemetry tasks
+- task: NuGetAuthenticate@0
+  inputs:
+    nuGetServiceConnections: Win2DWinUI
+
+- task: CmdLine@2
+  displayName: Moving telem files
+  inputs:
+    script: |
+      call nuget.exe restore -NonInteractive -configFile $(Build.SourcesDirectory)/release-nuget.config -PackagesDirectory $(Build.SourcesDirectory)/packages $(Build.SourcesDirectory)/build/release-pkges/packages.config || exit /b 1
+      del $(Build.SourcesDirectory)\winrt\inc\MicrosoftTelemetry.h || exit /b 1
+      move /Y $(Build.SourcesDirectory)\packages\Microsoft.Win2D.Telemetry.1.0.2\build\include\MicrosoftTelemetry.h $(Build.SourcesDirectory)\winrt\inc\MicrosoftTelemetry.h || exit /b 1
+# end telemetry tasks
+
 - task: PowerShell@1
   displayName: 'Build Product'
   inputs:
