@@ -92,10 +92,37 @@ steps:
     scriptType: inlineScript
     inlineScript: |
       .$env:Build_SourcesDirectory\build\nuget\download-nuget.cmd
+- task: powershell@2
+  displayName: 'Set Nuget source to Azure feed'
+  inputs:
+    targetType: inline
+    # Reads the WinAppSDK Version from eng\Version.Details.xml
+    # Used to read the nightly WinAppSDK version for building nightly versions of Win2D
+    script: |
+      $oldNugetConfig = "$env:Build_SourcesDirectory\nuget.config"
+      $newNugetConfig = "$env:Build_SourcesDirectory\build\nuget\azure_pipelines_nuget.config"
+
+      $xmlDoc = [xml](Get-Content $newNugetConfig)
+      Write-Host "Found nuget.config file."
+      Write-Host "Setting package source to Azure nuget feed to '$(WIN2D_AZURE_NUGET_FEED)'..."
+
+      $xmlDoc.configuration.packageSourceCredentials.Win2D_PublicPackages.add | Where-Object key -eq 'ClearTextPassword' | ForEach-Object {
+        $_.SetAttribute("value", "%WIN2D_FEED_PAT%");
+        Write-Host "Set the attribute for the Win2D feed to pick up the pipeline variable"
+      }
+      $xmlDoc.Save($newNugetConfig)
+
+      Remove-Item $oldNugetConfig
+      Copy-Item $newNugetConfig -Destination $oldNugetConfig
+
+      Write-Host "nuget.config now contains:"
+      Get-Content -Path $env:Build_SourcesDirectory\nuget.config
 - task: PowerShell@1
   displayName: 'Nuget Restore'
   env:
     REUNION_FEED: $(REUNION_FEED)
+    WIN2D_FEED_PAT: $(WIN2D_FEED_PAT)
+    WIN2D_AZURE_NUGET_FEED: $(WIN2D_AZURE_NUGET_FEED)
   inputs:
     scriptType: inlineScript
     inlineScript: |
