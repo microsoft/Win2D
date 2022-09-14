@@ -6,6 +6,11 @@
     <win2d-Platform Condition="'$(Platform)' != 'Win32'">$(Platform)</win2d-Platform>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <!-- This is a workaround for a WinAppSDK VSIX bug (MSFT:40265852) that causes not apps to not properly generate ActivatableClass entries on incremental build -->
+    <AppxWinMdCacheEnabled>false</AppxWinMdCacheEnabled>
+  </PropertyGroup>
+
   <ItemGroup>
     <Reference Include="$(MSBuildThisFileDirectory)..\..\lib\uap10.0\Microsoft.Graphics.Canvas.winmd">
       <Implementation>Microsoft.Graphics.Canvas.dll</Implementation>
