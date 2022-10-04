@@ -1,5 +1,16 @@
 # Win2D Changelog
 
+## Win2D-WinUI 1.0.4
+_October 4, 2022_
+
+Update Win2D to WinAppSDK 1.0.4
+Update Win2D to CsWinRT 1.4.1
+Update Win2D to target 17763 instead of 18362 to add downlevel support
+Infrastructure updates
+ - Add telemetry
+ - Automate symbol publishing in Azure pipeline
+ - Pull nuget packages from Azure nuget feeds when building in Azure pipelines
+
 ## Win2D-WinUI 1.0.3
 _April 22, 2022_
 
