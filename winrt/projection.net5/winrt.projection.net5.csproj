@@ -9,7 +9,7 @@
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <AssemblyName>Microsoft.Graphics.Canvas.Interop</AssemblyName>
     <!-- ignore CanvasRenderTarget.CreateFromDirect3D11Surface hiding CanvasBitmap.CreateFromDirect3D11Surface -->
-    <NoWarn>0108</NoWarn>
+    <NoWarn>0108;CS0169</NoWarn>
     <WindowsSdkPackageVersion>10.0.17763.24</WindowsSdkPackageVersion>
 
     <CSWinRTIncludes>
