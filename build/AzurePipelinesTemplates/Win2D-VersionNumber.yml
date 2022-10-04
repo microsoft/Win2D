@@ -12,7 +12,7 @@ steps:
 
       Write-Host "Reading from VERSION file"
       $versionMMP = Get-Content build\nuget\VERSION
-      $preRelease = '-preview3'
+      $preRelease = ''
 
       $versionMMP = $versionMMP + $preRelease
 

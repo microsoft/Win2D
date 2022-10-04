@@ -1,6 +1,6 @@
 parameters:
   isRelease: false
-  sdkVersion: 18362
+  sdkVersion: 17763
   codeSignInlineOperation: |
         [
           {
