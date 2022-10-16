@@ -491,6 +491,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 });
         }
 
+        //
+        // ICanvasImageInterop
+        //
+
+        IFACEMETHOD(GetDevice)(ICanvasDevice** device)
+        {
+            return get_Device(device);
+        }
+
         // ICanvasImageInternal
         virtual ComPtr<ID2D1Image> GetD2DImage(ICanvasDevice*, ID2D1DeviceContext*, GetImageFlags, float /*targetDpi*/, float* realizedDpi) override
         {

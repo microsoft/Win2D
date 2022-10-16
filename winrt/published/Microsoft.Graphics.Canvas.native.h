@@ -58,6 +58,8 @@ namespace ABI
                 ICanvasImageInterop : public IUnknown
                 {
                 public:
+                    IFACEMETHOD(GetDevice)(ICanvasDevice** device) = 0;
+
                     IFACEMETHOD(GetOrCreateD2DImage)(
                         ICanvasDevice* device,
                         ID2D1DeviceContext* deviceContext,

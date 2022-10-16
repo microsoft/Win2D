@@ -106,6 +106,20 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         return GetImageBoundsImpl(this, resourceCreator, &transform, bounds);
     }
 
+    //
+    // ICanvasImageInterop
+    //
+
+    IFACEMETHODIMP CanvasEffect::GetDevice(ICanvasDevice** device)
+    {
+        return ExceptionBoundary([&]
+            {
+                ThrowIfClosed();
+                CheckAndClearOutPointer(device);
+
+                *device = RealizationDevice();
+            });
+    }
 
     //
     // ICanvasImageInternal

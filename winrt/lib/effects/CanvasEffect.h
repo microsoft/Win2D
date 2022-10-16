@@ -152,6 +152,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         IFACEMETHOD(GetBoundsWithTransform)(ICanvasResourceCreator* resourceCreator, Numerics::Matrix3x2 transform, Rect *bounds) override;
 
         //
+        // ICanvasImageInterop
+        //
+
+        IFACEMETHOD(GetDevice)(ICanvasDevice** device) override;
+
+        //
         // ICanvasImageInternal
         //
 

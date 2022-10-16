@@ -54,6 +54,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             Numerics::Matrix3x2 transform,
             Rect* bounds) override;
 
+        //
+        // ICanvasImageInterop
+        //
+
+        IFACEMETHOD(GetDevice)(ICanvasDevice** device)
+        {
+            return get_Device(device);
+        }
 
         // ICanvasImageInternal
 
