@@ -40,6 +40,32 @@ namespace ABI
                 public:
                     IFACEMETHOD(GetNativeResource)(ICanvasDevice* device, float dpi, REFIID iid, void** resource) = 0;
                 };
+
+                typedef enum CanvasImageGetD2DImageFlags
+                {
+                    None = 0,
+                    ReadDpiFromDeviceContext = 1,    // Ignore the targetDpi parameter - read DPI from deviceContext instead
+                    AlwaysInsertDpiCompensation = 2, // Ignore the targetDpi parameter - always insert DPI compensation
+                    NeverInsertDpiCompensation = 4,  // Ignore the targetDpi parameter - never insert DPI compensation
+                    MinimalRealization = 8,          // Do the bare minimum to get back an ID2D1Image - no validation or recursive realization
+                    AllowNullEffectInputs = 16,      // Allow partially configured effect graphs where some inputs are null
+                } CanvasImageGetD2DImageFlags;
+
+                //
+                // Interface implemented by all effects and also exposed to allow external users to implement custom effects.
+                //
+                class __declspec(uuid("E042D1F7-F9AD-4479-A713-67627EA31863"))
+                ICanvasImageInterop : public IUnknown
+                {
+                public:
+                    IFACEMETHOD(GetOrCreateD2DImage)(
+                        ICanvasDevice* device,
+                        ID2D1DeviceContext* deviceContext,
+                        CanvasImageGetD2DImageFlags flags,
+                        float targetDpi,
+                        float* realizeDpi,
+                        ID2D1Image** ppImage) = 0;
+                };
             }
         }
     }
