@@ -1036,42 +1036,74 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             ComPtr<ICanvasImageInternal> internalSource;
             HRESULT hr = source->QueryInterface(IID_PPV_ARGS(&internalSource));
 
+            // If QueryInterface failed in any way other than E_NOINTERFACE, we just rethrow.
+            if (FAILED(hr) && hr != E_NOINTERFACE)
+                ThrowHR(hr);
+
+            ComPtr<ICanvasImageInterop> interopSource;
+
             if (FAILED(hr))
             {
-                if (hr != E_NOINTERFACE)
-                    ThrowHR(hr);
+                // If the input source is not an ICanvasImage, we now check to see if it's an ICanvasImageInterop. This is
+                // the only case other than ICanvasImage where setting the source is valid and we don't need to unrealize.
+                hr = source->QueryInterface(IID_PPV_ARGS(&interopSource));
 
-                if ((flags & GetImageFlags::UnrealizeOnFailure) == GetImageFlags::None)
-                    ThrowFormattedMessage(E_NOINTERFACE, Strings::EffectWrongSourceType, index);
-
-                // If the source is not an ICanvasImage (eg. setting a Windows.UI.Composition resource), we must unrealize.
-                Unrealize(index);
-                m_sources[index] = source;
-                return false;
-            }
-
-            // If the specified source has an associated device, validate that this matches the one we are realized on.
-            auto sourceWithDevice = MaybeAs<ICanvasResourceWrapperWithDevice>(source);
-
-            if (sourceWithDevice)
-            {
-                ComPtr<ICanvasDevice> sourceDevice;
-                ThrowIfFailed(sourceWithDevice->get_Device(&sourceDevice));
-
-                if (!IsSameInstance(RealizationDevice(), sourceDevice.Get()))
+                if (FAILED(hr))
                 {
+                    if (hr != E_NOINTERFACE)
+                        ThrowHR(hr);
+
                     if ((flags & GetImageFlags::UnrealizeOnFailure) == GetImageFlags::None)
-                        ThrowFormattedMessage(E_INVALIDARG, Strings::EffectWrongDevice, index);
-                    
-                    // If the source is on a different device, we must unrealize.
+                        ThrowFormattedMessage(E_NOINTERFACE, Strings::EffectWrongSourceType, index);
+
+                    // If the source is not an ICanvasImage (eg. setting a Windows.UI.Composition resource), we must unrealize.
                     Unrealize(index);
                     m_sources[index] = source;
                     return false;
                 }
             }
 
+            ComPtr<ICanvasDevice> sourceDevice;
+
+            // If the specified source has an associated device, validate that this matches the one we are realized on.
+            // This applies to all the built-in Win2D effects, but not to external effects using ICanvasImageInterop.
+            auto sourceWithDevice = MaybeAs<ICanvasResourceWrapperWithDevice>(source);
+
+            if (sourceWithDevice)
+            {
+                // If the input is an ICanvasResourceWrapperWithDevice, get the current device from there.
+                ThrowIfFailed(sourceWithDevice->get_Device(&sourceDevice));
+            }
+            else if (interopSource)
+            {
+                // Otherwise, if the source is an ICanvasImageInterop, get the device from there. This will
+                // either be the previous one that was passed to ICanvasImageInterop::GetOrCreateD2DImage, or null.
+                ThrowIfFailed(interopSource->GetDevice(&sourceDevice));
+            }
+
+            // Now that a device has been retrieved (unless null), ensure it's not a mismatch with the current one, if any.
+            if (!IsSameInstance(RealizationDevice(), sourceDevice.Get()))
+            {
+                if ((flags & GetImageFlags::UnrealizeOnFailure) == GetImageFlags::None)
+                    ThrowFormattedMessage(E_INVALIDARG, Strings::EffectWrongDevice, index);
+
+                // If the source is on a different device, we must unrealize.
+                Unrealize(index);
+                m_sources[index] = source;
+                return false;
+            }
+
             // Get the underlying D2D interface. This call recurses through the effect graph.
-            realizedSource = internalSource->GetD2DImage(RealizationDevice(), deviceContext, flags, targetDpi, &realizedDpi);
+            if (internalSource)
+            {
+                realizedSource = internalSource->GetD2DImage(RealizationDevice(), deviceContext, flags, targetDpi, &realizedDpi);
+            }
+            else
+            {
+                CanvasImageGetD2DImageFlags interopFlags = static_cast<CanvasImageGetD2DImageFlags>(flags & ~GetImageFlags::UnrealizeOnFailure);
+
+                ThrowIfFailed(interopSource->GetOrCreateD2DImage(RealizationDevice(), deviceContext, interopFlags, targetDpi, &realizedDpi, &realizedSource));
+            }
 
             if (!realizedSource)
             {
