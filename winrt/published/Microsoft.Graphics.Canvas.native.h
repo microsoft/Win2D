@@ -60,7 +60,7 @@ namespace ABI
                 public:
                     IFACEMETHOD(GetDevice)(ICanvasDevice** device) = 0;
 
-                    IFACEMETHOD(GetOrCreateD2DImage)(
+                    IFACEMETHOD(GetD2DImage)(
                         ICanvasDevice* device,
                         ID2D1DeviceContext* deviceContext,
                         CanvasImageGetD2DImageFlags flags,

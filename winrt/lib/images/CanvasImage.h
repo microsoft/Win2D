@@ -34,7 +34,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     ICanvasImageInternal : public ICanvasImageInterop
     {
     public:
-        IFACEMETHODIMP ICanvasImageInterop::GetOrCreateD2DImage(
+        IFACEMETHODIMP ICanvasImageInterop::GetD2DImage(
             ICanvasDevice* device,
             ID2D1DeviceContext* deviceContext,
             CanvasImageGetD2DImageFlags flags,
@@ -42,11 +42,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             float* realizeDpi,
             ID2D1Image** ppImage)
         {
-            // GetOrCreateD2DImage is exposed as a COM interface to external users, so make sure exceptions never cross the ABI boundary.
+            // GetD2DImage is exposed as a COM interface to external users, so make sure exceptions never cross the ABI boundary.
             return ExceptionBoundary([&]
                 {
                     // CanvasImageGetD2DImageFlags matches GetImageFlags, except it doesn't have the UnrealizeOnFailure flag defined,
-                    // as that would have no meaning for GetOrCreateD2DImage (since not throwing is the only allowed behavior). As
+                    // as that would have no meaning for GetD2DImage (since not throwing is the only allowed behavior). As
                     // such, it is safe here to just statically cast the input CanvasImageGetD2DImageFlags value to GetImageFlags.
                     // All other arguments are just forwarded with no changes.
                     auto d2dImage = GetD2DImage(device, deviceContext, static_cast<GetImageFlags>(flags), targetDpi, realizeDpi);

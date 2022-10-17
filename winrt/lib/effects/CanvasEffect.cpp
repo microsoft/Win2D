@@ -1079,7 +1079,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             else if (interopSource)
             {
                 // Otherwise, if the source is an ICanvasImageInterop, get the device from there. This will
-                // either be the previous one that was passed to ICanvasImageInterop::GetOrCreateD2DImage, or null.
+                // either be the previous one that was passed to ICanvasImageInterop::GetD2DImage, or null.
                 ThrowIfFailed(interopSource->GetDevice(&sourceDevice));
             }
 
@@ -1108,7 +1108,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                 // HRESULTs are used by default to propagate errors, and exceptions are never thrown. As such, that flag has no meaning.
                 CanvasImageGetD2DImageFlags interopFlags = static_cast<CanvasImageGetD2DImageFlags>(flags & ~GetImageFlags::UnrealizeOnFailure);
 
-                hr = interopSource->GetOrCreateD2DImage(RealizationDevice(), deviceContext, interopFlags, targetDpi, &realizedDpi, &realizedSource);
+                hr = interopSource->GetD2DImage(RealizationDevice(), deviceContext, interopFlags, targetDpi, &realizedDpi, &realizedSource);
 
                 // To match the behavior of ICanvasImageInternal::GetD2DImage in case of failure, check if the flags being used did have the
                 // GetImageFlags::UnrealizeOnFailure set. If not, and the call failed, then we explicitly throw from the returned HRESULT.

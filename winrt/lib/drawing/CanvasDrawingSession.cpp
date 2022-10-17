@@ -489,7 +489,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                     // If the image is not an ICanvasImageInternal, it must be an ICanvasImageInterop.
                     auto imageInterop = As<ICanvasImageInterop>(image);
 
-                    ThrowIfFailed(imageInterop->GetOrCreateD2DImage(m_canvasDevice, m_deviceContext, CanvasImageGetD2DImageFlags::ReadDpiFromDeviceContext, 0, nullptr, d2dImage.GetAddressOf()));
+                    ThrowIfFailed(imageInterop->GetD2DImage(m_canvasDevice, m_deviceContext, CanvasImageGetD2DImageFlags::ReadDpiFromDeviceContext, 0, nullptr, d2dImage.GetAddressOf()));
                 }
 
                 auto d2dInterpolationMode = static_cast<D2D1_INTERPOLATION_MODE>(m_interpolation);
