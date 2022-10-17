@@ -1032,7 +1032,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         if (source)
         {
-            // Make sure the specified source is an ICanvasImage.
+            // Check if the specified source is an ICanvasImage.
             ComPtr<ICanvasImageInternal> internalSource;
             HRESULT hr = source->QueryInterface(IID_PPV_ARGS(&internalSource));
 
@@ -1065,12 +1065,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
             ComPtr<ICanvasDevice> sourceDevice;
 
-            // If the specified source has an associated device, validate that this matches the one we are realized on.
-            // This applies to all the built-in Win2D effects, but not to external effects using ICanvasImageInterop.
-            auto sourceWithDevice = MaybeAs<ICanvasResourceWrapperWithDevice>(source);
-
-            if (sourceWithDevice)
+            if (internalSource)
             {
+                // If the specified source has an associated device, validate that this matches the one we are realized on.
+                // This applies to all the built-in Win2D effects, but not to external effects using ICanvasImageInterop.
+                // Note that this path is only taken if the source is an ICanvasImageInternal, as the ICanvasResourceWrapperWithDevice
+                // interface is internal. That is, if the source is an external effect, there is no way it could implement this.
+                auto sourceWithDevice = MaybeAs<ICanvasResourceWrapperWithDevice>(source);
+
                 // If the input is an ICanvasResourceWrapperWithDevice, get the current device from there.
                 ThrowIfFailed(sourceWithDevice->get_Device(&sourceDevice));
             }
@@ -1100,9 +1102,18 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             }
             else
             {
+                // The source is an external effect implementing ICanvasImageInterop, so we need to prepare the arguments to invoke it.
+                // They match the ones for ICanvasImageInternal::GetD2DImage, with the exception of the flags being slightly different.
+                // Specifically, the UnrealizeOnFailure flag is not present and should be removed, as this API is in a COM interface, so
+                // HRESULTs are used by default to propagate errors, and exceptions are never thrown. As such, that flag has no meaning.
                 CanvasImageGetD2DImageFlags interopFlags = static_cast<CanvasImageGetD2DImageFlags>(flags & ~GetImageFlags::UnrealizeOnFailure);
 
-                ThrowIfFailed(interopSource->GetOrCreateD2DImage(RealizationDevice(), deviceContext, interopFlags, targetDpi, &realizedDpi, &realizedSource));
+                hr = interopSource->GetOrCreateD2DImage(RealizationDevice(), deviceContext, interopFlags, targetDpi, &realizedDpi, &realizedSource);
+
+                // To match the behavior of ICanvasImageInternal::GetD2DImage in case of failure, check if the flags being used did have the
+                // GetImageFlags::UnrealizeOnFailure set. If not, and the call failed, then we explicitly throw from the returned HRESULT.
+                if ((flags & GetImageFlags::UnrealizeOnFailure) == GetImageFlags::None)
+                    ThrowIfFailed(hr);
             }
 
             if (!realizedSource)
