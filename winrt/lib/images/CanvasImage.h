@@ -80,6 +80,57 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             GetImageFlags flags = GetImageFlags::ReadDpiFromDeviceContext,
             float targetDpi = 0,
             float* realizedDpi = nullptr) = 0;
+
+        // Static helper for internal callers to invoke GetD2DImage on multiple input types. That is, this method
+        // handles not just ICanvasImageInternal sources, but ICanvasImageInterop source as well. This way, callers
+        // don't have to worry about the second interop interface, and can just get an image from a single code path.
+
+        static ComPtr<ID2D1Image> GetD2DImageFromInternalOrInteropSource(
+            IUnknown* canvasImage,
+            ICanvasDevice* device,
+            ID2D1DeviceContext* deviceContext,
+            GetImageFlags flags = GetImageFlags::ReadDpiFromDeviceContext,
+            float targetDpi = 0,
+            float* realizedDpi = nullptr)
+        {
+            // The input is an IUnknown* object, where callers pass in either ICanvasImage* or IGraphicsEffectSource.
+            // There are two possible cases for the input image being retrieved:
+            //   - It is one of the built-in Win2D effects, so it will implement ICanvasImageInternal.
+            //   - It is a custom Win2D-compatible effect, so it will implement ICanvasImageInterop.
+            ComPtr<ID2D1Image> d2dImage;
+            ComPtr<ICanvasImageInternal> internalSource;
+
+            // Check if the specified source is an ICanvasImageInternal (this is the most common case).
+            HRESULT hr = canvasImage->QueryInterface(IID_PPV_ARGS(&internalSource));
+
+            // If QueryInterface failed in any way other than E_NOINTERFACE, we just rethrow (just like in CanvasEffect::SetD2DInput).
+            if (FAILED(hr) && hr != E_NOINTERFACE)
+                ThrowHR(hr);
+
+            // If the input was indeed an ICanvasImageInternal, invoke its GetD2DImage method normally.
+            if (SUCCEEDED(hr))
+            {
+                d2dImage = internalSource->GetD2DImage(device, deviceContext, flags, targetDpi, realizedDpi);
+            }
+            else
+            {
+                // The source is an external effect implementing ICanvasImageInterop, so we need to prepare the arguments to invoke it.
+                // They match the ones for ICanvasImageInternal::GetD2DImage, with the exception of the flags being slightly different.
+                // Specifically, the UnrealizeOnFailure flag is not present and should be removed, as this API is in a COM interface, so
+                // HRESULTs are used by default to propagate errors, and exceptions are never thrown. As such, that flag has no meaning.
+                CanvasImageGetD2DImageFlags interopFlags = static_cast<CanvasImageGetD2DImageFlags>(flags & ~GetImageFlags::UnrealizeOnFailure);
+
+                // If the source is not an ICanvasImageInternal, it must be an ICanvasImageInterop object.
+                hr = As<ICanvasImageInterop>(canvasImage)->GetD2DImage(device, deviceContext, interopFlags, targetDpi, realizedDpi, &d2dImage);
+
+                // To match the behavior of ICanvasImageInternal::GetD2DImage in case of failure, check if the flags being used did have the
+                // GetImageFlags::UnrealizeOnFailure set. If not, and the call failed, then we explicitly throw from the returned HRESULT.
+                if ((flags & GetImageFlags::UnrealizeOnFailure) == GetImageFlags::None)
+                    ThrowIfFailed(hr);
+            }
+
+            return d2dImage;
+        }
     };
 
 

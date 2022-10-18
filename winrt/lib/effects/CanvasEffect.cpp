@@ -1007,37 +1007,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             }
             else
             {
+                // Get the underlying D2D interface. This call recurses through the effect graph.
                 float realizedDpi;
-
-                // Get the underlying D2D interface. This call recurses through the effect graph. Just like
-                // when setting an effect, the input can be either ICanvasImageInternal or ICanvasImageInterop.
-                // Query for ICanvasImageInternal as that's the most common scenario (just like in SetD2DInput).
-                ComPtr<ID2D1Image> realizedSource;
-                ComPtr<ICanvasImageInternal> internalSource;
-
-                HRESULT hr = source->QueryInterface(IID_PPV_ARGS(&internalSource));
-
-                // If QueryInterface failed in any way other than E_NOINTERFACE, we just rethrow (just like in SetD2DInput).
-                if (FAILED(hr) && hr != E_NOINTERFACE)
-                    ThrowHR(hr);
-
-                // If the input was indeed an ICanvasImageInternal, invoke its GetD2DImage method normally.
-                if (SUCCEEDED(hr))
-                {
-                    realizedSource = internalSource->GetD2DImage(RealizationDevice(), deviceContext, flags, targetDpi, &realizedDpi);
-                }
-                else
-                {
-                    // Strip the UnrealizeOnFailure flag for the COM call, as it has no effect (see comments in SetD2DInput below for more info).
-                    CanvasImageGetD2DImageFlags interopFlags = static_cast<CanvasImageGetD2DImageFlags>(flags & ~GetImageFlags::UnrealizeOnFailure);
-
-                    // If the input is not an ICanvasImageInternal, it must be an ICanvasImageInterop
-                    hr = As<ICanvasImageInterop>(source)->GetD2DImage(RealizationDevice(), deviceContext, interopFlags, targetDpi, &realizedDpi, &realizedSource);
-
-                    // If the call failed and UnrealizeOnFailure is not set, rethrow.
-                    if ((flags & GetImageFlags::UnrealizeOnFailure) == GetImageFlags::None)
-                        ThrowIfFailed(hr);
-                }
+                auto realizedSource = ICanvasImageInternal::GetD2DImageFromInternalOrInteropSource(source.Get(), RealizationDevice(), deviceContext, flags, targetDpi, &realizedDpi);
 
                 bool resourceChanged = sourceInfo.UpdateResource(realizedSource.Get());
 

@@ -471,26 +471,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             else
             {
                 // If DrawBitmap cannot handle this request, we must use the DrawImage slow path.
-                // There are two possible cases for the input image being drawn:
-                //   - It is one of the built-in Win2D effects, so it will implement ICanvasImageInternal.
-                //   - It is a custom Win2D-compatible effect, so it will implement ICanvasImageInterop.
 
-                ComPtr<ID2D1Image> d2dImage;
-
-                auto internalImage = MaybeAs<ICanvasImageInternal>(image);
-
-                // Try to get an ICanvasImageInternal first (this is the most common path).
-                if (internalImage)
-                {
-                    d2dImage = internalImage->GetD2DImage(m_canvasDevice, m_deviceContext);
-                }
-                else
-                {
-                    // If the image is not an ICanvasImageInternal, it must be an ICanvasImageInterop.
-                    auto imageInterop = As<ICanvasImageInterop>(image);
-
-                    ThrowIfFailed(imageInterop->GetD2DImage(m_canvasDevice, m_deviceContext, CanvasImageGetD2DImageFlags::ReadDpiFromDeviceContext, 0, nullptr, d2dImage.GetAddressOf()));
-                }
+                ComPtr<ID2D1Image> d2dImage = ICanvasImageInternal::GetD2DImageFromInternalOrInteropSource(image, m_canvasDevice, m_deviceContext);
 
                 auto d2dInterpolationMode = static_cast<D2D1_INTERPOLATION_MODE>(m_interpolation);
                 auto d2dCompositeMode = composite ? static_cast<D2D1_COMPOSITE_MODE>(*composite)
