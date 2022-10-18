@@ -198,7 +198,25 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 auto canvasDevice = GetCanvasDevice(resourceCreator);
                 auto d2dDevice = GetWrappedResource<ID2D1Device>(canvasDevice);
 
-                auto d2dImage = As<ICanvasImageInternal>(image)->GetD2DImage(canvasDevice.Get(), nullptr, GetImageFlags::None, dpi);
+                ComPtr<ID2D1Image> d2dImage;
+                ComPtr<ICanvasImageInternal> internalSource;
+
+                HRESULT hr = image->QueryInterface(IID_PPV_ARGS(&internalSource));
+
+                // If QueryInterface failed in any way other than E_NOINTERFACE, we just rethrow (just like in CanvasEffect::SetD2DInput).
+                if (FAILED(hr) && hr != E_NOINTERFACE)
+                    ThrowHR(hr);
+
+                // If the input was indeed an ICanvasImageInternal, invoke its GetD2DImage method normally.
+                if (SUCCEEDED(hr))
+                {
+                    d2dImage = internalSource->GetD2DImage(canvasDevice.Get(), nullptr, GetImageFlags::None, dpi);
+                }
+                else
+                {
+                    // If the source is not an ICanvasImageInternal, it must be an ICanvasImageInterop object.
+                    ThrowIfFailed(As<ICanvasImageInterop>(image)->GetD2DImage(canvasDevice.Get(), nullptr, CanvasImageGetD2DImageFlags::None, dpi, nullptr, &d2dImage));
+                }
 
                 auto adapter = m_adapter;
                 auto istream = adapter->CreateStreamOverRandomAccessStream(stream);
@@ -260,7 +278,25 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 // Configure the atlas effect to select what region of the source image we want to feed into the histogram.
                 float realizedDpi;
 
-                auto d2dImage = As<ICanvasImageInternal>(image)->GetD2DImage(device.Get(), deviceContext.Get(), GetImageFlags::None, DEFAULT_DPI, &realizedDpi);
+                ComPtr<ID2D1Image> d2dImage;
+                ComPtr<ICanvasImageInternal> internalSource;
+
+                HRESULT hr = image->QueryInterface(IID_PPV_ARGS(&internalSource));
+
+                // If QueryInterface failed in any way other than E_NOINTERFACE, we just rethrow (just like in CanvasEffect::SetD2DInput).
+                if (FAILED(hr) && hr != E_NOINTERFACE)
+                    ThrowHR(hr);
+
+                // If the input was indeed an ICanvasImageInternal, invoke its GetD2DImage method normally.
+                if (SUCCEEDED(hr))
+                {
+                    d2dImage = internalSource->GetD2DImage(device.Get(), deviceContext.Get(), GetImageFlags::None, DEFAULT_DPI, &realizedDpi);
+                }
+                else
+                {
+                    // If the source is not an ICanvasImageInternal, it must be an ICanvasImageInterop object.
+                    ThrowIfFailed(As<ICanvasImageInterop>(image)->GetD2DImage(device.Get(), deviceContext.Get(), CanvasImageGetD2DImageFlags::None, DEFAULT_DPI, &realizedDpi, &d2dImage));
+                }
 
                 if (realizedDpi != 0 && realizedDpi != DEFAULT_DPI)
                 {
