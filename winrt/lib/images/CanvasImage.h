@@ -34,13 +34,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     ICanvasImageInternal : public ICanvasImageInterop
     {
     public:
-        IFACEMETHODIMP ICanvasImageInterop::GetD2DImage(
+        IFACEMETHODIMP GetD2DImage(
             ICanvasDevice* device,
             ID2D1DeviceContext* deviceContext,
             CanvasImageGetD2DImageFlags flags,
             float targetDpi,
             float* realizeDpi,
-            ID2D1Image** ppImage)
+            ID2D1Image** ppImage) override
         {
             // GetD2DImage is exposed as a COM interface to external users, so make sure exceptions never cross the ABI boundary.
             return ExceptionBoundary([&]
