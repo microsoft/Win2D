@@ -1102,16 +1102,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             }
             else
             {
-                // The source is an external effect implementing ICanvasImageInterop, so we need to prepare the arguments to invoke it.
-                // They match the ones for ICanvasImageInternal::GetD2DImage, with the exception of the flags being slightly different.
-                // Specifically, the UnrealizeOnFailure flag is not present and should be removed, as this API is in a COM interface, so
-                // HRESULTs are used by default to propagate errors, and exceptions are never thrown. As such, that flag has no meaning.
+                // For more info on the following logic, see comments in ICanvasImageInternal::GetD2DImageFromInternalOrInteropSource
                 CanvasImageGetD2DImageFlags interopFlags = static_cast<CanvasImageGetD2DImageFlags>(flags & ~GetImageFlags::UnrealizeOnFailure);
 
                 hr = interopSource->GetD2DImage(RealizationDevice(), deviceContext, interopFlags, targetDpi, &realizedDpi, &realizedSource);
 
-                // To match the behavior of ICanvasImageInternal::GetD2DImage in case of failure, check if the flags being used did have the
-                // GetImageFlags::UnrealizeOnFailure set. If not, and the call failed, then we explicitly throw from the returned HRESULT.
                 if ((flags & GetImageFlags::UnrealizeOnFailure) == GetImageFlags::None)
                     ThrowIfFailed(hr);
             }
