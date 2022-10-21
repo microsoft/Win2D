@@ -118,7 +118,7 @@ void CanvasImageBrush::SetImage(ICanvasImage* image)
     else
     {
         // Use an image brush.
-        auto d2dImage = As<ICanvasImageInternal>(image)->GetD2DImage(m_device.EnsureNotClosed().Get(), nullptr, GetImageFlags::MinimalRealization);
+        auto d2dImage = ICanvasImageInternal::GetD2DImageFromInternalOrInteropSource(image, m_device.EnsureNotClosed().Get(), nullptr, GetImageFlags::MinimalRealization);
 
         if (m_d2dImageBrush)
         {
