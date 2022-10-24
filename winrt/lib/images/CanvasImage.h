@@ -133,7 +133,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         }
     };
 
-
     HRESULT GetImageBoundsImpl(
         ICanvasImageInternal* imageInternal,
         ICanvasResourceCreator* resourceCreator,

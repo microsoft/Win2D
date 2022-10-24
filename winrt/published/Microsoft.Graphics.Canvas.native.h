@@ -17,7 +17,10 @@ namespace ABI
         {
             namespace Canvas
             {
+                using namespace ABI::Windows::Foundation;
+
                 interface ICanvasDevice;
+                interface ICanvasResourceCreator;
 
                 //
                 // Interface provided by the CanvasDevice factory that is
@@ -68,6 +71,15 @@ namespace ABI
                         float* realizeDpi,
                         ID2D1Image** ppImage) = 0;
                 };
+
+                //
+                // Exported method to allow ICanvasImageInterop implementors to implement ICanvasImage properly.
+                //
+                extern "C" __declspec(nothrow, dllexport) HRESULT __stdcall GetBoundsForICanvasImageInterop(
+                    ICanvasResourceCreator* resourceCreator,
+                    ICanvasImageInterop* image,
+                    Numerics::Matrix3x2 const* transform,
+                    Rect* rect);
             }
         }
     }
