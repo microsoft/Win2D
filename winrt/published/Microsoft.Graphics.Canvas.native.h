@@ -5,6 +5,7 @@
 #pragma once
 
 #include <inspectable.h>
+#include <windows.foundation.numerics.h>
 #include <wrl.h>
 
 interface ID2D1Device1;
