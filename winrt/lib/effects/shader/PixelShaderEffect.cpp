@@ -216,7 +216,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     }
 
 
-    bool PixelShaderEffect::Realize(GetImageFlags flags, float targetDpi, ID2D1DeviceContext* deviceContext)
+    bool PixelShaderEffect::Realize(GetD2DImageFlags flags, float targetDpi, ID2D1DeviceContext* deviceContext)
     {
         // Validate that this device supports the D3D feature level of the pixel shader.
         if (!IsSupported(RealizationDevice()))

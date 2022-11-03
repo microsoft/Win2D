@@ -68,7 +68,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         virtual ComPtr<ID2D1Image> GetD2DImage(
             ICanvasDevice* device,
             ID2D1DeviceContext* deviceContext,
-            GetImageFlags flags,
+            GetD2DImageFlags flags,
             float targetDpi,
             float* realizedDpi) override;
 

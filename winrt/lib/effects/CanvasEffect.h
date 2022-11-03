@@ -161,7 +161,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         // ICanvasImageInternal
         //
 
-        virtual ComPtr<ID2D1Image> GetD2DImage(ICanvasDevice* device, ID2D1DeviceContext* deviceContext, GetImageFlags flags, float targetDpi, float* realizedDpi = nullptr) override;
+        virtual ComPtr<ID2D1Image> GetD2DImage(ICanvasDevice* device, ID2D1DeviceContext* deviceContext, GetD2DImageFlags flags, float targetDpi, float* realizedDpi = nullptr) override;
 
         //
         // ICanvasResourceWrapperNative
@@ -276,15 +276,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
 
         // On-demand creation of the underlying D2D image effect.
-        virtual bool Realize(GetImageFlags flags, float targetDpi, ID2D1DeviceContext* deviceContext);
+        virtual bool Realize(GetD2DImageFlags flags, float targetDpi, ID2D1DeviceContext* deviceContext);
         virtual void Unrealize(unsigned int skipSourceIndex = UINT_MAX, bool skipAllSources = false);
 
     private:
         ComPtr<ID2D1Effect> CreateD2DEffect(ID2D1DeviceContext* deviceContext, IID const& effectId);
-        bool ApplyDpiCompensation(unsigned int index, ComPtr<ID2D1Image>& inputImage, float inputDpi, GetImageFlags flags, float targetDpi, ID2D1DeviceContext* deviceContext);
-        void RefreshInputs(GetImageFlags flags, float targetDpi, ID2D1DeviceContext* deviceContext);
+        bool ApplyDpiCompensation(unsigned int index, ComPtr<ID2D1Image>& inputImage, float inputDpi, GetD2DImageFlags flags, float targetDpi, ID2D1DeviceContext* deviceContext);
+        void RefreshInputs(GetD2DImageFlags flags, float targetDpi, ID2D1DeviceContext* deviceContext);
         
-        bool SetD2DInput(ID2D1Effect* d2dEffect, unsigned int index, IGraphicsEffectSource* source, GetImageFlags flags, float targetDpi = 0, ID2D1DeviceContext* deviceContext = nullptr);
+        bool SetD2DInput(ID2D1Effect* d2dEffect, unsigned int index, IGraphicsEffectSource* source, GetD2DImageFlags flags, float targetDpi = 0, ID2D1DeviceContext* deviceContext = nullptr);
         ComPtr<IGraphicsEffectSource> GetD2DInput(ID2D1Effect* d2dEffect, unsigned int index);
 
         void SetProperty(unsigned int index, IPropertyValue* propertyValue);

@@ -118,7 +118,7 @@ void CanvasImageBrush::SetImage(ICanvasImage* image)
     else
     {
         // Use an image brush.
-        auto d2dImage = ICanvasImageInternal::GetD2DImageFromInternalOrInteropSource(image, m_device.EnsureNotClosed().Get(), nullptr, GetImageFlags::MinimalRealization);
+        auto d2dImage = ICanvasImageInternal::GetD2DImageFromInternalOrInteropSource(image, m_device.EnsureNotClosed().Get(), nullptr, GetD2DImageFlags::MinimalRealization);
 
         if (m_d2dImageBrush)
         {
@@ -397,8 +397,8 @@ ComPtr<ID2D1Brush> CanvasImageBrush::GetD2DBrush(ID2D1DeviceContext* deviceConte
         // If our input image is an effect graph, make sure it is fully configured to match the target DPI.
         if (deviceContext)
         {
-            GetImageFlags effectFlags = ((flags & GetBrushFlags::AlwaysInsertDpiCompensation) != GetBrushFlags::None) ? GetImageFlags::AlwaysInsertDpiCompensation
-                                                                                                                      : GetImageFlags::ReadDpiFromDeviceContext;
+            GetD2DImageFlags effectFlags = ((flags & GetBrushFlags::AlwaysInsertDpiCompensation) != GetBrushFlags::None) ? GetD2DImageFlags::AlwaysInsertDpiCompensation
+                                                                                                                         : GetD2DImageFlags::ReadDpiFromDeviceContext;
 
             RealizeSourceEffect(deviceContext, effectFlags, 0);
         }
@@ -429,10 +429,10 @@ IFACEMETHODIMP CanvasImageBrush::GetNativeResource(ICanvasDevice* device, float 
             else
             {
                 // If our input image is an effect graph, make sure it is fully configured to match the target DPI.
-                GetImageFlags effectFlags = GetImageFlags::AllowNullEffectInputs;
+                GetD2DImageFlags effectFlags = GetD2DImageFlags::AllowNullEffectInputs;
 
                 if (dpi <= 0)
-                    effectFlags |= GetImageFlags::AlwaysInsertDpiCompensation;
+                    effectFlags |= GetD2DImageFlags::AlwaysInsertDpiCompensation;
 
                 RealizeSourceEffect(nullptr, effectFlags, dpi);
 
@@ -441,7 +441,7 @@ IFACEMETHODIMP CanvasImageBrush::GetNativeResource(ICanvasDevice* device, float 
         });
 }
 
-void CanvasImageBrush::RealizeSourceEffect(ID2D1DeviceContext* deviceContext, GetImageFlags flags, float dpi)
+void CanvasImageBrush::RealizeSourceEffect(ID2D1DeviceContext* deviceContext, GetD2DImageFlags flags, float dpi)
 {
     // Do we have a source image?
     ComPtr<ID2D1Image> d2dImage;

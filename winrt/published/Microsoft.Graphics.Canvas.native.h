@@ -44,7 +44,8 @@ namespace ABI
                     IFACEMETHOD(GetNativeResource)(ICanvasDevice* device, float dpi, REFIID iid, void** resource) = 0;
                 };
 
-                typedef enum CanvasImageGetD2DImageFlags
+                // Options for fine-tuning the behavior of ICanvasImageInterop::GetD2DImage.
+                typedef enum GetD2DImageFlags
                 {
                     None = 0,
                     ReadDpiFromDeviceContext = 1,    // Ignore the targetDpi parameter - read DPI from deviceContext instead
@@ -52,7 +53,8 @@ namespace ABI
                     NeverInsertDpiCompensation = 4,  // Ignore the targetDpi parameter - never insert DPI compensation
                     MinimalRealization = 8,          // Do the bare minimum to get back an ID2D1Image - no validation or recursive realization
                     AllowNullEffectInputs = 16,      // Allow partially configured effect graphs where some inputs are null
-                } CanvasImageGetD2DImageFlags;
+                    UnrealizeOnFailure = 32,         // If an input is invalid, unrealize the effect and set the output image to null
+                } GetD2DImageFlags;
 
                 //
                 // Interface implemented by all effects and also exposed to allow external users to implement custom effects.
@@ -66,7 +68,7 @@ namespace ABI
                     IFACEMETHOD(GetD2DImage)(
                         ICanvasDevice* device,
                         ID2D1DeviceContext* deviceContext,
-                        CanvasImageGetD2DImageFlags flags,
+                        GetD2DImageFlags flags,
                         float targetDpi,
                         float* realizeDpi,
                         ID2D1Image** ppImage) = 0;

@@ -137,7 +137,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         }
 
         // ICanvasImageInternal
-        ComPtr<ID2D1Image> GetD2DImage(ICanvasDevice* , ID2D1DeviceContext*, GetImageFlags, float, float*) override;
+        ComPtr<ID2D1Image> GetD2DImage(ICanvasDevice* , ID2D1DeviceContext*, GetD2DImageFlags, float, float*) override;
     };
 
 }}}}
