@@ -1032,18 +1032,18 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         if (source)
         {
-            // Check if the specified source is an ICanvasImage.
+            // Check if the specified source is an ICanvasImage. There are two possible scenarios to
+            // handle: ICanvasImageInternal (a Win2D effect) or ICanvasImageInterop (an external effect).
             ComPtr<ICanvasImageInternal> internalSource;
-            HRESULT hr = source->QueryInterface(IID_PPV_ARGS(&internalSource));
-
-            // If QueryInterface failed in any way other than E_NOINTERFACE, we just rethrow.
-            if (FAILED(hr) && hr != E_NOINTERFACE)
-                ThrowHR(hr);
-
             ComPtr<ICanvasImageInterop> interopSource;
+            HRESULT hr = source->QueryInterface(IID_PPV_ARGS(&internalSource));
 
             if (FAILED(hr))
             {
+                // If QueryInterface failed in any way other than E_NOINTERFACE, we just rethrow.
+                if (hr != E_NOINTERFACE)
+                    ThrowHR(hr);
+
                 // If the input source is not an ICanvasImage, we now check to see if it's an ICanvasImageInterop. This is
                 // the only case other than ICanvasImage where setting the source is valid and we don't need to unrealize.
                 hr = source->QueryInterface(IID_PPV_ARGS(&interopSource));
@@ -1063,6 +1063,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                 }
             }
 
+            ComPtr<ICanvasResourceWrapperWithDevice> sourceWithDevice;
             ComPtr<ICanvasDevice> sourceDevice;
 
             if (internalSource)
@@ -1071,10 +1072,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                 // This applies to all the built-in Win2D effects, but not to external effects using ICanvasImageInterop.
                 // Note that this path is only taken if the source is an ICanvasImageInternal, as the ICanvasResourceWrapperWithDevice
                 // interface is internal. That is, if the source is an external effect, there is no way it could implement this.
-                auto sourceWithDevice = MaybeAs<ICanvasResourceWrapperWithDevice>(source);
+                sourceWithDevice = MaybeAs<ICanvasResourceWrapperWithDevice>(source);
 
-                // If the input is an ICanvasResourceWrapperWithDevice, get the current device from there.
-                ThrowIfFailed(sourceWithDevice->get_Device(&sourceDevice));
+                if (sourceWithDevice)
+                {
+                    // If the input is an ICanvasResourceWrapperWithDevice, get the current device from there.
+                    ThrowIfFailed(sourceWithDevice->get_Device(&sourceDevice));
+                }
             }
             else if (interopSource)
             {
@@ -1084,7 +1088,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             }
 
             // Now that a device has been retrieved (unless null), ensure it's not a mismatch with the current one, if any.
-            if (!IsSameInstance(RealizationDevice(), sourceDevice.Get()))
+            // There are two possible scenarios to handle here:
+            //   - We have an ICanvasResourceWrapperWithDevice instance (this matches the original behavior).
+            //   - If we have a source device (that is, external effects must be unrealized or have a matching device).
+            if ((sourceWithDevice || sourceDevice) && !IsSameInstance(RealizationDevice(), sourceDevice.Get()))
             {
                 if ((flags & GetImageFlags::UnrealizeOnFailure) == GetImageFlags::None)
                     ThrowFormattedMessage(E_INVALIDARG, Strings::EffectWrongDevice, index);
