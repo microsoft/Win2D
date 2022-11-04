@@ -230,7 +230,7 @@ TEST_CLASS(CanvasVirtualBitmapUnitTest)
         CreatedFixture f;
 
         float realizedDpi = 0;
-        auto d2dImage = f.VirtualBitmap->GetD2DImage(nullptr, nullptr, GetImageFlags::None, 0.0f, &realizedDpi);
+        auto d2dImage = f.VirtualBitmap->GetD2DImage(nullptr, nullptr, GetD2DImageFlags::None, 0.0f, &realizedDpi);
 
         Assert::IsTrue(IsSameInstance(f.ImageSource.Get(), d2dImage.Get()));
         Assert::AreEqual(0.0f, realizedDpi);

@@ -153,7 +153,7 @@ TEST_CLASS(PixelShaderEffectUnitTests)
         auto effect = Make<PixelShaderEffect>(nullptr, nullptr, sharedState.Get());
 
         // Realize the effect.
-        effect->GetD2DImage(f.CanvasDevice.Get(), f.DeviceContext.Get(), GetImageFlags::None, 0, nullptr);
+        effect->GetD2DImage(f.CanvasDevice.Get(), f.DeviceContext.Get(), GetD2DImageFlags::None, 0, nullptr);
 
         // This should have passed the constant buffer through to D2D.
         Assert::AreEqual(constants, f.EffectPropertyValues[(int)PixelShaderEffectProperty::Constants]);
@@ -253,7 +253,7 @@ TEST_CLASS(PixelShaderEffectUnitTests)
         ThrowIfFailed(properties->Insert(HStringReference(L"foo").Get(), Make<Nullable<int>>(3).Get(), &replaced));
 
         // Realize the effect.
-        effect->GetD2DImage(f.CanvasDevice.Get(), f.DeviceContext.Get(), GetImageFlags::None, 0, nullptr);
+        effect->GetD2DImage(f.CanvasDevice.Get(), f.DeviceContext.Get(), GetD2DImageFlags::None, 0, nullptr);
 
         // This should have passed the constant buffer containing 3 through to D2D.
         auto& d2dConstants = f.GetEffectPropertyValue<int>(PixelShaderEffectProperty::Constants);
@@ -281,7 +281,7 @@ TEST_CLASS(PixelShaderEffectUnitTests)
         ThrowIfFailed(effect->put_MaxSamplerOffset(23));
 
         // Realize the effect.
-        effect->GetD2DImage(f.CanvasDevice.Get(), f.DeviceContext.Get(), GetImageFlags::None, 0, nullptr);
+        effect->GetD2DImage(f.CanvasDevice.Get(), f.DeviceContext.Get(), GetD2DImageFlags::None, 0, nullptr);
 
         // This should have passed the coordinate mapping state through to D2D.
         auto& d2dMapping = f.GetEffectPropertyValue<CoordinateMappingState>(PixelShaderEffectProperty::CoordinateMapping);
@@ -318,7 +318,7 @@ TEST_CLASS(PixelShaderEffectUnitTests)
         ThrowIfFailed(effect->put_Source2Interpolation(CanvasImageInterpolation::Anisotropic));
 
         // Realize the effect.
-        effect->GetD2DImage(f.CanvasDevice.Get(), f.DeviceContext.Get(), GetImageFlags::None, 0, nullptr);
+        effect->GetD2DImage(f.CanvasDevice.Get(), f.DeviceContext.Get(), GetD2DImageFlags::None, 0, nullptr);
 
         // This should have passed the interpolation mode state through to D2D.
         auto& d2dInterpolation = f.GetEffectPropertyValue<SourceInterpolationState>(PixelShaderEffectProperty::SourceInterpolation);
