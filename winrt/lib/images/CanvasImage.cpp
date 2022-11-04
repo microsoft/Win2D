@@ -86,7 +86,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     // Static helper for forwarding GetImageBoundsImpl support to ICanvasImageInterop consumers.
     // This is the implementation of the public GetBoundsForICanvasImageInterop exported function.
 
-    HRESULT GetBoundsForICanvasImageInterop(
+    extern "C" __declspec(nothrow, dllexport) HRESULT __stdcall GetBoundsForICanvasImageInterop(
         ICanvasResourceCreator* resourceCreator,
         ICanvasImageInterop* image,
         Numerics::Matrix3x2 const* transform,
