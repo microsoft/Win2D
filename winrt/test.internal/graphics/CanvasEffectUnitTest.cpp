@@ -38,6 +38,7 @@ public:
         ASSERT_IMPLEMENTS_INTERFACE(m_testEffect, IGraphicsEffectSource);
         ASSERT_IMPLEMENTS_INTERFACE(m_testEffect, ABI::Windows::Foundation::IClosable);
         ASSERT_IMPLEMENTS_INTERFACE(m_testEffect, ICanvasImage);
+        ASSERT_IMPLEMENTS_INTERFACE(m_testEffect, ICanvasImageInterop);
         ASSERT_IMPLEMENTS_INTERFACE(m_testEffect, ICanvasImageInternal);
         ASSERT_IMPLEMENTS_INTERFACE(m_testEffect, IGaussianBlurEffect);
     }
