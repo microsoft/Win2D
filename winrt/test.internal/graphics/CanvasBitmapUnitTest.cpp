@@ -64,6 +64,7 @@ TEST_CLASS(CanvasBitmapUnitTest)
         ASSERT_IMPLEMENTS_INTERFACE(canvasBitmap, IDirect3DSurface);
         ASSERT_IMPLEMENTS_INTERFACE(canvasBitmap, ABI::Windows::Foundation::IClosable);
         ASSERT_IMPLEMENTS_INTERFACE(canvasBitmap, IDirect3DDxgiInterfaceAccess);
+        ASSERT_IMPLEMENTS_INTERFACE(canvasBitmap, ICanvasImageInterop);
         ASSERT_IMPLEMENTS_INTERFACE(canvasBitmap, ICanvasImageInternal);
         ASSERT_IMPLEMENTS_INTERFACE(canvasBitmap, ICanvasBitmapInternal);
     }
