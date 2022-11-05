@@ -336,7 +336,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 RuntimeClassFlags<WinRtClassicComMix>,
                 ICanvasResourceCreator,
                 ICanvasResourceCreatorWithDpi,
-                CloakedIid<ICanvasImageInternal>,
+                ChainInterfaces<CloakedIid<ICanvasImageInternal>, CloakedIid<ICanvasImageInterop>>,
                 CloakedIid<ICanvasBitmapInternal>,
                 CloakedIid<IDirect3DDxgiInterfaceAccess>,
                 CloakedIid<ICanvasResourceWrapperWithDevice>>,

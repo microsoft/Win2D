@@ -37,7 +37,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             IGraphicsEffectD2D1Interop,
             ICanvasEffect,
             ICanvasImage,
-            CloakedIid<ICanvasImageInternal>,
+            ChainInterfaces<CloakedIid<ICanvasImageInternal>, CloakedIid<ICanvasImageInterop>>,
             ChainInterfaces<
                 MixIn<CanvasEffect, ResourceWrapper<ID2D1Effect, CanvasEffect, IGraphicsEffect>>,
                 IClosable,

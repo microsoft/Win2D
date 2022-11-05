@@ -11,7 +11,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         CanvasCommandList,
         ICanvasCommandList,
         ICanvasImage,
-        CloakedIid<ICanvasImageInternal>,
+        ChainInterfaces<CloakedIid<ICanvasImageInternal>, CloakedIid<ICanvasImageInterop>>,
         CloakedIid<ICanvasResourceWrapperWithDevice>,
         Effects::IGraphicsEffectSource)
     {

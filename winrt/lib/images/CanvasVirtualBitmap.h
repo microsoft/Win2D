@@ -85,7 +85,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ICanvasVirtualBitmap,
         ICanvasImage,
         IGraphicsEffectSource,
-        CloakedIid<ICanvasImageInternal>,
+        ChainInterfaces<CloakedIid<ICanvasImageInternal>, CloakedIid<ICanvasImageInterop>>,
         CloakedIid<ICanvasResourceWrapperWithDevice>)        
     {
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_CanvasVirtualBitmap, BaseTrust);
