@@ -1464,6 +1464,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     {
         try
         {
+            // the way this variable/function is declared, the TraceLoggingWrite call here will only fire once
+            // per process, even if LogCreateCanvasDevice() is called more than once.
             static bool createCanvasDeviceLoggedOnce = []()
             {
                 TraceLoggingWrite(
@@ -1471,7 +1473,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                     "Win2DCanvasDeviceCreated",
                     TraceLoggingKeyword(MICROSOFT_KEYWORD_MEASURES),
                     TelemetryPrivacyDataTag(PDT_ProductAndServicePerformance),
-                    TraceLoggingValue(WIN2D_VERSION, "Win2D Version"));
+                    TraceLoggingValue(WIN2D_VERSION, "Win2D Version"),
+                    TraceLoggingValue("WinAppSDK", "App Model"));
 
                 return true;
             }();
