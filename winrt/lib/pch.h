@@ -98,6 +98,7 @@
 #include <ErrorHandling.h>
 #include <LifespanTracker.h>
 #include <Map.h>
+#include <MicrosoftTelemetry.h>
 #include <Nullable.h>
 #include <ReferenceArray.h>
 #include <RegisteredEvent.h>
@@ -105,6 +106,7 @@
 #include <Singleton.h>
 #include <Utilities.h>
 #include <Vector.h>
+#include <Win2DTelemetry.h>
 #include <WinStringWrapper.h>
 #include <WinStringBuilder.h>
 

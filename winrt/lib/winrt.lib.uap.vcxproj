@@ -24,6 +24,9 @@
   <Target Name="CleanIntermediateFiles" AfterTargets="Build" Condition="'$(AzurePipeline)'!=''">
     <RemoveDir Directories="" />
   </Target>
+  <PropertyGroup>
+    <Win2DVersion>$([System.IO.File]::ReadAllText('$(ProjectDir)..\\..\\build\\nuget\\VERSION').TrimEnd())</Win2DVersion>
+  </PropertyGroup>
   <ItemDefinitionGroup>
     <Midl>
       <AdditionalIncludeDirectories>..\..\Numerics\WinRT;directx</AdditionalIncludeDirectories>
@@ -31,7 +34,7 @@
     <ClCompile>
       <CompileAsWinRT>false</CompileAsWinRT>
       <AdditionalIncludeDirectories>..\Inc;$(EtwDirectory);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WRT_EXPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WRT_EXPORT;WIN2D_VERSION="$(Win2DVersion)";%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <WarningLevel>Level4</WarningLevel>
       <AdditionalOptions>/ZH:SHA_256 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
@@ -376,6 +379,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)utils\Strings.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)directx\Direct3DDevice.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)directx\Direct3DSurface.cpp" />
+    <ClCompile Include="telemetry\Win2DTelemetry.cpp" />
     <mc Include="$(MSBuildThisFileDirectory)win2d.etw.xml" />
   </ItemGroup>
   <ItemGroup>

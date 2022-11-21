@@ -480,6 +480,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         }
 
         InitializePrimaryOutput(dxgiDevice);
+        LogCreateCanvasDevice();
     }
 
     ComPtr<CanvasDevice> CanvasDevice::CreateNew(
@@ -1475,6 +1476,32 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         auto d3dDevice = As<ID3D11Device>(dxgiDevice);
 
         return d3dDevice->GetDeviceRemovedReason();
+    }
+
+    void CanvasDevice::LogCreateCanvasDevice()
+    {
+        try
+        {
+            // the way this variable/function is declared, the TraceLoggingWrite call here will only fire once
+            // per process, even if LogCreateCanvasDevice() is called more than once.
+            static bool createCanvasDeviceLoggedOnce = []()
+            {
+                TraceLoggingWrite(
+                    g_hTelemetryProvider,
+                    "Win2DCanvasDeviceCreated",
+                    TraceLoggingKeyword(MICROSOFT_KEYWORD_MEASURES),
+                    TelemetryPrivacyDataTag(PDT_ProductAndServicePerformance),
+                    TraceLoggingValue(WIN2D_VERSION, "Win2D Version"),
+                    TraceLoggingValue("UWP", "App Model"));
+
+                return true;
+            }();
+        }
+        catch (...)
+        {
+            // We will swallow all exceptions and ignore them if telemetry logging code throws,
+            // so as to not throw off the actual CanvasDevice creation.
+        }
     }
 
     ActivatableClassWithFactory(CanvasDevice, CanvasDeviceFactory);

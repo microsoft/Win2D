@@ -43,6 +43,9 @@
     <Filter Include="svg">
       <UniqueIdentifier>{805ea252-3559-4026-854a-65a3fc8880b8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="telemetry">
+      <UniqueIdentifier>{9efe6ead-10ac-45bc-b729-9c7d290cc10f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <MidlRT Include="$(MSBuildThisFileDirectory)Canvas.abi.idl" />
@@ -471,6 +474,9 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)svg\CanvasSvgStrokeDashArrayAttribute.cpp">
       <Filter>svg</Filter>
+    </ClCompile>
+    <ClCompile Include="telemetry\Win2DTelemetry.cpp">
+      <Filter>telemetry</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
