@@ -410,6 +410,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         ComPtr<ID2D1Bitmap1> CreateBitmapFromWicBitmap(ID2D1DeviceContext* deviceContext, IWICBitmapSource* wicBitmapSource, float dpi, CanvasAlphaMode alpha);
         ComPtr<ID2D1Bitmap1> CreateBitmapFromDdsFrame(ID2D1DeviceContext* deviceContext, IWICBitmapSource* wicBitmapSource, IWICDdsFrameDecode* ddsFrame, float dpi, CanvasAlphaMode alpha);
+
+        // telemetry
+        static void LogCreateCanvasDevice();
     };
 
 

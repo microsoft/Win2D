@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29020.237
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32901.215
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "winrt", "winrt", "{0F212400-0A8B-4E26-9BA8-CE7165FF8717}"
 EndProject
@@ -17,6 +17,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Inc", "Inc", "{CEA2F017-5D5
 		winrt\inc\ErrorHandling.h = winrt\inc\ErrorHandling.h
 		winrt\inc\LifespanTracker.h = winrt\inc\LifespanTracker.h
 		winrt\inc\Map.h = winrt\inc\Map.h
+		winrt\inc\MicrosoftTelemetry.h = winrt\inc\MicrosoftTelemetry.h
 		winrt\inc\Nullable.h = winrt\inc\Nullable.h
 		winrt\inc\ReferenceArray.h = winrt\inc\ReferenceArray.h
 		winrt\inc\RegisteredEvent.h = winrt\inc\RegisteredEvent.h
@@ -25,6 +26,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Inc", "Inc", "{CEA2F017-5D5
 		winrt\inc\UapApis.h = winrt\inc\UapApis.h
 		winrt\inc\Utilities.h = winrt\inc\Utilities.h
 		winrt\inc\Vector.h = winrt\inc\Vector.h
+		winrt\inc\Win2DTelemetry.h = winrt\inc\Win2DTelemetry.h
 		winrt\inc\WinStringBuilder.h = winrt\inc\WinStringBuilder.h
 		winrt\inc\WinStringWrapper.h = winrt\inc\WinStringWrapper.h
 	EndProjectSection
