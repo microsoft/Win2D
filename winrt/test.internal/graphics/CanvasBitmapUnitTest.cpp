@@ -111,6 +111,16 @@ TEST_CLASS(CanvasBitmapUnitTest)
         Assert::AreEqual<ICanvasDevice*>(f.m_canvasDevice.Get(), actualDevice.Get());
     }
 
+    TEST_METHOD_EX(CanvasBitmap_GetDevice_FromICanvasImageInterop)
+    {
+        Fixture f;
+        auto bitmap = CanvasBitmap::CreateNew(f.m_canvasDevice.Get(), f.m_testFileName, DEFAULT_DPI, CanvasAlphaMode::Premultiplied);
+
+        ComPtr<ICanvasDevice> actualDevice;
+        As<ICanvasImageInterop>(bitmap)->GetDevice(&actualDevice);
+        Assert::AreEqual<ICanvasDevice*>(f.m_canvasDevice.Get(), actualDevice.Get());
+    }
+
     TEST_METHOD_EX(CanvasBitmap_GetAlphaMode)
     {
         Fixture f;

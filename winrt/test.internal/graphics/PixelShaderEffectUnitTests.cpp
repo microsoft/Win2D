@@ -72,7 +72,6 @@ TEST_CLASS(PixelShaderEffectUnitTests)
         Assert::AreEqual(RO_E_CLOSED, As<IIterable<IKeyValuePair<HSTRING, IInspectable*>*>>(properties)->First(&iterator));
     }
 
-
     struct Fixture
     {
         ComPtr<MockD2DFactory> Factory;
@@ -333,6 +332,46 @@ TEST_CLASS(PixelShaderEffectUnitTests)
         // Changes should immediately be passed along to D2D.
         Assert::AreEqual<int>(D2D1_FILTER_ANISOTROPIC, d2dInterpolation.Filter[0]);
         Assert::AreEqual<int>(D2D1_FILTER_MIN_MAG_MIP_POINT, d2dInterpolation.Filter[1]);
+    }
+
+    TEST_METHOD_EX(PixelShaderEffect_RealizeAndGetDevice_FromICanvasImageInterop)
+    {
+        Fixture f;
+
+        auto sharedState = MakeSharedShaderState();
+        auto effect = Make<PixelShaderEffect>(nullptr, nullptr, sharedState.Get());
+
+        ComPtr<ICanvasDevice> canvasDevice;
+        ThrowIfFailed(As<ICanvasImageInterop>(effect)->GetDevice(&canvasDevice));
+
+        // The canvas device is just null initially (calling GetDevice should still succeed though)
+        Assert::IsNull(canvasDevice.Get());
+
+        f.CanvasDevice.Get()->AddRef();
+
+        // The only reference to the canvas device is the one in the test fixture
+        Assert::AreEqual(f.CanvasDevice.Get()->Release(), 1ul);
+
+        ComPtr<ID2D1Image> image;
+        ThrowIfFailed(As<ICanvasImageInterop>(effect)->GetD2DImage(f.CanvasDevice.Get(), f.DeviceContext.Get(), GetD2DImageFlags::None, 0, nullptr, &image));
+
+        f.CanvasDevice.Get()->AddRef();
+
+        // The canvas device is now also stored in the effect as the realization device
+        Assert::AreEqual(f.CanvasDevice.Get()->Release(), 2ul);
+
+        // The resulting image should not be null if the method returned S_OK
+        Assert::IsNotNull(image.Get());
+
+        ThrowIfFailed(As<ICanvasImageInterop>(effect)->GetDevice(&canvasDevice));
+
+        f.CanvasDevice.Get()->AddRef();
+
+        // The canvas device now has 3 references (this ensures that ICanvasImageInterop::GetDevice also calls AddRef() on it)
+        Assert::AreEqual(f.CanvasDevice.Get()->Release(), 3ul);
+
+        // The realization device should match
+        Assert::AreEqual<ICanvasDevice*>(f.CanvasDevice.Get(), canvasDevice.Get());
     }
 };
 
