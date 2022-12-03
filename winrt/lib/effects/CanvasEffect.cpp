@@ -117,7 +117,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                 ThrowIfClosed();
                 CheckAndClearOutPointer(device);
 
-                *device = RealizationDevice();
+                auto realizationDevice = RealizationDevice();
+
+                // RealizationDevice() returns an ICanvasDevice* (not a ComPtr<ICanvasDevice>), so we can
+                // just check if it's not null and forward to QueryInterface if that's the case. If instead
+                // the device is null, CheckAndClearOutPointer will have already set the argument to null.
+                if (realizationDevice)
+                {
+                    ThrowIfFailed(realizationDevice->QueryInterface(IID_PPV_ARGS(device)));
+                }
             });
     }
 
