@@ -55,6 +55,7 @@ namespace ABI
                     WIN2D_GET_D2D_IMAGE_FLAGS_MINIMAL_REALIZATION = 8,             // Do the bare minimum to get back an ID2D1Image - no validation or recursive realization
                     WIN2D_GET_D2D_IMAGE_FLAGS_ALLOW_NULL_EFFECT_INPUTS = 16,       // Allow partially configured effect graphs where some inputs are null
                     WIN2D_GET_D2D_IMAGE_FLAGS_UNREALIZE_ON_FAILURE = 32,           // If an input is invalid, unrealize the effect and set the output image to null
+                    WIN2D_GET_D2D_IMAGE_FLAGS_FORCE_DWORD = 0xffffffff
                 } WIN2D_GET_D2D_IMAGE_FLAGS;
 
                 DEFINE_ENUM_FLAG_OPERATORS(WIN2D_GET_D2D_IMAGE_FLAGS)
