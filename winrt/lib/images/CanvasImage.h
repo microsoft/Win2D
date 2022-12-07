@@ -14,8 +14,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     using namespace ABI::Windows::Foundation;
     using namespace ABI::Windows::Storage::Streams;
 
-    DEFINE_ENUM_FLAG_OPERATORS(WIN2D_GET_D2D_IMAGE_FLAGS)
-
 
     class __declspec(uuid("2F434224-053C-4978-87C4-CFAAFA2F4FAC"))
     ICanvasImageInternal : public ICanvasImageInterop

@@ -57,6 +57,8 @@ namespace ABI
                     WIN2D_GET_D2D_IMAGE_FLAGS_UNREALIZE_ON_FAILURE = 32,           // If an input is invalid, unrealize the effect and set the output image to null
                 } WIN2D_GET_D2D_IMAGE_FLAGS;
 
+                DEFINE_ENUM_FLAG_OPERATORS(WIN2D_GET_D2D_IMAGE_FLAGS)
+
                 //
                 // Interface implemented by all effects and also exposed to allow external users to implement custom effects.
                 //
