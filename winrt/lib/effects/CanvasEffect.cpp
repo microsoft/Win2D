@@ -133,7 +133,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     // ICanvasImageInternal
     //
 
-    ComPtr<ID2D1Image> CanvasEffect::GetD2DImage(ICanvasDevice* device, ID2D1DeviceContext* deviceContext, GetD2DImageFlags flags, float targetDpi, float* realizedDpi)
+    ComPtr<ID2D1Image> CanvasEffect::GetD2DImage(ICanvasDevice* device, ID2D1DeviceContext* deviceContext, WIN2D_GET_D2D_IMAGE_FLAGS flags, float targetDpi, float* realizedDpi)
     {
         ThrowIfClosed();
 
@@ -149,13 +149,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         auto lock = Lock(m_mutex);
 
         // Process the ReadDpiFromDeviceContext flag.
-        if ((flags & GetD2DImageFlags::ReadDpiFromDeviceContext) != GetD2DImageFlags::None)
+        if ((flags & WIN2D_GET_D2D_IMAGE_FLAGS_READ_DPI_FROM_DEVICE_CONTEXT) != WIN2D_GET_D2D_IMAGE_FLAGS_NONE)
         {
             if (TargetIsCommandList(deviceContext))
             {
                 // Command lists are DPI independent, so we always
                 // need to insert DPI compensation when drawing to them.
-                flags |= GetD2DImageFlags::AlwaysInsertDpiCompensation;
+                flags |= WIN2D_GET_D2D_IMAGE_FLAGS_ALWAYS_INSERT_DPI_COMPENSATION;
             }
             else
             {
@@ -163,13 +163,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                 targetDpi = GetDpi(deviceContext);
             }
 
-            flags &= ~GetD2DImageFlags::ReadDpiFromDeviceContext;
+            flags &= ~WIN2D_GET_D2D_IMAGE_FLAGS_READ_DPI_FROM_DEVICE_CONTEXT;
         }
 
         // If this is a DPI compensation effect, we no longer need to insert any further compensation.
         if (IsEqualGUID(m_effectId, CLSID_D2D1DpiCompensation))
         {
-            flags |= GetD2DImageFlags::NeverInsertDpiCompensation;
+            flags |= WIN2D_GET_D2D_IMAGE_FLAGS_NEVER_INSERT_DPI_COMPENSATION;
         }
 
         // Check if device is the same as previous device.
@@ -190,7 +190,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                 return nullptr;
             }
         }
-        else if ((flags & GetD2DImageFlags::MinimalRealization) == GetD2DImageFlags::None)
+        else if ((flags & WIN2D_GET_D2D_IMAGE_FLAGS_MINIMAL_REALIZATION) == WIN2D_GET_D2D_IMAGE_FLAGS_NONE)
         {
             // Recurse through the effect graph to make sure child nodes are properly realized.
             RefreshInputs(flags, targetDpi, deviceContext);
@@ -218,13 +218,13 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                 if (!device)
                     ThrowHR(E_INVALIDARG, Strings::GetResourceNoDevice);
 
-                GetD2DImageFlags flags = GetD2DImageFlags::AllowNullEffectInputs;
+                WIN2D_GET_D2D_IMAGE_FLAGS flags = WIN2D_GET_D2D_IMAGE_FLAGS_ALLOW_NULL_EFFECT_INPUTS;
 
                 // If the caller did not specify target DPI, we always need to insert DPI compensation
                 // (same as when using effects with DPI independent contexts such as command lists).
                 if (dpi <= 0)
                 {
-                    flags |= GetD2DImageFlags::AlwaysInsertDpiCompensation;
+                    flags |= WIN2D_GET_D2D_IMAGE_FLAGS_ALWAYS_INSERT_DPI_COMPENSATION;
                 }
 
                 auto realizedEffect = GetD2DImage(device, nullptr, flags, dpi);
@@ -492,12 +492,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     {
         DeviceContextLease m_deviceContext;
         ComPtr<ICanvasDevice> m_device;
-        GetD2DImageFlags m_flags;
+        WIN2D_GET_D2D_IMAGE_FLAGS m_flags;
         float m_dpi;
 
     public:
         EffectRealizationContext(ICanvasResourceCreatorWithDpi* resourceCreator)
-            : m_flags(GetD2DImageFlags::AllowNullEffectInputs)
+            : m_flags(WIN2D_GET_D2D_IMAGE_FLAGS_ALLOW_NULL_EFFECT_INPUTS)
         {
             CheckInPointer(resourceCreator);
 
@@ -513,7 +513,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                 // Special case for command lists, which always require DPI compensation.
                 if (TargetIsCommandList(m_deviceContext.Get()))
                 {
-                    m_flags |= GetD2DImageFlags::AlwaysInsertDpiCompensation;
+                    m_flags |= WIN2D_GET_D2D_IMAGE_FLAGS_ALWAYS_INSERT_DPI_COMPENSATION;
                 }
             }
             else
@@ -737,9 +737,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
 
     // SetD2DInput options used by SetSource, InsertSource, and AppendSource.
-    const GetD2DImageFlags SetSourceFlags = GetD2DImageFlags::MinimalRealization | 
-                                            GetD2DImageFlags::AllowNullEffectInputs |
-                                            GetD2DImageFlags::UnrealizeOnFailure;
+    const WIN2D_GET_D2D_IMAGE_FLAGS SetSourceFlags = WIN2D_GET_D2D_IMAGE_FLAGS_MINIMAL_REALIZATION |
+                                                     WIN2D_GET_D2D_IMAGE_FLAGS_ALLOW_NULL_EFFECT_INPUTS |
+                                                     WIN2D_GET_D2D_IMAGE_FLAGS_UNREALIZE_ON_FAILURE;
 
 
     void CanvasEffect::SetSource(unsigned int index, IGraphicsEffectSource* source)
@@ -931,14 +931,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     }
 
 
-    bool CanvasEffect::ApplyDpiCompensation(unsigned int index, ComPtr<ID2D1Image>& inputImage, float inputDpi, GetD2DImageFlags flags, float targetDpi, ID2D1DeviceContext* deviceContext)
+    bool CanvasEffect::ApplyDpiCompensation(unsigned int index, ComPtr<ID2D1Image>& inputImage, float inputDpi, WIN2D_GET_D2D_IMAGE_FLAGS flags, float targetDpi, ID2D1DeviceContext* deviceContext)
     {
         auto& dpiCompensator = m_sources[index].DpiCompensator;
 
         bool hasDpiCompensation = (dpiCompensator != nullptr);
         bool needsDpiCompensation;
 
-        if ((flags & GetD2DImageFlags::MinimalRealization) != GetD2DImageFlags::None)
+        if ((flags & WIN2D_GET_D2D_IMAGE_FLAGS_MINIMAL_REALIZATION) != WIN2D_GET_D2D_IMAGE_FLAGS_NONE)
         {
             // In minimal mode, we don't yet know the target DPI. For instance this occurs when setting an
             // effect as the source of an image brush. We'll fix up later when the brush is drawn to a device
@@ -954,8 +954,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             //  - we were not told never to include it
             //  - either we were told to always include it, or the input DPI is different from the target
 
-            bool neverCompensate  = (flags & GetD2DImageFlags::NeverInsertDpiCompensation)  != GetD2DImageFlags::None;
-            bool alwaysCompensate = (flags & GetD2DImageFlags::AlwaysInsertDpiCompensation) != GetD2DImageFlags::None;
+            bool neverCompensate  = (flags & WIN2D_GET_D2D_IMAGE_FLAGS_NEVER_INSERT_DPI_COMPENSATION)  != WIN2D_GET_D2D_IMAGE_FLAGS_NONE;
+            bool alwaysCompensate = (flags & WIN2D_GET_D2D_IMAGE_FLAGS_ALWAYS_INSERT_DPI_COMPENSATION) != WIN2D_GET_D2D_IMAGE_FLAGS_NONE;
 
             needsDpiCompensation = (inputDpi != 0) &&
                                    !neverCompensate &&
@@ -995,7 +995,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     }
 
     
-    void CanvasEffect::RefreshInputs(GetD2DImageFlags flags, float targetDpi, ID2D1DeviceContext* deviceContext)
+    void CanvasEffect::RefreshInputs(WIN2D_GET_D2D_IMAGE_FLAGS flags, float targetDpi, ID2D1DeviceContext* deviceContext)
     {
         auto& d2dEffect = GetResource();
 
@@ -1010,7 +1010,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
             if (!source)
             {
-                if ((flags & GetD2DImageFlags::AllowNullEffectInputs) == GetD2DImageFlags::None)
+                if ((flags & WIN2D_GET_D2D_IMAGE_FLAGS_ALLOW_NULL_EFFECT_INPUTS) == WIN2D_GET_D2D_IMAGE_FLAGS_NONE)
                     ThrowFormattedMessage(E_INVALIDARG, Strings::EffectNullSource, i);
             }
             else
@@ -1033,7 +1033,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     }
 
 
-    bool CanvasEffect::SetD2DInput(ID2D1Effect* d2dEffect, unsigned int index, IGraphicsEffectSource* source, GetD2DImageFlags flags, float targetDpi, ID2D1DeviceContext* deviceContext)
+    bool CanvasEffect::SetD2DInput(ID2D1Effect* d2dEffect, unsigned int index, IGraphicsEffectSource* source, WIN2D_GET_D2D_IMAGE_FLAGS flags, float targetDpi, ID2D1DeviceContext* deviceContext)
     {
         ComPtr<ID2D1Image> realizedSource;
         float realizedDpi = 0;
@@ -1061,7 +1061,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                     if (hr != E_NOINTERFACE)
                         ThrowHR(hr);
 
-                    if ((flags & GetD2DImageFlags::UnrealizeOnFailure) == GetD2DImageFlags::None)
+                    if ((flags & WIN2D_GET_D2D_IMAGE_FLAGS_UNREALIZE_ON_FAILURE) == WIN2D_GET_D2D_IMAGE_FLAGS_NONE)
                         ThrowFormattedMessage(E_NOINTERFACE, Strings::EffectWrongSourceType, index);
 
                     // If the source is not an ICanvasImage (eg. setting a Windows.UI.Composition resource), we must unrealize.
@@ -1101,7 +1101,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             //   - If we have a source device (that is, external effects must be unrealized or have a matching device).
             if ((sourceWithDevice || sourceDevice) && !IsSameInstance(RealizationDevice(), sourceDevice.Get()))
             {
-                if ((flags & GetD2DImageFlags::UnrealizeOnFailure) == GetD2DImageFlags::None)
+                if ((flags & WIN2D_GET_D2D_IMAGE_FLAGS_UNREALIZE_ON_FAILURE) == WIN2D_GET_D2D_IMAGE_FLAGS_NONE)
                     ThrowFormattedMessage(E_INVALIDARG, Strings::EffectWrongDevice, index);
 
                 // If the source is on a different device, we must unrealize.
@@ -1119,7 +1119,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             {
                 hr = interopSource->GetD2DImage(RealizationDevice(), deviceContext, flags, targetDpi, &realizedDpi, &realizedSource);
 
-                if ((flags & GetD2DImageFlags::UnrealizeOnFailure) == GetD2DImageFlags::None)
+                if ((flags & WIN2D_GET_D2D_IMAGE_FLAGS_UNREALIZE_ON_FAILURE) == WIN2D_GET_D2D_IMAGE_FLAGS_NONE)
                     ThrowIfFailed(hr);
             }
 
@@ -1133,7 +1133,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         else
         {
             // Source is null.
-            if ((flags & GetD2DImageFlags::AllowNullEffectInputs) == GetD2DImageFlags::None)
+            if ((flags & WIN2D_GET_D2D_IMAGE_FLAGS_ALLOW_NULL_EFFECT_INPUTS) == WIN2D_GET_D2D_IMAGE_FLAGS_NONE)
                 ThrowFormattedMessage(E_INVALIDARG, Strings::EffectNullSource, index);
         }
 
@@ -1373,7 +1373,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     }
 
 
-    bool CanvasEffect::Realize(GetD2DImageFlags flags, float targetDpi, ID2D1DeviceContext* deviceContext)
+    bool CanvasEffect::Realize(WIN2D_GET_D2D_IMAGE_FLAGS flags, float targetDpi, ID2D1DeviceContext* deviceContext)
     {
         assert(!HasResource());
 

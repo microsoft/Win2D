@@ -14,7 +14,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     using namespace ABI::Windows::Foundation;
     using namespace ABI::Windows::Storage::Streams;
 
-    DEFINE_ENUM_FLAG_OPERATORS(GetD2DImageFlags)
+    DEFINE_ENUM_FLAG_OPERATORS(WIN2D_GET_D2D_IMAGE_FLAGS)
 
 
     class __declspec(uuid("2F434224-053C-4978-87C4-CFAAFA2F4FAC"))
@@ -24,7 +24,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         IFACEMETHODIMP GetD2DImage(
             ICanvasDevice* device,
             ID2D1DeviceContext* deviceContext,
-            GetD2DImageFlags flags,
+            WIN2D_GET_D2D_IMAGE_FLAGS flags,
             float targetDpi,
             float* realizeDpi,
             ID2D1Image** ppImage) override
@@ -42,16 +42,16 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         // For effects it triggers on-demand realization, which requires extra information.
         //
         // The device parameter is required, while deviceContext is optional (but recommended)
-        // except when the ReadDpiFromDeviceContext flag is specified. This is because not all
-        // callers of GetD2DImage have easy access to a context. It is always possible to get a
-        // resource creation context from the device, but the context is only actually necessary
-        // if a new effect realization needs to be created, so it is more efficient to have the
+        // except when the WIN2D_GET_D2D_IMAGE_FLAGS_READ_DPI_FROM_DEVICE_CONTEXT flag is specified.
+        // This is because not all callers of GetD2DImage have easy access to a context. It is always
+        // possible to get a resource creation context from the device, but the context is only actually
+        // necessary if a new effect realization needs to be created, so it is more efficient to have the
         // implementation do this lookup only if/when it turns out to be needed.
         //
         // targetDpi passes in the DPI of the target device context. This is used to
         // determine when a D2D1DpiCompensation effect needs to be inserted. Behavior of
-        // this parameter can be overridden by the flag values ReadDpiFromDeviceContext,
-        // AlwaysInsertDpiCompensation, or NeverInsertDpiCompensation.
+        // this parameter can be overridden by the flag values WIN2D_GET_D2D_IMAGE_FLAGS_READ_DPI_FROM_DEVICE_CONTEXT,
+        // WIN2D_GET_D2D_IMAGE_FLAGS_ALWAYS_INSERT_DPI_COMPENSATION, or WIN2D_GET_D2D_IMAGE_FLAGS_NEVER_INSERT_DPI_COMPENSATION.
         //
         // realizedDpi returns the DPI of a source bitmap, or zero if the image does not
         // have a fixed DPI. A D2D1DpiCompensation effect will be inserted if targetDpi
@@ -60,7 +60,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         virtual ComPtr<ID2D1Image> GetD2DImage(
             ICanvasDevice* device,
             ID2D1DeviceContext* deviceContext,
-            GetD2DImageFlags flags = GetD2DImageFlags::ReadDpiFromDeviceContext,
+            WIN2D_GET_D2D_IMAGE_FLAGS flags = WIN2D_GET_D2D_IMAGE_FLAGS_READ_DPI_FROM_DEVICE_CONTEXT,
             float targetDpi = 0,
             float* realizedDpi = nullptr) = 0;
 
@@ -72,7 +72,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             IUnknown* canvasImage,
             ICanvasDevice* device,
             ID2D1DeviceContext* deviceContext,
-            GetD2DImageFlags flags = GetD2DImageFlags::ReadDpiFromDeviceContext,
+            WIN2D_GET_D2D_IMAGE_FLAGS flags = WIN2D_GET_D2D_IMAGE_FLAGS_READ_DPI_FROM_DEVICE_CONTEXT,
             float targetDpi = 0,
             float* realizedDpi = nullptr)
         {
@@ -100,9 +100,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 // If the source is not an ICanvasImageInternal, it must be an ICanvasImageInterop object.
                 hr = As<ICanvasImageInterop>(canvasImage)->GetD2DImage(device, deviceContext, flags, targetDpi, realizedDpi, &d2dImage);
 
-                // To match the behavior of ICanvasImageInternal::GetD2DImage in case of failure, check if the flags being used did have the
-                // GetD2DImageFlags::UnrealizeOnFailure set. If not, and the call failed, then we explicitly throw from the returned HRESULT.
-                if ((flags & GetD2DImageFlags::UnrealizeOnFailure) == GetD2DImageFlags::None)
+                // To match the behavior of ICanvasImageInternal::GetD2DImage in case of failure, check if the flags being used did have the flag
+                // WIN2D_GET_D2D_IMAGE_FLAGS_UNREALIZE_ON_FAILURE set. If not, and the call failed, then we explicitly throw from the returned HRESULT.
+                if ((flags & WIN2D_GET_D2D_IMAGE_FLAGS_UNREALIZE_ON_FAILURE) == WIN2D_GET_D2D_IMAGE_FLAGS_NONE)
                     ThrowIfFailed(hr);
             }
 

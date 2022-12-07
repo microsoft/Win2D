@@ -88,7 +88,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     protected:
         bool IsSupported(ICanvasDevice* device);
 
-        virtual bool Realize(GetD2DImageFlags flags, float targetDpi, ID2D1DeviceContext* deviceContext) override;
+        virtual bool Realize(WIN2D_GET_D2D_IMAGE_FLAGS flags, float targetDpi, ID2D1DeviceContext* deviceContext) override;
         virtual void Unrealize(unsigned int skipSourceIndex, bool skipAllSources) override;
 
         IFACEMETHOD(GetSource)(unsigned int index, IGraphicsEffectSource** source) override;

@@ -227,7 +227,7 @@ public:
                     mockEffect->MockGetInput =
                         [&](UINT32, ID2D1Image** input)
                         {
-                            ThrowIfFailed(stubBitmap->GetD2DImage(nullptr, nullptr, (GetD2DImageFlags)0, 0, nullptr).CopyTo(input));
+                            ThrowIfFailed(stubBitmap->GetD2DImage(nullptr, nullptr, WIN2D_GET_D2D_IMAGE_FLAGS_NONE, 0, nullptr).CopyTo(input));
                         };
 
                     mockEffect->MockGetInputCount =

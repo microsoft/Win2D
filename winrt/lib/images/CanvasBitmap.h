@@ -501,7 +501,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         }
 
         // ICanvasImageInternal
-        virtual ComPtr<ID2D1Image> GetD2DImage(ICanvasDevice*, ID2D1DeviceContext*, GetD2DImageFlags, float /*targetDpi*/, float* realizedDpi) override
+        virtual ComPtr<ID2D1Image> GetD2DImage(ICanvasDevice*, ID2D1DeviceContext*, WIN2D_GET_D2D_IMAGE_FLAGS, float /*targetDpi*/, float* realizedDpi) override
         {
             if (realizedDpi)
                 *realizedDpi = m_dpi;

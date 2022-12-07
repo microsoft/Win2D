@@ -46,16 +46,16 @@ namespace ABI
                 };
 
                 // Options for fine-tuning the behavior of ICanvasImageInterop::GetD2DImage.
-                typedef enum GetD2DImageFlags
+                typedef enum WIN2D_GET_D2D_IMAGE_FLAGS
                 {
-                    None = 0,
-                    ReadDpiFromDeviceContext = 1,    // Ignore the targetDpi parameter - read DPI from deviceContext instead
-                    AlwaysInsertDpiCompensation = 2, // Ignore the targetDpi parameter - always insert DPI compensation
-                    NeverInsertDpiCompensation = 4,  // Ignore the targetDpi parameter - never insert DPI compensation
-                    MinimalRealization = 8,          // Do the bare minimum to get back an ID2D1Image - no validation or recursive realization
-                    AllowNullEffectInputs = 16,      // Allow partially configured effect graphs where some inputs are null
-                    UnrealizeOnFailure = 32,         // If an input is invalid, unrealize the effect and set the output image to null
-                } GetD2DImageFlags;
+                    WIN2D_GET_D2D_IMAGE_FLAGS_NONE = 0,
+                    WIN2D_GET_D2D_IMAGE_FLAGS_READ_DPI_FROM_DEVICE_CONTEXT = 1,    // Ignore the targetDpi parameter - read DPI from deviceContext instead
+                    WIN2D_GET_D2D_IMAGE_FLAGS_ALWAYS_INSERT_DPI_COMPENSATION = 2,  // Ignore the targetDpi parameter - always insert DPI compensation
+                    WIN2D_GET_D2D_IMAGE_FLAGS_NEVER_INSERT_DPI_COMPENSATION = 4,   // Ignore the targetDpi parameter - never insert DPI compensation
+                    WIN2D_GET_D2D_IMAGE_FLAGS_MINIMAL_REALIZATION = 8,             // Do the bare minimum to get back an ID2D1Image - no validation or recursive realization
+                    WIN2D_GET_D2D_IMAGE_FLAGS_ALLOW_NULL_EFFECT_INPUTS = 16,       // Allow partially configured effect graphs where some inputs are null
+                    WIN2D_GET_D2D_IMAGE_FLAGS_UNREALIZE_ON_FAILURE = 32,           // If an input is invalid, unrealize the effect and set the output image to null
+                } WIN2D_GET_D2D_IMAGE_FLAGS;
 
                 //
                 // Interface implemented by all effects and also exposed to allow external users to implement custom effects.
@@ -69,7 +69,7 @@ namespace ABI
                     IFACEMETHOD(GetD2DImage)(
                         ICanvasDevice* device,
                         ID2D1DeviceContext* deviceContext,
-                        GetD2DImageFlags flags,
+                        WIN2D_GET_D2D_IMAGE_FLAGS flags,
                         float targetDpi,
                         float* realizeDpi,
                         ID2D1Image** ppImage) = 0;
