@@ -92,7 +92,7 @@ TEST_CLASS(CanvasImageInteropTests)
 
         auto canvasBitmap = CanvasBitmap::CreateFromColors(
             drawingSession->Device,
-            ref new Platform::Array<Color>(1),
+            ref new Platform::Array<Color>(256 * 256),
             256,
             256,
             96.0f,
@@ -106,6 +106,31 @@ TEST_CLASS(CanvasImageInteropTests)
         drawingSession->DrawImage(canvasImage);
     }
 
+    TEST_METHOD(WrappedEffect_FromCanvasEffect_CanvasDrawingSessionDrawImage)
+    {
+        auto deviceContext = CreateTestD2DDeviceContext();
+        auto drawingSession = GetOrCreate<CanvasDrawingSession>(deviceContext.Get());
+
+        auto canvasBitmap = CanvasBitmap::CreateFromColors(
+            drawingSession->Device,
+            ref new Platform::Array<Color>(256 * 256),
+            256,
+            256,
+            96.0f,
+            CanvasAlphaMode::Ignore);
+
+        auto blurEffect = ref new GaussianBlurEffect();
+
+        blurEffect->Source = canvasBitmap;
+
+        // Create a wrapper around GaussianBlurEffect to validate that ICanvasImageInterop also works correctly through a CanvasEffect-derived type
+        auto wrappedEffect = Make<WrappedEffect>(blurEffect);
+
+        ICanvasImage^ canvasImage = reinterpret_cast<ICanvasImage^>(As<ABI::Microsoft::Graphics::Canvas::ICanvasImage>(wrappedEffect.Get()).Get());
+
+        drawingSession->DrawImage(canvasImage);
+    }
+
     TEST_METHOD(WrappedEffect_FromCanvasBitmap_AsOtherEffectSource_CanvasDrawingSessionDrawImage)
     {
         auto deviceContext = CreateTestD2DDeviceContext();
@@ -113,7 +138,7 @@ TEST_CLASS(CanvasImageInteropTests)
 
         auto canvasBitmap = CanvasBitmap::CreateFromColors(
             drawingSession->Device,
-            ref new Platform::Array<Color>(1),
+            ref new Platform::Array<Color>(256 * 256),
             256,
             256,
             96.0f,
@@ -129,5 +154,96 @@ TEST_CLASS(CanvasImageInteropTests)
         blurEffect->Source = effectSource;
 
         drawingSession->DrawImage(blurEffect);
+    }
+
+    TEST_METHOD(WrappedEffect_FromCanvasBitmap_GetBoundsForICanvasImageInterop)
+    {
+        auto deviceContext = CreateTestD2DDeviceContext();
+        auto drawingSession = GetOrCreate<CanvasDrawingSession>(deviceContext.Get());
+
+        auto canvasBitmap = CanvasBitmap::CreateFromColors(
+            drawingSession->Device,
+            ref new Platform::Array<Color>(256 * 256),
+            256,
+            256,
+            96.0f,
+            CanvasAlphaMode::Ignore);
+
+        auto wrappedEffect = Make<WrappedEffect>(canvasBitmap);
+
+        ComPtr<ABI::Microsoft::Graphics::Canvas::ICanvasDevice> canvasDevice;
+        ComPtr<ABI::Microsoft::Graphics::Canvas::ICanvasResourceCreator> canvasResourceCreator;
+        ThrowIfFailed(wrappedEffect->GetDevice(&canvasDevice));
+        ThrowIfFailed(canvasDevice.CopyTo(IID_PPV_ARGS(&canvasResourceCreator)));
+
+        Assert::IsNotNull(canvasDevice.Get());
+        Assert::IsNotNull(canvasResourceCreator.Get());
+
+        auto canvasImageInterop = As<ABI::Microsoft::Graphics::Canvas::ICanvasImageInterop>(canvasBitmap);
+
+        ABI::Windows::Foundation::Rect rect;
+
+        // Test the GetBoundsForICanvasImageInterop export with an external effect wrapping a CanvasBitmap
+        ThrowIfFailed(ABI::Microsoft::Graphics::Canvas::GetBoundsForICanvasImageInterop(
+            canvasResourceCreator.Get(),
+            canvasImageInterop.Get(),
+            nullptr,
+            &rect));
+
+        ABI::Windows::Foundation::Rect expectedBounds;
+        expectedBounds.X = 0;
+        expectedBounds.Y = 0;
+        expectedBounds.Width = canvasBitmap->Size.Width;
+        expectedBounds.Height = canvasBitmap->Size.Height;
+
+        Assert::AreEqual(*reinterpret_cast<Rect*>(&expectedBounds), *reinterpret_cast<Rect*>(&rect));
+    }
+
+    TEST_METHOD(WrappedEffect_FromCanvasEffect_GetBoundsForICanvasImageInterop)
+    {
+        auto deviceContext = CreateTestD2DDeviceContext();
+        auto drawingSession = GetOrCreate<CanvasDrawingSession>(deviceContext.Get());
+
+        auto canvasBitmap = CanvasBitmap::CreateFromColors(
+            drawingSession->Device,
+            ref new Platform::Array<Color>(256 * 256),
+            256,
+            256,
+            96.0f,
+            CanvasAlphaMode::Ignore);
+
+        auto blurEffect = ref new GaussianBlurEffect();
+
+        blurEffect->Source = canvasBitmap;
+        blurEffect->BorderMode = EffectBorderMode::Hard;
+
+        auto wrappedEffect = Make<WrappedEffect>(blurEffect);
+
+        ComPtr<ABI::Microsoft::Graphics::Canvas::ICanvasDevice> canvasDevice;
+        ComPtr<ABI::Microsoft::Graphics::Canvas::ICanvasResourceCreator> canvasResourceCreator;
+        ThrowIfFailed(wrappedEffect->GetDevice(&canvasDevice));
+        ThrowIfFailed(canvasDevice.CopyTo(IID_PPV_ARGS(&canvasResourceCreator)));
+
+        Assert::IsNotNull(canvasDevice.Get());
+        Assert::IsNotNull(canvasResourceCreator.Get());
+
+        auto canvasImageInterop = As<ABI::Microsoft::Graphics::Canvas::ICanvasImageInterop>(canvasBitmap);
+
+        ABI::Windows::Foundation::Rect rect;
+
+        // Test GetBoundsForICanvasImageInterop with an effect going through a second Win2D effect first
+        ThrowIfFailed(ABI::Microsoft::Graphics::Canvas::GetBoundsForICanvasImageInterop(
+            canvasResourceCreator.Get(),
+            canvasImageInterop.Get(),
+            nullptr,
+            &rect));
+
+        ABI::Windows::Foundation::Rect expectedBounds;
+        expectedBounds.X = 0;
+        expectedBounds.Y = 0;
+        expectedBounds.Width = canvasBitmap->Size.Width;
+        expectedBounds.Height = canvasBitmap->Size.Height;
+
+        Assert::AreEqual(*reinterpret_cast<Rect*>(&expectedBounds), *reinterpret_cast<Rect*>(&rect));
     }
 };
