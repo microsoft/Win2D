@@ -176,6 +176,7 @@ TEST_CLASS(CanvasImageInteropTests)
         ThrowIfFailed(wrappedEffect->GetDevice(&canvasDevice));
         ThrowIfFailed(canvasDevice.CopyTo(IID_PPV_ARGS(&canvasResourceCreator)));
 
+        // A canvas bitmap has an associated device from creation
         Assert::IsNotNull(canvasDevice.Get());
         Assert::IsNotNull(canvasResourceCreator.Get());
 
@@ -220,12 +221,10 @@ TEST_CLASS(CanvasImageInteropTests)
         auto wrappedEffect = Make<WrappedEffect>(blurEffect);
 
         ComPtr<ABI::Microsoft::Graphics::Canvas::ICanvasDevice> canvasDevice;
-        ComPtr<ABI::Microsoft::Graphics::Canvas::ICanvasResourceCreator> canvasResourceCreator;
         ThrowIfFailed(wrappedEffect->GetDevice(&canvasDevice));
-        ThrowIfFailed(canvasDevice.CopyTo(IID_PPV_ARGS(&canvasResourceCreator)));
 
-        Assert::IsNotNull(canvasDevice.Get());
-        Assert::IsNotNull(canvasResourceCreator.Get());
+        // An effect has no associated device until it's realized (and it isn't at this point yet)
+        Assert::IsNull(canvasDevice.Get());
 
         auto canvasImageInterop = As<ABI::Microsoft::Graphics::Canvas::ICanvasImageInterop>(canvasBitmap);
 
@@ -233,7 +232,7 @@ TEST_CLASS(CanvasImageInteropTests)
 
         // Test GetBoundsForICanvasImageInterop with an effect going through a second Win2D effect first
         ThrowIfFailed(ABI::Microsoft::Graphics::Canvas::GetBoundsForICanvasImageInterop(
-            canvasResourceCreator.Get(),
+            As<ABI::Microsoft::Graphics::Canvas::ICanvasResourceCreator>(drawingSession).Get(),
             canvasImageInterop.Get(),
             nullptr,
             &rect));
