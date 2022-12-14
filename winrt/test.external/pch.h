@@ -37,6 +37,8 @@
 #include <ComArray.h>
 #include <collection.h>
 
+#include <windows.foundation.h>
+
 #include <windowsnumerics.h>
 
 #include <Microsoft.Graphics.Canvas.native.h>

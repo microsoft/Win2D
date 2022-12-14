@@ -11,7 +11,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         CanvasCommandList,
         ICanvasCommandList,
         ICanvasImage,
-        CloakedIid<ICanvasImageInternal>,
+        ChainInterfaces<CloakedIid<ICanvasImageInternal>, CloakedIid<ICanvasImageInterop>>,
         CloakedIid<ICanvasResourceWrapperWithDevice>,
         Effects::IGraphicsEffectSource)
     {
@@ -54,13 +54,21 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             Numerics::Matrix3x2 transform,
             Rect* bounds) override;
 
+        //
+        // ICanvasImageInterop
+        //
+
+        IFACEMETHOD(GetDevice)(ICanvasDevice** device)
+        {
+            return get_Device(device);
+        }
 
         // ICanvasImageInternal
 
         virtual ComPtr<ID2D1Image> GetD2DImage(
             ICanvasDevice* device,
             ID2D1DeviceContext* deviceContext,
-            GetImageFlags flags,
+            WIN2D_GET_D2D_IMAGE_FLAGS flags,
             float targetDpi,
             float* realizedDpi) override;
 

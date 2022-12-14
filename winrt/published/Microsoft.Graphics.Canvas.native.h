@@ -5,6 +5,7 @@
 #pragma once
 
 #include <inspectable.h>
+#include <windows.foundation.numerics.h>
 #include <wrl.h>
 
 interface ID2D1Device1;
@@ -17,7 +18,10 @@ namespace ABI
         {
             namespace Canvas
             {
+                using namespace ABI::Windows::Foundation;
+
                 interface ICanvasDevice;
+                interface ICanvasResourceCreator;
 
                 //
                 // Interface provided by the CanvasDevice factory that is
@@ -40,6 +44,48 @@ namespace ABI
                 public:
                     IFACEMETHOD(GetNativeResource)(ICanvasDevice* device, float dpi, REFIID iid, void** resource) = 0;
                 };
+
+                // Options for fine-tuning the behavior of ICanvasImageInterop::GetD2DImage.
+                typedef enum WIN2D_GET_D2D_IMAGE_FLAGS
+                {
+                    WIN2D_GET_D2D_IMAGE_FLAGS_NONE = 0,
+                    WIN2D_GET_D2D_IMAGE_FLAGS_READ_DPI_FROM_DEVICE_CONTEXT = 1,    // Ignore the targetDpi parameter - read DPI from deviceContext instead
+                    WIN2D_GET_D2D_IMAGE_FLAGS_ALWAYS_INSERT_DPI_COMPENSATION = 2,  // Ignore the targetDpi parameter - always insert DPI compensation
+                    WIN2D_GET_D2D_IMAGE_FLAGS_NEVER_INSERT_DPI_COMPENSATION = 4,   // Ignore the targetDpi parameter - never insert DPI compensation
+                    WIN2D_GET_D2D_IMAGE_FLAGS_MINIMAL_REALIZATION = 8,             // Do the bare minimum to get back an ID2D1Image - no validation or recursive realization
+                    WIN2D_GET_D2D_IMAGE_FLAGS_ALLOW_NULL_EFFECT_INPUTS = 16,       // Allow partially configured effect graphs where some inputs are null
+                    WIN2D_GET_D2D_IMAGE_FLAGS_UNREALIZE_ON_FAILURE = 32,           // If an input is invalid, unrealize the effect and set the output image to null
+                    WIN2D_GET_D2D_IMAGE_FLAGS_FORCE_DWORD = 0xffffffff
+                } WIN2D_GET_D2D_IMAGE_FLAGS;
+
+                DEFINE_ENUM_FLAG_OPERATORS(WIN2D_GET_D2D_IMAGE_FLAGS)
+
+                //
+                // Interface implemented by all effects and also exposed to allow external users to implement custom effects.
+                //
+                class __declspec(uuid("E042D1F7-F9AD-4479-A713-67627EA31863"))
+                ICanvasImageInterop : public IUnknown
+                {
+                public:
+                    IFACEMETHOD(GetDevice)(ICanvasDevice** device) = 0;
+
+                    IFACEMETHOD(GetD2DImage)(
+                        ICanvasDevice* device,
+                        ID2D1DeviceContext* deviceContext,
+                        WIN2D_GET_D2D_IMAGE_FLAGS flags,
+                        float targetDpi,
+                        float* realizeDpi,
+                        ID2D1Image** ppImage) = 0;
+                };
+
+                //
+                // Exported method to allow ICanvasImageInterop implementors to implement ICanvasImage properly.
+                //
+                extern "C" __declspec(nothrow, dllexport) HRESULT __stdcall GetBoundsForICanvasImageInterop(
+                    ICanvasResourceCreator* resourceCreator,
+                    ICanvasImageInterop* image,
+                    Numerics::Matrix3x2 const* transform,
+                    Rect* rect);
             }
         }
     }

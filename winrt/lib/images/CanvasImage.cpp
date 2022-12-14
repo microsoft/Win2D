@@ -23,17 +23,33 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return As<ICanvasDeviceInternal>(device)->GetResourceCreationDeviceContext();
     }
     
+    template <typename T>
     static Rect GetImageBoundsImpl(
-        ICanvasImageInternal* imageInternal,
+        T* image,
         ICanvasResourceCreator* resourceCreator,
         Numerics::Matrix3x2 const* transform)
     {
+        // This method is only allowed when T is ICanvasImageInterop or a derived type.
+        // This includes both ICanvasImageInterop (external effects) and ICanvasImageInternal.
+        static_assert(std::is_base_of<ICanvasImageInterop, T>::value);
+
         ComPtr<ICanvasDevice> device;
         ThrowIfFailed(resourceCreator->get_Device(&device));
 
         auto d2dDeviceContext = GetDeviceContextForGetBounds(device.Get(), resourceCreator);
 
-        auto d2dImage = imageInternal->GetD2DImage(device.Get(), d2dDeviceContext.Get());
+        ComPtr<ID2D1Image> d2dImage;
+
+        // Check if T is ICanvasImageInternal. If so, we can call GetD2DImage without a QueryInterface call.
+        if constexpr (std::is_same<ICanvasImageInternal, T>::value)
+        {
+            d2dImage = image->GetD2DImage(device.Get(), d2dDeviceContext.Get());
+        }
+        else
+        {
+            // If not, use the shared helper to get a D2D image from all supported image types.
+            d2dImage = ICanvasImageInternal::GetD2DImageFromInternalOrInteropSource(image, device.Get(), d2dDeviceContext.Get());
+        }
 
         D2D1_MATRIX_3X2_F previousTransform;
         d2dDeviceContext->GetTransform(&previousTransform);
@@ -64,6 +80,29 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 CheckInPointer(bounds);
 
                 *bounds = GetImageBoundsImpl(imageInternal, resourceCreator, transform);
+            });
+    }
+
+    // Static helper for forwarding GetImageBoundsImpl support to ICanvasImageInterop consumers.
+    // This is the implementation of the public GetBoundsForICanvasImageInterop exported function.
+
+    extern "C" __declspec(nothrow, dllexport) HRESULT __stdcall GetBoundsForICanvasImageInterop(
+        ICanvasResourceCreator* resourceCreator,
+        ICanvasImageInterop* image,
+        Numerics::Matrix3x2 const* transform,
+        Rect* bounds)
+    {
+        if (!transform)
+            transform = &Identity3x2();
+
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckInPointer(image);
+                CheckInPointer(resourceCreator);
+                CheckInPointer(bounds);
+
+                *bounds = GetImageBoundsImpl(image, resourceCreator, transform);
             });
     }
 
@@ -198,7 +237,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 auto canvasDevice = GetCanvasDevice(resourceCreator);
                 auto d2dDevice = GetWrappedResource<ID2D1Device>(canvasDevice);
 
-                auto d2dImage = As<ICanvasImageInternal>(image)->GetD2DImage(canvasDevice.Get(), nullptr, GetImageFlags::None, dpi);
+                auto d2dImage = ICanvasImageInternal::GetD2DImageFromInternalOrInteropSource(image, canvasDevice.Get(), nullptr, WIN2D_GET_D2D_IMAGE_FLAGS_NONE, dpi);
 
                 auto adapter = m_adapter;
                 auto istream = adapter->CreateStreamOverRandomAccessStream(stream);
@@ -260,7 +299,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 // Configure the atlas effect to select what region of the source image we want to feed into the histogram.
                 float realizedDpi;
 
-                auto d2dImage = As<ICanvasImageInternal>(image)->GetD2DImage(device.Get(), deviceContext.Get(), GetImageFlags::None, DEFAULT_DPI, &realizedDpi);
+                auto d2dImage = ICanvasImageInternal::GetD2DImageFromInternalOrInteropSource(image, device.Get(), deviceContext.Get(), WIN2D_GET_D2D_IMAGE_FLAGS_NONE, DEFAULT_DPI, &realizedDpi);
 
                 if (realizedDpi != 0 && realizedDpi != DEFAULT_DPI)
                 {

@@ -7,11 +7,10 @@
     <MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>
     <DefaultLanguage>en-US</DefaultLanguage>
     <AppContainerApplication>true</AppContainerApplication>
-    <UnitTestPlatformVersion  Condition="'$(UnitTestPlatformVersion)' == ''">16.0</UnitTestPlatformVersion>
+    <UnitTestPlatformVersion Condition="'$(UnitTestPlatformVersion)' == ''">16.0</UnitTestPlatformVersion>
     <ProjectSubType>NativeUnitTestProject</ProjectSubType>
     <ApplicationType>Windows Store</ApplicationType>
     <ApplicationTypeRevision>10.0</ApplicationTypeRevision>
-
   </PropertyGroup>
   <Import Project="..\..\build\Win2D.cpp.props" />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -39,6 +38,7 @@
     <ClCompile Include="CanvasCreateResourcesEventArgsTests.cpp" />
     <ClCompile Include="CanvasDeviceTests.cpp" />
     <ClCompile Include="CanvasBitmapTests.cpp" />
+    <ClCompile Include="CanvasImageInteropTests.cpp" />
     <ClCompile Include="CanvasSvgAttributeTests.cpp" />
     <ClCompile Include="CanvasVirtualBitmapTests.cpp" />
     <ClCompile Include="CanvasEffectsTests.cpp" />

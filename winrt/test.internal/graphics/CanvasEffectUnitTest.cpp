@@ -38,6 +38,7 @@ public:
         ASSERT_IMPLEMENTS_INTERFACE(m_testEffect, IGraphicsEffectSource);
         ASSERT_IMPLEMENTS_INTERFACE(m_testEffect, ABI::Windows::Foundation::IClosable);
         ASSERT_IMPLEMENTS_INTERFACE(m_testEffect, ICanvasImage);
+        ASSERT_IMPLEMENTS_INTERFACE(m_testEffect, ICanvasImageInterop);
         ASSERT_IMPLEMENTS_INTERFACE(m_testEffect, ICanvasImageInternal);
         ASSERT_IMPLEMENTS_INTERFACE(m_testEffect, IGaussianBlurEffect);
     }
@@ -226,7 +227,7 @@ public:
                     mockEffect->MockGetInput =
                         [&](UINT32, ID2D1Image** input)
                         {
-                            ThrowIfFailed(stubBitmap->GetD2DImage(nullptr, nullptr, (GetImageFlags)0, 0, nullptr).CopyTo(input));
+                            ThrowIfFailed(stubBitmap->GetD2DImage(nullptr, nullptr, WIN2D_GET_D2D_IMAGE_FLAGS_NONE, 0, nullptr).CopyTo(input));
                         };
 
                     mockEffect->MockGetInputCount =

@@ -147,7 +147,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     ComPtr<ID2D1Image> CanvasCommandList::GetD2DImage(
         ICanvasDevice* device,
         ID2D1DeviceContext* deviceContext,
-        GetImageFlags,
+        WIN2D_GET_D2D_IMAGE_FLAGS,
         float /*targetDpi*/,
         float* realizedDpi)
     {

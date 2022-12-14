@@ -336,7 +336,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 RuntimeClassFlags<WinRtClassicComMix>,
                 ICanvasResourceCreator,
                 ICanvasResourceCreatorWithDpi,
-                CloakedIid<ICanvasImageInternal>,
+                ChainInterfaces<CloakedIid<ICanvasImageInternal>, CloakedIid<ICanvasImageInterop>>,
                 CloakedIid<ICanvasBitmapInternal>,
                 CloakedIid<IDirect3DDxgiInterfaceAccess>,
                 CloakedIid<ICanvasResourceWrapperWithDevice>>,
@@ -491,8 +491,17 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 });
         }
 
+        //
+        // ICanvasImageInterop
+        //
+
+        IFACEMETHOD(GetDevice)(ICanvasDevice** device)
+        {
+            return get_Device(device);
+        }
+
         // ICanvasImageInternal
-        virtual ComPtr<ID2D1Image> GetD2DImage(ICanvasDevice*, ID2D1DeviceContext*, GetImageFlags, float /*targetDpi*/, float* realizedDpi) override
+        virtual ComPtr<ID2D1Image> GetD2DImage(ICanvasDevice*, ID2D1DeviceContext*, WIN2D_GET_D2D_IMAGE_FLAGS, float /*targetDpi*/, float* realizedDpi) override
         {
             if (realizedDpi)
                 *realizedDpi = m_dpi;
