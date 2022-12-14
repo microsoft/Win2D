@@ -103,7 +103,12 @@ TEST_CLASS(CanvasImageInteropTests)
         ICanvasImage^ canvasImage = reinterpret_cast<ICanvasImage^>(As<ABI::Microsoft::Graphics::Canvas::ICanvasImage>(wrappedEffect.Get()).Get());
 
         // Draw an image passing the wrapping effect implementing ICanvasImage externally
+        ComPtr<ID2D1CommandList> d2dCommandList;
+        ThrowIfFailed(deviceContext->CreateCommandList(&d2dCommandList));
+        deviceContext->SetTarget(d2dCommandList.Get());
+        deviceContext->BeginDraw();
         drawingSession->DrawImage(canvasImage);
+        ThrowIfFailed(deviceContext->EndDraw());
     }
 
     TEST_METHOD(WrappedEffect_FromCanvasEffect_CanvasDrawingSessionDrawImage)
@@ -128,7 +133,12 @@ TEST_CLASS(CanvasImageInteropTests)
 
         ICanvasImage^ canvasImage = reinterpret_cast<ICanvasImage^>(As<ABI::Microsoft::Graphics::Canvas::ICanvasImage>(wrappedEffect.Get()).Get());
 
+        ComPtr<ID2D1CommandList> d2dCommandList;
+        ThrowIfFailed(deviceContext->CreateCommandList(&d2dCommandList));
+        deviceContext->SetTarget(d2dCommandList.Get());
+        deviceContext->BeginDraw();
         drawingSession->DrawImage(canvasImage);
+        ThrowIfFailed(deviceContext->EndDraw());
     }
 
     TEST_METHOD(WrappedEffect_FromCanvasBitmap_AsOtherEffectSource_CanvasDrawingSessionDrawImage)
@@ -153,7 +163,12 @@ TEST_CLASS(CanvasImageInteropTests)
         // Assign the wrapper as source for an effect to validate that built-in effects can also accept external ICanvasImage objects
         blurEffect->Source = effectSource;
 
+        ComPtr<ID2D1CommandList> d2dCommandList;
+        ThrowIfFailed(deviceContext->CreateCommandList(&d2dCommandList));
+        deviceContext->SetTarget(d2dCommandList.Get());
+        deviceContext->BeginDraw();
         drawingSession->DrawImage(blurEffect);
+        ThrowIfFailed(deviceContext->EndDraw());
     }
 
     TEST_METHOD(WrappedEffect_FromCanvasBitmap_GetBoundsForICanvasImageInterop)
