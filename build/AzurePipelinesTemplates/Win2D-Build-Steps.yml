@@ -26,6 +26,7 @@ parameters:
         ]
   winappsdk_version: ""
   version: ""
+  is_nightly_pipeline: false
 
 steps:
 - script: |
@@ -94,6 +95,7 @@ steps:
       .$env:Build_SourcesDirectory\build\nuget\download-nuget.cmd
 - task: powershell@2
   displayName: 'Set Nuget source to Azure feed'
+  condition: and(succeeded(), ne(variables.is_nightly_pipeline, 'true'))
   inputs:
     targetType: inline
     # Reads the WinAppSDK Version from eng\Version.Details.xml
