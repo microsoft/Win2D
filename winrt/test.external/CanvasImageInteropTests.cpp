@@ -111,6 +111,41 @@ TEST_CLASS(CanvasImageInteropTests)
         ThrowIfFailed(deviceContext->EndDraw());
     }
 
+    TEST_METHOD(WrappedEffect_FromCanvasBitmap_CanvasDrawingSessionDrawImage_OnRentedContext)
+    {
+        auto canvasDevice = ref new CanvasDevice();
+
+        // Get an ID2D1DeviceContextLease object
+        ComPtr<ABI::Microsoft::Graphics::Canvas::ID2D1DeviceContextLease> deviceContextLease;
+        ThrowIfFailed(As<ABI::Microsoft::Graphics::Canvas::ID2D1DeviceContextPool>(canvasDevice)->GetDeviceContextLease(&deviceContextLease));
+
+        // Get the underlying context from the lease
+        ComPtr<ID2D1DeviceContext> deviceContext;
+        ThrowIfFailed(deviceContextLease->GetD2DDeviceContext(&deviceContext));
+
+        // Same test as before, but using the rented device context
+        auto drawingSession = GetOrCreate<CanvasDrawingSession>(As<ID2D1DeviceContext1>(deviceContext.Get()).Get());
+
+        auto canvasBitmap = CanvasBitmap::CreateFromColors(
+            drawingSession->Device,
+            ref new Platform::Array<Color>(256 * 256),
+            256,
+            256,
+            96.0f,
+            CanvasAlphaMode::Ignore);
+
+        auto wrappedEffect = Make<WrappedEffect>(canvasBitmap);
+
+        ICanvasImage^ canvasImage = reinterpret_cast<ICanvasImage^>(As<ABI::Microsoft::Graphics::Canvas::ICanvasImage>(wrappedEffect.Get()).Get());
+
+        ComPtr<ID2D1CommandList> d2dCommandList;
+        ThrowIfFailed(deviceContext->CreateCommandList(&d2dCommandList));
+        deviceContext->SetTarget(d2dCommandList.Get());
+        deviceContext->BeginDraw();
+        drawingSession->DrawImage(canvasImage);
+        ThrowIfFailed(deviceContext->EndDraw());
+    }
+
     TEST_METHOD(WrappedEffect_FromCanvasEffect_CanvasDrawingSessionDrawImage)
     {
         auto deviceContext = CreateTestD2DDeviceContext();

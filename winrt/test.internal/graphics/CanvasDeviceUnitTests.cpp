@@ -43,6 +43,8 @@ public:
         ASSERT_IMPLEMENTS_INTERFACE(canvasDevice, ABI::Windows::Foundation::IClosable);
         ASSERT_IMPLEMENTS_INTERFACE(canvasDevice, ICanvasResourceWrapperNative);
         ASSERT_IMPLEMENTS_INTERFACE(canvasDevice, ICanvasDeviceInternal);
+        ASSERT_IMPLEMENTS_INTERFACE(canvasDevice, IDirect3DDxgiInterfaceAccess);
+        ASSERT_IMPLEMENTS_INTERFACE(canvasDevice, ID2D1DeviceContextPool);
     }
 
     TEST_METHOD_EX(CanvasDevice_ForceSoftwareRenderer)
