@@ -1,0 +1,31 @@
+parameters:
+- name: "RunTests"
+  type: boolean
+  default: True
+- name: "PushPackageToInternalFeed"
+  type: boolean
+  default: False  
+- name: "PipelineType"
+  type: string
+  default: "not_set"
+
+# Builds Win2D code and nuget package
+stages:
+- stage: Build
+  jobs:
+  # Build Win2D 
+  - job: BuildWin2D
+    pool:
+      vmImage: 'windows-2019'
+    steps:
+    # Set the build number and version
+    - template: Win2D-VersionNumber.yml
+      parameters:
+        PipelineType: ${{ parameters.PipelineType }}
+    # Build Win2D
+    - template: Win2D-BuildSteps.yml
+      parameters:
+        PipelineType: ${{ parameters.PipelineType }}
+          
+
+

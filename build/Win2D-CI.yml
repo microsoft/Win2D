@@ -1,118 +1,35 @@
-# 'Allow scripts to access the OAuth token' was selected in pipeline.  Add the following YAML to any steps requiring access:
-#       env:
-#           MY_ACCESS_TOKEN: $(System.AccessToken)
-# Multi-job configuration must be converted to matrix strategy: https://docs.microsoft.com/en-us/azure/devops/pipelines/process/phases?view=azure-devops&tabs=yaml#multi-job-configuration
+# Please see https://www.osgwiki.com/wiki/Windows_App_SDK_-_How_to_build_and_use_the_pipelines
+# for information on how to use the pipelines
+
 trigger:
   branches:
     include:
     - refs/heads/master
-name: $(BuildDefinitionName)_$(date:yyMM).$(date:dd)$(rev:rrr)
+
+name: $(BuildDefinitionName)-$(date:yyMMdd)
+parameters:
+- name: RunTests
+  displayName: "Run Tests"
+  type: boolean
+  default: True
+- name: PushPackageToInternalFeed
+  displayName: "(TODO) Push Windows App SDK Packages To InternalFeed"
+  type: boolean
+  default: False
+variables:
+- name: PackageSuffix
+  value: $[format('-CI-{0:yyMMdd}.{1}', pipeline.startTime, counter(format('{0}.{1}', variables['Build.DefinitionName'], format('{0:yyMMdd}', pipeline.startTime)), 0))]
+
 resources:
   repositories:
   - repository: self
     type: git
     ref: refs/heads/master
-jobs:
-- job: Phase_1
-  displayName: Phase 1
-  timeoutInMinutes: 120
-  cancelTimeoutInMinutes: 1
-  pool:
-    vmImage: windows-2019
-  steps:
-  - checkout: self
-    clean: true
-    persistCredentials: True
-  - task: PkgESSetupBuild@12
-    name: XESSetupBuild_1
-    displayName: Setup Build
-    enabled: False
-    inputs:
-      branchVersionExcludeBranch: master
-      disableWorkspace: true
-  - task: CmdLine@1
-    displayName: Ensure release branch not merged to master
-    inputs:
-      filename: cmd
-      arguments: /c if exist build\pkges\PoliCheckExclusions.txt exit 1
-  - task: PowerShell@1
-    displayName: Restore pkges\packages.config
-    enabled: False
-    inputs:
-      scriptType: inlineScript
-      inlineScript: >
-        $cmd = ("\\edge-svcs\nuget\v4.3\nuget.exe restore " + $env:Build_SourcesDirectory + "\build\pkges\packages.config -Source https://microsoft.pkgs.visualstudio.com/_packaging/MSFTNuget/nuget/v3/index.json -PackagesDirectory “ + $env:Build_SourcesDirectory + “\packages”)
 
-        &cmd /c $cmd
-  - task: BatchScript@1
-    displayName: Run download-nuget.cmd
-    inputs:
-      filename: build\nuget\download-nuget.cmd
-  - task: NuGetAuthenticate@1
-    displayName: NuGet Authenticate
-    inputs:
-      nuGetServiceConnections: 15653542-de7f-478b-9b8b-9a2c4bf551df
-  - task: CmdLine@2
-    displayName: Move telemetry files
-    inputs:
-      script: "call nuget.exe restore -NonInteractive -configFile $(Build.SourcesDirectory)/release-nuget.config -PackagesDirectory $(Build.SourcesDirectory)/packages $(Build.SourcesDirectory)/build/release-pkges/packages.config || exit /b 1\n      \ndel $(Build.SourcesDirectory)\\winrt\\inc\\MicrosoftTelemetry.h || exit /b 1\n      \nmove /Y $(Build.SourcesDirectory)\\packages\\Microsoft.Win2D.Telemetry.1.0.2\\build\\include\\MicrosoftTelemetry.h $(Build.SourcesDirectory)\\winrt\\inc\\MicrosoftTelemetry.h || exit /b 1"
-  - task: MSBuild@1
-    displayName: Build Win2D.proj
-    inputs:
-      solution: Win2D.proj
-      msbuildVersion: 16.0
-      configuration: Release
-      msbuildArguments: /p:RunTests=false /p:BuildDocs=true /p:BuildTools=true /p:RunTests=false /p:BuildConfigurations=Release /p:AzurePipeline=true
-      maximumCpuCount: true
-  - task: BatchScript@1
-    displayName: build-nupkg
-    inputs:
-      filename: build/nuget/build-nupkg.cmd
-      arguments: integration
-  - task: BatchScript@1
-    displayName: Run clear-space.cmd
-    inputs:
-      filename: build\clear-space.cmd
-      workingFolder: $(Build.SourcesDirectory)
-  - task: CopyFiles@1
-    name: CopyFiles_7
-    displayName: 'Copy Files to: $(XES_DFSDROP)'
-    condition: succeededOrFailed()
-    enabled: False
-    inputs:
-      Contents: >-
-        bin\signed\**
-
-        bin\docs.zip
-
-        bin\uapx86\release\winrt.dll.uap\Microsoft.Graphics.Canvas.pdb
-
-        bin\uapx64\release\winrt.dll.uap\Microsoft.Graphics.Canvas.pdb
-
-        bin\uaparm\release\winrt.dll.uap\Microsoft.Graphics.Canvas.pdb
-
-        bin\uaparm64\release\winrt.dll.uap\Microsoft.Graphics.Canvas.pdb
-      TargetFolder: $(XES_DFSDROP)
-  - task: CopyFiles@2
-    displayName: 'Copy Files to: $(Build.ArtifactStagingDirectory)'
-    inputs:
-      SourceFolder: bin
-      Contents: >-
-        *.nupkg
-
-        signed\**
-
-        docs.zip
-
-        **\*.pdb
-
-        **\*.dll
-      TargetFolder: $(Build.ArtifactStagingDirectory)
-  - task: PublishSymbols@2
-    displayName: Publish symbols path
-    inputs:
-      SearchPattern: '**/bin/**/release/winrt.dll.uap/Microsoft.Graphics.Canvas.pdb'
-      SymbolServerType: TeamServices
-  - task: PublishBuildArtifacts@1
-    displayName: 'Publish Artifact: drop'
-...
+stages:
+- template: AzurePipelineTemplates\Win2D-Stages.yml
+  parameters:
+    # PipelineName: ${{ variables.BuildDefinitionName }}.${{ variables.dateAndCounter }}
+    RunTests: ${{ parameters.RunTests }}
+    PushPackageToInternalFeed: ${{ parameters.PushPackageToInternalFeed }}
+    PipelineType: 'CI'

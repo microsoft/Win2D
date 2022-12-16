@@ -1,0 +1,36 @@
+parameters:
+  PipelineType: "not set"
+
+steps:
+- task: powershell@2
+  name: Win2dVersionTask
+  inputs:
+    targetType: inline
+    # Version numbers look like this: 
+    # CI - Microsoft.Graphics.Win2D.1.0.0-CI.257
+    # Release - Microsoft.Graphics.Win2D.1.0.0.0
+    script: |
+      Write-Host "Setting versions for CI/Release pipelines"
+
+      $pipelineType = "${{ parameters.PipelineType }}"
+      Write-Host Pipeline type: $pipelineType
+
+      $packageSuffix = "$env:packageSuffix"
+      Write-Host Counter: $packageSuffix
+
+      Write-Host Reading from VERSION file
+      $versionMMP = Get-Content build\nuget\VERSION
+      $preRelease = Get-Content build\nuget\VERSION-PRERELEASE
+
+      $versionMMP = $versionMMP + $preRelease
+
+      $version = $versionMMP + $packageSuffix
+
+      $pipelineName = "Win2D-UWP-" + $version
+      
+      Write-Host Setting pipeline version to: $version
+      Write-Host "##vso[build.updatebuildnumber]$pipelineName"
+      Write-Host "##vso[task.setvariable variable=version;isOutput=true]$version"
+
+      Write-Host Done.
+  displayName: Set Win2D Version number and Pipeline number
