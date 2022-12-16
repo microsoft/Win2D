@@ -1,5 +1,5 @@
 trigger:
-- user/getrou/nightly
+- WinAppSDK-Nightly
 
 pool:
   vmImage: 'windows-2019'
@@ -33,6 +33,8 @@ jobs:
     value: $[format('{0}.{1}', dependencies.Win2DVersioning.outputs['win2dVersionTask.versionNightly'], counter(dependencies.Win2DVersioning.outputs['win2dVersionTask.versionNightly']))]
   - name: winappsdk_version
     value: $[dependencies.Win2DVersioning.outputs['winappsdkVersionTask.winappsdk_version']]
+  - name: is_nightly_pipeline
+    value: true
   steps:
   # Update package.config files with Nightly WinAppSDK version
   - task: powershell@2
@@ -53,6 +55,8 @@ jobs:
   variables:
   - name: winappsdk_version
     value: $[dependencies.Win2DVersioning.outputs['winappsdkVersionTask.winappsdk_version']]
+  - name: is_nightly_pipeline
+    value: true
   steps:
   # Update package.config files with Nightly WinAppSDK version
   - task: powershell@2
