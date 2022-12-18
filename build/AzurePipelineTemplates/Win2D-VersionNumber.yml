@@ -12,25 +12,18 @@ steps:
     script: |
       Write-Host "Setting versions for CI/Release pipelines"
 
-      $pipelineType = "${{ parameters.PipelineType }}"
-      Write-Host Pipeline type: $pipelineType
-
-      $packageSuffix = "$env:packageSuffix"
-      Write-Host Counter: $packageSuffix
+      Write-Host Pipeline type: ${{ parameters.PipelineType }}
+      Write-Host Package Suffix: $env:packageSuffix
 
       Write-Host Reading from VERSION file
       $versionMMP = Get-Content build\nuget\VERSION
       $preRelease = Get-Content build\nuget\VERSION-PRERELEASE
-
       $versionMMP = $versionMMP + $preRelease
 
-      $version = $versionMMP + $packageSuffix
-
-      $pipelineName = "Win2D-UWP-" + $version
+      $pipelineName = $versionMMP + "-" + $env:packageSuffix
       
       Write-Host Setting pipeline version to: $version
       Write-Host "##vso[build.updatebuildnumber]$pipelineName"
-      Write-Host "##vso[task.setvariable variable=version;isOutput=true]$version"
 
       Write-Host Done.
   displayName: Set Win2D Version number and Pipeline number

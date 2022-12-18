@@ -11,10 +11,10 @@ parameters:
 
 # Builds Win2D code and nuget package
 stages:
-- stage: Build
+- stage: Build_Win2D
   jobs:
   # Build Win2D 
-  - job: BuildWin2D
+  - job: Version
     pool:
       vmImage: 'windows-2019'
     steps:
@@ -23,9 +23,44 @@ stages:
       parameters:
         PipelineType: ${{ parameters.PipelineType }}
     # Build Win2D
-    - template: Win2D-BuildSteps.yml
+  # - job: BuildWin2D
+  #   dependson: Version
+  #   - template: Win2D-Build-Steps.yml
+  #     parameters:
+  #       PipelineType: ${{ parameters.PipelineType }}
+  - job: MSBuild_Win2D
+    dependsOn: Version
+    strategy:
+      matrix:
+        x86:
+          # x86 is responsible for building docs and tools, which is AnyCPU
+          architecture: "Win32;AnyCPU"
+          buildConfiguration: "Release"
+        x64:
+          architecture: "x64"
+          buildConfiguration: "Release"
+        ARM:
+          architecture: "ARM"
+          buildConfiguration: "Release"
+        ARM64:
+          architecture: "ARM64"
+          buildConfiguration: "Release"
+    pool:
+      vmImage: 'windows-2019'
+    variables:
+      version: $[ dependencies.Version.outputs['version'] ]
+    steps:
+    - template: Win2D-ParallelBuild-Steps.yml
       parameters:
         PipelineType: ${{ parameters.PipelineType }}
+- stage: Build_Nupkg
+  dependsOn: Build_Win2D
+  jobs:
+  - job: Run_BuildNupkg
+    pool:
+      vmImage: 'windows-2019'
+    steps:
+    - template: Win2D-BuildNupkg.yml
           
 
 
