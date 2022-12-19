@@ -271,6 +271,7 @@
     <_VsTest Condition="Exists('$(VS140COMNTOOLS)$(_VsTestPathUnderCommonTools)')">$(VS140COMNTOOLS)$(_VsTestPathUnderCommonTools)</_VsTest>
     <_VsTest Condition="Exists('$(VS150COMNTOOLS)$(_VsTestPathUnderCommonTools)')">$(VS150COMNTOOLS)$(_VsTestPathUnderCommonTools)</_VsTest>
     <_VsTest Condition="Exists('$(VS160COMNTOOLS)$(_VsTestPathUnderCommonTools)')">$(VS160COMNTOOLS)$(_VsTestPathUnderCommonTools)</_VsTest>
+    <_VsTest Condition="Exists('$(VS170COMNTOOLS)$(_VsTestPathUnderCommonTools)')">$(VS170COMNTOOLS)$(_VsTestPathUnderCommonTools)</_VsTest>
     <VsTest Condition="'$(_VsTest)' != ''">"$([System.IO.Path]::GetFullPath('$(_VsTest)'))"</VsTest>
   </PropertyGroup>
 

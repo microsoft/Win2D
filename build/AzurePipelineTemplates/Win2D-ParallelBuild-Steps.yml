@@ -1,5 +1,9 @@
 parameters:
-  PipelineType: "not set"
+  BuildTests: false
+  RunTests: false
+  BuildDocs: true
+  BuildTools: true
+  PublishBinaries: true
   # sdkVersion: 18362
   codeSignInlineOperation: |
         [
@@ -55,12 +59,14 @@ steps:
     solution: Win2D.proj
     msbuildVersion: 16.0
     configuration: Release
-    msbuildArguments: /p:BuildTests=false /p:BuildDocs=true /p:BuildTools=true /p:RunTests=false /p:BuildPlatforms="$(architecture)" /p:BuildConfigurations="$(buildConfiguration)" /p:AzurePipeline=true
+    msbuildArguments: /p:BuildTests=${{ parameters.BuildTests }} /p:BuildDocs=${{ parameters.BuildDocs }} /p:BuildTools=${{ parameters.BuildTools }} /p:RunTests=${{ Parameters.RunTests }} /p:BuildPlatforms="$(architecture)" /p:BuildConfigurations="$(buildConfiguration)"
     maximumCpuCount: true
 
+##### Publish build output #####
 # Copy binaries to artifact staging directory
 - task: CopyFiles@2
   displayName: 'Copy Binaries to ArtifactStagingDirectory'
+  condition: and(succeeded(), ${{ parameters.PublishBinaries }})
   inputs:
     SourceFolder: $(Build.SourcesDirectory)
     TargetFolder: $(Build.ArtifactStagingDirectory)
@@ -71,7 +77,10 @@ steps:
 # Copy WinMD and header files to the artifact staging directory from the x86 build to avoid duplicates
 - task: CopyFiles@2
   displayName: 'Copy WinMD and Header to ArtifactStagingDirectory'
-  condition: eq(variables.architecture, 'Win32;AnyCPU')
+  condition: | 
+    and(succeeded(),
+    and(${{ parameters.PublishBinaries }},
+    eq(variables.architecture, 'Win32;AnyCPU') ))
   inputs:
     SourceFolder: $(Build.SourcesDirectory)
     TargetFolder: $(Build.ArtifactStagingDirectory)
@@ -80,24 +89,32 @@ steps:
       bin\UAPx86\*\winrt.dll.UAP\Microsoft.Graphics.Canvas.winmd
   # Copy intellisense to the artifact staging directory from the x86 release build to avoid duplicates
 - task: CopyFiles@2
-  displayName: 'Copy Files to: $(Build.ArtifactStagingDirectory)'
-  condition: and( eq(variables.architecture, 'Win32;AnyCPU'),  eq(variables.buildConfiguration, 'Release') )
+  displayName: 'Copy Intellisense to: $(Build.ArtifactStagingDirectory)'
+  condition: | 
+    and(succeeded(),
+    and(${{ parameters.PublishBinaries }},
+    and(eq(variables.architecture, 'Win32;AnyCPU'),
+    eq(variables.buildConfiguration, 'Release') )))
   inputs:
     SourceFolder: $(Build.SourcesDirectory)
     TargetFolder: $(Build.ArtifactStagingDirectory)
     Contents: |
       bin\intellisense\Microsoft.Graphics.Canvas.xml
-
 # Publish binary artifact
 - task: PublishBuildArtifacts@1
   displayName: 'Publish Artifact: build_output'
+  condition: and(succeeded(), ${{ parameters.PublishBinaries }})
   inputs:
     ArtifactName: 'build_output'
     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
 # Publish symbols
 - task: PublishSymbols@2
   displayName: Publish symbols path
-  condition: false #TODO - make this a build param, limit the number of days
+  #TODO - make this a build param, limit the number of days
+  condition: |
+    and(succeeded(),
+    and(${{ parameters.PublishBinaries }},
+    false ))
   inputs:
     SearchPattern: '**/bin/**/release/winrt.dll.uap/Microsoft.Graphics.Canvas.pdb'
     SymbolServerType: TeamServices

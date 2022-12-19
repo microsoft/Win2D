@@ -23,8 +23,5 @@
   <PropertyGroup Condition="'$(Platform)' == 'ARM64'">
     <TargetPlatformMinVersion>10.0.16299.0</TargetPlatformMinVersion>
   </PropertyGroup>
-
-  <Target Name="CleanIntermediateFiles" AfterTargets="Build" Condition="'$(AzurePipeline)'!=''">
-    <RemoveDir Directories="$(IntDir)" />
-  </Target>
+  
 </Project>

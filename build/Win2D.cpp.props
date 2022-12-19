@@ -13,10 +13,6 @@
 
   <Import Project="Win2D.common.props" />
 
-  <Target Name="CleanIntermediateFiles" AfterTargets="Build" Condition="'$(AzurePipeline)'!=''">
-    <RemoveDir Directories="$(IntDir)" />
-  </Target>
-
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|ARM" Condition="'$(ApplicationType)' != ''">
       <Configuration>Debug</Configuration>

@@ -21,9 +21,6 @@
   </PropertyGroup>
   <Import Project="$(MSBuildThisFileDir)..\..\build\midlrt.props" />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
-  <Target Name="CleanIntermediateFiles" AfterTargets="Build" Condition="'$(AzurePipeline)'!=''">
-    <RemoveDir Directories="" />
-  </Target>
   <PropertyGroup>
     <Win2DVersion>$([System.IO.File]::ReadAllText('$(ProjectDir)..\\..\\build\\nuget\\VERSION').TrimEnd())</Win2DVersion>
   </PropertyGroup>

@@ -52,7 +52,10 @@ stages:
     steps:
     - template: Win2D-ParallelBuild-Steps.yml
       parameters:
-        PipelineType: ${{ parameters.PipelineType }}
+        BuildTests: False
+        RunTests: False
+        BuildDocs: True
+        BuildTools: True
 - stage: Build_Nupkg
   dependsOn: Build_Win2D
   jobs:
@@ -61,6 +64,36 @@ stages:
       vmImage: 'windows-2019'
     steps:
     - template: Win2D-BuildNupkg.yml
-          
+- stage: Test_Win2D
+  # Empty
+  dependsOn:
+  jobs:
+  - job: MSTest_Win2D
+    strategy:
+      matrix:
+        x86:
+          architecture: "Win32"
+          buildConfiguration: "Release"
+        x64:
+          architecture: "x64"
+          buildConfiguration: "Release"
+        # TODO - Test projects don't support ARM and ARM64
+        # ARM:
+        #   architecture: "ARM"
+        #   buildConfiguration: "Release"
+        # ARM64:
+        #   architecture: "ARM64"
+        #   buildConfiguration: "Release"
+    pool:
+      vmImage: 'windows-2019'
+    variables:
+      version: $[ dependencies.Version.outputs['version'] ]
+    steps:
+    - template: Win2D-ParallelBuild-Steps.yml
+      parameters:
+        BuildTests: True
+        RunTests: True
+        BuildDocs: False
+        BuildToos: False
 
 
