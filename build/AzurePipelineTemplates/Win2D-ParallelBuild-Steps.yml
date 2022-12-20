@@ -57,7 +57,7 @@ steps:
   displayName: Build Win2D.proj
   inputs:
     solution: Win2D.proj
-    msbuildVersion: 16.0
+    msbuildVersion: 17.0
     configuration: Release
     msbuildArguments: /p:BuildTests=${{ parameters.BuildTests }} /p:BuildDocs=${{ parameters.BuildDocs }} /p:BuildTools=${{ parameters.BuildTools }} /p:RunTests=${{ Parameters.RunTests }} /p:BuildPlatforms="$(architecture)" /p:BuildConfigurations="$(buildConfiguration)"
     maximumCpuCount: true

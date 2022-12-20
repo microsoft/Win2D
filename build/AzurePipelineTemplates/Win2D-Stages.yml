@@ -8,6 +8,9 @@ parameters:
 - name: "PipelineType"
   type: string
   default: "not_set"
+- name: "VMImage"
+  type: string
+  default: "windows-2022"
 
 # Builds Win2D code and nuget package
 stages:
@@ -16,7 +19,7 @@ stages:
   # Build Win2D 
   - job: Version
     pool:
-      vmImage: 'windows-2019'
+      vmImage: '${{ parameters.VMImage }}'
     steps:
     # Set the build number and version
     - template: Win2D-VersionNumber.yml
@@ -46,7 +49,7 @@ stages:
           architecture: "ARM64"
           buildConfiguration: "Release"
     pool:
-      vmImage: 'windows-2019'
+      vmImage: '${{ parameters.VMImage }}'
     variables:
       version: $[ dependencies.Version.outputs['version'] ]
     steps:
@@ -61,7 +64,7 @@ stages:
   jobs:
   - job: Run_BuildNupkg
     pool:
-      vmImage: 'windows-2019'
+      vmImage: '${{ parameters.VMImage }}'
     steps:
     - template: Win2D-BuildNupkg.yml
 - stage: Test_Win2D
@@ -85,7 +88,7 @@ stages:
         #   architecture: "ARM64"
         #   buildConfiguration: "Release"
     pool:
-      vmImage: 'windows-2019'
+      vmImage: '${{ parameters.VMImage }}'
     variables:
       version: $[ dependencies.Version.outputs['version'] ]
     steps:
@@ -95,5 +98,4 @@ stages:
         RunTests: True
         BuildDocs: False
         BuildToos: False
-
 

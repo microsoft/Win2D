@@ -49,11 +49,11 @@
   </ItemGroup>
 
   <PropertyGroup Label="Configuration">
-    <PlatformToolset Condition="'$(ApplicationType)' == 'Windows Store' And '$(ApplicationTypeRevision)' == '10.0'">v142</PlatformToolset>
+    <PlatformToolset Condition="'$(ApplicationType)' == 'Windows Store' And '$(ApplicationTypeRevision)' == '10.0'">v143</PlatformToolset>
   </PropertyGroup>
 
   <PropertyGroup>
-    <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.22000.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Platform)' != 'ARM64'">
     <WindowsTargetPlatformMinVersion>10.0.10240.0</WindowsTargetPlatformMinVersion>
