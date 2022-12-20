@@ -1,0 +1,26 @@
+# Please see https://www.osgwiki.com/wiki/Windows_App_SDK_-_How_to_build_and_use_the_pipelines
+# for information on how to use the pipelines
+
+name: $(BuildDefinitionName)-$(date:yyMMdd)
+parameters:
+- name: RunTests
+  displayName: "Run Tests"
+  type: boolean
+  default: true
+variables:
+- name: PackageSuffix
+  value: ''
+
+resources:
+  repositories:
+  - repository: self
+    type: git
+    ref: refs/heads/master
+
+stages:
+- template: AzurePipelineTemplates\Win2D-Stages.yml
+  parameters:
+    # PipelineName: ${{ variables.BuildDefinitionName }}.${{ variables.dateAndCounter }}
+    RunTests: ${{ parameters.RunTests }}
+    PushPackageToInternalFeed: false
+    PipelineType: 'Release'
