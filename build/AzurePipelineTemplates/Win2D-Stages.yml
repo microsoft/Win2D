@@ -1,18 +1,21 @@
 parameters:
 - name: "RunTests"
   type: boolean
-  default: True
+  default: true
 - name: "PushPackageToInternalFeed"
   type: boolean
-  default: False  
+  default: false  
 - name: "PipelineType"
   type: string
   default: "not_set"
 - name: "VMImage"
   type: string
   default: "windows-2022"
+- name: "SignCode"
+  type: boolean
+  default: false
 
-# Builds Win2D code and nuget package
+# Build Win2D code and nuget package
 stages:
 - stage: Build_Win2D
   jobs:
@@ -38,15 +41,19 @@ stages:
         x86:
           # x86 is responsible for building docs and tools, which is AnyCPU
           architecture: "Win32;AnyCPU"
+          archDirectory: "uapx86"
           buildConfiguration: "Release"
         x64:
           architecture: "x64"
+          archDirectory: "uapx64"
           buildConfiguration: "Release"
         ARM:
           architecture: "ARM"
+          archDirectory: "uaparm"
           buildConfiguration: "Release"
         ARM64:
           architecture: "ARM64"
+          archDirectory: "uaparm64"
           buildConfiguration: "Release"
     pool:
       vmImage: '${{ parameters.VMImage }}'
@@ -55,10 +62,13 @@ stages:
     steps:
     - template: Win2D-ParallelBuild-Steps.yml
       parameters:
-        BuildTests: False
-        RunTests: False
-        BuildDocs: True
-        BuildTools: True
+        BuildTests: false
+        RunTests: false
+        BuildDocs: true
+        BuildTools: true
+        PublishBinaries: true
+        SignCode: ${{ parameters.SignCode }}
+        PipelineType: ${{ parameters.PipelineType }}
 - stage: Build_Nupkg
   dependsOn: Build_Win2D
   jobs:
@@ -76,11 +86,11 @@ stages:
       matrix:
         x86:
           architecture: "Win32"
-          binDirectory: "uapx86"
+          archDirectory: "uapx86"
           buildConfiguration: "Release"
         x64:
           architecture: "x64"
-          binDirectory: "uapx64"
+          archDirectory: "uapx64"
           buildConfiguration: "Release"
         # TODO - Test projects don't support ARM and ARM64
         # ARM:
@@ -96,9 +106,10 @@ stages:
     steps:
     - template: Win2D-ParallelBuild-Steps.yml
       parameters:
-        BuildTests: True
-        RunTests: True
-        BuildDocs: False
-        BuildToos: False
-        PublishBinaries: False
-
+        BuildTests: true
+        RunTests: true
+        BuildDocs: false
+        BuildToos: false
+        PublishBinaries: false
+        SignCode: false
+        PipelineType: ${{ parameters.PipelineType }}

@@ -7,8 +7,14 @@ steps:
   inputs:
     targetType: inline
     # Version numbers look like this: 
-    # CI - Microsoft.Graphics.Win2D.1.0.0-CI.257
-    # Release - Microsoft.Graphics.Win2D.1.0.0.0
+    # [CI]       Win2D.uwp.1.27.0-CI-221220.1
+    # [Release]  Win2D.uwp.1.27.0
+    #
+    # Prereleases look like:
+    # [CI]       Win2D.uwp.1.27.0-prerelease-CI-221220.1
+    # [Release]  Win2D.uwp.1.27.0-prerelease
+    #
+    # Pipeline name will be just the version number (e.g. 1.27.0-CI-221220.1)
     script: |
       Write-Host "Setting versions for CI/Release pipelines"
 
@@ -20,9 +26,14 @@ steps:
       $preRelease = Get-Content build\nuget\VERSION-PRERELEASE
       $versionMMP = $versionMMP + $preRelease
 
-      $pipelineName = $versionMMP + "-" + $env:packageSuffix
+      # If the pipeline has a suffix, add it to the name
+      $pipelineName = $versionMMP 
+      if ( $env:packageSuffix -ne "" )
+      {
+        $pipelineName = $pipelineName + "-" + $env:packageSuffix
+      }
       
-      Write-Host Setting pipeline version to: $version
+      Write-Host Setting pipeline name to: $pipelineName
       Write-Host "##vso[build.updatebuildnumber]$pipelineName"
 
       Write-Host Done.

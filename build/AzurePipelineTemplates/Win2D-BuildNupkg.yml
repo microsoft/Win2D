@@ -1,5 +1,5 @@
 parameters:
-  PipelineType: "not set"
+  PipelineType: ""
   # sdkVersion: 18362
   codeSignInlineOperation: |
         [
@@ -46,7 +46,38 @@ steps:
   displayName: build-nupkg
   inputs:
     filename: build/nuget/build-nupkg.cmd
-    arguments: $(packageSuffix)
+    ${{ if eq(parameters.PipelineType, 'Release') }}:
+      arguments: 'signed'
+    ${{ if ne(parameters.PipelineType, 'Release') }}:
+      arguments: $(packageSuffix)
+
+# Sign nuget package
+- ${{ if eq(parameters.PipelineType, 'Release') }}:
+  - task: SFP.build-tasks.custom-build-task-1.EsrpCodeSigning@1
+    displayName: 'CodeSign (Nuget)'
+    inputs:
+      ConnectedServiceName: 'ESRP Signing'
+      FolderPath: '$(Build.SourcesDirectory)\bin\'
+      Pattern: '*.nupkg'
+      signConfigType: inlineSignParams
+      inlineOperation: |
+        [
+            {
+                "KeyCode" : "CP-401405",
+                "OperationCode" : "NuGetSign",
+                "Parameters" : {},
+                "ToolName" : "sign",
+                "ToolVersion" : "1.0"
+            },
+            {
+                "KeyCode" : "CP-401405",
+                "OperationCode" : "NuGetVerify",
+                "Parameters" : {},
+                "ToolName" : "sign",
+                "ToolVersion" : "1.0"
+            }
+        ]
+
 # Copy nuget package to artifact staging directory
 - task: CopyFiles@2
   displayName: 'Copy Nupkg to: $(Build.ArtifactStagingDirectory)'

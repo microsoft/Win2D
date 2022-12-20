@@ -33,3 +33,4 @@ stages:
     RunTests: ${{ parameters.RunTests }}
     PushPackageToInternalFeed: ${{ parameters.PushPackageToInternalFeed }}
     PipelineType: 'CI'
+    SignCode: false

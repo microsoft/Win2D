@@ -1,52 +1,60 @@
 parameters:
   BuildTests: false
   RunTests: false
-  BuildDocs: true
-  BuildTools: true
-  PublishBinaries: true
-  # sdkVersion: 18362
-  codeSignInlineOperation: |
-        [
-          {
-              "KeyCode" : "CP-230012",
-              "OperationCode" : "SigntoolSign",
-              "Parameters" : {
-                  "OpusName" : "Microsoft",
-                  "OpusInfo" : "http://www.microsoft.com",
-                  "FileDigest" : "/fd \"SHA256\"",
-                  "PageHash" : "/NPH",
-                  "TimeStamp" : "/tr \"http://rfc3161.gtm.corp.microsoft.com/TSS/HttpTspServer\" /td sha256"
-              },
-              "ToolName" : "sign",
-              "ToolVersion" : "1.0"
-          },
-          {
-              "KeyCode" : "CP-230012",
-              "OperationCode" : "SigntoolVerify",
-              "Parameters" : {},
-              "ToolName" : "sign",
-              "ToolVersion" : "1.0"
-          }
-        ]
+  BuildDocs: false
+  BuildTools: false
+  SignCode: false
+  PublishBinaries: false
+  PipelineType: ''
 
 steps:
-# Ensure that release branch was not merged back into master
-- task: CmdLine@1
-  displayName: Ensure release branch not merged to master
-  inputs:
-    filename: cmd
-    arguments: /c if exist build\pkges\PoliCheckExclusions.txt exit 1
+# Release Policy Checks
+- ${{ if eq(parameters.PipelineType, 'Release') }}:
+  # Run PoliCheck
+  - task: securedevelopmentteam.vss-secure-development-tools.build-task-policheck.PoliCheck@1
+    displayName: 'Run PoliCheck'
+    inputs:
+      inputType: CmdLine
+      cmdLineArgs: '/F:$(Build.SourcesDirectory) /O:$(Build.SourcesDirectory)\bin\PoliCheck.xml /T:9 /SEV:"1|2|3|4" /SOM'
+      SOMEnabled: true
+      optionsFC: 1
+      optionsXS: 1
+      optionsSEV: '1|2|3|4'
+      optionsWORKINGDIRECTORY: '$(Build.SourcesDirectory)'
+  # Build PoliCheck Output Parser
+  - task: MSBuild@1
+    displayName: 'Build PoliCheckOutputParser'
+    inputs:
+      solution: 'build\pkges\PoliCheckOutputParser\PoliCheckOutputParser.csproj'
+      platform: AnyCPU
+      configuration: Release
+  # Run PoliCheck Output Parser
+  - task: CmdLine@1
+    displayName: 'Run PoliCheckOutputParser'
+    inputs:
+      filename: 'build\pkges\PoliCheckOutputParser\bin\Release\PoliCheckOutputParser.exe'
+      arguments: '$(Build.SourcesDirectory) ..\_sdt\logs\PoliCheck\PoliCheck.xml build\pkges\PoliCheckExclusions.txt bin\PoliCheck.txt'
+
+# CI Policy Checks
+- ${{ if ne(parameters.PipelineType, 'Release') }}:
+  # Ensure that release branch was not merged back into master
+  - task: CmdLine@1
+    displayName: Ensure release branch not merged to master
+    inputs:
+      filename: cmd
+      arguments: /c if exist build\pkges\PoliCheckExclusions.txt exit 1
+
 # Download nuget.exe
 - task: BatchScript@1
   displayName: Run download-nuget.cmd
   inputs:
     filename: build\nuget\download-nuget.cmd
-# Nuget authentication
+# Nuget Authenticate
 - task: NuGetAuthenticate@1
   displayName: NuGet Authenticate
   inputs:
     nuGetServiceConnections: Win2DWinUI
-# Restore telemetry files
+# Nuget Restore
 - task: CmdLine@2
   displayName: Move telemetry files
   inputs:
@@ -58,99 +66,144 @@ steps:
   inputs:
     solution: Win2D.proj
     msbuildVersion: 17.0
-    configuration: Release
     msbuildArguments: /p:BuildTests=${{ parameters.BuildTests }} /p:BuildDocs=${{ parameters.BuildDocs }} /p:BuildTools=${{ parameters.BuildTools }} /p:RunTests=false /p:BuildPlatforms="$(architecture)" /p:BuildConfigurations="$(buildConfiguration)"
     maximumCpuCount: true
 
+# Signing and Release checks: BinSkim, Post Analysis, and ComponentDetection
+- ${{ if eq(parameters.PipelineType, 'Release') }}:
+  # BinSkim
+  - task: securedevelopmentteam.vss-secure-development-tools.build-task-binskim.BinSkim@3
+    displayName: 'Run BinSkim '
+    inputs:
+      InputType: Basic
+      AnalyzeTarget: 'bin\$(archDirectory)\release\winrt.dll.uap\Microsoft.Graphics.Canvas.dll'
+      AnalyzeConfigPath: '"build\pkges\BinSkimConfig.xml"'
+      AnalyzeVerbose: true
+      toolVersion: LatestPreRelease
+  # Post Analysis
+  - task: securedevelopmentteam.vss-secure-development-tools.build-task-postanalysis.PostAnalysis@1
+    displayName: 'Post Analysis'
+    inputs:
+      BinSkim: true
+      BinSkimBreakOn: WarningAbove
+  # Component Gonvernance Detection
+  - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
+    displayName: 'Component Detection'
+  # Sign Binaries
+  - ${{ if eq(parameters.SignCode, true) }}:
+    - task: SFP.build-tasks.custom-build-task-1.EsrpCodeSigning@2
+      displayName: 'CodeSign'
+      inputs:
+        ConnectedServiceName: 'ESRP Signing'
+        FolderPath: '$(Build.SourcesDirectory)\bin\$(archDirectory)\Release\winrt.dll.uap\'
+        Pattern: 'Microsoft.Graphics.Canvas.dll, Microsoft.Graphics.Canvas.winmd'
+        signConfigType: inlineSignParams
+        inlineOperation: |
+          [
+              {
+                  "KeyCode" : "CP-230012",
+                  "OperationCode" : "SigntoolSign",
+                  "Parameters" : {
+                      "OpusName" : "Microsoft",
+                      "OpusInfo" : "http://www.microsoft.com",
+                      "FileDigest" : "/fd \"SHA256\"",
+                      "PageHash" : "/NPH",
+                      "TimeStamp" : "/tr \"http://rfc3161.gtm.corp.microsoft.com/TSS/HttpTspServer\" /td sha256"
+                  },
+                  "ToolName" : "sign",
+                  "ToolVersion" : "1.0"
+              },
+              {
+                  "KeyCode" : "CP-230012",
+                  "OperationCode" : "SigntoolVerify",
+                  "Parameters" : {},
+                  "ToolName" : "sign",
+                  "ToolVersion" : "1.0"
+              }
+          ]
+    
 # Run Tests
-- task: PowerShell@2
-  displayName: Install Test AppX
-  condition: ${{ parameters.RunTests }}
-  inputs:
-    targetType: 'inline'
-    script: |
-      Import-Certificate -FilePath $(Build.SourcesDirectory)\bin\$(binDirectory)\$(buildConfiguration)\winrt.test.managed.uap\AppPackages\winrt.test.managed.uap_1.0.0.0_$(architecture)_Test\winrt.test.managed.uap_1.0.0.0_$(architecture).cer -CertStoreLocation Cert:\LocalMachine\Root\
-      Import-Certificate -FilePath $(Build.SourcesDirectory)\bin\$(binDirectory)\$(buildConfiguration)\winrt.test.external.uap\AppPackages\winrt.test.external.uap_1.0.0.0_$(architecture)_Test\winrt.test.external.uap_1.0.0.0_$(architecture).cer -CertStoreLocation Cert:\LocalMachine\Root\
-      # $(Build.SourcesDirectory)\bin\$(binDirectory)\$(buildConfiguration)\winrt.test.managed.uap\AppPackages\winrt.test.managed.uap_1.0.0.0_$(architecture)_Test\Install.ps1
-      # $(Build.SourcesDirectory)\bin\$(binDirectory)\$(buildConfiguration)\winrt.test.external.uap\AppPackages\winrt.test.external.uap_1.0.0.0_$(architecture)_Test\Install.ps1
-- task: VSTest@2
-  displayName: Run Internal Tests
-  condition: ${{ parameters.RunTests }}
-  inputs:
-    # Internal tests
-    testSelector: 'testAssemblies'
-    testAssemblyVer2: '**\winrt.test.internal.uap.dll'
-    searchFolder: '$(Build.SourcesDirectory)\bin'
-- task: VSTest@2
-  displayName: Run Managed Tests
-  condition: ${{ parameters.RunTests }}
-  inputs:
-    # Managed tests
-    testSelector: 'testAssemblies'
-    testAssemblyVer2: '**\winrt.test.managed.uap\**\*test*.appx'
-    searchFolder: '$(Build.SourcesDirectory)\bin'
-- task: VSTest@2
-  displayName: Run External Tests
-  condition: ${{ parameters.RunTests }}
-  inputs:
-    # External tests
-    testSelector: 'testAssemblies'
-    testAssemblyVer2: '**\winrt.test.external.uap\**\*test*.appx'
-    searchFolder: '$(Build.SourcesDirectory)\bin'
+- ${{ if eq(parameters.RunTests, true) }}:
+  - task: PowerShell@2
+    displayName: Install Test AppX
+    inputs:
+      targetType: 'inline'
+      script: |
+        Import-Certificate -FilePath $(Build.SourcesDirectory)\bin\$(archDirectory)\$(buildConfiguration)\winrt.test.managed.uap\AppPackages\winrt.test.managed.uap_1.0.0.0_$(architecture)_Test\winrt.test.managed.uap_1.0.0.0_$(architecture).cer -CertStoreLocation Cert:\LocalMachine\Root\
+        Import-Certificate -FilePath $(Build.SourcesDirectory)\bin\$(archDirectory)\$(buildConfiguration)\winrt.test.external.uap\AppPackages\winrt.test.external.uap_1.0.0.0_$(architecture)_Test\winrt.test.external.uap_1.0.0.0_$(architecture).cer -CertStoreLocation Cert:\LocalMachine\Root\
+        # $(Build.SourcesDirectory)\bin\$(archDirectory)\$(buildConfiguration)\winrt.test.managed.uap\AppPackages\winrt.test.managed.uap_1.0.0.0_$(architecture)_Test\Install.ps1
+        # $(Build.SourcesDirectory)\bin\$(archDirectory)\$(buildConfiguration)\winrt.test.external.uap\AppPackages\winrt.test.external.uap_1.0.0.0_$(architecture)_Test\Install.ps1
+  - task: VSTest@2
+    displayName: Run Internal Tests
+    condition:
+    inputs:
+      # Internal tests
+      testSelector: 'testAssemblies'
+      testAssemblyVer2: '**\winrt.test.internal.uap.dll'
+      searchFolder: '$(Build.SourcesDirectory)\bin'
+  - task: VSTest@2
+    displayName: Run Managed Tests
+    condition:
+    inputs:
+      # Managed tests
+      testSelector: 'testAssemblies'
+      testAssemblyVer2: '**\winrt.test.managed.uap\**\*test*.appx'
+      searchFolder: '$(Build.SourcesDirectory)\bin'
+  - task: VSTest@2
+    displayName: Run External Tests
+    condition:
+    inputs:
+      # External tests
+      testSelector: 'testAssemblies'
+      testAssemblyVer2: '**\winrt.test.external.uap\**\*test*.appx'
+      searchFolder: '$(Build.SourcesDirectory)\bin'
 
 ##### Publish build output #####
 # Copy binaries to artifact staging directory
-- task: CopyFiles@2
-  displayName: 'Copy Binaries to ArtifactStagingDirectory'
-  condition: and(succeeded(), ${{ parameters.PublishBinaries }})
-  inputs:
-    SourceFolder: $(Build.SourcesDirectory)
-    TargetFolder: $(Build.ArtifactStagingDirectory)
-    Contents: |
-      bin\**\Microsoft.Graphics.Canvas.pdb
-      bin\**\Microsoft.Graphics.Canvas.dll
-      obj\Win2d.githash.txt
-# Copy WinMD and header files to the artifact staging directory from the x86 build to avoid duplicates
-- task: CopyFiles@2
-  displayName: 'Copy WinMD and Header to ArtifactStagingDirectory'
-  condition: | 
-    and(succeeded(),
-    and(${{ parameters.PublishBinaries }},
-    eq(variables.architecture, 'Win32;AnyCPU') ))
-  inputs:
-    SourceFolder: $(Build.SourcesDirectory)
-    TargetFolder: $(Build.ArtifactStagingDirectory)
-    Contents: |
-      bin\UAPx86\*\IdlHeader\Microsoft.Graphics.Canvas.h
-      bin\UAPx86\*\winrt.dll.UAP\Microsoft.Graphics.Canvas.winmd
+- ${{ if eq(parameters.PublishBinaries, true) }}:
+  - task: CopyFiles@2
+    displayName: 'Copy Binaries to ArtifactStagingDirectory'
+    inputs:
+      SourceFolder: $(Build.SourcesDirectory)
+      TargetFolder: $(Build.ArtifactStagingDirectory)
+      Contents: |
+        bin\**\Microsoft.Graphics.Canvas.pdb
+        bin\**\Microsoft.Graphics.Canvas.dll
+        obj\Win2d.githash.txt
+  # Copy WinMD and header files to the artifact staging directory from the x86 build to avoid duplicates
+  - task: CopyFiles@2
+    displayName: 'Copy WinMD and Header to ArtifactStagingDirectory'
+    condition: | 
+      and(succeeded(), eq(variables.architecture, 'Win32;AnyCPU') )
+    inputs:
+      SourceFolder: $(Build.SourcesDirectory)
+      TargetFolder: $(Build.ArtifactStagingDirectory)
+      Contents: |
+        bin\UAPx86\*\IdlHeader\Microsoft.Graphics.Canvas.h
+        bin\UAPx86\*\winrt.dll.UAP\Microsoft.Graphics.Canvas.winmd
   # Copy intellisense to the artifact staging directory from the x86 release build to avoid duplicates
-- task: CopyFiles@2
-  displayName: 'Copy Intellisense to: $(Build.ArtifactStagingDirectory)'
-  condition: | 
-    and(succeeded(),
-    and(${{ parameters.PublishBinaries }},
-    and(eq(variables.architecture, 'Win32;AnyCPU'),
-    eq(variables.buildConfiguration, 'Release') )))
-  inputs:
-    SourceFolder: $(Build.SourcesDirectory)
-    TargetFolder: $(Build.ArtifactStagingDirectory)
-    Contents: |
-      bin\intellisense\Microsoft.Graphics.Canvas.xml
-# Publish binary artifact
-- task: PublishBuildArtifacts@1
-  displayName: 'Publish Artifact: build_output'
-  condition: and(succeeded(), ${{ parameters.PublishBinaries }})
-  inputs:
-    ArtifactName: 'build_output'
-    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-# Publish symbols
-- task: PublishSymbols@2
-  displayName: Publish symbols path
-  #TODO - make this a build param, limit the number of days
-  condition: |
-    and(succeeded(),
-    and(${{ parameters.PublishBinaries }},
-    false ))
-  inputs:
-    SearchPattern: '**/bin/**/release/winrt.dll.uap/Microsoft.Graphics.Canvas.pdb'
-    SymbolServerType: TeamServices
+  - task: CopyFiles@2
+    displayName: 'Copy Intellisense to: $(Build.ArtifactStagingDirectory)'
+    condition: | 
+      and(succeeded(),
+      and(eq(variables.architecture, 'Win32;AnyCPU'),
+      eq(variables.buildConfiguration, 'Release') ))
+    inputs:
+      SourceFolder: $(Build.SourcesDirectory)
+      TargetFolder: $(Build.ArtifactStagingDirectory)
+      Contents: |
+        bin\intellisense\Microsoft.Graphics.Canvas.xml
+  # Publish binary artifact
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish Artifact: build_output'
+    inputs:
+      ArtifactName: 'build_output'
+      PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+  # Publish symbols
+  - task: PublishSymbols@2
+    displayName: Publish symbols path
+    #TODO - make this a build param, limit the number of days
+    condition: and(succeeded(), false)
+    inputs:
+      SearchPattern: '**/bin/**/release/winrt.dll.uap/Microsoft.Graphics.Canvas.pdb'
+      SymbolServerType: TeamServices

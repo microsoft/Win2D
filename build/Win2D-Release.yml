@@ -24,3 +24,4 @@ stages:
     RunTests: ${{ parameters.RunTests }}
     PushPackageToInternalFeed: false
     PipelineType: 'Release'
+    SignCode: true
