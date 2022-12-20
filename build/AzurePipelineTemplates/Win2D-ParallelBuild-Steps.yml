@@ -45,7 +45,7 @@ steps:
 - task: NuGetAuthenticate@1
   displayName: NuGet Authenticate
   inputs:
-    nuGetServiceConnections: 15653542-de7f-478b-9b8b-9a2c4bf551df
+    nuGetServiceConnections: Win2DWinUI
 # Restore telemetry files
 - task: CmdLine@2
   displayName: Move telemetry files
@@ -59,8 +59,44 @@ steps:
     solution: Win2D.proj
     msbuildVersion: 17.0
     configuration: Release
-    msbuildArguments: /p:BuildTests=${{ parameters.BuildTests }} /p:BuildDocs=${{ parameters.BuildDocs }} /p:BuildTools=${{ parameters.BuildTools }} /p:RunTests=${{ Parameters.RunTests }} /p:BuildPlatforms="$(architecture)" /p:BuildConfigurations="$(buildConfiguration)"
+    msbuildArguments: /p:BuildTests=${{ parameters.BuildTests }} /p:BuildDocs=${{ parameters.BuildDocs }} /p:BuildTools=${{ parameters.BuildTools }} /p:RunTests=false /p:BuildPlatforms="$(architecture)" /p:BuildConfigurations="$(buildConfiguration)"
     maximumCpuCount: true
+
+# Run Tests
+- task: PowerShell@2
+  displayName: Install Test AppX
+  condition: ${{ parameters.RunTests }}
+  inputs:
+    targetType: 'inline'
+    script: |
+      Import-Certificate -FilePath $(Build.SourcesDirectory)\bin\$(binDirectory)\$(buildConfiguration)\winrt.test.managed.uap\AppPackages\winrt.test.managed.uap_1.0.0.0_$(architecture)_Test\winrt.test.managed.uap_1.0.0.0_$(architecture).cer -CertStoreLocation Cert:\LocalMachine\Root\
+      Import-Certificate -FilePath $(Build.SourcesDirectory)\bin\$(binDirectory)\$(buildConfiguration)\winrt.test.external.uap\AppPackages\winrt.test.external.uap_1.0.0.0_$(architecture)_Test\winrt.test.external.uap_1.0.0.0_$(architecture).cer -CertStoreLocation Cert:\LocalMachine\Root\
+      # $(Build.SourcesDirectory)\bin\$(binDirectory)\$(buildConfiguration)\winrt.test.managed.uap\AppPackages\winrt.test.managed.uap_1.0.0.0_$(architecture)_Test\Install.ps1
+      # $(Build.SourcesDirectory)\bin\$(binDirectory)\$(buildConfiguration)\winrt.test.external.uap\AppPackages\winrt.test.external.uap_1.0.0.0_$(architecture)_Test\Install.ps1
+- task: VSTest@2
+  displayName: Run Internal Tests
+  condition: ${{ parameters.RunTests }}
+  inputs:
+    # Internal tests
+    testSelector: 'testAssemblies'
+    testAssemblyVer2: '**\winrt.test.internal.uap.dll'
+    searchFolder: '$(Build.SourcesDirectory)\bin'
+- task: VSTest@2
+  displayName: Run Managed Tests
+  condition: ${{ parameters.RunTests }}
+  inputs:
+    # Managed tests
+    testSelector: 'testAssemblies'
+    testAssemblyVer2: '**\winrt.test.managed.uap\**\*test*.appx'
+    searchFolder: '$(Build.SourcesDirectory)\bin'
+- task: VSTest@2
+  displayName: Run External Tests
+  condition: ${{ parameters.RunTests }}
+  inputs:
+    # External tests
+    testSelector: 'testAssemblies'
+    testAssemblyVer2: '**\winrt.test.external.uap\**\*test*.appx'
+    searchFolder: '$(Build.SourcesDirectory)\bin'
 
 ##### Publish build output #####
 # Copy binaries to artifact staging directory

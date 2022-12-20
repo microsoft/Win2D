@@ -31,7 +31,7 @@ stages:
   #   - template: Win2D-Build-Steps.yml
   #     parameters:
   #       PipelineType: ${{ parameters.PipelineType }}
-  - job: MSBuild_Win2D
+  - job: Build_Win2D
     dependsOn: Version
     strategy:
       matrix:
@@ -71,14 +71,16 @@ stages:
   # Empty
   dependsOn:
   jobs:
-  - job: MSTest_Win2D
+  - job: Test_Win2D
     strategy:
       matrix:
         x86:
           architecture: "Win32"
+          binDirectory: "uapx86"
           buildConfiguration: "Release"
         x64:
           architecture: "x64"
+          binDirectory: "uapx64"
           buildConfiguration: "Release"
         # TODO - Test projects don't support ARM and ARM64
         # ARM:
@@ -98,4 +100,5 @@ stages:
         RunTests: True
         BuildDocs: False
         BuildToos: False
+        PublishBinaries: False
 
