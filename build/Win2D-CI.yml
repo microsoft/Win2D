@@ -1,11 +1,10 @@
-# Please see https://www.osgwiki.com/wiki/Windows_App_SDK_-_How_to_build_and_use_the_pipelines
-# for information on how to use the pipelines
-
+# Trigger the pipeline whenever the master branch is updated
 trigger:
   branches:
     include:
     - refs/heads/master
 
+# Parameters to configure the pipeline at runtime
 name: $(BuildDefinitionName)-$(date:yyMMdd)
 parameters:
 - name: RunTests
@@ -13,23 +12,24 @@ parameters:
   type: boolean
   default: True
 - name: PushPackageToInternalFeed
-  displayName: "(TODO) Push Windows App SDK Packages To InternalFeed"
+  displayName: "(TODO) Push resulting Win2D Package To Internal Nuget Feed"
   type: boolean
   default: False
 variables:
 - name: PackageSuffix
   value: $[format('CI-{0:yyMMdd}.{1}', pipeline.startTime, counter(format('{0}.{1}', variables['Build.DefinitionName'], format('{0:yyMMdd}', pipeline.startTime)), 0))]
 
+# Source
 resources:
   repositories:
   - repository: self
     type: git
     ref: refs/heads/master
 
+# Run the Pipeline
 stages:
 - template: AzurePipelineTemplates\Win2D-Stages.yml
   parameters:
-    # PipelineName: ${{ variables.BuildDefinitionName }}.${{ variables.dateAndCounter }}
     RunTests: ${{ parameters.RunTests }}
     PushPackageToInternalFeed: ${{ parameters.PushPackageToInternalFeed }}
     PipelineType: 'CI'

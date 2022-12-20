@@ -200,10 +200,9 @@ steps:
       ArtifactName: 'build_output'
       PathtoPublish: '$(Build.ArtifactStagingDirectory)'
   # Publish symbols
+  # Per the PublishSymbols docs, these are retained as long as the build is (30 days for CI, forever for Release)
   - task: PublishSymbols@2
     displayName: Publish symbols path
-    #TODO - make this a build param, limit the number of days
-    condition: and(succeeded(), false)
     inputs:
       SearchPattern: '**/bin/**/release/winrt.dll.uap/Microsoft.Graphics.Canvas.pdb'
       SymbolServerType: TeamServices
