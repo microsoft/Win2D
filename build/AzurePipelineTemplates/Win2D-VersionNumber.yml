@@ -24,7 +24,7 @@ steps:
       Write-Host Reading from VERSION file
       $versionMMP = Get-Content build\nuget\VERSION
       $preRelease = Get-Content build\nuget\VERSION-PRERELEASE
-      $versionMMP = $versionMMP + $preRelease
+      $versionMMP = $versionMMP + "-" + $preRelease
 
       # If the pipeline has a suffix, add it to the name
       $pipelineName = $versionMMP 

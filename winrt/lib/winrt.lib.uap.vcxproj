@@ -55,7 +55,7 @@
     <!-- Reference paths differ depending on locally installed vs. NuGet SDK -->
     <ItemGroup Condition="'$(UseNuGetSDK)' == ''">
       <MetaDataDir Include="$(WindowsSDK_MetadataPath)\$(TargetPlatformVersion)\Windows.Foundation.FoundationContract\4.0.0.0" />
-      <MetaDataDir Include="$(WindowsSDK_MetadataPath)\$(TargetPlatformVersion)\Windows.Foundation.UniversalApiContract\14.0.0.0" />
+      <MetaDataDir Include="$(WindowsSDK_MetadataPath)\$(TargetPlatformVersion)\Windows.Foundation.UniversalApiContract\15.0.0.0" />
     </ItemGroup>
     <ItemGroup Condition="'$(UseNuGetSDK)' != ''">
       <MetaDataDir Include="$(WindowsSDK_MetadataPath)\$(TargetPlatformVersion)\Windows.Foundation.FoundationContract\4.0.0.0" />
