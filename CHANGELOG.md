@@ -1,5 +1,13 @@
 # Win2D Changelog
 
+## Win2D 1.27.0-preview1 - Bugfix for Visual Studio 2019 support
+_December 23, 2022_
+
+- New `ICanvasImageInterop` COM interface and infrastructure to support external effects (see https://github.com/microsoft/Win2D/pull/888)
+- Add usage telemetry for `CanvasDevice`
+
+---
+
 ## Win2D 1.26.0 - Bugfix for Visual Studio 2019 support
 _April 23, 2021_
 
