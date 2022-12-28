@@ -16,7 +16,7 @@
         msbuild RunCodeChecks.proj /p:Fix=true /p:PreviousCopyright=prev.txt
 -->
 
-<Project ToolsVersion="12.0" DefaultTargets="RunCodeChecks" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="17.0" DefaultTargets="RunCodeChecks" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <Import Project="$(MsBuildThisFileDirectory)..\..\build\Win2D.common.props" />
 
