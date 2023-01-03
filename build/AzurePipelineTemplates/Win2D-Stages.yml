@@ -19,7 +19,7 @@ parameters:
 stages:
 - stage: Build_Win2D
   jobs:
-  # Build Win2D 
+  # Set Version Number 
   - job: Version
     pool:
       vmImage: '${{ parameters.VMImage }}'
@@ -28,12 +28,7 @@ stages:
     - template: Win2D-VersionNumber.yml
       parameters:
         PipelineType: ${{ parameters.PipelineType }}
-    # Build Win2D
-  # - job: BuildWin2D
-  #   dependson: Version
-  #   - template: Win2D-Build-Steps.yml
-  #     parameters:
-  #       PipelineType: ${{ parameters.PipelineType }}
+  # Build Win2D in parallel
   - job: Build_Win2D
     dependsOn: Version
     strategy:
@@ -78,7 +73,7 @@ stages:
     steps:
     - template: Win2D-BuildNupkg.yml
 - stage: Test_Win2D
-  # Empty
+  # Empty dependency
   dependsOn:
   jobs:
   - job: Test_Win2D
@@ -92,7 +87,7 @@ stages:
           architecture: "x64"
           archDirectory: "uapx64"
           buildConfiguration: "Release"
-        # TODO - Test projects don't support ARM and ARM64
+        # Test projects don't support ARM and ARM64 right now
         # ARM:
         #   architecture: "ARM"
         #   buildConfiguration: "Release"

@@ -11,10 +11,6 @@ parameters:
   displayName: "Run Tests"
   type: boolean
   default: True
-- name: PushPackageToInternalFeed
-  displayName: "(TODO) Push resulting Win2D Package To Internal Nuget Feed"
-  type: boolean
-  default: False
 variables:
 - name: PackageSuffix
   value: $[format('CI-{0:yyMMdd}.{1}', pipeline.startTime, counter(format('{0}.{1}', variables['Build.DefinitionName'], format('{0:yyMMdd}', pipeline.startTime)), 0))]

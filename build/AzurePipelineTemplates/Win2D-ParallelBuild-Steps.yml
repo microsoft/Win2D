@@ -158,7 +158,7 @@ steps:
       testAssemblyVer2: '**\winrt.test.external.uap\**\*test*.appx'
       searchFolder: '$(Build.SourcesDirectory)\bin'
 
-##### Publish build output #####
+# Publish build output 
 # Copy binaries to artifact staging directory
 - ${{ if eq(parameters.PublishBinaries, true) }}:
   - task: CopyFiles@2
