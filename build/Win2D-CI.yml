@@ -27,6 +27,5 @@ stages:
 - template: AzurePipelineTemplates\Win2D-Stages.yml
   parameters:
     RunTests: ${{ parameters.RunTests }}
-    PushPackageToInternalFeed: ${{ parameters.PushPackageToInternalFeed }}
     PipelineType: 'CI'
     SignCode: false

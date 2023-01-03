@@ -2,9 +2,6 @@ parameters:
 - name: "RunTests"
   type: boolean
   default: true
-- name: "PushPackageToInternalFeed"
-  type: boolean
-  default: false  
 - name: "PipelineType"
   type: string
   default: "not_set"
