@@ -24,11 +24,16 @@ steps:
       Write-Host Reading from VERSION file
       $versionMMP = Get-Content build\nuget\VERSION
       $preRelease = Get-Content build\nuget\VERSION-PRERELEASE
-      $versionMMP = $versionMMP + "-" + $preRelease
+
+      # If the package has a prelease version, add it to the version
+      if ( -not [String]::IsNullOrWhiteSpace($preRelease) )
+      {
+        $versionMMP = $versionMMP + "-" + $preRelease
+      }
 
       # If the pipeline has a suffix, add it to the name
       $pipelineName = $versionMMP 
-      if ( $env:packageSuffix -ne "" )
+      if ( -not [String]::IsNullOrWhiteSpace($env:packageSuffix) )
       {
         $pipelineName = $pipelineName + "-" + $env:packageSuffix
       }
