@@ -2,7 +2,7 @@
 trigger:
   branches:
     include:
-    - refs/heads/master
+    - refs/heads/uwp/main
 
 # Parameters to configure the pipeline at runtime
 name: $(BuildDefinitionName)-$(date:yyMMdd)

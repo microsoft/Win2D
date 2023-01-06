@@ -69,39 +69,40 @@ stages:
       vmImage: '${{ parameters.VMImage }}'
     steps:
     - template: Win2D-BuildNupkg.yml
-- stage: Test_Win2D
-  # Empty dependency
-  dependsOn:
-  jobs:
-  - job: Test_Win2D
-    strategy:
-      matrix:
-        x86:
-          architecture: "Win32"
-          archDirectory: "uapx86"
-          buildConfiguration: "Release"
-        x64:
-          architecture: "x64"
-          archDirectory: "uapx64"
-          buildConfiguration: "Release"
-        # Test projects don't support ARM and ARM64 right now
-        # ARM:
-        #   architecture: "ARM"
-        #   buildConfiguration: "Release"
-        # ARM64:
-        #   architecture: "ARM64"
-        #   buildConfiguration: "Release"
-    pool:
-      vmImage: '${{ parameters.VMImage }}'
-    variables:
-      version: $[ dependencies.Version.outputs['version'] ]
-    steps:
-    - template: Win2D-ParallelBuild-Steps.yml
-      parameters:
-        BuildTests: true
-        RunTests: true
-        BuildDocs: false
-        BuildToos: false
-        PublishBinaries: false
-        SignCode: false
-        PipelineType: ${{ parameters.PipelineType }}
+- ${{ if parameters.RunTests }}:
+  - stage: Test_Win2D
+    # Empty dependency
+    dependsOn:
+    jobs:
+    - job: Test_Win2D
+      strategy:
+        matrix:
+          x86:
+            architecture: "Win32"
+            archDirectory: "uapx86"
+            buildConfiguration: "Release"
+          x64:
+            architecture: "x64"
+            archDirectory: "uapx64"
+            buildConfiguration: "Release"
+          # Test projects don't support ARM and ARM64 right now
+          # ARM:
+          #   architecture: "ARM"
+          #   buildConfiguration: "Release"
+          # ARM64:
+          #   architecture: "ARM64"
+          #   buildConfiguration: "Release"
+      pool:
+        vmImage: '${{ parameters.VMImage }}'
+      variables:
+        version: $[ dependencies.Version.outputs['version'] ]
+      steps:
+      - template: Win2D-ParallelBuild-Steps.yml
+        parameters:
+          BuildTests: true
+          RunTests: true
+          BuildDocs: false
+          BuildToos: false
+          PublishBinaries: false
+          SignCode: false
+          PipelineType: ${{ parameters.PipelineType }}
