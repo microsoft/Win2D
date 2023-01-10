@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="Globals">
     <ProjectGuid>{26b85b6e-3520-42b5-adb6-971010cc99fa}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
@@ -21,9 +21,6 @@
   </PropertyGroup>
   <Import Project="$(MSBuildThisFileDir)..\..\build\midlrt.props" />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
-  <Target Name="CleanIntermediateFiles" AfterTargets="Build" Condition="'$(AzurePipeline)'!=''">
-    <RemoveDir Directories="" />
-  </Target>
   <PropertyGroup>
     <Win2DVersion>$([System.IO.File]::ReadAllText('$(ProjectDir)..\\..\\build\\nuget\\VERSION').TrimEnd())</Win2DVersion>
   </PropertyGroup>
@@ -57,11 +54,11 @@
     </PropertyGroup>
     <!-- Reference paths differ depending on locally installed vs. NuGet SDK -->
     <ItemGroup Condition="'$(UseNuGetSDK)' == ''">
-      <MetaDataDir Include="$(WindowsSDK_MetadataPath)\$(TargetPlatformVersion)\Windows.Foundation.FoundationContract\3.0.0.0" />
-      <MetaDataDir Include="$(WindowsSDK_MetadataPath)\$(TargetPlatformVersion)\Windows.Foundation.UniversalApiContract\8.0.0.0" />
+      <MetaDataDir Include="$(WindowsSDK_MetadataPath)\$(TargetPlatformVersion)\Windows.Foundation.FoundationContract\4.0.0.0" />
+      <MetaDataDir Include="$(WindowsSDK_MetadataPath)\$(TargetPlatformVersion)\Windows.Foundation.UniversalApiContract\15.0.0.0" />
     </ItemGroup>
     <ItemGroup Condition="'$(UseNuGetSDK)' != ''">
-      <MetaDataDir Include="$(WindowsSDK_MetadataPath)\$(TargetPlatformVersion)\Windows.Foundation.FoundationContract\3.0.0.0" />
+      <MetaDataDir Include="$(WindowsSDK_MetadataPath)\$(TargetPlatformVersion)\Windows.Foundation.FoundationContract\4.0.0.0" />
       <MetaDataDir Include="$(WindowsSDK_MetadataPath)\$(TargetPlatformVersion)\031\6.0.0.0" />
       <!-- Windows.Foundation.UniversalApiContract lives here -->
     </ItemGroup>

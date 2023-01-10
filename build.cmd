@@ -2,7 +2,7 @@
 
 SETLOCAL
 
-IF "%VisualStudioVersion%" LSS "16.0" (
+IF "%VisualStudioVersion%" LSS "17.0" (
     GOTO WRONG_COMMAND_PROMPT
 )
 
@@ -13,7 +13,7 @@ IF %ERRORLEVEL% NEQ 0 (
     GOTO WRONG_COMMAND_PROMPT
 )
 
-msbuild "%~dp0Win2D.proj" /v:m /maxcpucount /nr:false /p:BuildTests=false /p:BuildTools=false /p:BuildDocs=false
+msbuild "%~dp0Win2D.proj" /v:m /maxcpucount /nr:false /p:BuildTests=false /p:BuildTools=false /p:BuildDocs=false /bl
 
 IF %ERRORLEVEL% NEQ 0 (
     ECHO Build failed; aborting.

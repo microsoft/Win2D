@@ -1,0 +1,30 @@
+trigger:
+  branches:
+    include:
+    - refs/heads/release
+
+# Parameters to configure the pipeline at runtime
+name: $(BuildDefinitionName)-$(date:yyMMdd)
+parameters:
+- name: RunTests
+  displayName: "Run Tests"
+  type: boolean
+  default: true
+variables:
+- name: PackageSuffix
+  value: ''
+
+# Source
+resources:
+  repositories:
+  - repository: self
+    type: git
+    ref: refs/heads/release
+
+# Run the Pipeline
+stages:
+- template: AzurePipelineTemplates\Win2D-Stages.yml
+  parameters:
+    RunTests: ${{ parameters.RunTests }}
+    PipelineType: 'Release'
+    SignCode: true
