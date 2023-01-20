@@ -365,4 +365,93 @@ TEST_CLASS(CanvasImageInteropTests)
 
         Assert::AreEqual(*reinterpret_cast<Rect*>(&expectedBounds), *reinterpret_cast<Rect*>(&rect));
     }
+
+    TEST_METHOD(WrappedEffect_FromCanvasBitmap_InvalidateSourceRectangleForICanvasImageInterop_ThrowE_NOINTERFACE)
+    {
+        auto deviceContext = CreateTestD2DDeviceContext();
+        auto drawingSession = GetOrCreate<CanvasDrawingSession>(deviceContext.Get());
+
+        auto canvasBitmap = CanvasBitmap::CreateFromColors(
+            drawingSession->Device,
+            ref new Platform::Array<Color>(256 * 256),
+            256,
+            256,
+            96.0f,
+            CanvasAlphaMode::Ignore);
+
+        auto wrappedEffect = Make<WrappedEffect>(canvasBitmap);
+
+        Rect invalidRectangle = { 0, 0, 0, 0 };
+
+        // This wrapped effect wraps a canvas bitmap, meaning when ICanvasImageInterop::GetD2DImage is called, the
+        // resulting ID2D1Image will not also be an ID2D1Effect. In this case, an E_NOINTERFACE error is expected.
+        HRESULT result = ABI::Microsoft::Graphics::Canvas::Effects::InvalidateSourceRectangleForICanvasImageInterop(
+            As<ABI::Microsoft::Graphics::Canvas::ICanvasResourceCreatorWithDpi>(drawingSession).Get(),
+            As<ABI::Microsoft::Graphics::Canvas::ICanvasImageInterop>(wrappedEffect.Get()).Get(),
+            0,
+            reinterpret_cast<ABI::Windows::Foundation::Rect*>(&invalidRectangle));
+
+        Assert::AreEqual(result, E_NOINTERFACE);
+    }
+
+    TEST_METHOD(WrappedEffect_FromCanvasEffect_InvalidateSourceRectangleForICanvasImageInterop)
+    {
+        auto deviceContext = CreateTestD2DDeviceContext();
+        auto drawingSession = GetOrCreate<CanvasDrawingSession>(deviceContext.Get());
+
+        auto canvasBitmap = CanvasBitmap::CreateFromColors(
+            drawingSession->Device,
+            ref new Platform::Array<Color>(256 * 256),
+            256,
+            256,
+            96.0f,
+            CanvasAlphaMode::Ignore);
+
+        auto blurEffect = ref new GaussianBlurEffect();
+
+        blurEffect->Source = canvasBitmap;
+        blurEffect->BorderMode = EffectBorderMode::Hard;
+
+        auto wrappedEffect = Make<WrappedEffect>(blurEffect);
+
+        ABI::Windows::Foundation::Rect invalidRectangle = { 0, 0, 0, 0 };
+
+        // This test and the one below simply check that the C exports to support ICanvasEffect also work correctly
+        // when an effect that only implements ICanvasImageInterop (and not ICanvasImageInternal) is passed. This is
+        // just a sanity check, and the real tests with validation of all params/results are in the internal unit tests.
+        ThrowIfFailed(ABI::Microsoft::Graphics::Canvas::Effects::InvalidateSourceRectangleForICanvasImageInterop(
+            As<ABI::Microsoft::Graphics::Canvas::ICanvasResourceCreatorWithDpi>(drawingSession).Get(),
+            As<ABI::Microsoft::Graphics::Canvas::ICanvasImageInterop>(wrappedEffect.Get()).Get(),
+            0,
+            &invalidRectangle));
+    }
+
+    TEST_METHOD(WrappedEffect_FromCanvasEffect_GetInvalidRectanglesForICanvasImageInterop)
+    {
+        auto deviceContext = CreateTestD2DDeviceContext();
+        auto drawingSession = GetOrCreate<CanvasDrawingSession>(deviceContext.Get());
+
+        auto canvasBitmap = CanvasBitmap::CreateFromColors(
+            drawingSession->Device,
+            ref new Platform::Array<Color>(256 * 256),
+            256,
+            256,
+            96.0f,
+            CanvasAlphaMode::Ignore);
+
+        auto blurEffect = ref new GaussianBlurEffect();
+
+        blurEffect->Source = canvasBitmap;
+        blurEffect->BorderMode = EffectBorderMode::Hard;
+
+        auto wrappedEffect = Make<WrappedEffect>(blurEffect);
+
+        ComArray<ABI::Windows::Foundation::Rect> result;
+
+        ThrowIfFailed(ABI::Microsoft::Graphics::Canvas::Effects::GetInvalidRectanglesForICanvasImageInterop(
+            As<ABI::Microsoft::Graphics::Canvas::ICanvasResourceCreatorWithDpi>(drawingSession).Get(),
+            As<ABI::Microsoft::Graphics::Canvas::ICanvasImageInterop>(wrappedEffect.Get()).Get(),
+            result.GetAddressOfSize(),
+            result.GetAddressOfData()));
+    }
 };

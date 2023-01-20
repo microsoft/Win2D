@@ -530,10 +530,136 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             }
         }
 
-        ComPtr<ID2D1Effect> RealizeEffect(ICanvasEffect* effect)
+        static HRESULT InvalidateSourceRectangle(
+            ICanvasResourceCreatorWithDpi* resourceCreator,
+            IUnknown* image,
+            uint32_t sourceIndex,
+            Rect const* invalidRectangle)
         {
-            auto imageInternal = As<ICanvasImageInternal>(effect);
-            auto realizedEffect = imageInternal->GetD2DImage(m_device.Get(), m_deviceContext.Get(), m_flags, m_dpi);
+            return ExceptionBoundary(
+                [&]
+                {
+                    CheckInPointer(image);
+                    CheckInPointer(invalidRectangle);
+
+                    EffectRealizationContext realizationContext(resourceCreator);
+
+                    auto d2dEffect = realizationContext.RealizeEffect(image);
+
+                    if (sourceIndex >= d2dEffect->GetInputCount())
+                        ThrowHR(E_INVALIDARG);
+
+                    auto d2dInvalidRectangle = ToD2DRect(*invalidRectangle);
+
+                    ThrowIfFailed(realizationContext->InvalidateEffectInputRectangle(d2dEffect.Get(), sourceIndex, &d2dInvalidRectangle));
+                });
+        }
+
+        static HRESULT GetInvalidRectangles(
+            ICanvasResourceCreatorWithDpi* resourceCreator,
+            IUnknown* image,
+            uint32_t* valueCount,
+            Rect** valueElements)
+        {
+            return ExceptionBoundary(
+                [&]
+                {
+                    CheckInPointer(image);
+                    CheckInPointer(valueCount);
+                    CheckAndClearOutPointer(valueElements);
+
+                    EffectRealizationContext realizationContext(resourceCreator);
+
+                    auto d2dEffect = realizationContext.RealizeEffect(image);
+
+                    // Query the count.
+                    UINT32 invalidRectangleCount;
+
+                    ThrowIfFailed(realizationContext->GetEffectInvalidRectangleCount(d2dEffect.Get(), &invalidRectangleCount));
+
+                    // Query the rectangles.
+                    std::vector<D2D1_RECT_F> result(invalidRectangleCount);
+
+                    ThrowIfFailed(realizationContext->GetEffectInvalidRectangles(d2dEffect.Get(), result.data(), invalidRectangleCount));
+
+                    // Return the array.
+                    auto resultArray = TransformToComArray<Rect>(result.begin(), result.end(), FromD2DRect);
+
+                    resultArray.Detach(valueCount, valueElements);
+                });
+        }
+
+        // This method explicitly does not return an HRESULT, but instead just writes into a target buffer and throws if
+        // an error is encountered, requiring callers to use ExceptionBoundary themselves. This is different than the two
+        // APIs above, and it is done to give callers extra flexibility. Specifically, allowing them to pass an existing
+        // buffer (which can easily be done given the number of result is known, as it's just the number of source effects)
+        // means they can avoid the round-trip to a CoTaskMem-allocated buffer when they only want to fetch a single rectangle.
+        // Instead, they can just pass a buffer to a value on the stack and have this method write the result there. If instead
+        // they do want to return a COM array to callers, they can just preallocate the temporary D2D1_RECT_F vector and then
+        // convert that to the COM array to return on their own.
+        static void GetRequiredSourceRectangles(
+            ICanvasResourceCreatorWithDpi* resourceCreator,
+            IUnknown* image,
+            Rect const* outputRectangle,
+            uint32_t sourceEffectCount,
+            ICanvasEffect* const* sourceEffects,
+            uint32_t sourceIndexCount,
+            uint32_t const* sourceIndices,
+            uint32_t sourceBoundsCount,
+            Rect const* sourceBounds,
+            uint32_t valueCount,
+            D2D1_RECT_F* valueElements)
+        {
+            CheckInPointer(image);
+            CheckInPointer(outputRectangle);
+            CheckInPointer(sourceEffects);
+            CheckInPointer(sourceIndices);
+            CheckInPointer(sourceBounds);
+            CheckInPointer(valueElements);
+
+            // All three source arrays must be the same size.
+            if (sourceEffectCount != sourceIndexCount ||
+                sourceEffectCount != sourceBoundsCount ||
+                sourceEffectCount != valueCount)
+            {
+                ThrowHR(E_INVALIDARG);
+            }
+
+            EffectRealizationContext realizationContext(resourceCreator);
+
+            auto d2dEffect = realizationContext.RealizeEffect(image);
+
+            auto d2dOutputRectangle = ToD2DRect(*outputRectangle);
+
+            // Convert parameter data to an array of D2D1_EFFECT_INPUT_DESCRIPTION structs.
+            std::vector<D2D1_EFFECT_INPUT_DESCRIPTION> inputDescriptions;
+            std::vector<ComPtr<ID2D1Effect>> keepAliveReferences;
+
+            inputDescriptions.reserve(sourceEffectCount);
+            keepAliveReferences.reserve(sourceEffectCount);
+
+            for (uint32_t i = 0; i < sourceEffectCount; i++)
+            {
+                CheckInPointer(sourceEffects[i]);
+
+                auto d2dSourceEffect = realizationContext.RealizeEffect(sourceEffects[i]);
+
+                if (sourceIndices[i] >= d2dSourceEffect->GetInputCount())
+                    ThrowHR(E_INVALIDARG);
+
+                inputDescriptions.push_back(D2D1_EFFECT_INPUT_DESCRIPTION{ d2dSourceEffect.Get(), sourceIndices[i], ToD2DRect(sourceBounds[i]) });
+
+                keepAliveReferences.push_back(std::move(d2dSourceEffect));
+            }
+
+            // Query the input rectangles.
+            ThrowIfFailed(realizationContext->GetEffectRequiredInputRectangles(d2dEffect.Get(), &d2dOutputRectangle, inputDescriptions.data(), valueElements, sourceEffectCount));
+        }
+
+    private:
+        ComPtr<ID2D1Effect> RealizeEffect(IUnknown* effect)
+        {
+            auto realizedEffect = ICanvasImageInternal::GetD2DImageFromInternalOrInteropSource(effect, m_device.Get(), m_deviceContext.Get(), m_flags, m_dpi);
             return As<ID2D1Effect>(realizedEffect);
         }
 
@@ -546,97 +672,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
     IFACEMETHODIMP CanvasEffect::InvalidateSourceRectangle(ICanvasResourceCreatorWithDpi* resourceCreator, uint32_t sourceIndex, Rect invalidRectangle)
     {
-        return ExceptionBoundary(
-            [&]
-            {
-                EffectRealizationContext realizationContext(resourceCreator);
-
-                auto d2dEffect = realizationContext.RealizeEffect(this);
-
-                if (sourceIndex >= d2dEffect->GetInputCount())
-                    ThrowHR(E_INVALIDARG);
-
-                auto d2dInvalidRectangle = ToD2DRect(invalidRectangle);
-
-                ThrowIfFailed(realizationContext->InvalidateEffectInputRectangle(d2dEffect.Get(), sourceIndex, &d2dInvalidRectangle));
-            });
+        return EffectRealizationContext::InvalidateSourceRectangle(resourceCreator, reinterpret_cast<IUnknown*>(this), sourceIndex, &invalidRectangle);
     }
 
 
     IFACEMETHODIMP CanvasEffect::GetInvalidRectangles(ICanvasResourceCreatorWithDpi* resourceCreator, uint32_t* valueCount, Rect** valueElements)
     {
-        return ExceptionBoundary(
-            [&]
-            {
-                CheckInPointer(valueCount);
-                CheckAndClearOutPointer(valueElements);
-
-                EffectRealizationContext realizationContext(resourceCreator);
-
-                auto d2dEffect = realizationContext.RealizeEffect(this);
-
-                // Query the count.
-                UINT32 invalidRectangleCount;
-
-                ThrowIfFailed(realizationContext->GetEffectInvalidRectangleCount(d2dEffect.Get(), &invalidRectangleCount));
-
-                // Query the rectangles.
-                std::vector<D2D1_RECT_F> result(invalidRectangleCount);
-
-                ThrowIfFailed(realizationContext->GetEffectInvalidRectangles(d2dEffect.Get(), result.data(), invalidRectangleCount));
-
-                // Return the array.
-                auto resultArray = TransformToComArray<Rect>(result.begin(), result.end(), FromD2DRect);
-                
-                resultArray.Detach(valueCount, valueElements);
-            });
+        return EffectRealizationContext::GetInvalidRectangles(resourceCreator, reinterpret_cast<IUnknown*>(this), valueCount, valueElements);
     }
-
-
-    static std::vector<D2D1_RECT_F> GetRequiredSourceRectanglesImpl(
-        ICanvasEffect* effect,
-        ICanvasResourceCreatorWithDpi* resourceCreator,
-        Rect outputRectangle,
-        uint32_t sourceCount,
-        ICanvasEffect** sourceEffects,
-        uint32_t* sourceIndices,
-        Rect* sourceBounds)
-    {
-        EffectRealizationContext realizationContext(resourceCreator);
-
-        auto d2dEffect = realizationContext.RealizeEffect(effect);
-
-        auto d2dOutputRectangle = ToD2DRect(outputRectangle);
-
-        // Convert parameter data to an array of D2D1_EFFECT_INPUT_DESCRIPTION structs.
-        std::vector<D2D1_EFFECT_INPUT_DESCRIPTION> inputDescriptions;
-        std::vector<ComPtr<ID2D1Effect>> keepAliveReferences;
-
-        inputDescriptions.reserve(sourceCount);
-        keepAliveReferences.reserve(sourceCount);
-
-        for (uint32_t i = 0; i < sourceCount; i++)
-        {
-            CheckInPointer(sourceEffects[i]);
-
-            auto d2dSourceEffect = realizationContext.RealizeEffect(sourceEffects[i]);
-
-            if (sourceIndices[i] >= d2dSourceEffect->GetInputCount())
-                ThrowHR(E_INVALIDARG);
-
-            inputDescriptions.push_back(D2D1_EFFECT_INPUT_DESCRIPTION{ d2dSourceEffect.Get(), sourceIndices[i], ToD2DRect(sourceBounds[i]) });
-
-            keepAliveReferences.push_back(std::move(d2dSourceEffect));
-        }
-
-        // Query the input rectangles.
-        std::vector<D2D1_RECT_F> result(sourceCount);
-
-        ThrowIfFailed(realizationContext->GetEffectRequiredInputRectangles(d2dEffect.Get(), &d2dOutputRectangle, inputDescriptions.data(), result.data(), sourceCount));
-
-        return result;
-    }
-
 
     IFACEMETHODIMP CanvasEffect::GetRequiredSourceRectangle(
         ICanvasResourceCreatorWithDpi* resourceCreator,
@@ -649,13 +692,31 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         return ExceptionBoundary(
             [&]
             {
+                // For this method and the ones below, we need to explicitly check the additional
+                // parameters these WinRT APIs expose (namely, the returned value pointer here, and
+                // the returned value array pointer in GetRequiredSourceRectangles below), as those
+                // two results are not directly computed by the shared stub. We can check that the
+                // input pointers are valid before invoking that stub, as all invalid arguments just
+                // throw E_INVALIDARG in case of failure, so the exact order they're checked isn't
+                // important. That is, checking the parameters "out of order" is not observable.
                 CheckInPointer(value);
 
-                auto result = GetRequiredSourceRectanglesImpl(this, resourceCreator, outputRectangle, 1, &sourceEffect, &sourceIndex, &sourceBounds);
+                D2D1_RECT_F result;
 
-                assert(result.size() == 1);
+                EffectRealizationContext::GetRequiredSourceRectangles(
+                    resourceCreator,
+                    reinterpret_cast<IUnknown*>(this),
+                    &outputRectangle,
+                    1,
+                    &sourceEffect,
+                    1,
+                    &sourceIndex,
+                    1,
+                    &sourceBounds,
+                    1,
+                    &result);
 
-                *value = FromD2DRect(result[0]);
+                *value = FromD2DRect(result);
             });
     }
 
@@ -675,20 +736,23 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         return ExceptionBoundary(
             [&]
             {
-                CheckInPointer(sourceEffects);
-                CheckInPointer(sourceIndices);
-                CheckInPointer(sourceBounds);
                 CheckInPointer(valueCount);
                 CheckAndClearOutPointer(valueElements);
 
-                // All three source arrays must be the same size.
-                if (sourceEffectCount != sourceIndexCount ||
-                    sourceEffectCount != sourceBoundsCount)
-                {
-                    ThrowHR(E_INVALIDARG);
-                }
+                std::vector<D2D1_RECT_F> result(sourceEffectCount);
 
-                auto result = GetRequiredSourceRectanglesImpl(this, resourceCreator, outputRectangle, sourceEffectCount, sourceEffects, sourceIndices, sourceBounds);
+                EffectRealizationContext::GetRequiredSourceRectangles(
+                    resourceCreator,
+                    reinterpret_cast<IUnknown*>(this),
+                    &outputRectangle,
+                    sourceEffectCount,
+                    sourceEffects,
+                    sourceIndexCount,
+                    sourceIndices,
+                    sourceBoundsCount,
+                    sourceBounds,
+                    sourceEffectCount,
+                    result.data());
 
                 auto resultArray = TransformToComArray<Rect>(result.begin(), result.end(), FromD2DRect);
 
@@ -696,6 +760,66 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             });
     }
 
+    //
+    // Implementation of the public exports to support ICanvasEffect APIs for ICanvasImageInterop
+    //
+    extern "C" __declspec(nothrow, dllexport) HRESULT __stdcall InvalidateSourceRectangleForICanvasImageInterop(
+        ICanvasResourceCreatorWithDpi* resourceCreator,
+        ICanvasImageInterop* image,
+        uint32_t sourceIndex,
+        Rect const* invalidRectangle)
+    {
+        return EffectRealizationContext::InvalidateSourceRectangle(resourceCreator, image, sourceIndex, invalidRectangle);
+    }
+
+    extern "C" __declspec(nothrow, dllexport) HRESULT __stdcall GetInvalidRectanglesForICanvasImageInterop(
+        ICanvasResourceCreatorWithDpi* resourceCreator,
+        ICanvasImageInterop* image,
+        uint32_t* valueCount,
+        Rect** valueElements)
+    {
+        return EffectRealizationContext::GetInvalidRectangles(resourceCreator, image, valueCount, valueElements);
+    }
+
+    extern "C" __declspec(nothrow, dllexport) HRESULT __stdcall GetRequiredSourceRectanglesForICanvasImageInterop(
+        ICanvasResourceCreatorWithDpi* resourceCreator,
+        ICanvasImageInterop* image,
+        Rect const* outputRectangle,
+        uint32_t sourceEffectCount,
+        ICanvasEffect* const* sourceEffects,
+        uint32_t sourceIndexCount,
+        uint32_t const* sourceIndices,
+        uint32_t sourceBoundsCount,
+        Rect const* sourceBounds,
+        uint32_t valueCount,
+        Rect* valueElements)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                // Same preemptive check for the output pointer, see notes in GetRequiredSourceRectangle above
+                CheckInPointer(valueElements);
+
+                std::vector<D2D1_RECT_F> result(valueCount);
+
+                // This API explicitly does not return a COM array, but instead allows callers to have it
+                // directly write the results into a buffer they own. See notes in EffectRealizationContext.
+                EffectRealizationContext::GetRequiredSourceRectangles(
+                    resourceCreator,
+                    image,
+                    outputRectangle,
+                    sourceEffectCount,
+                    sourceEffects,
+                    sourceIndexCount,
+                    sourceIndices,
+                    sourceBoundsCount,
+                    sourceBounds,
+                    valueCount,
+                    result.data());
+
+                std::transform(result.begin(), result.end(), valueElements, FromD2DRect);
+            });
+    }
 
     unsigned int CanvasEffect::GetSourceCount()
     {

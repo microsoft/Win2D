@@ -22,6 +22,7 @@ namespace ABI
 
                 interface ICanvasDevice;
                 interface ICanvasResourceCreator;
+                interface ICanvasResourceCreatorWithDpi;
 
                 //
                 // Interface provided by the CanvasDevice factory that is
@@ -112,6 +113,39 @@ namespace ABI
                     ICanvasImageInterop* image,
                     Numerics::Matrix3x2 const* transform,
                     Rect* rect);
+
+                namespace Effects
+                {
+                    interface ICanvasEffect;
+
+                    //
+                    // Exported methods to allow ICanvasImageInterop implementors to implement ICanvasEffect properly.
+                    //
+                    extern "C" __declspec(nothrow, dllexport) HRESULT __stdcall InvalidateSourceRectangleForICanvasImageInterop(
+                        ICanvasResourceCreatorWithDpi* resourceCreator,
+                        ICanvasImageInterop* image,
+                        uint32_t sourceIndex,
+                        Rect const* invalidRectangle);
+
+                    extern "C" __declspec(nothrow, dllexport) HRESULT __stdcall GetInvalidRectanglesForICanvasImageInterop(
+                        ICanvasResourceCreatorWithDpi* resourceCreator,
+                        ICanvasImageInterop* image,
+                        uint32_t* valueCount,
+                        Rect** valueElements);
+
+                    extern "C" __declspec(nothrow, dllexport) HRESULT __stdcall GetRequiredSourceRectanglesForICanvasImageInterop(
+                        ICanvasResourceCreatorWithDpi* resourceCreator,
+                        ICanvasImageInterop* image,
+                        Rect const* outputRectangle,
+                        uint32_t sourceEffectCount,
+                        ICanvasEffect* const* sourceEffects,
+                        uint32_t sourceIndexCount,
+                        uint32_t const* sourceIndices,
+                        uint32_t sourceBoundsCount,
+                        Rect const* sourceBounds,
+                        uint32_t valueCount,
+                        Rect* valueElements);
+                }
             }
         }
     }

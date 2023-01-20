@@ -762,6 +762,34 @@ public:
         ThrowIfFailed(testEffect->InvalidateSourceRectangle(f.m_drawingSession.Get(), 0, rect));
     }
 
+    TEST_METHOD_EX(CanvasEffect_InvalidateSourceRectangle_ForICanvasImageInterop)
+    {
+        Fixture f;
+
+        auto testEffect = Make<TestEffect>(m_blurGuid, 0, 1);
+        auto mockD2DEffect = Make<MockD2DEffectThatCountsCalls>();
+
+        f.m_deviceContext->CreateEffectMethod.SetExpectedCalls(1, [&](IID const& effectId, ID2D1Effect** effect) { return mockD2DEffect.CopyTo(effect); });
+
+        Rect rect = { 1, 2, 3, 4 };
+
+        Assert::AreEqual(E_INVALIDARG, InvalidateSourceRectangleForICanvasImageInterop(nullptr, As<ICanvasImageInterop>(testEffect.Get()).Get(), 0, &rect));
+        Assert::AreEqual(E_INVALIDARG, InvalidateSourceRectangleForICanvasImageInterop(f.m_drawingSession.Get(), nullptr, 0, &rect));
+        Assert::AreEqual(E_INVALIDARG, InvalidateSourceRectangleForICanvasImageInterop(f.m_drawingSession.Get(), As<ICanvasImageInterop>(testEffect.Get()).Get(), 1, &rect));
+
+        f.m_deviceContext->InvalidateEffectInputRectangleMethod.SetExpectedCalls(1,
+            [&](ID2D1Effect* effect, UINT32 input, D2D1_RECT_F const* invalidRect)
+            {
+                Assert::IsTrue(IsSameInstance(effect, mockD2DEffect.Get()));
+                Assert::AreEqual(0u, input);
+                Assert::AreEqual(rect, FromD2DRect(*invalidRect));
+
+                return S_OK;
+            });
+
+        ThrowIfFailed(InvalidateSourceRectangleForICanvasImageInterop(f.m_drawingSession.Get(), As<ICanvasImageInterop>(testEffect.Get()).Get(), 0, &rect));
+    }
+
     TEST_METHOD_EX(CanvasEffect_GetInvalidRectangles)
     {
         Fixture f;
@@ -802,6 +830,54 @@ public:
             });
 
         ThrowIfFailed(testEffect->GetInvalidRectangles(f.m_drawingSession.Get(), result.GetAddressOfSize(), result.GetAddressOfData()));
+
+        Assert::AreEqual(2u, result.GetSize());
+     
+        Assert::AreEqual(rect1, result[0]);
+        Assert::AreEqual(rect2, result[1]);
+    }
+
+    TEST_METHOD_EX(CanvasEffect_GetInvalidRectangles_ForICanvasImageInterop)
+    {
+        Fixture f;
+
+        auto testEffect = Make<TestEffect>(m_blurGuid, 0, 1);
+        auto mockD2DEffect = Make<MockD2DEffectThatCountsCalls>();
+
+        f.m_deviceContext->CreateEffectMethod.SetExpectedCalls(1, [&](IID const& effectId, ID2D1Effect** effect) { return mockD2DEffect.CopyTo(effect); });
+
+        Rect rect1 = { 1, 2, 3, 4 };
+        Rect rect2 = { 5, 6, 7, 8 };
+
+        ComArray<Rect> result;
+
+        Assert::AreEqual(E_INVALIDARG, GetInvalidRectanglesForICanvasImageInterop(nullptr, As<ICanvasImageInterop>(testEffect.Get()).Get(), result.GetAddressOfSize(), result.GetAddressOfData()));
+        Assert::AreEqual(E_INVALIDARG, GetInvalidRectanglesForICanvasImageInterop(f.m_drawingSession.Get(), nullptr, result.GetAddressOfSize(), result.GetAddressOfData()));
+        Assert::AreEqual(E_INVALIDARG, GetInvalidRectanglesForICanvasImageInterop(f.m_drawingSession.Get(), As<ICanvasImageInterop>(testEffect.Get()).Get(), nullptr, result.GetAddressOfData()));
+        Assert::AreEqual(E_INVALIDARG, GetInvalidRectanglesForICanvasImageInterop(f.m_drawingSession.Get(), As<ICanvasImageInterop>(testEffect.Get()).Get(), result.GetAddressOfSize(), nullptr));
+
+        f.m_deviceContext->GetEffectInvalidRectangleCountMethod.SetExpectedCalls(1,
+            [&](ID2D1Effect* effect, UINT32* count)
+            {
+                Assert::IsTrue(IsSameInstance(effect, mockD2DEffect.Get()));
+                *count = 2;
+
+                return S_OK;
+            });
+
+        f.m_deviceContext->GetEffectInvalidRectanglesMethod.SetExpectedCalls(1,
+            [&](ID2D1Effect* effect, D2D1_RECT_F* rects, UINT32 count)
+            {
+                Assert::IsTrue(IsSameInstance(effect, mockD2DEffect.Get()));
+                Assert::AreEqual(2u, count);
+
+                rects[0] = ToD2DRect(rect1);
+                rects[1] = ToD2DRect(rect2);
+
+                return S_OK;
+            });
+
+        ThrowIfFailed(GetInvalidRectanglesForICanvasImageInterop(f.m_drawingSession.Get(), As<ICanvasImageInterop>(testEffect.Get()).Get(), result.GetAddressOfSize(), result.GetAddressOfData()));
 
         Assert::AreEqual(2u, result.GetSize());
      
@@ -854,6 +930,64 @@ public:
             });
 
         ThrowIfFailed(testEffect->GetRequiredSourceRectangle(f.m_drawingSession.Get(), outputRect, inputEffect.Get(), 0, inputBounds, &result));
+
+        Assert::AreEqual(expectedResult, result);
+    }
+
+    TEST_METHOD_EX(CanvasEffect_GetRequiredSourceRectangle_ForICanvasImageInterop)
+    {
+        Fixture f;
+
+        auto testEffect = Make<TestEffect>(m_blurGuid, 0, 1);
+        auto inputEffect = Make<TestEffect>(m_blurGuid, 0, 1);
+
+        testEffect->SetSource(0, inputEffect.Get());
+
+        std::vector<ComPtr<MockD2DEffectThatCountsCalls>> mockEffects;
+
+        f.m_deviceContext->CreateEffectMethod.SetExpectedCalls(2,
+            [&](IID const& effectId, ID2D1Effect** effect)
+            {
+                mockEffects.push_back(Make<MockD2DEffectThatCountsCalls>(effectId));
+        return mockEffects.back().CopyTo(effect);
+            });
+
+        Rect outputRect = { 1, 2, 3, 4 };
+        Rect inputBounds = { 5, 6, 7, 8 };
+        Rect expectedResult = { 9, 10, 11, 12 };
+        Rect result;
+        uint32_t inputIndex = 0;
+        ICanvasEffect* inputEffects = inputEffect.Get();
+        ICanvasEffect* nullEffects = nullptr;
+        uint32_t invalidIndex = 1;
+
+        Assert::AreEqual(E_INVALIDARG, GetRequiredSourceRectanglesForICanvasImageInterop(nullptr, As<ICanvasImageInterop>(testEffect.Get()).Get(), &outputRect, 1, &inputEffects, 1, &inputIndex, 1, &inputBounds, 1, &result));
+        Assert::AreEqual(E_INVALIDARG, GetRequiredSourceRectanglesForICanvasImageInterop(f.m_drawingSession.Get(), nullptr, &outputRect, 1, &inputEffects, 1, &inputIndex, 1, &inputBounds, 1, &result));
+        Assert::AreEqual(E_INVALIDARG, GetRequiredSourceRectanglesForICanvasImageInterop(f.m_drawingSession.Get(), As<ICanvasImageInterop>(testEffect.Get()).Get(), &outputRect, 1, nullptr, 1, &inputIndex, 1, &inputBounds, 1, &result));
+        Assert::AreEqual(E_INVALIDARG, GetRequiredSourceRectanglesForICanvasImageInterop(f.m_drawingSession.Get(), As<ICanvasImageInterop>(testEffect.Get()).Get(), &outputRect, 1, &nullEffects, 1, &inputIndex, 1, &inputBounds, 1, &result));
+        Assert::AreEqual(E_INVALIDARG, GetRequiredSourceRectanglesForICanvasImageInterop(f.m_drawingSession.Get(), As<ICanvasImageInterop>(testEffect.Get()).Get(), &outputRect, 1, &inputEffects, 1, &invalidIndex, 1, &inputBounds, 1, &result));
+        Assert::AreEqual(E_INVALIDARG, GetRequiredSourceRectanglesForICanvasImageInterop(f.m_drawingSession.Get(), As<ICanvasImageInterop>(testEffect.Get()).Get(), &outputRect, 1, &inputEffects, 0, &inputIndex, 1, &inputBounds, 1, &result));
+        Assert::AreEqual(E_INVALIDARG, GetRequiredSourceRectanglesForICanvasImageInterop(f.m_drawingSession.Get(), As<ICanvasImageInterop>(testEffect.Get()).Get(), &outputRect, 1, &inputEffects, 1, &inputIndex, 0, &inputBounds, 1, &result));
+        Assert::AreEqual(E_INVALIDARG, GetRequiredSourceRectanglesForICanvasImageInterop(f.m_drawingSession.Get(), As<ICanvasImageInterop>(testEffect.Get()).Get(), &outputRect, 1, &inputEffects, 1, &inputIndex, 1, &inputBounds, 0, &result));
+        Assert::AreEqual(E_INVALIDARG, GetRequiredSourceRectanglesForICanvasImageInterop(f.m_drawingSession.Get(), As<ICanvasImageInterop>(testEffect.Get()).Get(), &outputRect, 1, &inputEffects, 1, &inputIndex, 1, &inputBounds, 1, nullptr));
+
+        f.m_deviceContext->GetEffectRequiredInputRectanglesMethod.SetExpectedCalls(1,
+            [&](ID2D1Effect* effect, D2D1_RECT_F const* output, D2D1_EFFECT_INPUT_DESCRIPTION const* desc, D2D1_RECT_F* result, UINT32 count)
+            {
+                Assert::IsTrue(IsSameInstance(mockEffects[0].Get(), effect));
+                Assert::AreEqual(outputRect, FromD2DRect(*output));
+                Assert::AreEqual(1u, count);
+
+                Assert::IsTrue(IsSameInstance(mockEffects[1].Get(), desc[0].effect));
+                Assert::AreEqual(0u, desc[0].inputIndex);
+                Assert::AreEqual(inputBounds, FromD2DRect(desc[0].inputRectangle));
+
+                result[0] = ToD2DRect(expectedResult);
+
+                return S_OK;
+            });
+
+        ThrowIfFailed(GetRequiredSourceRectanglesForICanvasImageInterop(f.m_drawingSession.Get(), As<ICanvasImageInterop>(testEffect.Get()).Get(), &outputRect, 1, &inputEffects, 1, &inputIndex, 1, &inputBounds, 1, &result));
 
         Assert::AreEqual(expectedResult, result);
     }
@@ -931,6 +1065,80 @@ public:
      
         Assert::AreEqual(expectedResult1, result[0]);
         Assert::AreEqual(expectedResult2, result[1]);
+    }
+
+    TEST_METHOD_EX(CanvasEffect_GetRequiredSourceRectangles_ForICanvasImageInterop)
+    {
+        Fixture f;
+
+        auto testEffect = Make<TestEffect>(m_blurGuid, 0, 2);
+        auto inputEffect1 = Make<TestEffect>(m_blurGuid, 0, 1);
+        auto inputEffect2 = Make<TestEffect>(m_blurGuid, 0, 1);
+
+        testEffect->SetSource(0, inputEffect1.Get());
+        testEffect->SetSource(1, inputEffect2.Get());
+
+        std::vector<ComPtr<MockD2DEffectThatCountsCalls>> mockEffects;
+
+        f.m_deviceContext->CreateEffectMethod.SetExpectedCalls(3,
+            [&](IID const& effectId, ID2D1Effect** effect)
+            {
+                mockEffects.push_back(Make<MockD2DEffectThatCountsCalls>(effectId));
+                return mockEffects.back().CopyTo(effect);
+            });
+
+        Rect outputRect = { 1, 2, 3, 4 };
+        Rect inputBounds1 = { 5, 6, 7, 8 };
+        Rect inputBounds2 = { 9, 10, 11, 12 };
+        Rect expectedResult1 = { 13, 14, 15, 16 };
+        Rect expectedResult2 = { 17, 18, 19, 20 };
+        
+        ICanvasEffect* inputEffects[] = { inputEffect1.Get(), inputEffect2.Get() };
+        uint32_t inputIndices[] = { 0, 0 };
+        uint32_t badIndices1[] = { 1, 0 };
+        uint32_t badIndices2[] = { 0, 1 };
+        Rect inputBounds[] = { inputBounds1, inputBounds2 };
+
+        Rect results[2];
+
+        Assert::AreEqual(E_INVALIDARG, GetRequiredSourceRectanglesForICanvasImageInterop(nullptr, As<ICanvasImageInterop>(testEffect.Get()).Get(), &outputRect, 2, inputEffects, 2, inputIndices, 2, inputBounds, 2, results));
+        Assert::AreEqual(E_INVALIDARG, GetRequiredSourceRectanglesForICanvasImageInterop(f.m_drawingSession.Get(), nullptr, &outputRect, 2, inputEffects, 2, inputIndices, 2, inputBounds, 2, results));
+        Assert::AreEqual(E_INVALIDARG, GetRequiredSourceRectanglesForICanvasImageInterop(f.m_drawingSession.Get(), As<ICanvasImageInterop>(testEffect.Get()).Get(), &outputRect, 2, nullptr, 2, inputIndices, 2, inputBounds, 2, results));
+        Assert::AreEqual(E_INVALIDARG, GetRequiredSourceRectanglesForICanvasImageInterop(f.m_drawingSession.Get(), As<ICanvasImageInterop>(testEffect.Get()).Get(), &outputRect, 2, inputEffects, 2, nullptr, 2, inputBounds, 2, results));
+        Assert::AreEqual(E_INVALIDARG, GetRequiredSourceRectanglesForICanvasImageInterop(f.m_drawingSession.Get(), As<ICanvasImageInterop>(testEffect.Get()).Get(), &outputRect, 2, inputEffects, 2, inputIndices, 2, nullptr, 2, results));
+        Assert::AreEqual(E_INVALIDARG, GetRequiredSourceRectanglesForICanvasImageInterop(f.m_drawingSession.Get(), As<ICanvasImageInterop>(testEffect.Get()).Get(), &outputRect, 2, inputEffects, 2, inputIndices, 2, inputBounds, 0, results));
+        Assert::AreEqual(E_INVALIDARG, GetRequiredSourceRectanglesForICanvasImageInterop(f.m_drawingSession.Get(), As<ICanvasImageInterop>(testEffect.Get()).Get(), &outputRect, 2, inputEffects, 2, inputIndices, 2, inputBounds, 2, nullptr));
+        Assert::AreEqual(E_INVALIDARG, GetRequiredSourceRectanglesForICanvasImageInterop(f.m_drawingSession.Get(), As<ICanvasImageInterop>(testEffect.Get()).Get(), &outputRect, 1, inputEffects, 2, inputIndices, 2, inputBounds, 2, results));
+        Assert::AreEqual(E_INVALIDARG, GetRequiredSourceRectanglesForICanvasImageInterop(f.m_drawingSession.Get(), As<ICanvasImageInterop>(testEffect.Get()).Get(), &outputRect, 2, inputEffects, 1, inputIndices, 2, inputBounds, 2, results));
+        Assert::AreEqual(E_INVALIDARG, GetRequiredSourceRectanglesForICanvasImageInterop(f.m_drawingSession.Get(), As<ICanvasImageInterop>(testEffect.Get()).Get(), &outputRect, 2, inputEffects, 2, inputIndices, 1, inputBounds, 2, results));
+        Assert::AreEqual(E_INVALIDARG, GetRequiredSourceRectanglesForICanvasImageInterop(f.m_drawingSession.Get(), As<ICanvasImageInterop>(testEffect.Get()).Get(), &outputRect, 2, inputEffects, 2, badIndices1, 2, inputBounds, 2, results));
+        Assert::AreEqual(E_INVALIDARG, GetRequiredSourceRectanglesForICanvasImageInterop(f.m_drawingSession.Get(), As<ICanvasImageInterop>(testEffect.Get()).Get(), &outputRect, 2, inputEffects, 2, badIndices2, 2, inputBounds, 2, results));
+
+        f.m_deviceContext->GetEffectRequiredInputRectanglesMethod.SetExpectedCalls(1,
+            [&](ID2D1Effect* effect, D2D1_RECT_F const* output, D2D1_EFFECT_INPUT_DESCRIPTION const* desc, D2D1_RECT_F* result, UINT32 count)
+            {
+                Assert::IsTrue(IsSameInstance(mockEffects[0].Get(), effect));
+                Assert::AreEqual(outputRect, FromD2DRect(*output));
+                Assert::AreEqual(2u, count);
+
+                Assert::IsTrue(IsSameInstance(mockEffects[1].Get(), desc[0].effect));
+                Assert::AreEqual(0u, desc[0].inputIndex);
+                Assert::AreEqual(inputBounds1, FromD2DRect(desc[0].inputRectangle));
+
+                Assert::IsTrue(IsSameInstance(mockEffects[2].Get(), desc[1].effect));
+                Assert::AreEqual(0u, desc[1].inputIndex);
+                Assert::AreEqual(inputBounds2, FromD2DRect(desc[1].inputRectangle));
+
+                result[0] = ToD2DRect(expectedResult1);
+                result[1] = ToD2DRect(expectedResult2);
+
+                return S_OK;
+            });
+
+        ThrowIfFailed(GetRequiredSourceRectanglesForICanvasImageInterop(f.m_drawingSession.Get(), As<ICanvasImageInterop>(testEffect.Get()).Get(), &outputRect, 2, inputEffects, 2, inputIndices, 2, inputBounds, 2, results));
+     
+        Assert::AreEqual(expectedResult1, results[0]);
+        Assert::AreEqual(expectedResult2, results[1]);
     }
 
     struct EffectRealizationContextFixture : public Fixture
