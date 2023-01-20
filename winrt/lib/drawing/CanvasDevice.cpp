@@ -1123,6 +1123,34 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             });
     }
 
+    //
+    // ID2D1DeviceContextPool
+    //
+    IFACEMETHODIMP CanvasDevice::GetDeviceContextLease(ID2D1DeviceContextLease** lease)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckAndClearOutPointer(lease);
+
+                ThrowIfFailed(Make<D2D1DeviceContextLease>(this).CopyTo(lease));
+            });
+    }
+
+    //
+    // ID2D1DeviceContextLease
+    //
+    IFACEMETHODIMP D2D1DeviceContextLease::GetD2DDeviceContext(ID2D1DeviceContext** deviceContext)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckAndClearOutPointer(deviceContext);
+
+                ThrowIfFailed(m_deviceContext->QueryInterface(IID_PPV_ARGS(deviceContext)));
+            });
+    }
+
     ComPtr<ID2D1GradientStopCollection1> CanvasDevice::CreateGradientStopCollection(
         std::vector<D2D1_GRADIENT_STOP>&& stops,
         D2D1_COLOR_SPACE preInterpolationSpace,

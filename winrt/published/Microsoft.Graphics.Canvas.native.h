@@ -88,6 +88,23 @@ namespace ABI
                 };
 
                 //
+                // Supporting interfaces to allow external effects to access Win2D's pool of ID2D1DeviceContext objects for each device.
+                //
+                class __declspec(uuid("A0928F38-F7D5-44DD-A5C9-E23D94734BBB"))
+                ID2D1DeviceContextLease : public IUnknown
+                {
+                public:
+                    IFACEMETHOD(GetD2DDeviceContext)(ID2D1DeviceContext** deviceContext) = 0;
+                };
+
+                class __declspec(uuid("454A82A1-F024-40DB-BD5B-8F527FD58AD0"))
+                ID2D1DeviceContextPool : public IUnknown
+                {
+                public:
+                    IFACEMETHOD(GetDeviceContextLease)(ID2D1DeviceContextLease** lease) = 0;
+                };
+
+                //
                 // Exported method to allow ICanvasImageInterop implementors to implement ICanvasImage properly.
                 //
                 extern "C" __declspec(nothrow, dllexport) HRESULT __stdcall GetBoundsForICanvasImageInterop(
