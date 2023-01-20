@@ -45,6 +45,15 @@ namespace ABI
                     IFACEMETHOD(GetNativeResource)(ICanvasDevice* device, float dpi, REFIID iid, void** resource) = 0;
                 };
 
+                // The type of canvas device returned by ICanvasImageInterop::GetDevice, describing how the device is associated with the canvas image.
+                typedef enum WIN2D_GET_DEVICE_ASSOCIATION_TYPE
+                {
+                    WIN2D_GET_DEVICE_ASSOCIATION_TYPE_UNSPECIFIED = 0,          // No device info is available, callers will handle the returned device with their own logic
+                    WIN2D_GET_DEVICE_ASSOCIATION_TYPE_REALIZATION_DEVICE = 1,   // The returned device is the one the image is currently realized on, if any
+                    WIN2D_GET_DEVICE_ASSOCIATION_TYPE_CREATION_DEVICE = 2,      // The returned device is the one that created the image resource, and cannot change
+                    WIN2D_GET_DEVICE_ASSOCIATION_TYPE_FORCE_DWORD = 0xffffffff
+                } WIN2D_GET_DEVICE_ASSOCIATION_TYPE;
+
                 // Options for fine-tuning the behavior of ICanvasImageInterop::GetD2DImage.
                 typedef enum WIN2D_GET_D2D_IMAGE_FLAGS
                 {
@@ -67,7 +76,7 @@ namespace ABI
                 ICanvasImageInterop : public IUnknown
                 {
                 public:
-                    IFACEMETHOD(GetDevice)(ICanvasDevice** device) = 0;
+                    IFACEMETHOD(GetDevice)(ICanvasDevice** device, WIN2D_GET_DEVICE_ASSOCIATION_TYPE* type) = 0;
 
                     IFACEMETHOD(GetD2DImage)(
                         ICanvasDevice* device,

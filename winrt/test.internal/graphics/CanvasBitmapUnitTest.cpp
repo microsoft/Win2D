@@ -117,8 +117,11 @@ TEST_CLASS(CanvasBitmapUnitTest)
         auto bitmap = CanvasBitmap::CreateNew(f.m_canvasDevice.Get(), f.m_testFileName, DEFAULT_DPI, CanvasAlphaMode::Premultiplied);
 
         ComPtr<ICanvasDevice> actualDevice;
-        As<ICanvasImageInterop>(bitmap)->GetDevice(&actualDevice);
+        WIN2D_GET_DEVICE_ASSOCIATION_TYPE deviceType = WIN2D_GET_DEVICE_ASSOCIATION_TYPE::WIN2D_GET_DEVICE_ASSOCIATION_TYPE_UNSPECIFIED;
+        As<ICanvasImageInterop>(bitmap)->GetDevice(&actualDevice, &deviceType);
+
         Assert::AreEqual<ICanvasDevice*>(f.m_canvasDevice.Get(), actualDevice.Get());
+        Assert::IsTrue(deviceType == WIN2D_GET_DEVICE_ASSOCIATION_TYPE::WIN2D_GET_DEVICE_ASSOCIATION_TYPE_CREATION_DEVICE);
     }
 
     TEST_METHOD_EX(CanvasBitmap_GetAlphaMode)

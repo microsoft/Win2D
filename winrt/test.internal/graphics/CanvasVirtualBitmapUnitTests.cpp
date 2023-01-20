@@ -121,8 +121,11 @@ TEST_CLASS(CanvasVirtualBitmapUnitTest)
         auto virtualBitmap = f.CreateVirtualBitmap(CanvasVirtualBitmapOptions::None, CanvasAlphaMode::Premultiplied);
 
         ComPtr<ICanvasDevice> actualDevice;
-        ThrowIfFailed(As<ICanvasImageInterop>(virtualBitmap)->GetDevice(&actualDevice));
+        WIN2D_GET_DEVICE_ASSOCIATION_TYPE deviceType = WIN2D_GET_DEVICE_ASSOCIATION_TYPE::WIN2D_GET_DEVICE_ASSOCIATION_TYPE_UNSPECIFIED;
+        ThrowIfFailed(As<ICanvasImageInterop>(virtualBitmap)->GetDevice(&actualDevice, &deviceType));
+
         Assert::IsTrue(IsSameInstance(f.Device.Get(), actualDevice.Get()));
+        Assert::IsTrue(deviceType == WIN2D_GET_DEVICE_ASSOCIATION_TYPE::WIN2D_GET_DEVICE_ASSOCIATION_TYPE_CREATION_DEVICE);
     }
 
     TEST_METHOD_EX(CanvasVirtualBitmap_CreateNew_PassesCorrectAlphaModeThrough)

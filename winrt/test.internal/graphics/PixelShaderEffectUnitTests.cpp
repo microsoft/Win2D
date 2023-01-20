@@ -342,10 +342,12 @@ TEST_CLASS(PixelShaderEffectUnitTests)
         auto effect = Make<PixelShaderEffect>(nullptr, nullptr, sharedState.Get());
 
         ComPtr<ICanvasDevice> canvasDevice;
-        ThrowIfFailed(As<ICanvasImageInterop>(effect)->GetDevice(&canvasDevice));
+        WIN2D_GET_DEVICE_ASSOCIATION_TYPE deviceType = WIN2D_GET_DEVICE_ASSOCIATION_TYPE::WIN2D_GET_DEVICE_ASSOCIATION_TYPE_UNSPECIFIED;
+        ThrowIfFailed(As<ICanvasImageInterop>(effect)->GetDevice(&canvasDevice, &deviceType));
 
         // The canvas device is just null initially (calling GetDevice should still succeed though)
         Assert::IsNull(canvasDevice.Get());
+        Assert::IsTrue(deviceType == WIN2D_GET_DEVICE_ASSOCIATION_TYPE::WIN2D_GET_DEVICE_ASSOCIATION_TYPE_REALIZATION_DEVICE);
 
         f.CanvasDevice.Get()->AddRef();
 
@@ -363,7 +365,11 @@ TEST_CLASS(PixelShaderEffectUnitTests)
         // The resulting image should not be null if the method returned S_OK
         Assert::IsNotNull(image.Get());
 
-        ThrowIfFailed(As<ICanvasImageInterop>(effect)->GetDevice(&canvasDevice));
+        deviceType = WIN2D_GET_DEVICE_ASSOCIATION_TYPE::WIN2D_GET_DEVICE_ASSOCIATION_TYPE_UNSPECIFIED;
+        ThrowIfFailed(As<ICanvasImageInterop>(effect)->GetDevice(&canvasDevice, &deviceType));
+
+        // Device type should just always be the same
+        Assert::IsTrue(deviceType == WIN2D_GET_DEVICE_ASSOCIATION_TYPE::WIN2D_GET_DEVICE_ASSOCIATION_TYPE_REALIZATION_DEVICE);
 
         f.CanvasDevice.Get()->AddRef();
 

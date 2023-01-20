@@ -110,12 +110,16 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     // ICanvasImageInterop
     //
 
-    IFACEMETHODIMP CanvasEffect::GetDevice(ICanvasDevice** device)
+    IFACEMETHODIMP CanvasEffect::GetDevice(ICanvasDevice** device, WIN2D_GET_DEVICE_ASSOCIATION_TYPE* type)
     {
         return ExceptionBoundary([&]
             {
-                ThrowIfClosed();
                 CheckAndClearOutPointer(device);
+                CheckInPointer(type);
+
+                *type = WIN2D_GET_DEVICE_ASSOCIATION_TYPE_UNSPECIFIED;
+
+                ThrowIfClosed();
 
                 auto realizationDevice = RealizationDevice();
 
@@ -126,6 +130,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                 {
                     ThrowIfFailed(realizationDevice->QueryInterface(IID_PPV_ARGS(device)));
                 }
+
+                // The returned device is the current realization device, and can change
+                *type = WIN2D_GET_DEVICE_ASSOCIATION_TYPE_REALIZATION_DEVICE;
             });
     }
 
@@ -1071,35 +1078,54 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                 }
             }
 
-            ComPtr<ICanvasResourceWrapperWithDevice> sourceWithDevice;
             ComPtr<ICanvasDevice> sourceDevice;
+            bool sourceDeviceMustBeExactMatch;
 
             if (internalSource)
             {
-                // If the specified source has an associated device, validate that this matches the one we are realized on.
-                // This applies to all the built-in Win2D effects, but not to external effects using ICanvasImageInterop.
-                // Note that this path is only taken if the source is an ICanvasImageInternal, as the ICanvasResourceWrapperWithDevice
+                // If the specified source is bound to a creation device, validate that this matches the one we are realized on.
+                // A "creation device" is a canvas device that is used to create the native resources in a given canvas image
+                // implementation, such that the canvas device and the canvas image are bound for the entire lifetime of the
+                // canvas image itself. This applies to eg. CanvasBitmap, which directly wraps some native memory allocated on
+                // a specific device. In these cases, if the associated device doesn't match the one this effect is currently
+                // realized on, that is an error and the source is invalid.
+                // 
+                // Note: this path is only taken if the source is an ICanvasImageInternal, as the ICanvasResourceWrapperWithDevice
                 // interface is internal. That is, if the source is an external effect, there is no way it could implement this.
-                sourceWithDevice = MaybeAs<ICanvasResourceWrapperWithDevice>(source);
+                auto sourceWithDevice = MaybeAs<ICanvasResourceWrapperWithDevice>(source);
 
                 if (sourceWithDevice)
                 {
                     // If the input is an ICanvasResourceWrapperWithDevice, get the current device from there.
                     ThrowIfFailed(sourceWithDevice->get_Device(&sourceDevice));
+
+                    // As mentioned above, if the source is bound to a creation device, it must match the realization device.
+                    sourceDeviceMustBeExactMatch = true;
+                }
+                else
+                {
+                    // Otherwise, the source can be unrealized if it's currently using another device (eg. it's a CanvasEffect).
+                    // As such, its underlying device could be null or a different one, and both cases are valid here.
+                    sourceDeviceMustBeExactMatch = false;
                 }
             }
-            else if (interopSource)
+            else
             {
-                // Otherwise, if the source is an ICanvasImageInterop, get the device from there. This will
-                // either be the previous one that was passed to ICanvasImageInterop::GetD2DImage, or null.
-                ThrowIfFailed(interopSource->GetDevice(&sourceDevice));
+                WIN2D_GET_DEVICE_ASSOCIATION_TYPE deviceInfo;
+
+                // Otherwise (the source is an ICanvasImageInterop), get the device from there. The device returned here will
+                // depend on the specific implementation of this external effect. That is, it could be null for an unrealized
+                // effect, it could be null for a lazily initialized device-bound resource, or it could be an already instantiated
+                // resource tied to a specific device. We can check that via the returned association type value.
+                ThrowIfFailed(interopSource->GetDevice(&sourceDevice, &deviceInfo));
+
+                // The only case where the device has to be an exact match is if the device is an owning device for the canvas image.
+                // In all other cases (including when the device is null), we can proceed to resolve the effects graph normally.
+                sourceDeviceMustBeExactMatch = deviceInfo == WIN2D_GET_DEVICE_ASSOCIATION_TYPE_CREATION_DEVICE;
             }
 
-            // Now that a device has been retrieved (unless null), ensure it's not a mismatch with the current one, if any.
-            // There are two possible scenarios to handle here:
-            //   - We have an ICanvasResourceWrapperWithDevice instance (this matches the original behavior).
-            //   - If we have a source device (that is, external effects must be unrealized or have a matching device).
-            if ((sourceWithDevice || sourceDevice) && !IsSameInstance(RealizationDevice(), sourceDevice.Get()))
+            // If required by the source, as described above, validate that the current realization device matches the source associated device.
+            if (sourceDeviceMustBeExactMatch && !IsSameInstance(RealizationDevice(), sourceDevice.Get()))
             {
                 if ((flags & WIN2D_GET_D2D_IMAGE_FLAGS_UNREALIZE_ON_FAILURE) == WIN2D_GET_D2D_IMAGE_FLAGS_NONE)
                     ThrowFormattedMessage(E_INVALIDARG, Strings::EffectWrongDevice, index);

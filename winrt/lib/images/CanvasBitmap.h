@@ -445,7 +445,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             return ExceptionBoundary(
                 [&]
                 {
-                    CheckInPointer(value);
+                    CheckAndClearOutPointer(value);
                     ThrowIfFailed(m_device.CopyTo(value));
                 });
         }
@@ -495,9 +495,21 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         // ICanvasImageInterop
         //
 
-        IFACEMETHOD(GetDevice)(ICanvasDevice** device)
+        IFACEMETHODIMP GetDevice(ICanvasDevice** device, WIN2D_GET_DEVICE_ASSOCIATION_TYPE* type) override
         {
-            return get_Device(device);
+            return ExceptionBoundary(
+                [&]
+                {
+                    CheckAndClearOutPointer(device);
+                    CheckInPointer(type);
+
+                    *type = WIN2D_GET_DEVICE_ASSOCIATION_TYPE_UNSPECIFIED;
+
+                    ThrowIfFailed(m_device.CopyTo(device));
+
+                    // A canvas bitmap is uniquely owned by its creation device.
+                    *type = WIN2D_GET_DEVICE_ASSOCIATION_TYPE_CREATION_DEVICE;
+                });
         }
 
         // ICanvasImageInternal

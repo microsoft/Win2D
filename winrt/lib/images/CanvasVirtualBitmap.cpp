@@ -378,8 +378,29 @@ IFACEMETHODIMP CanvasVirtualBitmap::get_Device(ICanvasDevice** value)
     return ExceptionBoundary(
         [&]
         {
-            CheckInPointer(value);
+            CheckAndClearOutPointer(value);
             ThrowIfFailed(m_device.CopyTo(value));
+        });
+}
+
+//
+// ICanvasImageInterop
+//
+
+IFACEMETHODIMP CanvasVirtualBitmap::GetDevice(ICanvasDevice** device, WIN2D_GET_DEVICE_ASSOCIATION_TYPE* type)
+{
+    return ExceptionBoundary(
+        [&]
+        {
+            CheckAndClearOutPointer(device);
+            CheckInPointer(type);
+
+            *type = WIN2D_GET_DEVICE_ASSOCIATION_TYPE_UNSPECIFIED;
+
+            ThrowIfFailed(m_device.CopyTo(device));
+
+            // Just like a normal bitmap, a virtualized bitmap is also uniquely tied to its owning device.
+            *type = WIN2D_GET_DEVICE_ASSOCIATION_TYPE_CREATION_DEVICE;
         });
 }
 

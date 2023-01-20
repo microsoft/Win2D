@@ -155,7 +155,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         // ICanvasImageInterop
         //
 
-        IFACEMETHOD(GetDevice)(ICanvasDevice** device) override;
+        IFACEMETHOD(GetDevice)(ICanvasDevice** device, WIN2D_GET_DEVICE_ASSOCIATION_TYPE* type) override;
 
         //
         // ICanvasImageInternal

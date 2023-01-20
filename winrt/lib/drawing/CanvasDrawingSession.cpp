@@ -3720,7 +3720,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ExceptionBoundary(
             [&]
             {
-                CheckInPointer(value);
+                CheckAndClearOutPointer(value);
 
                 ThrowIfFailed(GetDevice().CopyTo(value));
             });
