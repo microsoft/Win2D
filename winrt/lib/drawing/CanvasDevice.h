@@ -256,7 +256,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         IFACEMETHOD(remove_DeviceLost)(EventRegistrationToken token) override;
 
+        IFACEMETHOD(IsDeviceLost2)(boolean* value) override;
         IFACEMETHOD(IsDeviceLost)(int hresult, boolean* value) override;
+
+        IFACEMETHOD(GetDeviceLostReason)(int* hresult) override;
 
         IFACEMETHOD(RaiseDeviceLost)() override;
 
