@@ -551,7 +551,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             widthInPixels,
             heightInPixels,
             static_cast<DXGI_FORMAT>(newFormat), 
-            0));
+            DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING));
 
         if (m_isCoreWindowSwapChain)
         {

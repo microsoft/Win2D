@@ -1153,6 +1153,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         swapChainDesc.Scaling = DXGI_SCALING_STRETCH;
         swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_SEQUENTIAL;
         swapChainDesc.AlphaMode = ToDxgiAlphaMode(alphaMode);
+        swapChainDesc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING;
 
         ComPtr<IDXGISwapChain1> swapChain;
         ThrowIfCreateSurfaceFailed(
