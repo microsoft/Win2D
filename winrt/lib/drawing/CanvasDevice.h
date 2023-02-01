@@ -252,6 +252,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         IFACEMETHOD(get_LowPriority)(boolean* value) override;
         IFACEMETHOD(put_LowPriority)(boolean value) override;
 
+        IFACEMETHOD(get_DXGIDevice)(IUnknown** dxgiDevice) override;
+
         IFACEMETHOD(add_DeviceLost)(DeviceLostHandlerType* value, EventRegistrationToken* token) override;
 
         IFACEMETHOD(remove_DeviceLost)(EventRegistrationToken token) override;

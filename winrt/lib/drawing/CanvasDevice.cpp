@@ -652,6 +652,16 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             });
     }
 
+    IFACEMETHODIMP CanvasDevice::get_DXGIDevice(IUnknown** dxgiDevice)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckAndClearOutPointer(dxgiDevice);
+                *dxgiDevice = m_dxgiDevice.EnsureNotClosed().Get();
+            });
+    }
+
     IFACEMETHODIMP CanvasDevice::add_DeviceLost(
         DeviceLostHandlerType* value, 
         EventRegistrationToken* token)
