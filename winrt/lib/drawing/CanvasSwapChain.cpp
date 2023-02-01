@@ -448,10 +448,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     IFACEMETHODIMP CanvasSwapChain::Present() 
     {
-        return PresentWithSyncInterval(1);
+        return PresentWithSyncIntervalAndPresentFlags(1, 0);
     }
 
     IFACEMETHODIMP CanvasSwapChain::PresentWithSyncInterval(int32_t syncInterval)
+    {
+        return PresentWithSyncIntervalAndPresentFlags(syncInterval, 0);
+    }
+
+    IFACEMETHODIMP CanvasSwapChain::PresentWithSyncIntervalAndPresentFlags(int32_t syncInterval, int32_t presentFlags)
     {
         return ExceptionBoundary(
             [&]
@@ -460,7 +465,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 auto& resource = GetResource();
 
                 DXGI_PRESENT_PARAMETERS presentParameters = { 0 };
-                ThrowIfFailed(resource->Present1(syncInterval, 0, &presentParameters));
+                ThrowIfFailed(resource->Present1(syncInterval, presentFlags, &presentParameters));
             });
     }
 
