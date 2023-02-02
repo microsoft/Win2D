@@ -34,8 +34,7 @@ steps:
           $xmlfile.Dependencies.ProductDependencies.Dependency | Where-Object Name -eq 'Microsoft.WindowsAppSDK' | ForEach-Object {
               $WIN_APP_SDK_VERSION = $_.Version
               Write-Host "The WinAppSDK Version is $WIN_APP_SDK_VERSION"
-              Write-Host "##vso[task.setvariable variable=winappsdk_version]$WIN_APP_SDK_VERSION"
-              Write-Host "##vso[task.setvariable variable=winappsdk_version;isOutput=true]$WIN_APP_SDK_VERSION"
+              Write-Host "##vso[task.setvariable variable=nightly_winappsdk_version;isOutput=true]$WIN_APP_SDK_VERSION"
           }
           $env:packageSuffix = $env:packageSuffix + "-WinAppSDK." + $WIN_APP_SDK_VERSION
       }
