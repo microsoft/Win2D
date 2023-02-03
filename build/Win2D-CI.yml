@@ -24,7 +24,7 @@ resources:
 
 # Run the Pipeline
 stages:
-- template: AzurePipelineTemplates\Win2D-Stages.yml
+- template: AzurePipelinesTemplates\Win2D-Stages.yml
   parameters:
     RunTests: ${{ parameters.RunTests }}
     PipelineType: 'CI'
