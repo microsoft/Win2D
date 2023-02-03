@@ -4,7 +4,7 @@ trigger:
     - refs/heads/release
 
 # Parameters to configure the pipeline at runtime
-name: $(BuildDefinitionName)-$(date:yyMMdd)
+name: $(BuildDefinitionName)-UWP-$(date:yyMMdd)
 parameters:
 - name: RunTests
   displayName: "Run Tests"
