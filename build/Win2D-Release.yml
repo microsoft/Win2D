@@ -4,7 +4,7 @@ trigger:
     - refs/heads/winappsdk/release
 
 # Parameters to configure the pipeline at runtime
-name: $(BuildDefinitionName)-$(date:yyMMdd)
+name: $(BuildDefinitionName)-WinAppSDK-$(date:yyMMdd)
 parameters:
 - name: RunTests
   displayName: "Run Tests"

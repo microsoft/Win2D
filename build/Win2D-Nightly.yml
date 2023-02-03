@@ -7,7 +7,7 @@ pool:
   vmImage: 'windows-2022'
 
 # Parameters to configure the pipeline at runtime
-name: $(BuildDefinitionName)-$(date:yyMMdd)
+name: $(BuildDefinitionName)-WinAppSDK-$(date:yyMMdd)
 parameters:
 - name: RunTests
   displayName: "Run Tests"
