@@ -763,25 +763,35 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     //
     // Implementation of the public exports to support ICanvasEffect APIs for ICanvasImageInterop
     //
-    extern "C" __declspec(nothrow, dllexport) HRESULT __stdcall InvalidateSourceRectangleForICanvasImageInterop(
+
+#if defined(ARCH_X86)
+#pragma comment(linker, "/export:InvalidateSourceRectangleForICanvasImageInterop=_InvalidateSourceRectangleForICanvasImageInterop@16")
+#endif
+    WIN2DAPI InvalidateSourceRectangleForICanvasImageInterop(
         ICanvasResourceCreatorWithDpi* resourceCreator,
         ICanvasImageInterop* image,
         uint32_t sourceIndex,
-        Rect const* invalidRectangle)
+        Rect const* invalidRectangle) noexcept
     {
         return EffectRealizationContext::InvalidateSourceRectangle(resourceCreator, image, sourceIndex, invalidRectangle);
     }
 
-    extern "C" __declspec(nothrow, dllexport) HRESULT __stdcall GetInvalidRectanglesForICanvasImageInterop(
+#if defined(ARCH_X86)
+#pragma comment(linker, "/export:GetInvalidRectanglesForICanvasImageInterop=_GetInvalidRectanglesForICanvasImageInterop@16")
+#endif
+    WIN2DAPI GetInvalidRectanglesForICanvasImageInterop(
         ICanvasResourceCreatorWithDpi* resourceCreator,
         ICanvasImageInterop* image,
         uint32_t* valueCount,
-        Rect** valueElements)
+        Rect** valueElements) noexcept
     {
         return EffectRealizationContext::GetInvalidRectangles(resourceCreator, image, valueCount, valueElements);
     }
 
-    extern "C" __declspec(nothrow, dllexport) HRESULT __stdcall GetRequiredSourceRectanglesForICanvasImageInterop(
+#if defined(ARCH_X86)
+#pragma comment(linker, "/export:GetRequiredSourceRectanglesForICanvasImageInterop=_GetRequiredSourceRectanglesForICanvasImageInterop@44")
+#endif
+    WIN2DAPI GetRequiredSourceRectanglesForICanvasImageInterop(
         ICanvasResourceCreatorWithDpi* resourceCreator,
         ICanvasImageInterop* image,
         Rect const* outputRectangle,
@@ -792,7 +802,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         uint32_t sourceBoundsCount,
         Rect const* sourceBounds,
         uint32_t valueCount,
-        Rect* valueElements)
+        Rect* valueElements) noexcept
     {
         return ExceptionBoundary(
             [&]

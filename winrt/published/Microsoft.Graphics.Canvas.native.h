@@ -8,6 +8,16 @@
 #include <windows.foundation.numerics.h>
 #include <wrl.h>
 
+#ifndef __cplusplus
+#error "Requires C++"
+#endif
+
+#ifdef WIN2D_DLL_EXPORT
+#define WIN2DAPI extern "C" __declspec(dllexport) HRESULT __stdcall
+#else
+#define WIN2DAPI extern "C" __declspec(dllimport) HRESULT __stdcall
+#endif
+
 interface ID2D1Device1;
 
 namespace ABI
@@ -108,11 +118,11 @@ namespace ABI
                 //
                 // Exported method to allow ICanvasImageInterop implementors to implement ICanvasImage properly.
                 //
-                extern "C" __declspec(nothrow, dllexport) HRESULT __stdcall GetBoundsForICanvasImageInterop(
+                WIN2DAPI GetBoundsForICanvasImageInterop(
                     ICanvasResourceCreator* resourceCreator,
                     ICanvasImageInterop* image,
                     Numerics::Matrix3x2 const* transform,
-                    Rect* rect);
+                    Rect* rect) noexcept;
 
                 namespace Effects
                 {
@@ -121,19 +131,19 @@ namespace ABI
                     //
                     // Exported methods to allow ICanvasImageInterop implementors to implement ICanvasEffect properly.
                     //
-                    extern "C" __declspec(nothrow, dllexport) HRESULT __stdcall InvalidateSourceRectangleForICanvasImageInterop(
+                    WIN2DAPI InvalidateSourceRectangleForICanvasImageInterop(
                         ICanvasResourceCreatorWithDpi* resourceCreator,
                         ICanvasImageInterop* image,
                         uint32_t sourceIndex,
-                        Rect const* invalidRectangle);
+                        Rect const* invalidRectangle) noexcept;
 
-                    extern "C" __declspec(nothrow, dllexport) HRESULT __stdcall GetInvalidRectanglesForICanvasImageInterop(
+                    WIN2DAPI GetInvalidRectanglesForICanvasImageInterop(
                         ICanvasResourceCreatorWithDpi* resourceCreator,
                         ICanvasImageInterop* image,
                         uint32_t* valueCount,
-                        Rect** valueElements);
+                        Rect** valueElements) noexcept;
 
-                    extern "C" __declspec(nothrow, dllexport) HRESULT __stdcall GetRequiredSourceRectanglesForICanvasImageInterop(
+                    WIN2DAPI GetRequiredSourceRectanglesForICanvasImageInterop(
                         ICanvasResourceCreatorWithDpi* resourceCreator,
                         ICanvasImageInterop* image,
                         Rect const* outputRectangle,
@@ -144,7 +154,7 @@ namespace ABI
                         uint32_t sourceBoundsCount,
                         Rect const* sourceBounds,
                         uint32_t valueCount,
-                        Rect* valueElements);
+                        Rect* valueElements) noexcept;
                 }
             }
         }
