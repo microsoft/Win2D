@@ -5,7 +5,7 @@ trigger:
     - refs/heads/uwp/main
 
 # Parameters to configure the pipeline at runtime
-name: $(BuildDefinitionName)-$(date:yyMMdd)
+name: $(BuildDefinitionName)-UWP-$(date:yyMMdd)
 parameters:
 - name: RunTests
   displayName: "Run Tests"
@@ -24,7 +24,7 @@ resources:
 
 # Run the Pipeline
 stages:
-- template: AzurePipelineTemplates\Win2D-Stages.yml
+- template: AzurePipelinesTemplates\Win2D-Stages.yml
   parameters:
     RunTests: ${{ parameters.RunTests }}
     PipelineType: 'CI'

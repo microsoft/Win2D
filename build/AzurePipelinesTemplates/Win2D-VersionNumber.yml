@@ -32,7 +32,7 @@ steps:
       }
 
       # If the pipeline has a suffix, add it to the name
-      $pipelineName = $versionMMP 
+      $pipelineName = "Win2D.UWP." + $versionMMP 
       if ( -not [String]::IsNullOrWhiteSpace($env:packageSuffix) )
       {
         $pipelineName = $pipelineName + "-" + $env:packageSuffix
