@@ -1,0 +1,110 @@
+parameters:
+- name: "RunTests"
+  type: boolean
+  default: true
+- name: "PipelineType"
+  type: string
+  default: "not_set"
+- name: "VMImage"
+  type: string
+  default: "windows-2022"
+- name: "SignCode"
+  type: boolean
+  default: false
+
+# Build Win2D code and nuget package
+stages:
+- stage: Version_Win2D
+  jobs:
+    # Set Version Number 
+  - job: Version
+    pool:
+      vmImage: '${{ parameters.VMImage }}'
+    steps:
+    # Set the build number and version
+    - template: Win2D-VersionNumber.yml
+      parameters:
+        PipelineType: ${{ parameters.PipelineType }}
+- stage: Build_Win2D
+  dependsOn: Version_Win2D
+  jobs:
+  # Build Win2D in parallel
+  - job: Build_Win2D
+    strategy:
+      matrix:
+        x86:
+          # x86 is responsible for building docs and tools, which is AnyCPU
+          architecture: "Win32;AnyCPU"
+          archDirectory: "uapx86"
+          buildConfiguration: "Release"
+        x64:
+          architecture: "x64"
+          archDirectory: "uapx64"
+          buildConfiguration: "Release"
+        # ARM:
+        #   architecture: "ARM"
+        #   archDirectory: "uaparm"
+        #   buildConfiguration: "Release"
+        ARM64:
+          architecture: "ARM64"
+          archDirectory: "uaparm64"
+          buildConfiguration: "Release"
+    pool:
+      vmImage: '${{ parameters.VMImage }}'
+    variables:
+      ${{ if eq(parameters.PipelineType, 'Nightly') }}:
+        nightly_winappsdk_version: $[ stageDependencies.Version_Win2D.Version.outputs['Win2dVersionTask.nightly_winappsdk_version'] ]
+    steps:
+    - template: Win2D-ParallelBuild-Steps.yml
+      parameters:
+        BuildTests: false
+        RunTests: false
+        BuildDocs: true
+        BuildTools: true
+        PublishBinaries: true
+        SignCode: ${{ parameters.SignCode }}
+        PipelineType: ${{ parameters.PipelineType }}
+- stage: Build_Nupkg
+  dependsOn: Build_Win2D
+  jobs:
+  - job: Run_BuildNupkg
+    pool:
+      vmImage: '${{ parameters.VMImage }}'
+    steps:
+    - template: Win2D-BuildNupkg.yml
+- ${{ if parameters.RunTests }}:
+  - stage: Test_Win2D
+    # Empty dependency
+    dependsOn: Version_Win2D
+    jobs:
+    - job: Test_Win2D
+      strategy:
+        matrix:
+          x86:
+            architecture: "Win32"
+            archDirectory: "uapx86"
+            buildConfiguration: "Release"
+          x64:
+            architecture: "x64"
+            archDirectory: "uapx64"
+            buildConfiguration: "Release"
+          # Test projects don't support ARM64 right now
+          # ARM64:
+          #   architecture: "ARM64"
+          #   buildConfiguration: "Release"
+      pool:
+        vmImage: '${{ parameters.VMImage }}'
+      variables:
+        ${{ if eq(parameters.PipelineType, 'Nightly') }}:
+          nightly_winappsdk_version: $[ stageDependencies.Version_Win2D.Version.outputs['Win2dVersionTask.nightly_winappsdk_version'] ]
+      steps:
+      - template: Win2D-ParallelBuild-Steps.yml
+        parameters:
+          BuildTests: true
+          RunTests: true
+          BuildDocs: false
+          BuildToos: false
+          PublishBinaries: false
+          SignCode: false
+          PipelineType: ${{ parameters.PipelineType }}
+    

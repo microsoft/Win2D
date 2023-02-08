@@ -1,0 +1,69 @@
+parameters:
+  PipelineType: ""
+steps:
+# Download nuget.exe
+- task: BatchScript@1
+  displayName: Run download-nuget.cmd
+  inputs:
+    filename: build\nuget\download-nuget.cmd
+# Download binaries from previous stage
+- task: DownloadPipelineArtifact@2
+  inputs:
+    artifactName: 'build_output'
+    targetPath: $(Build.SourcesDirectory)
+- script: |
+    cd $(Build.SourcesDirectory)
+    dir
+  displayName: Print root directory
+
+# Build nuget package
+- task: BatchScript@1
+  displayName: build-nupkg
+  inputs:
+    filename: build/nuget/build-nupkg.cmd
+    ${{ if eq(parameters.PipelineType, 'Release') }}:
+      arguments: 'signed'
+    ${{ if ne(parameters.PipelineType, 'Release') }}:
+      arguments: $(packageSuffix)
+
+# Sign nuget package
+- ${{ if eq(parameters.PipelineType, 'Release') }}:
+  - task: SFP.build-tasks.custom-build-task-1.EsrpCodeSigning@1
+    displayName: 'CodeSign (Nuget)'
+    inputs:
+      ConnectedServiceName: 'ESRP Signing'
+      FolderPath: '$(Build.SourcesDirectory)\bin\'
+      Pattern: '*.nupkg'
+      signConfigType: inlineSignParams
+      inlineOperation: |
+        [
+            {
+                "KeyCode" : "CP-401405",
+                "OperationCode" : "NuGetSign",
+                "Parameters" : {},
+                "ToolName" : "sign",
+                "ToolVersion" : "1.0"
+            },
+            {
+                "KeyCode" : "CP-401405",
+                "OperationCode" : "NuGetVerify",
+                "Parameters" : {},
+                "ToolName" : "sign",
+                "ToolVersion" : "1.0"
+            }
+        ]
+
+# Copy nuget package to artifact staging directory
+- task: CopyFiles@2
+  displayName: 'Copy Nupkg to: $(Build.ArtifactStagingDirectory)'
+  inputs:
+    SourceFolder: bin
+    Contents: >-
+      *.nupkg
+    TargetFolder: $(Build.ArtifactStagingDirectory)
+# Publish nuget package artifact
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact: nupkg'
+  inputs:
+    ArtifactName: 'nupkg'
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'

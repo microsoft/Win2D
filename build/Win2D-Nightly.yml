@@ -1,65 +1,26 @@
+# Trigger the pipeline whenever the master branch is updated
 trigger:
-- WinAppSDK-Nightly
-
+  branches:
+    include:
+    - refs/heads/winappsdk/nightly
 pool:
-  vmImage: 'windows-2019'
+  vmImage: 'windows-2022'
 
+# Parameters to configure the pipeline at runtime
+name: $(BuildDefinitionName)-WinAppSDK-$(date:yyMMdd)
+parameters:
+- name: RunTests
+  displayName: "Run Tests"
+  type: boolean
+  default: True
 variables:
-- name: date
-  value: $[format('{0:yyMMdd}', pipeline.startTime)]
+- name: PackageSuffix
+  value: $[format('Win2D.WinUI-Nightly-{0:yyMMdd}.{1}', pipeline.startTime, counter(format('{0}.{1}', variables['Build.DefinitionName'], format('{0:yyMMdd}', pipeline.startTime)), 0))]
 
-name: $[format('{0}.{1}.Nightly', variables['date'], counter(variables['date']))]
-
-jobs:
-# Set Version for Win2D
-- job: Win2DVersioning
-  pool:
-    vmImage: 'windows-2019'
-  variables:
-  # Codesigning not needed for this job
-  - name: runCodesignValidationInjection
-    value: false
-  steps:
-  - template: AzurePipelinesTemplates\Win2D-Find-WinAppSDK-Version.yml
-  - template: AzurePipelinesTemplates\Win2D-VersionNumber.yml
-  
-# Build Win2D
-- job: BuildProduct
-  dependsOn: 'Win2DVersioning'
-  pool:
-    vmImage: 'windows-2019'
-  variables:
-  - name: version
-    value: $[format('{0}.{1}', dependencies.Win2DVersioning.outputs['win2dVersionTask.versionNightly'], counter(dependencies.Win2DVersioning.outputs['win2dVersionTask.versionNightly']))]
-  - name: winappsdk_version
-    value: $[dependencies.Win2DVersioning.outputs['winappsdkVersionTask.winappsdk_version']]
-  steps:
-  # Update package.config files with Nightly WinAppSDK version
-  - task: powershell@2
-    inputs:
-      targetType: filePath
-      filePath: build\Apply-WinAppSDK-Version-To-Configs.ps1
-    displayName: 'Apply Nightly WinAppSDK version to packages.config files'
-  # Build Win2D
-  - template: AzurePipelinesTemplates\Win2D-Build-Steps.yml
-    parameters:
-      isRelease: false
-      isNightly: true
-
-# Run tests
-- job: TestProduct
-  dependsOn: 'Win2DVersioning'
-  pool:
-    name: 'Hosted Windows 2019 with VS2019'
-  variables:
-  - name: winappsdk_version
-    value: $[dependencies.Win2DVersioning.outputs['winappsdkVersionTask.winappsdk_version']]
-  steps:
-  # Update package.config files with Nightly WinAppSDK version
-  - task: powershell@2
-    inputs:
-      targetType: filePath
-      filePath: build\Apply-WinAppSDK-Version-To-Configs.ps1
-    displayName: 'Apply Nightly WinAppSDK version to packages.config files'
-  # Test Win2D
-  - template: AzurePipelinesTemplates\Win2D-Test-Steps.yml
+# Run the Pipeline
+stages:
+- template: AzurePipelinesTemplates\Win2D-Stages.yml
+  parameters:
+    RunTests: ${{ parameters.RunTests }}
+    PipelineType: 'Nightly'
+    SignCode: false

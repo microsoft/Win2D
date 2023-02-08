@@ -32,22 +32,27 @@ IF %ERRORLEVEL% NEQ 0 (
 )
 
 SET /p VERSION=<VERSION
-SET OUTDIR=..\..\bin
+SET /p PRERELEASE=<VERSION-PRERELEASE
+
+IF NOT "%PRERELEASE%" == "" (
+    SET VERSION=%VERSION%-%PRERELEASE%
+)
 
 IF "%1" == "signed" (
     SHIFT
+    SET BIN=bin\signed
+    SET OUTDIR=..\..\bin
     SET LICENSE_URL=http://www.microsoft.com/web/webpi/eula/eula_win2d_10012014.htm
     SET REQUIRE_LICENSE_ACCEPTANCE=true
 ) else (
+    SET BIN=bin
+    SET OUTDIR=..\..\bin
     SET LICENSE_URL=http://github.com/Microsoft/Win2D/blob/master/LICENSE.txt
-    SET REQUIRE_LICENSE_ACCEPTANCE=false
-)
+    SET REQUIRE_LICENSE_ACCEPTANCE=false    
 
-IF NOT "%1" == "" (
-    ECHO Setting VERSION to '%1'
-    SET VERSION=%1
-) else (
-    ECHO Setting VERSION to '%VERSION%'
+    IF NOT "%1" == "" (
+        SET VERSION=%VERSION%-%1
+    )
 )
 
 SET NUGET_ARGS=^

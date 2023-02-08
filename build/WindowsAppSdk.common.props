@@ -3,10 +3,10 @@
     <PropertyGroup>
         <!-- This value controls all of the projects consuming the WindowsAppSdk and centralizes it in one spot.
             When updating the version, don't forget to update all of the package.config files as well.
-            The AzureDevOps pipeline will override the version here by setting WINAPPSDK_VERSION in the nightly build.
+            The AzureDevOps pipeline will override the version here by setting NIGHTLY_WINAPPSDK_VERSION in the nightly build.
             That nightly version is read from \eng\Version.Details.xml -->
-        <WindowsAppSdkVersion Condition="'$(WINAPPSDK_VERSION)' == ''">1.0.4</WindowsAppSdkVersion>
-        <WindowsAppSdkVersion Condition="'$(WINAPPSDK_VERSION)' != ''">$(WINAPPSDK_VERSION)</WindowsAppSdkVersion>
+        <WindowsAppSdkVersion Condition="'$(NIGHTLY_WINAPPSDK_VERSION)' == ''">1.0.4</WindowsAppSdkVersion>
+        <WindowsAppSdkVersion Condition="'$(NIGHTLY_WINAPPSDK_VERSION)' != ''">$(NIGHTLY_WINAPPSDK_VERSION)</WindowsAppSdkVersion>
 
         <_PackagesPath>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\packages'))</_PackagesPath>
         <_WindowsAppSdkPackageRoot>$(_PackagesPath)\Microsoft.WindowsAppSdk.$(WindowsAppSdkVersion)</_WindowsAppSdkPackageRoot>

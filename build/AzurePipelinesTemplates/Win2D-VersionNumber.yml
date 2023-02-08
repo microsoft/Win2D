@@ -1,33 +1,60 @@
+parameters:
+  PipelineType: "not set"
+
 steps:
 - task: powershell@2
-  name: win2dVersionTask
+  name: Win2dVersionTask
+  displayName: Set Win2D Version number and Pipeline number (and WinAppSDK Version for nightly pipeline only)
   inputs:
     targetType: inline
-    # Version numbers look like this: 
-    # Nightly - Microsoft.Graphics.Win2D.1.0.0-WinAppSDK.1.0.0-20211122.1-CI-stable-Nightly.0
-    # CI - Microsoft.Graphics.Win2D.1.0.0-CI.257
-    # Release - Microsoft.Graphics.Win2D.1.0.0.0
     script: |
-      Write-Host "Setting versions for Nightly/CI/Release pipelines"
+      # Version numbers look like this: 
+      # [CI]       Microsoft.Graphics.Canvas.1.0.0-CI-221220.1
+      # [Release]  Microsoft.Graphics.Canvas.1.0.0
+      # [Nightly]  Microsoft.Graphics.Canvas.1.0.0-WinAppSDK.1.0.0-20211122.1-CI-stable-Nightly.0
+      #
+      # Prereleases look like:
+      # [CI]       Microsoft.Graphics.Canvas.1.0.0-prerelease-CI-221220.1
+      # [Release]  Microsoft.Graphics.Canvas.1.0.0-prerelease
+      # [Nightly]  Microsoft.Graphics.Canvas.1.0.0-prerelease-WinAppSDK.1.0.0-20211122.1-CI-stable-Nightly.0
+      #
+      # Pipeline name will be just the version number (e.g. 1.27.0-CI-221220.1)
 
-      Write-Host "Reading from VERSION file"
+      Write-Host "Setting versions for CI/Release/Nightly pipelines"
+      Write-Host Pipeline type: ${{ parameters.PipelineType }}
+      Write-Host Package Suffix: $env:packageSuffix
+
+      if ( "${{ parameters.PipelineType }}" -eq "Nightly" ) {
+          # Reads the WinAppSDK Version from eng\Version.Details.xml
+          # Used to read the nightly WinAppSDK version for building nightly versions of Win2D
+          $file = "eng\Version.Details.xml"
+          $xmlfile = [xml](Get-Content $file)
+
+          Write-Host "Found Version.Details.xml file."
+          $xmlfile.Dependencies.ProductDependencies.Dependency | Where-Object Name -eq 'Microsoft.WindowsAppSDK' | ForEach-Object {
+              $WIN_APP_SDK_VERSION = $_.Version
+              Write-Host "The WinAppSDK Version is $WIN_APP_SDK_VERSION"
+              Write-Host "##vso[task.setvariable variable=nightly_winappsdk_version;isOutput=true]$WIN_APP_SDK_VERSION"
+          }
+          $env:packageSuffix = $env:packageSuffix + "-WinAppSDK." + $WIN_APP_SDK_VERSION
+      }
+
+      Write-Host Reading from VERSION file
       $versionMMP = Get-Content build\nuget\VERSION
-      $preRelease = ''
+      $preRelease = Get-Content build\nuget\VERSION-PRERELEASE
 
-      $versionMMP = $versionMMP + $preRelease
+      # If the package has a prelease version, add it to the version
+      if ( -not [String]::IsNullOrWhiteSpace($preRelease) ) {
+          $versionMMP = $versionMMP + "-" + $preRelease
+      }
 
-      $versionNightly = $versionMMP + '-WinAppSDK-' + $env:winappsdk_version + '-Nightly'
-      Write-Host "##vso[task.setvariable variable=versionNightly;isOutput=true]$versionNightly"
+      # If the pipeline has a suffix, add it to the name
+      $pipelineName = "Win2D.WinAppSDK." + $versionMMP 
+      if ( -not [String]::IsNullOrWhiteSpace($env:packageSuffix) ) {
+          $pipelineName = $pipelineName + "-" + $env:packageSuffix
+      }
 
-      $versionCI = $versionMMP + '-CI'
-      Write-Host "##vso[task.setvariable variable=versionCI;isOutput=true]$versionCI"
+      Write-Host Setting pipeline name to: $pipelineName
+      Write-Host "##vso[build.updatebuildnumber]$pipelineName"
 
-      $versionRelease = $versionMMP
-      Write-Host "##vso[task.setvariable variable=versionRelease;isOutput=true]$versionRelease"
-      
-      Write-Host "Set Nightly version to $versionNightly"
-      Write-Host "Set CI version to $versionCI"
-      Write-Host "Set Release version to $versionRelease"
-
-      Write-Host Done.
-  displayName: Set Win2D Version number and Pipeline number
+      Write-Host Done. 

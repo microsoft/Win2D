@@ -11,9 +11,9 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
      defined in build\WindowsAppSdk.common.props -->
 <Dependencies>
   <ProductDependencies>
-    <Dependency Name="Microsoft.WindowsAppSDK" Version="1.0.0">
+    <Dependency Name="Microsoft.WindowsAppSDK" Version="1.1.0">
       <Uri>https://dev.azure.com/microsoft/ProjectReunion/_git/ProjectReunionInternal</Uri>
-      <Sha>26a4f01996caf57be507bf8fc5bf5fe1292edec2</Sha>
+      <Sha>e9f6d119a70db6516304e4ed00b080ce46dc4bee</Sha>
     </Dependency>
   </ProductDependencies>
   <ToolsetDependencies>

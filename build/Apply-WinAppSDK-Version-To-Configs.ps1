@@ -10,9 +10,9 @@ foreach ( $configFile in $fileList )
     $configXml = [xml](Get-Content $configPath)
 
     $configXml.packages.package | Where-Object id -eq 'Microsoft.WindowsAppSDK' | ForEach-Object {
-        $_.SetAttribute("version", $env:winappsdk_version);
+        $_.SetAttribute("version", $env:NIGHTLY_WINAPPSDK_VERSION);
         
-        Write-Host "Setting the WinAppSDK version for $configfile to $env:winappsdk_version"
+        Write-Host "Setting the WinAppSDK version for $configfile to $env:NIGHTLY_WINAPPSDK_VERSION"
     }
 
     $configXml.Save($configPath)
