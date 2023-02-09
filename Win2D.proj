@@ -8,7 +8,7 @@
         msbuild Win2D.proj /maxcpucount /nr:false
 -->
 
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="12.0" DefaultTargets="Build">
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="17.0" DefaultTargets="Build">
 
   <!-- Parameters that can be configured by the caller, eg. "msbuild Win2D.proj /p:BuildTests=false" -->
   <PropertyGroup>
@@ -193,6 +193,7 @@
     <_VsTest Condition="Exists('$(VS140COMNTOOLS)$(_VsTestPathUnderCommonTools)')">$(VS140COMNTOOLS)$(_VsTestPathUnderCommonTools)</_VsTest>
     <_VsTest Condition="Exists('$(VS150COMNTOOLS)$(_VsTestPathUnderCommonTools)')">$(VS150COMNTOOLS)$(_VsTestPathUnderCommonTools)</_VsTest>
     <_VsTest Condition="Exists('$(VS160COMNTOOLS)$(_VsTestPathUnderCommonTools)')">$(VS160COMNTOOLS)$(_VsTestPathUnderCommonTools)</_VsTest>
+    <_VsTest Condition="Exists('$(VS170COMNTOOLS)$(_VsTestPathUnderCommonTools)')">$(VS170COMNTOOLS)$(_VsTestPathUnderCommonTools)</_VsTest>
     <VsTest Condition="'$(_VsTest)' != ''">"$([System.IO.Path]::GetFullPath('$(_VsTest)'))"</VsTest>
   </PropertyGroup>
 

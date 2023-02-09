@@ -9,7 +9,7 @@
     <UnitTestPlatformVersion Condition="'$(UnitTestPlatformVersion)' == ''">16.0</UnitTestPlatformVersion>
     <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
     <WindowsTargetPlatformMinVersion>10.0.17763.0</WindowsTargetPlatformMinVersion>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <Import Project="..\..\build\Win2D.cpp.props" />
   <Import Project="..\..\build\HybridCRT.props" />
