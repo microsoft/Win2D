@@ -10,7 +10,7 @@
     <AssemblyName>Microsoft.Graphics.Canvas.Interop</AssemblyName>
     <!-- ignore CanvasRenderTarget.CreateFromDirect3D11Surface hiding CanvasBitmap.CreateFromDirect3D11Surface -->
     <NoWarn>0108;CS0169</NoWarn>
-    <WindowsSdkPackageVersion>10.0.17763.24</WindowsSdkPackageVersion>
+    <WindowsSdkPackageVersion>10.0.17763.27</WindowsSdkPackageVersion>
 
     <CSWinRTIncludes>
       Microsoft.Graphics.Canvas;
