@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net6.0-windows10.0.17763.0</TargetFramework>
+    <TargetFramework>net6.0-windows10.0.22621.0</TargetFramework>
 
     <AnalysisLevel>4</AnalysisLevel>
     <WarningLevel>4</WarningLevel>
@@ -10,7 +10,7 @@
     <AssemblyName>Microsoft.Graphics.Canvas.Interop</AssemblyName>
     <!-- ignore CanvasRenderTarget.CreateFromDirect3D11Surface hiding CanvasBitmap.CreateFromDirect3D11Surface -->
     <NoWarn>0108;CS0169</NoWarn>
-    <WindowsSdkPackageVersion>10.0.17763.27</WindowsSdkPackageVersion>
+    <WindowsSdkPackageVersion>10.0.22621.27</WindowsSdkPackageVersion>
 
     <CSWinRTIncludes>
       Microsoft.Graphics.Canvas;
@@ -23,7 +23,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.WindowsAppSdk" Version="$(WindowsAppSdkVersion)" />
-    <PackageReference Include="Microsoft.Windows.CSWinRT" Version="1.4.1" />
+    <PackageReference Include="Microsoft.Windows.CSWinRT" Version="2.0.1" />
     <PackageReference Include="Microsoft.SourceLink.AzureRepos.Git" Version="1.0.0" PrivateAssets="All" />
   
     <CSWinRTInputs Include="$(PkgMicrosoft_WinUI)\lib\uap10.0\*.winmd" />
