@@ -40,7 +40,7 @@ IF NOT "%PRERELEASE%" == "" (
 
 IF "%1" == "signed" (
     SHIFT
-    SET BIN=bin\signed
+    SET BIN=bin
     SET OUTDIR=..\..\bin
     SET LICENSE_URL=http://www.microsoft.com/web/webpi/eula/eula_win2d_10012014.htm
     SET REQUIRE_LICENSE_ACCEPTANCE=true
