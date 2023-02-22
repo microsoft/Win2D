@@ -28,7 +28,7 @@ steps:
 
 # Sign nuget package
 - ${{ if eq(parameters.PipelineType, 'Release') }}:
-  - task: SFP.build-tasks.custom-build-task-1.EsrpCodeSigning@1
+  - task: SFP.build-tasks.custom-build-task-1.EsrpCodeSigning@2
     displayName: 'CodeSign (Nuget)'
     inputs:
       ConnectedServiceName: 'ESRP Signing'

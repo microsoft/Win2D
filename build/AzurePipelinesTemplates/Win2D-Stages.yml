@@ -69,6 +69,8 @@ stages:
       vmImage: '${{ parameters.VMImage }}'
     steps:
     - template: Win2D-BuildNupkg.yml
+      parameters:
+        PipelineType: ${{ parameters.PipelineType }}
 - ${{ if parameters.RunTests }}:
   - stage: Test_Win2D
     # Empty dependency
