@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29020.237
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "winrt", "winrt", "{0F212400-0A8B-4E26-9BA8-CE7165FF8717}"
 EndProject
@@ -65,7 +65,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{9B5A1D54
 		build\Win2D.cs.targets = build\Win2D.cs.targets
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "winrt.projection.net5", "winrt\projection.net5\winrt.projection.net5.csproj", "{F21914F9-993C-449F-BFD0-868300E1E3BD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "winrt.projection", "winrt\projection\winrt.projection.csproj", "{F21914F9-993C-449F-BFD0-868300E1E3BD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
