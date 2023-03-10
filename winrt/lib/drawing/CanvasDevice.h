@@ -187,7 +187,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         CloakedIid<ICanvasDeviceInternal>,
         ICanvasResourceCreator,
         IDirect3DDevice,
-        CloakedIid<IDirect3DDxgiInterfaceAccess>)
+        CloakedIid<IDirect3DDxgiInterfaceAccess>,
+        CloakedIid<ID2D1DeviceContextPool>)
     {
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_CanvasDevice, BaseTrust);
 
@@ -255,7 +256,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         IFACEMETHOD(remove_DeviceLost)(EventRegistrationToken token) override;
 
+        IFACEMETHOD(IsDeviceLost2)(boolean* value) override;
         IFACEMETHOD(IsDeviceLost)(int hresult, boolean* value) override;
+
+        IFACEMETHOD(GetDeviceLostReason)(int* hresult) override;
 
         IFACEMETHOD(RaiseDeviceLost)() override;
 
@@ -385,6 +389,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         IFACEMETHOD(GetInterface)(IID const&, void**) override;
 
         //
+        // ID2D1DeviceContextPool
+        //
+        IFACEMETHOD(GetDeviceContextLease)(ID2D1DeviceContextLease** lease) override;
+
+        //
         // Internal
         //
         HRESULT GetDeviceRemovedErrorCode();
@@ -412,6 +421,27 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         // telemetry
         static void LogCreateCanvasDevice();
+    };
+
+    //
+    // ID2D1DeviceContextLease implementation that is returned by CanvasDevice::GetDeviceContextLease.
+    // This type is just a very thin COM object wrapping a DeviviceContextLease, which is the lease
+    // object holding a pooled ID2D1DeviceContext instance already used internally by Win2D effects.
+    //
+    class D2D1DeviceContextLease final : public RuntimeClass<RuntimeClassFlags<ClassicCom>, ID2D1DeviceContextLease>
+    {
+    public:
+        D2D1DeviceContextLease(CanvasDevice* canvasDevice)
+        {
+            CheckInPointer(canvasDevice);
+
+            m_deviceContext = canvasDevice->GetResourceCreationDeviceContext();
+        }
+
+        IFACEMETHOD(GetD2DDeviceContext)(ID2D1DeviceContext** deviceContext) override;
+
+    private:
+        DeviceContextLease m_deviceContext;
     };
 
 

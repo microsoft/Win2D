@@ -378,8 +378,29 @@ IFACEMETHODIMP CanvasVirtualBitmap::get_Device(ICanvasDevice** value)
     return ExceptionBoundary(
         [&]
         {
-            CheckInPointer(value);
+            CheckAndClearOutPointer(value);
             ThrowIfFailed(m_device.CopyTo(value));
+        });
+}
+
+//
+// ICanvasImageInterop
+//
+
+IFACEMETHODIMP CanvasVirtualBitmap::GetDevice(ICanvasDevice** device, WIN2D_GET_DEVICE_ASSOCIATION_TYPE* type)
+{
+    return ExceptionBoundary(
+        [&]
+        {
+            CheckAndClearOutPointer(device);
+            CheckInPointer(type);
+
+            *type = WIN2D_GET_DEVICE_ASSOCIATION_TYPE_UNSPECIFIED;
+
+            ThrowIfFailed(m_device.CopyTo(device));
+
+            // Just like a normal bitmap, a virtualized bitmap is also uniquely tied to its owning device.
+            *type = WIN2D_GET_DEVICE_ASSOCIATION_TYPE_CREATION_DEVICE;
         });
 }
 
@@ -462,7 +483,7 @@ IFACEMETHODIMP CanvasVirtualBitmap::GetBoundsWithTransform(ICanvasResourceCreato
 }
 
 
-ComPtr<ID2D1Image> CanvasVirtualBitmap::GetD2DImage(ICanvasDevice* , ID2D1DeviceContext*, GetImageFlags, float, float* realizedDpi)
+ComPtr<ID2D1Image> CanvasVirtualBitmap::GetD2DImage(ICanvasDevice* , ID2D1DeviceContext*, WIN2D_GET_D2D_IMAGE_FLAGS, float, float* realizedDpi)
 {
     if (realizedDpi)
         *realizedDpi = 0;

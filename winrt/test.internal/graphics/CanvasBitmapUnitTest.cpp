@@ -64,6 +64,7 @@ TEST_CLASS(CanvasBitmapUnitTest)
         ASSERT_IMPLEMENTS_INTERFACE(canvasBitmap, IDirect3DSurface);
         ASSERT_IMPLEMENTS_INTERFACE(canvasBitmap, ABI::Windows::Foundation::IClosable);
         ASSERT_IMPLEMENTS_INTERFACE(canvasBitmap, IDirect3DDxgiInterfaceAccess);
+        ASSERT_IMPLEMENTS_INTERFACE(canvasBitmap, ICanvasImageInterop);
         ASSERT_IMPLEMENTS_INTERFACE(canvasBitmap, ICanvasImageInternal);
         ASSERT_IMPLEMENTS_INTERFACE(canvasBitmap, ICanvasBitmapInternal);
     }
@@ -108,6 +109,19 @@ TEST_CLASS(CanvasBitmapUnitTest)
         ComPtr<ICanvasDevice> actualDevice;
         bitmap->get_Device(&actualDevice);
         Assert::AreEqual<ICanvasDevice*>(f.m_canvasDevice.Get(), actualDevice.Get());
+    }
+
+    TEST_METHOD_EX(CanvasBitmap_GetDevice_FromICanvasImageInterop)
+    {
+        Fixture f;
+        auto bitmap = CanvasBitmap::CreateNew(f.m_canvasDevice.Get(), f.m_testFileName, DEFAULT_DPI, CanvasAlphaMode::Premultiplied);
+
+        ComPtr<ICanvasDevice> actualDevice;
+        WIN2D_GET_DEVICE_ASSOCIATION_TYPE deviceType = WIN2D_GET_DEVICE_ASSOCIATION_TYPE::WIN2D_GET_DEVICE_ASSOCIATION_TYPE_UNSPECIFIED;
+        As<ICanvasImageInterop>(bitmap)->GetDevice(&actualDevice, &deviceType);
+
+        Assert::AreEqual<ICanvasDevice*>(f.m_canvasDevice.Get(), actualDevice.Get());
+        Assert::IsTrue(deviceType == WIN2D_GET_DEVICE_ASSOCIATION_TYPE::WIN2D_GET_DEVICE_ASSOCIATION_TYPE_CREATION_DEVICE);
     }
 
     TEST_METHOD_EX(CanvasBitmap_GetAlphaMode)

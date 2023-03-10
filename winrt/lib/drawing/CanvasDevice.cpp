@@ -641,9 +641,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ExceptionBoundary(
             [&]
             {
-                GetResource();  // this ensures that Close() hasn't been called
                 CheckInPointer(value);
                 CheckInPointer(token);
+
+                GetResource();  // this ensures that Close() hasn't been called
 
                 ThrowIfFailed(m_deviceLostEventList.Add(value, token));
             });
@@ -663,6 +664,20 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             });
     }
 
+    IFACEMETHODIMP CanvasDevice::IsDeviceLost2(
+        boolean* value)
+    {        
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckInPointer(value);
+
+                GetResource();  // this ensures that Close() hasn't been called
+
+                *value = GetDeviceRemovedErrorCode() != S_OK;
+            });
+    }
+
     IFACEMETHODIMP CanvasDevice::IsDeviceLost(
         int hresult,
         boolean* value)
@@ -670,10 +685,49 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ExceptionBoundary(
             [&]
             {
-                GetResource();  // this ensures that Close() hasn't been called
-
                 CheckInPointer(value);
 
+                GetResource();  // this ensures that Close() hasn't been called
+
+                // A bit of history. This method was added years ago, and the documentation for it is a bit confusing.
+                // 
+                // The docs say:
+                //   "IsDeviceLost will return true if the device is indeed lost,
+                //   and the error code actually corresponds to device removal.".
+                // 
+                // What that really means is that this method is checking whether the input error code belongs to an
+                // arbitrary set of possible device lost error codes (not even all of them) that various Win2D controls
+                // internally classify as representing a "device lost" event. It's essentially exposing the ability to
+                // match an HRESULT against this set to external users as well. Then, if the input HRESULT does match,
+                // this method returns whether the current device is lost (not necessarily for the reason given as input).
+                //
+                // As in, as long as the input error code is, say, DXGI_ERROR_DEVICE_HUNG or any other error code from
+                // this arbitrary set of error codes, this method will return whether the device is lost for *any* reason.
+                //
+                // In practice, this means that this method is really only useful in a very specific scenario (which is indeed
+                // documented): an exception handler that's matching the caught HRESULT against this "device lost" set, so that
+                // if this method returns true it can call CanvasDevice.RaiseDeviceLost() to notify registered handlers. This
+                // system is essentially working around the fact that the underlying D3D11 device doesn't have a proper device
+                // lost event (as is instead the case on D3D12), so it relies on callers to detect failures on their end.
+                //
+                // Unfortunately, this also means that outside of that very specific use case, this method provides not much
+                // utility to callers. The only information it can give callers is whether the device is lost or not, with the
+                // condition that they must pass an (unused) HRESULT that causes this condition below to be true. But even then,
+                // if this method is not called from a handler, it's also pretty awkward to use, as callers would have to just
+                // pick a random "device lost HRESULT" value to pass to this method just to get the check to pass, so they can
+                // check whether the device is actually lost or not.
+                //
+                // We can't really change this method, as it'd be a breaking change, and there's surely plenty of consumers
+                // relying on the exact way this system is structured (as it's the recommended way for external users to check
+                // and notify a device that it has been lost following an exception that was caught on their end while drawing).
+                // But even if we could adjust the implementation of this method, it's still not really a method with a useful
+                // signature in general outside of that very specific use case, as it's much better to just either tell callers
+                // whether the device is lost or not (regardless of the reason), or to give them the actual reason and allow
+                // them to then use whatever logic they want to handle that information.
+                //
+                // This is the reason for the two other APIs next to this method:
+                //   - IsDeviceLost2 (exposed as an "IsDeviceLost" overload), simply returning whether the device is lost.
+                //   - GetDeviceLostReason, returning the actual HRESULT from the underlying D3D11 device.
                 if (DeviceLostException::IsDeviceLostHResult(hresult))
                 {
                     *value = GetDeviceRemovedErrorCode() != S_OK;
@@ -682,6 +736,19 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 {
                     *value = false;
                 }
+            });
+    }
+
+    IFACEMETHODIMP CanvasDevice::GetDeviceLostReason(int* hresult)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckInPointer(hresult);
+
+                GetResource();  // this ensures that Close() hasn't been called
+
+                *hresult = GetDeviceRemovedErrorCode();
             });
     }
 
@@ -704,6 +771,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ExceptionBoundary(
             [&]
             {
+                CheckAndClearOutPointer(value);
+
                 auto factory = GetD2DFactory();
 
                 auto lock = Make<CanvasLock>(As<ID2D1Multithread>(factory).Get());
@@ -1033,6 +1102,34 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 auto& dxgiDevice = m_dxgiDevice.EnsureNotClosed();
 
                 ThrowIfFailed(dxgiDevice.CopyTo(iid, p));
+            });
+    }
+
+    //
+    // ID2D1DeviceContextPool
+    //
+    IFACEMETHODIMP CanvasDevice::GetDeviceContextLease(ID2D1DeviceContextLease** lease)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckAndClearOutPointer(lease);
+
+                ThrowIfFailed(Make<D2D1DeviceContextLease>(this).CopyTo(lease));
+            });
+    }
+
+    //
+    // ID2D1DeviceContextLease
+    //
+    IFACEMETHODIMP D2D1DeviceContextLease::GetD2DDeviceContext(ID2D1DeviceContext** deviceContext)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckAndClearOutPointer(deviceContext);
+
+                ThrowIfFailed(m_deviceContext->QueryInterface(IID_PPV_ARGS(deviceContext)));
             });
     }
 

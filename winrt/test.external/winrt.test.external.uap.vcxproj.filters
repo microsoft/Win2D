@@ -41,6 +41,7 @@
     <ClCompile Include="ColorManagementProfileTests.cpp" />
     <ClCompile Include="CanvasSvgDocumentTests.cpp" />
     <ClCompile Include="CanvasSvgAttributeTests.cpp" />
+    <ClCompile Include="CanvasImageInteropTests.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />

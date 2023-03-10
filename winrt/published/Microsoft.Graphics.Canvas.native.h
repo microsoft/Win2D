@@ -5,7 +5,18 @@
 #pragma once
 
 #include <inspectable.h>
+#include <windows.foundation.numerics.h>
 #include <wrl.h>
+
+#ifndef __cplusplus
+#error "Requires C++"
+#endif
+
+#ifdef WIN2D_DLL_EXPORT
+#define WIN2DAPI extern "C" __declspec(dllexport) HRESULT __stdcall
+#else
+#define WIN2DAPI extern "C" __declspec(dllimport) HRESULT __stdcall
+#endif
 
 interface ID2D1Device1;
 
@@ -17,7 +28,11 @@ namespace ABI
         {
             namespace Canvas
             {
+                using namespace ABI::Windows::Foundation;
+
                 interface ICanvasDevice;
+                interface ICanvasResourceCreator;
+                interface ICanvasResourceCreatorWithDpi;
 
                 //
                 // Interface provided by the CanvasDevice factory that is
@@ -40,6 +55,107 @@ namespace ABI
                 public:
                     IFACEMETHOD(GetNativeResource)(ICanvasDevice* device, float dpi, REFIID iid, void** resource) = 0;
                 };
+
+                // The type of canvas device returned by ICanvasImageInterop::GetDevice, describing how the device is associated with the canvas image.
+                typedef enum WIN2D_GET_DEVICE_ASSOCIATION_TYPE
+                {
+                    WIN2D_GET_DEVICE_ASSOCIATION_TYPE_UNSPECIFIED = 0,          // No device info is available, callers will handle the returned device with their own logic
+                    WIN2D_GET_DEVICE_ASSOCIATION_TYPE_REALIZATION_DEVICE = 1,   // The returned device is the one the image is currently realized on, if any
+                    WIN2D_GET_DEVICE_ASSOCIATION_TYPE_CREATION_DEVICE = 2,      // The returned device is the one that created the image resource, and cannot change
+                    WIN2D_GET_DEVICE_ASSOCIATION_TYPE_FORCE_DWORD = 0xffffffff
+                } WIN2D_GET_DEVICE_ASSOCIATION_TYPE;
+
+                // Options for fine-tuning the behavior of ICanvasImageInterop::GetD2DImage.
+                typedef enum WIN2D_GET_D2D_IMAGE_FLAGS
+                {
+                    WIN2D_GET_D2D_IMAGE_FLAGS_NONE = 0,
+                    WIN2D_GET_D2D_IMAGE_FLAGS_READ_DPI_FROM_DEVICE_CONTEXT = 1,    // Ignore the targetDpi parameter - read DPI from deviceContext instead
+                    WIN2D_GET_D2D_IMAGE_FLAGS_ALWAYS_INSERT_DPI_COMPENSATION = 2,  // Ignore the targetDpi parameter - always insert DPI compensation
+                    WIN2D_GET_D2D_IMAGE_FLAGS_NEVER_INSERT_DPI_COMPENSATION = 4,   // Ignore the targetDpi parameter - never insert DPI compensation
+                    WIN2D_GET_D2D_IMAGE_FLAGS_MINIMAL_REALIZATION = 8,             // Do the bare minimum to get back an ID2D1Image - no validation or recursive realization
+                    WIN2D_GET_D2D_IMAGE_FLAGS_ALLOW_NULL_EFFECT_INPUTS = 16,       // Allow partially configured effect graphs where some inputs are null
+                    WIN2D_GET_D2D_IMAGE_FLAGS_UNREALIZE_ON_FAILURE = 32,           // If an input is invalid, unrealize the effect and set the output image to null
+                    WIN2D_GET_D2D_IMAGE_FLAGS_FORCE_DWORD = 0xffffffff
+                } WIN2D_GET_D2D_IMAGE_FLAGS;
+
+                DEFINE_ENUM_FLAG_OPERATORS(WIN2D_GET_D2D_IMAGE_FLAGS)
+
+                //
+                // Interface implemented by all effects and also exposed to allow external users to implement custom effects.
+                //
+                class __declspec(uuid("E042D1F7-F9AD-4479-A713-67627EA31863"))
+                ICanvasImageInterop : public IUnknown
+                {
+                public:
+                    IFACEMETHOD(GetDevice)(ICanvasDevice** device, WIN2D_GET_DEVICE_ASSOCIATION_TYPE* type) = 0;
+
+                    IFACEMETHOD(GetD2DImage)(
+                        ICanvasDevice* device,
+                        ID2D1DeviceContext* deviceContext,
+                        WIN2D_GET_D2D_IMAGE_FLAGS flags,
+                        float targetDpi,
+                        float* realizeDpi,
+                        ID2D1Image** ppImage) = 0;
+                };
+
+                //
+                // Supporting interfaces to allow external effects to access Win2D's pool of ID2D1DeviceContext objects for each device.
+                //
+                class __declspec(uuid("A0928F38-F7D5-44DD-A5C9-E23D94734BBB"))
+                ID2D1DeviceContextLease : public IUnknown
+                {
+                public:
+                    IFACEMETHOD(GetD2DDeviceContext)(ID2D1DeviceContext** deviceContext) = 0;
+                };
+
+                class __declspec(uuid("454A82A1-F024-40DB-BD5B-8F527FD58AD0"))
+                ID2D1DeviceContextPool : public IUnknown
+                {
+                public:
+                    IFACEMETHOD(GetDeviceContextLease)(ID2D1DeviceContextLease** lease) = 0;
+                };
+
+                //
+                // Exported method to allow ICanvasImageInterop implementors to implement ICanvasImage properly.
+                //
+                WIN2DAPI GetBoundsForICanvasImageInterop(
+                    ICanvasResourceCreator* resourceCreator,
+                    ICanvasImageInterop* image,
+                    Numerics::Matrix3x2 const* transform,
+                    Rect* rect) noexcept;
+
+                namespace Effects
+                {
+                    interface ICanvasEffect;
+
+                    //
+                    // Exported methods to allow ICanvasImageInterop implementors to implement ICanvasEffect properly.
+                    //
+                    WIN2DAPI InvalidateSourceRectangleForICanvasImageInterop(
+                        ICanvasResourceCreatorWithDpi* resourceCreator,
+                        ICanvasImageInterop* image,
+                        uint32_t sourceIndex,
+                        Rect const* invalidRectangle) noexcept;
+
+                    WIN2DAPI GetInvalidRectanglesForICanvasImageInterop(
+                        ICanvasResourceCreatorWithDpi* resourceCreator,
+                        ICanvasImageInterop* image,
+                        uint32_t* valueCount,
+                        Rect** valueElements) noexcept;
+
+                    WIN2DAPI GetRequiredSourceRectanglesForICanvasImageInterop(
+                        ICanvasResourceCreatorWithDpi* resourceCreator,
+                        ICanvasImageInterop* image,
+                        Rect const* outputRectangle,
+                        uint32_t sourceEffectCount,
+                        ICanvasEffect* const* sourceEffects,
+                        uint32_t sourceIndexCount,
+                        uint32_t const* sourceIndices,
+                        uint32_t sourceBoundsCount,
+                        Rect const* sourceBounds,
+                        uint32_t valueCount,
+                        Rect* valueElements) noexcept;
+                }
             }
         }
     }

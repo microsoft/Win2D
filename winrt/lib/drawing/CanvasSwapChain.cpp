@@ -579,7 +579,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ExceptionBoundary(
             [&]
             {
-                CheckInPointer(value);
+                CheckAndClearOutPointer(value);
 
                 auto& device = m_device.EnsureNotClosed();
 

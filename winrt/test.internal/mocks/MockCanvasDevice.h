@@ -69,7 +69,9 @@ namespace canvas
 
         CALL_COUNTER_WITH_MOCK(GetDeviceRemovedErrorCodeMethod, HRESULT());
 
+        CALL_COUNTER_WITH_MOCK(IsDeviceLost2Method, HRESULT(boolean*));
         CALL_COUNTER_WITH_MOCK(IsDeviceLostMethod, HRESULT(int, boolean*));
+        CALL_COUNTER_WITH_MOCK(GetDeviceLostReasonMethod, HRESULT(int*));
 
 #if WINVER > _WIN32_WINNT_WINBLUE
         CALL_COUNTER_WITH_MOCK(CreateGradientMeshMethod, ComPtr<ID2D1GradientMesh>(D2D1_GRADIENT_MESH_PATCH const*, UINT32));
@@ -142,11 +144,23 @@ namespace canvas
             return remove_DeviceLostMethod.WasCalled(token);
         }
 
+        IFACEMETHODIMP IsDeviceLost2(
+            boolean* value)
+        {
+            return IsDeviceLost2Method.WasCalled(value);
+        }
+
         IFACEMETHODIMP IsDeviceLost(
             int hresult,
             boolean* value)
         {
             return IsDeviceLostMethod.WasCalled(hresult, value);
+        }
+
+        IFACEMETHODIMP GetDeviceLostReason(
+            int* hresult)
+        {
+            return GetDeviceLostReasonMethod.WasCalled(hresult);
         }
 
         IFACEMETHODIMP RaiseDeviceLost()

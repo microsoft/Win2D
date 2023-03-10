@@ -472,8 +472,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             {
                 // If DrawBitmap cannot handle this request, we must use the DrawImage slow path.
 
-                auto internalImage = As<ICanvasImageInternal>(image);
-                auto d2dImage = internalImage->GetD2DImage(m_canvasDevice, m_deviceContext);
+                ComPtr<ID2D1Image> d2dImage = ICanvasImageInternal::GetD2DImageFromInternalOrInteropSource(image, m_canvasDevice, m_deviceContext);
 
                 auto d2dInterpolationMode = static_cast<D2D1_INTERPOLATION_MODE>(m_interpolation);
                 auto d2dCompositeMode = composite ? static_cast<D2D1_COMPOSITE_MODE>(*composite)
@@ -3725,7 +3724,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ExceptionBoundary(
             [&]
             {
-                CheckInPointer(value);
+                CheckAndClearOutPointer(value);
 
                 ThrowIfFailed(GetDevice().CopyTo(value));
             });

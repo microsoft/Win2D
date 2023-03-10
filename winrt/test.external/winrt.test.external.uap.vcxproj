@@ -48,6 +48,7 @@
     <ClCompile Include="CanvasCreateResourcesEventArgsTests.cpp" />
     <ClCompile Include="CanvasDeviceTests.cpp" />
     <ClCompile Include="CanvasBitmapTests.cpp" />
+    <ClCompile Include="CanvasImageInteropTests.cpp" />
     <ClCompile Include="CanvasSvgAttributeTests.cpp" />
     <ClCompile Include="CanvasVirtualBitmapTests.cpp" />
     <ClCompile Include="CanvasEffectsTests.cpp" />

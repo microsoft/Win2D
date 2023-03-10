@@ -43,6 +43,8 @@ public:
         ASSERT_IMPLEMENTS_INTERFACE(canvasDevice, ABI::Windows::Foundation::IClosable);
         ASSERT_IMPLEMENTS_INTERFACE(canvasDevice, ICanvasResourceWrapperNative);
         ASSERT_IMPLEMENTS_INTERFACE(canvasDevice, ICanvasDeviceInternal);
+        ASSERT_IMPLEMENTS_INTERFACE(canvasDevice, IDirect3DDxgiInterfaceAccess);
+        ASSERT_IMPLEMENTS_INTERFACE(canvasDevice, ID2D1DeviceContextPool);
     }
 
     TEST_METHOD_EX(CanvasDevice_ForceSoftwareRenderer)
@@ -555,6 +557,10 @@ public:
 
         boolean b;
         Assert::AreEqual(RO_E_CLOSED, canvasDevice->IsDeviceLost(0, &b));
+        Assert::AreEqual(RO_E_CLOSED, canvasDevice->IsDeviceLost2(&b));
+
+        int hresult;
+        Assert::AreEqual(RO_E_CLOSED, canvasDevice->GetDeviceLostReason(&hresult));
 
         Assert::AreEqual(RO_E_CLOSED, canvasDevice->RaiseDeviceLost());
 
@@ -570,6 +576,8 @@ public:
         Assert::AreEqual(E_INVALIDARG, canvasDevice->add_DeviceLost(nullptr, &token));
         Assert::AreEqual(E_INVALIDARG, canvasDevice->add_DeviceLost(dummyDeviceLostHandler.Get(), nullptr));
         Assert::AreEqual(E_INVALIDARG, canvasDevice->IsDeviceLost(0, nullptr));
+        Assert::AreEqual(E_INVALIDARG, canvasDevice->IsDeviceLost2(nullptr));
+        Assert::AreEqual(E_INVALIDARG, canvasDevice->GetDeviceLostReason(nullptr));
     }
 
     class DeviceLostAdapter : public TestDeviceAdapter
@@ -631,6 +639,46 @@ public:
             Assert::AreEqual(S_OK, canvasDevice->IsDeviceLost(hr, &isDeviceLost));
             Assert::IsFalse(!!isDeviceLost);
         }
+    }
+
+    TEST_METHOD_EX(CanvasDeviceLostTests_IsDeviceLost2_DeviceIsLost_ReturnsTrue)
+    {
+        DeviceLostFixture f;
+        auto canvasDevice = CanvasDevice::CreateNew(false);
+
+        boolean isDeviceLost;
+        Assert::AreEqual(S_OK, canvasDevice->IsDeviceLost2(&isDeviceLost));
+        Assert::IsTrue(!!isDeviceLost);
+    }
+
+    TEST_METHOD_EX(CanvasDeviceLostTests_IsDeviceLost2_DeviceNotActuallyLost_ReturnsFalse)
+    {
+        Fixture f;
+        auto canvasDevice = CanvasDevice::CreateNew(false);
+
+        boolean isDeviceLost;
+        Assert::AreEqual(S_OK, canvasDevice->IsDeviceLost2(&isDeviceLost));
+        Assert::IsFalse(!!isDeviceLost);
+    }
+
+    TEST_METHOD_EX(CanvasDeviceLostTests_GetDeviceLostReason_DeviceIsLost_ReturnsHResult)
+    {
+        DeviceLostFixture f;
+        auto canvasDevice = CanvasDevice::CreateNew(false);
+
+        int hresult;
+        Assert::AreEqual(S_OK, canvasDevice->GetDeviceLostReason(&hresult));
+        Assert::AreEqual(DXGI_ERROR_DEVICE_REMOVED, (HRESULT)hresult);
+    }
+
+    TEST_METHOD_EX(CanvasDeviceLostTests_GetDeviceLostReason_DeviceNotActuallyLost_ReturnsS_OK)
+    {
+        Fixture f;
+        auto canvasDevice = CanvasDevice::CreateNew(false);
+
+        int hresult;
+        Assert::AreEqual(S_OK, canvasDevice->GetDeviceLostReason(&hresult));
+        Assert::AreEqual(S_OK, (HRESULT)hresult);
     }
 
     TEST_METHOD_EX(CanvasDeviceLostTests_IsDeviceLost_SomeArbitraryHr_DeviceNotActuallyLost_ReturnsFalse)

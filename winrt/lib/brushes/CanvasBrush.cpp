@@ -55,7 +55,7 @@ IFACEMETHODIMP CanvasBrush::get_Device(ICanvasDevice** value)
     return ExceptionBoundary(
         [&]
         {
-            CheckInPointer(value);
+            CheckAndClearOutPointer(value);
             ThrowIfFailed(m_device.EnsureNotClosed().CopyTo(value));
         });
 }

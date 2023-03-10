@@ -14,6 +14,16 @@
 #define NOMINMAX                // Stop Windows from defining min() and max() macros that break STL
 #endif
 
+#ifndef WIN2D_DLL_EXPORT
+#define WIN2D_DLL_EXPORT		// Mark public C APIs as being exported (whereas external consumers will import them)
+#endif
+
+#if defined(_M_IX86) && defined(_MSC_VER)
+#ifndef ARCH_X86
+#define ARCH_X86				// Used to detect the x86 architecture so fixups for C exports can be added
+#endif
+#endif
+
 #include <windows.h>
 
 // Undef GetCurrentTime because the Win32 API in windows.h collides with Storyboard.GetCurrentTime
