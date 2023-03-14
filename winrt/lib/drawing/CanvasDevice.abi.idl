@@ -103,7 +103,7 @@ namespace Microsoft.Graphics.Canvas
         [propget] HRESULT LowPriority([out, retval] boolean* value);
         [propput] HRESULT LowPriority([in] boolean value);
 
-        [propget] HRESULT DXGIDevice([out, retval] IUnknown** dxgiDevice);
+        [propget] HRESULT DXGIDevice([out, retval] IInspectable** dxgiDevice);
 
         //
         // This event is raised whenever the native device resource is lost-
