@@ -42,6 +42,7 @@
     <ClCompile Include="CanvasSvgDocumentTests.cpp" />
     <ClCompile Include="CanvasSvgAttributeTests.cpp" />
     <ClCompile Include="CanvasImageInteropTests.cpp" />
+    <ClCompile Include="CanvasFactoryNativeTests.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />

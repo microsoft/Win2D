@@ -66,6 +66,7 @@
     <ClCompile Include="DWriteExperiments.cpp" />
     <ClCompile Include="EffectTransferTable3DTests.cpp" />
     <ClCompile Include="Helpers.cpp" />
+    <ClCompile Include="CanvasFactoryNativeTests.cpp" />
     <ClCompile Include="Matrix5x4Test.cpp" />
     <ClCompile Include="RefCountTests.cpp" />
     <ClInclude Include="DebugLayer.h" />

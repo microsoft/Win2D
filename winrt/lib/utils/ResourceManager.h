@@ -27,7 +27,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     public:
         // Used by ResourceWrapper to maintain its state in the interop mapping table.
         static void Add(IUnknown* resource, IInspectable* wrapper);
+        static bool TryAdd(IUnknown* resource, IInspectable* wrapper);
         static void Remove(IUnknown* resource);
+        static bool TryRemove(IUnknown* resource);
 
 
         // Used internally, and exposed to apps via CanvasDeviceFactory::GetOrCreate and Microsoft.Graphics.Canvas.native.h.
@@ -51,6 +53,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         // Validation helpers, also used by ResourceWrapper.
         static void ValidateDevice(IInspectable* wrapper, ICanvasDevice* device);
         static void ValidateDevice(ICanvasResourceWrapperWithDevice* wrapper, ICanvasDevice* device);
+        static void ValidateDevice(ICanvasImageInterop* wrapper, ICanvasDevice* device);
         
         static void ValidateDpi(IInspectable* wrapper, float dpi);
         static void ValidateDpi(ICanvasResourceWrapperWithDpi* wrapper, float dpi);

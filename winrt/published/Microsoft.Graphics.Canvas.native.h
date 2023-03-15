@@ -43,6 +43,8 @@ namespace ABI
                 {
                 public:
                     IFACEMETHOD(GetOrCreate)(ICanvasDevice* device, IUnknown* resource, float dpi, IInspectable** wrapper) = 0;
+                    IFACEMETHOD(Add)(IUnknown* resource, IInspectable* wrapper) = 0;
+                    IFACEMETHOD(Remove)(IUnknown* resource) = 0;
                 };
 
                 //
@@ -203,7 +205,6 @@ namespace Microsoft
                 return safe_cast<WRAPPER^>(objectWrapper);
             }
 
-
             template<class WRAPPER>
             WRAPPER^ GetOrCreate(ID2D1Device1* device, IUnknown* resource)
             {
@@ -218,6 +219,43 @@ namespace Microsoft
                 return GetOrCreate<WRAPPER>(canvasDevice, resource, dpi);
             }
 
+            template<class WRAPPER>
+            bool Add(IUnknown* resource, WRAPPER^ wrapper)
+            {
+                using namespace Microsoft::WRL;
+                namespace abi = ABI::Microsoft::Graphics::Canvas;
+
+                ComPtr<abi::ICanvasFactoryNative> factory;
+                __abi_ThrowIfFailed(Windows::Foundation::GetActivationFactory(
+                    reinterpret_cast<HSTRING>(CanvasDevice::typeid->FullName),
+                    &factory));
+
+                Platform::Object^ objectWrapper = wrapper;
+                IInspectable* inspectableWrapper = reinterpret_cast<IInspectable*>(objectWrapper);
+
+                HRESULT hresult = factory->Add(resource, inspectableWrapper);
+
+                __abi_ThrowIfFailed(hresult);
+
+                return hresult == S_OK;
+            }
+
+            inline bool Remove(IUnknown* resource)
+            {
+                using namespace Microsoft::WRL;
+                namespace abi = ABI::Microsoft::Graphics::Canvas;
+
+                ComPtr<abi::ICanvasFactoryNative> factory;
+                __abi_ThrowIfFailed(Windows::Foundation::GetActivationFactory(
+                    reinterpret_cast<HSTRING>(CanvasDevice::typeid->FullName),
+                    &factory));
+
+                HRESULT hresult = factory->Remove(resource);
+
+                __abi_ThrowIfFailed(hresult);
+
+                return hresult == S_OK;
+            }
 
             template<typename T, typename U>
             Microsoft::WRL::ComPtr<T> GetWrappedResource(U^ wrapper)

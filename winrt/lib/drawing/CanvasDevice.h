@@ -545,6 +545,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             IUnknown* resource,
             float dpi,
             IInspectable** wrapper) override;
+
+        IFACEMETHOD(Add)(
+            IUnknown* resource,
+            IInspectable* wrapper) override;
+
+        IFACEMETHOD(Remove)(IUnknown* resource) override;
     };
 
     static uint32_t const QUALCOMM_VENDOR_ID = 0x4D4F4351;
