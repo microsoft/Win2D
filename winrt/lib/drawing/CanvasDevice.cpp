@@ -437,6 +437,47 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             });
     }
 
+    IFACEMETHODIMP CanvasDeviceFactory::Add(IUnknown* resource, IInspectable* wrapper)
+    {
+        bool wasAdded = false;
+
+        HRESULT hresult = ExceptionBoundary(
+            [&]
+            {
+                CheckInPointer(resource);
+                CheckInPointer(wrapper);
+
+                wasAdded = ResourceManager::TryAdd(resource, wrapper);
+            });
+
+        if (hresult == S_OK)
+        {
+            return wasAdded ? S_OK : S_FALSE;
+        }
+
+        return hresult;
+    }
+
+    IFACEMETHODIMP CanvasDeviceFactory::Remove(IUnknown* resource)
+    {
+        bool wasRemoved = false;
+
+        HRESULT hresult = ExceptionBoundary(
+            [&]
+            {
+                CheckInPointer(resource);
+
+                wasRemoved = ResourceManager::TryRemove(resource);
+            });
+
+        if (hresult == S_OK)
+        {
+            return wasRemoved ? S_OK : S_FALSE;
+        }
+
+        return hresult;
+    }
+
 
     //
     // CanvasDevice
