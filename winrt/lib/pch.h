@@ -77,7 +77,6 @@
 #include <windows.ui.xaml.shapes.h>
 #include <windows.graphics.display.h>
 #include <windows.graphics.interop.h>
-#include <winrt\Windows.Foundation.h>
 
 #if WINVER > _WIN32_WINNT_WINBLUE
 #include <windows.foundation.metadata.h>
