@@ -1,35 +1,48 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net6.0-windows10.0.22621.0</TargetFramework>
-
     <AnalysisLevel>4</AnalysisLevel>
     <WarningLevel>4</WarningLevel>
-    <LangVersion>preview</LangVersion>
+    <LangVersion>10.0</LangVersion>
     <AssemblyVersion>1.0.26</AssemblyVersion>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <AssemblyName>Microsoft.Graphics.Canvas.Interop</AssemblyName>
-    <!-- ignore CanvasRenderTarget.CreateFromDirect3D11Surface hiding CanvasBitmap.CreateFromDirect3D11Surface -->
-    <NoWarn>0108;CS0169</NoWarn>
-    <WindowsSdkPackageVersion>10.0.22621.27</WindowsSdkPackageVersion>
+    <Platforms>AnyCPU</Platforms>
+  </PropertyGroup>
 
+  <!-- Additional properties -->
+  <PropertyGroup>
+
+    <!-- Enable trimming -->
+    <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
+    <IsTrimmable>true</IsTrimmable>
+
+    <!--
+      'CanvasRenderTarget.CreateFromDirect3D11Surface(ICanvasResourceCreator, IDirect3DSurface)' hides
+      inherited member 'CanvasBitmap.CreateFromDirect3D11Surface(ICanvasResourceCreator, IDirect3DSurface)'
+    -->
+    <NoWarn>$(NoWarn);CS0108;</NoWarn>
+  </PropertyGroup>
+
+  <!-- CsWinRT related properties for projections generation -->
+  <PropertyGroup>
+    <WindowsSdkPackageVersion>10.0.22621.27</WindowsSdkPackageVersion>
     <CSWinRTIncludes>
-      Microsoft.Graphics.Canvas;
+        Microsoft.Graphics.Canvas;
     </CSWinRTIncludes>
     <CSWinRTWindowsMetadata>local</CSWinRTWindowsMetadata>
     <CsWinRTGenerateProjection>true</CsWinRTGenerateProjection>
-
-    <Platforms>AnyCPU</Platforms>
   </PropertyGroup>
+
+  <!-- CsWinRT input projects and assemblies -->
+  <ItemGroup>
+    <ProjectReference Include="..\lib\winrt.lib.uap.vcxproj" PrivateAssets="All" />
+    <CSWinRTInputs Include="$(PkgMicrosoft_WinUI)\lib\uap10.0\*.winmd" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.WindowsAppSdk" Version="$(WindowsAppSdkVersion)" />
     <PackageReference Include="Microsoft.Windows.CSWinRT" Version="2.0.1" />
     <PackageReference Include="Microsoft.SourceLink.AzureRepos.Git" Version="1.0.0" PrivateAssets="All" />
-  
-    <CSWinRTInputs Include="$(PkgMicrosoft_WinUI)\lib\uap10.0\*.winmd" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\lib\winrt.lib.uap.vcxproj" PrivateAssets="All" />
   </ItemGroup>
 </Project>
