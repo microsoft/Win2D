@@ -1,5 +1,24 @@
 # Win2D Changelog
 
+## Win2D-WinUI 1.1.0-preview1
+_March 15, 2023_
+
+Update Win2D to WinAppSDK 1.2.230118.102
+Update .NET projections to .NET 6
+Update target SDK to 10.0.22621.0
+Update minimum SDK to 10.0.17763.0
+New `ICanvasImageInterop` COM interface and infrastructure to support external effects (see https://github.com/microsoft/Win2D/pull/888)
+New `CanvasDevice.IsDeviceLost()` overload to check whether a `CanvasDevice` is lost
+New `CanvasDevice.GetDeviceLostReason()` API to get the device lost error code for a `CanvasDevice`
+New `ID2D1DeviceContextPool` and `ID2D1DeviceContextLease` COM interfaces to efficiently rent `ID2D1DeviceContext`-s
+New C exports to support `ICanvasEffect` from external effects (see https://github.com/microsoft/Win2D/issues/894)
+Added some missing parameter checks/clears in some public APIs
+Improved consistency for parameter validation and disposal checks in some public APIs
+New `ICanvasFactoryNative` methods (`Add` and `Remove`) to register custom wrappers (see https://github.com/microsoft/Win2D/issues/910)
+Add missing XML docs for `CanvasDevice.IsDeviceLost()` and `CanvasDevice.GetDeviceLostReason()` APIs
+
+---
+
 ## Win2D-WinUI 1.0.4
 _October 4, 2022_
 
@@ -11,6 +30,8 @@ Infrastructure updates
  - Automate symbol publishing in Azure pipeline
  - Pull nuget packages from Azure nuget feeds when building in Azure pipelines
 
+---
+
 ## Win2D-WinUI 1.0.3
 _April 22, 2022_
 
@@ -18,6 +39,8 @@ Update Win2D to WinAppSDK 1.0.3
 Update Win2D to use HybridCRT
 Remove BuildDocs from build process, which isn't intended to be used with WinAppSDK
 Add WinAppSDK as a nuget package dependency, enforcing a minimum version
+
+---
 
 ## Win2D-WinUI 1.0.1
 _March 30, 2022_
@@ -51,7 +74,6 @@ Updates Win2D to depend on Windows App SDK 1.0.0-preview2
 This version includes a workaround for a reference to a non-existent file Microsoft.Windows.ApplicationModel.WindowsAppSDK.winmd in the Windows App SDK's nuget package. This workaround will be removed when the issue is fixed in future versions of the Windows App SDK.
 
 ---
-
 
 ## Win2D-WinUI 1.0.0.27-preview1
 _September 28, 2021_
