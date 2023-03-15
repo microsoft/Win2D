@@ -652,13 +652,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             });
     }
 
-    IFACEMETHODIMP CanvasDevice::get_DXGIDevice(IInspectable** dxgiDevice)
+    IFACEMETHODIMP CanvasDevice::get_DXGIDevice(UINT64* dxgiDevice)
     {
         return ExceptionBoundary(
             [&]
             {
-                CheckAndClearOutPointer(dxgiDevice);
-                As<IInspectable>(&winrt::box_value(m_dxgiDevice.EnsureNotClosed().Get())).CopyTo(dxgiDevice);
+                CheckInPointer(dxgiDevice);
+
+                *dxgiDevice = reinterpret_cast<std::uintptr_t>(m_dxgiDevice.EnsureNotClosed().Get());
             });
     }
 
