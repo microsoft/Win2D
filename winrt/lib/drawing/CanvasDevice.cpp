@@ -652,14 +652,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             });
     }
 
-    IFACEMETHODIMP CanvasDevice::get_DXGIDevice(UINT64* dxgiDevice)
+    IFACEMETHODIMP CanvasDevice::get_DXGIDevice(uintptr_t* dxgiDevice)
     {
         return ExceptionBoundary(
             [&]
             {
                 CheckInPointer(dxgiDevice);
 
-                *dxgiDevice = reinterpret_cast<std::uintptr_t>(m_dxgiDevice.EnsureNotClosed().Get());
+                *dxgiDevice = reinterpret_cast<uintptr_t>(m_dxgiDevice.EnsureNotClosed().Get());
             });
     }
 
