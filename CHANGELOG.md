@@ -1,5 +1,11 @@
 # Win2D Changelog
 
+## Win2D 1.27.0-preview3
+_March 15, 2023_
+
+- New `ICanvasFactoryNative` methods (`Add` and `Remove`) to register custom wrappers
+- Add missing XML docs for `CanvasDevice.IsDeviceLost()` and `CanvasDevice.GetDeviceLostReason()` APIs
+
 ## Win2D 1.27.0-preview2
 _January 23, 2023_
 
