@@ -5,6 +5,7 @@ _March 15, 2023_
 
 Update Win2D to WinAppSDK 1.2.230118.102
 Update .NET projections to .NET 6
+Enabled trimming in the .NET projections assembly (see https://github.com/microsoft/CsWinRT/issues/373)
 Update target SDK to 10.0.22621.0
 Update minimum SDK to 10.0.17763.0
 New `ICanvasImageInterop` COM interface and infrastructure to support external effects (see https://github.com/microsoft/Win2D/pull/888)
