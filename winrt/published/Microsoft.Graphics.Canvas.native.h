@@ -35,16 +35,41 @@ namespace ABI
                 interface ICanvasResourceCreatorWithDpi;
 
                 //
+                // An interface for a factory that can create a resource wrapper from a native D2D effect.
+                // This is meant to be used by custom effects to register wrapper factories to create a
+                // managed wrapper to return to users if one is no longer available for a given resource.
+                //
+                class __declspec(uuid("29BA1A1F-1CFE-44C3-984D-426D61B51427"))
+                ICanvasEffectFactoryNative : public IUnknown
+                {
+                public:
+                    IFACEMETHOD(CreateWrapper)(ICanvasDevice* device, ID2D1Effect* resource, float dpi, IInspectable** wrapper) = 0;
+                };
+
+                //
                 // Interface provided by the CanvasDevice factory that is
                 // able to get or create objects that wrap resources.
+                // 
+                // Note: the GetOrCreate was introduced long before support for custom effects was introduced in Win2D.
+                // Because of this, the name was kept simple given that there were no other APIs next to it that there
+                // was a need to differentiate with. With the introduction of ICanvasImageInterop, new APIs are needed
+                // to allow authors of external effects to ensure those custom effects can seamlessly interoperate with
+                // Win2D and support all the scenarios where built-in effects can also work, such as wrapping from a
+                // native resources. In order to make the behaviors of these new APIs clearer, we use the "Wrapper"
+                // suffix, to clearly indicate that the new APIs allow developers to register a pair of resource-wrapper,
+                // and a pair of effectId-wrapperFactory. This is not consistent with "GetOrCreate" (as it would've been
+                // if it had been called "GetOrCreateWrapper", but we feel the suffix and new naming scheme makes things
+                // much easier to understand with the new APIs that it's worth the slight variation from the previous one.
                 //
                 class __declspec(uuid("695C440D-04B3-4EDD-BFD9-63E51E9F7202"))
                 ICanvasFactoryNative : public IInspectable
                 {
                 public:
                     IFACEMETHOD(GetOrCreate)(ICanvasDevice* device, IUnknown* resource, float dpi, IInspectable** wrapper) = 0;
-                    IFACEMETHOD(Add)(IUnknown* resource, IInspectable* wrapper) = 0;
-                    IFACEMETHOD(Remove)(IUnknown* resource) = 0;
+                    IFACEMETHOD(RegisterWrapper)(IUnknown* resource, IInspectable* wrapper) = 0;
+                    IFACEMETHOD(UnregisterWrapper)(IUnknown* resource) = 0;
+                    IFACEMETHOD(RegisterEffectFactory)(REFIID effectId, ICanvasEffectFactoryNative* factory) = 0;
+                    IFACEMETHOD(UnregisterEffectFactory)(REFIID effectId) = 0;
                 };
 
                 //
@@ -220,7 +245,7 @@ namespace Microsoft
             }
 
             template<class WRAPPER>
-            bool Add(IUnknown* resource, WRAPPER^ wrapper)
+            bool RegisterWrapper(IUnknown* resource, WRAPPER^ wrapper)
             {
                 using namespace Microsoft::WRL;
                 namespace abi = ABI::Microsoft::Graphics::Canvas;
@@ -233,14 +258,14 @@ namespace Microsoft
                 Platform::Object^ objectWrapper = wrapper;
                 IInspectable* inspectableWrapper = reinterpret_cast<IInspectable*>(objectWrapper);
 
-                HRESULT hresult = factory->Add(resource, inspectableWrapper);
+                HRESULT hresult = factory->RegisterWrapper(resource, inspectableWrapper);
 
                 __abi_ThrowIfFailed(hresult);
 
                 return hresult == S_OK;
             }
 
-            inline bool Remove(IUnknown* resource)
+            inline bool UnregisterWrapper(IUnknown* resource)
             {
                 using namespace Microsoft::WRL;
                 namespace abi = ABI::Microsoft::Graphics::Canvas;
@@ -250,7 +275,41 @@ namespace Microsoft
                     reinterpret_cast<HSTRING>(CanvasDevice::typeid->FullName),
                     &factory));
 
-                HRESULT hresult = factory->Remove(resource);
+                HRESULT hresult = factory->UnregisterWrapper(resource);
+
+                __abi_ThrowIfFailed(hresult);
+
+                return hresult == S_OK;
+            }
+
+            inline bool RegisterEffectFactory(REFIID effectId, ABI::Microsoft::Graphics::Canvas::ICanvasEffectFactoryNative* factory)
+            {
+                using namespace Microsoft::WRL;
+                namespace abi = ABI::Microsoft::Graphics::Canvas;
+
+                ComPtr<abi::ICanvasFactoryNative> activationFactory;
+                __abi_ThrowIfFailed(Windows::Foundation::GetActivationFactory(
+                    reinterpret_cast<HSTRING>(CanvasDevice::typeid->FullName),
+                    &activationFactory));
+
+                HRESULT hresult = activationFactory->RegisterEffectFactory(effectId, factory);
+
+                __abi_ThrowIfFailed(hresult);
+
+                return hresult == S_OK;
+            }
+
+            inline bool UnregisterEffectFactory(REFIID effectId)
+            {
+                using namespace Microsoft::WRL;
+                namespace abi = ABI::Microsoft::Graphics::Canvas;
+
+                ComPtr<abi::ICanvasFactoryNative> factory;
+                __abi_ThrowIfFailed(Windows::Foundation::GetActivationFactory(
+                    reinterpret_cast<HSTRING>(CanvasDevice::typeid->FullName),
+                    &factory));
+
+                HRESULT hresult = factory->UnregisterEffectFactory(effectId);
 
                 __abi_ThrowIfFailed(hresult);
 

@@ -546,11 +546,17 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             float dpi,
             IInspectable** wrapper) override;
 
-        IFACEMETHOD(Add)(
+        IFACEMETHOD(RegisterWrapper)(
             IUnknown* resource,
             IInspectable* wrapper) override;
 
-        IFACEMETHOD(Remove)(IUnknown* resource) override;
+        IFACEMETHOD(UnregisterWrapper)(IUnknown* resource) override;
+
+        IFACEMETHOD(RegisterEffectFactory)(
+            REFIID effectId,
+            ICanvasEffectFactoryNative* factory) override;
+
+        IFACEMETHOD(UnregisterEffectFactory)(REFIID effectId) override;
     };
 
     static uint32_t const QUALCOMM_VENDOR_ID = 0x4D4F4351;

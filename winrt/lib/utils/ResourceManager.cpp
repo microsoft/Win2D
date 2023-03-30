@@ -26,8 +26,34 @@
 #include "svg/CanvasSvgPointsAttribute.h"
 #include "svg/CanvasSvgStrokeDashArrayAttribute.h"
 
+namespace std
+{
+    // Polyfill std::hash<T> support for GUID, so it can be used as a key in
+    // hash-based collections (such as std::unordered_map). The type was added
+    // in C++ 11, which is long after GUID existed, so there's no build-in support.
+    template<>
+    struct hash<IID>
+    {
+        size_t operator()(REFIID guid) const
+        {
+            uint32_t data[4];
+
+            static_assert(sizeof(guid) == sizeof(data));
+
+            // The memcpy call will be automatically elided on platforms that don't have memory
+            // alignment requirements. That is, when compiling this call each backend will optimize
+            // it as best as possible. Basically exactly what the .NET JIT does when using intrinsics.
+            std::memcpy(data, &guid, sizeof(guid));
+
+            // Fast GUID hashcode, same as System.Guid in .NET
+            return data[0] ^ data[1] ^ data[2] ^ data[3];
+        }
+    };
+}
+
 
 std::unordered_map<IUnknown*, WeakRef> ResourceManager::m_resources;
+std::unordered_map<IID, ComPtr<ICanvasEffectFactoryNative>> ResourceManager::m_effectFactories;
 std::recursive_mutex ResourceManager::m_mutex;
 
 // When adding new types here, please also update the "Types that support interop" table in winrt\docsrc\Interop.aml.
@@ -117,6 +143,46 @@ bool ResourceManager::TryRemove(IUnknown* resource)
 
     return result == 1;
 }
+
+// Checks whether a given effect id is a valid effect id for an external factory
+inline static void ValidateEffectIdForExternalEffectFactory(REFIID effectId)
+{
+    // The input effect id can't be an empty GUID and it can't be a Win2D effect.
+    // These checks are pretty cheap since the total number of effects to check is
+    // fixed and low, but also it's expected that external effects would only register
+    // a factory for them once the first time they're realized, so this will not be
+    // invoked in any hot path anyway. The additional validation can be useful for
+    // developers to detect invalid parameters being passed around early on.
+    if (IsEqualGUID(effectId, GUID_NULL) || CanvasEffect::IsWin2DEffectId(effectId))
+    {
+        ThrowHR(E_INVALIDARG, Strings::ResourceManagerInvalidEffectIdForEffectFactory);
+    }
+}
+
+// Exposed through CanvasDeviceFactory::RegisterEffectFactory
+bool ResourceManager::RegisterEffectFactory(REFIID effectId, ICanvasEffectFactoryNative* factory)
+{
+    ValidateEffectIdForExternalEffectFactory(effectId);
+
+    std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
+    auto result = m_effectFactories.insert(std::make_pair(effectId, factory));
+    
+    return result.second;
+}
+
+// Exposed through CanvasDeviceFactory::UnregisterEffectFactory
+bool ResourceManager::UnregisterEffectFactory(REFIID effectId)
+{
+    ValidateEffectIdForExternalEffectFactory(effectId);
+
+    std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
+    auto result = m_effectFactories.erase(effectId);
+    
+    return result == 1;
+}
+
 
 ComPtr<IInspectable> ResourceManager::GetOrCreate(ICanvasDevice* device, IUnknown* resource, float dpi)
 {
@@ -233,6 +299,13 @@ void ResourceManager::ValidateDevice(ICanvasImageInterop* wrapper, ICanvasDevice
 
 void ResourceManager::ValidateDpi(IInspectable* wrapper, float dpi)
 {
+    // Note: unlike with ValidateDevice, which also has a path checking for ICanvasImageInterop to correctly
+    // handle custom effects, ValidateDpi only checks against the internal ICanvasResourceWrapperWithDpi
+    // interface. This is because this interface is only implemented by CanvasSwapChain, as it's the only
+    // object that is tightly bound to a specific DPI value. All other objects, including images, do not
+    // need a strict validation for DPIs. This has always been the case in Win2D. Because of this, and
+    // following the same logic, the same is applied to external effects implementing ICanvasImageInterop.
+    // That is, when retrieving or creating a wrapper for an external effect, DPIs are not validated.
     auto wrapperWithDpi = MaybeAs<ICanvasResourceWrapperWithDpi>(wrapper);
 
     if (wrapperWithDpi)
@@ -254,6 +327,23 @@ void ResourceManager::ValidateDpi(ICanvasResourceWrapperWithDpi* wrapper, float 
             ThrowHR(E_INVALIDARG, Strings::ResourceManagerWrongDpi);
         }
     }
+}
+
+ComPtr<ICanvasEffectFactoryNative> ResourceManager::TryGetEffectFactory(REFIID effectId)
+{
+    // This lookup doesn't require any locks, as this method is only ever called by CanvasEffect::TryCreateEffect,
+    // which is retrieved from the create factories declared above and invoked from GetOrCreate, which already
+    // acquires a lock to access the ResourceManager internal collections before doing so.
+    auto effectFactory = m_effectFactories.find(effectId);
+    
+    // Check if we did find a registered effect factory
+    if (effectFactory != m_effectFactories.end())
+    {
+        return effectFactory->second;
+    }
+
+    // Unrecognized custom effect.
+    return nullptr;
 }
 
 
