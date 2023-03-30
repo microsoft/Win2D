@@ -186,6 +186,12 @@ TEST_CLASS(PixelShaderEffectUnitTests)
 
         auto sharedState = MakeSharedShaderState(desc);
 
+        // Teach the D2D effect to return the factory of the device (since they are compatible)
+        f.MockEffect->MockGetFactory = [&](ID2D1Factory** factory)
+        {
+            f.StubDevice->GetFactory(factory);
+        };
+
         // Teach the D2D effect how to report its CLSID and shared state.
         f.MockEffect->MockGetValue = [&](UINT32 index, D2D1_PROPERTY_TYPE type, BYTE *data, UINT32 dataSize)
         {

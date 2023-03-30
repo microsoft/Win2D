@@ -34,6 +34,26 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         {
             auto d2dDevice = As<ICanvasDeviceInternal>(device)->GetD2DDevice();
 
+            ComPtr<ID2D1Factory> effectFactory;
+            As<ID2D1Image>(effect)->GetFactory(&effectFactory);
+
+            ComPtr<ID2D1Factory> d2dDeviceFactory;
+            d2dDevice->GetFactory(&d2dDeviceFactory);
+
+            // Note: there is a small chance of constructing a CanvasEffect object that is in an invalid state
+            // when using this constructor indirectly from the interop APIs exposed in the public headers. For
+            // a more detailed explanation and a full example, see https://github.com/microsoft/Win2D/issues/913.
+            // Here we're validating the D2D factories from the wrapped effect and the device to try to minimize
+            // the chances of this happening. We can't be 100% sure since there is no way with the existing D2D
+            // APIs to fully determine whether two resources are "compatible", short of just trying to draw with
+            // both of them to see if that fails. But, comparing factories is at least a nice additional check
+            // to perform, and due to the fact that Win2D creates a new D2D factory per CanvasDevice, this should
+            // already cover most scenarios where this might potentially happen, so that's good enough.
+            if (!IsSameInstance(effectFactory.Get(), d2dDeviceFactory.Get()))
+            {
+                ThrowHR(E_INVALIDARG, Strings::ResourceManagerMismatchedFactoryForEffectAndDevice);
+            }
+
             m_realizationDevice.Set(d2dDevice.Get(), device);
         }
     }

@@ -1525,4 +1525,51 @@ TEST_CLASS(CanvasEffectsTests)
     }
 
 #endif  // WINVER > _WIN32_WINNT_WINBLUE
+
+    // See https://github.com/microsoft/Win2D/issues/913
+    TEST_METHOD(CanvasEffect_CreateWrapperOnInvalidDevice_DetectD2DFactoryMismatch)
+    {
+        // Create CanvasDevice #1 (this will internally create the D2D factory #1)
+        auto canvasDevice1 = ref new CanvasDevice();
+
+        // Create an effect (this will be in the unrealized state, not tied to any device)
+        auto colorEffect1 = ref new ColorSourceEffect();
+
+        ComPtr<ID2D1Image> imageAbi1;
+
+        // Realize the effect on CanvasDevice #1. This will cause the effect to be realized, and to return the D2D effect
+        // with the same D2D factory #1 as parent as the CanvasDevice (and hence D2D device) it was created from.
+        ThrowIfFailed(As<ABI::Microsoft::Graphics::Canvas::ICanvasResourceWrapperNative>(colorEffect1)->GetNativeResource(
+            As<ABI::Microsoft::Graphics::Canvas::ICanvasDevice>(canvasDevice1).Get(),
+            0,
+            IID_PPV_ARGS(&imageAbi1)));
+
+        // Create CanvasDevice #2 (this will internally use a different D2D factory #2)
+        auto canvasDevice2 = ref new CanvasDevice();
+
+        ComPtr<ID2D1Image> imageAbi2;
+
+        // Realize the effect on CanvasDevice #2. From GetD2DImage, this effect will see the realization device does not
+        // match, so it will unrealize and re-realize on the new device. That is, the returned D2D image will now be tied
+        // to the new D2D device retrieved from CanvasDevice #2, and as such it will be parented to D2D factory #2.
+        ThrowIfFailed(As<ABI::Microsoft::Graphics::Canvas::ICanvasResourceWrapperNative>(colorEffect1)->GetNativeResource(
+            As<ABI::Microsoft::Graphics::Canvas::ICanvasDevice>(canvasDevice2).Get(),
+            0,
+            IID_PPV_ARGS(&imageAbi2)));
+
+        // At this point: the D2D effect retrieved from the color effect is "orphaned". That is, it no longer has an associated
+        // wrapper, as its parent Win2D effect has unrealized (ie. discarded it) and re-realized on another device. We can now
+        // call GetOrCreate to ask Win2D to create a new wrapper for this D2D effect then. Here's the issue:
+        //   - We're passing CanvasDevice #2 as the realization device (tied to D2D factory #2)
+        //   - We're wrapping the D2D effect from the effect created from CanvasDevice #1
+        // Win2D does validation for this when constructing a wrapper from an external effect, by checking that the D2D factory of
+        // the input device matches the factory of the effect being wrapped. This doesn't cover 100% of cases (as there might be
+        // multiple devices from a single factory), but because there is no way to get a device from an effect, this is the best it
+        // can do. And it's still enough to cover the majority of cases, such as this one. As such, we expect an exception here.
+        Assert::ExpectException<Platform::InvalidArgumentException^>(
+            [&]
+            {
+                auto colorEffect2 = GetOrCreate<ColorSourceEffect>(canvasDevice2, imageAbi1.Get());
+            });
+    }
 };

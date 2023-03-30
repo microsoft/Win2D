@@ -20,6 +20,7 @@ namespace canvas
         std::function<HRESULT(UINT32 index, D2D1_PROPERTY_TYPE type, CONST BYTE* data, UINT32 dataSize)> MockSetValue;
         std::function<D2D1_PROPERTY_TYPE(UINT32 index)> MockGetType;
         std::function<HRESULT(UINT32 index, D2D1_PROPERTY_TYPE type, BYTE *data, UINT32 dataSize)> MockGetValue;
+        std::function<void(ID2D1Factory** factory)> MockGetFactory;
 
         //
         // ID2D1Effect
@@ -209,7 +210,11 @@ namespace canvas
 
         IFACEMETHODIMP_(void) GetFactory(ID2D1Factory **factory) const override
         {
-            Assert::Fail(L"Unexpected call to GetFactory");
+            if (!MockGetFactory)
+            {
+                Assert::Fail(L"Unexpected call to GetFactory");
+            }
+            MockGetFactory(factory);
         }
     };
 
