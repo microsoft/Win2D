@@ -141,8 +141,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         std::mutex m_mutex;
 
     public:
-        // Used by ResourceManager::GetOrCreate.
+        // Used by ResourceManager (in GetOrCreate and to register effect factories).
         static bool TryCreateEffect(ICanvasDevice* device, IUnknown* resource, float dpi, ComPtr<IInspectable>* result);
+        static bool IsWin2DEffectId(REFIID effectId);
             
         //
         // ICanvasImage

@@ -437,7 +437,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             });
     }
 
-    IFACEMETHODIMP CanvasDeviceFactory::Add(IUnknown* resource, IInspectable* wrapper)
+    IFACEMETHODIMP CanvasDeviceFactory::RegisterWrapper(IUnknown* resource, IInspectable* wrapper)
     {
         bool wasAdded = false;
 
@@ -446,6 +446,19 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             {
                 CheckInPointer(resource);
                 CheckInPointer(wrapper);
+
+                // This method is only allowed for D2D images and their wrappers right now. This is not an exhaustive check,
+                // as there's still ways for developers to intentionally mess with Win2D's caching system to a degree (eg.
+                // they can replace registered wrappers from Win2D with their own), but this will at least catch the most
+                // egregious misuses. There's still other checks later on that will protect against invalid uses anyway.
+                // But most importantly, we don't want to prevent developers deliberately trying to break Win2D from doing
+                // so (eg. just like several Win2D APIs are not thread-safe for the same reason). This is only meant to
+                // catch honest mistakes of developers accidentally trying to register wrappers for unsupported types.
+                if (!MaybeAs<ID2D1Image>(resource) ||
+                    !MaybeAs<ICanvasImage>(wrapper))
+                {
+                    ThrowHR(E_INVALIDARG);
+                }
 
                 wasAdded = ResourceManager::TryAdd(resource, wrapper);
             });
@@ -458,7 +471,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return hresult;
     }
 
-    IFACEMETHODIMP CanvasDeviceFactory::Remove(IUnknown* resource)
+    IFACEMETHODIMP CanvasDeviceFactory::UnregisterWrapper(IUnknown* resource)
     {
         bool wasRemoved = false;
 
@@ -467,7 +480,51 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             {
                 CheckInPointer(resource);
 
+                // Only allow D2D images (see notes above)
+                if (!MaybeAs<ID2D1Image>(resource))
+                {
+                    ThrowHR(E_INVALIDARG);
+                }
+
                 wasRemoved = ResourceManager::TryRemove(resource);
+            });
+
+        if (hresult == S_OK)
+        {
+            return wasRemoved ? S_OK : S_FALSE;
+        }
+
+        return hresult;
+    }
+
+    IFACEMETHODIMP CanvasDeviceFactory::RegisterEffectFactory(REFIID effectId, ICanvasEffectFactoryNative* factory)
+    {
+        bool wasAdded = false;
+
+        HRESULT hresult = ExceptionBoundary(
+            [&]
+            {
+                CheckInPointer(factory);
+
+                wasAdded = ResourceManager::RegisterEffectFactory(effectId, factory);
+            });
+
+        if (hresult == S_OK)
+        {
+            return wasAdded ? S_OK : S_FALSE;
+        }
+
+        return hresult;
+    }
+
+    IFACEMETHODIMP CanvasDeviceFactory::UnregisterEffectFactory(REFIID effectId)
+    {
+        bool wasRemoved = false;
+
+        HRESULT hresult = ExceptionBoundary(
+            [&]
+            {
+                wasRemoved = ResourceManager::UnregisterEffectFactory(effectId);
             });
 
         if (hresult == S_OK)

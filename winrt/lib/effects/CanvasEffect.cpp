@@ -70,8 +70,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
     bool CanvasEffect::TryCreateEffect(ICanvasDevice* device, IUnknown* resource, float dpi, ComPtr<IInspectable>* result)
     {
-        UNREFERENCED_PARAMETER(dpi);
-
         // Is this resource an effect?
         auto d2dEffect = MaybeAs<ID2D1Effect>(resource);
 
@@ -101,8 +99,51 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             return true;
         }
 
+        // As a last resort, let's try to see if there is an external factory for this effect.
+        if (auto effectFactory = ResourceManager::TryGetEffectFactory(effectId))
+        {
+            ComPtr<IInspectable> externalResult;
+
+            // First create the wrapper in a local target. We need to validate it first
+            // before returning it, and we don't want invalid objects to bubble up in
+            // case they fail validation after this call for whatever reason.
+            ThrowIfFailed(effectFactory->CreateWrapper(device, d2dEffect.Get(), dpi, externalResult.GetAddressOf()));
+
+            // If the returned object is null, clearly the factory isn't working correctly.
+            // Realistically speaking this should never happen, but the extra check is here
+            // mostly for correctness given that As<T> doesn't check the input for null.
+            if (!externalResult)
+            {
+                ThrowHR(E_UNEXPECTED);
+            }
+
+            // Additional validation step for external factories: just like with RegisterWrapper,
+            // the returned wrapper has to be an ICanvasImage, it can't just be some random object.
+            As<ICanvasImage>(externalResult);
+
+            // The object retrieved from the external factory is valid: copy it to the result.
+            ThrowIfFailed(externalResult.As(result));
+
+            return true;
+        }
+
         // Unrecognized effect CLSID.
         return false;
+    }
+
+    bool CanvasEffect::IsWin2DEffectId(REFIID effectId)
+    {
+        // Check the generated effect wrappers first
+        for (auto effectMaker = m_effectMakers; effectMaker->second; effectMaker++)
+        {
+            if (IsEqualGUID(effectMaker->first, effectId))
+            {
+                return true;
+            }
+        }
+
+        // Check PixelShaderEffect specifically next
+        return IsEqualGUID(effectId, CLSID_PixelShaderEffect);
     }
 
 
