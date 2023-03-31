@@ -1,7 +1,7 @@
 # Win2D Changelog
 
 ## Win2D-WinUI 1.1.0-preview1
-_March 15, 2023_
+_March 31, 2023_
 
 Update Win2D to WinAppSDK 1.2.230118.102
 Update .NET projections to .NET 6
@@ -15,8 +15,10 @@ New `ID2D1DeviceContextPool` and `ID2D1DeviceContextLease` COM interfaces to eff
 New C exports to support `ICanvasEffect` from external effects (see https://github.com/microsoft/Win2D/issues/894)
 Added some missing parameter checks/clears in some public APIs
 Improved consistency for parameter validation and disposal checks in some public APIs
-New `ICanvasFactoryNative` methods (`Add` and `Remove`) to register custom wrappers (see https://github.com/microsoft/Win2D/issues/910)
-Add missing XML docs for `CanvasDevice.IsDeviceLost()` and `CanvasDevice.GetDeviceLostReason()` APIs
+New `ICanvasFactoryNative` methods to register custom wrappers (see https://github.com/microsoft/Win2D/issues/910)
+  - `RegisterWrapper` and `UnregisterWrapper`, as mentioned in the linked issue (with updated names)
+  - `RegisterEffectFactory` and `UnregisterEffectFactory`, documented in the published header
+Add validation for `GetOrCreate` creating Win2D effects in an invalid state (see https://github.com/microsoft/Win2D/issues/913)
 
 ---
 
