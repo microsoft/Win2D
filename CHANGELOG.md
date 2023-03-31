@@ -1,9 +1,12 @@
 # Win2D Changelog
 
 ## Win2D 1.27.0-preview3
-_March 15, 2023_
+_March 31, 2023_
 
-- New `ICanvasFactoryNative` methods (`Add` and `Remove`) to register custom wrappers (see https://github.com/microsoft/Win2D/issues/910)
+- New `ICanvasFactoryNative` methods to register custom wrappers (see https://github.com/microsoft/Win2D/issues/910)
+  - `RegisterWrapper` and `UnregisterWrapper`, as mentioned in the linked issue (with updated names)
+  - `RegisterEffectFactory` and `UnregisterEffectFactory`, documented in the published header
+- Add validation for `GetOrCreate` creating Win2D effects in an invalid state (see https://github.com/microsoft/Win2D/issues/913)
 - Add missing XML docs for `CanvasDevice.IsDeviceLost()` and `CanvasDevice.GetDeviceLostReason()` APIs
 
 ## Win2D 1.27.0-preview2
