@@ -251,7 +251,7 @@ namespace Microsoft
                 namespace abi = ABI::Microsoft::Graphics::Canvas;
 
                 ComPtr<abi::ICanvasFactoryNative> factory;
-                __abi_ThrowIfFailed(Windows::Foundation::GetActivationFactory(
+                __abi_ThrowIfFailed(::Windows::Foundation::GetActivationFactory(
                     reinterpret_cast<HSTRING>(CanvasDevice::typeid->FullName),
                     &factory));
 
@@ -271,7 +271,7 @@ namespace Microsoft
                 namespace abi = ABI::Microsoft::Graphics::Canvas;
 
                 ComPtr<abi::ICanvasFactoryNative> factory;
-                __abi_ThrowIfFailed(Windows::Foundation::GetActivationFactory(
+                __abi_ThrowIfFailed(::Windows::Foundation::GetActivationFactory(
                     reinterpret_cast<HSTRING>(CanvasDevice::typeid->FullName),
                     &factory));
 
@@ -288,7 +288,7 @@ namespace Microsoft
                 namespace abi = ABI::Microsoft::Graphics::Canvas;
 
                 ComPtr<abi::ICanvasFactoryNative> activationFactory;
-                __abi_ThrowIfFailed(Windows::Foundation::GetActivationFactory(
+                __abi_ThrowIfFailed(::Windows::Foundation::GetActivationFactory(
                     reinterpret_cast<HSTRING>(CanvasDevice::typeid->FullName),
                     &activationFactory));
 
@@ -305,7 +305,7 @@ namespace Microsoft
                 namespace abi = ABI::Microsoft::Graphics::Canvas;
 
                 ComPtr<abi::ICanvasFactoryNative> factory;
-                __abi_ThrowIfFailed(Windows::Foundation::GetActivationFactory(
+                __abi_ThrowIfFailed(::Windows::Foundation::GetActivationFactory(
                     reinterpret_cast<HSTRING>(CanvasDevice::typeid->FullName),
                     &factory));
 

@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "winrt.test.managed.winappsdk (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "winrt.test.managed.winappsdk (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}

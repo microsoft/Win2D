@@ -1,25 +1,23 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 //
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
-using Microsoft.Graphics.Canvas;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.Graphics.Canvas;
+using Microsoft.UI;
 using System.IO;
 using System.Runtime.InteropServices.WindowsRuntime;
-using System.Threading.Tasks;
-using Windows.Foundation;
-using Windows.Graphics.Imaging;
-using Windows.Storage;
 using Windows.Storage.Streams;
-using Microsoft.UI;
-
-#if WINDOWS_UWP
+using Windows.Storage;
 using Windows.Graphics.DirectX;
-#else
-using Microsoft.Graphics.Canvas.DirectX;
-#endif
+using System.Diagnostics;
 
 namespace test.managed
 {
@@ -84,11 +82,11 @@ namespace test.managed
             var device = new CanvasDevice();
 
             var pixelFormats = new List<DirectXPixelFormat>
-            {
-                DirectXPixelFormat.B8G8R8A8UIntNormalized,
-                DirectXPixelFormat.R8G8B8A8UIntNormalized,
-                DirectXPixelFormat.A8UIntNormalized,
-            };
+        {
+            DirectXPixelFormat.B8G8R8A8UIntNormalized,
+            DirectXPixelFormat.R8G8B8A8UIntNormalized,
+            DirectXPixelFormat.A8UIntNormalized,
+        };
 
             if (device.IsPixelFormatSupported(DirectXPixelFormat.R16G16B16A16Float))
             {
@@ -107,19 +105,19 @@ namespace test.managed
 
             CanvasBitmapFileFormat[] fileFormats =
             {
-                CanvasBitmapFileFormat.Bmp,
-                CanvasBitmapFileFormat.Gif,
-                CanvasBitmapFileFormat.Jpeg,
-                CanvasBitmapFileFormat.JpegXR,
-                CanvasBitmapFileFormat.Png,
-                CanvasBitmapFileFormat.Tiff,
-            };
+            CanvasBitmapFileFormat.Bmp,
+            CanvasBitmapFileFormat.Gif,
+            CanvasBitmapFileFormat.Jpeg,
+            CanvasBitmapFileFormat.JpegXR,
+            CanvasBitmapFileFormat.Png,
+            CanvasBitmapFileFormat.Tiff,
+        };
 
             foreach (var pixelFormat in pixelFormats)
             {
                 bool pixelFormatSupportsHdr = (pixelFormat == DirectXPixelFormat.R16G16B16A16Float) ||
-                                              (pixelFormat == DirectXPixelFormat.R32G32B32A32Float) ||
-                                              (pixelFormat == DirectXPixelFormat.R16G16B16A16UIntNormalized);
+                                                (pixelFormat == DirectXPixelFormat.R32G32B32A32Float) ||
+                                                (pixelFormat == DirectXPixelFormat.R16G16B16A16UIntNormalized);
 
                 foreach (var fileFormat in fileFormats)
                 {
@@ -331,7 +329,7 @@ namespace test.managed
         }
     }
 
-#if WINDOWS_UWP
+    #if WINDOWS_UWP
     [TestClass]
     public class CanvasBitmapCreateFromSoftwareBitmapTests
     {
@@ -496,5 +494,5 @@ namespace test.managed
             return true;
         }
     }
-#endif
+    #endif
 }

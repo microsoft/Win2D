@@ -11,12 +11,7 @@ using System.IO;
 using System.Threading.Tasks;
 using Windows.Foundation;
 using Microsoft.UI;
-
-#if WINDOWS_UWP
 using Windows.Graphics.DirectX;
-#else
-using Microsoft.Graphics.Canvas.DirectX;
-#endif
 
 namespace test.managed
 {

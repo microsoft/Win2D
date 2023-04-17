@@ -3,14 +3,8 @@
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-
-#if WINDOWS_UWP
 using Windows.Graphics.DirectX;
 using Windows.Graphics.DirectX.Direct3D11;
-#else
-using Microsoft.Graphics.Canvas.DirectX;
-using Microsoft.Graphics.Canvas.DirectX.Direct3D11;
-#endif
 
 namespace test.managed
 {

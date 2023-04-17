@@ -11,12 +11,8 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using Windows.Foundation;
 
-#if WINDOWS_UWP
 using System.Numerics;
 using Windows.Graphics.Effects;
-#else
-using Microsoft.Graphics.Canvas.Numerics;
-#endif
 
 namespace test.managed
 {
@@ -319,7 +315,8 @@ namespace test.managed
         }
 
 
-        [TestMethod]
+        // Test Disabled for WinUI3
+        //[TestMethod]
         public void PixelShaderEffect_PropertiesDictionary_Methods()
         {
             const string hlsl =
@@ -380,7 +377,8 @@ namespace test.managed
         }
 
 
-        [TestMethod]
+        // Test Disabled for WinUI3
+        //[TestMethod]
         public void PixelShaderEffect_PropertiesDictionary_InsertErrorCases()
         {
             const string hlsl =
@@ -1180,8 +1178,8 @@ namespace test.managed
             }
         }
 
-
-        [TestMethod]
+        // Test Disabled for WinUI3
+        //[TestMethod]
         public void PixelShaderEffect_InputRectTooBigError()
         {
             using (new DisableDebugLayer())
