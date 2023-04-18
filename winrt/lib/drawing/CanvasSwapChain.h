@@ -110,7 +110,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_CanvasSwapChain, BaseTrust);
 
         ClosablePtr<ICanvasDevice> m_device;
-        bool m_isCoreWindowSwapChain;
+        bool m_isTransformMatrixSupported;
         float m_dpi;
         std::shared_ptr<CanvasSwapChainAdapter> m_adapter;
         std::shared_ptr<bool> m_hasActiveDrawingSession;

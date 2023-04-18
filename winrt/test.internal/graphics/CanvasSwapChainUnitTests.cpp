@@ -272,6 +272,148 @@ TEST_CLASS(CanvasSwapChainUnitTests)
         ExpectHResultException(E_INVALIDARG, [&] { CanvasSwapChain::CreateNew(f.Device.Get(), f.Window.Get(), anyWidthInDips, anyHeightInDips, anyDpi, anyPixelFormat, -1); });
     }
 
+    TEST_METHOD_EX(CanvasSwapChain_CreateForCoreWindow_DoesNotUseTransformMethods)
+    {
+        StubDeviceFixture f;
+
+        auto coreWindow = Make<MockCoreWindow>();
+        auto dxgiSwapChain = Make<MockDxgiSwapChain>();
+
+        dxgiSwapChain->GetCoreWindowMethod.SetExpectedCalls(1,
+            [&](const IID& refiid, void** ppUnk)
+            {
+                coreWindow.CopyTo((IUnknown**)ppUnk);
+
+                return S_OK;
+            });
+
+        // Creating a swap chain with no transform matrix support specified:
+        // it will query for a core window first, which succeeds.
+        auto canvasSwapChain = Make<CanvasSwapChain>(
+            f.m_canvasDevice.Get(),
+            dxgiSwapChain.Get(),
+            96.0f);
+
+        dxgiSwapChain->ResizeBuffersMethod.SetExpectedCalls(1,
+            [&](
+                UINT bufferCount,
+                UINT width,
+                UINT height,
+                DXGI_FORMAT newFormat,
+                UINT swapChainFlags)
+            {
+                return S_OK;
+            });
+
+        // This validates that the transform methods are not called,
+        // or the test would fail when the mock swap chain is validated.
+
+        canvasSwapChain->ResizeBuffersWithAllOptions(128, 128, 96.0f, DirectXPixelFormat_Unknown, 0);
+    }
+
+    TEST_METHOD_EX(CanvasSwapChain_CreateForHwnd_DoesNotUseTransformMethods)
+    {
+        StubDeviceFixture f;
+
+        auto dxgiSwapChain = Make<MockDxgiSwapChain>();
+
+        dxgiSwapChain->GetCoreWindowMethod.SetExpectedCalls(1,
+            [&](const IID& refiid, void** ppUnk)
+            {
+                *ppUnk = nullptr;
+
+                return E_FAIL;
+            });
+
+        dxgiSwapChain->GetHwndMethod.SetExpectedCalls(1,
+            [&](HWND* pHwnd)
+            {
+                *pHwnd = 0;
+
+                return S_OK;
+            });
+
+        // Creating a swap chain with no transform matrix support specified:
+        // it will query for a core window first (which will fail), and then
+        // for an HWND, which will suceed. As such, it will mark the transform
+        // matrix as not being supported.
+        auto canvasSwapChain = Make<CanvasSwapChain>(
+            f.m_canvasDevice.Get(),
+            dxgiSwapChain.Get(),
+            96.0f);
+
+        dxgiSwapChain->ResizeBuffersMethod.SetExpectedCalls(1,
+            [&] (
+                UINT bufferCount,
+                UINT width,
+                UINT height,
+                DXGI_FORMAT newFormat,
+                UINT swapChainFlags)
+            {
+                return S_OK;
+            });
+
+        // This validates that the transform methods are not called, same as above.
+
+        canvasSwapChain->ResizeBuffersWithAllOptions(128, 128, 96.0f, DirectXPixelFormat_Unknown, 0);
+    }
+
+    TEST_METHOD_EX(CanvasSwapChain_CreateForComposition_UsesTransformMethods)
+    {
+        StubDeviceFixture f;
+
+        auto dxgiSwapChain = Make<MockDxgiSwapChain>();
+
+        dxgiSwapChain->GetCoreWindowMethod.SetExpectedCalls(1,
+            [&](const IID& refiid, void** ppUnk)
+            {
+                *ppUnk = nullptr;
+
+                return E_FAIL;
+            });
+
+        dxgiSwapChain->GetHwndMethod.SetExpectedCalls(1,
+            [&](HWND* pHwnd)
+            {
+                *pHwnd = 0;
+
+                return E_FAIL;
+            });
+
+        // Creating a swap chain with support for transform matrix (composition).
+        auto canvasSwapChain = Make<CanvasSwapChain>(
+            f.m_canvasDevice.Get(),
+            dxgiSwapChain.Get(),
+            96.0f);
+
+        dxgiSwapChain->ResizeBuffersMethod.SetExpectedCalls(1,
+            [&](
+                UINT bufferCount,
+                UINT width,
+                UINT height,
+                DXGI_FORMAT newFormat,
+                UINT swapChainFlags)
+            {
+                return S_OK;
+            });
+
+        dxgiSwapChain->GetMatrixTransformMethod.SetExpectedCalls(1,
+            [&] (DXGI_MATRIX_3X2_F* matrix)
+            {
+                *matrix = { };
+
+                return S_OK;
+            });
+
+        dxgiSwapChain->SetMatrixTransformMethod.SetExpectedCalls(1,
+            [&] (const DXGI_MATRIX_3X2_F* matrix)
+            {
+                return S_OK;
+            });
+
+        canvasSwapChain->ResizeBuffersWithAllOptions(128, 128, 96.0f, DirectXPixelFormat_Unknown, 0);
+    }
+
 
     struct FullDeviceFixture : public MockDxgiFixture
     {
@@ -854,7 +996,7 @@ TEST_CLASS(CanvasSwapChainUnitTests)
             f.m_canvasDevice.Get(),
             dxgiSwapChain.Get(),
             anyDpi,
-            false);
+            /* isTransformMatrixSupported */ true);
 
         dxgiSwapChain->GetDesc1Method.SetExpectedCalls(1,
             [&] (DXGI_SWAP_CHAIN_DESC1* desc)

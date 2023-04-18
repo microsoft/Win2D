@@ -97,7 +97,7 @@ public:
         auto compositor = Make<MockCompositor>();
         auto dxgiSwapChain = Make<MockDxgiSwapChain>();
         auto canvasDevice = Make<MockCanvasDevice>();
-        auto canvasSwapChain = Make<CanvasSwapChain>(canvasDevice.Get(), dxgiSwapChain.Get(), DEFAULT_DPI, false);
+        auto canvasSwapChain = Make<CanvasSwapChain>(canvasDevice.Get(), dxgiSwapChain.Get(), DEFAULT_DPI, /* isTransformMatrixSupported */ true);
         auto compositionSurface = Make<RuntimeClass<ICompositionSurface>>();
 
         compositor->CreateCompositionSurfaceForSwapChainMethod.SetExpectedCalls(1,

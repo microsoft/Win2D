@@ -167,10 +167,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ICanvasDevice* device,
         IDXGISwapChain1* dxgiSwapChain,
         float dpi,
-        bool isCoreWindowSwapChain)
+        bool isTransformMatrixSupported)
         : ResourceWrapper(dxgiSwapChain)
         , m_device(device)
-        , m_isCoreWindowSwapChain(isCoreWindowSwapChain)
+        , m_isTransformMatrixSupported(isTransformMatrixSupported)
         , m_dpi(dpi)
         , m_adapter(CanvasSwapChainAdapter::GetInstance())
         , m_hasActiveDrawingSession(std::make_shared<bool>())
@@ -181,23 +181,33 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     // created via CanvasSwapChainFactory can directly tell CanvasSwapChain what
     // type of swap chain they are.  Swap chains created by interop need to be
     // queried to find out if they have a core window associated.
-    static bool IsCoreWindowSwapChain(IDXGISwapChain1* swapChain)
+    static bool IsTransformMatrixSupported(IDXGISwapChain1* swapChain)
     {
+        // Check for CoreWindow first
         ComPtr<ICoreWindow> coreWindow;
         if (SUCCEEDED(swapChain->GetCoreWindow(IID_PPV_ARGS(&coreWindow))))
         {
             if (coreWindow)
-                return true;
+                return false;
         }
 
-        return false;
+        // Check for HWNDs, which is the other case where transforms aren't supported.
+        // This path is taken if a CanvasSwapChain is created by wrapping an external
+        // swap chain created for a HWND, through the GetOrCreate interop helper.
+        HWND hwnd;
+        if (SUCCEEDED(swapChain->GetHwnd(&hwnd)))
+        {
+            return false;
+        }
+
+        return true;
     }
 
     CanvasSwapChain::CanvasSwapChain(
         ICanvasDevice* device,
         IDXGISwapChain1* dxgiSwapChain,
         float dpi)
-        : CanvasSwapChain(device, dxgiSwapChain, dpi, IsCoreWindowSwapChain(dxgiSwapChain))
+        : CanvasSwapChain(device, dxgiSwapChain, dpi, IsTransformMatrixSupported(dxgiSwapChain))
     {
     }
 
@@ -548,9 +558,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             static_cast<DXGI_FORMAT>(newFormat), 
             0));
 
-        if (m_isCoreWindowSwapChain)
+        if (!m_isTransformMatrixSupported)
         {
-            // CoreWindow swap chains can't get or set the transform matrix.
+            // CoreWindow/HWND swap chains can't get or set the transform matrix.
             m_dpi = newDpi;
         }
         else
@@ -750,7 +760,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             device,
             dxgiSwapChain.Get(),
             dpi,
-            false);
+            /* isTransformMatrixSupported */ true);
         CheckMakeResult(canvasSwapChain);
 
         ThrowIfFailed(canvasSwapChain->put_TransformMatrix(Matrix3x2{ 1, 0, 0, 1, 0, 0 }));
@@ -803,7 +813,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             device,
             dxgiSwapChain.Get(),
             dpi,
-            true);
+            /* isTransformMatrixSupported */ false);
         CheckMakeResult(canvasSwapChain);
 
         return canvasSwapChain;
