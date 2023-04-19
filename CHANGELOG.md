@@ -1,7 +1,7 @@
 # Win2D Changelog
 
 ## Win2D 1.27.0-preview3
-_March 31, 2023_
+_April 20, 2023_
 
 - New `ICanvasFactoryNative` methods to register custom wrappers (see https://github.com/microsoft/Win2D/issues/910)
   - `RegisterWrapper` and `UnregisterWrapper`, as mentioned in the linked issue (with updated names)
