@@ -1,9 +1,9 @@
 # Win2D Changelog
 
 ## Win2D-WinUI 1.1.0-preview1
-_March 31, 2023_
+_April 20, 2023_
 
-Update Win2D to WinAppSDK 1.2.230118.102
+Update Win2D to WinAppSDK 1.3.230331000
 Update .NET projections to .NET 6
 Enabled trimming in the .NET projections assembly (see https://github.com/microsoft/CsWinRT/issues/373)
 Update target SDK to 10.0.22621.0
@@ -19,6 +19,7 @@ New `ICanvasFactoryNative` methods to register custom wrappers (see https://gith
   - `RegisterWrapper` and `UnregisterWrapper`, as mentioned in the linked issue (with updated names)
   - `RegisterEffectFactory` and `UnregisterEffectFactory`, documented in the published header
 Add validation for `GetOrCreate` creating Win2D effects in an invalid state (see https://github.com/microsoft/Win2D/issues/913)
+Fix a crash when calling `CanvasSwapChain.Resize(...)` on an instance created through interop over an HWND DXGI swap chain
 
 ---
 
