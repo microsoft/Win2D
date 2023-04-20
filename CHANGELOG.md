@@ -1,6 +1,30 @@
 # Win2D Changelog
 
-## Win2D 1.27.0-preview1 - Bugfix for Visual Studio 2019 support
+## Win2D 1.27.0-preview3
+_April 20, 2023_
+
+- New `ICanvasFactoryNative` methods to register custom wrappers (see https://github.com/microsoft/Win2D/issues/910)
+  - `RegisterWrapper` and `UnregisterWrapper`, as mentioned in the linked issue (with updated names)
+  - `RegisterEffectFactory` and `UnregisterEffectFactory`, documented in the published header
+- Add validation for `GetOrCreate` creating Win2D effects in an invalid state (see https://github.com/microsoft/Win2D/issues/913)
+- Add missing XML docs for `CanvasDevice.IsDeviceLost()` and `CanvasDevice.GetDeviceLostReason()` APIs
+
+## Win2D 1.27.0-preview2
+_January 23, 2023_
+
+- New `CanvasDevice.IsDeviceLost()` overload to check whether a `CanvasDevice` is lost
+- New `CanvasDevice.GetDeviceLostReason()` API to get the device lost error code for a `CanvasDevice`
+- New `WIN2D_GET_DEVICE_ASSOCIATION_TYPE` type and parameter for `ICanvasImageInterop.GetDevice`
+  - This allows Win2D to correctly handle external effects supporting unrealization/realization
+  - This is a source and binary breaking change from 1.27.0-preview1
+- New `ID2D1DeviceContextPool` and `ID2D1DeviceContextLease` COM interfaces to efficiently rent `ID2D1DeviceContext`-s
+- New C exports to support `ICanvasEffect` from external effects (see https://github.com/microsoft/Win2D/issues/894)
+- Added some missing parameter checks/clears in some public APIs
+- Improved consistency for parameter validation and disposal checks in some public APIs
+
+---
+
+## Win2D 1.27.0-preview1
 _December 23, 2022_
 
 - New `ICanvasImageInterop` COM interface and infrastructure to support external effects (see https://github.com/microsoft/Win2D/pull/888)
