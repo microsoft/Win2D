@@ -1557,6 +1557,12 @@ TEST_CLASS(CanvasEffectsTests)
             0,
             IID_PPV_ARGS(&imageAbi2)));
 
+        // Get the ICanvasFactoryNative activation factory to test the ABI methods
+        ComPtr<ABI::Microsoft::Graphics::Canvas::ICanvasFactoryNative> factory;
+        ThrowIfFailed(Windows::Foundation::GetActivationFactory(
+            reinterpret_cast<HSTRING>(CanvasDevice::typeid->FullName),
+            &factory));
+
         // At this point: the D2D effect retrieved from the color effect is "orphaned". That is, it no longer has an associated
         // wrapper, as its parent Win2D effect has unrealized (ie. discarded it) and re-realized on another device. We can now
         // call GetOrCreate to ask Win2D to create a new wrapper for this D2D effect then. Here's the issue:
@@ -1566,10 +1572,18 @@ TEST_CLASS(CanvasEffectsTests)
         // the input device matches the factory of the effect being wrapped. This doesn't cover 100% of cases (as there might be
         // multiple devices from a single factory), but because there is no way to get a device from an effect, this is the best it
         // can do. And it's still enough to cover the majority of cases, such as this one. As such, we expect an exception here.
-        Assert::ExpectException<Platform::InvalidArgumentException^>(
-            [&]
-            {
-                auto colorEffect2 = GetOrCreate<ColorSourceEffect>(canvasDevice2, imageAbi1.Get());
-            });
+        ComPtr<IInspectable> inspectableResult;
+        Assert::AreEqual(D2DERR_WRONG_FACTORY, factory->GetOrCreate(As<ABI::Microsoft::Graphics::Canvas::ICanvasDevice>(canvasDevice2).Get(), imageAbi1.Get(), 0, &inspectableResult));
+        Assert::IsNull(inspectableResult.Get());
+
+        // Also test the C++/CX helper in this scenario (it should throw an exception)
+        try
+        {
+            auto colorEffect2 = GetOrCreate<ColorSourceEffect>(canvasDevice2, imageAbi1.Get());
+        }
+        catch (Platform::COMException^ e)
+        {
+            Assert::AreEqual(D2DERR_WRONG_FACTORY, (HRESULT)e->HResult);
+        }
     }
 };

@@ -26,10 +26,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     {
     public:
         // Used by ResourceWrapper to maintain its state in the interop mapping table.
-        static void Add(IUnknown* resource, IInspectable* wrapper);
-        static bool TryAdd(IUnknown* resource, IInspectable* wrapper);
-        static void Remove(IUnknown* resource);
-        static bool TryRemove(IUnknown* resource);
+        static void RegisterWrapper(IUnknown* resource, IInspectable* wrapper);
+        static bool TryRegisterWrapper(IUnknown* resource, IInspectable* wrapper);
+        static void UnregisterWrapper(IUnknown* resource);
+        static bool TryUnregisterWrapper(IUnknown* resource);
         static bool RegisterEffectFactory(REFIID effectId, ICanvasEffectFactoryNative* factory);
         static bool UnregisterEffectFactory(REFIID effectId);
 

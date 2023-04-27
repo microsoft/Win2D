@@ -40,7 +40,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         {
             if (resource)
             {
-                ResourceManager::Add(resource, outerInspectable);
+                ResourceManager::RegisterWrapper(resource, outerInspectable);
             }
         }
 
@@ -55,7 +55,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             {
                 auto resource = m_resource.Close();
 
-                ResourceManager::Remove(resource.Get());
+                ResourceManager::UnregisterWrapper(resource.Get());
             }
         }
 
@@ -67,7 +67,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             {
                 m_resource = resource;
 
-                ResourceManager::Add(resource, GetOuterInspectable());
+                ResourceManager::RegisterWrapper(resource, GetOuterInspectable());
             }
         }
 

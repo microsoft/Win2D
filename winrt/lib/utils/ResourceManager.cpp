@@ -107,14 +107,14 @@ std::vector<ResourceManager::TryCreateFunction> ResourceManager::tryCreateFuncti
 
 
 // Called by the ResourceWrapper constructor, to add itself to the interop mapping table.
-void ResourceManager::Add(IUnknown* resource, IInspectable* wrapper)
+void ResourceManager::RegisterWrapper(IUnknown* resource, IInspectable* wrapper)
 {
-    if (!TryAdd(resource, wrapper))
+    if (!TryRegisterWrapper(resource, wrapper))
         ThrowHR(E_UNEXPECTED);
 }
 
-// Exposed through CanvasDeviceFactory::Add.
-bool ResourceManager::TryAdd(IUnknown* resource, IInspectable* wrapper)
+// Exposed through CanvasDeviceFactory::RegisterWrapper.
+bool ResourceManager::TryRegisterWrapper(IUnknown* resource, IInspectable* wrapper)
 {
     ComPtr<IUnknown> resourceIdentity = AsUnknown(resource);
 
@@ -126,14 +126,14 @@ bool ResourceManager::TryAdd(IUnknown* resource, IInspectable* wrapper)
 }
 
 // Called by ResourceWrapper::Close, to remove itself from the interop mapping table.
-void ResourceManager::Remove(IUnknown* resource)
+void ResourceManager::UnregisterWrapper(IUnknown* resource)
 {
-    if (!TryRemove(resource))
+    if (!TryUnregisterWrapper(resource))
         ThrowHR(E_UNEXPECTED);
 }
 
-// Exposed through CanvasDeviceFactory::Remove.
-bool ResourceManager::TryRemove(IUnknown* resource)
+// Exposed through CanvasDeviceFactory::UnregisterWrapper.
+bool ResourceManager::TryUnregisterWrapper(IUnknown* resource)
 {
     ComPtr<IUnknown> resourceIdentity = AsUnknown(resource);
 

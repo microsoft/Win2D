@@ -51,7 +51,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             // already cover most scenarios where this might potentially happen, so that's good enough.
             if (!IsSameInstance(effectFactory.Get(), d2dDeviceFactory.Get()))
             {
-                ThrowHR(E_INVALIDARG, Strings::ResourceManagerMismatchedFactoryForEffectAndDevice);
+                ThrowHR(D2DERR_WRONG_FACTORY, Strings::ResourceManagerMismatchedFactoryForEffectAndDevice);
             }
 
             m_realizationDevice.Set(d2dDevice.Get(), device);
