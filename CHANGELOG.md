@@ -1,5 +1,13 @@
 # Win2D Changelog
 
+## Win2D-WinUI 1.1.0-preview2
+
+_May 25, 2023_
+
+- Add file:// URI support for CanvasFontSet as a workaround for msappx:// not working in unpackaged applications.
+
+---
+
 ## Win2D-WinUI 1.1.0-preview1
 
 _April 20, 2023_
