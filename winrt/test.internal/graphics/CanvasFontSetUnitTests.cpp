@@ -697,6 +697,12 @@ TEST_CLASS(CanvasFontSetTests)
         ComPtr<ICanvasFontSet> fontSet;
 
         auto uri = Make<StubUri>(somePath);
+        uri->get_SchemeNameMethod.SetExpectedCalls(1,
+            [](HSTRING* schemeName)
+            {
+                WindowsCreateString(L"ms-appx", 7, schemeName);
+                return S_OK;
+            });
         Assert::AreEqual(S_OK, factory->Create(uri.Get(), &fontSet));
 
         auto dwriteResource = GetWrappedResource<DWriteFontSetType>(fontSet.Get());
@@ -727,7 +733,51 @@ TEST_CLASS(CanvasFontSetTests)
         auto factory = Make<CanvasFontSetFactory>();
         ComPtr<ICanvasFontSet> fontSet;
         auto uri = Make<StubUri>(nullptr);
+        uri->get_SchemeNameMethod.SetExpectedCalls(1,
+            [](HSTRING* schemeName)
+            {
+                // The URI is empty
+                WindowsCreateString(L"", 0, schemeName);
+                return S_OK;
+            });
+
         Assert::AreEqual(E_INVALIDARG, factory->Create(uri.Get(), &fontSet));
         ValidateStoredErrorState(E_INVALIDARG, Strings::InvalidFontFamilyUri);
+    }
+
+    TEST_METHOD_EX(CanvasFontSet_CreateFromUri_FilePath)
+    {
+        CustomFontFixture f;
+
+        WCHAR buffer[MAX_PATH];
+        GetModuleFileName(nullptr, buffer, MAX_PATH);
+
+        std::wstring executablePath(buffer);
+        std::wstring executableDirectory = executablePath.substr(0, executablePath.find_last_of(L"\\/"));
+
+        WinString somePath(L"file:///" + executableDirectory + L"/somefontfile.ttf");
+
+        auto expectedDWriteResource = f.ExpectCreateCustomFontCollection(StubStorageFileStatics::GetFakePath(somePath));
+
+        auto factory = Make<CanvasFontSetFactory>();
+        ComPtr<ICanvasFontSet> fontSet;
+
+        auto uri = Make<StubUri>(somePath);
+        uri->get_SchemeNameMethod.SetExpectedCalls(1,
+            [](HSTRING* schemeName)
+            {
+                WindowsCreateString(L"file", 4, schemeName);
+                return S_OK;
+            });
+        uri->get_AbsoluteUriMethod.SetExpectedCalls(1,
+            [somePath](HSTRING* absoluteUri)
+            {
+                *absoluteUri = somePath;
+                return S_OK;
+            });
+        Assert::AreEqual(S_OK, factory->Create(uri.Get(), &fontSet));
+
+        auto dwriteResource = GetWrappedResource<DWriteFontSetType>(fontSet.Get());
+        Assert::IsTrue(IsSameInstance(expectedDWriteResource.Get(), dwriteResource.Get()));
     }
 };
