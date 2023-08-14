@@ -26,6 +26,14 @@ steps:
     ${{ if ne(parameters.PipelineType, 'Release') }}:
       arguments: $(packageSuffix)
 
+# Publish symbols
+# Per the PublishSymbols docs, these are retained as long as the build is (30 days for CI, forever for Release)
+- task: PublishSymbols@2
+  displayName: Publish symbols path
+  inputs:
+    SearchPattern: '**/bin/**/release/winrt.dll.uap/Microsoft.Graphics.Canvas.pdb'
+    SymbolServerType: TeamServices
+
 # Sign nuget package
 - ${{ if eq(parameters.PipelineType, 'Release') }}:
   - task: SFP.build-tasks.custom-build-task-1.EsrpCodeSigning@2
