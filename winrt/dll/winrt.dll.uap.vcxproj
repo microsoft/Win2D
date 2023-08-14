@@ -53,6 +53,10 @@
       <WindowsMetadataFile>$(Outdir)\$(ItemsRootNamespace).winmd</WindowsMetadataFile>
       <DelayLoadDLLs>d3dcompiler_47.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalOptions>/debug %(AdditionalOptions)</AdditionalOptions>
+    </Link>
+    <Link Condition="'$(Configuration)'=='Release'">
+      <AdditionalOptions>/opt:ref /opt:icf %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)'=='Release'">
