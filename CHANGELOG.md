@@ -1,5 +1,10 @@
 # Win2D Changelog
 
+## Win2D 1.27.0
+_August 14, 2023_
+
+- Stable release for custom external effects API
+
 ## Win2D 1.27.0-preview3
 _April 20, 2023_
 
