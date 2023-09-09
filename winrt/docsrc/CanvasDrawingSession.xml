@@ -755,11 +755,13 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <summary>The composite mode used for the effect.</summary>
       <remarks>
         <p>The equations listed in enum descriptions use these elements:</p>
-        <p>O = Output</p>
-        <p>S = Source</p>
-        <p>SA = Source Alpha</p>
-        <p>D = Destination</p>
-        <p>DA = Destination Alpha</p>
+        <ul>
+          <li>O = Output</li>
+          <li>S = Source</li>
+          <li>SA = Source Alpha</li>
+          <li>D = Destination</li>
+          <li>DA = Destination Alpha</li>
+        </ul>
       </remarks>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.CanvasComposite.SourceOver">
