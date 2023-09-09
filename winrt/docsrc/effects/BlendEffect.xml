@@ -127,17 +127,29 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="F:Microsoft.Graphics.Canvas.Effects.BlendEffectMode.Exclusion">
       <summary>Exclusion blend mode. <img src="../media/BlendEffectMode_Exclusion.png"/></summary>
     </member>
-    <member name="F:Microsoft.Graphics.Canvas.Effects.BlendEffectMode.Hue" NoComposition="true">
-      <summary>Hue blend mode. <img src="../media/BlendEffectMode_Hue.png"/></summary>
+    <member name="F:Microsoft.Graphics.Canvas.Effects.BlendEffectMode.Hue">
+      <summary>
+	    <p>Hue blend mode. <img src="../media/BlendEffectMode_Hue.png"/></p>
+        <p>This blend mode is supported by Windows.UI.Composition since Windows 10 build 18362 (May 2019 Update).</p>
+      </summary>
     </member>
-    <member name="F:Microsoft.Graphics.Canvas.Effects.BlendEffectMode.Saturation" NoComposition="true">
-      <summary>Saturation blend mode. <img src="../media/BlendEffectMode_Saturation.png"/></summary>
+    <member name="F:Microsoft.Graphics.Canvas.Effects.BlendEffectMode.Saturation">
+      <summary>
+	    <p>Saturation blend mode. <img src="../media/BlendEffectMode_Saturation.png"/></p>
+        <p>This blend mode is supported by Windows.UI.Composition since Windows 10 build 18362 (May 2019 Update).</p>
+      </summary>
     </member>
-    <member name="F:Microsoft.Graphics.Canvas.Effects.BlendEffectMode.Color" NoComposition="true">
-      <summary>Color blend mode. <img src="../media/BlendEffectMode_Color.png"/></summary>
+    <member name="F:Microsoft.Graphics.Canvas.Effects.BlendEffectMode.Color">
+      <summary>
+	    <p>Color blend mode. <img src="../media/BlendEffectMode_Color.png"/></p>
+        <p>This blend mode is supported by Windows.UI.Composition since Windows 10 build 18362 (May 2019 Update).</p>
+      </summary>
     </member>
-    <member name="F:Microsoft.Graphics.Canvas.Effects.BlendEffectMode.Luminosity" NoComposition="true">
-      <summary>Luminosity blend mode. <img src="../media/BlendEffectMode_Luminosity.png"/></summary>
+    <member name="F:Microsoft.Graphics.Canvas.Effects.BlendEffectMode.Luminosity">
+      <summary>
+	    <p>Luminosity blend mode. <img src="../media/BlendEffectMode_Luminosity.png"/></p>
+        <p>This blend mode is supported by Windows.UI.Composition since Windows 10 build 18362 (May 2019 Update).</p>
+      </summary>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.Effects.BlendEffectMode.Subtract">
       <summary>Subtract blend mode. <img src="../media/BlendEffectMode_Subtract.png"/></summary>
