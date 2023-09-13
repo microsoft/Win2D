@@ -62,7 +62,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     inline void ImageControlMixIn::RegisterEventHandlers(IImageControlMixInAdapter* adapter)
     {
         using namespace ABI::Microsoft::UI::Xaml::Controls;
-        using namespace Windows::Foundation;
+        using namespace ABI::Windows::Foundation;
 
         auto callback = Callback<IEventHandler<IInspectable*>>(this, &ImageControlMixIn::OnSurfaceContentsLost<CONTROL>);
         CheckMakeResult(callback);
