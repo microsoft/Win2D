@@ -2,9 +2,9 @@
 
 ## Win2D-WinUI 1.1.0
 
-_September 8, 2023_
+_September 26, 2023_
 
-- Update to WindowsAppSDK 1.4
+- Update to WindowsAppSDK 1.4.230913002
 - Change linker options for symbol building
 - Offical release of features from 1.1.0-preview1
 
