@@ -6,7 +6,7 @@
 
 #include <inspectable.h>
 #include <windows.foundation.numerics.h>
-#include <wrl.h>
+#include <d2d1_1.h>
 
 #ifndef __cplusplus
 #error "Requires C++"
@@ -17,8 +17,6 @@
 #else
 #define WIN2DAPI extern "C" __declspec(dllimport) HRESULT __stdcall
 #endif
-
-interface ID2D1Device1;
 
 namespace ABI
 {
