@@ -17,7 +17,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ReferenceCopyLocalPaths Include="$(MSBuildThisFileDirectory)..\..\runtimes\win10-$(win2d-Platform)\native\Microsoft.Graphics.Canvas.dll" Condition="'$(win2d-Platform)' != ''" />
+    <ReferenceCopyLocalPaths Include="$(MSBuildThisFileDirectory)..\..\runtimes\win-$(win2d-Platform)\native\Microsoft.Graphics.Canvas.dll" Condition="'$(win2d-Platform)' != ''" />
   </ItemGroup>
 
   <Target Name="Win2DWarnNoPlatform" BeforeTargets="BeforeBuild" Condition="'$(win2d-Platform)' == '' and '$(Win2DWarnNoPlatform)' == 'true'">
