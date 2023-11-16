@@ -55,6 +55,12 @@ steps:
       }
 
       Write-Host Setting pipeline name to: $pipelineName
-      Write-Host "##vso[build.updatebuildnumber]$pipelineName"
+      Write-Host "##vso[task.setvariable variable=CUSTOM_VERSION;]$pipelineName"
 
       Write-Host Done. 
+  
+# Use OneBranch Version task to set version
+- task: onebranch.pipeline.version@1
+  inputs:
+    system: 'Custom'
+    customVersion: '$(CUSTOM_VERSION)'

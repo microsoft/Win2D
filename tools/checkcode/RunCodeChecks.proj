@@ -31,8 +31,8 @@
     <!-- File extensions and directories to check vs. ignore -->
     <CppExt>c;cpp;h;inl;cs;idl;rc;hlsl</CppExt>
     <XmlExt>xml;xaml;aml</XmlExt>
-    <SkipExt>;gitattributes;gitignore;orig;jpg;png;dds;txt;md;pfx;cmd;bat;proj;nuspec;props;targets;def;sln;csproj;vcxproj;vcxitems;filters;projitems;shproj;shfbproj;content;config;appxmanifest;suo;ipch;sdf;log;opensdf;user;exe;bmp;ico;tif;vsdx;svg;json;bin;opendb;db;binlog;vsconfig_buildtools;ps1;sscignore;manifest;pubxml</SkipExt>
-    <SkipDir>.git;obj;bin;TestResults;build;.nuget;packages;.vs;.vscode</SkipDir>
+    <SkipExt>;gitattributes;gitignore;orig;jpg;png;dds;txt;md;pfx;cmd;bat;proj;nuspec;props;targets;def;sln;csproj;vcxproj;vcxitems;filters;projitems;shproj;shfbproj;content;config;appxmanifest;suo;ipch;sdf;log;opensdf;user;exe;bmp;ico;tif;vsdx;svg;json;bin;opendb;db;binlog;vsconfig_buildtools;ps1;sscignore;manifest;pubxml;pid;pdb</SkipExt>
+    <SkipDir>.git;obj;bin;TestResults;build;.nuget;packages;.vs;.vscode;.pipelines</SkipDir>
 
     <!-- Commandline arguments for the CheckCode.exe tool -->
     <Args>$(CopyrightFile) /rootdir:$(RootDir) /cppext:$(CppExt) /xmlext:$(XmlExt) /skipext:$(SkipExt) /skipdir:$(SkipDir) /checkformatting</Args>

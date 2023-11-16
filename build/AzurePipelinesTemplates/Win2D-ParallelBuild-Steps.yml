@@ -11,7 +11,7 @@ steps:
 # Release Policy Checks
 - ${{ if eq(parameters.PipelineType, 'Release') }}:
   # Run PoliCheck
-  - task: securedevelopmentteam.vss-secure-development-tools.build-task-policheck.PoliCheck@1
+  - task: securedevelopmentteam.vss-secure-development-tools.build-task-policheck.PoliCheck@2
     displayName: 'Run PoliCheck'
     inputs:
       inputType: CmdLine
@@ -29,20 +29,24 @@ steps:
       platform: AnyCPU
       configuration: Release
   # Run PoliCheck Output Parser
-  - task: CmdLine@1
+  - task: CmdLine@2
     displayName: 'Run PoliCheckOutputParser'
     inputs:
-      filename: 'build\pkges\PoliCheckOutputParser\bin\Release\PoliCheckOutputParser.exe'
-      arguments: '$(Build.SourcesDirectory) ..\_sdt\logs\PoliCheck\PoliCheck.xml build\pkges\PoliCheckExclusions.txt bin\PoliCheck.txt'
+      script: call build\pkges\PoliCheckOutputParser\bin\Release\PoliCheckOutputParser.exe $(Build.SourcesDirectory) ..\.gdn\.r\policheck\001\policheck.xml build\pkges\PoliCheckExclusions.txt bin\PoliCheck.txt
 
 # CI Policy Checks
 - ${{ if ne(parameters.PipelineType, 'Release') }}:
   # Ensure that release branch was not merged back into master
-  - task: CmdLine@1
-    displayName: Ensure release branch not merged to master
+  - task: CmdLine@2
+    displayName: Ensure release branch not merged to master  
     inputs:
-      filename: cmd
-      arguments: /c if exist build\pkges\PoliCheckExclusions.txt exit 1
+      script: |
+        if exist $(Build.SourcesDirectory)\build\pkges\PoliCheckExclusions.txt exit 1
+
+# Set the build number and version
+- template: Win2D-VersionNumber.yml
+  parameters:
+    PipelineType: ${{ parameters.PipelineType }}
 
 # Print the WinAppSDK version number to be consumed by build\WindowsAppSDK.common.props
 - script: |
@@ -54,10 +58,9 @@ steps:
   displayName: Display Versions
 
 # Download nuget.exe
-- task: BatchScript@1
+- script : call build\nuget\download-nuget.cmd
   displayName: Run download-nuget.cmd
-  inputs:
-    filename: build\nuget\download-nuget.cmd
+
 # Update package.config files with Nightly WinAppSDK version
 - ${{ if eq(parameters.PipelineType, 'Nightly') }}:
   - task: powershell@2
@@ -72,15 +75,15 @@ steps:
   displayName: NuGet Authenticate
   inputs:
     nuGetServiceConnections: Win2DWinUI
-- task: PowerShell@1
+- task: PowerShell@2
   displayName: 'Nuget Restore'
   env:
     REUNION_FEED: $(REUNION_FEED)
     WIN2D_FEED_PAT: $(WIN2D_FEED_PAT)
     WIN2D_AZURE_NUGET_FEED: $(WIN2D_AZURE_NUGET_FEED)
   inputs:
-    scriptType: inlineScript
-    inlineScript: |
+    targetType: inline
+    script: |
       # Set the appropriate nuget config
       $nugetConfig = "\build\nuget\azure_pipelines_nuget.config"
       if ("${{ parameters.PipelineType }}" -eq "Nightly")
@@ -146,8 +149,8 @@ steps:
       displayName: 'CodeSign'
       inputs:
         ConnectedServiceName: 'ESRP Signing'
-        FolderPath: '$(Build.SourcesDirectory)\bin\$(archDirectory)\Release\winrt.dll.uap\'
-        Pattern: 'Microsoft.Graphics.Canvas.dll, Microsoft.Graphics.Canvas.winmd'
+        FolderPath: '$(Build.SourcesDirectory)\bin\'
+        Pattern: 'Microsoft.Graphics.Canvas.dll, Microsoft.Graphics.Canvas.winmd, Microsoft.Graphics.Canvas.Interop.dll'
         signConfigType: inlineSignParams
         inlineOperation: |
           [
@@ -248,9 +251,3 @@ steps:
       TargetFolder: $(Build.ArtifactStagingDirectory)
       Contents: |
         bin\intellisense\Microsoft.Graphics.Canvas.xml
-  # Publish binary artifact
-  - task: PublishBuildArtifacts@1
-    displayName: 'Publish Artifact: build_output'
-    inputs:
-      ArtifactName: 'build_output'
-      PathtoPublish: '$(Build.ArtifactStagingDirectory)'

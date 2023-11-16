@@ -2,14 +2,21 @@ parameters:
   PipelineType: ""
 steps:
 # Download nuget.exe
-- task: BatchScript@1
+- script : call build\nuget\download-nuget.cmd
   displayName: Run download-nuget.cmd
-  inputs:
-    filename: build\nuget\download-nuget.cmd
+    
 # Download binaries from previous stage
 - task: DownloadPipelineArtifact@2
   inputs:
-    artifactName: 'build_output'
+    artifactName: 'build_output_x64'
+    targetPath: $(Build.SourcesDirectory)
+- task: DownloadPipelineArtifact@2
+  inputs:
+    artifactName: 'build_output_Win32;AnyCPU'
+    targetPath: $(Build.SourcesDirectory)
+- task: DownloadPipelineArtifact@2
+  inputs:
+    artifactName: 'build_output_ARM64'
     targetPath: $(Build.SourcesDirectory)
 - script: |
     cd $(Build.SourcesDirectory)
@@ -17,14 +24,13 @@ steps:
   displayName: Print root directory
 
 # Build nuget package
-- task: BatchScript@1
+- task: CmdLine@2
   displayName: build-nupkg
   inputs:
-    filename: build/nuget/build-nupkg.cmd
     ${{ if eq(parameters.PipelineType, 'Release') }}:
-      arguments: 'signed'
+      script: call build/nuget/build-nupkg.cmd signed
     ${{ if ne(parameters.PipelineType, 'Release') }}:
-      arguments: $(packageSuffix)
+      script: call build/nuget/build-nupkg.cmd $(packageSuffix)
 
 # Publish symbols
 # Per the PublishSymbols docs, these are retained as long as the build is (30 days for CI, forever for Release)
@@ -69,9 +75,3 @@ steps:
     Contents: >-
       *.nupkg
     TargetFolder: $(Build.ArtifactStagingDirectory)
-# Publish nuget package artifact
-- task: PublishBuildArtifacts@1
-  displayName: 'Publish Artifact: nupkg'
-  inputs:
-    ArtifactName: 'nupkg'
-    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
