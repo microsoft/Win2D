@@ -1,5 +1,15 @@
 # Win2D Changelog
 
+## Win2D-WinUI 1.1.1
+
+_November 17, 2023_
+- Update WindowsAppSDK to 1.4.231115000
+- Update Windows SDK to 10.0.22621.31
+- Update CsWinRT to 2.0.4
+- Fix nuget package .NET projection folder to match the project's TargetFrameworkVersion
+- Use non-generic RID folder names in nuget package for .NET 8 compatibility
+- Fixes to published interop header which was causing missing D2D type errors for C++ consumers
+
 ## Win2D-WinUI 1.1.0
 
 _September 26, 2023_
