@@ -1,5 +1,9 @@
 # Win2D Changelog
 
+## Win2D 1.27.1
+_November 17, 2023_
+- Fixes to published interop header which was causing missing D2D type errors for C++ consumers
+
 ## Win2D 1.27.0
 _August 14, 2023_
 
