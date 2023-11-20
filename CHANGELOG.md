@@ -9,6 +9,7 @@ _November 17, 2023_
 - Fix nuget package .NET projection folder to match the project's TargetFrameworkVersion
 - Use non-generic RID folder names in nuget package for .NET 8 compatibility
 - Fixes to published interop header which was causing missing D2D type errors for C++ consumers
+- Remove .NET Core 3 support
 
 ## Win2D-WinUI 1.1.0
 
