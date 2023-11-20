@@ -2,7 +2,7 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <PropertyGroup>
-    <Win2DMinPlatformVersion>10.0.17134.0</Win2DMinPlatformVersion>
+    <Win2DMinPlatformVersion>10.0.22621.0</Win2DMinPlatformVersion>
   </PropertyGroup>
 
 
