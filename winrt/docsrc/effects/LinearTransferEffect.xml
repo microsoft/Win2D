@@ -11,11 +11,12 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
   </assembly>
   <members>
   
-    <member name="T:Microsoft.Graphics.Canvas.Effects.LinearTransferEffect" NoComposition="true">
+    <member name="T:Microsoft.Graphics.Canvas.Effects.LinearTransferEffect">
       <summary>
         Alters the colors of an image by applying a per-channel linear transfer function.
       </summary>
       <remarks>
+        <p>This effect is supported by Windows.UI.Composition since Windows 10 build 14393 (Anniversary Update).</p>
         <p>The linear transfer function is evaluated separately for each color channel:</p>
         <p>result = (input * slope) + offset</p>
         <p>
