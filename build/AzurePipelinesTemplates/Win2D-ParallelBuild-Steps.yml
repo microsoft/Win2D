@@ -72,13 +72,17 @@ steps:
     displayName: 'Apply Nightly WinAppSDK version to packages.config files'
 # Nuget Authenticate
 - task: NuGetAuthenticate@1
-  displayName: NuGet Authenticate
+  displayName: NuGet Authenticate Win2DWinUI
   inputs:
     nuGetServiceConnections: Win2DWinUI
+- task: NuGetAuthenticate@1
+  displayName: NuGet Authenticate ProjectReunion.nuget.internal
+  inputs:
+    nuGetServiceConnections: ProjectReunion.nuget.internal
 - task: PowerShell@2
   displayName: 'Nuget Restore'
   env:
-    REUNION_FEED: $(REUNION_FEED)
+    REUNION_FEED_PAT: $(REUNION_FEED_PAT)
     WIN2D_FEED_PAT: $(WIN2D_FEED_PAT)
     WIN2D_AZURE_NUGET_FEED: $(WIN2D_AZURE_NUGET_FEED)
   inputs:
