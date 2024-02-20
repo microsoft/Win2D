@@ -21,7 +21,7 @@ steps:
       echo "WinAppSDK version override not set, defaulting to version in build\WindowsAppSdk.common.props"
     )
   displayName: Display WinAppSDK version
-- task: NuGetAuthenticate@0
+- task: NuGetAuthenticate@1
   displayName: 'NuGet Authenticate'
 - task: PowerShell@1
   displayName: 'Nuget Restore'
