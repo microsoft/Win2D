@@ -105,6 +105,8 @@ CustomFontManager::CustomFontManager()
 WinString CustomFontManager::GetAbsolutePathFromUri(WinString const& uriString)
 {
     ComPtr<IUriRuntimeClass> uri;
+
+    // This will not overwrite an existing URI scheme in uriString, e.g. file://
     ThrowIfFailed(m_uriFactory->CreateWithRelativeUri(WinString(L"ms-appx://"), uriString, &uri));
 
     return GetAbsolutePathFromUri(uri.Get());
@@ -282,7 +284,8 @@ void CustomFontManager::ValidateUri(WinString const& uriString)
     ThrowIfFailed(uri->get_SchemeName(schemeName.GetAddressOf()));
 
     if (!schemeName.Equals(HStringReference(L"ms-appx").Get()) &&
-        !schemeName.Equals(HStringReference(L"ms-appdata").Get()))
+        !schemeName.Equals(HStringReference(L"ms-appdata").Get()) &&
+        !schemeName.Equals(HStringReference(L"file").Get()))
     {
         ThrowHR(E_INVALIDARG, Strings::InvalidFontFamilyUriScheme);
     }

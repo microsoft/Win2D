@@ -1248,7 +1248,7 @@ namespace canvas
                     return std::wstring(uri) + L"#anyfamily"; 
                 };
 
-            auto validUris = { L"foo/bar", L"foo", L"ms-appx:///foo", L"ms-appdata:///local/foo", L"filename with spaces" };
+            auto validUris = { L"foo/bar", L"foo", L"ms-appx:///foo", L"ms-appdata:///local/foo", L"filename with spaces", L"file://foo"};
 
             for (auto uri : validUris)
             {
@@ -1256,7 +1256,7 @@ namespace canvas
                 Assert::AreEqual(S_OK, cf->put_FontFamily(WinString(familyName)), familyName.c_str());
             }
 
-            auto invalidUriSchemes = { L"http://foo", L"file://foo", L"anything:" };
+            auto invalidUriSchemes = { L"http://foo", L"anything:" };
 
             for (auto uri : invalidUriSchemes)
             {
