@@ -1,5 +1,14 @@
 # Win2D Changelog
 
+## Win2D-WinUI 1.2.0
+
+_March 1, 2024_
+
+- Roll Target Framework and Target Platform version to 19041 because of conflict with WinAppSDK and MAUI project templates
+- Add support for file:// URI to CanvasFontFormat
+
+---
+
 ## Win2D-WinUI 1.1.1
 
 _November 17, 2023_
@@ -10,6 +19,8 @@ _November 17, 2023_
 - Use non-generic RID folder names in nuget package for .NET 8 compatibility
 - Fixes to published interop header which was causing missing D2D type errors for C++ consumers
 - Remove .NET Core 3 support
+
+---
 
 ## Win2D-WinUI 1.1.0
 
