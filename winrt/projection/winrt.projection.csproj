@@ -20,7 +20,7 @@
         - Set "AssemblyFile" to match the assembly version.
         - Set "AssemblyInformationVersion" to $(Version) plus git hash (eg. "1.1.0-preview1+1b95cfe91e").
     -->
-    <Version>1.1.1</Version>
+    <Version>1.2.0</Version>
 
     <!-- Enable trimming -->
     <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
