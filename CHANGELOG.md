@@ -6,6 +6,7 @@ _March 1, 2024_
 
 - Roll Target Framework and Target Platform version to 19041 because of conflict with WinAppSDK and MAUI project templates
 - Add support for file:// URI to CanvasFontFormat
+- Update to WinAppSDK 1.5.240227000
 
 ---
 
