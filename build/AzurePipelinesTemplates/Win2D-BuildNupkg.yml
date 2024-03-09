@@ -39,6 +39,9 @@ steps:
   inputs:
     SearchPattern: '**/bin/**/release/winrt.dll.uap/Microsoft.Graphics.Canvas.pdb'
     SymbolServerType: TeamServices
+    Pat: $(System.AccessToken)
+  env:
+    ARTIFACTSERVICES_SYMBOL_ACCOUNTNAME: $(WIN2D_ADO_ORG)
 
 # Sign nuget package
 - ${{ if eq(parameters.PipelineType, 'Release') }}:
