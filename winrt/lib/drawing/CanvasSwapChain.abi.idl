@@ -131,6 +131,9 @@ namespace Microsoft.Graphics.Canvas
         [overload("Present")]
         HRESULT PresentWithSyncInterval([in] INT32 syncInterval);
 
+        [overload("Present")]
+        HRESULT PresentWithSyncIntervalAndPresentFlags([in] INT32 syncInterval, [in] INT32 presentFlags);
+
         [overload("ResizeBuffers")]
         HRESULT ResizeBuffersWithSize(
             [in] Windows.Foundation.Size newSize);

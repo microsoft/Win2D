@@ -182,6 +182,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         IFACEMETHOD(Present)() override;
         IFACEMETHOD(PresentWithSyncInterval)(int32_t syncInterval) override;
+        IFACEMETHOD(PresentWithSyncIntervalAndPresentFlags)(int32_t syncInterval, int32_t presentFlags) override;
 
         IFACEMETHOD(ResizeBuffersWithSize)(
             Size newSize) override;
