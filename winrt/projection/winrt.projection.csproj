@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net6.0-windows10.0.19041.0</TargetFramework>
+    <TargetFramework>net6.0-windows10.0.22000.0</TargetFramework>
     <AnalysisLevel>4</AnalysisLevel>
     <WarningLevel>4</WarningLevel>
     <LangVersion>10.0</LangVersion>
@@ -20,7 +20,7 @@
         - Set "AssemblyFile" to match the assembly version.
         - Set "AssemblyInformationVersion" to $(Version) plus git hash (eg. "1.1.0-preview1+1b95cfe91e").
     -->
-    <Version>1.2.0</Version>
+    <Version>1.2.1-prerelease</Version>
 
     <!-- Enable trimming -->
     <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
@@ -35,7 +35,7 @@
 
   <!-- CsWinRT related properties for projections generation -->
   <PropertyGroup>
-    <WindowsSdkPackageVersion>10.0.19041.31</WindowsSdkPackageVersion>
+    <WindowsSdkPackageVersion>10.0.22000.35-preview</WindowsSdkPackageVersion>
     <CSWinRTIncludes>
         Microsoft.Graphics.Canvas;
     </CSWinRTIncludes>
@@ -51,7 +51,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.WindowsAppSdk" Version="$(WindowsAppSdkVersion)" />
-    <PackageReference Include="Microsoft.Windows.CSWinRT" Version="2.0.4" />
+    <PackageReference Include="Microsoft.Windows.CSWinRT" Version="2.1.0-prerelease.240602.1" />
     <PackageReference Include="Microsoft.SourceLink.AzureRepos.Git" Version="1.1.1" PrivateAssets="All" />
   </ItemGroup>
 </Project>
