@@ -1,5 +1,16 @@
 # Win2D Changelog
 
+## Win2D-WinUI 1.2.1-experimental1
+
+_June 17, 2024_
+
+- Update WindowsAppSDK version to 1.6.240531000-experimental1
+- Update CsWinRT version to 2.1.0-prerelease.240602.1
+- Update TargetPlatform and TargetFramework verisons to 22000
+  - WindowsAppSDK experimental channel uses 22000 instead of 19041. When WindowsAppSDK does a stable release on 19041, Win2D will also drop back down to 19041.
+
+---
+
 ## Win2D-WinUI 1.2.0
 
 _March 1, 2024_
