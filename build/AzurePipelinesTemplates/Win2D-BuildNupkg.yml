@@ -1,5 +1,6 @@
 parameters:
   PipelineType: ""
+  SignCode: false
 steps:
 # Download nuget.exe
 - script : call build\nuget\download-nuget.cmd
@@ -44,31 +45,14 @@ steps:
     ARTIFACTSERVICES_SYMBOL_ACCOUNTNAME: $(WIN2D_ADO_ORG)
 
 # Sign nuget package
-- ${{ if eq(parameters.PipelineType, 'Release') }}:
-  - task: SFP.build-tasks.custom-build-task-1.EsrpCodeSigning@2
-    displayName: 'CodeSign (Nuget)'
-    inputs:
-      ConnectedServiceName: 'ESRP Signing'
-      FolderPath: '$(Build.SourcesDirectory)\bin\'
-      Pattern: '*.nupkg'
-      signConfigType: inlineSignParams
-      inlineOperation: |
-        [
-            {
-                "KeyCode" : "CP-401405",
-                "OperationCode" : "NuGetSign",
-                "Parameters" : {},
-                "ToolName" : "sign",
-                "ToolVersion" : "1.0"
-            },
-            {
-                "KeyCode" : "CP-401405",
-                "OperationCode" : "NuGetVerify",
-                "Parameters" : {},
-                "ToolName" : "sign",
-                "ToolVersion" : "1.0"
-            }
-        ]
+- task: onebranch.pipeline.signing@1
+  displayName: 'CodeSign (Nuget)'
+  condition: eq(${{ parameters.SignCode }}, 'true')
+  inputs:
+    command: sign
+    signing_profile: external_distribution
+    files_to_sign: '**\*.nupkg'
+    search_root: $(Build.SourcesDirectory)\bin\
 
 # Copy nuget package to artifact staging directory
 - task: CopyFiles@2
