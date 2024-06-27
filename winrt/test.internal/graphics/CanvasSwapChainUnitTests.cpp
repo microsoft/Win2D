@@ -3,6 +3,7 @@
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
 #include "pch.h"
+#include "Microsoft.Graphics.Canvas.native.h"
 #include "mocks/MockCoreWindow.h"
 #include "mocks/MockDXGIAdapter.h"
 #include "mocks/MockDXGIFactory.h"
@@ -270,6 +271,53 @@ TEST_CLASS(CanvasSwapChainUnitTests)
         ExpectHResultException(E_INVALIDARG, [&] { CanvasSwapChain::CreateNew(f.Device.Get(), f.Window.Get(), anyWidthInDips, -1.0f, anyDpi, anyPixelFormat, anyBufferCount); });
         ExpectHResultException(E_INVALIDARG, [&] { CanvasSwapChain::CreateNew(f.Device.Get(), f.Window.Get(), anyWidthInDips, anyHeightInDips, -1.0f, anyPixelFormat, anyBufferCount); });
         ExpectHResultException(E_INVALIDARG, [&] { CanvasSwapChain::CreateNew(f.Device.Get(), f.Window.Get(), anyWidthInDips, anyHeightInDips, anyDpi, anyPixelFormat, -1); });
+    }
+
+    TEST_METHOD_EX(CanvasSwapChain_CreateForHwnd)
+    {
+        StubDeviceFixture deviceFixture;
+
+        auto dxgiSwapChain = Make<MockDxgiSwapChain>();
+
+        HWND expectedHwnd = (HWND)(void*)1234567;
+        auto expectedWidthInPixels = 1280;
+        auto expectedHeightInPixels = 720;
+        auto expectedDpi = 144.0f;
+        auto expectedFormat = PIXEL_FORMAT(R8G8B8A8UIntNormalized);
+        auto expectedBufferCount = 2;
+        auto expectedAlphaMode = CanvasAlphaMode::Ignore;
+
+        deviceFixture.m_canvasDevice->CreateSwapChainForHwndMethod.SetExpectedCalls(1,
+            [&](HWND hwnd, int32_t widthInPixels, int32_t heightInPixels, DirectXPixelFormat format, int32_t bufferCount, CanvasAlphaMode alphaMode)
+            {
+                Assert::AreEqual((void*)expectedHwnd, (void*)hwnd);
+                Assert::AreEqual(expectedWidthInPixels, widthInPixels);
+                Assert::AreEqual(expectedHeightInPixels, heightInPixels);
+                Assert::AreEqual(expectedFormat, format);
+                Assert::AreEqual(expectedBufferCount, bufferCount);
+                Assert::AreEqual(expectedAlphaMode, alphaMode);
+
+                return dxgiSwapChain.Get();
+            });
+
+        auto resultSwapChain = CanvasSwapChain::CreateNew(
+            deviceFixture.m_canvasDevice.Get(),
+            expectedHwnd,
+            expectedWidthInPixels,
+            expectedHeightInPixels,
+            expectedDpi,
+            expectedFormat,
+            expectedBufferCount);
+
+        ComPtr<IDXGISwapChain1> resultDxgiSwapChain;
+        HRESULT hresult = As<ABI::Microsoft::Graphics::Canvas::ICanvasResourceWrapperNative>(resultSwapChain)->GetNativeResource(
+            deviceFixture.m_canvasDevice.Get(),
+            expectedDpi,
+            IID_PPV_ARGS(&resultDxgiSwapChain));
+
+        Assert::AreEqual(S_OK, hresult);
+
+        Assert::IsTrue(IsSameInstance(dxgiSwapChain.Get(), resultDxgiSwapChain.Get()));
     }
 
 

@@ -140,6 +140,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             int32_t bufferCount,
             CanvasAlphaMode alphaMode) = 0;
 
+        virtual ComPtr<IDXGISwapChain1> CreateSwapChainForHwnd(
+            HWND hwnd,
+            int32_t widthInPixels,
+            int32_t heightInPixels,
+            DirectXPixelFormat format,
+            int32_t bufferCount,
+            CanvasAlphaMode alphaMode) = 0;
+
         virtual ComPtr<ID2D1CommandList> CreateCommandList() = 0;
 
         virtual ComPtr<ID2D1GeometryRealization> CreateFilledGeometryRealization(ID2D1Geometry* geometry, float flatteningTolerance) = 0;
@@ -347,6 +355,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             int32_t bufferCount,
             CanvasAlphaMode alphaMode) override;
 
+        virtual ComPtr<IDXGISwapChain1> CreateSwapChainForHwnd(
+            HWND hwnd,
+            int32_t widthInPixels,
+            int32_t heightInPixels,
+            DirectXPixelFormat format,
+            int32_t bufferCount,
+            CanvasAlphaMode alphaMode) override;
+
         virtual ComPtr<ID2D1CommandList> CreateCommandList() override;
 
         virtual ComPtr<ID2D1GeometryRealization> CreateFilledGeometryRealization(ID2D1Geometry* geometry, float flatteningTolerance) override;
@@ -538,7 +554,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         IFACEMETHOD(get_DebugLevel)(CanvasDebugLevel* debugLevel);
 
         //
-        // ICanvasFactoryNative.
+        // ICanvasFactoryNative
         //
         IFACEMETHOD(GetOrCreate)(
             ICanvasDevice* device,

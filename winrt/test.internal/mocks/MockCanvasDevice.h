@@ -44,6 +44,7 @@ namespace canvas
         CALL_COUNTER_WITH_MOCK(CreateRenderTargetBitmapMethod, ComPtr<ID2D1Bitmap1>(float, float, float, DirectXPixelFormat, CanvasAlphaMode));
         CALL_COUNTER_WITH_MOCK(CreateSwapChainForCompositionMethod, ComPtr<IDXGISwapChain1>(int32_t, int32_t, DirectXPixelFormat, int32_t, CanvasAlphaMode));
         CALL_COUNTER_WITH_MOCK(CreateSwapChainForCoreWindowMethod, ComPtr<IDXGISwapChain1>(ICoreWindow*, int32_t, int32_t, DirectXPixelFormat, int32_t, CanvasAlphaMode));
+        CALL_COUNTER_WITH_MOCK(CreateSwapChainForHwndMethod, ComPtr<IDXGISwapChain1>(HWND, int32_t, int32_t, DirectXPixelFormat, int32_t, CanvasAlphaMode));
         CALL_COUNTER_WITH_MOCK(CreateCommandListMethod, ComPtr<ID2D1CommandList>());
 
         CALL_COUNTER_WITH_MOCK(CreateFilledGeometryRealizationMethod, ComPtr<ID2D1GeometryRealization>(ID2D1Geometry*, float));
@@ -368,6 +369,17 @@ namespace canvas
             CanvasAlphaMode alphaMode) override
         {
             return CreateSwapChainForCoreWindowMethod.WasCalled(coreWindow, widthInPixels, heightInPixels, format, bufferCount, alphaMode);
+        }
+
+        virtual ComPtr<IDXGISwapChain1> CreateSwapChainForHwnd(
+            HWND hwnd,
+            int32_t widthInPixels,
+            int32_t heightInPixels,
+            DirectXPixelFormat format,
+            int32_t bufferCount,
+            CanvasAlphaMode alphaMode) override
+        {
+            return CreateSwapChainForHwndMethod.WasCalled(hwnd, widthInPixels, heightInPixels, format, bufferCount, alphaMode);
         }
 
         virtual ComPtr<ID2D1CommandList> CreateCommandList() override

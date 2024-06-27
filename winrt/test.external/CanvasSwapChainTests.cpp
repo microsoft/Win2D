@@ -3,6 +3,7 @@
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
 #include "pch.h"
+#include <WinUser.h>
 
 using Platform::String;
 using namespace Microsoft::Graphics::Canvas;
@@ -57,6 +58,152 @@ TEST_CLASS(CanvasSwapChainTests)
             {
                 GetWrappedResource<IDXGISwapChain2>(canvasDevice, canvasSwapChain, DEFAULT_DPI + 3);
             });
+    }
+
+    static HWND CreateBlankTestWindow(const wchar_t name[])
+    {
+        HMODULE hInstance = GetModuleHandleW(nullptr);
+
+        WNDCLASS wc = { };
+        wc.lpfnWndProc = DefWindowProc;
+        wc.hInstance = hInstance;
+        wc.lpszClassName = name;
+
+        RegisterClass(&wc);
+
+        HWND hwnd = CreateWindowEx(
+            0,
+            name,
+            name,
+            WS_OVERLAPPEDWINDOW,
+            CW_USEDEFAULT,
+            CW_USEDEFAULT,
+            CW_USEDEFAULT,
+            CW_USEDEFAULT,
+            NULL,
+            NULL,
+            hInstance,
+            NULL);
+
+        Assert::IsNotNull(hwnd);
+
+        return hwnd;
+    }
+
+    TEST_METHOD(CanvasSwapChain_CreateForHwnd)
+    {
+        HWND hwnd = CreateBlankTestWindow(L"CanvasSwapChain_CreateForHwnd");        
+
+        ComPtr<ABI::Microsoft::Graphics::Canvas::ICanvasSwapChainFactoryNative> factory;
+        ThrowIfFailed(::Windows::Foundation::GetActivationFactory(
+            HStringReference(RuntimeClass_Microsoft_Graphics_Canvas_CanvasSwapChain).Get(),
+            &factory));
+
+        auto canvasDevice = ref new CanvasDevice();
+
+        auto expectedWidthInPixels = 1280;
+        auto expectedHeightInPixels = 720;
+        auto expectedDpi = 144.0f;
+        auto expectedFormat = PIXEL_FORMAT(R8G8B8A8UIntNormalized);
+        auto expectedBufferCount = 2;
+        auto expectedAlphaMode = DXGI_ALPHA_MODE_IGNORE;
+
+        ComPtr<ABI::Microsoft::Graphics::Canvas::ICanvasSwapChain> resultSwapChain;
+        HRESULT hresult = factory->CreateForHwnd(
+            As<ABI::Microsoft::Graphics::Canvas::ICanvasResourceCreator>(canvasDevice).Get(),
+            hwnd,
+            expectedWidthInPixels,
+            expectedHeightInPixels,
+            expectedDpi,
+            expectedFormat,
+            expectedBufferCount,
+            &resultSwapChain);
+
+        Assert::AreEqual(S_OK, hresult);
+
+        ABI::Windows::Foundation::Size resultSize;
+        ThrowIfFailed(resultSwapChain->get_Size(&resultSize));
+
+        Assert::AreEqual(expectedWidthInPixels * 96.0f / expectedDpi, resultSize.Width);
+        Assert::AreEqual(expectedHeightInPixels * 96.0f / expectedDpi, resultSize.Height);
+
+        ComPtr<ABI::Microsoft::Graphics::Canvas::ICanvasResourceWrapperNative> nativeWrapper;
+        ThrowIfFailed(resultSwapChain->QueryInterface(nativeWrapper.GetAddressOf()));
+
+        ComPtr<IDXGISwapChain1> resultDxgiSwapChain;
+        hresult = As<ABI::Microsoft::Graphics::Canvas::ICanvasResourceWrapperNative>(resultSwapChain)->GetNativeResource(
+            reinterpret_cast<ABI::Microsoft::Graphics::Canvas::ICanvasDevice*>(canvasDevice),
+            expectedDpi,
+            IID_PPV_ARGS(&resultDxgiSwapChain));
+
+        Assert::AreEqual(S_OK, hresult);
+
+        HWND resultHwnd;
+        ThrowIfFailed(resultDxgiSwapChain->GetHwnd(&resultHwnd));
+
+        Assert::AreEqual((void*)hwnd, (void*)resultHwnd);
+
+        DXGI_SWAP_CHAIN_DESC1 resultDesc1;
+        ThrowIfFailed(resultDxgiSwapChain->GetDesc1(&resultDesc1));
+
+        Assert::AreEqual((UINT)expectedWidthInPixels, resultDesc1.Width);
+        Assert::AreEqual((UINT)expectedHeightInPixels, resultDesc1.Height);
+        Assert::AreEqual((UINT)expectedFormat, (UINT)resultDesc1.Format);
+        Assert::AreEqual((UINT)expectedBufferCount, resultDesc1.BufferCount);
+        Assert::AreEqual((UINT)expectedAlphaMode, (UINT)resultDesc1.AlphaMode);
+
+        DestroyWindow(hwnd);
+    }
+
+    TEST_METHOD(CanvasSwapChain_CreateForHwnd_WithHelper)
+    {
+        HWND hwnd = CreateBlankTestWindow(L"CanvasSwapChain_CreateForHwnd_WithHelper");
+
+        ComPtr<ABI::Microsoft::Graphics::Canvas::ICanvasSwapChainFactoryNative> factory;
+        ThrowIfFailed(::Windows::Foundation::GetActivationFactory(
+            HStringReference(RuntimeClass_Microsoft_Graphics_Canvas_CanvasSwapChain).Get(),
+            &factory));
+
+        auto canvasDevice = ref new CanvasDevice();
+
+        auto expectedWidthInPixels = 1280;
+        auto expectedHeightInPixels = 720;
+        auto expectedDpi = 144.0f;
+        auto expectedFormat = PIXEL_FORMAT(R8G8B8A8UIntNormalized);
+        auto expectedBufferCount = 2;
+        auto expectedAlphaMode = DXGI_ALPHA_MODE_IGNORE;
+
+        CanvasSwapChain^ resultSwapChain = CreateCanvasSwapChainForHwnd(
+            canvasDevice,
+            hwnd,
+            expectedWidthInPixels,
+            expectedHeightInPixels,
+            expectedDpi,
+            expectedFormat,
+            expectedBufferCount);
+
+        Size resultSize = resultSwapChain->Size;
+
+        Assert::AreEqual(expectedWidthInPixels * 96.0f / expectedDpi, resultSize.Width);
+        Assert::AreEqual(expectedHeightInPixels * 96.0f / expectedDpi, resultSize.Height);
+
+        auto resultDxgiSwapChain = GetWrappedResource<IDXGISwapChain1, CanvasSwapChain>(canvasDevice, resultSwapChain, 144.0f);
+
+        HWND resultHwnd;
+        ThrowIfFailed(resultDxgiSwapChain->GetHwnd(&resultHwnd));
+
+        Assert::AreEqual((void*)hwnd, (void*)resultHwnd);
+
+        DXGI_SWAP_CHAIN_DESC1 resultDesc1;
+        ThrowIfFailed(resultDxgiSwapChain->GetDesc1(&resultDesc1));
+
+        Assert::AreEqual((UINT)expectedWidthInPixels, resultDesc1.Width);
+        Assert::AreEqual((UINT)expectedHeightInPixels, resultDesc1.Height);
+        Assert::AreEqual((UINT)expectedFormat, (UINT)resultDesc1.Format);
+        Assert::AreEqual((UINT)expectedBufferCount, resultDesc1.BufferCount);
+        Assert::AreEqual((UINT)expectedAlphaMode, (UINT)resultDesc1.AlphaMode);
+
+        DestroyWindow(hwnd);
     }
 
     TEST_METHOD(CanvasSwapChain_DrawOperation)
