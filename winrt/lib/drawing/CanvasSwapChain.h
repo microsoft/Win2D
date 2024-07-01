@@ -14,7 +14,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     using namespace WinRTDirectX;
 
     class CanvasSwapChainFactory
-        : public AgileActivationFactory<ICanvasSwapChainFactory, ICanvasSwapChainStatics>
+        : public AgileActivationFactory<ICanvasSwapChainFactory, ICanvasSwapChainStatics, CloakedIid<ICanvasSwapChainFactoryNative>>
         , private LifespanTracker<CanvasSwapChainFactory>
     {
         InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_CanvasSwapChain, BaseTrust);
@@ -71,6 +71,19 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             DirectXPixelFormat format,
             int32_t bufferCount,
             ICanvasSwapChain** swapChain);
+
+        //
+        // ICanvasSwapChainFactoryNative
+        //
+        IFACEMETHOD(CreateForHwnd)(
+            ICanvasResourceCreator* resourceCreator,
+            HWND hwnd,
+            uint32_t width,
+            uint32_t height,
+            float dpi,
+            DirectXPixelFormat format,
+            int32_t bufferCount,
+            ICanvasSwapChain** canvasSwapChain) override;
     };
 
 
@@ -140,6 +153,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ICoreWindow* coreWindow,
             float width,
             float height,
+            float dpi,
+            DirectXPixelFormat format,
+            int32_t bufferCount);
+
+        static ComPtr<CanvasSwapChain> CreateNew(
+            ICanvasDevice* device,
+            HWND hwnd,
+            uint32_t width,
+            uint32_t height,
             float dpi,
             DirectXPixelFormat format,
             int32_t bufferCount);

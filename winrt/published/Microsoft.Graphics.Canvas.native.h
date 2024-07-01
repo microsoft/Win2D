@@ -5,6 +5,7 @@
 #pragma once
 
 #include <inspectable.h>
+#include <windows.graphics.directx.h>
 #include <windows.foundation.numerics.h>
 #include <d2d1_1.h>
 
@@ -31,6 +32,7 @@ namespace ABI
                 interface ICanvasDevice;
                 interface ICanvasResourceCreator;
                 interface ICanvasResourceCreatorWithDpi;
+                interface ICanvasSwapChain;
 
                 //
                 // An interface for a factory that can create a resource wrapper from a native D2D effect.
@@ -181,6 +183,24 @@ namespace ABI
                         uint32_t valueCount,
                         Rect* valueElements) noexcept;
                 }
+
+                //
+                // Interop interface for the activation factory for CanvasSwapChain
+                //
+                class __declspec(uuid("040AB731-08F1-469F-9BF9-5B1160F27224"))
+                ICanvasSwapChainFactoryNative : public IInspectable
+                {
+                public:
+                    IFACEMETHOD(CreateForHwnd)(
+                        ICanvasResourceCreator* resourceCreator,
+                        HWND hwnd,
+                        uint32_t width,
+                        uint32_t height,
+                        float dpi,
+                        ABI::Windows::Graphics::DirectX::DirectXPixelFormat format,
+                        int32_t bufferCount,
+                        ICanvasSwapChain** canvasSwapChain) = 0;
+                };
             }
         }
     }
@@ -342,6 +362,42 @@ namespace Microsoft
                 __abi_ThrowIfFailed(nativeWrapper->GetNativeResource(reinterpret_cast<abi::ICanvasDevice*>(device), dpi, IID_PPV_ARGS(&resource)));
 
                 return resource;
+            }
+
+            inline CanvasSwapChain^ CreateCanvasSwapChainForHwnd(
+                ICanvasResourceCreator^ resourceCreator,
+                HWND hwnd,
+                uint32_t width,
+                uint32_t height,
+                float dpi,
+                ABI::Windows::Graphics::DirectX::DirectXPixelFormat format,
+                int32_t bufferCount)
+            {
+                using namespace Microsoft::WRL;
+                namespace abi = ABI::Microsoft::Graphics::Canvas;
+
+                ComPtr<abi::ICanvasSwapChainFactoryNative> factory;
+                __abi_ThrowIfFailed(::Windows::Foundation::GetActivationFactory(
+                    reinterpret_cast<HSTRING>(CanvasSwapChain::typeid->FullName),
+                    &factory));
+
+                // We can't use a ComPtr<abi::ICanvasSwapChain> here, as the forward declaration of that
+                // ABI type in this header doesn't have all necessary info to enable use with ComPtr<T>.
+                // That can result in build failures in projects that don't import the other Win2D header
+                // before this one. To work around that, we can just use a CanvasSwapChain^ value directly,
+                // reinterpret to the ABI type to assign to it from CreateForHwnd, and then just return it.
+                CanvasSwapChain^ canvasSwapChain;
+                __abi_ThrowIfFailed(factory->CreateForHwnd(
+                    reinterpret_cast<abi::ICanvasResourceCreator*>(resourceCreator),
+                    hwnd,
+                    width,
+                    height,
+                    dpi,
+                    format,
+                    bufferCount,
+                    reinterpret_cast<abi::ICanvasSwapChain**>(&canvasSwapChain)));
+
+                return canvasSwapChain;
             }
         }
     }

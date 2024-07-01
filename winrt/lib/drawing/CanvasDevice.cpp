@@ -1379,6 +1379,27 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             });
     }
 
+    ComPtr<IDXGISwapChain1> CanvasDevice::CreateSwapChainForHwnd(
+        HWND hwnd,
+        int32_t widthInPixels,
+        int32_t heightInPixels,
+        DirectXPixelFormat format,
+        int32_t bufferCount,
+        CanvasAlphaMode alphaMode)
+    {
+        return CreateSwapChain(widthInPixels, heightInPixels, format, bufferCount, alphaMode,
+            [hwnd](IDXGIFactory2* factory, IDXGIDevice3* device, DXGI_SWAP_CHAIN_DESC1* desc, IDXGISwapChain1** swapChain)
+            {
+                return factory->CreateSwapChainForHwnd(
+                    device,
+                    hwnd,
+                    desc,
+                    nullptr,    // pFullscreenDesc
+                    nullptr,    // restrictToOutput
+                    swapChain);
+            });
+    }
+
 
     ComPtr<ID2D1CommandList> CanvasDevice::CreateCommandList()
     {

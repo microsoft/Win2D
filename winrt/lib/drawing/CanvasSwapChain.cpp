@@ -162,6 +162,44 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 ThrowIfFailed(newCanvasSwapChain.CopyTo(swapChain));
             });
     }
+
+    //
+    // ICanvasSwapChainFactoryNative.
+    //
+    // This method is attached to CanvasSwapChainFactory, but only exposed through the
+    // interop interface ICanvasSwapChainFactoryNative (the method is not a WinRT API).
+
+    IFACEMETHODIMP CanvasSwapChainFactory::CreateForHwnd(
+        ICanvasResourceCreator* resourceCreator,
+        HWND hwnd,
+        uint32_t width,
+        uint32_t height,
+        float dpi,
+        DirectXPixelFormat format,
+        int32_t bufferCount,
+        ICanvasSwapChain** canvasSwapChain)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckInPointer(resourceCreator);
+                CheckAndClearOutPointer(canvasSwapChain);
+
+                ComPtr<ICanvasDevice> device;
+                ThrowIfFailed(resourceCreator->get_Device(&device));
+
+                auto newCanvasSwapChain = CanvasSwapChain::CreateNew(
+                    device.Get(),
+                    hwnd,
+                    width,
+                    height,
+                    dpi,
+                    format,
+                    bufferCount);
+
+                ThrowIfFailed(newCanvasSwapChain.CopyTo(canvasSwapChain));
+            });
+    }
     
     CanvasSwapChain::CanvasSwapChain(
         ICanvasDevice* device,
@@ -805,6 +843,35 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             coreWindow,
             SizeDipsToPixels(width, dpi),
             SizeDipsToPixels(height, dpi),
+            format,
+            bufferCount,
+            CanvasAlphaMode::Ignore);
+
+        auto canvasSwapChain = Make<CanvasSwapChain>(
+            device,
+            dxgiSwapChain.Get(),
+            dpi,
+            /* isTransformMatrixSupported */ false);
+        CheckMakeResult(canvasSwapChain);
+
+        return canvasSwapChain;
+    }
+
+    ComPtr<CanvasSwapChain> CanvasSwapChain::CreateNew(
+        ICanvasDevice* device,
+        HWND hwnd,
+        uint32_t width,
+        uint32_t height,
+        float dpi,
+        DirectXPixelFormat format,
+        int32_t bufferCount)
+    {
+        CheckInPointer(device);
+
+        auto dxgiSwapChain = As<ICanvasDeviceInternal>(device)->CreateSwapChainForHwnd(
+            hwnd,
+            width,
+            height,
             format,
             bufferCount,
             CanvasAlphaMode::Ignore);

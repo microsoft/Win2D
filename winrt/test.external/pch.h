@@ -37,6 +37,8 @@
 #include <ComArray.h>
 #include <collection.h>
 
+#undef GetCurrentTime // Fixes a conflict in a WinRT header (caused by Win32 APIs from Windows.h)
+#undef GetGlyphIndices
 #include <windows.foundation.h>
 
 #include <windowsnumerics.h>
