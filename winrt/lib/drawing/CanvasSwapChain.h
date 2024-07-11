@@ -72,6 +72,24 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             int32_t bufferCount,
             ICanvasSwapChain** swapChain);
 
+        IFACEMETHOD(CreateForWindowIdWithDpi)(
+            ICanvasResourceCreator* resourceCreator,
+            WindowId windowId,
+            float width,
+            float height,
+            float dpi,
+            ICanvasSwapChain** swapChain);
+
+        IFACEMETHOD(CreateForWindowIdWithAllOptions)(
+            ICanvasResourceCreator* resourceCreator,
+            WindowId windowId,
+            float width,
+            float height,
+            float dpi,
+            DirectXPixelFormat format,
+            int32_t bufferCount,
+            ICanvasSwapChain** swapChain);
+
         //
         // ICanvasSwapChainFactoryNative
         //

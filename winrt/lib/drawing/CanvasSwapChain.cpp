@@ -163,6 +163,62 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             });
     }
 
+    IFACEMETHODIMP CanvasSwapChainFactory::CreateForWindowIdWithDpi(
+        ICanvasResourceCreator* resourceCreator,
+        WindowId windowId,
+        float width,
+        float height,
+        float dpi,
+        ICanvasSwapChain** swapChain)
+    {
+        return CreateForWindowIdWithAllOptions(
+            resourceCreator,
+            windowId,
+            width,
+            height,
+            dpi,
+            CanvasSwapChain::DefaultPixelFormat,
+            CanvasSwapChain::DefaultBufferCount,
+            swapChain);
+    }
+
+    IFACEMETHODIMP CanvasSwapChainFactory::CreateForWindowIdWithAllOptions(
+        ICanvasResourceCreator* resourceCreator,
+        WindowId windowId,
+        float width,
+        float height,
+        float dpi,
+        DirectXPixelFormat format,
+        int32_t bufferCount,
+        ICanvasSwapChain** swapChain)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckInPointer(resourceCreator);
+                CheckAndClearOutPointer(swapChain);
+
+                HWND hwnd;
+                ThrowIfFailed(GetWindowFromWindowId(windowId, &hwnd));
+
+                CheckInPointer(hwnd);
+
+                ComPtr<ICanvasDevice> device;
+                ThrowIfFailed(resourceCreator->get_Device(&device));
+
+                auto newCanvasSwapChain = CanvasSwapChain::CreateNew(
+                    device.Get(),
+                    hwnd,
+                    SizeDipsToPixels(width, dpi),
+                    SizeDipsToPixels(height, dpi),
+                    dpi,
+                    format,
+                    bufferCount);
+
+                ThrowIfFailed(newCanvasSwapChain.CopyTo(swapChain));
+            });
+    }
+
     //
     // ICanvasSwapChainFactoryNative.
     //

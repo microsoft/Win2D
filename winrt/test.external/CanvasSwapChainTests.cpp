@@ -206,6 +206,103 @@ TEST_CLASS(CanvasSwapChainTests)
         DestroyWindow(hwnd);
     }
 
+    TEST_METHOD(CanvasSwapChain_CreateForWindowId)
+    {
+        HWND hwnd = CreateBlankTestWindow(L"CanvasSwapChain_CreateForWindowId");
+
+        auto canvasDevice = ref new CanvasDevice();
+
+        auto expectedWidthInPixels = 1280;
+        auto expectedHeightInPixels = 720;
+        auto expectedDpi = 144.0f;
+        auto expectedFormat = DXGI_FORMAT_B8G8R8A8_UNORM;
+        auto expectedBufferCount = 2;
+        auto expectedAlphaMode = DXGI_ALPHA_MODE_IGNORE;
+
+        Windows::UI::WindowId windowId { };
+        windowId.Value = (UINT64)hwnd;
+
+        CanvasSwapChain^ resultSwapChain = CanvasSwapChain::CreateForWindowId(
+            canvasDevice,
+            windowId,
+            (UINT)expectedWidthInPixels,
+            (UINT)expectedHeightInPixels,
+            expectedDpi);
+
+        Size resultSize = resultSwapChain->Size;
+
+        Assert::AreEqual(expectedWidthInPixels * 96.0f / expectedDpi, resultSize.Width);
+        Assert::AreEqual(expectedHeightInPixels * 96.0f / expectedDpi, resultSize.Height);
+
+        auto resultDxgiSwapChain = GetWrappedResource<IDXGISwapChain1, CanvasSwapChain>(canvasDevice, resultSwapChain, 144.0f);
+
+        HWND resultHwnd;
+        ThrowIfFailed(resultDxgiSwapChain->GetHwnd(&resultHwnd));
+
+        Assert::AreEqual((void*)hwnd, (void*)resultHwnd);
+
+        DXGI_SWAP_CHAIN_DESC1 resultDesc1;
+        ThrowIfFailed(resultDxgiSwapChain->GetDesc1(&resultDesc1));
+
+        Assert::AreEqual((UINT)expectedWidthInPixels, resultDesc1.Width);
+        Assert::AreEqual((UINT)expectedHeightInPixels, resultDesc1.Height);
+        Assert::AreEqual((UINT)expectedFormat, (UINT)resultDesc1.Format);
+        Assert::AreEqual((UINT)expectedBufferCount, resultDesc1.BufferCount);
+        Assert::AreEqual((UINT)expectedAlphaMode, (UINT)resultDesc1.AlphaMode);
+
+        DestroyWindow(hwnd);
+    }
+
+    TEST_METHOD(CanvasSwapChain_CreateForWindowId_WithAllOptions)
+    {
+        HWND hwnd = CreateBlankTestWindow(L"CanvasSwapChain_CreateForWindowId_WithAllOptions");
+
+
+        auto canvasDevice = ref new CanvasDevice();
+
+        auto expectedWidthInPixels = 1280;
+        auto expectedHeightInPixels = 720;
+        auto expectedDpi = 144.0f;
+        auto expectedFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
+        auto expectedBufferCount = 2;
+        auto expectedAlphaMode = DXGI_ALPHA_MODE_IGNORE;
+
+        Windows::UI::WindowId windowId { };
+        windowId.Value = (UINT64)hwnd;
+
+        CanvasSwapChain^ resultSwapChain = CanvasSwapChain::CreateForWindowId(
+            canvasDevice,
+            windowId,
+            (UINT)expectedWidthInPixels,
+            (UINT)expectedHeightInPixels,
+            expectedDpi,
+            (DirectXPixelFormat)expectedFormat,
+            expectedBufferCount);
+
+        Size resultSize = resultSwapChain->Size;
+
+        Assert::AreEqual(expectedWidthInPixels * 96.0f / expectedDpi, resultSize.Width);
+        Assert::AreEqual(expectedHeightInPixels * 96.0f / expectedDpi, resultSize.Height);
+
+        auto resultDxgiSwapChain = GetWrappedResource<IDXGISwapChain1, CanvasSwapChain>(canvasDevice, resultSwapChain, 144.0f);
+
+        HWND resultHwnd;
+        ThrowIfFailed(resultDxgiSwapChain->GetHwnd(&resultHwnd));
+
+        Assert::AreEqual((void*)hwnd, (void*)resultHwnd);
+
+        DXGI_SWAP_CHAIN_DESC1 resultDesc1;
+        ThrowIfFailed(resultDxgiSwapChain->GetDesc1(&resultDesc1));
+
+        Assert::AreEqual((UINT)expectedWidthInPixels, resultDesc1.Width);
+        Assert::AreEqual((UINT)expectedHeightInPixels, resultDesc1.Height);
+        Assert::AreEqual((UINT)expectedFormat, (UINT)resultDesc1.Format);
+        Assert::AreEqual((UINT)expectedBufferCount, resultDesc1.BufferCount);
+        Assert::AreEqual((UINT)expectedAlphaMode, (UINT)resultDesc1.AlphaMode);
+
+        DestroyWindow(hwnd);
+    }
+
     TEST_METHOD(CanvasSwapChain_DrawOperation)
     {
         auto canvasDevice = ref new CanvasDevice();

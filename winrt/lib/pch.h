@@ -100,6 +100,8 @@
 #include <windows.graphics.display.h>
 #include <windows.graphics.interop.h>
 
+#include <Microsoft.UI.Interop.h>
+
 #if WINVER > _WIN32_WINNT_WINBLUE
 #include <windows.foundation.metadata.h>
 #include <microsoft.ui.composition.h>

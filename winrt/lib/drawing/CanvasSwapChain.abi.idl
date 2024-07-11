@@ -118,6 +118,26 @@ namespace Microsoft.Graphics.Canvas
         // Note: no alpha mode can be specified for CoreWindow swap chains,
         // since CanvasAlphaMode::Ignore is the only valid value (in the absence
         // of DXGI_SWAP_CHAIN_FLAG_FOREGROUND_LAYER support).
+
+        [overload("CreateForWindowId")]
+        HRESULT CreateForWindowIdWithDpi(
+            [in] ICanvasResourceCreator* resourceCreator,
+            [in] Microsoft.UI.WindowId windowId,
+            [in] float width,
+            [in] float height,
+            [in] float dpi,
+            [out, retval] CanvasSwapChain** swapChain);
+
+        [overload("CreateForWindowId")]
+        HRESULT CreateForWindowIdWithAllOptions(
+            [in] ICanvasResourceCreator* resourceCreator,
+            [in] Microsoft.UI.WindowId windowId,
+            [in] float width,
+            [in] float height,
+            [in] float dpi,
+            [in] DIRECTX_PIXEL_FORMAT format,
+            [in] INT32 bufferCount,
+            [out, retval] CanvasSwapChain** swapChain);
     }
 
     [version(VERSION), uuid(882E3C3A-5725-409C-9E76-F80B3BACF1B4), exclusiveto(CanvasSwapChain)]
