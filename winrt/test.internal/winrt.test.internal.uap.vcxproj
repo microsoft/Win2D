@@ -87,7 +87,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)xaml\CanvasControlTestAdapter.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)xaml\CanvasSwapChainPanelTestAdapter.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)xaml\ControlFixtures.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)xaml\MockCoreIndependentInputSource.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)xaml\MockDispatcher.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)xaml\MockRecreatableDeviceManager.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockAsyncAction.h" />

@@ -572,7 +572,6 @@ TEST_CLASS(CanvasVirtualControlTests)
         f.Adapter->GetCurrentMockWindow()->SetVisible(true);
     }
 
-#ifdef CANVAS_ANIMATED_CONTROL_IS_ENABLED
     TEST_METHOD_EX(CanvasVirtualControl_WhenDeviceLostDuringRegionsInvalidated_ImageIsRecreated)
     {
         Fixture f;
@@ -604,7 +603,6 @@ TEST_CLASS(CanvasVirtualControlTests)
         onRegionsInvalidated.SetExpectedCalls(1);
         replacementImageSource->RaiseRegionsInvalidated(std::vector<Rect> { anyRegion }, anyRegion);
     }
-#endif
 
 //Test removed, as DPI now comes from the XamlRoot instead of the adapter
 #ifndef WINUI3
@@ -632,7 +630,6 @@ TEST_CLASS(CanvasVirtualControlTests)
     }
 #endif
 
-#ifdef CANVAS_ANIMATED_CONTROL_IS_ENABLED
     TEST_METHOD_EX(CanvasVirtualControl_WhenChangedIsCalledOnBackgroundThread_ChangedImplIsDeferred)
     {
         Fixture f;
@@ -653,5 +650,4 @@ TEST_CLASS(CanvasVirtualControlTests)
         f.Adapter->SetHasUIThreadAccess(true);
         f.Adapter->TickUiThread();
     }
-#endif
 };

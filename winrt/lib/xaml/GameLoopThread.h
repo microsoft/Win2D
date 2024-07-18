@@ -4,8 +4,6 @@
 
 #pragma once
 
-#ifdef CANVAS_ANIMATED_CONTROL_IS_ENABLED
-
 using namespace ABI::Windows::Foundation;
 using namespace ABI::Windows::System::Threading;
 using namespace ABI::Windows::UI::Core;
@@ -18,12 +16,10 @@ public:
     virtual ~IGameLoopThread() = default;
     virtual void StartDispatcher() = 0;
     virtual void StopDispatcher() = 0;
-    virtual ComPtr<IAsyncAction> RunAsync(IDispatchedHandler* handler) = 0;
+    virtual ComPtr<IAsyncAction> RunAsync(IDispatcherQueueHandler* handler) = 0;
     virtual bool HasThreadAccess() = 0;
 };
 
 class ICanvasGameLoopClient;
 
 std::unique_ptr<IGameLoopThread> CreateGameLoopThread(ISwapChainPanel* swapChainPanel, ICanvasGameLoopClient* client);
-
-#endif

@@ -2,8 +2,6 @@
 //
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
-#ifdef CANVAS_ANIMATED_CONTROL_IS_ENABLED
-
 namespace Microsoft.Graphics.Canvas.UI
 {
     [version(VERSION)]
@@ -224,8 +222,8 @@ namespace Microsoft.Graphics.Canvas.UI.Xaml
         // CreateCoreIndpendentInputSource.
         //
         HRESULT CreateCoreIndependentInputSource(
-            [in] Windows.UI.Core.CoreInputDeviceTypes deviceTypes,
-            [out, retval] Windows.UI.Core.CoreIndependentInputSource** returnValue);
+            [in] Microsoft.UI.Input.InputPointerSourceDeviceKinds deviceTypes,
+            [out, retval] Microsoft.UI.Input.InputPointerSource** returnValue);
 
         //
         // Removes the control from the visual tree.
@@ -247,7 +245,7 @@ namespace Microsoft.Graphics.Canvas.UI.Xaml
         //
 
         HRESULT RunOnGameLoopThreadAsync(
-            [in] Windows.UI.Core.DispatchedHandler* agileCallback,
+            [in] Microsoft.UI.Dispatching.DispatcherQueueHandler* agileCallback,
             [out][retval] Windows.Foundation.IAsyncAction** asyncAction);
 
         //
@@ -289,5 +287,3 @@ namespace Microsoft.Graphics.Canvas.UI.Xaml
     }
 
 }
-
-#endif

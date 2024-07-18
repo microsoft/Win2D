@@ -43,7 +43,7 @@
       <AdditionalIncludeDirectories>$(EtwDirectory);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <CompileAsWinRT>false</CompileAsWinRT>
       <WarningLevel>Level4</WarningLevel>
-      <PreprocessorDefinitions>UNICODE;_WINDLL;%(PreprocessorDefinitions);CANVAS_ANIMATED_CONTROL_IS_DISABLED;WINUI3;ENABLE_WINRT_EXPERIMENTAL_TYPES=1;WRT_EXPORT</PreprocessorDefinitions>
+      <PreprocessorDefinitions>UNICODE;_WINDLL;%(PreprocessorDefinitions);WINUI3;ENABLE_WINRT_EXPERIMENTAL_TYPES=1;WRT_EXPORT</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

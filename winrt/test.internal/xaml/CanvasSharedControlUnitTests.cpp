@@ -4,7 +4,6 @@
 
 #include "pch.h"
 
-#ifdef CANVAS_ANIMATED_CONTROL_IS_ENABLED
 
     #define TEST_SHARED_CONTROL_BEHAVIOR(NAME)      \
     TEST_METHOD_EX(CanvasControl_##NAME)            \
@@ -17,18 +16,6 @@
     }                                               \
     template<typename TRAITS>                       \
     void NAME()
-
-#else
-
-#define TEST_SHARED_CONTROL_BEHAVIOR(NAME)          \
-    TEST_METHOD_EX(CanvasControl_##NAME)            \
-    {                                               \
-        NAME<CanvasControlTraits>();                \
-    }                                               \
-    template<typename TRAITS>                       \
-    void NAME()
-
-#endif
 
 TEST_CLASS(CanvasSharedControlTests_ClearColor)
 {
@@ -304,7 +291,6 @@ TEST_CLASS(CanvasSharedControlTests_InteractionWithRecreatableDeviceManager)
             Adapter->CreateCanvasImageSourceMethod.AllowAnyCall();
         }
 
-#ifdef CANVAS_ANIMATED_CONTROL_IS_ENABLED
         template<>
         void PrepareAdapter<CanvasAnimatedControlTraits>()
         {
@@ -325,7 +311,6 @@ TEST_CLASS(CanvasSharedControlTests_InteractionWithRecreatableDeviceManager)
                     return mockSwapChain;
                 });
         }
-#endif
         void EnsureChangedCallback()
         {
             EnsureChangedCallbackImpl<TRAITS>();
@@ -336,13 +321,11 @@ TEST_CLASS(CanvasSharedControlTests_InteractionWithRecreatableDeviceManager)
         template<typename T>
         void EnsureChangedCallbackImpl() {}
 
-#ifdef CANVAS_ANIMATED_CONTROL_IS_ENABLED
         template<>
         void EnsureChangedCallbackImpl<CanvasAnimatedControlTraits>()
         {
             Adapter->DoChanged();
         }
-#endif
 
     };
     
@@ -609,13 +592,11 @@ inline void DeviceCreationFixture<CanvasControlTraits>::EnsureDevice()
     RenderSingleFrame();
 }
 
-#ifdef CANVAS_ANIMATED_CONTROL_IS_ENABLED
 inline void DeviceCreationFixture<CanvasAnimatedControlTraits>::EnsureDevice()
 {
     Adapter->Tick();
     Adapter->DoChanged();
 }
-#endif
 
 TEST_CLASS(CanvasSharedControlTests_DeviceApis)
 {    

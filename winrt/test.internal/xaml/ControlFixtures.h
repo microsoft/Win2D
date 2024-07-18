@@ -149,8 +149,6 @@ inline void ClearColorFixture<CanvasControlTraits>::RenderAnyNumberOfFrames()
     }
 }
 
-#ifdef CANVAS_ANIMATED_CONTROL_IS_ENABLED
-
 std::shared_ptr<CanvasAnimatedControlTestAdapter> CreateAnimatedControlTestAdapter(
     ComPtr<MockD2DDeviceContext> const& deviceContext,
     ComPtr<StubD2DDevice> const& mockD2DDevice,
@@ -196,5 +194,3 @@ inline void ClearColorFixture<CanvasAnimatedControlTraits>::RenderAnyNumberOfFra
         Adapter->Tick();        
     }            
 }
-
-#endif

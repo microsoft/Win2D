@@ -6,11 +6,13 @@
 
 #ifdef WINUI3
 
-class MockDispatcherQueue : public RuntimeClass<ABI::Microsoft::UI::Dispatching::IDispatcherQueue, ABI::Microsoft::UI::Dispatching::IDispatcherQueue2>
+class MockDispatcherQueue : public RuntimeClass<ABI::Microsoft::UI::Dispatching::IDispatcherQueue, ABI::Microsoft::UI::Dispatching::IDispatcherQueue2, ABI::Microsoft::UI::Dispatching::IDispatcherQueue3>
 {
 public:
     CALL_COUNTER_WITH_MOCK(TryEnqueueWithPriorityMethod, HRESULT(ABI::Microsoft::UI::Dispatching::DispatcherQueuePriority, ABI::Microsoft::UI::Dispatching::IDispatcherQueueHandler*, boolean*));
     CALL_COUNTER_WITH_MOCK(get_HasThreadAccessMethod, HRESULT(boolean*));
+    CALL_COUNTER_WITH_MOCK(RunEventLoopMethod, HRESULT());
+    CALL_COUNTER_WITH_MOCK(EnqueueEventLoopExitMethod, HRESULT());
 
     virtual IFACEMETHODIMP get_HasThreadAccess(boolean* value) override
     {
@@ -66,6 +68,55 @@ public:
         Assert::Fail(L"Unexpected call to IDispatcherQueue::remove_ShutdownCompleted");
         return E_UNEXPECTED;
     }
+
+    // IDispatcherQueue3
+
+    virtual IFACEMETHODIMP RunEventLoop() override
+    {
+        return RunEventLoopMethod.WasCalled();
+    }
+
+    virtual IFACEMETHODIMP EnqueueEventLoopExit() override
+    {
+        return EnqueueEventLoopExitMethod.WasCalled();
+    }
+
+    virtual IFACEMETHODIMP EnsureSystemDispatcherQueue() override
+    {
+        Assert::Fail(L"Unexpected call to IDispatcherQueue3::EnsureSystemDispatcherQueue");
+        return E_UNEXPECTED;
+    }
+
+    virtual IFACEMETHODIMP RunEventLoopWithOptions(ABI::Microsoft::UI::Dispatching::DispatcherRunOptions, ABI::Microsoft::UI::Dispatching::IDispatcherExitDeferral*) override
+    {
+        Assert::Fail(L"Unexpected call to IDispatcherQueue3::RunEventLoopWithOptions");
+        return E_UNEXPECTED;
+    }
+
+    virtual IFACEMETHODIMP add_FrameworkShutdownStarting(ABI::Windows::Foundation::__FITypedEventHandler_2_Microsoft__CUI__CDispatching__CDispatcherQueue_Microsoft__CUI__CDispatching__CDispatcherQueueShutdownStartingEventArgs_t*, EventRegistrationToken*) override
+    {
+        Assert::Fail(L"Unexpected call to IDispatcherQueue3::add_FrameworkShutdownStarting");
+        return E_UNEXPECTED;
+    }
+
+    virtual IFACEMETHODIMP remove_FrameworkShutdownStarting(EventRegistrationToken) override
+    {
+        Assert::Fail(L"Unexpected call to IDispatcherQueue3::remove_FrameworkShutdownStarting");
+        return E_UNEXPECTED;
+    }
+
+    virtual IFACEMETHODIMP add_FrameworkShutdownCompleted(ABI::Windows::Foundation::__FITypedEventHandler_2_Microsoft__CUI__CDispatching__CDispatcherQueue_IInspectable_t*, EventRegistrationToken*) override
+    {
+        Assert::Fail(L"Unexpected call to IDispatcherQueue3::remove_FrameworkShutdownCompleted");
+        return E_UNEXPECTED;
+    }
+
+    virtual IFACEMETHODIMP remove_FrameworkShutdownCompleted(EventRegistrationToken) override
+    {
+        Assert::Fail(L"Unexpected call to IDispatcherQueue3::remove_FrameworkShutdownCompleted");
+        return E_UNEXPECTED;
+    }
+
 };
 
 #else

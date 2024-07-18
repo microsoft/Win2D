@@ -3,9 +3,6 @@
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
 #include "pch.h"
-
-#ifdef CANVAS_ANIMATED_CONTROL_IS_ENABLED
-
 #include "CanvasAnimatedControl.h"
 #include "CanvasGameLoop.h"
 #include "GameLoopThread.h"
@@ -152,5 +149,3 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     }
 
 } } } } } }
-
-#endif

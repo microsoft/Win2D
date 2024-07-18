@@ -12,11 +12,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     {
         InspectableClass(InterfaceName_Windows_Foundation_IAsyncAction, BaseTrust);
 
-        ComPtr<IDispatchedHandler> m_dispatchedHandler;
+        ComPtr<ABI::Microsoft::UI::Dispatching::IDispatcherQueueHandler> m_dispatcherQueueHandler;
 
     public:
-        AnimatedControlAsyncAction(IDispatchedHandler* callback)
-            : m_dispatchedHandler(callback)
+        AnimatedControlAsyncAction(ABI::Microsoft::UI::Dispatching::IDispatcherQueueHandler* callback)
+            : m_dispatcherQueueHandler(callback)
         {
             Start();
         }
@@ -35,7 +35,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             // state (eg we haven't been canceled already).
             //
             if (!IsTerminalState())
-                result.ActionResult = m_dispatchedHandler->Invoke();
+                result.ActionResult = m_dispatcherQueueHandler->Invoke();
 
             //
             // Even though the CanvasControl will handle device lost,
@@ -62,6 +62,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             // subsequent async actions.
             //
             result.CompletedHandlerResult = FireCompletion();
+
             return result;
         }
 

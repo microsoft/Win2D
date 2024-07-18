@@ -4,8 +4,6 @@
 
 #include "pch.h"
 
-#ifdef CANVAS_ANIMATED_CONTROL_IS_ENABLED
-
 #include "CanvasGameLoop.h"
 
 using namespace ::ABI::Microsoft::Graphics::Canvas;
@@ -424,8 +422,8 @@ IFACEMETHODIMP CanvasAnimatedControl::ResetElapsedTime()
 }
 
 IFACEMETHODIMP CanvasAnimatedControl::CreateCoreIndependentInputSource(
-    CoreInputDeviceTypes deviceTypes,
-    ICoreInputSourceBase** returnValue)
+    InputPointerSourceDeviceKinds deviceTypes,
+    IInputPointerSource** returnValue)
 {
     return ExceptionBoundary(
         [&]
@@ -490,7 +488,7 @@ IFACEMETHODIMP CanvasAnimatedControl::get_HasGameLoopThreadAccess(boolean* value
 }
 
 IFACEMETHODIMP CanvasAnimatedControl::RunOnGameLoopThreadAsync(
-    IDispatchedHandler* callback,
+    IDispatcherQueueHandler* callback,
     IAsyncAction** asyncAction)
 {
     return ExceptionBoundary(
@@ -713,19 +711,19 @@ void CanvasAnimatedControl::Changed(ChangeReason reason)
     // IWindow will not be available in Xaml island scenarios, so prefer
     // IDependencyObject for getting the dispatcher.
     //
-    ComPtr<ICoreDispatcher> dispatcher;
+    ComPtr<IDispatcherQueue> dispatcherQueue;
     auto control = GetControl();
     if (auto dependencyObject = MaybeAs<IDependencyObject>(control))
     {
-        ThrowIfFailed(dependencyObject->get_Dispatcher(&dispatcher));
+        ThrowIfFailed(dependencyObject->get_DispatcherQueue(&dispatcherQueue));
     }
     else
     {
-        ThrowIfFailed(GetWindow()->get_Dispatcher(&dispatcher));
+        ThrowIfFailed(GetWindow()->get_DispatcherQueue(&dispatcherQueue));
     }
 
     WeakRef weakSelf = AsWeak(this);
-    auto callback = Callback<AddFtmBase<IDispatchedHandler>::Type>(
+    auto callback = Callback<AddFtmBase<IDispatcherQueueHandler>::Type>(
         [weakSelf]() mutable
         {
             return ExceptionBoundary(
@@ -739,8 +737,8 @@ void CanvasAnimatedControl::Changed(ChangeReason reason)
                 });
         });
 
-    ComPtr<IAsyncAction> asyncAction;
-    ThrowIfFailed(dispatcher->RunAsync(CoreDispatcherPriority_Normal, callback.Get(), &asyncAction));
+    boolean result;
+    ThrowIfFailed(dispatcherQueue->TryEnqueueWithPriority(DispatcherQueuePriority_Normal, callback.Get(), &result));
 }
 
 void CanvasAnimatedControl::ChangedImpl()
@@ -1317,5 +1315,3 @@ CanvasTimingInformation CanvasAnimatedControl::GetTimingInformationFromTimer()
 ActivatableClassWithFactory(CanvasAnimatedUpdateEventArgs, CanvasAnimatedUpdateEventArgsFactory);
 ActivatableClassWithFactory(CanvasAnimatedDrawEventArgs, CanvasAnimatedDrawEventArgsFactory);
 ActivatableClassWithFactory(CanvasAnimatedControl, CanvasAnimatedControlFactory);
-
-#endif

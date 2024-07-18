@@ -64,10 +64,7 @@ cpp_quote("#endif")
 #include "images\CanvasCommandList.abi.idl"
 #include "printing\CanvasPrintDocument.abi.idl"
 
-#ifdef CANVAS_ANIMATED_CONTROL_IS_ENABLED
 #include "xaml\CanvasAnimatedControl.abi.idl"
-#endif 
-
 #include "xaml\CanvasControl.abi.idl"
 #include "xaml\CanvasSwapChainPanel.abi.idl"
 #include "xaml\CanvasVirtualImageSource.abi.idl"

@@ -145,7 +145,6 @@ namespace Microsoft
                 return value;
             }            
 
-#ifdef CANVAS_ANIMATED_CONTROL_IS_ENABLED
             template<>
             inline std::wstring ToString<CanvasTimingInformation>(CanvasTimingInformation const& value)
             {
@@ -158,7 +157,7 @@ namespace Microsoft
 
                 return buf;
             }
-#endif
+            
             inline std::wstring PointerToString(const wchar_t* name, void* value)
             {
                 wchar_t buf[64];
@@ -1002,16 +1001,6 @@ namespace Microsoft
                 END_ENUM(D2D1_COMPOSITE_MODE);
             }
 
-#ifdef CANVAS_ANIMATED_CONTROL_IS_ENABLED
-            ENUM_TO_STRING(ABI::Windows::UI::Core::CoreDispatcherPriority)
-            {
-                ENUM_VALUE(ABI::Windows::UI::Core::CoreDispatcherPriority_Idle);
-                ENUM_VALUE(ABI::Windows::UI::Core::CoreDispatcherPriority_Low);
-                ENUM_VALUE(ABI::Windows::UI::Core::CoreDispatcherPriority_Normal);
-                ENUM_VALUE(ABI::Windows::UI::Core::CoreDispatcherPriority_High);
-                END_ENUM(ABI::Windows::UI::Core::CoreDispatcherPriority);
-            }
-#else
             ENUM_TO_STRING(ABI::Microsoft::UI::Dispatching::DispatcherQueuePriority)
             {
                 ENUM_VALUE(ABI::Microsoft::UI::Dispatching::DispatcherQueuePriority_Low);
@@ -1019,7 +1008,7 @@ namespace Microsoft
                 ENUM_VALUE(ABI::Microsoft::UI::Dispatching::DispatcherQueuePriority_High);
                 END_ENUM(ABI::Microsoft::UI::Dispatching::DispatcherQueuePriority);
             }
-#endif
+
             ENUM_TO_STRING(D2D1_COMBINE_MODE)
             {
                 ENUM_VALUE(D2D1_COMBINE_MODE_UNION);
@@ -1913,7 +1902,6 @@ namespace Microsoft
             return a.Width == b.Width && a.Height == b.Height;
         }
 
-#if CANVAS_ANIMATED_CONTROL_IS_ENABLED
         inline bool operator==(CanvasTimingInformation const& a, CanvasTimingInformation const& b)
         {
             return a.UpdateCount == b.UpdateCount &&
@@ -1921,7 +1909,6 @@ namespace Microsoft
                    a.ElapsedTime.Duration == b.ElapsedTime.Duration &&
                    a.IsRunningSlowly == b.IsRunningSlowly;
         }
-#endif
 
         inline bool operator==(ABI::Windows::Foundation::Point const& a, ABI::Windows::Foundation::Point const& b)
         {

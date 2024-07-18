@@ -5,8 +5,6 @@
 #include "pch.h"
 #include "CanvasGameLoop.h"
 
-#ifdef CANVAS_ANIMATED_CONTROL_IS_ENABLED
-
 using namespace ::ABI::Microsoft::Graphics::Canvas;
 using namespace ::ABI::Microsoft::Graphics::Canvas::UI;
 using namespace ::ABI::Microsoft::Graphics::Canvas::UI::Xaml;
@@ -18,7 +16,7 @@ CanvasGameLoop::CanvasGameLoop(
     : m_client(client)
     , m_gameLoopThread(std::move(gameLoopThread))
 { 
-    m_tickHandler = Callback<AddFtmBase<IDispatchedHandler>::Type>(
+    m_tickHandler = Callback<AddFtmBase<IDispatcherQueueHandler>::Type>(
         [this]
         {
             return ExceptionBoundary([&] { Tick(); });
@@ -124,5 +122,3 @@ bool CanvasGameLoop::HasThreadAccess()
 {
     return m_gameLoopThread->HasThreadAccess();
 }
-
-#endif

@@ -157,18 +157,17 @@ private:
         // exceptions are bubbled out as expected - so if Tick() throws we know
         // that in real life RoReportUnhandledError would have been called.
         //
-        bool unhandledError = false;
+        // Update for WinUI3 - This is no longer the case, as DispatcherQueue returns void
+        // instead of an IAsyncAction. CanvasAnimatedControl responded by now wrapping that
+        // IAsyncAction inside the DispatcherQueueHandler that it hands to the DispatcherQueue.
+        // As a result, it is opaque from here whether the error comes from the operation or
+        // the Completion handler. If the IDispatcherQueueHandler succeeded, we get that HRESULT.
+        // If not, we get the Completion handler HRESULT.
+        // 
+
         if (FAILED(actionResult))
         {
-            ComPtr<IAsyncActionCompletedHandler> handler;
-            ThrowIfFailed(handlerAndAction.second->get_Completed(&handler));
-            if (!handler)
-                unhandledError = true;
-        }
-
-        handlerAndAction.second->SetResult(actionResult);
-
-        if (unhandledError)
             ThrowHR(actionResult);
+        }
     }
 };

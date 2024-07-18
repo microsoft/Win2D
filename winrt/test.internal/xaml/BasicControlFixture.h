@@ -163,17 +163,13 @@ private:
     template<typename T>
     void EnsureChangedCallbackImpl() {}
 
-#ifdef CANVAS_ANIMATED_CONTROL_IS_ENABLED
     template<>
     void EnsureChangedCallbackImpl<CanvasAnimatedControlTraits>()
     {
         Adapter->DoChanged();
     }
-#endif
 
 };
-
-#ifdef CANVAS_ANIMATED_CONTROL_IS_ENABLED
 
 inline void BasicControlWithDrawFixture<CanvasAnimatedControlTraits>::RenderSingleFrame()
 {
@@ -294,5 +290,3 @@ struct ControlFixture<CanvasAnimatedControlTraits> : public Animated_BasicContro
 };
 
 typedef ControlFixture<CanvasAnimatedControlTraits> CanvasAnimatedControlFixture;
-    
-#endif

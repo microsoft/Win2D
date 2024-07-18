@@ -78,7 +78,6 @@ public:
 #endif
     }
 
-#ifdef CANVAS_ANIMATED_CONTROL_IS_ENABLED
     void TickUiThread()
     {
         m_uiThreadDispatcher->TickAll();
@@ -88,7 +87,6 @@ public:
     {
         return m_uiThreadDispatcher->HasPendingActions();
     }
-#endif
 
     virtual bool IsDesignModeEnabled() override
     {

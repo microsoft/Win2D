@@ -223,9 +223,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)xaml\ControlFixtures.h">
       <Filter>xaml</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)xaml\MockCoreIndependentInputSource.h">
-      <Filter>xaml</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)xaml\MockDispatcher.h">
       <Filter>xaml</Filter>
     </ClInclude>

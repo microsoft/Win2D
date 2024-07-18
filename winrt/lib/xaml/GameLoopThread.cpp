@@ -4,33 +4,23 @@
 
 #include "pch.h"
 
-#ifdef CANVAS_ANIMATED_CONTROL_IS_ENABLED
-
 #include "GameLoopThread.h"
 
 using namespace ABI::Microsoft::Graphics::Canvas;
 //
-// Creates a CoreDispatcher for the current thread.
+// Creates a DispatcherQueueController for the current thread.
 //
-// We do a little dance here to create the dispatcher.  We first create a core
-// independent input source (via the swapChainPanel), which will create a
-// dispatcher.  We then discard the input source we created.
-//
-static ComPtr<ICoreDispatcher> CreateCoreDispatcher(ISwapChainPanel* swapChainPanel)
+static ComPtr<IDispatcherQueueController> CreateDispatcherQueueController()
 {
-    ComPtr<ICoreInputSourceBase> inputSource;
-    ThrowIfFailed(swapChainPanel->CreateCoreIndependentInputSource(
-        CoreInputDeviceTypes_Touch | CoreInputDeviceTypes_Pen | CoreInputDeviceTypes_Mouse,
-        &inputSource));
+    ComPtr<IDispatcherQueueControllerStatics> dispatcherQueueControllerStatics;
+    ThrowIfFailed(GetActivationFactory(
+        HStringReference(RuntimeClass_Microsoft_UI_Dispatching_DispatcherQueueController).Get(),
+        &dispatcherQueueControllerStatics));
 
-    ComPtr<ICoreDispatcher> dispatcher;
-    ThrowIfFailed(inputSource->get_Dispatcher(&dispatcher));
+    ComPtr<IDispatcherQueueController> dispatcherQueueController;
+    ThrowIfFailed(dispatcherQueueControllerStatics->CreateOnCurrentThread(&dispatcherQueueController));
 
-    ThrowIfFailed(swapChainPanel->CreateCoreIndependentInputSource(
-        CoreInputDeviceTypes_None,
-        &inputSource));
-
-    return dispatcher;
+    return dispatcherQueueController;
 }
 
 //
@@ -87,7 +77,8 @@ class GameLoopThread : public IGameLoopThread
     std::mutex m_mutex;
     std::condition_variable m_conditionVariable;
 
-    ComPtr<ICoreDispatcher> m_dispatcher;
+    ComPtr<IDispatcherQueueController> m_dispatcherQueueController;
+    ComPtr<IDispatcherQueue> m_dispatcherQueue;
     bool m_started;
     bool m_startDispatcher;
     bool m_dispatcherStarted;
@@ -127,8 +118,10 @@ public:
     {
         auto lock = GetLock();
         
-        if (m_dispatcher)
-            As<ICoreDispatcherWithTaskPriority>(m_dispatcher)->StopProcessEvents();
+        if (m_dispatcherQueue)
+        {
+            ThrowIfFailed(As<IDispatcherQueue3>(m_dispatcherQueue)->EnqueueEventLoopExit());
+        }
 
         m_shutdownRequested = true;
         m_conditionVariable.notify_all();
@@ -151,50 +144,64 @@ public:
 
         if (m_dispatcherStarted)
         {
-            assert(m_dispatcher);
-            ThrowIfFailed(As<ICoreDispatcherWithTaskPriority>(m_dispatcher)->StopProcessEvents());
+            assert(m_dispatcherQueue);
+            ThrowIfFailed(As<IDispatcherQueue3>(m_dispatcherQueue)->EnqueueEventLoopExit());
         }
 
         m_conditionVariable.notify_all();
         m_conditionVariable.wait(lock, [=] { return !m_dispatcherStarted; });
     }
 
-    virtual ComPtr<IAsyncAction> RunAsync(IDispatchedHandler* handler) override
+    virtual ComPtr<IAsyncAction> RunAsync(IDispatcherQueueHandler* handler) override
     {
         auto lock = GetLock();
 
+        auto action = Make<AnimatedControlAsyncAction>(handler);
+
         if (m_startDispatcher)
         {
-            ComPtr<IAsyncAction> action;
-            HRESULT hr = m_dispatcher->RunAsync(CoreDispatcherPriority_Low, handler, &action);
+            // RunAsync needs to return an IAsyncAction that fires a Completed event.
+            // For example, CanvasGameLoop's Tick uses each Completed event to fire the next Tick.
+            // DispatcherQueue, unlike UWP's CoreDispatcher, does not return an IAsyncAction, so we
+            // wrap the passed in IDispatcherQueueHandler in our own custom AnimatedControlAsyncAction.
+            // Then we wrap that AnimatedControlAsyncAction in a new IDispatcherQueueHandler to give
+            // to the DispatcherQueue.
+            auto callback = Callback<AddFtmBase<IDispatcherQueueHandler>::Type>(
+                [action]() {
+                    auto result = action->InvokeAndFireCompletion();
 
-            // Work around MSFT:8381339. CoreDispatcher.RunAsync can fail with E_INVALIDARG
-            // when an internal counter wraps. We can recover from this by a simple retry.
-            if (hr == E_INVALIDARG)
-            {
-                hr = m_dispatcher->RunAsync(CoreDispatcherPriority_Low, handler, &action);
-            }
+                    if (SUCCEEDED(result.ActionResult))
+                    {
+                        return result.ActionResult;
+                    }
+                    else
+                    {
+                        return result.CompletedHandlerResult;
+                    }
+                });
+
+            boolean result;
+            HRESULT hr = m_dispatcherQueue->TryEnqueueWithPriority(DispatcherQueuePriority_Low, callback.Get(), &result);
 
             ThrowIfFailed(hr);
-            return action;
         }
         else
         {
-            auto action = Make<AnimatedControlAsyncAction>(handler);
             m_pendingActions.push_back(action);
             m_conditionVariable.notify_all();
-            return action;
         }
+
+        return action;
     }
 
     virtual bool HasThreadAccess() override
     {
         auto lock = GetLock();
 
-        if (m_dispatcher)
+        if (m_dispatcherQueue)
         {
             boolean result;
-            ThrowIfFailed(m_dispatcher->get_HasThreadAccess(&result));
+            ThrowIfFailed(As<IDispatcherQueue2>(m_dispatcherQueue)->get_HasThreadAccess(&result));
 
             
             return !!result;
@@ -217,7 +224,9 @@ private:
 
         auto lock = GetLock();
 
-        m_dispatcher = CreateCoreDispatcher(swapChainPanel.Get());
+        m_dispatcherQueueController = CreateDispatcherQueueController();
+        ThrowIfFailed(m_dispatcherQueueController->get_DispatcherQueue(&m_dispatcherQueue));
+
         swapChainPanel.Reset(); // we only needed this to create the dispatcher
         m_conditionVariable.notify_all();
 
@@ -250,7 +259,9 @@ private:
                 m_conditionVariable.notify_all();
                 
                 lock.unlock();
-                ThrowIfFailed(m_dispatcher->ProcessEvents(CoreProcessEventsOption_ProcessUntilQuit));
+                ThrowIfFailed(As<IDispatcherQueue3>(m_dispatcherQueue)->RunEventLoop());
+                ComPtr<IAsyncAction> action;
+                m_dispatcherQueueController->ShutdownQueueAsync(&action);
                 lock.lock();
 
                 m_dispatcherStarted = false;
@@ -308,5 +319,3 @@ std::unique_ptr<IGameLoopThread> CreateGameLoopThread(ISwapChainPanel* swapChain
 {
     return std::make_unique<GameLoopThread>(swapChainPanel, client);
 }
-
-#endif

@@ -91,6 +91,7 @@
 #include <microsoft.system.h>
 #else
 #include <microsoft.ui.h>
+#include <microsoft.ui.dispatching.h>
 #include <microsoft.UI.Xaml.Controls.h>
 #include <microsoft.ui.xaml.media.h>
 #include <microsoft.ui.xaml.media.dxinterop.h>
