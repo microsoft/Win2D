@@ -4,8 +4,6 @@
 
 #pragma once
 
-#if (defined _WIN32_WINNT_WIN10) && (WINVER >= _WIN32_WINNT_WIN10)
-
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Effects
 {
     class EffectTransferTable3D : RESOURCE_WRAPPER_RUNTIME_CLASS(
@@ -72,5 +70,3 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     };
 
 }}}}}
-
-#endif // _WIN32_WINNT_WIN10

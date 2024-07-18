@@ -4,8 +4,6 @@
 
 #include "pch.h"
 
-#if WINVER > _WIN32_WINNT_WINBLUE
-
 using namespace Microsoft::Graphics::Canvas::Svg;
 using namespace Windows::Storage::Streams;
 using namespace Windows::UI;
@@ -180,5 +178,3 @@ public:
             });
     }
 };
-
-#endif

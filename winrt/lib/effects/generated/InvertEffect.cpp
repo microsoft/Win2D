@@ -7,8 +7,6 @@
 #include "pch.h"
 #include "InvertEffect.h"
 
-#if (defined _WIN32_WINNT_WIN10) && (WINVER >= _WIN32_WINNT_WIN10)
-
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Effects
 {
     InvertEffect::InvertEffect(ICanvasDevice* device, ID2D1Effect* effect)
@@ -26,5 +24,3 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
     ActivatableClassWithFactory(InvertEffect, ::SimpleAgileActivationFactory<InvertEffect>);
 }}}}}
-
-#endif // _WIN32_WINNT_WIN10

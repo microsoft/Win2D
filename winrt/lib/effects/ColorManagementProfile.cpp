@@ -6,9 +6,6 @@
 #include "ColorManagementProfile.h"
 
 
-#if WINVER > _WIN32_WINNT_WINBLUE
-
-
 static ExtendedColorSpace CanvasColorSpaceToExtended(CanvasColorSpace colorSpace)
 {
     switch (colorSpace)
@@ -67,18 +64,13 @@ ColorManagementProfile::ColorManagementProfile(ExtendedColorSpace colorSpace)
 }
 
 
-#endif  // WINVER > _WIN32_WINNT_WINBLUE
-
-
 ColorManagementProfile::ColorManagementProfile(CanvasColorSpace colorSpace)
     : ResourceWrapper(nullptr)
     , m_closed(false)
     , m_colorSpace(colorSpace)
-#if WINVER > _WIN32_WINNT_WINBLUE
     , m_type(ColorManagementProfileType::Icc)
     , m_extendedColorSpace(CanvasColorSpaceToExtended(colorSpace))
     , m_simpleProfile{}
-#endif
 {
     if (colorSpace == CanvasColorSpace::Custom)
     {
@@ -91,11 +83,9 @@ ColorManagementProfile::ColorManagementProfile(uint32_t iccProfileCount, uint8_t
     : ResourceWrapper(nullptr)
     , m_closed(false)
     , m_colorSpace(CanvasColorSpace::Custom)
-#if WINVER > _WIN32_WINNT_WINBLUE
     , m_type(ColorManagementProfileType::Icc)
     , m_extendedColorSpace(ExtendedColorSpace::Custom)
     , m_simpleProfile{}
-#endif
 {
     CheckInPointer(iccProfile);
 
@@ -110,7 +100,6 @@ ColorManagementProfile::ColorManagementProfile(ICanvasDevice* device, ID2D1Color
 {
     m_colorSpace = StaticCastAs<CanvasColorSpace>(d2dColorContext->GetColorSpace());
 
-#if WINVER > _WIN32_WINNT_WINBLUE
     // Prior to RS2, we will have ID2D1ColorContext which is always an ICC profile.
     m_type = ColorManagementProfileType::Icc;
     m_extendedColorSpace = CanvasColorSpaceToExtended(m_colorSpace);
@@ -130,7 +119,6 @@ ColorManagementProfile::ColorManagementProfile(ICanvasDevice* device, ID2D1Color
             m_colorSpace = CanvasColorSpace::Custom;
         }
     }
-#endif
 }
 
 
@@ -161,9 +149,7 @@ IFACEMETHODIMP ColorManagementProfile::get_IccProfile(uint32_t* valueCount, uint
 
         if (d2dColorContext
             && m_colorSpace == CanvasColorSpace::Custom
-#if WINVER > _WIN32_WINNT_WINBLUE
             && m_type == ColorManagementProfileType::Icc
-#endif
             )
         {
             // Read the profile bytes back from a realized D2D resource.
@@ -180,9 +166,6 @@ IFACEMETHODIMP ColorManagementProfile::get_IccProfile(uint32_t* valueCount, uint
         array.Detach(valueCount, valueElements);
     });
 }
-
-
-#if WINVER > _WIN32_WINNT_WINBLUE
 
 
 IFACEMETHODIMP ColorManagementProfile::get_Type(ColorManagementProfileType* value)
@@ -224,9 +207,6 @@ IFACEMETHODIMP ColorManagementProfile::get_ExtendedColorSpace(ExtendedColorSpace
         *value = m_extendedColorSpace;
     });
 }
-
-
-#endif  // WINVER > _WIN32_WINNT_WINBLUE
 
 
 IFACEMETHODIMP ColorManagementProfile::Close()
@@ -295,9 +275,7 @@ void ColorManagementProfile::Realize(ICanvasDevice* device)
     
     ComPtr<ID2D1ColorContext> newColorContext;
 
-#if WINVER > _WIN32_WINNT_WINBLUE
     if (m_type == ColorManagementProfileType::Icc)
-#endif
     {
         // Create an old style ICC color context.
         ThrowIfFailed(deviceContext->CreateColorContext(
@@ -306,7 +284,6 @@ void ColorManagementProfile::Realize(ICanvasDevice* device)
             static_cast<uint32_t>(m_iccProfile.size()),
             &newColorContext));
     }
-#if WINVER > _WIN32_WINNT_WINBLUE
     else
     {
         // Create one of the new RS2 color contexts.
@@ -338,7 +315,6 @@ void ColorManagementProfile::Realize(ICanvasDevice* device)
 
         newColorContext = colorContext1;
     }
-#endif
 
     // Store our new realization.
     SetResource(newColorContext.Get());
@@ -383,9 +359,6 @@ IFACEMETHODIMP ColorManagementProfileFactory::CreateCustom(uint32_t iccProfileCo
         ThrowIfFailed(newProfile.CopyTo(result));
     });
 }
-
-
-#if WINVER > _WIN32_WINNT_WINBLUE
 
 
 IFACEMETHODIMP ColorManagementProfileFactory::CreateSimple(ColorManagementSimpleProfile simpleProfile, IColorManagementProfile** result)
@@ -447,9 +420,6 @@ IFACEMETHODIMP ColorManagementProfileFactory::IsSupported(ColorManagementProfile
         }
     });
 }
-
-
-#endif  // WINVER > _WIN32_WINNT_WINBLUE
 
 
 ActivatableClassWithFactory(ColorManagementProfile, ColorManagementProfileFactory);

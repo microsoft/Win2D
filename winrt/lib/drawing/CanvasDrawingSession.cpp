@@ -98,7 +98,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     }
 
 
-#if WINVER > _WIN32_WINNT_WINBLUE
     ComPtr<IInkD2DRenderer> DefaultInkAdapter::CreateInkRenderer()
     {
         ComPtr<IInkD2DRenderer> inkRenderer;
@@ -125,7 +124,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ThrowIfFailed(m_accessibilitySettings->get_HighContrast(&isHighContrastEnabled));
         return !!isHighContrastEnabled;
     }
-#endif
 
 
     CanvasDrawingSession::CanvasDrawingSession(
@@ -183,10 +181,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 m_solidColorBrush.Reset();
                 m_defaultTextFormat.Reset();
                 m_owner.Reset();
-#if WINVER > _WIN32_WINNT_WINBLUE
                 m_inkD2DRenderer.Reset();
                 m_inkStateBlock.Reset();
-#endif
             });
     }
 
@@ -3275,7 +3271,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             brush);
     }
 
-#if WINVER > _WIN32_WINNT_WINBLUE
     IFACEMETHODIMP CanvasDrawingSession::DrawInk(IIterable<InkStroke*>* inkStrokeCollection)
     {
         return ExceptionBoundary(
@@ -3377,8 +3372,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                     GetWrappedResource<ID2D1GradientMesh>(gradientMesh).Get());
             });
     }
-
-#endif
 
     ID2D1SolidColorBrush* CanvasDrawingSession::GetColorBrush(Color const& color)
     {
@@ -4085,8 +4078,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         }
     }
 
-#if WINVER > _WIN32_WINNT_WINBLUE
-
     IFACEMETHODIMP CanvasDrawingSession::CreateSpriteBatch(
         ICanvasSpriteBatch** spriteBatch)
     {
@@ -4202,7 +4193,5 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 deviceContext5->DrawSvgDocument(d2dSvgDocument.Get());
             });
     }
-    
-#endif
 
 }}}}

@@ -52,10 +52,8 @@ namespace Microsoft.Graphics.Canvas.Text
         float Height;
         float Baseline;
         boolean IsTrimmed;
-#if WINVER > _WIN32_WINNT_WINBLUE
         float LeadingWhitespaceBefore;
         float LeadingWhitespaceAfter;
-#endif
     } CanvasLineMetrics;
 
     [version(VERSION)]
@@ -99,10 +97,7 @@ namespace Microsoft.Graphics.Canvas.Text
         PROPERTY(TrimmingDelimiterCount, INT32);
         PROPERTY(WordWrapping, CanvasWordWrapping);
         PROPERTY(Options, CanvasDrawTextOptions);
-
-#if WINVER > _WIN32_WINNT_WINBLUE
         PROPERTY(LineSpacingMode, CanvasLineSpacingMode);
-#endif
         PROPERTY(TrimmingSign, CanvasTrimmingSign);
         PROPERTY(CustomTrimmingSign, ICanvasTextInlineObject*);
 

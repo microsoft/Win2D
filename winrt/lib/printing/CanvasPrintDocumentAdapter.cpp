@@ -4,8 +4,6 @@
 
 #include "pch.h"
 
-#ifndef WINDOWS_PHONE
-
 #include "CanvasPrintDocumentAdapter.h"
 
 ComPtr<ICanvasDevice> DefaultPrintDocumentAdapter::GetSharedDevice()
@@ -61,5 +59,3 @@ bool DefaultPrintDocumentAdapter::ShouldWaitForUIThread()
 {
     return true;
 }
-
-#endif

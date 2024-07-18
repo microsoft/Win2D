@@ -23,13 +23,8 @@ namespace canvas
 
     static const HRESULT sc_someFailureHr = D2DERR_PRINT_JOB_CLOSED;
 
-#if WINVER > _WIN32_WINNT_WINBLUE
     typedef MockDWriteFontFaceReference MockDWriteFontFaceContainer;
     typedef IDWriteFontFace3 FontFaceType;
-#else
-    typedef MockDWriteFont MockDWriteFontFaceContainer;
-    typedef IDWriteFontFace FontFaceType;
-#endif
 
     TEST_CLASS(CanvasTextRenderer)
     {
@@ -45,9 +40,7 @@ namespace canvas
             ComPtr<InternalDWriteInlineObject> DWriteInlineObject;
 
             ComPtr<MockDWriteFont> DWriteFont;
-#if WINVER > _WIN32_WINNT_WINBLUE
             ComPtr<MockDWriteFontFaceReference> DWriteFontFaceReference;
-#endif
             ComPtr<MockDWriteFontFace> RealizedDWriteFontFace;
             ComPtr<CanvasFontFace> FontFace;
 
@@ -59,9 +52,7 @@ namespace canvas
                 , Device(Make<StubCanvasDevice>())
                 , TextRenderer(Make<CustomTextRenderer>())
                 , DWriteFont(Make<MockDWriteFont>())
-#if WINVER > _WIN32_WINNT_WINBLUE
                 , DWriteFontFaceReference(Make<MockDWriteFontFaceReference>())
-#endif
                 , RealizedDWriteFontFace(Make<MockDWriteFontFace>())
                 , D2DBrush(Make<MockD2DSolidColorBrush>())
             {
@@ -80,7 +71,6 @@ namespace canvas
                         return S_OK;
                     });
 
-#if WINVER > _WIN32_WINNT_WINBLUE
                 DWriteFontFaceReference->CreateFontFaceMethod.AllowAnyCall(
                     [&](IDWriteFontFace3** out)
                     {
@@ -94,20 +84,8 @@ namespace canvas
                         ThrowIfFailed(DWriteFontFaceReference.CopyTo(out));
                         return S_OK;
                     });
-#else
-                DWriteFont->CreateFontFaceMethod.AllowAnyCall(
-                    [&](IDWriteFontFace** out)
-                    {
-                        ThrowIfFailed(RealizedDWriteFontFace.CopyTo(out));
-                        return S_OK;
-                    });
-#endif
 
-#if WINVER > _WIN32_WINNT_WINBLUE
                 FontFace = Make<CanvasFontFace>(DWriteFontFaceReference.Get());
-#else
-                FontFace = Make<CanvasFontFace>(DWriteFont.Get());
-#endif
 
                 Adapter->GetMockDWriteFactory()->CreateCustomFontCollectionMethod.AllowAnyCall(
                     [&](

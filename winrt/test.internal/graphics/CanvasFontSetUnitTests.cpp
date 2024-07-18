@@ -17,7 +17,6 @@
 #include <lib/text/CanvasFontFace.h>
 #include <lib/text/CanvasFontSet.h>
 
-#if WINVER > _WIN32_WINNT_WINBLUE
 static const struct TestFontProperty
 {
     TestFontProperty(CanvasFontPropertyIdentifier id, wchar_t const* value, wchar_t const* locale)
@@ -39,10 +38,8 @@ static const struct TestFontProperty
         TestFontProperty(CanvasFontPropertyIdentifier::DesignScriptLanguageTag, L"SomeName2", L"xx-bb"),
         TestFontProperty(CanvasFontPropertyIdentifier::PostscriptName, L"SomeName3", L"xx-cc"),
     };
-#endif
     
 
-#if WINVER > _WIN32_WINNT_WINBLUE
     struct FontSetFixture
     {
         ComPtr<MockDWriteFontFaceReference> DWriteFontFaceResources[3];
@@ -114,104 +111,12 @@ static const struct TestFontProperty
 
         }
     };
-#else
-    struct FontSetFixture
-    {
-        //
-        // This sets up a font collection with two families, three fonts in total.
-        //
-        ComPtr<MockDWriteFont> DWriteFontFaceResources[3];
-        ComPtr<MockDWriteFontCollection> DWriteResource;
-        ComPtr<MockDWriteFontFamily> FontFamilies[2];
-        ComPtr<MockDWriteFontFace> RealizedDWriteFontFace;
-
-        FontSetFixture()
-        {
-            for (int i = 0; i < 3; ++i)
-            {
-                DWriteFontFaceResources[i] = Make<MockDWriteFont>();
-
-                RealizedDWriteFontFace = Make<MockDWriteFontFace>();
-                DWriteFontFaceResources[i]->CreateFontFaceMethod.AllowAnyCall(
-                    [&](IDWriteFontFace** out)
-                    {
-                        return RealizedDWriteFontFace.CopyTo(out);
-                    });
-            }
-
-            DWriteResource = Make<MockDWriteFontCollection>();
-        }
-
-        void ExpectFindThirdFont()
-        {
-            ExpectRealization();
-        }
-
-        void ExpectFindNoFont()
-        {
-            ExpectRealization();
-        }
-
-        void ExpectGetFonts()
-        {
-            ExpectRealization();
-        }
-
-        ComPtr<CanvasFontFace> CreateSimpleFontFace()
-        {
-            auto resource = Make<MockDWriteFont>();
-
-            resource->CreateFontFaceMethod.AllowAnyCall(
-                [&](IDWriteFontFace** out)
-                {
-                    ComPtr<MockDWriteFontFace> fontFace = Make<MockDWriteFontFace>();
-                    return fontFace.CopyTo(out);
-                });
-
-            return Make<CanvasFontFace>(resource.Get());
-        }
-
-    private:
-        void ExpectRealization()
-        {
-            FontFamilies[0] = Make<MockDWriteFontFamily>();
-            FontFamilies[0]->GetFontCountMethod.AllowAnyCall([&] {return 2u; });
-            FontFamilies[0]->GetFontMethod.AllowAnyCall(
-                [&](UINT32 index, IDWriteFont** out)
-                {
-                    Assert::IsTrue(index == 0 || index == 1);
-                    return DWriteFontFaceResources[index].CopyTo(out);
-                });
-
-            FontFamilies[1] = Make<MockDWriteFontFamily>();
-            FontFamilies[1]->GetFontCountMethod.AllowAnyCall([&] {return 1u; });
-            FontFamilies[1]->GetFontMethod.AllowAnyCall(
-                [&](UINT32 index, IDWriteFont** out)
-                {
-                    Assert::AreEqual(0u, index);
-                    return DWriteFontFaceResources[2].CopyTo(out);
-                });
-
-            DWriteResource->GetFontFamilyCountMethod.SetExpectedCalls(1, [&] {return 2; });
-            DWriteResource->GetFontFamilyMethod.SetExpectedCalls(2,
-                [&](uint32_t index, IDWriteFontFamily** out)
-                {
-                    Assert::IsTrue(index == 0 || index == 1);
-                    return FontFamilies[index].CopyTo(out);
-                });
-        }
-    };
-#endif
 
 TEST_CLASS(CanvasFontSetTests)
 {
     ComPtr<CanvasFontSet> CreateSimpleTestFontSet()
     {
-#if WINVER > _WIN32_WINNT_WINBLUE
         auto resource = Make<MockDWriteFontSet>();
-#else
-        auto resource = Make<MockDWriteFontCollection>();
-#endif
         return Make<CanvasFontSet>(resource.Get());
     }
 
@@ -232,7 +137,6 @@ TEST_CLASS(CanvasFontSetTests)
 
         Assert::AreEqual(E_INVALIDARG, canvasFontSet->get_Fonts(nullptr));
 
-#if WINVER > _WIN32_WINNT_WINBLUE
         CanvasFontProperty fp{};
         CanvasFontProperty* fpArray{};
         uint32_t u{};
@@ -250,7 +154,6 @@ TEST_CLASS(CanvasFontSetTests)
         Assert::AreEqual(E_INVALIDARG, canvasFontSet->GetPropertyValuesFromIdentifier(CanvasFontPropertyIdentifier::FaceName, WinString(L""), nullptr, &fpArray));
         Assert::AreEqual(E_INVALIDARG, canvasFontSet->GetPropertyValues(CanvasFontPropertyIdentifier::FaceName, &u, nullptr));
         Assert::AreEqual(E_INVALIDARG, canvasFontSet->GetPropertyValues(CanvasFontPropertyIdentifier::FaceName, nullptr, &fpArray));
-#endif
     }
 
     TEST_METHOD_EX(CanvasFontSet_Closed)
@@ -265,7 +168,6 @@ TEST_CLASS(CanvasFontSetTests)
 
         Assert::AreEqual(RO_E_CLOSED, canvasFontSet->get_Fonts(&vector));
 
-#if WINVER > _WIN32_WINNT_WINBLUE
         CanvasFontProperty fp{};
         CanvasFontProperty* fpArray{};
         uint32_t u{};
@@ -278,25 +180,19 @@ TEST_CLASS(CanvasFontSetTests)
         Assert::AreEqual(RO_E_CLOSED, canvasFontSet->GetPropertyValuesFromIndex(0, CanvasFontPropertyIdentifier::FaceName, &map));
         Assert::AreEqual(RO_E_CLOSED, canvasFontSet->GetPropertyValuesFromIdentifier(CanvasFontPropertyIdentifier::FaceName, WinString(L""), &u, &fpArray));
         Assert::AreEqual(RO_E_CLOSED, canvasFontSet->GetPropertyValues(CanvasFontPropertyIdentifier::FaceName, &u, &fpArray));
-#endif
     }
 
     struct SystemFontSetFixture
     {
         std::shared_ptr<StubCanvasTextLayoutAdapter> m_adapter;
 
-#if WINVER > _WIN32_WINNT_WINBLUE
         ComPtr<StubDWriteFontSet> m_systemFontSet;
-#else
-        ComPtr<MockDWriteFontCollection> m_systemFontSet;
-#endif
 
         SystemFontSetFixture()
         {
             m_adapter = std::make_shared<StubCanvasTextLayoutAdapter>();
             CustomFontManagerAdapter::SetInstance(m_adapter);
 
-#if WINVER > _WIN32_WINNT_WINBLUE
             m_adapter->GetMockDWriteFactory()->CreateFontSetBuilderMethod.AllowAnyCall(
                 [&](IDWriteFontSetBuilder** out)
                 {
@@ -312,15 +208,6 @@ TEST_CLASS(CanvasFontSetTests)
                 {
                     return m_systemFontSet.CopyTo(out);
                 });
-#else
-            m_systemFontSet = Make<MockDWriteFontCollection>();
-
-            m_adapter->GetMockDWriteFactory()->GetSystemFontCollectionMethod.SetExpectedCalls(1,
-                [&](IDWriteFontCollection** out, BOOL)
-                {
-                    return m_systemFontSet.CopyTo(out);
-                });
-#endif
         }
     };
 
@@ -332,7 +219,6 @@ TEST_CLASS(CanvasFontSetTests)
         ComPtr<ICanvasFontSet> actualCanvasFontSet;
         Assert::AreEqual(S_OK, factory->GetSystemFontSet(&actualCanvasFontSet));
 
-#if WINVER > _WIN32_WINNT_WINBLUE
         auto actualFontCollection = GetWrappedResource<IDWriteFontSet>(actualCanvasFontSet);
         // The font set that we get out should contain the same fonts as our stub font set.
         ComPtr<StubDWriteFontSet> actualStubFontSet = static_cast<StubDWriteFontSet*>(actualFontCollection.Get());
@@ -340,14 +226,8 @@ TEST_CLASS(CanvasFontSetTests)
         {
             Assert::IsTrue(IsSameInstance(f.m_systemFontSet->GetFontFaceReferenceInternal(i).Get(), actualStubFontSet->GetFontFaceReferenceInternal(i).Get()));
         }
-#else
-        auto actualFontCollection = GetWrappedResource<IDWriteFontCollection>(actualCanvasFontSet);
-
-        Assert::IsTrue(IsSameInstance(f.m_systemFontSet.Get(), actualFontCollection.Get()));
-#endif
     }
 
-#if WINVER > _WIN32_WINNT_WINBLUE
     TEST_METHOD_EX(CanvasFontSet_GetSystemFontSet_RemovesRemoteFonts)
     {
         DWRITE_LOCALITY localities[] = { DWRITE_LOCALITY_PARTIAL, DWRITE_LOCALITY_REMOTE };
@@ -405,7 +285,6 @@ TEST_CLASS(CanvasFontSetTests)
         Assert::AreEqual(S_OK, canvasFontSet->TryFindFontFace(someFontFace.Get(), &value, &succeeded));
         Assert::IsFalse(!!succeeded);
     }
-#endif
 
     TEST_METHOD_EX(CanvasFontSet_get_Fonts)
     {
@@ -435,8 +314,6 @@ TEST_CLASS(CanvasFontSetTests)
             Assert::IsTrue(IsSameInstance(fontFaces[i].Get(), items[i].Get()));
         }
     }
-
-#if WINVER > _WIN32_WINNT_WINBLUE
 
     TEST_METHOD_EX(CanvasFontSet_GetMatchingFontsFromProperties)
     {
@@ -607,15 +484,12 @@ TEST_CLASS(CanvasFontSetTests)
         AssertStringsEqual(sc_testProperties[1].Win2DProperty.Locale, valueElements[1].Locale);
         AssertStringsEqual(sc_testProperties[1].Win2DProperty.Value, valueElements[1].Value);
     }
-#endif
     
     struct CustomFontFixture
     {
         std::shared_ptr<StubCanvasTextLayoutAdapter> m_adapter;
 
-#if WINVER > _WIN32_WINNT_WINBLUE
         ComPtr<MockDWriteFontSet> m_mockDWriteFontSet;
-#endif
 
         CustomFontFixture()
             : m_adapter(std::make_shared<StubCanvasTextLayoutAdapter>())
@@ -624,9 +498,7 @@ TEST_CLASS(CanvasFontSetTests)
 
             m_adapter->GetMockDWriteFactory()->RegisterFontCollectionLoaderMethod.AllowAnyCall();
 
-#if WINVER > _WIN32_WINNT_WINBLUE
             m_mockDWriteFontSet = Make<MockDWriteFontSet>();
-#endif
         }
 
         ComPtr<DWriteFontSetType> ExpectCreateCustomFontCollection(std::wstring expectedFilename)
@@ -671,7 +543,6 @@ TEST_CLASS(CanvasFontSetTests)
                     return fontFile.CopyTo(outFontFile);
                 });
 
-#if WINVER > _WIN32_WINNT_WINBLUE
             collection->GetFontSetMethod.SetExpectedCalls(1,
                 [&](IDWriteFontSet** fontSet)
                 {
@@ -679,9 +550,6 @@ TEST_CLASS(CanvasFontSetTests)
                     return S_OK;
                 });
             return m_mockDWriteFontSet;
-#else
-            return collection;
-#endif
         }
     };
 

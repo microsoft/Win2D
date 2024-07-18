@@ -75,7 +75,6 @@ std::vector<ResourceManager::TryCreateFunction> ResourceManager::tryCreateFuncti
     TryCreate<ID2D1RadialGradientBrush,    CanvasRadialGradientBrush,         MakeWrapperWithDevice>,
     TryCreate<ID2D1ImageBrush,             CanvasImageBrush,                  MakeWrapperWithDevice>,
     TryCreate<ID2D1BitmapBrush1,           CanvasImageBrush,                  MakeWrapperWithDevice>,
-#if WINVER > _WIN32_WINNT_WINBLUE
     TryCreate<ID2D1GradientMesh,           CanvasGradientMesh,                MakeWrapperWithDevice>,
     TryCreate<ID2D1ImageSource,            CanvasVirtualBitmap,               MakeWrapperWithDevice>,
     TryCreate<ID2D1TransformedImageSource, CanvasVirtualBitmap,               MakeWrapperWithDevice>,
@@ -91,11 +90,6 @@ std::vector<ResourceManager::TryCreateFunction> ResourceManager::tryCreateFuncti
     TryCreate<ID2D1SvgPathData,            CanvasSvgPathAttribute,            MakeWrapperWithDevice>,
     TryCreate<ID2D1SvgPointCollection,     CanvasSvgPointsAttribute,          MakeWrapperWithDevice>,
     TryCreate<ID2D1SvgStrokeDashArray,     CanvasSvgStrokeDashArrayAttribute, MakeWrapperWithDevice>,
-#else
-    TryCreate<IDWriteRenderingParams2,     CanvasTextRenderingParameters, MakeWrapper>,
-    TryCreate<IDWriteFontCollection,       CanvasFontSet,                 MakeWrapper>,
-    TryCreate<IDWriteFont2,                CanvasFontFace,                MakeWrapper>,
-#endif
     TryCreate<IDWriteTypography,           CanvasTypography,              MakeWrapper>,
     TryCreate<IDWriteNumberSubstitution,   CanvasNumberSubstitution,      MakeWrapper>,
     TryCreate<ID2D1ColorContext,           ColorManagementProfile,        MakeWrapperWithDevice>,

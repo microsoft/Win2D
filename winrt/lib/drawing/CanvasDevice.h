@@ -174,13 +174,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         virtual HistogramAndAtlasEffects LeaseHistogramEffect(ID2D1DeviceContext* d2dContext) = 0;
         virtual void ReleaseHistogramEffect(HistogramAndAtlasEffects&& effects) = 0;
 
-#if WINVER > _WIN32_WINNT_WINBLUE
         virtual ComPtr<ID2D1GradientMesh> CreateGradientMesh(D2D1_GRADIENT_MESH_PATCH const* patches, uint32_t patchCount) = 0;
 
         virtual bool IsSpriteBatchQuirkRequired() = 0;
 
         virtual ComPtr<ID2D1SvgDocument> CreateSvgDocument(IStream* inputXmlStream) = 0;
-#endif
     };
 
 
@@ -221,7 +219,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ComPtr<ID2D1Effect> m_histogramEffect;
         ComPtr<ID2D1Effect> m_atlasEffect;
 
-#if WINVER > _WIN32_WINNT_WINBLUE
         std::mutex m_quirkMutex;
         
         enum class SpriteBatchQuirk
@@ -232,7 +229,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         };
 
         SpriteBatchQuirk m_spriteBatchQuirk;
-#endif
 
     public:
         static ComPtr<CanvasDevice> CreateNew(bool forceSoftwareRenderer);
@@ -385,13 +381,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         virtual HistogramAndAtlasEffects LeaseHistogramEffect(ID2D1DeviceContext* d2dContext) override;
         virtual void ReleaseHistogramEffect(HistogramAndAtlasEffects&& effects) override;
 
-#if WINVER > _WIN32_WINNT_WINBLUE
         virtual ComPtr<ID2D1GradientMesh> CreateGradientMesh(D2D1_GRADIENT_MESH_PATCH const* patches, uint32_t patchCount) override;
 
         virtual bool IsSpriteBatchQuirkRequired() override;
 
         virtual ComPtr<ID2D1SvgDocument> CreateSvgDocument(IStream* inputXmlStream) override;
-#endif
 
         //
         // IDirect3DDevice

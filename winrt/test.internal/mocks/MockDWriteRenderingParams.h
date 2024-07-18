@@ -8,11 +8,7 @@ namespace canvas
 {
     class MockDWriteRenderingParams : public RuntimeClass<
         RuntimeClassFlags<ClassicCom>,
-        ChainInterfaces<
-#if WINVER > _WIN32_WINNT_WINBLUE
-        IDWriteRenderingParams3,
-#endif
-        IDWriteRenderingParams2, IDWriteRenderingParams1, IDWriteRenderingParams>>
+        ChainInterfaces<IDWriteRenderingParams3, IDWriteRenderingParams2, IDWriteRenderingParams1, IDWriteRenderingParams>>
     {
     public:
         CALL_COUNTER_WITH_MOCK(GetGammaMethod, FLOAT());
@@ -26,9 +22,7 @@ namespace canvas
 
         CALL_COUNTER_WITH_MOCK(GetRenderingModeMethod, DWRITE_RENDERING_MODE());
 
-#if WINVER > _WIN32_WINNT_WINBLUE
         CALL_COUNTER_WITH_MOCK(GetRenderingMode1Method, DWRITE_RENDERING_MODE1());
-#endif
 
         //
         // IDWriteRenderingParams
@@ -81,11 +75,9 @@ namespace canvas
         // IDWriteRenderingParams3
         //
 
-#if WINVER > _WIN32_WINNT_WINBLUE
         IFACEMETHODIMP_(DWRITE_RENDERING_MODE1) GetRenderingMode1()
         {
             return GetRenderingMode1Method.WasCalled();
         }
-#endif
     };
 }

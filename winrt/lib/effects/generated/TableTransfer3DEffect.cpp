@@ -7,8 +7,6 @@
 #include "pch.h"
 #include "TableTransfer3DEffect.h"
 
-#if (defined _WIN32_WINNT_WIN10) && (WINVER >= _WIN32_WINNT_WIN10)
-
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Effects
 {
     TableTransfer3DEffect::TableTransfer3DEffect(ICanvasDevice* device, ID2D1Effect* effect)
@@ -44,5 +42,3 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
     ActivatableClassWithFactory(TableTransfer3DEffect, ::SimpleAgileActivationFactory<TableTransfer3DEffect>);
 }}}}}
-
-#endif // _WIN32_WINNT_WIN10

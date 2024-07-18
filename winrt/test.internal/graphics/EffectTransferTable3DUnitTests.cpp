@@ -6,8 +6,6 @@
 
 #include <lib/effects/EffectTransferTable3D.h>
 
-#if WINVER > _WIN32_WINNT_WINBLUE
-
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 TEST_CLASS(EffectTransferTable3DUnitTests)
@@ -172,5 +170,3 @@ TEST_CLASS(EffectTransferTable3DUnitTests)
         ExpectHResultException(WINCODEC_ERR_UNSUPPORTEDPIXELFORMAT, [&] { EffectTransferTable3D::CreateNew(device.Get(), 32, bytes, 2, 2, 2, PIXEL_FORMAT(B8G8R8A8UIntNormalized)); });
     }
 };
-
-#endif

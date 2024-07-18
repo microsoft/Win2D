@@ -43,11 +43,8 @@ IFACEMETHODIMP CanvasTextRenderingParameters::get_RenderingMode(
             auto& dwriteRenderingParams = GetResource();
             CheckInPointer(value);
 
-#if WINVER > _WIN32_WINNT_WINBLUE
             auto renderingMode = dwriteRenderingParams->GetRenderingMode1();
-#else
-            auto renderingMode = dwriteRenderingParams->GetRenderingMode();
-#endif
+
             *value = ToCanvasTextRenderingMode(renderingMode);
         });
 }
@@ -82,11 +79,7 @@ ComPtr<CanvasTextRenderingParameters> CanvasTextRenderingParameters::CreateNew(
 
     auto defaultRenderingParams = As<DWriteTextParamsType>(defaultRenderingParamsBase);
 
-#if WINVER > _WIN32_WINNT_WINBLUE
     auto dwriteFactory = As<IDWriteFactory3>(dwriteFactoryBase);
-#else
-    auto dwriteFactory = As<IDWriteFactory2>(dwriteFactoryBase);
-#endif
 
     ComPtr<DWriteTextParamsType> newRenderingParams;
 

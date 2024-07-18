@@ -8,19 +8,10 @@ using namespace Platform::Collections;
 using namespace Microsoft::Graphics::Canvas;
 using namespace Microsoft::Graphics::Canvas::Text;
 
-#if WINVER > _WIN32_WINNT_WINBLUE
     typedef Windows::Foundation::Numerics::float3x2 MatrixType;
     typedef Windows::Foundation::Numerics::float2 Vector2Type;
-#else
-    typedef Microsoft::Graphics::Canvas::Numerics::Matrix3x2 MatrixType;
-    typedef Microsoft::Graphics::Canvas::Numerics::Vector2 Vector2Type;
-#endif
 
-#if WINVER > _WIN32_WINNT_WINBLUE
     typedef IDWriteFontFaceReference DWriteFontContainerType;
-#else
-    typedef IDWriteFont DWriteFontContainerType;
-#endif
 
 ref class GlyphRun sealed
 {
@@ -199,13 +190,9 @@ TEST_CLASS(CanvasFontFaceTests)
                 ComPtr<IDWriteFont> font;
                 ThrowIfFailed(fontFamily->GetFirstMatchingFont(DWRITE_FONT_WEIGHT_REGULAR, DWRITE_FONT_STRETCH_NORMAL, DWRITE_FONT_STYLE_NORMAL, &font));
 
-#if WINVER > _WIN32_WINNT_WINBLUE
                 ComPtr<IDWriteFontFaceReference> fontFaceReference;
                 ThrowIfFailed(As<IDWriteFont3>(font)->GetFontFaceReference(&fontFaceReference));
                 return fontFaceReference;
-#else
-                return font;
-#endif
             }
         }
 
@@ -265,7 +252,6 @@ TEST_CLASS(CanvasFontFaceTests)
         }
     }
 
-#if WINVER > _WIN32_WINNT_WINBLUE
     TEST_METHOD(CanvasFontFace_FontFacePassedToDrawGlyphRun_PresenceInSystemFontSet)
     {
         CanvasDevice^ device = ref new CanvasDevice();
@@ -282,5 +268,4 @@ TEST_CLASS(CanvasFontFaceTests)
         bool found = systemFonts->TryFindFontFace(fontFace, &index);
         Assert::IsTrue(found);
     }
-#endif
 };

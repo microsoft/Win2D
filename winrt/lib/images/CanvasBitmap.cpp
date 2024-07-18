@@ -11,9 +11,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     using namespace ABI::Windows::Storage;
     using namespace ::Microsoft::WRL::Wrappers;
 
-#if WINVER > _WIN32_WINNT_WINBLUE
     using ABI::Windows::Graphics::Imaging::BitmapPixelFormat;
-#endif
 
     static void VerifyWellFormedSubrectangle(D2D1_RECT_U subRectangle, D2D1_SIZE_U targetSize)
     {
@@ -151,7 +149,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
     static bool TryEnableIndexing(ComPtr<IWICBitmapFrameDecode> const& frameDecode)
     {
-#if WINVER > _WIN32_WINNT_WINBLUE
         auto jpegDecode = MaybeAs<IWICJpegFrameDecode>(frameDecode);
 
         if (!jpegDecode)
@@ -167,10 +164,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ThrowIfFailed(jpegDecode->SetIndexing(WICJpegIndexingOptionsGenerateOnLoad, indexingGranularity));
 
         return true;
-#else
-        UNREFERENCED_PARAMETER(frameDecode);
-        return false;
-#endif
     }
 
     static UINT GetOrientationFromFrameDecode(ComPtr<IWICBitmapFrameDecode> const& frameDecode)
@@ -468,9 +461,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             alpha);
     }
 
-
-#if WINVER > _WIN32_WINNT_WINBLUE
-
     //
     // BitmapPixelFormat's values are intended to be reinterpreted as
     // DXGI_FORMAT values.  Unfortunately, some of the chosen color values map
@@ -554,8 +544,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         return bitmap;
     }
-
-#endif
 
     
     //
@@ -885,8 +873,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             });
     }
 
-#if WINVER > _WIN32_WINNT_WINBLUE
-
     IFACEMETHODIMP CanvasBitmapFactory::CreateFromSoftwareBitmap(
         ICanvasResourceCreator* resourceCreator,
         ISoftwareBitmap* sourceBitmap,
@@ -909,8 +895,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 ThrowIfFailed(newBitmap.CopyTo(canvasBitmap));
             });
     }
-
-#endif
 
     IFACEMETHODIMP CanvasBitmapFactory::LoadAsyncFromHstring(
         ICanvasResourceCreator* resourceCreator,

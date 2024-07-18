@@ -6,15 +6,9 @@
 
 using namespace Microsoft::Graphics::Canvas;
 
-#if WINVER > _WIN32_WINNT_WINBLUE
 typedef Windows::Foundation::Numerics::float3x2 MatrixType;
 typedef Windows::Foundation::Numerics::float2 Vector2Type;
 using namespace Microsoft::Graphics::Canvas::Svg;
-
-#else
-typedef Microsoft::Graphics::Canvas::Numerics::Matrix3x2 MatrixType;
-typedef Microsoft::Graphics::Canvas::Numerics::Vector2 Vector2Type;
-#endif
 
 TEST_CLASS(CanvasDrawingSessionTests)
 {
@@ -223,7 +217,6 @@ TEST_CLASS(CanvasDrawingSessionTests)
     }
 
 
-#if WINVER > _WIN32_WINNT_WINBLUE
     TEST_METHOD(CanvasDrawingSession_DrawSvgDocument_ZeroSizedViewportIsInvalid)
     {
         auto device = ref new CanvasDevice();
@@ -248,6 +241,5 @@ TEST_CLASS(CanvasDrawingSessionTests)
                 drawingSession->DrawSvg(svgDocument, Size{});
             });
     }
-#endif
 };
 

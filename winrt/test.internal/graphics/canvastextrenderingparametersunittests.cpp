@@ -54,9 +54,7 @@ namespace canvas
                 CanvasTextRenderingMode::Natural,
                 CanvasTextRenderingMode::NaturalSymmetric,
                 CanvasTextRenderingMode::Outline,
-#if WINVER > _WIN32_WINNT_WINBLUE
                 CanvasTextRenderingMode::NaturalSymmetricDownsampled
-#endif
             };
 
             for (auto expectedRenderingMode : renderingModes)

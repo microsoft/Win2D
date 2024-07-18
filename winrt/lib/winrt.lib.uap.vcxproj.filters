@@ -289,12 +289,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)utils\Strings.cpp">
       <Filter>utils</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)directx\Direct3DDevice.cpp">
-      <Filter>directx</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)directx\Direct3DSurface.cpp">
-      <Filter>directx</Filter>
-    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)xaml\CanvasAnimatedControlAdapter.cpp">
       <Filter>xaml</Filter>
     </ClCompile>

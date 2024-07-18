@@ -61,18 +61,13 @@
 #include <wincodec.h>
 #include <shcore.h>
 #include <robuffer.h>
-
-#ifndef WINDOWS_PHONE
 #include <DocumentSource.h>
 #include <PrintPreview.h>
-#endif
 
-#if WINVER > _WIN32_WINNT_WINBLUE
 #include <d2d1_3.h>
 #include <dwrite_3.h>
 #include <inkrenderer.h>
 #include <MemoryBuffer.h>
-#endif
 
 // WinRT
 #include <windows.foundation.h>
@@ -87,12 +82,9 @@
 #include <windows.ui.xaml.shapes.h>
 #include <windows.graphics.display.h>
 #include <windows.graphics.interop.h>
-
-#if WINVER > _WIN32_WINNT_WINBLUE
 #include <windows.foundation.metadata.h>
 #include <windows.ui.composition.h>
 #include <windows.ui.composition.interop.h>
-#endif
 
 #pragma warning(default: 4265)  // "class has virtual functions, but destructor is not virtual"
 

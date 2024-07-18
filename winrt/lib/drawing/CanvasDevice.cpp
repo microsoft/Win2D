@@ -84,34 +84,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         //
         ComPtr<IDXGIDevice3> dxgiDevice3;
 
-#if WINVER > _WIN32_WINNT_WINBLUE
         auto d2dDevice2 = As<ID2D1Device2>(d2dDevice);
 
         ComPtr<IDXGIDevice> dxgiDevice;
         ThrowIfFailed(d2dDevice2->GetDxgiDevice(&dxgiDevice));
 
         ThrowIfFailed(dxgiDevice.As(&dxgiDevice3));
-#else
-        ComPtr<ID2D1DeviceContext> deviceContext;
-        ThrowIfFailed(d2dDevice->CreateDeviceContext(
-            D2D1_DEVICE_CONTEXT_OPTIONS_NONE,
-            &deviceContext));
-
-        ComPtr<ID2D1Bitmap1> bitmap;
-        ThrowIfFailed(deviceContext->CreateBitmap(
-            D2D1_SIZE_U{ 1, 1 },
-            nullptr,
-            0,
-            D2D1::BitmapProperties1(
-                D2D1_BITMAP_OPTIONS_NONE,
-                D2D1::PixelFormat(DXGI_FORMAT_R8G8B8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED)),
-            &bitmap));
-
-        ComPtr<IDXGISurface> surface;
-        ThrowIfFailed(bitmap->GetSurface(&surface));
-
-        ThrowIfFailed(surface->GetDevice(IID_PPV_ARGS(&dxgiDevice3)));
-#endif
 
         return dxgiDevice3;
     }
@@ -312,12 +290,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         {
             m_isID2D1Factory5Supported = 0;
 
-#if WINVER > _WIN32_WINNT_WINBLUE
             if (MaybeAs<ID2D1Factory5>(m_adapter->CreateD2DFactory(CanvasDebugLevel::None)))
             {
                 m_isID2D1Factory5Supported = 1;
             }
-#endif
         }
 
         return !!m_isID2D1Factory5Supported;
@@ -567,9 +543,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         , m_dxgiDevice(dxgiDevice)
         , m_sharedState(SharedDeviceState::GetInstance())
         , m_deviceContextPool(d2dDevice)
-#if WINVER > _WIN32_WINNT_WINBLUE
         , m_spriteBatchQuirk(SpriteBatchQuirk::NeedsCheck)
-#endif
     {
         if (!dxgiDevice)
         {
@@ -1587,8 +1561,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         InterlockedExchangeComPtr(m_atlasEffect, std::move(effects.AtlasEffect));
     }
 
-#if WINVER > _WIN32_WINNT_WINBLUE
-
     ComPtr<ID2D1GradientMesh> CanvasDevice::CreateGradientMesh(
         D2D1_GRADIENT_MESH_PATCH const* patches,
         uint32_t patchCount)
@@ -1682,8 +1654,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         return d2dSvgDocument;
     }
-
-#endif
 
     HRESULT CanvasDevice::GetDeviceRemovedErrorCode()
     {

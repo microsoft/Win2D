@@ -4,8 +4,6 @@
 
 #pragma once
 
-#if WINVER > _WIN32_WINNT_WINBLUE
-
 class MockD2DSpriteBatch : public RuntimeClass<
     RuntimeClassFlags<ClassicCom>,
     ID2D1SpriteBatch>
@@ -27,5 +25,3 @@ public:
     MOCK_METHOD0_CONST(GetSpriteCount, UINT32());
     MOCK_METHOD0(Clear, void());
 };
-
-#endif

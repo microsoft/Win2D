@@ -10,10 +10,7 @@
 #include "TessellationSink.h"
 #include "../images/CanvasCommandList.h"
 #include "../text/DrawGlyphRunHelper.h"
-
-#if WINVER > _WIN32_WINNT_WINBLUE
 #include "InkToGeometryCommandSink.h"
-#endif
 
 using namespace ABI::Microsoft::Graphics::Canvas::Geometry;
 using namespace ABI::Microsoft::Graphics::Canvas;
@@ -367,9 +364,6 @@ IFACEMETHODIMP CanvasGeometryFactory::CreateGlyphRun(
         });
 }
 
-
-#if WINVER > _WIN32_WINNT_WINBLUE
-
 IFACEMETHODIMP CanvasGeometryFactory::CreateInk(
     ICanvasResourceCreator* resourceCreator,
     IIterable<InkStroke*>* inkStrokes,
@@ -397,8 +391,6 @@ IFACEMETHODIMP CanvasGeometryFactory::CreateInkWithTransformAndFlatteningToleran
             ThrowIfFailed(newCanvasGeometry.CopyTo(geometry));
         });
 }
-
-#endif
 
 IFACEMETHODIMP CanvasGeometryFactory::ComputeFlatteningTolerance(
     float dpi,
@@ -1709,9 +1701,6 @@ ComPtr<CanvasGeometry> CanvasGeometry::CreateNew(
     return canvasGeometry;
 }
 
-
-#if WINVER > _WIN32_WINNT_WINBLUE
-
 ComPtr<CanvasGeometry> CanvasGeometry::CreateNew(
     ICanvasResourceCreator* resourceCreator,
     IIterable<InkStroke*>* inkStrokes,
@@ -1758,7 +1747,5 @@ ComPtr<CanvasGeometry> CanvasGeometry::CreateNew(
 
     return canvasGeometry;
 }
-
-#endif
 
 ActivatableClassWithFactory(CanvasGeometry, CanvasGeometryFactory);

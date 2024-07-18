@@ -1305,7 +1305,6 @@ namespace Microsoft.Graphics.Canvas
         //
         // DrawInk
         //
-#if WINVER > _WIN32_WINNT_WINBLUE
         [overload("DrawInk")]
         HRESULT DrawInk(
             [in] Windows.Foundation.Collections.IIterable<Windows.UI.Input.Inking.InkStroke*>* inkStrokes);
@@ -1353,7 +1352,6 @@ namespace Microsoft.Graphics.Canvas
             [in] Windows.Foundation.Size viewportSize,
             [in] float x,
             [in] float y);
-#endif
 
         //
         // State properties
@@ -1485,8 +1483,6 @@ namespace Microsoft.Graphics.Canvas
             [in, size_is(clusterMapIndicesCount)] int* clusterMapIndices,
             [in] UINT32 textPosition);
 
-#if WINVER > _WIN32_WINNT_WINBLUE
-
         //
         // CreateSpriteBatch
         //
@@ -1512,8 +1508,6 @@ namespace Microsoft.Graphics.Canvas
             [in] CanvasImageInterpolation interpolation,
             [in] CanvasSpriteOptions options,
             [out, retval] CanvasSpriteBatch** spriteBatch);
-        
-#endif
     };
 
     [STANDARD_ATTRIBUTES]

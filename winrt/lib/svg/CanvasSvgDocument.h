@@ -4,8 +4,6 @@
 
 #pragma once
 
-#if WINVER > _WIN32_WINNT_WINBLUE
-
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Svg
 {
     class CanvasSvgDocument : RESOURCE_WRAPPER_RUNTIME_CLASS(
@@ -155,5 +153,3 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         }
     }
 }}}}}
-
-#endif

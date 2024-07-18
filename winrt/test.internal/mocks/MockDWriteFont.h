@@ -10,9 +10,7 @@ namespace canvas
         : public RuntimeClass<
             RuntimeClassFlags<ClassicCom>,
            ChainInterfaces<
-#if WINVER > _WIN32_WINNT_WINBLUE
                IDWriteFont3,
-#endif
                IDWriteFont2,
                IDWriteFont1,
                IDWriteFont>>
@@ -30,10 +28,8 @@ namespace canvas
         CALL_COUNTER_WITH_MOCK(HasCharacterMethod, HRESULT(uint32_t, BOOL*));
         CALL_COUNTER_WITH_MOCK(CreateFontFaceMethod, HRESULT(IDWriteFontFace**));
         CALL_COUNTER_WITH_MOCK(GetPanoseMethod, void(DWRITE_PANOSE*));
-#if WINVER > _WIN32_WINNT_WINBLUE
         CALL_COUNTER_WITH_MOCK(GetFontFaceReferenceMethod, HRESULT(IDWriteFontFaceReference** fontFaceReference));
         CALL_COUNTER_WITH_MOCK(CreateFontFaceMethod1, HRESULT(IDWriteFontFace3**));
-#endif
         
         IFACEMETHODIMP GetFontFamily(
             IDWriteFontFamily** fontFamily)
@@ -131,8 +127,6 @@ namespace canvas
             return FALSE;
         }
 
-#if WINVER > _WIN32_WINNT_WINBLUE
-
         IFACEMETHODIMP CreateFontFace(IDWriteFontFace3** fontFace)
         {
             return CreateFontFaceMethod1.WasCalled(fontFace);
@@ -160,7 +154,6 @@ namespace canvas
             Assert::Fail(L"Unexpected call to GetLocality");
             return DWRITE_LOCALITY_LOCAL;
         }
-#endif
 
     };
 }

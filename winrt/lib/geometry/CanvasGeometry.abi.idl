@@ -387,7 +387,6 @@ namespace Microsoft.Graphics.Canvas.Geometry
             [in] Microsoft.Graphics.Canvas.Text.CanvasGlyphOrientation glyphOrientation,
             [out, retval] CanvasGeometry** geometry);
 
-#if WINVER > _WIN32_WINNT_WINBLUE
         [overload("CreateInk")]
         HRESULT CreateInk(
             [in] Microsoft.Graphics.Canvas.ICanvasResourceCreator* resourceCreator,
@@ -401,7 +400,6 @@ namespace Microsoft.Graphics.Canvas.Geometry
             [in] NUMERICS.Matrix3x2 transform,
             [in] float flatteningTolerance,
             [out, retval] CanvasGeometry** geometry);
-#endif
 
         [overload("ComputeFlatteningTolerance")]
         HRESULT ComputeFlatteningTolerance(

@@ -8,15 +8,6 @@
 #include "CustomFontManager.h"
 #include "TrimmingSignInformation.h"
 
-//
-// CanvasLineSpacingMode is a type that is only available on Win10.
-// To reduce the number of guards around places that consume this type,
-// we define a placeholder for 8.1.
-//
-#if WINVER <= _WIN32_WINNT_WINBLUE
-enum CanvasLineSpacingMode { Default };
-#endif
-
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Text
 {
     using namespace ::Microsoft::WRL;
@@ -160,10 +151,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         PROPERTY(LastLineWrapping,         boolean);
         PROPERTY(TrimmingSign,             CanvasTrimmingSign);
         PROPERTY(CustomTrimmingSign,       ICanvasTextInlineObject*);
-
-#if WINVER > _WIN32_WINNT_WINBLUE
         PROPERTY(LineSpacingMode,          CanvasLineSpacingMode);
-#endif
 
 #undef PROPERTY
 
@@ -245,16 +233,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                 return -Spacing;
 
             case DWRITE_LINE_SPACING_METHOD_UNIFORM:
-
-#if WINVER > _WIN32_WINNT_WINBLUE
             case DWRITE_LINE_SPACING_METHOD_PROPORTIONAL:
-#endif
             default:
                 return Spacing;
             }
         }
 
-#if WINVER > _WIN32_WINNT_WINBLUE
         CanvasLineSpacingMode GetAdjustedLineSpacingMode(bool allowUniform = false) const
         {
             if (Method == DWRITE_LINE_SPACING_METHOD_PROPORTIONAL)
@@ -266,7 +250,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                 return allowUniform? CanvasLineSpacingMode::Uniform : CanvasLineSpacingMode::Default;
             }
         }
-#endif
 
         static void Set(
             IDWriteTextFormat* format,
@@ -305,7 +288,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
                 ? DWRITE_LINE_SPACING_METHOD_DEFAULT
                 : DWRITE_LINE_SPACING_METHOD_UNIFORM;
 
-#if WINVER > _WIN32_WINNT_WINBLUE
             if (lineSpacingMode == CanvasLineSpacingMode::Uniform)
             {
                 method = DWRITE_LINE_SPACING_METHOD_UNIFORM;
@@ -314,9 +296,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             {
                 method = DWRITE_LINE_SPACING_METHOD_PROPORTIONAL;
             }
-#else
-            UNREFERENCED_PARAMETER(lineSpacingMode);
-#endif
 
             ThrowIfFailed(format->SetLineSpacing(
                 method,

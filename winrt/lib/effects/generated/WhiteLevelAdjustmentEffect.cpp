@@ -7,8 +7,6 @@
 #include "pch.h"
 #include "WhiteLevelAdjustmentEffect.h"
 
-#if (defined _WIN32_WINNT_WIN10) && (WINVER >= _WIN32_WINNT_WIN10)
-
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Effects
 {
     WhiteLevelAdjustmentEffect::WhiteLevelAdjustmentEffect(ICanvasDevice* device, ID2D1Effect* effect)
@@ -67,5 +65,3 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
     ActivatableClassWithFactory(WhiteLevelAdjustmentEffect, WhiteLevelAdjustmentEffectFactory);
 }}}}}
-
-#endif // _WIN32_WINNT_WIN10

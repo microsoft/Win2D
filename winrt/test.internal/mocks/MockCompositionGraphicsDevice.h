@@ -4,8 +4,6 @@
 
 #pragma once
 
-#if WINVER > _WIN32_WINNT_WINBLUE
-
 class MockCompositionGraphicsDevice : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>,
     ICompositionGraphicsDevice,
     ICompositionGraphicsDeviceInterop>
@@ -20,5 +18,3 @@ public:
     MOCK_METHOD1(GetRenderingDevice, HRESULT(IUnknown** ppBackingDevice));
     MOCK_METHOD1(SetRenderingDevice, HRESULT(IUnknown* pBackingDevice));
 };
-
-#endif

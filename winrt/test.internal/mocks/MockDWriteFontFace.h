@@ -9,11 +9,7 @@ namespace canvas
     class MockDWriteFontFace
         : public RuntimeClass<
         RuntimeClassFlags<ClassicCom>,
-        ChainInterfaces<
-#if WINVER > _WIN32_WINNT_WINBLUE
-            IDWriteFontFace3, 
-#endif
-        IDWriteFontFace2, IDWriteFontFace1, IDWriteFontFace>>
+        ChainInterfaces<IDWriteFontFace3, IDWriteFontFace2, IDWriteFontFace1, IDWriteFontFace>>
     {
     public:
 
@@ -52,7 +48,6 @@ namespace canvas
         CALL_COUNTER_WITH_MOCK(GetRecommendedRenderingModeMethod1, HRESULT(FLOAT, FLOAT, FLOAT, DWRITE_MATRIX const*, BOOL, DWRITE_OUTLINE_THRESHOLD, DWRITE_MEASURING_MODE, DWRITE_RENDERING_MODE*));
         CALL_COUNTER_WITH_MOCK(GetRecommendedRenderingModeMethod2, HRESULT(FLOAT, FLOAT, FLOAT, DWRITE_MATRIX const*, BOOL, DWRITE_OUTLINE_THRESHOLD, DWRITE_MEASURING_MODE, IDWriteRenderingParams*, DWRITE_RENDERING_MODE*, DWRITE_GRID_FIT_MODE*));
 
-#if WINVER > _WIN32_WINNT_WINBLUE
         CALL_COUNTER_WITH_MOCK(GetFontFaceReferenceMethod, HRESULT(IDWriteFontFaceReference**));
         CALL_COUNTER_WITH_MOCK(GetPanoseMethod, void(DWRITE_PANOSE*));
         CALL_COUNTER_WITH_MOCK(GetWeightMethod, DWRITE_FONT_WEIGHT());
@@ -67,7 +62,6 @@ namespace canvas
         CALL_COUNTER_WITH_MOCK(AreCharactersLocalMethod, HRESULT(WCHAR const*, uint32_t, BOOL, BOOL*));
         CALL_COUNTER_WITH_MOCK(AreGlyphsLocalMethod, HRESULT(UINT16 const*, uint32_t, BOOL, BOOL*));
         CALL_COUNTER_WITH_MOCK(GetRecommendedRenderingModeMethod3, HRESULT(FLOAT, FLOAT, FLOAT, DWRITE_MATRIX const*, BOOL, DWRITE_OUTLINE_THRESHOLD, DWRITE_MEASURING_MODE, IDWriteRenderingParams*, DWRITE_RENDERING_MODE1*, DWRITE_GRID_FIT_MODE*));
-#endif
 
         //
         // IDWriteFontFace
@@ -340,7 +334,6 @@ namespace canvas
         //
         // IDWriteFontFace3
         //
-#if WINVER > _WIN32_WINNT_WINBLUE
         IFACEMETHODIMP GetFontFaceReference(
             IDWriteFontFaceReference** fontFaceReference)
         {
@@ -439,6 +432,5 @@ namespace canvas
         {
             return AreGlyphsLocalMethod.WasCalled(glyphIndices, glyphCount, enqueueIfNotLocal, isLocal);
         }
-#endif
     };
 }

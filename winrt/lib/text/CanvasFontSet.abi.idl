@@ -48,8 +48,6 @@ namespace Microsoft.Graphics.Canvas.Text
     {
         [propget] HRESULT Fonts([out, retval] Windows.Foundation.Collections.IVectorView<CanvasFontFace*>** value);
 
-#if WINVER > _WIN32_WINNT_WINBLUE
-
         // Returns the index of a font face, and whether it was found in the set.
         HRESULT TryFindFontFace(
             [in] CanvasFontFace* fontFace, 
@@ -98,7 +96,6 @@ namespace Microsoft.Graphics.Canvas.Text
             [in] CanvasFontPropertyIdentifier propertyIdentifier,
             [out] UINT32* valueCount,
             [out, size_is(, *valueCount), retval] CanvasFontProperty** valueElements);
-#endif
 
         // Not exposed directly: 
         // FindFontFaceReference, GetFontFaceReference. 

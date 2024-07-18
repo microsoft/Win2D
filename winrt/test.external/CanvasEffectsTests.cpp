@@ -11,11 +11,7 @@ using namespace Windows::UI;
 using namespace Windows::Devices::Enumeration;
 using namespace Platform;
 
-#ifdef USE_LOCALLY_EMULATED_UAP_APIS
-namespace EffectsAbi = ABI::Microsoft::Graphics::Canvas::Effects;
-#else
 namespace EffectsAbi = ABI::Windows::Graphics::Effects;
-#endif
 
 using EffectsAbi::IGraphicsEffectD2D1Interop;
 
@@ -1491,8 +1487,6 @@ TEST_CLASS(CanvasEffectsTests)
         );
     }
 
-#if WINVER > _WIN32_WINNT_WINBLUE
-
     TEST_METHOD(CanvasEffect_TransferTable3D_TableProperty_NotRealized)
     {
         auto device = ref new CanvasDevice();
@@ -1523,8 +1517,6 @@ TEST_CLASS(CanvasEffectsTests)
             [&](EffectTransferTable3D^ value) { effect->Table = value; }
         );
     }
-
-#endif  // WINVER > _WIN32_WINNT_WINBLUE
 
     // See https://github.com/microsoft/Win2D/issues/913
     TEST_METHOD(CanvasEffect_CreateWrapperOnInvalidDevice_DetectD2DFactoryMismatch)

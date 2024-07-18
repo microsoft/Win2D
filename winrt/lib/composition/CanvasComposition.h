@@ -4,8 +4,6 @@
 
 #pragma once
 
-#if WINVER > _WIN32_WINNT_WINBLUE
-
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace UI { namespace Composition
 {
     using namespace ABI::Windows::UI::Composition;
@@ -59,5 +57,3 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     };
 
 } } } } } }
-
-#endif

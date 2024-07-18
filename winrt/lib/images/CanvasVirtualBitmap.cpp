@@ -4,8 +4,6 @@
 
 #include "pch.h"
 
-#if WINVER > _WIN32_WINNT_WINBLUE
-
 #include <WindowsNumerics.h>
 
 #include "CanvasVirtualBitmap.h"
@@ -490,6 +488,3 @@ ComPtr<ID2D1Image> CanvasVirtualBitmap::GetD2DImage(ICanvasDevice* , ID2D1Device
 
     return GetResource();
 }
-
-
-#endif

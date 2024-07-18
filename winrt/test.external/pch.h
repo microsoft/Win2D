@@ -17,15 +17,10 @@
 #include <d3d11.h>
 #include <dxgi1_3.h>
 #include <d2d1_2.h>
-
-#if WINVER > _WIN32_WINNT_WINBLUE
 #include <d2d1_3.h>
-#endif
 
 #include <dwrite_2.h>
-#if WINVER > _WIN32_WINNT_WINBLUE
 #include <dwrite_3.h>
-#endif
 
 #include <DirectXMath.h>
 #include <Combaseapi.h>

@@ -13,13 +13,8 @@
 #include <lib/text/CanvasFontFace.h>
 #include <lib/text/CanvasTextRenderingParameters.h>
 
-#if WINVER > _WIN32_WINNT_WINBLUE
 static const int realizeOn10Only = 1;
 typedef MockDWriteFontFaceReference MockDWriteFontFaceContainer;
-#else
-static const int realizeOn10Only = 0;
-typedef MockDWriteFont MockDWriteFontFaceContainer;
-#endif
 
 TEST_CLASS(CanvasFontFaceTests)
 {
@@ -106,9 +101,7 @@ TEST_CLASS(CanvasFontFaceTests)
         Assert::AreEqual(E_INVALIDARG, canvasFontFace->get_Stretch(nullptr));
         Assert::AreEqual(E_INVALIDARG, canvasFontFace->get_Style(nullptr));
 
-#if WINVER > _WIN32_WINNT_WINBLUE
         Assert::AreEqual(E_INVALIDARG, canvasFontFace->get_FamilyNames(nullptr));
-#endif
 
         Assert::AreEqual(E_INVALIDARG, canvasFontFace->get_FaceNames(nullptr));
 
@@ -205,9 +198,7 @@ TEST_CLASS(CanvasFontFaceTests)
         Assert::AreEqual(RO_E_CLOSED, canvasFontFace->get_Stretch(&fontStretch));
         Assert::AreEqual(RO_E_CLOSED, canvasFontFace->get_Style(&fontStyle));
 
-#if WINVER > _WIN32_WINNT_WINBLUE
         Assert::AreEqual(RO_E_CLOSED, canvasFontFace->get_FamilyNames(&map));
-#endif
 
         Assert::AreEqual(RO_E_CLOSED, canvasFontFace->get_FaceNames(&map));
 
@@ -230,9 +221,7 @@ TEST_CLASS(CanvasFontFaceTests)
         ComPtr<CanvasTextRenderingParameters> RenderingParameters;
         ComPtr<MockDWriteTextAnalyzer> DWriteTextAnalyzer;
 
-#if WINVER > _WIN32_WINNT_WINBLUE
         ComPtr<StubDWriteFontFaceReference> DWriteFontFaceReference;
-#endif
 
         std::shared_ptr<StubCanvasTextLayoutAdapter> Adapter;
 
@@ -243,34 +232,20 @@ TEST_CLASS(CanvasFontFaceTests)
             Adapter = std::make_shared<StubCanvasTextLayoutAdapter>();
             CustomFontManagerAdapter::SetInstance(Adapter);
 
-#if WINVER > _WIN32_WINNT_WINBLUE
             DWriteFontFaceReference = Make<StubDWriteFontFaceReference>();
             FontFace = Make<CanvasFontFace>(DWriteFontFaceReference.Get());
-#else
-            DWriteFont = Make<MockDWriteFont>();
-            FontFace = Make<CanvasFontFace>(DWriteFont.Get());
-#endif
 
             RenderingParameters = CanvasTextRenderingParameters::CreateNew(CanvasTextRenderingMode::Default, CanvasTextGridFit::Default);
             DWriteRenderingParameters = GetWrappedResource<IDWriteRenderingParams>(RenderingParameters);
 
             RealizedDWriteFontFace = Make<MockDWriteFontFace>();
 
-#if WINVER > _WIN32_WINNT_WINBLUE
             DWriteFontFaceReference->CreateFontFaceMethod.SetExpectedCalls(realizationCount,
                 [&, realizationHr](IDWriteFontFace3** out)
                 {
                     ThrowIfFailed(RealizedDWriteFontFace.CopyTo(out));
                     return realizationHr;
                 });
-#else
-            DWriteFont->CreateFontFaceMethod.SetExpectedCalls(realizationCount,
-                [&, realizationHr](IDWriteFontFace** out)
-                {
-                    ThrowIfFailed(RealizedDWriteFontFace.CopyTo(out));
-                    return realizationHr;
-                });
-#endif
             DWriteTextAnalyzer = Make<MockDWriteTextAnalyzer>();
 
             Adapter->GetMockDWriteFactory()->CreateTextAnalyzerMethod.AllowAnyCall(
@@ -281,11 +256,7 @@ TEST_CLASS(CanvasFontFaceTests)
                 });
         }
 
-#if WINVER > _WIN32_WINNT_WINBLUE
         ComPtr<MockDWriteFontFace> GetMockPhysicalPropertyContainer() { return RealizedDWriteFontFace; }
-#else
-        ComPtr<MockDWriteFont> GetMockPhysicalPropertyContainer() { return DWriteFont; }
-#endif
     };
 
     TEST_METHOD_EX(CanvasFontFace_GetRecommendedRenderingMode)
@@ -329,7 +300,6 @@ TEST_CLASS(CanvasFontFaceTests)
     {
         Fixture f;
 
-#if WINVER > _WIN32_WINNT_WINBLUE
         f.RealizedDWriteFontFace->GetRecommendedRenderingModeMethod3.SetExpectedCalls(1,
             [&](FLOAT emSize, FLOAT dpiX, FLOAT dpiY, DWRITE_MATRIX const* transform, BOOL isSidways, DWRITE_OUTLINE_THRESHOLD outline, DWRITE_MEASURING_MODE measuringMode, IDWriteRenderingParams* renderingParams, DWRITE_RENDERING_MODE1* renderingMode, DWRITE_GRID_FIT_MODE* gridFit)
             {
@@ -345,23 +315,6 @@ TEST_CLASS(CanvasFontFaceTests)
                 *gridFit = static_cast<DWRITE_GRID_FIT_MODE>(999);
                 return S_OK;
             });
-#else
-        f.RealizedDWriteFontFace->GetRecommendedRenderingModeMethod2.SetExpectedCalls(1,
-            [&](FLOAT emSize, FLOAT dpiX, FLOAT dpiY, DWRITE_MATRIX const* transform, BOOL isSidways, DWRITE_OUTLINE_THRESHOLD outline, DWRITE_MEASURING_MODE measuringMode, IDWriteRenderingParams* renderingParams, DWRITE_RENDERING_MODE* renderingMode, DWRITE_GRID_FIT_MODE* gridFit)
-            {
-                Assert::AreEqual(3.0f, emSize);
-                Assert::AreEqual(100.0f, dpiX);
-                Assert::AreEqual(100.0f, dpiY);
-                Assert::AreEqual(DWRITE_MATRIX{ 1, 2, 3, 4, 5, 6 }, *transform);
-                Assert::IsTrue(!!isSidways);
-                Assert::AreEqual(DWRITE_OUTLINE_THRESHOLD_ALIASED, outline);
-                Assert::AreEqual(DWRITE_MEASURING_MODE_GDI_NATURAL, measuringMode);
-                Assert::IsTrue(IsSameInstance(f.DWriteRenderingParameters.Get(), renderingParams));
-                *renderingMode = DWRITE_RENDERING_MODE_ALIASED;
-                *gridFit = static_cast<DWRITE_GRID_FIT_MODE>(999);
-                return S_OK;
-            });
-#endif
 
         CanvasTextRenderingMode mode;
         Numerics::Matrix3x2 someTransform = Numerics::Matrix3x2{ 1, 2, 3, 4, 5, 6 };
@@ -381,7 +334,6 @@ TEST_CLASS(CanvasFontFaceTests)
     {
         Fixture f;
 
-#if WINVER > _WIN32_WINNT_WINBLUE
         f.RealizedDWriteFontFace->GetRecommendedRenderingModeMethod3.SetExpectedCalls(1,
             [&](FLOAT emSize, FLOAT dpiX, FLOAT dpiY, DWRITE_MATRIX const* transform, BOOL isSidways, DWRITE_OUTLINE_THRESHOLD outline, DWRITE_MEASURING_MODE measuringMode, IDWriteRenderingParams* renderingParams, DWRITE_RENDERING_MODE1* renderingMode, DWRITE_GRID_FIT_MODE* gridFit)
             {
@@ -397,23 +349,6 @@ TEST_CLASS(CanvasFontFaceTests)
                 *gridFit = DWRITE_GRID_FIT_MODE_ENABLED;
                 return S_OK;
             });
-#else
-        f.RealizedDWriteFontFace->GetRecommendedRenderingModeMethod2.SetExpectedCalls(1,
-            [&](FLOAT emSize, FLOAT dpiX, FLOAT dpiY, DWRITE_MATRIX const* transform, BOOL isSidways, DWRITE_OUTLINE_THRESHOLD outline, DWRITE_MEASURING_MODE measuringMode, IDWriteRenderingParams* renderingParams, DWRITE_RENDERING_MODE* renderingMode, DWRITE_GRID_FIT_MODE* gridFit)
-            {
-                Assert::AreEqual(3.0f, emSize);
-                Assert::AreEqual(100.0f, dpiX);
-                Assert::AreEqual(100.0f, dpiY);
-                Assert::AreEqual(DWRITE_MATRIX{ 1, 2, 3, 4, 5, 6 }, *transform);
-                Assert::IsTrue(!!isSidways);
-                Assert::AreEqual(DWRITE_OUTLINE_THRESHOLD_ALIASED, outline);
-                Assert::AreEqual(DWRITE_MEASURING_MODE_GDI_NATURAL, measuringMode);
-                Assert::IsTrue(IsSameInstance(f.DWriteRenderingParameters.Get(), renderingParams));
-                *renderingMode = static_cast<DWRITE_RENDERING_MODE>(999);
-                *gridFit = DWRITE_GRID_FIT_MODE_ENABLED;
-                return S_OK;
-            });
-#endif
 
         CanvasTextGridFit gridFit;
         Numerics::Matrix3x2 someTransform = Numerics::Matrix3x2{ 1, 2, 3, 4, 5, 6 };
@@ -1051,20 +986,11 @@ TEST_CLASS(CanvasFontFaceTests)
     {
         Fixture f(realizeOn10Only);
 
-#if WINVER > _WIN32_WINNT_WINBLUE
         f.GetMockPhysicalPropertyContainer()->HasCharacterMethod.SetExpectedCalls(2,
             [&](uint32_t unicodeValue)
             {
                 return (unicodeValue == 0x1234u);
             });
-#else
-        f.GetMockPhysicalPropertyContainer()->HasCharacterMethod.SetExpectedCalls(2,
-            [&](uint32_t unicodeValue, BOOL* exists)
-            {
-                *exists = (unicodeValue == 0x1234u);
-                return S_OK;
-            });
-#endif
 
         boolean value;
         Assert::AreEqual(S_OK, f.FontFace->HasCharacter(0x1234u, &value));
@@ -1074,7 +1000,6 @@ TEST_CLASS(CanvasFontFaceTests)
         Assert::IsFalse(!!value);
     }
 
-#if WINVER > _WIN32_WINNT_WINBLUE
     TEST_METHOD_EX(CanvasFontFace_RealizingRemoteFontThrowsException)
     {
         Fixture f(1, DWRITE_E_REMOTEFONT);
@@ -1082,7 +1007,6 @@ TEST_CLASS(CanvasFontFaceTests)
         boolean value;
         Assert::AreEqual(DWRITE_E_REMOTEFONT, f.FontFace->HasCharacter(0x1234u, &value));
     }
-#endif
 
     struct GetGlyphRunBoundsFixture : public Fixture
     {
@@ -1448,36 +1372,3 @@ TEST_CLASS(CanvasFontFaceTests)
         }
     }
 };
-
-//
-// These workarounds are (unfortunately) needed due to a bug in DWrite's headers,
-// where a few virtual methods are not marked as 'pure'. This causes a link error
-// when defining our mocks, when compiling for 8.1.
-//
-
-#if WINVER <= _WIN32_WINNT_WINBLUE
-IFACEMETHODIMP IDWriteFactory1::GetEudcFontCollection(IDWriteFontCollection**, BOOL )
-{
-    return E_NOTIMPL;
-}
-
-IFACEMETHODIMP_(BOOL) IDWriteFontFace1::HasKerningPairs()
-{
-    return FALSE;
-}
-
-IFACEMETHODIMP IDWriteFontFace1::GetVerticalGlyphVariants(uint32_t, uint16_t const*, uint16_t*)
-{
-    return E_NOTIMPL;
-}
-
-IFACEMETHODIMP_(BOOL) IDWriteFontFace1::HasVerticalGlyphVariants()
-{
-    return FALSE;
-}
-
-IFACEMETHODIMP IDWriteFontFallback::MapCharacters(IDWriteTextAnalysisSource*, unsigned int, unsigned int, IDWriteFontCollection *, wchar_t const *, DWRITE_FONT_WEIGHT, DWRITE_FONT_STYLE, DWRITE_FONT_STRETCH, unsigned int *, IDWriteFont**, float*)
-{
-    return E_NOTIMPL;
-}
-#endif

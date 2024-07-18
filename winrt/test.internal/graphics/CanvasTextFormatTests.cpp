@@ -452,7 +452,6 @@ namespace canvas
             }
         }
 
-#if WINVER > _WIN32_WINNT_WINBLUE
 
         TEST_METHOD_EX(CanvasTextFormat_LineSpacing_InteropToAndFromDWrite_AllSpacingMethods)
         {
@@ -551,7 +550,6 @@ namespace canvas
                 Assert::AreEqual(CanvasLineSpacingMode::Default, spacingMode);
             }
         }
-#endif
 
         TEST_METHOD_EX(CanvasTextFormat_LineSpacing_MethodIsDeterminedByValueOfLineSpacing)
         {
@@ -1614,11 +1612,9 @@ namespace canvas
                 &CanvasTextFormat::put_LineSpacingBaseline,
                 202.0f);
 
-#if WINVER > _WIN32_WINNT_WINBLUE
             CanvasTextFormat_TrimmingSign_AffectsTextFormatState_TestCase(
                 &CanvasTextFormat::put_LineSpacingMode,
                 CanvasLineSpacingMode::Proportional);
-#endif
 
             CanvasTextFormat_TrimmingSign_AffectsTextFormatState_TestCase(
                 &CanvasTextFormat::put_LocaleName,

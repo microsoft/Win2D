@@ -4,8 +4,6 @@
 
 #pragma once
 
-#if WINVER > _WIN32_WINNT_WINBLUE
-
 using namespace ABI::Windows::UI::Composition;
 
 class MockCompositor : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>,
@@ -44,5 +42,3 @@ public:
     MOCK_METHOD2(CreateCompositionSurfaceForSwapChain , HRESULT(IUnknown* pDxgiSwapChain, ICompositionSurface** value));
     MOCK_METHOD2(CreateGraphicsDevice                 , HRESULT(IUnknown* pRenderingDevice, ICompositionGraphicsDevice** value));
 };
-
-#endif

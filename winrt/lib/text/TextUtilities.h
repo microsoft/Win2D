@@ -285,7 +285,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         }
     }
 
-#if WINVER > _WIN32_WINNT_WINBLUE
     template<>
     inline void ThrowIfInvalid(CanvasLineSpacingMode value)
     {
@@ -314,8 +313,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         CHECK_ENUM_MEMBER(DWRITE_LINE_SPACING_METHOD_PROPORTIONAL, CanvasLineSpacingMode::Proportional);
 
         return static_cast<DWRITE_LINE_SPACING_METHOD>(value);
-    }
-#endif    
+    } 
 
     template<>
     inline void ThrowIfInvalid(CanvasVerticalGlyphOrientation value)
@@ -441,8 +439,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             return std::make_pair(WinString(beginIt, hashPos), WinString(hashPos + 1, endIt));
     }
 
-#if WINVER > _WIN32_WINNT_WINBLUE
-
     inline CanvasTextRenderingMode ToCanvasTextRenderingMode(DWRITE_RENDERING_MODE1 const& value)
     {
         // static_asserts in ToDWriteRenderingMode validate that this cast is ok
@@ -461,26 +457,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         CHECK_ENUM_MEMBER(DWRITE_RENDERING_MODE1_NATURAL_SYMMETRIC_DOWNSAMPLED, CanvasTextRenderingMode::NaturalSymmetricDownsampled);
         return static_cast<DWRITE_RENDERING_MODE1>(value);
     }
-#else
-
-    inline CanvasTextRenderingMode ToCanvasTextRenderingMode(DWRITE_RENDERING_MODE const& value)
-    {
-        // static_asserts in ToDWriteRenderingMode validate that this cast is ok
-        return static_cast<CanvasTextRenderingMode>(value);
-    }
-
-    inline DWRITE_RENDERING_MODE ToDWriteRenderingMode(CanvasTextRenderingMode value)
-    {
-        CHECK_ENUM_MEMBER(DWRITE_RENDERING_MODE_DEFAULT, CanvasTextRenderingMode::Default);
-        CHECK_ENUM_MEMBER(DWRITE_RENDERING_MODE_ALIASED, CanvasTextRenderingMode::Aliased);
-        CHECK_ENUM_MEMBER(DWRITE_RENDERING_MODE_GDI_CLASSIC, CanvasTextRenderingMode::GdiClassic);
-        CHECK_ENUM_MEMBER(DWRITE_RENDERING_MODE_GDI_NATURAL, CanvasTextRenderingMode::GdiNatural);
-        CHECK_ENUM_MEMBER(DWRITE_RENDERING_MODE_NATURAL, CanvasTextRenderingMode::Natural);
-        CHECK_ENUM_MEMBER(DWRITE_RENDERING_MODE_NATURAL_SYMMETRIC, CanvasTextRenderingMode::NaturalSymmetric);
-        CHECK_ENUM_MEMBER(DWRITE_RENDERING_MODE_OUTLINE, CanvasTextRenderingMode::Outline);
-        return static_cast<DWRITE_RENDERING_MODE>(value);
-    }
-#endif
 
     inline CanvasTextGridFit ToCanvasTextGridFit(DWRITE_GRID_FIT_MODE value)
     {
@@ -571,15 +547,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         CHECK_ENUM_MEMBER(DWRITE_INFORMATIONAL_STRING_FULL_NAME, CanvasFontInformation::FullName);
         CHECK_ENUM_MEMBER(DWRITE_INFORMATIONAL_STRING_POSTSCRIPT_NAME, CanvasFontInformation::PostscriptName);
         CHECK_ENUM_MEMBER(DWRITE_INFORMATIONAL_STRING_POSTSCRIPT_CID_NAME, CanvasFontInformation::PostscriptCidName);
-#if WINVER > _WIN32_WINNT_WINBLUE
         CHECK_ENUM_MEMBER(DWRITE_INFORMATIONAL_STRING_WWS_FAMILY_NAME, CanvasFontInformation::WwsFamilyName);
         CHECK_ENUM_MEMBER(DWRITE_INFORMATIONAL_STRING_DESIGN_SCRIPT_LANGUAGE_TAG, CanvasFontInformation::DesignScriptLanguageTag);
         CHECK_ENUM_MEMBER(DWRITE_INFORMATIONAL_STRING_SUPPORTED_SCRIPT_LANGUAGE_TAG, CanvasFontInformation::SupportedScriptLanguageTag);
-#endif
         return static_cast<DWRITE_INFORMATIONAL_STRING_ID>(value);
     }
 
-#if WINVER > _WIN32_WINNT_WINBLUE
     inline DWRITE_FONT_PROPERTY_ID ToDWriteFontPropertyId(CanvasFontPropertyIdentifier value)
     {
         CHECK_ENUM_MEMBER(DWRITE_FONT_PROPERTY_ID_NONE, CanvasFontPropertyIdentifier::None);
@@ -599,7 +572,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         return static_cast<DWRITE_FONT_PROPERTY_ID>(value);
     }
-#endif
 
     inline DWRITE_GLYPH_ORIENTATION_ANGLE ToDWriteGlyphOrientationAngle(CanvasGlyphOrientation value)
     {
