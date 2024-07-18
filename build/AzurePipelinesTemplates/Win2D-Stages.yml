@@ -5,9 +5,9 @@ parameters:
 - name: "PipelineType"
   type: string
   default: "not_set"
-- name: "VMImage"
+- name: "OBImage"
   type: string
-  default: "windows-2022"
+  default: "windows"
 - name: "SignCode"
   type: boolean
   default: false
@@ -16,18 +16,10 @@ parameters:
 stages:
 - stage: Build_Win2D
   jobs:
-  # Set Version Number 
-  - job: Version
-    pool:
-      vmImage: '${{ parameters.VMImage }}'
-    steps:
-    # Set the build number and version
-    - template: Win2D-VersionNumber.yml
-      parameters:
-        PipelineType: ${{ parameters.PipelineType }}
   # Build Win2D in parallel
   - job: Build_Win2D
-    dependsOn: Version
+    # Empty dependency
+    dependsOn:
     strategy:
       matrix:
         x86:
@@ -48,15 +40,19 @@ stages:
           archDirectory: "uaparm64"
           buildConfiguration: "Release"
     pool:
-      vmImage: '${{ parameters.VMImage }}'
+      type: '${{ parameters.OBImage }}'
     variables:
-      version: $[ dependencies.Version.outputs['version'] ]
+      # binaries scanning tools are run on this directory ( https://onebranch.visualstudio.com/OneBranch/_wiki/wikis/OneBranch.wiki/4634/SDL-(Static-Analysis)-for-Containerized-Workflows ) and 
+      # this directory is uploaded to pipeline artifacts. More info at https://aka.ms/obpipelines/artifacts
+      ob_outputDirectory: '$(Build.ArtifactStagingDirectory)'
+      ob_artifactBaseName: 'build_output'
+      ob_artifactSuffix: '_$(architecture)'
     steps:
     - template: Win2D-ParallelBuild-Steps.yml
       parameters:
         BuildTests: false
         RunTests: false
-        BuildDocs: true
+        BuildDocs: false
         BuildTools: true
         PublishBinaries: true
         SignCode: ${{ parameters.SignCode }}
@@ -66,7 +62,13 @@ stages:
   jobs:
   - job: Run_BuildNupkg
     pool:
-      vmImage: '${{ parameters.VMImage }}'
+      type: '${{ parameters.OBImage }}'
+    variables:
+      # binaries scanning tools are run on this directory ( https://onebranch.visualstudio.com/OneBranch/_wiki/wikis/OneBranch.wiki/4634/SDL-(Static-Analysis)-for-Containerized-Workflows ) and 
+      # this directory is uploaded to pipeline artifacts. More info at https://aka.ms/obpipelines/artifacts
+      ob_outputDirectory: '$(Build.ArtifactStagingDirectory)'
+      ob_artifactBaseName: 'test_output'
+      ob_artifactSuffix: '_$(architecture)'
     steps:
     - template: Win2D-BuildNupkg.yml
       parameters:
@@ -95,9 +97,16 @@ stages:
           #   architecture: "ARM64"
           #   buildConfiguration: "Release"
       pool:
-        vmImage: '${{ parameters.VMImage }}'
+        type: '${{ parameters.OBImage }}'
+        isCustom: true
+        name: 'Azure Pipelines'
+        vmImage: 'windows-2022'
       variables:
-        version: $[ dependencies.Version.outputs['version'] ]
+        # binaries scanning tools are run on this directory ( https://onebranch.visualstudio.com/OneBranch/_wiki/wikis/OneBranch.wiki/4634/SDL-(Static-Analysis)-for-Containerized-Workflows ) and 
+        # this directory is uploaded to pipeline artifacts. More info at https://aka.ms/obpipelines/artifacts
+        ob_outputDirectory: '$(Build.ArtifactStagingDirectory)'
+        ob_artifactBaseName: 'build_output'
+        ob_artifactSuffix: '_$(architecture)'
       steps:
       - template: Win2D-ParallelBuild-Steps.yml
         parameters:

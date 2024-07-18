@@ -1,0 +1,74 @@
+#####################################################################################################################################
+#                                               OneBranch Pipelines - Buddy                                                         #
+#####################################################################################################################################
+#                                                                                                                                   #
+# This pipeline was created by EasyStart from a sample located at:                                                                  #
+#                               https://aka.ms/obpipelines/easystart/samples                                                        #
+#                                                                                                                                   #
+# OB Windows Undocked Wiki:     https://aka.ms/wud/template                                                                         #
+# General OB Documentation:     https://aka.ms/obpipelines                                                                          #
+# Build MSBuild project:        https://dev.azure.com/onebranch/OneBranch/_wiki/wikis/OneBranch.wiki/6045/Build-MSBuild-project     #
+# Yaml Schema:                  https://aka.ms/obpipelines/yaml/schema                                                              #
+# Retail Tasks:                 https://aka.ms/obpipelines/tasks                                                                    #
+# Support:                      https://aka.ms/onebranchsup                                                                         #
+#                                                                                                                                   #
+#####################################################################################################################################
+
+# https://aka.ms/obpipelines/triggers
+trigger:
+  branches:
+    include:
+    - refs/heads/uwp/main
+
+name: $(BuildDefinitionName)-UWP-$(date:yyMMdd)
+
+parameters: # parameters are shown up in ADO UI in a build queue time
+- name: 'debug'
+  displayName: 'Enable debug output'
+  type: boolean
+  default: false
+- name: RunTests
+  displayName: "Run Tests"
+  type: boolean
+  default: True
+
+variables:
+  CDP_DEFINITION_BUILD_COUNT: $[counter('', 0)] # needed for onebranch.pipeline.version task https://aka.ms/obpipelines/versioning
+  system.debug: ${{ parameters.debug }}
+  ENABLE_PRS_DELAYSIGN: 1
+  ROOT: $(Build.SourcesDirectory)
+  REPOROOT: $(Build.SourcesDirectory)
+  OUTPUTROOT: $(REPOROOT)\out
+  NUGET_XMLDOC_MODE: none
+  PackageSuffix: $[format('CI-{0:yyMMdd}.{1}', pipeline.startTime, counter(format('{0}.{1}', variables['Build.DefinitionName'], format('{0:yyMMdd}', pipeline.startTime)), 0))]
+
+  # Docker image which is used to build the project https://aka.ms/obpipelines/containers
+  WindowsContainerImage: 'onebranch.azurecr.io/windows/ltsc2019/vse2022:latest' 
+
+  Codeql.Enabled: true #  CodeQL once every 3 days on the default branch for all languages its applicable to in that pipeline.
+  
+resources:
+  repositories: 
+    - repository: templates
+      type: git
+      name: OneBranch.Pipelines/GovernedTemplates
+      ref: refs/heads/main
+
+extends:
+  template: v2/Microsoft.NonOfficial.yml@templates # https://aka.ms/obpipelines/templates
+  parameters:
+    platform:
+      name: 'windows_undocked' # windows undocked
+    
+    globalSdl: # Refer the wiki for more options in this parameter: https://aka.ms/obpipelines/sdl
+      tsa:
+        enabled: false # onebranch publish all sdl results to TSA. If TSA is disabled all SDL tools will forced into 'break' build mode.
+      suppression:
+        suppressionFile: $(Build.SourcesDirectory)\.config\CredScanSuppressions.json
+
+    stages:
+    - template: ..\build\AzurePipelinesTemplates\Win2D-Stages.yml
+      parameters:
+        RunTests: ${{ parameters.RunTests }}
+        PipelineType: 'CI'
+        SignCode: false

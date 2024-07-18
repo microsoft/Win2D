@@ -11,7 +11,7 @@ steps:
 # Release Policy Checks
 - ${{ if eq(parameters.PipelineType, 'Release') }}:
   # Run PoliCheck
-  - task: securedevelopmentteam.vss-secure-development-tools.build-task-policheck.PoliCheck@1
+  - task: securedevelopmentteam.vss-secure-development-tools.build-task-policheck.PoliCheck@2
     displayName: 'Run PoliCheck'
     inputs:
       inputType: CmdLine
@@ -29,36 +29,47 @@ steps:
       platform: AnyCPU
       configuration: Release
   # Run PoliCheck Output Parser
-  - task: CmdLine@1
+  - task: CmdLine@2
     displayName: 'Run PoliCheckOutputParser'
     inputs:
-      filename: 'build\pkges\PoliCheckOutputParser\bin\Release\PoliCheckOutputParser.exe'
-      arguments: '$(Build.SourcesDirectory) ..\_sdt\logs\PoliCheck\PoliCheck.xml build\pkges\PoliCheckExclusions.txt bin\PoliCheck.txt'
+      script: call build\pkges\PoliCheckOutputParser\bin\Release\PoliCheckOutputParser.exe $(Build.SourcesDirectory) ..\.gdn\.r\policheck\001\policheck.xml build\pkges\PoliCheckExclusions.txt bin\PoliCheck.txt
 
 # CI Policy Checks
 - ${{ if ne(parameters.PipelineType, 'Release') }}:
   # Ensure that release branch was not merged back into master
-  - task: CmdLine@1
+  - task: CmdLine@2
     displayName: Ensure release branch not merged to master
     inputs:
-      filename: cmd
-      arguments: /c if exist build\pkges\PoliCheckExclusions.txt exit 1
+      script: |
+        if exist $(Build.SourcesDirectory)\build\pkges\PoliCheckExclusions.txt exit 1
+
+# Set the build number and version
+- template: Win2D-VersionNumber.yml
+  parameters:
+    PipelineType: ${{ parameters.PipelineType }}
 
 # Download nuget.exe
-- task: BatchScript@1
-  displayName: Run download-nuget.cmd
-  inputs:
-    filename: build\nuget\download-nuget.cmd
+- script : call build\nuget\download-nuget.cmd
+  displayName: Download Nuget
+
 # Nuget Authenticate
 - task: NuGetAuthenticate@1
-  displayName: NuGet Authenticate
+  displayName: NuGet Authenticate Win2DWinUI
   inputs:
     nuGetServiceConnections: Win2DWinUI
-# Nuget Restore
+- task: NuGetAuthenticate@1
+  displayName: NuGet Authenticate ProjectReunion.nuget.internal
+  inputs:
+    nuGetServiceConnections: ProjectReunion.nuget.internal
+    
+# Nuget Restore for telemetry
 - task: CmdLine@2
   displayName: Move telemetry files
   inputs:
-    script: "call nuget.exe restore -NonInteractive -configFile $(Build.SourcesDirectory)/release-nuget.config -PackagesDirectory $(Build.SourcesDirectory)/packages $(Build.SourcesDirectory)/build/release-pkges/packages.config || exit /b 1\n      \ndel $(Build.SourcesDirectory)\\winrt\\inc\\MicrosoftTelemetry.h || exit /b 1\n      \nmove /Y $(Build.SourcesDirectory)\\packages\\Microsoft.Win2D.Telemetry.1.0.2\\build\\include\\MicrosoftTelemetry.h $(Build.SourcesDirectory)\\winrt\\inc\\MicrosoftTelemetry.h || exit /b 1"
+    script: |
+      call nuget.exe restore -NonInteractive -configFile $(Build.SourcesDirectory)/release-nuget.config -PackagesDirectory $(Build.SourcesDirectory)/packages $(Build.SourcesDirectory)/build/release-pkges/packages.config || exit /b 1
+      del $(Build.SourcesDirectory)\\winrt\\inc\\MicrosoftTelemetry.h || exit /b 1
+      move /Y $(Build.SourcesDirectory)\\packages\\Microsoft.Win2D.Telemetry.1.0.2\\build\\include\\MicrosoftTelemetry.h $(Build.SourcesDirectory)\\winrt\\inc\\MicrosoftTelemetry.h || exit /b 1
 
 # Build Win2D
 - task: MSBuild@1
@@ -67,6 +78,16 @@ steps:
     solution: Win2D.proj
     msbuildVersion: 17.0
     msbuildArguments: /p:BuildTests=${{ parameters.BuildTests }} /p:BuildDocs=${{ parameters.BuildDocs }} /p:BuildTools=${{ parameters.BuildTools }} /p:RunTests=false /p:BuildPlatforms="$(architecture)" /p:BuildConfigurations="$(buildConfiguration)"
+    maximumCpuCount: true
+
+# Build Intellisense
+- task: MSBuild@1
+  displayName: Build Intellisense
+  condition: and(succeeded(), eq(variables.architecture, 'Win32;AnyCPU') )
+  inputs:
+    solution: tools\docs\BuildDocs.proj
+    msbuildVersion: 17.0
+    msbuildArguments: /nologo /v:m /p:IntellisenseOnly=true
     maximumCpuCount: true
 
 # Signing and Release checks: BinSkim, Post Analysis, and ComponentDetection
@@ -193,9 +214,3 @@ steps:
       TargetFolder: $(Build.ArtifactStagingDirectory)
       Contents: |
         bin\intellisense\Microsoft.Graphics.Canvas.xml
-  # Publish binary artifact
-  - task: PublishBuildArtifacts@1
-    displayName: 'Publish Artifact: build_output'
-    inputs:
-      ArtifactName: 'build_output'
-      PathtoPublish: '$(Build.ArtifactStagingDirectory)'

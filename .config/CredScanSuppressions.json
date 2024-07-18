@@ -1,0 +1,9 @@
+{
+    "tool": "Credential Scanner",
+    "suppressions": [
+      {
+        "file": "\\build\\Assets\\TemporaryKey.pfx",
+        "_justification": "Dummy key file used for VS test project, unusable for signing"
+      }
+    ]
+ }

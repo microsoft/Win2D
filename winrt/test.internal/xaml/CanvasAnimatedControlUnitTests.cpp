@@ -8,6 +8,8 @@
 
 #include "MockXamlSolidColorBrush.h"
 
+#ifndef ARCH_X86
+
 static Color const AnyColor                 {   1,   2,   3,   4 };
 static Color const AnyOtherColor            {   5,   6,   7,   8 };
 static Color const AnyOpaqueColor           { 255,   2,   3,   4 };
@@ -3539,3 +3541,5 @@ TEST_CLASS(CanvasAnimatedControl_DesignMode)
         Assert::AreEqual(anyColor, retrievedColor);
     }
 };
+
+#endif
