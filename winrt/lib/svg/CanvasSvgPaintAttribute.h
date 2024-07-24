@@ -4,8 +4,6 @@
 
 #pragma once
 
-#if WINVER > _WIN32_WINNT_WINBLUE 
-
 #include "AttributeHelpers.h"
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Svg
@@ -57,5 +55,3 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         }
     };
 }}}}}
-
-#endif

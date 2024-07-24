@@ -19,9 +19,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     using namespace ABI::Microsoft::UI;
     using namespace ABI::Windows::UI;
 
-#if WINVER > _WIN32_WINNT_WINBLUE
     using ABI::Windows::Graphics::Imaging::ISoftwareBitmap;
-#endif
 
     bool FileFormatSupportsHdr(GUID const& containerFormat);
     GUID GetGUIDForFileFormat(CanvasBitmapFileFormat fileFormat);
@@ -186,12 +184,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             CanvasAlphaMode alpha,
             ICanvasBitmap** canvasBitmap) override;
 
-#if WINVER > _WIN32_WINNT_WINBLUE
         IFACEMETHOD(CreateFromSoftwareBitmap)(
             ICanvasResourceCreator* resourceCreator,
             ISoftwareBitmap* sourceBitmap,
             ICanvasBitmap** canvasBitmap) override;
-#endif        
 
         IFACEMETHOD(LoadAsyncFromHstring)(
             ICanvasResourceCreator* resourceCreator,
@@ -950,13 +946,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             float dpi,
             CanvasAlphaMode alpha);
 
-#if WINVER > _WIN32_WINNT_WINBLUE
-
         static ComPtr<CanvasBitmap> CreateNew(
             ICanvasDevice* device,
             ISoftwareBitmap* sourceBitmap);
-
-#endif
 
         CanvasBitmap(
             ICanvasDevice* device,

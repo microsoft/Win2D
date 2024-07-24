@@ -4,8 +4,6 @@
 
 #include "pch.h"
 
-#if WINVER > _WIN32_WINNT_WINBLUE
-
 #include "CanvasSvgStrokeDashArrayAttribute.h"
 #include "AttributeHelpers.h"
     
@@ -196,5 +194,3 @@ IFACEMETHODIMP CanvasSvgStrokeDashArrayAttribute::get_Device(ICanvasDevice** dev
             ThrowIfFailed(m_canvasDevice.EnsureNotClosed().CopyTo(device));
         });
 }
-
-#endif

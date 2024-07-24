@@ -4,8 +4,6 @@
 
 #include "pch.h"
 
-#if WINVER > _WIN32_WINNT_WINBLUE
-
 #include <lib/composition/CanvasComposition.h>
 
 using namespace ABI::Microsoft::Graphics::Canvas::UI::Composition;
@@ -353,5 +351,3 @@ public:
         ExpectHResultException(E_NOTIMPL, [] { GetCompositionStatics(); });
     }
 };
-
-#endif

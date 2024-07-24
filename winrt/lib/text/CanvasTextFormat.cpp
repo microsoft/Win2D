@@ -312,10 +312,8 @@ void CanvasTextFormat::SetShadowPropertiesFromDWrite()
     m_lineSpacing = spacing.GetAdjustedSpacing();
     m_lineSpacingBaseline = spacing.Baseline;
 
-#if WINVER > _WIN32_WINNT_WINBLUE
     bool isUniform = m_lineSpacingMode == CanvasLineSpacingMode::Uniform;
     m_lineSpacingMode = spacing.GetAdjustedLineSpacingMode(isUniform);
-#endif
 
     DWRITE_TRIMMING trimmingOptions{};
     ComPtr<IDWriteInlineObject> inlineObject;
@@ -1036,8 +1034,6 @@ IFACEMETHODIMP CanvasTextFormat::put_Options(CanvasDrawTextOptions value)
 // CanvasTextFormat.LineSpacingMethod
 //
 
-#if WINVER > _WIN32_WINNT_WINBLUE
-
 IFACEMETHODIMP CanvasTextFormat::get_LineSpacingMode(CanvasLineSpacingMode* value)
 {
     bool allowUniformToBePreserved = m_lineSpacingMode == CanvasLineSpacingMode::Uniform;
@@ -1057,8 +1053,6 @@ IFACEMETHODIMP CanvasTextFormat::put_LineSpacingMode(CanvasLineSpacingMode value
         ThrowIfInvalid<CanvasLineSpacingMode>,
         &CanvasTextFormat::RealizeLineSpacing);
 }
-
-#endif
 
 
 IFACEMETHODIMP CanvasTextFormat::get_VerticalGlyphOrientation(CanvasVerticalGlyphOrientation* value)

@@ -19,19 +19,8 @@
 #include "pch.h"
 #include <Microsoft.Graphics.Canvas.native.h>
 
-#ifdef USE_LOCALLY_EMULATED_UAP_APIS
-
-    #include <Microsoft.Graphics.Canvas.h>
-
-    using namespace Microsoft::Graphics::Canvas::Effects;
-    namespace EffectsAbi = ABI::Microsoft::Graphics::Canvas::Effects;
-
-#else
-
-    using namespace Windows::Graphics::Effects;
-    namespace EffectsAbi = ABI::Windows::Graphics::Effects;
-
-#endif
+using namespace Windows::Graphics::Effects;
+namespace EffectsAbi = ABI::Windows::Graphics::Effects;
 
 using EffectsAbi::IGraphicsEffectD2D1Interop;
 

@@ -3,7 +3,6 @@
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
 #include "pch.h"
-#if WINVER > _WIN32_WINNT_WINBLUE
 
 #include <lib/svg/CanvasSvgPaintAttribute.h>
 #include <lib/svg/CanvasSvgPointsAttribute.h>
@@ -925,6 +924,3 @@ namespace canvas
         }
     };
 }
-
-
-#endif

@@ -9,11 +9,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     using namespace ::Microsoft::WRL;
     using namespace WinRTDirectX;
     using namespace Brushes;
-
-#if WINVER > _WIN32_WINNT_WINBLUE
     using namespace Svg;
-#endif
-
     using namespace Text;
     using namespace UI;
     using namespace UI::Xaml;
@@ -190,7 +186,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         static_assert(offsetof(DWRITE_UNICODE_RANGE, last) == offsetof(CanvasUnicodeRange, Last), "CanvasUnicodeRange layout must match DWRITE_UNICODE_RANGE");
     };
 
-#if WINVER > _WIN32_WINNT_WINBLUE
     template<> struct ValidateStaticCastAs<CanvasSvgDisplay, D2D1_SVG_DISPLAY> : std::true_type
     {
         static_assert(static_cast<uint32_t>(D2D1_SVG_DISPLAY_INLINE) == static_cast<uint32_t>(CanvasSvgDisplay::Inline), "CanvasSvgDisplay must match D2D1_SVG_DISPLAY");
@@ -312,8 +307,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         static_assert(static_cast<uint32_t>(Effects::ExtendedColorSpace::FullG22P2020)     == static_cast<uint32_t>(DXGI_COLOR_SPACE_RGB_FULL_G22_NONE_P2020),          "ExtendedColorSpace must match DXGI_COLOR_SPACE_TYPE");
         static_assert(static_cast<uint32_t>(Effects::ExtendedColorSpace::Custom)           == static_cast<uint32_t>(DXGI_COLOR_SPACE_CUSTOM),                           "ExtendedColorSpace must match DXGI_COLOR_SPACE_TYPE");
     };
-
-#endif  // WINVER > _WIN32_WINNT_WINBLUE
 
     inline float ToNormalizedFloat(uint8_t v)
     {
@@ -494,7 +487,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         }
     }
 
-#if WINVER > _WIN32_WINNT_WINBLUE
 
     inline CanvasAlphaMode ToCanvasAlphaMode(ABI::Windows::Graphics::Imaging::BitmapAlphaMode alphaMode)
     {
@@ -508,8 +500,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             default: assert(false); return CanvasAlphaMode::Premultiplied;
         }
     }
-
-#endif
     
     inline CanvasAlphaMode FromD2DColorInterpolation(D2D1_COLOR_INTERPOLATION_MODE colorInterpolation)
     {
@@ -690,7 +680,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ABI::Windows::Foundation::Rect{ x, y, width, height };
     }
 
-#if WINVER > _WIN32_WINNT_WINBLUE
     inline D2D1_PATCH_EDGE_MODE ToD2DPatchEdgeMode(CanvasGradientMeshPatchEdge edge)
     {
         switch (edge)
@@ -712,8 +701,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             default: assert(false); return CanvasGradientMeshPatchEdge::Aliased;
         }
     }
-
-#endif
     
     inline unsigned short CheckCastAsUShort(int i)
     {

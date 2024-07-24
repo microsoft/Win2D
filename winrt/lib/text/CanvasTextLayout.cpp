@@ -86,9 +86,8 @@ ComPtr<CanvasTextLayout> CanvasTextLayout::CreateNew(
     CheckMakeResult(textLayout);
 
     CanvasLineSpacingMode lineSpacingMode{};
-#if WINVER > _WIN32_WINNT_WINBLUE
     ThrowIfFailed(textFormat->get_LineSpacingMode(&lineSpacingMode));
-#endif
+
     textLayout->SetLineSpacingModeInternal(lineSpacingMode);
 
     CanvasTrimmingSign trimmingSign;
@@ -348,9 +347,7 @@ IFACEMETHODIMP CanvasTextLayout::put_LineSpacing(
             DWriteLineSpacing originalSpacing(resource.Get());
 
             CanvasLineSpacingMode lineSpacingMode{};
-#if WINVER > _WIN32_WINNT_WINBLUE
             lineSpacingMode = ToCanvasLineSpacingMode(originalSpacing.Method);
-#endif
 
             DWriteLineSpacing::Set(
                 resource.Get(),
@@ -410,8 +407,6 @@ IFACEMETHODIMP CanvasTextLayout::put_LineSpacingBaseline(
         });
 }
 
-#if WINVER > _WIN32_WINNT_WINBLUE
-
 IFACEMETHODIMP CanvasTextLayout::get_LineSpacingMode(
     CanvasLineSpacingMode* value)
 {
@@ -448,8 +443,6 @@ IFACEMETHODIMP CanvasTextLayout::put_LineSpacingMode(
             m_trimmingSignInformation.RecreateInternalTrimmingSignIfNeeded(resource.Get());
         });
 }
-
-#endif
 
 IFACEMETHODIMP CanvasTextLayout::get_TrimmingGranularity(
     CanvasTextTrimmingGranularity* value)
@@ -1622,10 +1615,8 @@ IFACEMETHODIMP CanvasTextLayout::get_LineMetrics(
                     metrics.Height = dwriteMetrics.height;
                     metrics.Baseline = dwriteMetrics.baseline;
                     metrics.IsTrimmed = !!dwriteMetrics.isTrimmed;
-#if WINVER > _WIN32_WINNT_WINBLUE
                     metrics.LeadingWhitespaceBefore = dwriteMetrics.leadingBefore;
                     metrics.LeadingWhitespaceAfter = dwriteMetrics.leadingAfter;
-#endif
                     return metrics;
                 });
 

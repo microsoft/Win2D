@@ -4,8 +4,6 @@
 
 #pragma once
 
-#if WINVER > _WIN32_WINNT_WINBLUE
-
 namespace canvas
 {
     class MockDWriteFontSet
@@ -103,5 +101,3 @@ namespace canvas
         }
     };
 }
-
-#endif

@@ -7,8 +7,6 @@
 #include "pch.h"
 #include "StraightenEffect.h"
 
-#if (defined _WIN32_WINNT_WIN10) && (WINVER >= _WIN32_WINNT_WIN10)
-
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Effects
 {
     StraightenEffect::StraightenEffect(ICanvasDevice* device, ID2D1Effect* effect)
@@ -53,5 +51,3 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
     ActivatableClassWithFactory(StraightenEffect, ::SimpleAgileActivationFactory<StraightenEffect>);
 }}}}}
-
-#endif // _WIN32_WINNT_WIN10

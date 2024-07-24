@@ -4,8 +4,6 @@
 
 // This file was automatically generated. Please do not edit it manually.
 
-#if (defined _WIN32_WINNT_WIN10) && (WINVER >= _WIN32_WINNT_WIN10)
-
 namespace Microsoft.Graphics.Canvas.Effects
 {
     runtimeclass EmbossEffect;
@@ -40,5 +38,3 @@ namespace Microsoft.Graphics.Canvas.Effects
         [default] interface IEmbossEffect;
     }
 }
-
-#endif // _WIN32_WINNT_WIN10

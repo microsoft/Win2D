@@ -6,8 +6,6 @@
 
 #pragma once
 
-#if WINVER > _WIN32_WINNT_WINBLUE
-
 namespace canvas
 {
     class MockD2DGradientMesh : public RuntimeClass<
@@ -49,5 +47,3 @@ namespace canvas
 
     };
 }
-
-#endif

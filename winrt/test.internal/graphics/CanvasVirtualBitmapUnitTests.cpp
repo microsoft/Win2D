@@ -11,8 +11,6 @@
 #include "../mocks/MockD2DTransformedImageSource.h"
 #include "../mocks/MockWICBitmapSource.h"
 
-#if WINVER > _WIN32_WINNT_WINBLUE
-
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 TEST_CLASS(CanvasVirtualBitmapUnitTest)
@@ -443,5 +441,3 @@ TEST_CLASS(CanvasVirtualBitmapUnitTest)
         Assert::IsTrue(IsSameInstance(f.Device.Get(), actualDevice.Get()));
     }
 };
-
-#endif

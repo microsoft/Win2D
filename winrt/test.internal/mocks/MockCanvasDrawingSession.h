@@ -9,7 +9,7 @@ namespace canvas
     using namespace ABI::Windows::Foundation;
     using namespace ABI::Microsoft::UI;
     
-#if WINVER > _WIN32_WINNT_WINBLUE && WINUI3_SUPPORTS_INKING
+#if WINUI3_SUPPORTS_INKING
     using namespace ABI::Microsoft::UI::Input::Inking;
 #endif
 
@@ -202,8 +202,6 @@ namespace canvas
         DONT_EXPECT(DrawTextLayoutWithColor, ICanvasTextLayout*, Vector2, Color);
         DONT_EXPECT(DrawTextLayoutAtCoordsWithColor, ICanvasTextLayout*, float, float, Color);
 
-#if WINVER > _WIN32_WINNT_WINBLUE
-
 #if WINUI3_SUPPORTS_INKING
         DONT_EXPECT(DrawInk, IIterable<InkStroke*>*);
         DONT_EXPECT(DrawInkWithHighContrast, IIterable<InkStroke*>*, boolean);
@@ -212,7 +210,6 @@ namespace canvas
         DONT_EXPECT(DrawGradientMeshAtOrigin, ICanvasGradientMesh*);
         DONT_EXPECT(DrawGradientMesh, ICanvasGradientMesh*, Vector2);
         DONT_EXPECT(DrawGradientMeshAtCoords, ICanvasGradientMesh*, float, float);
-#endif
 
         DONT_EXPECT(DrawGlyphRun, Vector2, ICanvasFontFace*, float, uint32_t, CanvasGlyph*, boolean, uint32_t, ICanvasBrush*);
         DONT_EXPECT(DrawGlyphRunWithMeasuringMode, Vector2, ICanvasFontFace*, float, uint32_t, CanvasGlyph*, boolean, uint32_t, ICanvasBrush*, CanvasTextMeasuringMode);
@@ -245,7 +242,6 @@ namespace canvas
         DONT_EXPECT(CreateLayerWithOpacityBrushAndClipGeometryAndTransform, ICanvasBrush*, ICanvasGeometry*, Matrix3x2, ICanvasActiveLayer**);
         DONT_EXPECT(CreateLayerWithAllOptions                             , float, ICanvasBrush*, Rect, ICanvasGeometry*, Matrix3x2, CanvasLayerOptions, ICanvasActiveLayer**);
 
-#if WINVER > _WIN32_WINNT_WINBLUE
         DONT_EXPECT(CreateSpriteBatch                                       , ICanvasSpriteBatch**);
         DONT_EXPECT(CreateSpriteBatchWithSortMode                           , CanvasSpriteSortMode, ICanvasSpriteBatch**);
         DONT_EXPECT(CreateSpriteBatchWithSortModeAndInterpolation           , CanvasSpriteSortMode, CanvasImageInterpolation, ICanvasSpriteBatch**);
@@ -254,7 +250,6 @@ namespace canvas
         DONT_EXPECT(DrawSvgAtOrigin, ICanvasSvgDocument*, Size);
         DONT_EXPECT(DrawSvgAtPoint, ICanvasSvgDocument*, Size, Vector2);
         DONT_EXPECT(DrawSvgAtCoords, ICanvasSvgDocument*, Size, float, float);
-#endif
         
         // ICanvasResourceWrapperNative
         DONT_EXPECT(GetNativeResource, ICanvasDevice* device, float dpi, REFIID iid, void**);

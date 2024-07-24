@@ -4,8 +4,6 @@
 
 #pragma once
 
-#if WINVER > _WIN32_WINNT_WINBLUE
-
 class MockCompositionDrawingSurface : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>,
     ICompositionDrawingSurface,
     ICompositionDrawingSurfaceInterop>
@@ -24,5 +22,3 @@ public:
     MOCK_METHOD0(ResumeDraw, HRESULT());
     MOCK_METHOD0(SuspendDraw, HRESULT());
 };
-
-#endif

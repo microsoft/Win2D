@@ -4,8 +4,6 @@
 
 #include "pch.h"
 
-#if WINVER > _WIN32_WINNT_WINBLUE
-
 #include <lib/svg/CanvasSvgDocument.h>
 #include <lib/svg/CanvasSvgElement.h>
 #include <lib/svg/CanvasSvgPaintAttribute.h>
@@ -480,5 +478,3 @@ namespace canvas
         }
     };
 }
-
-#endif

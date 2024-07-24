@@ -20,32 +20,25 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         CanvasColorSpace m_colorSpace;      // Always valid.
         std::vector<uint8_t> m_iccProfile;  // Only used when not realized (to avoid duplicating the data).
 
-#if WINVER > _WIN32_WINNT_WINBLUE
         ColorManagementProfileType m_type;
         ColorManagementSimpleProfile m_simpleProfile;
         ExtendedColorSpace m_extendedColorSpace;
-#endif
 
         ComPtr<ICanvasDevice> m_device;
 
     public:
         ColorManagementProfile(CanvasColorSpace colorSpace);
         ColorManagementProfile(uint32_t iccProfileCount, uint8_t* iccProfile);
-#if WINVER > _WIN32_WINNT_WINBLUE
         ColorManagementProfile(ColorManagementSimpleProfile const& simpleProfile);
         ColorManagementProfile(ExtendedColorSpace colorSpace);
-#endif
         ColorManagementProfile(ICanvasDevice* device, ID2D1ColorContext* d2dColorContext);
 
         // IColorManagementProfile
         IFACEMETHOD(get_ColorSpace)(CanvasColorSpace* value) override;
         IFACEMETHOD(get_IccProfile)(uint32_t* valueCount, uint8_t** valueElements) override;
-
-#if WINVER > _WIN32_WINNT_WINBLUE
         IFACEMETHOD(get_Type)(ColorManagementProfileType* value) override;
         IFACEMETHOD(get_SimpleProfile)(IReference<ColorManagementSimpleProfile>** value) override;
         IFACEMETHOD(get_ExtendedColorSpace)(ExtendedColorSpace* value) override;
-#endif
 
         // IClosable
         IFACEMETHOD(Close)() override;
@@ -74,13 +67,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         // IColorManagementProfileStatics
         IFACEMETHOD(CreateCustom)(uint32_t iccProfileCount, uint8_t* iccProfile, IColorManagementProfile** result) override;
-
-#if WINVER > _WIN32_WINNT_WINBLUE
         IFACEMETHOD(CreateSimple)(ColorManagementSimpleProfile simpleProfile, IColorManagementProfile** result) override;
         IFACEMETHOD(CreateExtended)(ExtendedColorSpace colorSpace, IColorManagementProfile** result) override;
-
         IFACEMETHOD(IsSupported)(ColorManagementProfileType type, ICanvasDevice* device, boolean* result) override;
-#endif
     };
 
 }}}}}

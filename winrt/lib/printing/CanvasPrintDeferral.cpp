@@ -4,8 +4,6 @@
 
 #include "pch.h"
 
-#ifndef WINDOWS_PHONE
-
 #include "CanvasPrintDeferral.h"
 #include "DeferrableTask.h"
 
@@ -32,5 +30,3 @@ IFACEMETHODIMP CanvasPrintDeferral::Complete()
             m_task = nullptr;
         });
 }
-
-#endif

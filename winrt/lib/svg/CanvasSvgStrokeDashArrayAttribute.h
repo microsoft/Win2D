@@ -4,8 +4,6 @@
 
 #pragma once
 
-#if WINVER > _WIN32_WINNT_WINBLUE
-
 #include "AttributeHelpers.h"
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Svg
@@ -60,5 +58,3 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         std::vector<D2D1_SVG_LENGTH> GetD2DSvgLengths(uint32_t dashCount, float* dashValues, CanvasSvgLengthUnits* dashUnits);
     };
 }}}}}
-
-#endif

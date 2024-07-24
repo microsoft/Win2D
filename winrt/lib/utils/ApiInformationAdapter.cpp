@@ -4,8 +4,6 @@
 
 #include "pch.h"
 
-#if WINVER > _WIN32_WINNT_WINBLUE
-
 #include "ApiInformationAdapter.h"
 
 using namespace ABI::Windows::Foundation::Metadata;
@@ -27,5 +25,3 @@ bool DefaultApiInformationAdapter::IsApiContractPresent(wchar_t const* contractN
 
     return !!isPresent;
 }
-
-#endif

@@ -210,12 +210,9 @@ namespace Microsoft
             TO_STRING(IDWriteInlineObject);
             TO_STRING(ID2D1TransformNode);
             TO_STRING(IStream);
-
-#if WINVER > _WIN32_WINNT_WINBLUE
             TO_STRING(ID2D1GradientMesh);
             TO_STRING(ID2D1SvgDocument);
             TO_STRING(ID2D1SvgElement);
-#endif
 
 #undef TO_STRING
 
@@ -395,7 +392,6 @@ namespace Microsoft
                 return buf;
             }
 
-#if WINVER > _WIN32_WINNT_WINBLUE
             template<>
             inline std::wstring ToString<D2D1_SVG_VIEWBOX>(D2D1_SVG_VIEWBOX const& value)
             {
@@ -409,7 +405,6 @@ namespace Microsoft
 
                 return buf;
             }
-#endif
 
             template<>
             inline std::wstring ToString<ABI::Windows::Foundation::Rect>(ABI::Windows::Foundation::Rect const& value)
@@ -687,9 +682,7 @@ namespace Microsoft
             {
                 ENUM_VALUE(DWRITE_LINE_SPACING_METHOD_DEFAULT);
                 ENUM_VALUE(DWRITE_LINE_SPACING_METHOD_UNIFORM);
-#if WINVER > _WIN32_WINNT_WINBLUE
                 ENUM_VALUE(DWRITE_LINE_SPACING_METHOD_PROPORTIONAL);
-#endif
                 END_ENUM(DWRITE_LINE_SPACING_METHOD);
             }
 
@@ -945,8 +938,6 @@ namespace Microsoft
                 ENUM_VALUE(D2D1_BITMAP_INTERPOLATION_MODE_LINEAR);
                 END_ENUM(D2D1_BITMAP_INTERPOLATION_MODE);
             }
-            
-#if WINVER > _WIN32_WINNT_WINBLUE
 
             ENUM_TO_STRING(D2D1_SPRITE_OPTIONS)
             {
@@ -954,8 +945,6 @@ namespace Microsoft
                 ENUM_VALUE(D2D1_SPRITE_OPTIONS_CLAMP_TO_SOURCE_RECTANGLE);
                 END_ENUM(D2D1_SPRITE_OPTIONS);
             }
-
-#endif
 
             ENUM_TO_STRING(CanvasAlphaMode)
             {
@@ -1078,7 +1067,6 @@ namespace Microsoft
                 END_ENUM(DWRITE_MEASURING_MODE);
             }
 
-#if WINVER > _WIN32_WINNT_WINBLUE
             ENUM_TO_STRING(DWRITE_FONT_PROPERTY_ID)
             {
                 ENUM_VALUE(DWRITE_FONT_PROPERTY_ID_NONE);
@@ -1097,7 +1085,6 @@ namespace Microsoft
                 ENUM_VALUE(DWRITE_FONT_PROPERTY_ID_TOTAL);
                 END_ENUM(DWRITE_FONT_PROPERTY_ID);
             }
-#endif
 
             ENUM_TO_STRING(CanvasFigureFill)
             {
@@ -1151,9 +1138,7 @@ namespace Microsoft
                 ENUM_VALUE(CanvasTextRenderingMode::Natural);
                 ENUM_VALUE(CanvasTextRenderingMode::NaturalSymmetric);
                 ENUM_VALUE(CanvasTextRenderingMode::Outline);
-#if WINVER > _WIN32_WINNT_WINBLUE
                 ENUM_VALUE(CanvasTextRenderingMode::NaturalSymmetricDownsampled);
-#endif
                 END_ENUM(CanvasTextRenderingMode);
             }
 
@@ -1165,7 +1150,6 @@ namespace Microsoft
                 END_ENUM(CanvasTextGridFit);
             }
 
-#if WINVER > _WIN32_WINNT_WINBLUE
             ENUM_TO_STRING(CanvasGradientMeshPatchEdge)
             {
                 ENUM_VALUE(CanvasGradientMeshPatchEdge::Aliased);
@@ -1207,7 +1191,6 @@ namespace Microsoft
                 ENUM_VALUE(CanvasLineSpacingMode::Proportional);
                 END_ENUM(CanvasLineSpacingMode);
             }
-#endif
 
             ENUM_TO_STRING(CanvasTrimmingSign)
             {
@@ -1551,8 +1534,6 @@ namespace Microsoft
                 END_ENUM(CanvasGlyphJustification);
             }
 
-#if WINVER > _WIN32_WINNT_WINBLUE
-
             ENUM_TO_STRING(CanvasSvgPaintType)
             {
                 ENUM_VALUE(CanvasSvgPaintType::None);
@@ -1779,7 +1760,6 @@ namespace Microsoft
                 ENUM_VALUE(CanvasSvgAspectScaling::Slice);
                 END_ENUM(CanvasSvgAspectScaling);
             }
-#endif
 
             template<typename T>
             inline std::wstring ToStringAsInt(T value)
@@ -1887,7 +1867,6 @@ namespace Microsoft
                    a.Height == b.Height;
         }
 
-#if WINVER > _WIN32_WINNT_WINBLUE
         inline bool operator==(D2D1_SVG_VIEWBOX const& a, D2D1_SVG_VIEWBOX const& b)
         {
             return a.x == b.x &&
@@ -1895,7 +1874,6 @@ namespace Microsoft
                 a.width == b.width &&
                 a.height == b.height;
         }
-#endif
 
         inline bool operator==(ABI::Windows::Foundation::Size const& a, ABI::Windows::Foundation::Size const& b)
         {
@@ -1941,7 +1919,6 @@ namespace Microsoft
                    a.point3 == b.point3;
         }
 
-#if WINVER > _WIN32_WINNT_WINBLUE
         inline bool operator==(CanvasGradientMeshPatch const& a, CanvasGradientMeshPatch const& b)
         {
             return
@@ -2016,8 +1993,6 @@ namespace Microsoft
                 wcscmp(a.propertyValue, b.propertyValue) == 0 &&
                 wcscmp(a.localeName, b.localeName) == 0;
         }
-#endif      
-
     }
 }
 

@@ -17,12 +17,10 @@
 #include "stubs/StubGeometrySink.h"
 #include "stubs/StubCanvasTextLayoutAdapter.h"
 
-#if WINVER > _WIN32_WINNT_WINBLUE
 #include "Mocks/MockD2DInk.h"
 #include "Mocks/MockD2DInkStyle.h"
 #include "mocks/MockDWriteFontFaceReference.h"
 #include "Stubs/StubInkAdapter.h"
-#endif
 
 static const D2D1_MATRIX_3X2_F sc_someD2DTransform = { 1, 2, 3, 4, 5, 6 };
 static const D2D1_MATRIX_3X2_F sc_identityD2DTransform = { 1, 0, 0, 1, 0, 0 };
@@ -32,11 +30,7 @@ static const D2D1_TRIANGLE sc_triangle1 = { { 1, 2 }, { 3, 4 }, { 5, 6 } };
 static const D2D1_TRIANGLE sc_triangle2 = { { 7, 8 }, { 9, 10 }, { 11, 12 } };
 static const D2D1_TRIANGLE sc_triangle3 = { { 13, 14 }, { 15, 16 }, { 17, 18 } };
 
-#if WINVER > _WIN32_WINNT_WINBLUE
 typedef MockDWriteFontFaceReference MockDWriteFontFaceContainer;
-#else
-typedef MockDWriteFont MockDWriteFontFaceContainer;
-#endif
 
 ComPtr<CanvasFontFace> CreateSimpleFontFace()
 {
@@ -2102,7 +2096,7 @@ public:
             nullptr));
     }
 
-#if WINVER > _WIN32_WINNT_WINBLUE && WINUI3_SUPPORTS_INKING
+#if WINUI3_SUPPORTS_INKING
 
     static void TestCreateInk(
         D2D1_MATRIX_3X2_F const& expectedTransform,

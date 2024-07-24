@@ -9,12 +9,10 @@
 #include "stubs/TestEffect.h"
 #include "stubs/StubD2DEffect.h"
 
-#if WINVER > _WIN32_WINNT_WINBLUE
 #include <lib/effects/generated/AlphaMaskEffect.h>
 #include <lib/effects/generated/CrossFadeEffect.h>
 #include <lib/effects/generated/OpacityEffect.h>
 #include <lib/effects/generated/TintEffect.h>
-#endif
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
@@ -1210,8 +1208,6 @@ public:
         Assert::AreEqual(CLSID_D2D1DpiCompensation, f.m_mockEffects[1]->m_effectId);
     }
 
-#if WINVER > _WIN32_WINNT_WINBLUE 
-
     class D2DFactoryWithOptional5Support : public MockD2DFactory
     {
         bool m_supportFactory5;
@@ -1311,8 +1307,6 @@ public:
         TestIsSupported<OpacityEffectFactory>(true);
         TestIsSupported<TintEffectFactory>(true);
     }
-
-#endif
 
     // DImage defines separate (but identical) enum types for different effects.
     // Effects codegen tool collapses this duplication in the WinRT projection.

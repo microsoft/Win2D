@@ -2,8 +2,6 @@
 //
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
-#if WINVER > _WIN32_WINNT_WINBLUE
-
 namespace Microsoft.Graphics.Canvas.UI.Composition
 {
     runtimeclass CanvasComposition;
@@ -81,5 +79,3 @@ namespace Microsoft.Graphics.Canvas.UI.Composition
     {
     }
 }
-
-#endif

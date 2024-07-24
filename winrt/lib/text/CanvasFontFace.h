@@ -10,17 +10,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     using namespace ABI::Windows::Foundation::Collections;
     using namespace ABI::Windows::UI::Text;
 
-#if WINVER > _WIN32_WINNT_WINBLUE
     typedef IDWriteFontFaceReference DWriteFontReferenceType;
     typedef IDWriteFontFace3 DWriteFontFaceType;
     typedef IDWriteFontFace3 DWritePhysicalFontPropertyContainer;
     typedef DWRITE_RENDERING_MODE1 DWriteRenderingMode;
-#else
-    typedef IDWriteFont2 DWriteFontReferenceType;
-    typedef IDWriteFontFace2 DWriteFontFaceType;
-    typedef IDWriteFont2 DWritePhysicalFontPropertyContainer;
-    typedef DWRITE_RENDERING_MODE DWriteRenderingMode;
-#endif
     
     class __declspec(uuid("0A165926-BCBD-4B02-BF60-F5FC46C22B58"))
     ICanvasFontFaceInternal : public IUnknown
@@ -144,9 +137,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         IFACEMETHOD(get_Stretch)(FontStretch* value) override;
         IFACEMETHOD(get_Style)(FontStyle* value) override;
 
-#if WINVER > _WIN32_WINNT_WINBLUE
         IFACEMETHOD(get_FamilyNames)(IMapView<HSTRING, HSTRING>** values) override;
-#endif
         IFACEMETHOD(get_FaceNames)(IMapView<HSTRING, HSTRING>** values) override;
 
         IFACEMETHOD(GetInformationalStrings)(

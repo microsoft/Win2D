@@ -11,19 +11,7 @@ namespace Microsoft.Graphics.Canvas
     runtimeclass CanvasBitmap;
     runtimeclass CanvasDevice;
 
-#ifndef USE_LOCALLY_EMULATED_UAP_APIS
     typedef Windows.Graphics.Imaging.BitmapSize BitmapSize;
-#else
-    //
-    // An integer based size struct, used to report SizeInPixels.
-    //
-    [version(VERSION)]
-    typedef struct BitmapSize
-    {
-        UINT32 Width;
-        UINT32 Height;
-    } BitmapSize;
-#endif
 
     [version(VERSION), uuid(F2D0EB0E-16F3-4BCF-B1D1-04834AB97DE4), exclusiveto(CanvasBitmap)]
     interface ICanvasBitmapFactory : IInspectable
@@ -313,12 +301,10 @@ namespace Microsoft.Graphics.Canvas
             [in] CanvasAlphaMode alpha,
             [out, retval] CanvasBitmap** bitmap);
 
-#if WINVER > _WIN32_WINNT_WINBLUE
         HRESULT CreateFromSoftwareBitmap(
             [in] ICanvasResourceCreator* resourceCreator,
             [in] Windows.Graphics.Imaging.SoftwareBitmap* sourceBitmap,
             [out, retval] CanvasBitmap** bitmap);
-#endif
 
         [overload("LoadAsync")]
         HRESULT LoadAsyncFromHstring(

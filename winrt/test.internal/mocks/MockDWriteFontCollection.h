@@ -7,12 +7,8 @@
 namespace canvas
 {
     class MockDWriteFontCollection : public RuntimeClass<
-        RuntimeClassFlags<ClassicCom>,        
-#if WINVER > _WIN32_WINNT_WINBLUE
+        RuntimeClassFlags<ClassicCom>,
         ChainInterfaces<IDWriteFontCollection1, IDWriteFontCollection>>
-#else
-        IDWriteFontCollection>
-#endif
     {
     public: 
         CALL_COUNTER_WITH_MOCK(GetFontFamilyCountMethod, uint32_t());
@@ -47,7 +43,6 @@ namespace canvas
             return GetFontFromFontFaceMethod.WasCalled(fontFace, font);
         }
 
-#if WINVER > _WIN32_WINNT_WINBLUE
         MOCK_METHOD1(GetFontSet, HRESULT(IDWriteFontSet**));
 
         IFACEMETHODIMP GetFontFamily(uint32_t, IDWriteFontFamily1**) override
@@ -55,6 +50,5 @@ namespace canvas
             Assert::Fail(L"Unexpected call to GetFontSet");
             return E_NOTIMPL;
         }
-#endif
     };
 }

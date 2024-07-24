@@ -14,12 +14,10 @@ namespace canvas
     class MockD2DDeviceContext : public RuntimeClass<
         RuntimeClassFlags<ClassicCom>,
         ChainInterfaces<
-#if WINVER > _WIN32_WINNT_WINBLUE
             ID2D1DeviceContext5,
             ID2D1DeviceContext4,
             ID2D1DeviceContext3,
             ID2D1DeviceContext2,
-#endif
             ID2D1DeviceContext1, 
             ID2D1DeviceContext, 
             ID2D1RenderTarget, 
@@ -98,7 +96,6 @@ namespace canvas
         MOCK_METHOD8(CreateGradientStopCollection     , HRESULT(D2D1_GRADIENT_STOP const*, uint32_t, D2D1_COLOR_SPACE, D2D1_COLOR_SPACE, D2D1_BUFFER_PRECISION, D2D1_EXTEND_MODE, D2D1_COLOR_INTERPOLATION_MODE, ID2D1GradientStopCollection1**));
 
 
-#if WINVER > _WIN32_WINNT_WINBLUE
         // ID2D1DeviceContext2
 
         MOCK_METHOD2(CreateInk                        , HRESULT(CONST D2D1_INK_POINT*, ID2D1Ink**));
@@ -121,8 +118,7 @@ namespace canvas
         // ID2D1DeviceContext5
         MOCK_METHOD1(DrawSvgDocument, void(ID2D1SvgDocument*));
         MOCK_METHOD3(CreateSvgDocument, HRESULT(IStream*, D2D1_SIZE_F, ID2D1SvgDocument**));
-        
-#endif
+
 
         MockD2DDeviceContext()
         {
@@ -302,8 +298,6 @@ namespace canvas
             Assert::Fail(L"Unexpected call to DrawGdiMetafile");
         }
 
-#if WINVER > _WIN32_WINNT_WINBLUE
-
         // ID2D1DeviceContext4
 
         IFACEMETHODIMP CreateSvgGlyphStyle(ID2D1SvgGlyphStyle**) override
@@ -409,6 +403,5 @@ namespace canvas
             Assert::Fail(L"Unexpected call to CreateColorContextFromSimpleColorProfile");
             return E_NOTIMPL;
         }
-#endif
     };
 }

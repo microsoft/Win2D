@@ -10,9 +10,7 @@
 #include <lib/svg/CanvasSvgDocument.h>
 #include <lib/drawing/CanvasGradientMesh.h>
 
-#if WINVER > _WIN32_WINNT_WINBLUE
 #include "stubs/StubInkAdapter.h"
-#endif
 
 #include "mocks/MockD2DGeometryRealization.h"
 #include "mocks/MockD2DRectangleGeometry.h"
@@ -127,10 +125,7 @@ public:
     ComPtr<CanvasCachedGeometry> CachedGeometry;
     ComPtr<CanvasTextLayout> TextLayout;
     std::shared_ptr<MockGeometryAdapter> m_geometryAdapter;
-
-#if WINVER > _WIN32_WINNT_WINBLUE
     ComPtr<CanvasGradientMesh> GradientMesh;
-#endif
 
     CanvasDrawingSessionFixture()
         : CanvasDevice(Make<StubCanvasDevice>())
@@ -155,9 +150,7 @@ public:
         auto textlayoutAdapter = std::make_shared<StubCanvasTextLayoutAdapter>();
         TextLayout = CanvasTextLayout::CreateNew(CanvasDevice.Get(), WinString(L"A string"), textFormat.Get(), 0.0f, 0.0f);
 
-#if WINVER > _WIN32_WINNT_WINBLUE
         GradientMesh = CanvasGradientMesh::CreateNew(CanvasDevice.Get(), 0, nullptr);
-#endif
     }
 
 private:
@@ -4202,8 +4195,6 @@ public:
         ThrowIfFailed(drawingSession->put_EffectTileSize(expectedBitmapSize));
     }
 
-#if WINVER > _WIN32_WINNT_WINBLUE
-
 #ifdef WINUI3_SUPPORTS_INKING
 
     TEST_METHOD_EX(CanvasDrawingSession_DrawInk_NullArg)
@@ -4482,8 +4473,6 @@ public:
         CanvasDrawingSessionFixture f;
         Assert::AreEqual(E_INVALIDARG, f.DS->DrawSvgAtCoords(nullptr, Size{}, 0, 0));
     }
-     
-#endif
 };
 
 TEST_CLASS(CanvasDrawingSession_DrawTextTests)
@@ -4948,7 +4937,7 @@ TEST_CLASS(CanvasDrawingSession_CloseTests)
         EXPECT_OBJECT_CLOSED(canvasDrawingSession->DrawGlyphRunWithMeasuringMode(Vector2{}, nullptr, 0, 0, nullptr, false, 0u, nullptr, CanvasTextMeasuringMode::Natural));
         EXPECT_OBJECT_CLOSED(canvasDrawingSession->DrawGlyphRunWithMeasuringModeAndDescription(Vector2{}, nullptr, 0, 0, nullptr, false, 0u, nullptr, CanvasTextMeasuringMode::Natural, nullptr, nullptr, 0, nullptr, 0));
 
-#if WINVER > _WIN32_WINNT_WINBLUE && WINUI3_SUPPORTS_INKING
+#if WINUI3_SUPPORTS_INKING
         EXPECT_OBJECT_CLOSED(canvasDrawingSession->DrawInk(nullptr));
 #endif
 

@@ -4,8 +4,6 @@
 
 #pragma once
 
-#if WINVER > _WIN32_WINNT_WINBLUE
-
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
     class CanvasSpriteBatchStatics
@@ -219,6 +217,4 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     };
 
 } } } }
-
-#endif
 

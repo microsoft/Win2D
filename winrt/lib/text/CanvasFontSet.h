@@ -10,11 +10,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     using namespace ABI::Windows::Foundation::Collections;
     using namespace ABI::Windows::UI::Text;
 
-#if WINVER > _WIN32_WINNT_WINBLUE
     typedef IDWriteFontSet DWriteFontSetType;
-#else
-    typedef IDWriteFontCollection DWriteFontSetType;
-#endif
 
     class CanvasFontSet : RESOURCE_WRAPPER_RUNTIME_CLASS(
         DWriteFontSetType,
@@ -23,9 +19,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     {
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_Text_CanvasFontSet, BaseTrust);
 
-#if WINVER <= _WIN32_WINNT_WINBLUE
-        std::vector<ComPtr<IDWriteFont>> m_flatCollection;
-#endif
         std::shared_ptr<CustomFontManager> m_customFontManager;
 
     public:
@@ -34,8 +27,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             DWriteFontSetType* dwriteFontSet);
 
         IFACEMETHOD(get_Fonts)(IVectorView<CanvasFontFace*>** value) override;
-
-#if WINVER > _WIN32_WINNT_WINBLUE
 
         IFACEMETHOD(TryFindFontFace)(ICanvasFontFace* fontFace, int* index, boolean* succeeded) override;
 
@@ -70,12 +61,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             CanvasFontPropertyIdentifier propertyIdentifier,
             UINT32* valueCount,
             CanvasFontProperty** valueElements) override;
-#endif
-
-#if WINVER <= _WIN32_WINNT_WINBLUE
-    private:
-        void EnsureFlatCollection(ComPtr<IDWriteFontCollection> const& resource);
-#endif
     };
 
     //

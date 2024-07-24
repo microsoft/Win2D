@@ -9,11 +9,7 @@ namespace canvas
     class MockDWriteFactory : public RuntimeClass<
         RuntimeClassFlags<ClassicCom>,
         ChainInterfaces<
-
-#if WINVER > _WIN32_WINNT_WINBLUE
         IDWriteFactory3,
-#endif
-
         IDWriteFactory2, IDWriteFactory1, IDWriteFactory>>
     {
     public:
@@ -43,13 +39,11 @@ namespace canvas
 
         MOCK_METHOD1(GetSystemFontFallback, HRESULT(IDWriteFontFallback**));
 
-#if WINVER > _WIN32_WINNT_WINBLUE
         CALL_COUNTER_WITH_MOCK(CreateCustomRenderingParamsMethod2, HRESULT(FLOAT,FLOAT,FLOAT,FLOAT,DWRITE_PIXEL_GEOMETRY,DWRITE_RENDERING_MODE1,DWRITE_GRID_FIT_MODE,IDWriteRenderingParams3**));
         CALL_COUNTER_WITH_MOCK(GetSystemFontSetMethod, HRESULT(IDWriteFontSet**));
         CALL_COUNTER_WITH_MOCK(CreateFontSetBuilderMethod, HRESULT(IDWriteFontSetBuilder**));
 
         MOCK_METHOD2(CreateFontCollectionFromFontSet, HRESULT(IDWriteFontSet*, IDWriteFontCollection1**));
-#endif
 
         IFACEMETHODIMP GetSystemFontCollection(
             IDWriteFontCollection** fontCollection,
@@ -310,8 +304,6 @@ namespace canvas
         // IDWriteFactory3
         //
 
-#if WINVER > _WIN32_WINNT_WINBLUE
-
         IFACEMETHODIMP CreateGlyphRunAnalysis(
             DWRITE_GLYPH_RUN const*,
             DWRITE_MATRIX const*,
@@ -388,8 +380,6 @@ namespace canvas
             Assert::Fail(L"Unexpected call to GetFontDownloadQueue");
             return E_NOTIMPL;
         }
-
-#endif
 
     };
 }

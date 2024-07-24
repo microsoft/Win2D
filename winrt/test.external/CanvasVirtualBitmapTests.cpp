@@ -4,8 +4,6 @@
 
 #include "pch.h"
 
-#if WINVER > _WIN32_WINNT_WINBLUE
-
 TEST_CLASS(CanvasVirtualBitmapTests)
 {
     CanvasDevice^ m_device;
@@ -64,5 +62,3 @@ public:
         Assert::AreEqual(4.0f, bounds.Height);
     }
 };
-
-#endif

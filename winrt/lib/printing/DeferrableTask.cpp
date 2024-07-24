@@ -4,8 +4,6 @@
 
 #include "pch.h"
 
-#ifndef WINDOWS_PHONE
-
 #include "DeferrableTask.h"
 
 #include "DeferrableTaskScheduler.h"
@@ -90,5 +88,3 @@ std::future<void> DeferrableTask::GetFuture()
 {
     return m_promise.get_future();
 }
-
-#endif

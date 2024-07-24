@@ -6,8 +6,6 @@
 
 #pragma once
 
-#if (defined _WIN32_WINNT_WIN10) && (WINVER >= _WIN32_WINNT_WIN10)
-
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Effects 
 {
     using namespace ::Microsoft::WRL;
@@ -28,5 +26,3 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         EFFECT_PROPERTY(Source, IGraphicsEffectSource*);
     };
 }}}}}
-
-#endif // _WIN32_WINNT_WIN10

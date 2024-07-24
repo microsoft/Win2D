@@ -373,8 +373,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)text\DrawGlyphRunHelper.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)text\TextUtilities.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)utils\Strings.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)directx\Direct3DDevice.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)directx\Direct3DSurface.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)telemetry\Win2DTelemetry.cpp" />
     <mc Include="$(MSBuildThisFileDirectory)win2d.etw.xml" />
   </ItemGroup>

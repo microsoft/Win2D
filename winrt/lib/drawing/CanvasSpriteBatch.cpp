@@ -4,8 +4,6 @@
 
 #include "pch.h"
 
-#if WINVER > _WIN32_WINNT_WINBLUE
-
 #include <WindowsNumerics.h>
 
 #include "CanvasSpriteBatch.h"
@@ -675,6 +673,3 @@ void CanvasSpriteBatch::EnsureNotClosed()
 {
     m_deviceContext.EnsureNotClosed();
 }
-
-
-#endif

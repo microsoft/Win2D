@@ -10,9 +10,7 @@
 using namespace concurrency;
 using namespace Microsoft::Graphics::Canvas::Brushes;
 using namespace Microsoft::Graphics::Canvas::Geometry;
-#if WINVER > _WIN32_WINNT_WINBLUE
 using namespace Microsoft::Graphics::Canvas::Svg;
-#endif
 using namespace Microsoft::Graphics::Canvas::Text;
 using namespace Microsoft::Graphics::Canvas::UI::Xaml;
 using namespace Microsoft::Graphics::Canvas::UI;
@@ -80,9 +78,7 @@ namespace Microsoft
             TO_STRING(ID2D1PathGeometry);
             TO_STRING(ID2D1GeometryRealization);
             TO_STRING(ID2D1Factory);
-#if WINVER > _WIN32_WINNT_WINBLUE
             TO_STRING_CX(ICanvasSvgElement);
-#endif
 
 #undef TO_STRING
 #undef TO_STRING_CX
@@ -225,12 +221,9 @@ namespace Microsoft
             CX_VALUE_TO_STRING(Microsoft::Graphics::Canvas::Text::CanvasTextDirection);
             CX_VALUE_TO_STRING(Microsoft::Graphics::Canvas::Text::CanvasTextMeasuringMode);
             CX_VALUE_TO_STRING(DirectXPixelFormat);
-
-#if WINVER > _WIN32_WINNT_WINBLUE
             CX_VALUE_TO_STRING(Microsoft::Graphics::Canvas::Effects::ColorManagementProfileType);
             CX_VALUE_TO_STRING(Microsoft::Graphics::Canvas::Effects::ColorManagementGamma);
             CX_VALUE_TO_STRING(Microsoft::Graphics::Canvas::Effects::ExtendedColorSpace);
-#endif
 
 #undef CX_VALUE_TO_STRING
 
@@ -332,9 +325,7 @@ namespace Microsoft
                     case CanvasTextRenderingMode::GdiNatural: return L"CanvasTextRenderingMode::GdiNatural";
                     case CanvasTextRenderingMode::NaturalSymmetric: return L"CanvasTextRenderingMode::NaturalSymmetric";
                     case CanvasTextRenderingMode::Outline: return L"CanvasTextRenderingMode::Outline";
-#if WINVER > _WIN32_WINNT_WINBLUE
                     case CanvasTextRenderingMode::NaturalSymmetricDownsampled: return L"CanvasTextRenderingMode::NaturalSymmetricDownsampled";
-#endif
                     default: assert(false); return L"<unknown CanvasTextRenderingMode>";
                 }
             }
@@ -402,7 +393,6 @@ namespace Microsoft
                 }
             }
 
-#if WINVER > _WIN32_WINNT_WINBLUE
             template<>
             inline std::wstring ToString<CanvasSvgPathCommand>(CanvasSvgPathCommand const& value)
             {
@@ -441,7 +431,6 @@ namespace Microsoft
                     default: assert(false); return L"<unknown CanvasSvgLengthUnits>";
                 }
             }
-#endif
 
             template<>
             inline std::wstring ToString<Platform::Guid>(Platform::Guid const& value)

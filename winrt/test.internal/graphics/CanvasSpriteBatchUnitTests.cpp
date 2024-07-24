@@ -4,8 +4,6 @@
 
 #include "pch.h"
 
-#if WINVER > _WIN32_WINNT_WINBLUE
-
 #include <WindowsNumerics.h>
 
 #include <lib/drawing/CanvasSpriteBatch.h>
@@ -1613,5 +1611,3 @@ public:
         }
     }
 };
-
-#endif

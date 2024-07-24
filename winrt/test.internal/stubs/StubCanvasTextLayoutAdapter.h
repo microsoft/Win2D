@@ -209,7 +209,6 @@ namespace canvas
                     return S_OK;
                 });
 
-#if WINVER > _WIN32_WINNT_WINBLUE
             m_mockDWritefactory->CreateCustomRenderingParamsMethod2.AllowAnyCall(
                 [&](FLOAT gamma, FLOAT enhancedContrast, FLOAT grayscaleEnhancedContrast, FLOAT clearTypeLevel, DWRITE_PIXEL_GEOMETRY pixelGeometry, DWRITE_RENDERING_MODE1 renderingMode, DWRITE_GRID_FIT_MODE gridFitMode, IDWriteRenderingParams3** renderingParams)
                 {
@@ -219,7 +218,6 @@ namespace canvas
 
                     return S_OK;
                 });
-#endif
             }
 
         virtual IStorageFileStatics* GetStorageFileStatics() override

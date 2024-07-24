@@ -4,8 +4,6 @@
 
 #include "pch.h"
 
-#ifndef WINDOWS_PHONE
-
 #include "CanvasPrintDocument.h"
 
 #include "CanvasPreviewEventArgs.h"
@@ -519,5 +517,3 @@ void CanvasPrintDocument::RunOnUIThread(std::function<void(CanvasPrintDocument*,
         future.get();
     }
 }
-
-#endif

@@ -39,14 +39,10 @@ namespace Microsoft.Graphics.Canvas.Effects
         Alpha = 3
     } EffectChannelSelect;
 
-    #if (defined _WIN32_WINNT_WIN10) && (WINVER >= _WIN32_WINNT_WIN10)
-
     [version(VERSION)]
     typedef enum EffectHueColorSpace
     {
         Hsv = 0,
         Hsl = 1
     } EffectHueColorSpace;
-
-    #endif // _WIN32_WINNT_WIN10
 }

@@ -65,9 +65,7 @@ public:
         {
             L"Assets/imageTiger.jpg", testImageWidth, testImageHeight,
             L"Images/x.bmp", 16, 16,
-#if WINAPI_FAMILY!=WINAPI_FAMILY_PHONE_APP
             L"Images/x.ico", 16, 16,
-#endif
             L"Images/x.tif", 16, 16 // Metadata-less tif
         };
 

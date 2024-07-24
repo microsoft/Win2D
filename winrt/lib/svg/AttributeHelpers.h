@@ -4,8 +4,6 @@
 
 #pragma once
 
-#if WINVER > _WIN32_WINNT_WINBLUE
-
 namespace AttributeHelpers
 {
     class __declspec(uuid("52046A90-F359-4BF8-9126-07CAF2F51077"))
@@ -43,5 +41,3 @@ namespace AttributeHelpers
 
     void ValidateRange(int32_t startIndex, int32_t elementCount, uint32_t available);
 }
-
-#endif

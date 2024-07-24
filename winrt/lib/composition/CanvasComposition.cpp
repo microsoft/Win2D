@@ -4,8 +4,6 @@
 
 #include "pch.h"
 
-#if WINVER > _WIN32_WINNT_WINBLUE
-
 #include "CanvasComposition.h"
 
 #include "../utils/ApiInformationAdapter.h"
@@ -231,5 +229,3 @@ IFACEMETHODIMP CanvasCompositionStatics::Resize(
             ThrowIfFailed(drawingSurfaceInterop->Resize(newSize));
         });
 }
-
-#endif

@@ -74,12 +74,10 @@ namespace canvas
         CALL_COUNTER_WITH_MOCK(IsDeviceLostMethod, HRESULT(int, boolean*));
         CALL_COUNTER_WITH_MOCK(GetDeviceLostReasonMethod, HRESULT(int*));
 
-#if WINVER > _WIN32_WINNT_WINBLUE
         CALL_COUNTER_WITH_MOCK(CreateGradientMeshMethod, ComPtr<ID2D1GradientMesh>(D2D1_GRADIENT_MESH_PATCH const*, UINT32));
         CALL_COUNTER_WITH_MOCK(IsSpriteBatchQuirkRequiredMethod, bool());
 
         CALL_COUNTER_WITH_MOCK(CreateSvgDocumentMethod, ComPtr<ID2D1SvgDocument>(IStream*));
-#endif
 
         //
         // ICanvasDevice
@@ -431,7 +429,6 @@ namespace canvas
             return ReleaseHistogramEffectMethod.WasCalled(effects);
         }
 
-#if WINVER > _WIN32_WINNT_WINBLUE
         virtual ComPtr<ID2D1GradientMesh> CreateGradientMesh(
             D2D1_GRADIENT_MESH_PATCH const* patches,
             UINT32 patchCount) override
@@ -448,7 +445,6 @@ namespace canvas
         {
             return CreateSvgDocumentMethod.WasCalled(inputXmlStream);
         }
-#endif
     };
 }
 
