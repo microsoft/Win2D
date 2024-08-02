@@ -1,0 +1,63 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows10.0.22621.0</TargetFramework>
+    <AnalysisLevel>4</AnalysisLevel>
+    <WarningLevel>4</WarningLevel>
+    <LangVersion>latest</LangVersion>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <AssemblyName>Microsoft.Graphics.Canvas.Interop</AssemblyName>
+    <Platforms>AnyCPU</Platforms>
+    <UseUwp>true</UseUwp>
+      
+    <!--
+      Win2D validates the device type, and initializes it to match 'TargetPlatformIdentifier'
+      if empty. We cannot set 'TargetPlatformIdentifier' to 'UAP', because it's not supported
+      the .NET SDK. To fix this, we can just set 'DeviceType' directly.
+    -->
+    <DeviceType>UAP</DeviceType>
+  </PropertyGroup>
+
+  <!-- Additional properties -->
+  <PropertyGroup>
+
+    <!--
+      Set the version (this includes both version number and prefix). It's all documented
+      here: https://learn.microsoft.com/dotnet/core/project-sdk/msbuild-props#generateassemblyinfo.
+      In particular, the default targets in the SDK do the following:
+        - Set "AssemblyVersion" to the value $(Version) without the suffix (eg. "1.1.0").
+        - Set "AssemblyFile" to match the assembly version.
+        - Set "AssemblyInformationVersion" to $(Version) plus git hash (eg. "1.1.0-preview1+1b95cfe91e").
+    -->
+    <Version>1.28.0-preview1</Version>
+
+    <!-- Enable trim/AOT compatibility -->
+    <IsAotCompatible>true</IsAotCompatible>
+
+    <!--
+      'CanvasRenderTarget.CreateFromDirect3D11Surface(ICanvasResourceCreator, IDirect3DSurface)' hides
+      inherited member 'CanvasBitmap.CreateFromDirect3D11Surface(ICanvasResourceCreator, IDirect3DSurface)'
+    -->
+    <NoWarn>$(NoWarn);CS0108;</NoWarn>
+  </PropertyGroup>
+
+  <!-- CsWinRT related properties for projections generation -->
+  <PropertyGroup>
+    <WindowsSdkPackageVersion>10.0.22621.37-preview</WindowsSdkPackageVersion>
+    <CSWinRTIncludes>
+        Microsoft.Graphics.Canvas;
+    </CSWinRTIncludes>
+    <CSWinRTWindowsMetadata>local</CSWinRTWindowsMetadata>
+    <CsWinRTGenerateProjection>true</CsWinRTGenerateProjection>
+  </PropertyGroup>
+
+  <!-- CsWinRT input projects and assemblies -->
+  <ItemGroup>
+    <ProjectReference Include="..\lib\winrt.lib.uap.vcxproj" PrivateAssets="compile" />
+    <CSWinRTInputs Include="$(MergedWinmdDirectory)\Microsoft.Graphics.Canvas.winmd" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Windows.CSWinRT" Version="2.1.0-prerelease.240722.1" />
+    <PackageReference Include="Microsoft.SourceLink.AzureRepos.Git" Version="1.1.1" PrivateAssets="All" />
+  </ItemGroup>
+</Project>

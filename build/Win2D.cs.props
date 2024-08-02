@@ -8,6 +8,7 @@
     <OutputPath>$(__OutputPath)</OutputPath>
     <OutDir>$(__OutputPath)\</OutDir>
     <GenerateProjectSpecificOutputFolder>false</GenerateProjectSpecificOutputFolder>
+    <MergedWinmdDirectory>$(MSBuildThisFileDirectory)..\bin\uap$(FullPlatform)\$(Configuration)\MergedWinMD</MergedWinmdDirectory>
   </PropertyGroup>
 
   <!-- [[IN SAMPLE]] -->

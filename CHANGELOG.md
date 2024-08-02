@@ -1,5 +1,10 @@
 # Win2D Changelog
 
+## Win2D 1.28.0-preview1
+_July 29, 2024_
+- Add .NET 8 projections for Win2D
+- Add `ICanvasSwapChainFactoryNative` interop interface to create a `CanvasSwapChain`-s from an `HWND`
+
 ## Win2D 1.27.1
 _November 17, 2023_
 - Fixes to published interop header which was causing missing D2D type errors for C++ consumers

@@ -62,6 +62,34 @@ steps:
   inputs:
     nuGetServiceConnections: ProjectReunion.nuget.internal
     
+# Nuget restore
+- task: PowerShell@2
+  displayName: 'Nuget Restore'
+  env:
+    REUNION_FEED_PAT: $(REUNION_FEED_PAT)
+    WIN2D_FEED_PAT: $(WIN2D_FEED_PAT)
+    WIN2D_AZURE_NUGET_FEED: $(WIN2D_AZURE_NUGET_FEED)
+  inputs:
+    targetType: inline
+    script: |
+      # Set the appropriate nuget config, using the private ADO secure feed rather than the public feed used by the VS solution
+      $nugetConfig = "\build\nuget\azure_pipelines_nuget.config"
+
+      # Enter VS Shell
+      $env:_MSBDIR="C:\Program Files\Microsoft Visual Studio\2022\Enterprise\"
+      .$env:Build_SourcesDirectory\build\Enter-VSShell.ps1 -vsPath $env:_MSBDIR
+      $env:PATH="$env:Build_SourcesDirectory\build\nuget;$env:PATH"
+
+      # Nuget Restore
+      .$env:Build_SourcesDirectory\build\nuget\nuget.exe restore ($env:Build_SourcesDirectory + "\build\pkges\packages.config") -PackagesDirectory ($env:Build_SourcesDirectory + "\packages") -configFile ($env:Build_SourcesDirectory + $nugetConfig) -NonInteractive
+
+      # Nuget Restore for AnyCPU projects
+      $env:Platform="AnyCPU"
+      $env:Configuration="Release"
+      .$env:Build_SourcesDirectory\build\nuget\nuget.exe restore .\Win2D.uap.sln -PackagesDirectory ($env:Build_SourcesDirectory + "\packages") -configFile ($env:Build_SourcesDirectory + $nugetConfig) -NonInteractive
+      rm env:Configuration
+      rm env:Platform
+    
 # Nuget Restore for telemetry
 - task: CmdLine@2
   displayName: Move telemetry files
@@ -190,6 +218,7 @@ steps:
       Contents: |
         bin\**\Microsoft.Graphics.Canvas.pdb
         bin\**\Microsoft.Graphics.Canvas.dll
+        bin\**\Microsoft.Graphics.Canvas.Interop.dll
         obj\Win2d.githash.txt
   # Copy WinMD and header files to the artifact staging directory from the x86 build to avoid duplicates
   - task: CopyFiles@2
@@ -214,3 +243,4 @@ steps:
       TargetFolder: $(Build.ArtifactStagingDirectory)
       Contents: |
         bin\intellisense\Microsoft.Graphics.Canvas.xml
+        bin\intellisense\Microsoft.Graphics.Canvas.Interop.xml
