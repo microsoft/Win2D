@@ -33,6 +33,9 @@
     <!-- Enable trim/AOT compatibility -->
     <IsAotCompatible>true</IsAotCompatible>
 
+    <!-- Disable runtime marshalling (CsWinRT doesn't rely on it anymore) -->
+    <DisableRuntimeMarshalling>true</DisableRuntimeMarshalling>
+
     <!--
       'CanvasRenderTarget.CreateFromDirect3D11Surface(ICanvasResourceCreator, IDirect3DSurface)' hides
       inherited member 'CanvasBitmap.CreateFromDirect3D11Surface(ICanvasResourceCreator, IDirect3DSurface)'
@@ -48,6 +51,7 @@
     </CSWinRTIncludes>
     <CSWinRTWindowsMetadata>local</CSWinRTWindowsMetadata>
     <CsWinRTGenerateProjection>true</CsWinRTGenerateProjection>
+    <CsWinRTIIDOptimizerOptOut>true</CsWinRTIIDOptimizerOptOut>
   </PropertyGroup>
 
   <!-- CsWinRT input projects and assemblies -->
