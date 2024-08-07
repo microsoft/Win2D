@@ -1,5 +1,14 @@
 # Win2D Changelog
 
+## Win2D-WinUI 1.2.1-experimental2
+
+_August 1, 2024_
+
+- Bring back CanvasAnimatedControl
+- Add ICanvasSwapChainFactoryNative interop interface
+- Add CanvasSwapChain.CreateForWindowId APIs for HWND swapchains
+- Update Windows SDK projections and CsWinRT to latest previews
+
 ## Win2D-WinUI 1.2.1-experimental1
 
 _June 17, 2024_

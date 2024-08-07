@@ -6,7 +6,7 @@
     <RuntimeIdentifiers>win10-x86;win10-x64;win10-arm64</RuntimeIdentifiers>
     <!-- <UseWinUI>true</UseWinUI> -->
     <AssemblyName>winrt.test.nativecomponent.projection</AssemblyName>
-    <WindowsSdkPackageVersion>10.0.22621.31</WindowsSdkPackageVersion>
+    <WindowsSdkPackageVersion>10.0.22621.37-preview</WindowsSdkPackageVersion>
     <Platforms>AnyCPU</Platforms>
   </PropertyGroup>
 
@@ -17,7 +17,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.1.0-prerelease.240602.1" />
+    <PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.1.0-prerelease.240801.1" />
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="$(WindowsAppSdkVersion)" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.756" />
   </ItemGroup>
