@@ -45,13 +45,16 @@
 
   <!-- CsWinRT related properties for projections generation -->
   <PropertyGroup>
-    <WindowsSdkPackageVersion>10.0.22621.37-preview</WindowsSdkPackageVersion>
+    <WindowsSdkPackageVersion>10.0.22621.39</WindowsSdkPackageVersion>
     <CSWinRTIncludes>
         Microsoft.Graphics.Canvas;
     </CSWinRTIncludes>
     <CSWinRTWindowsMetadata>local</CSWinRTWindowsMetadata>
     <CsWinRTGenerateProjection>true</CsWinRTGenerateProjection>
     <CsWinRTIIDOptimizerOptOut>true</CsWinRTIIDOptimizerOptOut>
+
+    <!-- Temporary, until .NET SDK update to support this out of the box -->
+    <CsWinRTUseWindowsUIXamlProjections>true</CsWinRTUseWindowsUIXamlProjections>
   </PropertyGroup>
 
   <!-- CsWinRT input projects and assemblies -->
@@ -61,7 +64,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Windows.CSWinRT" Version="2.1.0-prerelease.240801.1" />
+    <PackageReference Include="Microsoft.Windows.CSWinRT" Version="2.1.1" />
     <PackageReference Include="Microsoft.SourceLink.AzureRepos.Git" Version="1.1.1" PrivateAssets="All" />
   </ItemGroup>
 </Project>

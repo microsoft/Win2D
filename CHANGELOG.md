@@ -1,7 +1,7 @@
 # Win2D Changelog
 
 ## Win2D 1.28.0-preview1
-_July 29, 2024_
+_August 8th, 2024_
 - Add .NET 8 projections for Win2D
 - Add `ICanvasSwapChainFactoryNative` interop interface to create a `CanvasSwapChain`-s from an `HWND`
 
