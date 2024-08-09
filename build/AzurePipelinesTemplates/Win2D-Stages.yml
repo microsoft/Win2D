@@ -73,6 +73,7 @@ stages:
     - template: Win2D-BuildNupkg.yml
       parameters:
         PipelineType: ${{ parameters.PipelineType }}
+        SignCode: ${{ parameters.SignCode }}
 - ${{ if parameters.RunTests }}:
   - stage: Test_Win2D
     # Empty dependency
