@@ -49,14 +49,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             deviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
         }
 
+        D3D_FEATURE_LEVEL featureLevels[7] { D3D_FEATURE_LEVEL_11_1, D3D_FEATURE_LEVEL_11_0, D3D_FEATURE_LEVEL_10_1, D3D_FEATURE_LEVEL_10_0, D3D_FEATURE_LEVEL_9_3, D3D_FEATURE_LEVEL_9_2, D3D_FEATURE_LEVEL_9_1 };
         ComPtr<ID3D11Device> createdDevice;
         if (SUCCEEDED(D3D11CreateDevice(
             NULL, // adapter
             driverType,
             NULL, // software handle
             deviceFlags,
-            NULL, // feature level array
-            0,  // feature level count
+            featureLevels, // feature level array
+            ARRAYSIZE(featureLevels),  // feature level count
             D3D11_SDK_VERSION,
             &createdDevice,
             NULL,
