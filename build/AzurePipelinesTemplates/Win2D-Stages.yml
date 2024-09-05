@@ -67,8 +67,7 @@ stages:
       # binaries scanning tools are run on this directory ( https://onebranch.visualstudio.com/OneBranch/_wiki/wikis/OneBranch.wiki/4634/SDL-(Static-Analysis)-for-Containerized-Workflows ) and 
       # this directory is uploaded to pipeline artifacts. More info at https://aka.ms/obpipelines/artifacts
       ob_outputDirectory: '$(Build.ArtifactStagingDirectory)'
-      ob_artifactBaseName: 'test_output'
-      ob_artifactSuffix: '_$(architecture)'
+      ob_artifactBaseName: 'nupkg'
     steps:
     - template: Win2D-BuildNupkg.yml
       parameters:
@@ -106,7 +105,7 @@ stages:
         # binaries scanning tools are run on this directory ( https://onebranch.visualstudio.com/OneBranch/_wiki/wikis/OneBranch.wiki/4634/SDL-(Static-Analysis)-for-Containerized-Workflows ) and 
         # this directory is uploaded to pipeline artifacts. More info at https://aka.ms/obpipelines/artifacts
         ob_outputDirectory: '$(Build.ArtifactStagingDirectory)'
-        ob_artifactBaseName: 'build_output'
+        ob_artifactBaseName: 'test_output'
         ob_artifactSuffix: '_$(architecture)'
       steps:
       - template: Win2D-ParallelBuild-Steps.yml
