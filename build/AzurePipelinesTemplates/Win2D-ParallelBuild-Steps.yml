@@ -70,15 +70,11 @@ steps:
     env:
       NIGHTLY_WINAPPSDK_VERSION: $[variables.nightly_winappsdk_version]
     displayName: 'Apply Nightly WinAppSDK version to packages.config files'
-# Nuget Authenticate
+
+# Nuget authenticate for project-scoped feeds
 - task: NuGetAuthenticate@1
-  displayName: NuGet Authenticate Win2DWinUI
-  inputs:
-    nuGetServiceConnections: Win2DWinUI
-- task: NuGetAuthenticate@1
-  displayName: NuGet Authenticate ProjectReunion.nuget.internal
-  inputs:
-    nuGetServiceConnections: ProjectReunion.nuget.internal
+  displayName: NuGet Authenticate
+
 - task: PowerShell@2
   displayName: 'Nuget Restore'
   env:
@@ -89,7 +85,7 @@ steps:
     targetType: inline
     script: |
       # Set the appropriate nuget config
-      $nugetConfig = "\build\nuget\azure_pipelines_nuget.config"
+      $nugetConfig = "\nuget.config"
       if ("${{ parameters.PipelineType }}" -eq "Nightly")
       {
         $nugetConfig = "\build\nuget\azure_pipelines_nightly_nuget.config"
@@ -109,12 +105,22 @@ steps:
       .$env:Build_SourcesDirectory\build\nuget\nuget.exe restore .\Microsoft.Graphics.Win2D.sln -PackagesDirectory ($env:Build_SourcesDirectory + "\packages") -configFile ($env:Build_SourcesDirectory + $nugetConfig) -NonInteractive
       rm env:Configuration
       rm env:Platform
+
 # Nuget Restore for Telemetry
+- task: NugetCommand@2
+  displayName: Restore Telemetry files
+  inputs:
+    command: 'restore'
+    restoreSolution: '$(Build.SourcesDirectory)/build/release-pkges/packages.config'
+    feedsToUse: 'config'
+    nugetConfigPath: '$(Build.SourcesDirectory)/build/nuget/release-nuget.config'
+    restoreDirectory: '$(Build.SourcesDirectory)/packages'
+    includeNuGetOrg: false
+
 - task: CmdLine@2
   displayName: Moving telem files
   inputs:
     script: |
-      call nuget.exe restore -NonInteractive -configFile $(Build.SourcesDirectory)/build/nuget/release-nuget.config -PackagesDirectory $(Build.SourcesDirectory)/packages $(Build.SourcesDirectory)/build/release-pkges/packages.config || exit /b 1
       del $(Build.SourcesDirectory)\winrt\inc\MicrosoftTelemetry.h || exit /b 1
       move /Y $(Build.SourcesDirectory)\packages\Microsoft.Win2D.Telemetry.1.0.2\build\include\MicrosoftTelemetry.h $(Build.SourcesDirectory)\winrt\inc\MicrosoftTelemetry.h || exit /b 1
 
