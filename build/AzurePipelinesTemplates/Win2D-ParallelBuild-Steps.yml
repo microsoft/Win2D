@@ -124,6 +124,13 @@ steps:
       del $(Build.SourcesDirectory)\winrt\inc\MicrosoftTelemetry.h || exit /b 1
       move /Y $(Build.SourcesDirectory)\packages\Microsoft.Win2D.Telemetry.1.0.2\build\include\MicrosoftTelemetry.h $(Build.SourcesDirectory)\winrt\inc\MicrosoftTelemetry.h || exit /b 1
 
+# Signing
+- task: PowerShell@2
+  displayName: Generate Test Signing Certificate
+  inputs:
+    targetType: filePath
+    filePath: build/GenerateTestPFX.ps1
+
 # Build Win2D
 - task: MSBuild@1
   displayName: Build Win2D.proj
