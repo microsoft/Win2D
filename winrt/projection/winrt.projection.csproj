@@ -52,9 +52,6 @@
     <CSWinRTWindowsMetadata>local</CSWinRTWindowsMetadata>
     <CsWinRTGenerateProjection>true</CsWinRTGenerateProjection>
     <CsWinRTIIDOptimizerOptOut>true</CsWinRTIIDOptimizerOptOut>
-
-    <!-- Temporary, until .NET SDK update to support this out of the box -->
-    <CsWinRTUseWindowsUIXamlProjections>true</CsWinRTUseWindowsUIXamlProjections>
   </PropertyGroup>
 
   <!-- CsWinRT input projects and assemblies -->
