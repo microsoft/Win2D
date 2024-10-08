@@ -4490,7 +4490,7 @@ TEST_CLASS(CanvasDrawingSession_DrawTextTests)
         template<typename FORMAT_VALIDATOR>
         void Expect(int numCalls, std::wstring expectedText, D2D1_RECT_F expectedRect, D2D1_DRAW_TEXT_OPTIONS expectedOptions, FORMAT_VALIDATOR&& formatValidator)
         {            
-            DeviceContext->DrawTextMethod.SetExpectedCalls(numCalls,
+            DeviceContext->DrawTextWMethod.SetExpectedCalls(numCalls,
                 [=](wchar_t const* actualText,
                     uint32_t actualTextLength,
                     IDWriteTextFormat* format,
@@ -4748,7 +4748,7 @@ TEST_CLASS(CanvasDrawingSession_DrawTextTests)
 
         ThrowIfFailed(f.Format->put_WordWrapping(originalWrapping));
 
-        f.DeviceContext->DrawTextMethod.SetExpectedCalls(1,
+        f.DeviceContext->DrawTextWMethod.SetExpectedCalls(1,
             [&] (wchar_t const*, uint32_t, IDWriteTextFormat* format, D2D1_RECT_F const*, ID2D1Brush*, D2D1_DRAW_TEXT_OPTIONS, DWRITE_MEASURING_MODE)
             {
                 Assert::AreEqual(DWRITE_WORD_WRAPPING_NO_WRAP, format->GetWordWrapping());

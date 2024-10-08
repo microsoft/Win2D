@@ -11,6 +11,8 @@
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
     <WindowsTargetPlatformVersion>10.0.19041.0</WindowsTargetPlatformVersion>
     <WindowsTargetPlatformMinVersion>10.0.17763.0</WindowsTargetPlatformMinVersion>
+    <DesktopCompatible>true</DesktopCompatible>
+    <_NoWinAPIFamilyApp>true</_NoWinAPIFamilyApp>
   </PropertyGroup>
   <Import Project="..\..\build\Win2D.cpp.props" />
   <Import Project="..\..\build\HybridCRT.props" />
@@ -251,7 +253,7 @@
   <ItemDefinitionGroup>
     <ClCompile>
       <AdditionalIncludeDirectories>$(VCInstallDir)UnitTest\include;.;..\Inc;..;$(EtwDirectory);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WINAPI_FAMILY=WINAPI_FAMILY_APP;_SILENCE_STDEXT_ARR_ITERS_DEPRECATION_WARNING;%(PreprocessorDefinitions);ENABLE_WINRT_EXPERIMENTAL_TYPES=1;WRT_EXPORT;WINUI3;_WINDLL</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_SILENCE_STDEXT_ARR_ITERS_DEPRECATION_WARNING;%(PreprocessorDefinitions);ENABLE_WINRT_EXPERIMENTAL_TYPES=1;WRT_EXPORT;WINUI3;_WINDLL</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(VCInstallDir)UnitTest\include;.;..\Inc;..;$(EtwDirectory);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <UseFullPaths>true</UseFullPaths>
       <WarningLevel>Level4</WarningLevel>
@@ -289,6 +291,7 @@
     <Error Condition="!Exists('..\..\packages\Microsoft.Windows.MidlRT.2.0.200924.1\build\native\Microsoft.Windows.MidlRT.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.Windows.MidlRT.2.0.200924.1\build\native\Microsoft.Windows.MidlRT.targets'))" />
     <Error Condition="!Exists('$(WindowsAppSdk_props)')" Text="$([System.String]::Format('$(ErrorText)', '$(WindowsAppSdk_props)'))" />
     <Error Condition="!Exists('$(WindowsAppSdk_targets)')" Text="$([System.String]::Format('$(ErrorText)', '$(WindowsAppSdk_targets)'))" />
+    <Error Condition="!Exists('..\..\packages\Microsoft.Web.WebView2.1.0.2792.45\build\native\Microsoft.Web.WebView2.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.Web.WebView2.1.0.2792.45\build\native\Microsoft.Web.WebView2.targets'))" />
   </Target>
   <Import Project="..\..\packages\Microsoft.Windows.AbiWinRT.2.0.210330.2\build\native\Microsoft.Windows.AbiWinRT.targets" Condition="Exists('..\..\packages\Microsoft.Windows.AbiWinRT.2.0.210330.2\build\native\Microsoft.Windows.AbiWinRT.targets')" />
   <Import Project="..\..\packages\Microsoft.Windows.MidlRT.2.0.200924.1\build\native\Microsoft.Windows.MidlRT.targets" Condition="Exists('..\..\packages\Microsoft.Windows.MidlRT.2.0.200924.1\build\native\Microsoft.Windows.MidlRT.targets')" />
@@ -306,4 +309,5 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <Import Project="$(WindowsAppSdk_targets)" Condition="Exists('$(WindowsAppSdk_targets)')" />
+  <Import Project="..\..\packages\Microsoft.Web.WebView2.1.0.2792.45\build\native\Microsoft.Web.WebView2.targets" Condition="Exists('..\..\packages\Microsoft.Web.WebView2.1.0.2792.45\build\native\Microsoft.Web.WebView2.targets')" />
 </Project>

@@ -38,12 +38,11 @@
       <file target="lib\net45\Microsoft.Graphics.Canvas.winmd"                            src="bin\UAPx86\release\winrt.dll.UAP\Microsoft.Graphics.Canvas.winmd" />
 
       <file target="lib\net6.0-windows10.0.19041.0\Microsoft.Graphics.Canvas.Interop.dll" src="bin\anycpu\release\winrt.projection\Microsoft.Graphics.Canvas.Interop.dll" />
-      <file target="lib\net6.0-windows10.0.19041.0\Microsoft.Graphics.Canvas.Interop.xml" src="bin\intellisense\Microsoft.Graphics.Canvas.xml" />
 
       <!-- TODO: Doc generation is failing to load Microsoft.System.DispatcherQueue -->
       <!--
-      <file target="lib\uap10.0\Microsoft.Graphics.Canvas.xml"               src="bin\intellisense\Microsoft.Graphics.Canvas.xml" />
-      <file target="lib\net45\Microsoft.Graphics.Canvas.xml"                 src="bin\intellisense\Microsoft.Graphics.Canvas.xml" />
+      <file target="lib\uap10.0\Microsoft.Graphics.Canvas.xml"                            src="bin\intellisense\Microsoft.Graphics.Canvas.xml" />
+      <file target="lib\net45\Microsoft.Graphics.Canvas.xml"                              src="bin\intellisense\Microsoft.Graphics.Canvas.xml" />
       <file target="lib\net6.0-windows10.0.19041.0\Microsoft.Graphics.Canvas.Interop.xml" src="bin\intellisense\Microsoft.Graphics.Canvas.xml" />
       -->
 

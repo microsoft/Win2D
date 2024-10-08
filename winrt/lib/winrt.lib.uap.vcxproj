@@ -20,6 +20,12 @@
     <WindowsTargetPlatformMinVersion>10.0.17763.0</WindowsTargetPlatformMinVersion>
     <PlatformToolset>v143</PlatformToolset>
     <DesktopCompatible>true</DesktopCompatible>
+
+    <!--
+      Include non-UAP APIs as if this were a normal Desktop-only component.
+      For instance, this lets us reference 'LoadLibrary' while targetingt 19041.
+    -->
+    <_NoWinAPIFamilyApp>true</_NoWinAPIFamilyApp>
   </PropertyGroup>
   <Import Project="..\..\build\Win2D.cpp.props" />
   <Import Project="..\..\build\HybridCRT.props" />
@@ -496,9 +502,11 @@
     <Error Condition="!Exists('..\..\packages\Microsoft.Windows.AbiWinRT.2.0.210330.2\build\native\Microsoft.Windows.AbiWinRT.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.Windows.AbiWinRT.2.0.210330.2\build\native\Microsoft.Windows.AbiWinRT.targets'))" />
     <Error Condition="!Exists('$(WindowsAppSdk_props)')" Text="$([System.String]::Format('$(ErrorText)', '$(WindowsAppSdk_props)'))" />
     <Error Condition="!Exists('$(WindowsAppSdk_targets)')" Text="$([System.String]::Format('$(ErrorText)', '$(WindowsAppSdk_targets)'))" />
+    <Error Condition="!Exists('..\..\packages\Microsoft.Web.WebView2.1.0.2792.45\build\native\Microsoft.Web.WebView2.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.Web.WebView2.1.0.2792.45\build\native\Microsoft.Web.WebView2.targets'))" />
   </Target>
   <Import Project="..\..\packages\Microsoft.Windows.MidlRT.2.0.200924.1\build\native\Microsoft.Windows.MidlRT.targets" Condition="Exists('..\..\packages\Microsoft.Windows.MidlRT.2.0.200924.1\build\native\Microsoft.Windows.MidlRT.targets')" />
   <Import Project="..\..\packages\Microsoft.Windows.AbiWinRT.2.0.210330.2\build\native\Microsoft.Windows.AbiWinRT.targets" Condition="Exists('..\..\packages\Microsoft.Windows.AbiWinRT.2.0.210330.2\build\native\Microsoft.Windows.AbiWinRT.targets')" />
   <Import Project="$(WindowsAppSdk_targets)" Condition="Exists('$(WindowsAppSdk_targets)')" />
   <Import Project="$(MSBuildThisFileDirectory)..\..\build\midlrt.targets" />
+  <Import Project="..\..\packages\Microsoft.Web.WebView2.1.0.2792.45\build\native\Microsoft.Web.WebView2.targets" Condition="Exists('..\..\packages\Microsoft.Web.WebView2.1.0.2792.45\build\native\Microsoft.Web.WebView2.targets')" />
 </Project>
