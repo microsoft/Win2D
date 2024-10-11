@@ -1,5 +1,10 @@
 # Win2D Changelog
 
+## Win2D 1.28.0
+_October 9th, 2024_
+- Update Windows SDK projections and CsWinRT to latest
+- Update .nuspec to correctly declare all dependencies
+
 ## Win2D 1.28.0-preview1
 _August 8th, 2024_
 - Add .NET 8 projections for Win2D

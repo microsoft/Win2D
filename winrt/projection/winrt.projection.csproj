@@ -28,7 +28,7 @@
         - Set "AssemblyFile" to match the assembly version.
         - Set "AssemblyInformationVersion" to $(Version) plus git hash (eg. "1.1.0-preview1+1b95cfe91e").
     -->
-    <Version>1.28.0-preview1</Version>
+    <Version>1.28.0</Version>
 
     <!-- Enable trim/AOT compatibility -->
     <IsAotCompatible>true</IsAotCompatible>
@@ -45,7 +45,7 @@
 
   <!-- CsWinRT related properties for projections generation -->
   <PropertyGroup>
-    <WindowsSdkPackageVersion>10.0.$([System.Version]::Parse('$(TargetPlatformVersion)').Build).39</WindowsSdkPackageVersion>
+    <WindowsSdkPackageVersion>10.0.$([System.Version]::Parse('$(TargetPlatformVersion)').Build).48</WindowsSdkPackageVersion>
     <CSWinRTIncludes>
         Microsoft.Graphics.Canvas;
     </CSWinRTIncludes>
@@ -61,7 +61,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Windows.CSWinRT" Version="2.1.3" />
+    <PackageReference Include="Microsoft.Windows.CSWinRT" Version="2.1.5" />
     <PackageReference Include="Microsoft.SourceLink.AzureRepos.Git" Version="1.1.1" PrivateAssets="All" />
   </ItemGroup>
 </Project>
