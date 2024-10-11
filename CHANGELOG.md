@@ -1,5 +1,11 @@
 # Win2D Changelog
 
+## Win2D-WinUI 1.3.0
+_October 9th, 2024_
+- Update Windows SDK projections and CsWinRT to latest
+- Lower TFM to 10.0.19041.0
+- Mark CanvasAnimatedControl as experimental (it has some known issues)
+
 ## Win2D-WinUI 1.2.1-experimental2
 
 _August 1, 2024_

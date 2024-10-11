@@ -16,6 +16,9 @@
     <WarningLevel>4</WarningLevel>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <TargetPlatformVersion>10.0.19041.0</TargetPlatformVersion>
+
+    <!-- Don't fail the build for [Experimental] warnings (eg. for CanvasAnimatedControl) -->
+    <WarningsNotAsErrors>$(WarningsNotAsErrors);CS8305</WarningsNotAsErrors>
   </PropertyGroup>
   <PropertyGroup>
     <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>

@@ -20,7 +20,7 @@
         - Set "AssemblyFile" to match the assembly version.
         - Set "AssemblyInformationVersion" to $(Version) plus git hash (eg. "1.1.0-preview1+1b95cfe91e").
     -->
-    <Version>1.2.1-experimental2</Version>
+    <Version>1.3.0</Version>
 
     <!-- Enable trimming -->
     <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
@@ -52,7 +52,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.2792.45" />
     <PackageReference Include="Microsoft.WindowsAppSdk" Version="$(WindowsAppSdkVersion)" />
-    <PackageReference Include="Microsoft.Windows.CSWinRT" Version="2.1.3" />
+    <PackageReference Include="Microsoft.Windows.CSWinRT" Version="2.1.5" />
     <PackageReference Include="Microsoft.SourceLink.AzureRepos.Git" Version="1.1.1" PrivateAssets="All" />
   </ItemGroup>
 </Project>
