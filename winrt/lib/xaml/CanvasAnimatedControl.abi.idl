@@ -281,7 +281,6 @@ namespace Microsoft.Graphics.Canvas.UI.Xaml
     }
 
     [version(VERSION), activatable(VERSION), marshaling_behavior(agile), threading(both)]
-    [experimental]
     runtimeclass CanvasAnimatedControl : Microsoft.UI.Xaml.Controls.UserControl
     {
         [default] interface ICanvasAnimatedControl;

@@ -260,8 +260,6 @@ private:
                 
                 lock.unlock();
                 ThrowIfFailed(As<IDispatcherQueue3>(m_dispatcherQueue)->RunEventLoop());
-                ComPtr<IAsyncAction> action;
-                m_dispatcherQueueController->ShutdownQueueAsync(&action);
                 lock.lock();
 
                 m_dispatcherStarted = false;
@@ -271,6 +269,8 @@ private:
 
         // Cancel any remaining actions
         CancelActions(lock);
+        ComPtr<IAsyncAction> action;
+        m_dispatcherQueueController->ShutdownQueueAsync(&action);
 
         lock.unlock();
         m_client->OnGameLoopStopped();
