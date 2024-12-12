@@ -14,7 +14,7 @@
         <copyright>© Microsoft Corporation. All rights reserved.</copyright>
         <tags>graphics 2D Direct2D DirectX WinRT XAML canvas drawing C# C++ Windows Reunion ProjectReunion WindowsAppSdk</tags>
         <dependencies>
-            <dependency id="Microsoft.WindowsAppSDK" version="1.6.240923002" />
+            <dependency id="Microsoft.WindowsAppSDK" version="1.6.241114003" />
         </dependencies>
     </metadata>
     
@@ -24,6 +24,7 @@
 
       <file target="icon.png"                                                             src="build\nuget\icon.png" />
       <file target="build\native\Microsoft.Graphics.Win2D.targets"                        src="build\nuget\Microsoft.Graphics.Win2D-native.targets" />
+      <file target="build\net6.0-windows10.0.19041.0\Microsoft.Graphics.Win2D.props"      src="build\nuget\Microsoft.Graphics.Win2D-WinUI3.props" />
       <file target="build\net6.0-windows10.0.19041.0\Microsoft.Graphics.Win2D.targets"    src="build\nuget\Microsoft.Graphics.Win2D-WinUI3.targets" />
       <file target="build\net45\Microsoft.Graphics.Win2D.targets"                         src="build\nuget\Microsoft.Graphics.Win2D-managed.targets" />
       <file target="build\win10\Microsoft.Graphics.Win2D.targets"                         src="build\nuget\Microsoft.Graphics.Win2D-win10.targets" />

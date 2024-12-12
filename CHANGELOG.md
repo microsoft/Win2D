@@ -1,5 +1,13 @@
 # Win2D Changelog
 
+## Win2D-WinUI 1.3.1
+_December 12th, 2024_
+- Fix pause/resume issues with CanvasAnimatedControl
+- Remove \[Experimental\] attribute from CanvasAnimatedControl
+- Enable automatic .winmd registration for MSIX apps on .NET 8
+- Update WindowsAppSDK version to 1.6.241114003
+- Update Windows SDK projections and CsWinRT to latest
+
 ## Win2D-WinUI 1.3.0
 _October 9th, 2024_
 - Update Windows SDK projections and CsWinRT to latest

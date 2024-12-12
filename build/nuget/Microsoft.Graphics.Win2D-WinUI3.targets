@@ -24,6 +24,10 @@
     <Warning Text="Microsoft.Graphics.Canvas.dll could not be copied because the AnyCPU platform is being used. Please specify a specific platform to copy this file." />
   </Target>
 
+  <ItemGroup>
+    <WindowsMetadataReference Include="$(Win2DWinMDPath)" Implementation="$(Win2DWinMDImplementationDllName)" />
+  </ItemGroup>
+
   <!--
   Don't import Win2D.common.targets here, as it will cause build failures because desktop project
   files don't define $(TargetPlatformVersion) with the same semantics as with UWP or C++ project files.

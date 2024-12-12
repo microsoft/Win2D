@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup>
+    <Win2DWinMDPath>$(MSBuildThisFileDirectory)..\..\lib\uap10.0\Microsoft.Graphics.Canvas.winmd</Win2DWinMDPath>
+    <Win2DWinMDImplementationDllName>Microsoft.Graphics.Canvas.dll</Win2DWinMDImplementationDllName>
+  </PropertyGroup>
+
+</Project>
