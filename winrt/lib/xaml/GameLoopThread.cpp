@@ -259,7 +259,17 @@ private:
                 m_conditionVariable.notify_all();
                 
                 lock.unlock();
-                ThrowIfFailed(As<IDispatcherQueue3>(m_dispatcherQueue)->RunEventLoop());
+                // Our desired behavior here is to wait for the loop to exit, 
+				// even if no actions are currently being run, i.e. RunEventLoop(WithOptions) 
+                // should block until EnqueueEventLoopExit is called.
+                // 
+				// When calling RunEventLoop without options, a call to EnqueueEventLoopExit exits 
+                // the loop "globally" and consecutive calls of RunEventLoop will terminate if the queue is empty.
+				// By using DispatcherRunOptions::QuitOnlyLocalLoop, we ensure that the loop will 
+				// exit "locally" when EnqueueEventLoopExit is called, but calling RunEventLoopWithOptions 
+                // again will block again even if there are no actions.
+				// The second parameter would allow us to defer queue exit, but we don't need that so we pass nullptr.
+                ThrowIfFailed(As<IDispatcherQueue3>(m_dispatcherQueue)->RunEventLoopWithOptions(DispatcherRunOptions::DispatcherRunOptions_QuitOnlyLocalLoop, nullptr));
                 lock.lock();
 
                 m_dispatcherStarted = false;
