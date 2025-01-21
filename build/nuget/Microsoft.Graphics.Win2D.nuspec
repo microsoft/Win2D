@@ -21,14 +21,17 @@
     <files>
 
       <file target="Win2d.githash.txt"                                                    src="obj\Win2d.githash.txt" />
-
       <file target="icon.png"                                                             src="build\nuget\icon.png" />
+
       <file target="build\native\Microsoft.Graphics.Win2D.targets"                        src="build\nuget\Microsoft.Graphics.Win2D-native.targets" />
       <file target="build\net6.0-windows10.0.19041.0\Microsoft.Graphics.Win2D.props"      src="build\nuget\Microsoft.Graphics.Win2D-WinUI3.props" />
       <file target="build\net6.0-windows10.0.19041.0\Microsoft.Graphics.Win2D.targets"    src="build\nuget\Microsoft.Graphics.Win2D-WinUI3.targets" />
       <file target="build\net45\Microsoft.Graphics.Win2D.targets"                         src="build\nuget\Microsoft.Graphics.Win2D-managed.targets" />
       <file target="build\win10\Microsoft.Graphics.Win2D.targets"                         src="build\nuget\Microsoft.Graphics.Win2D-win10.targets" />
       <file target="build\Win2D.common.targets"                                           src="build\nuget\Win2D.common.targets" />
+
+      <file target="buildTransitive\net6.0-windows10.0.19041.0\Microsoft.Graphics.Win2D.props"      src="build\nuget\Microsoft.Graphics.Win2D-WinUI3.props" />
+      <file target="buildTransitive\net6.0-windows10.0.19041.0\Microsoft.Graphics.Win2D.targets"    src="build\nuget\Microsoft.Graphics.Win2D-WinUI3.targets" />
 
       <file target="include\x86\Microsoft.Graphics.Canvas.h"                              src="obj\winrt.lib.uap\UAPx86\release\Generated Files\Microsoft.Graphics.Canvas.h"/>
       <file target="include\x64\Microsoft.Graphics.Canvas.h"                              src="obj\winrt.lib.uap\UAPx64\release\Generated Files\Microsoft.Graphics.Canvas.h"/>

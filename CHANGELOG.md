@@ -1,5 +1,10 @@
 # Win2D Changelog
 
+## Win2D-WinUI 1.3.2
+_January 22nd, 2025_
+- Enable transitive MSBuild configuration
+- Fix an issue causing CanvasAnimatedControl to use 100% of the CPU in some scenarios
+
 ## Win2D-WinUI 1.3.1
 _December 12th, 2024_
 - Fix pause/resume issues with CanvasAnimatedControl
