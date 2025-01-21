@@ -1,5 +1,10 @@
 # Win2D Changelog
 
+## Win2D 1.28.2
+_January 22nd, 2025_
+- Enable transitive MSBuild configuration
+- Fix package icon
+
 ## Win2D 1.28.1
 _December 12th, 2024_
 - Enable automatic .winmd registration for MSIX apps on .NET 8
