@@ -52,7 +52,7 @@
 
   <!-- CsWinRT related properties for projections generation -->
   <PropertyGroup>
-    <WindowsSdkPackageVersion>10.0.$([System.Version]::Parse('$(TargetPlatformVersion)').Build).54</WindowsSdkPackageVersion>
+    <WindowsSdkPackageVersion>10.0.$([System.Version]::Parse('$(TargetPlatformVersion)').Build).57</WindowsSdkPackageVersion>
     <CSWinRTIncludes>
         Microsoft.Graphics.Canvas;
     </CSWinRTIncludes>
@@ -68,7 +68,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Windows.CSWinRT" Version="2.1.6" />
+    <PackageReference Include="Microsoft.Windows.CSWinRT" Version="2.2.0" />
     <PackageReference Include="Microsoft.SourceLink.AzureRepos.Git" Version="1.1.1" PrivateAssets="All" />
   </ItemGroup>
 </Project>

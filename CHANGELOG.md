@@ -1,5 +1,9 @@
 # Win2D Changelog
 
+## Win2D 1.28.3
+_February 7th, 2025_
+- Update Windows SDK projections and CsWinRT to latest
+
 ## Win2D 1.28.2
 _January 22nd, 2025_
 - Enable transitive MSBuild configuration
