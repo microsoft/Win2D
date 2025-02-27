@@ -6,7 +6,6 @@
     <LangVersion>latest</LangVersion>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <AssemblyName>Microsoft.Graphics.Canvas.Interop</AssemblyName>
-    <Platforms>AnyCPU</Platforms>
     <UseUwp>true</UseUwp>
 
     <!--
@@ -22,6 +21,13 @@
       the .NET SDK. To fix this, we can just set 'DeviceType' directly.
     -->
     <DeviceType>UAP</DeviceType>
+
+    <!-- Projections should always be built for 'AnyCPU', no matter who consumes them -->
+    <Platforms>AnyCPU</Platforms>
+    <Platform>AnyCPU</Platform>
+
+    <!-- Override 'PlatformTarget' too, just in case -->
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
 
   <!-- Additional properties -->
@@ -35,7 +41,7 @@
         - Set "AssemblyFile" to match the assembly version.
         - Set "AssemblyInformationVersion" to $(Version) plus git hash (eg. "1.1.0-preview1+1b95cfe91e").
     -->
-    <Version>1.28.1</Version>
+    <Version>1.28.3</Version>
 
     <!-- Enable trim/AOT compatibility -->
     <IsAotCompatible>true</IsAotCompatible>
