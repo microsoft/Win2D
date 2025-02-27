@@ -1,7 +1,7 @@
 # Win2D Changelog
 
 ## Win2D-WinUI 1.3.3
-_February 7th, 2025_
+_February 26th, 2025_
 - Update Windows SDK projections and CsWinRT to latest
 
 ## Win2D-WinUI 1.3.2
