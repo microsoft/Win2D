@@ -7,7 +7,7 @@
 #include <inspectable.h>
 #include <windows.graphics.directx.h>
 #include <windows.foundation.numerics.h>
-#include <d2d1_1.h>
+#include <d2d1_2.h>
 
 #ifndef __cplusplus
 #error "Requires C++"
