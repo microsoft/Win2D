@@ -278,6 +278,14 @@ namespace Microsoft.Graphics.Canvas.UI.Xaml
 
         [propget] HRESULT DpiScale([out, retval] float* value);
         [propput] HRESULT DpiScale([in] float ratio);
+
+        //
+        // Determines the sync interval used to present to the swapchain. 
+        //
+        // These methods can be called from any thread.
+        //
+        [propput] HRESULT SyncInterval([in] int value);
+        [propget] HRESULT SyncInterval([out, retval] int* value);
     }
 
     [version(VERSION), activatable(VERSION), marshaling_behavior(agile), threading(both)]

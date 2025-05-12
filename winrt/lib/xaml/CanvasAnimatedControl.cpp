@@ -366,6 +366,26 @@ IFACEMETHODIMP CanvasAnimatedControl::get_Paused(boolean* value)
         });
 }
 
+IFACEMETHODIMP CanvasAnimatedControl::put_SyncInterval(int32_t value)
+{
+    return ExceptionBoundary(
+        [&]
+        {
+            auto lock = Lock(m_sharedStateMutex);
+            m_sharedState.SyncInterval = value;
+        });
+}
+IFACEMETHODIMP CanvasAnimatedControl::get_SyncInterval(int32_t* value)
+{
+    return ExceptionBoundary(
+        [&]
+        {
+            CheckInPointer(value);
+            auto lock = Lock(m_sharedStateMutex);
+            *value = m_sharedState.SyncInterval;
+        });
+}
+
 IFACEMETHODIMP CanvasAnimatedControl::get_Size(Size* value)
 {
     return ExceptionBoundary(
@@ -1225,7 +1245,7 @@ bool CanvasAnimatedControl::Tick(
             Draw(renderTarget->Target.Get(), clearColor, invokeDrawHandlers, updateResult.IsRunningSlowly);
             EventWrite_CanvasAnimatedControl_Draw_Stop();
             EventWrite_CanvasAnimatedControl_Present_Start();            
-            ThrowIfFailed(renderTarget->Target->Present());
+            ThrowIfFailed(renderTarget->Target->PresentWithSyncInterval(m_sharedState.SyncInterval));
             EventWrite_CanvasAnimatedControl_Present_Stop();
 
             drew = true;

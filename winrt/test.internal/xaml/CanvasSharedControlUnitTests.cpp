@@ -303,7 +303,7 @@ TEST_CLASS(CanvasSharedControlTests_InteractionWithRecreatableDeviceManager)
                             auto ds = Make<MockCanvasDrawingSession>();
                             return ds.CopyTo(value);
                         });
-                    mockSwapChain->PresentMethod.AllowAnyCall();
+                    mockSwapChain->PresentWithSyncIntervalMethod.AllowAnyCall();
 
                     mockSwapChain->put_TransformMethod.AllowAnyCall();
 

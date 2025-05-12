@@ -2247,13 +2247,13 @@ TEST_CLASS(CanvasAnimatedControlRenderLoop)
 
         void ExpectRender()
         {
-            SwapChain->PresentMethod.SetExpectedCalls(1);
+            SwapChain->PresentWithSyncIntervalMethod.SetExpectedCalls(1);
             ExpectDrawingSession();
         }
 
         void AllowAnyRendering()
         {
-            SwapChain->PresentMethod.AllowAnyCall();
+            SwapChain->PresentWithSyncIntervalMethod.AllowAnyCall();
 
             SwapChain->CreateDrawingSessionMethod.SetExpectedCalls(1,
                 [=](Color clearColor, ICanvasDrawingSession** value)

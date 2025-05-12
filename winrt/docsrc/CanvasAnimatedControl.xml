@@ -515,7 +515,25 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <summary>Gets the current size of the control, in device independent pixels (DIPs).</summary>
       <inheritdoc/>
     </member>
-    
+
+    <member name="P:Microsoft.Graphics.Canvas.UI.Xaml.ICanvasAnimatedControl.SyncInterval">
+      <summary>Specifies the sync interval that determines how frame presentation is synchronized with display vertical blank.</summary>
+      <remarks>
+        <p>
+          The default is 1. See the remarks section of <see 
+          cref="M:Microsoft.Graphics.Canvas.CanvasSwapChain.Present(System.Int32)" /> for
+          more details.
+        </p>
+        <p>
+          This property can be accessed from any thread.
+        </p>
+      </remarks>
+    </member>
+    <member name="P:Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl.SyncInterval">
+      <summary>Specifies the sync interval that determines how frame presentation is synchronized with display vertical blank.</summary>
+      <inheritdoc />
+    </member>
+
     <member name="P:Microsoft.Graphics.Canvas.UI.Xaml.ICanvasAnimatedControl.TargetElapsedTime">
       <summary>Gets or sets the time between Update events</summary>
       <remarks>

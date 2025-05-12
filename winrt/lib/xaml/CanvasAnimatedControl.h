@@ -148,6 +148,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         {
             SharedState()
                 : IsPaused(false)
+                , SyncInterval(1)
                 , TimeWhenPausedWasSet{}
                 , TimeSpentPaused{}
                 , IsStepTimerFixedStep(false)
@@ -164,6 +165,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             int64_t TimeWhenPausedWasSet;
             int64_t TimeSpentPaused;
             bool IsStepTimerFixedStep;
+            int32_t SyncInterval;
             uint64_t TargetElapsedTime;
             bool ShouldResetElapsedTime;
             bool NeedsDraw;
@@ -222,7 +224,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         IFACEMETHODIMP put_Paused(boolean value) override;
 
         IFACEMETHODIMP get_Paused(boolean* value) override;
-        
+
+        IFACEMETHODIMP put_SyncInterval(int32_t value);
+
+        IFACEMETHODIMP get_SyncInterval(int32_t* value);
+
         IFACEMETHODIMP get_Size(Size* value) override;
 
         IFACEMETHODIMP Invalidate() override;
