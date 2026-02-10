@@ -8,7 +8,7 @@
     <owners>win2d,microsoft</owners>
     <description>An easy-to-use Windows Runtime API for immediate mode 2D graphics rendering.&#10;For the Universal Windows Platform (Windows 10).</description>
     <projectUrl>http://go.microsoft.com/fwlink/?LinkID=519078</projectUrl>
-    <iconUrl>http://raw.githubusercontent.com/Microsoft/Win2D/master/samples/ExampleGallery/WindowsPhone/Assets/Square71x71Logo.scale-240.png</iconUrl>
+    <icon>icon.png</icon>
     <licenseUrl>$LicenseUrl$</licenseUrl>
     <requireLicenseAcceptance>$RequireLicenseAcceptance$</requireLicenseAcceptance>
     <copyright>© Microsoft Corporation. All rights reserved.</copyright>
@@ -29,6 +29,7 @@
   <files>
 
     <file target="Win2d.githash.txt"                                       src="obj\Win2d.githash.txt" />
+    <file target="icon.png"                                                src="build\nuget\icon.png" />
 
     <file target="build\native\Win2D.uwp.targets"                          src="build\nuget\Win2D.uwp-native.targets" />
     <file target="build\net45\Win2D.uwp.targets"                           src="build\nuget\Win2D.uwp-managed.targets" />
@@ -36,6 +37,9 @@
     <file target="build\net8.0-windows10.0.19041.0\Win2D.uwp.targets"      src="build\nuget\Win2D.uwp-cswinrt.targets" />
     <file target="build\uap10.0\Win2D.uwp.targets"                         src="build\nuget\Win2D.uwp-win10.targets" />
     <file target="build\Win2D.common.targets"                              src="build\nuget\Win2D.common.targets" />
+
+    <file target="buildTransitive\net8.0-windows10.0.19041.0\Win2D.uwp.props"        src="build\nuget\Win2D.uwp-cswinrt.props" />
+    <file target="buildTransitive\net8.0-windows10.0.19041.0\Win2D.uwp.targets"      src="build\nuget\Win2D.uwp-cswinrt.targets" />
 
     <file target="include\Microsoft.Graphics.Canvas.h"                     src="bin\UAPx86\release\IdlHeader\Microsoft.Graphics.Canvas.h"/>
     <file target="include\Microsoft.Graphics.Canvas.native.h"              src="winrt\published\Microsoft.Graphics.Canvas.native.h"/>
