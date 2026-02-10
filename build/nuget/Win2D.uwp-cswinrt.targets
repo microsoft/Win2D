@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
+  <!-- Set the platform from the RID, first -->
   <PropertyGroup>
     <win2d-Platform Condition="$(RuntimeIdentifier.EndsWith('-x64'))">x64</win2d-Platform>
     <win2d-Platform Condition="$(RuntimeIdentifier.EndsWith('-x86'))">x86</win2d-Platform>
@@ -8,6 +9,7 @@
     <win2d-Platform Condition="$(RuntimeIdentifier.EndsWith('-arm'))">arm</win2d-Platform>
   </PropertyGroup>
 
+  <!-- If still empty, try to set the platform based on the build platform -->
   <PropertyGroup Condition="'$(win2d-Platform)' == ''">
     <win2d-Platform Condition="'$(Platform)' == 'Win32'">x86</win2d-Platform>
     <win2d-Platform Condition="'$(Platform)' != 'Win32'">$(Platform)</win2d-Platform>
@@ -18,21 +20,19 @@
     <Win2DWarnNoPlatform Condition="'$(Win2DWarnNoPlatform)' == ''">true</Win2DWarnNoPlatform>
   </PropertyGroup>
 
-  <ItemGroup>
-    <ReferenceCopyLocalPaths Include="$(MSBuildThisFileDirectory)..\..\runtimes\win-$(win2d-Platform)\native\Microsoft.Graphics.Canvas.dll" Condition="'$(win2d-Platform)' != ''" />
-  </ItemGroup>
-
-  <Target Name="Win2DWarnNoPlatform" BeforeTargets="BeforeBuild" Condition="'$(win2d-Platform)' == '' and '$(Win2DWarnNoPlatform)' == 'true'">
-    <Warning Text="Microsoft.Graphics.Canvas.dll could not be copied because the AnyCPU platform is being used. Please specify a specific platform to copy this file." />
-  </Target>
-
+  <!-- Register the Win2D .winmd in the APPX manifest (requires the new MSIX tooling) -->
   <ItemGroup>
     <WindowsMetadataReference Include="$(Win2DWinMDPath)" Implementation="$(Win2DWinMDImplementationDllName)" />
   </ItemGroup>
 
   <!--
-  Don't import Win2D.common.targets here, as it will cause build failures because modern .NET projects
-  files don't define $(TargetPlatformVersion) with the same semantics as with UWP or C++ project files.
+    Emit a warning if building as 'AnyCPU', which is not supported. Note that we are emitting this warning but
+    we are not copying the .dll ourselves. NuGet will do that automatically when projects are published.
   -->
+  <Target Name="Win2DWarnNoPlatform" BeforeTargets="BeforeBuild" Condition="'$(win2d-Platform)' == '' and '$(Win2DWarnNoPlatform)' == 'true'">
+    <Warning
+      Code="WIN2D0001"
+      Text="'Microsoft.Graphics.Canvas.dll' cannot be referenced correctly, because the project is being built as 'AnyCPU'. Please specify a specific platform (eg. 'x64'), publish with a RID (runtime identifier, eg. 'win-x64'), or set 'Win2DWarnNoPlatform' to suppress this error (note: you'll need to manually handle referencing the Win2D .dll in that case)." />
+  </Target>
 
 </Project>
