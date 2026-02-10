@@ -41,7 +41,7 @@
   </ItemGroup>
 
   <PropertyGroup Label="Configuration">
-    <PlatformToolset Condition="'$(ApplicationType)' == 'Windows Store' And '$(ApplicationTypeRevision)' == '10.0'">v143</PlatformToolset>
+    <PlatformToolset Condition="'$(ApplicationType)' == 'Windows Store' And '$(ApplicationTypeRevision)' == '10.0'">v145</PlatformToolset>
   </PropertyGroup>
 
   <PropertyGroup>
