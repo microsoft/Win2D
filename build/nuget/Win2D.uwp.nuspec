@@ -16,11 +16,11 @@
     <dependencies>
       <group targetFramework="native" />
       <group targetFramework="net45" />
-      <group targetFramework="net8.0-windows10.0.19041" />
+      <group targetFramework="net8.0-windows10.0.26100" />
       <group targetFramework="uap10.0" />
     </dependencies>
     <frameworkReferences>
-      <group targetFramework="net8.0-windows10.0.19041">
+      <group targetFramework="net8.0-windows10.0.26100">
         <frameworkReference name="Microsoft.Windows.SDK.NET.Ref.Xaml" />
       </group>
     </frameworkReferences>
@@ -32,8 +32,8 @@
 
     <file target="build\native\Win2D.uwp.targets"                          src="build\nuget\Win2D.uwp-native.targets" />
     <file target="build\net45\Win2D.uwp.targets"                           src="build\nuget\Win2D.uwp-managed.targets" />
-    <file target="build\net8.0-windows10.0.19041.0\Win2D.uwp.props"        src="build\nuget\Win2D.uwp-cswinrt.props" />
-    <file target="build\net8.0-windows10.0.19041.0\Win2D.uwp.targets"      src="build\nuget\Win2D.uwp-cswinrt.targets" />
+    <file target="build\net8.0-windows10.0.26100.0\Win2D.uwp.props"        src="build\nuget\Win2D.uwp-cswinrt.props" />
+    <file target="build\net8.0-windows10.0.26100.0\Win2D.uwp.targets"      src="build\nuget\Win2D.uwp-cswinrt.targets" />
     <file target="build\uap10.0\Win2D.uwp.targets"                         src="build\nuget\Win2D.uwp-win10.targets" />
     <file target="build\Win2D.common.targets"                              src="build\nuget\Win2D.common.targets" />
 
@@ -45,8 +45,8 @@
     <file target="lib\net45\Microsoft.Graphics.Canvas.winmd"       src="$bin$\UAPx86\release\winrt.dll.UAP\Microsoft.Graphics.Canvas.winmd" />
     <file target="lib\net45\Microsoft.Graphics.Canvas.xml"         src="bin\intellisense\Microsoft.Graphics.Canvas.xml" />
 
-    <file target="lib\net8.0-windows10.0.19041.0\Microsoft.Graphics.Canvas.Interop.dll" src="bin\anycpu\release\winrt.projection\Microsoft.Graphics.Canvas.Interop.dll" />
-    <file target="lib\net8.0-windows10.0.19041.0\Microsoft.Graphics.Canvas.Interop.xml" src="bin\intellisense\Microsoft.Graphics.Canvas.xml" />
+    <file target="lib\net8.0-windows10.0.26100.0\Microsoft.Graphics.Canvas.Interop.dll" src="bin\anycpu\release\winrt.projection\Microsoft.Graphics.Canvas.Interop.dll" />
+    <file target="lib\net8.0-windows10.0.26100.0\Microsoft.Graphics.Canvas.Interop.xml" src="bin\intellisense\Microsoft.Graphics.Canvas.xml" />
 
     <file target="runtimes\win-arm64\native\Microsoft.Graphics.Canvas.dll" src="$bin$\UAPARM64\release\winrt.dll.UAP\Microsoft.Graphics.Canvas.dll" />
     <file target="runtimes\win-arm\native\Microsoft.Graphics.Canvas.dll" src="$bin$\UAPARM\release\winrt.dll.UAP\Microsoft.Graphics.Canvas.dll" />
