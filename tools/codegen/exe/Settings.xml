@@ -97,7 +97,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
   <Namespace Name="Effects">
     <Enum Name="EffectInterpolationMode" ShouldProject="false" ProjectedNameOverride="CanvasImageInterpolation" Namespace="Microsoft.Graphics.Canvas"/>
     <Enum Name="EffectScaleMode" ShouldProject="false" ProjectedNameOverride="CanvasImageInterpolation" Namespace="Microsoft.Graphics.Canvas"/>
-    <Enum Name="EffectInputColorSpace" ShouldProject="true" ProjectedNameOverride="EffectHueColorSpace" WinVer="_WIN32_WINNT_WIN10">
+    <Enum Name="EffectInputColorSpace" ShouldProject="true" ProjectedNameOverride="EffectHueColorSpace">
       <Field Name="HSV" ProjectedNameOverride="Hsv"/>
       <Field Name="HSL" ProjectedNameOverride="Hsl"/>
     </Enum>
@@ -246,64 +246,64 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <Property Name="ScaleMode" ProjectedNameOverride="InterpolationMode"/>
       <Property Name="Bias" ProjectedNameOverride="Offset"/>
     </Effect>
-    <Effect Name="ChromaKeyEffect" WinVer="_WIN32_WINNT_WIN10"/>
-    <Effect Name="ContrastEffect" WinVer="_WIN32_WINNT_WIN10">
+    <Effect Name="ChromaKeyEffect"/>
+    <Effect Name="ContrastEffect">
       <Property Name="ClampInput" ProjectedNameOverride="ClampSource"/>
     </Effect>
-    <Effect Name="EdgeDetectionEffect" WinVer="_WIN32_WINNT_WIN10">
+    <Effect Name="EdgeDetectionEffect">
       <Property Name="Strength" ProjectedNameOverride="Amount"/>
       <Property Name="BlurRadius" ProjectedNameOverride="BlurAmount"/>
     </Effect>
-    <Effect Name="EmbossEffect" WinVer="_WIN32_WINNT_WIN10">
+    <Effect Name="EmbossEffect">
       <Property Name="Height" ProjectedNameOverride="Amount"/>
       <Property Name="Direction" ProjectedNameOverride="Angle" ConvertRadiansToDegrees="true"/>
     </Effect>
-    <Effect Name="ExposureEffect" WinVer="_WIN32_WINNT_WIN10">
+    <Effect Name="ExposureEffect">
       <Property Name="ExposureValue" ProjectedNameOverride="Exposure"/>
     </Effect>
-    <Effect Name="GrayscaleEffect" WinVer="_WIN32_WINNT_WIN10"/>
-    <Effect Name="HighlightsandShadowsEffect" ProjectedNameOverride="HighlightsAndShadowsEffect" CLSIDOverride="CLSID_D2D1HighlightsShadows" WinVer="_WIN32_WINNT_WIN10">
+    <Effect Name="GrayscaleEffect"/>
+    <Effect Name="HighlightsandShadowsEffect" ProjectedNameOverride="HighlightsAndShadowsEffect" CLSIDOverride="CLSID_D2D1HighlightsShadows">
       <Property Name="MaskBlurRadius" ProjectedNameOverride="MaskBlurAmount"/>
       <Property Name="InputGamma" ProjectedNameOverride="SourceIsLinearGamma" Type="boolean" IsHandCoded="true"/>
     </Effect>
-    <Effect Name="HueToRgbEffect" WinVer="_WIN32_WINNT_WIN10">
+    <Effect Name="HueToRgbEffect">
       <Property Name="InputColorSpace" ProjectedNameOverride="SourceColorSpace"/>
     </Effect>
-    <Effect Name="InvertEffect" WinVer="_WIN32_WINNT_WIN10"/>
-    <Effect Name="LookupTable3DEffect" ProjectedNameOverride="TableTransfer3DEffect" WinVer="_WIN32_WINNT_WIN10">
+    <Effect Name="InvertEffect"/>
+    <Effect Name="LookupTable3DEffect" ProjectedNameOverride="TableTransfer3DEffect">
       <Property Name="Lut" ProjectedNameOverride="Table"/>
     </Effect>
-    <Effect Name="PosterizeEffect" WinVer="_WIN32_WINNT_WIN10"/>
-    <Effect Name="RgbToHueEffect" WinVer="_WIN32_WINNT_WIN10"/>
-    <Effect Name="SepiaEffect" WinVer="_WIN32_WINNT_WIN10"/>
-    <Effect Name="SharpenEffect" WinVer="_WIN32_WINNT_WIN10">
+    <Effect Name="PosterizeEffect"/>
+    <Effect Name="RgbToHueEffect"/>
+    <Effect Name="SepiaEffect"/>
+    <Effect Name="SharpenEffect">
       <Property Name="Sharpness" ProjectedNameOverride="Amount"/>
     </Effect>
-    <Effect Name="StraightenEffect" WinVer="_WIN32_WINNT_WIN10">
+    <Effect Name="StraightenEffect">
       <Property Name="Angle" ConvertRadiansToDegrees="true"/>
       <Property Name="ScaleMode" ProjectedNameOverride="InterpolationMode"/>
     </Effect>
-    <Effect Name="TemperatureAndTintEffect" CLSIDOverride="CLSID_D2D1TemperatureTint" WinVer="_WIN32_WINNT_WIN10"/>
-    <Effect Name="VignetteEffect" WinVer="_WIN32_WINNT_WIN10">
+    <Effect Name="TemperatureAndTintEffect" CLSIDOverride="CLSID_D2D1TemperatureTint"/>
+    <Effect Name="VignetteEffect">
       <Property Name="TransitionSize" ProjectedNameOverride="Amount"/>
       <Property Name="Strength" ProjectedNameOverride="Curve"/>
     </Effect>
-    <Effect Name="AlphaMaskEffect" WinVer="_WIN32_WINNT_WIN10" IsSupportedCheck="ID2D1Factory5">
+    <Effect Name="AlphaMaskEffect" IsSupportedCheck="ID2D1Factory5">
       <Input Name="Destination" ProjectedNameOverride="Source"/>
       <Input Name="Mask" ProjectedNameOverride="AlphaMask"/>
     </Effect>
-    <Effect Name="CrossFadeEffect" WinVer="_WIN32_WINNT_WIN10" IsSupportedCheck="ID2D1Factory5">
+    <Effect Name="CrossFadeEffect" IsSupportedCheck="ID2D1Factory5">
       <Input Name="Source" ProjectedNameOverride="Source1"/>
       <Input Name="Destination" ProjectedNameOverride="Source2"/>
       <Property Name="Weight" ProjectedNameOverride="CrossFade"/>
     </Effect>
-    <Effect Name="OpacityEffect" WinVer="_WIN32_WINNT_WIN10" IsSupportedCheck="ID2D1Factory5"/>
-    <Effect Name="TintEffect" WinVer="_WIN32_WINNT_WIN10" IsSupportedCheck="ID2D1Factory5"/>
-    <Effect Name="HDRToneMapEffect" ProjectedNameOverride="HdrToneMapEffect" CLSIDOverride="CLSID_D2D1HdrToneMap" WinVer="_WIN32_WINNT_WIN10" IsSupportedCheck="Registered"/>
+    <Effect Name="OpacityEffect" IsSupportedCheck="ID2D1Factory5"/>
+    <Effect Name="TintEffect" IsSupportedCheck="ID2D1Factory5"/>
+    <Effect Name="HDRToneMapEffect" ProjectedNameOverride="HdrToneMapEffect" CLSIDOverride="CLSID_D2D1HdrToneMap" IsSupportedCheck="Registered"/>
     <Enum Name="HDRToneMapEffectDisplayMode" ProjectedNameOverride="HdrToneMapEffectDisplayMode">
       <Field Name="SDR" ProjectedNameOverride="Sdr"/>
       <Field Name="HDR" ProjectedNameOverride="Hdr"/>
     </Enum>
-    <Effect Name="WhiteLevelAdjustmentEffect" WinVer="_WIN32_WINNT_WIN10" IsSupportedCheck="Registered"/>
+    <Effect Name="WhiteLevelAdjustmentEffect" IsSupportedCheck="Registered"/>
   </Namespace>
 </Settings>
