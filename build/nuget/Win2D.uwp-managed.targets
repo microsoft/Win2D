@@ -25,7 +25,7 @@
   </ItemGroup>
 
   <Target Name="Win2DWarnNoPlatform" BeforeTargets="BeforeBuild" Condition="'$(win2d-Platform)' == '' and '$(Win2DWarnNoPlatform)' == 'true'">
-    <Warning Text="Microsoft.Graphics.Canvas.dll could not be copied because the AnyCPU platform is being used. Please specify a specific platform to copy this file." />
+    <Warning Code="WIN2D0001" Text="Microsoft.Graphics.Canvas.dll could not be copied because the AnyCPU platform is being used. Please specify a specific platform to copy this file." />
   </Target>
 
   <!--
