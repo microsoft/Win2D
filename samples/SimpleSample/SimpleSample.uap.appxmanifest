@@ -7,7 +7,7 @@
 
   <Identity
     Name="41567122-9c27-4c54-b64f-9dcc924450ad"
-    Publisher="CN=Microsoft Corporation"
+    Publisher="CN=Win2DTemporaryKey"
     Version="1.0.0.0" />
 
   <mp:PhoneIdentity PhoneProductId="41567122-9c27-4c54-b64f-9dcc924450ad" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>

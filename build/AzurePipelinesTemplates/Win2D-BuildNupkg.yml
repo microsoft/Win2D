@@ -17,10 +17,6 @@ steps:
     targetPath: $(Build.SourcesDirectory)
 - task: DownloadPipelineArtifact@2
   inputs:
-    artifactName: 'build_output_ARM'
-    targetPath: $(Build.SourcesDirectory)
-- task: DownloadPipelineArtifact@2
-  inputs:
     artifactName: 'build_output_ARM64'
     targetPath: $(Build.SourcesDirectory)
 - script: |

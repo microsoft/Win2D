@@ -5,7 +5,7 @@
   xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
   IgnorableNamespaces="uap mp">
   <Identity Name="E2C40EB9-8CCE-48B1-9A5C-4C8CA4999631"
-            Publisher="CN=Microsoft Corporation"
+            Publisher="CN=Win2DTemporaryKey"
             Version="1.0.0.0" />
   <mp:PhoneIdentity PhoneProductId="e2c40eb9-8cce-48b1-9a5c-4c8ca4999631" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
   <Properties>

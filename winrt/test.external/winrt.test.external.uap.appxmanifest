@@ -6,7 +6,7 @@
   IgnorableNamespaces="uap mp">
   
   <Identity Name="48618ead-cca9-4d38-9fa8-9e2710f4d459"
-            Publisher="CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US"
+            Publisher="CN=Win2DTemporaryKey"
             Version="1.0.0.0" />
 
   <mp:PhoneIdentity PhoneProductId="48618ead-cca9-4d38-9fa8-9e2710f4d459" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
