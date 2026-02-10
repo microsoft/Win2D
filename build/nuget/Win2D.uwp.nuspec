@@ -38,8 +38,8 @@
     <file target="build\uap10.0\Win2D.uwp.targets"                         src="build\nuget\Win2D.uwp-win10.targets" />
     <file target="build\Win2D.common.targets"                              src="build\nuget\Win2D.common.targets" />
 
-    <file target="buildTransitive\net8.0-windows10.0.19041.0\Win2D.uwp.props"        src="build\nuget\Win2D.uwp-cswinrt.props" />
-    <file target="buildTransitive\net8.0-windows10.0.19041.0\Win2D.uwp.targets"      src="build\nuget\Win2D.uwp-cswinrt.targets" />
+    <file target="buildTransitive\net8.0-windows10.0.26100.0\Win2D.uwp.props"        src="build\nuget\Win2D.uwp-cswinrt.props" />
+    <file target="buildTransitive\net8.0-windows10.0.26100.0\Win2D.uwp.targets"      src="build\nuget\Win2D.uwp-cswinrt.targets" />
 
     <file target="include\Microsoft.Graphics.Canvas.h"                     src="bin\UAPx86\release\IdlHeader\Microsoft.Graphics.Canvas.h"/>
     <file target="include\Microsoft.Graphics.Canvas.native.h"              src="winrt\published\Microsoft.Graphics.Canvas.native.h"/>
