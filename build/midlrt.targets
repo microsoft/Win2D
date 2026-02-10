@@ -12,14 +12,12 @@
     <ItemGroup>
       <Midl Include="%(MidlRT.Identity)">
       
-        <!-- Need to compile against win32 environment settings for ARM. 
-          Reason: ARM compilation produces longer code for proxys/stubs which exceed some internal limits of the 
+        <!-- Need to compile against win32 environment settings for ARM64. 
+          Reason: ARM64 compilation produces longer code for proxys/stubs which exceed some internal limits of the 
           Midl compiler given the size of our Idl code. Since we don't use proxys/stubs, we can use the win32 env 
           option which causes less restrictive limits. For the short term, this works; in the longer term, we should
           pick up the RS3 toolset and pass the /nomidl param- or if for some reason that doesn't work, then split up 
           our Idl into multiple files. -->
-        <!-- Presumably this applies to ARM64 too even though we have picked up the RS3 toolset. -->
-        <TargetEnvironment Condition="'$(Platform)' == 'ARM'">win32</TargetEnvironment>
         <TargetEnvironment Condition="'$(Platform)' == 'ARM64'">win32</TargetEnvironment>
         
         <WarningLevel>1</WarningLevel>

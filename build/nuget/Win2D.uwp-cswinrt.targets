@@ -5,7 +5,6 @@
     <win2d-Platform Condition="$(RuntimeIdentifier.EndsWith('-x64'))">x64</win2d-Platform>
     <win2d-Platform Condition="$(RuntimeIdentifier.EndsWith('-x86'))">x86</win2d-Platform>
     <win2d-Platform Condition="$(RuntimeIdentifier.EndsWith('-arm64'))">arm64</win2d-Platform>
-    <win2d-Platform Condition="$(RuntimeIdentifier.EndsWith('-arm'))">arm</win2d-Platform>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(win2d-Platform)' == ''">
