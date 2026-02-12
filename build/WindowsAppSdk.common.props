@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
+        <CsWinRTVersion>2.2.0</CsWinRTVersion>
         <!-- This value controls all of the projects consuming the WindowsAppSdk and centralizes it in one spot.
             When updating the version, don't forget to update all of the package.config files as well.
             The AzureDevOps pipeline will override the version here by setting NIGHTLY_WINAPPSDK_VERSION in the nightly build.
             That nightly version is read from \eng\Version.Details.xml -->
-        <WindowsAppSdkVersion Condition="'$(NIGHTLY_WINAPPSDK_VERSION)' == ''">1.6.241114003</WindowsAppSdkVersion>
+        <WindowsAppSdkVersion Condition="'$(NIGHTLY_WINAPPSDK_VERSION)' == ''">1.8.260204000</WindowsAppSdkVersion>
         <WindowsAppSdkVersion Condition="'$(NIGHTLY_WINAPPSDK_VERSION)' != ''">$(NIGHTLY_WINAPPSDK_VERSION)</WindowsAppSdkVersion>
 
         <_PackagesPath>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\packages'))</_PackagesPath>
-        <_WindowsAppSdkPackageRoot>$(_PackagesPath)\Microsoft.WindowsAppSdk.$(WindowsAppSdkVersion)</_WindowsAppSdkPackageRoot>
+        <_WindowsAppSdkPackageRoot>$(_PackagesPath)\Microsoft.WindowsAppSDK.WinUI.$(WindowsAppSdkVersion)</_WindowsAppSdkPackageRoot>
 
-        <WindowsAppSdk_props>$(_WindowsAppSdkPackageRoot)\build\native\Microsoft.WindowsAppSdk.props</WindowsAppSdk_props>
-        <WindowsAppSdk_targets>$(_WindowsAppSdkPackageRoot)\build\native\Microsoft.WindowsAppSdk.targets</WindowsAppSdk_targets>
+        <WindowsAppSdk_props>$(_WindowsAppSdkPackageRoot)\build\native\Microsoft.WindowsAppSDK.WinUI.props</WindowsAppSdk_props>
+        <WindowsAppSdk_targets>$(_WindowsAppSdkPackageRoot)\build\native\Microsoft.WindowsAppSDK.WinUI.targets</WindowsAppSdk_targets>
     </PropertyGroup>
 </Project>
