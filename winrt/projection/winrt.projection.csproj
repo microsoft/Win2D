@@ -50,9 +50,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.2792.45" />
-    <PackageReference Include="Microsoft.WindowsAppSdk" Version="$(WindowsAppSdkVersion)" />
-    <PackageReference Include="Microsoft.Windows.CSWinRT" Version="2.1.6" />
+    <PackageReference Include="Microsoft.WindowsAppSDK.WinUI" Version="$(WindowsAppSdkVersion)" />
+    <PackageReference Include="Microsoft.Windows.CSWinRT" Version="$(CsWinRTVersion)" />
     <PackageReference Include="Microsoft.SourceLink.AzureRepos.Git" Version="1.1.1" PrivateAssets="All" />
   </ItemGroup>
 </Project>
