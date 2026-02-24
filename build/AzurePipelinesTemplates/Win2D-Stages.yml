@@ -29,10 +29,6 @@ stages:
           architecture: "x64"
           archDirectory: "uapx64"
           buildConfiguration: "Release"
-        # ARM:
-        #   architecture: "ARM"
-        #   archDirectory: "uaparm"
-        #   buildConfiguration: "Release"
         ARM64:
           architecture: "ARM64"
           archDirectory: "uaparm64"

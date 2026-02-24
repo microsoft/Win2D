@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net6.0-windows10.0.19041.0</TargetFramework>
+    <TargetFramework>net8.0-windows10.0.26100.0</TargetFramework>
     <AnalysisLevel>4</AnalysisLevel>
     <WarningLevel>4</WarningLevel>
     <LangVersion>10.0</LangVersion>
@@ -35,7 +35,7 @@
 
   <!-- CsWinRT related properties for projections generation -->
   <PropertyGroup>
-    <WindowsSdkPackageVersion>10.0.19041.52</WindowsSdkPackageVersion>
+    <WindowsSdkPackageVersion>10.0.$([System.Version]::Parse('$(TargetPlatformVersion)').Build).57</WindowsSdkPackageVersion>
     <CSWinRTIncludes>
         Microsoft.Graphics.Canvas;
     </CSWinRTIncludes>
@@ -52,7 +52,6 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.2792.45" />
     <PackageReference Include="Microsoft.WindowsAppSdk" Version="$(WindowsAppSdkVersion)" />
-    <PackageReference Include="Microsoft.Windows.CSWinRT" Version="2.1.6" />
-    <PackageReference Include="Microsoft.SourceLink.AzureRepos.Git" Version="1.1.1" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.Windows.CSWinRT" Version="2.2.0" />
   </ItemGroup>
 </Project>
