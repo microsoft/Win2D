@@ -14,6 +14,43 @@ namespace Microsoft.Graphics.Canvas.Effects
         Offset
     } SamplerCoordinateMapping;
 
+    [version(VERSION), uuid(39D6BA64-E00D-4E14-958C-F1329CE1011F), exclusiveto(PixelShaderEffect)]
+    interface IPixelShaderEffectStatics : IInspectable
+    {
+        HRESULT RegisterEffect(
+            [in] UINT32 shaderCodeCount,
+            [in, size_is(shaderCodeCount)] BYTE* shaderCode,
+            [in] GUID effectId,
+            [in] INT32 maxSamplerOffset,
+            [in] UINT32 coordinateMappingsSize,
+            [in, size_is(coordinateMappingsSize)] SamplerCoordinateMapping* coordinateMappings,
+            [in] UINT32 borderModesSize,
+            [in, size_is(borderModesSize)] EffectBorderMode* borderModes,
+            [in] UINT32 sourceInterpolationsSize,
+            [in, size_is(sourceInterpolationsSize)] Microsoft.Graphics.Canvas.CanvasImageInterpolation* sourceInterpolations);
+
+        HRESULT CreateEffect(
+            [in] GUID effectId,
+            [out, retval] PixelShaderEffect** effect);
+
+        HRESULT RegisterAndCreateEffect(
+            [in] UINT32 shaderCodeCount,
+            [in, size_is(shaderCodeCount)] BYTE* shaderCode,
+            [in] GUID effectId,
+            [in] INT32 maxSamplerOffset,
+            [in] UINT32 coordinateMappingsSize,
+            [in, size_is(coordinateMappingsSize)] SamplerCoordinateMapping* coordinateMappings,
+            [in] UINT32 borderModesSize,
+            [in, size_is(borderModesSize)] EffectBorderMode* borderModes,
+            [in] UINT32 sourceInterpolationsSize,
+            [in, size_is(sourceInterpolationsSize)] Microsoft.Graphics.Canvas.CanvasImageInterpolation* sourceInterpolations,
+            [out, retval] PixelShaderEffect** effect);
+
+        HRESULT IsEffectRegistered([in] GUID effectId, [out, retval] boolean* result);
+
+        HRESULT UnregisterEffect([in] GUID effectId);
+    };
+
     [version(VERSION), uuid(FC8C3C31-FA96-45E2-8B72-1741C65CEE8E), exclusiveto(PixelShaderEffect)]
     interface IPixelShaderEffect : IInspectable
         requires ICanvasEffect
@@ -107,7 +144,7 @@ namespace Microsoft.Graphics.Canvas.Effects
             [out, retval] PixelShaderEffect** effect);
     };
 
-    [version(VERSION), activatable(IPixelShaderEffectFactory, VERSION)]
+    [version(VERSION), activatable(IPixelShaderEffectFactory, VERSION), static(IPixelShaderEffectStatics, VERSION)]
     runtimeclass PixelShaderEffect
     {
         [default] interface IPixelShaderEffect;

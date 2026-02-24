@@ -199,6 +199,39 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         </ul>
       </remarks>
     </member>
+    <member name="M:Microsoft.Graphics.Canvas.Effects.PixelShaderEffect.RegisterEffect(System.Byte[],System.Guid,System.Int32,Microsoft.Graphics.Canvas.Effects.SamplerCoordinateMapping[],Microsoft.Graphics.Canvas.Effects.EffectBorderMode[],Microsoft.Graphics.Canvas.CanvasImageInterpolation[])">
+      <summary>Registers the shader code using the given effectId, which must be unique, and performs one-time reflection over the shader code to extract constant property names etc. Does nothing if the effectId is already registered.</summary>
+      <remarks>
+        <p>
+          Throws an exception if the reflection over the shader code fails. See <see cref="M:Microsoft.Graphics.Canvas.Effects.PixelShaderEffect.#ctor(System.Byte[])"/> for more detail about the shader code requirements.
+        </p>
+        <p>
+          The parameter maxSamplerOffset should be set to 0 if the offset coordinate mapping mode is not used. It can be overridden on each instance.
+          The coordinateMappings, borderModes and sourceInterpolations parameters are optional and can be set to null or empty or partially specified. The values in the array apply to sources 1 to 8 in order.
+          These properties can be overridden on each instance.
+        </p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Effects.PixelShaderEffect.CreateEffect(System.Guid)">
+      <summary>Initializes a new instance of the PixelShaderEffect class using the shader code which was previously registered using the given effectId.</summary>
+      <remarks>
+        <p>
+          Throws an exception if not registered.
+        </p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Effects.PixelShaderEffect.RegisterAndCreateEffect(System.Byte[],System.Guid,System.Int32,Microsoft.Graphics.Canvas.Effects.SamplerCoordinateMapping[],Microsoft.Graphics.Canvas.Effects.EffectBorderMode[],Microsoft.Graphics.Canvas.CanvasImageInterpolation[])">
+      <summary>
+        Calls <see cref="M:Microsoft.Graphics.Canvas.Effects.PixelShaderEffect.RegisterEffect(System.Byte[],System.Guid,System.Int32,Microsoft.Graphics.Canvas.Effects.SamplerCoordinateMapping[],Microsoft.Graphics.Canvas.Effects.EffectBorderMode[],Microsoft.Graphics.Canvas.CanvasImageInterpolation[])"/> 
+        then <see cref="M:Microsoft.Graphics.Canvas.Effects.PixelShaderEffect.CreateEffect(System.Guid)"/>.
+      </summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Effects.PixelShaderEffect.IsEffectRegistered(System.Guid)">
+      <summary>Checks to see if the given effectId has been registered via <see cref="M:Microsoft.Graphics.Canvas.Effects.PixelShaderEffect.RegisterEffect(System.Byte[],System.Guid,System.Int32,Microsoft.Graphics.Canvas.Effects.SamplerCoordinateMapping[],Microsoft.Graphics.Canvas.Effects.EffectBorderMode[],Microsoft.Graphics.Canvas.CanvasImageInterpolation[])"/>.</summary>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.Effects.PixelShaderEffect.UnregisterEffect(System.Guid)">
+      <summary>Removes the cached shader code with the given effectId. Does nothing if not registered.</summary>
+    </member>
     <member name="P:Microsoft.Graphics.Canvas.Effects.PixelShaderEffect.Source1">
       <summary>Gets or sets the first input source for the custom pixel shader.</summary>
     </member>
