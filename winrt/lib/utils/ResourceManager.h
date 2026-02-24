@@ -3,6 +3,7 @@
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
 #pragma once
+#include <unordered_set>
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
@@ -26,10 +27,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     {
     public:
         // Used by ResourceWrapper to maintain its state in the interop mapping table.
-        static void RegisterWrapper(IUnknown* resource, IInspectable* wrapper);
-        static bool TryRegisterWrapper(IUnknown* resource, IInspectable* wrapper);
-        static void UnregisterWrapper(IUnknown* resource);
-        static bool TryUnregisterWrapper(IUnknown* resource);
+        // Note that wrapperIdentity should be null if directly registering/unregistering an external wrapper (not being created through GetOrCreate), 
+        // otherwise it should be the IUnknown pointer which represents the object's identity in COM.
+        static void RegisterWrapper(IUnknown* resource, IInspectable* wrapper, IUnknown * wrapperIdentity);
+        static bool TryRegisterWrapper(IUnknown* resource, IInspectable* wrapper, IUnknown * wrapperIdentity);
+        static void UnregisterWrapper(IUnknown* resource, IUnknown * wrapperIdentity);
+        static bool TryUnregisterWrapper(IUnknown* resource, IUnknown * wrapperIdentity);
         static bool RegisterEffectFactory(REFIID effectId, ICanvasEffectFactoryNative* factory);
         static bool UnregisterEffectFactory(REFIID effectId);
 
@@ -166,6 +169,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         static std::unordered_map<IUnknown*, WeakRef> m_resources;
         static std::unordered_map<IID, ComPtr<ICanvasEffectFactoryNative>> m_effectFactories;
         static std::recursive_mutex m_mutex;
+
+        //Used temporarily by GetOrCreate in conjunction with Add/Remove to prevent duplicate wrapped resources without having to lock.
+        static std::unordered_multiset<IUnknown*> m_wrappingResources;
+        static std::unordered_set<IUnknown*> m_creatingWrappers;
 
         // Table of try-create functions, one per type.
         static std::vector<TryCreateFunction> tryCreateFunctions;
