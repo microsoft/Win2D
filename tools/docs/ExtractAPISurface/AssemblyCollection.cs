@@ -21,9 +21,9 @@ namespace ExtractAPISurface
             {
                 return assembly.DefinedTypes;
             }
-            catch(System.Reflection.ReflectionTypeLoadException ex)
+            catch (System.Reflection.ReflectionTypeLoadException ex)
             {
-                foreach(var loadException in ex.LoaderExceptions)
+                foreach (var loadException in ex.LoaderExceptions)
                 {
                     System.Console.WriteLine(loadException.ToString());
                 }

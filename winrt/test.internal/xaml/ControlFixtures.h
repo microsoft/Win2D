@@ -29,7 +29,7 @@ public:
 
         auto sisFactory = Make<MockSurfaceImageSourceFactory>();
         sisFactory->MockCreateInstanceWithDimensionsAndOpacity =
-            [=](int32_t actualWidth, int32_t actualHeight, bool isOpaque, IInspectable* outer)
+        [=](int32_t actualWidth, int32_t actualHeight, bool isOpaque, IInspectable* outer)
         {
             auto mockSurfaceImageSource = Make<MockSurfaceImageSource>();
 

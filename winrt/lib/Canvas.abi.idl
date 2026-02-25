@@ -3,18 +3,18 @@
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
 #ifdef WINUI3
-	import "Microsoft.UI.Composition.idl";
-	import "Microsoft.UI.Xaml.Media.Imaging.idl";
-	import "Microsoft.UI.Xaml.Controls.idl";
-	import "Windows.Graphics.Printing.idl";
+    import "Microsoft.UI.Composition.idl";
+    import "Microsoft.UI.Xaml.Media.Imaging.idl";
+    import "Microsoft.UI.Xaml.Controls.idl";
+    import "Windows.Graphics.Printing.idl";
 #else
-	import "inspectable.idl";
-	import "Windows.Foundation.idl";
-	import "Windows.UI.idl";
-	import "Windows.UI.Composition.idl";
-	import "Windows.UI.Xaml.Media.Imaging.idl";
-	import "Windows.UI.Xaml.Controls.idl";
-	import "Windows.UI.Input.Inking.idl";
+    import "inspectable.idl";
+    import "Windows.Foundation.idl";
+    import "Windows.UI.idl";
+    import "Windows.UI.Composition.idl";
+    import "Windows.UI.Xaml.Media.Imaging.idl";
+    import "Windows.UI.Xaml.Controls.idl";
+    import "Windows.UI.Input.Inking.idl";
 #endif
 
 #include <sdkddkver.h>

@@ -69,9 +69,6 @@
       <Optimization>MinSpace</Optimization>
       <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
     </ClCompile>
-    <Midl>
-      <WarningLevel>0</WarningLevel>
-    </Midl>
   </ItemDefinitionGroup>
   <Target Name="mc" AfterTargets="MidlRTMergeProjectWinMDInputs" Inputs="@(mc)" Outputs="$(EtwDirectory)\%(filename).rc">
     <MakeDir Directories="$(EtwDirectory)" />

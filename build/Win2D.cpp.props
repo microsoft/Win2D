@@ -109,10 +109,8 @@
       <SDLCheck>true</SDLCheck>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <AdditionalUsingDirectories>$(WindowsSDK_WindowsMetadata);$(AdditionalUsingDirectories)</AdditionalUsingDirectories>
-      <AdditionalOptions>/bigobj /Zm2000 /wd4503 /wd4467 /D_CRT_STDIO_LEGACY_WIDE_SPECIFIERS=1 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/bigobj /wd4503 /wd4467 /D_CRT_STDIO_LEGACY_WIDE_SPECIFIERS=1 %(AdditionalOptions)</AdditionalOptions>
       <!--
-          /Zm999 - this value needs to be bumped occasionally when as our PCH grows
-
           /wd4503 - this disables the warning about decorated names being too
                     long.  There isn't much we can do about this so the warning isn't very
                     helpful.
