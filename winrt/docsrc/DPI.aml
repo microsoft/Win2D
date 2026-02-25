@@ -309,7 +309,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
           Windows.UI.Composition APIs such as CreateDrawingSurface always specify sizes 
           in pixel units. When using Win2D to draw onto a composition surface, you can 
           specify whatever DPI you want to use when calling 
-          <codeEntityReference>M:Microsoft.Graphics.Canvas.UI.Composition.CanvasComposition.CreateDrawingSession(Windows.UI.Composition.CompositionDrawingSurface,Windows.Foundation.Rect,System.Single)</codeEntityReference>.
+          <codeEntityReference>M:Microsoft.Graphics.Canvas.UI.Composition.CanvasComposition.CreateDrawingSession(Microsoft.UI.Composition.CompositionDrawingSurface,Windows.Foundation.Rect,System.Single)</codeEntityReference>.
           All drawing performed through the returned CanvasDrawingSession will be scaled 
           up or down accordingly.
         </para>

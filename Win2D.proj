@@ -64,12 +64,17 @@
     <AnyCPUProject Include="tools\mock\test\mock.test.csproj" Condition="$(BuildTests)">
       <AutomatedTests>desktop</AutomatedTests>
     </AnyCPUProject>
+    <AnyCPUProject Include="tools\docs\DocDiff\DocDiff.csproj" />
+    <AnyCPUProject Include="tools\docs\DocPreprocess\DocPreprocess.csproj" />
+    <AnyCPUProject Include="tools\docs\ExtractAPISurface\ExtractAPISurface.csproj" />
+    <AnyCPUProject Include="tools\docs\MergeIntellisense\MergeIntellisense.csproj" />
+    <AnyCPUProject Include="tools\exportsample\exportsample.csproj" />
   </ItemGroup>
 
 
   <!-- Master target just chains to a bunch of workers -->
   <Target Name="Build"
-          DependsOnTargets="BuildProjects; CheckCode; RunTests" />
+          DependsOnTargets="BuildProjects; CheckCode; BuildDocs; RunTests" />
 
   <Target Name="BuildProjectsPrelim" DependsOnTargets="PrepareVersionInfo; ChooseProjectsToBuild; ChooseConfigurationsToRestore" />
 
@@ -179,6 +184,29 @@
 
   <!-- Build the reference documentation -->
   <UsingTask TaskName="SetEnv" AssemblyFile="$(VCTargetsPath)Microsoft.Build.CppTasks.Common.dll"/>
+
+  <Target Name="BuildDocs"
+        Condition="$(BuildDocs) and
+                    $(BuildTools) and
+                    $(BuildPlatforms.Contains('AnyCPU')) and
+                    $(BuildPlatforms.Contains('Win32')) and
+                    $(BuildConfigurations.Contains('Release'))">
+
+    <Message Importance="High" Text="Building documentation" />
+
+    <!-- unset SHFBROOT, so that BuildDocs only picks up the version of
+          sandcastle installed via nuget -->
+    <SetEnv Name="SHFBROOT" Prefix="false" />
+
+    <!-- Use <Exec> rather than <MSBuild> here, since we want BuildDocs.proj to
+          be isolated from the environment that's formed around running
+          Win2D.proj up to this point, and to suppress the Sandcastle
+          false positive warning BHT0001 -->
+    <Exec Command="&quot;$(MSBuildBinPath)\msbuild&quot; $(MSBuildThisFileDirectory)tools\docs\BuildDocs.proj" 
+          IgnoreStandardErrorWarningFormat="true"
+          CustomErrorRegularExpression=": error "
+          CustomWarningRegularExpression=": warning (?!BHT0001)" />
+  </Target>
 
   <!-- Run the automated tests -->
 

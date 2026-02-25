@@ -90,10 +90,7 @@ namespace ExtractAPISurface
         {
             foreach (var assembly in referenceAssemblies.Concat(inputAssemblies))
             {
-                if (GetDefinedTypes(assembly).Any(type => type.Namespace == e.NamespaceName))
-                {
-                    e.ResolvedAssemblies.Add(assembly);
-                }
+                e.ResolvedAssemblies.Add(assembly); //Simply add all assemblies to avoid issue with circular dependencies
             }
         }
     }

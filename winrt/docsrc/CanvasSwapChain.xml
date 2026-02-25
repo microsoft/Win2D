@@ -156,7 +156,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         </p>
       </remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.CanvasSwapChain.CreateForCoreWindow(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.UI.WindowId,System.Single,System.Single,System.Single,Windows.Graphics.DirectX.DirectXPixelFormat,System.Int32)">
+    <member name="M:Microsoft.Graphics.Canvas.CanvasSwapChain.CreateForWindowId(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.UI.WindowId,System.Single,System.Single,System.Single,Windows.Graphics.DirectX.DirectXPixelFormat,System.Int32)">
       <summary>Initializes a new instance of a CanvasSwapChain, suitable for use with HWND windows.</summary>
       <remarks>
         <p>

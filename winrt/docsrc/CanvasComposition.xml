@@ -13,23 +13,17 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     
     <member name="T:Microsoft.Graphics.Canvas.UI.Composition.CanvasComposition" Win10_10586="true">
       <summary>
-        Methods for using Win2D with Windows.UI.Composition.
+        Methods for using Win2D with Microsoft.UI.Composition.
       </summary>
     </member>
 
-    <member name="M:Microsoft.Graphics.Canvas.UI.Composition.CanvasComposition.CreateCompositionGraphicsDevice(Windows.UI.Composition.Compositor,Microsoft.Graphics.Canvas.CanvasDevice)">
+    <member name="M:Microsoft.Graphics.Canvas.UI.Composition.CanvasComposition.CreateCompositionGraphicsDevice(Microsoft.UI.Composition.Compositor,Microsoft.Graphics.Canvas.CanvasDevice)">
       <summary>
         Creates a CompositionGraphicsDevice associated with a CanvasDevice.
       </summary>
     </member>
 
-    <member name="M:Microsoft.Graphics.Canvas.UI.Composition.CanvasComposition.CreateCompositionSurfaceForSwapChain(Windows.UI.Composition.Compositor,Microsoft.Graphics.Canvas.CanvasSwapChain)">
-      <summary>
-        Creates an ICompositionSurface associated with a CanvasSwapChain.
-      </summary>
-    </member>
-
-    <member name="M:Microsoft.Graphics.Canvas.UI.Composition.CanvasComposition.CreateDrawingSession(Windows.UI.Composition.CompositionDrawingSurface)">
+    <member name="M:Microsoft.Graphics.Canvas.UI.Composition.CanvasComposition.CreateDrawingSession(Microsoft.UI.Composition.CompositionDrawingSurface)">
       <summary>
         Creates a CanvasDrawingSession for drawing to the given CompositionDrawingSurface.
       </summary>
@@ -45,7 +39,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       </remarks>
     </member>
 
-    <member name="M:Microsoft.Graphics.Canvas.UI.Composition.CanvasComposition.CreateDrawingSession(Windows.UI.Composition.CompositionDrawingSurface,Windows.Foundation.Rect)">
+    <member name="M:Microsoft.Graphics.Canvas.UI.Composition.CanvasComposition.CreateDrawingSession(Microsoft.UI.Composition.CompositionDrawingSurface,Windows.Foundation.Rect)">
       <summary>
         Creates a CanvasDrawingSession for updating a region of the given CompositionDrawingSurface.
       </summary>
@@ -56,7 +50,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       </remarks>
     </member>
 
-    <member name="M:Microsoft.Graphics.Canvas.UI.Composition.CanvasComposition.CreateDrawingSession(Windows.UI.Composition.CompositionDrawingSurface,Windows.Foundation.Rect,System.Single)">
+    <member name="M:Microsoft.Graphics.Canvas.UI.Composition.CanvasComposition.CreateDrawingSession(Microsoft.UI.Composition.CompositionDrawingSurface,Windows.Foundation.Rect,System.Single)">
       <summary>
         Creates a CanvasDrawingSession for updating a region of the given CompositionDrawingSurface, using a custom DPI setting.
       </summary>
@@ -73,19 +67,19 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       </remarks>
     </member>
 
-    <member name="M:Microsoft.Graphics.Canvas.UI.Composition.CanvasComposition.GetCanvasDevice(Windows.UI.Composition.CompositionGraphicsDevice)">
+    <member name="M:Microsoft.Graphics.Canvas.UI.Composition.CanvasComposition.GetCanvasDevice(Microsoft.UI.Composition.CompositionGraphicsDevice)">
       <summary>
         Gets the CanvasDevice associated with the given CompositionGraphicsDevice.
       </summary>
     </member>
 
-    <member name="M:Microsoft.Graphics.Canvas.UI.Composition.CanvasComposition.Resize(Windows.UI.Composition.CompositionDrawingSurface,Windows.Foundation.Size)">
+    <member name="M:Microsoft.Graphics.Canvas.UI.Composition.CanvasComposition.Resize(Microsoft.UI.Composition.CompositionDrawingSurface,Windows.Foundation.Size)">
       <summary>
         Resizes the given CompositionDrawingSurface.
       </summary>
     </member>
 
-    <member name="M:Microsoft.Graphics.Canvas.UI.Composition.CanvasComposition.SetCanvasDevice(Windows.UI.Composition.CompositionGraphicsDevice,Microsoft.Graphics.Canvas.CanvasDevice)">
+    <member name="M:Microsoft.Graphics.Canvas.UI.Composition.CanvasComposition.SetCanvasDevice(Microsoft.UI.Composition.CompositionGraphicsDevice,Microsoft.Graphics.Canvas.CanvasDevice)">
       <summary>
         Sets the CanvasDevice associated with the given CompositionGraphicsDevice.
       </summary>
