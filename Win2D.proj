@@ -16,7 +16,7 @@
     <BuildConfigurations>Debug;Release</BuildConfigurations>
     <BuildTests>true</BuildTests>
     <BuildTools>true</BuildTools>
-    <BuildDocs>false</BuildDocs>
+    <BuildDocs>true</BuildDocs>
     <RunTests>true</RunTests>
   </PropertyGroup>
 
@@ -50,6 +50,10 @@
     <UAPProject Include="winrt\test.internal\winrt.test.internal.uap.vcxproj">
       <Platforms>Win32;x64</Platforms>
       <AutomatedTests Condition="$(ShouldRunUAPTests)">desktop</AutomatedTests>
+    </UAPProject>
+    <UAPProject Include="winrt\test.nativecomponent\winrt.test.nativecomponent.uap.vcxproj" />
+    <UAPProject Include="samples\SimpleSample\SimpleSample.uap.csproj">
+      <BuildInParallel>false</BuildInParallel>
     </UAPProject>
   </ItemGroup>
 
