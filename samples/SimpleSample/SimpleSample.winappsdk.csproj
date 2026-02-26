@@ -2,7 +2,7 @@
   <PropertyGroup>
     <ProjectGuid>{16DE7EC1-EDB4-4C29-9598-487A0D211D99}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net10.0-windows10.0.26100.0</TargetFramework>
+    <TargetFramework>net8.0-windows10.0.22621.0</TargetFramework>
     <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
     <RootNamespace>SimpleSample</RootNamespace>
     <ApplicationManifest>app.manifest</ApplicationManifest>
@@ -78,6 +78,5 @@
     <PublishReadyToRun Condition="'$(Configuration)' != 'Debug'">True</PublishReadyToRun>
     <PublishTrimmed Condition="'$(Configuration)' == 'Debug'">False</PublishTrimmed>
     <PublishTrimmed Condition="'$(Configuration)' != 'Debug'">True</PublishTrimmed>
-    <PublishAot>True</PublishAot>
   </PropertyGroup>
 </Project>
