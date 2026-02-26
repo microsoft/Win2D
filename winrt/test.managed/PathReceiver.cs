@@ -10,9 +10,9 @@ using System.Numerics;
 namespace test.managed
 {
     [TestClass]
-    public class PathReceiver
+    public partial class PathReceiver
     {
-        private class MyGeometryStreamReader : ICanvasPathReceiver
+        private partial class MyGeometryStreamReader : ICanvasPathReceiver
         {
             bool wasBeginFigureCalled;
             bool wasAddArcCalled;

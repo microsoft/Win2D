@@ -1,4 +1,10 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0"?>
+<!--
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+Licensed under the MIT License. See LICENSE.txt in the project root for license information.
+-->
+
 <Application
     x:Class="SimpleSample.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"

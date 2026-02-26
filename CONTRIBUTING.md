@@ -119,10 +119,10 @@ and test signing key build\Assets\TemporaryKey.pfx in your Win2D repository.
 
 You only need to perform the below steps once:
 
-1. Open a PowerShell command prompt.
+1. Open a PowerShell command prompt as an administrator.
 2. Using the PowerShell command prompt, change to the 'build' directory from the root of the repository.
-3. Run `powershell -ep Bypass GenerateTestPfx.ps1`.
-    * GenerateTestPfx.ps1 registers the test package certificate to CurrentUser\My certificate store and saves the private key to `build\Assets\TemporaryKey.pfx` for use in building the Store unit tests package. This file is ignored by .gitignore from being included in commits.
+3. Run `.\GenerateTestPfx.ps1`.
+    * GenerateTestPfx.ps1 registers the test package certificate to LocalMachine\TrustedPeople certificate store and saves the private key to `build\Assets\TemporaryKey.pfx` for use in building the Store unit tests package. This file is ignored by .gitignore from being included in commits.
 
 #### Submit a pull request to the main repository
 

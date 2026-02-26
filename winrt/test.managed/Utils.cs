@@ -9,6 +9,18 @@ namespace test.managed
 {
     static class Utils
     {
+        public static void AssertThrowsException<T>(Action action)
+            where T : Exception
+        {
+            try
+            {
+                action();
+                Assert.Fail("should throw");
+            }
+            catch (T)
+            { }
+        }
+
         public static void AssertThrowsException<T>(Action action, string expectedMessage)
             where T : Exception
         {
