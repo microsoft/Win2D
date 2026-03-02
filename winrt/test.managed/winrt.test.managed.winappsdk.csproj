@@ -10,6 +10,7 @@
     <PublishProfile>win-$(__Platform).pubxml</PublishProfile>
     <UseWinUI>true</UseWinUI>
     <EnableMsixTooling>true</EnableMsixTooling>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <GenerateAppxPackageOnBuild>true</GenerateAppxPackageOnBuild>
@@ -39,10 +40,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.2.0" />
     <PackageReference Include="Microsoft.WindowsAppSDK.WinUI" Version="$(WindowsAppSdkWinUIVersion)" />
     <PackageReference Include="Microsoft.WindowsAppSDK.Runtime" Version="$(WindowsAppSdkRuntimeVersion)" />
-    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.7705" />
     <PackageReference Include="MSTest.TestAdapter">
       <Version>3.0.2</Version>
     </PackageReference>
