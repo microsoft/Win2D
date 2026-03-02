@@ -3,7 +3,7 @@
     <PropertyGroup>
         <!-- 
             This value controls some of projects consuming the WindowsAppSdk and centralizes it in one spot.
-            When updating the version, don't forget to update all of the WindowsAppSdkPackages.config file as well and the nuspec file.
+            When updating the version, don't forget to update the pkges/packages.config file as well and the nuspec file.
             The AzureDevOps pipeline will override the version here by setting NIGHTLY_WINAPPSDK_VERSION in the nightly build.
             That nightly version is read from \eng\Version.Details.xml -->
         <WindowsAppSdkWinUIVersion Condition="'$(NIGHTLY_WINAPPSDK_VERSION)' == ''">1.8.260204000</WindowsAppSdkWinUIVersion>
