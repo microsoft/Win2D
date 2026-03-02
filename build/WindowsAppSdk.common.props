@@ -1,17 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
-        <!-- This value controls all of the projects consuming the WindowsAppSdk and centralizes it in one spot.
-            When updating the version, don't forget to update all of the package.config files as well.
+        <!-- 
+            This value controls some of projects consuming the WindowsAppSdk and centralizes it in one spot.
+            When updating the version, don't forget to update all of the package.config files as well and the nuspec file and the WindowsAppSdk.cpp.props and WindowsAppSdk.cpp.targets files.
             The AzureDevOps pipeline will override the version here by setting NIGHTLY_WINAPPSDK_VERSION in the nightly build.
             That nightly version is read from \eng\Version.Details.xml -->
-        <WindowsAppSdkVersion Condition="'$(NIGHTLY_WINAPPSDK_VERSION)' == ''">1.6.241114003</WindowsAppSdkVersion>
-        <WindowsAppSdkVersion Condition="'$(NIGHTLY_WINAPPSDK_VERSION)' != ''">$(NIGHTLY_WINAPPSDK_VERSION)</WindowsAppSdkVersion>
-
-        <_PackagesPath>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\packages'))</_PackagesPath>
-        <_WindowsAppSdkPackageRoot>$(_PackagesPath)\Microsoft.WindowsAppSdk.$(WindowsAppSdkVersion)</_WindowsAppSdkPackageRoot>
-
-        <WindowsAppSdk_props>$(_WindowsAppSdkPackageRoot)\build\native\Microsoft.WindowsAppSdk.props</WindowsAppSdk_props>
-        <WindowsAppSdk_targets>$(_WindowsAppSdkPackageRoot)\build\native\Microsoft.WindowsAppSdk.targets</WindowsAppSdk_targets>
+        <WindowsAppSdkWinUIVersion Condition="'$(NIGHTLY_WINAPPSDK_VERSION)' == ''">1.8.260204000</WindowsAppSdkWinUIVersion>
+        <WindowsAppSdkWinUIVersion Condition="'$(NIGHTLY_WINAPPSDK_VERSION)' != ''">$(NIGHTLY_WINAPPSDK_VERSION)</WindowsAppSdkWinUIVersion>
+        <WindowsAppSdkFoundationVersion>1.8.260203002</WindowsAppSdkFoundationVersion>
+        <WindowsAppSdkInteractiveExperiencesVersion>1.8.260125001</WindowsAppSdkInteractiveExperiencesVersion>
+        <WindowsAppSdkBaseVersion>1.8.251216001</WindowsAppSdkBaseVersion>
+        <WindowsAppSdkRuntimeVersion>1.8.260209005</WindowsAppSdkRuntimeVersion>
+        <WindowsSDKBuildToolsVersion>10.0.26100.7705</WindowsSDKBuildToolsVersion>
+        <WindowsSDKBuildToolsMSIXVersion>1.7.251221100</WindowsSDKBuildToolsMSIXVersion>
+        <WebView2Version>1.0.3800.47</WebView2Version>
+        <CsWinRTVersion>2.2.0</CsWinRTVersion>
     </PropertyGroup>
 </Project>

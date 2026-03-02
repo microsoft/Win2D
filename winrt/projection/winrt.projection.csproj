@@ -9,6 +9,11 @@
     <Platforms>AnyCPU</Platforms>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <!-- Workaround for MSB3271 error on processor architecture mismatch -->
+    <ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>None</ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>
+  </PropertyGroup>
+
   <!-- Additional properties -->
   <PropertyGroup>
 
@@ -46,12 +51,11 @@
   <!-- CsWinRT input projects and assemblies -->
   <ItemGroup>
     <ProjectReference Include="..\lib\winrt.lib.uap.vcxproj" PrivateAssets="All" />
-    <CSWinRTInputs Include="$(PkgMicrosoft_WinUI)\lib\uap10.0\*.winmd" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.2792.45" />
-    <PackageReference Include="Microsoft.WindowsAppSdk" Version="$(WindowsAppSdkVersion)" />
-    <PackageReference Include="Microsoft.Windows.CSWinRT" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Web.WebView2" Version="$(WebView2Version)" />
+    <PackageReference Include="Microsoft.WindowsAppSdk.WinUI" Version="$(WindowsAppSdkWinUIVersion)" />
+    <PackageReference Include="Microsoft.Windows.CSWinRT" Version="$(CsWinRTVersion)" />
   </ItemGroup>
 </Project>

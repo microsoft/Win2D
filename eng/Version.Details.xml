@@ -11,7 +11,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
      defined in build\WindowsAppSdk.common.props -->
 <Dependencies>
   <ProductDependencies>
-    <Dependency Name="Microsoft.WindowsAppSDK" Version="1.1.0">
+    <Dependency Name="Microsoft.WindowsAppSDK.WinUI" Version="1.1.0">
       <Uri>https://dev.azure.com/microsoft/ProjectReunion/_git/ProjectReunionInternal</Uri>
       <Sha>e9f6d119a70db6516304e4ed00b080ce46dc4bee</Sha>
     </Dependency>

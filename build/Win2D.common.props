@@ -55,6 +55,6 @@
 
   </PropertyGroup>
 
-  <Import Project="WindowsAppSdk.common.props" />
+  <Import Project="WindowsAppSdk.common.props" Condition="$(WindowsAppSdkWinUIVersion) == ''" />
 
 </Project>

@@ -18,7 +18,7 @@
     <UseCrtSDKReferenceStaticWarning>false</UseCrtSDKReferenceStaticWarning>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
-  <Import Project="$(WindowsAppSdk_props)" Condition="Exists('$(WindowsAppSdk_props)')" />
+  <Import Project="..\..\build\WindowsAppSdk.cpp.props" />
   <PropertyGroup Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
   </PropertyGroup>
@@ -177,7 +177,7 @@
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup>
-    <Import Project="$(WindowsAppSdk_targets)" Condition="Exists('$(WindowsAppSdk_targets)')" />
+    <Import Project="..\..\build\WindowsAppSdk.cpp.targets" />
   </ImportGroup>
   <Import Project="..\..\build\Win2D.cpp.targets" />
   <ItemDefinitionGroup>
@@ -197,7 +197,5 @@
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-      <Error Condition="!Exists('$(WindowsAppSdk_props)')" Text="$([System.String]::Format('$(ErrorText)', '$(WindowsAppSdk_props)'))" />
-      <Error Condition="!Exists('$(WindowsAppSdk_targets)')" Text="$([System.String]::Format('$(ErrorText)', '$(WindowsAppSdk_targets)'))" />
   </Target>
 </Project>

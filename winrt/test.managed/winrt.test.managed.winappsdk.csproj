@@ -40,7 +40,8 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.2.0" />
-    <PackageReference Include="Microsoft.WindowsAppSDK" Version="$(WindowsAppSdkVersion)" />
+    <PackageReference Include="Microsoft.WindowsAppSDK.WinUI" Version="$(WindowsAppSdkWinUIVersion)" />
+    <PackageReference Include="Microsoft.WindowsAppSDK.Runtime" Version="$(WindowsAppSdkRuntimeVersion)" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.7705" />
     <PackageReference Include="MSTest.TestAdapter">
       <Version>3.0.2</Version>
@@ -69,8 +70,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="$(OutDir)\..\..\..\uap$(__Platform)\$(Configuration)\winrt.dll.uap\Microsoft.Graphics.Canvas.dll" CopyToOutputDirectory="PreserveNewest" />
-    <!-- <Content Include="$(OutDir)\..\..\..\..\..\..\..\bin\uap$(__Platform)\$(Configuration)\winrt.dll.uap\Microsoft.Graphics.Canvas.dll" CopyToOutputDirectory="PreserveNewest" /> -->
+    <Content Include="..\..\bin\uap$(__Platform)\$(Configuration)\winrt.dll.uap\Microsoft.Graphics.Canvas.dll" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
   <!-- 

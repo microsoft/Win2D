@@ -14,7 +14,7 @@
         <copyright>© Microsoft Corporation. All rights reserved.</copyright>
         <tags>graphics 2D Direct2D DirectX WinRT XAML canvas drawing C# C++ Windows Reunion ProjectReunion WindowsAppSdk</tags>
         <dependencies>
-            <dependency id="Microsoft.WindowsAppSDK" version="1.6.241114003" />
+            <dependency id="Microsoft.WindowsAppSDK.WinUI" version="1.8.260204000" />
         </dependencies>
     </metadata>
     
