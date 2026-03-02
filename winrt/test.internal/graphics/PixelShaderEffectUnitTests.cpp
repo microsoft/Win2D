@@ -1343,10 +1343,8 @@ TEST_CLASS(SharedShaderStateUnitTests)
 {
     TEST_CLASS_INITIALIZE(Initialize)
     {
-#define HLSL(quote) #quote
 
-        static char const* shader1 = HLSL
-        (
+        static char const* shader1 = R""""(
             cbuffer constants : register(b0)
             {
                 float f                    : packoffset(c0.x);
@@ -1362,15 +1360,14 @@ TEST_CLASS(SharedShaderStateUnitTests)
             {
                 return rows._11 * cols._11 * f * i * b;
             }
-        );
+        )"""";
 
-        static char const* shader2 = HLSL
-        (
+        static char const* shader2 = R""""(
             float4 main() : SV_Target
             {
                 return 0;
             }
-        );
+        )"""";
 
         compiledShader1 = CompileShader(shader1);
         compiledShader2 = CompileShader(shader2);
