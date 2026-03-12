@@ -56,10 +56,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Web.WebView2" Version="$(WebView2Version)" />
     <PackageReference Include="Microsoft.WindowsAppSDK.WinUI" Version="$(WindowsAppSdkWinUIVersion)" />
-    <PackageReference Include="Microsoft.WindowsAppSDK.InteractiveExperiences" Version="$(WindowsAppSdkInteractiveExperiencesVersion)" />
-    <PackageReference Include="Microsoft.WindowsAppSDK.Foundation" Version="$(WindowsAppSdkFoundationVersion)" />
     <PackageReference Include="Microsoft.Windows.CSWinRT" Version="$(CsWinRTVersion)" />
     <PackageReference Include="Microsoft.SourceLink.AzureRepos.Git" Version="1.1.1" PrivateAssets="All" />
   </ItemGroup>
