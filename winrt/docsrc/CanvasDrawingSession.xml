@@ -754,12 +754,14 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="T:Microsoft.Graphics.Canvas.CanvasComposite">
       <summary>The composite mode used for the effect.</summary>
       <remarks>
-        <p>The equations listed in enum descriptions use these elements:
-           O = Output
-           S = Source
-           SA = Source Alpha
-           D = Destination
-           DA = Destination Alpha</p>
+        <p>The equations listed in enum descriptions use these elements:</p>
+        <ul>
+          <li>O = Output</li>
+          <li>S = Source</li>
+          <li>SA = Source Alpha</li>
+          <li>D = Destination</li>
+          <li>DA = Destination Alpha</li>
+        </ul>
       </remarks>
     </member>
     <member name="F:Microsoft.Graphics.Canvas.CanvasComposite.SourceOver">
@@ -796,7 +798,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="F:Microsoft.Graphics.Canvas.CanvasComposite.Copy">
       <summary>Region of the source bitmap. Equation: O = S.</summary>
     </member>
-    <member name="F:Microsoft.Graphics.Canvas.CanvasComposite.BoundedCopy">
+    <member name="F:Microsoft.Graphics.Canvas.CanvasComposite.BoundedCopy" NoComposition="true">
       <summary>Union of source and destination bitmaps with no destination override. 
                Equation: O = S (only where source exists).</summary>
     </member>
