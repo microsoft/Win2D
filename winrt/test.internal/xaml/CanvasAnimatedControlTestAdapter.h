@@ -66,7 +66,7 @@ public:
         if (m_dispatcherActive)
         {
             auto callback = Callback<AddFtmBase<IDispatcherQueueHandler>::Type>(
-                [action]() {
+                [action] {
                     auto result = action->InvokeAndFireCompletion();
                     if (SUCCEEDED(result.ActionResult))
                     {
