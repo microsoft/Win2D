@@ -6,7 +6,15 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
 -->
 <Dependencies>
   <ProductDependencies>
-    <Dependency Name="Microsoft.WindowsAppSDK" Version="1.0.0">
+    <Dependency Name="Microsoft.WindowsAppSDK.WinUI" Version="1.8.260204000">
+      <Uri>https://dev.azure.com/microsoft/WindowsAppSDK</Uri>
+      <Sha>400c67880dae14f57e388cf8eb364d60fe814eb6</Sha>
+    </Dependency>
+    <Dependency Name="Microsoft.WindowsAppSDK.InteractiveExperiences" Version="1.8.260125001">
+      <Uri>https://dev.azure.com/microsoft/WindowsAppSDK</Uri>
+      <Sha>400c67880dae14f57e388cf8eb364d60fe814eb6</Sha>
+    </Dependency>
+    <Dependency Name="Microsoft.WindowsAppSDK.Foundation" Version="1.8.260203002">
       <Uri>https://dev.azure.com/microsoft/WindowsAppSDK</Uri>
       <Sha>400c67880dae14f57e388cf8eb364d60fe814eb6</Sha>
     </Dependency>
