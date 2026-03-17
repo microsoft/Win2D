@@ -9,7 +9,7 @@ namespace canvas
     class MockCanvasSwapChain : public CanvasSwapChain
     {
     public:
-        CALL_COUNTER_WITH_MOCK(PresentMethod, HRESULT());
+        CALL_COUNTER_WITH_MOCK(PresentWithSyncIntervalMethod, HRESULT());
         CALL_COUNTER_WITH_MOCK(CreateDrawingSessionMethod, HRESULT(Color, ICanvasDrawingSession**));
         CALL_COUNTER_WITH_MOCK(put_TransformMethod, HRESULT(Matrix3x2));
 
@@ -120,13 +120,13 @@ namespace canvas
 
         IFACEMETHOD(Present)() override
         {
-            return PresentMethod.WasCalled();
+            Assert::Fail(L"Unexpected call to Present");
+            return E_NOTIMPL;
         }
 
         IFACEMETHOD(PresentWithSyncInterval)(int32_t syncInterval) override
         {
-            Assert::Fail(L"Unexpected call to PresentWithSyncInterval");
-            return E_NOTIMPL;
+            return PresentWithSyncIntervalMethod.WasCalled();
         }
 
         IFACEMETHOD(ResizeBuffersWithSize)(

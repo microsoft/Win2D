@@ -1,5 +1,14 @@
 # Win2D Changelog
 
+## Win2D-WinUI 1.4.0
+_March 10th, 2026_
+- Update WindowsAppSDK to use WindowsAppSDK.WinUI package and 1.8.260204000
+- Update CsWinRT to 2.2.0
+
+## Win2D-WinUI 1.3.3
+_February 26th, 2025_
+- Update Windows SDK projections and CsWinRT to latest
+
 ## Win2D-WinUI 1.3.2
 _January 22nd, 2025_
 - Enable transitive MSBuild configuration
