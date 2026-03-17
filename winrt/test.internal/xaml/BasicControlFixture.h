@@ -188,7 +188,7 @@ inline void BasicControlFixture<CanvasAnimatedControlTraits>::PrepareAdapterForR
                     auto ds = Make<MockCanvasDrawingSession>();
                     return ds.CopyTo(value);
                 });
-            mockSwapChain->PresentMethod.AllowAnyCall();
+            mockSwapChain->PresentWithSyncIntervalMethod.AllowAnyCall();
 
             mockSwapChain->put_TransformMethod.AllowAnyCall();
 

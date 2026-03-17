@@ -30,20 +30,20 @@ public:
         auto sisFactory = Make<MockSurfaceImageSourceFactory>();
         sisFactory->MockCreateInstanceWithDimensionsAndOpacity =
             [=](int32_t actualWidth, int32_t actualHeight, bool isOpaque, IInspectable* outer)
-        {
-            auto mockSurfaceImageSource = Make<MockSurfaceImageSource>();
+            {
+                auto mockSurfaceImageSource = Make<MockSurfaceImageSource>();
 
-            mockSurfaceImageSource->BeginDrawMethod.AllowAnyCall(
-                [=](RECT const&, IID const& iid, void** updateObject, POINT*)
-                {
-                    return m_deviceContext.CopyTo(iid, updateObject);
-                });
+                mockSurfaceImageSource->BeginDrawMethod.AllowAnyCall(
+                    [=](RECT const&, IID const& iid, void** updateObject, POINT*)
+                    {
+                        return m_deviceContext.CopyTo(iid, updateObject);
+                    });
 
-            mockSurfaceImageSource->SetDeviceMethod.AllowAnyCall();
-            mockSurfaceImageSource->EndDrawMethod.AllowAnyCall();
+                mockSurfaceImageSource->SetDeviceMethod.AllowAnyCall();
+                mockSurfaceImageSource->EndDrawMethod.AllowAnyCall();
 
-            return mockSurfaceImageSource;
-        };
+                return mockSurfaceImageSource;
+            };
 
         auto dsFactory = std::make_shared<CanvasImageSourceDrawingSessionFactory>();
 
