@@ -4,6 +4,10 @@
 
 #pragma once
 
+#include "../../utils/GuidUtilities.h"
+#include "ShaderDescription.h"
+#include "SharedShaderState.h"
+
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Effects 
 {
     class ISharedShaderState;
@@ -12,13 +16,39 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
 
     // WinRT activation factory.
-    class PixelShaderEffectFactory : public AgileActivationFactory<IPixelShaderEffectFactory>
+    class PixelShaderEffectFactory : public AgileActivationFactory<IPixelShaderEffectFactory, IPixelShaderEffectStatics>
                                    , private LifespanTracker<PixelShaderEffectFactory>
     {
         InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_Effects_PixelShaderEffect, BaseTrust);
 
     public:
+        //
+        // IPixelShaderEffectFactory
+        //
         IFACEMETHOD(Create)(uint32_t shaderCodeCount, BYTE* shaderCode, IPixelShaderEffect** effect) override;
+
+        //
+        // IPixelShaderEffectStatics
+        //
+        IFACEMETHOD(RegisterEffect)(UINT32 shaderCodeCount, BYTE* shaderCode, GUID effectId, int32_t maxSamplerOffset, 
+            uint32_t coordinateMappingsSize, SamplerCoordinateMapping* coordinateMappings, 
+            uint32_t borderModesSize, EffectBorderMode* borderModes, 
+            uint32_t sourceInterpolationsSize, CanvasImageInterpolation* sourceInterpolations) override;
+
+        IFACEMETHOD(CreateEffect)(GUID effectId, IPixelShaderEffect** effect) override;
+
+        IFACEMETHOD(RegisterAndCreateEffect)(UINT32 shaderCodeCount, BYTE* shaderCode, GUID effectId, int32_t maxSamplerOffset, 
+            uint32_t coordinateMappingsSize, SamplerCoordinateMapping* coordinateMappings, 
+            uint32_t borderModesSize, EffectBorderMode* borderModes, 
+            uint32_t sourceInterpolationsSize, CanvasImageInterpolation* sourceInterpolations, IPixelShaderEffect** effect) override;
+
+        IFACEMETHOD(IsEffectRegistered)(GUID effectId, boolean* result) override;
+
+        IFACEMETHOD(UnregisterEffect)(GUID effectId) override;
+
+    private:
+        static std::recursive_mutex m_mutex;
+        static std::map<GUID, ShaderDescriptionWithDefaults, GuidComparer> shaderCache;
     };
 
 

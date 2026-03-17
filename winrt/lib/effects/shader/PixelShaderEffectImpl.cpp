@@ -168,7 +168,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         // Load our pixel shader into D2D.
         auto& shader = m_sharedState->Shader();
 
-        HRESULT hr = m_effectContext->LoadPixelShader(shader.Hash, shader.Code.data(), static_cast<UINT32>(shader.Code.size()));
+        HRESULT hr = m_effectContext->LoadPixelShader(shader->Hash, shader->Code.data(), static_cast<UINT32>(shader->Code.size()));
 
         if (FAILED(hr))
             ThrowHR(hr, Strings::CustomEffectBadShader);
@@ -197,7 +197,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         ThrowIfFailed(m_transformGraph->ConnectNode(shaderTransform.Get(), clipTransform.Get(), 0));
         ThrowIfFailed(m_transformGraph->SetOutputNode(clipTransform.Get()));
 
-        for (unsigned i = 0; i < m_sharedState->Shader().InputCount; i++)
+        for (unsigned i = 0; i < m_sharedState->Shader()->InputCount; i++)
         {
             switch (m_coordinateMapping->BorderMode[i])
             {

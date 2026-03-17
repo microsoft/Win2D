@@ -37,6 +37,7 @@ STRING(CustomEffectUnknownProperty, L"Shader does not have a property named '%s'
 STRING(CustomEffectWrongPropertyArraySize, L"Wrong array size. Shader property '%s' is an array of %d elements.")
 STRING(CustomEffectWrongPropertyType, L"Wrong type. Shader property '%s' is of type %s.")
 STRING(CustomEffectWrongPropertyTypeArray, L"Wrong type. Shader property '%s' is an array of %s.")
+STRING(CustomEffectNotRegistered, L"The effect is not registered.")
 STRING(DeviceExpectedToBeLost, L"This API was unexpectedly called when the Direct3D device is not lost.")
 STRING(DidNotPopLayer, L"After calling CanvasDrawingSession.CreateLayer, you must close the resulting CanvasActiveLayer before ending the CanvasDrawingSession.")
 STRING(DrawImageMinBlendNotSupported, L"This DrawImage overload is not valid when CanvasDrawingSession.Blend is set to CanvasBlend.Min.")

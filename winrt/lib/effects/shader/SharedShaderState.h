@@ -35,6 +35,23 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     };
 
 
+    // Primarily used for caching
+    struct SharedShaderStateDefaults
+    {
+        std::vector<BYTE> DefaultConstants;
+        CoordinateMappingState DefaultCoordinateMapping;
+        SourceInterpolationState DefaultSourceInterpolation;
+    };
+
+
+    // Primarily used for caching
+    struct ShaderDescriptionWithDefaults
+    {
+        std::shared_ptr<ShaderDescription> Description;
+        std::shared_ptr<SharedShaderStateDefaults> Defaults;
+    };
+
+
     // Implementation state shared between PixelShaderEffect and PixelShaderEffectImpl.
     // This stores the compiled shader code, metadata obtained via shader reflection,
     // and app-specified state such as the current constant buffer.
@@ -51,7 +68,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     public:
         virtual ComPtr<ISharedShaderState> Clone() = 0;
 
-        virtual ShaderDescription const& Shader() = 0;
+        virtual std::shared_ptr<ShaderDescription> const& Shader() = 0;
         virtual std::vector<BYTE> const& Constants() = 0;
         virtual CoordinateMappingState& CoordinateMapping() = 0;
         virtual SourceInterpolationState& SourceInterpolation() = 0;
@@ -68,18 +85,20 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     class SharedShaderState : public RuntimeClass<RuntimeClassFlags<ClassicCom>, ISharedShaderState>
                             , private LifespanTracker<SharedShaderState>
     {
-        ShaderDescription m_shader;
+        std::shared_ptr<ShaderDescription> m_shader;
         std::vector<BYTE> m_constants;
         CoordinateMappingState m_coordinateMapping;
         SourceInterpolationState m_sourceInterpolation;
 
     public:
-        SharedShaderState(ShaderDescription const& shader, std::vector<BYTE> const& constants, CoordinateMappingState const& coordinateMapping, SourceInterpolationState const& sourceInterpolation);
+        SharedShaderState(std::shared_ptr<ShaderDescription> const& shader, std::vector<BYTE> const& constants, CoordinateMappingState const& coordinateMapping, SourceInterpolationState const& sourceInterpolation);
         SharedShaderState(BYTE* shaderCode, uint32_t shaderCodeSize);
+        static ShaderDescriptionWithDefaults SharedShaderState::CreateShaderDescription(BYTE* shaderCode, uint32_t shaderCodeSize, IID const& effectId, int32_t maxSamplerOffset, 
+            SamplerCoordinateMapping* coordinateMappings, uint32_t coordinateMappingsSize, EffectBorderMode* borderModes, uint32_t borderModesSize, CanvasImageInterpolation* sourceInterpolations, uint32_t sourceInterpolationsSize);
 
         virtual ComPtr<ISharedShaderState> Clone() override;
 
-        virtual ShaderDescription const& Shader() override { return m_shader; }
+        virtual std::shared_ptr<ShaderDescription> const& Shader() override { return m_shader; }
         virtual std::vector<BYTE> const& Constants() override { return m_constants; }
         virtual CoordinateMappingState& CoordinateMapping() override { return m_coordinateMapping; }
         virtual SourceInterpolationState& SourceInterpolation() { return m_sourceInterpolation; }
@@ -107,12 +126,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         void CopyConstantData(ShaderVariable const& variable, TComponent* values);
 
 
-        // Shader reflection (done at init time).
-        void ReflectOverShader();
-        void ReflectOverBindings(ID3D11ShaderReflection* reflector, D3D11_SHADER_DESC const& desc);
-        void ReflectOverConstantBuffer(ID3D11ShaderReflectionConstantBuffer* constantBuffer);
-        void ReflectOverVariable(ID3D11ShaderReflectionVariable* variable);
-        void ReflectOverShaderLinkingFunction();
+        // Shader reflection (done at init time). Note the members of the output must be non-null before calling these functions.
+        static void ReflectOverShader(ShaderDescriptionWithDefaults const& output);
+        static void ReflectOverBindings(ShaderDescriptionWithDefaults const& output, ID3D11ShaderReflection* reflector, D3D11_SHADER_DESC const& desc);
+        static void ReflectOverConstantBuffer(ShaderDescriptionWithDefaults const& output, ID3D11ShaderReflectionConstantBuffer* constantBuffer);
+        static void ReflectOverVariable(ShaderDescriptionWithDefaults const& output, ID3D11ShaderReflectionVariable* variable);
+        static void ReflectOverShaderLinkingFunction(ShaderDescriptionWithDefaults const& output);
     };
 
 }}}}}
