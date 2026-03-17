@@ -1,0 +1,8 @@
+schemaVersion: 0.0.1
+isProduction: true
+accountableOwners:
+  service: f9e09438-81f0-49d8-8ad7-09c34ff30602
+routing:
+  defaultAreaPath:
+    org: microsoft
+    path: OS\Windows Client and Services\WinPD\DFX-Developer Fundamentals and Experiences\DevFun\Composition\Rendering

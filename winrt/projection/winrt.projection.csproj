@@ -6,7 +6,13 @@
     <LangVersion>10.0</LangVersion>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <AssemblyName>Microsoft.Graphics.Canvas.Interop</AssemblyName>
+
+    <!-- Projections should always be built for 'AnyCPU', no matter who consumes them -->
     <Platforms>AnyCPU</Platforms>
+    <Platform>AnyCPU</Platform>
+
+    <!-- Override 'PlatformTarget' too, just in case -->
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
 
   <!-- Additional properties -->
@@ -20,7 +26,7 @@
         - Set "AssemblyFile" to match the assembly version.
         - Set "AssemblyInformationVersion" to $(Version) plus git hash (eg. "1.1.0-preview1+1b95cfe91e").
     -->
-    <Version>1.3.1</Version>
+    <Version>1.4.0</Version>
 
     <!-- Enable trimming -->
     <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
@@ -35,7 +41,7 @@
 
   <!-- CsWinRT related properties for projections generation -->
   <PropertyGroup>
-    <WindowsSdkPackageVersion>10.0.19041.52</WindowsSdkPackageVersion>
+    <WindowsSdkPackageVersion>10.0.19041.55</WindowsSdkPackageVersion>
     <CSWinRTIncludes>
         Microsoft.Graphics.Canvas;
     </CSWinRTIncludes>
@@ -50,9 +56,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.2792.45" />
-    <PackageReference Include="Microsoft.WindowsAppSdk" Version="$(WindowsAppSdkVersion)" />
-    <PackageReference Include="Microsoft.Windows.CSWinRT" Version="2.1.6" />
+    <PackageReference Include="Microsoft.WindowsAppSDK.WinUI" Version="$(WindowsAppSdkWinUIVersion)" />
+    <PackageReference Include="Microsoft.Windows.CSWinRT" Version="$(CsWinRTVersion)" />
     <PackageReference Include="Microsoft.SourceLink.AzureRepos.Git" Version="1.1.1" PrivateAssets="All" />
   </ItemGroup>
 </Project>
