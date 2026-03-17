@@ -18,7 +18,8 @@
     <UseCrtSDKReferenceStaticWarning>false</UseCrtSDKReferenceStaticWarning>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
-  <Import Project="..\..\build\WindowsAppSdk.cpp.props" />
+  <Import Project="$(WindowsAppSdkWinUI_props)" Condition="Exists('$(WindowsAppSdkWinUI_props)')" />
+  <Import Project="$(WindowsAppSdkInteractiveExperiences_props)" Condition="Exists('$(WindowsAppSdkInteractiveExperiences_props)')" />
   <PropertyGroup Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
   </PropertyGroup>
@@ -177,7 +178,8 @@
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup>
-    <Import Project="..\..\build\WindowsAppSdk.cpp.targets" />
+    <Import Project="$(WindowsAppSdkWinUI_targets)" Condition="Exists('$(WindowsAppSdkWinUI_targets)')" />
+    <Import Project="$(WindowsAppSdkInteractiveExperiences_targets)" Condition="Exists('$(WindowsAppSdkInteractiveExperiences_targets)')" />
   </ImportGroup>
   <Import Project="..\..\build\Win2D.cpp.targets" />
   <ItemDefinitionGroup>
@@ -197,5 +199,9 @@
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
+      <Error Condition="!Exists('$(WindowsAppSdkWinUI_props)')" Text="$([System.String]::Format('$(ErrorText)', '$(WindowsAppSdkWinUI_props)'))" />
+      <Error Condition="!Exists('$(WindowsAppSdkWinUI_targets)')" Text="$([System.String]::Format('$(ErrorText)', '$(WindowsAppSdkWinUI_targets)'))" />
+      <Error Condition="!Exists('$(WindowsAppSdkInteractiveExperiences_props)')" Text="$([System.String]::Format('$(ErrorText)', '$(WindowsAppSdkInteractiveExperiences_props)'))" />
+      <Error Condition="!Exists('$(WindowsAppSdkInteractiveExperiences_targets)')" Text="$([System.String]::Format('$(ErrorText)', '$(WindowsAppSdkInteractiveExperiences_targets)'))" />
   </Target>
 </Project>

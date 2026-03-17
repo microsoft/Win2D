@@ -20,7 +20,9 @@
   <Import Project="..\..\build\Win2D.cpp.props" />
   <Import Project="..\..\build\HybridCRT.props" />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
-  <Import Project="..\..\build\WindowsAppSdk.cpp.props" />
+  <Import Project="$(WindowsAppSdkWinUI_props)" Condition="Exists('$(WindowsAppSdkWinUI_props)')" />
+  <Import Project="$(WindowsAppSdkInteractiveExperiences_props)" Condition="Exists('$(WindowsAppSdkInteractiveExperiences_props)')" />
+  <Import Project="$(WindowsAppSdkFoundation_props)" Condition="Exists('$(WindowsAppSdkFoundation_props)')" />
   <PropertyGroup Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
   </PropertyGroup>
@@ -108,6 +110,16 @@
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
+    <Error Condition="!Exists('$(WindowsAppSdkWinUI_props)')" Text="$([System.String]::Format('$(ErrorText)', '$(WindowsAppSdkWinUI_props)'))" />
+    <Error Condition="!Exists('$(WindowsAppSdkWinUI_targets)')" Text="$([System.String]::Format('$(ErrorText)', '$(WindowsAppSdkWinUI_targets)'))" />
+    <Error Condition="!Exists('$(WindowsAppSdkInteractiveExperiences_props)')" Text="$([System.String]::Format('$(ErrorText)', '$(WindowsAppSdkInteractiveExperiences_props)'))" />
+    <Error Condition="!Exists('$(WindowsAppSdkInteractiveExperiences_targets)')" Text="$([System.String]::Format('$(ErrorText)', '$(WindowsAppSdkInteractiveExperiences_targets)'))" />
+    <Error Condition="!Exists('$(WindowsAppSdkFoundation_props)')" Text="$([System.String]::Format('$(ErrorText)', '$(WindowsAppSdkFoundation_props)'))" />
+    <Error Condition="!Exists('$(WindowsAppSdkFoundation_targets)')" Text="$([System.String]::Format('$(ErrorText)', '$(WindowsAppSdkFoundation_targets)'))" />
+    <Error Condition="!Exists('$(_WebView2PackageRoot)\build\native\Microsoft.Web.WebView2.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(_WebView2PackageRoot)\build\native\Microsoft.Web.WebView2.targets'))" />
   </Target>
-  <Import Project="..\..\build\WindowsAppSdk.cpp.targets" />
+  <Import Project="$(WindowsAppSdkWinUI_targets)" Condition="Exists('$(WindowsAppSdkWinUI_targets)')" />
+  <Import Project="$(WindowsAppSdkInteractiveExperiences_targets)" Condition="Exists('$(WindowsAppSdkInteractiveExperiences_targets)')" />
+  <Import Project="$(WindowsAppSdkFoundation_targets)" Condition="Exists('$(WindowsAppSdkFoundation_targets)')" />
+  <Import Project="$(WebView2_targets)" Condition="Exists('$(WebView2_targets)')" />
 </Project>
