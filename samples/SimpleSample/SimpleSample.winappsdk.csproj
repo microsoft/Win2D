@@ -47,7 +47,9 @@
     <ProjectCapability Include="Msix" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Microsoft.Web.WebView2" Version="$(WebView2Version)" />
     <PackageReference Include="Microsoft.WindowsAppSDK.WinUI" Version="$(WindowsAppSdkWinUIVersion)" />
+    <PackageReference Include="Microsoft.WindowsAppSDK.InteractiveExperiences" Version="$(WindowsAppSdkInteractiveExperiencesVersion)" />
     <PackageReference Include="Microsoft.WindowsAppSDK.Runtime" Version="$(WindowsAppSdkRuntimeVersion)" />
   </ItemGroup>
 

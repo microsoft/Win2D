@@ -287,8 +287,8 @@
         <Platform>%(BuildPlatform.Identity)</Platform>
       </NuGetRestore>
 
-      <!-- Common WindowsAppSdk packages -->
-      <NuGetRestore Include="$(MSBuildThisFileDirectory)build\pkges\packages.config" />
+      <!-- Internal Microsoft builds can optionally consume the Windows SDK via NuGet -->
+      <NuGetRestore Include="build\pkges\packages.config" Condition="'$(UseNuGetSDK)' != ''" />
     </ItemGroup>
   </Target>
 
