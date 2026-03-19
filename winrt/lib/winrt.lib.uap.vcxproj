@@ -501,8 +501,6 @@
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <Import Project="..\..\build\Win2D.cpp.targets" />
-<<<<<<< HEAD
-=======
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
@@ -526,5 +524,4 @@
   <Import Project="$(WindowsAppSdkFoundation_targets)" Condition="Exists('$(WindowsAppSdkFoundation_targets)')" />
   <Import Project="$(MSBuildThisFileDirectory)..\..\build\midlrt.targets" />
   <Import Project="$(WebView2_targets)" Condition="Exists('$(WebView2_targets)')" />
->>>>>>> winappsdk/main
 </Project>
