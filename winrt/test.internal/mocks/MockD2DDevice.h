@@ -23,9 +23,7 @@ namespace canvas
     class MockD2DDevice : public RuntimeClass<
         RuntimeClassFlags<ClassicCom>,
         ChainInterfaces<
-#if WINVER > _WIN32_WINNT_WINBLUE
         ID2D1Device2,
-#endif
         ID2D1Device1, ID2D1Device, ID2D1Resource>,
         ID2DDeviceWithDxgiDevice>
     {
@@ -101,7 +99,6 @@ namespace canvas
             return mockDeviceContext.CopyTo(deviceContext);
         }
 
-#if WINVER > _WIN32_WINNT_WINBLUE
         //
         // ID2D1Device2
         //
@@ -125,7 +122,6 @@ namespace canvas
         {
             return m_dxgiDevice.CopyTo(dxgiDevice);
         }
-#endif
 
         //
         // ID2DDeviceWithDxgiDevice

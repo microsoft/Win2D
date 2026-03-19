@@ -22,7 +22,8 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
           href="http://msdn.microsoft.com/en-us/library/windows/desktop/bb174569(v=vs.85).aspx">IDXGISwapChain</a>.
         </p>
         <p>
-          Two types of CanvasSwapChain are supported: composition and CoreWindow.
+          Three types of CanvasSwapChain are supported: composition, CoreWindow and HWND.
+          Note that the HWND type is only supported when running outside of the UWP sandbox.
         </p>
         <h4>Composition (XAML) Swap Chains</h4>
         <p>
@@ -46,6 +47,17 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
           be used in non-XAML apps (also known as "DirectX apps".)
           <code>
             var swapChain = CanvasSwapChain.CreateForCoreWindow(device, coreWindow, dpi);
+            // ... later ...
+            swapChain.Present();
+          </code>
+        </p>
+        <h4>HWND Swap Chains</h4>
+        <p>
+          HWND swap chains are constructed via <see
+          cref="O:Microsoft.Graphics.Canvas.CanvasSwapChain.CreateForWindowId"/>, where the input value
+          is constructed from a given HWND owned by the running application.
+          <code>
+            var swapChain = CanvasSwapChain.CreateForWindowId(device, GetWindowIdFromWindow(hwnd), 1280, 720, 96.0f);
             // ... later ...
             swapChain.Present();
           </code>
@@ -110,6 +122,42 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     </member>
     <member name="M:Microsoft.Graphics.Canvas.CanvasSwapChain.CreateForCoreWindow(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Windows.UI.Core.CoreWindow,System.Single,System.Single,System.Single,Windows.Graphics.DirectX.DirectXPixelFormat,System.Int32)">
       <summary>Initializes a new instance of a CanvasSwapChain, suitable for use with CoreWindow.</summary>
+      <remarks>
+        <p>
+          The size is in <a href="DPI.htm">device independent pixels (DIPs)</a>.
+        </p>
+        <p>
+          List of <a href="PixelFormats.htm">supported pixel formats</a>.
+        </p>
+        <p>
+          The <see
+          cref="P:Microsoft.Graphics.Canvas.CanvasSwapChain.TransformMatrix"/>
+          property is not available when the CanvasSwapChain is created with
+          this method.
+        </p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasSwapChain.CreateForWindowId(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.UI.WindowId,System.Single,System.Single,System.Single)">
+      <summary>Initializes a new instance of a CanvasSwapChain, suitable for use with HWND windows.</summary>
+      <remarks>
+        <p>
+          The size is in <a href="DPI.htm">device independent pixels (DIPs)</a>.
+        </p>
+        <p>
+          The swap chain's pixel format will default to
+          DirectXPixelFormat.B8G8R8A8UIntNormalized, its buffer count will be
+          2, and its alpha mode will be CanvasAlphaMode.Ignore.
+        </p>
+        <p>
+          The <see
+          cref="P:Microsoft.Graphics.Canvas.CanvasSwapChain.TransformMatrix"/>
+          property is not available when the CanvasSwapChain is created with
+          this method.
+        </p>
+      </remarks>
+    </member>
+    <member name="M:Microsoft.Graphics.Canvas.CanvasSwapChain.CreateForCoreWindow(Microsoft.Graphics.Canvas.ICanvasResourceCreator,Microsoft.UI.WindowId,System.Single,System.Single,System.Single,Windows.Graphics.DirectX.DirectXPixelFormat,System.Int32)">
+      <summary>Initializes a new instance of a CanvasSwapChain, suitable for use with HWND windows.</summary>
       <remarks>
         <p>
           The size is in <a href="DPI.htm">device independent pixels (DIPs)</a>.
@@ -232,7 +280,8 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         <p>Swap chain scaling may be used to render at a lower resolution than the physical screen.</p>
         <p>Only scale and translation components are allowed in the matrix (no rotation, skew, etc.)</p>
         <p>This property is not supported on objects created via <see
-        cref="O:Microsoft.Graphics.Canvas.CanvasSwapChain.CreateForCoreWindow"/>;
+        cref="O:Microsoft.Graphics.Canvas.CanvasSwapChain.CreateForCoreWindow"/> or <see
+        cref="O:Microsoft.Graphics.Canvas.CanvasSwapChain.CreateForWindowId"/>;
         any attempt to access it will fail.</p>
       </remarks>
     </member>

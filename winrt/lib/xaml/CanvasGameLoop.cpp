@@ -3,7 +3,6 @@
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
 #include "pch.h"
-
 #include "CanvasGameLoop.h"
 
 using namespace ::ABI::Microsoft::Graphics::Canvas;
@@ -17,7 +16,7 @@ CanvasGameLoop::CanvasGameLoop(
     : m_client(client)
     , m_gameLoopThread(std::move(gameLoopThread))
 { 
-    m_tickHandler = Callback<AddFtmBase<IDispatchedHandler>::Type>(
+    m_tickHandler = Callback<AddFtmBase<IDispatcherQueueHandler>::Type>(
         [this]
         {
             return ExceptionBoundary([&] { Tick(); });

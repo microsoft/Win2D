@@ -10,11 +10,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     using namespace ABI::Microsoft::Graphics::Canvas::Numerics;
     using namespace ABI::Windows::Foundation;
 
-#if WINVER > _WIN32_WINNT_WINBLUE
+#ifdef WINUI3_SUPPORTS_INKING
     using namespace ABI::Windows::UI::Input::Inking;
+#endif
+
     using namespace ABI::Windows::UI::ViewManagement;
     using namespace ABI::Microsoft::Graphics::Canvas::Svg;
-#endif
 
     using namespace ::Microsoft::WRL;
 
@@ -26,7 +27,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         virtual void EndDraw(ID2D1DeviceContext1* d2dDeviceContext) = 0;
     };
 
-#if WINVER > _WIN32_WINNT_WINBLUE
     class DefaultInkAdapter;
 
     class InkAdapter : public Singleton<InkAdapter, DefaultInkAdapter>
@@ -46,7 +46,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         virtual ComPtr<IInkD2DRenderer> CreateInkRenderer() override;
         virtual bool IsHighContrastEnabled() override;
     };
-#endif
 
     class CanvasDrawingSession : RESOURCE_WRAPPER_RUNTIME_CLASS(
         ID2D1DeviceContext1,
@@ -80,7 +79,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         //
         ComPtr<ICanvasDevice> m_owner;
 
-#if WINVER > _WIN32_WINNT_WINBLUE
+#if WINUI3_SUPPORTS_INKING
         ComPtr<IInkD2DRenderer> m_inkD2DRenderer;
         ComPtr<ID2D1DrawingStateBlock1> m_inkStateBlock;
 #endif
@@ -1165,14 +1164,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ICanvasCachedGeometry* cachedGeometry,
             ABI::Windows::UI::Color color) override;
 
-#if WINVER > _WIN32_WINNT_WINBLUE
+#ifdef WINUI3_SUPPORTS_INKING
         //
         // DrawInk
         //
         IFACEMETHOD(DrawInk)(IIterable<InkStroke*>* inkStrokes) override;
 
         IFACEMETHOD(DrawInkWithHighContrast)(IIterable<InkStroke*>* inkStrokes, boolean highContrast) override;
-        
+#endif
+
         //
         // DrawGradientMesh
         //
@@ -1187,8 +1187,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         IFACEMETHOD(DrawSvgAtPoint)(ICanvasSvgDocument *svgDocument, Size viewportSize, Vector2 point) override;
 
         IFACEMETHOD(DrawSvgAtCoords)(ICanvasSvgDocument *svgDocument, Size viewportSize, float x, float y) override;
-
-#endif
 
         //
         // State properties
@@ -1309,9 +1307,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             int* clusterMapIndices,
             uint32_t textPosition) override;
 
-
-#if WINVER > _WIN32_WINNT_WINBLUE
-
         //
         // CreateSpriteBatch
         //
@@ -1333,8 +1328,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             CanvasImageInterpolation interpolation,
             CanvasSpriteOptions options,
             ICanvasSpriteBatch** spriteBatch) override;
-
-#endif
 
         //
         // ICanvasResourceCreator
@@ -1465,7 +1458,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         void PopLayer(int layerId, bool isAxisAlignedClip);
 
-#if WINVER > _WIN32_WINNT_WINBLUE
+#ifdef WINUI3_SUPPORTS_INKING
         void DrawInkImpl(IIterable<InkStroke*>* inkStrokeCollection, bool highContrast);
 #endif
 

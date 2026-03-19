@@ -91,7 +91,6 @@ namespace canvas
         }
     };
 
-#if WINVER > _WIN32_WINNT_WINBLUE
     class StringList : public MockDWriteStringList
     {
         struct LocalizedName
@@ -155,6 +154,5 @@ namespace canvas
             return S_OK;
         }
     };
-#endif
 
 }

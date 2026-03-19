@@ -15,13 +15,8 @@
 #include <lib/text/CanvasTextAnalyzer.h>
 #include <lib/text/CanvasFontFace.h>
 
-#if WINVER > _WIN32_WINNT_WINBLUE
 typedef MockDWriteFontFaceReference MockDWriteFontFaceContainer;
 typedef IDWriteFontFace3 RealizedFontFaceType;
-#else
-typedef MockDWriteFont MockDWriteFontFaceContainer;
-typedef IDWriteFontFace RealizedFontFaceType;
-#endif
 
 struct TestCaseForCharacterRange
 {
@@ -342,7 +337,6 @@ TEST_CLASS(CanvasTextAnalyzerTests)
                     return S_OK;
                 });
 
-#if WINVER > _WIN32_WINNT_WINBLUE
             ReturnedFont->GetFontFaceReferenceMethod.AllowAnyCall(
                 [&](IDWriteFontFaceReference** out)
                 {
@@ -350,7 +344,6 @@ TEST_CLASS(CanvasTextAnalyzerTests)
                     ThrowIfFailed(mockFontFaceReference.CopyTo(out));
                     return S_OK;
                 });
-#endif
             TextAnalyzer->AnalyzeScriptMethod.AllowAnyCall();
 
             RealizedFontFace = Make<MockDWriteFontFace>();
@@ -1288,7 +1281,6 @@ TEST_CLASS(CanvasTextAnalyzerTests)
 
         auto textAnalyzer = f.Create();
 
-#if WINVER > _WIN32_WINNT_WINBLUE
         auto dwriteFontSet = Make<MockDWriteFontSet>();
         f.GetAdapter()->GetMockDWriteFactory()->CreateFontCollectionFromFontSetMethod.SetExpectedCalls(1,
             [&](IDWriteFontSet* fontSet, IDWriteFontCollection1** fontCollection)
@@ -1298,9 +1290,6 @@ TEST_CLASS(CanvasTextAnalyzerTests)
                 return S_OK;
             });
         auto canvasFontSet = ResourceManager::GetOrCreate<ICanvasFontSet>(dwriteFontSet.Get());
-#else
-        auto canvasFontSet = ResourceManager::GetOrCreate<ICanvasFontSet>(dwriteFontCollection.Get());
-#endif
 
         ComPtr<IVectorView<IKeyValuePair<CanvasCharacterRange, CanvasScaledFont*>*>> result;
         Assert::AreEqual(S_OK, textAnalyzer->GetFonts(f.TextFormat.Get(), canvasFontSet.Get(), &result));

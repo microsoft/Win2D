@@ -4,8 +4,6 @@
 
 #include "pch.h"
 
-#if WINVER > _WIN32_WINNT_WINBLUE
-
 #include "CanvasSvgElement.h"
 #include "CanvasSvgDocument.h"
 #include "BufferStreamWrapper.h"
@@ -976,5 +974,3 @@ bool ABI::Microsoft::Graphics::Canvas::Svg::IsSvgTextElement(ID2D1SvgElement* d2
 {
     return !!d2dSvgElement->IsTextContent();
 }
-
-#endif

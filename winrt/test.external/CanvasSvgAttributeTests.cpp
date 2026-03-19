@@ -4,11 +4,9 @@
 
 #include "pch.h"
 
-#if WINVER > _WIN32_WINNT_WINBLUE
-
 using namespace Microsoft::Graphics::Canvas::Svg;
 using namespace Windows::Storage::Streams;
-using namespace Windows::UI;
+using namespace Microsoft::UI;
 
 TEST_CLASS(CanvasSvgAttributeTests)
 {
@@ -53,7 +51,7 @@ public:
             return;
         
         CanvasSvgPaintAttribute^ paint = m_document->CreatePaintAttribute();
-        CanvasSvgPaintAttribute^ paint2 = m_document->CreatePaintAttribute(CanvasSvgPaintType::None, Color{}, L"");
+        CanvasSvgPaintAttribute^ paint2 = m_document->CreatePaintAttribute(CanvasSvgPaintType::None, Windows::UI::Color{}, L"");
 
         CanvasSvgPathAttribute^ path = m_document->CreatePathAttribute();
         CanvasSvgPathAttribute^ path2 = m_document->CreatePathAttribute(ref new Platform::Array<float>(0), ref new Platform::Array<CanvasSvgPathCommand>(0));
@@ -180,5 +178,3 @@ public:
             });
     }
 };
-
-#endif

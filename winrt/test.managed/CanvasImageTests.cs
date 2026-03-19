@@ -10,13 +10,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Windows.Foundation;
-using Windows.UI;
-
-#if WINDOWS_UWP
+using Microsoft.UI;
 using Windows.Graphics.DirectX;
-#else
-using Microsoft.Graphics.Canvas.DirectX;
-#endif
 
 namespace test.managed
 {
@@ -149,7 +144,7 @@ namespace test.managed
         [TestMethod]
         public void CanvasImage_ComputeHistogram()
         {
-            Color[] colors =
+            Windows.UI.Color[] colors =
             {
                 Colors.Red, Colors.Lime,
                 Colors.Blue, Colors.White

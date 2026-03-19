@@ -5,6 +5,7 @@
 #include "pch.h"
 #include "SharedShaderState.h"
 #include "utils/HashUtilities.h"
+#include "Windows.Perception.Spatial.h"
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Effects
 {

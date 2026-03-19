@@ -116,10 +116,13 @@ namespace Microsoft.Graphics.Canvas
         [eventremove] HRESULT DeviceLost([in] EventRegistrationToken token);
 
         //
-        // Identifies whether this error code matches a device lost.
-        // If this device was not actually lost, this method always
-        // returns false.
+        // Identifies whether this error code matches one of the HRESULTs that Win2D
+        // classifies as "device lost" error codes. If that is the case, the method
+        // then returns whether the current device is actually lost. If the HRESULT
+        // is instead not one that Win2D classifies as "device lost", this method
+        // will always returns false.
         //
+        [overload("IsDeviceLost")]
         HRESULT IsDeviceLost([in] int hresult, [out, retval] boolean* value);
 
         //
@@ -142,6 +145,27 @@ namespace Microsoft.Graphics.Canvas
         // it calls ID2D1MultiThread::Leave.
         //
         HRESULT Lock([out, retval] CanvasLock** lock);
+
+        //
+        // Checks whether the current device instance is lost. To get the exact
+        // HRESULT representing the reason it was lost, call GetDeviceLostReason().
+        //
+        [overload("IsDeviceLost")]
+        HRESULT IsDeviceLost2([out, retval] boolean* value);
+
+        //
+        // Gets the HRESULT representing the reason the device was lost.
+        // This method is only expected to be called when the device is
+        // actually lost. If that is not the case, it will just return 0.
+        //
+        // This method can be used to check the reason a device was lost
+        // from a handler for the DeviceLost event (eg. for telemetry).
+        // 
+        // The returned HRESULT is not guaranteed to be recognized by the IsDeviceLost
+        // overload taking an input HRESULT, as is instead the raw error code from
+        // the underlying DirectX device wrapped by the current CanvasDevice instance.
+        //
+        HRESULT GetDeviceLostReason([out, retval] int* hresult);
     };
 
     [STANDARD_ATTRIBUTES, activatable(VERSION), activatable(ICanvasDeviceFactory, VERSION), static(ICanvasDeviceStatics, VERSION)]

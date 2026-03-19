@@ -75,6 +75,7 @@ TEST_CLASS(CanvasRenderTargetTests)
         ASSERT_IMPLEMENTS_INTERFACE(renderTarget, ICanvasBitmap);
         ASSERT_IMPLEMENTS_INTERFACE(renderTarget, ICanvasImage);
         ASSERT_IMPLEMENTS_INTERFACE(renderTarget, ABI::Windows::Foundation::IClosable);
+        ASSERT_IMPLEMENTS_INTERFACE(renderTarget, ICanvasImageInterop);
         ASSERT_IMPLEMENTS_INTERFACE(renderTarget, ICanvasImageInternal);
     }
 

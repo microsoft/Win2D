@@ -4,7 +4,7 @@
 
 #include "pch.h"
 
-using namespace Windows::UI;
+using namespace Microsoft::UI;
 
 TEST_CLASS(CanvasImageSourceTests)
 {
@@ -18,7 +18,7 @@ TEST_CLASS(CanvasImageSourceTests)
         RunOnUIThread(
             []
             {
-                Color anyColor{1,2,3,4};
+                Windows::UI::Color anyColor{1,2,3,4};
 
                 // Verify creation off of a device.
                 auto canvasDevice = ref new CanvasDevice();

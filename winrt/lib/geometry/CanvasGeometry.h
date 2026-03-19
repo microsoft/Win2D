@@ -134,7 +134,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             CanvasTextMeasuringMode measuringMode,
             CanvasGlyphOrientation glyphOrientation);
 
-#if WINVER > _WIN32_WINNT_WINBLUE
+#if WINUI3_SUPPORTS_INKING
         static ComPtr<CanvasGeometry> CreateNew(
             ICanvasResourceCreator* resourceCreator,
             IIterable<InkStroke*>* inkStrokes,
@@ -459,7 +459,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             CanvasGlyphOrientation glyphOrientation,
             ICanvasGeometry** geometry) override;
 
-#if WINVER > _WIN32_WINNT_WINBLUE
+#ifdef WINUI3_SUPPORTS_INKING
+
         IFACEMETHOD(CreateInk)(
             ICanvasResourceCreator* resourceCreator,
             IIterable<InkStroke*>* inkStrokes,
@@ -471,6 +472,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             Matrix3x2 transform,
             float flatteningTolerance,
             ICanvasGeometry** geometry) override;
+
 #endif
 
         IFACEMETHOD(ComputeFlatteningTolerance)(

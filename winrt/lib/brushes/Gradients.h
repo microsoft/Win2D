@@ -5,7 +5,7 @@
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Brushes
 {
     using namespace ABI::Microsoft::Graphics::Canvas::Numerics;
-    using namespace ABI::Windows::UI;
+    using namespace ABI::Microsoft::UI;
 
     uint8_t DesaturateChannel(uint8_t channel, float amount);
     Color Desaturate(Color const& color, float amount);

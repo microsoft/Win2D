@@ -5,15 +5,15 @@
 #include "pch.h"
 
 using namespace Microsoft::Graphics::Canvas;
-using namespace Windows::UI;
+using namespace Microsoft::UI;
 
 TEST_CLASS(CanvasStrokeStyleTests)
 {
-    Color m_anyColor;
+    Windows::UI::Color m_anyColor;
 
 public:
     CanvasStrokeStyleTests()
-        : m_anyColor(Color{1,2,3,4})
+        : m_anyColor(Windows::UI::Color{1,2,3,4})
     {}
 
     TEST_METHOD(CanvasStrokeStyleTests_Construction)
@@ -125,7 +125,7 @@ public:
                         1,
                         1,
                         DEFAULT_DPI);
-                    brush = ref new CanvasSolidColorBrush(canvasDevice, Windows::UI::Colors::Red);
+                    brush = ref new CanvasSolidColorBrush(canvasDevice, Microsoft::UI::Colors::Red);
                     drawingSession = canvasImageSource->CreateDrawingSession(m_anyColor);
                 }
 
@@ -161,7 +161,7 @@ public:
                     1,
                     1,
                     DEFAULT_DPI);
-                brush = ref new CanvasSolidColorBrush(canvasDevice, Windows::UI::Colors::Red);
+                brush = ref new CanvasSolidColorBrush(canvasDevice, Microsoft::UI::Colors::Red);
                 drawingSession = canvasImageSource->CreateDrawingSession(m_anyColor);
 
                 CanvasStrokeStyle^ strokeStyle = ref new CanvasStrokeStyle();

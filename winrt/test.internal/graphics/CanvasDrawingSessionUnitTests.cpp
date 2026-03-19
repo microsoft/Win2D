@@ -8,11 +8,9 @@
 #include <lib/geometry/CanvasCachedGeometry.h>
 #include <lib/images/CanvasCommandList.h>
 #include <lib/svg/CanvasSvgDocument.h>
-
-#if WINVER > _WIN32_WINNT_WINBLUE
 #include <lib/drawing/CanvasGradientMesh.h>
+
 #include "stubs/StubInkAdapter.h"
-#endif
 
 #include "mocks/MockD2DGeometryRealization.h"
 #include "mocks/MockD2DRectangleGeometry.h"
@@ -127,10 +125,7 @@ public:
     ComPtr<CanvasCachedGeometry> CachedGeometry;
     ComPtr<CanvasTextLayout> TextLayout;
     std::shared_ptr<MockGeometryAdapter> m_geometryAdapter;
-
-#if WINVER > _WIN32_WINNT_WINBLUE
     ComPtr<CanvasGradientMesh> GradientMesh;
-#endif
 
     CanvasDrawingSessionFixture()
         : CanvasDevice(Make<StubCanvasDevice>())
@@ -155,9 +150,7 @@ public:
         auto textlayoutAdapter = std::make_shared<StubCanvasTextLayoutAdapter>();
         TextLayout = CanvasTextLayout::CreateNew(CanvasDevice.Get(), WinString(L"A string"), textFormat.Get(), 0.0f, 0.0f);
 
-#if WINVER > _WIN32_WINNT_WINBLUE
         GradientMesh = CanvasGradientMesh::CreateNew(CanvasDevice.Get(), 0, nullptr);
-#endif
     }
 
 private:
@@ -417,7 +410,7 @@ public:
             d2dBitmap->GetSizeMethod.AllowAnyCall([] { return D2D1_SIZE_F{ 23, 45 }; });
             d2dBitmap->GetPixelSizeMethod.AllowAnyCall([] { return D2D1_SIZE_U{ 67, 89 }; });
 
-            return Make<CanvasBitmap>(CanvasDevice.Get(), d2dBitmap.Get());
+            return CreateStubCanvasBitmap(CanvasDevice.Get(), d2dBitmap.Get());
         }
     };
 
@@ -4202,7 +4195,7 @@ public:
         ThrowIfFailed(drawingSession->put_EffectTileSize(expectedBitmapSize));
     }
 
-#if WINVER > _WIN32_WINNT_WINBLUE
+#ifdef WINUI3_SUPPORTS_INKING
 
     TEST_METHOD_EX(CanvasDrawingSession_DrawInk_NullArg)
     {
@@ -4278,6 +4271,8 @@ public:
             Assert::AreEqual(S_OK, f.DrawingSession->DrawInkWithHighContrast(f.StrokeCollection.Get(), i == 1));
         }
     }
+
+#endif
 
     //
     // DrawGradientMesh
@@ -4478,8 +4473,6 @@ public:
         CanvasDrawingSessionFixture f;
         Assert::AreEqual(E_INVALIDARG, f.DS->DrawSvgAtCoords(nullptr, Size{}, 0, 0));
     }
-     
-#endif
 };
 
 TEST_CLASS(CanvasDrawingSession_DrawTextTests)
@@ -4497,7 +4490,7 @@ TEST_CLASS(CanvasDrawingSession_DrawTextTests)
         template<typename FORMAT_VALIDATOR>
         void Expect(int numCalls, std::wstring expectedText, D2D1_RECT_F expectedRect, D2D1_DRAW_TEXT_OPTIONS expectedOptions, FORMAT_VALIDATOR&& formatValidator)
         {            
-            DeviceContext->DrawTextMethod.SetExpectedCalls(numCalls,
+            DeviceContext->DrawTextWMethod.SetExpectedCalls(numCalls,
                 [=](wchar_t const* actualText,
                     uint32_t actualTextLength,
                     IDWriteTextFormat* format,
@@ -4755,7 +4748,7 @@ TEST_CLASS(CanvasDrawingSession_DrawTextTests)
 
         ThrowIfFailed(f.Format->put_WordWrapping(originalWrapping));
 
-        f.DeviceContext->DrawTextMethod.SetExpectedCalls(1,
+        f.DeviceContext->DrawTextWMethod.SetExpectedCalls(1,
             [&] (wchar_t const*, uint32_t, IDWriteTextFormat* format, D2D1_RECT_F const*, ID2D1Brush*, D2D1_DRAW_TEXT_OPTIONS, DWRITE_MEASURING_MODE)
             {
                 Assert::AreEqual(DWRITE_WORD_WRAPPING_NO_WRAP, format->GetWordWrapping());
@@ -4833,7 +4826,7 @@ TEST_CLASS(CanvasDrawingSession_CloseTests)
         //
         // Calling any other method will return RO_E_CLOSED
         //
-        using namespace ABI::Windows::UI;
+        using namespace ABI::Microsoft::UI;
         using namespace ABI::Windows::Foundation;
 
 #define EXPECT_OBJECT_CLOSED(CODE) Assert::AreEqual(RO_E_CLOSED, CODE)
@@ -4944,7 +4937,7 @@ TEST_CLASS(CanvasDrawingSession_CloseTests)
         EXPECT_OBJECT_CLOSED(canvasDrawingSession->DrawGlyphRunWithMeasuringMode(Vector2{}, nullptr, 0, 0, nullptr, false, 0u, nullptr, CanvasTextMeasuringMode::Natural));
         EXPECT_OBJECT_CLOSED(canvasDrawingSession->DrawGlyphRunWithMeasuringModeAndDescription(Vector2{}, nullptr, 0, 0, nullptr, false, 0u, nullptr, CanvasTextMeasuringMode::Natural, nullptr, nullptr, 0, nullptr, 0));
 
-#if WINVER > _WIN32_WINNT_WINBLUE
+#if WINUI3_SUPPORTS_INKING
         EXPECT_OBJECT_CLOSED(canvasDrawingSession->DrawInk(nullptr));
 #endif
 

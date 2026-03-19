@@ -4,8 +4,6 @@
 
 #include "pch.h"
 
-#if WINVER > _WIN32_WINNT_WINBLUE
-
 using namespace Microsoft::Graphics::Canvas::Geometry;
 
 TEST_CLASS(CanvasGradientMeshTests)
@@ -48,5 +46,3 @@ public:
         auto canvasGradientMesh = ref new CanvasGradientMesh(m_device, nullptr);
     }
 };
-
-#endif

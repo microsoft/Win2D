@@ -3,7 +3,12 @@
   <PropertyGroup>
     <PrepareForBuildDependsOn>CheckForDeviceType;$(PrepareForBuildDependsOn)</PrepareForBuildDependsOn>
   </PropertyGroup>
-  <Target Name="CheckForDeviceType" Condition="'$(DeviceType)' == ''">
+
+  <!--
+    Ignore this target for .NET5 projects, since the TargetPlatformIdentifier is inferred through the .NET SDK
+    in Microsoft.NET.TargetFrameworkInference.targets and isn't set early enough
+   -->
+  <Target Name="CheckForDeviceType" Condition="'$(DeviceType)' == '' and '$(UsingMicrosoftNETSdk)'!='true'">
     <Error Text="Could not determine DeviceType - ensure that TargetPlatformIdentifier is set."/>
   </Target>
 </Project>

@@ -19,21 +19,14 @@ namespace test.managed
             }
             catch (T e)
             {
-                VerifyExceptionMessage(expectedMessage, e.Message);
+                VerifyExceptionMessage(expectedMessage, e.Data["RestrictedDescription"].ToString());
             }
         }
 
 
         static void VerifyExceptionMessage(string expected, string sourceMessage)
         {
-            // Exception messages contain something like 
-            // "Invalid pointer\r\n\r\nEffect source #0 is null",
-            // The 'invalid pointer' part is locale 
-            // dependent and is stripped out.
-
-            string delimiterString = "\r\n\r\n";
-            int delimiterPosition = sourceMessage.LastIndexOf(delimiterString);
-            string exceptionMessage = sourceMessage.Substring(delimiterPosition + delimiterString.Length);
+            string exceptionMessage = sourceMessage;
 
             // .NET Native formats HRESULT exception messages differently to other CLR versions.
             exceptionMessage = exceptionMessage.Replace("Excep_FromHResult", "Exception from HRESULT:");

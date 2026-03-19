@@ -8,7 +8,7 @@
 using namespace ABI::Microsoft::Graphics::Canvas::Brushes;
 using namespace ABI::Microsoft::Graphics::Canvas;
 using namespace ABI::Windows::Foundation;
-using namespace ABI::Windows::UI;
+using namespace ABI::Microsoft::UI;
 
 IFACEMETHODIMP CanvasBrush::get_Opacity(float *value)
 {
@@ -55,7 +55,7 @@ IFACEMETHODIMP CanvasBrush::get_Device(ICanvasDevice** value)
     return ExceptionBoundary(
         [&]
         {
-            CheckInPointer(value);
+            CheckAndClearOutPointer(value);
             ThrowIfFailed(m_device.EnsureNotClosed().CopyTo(value));
         });
 }

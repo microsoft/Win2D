@@ -4,8 +4,6 @@
 
 #pragma once
 
-#if WINVER > _WIN32_WINNT_WINBLUE
-
 class MockD2DImageSource
     : public RuntimeClass<RuntimeClassFlags<ClassicCom>
     , ChainInterfaces<ID2D1ImageSource, ID2D1Resource>>
@@ -18,5 +16,3 @@ public:
     MOCK_METHOD0(OfferResources      , HRESULT());
     MOCK_METHOD1(TryReclaimResources , HRESULT(BOOL*));
 };
-
-#endif

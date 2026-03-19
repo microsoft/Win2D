@@ -6,7 +6,7 @@
 
 namespace canvas
 {
-    using namespace ABI::Windows::UI::Xaml::Media::Imaging;
+    using namespace ABI::Microsoft::UI::Xaml::Media::Imaging;
 
     class StubSurfaceImageSourceFactory : public MockSurfaceImageSourceFactory
     {

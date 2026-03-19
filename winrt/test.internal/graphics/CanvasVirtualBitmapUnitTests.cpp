@@ -11,8 +11,6 @@
 #include "../mocks/MockD2DTransformedImageSource.h"
 #include "../mocks/MockWICBitmapSource.h"
 
-#if WINVER > _WIN32_WINNT_WINBLUE
-
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 TEST_CLASS(CanvasVirtualBitmapUnitTest)
@@ -110,6 +108,22 @@ TEST_CLASS(CanvasVirtualBitmapUnitTest)
         ComPtr<ICanvasDevice> actualDevice;
         ThrowIfFailed(virtualBitmap->get_Device(&actualDevice));
         Assert::IsTrue(IsSameInstance(f.Device.Get(), actualDevice.Get()));
+    }
+
+    TEST_METHOD_EX(CanvasVirtualBitmap_CreateNew_Untransformed_CallsThrough_FromICanvasImageInterop)
+    {
+        Fixture f;
+
+        auto imageSource = f.ExpectCreateImageSourceFromWic(D2D1_IMAGE_SOURCE_LOADING_OPTIONS_NONE, D2D1_ALPHA_MODE_PREMULTIPLIED);
+
+        auto virtualBitmap = f.CreateVirtualBitmap(CanvasVirtualBitmapOptions::None, CanvasAlphaMode::Premultiplied);
+
+        ComPtr<ICanvasDevice> actualDevice;
+        WIN2D_GET_DEVICE_ASSOCIATION_TYPE deviceType = WIN2D_GET_DEVICE_ASSOCIATION_TYPE::WIN2D_GET_DEVICE_ASSOCIATION_TYPE_UNSPECIFIED;
+        ThrowIfFailed(As<ICanvasImageInterop>(virtualBitmap)->GetDevice(&actualDevice, &deviceType));
+
+        Assert::IsTrue(IsSameInstance(f.Device.Get(), actualDevice.Get()));
+        Assert::IsTrue(deviceType == WIN2D_GET_DEVICE_ASSOCIATION_TYPE::WIN2D_GET_DEVICE_ASSOCIATION_TYPE_CREATION_DEVICE);
     }
 
     TEST_METHOD_EX(CanvasVirtualBitmap_CreateNew_PassesCorrectAlphaModeThrough)
@@ -230,7 +244,7 @@ TEST_CLASS(CanvasVirtualBitmapUnitTest)
         CreatedFixture f;
 
         float realizedDpi = 0;
-        auto d2dImage = f.VirtualBitmap->GetD2DImage(nullptr, nullptr, GetImageFlags::None, 0.0f, &realizedDpi);
+        auto d2dImage = f.VirtualBitmap->GetD2DImage(nullptr, nullptr, WIN2D_GET_D2D_IMAGE_FLAGS_NONE, 0.0f, &realizedDpi);
 
         Assert::IsTrue(IsSameInstance(f.ImageSource.Get(), d2dImage.Get()));
         Assert::AreEqual(0.0f, realizedDpi);
@@ -427,5 +441,3 @@ TEST_CLASS(CanvasVirtualBitmapUnitTest)
         Assert::IsTrue(IsSameInstance(f.Device.Get(), actualDevice.Get()));
     }
 };
-
-#endif

@@ -5,18 +5,13 @@
 #include "pch.h"
 
 
-using namespace Windows::UI;
+using namespace Microsoft::UI;
 using namespace Microsoft::Graphics::Canvas;
 using namespace Microsoft::Graphics::Canvas::Brushes;
 using namespace Microsoft::Graphics::Canvas::Text;
 
-#if WINVER > _WIN32_WINNT_WINBLUE
-    typedef Windows::Foundation::Numerics::float3x2 MatrixType;
-    typedef Windows::Foundation::Numerics::float2 Vector2Type;
-#else
-    typedef Microsoft::Graphics::Canvas::Numerics::Matrix3x2 MatrixType;
-    typedef Microsoft::Graphics::Canvas::Numerics::Vector2 Vector2Type;
-#endif
+typedef Windows::Foundation::Numerics::float3x2 MatrixType;
+typedef Windows::Foundation::Numerics::float2 Vector2Type;
 
 static float const sc_fontSize = 15.0f;
 

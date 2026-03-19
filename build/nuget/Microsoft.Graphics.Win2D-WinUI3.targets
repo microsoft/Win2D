@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <!-- Set the platform from the RID, first -->
+  <PropertyGroup>
+    <win2d-Platform Condition="$(RuntimeIdentifier.EndsWith('-x64'))">x64</win2d-Platform>
+    <win2d-Platform Condition="$(RuntimeIdentifier.EndsWith('-x86'))">x86</win2d-Platform>
+    <win2d-Platform Condition="$(RuntimeIdentifier.EndsWith('-arm64'))">arm64</win2d-Platform>
+  </PropertyGroup>
+
+  <!-- If still empty, try to set the platform based on the build platform -->
+  <PropertyGroup Condition="'$(win2d-Platform)' == ''">
+    <win2d-Platform Condition="'$(Platform)' == 'Win32'">x86</win2d-Platform>
+    <win2d-Platform Condition="'$(Platform)' != 'Win32'">$(Platform)</win2d-Platform>
+    <win2d-Platform Condition="'$(Platform)' == 'AnyCPU'"></win2d-Platform>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Win2DWarnNoPlatform Condition="'$(Win2DWarnNoPlatform)' == ''">true</Win2DWarnNoPlatform>
+  </PropertyGroup>
+
+  <!-- Register the Win2D .winmd in the APPX manifest (requires the new MSIX tooling) -->
+  <ItemGroup>
+    <WindowsMetadataReference Include="$(Win2DWinMDPath)" Implementation="$(Win2DWinMDImplementationDllName)" />
+  </ItemGroup>
+
+  <!--
+    Emit a warning if building as 'AnyCPU', which is not supported. Note that we are emitting this warning but
+    we are not copying the .dll ourselves. NuGet will do that automatically when projects are published.
+  -->
+  <Target Name="Win2DWarnNoPlatform" BeforeTargets="BeforeBuild" Condition="'$(win2d-Platform)' == '' and '$(Win2DWarnNoPlatform)' == 'true'">
+    <Warning
+      Code="WIN2D0001"
+      Text="'Microsoft.Graphics.Canvas.dll' cannot be referenced correctly, because the project is being built as 'AnyCPU'. Please specify a specific platform (eg. 'x64'), publish with a RID (runtime identifier, eg. 'win-x64'), or set 'Win2DWarnNoPlatform' to suppress this error (note: you'll need to manually handle referencing the Win2D .dll in that case)." />
+  </Target>
+
+</Project>

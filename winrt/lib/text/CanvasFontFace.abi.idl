@@ -224,9 +224,7 @@ namespace Microsoft.Graphics.Canvas.Text
         [propget] HRESULT Stretch([out, retval] Windows.UI.Text.FontStretch* value);
         [propget] HRESULT Style([out, retval] Windows.UI.Text.FontStyle* value);
 
-#if WINVER > _WIN32_WINNT_WINBLUE
         [propget] HRESULT FamilyNames([out, retval] Windows.Foundation.Collections.IMapView<HSTRING, HSTRING>** values);
-#endif
         [propget] HRESULT FaceNames([out, retval] Windows.Foundation.Collections.IMapView<HSTRING, HSTRING>** values);
 
         // Returns null if the string was not found.

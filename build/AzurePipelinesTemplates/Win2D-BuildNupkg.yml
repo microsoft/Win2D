@@ -1,0 +1,64 @@
+parameters:
+  PipelineType: ""
+  SignCode: false
+steps:
+# Download nuget.exe
+- script : call build\nuget\download-nuget.cmd
+  displayName: Run download-nuget.cmd
+    
+# Download binaries from previous stage
+- task: DownloadPipelineArtifact@2
+  inputs:
+    artifactName: 'build_output_x64'
+    targetPath: $(Build.SourcesDirectory)
+- task: DownloadPipelineArtifact@2
+  inputs:
+    artifactName: 'build_output_Win32;AnyCPU'
+    targetPath: $(Build.SourcesDirectory)
+- task: DownloadPipelineArtifact@2
+  inputs:
+    artifactName: 'build_output_ARM64'
+    targetPath: $(Build.SourcesDirectory)
+- script: |
+    cd $(Build.SourcesDirectory)
+    dir
+  displayName: Print root directory
+
+# Build nuget package
+- task: CmdLine@2
+  displayName: build-nupkg
+  inputs:
+    ${{ if eq(parameters.PipelineType, 'Release') }}:
+      script: call build/nuget/build-nupkg.cmd signed
+    ${{ if ne(parameters.PipelineType, 'Release') }}:
+      script: call build/nuget/build-nupkg.cmd $(packageSuffix)
+
+# Publish symbols
+# Per the PublishSymbols docs, these are retained as long as the build is (30 days for CI, forever for Release)
+- task: PublishSymbols@2
+  displayName: Publish symbols path
+  inputs:
+    SearchPattern: '**/bin/**/release/winrt.dll.uap/Microsoft.Graphics.Canvas.pdb'
+    SymbolServerType: TeamServices
+    Pat: $(System.AccessToken)
+  env:
+    ARTIFACTSERVICES_SYMBOL_ACCOUNTNAME: $(WIN2D_ADO_ORG)
+
+# Sign nuget package
+- task: onebranch.pipeline.signing@1
+  displayName: 'CodeSign (Nuget)'
+  condition: eq(${{ parameters.SignCode }}, 'true')
+  inputs:
+    command: sign
+    signing_profile: external_distribution
+    files_to_sign: '**\*.nupkg'
+    search_root: $(Build.SourcesDirectory)\bin\
+
+# Copy nuget package to artifact staging directory
+- task: CopyFiles@2
+  displayName: 'Copy Nupkg to: $(Build.ArtifactStagingDirectory)'
+  inputs:
+    SourceFolder: bin
+    Contents: >-
+      *.nupkg
+    TargetFolder: $(Build.ArtifactStagingDirectory)

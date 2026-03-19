@@ -125,13 +125,9 @@ ComPtr<DWriteFontReferenceType> GetContainer(IDWriteFontFace2* fontFaceInstance)
     // So we funnel both 8 and 10 through this path.
     //
 
-#if WINVER > _WIN32_WINNT_WINBLUE
     auto font3 = As<IDWriteFont3>(font);
     ComPtr<IDWriteFontFaceReference> container;
     ThrowIfFailed(font3->GetFontFaceReference(&container));
-#else
-    auto container = As<IDWriteFont2>(font);
-#endif
 
     return container;
 }
@@ -823,7 +819,6 @@ IFACEMETHODIMP CanvasFontFace::get_Style(FontStyle* value)
         });
 }
 
-#if WINVER > _WIN32_WINNT_WINBLUE
 IFACEMETHODIMP CanvasFontFace::get_FamilyNames(IMapView<HSTRING, HSTRING>** values)
 {
     return ExceptionBoundary(
@@ -837,7 +832,6 @@ IFACEMETHODIMP CanvasFontFace::get_FamilyNames(IMapView<HSTRING, HSTRING>** valu
             CopyLocalizedStringsToMapView(localizedStrings, values);
         });
 }
-#endif
 
 IFACEMETHODIMP CanvasFontFace::get_FaceNames(IMapView<HSTRING, HSTRING>** values)
 {
@@ -878,13 +872,7 @@ IFACEMETHODIMP CanvasFontFace::HasCharacter(uint32_t unicodeValue, boolean* valu
         {
             CheckInPointer(value);
 
-#if WINVER > _WIN32_WINNT_WINBLUE
             *value = !!GetPhysicalPropertyContainer()->HasCharacter(unicodeValue);
-#else
-            BOOL exists;
-            ThrowIfFailed(GetPhysicalPropertyContainer()->HasCharacter(unicodeValue, &exists));
-            *value = !!exists;
-#endif
         });
 }
 
@@ -1113,7 +1101,6 @@ ComPtr<DWriteFontFaceType> const& CanvasFontFace::GetRealizedFontFace()
     {
         auto& resource = GetResource();
 
-#if WINVER > _WIN32_WINNT_WINBLUE
         HRESULT hr = resource->CreateFontFace(&m_realizedFontFace);
 
         if (hr == DWRITE_E_REMOTEFONT)
@@ -1121,11 +1108,6 @@ ComPtr<DWriteFontFaceType> const& CanvasFontFace::GetRealizedFontFace()
             ThrowHR(hr, Strings::RemoteFontUnavailable);
         }
         ThrowIfFailed(hr);
-#else
-        ComPtr<IDWriteFontFace> baseFontFace;
-        ThrowIfFailed(resource->CreateFontFace(&baseFontFace));
-        m_realizedFontFace = As<DWriteFontFaceType>(baseFontFace);
-#endif
     }
 
     return m_realizedFontFace;
@@ -1133,9 +1115,5 @@ ComPtr<DWriteFontFaceType> const& CanvasFontFace::GetRealizedFontFace()
 
 ComPtr<DWritePhysicalFontPropertyContainer> CanvasFontFace::GetPhysicalPropertyContainer()
 {
-#if WINVER > _WIN32_WINNT_WINBLUE
     return GetRealizedFontFace();
-#else
-    return GetResource();
-#endif
 }

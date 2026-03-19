@@ -105,6 +105,8 @@ CustomFontManager::CustomFontManager()
 WinString CustomFontManager::GetAbsolutePathFromUri(WinString const& uriString)
 {
     ComPtr<IUriRuntimeClass> uri;
+
+    // This will not overwrite an existing URI scheme in uriString, e.g. file://
     ThrowIfFailed(m_uriFactory->CreateWithRelativeUri(WinString(L"ms-appx://"), uriString, &uri));
 
     return GetAbsolutePathFromUri(uri.Get());
@@ -115,10 +117,37 @@ WinString CustomFontManager::GetAbsolutePathFromUri(IUriRuntimeClass* uri)
     auto storageFileStatics = m_adapter->GetStorageFileStatics();
     ComPtr<IAsyncOperation<StorageFile*>> operation;
 
-    HRESULT hr = storageFileStatics->GetFileFromApplicationUriAsync(uri, &operation);
+    // Check to see if the URI has a file:// host.
+    WinString uriHost;
+    HRESULT hr = uri->get_SchemeName(uriHost.GetAddressOf());
     if (FAILED(hr))
     {
-        ThrowHR(hr, HStringReference(Strings::InvalidFontFamilyUri).Get());
+        ThrowHR(hr, Strings::InvalidFontFamilyUri);
+    }
+    if (CompareStringOrdinal(L"file", -1, (LPCWCH)uriHost, -1, TRUE) == CSTR_EQUAL)
+    {
+        // Get a StorageFile by extracting the file path.
+        WinString uriPath;
+        hr = uri->get_AbsoluteUri(uriPath.GetAddressOf());
+        if (FAILED(hr))
+        {
+            ThrowHR(hr, Strings::InvalidFontFamilyFileUri);
+        }
+        hr = storageFileStatics->GetFileFromPathAsync(uriPath, &operation);
+        if (FAILED(hr))
+        {
+            ThrowHR(hr, Strings::InvalidFontFamilyFileUri);
+        }
+    }
+    else
+    {
+        // Get a StorageFile directly from the URI.
+        // This is not supported on unpackaged apps.
+        hr = storageFileStatics->GetFileFromApplicationUriAsync(uri, &operation);
+        if (FAILED(hr))
+        {
+            ThrowHR(hr, HStringReference(Strings::InvalidFontFamilyUri).Get());
+        }
     }
 
     Event operationCompleted(CreateEventEx(nullptr, nullptr, CREATE_EVENT_MANUAL_RESET, EVENT_ALL_ACCESS));
@@ -255,7 +284,8 @@ void CustomFontManager::ValidateUri(WinString const& uriString)
     ThrowIfFailed(uri->get_SchemeName(schemeName.GetAddressOf()));
 
     if (!schemeName.Equals(HStringReference(L"ms-appx").Get()) &&
-        !schemeName.Equals(HStringReference(L"ms-appdata").Get()))
+        !schemeName.Equals(HStringReference(L"ms-appdata").Get()) &&
+        !schemeName.Equals(HStringReference(L"file").Get()))
     {
         ThrowHR(E_INVALIDARG, Strings::InvalidFontFamilyUriScheme);
     }

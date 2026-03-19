@@ -59,20 +59,34 @@ public:
         m_dispatcherActive = false;
     }
 
-    virtual ComPtr<IAsyncAction> RunAsync(IDispatchedHandler* handler) override
+    virtual ComPtr<IAsyncAction> RunAsync(IDispatcherQueueHandler* handler) override
     {
+        auto action = Make<AnimatedControlAsyncAction>(handler);
+
         if (m_dispatcherActive)
         {
-            ComPtr<IAsyncAction> action;
-            ThrowIfFailed(m_dispatcher->RunAsync(CoreDispatcherPriority_Low, handler, &action));
-            return action;
+            auto callback = Callback<AddFtmBase<IDispatcherQueueHandler>::Type>(
+                [action] {
+                    auto result = action->InvokeAndFireCompletion();
+                    if (SUCCEEDED(result.ActionResult))
+                    {
+                        return result.ActionResult;
+                    }
+                    else
+                    {
+                        return result.CompletedHandlerResult;
+                    }
+                });
+
+            boolean result;
+            ThrowIfFailed(m_dispatcher->TryEnqueueWithPriority(DispatcherQueuePriority_Low, callback.Get(), &result));
         }
         else
         {
-            auto action = Make<AnimatedControlAsyncAction>(handler);
             m_pendingActions.push_back(action);
-            return action;
         }
+
+        return action;
     }
 
     virtual bool HasThreadAccess() override
@@ -184,7 +198,7 @@ public:
 
             virtual void StartDispatcher() { m_thread->StartDispatcher(); }
             virtual void StopDispatcher() { m_thread->StopDispatcher(); }
-            virtual ComPtr<IAsyncAction> RunAsync(IDispatchedHandler* handler) { return m_thread->RunAsync(handler); }
+            virtual ComPtr<IAsyncAction> RunAsync(IDispatcherQueueHandler* handler) { return m_thread->RunAsync(handler); }
             virtual bool HasThreadAccess() { return m_thread->HasThreadAccess(); }
         };
 

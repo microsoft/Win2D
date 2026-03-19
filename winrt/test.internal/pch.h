@@ -66,6 +66,7 @@ using namespace ABI::Microsoft::Graphics::Canvas::Effects;
 #include "stubs/StubSurfaceImageSourceFactory.h"
 #include "stubs/StubUserControl.h"
 #include "stubs/StubUserControlWithXamlRoot.h"
+#include "stubs/StubDependencyObject.h"
 #include "stubs/TestBitmapAdapter.h"
 #include "stubs/TestDeviceAdapter.h"
 #include "stubs/SwitchableTestBrushFixture.h"

@@ -1,0 +1,118 @@
+parameters:
+- name: "RunTests"
+  type: boolean
+  default: true
+- name: "PipelineType"
+  type: string
+  default: "not_set"
+- name: "OBImage"
+  type: string
+  default: "windows"
+- name: "SignCode"
+  type: boolean
+  default: false
+
+# Build Win2D code and nuget package
+stages:
+- stage: Build_Win2D
+  jobs:
+  # Build Win2D in parallel
+  - job: Build_Win2D
+    strategy:
+      matrix:
+        x86:
+          # x86 is responsible for building docs and tools, which is AnyCPU
+          architecture: "Win32;AnyCPU"
+          archDirectory: "uapx86"
+          buildConfiguration: "Release"
+        x64:
+          architecture: "x64"
+          archDirectory: "uapx64"
+          buildConfiguration: "Release"
+        # ARM:
+        #   architecture: "ARM"
+        #   archDirectory: "uaparm"
+        #   buildConfiguration: "Release"
+        ARM64:
+          architecture: "ARM64"
+          archDirectory: "uaparm64"
+          buildConfiguration: "Release"
+    pool:
+      type: '${{ parameters.OBImage }}'
+    variables:
+      # ${{ if eq(parameters.PipelineType, 'Nightly') }}:
+        # nightly_winappsdk_version: $[ stageDependencies.Version_Win2D.Version.outputs['Win2dVersionTask.nightly_winappsdk_version'] ]
+      # binaries scanning tools are run on this directory ( https://onebranch.visualstudio.com/OneBranch/_wiki/wikis/OneBranch.wiki/4634/SDL-(Static-Analysis)-for-Containerized-Workflows ) and 
+      # this directory is uploaded to pipeline artifacts. More info at https://aka.ms/obpipelines/artifacts
+      ob_outputDirectory: '$(Build.ArtifactStagingDirectory)'
+      ob_artifactBaseName: 'build_output'
+      ob_artifactSuffix: '_$(architecture)'
+    steps:
+    - template: Win2D-ParallelBuild-Steps.yml
+      parameters:
+        BuildTests: false
+        RunTests: false
+        BuildDocs: true
+        BuildTools: true
+        PublishBinaries: true
+        SignCode: ${{ parameters.SignCode }}
+        PipelineType: ${{ parameters.PipelineType }}
+- stage: Build_Nupkg
+  dependsOn: Build_Win2D
+  jobs:
+  - job: Run_BuildNupkg
+    pool:
+      type: '${{ parameters.OBImage }}'
+    variables:
+      # binaries scanning tools are run on this directory ( https://onebranch.visualstudio.com/OneBranch/_wiki/wikis/OneBranch.wiki/4634/SDL-(Static-Analysis)-for-Containerized-Workflows ) and 
+      # this directory is uploaded to pipeline artifacts. More info at https://aka.ms/obpipelines/artifacts
+      ob_outputDirectory: '$(Build.ArtifactStagingDirectory)'
+      ob_artifactBaseName: 'nupkg'
+    steps:
+    - template: Win2D-BuildNupkg.yml
+      parameters:
+        PipelineType: ${{ parameters.PipelineType }}
+        SignCode: ${{ parameters.SignCode }}
+- ${{ if parameters.RunTests }}:
+  - stage: Test_Win2D
+    jobs:
+    - job: Test_Win2D
+      strategy:
+        matrix:
+          x86:
+            architecture: "Win32"
+            archDirectory: "uapx86"
+            buildConfiguration: "Release"
+          x64:
+            architecture: "x64"
+            archDirectory: "uapx64"
+            buildConfiguration: "Release"
+          # Test projects don't support ARM64 right now
+          # ARM64:
+          #   architecture: "ARM64"
+          #   buildConfiguration: "Release"
+      pool:
+        # type: '${{ parameters.OBImage }}'
+        type: windows
+        isCustom: true
+        name: 'Azure Pipelines'
+        vmImage: 'windows-2022'
+      variables:
+        #${{ if eq(parameters.PipelineType, 'Nightly') }}:
+          #nightly_winappsdk_version: $[ stageDependencies.Version_Win2D.Version.outputs['Win2dVersionTask.nightly_winappsdk_version'] ]
+        # binaries scanning tools are run on this directory ( https://onebranch.visualstudio.com/OneBranch/_wiki/wikis/OneBranch.wiki/4634/SDL-(Static-Analysis)-for-Containerized-Workflows ) and 
+        # this directory is uploaded to pipeline artifacts. More info at https://aka.ms/obpipelines/artifacts
+        ob_outputDirectory: '$(Build.ArtifactStagingDirectory)'
+        ob_artifactBaseName: 'test_output'
+        ob_artifactSuffix: '_$(architecture)'
+      steps:
+      - template: Win2D-ParallelBuild-Steps.yml
+        parameters:
+          BuildTests: true
+          RunTests: true
+          BuildDocs: false
+          BuildToos: false
+          PublishBinaries: false
+          SignCode: false
+          PipelineType: ${{ parameters.PipelineType }}
+    

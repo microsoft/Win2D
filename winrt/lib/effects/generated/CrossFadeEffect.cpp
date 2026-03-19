@@ -7,8 +7,6 @@
 #include "pch.h"
 #include "CrossFadeEffect.h"
 
-#if (defined _WIN32_WINNT_WIN10) && (WINVER >= _WIN32_WINNT_WIN10)
-
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Effects
 {
     CrossFadeEffect::CrossFadeEffect(ICanvasDevice* device, ID2D1Effect* effect)
@@ -64,5 +62,3 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
     ActivatableClassWithFactory(CrossFadeEffect, CrossFadeEffectFactory);
 }}}}}
-
-#endif // _WIN32_WINNT_WIN10

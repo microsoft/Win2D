@@ -366,6 +366,26 @@ IFACEMETHODIMP CanvasAnimatedControl::get_Paused(boolean* value)
         });
 }
 
+IFACEMETHODIMP CanvasAnimatedControl::put_SyncInterval(int32_t value)
+{
+    return ExceptionBoundary(
+        [&]
+        {
+            auto lock = Lock(m_sharedStateMutex);
+            m_sharedState.SyncInterval = value;
+        });
+}
+IFACEMETHODIMP CanvasAnimatedControl::get_SyncInterval(int32_t* value)
+{
+    return ExceptionBoundary(
+        [&]
+        {
+            CheckInPointer(value);
+            auto lock = Lock(m_sharedStateMutex);
+            *value = m_sharedState.SyncInterval;
+        });
+}
+
 IFACEMETHODIMP CanvasAnimatedControl::get_Size(Size* value)
 {
     return ExceptionBoundary(
@@ -422,8 +442,8 @@ IFACEMETHODIMP CanvasAnimatedControl::ResetElapsedTime()
 }
 
 IFACEMETHODIMP CanvasAnimatedControl::CreateCoreIndependentInputSource(
-    CoreInputDeviceTypes deviceTypes,
-    ICoreInputSourceBase** returnValue)
+    InputPointerSourceDeviceKinds deviceTypes,
+    IInputPointerSource** returnValue)
 {
     return ExceptionBoundary(
         [&]
@@ -488,7 +508,7 @@ IFACEMETHODIMP CanvasAnimatedControl::get_HasGameLoopThreadAccess(boolean* value
 }
 
 IFACEMETHODIMP CanvasAnimatedControl::RunOnGameLoopThreadAsync(
-    IDispatchedHandler* callback,
+    IDispatcherQueueHandler* callback,
     IAsyncAction** asyncAction)
 {
     return ExceptionBoundary(
@@ -711,19 +731,19 @@ void CanvasAnimatedControl::Changed(ChangeReason reason)
     // IWindow will not be available in Xaml island scenarios, so prefer
     // IDependencyObject for getting the dispatcher.
     //
-    ComPtr<ICoreDispatcher> dispatcher;
+    ComPtr<IDispatcherQueue> dispatcherQueue;
     auto control = GetControl();
     if (auto dependencyObject = MaybeAs<IDependencyObject>(control))
     {
-        ThrowIfFailed(dependencyObject->get_Dispatcher(&dispatcher));
+        ThrowIfFailed(dependencyObject->get_DispatcherQueue(&dispatcherQueue));
     }
     else
     {
-        ThrowIfFailed(GetWindow()->get_Dispatcher(&dispatcher));
+        ThrowIfFailed(GetWindow()->get_DispatcherQueue(&dispatcherQueue));
     }
 
     WeakRef weakSelf = AsWeak(this);
-    auto callback = Callback<AddFtmBase<IDispatchedHandler>::Type>(
+    auto callback = Callback<AddFtmBase<IDispatcherQueueHandler>::Type>(
         [weakSelf]() mutable
         {
             return ExceptionBoundary(
@@ -737,8 +757,8 @@ void CanvasAnimatedControl::Changed(ChangeReason reason)
                 });
         });
 
-    ComPtr<IAsyncAction> asyncAction;
-    ThrowIfFailed(dispatcher->RunAsync(CoreDispatcherPriority_Normal, callback.Get(), &asyncAction));
+    boolean result;
+    ThrowIfFailed(dispatcherQueue->TryEnqueueWithPriority(DispatcherQueuePriority_Normal, callback.Get(), &result));
 }
 
 void CanvasAnimatedControl::ChangedImpl()
@@ -1225,7 +1245,7 @@ bool CanvasAnimatedControl::Tick(
             Draw(renderTarget->Target.Get(), clearColor, invokeDrawHandlers, updateResult.IsRunningSlowly);
             EventWrite_CanvasAnimatedControl_Draw_Stop();
             EventWrite_CanvasAnimatedControl_Present_Start();            
-            ThrowIfFailed(renderTarget->Target->Present());
+            ThrowIfFailed(renderTarget->Target->PresentWithSyncInterval(m_sharedState.SyncInterval));
             EventWrite_CanvasAnimatedControl_Present_Stop();
 
             drew = true;

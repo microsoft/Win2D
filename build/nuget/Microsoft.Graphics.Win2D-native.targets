@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup>
+    <win2d-Platform Condition="'$(Platform)' == 'Win32'">x86</win2d-Platform>
+    <win2d-Platform Condition="'$(Platform)' != 'Win32'">$(Platform)</win2d-Platform>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <!-- This is a workaround for a WinAppSDK VSIX bug (MSFT:40265852) that causes not apps to not properly generate ActivatableClass entries on incremental build -->
+    <AppxWinMdCacheEnabled>false</AppxWinMdCacheEnabled>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="$(MSBuildThisFileDirectory)..\..\lib\uap10.0\Microsoft.Graphics.Canvas.winmd">
+      <Implementation>Microsoft.Graphics.Canvas.dll</Implementation>
+    </Reference>
+    <ReferenceCopyLocalPaths Include="$(MSBuildThisFileDirectory)..\..\runtimes\win-$(win2d-Platform)\native\Microsoft.Graphics.Canvas.dll" />
+  </ItemGroup>
+
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>
+        $(MSBuildThisFileDirectory)..\..\Include;
+        $(MSBuildThisFileDirectory)..\..\Include\$(win2d-Platform);
+        %(AdditionalIncludeDirectories);</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+
+  <Import Project="$(MSBuildThisFileDirectory)..\Win2D.common.targets" />
+
+</Project>

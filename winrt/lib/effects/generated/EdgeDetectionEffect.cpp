@@ -7,8 +7,6 @@
 #include "pch.h"
 #include "EdgeDetectionEffect.h"
 
-#if (defined _WIN32_WINNT_WIN10) && (WINVER >= _WIN32_WINNT_WIN10)
-
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Effects
 {
     EdgeDetectionEffect::EdgeDetectionEffect(ICanvasDevice* device, ID2D1Effect* effect)
@@ -70,5 +68,3 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
     ActivatableClassWithFactory(EdgeDetectionEffect, ::SimpleAgileActivationFactory<EdgeDetectionEffect>);
 }}}}}
-
-#endif // _WIN32_WINNT_WIN10

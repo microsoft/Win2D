@@ -489,17 +489,19 @@ TEST_CLASS(CanvasVirtualControlTests)
         ThrowIfFailed(f.Control->put_ClearColor(anyColor));
     }
 
+// Test removed from WinUI3, as DPI now comes from the XamlRoot instead of the adapter
+#ifndef WINUI3
     TEST_METHOD_EX(CanvasVirtualControl_WhenDpiChanges_ImageSourceIsRecreatedAndInvalidated)
     {
         Fixture f;
-
+ 
         float expectedWidth = 123;
         float expectedHeight = 456;
         float expectedDpi = f.Adapter->LogicalDpi * 2;
-
+ 
         auto imageSource = f.ExpectCreateImageSource();
         f.Load(expectedWidth, expectedHeight);
-
+ 
         imageSource->ResizeWithWidthAndHeightAndDpiMethod.SetExpectedCalls(1,
             [&] (float w, float h, float dpi)
             {
@@ -508,12 +510,13 @@ TEST_CLASS(CanvasVirtualControlTests)
                 Assert::AreEqual(expectedDpi, dpi);
                 return S_OK;
             });
-
+ 
         imageSource->InvalidateMethod.SetExpectedCalls(1);
-
+ 
         f.Adapter->LogicalDpi = f.Adapter->LogicalDpi * 2;
         f.Adapter->RaiseDpiChangedEvent();
     }
+#endif
 
     TEST_METHOD_EX(CanvasVirtualControl_WhenResized_ImageSourceIsResized)
     {
@@ -601,16 +604,18 @@ TEST_CLASS(CanvasVirtualControlTests)
         replacementImageSource->RaiseRegionsInvalidated(std::vector<Rect> { anyRegion }, anyRegion);
     }
 
+//Test removed, as DPI now comes from the XamlRoot instead of the adapter
+#ifndef WINUI3
     TEST_METHOD_EX(CanvasVirtualControl_DpiScaling_ResourceHasCorrectDpiScale)
     {
         for (auto testCase : dpiScalingTestCases)
         {
             Fixture f;
-
+ 
             f.Adapter->LogicalDpi = testCase.Dpi;
-
+ 
             f.Control->put_DpiScale(testCase.DpiScale);
-
+ 
             auto imageSource = Make<StubCanvasVirtualImageSource>();
             f.Adapter->CreateCanvasVirtualImageSourceMethod.SetExpectedCalls(1,
                 [&](ICanvasDevice*, float, float, float dpi, CanvasAlphaMode)
@@ -619,10 +624,11 @@ TEST_CLASS(CanvasVirtualControlTests)
                     Assert::AreEqual(dpi, expectedDpi);
                     return imageSource;
                 });
-
+ 
             f.Load();
         }
     }
+#endif
 
     TEST_METHOD_EX(CanvasVirtualControl_WhenChangedIsCalledOnBackgroundThread_ChangedImplIsDeferred)
     {

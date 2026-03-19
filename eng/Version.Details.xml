@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<!--
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+Licensed under the MIT License. See LICENSE.txt in the project root for license information.
+-->
+
+<!-- This version is updated automatically by Maestro in the Nightly branch.
+     It is used by the Nightly pipeline, but it is NOT used by the CI pipeline,
+     the Release pipeline, or the local build.cmd script. Those builds use the version
+     defined in build\WindowsAppSdk.common.props -->
+<Dependencies>
+  <ProductDependencies>
+    <Dependency Name="Microsoft.WindowsAppSDK.WinUI" Version="1.8.260204000">
+      <Uri>https://dev.azure.com/microsoft/ProjectReunion/_git/ProjectReunionInternal</Uri>
+      <Sha>e9f6d119a70db6516304e4ed00b080ce46dc4bee</Sha>
+    </Dependency>
+    <Dependency Name="Microsoft.WindowsAppSDK.InteractiveExperiences" Version="1.8.260125001">
+      <Uri>https://dev.azure.com/microsoft/ProjectReunion/_git/ProjectReunionInternal</Uri>
+      <Sha>e9f6d119a70db6516304e4ed00b080ce46dc4bee</Sha>
+    </Dependency>
+    <Dependency Name="Microsoft.WindowsAppSDK.Foundation" Version="1.8.260203002">
+      <Uri>https://dev.azure.com/microsoft/ProjectReunion/_git/ProjectReunionInternal</Uri>
+      <Sha>e9f6d119a70db6516304e4ed00b080ce46dc4bee</Sha>
+    </Dependency>
+  </ProductDependencies>
+  <ToolsetDependencies>
+  </ToolsetDependencies>
+</Dependencies>

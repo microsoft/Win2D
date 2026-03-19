@@ -4,8 +4,6 @@
 
 #include "pch.h"
 
-#ifndef WINDOWS_PHONE
-
 #include "CanvasPrintDocumentAdapter.h"
 
 ComPtr<ICanvasDevice> DefaultPrintDocumentAdapter::GetSharedDevice()
@@ -13,7 +11,20 @@ ComPtr<ICanvasDevice> DefaultPrintDocumentAdapter::GetSharedDevice()
     return SharedDeviceState::GetInstance()->GetSharedDevice(false);
 }
 
+#ifdef WINUI3
 
+ComPtr<IDispatcherQueue> DefaultPrintDocumentAdapter::GetDispatcherForCurrentThread()
+{
+    ComPtr<ABI::Microsoft::UI::Dispatching::IDispatcherQueueStatics> dispatcherQueueStatic;
+    ThrowIfFailed(GetActivationFactory(HStringReference(RuntimeClass_Microsoft_UI_Dispatching_DispatcherQueue).Get(), &dispatcherQueueStatic));
+
+    ComPtr<IDispatcherQueue> dispatcherQueue;
+    ThrowIfFailed(dispatcherQueueStatic->GetForCurrentThread(&dispatcherQueue));
+
+    return dispatcherQueue;
+}
+
+#else
 ComPtr<ICoreDispatcher> DefaultPrintDocumentAdapter::GetDispatcherForCurrentThread()
 {
     ComPtr<ICoreWindowStatic> coreWindowStatic;
@@ -30,7 +41,7 @@ ComPtr<ICoreDispatcher> DefaultPrintDocumentAdapter::GetDispatcherForCurrentThre
 
     return coreDispatcher;
 }
-
+#endif
 
 float DefaultPrintDocumentAdapter::GetLogicalDpi()
 {
@@ -61,5 +72,3 @@ bool DefaultPrintDocumentAdapter::ShouldWaitForUIThread()
 {
     return true;
 }
-
-#endif

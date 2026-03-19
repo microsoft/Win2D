@@ -223,9 +223,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)xaml\ControlFixtures.h">
       <Filter>xaml</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)xaml\MockCoreIndependentInputSource.h">
-      <Filter>xaml</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)xaml\MockDispatcher.h">
       <Filter>xaml</Filter>
     </ClInclude>
@@ -646,11 +643,16 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)mocks\MockD2DSvgStrokeDashArray.h">
       <Filter>mocks</Filter>
     </ClInclude>
-    <ClInclude Include="mocks\MockGeometryAdapter.h">
-      <Filter>mocks</Filter>
+    <ClInclude Include="$(MSBuildThisFileDirectory)stubs\StubDependencyObject.h">
+      <Filter>stubs</Filter>
     </ClInclude>
+    <ClInclude Include="mocks\MockGeometryAdapter.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="$(MSBuildThisFileDirectory)readme.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
 </Project>

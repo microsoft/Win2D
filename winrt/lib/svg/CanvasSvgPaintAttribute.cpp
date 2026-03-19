@@ -4,8 +4,6 @@
 
 #include "pch.h"
 
-#if WINVER > _WIN32_WINNT_WINBLUE
-
 #include "CanvasSvgPaintAttribute.h"
 #include "AttributeHelpers.h"
     
@@ -130,5 +128,3 @@ IFACEMETHODIMP CanvasSvgPaintAttribute::get_Device(ICanvasDevice** device)
             ThrowIfFailed(m_canvasDevice.EnsureNotClosed().CopyTo(device));
         });
 }
-
-#endif

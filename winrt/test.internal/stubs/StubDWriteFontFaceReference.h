@@ -4,8 +4,6 @@
 
 #pragma once
 
-#if WINVER > _WIN32_WINNT_WINBLUE
-
 #include "mocks/MockDWriteFontFaceReference.h"
 
 namespace canvas
@@ -31,5 +29,3 @@ namespace canvas
         }
     };
 }
-
-#endif

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <CsWinRTVersion>2.2.0</CsWinRTVersion>
+        <!-- This value controls all of the projects consuming the WindowsAppSdk and centralizes it in one spot.
+            When updating the version, don't forget to update all of the package.config files as well.
+            The AzureDevOps pipeline will override the version here by setting NIGHTLY_WINAPPSDK_VERSION in the nightly build.
+            That nightly version is read from \eng\Version.Details.xml -->
+        <WindowsAppSdkWinUIVersion Condition="'$(NIGHTLY_WINAPPSDK_VERSION)' == ''">1.8.260204000</WindowsAppSdkWinUIVersion>
+        <WindowsAppSdkWinUIVersion Condition="'$(NIGHTLY_WINAPPSDK_VERSION)' != ''">$(NIGHTLY_WINAPPSDK_VERSION)</WindowsAppSdkWinUIVersion>
+        <WindowsAppSdkInteractiveExperiencesVersion Condition="'$(NIGHTLY_WINAPPSDK_VERSION)' == ''">1.8.260125001</WindowsAppSdkInteractiveExperiencesVersion>
+        <WindowsAppSdkFoundationVersion Condition="'$(NIGHTLY_WINAPPSDK_VERSION)' == ''">1.8.260203002</WindowsAppSdkFoundationVersion>
+        <WebView2Version>1.0.3800.47</WebView2Version>
+
+        <_PackagesPath>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\packages'))</_PackagesPath>
+        <_WindowsAppSdkWinUIPackageRoot>$(_PackagesPath)\Microsoft.WindowsAppSDK.WinUI.$(WindowsAppSdkWinUIVersion)</_WindowsAppSdkWinUIPackageRoot>
+        <_WindowsAppSdkInteractiveExperiencesPackageRoot>$(_PackagesPath)\Microsoft.WindowsAppSDK.InteractiveExperiences.$(WindowsAppSdkInteractiveExperiencesVersion)</_WindowsAppSdkInteractiveExperiencesPackageRoot>
+        <_WindowsAppSdkFoundationPackageRoot>$(_PackagesPath)\Microsoft.WindowsAppSDK.Foundation.$(WindowsAppSdkFoundationVersion)</_WindowsAppSdkFoundationPackageRoot>
+        <_WebView2PackageRoot>$(_PackagesPath)\Microsoft.Web.WebView2.$(WebView2Version)</_WebView2PackageRoot>
+
+        <WindowsAppSdkWinUI_props>$(_WindowsAppSdkWinUIPackageRoot)\build\native\Microsoft.WindowsAppSDK.WinUI.props</WindowsAppSdkWinUI_props>
+        <WindowsAppSdkWinUI_targets>$(_WindowsAppSdkWinUIPackageRoot)\build\native\Microsoft.WindowsAppSDK.WinUI.targets</WindowsAppSdkWinUI_targets>
+        <WindowsAppSdkInteractiveExperiences_props>$(_WindowsAppSdkInteractiveExperiencesPackageRoot)\build\native\Microsoft.WindowsAppSDK.InteractiveExperiences.props</WindowsAppSdkInteractiveExperiences_props>
+        <WindowsAppSdkInteractiveExperiences_targets>$(_WindowsAppSdkInteractiveExperiencesPackageRoot)\build\native\Microsoft.WindowsAppSDK.InteractiveExperiences.targets</WindowsAppSdkInteractiveExperiences_targets>
+        <WindowsAppSdkFoundation_props>$(_WindowsAppSdkFoundationPackageRoot)\build\native\Microsoft.WindowsAppSDK.Foundation.props</WindowsAppSdkFoundation_props>
+        <WindowsAppSdkFoundation_targets>$(_WindowsAppSdkFoundationPackageRoot)\build\native\Microsoft.WindowsAppSDK.Foundation.targets</WindowsAppSdkFoundation_targets>
+        <WebView2_targets>$(_WebView2PackageRoot)\build\native\Microsoft.Web.WebView2.targets</WebView2_targets>
+    </PropertyGroup>
+</Project>

@@ -4,8 +4,6 @@
 
 #pragma once
 
-#if WINVER > _WIN32_WINNT_WINBLUE
-
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Geometry
 {
     using namespace Numerics;
@@ -83,5 +81,3 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         static CanvasGradientMeshPatch PatchFromD2DPatch(D2D1_GRADIENT_MESH_PATCH const& d2dPatch);
     };
 }}}}}
-
-#endif

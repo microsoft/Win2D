@@ -4,8 +4,6 @@
 
 #include "pch.h"
 
-#if WINVER > _WIN32_WINNT_WINBLUE
-
 namespace AttributeHelpers
 {
     void GetElementImpl(
@@ -38,5 +36,3 @@ namespace AttributeHelpers
         }
     }
 }
-
-#endif

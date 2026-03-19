@@ -4,8 +4,6 @@
 
 #include "pch.h"
 
-#if WINVER > _WIN32_WINNT_WINBLUE
-
 #include "BufferStreamWrapper.h"
 
 using namespace ABI::Microsoft::Graphics::Canvas::Svg;
@@ -179,5 +177,3 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     }
 
 }}}}}
-
-#endif

@@ -21,7 +21,7 @@ static ComPtr<IVirtualSurfaceImageSourceFactory> GetVirtualSurfaceImageSourceFac
 {
     ComPtr<IVirtualSurfaceImageSourceFactory> f;
     ThrowIfFailed(GetActivationFactory(
-        HStringReference(RuntimeClass_Windows_UI_Xaml_Media_Imaging_VirtualSurfaceImageSource).Get(),
+        HStringReference(RuntimeClass_Microsoft_UI_Xaml_Media_Imaging_VirtualSurfaceImageSource).Get(),
         &f));
 
     return f;
@@ -568,8 +568,8 @@ IFACEMETHODIMP CanvasVirtualImageSource::UpdatesNeeded()
 
 bool CanvasVirtualImageSource::IsOnUIThread()
 {
-    ComPtr<ICoreDispatcher> dispatcher;
-    HRESULT hr = As<IDependencyObject>(m_vsis)->get_Dispatcher(&dispatcher);
+    ComPtr<IDispatcherQueue> dispatcher;
+    HRESULT hr = As<IDependencyObject>(m_vsis)->get_DispatcherQueue(&dispatcher);
     if (hr == E_FAIL)
     {
         // When running in the XAML designer, get_Dispatcher will fail with
@@ -582,7 +582,7 @@ bool CanvasVirtualImageSource::IsOnUIThread()
     }
 
     boolean hasThreadAccess;
-    ThrowIfFailed(dispatcher->get_HasThreadAccess(&hasThreadAccess));
+    ThrowIfFailed(As<IDispatcherQueue2>(dispatcher)->get_HasThreadAccess(&hasThreadAccess));
 
     return !!hasThreadAccess;
 }

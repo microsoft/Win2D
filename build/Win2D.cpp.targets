@@ -12,6 +12,8 @@
 
   <PropertyGroup>
     <BuildDependsOn>CheckWarningLevel;$(BuildDependsOn)</BuildDependsOn>
+    <UnmergedWinmdDirectory>$(IntDir)\Unmerged</UnmergedWinmdDirectory>
+    <MergedWinmdDirectory>$(IntDir)\Merged</MergedWinmdDirectory>
   </PropertyGroup>
 
   <Import Project="Win2D.common.targets" />
@@ -33,5 +35,6 @@
     <Error Condition="!Exists('$(MSBuildThisFileDirectory)..\packages\MS.Uwp.rs4rls.Native.10.0.17133.1\build\MS.Uwp.rs4rls.Native.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(MSBuildThisFileDirectory)..\packages\MS.Uwp.rs4rls.Native.10.0.17133.1\build\MS.Uwp.rs4rls.Native.targets'))" />
   </Target>
   -->
-
+  <!-- empty target to workaround a bug in MRT tooling -->
+  <Target Name="GetMrtPackagingOutputs"/>
 </Project>

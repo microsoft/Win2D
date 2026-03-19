@@ -4,8 +4,6 @@
 
 #include "pch.h"
 
-#if WINVER > _WIN32_WINNT_WINBLUE
-
 #include <WindowsNumerics.h>
 
 #include <lib/drawing/CanvasSpriteBatch.h>
@@ -273,7 +271,7 @@ public:
             , BitmapSize{ 100.0f, 100.0f }
             , BitmapSizeInPixels{ 200U, 200U }
             , D2DBitmap(Make<StubD2DBitmap>(D2D1_BITMAP_OPTIONS_NONE, BitmapDpi))
-            , Bitmap(Make<CanvasBitmap>(Make<MockCanvasDevice>().Get(), D2DBitmap.Get()))
+            , Bitmap(CreateStubCanvasBitmap(Make<MockCanvasDevice>().Get(), D2DBitmap.Get()))
         {
             D2DBitmap->GetSizeMethod.AllowAnyCall([=] { return BitmapSize; });
             D2DBitmap->GetPixelSizeMethod.AllowAnyCall([=] { return BitmapSizeInPixels; });
@@ -1361,7 +1359,7 @@ public:
                 d2dBitmap->GetSizeMethod.AllowAnyCall([] { return D2D1_SIZE_F{ 100, 100 }; });
                 d2dBitmap->GetPixelSizeMethod.AllowAnyCall([] { return D2D1_SIZE_U{ 100, 100 }; });
                 
-                bitmap = std::make_pair(d2dBitmap, Make<CanvasBitmap>(device.Get(), d2dBitmap.Get()));
+                bitmap = std::make_pair(d2dBitmap, CreateStubCanvasBitmap(device.Get(), d2dBitmap.Get()));
             }
         }
 
@@ -1613,5 +1611,3 @@ public:
         }
     }
 };
-
-#endif

@@ -79,7 +79,21 @@ namespace canvas
                             ThrowIfFailed(op->FireCompletion());
                             ThrowIfFailed(op.CopyTo(operation));
                         });
-                });                    
+                });
+            GetFileFromPathAsyncMethod.AllowAnyCall(
+                [](HSTRING path, IAsyncOperation<StorageFile*>** operation)
+                {
+                    return ExceptionBoundary(
+                        [=]
+                        {
+                            WinString path_winstr(path);
+                            auto fakePath = GetFakePath(path_winstr);
+
+                            auto op = Make<StorageFileOperation>(fakePath);
+                            ThrowIfFailed(op->FireCompletion());
+                            ThrowIfFailed(op.CopyTo(operation));
+                        });
+                });
         }
     };
 }

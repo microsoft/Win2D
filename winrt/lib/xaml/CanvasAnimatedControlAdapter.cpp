@@ -3,7 +3,6 @@
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
 #include "pch.h"
-
 #include "CanvasAnimatedControl.h"
 #include "CanvasGameLoop.h"
 #include "GameLoopThread.h"
@@ -79,7 +78,7 @@ public:
         ComPtr<IActivationFactory> rectangleFactory;
 
         ThrowIfFailed(GetActivationFactory(
-            HStringReference(RuntimeClass_Windows_UI_Xaml_Shapes_Rectangle).Get(),
+            HStringReference(RuntimeClass_Microsoft_UI_Xaml_Shapes_Rectangle).Get(),
             &rectangleFactory));
         
         ComPtr<IInspectable> rectangleInspectable;
@@ -87,7 +86,7 @@ public:
 
         ComPtr<IActivationFactory> brushFactory;
         ThrowIfFailed(GetActivationFactory(
-            HStringReference(RuntimeClass_Windows_UI_Xaml_Media_SolidColorBrush).Get(),
+            HStringReference(RuntimeClass_Microsoft_UI_Xaml_Media_SolidColorBrush).Get(),
             &brushFactory));
 
         ComPtr<IInspectable> brushInspectable;

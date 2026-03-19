@@ -8,11 +8,7 @@ namespace canvas
 {
     class MockDWriteTextLayout : public RuntimeClass<
         RuntimeClassFlags<ClassicCom>,
-        ChainInterfaces<
-#if WINVER > _WIN32_WINNT_WINBLUE
-        IDWriteTextLayout3,
-#endif
-        IDWriteTextLayout2, IDWriteTextLayout1, IDWriteTextLayout, IDWriteTextFormat>>
+        ChainInterfaces<IDWriteTextLayout3, IDWriteTextLayout2, IDWriteTextLayout1, IDWriteTextLayout, IDWriteTextFormat>>
     {
     public:
         // IDWriteTextFormat
@@ -100,10 +96,8 @@ namespace canvas
         CALL_COUNTER_WITH_MOCK(SetFontFallbackMethod, HRESULT(IDWriteFontFallback*));
         CALL_COUNTER_WITH_MOCK(GetFontFallbackMethod, HRESULT(IDWriteFontFallback**));
 
-#if WINVER > _WIN32_WINNT_WINBLUE
         // IDWriteTextLayout3
         CALL_COUNTER_WITH_MOCK(GetLineMetricsMethod1, HRESULT(DWRITE_LINE_METRICS1*, UINT32, UINT32*));
-#endif
 
 
         ///////////////////////////////////////////////////////////////////////////////////////////
@@ -578,7 +572,6 @@ namespace canvas
             return GetFontFallbackMethod.WasCalled(fontFallback);
         }
 
-#if WINVER > _WIN32_WINNT_WINBLUE
         //
         // IDWriteTextLayout3
         //
@@ -607,6 +600,5 @@ namespace canvas
         {
             return GetLineMetricsMethod1.WasCalled(lineMetrics, maxLineCount, actualLineCount);
         }
-#endif
     };
 }

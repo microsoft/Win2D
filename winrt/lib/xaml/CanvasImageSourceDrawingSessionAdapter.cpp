@@ -38,11 +38,11 @@ std::shared_ptr<CanvasImageSourceDrawingSessionAdapter> CanvasImageSourceDrawing
         // We check for that and translate to RPC_E_WRONG_THREAD instead.
         if (hr == E_FAIL)
         {
-            ComPtr<ICoreDispatcher> dispatcher;
-            ThrowIfFailed(As<IDependencyObject>(sisNative)->get_Dispatcher(&dispatcher));
+            ComPtr<IDispatcherQueue> dispatcher;
+            ThrowIfFailed(As<IDependencyObject>(sisNative)->get_DispatcherQueue(&dispatcher));
 
             boolean hasThreadAccess;
-            ThrowIfFailed(dispatcher->get_HasThreadAccess(&hasThreadAccess));
+            ThrowIfFailed(As<IDispatcherQueue2>(dispatcher)->get_HasThreadAccess(&hasThreadAccess));
 
             if (!hasThreadAccess)
                 hr = RPC_E_WRONG_THREAD;

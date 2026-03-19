@@ -57,8 +57,7 @@ namespace CheckCode
 
             string[] xmlFooter =
             {
-                "-->",
-                ""
+                "-->"
             };
 
             return xmlHeader.Concat(copyrightBanner)

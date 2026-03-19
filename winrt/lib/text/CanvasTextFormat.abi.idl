@@ -105,7 +105,6 @@ namespace Microsoft.Graphics.Canvas.Text
     } CanvasWordWrapping;
 
 
-#if WINVER > _WIN32_WINNT_WINBLUE
     [version(VERSION)]
     typedef enum CanvasLineSpacingMode
     {
@@ -113,7 +112,6 @@ namespace Microsoft.Graphics.Canvas.Text
         Uniform,
         Proportional
     } CanvasLineSpacingMode;
-#endif
 
     [version(VERSION)]
     typedef enum CanvasOpticalAlignment // Corresponds to DWRITE_OPTICAL_ALIGNMENT.
@@ -164,10 +162,7 @@ namespace Microsoft.Graphics.Canvas.Text
         PROPERTY(VerticalGlyphOrientation, CanvasVerticalGlyphOrientation);
         PROPERTY(OpticalAlignment,         CanvasOpticalAlignment); 
         PROPERTY(LastLineWrapping,         boolean);
-
-#if WINVER > _WIN32_WINNT_WINBLUE
         PROPERTY(LineSpacingMode,          CanvasLineSpacingMode); // [6]
-#endif
 
         //
         // [1] Direction corresponds to IDWriteTextFormat::FlowDirection and

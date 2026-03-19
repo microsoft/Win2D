@@ -1,0 +1,7 @@
+﻿<Project>
+  <!--
+    Since our build props change the BaseIntermediateOutputPath, we use Directory.Build.props so we can hook
+    in early enough in the build process so that this doesn't cause issues.
+    -->
+  <Import Project="..\..\build\win2d.cs.props"/>
+</Project>

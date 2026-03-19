@@ -84,34 +84,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         //
         ComPtr<IDXGIDevice3> dxgiDevice3;
 
-#if WINVER > _WIN32_WINNT_WINBLUE
         auto d2dDevice2 = As<ID2D1Device2>(d2dDevice);
 
         ComPtr<IDXGIDevice> dxgiDevice;
         ThrowIfFailed(d2dDevice2->GetDxgiDevice(&dxgiDevice));
 
         ThrowIfFailed(dxgiDevice.As(&dxgiDevice3));
-#else
-        ComPtr<ID2D1DeviceContext> deviceContext;
-        ThrowIfFailed(d2dDevice->CreateDeviceContext(
-            D2D1_DEVICE_CONTEXT_OPTIONS_NONE,
-            &deviceContext));
-
-        ComPtr<ID2D1Bitmap1> bitmap;
-        ThrowIfFailed(deviceContext->CreateBitmap(
-            D2D1_SIZE_U{ 1, 1 },
-            nullptr,
-            0,
-            D2D1::BitmapProperties1(
-                D2D1_BITMAP_OPTIONS_NONE,
-                D2D1::PixelFormat(DXGI_FORMAT_R8G8B8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED)),
-            &bitmap));
-
-        ComPtr<IDXGISurface> surface;
-        ThrowIfFailed(bitmap->GetSurface(&surface));
-
-        ThrowIfFailed(surface->GetDevice(IID_PPV_ARGS(&dxgiDevice3)));
-#endif
 
         return dxgiDevice3;
     }
@@ -312,12 +290,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         {
             m_isID2D1Factory5Supported = 0;
 
-#if WINVER > _WIN32_WINNT_WINBLUE
             if (MaybeAs<ID2D1Factory5>(m_adapter->CreateD2DFactory(CanvasDebugLevel::None)))
             {
                 m_isID2D1Factory5Supported = 1;
             }
-#endif
         }
 
         return !!m_isID2D1Factory5Supported;
@@ -455,6 +431,104 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             });
     }
 
+    IFACEMETHODIMP CanvasDeviceFactory::RegisterWrapper(IUnknown* resource, IInspectable* wrapper)
+    {
+        bool wasAdded = false;
+
+        HRESULT hresult = ExceptionBoundary(
+            [&]
+            {
+                CheckInPointer(resource);
+                CheckInPointer(wrapper);
+
+                // This method is only allowed for D2D images and their wrappers right now. This is not an exhaustive check,
+                // as there's still ways for developers to intentionally mess with Win2D's caching system to a degree (eg.
+                // they can replace registered wrappers from Win2D with their own), but this will at least catch the most
+                // egregious misuses. There's still other checks later on that will protect against invalid uses anyway.
+                // But most importantly, we don't want to prevent developers deliberately trying to break Win2D from doing
+                // so (eg. just like several Win2D APIs are not thread-safe for the same reason). This is only meant to
+                // catch honest mistakes of developers accidentally trying to register wrappers for unsupported types.
+                if (!MaybeAs<ID2D1Image>(resource) ||
+                    !MaybeAs<ICanvasImage>(wrapper))
+                {
+                    ThrowHR(E_INVALIDARG);
+                }
+
+                wasAdded = ResourceManager::TryRegisterWrapper(resource, wrapper);
+            });
+
+        if (hresult == S_OK)
+        {
+            return wasAdded ? S_OK : S_FALSE;
+        }
+
+        return hresult;
+    }
+
+    IFACEMETHODIMP CanvasDeviceFactory::UnregisterWrapper(IUnknown* resource)
+    {
+        bool wasRemoved = false;
+
+        HRESULT hresult = ExceptionBoundary(
+            [&]
+            {
+                CheckInPointer(resource);
+
+                // Only allow D2D images (see notes above)
+                if (!MaybeAs<ID2D1Image>(resource))
+                {
+                    ThrowHR(E_INVALIDARG);
+                }
+
+                wasRemoved = ResourceManager::TryUnregisterWrapper(resource);
+            });
+
+        if (hresult == S_OK)
+        {
+            return wasRemoved ? S_OK : S_FALSE;
+        }
+
+        return hresult;
+    }
+
+    IFACEMETHODIMP CanvasDeviceFactory::RegisterEffectFactory(REFIID effectId, ICanvasEffectFactoryNative* factory)
+    {
+        bool wasAdded = false;
+
+        HRESULT hresult = ExceptionBoundary(
+            [&]
+            {
+                CheckInPointer(factory);
+
+                wasAdded = ResourceManager::RegisterEffectFactory(effectId, factory);
+            });
+
+        if (hresult == S_OK)
+        {
+            return wasAdded ? S_OK : S_FALSE;
+        }
+
+        return hresult;
+    }
+
+    IFACEMETHODIMP CanvasDeviceFactory::UnregisterEffectFactory(REFIID effectId)
+    {
+        bool wasRemoved = false;
+
+        HRESULT hresult = ExceptionBoundary(
+            [&]
+            {
+                wasRemoved = ResourceManager::UnregisterEffectFactory(effectId);
+            });
+
+        if (hresult == S_OK)
+        {
+            return wasRemoved ? S_OK : S_FALSE;
+        }
+
+        return hresult;
+    }
+
 
     //
     // CanvasDevice
@@ -469,9 +543,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         , m_dxgiDevice(dxgiDevice)
         , m_sharedState(SharedDeviceState::GetInstance())
         , m_deviceContextPool(d2dDevice)
-#if WINVER > _WIN32_WINNT_WINBLUE
         , m_spriteBatchQuirk(SpriteBatchQuirk::NeedsCheck)
-#endif
     {
         if (!dxgiDevice)
         {
@@ -480,6 +552,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         }
 
         InitializePrimaryOutput(dxgiDevice);
+        LogCreateCanvasDevice();
     }
 
     ComPtr<CanvasDevice> CanvasDevice::CreateNew(
@@ -658,9 +731,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ExceptionBoundary(
             [&]
             {
-                GetResource();  // this ensures that Close() hasn't been called
                 CheckInPointer(value);
                 CheckInPointer(token);
+
+                GetResource();  // this ensures that Close() hasn't been called
 
                 ThrowIfFailed(m_deviceLostEventList.Add(value, token));
             });
@@ -680,6 +754,20 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             });
     }
 
+    IFACEMETHODIMP CanvasDevice::IsDeviceLost2(
+        boolean* value)
+    {        
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckInPointer(value);
+
+                GetResource();  // this ensures that Close() hasn't been called
+
+                *value = GetDeviceRemovedErrorCode() != S_OK;
+            });
+    }
+
     IFACEMETHODIMP CanvasDevice::IsDeviceLost(
         int hresult,
         boolean* value)
@@ -687,10 +775,49 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ExceptionBoundary(
             [&]
             {
-                GetResource();  // this ensures that Close() hasn't been called
-
                 CheckInPointer(value);
 
+                GetResource();  // this ensures that Close() hasn't been called
+
+                // A bit of history. This method was added years ago, and the documentation for it is a bit confusing.
+                // 
+                // The docs say:
+                //   "IsDeviceLost will return true if the device is indeed lost,
+                //   and the error code actually corresponds to device removal.".
+                // 
+                // What that really means is that this method is checking whether the input error code belongs to an
+                // arbitrary set of possible device lost error codes (not even all of them) that various Win2D controls
+                // internally classify as representing a "device lost" event. It's essentially exposing the ability to
+                // match an HRESULT against this set to external users as well. Then, if the input HRESULT does match,
+                // this method returns whether the current device is lost (not necessarily for the reason given as input).
+                //
+                // As in, as long as the input error code is, say, DXGI_ERROR_DEVICE_HUNG or any other error code from
+                // this arbitrary set of error codes, this method will return whether the device is lost for *any* reason.
+                //
+                // In practice, this means that this method is really only useful in a very specific scenario (which is indeed
+                // documented): an exception handler that's matching the caught HRESULT against this "device lost" set, so that
+                // if this method returns true it can call CanvasDevice.RaiseDeviceLost() to notify registered handlers. This
+                // system is essentially working around the fact that the underlying D3D11 device doesn't have a proper device
+                // lost event (as is instead the case on D3D12), so it relies on callers to detect failures on their end.
+                //
+                // Unfortunately, this also means that outside of that very specific use case, this method provides not much
+                // utility to callers. The only information it can give callers is whether the device is lost or not, with the
+                // condition that they must pass an (unused) HRESULT that causes this condition below to be true. But even then,
+                // if this method is not called from a handler, it's also pretty awkward to use, as callers would have to just
+                // pick a random "device lost HRESULT" value to pass to this method just to get the check to pass, so they can
+                // check whether the device is actually lost or not.
+                //
+                // We can't really change this method, as it'd be a breaking change, and there's surely plenty of consumers
+                // relying on the exact way this system is structured (as it's the recommended way for external users to check
+                // and notify a device that it has been lost following an exception that was caught on their end while drawing).
+                // But even if we could adjust the implementation of this method, it's still not really a method with a useful
+                // signature in general outside of that very specific use case, as it's much better to just either tell callers
+                // whether the device is lost or not (regardless of the reason), or to give them the actual reason and allow
+                // them to then use whatever logic they want to handle that information.
+                //
+                // This is the reason for the two other APIs next to this method:
+                //   - IsDeviceLost2 (exposed as an "IsDeviceLost" overload), simply returning whether the device is lost.
+                //   - GetDeviceLostReason, returning the actual HRESULT from the underlying D3D11 device.
                 if (DeviceLostException::IsDeviceLostHResult(hresult))
                 {
                     *value = GetDeviceRemovedErrorCode() != S_OK;
@@ -699,6 +826,19 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 {
                     *value = false;
                 }
+            });
+    }
+
+    IFACEMETHODIMP CanvasDevice::GetDeviceLostReason(int* hresult)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckInPointer(hresult);
+
+                GetResource();  // this ensures that Close() hasn't been called
+
+                *hresult = GetDeviceRemovedErrorCode();
             });
     }
 
@@ -721,6 +861,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ExceptionBoundary(
             [&]
             {
+                CheckAndClearOutPointer(value);
+
                 auto factory = GetD2DFactory();
 
                 auto lock = Make<CanvasLock>(As<ID2D1Multithread>(factory).Get());
@@ -1053,6 +1195,34 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             });
     }
 
+    //
+    // ID2D1DeviceContextPool
+    //
+    IFACEMETHODIMP CanvasDevice::GetDeviceContextLease(ID2D1DeviceContextLease** lease)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckAndClearOutPointer(lease);
+
+                ThrowIfFailed(Make<D2D1DeviceContextLease>(this).CopyTo(lease));
+            });
+    }
+
+    //
+    // ID2D1DeviceContextLease
+    //
+    IFACEMETHODIMP D2D1DeviceContextLease::GetD2DDeviceContext(ID2D1DeviceContext** deviceContext)
+    {
+        return ExceptionBoundary(
+            [&]
+            {
+                CheckAndClearOutPointer(deviceContext);
+
+                ThrowIfFailed(m_deviceContext->QueryInterface(IID_PPV_ARGS(deviceContext)));
+            });
+    }
+
     ComPtr<ID2D1GradientStopCollection1> CanvasDevice::CreateGradientStopCollection(
         std::vector<D2D1_GRADIENT_STOP>&& stops,
         D2D1_COLOR_SPACE preInterpolationSpace,
@@ -1196,6 +1366,27 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                     device,
                     coreWindow,
                     desc,
+                    nullptr,    // restrictToOutput
+                    swapChain);
+            });
+    }
+
+    ComPtr<IDXGISwapChain1> CanvasDevice::CreateSwapChainForHwnd(
+        HWND hwnd,
+        int32_t widthInPixels,
+        int32_t heightInPixels,
+        DirectXPixelFormat format,
+        int32_t bufferCount,
+        CanvasAlphaMode alphaMode)
+    {
+        return CreateSwapChain(widthInPixels, heightInPixels, format, bufferCount, alphaMode,
+            [hwnd](IDXGIFactory2* factory, IDXGIDevice3* device, DXGI_SWAP_CHAIN_DESC1* desc, IDXGISwapChain1** swapChain)
+            {
+                return factory->CreateSwapChainForHwnd(
+                    device,
+                    hwnd,
+                    desc,
+                    nullptr,    // pFullscreenDesc
                     nullptr,    // restrictToOutput
                     swapChain);
             });
@@ -1370,8 +1561,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         InterlockedExchangeComPtr(m_atlasEffect, std::move(effects.AtlasEffect));
     }
 
-#if WINVER > _WIN32_WINNT_WINBLUE
-
     ComPtr<ID2D1GradientMesh> CanvasDevice::CreateGradientMesh(
         D2D1_GRADIENT_MESH_PATCH const* patches,
         uint32_t patchCount)
@@ -1466,8 +1655,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return d2dSvgDocument;
     }
 
-#endif
-
     HRESULT CanvasDevice::GetDeviceRemovedErrorCode()
     {
         auto& dxgiDevice = m_dxgiDevice.EnsureNotClosed();
@@ -1475,6 +1662,32 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         auto d3dDevice = As<ID3D11Device>(dxgiDevice);
 
         return d3dDevice->GetDeviceRemovedReason();
+    }
+
+    void CanvasDevice::LogCreateCanvasDevice()
+    {
+        try
+        {
+            // the way this variable/function is declared, the TraceLoggingWrite call here will only fire once
+            // per process, even if LogCreateCanvasDevice() is called more than once.
+            static bool createCanvasDeviceLoggedOnce = []
+            {
+                TraceLoggingWrite(
+                    g_hTelemetryProvider,
+                    "Win2DCanvasDeviceCreated",
+                    TraceLoggingKeyword(MICROSOFT_KEYWORD_MEASURES),
+                    TelemetryPrivacyDataTag(PDT_ProductAndServicePerformance),
+                    TraceLoggingValue(WIN2D_VERSION, "Win2D Version"),
+                    TraceLoggingValue("WinAppSDK", "App Model"));
+
+                return true;
+            }();
+        }
+        catch (...)
+        {
+            // We will swallow all exceptions and ignore them if telemetry logging code throws,
+            // so as to not throw off the actual CanvasDevice creation.
+        }
     }
 
     ActivatableClassWithFactory(CanvasDevice, CanvasDeviceFactory);

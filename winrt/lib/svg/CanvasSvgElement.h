@@ -4,13 +4,11 @@
 
 #pragma once
 
-#if WINVER > _WIN32_WINNT_WINBLUE
-
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Svg
 {
     using namespace ABI::Microsoft::Graphics::Canvas;
     using namespace ABI::Microsoft::Graphics::Canvas::Geometry;
-    using namespace ABI::Windows::UI;
+    using namespace ABI::Microsoft::UI;
     using namespace ABI::Windows::Foundation::Numerics;
     using namespace ABI::Windows::Foundation;
     
@@ -148,5 +146,3 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     bool IsSvgTextElement(ID2D1SvgElement* d2dSvgElement);
 
 }}}}}
-
-#endif

@@ -9,7 +9,7 @@
 #include <lib/brushes/Gradients.h>
 
 using namespace ABI::Windows::Foundation;
-using namespace ABI::Windows::UI;
+using namespace ABI::Microsoft::UI;
 
 TEST_CLASS(CanvasGradientBrushTests)
 {

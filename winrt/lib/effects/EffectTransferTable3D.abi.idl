@@ -2,8 +2,6 @@
 //
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
-#if (defined _WIN32_WINNT_WIN10) && (WINVER >= _WIN32_WINNT_WIN10)
-
 namespace Microsoft.Graphics.Canvas.Effects
 {
     runtimeclass EffectTransferTable3D;
@@ -44,5 +42,3 @@ namespace Microsoft.Graphics.Canvas.Effects
         [default] interface IEffectTransferTable3D;
     }
 }
-
-#endif // _WIN32_WINNT_WIN10

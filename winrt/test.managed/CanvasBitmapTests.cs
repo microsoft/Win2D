@@ -1,25 +1,23 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 //
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
-using Microsoft.Graphics.Canvas;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.Graphics.Canvas;
+using Microsoft.UI;
 using System.IO;
 using System.Runtime.InteropServices.WindowsRuntime;
-using System.Threading.Tasks;
-using Windows.Foundation;
-using Windows.Graphics.Imaging;
-using Windows.Storage;
 using Windows.Storage.Streams;
-using Windows.UI;
-
-#if WINDOWS_UWP
+using Windows.Storage;
 using Windows.Graphics.DirectX;
-#else
-using Microsoft.Graphics.Canvas.DirectX;
-#endif
+using System.Diagnostics;
 
 namespace test.managed
 {
@@ -84,11 +82,11 @@ namespace test.managed
             var device = new CanvasDevice();
 
             var pixelFormats = new List<DirectXPixelFormat>
-            {
-                DirectXPixelFormat.B8G8R8A8UIntNormalized,
-                DirectXPixelFormat.R8G8B8A8UIntNormalized,
-                DirectXPixelFormat.A8UIntNormalized,
-            };
+        {
+            DirectXPixelFormat.B8G8R8A8UIntNormalized,
+            DirectXPixelFormat.R8G8B8A8UIntNormalized,
+            DirectXPixelFormat.A8UIntNormalized,
+        };
 
             if (device.IsPixelFormatSupported(DirectXPixelFormat.R16G16B16A16Float))
             {
@@ -107,19 +105,19 @@ namespace test.managed
 
             CanvasBitmapFileFormat[] fileFormats =
             {
-                CanvasBitmapFileFormat.Bmp,
-                CanvasBitmapFileFormat.Gif,
-                CanvasBitmapFileFormat.Jpeg,
-                CanvasBitmapFileFormat.JpegXR,
-                CanvasBitmapFileFormat.Png,
-                CanvasBitmapFileFormat.Tiff,
-            };
+            CanvasBitmapFileFormat.Bmp,
+            CanvasBitmapFileFormat.Gif,
+            CanvasBitmapFileFormat.Jpeg,
+            CanvasBitmapFileFormat.JpegXR,
+            CanvasBitmapFileFormat.Png,
+            CanvasBitmapFileFormat.Tiff,
+        };
 
             foreach (var pixelFormat in pixelFormats)
             {
                 bool pixelFormatSupportsHdr = (pixelFormat == DirectXPixelFormat.R16G16B16A16Float) ||
-                                              (pixelFormat == DirectXPixelFormat.R32G32B32A32Float) ||
-                                              (pixelFormat == DirectXPixelFormat.R16G16B16A16UIntNormalized);
+                                                (pixelFormat == DirectXPixelFormat.R32G32B32A32Float) ||
+                                                (pixelFormat == DirectXPixelFormat.R16G16B16A16UIntNormalized);
 
                 foreach (var fileFormat in fileFormats)
                 {
@@ -308,37 +306,37 @@ namespace test.managed
                 ds.DrawImage(bitmap, 1, 0);
             }
 
-            CollectionAssert.AreEqual(new Color[] { Colors.Blue, Colors.Red }, renderTarget.GetPixelColors());
+            CollectionAssert.AreEqual(new Windows.UI.Color[] { Colors.Blue, Colors.Red }, renderTarget.GetPixelColors());
         }
 
         [TestMethod]
         public void SetPixelColorsReadHazards()
         {
             var device = new CanvasDevice();
-            var bitmap = CanvasBitmap.CreateFromColors(device, new Color[1], 1, 1);
+            var bitmap = CanvasBitmap.CreateFromColors(device, new Windows.UI.Color[1], 1, 1);
             var renderTarget = new CanvasRenderTarget(device, 2, 1, 96);
 
             using (var ds = renderTarget.CreateDrawingSession())
             {
-                bitmap.SetPixelColors(new Color[] { Colors.Blue });
+                bitmap.SetPixelColors(new Windows.UI.Color[] { Colors.Blue });
                 ds.DrawImage(bitmap, 0, 0);
 
-                bitmap.SetPixelColors(new Color[] { Colors.Red });
+                bitmap.SetPixelColors(new Windows.UI.Color[] { Colors.Red });
                 ds.DrawImage(bitmap, 1, 0);
             }
 
-            CollectionAssert.AreEqual(new Color[] { Colors.Blue, Colors.Red }, renderTarget.GetPixelColors());
+            CollectionAssert.AreEqual(new Windows.UI.Color[] { Colors.Blue, Colors.Red }, renderTarget.GetPixelColors());
         }
     }
 
-#if WINDOWS_UWP
+    #if WINDOWS_UWP
     [TestClass]
     public class CanvasBitmapCreateFromSoftwareBitmapTests
     {
         [TestMethod]
         public void CanvasBitmap_CreateFromSoftwareBitmap_Roundtrip()
         {
-            var colors = new Color[]
+            var colors = new Windows.UI.Color[]
             {
                 Colors.Red, Colors.Green, Colors.Yellow,
                 Colors.Green, Colors.Yellow, Colors.Red,
@@ -496,5 +494,5 @@ namespace test.managed
             return true;
         }
     }
-#endif
+    #endif
 }

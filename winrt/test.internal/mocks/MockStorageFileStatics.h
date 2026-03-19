@@ -9,13 +9,14 @@ namespace canvas
     class MockStorageFileStatics : public RuntimeClass<IStorageFileStatics>
     {
     public:
+        CALL_COUNTER_WITH_MOCK(GetFileFromPathAsyncMethod, HRESULT(HSTRING, IAsyncOperation<StorageFile*>**));
         CALL_COUNTER_WITH_MOCK(GetFileFromApplicationUriAsyncMethod, HRESULT(IUriRuntimeClass*, IAsyncOperation<StorageFile*>**));
         
         IFACEMETHODIMP GetFileFromPathAsync(
-            HSTRING, 
-            IAsyncOperation<StorageFile*>**) override
+            HSTRING path, 
+            IAsyncOperation<StorageFile*>** operation) override
         {
-            return E_NOTIMPL;
+            return GetFileFromPathAsyncMethod.WasCalled(path, operation);
         }
 
         IFACEMETHODIMP GetFileFromApplicationUriAsync(

@@ -2,13 +2,15 @@
 //
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
+#if  WINUI3_SUPPORTS_INKING
+
 using Microsoft.Graphics.Canvas;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Linq;
 using System.Reflection;
 using Windows.Foundation;
 using Windows.UI;
-using Windows.UI.Input.Inking;
+using Windows.UI.Input.WINUI3_SUPPORTS_INKING;
 
 namespace test.managed
 {
@@ -67,3 +69,5 @@ namespace test.managed
         }
     }
 }
+
+#endif

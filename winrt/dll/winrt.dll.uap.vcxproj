@@ -7,17 +7,22 @@
     <RootNamespace>Microsoft.Graphics.Canvas</RootNamespace>
     <DefaultLanguage>en-US</DefaultLanguage>
     <MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>
-    <AppContainerApplication>true</AppContainerApplication>
-    <ApplicationType>Windows Store</ApplicationType>
-    <ApplicationTypeRevision>10.0</ApplicationTypeRevision>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
     <ItemsRootNamespace>Microsoft.Graphics.Canvas</ItemsRootNamespace>
     <TargetName>$(ItemsRootNamespace)</TargetName>
+    <WindowsTargetPlatformVersion>10.0.19041.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformMinVersion>10.0.17763.0</WindowsTargetPlatformMinVersion>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
-
+  <PropertyGroup>
+    <SkipAddPriPayloadFilesToCopyToOutputDirectoryItems>true</SkipAddPriPayloadFilesToCopyToOutputDirectoryItems>
+  </PropertyGroup>
   <Import Project="..\..\build\Win2D.cpp.props" />
+  <Import Project="..\..\build\HybridCRT.props" />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
-
+  <Import Project="$(WindowsAppSdkWinUI_props)" Condition="Exists('$(WindowsAppSdkWinUI_props)')" />
+  <Import Project="$(WindowsAppSdkInteractiveExperiences_props)" Condition="Exists('$(WindowsAppSdkInteractiveExperiences_props)')" />
+  <Import Project="$(WindowsAppSdkFoundation_props)" Condition="Exists('$(WindowsAppSdkFoundation_props)')" />
   <PropertyGroup Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
   </PropertyGroup>
@@ -28,6 +33,9 @@
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
   </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <DesktopCompatible>true</DesktopCompatible>
+  </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <PropertyGroup>
     <IgnoreImportLibrary>false</IgnoreImportLibrary>
@@ -37,6 +45,7 @@
       <AdditionalIncludeDirectories>$(EtwDirectory);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <CompileAsWinRT>false</CompileAsWinRT>
       <WarningLevel>Level4</WarningLevel>
+      <PreprocessorDefinitions>UNICODE;_WINDLL;%(PreprocessorDefinitions);WINUI3;ENABLE_WINRT_EXPERIMENTAL_TYPES=1;WRT_EXPORT</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -46,6 +55,10 @@
       <WindowsMetadataFile>$(Outdir)\$(ItemsRootNamespace).winmd</WindowsMetadataFile>
       <DelayLoadDLLs>d3dcompiler_47.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalOptions>/debug %(AdditionalOptions)</AdditionalOptions>
+    </Link>
+    <Link Condition="'$(Configuration)'=='Release'">
+      <AdditionalOptions>/opt:ref /opt:icf %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)'=='Release'">
@@ -54,8 +67,12 @@
       <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
     </ClCompile>
   </ItemDefinitionGroup>
+  <PropertyGroup>
+    <PlatformShortName>$(Platform)</PlatformShortName>
+    <PlatformShortName Condition="'$(PlatformShortName)'=='Win32'">x86</PlatformShortName>
+  </PropertyGroup>
   <ItemGroup>
-    <CopyMergedWinMD Include="$(MergedWinmdDirectory)\$(ItemsRootNamespace).winmd" />
+    <CopyMergedWinMD Include="$(MSBuildThisFileDirectory)..\..\bin\uap$(PlatformShortName)\$(Configuration)\winrt.lib.uap\$(ItemsRootNamespace).winmd" />
   </ItemGroup>
   <Target Name="CopyMergedWinMD" BeforeTargets="Link" Outputs="@(CopiedWinMDFile)">
     <Copy SourceFiles="@(CopyMergedWinMD)" DestinationFolder="$(Outdir)" SkipUnchangedFiles="true">
@@ -69,6 +86,13 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)module.cpp" />
     <None Include="$(MSBuildThisFileDirectory)module.def" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="module.rc">
+      <PreprocessorDefinitions Condition="'$(IncludeVersionInfo)' != ''">INCLUDE_VERSION_INFO;$(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\..\obj;$(EtwDirectory)</AdditionalIncludeDirectories>
+    </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\lib\winrt.lib.uap.vcxproj">
@@ -80,14 +104,22 @@
       <UseLibraryDependencyInputs>true</UseLibraryDependencyInputs>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="module.rc">
-      <PreprocessorDefinitions Condition="'$(IncludeVersionInfo)' != ''">INCLUDE_VERSION_INFO;$(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\obj;$(EtwDirectory)</AdditionalIncludeDirectories>
-    </ResourceCompile>
-  </ItemGroup>
-
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <Import Project="..\..\build\Win2D.cpp.targets" />
-
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('$(WindowsAppSdkWinUI_props)')" Text="$([System.String]::Format('$(ErrorText)', '$(WindowsAppSdkWinUI_props)'))" />
+    <Error Condition="!Exists('$(WindowsAppSdkWinUI_targets)')" Text="$([System.String]::Format('$(ErrorText)', '$(WindowsAppSdkWinUI_targets)'))" />
+    <Error Condition="!Exists('$(WindowsAppSdkInteractiveExperiences_props)')" Text="$([System.String]::Format('$(ErrorText)', '$(WindowsAppSdkInteractiveExperiences_props)'))" />
+    <Error Condition="!Exists('$(WindowsAppSdkInteractiveExperiences_targets)')" Text="$([System.String]::Format('$(ErrorText)', '$(WindowsAppSdkInteractiveExperiences_targets)'))" />
+    <Error Condition="!Exists('$(WindowsAppSdkFoundation_props)')" Text="$([System.String]::Format('$(ErrorText)', '$(WindowsAppSdkFoundation_props)'))" />
+    <Error Condition="!Exists('$(WindowsAppSdkFoundation_targets)')" Text="$([System.String]::Format('$(ErrorText)', '$(WindowsAppSdkFoundation_targets)'))" />
+    <Error Condition="!Exists('$(_WebView2PackageRoot)\build\native\Microsoft.Web.WebView2.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(_WebView2PackageRoot)\build\native\Microsoft.Web.WebView2.targets'))" />
+  </Target>
+  <Import Project="$(WindowsAppSdkWinUI_targets)" Condition="Exists('$(WindowsAppSdkWinUI_targets)')" />
+  <Import Project="$(WindowsAppSdkInteractiveExperiences_targets)" Condition="Exists('$(WindowsAppSdkInteractiveExperiences_targets)')" />
+  <Import Project="$(WindowsAppSdkFoundation_targets)" Condition="Exists('$(WindowsAppSdkFoundation_targets)')" />
+  <Import Project="$(WebView2_targets)" Condition="Exists('$(WebView2_targets)')" />
 </Project>

@@ -2,39 +2,13 @@
 //
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
-#ifndef USE_LOCALLY_EMULATED_UAP_APIS
-
 import "Windows.Graphics.Effects.idl";
 
 #define IGRAPHICSEFFECT Windows.Graphics.Effects.IGraphicsEffect
 #define IGRAPHICSEFFECTSOURCE Windows.Graphics.Effects.IGraphicsEffectSource
 
-#else
-
-#define IGRAPHICSEFFECT Microsoft.Graphics.Canvas.Effects.IGraphicsEffect
-#define IGRAPHICSEFFECTSOURCE Microsoft.Graphics.Canvas.Effects.IGraphicsEffectSource
-
-#endif
-
 namespace Microsoft.Graphics.Canvas.Effects
 {
-#ifdef USE_LOCALLY_EMULATED_UAP_APIS
-
-    [version(VERSION), uuid(FA3AA76D-074E-4EAC-8FC7-306B0629F301)]
-    interface IGraphicsEffectSource : IInspectable
-    {
-    }
-
-    [version(VERSION), uuid(3A339957-A95E-490E-A1BF-2CBF4806C378)]
-    interface IGraphicsEffect : IInspectable
-        requires IGraphicsEffectSource
-    {
-        [propget] HRESULT Name([out, retval] HSTRING* name);
-        [propput] HRESULT Name([in] HSTRING name);
-    }
-
-#endif
-
     [version(VERSION), uuid(0EF96F8C-9B5E-4BF0-A399-AAD8CE53DB55)]
     interface ICanvasEffect : IInspectable
         requires IGRAPHICSEFFECT, Microsoft.Graphics.Canvas.ICanvasImage

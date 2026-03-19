@@ -4,11 +4,9 @@
 
 #pragma once
 
-#if WINVER > _WIN32_WINNT_WINBLUE
-
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace UI { namespace Composition
 {
-    using namespace ABI::Windows::UI::Composition;
+    using namespace ABI::Microsoft::UI::Composition;
 
     class CanvasCompositionStatics : public AgileActivationFactory<ICanvasCompositionStatics>
     {
@@ -22,10 +20,12 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             ICanvasDevice* canvasDevice,
             ICompositionGraphicsDevice** graphicsDevice) override;
 
+#if ENABLE_WIN2D_EXPERIMENTAL_FEATURES
         IFACEMETHODIMP CreateCompositionSurfaceForSwapChain( 
             ICompositor* compositor,
             ICanvasSwapChain* swapChain,
             ICompositionSurface** compositionSurface) override;
+#endif
         
         IFACEMETHODIMP GetCanvasDevice( 
             ICompositionGraphicsDevice* graphicsDevice,
@@ -59,5 +59,3 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     };
 
 } } } } } }
-
-#endif

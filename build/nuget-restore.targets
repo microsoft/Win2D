@@ -51,11 +51,7 @@
 
 
   <Target Name="RestoreNuGetPackagesPrelim" DependsOnTargets="FindNuGet; CheckNuGetVersion" Condition="'@(NuGetRestore)' != ''" />
-  <Target Name="RestoreNuGetPackages10240" DependsOnTargets="RestoreNuGetPackagesPrelim" Condition="'@(NuGetRestore)' != ''">
-    <Exec Command="(set PLATFORM=%(NuGetRestore.Platform)) &amp; (set CONFIGURATION=%(NuGetRestore.Configuration)) &amp; $(NuGetCommand) restore %(NuGetRestore.Identity) -SolutionDirectory $(MsBuildThisFileDirectory)..\ -Verbosity Detailed -NonInteractive" Condition="'%(NuGetRestore.Platform)'!='ARM64'" />
-  </Target>
-  <!-- Duplicate RestoreNuGetPackages for TargetPlatform 16299 flavors (ARM64); see Win2D.proj for details -->
-  <Target Name="RestoreNuGetPackages16299" DependsOnTargets="RestoreNuGetPackagesPrelim" Condition="'@(NuGetRestore)' != ''">
-    <Exec Command="(set PLATFORM=%(NuGetRestore.Platform)) &amp; (set CONFIGURATION=%(NuGetRestore.Configuration)) &amp; $(NuGetCommand) restore %(NuGetRestore.Identity) -SolutionDirectory $(MsBuildThisFileDirectory)..\ -Verbosity Detailed -NonInteractive" Condition="'%(NuGetRestore.Platform)'=='ARM64'"  />
+  <Target Name="RestoreNuGetPackages18362" DependsOnTargets="RestoreNuGetPackagesPrelim" Condition="'@(NuGetRestore)' != ''">
+    <Exec Command="(set PLATFORM=%(NuGetRestore.Platform)) &amp; (set CONFIGURATION=%(NuGetRestore.Configuration)) &amp; $(NuGetCommand) restore %(NuGetRestore.Identity) -SolutionDirectory $(MsBuildThisFileDirectory)..\ -Verbosity Detailed -NonInteractive"  />
   </Target>
 </Project>

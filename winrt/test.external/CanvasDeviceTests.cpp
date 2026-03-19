@@ -76,6 +76,49 @@ TEST_CLASS(CanvasDeviceTests)
         Assert::AreEqual(originalD2DDevice.Get(), newD2DDevice.Get());
     }
 
+    TEST_METHOD(CanvasDevice_NativeInterop_DeviceContextLease)
+    {
+        auto canvasDevice = ref new CanvasDevice();
+
+        // CanvasDevice should be castable to ID2D1DeviceContextPool
+        auto deviceContextPool = As<ABI::Microsoft::Graphics::Canvas::ID2D1DeviceContextPool>(canvasDevice);
+
+        // Getting a device context lease should always succeed
+        ComPtr<ABI::Microsoft::Graphics::Canvas::ID2D1DeviceContextLease> deviceContextLease;
+        ThrowIfFailed(deviceContextPool->GetDeviceContextLease(&deviceContextLease));
+        Assert::IsNotNull(deviceContextLease.Get());
+
+        // Nobody else should have a reference to this lease
+        deviceContextLease->AddRef();
+        Assert::AreEqual(deviceContextLease->Release(), 1ul);
+
+        // Getting a device context from a lease should also always succeed
+        ComPtr<ID2D1DeviceContext> deviceContext;
+        ThrowIfFailed(deviceContextLease->GetD2DDeviceContext(&deviceContext));
+        Assert::IsNotNull(deviceContext.Get());
+
+        // Getting a device context from a lease again should always return the same instance.
+        // That is, a device context lease is just a thin wrapper around a single rented context.
+        ComPtr<ID2D1DeviceContext> deviceContext2;
+        ThrowIfFailed(deviceContextLease->GetD2DDeviceContext(&deviceContext2));
+        Assert::IsNotNull(deviceContext2.Get());
+        Assert::IsTrue(As<IUnknown>(deviceContext.Get()).Get() == As<IUnknown>(deviceContext2.Get()).Get());
+
+        // Get the device from the canvas device
+        ComPtr<ID2D1Device1> d2D1Device;
+        ThrowIfFailed(As<ABI::Microsoft::Graphics::Canvas::ICanvasResourceWrapperNative>(canvasDevice)->GetNativeResource(
+            As<ABI::Microsoft::Graphics::Canvas::ICanvasDevice>(canvasDevice).Get(),
+            0,
+            IID_PPV_ARGS(&d2D1Device)));
+
+        // Also get the device from the rented device context
+        ComPtr<ID2D1Device> d2D1DeviceFromDeviceContext;
+        deviceContext->GetDevice(&d2D1DeviceFromDeviceContext);
+
+        // The underlying device from the canvas device should be the same one as the one from the context
+        Assert::IsTrue(As<IUnknown>(d2D1Device.Get()).Get() == As<IUnknown>(d2D1DeviceFromDeviceContext.Get()).Get());
+    }
+
     TEST_METHOD(CanvasDevice_GetSharedDevice_ReturnsExisting)
     {
         auto d1 = CanvasDevice::GetSharedDevice(false);

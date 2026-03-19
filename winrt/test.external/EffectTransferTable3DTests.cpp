@@ -4,19 +4,17 @@
 
 #include "pch.h"
 
-#if WINVER > _WIN32_WINNT_WINBLUE
-
 using namespace Microsoft::Graphics::Canvas;
 using namespace Microsoft::Graphics::Canvas::Effects;
 using namespace Platform;
-using namespace Windows::UI;
+using namespace Microsoft::UI;
 
 TEST_CLASS(EffectTransferTable3DTests)
 {
     TEST_METHOD(EffectTransferTable3D_NativeInterop)
     {
         auto canvasDevice = ref new CanvasDevice();
-        auto transferTable = EffectTransferTable3D::CreateFromColors(canvasDevice, ref new Array<Color>(8), 2, 2, 2);
+        auto transferTable = EffectTransferTable3D::CreateFromColors(canvasDevice, ref new Array<Windows::UI::Color>(8), 2, 2, 2);
 
         auto d2dLookupTable = GetWrappedResource<ID2D1LookupTable3D>(transferTable);
 
@@ -52,7 +50,7 @@ TEST_CLASS(EffectTransferTable3DTests)
     TEST_METHOD(EffectTransferTable3D_Closed)
     {
         auto canvasDevice = ref new CanvasDevice();
-        auto transferTable = EffectTransferTable3D::CreateFromColors(canvasDevice, ref new Array<Color>(8), 2, 2, 2);
+        auto transferTable = EffectTransferTable3D::CreateFromColors(canvasDevice, ref new Array<Windows::UI::Color>(8), 2, 2, 2);
 
         delete transferTable;
 
@@ -71,7 +69,7 @@ TEST_CLASS(EffectTransferTable3DTests)
     TEST_METHOD(EffectTransferTable3D_DrawWrongDevice)
     {
         auto canvasDevice = ref new CanvasDevice();
-        auto transferTable = EffectTransferTable3D::CreateFromColors(canvasDevice, ref new Array<Color>(8), 2, 2, 2);
+        auto transferTable = EffectTransferTable3D::CreateFromColors(canvasDevice, ref new Array<Windows::UI::Color>(8), 2, 2, 2);
 
         auto effect = ref new TableTransfer3DEffect();
         effect->Source = ref new ColorSourceEffect();
@@ -94,5 +92,3 @@ TEST_CLASS(EffectTransferTable3DTests)
         });
     }
 };
-
-#endif
