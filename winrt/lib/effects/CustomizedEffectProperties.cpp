@@ -93,8 +93,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     }
 
 
-#if (defined _WIN32_WINNT_WIN10) && (WINVER >= _WIN32_WINNT_WIN10)
-
     // HighlightsAndShadowsEffect.SourceIsLinearGamma property needs special conversion,
     // because we project the D2D1_HIGHLIGHTSANDSHADOWS_INPUT_GAMMA enum as a bool.
 
@@ -120,7 +118,5 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
     IMPLEMENT_EFFECT_PROPERTY_MAPPING_HANDCODED(HighlightsAndShadowsEffect,
         { L"SourceIsLinearGamma", D2D1_HIGHLIGHTSANDSHADOWS_PROP_INPUT_GAMMA, GRAPHICS_EFFECT_PROPERTY_MAPPING_UNKNOWN })
-
-#endif // _WIN32_WINNT_WIN10
 
 }}}}}

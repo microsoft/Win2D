@@ -8,13 +8,9 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Windows.UI;
+using Microsoft.UI;
 
-#if WINDOWS_UWP
 using Windows.Graphics.DirectX;
-#else
-using Microsoft.Graphics.Canvas.DirectX;
-#endif
 
 namespace test.managed
 {

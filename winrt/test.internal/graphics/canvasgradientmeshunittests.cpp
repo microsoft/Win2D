@@ -4,8 +4,6 @@
 
 #include "pch.h"
 
-#if WINVER > _WIN32_WINNT_WINBLUE
-
 #include <lib/drawing/CanvasGradientMesh.h>
 
 #include "GetBoundsFixture.h"
@@ -496,5 +494,3 @@ public:
         }
     }
 };
-
-#endif

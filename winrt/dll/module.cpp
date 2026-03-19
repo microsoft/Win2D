@@ -11,6 +11,8 @@
 #pragma warning(pop)
 
 #include "../inc/LifespanTracker.h"
+#include "../inc/MicrosoftTelemetry.h"
+#include "../inc/Win2DTelemetry.h"
 
 STDAPI_(BOOL)
 DllMain(
@@ -26,6 +28,7 @@ DllMain(
     {
     case DLL_PROCESS_ATTACH:
         EventRegisterWin2D();
+        RegisterTraceLogging();
         break;
         
     case DLL_PROCESS_DETACH:
@@ -38,6 +41,7 @@ DllMain(
         LifespanInfo::ReportLiveObjectsNoLock();
 
         EventUnregisterWin2D();
+        UnregisterTraceLogging();
         break;
     }
 

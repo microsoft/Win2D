@@ -6,17 +6,25 @@
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
     <MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>
     <DefaultLanguage>en-US</DefaultLanguage>
-    <AppContainerApplication>true</AppContainerApplication>
-    <UnitTestPlatformVersion  Condition="'$(UnitTestPlatformVersion)' == ''">16.0</UnitTestPlatformVersion>
-    <ProjectSubType>NativeUnitTestProject</ProjectSubType>
-    <ApplicationType>Windows Store</ApplicationType>
-    <ApplicationTypeRevision>10.0</ApplicationTypeRevision>
-
+    <UnitTestPlatformVersion Condition="'$(UnitTestPlatformVersion)' == ''">16.0</UnitTestPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.19041.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformMinVersion>10.0.17763.0</WindowsTargetPlatformMinVersion>
+    <PlatformToolset>v143</PlatformToolset>
+    <_NoWinAPIFamilyApp>true</_NoWinAPIFamilyApp>
   </PropertyGroup>
   <Import Project="..\..\build\Win2D.cpp.props" />
+  <Import Project="..\..\build\HybridCRT.props" />
+  <PropertyGroup>
+    <UseCrtSDKReferenceStaticWarning>false</UseCrtSDKReferenceStaticWarning>
+  </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <Import Project="$(WindowsAppSdkWinUI_props)" Condition="Exists('$(WindowsAppSdkWinUI_props)')" />
+  <Import Project="$(WindowsAppSdkInteractiveExperiences_props)" Condition="Exists('$(WindowsAppSdkInteractiveExperiences_props)')" />
   <PropertyGroup Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <DesktopCompatible>true</DesktopCompatible>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <PropertyGroup>
@@ -24,12 +32,15 @@
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
-      <AdditionalIncludeDirectories>$(VCInstallDir)UnitTest\include\UWP;..\Inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <WarningLevel>Level4</WarningLevel>
+      <AdditionalIncludeDirectories>$(VCInstallDir)UnitTest\include\UWP;..\Inc;$(EtwDirectory);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>ENABLE_WINRT_EXPERIMENTAL_TYPES=1;WRT_EXPORT;WINUI3;_UNICODE;UNICODE;_SILENCE_STDEXT_ARR_ITERS_DEPRECATION_WARNING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <!-- Suppress warnings about using Windows.UI.Color without referencing Windows.winmd -->
+      <DisableSpecificWarnings>4691;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(VCInstallDir)UnitTest\lib\UWP;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>dxguid.lib;d3d11.lib;d2d1.lib;dwrite.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>dxguid.lib;d3d11.lib;d2d1.lib;dwrite.lib;User32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -39,6 +50,7 @@
     <ClCompile Include="CanvasCreateResourcesEventArgsTests.cpp" />
     <ClCompile Include="CanvasDeviceTests.cpp" />
     <ClCompile Include="CanvasBitmapTests.cpp" />
+    <ClCompile Include="CanvasImageInteropTests.cpp" />
     <ClCompile Include="CanvasSvgAttributeTests.cpp" />
     <ClCompile Include="CanvasVirtualBitmapTests.cpp" />
     <ClCompile Include="CanvasEffectsTests.cpp" />
@@ -66,6 +78,7 @@
     <ClCompile Include="DWriteExperiments.cpp" />
     <ClCompile Include="EffectTransferTable3DTests.cpp" />
     <ClCompile Include="Helpers.cpp" />
+    <ClCompile Include="CanvasFactoryNativeTests.cpp" />
     <ClCompile Include="Matrix5x4Test.cpp" />
     <ClCompile Include="RefCountTests.cpp" />
     <ClInclude Include="DebugLayer.h" />
@@ -142,6 +155,7 @@
       <SubType>Designer</SubType>
     </AppxManifest>
     <None Include="$(AssetDir)TemporaryKey.pfx" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="$(AssetDir)UnitTestLogo.scale-100.png">
@@ -163,6 +177,31 @@
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <ImportGroup Label="ExtensionTargets" />
+  <ImportGroup>
+    <Import Project="$(WindowsAppSdkWinUI_targets)" Condition="Exists('$(WindowsAppSdkWinUI_targets)')" />
+    <Import Project="$(WindowsAppSdkInteractiveExperiences_targets)" Condition="Exists('$(WindowsAppSdkInteractiveExperiences_targets)')" />
+  </ImportGroup>
   <Import Project="..\..\build\Win2D.cpp.targets" />
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <!-- 
+           Having the MidlRT and AbiWinRT packages causes a Microsoft.Graphics.Canvas.h file to be generated in the \obj\winrt.test.external.uap\ folder.
+           Ideally the following statement adding include directories should be placed in the previous ClCompile clause.
+           However, by doing so, <Microsoft.Graphics.Canvas.h> will refer to the file located at the \obj\winrt.test.external.uap\ folder.
+           When the AdditionalIncludeDirectories statement is placed at the end of the file, as follows, 
+           <Microsoft.Graphics.Canvas.h> starts referring to the file located at the \obj\winrt.lib.uap\ folder, which is the desired one.
+           In the future, the nuget packages should be able to be removed, and thus the AdditionalIncludeDirectories clause should be moved back.
+      -->
+      <AdditionalIncludeDirectories>..\..\obj\winrt.lib.uap\$(FullPlatform)\$(Configuration)\Generated Files;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+      <Error Condition="!Exists('$(WindowsAppSdkWinUI_props)')" Text="$([System.String]::Format('$(ErrorText)', '$(WindowsAppSdkWinUI_props)'))" />
+      <Error Condition="!Exists('$(WindowsAppSdkWinUI_targets)')" Text="$([System.String]::Format('$(ErrorText)', '$(WindowsAppSdkWinUI_targets)'))" />
+      <Error Condition="!Exists('$(WindowsAppSdkInteractiveExperiences_props)')" Text="$([System.String]::Format('$(ErrorText)', '$(WindowsAppSdkInteractiveExperiences_props)'))" />
+      <Error Condition="!Exists('$(WindowsAppSdkInteractiveExperiences_targets)')" Text="$([System.String]::Format('$(ErrorText)', '$(WindowsAppSdkInteractiveExperiences_targets)'))" />
+  </Target>
 </Project>

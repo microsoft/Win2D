@@ -44,9 +44,6 @@
 #include "Transform3DEffect.h"
 #include "TurbulenceEffect.h"
 #include "UnPremultiplyEffect.h"
-
-#if (defined _WIN32_WINNT_WIN10) && (WINVER >= _WIN32_WINNT_WIN10)
-
 #include "AlphaMaskEffect.h"
 #include "ChromaKeyEffect.h"
 #include "ContrastEffect.h"
@@ -70,8 +67,6 @@
 #include "TintEffect.h"
 #include "VignetteEffect.h"
 #include "WhiteLevelAdjustmentEffect.h"
-
-#endif // _WIN32_WINNT_WIN10
 
 
 std::pair<IID, CanvasEffect::MakeEffectFunction> CanvasEffect::m_effectMakers[] =
@@ -114,9 +109,6 @@ std::pair<IID, CanvasEffect::MakeEffectFunction> CanvasEffect::m_effectMakers[] 
     { Transform3DEffect::EffectId(),          MakeEffect<Transform3DEffect>          },
     { TurbulenceEffect::EffectId(),           MakeEffect<TurbulenceEffect>           },
     { UnPremultiplyEffect::EffectId(),        MakeEffect<UnPremultiplyEffect>        },
-
-#if (defined _WIN32_WINNT_WIN10) && (WINVER >= _WIN32_WINNT_WIN10)
-
     { AlphaMaskEffect::EffectId(),            MakeEffect<AlphaMaskEffect>            },
     { ChromaKeyEffect::EffectId(),            MakeEffect<ChromaKeyEffect>            },
     { ContrastEffect::EffectId(),             MakeEffect<ContrastEffect>             },
@@ -140,8 +132,6 @@ std::pair<IID, CanvasEffect::MakeEffectFunction> CanvasEffect::m_effectMakers[] 
     { TintEffect::EffectId(),                 MakeEffect<TintEffect>                 },
     { VignetteEffect::EffectId(),             MakeEffect<VignetteEffect>             },
     { WhiteLevelAdjustmentEffect::EffectId(), MakeEffect<WhiteLevelAdjustmentEffect> },
-
-#endif // _WIN32_WINNT_WIN10
 
     { GUID_NULL, nullptr }
 };

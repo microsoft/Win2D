@@ -43,9 +43,9 @@
     <Filter Include="svg">
       <UniqueIdentifier>{805ea252-3559-4026-854a-65a3fc8880b8}</UniqueIdentifier>
     </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <MidlRT Include="$(MSBuildThisFileDirectory)Canvas.abi.idl" />
+    <Filter Include="telemetry">
+      <UniqueIdentifier>{420983e6-6003-4a30-8a07-15b8391c80d1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)pch.cpp" />
@@ -286,12 +286,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)utils\Strings.cpp">
       <Filter>utils</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)directx\Direct3DDevice.cpp">
-      <Filter>directx</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)directx\Direct3DSurface.cpp">
-      <Filter>directx</Filter>
-    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)xaml\CanvasAnimatedControlAdapter.cpp">
       <Filter>xaml</Filter>
     </ClCompile>
@@ -471,6 +465,9 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)svg\CanvasSvgStrokeDashArrayAttribute.cpp">
       <Filter>svg</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)telemetry\Win2DTelemetry.cpp">
+      <Filter>telemetry</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1270,5 +1267,9 @@
     <None Include="$(MSBuildThisFileDirectory)svg\CanvasSvgElement.abi.idl">
       <Filter>svg</Filter>
     </None>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Midl Include="$(MSBuildThisFileDirectory)Canvas.abi.idl" />
   </ItemGroup>
 </Project>

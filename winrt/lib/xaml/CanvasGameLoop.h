@@ -39,7 +39,7 @@ class CanvasGameLoop : private LifespanTracker<CanvasGameLoop>
     // thread).  It is reset by StartTickLoop.
     ComPtr<IAsyncInfo> m_completedTickLoopInfo;
         
-    ComPtr<IDispatchedHandler> m_tickHandler;
+    ComPtr<IDispatcherQueueHandler> m_tickHandler;
     ComPtr<IAsyncActionCompletedHandler> m_tickCompletedHandler;
 
     ComPtr<CanvasSwapChain> m_target;

@@ -94,7 +94,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         return ExceptionBoundary(
             [&]
             {
-                CheckInPointer(value);
+                CheckAndClearOutPointer(value);
                 
                 auto& device = m_device.EnsureNotClosed();
                 ThrowIfFailed(device.CopyTo(value));
@@ -107,6 +107,32 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         m_device.Close();
         return __super::Close();
     }
+
+    //
+    // ICanvasImageInterop
+    //
+
+    IFACEMETHODIMP CanvasCommandList::GetDevice(ICanvasDevice** device, WIN2D_GET_DEVICE_ASSOCIATION_TYPE* type)
+    {
+         return ExceptionBoundary(
+            [&]
+            {
+                CheckAndClearOutPointer(device);
+                CheckInPointer(type);
+
+                *type = WIN2D_GET_DEVICE_ASSOCIATION_TYPE_UNSPECIFIED;
+                
+                auto& localDevice = m_device.EnsureNotClosed();
+                ThrowIfFailed(localDevice.CopyTo(device));
+
+                // Just like bitmaps, command lists are uniquely owned by a device that cannot change.
+                *type = WIN2D_GET_DEVICE_ASSOCIATION_TYPE_CREATION_DEVICE;
+            });
+    }
+
+    //
+    // ICanvasImage
+    //
 
 
     IFACEMETHODIMP CanvasCommandList::GetBounds(
@@ -147,7 +173,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     ComPtr<ID2D1Image> CanvasCommandList::GetD2DImage(
         ICanvasDevice* device,
         ID2D1DeviceContext* deviceContext,
-        GetImageFlags,
+        WIN2D_GET_D2D_IMAGE_FLAGS,
         float /*targetDpi*/,
         float* realizedDpi)
     {

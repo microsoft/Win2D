@@ -4,7 +4,7 @@
 
 #pragma once
 
-using namespace ABI::Windows::UI::Xaml::Media::Imaging;
+using namespace ABI::Microsoft::UI::Xaml::Media::Imaging;
 
 class MockVirtualSurfaceImageSourceFactory
     : public RuntimeClass<IVirtualSurfaceImageSourceFactory>

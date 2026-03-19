@@ -140,6 +140,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             int32_t bufferCount,
             CanvasAlphaMode alphaMode) = 0;
 
+        virtual ComPtr<IDXGISwapChain1> CreateSwapChainForHwnd(
+            HWND hwnd,
+            int32_t widthInPixels,
+            int32_t heightInPixels,
+            DirectXPixelFormat format,
+            int32_t bufferCount,
+            CanvasAlphaMode alphaMode) = 0;
+
         virtual ComPtr<ID2D1CommandList> CreateCommandList() = 0;
 
         virtual ComPtr<ID2D1GeometryRealization> CreateFilledGeometryRealization(ID2D1Geometry* geometry, float flatteningTolerance) = 0;
@@ -166,13 +174,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         virtual HistogramAndAtlasEffects LeaseHistogramEffect(ID2D1DeviceContext* d2dContext) = 0;
         virtual void ReleaseHistogramEffect(HistogramAndAtlasEffects&& effects) = 0;
 
-#if WINVER > _WIN32_WINNT_WINBLUE
         virtual ComPtr<ID2D1GradientMesh> CreateGradientMesh(D2D1_GRADIENT_MESH_PATCH const* patches, uint32_t patchCount) = 0;
 
         virtual bool IsSpriteBatchQuirkRequired() = 0;
 
         virtual ComPtr<ID2D1SvgDocument> CreateSvgDocument(IStream* inputXmlStream) = 0;
-#endif
     };
 
 
@@ -188,7 +194,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         CloakedIid<ICanvasDeviceInternal>,
         ICanvasResourceCreator,
         IDirect3DDevice,
-        CloakedIid<IDirect3DDxgiInterfaceAccess>)
+        CloakedIid<IDirect3DDxgiInterfaceAccess>,
+        CloakedIid<ID2D1DeviceContextPool>)
     {
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_CanvasDevice, BaseTrust);
 
@@ -212,7 +219,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ComPtr<ID2D1Effect> m_histogramEffect;
         ComPtr<ID2D1Effect> m_atlasEffect;
 
-#if WINVER > _WIN32_WINNT_WINBLUE
         std::mutex m_quirkMutex;
         
         enum class SpriteBatchQuirk
@@ -223,7 +229,6 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         };
 
         SpriteBatchQuirk m_spriteBatchQuirk;
-#endif
 
     public:
         static ComPtr<CanvasDevice> CreateNew(bool forceSoftwareRenderer);
@@ -256,7 +261,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         IFACEMETHOD(remove_DeviceLost)(EventRegistrationToken token) override;
 
+        IFACEMETHOD(IsDeviceLost2)(boolean* value) override;
         IFACEMETHOD(IsDeviceLost)(int hresult, boolean* value) override;
+
+        IFACEMETHOD(GetDeviceLostReason)(int* hresult) override;
 
         IFACEMETHOD(RaiseDeviceLost)() override;
 
@@ -343,6 +351,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             int32_t bufferCount,
             CanvasAlphaMode alphaMode) override;
 
+        virtual ComPtr<IDXGISwapChain1> CreateSwapChainForHwnd(
+            HWND hwnd,
+            int32_t widthInPixels,
+            int32_t heightInPixels,
+            DirectXPixelFormat format,
+            int32_t bufferCount,
+            CanvasAlphaMode alphaMode) override;
+
         virtual ComPtr<ID2D1CommandList> CreateCommandList() override;
 
         virtual ComPtr<ID2D1GeometryRealization> CreateFilledGeometryRealization(ID2D1Geometry* geometry, float flatteningTolerance) override;
@@ -365,13 +381,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         virtual HistogramAndAtlasEffects LeaseHistogramEffect(ID2D1DeviceContext* d2dContext) override;
         virtual void ReleaseHistogramEffect(HistogramAndAtlasEffects&& effects) override;
 
-#if WINVER > _WIN32_WINNT_WINBLUE
         virtual ComPtr<ID2D1GradientMesh> CreateGradientMesh(D2D1_GRADIENT_MESH_PATCH const* patches, uint32_t patchCount) override;
 
         virtual bool IsSpriteBatchQuirkRequired() override;
 
         virtual ComPtr<ID2D1SvgDocument> CreateSvgDocument(IStream* inputXmlStream) override;
-#endif
 
         //
         // IDirect3DDevice
@@ -384,6 +398,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         //
 
         IFACEMETHOD(GetInterface)(IID const&, void**) override;
+
+        //
+        // ID2D1DeviceContextPool
+        //
+        IFACEMETHOD(GetDeviceContextLease)(ID2D1DeviceContextLease** lease) override;
 
         //
         // Internal
@@ -410,6 +429,30 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 
         ComPtr<ID2D1Bitmap1> CreateBitmapFromWicBitmap(ID2D1DeviceContext* deviceContext, IWICBitmapSource* wicBitmapSource, float dpi, CanvasAlphaMode alpha);
         ComPtr<ID2D1Bitmap1> CreateBitmapFromDdsFrame(ID2D1DeviceContext* deviceContext, IWICBitmapSource* wicBitmapSource, IWICDdsFrameDecode* ddsFrame, float dpi, CanvasAlphaMode alpha);
+
+        // telemetry
+        static void LogCreateCanvasDevice();
+    };
+
+    //
+    // ID2D1DeviceContextLease implementation that is returned by CanvasDevice::GetDeviceContextLease.
+    // This type is just a very thin COM object wrapping a DeviviceContextLease, which is the lease
+    // object holding a pooled ID2D1DeviceContext instance already used internally by Win2D effects.
+    //
+    class D2D1DeviceContextLease final : public RuntimeClass<RuntimeClassFlags<ClassicCom>, ID2D1DeviceContextLease>
+    {
+    public:
+        D2D1DeviceContextLease(CanvasDevice* canvasDevice)
+        {
+            CheckInPointer(canvasDevice);
+
+            m_deviceContext = canvasDevice->GetResourceCreationDeviceContext();
+        }
+
+        IFACEMETHOD(GetD2DDeviceContext)(ID2D1DeviceContext** deviceContext) override;
+
+    private:
+        DeviceContextLease m_deviceContext;
     };
 
 
@@ -505,13 +548,25 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         IFACEMETHOD(get_DebugLevel)(CanvasDebugLevel* debugLevel);
 
         //
-        // ICanvasFactoryNative.
+        // ICanvasFactoryNative
         //
         IFACEMETHOD(GetOrCreate)(
             ICanvasDevice* device,
             IUnknown* resource,
             float dpi,
             IInspectable** wrapper) override;
+
+        IFACEMETHOD(RegisterWrapper)(
+            IUnknown* resource,
+            IInspectable* wrapper) override;
+
+        IFACEMETHOD(UnregisterWrapper)(IUnknown* resource) override;
+
+        IFACEMETHOD(RegisterEffectFactory)(
+            REFIID effectId,
+            ICanvasEffectFactoryNative* factory) override;
+
+        IFACEMETHOD(UnregisterEffectFactory)(REFIID effectId) override;
     };
 
     static uint32_t const QUALCOMM_VENDOR_ID = 0x4D4F4351;

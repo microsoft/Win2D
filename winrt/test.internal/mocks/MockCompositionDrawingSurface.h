@@ -4,16 +4,14 @@
 
 #pragma once
 
-#if WINVER > _WIN32_WINNT_WINBLUE
-
 class MockCompositionDrawingSurface : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>,
     ICompositionDrawingSurface,
     ICompositionDrawingSurfaceInterop>
 {
 public:
     // ICompositionDrawingSurface
-    MOCK_METHOD1(get_AlphaMode   , HRESULT(DirectXAlphaMode* value));
-    MOCK_METHOD1(get_PixelFormat , HRESULT(DirectXPixelFormat* value));
+    MOCK_METHOD1(get_AlphaMode   , HRESULT(ABI::Microsoft::Graphics::DirectX::DirectXAlphaMode* value));
+    MOCK_METHOD1(get_PixelFormat , HRESULT(ABI::Microsoft::Graphics::DirectX::DirectXPixelFormat* value));
     MOCK_METHOD1(get_Size        , HRESULT(Size *value));
     
     // ICompositionDrawingSurfaceInterop
@@ -24,5 +22,3 @@ public:
     MOCK_METHOD0(ResumeDraw, HRESULT());
     MOCK_METHOD0(SuspendDraw, HRESULT());
 };
-
-#endif

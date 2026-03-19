@@ -4,8 +4,6 @@
 
 #include "pch.h"
 
-#if WINVER > _WIN32_WINNT_WINBLUE
-
 #include "CanvasSvgPointsAttribute.h"
 #include "AttributeHelpers.h"
     
@@ -117,5 +115,3 @@ IFACEMETHODIMP CanvasSvgPointsAttribute::get_Device(ICanvasDevice** device)
             ThrowIfFailed(m_canvasDevice.EnsureNotClosed().CopyTo(device));
         });
 }
-
-#endif

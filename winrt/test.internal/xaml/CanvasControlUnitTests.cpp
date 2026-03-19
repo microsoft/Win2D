@@ -10,7 +10,7 @@ TEST_CLASS(CanvasControlTests_CommonAdapter)
     {
         CanvasControlFixture f;
         ASSERT_IMPLEMENTS_INTERFACE(f.Control, ICanvasControl);
-        ASSERT_IMPLEMENTS_INTERFACE(f.Control, ABI::Windows::UI::Xaml::Controls::IUserControl);
+        ASSERT_IMPLEMENTS_INTERFACE(f.Control, ABI::Microsoft::UI::Xaml::Controls::IUserControl);
         ASSERT_IMPLEMENTS_INTERFACE(f.Control, ICanvasResourceCreator);
     }
 
@@ -319,7 +319,7 @@ TEST_CLASS(CanvasControlTests_SizeTests)
         }
         
     private:
-        IFACEMETHODIMP put_Source(ABI::Windows::UI::Xaml::Media::IImageSource* value) override 
+        IFACEMETHODIMP put_Source(ABI::Microsoft::UI::Xaml::Media::IImageSource* value) override 
         {
             Assert::IsFalse(m_sourceSeen);
 
@@ -481,64 +481,68 @@ TEST_CLASS(CanvasControlTests_Dpi)
             return __super::CreateCanvasImageSource(device, width, height, dpi, alphaMode);
         }
 
-        virtual float GetLogicalDpi() override
+#ifndef WINUI3
+        virtual float GetLogicalDpi(IXamlRoot*) override
         {
             return m_dpi;
         }
+#endif
     };
 
+// Test removed, as DPI now comes from the XamlRoot instead of the adapter
+#ifndef WINUI3
     TEST_METHOD_EX(CanvasControl_Dpi)
     {
         auto deviceContext = Make<MockD2DDeviceContext>();
         deviceContext->ClearMethod.AllowAnyCall();
         deviceContext->SetTransformMethod.AllowAnyCall();
         deviceContext->SetTextAntialiasModeMethod.AllowAnyCall();
-
+ 
         float dpiCases[] = {
             50, 
             DEFAULT_DPI,
             200};
-
+ 
         for (auto dpiCase : dpiCases)
         {
             auto adapter = std::make_shared<CanvasControlTestAdapter_VerifyDpi>(deviceContext.Get());
             adapter->CreateCanvasImageSourceMethod.AllowAnyCall();
-
+ 
             int expectedImageSourceCount = 0;
-
+ 
             adapter->m_dpi = dpiCase;
-
+ 
             ComPtr<CanvasControl> canvasControl = Make<CanvasControl>(adapter);
             ComPtr<StubUserControl> userControl = static_cast<StubUserControl*>(As<IUserControl>(canvasControl).Get());
-
+ 
             float const controlSize = 1000;
             userControl->Resize(Size{controlSize, controlSize});
-
+ 
             ThrowIfFailed(userControl->LoadedEventSource->InvokeAll(nullptr, nullptr));
-
+ 
             // An event handler needs to be registered for a drawing session to be constructed.
             auto onDrawFn = 
                 Callback<Static_DrawEventHandler>([](ICanvasControl*, ICanvasDrawEventArgs*) { return S_OK; });
             EventRegistrationToken drawEventToken;
             ThrowIfFailed(canvasControl->add_Draw(onDrawFn.Get(), &drawEventToken));
-
+ 
             deviceContext->SetDpiMethod.SetExpectedCalls(1,
                 [&](float dpiX, float dpiY)
                 {
                     Assert::AreEqual(dpiCase, dpiX);
                     Assert::AreEqual(dpiCase, dpiY);
                 });
-
+ 
             canvasControl->Invalidate();
             adapter->RaiseCompositionRenderingEvent();
-
+ 
             expectedImageSourceCount++;
             Assert::AreEqual(expectedImageSourceCount, adapter->m_imageSourceCount);
-
+ 
             // Verify the backing store size is correct
             Assert::AreEqual(controlSize, adapter->m_lastImageSourceWidth);
             Assert::AreEqual(controlSize, adapter->m_lastImageSourceHeight);
-
+ 
             // Verify the public, device-independent size of the control.
             ComPtr<IFrameworkElement> controlAsFrameworkElement;
             ThrowIfFailed(canvasControl.As(&controlAsFrameworkElement));
@@ -547,32 +551,32 @@ TEST_CLASS(CanvasControlTests_Dpi)
             ThrowIfFailed(controlAsFrameworkElement->get_ActualHeight(&verifyHeight));
             Assert::AreEqual<double>(verifyWidth, controlSize);
             Assert::AreEqual<double>(verifyHeight, controlSize);
-
+ 
             // Raise a DpiChanged.
             bool expectResize = controlSize != ceil(controlSize * dpiCase / DEFAULT_DPI);
-
+ 
             deviceContext->SetDpiMethod.SetExpectedCalls(expectResize ? 1 : 0,
                 [](float dpiX, float dpiY)
                 {
                     Assert::AreEqual(DEFAULT_DPI, dpiX);
                     Assert::AreEqual(DEFAULT_DPI, dpiY);
                 });            
-
+ 
             adapter->m_dpi = DEFAULT_DPI;
             adapter->RaiseDpiChangedEvent();
-
+ 
             // Here, verify that no recreation occurred yet. The backing store recreation
             // should occur at the next rendering event.
             Assert::AreEqual(expectedImageSourceCount, adapter->m_imageSourceCount);
-
+ 
             adapter->RaiseCompositionRenderingEvent();
-
+ 
             // Verify the backing store got resized as appropriate.
             if (expectResize) expectedImageSourceCount++;
             Assert::AreEqual(expectedImageSourceCount, adapter->m_imageSourceCount);
             Assert::AreEqual(controlSize, adapter->m_lastImageSourceWidth);
             Assert::AreEqual(controlSize, adapter->m_lastImageSourceHeight);
-
+ 
             // Verify the size of the control again.
             ThrowIfFailed(controlAsFrameworkElement->get_ActualWidth(&verifyWidth));
             ThrowIfFailed(controlAsFrameworkElement->get_ActualHeight(&verifyHeight));
@@ -580,6 +584,7 @@ TEST_CLASS(CanvasControlTests_Dpi)
             Assert::AreEqual<double>(verifyHeight, controlSize);
         }
     }
+#endif
 
     TEST_METHOD_EX(CanvasControl_WhenInvalidateIsCalledBeforeLoadedEvent_ThenNothingBadHappens)
     {
@@ -587,16 +592,18 @@ TEST_CLASS(CanvasControlTests_Dpi)
         ThrowIfFailed(f.Control->Invalidate());
     }
 
+// Test removed, as DPI now comes from the XamlRoot instead of the adapter
+#ifndef WINUI3
     TEST_METHOD_EX(CanvasControl_DpiScaling_ResourceHasCorrectDpiScale)
     {
         for (auto testCase : dpiScalingTestCases)
         {
             CanvasControlFixture f;
-
+ 
             f.Adapter->LogicalDpi = testCase.Dpi;
-
+ 
             f.Control->put_DpiScale(testCase.DpiScale);
-
+ 
             f.Adapter->CreateCanvasImageSourceMethod.SetExpectedCalls(1,
                 [&](ICanvasDevice*, float, float, float dpi, CanvasAlphaMode alphaMode)
                 {
@@ -604,11 +611,12 @@ TEST_CLASS(CanvasControlTests_Dpi)
                     Assert::AreEqual(dpi, expectedDpi);
                     return nullptr;
                 });
-
+ 
             f.Load();
             f.RenderSingleFrame();
         }
     }
+#endif
 };
 
 
@@ -760,6 +768,8 @@ TEST_CLASS(CanvasControl_ExternalEvents)
         f.Control.Reset();
     }
 
+// Test removed, as DPI now comes from the XamlRoot instead of the adapter
+#ifndef WINUI3
     TEST_METHOD_EX(CanvasControl_WhenDestroyed_UnregisterDpiChangedEvent)
     {
         Fixture f;
@@ -770,6 +780,7 @@ TEST_CLASS(CanvasControl_ExternalEvents)
         f.CreateControl();
         f.Control.Reset();
     }
+#endif
 
     TEST_METHOD_EX(CanvasControl_WhenSuspendingEventRaised_TrimCalledOnDevice)
     {

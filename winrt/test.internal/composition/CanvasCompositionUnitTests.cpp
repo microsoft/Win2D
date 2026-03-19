@@ -4,8 +4,6 @@
 
 #include "pch.h"
 
-#if WINVER > _WIN32_WINNT_WINBLUE
-
 #include <lib/composition/CanvasComposition.h>
 
 using namespace ABI::Microsoft::Graphics::Canvas::UI::Composition;
@@ -76,6 +74,7 @@ public:
         Assert::IsTrue(IsSameInstance(graphicsDevice.Get(), actualGraphicsDevice.Get()));
     }
 
+#if ENABLE_WIN2D_EXPERIMENTAL_FEATURES
     TEST_METHOD_EX(CanvasComposition_CreateCompositionSurfaceForSwapChain_FailsWhenPassedNullParameters)
     {
         Fixture f;
@@ -96,7 +95,7 @@ public:
         auto compositor = Make<MockCompositor>();
         auto dxgiSwapChain = Make<MockDxgiSwapChain>();
         auto canvasDevice = Make<MockCanvasDevice>();
-        auto canvasSwapChain = Make<CanvasSwapChain>(canvasDevice.Get(), dxgiSwapChain.Get(), DEFAULT_DPI, false);
+        auto canvasSwapChain = Make<CanvasSwapChain>(canvasDevice.Get(), dxgiSwapChain.Get(), DEFAULT_DPI, /* isTransformMatrixSupported */ true);
         auto compositionSurface = Make<RuntimeClass<ICompositionSurface>>();
 
         compositor->CreateCompositionSurfaceForSwapChainMethod.SetExpectedCalls(1,
@@ -111,6 +110,7 @@ public:
 
         Assert::IsTrue(IsSameInstance(compositionSurface.Get(), actualCompositionSurface.Get()));
     }
+#endif
 
     TEST_METHOD_EX(CanvasComposition_GetCanvasDevice_FailsWhenPassedNullParameters)
     {
@@ -351,5 +351,3 @@ public:
         ExpectHResultException(E_NOTIMPL, [] { GetCompositionStatics(); });
     }
 };
-
-#endif

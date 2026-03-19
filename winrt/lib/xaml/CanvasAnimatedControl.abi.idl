@@ -222,8 +222,8 @@ namespace Microsoft.Graphics.Canvas.UI.Xaml
         // CreateCoreIndpendentInputSource.
         //
         HRESULT CreateCoreIndependentInputSource(
-            [in] Windows.UI.Core.CoreInputDeviceTypes deviceTypes,
-            [out, retval] Windows.UI.Core.CoreIndependentInputSource** returnValue);
+            [in] Microsoft.UI.Input.InputPointerSourceDeviceKinds deviceTypes,
+            [out, retval] Microsoft.UI.Input.InputPointerSource** returnValue);
 
         //
         // Removes the control from the visual tree.
@@ -245,7 +245,7 @@ namespace Microsoft.Graphics.Canvas.UI.Xaml
         //
 
         HRESULT RunOnGameLoopThreadAsync(
-            [in] Windows.UI.Core.DispatchedHandler* agileCallback,
+            [in] Microsoft.UI.Dispatching.DispatcherQueueHandler* agileCallback,
             [out][retval] Windows.Foundation.IAsyncAction** asyncAction);
 
         //
@@ -278,10 +278,18 @@ namespace Microsoft.Graphics.Canvas.UI.Xaml
 
         [propget] HRESULT DpiScale([out, retval] float* value);
         [propput] HRESULT DpiScale([in] float ratio);
+
+        //
+        // Determines the sync interval used to present to the swapchain. 
+        //
+        // These methods can be called from any thread.
+        //
+        [propput] HRESULT SyncInterval([in] int value);
+        [propget] HRESULT SyncInterval([out, retval] int* value);
     }
 
     [version(VERSION), activatable(VERSION), marshaling_behavior(agile), threading(both)]
-    runtimeclass CanvasAnimatedControl : Windows.UI.Xaml.Controls.UserControl
+    runtimeclass CanvasAnimatedControl : Microsoft.UI.Xaml.Controls.UserControl
     {
         [default] interface ICanvasAnimatedControl;
     }

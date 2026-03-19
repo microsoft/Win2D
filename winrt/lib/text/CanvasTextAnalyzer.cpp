@@ -504,16 +504,12 @@ IFACEMETHODIMP CanvasTextAnalyzer::GetFonts(
 
             if (requestedFontSet)
             {
-#if WINVER > _WIN32_WINNT_WINBLUE
                 auto dwriteFontSet = GetWrappedResource<IDWriteFontSet>(requestedFontSet);
                 auto factory = As<IDWriteFactory3>(m_customFontManager->GetSharedFactory());
                 ComPtr<IDWriteFontCollection1> dwriteFontCollection1;
                 ThrowIfFailed(factory->CreateFontCollectionFromFontSet(dwriteFontSet.Get(), &dwriteFontCollection1));
 
                 dwriteFontCollection = As<IDWriteFontCollection>(dwriteFontCollection1.Get());
-#else
-                dwriteFontCollection = GetWrappedResource<IDWriteFontCollection>(requestedFontSet);
-#endif
             }
             else
             {
@@ -551,13 +547,10 @@ IFACEMETHODIMP CanvasTextAnalyzer::GetFonts(
 
                 if (mappedFont)
                 {
-#if WINVER > _WIN32_WINNT_WINBLUE
                     ComPtr<IDWriteFontFaceReference> fontFaceReference;
                     ThrowIfFailed(As<IDWriteFont3>(mappedFont)->GetFontFaceReference(&fontFaceReference));
                     auto canvasFontFace = ResourceManager::GetOrCreate<ICanvasFontFace>(fontFaceReference.Get());
-#else
-                    auto canvasFontFace = ResourceManager::GetOrCreate<ICanvasFontFace>(mappedFont.Get());
-#endif
+
                     auto canvasScaledFont = Make<CanvasScaledFont>(canvasFontFace.Get(), scaleFactor);
                     CheckMakeResult(canvasScaledFont);
 

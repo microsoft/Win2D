@@ -7,8 +7,6 @@
 #include "pch.h"
 #include "HighlightsAndShadowsEffect.h"
 
-#if (defined _WIN32_WINNT_WIN10) && (WINVER >= _WIN32_WINNT_WIN10)
-
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Effects
 {
     HighlightsAndShadowsEffect::HighlightsAndShadowsEffect(ICanvasDevice* device, ID2D1Effect* effect)
@@ -65,5 +63,3 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
     ActivatableClassWithFactory(HighlightsAndShadowsEffect, ::SimpleAgileActivationFactory<HighlightsAndShadowsEffect>);
 }}}}}
-
-#endif // _WIN32_WINNT_WIN10

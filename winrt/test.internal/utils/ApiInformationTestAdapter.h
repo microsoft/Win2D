@@ -4,8 +4,6 @@
 
 #pragma once
 
-#if WINVER > _WIN32_WINNT_WINBLUE
-
 #include <lib/utils/ApiInformationAdapter.h>
 
 class ApiInformationTestAdapter : public ApiInformationAdapter
@@ -36,5 +34,3 @@ public:
         return (std::find(m_contracts.begin(), m_contracts.end(), toFind) != m_contracts.end());
     }
 };
-
-#endif

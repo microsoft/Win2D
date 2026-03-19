@@ -9,7 +9,10 @@
     C++ projects.
 
   -->
-
+  <PropertyGroup>
+    <EnableWin2DExperimentalFeatures>false</EnableWin2DExperimentalFeatures>
+  </PropertyGroup>
+  
   <PropertyGroup>
     <DeviceType Condition="'$(DeviceType)' == ''">$(TargetPlatformIdentifier)</DeviceType>
   </PropertyGroup>
@@ -51,5 +54,7 @@
     <AssetDir>$(AssetDir.ToLower())</AssetDir>
 
   </PropertyGroup>
+
+  <Import Project="WindowsAppSdk.common.props" />
 
 </Project>

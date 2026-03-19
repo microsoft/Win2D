@@ -16,11 +16,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     using namespace ABI::Windows::Foundation;
     using namespace ABI::Windows::Storage::Streams;
     using namespace ABI::Windows::Storage;
+    using namespace ABI::Microsoft::UI;
     using namespace ABI::Windows::UI;
 
-#if WINVER > _WIN32_WINNT_WINBLUE
     using ABI::Windows::Graphics::Imaging::ISoftwareBitmap;
-#endif
 
     bool FileFormatSupportsHdr(GUID const& containerFormat);
     GUID GetGUIDForFileFormat(CanvasBitmapFileFormat fileFormat);
@@ -185,12 +184,10 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             CanvasAlphaMode alpha,
             ICanvasBitmap** canvasBitmap) override;
 
-#if WINVER > _WIN32_WINNT_WINBLUE
         IFACEMETHOD(CreateFromSoftwareBitmap)(
             ICanvasResourceCreator* resourceCreator,
             ISoftwareBitmap* sourceBitmap,
             ICanvasBitmap** canvasBitmap) override;
-#endif        
 
         IFACEMETHOD(LoadAsyncFromHstring)(
             ICanvasResourceCreator* resourceCreator,
@@ -336,7 +333,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 RuntimeClassFlags<WinRtClassicComMix>,
                 ICanvasResourceCreator,
                 ICanvasResourceCreatorWithDpi,
-                CloakedIid<ICanvasImageInternal>,
+                ChainInterfaces<CloakedIid<ICanvasImageInternal>, CloakedIid<ICanvasImageInterop>>,
                 CloakedIid<ICanvasBitmapInternal>,
                 CloakedIid<IDirect3DDxgiInterfaceAccess>,
                 CloakedIid<ICanvasResourceWrapperWithDevice>>,
@@ -445,7 +442,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             return ExceptionBoundary(
                 [&]
                 {
-                    CheckInPointer(value);
+                    CheckAndClearOutPointer(value);
                     ThrowIfFailed(m_device.CopyTo(value));
                 });
         }
@@ -491,8 +488,29 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
                 });
         }
 
+        //
+        // ICanvasImageInterop
+        //
+
+        IFACEMETHODIMP GetDevice(ICanvasDevice** device, WIN2D_GET_DEVICE_ASSOCIATION_TYPE* type) override
+        {
+            return ExceptionBoundary(
+                [&]
+                {
+                    CheckAndClearOutPointer(device);
+                    CheckInPointer(type);
+
+                    *type = WIN2D_GET_DEVICE_ASSOCIATION_TYPE_UNSPECIFIED;
+
+                    ThrowIfFailed(m_device.CopyTo(device));
+
+                    // A canvas bitmap is uniquely owned by its creation device.
+                    *type = WIN2D_GET_DEVICE_ASSOCIATION_TYPE_CREATION_DEVICE;
+                });
+        }
+
         // ICanvasImageInternal
-        virtual ComPtr<ID2D1Image> GetD2DImage(ICanvasDevice*, ID2D1DeviceContext*, GetImageFlags, float /*targetDpi*/, float* realizedDpi) override
+        virtual ComPtr<ID2D1Image> GetD2DImage(ICanvasDevice*, ID2D1DeviceContext*, WIN2D_GET_D2D_IMAGE_FLAGS, float /*targetDpi*/, float* realizedDpi) override
         {
             if (realizedDpi)
                 *realizedDpi = m_dpi;
@@ -928,13 +946,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             float dpi,
             CanvasAlphaMode alpha);
 
-#if WINVER > _WIN32_WINNT_WINBLUE
-
         static ComPtr<CanvasBitmap> CreateNew(
             ICanvasDevice* device,
             ISoftwareBitmap* sourceBitmap);
-
-#endif
 
         CanvasBitmap(
             ICanvasDevice* device,

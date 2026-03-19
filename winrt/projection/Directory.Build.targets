@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\..\build\win2d.cs.targets"/>
+</Project>

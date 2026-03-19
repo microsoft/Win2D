@@ -11,13 +11,8 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 {
     using namespace ::Microsoft::WRL;
 
-#if WINVER > _WIN32_WINNT_WINBLUE
     typedef IDWriteTextLayout3 DWriteTextLayoutType;
     typedef DWRITE_LINE_METRICS1 DWriteMetricsType;
-#else
-    typedef IDWriteTextLayout2 DWriteTextLayoutType;
-    typedef DWRITE_LINE_METRICS DWriteMetricsType;
-#endif
 
     class CanvasTextLayout : RESOURCE_WRAPPER_RUNTIME_CLASS(
         DWriteTextLayoutType,
@@ -92,13 +87,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         IFACEMETHOD(put_LineSpacingBaseline)(
             float value) override;
 
-#if WINVER > _WIN32_WINNT_WINBLUE
         IFACEMETHOD(get_LineSpacingMode)(
             CanvasLineSpacingMode* value) override;
 
         IFACEMETHOD(put_LineSpacingMode)(
             CanvasLineSpacingMode value) override;
-#endif
 
         IFACEMETHOD(get_DefaultLocaleName)(
             HSTRING* value) override;

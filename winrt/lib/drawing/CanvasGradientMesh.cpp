@@ -4,8 +4,6 @@
 
 #include "pch.h"
 
-#if WINVER > _WIN32_WINNT_WINBLUE
-
 #include "CanvasGradientMesh.h"
 
 using namespace ABI::Microsoft::Graphics::Canvas::Geometry;
@@ -356,5 +354,3 @@ ComPtr<CanvasGradientMesh> CanvasGradientMesh::CreateNew(
 }
 
 ActivatableClassWithFactory(CanvasGradientMesh, CanvasGradientMeshFactory);
-
-#endif

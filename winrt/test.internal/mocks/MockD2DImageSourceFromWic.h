@@ -4,8 +4,6 @@
 
 #pragma once
 
-#if WINVER > _WIN32_WINNT_WINBLUE
-
 class MockD2DImageSourceFromWic
     : public RuntimeClass<RuntimeClassFlags<ClassicCom>
     , ChainInterfaces<ID2D1ImageSourceFromWic, ID2D1ImageSource, ID2D1Resource>>
@@ -23,5 +21,3 @@ public:
     MOCK_METHOD1(TrimCache       , HRESULT(const D2D1_RECT_U*));
     MOCK_METHOD1_CONST(GetSource , void(IWICBitmapSource**));
 };
-
-#endif

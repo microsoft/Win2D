@@ -17,9 +17,7 @@ namespace Microsoft.Graphics.Canvas.Text
         Natural,
         NaturalSymmetric,
         Outline,
-#if WINVER > _WIN32_WINNT_WINBLUE
         NaturalSymmetricDownsampled
-#endif
     } CanvasTextRenderingMode;
 
     [version(VERSION)]

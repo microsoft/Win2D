@@ -44,6 +44,7 @@ namespace canvas
         CALL_COUNTER_WITH_MOCK(CreateRenderTargetBitmapMethod, ComPtr<ID2D1Bitmap1>(float, float, float, DirectXPixelFormat, CanvasAlphaMode));
         CALL_COUNTER_WITH_MOCK(CreateSwapChainForCompositionMethod, ComPtr<IDXGISwapChain1>(int32_t, int32_t, DirectXPixelFormat, int32_t, CanvasAlphaMode));
         CALL_COUNTER_WITH_MOCK(CreateSwapChainForCoreWindowMethod, ComPtr<IDXGISwapChain1>(ICoreWindow*, int32_t, int32_t, DirectXPixelFormat, int32_t, CanvasAlphaMode));
+        CALL_COUNTER_WITH_MOCK(CreateSwapChainForHwndMethod, ComPtr<IDXGISwapChain1>(HWND, int32_t, int32_t, DirectXPixelFormat, int32_t, CanvasAlphaMode));
         CALL_COUNTER_WITH_MOCK(CreateCommandListMethod, ComPtr<ID2D1CommandList>());
 
         CALL_COUNTER_WITH_MOCK(CreateFilledGeometryRealizationMethod, ComPtr<ID2D1GeometryRealization>(ID2D1Geometry*, float));
@@ -69,14 +70,14 @@ namespace canvas
 
         CALL_COUNTER_WITH_MOCK(GetDeviceRemovedErrorCodeMethod, HRESULT());
 
+        CALL_COUNTER_WITH_MOCK(IsDeviceLost2Method, HRESULT(boolean*));
         CALL_COUNTER_WITH_MOCK(IsDeviceLostMethod, HRESULT(int, boolean*));
+        CALL_COUNTER_WITH_MOCK(GetDeviceLostReasonMethod, HRESULT(int*));
 
-#if WINVER > _WIN32_WINNT_WINBLUE
         CALL_COUNTER_WITH_MOCK(CreateGradientMeshMethod, ComPtr<ID2D1GradientMesh>(D2D1_GRADIENT_MESH_PATCH const*, UINT32));
         CALL_COUNTER_WITH_MOCK(IsSpriteBatchQuirkRequiredMethod, bool());
 
         CALL_COUNTER_WITH_MOCK(CreateSvgDocumentMethod, ComPtr<ID2D1SvgDocument>(IStream*));
-#endif
 
         //
         // ICanvasDevice
@@ -142,11 +143,23 @@ namespace canvas
             return remove_DeviceLostMethod.WasCalled(token);
         }
 
+        IFACEMETHODIMP IsDeviceLost2(
+            boolean* value)
+        {
+            return IsDeviceLost2Method.WasCalled(value);
+        }
+
         IFACEMETHODIMP IsDeviceLost(
             int hresult,
             boolean* value)
         {
             return IsDeviceLostMethod.WasCalled(hresult, value);
+        }
+
+        IFACEMETHODIMP GetDeviceLostReason(
+            int* hresult)
+        {
+            return GetDeviceLostReasonMethod.WasCalled(hresult);
         }
 
         IFACEMETHODIMP RaiseDeviceLost()
@@ -356,6 +369,17 @@ namespace canvas
             return CreateSwapChainForCoreWindowMethod.WasCalled(coreWindow, widthInPixels, heightInPixels, format, bufferCount, alphaMode);
         }
 
+        virtual ComPtr<IDXGISwapChain1> CreateSwapChainForHwnd(
+            HWND hwnd,
+            int32_t widthInPixels,
+            int32_t heightInPixels,
+            DirectXPixelFormat format,
+            int32_t bufferCount,
+            CanvasAlphaMode alphaMode) override
+        {
+            return CreateSwapChainForHwndMethod.WasCalled(hwnd, widthInPixels, heightInPixels, format, bufferCount, alphaMode);
+        }
+
         virtual ComPtr<ID2D1CommandList> CreateCommandList() override
         {
             return CreateCommandListMethod.WasCalled();
@@ -405,7 +429,6 @@ namespace canvas
             return ReleaseHistogramEffectMethod.WasCalled(effects);
         }
 
-#if WINVER > _WIN32_WINNT_WINBLUE
         virtual ComPtr<ID2D1GradientMesh> CreateGradientMesh(
             D2D1_GRADIENT_MESH_PATCH const* patches,
             UINT32 patchCount) override
@@ -422,7 +445,6 @@ namespace canvas
         {
             return CreateSvgDocumentMethod.WasCalled(inputXmlStream);
         }
-#endif
     };
 }
 

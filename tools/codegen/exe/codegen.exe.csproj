@@ -10,7 +10,7 @@
     <RootNamespace>CodeGen</RootNamespace>
     <AssemblyName>codegen</AssemblyName>
     <TargetPlatformIdentifier>Windows</TargetPlatformIdentifier>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <Import Project="$(MSBuildThisFileDirectory)..\..\..\build\Win2D.cs.props" />

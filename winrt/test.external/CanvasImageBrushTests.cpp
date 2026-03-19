@@ -7,13 +7,13 @@
 using namespace Microsoft::Graphics::Canvas;
 using namespace Microsoft::Graphics::Canvas::Effects;
 using namespace WinRTDirectX;
-using namespace Windows::UI;
+using namespace Microsoft::UI;
 
 static CanvasBitmap^ CreateArbitraryCanvasBitmap(CanvasDevice^ device)
 { 
     return CanvasBitmap::CreateFromColors(
         device,
-        ref new Platform::Array<Color>(0),
+        ref new Platform::Array<Windows::UI::Color>(0),
         0,
         0,
         DEFAULT_DPI,

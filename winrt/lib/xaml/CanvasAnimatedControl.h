@@ -6,19 +6,22 @@
 
 #include "AnimatedControlAsyncAction.h"
 #include "BaseControlAdapter.h"
-#include "CanvasGameLoop.h"
 #include "CanvasSwapChainPanel.h"
 #include "StepTimer.h"
+
+#include "CanvasGameLoop.h"
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace UI { namespace Xaml
 {
     using namespace ABI::Windows::ApplicationModel;
     using namespace ABI::Windows::UI::Core;
-    using namespace ABI::Windows::UI::Xaml::Controls;
-    using namespace ABI::Windows::UI::Xaml::Shapes;
-    using namespace ABI::Windows::UI::Xaml;
+    using namespace ABI::Microsoft::UI::Dispatching;
+    using namespace ABI::Microsoft::UI::Input;
+    using namespace ABI::Microsoft::UI::Xaml::Controls;
+    using namespace ABI::Microsoft::UI::Xaml::Shapes;
+    using namespace ABI::Microsoft::UI::Xaml;
     using namespace ABI::Windows::Foundation;
-    using namespace ABI::Windows::System::Threading;
+    ///using namespace ABI::Windows::System::Threading;
 
     class CanvasAnimatedUpdateEventArgs : public RuntimeClass<ICanvasAnimatedUpdateEventArgs>,
                                           private LifespanTracker<CanvasAnimatedUpdateEventArgs>
@@ -148,6 +151,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         {
             SharedState()
                 : IsPaused(false)
+                , SyncInterval(1)
                 , TimeWhenPausedWasSet{}
                 , TimeSpentPaused{}
                 , IsStepTimerFixedStep(false)
@@ -161,6 +165,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             {}
 
             bool IsPaused;
+            int32_t SyncInterval;
             int64_t TimeWhenPausedWasSet;
             int64_t TimeSpentPaused;
             bool IsStepTimerFixedStep;
@@ -222,7 +227,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         IFACEMETHODIMP put_Paused(boolean value) override;
 
         IFACEMETHODIMP get_Paused(boolean* value) override;
-        
+
+        IFACEMETHODIMP put_SyncInterval(int32_t value);
+
+        IFACEMETHODIMP get_SyncInterval(int32_t* value);
+
         IFACEMETHODIMP get_Size(Size* value) override;
 
         IFACEMETHODIMP Invalidate() override;
@@ -230,15 +239,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         IFACEMETHODIMP ResetElapsedTime() override;
 
         IFACEMETHODIMP CreateCoreIndependentInputSource(
-            CoreInputDeviceTypes deviceType,
-            ICoreInputSourceBase** returnValue) override;
+            InputPointerSourceDeviceKinds deviceType,
+            IInputPointerSource** returnValue) override;
 
         IFACEMETHODIMP RemoveFromVisualTree() override;
 
         IFACEMETHODIMP get_HasGameLoopThreadAccess(boolean* value) override;
 
         IFACEMETHODIMP RunOnGameLoopThreadAsync(
-            IDispatchedHandler* callback,
+            IDispatcherQueueHandler* callback,
             IAsyncAction** asyncAction) override;
 
         //

@@ -17,8 +17,8 @@ public:
 
     MOCK_METHOD1(get_Opacity           , HRESULT(double *));
     MOCK_METHOD1(put_Opacity           , HRESULT(double));
-    MOCK_METHOD1(get_Transform         , HRESULT(ABI::Windows::UI::Xaml::Media::ITransform **));
-    MOCK_METHOD1(put_Transform         , HRESULT(ABI::Windows::UI::Xaml::Media::ITransform *));
-    MOCK_METHOD1(get_RelativeTransform , HRESULT(ABI::Windows::UI::Xaml::Media::ITransform **));
-    MOCK_METHOD1(put_RelativeTransform , HRESULT(ABI::Windows::UI::Xaml::Media::ITransform *));
+    MOCK_METHOD1(get_Transform         , HRESULT(ABI::Microsoft::UI::Xaml::Media::ITransform **));
+    MOCK_METHOD1(put_Transform         , HRESULT(ABI::Microsoft::UI::Xaml::Media::ITransform *));
+    MOCK_METHOD1(get_RelativeTransform , HRESULT(ABI::Microsoft::UI::Xaml::Media::ITransform **));
+    MOCK_METHOD1(put_RelativeTransform , HRESULT(ABI::Microsoft::UI::Xaml::Media::ITransform *));
 };

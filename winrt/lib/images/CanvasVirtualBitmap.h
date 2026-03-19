@@ -4,8 +4,6 @@
 
 #pragma once
 
-#if WINVER > _WIN32_WINNT_WINBLUE
-
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
 {
     class CanvasVirtualBitmapFactory :
@@ -85,7 +83,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         ICanvasVirtualBitmap,
         ICanvasImage,
         IGraphicsEffectSource,
-        CloakedIid<ICanvasImageInternal>,
+        ChainInterfaces<CloakedIid<ICanvasImageInternal>, CloakedIid<ICanvasImageInterop>>,
         CloakedIid<ICanvasResourceWrapperWithDevice>)        
     {
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_CanvasVirtualBitmap, BaseTrust);
@@ -127,10 +125,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         IFACEMETHODIMP GetBounds(ICanvasResourceCreator*, Rect*) override;
         IFACEMETHODIMP GetBoundsWithTransform(ICanvasResourceCreator*, Matrix3x2, Rect*) override;
 
+        //
+        // ICanvasImageInterop
+        //
+
+        IFACEMETHODIMP GetDevice(ICanvasDevice** device, WIN2D_GET_DEVICE_ASSOCIATION_TYPE* type) override;
+
         // ICanvasImageInternal
-        ComPtr<ID2D1Image> GetD2DImage(ICanvasDevice* , ID2D1DeviceContext*, GetImageFlags, float, float*) override;
+        ComPtr<ID2D1Image> GetD2DImage(ICanvasDevice* , ID2D1DeviceContext*, WIN2D_GET_D2D_IMAGE_FLAGS, float, float*) override;
     };
 
 }}}}
-
-#endif

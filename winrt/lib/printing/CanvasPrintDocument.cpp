@@ -4,8 +4,6 @@
 
 #include "pch.h"
 
-#ifndef WINDOWS_PHONE
-
 #include "CanvasPrintDocument.h"
 
 #include "CanvasPreviewEventArgs.h"
@@ -61,7 +59,7 @@ IFACEMETHODIMP CanvasPrintDocumentFactory::CreateWithDevice(
 // CanvasPrintDocument implementation
 //
 
-static ComPtr<ICoreDispatcher> GetDispatcher(CanvasPrintDocumentAdapter* adapter)
+static ComPtr<IDispatcherQueue> GetDispatcher(CanvasPrintDocumentAdapter* adapter)
 {
     auto dispatcher = adapter->GetDispatcherForCurrentThread();
     if (!dispatcher)
@@ -519,5 +517,3 @@ void CanvasPrintDocument::RunOnUIThread(std::function<void(CanvasPrintDocument*,
         future.get();
     }
 }
-
-#endif

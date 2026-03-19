@@ -4,14 +4,12 @@
 
 #include "pch.h"
 
-#if WINVER > _WIN32_WINNT_WINBLUE
-
 #include "CanvasComposition.h"
 
 #include "../utils/ApiInformationAdapter.h"
 
 using namespace ABI::Microsoft::Graphics::Canvas::UI::Composition;
-using namespace ABI::Windows::UI::Composition;
+using namespace ABI::Microsoft::UI::Composition;
 
 
 ActivatableStaticOnlyFactory(CanvasCompositionStatics);
@@ -55,25 +53,27 @@ IFACEMETHODIMP CanvasCompositionStatics::CreateCompositionGraphicsDevice(
         });
 }
 
-
+// Windows App SDK's support for swapchains is experimental
+#if ENABLE_WIN2D_EXPERIMENTAL_FEATURES
 IFACEMETHODIMP CanvasCompositionStatics::CreateCompositionSurfaceForSwapChain( 
-    ICompositor* compositor,
-    ICanvasSwapChain* swapChain,
-    ICompositionSurface** compositionSurface)
+   ICompositor* compositor,
+   ICanvasSwapChain* swapChain,
+   ICompositionSurface** compositionSurface)
 {
-    return ExceptionBoundary(
-        [&]
-        {
-            CheckInPointer(compositor);
-            CheckInPointer(swapChain);
-            CheckAndClearOutPointer(compositionSurface);
-            
-            auto compositorInterop = As<ICompositorInterop>(compositor);
-            auto dxgiSwapChain = GetWrappedResource<IDXGISwapChain>(swapChain);
-            
-            ThrowIfFailed(compositorInterop->CreateCompositionSurfaceForSwapChain(dxgiSwapChain.Get(), compositionSurface));
-        });
+   return ExceptionBoundary(
+       [&]
+       {
+           CheckInPointer(compositor);
+           CheckInPointer(swapChain);
+           CheckAndClearOutPointer(compositionSurface);
+           
+           auto compositorInterop = As<ICompositorInterop>(compositor);
+           auto dxgiSwapChain = GetWrappedResource<IDXGISwapChain>(swapChain);
+           
+           ThrowIfFailed(compositorInterop->CreateCompositionSurfaceForSwapChain(dxgiSwapChain.Get(), compositionSurface));
+       });
 }
+#endif
 
 
 IFACEMETHODIMP CanvasCompositionStatics::GetCanvasDevice( 
@@ -229,5 +229,3 @@ IFACEMETHODIMP CanvasCompositionStatics::Resize(
             ThrowIfFailed(drawingSurfaceInterop->Resize(newSize));
         });
 }
-
-#endif

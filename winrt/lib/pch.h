@@ -14,7 +14,22 @@
 #define NOMINMAX                // Stop Windows from defining min() and max() macros that break STL
 #endif
 
+#ifndef WIN2D_DLL_EXPORT
+#define WIN2D_DLL_EXPORT        // Mark public C APIs as being exported (whereas external consumers will import them)
+#endif
+
+#if defined(_M_IX86) && defined(_MSC_VER)
+#ifndef ARCH_X86
+#define ARCH_X86                // Used to detect the x86 architecture so fixups for C exports can be added
+#endif
+#endif
+
 #include <windows.h>
+
+// Undef GetCurrentTime because the Win32 API in windows.h collides with Storyboard.GetCurrentTime
+#ifdef GetCurrentTime
+#undef GetCurrentTime
+#endif
 
 // Standard C++
 #include <algorithm>
@@ -51,18 +66,13 @@
 #include <wincodec.h>
 #include <shcore.h>
 #include <robuffer.h>
-
-#ifndef WINDOWS_PHONE
 #include <DocumentSource.h>
 #include <PrintPreview.h>
-#endif
 
-#if WINVER > _WIN32_WINNT_WINBLUE
 #include <d2d1_3.h>
 #include <dwrite_3.h>
 #include <inkrenderer.h>
 #include <MemoryBuffer.h>
-#endif
 
 // WinRT
 #include <windows.foundation.h>
@@ -70,24 +80,35 @@
 #include <windows.security.cryptography.h>
 #include <windows.security.cryptography.core.h>
 #include <windows.storage.h>
-#include <windows.ui.h>
-#include <windows.ui.xaml.controls.h>
-#include <windows.ui.xaml.media.h>
-#include <windows.ui.xaml.media.dxinterop.h>
-#include <windows.ui.xaml.shapes.h>
+
+#ifndef WINUI3
+#include <microsoft.graphics.h>
+#include <microsoft.system.h>
+#else
+#include <microsoft.ui.h>
+#include <microsoft.ui.dispatching.h>
+#include <microsoft.UI.Xaml.Controls.h>
+#include <microsoft.ui.xaml.media.h>
+#include <microsoft.ui.xaml.media.dxinterop.h>
+#include <microsoft.ui.xaml.shapes.h>
+#endif
+
 #include <windows.graphics.display.h>
 #include <windows.graphics.interop.h>
 
-#if WINVER > _WIN32_WINNT_WINBLUE
+#include <Microsoft.UI.Interop.h>
+
 #include <windows.foundation.metadata.h>
-#include <windows.ui.composition.h>
-#include <windows.ui.composition.interop.h>
-#endif
+#include <microsoft.ui.composition.h>
+#include <microsoft.ui.composition.interop.h>
 
 #pragma warning(default: 4265)  // "class has virtual functions, but destructor is not virtual"
 
 // Public
 #include <Microsoft.Graphics.Canvas.native.h>
+
+// Generated from local IDLs
+#include <Microsoft.Graphics.Canvas.h>
 
 // Inc
 #include <AsyncOperation.h>
@@ -98,6 +119,7 @@
 #include <ErrorHandling.h>
 #include <LifespanTracker.h>
 #include <Map.h>
+#include <MicrosoftTelemetry.h>
 #include <Nullable.h>
 #include <ReferenceArray.h>
 #include <RegisteredEvent.h>
@@ -105,11 +127,9 @@
 #include <Singleton.h>
 #include <Utilities.h>
 #include <Vector.h>
+#include <Win2DTelemetry.h>
 #include <WinStringWrapper.h>
 #include <WinStringBuilder.h>
-
-// Generated from local IDLs
-#include <Microsoft.Graphics.Canvas.h>
 
 #pragma warning(push)
 #pragma warning(disable:4459)   // declaration hides global declaration

@@ -4,8 +4,6 @@
 
 #pragma once
 
-#if WINVER > _WIN32_WINNT_WINBLUE
-
 #include "stubs/StubDWriteFontFaceReference.h"
 
 namespace canvas
@@ -52,5 +50,3 @@ namespace canvas
         }
     };
 }
-
-#endif

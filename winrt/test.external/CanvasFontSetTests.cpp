@@ -33,15 +33,9 @@ TEST_CLASS(CanvasFontSetTests)
             __uuidof(&factory),
             static_cast<IUnknown**>(&factory)));
 
-#if WINVER > _WIN32_WINNT_WINBLUE
         typedef IDWriteFontSet DWriteFontSetResourceType;
         ComPtr<DWriteFontSetResourceType> fontSetResource;
         ThrowIfFailed(As<IDWriteFactory3>(factory)->GetSystemFontSet(&fontSetResource));
-#else
-        typedef IDWriteFontCollection DWriteFontSetResourceType;
-        ComPtr<DWriteFontSetResourceType> fontSetResource;
-        ThrowIfFailed(factory->GetSystemFontCollection(&fontSetResource));
-#endif
 
         auto canvasFontSet = GetOrCreate<CanvasFontSet>(fontSetResource.Get());
 

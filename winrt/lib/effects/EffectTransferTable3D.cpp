@@ -5,8 +5,6 @@
 #include "pch.h"
 #include "EffectTransferTable3D.h"
 
-#if (defined _WIN32_WINNT_WIN10) && (WINVER >= _WIN32_WINNT_WIN10)
-
 
 static D2D1_BUFFER_PRECISION ConvertTableFormatToBufferPrecision(DirectXPixelFormat format)
 {
@@ -177,6 +175,3 @@ IFACEMETHODIMP EffectTransferTable3DFactory::CreateFromBytes(
 
 
 ActivatableStaticOnlyFactory(EffectTransferTable3DFactory);
-
-
-#endif // _WIN32_WINNT_WIN10

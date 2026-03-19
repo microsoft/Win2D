@@ -8,6 +8,8 @@
 
 #include "MockXamlSolidColorBrush.h"
 
+#ifndef ARCH_X86
+
 static Color const AnyColor                 {   1,   2,   3,   4 };
 static Color const AnyOtherColor            {   5,   6,   7,   8 };
 static Color const AnyOpaqueColor           { 255,   2,   3,   4 };
@@ -36,6 +38,13 @@ public:
     void ResetSwapChain()
     {
         m_dxgiSwapChain = Make<StubDxgiSwapChain>();
+
+        m_dxgiSwapChain->GetHwndMethod.AllowAnyCall(
+            [=](HWND* pHwnd)
+            {
+                *pHwnd = 0;
+                return E_FAIL;
+            });
 
         m_dxgiSwapChain->Present1Method.AllowAnyCall();
 
@@ -78,18 +87,18 @@ public:
     }
 };
 
-class MockDispatchedHandler
+class MockDispatcherQueueHandler
 {
-    ComPtr<IDispatchedHandler> m_handler;
+    ComPtr<IDispatcherQueueHandler> m_handler;
     ComPtr<IAsyncAction> m_action;
 
 public:
     CALL_COUNTER_WITH_MOCK(OnInvoke, HRESULT());
     CALL_COUNTER_WITH_MOCK(OnCompleted, HRESULT(IAsyncAction*, AsyncStatus));
 
-    MockDispatchedHandler()
+    MockDispatcherQueueHandler()
     {
-        m_handler = Callback<AddFtmBase<IDispatchedHandler>::Type>(
+        m_handler = Callback<AddFtmBase<IDispatcherQueueHandler>::Type>(
             [=]
             {
                 return OnInvoke.WasCalled();
@@ -208,7 +217,7 @@ TEST_CLASS(CanvasAnimatedControlTests)
     {
         CanvasAnimatedControlFixture f;
         ASSERT_IMPLEMENTS_INTERFACE(f.Control, ICanvasAnimatedControl);
-        ASSERT_IMPLEMENTS_INTERFACE(f.Control, ABI::Windows::UI::Xaml::Controls::IUserControl);
+        ASSERT_IMPLEMENTS_INTERFACE(f.Control, ABI::Microsoft::UI::Xaml::Controls::IUserControl);
         ASSERT_IMPLEMENTS_INTERFACE(f.Control, ICanvasResourceCreator);
     }
 
@@ -618,6 +627,8 @@ TEST_CLASS(CanvasAnimatedControlTests)
         Assert::AreEqual(otherSize, sizeSeenByDraw);
     }
 
+// Test removed, as DPI now comes from the XamlRoot instead of the adapter
+#ifndef WINUI3
     class DpiFixture : public ResizeFixture
     {
     public:
@@ -778,6 +789,7 @@ TEST_CLASS(CanvasAnimatedControlTests)
         f.ExpectOneResizeBuffers(Size{ 123 * 2, 456 * 2 });
         f.Adapter->Tick();
     }
+#endif
 
     class DeviceLostFixture : public FixtureWithSwapChainAccess
     {
@@ -2084,7 +2096,7 @@ TEST_CLASS(CanvasAnimatedControlTests)
             f.Adapter->Tick();
         }
 
-        auto handler = Callback<IDispatchedHandler>(
+        auto handler = Callback<IDispatcherQueueHandler>(
             [&]
             {
                 ThrowIfFailed(f.Control->Invalidate());
@@ -2102,12 +2114,12 @@ TEST_CLASS(CanvasAnimatedControlTests)
     {
         CanvasAnimatedControlFixture f;
 
-        auto anyDeviceTypes = static_cast<CoreInputDeviceTypes>(123);
-        auto anyReturnValue = reinterpret_cast<ICoreInputSourceBase**>(456);
+        auto anyDeviceTypes = static_cast<InputPointerSourceDeviceKinds>(123);
+        auto anyReturnValue = reinterpret_cast<IInputPointerSource**>(456);
         HRESULT anyResultCode = -789;
 
         f.Adapter->GetSwapChainPanel()->CreateCoreIndependentInputSourceMethod.SetExpectedCalls(1,
-            [=] (CoreInputDeviceTypes actualDeviceTypes, ICoreInputSourceBase** actualReturnValue)
+            [=] (InputPointerSourceDeviceKinds actualDeviceTypes, IInputPointerSource** actualReturnValue)
             {
                 Assert::IsTrue(anyDeviceTypes == actualDeviceTypes, L"deviceTypes parameter is passed through");
                 Assert::IsTrue(anyReturnValue == actualReturnValue, L"returnValue paremeter is passed through");
@@ -2245,13 +2257,13 @@ TEST_CLASS(CanvasAnimatedControlRenderLoop)
 
         void ExpectRender()
         {
-            SwapChain->PresentMethod.SetExpectedCalls(1);
+            SwapChain->PresentWithSyncIntervalMethod.SetExpectedCalls(1);
             ExpectDrawingSession();
         }
 
         void AllowAnyRendering()
         {
-            SwapChain->PresentMethod.AllowAnyCall();
+            SwapChain->PresentWithSyncIntervalMethod.AllowAnyCall();
 
             SwapChain->CreateDrawingSessionMethod.SetExpectedCalls(1,
                 [=](Color clearColor, ICanvasDrawingSession** value)
@@ -2801,7 +2813,7 @@ TEST_CLASS(CanvasAnimatedControl_AppAccessingWorkerThreadTests)
     {
         CanvasAnimatedControlFixture f;
 
-        auto dispatchedHandler = Callback<IDispatchedHandler>([] { return S_OK; });
+        auto dispatchedHandler = Callback<IDispatcherQueueHandler>([] { return S_OK; });
         ComPtr<IAsyncAction> asyncAction;
 
         Assert::AreEqual(E_INVALIDARG, f.Control->RunOnGameLoopThreadAsync(dispatchedHandler.Get(), nullptr));
@@ -2812,7 +2824,7 @@ TEST_CLASS(CanvasAnimatedControl_AppAccessingWorkerThreadTests)
     {
         RunOnGameLoopFixture f;
 
-        MockDispatchedHandler dispatchedHandler;
+        MockDispatcherQueueHandler dispatchedHandler;
         dispatchedHandler.OnInvoke.SetExpectedCalls(0);
 
         dispatchedHandler.RunOnGameLoopThreadAsync(f.Control);
@@ -2834,7 +2846,7 @@ TEST_CLASS(CanvasAnimatedControl_AppAccessingWorkerThreadTests)
         f.TickUntil([&] { return !f.Adapter->GameThreadHasPendingWork(); });
 
 
-        MockDispatchedHandler dispatchedHandler;
+        MockDispatcherQueueHandler dispatchedHandler;
 
         dispatchedHandler.RunOnGameLoopThreadAsync(f.Control);
 
@@ -2851,7 +2863,7 @@ TEST_CLASS(CanvasAnimatedControl_AppAccessingWorkerThreadTests)
         RunOnGameLoopFixture f;
 
         int callbackIndex = 0;
-        MockDispatchedHandler dispatchedHandlers[actionCount];
+        MockDispatcherQueueHandler dispatchedHandlers[actionCount];
         for (int i = 0; i < actionCount; ++i)
         {
             dispatchedHandlers[i].OnInvoke.SetExpectedCalls(1,
@@ -2872,7 +2884,7 @@ TEST_CLASS(CanvasAnimatedControl_AppAccessingWorkerThreadTests)
     {
         RunOnGameLoopFixture f;
                 
-        MockDispatchedHandler dispatchedHandler;
+        MockDispatcherQueueHandler dispatchedHandler;
         dispatchedHandler.OnInvoke.SetExpectedCalls(1,
             [&]
             {
@@ -2899,7 +2911,7 @@ TEST_CLASS(CanvasAnimatedControl_AppAccessingWorkerThreadTests)
 
         RunOnGameLoopFixture f;
         
-        MockDispatchedHandler dispatchedHandlers[actionCount];
+        MockDispatcherQueueHandler dispatchedHandlers[actionCount];
 
         dispatchedHandlers[0].OnInvoke.SetExpectedCalls(1,
             [&]
@@ -2940,7 +2952,7 @@ TEST_CLASS(CanvasAnimatedControl_AppAccessingWorkerThreadTests)
     {
         RunOnGameLoopFixture f;
         
-        MockDispatchedHandler dispatchedHandler;
+        MockDispatcherQueueHandler dispatchedHandler;
         dispatchedHandler.OnInvoke.SetExpectedCalls(1, [] { return E_INVALIDARG; });
         dispatchedHandler.OnCompleted.SetExpectedCalls(1);
 
@@ -2958,7 +2970,7 @@ TEST_CLASS(CanvasAnimatedControl_AppAccessingWorkerThreadTests)
 
         RunOnGameLoopFixture f;
         
-        MockDispatchedHandler dispatchedHandlers[actionCount];
+        MockDispatcherQueueHandler dispatchedHandlers[actionCount];
         dispatchedHandlers[0].OnInvoke.SetExpectedCalls(1, [] { return E_INVALIDARG; });
         for (int i = 1; i < actionCount; ++i)
             dispatchedHandlers[i].OnInvoke.SetExpectedCalls(1);
@@ -2980,7 +2992,7 @@ TEST_CLASS(CanvasAnimatedControl_AppAccessingWorkerThreadTests)
         {
             RunOnGameLoopFixture f;
             
-            MockDispatchedHandler dispatchedHandler;
+            MockDispatcherQueueHandler dispatchedHandler;
             dispatchedHandler.OnInvoke.SetExpectedCalls(1);
             dispatchedHandler.OnCompleted.SetExpectedCalls(1, [=] (IAsyncAction*, AsyncStatus) { return error; });
 
@@ -2999,7 +3011,7 @@ TEST_CLASS(CanvasAnimatedControl_AppAccessingWorkerThreadTests)
 
         RunOnGameLoopFixture f;
         
-        MockDispatchedHandler dispatchedHandlers[actionCount];
+        MockDispatcherQueueHandler dispatchedHandlers[actionCount];
 
         dispatchedHandlers[0].OnInvoke.SetExpectedCalls(1);
         dispatchedHandlers[0].OnCompleted.SetExpectedCalls(1, [] (IAsyncAction*, AsyncStatus) { return E_INVALIDARG; });
@@ -3020,7 +3032,7 @@ TEST_CLASS(CanvasAnimatedControl_AppAccessingWorkerThreadTests)
         // The design is for the 'device removed' to take precedence.
         RunOnGameLoopFixture f;
         
-        MockDispatchedHandler dispatchedHandler;
+        MockDispatcherQueueHandler dispatchedHandler;
         dispatchedHandler.OnInvoke.SetExpectedCalls(1,
             [&]
             {
@@ -3064,7 +3076,7 @@ TEST_CLASS(CanvasAnimatedControl_AppAccessingWorkerThreadTests)
         //
 
         static const int actionCount = 6;
-        MockDispatchedHandler dispatchedHandlers[actionCount];
+        MockDispatcherQueueHandler dispatchedHandlers[actionCount];
 
         RunOnGameLoopFixture f;
         
@@ -3107,7 +3119,7 @@ TEST_CLASS(CanvasAnimatedControl_AppAccessingWorkerThreadTests)
 
         f.Load();
 
-        MockDispatchedHandler handler;
+        MockDispatcherQueueHandler handler;
 
         handler.RunOnGameLoopThreadAsync(f.Control);
 
@@ -3147,7 +3159,7 @@ TEST_CLASS(CanvasAnimatedControl_AppAccessingWorkerThreadTests)
     {
         CanvasAnimatedControlFixture f;
 
-        MockDispatchedHandler handler;
+        MockDispatcherQueueHandler handler;
 
         handler.OnInvoke.SetExpectedCalls(0);
         handler.OnCompleted.SetExpectedCalls(1,
@@ -3164,10 +3176,10 @@ TEST_CLASS(CanvasAnimatedControl_AppAccessingWorkerThreadTests)
     {
         CanvasAnimatedControlFixture f;
 
-        std::vector<MockDispatchedHandler> handlers;
+        std::vector<MockDispatcherQueueHandler> handlers;
         for (int i = 0; i < 10; ++i)
         {
-            MockDispatchedHandler handler;
+            MockDispatcherQueueHandler handler;
             handler.OnInvoke.SetExpectedCalls(0);
             handler.OnCompleted.SetExpectedCalls(1,
                 [] (IAsyncAction*, AsyncStatus status)
@@ -3194,7 +3206,7 @@ TEST_CLASS(CanvasAnimatedControl_AppAccessingWorkerThreadTests)
 
         f.Load();
 
-        MockDispatchedHandler handler;
+        MockDispatcherQueueHandler handler;
         handler.OnInvoke.SetExpectedCalls(0);
         handler.OnCompleted.SetExpectedCalls(1,
             [] (IAsyncAction*, AsyncStatus status)
@@ -3248,11 +3260,11 @@ TEST_CLASS(CanvasAnimatedControl_AppAccessingWorkerThreadTests)
         {
             auto mock = std::make_shared<HResultCallCounter>(L"RunAsync handler");
             
-            auto handler = Callback<IDispatchedHandler>([=] { return mock->WasCalled(); });
+            auto handler = Callback<IDispatcherQueueHandler>([=] { return mock->WasCalled(); });
             
-            ComPtr<IAsyncAction> ignoredAction;
+            boolean ignoredResult;
             
-            ThrowIfFailed(Adapter->GetGameThreadDispatcher()->RunAsync(CoreDispatcherPriority_Normal, handler.Get(), &ignoredAction));
+            ThrowIfFailed(Adapter->GetGameThreadDispatcher()->TryEnqueueWithPriority(DispatcherQueuePriority_Normal, handler.Get(), &ignoredResult));
             
             return mock;
         }
@@ -3261,7 +3273,7 @@ TEST_CLASS(CanvasAnimatedControl_AppAccessingWorkerThreadTests)
         {
             auto mock = std::make_shared<HResultCallCounter>(L"RunOnGameLoopThreadAsync handler");
 
-            auto handler = Callback<IDispatchedHandler>([=] { return mock->WasCalled(); });
+            auto handler = Callback<IDispatcherQueueHandler>([=] { return mock->WasCalled(); });
             
             ComPtr<IAsyncAction> ignoredAction;
             
@@ -3389,7 +3401,7 @@ TEST_CLASS(CanvasAnimatedControl_DpiScaling)
 
                     Assert::AreEqual(dpi, expectedDpi);
 
-                    return Make<CanvasSwapChain>(device, m_dxgiSwapChain.Get(), dpi, false);
+                    return Make<CanvasSwapChain>(device, m_dxgiSwapChain.Get(), dpi, /* isTransformMatrixSupported */ true);
                 });
         }
 
@@ -3419,7 +3431,8 @@ TEST_CLASS(CanvasAnimatedControl_DpiScaling)
         }
     };
 
-
+// Test removed, as DPI now comes from the XamlRoot instead of the adapter
+#ifndef WINUI3
     TEST_METHOD_EX(CanvasAnimatedControl_DpiScaling_Affects_SwapChainDpi_InitialCreate)
     {
         for (auto testCase : dpiScalingTestCases)
@@ -3450,6 +3463,7 @@ TEST_CLASS(CanvasAnimatedControl_DpiScaling)
             f.Adapter->DoChanged();
         }
     }
+#endif
 };
 
 //
@@ -3498,8 +3512,8 @@ TEST_CLASS(CanvasAnimatedControl_DesignMode)
     {
         Fixture f;
 
-        auto anyDeviceTypes = static_cast<CoreInputDeviceTypes>(123);
-        auto anyReturnValue = reinterpret_cast<ICoreInputSourceBase**>(456);
+        auto anyDeviceTypes = static_cast<InputPointerSourceDeviceKinds>(123);
+        auto anyReturnValue = reinterpret_cast<IInputPointerSource**>(456);
 
         Assert::AreEqual(E_NOTIMPL, f.Control->CreateCoreIndependentInputSource(anyDeviceTypes, anyReturnValue));
     }
@@ -3539,3 +3553,5 @@ TEST_CLASS(CanvasAnimatedControl_DesignMode)
         Assert::AreEqual(anyColor, retrievedColor);
     }
 };
+
+#endif

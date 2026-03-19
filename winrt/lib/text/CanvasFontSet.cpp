@@ -32,11 +32,8 @@ IFACEMETHODIMP CanvasFontSetFactory::Create(
                 ThrowHR(E_INVALIDARG);
 
             ComPtr<DWriteFontSetType> fontResource;
-#if WINVER > _WIN32_WINNT_WINBLUE
             ThrowIfFailed(As<IDWriteFontCollection1>(fontCollection)->GetFontSet(&fontResource));
-#else
-            fontResource = fontCollection;
-#endif
+
             auto newFontSet = Make<CanvasFontSet>(fontResource.Get());
             CheckMakeResult(newFontSet);
 
@@ -45,7 +42,6 @@ IFACEMETHODIMP CanvasFontSetFactory::Create(
 }
 
 
-#if WINVER > _WIN32_WINNT_WINBLUE
 ComPtr<IDWriteFontSet> GetLocalFonts(ComPtr<IDWriteFontSet> const& fonts)
 {
     auto factory = As<IDWriteFactory3>(CustomFontManager::GetInstance()->GetSharedFactory());
@@ -70,7 +66,6 @@ ComPtr<IDWriteFontSet> GetLocalFonts(ComPtr<IDWriteFontSet> const& fonts)
 
     return localFonts;
 }
-#endif
 
 IFACEMETHODIMP CanvasFontSetFactory::GetSystemFontSet(
     ICanvasFontSet** fontSet)
@@ -84,14 +79,11 @@ IFACEMETHODIMP CanvasFontSetFactory::GetSystemFontSet(
 
             ComPtr<DWriteFontSetType> systemFonts;
 
-#if WINVER > _WIN32_WINNT_WINBLUE
             ComPtr<DWriteFontSetType> systemFontsIncludingRemoteFonts;
 
             ThrowIfFailed(As<IDWriteFactory3>(factory)->GetSystemFontSet(&systemFontsIncludingRemoteFonts));
             systemFonts = GetLocalFonts(systemFontsIncludingRemoteFonts);
-#else
-            ThrowIfFailed(factory->GetSystemFontCollection(&systemFonts));
-#endif
+
             auto canvasFontSet = ResourceManager::GetOrCreate<ICanvasFontSet>(systemFonts.Get());
 
             canvasFontSet.CopyTo(fontSet);
@@ -104,36 +96,6 @@ CanvasFontSet::CanvasFontSet(DWriteFontSetType* dwriteFontSet)
 {
 }
 
-#if WINVER <= _WIN32_WINNT_WINBLUE
-void CanvasFontSet::EnsureFlatCollection(ComPtr<IDWriteFontCollection> const& resource)
-{
-    //
-    // The contents of a DWrite font collection are guaranteed to be immutable; 
-    // we exploit this by storing a flattened collection to more easily get at the 
-    // IDWriteFontSet functionality.
-    //
-    if (!m_flatCollection.empty()) 
-        return;
-
-    const uint32_t familyCount = resource->GetFontFamilyCount();
-    for (uint32_t i = 0; i < familyCount; ++i)
-    {
-        ComPtr<IDWriteFontFamily> fontFamily;
-        ThrowIfFailed(resource->GetFontFamily(i, &fontFamily));
-
-        const uint32_t fontsInFamily = fontFamily->GetFontCount();
-        for (uint32_t j = 0; j < fontsInFamily; ++j)
-        {
-            ComPtr<IDWriteFont> font;
-            ThrowIfFailed(fontFamily->GetFont(j, &font));
-
-            m_flatCollection.push_back(font);
-        }
-    }
-}
-#endif
-
-#if WINVER > _WIN32_WINNT_WINBLUE
 IFACEMETHODIMP CanvasFontSet::TryFindFontFace(ICanvasFontFace* fontFace, int* index, boolean* succeeded)
 {
     return ExceptionBoundary(
@@ -163,7 +125,6 @@ IFACEMETHODIMP CanvasFontSet::TryFindFontFace(ICanvasFontFace* fontFace, int* in
             }
         });
 }
-#endif
 
 IFACEMETHODIMP CanvasFontSet::get_Fonts(IVectorView<CanvasFontFace*>** value)
 {
@@ -174,23 +135,14 @@ IFACEMETHODIMP CanvasFontSet::get_Fonts(IVectorView<CanvasFontFace*>** value)
 
             auto& resource = GetResource();
 
-#if WINVER > _WIN32_WINNT_WINBLUE
             const uint32_t fontCount = resource->GetFontCount();
-#else
-            EnsureFlatCollection(resource);
-            const uint32_t fontCount = static_cast<uint32_t>(m_flatCollection.size());
-#endif
 
             auto vector = Make<Vector<CanvasFontFace*>>();
 
             for (uint32_t i = 0; i < fontCount; ++i)
             {
-#if WINVER > _WIN32_WINNT_WINBLUE
                 ComPtr<IDWriteFontFaceReference> fontResource;
                 ThrowIfFailed(resource->GetFontFaceReference(i, &fontResource));
-#else
-                ComPtr<IDWriteFont> fontResource = m_flatCollection[i];
-#endif
 
                 auto canvasFontFace = ResourceManager::GetOrCreate<ICanvasFontFace>(fontResource.Get());
 
@@ -200,8 +152,6 @@ IFACEMETHODIMP CanvasFontSet::get_Fonts(IVectorView<CanvasFontFace*>** value)
             ThrowIfFailed(vector->GetView(value));
         });
 }
-
-#if WINVER > _WIN32_WINNT_WINBLUE
 
 DWRITE_FONT_PROPERTY ToDWriteFontProperty(CanvasFontProperty const& value)
 {
@@ -369,7 +319,5 @@ IFACEMETHODIMP CanvasFontSet::GetPropertyValues(
             CopyStringListToArray(dwriteStringList, propertyIdentifier, valueCount, valueElements);
         });
 }
-
-#endif
 
 ActivatableClassWithFactory(CanvasFontSet, CanvasFontSetFactory);

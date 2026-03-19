@@ -6,8 +6,8 @@
 
 namespace canvas
 {
-    using namespace ABI::Windows::UI::Xaml::Media::Imaging;
-    using namespace ABI::Windows::UI::Xaml::Media;
+    using namespace ABI::Microsoft::UI::Xaml::Media::Imaging;
+    using namespace ABI::Microsoft::UI::Xaml::Media;
 
     class MockSurfaceImageSource : public RuntimeClass<
         RuntimeClassFlags<WinRtClassicComMix>,

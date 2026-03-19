@@ -452,7 +452,6 @@ namespace canvas
             }
         }
 
-#if WINVER > _WIN32_WINNT_WINBLUE
 
         TEST_METHOD_EX(CanvasTextFormat_LineSpacing_InteropToAndFromDWrite_AllSpacingMethods)
         {
@@ -551,7 +550,6 @@ namespace canvas
                 Assert::AreEqual(CanvasLineSpacingMode::Default, spacingMode);
             }
         }
-#endif
 
         TEST_METHOD_EX(CanvasTextFormat_LineSpacing_MethodIsDeterminedByValueOfLineSpacing)
         {
@@ -1248,7 +1246,7 @@ namespace canvas
                     return std::wstring(uri) + L"#anyfamily"; 
                 };
 
-            auto validUris = { L"foo/bar", L"foo", L"ms-appx:///foo", L"ms-appdata:///local/foo", L"filename with spaces" };
+            auto validUris = { L"foo/bar", L"foo", L"ms-appx:///foo", L"ms-appdata:///local/foo", L"filename with spaces", L"file://foo"};
 
             for (auto uri : validUris)
             {
@@ -1256,7 +1254,7 @@ namespace canvas
                 Assert::AreEqual(S_OK, cf->put_FontFamily(WinString(familyName)), familyName.c_str());
             }
 
-            auto invalidUriSchemes = { L"http://foo", L"file://foo", L"anything:" };
+            auto invalidUriSchemes = { L"http://foo", L"anything:" };
 
             for (auto uri : invalidUriSchemes)
             {
@@ -1614,11 +1612,9 @@ namespace canvas
                 &CanvasTextFormat::put_LineSpacingBaseline,
                 202.0f);
 
-#if WINVER > _WIN32_WINNT_WINBLUE
             CanvasTextFormat_TrimmingSign_AffectsTextFormatState_TestCase(
                 &CanvasTextFormat::put_LineSpacingMode,
                 CanvasLineSpacingMode::Proportional);
-#endif
 
             CanvasTextFormat_TrimmingSign_AffectsTextFormatState_TestCase(
                 &CanvasTextFormat::put_LocaleName,

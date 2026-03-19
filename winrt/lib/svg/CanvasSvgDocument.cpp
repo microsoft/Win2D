@@ -4,8 +4,6 @@
 
 #include "pch.h"
 
-#if WINVER > _WIN32_WINNT_WINBLUE
-
 #include "CanvasSvgDocument.h"
 #include "CanvasSvgElement.h"
 #include "CanvasSvgPaintAttribute.h"
@@ -501,5 +499,3 @@ IFACEMETHODIMP CanvasSvgDocumentStatics::IsSupported(ICanvasDevice* device, bool
 }
 
 }}}}}
-
-#endif

@@ -728,8 +728,6 @@ namespace canvas
             Assert::AreEqual(456.0f, fl);
         }
 
-#if WINVER > _WIN32_WINNT_WINBLUE
-
         TEST_METHOD_EX(CanvasTextLayoutTests_LineSpacingMode)
         {
             struct TestCase
@@ -801,8 +799,6 @@ namespace canvas
             ThrowIfFailed(ctl->get_LineSpacingMode(&spacingMode));
             Assert::AreEqual(CanvasLineSpacingMode::Uniform, spacingMode);
         }
-
-#endif
 
         template<class SET_LINE_SPACING_METHOD>
         void InitializeSetLineSpacingMethod(SET_LINE_SPACING_METHOD& setLineSpacingMethod, DWRITE_LINE_SPACING_METHOD method, FLOAT spacing, FLOAT baseline)
@@ -1963,11 +1959,9 @@ namespace canvas
                 &CanvasTextLayout::put_LineSpacingBaseline,
                 202.0f);
 
-#if WINVER > _WIN32_WINNT_WINBLUE
             CanvasTextLayout_TrimmingSign_SurvivesModifyingTextLayoutState_TestCase(
                 &CanvasTextLayout::put_LineSpacingMode,
                 CanvasLineSpacingMode::Proportional);
-#endif
 
             CanvasTextLayout_TrimmingSign_SurvivesModifyingTextLayoutState_TestCase(
                 &CanvasTextLayout::put_OpticalAlignment,
@@ -2315,11 +2309,8 @@ namespace canvas
                 metrics.height = 4.0f + inc;
                 metrics.baseline = 5.0f + inc;
                 metrics.isTrimmed = seed % 2 == 0 ? TRUE : FALSE;
-
-#if WINVER > _WIN32_WINNT_WINBLUE
                 metrics.leadingBefore = 6.0f + inc;
                 metrics.leadingAfter = 7.0f + inc;
-#endif              
                 return metrics;
             }
 
@@ -2334,21 +2325,14 @@ namespace canvas
                 metrics.Height = 4.0f + inc;
                 metrics.Baseline = 5.0f + inc;
                 metrics.IsTrimmed = seed % 2 == 0;
-
-#if WINVER > _WIN32_WINNT_WINBLUE
                 metrics.LeadingWhitespaceBefore = 6.0f + inc;
                 metrics.LeadingWhitespaceAfter = 7.0f + inc;
-#endif                    
                 return metrics;
             }
 
             void ExpectGetLineMetrics(int callCount, std::function<HRESULT(DWriteMetricsType*, uint32_t, uint32_t*)> mock)
             {
-#if WINVER > _WIN32_WINNT_WINBLUE
                 auto& lineMetricsMethod = Adapter->MockTextLayout->GetLineMetricsMethod1;
-#else
-                auto& lineMetricsMethod = Adapter->MockTextLayout->GetLineMetricsMethod;
-#endif
                 lineMetricsMethod.SetExpectedCalls(callCount, mock);
             }
         };

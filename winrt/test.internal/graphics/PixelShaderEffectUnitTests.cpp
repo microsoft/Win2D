@@ -14,6 +14,7 @@
 #include "mocks/MockD2DEffectContext.h"
 #include "mocks/MockD2DTransformGraph.h"
 #include "mocks/MockD2DBorderTransform.h"
+#include "Windows.Perception.Spatial.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
@@ -71,7 +72,6 @@ TEST_CLASS(PixelShaderEffectUnitTests)
         Assert::AreEqual(RO_E_CLOSED, properties->Insert(nullptr, nullptr, &b));
         Assert::AreEqual(RO_E_CLOSED, As<IIterable<IKeyValuePair<HSTRING, IInspectable*>*>>(properties)->First(&iterator));
     }
-
 
     struct Fixture
     {
@@ -153,7 +153,7 @@ TEST_CLASS(PixelShaderEffectUnitTests)
         auto effect = Make<PixelShaderEffect>(nullptr, nullptr, sharedState.Get());
 
         // Realize the effect.
-        effect->GetD2DImage(f.CanvasDevice.Get(), f.DeviceContext.Get(), GetImageFlags::None, 0, nullptr);
+        effect->GetD2DImage(f.CanvasDevice.Get(), f.DeviceContext.Get(), WIN2D_GET_D2D_IMAGE_FLAGS_NONE, 0, nullptr);
 
         // This should have passed the constant buffer through to D2D.
         Assert::AreEqual(constants, f.EffectPropertyValues[(int)PixelShaderEffectProperty::Constants]);
@@ -187,6 +187,12 @@ TEST_CLASS(PixelShaderEffectUnitTests)
 
         auto sharedState = MakeSharedShaderState(desc);
 
+        // Teach the D2D effect to return the factory of the device (since they are compatible)
+        f.MockEffect->MockGetFactory = [&](ID2D1Factory** factory)
+        {
+            f.StubDevice->GetFactory(factory);
+        };
+
         // Teach the D2D effect how to report its CLSID and shared state.
         f.MockEffect->MockGetValue = [&](UINT32 index, D2D1_PROPERTY_TYPE type, BYTE *data, UINT32 dataSize)
         {
@@ -197,7 +203,7 @@ TEST_CLASS(PixelShaderEffectUnitTests)
                 *reinterpret_cast<IID*>(data) = CLSID_PixelShaderEffect;
                 break;
 
-            case PixelShaderEffectProperty::SharedState:
+            case (UINT32)PixelShaderEffectProperty::SharedState:
                 Assert::AreEqual<size_t>(sizeof(IUnknown*), dataSize);
                 *reinterpret_cast<IUnknown**>(data) = As<IUnknown>(sharedState).Detach();
                 break;
@@ -253,7 +259,7 @@ TEST_CLASS(PixelShaderEffectUnitTests)
         ThrowIfFailed(properties->Insert(HStringReference(L"foo").Get(), Make<Nullable<int>>(3).Get(), &replaced));
 
         // Realize the effect.
-        effect->GetD2DImage(f.CanvasDevice.Get(), f.DeviceContext.Get(), GetImageFlags::None, 0, nullptr);
+        effect->GetD2DImage(f.CanvasDevice.Get(), f.DeviceContext.Get(), WIN2D_GET_D2D_IMAGE_FLAGS_NONE, 0, nullptr);
 
         // This should have passed the constant buffer containing 3 through to D2D.
         auto& d2dConstants = f.GetEffectPropertyValue<int>(PixelShaderEffectProperty::Constants);
@@ -281,7 +287,7 @@ TEST_CLASS(PixelShaderEffectUnitTests)
         ThrowIfFailed(effect->put_MaxSamplerOffset(23));
 
         // Realize the effect.
-        effect->GetD2DImage(f.CanvasDevice.Get(), f.DeviceContext.Get(), GetImageFlags::None, 0, nullptr);
+        effect->GetD2DImage(f.CanvasDevice.Get(), f.DeviceContext.Get(), WIN2D_GET_D2D_IMAGE_FLAGS_NONE, 0, nullptr);
 
         // This should have passed the coordinate mapping state through to D2D.
         auto& d2dMapping = f.GetEffectPropertyValue<CoordinateMappingState>(PixelShaderEffectProperty::CoordinateMapping);
@@ -318,7 +324,7 @@ TEST_CLASS(PixelShaderEffectUnitTests)
         ThrowIfFailed(effect->put_Source2Interpolation(CanvasImageInterpolation::Anisotropic));
 
         // Realize the effect.
-        effect->GetD2DImage(f.CanvasDevice.Get(), f.DeviceContext.Get(), GetImageFlags::None, 0, nullptr);
+        effect->GetD2DImage(f.CanvasDevice.Get(), f.DeviceContext.Get(), WIN2D_GET_D2D_IMAGE_FLAGS_NONE, 0, nullptr);
 
         // This should have passed the interpolation mode state through to D2D.
         auto& d2dInterpolation = f.GetEffectPropertyValue<SourceInterpolationState>(PixelShaderEffectProperty::SourceInterpolation);
@@ -333,6 +339,52 @@ TEST_CLASS(PixelShaderEffectUnitTests)
         // Changes should immediately be passed along to D2D.
         Assert::AreEqual<int>(D2D1_FILTER_ANISOTROPIC, d2dInterpolation.Filter[0]);
         Assert::AreEqual<int>(D2D1_FILTER_MIN_MAG_MIP_POINT, d2dInterpolation.Filter[1]);
+    }
+
+    TEST_METHOD_EX(PixelShaderEffect_RealizeAndGetDevice_FromICanvasImageInterop)
+    {
+        Fixture f;
+
+        auto sharedState = MakeSharedShaderState();
+        auto effect = Make<PixelShaderEffect>(nullptr, nullptr, sharedState.Get());
+
+        ComPtr<ICanvasDevice> canvasDevice;
+        WIN2D_GET_DEVICE_ASSOCIATION_TYPE deviceType = WIN2D_GET_DEVICE_ASSOCIATION_TYPE::WIN2D_GET_DEVICE_ASSOCIATION_TYPE_UNSPECIFIED;
+        ThrowIfFailed(As<ICanvasImageInterop>(effect)->GetDevice(&canvasDevice, &deviceType));
+
+        // The canvas device is just null initially (calling GetDevice should still succeed though)
+        Assert::IsNull(canvasDevice.Get());
+        Assert::IsTrue(deviceType == WIN2D_GET_DEVICE_ASSOCIATION_TYPE::WIN2D_GET_DEVICE_ASSOCIATION_TYPE_REALIZATION_DEVICE);
+
+        f.CanvasDevice.Get()->AddRef();
+
+        // The only reference to the canvas device is the one in the test fixture
+        Assert::AreEqual(f.CanvasDevice.Get()->Release(), 1ul);
+
+        ComPtr<ID2D1Image> image;
+        ThrowIfFailed(As<ICanvasImageInterop>(effect)->GetD2DImage(f.CanvasDevice.Get(), f.DeviceContext.Get(), WIN2D_GET_D2D_IMAGE_FLAGS_NONE, 0, nullptr, &image));
+
+        f.CanvasDevice.Get()->AddRef();
+
+        // The canvas device is now also stored in the effect as the realization device
+        Assert::AreEqual(f.CanvasDevice.Get()->Release(), 2ul);
+
+        // The resulting image should not be null if the method returned S_OK
+        Assert::IsNotNull(image.Get());
+
+        deviceType = WIN2D_GET_DEVICE_ASSOCIATION_TYPE::WIN2D_GET_DEVICE_ASSOCIATION_TYPE_UNSPECIFIED;
+        ThrowIfFailed(As<ICanvasImageInterop>(effect)->GetDevice(&canvasDevice, &deviceType));
+
+        // Device type should just always be the same
+        Assert::IsTrue(deviceType == WIN2D_GET_DEVICE_ASSOCIATION_TYPE::WIN2D_GET_DEVICE_ASSOCIATION_TYPE_REALIZATION_DEVICE);
+
+        f.CanvasDevice.Get()->AddRef();
+
+        // The canvas device now has 3 references (this ensures that ICanvasImageInterop::GetDevice also calls AddRef() on it)
+        Assert::AreEqual(f.CanvasDevice.Get()->Release(), 3ul);
+
+        // The realization device should match
+        Assert::AreEqual<ICanvasDevice*>(f.CanvasDevice.Get(), canvasDevice.Get());
     }
 };
 

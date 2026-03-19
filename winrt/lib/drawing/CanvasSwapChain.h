@@ -10,11 +10,11 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
     using namespace ABI::Microsoft::Graphics::Canvas::Numerics;
     using namespace ABI::Windows::Foundation;
     using namespace ABI::Windows::UI::Core;
-    using namespace ABI::Windows::UI;
+    using namespace ABI::Microsoft::UI;
     using namespace WinRTDirectX;
 
     class CanvasSwapChainFactory
-        : public AgileActivationFactory<ICanvasSwapChainFactory, ICanvasSwapChainStatics>
+        : public AgileActivationFactory<ICanvasSwapChainFactory, ICanvasSwapChainStatics, CloakedIid<ICanvasSwapChainFactoryNative>>
         , private LifespanTracker<CanvasSwapChainFactory>
     {
         InspectableClassStatic(RuntimeClass_Microsoft_Graphics_Canvas_CanvasSwapChain, BaseTrust);
@@ -71,6 +71,37 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             DirectXPixelFormat format,
             int32_t bufferCount,
             ICanvasSwapChain** swapChain);
+
+        IFACEMETHOD(CreateForWindowIdWithDpi)(
+            ICanvasResourceCreator* resourceCreator,
+            WindowId windowId,
+            float width,
+            float height,
+            float dpi,
+            ICanvasSwapChain** swapChain);
+
+        IFACEMETHOD(CreateForWindowIdWithAllOptions)(
+            ICanvasResourceCreator* resourceCreator,
+            WindowId windowId,
+            float width,
+            float height,
+            float dpi,
+            DirectXPixelFormat format,
+            int32_t bufferCount,
+            ICanvasSwapChain** swapChain);
+
+        //
+        // ICanvasSwapChainFactoryNative
+        //
+        IFACEMETHOD(CreateForHwnd)(
+            ICanvasResourceCreator* resourceCreator,
+            HWND hwnd,
+            uint32_t width,
+            uint32_t height,
+            float dpi,
+            DirectXPixelFormat format,
+            int32_t bufferCount,
+            ICanvasSwapChain** canvasSwapChain) override;
     };
 
 
@@ -110,7 +141,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         InspectableClass(RuntimeClass_Microsoft_Graphics_Canvas_CanvasSwapChain, BaseTrust);
 
         ClosablePtr<ICanvasDevice> m_device;
-        bool m_isCoreWindowSwapChain;
+        bool m_isTransformMatrixSupported;
         float m_dpi;
         std::shared_ptr<CanvasSwapChainAdapter> m_adapter;
         std::shared_ptr<bool> m_hasActiveDrawingSession;
@@ -140,6 +171,15 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
             ICoreWindow* coreWindow,
             float width,
             float height,
+            float dpi,
+            DirectXPixelFormat format,
+            int32_t bufferCount);
+
+        static ComPtr<CanvasSwapChain> CreateNew(
+            ICanvasDevice* device,
+            HWND hwnd,
+            uint32_t width,
+            uint32_t height,
             float dpi,
             DirectXPixelFormat format,
             int32_t bufferCount);

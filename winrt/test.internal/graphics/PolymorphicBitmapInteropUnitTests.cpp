@@ -8,6 +8,9 @@ TEST_CLASS(PolymorphicBitmapInteropTests_FromD2DBitmap)
 {
     struct Fixture
     {
+        ComPtr<MockWICFormatConverter> m_converter;
+        std::shared_ptr<TestBitmapAdapter> m_adapter;
+
         ComPtr<StubCanvasDevice> m_canvasDevice;
         
         ComPtr<StubD2DBitmap> m_nonTargetBitmap;
@@ -15,6 +18,10 @@ TEST_CLASS(PolymorphicBitmapInteropTests_FromD2DBitmap)
 
         Fixture()
         {
+            m_converter = Make<MockWICFormatConverter>();
+            m_adapter = std::make_shared<TestBitmapAdapter>(m_converter);
+            CanvasBitmapAdapter::SetInstance(m_adapter);
+
             m_canvasDevice = Make<StubCanvasDevice>();
             m_nonTargetBitmap = Make<StubD2DBitmap>(D2D1_BITMAP_OPTIONS_NONE);
             m_targetBitmap = Make<StubD2DBitmap>(D2D1_BITMAP_OPTIONS_TARGET);

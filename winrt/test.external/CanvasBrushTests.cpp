@@ -5,7 +5,7 @@
 #include "pch.h"
 
 using namespace Microsoft::Graphics::Canvas;
-using namespace Windows::UI;
+using namespace Microsoft::UI;
 
 TEST_CLASS(CanvasBrushTests)
 {
@@ -15,12 +15,12 @@ TEST_CLASS(CanvasBrushTests)
         
         CanvasSolidColorBrush^ canvasSolidColorBrush = ref new CanvasSolidColorBrush(
             canvasDevice, 
-            Windows::UI::Colors::Aquamarine
+            Microsoft::UI::Colors::Aquamarine
             );
 
-        Assert::AreEqual(Windows::UI::Colors::Aquamarine, canvasSolidColorBrush->Color);
-        canvasSolidColorBrush->Color = Windows::UI::Colors::Blue;
-        Assert::AreEqual(Windows::UI::Colors::Blue, canvasSolidColorBrush->Color);
+        Assert::AreEqual(Microsoft::UI::Colors::Aquamarine, canvasSolidColorBrush->Color);
+        canvasSolidColorBrush->Color = Microsoft::UI::Colors::Blue;
+        Assert::AreEqual(Microsoft::UI::Colors::Blue, canvasSolidColorBrush->Color);
 
         Assert::AreEqual(1.0f, canvasSolidColorBrush->Opacity);
         canvasSolidColorBrush->Opacity = 0.8f;
@@ -35,7 +35,7 @@ TEST_CLASS(CanvasBrushTests)
         delete canvasSolidColorBrush;
 
         ExpectObjectClosed([&]{ canvasSolidColorBrush->Color; });
-        ExpectObjectClosed([&]{ canvasSolidColorBrush->Color = Windows::UI::Colors::Orange; });
+        ExpectObjectClosed([&]{ canvasSolidColorBrush->Color = Microsoft::UI::Colors::Orange; });
 
         ExpectObjectClosed([&]{ canvasSolidColorBrush->Opacity; });
         ExpectObjectClosed([&]{ canvasSolidColorBrush->Opacity = 3; });
@@ -47,7 +47,7 @@ TEST_CLASS(CanvasBrushTests)
         Assert::ExpectException<Platform::InvalidArgumentException^>(
             []
             {
-                CanvasSolidColorBrush^ invalidBrush = ref new CanvasSolidColorBrush(nullptr, Windows::UI::Colors::White);
+                CanvasSolidColorBrush^ invalidBrush = ref new CanvasSolidColorBrush(nullptr, Microsoft::UI::Colors::White);
             });
     }
 

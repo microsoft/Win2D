@@ -37,11 +37,20 @@ public:
     }
 };
 
+inline ComPtr<CanvasBitmap> CreateStubCanvasBitmap(ICanvasDevice* device, ID2D1Bitmap1* bitmap)
+{
+    auto converter = Make<MockWICFormatConverter>();
+    auto adapter = std::make_shared<TestBitmapAdapter>(converter);
+    CanvasBitmapAdapter::SetInstance(adapter);
+
+    return Make<CanvasBitmap>(device, bitmap);
+}
 
 inline ComPtr<CanvasBitmap> CreateStubCanvasBitmap(float dpi = DEFAULT_DPI, ICanvasDevice* device = nullptr)
 {
-    return Make<CanvasBitmap>(device, Make<StubD2DBitmap>(D2D1_BITMAP_OPTIONS_NONE, dpi).Get());
+    return CreateStubCanvasBitmap(device, Make<StubD2DBitmap>(D2D1_BITMAP_OPTIONS_NONE, dpi).Get());
 }
+
 
 
 inline ComPtr<ICanvasDrawingSession> CreateStubDrawingSession()

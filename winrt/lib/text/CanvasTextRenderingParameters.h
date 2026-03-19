@@ -4,11 +4,7 @@
 
 #pragma once
 
-#if WINVER > _WIN32_WINNT_WINBLUE
 typedef IDWriteRenderingParams3 DWriteTextParamsType;
-#else
-typedef IDWriteRenderingParams2 DWriteTextParamsType;
-#endif
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Text
 {

@@ -6,8 +6,6 @@
 
 #include <lib/xaml/GameLoopThread.h>
 
-#include "MockCoreIndependentInputSource.h"
-
 class Waiter
 {
     Event m_event;
@@ -29,7 +27,7 @@ public:
     }
 };
 
-class FakeDispatcher : public MockDispatcher
+class FakeDispatcher : public MockDispatcherQueue
 {
     std::mutex m_mutex;
     std::condition_variable m_conditionVariable;
@@ -37,7 +35,7 @@ class FakeDispatcher : public MockDispatcher
     std::vector<ComPtr<AnimatedControlAsyncAction>> m_pendingActions;    
 
 public:
-    CALL_COUNTER_WITH_MOCK(RunAsyncValidation, void(CoreDispatcherPriority));
+    CALL_COUNTER_WITH_MOCK(RunAsyncValidation, void(DispatcherQueuePriority));
 
     FakeDispatcher()
         : m_stopped(false)
@@ -45,10 +43,10 @@ public:
         RunAsyncValidation.AllowAnyCall();
     }
 
-    virtual IFACEMETHODIMP RunAsync(
-        CoreDispatcherPriority priority,
-        IDispatchedHandler* agileCallback,
-        IAsyncAction** asyncAction) override
+    virtual IFACEMETHODIMP TryEnqueueWithPriority(
+        DispatcherQueuePriority priority,
+        IDispatcherQueueHandler* agileCallback,
+        boolean* result) override
     {
         RunAsyncValidation.WasCalled(priority);
 
@@ -58,10 +56,10 @@ public:
         m_pendingActions.push_back(action);
         m_conditionVariable.notify_all();
 
-        return action.CopyTo(asyncAction);
+        return true;
     }
 
-    virtual IFACEMETHODIMP StopProcessEvents() override
+    virtual IFACEMETHODIMP EnqueueEventLoopExit() override
     {
         Lock lock(m_mutex);
 
@@ -71,11 +69,8 @@ public:
         return S_OK;
     }
 
-    virtual IFACEMETHODIMP ProcessEvents(
-        CoreProcessEventsOption options) override
+    virtual IFACEMETHODIMP RunEventLoop() override
     {
-        Assert::IsTrue(options == CoreProcessEventsOption_ProcessUntilQuit);
-
         Lock lock(m_mutex);
         m_stopped = false;
 
@@ -142,13 +137,6 @@ TEST_CLASS(GameLoopThreadTests)
             : Dispatcher(Make<FakeDispatcher>())
             , SwapChainPanel(Make<StubSwapChainPanel>())
         {
-            SwapChainPanel->CreateCoreIndependentInputSourceMethod.AllowAnyCall(
-                [=] (CoreInputDeviceTypes, ICoreInputSourceBase** value)
-                {
-                    auto inputSource = Make<StubCoreIndependentInputSource>(Dispatcher);
-                    return inputSource.CopyTo(value);
-                });
-
             Client.GameLoopStarting.AllowAnyCall();
             Client.GameLoopStopped.AllowAnyCall();
         }
@@ -160,7 +148,7 @@ TEST_CLASS(GameLoopThreadTests)
 
         void RunAndWait(std::function<void()> fn = nullptr)
         {
-            auto handler = Callback<IDispatchedHandler>(
+            auto handler = Callback<IDispatcherQueueHandler>(
                 [=]
                 {
                     return ExceptionBoundary(
@@ -189,14 +177,14 @@ TEST_CLASS(GameLoopThreadTests)
         void RunDirectlyOnDispatcherAndWait()
         {
             Waiter w;
-            auto handler = Callback<IDispatchedHandler>(
+            auto handler = Callback<IDispatcherQueueHandler>(
                 [&]
                 {
                     w.Set();
                     return S_OK;
                 });
-            ComPtr<IAsyncAction> ignoredAction;
-            ThrowIfFailed(Dispatcher->RunAsync(CoreDispatcherPriority_Normal, handler.Get(), &ignoredAction));
+            boolean ignoredResult;
+            ThrowIfFailed(Dispatcher->TryEnqueueWithPriority(DispatcherQueuePriority_Normal, handler.Get(), &ignoredResult));
             w.Wait();
         }
     };
@@ -207,6 +195,9 @@ TEST_CLASS(GameLoopThreadTests)
         f.CreateThread();
     }
 
+// Creating a DispatcherQueueController is not working in the unit test project
+// Due to Class Activation issues
+#ifdef DispatcherActivationTestsEnabled
     TEST_METHOD_EX(GameLoopThread_HasThreadAccess_CallsThroughToDispatcher)
     {
         Fixture f;
@@ -263,14 +254,14 @@ TEST_CLASS(GameLoopThreadTests)
         f.Thread->StartDispatcher();
         f.Thread->StopDispatcher();
 
-        auto handler = Callback<IDispatchedHandler>(
+        auto handler = Callback<IDispatcherQueueHandler>(
             [&]
             {
                 Assert::Fail(L"did not expect to see this");
                 return S_OK;
             });
-        ComPtr<IAsyncAction> ignoredAction;
-        ThrowIfFailed(f.Dispatcher->RunAsync(CoreDispatcherPriority_Normal, handler.Get(), &ignoredAction));
+        boolean ignoredResult;
+        ThrowIfFailed(f.Dispatcher->TryEnqueueWithPriority(DispatcherQueuePriority_Normal, handler.Get(), &ignoredResult));
 
         f.RunAndWait();
     }
@@ -287,9 +278,9 @@ TEST_CLASS(GameLoopThreadTests)
         f.RunDirectlyOnDispatcherAndWait();
 
         f.Dispatcher->RunAsyncValidation.SetExpectedCalls(1,
-            [] (CoreDispatcherPriority priority)
+            [] (DispatcherQueuePriority priority)
             {
-                Assert::AreEqual(CoreDispatcherPriority_Low, priority);
+                Assert::AreEqual(DispatcherQueuePriority_Low, priority);
             });
 
         f.RunAndWait();
@@ -325,17 +316,18 @@ TEST_CLASS(GameLoopThreadTests)
         Fixture f;
 
         f.SwapChainPanel->CreateCoreIndependentInputSourceMethod.SetExpectedCalls(1,
-                [=] (CoreInputDeviceTypes, ICoreInputSourceBase**)
-                {
-                    // This is what happens when
-                    // CreateCoreIndependentInputSource is called from inside
-                    // the designer.
-                    return E_UNEXPECTED;
-                });
+            [=](ABI::Microsoft::UI::Input::InputPointerSourceDeviceKinds, ABI::Microsoft::UI::Input::IInputPointerSource**)
+            {
+                // This is what happens when
+                // CreateCoreIndependentInputSource is called from inside
+                // the designer.
+                return E_UNEXPECTED;
+            });
 
         f.CreateThread();
         // If this test fails then CreateThread will never return.
     }
+#endif
 };
 
 
@@ -361,7 +353,7 @@ TEST_CLASS(CanvasGameLoopTests)
                 : m_first(true)
             {}
             
-            virtual ComPtr<IAsyncAction> RunAsync(IDispatchedHandler* handler) override
+            virtual ComPtr<IAsyncAction> RunAsync(IDispatcherQueueHandler* handler) override
             {
                 auto action = Make<AnimatedControlAsyncAction>(handler);
                 if (m_first)
@@ -385,4 +377,3 @@ TEST_CLASS(CanvasGameLoopTests)
         
     }
 };
-

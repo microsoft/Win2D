@@ -13,4 +13,10 @@
   </ItemGroup>
   -->
 
+  <!-- Strong sign the assembly -->
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)win2d.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+
 </Project>

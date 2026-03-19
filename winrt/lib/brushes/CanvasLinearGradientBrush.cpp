@@ -10,7 +10,7 @@
 using namespace ABI::Microsoft::Graphics::Canvas::Brushes;
 using namespace ABI::Microsoft::Graphics::Canvas::Numerics;
 using namespace ABI::Microsoft::Graphics::Canvas;
-using namespace ABI::Windows::UI;
+using namespace ABI::Microsoft::UI;
 
 ComPtr<CanvasLinearGradientBrush> CanvasLinearGradientBrush::CreateNew(
     ICanvasResourceCreator* resourceCreator,

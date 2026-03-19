@@ -6,7 +6,7 @@ namespace Microsoft.Graphics.Canvas.UI.Xaml
 {
     //
     // CanvasImageSource - this derives from
-    // Windows.UI.Xaml.Media.Imaging.SurfaceImageSource and extends it so that
+    // Microsoft.UI.Xaml.Media.Imaging.SurfaceImageSource and extends it so that
     // it knows about Canvas types.
     //
     // Usage (C#):
@@ -114,7 +114,7 @@ namespace Microsoft.Graphics.Canvas.UI.Xaml
      activatable(ICanvasImageSourceFactory, VERSION), 
      marshaling_behavior(agile), 
      threading(both)]
-    runtimeclass CanvasImageSource : Windows.UI.Xaml.Media.Imaging.SurfaceImageSource
+    runtimeclass CanvasImageSource : Microsoft.UI.Xaml.Media.Imaging.SurfaceImageSource
     {
         [default] interface ICanvasImageSource;
     };

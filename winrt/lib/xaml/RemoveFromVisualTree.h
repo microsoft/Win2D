@@ -6,8 +6,8 @@
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace UI { namespace Xaml
 {
-    using namespace ABI::Windows::UI::Xaml;
-    using namespace ABI::Windows::UI::Xaml::Controls;
+    using namespace ABI::Microsoft::UI::Xaml;
+    using namespace ABI::Microsoft::UI::Xaml::Controls;
 
     //
     // Removes the given element from a parent.  This needs to inspect the

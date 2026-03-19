@@ -7,10 +7,7 @@
 #include "mocks/MockD2DRectangleGeometry.h"
 #include "mocks/MockD2DGeometryRealization.h"
 #include "mocks/MockD2DGradientMesh.h"
-
-#if WINVER > _WIN32_WINNT_WINBLUE
 #include "mocks/MockD2DSvgDocument.h"
-#endif
 
 namespace canvas
 {
@@ -93,7 +90,6 @@ namespace canvas
                     return S_OK;
                 });
 
-#if WINVER > _WIN32_WINNT_WINBLUE
             CreateGradientMeshMethod.AllowAnyCall(
                 [=](D2D1_GRADIENT_MESH_PATCH const*, UINT32)
                 {
@@ -105,7 +101,6 @@ namespace canvas
                 {
                     return Make<MockD2DSvgDocument>();
                 });
-#endif
         }
 
         void MarkAsLost()

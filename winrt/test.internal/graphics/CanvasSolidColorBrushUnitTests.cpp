@@ -6,7 +6,7 @@
 #include <lib/brushes/CanvasSolidColorBrush.h>
 
 using namespace ABI::Windows::Foundation;
-using namespace ABI::Windows::UI;
+using namespace ABI::Microsoft::UI;
 
 struct SolidColorBrushCounters
 {
