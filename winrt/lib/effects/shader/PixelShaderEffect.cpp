@@ -300,7 +300,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
     void PixelShaderEffect::SetProperty(HSTRING name, IInspectable* boxedValue)
     {
-        auto lock = Lock(m_mutex);
+        auto lock = RecursiveLock(m_mutex);
 
         // Store the new property value into our shared state object.
         m_sharedState->SetProperty(name, boxedValue);
@@ -329,7 +329,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         return ExceptionBoundary([&]
         {
-            auto lock = Lock(m_mutex);
+            auto lock = RecursiveLock(m_mutex);
 
             // Store the new value into our shared state object.
             m_sharedState->CoordinateMapping().Mapping[index] = value;
@@ -359,7 +359,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         return ExceptionBoundary([&]
         {
-            auto lock = Lock(m_mutex);
+            auto lock = RecursiveLock(m_mutex);
 
             // Store the new value into our shared state object.
             m_sharedState->CoordinateMapping().BorderMode[index] = value;
@@ -385,7 +385,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     {
         return ExceptionBoundary([&]
         {
-            auto lock = Lock(m_mutex);
+            auto lock = RecursiveLock(m_mutex);
 
             // Store the new value into our shared state object.
             m_sharedState->CoordinateMapping().MaxOffset = value;
@@ -415,7 +415,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
         return ExceptionBoundary([&]
         {
-            auto lock = Lock(m_mutex);
+            auto lock = RecursiveLock(m_mutex);
 
             // Convert the enum from Win2D -> D2D format.
             auto d2dFilter = ToD2DFilter(value);

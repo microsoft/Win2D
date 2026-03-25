@@ -205,16 +205,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     {
         ThrowIfClosed();
 
+        auto lock = RecursiveLock(m_mutex);
+
         // Check for graph cycles
         if (m_insideGetImage)
             ThrowHR(D2DERR_CYCLIC_GRAPH);
 
         m_insideGetImage = true;
         auto clearFlagWarden = MakeScopeWarden([&] { m_insideGetImage = false; });
-
-        // Lock after the cycle detection, because m_mutex is not recursive.
-        // Cycle checks don't need to be threadsafe because that's just a developer error.
-        auto lock = Lock(m_mutex);
 
         // Process the ReadDpiFromDeviceContext flag.
         if ((flags & WIN2D_GET_D2D_IMAGE_FLAGS_READ_DPI_FROM_DEVICE_CONTEXT) != WIN2D_GET_D2D_IMAGE_FLAGS_NONE)
@@ -465,7 +463,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             {
                 CheckInPointer(value);
 
-                auto lock = Lock(m_mutex);
+                auto lock = RecursiveLock(m_mutex);
 
                 // If we are realized, read the latest value from the underlying D2D resource.
                 if (auto& d2dEffect = MaybeGetResource())
@@ -483,7 +481,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         return ExceptionBoundary(
             [&]
             {
-                auto lock = Lock(m_mutex);
+                auto lock = RecursiveLock(m_mutex);
 
                 m_cacheOutput = value;
 
@@ -503,7 +501,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             {
                 CheckAndClearOutPointer(value);
 
-                auto lock = Lock(m_mutex);
+                auto lock = RecursiveLock(m_mutex);
 
                 // If we are realized, read the latest value from the underlying D2D resource.
                 if (auto& d2dEffect = MaybeGetResource())
@@ -529,7 +527,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         return ExceptionBoundary(
             [&]
             {
-                auto lock = Lock(m_mutex);
+                auto lock = RecursiveLock(m_mutex);
 
                 if (value)
                 {
@@ -894,7 +892,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
     unsigned int CanvasEffect::GetSourceCount()
     {
-        auto lock = Lock(m_mutex);
+        auto lock = RecursiveLock(m_mutex);
 
         auto& d2dEffect = MaybeGetResource();
 
@@ -915,7 +913,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
     ComPtr<IGraphicsEffectSource> CanvasEffect::GetSource(unsigned int index)
     {
-        auto lock = Lock(m_mutex);
+        auto lock = RecursiveLock(m_mutex);
 
         auto& d2dEffect = MaybeGetResource();
 
@@ -946,7 +944,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
     void CanvasEffect::SetSource(unsigned int index, IGraphicsEffectSource* source)
     {
-        auto lock = Lock(m_mutex);
+        auto lock = RecursiveLock(m_mutex);
 
         auto& d2dEffect = MaybeGetResource();
 
@@ -971,7 +969,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
     void CanvasEffect::InsertSource(unsigned int index, IGraphicsEffectSource* source)
     {
-        auto lock = Lock(m_mutex);
+        auto lock = RecursiveLock(m_mutex);
         
         auto& d2dEffect = MaybeGetResource();
 
@@ -1011,7 +1009,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
     void CanvasEffect::RemoveSource(unsigned int index)
     {
-        auto lock = Lock(m_mutex);
+        auto lock = RecursiveLock(m_mutex);
         
         auto& d2dEffect = MaybeGetResource();
 
@@ -1058,7 +1056,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
     void CanvasEffect::AppendSource(IGraphicsEffectSource* source)
     {
-        auto lock = Lock(m_mutex);
+        auto lock = RecursiveLock(m_mutex);
         
         auto& d2dEffect = MaybeGetResource();
 
@@ -1081,7 +1079,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
     void CanvasEffect::ClearSources()
     {
-        auto lock = Lock(m_mutex);
+        auto lock = RecursiveLock(m_mutex);
         
         // Effects with variable number of inputs don't allow zero of them,
         // so we must unrealize before we can clear the collection.
@@ -1403,7 +1401,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
     void CanvasEffect::SetProperty(unsigned int index, IPropertyValue* propertyValue)
     {
-        auto lock = Lock(m_mutex);
+        auto lock = RecursiveLock(m_mutex);
 
         assert(index < m_properties.size());
 
@@ -1495,7 +1493,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
     ComPtr<IPropertyValue> CanvasEffect::GetProperty(unsigned int index)
     {
-        auto lock = Lock(m_mutex);
+        auto lock = RecursiveLock(m_mutex);
 
         assert(index < m_properties.size());
 

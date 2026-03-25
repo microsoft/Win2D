@@ -138,7 +138,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         
         ICanvasDevice* RealizationDevice() { return m_realizationDevice.GetWrapper(); }
 
-        std::mutex m_mutex;
+        std::recursive_mutex m_mutex;
 
     public:
         // Used by ResourceManager (in GetOrCreate and to register effect factories).
