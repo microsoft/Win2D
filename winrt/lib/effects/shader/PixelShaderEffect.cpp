@@ -5,7 +5,6 @@
 #include "pch.h"
 #include "PixelShaderEffect.h"
 #include "PixelShaderEffectImpl.h"
-#include "SharedShaderState.h"
 
 namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { namespace Effects
 {
@@ -30,6 +29,107 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             ThrowIfFailed(newEffect.CopyTo(effect));
         });
     }
+
+    IFACEMETHODIMP PixelShaderEffectFactory::RegisterEffect(UINT32 shaderCodeCount, BYTE* shaderCode, GUID effectId, int32_t maxSamplerOffset, 
+        uint32_t coordinateMappingsSize, SamplerCoordinateMapping* coordinateMappings, 
+        uint32_t borderModesSize, EffectBorderMode* borderModes, 
+        uint32_t sourceInterpolationsSize, CanvasImageInterpolation* sourceInterpolations)
+    {
+        return ExceptionBoundary([&]
+        {
+            if (effectId == GUID_NULL) {
+                ThrowHR(E_INVALIDARG);
+            }
+
+            {
+                std::lock_guard<std::recursive_mutex> lock(m_mutex);
+                auto const& cached = shaderCache.find(effectId);
+                if (cached != shaderCache.end()) {
+                    return;
+                }
+            }
+
+            CheckInPointer(shaderCode);
+            auto description = SharedShaderState::CreateShaderDescription(shaderCode, shaderCodeCount, effectId, maxSamplerOffset, 
+                coordinateMappings, coordinateMappingsSize, borderModes, borderModesSize, sourceInterpolations, sourceInterpolationsSize);
+
+            {
+                std::lock_guard<std::recursive_mutex> lock(m_mutex);
+                auto const& cached = shaderCache.find(effectId);
+                if (cached != shaderCache.end()) {
+                    return;
+                }
+                shaderCache.insert_or_assign(effectId, description);
+            }
+        });
+    }
+
+    IFACEMETHODIMP PixelShaderEffectFactory::CreateEffect(GUID effectId, IPixelShaderEffect** effect)
+    {
+        return ExceptionBoundary([&]
+        {
+            CheckAndClearOutPointer(effect);
+
+            ShaderDescriptionWithDefaults description{};
+            {
+                std::lock_guard<std::recursive_mutex> lock(m_mutex);
+                auto const& cached = shaderCache.find(effectId);
+                if (cached != shaderCache.end()) {
+                    description = cached->second;
+                }
+            }
+
+            if (description.Description == nullptr || description.Defaults == nullptr) {
+                ThrowHR(E_INVALIDARG, Strings::CustomEffectNotRegistered);
+            }
+
+            // Create a shared state object using the specified shader code.
+            auto sharedState = Make<SharedShaderState>(description.Description, description.Defaults->DefaultConstants, description.Defaults->DefaultCoordinateMapping, description.Defaults->DefaultSourceInterpolation);
+            CheckMakeResult(sharedState);
+
+            // Create the WinRT effect instance.
+            auto newEffect = Make<PixelShaderEffect>(nullptr, nullptr, sharedState.Get());
+            CheckMakeResult(newEffect);
+
+            ThrowIfFailed(newEffect.CopyTo(effect));
+        });
+    }
+
+    IFACEMETHODIMP PixelShaderEffectFactory::RegisterAndCreateEffect(UINT32 shaderCodeCount, BYTE* shaderCode, GUID effectId, int32_t maxSamplerOffset, 
+        uint32_t coordinateMappingsSize, SamplerCoordinateMapping* coordinateMappings, 
+        uint32_t borderModesSize, EffectBorderMode* borderModes, 
+        uint32_t sourceInterpolationsSize, CanvasImageInterpolation* sourceInterpolations, IPixelShaderEffect** effect)
+    {
+        return ExceptionBoundary([&]
+        {
+            ThrowIfFailed(RegisterEffect(shaderCodeCount, shaderCode, effectId, maxSamplerOffset, coordinateMappingsSize, coordinateMappings, borderModesSize, borderModes, sourceInterpolationsSize, sourceInterpolations));
+            ThrowIfFailed(CreateEffect(effectId, effect));
+        });
+    }
+
+    IFACEMETHODIMP PixelShaderEffectFactory::IsEffectRegistered(GUID effectId, boolean* result)
+    {
+        return ExceptionBoundary([&]
+        {
+            CheckInPointer(result);
+
+            std::lock_guard<std::recursive_mutex> lock(m_mutex);
+            auto const& cached = shaderCache.find(effectId);
+            *result = cached != shaderCache.end();
+        });
+    }
+
+    IFACEMETHODIMP PixelShaderEffectFactory::UnregisterEffect(GUID effectId)
+    {
+        return ExceptionBoundary([&]
+        {
+            std::lock_guard<std::recursive_mutex> lock(m_mutex);
+            shaderCache.erase(effectId);
+        });
+    }
+
+    std::recursive_mutex PixelShaderEffectFactory::m_mutex{};
+    std::map<GUID, ShaderDescriptionWithDefaults, GuidComparer> PixelShaderEffectFactory::shaderCache{};
 
 
     // Describe how to implement WinRT IMap<> methods in terms of our shader constant buffer.
@@ -81,7 +181,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
 
     PixelShaderEffect::PixelShaderEffect(ICanvasDevice* device, ID2D1Effect* effect, ISharedShaderState* sharedState)
-        : CanvasEffect(CLSID_PixelShaderEffect, 0, sharedState->Shader().InputCount, true, device, effect, static_cast<IPixelShaderEffect*>(this))
+        : CanvasEffect(CLSID_PixelShaderEffect, 0, sharedState->Shader()->InputCount, true, device, effect, static_cast<IPixelShaderEffect*>(this))
         , m_sharedState(sharedState)
     {
         m_propertyMap = Make<PropertyMap>(true, this);
@@ -210,7 +310,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         ThrowIfFailed(As<IDirect3DDxgiInterfaceAccess>(device)->GetInterface(IID_PPV_ARGS(&d3dDevice)));
 
         auto deviceFeatureLevel = d3dDevice->GetFeatureLevel();
-        auto shaderFeatureLevel = m_sharedState->Shader().MinFeatureLevel;
+        auto shaderFeatureLevel = m_sharedState->Shader()->MinFeatureLevel;
 
         return deviceFeatureLevel >= shaderFeatureLevel;
     }
@@ -263,7 +363,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
     IFACEMETHODIMP PixelShaderEffect::GetSource(unsigned int index, IGraphicsEffectSource** source)
     {
-        if (index >= m_sharedState->Shader().InputCount && source)
+        if (index >= m_sharedState->Shader()->InputCount && source)
         {
             // Getting an out of range source returns null, rather than throwing like most effects.
             *source = nullptr;
@@ -279,14 +379,14 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
     
     void PixelShaderEffect::SetSource(unsigned int index, IGraphicsEffectSource* source)
     {
-        if (index >= m_sharedState->Shader().InputCount)
+        if (index >= m_sharedState->Shader()->InputCount)
         {
             // Setting unused sources to null is valid.
             // If the value is not null, we format a nice exception message.
             if (source)
             {
                 WinStringBuilder message;
-                message.Format(Strings::CustomEffectSourceOutOfRange, index + 1, m_sharedState->Shader().InputCount);
+                message.Format(Strings::CustomEffectSourceOutOfRange, index + 1, m_sharedState->Shader()->InputCount);
                 ThrowHR(E_INVALIDARG, message.Get());
             }
         }

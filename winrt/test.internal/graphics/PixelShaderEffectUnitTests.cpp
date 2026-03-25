@@ -19,7 +19,7 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 
 static ComPtr<SharedShaderState> MakeSharedShaderState(
-    ShaderDescription const& shader = ShaderDescription(),
+    std::shared_ptr<ShaderDescription> const& shader = std::make_shared<ShaderDescription>(),
     std::vector<BYTE> const& constants = std::vector<BYTE>(),
     CoordinateMappingState const& coordinateMapping = CoordinateMappingState(),
     SourceInterpolationState const& sourceInterpolation = SourceInterpolationState())
@@ -148,7 +148,7 @@ TEST_CLASS(PixelShaderEffectUnitTests)
         sourceInterpolation.Filter[0] = D2D1_FILTER_MIN_MAG_MIP_POINT;
         sourceInterpolation.Filter[7] = D2D1_FILTER_ANISOTROPIC;
 
-        auto sharedState = MakeSharedShaderState(ShaderDescription(), constants, coordinateMapping, sourceInterpolation);
+        auto sharedState = MakeSharedShaderState(std::make_shared<ShaderDescription>(), constants, coordinateMapping, sourceInterpolation);
         auto effect = Make<PixelShaderEffect>(nullptr, nullptr, sharedState.Get());
 
         // Realize the effect.
@@ -181,8 +181,8 @@ TEST_CLASS(PixelShaderEffectUnitTests)
 
         ShaderVariable variable(variableDesc, variableType);
 
-        ShaderDescription desc;
-        desc.Variables.push_back(variable);
+        std::shared_ptr<ShaderDescription> desc = std::make_shared<ShaderDescription>();
+        desc->Variables.push_back(variable);
 
         auto sharedState = MakeSharedShaderState(desc);
 
@@ -202,7 +202,7 @@ TEST_CLASS(PixelShaderEffectUnitTests)
                 *reinterpret_cast<IID*>(data) = CLSID_PixelShaderEffect;
                 break;
 
-            case PixelShaderEffectProperty::SharedState:
+            case ((uint32_t)PixelShaderEffectProperty::SharedState):
                 Assert::AreEqual<size_t>(sizeof(IUnknown*), dataSize);
                 *reinterpret_cast<IUnknown**>(data) = As<IUnknown>(sharedState).Detach();
                 break;
@@ -244,8 +244,8 @@ TEST_CLASS(PixelShaderEffectUnitTests)
 
         ShaderVariable variable(variableDesc, variableType);
 
-        ShaderDescription desc;
-        desc.Variables.push_back(variable);
+        std::shared_ptr<ShaderDescription> desc = std::make_shared<ShaderDescription>();
+        desc->Variables.push_back(variable);
 
         auto sharedState = MakeSharedShaderState(desc, std::vector<BYTE>(sizeof(int)));
         auto effect = Make<PixelShaderEffect>(nullptr, nullptr, sharedState.Get());
@@ -575,10 +575,10 @@ public:
         Assert::AreEqual(E_FAIL, impl->PrepareForRender(D2D1_CHANGE_TYPE_NONE));
 
         // Set the shared state property.
-        ShaderDescription desc;
-        desc.Code = { 2, 5, 7, 9, 4 };
-        desc.Hash = IID{ 0x8495c8be, 0xd63e, 0x40a0, 0x9f, 0xa5, 0x9, 0x72, 0x4b, 0xaf, 0xf7, 0x15 };
-        desc.InputCount = 7;
+        std::shared_ptr<ShaderDescription> desc = std::make_shared<ShaderDescription>();
+        desc->Code = { 2, 5, 7, 9, 4 };
+        desc->Hash = IID{ 0x8495c8be, 0xd63e, 0x40a0, 0x9f, 0xa5, 0x9, 0x72, 0x4b, 0xaf, 0xf7, 0x15 };
+        desc->InputCount = 7;
 
         auto sharedState = MakeSharedShaderState(desc);
 
@@ -587,18 +587,18 @@ public:
         // The first PrepareForRender should call LoadPixelShader and configure the transform graph.
         f.MockEffectContext->LoadPixelShaderMethod.SetExpectedCalls(1, [&](IID const& shaderId, BYTE const* shaderBuffer, unsigned shaderBufferCount)
         {
-            Assert::AreEqual(desc.Hash, shaderId);
-            Assert::AreEqual<size_t>(desc.Code.size(), shaderBufferCount);
+            Assert::AreEqual(desc->Hash, shaderId);
+            Assert::AreEqual<size_t>(desc->Code.size(), shaderBufferCount);
 
             for (unsigned i = 0; i < shaderBufferCount; i++)
             {
-                Assert::AreEqual(desc.Code[i], shaderBuffer[i]);
+                Assert::AreEqual(desc->Code[i], shaderBuffer[i]);
             }
 
             return S_OK;
         });
 
-        f.ExpectTransformGraph(desc.InputCount, 0);
+        f.ExpectTransformGraph(desc->InputCount, 0);
 
         ThrowIfFailed(impl->PrepareForRender(D2D1_CHANGE_TYPE_NONE));
 
@@ -732,8 +732,8 @@ public:
         PixelShaderEffectImpl::Register(f.Factory.Get());
         auto& binding = f.FindBinding(L"CoordinateMapping");
 
-        ShaderDescription desc;
-        desc.InputCount = 2;
+        std::shared_ptr<ShaderDescription> desc = std::make_shared<ShaderDescription>();
+        desc->InputCount = 2;
 
         auto impl = Make<PixelShaderEffectImpl>();
 
@@ -805,7 +805,7 @@ public:
         // PrepareForRender should create a graph with no intermediate border transforms.
         GraphState graphState;
 
-        f.ExpectTransformGraph(desc.InputCount, 0, mockDrawInfo.Get(), &graphState);
+        f.ExpectTransformGraph(desc->InputCount, 0, mockDrawInfo.Get(), &graphState);
 
         ThrowIfFailed(impl->PrepareForRender(D2D1_CHANGE_TYPE_NONE));
 
@@ -847,7 +847,7 @@ public:
 
         ThrowIfFailed(binding.setFunction(impl.Get(), reinterpret_cast<BYTE*>(&value), sizeof(CoordinateMappingState)));
 
-        f.ExpectTransformGraph(desc.InputCount, 1, mockDrawInfo.Get(), &graphState);
+        f.ExpectTransformGraph(desc->InputCount, 1, mockDrawInfo.Get(), &graphState);
 
         ThrowIfFailed(impl->PrepareForRender(D2D1_CHANGE_TYPE_NONE));
 
@@ -888,8 +888,8 @@ public:
 
         auto impl = Make<PixelShaderEffectImpl>();
 
-        ShaderDescription desc;
-        desc.InputCount = 2;
+        std::shared_ptr<ShaderDescription> desc = std::make_shared<ShaderDescription>();
+        desc->InputCount = 2;
 
         auto sharedState = MakeSharedShaderState(desc);
         ThrowIfFailed(f.FindBinding(L"SharedState").setFunction(impl.Get(), reinterpret_cast<BYTE*>(sharedState.GetAddressOf()), sizeof(ISharedShaderState*)));
@@ -936,7 +936,7 @@ public:
         // PrepareForRender should pass the interpolation mode through to SetInputDescription.
         auto mockDrawInfo = Make<MockD2DDrawInfo>();
 
-        f.ExpectTransformGraph(desc.InputCount, 0, mockDrawInfo.Get());
+        f.ExpectTransformGraph(desc->InputCount, 0, mockDrawInfo.Get());
 
         f.MockEffectContext->LoadPixelShaderMethod.SetExpectedCalls(1);
 
@@ -979,8 +979,8 @@ TEST_CLASS(PixelShaderTransformUnitTests)
 public:
     TEST_METHOD_EX(PixelShaderTransform_GetInputCount)
     {
-        ShaderDescription desc;
-        desc.InputCount = 5;
+        std::shared_ptr<ShaderDescription> desc = std::make_shared<ShaderDescription>();
+        desc->InputCount = 5;
 
         auto sharedState = MakeSharedShaderState(desc);
         auto transform = Make<PixelShaderTransform>(sharedState.Get(), std::make_shared<CoordinateMappingState>());
@@ -991,9 +991,9 @@ public:
 
     TEST_METHOD_EX(PixelShaderTransform_SetDrawInfo)
     {
-        ShaderDescription desc;
-        desc.InstructionCount = 123;
-        desc.Hash = IID{ 0x8495c8be, 0xd63e, 0x40a0, 0x9f, 0xa5, 0x9, 0x72, 0x4b, 0xaf, 0xf7, 0x15 };
+        std::shared_ptr<ShaderDescription> desc = std::make_shared<ShaderDescription>();
+        desc->InstructionCount = 123;
+        desc->Hash = IID{ 0x8495c8be, 0xd63e, 0x40a0, 0x9f, 0xa5, 0x9, 0x72, 0x4b, 0xaf, 0xf7, 0x15 };
 
         auto sharedState = MakeSharedShaderState(desc);
         auto transform = Make<PixelShaderTransform>(sharedState.Get(), std::make_shared<CoordinateMappingState>());
@@ -1003,14 +1003,14 @@ public:
         // SetDrawInfo should call SetPixelShader and SetInstructionCountHint.
         mockDrawInfo->SetPixelShaderMethod.SetExpectedCalls(1, [&](IID const& iid, D2D1_PIXEL_OPTIONS options)
         {
-            Assert::AreEqual(desc.Hash, iid);
+            Assert::AreEqual(desc->Hash, iid);
             Assert::AreEqual<int>(D2D1_PIXEL_OPTIONS_NONE, options);
             return S_OK;
         });
 
         mockDrawInfo->SetInstructionCountHintMethod.SetExpectedCalls(1, [&](UINT32 instructionCount)
         {
-            Assert::AreEqual(desc.InstructionCount, instructionCount);
+            Assert::AreEqual(desc->InstructionCount, instructionCount);
         });
 
         ThrowIfFailed(transform->SetDrawInfo(mockDrawInfo.Get()));
@@ -1099,8 +1099,8 @@ TEST_CLASS(ClipTransformUnitTests)
 public:
     TEST_METHOD_EX(ClipTransform_GetInputCount)
     {
-        ShaderDescription desc;
-        desc.InputCount = 5;
+        std::shared_ptr<ShaderDescription> desc = std::make_shared<ShaderDescription>();
+        desc->InputCount = 5;
 
         auto sharedState = MakeSharedShaderState(desc);
         auto transform = Make<ClipTransform>(sharedState.Get(), std::make_shared<CoordinateMappingState>());
@@ -1391,8 +1391,8 @@ TEST_CLASS(SharedShaderStateUnitTests)
 
     TEST_METHOD_EX(SharedShaderState_Clone)
     {
-        ShaderDescription desc;
-        desc.InputCount = 73;
+        std::shared_ptr<ShaderDescription> desc = std::make_shared<ShaderDescription>();
+        desc->InputCount = 73;
 
         std::vector<BYTE> constants = { 29 };
 
@@ -1404,7 +1404,7 @@ TEST_CLASS(SharedShaderStateUnitTests)
 
         auto originalState = MakeSharedShaderState(desc, constants, coordinateMapping, sourceInterpolation);
 
-        Assert::AreEqual(desc.InputCount, originalState->Shader().InputCount);
+        Assert::AreEqual(desc->InputCount, originalState->Shader()->InputCount);
         Assert::AreEqual<size_t>(1, originalState->Constants().size());
         Assert::AreEqual(constants[0], originalState->Constants()[0]);
         Assert::AreEqual(coordinateMapping.MaxOffset, originalState->CoordinateMapping().MaxOffset);
@@ -1412,7 +1412,7 @@ TEST_CLASS(SharedShaderStateUnitTests)
 
         auto clone = originalState->Clone();
 
-        Assert::AreEqual(desc.InputCount, clone->Shader().InputCount);
+        Assert::AreEqual(desc->InputCount, clone->Shader()->InputCount);
         Assert::AreEqual<size_t>(1, clone->Constants().size());
         Assert::AreEqual(constants[0], clone->Constants()[0]);
         Assert::AreEqual(coordinateMapping.MaxOffset, clone->CoordinateMapping().MaxOffset);
@@ -1433,10 +1433,10 @@ TEST_CLASS(SharedShaderStateUnitTests)
         auto state2a = Make<SharedShaderState>(compiledShader2.data(), static_cast<unsigned>(compiledShader2.size()));
         auto state2b = Make<SharedShaderState>(compiledShader2.data(), static_cast<unsigned>(compiledShader2.size()));
 
-        Assert::AreEqual(state1a->Shader().Hash, state1b->Shader().Hash);
-        Assert::AreEqual(state2a->Shader().Hash, state2b->Shader().Hash);
+        Assert::AreEqual(state1a->Shader()->Hash, state1b->Shader()->Hash);
+        Assert::AreEqual(state2a->Shader()->Hash, state2b->Shader()->Hash);
 
-        Assert::AreNotEqual(state1a->Shader().Hash, state2a->Shader().Hash);
+        Assert::AreNotEqual(state1a->Shader()->Hash, state2a->Shader()->Hash);
     };
 
 
@@ -1444,12 +1444,12 @@ TEST_CLASS(SharedShaderStateUnitTests)
     {
         auto state = Make<SharedShaderState>(compiledShader1.data(), static_cast<unsigned>(compiledShader1.size()));
 
-        Assert::AreEqual(compiledShader1, state->Shader().Code);
-        Assert::AreEqual(0u, state->Shader().InputCount);
-        Assert::IsTrue(state->Shader().InstructionCount > 3 && state->Shader().InstructionCount < 20);
-        Assert::AreEqual<int>(D3D_FEATURE_LEVEL_10_0, state->Shader().MinFeatureLevel);
+        Assert::AreEqual(compiledShader1, state->Shader()->Code);
+        Assert::AreEqual(0u, state->Shader()->InputCount);
+        Assert::IsTrue(state->Shader()->InstructionCount > 3 && state->Shader()->InstructionCount < 20);
+        Assert::AreEqual<int>(D3D_FEATURE_LEVEL_10_0, state->Shader()->MinFeatureLevel);
 
-        auto& variables = state->Shader().Variables;
+        auto& variables = state->Shader()->Variables;
 
         Assert::AreEqual<size_t>(7, variables.size());
 

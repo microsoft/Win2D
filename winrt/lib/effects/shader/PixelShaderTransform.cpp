@@ -16,7 +16,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
     IFACEMETHODIMP_(UINT32) PixelShaderTransform::GetInputCount() const
     {
-        return m_sharedState->Shader().InputCount;
+        return m_sharedState->Shader()->InputCount;
     }
 
 
@@ -86,9 +86,9 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
             // Tell D2D to use our pixel shader.
             auto& shader = m_sharedState->Shader();
 
-            ThrowIfFailed(drawInfo->SetPixelShader(shader.Hash));
+            ThrowIfFailed(drawInfo->SetPixelShader(shader->Hash));
 
-            drawInfo->SetInstructionCountHint(shader.InstructionCount);
+            drawInfo->SetInstructionCountHint(shader->InstructionCount);
         });
     }
 
@@ -101,7 +101,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
 
     void PixelShaderTransform::SetSourceInterpolation(SourceInterpolationState const* sourceInterpolation)
     {
-        auto inputCount = m_sharedState->Shader().InputCount;
+        auto inputCount = m_sharedState->Shader()->InputCount;
 
         for (unsigned i = 0; i < inputCount; i++)
         {

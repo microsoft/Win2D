@@ -6,7 +6,6 @@
 
 #include "CanvasFontFace.h"
 #include "TextUtilities.h"
-#include "effects/shader/PixelShaderEffect.h"
 #include "DrawGlyphRunHelper.h"
 
 using namespace ABI::Microsoft::Graphics::Canvas;

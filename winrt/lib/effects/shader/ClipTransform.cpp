@@ -20,7 +20,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas { na
         // PixelShaderTransform inputs, before any intermediate border transforms were applied to them.
         // This lets us compute a non infinite output rect even in the presence of hard borders.
 
-        return 1 + m_sharedState->Shader().InputCount;
+        return 1 + m_sharedState->Shader()->InputCount;
     }
 
 
