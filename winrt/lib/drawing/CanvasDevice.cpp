@@ -1670,7 +1670,7 @@ namespace ABI { namespace Microsoft { namespace Graphics { namespace Canvas
         {
             // the way this variable/function is declared, the TraceLoggingWrite call here will only fire once
             // per process, even if LogCreateCanvasDevice() is called more than once.
-            static bool createCanvasDeviceLoggedOnce = []()
+            static bool createCanvasDeviceLoggedOnce = []
             {
                 TraceLoggingWrite(
                     g_hTelemetryProvider,

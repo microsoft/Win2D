@@ -26,7 +26,7 @@ using namespace ABI::Microsoft::Graphics::Canvas::Effects;
 
 #if defined(_M_IX86) && defined(_MSC_VER)
 #ifndef ARCH_X86
-#define ARCH_X86				// Used to detect the x86 architecture so fixups for C exports can be added
+#define ARCH_X86                // Used to detect the x86 architecture so fixups for C exports can be added
 #endif
 #endif
 
