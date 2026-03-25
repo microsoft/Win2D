@@ -130,16 +130,14 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
                they are not of high enough precision. Default value false.</summary>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Effects.ColorMatrixEffect.AlphaMode">
-      <summary>Specifies the treatment of alpha. Default value Premultiplied.</summary>
+      <summary>Specifies the alpha mode of the input. Default value Premultiplied.</summary>
       <remarks>
         <p>
-          Effect inputs and outputs are assumed to be in
-          <a href="PremultipliedAlpha.htm">premultiplied alpha</a> format, so when this 
-          property is set to Premultiplied, the color matrix is applied directly to the 
+          When this property is set to Straight, the color matrix is applied directly to the 
           input values with no extra conversions.
         </p>
         <p>
-          If AlphaMode set to Straight, input values will be unpremultiplied, then the 
+          If AlphaMode set to Premultiplied (the default), input values will be unpremultiplied, then the 
           color matrix applied, and finally the result converted back to premultiplied 
           format.
         </p>

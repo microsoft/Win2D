@@ -52,18 +52,16 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       </remarks>
     </member>
     <member name="P:Microsoft.Graphics.Canvas.Effects.ColorManagementEffect.AlphaMode">
-      <summary>Specifies the treatment of alpha. Default value Premultiplied.</summary>
+      <summary>Specifies the alpha mode of the input. Default value Premultiplied.</summary>
       <remarks>
         <p>
-          Effect inputs and outputs are assumed to be in
-          <a href="PremultipliedAlpha.htm">premultiplied alpha</a> format, so when this 
-          property is set to Premultiplied, color management is applied directly to the 
+          When this property is set to Straight, color management is applied directly to the 
           input values with no extra conversions.
         </p>
         <p>
-          If AlphaMode set to Straight, input values will be unpremultiplied, then the 
-          color management applied, and finally the result converted back to premultiplied 
-          format.
+          If AlphaMode set to Premultiplied (the default), input values will be unpremultiplied, then the 
+          color management applied, and finally the result converted back to premultiplied format
+          (except in the case of 4-channel color spaces where there is no alpha data).
         </p>
       </remarks>
     </member>
