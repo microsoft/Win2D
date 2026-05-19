@@ -24,7 +24,7 @@
   <Import Project="$(WindowsAppSdkInteractiveExperiences_props)" Condition="Exists('$(WindowsAppSdkInteractiveExperiences_props)')" />
   <Import Project="$(WindowsAppSdkFoundation_props)" Condition="Exists('$(WindowsAppSdkFoundation_props)')" />
   <PropertyGroup Label="Configuration">
-    <PlatformToolset>v145</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <TargetName>winrt.test.internal.uap</TargetName>
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseOfMfc>false</UseOfMfc>
