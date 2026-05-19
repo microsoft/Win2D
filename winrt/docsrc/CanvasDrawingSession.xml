@@ -1085,7 +1085,8 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       <seealso cref="T:Microsoft.Graphics.Canvas.CanvasActiveLayer"/>
     </member>
 
-    <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawInk(System.Collections.Generic.IEnumerable{Windows.UI.Input.Inking.InkStroke})">
+    <!-- If we get ink support, add back in -->
+    <!--<member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawInk(System.Collections.Generic.IEnumerable{Windows.UI.Input.Inking.InkStroke})">
       <summary>
         Draws a collection of ink strokes.
       </summary>
@@ -1156,7 +1157,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
           </code>
         </p>
       </remarks>
-    </member>
+    </member>-->
 
     <member name="M:Microsoft.Graphics.Canvas.CanvasDrawingSession.DrawGradientMesh(Microsoft.Graphics.Canvas.Geometry.CanvasGradientMesh)">
       <summary>Draws a gradient mesh, relative to the origin.</summary>

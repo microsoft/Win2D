@@ -626,7 +626,8 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       </remarks>
     </member>
     
-    <member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.CreateInk(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Collections.Generic.IEnumerable{Windows.UI.Input.Inking.InkStroke})">
+    <!-- If we get ink support, add back in -->
+    <!--<member name="M:Microsoft.Graphics.Canvas.Geometry.CanvasGeometry.CreateInk(Microsoft.Graphics.Canvas.ICanvasResourceCreator,System.Collections.Generic.IEnumerable{Windows.UI.Input.Inking.InkStroke})">
       <summary>Creates a geometry from a collection of ink strokes.</summary>
       <remarks>
         <p>
@@ -661,7 +662,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
           Passing pencil strokes will produce an empty geometry.
         </p>
       </remarks>
-    </member>
+    </member>-->
         
   </members>
 </doc>

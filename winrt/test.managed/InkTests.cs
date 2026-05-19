@@ -10,7 +10,7 @@ using System.Linq;
 using System.Reflection;
 using Windows.Foundation;
 using Windows.UI;
-using Windows.UI.Input.WINUI3_SUPPORTS_INKING;
+using Windows.UI.Input.Inking;
 
 namespace test.managed
 {

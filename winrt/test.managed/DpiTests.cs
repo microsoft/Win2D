@@ -9,7 +9,7 @@ using Microsoft.Graphics.Canvas;
 namespace test.managed
 {
     [TestClass]
-    public class DpiTests
+    public partial class DpiTests
     {
         [TestMethod]
         public void RenderTargetDpiTest()
@@ -75,7 +75,7 @@ namespace test.managed
         }
 
 
-        class TestResourceCreator : ICanvasResourceCreatorWithDpi
+        partial class TestResourceCreator : ICanvasResourceCreatorWithDpi
         {
             public TestResourceCreator(CanvasDevice device, float dpi)
             {

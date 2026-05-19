@@ -10,6 +10,7 @@
         <WindowsAppSdkWinUIVersion Condition="'$(NIGHTLY_WINAPPSDK_VERSION)' != ''">$(NIGHTLY_WINAPPSDK_VERSION)</WindowsAppSdkWinUIVersion>
         <WindowsAppSdkInteractiveExperiencesVersion Condition="'$(NIGHTLY_WINAPPSDK_VERSION)' == ''">1.8.260125001</WindowsAppSdkInteractiveExperiencesVersion>
         <WindowsAppSdkFoundationVersion Condition="'$(NIGHTLY_WINAPPSDK_VERSION)' == ''">1.8.260203002</WindowsAppSdkFoundationVersion>
+        <WindowsAppSdkRuntimeVersion>1.8.260209005</WindowsAppSdkRuntimeVersion>
         <WebView2Version>1.0.3800.47</WebView2Version>
 
         <_PackagesPath>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\packages'))</_PackagesPath>

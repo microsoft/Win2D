@@ -315,8 +315,7 @@ namespace test.managed
         }
 
 
-        // Test Disabled for WinUI3
-        //[TestMethod]
+        [TestMethod]
         public void PixelShaderEffect_PropertiesDictionary_Methods()
         {
             const string hlsl =
@@ -377,8 +376,7 @@ namespace test.managed
         }
 
 
-        // Test Disabled for WinUI3
-        //[TestMethod]
+        [TestMethod]
         public void PixelShaderEffect_PropertiesDictionary_InsertErrorCases()
         {
             const string hlsl =
@@ -1178,8 +1176,7 @@ namespace test.managed
             }
         }
 
-        // Test Disabled for WinUI3
-        //[TestMethod]
+        [TestMethod]
         public void PixelShaderEffect_InputRectTooBigError()
         {
             using (new DisableDebugLayer())
@@ -1220,7 +1217,7 @@ namespace test.managed
                     {
                         ds.DrawImage(effect);
                     }
-                }, " graph could not be rendered with the context's current tiling settings. (Exception from HRESULT: 0x88990027)");
+                });
 
                 // But it's ok if we clamp the input back down to finite size.
                 effect.Source1 = new CropEffect
@@ -1303,8 +1300,6 @@ namespace test.managed
         }
 
 
-#if WINDOWS_UWP
-
         [TestMethod]
         public void PixelShaderEffect_ShaderReflectionSetsCoordinateMappingDefaults()
         {
@@ -1363,6 +1358,5 @@ namespace test.managed
             Assert.AreEqual(SamplerCoordinateMapping.OneToOne, effect.Source4Mapping);
         }
 
-#endif
     }
 }

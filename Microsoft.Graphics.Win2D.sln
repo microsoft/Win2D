@@ -47,6 +47,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "winrt.test.nativecomponent.
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "winrt.test.external.uap", "winrt\test.external\winrt.test.external.uap.vcxproj", "{F33C7CB9-5ECA-47B7-9393-81E6E8F0BD34}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleSample.winappsdk", "samples\SimpleSample\SimpleSample.winappsdk.csproj", "{16DE7EC1-EDB4-4C29-9598-487A0D211D99}"
+EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C868222C-3A9F-419D-9B8F-FAE49D14F91D}"
 	ProjectSection(SolutionItems) = preProject
 		global.json = global.json
@@ -188,6 +190,24 @@ Global
 		{B44A302A-EBBA-45F0-A94C-8E5F5F4635F7}.Release|x64.ActiveCfg = Release|x64
 		{B44A302A-EBBA-45F0-A94C-8E5F5F4635F7}.Release|x64.Build.0 = Release|x64
 		{B44A302A-EBBA-45F0-A94C-8E5F5F4635F7}.Release|x64.Deploy.0 = Release|x64
+		{16DE7EC1-EDB4-4C29-9598-487A0D211D99}.Debug|ARM64.ActiveCfg = Debug|ARM64
+		{16DE7EC1-EDB4-4C29-9598-487A0D211D99}.Debug|ARM64.Build.0 = Debug|ARM64
+		{16DE7EC1-EDB4-4C29-9598-487A0D211D99}.Debug|ARM64.Deploy.0 = Debug|ARM64
+		{16DE7EC1-EDB4-4C29-9598-487A0D211D99}.Debug|Win32.ActiveCfg = Debug|Win32
+		{16DE7EC1-EDB4-4C29-9598-487A0D211D99}.Debug|Win32.Build.0 = Debug|Win32
+		{16DE7EC1-EDB4-4C29-9598-487A0D211D99}.Debug|Win32.Deploy.0 = Debug|Win32
+		{16DE7EC1-EDB4-4C29-9598-487A0D211D99}.Debug|x64.ActiveCfg = Debug|x64
+		{16DE7EC1-EDB4-4C29-9598-487A0D211D99}.Debug|x64.Build.0 = Debug|x64
+		{16DE7EC1-EDB4-4C29-9598-487A0D211D99}.Debug|x64.Deploy.0 = Debug|x64
+		{16DE7EC1-EDB4-4C29-9598-487A0D211D99}.Release|ARM64.ActiveCfg = Release|ARM64
+		{16DE7EC1-EDB4-4C29-9598-487A0D211D99}.Release|ARM64.Build.0 = Release|ARM64
+		{16DE7EC1-EDB4-4C29-9598-487A0D211D99}.Release|ARM64.Deploy.0 = Release|ARM64
+		{16DE7EC1-EDB4-4C29-9598-487A0D211D99}.Release|Win32.ActiveCfg = Release|Win32
+		{16DE7EC1-EDB4-4C29-9598-487A0D211D99}.Release|Win32.Build.0 = Release|Win32
+		{16DE7EC1-EDB4-4C29-9598-487A0D211D99}.Release|Win32.Deploy.0 = Release|Win32
+		{16DE7EC1-EDB4-4C29-9598-487A0D211D99}.Release|x64.ActiveCfg = Release|x64
+		{16DE7EC1-EDB4-4C29-9598-487A0D211D99}.Release|x64.Build.0 = Release|x64
+		{16DE7EC1-EDB4-4C29-9598-487A0D211D99}.Release|x64.Deploy.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

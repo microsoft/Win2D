@@ -57,7 +57,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
                 This is raised just before the game loop starts running.
                 Applications can hook this to perform any initialization that
                 must happen on the game loop thread.  For example, <see
-                cref="M:Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl.CreateCoreIndependentInputSource(Windows.UI.Core.CoreInputDeviceTypes)"/>
+                cref="M:Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl.CreateCoreIndependentInputSource(Microsoft.UI.Input.InputPointerSourceDeviceKinds)"/>
                 must be called from the thread that will process the input
                 events raised by the CoreIndependentInputSource.
               </p>
@@ -251,7 +251,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         </p>
         <p>
           One strategy for handling this is to use <see
-          cref="M:Microsoft.Graphics.Canvas.UI.Xaml.ICanvasAnimatedControl.RunOnGameLoopThreadAsync(Windows.UI.Core.DispatchedHandler)"/>
+          cref="M:Microsoft.Graphics.Canvas.UI.Xaml.ICanvasAnimatedControl.RunOnGameLoopThreadAsync(Microsoft.UI.Dispatching.DispatcherQueueHandler)"/>
           to execute code on the game loop thread.  For example:
           <code>
             private void animatedControl_PointerPressed(object sender, PointerRoutedEventArgs e)
@@ -271,7 +271,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         </p>
         <p>
           For more advanced input handling, CanvasAnimatedControl provides <see
-          cref="M:Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl.CreateCoreIndependentInputSource(Windows.UI.Core.CoreInputDeviceTypes)"/>.
+          cref="M:Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl.CreateCoreIndependentInputSource(Microsoft.UI.Input.InputPointerSourceDeviceKinds)"/>.
           This allows input to be processed on any thread (including the game
           loop thread).  This gives the app finer control over input processing.
         </p>
@@ -291,7 +291,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
 
         <p>
           One possible approach here is to use <see
-          cref="M:Microsoft.Graphics.Canvas.UI.Xaml.ICanvasAnimatedControl.RunOnGameLoopThreadAsync(Windows.UI.Core.DispatchedHandler)"
+          cref="M:Microsoft.Graphics.Canvas.UI.Xaml.ICanvasAnimatedControl.RunOnGameLoopThreadAsync(Microsoft.UI.Dispatching.DispatcherQueueHandler)"
           /> to execute code on the game loop thread.  The gotcha here is that
           the <a
           href="https://msdn.microsoft.com/en-us/library/windows/apps/windows.ui.core.keyeventargs.aspx">KeyEventArgs</a>
@@ -363,7 +363,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
 
         <p>
           Arbitrary code can be scheduled to run on the game loop thread using
-          <see cref="M:Microsoft.Graphics.Canvas.UI.Xaml.ICanvasAnimatedControl.RunOnGameLoopThreadAsync(Windows.UI.Core.DispatchedHandler)"/>.
+          <see cref="M:Microsoft.Graphics.Canvas.UI.Xaml.ICanvasAnimatedControl.RunOnGameLoopThreadAsync(Microsoft.UI.Dispatching.DispatcherQueueHandler)"/>.
           Work scheduled with this method will only run after CreateResources has
           completed.
         </p>
@@ -408,7 +408,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     </member> 
     <member name="T:Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl">
       <summary>XAML control intended for displaying animating content.</summary>
-      <inheritdoc select="remarks"/>
+      <inheritdoc path="remarks"/>
     </member>   
 
     <member name="M:Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl.#ctor">
@@ -561,7 +561,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         <p>
           This event is the first chance that an application has to execute code
           on the game loop thread.  This is the recommended place to call <see
-          cref="M:Microsoft.Graphics.Canvas.UI.Xaml.ICanvasAnimatedControl.CreateCoreIndependentInputSource(Windows.UI.Core.CoreInputDeviceTypes)"/>,
+          cref="M:Microsoft.Graphics.Canvas.UI.Xaml.ICanvasAnimatedControl.CreateCoreIndependentInputSource(Microsoft.UI.Input.InputPointerSourceDeviceKinds)"/>,
           create <a
           href="https://msdn.microsoft.com/en-us/library/windows/apps/windows.ui.input.gesturerecognizer.asp">GestureRecognizer</a>s
           and register event handlers against them.
@@ -764,7 +764,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
       </remarks>
     </member>
     
-    <member name="M:Microsoft.Graphics.Canvas.UI.Xaml.ICanvasAnimatedControl.CreateCoreIndependentInputSource(Windows.UI.Core.CoreInputDeviceTypes)">
+    <member name="M:Microsoft.Graphics.Canvas.UI.Xaml.ICanvasAnimatedControl.CreateCoreIndependentInputSource(Microsoft.UI.Input.InputPointerSourceDeviceKinds)">
       <summary>Creates an input source that can process input on a non-UI thread (such as the game loop thread).</summary>
       <remarks>
         <p>
@@ -801,7 +801,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
         </p>
       </remarks>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl.CreateCoreIndependentInputSource(Windows.UI.Core.CoreInputDeviceTypes)">
+    <member name="M:Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl.CreateCoreIndependentInputSource(Microsoft.UI.Input.InputPointerSourceDeviceKinds)">
       <summary>Creates an input source that can process input on a non-UI thread (such as the game loop thread).</summary>
       <inheritdoc/>
     </member>
@@ -834,7 +834,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     </member>
     
 
-    <member name="M:Microsoft.Graphics.Canvas.UI.Xaml.ICanvasAnimatedControl.RunOnGameLoopThreadAsync(Windows.UI.Core.DispatchedHandler)">
+    <member name="M:Microsoft.Graphics.Canvas.UI.Xaml.ICanvasAnimatedControl.RunOnGameLoopThreadAsync(Microsoft.UI.Dispatching.DispatcherQueueHandler)">
       <summary>Schedules the provided callback to run asynchronously on the game loop thread.</summary>
       <remarks>
         <p>
@@ -895,7 +895,7 @@ Licensed under the MIT License. See LICENSE.txt in the project root for license 
     <member name="P:Microsoft.Graphics.Canvas.UI.Xaml.ICanvasAnimatedControl.HasGameLoopThreadAccess">
       <summary>Gets whether the current thread is the game loop thread.</summary>
     </member>
-    <member name="M:Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl.RunOnGameLoopThreadAsync(Windows.UI.Core.DispatchedHandler)">
+    <member name="M:Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl.RunOnGameLoopThreadAsync(Microsoft.UI.Dispatching.DispatcherQueueHandler)">
       <summary>Schedules the provided callback to run asynchronously on the game loop thread.</summary>
       <inheritdoc/>
     </member>

@@ -31,7 +31,7 @@ steps:
           $xmlfile = [xml](Get-Content $file)
 
           Write-Host "Found Version.Details.xml file."
-          $xmlfile.Dependencies.ProductDependencies.Dependency | Where-Object Name -eq 'Microsoft.WindowsAppSDK' | ForEach-Object {
+          $xmlfile.Dependencies.ProductDependencies.Dependency | Where-Object Name -eq 'Microsoft.WindowsAppSDK.WinUI' | ForEach-Object {
               $WIN_APP_SDK_VERSION = $_.Version
               Write-Host "The WinAppSDK Version is $WIN_APP_SDK_VERSION"
               Write-Host "##vso[task.setvariable variable=nightly_winappsdk_version;isOutput=true]$WIN_APP_SDK_VERSION"

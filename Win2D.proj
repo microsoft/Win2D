@@ -16,7 +16,7 @@
     <BuildConfigurations>Debug;Release</BuildConfigurations>
     <BuildTests>true</BuildTests>
     <BuildTools>true</BuildTools>
-    <BuildDocs>false</BuildDocs>
+    <BuildDocs>true</BuildDocs>
     <RunTests>true</RunTests>
   </PropertyGroup>
 
@@ -51,6 +51,16 @@
       <Platforms>Win32;x64</Platforms>
       <AutomatedTests Condition="$(ShouldRunUAPTests)">desktop</AutomatedTests>
     </UAPProject>
+    <UAPProject Include="winrt\test.nativecomponent\winrt.test.nativecomponent.uap.vcxproj" />
+    <UAPProject Include="winrt\test.managed\winrt.test.managed.winappsdk.csproj">
+      <Platforms>Win32;x64</Platforms>
+      <AutomatedTests Condition="$(ShouldRunUAPTests)">store</AutomatedTests>
+      <BuildInParallel>false</BuildInParallel>
+      <BinDir></BinDir>
+    </UAPProject>
+    <UAPProject Include="samples\SimpleSample\SimpleSample.winappsdk.csproj">
+      <BuildInParallel>false</BuildInParallel>
+    </UAPProject>
   </ItemGroup>
 
   <!-- Tools projects -->
@@ -64,28 +74,28 @@
     <AnyCPUProject Include="tools\mock\test\mock.test.csproj" Condition="$(BuildTests)">
       <AutomatedTests>desktop</AutomatedTests>
     </AnyCPUProject>
+    <AnyCPUProject Include="tools\docs\DocDiff\DocDiff.csproj" />
+    <AnyCPUProject Include="tools\docs\DocPreprocess\DocPreprocess.csproj" />
+    <AnyCPUProject Include="tools\docs\ExtractAPISurface\ExtractAPISurface.csproj" />
+    <AnyCPUProject Include="tools\docs\MergeIntellisense\MergeIntellisense.csproj" />
+    <AnyCPUProject Include="tools\exportsample\exportsample.csproj" />
   </ItemGroup>
 
 
   <!-- Master target just chains to a bunch of workers -->
   <Target Name="Build"
-          DependsOnTargets="BuildProjects; CheckCode; RunTests" />
-
-
-  <!-- TargetPlatformMinVersion 10.0.16299.0 and 10.0.10240 Platforms must be build separately. -->
-  <Target Name="BuildProjects" DependsOnTargets="BuildProjects18362" />
-
+          DependsOnTargets="BuildProjects; CheckCode; BuildDocs; RunTests" />
 
   <Target Name="BuildProjectsPrelim" DependsOnTargets="PrepareVersionInfo; ChooseProjectsToBuild; ChooseConfigurationsToRestore" />
 
 
   <!-- Use batching to build each project in turn -->
-  <Target Name="BuildProjects18362"
-          DependsOnTargets="BuildProjectsPrelim; RestoreNuGetPackages18362"
+  <Target Name="BuildProjects"
+          DependsOnTargets="BuildProjectsPrelim; RestoreNuGetPackages"
           Inputs="@(ProjectsToBuild)"
           Outputs="%(PlatformIndependentName)">
 
-    <Message Importance="High" Text="Building TargetPlatformMinVersion 18362 variants of project %(ProjectsToBuild.PlatformIndependentName):" />
+    <Message Importance="High" Text="Building all variants of project %(ProjectsToBuild.PlatformIndependentName):" />
     <Message Importance="High" Text="  %(ProjectsToBuild.Filename) (%(ProjectsToBuild.Configuration)|%(ProjectsToBuild.Platform))" />
 
     <!-- All the variants (platform and configuration) of most projects can be built in parallel -->
@@ -185,15 +195,35 @@
   <!-- Build the reference documentation -->
   <UsingTask TaskName="SetEnv" AssemblyFile="$(VCTargetsPath)Microsoft.Build.CppTasks.Common.dll"/>
 
+  <Target Name="BuildDocs"
+        Condition="$(BuildDocs) and
+                    $(BuildTools) and
+                    $(BuildPlatforms.Contains('AnyCPU')) and
+                    $(BuildPlatforms.Contains('Win32')) and
+                    $(BuildConfigurations.Contains('Release'))">
+
+    <Message Importance="High" Text="Building documentation" />
+
+    <!-- unset SHFBROOT, so that BuildDocs only picks up the version of
+          sandcastle installed via nuget -->
+    <SetEnv Name="SHFBROOT" Prefix="false" />
+
+    <!-- Use <Exec> rather than <MSBuild> here, since we want BuildDocs.proj to
+          be isolated from the environment that's formed around running
+          Win2D.proj up to this point, and to suppress the Sandcastle
+          false positive warning BHT0001 -->
+    <Exec Command="&quot;$(MSBuildBinPath)\msbuild&quot; $(MSBuildThisFileDirectory)tools\docs\BuildDocs.proj" 
+          IgnoreStandardErrorWarningFormat="true"
+          CustomErrorRegularExpression=": error "
+          CustomWarningRegularExpression=": warning (?!BHT0001)" />
+  </Target>
+
   <!-- Run the automated tests -->
 
   <PropertyGroup>
     <_VsTestPathUnderCommonTools>..\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe</_VsTestPathUnderCommonTools>
-    <_VsTest Condition="Exists('$(VS120COMNTOOLS)$(_VsTestPathUnderCommonTools)')">$(VS120COMNTOOLS)$(_VsTestPathUnderCommonTools)</_VsTest>
-    <_VsTest Condition="Exists('$(VS140COMNTOOLS)$(_VsTestPathUnderCommonTools)')">$(VS140COMNTOOLS)$(_VsTestPathUnderCommonTools)</_VsTest>
-    <_VsTest Condition="Exists('$(VS150COMNTOOLS)$(_VsTestPathUnderCommonTools)')">$(VS150COMNTOOLS)$(_VsTestPathUnderCommonTools)</_VsTest>
-    <_VsTest Condition="Exists('$(VS160COMNTOOLS)$(_VsTestPathUnderCommonTools)')">$(VS160COMNTOOLS)$(_VsTestPathUnderCommonTools)</_VsTest>
     <_VsTest Condition="Exists('$(VS170COMNTOOLS)$(_VsTestPathUnderCommonTools)')">$(VS170COMNTOOLS)$(_VsTestPathUnderCommonTools)</_VsTest>
+    <_VsTest Condition="Exists('$(VS180COMNTOOLS)$(_VsTestPathUnderCommonTools)')">$(VS180COMNTOOLS)$(_VsTestPathUnderCommonTools)</_VsTest>
     <VsTest Condition="'$(_VsTest)' != ''">"$([System.IO.Path]::GetFullPath('$(_VsTest)'))"</VsTest>
   </PropertyGroup>
 
@@ -210,14 +240,14 @@
     <Error Text="vstest.console.exe not found, please specify using the VsTest property" Condition="'$(VsTest)' == ''" />
     <Message Importance="High" Text="Running tests: %(TestProjects.Filename) (%(TestProjects.Configuration)|%(TestProjects.Platform))" />
 
-    <Exec Command="$(PowerShellExe) -NonInteractive -executionpolicy Unrestricted -command &quot;&amp; { get-appxpackage -name E2C40EB9-8CCE-48B1-9A5C-4C8CA4999631 | remove-appxpackage } &quot;" ConsoleToMsBuild="true" ContinueOnError="ErrorAndContinue" IgnoreStandardErrorWarningFormat="true"/>
+    <Exec Command="$(PowerShellExe) -NonInteractive -executionpolicy Unrestricted -command &quot;&amp; { get-appxpackage -name 09ca071b-56a7-4712-b99e-9ead40b150e3 | remove-appxpackage } &quot;" ConsoleToMsBuild="true" ContinueOnError="ErrorAndContinue" IgnoreStandardErrorWarningFormat="true"/>
     <Exec Command="$(VsTest) %(TestProjects.TestBinary)%(TestProjects.TestArgs)" ContinueOnError="ErrorAndContinue" IgnoreStandardErrorWarningFormat="true" />
   </Target>
 
 
   <Target Name="ChooseTestsToRun">
     <ItemGroup>
-      <TestProjects Include="@(ProjectsToBuild)" Condition="%(ProjectsToBuild.AutomatedTests) != '' and %(ProjectsToBuild.Platform) != ARM and %(ProjectsToBuild.Platform) != ARM64">
+      <TestProjects Include="@(ProjectsToBuild)" Condition="%(ProjectsToBuild.AutomatedTests) != '' and %(ProjectsToBuild.Platform) != ARM64">
         <!-- Remap Win32 to x86 -->
         <TestPlatform Condition="%(ProjectsToBuild.Platform) == Win32">x86</TestPlatform>
         <TestPlatform Condition="%(ProjectsToBuild.Platform) != Win32">%(ProjectsToBuild.Platform)</TestPlatform>
@@ -225,12 +255,12 @@
         <!-- Work out where the test binaries are located -->
         <TestPath>bin\%(ProjectsToBuild.BinDir)%(TestProjects.TestPlatform)\%(ProjectsToBuild.Configuration)</TestPath>
 
-        <TestAppX Condition="%(ProjectsToBuild.Configuration) == Release">%(ProjectsToBuild.Filename)_1.0.0.0_%(ProjectsToBuild.Platform)</TestAppX>
-        <TestAppX Condition="%(ProjectsToBuild.Configuration) != Release">%(ProjectsToBuild.Filename)_1.0.0.0_%(ProjectsToBuild.Platform)_%(ProjectsToBuild.Configuration)</TestAppX>
+        <TestAppX Condition="%(ProjectsToBuild.Configuration) == Release">%(ProjectsToBuild.Filename)_1.0.0.0_%(TestProjects.TestPlatform)</TestAppX>
+        <TestAppX Condition="%(ProjectsToBuild.Configuration) != Release">%(ProjectsToBuild.Filename)_1.0.0.0_%(TestProjects.TestPlatform)_%(ProjectsToBuild.Configuration)</TestAppX>
 
         <!-- Binaries can be either a .dll for desktop tests, or .appx for store app tests -->
         <TestBinary Condition="%(ProjectsToBuild.AutomatedTests) == desktop">%(TestProjects.TestPath)\%(ProjectsToBuild.Filename)\%(ProjectsToBuild.Filename).dll</TestBinary>
-        <TestBinary Condition="%(ProjectsToBuild.AutomatedTests) == store">%(TestProjects.TestPath)\%(ProjectsToBuild.Filename)\AppPackages\%(TestProjects.TestAppX)_Test\%(TestProjects.TestAppX).appx</TestBinary>
+        <TestBinary Condition="%(ProjectsToBuild.AutomatedTests) == store">%(TestProjects.TestPath)\%(ProjectsToBuild.Filename)\AppPackages\%(TestProjects.TestAppX)_Test\%(TestProjects.TestAppX).msix</TestBinary>
 
         <!-- Do we need the /Platform or /InIsolation arguments for this test project? -->
         <TestArgs Condition="%(ProjectsToBuild.Platform) == x64">%(TestProjects.TestArgs) /Platform:x64</TestArgs>
@@ -253,7 +283,7 @@
         <Configuration>%(BuildConfiguration.Identity)</Configuration>
       </ConfigToRestore>
 
-      <NuGetRestore Include="@(ConfigToRestore)" Condition="%(BuildPlatform.Identity) != AnyCPU">
+      <NuGetRestore Include="@(ConfigToRestore)">
         <Platform>%(BuildPlatform.Identity)</Platform>
       </NuGetRestore>
 

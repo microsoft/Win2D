@@ -18,6 +18,7 @@ using Windows.Storage.Streams;
 using Windows.Storage;
 using Windows.Graphics.DirectX;
 using System.Diagnostics;
+using Windows.Graphics.Imaging;
 
 namespace test.managed
 {
@@ -329,7 +330,6 @@ namespace test.managed
         }
     }
 
-    #if WINDOWS_UWP
     [TestClass]
     public class CanvasBitmapCreateFromSoftwareBitmapTests
     {
@@ -421,7 +421,7 @@ namespace test.managed
 
             if (!IsFormatSupportedByWin2D(pixelFormat, alphaMode))
             {
-                Assert.ThrowsException<Exception>(() =>
+                Utils.AssertThrowsException<Exception>(() =>
                 {
                     CanvasBitmap.CreateFromSoftwareBitmap(device, softwareBitmap);
                 });
@@ -494,5 +494,4 @@ namespace test.managed
             return true;
         }
     }
-    #endif
 }

@@ -24,6 +24,15 @@
     <WindowsMetadataReference Include="$(Win2DWinMDPath)" Implementation="$(Win2DWinMDImplementationDllName)" />
   </ItemGroup>
 
+  <!-- 
+    In case Win2D is used in the projected API of another component, 
+    the .winmd should be included as an input so that the types can be discovered
+    (but that component should not include the Microsoft.Graphics.Canvas namespace in its CsWinRTIncludes property)
+  -->
+  <ItemGroup>
+    <CsWinRTInputs Include="$(Win2DWinMDPath)"/>
+  </ItemGroup>
+
   <!--
     Emit a warning if building as 'AnyCPU', which is not supported. Note that we are emitting this warning but
     we are not copying the .dll ourselves. NuGet will do that automatically when projects are published.

@@ -28,6 +28,9 @@
   <!-- Other files that are not part of the API, but which define types used by it -->
   <ItemGroup>
     <ReferenceAssembly Include="$(registry:HKEY_LOCAL_MACHINE\Software\Microsoft\Windows Kits\Installed Roots@KitsRoot10)UnionMetadata\$(TargetPlatformVersion)\Windows.winmd" />
+    <ReferenceAssembly Include="$(MSBuildThisFileDirectory)..\..\packages\Microsoft.WindowsAppSdk.WinUI.$(WindowsAppSdkWinUIVersion)\metadata\*.winmd" />
+    <ReferenceAssembly Include="$(MSBuildThisFileDirectory)..\..\packages\Microsoft.WindowsAppSdk.Foundation.$(WindowsAppSdkFoundationVersion)\metadata\*.winmd" />
+    <ReferenceAssembly Include="$(MSBuildThisFileDirectory)..\..\packages\Microsoft.WindowsAppSdk.InteractiveExperiences.$(WindowsAppSdkInteractiveExperiencesVersion)\metadata\10.0.17763.0\*.winmd" />
   </ItemGroup>
 
 
@@ -62,9 +65,9 @@
 
 
   <!-- Compile the generated C# code to create new assemblies -->
-  <Target Name="CompileAPISurface" Condition="!$(IntellisenseOnly)" DependsOnTargets="RestoreNuGetPackages10240">
+  <Target Name="CompileAPISurface" Condition="!$(IntellisenseOnly)" DependsOnTargets="RestoreNuGetPackages">
     <PropertyGroup>
-      <FrameworkRoot>$(MSBuildThisFileDirectory)..\..\packages\System.Runtime.4.0.20\ref\dotnet</FrameworkRoot>
+      <FrameworkRoot>$(MSBuildThisFileDirectory)..\..\packages\System.Runtime.4.3.1\ref\netcore50</FrameworkRoot>
     </PropertyGroup>
 
     <ItemGroup>
@@ -126,7 +129,7 @@
 
 
   <!-- Run the Sandcastle tool to create HTML reference documentation -->
-  <Target Name="RunSandcastle" Condition="!$(IntellisenseOnly)" DependsOnTargets="RestoreNuGetPackages10240">
+  <Target Name="RunSandcastle" Condition="!$(IntellisenseOnly)" DependsOnTargets="RestoreNuGetPackages">
     <MSBuild Projects="BuildDocs.shfbproj" />
   </Target>
 

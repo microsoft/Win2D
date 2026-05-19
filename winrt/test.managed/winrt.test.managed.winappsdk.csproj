@@ -1,18 +1,23 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net6.0-windows10.0.19041.0</TargetFramework>
+    <TargetFramework>net8.0-windows10.0.22621.0</TargetFramework>
     <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
-    <WindowsSdkPackageVersion>10.0.19041.55</WindowsSdkPackageVersion>
     <RootNamespace>test.managed</RootNamespace>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <Platforms>x86;x64;ARM64</Platforms>
-    <RuntimeIdentifiers>win10-x86;win10-x64;win10-arm64</RuntimeIdentifiers>
-    <PublishProfile>win10-$(Platform).pubxml</PublishProfile>
+    <RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
+    <PublishProfile>win-$(__Platform).pubxml</PublishProfile>
     <UseWinUI>true</UseWinUI>
     <EnableMsixTooling>true</EnableMsixTooling>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <GenerateAppxPackageOnBuild>true</GenerateAppxPackageOnBuild>
+    <AppxBundle>Never</AppxBundle>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PackageCertificateKeyFile>$(AssetDir)TemporaryKey.pfx</PackageCertificateKeyFile>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -36,10 +41,9 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Web.WebView2" Version="$(WebView2Version)" />
-    <PackageReference Include="Microsoft.Windows.CsWinRT" Version="$(CsWinRTVersion)" />
     <PackageReference Include="Microsoft.WindowsAppSDK.WinUI" Version="$(WindowsAppSdkWinUIVersion)" />
     <PackageReference Include="Microsoft.WindowsAppSDK.InteractiveExperiences" Version="$(WindowsAppSdkInteractiveExperiencesVersion)" />
-    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.28000.1-RTM" />
+    <PackageReference Include="Microsoft.WindowsAppSDK.Runtime" Version="$(WindowsAppSdkRuntimeVersion)" />
     <PackageReference Include="MSTest.TestAdapter">
       <Version>3.0.2</Version>
     </PackageReference>
@@ -67,8 +71,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="$(OutDir)\..\..\..\uap$(Platform)\$(Configuration)\winrt.dll.uap\Microsoft.Graphics.Canvas.dll" CopyToOutputDirectory="PreserveNewest" />
-    <!-- <Content Include="$(OutDir)\..\..\..\..\..\..\..\bin\uap$(Platform)\$(Configuration)\winrt.dll.uap\Microsoft.Graphics.Canvas.dll" CopyToOutputDirectory="PreserveNewest" /> -->
+    <Content Include="..\..\bin\uap$(__Platform)\$(Configuration)\winrt.dll.uap\Microsoft.Graphics.Canvas.dll" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
   <!-- 

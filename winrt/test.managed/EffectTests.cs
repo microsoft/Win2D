@@ -18,15 +18,13 @@ using System.Numerics;
 namespace test.managed
 {
     [TestClass]
-    public class EffectTests
+    public partial class EffectTests
     {
         CanvasDevice device, device2;
 
         ColorManagementProfile[] colorProfiles;
 
-#if WINDOWS_UWP
         EffectTransferTable3D[] transferTables;
-#endif
 
 
         // When viewed through CsWinRT, the Assembly is Microsoft.Graphics.Canvas.Interop.dll instead of
@@ -474,11 +472,7 @@ namespace test.managed
                     (float)c.A / 255,
                 };
             }
-            else if (value is ColorManagementProfile
-#if WINDOWS_UWP
-                  || value is EffectTransferTable3D
-#endif
-                    )
+            else if (value is ColorManagementProfile || value is EffectTransferTable3D)
             {
                 return new object[] { value };
             }
@@ -607,11 +601,7 @@ namespace test.managed
                                       (byte)(a[1] * 255),
                                       (byte)(a[2] * 255));
             }
-            else if (type == typeof(ColorManagementProfile)
-#if WINDOWS_UWP
-                  || type == typeof(EffectTransferTable3D)
-#endif
-                    )
+            else if (type == typeof(ColorManagementProfile) || type == typeof(EffectTransferTable3D))
             {
                 var a = (object[])value;
                 Assert.AreEqual(1, a.Length);
@@ -852,7 +842,6 @@ namespace test.managed
 
                 return colorProfiles[whichOne ? 0 : 1];
             }
-#if WINDOWS_UWP
             else if (type == typeof(EffectTransferTable3D))
             {
                 if (transferTables == null)
@@ -866,7 +855,6 @@ namespace test.managed
 
                 return transferTables[whichOne ? 0 : 1];
             }
-#endif
             else
             {
                 throw new NotSupportedException("Unsupported GetArbitraryTestValue type " + type);
@@ -920,7 +908,6 @@ namespace test.managed
                 propertiesToRemove.Add("AlphaMode");
                 indexMapping = new int[] { 0, 2 };
             }
-#if WINDOWS_UWP
             else if (effectType == typeof(SepiaEffect))
             {
                 // SepiaEffect.AlphaMode has special logic to remap enum values between WinRT and D2D.
@@ -945,7 +932,6 @@ namespace test.managed
                 propertiesToRemove.Add("SourceIsLinearGamma");
                 indexMapping = new int[] { 0, 1, 2, 4 };
             }
-#endif  // WINDOWS_UWP
 
             // Remove any HDR properties
             var hdrProperties = properties.Where(p => p.Name.EndsWith("Hdr")).Select(p => p.Name);
@@ -1159,9 +1145,6 @@ namespace test.managed
         }
 
 
-#if WINDOWS_UWP
-
-
         [TestMethod]
         public void SepiaEffectCustomizations()
         {
@@ -1248,9 +1231,6 @@ namespace test.managed
         }
 
 
-#endif  // WINDOWS_UWP
-
-
         [TestMethod]
         public void Transform3DEffectDoesNotSupportHighQualityInterpolation()
         {
@@ -1286,7 +1266,7 @@ namespace test.managed
         }
 
 
-        class NotACanvasImage : IGraphicsEffectSource { }
+        partial class NotACanvasImage : IGraphicsEffectSource { }
 
 
         [TestMethod]
